@@ -98,10 +98,10 @@ ClassManager.compileSuper.ClassManager = ClassManager;
 
     /**
      * Create a new Class that inherits from this Class
-     * @param {object} prop
+     * @param {object} props
      * @return {function}
      */
-    cc.Class.extend = function (prop) {
+    cc.Class.extend = function (props) {
         var _super = this.prototype;
 
         // Instantiate a base Class (but only create the instance,
@@ -144,63 +144,66 @@ ClassManager.compileSuper.ClassManager = ClassManager;
 	    this.__getters__ && (Class.__getters__ = cc.clone(this.__getters__));
 	    this.__setters__ && (Class.__setters__ = cc.clone(this.__setters__));
 
-        for (var name in prop) {
-	        var isFunc = (typeof prop[name] === "function");
-	        var override = (typeof _super[name] === "function");
-	        var hasSuperCall = fnTest.test(prop[name]);
+        for(var idx = 0, li = arguments.length; idx < li; ++idx) {
+            var prop = arguments[idx];
+            for (var name in prop) {
+                var isFunc = (typeof prop[name] === "function");
+                var override = (typeof _super[name] === "function");
+                var hasSuperCall = fnTest.test(prop[name]);
 
-            if(releaseMode && isFunc && override && hasSuperCall) {
-                desc.value = ClassManager.compileSuper(prop[name], name, classId);
-                Object.defineProperty(prototype, name, desc);
-            } else if(isFunc && override && hasSuperCall){
-                desc.value = (function (name, fn) {
-                    return function () {
-                        var tmp = this._super;
+                if (releaseMode && isFunc && override && hasSuperCall) {
+                    desc.value = ClassManager.compileSuper(prop[name], name, classId);
+                    Object.defineProperty(prototype, name, desc);
+                } else if (isFunc && override && hasSuperCall) {
+                    desc.value = (function (name, fn) {
+                        return function () {
+                            var tmp = this._super;
 
-                        // Add a new ._super() method that is the same method
-                        // but on the super-Class
-                        this._super = _super[name];
+                            // Add a new ._super() method that is the same method
+                            // but on the super-Class
+                            this._super = _super[name];
 
-                        // The method only need to be bound temporarily, so we
-                        // remove it when we're done executing
-                        var ret = fn.apply(this, arguments);
-                        this._super = tmp;
+                            // The method only need to be bound temporarily, so we
+                            // remove it when we're done executing
+                            var ret = fn.apply(this, arguments);
+                            this._super = tmp;
 
-                        return ret;
-                    };
-                })(name, prop[name]);
-                Object.defineProperty(prototype, name, desc);
-            } else if(isFunc) {
-                desc.value = prop[name];
-                Object.defineProperty(prototype, name, desc);
-            } else{
-                prototype[name] = prop[name];
+                            return ret;
+                        };
+                    })(name, prop[name]);
+                    Object.defineProperty(prototype, name, desc);
+                } else if (isFunc) {
+                    desc.value = prop[name];
+                    Object.defineProperty(prototype, name, desc);
+                } else {
+                    prototype[name] = prop[name];
+                }
+
+                if (isFunc) {
+                    // Override registered getter/setter
+                    var getter, setter, propertyName;
+                    if (this.__getters__ && this.__getters__[name]) {
+                        propertyName = this.__getters__[name];
+                        for (var i in this.__setters__) {
+                            if (this.__setters__[i] == propertyName) {
+                                setter = i;
+                                break;
+                            }
+                        }
+                        cc.defineGetterSetter(prototype, propertyName, prop[name], prop[setter] ? prop[setter] : prototype[setter], name, setter);
+                    }
+                    if (this.__setters__ && this.__setters__[name]) {
+                        propertyName = this.__setters__[name];
+                        for (var i in this.__getters__) {
+                            if (this.__getters__[i] == propertyName) {
+                                getter = i;
+                                break;
+                            }
+                        }
+                        cc.defineGetterSetter(prototype, propertyName, prop[getter] ? prop[getter] : prototype[getter], prop[name], getter, name);
+                    }
+                }
             }
-
-	        if (isFunc) {
-		        // Override registered getter/setter
-		        var getter, setter, propertyName;
-		        if( this.__getters__ && this.__getters__[name] ) {
-			        propertyName = this.__getters__[name];
-			        for (var i in this.__setters__) {
-				        if (this.__setters__[i] == propertyName) {
-					        setter = i;
-				            break;
-				        }
-			        }
-			        cc.defineGetterSetter(prototype, propertyName, prop[name], prop[setter] ? prop[setter] : prototype[setter], name, setter);
-		        }
-		        if( this.__setters__ && this.__setters__[name] ) {
-			        propertyName = this.__setters__[name];
-			        for (var i in this.__getters__) {
-				        if (this.__getters__[i] == propertyName) {
-					        getter = i;
-					        break;
-				        }
-			        }
-			        cc.defineGetterSetter(prototype, propertyName, prop[getter] ? prop[getter] : prototype[getter], prop[name], getter, name);
-		        }
-	        }
         }
 
         // And make this Class extendable
