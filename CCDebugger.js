@@ -265,17 +265,24 @@ cc._logToWebPage = function (msg) {
 };
 
 //to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
+cc._formatString = function(arg){
+    if(typeof arg === 'object'){
+        return JSON.stringify(arg);
+    }else{
+        return arg;
+    }
+};
 if (console.log) {
     cc.log = function(msg){
         for (var i = 1; i < arguments.length; i++) {
-            msg = msg.replace("%s", arguments[i]);
+            msg = msg.replace(/(%s)|(%d)/, cc._formatString(arguments[i]));
         }
         console.log(msg);
     };
     cc.warn = console.warn ?
         function(msg){
             for (var i = 1; i < arguments.length; i++) {
-                msg = msg.replace("%s", arguments[i]);
+                msg = msg.replace(/(%s)|(%d)/, cc._formatString(arguments[i]));
             }
             console.warn(msg);
         } :
@@ -283,7 +290,7 @@ if (console.log) {
     cc.error = console.error ?
         function(msg){
             for (var i = 1; i < arguments.length; i++) {
-                msg = msg.replace("%s", arguments[i]);
+                msg = msg.replace(/(%s)|(%d)/, cc._formatString(arguments[i]));
             }
             console.error(msg);
         } :
@@ -291,7 +298,7 @@ if (console.log) {
     cc.assert = function (cond, msg) {
         if (!cond && msg) {
             for (var i = 2; i < arguments.length; i++) {
-                msg = msg.replace("%s", arguments[i]);
+                msg = msg.replace(/(%s)|(%d)/, cc._formatString(arguments[i]));
             }
             throw msg;
         }
