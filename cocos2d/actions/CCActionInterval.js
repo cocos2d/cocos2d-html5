@@ -1657,14 +1657,55 @@ cc.JumpBy.create = function (duration, position, y, height, jumps) {
  * @extends cc.JumpBy
  */
 cc.JumpTo = cc.JumpBy.extend(/** @lends cc.JumpTo# */{
+    _endPosition:null,
 
-	/**
+    /**
+     * Constructor of JumpTo
+     * @param {Number} duration
+     * @param {cc.Point|Number} position
+     * @param {Number} [y]
+     * @param {Number} height
+     * @param {Number} jumps
+     * @example
+     * var actionTo = new cc.JumpTo(2, cc.p(300, 0), 50, 4);
+     * var actionTo = new cc.JumpTo(2, 300, 0, 50, 4);
+     */
+    ctor:function (duration, position, y, height, jumps) {
+        cc.JumpBy.prototype.ctor.call(this);
+        this._endPosition = cc.p(0, 0);
+
+        height !== undefined && this.initWithDuration(duration, position, y, height, jumps);
+    },
+    /**
+     * @param {Number} duration
+     * @param {cc.Point|Number} position
+     * @param {Number} [y]
+     * @param {Number} height
+     * @param {Number} jumps
+     * @return {Boolean}
+     * @example
+     * actionTo.initWithDuration(2, cc.p(300, 0), 50, 4);
+     * actionTo.initWithDuration(2, 300, 0, 50, 4);
+     */
+    initWithDuration:function (duration, position, y, height, jumps) {
+        if (cc.JumpBy.prototype.initWithDuration.call(this, duration, position, y, height, jumps)) {
+            if (jumps === undefined) {
+                y = position.y;
+                position = position.x;
+            }
+            this._endPosition.x = position;
+            this._endPosition.y = y;
+            return true;
+        }
+        return false;
+    },
+    /**
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
         cc.JumpBy.prototype.startWithTarget.call(this, target);
-        this._delta.x = this._delta.x - this._startPosition.x;
-        this._delta.y = this._delta.y - this._startPosition.y;
+        this._delta.x = this._endPosition.x - this._startPosition.x;
+        this._delta.y = this._endPosition.y - this._startPosition.y;
     },
 
     /**
@@ -1674,7 +1715,7 @@ cc.JumpTo = cc.JumpBy.extend(/** @lends cc.JumpTo# */{
     clone:function () {
         var action = new cc.JumpTo();
         this._cloneDecoration(action);
-        action.initWithDuration(this._duration, this._delta, this._height, this._jumps);
+        action.initWithDuration(this._duration, this._endPosition, this._height, this._jumps);
         return action;
     }
 });

@@ -546,7 +546,7 @@ cc.NodeLoader = cc.Class.extend({
         var red = ccbReader.readByte();
         var green = ccbReader.readByte();
         var blue = ccbReader.readByte();
-        var color = {r:red, g:green, b:blue };
+        var color = cc.color(red, green, blue, 255);               //v3.0
         if(ccbReader.getAnimatedProperties().indexOf(propertyName) > -1){
             ccbReader.getAnimationManager().setBaseValue(cc.Color3BWapper.create(color),node, propertyName);
         }

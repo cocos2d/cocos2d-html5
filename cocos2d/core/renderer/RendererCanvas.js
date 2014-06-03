@@ -95,7 +95,11 @@ cc.TextureRenderCmdCanvas = function(node){
 
 cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
     var _t = this;
-    var context = ctx || cc._renderContext, t = this._transform;
+    var context = ctx || cc._renderContext, locTextureCoord = _t._textureCoord;
+    if(!locTextureCoord.validRect)
+        return;  //draw nothing
+
+    var t = this._transform, locDrawingRect = _t._drawingRect;
 
     context.save();
     //transform
@@ -103,7 +107,6 @@ cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
 
     if (_t._isLighterMode)
         context.globalCompositeOperation = 'lighter';
-    var locTextureCoord = _t._textureCoord, locDrawingRect = _t._drawingRect;
 
     if (_t._flippedX)
         context.scale(-1, 1);
@@ -118,17 +121,11 @@ cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
                 locTextureCoord.x, locTextureCoord.y, locTextureCoord.width, locTextureCoord.height,
                 locDrawingRect.x, locDrawingRect.y, locDrawingRect.width , locDrawingRect.height);
         }
-    } else if (locDrawingRect.width !== 0) {
+    } else if (!_t._texture && locTextureCoord.validRect) {
         var curColor = _t._color;
         context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + _t._opacity + ")";
         context.fillRect(locDrawingRect.x , locDrawingRect.y , locDrawingRect.width , locDrawingRect.height);
     }
-
-    //restore the context for flipped
-/*    if (_t._flippedX)
-        context.scale(-1, 1);
-    if (_t._flippedY)
-        context.scale(1, -1);*/
 
     context.restore();
     cc.g_NumberOfDraws++;
@@ -288,28 +285,41 @@ cc.ParticleRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
 
 // the canvas implement of renderCommand for cc.ProgressTimer
 cc.ProgressRenderCmdCanvas = function(node){
+    this._PI180 = Math.PI / 180;
+
     this._node = node;
-
     this._transform = node._transformWorld; //{a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
-
+    this._sprite = node._sprite;
+    this._type = node.getType();
+    this._barRect = node._barRect;
+    this._origin = node._origin;
+    this._radius = 0;
+    this._startAngle = 0;
+    this._endAngle = 0;
+    this._counterClockWise = false;
 };
 
-cc.ProgressRenderCmdCanvas.prototype.rendering = function(ctx){
-    var context = ctx || cc._renderContext;
+cc.ProgressRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
+    var context = ctx || cc._renderContext, locSprite = this._sprite;
 
-    var locSprite = this._sprite;
+    var locTextureCoord = locSprite._textureRect_Canvas;
+    if (!locSprite._texture || !locTextureCoord.validRect)
+        return;
+
+    var t = this._transform;
+    context.save();
+    context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+
     if (locSprite._isLighterMode)
         context.globalCompositeOperation = 'lighter';
 
-    var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
-
     context.globalAlpha = locSprite._displayedOpacity / 255;
-    var locRect = locSprite._rect, locContentSize = locSprite._contentSize, locOffsetPosition = locSprite._offsetPosition, locDrawSizeCanvas = locSprite._drawSize_Canvas;
-    var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height, locTextureCoord = locSprite._textureRect_Canvas;
-    locDrawSizeCanvas.width = locRect.width * locEGL_ScaleX;
-    locDrawSizeCanvas.height = locRect.height * locEGL_ScaleY;
 
-    context.save();
+    var locRect = locSprite._rect, locOffsetPosition = locSprite._offsetPosition, locDrawSizeCanvas = locSprite._drawSize_Canvas;
+    var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height;
+    locDrawSizeCanvas.width = locRect.width * scaleX;
+    locDrawSizeCanvas.height = locRect.height * scaleY;
+
     if (locSprite._flippedX) {
         flipXOffset = -locOffsetPosition.x - locRect.width;
         context.scale(-1, 1);
@@ -319,42 +329,36 @@ cc.ProgressRenderCmdCanvas.prototype.rendering = function(ctx){
         context.scale(1, -1);
     }
 
-    flipXOffset *= locEGL_ScaleX;
-    flipYOffset *= locEGL_ScaleY;
+    flipXOffset *= scaleX;
+    flipYOffset *= scaleY;
 
     //clip
     if (this._type == cc.ProgressTimer.TYPE_BAR) {
         var locBarRect = this._barRect;
         context.beginPath();
-        context.rect(locBarRect.x * locEGL_ScaleX, locBarRect.y * locEGL_ScaleY, locBarRect.width * locEGL_ScaleX, locBarRect.height * locEGL_ScaleY);
+        context.rect(locBarRect.x * scaleX, locBarRect.y * scaleY, locBarRect.width * scaleX, locBarRect.height * scaleY);
         context.clip();
         context.closePath();
     } else if (this._type == cc.ProgressTimer.TYPE_RADIAL) {
-        var locOriginX = this._origin.x * locEGL_ScaleX;
-        var locOriginY = this._origin.y * locEGL_ScaleY;
+        var locOriginX = this._origin.x * scaleX;
+        var locOriginY = this._origin.y * scaleY;
         context.beginPath();
-        context.arc(locOriginX, locOriginY, this._radius * locEGL_ScaleY, (Math.PI / 180) * this._startAngle, (Math.PI / 180) * this._endAngle, this._counterClockWise);
+        context.arc(locOriginX, locOriginY, this._radius * scaleY, this._PI180 * this._startAngle, this._PI180 * this._endAngle, this._counterClockWise);
         context.lineTo(locOriginX, locOriginY);
         context.clip();
         context.closePath();
     }
 
     //draw sprite
-    if (locSprite._texture && locTextureCoord.validRect) {
-        var image = locSprite._texture.getHtmlElementObj();
-        if (this._colorized) {
-            context.drawImage(image,
-                0, 0, locTextureCoord.width, locTextureCoord.height,
-                flipXOffset, flipYOffset, locDrawSizeCanvas.width, locDrawSizeCanvas.height);
-        } else {
-            context.drawImage(image,
-                locTextureCoord.x, locTextureCoord.y, locTextureCoord.width,  locTextureCoord.height,
-                flipXOffset, flipYOffset, locDrawSizeCanvas.width , locDrawSizeCanvas.height);
-        }
-    } else if (locContentSize.width !== 0) {
-        var curColor = this.color;
-        context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
-        context.fillRect(flipXOffset, flipYOffset, locContentSize.width * locEGL_ScaleX, locContentSize.height * locEGL_ScaleY);
+    var image = locSprite._texture.getHtmlElementObj();
+    if (locSprite._colorized) {
+        context.drawImage(image,
+            0, 0, locTextureCoord.width, locTextureCoord.height,
+            flipXOffset, flipYOffset, locDrawSizeCanvas.width, locDrawSizeCanvas.height);
+    } else {
+        context.drawImage(image,
+            locTextureCoord.x, locTextureCoord.y, locTextureCoord.width, locTextureCoord.height,
+            flipXOffset, flipYOffset, locDrawSizeCanvas.width, locDrawSizeCanvas.height);
     }
 
     context.restore();

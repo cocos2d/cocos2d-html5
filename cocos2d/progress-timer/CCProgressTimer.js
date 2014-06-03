@@ -186,6 +186,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         this._radius = 0;
         this._counterClockWise = false;
         this._barRect = cc.rect(0, 0, 0, 0);
+        this._rendererCmd = new cc.ProgressRenderCmdCanvas(this);
     },
 
     _ctorForWebGL: function () {
@@ -270,6 +271,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     _setSpriteForCanvas:function (sprite) {
         if (this._sprite != sprite) {
             this._sprite = sprite;
+            this._rendererCmd._sprite = sprite;
             this.width = this._sprite.width;
 	        this.height = this._sprite.height;
         }
@@ -298,8 +300,10 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     setType:null,
 
     _setTypeForCanvas:function (type) {
-        if (type !== this._type)
+        if (type !== this._type){
             this._type = type;
+            this._rendererCmd._type = type;
+        }
     },
 
     _setTypeForWebGL:function (type) {
@@ -670,13 +674,10 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         if (!this._sprite)
             return;
 
-        var i;
-        var alpha = this._percentage / 100.0;
-        var locBarChangeRate = this._barChangeRate;
+        var i, alpha = this._percentage / 100.0, locBarChangeRate = this._barChangeRate;
         var alphaOffset = cc.pMult(cc.p((1.0 - locBarChangeRate.x) + alpha * locBarChangeRate.x,
             (1.0 - locBarChangeRate.y) + alpha * locBarChangeRate.y), 0.5);
-        var min = cc.pSub(this._midPoint, alphaOffset);
-        var max = cc.pAdd(this._midPoint, alphaOffset);
+        var min = cc.pSub(this._midPoint, alphaOffset), max = cc.pAdd(this._midPoint, alphaOffset);
 
         if (min.x < 0) {
             max.x += -min.x;
@@ -822,6 +823,12 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
             this._startAngle = locStartAngle;
             this._endAngle = locEndAngle;
             this._counterClockWise = locCounterClockWise;
+            // to renderer           TODO move these variables to renderer is better for maintainability
+            var locCmd = this._rendererCmd;
+            locCmd._radius = this._radius;
+            locCmd._startAngle = locStartAngle;
+            locCmd._endAngle = locEndAngle;
+            locCmd._counterClockWise = locCounterClockWise;
         } else {
             var locBarChangeRate = this._barChangeRate;
             var percentageF = this._percentage / 100;
@@ -834,18 +841,12 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
             var startPoint = cc.p(sw * locMidPoint.x, sh * locMidPoint.y);
 
             var needToLeft = startPoint.x - currentDrawSize.width / 2;
-            if (locMidPoint.x > 0.5) {
-                if (currentDrawSize.width / 2 >= sw - startPoint.x) {
-                    needToLeft = sw - currentDrawSize.width;
-                }
-            }
+            if ((locMidPoint.x > 0.5) && (currentDrawSize.width / 2 >= sw - startPoint.x))
+                needToLeft = sw - currentDrawSize.width;
 
             var needToTop = startPoint.y - currentDrawSize.height / 2;
-            if (locMidPoint.y > 0.5) {
-                if (currentDrawSize.height / 2 >= sh - startPoint.y) {
-                    needToTop = sh - currentDrawSize.height;
-                }
-            }
+            if ((locMidPoint.y > 0.5) && (currentDrawSize.height / 2 >= sh - startPoint.y))
+                needToTop = sh - currentDrawSize.height;
 
             //left pos
             locBarRect.x = 0;
@@ -882,6 +883,22 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         else if(locType === cc.ProgressTimer.TYPE_BAR)
             this._updateBar();
         this._vertexDataDirty = true;
+    },
+
+    toRenderer: function(renderer){
+        if(!this._rendererCmd)
+            return;
+
+        var locCmd = this._rendererCmd;
+        renderer = renderer || cc.renderer;
+        renderer.pushRenderCommand(locCmd);
+        //set the data to the rendererCmd
+
+        locCmd._type = this._type;
+        locCmd._radius = this._radius;
+        locCmd._startAngle = this._startAngle;
+        locCmd._endAngle = this._endAngle;
+        locCmd._counterClockWise = this._counterClockWise;
     }
 });
 
