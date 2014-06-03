@@ -472,7 +472,7 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
      */
     execute:function () {
         if (this._callFunc != null)         //CallFunc, N, ND
-            this._callFunc.call(this._selectorTarget, this.target, this._data);
+            this._callFunc.call(this._selectorTarget, this._data);
         else if(this._function)
             this._function.call(null, this.target);
     },
