@@ -354,7 +354,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
             this.setTexture(texture);
         }
 
-
+        texture = this.getTexture();
         if(texture) {
             var _x, _y;
             if(rotated){
