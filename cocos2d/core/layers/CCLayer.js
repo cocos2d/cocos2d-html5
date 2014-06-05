@@ -536,14 +536,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         locCmd._color.a = this._displayedOpacity / 255;
     };
 
-    _p.toRenderer = function(renderer){
+    _p.toRenderer = function(){
         if(!this._rendererCmd)
             return;
 
         var locCmd = this._rendererCmd;
-        renderer = renderer || cc.renderer;
-        renderer.pushRenderCommand(locCmd);
-
         var locColor = this._displayedColor;
         locCmd._isLighterMode = this._isLighterMode;
 
@@ -819,22 +816,12 @@ cc.LayerGradient.create = function (start, end, v) {
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     //cc.LayerGradient define start
     var _p = cc.LayerGradient.prototype;
-    _p.toRenderer = function(renderer){
+    _p.toRenderer = function(){
         if(!this._rendererCmd)
             return;
 
         var locCmd = this._rendererCmd;
-        renderer = renderer || cc.renderer;
-        renderer.pushRenderCommand(locCmd);
         //set the data to the rendererCmd
-        var locWT = this._transformWorld;
-        locCmd._transform.a = locWT.a;
-        locCmd._transform.b = locWT.b;
-        locCmd._transform.c = locWT.c;
-        locCmd._transform.d = locWT.d;
-        locCmd._transform.tx = locWT.tx * cc.view.getScaleX();
-        locCmd._transform.ty = locWT.ty * cc.view.getScaleY();
-
         var locColor = this._displayedColor, locEndColor = this._endColor;
         locCmd._isLighterMode = this._isLighterMode;
         locCmd._opacity = this._displayedOpacity/255;

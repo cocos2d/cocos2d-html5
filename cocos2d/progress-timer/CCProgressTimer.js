@@ -885,13 +885,11 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         this._vertexDataDirty = true;
     },
 
-    toRenderer: function(renderer){
+    toRenderer: function(){
         if(!this._rendererCmd)
             return;
 
         var locCmd = this._rendererCmd;
-        renderer = renderer || cc.renderer;
-        renderer.pushRenderCommand(locCmd);
         //set the data to the rendererCmd
 
         locCmd._type = this._type;

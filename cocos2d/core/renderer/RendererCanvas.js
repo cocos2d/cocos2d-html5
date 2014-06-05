@@ -47,7 +47,7 @@ cc.rendererCanvas = {
         for (i = 0, len = locCmds.length; i < len; i++) {
             locCmds[i].rendering(ctx, 1, 1);
         }
-        //clear the _renderTextureCmds
+
         locCmds.length = 0;
         this._isRenderTextureOn = false;
     },

@@ -1538,15 +1538,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         }
     };
 
-    _p.toRenderer = function(renderer){
+    _p.toRenderer = function(){
         if(!this._rendererCmd)
             return;
 
         var locCmd = this._rendererCmd;
-        renderer = renderer || cc.renderer;
-        renderer.pushRenderCommand(locCmd);
         //set the data to the rendererCmd
-
         locCmd._texture = this._texture;
         locCmd._isLighterMode = this._isLighterMode;
         locCmd._flippedX = this._flippedX;

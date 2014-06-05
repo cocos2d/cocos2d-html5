@@ -836,17 +836,13 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         this.autoDraw = autoDraw;
     },
 
-    toRenderer: function(renderer){
+    toRenderer: function(){
         if(!this._rendererCmd)
             return;
 
         var locCmd = this._rendererCmd;
-        renderer = renderer || cc.renderer;
-        renderer.pushRenderCommand(locCmd);
-
         locCmd._clearFlags = this.clearFlags;
         locCmd.autoDraw = this.autoDraw;
-
         locCmd._sprite = this.sprite;
     }
 });

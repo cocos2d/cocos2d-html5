@@ -933,16 +933,16 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return true;
     },
 
-    visit: function (ctx) {
-        if (!this._string || this._string == "")
-            return;
-        if (this._needUpdateTexture) {
-            this._needUpdateTexture = false;
-            this._updateTexture();
-        }
-        var context = ctx || cc._renderContext;
-        cc.Sprite.prototype.visit.call(this, context);
-    },
+/*    visit: function (ctx) {
+     if (!this._string || this._string == "")
+     return;
+     if (this._needUpdateTexture) {
+     this._needUpdateTexture = false;
+     this._updateTexture();
+     }
+     var context = ctx || cc._renderContext;
+     cc.Sprite.prototype.visit.call(this, context);
+     },*/
 
     /**
      * Draw sprite to canvas
@@ -1048,7 +1048,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             this.toRenderer();
         }
         cc.Sprite.prototype._transformForRenderer.call(this);
-    },
+    };
 
     _p._setColorsString = function () {
         this._setUpdateTextureDirty();

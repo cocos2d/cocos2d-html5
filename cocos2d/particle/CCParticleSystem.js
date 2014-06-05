@@ -2596,23 +2596,11 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         return true;
     },
 
-    toRenderer: function(renderer){
+    toRenderer: function(){
         if(!this._rendererCmd)
             return;
 
         var locCmd = this._rendererCmd;
-        renderer = renderer || cc.renderer;
-        renderer.pushRenderCommand(locCmd);
-
-        var locWT = this._transformWorld;
-        locCmd._transform.a = locWT.a;
-        locCmd._transform.b = locWT.b;
-        locCmd._transform.c = locWT.c;
-        locCmd._transform.d = locWT.d;
-        locCmd._transform.tx = locWT.tx * cc.view.getScaleX();
-        locCmd._transform.ty = locWT.ty * cc.view.getScaleY();
-
-        //TODO
         locCmd._isBlendAdditive = this.isBlendAdditive();
         locCmd._drawMode = this.drawMode;
         locCmd._shapeType = this.shapeType;

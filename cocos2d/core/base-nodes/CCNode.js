@@ -2129,13 +2129,18 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                     break;
             }
             //_t.draw(context);
+            if(this._rendererCmd)
+                cc.renderer.pushRenderCommand(this._rendererCmd);
             _t.toRenderer();
             for (; i < len; i++) {
                 children[i].visit();
             }
-        } else
+        } else{
             //_t.draw(context);
+            if(this._rendererCmd)
+                cc.renderer.pushRenderCommand(this._rendererCmd);
             _t.toRenderer();
+        }
 
         _t.arrivalOrder = 0;
         //context.restore();
