@@ -184,8 +184,12 @@ cc._tmp.WebGLSprite = function () {
                 _x = rect.x + rect.width;
                 _y = rect.y + rect.height;
             }
-            cc.assert(_x <= texture.width, cc._LogInfos.RectWidth, texture.url);
-            cc.assert(_y <= texture.height, cc._LogInfos.RectHeight, texture.url);
+            if(_x > texture.width){
+                cc.error(cc._LogInfos.RectWidth, texture.url);
+            }
+            if(_y > texture.height){
+                cc.error(cc._LogInfos.RectHeight, texture.url);
+            }
         }
 
         _t.texture = texture;
