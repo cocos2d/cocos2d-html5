@@ -190,7 +190,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         _t._position = cc.p(0, 0);
         _t._children = [];
         _t._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
-        _t._transformWorld = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+        _t._transformWorld = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0, needTransform: false};
 
         var director = cc.director;
         _t._actionManager = director.getActionManager();
@@ -2206,6 +2206,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             worldT.tx = t.tx;
             worldT.ty = t.ty;
         }
+
+        worldT.needTransform = (worldT.a !== 1 || worldT.b !== 0 || worldT.c !== 0 || worldT.d !==1);
 
         //TODO
         //context.transform(t.a, t.c, t.b, t.d, t.tx * eglViewer.getScaleX(), -t.ty * eglViewer.getScaleY());

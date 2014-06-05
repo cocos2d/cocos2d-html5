@@ -139,7 +139,7 @@ cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
             var image = _t._texture.getHtmlElementObj();
             context.drawImage(image,
                 locTextureCoord.x, locTextureCoord.y, locTextureCoord.width, locTextureCoord.height,
-                //t.tx * scaleX + locDrawingRect.x, -t.ty * scaleY + locDrawingRect.y, locDrawingRect.width , locDrawingRect.height);
+                    //t.tx * scaleX + locDrawingRect.x, -t.ty * scaleY + locDrawingRect.y, locDrawingRect.width , locDrawingRect.height);
                 locDrawingRect.x, locDrawingRect.y, locDrawingRect.width, locDrawingRect.height);
         }
     } else if (!_t._texture && locTextureCoord.validRect) {
@@ -391,9 +391,41 @@ cc.RenderTextureRenderCmdCanvas = function(node){
     this._node = node;
 
     this._transform = node._transformWorld;
+    this._clearFlags = node.clearFlags;
+    this.autoDraw = node.autoDraw;
 
+    this._cacheCanvas = node._cacheCanvas;
+    this._cacheContext = node._cacheContext;
+
+    this._sprite = node.sprite;
 };
 
 cc.RenderTextureRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
+    // auto draw flag
+    var context = ctx || cc._renderContext;
+    var locNode = this._node, cacheCanvas = this._cacheCanvas, cacheCtx = this._cacheContext;
+    if (this.autoDraw) {
+        locNode.begin();
 
+        if (this._clearFlags) {
+            cacheCtx.save();
+            cacheCtx.fillStyle = this._clearColorStr;
+            cacheCtx.clearRect(0, 0, cacheCanvas.width, -cacheCanvas.height);
+            cacheCtx.fillRect(0, 0, cacheCanvas.width, -cacheCanvas.height);
+            cacheCtx.restore();
+        }
+
+        //! make sure all children are drawn
+        locNode.sortAllChildren();
+        var locChildren = locNode._children;
+        var childrenLen = locChildren.length;
+        var selfSprite = this.sprite;
+        for (var i = 0; i < childrenLen; i++) {
+            var getChild = locChildren[i];
+            if (getChild != selfSprite)
+                getChild.visit();
+        }
+        locNode.end();
+    }
+    cc.g_NumberOfDraws++;
 };

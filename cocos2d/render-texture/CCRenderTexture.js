@@ -224,6 +224,10 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         texture.initWithElement(locCacheCanvas);
         texture.handleLoadedTexture();
         this.sprite = cc.Sprite.create(texture);
+        this.addChild(this.sprite);
+
+        this._rendererCmd = new cc.RenderTextureRenderCmdCanvas(this);
+
         return true;
     },
 
@@ -584,13 +588,14 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             return;
 
         ctx = ctx || cc._renderContext;
-        ctx.save();
+        //ctx.save();
 
-        this.draw(ctx);                                                   // update children of RenderTexture before
+        //this.draw(ctx);                                                   // update children of RenderTexture before
         this.transform(ctx);
-        this.sprite.visit();                                             // draw the RenderTexture
+        this.toRenderer();
+        this.sprite.visit(ctx);                                        // draw the RenderTexture
 
-        ctx.restore();
+        //ctx.restore();
 
         this.arrivalOrder = 0;
     },
@@ -819,7 +824,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     /**
-     * When enabled, it will render its children into the texture automatically. Disabled by default for compatiblity reasons. <br/>
+     * When enabled, it will render its children into the texture automatically. Disabled by default for compatibility reasons. <br/>
      * Will be enabled in the future.
      * @return {Boolean}
      */
@@ -829,6 +834,20 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     setAutoDraw:function (autoDraw) {
         this.autoDraw = autoDraw;
+    },
+
+    toRenderer: function(renderer){
+        if(!this._rendererCmd)
+            return;
+
+        var locCmd = this._rendererCmd;
+        renderer = renderer || cc.renderer;
+        renderer.pushRenderCommand(locCmd);
+
+        locCmd._clearFlags = this.clearFlags;
+        locCmd.autoDraw = this.autoDraw;
+
+        locCmd._sprite = this.sprite;
     }
 });
 
