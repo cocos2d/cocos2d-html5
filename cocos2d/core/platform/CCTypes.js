@@ -52,7 +52,7 @@ cc.Color = function (r, g, b, a) {
  * // 3. An color object as parameter
  * var color3 = cc.color({r: 255, g: 255, b: 255, a: 255});
  *
- * Alpha chanal is optional. Default value is 255
+ * Alpha channel is optional. Default value is 255
  *
  * @param {Number|String|cc.Color} r
  * @param {Number} g
