@@ -40,24 +40,24 @@ cc.Color = function (r, g, b, a) {
 };
 
 /**
- * Introduction of the corresponding data, generate a color object
- * You can choose the incoming parameters:
+ * Generate a color object based on multiple forms of parameters
+ * @example
  *
- * 1. cc.color(255, 255, 255, 255);
- *     4 parameters into the corresponding R, G, B, A
+ * // 1. All channals seperately as parameters
+ * var color1 = cc.color(255, 255, 255, 255);
  *
- * 2. cc.color("#000000");
- *     Function to convert a string to the corresponding value
+ * // 2. Convert a hex string to a color
+ * var color2 = cc.color("#000000");
  *
- * 3. cc.color({r: 255, g: 255, b: 255, a: 255});
- *     Also can pass an object, including all data
+ * // 3. An color object as parameter
+ * var color3 = cc.color({r: 255, g: 255, b: 255, a: 255});
  *
- * ‘a’ are optional. The default is 255
+ * Alpha chanal is optional. Default value is 255
  *
  * @param {Number|String|cc.Color} r
  * @param {Number} g
  * @param {Number} b
- * @param {Number} a
+ * @param {Number} [a=255]
  * @returns {cc.Color}
  */
 cc.color = function (r, g, b, a) {
