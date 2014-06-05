@@ -357,4 +357,4 @@
             d.body.appendChild(s);
         });
     }
-})(cc);
+})(window.cc);
