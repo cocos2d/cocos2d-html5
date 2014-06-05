@@ -36,10 +36,23 @@ cc.Color = function (r, g, b, a) {
     this.r = r || 0;
     this.g = g || 0;
     this.b = b || 0;
-    this.a = a;
+    this.a = a || 255;
 };
 
 /**
+ * Introduction of the corresponding data, generate a color object
+ * You can choose the incoming parameters:
+ *
+ * 1. cc.color(255, 255, 255, 255);
+ *     4 parameters into the corresponding R, G, B, A
+ *
+ * 2. cc.color("#000000");
+ *     Function to convert a string to the corresponding value
+ *
+ * 3. cc.color({r: 255, g: 255, b: 255, a: 255});
+ *     Also can pass an object, including all data
+ *
+ * ‘a’ are optional. The default is 255
  *
  * @param {Number|String|cc.Color} r
  * @param {Number} g
@@ -53,8 +66,8 @@ cc.color = function (r, g, b, a) {
     if (typeof r === "string")
         return cc.hexToColor(r);
     if (typeof r === "object")
-        return {r: r.r, g: r.g, b: r.b, a: r.a};
-    return  {r: r, g: g, b: b, a: a };
+        return {r: r.r, g: r.g, b: r.b, a: r.a || 255};
+    return  {r: r, g: g, b: b, a: a || 255 };
 };
 
 /**
