@@ -383,7 +383,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
             return;
         }
         var animationName = moveNames[animationIndex];
-        this.play(animationName, durationTo, -1, loop, 0);
+        this.play(animationName, durationTo, loop, 0);
     },
 
     /**
