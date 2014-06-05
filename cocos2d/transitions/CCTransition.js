@@ -115,7 +115,8 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
     /**
      * stuff gets drawn here
      */
-    draw:function () {
+    //draw:function () {
+    visit:function () {
         if (this._isInSceneOnTop) {
             this._outScene.visit();
             this._inScene.visit();
@@ -123,6 +124,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
             this._inScene.visit();
             this._outScene.visit();
         }
+        cc.Node.prototype.visit.call(this);
     },
 
     /**

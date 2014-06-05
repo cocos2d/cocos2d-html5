@@ -324,8 +324,11 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     begin: null,
 
     _beginForCanvas: function () {
-        cc._renderContext = this._cacheContext;
-        cc.view._setScaleXYForRenderTexture();
+        //old code
+        //cc._renderContext = this._cacheContext;
+        //cc.view._setScaleXYForRenderTexture();
+
+        cc.renderer._isRenderTextureOn = true;
 
         /*// Save the current matrix
          cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
@@ -410,7 +413,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         var context = this._cacheContext;
         var locCanvas = this._cacheCanvas;
         context.save();
-        context.fillStyle = "rgba(" + (0 | r) + "," + (0 | g) + "," + (0 | b) + "," + a / 255 + ")";
+        context.fillStyle = "rgba(" + (0 | (r * 255)) + "," + (0 | (g * 255)) + "," + (0 | (b * 255)) + "," + a + ")";
         context.clearRect(0, 0, locCanvas.width, -locCanvas.height);
         context.fillRect(0, 0, locCanvas.width, -locCanvas.height);
         context.restore();
@@ -461,8 +464,11 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     end: null,
 
     _endForCanvas: function () {
-        cc._renderContext = cc._mainRenderContextBackup;
-        cc.view._resetScale();
+        //Old code
+        //cc._renderContext = cc._mainRenderContextBackup;
+        //cc.view._resetScale();
+
+        cc.renderer._renderingForRenderTexture(this._cacheContext);
 
         //TODO
         /*//restore viewport
