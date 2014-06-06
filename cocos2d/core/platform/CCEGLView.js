@@ -644,7 +644,7 @@ cc.ContainerStrategy = cc.Class.extend(/** @lends cc.ContainerStrategy# */{
 
     _setupContainer: function (view, w, h) {
         var frame = view._frame;
-        if (this._autoFullScreen && cc.sys.isMobile && frame == document.documentElement) {
+        if (cc.view._autoFullScreen && cc.sys.isMobile && frame == document.documentElement) {
             // Automatically full screen when user touches on mobile version
             cc.screen.autoFullScreen(frame);
         }
