@@ -823,6 +823,16 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return this._labelContext;
     },
 
+    _maxNum: function(numArr){
+        var num = numArr[0];
+        for(var i=1;i<numArr.length;i++){
+            if(num<numArr[i]){
+                num = numArr[i];
+            }
+        }
+        return num;
+    },
+
     _updateTTF: function () {
         var locDimensionsWidth = this._dimensions.width, i, strLength;
         var locLineWidth = this._lineWidths;
@@ -842,7 +852,11 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                 i += next;
             }
         } else {
-            this._strings = this._string.split('\n');
+            if(/\n/.test(this._string)) {
+                this._strings = this._string.split('\n');
+            }else{
+                this._strings = [this._string];
+            }
             for (i = 0, strLength = this._strings.length; i < strLength; i++) {
                 locLineWidth.push(this._measure(this._strings[i]));
             }
@@ -863,19 +877,33 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         //get offset for stroke and shadow
         if (locDimensionsWidth === 0) {
             if (this._isMultiLine)
-                locSize = cc.size(0 | (Math.max.apply(Math, locLineWidth) + locStrokeShadowOffsetX),
-                    0 | ((this._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY));
+                locSize = {
+                    width: this._maxNum(locLineWidth) + locStrokeShadowOffsetX | 0,
+                    height: this._fontClientHeight * this._strings.length + locStrokeShadowOffsetY | 0
+                };
             else
-                locSize = cc.size(0 | (this._measure(this._string) + locStrokeShadowOffsetX), 0 | (this._fontClientHeight + locStrokeShadowOffsetY));
+                locSize = {
+                    width: this._measure(this._string) + locStrokeShadowOffsetX | 0,
+                    height: this._fontClientHeight + locStrokeShadowOffsetY | 0
+                };
         } else {
             if (this._dimensions.height === 0) {
                 if (this._isMultiLine)
-                    locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | ((this._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY));
+                    locSize = {
+                        width: locDimensionsWidth + locStrokeShadowOffsetX | 0,
+                        height: this._fontClientHeight * this._strings.length + locStrokeShadowOffsetY | 0
+                    };
                 else
-                    locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | (this._fontClientHeight + locStrokeShadowOffsetY));
+                    locSize = {
+                        width: locDimensionsWidth + locStrokeShadowOffsetX | 0,
+                        height: this._fontClientHeight + locStrokeShadowOffsetY | 0
+                    };
             } else {
                 //dimension is already set, contentSize must be same as dimension
-                locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | (this._dimensions.height + locStrokeShadowOffsetY));
+                locSize = {
+                    width: locDimensionsWidth + locStrokeShadowOffsetX | 0,
+                    height: this._dimensions.height + locStrokeShadowOffsetY | 0
+                };
             }
         }
         this.setContentSize(locSize);
@@ -884,8 +912,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         // need computing _anchorPointInPoints
         var locAP = this._anchorPoint;
-        this._anchorPointInPoints.x = (locStrokeShadowOffsetX * 0.5) + ((locSize.width - locStrokeShadowOffsetX) * locAP.x);
-        this._anchorPointInPoints.y = (locStrokeShadowOffsetY * 0.5) + ((locSize.height - locStrokeShadowOffsetY) * locAP.y);
+        this._anchorPointInPoints.x = (0.5 - locAP.x) * locStrokeShadowOffsetX + locAP.x * locSize.width;
+        this._anchorPointInPoints.y = (0.5 - locAP.y) * locStrokeShadowOffsetY + locAP.y * locSize.height;
     },
 
     getContentSize: function () {
