@@ -2088,7 +2088,6 @@ cc.Node.create = function () {
 cc.Node.StateCallbackType = {onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, updateTransform: 5, onExitTransitionDidStart: 6, sortAllChildren: 7};
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-
     //redefine cc.Node
     var _p = cc.Node.prototype;
     _p.ctor = function () {
@@ -2107,15 +2106,13 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p.visit = function () {
         var _t = this;
         // quick return if not visible
-        if (!_t._visible)
-            return;
+        if (!_t._visible) return;
 
-        _t._curLevel = _t._parent ? _t._parent._curLevel + 1 : -1;
+        if( _t._parent)
+            _t._curLevel = _t._parent._curLevel;
 
         //visit for canvas
-        //var context = ctx || cc._renderContext, i;
         var i, children = _t._children, child;
-        //context.save();
         _t.transform();
         var len = children.length;
         if (len > 0) {
@@ -2136,14 +2133,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 children[i].visit();
             }
         } else{
-            //_t.draw(context);
             if(this._rendererCmd)
                 cc.renderer.pushRenderCommand(this._rendererCmd);
             _t.toRenderer();
         }
-
         _t.arrivalOrder = 0;
-        //context.restore();
     };
 
     _p._transformForRenderer = function () {
@@ -2177,18 +2171,18 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         if(!this._children || this._children.length === 0)
             return;
         var i, len, locChildren = this._children;
-        for(i = 0, len = locChildren.length; i< len; i++)
+        for(i = 0, len = locChildren.length; i< len; i++){
             locChildren[i]._transformForRenderer();
+        }
     };
 
     _p.transform = function (ctx) {
         // transform for canvas
-        //var context = ctx || cc._renderContext, eglViewer = cc.view;
         var t = this.nodeToParentTransform(), worldT = this._transformWorld;         //get the world transform
 
         if(this._parent){
             var pt = this._parent._transformWorld;
-            //worldT = cc.AffineTransformConcat(t, pt);
+            // cc.AffineTransformConcat is incorrect at get world transform
             worldT.a = t.a * pt.a + t.b * pt.c;                               //a
             worldT.b = t.a * pt.b + t.b * pt.d;                               //b
             worldT.c = t.c * pt.a + t.d * pt.c;                               //c
@@ -2212,10 +2206,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             worldT.ty = t.ty;
         }
 
-        worldT.needTransform = (worldT.a !== 1 || worldT.b !== 0 || worldT.c !== 0 || worldT.d !==1);
-
-        //TODO
-        //context.transform(t.a, t.c, t.b, t.d, t.tx * eglViewer.getScaleX(), -t.ty * eglViewer.getScaleY());
+        //worldT.needTransform = (worldT.a !== 1 || worldT.b !== 0 || worldT.c !== 0 || worldT.d !==1);
     };
 
     _p.nodeToParentTransform = function () {
@@ -2295,9 +2286,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         }
         return _t._transform;
     };
-
     _p = null;
-
 } else {
     cc.assert(typeof cc._tmp.WebGLCCNode === "function", cc._LogInfos.MissingFile, "BaseNodesWebGL.js");
     cc._tmp.WebGLCCNode();

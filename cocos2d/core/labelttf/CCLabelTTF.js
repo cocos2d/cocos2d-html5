@@ -1047,7 +1047,15 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             this._updateTexture();
             this.toRenderer();
         }
-        cc.Sprite.prototype._transformForRenderer.call(this);
+        cc.Node.prototype._transformForRenderer.call(this);
+    };
+
+    _p.toRenderer = function(){
+        if (this._needUpdateTexture) {
+            this._needUpdateTexture = false;
+            this._updateTexture();
+        }
+        cc.Sprite.prototype.toRenderer.call(this);
     };
 
     _p._setColorsString = function () {
