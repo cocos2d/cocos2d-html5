@@ -77,7 +77,7 @@ cc.DIRECTOR_STATS_POSITION = cc.p(0, 0);
  * @constant
  * @type Number
  */
-cc.DIRECTOR_FPS_INTERVAL = 0.5;
+cc.DIRECTOR_FPS_INTERVAL = 1; //0.5;
 
 /**
  * <p>

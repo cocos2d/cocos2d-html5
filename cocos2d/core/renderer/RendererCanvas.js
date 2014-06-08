@@ -119,36 +119,56 @@ cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
     if (!locTextureCoord.validRect)
         return;  //draw nothing
 
-    var t = this._transform, locDrawingRect = _t._drawingRect;
+    var t = this._transform, locDrawingRect = _t._drawingRect, image, curColor;
+    if(t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1 || _t._flippedX || _t._flippedY){
+        context.save();
+        //transform
+        context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
-    context.save();
-    //transform
-    context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+        if (_t._isLighterMode)
+            context.globalCompositeOperation = 'lighter';
 
-    if (_t._isLighterMode)
-        context.globalCompositeOperation = 'lighter';
+        if (_t._flippedX)
+            context.scale(-1, 1);
+        if (_t._flippedY)
+            context.scale(1, -1);
 
-    if (_t._flippedX)
-        context.scale(-1, 1);
-    if (_t._flippedY)
-        context.scale(1, -1);
-
-    if (_t._texture && locTextureCoord.validRect) {
-        if (_t._texture._isLoaded) {
-            context.globalAlpha = _t._opacity;
-            var image = _t._texture.getHtmlElementObj();
-            context.drawImage(image,
-                locTextureCoord.x, locTextureCoord.y, locTextureCoord.width, locTextureCoord.height,
-                    //t.tx * scaleX + locDrawingRect.x, -t.ty * scaleY + locDrawingRect.y, locDrawingRect.width , locDrawingRect.height);
-                locDrawingRect.x, locDrawingRect.y, locDrawingRect.width, locDrawingRect.height);
+        if (_t._texture && locTextureCoord.validRect) {
+            if (_t._texture._isLoaded) {
+                context.globalAlpha = _t._opacity;
+                image = _t._texture._htmlElementObj;
+                context.drawImage(image,
+                    locTextureCoord.x, locTextureCoord.y, locTextureCoord.width, locTextureCoord.height,
+                    locDrawingRect.x, locDrawingRect.y, locDrawingRect.width, locDrawingRect.height);
+            }
+        } else if (!_t._texture && locTextureCoord.validRect) {
+            curColor = _t._color;
+            context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + _t._opacity + ")";
+            context.fillRect(locDrawingRect.x, locDrawingRect.y, locDrawingRect.width, locDrawingRect.height);
         }
-    } else if (!_t._texture && locTextureCoord.validRect) {
-        var curColor = _t._color;
-        context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + _t._opacity + ")";
-        context.fillRect(locDrawingRect.x, locDrawingRect.y, locDrawingRect.width, locDrawingRect.height);
-    }
+        context.restore();
+    } else {
+        if (_t._isLighterMode){
+            context.save();
+            context.globalCompositeOperation = 'lighter';
+        }
 
-    context.restore();
+        if (_t._texture && locTextureCoord.validRect) {
+            if (_t._texture._isLoaded) {
+                context.globalAlpha = _t._opacity;
+                image = _t._texture._htmlElementObj;
+                context.drawImage(image,
+                    locTextureCoord.x, locTextureCoord.y, locTextureCoord.width, locTextureCoord.height,
+                    t.tx * scaleX + locDrawingRect.x, -t.ty * scaleY + locDrawingRect.y, locDrawingRect.width , locDrawingRect.height);
+            }
+        } else if (!_t._texture && locTextureCoord.validRect) {
+            curColor = _t._color;
+            context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + _t._opacity + ")";
+            context.fillRect(t.tx * scaleX + locDrawingRect.x, -t.ty * scaleY + locDrawingRect.y, locDrawingRect.width, locDrawingRect.height);
+        }
+        if (_t._isLighterMode)
+            context.restore();
+    }
     cc.g_NumberOfDraws++;
 };
 

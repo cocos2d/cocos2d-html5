@@ -93,6 +93,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     _winSizeInPoints: null,
 
     _lastUpdate: null,
+    _lastUpdateTime: null,
     _nextScene: null,
     _notificationNode: null,
     _openGLView: null,
@@ -116,8 +117,10 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     ctor: function () {
         var self = this;
         self._lastUpdate = Date.now();
+        self._lastUpdateTime = Date.now();
         cc.eventManager.addCustomListener(cc.game.EVENT_SHOW, function () {
             self._lastUpdate = Date.now();
+            self._lastUpdateTime = Date.now();
         });
     },
 
@@ -194,20 +197,30 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * convertToGL move to CCDirectorWebGL
      * convertToUI move to CCDirectorWebGL
      */
+    updateScene: function(){
+        var now = Date.now();
 
+        var updateDeltaTime = (now - this._lastUpdateTime) / 1000;
+
+        if (!this._paused) {
+            this._scheduler.update(updateDeltaTime);
+            cc.eventManager.dispatchEvent(this._eventAfterUpdate);
+        }
+        this._lastUpdateTime = now;
+    },
     /**
      *  Draw the scene. This method is called every frame. Don't call it manually.
      */
     drawScene: function () {
         var renderer = cc.renderer;
         // calculate "global" dt
-        this.calculateDeltaTime();
+       this.calculateDeltaTime();
 
         //tick before glClear: issue #533
-        if (!this._paused) {
+ /*        if (!this._paused) {
             this._scheduler.update(this._deltaTime);
             cc.eventManager.dispatchEvent(this._eventAfterUpdate);
-        }
+        }*/
         this._clear();
 
         /* to avoid flickr, nextScene MUST be here: after tick and before draw.
@@ -567,10 +580,11 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
         this._frames++;
         this._accumDt += this._deltaTime;
         if (this._FPSLabel && this._SPFLabel && this._drawsLabel) {
+            //this._SPFLabel.string = this._secondsPerFrame.toFixed(3);
             if (this._accumDt > cc.DIRECTOR_FPS_INTERVAL) {
                 this._SPFLabel.string = this._secondsPerFrame.toFixed(3);
 
-                this._frameRate = this._frames / this._accumDt;
+                this._frameRate = this._frames ;// / this._accumDt;
                 this._frames = 0;
                 this._accumDt = 0;
 
