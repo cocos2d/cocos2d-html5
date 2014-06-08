@@ -197,7 +197,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * convertToGL move to CCDirectorWebGL
      * convertToUI move to CCDirectorWebGL
      */
-    updateScene: function(){
+/*    updateScene: function(){
         var now = Date.now();
 
         var updateDeltaTime = (now - this._lastUpdateTime) / 1000;
@@ -207,42 +207,43 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
             cc.eventManager.dispatchEvent(this._eventAfterUpdate);
         }
         this._lastUpdateTime = now;
-    },
+    },*/
     /**
      *  Draw the scene. This method is called every frame. Don't call it manually.
      */
     drawScene: function () {
         var renderer = cc.renderer;
         // calculate "global" dt
-       this.calculateDeltaTime();
+       this.calculateDeltaTime();                        //0.05k
 
         //tick before glClear: issue #533
- /*        if (!this._paused) {
+         if (!this._paused) {
+             //0.2k
             this._scheduler.update(this._deltaTime);
             cc.eventManager.dispatchEvent(this._eventAfterUpdate);
-        }*/
-        this._clear();
+        }
+        this._clear();                                      //0.1k
 
         /* to avoid flickr, nextScene MUST be here: after tick and before draw.
          XXX: Which bug is this one. It seems that it can't be reproduced with v0.9 */
-        if (this._nextScene) {
+       if (this._nextScene) {
             this.setNextScene();
         }
 
-        if (this._beforeVisitScene)
+         if (this._beforeVisitScene)
             this._beforeVisitScene();
 
         // draw the scene
         if (this._runningScene) {
-            if(renderer.childrenOrderDirty === true){
-                cc.renderer.clearRenderCommands();
-                this._runningScene._curLevel = 0;                          //level start from 0;
-                this._runningScene.visit();
-                renderer.resetFlag();
-            } else if(renderer.transformDirty() === true){
-                renderer.transform();
-            }
-            cc.eventManager.dispatchEvent(this._eventAfterVisit);
+                if (renderer.childrenOrderDirty === true) {
+                    cc.renderer.clearRenderCommands();
+                    this._runningScene._curLevel = 0;                          //level start from 0;
+                    this._runningScene.visit();
+                    renderer.resetFlag();
+                } else if (renderer.transformDirty() === true) {
+                    renderer.transform();
+                }
+                cc.eventManager.dispatchEvent(this._eventAfterVisit);     //0.4k
         }
 
         // draw the notifications node
@@ -254,9 +255,8 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
 
         if (this._afterVisitScene)
             this._afterVisitScene();
-
-        renderer.rendering(cc._renderContext);
-        cc.eventManager.dispatchEvent(this._eventAfterDraw);
+        renderer.rendering(cc._renderContext);                         //0.4k
+        cc.eventManager.dispatchEvent(this._eventAfterDraw);              //0.4k
         this._totalFrames++;
 
         if (this._displayStats)

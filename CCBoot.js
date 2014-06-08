@@ -1469,11 +1469,11 @@ cc.game = {
                 }
             };
             win.requestAnimFrame(callback);
-            updateCallback = function(){
+/*            updateCallback = function(){
                 if(!self._paused)
                     director.updateScene();
             };
-            self._intervalId = setInterval(updateCallback, 1000.0/ 30 );
+            self._intervalId = setInterval(updateCallback, 1000.0/ 30 );*/
         } else {
             callback = function () {
                 director.mainLoop();
