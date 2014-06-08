@@ -105,6 +105,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     _totalFrames: 0,
     _secondsPerFrame: 0,
 
+    _ignoreClearCanvas: false,
     _dirtyRegion: null,
 
     _scheduler: null,
@@ -668,6 +669,22 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     },
 
     /**
+     * Set whether or not clear the canvas before each frame
+     * @param {Boolean} ignoreClearCanvas
+     */
+    ignoreClearCanvas: function (ignoreClearCanvas) {
+        this._ignoreClearCanvas = ignoreClearCanvas;
+    },
+
+    /**
+     * Indicate whether ignore clear canvas or not
+     * @returns {Boolean}
+     */
+    isIgnoreClearCanvas: function () {
+        return this._ignoreClearCanvas;
+    },
+
+    /**
      * How many frames were called since the director started
      * @return {Number}
      */
@@ -877,8 +894,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p._clear = function () {
-        var viewport = this._openGLView.getViewPortRect();
-        cc._renderContext.clearRect(-viewport.x, viewport.y, viewport.width, -viewport.height);
+        if (!this._ignoreClearCanvas) {
+            var viewport = this._openGLView.getViewPortRect();
+            cc._renderContext.clearRect(-viewport.x, viewport.y, viewport.width, -viewport.height);
+        }
     };
 
     _p._createStatsLabel = function () {
