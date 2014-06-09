@@ -62,6 +62,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
     _stencil: null,
     _godhelpme: false,
+    _transformTmp: null,
 
     /**
      * Creates and initializes a clipping node with an other node as its stencil.
@@ -70,10 +71,16 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * @param {cc.Node} [stencil=null]
      */
     ctor: function (stencil) {
+
         cc.Node.prototype.ctor.call(this);
         this._stencil = null;
         this.alphaThreshold = 0;
         this.inverted = false;
+
+        this._rendererCmd = new cc.ClippingNodeRenderCmdCanvas(this);
+        this._rendererSaveCmd = new cc.ClippingNodeSaveRenderCmdCanvas(this);
+        this._rendererClipCmd = new cc.ClippingNodeClipRenderCmdCanvas(this);
+        this._rendererRestoreCmd = new cc.ClippingNodeRestoreRenderCmdCanvas(this);
 
         stencil = stencil || null;
         cc.ClippingNode.prototype.init.call(this, stencil);
@@ -311,80 +318,37 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         }
 
         var context = ctx || cc._renderContext;
-        var canvas = context.canvas;
-        // Composition mode, costy but support texture stencil
-        if (this._cangodhelpme() || this._stencil instanceof cc.Sprite) {
-            // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
-            var locCache = cc.ClippingNode._getSharedCache();
-            locCache.width = canvas.width;
-            locCache.height = canvas.height;
-            var locCacheCtx = locCache.getContext("2d");
-            locCacheCtx.drawImage(canvas, 0, 0);
 
-            context.save();
-            // Draw everything first using node visit function
-            cc.Node.prototype.visit.call(this, context);
+        var i, children = this._children, locChild;
 
-            context.globalCompositeOperation = this.inverted ? "destination-out" : "destination-in";
+        cc.renderer.pushRenderCommand(this._rendererSaveCmd);
+        this.transform(context);
+        this._stencil.visit(context);
 
-            this.transform(context);
-            this._stencil.visit();
+        cc.renderer.pushRenderCommand(this._rendererClipCmd);
 
-            context.restore();
-
-            // Redraw the cached canvas, so that the cliped area shows the background etc.
-            context.save();
-            context.setTransform(1, 0, 0, 1, 0, 0);
-            context.globalCompositeOperation = "destination-over";
-            context.drawImage(locCache, 0, 0);
-            context.restore();
-        }
-        // Clip mode, fast, but only support cc.DrawNode
-        else {
-            var i, children = this._children, locChild;
-
-            context.save();
-            this.transform(context);
-            this._stencil.visit(context);
-            if (this.inverted) {
-                context.save();
-
-                context.setTransform(1, 0, 0, 1, 0, 0);
-
-                context.moveTo(0, 0);
-                context.lineTo(0, canvas.height);
-                context.lineTo(canvas.width, canvas.height);
-                context.lineTo(canvas.width, 0);
-                context.lineTo(0, 0);
-
-                context.restore();
+        this._cangodhelpme(true);
+        var len = children.length;
+        if (len > 0) {
+            this.sortAllChildren();
+            // draw children zOrder < 0
+            for (i = 0; i < len; i++) {
+                locChild = children[i];
+                if (locChild._localZOrder < 0)
+                    locChild.visit(context);
+                else
+                    break;
             }
-            context.clip();
+            cc.renderer.pushRenderCommand(this._rendererCmd);
+            for (; i < len; i++) {
+                children[i].visit(context);
+            }
+        } else
+            cc.renderer.pushRenderCommand(this._rendererCmd);
+        this._cangodhelpme(false);
 
-            // Clip mode doesn't support recusive stencil, so once we used a clip stencil,
-            // so if it has ClippingNode as a child, the child must uses composition stencil.
-            this._cangodhelpme(true);
-            var len = children.length;
-            if (len > 0) {
-                this.sortAllChildren();
-                // draw children zOrder < 0
-                for (i = 0; i < len; i++) {
-                    locChild = children[i];
-                    if (locChild._localZOrder < 0)
-                        locChild.visit(context);
-                    else
-                        break;
-                }
-                this.draw(context);
-                for (; i < len; i++) {
-                    children[i].visit(context);
-                }
-            } else
-                this.draw(context);
-            this._cangodhelpme(false);
+        cc.renderer.pushRenderCommand(this._rendererRestoreCmd);
 
-            context.restore();
-        }
     },
 
     /**
@@ -415,7 +379,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         }
         // For shape stencil, rewrite the draw of stencil ,only init the clip path and draw nothing.
         else if (stencil instanceof cc.DrawNode) {
-            stencil.draw = function () {
+            stencil.rendering = function () {
                 var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
                 locContext.beginPath();
                 for (var i = 0; i < stencil._buffer.length; i++) {
@@ -480,6 +444,154 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         if (godhelpme === true || godhelpme === false)
             cc.ClippingNode.prototype._godhelpme = godhelpme;
         return cc.ClippingNode.prototype._godhelpme;
+    },
+
+    _transformForRenderer: function () {
+        var t = this.nodeToParentTransform(), worldT = this._transformWorld;
+        if(this._parent){
+            var pt = this._parent._transformWorld;
+            //worldT = cc.AffineTransformConcat(t, pt);
+            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
+            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
+            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
+            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
+            if(!this._skewX || this._skewY){
+                var plt = this._parent._transform;
+                var xOffset = -(plt.b + plt.c) * t.ty ;
+                var yOffset = -(plt.b + plt.c) * t.tx;
+                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
+                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
+            }else{
+                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx);          //tx
+                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty);		  //ty
+            }
+        } else {
+            worldT.a = t.a;
+            worldT.b = t.b;
+            worldT.c = t.c;
+            worldT.d = t.d;
+            worldT.tx = t.tx;
+            worldT.ty = t.ty;
+        }
+        this._renderCmdDiry = false;
+        if(!this._children || this._children.length === 0)
+            return;
+        var i, len, locChildren = this._children;
+        for(i = 0, len = locChildren.length; i< len; i++){
+            locChildren[i]._transformForRenderer();
+        }
+    },
+
+    transform: function (ctx) {
+        // transform for canvas
+        var t = this.nodeToParentTransform(),
+            worldT = this._transformWorld;         //get the world transform
+
+        if(this._parent){
+            var pt = this._parent._transformWorld;
+            // cc.AffineTransformConcat is incorrect at get world transform
+            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
+            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
+            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
+            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
+            if(!this._skewX || this._skewY){
+                var plt = this._parent._transform;
+                var xOffset = -(plt.b + plt.c) * t.ty ;
+                var yOffset = -(plt.b + plt.c) * t.tx;
+                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
+                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
+            }else{
+                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx);          //tx
+                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty);		  //ty
+            }
+        } else {
+            worldT.a = t.a;
+            worldT.b = t.b;
+            worldT.c = t.c;
+            worldT.d = t.d;
+            worldT.tx = t.tx;
+            worldT.ty = t.ty;
+        }
+
+        //worldT.needTransform = (worldT.a !== 1 || worldT.b !== 0 || worldT.c !== 0 || worldT.d !==1);
+    },
+
+    nodeToParentTransform: function () {
+        var _t = this;
+        if (_t._transformDirty) {
+            var t = _t._transform;// quick reference
+
+            // base position
+            t.tx = _t._position.x;
+            t.ty = _t._position.y;
+
+            // rotation Cos and Sin
+            var Cos = 1, Sin = 0;
+            if (_t._rotationX) {
+                Cos = Math.cos(_t._rotationRadiansX);
+                Sin = Math.sin(_t._rotationRadiansX);
+            }
+
+            // base abcd
+            t.a = t.d = Cos;
+            t.b = -Sin;
+            t.c = Sin;
+
+            var lScaleX = _t._scaleX, lScaleY = _t._scaleY;
+            var appX = _t._anchorPointInPoints.x, appY = _t._anchorPointInPoints.y;
+
+            // Firefox on Vista and XP crashes
+            // GPU thread in case of scale(0.0, 0.0)
+            var sx = (lScaleX < 0.000001 && lScaleX > -0.000001) ? 0.000001 : lScaleX,
+                sy = (lScaleY < 0.000001 && lScaleY > -0.000001) ? 0.000001 : lScaleY;
+
+            // skew
+            if (_t._skewX || _t._skewY) {
+                // offset the anchorpoint
+                var skx = Math.tan(-_t._skewX * Math.PI / 180);
+                var sky = Math.tan(-_t._skewY * Math.PI / 180);
+                if(skx === Infinity){
+                    skx = 99999999;
+                }
+                if(sky === Infinity){
+                    sky = 99999999;
+                }
+                var xx = appY * skx * sx;
+                var yy = appX * sky * sy;
+                t.a = Cos + -Sin * sky;
+                t.b = Cos * skx + -Sin;
+                t.c = Sin + Cos * sky;
+                t.d = Sin * skx + Cos;
+                t.tx += Cos * xx + -Sin * yy;
+                t.ty += Sin * xx + Cos * yy;
+            }
+
+            // scale
+            if (lScaleX !== 1 || lScaleY !== 1) {
+                t.a *= sx;
+                t.c *= sx;
+                t.b *= sy;
+                t.d *= sy;
+            }
+
+            // adjust anchorPoint
+            t.tx += Cos * -appX * sx + -Sin * appY * sy;
+            t.ty -= Sin * -appX * sx + Cos * appY * sy;
+
+            // if ignore anchorPoint
+            if (_t._ignoreAnchorPointForPosition) {
+                t.tx += appX;
+                t.ty += appY;
+            }
+
+            if (_t._additionalTransformDirty) {
+                _t._transform = cc.AffineTransformConcat(t, _t._additionalTransform);
+                _t._additionalTransformDirty = false;
+            }
+
+            _t._transformDirty = false;
+        }
+        return _t._transform;
     }
 });
 

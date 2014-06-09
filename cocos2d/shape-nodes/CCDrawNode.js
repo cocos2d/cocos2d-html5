@@ -464,15 +464,6 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
      */
     clear: function () {
         this._buffer.length = 0;
-    },
-
-
-    _setUpdateDirty: function(){
-        this._renderCmdDiry = true;
-        cc.renderer.pushDirtyNode(this);
-        cc.Node.prototype._transformForRenderer.call(this);
-        if(this._rendererCmd)
-            cc.rendererCanvas.pushRenderCommand(this._rendererCmd);
     }
 });
 
