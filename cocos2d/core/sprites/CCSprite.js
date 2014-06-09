@@ -1113,6 +1113,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         }
         this._quadDirty = true;
     },
+
     /**
      * draw sprite to canvas
      * @function

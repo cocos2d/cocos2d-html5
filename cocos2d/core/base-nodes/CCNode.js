@@ -711,7 +711,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setVisible: function (Var) {
         this._visible = Var;
-        cc.renderer.childrenOrderDirty = true;
         this.setNodeDirty();
     },
 

@@ -116,7 +116,7 @@ cc.TextureRenderCmdCanvas = function (node) {
 cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
     var _t = this;
     var context = ctx || cc._renderContext, locTextureCoord = _t._textureCoord;
-    if (!locTextureCoord.validRect)
+    if (!locTextureCoord.validRect || !_t._node._visible)
         return;  //draw nothing
 
     var t = this._transform, locDrawingRect = _t._drawingRect, image, curColor;
@@ -182,6 +182,9 @@ cc.RectRenderCmdCanvas = function (node) {
 };
 
 cc.RectRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
+    if(!this._node._visible)
+        return;
+
     var context = ctx || cc._renderContext, t = this._transform, curColor = this._color, locRect = this._drawingRect;
     context.save();
     if (this._isLighterMode)
@@ -210,6 +213,8 @@ cc.GradientRectRenderCmdCanvas = function (node) {
 };
 
 cc.GradientRectRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
+    if(!this._node._visible)
+        return;
     var context = ctx || cc._renderContext, _t = this, t = this._transform;
     context.save();
     if (_t._isLighterMode)
@@ -243,6 +248,8 @@ cc.ParticleRenderCmdCanvas = function (node) {
 };
 
 cc.ParticleRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
+    if(!this._node._visible)
+        return;
     var context = ctx || cc._renderContext, t = this._transform;
     context.save();
     //transform
@@ -341,6 +348,8 @@ cc.ProgressRenderCmdCanvas = function (node) {
 };
 
 cc.ProgressRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
+    if(!this._node._visible)
+        return;
     var context = ctx || cc._renderContext, locSprite = this._sprite;
 
     var locTextureCoord = locSprite._textureRect_Canvas;
@@ -421,6 +430,9 @@ cc.RenderTextureRenderCmdCanvas = function(node){
 };
 
 cc.RenderTextureRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
+    if(!this._node._visible)
+        return;
+
     // auto draw flag
     var context = ctx || cc._renderContext;
     var locNode = this._node, cacheCanvas = this._cacheCanvas, cacheCtx = this._cacheContext;

@@ -244,7 +244,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
                 } else if (renderer.transformDirty() === true) {
                     renderer.transform();
                 }
-                cc.eventManager.dispatchEvent(this._eventAfterVisit);     //0.4k
+                //cc.eventManager.dispatchEvent(this._eventAfterVisit);     //0.2k
         }
 
         // draw the notifications node
@@ -256,8 +256,8 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
 
         if (this._afterVisitScene)
             this._afterVisitScene();
-        renderer.rendering(cc._renderContext);                         //0.4k
-        cc.eventManager.dispatchEvent(this._eventAfterDraw);              //0.4k
+        renderer.rendering(cc._renderContext);                              //0.4k
+        //cc.eventManager.dispatchEvent(this._eventAfterDraw);              //0.2k
         this._totalFrames++;
 
         if (this._displayStats)
