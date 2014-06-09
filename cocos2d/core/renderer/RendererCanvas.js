@@ -33,7 +33,11 @@ cc.rendererCanvas = {
     _renderTextureCmds: [],
 
     rendering: function (ctx) {
-        var locCmds = this._renderCmds, i, len, scaleX = cc.view.getScaleX(), scaleY = cc.view.getScaleY();
+        var locCmds = this._renderCmds,
+            i,
+            len,
+            scaleX = cc.view.getScaleX(),
+            scaleY = cc.view.getScaleY();
         var context = ctx || cc._renderContext;
         for (i = 0, len = locCmds.length; i < len; i++) {
             locCmds[i].rendering(context, scaleX, scaleY);
@@ -115,7 +119,8 @@ cc.TextureRenderCmdCanvas = function (node) {
 
 cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
     var _t = this;
-    var context = ctx || cc._renderContext, locTextureCoord = _t._textureCoord;
+    var context = ctx || cc._renderContext,
+        locTextureCoord = _t._textureCoord;
     if (!locTextureCoord.validRect)
         return;  //draw nothing
 
@@ -448,4 +453,103 @@ cc.RenderTextureRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scal
         locNode.end();
     }
     cc.g_NumberOfDraws++;
+};
+
+cc.DrawNodeRenderCmdCanvas = function(node){
+    this._node = node;
+    this._buffer = node._buffer;
+    this._drawColor = node._drawColor;
+    this._blendFunc = node._blendFunc;
+};
+
+cc.DrawNodeRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
+    var context = ctx || cc._renderContext, _t = this;
+    if ((_t._blendFunc && (_t._blendFunc.src == cc.SRC_ALPHA) && (_t._blendFunc.dst == cc.ONE)))
+        context.globalCompositeOperation = 'lighter';
+
+    for (var i = 0; i < _t._buffer.length; i++) {
+        var element = _t._buffer[i];
+        switch (element.type) {
+            case cc.DrawNode.TYPE_DOT:
+                _t._drawDot(context, element);
+                break;
+            case cc.DrawNode.TYPE_SEGMENT:
+                _t._drawSegment(context, element);
+                break;
+            case cc.DrawNode.TYPE_POLY:
+                _t._drawPoly(context, element);
+                break;
+        }
+    }
+};
+
+cc.DrawNodeRenderCmdCanvas.prototype._drawDot = function (ctx, element) {
+    var locColor = element.fillColor, locPos = element.verts[0], locRadius = element.lineWidth;
+    var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
+
+    ctx.fillStyle = "rgba(" + (0 | locColor.r) + "," + (0 | locColor.g) + "," + (0 | locColor.b) + "," + locColor.a / 255 + ")";
+    ctx.beginPath();
+    ctx.arc(locPos.x * locScaleX, -locPos.y * locScaleY, locRadius * locScaleX, 0, Math.PI * 2, false);
+    ctx.closePath();
+    ctx.fill();
+};
+
+cc.DrawNodeRenderCmdCanvas.prototype._drawSegment = function (ctx, element) {
+    var locColor = element.lineColor;
+    var locFrom = element.verts[0];
+    var locTo = element.verts[1];
+    var locLineWidth = element.lineWidth;
+    var locLineCap = element.lineCap;
+    var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
+
+    ctx.strokeStyle = "rgba(" + (0 | locColor.r) + "," + (0 | locColor.g) + "," + (0 | locColor.b) + "," + locColor.a / 255 + ")";
+    ctx.lineWidth = locLineWidth * locScaleX;
+    ctx.beginPath();
+    ctx.lineCap = locLineCap;
+    ctx.moveTo(locFrom.x * locScaleX, -locFrom.y * locScaleY);
+    ctx.lineTo(locTo.x * locScaleX, -locTo.y * locScaleY);
+    ctx.stroke();
+};
+
+cc.DrawNodeRenderCmdCanvas.prototype._drawPoly = function (ctx, element) {
+    var locVertices = element.verts;
+    var locLineCap = element.lineCap;
+    var locFillColor = element.fillColor;
+    var locLineWidth = element.lineWidth;
+    var locLineColor = element.lineColor;
+    var locIsClosePolygon = element.isClosePolygon;
+    var locIsFill = element.isFill;
+    var locIsStroke = element.isStroke;
+    if (locVertices == null)
+        return;
+
+    var firstPoint = locVertices[0];
+    var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
+
+    ctx.lineCap = locLineCap;
+
+    if (locFillColor) {
+        ctx.fillStyle = "rgba(" + (0 | locFillColor.r) + "," + (0 | locFillColor.g) + ","
+            + (0 | locFillColor.b) + "," + locFillColor.a / 255 + ")";
+    }
+
+    if (locLineWidth) {
+        ctx.lineWidth = locLineWidth * locScaleX;
+    }
+    if (locLineColor) {
+        ctx.strokeStyle = "rgba(" + (0 | locLineColor.r) + "," + (0 | locLineColor.g) + ","
+            + (0 | locLineColor.b) + "," + locLineColor.a / 255 + ")";
+    }
+    ctx.beginPath();
+    ctx.moveTo(firstPoint.x * locScaleX, -firstPoint.y * locScaleY);
+    for (var i = 1, len = locVertices.length; i < len; i++)
+        ctx.lineTo(locVertices[i].x * locScaleX, -locVertices[i].y * locScaleY);
+
+    if (locIsClosePolygon)
+        ctx.closePath();
+
+    if (locIsFill)
+        ctx.fill();
+    if (locIsStroke)
+        ctx.stroke();
 };
