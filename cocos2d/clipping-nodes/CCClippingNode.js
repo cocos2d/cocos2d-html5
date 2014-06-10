@@ -62,7 +62,6 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
     _stencil: null,
     _godhelpme: false,
-    _transformTmp: null,
 
     /**
      * Creates and initializes a clipping node with an other node as its stencil.
@@ -77,7 +76,6 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         this.alphaThreshold = 0;
         this.inverted = false;
 
-        this._rendererCmd = new cc.ClippingNodeRenderCmdCanvas(this);
         this._rendererSaveCmd = new cc.ClippingNodeSaveRenderCmdCanvas(this);
         this._rendererClipCmd = new cc.ClippingNodeClipRenderCmdCanvas(this);
         this._rendererRestoreCmd = new cc.ClippingNodeRestoreRenderCmdCanvas(this);
@@ -319,7 +317,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
         var context = ctx || cc._renderContext;
 
-        var i, children = this._children, locChild;
+        var i, children = this._children;
 
         this.transform(context);
 
@@ -332,24 +330,13 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         var len = children.length;
         if (len > 0) {
             this.sortAllChildren();
-            // draw children zOrder < 0
             for (i = 0; i < len; i++) {
-                locChild = children[i];
-                if (locChild._localZOrder < 0)
-                    locChild.visit(context);
-                else
-                    break;
-            }
-            cc.renderer.pushRenderCommand(this._rendererCmd);
-            for (; i < len; i++) {
                 children[i].visit(context);
             }
-        } else
-            cc.renderer.pushRenderCommand(this._rendererCmd);
+        }
         this._cangodhelpme(false);
 
         cc.renderer.pushRenderCommand(this._rendererRestoreCmd);
-
     },
 
     /**
@@ -381,11 +368,9 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         }
         var locContext = cc._renderContext;
         // For texture stencil, use the sprite itself
-        if (stencil instanceof cc.Sprite) {
-            return;
-        }
+
         // For shape stencil, rewrite the draw of stencil ,only init the clip path and draw nothing.
-        else if (stencil instanceof cc.DrawNode) {
+        if (stencil instanceof cc.DrawNode) {
             stencil.rendering = function () {
                 var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
                 locContext.beginPath();
