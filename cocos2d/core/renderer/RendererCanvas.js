@@ -565,3 +565,66 @@ cc.DrawNodeRenderCmdCanvas.prototype._drawPoly = function (ctx, element) {
     if (locIsStroke)
         ctx.stroke();
 };
+
+cc.ClippingNodeRenderCmdCanvas = function(node){
+    this._node = node;
+    this._cangodhelpme = node._cangodhelpme;
+    this._stencil = node._stencil;
+    this.inverted = node.inverted;
+};
+
+cc.ClippingNodeRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
+
+};
+
+cc.ClippingNodeSaveRenderCmdCanvas = function(node){
+    this._node = node;
+};
+
+cc.ClippingNodeSaveRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
+
+    var context = ctx || cc._renderContext;
+
+    context.save();
+
+    var t = this._node._transformWorld;
+    context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+};
+
+cc.ClippingNodeClipRenderCmdCanvas = function(node){
+    this._node = node;
+};
+
+cc.ClippingNodeClipRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
+
+    var context = ctx || cc._renderContext;
+
+    if (this._node.inverted) {
+        var canvas = context.canvas;
+        context.save();
+
+        context.setTransform(1, 0, 0, 1, 0, 0);
+
+        context.moveTo(0, 0);
+        context.lineTo(0, canvas.height);
+        context.lineTo(canvas.width, canvas.height);
+        context.lineTo(canvas.width, 0);
+        context.lineTo(0, 0);
+
+        context.restore();
+    }
+    var t = cc.AffineTransformInvert(this._node._transformWorld);
+    context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+    context.clip();
+};
+
+cc.ClippingNodeRestoreRenderCmdCanvas = function(node){
+    this._node = node;
+};
+
+cc.ClippingNodeRestoreRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
+
+    var context = ctx || cc._renderContext;
+
+    context.restore();
+};
