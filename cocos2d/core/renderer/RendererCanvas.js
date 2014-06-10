@@ -574,12 +574,8 @@ cc.ClippingNodeSaveRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, s
     var context = ctx || cc._renderContext;
 
     context.save();
-    if(!this._node.transformTmp){
-        this._node.transformTmp = this._node._transformWorld;
-        this._node._transformWorld.tx = 0;
-        this._node._transformWorld.ty = 0;
-    }
-    var t = this._node.transformTmp;
+
+    var t = this._node._transformWorld;
     context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 };
 
@@ -590,9 +586,9 @@ cc.ClippingNodeClipRenderCmdCanvas = function(node){
 cc.ClippingNodeClipRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
 
     var context = ctx || cc._renderContext;
-    var canvas = context.canvas;
 
     if (this._node.inverted) {
+        var canvas = context.canvas;
         context.save();
 
         context.setTransform(1, 0, 0, 1, 0, 0);
@@ -605,6 +601,8 @@ cc.ClippingNodeClipRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, s
 
         context.restore();
     }
+    var t = cc.AffineTransformInvert(this._node._transformWorld);
+    context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
     context.clip();
 };
 

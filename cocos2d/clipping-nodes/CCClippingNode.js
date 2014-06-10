@@ -321,8 +321,9 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
         var i, children = this._children, locChild;
 
-        cc.renderer.pushRenderCommand(this._rendererSaveCmd);
         this.transform(context);
+
+        cc.renderer.pushRenderCommand(this._rendererSaveCmd);
         this._stencil.visit(context);
 
         cc.renderer.pushRenderCommand(this._rendererClipCmd);
@@ -372,6 +373,12 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
     _setStencilForCanvas: function (stencil) {
         this._stencil = stencil;
+        if(stencil._buffer){
+            for(var i=0; i<stencil._buffer.length; i++){
+                stencil._buffer[i].isFill = false;
+                stencil._buffer[i].isStroke = false;
+            }
+        }
         var locContext = cc._renderContext;
         // For texture stencil, use the sprite itself
         if (stencil instanceof cc.Sprite) {
@@ -394,7 +401,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
                     for (var j = 1, len = vertices.length; j < len; j++)
                         locContext.lineTo(vertices[j].x * locEGL_ScaleX, -vertices[j].y * locEGL_ScaleY);
                 }
-            }
+            };
         }
     },
 
@@ -444,154 +451,6 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         if (godhelpme === true || godhelpme === false)
             cc.ClippingNode.prototype._godhelpme = godhelpme;
         return cc.ClippingNode.prototype._godhelpme;
-    },
-
-    _transformForRenderer: function () {
-        var t = this.nodeToParentTransform(), worldT = this._transformWorld;
-        if(this._parent){
-            var pt = this._parent._transformWorld;
-            //worldT = cc.AffineTransformConcat(t, pt);
-            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
-            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
-            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
-            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
-            if(!this._skewX || this._skewY){
-                var plt = this._parent._transform;
-                var xOffset = -(plt.b + plt.c) * t.ty ;
-                var yOffset = -(plt.b + plt.c) * t.tx;
-                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
-                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
-            }else{
-                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx);          //tx
-                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty);		  //ty
-            }
-        } else {
-            worldT.a = t.a;
-            worldT.b = t.b;
-            worldT.c = t.c;
-            worldT.d = t.d;
-            worldT.tx = t.tx;
-            worldT.ty = t.ty;
-        }
-        this._renderCmdDiry = false;
-        if(!this._children || this._children.length === 0)
-            return;
-        var i, len, locChildren = this._children;
-        for(i = 0, len = locChildren.length; i< len; i++){
-            locChildren[i]._transformForRenderer();
-        }
-    },
-
-    transform: function (ctx) {
-        // transform for canvas
-        var t = this.nodeToParentTransform(),
-            worldT = this._transformWorld;         //get the world transform
-
-        if(this._parent){
-            var pt = this._parent._transformWorld;
-            // cc.AffineTransformConcat is incorrect at get world transform
-            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
-            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
-            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
-            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
-            if(!this._skewX || this._skewY){
-                var plt = this._parent._transform;
-                var xOffset = -(plt.b + plt.c) * t.ty ;
-                var yOffset = -(plt.b + plt.c) * t.tx;
-                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
-                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
-            }else{
-                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx);          //tx
-                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty);		  //ty
-            }
-        } else {
-            worldT.a = t.a;
-            worldT.b = t.b;
-            worldT.c = t.c;
-            worldT.d = t.d;
-            worldT.tx = t.tx;
-            worldT.ty = t.ty;
-        }
-
-        //worldT.needTransform = (worldT.a !== 1 || worldT.b !== 0 || worldT.c !== 0 || worldT.d !==1);
-    },
-
-    nodeToParentTransform: function () {
-        var _t = this;
-        if (_t._transformDirty) {
-            var t = _t._transform;// quick reference
-
-            // base position
-            t.tx = _t._position.x;
-            t.ty = _t._position.y;
-
-            // rotation Cos and Sin
-            var Cos = 1, Sin = 0;
-            if (_t._rotationX) {
-                Cos = Math.cos(_t._rotationRadiansX);
-                Sin = Math.sin(_t._rotationRadiansX);
-            }
-
-            // base abcd
-            t.a = t.d = Cos;
-            t.b = -Sin;
-            t.c = Sin;
-
-            var lScaleX = _t._scaleX, lScaleY = _t._scaleY;
-            var appX = _t._anchorPointInPoints.x, appY = _t._anchorPointInPoints.y;
-
-            // Firefox on Vista and XP crashes
-            // GPU thread in case of scale(0.0, 0.0)
-            var sx = (lScaleX < 0.000001 && lScaleX > -0.000001) ? 0.000001 : lScaleX,
-                sy = (lScaleY < 0.000001 && lScaleY > -0.000001) ? 0.000001 : lScaleY;
-
-            // skew
-            if (_t._skewX || _t._skewY) {
-                // offset the anchorpoint
-                var skx = Math.tan(-_t._skewX * Math.PI / 180);
-                var sky = Math.tan(-_t._skewY * Math.PI / 180);
-                if(skx === Infinity){
-                    skx = 99999999;
-                }
-                if(sky === Infinity){
-                    sky = 99999999;
-                }
-                var xx = appY * skx * sx;
-                var yy = appX * sky * sy;
-                t.a = Cos + -Sin * sky;
-                t.b = Cos * skx + -Sin;
-                t.c = Sin + Cos * sky;
-                t.d = Sin * skx + Cos;
-                t.tx += Cos * xx + -Sin * yy;
-                t.ty += Sin * xx + Cos * yy;
-            }
-
-            // scale
-            if (lScaleX !== 1 || lScaleY !== 1) {
-                t.a *= sx;
-                t.c *= sx;
-                t.b *= sy;
-                t.d *= sy;
-            }
-
-            // adjust anchorPoint
-            t.tx += Cos * -appX * sx + -Sin * appY * sy;
-            t.ty -= Sin * -appX * sx + Cos * appY * sy;
-
-            // if ignore anchorPoint
-            if (_t._ignoreAnchorPointForPosition) {
-                t.tx += appX;
-                t.ty += appY;
-            }
-
-            if (_t._additionalTransformDirty) {
-                _t._transform = cc.AffineTransformConcat(t, _t._additionalTransform);
-                _t._additionalTransformDirty = false;
-            }
-
-            _t._transformDirty = false;
-        }
-        return _t._transform;
     }
 });
 
