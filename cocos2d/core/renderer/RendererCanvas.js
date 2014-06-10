@@ -187,9 +187,6 @@ cc.RectRenderCmdCanvas = function (node) {
 };
 
 cc.RectRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-    if(!this._node._visible)
-        return;
-
     var context = ctx || cc._renderContext, t = this._transform, curColor = this._color, locRect = this._drawingRect;
     context.save();
     if (this._isLighterMode)
@@ -218,8 +215,6 @@ cc.GradientRectRenderCmdCanvas = function (node) {
 };
 
 cc.GradientRectRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-    if(!this._node._visible)
-        return;
     var context = ctx || cc._renderContext, _t = this, t = this._transform;
     context.save();
     if (_t._isLighterMode)
@@ -253,8 +248,6 @@ cc.ParticleRenderCmdCanvas = function (node) {
 };
 
 cc.ParticleRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-    if(!this._node._visible)
-        return;
     var context = ctx || cc._renderContext, t = this._transform;
     context.save();
     //transform
@@ -353,8 +346,6 @@ cc.ProgressRenderCmdCanvas = function (node) {
 };
 
 cc.ProgressRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-    if(!this._node._visible)
-        return;
     var context = ctx || cc._renderContext, locSprite = this._sprite;
 
     var locTextureCoord = locSprite._textureRect_Canvas;
@@ -435,9 +426,6 @@ cc.RenderTextureRenderCmdCanvas = function(node){
 };
 
 cc.RenderTextureRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
-    if(!this._node._visible)
-        return;
-
     // auto draw flag
     var context = ctx || cc._renderContext;
     var locNode = this._node, cacheCanvas = this._cacheCanvas, cacheCtx = this._cacheContext;
@@ -566,17 +554,6 @@ cc.DrawNodeRenderCmdCanvas.prototype._drawPoly = function (ctx, element) {
         ctx.stroke();
 };
 
-cc.ClippingNodeRenderCmdCanvas = function(node){
-    this._node = node;
-    this._cangodhelpme = node._cangodhelpme;
-    this._stencil = node._stencil;
-    this.inverted = node.inverted;
-};
-
-cc.ClippingNodeRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
-
-};
-
 cc.ClippingNodeSaveRenderCmdCanvas = function(node){
     this._node = node;
 };
@@ -596,9 +573,7 @@ cc.ClippingNodeClipRenderCmdCanvas = function(node){
 };
 
 cc.ClippingNodeClipRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
-
     var context = ctx || cc._renderContext;
-
     if (this._node.inverted) {
         var canvas = context.canvas;
         context.save();
@@ -623,8 +598,6 @@ cc.ClippingNodeRestoreRenderCmdCanvas = function(node){
 };
 
 cc.ClippingNodeRestoreRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
-
     var context = ctx || cc._renderContext;
-
     context.restore();
 };
