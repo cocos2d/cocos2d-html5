@@ -119,13 +119,14 @@ cc.TextureRenderCmdCanvas = function (node) {
 
 cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
     var _t = this;
+    var _node = _t._node;
     var context = ctx || cc._renderContext,
         locTextureCoord = _t._textureCoord;
-    if (!locTextureCoord.validRect || !_t._node._visible)
+    if (!locTextureCoord.validRect || !_node._visible)
         return;  //draw nothing
 
     var t = this._transform, locDrawingRect = _t._drawingRect, image, curColor;
-    if(t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1 || _t._flippedX || _t._flippedY){
+    if(t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1 || _node._flippedX || _node._flippedY){
         context.save();
         //transform
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
@@ -133,9 +134,9 @@ cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
         if (_t._isLighterMode)
             context.globalCompositeOperation = 'lighter';
 
-        if (_t._flippedX)
+        if (_node._flippedX)
             context.scale(-1, 1);
-        if (_t._flippedY)
+        if (_node._flippedY)
             context.scale(1, -1);
 
         if (_t._texture && locTextureCoord.validRect) {
