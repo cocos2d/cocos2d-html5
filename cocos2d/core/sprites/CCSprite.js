@@ -827,16 +827,16 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         cc.assert(filename, cc._LogInfos.Sprite_initWithFile);
 
-        var texture = cc.textureCache.textureForKey(filename);
-        if (!texture) {
-            texture = cc.textureCache.addImage(filename);
-            return this.initWithTexture(texture, rect || cc.rect(0, 0, 0, 0));
+        var tex = cc.textureCache.textureForKey(filename);
+        if (!tex) {
+            tex = cc.textureCache.addImage(filename);
+            return this.initWithTexture(tex, rect || cc.rect(0, 0, tex._contentSize.width, tex._contentSize.height));
         } else {
             if (!rect) {
-                var size = texture.getContentSize();
+                var size = tex.getContentSize();
                 rect = cc.rect(0, 0, size.width, size.height);
             }
-            return this.initWithTexture(texture, rect);
+            return this.initWithTexture(tex, rect);
         }
     },
 
