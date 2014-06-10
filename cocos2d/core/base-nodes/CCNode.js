@@ -2112,6 +2112,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         //visit for canvas
         var i, children = _t._children, child;
+        _t.toRenderer();
         _t.transform();
         var len = children.length;
         if (len > 0) {
@@ -2127,14 +2128,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             //_t.draw(context);
             if(this._rendererCmd)
                 cc.renderer.pushRenderCommand(this._rendererCmd);
-            _t.toRenderer();
             for (; i < len; i++) {
                 children[i].visit();
             }
         } else{
             if(this._rendererCmd)
                 cc.renderer.pushRenderCommand(this._rendererCmd);
-            _t.toRenderer();
         }
         _t.arrivalOrder = 0;
     };
@@ -2177,7 +2176,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     _p.transform = function (ctx) {
         // transform for canvas
-        var t = this.nodeToParentTransform(), worldT = this._transformWorld;         //get the world transform
+        var t = this.nodeToParentTransform(),
+            worldT = this._transformWorld;         //get the world transform
 
         if(this._parent){
             var pt = this._parent._transformWorld;
@@ -2186,7 +2186,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             worldT.b = t.a * pt.b + t.b * pt.d;                               //b
             worldT.c = t.c * pt.a + t.d * pt.c;                               //c
             worldT.d = t.c * pt.b + t.d * pt.d;                               //d
-            if(!this._skewX || this._skewY){
+            if(!this._skewX || !this._skewY){
                 var plt = this._parent._transform;
                 var xOffset = -(plt.b + plt.c) * t.ty ;
                 var yOffset = -(plt.b + plt.c) * t.tx;
