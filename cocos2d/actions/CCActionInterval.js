@@ -2451,8 +2451,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
             this.target.color = cc.color(
                 locFrom.r + (locTo.r - locFrom.r) * time,
                 locFrom.g + (locTo.g - locFrom.g) * time,
-                locFrom.b + (locTo.b - locFrom.b) * time,
-                this.target.color.a || undefined
+                locFrom.b + (locTo.b - locFrom.b) * time
             );
         }
     }
@@ -2550,8 +2549,7 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
             this.target.color = cc.color(
                 this._fromR + this._deltaR * time,
                 this._fromG + this._deltaG * time,
-                this._fromB + this._deltaB * time,
-                this.target.color.a
+                this._fromB + this._deltaB * time
             );
         }
     },
