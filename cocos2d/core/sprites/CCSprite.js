@@ -1030,6 +1030,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                     this.texture = locTexture;
                 }
             }
+            if(this._rendererCmd){
+                this._rendererCmd._texture = this._texture;
+            }
         }
     },
 

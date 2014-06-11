@@ -2448,9 +2448,11 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
         time = this._computeEaseTime(time);
         var locFrom = this._from, locTo = this._to;
         if (locFrom && this.target.RGBAProtocol) {
-            this.target.color = cc.color(locFrom.r + (locTo.r - locFrom.r) * time,
-                                        locFrom.g + (locTo.g - locFrom.g) * time,
-	                                    locFrom.b + (locTo.b - locFrom.b) * time);
+            this.target.color = cc.color(
+                locFrom.r + (locTo.r - locFrom.r) * time,
+                locFrom.g + (locTo.g - locFrom.g) * time,
+                locFrom.b + (locTo.b - locFrom.b) * time
+            );
         }
     }
 });
@@ -2544,9 +2546,11 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
     update:function (time) {
         time = this._computeEaseTime(time);
         if (this.target.RGBAProtocol) {
-            this.target.color = cc.color(this._fromR + this._deltaR * time,
-                                        this._fromG + this._deltaG * time,
-                                        this._fromB + this._deltaB * time);
+            this.target.color = cc.color(
+                this._fromR + this._deltaR * time,
+                this._fromG + this._deltaG * time,
+                this._fromB + this._deltaB * time
+            );
         }
     },
 

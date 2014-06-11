@@ -227,24 +227,24 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
 
         /* to avoid flickr, nextScene MUST be here: after tick and before draw.
          XXX: Which bug is this one. It seems that it can't be reproduced with v0.9 */
-       if (this._nextScene) {
+        if (this._nextScene) {
             this.setNextScene();
         }
 
-         if (this._beforeVisitScene)
+        if (this._beforeVisitScene)
             this._beforeVisitScene();
 
         // draw the scene
         if (this._runningScene) {
-                if (renderer.childrenOrderDirty === true) {
-                    cc.renderer.clearRenderCommands();
-                    this._runningScene._curLevel = 0;                          //level start from 0;
-                    this._runningScene.visit();
-                    renderer.resetFlag();
-                } else if (renderer.transformDirty() === true) {
-                    renderer.transform();
-                }
-                cc.eventManager.dispatchEvent(this._eventAfterVisit);     //0.2k
+            if (renderer.childrenOrderDirty === true) {
+                cc.renderer.clearRenderCommands();
+                this._runningScene._curLevel = 0;                          //level start from 0;
+                this._runningScene.visit();
+                renderer.resetFlag();
+            } else if (renderer.transformDirty() === true) {
+                renderer.transform();
+            }
+            cc.eventManager.dispatchEvent(this._eventAfterVisit);     //0.2k
         }
 
         // draw the notifications node
