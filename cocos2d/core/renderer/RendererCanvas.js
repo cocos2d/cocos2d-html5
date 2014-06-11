@@ -120,6 +120,10 @@ cc.TextureRenderCmdCanvas = function (node) {
 cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
     var _t = this;
     var _node = _t._node;
+    if(_node.updateToRender){
+        _node.toRenderer();
+        _node.updateToRender = false;
+    }
     var context = ctx || cc._renderContext,
         locTextureCoord = _t._textureCoord;
     if (!locTextureCoord.validRect || !_node._visible)
@@ -163,9 +167,17 @@ cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
             if (_t._texture._isLoaded) {
                 context.globalAlpha = _t._opacity;
                 image = _t._texture._htmlElementObj;
-                context.drawImage(image,
-                    locTextureCoord.x, locTextureCoord.y, locTextureCoord.width, locTextureCoord.height,
-                    t.tx * scaleX + locDrawingRect.x, -t.ty * scaleY + locDrawingRect.y, locDrawingRect.width , locDrawingRect.height);
+                context.drawImage(
+                    image,
+                    locTextureCoord.x,
+                    locTextureCoord.y,
+                    locTextureCoord.width,
+                    locTextureCoord.height,
+                    t.tx * scaleX + locDrawingRect.x,
+                    -t.ty * scaleY + locDrawingRect.y,
+                    locDrawingRect.width,
+                    locDrawingRect.height
+                );
             }
         } else if (!_t._texture && locTextureCoord.validRect) {
             curColor = _t._color;
