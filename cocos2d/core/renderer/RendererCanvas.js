@@ -513,6 +513,7 @@ cc.DrawNodeRenderCmdCanvas.prototype._drawSegment = function (ctx, element) {
 };
 
 cc.DrawNodeRenderCmdCanvas.prototype._drawPoly = function (ctx, element) {
+    var _node = this._node;
     var locVertices = element.verts;
     var locLineCap = element.lineCap;
     var locFillColor = element.fillColor;
@@ -542,9 +543,9 @@ cc.DrawNodeRenderCmdCanvas.prototype._drawPoly = function (ctx, element) {
             + (0 | locLineColor.b) + "," + locLineColor.a / 255 + ")";
     }
     ctx.beginPath();
-    ctx.moveTo(firstPoint.x * locScaleX, -firstPoint.y * locScaleY);
+    ctx.moveTo((firstPoint.x + _node._transformWorld.tx) * locScaleX, (-firstPoint.y - _node._transformWorld.ty) * locScaleY);
     for (var i = 1, len = locVertices.length; i < len; i++)
-        ctx.lineTo(locVertices[i].x * locScaleX, -locVertices[i].y * locScaleY);
+        ctx.lineTo((locVertices[i].x + _node._transformWorld.tx) * locScaleX, (-locVertices[i].y - _node._transformWorld.ty) * locScaleY);
 
     if (locIsClosePolygon)
         ctx.closePath();
