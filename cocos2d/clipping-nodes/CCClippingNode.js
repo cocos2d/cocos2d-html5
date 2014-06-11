@@ -371,20 +371,20 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
         // For shape stencil, rewrite the draw of stencil ,only init the clip path and draw nothing.
         if (stencil instanceof cc.DrawNode) {
-            stencil.rendering = function () {
-                var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
-                locContext.beginPath();
+            stencil._rendererCmd.rendering = function (ctx, scaleX, scaleY) {
+                var context = ctx || cc._renderContext;
+                context.beginPath();
                 for (var i = 0; i < stencil._buffer.length; i++) {
                     var element = stencil._buffer[i];
                     var vertices = element.verts;
 
-                    cc.assert(cc.vertexListIsClockwise(vertices),
-                        "Only clockwise polygons should be used as stencil");
+                    //cc.assert(cc.vertexListIsClockwise(vertices),
+                    //    "Only clockwise polygons should be used as stencil");
 
                     var firstPoint = vertices[0];
-                    locContext.moveTo(firstPoint.x * locEGL_ScaleX, -firstPoint.y * locEGL_ScaleY);
+                    context.moveTo(firstPoint.x * scaleX, -firstPoint.y * scaleY);
                     for (var j = 1, len = vertices.length; j < len; j++)
-                        locContext.lineTo(vertices[j].x * locEGL_ScaleX, -vertices[j].y * locEGL_ScaleY);
+                        context.lineTo(vertices[j].x * scaleX, -vertices[j].y * scaleY);
                 }
             };
         }
