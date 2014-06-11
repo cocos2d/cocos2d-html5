@@ -98,12 +98,10 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
             this._transform = cc.AffineTransformConcat(locTransform, locArmature.nodeToParentTransform());
         }
         if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-            locTransform = this._transform
+            locTransform = this._transform;
             locTransform.b *= -1;
             locTransform.c *= -1;
-            var tempB = locTransform.b;
-            locTransform.b = locTransform.c;
-            locTransform.c = tempB;
+            locTransform.b = [locTransform.c, locTransform.c = locTransform.b][0];
         }
     },
     /** returns a "local" axis aligned bounding box of the node. <br/>
@@ -113,6 +111,11 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     getBoundingBox: function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var transForm = this.nodeToParentTransform();
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
+            transForm.b *= -1;
+            transForm.c *= -1;
+            transForm.b = [transForm.c, transForm.c = transForm.b][0];
+        }
         return cc.RectApplyAffineTransform(rect, transForm);
     },
 
