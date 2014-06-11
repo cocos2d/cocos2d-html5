@@ -2448,7 +2448,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
         time = this._computeEaseTime(time);
         var locFrom = this._from, locTo = this._to;
         if (locFrom && this.target.RGBAProtocol) {
-            this.target.updateToRender = true;
+            this.target._rendererCmd._texture = this.target._texture;
             this.target.color = cc.color(
                 locFrom.r + (locTo.r - locFrom.r) * time,
                 locFrom.g + (locTo.g - locFrom.g) * time,
@@ -2548,7 +2548,7 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
     update:function (time) {
         time = this._computeEaseTime(time);
         if (this.target.RGBAProtocol) {
-            this.target.updateToRender = true;
+            this.target._rendererCmd._texture = this.target._texture;
             this.target.color = cc.color(
                 this._fromR + this._deltaR * time,
                 this._fromG + this._deltaG * time,

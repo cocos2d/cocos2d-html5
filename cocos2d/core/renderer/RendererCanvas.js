@@ -120,10 +120,6 @@ cc.TextureRenderCmdCanvas = function (node) {
 cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
     var _t = this;
     var _node = _t._node;
-    if(_node.updateToRender){
-        _node.toRenderer();
-        _node.updateToRender = false;
-    }
     var context = ctx || cc._renderContext,
         locTextureCoord = _t._textureCoord;
     if (!locTextureCoord.validRect || !_node._visible)
@@ -484,19 +480,19 @@ cc.DrawNodeRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
         var element = _t._buffer[i];
         switch (element.type) {
             case cc.DrawNode.TYPE_DOT:
-                _t._drawDot(context, element);
+                _t._drawDot(context, element, scaleX, scaleY);
                 break;
             case cc.DrawNode.TYPE_SEGMENT:
-                _t._drawSegment(context, element);
+                _t._drawSegment(context, element, scaleX, scaleY);
                 break;
             case cc.DrawNode.TYPE_POLY:
-                _t._drawPoly(context, element);
+                _t._drawPoly(context, element, scaleX, scaleY);
                 break;
         }
     }
 };
 
-cc.DrawNodeRenderCmdCanvas.prototype._drawDot = function (ctx, element) {
+cc.DrawNodeRenderCmdCanvas.prototype._drawDot = function (ctx, element, scaleX, scaleY) {
     var locColor = element.fillColor, locPos = element.verts[0], locRadius = element.lineWidth;
     var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
 
@@ -507,7 +503,7 @@ cc.DrawNodeRenderCmdCanvas.prototype._drawDot = function (ctx, element) {
     ctx.fill();
 };
 
-cc.DrawNodeRenderCmdCanvas.prototype._drawSegment = function (ctx, element) {
+cc.DrawNodeRenderCmdCanvas.prototype._drawSegment = function (ctx, element, scaleX, scaleY) {
     var locColor = element.lineColor;
     var locFrom = element.verts[0];
     var locTo = element.verts[1];
@@ -524,7 +520,7 @@ cc.DrawNodeRenderCmdCanvas.prototype._drawSegment = function (ctx, element) {
     ctx.stroke();
 };
 
-cc.DrawNodeRenderCmdCanvas.prototype._drawPoly = function (ctx, element) {
+cc.DrawNodeRenderCmdCanvas.prototype._drawPoly = function (ctx, element, scaleX, scaleY) {
     var _node = this._node;
     var locVertices = element.verts;
     var locLineCap = element.lineCap;
@@ -554,10 +550,15 @@ cc.DrawNodeRenderCmdCanvas.prototype._drawPoly = function (ctx, element) {
         ctx.strokeStyle = "rgba(" + (0 | locLineColor.r) + "," + (0 | locLineColor.g) + ","
             + (0 | locLineColor.b) + "," + locLineColor.a / 255 + ")";
     }
+    var t = _node._transformWorld;
+
+    ctx.save();
+    ctx.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+
     ctx.beginPath();
-    ctx.moveTo((firstPoint.x + _node._transformWorld.tx) * locScaleX, (-firstPoint.y - _node._transformWorld.ty) * locScaleY);
+    ctx.moveTo(firstPoint.x * locScaleX, -firstPoint.y * locScaleY);
     for (var i = 1, len = locVertices.length; i < len; i++)
-        ctx.lineTo((locVertices[i].x + _node._transformWorld.tx) * locScaleX, (-locVertices[i].y - _node._transformWorld.ty) * locScaleY);
+        ctx.lineTo(locVertices[i].x * locScaleX, -locVertices[i].y * locScaleY);
 
     if (locIsClosePolygon)
         ctx.closePath();
@@ -566,6 +567,7 @@ cc.DrawNodeRenderCmdCanvas.prototype._drawPoly = function (ctx, element) {
         ctx.fill();
     if (locIsStroke)
         ctx.stroke();
+    ctx.restore();
 };
 
 cc.ClippingNodeSaveRenderCmdCanvas = function(node){
