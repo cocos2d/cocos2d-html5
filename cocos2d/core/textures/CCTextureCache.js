@@ -298,6 +298,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
         //remove from cache
         if (removeFrom[path])
             delete removeFrom[path];
+        cc.Loader.getInstance().onResLoaded(path);
 
         this.removeEventListener('error', this.__errorListener, false);
     },
