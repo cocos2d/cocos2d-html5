@@ -638,3 +638,13 @@ cc.PhysicsDebugNodeRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, s
 cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawDot = cc.DrawNodeRenderCmdCanvas.prototype._drawDot;
 cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawSegment = cc.DrawNodeRenderCmdCanvas.prototype._drawSegment;
 cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawPoly = cc.DrawNodeRenderCmdCanvas.prototype._drawPoly;
+
+cc.PhysicsSpriteTransformCmdCanvas = function(node){
+    this._node = node;
+};
+
+cc.PhysicsSpriteTransformCmdCanvas.prototype.rendering = function(){
+    if(this._node.transform){
+        this._node.transform();
+    }
+};

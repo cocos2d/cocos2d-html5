@@ -141,14 +141,6 @@ cc.PhysicsDebugNode = cc.DrawNode.extend({
 
     },
 
-    visit: function(){
-        cc.DrawNode.prototype.visit.call(this);
-
-        if(this._rendererCmd){
-            cc.rendererCanvas.pushRenderCommand(this._rendererCmd);
-        }
-    },
-
     getSpace:function () {
         return this.space;
     },
