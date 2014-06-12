@@ -614,3 +614,27 @@ cc.ClippingNodeRestoreRenderCmdCanvas.prototype.rendering = function(ctx, scaleX
     var context = ctx || cc._renderContext;
     context.restore();
 };
+
+
+//CHIPMUNK
+cc.chipmunkRenderCmdCanvas = function(node){
+    this._node = node;
+    this._buffer = node._buffer;
+};
+
+cc.chipmunkRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
+
+    var _node = this._node;
+
+    if (!_node.space)
+        return;
+
+    _node.space.eachShape(cc.DrawShape.bind(_node));
+    _node.space.eachConstraint(cc.DrawConstraint.bind(_node));
+    cc.DrawNodeRenderCmdCanvas.prototype.rendering.call(this, ctx, scaleX, scaleY);
+    _node.clear();
+};
+
+cc.chipmunkRenderCmdCanvas.prototype._drawDot = cc.DrawNodeRenderCmdCanvas.prototype._drawDot;
+cc.chipmunkRenderCmdCanvas.prototype._drawSegment = cc.DrawNodeRenderCmdCanvas.prototype._drawSegment;
+cc.chipmunkRenderCmdCanvas.prototype._drawPoly = cc.DrawNodeRenderCmdCanvas.prototype._drawPoly;
