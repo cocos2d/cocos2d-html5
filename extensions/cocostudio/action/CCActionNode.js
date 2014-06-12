@@ -268,12 +268,16 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
                     var locSrcFrame = locArray[j - 1];
                     var locDuration = (locFrame.frameIndex - locSrcFrame.frameIndex) * this.getUnitTime();
                     var locAction = locFrame.getAction(locDuration);
-                    locSequenceArray.push(locAction);
+                    if(locAction){
+                        locSequenceArray.push(locAction);
+                    }
                 }
             }
-            var locSequence = cc.Sequence.create(locSequenceArray);
-            if (locSequence != null) {
-                locSpawnArray.push(locSequence);
+            if(locSequenceArray){
+                var locSequence = cc.Sequence.create(locSequenceArray);
+                if (locSequence != null) {
+                    locSpawnArray.push(locSequence);
+                }
             }
         }
 

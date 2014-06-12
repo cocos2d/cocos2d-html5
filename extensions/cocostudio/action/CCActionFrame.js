@@ -211,8 +211,6 @@ ccs.ActionFrame = ccs.Class.extend(/** @lends ccs.ActionFrame# */{
             case ccs.FrameEaseType.Bounce_EaseInOut:
                 resultAction = action.easing(cc.easeBounceInOut());
                 break;
-            default:
-                console.error("Frame ease type: " + this.easingType + " is currently not supported.");
         }
 
         return resultAction;
