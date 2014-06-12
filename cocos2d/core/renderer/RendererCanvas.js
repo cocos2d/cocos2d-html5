@@ -617,12 +617,12 @@ cc.ClippingNodeRestoreRenderCmdCanvas.prototype.rendering = function(ctx, scaleX
 
 
 //CHIPMUNK
-cc.chipmunkRenderCmdCanvas = function(node){
+cc.PhysicsDebugNodeRenderCmdCanvas = function(node){
     this._node = node;
     this._buffer = node._buffer;
 };
 
-cc.chipmunkRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
+cc.PhysicsDebugNodeRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
 
     var _node = this._node;
 
@@ -635,6 +635,6 @@ cc.chipmunkRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
     _node.clear();
 };
 
-cc.chipmunkRenderCmdCanvas.prototype._drawDot = cc.DrawNodeRenderCmdCanvas.prototype._drawDot;
-cc.chipmunkRenderCmdCanvas.prototype._drawSegment = cc.DrawNodeRenderCmdCanvas.prototype._drawSegment;
-cc.chipmunkRenderCmdCanvas.prototype._drawPoly = cc.DrawNodeRenderCmdCanvas.prototype._drawPoly;
+cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawDot = cc.DrawNodeRenderCmdCanvas.prototype._drawDot;
+cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawSegment = cc.DrawNodeRenderCmdCanvas.prototype._drawSegment;
+cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawPoly = cc.DrawNodeRenderCmdCanvas.prototype._drawPoly;

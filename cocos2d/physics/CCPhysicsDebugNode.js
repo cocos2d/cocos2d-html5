@@ -133,7 +133,7 @@ cc.PhysicsDebugNode = cc.DrawNode.extend({
     ctor: function(){
         cc.DrawNode.prototype.ctor.apply(this, arguments);
 
-        this._rendererCmd = new cc.chipmunkRenderCmdCanvas(this);
+        this._rendererCmd = new cc.PhysicsDebugNodeRenderCmdCanvas(this);
 
         if(this._rendererCmd){
             cc.rendererCanvas.pushRenderCommand(this._rendererCmd);
