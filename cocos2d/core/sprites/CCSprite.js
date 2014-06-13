@@ -1209,15 +1209,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         self._textureLoaded = true;
 
         self._drawSize_Canvas = cc.size(0, 0);
-        
-        if(this._rendererCmd && rect){
-            this._rendererCmd._textureCoord.x = rect.x;
-            this._rendererCmd._textureCoord.renderX = rect.x;
-            this._rendererCmd._textureCoord.y = rect.y;
-            this._rendererCmd._textureCoord.renderY = rect.y;
-            this._rendererCmd._textureCoord.width = rect.width;
-            this._rendererCmd._textureCoord.height = rect.height;
-        }
 
         self._softInit(fileName, rect, rotated);
     };
@@ -1381,8 +1372,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         var locTextureRect = _t._rendererCmd._textureCoord,
             scaleFactor = cc.contentScaleFactor();
-        locTextureRect.x = 0 | (rect.x * scaleFactor);
-        locTextureRect.y = 0 | (rect.y * scaleFactor);
+        locTextureRect.renderX = locTextureRect.x = 0 | (rect.x * scaleFactor);
+        locTextureRect.renderY = locTextureRect.y = 0 | (rect.y * scaleFactor);
         locTextureRect.width = 0 | (rect.width * scaleFactor);
         locTextureRect.height = 0 | (rect.height * scaleFactor);
         locTextureRect.validRect = !(locTextureRect.width === 0 || locTextureRect.height === 0 || locTextureRect.x < 0 || locTextureRect.y < 0);
