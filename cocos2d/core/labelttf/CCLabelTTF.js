@@ -1146,13 +1146,17 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         this.setContentSize(untrimmedSize);
         this.setVertexRect(rect);
 
-        var locTextureCoordRect = this._textureRect_Canvas;
+        var locTextureCoordRect = this._rendererCmd._textureCoord;
         locTextureCoordRect.x = rect.x;
         locTextureCoordRect.y = rect.y;
+        locTextureCoordRect.renderX = rect.x;
+        locTextureCoordRect.renderY = rect.y;
         locTextureCoordRect.width = rect.width;
         locTextureCoordRect.height = rect.height;
-        locTextureCoordRect.validRect = !(locTextureCoordRect.width === 0 || locTextureCoordRect.height === 0
-            || locTextureCoordRect.x < 0 || locTextureCoordRect.y < 0);
+        locTextureCoordRect.validRect = !(locTextureCoordRect.width === 0 ||
+            locTextureCoordRect.height === 0 ||
+            locTextureCoordRect.x < 0 ||
+            locTextureCoordRect.y < 0);
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
         if (this._flippedX)

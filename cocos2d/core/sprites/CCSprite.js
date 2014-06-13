@@ -742,7 +742,6 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _colorized:false,
     _isLighterMode:false,
     _originalTexture:null,
-    _textureRect_Canvas:null,
     _drawSize_Canvas:null,
 
     /**
@@ -1010,7 +1009,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     _changeTextureColor: function () {
-        var locElement, locTexture = this._texture, locRect = this._textureRect_Canvas; //this.getTextureRect();
+        var locElement,
+            locTexture = this._texture,
+            locRect = this._rendererCmd._textureCoord; //this.getTextureRect();
         if (locTexture && locRect.validRect && this._originalTexture) {
             locElement = locTexture.getHtmlElementObj();
             if (!locElement)
@@ -1019,6 +1020,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
             if (cacheTextureForColor) {
                 this._colorized = true;
+
+                this._rendererCmd._textureCoord.renderX = 0;
+                this._rendererCmd._textureCoord.renderY = 0;
+
                 //generate color texture cache
                 if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor)
                     cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect, locElement);
@@ -1192,7 +1197,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     _p.ctor = function (fileName, rect, rotated) {
         var self = this;
-        self._textureRect_Canvas = {x: 0, y: 0, width: 0, height:0, validRect: false};
 
         cc.NodeRGBA.prototype.ctor.call(self);
         self._shouldBeHidden = false;
@@ -1366,9 +1370,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         _t.setVertexRect(rect);
 
-        var locTextureRect = _t._textureRect_Canvas, scaleFactor = cc.contentScaleFactor();
-        locTextureRect.x = 0 | (rect.x * scaleFactor);
-        locTextureRect.y = 0 | (rect.y * scaleFactor);
+        var locTextureRect = _t._rendererCmd._textureCoord,
+            scaleFactor = cc.contentScaleFactor();
+        locTextureRect.renderX = locTextureRect.x = 0 | (rect.x * scaleFactor);
+        locTextureRect.renderY = locTextureRect.y = 0 | (rect.y * scaleFactor);
         locTextureRect.width = 0 | (rect.width * scaleFactor);
         locTextureRect.height = 0 | (rect.height * scaleFactor);
         locTextureRect.validRect = !(locTextureRect.width === 0 || locTextureRect.height === 0 || locTextureRect.x < 0 || locTextureRect.y < 0);
@@ -1499,6 +1504,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         _t.setTextureRect(newFrame.getRect(), _t._rectRotated, newFrame.getOriginalSize());
         _t._colorized = false;
+
+        _t._rendererCmd._textureCoord.renderX = _t._rendererCmd._textureCoord.x;
+        _t._rendererCmd._textureCoord.renderY = _t._rendererCmd._textureCoord.y;
+
         if (locTextureLoaded) {
             var curColor = _t.color;
             if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
@@ -1568,8 +1577,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         var _t = this, locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
 
-        var locRect = _t._rect, locOffsetPosition = _t._offsetPosition, locDrawSizeCanvas = _t._drawSize_Canvas;
-        var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height;
+        var locRect = _t._rect,
+            locOffsetPosition = _t._offsetPosition,
+            locDrawSizeCanvas = _t._drawSize_Canvas;
+        var flipXOffset = 0 | (locOffsetPosition.x),
+            flipYOffset = -locOffsetPosition.y - locRect.height;
         locDrawSizeCanvas.width = locRect.width * locEGL_ScaleX;
         locDrawSizeCanvas.height = locRect.height * locEGL_ScaleY;
 
