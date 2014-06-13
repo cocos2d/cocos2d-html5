@@ -298,25 +298,25 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
      * @param {Object} dict
      */
     setPropertyFromJsonDict: function (node, dict) {
-        var x = (typeof dict["x"] === 'undefined')?0:dict["x"];
-        var y = (typeof dict["y"] === 'undefined')?0:dict["y"];
+        var x = dict["x"] || 0;
+        var y = dict["y"] || 0;
         node.setPosition(x, y);
 
-        var bVisible = Boolean((typeof dict["visible"] === 'undefined')?1:dict["visible"]);
+        var bVisible = Boolean((dict["visible"] === 'undefined') ? 1 : dict["visible"]);
         node.setVisible(bVisible);
 
-        var nTag = (typeof dict["objecttag"] === 'undefined')?-1:dict["objecttag"];
+        var nTag = (dict["objecttag"] === 'undefined') ? -1 : dict["objecttag"];
         node.setTag(nTag);
 
-        var nZorder = (typeof dict["zorder"] === 'undefined')?0:dict["zorder"];
+        var nZorder = dict["zorder"] || 0;
         node.setLocalZOrder(nZorder);
 
-        var fScaleX = (typeof dict["scalex"] === 'undefined')?1:dict["scalex"];
-        var fScaleY = (typeof dict["scaley"] === 'undefined')?1:dict["scaley"];
+        var fScaleX = (dict["scalex"] === 'undefined') ? 1 : dict["scalex"];
+        var fScaleY = (dict["scaley"] === 'undefined') ? 1 : dict["scaley"];
         node.setScaleX(fScaleX);
         node.setScaleY(fScaleY);
 
-        var fRotationZ = (typeof dict["rotation"] === 'undefined')?0:dict["rotation"];
+        var fRotationZ = dict["rotation"] || 0;
         node.setRotation(fRotationZ);
     },
     setTarget : function(selector,listener){

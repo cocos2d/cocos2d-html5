@@ -2066,6 +2066,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         //do nothing
     },
 
+    initRendererCmd: function(){
+        //do nothing
+    },
+
     _transformForRenderer: null
 });
 
@@ -2093,6 +2097,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     var _p = cc.Node.prototype;
     _p.ctor = function () {
         this._initNode();
+        this.initRendererCmd();
     };
 
     _p.setNodeDirty = function () {

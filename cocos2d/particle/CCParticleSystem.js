@@ -372,7 +372,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         } else if (plistFile) {
             this.initWithFile(plistFile);
         }
+    },
 
+    initRendererCmd: function(){
         this._rendererCmd = new cc.ParticleRenderCmdCanvas(this);
     },
 

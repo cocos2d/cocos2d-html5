@@ -83,12 +83,12 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
 
     /**
      * set string value for labelatlas.
+     * @deprecated
      * @param {String} value
      */
     setStringValue: function (value) {
-        this._stringValue = value;
-        this._labelAtlasRenderer.setString(value);
-        this.labelAtlasScaleChangedWithSize();
+        cc.log("Please use the setString");
+        this.setString(value);
     },
 
     /**
@@ -98,15 +98,25 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
      */
     getStringValue: function () {
         cc.log("Please use the getString");
-        return this._labelAtlasRenderer.getString();
+        return this.getString();
     },
 
     /**
-     * get string value for labelatlas.
+     * get string value for ui text atlas.
      * @returns {String}
      */
     getString: function () {
         return this._labelAtlasRenderer.getString();
+    },
+
+    /**
+     * set string value for ui text atlas.
+     * @param {String} value
+     */
+    setString: function (value) {
+        this._stringValue = value;
+        this._labelAtlasRenderer.setString(value);
+        this.labelAtlasScaleChangedWithSize();
     },
 
     /**
@@ -209,7 +219,7 @@ var _p = ccui.TextAtlas.prototype;
 // Extended properties
 /** @expose */
 _p.string;
-cc.defineGetterSetter(_p, "string", _p.getString, _p.setStringValue);
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
 
 _p = null;
 

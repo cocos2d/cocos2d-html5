@@ -110,8 +110,6 @@ cc.TextureRenderCmdCanvas = function (node) {
     this._texture = null;
     this._isLighterMode = false;
     this._opacity = 1;
-    this._flippedX = false;
-    this._flippedY = false;
     this._textureCoord = node._textureRect_Canvas;
     this._drawingRect = cc.rect(0, 0, 0, 0);
     this._color = node._displayedColor;
@@ -343,14 +341,14 @@ cc.ProgressRenderCmdCanvas = function (node) {
     this._PI180 = Math.PI / 180;
 
     this._node = node;
-    this._transform = node._transformWorld; //{a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
-    this._sprite = node._sprite;
-    this._type = node.getType();
-    this._barRect = node._barRect;
-    this._origin = node._origin;
+    this._transform = node._transformWorld;
+    this._sprite = null;
+    this._type = cc.ProgressTimer.TYPE_RADIAL;
+    this._barRect = cc.rect(0, 0, 0, 0);
+    this._origin = cc.p(0,0);
     this._radius = 0;
-    this._startAngle = 0;
-    this._endAngle = 0;
+    this._startAngle = 270;
+    this._endAngle = 270;
     this._counterClockWise = false;
 };
 
@@ -428,10 +426,10 @@ cc.RenderTextureRenderCmdCanvas = function(node){
     this._clearFlags = node.clearFlags;
     this.autoDraw = node.autoDraw;
 
-    this._cacheCanvas = node._cacheCanvas;
-    this._cacheContext = node._cacheContext;
+    this._cacheCanvas = null;
+    this._cacheContext = null;
 
-    this._sprite = node.sprite;
+    this._sprite = null;
 };
 
 cc.RenderTextureRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
@@ -466,9 +464,9 @@ cc.RenderTextureRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scal
 
 cc.DrawNodeRenderCmdCanvas = function(node){
     this._node = node;
-    this._buffer = node._buffer;
-    this._drawColor = node._drawColor;
-    this._blendFunc = node._blendFunc;
+    this._buffer = null;
+    this._drawColor = null;
+    this._blendFunc = null;
 };
 
 cc.DrawNodeRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
