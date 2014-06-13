@@ -130,22 +130,23 @@ cc.PhysicsDebugNode = cc.DrawNode.extend({
     _spaceObj:null,
     _className:"PhysicsDebugNode",
 
+    ctor: function(){
+        cc.DrawNode.prototype.ctor.apply(this, arguments);
+
+        this._rendererCmd = new cc.PhysicsDebugNodeRenderCmdCanvas(this);
+
+        if(this._rendererCmd){
+            cc.rendererCanvas.pushRenderCommand(this._rendererCmd);
+        }
+
+    },
+
     getSpace:function () {
         return this.space;
     },
 
     setSpace:function (space) {
         this.space = space;
-    },
-
-    draw:function (context) {
-        if (!this.space)
-            return;
-
-        this.space.eachShape(cc.DrawShape.bind(this));
-        this.space.eachConstraint(cc.DrawConstraint.bind(this));
-        cc.DrawNode.prototype.draw.call(this);
-        this.clear();
     }
 });
 

@@ -202,7 +202,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var i, locChildren = this._children;
 
         if (this._cacheDirty) {
-            //
             var eglViewer = cc.view;
             eglViewer._setScaleXYForRenderTexture();
             //add dirty region
@@ -257,9 +256,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                     context.drawImage(locSubCacheCanvasArr[i], 0, 0, selSubCanvas.width, selSubCanvas.height,
                         posX + i * this._subCacheWidth, -(posY + locCanvasHeight), selSubCanvas.width * eglViewer._scaleX, locCanvasHeight);
                 }
-            } else{
-                //context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
-                //    posX, -(posY + locCacheCanvas.height ), locCacheCanvas.width, locCacheCanvas.height );
+            } else {
                 context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
                     posX, -(posY + locCanvasHeight), locCacheCanvas.width * eglViewer._scaleX, locCanvasHeight);
             }

@@ -151,8 +151,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _cacheDirty: true,
     // Cached parent serves to construct the cached parent chain
     _cachedParent: null,
-    _transformGLDirty: null,
-    _transform: null,
+    _transform: null,            //local transform
+    _transformWorld: null,       //world transform
     _inverse: null,
 
     //since 2.0 api
@@ -172,8 +172,15 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _rotationRadiansX: 0,
     _rotationRadiansY: 0,
+
+    // for debug
     _className: "Node",
     _showNode: false,
+
+    //for new renderer
+    _curLevel: -1,
+    _rendererCmd: null,
+    _renderCmdDiry: false,
 
     _initNode: function () {
         var _t = this;
@@ -183,6 +190,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         _t._position = cc.p(0, 0);
         _t._children = [];
         _t._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+        _t._transformWorld = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
 
         var director = cc.director;
         _t._actionManager = director.getActionManager();
@@ -702,8 +710,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Boolean} Var true if the node is visible, false if the node is hidden.
      */
     setVisible: function (Var) {
-        this._visible = Var;
-        this.setNodeDirty();
+        if(this._visible != Var){
+            this._visible = Var;
+            cc.renderer.childrenOrderDirty = true;
+        }
     },
 
     /**
@@ -1123,7 +1133,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
      */
     addChild: function (child, localZOrder, tag) {
-
         cc.assert(child, cc._LogInfos.Node_addChild_3);
 
         if (child === this) {
@@ -1137,10 +1146,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
 
         var tmpzOrder = (localZOrder != null) ? localZOrder : child._localZOrder;
-        child.tag = (tag != null) ? tag : child.tag;
         this._insertChild(child, tmpzOrder);
+
+        child.tag = (tag != null) ? tag : child.tag;
         child._parent = this;
         this._cachedParent && (child._cachedParent = this._cachedParent);
+        child.setOrderOfArrival(cc.s_globalOrderOfArrival++);
 
         if (this._running) {
             child.onEnter();
@@ -1289,7 +1300,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @private
      */
     _insertChild: function (child, z) {
-        this._reorderChildDirty = true;
+        cc.renderer.childrenOrderDirty = this._reorderChildDirty = true;
         this._children.push(child);
         child._setLocalZOrder(z);
     },
@@ -1301,9 +1312,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     reorderChild: function (child, zOrder) {
         cc.assert(child, cc._LogInfos.Node_reorderChild)
-        this._reorderChildDirty = true;
-        child.arrivalOrder = cc.s_globalOrderOfArrival;
-        cc.s_globalOrderOfArrival++;
+        cc.renderer.childrenOrderDirty = this._reorderChildDirty = true;
+        child.arrivalOrder = cc.s_globalOrderOfArrival++;
         child._setLocalZOrder(zOrder);
         this.setNodeDirty();
     },
@@ -1866,7 +1876,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _setNodeDirtyForCache: function () {
         if (this._cacheDirty === false) {
             this._cacheDirty = true;
-
             var cachedP = this._cachedParent;
             cachedP && cachedP != this && cachedP._setNodeDirtyForCache();
         }
@@ -2051,7 +2060,17 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             _t._transformDirty = false;
         }
         return _t._transform;
-    }
+    },
+
+    toRenderer: function(){
+        //do nothing
+    },
+
+    initRendererCmd: function(){
+        //do nothing
+    },
+
+    _transformForRenderer: null
 });
 
 /**
@@ -2074,30 +2093,34 @@ cc.Node.create = function () {
 cc.Node.StateCallbackType = {onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, updateTransform: 5, onExitTransitionDidStart: 6, sortAllChildren: 7};
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-
     //redefine cc.Node
     var _p = cc.Node.prototype;
     _p.ctor = function () {
         this._initNode();
+        this.initRendererCmd();
     };
 
     _p.setNodeDirty = function () {
         var _t = this;
-        _t._setNodeDirtyForCache();
-        _t._transformDirty === false && (_t._transformDirty = _t._inverseDirty = true);
+        if(_t._transformDirty === false){
+            _t._setNodeDirtyForCache();
+            _t._renderCmdDiry = _t._transformDirty = _t._inverseDirty = true;
+            cc.renderer.pushDirtyNode(this);
+        }
     };
 
-    _p.visit = function (ctx) {
+    _p.visit = function () {
         var _t = this;
         // quick return if not visible
-        if (!_t._visible)
-            return;
+        if (!_t._visible) return;
+
+        if( _t._parent)
+            _t._curLevel = _t._parent._curLevel;
 
         //visit for canvas
-        var context = ctx || cc._renderContext, i;
-        var children = _t._children, child;
-        context.save();
-        _t.transform(context);
+        var i, children = _t._children, child;
+        _t.toRenderer();
+        _t.transform();
         var len = children.length;
         if (len > 0) {
             _t.sortAllChildren();
@@ -2105,27 +2128,85 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             for (i = 0; i < len; i++) {
                 child = children[i];
                 if (child._localZOrder < 0)
-                    child.visit(context);
+                    child.visit();
                 else
                     break;
             }
-            _t.draw(context);
+            //_t.draw(context);
+            if(this._rendererCmd)
+                cc.renderer.pushRenderCommand(this._rendererCmd);
             for (; i < len; i++) {
-                children[i].visit(context);
+                children[i].visit();
             }
-        } else
-            _t.draw(context);
-
+        } else{
+            if(this._rendererCmd)
+                cc.renderer.pushRenderCommand(this._rendererCmd);
+        }
         _t.arrivalOrder = 0;
-        context.restore();
+    };
+
+    _p._transformForRenderer = function () {
+        var t = this.nodeToParentTransform(), worldT = this._transformWorld;
+        if(this._parent){
+            var pt = this._parent._transformWorld;
+            //worldT = cc.AffineTransformConcat(t, pt);
+            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
+            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
+            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
+            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
+            if(!this._skewX || this._skewY){
+                var plt = this._parent._transform;
+                var xOffset = -(plt.b + plt.c) * t.ty ;
+                var yOffset = -(plt.b + plt.c) * t.tx;
+                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
+                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
+            }else{
+                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx);          //tx
+                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty);		  //ty
+            }
+        } else {
+            worldT.a = t.a;
+            worldT.b = t.b;
+            worldT.c = t.c;
+            worldT.d = t.d;
+            worldT.tx = t.tx;
+            worldT.ty = t.ty;
+        }
+        this._renderCmdDiry = false;
+        if(!this._children || this._children.length === 0)
+            return;
+        var i, len, locChildren = this._children;
+        for(i = 0, len = locChildren.length; i< len; i++){
+            locChildren[i]._transformForRenderer();
+        }
     };
 
     _p.transform = function (ctx) {
         // transform for canvas
-        var context = ctx || cc._renderContext, eglViewer = cc.view;
+        var t = this.nodeToParentTransform(),
+            worldT = this._transformWorld;         //get the world transform
 
-        var t = this.nodeToParentTransform();
-        context.transform(t.a, t.c, t.b, t.d, t.tx * eglViewer.getScaleX(), -t.ty * eglViewer.getScaleY());
+        if(this._parent){
+            var pt = this._parent._transformWorld;
+            // cc.AffineTransformConcat is incorrect at get world transform
+            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
+            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
+            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
+            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
+
+            var plt = this._parent._transform;
+            var xOffset = -(plt.b + plt.c) * t.ty;
+            var yOffset = -(plt.b + plt.c) * t.tx;
+            worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
+            worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
+        } else {
+            worldT.a = t.a;
+            worldT.b = t.b;
+            worldT.c = t.c;
+            worldT.d = t.d;
+            worldT.tx = t.tx;
+            worldT.ty = t.ty;
+        }
     };
 
     _p.nodeToParentTransform = function () {
@@ -2205,9 +2286,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         }
         return _t._transform;
     };
-
     _p = null;
-
 } else {
     cc.assert(typeof cc._tmp.WebGLCCNode === "function", cc._LogInfos.MissingFile, "BaseNodesWebGL.js");
     cc._tmp.WebGLCCNode();
@@ -2294,6 +2373,9 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
      */
     updateDisplayedOpacity: function (parentOpacity) {
         this._displayedOpacity = this._realOpacity * parentOpacity / 255.0;
+        if(this._rendererCmd && this._rendererCmd._opacity !== undefined)
+            this._rendererCmd._opacity = this._displayedOpacity / 255;
+
         if (this._cascadeOpacityEnabled) {
             var selChildren = this._children;
             for (var i = 0; i < selChildren.length; i++) {

@@ -189,7 +189,6 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
         ctx.globalAlpha = b * a;
         ctx.drawImage(tintedImgCache[2], rect.x, rect.y, w, h, 0, 0, w, h);
     }
-
     if (r + g + b < 1) {
         ctx.globalAlpha = a;
         ctx.drawImage(tintedImgCache[3], rect.x, rect.y, w, h, 0, 0, w, h);
@@ -364,7 +363,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @return {cc.Rect}
      */
     getTextureRect:function () {
-        return cc.rect(this._rect.x, this._rect.y, this._rect.width, this._rect.height);
+        return cc.rect(this._rect);
     },
 
     /**
@@ -471,10 +470,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @param {cc.Rect} rect
      */
     setVertexRect:function (rect) {
-        this._rect.x = rect.x;
-        this._rect.y = rect.y;
-        this._rect.width = rect.width;
-        this._rect.height = rect.height;
+        var locRect = this._rect;
+        locRect.x = rect.x;
+        locRect.y = rect.y;
+        locRect.width = rect.width;
+        locRect.height = rect.height;
     },
 
     sortAllChildren:function () {
@@ -696,7 +696,6 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @param frameIndex
      */
     setDisplayFrameWithAnimationName:function (animationName, frameIndex) {
-
         cc.assert(animationName, cc._LogInfos.Sprite_setDisplayFrameWithAnimationName_3);
 
         var cache = cc.animationCache.getAnimation(animationName);
@@ -723,7 +722,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _setReorderChildDirtyRecursively:function () {
         //only set parents flag the first time
         if (!this._reorderChildDirty) {
-            this._reorderChildDirty = true;
+            cc.renderer.childrenOrderDirty = this._reorderChildDirty = true;
             var pNode = this._parent;
             while (pNode && pNode != this._batchNode) {
                 pNode._setReorderChildDirtyRecursively();
@@ -1031,6 +1030,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                     this.texture = locTexture;
                 }
             }
+            if(this._rendererCmd){
+                this._rendererCmd._texture = this._texture;
+            }
         }
     },
 
@@ -1114,6 +1116,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         }
         this._quadDirty = true;
     },
+
     /**
      * draw sprite to canvas
      * @function
@@ -1141,7 +1144,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
  * var spriteFrame = cc.spriteFrameCache.getSpriteFrame("grossini_dance_01.png");
  * var sprite = cc.Sprite.create(spriteFrame);
  *
- * 4.Create a sprite with an exsiting texture contained in a CCTexture2D object
+ * 4.Create a sprite with an existing texture contained in a CCTexture2D object
  *      After creation, the rect will be the size of the texture, and the offset will be (0,0).
  * var texture = cc.textureCache.addImage("HelloHTML5World.png");
  * var sprite1 = cc.Sprite.create(texture);
@@ -1189,6 +1192,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     _p.ctor = function (fileName, rect, rotated) {
         var self = this;
+        self._textureRect_Canvas = {x: 0, y: 0, width: 0, height:0, validRect: false};
+
         cc.NodeRGBA.prototype.ctor.call(self);
         self._shouldBeHidden = false;
         self._offsetPosition = cc.p(0, 0);
@@ -1198,10 +1203,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         self._newTextureWhenChangeColor = false;
         self._textureLoaded = true;
-        self._textureRect_Canvas = {x: 0, y: 0, width: 0, height:0, validRect: false};
+
         self._drawSize_Canvas = cc.size(0, 0);
 
         self._softInit(fileName, rect, rotated);
+    };
+
+    _p.initRendererCmd = function(){
+        this._rendererCmd = new cc.TextureRenderCmdCanvas(this);
     };
 
     _p.setBlendFunc = function (src, dst) {
@@ -1372,6 +1381,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         _t._offsetPosition.x = relativeOffset.x + (_t._contentSize.width - _t._rect.width) / 2;
         _t._offsetPosition.y = relativeOffset.y + (_t._contentSize.height - _t._rect.height) / 2;
 
+        this.toRenderer();
+
         // rendering using batch node
         if (_t._batchNode) {
             // update dirty, don't update _recursiveDirty
@@ -1453,9 +1464,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var _t = this;
         if(typeof(newFrame) == "string"){
             newFrame = cc.spriteFrameCache.getSpriteFrame(newFrame);
-
-            cc.assert(newFrame, cc._LogInfos.CCSpriteBatchNode_setSpriteFrame)
-
+            cc.assert(newFrame, cc._LogInfos.CCSpriteBatchNode_setSpriteFrame);
         }
 
         _t.setNodeDirty(true);
@@ -1481,8 +1490,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             }, _t);
         }
         // update texture before updating texture rect
-        if (pNewTexture != _t._texture)
+        if (pNewTexture != _t._texture){
             _t.texture = pNewTexture;
+        }
 
         if (_t._rectRotated)
             _t._originalTexture = pNewTexture;
@@ -1544,78 +1554,36 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         }
     };
 
-    _p.draw = function (ctx) {
-        var _t = this;
-        if (!_t._textureLoaded)
+    _p.toRenderer = function(){
+        if(!this._rendererCmd)
             return;
 
-        var context = ctx || cc._renderContext;
-        if (_t._isLighterMode)
-            context.globalCompositeOperation = 'lighter';
+        var locCmd = this._rendererCmd;
+        //set the data to the rendererCmd
+        locCmd._texture = this._texture;
+        locCmd._isLighterMode = this._isLighterMode;
+        locCmd._flippedX = this._flippedX;
+        locCmd._flippedY = this._flippedY;
+        locCmd._opacity = this._displayedOpacity / 255;
 
-        var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
+        var _t = this, locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
 
-        context.globalAlpha = _t._displayedOpacity / 255;
-        var locRect = _t._rect, locContentSize = _t._contentSize, locOffsetPosition = _t._offsetPosition, locDrawSizeCanvas = _t._drawSize_Canvas;
-        var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height, locTextureCoord = _t._textureRect_Canvas;
+        var locRect = _t._rect, locOffsetPosition = _t._offsetPosition, locDrawSizeCanvas = _t._drawSize_Canvas;
+        var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height;
         locDrawSizeCanvas.width = locRect.width * locEGL_ScaleX;
         locDrawSizeCanvas.height = locRect.height * locEGL_ScaleY;
 
-        if (_t._flippedX || _t._flippedY) {
-            context.save();
-            if (_t._flippedX) {
-                flipXOffset = -locOffsetPosition.x - locRect.width;
-                context.scale(-1, 1);
-            }
-            if (_t._flippedY) {
-                flipYOffset = locOffsetPosition.y;
-                context.scale(1, -1);
-            }
-        }
-
+        if (_t._flippedX)
+            flipXOffset = -locOffsetPosition.x - locRect.width;
+        if (_t._flippedY)
+            flipYOffset = locOffsetPosition.y;
         flipXOffset *= locEGL_ScaleX;
         flipYOffset *= locEGL_ScaleY;
 
-        if (_t._texture && locTextureCoord.validRect) {
-            var image = _t._texture.getHtmlElementObj();
-            if (_t._colorized) {
-                context.drawImage(image,
-                    0, 0, locTextureCoord.width, locTextureCoord.height,
-                    flipXOffset, flipYOffset, locDrawSizeCanvas.width, locDrawSizeCanvas.height);
-            } else {
-                context.drawImage(image,
-                    locTextureCoord.x, locTextureCoord.y, locTextureCoord.width,  locTextureCoord.height,
-                    flipXOffset, flipYOffset, locDrawSizeCanvas.width , locDrawSizeCanvas.height);
-            }
-        } else if (!_t._texture && locTextureCoord.validRect) {
-            var curColor = _t.color;
-            context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
-            context.fillRect(flipXOffset, flipYOffset, locContentSize.width * locEGL_ScaleX, locContentSize.height * locEGL_ScaleY);
-        }
-
-        if (cc.SPRITE_DEBUG_DRAW === 1 || _t._showNode) {
-            // draw bounding box
-            context.strokeStyle = "rgba(0,255,0,1)";
-            flipXOffset /= locEGL_ScaleX;
-            flipYOffset /= locEGL_ScaleY;
-            flipYOffset = -flipYOffset;
-            var vertices1 = [cc.p(flipXOffset, flipYOffset),
-                cc.p(flipXOffset + locRect.width, flipYOffset),
-                cc.p(flipXOffset + locRect.width, flipYOffset - locRect.height),
-                cc.p(flipXOffset, flipYOffset - locRect.height)];
-            cc._drawingUtil.drawPoly(vertices1, 4, true);
-        } else if (cc.SPRITE_DEBUG_DRAW === 2) {
-            // draw texture box
-            context.strokeStyle = "rgba(0,255,0,1)";
-            var drawRect = _t._rect;
-            flipYOffset = -flipYOffset;
-            var vertices2 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + drawRect.width, flipYOffset),
-                cc.p(flipXOffset + drawRect.width, flipYOffset - drawRect.height), cc.p(flipXOffset, flipYOffset - drawRect.height)];
-            cc._drawingUtil.drawPoly(vertices2, 4, true);
-        }
-        if (_t._flippedX || _t._flippedY)
-            context.restore();
-        cc.g_NumberOfDraws++;
+        locCmd._drawingRect.x = flipXOffset;
+        locCmd._drawingRect.y = flipYOffset;
+        locCmd._drawingRect.width = locDrawSizeCanvas.width;
+        locCmd._drawingRect.height = locDrawSizeCanvas.height;
     };
 
     delete _p;

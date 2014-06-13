@@ -100,11 +100,14 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
 	 */
     ctor: function () {
         cc.Node.prototype.ctor.call(this);
-        this._buffer = [];
-        this._drawColor = cc.color(255, 255, 255, 255);
-        this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        var locCmd = this._rendererCmd;
+        locCmd._buffer = this._buffer = [];
+        locCmd._drawColor = this._drawColor = cc.color(255, 255, 255, 255);
+        locCmd._blendFunc = this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+    },
 
-		this.init();
+    initRendererCmd: function(){
+        this._rendererCmd = new cc.DrawNodeRenderCmdCanvas(this);
     },
 
     // ----common function start ----
@@ -457,98 +460,6 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
         return this.drawPoly_(vertsCopy, fillColor, lineWidth, color);     
     },
 
-    draw: function (ctx) {
-        var context = ctx || cc._renderContext, _t = this;
-        if ((_t._blendFunc && (_t._blendFunc.src == cc.SRC_ALPHA) && (_t._blendFunc.dst == cc.ONE)))
-            context.globalCompositeOperation = 'lighter';
-
-        for (var i = 0; i < _t._buffer.length; i++) {
-            var element = _t._buffer[i];
-            switch (element.type) {
-                case cc.DrawNode.TYPE_DOT:
-                    _t._drawDot(context, element);
-                    break;
-                case cc.DrawNode.TYPE_SEGMENT:
-                    _t._drawSegment(context, element);
-                    break;
-                case cc.DrawNode.TYPE_POLY:
-                    _t._drawPoly(context, element);
-                    break;
-            }
-        }
-    },
-
-    _drawDot: function (ctx, element) {
-        var locColor = element.fillColor, locPos = element.verts[0], locRadius = element.lineWidth;
-        var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
-
-        ctx.fillStyle = "rgba(" + (0 | locColor.r) + "," + (0 | locColor.g) + "," + (0 | locColor.b) + "," + locColor.a / 255 + ")";
-        ctx.beginPath();
-        ctx.arc(locPos.x * locScaleX, -locPos.y * locScaleY, locRadius * locScaleX, 0, Math.PI * 2, false);
-        ctx.closePath();
-        ctx.fill();
-    },
-
-    _drawSegment: function (ctx, element) {
-        var locColor = element.lineColor;
-        var locFrom = element.verts[0];
-        var locTo = element.verts[1];
-        var locLineWidth = element.lineWidth;
-        var locLineCap = element.lineCap;
-        var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
-
-        ctx.strokeStyle = "rgba(" + (0 | locColor.r) + "," + (0 | locColor.g) + "," + (0 | locColor.b) + "," + locColor.a / 255 + ")";
-        ctx.lineWidth = locLineWidth * locScaleX;
-        ctx.beginPath();
-        ctx.lineCap = locLineCap;
-        ctx.moveTo(locFrom.x * locScaleX, -locFrom.y * locScaleY);
-        ctx.lineTo(locTo.x * locScaleX, -locTo.y * locScaleY);
-        ctx.stroke();
-    },
-
-    _drawPoly: function (ctx, element) {
-        var locVertices = element.verts;
-        var locLineCap = element.lineCap;
-        var locFillColor = element.fillColor;
-        var locLineWidth = element.lineWidth;
-        var locLineColor = element.lineColor;
-        var locIsClosePolygon = element.isClosePolygon;
-        var locIsFill = element.isFill;
-        var locIsStroke = element.isStroke;
-        if (locVertices == null)
-            return;
-
-        var firstPoint = locVertices[0];
-        var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
-
-        ctx.lineCap = locLineCap;
-
-        if (locFillColor) {
-            ctx.fillStyle = "rgba(" + (0 | locFillColor.r) + "," + (0 | locFillColor.g) + ","
-                + (0 | locFillColor.b) + "," + locFillColor.a / 255 + ")";
-        }
-
-        if (locLineWidth) {
-            ctx.lineWidth = locLineWidth * locScaleX;
-        }
-        if (locLineColor) {
-            ctx.strokeStyle = "rgba(" + (0 | locLineColor.r) + "," + (0 | locLineColor.g) + ","
-                + (0 | locLineColor.b) + "," + locLineColor.a / 255 + ")";
-        }
-        ctx.beginPath();
-        ctx.moveTo(firstPoint.x * locScaleX, -firstPoint.y * locScaleY);
-        for (var i = 1, len = locVertices.length; i < len; i++)
-            ctx.lineTo(locVertices[i].x * locScaleX, -locVertices[i].y * locScaleY);
-
-        if (locIsClosePolygon)
-            ctx.closePath();
-
-        if (locIsFill)
-            ctx.fill();
-        if (locIsStroke)
-            ctx.stroke();
-    },
-
     /**
      * Clear the geometry in the node's buffer.
      */
@@ -882,8 +793,9 @@ cc.DrawNodeWebGL = cc.Node.extend({
         color = color || this.getDrawColor();
         if (color.a == null)
             color.a = 255;
-        for(var i = 0, len = points.length; i < len; i++)
+        for(var i = 0, len = points.length; i < len; i++){
             this.drawDot(points[i], radius, color);
+        }
     },
 
     drawSegment:function (from, to, radius, color) {

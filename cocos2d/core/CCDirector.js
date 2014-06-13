@@ -93,6 +93,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     _winSizeInPoints: null,
 
     _lastUpdate: null,
+    _lastUpdateTime: null,
     _nextScene: null,
     _notificationNode: null,
     _openGLView: null,
@@ -104,6 +105,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     _totalFrames: 0,
     _secondsPerFrame: 0,
 
+    _ignoreClearCanvas: false,
     _dirtyRegion: null,
 
     _scheduler: null,
@@ -116,8 +118,10 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     ctor: function () {
         var self = this;
         self._lastUpdate = Date.now();
+        self._lastUpdateTime = Date.now();
         cc.eventManager.addCustomListener(cc.game.EVENT_SHOW, function () {
             self._lastUpdate = Date.now();
+            self._lastUpdateTime = Date.now();
         });
     },
 
@@ -194,21 +198,32 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * convertToGL move to CCDirectorWebGL
      * convertToUI move to CCDirectorWebGL
      */
+/*    updateScene: function(){
+        var now = Date.now();
 
+        var updateDeltaTime = (now - this._lastUpdateTime) / 1000;
+
+        if (!this._paused) {
+            this._scheduler.update(updateDeltaTime);
+            cc.eventManager.dispatchEvent(this._eventAfterUpdate);
+        }
+        this._lastUpdateTime = now;
+    },*/
     /**
      *  Draw the scene. This method is called every frame. Don't call it manually.
      */
     drawScene: function () {
+        var renderer = cc.renderer;
         // calculate "global" dt
-        this.calculateDeltaTime();
+       this.calculateDeltaTime();                        //0.05k
 
         //tick before glClear: issue #533
-        if (!this._paused) {
+         if (!this._paused) {
+             //0.2k
             this._scheduler.update(this._deltaTime);
             cc.eventManager.dispatchEvent(this._eventAfterUpdate);
         }
-
-        this._clear();
+        this._clear();                                      //0.1k
 
         /* to avoid flickr, nextScene MUST be here: after tick and before draw.
          XXX: Which bug is this one. It seems that it can't be reproduced with v0.9 */
@@ -216,12 +231,20 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
             this.setNextScene();
         }
 
-        if (this._beforeVisitScene) this._beforeVisitScene();
+        if (this._beforeVisitScene)
+            this._beforeVisitScene();
 
         // draw the scene
         if (this._runningScene) {
-            this._runningScene.visit();
-            cc.eventManager.dispatchEvent(this._eventAfterVisit);
+            if (renderer.childrenOrderDirty === true) {
+                cc.renderer.clearRenderCommands();
+                this._runningScene._curLevel = 0;                          //level start from 0;
+                this._runningScene.visit();
+                renderer.resetFlag();
+            } else if (renderer.transformDirty() === true) {
+                renderer.transform();
+            }
+            cc.eventManager.dispatchEvent(this._eventAfterVisit);     //0.2k
         }
 
         // draw the notifications node
@@ -231,10 +254,10 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
         if (this._displayStats)
             this._showStats();
 
-        if (this._afterVisitScene) this._afterVisitScene();
-
-        //TODO
-        cc.eventManager.dispatchEvent(this._eventAfterDraw);
+        if (this._afterVisitScene)
+            this._afterVisitScene();
+        renderer.rendering(cc._renderContext);                              //0.4k
+        cc.eventManager.dispatchEvent(this._eventAfterDraw);              //0.2k
         this._totalFrames++;
 
         if (this._displayStats)
@@ -360,7 +383,6 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
 
         // don't release the event handlers
         // They are needed in case the director is run again
-
         if (this._runningScene) {
             this._runningScene.onExitTransitionDidStart();
             this._runningScene.onExit();
@@ -508,6 +530,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
         }
 
         this._runningScene = this._nextScene;
+        cc.renderer.childrenOrderDirty = true;
 
         this._nextScene = null;
         if ((!runningIsTransition) && (this._runningScene != null)) {
@@ -525,7 +548,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     },
 
     /**
-     *  CCDirector delegate. It shall implemente the CCDirectorDelegate protocol
+     *  CCDirector delegate. It shall implement the CCDirectorDelegate protocol
      *  @return {cc.DirectorDelegate}
      */
     getDelegate: function () {
@@ -558,10 +581,11 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
         this._frames++;
         this._accumDt += this._deltaTime;
         if (this._FPSLabel && this._SPFLabel && this._drawsLabel) {
+            //this._SPFLabel.string = this._secondsPerFrame.toFixed(3);
             if (this._accumDt > cc.DIRECTOR_FPS_INTERVAL) {
                 this._SPFLabel.string = this._secondsPerFrame.toFixed(3);
 
-                this._frameRate = this._frames / this._accumDt;
+                this._frameRate = this._frames ;// / this._accumDt;
                 this._frames = 0;
                 this._accumDt = 0;
 
@@ -645,6 +669,22 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     },
 
     /**
+     * Set whether or not clear the canvas before each frame
+     * @param {Boolean} ignoreClearCanvas
+     */
+    ignoreClearCanvas: function (ignoreClearCanvas) {
+        this._ignoreClearCanvas = ignoreClearCanvas;
+    },
+
+    /**
+     * Indicate whether ignore clear canvas or not
+     * @returns {Boolean}
+     */
+    isIgnoreClearCanvas: function () {
+        return this._ignoreClearCanvas;
+    },
+
+    /**
      * How many frames were called since the director started
      * @return {Number}
      */
@@ -673,7 +713,6 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * @param {Number} level
      */
     popToSceneStackLevel: function (level) {
-
         cc.assert(this._runningScene, cc._LogInfos.Director_popToSceneStackLevel_2);
 
         var locScenesStack = this._scenesStack;
@@ -835,7 +874,6 @@ cc.Director.PROJECTION_CUSTOM = 3;
 cc.Director.PROJECTION_DEFAULT = cc.Director.PROJECTION_3D;
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-
     var _p = cc.Director.prototype;
 
     _p.setProjection = function (projection) {
@@ -856,10 +894,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p._clear = function () {
-        var viewport = this._openGLView.getViewPortRect();
-        cc._renderContext.clearRect(-viewport.x, viewport.y, viewport.width, -viewport.height);
+        if (!this._ignoreClearCanvas) {
+            var viewport = this._openGLView.getViewPortRect();
+            cc._renderContext.clearRect(-viewport.x, viewport.y, viewport.width, -viewport.height);
+        }
     };
-
 
     _p._createStatsLabel = function () {
         var _t = this;

@@ -814,10 +814,12 @@ cc.loader = {
     }
 
     var onHidden = function () {
+        cc.game._paused = true;
         if (cc.eventManager && cc.game._eventHide)
             cc.eventManager.dispatchEvent(cc.game._eventHide);
     };
     var onShow = function () {
+        cc.game._paused = false;
         if (cc.eventManager && cc.game._eventShow)
             cc.eventManager.dispatchEvent(cc.game._eventShow);
     };
@@ -1456,7 +1458,7 @@ cc.game = {
      */
     _runMainLoop: function () {
         var self = this, callback, config = self.config, CONFIG_KEY = self.CONFIG_KEY,
-            win = window, frameRate = config[CONFIG_KEY.frameRate],
+            win = window, frameRate = config[CONFIG_KEY.frameRate], updateCallback,
             director = cc.director;
         director.setDisplayStats(config[CONFIG_KEY.showFPS]);
         if (win.requestAnimFrame && frameRate == 60) {
@@ -1467,6 +1469,11 @@ cc.game = {
                 }
             };
             win.requestAnimFrame(callback);
+/*            updateCallback = function(){
+                if(!self._paused)
+                    director.updateScene();
+            };
+            self._intervalId = setInterval(updateCallback, 1000.0/ 30 );*/
         } else {
             callback = function () {
                 director.mainLoop();

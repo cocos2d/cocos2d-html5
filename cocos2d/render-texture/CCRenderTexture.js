@@ -130,11 +130,13 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      */
     _ctorForCanvas: function (width, height, format, depthStencilFormat) {
         cc.Node.prototype.ctor.call(this);
+
         this._clearColor = cc.color(255, 255, 255, 255);
         this._clearColorStr = "rgba(255,255,255,1)";
 
         this._cacheCanvas = cc.newElement('canvas');
         this._cacheContext = this._cacheCanvas.getContext('2d');
+
         this.anchorX = 0;
 	    this.anchorY = 0;
 
@@ -143,6 +145,10 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             depthStencilFormat = depthStencilFormat || 0;
             this.initWithWidthAndHeight(width, height, format, depthStencilFormat);
         }
+    },
+
+    initRendererCmd: function(){
+        this._rendererCmd = new cc.RenderTextureRenderCmdCanvas(this);
     },
 
     /**
@@ -224,6 +230,13 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         texture.initWithElement(locCacheCanvas);
         texture.handleLoadedTexture();
         this.sprite = cc.Sprite.create(texture);
+        this.addChild(this.sprite);
+
+        var locCmd = this._rendererCmd;
+        locCmd._sprite = this.sprite;
+        locCmd._cacheCanvas = this._cacheCanvas;
+        locCmd._cacheContext = this._cacheContext;
+
         return true;
     },
 
@@ -324,8 +337,11 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     begin: null,
 
     _beginForCanvas: function () {
-        cc._renderContext = this._cacheContext;
-        cc.view._setScaleXYForRenderTexture();
+        //old code
+        //cc._renderContext = this._cacheContext;
+        //cc.view._setScaleXYForRenderTexture();
+
+        cc.renderer._isRenderTextureOn = true;
 
         /*// Save the current matrix
          cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
@@ -410,7 +426,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         var context = this._cacheContext;
         var locCanvas = this._cacheCanvas;
         context.save();
-        context.fillStyle = "rgba(" + (0 | r) + "," + (0 | g) + "," + (0 | b) + "," + a / 255 + ")";
+        context.fillStyle = "rgba(" + (0 | (r * 255)) + "," + (0 | (g * 255)) + "," + (0 | (b * 255)) + "," + a + ")";
         context.clearRect(0, 0, locCanvas.width, -locCanvas.height);
         context.fillRect(0, 0, locCanvas.width, -locCanvas.height);
         context.restore();
@@ -461,8 +477,11 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     end: null,
 
     _endForCanvas: function () {
-        cc._renderContext = cc._mainRenderContextBackup;
-        cc.view._resetScale();
+        //Old code
+        //cc._renderContext = cc._mainRenderContextBackup;
+        //cc.view._resetScale();
+
+        cc.renderer._renderingForRenderTexture(this._cacheContext);
 
         //TODO
         /*//restore viewport
@@ -578,13 +597,14 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             return;
 
         ctx = ctx || cc._renderContext;
-        ctx.save();
+        //ctx.save();
 
-        this.draw(ctx);                                                   // update children of RenderTexture before
+        //this.draw(ctx);                                                   // update children of RenderTexture before
         this.transform(ctx);
-        this.sprite.visit();                                             // draw the RenderTexture
+        this.toRenderer();
+        this.sprite.visit(ctx);                                        // draw the RenderTexture
 
-        ctx.restore();
+        //ctx.restore();
 
         this.arrivalOrder = 0;
     },
@@ -813,7 +833,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     /**
-     * When enabled, it will render its children into the texture automatically. Disabled by default for compatiblity reasons. <br/>
+     * When enabled, it will render its children into the texture automatically. Disabled by default for compatibility reasons. <br/>
      * Will be enabled in the future.
      * @return {Boolean}
      */
@@ -823,6 +843,16 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     setAutoDraw:function (autoDraw) {
         this.autoDraw = autoDraw;
+    },
+
+    toRenderer: function(){
+        if(!this._rendererCmd)
+            return;
+
+        var locCmd = this._rendererCmd;
+        locCmd._clearFlags = this.clearFlags;
+        locCmd.autoDraw = this.autoDraw;
+        locCmd._sprite = this.sprite;
     }
 });
 

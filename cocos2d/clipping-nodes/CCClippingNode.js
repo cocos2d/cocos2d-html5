@@ -70,10 +70,15 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * @param {cc.Node} [stencil=null]
      */
     ctor: function (stencil) {
+
         cc.Node.prototype.ctor.call(this);
         this._stencil = null;
         this.alphaThreshold = 0;
         this.inverted = false;
+
+        this._rendererSaveCmd = new cc.ClippingNodeSaveRenderCmdCanvas(this);
+        this._rendererClipCmd = new cc.ClippingNodeClipRenderCmdCanvas(this);
+        this._rendererRestoreCmd = new cc.ClippingNodeRestoreRenderCmdCanvas(this);
 
         stencil = stencil || null;
         cc.ClippingNode.prototype.init.call(this, stencil);
@@ -311,80 +316,27 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         }
 
         var context = ctx || cc._renderContext;
-        var canvas = context.canvas;
-        // Composition mode, costy but support texture stencil
-        if (this._cangodhelpme() || this._stencil instanceof cc.Sprite) {
-            // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
-            var locCache = cc.ClippingNode._getSharedCache();
-            locCache.width = canvas.width;
-            locCache.height = canvas.height;
-            var locCacheCtx = locCache.getContext("2d");
-            locCacheCtx.drawImage(canvas, 0, 0);
 
-            context.save();
-            // Draw everything first using node visit function
-            cc.Node.prototype.visit.call(this, context);
+        var i, children = this._children;
 
-            context.globalCompositeOperation = this.inverted ? "destination-out" : "destination-in";
+        this.transform(context);
 
-            this.transform(context);
-            this._stencil.visit();
+        cc.renderer.pushRenderCommand(this._rendererSaveCmd);
+        this._stencil.visit(context);
 
-            context.restore();
+        cc.renderer.pushRenderCommand(this._rendererClipCmd);
 
-            // Redraw the cached canvas, so that the cliped area shows the background etc.
-            context.save();
-            context.setTransform(1, 0, 0, 1, 0, 0);
-            context.globalCompositeOperation = "destination-over";
-            context.drawImage(locCache, 0, 0);
-            context.restore();
-        }
-        // Clip mode, fast, but only support cc.DrawNode
-        else {
-            var i, children = this._children, locChild;
-
-            context.save();
-            this.transform(context);
-            this._stencil.visit(context);
-            if (this.inverted) {
-                context.save();
-
-                context.setTransform(1, 0, 0, 1, 0, 0);
-
-                context.moveTo(0, 0);
-                context.lineTo(0, canvas.height);
-                context.lineTo(canvas.width, canvas.height);
-                context.lineTo(canvas.width, 0);
-                context.lineTo(0, 0);
-
-                context.restore();
+        this._cangodhelpme(true);
+        var len = children.length;
+        if (len > 0) {
+            this.sortAllChildren();
+            for (i = 0; i < len; i++) {
+                children[i].visit(context);
             }
-            context.clip();
-
-            // Clip mode doesn't support recusive stencil, so once we used a clip stencil,
-            // so if it has ClippingNode as a child, the child must uses composition stencil.
-            this._cangodhelpme(true);
-            var len = children.length;
-            if (len > 0) {
-                this.sortAllChildren();
-                // draw children zOrder < 0
-                for (i = 0; i < len; i++) {
-                    locChild = children[i];
-                    if (locChild._localZOrder < 0)
-                        locChild.visit(context);
-                    else
-                        break;
-                }
-                this.draw(context);
-                for (; i < len; i++) {
-                    children[i].visit(context);
-                }
-            } else
-                this.draw(context);
-            this._cangodhelpme(false);
-
-            context.restore();
         }
+        this._cangodhelpme(false);
+
+        cc.renderer.pushRenderCommand(this._rendererRestoreCmd);
     },
 
     /**
@@ -408,29 +360,33 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
     _setStencilForCanvas: function (stencil) {
         this._stencil = stencil;
+        if(stencil._buffer){
+            for(var i=0; i<stencil._buffer.length; i++){
+                stencil._buffer[i].isFill = false;
+                stencil._buffer[i].isStroke = false;
+            }
+        }
         var locContext = cc._renderContext;
         // For texture stencil, use the sprite itself
-        if (stencil instanceof cc.Sprite) {
-            return;
-        }
+
         // For shape stencil, rewrite the draw of stencil ,only init the clip path and draw nothing.
-        else if (stencil instanceof cc.DrawNode) {
-            stencil.draw = function () {
-                var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
-                locContext.beginPath();
+        if (stencil instanceof cc.DrawNode) {
+            stencil._rendererCmd.rendering = function (ctx, scaleX, scaleY) {
+                var context = ctx || cc._renderContext;
+                context.beginPath();
                 for (var i = 0; i < stencil._buffer.length; i++) {
                     var element = stencil._buffer[i];
                     var vertices = element.verts;
 
-                    cc.assert(cc.vertexListIsClockwise(vertices),
-                        "Only clockwise polygons should be used as stencil");
+                    //cc.assert(cc.vertexListIsClockwise(vertices),
+                    //    "Only clockwise polygons should be used as stencil");
 
                     var firstPoint = vertices[0];
-                    locContext.moveTo(firstPoint.x * locEGL_ScaleX, -firstPoint.y * locEGL_ScaleY);
+                    context.moveTo(firstPoint.x * scaleX, -firstPoint.y * scaleY);
                     for (var j = 1, len = vertices.length; j < len; j++)
-                        locContext.lineTo(vertices[j].x * locEGL_ScaleX, -vertices[j].y * locEGL_ScaleY);
+                        context.lineTo(vertices[j].x * scaleX, -vertices[j].y * scaleY);
                 }
-            }
+            };
         }
     },
 

@@ -25,8 +25,6 @@
  ****************************************************************************/
 
 cc._tmp.WebGLSprite = function () {
-
-
     var _p = cc.Sprite.prototype;
 
     _p._spriteFrameLoadedCallback = function(spriteFrame){
@@ -251,8 +249,8 @@ cc._tmp.WebGLSprite = function () {
         } else {
             // self rendering
             // Atlas: Vertex
-            var x1 = 0 + _t._offsetPosition.x;
-            var y1 = 0 + _t._offsetPosition.y;
+            var x1 = _t._offsetPosition.x;
+            var y1 = _t._offsetPosition.y;
             var x2 = x1 + locRect.width;
             var y2 = y1 + locRect.height;
 
