@@ -110,7 +110,15 @@ cc.TextureRenderCmdCanvas = function (node) {
     this._texture = null;
     this._isLighterMode = false;
     this._opacity = 1;
-    this._textureCoord = node._textureRect_Canvas;
+    this._textureCoord = {
+            renderX: 0,
+            renderY: 0,
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0,
+            validRect: false
+        };
     this._drawingRect = cc.rect(0, 0, 0, 0);
     this._color = node._displayedColor;
 };
@@ -141,30 +149,20 @@ cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
             if (_t._texture._isLoaded) {
                 context.globalAlpha = _t._opacity;
                 image = _t._texture._htmlElementObj;
-                if(this._node._colorized){
-                    context.drawImage(image,
-                        0,
-                        0,
-                        locTextureCoord.width,
-                        locTextureCoord.height,
-                        locDrawingRect.x,
-                        locDrawingRect.y,
-                        locDrawingRect.width,
-                        locDrawingRect.height
-                    );
-                }else{
-                    context.drawImage(image,
-                        locTextureCoord.x,
-                        locTextureCoord.y,
-                        locTextureCoord.width,
-                        locTextureCoord.height,
-                        locDrawingRect.x,
-                        locDrawingRect.y,
-                        locDrawingRect.width,
-                        locDrawingRect.height
-                    );
-                }
+
+                context.drawImage(image,
+                    locTextureCoord.renderX,
+                    locTextureCoord.renderY,
+                    locTextureCoord.width,
+                    locTextureCoord.height,
+                    locDrawingRect.x,
+                    locDrawingRect.y,
+                    locDrawingRect.width,
+                    locDrawingRect.height
+                );
+
             }
+
         } else if (!_t._texture && locTextureCoord.validRect) {
             curColor = _t._color;
             context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + _t._opacity + ")";
@@ -181,31 +179,17 @@ cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
             if (_t._texture._isLoaded) {
                 context.globalAlpha = _t._opacity;
                 image = _t._texture._htmlElementObj;
-                if(this._node._colorized){
-                    context.drawImage(
-                        image,
-                        0,
-                        0,
-                        locTextureCoord.width,
-                        locTextureCoord.height,
-                            t.tx * scaleX + locDrawingRect.x,
-                            -t.ty * scaleY + locDrawingRect.y,
-                        locDrawingRect.width,
-                        locDrawingRect.height
-                    );
-                }else{
-                    context.drawImage(
-                        image,
-                        locTextureCoord.x,
-                        locTextureCoord.y,
-                        locTextureCoord.width,
-                        locTextureCoord.height,
-                            t.tx * scaleX + locDrawingRect.x,
-                            -t.ty * scaleY + locDrawingRect.y,
-                        locDrawingRect.width,
-                        locDrawingRect.height
-                    );
-                }
+                context.drawImage(
+                    image,
+                    locTextureCoord.renderX,
+                    locTextureCoord.renderY,
+                    locTextureCoord.width,
+                    locTextureCoord.height,
+                    t.tx * scaleX + locDrawingRect.x,
+                    -t.ty * scaleY + locDrawingRect.y,
+                    locDrawingRect.width,
+                    locDrawingRect.height
+                );
             }
         } else if (!_t._texture && locTextureCoord.validRect) {
             curColor = _t._color;
@@ -389,7 +373,7 @@ cc.ProgressRenderCmdCanvas = function (node) {
 cc.ProgressRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
     var context = ctx || cc._renderContext, locSprite = this._sprite;
 
-    var locTextureCoord = locSprite._textureRect_Canvas;
+    var locTextureCoord = locSprite._rendererCmd._textureCoord;
     if (!locSprite._texture || !locTextureCoord.validRect)
         return;
 
