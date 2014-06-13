@@ -29,8 +29,8 @@ cc.rendererCanvas = {
     _transformNodePool: [],                              //save nodes transform dirty
     _renderCmds: [],                                     //save renderer commands
 
-    _isRenderTextureOn: false,
-    _renderTextureCmds: [],
+    _isCacheToCanvasOn: false,                          //a switch that whether cache the rendererCmd to cacheToCanvasCmds
+    _cacheToCanvasCmds: [],                              // an array saves the renderer commands need for cache to other canvas
 
     rendering: function (ctx) {
         var locCmds = this._renderCmds,
@@ -45,7 +45,7 @@ cc.rendererCanvas = {
     },
 
     _renderingForRenderTexture: function (ctx) {
-        var locCmds = this._renderTextureCmds, i, len;
+        var locCmds = this._cacheToCanvasCmds, i, len;
         if (!ctx)
             cc.log("The context of RenderTexture is invalid.");
         for (i = 0, len = locCmds.length; i < len; i++) {
@@ -53,7 +53,7 @@ cc.rendererCanvas = {
         }
 
         locCmds.length = 0;
-        this._isRenderTextureOn = false;
+        this._isCacheToCanvasOn = false;
     },
 
     resetFlag: function () {
@@ -92,9 +92,9 @@ cc.rendererCanvas = {
     },
 
     pushRenderCommand: function (cmd) {
-        if (this._isRenderTextureOn) {
-            if (this._renderTextureCmds.indexOf(cmd) === -1)
-                this._renderTextureCmds.push(cmd);
+        if (this._isCacheToCanvasOn) {
+            if (this._cacheToCanvasCmds.indexOf(cmd) === -1)
+                this._cacheToCanvasCmds.push(cmd);
         } else {
             if (this._renderCmds.indexOf(cmd) === -1)
                 this._renderCmds.push(cmd);

@@ -180,7 +180,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     //for new renderer
     _curLevel: -1,
     _rendererCmd: null,
-    _renderCmdDiry: false,
+    _renderCmdDiry: false,                                          //rendererCmd dirty flag
 
     _initNode: function () {
         var _t = this;

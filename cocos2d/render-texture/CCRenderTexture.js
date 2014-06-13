@@ -341,7 +341,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         //cc._renderContext = this._cacheContext;
         //cc.view._setScaleXYForRenderTexture();
 
-        cc.renderer._isRenderTextureOn = true;
+        cc.renderer._isCacheToCanvasOn = true;
 
         /*// Save the current matrix
          cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);

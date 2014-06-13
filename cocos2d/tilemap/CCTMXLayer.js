@@ -72,7 +72,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     //Only used when vertexZ is used
     _vertexZvalue: null,
     _useAutomaticVertexZ: null,
-    _alphaFuncValue: null,
+
     //used for optimization
     _reusedTile: null,
     _atlasIndexArray: null,
@@ -149,8 +149,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             // Init sub caches if needed
             var totalPixel = locCanvas.width * locCanvas.height;
             if(totalPixel > this._maxCachePixel) {
-                if(!this._subCacheCanvas) this._subCacheCanvas = [];
-                if(!this._subCacheContext) this._subCacheContext = [];
+                if(!this._subCacheCanvas)
+                    this._subCacheCanvas = [];
+                if(!this._subCacheContext)
+                    this._subCacheContext = [];
 
                 this._subCacheCount = Math.ceil( totalPixel / this._maxCachePixel );
                 var locSubCacheCanvas = this._subCacheCanvas, i;
@@ -170,7 +172,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 }
             }
             // Otherwise use count as a flag to disable sub caches
-            else this._subCacheCount = 0;
+            else
+                this._subCacheCount = 0;
         }
     },
 

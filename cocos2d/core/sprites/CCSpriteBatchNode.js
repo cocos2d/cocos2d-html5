@@ -150,6 +150,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         return this.initWithTexture(texture2D, capacity);
     },
 
+    //set the cache dirty flag for canvas
     _setNodeDirtyForCache: function () {
         this._cacheDirty = true;
     },
