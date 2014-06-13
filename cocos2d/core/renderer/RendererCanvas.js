@@ -421,15 +421,16 @@ cc.ProgressRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) 
 
     //draw sprite
     var image = locSprite._texture.getHtmlElementObj();
-    if (locSprite._colorized) {
-        context.drawImage(image,
-            0, 0, locTextureCoord.width, locTextureCoord.height,
-            flipXOffset, flipYOffset, locDrawSizeCanvas.width, locDrawSizeCanvas.height);
-    } else {
-        context.drawImage(image,
-            locTextureCoord.x, locTextureCoord.y, locTextureCoord.width, locTextureCoord.height,
-            flipXOffset, flipYOffset, locDrawSizeCanvas.width, locDrawSizeCanvas.height);
-    }
+    context.drawImage(image,
+        locTextureCoord.renderX,
+        locTextureCoord.renderY,
+        locTextureCoord.width,
+        locTextureCoord.height,
+        flipXOffset, flipYOffset,
+        locDrawSizeCanvas.width,
+        locDrawSizeCanvas.height
+    );
+
 
     context.restore();
     cc.g_NumberOfDraws++;
