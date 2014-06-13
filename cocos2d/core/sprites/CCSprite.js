@@ -1192,6 +1192,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     _p.ctor = function (fileName, rect, rotated) {
         var self = this;
+        self._textureRect_Canvas = {x: 0, y: 0, width: 0, height:0, validRect: false};
+
         cc.NodeRGBA.prototype.ctor.call(self);
         self._shouldBeHidden = false;
         self._offsetPosition = cc.p(0, 0);
@@ -1201,11 +1203,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         self._newTextureWhenChangeColor = false;
         self._textureLoaded = true;
-        self._textureRect_Canvas = {x: 0, y: 0, width: 0, height:0, validRect: false};
+
         self._drawSize_Canvas = cc.size(0, 0);
 
         self._softInit(fileName, rect, rotated);
-        self._rendererCmd = new cc.TextureRenderCmdCanvas(this);
+    };
+
+    _p.initRendererCmd = function(){
+        this._rendererCmd = new cc.TextureRenderCmdCanvas(this);
     };
 
     _p.setBlendFunc = function (src, dst) {

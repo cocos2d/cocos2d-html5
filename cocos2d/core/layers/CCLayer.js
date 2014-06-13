@@ -495,7 +495,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
  * // Example
  * //Create a yellow color layer as background
  * var yellowBackground = cc.LayerColor.create(cc.color(255,255,0,255));
- * //If you didnt pass in width and height, it defaults to the same size as the canvas
+ * //If you didn't pass in width and height, it defaults to the same size as the canvas
  *
  * //create a yellow box, 200 by 200 in size
  * var yellowBox = cc.LayerColor.create(cc.color(255,255,0,255), 200, 200);
@@ -511,6 +511,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         cc.LayerRGBA.prototype.ctor.call(this);
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         cc.LayerColor.prototype.init.call(this, color, width, height);
+    };
+    _p.initRendererCmd = function(){
         this._rendererCmd = new cc.RectRenderCmdCanvas(this);
     };
     _p._setWidth = function(width){
@@ -523,7 +525,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
     _p._updateColor = function () {
         var locCmd = this._rendererCmd;
-        if(!locCmd)
+        if(!locCmd || !locCmd._color)
             return;
         var locColor = this._displayedColor;
         locCmd._color.r = locColor.r;
@@ -623,8 +625,11 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         _t._alongVector = cc.p(0, -1);
         _t._startOpacity = 255;
         _t._endOpacity = 255;
-        this._rendererCmd = new cc.GradientRectRenderCmdCanvas(this);
         cc.LayerGradient.prototype.init.call(_t, start, end, v);
+    },
+
+    initRendererCmd: function(){
+        this._rendererCmd = new cc.GradientRectRenderCmdCanvas(this);
     },
 
     /**

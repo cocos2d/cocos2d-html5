@@ -130,11 +130,13 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      */
     _ctorForCanvas: function (width, height, format, depthStencilFormat) {
         cc.Node.prototype.ctor.call(this);
+
         this._clearColor = cc.color(255, 255, 255, 255);
         this._clearColorStr = "rgba(255,255,255,1)";
 
         this._cacheCanvas = cc.newElement('canvas');
         this._cacheContext = this._cacheCanvas.getContext('2d');
+
         this.anchorX = 0;
 	    this.anchorY = 0;
 
@@ -143,6 +145,10 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             depthStencilFormat = depthStencilFormat || 0;
             this.initWithWidthAndHeight(width, height, format, depthStencilFormat);
         }
+    },
+
+    initRendererCmd: function(){
+        this._rendererCmd = new cc.RenderTextureRenderCmdCanvas(this);
     },
 
     /**
@@ -226,7 +232,10 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         this.sprite = cc.Sprite.create(texture);
         this.addChild(this.sprite);
 
-        this._rendererCmd = new cc.RenderTextureRenderCmdCanvas(this);
+        var locCmd = this._rendererCmd;
+        locCmd._sprite = this.sprite;
+        locCmd._cacheCanvas = this._cacheCanvas;
+        locCmd._cacheContext = this._cacheContext;
 
         return true;
     },
