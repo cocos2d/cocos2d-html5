@@ -761,7 +761,7 @@ var _p = ccui.TextField.prototype;
 // Extended properties
 /** @expose */
 _p.string;
-cc.defineGetterSetter(_p, "string", _p.getString, _p.setText);
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
 /** @expose */
 _p.placeHolder;
 cc.defineGetterSetter(_p, "placeHolder", _p.getPlaceHolder, _p.setPlaceHolder);

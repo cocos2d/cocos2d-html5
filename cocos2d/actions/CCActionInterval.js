@@ -2322,16 +2322,13 @@ cc.FadeIn = cc.FadeTo.extend(/** @lends cc.FadeIn# */{
 
 /**
  * @param {Number} duration duration in seconds
- * @param {Number} [toOpacity] to opacity
  * @return {cc.FadeIn}
  * @example
  * //example
  * var action = cc.FadeIn.create(1.0);
  */
-cc.FadeIn.create = function (duration, toOpacity) {
-    if(toOpacity == null)
-        toOpacity = 255;
-    return new cc.FadeIn(duration, toOpacity);
+cc.FadeIn.create = function (duration) {
+    return new cc.FadeIn(duration, 255);
 };
 
 
