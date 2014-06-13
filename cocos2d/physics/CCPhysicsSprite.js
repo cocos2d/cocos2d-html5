@@ -205,7 +205,21 @@
                     this.initWithSpriteFrame(fileName);
                 }
             }
+
+            this._transformCmd = new cc.PhysicsSpriteTransformCmdCanvas(this);
+
+            cc.rendererCanvas.pushRenderCommand(this._transformCmd);
+
         },
+
+        visit: function(){
+            cc.Sprite.prototype.visit.call(this);
+
+            cc.rendererCanvas.pushRenderCommand(this._transformCmd);
+
+        },
+
+
         setBody:function (body) {
             this._body = body;
         },
