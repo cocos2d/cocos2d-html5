@@ -422,8 +422,8 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
                     var element = stencil._buffer[i];
                     var vertices = element.verts;
 
-                    cc.assert(cc.vertexListIsClockwise(vertices),
-                        "Only clockwise polygons should be used as stencil");
+                    //cc.assert(cc.vertexListIsClockwise(vertices),
+                    //    "Only clockwise polygons should be used as stencil");
 
                     var firstPoint = vertices[0];
                     locContext.moveTo(firstPoint.x * locEGL_ScaleX, -firstPoint.y * locEGL_ScaleY);
