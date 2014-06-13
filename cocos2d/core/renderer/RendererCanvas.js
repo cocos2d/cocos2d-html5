@@ -141,9 +141,29 @@ cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
             if (_t._texture._isLoaded) {
                 context.globalAlpha = _t._opacity;
                 image = _t._texture._htmlElementObj;
-                context.drawImage(image,
-                    locTextureCoord.x, locTextureCoord.y, locTextureCoord.width, locTextureCoord.height,
-                    locDrawingRect.x, locDrawingRect.y, locDrawingRect.width, locDrawingRect.height);
+                if(this._node._colorized){
+                    context.drawImage(image,
+                        0,
+                        0,
+                        locTextureCoord.width,
+                        locTextureCoord.height,
+                        locDrawingRect.x,
+                        locDrawingRect.y,
+                        locDrawingRect.width,
+                        locDrawingRect.height
+                    );
+                }else{
+                    context.drawImage(image,
+                        locTextureCoord.x,
+                        locTextureCoord.y,
+                        locTextureCoord.width,
+                        locTextureCoord.height,
+                        locDrawingRect.x,
+                        locDrawingRect.y,
+                        locDrawingRect.width,
+                        locDrawingRect.height
+                    );
+                }
             }
         } else if (!_t._texture && locTextureCoord.validRect) {
             curColor = _t._color;
@@ -161,17 +181,31 @@ cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
             if (_t._texture._isLoaded) {
                 context.globalAlpha = _t._opacity;
                 image = _t._texture._htmlElementObj;
-                context.drawImage(
-                    image,
-                    locTextureCoord.x,
-                    locTextureCoord.y,
-                    locTextureCoord.width,
-                    locTextureCoord.height,
-                    t.tx * scaleX + locDrawingRect.x,
-                    -t.ty * scaleY + locDrawingRect.y,
-                    locDrawingRect.width,
-                    locDrawingRect.height
-                );
+                if(this._node._colorized){
+                    context.drawImage(
+                        image,
+                        0,
+                        0,
+                        locTextureCoord.width,
+                        locTextureCoord.height,
+                            t.tx * scaleX + locDrawingRect.x,
+                            -t.ty * scaleY + locDrawingRect.y,
+                        locDrawingRect.width,
+                        locDrawingRect.height
+                    );
+                }else{
+                    context.drawImage(
+                        image,
+                        locTextureCoord.x,
+                        locTextureCoord.y,
+                        locTextureCoord.width,
+                        locTextureCoord.height,
+                            t.tx * scaleX + locDrawingRect.x,
+                            -t.ty * scaleY + locDrawingRect.y,
+                        locDrawingRect.width,
+                        locDrawingRect.height
+                    );
+                }
             }
         } else if (!_t._texture && locTextureCoord.validRect) {
             curColor = _t._color;
