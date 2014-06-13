@@ -120,7 +120,6 @@ cc.TextureRenderCmdCanvas = function (node) {
             validRect: false
         };
     this._drawingRect = cc.rect(0, 0, 0, 0);
-    this._color = node._displayedColor;
 };
 
 cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
@@ -191,8 +190,8 @@ cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
                     locDrawingRect.height
                 );
             }
-        } else if (!_t._texture && locTextureCoord.validRect) {
-            curColor = _t._color;
+        } else if (!_t._texture && locTextureCoord.validRect && _node._displayedColor) {
+            curColor = _node._displayedColor;
             context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + _t._opacity + ")";
             context.fillRect(t.tx * scaleX + locDrawingRect.x, -t.ty * scaleY + locDrawingRect.y, locDrawingRect.width, locDrawingRect.height);
         }
