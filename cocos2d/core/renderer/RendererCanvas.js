@@ -32,6 +32,10 @@ cc.rendererCanvas = {
     _isCacheToCanvasOn: false,                          //a switch that whether cache the rendererCmd to cacheToCanvasCmds
     _cacheToCanvasCmds: [],                              // an array saves the renderer commands need for cache to other canvas
 
+    /**
+     * drawing all renderer command to context (default is cc._renderContext)
+     * @param {CanvasRenderingContext2D} [ctx=cc._renderContext]
+     */
     rendering: function (ctx) {
         var locCmds = this._renderCmds,
             i,
@@ -44,7 +48,11 @@ cc.rendererCanvas = {
         }
     },
 
-    _renderingForRenderTexture: function (ctx) {
+    /**
+     * drawing all renderer command to cache canvas' context
+     * @param {CanvasRenderingContext2D} ctx
+     */
+    _renderingToCacheCanvas: function (ctx) {
         var locCmds = this._cacheToCanvasCmds, i, len;
         if (!ctx)
             cc.log("The context of RenderTexture is invalid.");
@@ -106,18 +114,18 @@ cc.renderer = cc.rendererCanvas;
 cc.TextureRenderCmdCanvas = function (node) {
     this._node = node;
 
-    this._transform = node._transformWorld; //{a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+    this._transform = node._transformWorld;         //reference of node's transformWorld
     this._texture = null;
     this._isLighterMode = false;
     this._opacity = 1;
     this._textureCoord = {
-            renderX: 0,
-            renderY: 0,
-            x: 0,
-            y: 0,
+            renderX: 0,                             //the x of texture coordinate for render, when texture tinted, its value doesn't equal x.
+            renderY: 0,                             //the y of texture coordinate for render, when texture tinted, its value doesn't equal y.
+            x: 0,                                   //the x of texture coordinate for node.
+            y: 0,                                   //the y of texture coordinate for node.
             width: 0,
             height: 0,
-            validRect: false
+            validRect: false                       //
         };
     this._drawingRect = cc.rect(0, 0, 0, 0);
     this._color = node._displayedColor;
@@ -665,4 +673,68 @@ cc.PhysicsSpriteTransformCmdCanvas.prototype.rendering = function(){
     if(this._node.transform){
         this._node.transform();
     }
+};
+
+//--- TMXLayer's render command ---
+cc.TMXLayerRenderCmdCanvas = function(tmxLayer){
+    this._node = tmxLayer;
+
+    this._transform = tmxLayer._transformWorld;
+    this._childrenRenderCmds = [];
+};
+
+cc.TMXLayerRenderCmdCanvas.prototype._copyRendererCmds = function(rendererCmds){
+    if(!rendererCmds)
+        return;
+
+    var locCacheCmds = this._childrenRenderCmds;
+    locCacheCmds.length = 0;
+    for(var i = 0, len = rendererCmds.length; i < len; i++){
+        locCacheCmds[i] = rendererCmds[i];
+    }
+};
+
+cc.TMXLayerRenderCmdCanvas.prototype._renderingChildToCache = function(scaleX, scaleY){
+    //TODO
+     var locNode = this._node;
+    if(locNode._cacheDirty){
+        var locCacheCmds = this._childrenRenderCmds, locCacheContext = locNode._cacheContext, locCanvas = locNode._cacheCanvas;
+
+        locCacheContext.save();
+        locCacheContext.clearRect(0, 0, locCanvas.width, -locCanvas.height);
+        //reset the cache context
+        var t = cc.AffineTransformInvert(this._transform);
+        locCacheContext.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+
+        for(var i = 0, len = locCacheCmds.length; i < len; i++){
+            locCacheCmds[i].rendering(locCacheContext, scaleX, scaleY);
+            if(locCacheCmds[i]._node)
+                locCacheCmds[i]._node._cacheDirty = false;
+        }
+        locCacheContext.restore();
+        locNode._cacheDirty = false;
+    }
+};
+
+cc.TMXLayerRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
+    this._renderingChildToCache(scaleX, scaleY);
+
+    var context = ctx || cc._renderContext;
+    var node = this._node;
+    //context.globalAlpha = this._opacity / 255;
+    var posX = 0 | ( -node._anchorPointInPoints.x), posY = 0 | ( -node._anchorPointInPoints.y);
+    var locCacheCanvas = node._cacheCanvas, t = this._transform;
+    //direct draw image by canvas drawImage
+    if (locCacheCanvas) {
+        context.save();
+        //transform
+        context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+
+        var locCanvasHeight = locCacheCanvas.height * scaleY;
+        context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
+            posX, -(posY + locCanvasHeight), locCacheCanvas.width * scaleX, locCanvasHeight);
+
+        context.restore();
+    }
+    cc.g_NumberOfDraws++;
 };
