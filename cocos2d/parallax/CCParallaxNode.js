@@ -134,8 +134,6 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
         cc.NodeRGBA.prototype.ctor.call(this);
         this.parallaxArray = [];
         this._lastPosition = cc.p(-100, -100);
-
-//        this._rendererCmd = new cc.ParallaxNodeTransformCmdCanvas(this);
     },
 
     /**
