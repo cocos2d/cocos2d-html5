@@ -82,10 +82,7 @@ ccui.LayoutParameter = ccui.Class.extend(/** @lends ccui.LayoutParameter# */{
      * @param {ccui.LayoutParameter} model
      */
     copyProperties:function(model){
-        this._margin.left = model._margin.left;
-        this._margin.top = model._margin.top;
-        this._margin.right = model._margin.right;
-        this._margin.bottom = model._margin.bottom;
+        this._margin = model._margin;
     }
 });
 
@@ -234,7 +231,7 @@ ccui.RelativeLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.Relat
      * @returns {ccui.RelativeLayoutParameter}
      */
     createCloneInstance:function(){
-        return ccui.LinearLayoutParameter.create();
+        return ccui.RelativeLayoutParameter.create();
     },
 
     /**

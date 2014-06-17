@@ -256,7 +256,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      * Get cap insets for slider.
      * @returns {cc.Rect}
      */
-    getCapInsetBarRenderer: function () {
+    getCapInsetsBarRenderer: function () {
         return this._capInsetsBarRenderer;
     },
 
@@ -276,7 +276,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      * Get cap insets for slider.
      * @returns {cc.Rect}
      */
-    getCapInsetProgressBarRenderer: function () {
+    getCapInsetsProgressBarRenderer: function () {
         return this._capInsetsProgressBarRenderer;
     },
 

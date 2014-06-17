@@ -358,7 +358,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
      *  Get normal renderer cap insets  .
      * @returns {cc.Rect}
      */
-    getCapInsetNormalRenderer: function () {
+    getCapInsetsNormalRenderer:function(){
         return this._capInsetsNormal;
     },
 
@@ -378,7 +378,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
      *  Get pressed renderer cap insets  .
      * @returns {cc.Rect}
      */
-    getCapInsetPressedRenderer: function () {
+    getCapInsetsPressedRenderer: function () {
         return this._capInsetsPressed;
     },
 
@@ -398,7 +398,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
      *  Get disable renderer cap insets  .
      * @returns {cc.Rect}
      */
-    getCapInsetDisabledRenderer: function () {
+    getCapInsetsDisabledRenderer: function () {
         return this._capInsetsDisabled;
     },
 

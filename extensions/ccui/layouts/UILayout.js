@@ -157,6 +157,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      */
     removeAllChildren: function (cleanup) {
         ccui.Widget.prototype.removeAllChildren.call(this, cleanup);
+    },
+
+    removeAllChildrenWithCleanup: function(cleanup){
+        ccui.Widget.prototype.removeAllChildrenWithCleanup(cleanup);
         this._doLayoutDirty = true;
     },
 
@@ -507,7 +511,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     getClippingRect: function () {
         if (this._clippingRectDirty) {
-            this._handleScissor = true;
             var worldPos = this.convertToWorldSpace(cc.p(0, 0));
             var t = this.nodeToWorldTransform();
             var scissorWidth = this._size.width * t.a;
@@ -1314,114 +1317,47 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
                         case ccui.RELATIVE_ALIGN_LOCATION_ABOVE_LEFT:
                             locFinalPosY += locMargin.bottom;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT) {
-                                locFinalPosY += locRelativeWidgetMargin.top;
-                            }
-                            locFinalPosY += locMargin.left;
+                            locFinalPosX += locMargin.left;
                             break;
                         case ccui.RELATIVE_ALIGN_LOCATION_ABOVE_CENTER:
                             locFinalPosY += locMargin.bottom;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT) {
-                                locFinalPosY += locRelativeWidgetMargin.top;
-                            }
                             break;
                         case ccui.RELATIVE_ALIGN_LOCATION_ABOVE_RIGHT:
                             locFinalPosY += locMargin.bottom;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT) {
-                                locFinalPosY += locRelativeWidgetMargin.top;
-                            }
                             locFinalPosX -= locMargin.right;
                             break;
                         case ccui.RELATIVE_ALIGN_LOCATION_LEFT_TOP:
                             locFinalPosX -= locMargin.right;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL) {
-                                locFinalPosX -= locRelativeWidgetMargin.left;
-                            }
                             locFinalPosY -= locMargin.top;
                             break;
                         case ccui.RELATIVE_ALIGN_LOCATION_LEFT_CENTER:
                             locFinalPosX -= locMargin.right;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL) {
-                                locFinalPosX -= locRelativeWidgetMargin.left;
-                            }
                             break;
                         case ccui.RELATIVE_ALIGN_LOCATION_LEFT_BOTTOM:
                             locFinalPosX -= locMargin.right;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL) {
-                                locFinalPosX -= locRelativeWidgetMargin.left;
-                            }
                             locFinalPosY += locMargin.bottom;
                             break;
                             break;
                         case ccui.RELATIVE_ALIGN_LOCATION_RIGHT_TOP:
                             locFinalPosX += locMargin.left;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL) {
-                                locFinalPosX += locRelativeWidgetMargin.right;
-                            }
                             locFinalPosY -= locMargin.top;
                             break;
                         case ccui.RELATIVE_ALIGN_LOCATION_RIGHT_CENTER:
                             locFinalPosX += locMargin.left;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL) {
-                                locFinalPosX += locRelativeWidgetMargin.right;
-                            }
                             break;
                         case ccui.RELATIVE_ALIGN_LOCATION_RIGHT_BOTTOM:
                             locFinalPosX += locMargin.left;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL) {
-                                locFinalPosX += locRelativeWidgetMargin.right;
-                            }
                             locFinalPosY += locMargin.bottom;
-                            break;
                             break;
                         case ccui.RELATIVE_ALIGN_LOCATION_BELOW_TOP:
                             locFinalPosY -= locMargin.top;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL) {
-                                locFinalPosY -= locRelativeWidgetMargin.bottom;
-                            }
                             locFinalPosX += locMargin.left;
                             break;
                         case ccui.RELATIVE_ALIGN_LOCATION_BELOW_CENTER:
                             locFinalPosY -= locMargin.top;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL) {
-                                locFinalPosY -= locRelativeWidgetMargin.bottom;
-                            }
                             break;
                         case ccui.RELATIVE_ALIGN_LOCATION_BELOW_BOTTOM:
                             locFinalPosY -= locMargin.top;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL) {
-                                locFinalPosY -= locRelativeWidgetMargin.bottom;
-                            }
                             locFinalPosX -= locMargin.right;
                             break;
                         default:

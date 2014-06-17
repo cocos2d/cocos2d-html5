@@ -182,6 +182,9 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
         this._labelRenderer.setDimensions(size);
         this.labelScaleChangedWithSize();
     },
+    getTextAreaSize: function(){
+        return this._labelRenderer.getDimensions();
+    },
     _setBoundingWidth: function (value) {
         this._textAreaSize.width = value;
         this._labelRenderer._setBoundingWidth(value);

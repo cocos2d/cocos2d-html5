@@ -1126,6 +1126,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
 
         var selectedState = options["selectedState"] || false;
         widget.setSelectedState(selectedState);
+        checkBox.setSelectedState(options, "selectedState");
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     },
 
