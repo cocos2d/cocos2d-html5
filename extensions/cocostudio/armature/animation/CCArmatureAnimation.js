@@ -251,7 +251,8 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
                 this._loopType = ccs.ANIMATION_TYPE_TO_LOOP_FRONT;
             }
             else {
-                this._loopType = ccs.ANIMATION_TYPE_NO_LOOP;
+                //this._loopType = ccs.ANIMATION_TYPE_NO_LOOP;
+                this._loopType = ccs.ANIMATION_TYPE_TO_LOOP_FRONT;
             }
             this._durationTween = durationTween;
         }
