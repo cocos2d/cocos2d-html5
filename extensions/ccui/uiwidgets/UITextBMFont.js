@@ -30,7 +30,7 @@
  *
  * @property {String}   string  - Content string of the label
  */
-ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFont# */{
+ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFont# */{
     _labelBMFontRenderer: null,
     _fileHasInit: false,
     _fntFileName: "",
@@ -223,7 +223,7 @@ _p = null;
  * // example
  * var uiLabelBMFont = ccui.TextBMFont.create();
  */
-ccui.TextBMFont.create = function () {
+ccui.LabelBMFont.create = ccui.TextBMFont.create = function () {
     return new ccui.TextBMFont();
 };
 

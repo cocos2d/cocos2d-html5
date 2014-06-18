@@ -23,75 +23,54 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.objectFactory = {
-    _typeMap: {},
+ccs.LabelBMFontReader = ccs.WidgetReader.extend({
 
-    destroyInstance: function () {
-        this._instance = null;
-    },
+    instanceTextFieldReader: null,
 
-    createObject: function (className) {
-        var o = null;
-        var t = this._typeMap[className];
-        if (t) {
-            o = new t._fun();
+    getInstance: function(){
+        if(!this.instanceTextFieldReader){
+            this.instanceTextFieldReader = new ccs.LabelBMFontReader();
         }
-        return o;
+        return this.instanceTextFieldReader;
     },
 
-    registerType: function (t) {
-        this._typeMap[t._className] = t;
+    purge: function(){
+        this.instanceTextFieldReader = null;
     },
 
-    createGUI: function(name){
-        var object = null;
-        if(name === "Panel"){
-            name = "Layout";
-        }else if(name === "TextArea"){
-            name = "Label";
-        }else if(name === "TextButton"){
-            name = "Button";
-        }
+    setPropsFromJsonDictionary: function(widget, options){
 
-        do{
 
-            var t = this._typeMap[name];
-            if(t._fun === null){
+        ccs.WidgetReader.prototype.setPropsFromJsonDictionary.call(this, widget, options);
+    
+    
+        var jsonPath = ccs.uiReader.getFilePath();
+    
+        var labelBMFont = widget;
+    
+        var cmftDic = options["fileNameData"];
+        var cmfType = cmftDic["resourceType"];
+        switch (cmfType)
+        {
+            case 0:
+            {
+                var tp_c = jsonPath;
+                var cmfPath = cmftDic["path"];
+                var cmf_tp = tp_c + cmfPath;
+                labelBMFont.setFntFile(cmf_tp);
                 break;
             }
-            object = t._fun;
-        }while(0);
-
-        return object;
-    },
-
-    createWidgetReaderProtocol: function(name){
-        var object = null;
-        do{
-            var t = this._typeMap[name];
-            if(t._fun === null){
+            case 1:
+                cc.log("Wrong res type of LabelAtlas!");
                 break;
-            }
-            object = t._fun;
-        }while(0);
-        return object;
-    }
-
-
-};
-
-ccs.TInfo = ccs.Class.extend({
-    _className: "",
-    _fun: null,
-
-    ctor: function (c, f) {
-        if (f) {
-            this._className = c;
-            this._fun = f;
-        } else {
-            this._className = c._className;
-            this._fun = c._fun;
+            default:
+                break;
         }
-        ccs.objectFactory.registerType(this);
+    
+        var text = options["text"];
+        labelBMFont.setText(text);
+    
+    
+        ccs.WidgetReader.prototype.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 });

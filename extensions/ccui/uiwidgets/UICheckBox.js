@@ -124,17 +124,17 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
                 break;
         }
 
-        this.updateColorToRenderer(bgBoxRenderer);
-        this.updateAnchorPoint();
-        this.updateFlippedX();
-        this.updateFlippedY();
+        this.backGroundTextureScaleChangedWithSize();
         if (!bgBoxRenderer.textureLoaded()) {
             this._backGroundBoxRenderer.setContentSize(this._customSize);
             bgBoxRenderer.addLoadedEventListener(function () {
                 this.backGroundTextureScaleChangedWithSize();
             }, this);
         }
-        this.backGroundTextureScaleChangedWithSize();
+        this.updateColorToRenderer(bgBoxRenderer);
+        this.updateAnchorPoint();
+        this.updateFlippedX();
+        this.updateFlippedY();
     },
     /**
      * Load backGroundSelected texture for checkbox.
@@ -187,11 +187,11 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
             default:
                 break;
         }
+        this.frontCrossTextureScaleChangedWithSize();
         this.updateColorToRenderer(this._frontCrossRenderer);
         this.updateAnchorPoint();
         this.updateFlippedX();
         this.updateFlippedY();
-        this.frontCrossTextureScaleChangedWithSize();
     },
 
     /**
@@ -216,11 +216,11 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
             default:
                 break;
         }
+        this.backGroundDisabledTextureScaleChangedWithSize();
         this.updateColorToRenderer(this._backGroundBoxDisabledRenderer);
         this.updateAnchorPoint();
         this.updateFlippedX();
         this.updateFlippedY();
-        this.backGroundDisabledTextureScaleChangedWithSize();
     },
 
     /**
@@ -245,11 +245,11 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
             default:
                 break;
         }
+        this.frontCrossDisabledTextureScaleChangedWithSize();
         this.updateColorToRenderer(this._frontCrossDisabledRenderer);
         this.updateAnchorPoint();
         this.updateFlippedX();
         this.updateFlippedY();
-        this.frontCrossDisabledTextureScaleChangedWithSize();
     },
 
     onTouchEnded: function (touch, event) {

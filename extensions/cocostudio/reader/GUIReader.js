@@ -29,6 +29,8 @@ ccs.uiReader = /** @lends ccs.uiReader# */{
     _filePath: "",
     _olderVersion: false,
     _fileDesignSizes: {},
+    _mapObject: {},
+    _mapParseSelector: {},
 
     /**
      * get version
@@ -132,6 +134,21 @@ ccs.uiReader = /** @lends ccs.uiReader# */{
         this._filePath = "";
         this._olderVersion = false;
         this._fileDesignSizes = {};
+    },
+    registerTypeAndCallBack: function(classType, ins, object, callback){
+        var factoryCreate = ccs.objectFactory.getInstance();
+        var t = new ccs.TInfo(classType, object);
+        factoryCreate.registerType(t);
+
+        if(object){
+            this._mapObject[classType] = object;
+        }
+        if(callback){
+            this._mapParseSelector[classType] = callback;
+        }
+    },
+    getFilePath: function(){
+        return this._filePath;
     }
 };
 

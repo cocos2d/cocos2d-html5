@@ -32,7 +32,7 @@
  * @property {Number}   maxLength           - The max length of the text field
  * @property {Boolean}  passwordEnabled     - Indicate whether the text field is for entering password
  */
-ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
+ccui.UILabelField = ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
     maxLengthEnabled: false,
     maxLength: 0,
     passwordEnabled: false,
@@ -226,7 +226,7 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
     }
 });
 
-ccui.UICCTextField.create = function (placeholder, fontName, fontSize) {
+ccui.UILabelField.create = ccui.UICCTextField.create = function (placeholder, fontName, fontSize) {
     var ret = new ccui.UICCTextField();
     if (ret && ret.initWithString("", fontName, fontSize)) {
         if (placeholder) {
@@ -251,7 +251,7 @@ ccui.UICCTextField.create = function (placeholder, fontName, fontSize) {
  * @property {Number}   maxLength           - The max length of the text field
  * @property {Boolean}  passwordEnabled     - Indicate whether the text field is for entering password
  */
-ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
+ccui.LabelField = ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     _textFieldRender: null,
     _touchWidth: 0,
     _touchHeight: 0,
@@ -794,7 +794,7 @@ _p = null;
  * // example
  * var uiTextField = ccui.TextField.create();
  */
-ccui.TextField.create = function () {
+ccui.LabelField.create = ccui.TextField.create = function () {
     return new ccui.TextField();
 };
 

@@ -226,11 +226,11 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             buttonNormalRenderer.setCapInsets(this._capInsetsNormal);
         }
 
+        this.normalTextureScaleChangedWithSize();
         this.updateColorToRenderer(buttonNormalRenderer);
         this.updateAnchorPoint();
         this.updateFlippedX();
         this.updateFlippedY();
-        this.normalTextureScaleChangedWithSize();
         this._normalTextureLoaded = true;
     },
 
@@ -276,10 +276,10 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             clickedRenderer.setCapInsets(this._capInsetsNormal);
         }
         this.updateColorToRenderer(clickedRenderer);
+        this.pressedTextureScaleChangedWithSize();
         this.updateAnchorPoint();
         this.updateFlippedX();
         this.updateFlippedY();
-        this.pressedTextureScaleChangedWithSize();
         this._pressedTextureLoaded = true;
     },
 
@@ -325,10 +325,10 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             disableRenderer.setCapInsets(this._capInsetsNormal);
         }
         this.updateColorToRenderer(disableRenderer);
+        this.disabledTextureScaleChangedWithSize();
         this.updateAnchorPoint();
         this.updateFlippedX();
         this.updateFlippedY();
-        this.disabledTextureScaleChangedWithSize();
         this._disabledTextureLoaded = true;
     },
 

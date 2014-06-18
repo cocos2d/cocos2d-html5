@@ -39,7 +39,7 @@
  * @property {Number}   verticalAlign       - Vertical Alignment of label: cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM
  * @property {Boolean}  touchScaleEnabled   - Indicate whether the label will scale when touching
  */
-ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
+ccui.Label = ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     touchScaleEnabled: false,
     _normalScaleValueX: 0,
     _normalScaleValueY: 0,
@@ -436,7 +436,7 @@ _p = null;
  * // example
  * var uiLabel = ccui.Text.create();
  */
-ccui.Text.create = function () {
+ccui.Label = ccui.Text.create = function () {
     return new ccui.Text();
 };
 
