@@ -32,7 +32,7 @@
  * @property {Number}   maxLength           - The max length of the text field
  * @property {Boolean}  passwordEnabled     - Indicate whether the text field is for entering password
  */
-ccui.UILabelField = ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
+ccui.UICCLabelField = ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
     maxLengthEnabled: false,
     maxLength: 0,
     passwordEnabled: false,
@@ -277,6 +277,14 @@ ccui.LabelField = ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField#
      */
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
+    },
+
+    init: function(){
+        if(ccui.Widget.prototype.init.call(this)){
+            this.setTouchEnabled(true);
+            return true;
+        }
+        return false;
     },
 
     onEnter: function () {
