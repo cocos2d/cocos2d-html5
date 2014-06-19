@@ -149,6 +149,12 @@ ccs.uiReader = /** @lends ccs.uiReader# */{
     },
     getFilePath: function(){
         return this._filePath;
+    },
+    getParseObjectMap: function(){
+        return this._mapObject;
+    },
+    getParseCallBackMap: function(){
+        return this._mapParseSelector;
     }
 };
 
@@ -304,6 +310,8 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         var z = options["ZOrder"];
         widget.setLocalZOrder(z);
     },
+    setPropsForAllWidgetFromJsonDictionary: function(){},
+    setPropsForAllCustomWidgetFromJsonDictionary: function(){},
 
     setColorPropsForWidgetFromJsonDictionary: function (widget, options) {
         if (options["opacity"] !== undefined) {
@@ -790,90 +798,141 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         actions = null;
         return widget;
     },
-    widgetFromJsonDictionary: function (data) {
-        var widget = null;
-        var classname = data["classname"];
-        var uiOptions = data["options"];
-        if (classname == "Button") {
-            widget = ccui.Button.create();
-            this.setPropsForButtonFromJsonDictionary(widget, uiOptions);
-        }
-        else if (classname == "CheckBox") {
-            widget = ccui.CheckBox.create();
-            this.setPropsForCheckBoxFromJsonDictionary(widget, uiOptions);
-        }
-        else if (classname == "Label") {
-            widget = ccui.Text.create();
-            this.setPropsForLabelFromJsonDictionary(widget, uiOptions);
-        }
-        else if (classname == "LabelAtlas") {
-            widget = ccui.TextAtlas.create();
-            this.setPropsForLabelAtlasFromJsonDictionary(widget, uiOptions);
-        }
-        else if (classname == "LoadingBar") {
-            widget = ccui.LoadingBar.create();
-            this.setPropsForLoadingBarFromJsonDictionary(widget, uiOptions);
-        } else if (classname == "ScrollView") {
-            widget = ccui.ScrollView.create();
-            this.setPropsForScrollViewFromJsonDictionary(widget, uiOptions);
-        }
-        else if (classname == "TextArea") {
-            widget = ccui.Text.create();
-            this.setPropsForLabelFromJsonDictionary(widget, uiOptions);
-        }
-        else if (classname == "TextButton") {
-            widget = ccui.Button.create();
-            this.setPropsForButtonFromJsonDictionary(widget, uiOptions);
-        }
-        else if (classname == "TextField") {
-            widget = ccui.TextField.create();
-            this.setPropsForTextFieldFromJsonDictionary(widget, uiOptions);
-        }
-        else if (classname == "ImageView") {
-            widget = ccui.ImageView.create();
-            this.setPropsForImageViewFromJsonDictionary(widget, uiOptions);
-        }
-        else if (classname == "Panel") {
-            widget = ccui.Layout.create();
-            this.setPropsForLayoutFromJsonDictionary(widget, uiOptions);
-        }
-        else if (classname == "Slider") {
-            widget = ccui.Slider.create();
-            this.setPropsForSliderFromJsonDictionary(widget, uiOptions);
-        }
-        else if (classname == "LabelBMFont") {
-            widget = ccui.TextBMFont.create();
-            this.setPropsForLabelBMFontFromJsonDictionary(widget, uiOptions);
-        }
-        else if (classname == "DragPanel") {
-            widget = ccui.ScrollView.create();
-            this.setPropsForScrollViewFromJsonDictionary(widget, uiOptions);
-        }
-        else if (classname == "ListView") {
-            widget = ccui.ListView.create();
-            this.setPropsForListViewFromJsonDictionary(widget, uiOptions);
-        }
-        else if (classname == "PageView") {
-            widget = ccui.PageView.create();
-            this.setPropsForPageViewFromJsonDictionary(widget, uiOptions);
-        }
-        var children = data["children"];
-        for (var i = 0; i < children.length; i++) {
-            var subData = children[i];
-            var child = this.widgetFromJsonDictionary(subData);
-            if (child) {
-                if (widget instanceof ccui.PageView && child instanceof ccui.Layout) {
-                    widget.addPage(child);
-                } else if (widget instanceof ccui.ListView) {
-                    widget.pushBackCustomItem(child);
-                } else {
-                    widget.addChild(child);
-                }
-            }
-            subData = null;
+    setPropsForAllWidgetFromJsonDictionary: function(reader, widget, options){
+        reader.setPropsFromJsonDictionary(widget, options);
+    },
+    setPropsForAllCustomWidgetFromJsonDictionary: function(classType, widget, customOptions){
+        var guiReader = ccs.uiReader;
+
+        var object_map = guiReader.getParseObjectMap();
+        var object = object_map[classType];
+
+        var selector_map = guiReader.getParseCallBackMap();
+        var selector = selector_map[classType];
+
+        if (object && selector)
+        {
+            object.selector.call(this, classType, widget, customOptions);
         }
 
-        uiOptions = null;
+    },
+    widgetFromJsonDictionary: function (data) {
+
+        var classname = data["classname"];
+        var uiOptions = data["options"];
+        var widget = ccs.objectFactory.getInstance().createGUI(classname);
+
+        // create widget reader to parse properties of widget
+        var readerName = classname;
+        switch(readerName){
+            case "Panel":
+                readerName = "Layout";
+                break;
+            case "TextArea":
+                readerName = "Label";
+                break;
+            case "TextButton":
+                readerName = "Button";
+                break;
+        }
+        readerName += "Reader";
+        var reader = ccs.objectFactory.getInstance().createWidgetReaderProtocol(readerName);
+        if(reader){
+            // widget parse with widget reader
+            this.setPropsForAllWidgetFromJsonDictionary(reader, widget, uiOptions);
+        }else{
+            // 1st., custom widget parse properties of parent widget with parent widget reader
+            if(widget instanceof ccs.Button){
+                readerName = "ButtonReader";
+            }else if(widget instanceof ccs.CheckBox){
+                readerName = "CheckBoxReader";
+            }else if (widget instanceof ccs.ImageView)
+            {
+                readerName = "ImageViewReader";
+            }
+            else if (widget instanceof ccs.LabelAtlas)
+            {
+                readerName = "LabelAtlasReader";
+            }
+            else if (widget instanceof ccs.LabelBMFont)
+            {
+                readerName = "LabelBMFontReader";
+            }
+            else if (widget instanceof ccs.Label)
+            {
+                readerName = "LabelReader";
+            }
+            else if (widget instanceof ccs.LoadingBar)
+            {
+                readerName = "LoadingBarReader";
+            }
+            else if (widget instanceof ccs.Slider)
+            {
+                readerName = "SliderReader";
+            }
+            else if (widget instanceof ccs.TextField)
+            {
+                readerName = "TextFieldReader";
+            }
+            else if (widget instanceof ccs.Layout)
+            {
+                readerName = "LayoutReader";
+            }
+            else if (widget instanceof ccs.ScrollView)
+            {
+                readerName = "ScrollViewReader";
+            }
+            else if (widget instanceof ccs.ListView)
+            {
+                readerName = "ListViewReader";
+            }
+            else if (widget instanceof ccs.PageView)
+            {
+                readerName = "PageViewReader";
+            }
+            else if (widget instanceof ccs.Widget)
+            {
+                readerName = "WidgetReader";
+            }
+
+            var render = ccs.objectFactory.getInstance().createWidgetReaderProtocol(readerName);
+            this.setPropsForAllWidgetFromJsonDictionary(reader, widget, uiOptions);
+
+            // 2nd., custom widget parse with custom reader
+            var customProperty = uiOptions["customProperty"];
+            var customJsonDict = uiOptions;
+            if (!uiOptions)
+            {
+                cc.log("GetParseError");
+            }
+            this.setPropsForAllCustomWidgetFromJsonDictionary(classname, widget, customJsonDict);
+        }
+        var childrenCount = data["children"];
+        for (var i = 0; i < childrenCount; i++)
+        {
+            var subData = data["children"][i];
+            var child = this.widgetFromJsonDictionary(subData);
+            if (child)
+            {
+                var pageView = widget;
+                if (pageView)
+                {
+                    pageView.addPage(child);
+                }
+                else
+                {
+                    var listView = widget;
+                    if (listView)
+                    {
+                        listView.pushBackCustomItem(child);
+                    }
+                    else
+                    {
+                        widget.addChild(child);
+                    }
+                }
+            }
+        }
         return widget;
     },
 
