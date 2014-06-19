@@ -32,10 +32,8 @@
  * @extends cc.Node
  */
 cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
-    /**
-     * init layer
-     * @return {Boolean}
-     */
+    _isBaked: false,
+    _bakeSprite: null,
     _className: "Layer",
 
     /**
@@ -47,7 +45,28 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         this._ignoreAnchorPointForPosition = true;
         nodep.setAnchorPoint.call(this, 0.5, 0.5);
         nodep.setContentSize.call(this, cc.winSize);
-    }
+        this._cachedParent = this;
+    },
+
+    /**
+     *  set the layer to cache all of children to a bake sprite, and draw itself by bake sprite. recommend using it in UI.
+     */
+    bake: null,
+
+    /**
+     * cancel the layer to cache all of children to a bake sprite.
+     */
+    unbake: null,
+
+    /**
+     * Determines if the layer is baked.
+     * @returns {boolean}
+     */
+    isBaked: function(){
+        return this._isBaked;
+    },
+
+    visit: null
 });
 
 /**
@@ -61,6 +80,111 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
 cc.Layer.create = function () {
     return new cc.Layer();
 };
+
+if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
+    var p = cc.Layer.prototype;
+    p.bake = function(){
+        if (!this._isBaked) {
+            //limit: 1. its children's blendfunc are invalid.
+            this._isBaked = this._cacheDirty = true;
+
+            var children = this._children;
+            for(var i = 0, len = children.length; i < len; i++)
+                children[i]._setCachedParent(this);
+
+            if (!this._bakeSprite)
+                this._bakeSprite = new cc.BakeSprite();
+        }
+    };
+
+    p.unbake = function(){
+        if (this._isBaked) {
+            this._isBaked = false;
+            this._cacheDirty = true;
+
+            var children = this._children;
+            for(var i = 0, len = children.length; i < len; i++)
+                children[i]._setCachedParent(null);
+        }
+    };
+
+    p.visit = function(ctx){
+        if(!this._isBaked){
+            cc.Node.prototype.visit.call(this, ctx);
+            return;
+        }
+
+        var context = ctx || cc._renderContext, i;
+        var _t = this;
+        var children = _t._children;
+        var len = children.length;
+        // quick return if not visible
+        if (!_t._visible || len === 0)
+            return;
+
+        var locBakeSprite = this._bakeSprite;
+
+        context.save();
+        _t.transform(context);
+
+        if(this._cacheDirty){
+            //compute the bounding box of the bake layer.
+            var boundingBox = this._getBoundingBoxForBake();
+            boundingBox.width = 0 | boundingBox.width;
+            boundingBox.height = 0 | boundingBox.height;
+            var bakeContext = locBakeSprite.getCacheContext();
+            locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
+            bakeContext.translate(0 - boundingBox.x, boundingBox.height + boundingBox.y);
+
+            //reset the bake sprite's position
+            var anchor = locBakeSprite.getAnchorPointInPoints();
+            locBakeSprite.setPosition(anchor.x + boundingBox.x, anchor.y + boundingBox.y);
+
+            //visit for canvas
+            _t.sortAllChildren();
+            // draw children zOrder < 0
+            for (i = 0; i < len; i++) {
+                children[i].visit(bakeContext);
+            }
+
+            this._cacheDirty = false;
+        }
+
+        //the bakeSprite is drawing
+        locBakeSprite.visit(context);
+
+        _t.arrivalOrder = 0;
+        context.restore();
+    };
+
+    p._getBoundingBoxForBake = function () {
+        var rect = null;
+
+        //query child's BoundingBox
+        if (!this._children || this._children.length === 0)
+            return cc.rect(0, 0, 10, 10);
+
+        var locChildren = this._children;
+        for (var i = 0; i < locChildren.length; i++) {
+            var child = locChildren[i];
+            if (child && child._visible) {
+                if(rect){
+                    var childRect = child._getBoundingBoxToCurrentNode();
+                    if (childRect)
+                        rect = cc.rectUnion(rect, childRect);
+                }else{
+                    rect = child._getBoundingBoxToCurrentNode();
+                }
+            }
+        }
+        return rect;
+    };
+    p = null;
+}else{
+    cc.assert(typeof cc._tmp.LayerDefineForWebGL === "function", cc._LogInfos.MissingFile, "CCLayerWebGL.js");
+    cc._tmp.LayerDefineForWebGL();
+    delete cc._tmp.LayerDefineForWebGL;
+}
 
 /**
  * <p>
@@ -508,7 +632,6 @@ cc.LayerColor.create = function (color, width, height) {
     return new cc.LayerColor(color, width, height);
 };
 
-
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     //cc.LayerColor define start
     var _p = cc.LayerColor.prototype;
@@ -516,7 +639,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         cc.LayerRGBA.prototype.ctor.call(this);
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         cc.LayerColor.prototype.init.call(this, color, width, height);
-    }
+    };
     _p._setWidth = cc.LayerRGBA.prototype._setWidth;
     _p._setHeight = cc.LayerRGBA.prototype._setHeight;
     _p._updateColor = function () {
@@ -530,7 +653,96 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         context.fillRect(0, 0, _t.width * locEGLViewer.getScaleX(), -_t.height * locEGLViewer.getScaleY());
         cc.g_NumberOfDraws++;
     };
-    //cc.LayerGradient define end
+
+    //for bake
+    _p.visit = function(ctx){
+        if(!this._isBaked){
+            cc.Node.prototype.visit.call(this, ctx);
+            return;
+        }
+
+        var context = ctx || cc._renderContext, i;
+        var _t = this;
+        var children = _t._children;
+        var len = children.length;
+        // quick return if not visible
+        if (!_t._visible)
+            return;
+
+        var locBakeSprite = this._bakeSprite;
+
+        context.save();
+        _t.transform(context);
+
+        if(this._cacheDirty){
+            //compute the bounding box of the bake layer.
+            var boundingBox = this._getBoundingBoxForBake();
+            boundingBox.width = 0 | boundingBox.width;
+            boundingBox.height = 0 | boundingBox.height;
+            var bakeContext = locBakeSprite.getCacheContext();
+            locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
+            var anchor = locBakeSprite.getAnchorPointInPoints(), locPos = this._position;
+            if(this._ignoreAnchorPointForPosition){
+                bakeContext.translate(0 - boundingBox.x + locPos.x, boundingBox.height + boundingBox.y - locPos.y);
+                //reset the bake sprite's position
+                locBakeSprite.setPosition(anchor.x + boundingBox.x - locPos.x, anchor.y + boundingBox.y - locPos.y);
+            } else {
+                var selfAnchor = this.getAnchorPointInPoints();
+                var selfPos = {x: locPos.x - selfAnchor.x, y: locPos.y - selfAnchor.y};
+                bakeContext.translate(0 - boundingBox.x + selfPos.x, boundingBox.height + boundingBox.y - selfPos.y);
+                locBakeSprite.setPosition(anchor.x + boundingBox.x - selfPos.x, anchor.y + boundingBox.y - selfPos.y);
+            }
+
+            var child;
+            //visit for canvas
+            if (len > 0) {
+                _t.sortAllChildren();
+                // draw children zOrder < 0
+                for (i = 0; i < len; i++) {
+                    child = children[i];
+                    if (child._localZOrder < 0)
+                        child.visit(bakeContext);
+                    else
+                        break;
+                }
+                _t.draw(bakeContext);
+                for (; i < len; i++) {
+                    children[i].visit(bakeContext);
+                }
+            } else
+                _t.draw(bakeContext);
+            this._cacheDirty = false;
+        }
+
+        //the bakeSprite is drawing
+        locBakeSprite.visit(context);
+
+        _t.arrivalOrder = 0;
+        context.restore();
+    };
+
+    _p._getBoundingBoxForBake = function () {
+        //default size
+        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
+        var trans = this.nodeToWorldTransform();
+        rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
+
+        //query child's BoundingBox
+        if (!this._children || this._children.length === 0)
+            return rect;
+
+        var locChildren = this._children;
+        for (var i = 0; i < locChildren.length; i++) {
+            var child = locChildren[i];
+            if (child && child._visible) {
+                var childRect = child._getBoundingBoxToCurrentNode(trans);
+                rect = cc.rectUnion(rect, childRect);
+            }
+        }
+        return rect;
+    };
+
+    //cc.LayerColor define end
     _p = null;
 } else {
     cc.assert(typeof cc._tmp.WebGLLayerColor === "function", cc._LogInfos.MissingFile, "CCLayerWebGL.js");
