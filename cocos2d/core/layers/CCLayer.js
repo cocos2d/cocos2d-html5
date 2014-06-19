@@ -45,7 +45,6 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         this._ignoreAnchorPointForPosition = true;
         nodep.setAnchorPoint.call(this, 0.5, 0.5);
         nodep.setContentSize.call(this, cc.winSize);
-        this._cachedParent = this;
     },
 
     /**
@@ -88,6 +87,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             //limit: 1. its children's blendfunc are invalid.
             this._isBaked = this._cacheDirty = true;
 
+            this._cachedParent = this;
             var children = this._children;
             for(var i = 0, len = children.length; i < len; i++)
                 children[i]._setCachedParent(this);
@@ -102,6 +102,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             this._isBaked = false;
             this._cacheDirty = true;
 
+            this._cachedParent = null;
             var children = this._children;
             for(var i = 0, len = children.length; i < len; i++)
                 children[i]._setCachedParent(null);
