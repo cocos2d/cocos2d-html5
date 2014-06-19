@@ -1868,8 +1868,19 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             this._cacheDirty = true;
 
             var cachedP = this._cachedParent;
+            //var cachedP = this._parent;
             cachedP && cachedP != this && cachedP._setNodeDirtyForCache();
         }
+    },
+
+    _setCachedParent: function(cachedParent){
+        if(this._cachedParent ==  cachedParent)
+            return;
+
+        this._cachedParent = cachedParent;
+        var children = this._children;
+        for(var i = 0, len = children.length; i < len; i++)
+            children[i]._setCachedParent(cachedParent);
     },
 
     /**
@@ -1949,7 +1960,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var trans = this.nodeToWorldTransform();
         rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
-        //rect = cc.rect(0 | rect.x - 4, 0 | rect.y - 4, 0 | rect.width + 8, 0 | rect.height + 8);
 
         //query child's BoundingBox
         if (!this._children)
@@ -1987,6 +1997,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
         return rect;
     },
+
     _nodeToParentTransformForWebGL: function () {
         var _t = this;
         if (_t._transformDirty) {
@@ -2116,6 +2127,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         } else
             _t.draw(context);
 
+        this._cacheDirty = false;
         _t.arrivalOrder = 0;
         context.restore();
     };
