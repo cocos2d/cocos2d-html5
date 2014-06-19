@@ -214,6 +214,12 @@ ccs.ActionFrame = ccs.Class.extend(/** @lends ccs.ActionFrame# */{
         }
 
         return resultAction;
+    },
+    setEasingParameter: function(parameter){
+        this._Parameter = [];
+        for(var i=0;i<parameter.length;i++){
+            this._Parameter.push(parameter[i]);
+        }
     }
 });
 

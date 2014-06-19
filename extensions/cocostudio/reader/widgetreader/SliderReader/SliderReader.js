@@ -44,7 +44,7 @@ ccs.SliderReader = ccs.WidgetReader.extend({
 
         var slider = widget;
 
-        var barTextureScale9Enable = options["barTextureScale9Enable"];
+        var barTextureScale9Enable = options["scale9Enable"];
         slider.setScale9Enabled(barTextureScale9Enable);
         var bt = options["barFileName"];
         var barLength = options["length"];

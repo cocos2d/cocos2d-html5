@@ -67,6 +67,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
             var frameTweenType = actionFrameDic["tweenType"];
             var frameTweenParameterNum = actionFrameDic["tweenParameter"];
 
+            var frameTweenParameter = [];
             for (var j = 0; j < frameTweenParameterNum; j++){
                 var value = actionFrameDic["tweenParameter"][j];
                 frameTweenParameter.push(value);
