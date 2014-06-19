@@ -96,7 +96,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
 	    var sys = cc.sys;
         _t.enableRetina(sys.os == sys.OS_IOS || sys.os == sys.OS_OSX);
-        cc.visibleRect && cc.visibleRect.init(_t._designResolutionSize);
+        cc.visibleRect && cc.visibleRect.init(_t._visibleRect);
 
         // Setup system default resolution policies
         _t._rpExactFit = new cc.ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.EXACT_FIT);
@@ -470,7 +470,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         // For editbox
         if (cc.DOM)
             cc.DOM._resetEGLViewDiv();
-        cc.visibleRect && cc.visibleRect.init(_t.getVisibleSize());
+        cc.visibleRect && cc.visibleRect.init(_t._visibleRect);
     },
 
     /**
