@@ -1320,7 +1320,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT) {
                                 locFinalPosY += locRelativeWidgetMargin.top;
                             }
-                            locFinalPosY += locMargin.left;
+                            locFinalPosX += locMargin.left;
                             break;
                         case ccui.RELATIVE_ALIGN_LOCATION_ABOVE_CENTER:
                             locFinalPosY += locMargin.bottom;
