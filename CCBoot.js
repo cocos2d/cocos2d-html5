@@ -622,8 +622,10 @@ cc.loader = {
         if (obj)
             return cb(null, obj);
         var loader = self._register[type.toLowerCase()];
-        if (!loader)
-            return cb("loader for [" + type + "] not exists!");
+        if (!loader) {
+            cc.error("loader for [" + type + "] not exists!");
+            return cb();
+        }
         var basePath = loader.getBasePath ? loader.getBasePath() : self.resPath;
         var realUrl = self.getUrl(basePath, url);
         loader.load(realUrl, url, item, function (err, data) {
