@@ -102,11 +102,11 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
             imageRenderer.setCapInsets(this._capInsets);
         }
 
-        this.updateColorToRenderer(imageRenderer);
+        this.imageTextureScaleChangedWithSize();
         this.updateAnchorPoint();
         this.updateFlippedX();
         this.updateFlippedY();
-        this.imageTextureScaleChangedWithSize();
+        this.updateRGBAToRenderer(imageRenderer);
     },
 
     /**

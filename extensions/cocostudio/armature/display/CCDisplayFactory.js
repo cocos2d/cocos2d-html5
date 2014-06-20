@@ -76,7 +76,8 @@ ccs.DisplayFactory.updateDisplay = function (bone,dt, dirty) {
             this.updateArmatureDisplay(bone, display, dt);
             break;
         default:
-            display.setAdditionalTransform(bone.nodeToArmatureTransform());
+            var transform = bone.getNodeToArmatureTransform();
+            display.setAdditionalTransform(transform);
             break;
     }
 

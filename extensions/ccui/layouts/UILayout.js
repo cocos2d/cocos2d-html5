@@ -58,6 +58,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _scissorRectDirty: false,
     _clippingRect: null,
     _clippingParent: null,
+    _clippingRectDirty: true,
     _className: "Layout",
     _backGroundImageColor: null,
 

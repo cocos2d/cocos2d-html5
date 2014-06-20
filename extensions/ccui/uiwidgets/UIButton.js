@@ -281,6 +281,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this.updateAnchorPoint();
         this.updateFlippedX();
         this.updateFlippedY();
+        this.updateRGBAToRenderer(this._buttonDisableRenderer);
         this._pressedTextureLoaded = true;
     },
 
@@ -330,6 +331,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this.updateAnchorPoint();
         this.updateFlippedX();
         this.updateFlippedY();
+        this.updateRGBAToRenderer(this._buttonDisableRenderer);
         this._disabledTextureLoaded = true;
     },
 
@@ -456,6 +458,44 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this._buttonDisableRenderer.setVisible(true);
         this._buttonNormalRenderer.setScale(this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
         this._buttonClickedRenderer.setScale(this._pressedTextureScaleXInSize, this._pressedTextureScaleYInSize);
+    },
+
+    setFlippedX: function(flippedX){
+        this._titleRenderer.setFlippedX(flippedX);
+        if (this._scale9Enabled)
+        {
+            return;
+        }
+        this._buttonNormalRenderer.setFlippedX(flippedX);
+        this._buttonClickedRenderer.setFlippedX(flippedX);
+        this._buttonDisableRenderer.setFlippedX(flippedX);
+    },
+
+    setFlipY: function(flippedY){
+        this._titleRenderer.setFlippedY(flippedY);
+        if (this._scale9Enabled)
+        {
+            return;
+        }
+        this._buttonNormalRenderer.setFlippedY(flippedY);
+        this._buttonClickedRenderer.setFlippedY(flippedY);
+        this._buttonDisableRenderer.setFlippedY(flippedY);
+    },
+
+    isFlippedX: function(){
+        if (this._scale9Enabled)
+        {
+            return false;
+        }
+        return this._buttonNormalRenderer.isFlippedX();
+    },
+
+    isFlippedY: function(){
+        if (this._scale9Enabled)
+        {
+            return false;
+        }
+        return this._buttonNormalRenderer.isFlippedY();
     },
 
     updateFlippedX: function () {
