@@ -53,27 +53,22 @@ ccs.objectFactory = {
             name = "Button";
         }
 
-        do{
-
-            var t = this._typeMap[name];
-            if(t._fun === null){
-                break;
-            }
+        var t = this._typeMap[name];
+        if(t && t._fun){
             object = t._fun;
-        }while(0);
+        }
 
         return object;
     },
 
     createWidgetReaderProtocol: function(name){
         var object = null;
-        do{
-            var t = this._typeMap[name];
-            if(t._fun === null){
-                break;
-            }
+
+        var t = this._typeMap[name];
+        if(t && t._fun){
             object = t._fun;
-        }while(0);
+        }
+
         return object;
     }
 

@@ -54,27 +54,113 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends cc.DisplayManager */{
         return true;
     },
 
-    addDisplay: function (displayData, index) {
+    addDisplay: function (display, index) {
+
         var decoDisplay = null;
-        if (index >= 0 && index < this._decoDisplayList.length) {
+
+        if( (index >= 0) && (index < this._decoDisplayList.length) )
+        {
             decoDisplay = this._decoDisplayList[index];
         }
-        else {
+        else
+        {
             decoDisplay = ccs.DecorativeDisplay.create();
             this._decoDisplayList.push(decoDisplay);
         }
 
-        if(displayData instanceof ccs.DisplayData){
-            ccs.DisplayFactory.addDisplay(this._bone, decoDisplay, displayData);
-        }else{
-            this._addDisplayOther(decoDisplay,displayData);
+        var displayData = null;
+        if (display instanceof ccs.Skin)
+        {
+            var skin = display;
+            skin.setBone(this._bone);
+            displayData = this.SpriteDisplayData.create();
+
+            ccs.DisplayFactory.initSpriteDisplay(this._bone, decoDisplay, skin.getDisplayName(), skin);
+
+            var spriteDisplayData = decoDisplay.getDisplayData();
+            if (spriteDisplayData instanceof ccs.SpriteDisplayData)
+            {
+                skin.setSkinData(spriteDisplayData.skinData);
+                displayData.skinData = spriteDisplayData.skinData;
+            }
+        else
+            {
+                var find = false;
+
+                for (var i = this._decoDisplayList.length - 2; i>=0; i--)
+                {
+                    var dd = this._decoDisplayList[i];
+                    var sdd = dd.getDisplayData();
+                    if (sdd instanceof ccs.SpriteDisplayData)
+                    {
+                        find = true;
+                        skin.setSkinData(sdd.skinData);
+                        displayData.skinData = sdd.skinData;
+                        break;
+                    }
+                }
+//
+//                if (!find)
+//                {
+//                    BaseData baseData;
+//                    skin.setSkinData(baseData);
+//                }
+            }
+        }
+        else if (display instanceof ccs.ParticleSystemQuad)
+        {
+            displayData = ccs.ParticleDisplayData.create();
+
+            display.removeFromParent();
+            display.cleanup();
+
+            var armature = this._bone.getArmature();
+            if (armature)
+            {
+                display.setParent(armature);
+            }
+        }
+        else if(display instanceof ccs.Armature)
+        {
+            var armature = display;
+            displayData = ccs.ArmatureDisplayData.create();
+            displayData.displayName = armature.getName();
+            armature.setParentBone(this._bone);
+        }
+        else
+        {
+            displayData = ccs.DisplayData.create();
         }
 
+        decoDisplay.setDisplay(display);
+        decoDisplay.setDisplayData(displayData);
+
         //! if changed display index is current display index, then change current display to the new display
-        if (index == this._displayIndex) {
+        if(index == this._displayIndex)
+        {
             this._displayIndex = -1;
             this.changeDisplayWithIndex(index, false);
         }
+//        var decoDisplay = null;
+//        if (index >= 0 && index < this._decoDisplayList.length) {
+//            decoDisplay = this._decoDisplayList[index];
+//        }
+//        else {
+//            decoDisplay = ccs.DecorativeDisplay.create();
+//            this._decoDisplayList.push(decoDisplay);
+//        }
+//
+//        if(displayData instanceof ccs.DisplayData){
+//            ccs.DisplayFactory.addDisplay(this._bone, decoDisplay, displayData);
+//        }else{
+//            this._addDisplayOther(decoDisplay,displayData);
+//        }
+//
+//        //! if changed display index is current display index, then change current display to the new display
+//        if (index == this._displayIndex) {
+//            this._displayIndex = -1;
+//            this.changeDisplayWithIndex(index, false);
+//        }
     },
 
     _addDisplayOther:function(decoDisplay,display){

@@ -190,10 +190,15 @@ ccs.DisplayFactory.addParticleDisplay = function (bone, decoDisplay, displayData
 ccs.DisplayFactory.createParticleDisplay = function (bone, decoDisplay) {
     var displayData = decoDisplay.getDisplayData();
     var system = cc.ParticleSystem.create(displayData.displayName);
+
+    system.removeFromParent();
+    system.cleanup();
+
     var armature = bone.getArmature();
     if (armature)    {
         system.setParent(bone.getArmature());
     }
+
     decoDisplay.setDisplay(system);
 };
 ccs.DisplayFactory.updateParticleDisplay = function (bone, particleSystem, dt) {

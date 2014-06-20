@@ -129,6 +129,8 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
                 this.barRendererScaleChangedWithSize();
             }, this);
         }
+
+        this.progressBarRendererScaleChangedWithSize();
     },
 
     /**
@@ -276,7 +278,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      * Get cap insets for slider.
      * @returns {cc.Rect}
      */
-    getCapInsetsProgressBarRenderer: function () {
+    getCapInsetsProgressBarRebderer: function () {
         return this._capInsetsProgressBarRenderer;
     },
 
@@ -533,6 +535,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         else {
             if (this._scale9Enabled) {
                 this._progressBarRenderer.setPreferredSize(cc.size(this._size.width, this._size.height));
+                this._progressBarTextureSize = this._progressBarRenderer.getContentSize();
             }
             else {
                 var ptextureSize = this._progressBarTextureSize;

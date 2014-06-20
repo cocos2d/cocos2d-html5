@@ -89,28 +89,31 @@ ccs.LayoutReader = ccs.WidgetReader.extend({
 
 
         var imageFileNameDic = options["backGroundImageData"];
-        var imageFileNameType = imageFileNameDic["resourceType"];
-        switch (imageFileNameType)
-        {
-            case 0:
+        if(imageFileNameDic){
+            var imageFileNameType = imageFileNameDic["resourceType"];
+            switch (imageFileNameType)
             {
-                var tp_b = jsonPath;
-                var imageFileName = imageFileNameDic["path"];
-                var imageFileName_tp = (imageFileName && (imageFileName !== "")) ?
-                    tp_b + imageFileName :
-                    null;
-                panel.setBackGroundImage(imageFileName_tp);
-                break;
+                case 0:
+                {
+                    var tp_b = jsonPath;
+                    var imageFileName = imageFileNameDic["path"];
+                    var imageFileName_tp = (imageFileName && (imageFileName !== "")) ?
+                        tp_b + imageFileName :
+                        null;
+                    panel.setBackGroundImage(imageFileName_tp);
+                    break;
+                }
+                case 1:
+                {
+                    var imageFileName = imageFileNameDic["path"];
+                    panel.setBackGroundImage(imageFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
+                    break;
+                }
+                default:
+                    break;
             }
-            case 1:
-            {
-                var imageFileName = imageFileNameDic["path"];
-                panel.setBackGroundImage(imageFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
-                break;
-            }
-            default:
-                break;
         }
+
 
         if (backGroundScale9Enable)
         {

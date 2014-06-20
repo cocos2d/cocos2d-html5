@@ -85,6 +85,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     _className: "Widget",
     _flippedX: false,
     _flippedY: false,
+    _opacity: 255,
     ctor: function () {
         cc.Node.prototype.ctor.call(this);
         this._brightStyle = ccui.Widget.BRIGHT_STYLE_NONE;
@@ -1424,6 +1425,11 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
         if (renderer.RGBAProtocol) {
             renderer.setOpacity(this._color.a);
         }
+    },
+
+    updateRGBAToRenderer: function(renderer){
+        renderer.setColor(this._color);
+        renderer.setOpacity(this._opacity);
     }
 });
 

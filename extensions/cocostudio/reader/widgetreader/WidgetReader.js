@@ -63,6 +63,13 @@ ccs.WidgetReader = ccs.WidgetReaderProtocol.extend({
         var x = options["x"];
         var y = options["y"];
         widget.setPosition(cc.p(x, y));
+        widget.x = x;
+        widget.y = y;
+
+
+        if(options["name"] == "background_Panel"){
+            void 0;
+        }
 
         var sx = options["scalex"];
         if(sx){
@@ -80,7 +87,7 @@ ccs.WidgetReader = ccs.WidgetReaderProtocol.extend({
         if(vb){
             widget.setVisible(vb);
         }
-        widget.setZOrder(options["ZOrder"]);
+        widget.setLocalZOrder(options["ZOrder"]);
 
         var layout = options["layoutParameter"];
         if(layout){
@@ -117,6 +124,23 @@ ccs.WidgetReader = ccs.WidgetReaderProtocol.extend({
             }
         }
 
+        if(options["name"] == "background_Panel"){
+            var tmp = {x: widget.x};
+            widget.__defineGetter__('x', function(){
+                return tmp.x
+            });
+            widget.__defineSetter__('x', function(x){
+                tmp.x = x;
+            });
+            var tmp2 = {x: widget._position.x};
+            widget._position.__defineGetter__('x', function(){
+                return tmp2.x
+            });
+            widget._position.__defineSetter__('x', function(x){
+                tmp2.x = x;
+            });
+            void 0;
+        }
 
     },
     setColorPropsFromJsonDictionary: function(widget, options){
@@ -133,7 +157,7 @@ ccs.WidgetReader = ccs.WidgetReaderProtocol.extend({
         var apy = options["anchorPointY"];
         var apyf = apy || (widget.getWidgetType() === ccs.WidgetType ? 0.5 : 0);
         widget.setAnchorPoint(cc.p(apxf, apyf));
-        widget.setFlipX(options["flipX"]);
-        widget.setFlipX(options["flipY"]);
+//        widget.setFlipX(options["flipX"]);
+//        widget.setFlipX(options["flipY"]);
     }
 });

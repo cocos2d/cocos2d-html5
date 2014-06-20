@@ -55,7 +55,7 @@ ccs.ImageViewReader = ccs.WidgetReader.extend({
             {
                 var tp_i = jsonPath;
                 var imageFileName = imageFileNameDic["path"];
-                var imageFileName_tp = NULL;
+                var imageFileName_tp = null;
                 if (imageFileName && imageFileName !== "")
                 {
                     imageFileName_tp = tp_i + imageFileName;

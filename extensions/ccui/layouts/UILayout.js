@@ -83,16 +83,25 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._clippingRect = cc.rect(0, 0, 0, 0);
         this._backGroundImageColor = cc.color(255, 255, 255, 255);
     },
+    onEnter: function(){
+        ccui.Widget.prototype.onEnter.call(this);
+        if (this._clippingStencil)
+        {
+            this._clippingStencil.onEnter();
+        }
+        this._doLayoutDirty = true;
+        this._clippingRectDirty = true;
+    },
     init: function () {
         if (cc.Node.prototype.init.call(this)) {
             this._layoutParameterDictionary = {};
             this._widgetChildren = [];
             this.initRenderer();
+            this.setBright(true);
             this.ignoreContentAdaptWithSize(false);
             this.setSize(cc.size(0, 0));
-            this.setBright(true);
             this.setAnchorPoint(0, 0);
-            this.initStencil();
+//            this.initStencil();
             return true;
         }
         return false;
@@ -1363,7 +1372,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                         default:
                             break;
                     }
-                    locChild.setPosition(locFinalPosX, locFinalPosY);
+                    locChild.setPosition(cc.p(locFinalPosX, locFinalPosY));
                     locLayoutParameter._put = true;
                     unlayoutChildCount--;
                 }

@@ -44,7 +44,7 @@ ccs.ButtonReader = ccs.WidgetReader.extend({
     
     
         var jsonPath = ccs.uiReader.getFilePath();
-    
+
         var button = widget;
         var scale9Enable = options["scale9Enable"];
         button.setScale9Enabled(scale9Enable);
@@ -112,7 +112,7 @@ ccs.ButtonReader = ccs.WidgetReader.extend({
             case 1:
             {
                 var disabledFileName = disabledDic["path"];
-                button.loadTextureDisabled(disabledFileName,ui::UI_TEX_TYPE_PLIST);
+                button.loadTextureDisabled(disabledFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
             }
             default:

@@ -231,6 +231,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this.updateAnchorPoint();
         this.updateFlippedX();
         this.updateFlippedY();
+        this.updateRGBAToRenderer(buttonNormalRenderer);
         this._normalTextureLoaded = true;
     },
 

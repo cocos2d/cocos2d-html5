@@ -142,7 +142,13 @@ ccui.LinearLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.LinearL
      */
     copyProperties: function (model) {
         ccui.LayoutParameter.prototype.copyProperties.call(this, model);
-        this.setGravity(model._linearGravity);
+        var parameter = model;
+        if(parameter){
+            this.setAlign(parameter._relativeAlign);
+            this.setRelativeName(parameter._relativeLayoutName);
+            this.setRelativeToWidgetName(parameter._relativeWidgetName);
+            //this.setGravity(model._linearGravity);
+        }
     }
 });
 

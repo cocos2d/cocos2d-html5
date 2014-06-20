@@ -136,7 +136,7 @@ ccs.uiReader = /** @lends ccs.uiReader# */{
         this._fileDesignSizes = {};
     },
     registerTypeAndCallBack: function(classType, ins, object, callback){
-        var factoryCreate = ccs.objectFactory.getInstance();
+        var factoryCreate = ccs.objectFactory;
         var t = new ccs.TInfo(classType, object);
         factoryCreate.registerType(t);
 
@@ -818,9 +818,59 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
     },
     widgetFromJsonDictionary: function (data) {
 
+        var widget = null;
         var classname = data["classname"];
         var uiOptions = data["options"];
-        var widget = ccs.objectFactory.getInstance().createGUI(classname);
+        if (classname == "Button") {
+            widget = ccui.Button.create();
+        }
+        else if (classname == "CheckBox") {
+            widget = ccui.CheckBox.create();
+        }
+        else if (classname == "Label") {
+            widget = ccui.Text.create();
+        }
+        else if (classname == "LabelAtlas") {
+            widget = ccui.TextAtlas.create();
+        }
+        else if (classname == "LoadingBar") {
+            widget = ccui.LoadingBar.create();
+        } else if (classname == "ScrollView") {
+            widget = ccui.ScrollView.create();
+        }
+        else if (classname == "TextArea") {
+            widget = ccui.Text.create();
+        }
+        else if (classname == "TextButton") {
+            widget = ccui.Button.create();
+        }
+        else if (classname == "TextField") {
+            widget = ccui.TextField.create();
+        }
+        else if (classname == "ImageView") {
+            widget = ccui.ImageView.create();
+        }
+        else if (classname == "Panel") {
+            widget = ccui.Layout.create();
+        }
+        else if (classname == "Slider") {
+            widget = ccui.Slider.create();
+        }
+        else if (classname == "LabelBMFont") {
+            widget = ccui.TextBMFont.create();
+        }
+        else if (classname == "DragPanel") {
+            widget = ccui.ScrollView.create();
+        }
+        else if (classname == "ListView") {
+            widget = ccui.ListView.create();
+        }
+        else if (classname == "PageView") {
+            widget = ccui.PageView.create();
+        }
+        else if (classname == "Widget"){
+            widget = ccui.Widget.create();
+        }
 
         // create widget reader to parse properties of widget
         var readerName = classname;
@@ -836,67 +886,68 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
                 break;
         }
         readerName += "Reader";
-        var reader = ccs.objectFactory.getInstance().createWidgetReaderProtocol(readerName);
+        var reader = ccs.objectFactory.createWidgetReaderProtocol(readerName);
         if(reader){
             // widget parse with widget reader
             this.setPropsForAllWidgetFromJsonDictionary(reader, widget, uiOptions);
         }else{
             // 1st., custom widget parse properties of parent widget with parent widget reader
-            if(widget instanceof ccs.Button){
-                readerName = "ButtonReader";
-            }else if(widget instanceof ccs.CheckBox){
-                readerName = "CheckBoxReader";
-            }else if (widget instanceof ccs.ImageView)
+
+            var render;
+            if(widget instanceof ccui.Button){
+                render = new ccs.ButtonReader();
+            }else if(widget instanceof ccui.CheckBox){
+                render = new ccs.CheckBoxReader();
+            }else if (widget instanceof ccui.ImageView)
             {
-                readerName = "ImageViewReader";
+                render = new ccs.ImageViewReader();
             }
-            else if (widget instanceof ccs.LabelAtlas)
+            else if (widget instanceof ccui.LabelAtlas)
             {
-                readerName = "LabelAtlasReader";
+                render = new ccs.LabelAtlasReader();
             }
-            else if (widget instanceof ccs.LabelBMFont)
+            else if (widget instanceof ccui.LabelBMFont)
             {
-                readerName = "LabelBMFontReader";
+                render = new ccs.LabelBMFontReader();
             }
-            else if (widget instanceof ccs.Label)
+            else if (widget instanceof ccui.Label)
             {
-                readerName = "LabelReader";
+                render = new ccs.LabelReader();
             }
-            else if (widget instanceof ccs.LoadingBar)
+            else if (widget instanceof ccui.LoadingBar)
             {
-                readerName = "LoadingBarReader";
+                render = new ccs.LoadingBarReader();
             }
-            else if (widget instanceof ccs.Slider)
+            else if (widget instanceof ccui.Slider)
             {
-                readerName = "SliderReader";
+                render = new ccs.SliderReader();
             }
-            else if (widget instanceof ccs.TextField)
+            else if (widget instanceof ccui.TextField)
             {
-                readerName = "TextFieldReader";
+                render = new ccs.TextFieldReader();
             }
-            else if (widget instanceof ccs.Layout)
+            else if (widget instanceof ccui.Layout)
             {
-                readerName = "LayoutReader";
+                render = new ccs.LayoutReader();
             }
-            else if (widget instanceof ccs.ScrollView)
+            else if (widget instanceof ccui.ScrollView)
             {
-                readerName = "ScrollViewReader";
+                render = new ccs.ScrollViewReader();
             }
-            else if (widget instanceof ccs.ListView)
+            else if (widget instanceof ccui.ListView)
             {
-                readerName = "ListViewReader";
+                render = new ccs.ListViewReader();
             }
-            else if (widget instanceof ccs.PageView)
+            else if (widget instanceof ccui.PageView)
             {
-                readerName = "PageViewReader";
+                render = new ccs.PageViewReader();
             }
-            else if (widget instanceof ccs.Widget)
+            else if (widget instanceof ccui.Widget)
             {
-                readerName = "WidgetReader";
+                render = new ccs.WidgetReader();
             }
 
-            var render = ccs.objectFactory.getInstance().createWidgetReaderProtocol(readerName);
-            this.setPropsForAllWidgetFromJsonDictionary(reader, widget, uiOptions);
+            this.setPropsForAllWidgetFromJsonDictionary(render, widget, uiOptions);
 
             // 2nd., custom widget parse with custom reader
             var customProperty = uiOptions["customProperty"];
@@ -908,29 +959,13 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             this.setPropsForAllCustomWidgetFromJsonDictionary(classname, widget, customJsonDict);
         }
         var childrenCount = data["children"];
-        for (var i = 0; i < childrenCount; i++)
+        for (var i = 0; i < childrenCount.length; i++)
         {
             var subData = data["children"][i];
             var child = this.widgetFromJsonDictionary(subData);
             if (child)
             {
-                var pageView = widget;
-                if (pageView)
-                {
-                    pageView.addPage(child);
-                }
-                else
-                {
-                    var listView = widget;
-                    if (listView)
-                    {
-                        listView.pushBackCustomItem(child);
-                    }
-                    else
-                    {
-                        widget.addChild(child);
-                    }
-                }
+                widget.addChild(child);
             }
         }
         return widget;
@@ -941,6 +976,10 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         var name = options["name"];
         var widgetName = name ? name : "default";
         widget.setName(widgetName);
+
+        if(name == "background_Panel"){
+            void(0);
+        }
 
         if (options["ignoreSize"] !== undefined) {
             widget.ignoreContentAdaptWithSize(options["ignoreSize"]);
@@ -962,6 +1001,11 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         var x = options["x"];
         var y = options["y"];
         widget.setPosition(x, y);
+        widget.x = x;
+        widget.y = y;
+        widget._transformDirty = true;
+
+
         if (options["scaleX"] !== undefined) {
             widget.setScaleX(options["scaleX"]);
         }

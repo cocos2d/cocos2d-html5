@@ -282,6 +282,7 @@
             "extensions/cocostudio/components/CCComponent.js",
             "extensions/cocostudio/components/CCComponentContainer.js",
             "extensions/cocostudio/CocoStudio.js",
+            "extensions/cocostudio/ActionManagerEx.js",
 
             "extensions/cocostudio/armature/utils/CCArmatureDefine.js",
             "extensions/cocostudio/armature/utils/CCDataReaderHelper.js",
@@ -318,7 +319,23 @@
             "extensions/cocostudio/trigger/TriggerObj.js",
 
             "extensions/cocostudio/reader/GUIReader.js",
-            "extensions/cocostudio/reader/SceneReader.js"
+            "extensions/cocostudio/reader/SceneReader.js",
+            "extensions/cocostudio/reader/widgetreader/WidgetReaderProtocol.js",
+            "extensions/cocostudio/reader/widgetreader/WidgetReader.js",
+
+            "extensions/cocostudio/reader/widgetreader/ButtonReader/ButtonReader.js",
+            "extensions/cocostudio/reader/widgetreader/CheckBoxReader/CheckBoxReader.js",
+            "extensions/cocostudio/reader/widgetreader/ImageViewReader/ImageViewReader.js",
+            "extensions/cocostudio/reader/widgetreader/LabelAtlasReader/LabelAtlasReader.js",
+            "extensions/cocostudio/reader/widgetreader/LabelBMFontReader/LabelBMFontReader.js",
+            "extensions/cocostudio/reader/widgetreader/LabelReader/LabelReader.js",
+            "extensions/cocostudio/reader/widgetreader/LayoutReader/LayoutReader.js",
+            "extensions/cocostudio/reader/widgetreader/ScrollViewReader/ScrollViewReader.js",
+            "extensions/cocostudio/reader/widgetreader/ListViewReader/ListViewReader.js",
+            "extensions/cocostudio/reader/widgetreader/LoadingBarReader/LoadingBarReader.js",
+            "extensions/cocostudio/reader/widgetreader/PageViewReader/PageViewReader.js",
+            "extensions/cocostudio/reader/widgetreader/SliderReader/SliderReader.js",
+            "extensions/cocostudio/reader/widgetreader/TextFieldReader/TextFieldReader.js"
         ],
         "gui" : [
             "core", "clipping-nodes", "render-texture", "actions", "progress-timer",
