@@ -589,15 +589,23 @@ cc.MouseDispatcher._registerHtmlElementEvent = function (element) {
 
     //register canvas mouse event
     element.addEventListener("mousedown", function (event) {
+        cc.Director.getInstance().getMouseDispatcher()._setMousePressed(true);
         cc.Director.getInstance().getMouseDispatcher().mouseHandle(getMouseByEvent(event), event, cc.MOUSE_DOWN);
+        event.stopPropagation();
+        event.preventDefault();
     });
 
     element.addEventListener("mouseup", function (event) {
+        cc.Director.getInstance().getMouseDispatcher()._setMousePressed(false);
         cc.Director.getInstance().getMouseDispatcher().mouseHandle(getMouseByEvent(event), event, cc.MOUSE_UP);
+        event.stopPropagation();
+        event.preventDefault();
     });
 
     element.addEventListener("mousemove", function (event) {
         cc.Director.getInstance().getMouseDispatcher().mouseHandle(getMouseByEvent(event), event, cc.MOUSE_MOVED);
+        //event.stopPropagation();
+        //event.preventDefault();
     });
 
     element.addEventListener("mousewheel", function (event) {
