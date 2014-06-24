@@ -37,6 +37,7 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
     _unitTime: 0,
     _currentTime: 0,
     _scheduler:null,
+    _fTotalTime: 0,
     ctor: function () {
         this._actionNodeList = [];
         this._name = "";
@@ -45,6 +46,7 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
         this._playing = false;
         this._unitTime = 0.1;
         this._currentTime = 0;
+        this._fTotalTime = 0;
         this._scheduler = new cc.Scheduler();
         cc.director.getScheduler().scheduleUpdateForTarget(this._scheduler, 0, false);
     },
@@ -118,6 +120,10 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
         this._currentTime = time;
     },
 
+    getTotalTime: function(){
+        return this._fTotalTime;
+    },
+
     /**
      * Return if the action is playing.
      * @returns {boolean}
@@ -136,14 +142,20 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
         this.setLoop(dic["loop"]);
         this.setUnitTime(dic["unittime"]);
         var actionNodeList = dic["actionnodelist"];
+        var maxLength = 0;
         for (var i = 0; i < actionNodeList.length; i++) {
-            var locActionNode = new ccs.ActionNode();
-            var locActionNodeDic = actionNodeList[i];
-            locActionNode.initWithDictionary(locActionNodeDic, root);
-            locActionNode.setUnitTime(this.getUnitTime());
-            this._actionNodeList.push(locActionNode);
-            locActionNodeDic = null;
+            var actionNode = new ccs.ActionNode();
+
+            var actionNodeDic = actionNodeList[i];
+            actionNode.initWithDictionary(actionNodeDic, root);
+            actionNode.setUnitTime(this.getUnitTime());
+            this._actionNodeList.push(actionNode);
+            var length = actionNode.getLastFrameIndex() - actionNode.getFirstFrameIndex();
+            if(length > maxLength){
+                maxLength = length;
+            }
         }
+        this._fTotalTime = maxLength * this._unitTime;
     },
 
     /**

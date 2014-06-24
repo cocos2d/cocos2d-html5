@@ -76,11 +76,14 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
      * @param {ccs.ArmatureData} armatureData
      */
     addArmatureData:function (id, armatureData, configFilePath) {
-        if (this._armarureDatas) {
-            var data = this.getRelativeData(configFilePath);
+        var data = this.getRelativeData(configFilePath);
+        if (data)
+        {
             data.armatures.push(id);
-            this._armarureDatas[id] = armatureData;
         }
+
+        this._armarureDatas[id] = armatureData;
+
     },
 
     /**
@@ -210,21 +213,11 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
      * //example2
      * ccs.armatureDataManager.addArmatureFileInfo("res/test.png","res/test.plist","res/test.json");
      */
-    addArmatureFileInfo:function (/*imagePath, plistPath, configFilePath*/) {
-        var imagePath, plistPath, configFilePath;
-        var isLoadSpriteFrame = false;
-        if (arguments.length == 1) {
-            configFilePath = arguments[0];
-            isLoadSpriteFrame = true;
-            this.addRelativeData(configFilePath);
-        } else if (arguments.length == 3){
-            imagePath = arguments[0];
-            plistPath = arguments[1];
-            configFilePath = arguments[2];
-            this.addRelativeData(configFilePath);
-            this.addSpriteFrameFromFile(plistPath, imagePath, configFilePath);
-        }
-        ccs.dataReaderHelper.addDataFromFile(configFilePath,isLoadSpriteFrame);
+    addArmatureFileInfo:function (configFilePath/*imagePath, plistPath, configFilePath*/) {
+        this.addRelativeData(configFilePath);
+
+        this._autoLoadSpriteFile = true;
+        ccs.dataReaderHelper.addDataFromFile(configFilePath);
     },
 
     /**
