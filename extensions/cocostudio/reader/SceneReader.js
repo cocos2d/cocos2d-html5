@@ -32,6 +32,8 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
     _selector:null,
     _node: null,
 
+    _coordinatesScale: {x: 1, y: 1},
+    
     /**
      * create node with json file that exported by CocoStudio scene editor
      * @param pszFileName
@@ -55,6 +57,13 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
      * @returns {cc.Node}
      */
     createObject: function (inputFiles, parenet) {
+        var canvasSize = inputFiles["CanvasSize"];
+        if(canvasSize != null) {
+            var designResolutionSize = cc.view.getDesignResolutionSize();
+            this._coordinatesScale.x =  designResolutionSize.width / canvasSize._width;
+            this._coordinatesScale.y =  designResolutionSize.height / canvasSize._height;
+        }
+        
         var className = inputFiles["classname"];
         if (className == "CCNode") {
             var gb = null;
@@ -101,7 +110,7 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
                         sprite = cc.Sprite.create(path);
                     }
                     else if (resType == 1) {
-                        if (pathExtname != ".plist") continue;
+                        if (plistFile === undefined) continue;
 
                         plistFile = cc.path.join(this._baseBath, plistFile);
                         var pngFile = cc.path.changeExtname(plistFile, ".png");
@@ -300,7 +309,7 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
     setPropertyFromJsonDict: function (node, dict) {
         var x = (typeof dict["x"] === 'undefined')?0:dict["x"];
         var y = (typeof dict["y"] === 'undefined')?0:dict["y"];
-        node.setPosition(x, y);
+        node.setPosition(x * this._coordinatesScale.x, y * this._coordinatesScale.y);
 
         var bVisible = Boolean((typeof dict["visible"] === 'undefined')?1:dict["visible"]);
         node.setVisible(bVisible);
