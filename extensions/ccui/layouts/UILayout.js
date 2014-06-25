@@ -1020,7 +1020,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 locFinalPosX += locMargin.left;
                 locFinalPosY -= locMargin.top;
                 locChild.setPosition(locFinalPosX, locFinalPosY);
-                topBoundary = locChild.getBottomInParent() - locMargin.bottom;
+                topBoundary = locChild.getBottomBoundary() - locMargin.bottom;
             }
         }
     },
@@ -1055,7 +1055,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 locFinalPosX += locMargin.left;
                 locFinalPosY -= locMargin.top;
                 locChild.setPosition(locFinalPosX, locFinalPosY);
-                leftBoundary = locChild.getRightInParent() + locMargin.right;
+                leftBoundary = locChild.getRightBoundary() + locMargin.right;
             }
         }
     },
@@ -1138,8 +1138,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var locationBottom = locRelativeWidget.getTopInParent();
-                                var locationLeft = locRelativeWidget.getLeftInParent();
+                                var locationBottom = locRelativeWidget.getTopBoundary();
+                                var locationLeft = locRelativeWidget.getLeftBoundary();
                                 locFinalPosY = locationBottom + locAP.y * locSize.height;
                                 locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
@@ -1150,10 +1150,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                                     continue;
                                 }
                                 var rbs = locRelativeWidget.getSize();
-                                var locationBottom = locRelativeWidget.getTopInParent();
+                                var locationBottom = locRelativeWidget.getTopBoundary();
 
                                 locFinalPosY = locationBottom + locAP.y * locSize.height;
-                                locFinalPosX = locRelativeWidget.getLeftInParent() + rbs.width * 0.5 + locAP.x * locSize.width - locSize.width * 0.5;
+                                locFinalPosX = locRelativeWidget.getLeftBoundary() + rbs.width * 0.5 + locAP.x * locSize.width - locSize.width * 0.5;
                             }
                             break;
                         case ccui.RELATIVE_ALIGN_LOCATION_ABOVE_RIGHT:
@@ -1161,8 +1161,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var locationBottom = locRelativeWidget.getTopInParent();
-                                var locationRight = locRelativeWidget.getRightInParent();
+                                var locationBottom = locRelativeWidget.getTopBoundary();
+                                var locationRight = locRelativeWidget.getRightBoundary();
                                 locFinalPosY = locationBottom + locAP.y * locSize.height;
                                 locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
                             }
@@ -1172,8 +1172,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var locationTop = locRelativeWidget.getTopInParent();
-                                var locationRight = locRelativeWidget.getLeftInParent();
+                                var locationTop = locRelativeWidget.getTopBoundary();
+                                var locationRight = locRelativeWidget.getLeftBoundary();
                                 locFinalPosY = locationTop - (1 - locAP.y) * locSize.height;
                                 locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
                             }
@@ -1184,10 +1184,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                                     continue;
                                 }
                                 var rbs = locRelativeWidget.getSize();
-                                var locationRight = locRelativeWidget.getLeftInParent();
+                                var locationRight = locRelativeWidget.getLeftBoundary();
                                 locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
 
-                                locFinalPosY = locRelativeWidget.getBottomInParent() + rbs.height * 0.5 + locAP.y * locSize.height - locSize.height * 0.5;
+                                locFinalPosY = locRelativeWidget.getBottomBoundary() + rbs.height * 0.5 + locAP.y * locSize.height - locSize.height * 0.5;
                             }
                             break;
                         case ccui.RELATIVE_ALIGN_LOCATION_LEFT_BOTTOM:
@@ -1195,8 +1195,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var locationBottom = locRelativeWidget.getBottomInParent();
-                                var locationRight = locRelativeWidget.getLeftInParent();
+                                var locationBottom = locRelativeWidget.getBottomBoundary();
+                                var locationRight = locRelativeWidget.getLeftBoundary();
                                 locFinalPosY = locationBottom + locAP.y * locSize.height;
                                 locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
                             }
@@ -1206,8 +1206,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var locationTop = locRelativeWidget.getTopInParent();
-                                var locationLeft = locRelativeWidget.getRightInParent();
+                                var locationTop = locRelativeWidget.getTopBoundary();
+                                var locationLeft = locRelativeWidget.getRightBoundary();
                                 locFinalPosY = locationTop - (1 - locAP.y) * locSize.height;
                                 locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
@@ -1218,10 +1218,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                                     continue;
                                 }
                                 var rbs = locRelativeWidget.getSize();
-                                var locationLeft = locRelativeWidget.getRightInParent();
+                                var locationLeft = locRelativeWidget.getRightBoundary();
                                 locFinalPosX = locationLeft + locAP.x * locSize.width;
 
-                                locFinalPosY = locRelativeWidget.getBottomInParent() + rbs.height * 0.5 + locAP.y * locSize.height - locSize.height * 0.5;
+                                locFinalPosY = locRelativeWidget.getBottomBoundary() + rbs.height * 0.5 + locAP.y * locSize.height - locSize.height * 0.5;
                             }
                             break;
                         case ccui.RELATIVE_ALIGN_LOCATION_RIGHT_BOTTOM:
@@ -1229,8 +1229,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var locationBottom = locRelativeWidget.getBottomInParent();
-                                var locationLeft = locRelativeWidget.getRightInParent();
+                                var locationBottom = locRelativeWidget.getBottomBoundary();
+                                var locationLeft = locRelativeWidget.getRightBoundary();
                                 locFinalPosY = locationBottom + locAP.y * locSize.height;
                                 locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
@@ -1240,8 +1240,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var locationTop = locRelativeWidget.getBottomInParent();
-                                var locationLeft = locRelativeWidget.getLeftInParent();
+                                var locationTop = locRelativeWidget.getBottomBoundary();
+                                var locationLeft = locRelativeWidget.getLeftBoundary();
                                 locFinalPosY = locationTop - (1 - locAP.y) * locSize.height;
                                 locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
@@ -1252,10 +1252,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                                     continue;
                                 }
                                 var rbs = locRelativeWidget.getSize();
-                                var locationTop = locRelativeWidget.getBottomInParent();
+                                var locationTop = locRelativeWidget.getBottomBoundary();
 
                                 locFinalPosY = locationTop - (1 - locAP.y) * locSize.height;
-                                locFinalPosX = locRelativeWidget.getLeftInParent() + rbs.width * 0.5 + locAP.x * locSize.width - locSize.width * 0.5;
+                                locFinalPosX = locRelativeWidget.getLeftBoundary() + rbs.width * 0.5 + locAP.x * locSize.width - locSize.width * 0.5;
                             }
                             break;
                         case ccui.RELATIVE_ALIGN_LOCATION_BELOW_BOTTOM:
@@ -1263,8 +1263,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var locationTop = locRelativeWidget.getBottomInParent();
-                                var locationRight = locRelativeWidget.getRightInParent();
+                                var locationTop = locRelativeWidget.getBottomBoundary();
+                                var locationRight = locRelativeWidget.getRightBoundary();
                                 locFinalPosY = locationTop - (1 - locAP.y) * locSize.height;
                                 locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
                             }

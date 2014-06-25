@@ -433,16 +433,16 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 
         switch (this._touchMoveDir) {
             case ccui.PageView.TOUCH_DIR_LEFT: // left
-                if (this._rightChild.getRightInParent() + touchOffset <= this._rightBoundary) {
-                    realOffset = this._rightBoundary - this._rightChild.getRightInParent();
+                if (this._rightChild.getRightBoundary() + touchOffset <= this._rightBoundary) {
+                    realOffset = this._rightBoundary - this._rightChild.getRightBoundary();
                     this.movePages(realOffset);
                     return false;
                 }
                 break;
 
             case ccui.PageView.TOUCH_DIR_RIGHT: // right
-                if (this._leftChild.getLeftInParent() + touchOffset >= this._leftBoundary) {
-                    realOffset = this._leftBoundary - this._leftChild.getLeftInParent();
+                if (this._leftChild.getLeftBoundary() + touchOffset >= this._leftBoundary) {
+                    realOffset = this._leftBoundary - this._leftChild.getLeftBoundary();
                     this.movePages(realOffset);
                     return false;
                 }
