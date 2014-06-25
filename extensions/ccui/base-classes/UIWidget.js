@@ -1187,7 +1187,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
      * Gets the left boundary position of this widget.
      * @returns {number}
      */
-    getLeftInParent: function () {
+    getLeftBoundary: function () {
         return this.getPositionX() - this._getAnchorX() * this._size.width;
     },
 
@@ -1195,7 +1195,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
      * Gets the bottom boundary position of this widget.
      * @returns {number}
      */
-    getBottomInParent: function () {
+    getBottomBoundary: function () {
         return this.getPositionY() - this._getAnchorY() * this._size.height;
     },
 
@@ -1203,16 +1203,16 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
      * Gets the right boundary position of this widget.
      * @returns {number}
      */
-    getRightInParent: function () {
-        return this.getLeftInParent() + this._size.width;
+    getRightBoundary: function () {
+        return this.getLeftBoundary() + this._size.width;
     },
 
     /**
      * Gets the top boundary position of this widget.
      * @returns {number}
      */
-    getTopInParent: function () {
-        return this.getBottomInParent() + this._size.height;
+    getTopBoundary: function () {
+        return this.getBottomBoundary() + this._size.height;
     },
 
     /**
