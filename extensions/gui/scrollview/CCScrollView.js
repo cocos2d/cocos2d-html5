@@ -648,8 +648,8 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         zOrder = zOrder || child.getLocalZOrder();
         tag = tag || child.getTag();
 
-        child.ignoreAnchorPointForPosition(false);
-        child.setAnchorPoint(0, 0);
+        //child.ignoreAnchorPointForPosition(false);
+        //child.setAnchorPoint(0, 0);
         if (this._container != child) {
             this._container.addChild(child, zOrder, tag);
         } else {
