@@ -336,7 +336,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
                 audio.stop();
             } else {
                 audio.pause();
-                audio.duration && (audio.currentTime = audio.duration);
+                audio.currentTime = 0;
             }
         }
         this._musicPlayState = 2;
@@ -368,8 +368,10 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
             if (audio.stop) {//cc.WebAudio
                 audio.stop();
             } else {
-                audio.pause();
-                audio.duration && (audio.currentTime = audio.duration);
+                if(audio.duration && audio.duration != Infinity)
+                    audio.currentTime = audio.duration;
+                else
+                    audio.pause();
             }
             return true;
         }
@@ -816,7 +818,7 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
             var self = this, audio = self._effectCache4Single[url], locLoader = cc.loader,
                 waitings = self._waitingEffIds, pauseds = self._pausedEffIds, effects = self._effects;
             if (audio) {
-                audio.duration && (audio.currentTime = 0);//reset current time
+                audio.currentTime = 0;                          //reset current time
             } else {
                 audio = self._getAudioByUrl(url);
                 if (!audio) return null;
@@ -848,7 +850,8 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
                 return;
             for (var key in sglCache) {
                 var eff = sglCache[key];
-                eff.duration && (eff.currentTime = eff.duration);
+                if(eff.duration && eff.duration != Infinity)
+                    eff.currentTime = eff.duration;
             }
             waitings.length = 0;
             pauseds.length = 0;
@@ -857,7 +860,8 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
                 for (var i = 0, li = list.length; i < li; i++) {
                     var eff = list[i];
                     eff.loop = false;
-                    eff.duration && (eff.currentTime = eff.duration);
+                    if(eff.duration && eff.duration != Infinity)
+                        eff.currentTime = eff.duration;
                 }
             }
             if (currEffect) self._stopAudio(currEffect);
@@ -874,7 +878,7 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
                 else self._resumeAudio(currEffect);
             } else if (self._needToResumeMusic) {
                 var currMusic = self._currMusic;
-                if (currMusic.duration) {//calculate current time
+                if (currMusic.duration && currMusic.duration != Infinity) {//calculate current time
                     var temp = currMusic.currentTime + self._expendTime4Music;
                     temp = temp - currMusic.duration * ((temp / currMusic.duration) | 0);
                     currMusic.currentTime = temp;
@@ -902,7 +906,7 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
                 if (eff._isToPlay || eff.loop || (eff.duration && eff.currentTime + expendTime < eff.duration)) {
                     self._currEffectId = effId;
                     self._currEffect = eff;
-                    if (!eff._isToPlay && eff.duration) {
+                    if (!eff._isToPlay && eff.duration && eff.duration != Infinity) {
                         var temp = eff.currentTime + expendTime;
                         temp = temp - eff.duration * ((temp / eff.duration) | 0);
                         eff.currentTime = temp;
@@ -910,7 +914,8 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
                     eff._isToPlay = false;
                     return eff;
                 } else {
-                    eff.duration && (eff.currentTime = eff.duration);
+                    if(eff.duration && eff.duration != Infinity)
+                        eff.currentTime = eff.duration;
                 }
             }
             self._currEffectId = null;
