@@ -23,61 +23,44 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * Base class for ccs.ComRender
- * @class
- * @extends ccs.Component
- */
-ccs.ComRender = ccs.Component.extend(/** @lends ccs.ComRender# */{
-    _render: null,
-    ctor: function (node, comName) {
-        cc.Component.prototype.ctor.call(this);
-        this._render = node;
-        this._name = comName;
-        this.isRenderer = true;
+ccs.LabelBMFontReader = {
+    getInstance: function(){
+        return ccs.LabelBMFontReader;
     },
 
-    onEnter: function () {
-        if (this._owner) {
-            this._owner.addChild(this._render);
+    setPropsFromJsonDictionary: function(widget, options){
+
+
+        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+    
+    
+        var jsonPath = ccs.uiReader.getFilePath();
+    
+        var labelBMFont = widget;
+    
+        var cmftDic = options["fileNameData"];
+        var cmfType = cmftDic["resourceType"];
+        switch (cmfType)
+        {
+            case 0:
+            {
+                var tp_c = jsonPath;
+                var cmfPath = cmftDic["path"];
+                var cmf_tp = tp_c + cmfPath;
+                labelBMFont.setFntFile(cmf_tp);
+                break;
+            }
+            case 1:
+                cc.log("Wrong res type of LabelAtlas!");
+                break;
+            default:
+                break;
         }
-    },
-
-    onExit: function () {
-        if (this._owner) {
-            this._owner.removeChild(this._render, true);
-            this._render = null;
-        }
-    },
-
-    /**
-     * Node getter
-     * @returns {cc.Node}
-     */
-    getNode: function () {
-        return this._render;
-    },
-
-    /**
-     * Node setter
-     * @param {cc.Node} node
-     */
-    setNode: function (node) {
-        this._render = node;
+    
+        var text = options["text"];
+        labelBMFont.setText(text);
+    
+    
+        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
-});
-/**
- * allocates and initializes a ComRender.
- * @constructs
- * @return {ccs.ComRender}
- * @example
- * // example
- * var com = ccs.ComRender.create();
- */
-ccs.ComRender.create = function (node, comName) {
-    var com = new ccs.ComRender(node, comName);
-    if (com && com.init()) {
-        return com;
-    }
-    return null;
 };

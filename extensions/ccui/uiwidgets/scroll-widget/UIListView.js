@@ -378,9 +378,17 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         this._listViewEventSelector = selector;
     },
 
-    selectedItemEvent: function () {
+    selectedItemEvent: function (state) {
         if(this._listViewEventSelector&&this._listViewEventListener){
-            this._listViewEventSelector.call(this._listViewEventListener, this, ccui.ListView.EVENT_SELECTED_ITEM);
+
+            switch(state){
+                case 0:
+                    this._listViewEventSelector.call(this._listViewEventListener, this, ccui.ListView.LISTVIEW_ONSELECTEDITEM_START);
+                    break;
+                default:
+                    this._listViewEventSelector.call(this._listViewEventListener, this, ccui.ListView.LISTVIEW_ONSELECTEDITEM_END);
+                    break;
+            }
         }
     },
 
@@ -395,7 +403,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
                 }
                 parent = parent.getParent();
             }
-            this.selectedItemEvent();
+            this.selectedItemEvent(handleState);
         }
     },
 
@@ -478,6 +486,9 @@ ccui.ListView.create = function () {
 // Constants
 //listView event type
 ccui.ListView.EVENT_SELECTED_ITEM = 0;
+
+ccui.LISTVIEW_ONSELECTEDITEM_START = 0;
+ccui.LISTVIEW_ONSELECTEDITEM_END = 1;
 
 //listView gravity
 ccui.ListView.GRAVITY_LEFT = 0;

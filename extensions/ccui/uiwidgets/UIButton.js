@@ -226,11 +226,12 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             buttonNormalRenderer.setCapInsets(this._capInsetsNormal);
         }
 
+        this.normalTextureScaleChangedWithSize();
         this.updateColorToRenderer(buttonNormalRenderer);
         this.updateAnchorPoint();
         this.updateFlippedX();
         this.updateFlippedY();
-        this.normalTextureScaleChangedWithSize();
+        this.updateRGBAToRenderer(buttonNormalRenderer);
         this._normalTextureLoaded = true;
     },
 
@@ -276,10 +277,11 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             clickedRenderer.setCapInsets(this._capInsetsNormal);
         }
         this.updateColorToRenderer(clickedRenderer);
+        this.pressedTextureScaleChangedWithSize();
         this.updateAnchorPoint();
         this.updateFlippedX();
         this.updateFlippedY();
-        this.pressedTextureScaleChangedWithSize();
+        this.updateRGBAToRenderer(this._buttonDisableRenderer);
         this._pressedTextureLoaded = true;
     },
 
@@ -325,10 +327,11 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             disableRenderer.setCapInsets(this._capInsetsNormal);
         }
         this.updateColorToRenderer(disableRenderer);
+        this.disabledTextureScaleChangedWithSize();
         this.updateAnchorPoint();
         this.updateFlippedX();
         this.updateFlippedY();
-        this.disabledTextureScaleChangedWithSize();
+        this.updateRGBAToRenderer(this._buttonDisableRenderer);
         this._disabledTextureLoaded = true;
     },
 
@@ -358,7 +361,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
      *  Get normal renderer cap insets  .
      * @returns {cc.Rect}
      */
-    getCapInsetNormalRenderer: function () {
+    getCapInsetsNormalRenderer:function(){
         return this._capInsetsNormal;
     },
 
@@ -378,7 +381,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
      *  Get pressed renderer cap insets  .
      * @returns {cc.Rect}
      */
-    getCapInsetPressedRenderer: function () {
+    getCapInsetsPressedRenderer: function () {
         return this._capInsetsPressed;
     },
 
@@ -398,7 +401,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
      *  Get disable renderer cap insets  .
      * @returns {cc.Rect}
      */
-    getCapInsetDisabledRenderer: function () {
+    getCapInsetsDisabledRenderer: function () {
         return this._capInsetsDisabled;
     },
 
@@ -455,6 +458,44 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this._buttonDisableRenderer.setVisible(true);
         this._buttonNormalRenderer.setScale(this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
         this._buttonClickedRenderer.setScale(this._pressedTextureScaleXInSize, this._pressedTextureScaleYInSize);
+    },
+
+    setFlippedX: function(flippedX){
+        this._titleRenderer.setFlippedX(flippedX);
+        if (this._scale9Enabled)
+        {
+            return;
+        }
+        this._buttonNormalRenderer.setFlippedX(flippedX);
+        this._buttonClickedRenderer.setFlippedX(flippedX);
+        this._buttonDisableRenderer.setFlippedX(flippedX);
+    },
+
+    setFlipY: function(flippedY){
+        this._titleRenderer.setFlippedY(flippedY);
+        if (this._scale9Enabled)
+        {
+            return;
+        }
+        this._buttonNormalRenderer.setFlippedY(flippedY);
+        this._buttonClickedRenderer.setFlippedY(flippedY);
+        this._buttonDisableRenderer.setFlippedY(flippedY);
+    },
+
+    isFlippedX: function(){
+        if (this._scale9Enabled)
+        {
+            return false;
+        }
+        return this._buttonNormalRenderer.isFlippedX();
+    },
+
+    isFlippedY: function(){
+        if (this._scale9Enabled)
+        {
+            return false;
+        }
+        return this._buttonNormalRenderer.isFlippedY();
     },
 
     updateFlippedX: function () {

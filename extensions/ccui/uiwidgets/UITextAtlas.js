@@ -30,7 +30,7 @@
  *
  * @property {String}   string  - Content string of the label
  */
-ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
+ccui.LabelAtlas = ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
     _labelAtlasRenderer: null,
     _stringValue: "",
     _charMapFileName: "",
@@ -231,7 +231,7 @@ _p = null;
  * // example
  * var uiLabelAtlas = ccui.TextAtlas.create();
  */
-ccui.TextAtlas.create = function () {
+ccui.LabelAtlas.create = ccui.TextAtlas.create = function () {
    return new ccui.TextAtlas();
 };
 

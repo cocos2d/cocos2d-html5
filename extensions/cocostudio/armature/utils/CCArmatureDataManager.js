@@ -89,7 +89,7 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
      */
     removeArmatureData:function(id){
         if (this._armarureDatas[id])
-           delete this._armarureDatas[id];
+            delete this._armarureDatas[id];
     },
 
     /**
@@ -290,14 +290,14 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
         return this._relativeDatas[configFilePath];
     },
 
-	/**
-	 * Clear data
-	 */
-	clear: function() {
+    /**
+     * Clear data
+     */
+    clear: function() {
         this._animationDatas = {};
         this._armarureDatas = {};
         this._textureDatas = {};
         ccs.spriteFrameCacheHelper.clear();
         ccs.dataReaderHelper.clear();
-	}
+    }
 };

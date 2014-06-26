@@ -23,70 +23,53 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.objectFactory = {
-    _typeMap: {},
+ccs.LabelReader = {
 
-    destroyInstance: function () {
-        this._instance = null;
+    getInstance: function(){
+        return ccs.LabelReader;
     },
 
-    createObject: function (className) {
-        var o = null;
-        var t = this._typeMap[className];
-        if (t) {
-            o = new t._fun();
+    setPropsFromJsonDictionary: function(widget, options){
+
+        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+    
+    
+        var jsonPath = ccs.uiReader.getFilePath();
+    
+        var label = widget;
+        var touchScaleChangeAble = options["touchScaleEnable"];
+        label.setTouchScaleChangeEnabled(touchScaleChangeAble);
+        var text = options["text"];
+        label.setString(text);
+        var fs = options["fontSize"];
+        if (fs)
+        {
+            label.setFontSize(options["fontSize"]);
         }
-        return o;
-    },
-
-    registerType: function (t) {
-        this._typeMap[t._className] = t;
-    },
-
-    createGUI: function(name){
-        var object = null;
-        if(name === "Panel"){
-            name = "Layout";
-        }else if(name === "TextArea"){
-            name = "Label";
-        }else if(name === "TextButton"){
-            name = "Button";
+        var fn = options["fontName"];
+        if (fn)
+        {
+            label.setFontName(options["fontName"]);
         }
-
-        var t = this._typeMap[name];
-        if(t && t._fun){
-            object = t._fun;
+        var aw = options["areaWidth"];
+        var ah = options["areaHeight"];
+        if (aw && ah)
+        {
+            var size = cc.size(options["areaWidth"], options["areaHeight"]);
+            label.setTextAreaSize(size);
         }
-
-        return object;
-    },
-
-    createWidgetReaderProtocol: function(name){
-        var object = null;
-
-        var t = this._typeMap[name];
-        if(t && t._fun){
-            object = t._fun;
+        var ha = options["hAlignment"];
+        if (ha)
+        {
+            label.setTextHorizontalAlignment(options["hAlignment"]);
         }
-
-        return object;
+        var va = options["vAlignment"];
+        if (va)
+        {
+            label.setTextVerticalAlignment(options["vAlignment"]);
+        }
+    
+    
+        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
-
-
 };
-
-ccs.TInfo = ccs.Class.extend({
-    _className: "",
-    _fun: null,
-
-    ctor: function (c, f) {
-        if (f) {
-            this._className = c;
-            this._fun = f;
-        } else {
-            this._className = c._className;
-            this._fun = c._fun;
-        }
-        ccs.objectFactory.registerType(this);
-    }
-});

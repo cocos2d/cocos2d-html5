@@ -23,61 +23,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * Base class for ccs.ComRender
- * @class
- * @extends ccs.Component
- */
-ccs.ComRender = ccs.Component.extend(/** @lends ccs.ComRender# */{
-    _render: null,
-    ctor: function (node, comName) {
-        cc.Component.prototype.ctor.call(this);
-        this._render = node;
-        this._name = comName;
-        this.isRenderer = true;
-    },
+ccs.WidgetReaderProtocol = ccs.Class.extend({
 
-    onEnter: function () {
-        if (this._owner) {
-            this._owner.addChild(this._render);
-        }
-    },
+    setPropsFromJsonDictionary: function(widget, options){
 
-    onExit: function () {
-        if (this._owner) {
-            this._owner.removeChild(this._render, true);
-            this._render = null;
-        }
-    },
-
-    /**
-     * Node getter
-     * @returns {cc.Node}
-     */
-    getNode: function () {
-        return this._render;
-    },
-
-    /**
-     * Node setter
-     * @param {cc.Node} node
-     */
-    setNode: function (node) {
-        this._render = node;
     }
 });
-/**
- * allocates and initializes a ComRender.
- * @constructs
- * @return {ccs.ComRender}
- * @example
- * // example
- * var com = ccs.ComRender.create();
- */
-ccs.ComRender.create = function (node, comName) {
-    var com = new ccs.ComRender(node, comName);
-    if (com && com.init()) {
-        return com;
-    }
-    return null;
-};

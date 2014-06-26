@@ -102,11 +102,11 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
             imageRenderer.setCapInsets(this._capInsets);
         }
 
-        this.updateColorToRenderer(imageRenderer);
+        this.imageTextureScaleChangedWithSize();
         this.updateAnchorPoint();
         this.updateFlippedX();
         this.updateFlippedY();
-        this.imageTextureScaleChangedWithSize();
+        this.updateRGBAToRenderer(imageRenderer);
     },
 
     /**
@@ -117,9 +117,9 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         if (!this._scale9Enabled){
             this._imageRenderer.setTextureRect(rect);
             var locRendererSize = this._imageRenderer.getContentSize();
+            this.imageTextureScaleChangedWithSize();
             this._imageTextureSize.width = locRendererSize.width;
             this._imageTextureSize.height = locRendererSize.height;
-            this.imageTextureScaleChangedWithSize();
         }
     },
 
