@@ -23,24 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.ScrollViewReader = ccs.LayoutReader.extend({
-
-    instanceTextFieldReader: null,
+ccs.ScrollViewReader = {
 
     getInstance: function(){
-        if(!this.instanceTextFieldReader){
-            this.instanceTextFieldReader = new ccs.ScrollViewReader();
-        }
-        return this.instanceTextFieldReader;
-    },
-
-    purge: function(){
-
+        return ccs.ScrollViewReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccs.LayoutReader.prototype.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.LayoutReader.setPropsFromJsonDictionary.call(this, widget, options);
 
 
         var scrollView = widget;
@@ -55,6 +46,6 @@ ccs.ScrollViewReader = ccs.LayoutReader.extend({
         scrollView.setBounceEnabled(options["bounceEnable"]);
 
 
-        ccs.LayoutReader.prototype.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.LayoutReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
-});
+};

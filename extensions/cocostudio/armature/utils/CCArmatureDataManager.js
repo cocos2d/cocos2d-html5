@@ -76,14 +76,11 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
      * @param {ccs.ArmatureData} armatureData
      */
     addArmatureData:function (id, armatureData, configFilePath) {
-        var data = this.getRelativeData(configFilePath);
-        if (data)
-        {
+        if (this._armarureDatas) {
+            var data = this.getRelativeData(configFilePath);
             data.armatures.push(id);
+            this._armarureDatas[id] = armatureData;
         }
-
-        this._armarureDatas[id] = armatureData;
-
     },
 
     /**
@@ -92,7 +89,7 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
      */
     removeArmatureData:function(id){
         if (this._armarureDatas[id])
-           delete this._armarureDatas[id];
+            delete this._armarureDatas[id];
     },
 
     /**
@@ -213,11 +210,21 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
      * //example2
      * ccs.armatureDataManager.addArmatureFileInfo("res/test.png","res/test.plist","res/test.json");
      */
-    addArmatureFileInfo:function (configFilePath/*imagePath, plistPath, configFilePath*/) {
-        this.addRelativeData(configFilePath);
-
-        this._autoLoadSpriteFile = true;
-        ccs.dataReaderHelper.addDataFromFile(configFilePath);
+    addArmatureFileInfo:function (/*imagePath, plistPath, configFilePath*/) {
+        var imagePath, plistPath, configFilePath;
+        var isLoadSpriteFrame = false;
+        if (arguments.length == 1) {
+            configFilePath = arguments[0];
+            isLoadSpriteFrame = true;
+            this.addRelativeData(configFilePath);
+        } else if (arguments.length == 3){
+            imagePath = arguments[0];
+            plistPath = arguments[1];
+            configFilePath = arguments[2];
+            this.addRelativeData(configFilePath);
+            this.addSpriteFrameFromFile(plistPath, imagePath, configFilePath);
+        }
+        ccs.dataReaderHelper.addDataFromFile(configFilePath,isLoadSpriteFrame);
     },
 
     /**
@@ -283,14 +290,14 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
         return this._relativeDatas[configFilePath];
     },
 
-	/**
-	 * Clear data
-	 */
-	clear: function() {
+    /**
+     * Clear data
+     */
+    clear: function() {
         this._animationDatas = {};
         this._armarureDatas = {};
         this._textureDatas = {};
         ccs.spriteFrameCacheHelper.clear();
         ccs.dataReaderHelper.clear();
-	}
+    }
 };

@@ -73,7 +73,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends cc.DisplayManager */{
         {
             var skin = display;
             skin.setBone(this._bone);
-            displayData = this.SpriteDisplayData.create();
+            displayData = new ccs.SpriteDisplayData();
 
             ccs.DisplayFactory.initSpriteDisplay(this._bone, decoDisplay, skin.getDisplayName(), skin);
 
@@ -107,9 +107,9 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends cc.DisplayManager */{
 //                }
             }
         }
-        else if (display instanceof ccs.ParticleSystemQuad)
+        else if (display instanceof cc.ParticleSystem)
         {
-            displayData = ccs.ParticleDisplayData.create();
+            displayData = new ccs.ParticleDisplayData();
 
             display.removeFromParent();
             display.cleanup();
@@ -123,13 +123,13 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends cc.DisplayManager */{
         else if(display instanceof ccs.Armature)
         {
             var armature = display;
-            displayData = ccs.ArmatureDisplayData.create();
+            displayData = new ccs.ArmatureDisplayData();
             displayData.displayName = armature.getName();
             armature.setParentBone(this._bone);
         }
         else
         {
-            displayData = ccs.DisplayData.create();
+            displayData = new ccs.DisplayData();
         }
 
         decoDisplay.setDisplay(display);

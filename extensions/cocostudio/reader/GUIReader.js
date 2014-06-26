@@ -293,7 +293,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         widget.setName(widgetName);
         var x = options["x"];
         var y = options["y"];
-        widget.setPosition(x, y);
+        widget.setPosition(cc.p(x, y));
         if (options["scaleX"] !== undefined) {
             widget.setScaleX(options["scaleX"]);
         }
@@ -895,56 +895,56 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
 
             var render;
             if(widget instanceof ccui.Button){
-                render = new ccs.ButtonReader();
+                render = ccs.ButtonReader;
             }else if(widget instanceof ccui.CheckBox){
-                render = new ccs.CheckBoxReader();
+                render = ccs.CheckBoxReader;
             }else if (widget instanceof ccui.ImageView)
             {
-                render = new ccs.ImageViewReader();
+                render = ccs.ImageViewReader;
             }
             else if (widget instanceof ccui.LabelAtlas)
             {
-                render = new ccs.LabelAtlasReader();
+                render = ccs.LabelAtlasReader;
             }
             else if (widget instanceof ccui.LabelBMFont)
             {
-                render = new ccs.LabelBMFontReader();
+                render = ccs.LabelBMFontReader;
             }
-            else if (widget instanceof ccui.Label)
+            else if (widget instanceof ccui.Text)
             {
-                render = new ccs.LabelReader();
+                render = ccs.LabelReader;
             }
             else if (widget instanceof ccui.LoadingBar)
             {
-                render = new ccs.LoadingBarReader();
+                render = ccs.LoadingBarReader;
             }
             else if (widget instanceof ccui.Slider)
             {
-                render = new ccs.SliderReader();
+                render = ccs.SliderReader;
             }
             else if (widget instanceof ccui.TextField)
             {
-                render = new ccs.TextFieldReader();
+                render = ccs.TextFieldReader;
             }
             else if (widget instanceof ccui.Layout)
             {
-                render = new ccs.LayoutReader();
+                render = ccs.LayoutReader;
             }
             else if (widget instanceof ccui.ScrollView)
             {
-                render = new ccs.ScrollViewReader();
+                render = ccs.ScrollViewReader;
             }
             else if (widget instanceof ccui.ListView)
             {
-                render = new ccs.ListViewReader();
+                render = ccs.ListViewReader;
             }
             else if (widget instanceof ccui.PageView)
             {
-                render = new ccs.PageViewReader();
+                render = ccs.PageViewReader;
             }
             else if (widget instanceof ccui.Widget)
             {
-                render = new ccs.WidgetReader();
+                render = ccs.WidgetReader;
             }
 
             this.setPropsForAllWidgetFromJsonDictionary(render, widget, uiOptions);
@@ -977,10 +977,6 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         var widgetName = name ? name : "default";
         widget.setName(widgetName);
 
-        if(name == "background_Panel"){
-            void(0);
-        }
-
         if (options["ignoreSize"] !== undefined) {
             widget.ignoreContentAdaptWithSize(options["ignoreSize"]);
         }
@@ -1000,11 +996,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
 
         var x = options["x"];
         var y = options["y"];
-        widget.setPosition(x, y);
-        widget.x = x;
-        widget.y = y;
-        widget._transformDirty = true;
-
+        widget.setPosition(cc.p(x, y));
 
         if (options["scaleX"] !== undefined) {
             widget.setScaleX(options["scaleX"]);

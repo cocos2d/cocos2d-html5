@@ -23,24 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.ImageViewReader = ccs.WidgetReader.extend({
-
-    instanceImageViewReader: null,
+ccs.ImageViewReader = {
 
     getInstance: function(){
-        if(!this.instanceImageViewReader){
-            this.instanceImageViewReader = new ccs.ImageViewReader();
-        }
-        return this.instanceImageViewReader;
-    },
-
-    purge: function(){
-        this.instanceImageViewReader = null;
+        return ccs.ImageViewReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccs.WidgetReader.prototype.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
     
     
         var jsonPath = ccs.uiReader.getFilePath();
@@ -103,6 +94,6 @@ ccs.ImageViewReader = ccs.WidgetReader.extend({
         }
     
     
-        ccs.WidgetReader.prototype.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
-});
+};

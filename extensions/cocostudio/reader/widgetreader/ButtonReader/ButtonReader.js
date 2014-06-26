@@ -23,26 +23,17 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.ButtonReader = ccs.WidgetReader.extend({
-
-    instanceButtonReader: null,
+ccs.ButtonReader = {
 
     getInstance: function(){
-        if(!this.instanceButtonReader){
-            this.instanceButtonReader = new ccs.ButtonReader();
-        }
-        return this.instanceButtonReader;
-    },
-
-    purge: function(){
-        this.instanceButtonReader = null;
+        return ccs.ButtonReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccs.WidgetReader.prototype.setPropsFromJsonDictionary.call(this, widget, options);
-    
-    
+        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+
+
         var jsonPath = ccs.uiReader.getFilePath();
 
         var button = widget;
@@ -165,6 +156,6 @@ ccs.ButtonReader = ccs.WidgetReader.extend({
         }
     
     
-        ccs.WidgetReader.prototype.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
-});
+};

@@ -41,10 +41,17 @@ ccui.LayoutParameter = ccui.Class.extend(/** @lends ccui.LayoutParameter# */{
      * @param {ccui.Margin} margin
      */
     setMargin: function (margin) {
-        this._margin.left = margin.left;
-        this._margin.top = margin.top;
-        this._margin.right = margin.right;
-        this._margin.bottom = margin.bottom;
+        if(typeof margin === 'object'){
+            this._margin.left = margin.left;
+            this._margin.top = margin.top;
+            this._margin.right = margin.right;
+            this._margin.bottom = margin.bottom;
+        }else{
+            this._margin.left = arguments[0];
+            this._margin.top = arguments[1];
+            this._margin.right = arguments[2];
+            this._margin.bottom = arguments[3];
+        }
     },
 
     /**
@@ -147,7 +154,7 @@ ccui.LinearLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.LinearL
             this.setAlign(parameter._relativeAlign);
             this.setRelativeName(parameter._relativeLayoutName);
             this.setRelativeToWidgetName(parameter._relativeWidgetName);
-            //this.setGravity(model._linearGravity);
+            this.setGravity(model._linearGravity);
         }
     }
 });

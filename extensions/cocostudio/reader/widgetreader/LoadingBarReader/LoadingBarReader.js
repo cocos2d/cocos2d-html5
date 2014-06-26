@@ -23,24 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.LoadingBarReader = ccs.WidgetReader.extend({
-
-    instanceTextFieldReader: null,
+ccs.LoadingBarReader = {
 
     getInstance: function(){
-        if(!this.instanceTextFieldReader){
-            this.instanceTextFieldReader = new ccs.LoadingBarReader();
-        }
-        return this.instanceTextFieldReader;
-    },
-
-    purge: function(){
-        this.instanceTextFieldReader = null;
+        return ccs.LoadingBarReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccs.WidgetReader.prototype.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
 
         var jsonPath = ccs.uiReader.getFilePath();
@@ -86,6 +77,6 @@ ccs.LoadingBarReader = ccs.WidgetReader.extend({
         loadingBar.setDirection(options["direction"]/*ui::LoadingBarType(options["direction"])*/);
         loadingBar.setPercent(options["percent"]);
 
-        ccs.WidgetReader.prototype.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
-});
+};

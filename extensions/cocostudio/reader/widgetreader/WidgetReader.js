@@ -23,19 +23,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.WidgetReader = ccs.WidgetReaderProtocol.extend({
-
-    instanceWidgetReader: null,
+ccs.WidgetReader = {
 
     getInstance: function(){
-        if(!this.instanceWidgetReader){
-            this.instanceWidgetReader = new ccs.WidgetReader();
-        }
-        return this.instanceWidgetReader;
+        return ccs.WidgetReader;
     },
-    purge: function(){
-        this.instanceWidgetReader = null;
-    },
+
     setPropsFromJsonDictionary: function(widget, options){
 
         var ignoreSizeExsit = options["ignoreSize"];
@@ -63,13 +56,7 @@ ccs.WidgetReader = ccs.WidgetReaderProtocol.extend({
         var x = options["x"];
         var y = options["y"];
         widget.setPosition(cc.p(x, y));
-        widget.x = x;
-        widget.y = y;
 
-
-        if(options["name"] == "background_Panel"){
-            void 0;
-        }
 
         var sx = options["scalex"];
         if(sx){
@@ -92,19 +79,19 @@ ccs.WidgetReader = ccs.WidgetReaderProtocol.extend({
         var layout = options["layoutParameter"];
         if(layout){
             var layoutParameterDic = options["layoutParameter"];
-            var paramType = options["type"];
+            var paramType = layoutParameterDic["type"];
             var parameter = null;
 
             switch(paramType){
                 case 0:
                     break;
                 case 1:
-                    parameter = ccs.LinearLayoutParameter.create();
+                    parameter = new ccui.LinearLayoutParameter();
                     var gravity = layoutParameterDic["gravity"];
                     parameter.setGravity(gravity);
                     break;
                 case 2:
-                    parameter = ccs.RelativeLayoutParameter.create();
+                    parameter = new ccui.RelativeLayoutParameter();
                     var rParameter = parameter;
                     var relativeName = options["relativeName"];
                     rParameter.setRelativeName(relativeName);
@@ -122,24 +109,6 @@ ccs.WidgetReader = ccs.WidgetReaderProtocol.extend({
                 parameter.setMargin(mgl, mgt, mgr, mgb);
                 widget.setLayoutParameter(parameter);
             }
-        }
-
-        if(options["name"] == "background_Panel"){
-            var tmp = {x: widget.x};
-            widget.__defineGetter__('x', function(){
-                return tmp.x
-            });
-            widget.__defineSetter__('x', function(x){
-                tmp.x = x;
-            });
-            var tmp2 = {x: widget._position.x};
-            widget._position.__defineGetter__('x', function(){
-                return tmp2.x
-            });
-            widget._position.__defineSetter__('x', function(x){
-                tmp2.x = x;
-            });
-            void 0;
         }
 
     },
@@ -160,4 +129,4 @@ ccs.WidgetReader = ccs.WidgetReaderProtocol.extend({
 //        widget.setFlipX(options["flipX"]);
 //        widget.setFlipX(options["flipY"]);
     }
-});
+};

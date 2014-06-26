@@ -23,24 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.LabelReader = ccs.WidgetReader.extend({
-
-    instanceTextFieldReader: null,
+ccs.LabelReader = {
 
     getInstance: function(){
-        if(!this.instanceTextFieldReader){
-            this.instanceTextFieldReader = new ccs.LabelReader();
-        }
-        return this.instanceTextFieldReader;
-    },
-
-    purge: function(){
-        this.instanceTextFieldReader = null;
+        return ccs.LabelReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccs.WidgetReader.prototype.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
     
     
         var jsonPath = ccs.uiReader.getFilePath();
@@ -49,7 +40,7 @@ ccs.LabelReader = ccs.WidgetReader.extend({
         var touchScaleChangeAble = options["touchScaleEnable"];
         label.setTouchScaleChangeEnabled(touchScaleChangeAble);
         var text = options["text"];
-        label.setText(text);
+        label.setString(text);
         var fs = options["fontSize"];
         if (fs)
         {
@@ -79,6 +70,6 @@ ccs.LabelReader = ccs.WidgetReader.extend({
         }
     
     
-        ccs.WidgetReader.prototype.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
-});
+};

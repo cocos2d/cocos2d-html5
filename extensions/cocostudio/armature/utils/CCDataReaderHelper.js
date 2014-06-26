@@ -168,54 +168,25 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         this._asyncRefTotalCount = 0;
     },
 
-    addDataFromFile: function (filePath/*, isLoadSpriteFrame*/) {
-        /*
-         * Check if file is already added to ArmatureDataManager, if then return.
-         */
-        for(var i = 0; i < this._configFileList.length; i++)
-        {
-            if (this._configFileList[i] == filePath)
-            {
-                return;
-            }
+    addDataFromFile: function (filePath, isLoadSpriteFrame) {
+        if (this._configFileList.indexOf(filePath) != -1) {
+            return;
         }
         this._configFileList.push(filePath);
 
-        //! find the base file path
-        var basefilePath = filePath;
-        var pos = basefilePath.lastIndexOf("/");
+        this._initBaseFilePath(filePath);
 
-        if (pos != -1)
-        {
-            basefilePath = basefilePath.substr(0, pos + 1);
-        }
-        else
-        {
-            basefilePath = "";
-        }
-
-
-        var filePathStr =  filePath;
-        var str = cc.path.extname(filePathStr);
-
-        // Read content from file
-        var fullPath = cc.path.join(filePath);
+        var str = cc.path.extname(filePath).toLowerCase();
 
         var dataInfo = new ccs.DataInfo();
-        dataInfo.filename = filePathStr;
-        dataInfo.asyncStruct = null;
-        dataInfo.baseFilePath = basefilePath;
-        if (str == ".xml")
-        {
-            //addDataFromCache...
-            this.addDataFromXML(fullPath, dataInfo);
+        dataInfo.filename = filePath;
+        dataInfo.basefilePath = this._initBaseFilePath(filePath);
+        if (str == ".xml") {
+            this.addDataFromXML(filePath, dataInfo);
         }
-        else if(str == ".json" || str == ".ExportJson")
-        {
-            //addDataFromJsonCache...
-            this.addDataFromJson(fullPath, dataInfo);
+        else if (str == ".json" || str == ".exportjson") {
+            this.addDataFromJson(filePath, dataInfo, isLoadSpriteFrame);
         }
-
     },
 
     addDataFromFileAsync: function (filePath, target, selector, isLoadSpriteFrame) {
@@ -302,45 +273,45 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         skeleton = null;
     },
 
-    decodeArmature: function (json, dataInfo) {
+    decodeArmature: function (armatureXML, dataInfo) {
+        var name = armatureXML.getAttribute(ccs.CONST_A_NAME);
         var armatureData = new ccs.ArmatureData();
-        armatureData.init();
+        armatureData.name = name;
 
-        var name = json[ccs.CONST_A_NAME];
-        if(name != null)
-        {
-            armatureData.name = name;
-        }
+        var bonesXML = armatureXML.querySelectorAll(ccs.CONST_ARMATURE + " > " + ccs.CONST_BONE);
 
-        dataInfo.cocoStudioVersion = armatureData.dataVersion = json[ccs.CONST_VERSION] ?
-            json[ccs.CONST_VERSION][1] : '';
-
-        var length = json[ccs.CONST_BONE_DATA] ?
-            json[ccs.CONST_BONE_DATA].length :
-            0;
-        for (var i = 0; i < length; i++)
-        {
-            var dic = json[ccs.CONST_BONE_DATA][i]; //json[BONE_DATA][i];
-            var boneData = this.decodeBone(dic, dataInfo);
+        for (var i = 0; i < bonesXML.length; i++) {
+            var boneXML = bonesXML[i];
+            var parentName = boneXML.getAttribute(ccs.CONST_A_PARENT);
+            var parentXML = null;
+            if (parentName) {
+                //parentXML = armatureXML.querySelectorAll(ccs.CONST_ARMATURE+" > "+ccs.CONST_BONE);
+                for (var j = 0; j < bonesXML.length; j++) {
+                    parentXML = bonesXML[j];
+                    if (parentName == bonesXML[j].getAttribute(ccs.CONST_A_NAME)) {
+                        //todo
+                        break;
+                    }
+                }
+            }
+            var boneData = this.decodeBone(boneXML, parentXML, dataInfo);
             armatureData.addBoneData(boneData);
-
         }
-
         return armatureData;
     },
 
     decodeBone: function (boneXML, parentXML, dataInfo) {
 
-        var name = boneXML[ccs.CONST_A_NAME];
+        var name = boneXML.getAttribute(ccs.CONST_A_NAME);
         if (name == "") {
             return;
         }
         var boneData = new ccs.BoneData();
         boneData.name = name;
-        boneData.parentName = boneXML[ccs.CONST_A_PARENT] || "";
-        boneData.zOrder = parseInt(boneXML[ccs.CONST_A_Z]) || 0;
+        boneData.parentName = boneXML.getAttribute(ccs.CONST_A_PARENT) || "";
+        boneData.zOrder = parseInt(boneXML.getAttribute(ccs.CONST_A_Z)) || 0;
 
-        var displaysXML = boneXML[ccs.CONST_DISPLAY_DATA] || [];
+        var displaysXML = boneXML.querySelectorAll(ccs.CONST_BONE + " > " + ccs.CONST_DISPLAY);
 
         var displayXML;
         for (var i = 0; i < displaysXML.length; i++) {
@@ -351,7 +322,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         return boneData;
     },
     decodeBoneDisplay: function (displayXML, dataInfo) {
-        var isArmature = parseFloat(displayXML[ccs.CONST_A_IS_ARMATURE]) || 0;
+        var isArmature = parseFloat(displayXML.getAttribute(ccs.CONST_A_IS_ARMATURE)) || 0;
         var displayData = null;
 
         if (isArmature == 1) {
@@ -362,7 +333,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             displayData = new ccs.SpriteDisplayData();
             displayData.displayType = ccs.DISPLAY_TYPE_SPRITE;
         }
-        var displayName = displayXML[ccs.CONST_A_NAME] || "";
+        var displayName = displayXML.getAttribute(ccs.CONST_A_NAME) || "";
         if (displayName) {
             displayData.displayName = displayName;
         }
@@ -370,105 +341,87 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
     },
 
 
-    decodeAnimation: function (json, dataInfo) {
-
-        var aniData =  new ccs.AnimationData();
-
-        var name = json[ccs.CONST_A_NAME];
-
+    decodeAnimation: function (animationXML, dataInfo) {
+        var name = animationXML.getAttribute(ccs.CONST_A_NAME);
+        var aniData = new ccs.AnimationData();
         var armatureData = ccs.armatureDataManager.getArmatureData(name);
-
         aniData.name = name;
 
-        var movementXML = json[ccs.CONST_MOVEMENT_DATA];
-
-        if(movementXML){
-            for (var i = 0; i < movementXML.length; i++)
-            {
-                var movementData = this.decodeMovement(movementXML[i], armatureData, dataInfo);
-                aniData.addMovement(movementData);
-
-            }
+        var movementsXML = animationXML.querySelectorAll(ccs.CONST_ANIMATION + " > " + ccs.CONST_MOVEMENT);
+        var movementXML = null;
+        for (var i = 0; i < movementsXML.length; i++) {
+            movementXML = movementsXML[i];
+            var movementData = this.decodeMovement(movementXML, armatureData, dataInfo);
+            aniData.addMovement(movementData);
         }
-
         return aniData;
-
     },
 
     decodeMovement: function (movementXML, armatureData, dataInfo) {
-
+        var movName = movementXML.getAttribute(ccs.CONST_A_NAME);
         var movementData = new ccs.MovementData();
-
-        var movName = movementXML[ccs.CONST_A_NAME];
         movementData.name = movName;
+        var duration, durationTo, durationTween, loop = 0, tweenEasing = 0;
 
+        duration = parseFloat(movementXML.getAttribute(ccs.CONST_A_DURATION)) || 0;
+        movementData.duration = duration;
 
-        var tweenEasing = 0;
+        durationTo = parseFloat(movementXML.getAttribute(ccs.CONST_A_DURATION_TO)) || 0;
+        movementData.durationTo = durationTo;
 
-        if( movementXML[ccs.CONST_A_DURATION])
-        {
-            movementData.duration  = movementXML[ccs.CONST_A_DURATION];
-        }
-        if( movementXML[ccs.CONST_A_DURATION_TO])
-        {
-            movementData.durationTo = movementXML[ccs.CONST_A_DURATION_TO];
-        }
-        if( movementXML[ccs.CONST_A_DURATION_TWEEN])
-        {
-            movementData.durationTween = movementXML[ccs.CONST_A_DURATION_TWEEN];
-        }
-        if( movementXML[ccs.CONST_A_LOOP])
-        {
-            movementData.loop = movementXML[ccs.CONST_A_LOOP] != 0;
+        durationTween = parseFloat(movementXML.getAttribute(ccs.CONST_A_DURATION_TWEEN)) || 0;
+        movementData.durationTween = durationTween;
+
+        loop = movementXML.getAttribute(ccs.CONST_A_LOOP);
+        movementData.loop = loop ? Boolean(parseFloat(loop)) : true;
+
+        var easing = movementXML.getAttribute(ccs.CONST_A_TWEEN_EASING);
+        if (easing) {
+            if (easing != ccs.CONST_FL_NAN) {
+                tweenEasing = parseFloat(easing) || 0;
+                movementData.tweenEasing = tweenEasing == 2 ? ccs.TweenType.sineEaseInOut : tweenEasing;
+            } else {
+                movementData.tweenEasing = ccs.TweenType.linear;
+            }
         }
 
-        var _easing = movementXML[ccs.CONST_A_TWEEN_EASING];
-        if(_easing != null)
-        {
-            var str = _easing;
-            if(str != ccs.CONST_FL_NAN)
-            {
-                if( movementXML[ccs.CONST_A_TWEEN_EASING])
-                {
-                    movementData.tweenEasing = tweenEasing == 2 ?
-                        //cocos2d.tweenfunc.Sine_EaseInOut :
-                        3 :
-                        movementXML[ccs.CONST_A_TWEEN_EASING];
+        var movBonesXml = movementXML.querySelectorAll(ccs.CONST_MOVEMENT + " > " + ccs.CONST_BONE);
+        var movBoneXml = null;
+        for (var i = 0; i < movBonesXml.length; i++) {
+            movBoneXml = movBonesXml[i];
+            var boneName = movBoneXml.getAttribute(ccs.CONST_A_NAME);
+
+            if (movementData.getMovementBoneData(boneName)) {
+                continue;
+            }
+
+            var boneData = armatureData.getBoneData(boneName);
+            var parentName = boneData.parentName;
+
+            var parentXML = null;
+            if (parentName != "") {
+                for (var j = 0; j < movBonesXml.length; j++) {
+                    parentXML = movBonesXml[j];
+                    if (parentName == parentXML.getAttribute(ccs.CONST_A_NAME)) {
+                        break;
+                    }
                 }
             }
-            else
-            {
-                movementData.tweenEasing  = 0//cocos2d.tweenfunc.Linear;
-            }
+            var moveBoneData = this.decodeMovementBone(movBoneXml, parentXML, boneData, dataInfo);
+            movementData.addMovementBoneData(moveBoneData);
         }
-
-        //var movBoneXml = movementXML[ccs.CONST_BONE];
-
-        var movBoneXml = movementXML[ccs.CONST_MOVEMENT_BONE_DATA];
-        for (var i = 0; i < movBoneXml.length; i++)
-        {
-            var parentXml = null;
-            var dic = movBoneXml[i];
-            var movementBoneData = this.decodeMovementBone(movementXML, parentXml, dic, dataInfo);
-            movementData.addMovementBoneData(movementBoneData);
-        }
-
         return movementData;
-
-
     },
 
     decodeMovementBone: function (movBoneXml, parentXml, boneData, dataInfo) {
         var movBoneData = new ccs.MovementBoneData();
-        movBoneData.init();
-
         var scale, delay;
 
         if (movBoneXml) {
-            scale = parseFloat(movBoneXml[ccs.CONST_A_MOVEMENT_SCALE]) || 0;
+            scale = parseFloat(movBoneXml.getAttribute(ccs.CONST_A_MOVEMENT_SCALE)) || 0;
             movBoneData.scale = scale;
 
-            delay = parseFloat(movBoneXml[ccs.CONST_A_MOVEMENT_DELAY]) || 0;
+            delay = parseFloat(movBoneXml.getAttribute(ccs.CONST_A_MOVEMENT_DELAY)) || 0;
             if (delay > 0) {
                 delay -= 1;
             }
@@ -493,7 +446,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
 
         var totalDuration = 0;
 
-        var name = movBoneXml[ccs.CONST_A_NAME];
+        var name = movBoneXml.getAttribute(ccs.CONST_A_NAME);
         movBoneData.name = name;
         var framesXML = movBoneXml.querySelectorAll(ccs.CONST_BONE + " > " + ccs.CONST_FRAME);
         var j = 0;
@@ -504,7 +457,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
                 while (j < length && (parentFrameXML ? (totalDuration < parentTotalDuration || totalDuration >= parentTotalDuration + currentDuration) : true)) {
                     parentFrameXML = parentXMLList[j];
                     parentTotalDuration += currentDuration;
-                    currentDuration = parseFloat(parentFrameXML[ccs.CONST_A_DURATION]);
+                    currentDuration = parseFloat(parentFrameXML.getAttribute(ccs.CONST_A_DURATION));
                     j++;
                 }
             }
@@ -666,61 +619,45 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         return frameData;
     },
 
-    decodeTexture: function (json, dataInfo) {
-        if(!dataInfo){
-            debugger;
-        }
-
+    decodeTexture: function (textureXML, dataInfo) {
         var textureData = new ccs.TextureData();
-        textureData.init();
-
-        if( json[ccs.CONST_A_NAME] != null)
-        {
-            textureData.name = json[ccs.CONST_A_NAME];
+        if (textureXML.getAttribute(ccs.CONST_A_NAME)) {
+            textureData.name = textureXML.getAttribute(ccs.CONST_A_NAME);
         }
-
-        if(dataInfo.flashToolVersion >= ccs.CONST_VERSION_2_0)
-        {
-            textureData.pivotX = json[ccs.CONST_A_COCOS2D_PIVOT_X];
-            textureData.pivotY = json[ccs.CONST_A_COCOS2D_PIVOT_Y];
+        var px, py, width, height = 0;
+        if (dataInfo.flashToolVersion >= ccs.CONST_VERSION_2_0) {
+            px = parseFloat(textureXML.getAttribute(ccs.CONST_A_COCOS2D_PIVOT_X)) || 0;
+            py = parseFloat(textureXML.getAttribute(ccs.CONST_A_COCOS2D_PIVOT_Y)) || 0;
         }
-        else
-        {
-            textureData.pivotX = json[ccs.CONST_A_PIVOT_X];
-            textureData.pivotY = json[ccs.CONST_A_PIVOT_Y];
+        else {
+            px = parseFloat(textureXML.getAttribute(ccs.CONST_A_PIVOT_X)) || 0;
+            py = parseFloat(textureXML.getAttribute(ccs.CONST_A_PIVOT_Y)) || 0;
         }
+        width = parseFloat(textureXML.getAttribute(ccs.CONST_A_WIDTH)) || 0;
+        height = parseFloat(textureXML.getAttribute(ccs.CONST_A_HEIGHT)) || 0;
 
-        textureData.width = json[ccs.CONST_A_WIDTH];
-        textureData.height = json[ccs.CONST_A_HEIGHT];
-
-        var anchorPointX = textureData.pivotX / textureData.width;
-        var anchorPointY = (textureData.height - textureData.pivotY) / textureData.height;
+        var anchorPointX = px / width;
+        var anchorPointY = (height - py) / height;
 
         textureData.pivotX = anchorPointX;
         textureData.pivotY = anchorPointY;
 
-        var contour = json[ccs.CONST_CONTOUR_DATA];
-        if(contour){
-            for (var i=0; i < contour.length; i++)
-            {
-                var dic = contour[i];
-                var contourData = this.decodeContour(dic);
-                textureData.contourDataList.push(contourData);
-            }
+        var contoursXML = textureXML.querySelectorAll(ccs.CONST_SUB_TEXTURE + " > " + ccs.CONST_CONTOUR);
+        for (var i = 0; i < contoursXML.length; i++) {
+            this.decodeContour(contoursXML[i], dataInfo);
         }
-
         return textureData;
     },
 
     decodeContour: function (contourXML, dataInfo) {
         var contourData = new ccs.ContourData();
-        var vertexDatasXML = contourXML['vertex'];
+        var vertexDatasXML = contourXML.querySelectorAll(ccs.CONST_CONTOUR + " > " + ccs.CONST_CONTOUR_VERTEX);
         var vertexDataXML;
         for (var i = 0; i < vertexDatasXML.length; i++) {
             vertexDataXML = vertexDatasXML[i];
             var vertex = cc.p(0, 0);
-            vertex.x = parseFloat(vertexDataXML[ccs.CONST_A_X]) || 0;
-            vertex.y = parseFloat(vertexDataXML[ccs.CONST_A_Y]) || 0;
+            vertex.x = parseFloat(vertexDataXML.getAttribute(ccs.CONST_A_X)) || 0;
+            vertex.y = parseFloat(vertexDataXML.getAttribute(ccs.CONST_A_Y)) || 0;
             //vertex.y = - vertex.y;//todo
             contourData.vertexList.push(vertex);
         }
@@ -728,72 +665,50 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
 
     },
 
-    addDataFromJson: function (filePath, dataInfo) {
+    addDataFromJson: function (filePath, dataInfo, isLoadSpriteFrame) {
         var fileContent = cc.loader.getRes(filePath);
-        this.addDataFromJsonCache(fileContent, dataInfo, filePath);
+        this.addDataFromJsonCache(fileContent, dataInfo, isLoadSpriteFrame);
     },
-    addDataFromJsonCache: function (json, dataInfo, filePath) {
-        // Decode armatures
-        var length = json[ccs.CONST_ARMATURE_DATA].length;
-        for(var i=0; i<length; i++){
-            var armatureDic = json[ccs.CONST_ARMATURE_DATA][i];
-            var armatureData = this.decodeArmature(armatureDic, dataInfo);
-
-            ccs.armatureDataManager.addArmatureData(armatureData['name'], armatureData, filePath);
+    addDataFromJsonCache: function (dic, dataInfo, isLoadSpriteFrame) {
+        dataInfo.contentScale = dic[ccs.CONST_CONTENT_SCALE] || 1;
+        var armatureDataArr = dic[ccs.CONST_ARMATURE_DATA] || [];
+        var armatureData;
+        for (var i = 0; i < armatureDataArr.length; i++) {
+            armatureData = this.decodeArmatureFromJSON(armatureDataArr[i], dataInfo);
+            ccs.armatureDataManager.addArmatureData(armatureData.name, armatureData, dataInfo.filename);
         }
 
-        // Decode animations
-        length = json[ccs.CONST_ANIMATION_DATA].length; //json[ANIMATION_DATA].IsNull() ? 0 : json[ANIMATION_DATA].Size();
-        for (var i = 0; i < length; i++)
-        {
-            var animationDic = json[ccs.CONST_ANIMATION_DATA][i];
-            var animationData = this.decodeAnimation(animationDic, dataInfo);
-
-            ccs.armatureDataManager.addAnimationData(animationData.name, animationData, filePath);
+        var animationDataArr = dic[ccs.CONST_ANIMATION_DATA] || [];
+        var animationData;
+        for (var i = 0; i < animationDataArr.length; i++) {
+            animationData = this.decodeAnimationFromJson(animationDataArr[i], dataInfo);
+            ccs.armatureDataManager.addAnimationData(animationData.name, animationData, dataInfo.filename);
         }
 
-        // Decode textures
-        length = json[ccs.CONST_TEXTURE_DATA].length;
-        for (var i = 0; i < length; i++)
-        {
-            var textureDic =  json[ccs.CONST_TEXTURE_DATA][i];
-            var textureData = this.decodeTexture(textureDic, dataInfo);
-
-            ccs.armatureDataManager.addTextureData(textureData.name, textureData, filePath);
+        var textureDataArr = dic[ccs.CONST_TEXTURE_DATA] || [];
+        var textureData;
+        for (var i = 0; i < textureDataArr.length; i++) {
+            textureData = this.decodeTextureFromJson(textureDataArr[i], dataInfo);
+            ccs.armatureDataManager.addTextureData(textureData.name, textureData, dataInfo.filename);
         }
 
-        // Auto load sprite file
-        var autoLoad = ( dataInfo.asyncStruct == null ) ?
-            ccs.armatureDataManager.isAutoLoadSpriteFile() :
-            dataInfo['asyncStruct']['autoLoadSpriteFile'];
-        if (autoLoad)
-        {
-            length =  json[ccs.CONST_CONFIG_FILE_PATH].length; // json[CONFIG_FILE_PATH].IsNull() ? 0 : json[CONFIG_FILE_PATH].Size();
-            for (var i = 0; i < length; i++)
-            {
-                var path = json[ccs.CONST_CONFIG_FILE_PATH][i]; // json[CONFIG_FILE_PATH][i].IsNull() ? NULL : json[CONFIG_FILE_PATH][i].GetString();
-                if (path == null)
-                {
-                    cc.log("load CONFIG_FILE_PATH error.");
-                    return;
-                }
-
-                path = path.substr(0, path.lastIndexOf("."));
-
-                if (dataInfo.asyncStruct)
-                {
-                    dataInfo.configFileQueue.push(filePath);
-                }
-                else
-                {
-                    var plistPath = dataInfo.baseFilePath + path + ".plist";
-                    var pngPath =  dataInfo.baseFilePath + path + ".png";
-
-                    ccs.armatureDataManager.addSpriteFrameFromFile(plistPath, pngPath, filePath);
-                }
+        if (isLoadSpriteFrame) {
+            var configFiles = dic[ccs.CONST_CONFIG_FILE_PATH] || [];
+            var locFilePath, locPos, locPlistPath, locImagePath;
+            for (var i = 0; i < configFiles.length; i++) {
+                locFilePath = configFiles[i];
+                locPos = locFilePath.lastIndexOf(".");
+                locFilePath = locFilePath.substring(0, locPos);
+                locPlistPath = dataInfo.basefilePath + locFilePath + ".plist";
+                locImagePath = dataInfo.basefilePath + locFilePath + ".png";
+                ccs.armatureDataManager.addSpriteFrameFromFile(locPlistPath, locImagePath, dataInfo.filename);
             }
         }
+
+        armatureData = null;
+        animationData = null;
     },
+
     decodeArmatureFromJSON: function (json, dataInfo) {
         var armatureData = new ccs.ArmatureData();
 
@@ -858,7 +773,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
                 break;
             case ccs.DISPLAY_TYPE_PARTICLE:
                 displayData = new ccs.ParticleDisplayData();
-                displayData.displayName = dataInfo.baseFilePath + json[ccs.CONST_A_PLIST] || "";
+                displayData.displayName = dataInfo.basefilePath + json[ccs.CONST_A_PLIST] || "";
                 break;
             default:
                 displayData = new ccs.SpriteDisplayData();

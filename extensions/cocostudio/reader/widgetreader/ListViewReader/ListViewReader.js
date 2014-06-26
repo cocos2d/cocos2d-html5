@@ -23,24 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.ListViewReader = ccs.ScrollViewReader.extend({
-
-    instanceTextFieldReader: null,
+ccs.ListViewReader = {
 
     getInstance: function(){
-        if(!this.instanceTextFieldReader){
-            this.instanceTextFieldReader = new ccs.ListViewReader();
-        }
-        return this.instanceTextFieldReader;
-    },
-
-    purge: function(){
-        this.instanceTextFieldReader = null;
+        return ccs.ListViewReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccs.ScrollViewReader.prototype.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.ScrollViewReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var listView = widget;
 
@@ -53,4 +44,4 @@ ccs.ListViewReader = ccs.ScrollViewReader.extend({
         var itemMargin = options["itemMargin"];
         listView.setItemsMargin(itemMargin);
     }
-});
+};

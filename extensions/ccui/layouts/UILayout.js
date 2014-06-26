@@ -58,10 +58,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _scissorRectDirty: false,
     _clippingRect: null,
     _clippingParent: null,
-    _clippingRectDirty: true,
     _className: "Layout",
     _backGroundImageColor: null,
-
+    _finalPositionX: 0,
+    _finalPositionY: 0,
     /**
      * allocates and initializes a UILayout.
      * Constructor of ccui.Layout
@@ -1008,6 +1008,9 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         var topBoundary = layoutSize.height;
         for (var i = 0; i < layoutChildrenArray.length; ++i) {
             var locChild = layoutChildrenArray[i];
+            if(locChild.name === "UItest"){
+                void 0;
+            }
             var locLayoutParameter = locChild.getLayoutParameter(ccui.LayoutParameter.LINEAR);
 
             if (locLayoutParameter) {
@@ -1030,8 +1033,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                         break;
                 }
                 var locMargin = locLayoutParameter.getMargin();
-                locFinalPosX += locMargin.left;
-                locFinalPosY -= locMargin.top;
+                locFinalPosX += locMargin.left || 0;
+                locFinalPosY -= locMargin.top || 0;
                 locChild.setPosition(locFinalPosX, locFinalPosY);
                 topBoundary = locChild.getBottomInParent() - locMargin.bottom;
             }
@@ -1380,13 +1383,13 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             }
         }
     },
+
     _doLayout: function () {
         if (!this._doLayoutDirty) {
             return;
         }
         switch (this._layoutType) {
             case ccui.Layout.ABSOLUTE:
-                break;
             case ccui.Layout.LINEAR_VERTICAL:
                 this.doLayout_LINEAR_VERTICAL();
                 break;

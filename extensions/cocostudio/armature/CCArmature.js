@@ -386,7 +386,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
     _nodeToParentTransformForCanvas: function () {
         if (!this._transform)
             this._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
-        if (this._transformDirty || true) {
+        if (this._transformDirty) {
             this._armatureTransformDirty = true;
             var t = this._transform;// quick reference
             // base position

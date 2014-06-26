@@ -23,23 +23,16 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.PageViewReader = ccs.LayoutReader.extend({
+ccs.PageViewReader = {
 
-    instanceTextFieldReader: null,
+    instancePageViewReader: null,
 
     getInstance: function(){
-        if(!this.instanceTextFieldReader){
-            this.instanceTextFieldReader = new ccs.PageViewReader();
-        }
-        return this.instanceTextFieldReader;
-    },
-
-    purge: function(){
-
+        return ccs.PageViewReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccs.LayoutReader.prototype.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.LayoutReader.setPropsFromJsonDictionary.call(this, widget, options);
     }
-});
+};

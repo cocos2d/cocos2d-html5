@@ -23,24 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.CheckBoxReader = ccs.WidgetReader.extend({
-
-    instanceCheckBoxReader: null,
+ccs.CheckBoxReader = {
 
     getInstance: function(){
-        if(!this.instanceCheckBoxReader){
-            this.instanceCheckBoxReader = new ccs.CheckBoxReader();
-        }
-        return this.instanceCheckBoxReader;
-    },
-
-    purge: function(){
-        this.instanceCheckBoxReader = null;
+        return ccs.CheckBoxReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccs.WidgetReader.prototype.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
     
     
         var jsonPath = ccs.uiReader.getFilePath();
@@ -168,6 +159,6 @@ ccs.CheckBoxReader = ccs.WidgetReader.extend({
         }
     
     
-        ccs.WidgetReader.prototype.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
-});
+};

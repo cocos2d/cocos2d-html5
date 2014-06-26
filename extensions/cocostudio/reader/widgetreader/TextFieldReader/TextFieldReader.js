@@ -23,22 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.TextFieldReader = ccs.WidgetReader.extend({
-
-    instanceTextFieldReader: null,
+ccs.TextFieldReader = {
 
     getInstance: function(){
-        if(!this.instanceTextFieldReader){
-            this.instanceTextFieldReader = new ccs.TextFieldReader();
-        }
-        return this.instanceTextFieldReader;
+        return ccs.TextFieldReader;
     },
-    purge: function(){
-        this.instanceTextFieldReader = null;
-    },
+
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccs.WidgetReader.prototype.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var textField = widget;
         var ph = options["placeHolder"];
@@ -93,7 +86,7 @@ ccs.TextFieldReader = ccs.WidgetReader.extend({
             textField.setTextVerticalAlignment(va);
         }
 
-        ccs.WidgetReader.prototype.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
 
     }
-});
+};

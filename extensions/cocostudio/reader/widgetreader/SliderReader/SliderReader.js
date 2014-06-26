@@ -23,22 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.SliderReader = ccs.WidgetReader.extend({
-
-    instanceTextFieldReader: null,
+ccs.SliderReader = {
 
     getInstance: function(){
-        if(!this.instanceTextFieldReader){
-            this.instanceTextFieldReader = new ccs.SliderReader();
-        }
-        return this.instanceTextFieldReader;
+        return ccs.SliderReader;
     },
-    purge: function(){
-        this.instanceTextFieldReader = null;
-    },
+
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccs.WidgetReader.prototype.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var jsonPath = ccs.uiReader.getFilePath();
 
@@ -162,6 +155,6 @@ ccs.SliderReader = ccs.WidgetReader.extend({
                 break;
         }
 
-        ccs.WidgetReader.prototype.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
-});
+};
