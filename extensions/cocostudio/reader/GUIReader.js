@@ -738,6 +738,8 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
 });
 
 ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
+    _coordinatesScale: {x: 1, y: 1},
+    
     createWidget: function (jsonDict, fullPath, fileName) {
         this._filePath = fullPath == "" ? fullPath : cc.path.join(fullPath, "/");
         var textures = jsonDict["textures"];
@@ -753,18 +755,26 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             cc.log("Read design size error!");
             var winSize = cc.director.getWinSize();
             ccs.uiReader.storeFileDesignSize(fileName, winSize);
+            
+            var designResolutionSize = cc.view.getDesignResolutionSize();
+            this._coordinatesScale.x =  designResolutionSize.width / winSize.width;
+            this._coordinatesScale.y =  designResolutionSize.height / winSize.height;
         }
         else {
             ccs.uiReader.storeFileDesignSize(fileName, cc.size(fileDesignWidth, fileDesignHeight));
+            
+            var designResolutionSize = cc.view.getDesignResolutionSize();
+            this._coordinatesScale.x = designResolutionSize.width / fileDesignWidth;
+            this._coordinatesScale.y = designResolutionSize.height / fileDesignHeight;
         }
         var widgetTree = jsonDict["widgetTree"];
         var widget = this.widgetFromJsonDictionary(widgetTree);
 
         var size = widget.getContentSize();
         if (size.width == 0 && size.height == 0) {
-            widget.setSize(cc.size(fileDesignWidth, fileDesignHeight));
+            widget.setSize(cc.size(fileDesignWidth * this._coordinatesScale.x, fileDesignHeight * this._coordinatesScale.y));
         }
-
+        
         var actions = jsonDict["animation"];
         var rootWidget = widget;
         ccs.actionManager.initWithDictionary(fileName, actions, rootWidget);
@@ -874,17 +884,17 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
 
         widget.setSizePercent(cc.p(options["sizePercentX"], options["sizePercentY"]));
         widget.setPositionPercent(cc.p(options["positionPercentX"], options["positionPercentY"]));
-
-        var w = options["width"];
-        var h = options["height"];
+        
+        var w = options["width"] * this._coordinatesScale.x;
+        var h = options["height"] * this._coordinatesScale.y;
         widget.setSize(cc.size(w, h));
-
+        
         widget.setTag(options["tag"]);
         widget.setActionTag(options["actiontag"]);
         widget.setTouchEnabled(options["touchAble"]);
-
-        var x = options["x"];
-        var y = options["y"];
+        
+        var x = options["x"] * this._coordinatesScale.x;
+        var y = options["y"] * this._coordinatesScale.y;
         widget.setPosition(x, y);
         if (options["scaleX"] !== undefined) {
             widget.setScaleX(options["scaleX"]);
@@ -898,7 +908,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         if (options["visible"] !== undefined) {
             widget.setVisible(options["visible"]);
         }
-
+        
         widget.setLocalZOrder(options["ZOrder"]);
         var layoutParameterDic = options["layoutParameter"];
         if (layoutParameterDic) {
@@ -923,10 +933,10 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
                 default:
                     break;
             }
-            var mgl = layoutParameterDic["marginLeft"];
-            var mgt = layoutParameterDic["marginTop"];
-            var mgr = layoutParameterDic["marginRight"];
-            var mgb = layoutParameterDic["marginDown"];
+            var mgl = layoutParameterDic["marginLeft"] * this._coordinatesScale.x;
+            var mgt = layoutParameterDic["marginTop"] * this._coordinatesScale.y;
+            var mgr = layoutParameterDic["marginRight"] * this._coordinatesScale.x;
+            var mgb = layoutParameterDic["marginDown"] * this._coordinatesScale.y;
             parameter.setMargin(new ccui.Margin(mgl, mgt, mgr, mgb));
             widget.setLayoutParameter(parameter);
         }
@@ -1006,15 +1016,15 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         }
         disabledDic = null;
         if (scale9Enable) {
-            var cx = options["capInsetsX"];
-            var cy = options["capInsetsY"];
-            var cw = options["capInsetsWidth"];
-            var ch = options["capInsetsHeight"];
+            var cx = options["capInsetsX"] * this._coordinatesScale.x;
+            var cy = options["capInsetsY"] * this._coordinatesScale.y;
+            var cw = options["capInsetsWidth"] * this._coordinatesScale.x;
+            var ch = options["capInsetsHeight"] * this._coordinatesScale.y;
 
             button.setCapInsets(cc.rect(cx, cy, cw, ch));
             if (options["scale9Width"] !== undefined && options["scale9Height"] !== undefined) {
-                var swf = options["scale9Width"];
-                var shf = options["scale9Height"];
+                var swf = options["scale9Width"] * this._coordinatesScale.x;
+                var shf = options["scale9Height"] * this._coordinatesScale.y;
                 button.setSize(cc.size(swf, shf));
             }
         }
@@ -1160,15 +1170,15 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
 
         if (scale9Enable) {
             if (options["scale9Width"] !== undefined && options["scale9Height"] !== undefined) {
-                var swf = options["scale9Width"];
-                var shf = options["scale9Height"];
+                var swf = options["scale9Width"] * this._coordinatesScale.x;
+                var shf = options["scale9Height"] * this._coordinatesScale.y;
                 imageView.setSize(cc.size(swf, shf));
             }
 
-            var cx = options["capInsetsX"];
-            var cy = options["capInsetsY"];
-            var cw = options["capInsetsWidth"];
-            var ch = options["capInsetsHeight"];
+            var cx = options["capInsetsX"] * this._coordinatesScale.x;
+            var cy = options["capInsetsY"] * this._coordinatesScale.y;
+            var cw = options["capInsetsWidth"] * this._coordinatesScale.x;
+            var ch = options["capInsetsHeight"] * this._coordinatesScale.y;
 
             imageView.setCapInsets(cc.rect(cx, cy, cw, ch));
 
@@ -1184,13 +1194,13 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         var text = options["text"];
         label.setString(text);
         if (options["fontSize"] !== undefined) {
-            label.setFontSize(options["fontSize"]);
+            label.setFontSize(options["fontSize"] * this._coordinatesScale.y);
         }
         if (options["fontName"] !== undefined) {
             label.setFontName(options["fontName"]);
         }
         if (options["areaWidth"] !== undefined && options["areaHeight"] !== undefined) {
-            var size = cc.size(options["areaWidth"], options["areaHeight"]);
+            var size = cc.size(options["areaWidth"] * this._coordinatesScale.x, options["areaHeight"] * this._coordinatesScale.y);
             label.setTextAreaSize(size);
         }
         if (options["hAlignment"]) {
@@ -1282,10 +1292,10 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         imageFileNameDic = null;
 
         if (backGroundScale9Enable) {
-            var cx = options["capInsetsX"];
-            var cy = options["capInsetsY"];
-            var cw = options["capInsetsWidth"];
-            var ch = options["capInsetsHeight"];
+            var cx = options["capInsetsX"] * this._coordinatesScale.x;
+            var cy = options["capInsetsY"] * this._coordinatesScale.y;
+            var cw = options["capInsetsWidth"] * this._coordinatesScale.x;
+            var ch = options["capInsetsHeight"] * this._coordinatesScale.y;
             panel.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
         }
         panel.setLayoutType(options["layoutType"]);
@@ -1296,8 +1306,8 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
     setPropsForScrollViewFromJsonDictionary: function (widget, options) {
         this.setPropsForLayoutFromJsonDictionary(widget, options);
         var scrollView = widget;
-        var innerWidth = options["innerWidth"];
-        var innerHeight = options["innerHeight"];
+        var innerWidth = options["innerWidth"] * this._coordinatesScale.x;
+        var innerHeight = options["innerHeight"] * this._coordinatesScale.y;
         scrollView.setInnerContainerSize(cc.size(innerWidth, innerHeight));
         var direction = options["direction"];
         scrollView.setDirection(direction);
@@ -1438,7 +1448,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         textArea.setColor(cc.color(cr, cg, cb));
         textArea.setFontName(options["fontName"]);
         if (options["areaWidth"] !== undefined && options["areaHeight"] !== undefined) {
-            var size = cc.size(options["areaWidth"], options["areaHeight"]);
+            var size = cc.size(options["areaWidth"] * this._coordinatesScale.x, options["areaHeight"] * this._coordinatesScale.y);
             textArea.setTextAreaSize(size);
         }
         if (options["hAlignment"]) {
@@ -1482,7 +1492,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             textField.setFontName(options["fontName"]);
         }
         if (options["touchSizeWidth"] !== undefined && options["touchSizeHeight"] !== undefined) {
-            textField.setTouchSize(cc.size(options["touchSizeWidth"], options["touchSizeHeight"]));
+            textField.setTouchSize(cc.size(options["touchSizeWidth"] * this._coordinatesScale.x, options["touchSizeHeight"] * this._coordinatesScale.y));
         }
 
         var dw = options["width"];
@@ -1534,15 +1544,15 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         loadingBar.setScale9Enabled(scale9Enable);
 
         if (scale9Enable) {
-            var cx = options["capInsetsX"];
-            var cy = options["capInsetsY"];
-            var cw = options["capInsetsWidth"];
-            var ch = options["capInsetsHeight"];
+            var cx = options["capInsetsX"] * this._coordinatesScale.x;
+            var cy = options["capInsetsY"] * this._coordinatesScale.y;
+            var cw = options["capInsetsWidth"] * this._coordinatesScale.x;
+            var ch = options["capInsetsHeight"] * this._coordinatesScale.y;
 
             loadingBar.setCapInsets(cc.rect(cx, cy, cw, ch));
 
-            var width = options["width"];
-            var height = options["height"];
+            var width = options["width"] * this._coordinatesScale.x;
+            var height = options["height"] * this._coordinatesScale.y;
             loadingBar.setSize(cc.size(width, height));
         }
 
@@ -1556,7 +1566,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         this.setPropsForLayoutFromJsonDictionary(widget, options);
         var innerWidth = options["innerWidth"] || 0;
         var innerHeight = options["innerHeight"] || 0;
-        widget.setInnerContainerSize(cc.size(innerWidth, innerHeight));
+        widget.setInnerContainerSize(cc.size(innerWidth * this._coordinatesScale.x, innerHeight * this._coordinatesScale.y));
         widget.setDirection(options["direction"] || 0);
         widget.setGravity(options["gravity"] || 0);
         widget.setItemsMargin(options["itemMargin"] || 0);

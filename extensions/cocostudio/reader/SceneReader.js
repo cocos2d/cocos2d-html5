@@ -56,7 +56,7 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
      * @param {cc.Node} parenet
      * @returns {cc.Node}
      */
-    createObject: function (inputFiles, parenet) {
+    createObject: function (inputFiles, parent) {
         var canvasSize = inputFiles["CanvasSize"];
         if(canvasSize != null) {
             var designResolutionSize = cc.view.getDesignResolutionSize();
@@ -67,12 +67,12 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
         var className = inputFiles["classname"];
         if (className == "CCNode") {
             var gb = null;
-            if (!parenet) {
+            if (!parent) {
                 gb = cc.Node.create();
             }
             else {
                 gb = cc.Node.create();
-                parenet.addChild(gb);
+                parent.addChild(gb);
             }
 
             this.setPropertyFromJsonDict(gb, inputFiles);
