@@ -63,8 +63,10 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     },
     init: function (backGround, backGroundSeleted, cross, backGroundDisabled, frontCrossDisabled, texType) {
         if (ccui.Widget.prototype.init.call(this)) {
+            this._isSelected = true;
             this.setTouchEnabled(true);
             this.setSelectedState(false);
+            this.loadTextures(backGround, backGroundSeleted, cross, backGroundDisabled, frontCrossDisabled, texType);
             return true;
         }
         return false;
@@ -532,7 +534,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     },
 
     createCloneInstance: function () {
-        return ccui.CheckBox.create();
+        return ccui.CheckBox.create();        //TODO should it do anything?
     },
 
     copySpecialProperties: function (uiCheckBox) {

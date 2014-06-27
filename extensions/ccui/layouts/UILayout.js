@@ -102,7 +102,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             this.ignoreContentAdaptWithSize(false);
             this.setSize(cc.size(0, 0));
             this.setAnchorPoint(0, 0);
-//            this.initStencil();
+            this.initStencil();
             return true;
         }
         return false;

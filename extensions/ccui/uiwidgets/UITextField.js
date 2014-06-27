@@ -96,7 +96,7 @@ ccui.UICCLabelField = ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccu
         return false;
     },
 
-    insertText: function (text, len) {
+    insertText: function (text, len) {        //todo need to delete
         var str_text = text;
         var locString = cc.TextFieldTTF.prototype.getString.call(this);
         var str_len = locString.length;
@@ -143,13 +143,13 @@ ccui.UICCLabelField = ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccu
 
         if (text !== "\n")
         {
-            if (this._maxLengthEnabled)
+            if (this.maxLengthEnabled)
             {
                 var text_count = this._calcCharCount(this.getString());
                 if (text_count >= this._maxLength)
                 {
                     // password
-                    if (this._passwordEnabled)
+                    if (this.passwordEnabled)
                     {
                         this.setPasswordText(this.getString());
                     }
@@ -161,7 +161,7 @@ ccui.UICCLabelField = ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccu
                     (cc.sys.os == cc.sys.OS_OSX) ||
                     (cc.sys.os == cc.sys.OS_WINDOWS)
                     )
-                var input_count = _calcCharCount(text);
+                var input_count = this._calcCharCount(text);
                 var total = text_count + input_count;
 
                 if (total > this._maxLength)
@@ -223,20 +223,13 @@ ccui.UICCLabelField = ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccu
                         len  = end;
                     }
                 }
-
             }
         }
-        ccui.TextFieldTTF.insertText(input_text, len);
+        cc.TextFieldTTF.prototype.insertText.call(this, input_text, len);
 
         // password
-        if (this._passwordEnabled)
-        {
-            if (ccui.TextFieldTTF.prototype.getCharCount.call(this) > 0)
-            {
+        if (this.passwordEnabled  && (cc.TextFieldTTF.prototype.getCharCount.call(this) > 0))
                 this.setPasswordText(this.getString());
-            }
-        }
-
     },
 
     deleteBackward: function () {

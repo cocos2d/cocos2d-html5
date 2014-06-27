@@ -1720,6 +1720,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}
      */
     convertToWorldSpace: function (nodePoint) {
+        nodePoint = nodePoint || cc.p(0,0);
         return cc.PointApplyAffineTransform(nodePoint, this.nodeToWorldTransform());
     },
 
@@ -1740,6 +1741,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}
      */
     convertToWorldSpaceAR: function (nodePoint) {
+        nodePoint = nodePoint || cc.p(0,0);
         var pt = cc.pAdd(nodePoint, this._anchorPointInPoints);
         return this.convertToWorldSpace(pt);
     },
