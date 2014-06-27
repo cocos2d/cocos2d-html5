@@ -46,6 +46,6 @@ ccs.ScrollViewReader = {
         scrollView.setBounceEnabled(options["bounceEnable"]);
 
 
-        ccs.LayoutReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };

@@ -926,21 +926,21 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             {
                 render = ccs.TextFieldReader;
             }
-            else if (widget instanceof ccui.Layout)
+            else if (widget instanceof ccui.ListView)
             {
-                render = ccs.LayoutReader;
+                render = ccs.ListViewReader;
             }
             else if (widget instanceof ccui.ScrollView)
             {
                 render = ccs.ScrollViewReader;
             }
-            else if (widget instanceof ccui.ListView)
-            {
-                render = ccs.ListViewReader;
-            }
             else if (widget instanceof ccui.PageView)
             {
                 render = ccs.PageViewReader;
+            }
+            else if (widget instanceof ccui.Layout)
+            {
+                render = ccs.LayoutReader;
             }
             else if (widget instanceof ccui.Widget)
             {
