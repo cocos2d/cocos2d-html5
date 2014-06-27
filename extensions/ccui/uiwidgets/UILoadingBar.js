@@ -249,19 +249,20 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         }
         var res = this._percent / 100.0;
 
-        var x = 0, y = 0;
-        if (this._renderBarTexType == ccui.Widget.PLIST_TEXTURE) {
-            var barNode = this._barRenderer;
-            if (barNode) {
-                var rect = barNode.getTextureRect();
-                x = rect.x;
-                y = rect.y;
-            }
-        }
         if (this._scale9Enabled)
             this.setScale9Scale();
-        else
+        else {
+            var x = 0, y = 0;
+            if (this._renderBarTexType == ccui.Widget.PLIST_TEXTURE) {
+                var barNode = this._barRenderer;
+                if (barNode) {
+                    var rect = barNode.getTextureRect();
+                    x = rect.x;
+                    y = rect.y;
+                }
+            }
             this._barRenderer.setTextureRect(cc.rect(x, y, this._barRendererTextureSize.width * res, this._barRendererTextureSize.height));
+        }
     },
 
     /**
