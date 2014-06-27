@@ -38,7 +38,7 @@ ccs.TextFieldReader = {
         if(ph){
             textField.setPlaceHolder(ph);
         }
-        textField.setText(options["text"]);
+        textField.setString(options["text"]);
         var fs = options["fontSize1"];
         if(fs){
             textField.setFontSize(fs);

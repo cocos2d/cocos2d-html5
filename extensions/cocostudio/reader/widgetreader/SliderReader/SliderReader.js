@@ -64,7 +64,7 @@ ccs.SliderReader = {
                 slider.setSize(cc.size(barLength, slider.getContentSize().height));
             }
         }else{
-            var imageFileNameDic = options["barFileNameDic"];
+            var imageFileNameDic = options["barFileNameData"];
             var imageFileType = imageFileNameDic["resourceType"];
             switch(imageFileType){
                 case 0:
@@ -72,6 +72,7 @@ ccs.SliderReader = {
                     var imageFileName = imageFileNameDic["path"];
                     var imageFileName_tp = ( imageFileName && imageFileName !== "" ) ?
                         tp_b + imageFileName :
+                        null;
                         slider.loadBarTexture(imageFileName_tp);
                     break;
                 case 1:
@@ -83,7 +84,8 @@ ccs.SliderReader = {
             }
         }
         var normalDic = options["ballNormalData"];
-        switch(normalDic){
+        var normalType = normalDic["resourceType"];
+        switch(normalType){
             case 0:
                 var tp_n = jsonPath;
                 var normalFileName = normalDic["path"];
@@ -101,8 +103,8 @@ ccs.SliderReader = {
         }
 
         var pressedDic = options["ballPressedData"];
-        var pressedTyep = pressedDic["resourceType"];
-        switch(pressedTyep){
+        var pressedType = pressedDic["resourceType"];
+        switch(pressedType){
             case 0:
                 var tp_p = jsonPath;
                 var pressedFileName = pressedDic["path"];
