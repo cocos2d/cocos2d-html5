@@ -894,7 +894,7 @@ cc.Spawn.create = function (/*Multiple Arguments*/tempArray) {
     var prev = paramArray[0];
     for (var i = 1; i < paramArray.length; i++) {
         if (paramArray[i] != null)
-            prev = this._actionOneTwo(prev, paramArray[i]);
+            prev = cc.Spawn._actionOneTwo(prev, paramArray[i]);
     }
     return prev;
 };
