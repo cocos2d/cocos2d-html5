@@ -86,6 +86,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     _flippedX: false,
     _flippedY: false,
     _opacity: 255,
+    _focusEnabled: false,
     ctor: function () {
         cc.Node.prototype.ctor.call(this);
         this._brightStyle = ccui.Widget.BRIGHT_STYLE_NONE;
@@ -219,6 +220,14 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
             return widget;
         }
         return null;
+    },
+
+    setFocusEnabled: function(enable){
+        this._focusEnabled = enable;
+    },
+
+    isFocusEnabled: function(){
+        return this._focusEnabled;
     },
 
     /**
