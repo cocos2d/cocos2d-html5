@@ -958,14 +958,36 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             }
             this.setPropsForAllCustomWidgetFromJsonDictionary(classname, widget, customJsonDict);
         }
-        var childrenCount = data["children"];
-        for (var i = 0; i < childrenCount.length; i++)
-        {
-            var subData = data["children"][i];
-            var child = this.widgetFromJsonDictionary(subData);
-            if (child)
-            {
-                widget.addChild(child);
+        var childrenItem = data["children"];
+        for(var i=0; i<childrenItem.length; i++){
+            var child = this.widgetFromJsonDictionary(childrenItem[i]);
+            if(child){
+                if(widget instanceof ccui.PageView)
+                {
+                    widget.addPage(child);
+                }
+                else
+                {
+                    if(widget instanceof ccui.ListView)
+                    {
+                        widget.pushBackCustomItem(child);
+                    }
+                    else
+                    {
+                        if(widget instanceof ccui.Layout)
+                        {
+                            if(child.getPositionType() == ccui.Widget.POSITION_PERCENT)
+                            {
+                                var position = child.getPosition();
+                                var anchor = widget.getAnchorPoint();
+                                child.setPositionPercent(cc.p(position.x + anchor.x, position.y + anchor.y));
+                            }
+                            var AnchorPointIn = widget.getAnchorPointInPoints();
+                            child.setPosition(cc.p(child.getPositionX() + AnchorPointIn.x, child.getPositionY() + AnchorPointIn.y));
+                        }
+                        widget.addChild(child);
+                    }
+                }
             }
         }
         return widget;

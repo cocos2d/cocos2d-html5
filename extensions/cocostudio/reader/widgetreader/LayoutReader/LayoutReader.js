@@ -38,8 +38,8 @@ ccs.LayoutReader = {
         var panel = widget;
 
         var w = 0, h = 0;
-        var adaptScrenn = options["adaptScreen"];
-        if (adaptScrenn){
+        var adaptScreen = options["adaptScreen"];
+        if (adaptScreen){
             var screenSize = cc.director.getWinSize();
             w = screenSize.width;
             h = screenSize.height;
