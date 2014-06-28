@@ -23,29 +23,37 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.ScrollViewReader = {
+/**
+ * Base class for ccui.HBox
+ * @class
+ * @extends ccui.Layout
+ */
+ccui.HBox = ccui.Layout.extend(/** @lends ccui.HBox# */{
 
-    getInstance: function(){
-        return ccs.ScrollViewReader;
+    init: function(){
+        if(ccui.Layout.prototype.init.call(this)){
+            this.setLayoutType(ccui.Layout.LINEAR_HORIZONTAL);
+            return true;
+        }
+        return false;
     },
 
-    setPropsFromJsonDictionary: function(widget, options){
-
-        ccs.LayoutReader.setPropsFromJsonDictionary.call(this, widget, options);
-
-
-        var scrollView = widget;
-
-        var innerWidth = options["innerWidth"];
-        var innerHeight = options["innerHeight"];
-        scrollView.setInnerContainerSize(cc.size(innerWidth, innerHeight));
-
-        var direction = options["direction"];
-        scrollView.setDirection(direction);
-
-        scrollView.setBounceEnabled(options["bounceEnable"]);
-
-
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+    initWithSize: function(size){
+        if(this.init()){
+            this.setSize(size);
+            return true;
+        }
+        return false;
     }
+});
+
+ccui.HBox.create = function(size){
+    var widget = new ccui.HBox();
+    if(size){
+        if(widget.initWithSize()){
+            return widget;
+        }
+        return null;
+    }
+    return widget;
 };

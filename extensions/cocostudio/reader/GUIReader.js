@@ -926,21 +926,21 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             {
                 render = ccs.TextFieldReader;
             }
-            else if (widget instanceof ccui.Layout)
+            else if (widget instanceof ccui.ListView)
             {
-                render = ccs.LayoutReader;
+                render = ccs.ListViewReader;
             }
             else if (widget instanceof ccui.ScrollView)
             {
                 render = ccs.ScrollViewReader;
             }
-            else if (widget instanceof ccui.ListView)
-            {
-                render = ccs.ListViewReader;
-            }
             else if (widget instanceof ccui.PageView)
             {
                 render = ccs.PageViewReader;
+            }
+            else if (widget instanceof ccui.Layout)
+            {
+                render = ccs.LayoutReader;
             }
             else if (widget instanceof ccui.Widget)
             {
@@ -958,14 +958,36 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             }
             this.setPropsForAllCustomWidgetFromJsonDictionary(classname, widget, customJsonDict);
         }
-        var childrenCount = data["children"];
-        for (var i = 0; i < childrenCount.length; i++)
-        {
-            var subData = data["children"][i];
-            var child = this.widgetFromJsonDictionary(subData);
-            if (child)
-            {
-                widget.addChild(child);
+        var childrenItem = data["children"];
+        for(var i=0; i<childrenItem.length; i++){
+            var child = this.widgetFromJsonDictionary(childrenItem[i]);
+            if(child){
+                if(widget instanceof ccui.PageView)
+                {
+                    widget.addPage(child);
+                }
+                else
+                {
+                    if(widget instanceof ccui.ListView)
+                    {
+                        widget.pushBackCustomItem(child);
+                    }
+                    else
+                    {
+                        if(widget instanceof ccui.Layout)
+                        {
+                            if(child.getPositionType() == ccui.Widget.POSITION_PERCENT)
+                            {
+                                var position = child.getPosition();
+                                var anchor = widget.getAnchorPoint();
+                                child.setPositionPercent(cc.p(position.x + anchor.x, position.y + anchor.y));
+                            }
+                            var AnchorPointIn = widget.getAnchorPointInPoints();
+                            child.setPosition(cc.p(child.getPositionX() + AnchorPointIn.x, child.getPositionY() + AnchorPointIn.y));
+                        }
+                        widget.addChild(child);
+                    }
+                }
             }
         }
         return widget;

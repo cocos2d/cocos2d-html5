@@ -90,6 +90,7 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _flippedX: false,
     _flippedY: false,
     _opacity: 255,
+    _focusEnabled: false,
     _highlight: false,
 
     _touchEventCallback: null,
@@ -232,6 +233,14 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
             return widget;
         }
         return null;
+    },
+
+    setFocusEnabled: function(enable){
+        this._focusEnabled = enable;
+    },
+
+    isFocusEnabled: function(){
+        return this._focusEnabled;
     },
 
     _updateContentSizeWithTextureSize: function(size){

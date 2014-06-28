@@ -38,8 +38,8 @@ ccs.LayoutReader = {
         var panel = widget;
 
         var w = 0, h = 0;
-        var adaptScrenn = options["adaptScreen"];
-        if (adaptScrenn){
+        var adaptScreen = options["adaptScreen"];
+        if (adaptScreen){
             var screenSize = cc.director.getWinSize();
             w = screenSize.width;
             h = screenSize.height;
@@ -66,7 +66,7 @@ ccs.LayoutReader = {
         var ecb = options["bgEndColorB"];
 
         var bgcv1 = options["vectorX"];
-        var bgcv2 = [options, "vectorY"];
+        var bgcv2 = options["vectorY"];
         panel.setBackGroundColorVector(cc.p(bgcv1, bgcv2));
 
         var co = options["bgColorOpacity"];
