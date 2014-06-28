@@ -66,7 +66,7 @@ ccs.LayoutReader = {
         var ecb = options["bgEndColorB"];
 
         var bgcv1 = options["vectorX"];
-        var bgcv2 = [options, "vectorY"];
+        var bgcv2 = options["vectorY"];
         panel.setBackGroundColorVector(cc.p(bgcv1, bgcv2));
 
         var co = options["bgColorOpacity"];
