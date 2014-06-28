@@ -38,7 +38,7 @@ ccs.LabelAtlasReader = {
     
         var labelAtlas = widget;
         var sv = options["stringValue"];
-        var cmf = options["charMapFile"];
+        var cmf = options["charMapFileData"] || options["charMapFile"];
         var iw = options["itemWidth"];
         var ih = options["itemHeight"];
         var scm = options["startCharMap"];
