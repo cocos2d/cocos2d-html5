@@ -46,9 +46,7 @@
  * @property {String}           name            - The name of the widget
  * @property {Number}           actionTag       - The action tag of the widget
  */
-ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
-
-    RGBAProtocol: true,
+ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _enabled: true,            ///< Highest control of widget
     _bright: true,             ///< is this widget bright
     _touchEnabled: false,       ///< is this widget touch endabled
@@ -56,9 +54,10 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     _focus: false,              ///< is the widget on focus
     _brightStyle: null, ///< bright style
     _updateEnabled: false,      ///< is "update" method scheduled
-    _touchStartPos: null,    ///< touch began point
-    _touchMovePos: null,     ///< touch moved point
-    _touchEndPos: null,      ///< touch ended point
+
+    _touchBeganPosition: null,    ///< touch began point
+    _touchMovePosition: null,     ///< touch moved point
+    _touchEndPosition: null,      ///< touch ended point
 
     _touchEventListener: null,
     _touchEventSelector: null,
@@ -69,6 +68,11 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     _size: cc.size(0, 0),
     _customSize: null,
     _layoutParameterDictionary: null,
+    _layoutParameterType:0,
+
+    _focused: false,
+    _focusEnabled: true,
+
     _ignoreSize: false,
     _widgetChildren: null,
     _affectByClipping: false,
@@ -78,7 +82,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     positionType: null,
     _positionPercent: null,
     _reorderWidgetChildDirty: false,
-    _hitted: false,
+    _hitted: false,                          //TODO typo
     _nodes: null,
     _touchListener: null,
     _color: null,
@@ -86,12 +90,16 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     _flippedX: false,
     _flippedY: false,
     _opacity: 255,
+    _highlight: false,
+
+    _touchEventCallback: null,
+
     ctor: function () {
-        cc.Node.prototype.ctor.call(this);
+        cc.ProtectedNode.prototype.ctor.call(this);
         this._brightStyle = ccui.Widget.BRIGHT_STYLE_NONE;
-        this._touchStartPos = cc.p(0, 0);
-        this._touchMovePos = cc.p(0, 0);
-        this._touchEndPos = cc.p(0, 0);
+        this._touchBeganPosition = cc.p(0, 0);
+        this._touchMovePosition = cc.p(0, 0);
+        this._touchEndPosition = cc.p(0, 0);
         this._widgetType = ccui.Widget.TYPE_WIDGET;
         this._size = cc.size(0, 0);
         this._customSize = cc.size(0, 0);
@@ -103,7 +111,8 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
         this._positionPercent = cc.p(0, 0);
         this._nodes = [];
         this._color = cc.color(255, 255, 255, 255);
-        this.init();
+        this._layoutParameterType = ccui.LayoutParameter.NONE;
+        this.init();                        //TODO
     },
 
     /**
@@ -125,6 +134,10 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     onEnter: function () {
         this.updateSizeAndPosition();
         cc.Node.prototype.onEnter.call(this);
+    },
+
+    onExit: function(){
+
     },
 
     visit: function (ctx) {
@@ -221,6 +234,26 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
         return null;
     },
 
+    _updateContentSizeWithTextureSize: function(size){
+
+    },
+
+    _isAncestorsEnabled: function(){
+
+    },
+
+    _getAncensterWidget: function(node){
+
+    },
+
+    _isAncestorsVisible: function(node){
+
+    },
+
+    _cleanupWidget: function(){
+
+    },
+
     /**
      * remove  child
      * @param {ccui.Widget} widget
@@ -258,7 +291,11 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     },
 
     /**
-     * Set enabled renderer
+     * <p>
+     *     Sets whether the widget is enabled                                                                                    <br/>
+     *     true if the widget is enabled, widget may be touched , false if the widget is disabled, widget cannot be touched.     <br/>
+     *     The default value is true, a widget is default to enabled
+     * </p>
      * @param {Boolean} enabled
      */
     setEnabled: function (enabled) {
@@ -370,7 +407,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**
      * Changes the size that is widget's size
-     * @param {cc.Size} size
+     * @param {cc.Size} size  that is widget's size
      */
     setSize: function (size) {
         var locW = this._customSize.width = size.width;
@@ -423,7 +460,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**
      * Changes the percent that is widget's percent size
-     * @param {cc.Point} percent
+     * @param {cc.Point} percent that is widget's percent size
      */
     setSizePercent: function (percent) {
         this._sizePercent.x = percent.x;
@@ -448,6 +485,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
         this._customSize.height = height;
         this.onSizeChanged();
     },
+
     _setWidthPercent: function (percent) {
         this._sizePercent.x = percent;
         var width = this._customSize.width;
@@ -473,8 +511,9 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**
      * update size and position
+     * @param {cc.Size} [parentSize] parent size
      */
-    updateSizeAndPosition: function () {
+    updateSizeAndPosition: function (parentSize) {
         switch (this._sizeType) {
             case ccui.Widget.SIZE_ABSOLUTE:
                 var locSize;
@@ -565,7 +604,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**TEXTURE_RES_TYPE
      * Changes the size type of widget.
-     * @param {ccui.Widget.SIZE_ABSOLUTE|ccui.Widget.SIZE_PERCENT} type
+     * @param {ccui.Widget.SIZE_ABSOLUTE|ccui.Widget.SIZE_PERCENT} type that is widget's size type
      */
     setSizeType: function (type) {
         this._sizeType = type;
@@ -573,7 +612,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**
      * Gets the size type of widget.
-     * @returns {ccui.Widget.SIZE_ABSOLUTE|ccui.Widget.SIZE_PERCENT}
+     * @returns {ccui.Widget.SIZE_ABSOLUTE|ccui.Widget.SIZE_PERCENT} that is widget's size type
      */
     getSizeType: function () {
         return this._sizeType;
@@ -581,7 +620,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**
      * Ignore the widget size
-     * @param {Boolean} ignore
+     * @param {Boolean} ignore true that widget will ignore it's size, use texture size, false otherwise. Default value is true.
      */
     ignoreContentAdaptWithSize: function (ignore) {
         this._ignoreSize = ignore;
@@ -599,7 +638,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**
      * Gets the widget if is ignore it's size.
-     * @returns {boolean}
+     * @returns {boolean}  true that widget will ignore it's size, use texture size, false otherwise.
      */
     isIgnoreContentAdaptWithSize: function () {
         return this._ignoreSize;
@@ -610,15 +649,19 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
      * @returns {cc.Size}
      */
     getSize: function () {
-        return this._size;
+        return cc.size(this._size);
     },
 
     /**
-     * Get custom size
+     * Get custom size of widget
      * @returns {cc.Size}
      */
     getCustomSize: function () {
-        return this._customSize
+        return cc.size(this._customSize);
+    },
+
+    getLayoutSize: function(){
+        return cc.size(this._size);
     },
 
     /**
@@ -637,7 +680,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**
      *  Gets world position of widget.
-     * @returns {cc.Point}
+     * @returns {cc.Point} world position of widget.
      */
     getWorldPosition: function () {
         return this.convertToWorldSpace(cc.p(0, 0));
@@ -649,6 +692,13 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
      */
     getVirtualRenderer: function () {
         return this;
+    },
+
+    /**
+     * Gets the content size of widget.  Content size is widget's texture size.
+     */
+    getVirtualRendererSize:function(){
+
     },
 
     /**
@@ -676,13 +726,13 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     },
 
     /**
-     * Sets whether the widget is touch enabled
-     * @param enable
+     * Sets whether the widget is touch enabled. The default value is false, a widget is default to touch disabled
+     * @param {Boolean} enable  true if the widget is touch enabled, false if the widget is touch disabled.
      */
     setTouchEnabled: function (enable) {
-        if (this._touchEnabled === enable) {
+        if (this._touchEnabled === enable)
             return;
-        }
+
         this._touchEnabled = enable;
         if (this._touchEnabled) {
             this._touchListener = cc.EventListener.create({
@@ -700,10 +750,26 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**
      * To set the bright style of widget.
-     * @returns {boolean}
+     * @returns {boolean} true if the widget is touch enabled, false if the widget is touch disabled.
      */
     isTouchEnabled: function () {
         return this._touchEnabled;
+    },
+
+    /**
+     * Determines if the widget is highlighted
+     * @returns {boolean} true if the widget is highlighted, false if the widget is not highlighted .
+     */
+    isHighlighted: function(){
+        return true;
+    },
+
+    /**
+     * Sets whether the widget is highlighted. The default value is false, a widget is default to not highlighted
+     * @param highlight true if the widget is highlighted, false if the widget is not highlighted.
+     */
+    setHighlighted:function(highlight){
+
     },
 
     /**
@@ -733,7 +799,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**
      * Determines if the widget is on focused
-     * @returns {boolean}
+     * @returns {boolean} whether the widget is focused or not
      */
     isFocused: function () {
         return this._focus;
@@ -742,13 +808,13 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     /**
      * Sets whether the widget is on focused
      * The default value is false, a widget is default to not on focused
-     * @param {boolean} fucos
+     * @param {boolean} focus  pass true to let the widget get focus or pass false to let the widget lose focus
      */
-    setFocused: function (fucos) {
-        if (fucos == this._focus) {
+    setFocused: function (focus) {
+        if (focus == this._focus) {
             return;
         }
-        this._focus = fucos;
+        this._focus = focus;
         if (this._bright) {
             if (this._focus) {
                 this.setBrightStyle(ccui.Widget.BRIGHT_STYLE_HIGH_LIGHT);
@@ -762,20 +828,115 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
         }
     },
 
-    setBright: function (bright, containChild) {
+    /**
+     * returns whether the widget could accept focus.
+     * @returns {boolean} true represent the widget could accept focus, false represent the widget couldn't accept focus
+     */
+    isFocusEnabled: function(){
+        return true;
+    },
+
+    /**
+     * sets whether the widget could accept focus.
+     * @param {Boolean} enable true represent the widget could accept focus, false represent the widget couldn't accept focus
+     */
+    setFocusEnabled: function(enable){
+
+    },
+
+    /**
+     * <p>
+     *     When a widget is in a layout, you could call this method to get the next focused widget within a specified direction. <br/>
+     *     If the widget is not in a layout, it will return itself
+     * </p>
+     * @param direction the direction to look for the next focused widget in a layout
+     * @param current  the current focused widget
+     * @return  the next focused widget in a layout
+     */
+    findNextFocusedWidget: function( direction, current){
+
+    },
+
+    /**
+     * when a widget calls this method, it will get focus immediately.
+     */
+    requestFocus: function(){
+
+    },
+
+    /**
+     * no matter what widget object you call this method on , it will return you the exact one focused widget
+     */
+    getCurrentFocusedWidget: function(){
+
+    },
+
+    /**
+     * call this method with parameter true to enable the Android Dpad focus navigation feature
+     * @param {Boolean} enable set true to enable dpad focus navigation, otherwise disable dpad focus navigation
+     */
+    enableDpadNavigation: function(enable){
+
+    },
+
+    /**
+     * <p>
+     *    When a widget lose/get focus, this method will be called. Be Caution when you provide your own version,       <br/>
+     *    you must call widget->setFocused(true/false) to change the focus state of the current focused widget;
+     * </p>
+     */
+    onFocusChanged: null,
+
+    /**
+     * use this function to manually specify the next focused widget regards to each direction
+     */
+    onNextFocusedWidget: null,
+
+    /**
+     * Sends the touch event to widget's parent
+     * @param {Number}  eventType
+     * @param {ccui.Widget} sender
+     * @param {cc.Touch} touch
+     */
+    interceptTouchEvent: function(eventType, sender, touch){
+
+    },
+
+    /**
+     * This method is called when a focus change event happens
+     * @param {ccui.Widget} widgetLostFocus
+     * @param {ccui.Widget} widgetGetFocus
+     */
+    onFocusChange: function(widgetLostFocus, widgetGetFocus){
+
+    },
+
+    /**
+     * Dispatch a EventFocus through a EventDispatcher
+     * @param {ccui.Widget} widgetLostFocus
+     * @param {ccui.Widget} widgetGetFocus
+     */
+    dispatchFocusEvent: function(widgetLostFocus, widgetGetFocus){
+
+    },
+
+    /**
+     *  Sets whether the widget is bright. The default value is true, a widget is default to bright
+     * @param {Boolean} bright true if the widget is bright, false if the widget is dark.
+     */
+    setBright: function (bright) {
         this._bright = bright;
         if (this._bright) {
             this._brightStyle = ccui.Widget.BRIGHT_STYLE_NONE;
             this.setBrightStyle(ccui.Widget.BRIGHT_STYLE_NORMAL);
-        }
-        else {
+        } else {
             this.onPressStateChangedToDisabled();
         }
     },
 
     /**
      * To set the bright style of widget.
-     * @param {ccui.Widget.BRIGHT_STYLE_NONE|ccui.Widget.BRIGHT_STYLE_NORMAL|ccui.Widget.BRIGHT_STYLE_HIGH_LIGHT} style
+     * @param {ccui.Widget.BRIGHT_STYLE_NONE|ccui.Widget.BRIGHT_STYLE_NORMAL|ccui.Widget.BRIGHT_STYLE_HIGH_LIGHT} style BRIGHT_NORMAL the widget is normal state, BRIGHT_HIGHLIGHT the widget is height light state.
      */
     setBrightStyle: function (style) {
         if (this._brightStyle == style) {
@@ -799,35 +960,31 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
      * call back function called widget's state changed to normal.
      */
     onPressStateChangedToNormal: function () {
-
     },
 
     /**
      * call back function called widget's state changed to selected.
      */
     onPressStateChangedToPressed: function () {
-
     },
 
     /**
      * call back function called widget's state changed to dark.
      */
     onPressStateChangedToDisabled: function () {
-
     },
 
     /**
      * A call back function when widget lost of focus.
      */
     didNotSelectSelf: function () {
-
     },
 
     onTouchBegan: function (touch, event) {
         var touchPoint = touch.getLocation();
-        this._touchStartPos.x = touchPoint.x;
-        this._touchStartPos.y = touchPoint.y;
-        this._hitted = this.isEnabled() && this.isTouchEnabled() && this.hitTest(touchPoint) && this.clippingParentAreaContainPoint(touchPoint);
+        this._touchBeganPosition.x = touchPoint.x;
+        this._touchBeganPosition.y = touchPoint.y;
+        this._hitted = this.isEnabled() && this.isTouchEnabled() && this.hitTest(touchPoint) && this.isClippingParentContainsPoint(touchPoint);
         if (!this._hitted) {
             return false;
         }
@@ -842,8 +999,8 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     onTouchMoved: function (touch, event) {
         var touchPoint = touch.getLocation();
-        this._touchMovePos.x = touchPoint.x;
-        this._touchMovePos.y = touchPoint.y;
+        this._touchMovePosition.x = touchPoint.x;
+        this._touchMovePosition.y = touchPoint.y;
         this.setFocused(this.hitTest(touchPoint));
         var widgetParent = this.getWidgetParent();
         if (widgetParent) {
@@ -855,8 +1012,8 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     onTouchEnded: function (touch, event) {
         var touchPoint = touch.getLocation();
-        this._touchEndPos.x = touchPoint.x;
-        this._touchEndPos.y = touchPoint.y;
+        this._touchEndPosition.x = touchPoint.x;
+        this._touchEndPosition.y = touchPoint.y;
         var focus = this._focus;
         this.setFocused(false);
         var widgetParent = this.getWidgetParent();
@@ -892,25 +1049,22 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     pushDownEvent: function () {
         if (this._touchEventListener && this._touchEventSelector) {
-            if (this._touchEventSelector) {
+            if (this._touchEventSelector)
                 this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_BEGAN);
-            }
         }
     },
 
     moveEvent: function () {
         if (this._touchEventListener && this._touchEventSelector) {
-            if (this._touchEventSelector) {
+            if (this._touchEventSelector)
                 this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_MOVED);
-            }
         }
     },
 
     releaseUpEvent: function () {
         if (this._touchEventListener && this._touchEventSelector) {
-            if (this._touchEventSelector) {
+            if (this._touchEventSelector)
                 this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_ENDED);
-            }
         }
     },
 
@@ -937,23 +1091,15 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     /**
      * Checks a point if is in widget's space
      * @param {cc.Point} pt
-     * @returns {boolean}
+     * @returns {boolean} true if the point is in widget's space, flase otherwise.
      */
     hitTest: function (pt) {
         var nsp = this.convertToNodeSpace(pt);
         var bb = cc.rect(-this._size.width * this._anchorPoint.x, -this._size.height * this._anchorPoint.y, this._size.width, this._size.height);
-        if (nsp.x >= bb.x && nsp.x <= bb.x + bb.width && nsp.y >= bb.y && nsp.y <= bb.y + bb.height) {
-            return true;
-        }
-        return false;
+        return (nsp.x >= bb.x && nsp.x <= bb.x + bb.width && nsp.y >= bb.y && nsp.y <= bb.y + bb.height);
     },
 
-    /**
-     * Checks a point if in parent's area.
-     * @param {cc.Point} pt
-     * @returns {Boolean}
-     */
-    clippingParentAreaContainPoint: function (pt) {
+    isClippingParentContainsPoint: function(pt){
         this._affectByClipping = false;
         var parent = this.getParent();
         var clippingParent = null;
@@ -987,6 +1133,17 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     },
 
     /**
+     * Checks a point if in parent's area.
+     * @deprecated
+     * @param {cc.Point} pt
+     * @returns {Boolean}
+     */
+    clippingParentAreaContainPoint: function (pt) {
+        cc.log("clippingParentAreaContainPoint is deprecated. Please use isClippingParentContainsPoint instead.");
+        this.isClippingParentContainsPoint(pt);
+    },
+
+    /**
      * Sends the touch event to widget's parent
      * @param {number} handleState
      * @param {ccui.Widget} sender
@@ -1001,6 +1158,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**
      * Changes the position (x,y) of the widget .
+     * The original point (0,0) is at the left-bottom corner of screen.
      * @param {cc.Point||Number} pos
      * @param {Number} posY
      */
@@ -1012,8 +1170,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
                 if (pSize.width <= 0 || pSize.height <= 0) {
                     this._positionPercent.x = 0;
                     this._positionPercent.y = 0;
-                }
-                else {
+                } else {
                     if (posY) {
                         this._positionPercent.x = pos / pSize.width;
                         this._positionPercent.y = posY / pSize.height;
@@ -1098,11 +1255,12 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**
      * Gets the percent (x,y) of the widget
-     * @returns {cc.Point}
+     * @returns {cc.Point} The percent (x,y) of the widget in OpenGL coordinates
      */
     getPositionPercent: function () {
         return this._positionPercent;
     },
+
     _getXPercent: function () {
         return this._positionPercent.x;
     },
@@ -1112,7 +1270,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**
      * Changes the position type of the widget
-     * @param {ccui.Widget.POSITION_ABSOLUTE|ccui.Widget.POSITION_PERCENT} type
+     * @param {ccui.Widget.POSITION_ABSOLUTE|ccui.Widget.POSITION_PERCENT} type  the position type of widget
      */
     setPositionType: function (type) {
         this.positionType = type;
@@ -1120,15 +1278,15 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**
      * Gets the position type of the widget
-     * @returns {cc.pPositionType}
+     * @returns {ccui.Widget.POSITION_ABSOLUTE|ccui.Widget.POSITION_PERCENT} the position type of widget
      */
     getPositionType: function () {
         return this.positionType;
     },
 
     /**
-     * Set flipped x
-     * @param {Boolean} flipX
+     * Sets whether the widget should be flipped horizontally or not.
+     * @param {Boolean} flipX true if the widget should be flipped horizaontally, false otherwise.
      */
     setFlippedX: function (flipX) {
         this._flippedX = flipX;
@@ -1136,16 +1294,22 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     },
 
     /**
-     * Get flipped x
-     * @returns {Boolean}
+     * <p>
+     *   Returns the flag which indicates whether the widget is flipped horizontally or not.             <br/>
+     *   It only flips the texture of the widget, and not the texture of the widget's children.          <br/>
+     *   Also, flipping the texture doesn't alter the anchorPoint.                                       <br/>
+     *   If you want to flip the anchorPoint too, and/or to flip the children too use:                   <br/>
+     *   widget->setScaleX(sprite->getScaleX() * -1);
+     * </p>
+     * @returns {Boolean} true if the widget is flipped horizontally, false otherwise.
      */
     isFlippedX: function () {
         return this._flippedX;
     },
 
     /**
-     * Set flipped y
-     * @param {Boolean} flipY
+     * Sets whether the widget should be flipped vertically or not.
+     * @param {Boolean} flipY  true if the widget should be flipped vertically, false otherwise.
      */
     setFlippedY: function (flipY) {
         this._flippedY = flipY;
@@ -1153,8 +1317,14 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     },
 
     /**
-     * Get flipped y
-     * @returns {Boolean}
+     * <p>
+     *     Return the flag which indicates whether the widget is flipped vertically or not.                <br/>
+     *     It only flips the texture of the widget, and not the texture of the widget's children.          <br/>
+     *     Also, flipping the texture doesn't alter the anchorPoint.                                       <br/>
+     *     If you want to flip the anchorPoint too, and/or to flip the children too use:                   <br/>
+     *     widget->setScaleY(widget->getScaleY() * -1);
+     * </p>
+     * @returns {Boolean} true if the widget is flipped vertically, false otherwise.
      */
     isFlippedY: function () {
         return this._flippedY;
@@ -1168,9 +1338,13 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     },
 
+    adaptRenderers: function(){
+
+    },
+
     /**
      * Determines if the widget is bright
-     * @returns {boolean}
+     * @returns {boolean} true if the widget is bright, false if the widget is dark.
      */
     isBright: function () {
         return this._bright;
@@ -1217,27 +1391,42 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     },
 
     /**
-     * Gets touch start position
-     * @returns {cc.Point}
+     * Gets the touch began point of widget when widget is selected.
+     * @returns {cc.Point} the touch began point.
      */
     getTouchStartPos: function () {
-        return this._touchStartPos;
+        cc.log("getTouchStartPos is deprecated. Please use getTouchBeganPosition instead.");
+        return this.getTouchBeganPosition();
+    },
+
+    getTouchBeganPosition: function(){
+         return cc.p(this._touchBeganPosition);
     },
 
     /**
-     * Gets touch move position
-     * @returns {cc.Point}
+     *Gets the touch move point of widget when widget is selected.
+     * @returns {cc.Point} the touch move point.
      */
     getTouchMovePos: function () {
-        return this._touchMovePos;
+        cc.log("getTouchMovePos is deprecated. Please use getTouchMovePosition instead.");
+        return this.getTouchMovePosition();
+    },
+
+    getTouchMovePosition: function(){
+        return cc.p(this._touchMovePosition);
     },
 
     /**
-     * Gets touch end position
-     * @returns {cc.Point}
+     * Gets the touch end point of widget when widget is selected.
+     * @returns {cc.Point} the touch end point.
      */
     getTouchEndPos: function () {
-        return this._touchEndPos;
+        cc.log("getTouchEndPos is deprecated. Please use getTouchEndPosition instead.");
+        return this.getTouchEndPosition();
+    },
+
+    getTouchEndPosition:function(){
+        return cc.p(this._touchEndPosition);
     },
 
     /**
@@ -1265,7 +1454,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     },
 
     /**
-     * Sets layout parameter
+     * Gets LayoutParameter of widget.
      * @param {ccui.LayoutParameter} parameter
      */
     setLayoutParameter: function (parameter) {
@@ -1507,11 +1696,17 @@ ccui.Widget.BRIGHT_STYLE_HIGH_LIGHT = 1;
 ccui.Widget.TYPE_WIDGET = 0;
 ccui.Widget.TYPE_CONTAINER = 1;
 
+//Focus Direction
+ccui.Widget.LEFT = 0;
+ccui.Widget.RIGHT = 1;
+ccui.Widget.UP = 0;
+ccui.Widget.DOWN = 1;
+
 //texture resource type
 ccui.Widget.LOCAL_TEXTURE = 0;
 ccui.Widget.PLIST_TEXTURE = 1;
 
-//touch event type
+//touch event type            //TODO why don't use a common define ?
 ccui.Widget.TOUCH_BEGAN = 0;
 ccui.Widget.TOUCH_MOVED = 1;
 ccui.Widget.TOUCH_ENDED = 2;

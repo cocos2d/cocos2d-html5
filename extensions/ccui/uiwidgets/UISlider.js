@@ -407,7 +407,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     onTouchBegan: function (touch, event) {
         var pass = ccui.Widget.prototype.onTouchBegan.call(this, touch, event);
         if (this._hitted) {
-            var nsp = this.convertToNodeSpace(this._touchStartPos);
+            var nsp = this.convertToNodeSpace(this._touchBeganPosition);
             this.setPercent(this.getPercentWithBallPos(nsp.x));
             this.percentChangedEvent();
         }
@@ -416,8 +416,8 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
 
     onTouchMoved: function (touch, event) {
         var touchPoint = touch.getLocation();
-        this._touchMovePos.x = touchPoint.x;
-        this._touchMovePos.y = touchPoint.y;
+        this._touchMovePosition.x = touchPoint.x;
+        this._touchMovePosition.y = touchPoint.y;
         var nsp = this.convertToNodeSpace(touchPoint);
         this._slidBallRenderer.setPosition(nsp.x, 0);
         this.setPercent(this.getPercentWithBallPos(nsp.x));

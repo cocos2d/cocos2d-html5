@@ -87,11 +87,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     onEnter: function(){
         ccui.Widget.prototype.onEnter.call(this);
         if (this._clippingStencil)
-        {
             this._clippingStencil.onEnter();
-        }
         this._doLayoutDirty = true;
         this._clippingRectDirty = true;
+    },
+    onExit: function(){
+        ccui.Widget.prototype.onExit.call(this);
+        if (this._clippingStencil)
+            this._clippingStencil.onExit();
     },
     init: function () {
         if (cc.Node.prototype.init.call(this)) {
