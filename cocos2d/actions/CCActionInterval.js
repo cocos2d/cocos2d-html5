@@ -326,17 +326,16 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
 		if ((last >= 0) && (paramArray[last] == null))
 			cc.log("parameters should not be ending with null in Javascript");
 
-		if (last >= 0) {
-			var prev = paramArray[0], action1;
-			for (var i = 1; i < last; i++) {
-				if (paramArray[i]) {
-					action1 = prev;
-					prev = cc.Sequence.create();
-					prev.initWithTwoActions(action1, paramArray[i]);
-				}
-			}
-			this.initWithTwoActions(prev, paramArray[last]);
-		}
+        if (last >= 0) {
+            var prev = paramArray[0], action1;
+            for (var i = 1; i < last; i++) {
+                if (paramArray[i]) {
+                    action1 = prev;
+                    prev = cc.Sequence._actionOneTwo(action1, paramArray[i]);
+                }
+            }
+            this.initWithTwoActions(prev, paramArray[last]);
+        }
     },
 
     /** initializes the action <br/>
@@ -786,17 +785,16 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
 		if ((last >= 0) && (paramArray[last] == null))
 			cc.log("parameters should not be ending with null in Javascript");
 
-		if (last >= 0) {
-			var prev = paramArray[0], action1;
-			for (var i = 1; i < last; i++) {
-				if (paramArray[i]) {
-					action1 = prev;
-					prev = cc.Spwan.create();
-					prev.initWithTwoActions(action1, paramArray[i]);
-				}
-			}
-			this.initWithTwoActions(prev, paramArray[last]);
-		}
+        if (last >= 0) {
+            var prev = paramArray[0], action1;
+            for (var i = 1; i < last; i++) {
+                if (paramArray[i]) {
+                    action1 = prev;
+                    prev = cc.Spawn._actionOneTwo(action1, paramArray[i]);
+                }
+            }
+            this.initWithTwoActions(prev, paramArray[last]);
+        }
     },
 
     /** initializes the Spawn action with the 2 actions to spawn
