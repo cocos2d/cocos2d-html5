@@ -365,24 +365,9 @@
         "pluginx" : [
             "core",
 
-            "extensions/pluginx/protocols/Config.js",
-            "extensions/pluginx/protocols/PluginUtils.js",
-            "extensions/pluginx/protocols/PluginProtocol.js",
-            "extensions/pluginx/protocols/ProtocolSocial.js",
-            "extensions/pluginx/protocols/ProtocolAds.js",
-            "extensions/pluginx/protocols/ProtocolAnalytics.js",
-
-            "extensions/pluginx/protocols/PluginFactory.js",
-            "extensions/pluginx/protocols/PluginManager.js",
-
-
-            "extensions/pluginx/plugins/SocialWeibo.js",
-            "extensions/pluginx/plugins/SocialQQWeibo.js",
-            "extensions/pluginx/plugins/SocialQzone.js",
-            "extensions/pluginx/plugins/SocialTwitter.js",
-            "extensions/pluginx/plugins/SocialFacebook.js",
-
-            "extensions/pluginx/plugins/AnalyticsFlurry.js"
+            "extensions/pluginx/Plugin.js",
+            "extensions/pluginx/platform/facebook_sdk.js",
+            "extensions/pluginx/platform/facebook.js"
         ],
         "spine":[
             "core",
