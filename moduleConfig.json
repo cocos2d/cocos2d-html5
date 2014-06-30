@@ -255,6 +255,11 @@
             "extensions/editbox/CCdomNode.js",
             "extensions/editbox/CCEditBox.js"
         ],
+        "ccpool" : [
+            "core", "gui",
+
+            "extensions/ccpool/CCPool.js"
+        ],
         "ccui" : [
             "core", "gui", "actions", "labels", "text-input","clipping-nodes",
             "extensions/ccui/system/CocosGUI.js",
@@ -371,7 +376,7 @@
             "extensions/spine/CCSkeleton.js",
             "extensions/spine/CCSkeletonAnimation.js"
         ],
-        "extensions" : ["gui", "ccbreader", "editbox", "cocostudio", "pluginx", "spine"],
+        "extensions" : ["gui", "ccbreader", "editbox", "cocostudio", "pluginx", "spine","ccpool"],
 
         "box2d" : [
             "core", "physics",
