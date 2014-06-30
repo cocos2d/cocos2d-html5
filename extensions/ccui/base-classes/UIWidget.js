@@ -73,7 +73,6 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _focusEnabled: true,
 
     _ignoreSize: false,
-    _widgetChildren: null,
     _affectByClipping: false,
 
     _sizeType: null,
@@ -89,7 +88,6 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _flippedX: false,
     _flippedY: false,
     _opacity: 255,
-    _focusEnabled: false,
     _highlight: false,
 
     _touchEventCallback: null,
@@ -104,7 +102,6 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
         this._size = cc.size(0, 0);
         this._customSize = cc.size(0, 0);
         this._layoutParameterDictionary = {};
-        this._widgetChildren = [];
         this._sizeType = ccui.Widget.SIZE_ABSOLUTE;
         this._sizePercent = cc.p(0, 0);
         this.positionType = ccui.Widget.POSITION_ABSOLUTE;
@@ -122,7 +119,6 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
     init: function () {
         if (cc.ProtectedNode.prototype.init.call(this)) {
             this._layoutParameterDictionary = {};
-            this._widgetChildren = [];
             this.initRenderer();
             this.setBright(true);
             this.ignoreContentAdaptWithSize(true);
@@ -149,86 +145,6 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
             this.adaptRenderers();
             cc.ProtectedNode.prototype.visit.call(this, ctx);
         }
-    },
-
-    sortAllChildren: function () {
-        this._reorderWidgetChildDirty = this._reorderChildDirty;
-        cc.Node.prototype.sortAllChildren.call(this);
-        if (this._reorderWidgetChildDirty) {
-            var _children = this._widgetChildren;
-            var i, j, length = _children.length, tempChild;
-
-            // insertion sort
-            for (i = 0; i < length; i++) {
-                var tempItem = _children[i];
-                j = i - 1;
-                tempChild = _children[j];
-
-                //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
-                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem.arrivalOrder < tempChild.arrivalOrder ))) {
-                    _children[j + 1] = tempChild;
-                    j = j - 1;
-                    tempChild = _children[j];
-                }
-                _children[j + 1] = tempItem;
-            }
-
-            //don't need to check children recursively, that's done in visit of each child
-
-            this._reorderWidgetChildDirty = false;
-        }
-    },
-
-    /**
-     * Adds a child to the container.
-     * @param {ccui.Widget} widget
-     * @param {Number} zOrder
-     * @param {Number} tag
-     */
-    addChild: function (widget, zOrder, tag) {
-        if (widget instanceof ccui.Widget) {
-            cc.Node.prototype.addChild.call(this, widget, zOrder, tag);
-            this._widgetChildren.push(widget);
-            return;
-        }
-        if (widget instanceof cc.Node) {
-            cc.log("Please use addNode to add a CCNode.");
-            return;
-        }
-    },
-
-    /**
-     *
-     * @param tag
-     * @returns {ccui.Widget}
-     */
-    getChildByTag: function (tag) {
-        var __children = this._widgetChildren;
-        if (__children != null) {
-            for (var i = 0; i < __children.length; i++) {
-                var node = __children[i];
-                if (node && node.tag == tag)
-                    return node;
-            }
-        }
-        return null;
-    },
-
-    /**
-     * Return an array of children
-     * @returns {Array}
-     */
-    getChildren: function () {
-        return this._widgetChildren;
-    },
-
-    /**
-     * get the count of children
-     * @returns {Number}
-     */
-    getChildrenCount: function () {
-        return this._widgetChildren.length;
     },
 
     getWidgetParent: function () {
@@ -298,42 +214,6 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     /**
-     * remove  child
-     * @param {ccui.Widget} widget
-     * @param {Boolean} cleanup
-     */
-    removeChild: function (widget, cleanup) {
-        if (!(widget instanceof ccui.Widget)) {
-            cc.log("child must a type of ccui.Widget");
-            return;
-        }
-        cc.Node.prototype.removeChild.call(this, widget, cleanup);
-        cc.arrayRemoveObject(this._widgetChildren, widget);
-    },
-
-    removeChildByTag: function (tag, cleanup) {
-        var child = this.getChildByTag(tag);
-
-        if (child == null) {
-            cc.log("cocos2d: removeChildByTag(tag = " + tag + "): child not found!");
-        }
-        else {
-            this.removeChild(child, cleanup);
-        }
-    },
-
-    /**
-     * Removes all children from the container, and do a cleanup to all running actions depending on the cleanup parameter.
-     */
-    removeAllChildren: function (cleanup) {
-        for (var i = 0; i < this._widgetChildren.length; i++) {
-            var widget = this._widgetChildren[i];
-            cc.Node.prototype.removeChild.call(this, widget, cleanup);
-        }
-        this._widgetChildren.length = 0;
-    },
-
-    /**
      * <p>
      *     Sets whether the widget is enabled                                                                                    <br/>
      *     true if the widget is enabled, widget may be touched , false if the widget is disabled, widget cannot be touched.     <br/>
@@ -343,29 +223,6 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
      */
     setEnabled: function (enabled) {
         this._enabled = enabled;
-        //TODO need test
-/*        var arrayChildren = this._widgetChildren;
-        var childrenCount = arrayChildren.length;
-        for (var i = 0; i < childrenCount; i++) {
-            var child = arrayChildren[i];
-            child.setEnabled(enabled);
-        }*/
-    },
-
-    /**
-     * Gets a child from the container with its name
-     * @param {string} name
-     * @returns {ccui.Widget}
-     */
-    getChildByName: function (name) {
-        var arrayChildren = this._widgetChildren;
-        var childrenCount = arrayChildren.length;
-        for (var i = 0; i < childrenCount; i++) {
-            var child = arrayChildren[i];
-            if (child.getName() == name) {
-                return child;
-            }
-        }
     },
 
     /**
@@ -719,7 +576,7 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
         var locChildren =  this.getChildren();
         for (var i = 0, len = locChildren.length; i < len; i++) {
             var child = locChildren[i];
-            if(child)
+            if(child instanceof ccui.Widget)
                 child.updateSizeAndPosition();
         }
     },

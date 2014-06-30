@@ -174,6 +174,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _rotationRadiansY: 0,
     _className: "Node",
     _showNode: false,
+    _name: "",                     ///<a string label, an user defined string to identify this node
 
     _initNode: function () {
         var _t = this;
@@ -945,6 +946,22 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
+     * Changes the name that is used to identify the node easily.
+     * @param {String} name
+     */
+    setName: function(name){
+         this._name
+    },
+
+    /**
+     * Returns a string that is used to identify the node.
+     * @returns {string} A string that identifies the node.
+     */
+    getName: function(){
+        return this._name;
+    },
+
+    /**
      * <p>
      *     Returns a custom user data pointer                                                               <br/>
      *     You can set everything in UserData pointer, a data block, a structure or an object.
@@ -1109,7 +1126,20 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                     return node;
             }
         }
-        //throw "not found";
+        return null;
+    },
+
+    getChildByName: function(name){
+        if(!name){
+            cc.log("Invalid name");
+            return null;
+        }
+
+        var locChildren = this._children;
+        for(var i = 0, len = locChildren.length; i < len; i++){
+           if(locChildren[i]._name == name)
+            return locChildren[i];
+        }
         return null;
     },
     // composition: ADD

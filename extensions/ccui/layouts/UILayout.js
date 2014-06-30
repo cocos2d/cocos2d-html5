@@ -1211,7 +1211,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         var locChild = null;
         for (var i = 0; i < layoutChildrenArray.length; i++) {
             locChild = layoutChildrenArray[i];
-            if(locChild)
+            if(locChild instanceof ccui.Widget)
                 this.supplyTheLayoutParameterLackToChild(locChild);
         }
         this._doLayoutDirty = true;
