@@ -190,26 +190,77 @@
             }
         },
 
+        /**
+         * shareInfo parameters support both AnySDK style and facebook style
+         *  1. AnySDK style
+         *      - title
+         *      - site
+         *      - siteUrl
+         *      - text
+         *      - imageUrl
+         *      - imagePath
+         *
+         *  2. Facebook style
+         *      - caption
+         *      - name
+         *      - link
+         *      - description
+         *      - picture
+         */
         dialog: function(options, callback){
 
-            FB.ui({
-                    method: 'share',
-                    name: options['title'],
-                    caption: options['caption'],
-                    description: options['text'],
-                    href: options['link'],
-                    picture: options['imageUrl']
-                },
-                function(response) {
-                    if (response) {
-                        if(response.post_id)
-                            typeof callback === 'function' && callback(0, errMsg[0]);
-                        else
-                            typeof callback === 'function' && callback(3, errMsg[3]);
-                    } else {
-                        typeof callback === 'function' && callback(4, errMsg[4]);
-                    }
-                });
+            if(!options){
+                return;
+            }
+
+            options['method'] = options['dialog'] == 'share_open_graph' ? 'share_open_graph' : 'share';
+            delete options['dialog'];
+
+            options['name'] = options['site'] || options['name'];
+            delete options['site'];
+            delete options['name'];
+
+            options['href'] = options['siteUrl'] || options['link'];
+            delete options['siteUrl'];
+            delete options['link'];
+
+            options['picture'] = options['imageUrl'] || options['imagePath'] || options['photo'] || options['picture'];
+            delete options['imageUrl'];
+            delete options['imagePath'];
+            delete options['photo'];
+
+
+            options['caption'] = options['title'] || options['caption'];
+            delete options['title'];
+
+            options['description'] = options['text'] || options['description'];
+            delete options['text'];
+            delete options['description'];
+
+            if(options['method'] == 'share_open_graph' && options['url']){
+                if(options['url']){
+                    options['action_properties'] = JSON.stringify({
+                        object: options['url']
+                    });
+                }else{
+                    return;
+                }
+            }else{
+                if(!options['href']){
+                    return;
+                }
+            }
+            FB.ui(options,
+            function(response) {
+                if (response) {
+                    if(response.post_id)
+                        typeof callback === 'function' && callback(0, errMsg[0]);
+                    else
+                        typeof callback === 'function' && callback(3, errMsg[3]);
+                } else {
+                    typeof callback === 'function' && callback(4, errMsg[4]);
+                }
+            });
         },
 
         ui: FB.ui,
