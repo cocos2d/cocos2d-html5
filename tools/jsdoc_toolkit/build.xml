@@ -159,7 +159,7 @@
                 <include name="ccui/base-classes/UIWidget.js"/>
                 <include name="ccui/layouts/UILayout.js"/>
                 <include name="ccui/layouts/UILayoutParameter.js"/>
-                <include name="ccui/layouts/UILayoutDefine.js"/>
+                <include name="ccui/layouts/UILayoutManager.js"/>
                 <include name="ccui/system/UIHelper.js"/>
                 <include name="ccui/uiwidgets/UIButton.js"/>
                 <include name="ccui/uiwidgets/UICheckBox.js"/>

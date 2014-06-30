@@ -33,6 +33,7 @@ cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Nod
     },
 
     ctor: function(){
+        cc.NodeRGBA.prototype.ctor.call(this);
        this._protectedChildren = [];
     },
 
@@ -45,7 +46,7 @@ cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Nod
      */
     addProtectedChild: function(child, localZOrder, tag){
          cc.assert(child != null, "child must be non-nil");
-         cc.assert(child.parent, "child already added. It can't be added again");
+         cc.assert(!child.parent, "child already added. It can't be added again");
 
         localZOrder = localZOrder || child.getLocalZOrder();
         if(tag)
@@ -64,9 +65,9 @@ cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Nod
                 child.onEnterTransitionDidFinish();
         }
         if(this._cascadeColorEnabled)
-            this.updateDisplayedColor();
+            this._enableCascadeColor();
         if (this._cascadeOpacityEnabled)
-            this.updateDisplayedOpacity();
+            this._enableCascadeOpacity();
     },
 
     /**
@@ -334,7 +335,7 @@ cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Nod
         cc.Node.prototype.onEnter.call(this);
         var locChildren = this._protectedChildren;
         for(var i = 0, len = locChildren.length;i< len;i++)
-            locChildren.onEnter();
+            locChildren[i].onEnter();
     },
 
     /**
@@ -348,14 +349,14 @@ cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Nod
         cc.Node.prototype.onEnterTransitionDidFinish.call(this);
         var locChildren = this._protectedChildren;
         for(var i = 0, len = locChildren.length;i< len;i++)
-            locChildren.onEnterTransitionDidFinish();
+            locChildren[i].onEnterTransitionDidFinish();
     },
 
     onExit:function(){
         cc.Node.prototype.onExit.call(this);
         var locChildren = this._protectedChildren;
         for(var i = 0, len = locChildren.length;i< len;i++)
-            locChildren.onExit();
+            locChildren[i].onExit();
     },
 
     /**
@@ -368,20 +369,25 @@ cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Nod
         cc.Node.prototype.onExitTransitionDidStart.call(this);
         var locChildren = this._protectedChildren;
         for(var i = 0, len = locChildren.length;i< len;i++)
-            locChildren.onExitTransitionDidStart();
+            locChildren[i].onExitTransitionDidStart();
     },
 
     updateDisplayedOpacity: function(parentOpacity){
         this._displayedOpacity = this._realOpacity * parentOpacity/255.0;
-        this.updateColor();
+        this._updateColor();
 
         if (this._cascadeOpacityEnabled){
             var i,len, locChildren = this._children, _opacity = this._displayedOpacity;
-            for(i = 0, len = locChildren.length;i < len; i++)
-                locChildren[i].updateDisplayedOpacity(_opacity);
+            for(i = 0, len = locChildren.length;i < len; i++){
+                if(locChildren[i].updateDisplayedOpacity)
+                    locChildren[i].updateDisplayedOpacity(_opacity);
+            }
+
             locChildren = this._protectedChildren;
-            for(i = 0, len = locChildren.length;i < len; i++)
-                locChildren[i].updateDisplayedOpacity(_opacity);
+            for(i = 0, len = locChildren.length;i < len; i++){
+                if(locChildren[i].updateDisplayedOpacity)
+                    locChildren[i].updateDisplayedOpacity(_opacity);
+            }
         }
     },
 
@@ -390,16 +396,20 @@ cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Nod
         displayedColor.r = realColor.r * parentColor.r/255.0;
         displayedColor.g = realColor.g * parentColor.g/255.0;
         displayedColor.b = realColor.b * parentColor.b/255.0;
-        this.updateColor();
+        this._updateColor();
 
         if (this._cascadeColorEnabled){
             var i, len, locChildren = this._children;
-            for(i = 0, len = locChildren.length; i < len; i++)
-                locChildren[i].updateDisplayedColor(displayedColor);
+            for(i = 0, len = locChildren.length; i < len; i++){
+                if(locChildren[i].updateDisplayedColor)
+                    locChildren[i].updateDisplayedColor(displayedColor);
+            }
 
             locChildren = this._protectedChildren;
-            for(i =0, len = locChildren.length; i < len; i++)
-                locChildren[i].updateDisplayedColor(displayedColor);
+            for(i =0, len = locChildren.length; i < len; i++) {
+                if (locChildren[i].updateDisplayedColor)
+                    locChildren[i].updateDisplayedColor(displayedColor);
+            }
         }
     },
 

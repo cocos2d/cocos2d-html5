@@ -2271,6 +2271,10 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         this._cascadeOpacityEnabled = false;
     },
 
+    _updateColor: function(){
+        //TODO
+    },
+
     /**
      * Get the opacity of Node
      * @returns {number} opacity

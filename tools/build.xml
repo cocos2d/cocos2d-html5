@@ -164,7 +164,7 @@
                 <file name="extensions/ccui/base-classes/UIWidget.js"/>
                 <file name="extensions/ccui/layouts/UILayout.js"/>
                 <file name="extensions/ccui/layouts/UILayoutParameter.js"/>
-                <file name="extensions/ccui/layouts/UILayoutDefine.js"/>
+                <file name="extensions/ccui/layouts/UILayoutManager.js"/>
                 <file name="extensions/ccui/system/UIHelper.js"/>
                 <file name="extensions/ccui/uiwidgets/UIButton.js"/>
                 <file name="extensions/ccui/uiwidgets/UICheckBox.js"/>
