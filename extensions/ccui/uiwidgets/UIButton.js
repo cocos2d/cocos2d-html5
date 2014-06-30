@@ -838,14 +838,18 @@ _p = null;
 
 /**
  * allocates and initializes a UIButton.
- * @constructs
+ * @param {string} [normalImage]    normal state texture name
+ * @param {string} [selectedImage]  selected state texture name
+ * @param {string} [disableImage]   disabled state texture name
+ * @param {string} [texType]
  * @return {ccui.Button}
  * @example
  * // example
  * var uiButton = ccui.Button.create();
  */
-ccui.Button.create = function () {
-    return new ccui.Button;
+ccui.Button.create = function (normalImage, selectedImage, disableImage, texType) {
+    if(normalImage === undefined)
+        return new ccui.Button();
 };
 
 // Constants

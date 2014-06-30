@@ -119,13 +119,13 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
                     var defaultLp = ccui.LinearLayoutParameter.create();
                     switch (this._gravity) {
                         case ccui.ListView.GRAVITY_LEFT:
-                            defaultLp.setGravity(ccui.LINEAR_GRAVITY_LEFT);
+                            defaultLp.setGravity(ccui.LinearLayoutParameter.LEFT);
                             break;
                         case ccui.ListView.GRAVITY_RIGHT:
-                            defaultLp.setGravity(ccui.LINEAR_GRAVITY_RIGHT);
+                            defaultLp.setGravity(ccui.LinearLayoutParameter.RIGHT);
                             break;
                         case ccui.ListView.GRAVITY_CENTER_HORIZONTAL:
-                            defaultLp.setGravity(ccui.LINEAR_GRAVITY_CENTER_HORIZONTAL);
+                            defaultLp.setGravity(ccui.LinearLayoutParameter.CENTER_HORIZONTAL);
                             break;
                         default:
                             break;
@@ -147,13 +147,13 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
                     }
                     switch (this._gravity) {
                         case ccui.ListView.GRAVITY_LEFT:
-                            llp.setGravity(ccui.LINEAR_GRAVITY_LEFT);
+                            llp.setGravity(ccui.LinearLayoutParameter.LEFT);
                             break;
                         case ccui.ListView.GRAVITY_RIGHT:
-                            llp.setGravity(ccui.LINEAR_GRAVITY_RIGHT);
+                            llp.setGravity(ccui.LinearLayoutParameter.RIGHT);
                             break;
                         case ccui.ListView.GRAVITY_CENTER_HORIZONTAL:
-                            llp.setGravity(ccui.LINEAR_GRAVITY_CENTER_HORIZONTAL);
+                            llp.setGravity(ccui.LinearLayoutParameter.CENTER_HORIZONTAL);
                             break;
                         default:
                             break;
@@ -166,13 +166,13 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
                     var defaultLp = ccui.LinearLayoutParameter.create();
                     switch (this._gravity) {
                         case ccui.ListView.GRAVITY_TOP:
-                            defaultLp.setGravity(ccui.LINEAR_GRAVITY_TOP);
+                            defaultLp.setGravity(ccui.LinearLayoutParameter.TOP);
                             break;
                         case ccui.ListView.GRAVITY_BOTTOM:
-                            defaultLp.setGravity(ccui.LINEAR_GRAVITY_BOTTOM);
+                            defaultLp.setGravity(ccui.LinearLayoutParameter.BOTTOM );
                             break;
                         case ccui.ListView.GRAVITY_CENTER_VERTICAL:
-                            defaultLp.setGravity(ccui.LINEAR_GRAVITY_CENTER_VERTICAL);
+                            defaultLp.setGravity(ccui.LinearLayoutParameter.CENTER_VERTICAL);
                             break;
                         default:
                             break;
@@ -194,13 +194,13 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
                     }
                     switch (this._gravity) {
                         case ccui.ListView.GRAVITY_TOP:
-                            llp.setGravity(ccui.LINEAR_GRAVITY_TOP);
+                            llp.setGravity(ccui.LinearLayoutParameter.TOP);
                             break;
                         case ccui.ListView.GRAVITY_BOTTOM:
-                            llp.setGravity(ccui.LINEAR_GRAVITY_BOTTOM);
+                            llp.setGravity(ccui.LinearLayoutParameter.BOTTOM);
                             break;
                         case ccui.ListView.GRAVITY_CENTER_VERTICAL:
-                            llp.setGravity(ccui.LINEAR_GRAVITY_CENTER_VERTICAL);
+                            llp.setGravity(ccui.LinearLayoutParameter.CENTER_VERTICAL);
                             break;
                         default:
                             break;
@@ -288,7 +288,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     /**
      * Returns a item whose index is same as the parameter.
      * @param {Number} index
-     * @returns {cc.Widget}
+     * @returns {ccui.Widget}
      */
     getItem: function (index) {
         if (index < 0 || index >= this._items.length) {

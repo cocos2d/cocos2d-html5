@@ -1383,19 +1383,19 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     onTouchBegan: function (touch, event) {
         var pass = ccui.Layout.prototype.onTouchBegan.call(this, touch, event);
         if (this._hitted) {
-            this.handlePressLogic(this._touchStartPos);
+            this.handlePressLogic(this._touchBeganPosition);
         }
         return pass;
     },
 
     onTouchMoved: function (touch, event) {
         ccui.Layout.prototype.onTouchMoved.call(this, touch, event);
-        this.handleMoveLogic(this._touchMovePos);
+        this.handleMoveLogic(this._touchMovePosition);
     },
 
     onTouchEnded: function (touch, event) {
         ccui.Layout.prototype.onTouchEnded.call(this, touch, event);
-        this.handleReleaseLogic(this._touchEndPos);
+        this.handleReleaseLogic(this._touchEndPosition);
     },
 
     onTouchCancelled: function (touch, event) {

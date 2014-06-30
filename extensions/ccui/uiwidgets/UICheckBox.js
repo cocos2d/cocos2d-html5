@@ -257,8 +257,8 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
     onTouchEnded: function (touch, event) {
         var touchPoint = touch.getLocation();
-        this._touchEndPos.x = touchPoint.x;
-        this._touchEndPos.y = touchPoint.y;
+        this._touchEndPosition.x = touchPoint.x;
+        this._touchEndPosition.y = touchPoint.y;
         if (this._focus) {
             this.releaseUpEvent();
             if (this._isSelected) {

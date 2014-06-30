@@ -935,6 +935,8 @@ cc.BuilderReader = cc.Class.extend({
         if (this._currentBit >= 8) {
             this._currentBit = 0;
             this._currentByte++;
+            if(this._currentByte > this._data.length)
+                throw "out of the data bound";
         }
 
         return bit;

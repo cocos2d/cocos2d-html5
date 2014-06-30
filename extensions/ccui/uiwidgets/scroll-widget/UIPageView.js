@@ -385,8 +385,8 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 
     onTouchMoved: function (touch,event) {
         var touchPoint = touch.getLocation();
-        this._touchMovePos.x = touchPoint.x;
-        this._touchMovePos.y = touchPoint.y;
+        this._touchMovePosition.x = touchPoint.x;
+        this._touchMovePosition.y = touchPoint.y;
         this.handleMoveLogic(touchPoint);
         var widgetParent = this.getWidgetParent();
         if (widgetParent) {
@@ -401,7 +401,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 
     onTouchEnded: function (touch, event) {
         ccui.Layout.prototype.onTouchEnded.call(this, touch, event);
-        this.handleReleaseLogic(this._touchEndPos);
+        this.handleReleaseLogic(this._touchEndPosition);
     },
 
     onTouchCancelled: function (touch, event) {
