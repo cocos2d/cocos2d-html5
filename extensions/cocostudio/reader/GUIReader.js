@@ -24,6 +24,7 @@
  ****************************************************************************/
 /**
  * @namespace Base object for ccs.uiReader
+ * @name ccs.uiReader
  */
 ccs.uiReader = /** @lends ccs.uiReader# */{
     _filePath: "",
