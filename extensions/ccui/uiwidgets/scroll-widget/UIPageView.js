@@ -91,6 +91,11 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         this.setUpdateEnabled(true);
     },
 
+    onExit:function(){
+        this.setUpdateEnabled(false);
+        ccui.Layout.prototype.onExit.call(this);
+    },
+
     /**
      * Add a widget to a page of pageview.
      * @param {ccui.Widget} widget

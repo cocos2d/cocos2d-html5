@@ -101,7 +101,9 @@ cc.__getListenerID = function (event) {
 };
 
 /**
- * @namespace<p>
+ * @namespace
+ * @name cc.eventManager
+ * <p>
  *  This class manages event listener subscriptions and event dispatching.                                      <br/>
  *                                                                                                              <br/>
  *  The EventListener list is managed in such a way that event listeners can be added and removed even          <br/>
