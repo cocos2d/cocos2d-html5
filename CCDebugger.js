@@ -267,7 +267,11 @@ cc._logToWebPage = function (msg) {
 //to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
 cc._formatString = function(arg){
     if(typeof arg === 'object'){
-        return JSON.stringify(arg);
+        try{
+            return JSON.stringify(arg);
+        }catch(err){
+            return "";
+        }
     }else{
         return arg;
     }
