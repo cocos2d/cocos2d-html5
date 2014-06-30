@@ -445,7 +445,6 @@ cc.inputManager = /** @lends cc.inputManager# */{
 
                         _touchEvent.call(selfPointer, [selfPointer.getTouchByXY(event.clientX, event.clientY, pos)]);
                         event.stopPropagation();
-                        event.preventDefault();
                     }, false);
                 })(eventName, _pointerEventsMap[eventName]);
             }
