@@ -64,7 +64,7 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _name: "default",
     _widgetType: null,
     _actionTag: 0,
-    _size: cc.size(0, 0),
+    _size: cc.size(0,0),
     _customSize: null,
     _layoutParameterDictionary: null,
     _layoutParameterType:0,

@@ -497,6 +497,11 @@ ccui.LabelField = ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField#
         this.setUpdateEnabled(true);
     },
 
+    onExit:function(){
+        this.setUpdateEnabled(false);
+        ccui.Layout.prototype.onExit.call(this);
+    },
+
     initRenderer: function () {
         this._textFieldRender = ccui.UICCTextField.create("input words here", "Thonburi", 20);
         cc.Node.prototype.addChild.call(this, this._textFieldRender, ccui.TextField.RENDERER_ZORDER, -1);
