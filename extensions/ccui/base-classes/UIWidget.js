@@ -1059,7 +1059,7 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
         if (clippingParent) {
             if (clippingParent.hitTest(pt))
-                return clippingParent.clippingParentAreaContainPoint(pt);
+                return clippingParent.isClippingParentContainsPoint(pt);
             return false;
         }
         return true;

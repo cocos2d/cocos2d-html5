@@ -94,17 +94,20 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * var uiLayout = new ccui.Layout();
      */
     ctor: function () {
+        this._layoutType = ccui.Layout.ABSOLUTE;
+        this._widgetType = ccui.Widget.TYPE_CONTAINER;
+        this._clippingType = ccui.Layout.CLIPPING_STENCIL;
+        this._colorType = ccui.Layout.BG_COLOR_NONE;
+
         ccui.Widget.prototype.ctor.call(this);
         this._backGroundImageCapInsets = cc.rect(0, 0, 0, 0);
-        this._colorType = ccui.Layout.BG_COLOR_NONE;
+
         this._color = cc.color(255, 255, 255, 255);
         this._startColor = cc.color(255, 255, 255, 255);
         this._endColor = cc.color(255, 255, 255, 255);
         this._alongVector = cc.p(0, -1);
         this._backGroundImageTextureSize = cc.size(0, 0);
-        this._layoutType = ccui.Layout.ABSOLUTE;
-        this._widgetType = ccui.Widget.TYPE_CONTAINER;
-        this._clippingType = ccui.Layout.CLIPPING_STENCIL;
+
         this._clippingRect = cc.rect(0, 0, 0, 0);
         this._backGroundImageColor = cc.color(255, 255, 255, 255);
     },

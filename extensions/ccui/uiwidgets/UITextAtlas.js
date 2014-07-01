@@ -82,8 +82,7 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
 //                this.labelAtlasScaleChangedWithSize();
 //            }, this);
 //        }
-        this._labelAtlasRenderer.setCharMap(this._charMapFileName, this._itemWidth, this._itemHeight, this._startCharMap[0]);
-        this._labelAtlasRenderer.setString(stringValue);
+        this._labelAtlasRenderer.initWithString(stringValue, this._charMapFileName, this._itemWidth, this._itemHeight, this._startCharMap[0]);
 
         this._updateContentSizeWithTextureSize(this._labelAtlasRenderer.getContentSize());
         this._labelAtlasRendererAdaptDirty = true;
