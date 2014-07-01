@@ -690,7 +690,7 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {boolean} focus  pass true to let the widget get focus or pass false to let the widget lose focus
      */
     setFocused: function (focus) {
-        this._focus = focus;
+        this._focused = focus;
         //make sure there is only one focusedWidget
         if (focus) {
             this._focusedWidget = this;

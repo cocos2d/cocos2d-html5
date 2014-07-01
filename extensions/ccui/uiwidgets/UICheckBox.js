@@ -91,6 +91,16 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this.addProtectedChild(this._frontCrossRenderer, ccui.CheckBox.FRONT_CROSS_RENDERER_ZORDER, -1);
         this.addProtectedChild(this._backGroundBoxDisabledRenderer, ccui.CheckBox.BOX_DISABLED_RENDERER_ZORDER, -1);
         this.addProtectedChild(this._frontCrossDisabledRenderer, ccui.CheckBox.FRONT_CROSS_DISABLED_RENDERER_ZORDER, -1);
+
+        window.test = [
+            this._backGroundBoxRenderer,
+            this._backGroundSelectedBoxRenderer,
+            this._frontCrossRenderer,
+            this._backGroundBoxDisabledRenderer,
+            this._frontCrossDisabledRenderer
+        ];
+
+        window.a = this;
     },
 
     /**
@@ -267,7 +277,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         var touchPoint = touch.getLocation();
         this._touchEndPosition.x = touchPoint.x;
         this._touchEndPosition.y = touchPoint.y;
-        if (this._focus) {
+        if (this._focused) {
             this.releaseUpEvent();
             if (this._isSelected) {
                 this.setSelectedState(false);
@@ -335,7 +345,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     },
 
     releaseUpEvent: function(){
-        cc.Widget.prototype.releaseUpEvent.call(this);
+        ccui.Widget.prototype.releaseUpEvent.call(this);
 
         if (this._isSelected){
             this.setSelectedState(false);
@@ -464,7 +474,14 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
             this._backGroundBoxRenderer.setScaleX(scaleX);
             this._backGroundBoxRenderer.setScaleY(scaleY);
         }
-        this._backGroundBoxRenderer.setPosition(this._contentSize.width / 2, this._contentSize.height / 2);
+
+        var x = this._contentSize.width / 2;
+        var y = this._contentSize.height / 2;
+        this._backGroundBoxRenderer.setPosition(x, y);
+        this._backGroundSelectedBoxRenderer.setPosition(x, y);
+        this._frontCrossRenderer.setPosition(x, y);
+        this._backGroundBoxDisabledRenderer.setPosition(x, y);
+        this._frontCrossDisabledRenderer.setPosition(x, y);
     },
 
     backGroundSelectedTextureScaleChangedWithSize: function () {
