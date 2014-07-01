@@ -32,7 +32,7 @@
  * @property {Number}   maxLength           - The max length of the text field
  * @property {Boolean}  passwordEnabled     - Indicate whether the text field is for entering password
  */
-ccui.UICCLabelField = ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
+ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
     maxLengthEnabled: false,
     maxLength: 0,
     passwordEnabled: false,
@@ -53,25 +53,16 @@ ccui.UICCLabelField = ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccu
         this._insertText = false;
         this._deleteBackward = false;
     },
-    init: function () {
-        if (ccui.Widget.prototype.init.call(this)) {
-            this.setTouchEnabled(true);
-            return true;
-        }
-        return false;
-    },
     onEnter: function () {
-        cc.TextFieldTTF.prototype.onEnter.call(this);
-        cc.TextFieldTTF.prototype.setDelegate.call(this, this);
+        cc.TextFieldTTF.prototype.setDelegate(this);
+//        cc.TextFieldTTF.prototype.onEnter.call(this);
+//        cc.TextFieldTTF.prototype.setDelegate.call(this, this);
     },
-
     //CCTextFieldDelegate
-
     onTextFieldAttachWithIME: function (sender) {
         this.setAttachWithIME(true);
         return false;
     },
-
     onTextFieldInsertText: function (sender, text, len) {
         if (len == 1 && text == "\n") {
             return false;
@@ -85,68 +76,49 @@ ccui.UICCLabelField = ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccu
 
         return false;
     },
-
     onTextFieldDeleteBackward: function (sender, delText, nLen) {
         this.setDeleteBackward(true);
         return false;
     },
-
     onTextFieldDetachWithIME: function (sender) {
         this.setDetachWithIME(true);
         return false;
     },
-
     insertText: function (text, len) {        //todo need to delete
-        var str_text = text;
-        var locString = cc.TextFieldTTF.prototype.getString.call(this);
-        var str_len = locString.length;
-        var multiple, header;
-        if (text != "\n") {
-            if (this.maxLengthEnabled) {
-                multiple = 1;
-                header = text.charCodeAt(0);
-                if (header < 0 || header > 127) {
-                    multiple = 3;
-                }
-
-                if (str_len + len > this.maxLength * multiple) {
-                    str_text = str_text.substr(0, this.maxLength * multiple);
-                    len = this.maxLength * multiple;
-                }
-            }
-        }
-        cc.TextFieldTTF.prototype.insertText.call(this, str_text, len);
-
-        // password
-        if (this.passwordEnabled) {
-            if (cc.TextFieldTTF.prototype.getCharCount.call(this) > 0) {
-                this.setPasswordText(this._inputText);
-            }
-        }
-    },
-
-    _calcCharCount: function(pszText){
-        var n = 0;
-        var ch = pszText;
-        if(!ch) {
-            if (0x80 != (0xC0 & ch))
-            {
-                ++n;
-            }
-            ++pszText;
-        }
-        return n;
-    },
-
-    insertText: function(text, len){
+//        var str_text = text;
+//        var locString = cc.TextFieldTTF.prototype.getString.call(this);
+//        var str_len = locString.length;
+//        var multiple, header;
+//        if (text != "\n") {
+//            if (this.maxLengthEnabled) {
+//                multiple = 1;
+//                header = text.charCodeAt(0);
+//                if (header < 0 || header > 127) {
+//                    multiple = 3;
+//                }
+//
+//                if (str_len + len > this.maxLength * multiple) {
+//                    str_text = str_text.substr(0, this.maxLength * multiple);
+//                    len = this.maxLength * multiple;
+//                }
+//            }
+//        }
+//        cc.TextFieldTTF.prototype.insertText.call(this, str_text, len);
+//
+//        // password
+//        if (this.passwordEnabled) {
+//            if (cc.TextFieldTTF.prototype.getCharCount.call(this) > 0) {
+//                this.setPasswordText(this._inputText);
+//            }
+//        }
         var input_text = text;
 
-        if (text !== "\n")
+        if (text != "\n")
         {
             if (this.maxLengthEnabled)
             {
-                var text_count = this._calcCharCount(this.getString());
-                if (text_count >= this._maxLength)
+                var text_count = this.getString().length;
+                if (text_count >= this.maxLength)
                 {
                     // password
                     if (this.passwordEnabled)
@@ -160,42 +132,42 @@ ccui.UICCLabelField = ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccu
                     (cc.sys.os == cc.sys.OS_IOS) ||
                     (cc.sys.os == cc.sys.OS_OSX) ||
                     (cc.sys.os == cc.sys.OS_WINDOWS)
-                    )
-                var input_count = this._calcCharCount(text);
-                var total = text_count + input_count;
+                ){
+                    var input_count = text.length;
+                    var total = text_count + input_count;
 
-                if (total > this._maxLength)
-                {
-                    var end = 0;
-                    var length = this._maxLength - text_count;
-
-                    for (var i = 0; i < length; ++i)
+                    if (total > this.maxLength)
                     {
-                        var value = text[i];
+                        var end = 0;
+                        var length = this.maxLength - text_count;
 
-                        if (value >= 0 && value <= 127) // ascii
+                        for (var i = 0; i < length; ++i)
                         {
-                            end++;
+                            var value = text[i];
+
+                            if (value >= 0 && value <= 127) // ascii
+                            {
+                                end++;
+                            }
+                            else
+                            {
+                                end += 3;
+                            }
                         }
-                        else
-                        {
-                            end += 3;
-                        }
+                        input_text = input_text.substr(0, end);
+                        len  = end;
                     }
-                    input_text = input_text.substr(0, end);
-                    len  = end;
-                }
-                else if (cc.sys.os == cc.sys.OS_ANDROID)
-                {
+                }else if(cc.sys.os == cc.sys.OS_ANDROID){
                     var input_count = this._calcCharCount(text);
-                    if (input_count > this._maxLength)
+                    var total = text_count + input_count;
+                    if (total > this.maxLength)
                     {
                         var ascii = 0;
                         var unicode = 0;
                         var end = 0;
                         var count = 0;
 
-                        for (var i = 0; i < input_count * 3; ++i)
+                        for (var i = 0; i < total * 3; ++i)
                         {
                             var value = text[i];
 
@@ -213,7 +185,7 @@ ccui.UICCLabelField = ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccu
                                 }
                             }
 
-                            if (count == this._maxLength)
+                            if (count == this.maxLength)
                             {
                                 break;
                             }
@@ -228,10 +200,14 @@ ccui.UICCLabelField = ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccu
         cc.TextFieldTTF.prototype.insertText.call(this, input_text, len);
 
         // password
-        if (this.passwordEnabled  && (cc.TextFieldTTF.prototype.getCharCount.call(this) > 0))
+        if (this.passwordEnabled)
+        {
+            if (cc.TextFieldTTF.prototype.getCharCount.call(this) > 0)
+            {
                 this.setPasswordText(this.getString());
+            }
+        }
     },
-
     deleteBackward: function () {
         cc.TextFieldTTF.prototype.deleteBackward.call(this);
 
@@ -242,45 +218,33 @@ ccui.UICCLabelField = ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccu
             }
         }
     },
-
     openIME: function () {
         cc.TextFieldTTF.prototype.attachWithIME.call(this);
     },
-
     closeIME: function () {
         cc.TextFieldTTF.prototype.detachWithIME.call(this);
-    },
-    onDraw: function (sender) {
-        return false;
     },
     setMaxLengthEnabled: function (enable) {
         this.maxLengthEnabled = enable;
     },
-
     isMaxLengthEnabled: function () {
         return this.maxLengthEnabled;
     },
-
     setMaxLength: function (length) {
         this.maxLength = length;
     },
-
     getMaxLength: function () {
         return this.maxLength;
     },
-
     getCharCount: function () {
         return cc.TextFieldTTF.prototype.getCharCount.call(this);
     },
-
     setPasswordEnabled: function (enable) {
         this.passwordEnabled = enable;
     },
-
     isPasswordEnabled: function () {
         return this.passwordEnabled;
     },
-
     setPasswordStyleText: function (styleText) {
         if (styleText.length > 1) {
             return;
@@ -291,49 +255,183 @@ ccui.UICCLabelField = ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccu
         }
         this._passwordStyleText = styleText;
     },
-
     setPasswordText: function (text) {
+//        var tempStr = "";
+//        for (var i = 0; i < text.length; ++i) {
+//            tempStr += this._passwordStyleText;
+//        }
+//        cc.LabelTTF.prototype.setString.call(this, tempStr);
         var tempStr = "";
-        for (var i = 0; i < text.length; ++i) {
-            tempStr += this._passwordStyleText;
+        var text_count = this._calcCharCount(text);
+        var max = text_count;
+
+        if (this.maxLengthEnabled)
+        {
+            if (text_count > this.maxLength)
+            {
+                max = this.maxLength;
+            }
         }
+
+        for (var i = 0; i < max; ++i)
+        {
+            tempStr.append(this._passwordStyleText);
+        }
+
         cc.LabelTTF.prototype.setString.call(this, tempStr);
     },
-
     setAttachWithIME: function (attach) {
         this._attachWithIME = attach;
     },
-
     getAttachWithIME: function () {
         return this._attachWithIME;
     },
-
     setDetachWithIME: function (detach) {
         this._detachWithIME = detach;
     },
-
     getDetachWithIME: function () {
         return this._detachWithIME;
     },
-
     setInsertText: function (insert) {
         this._insertText = insert;
     },
-
     getInsertText: function () {
         return this._insertText;
     },
-
     setDeleteBackward: function (deleteBackward) {
         this._deleteBackward = deleteBackward;
     },
-
     getDeleteBackward: function () {
         return this._deleteBackward;
+    },
+    init: function () {
+        if (ccui.Widget.prototype.init.call(this)) {
+            this.setTouchEnabled(true);
+            return true;
+        }
+        return false;
+    },
+    _calcCharCount: function(pszText){
+        var n = 0;
+        var ch = pszText;
+        if(!ch) {
+            if (0x80 != (0xC0 & ch))
+            {
+                ++n;
+            }
+            ++pszText;
+        }
+        return n;
+    },
+
+    insertText: function(text, len){
+//        var input_text = text;
+//
+//        if (text !== "\n")
+//        {
+//            if (this.maxLengthEnabled)
+//            {
+//                var text_count = this._calcCharCount(this.getString());
+//                if (text_count >= this._maxLength)
+//                {
+//                    // password
+//                    if (this.passwordEnabled)
+//                    {
+//                        this.setPasswordText(this.getString());
+//                    }
+//                    return;
+//                }
+//
+//                if (
+//                    (cc.sys.os == cc.sys.OS_IOS) ||
+//                    (cc.sys.os == cc.sys.OS_OSX) ||
+//                    (cc.sys.os == cc.sys.OS_WINDOWS)
+//                    )
+//                var input_count = this._calcCharCount(text);
+//                var total = text_count + input_count;
+//
+//                if (total > this._maxLength)
+//                {
+//                    var end = 0;
+//                    var length = this._maxLength - text_count;
+//
+//                    for (var i = 0; i < length; ++i)
+//                    {
+//                        var value = text[i];
+//
+//                        if (value >= 0 && value <= 127) // ascii
+//                        {
+//                            end++;
+//                        }
+//                        else
+//                        {
+//                            end += 3;
+//                        }
+//                    }
+//                    input_text = input_text.substr(0, end);
+//                    len  = end;
+//                }
+//                else if (cc.sys.os == cc.sys.OS_ANDROID)
+//                {
+//                    var input_count = this._calcCharCount(text);
+//                    if (input_count > this._maxLength)
+//                    {
+//                        var ascii = 0;
+//                        var unicode = 0;
+//                        var end = 0;
+//                        var count = 0;
+//
+//                        for (var i = 0; i < input_count * 3; ++i)
+//                        {
+//                            var value = text[i];
+//
+//                            if (value >= 0 && value <= 127) // ascii
+//                            {
+//                                ascii++;
+//                                count++;
+//                            }
+//                            else
+//                            {
+//                                unicode++;
+//                                if (unicode % 3 == 0)
+//                                {
+//                                    count++;
+//                                }
+//                            }
+//
+//                            if (count == this._maxLength)
+//                            {
+//                                break;
+//                            }
+//                        }
+//                        end = ascii + unicode;
+//                        input_text = input_text.substr(0, end);
+//                        len  = end;
+//                    }
+//                }
+//            }
+//        }
+//        cc.TextFieldTTF.prototype.insertText.call(this, input_text, len);
+//
+//        // password
+//        if (this.passwordEnabled  && (cc.TextFieldTTF.prototype.getCharCount.call(this) > 0))
+//                this.setPasswordText(this.getString());
+        // password
+        if (this._passwordEnabled)
+        {
+            if (cc.TextFieldTTF.prototype.getCharCount() > 0)
+            {
+                this.setPasswordText(this.getString());
+            }
+        }
+
+    },
+    onDraw: function (sender) {
+        return false;
     }
 });
 
-ccui.UICCLabelField.create = ccui.UICCTextField.create = function (placeholder, fontName, fontSize) {
+ccui.UICCTextField.create = function (placeholder, fontName, fontSize) {
     var ret = new ccui.UICCTextField();
     if (ret && ret.initWithString("", fontName, fontSize)) {
         if (placeholder) {
@@ -410,7 +508,7 @@ ccui.LabelField = ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField#
      * @param {cc.Size} size
      */
     setTouchSize: function (size) {
-        this._useTouchArea = true;
+//        this._useTouchArea = true;
         this._touchWidth = size.width;
         this._touchHeight = size.height;
     },
@@ -898,6 +996,22 @@ ccui.LabelField = ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField#
         this.setDeleteBackward(textField.getDeleteBackward());
     }
 });
+
+ccui.TextField.create = function(placeholder, fontName, fontSize){
+    var widget = new ccui.TextField();
+    if (widget && widget.init())
+    {
+        if(placeholder && fontName && fontSize){
+            widget.setPlaceHolder(placeholder);
+            widget.setFontName(fontName);
+            widget.setFontSize(fontSize);
+
+        }
+        return widget;
+    }
+    return null;
+
+};
 
 var _p = ccui.TextField.prototype;
 
