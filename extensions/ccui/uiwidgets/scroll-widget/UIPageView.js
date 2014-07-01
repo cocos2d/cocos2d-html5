@@ -47,6 +47,8 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     _pageViewEventListener: null,
     _pageViewEventSelector: null,
     _className:"PageView",
+    _touchMoveDirection: null,
+
     /**
      * allocates and initializes a UIPageView.
      * Constructor of ccui.PageView
@@ -80,7 +82,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     init: function () {
         if (ccui.Layout.prototype.init.call(this)) {
             this.setClippingEnabled(true);
-            this.setTouchEnabled(true);
+//            this.setTouchEnabled(true);
             return true;
         }
         return false;
@@ -103,13 +105,11 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      * @param {Boolean} forceCreate
      */
     addWidgetToPage: function (widget, pageIdx, forceCreate) {
-        if (!widget) {
+        if (!widget || pageIdx < 0) {
             return;
         }
-        if(pageIdx<0){
-            return;
-        }
-        var pageCount = this._pages.length;
+
+        var pageCount = this.getPageCount();
         if (pageIdx >= pageCount) {
             if (forceCreate) {
                 if (pageIdx > pageCount) {
@@ -134,7 +134,8 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      */
     createPage: function () {
         var newPage = ccui.Layout.create();
-        newPage.setSize(this.getSize());
+//        newPage.setSize(this.getSize());
+        newPage.setContentSize(this.getContentSize());
         return newPage;
     },
 
@@ -143,25 +144,35 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      * @param {ccui.Layout} page
      */
     addPage: function (page) {
-        if (!page) {
+//        if (!page) {
+//            return;
+//        }
+//        if (page.getWidgetType() != ccui.Widget.TYPE_CONTAINER) {
+//            return;
+//        }
+//        if (this._pages.indexOf(page) != -1) {
+//            return;
+//        }
+//        var pSize = page.getSize();
+//        var pvSize = this.getSize();
+//        if (!(pSize.width==pvSize.width&&pSize.height==pvSize.height)) {
+//            cc.log("page size does not match pageview size, it will be force sized!");
+//            page.setSize(pvSize);
+//        }
+//        page.setPosition(this.getPositionXByIndex(this._pages.length), 0);
+//        this._pages.push(page);
+//        this.addChild(page);
+//        this.updateBoundaryPages();
+        if (!page || this._pages.indexOf(page) != -1)
+        {
             return;
         }
-        if (page.getWidgetType() != ccui.Widget.TYPE_CONTAINER) {
-            return;
-        }
-        if (this._pages.indexOf(page) != -1) {
-            return;
-        }
-        var pSize = page.getSize();
-        var pvSize = this.getSize();
-        if (!(pSize.width==pvSize.width&&pSize.height==pvSize.height)) {
-            cc.log("page size does not match pageview size, it will be force sized!");
-            page.setSize(pvSize);
-        }
-        page.setPosition(this.getPositionXByIndex(this._pages.length), 0);
+
+
+        this.addProtectedChild(page);
         this._pages.push(page);
-        this.addChild(page);
-        this.updateBoundaryPages();
+
+        this._doLayoutDirty = true;
     },
 
     /**
@@ -170,42 +181,61 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      * @param {Number} idx
      */
     insertPage: function (page, idx) {
-        if (idx < 0) {
-            return;
-        }
-        if (!page) {
-            return;
-        }
-        if (page.getWidgetType() != ccui.Widget.TYPE_CONTAINER) {
-            return;
-        }
-        if (this._pages.indexOf(page) != -1) {
+//        if (idx < 0) {
+//            return;
+//        }
+//        if (!page) {
+//            return;
+//        }
+//        if (page.getWidgetType() != ccui.Widget.TYPE_CONTAINER) {
+//            return;
+//        }
+//        if (this._pages.indexOf(page) != -1) {
+//            return;
+//        }
+//
+//        var pageCount = this._pages.length;
+//        if (idx >= pageCount) {
+//            this.addPage(page);
+//        }
+//        else {
+//            this._pages.splice(idx, 0, page);
+//            page.setPosition(this.getPositionXByIndex(idx), 0);
+//            this.addChild(page);
+//            var pSize = page.getSize();
+//            var pvSize = this.getSize();
+//            if (!pSize.equals(pvSize)) {
+//                cc.log("page size does not match pageview size, it will be force sized!");
+//                page.setSize(pvSize);
+//            }
+//            var arrayPages = this._pages;
+//            var length = arrayPages.length;
+//            for (var i = (idx + 1); i < length; i++) {
+//                var behindPage = arrayPages[i];
+//                var formerPos = behindPage.getPosition();
+//                behindPage.setPosition(formerPos.x + this.getSize().width, 0);
+//            }
+//            this.updateBoundaryPages();
+//        }
+        if (idx < 0 || !page || this._pages.indexOf(page) != -1)
+        {
             return;
         }
 
-        var pageCount = this._pages.length;
-        if (idx >= pageCount) {
+
+        var pageCount = this.getPageCount();
+        if (idx >= pageCount)
+        {
             this.addPage(page);
         }
-        else {
-            this._pages.splice(idx, 0, page);
-            page.setPosition(this.getPositionXByIndex(idx), 0);
-            this.addChild(page);
-            var pSize = page.getSize();
-            var pvSize = this.getSize();
-            if (!pSize.equals(pvSize)) {
-                cc.log("page size does not match pageview size, it will be force sized!");
-                page.setSize(pvSize);
-            }
-            var arrayPages = this._pages;
-            var length = arrayPages.length;
-            for (var i = (idx + 1); i < length; i++) {
-                var behindPage = arrayPages[i];
-                var formerPos = behindPage.getPosition();
-                behindPage.setPosition(formerPos.x + this.getSize().width, 0);
-            }
-            this.updateBoundaryPages();
+        else
+        {
+            this._pages[idx] = page;
+            this.addProtectedChild(page);
+
         }
+
+        this._doLayoutDirty = true;
     },
 
     /**
@@ -216,9 +246,15 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         if (!page) {
             return;
         }
-        this.removeChild(page);
-        this.updateChildrenPosition();
-        this.updateBoundaryPages();
+//        this.removeChild(page);
+//        this.updateChildrenPosition();
+//        this.updateBoundaryPages();
+        this.removeProtectedChild(page);
+        var index = this._pages.indexOf(page);
+        if(index > -1)
+            this._pages.splice(index, 1);
+
+        this._doLayoutDirty = true;
     },
 
     /**
@@ -235,6 +271,15 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         }
     },
 
+    removeAllPages: function(){
+        for(var p in this._pages)
+        {
+            var node = this._pages[p];
+            this.removeProtectedChild(node);
+        }
+        this._pages = [];
+    },
+
     updateBoundaryPages: function () {
         if (this._pages.length <= 0) {
             this._leftChild = null;
@@ -243,6 +288,10 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         }
         this._leftChild = this._pages[0];
         this._rightChild = this._pages[this._pages.length-1];
+    },
+
+    getPageCount: function(){
+        return this._pages.length;
     },
 
     /**
@@ -254,74 +303,45 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         return (this.getSize().width * (idx - this._curPageIdx));
     },
 
-    /**
-     * Add widget
-     * @param {ccui.Widget} widget
-     * @param {Number} zOrder
-     * @param {Number} tag
-     * @returns {boolean}
-     */
-    addChild: function (widget, zOrder, tag) {
-        return ccui.Layout.prototype.addChild.call(this, widget, zOrder, tag);
-    },
-
-    /**
-     *  remove widget child override
-     * @param {ccui.Widget} child
-     * @param {Boolean} cleanup
-     */
-    removeChild: function (child, cleanup) {
-        if(cleanup)
-            cc.arrayRemoveObject(this._pages, child);
-        ccui.Layout.prototype.removeChild.call(this, child, cleanup);
-    },
-
     onSizeChanged: function () {
         ccui.Layout.prototype.onSizeChanged.call(this);
         this._rightBoundary = this.getSize().width;
-        this.updateChildrenSize();
-        this.updateChildrenPosition();
+//        this.updateChildrenSize();
+//        this.updateChildrenPosition();
+        this._doLayoutDirty = true;
     },
 
-    updateChildrenSize: function () {
-        if(this._pages){
-            if (!this._pages.length <= 0) {
-                return;
-            }
-
-            var selfSize = this.getSize();
-            for (var i = 0; i < this._pages.length; i++) {
-                var page = this._pages[i];
-                page.setSize(selfSize);
-            }
+    updateAllPagesSize: function(){
+        var selfSize = this.getContentSize();
+        for (var p in this._pages)
+        {
+            var page = this._pages[p];
+            page.setContentSize(selfSize);
         }
+
     },
 
-    updateChildrenPosition: function () {
-        if (!this._pages) {
-            return;
-        }
+    updateAllPagesPosition: function(){
+        var pageCount = this.getPageCount();
 
-        var pageCount = this._pages.length;
-        if (pageCount <= 0) {
+        if (pageCount <= 0)
+        {
             this._curPageIdx = 0;
             return;
         }
-        if (this._curPageIdx >= pageCount) {
-            this._curPageIdx = pageCount - 1;
-        }
-        var pageWidth = this.getSize().width;
-        var arrayPages = this._pages;
-        for (var i = 0; i < pageCount; i++) {
-            var page = arrayPages[i];
-            page.setPosition((i - this._curPageIdx) * pageWidth, 0);
-        }
-    },
 
-    removeAllChildren: function (cleanup) {
-        if(cleanup)
-            this._pages.length = 0;
-        ccui.Layout.prototype.removeAllChildren.call(this, cleanup);
+        if (this._curPageIdx >= pageCount)
+        {
+            this._curPageIdx = pageCount-1;
+        }
+
+        var pageWidth = this.getContentSize().width;
+        for (var i=0; i<pageCount; i++)
+        {
+            var page = this._pages[i];
+            page.setPosition(cc.p((i-this._curPageIdx) * pageWidth, 0));
+
+        }
     },
 
     /**
@@ -334,7 +354,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         }
         this._curPageIdx = idx;
         var curPage = this._pages[idx];
-        this._autoScrollDistance = -(curPage.getPositionX());
+        this._autoScrollDistance = -(curPage.getPosition().x);
         this._autoScrollSpeed = Math.abs(this._autoScrollDistance) / 0.2;
         this._autoScrollDir = this._autoScrollDistance > 0 ? 1 : 0;
         this._isAutoScrolling = true;
@@ -342,41 +362,45 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 
     update: function (dt) {
         if (this._isAutoScrolling) {
-            switch (this._autoScrollDir) {
-                case 0:
-                    var step = this._autoScrollSpeed * dt;
-                    if (this._autoScrollDistance + step >= 0.0) {
-                        step = -this._autoScrollDistance;
-                        this._autoScrollDistance = 0.0;
-                        this._isAutoScrolling = false;
-                    }
-                    else {
-                        this._autoScrollDistance += step;
-                    }
-                    this.scrollPages(-step);
-                    if(!this._isAutoScrolling){
-                        this.pageTurningEvent();
-                    }
-                    break;
-                    break;
-                case 1:
-                    var step = this._autoScrollSpeed * dt;
-                    if (this._autoScrollDistance - step <= 0.0) {
-                        step = this._autoScrollDistance;
-                        this._autoScrollDistance = 0.0;
-                        this._isAutoScrolling = false;
-                    }
-                    else {
-                        this._autoScrollDistance -= step;
-                    }
-                    this.scrollPages(step);
-                    if(!this._isAutoScrolling){
-                        this.pageTurningEvent();
-                    }
-                    break;
-                default:
-                    break;
-            }
+            this.autoScroll(dt);
+        }
+    },
+
+    autoScroll: function(dt){
+        switch (this._autoScrollDir) {
+            case 0:
+                var step = this._autoScrollSpeed * dt;
+                if (this._autoScrollDistance + step >= 0.0) {
+                    step = -this._autoScrollDistance;
+                    this._autoScrollDistance = 0.0;
+                    this._isAutoScrolling = false;
+                }
+                else {
+                    this._autoScrollDistance += step;
+                }
+                this.scrollPages(-step);
+                if(!this._isAutoScrolling){
+                    this.pageTurningEvent();
+                }
+                break;
+                break;
+            case 1:
+                var step = this._autoScrollSpeed * dt;
+                if (this._autoScrollDistance - step <= 0.0) {
+                    step = this._autoScrollDistance;
+                    this._autoScrollDistance = 0.0;
+                    this._isAutoScrolling = false;
+                }
+                else {
+                    this._autoScrollDistance -= step;
+                }
+                this.scrollPages(step);
+                if(!this._isAutoScrolling){
+                    this.pageTurningEvent();
+                }
+                break;
+            default:
+                break;
         }
     },
 
@@ -389,30 +413,46 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     onTouchMoved: function (touch,event) {
-        var touchPoint = touch.getLocation();
-        this._touchMovePosition.x = touchPoint.x;
-        this._touchMovePosition.y = touchPoint.y;
-        this.handleMoveLogic(touchPoint);
+//        var touchPoint = touch.getLocation();
+//        this._touchMovePosition.x = touchPoint.x;
+//        this._touchMovePosition.y = touchPoint.y;
+//        this.handleMoveLogic(touchPoint);
+        this.handleMoveLogic(touch);
         var widgetParent = this.getWidgetParent();
         if (widgetParent) {
-            widgetParent.checkChildInfo(1, this, touchPoint);
+            widgetParent.checkChildInfo(1, this, touch);
         }
         this.moveEvent();
-        if (!this.hitTest(touchPoint)) {
-            this.setFocused(false);
-            this.onTouchEnded(touch,event);
-        }
+//        if (!this.hitTest(touchPoint)) {
+//            this.setFocused(false);
+//            this.onTouchEnded(touch,event);
+//        }
     },
 
     onTouchEnded: function (touch, event) {
         ccui.Layout.prototype.onTouchEnded.call(this, touch, event);
-        this.handleReleaseLogic(this._touchEndPosition);
+        this.handleReleaseLogic(touch);
     },
 
     onTouchCancelled: function (touch, event) {
-        var touchPoint = touch.getLocation();
+//        var touchPoint = touch.getLocation();
         ccui.Layout.prototype.onTouchCancelled.call(this, touch, event);
-        this.handleReleaseLogic(touchPoint);
+//        this.handleReleaseLogic(touchPoint);
+        this.handleReleaseLogic(touch);
+    },
+
+    doLayout: function(){
+        if (!this._doLayoutDirty)
+        {
+            return;
+        }
+
+        this.updateAllPagesPosition();
+        this.updateAllPagesSize();
+        this.updateBoundaryPages();
+
+
+        this._doLayoutDirty = false;
     },
 
     movePages: function (offset) {
@@ -461,9 +501,10 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     handlePressLogic: function (touchPoint) {
-        var nsp = this.convertToNodeSpace(touchPoint);
-        this._touchMoveStartLocation = nsp.x;
-        this._touchStartLocation = nsp.x;
+//        var nsp = this.convertToNodeSpace(touchPoint);
+//        this._touchMoveStartLocation = nsp.x;
+//        this._touchStartLocation = nsp.x;
+        //np-op
     },
 
     handleMoveLogic: function (touchPoint) {
@@ -510,11 +551,6 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         }
     },
 
-    checkChildInfo: function (handleState, sender, touchPoint) {
-        if(this._enabled && this._touchEnabled)
-            this.interceptTouchEvent(handleState, sender, touchPoint);
-    },
-
     interceptTouchEvent: function (handleState, sender, touchPoint) {
         switch (handleState) {
             case 0:
@@ -541,6 +577,9 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         if (this._pageViewEventListener && this._pageViewEventSelector) {
             this._pageViewEventSelector.call(this._pageViewEventListener, this, ccui.PageView.EVENT_TURNING);
         }
+        if (this._eventCallback) {
+            this._eventCallback(this, ccui.PageView.EVENT_TURNING);
+        }
     },
 
     /**
@@ -552,12 +591,8 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         this._pageViewEventListener = target;
     },
 
-    /**
-     * get pages
-     * @returns {Array}
-     */
-    getPages:function(){
-        return this._pages;
+    addEventListener: function(callback){
+        this._eventCallback = callback;
     },
 
     /**
@@ -566,6 +601,22 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      */
     getCurPageIndex: function () {
         return this._curPageIdx;
+    },
+
+    /**
+     * get pages
+     * @returns {Array}
+     */
+    getPages:function(){
+        return this._pages;
+    },
+
+    getPage: function(index){
+        if (index < 0 || index >= this.getPages().size())
+        {
+            return null;
+        }
+        return this._pages[index];
     },
 
     /**
@@ -590,13 +641,84 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 
     copySpecialProperties: function (pageView) {
         ccui.Layout.prototype.copySpecialProperties.call(this, pageView);
-    },
-
-    _doLayout: function () {
-        if (!this._doLayoutDirty)
-            return;
-        this._doLayoutDirty = false;
     }
+
+
+
+
+//    /**
+//     * Add widget
+//     * @param {ccui.Widget} widget
+//     * @param {Number} zOrder
+//     * @param {Number} tag
+//     * @returns {boolean}
+//     */
+//    addChild: function (widget, zOrder, tag) {
+//        return ccui.Layout.prototype.addChild.call(this, widget, zOrder, tag);
+//    },
+//
+//    /**
+//     *  remove widget child override
+//     * @param {ccui.Widget} child
+//     * @param {Boolean} cleanup
+//     */
+//    removeChild: function (child, cleanup) {
+//        if(cleanup)
+//            cc.arrayRemoveObject(this._pages, child);
+//        ccui.Layout.prototype.removeChild.call(this, child, cleanup);
+//    },
+//
+//    updateChildrenSize: function () {
+//        if(this._pages){
+//            if (!this._pages.length <= 0) {
+//                return;
+//            }
+//
+//            var selfSize = this.getSize();
+//            for (var i = 0; i < this._pages.length; i++) {
+//                var page = this._pages[i];
+//                page.setSize(selfSize);
+//            }
+//        }
+//    },
+//
+//    updateChildrenPosition: function () {
+//        if (!this._pages) {
+//            return;
+//        }
+//
+//        var pageCount = this._pages.length;
+//        if (pageCount <= 0) {
+//            this._curPageIdx = 0;
+//            return;
+//        }
+//        if (this._curPageIdx >= pageCount) {
+//            this._curPageIdx = pageCount - 1;
+//        }
+//        var pageWidth = this.getSize().width;
+//        var arrayPages = this._pages;
+//        for (var i = 0; i < pageCount; i++) {
+//            var page = arrayPages[i];
+//            page.setPosition((i - this._curPageIdx) * pageWidth, 0);
+//        }
+//    },
+//
+//    removeAllChildren: function (cleanup) {
+//        if(cleanup)
+//            this._pages.length = 0;
+//        ccui.Layout.prototype.removeAllChildren.call(this, cleanup);
+//    },
+//
+//    checkChildInfo: function (handleState, sender, touchPoint) {
+//        if(this._enabled && this._touchEnabled)
+//            this.interceptTouchEvent(handleState, sender, touchPoint);
+//    },
+//
+//    _doLayout: function () {
+//        if (!this._doLayoutDirty)
+//            return;
+//        this._doLayoutDirty = false;
+//    }
 });
 /**
  * allocates and initializes a UIPageView.
@@ -607,7 +729,12 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
  * var uiPageView = ccui.PageView.create();
  */
 ccui.PageView.create = function () {
-    return new ccui.PageView();
+    var  widget = new ccui.PageView();
+    if (widget && widget.init())
+    {
+        return widget;
+    }
+    return null;
 };
 
 // Constants
