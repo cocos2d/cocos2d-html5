@@ -1160,33 +1160,63 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         return scrollEnabled;
     },
 
+    /**
+     * Scroll inner container to bottom boundary of scrollview.
+     * @param {Number} time
+     * @param {Boolean} attenuated
+     */
     scrollToBottom: function (time, attenuated) {
         this.startAutoScrollChildrenWithDestination(cc.p(this._innerContainer.getPositionX(), 0), time, attenuated);
     },
 
+    /**
+     * Scroll inner container to top boundary of scrollview.
+     * @param {Number} time
+     * @param {Boolean} attenuated
+     */
     scrollToTop: function (time, attenuated) {
         this.startAutoScrollChildrenWithDestination(cc.p(this._innerContainer.getPositionX(), this._size.height - this._innerContainer.getSize().height), time, attenuated);
     },
 
+    /**
+     * Scroll inner container to left boundary of scrollview.
+     * @param {Number} time
+     * @param {Boolean} attenuated
+     */
     scrollToLeft: function (time, attenuated) {
         this.startAutoScrollChildrenWithDestination(cc.p(0, this._innerContainer.getPositionY()), time, attenuated);
     },
 
+    /**
+     * Scroll inner container to right boundary of scrollview.
+     * @param {Number} time
+     * @param {Boolean} attenuated
+     */
     scrollToRight: function (time, attenuated) {
         this.startAutoScrollChildrenWithDestination(cc.p(this._size.width - this._innerContainer.getSize().width, this._innerContainer.getPositionY()), time, attenuated);
     },
 
+    /**
+     * Scroll inner container to top and left boundary of scrollview.
+     * @param {Number} time
+     * @param {Boolean} attenuated
+     */
     scrollToTopLeft: function (time, attenuated) {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
-            cc.log("Scroll diretion is not both!");
+            cc.log("Scroll direction is not both!");
             return;
         }
         this.startAutoScrollChildrenWithDestination(cc.p(0, this._size.height - this._innerContainer.getSize().height), time, attenuated);
     },
 
+    /**
+     * Scroll inner container to top and right boundary of scrollview.
+     * @param {Number} time
+     * @param {Boolean} attenuated
+     */
     scrollToTopRight: function (time, attenuated) {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
-            cc.log("Scroll diretion is not both!");
+            cc.log("Scroll direction is not both!");
             return;
         }
         this.startAutoScrollChildrenWithDestination(cc.p(this._size.width - this._innerContainer.getSize().width, this._size.height - this._innerContainer.getSize().height), time, attenuated);
@@ -1194,7 +1224,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     scrollToBottomLeft: function (time, attenuated) {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
-            cc.log("Scroll diretion is not both!");
+            cc.log("Scroll direction is not both!");
             return;
         }
         this.startAutoScrollChildrenWithDestination(cc.p(0, 0), time, attenuated);
@@ -1202,7 +1232,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     scrollToBottomRight: function (time, attenuated) {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
-            cc.log("Scroll diretion is not both!");
+            cc.log("Scroll diretcion is not both!");
             return;
         }
         this.startAutoScrollChildrenWithDestination(cc.p(this._size.width - this._innerContainer.getSize().width, 0), time, attenuated);
@@ -1524,7 +1554,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * set direction
+     * Changes scroll direction of scrollview.
      * @param {ccui.ScrollView.DIR_NONE | ccui.ScrollView.DIR_VERTICAL | ccui.ScrollView.DIR_HORIZONTAL | ccui.ScrollView.DIR_BOTH} dir
      */
     setDirection: function (dir) {
@@ -1532,7 +1562,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * get direction
+     * Gets scroll direction of scrollview.
      * @returns {ccui.ScrollView.DIR_NONE | ccui.ScrollView.DIR_VERTICAL | ccui.ScrollView.DIR_HORIZONTAL | ccui.ScrollView.DIR_BOTH}
      */
     getDirection: function () {
@@ -1572,7 +1602,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * get inner container
+     * Gets inner container of scrollview.  Inner container is the container of scrollview's children.
      * @returns {ccui.Layout}
      */
     getInnerContainer: function () {
