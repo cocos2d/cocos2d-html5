@@ -168,6 +168,12 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this._innerContainer.setPosition(0, locSize.height - this._innerContainer.getSize().height);
     },
 
+    /**
+     * Changes inner container size of scrollview.     <br/>
+     * Inner container size must be larger than or equal scrollview's size.
+     *
+     * @param {cc.Size} size inner container size.
+     */
     setInnerContainerSize: function (size) {
         var locSize = this._size;
         var innerSizeWidth = locSize.width;
@@ -1227,6 +1233,11 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this.startAutoScrollChildrenWithDestination(cc.p(this._size.width - this._innerContainer.getSize().width, this._size.height - this._innerContainer.getSize().height), time, attenuated);
     },
 
+    /**
+     * Scroll inner container to bottom and left boundary of scrollview.
+     * @param {Number} time
+     * @param {Boolean} attenuated
+     */
     scrollToBottomLeft: function (time, attenuated) {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
             cc.log("Scroll direction is not both!");
@@ -1235,25 +1246,48 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this.startAutoScrollChildrenWithDestination(cc.p(0, 0), time, attenuated);
     },
 
+    /**
+     * Scroll inner container to bottom and right boundary of scrollview.
+     * @param {Number} time
+     * @param {Boolean} attenuated
+     */
     scrollToBottomRight: function (time, attenuated) {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
-            cc.log("Scroll diretcion is not both!");
+            cc.log("Scroll direction is not both!");
             return;
         }
         this.startAutoScrollChildrenWithDestination(cc.p(this._size.width - this._innerContainer.getSize().width, 0), time, attenuated);
     },
 
+    /**
+     * Scroll inner container to vertical percent position of scrollview.
+     * @param {Number} percent
+     * @param {Number} time
+     * @param {Boolean} attenuated
+     */
     scrollToPercentVertical: function (percent, time, attenuated) {
         var minY = this._size.height - this._innerContainer.getSize().height;
         var h = -minY;
         this.startAutoScrollChildrenWithDestination(cc.p(this._innerContainer.getPositionX(), minY + percent * h / 100), time, attenuated);
     },
 
+    /**
+     * Scroll inner container to horizontal percent position of scrollview.
+     * @param {Number} percent
+     * @param {Number} time
+     * @param {Boolean} attenuated
+     */
     scrollToPercentHorizontal: function (percent, time, attenuated) {
         var w = this._innerContainer.getSize().width - this._size.width;
         this.startAutoScrollChildrenWithDestination(cc.p(-(percent * w / 100), this._innerContainer.getPositionY()), time, attenuated);
     },
 
+    /**
+     * Scroll inner container to both direction percent position of scrollview.
+     * @param {Number} percent
+     * @param {Number} time
+     * @param {Boolean} attenuated
+     */
     scrollToPercentBothDirection: function (percent, time, attenuated) {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
             return;
@@ -1264,65 +1298,98 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this.startAutoScrollChildrenWithDestination(cc.p(-(percent.x * w / 100), minY + percent.y * h / 100), time, attenuated);
     },
 
+    /**
+     * Move inner container to bottom boundary of scrollview.
+     */
     jumpToBottom: function () {
         this.jumpToDestination(this._innerContainer.getPositionX(), 0);
     },
 
+    /**
+     * Move inner container to top boundary of scrollview.
+     */
     jumpToTop: function () {
         this.jumpToDestination(this._innerContainer.getPositionX(), this._size.height - this._innerContainer.getSize().height);
     },
 
+    /**
+     * Move inner container to left boundary of scrollview.
+     */
     jumpToLeft: function () {
         this.jumpToDestination(0, this._innerContainer.getPositionY());
     },
 
+    /**
+     * Move inner container to right boundary of scrollview.
+     */
     jumpToRight: function () {
         this.jumpToDestination(this._size.width - this._innerContainer.getSize().width, this._innerContainer.getPositionY());
     },
 
+    /**
+     * Move inner container to top and left boundary of scrollview.
+     */
     jumpToTopLeft: function () {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
-            cc.log("Scroll diretion is not both!");
+            cc.log("Scroll direction is not both!");
             return;
         }
         this.jumpToDestination(0, this._size.height - this._innerContainer.getSize().height);
     },
 
+    /**
+     * Move inner container to top and right boundary of scrollview.
+     */
     jumpToTopRight: function () {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
-            cc.log("Scroll diretion is not both!");
+            cc.log("Scroll direction is not both!");
             return;
         }
         this.jumpToDestination(this._size.width - this._innerContainer.getSize().width, this._size.height - this._innerContainer.getSize().height);
     },
 
+    /**
+     * Move inner container to bottom and left boundary of scrollview.
+     */
     jumpToBottomLeft: function () {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
-            cc.log("Scroll diretion is not both!");
+            cc.log("Scroll direction is not both!");
             return;
         }
         this.jumpToDestination(0, 0);
     },
 
+    /**
+     * Move inner container to bottom and right boundary of scrollview.
+     */
     jumpToBottomRight: function () {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
-            cc.log("Scroll diretion is not both!");
+            cc.log("Scroll direction is not both!");
             return;
         }
         this.jumpToDestination(this._size.width - this._innerContainer.getSize().width, 0);
     },
 
+    /**
+     * Move inner container to vertical percent position of scrollview.
+     */
     jumpToPercentVertical: function (percent) {
         var minY = this._size.height - this._innerContainer.getSize().height;
         var h = -minY;
         this.jumpToDestination(this._innerContainer.getPositionX(), minY + percent * h / 100);
     },
 
+    /**
+     * Move inner container to horizontal percent position of scrollview.
+     */
     jumpToPercentHorizontal: function (percent) {
         var w = this._innerContainer.getSize().width - this._size.width;
         this.jumpToDestination(-(percent * w / 100), this._innerContainer.getPositionY());
     },
 
+    /**
+     * Move inner container to both direction percent position of scrollview.
+     */
     jumpToPercentBothDirection: function (percent) {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
             return;

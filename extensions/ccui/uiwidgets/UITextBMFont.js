@@ -104,7 +104,7 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
             return;
         }
         this._labelBMFontRenderer.setString(value);
-        this.updateContentSizeWithTextureSize(this._labelBMFontRenderer.getContentSize());
+        this._updateContentSizeWithTextureSize(this._labelBMFontRenderer.getContentSize());
         this._labelBMFontRendererAdaptDirty = true;
     },
 

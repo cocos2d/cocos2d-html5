@@ -155,7 +155,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
 
         this._barRendererAdaptDirty = true;
         this._progressBarRendererDirty = true;
-        this.updateContentSizeWithTextureSize(this._barRenderer.getContentSize());
+        this._updateContentSizeWithTextureSize(this._barRenderer.getContentSize());
     },
 
     /**
@@ -474,10 +474,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         var nsp = this._slidBallNormalRenderer.convertToNodeSpace(pt);
         var ballSize = this._slidBallNormalRenderer.getContentSize();
         var ballRect = cc.rect(0,0, ballSize.width, ballSize.height);
-        if (ballRect.containsPoint(nsp)) {
-            return true;
-        }
-        return false;
+        return cc.rectContainsPoint(ballRect, nsp);
     },
 
     onTouchBegan: function (touch, event) {

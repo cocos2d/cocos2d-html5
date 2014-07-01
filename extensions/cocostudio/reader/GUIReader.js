@@ -903,7 +903,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             {
                 render = ccs.ImageViewReader;
             }
-            else if (widget instanceof ccui.LabelAtlas)
+            else if (widget instanceof ccui.TextAtlas)
             {
                 render = ccs.LabelAtlasReader;
             }
