@@ -76,6 +76,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
 
     init: function () {
         if (ccui.Widget.prototype.init.call(this)) {
+//            this.setTouchEnabled(true);
             return true;
         }
         return false;
@@ -187,7 +188,8 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._progressBarRenderer.setOpacity(this.getOpacity());
 
         this._progressBarRenderer.setAnchorPoint(cc.p(0, 0.5));
-        this._progressBarTextureSize = this._progressBarRenderer.getContentSize();
+        var tz = this._progressBarRenderer.getContentSize();
+        this._progressBarTextureSize = {width: tz.width, height: tz.height};
         this._progressBarRendererDirty = true;
     },
 
@@ -419,19 +421,8 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
             this._progressBarRenderer.setPreferredSize(cc.size(dis, this._progressBarTextureSize.height));
         }
         else {
-//            var x = 0, y = 0;
-//            if (this._progressBarTexType == ccui.Widget.PLIST_TEXTURE) {
-//                var barNode = this._progressBarRenderer;
-//                if (barNode) {
-//                    var rect = barNode.getTextureRect();
-//                    x = rect.x;
-//                    y = rect.y;
-//                }
-//            }
-//            this._progressBarRenderer.setTextureRect(cc.rect(x, y, this._progressBarTextureSize.width * (percent / 100.0), this._progressBarTextureSize.height));
             var spriteRenderer = this._progressBarRenderer;
             var rect = spriteRenderer.getTextureRect();
-//            spriteRenderer.setTextureRect(rect, spriteRenderer.isTextureRectRotated(), rect.size);
             spriteRenderer.setTextureRect(
                 cc.rect(rect.x, rect.y, spriteRenderer.texture._contentSize.width * res, rect.height),
                 spriteRenderer.isTextureRectRotated()
@@ -481,7 +472,6 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      */
     getPercentWithBallPos: function (px) {
         return ((px/this._barLength)*100);
-//        return (((px - (-this._barLength / 2.0)) / this._barLength) * 100.0);
     },
 
     /**
@@ -608,25 +598,24 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
                 this._progressBarRenderer.setScaleY(pscaleY);
             }
         }
-//        this._progressBarRenderer.setPosition(-this._barLength * 0.5, 0.0);
         this._progressBarRenderer.setPosition(0.0, this._contentSize.height / 2.0);
         this.setPercent(this._percent);
     },
 
-//    /**
-//     * override "getContentSize" method of widget.
-//     * @returns {cc.Size}
-//     */
-//    getContentSize: function () {
-//        var locContentSize = this._barRenderer.getContentSize();
-//        return cc.size(locContentSize.width, locContentSize.height);
-//    },
-//    _getWidth: function () {
-//        return this._barRenderer._getWidth();
-//    },
-//    _getHeight: function () {
-//        return this._barRenderer._getHeight();
-//    },
+    /**
+     * override "getContentSize" method of widget.
+     * @returns {cc.Size}
+     */
+    getContentSize: function () {
+        var locContentSize = this._barRenderer.getContentSize();
+        return cc.size(locContentSize.width, locContentSize.height);
+    },
+    _getWidth: function () {
+        return this._barRenderer._getWidth();
+    },
+    _getHeight: function () {
+        return this._barRenderer._getHeight();
+    },
 
     onPressStateChangedToNormal: function () {
         this._slidBallNormalRenderer.setVisible(true);
