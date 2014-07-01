@@ -85,7 +85,7 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
         this._labelAtlasRenderer.setCharMap(this._charMapFileName, this._itemWidth, this._itemHeight, this._startCharMap[0]);
         this._labelAtlasRenderer.setString(stringValue);
 
-        this.updateContentSizeWithTextureSize(this._labelAtlasRenderer.getContentSize());
+        this._updateContentSizeWithTextureSize(this._labelAtlasRenderer.getContentSize());
         this._labelAtlasRendererAdaptDirty = true;
 
     },
@@ -98,7 +98,7 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
         this._stringValue = value;
         this._labelAtlasRenderer.setString(value);
 //        this.labelAtlasScaleChangedWithSize();
-        this.updateContentSizeWithTextureSize(this._labelAtlasRenderer.getContentSize());
+        this._updateContentSizeWithTextureSize(this._labelAtlasRenderer.getContentSize());
         this._labelAtlasRendererAdaptDirty = true;
     },
 

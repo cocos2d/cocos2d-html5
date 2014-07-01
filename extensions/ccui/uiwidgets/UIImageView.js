@@ -53,6 +53,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
     },
 
     init: function(imageFileName, texType){
+        ccui.Widget.prototype.init.call(this);
          if(imageFileName !== undefined)
             this.loadTexture(imageFileName, texType);
         return true;
@@ -60,7 +61,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
 
     initRenderer: function () {
         this._imageRenderer = cc.Sprite.create();
-        cc.Node.prototype.addChild.call(this, this._imageRenderer, ccui.ImageView.RENDERER_ZORDER, -1);
+        this.addProtectedChild(this._imageRenderer, ccui.ImageView.RENDERER_ZORDER, -1);
     },
 
     /**

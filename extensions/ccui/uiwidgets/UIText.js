@@ -102,7 +102,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     setString: function (text) {
         this._labelRenderer.setString(text);
 //        this.labelScaleChangedWithSize();
-        this.updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
+        this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
         this._labelRendererAdaptDirty = true;
     },
 
@@ -198,7 +198,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
         this._labelRenderer.setDimensions(size);
 //        this.labelScaleChangedWithSize();
 
-        this.updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
+        this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
         this._labelRendererAdaptDirty = true;
     },
     getTextAreaSize: function(){
@@ -214,7 +214,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
         this._labelRenderer.setHorizontalAlignment(alignment);
 //        this.labelScaleChangedWithSize();
 
-        this.updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
+        this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
         this._labelRendererAdaptDirty = true;
     },
 
@@ -228,13 +228,13 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
 
     /**
      * Set Vertical Alignment of label
-     * @param {cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM} verticalAlignment
+     * @param {cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM} alignment
      */
     setTextVerticalAlignment: function (alignment) {
 //        this._textVerticalAlignment = alignment;
         this._labelRenderer.setVerticalAlignment(alignment);
 //        this.labelScaleChangedWithSize();
-        this.updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
+        this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
         this._labelRendererAdaptDirty = true;
     },
 
@@ -323,16 +323,15 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
 
     labelScaleChangedWithSize: function () {
         if (this._ignoreSize) {
-            this._labelRenderer.setDimensions(0, 0);
+            this._labelRenderer.setDimensions(cc.size(0, 0));
 
             this._labelRenderer.setScale(1.0);
 //            var renderSize = this._labelRenderer.getContentSize();
 //            this._size.width = renderSize.width;
 //            this._size.height = renderSize.height;
             this._normalScaleValueX = this._normalScaleValueY = 1;
-        }
-        else {
-            this._labelRenderer.setDimensions(this._contentSize.width, this._contentSize.height);
+        } else {
+            this._labelRenderer.setDimensions(cc.size(this._contentSize.width, this._contentSize.height));
             var textureSize = this._labelRenderer.getContentSize();
             if (textureSize.width <= 0.0 || textureSize.height <= 0.0) {
                 this._labelRenderer.setScale(1.0);
