@@ -61,7 +61,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
 
     init: function () {
         if (ccui.ScrollView.prototype.init.call(this)) {
-            this._items = [];
+//            this._items = [];
             this.setLayoutType(ccui.Layout.LINEAR_VERTICAL);
             return true;
         }
@@ -86,9 +86,9 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
                 var totalHeight = (length - 1) * this._itemsMargin;
                 for (var i = 0; i < length; i++) {
                     var item = this._items[i];
-                    totalHeight += item.getSize().height;
+                    totalHeight += item.getContentSize().height;
                 }
-                var finalWidth = this._size.width;
+                var finalWidth = this._contentSize.width;
                 var finalHeight = totalHeight;
                 this.setInnerContainerSize(cc.size(finalWidth, finalHeight));
                 break;
@@ -97,10 +97,10 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
                 var totalWidth = (length - 1) * this._itemsMargin;
                 for (var i = 0; i < length; i++) {
                     var item = this._items[i];
-                    totalWidth += item.getSize().width;
+                    totalWidth += item.getContentSize().width;
                 }
                 var finalWidth = totalWidth;
-                var finalHeight = this._size.height;
+                var finalHeight = this._contentSize.height;
                 this.setInnerContainerSize(cc.size(finalWidth, finalHeight));
                 break;
             default:
@@ -114,7 +114,8 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         }
         switch (this.direction) {
             case ccui.ScrollView.DIR_VERTICAL:
-                var llp = item.getLayoutParameter(ccui.LayoutParameter.LINEAR);
+                var llp = item.getLayoutParameter();
+//                var llp = item.getLayoutParameter(ccui.LayoutParameter.LINEAR);
                 if (!llp) {
                     var defaultLp = ccui.LinearLayoutParameter.create();
                     switch (this._gravity) {
@@ -161,7 +162,8 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
                 }
                 break;
             case ccui.ScrollView.DIR_HORIZONTAL:
-                var llp = item.getLayoutParameter(ccui.LayoutParameter.LINEAR);
+//                var llp = item.getLayoutParameter(ccui.LayoutParameter.LINEAR);
+                var llp = item.getLayoutParameter();
                 if (!llp) {
                     var defaultLp = ccui.LinearLayoutParameter.create();
                     switch (this._gravity) {
@@ -220,7 +222,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
             return;
         }
         var newItem = this._model.clone();
-        this._items.push(newItem);
+//        this._items.push(newItem);
         this.remedyLayoutParameter(newItem);
         this.addChild(newItem);
         this._refreshViewDirty = true;
@@ -236,8 +238,10 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         }
         var newItem = this._model.clone();
         this._items.splice(index, 0, newItem);
-        this.remedyLayoutParameter(newItem);
         this.addChild(newItem);
+
+        this.remedyLayoutParameter(newItem);
+
         this._refreshViewDirty = true;
     },
 
@@ -246,10 +250,45 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
      * @param {ccui.Widget} item
      */
     pushBackCustomItem: function (item) {
-        this._items.push(item);
+//        this._items.push(item);
         this.remedyLayoutParameter(item);
         this.addChild(item);
         this._refreshViewDirty = true;
+    },
+
+    addChild: function(widget, zOrder, tag){
+        if(widget){
+            if(zOrder && tag){
+                ccui.ScrollView.prototype.addChild.call(this, widget, zOrder, tag);
+
+                if (widget)
+                {
+                    this._items.push(widget);
+                }
+            }else{
+                ccui.ListView.prototype.addChild.call(this, widget, zOrder || widget.getLocalZOrder(), widget.getName());
+            }
+        }
+    },
+
+    removeChild: function(widget, cleaup){
+        if (widget) {
+            var index = this._items.indexOf(widget);
+            if(index > -1){
+                this._items.splice(index, 1);
+            }
+        }
+
+        ccui.ScrollView.prototype.removeChild.call(this, widget, cleaup);
+    },
+
+    removeAllChildren: function(){
+        this.removeAllChildrenWithCleanup(true);
+    },
+
+    removeAllChildrenWithCleanup: function(cleanup){
+        ccui.ScrollView.prototype.removeAllChildrenWithCleanup.call(this, cleanup);
+        this._items = [];
     },
 
     /**
@@ -259,8 +298,10 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
      */
     insertCustomItem: function (item, index) {
         this._items.splice(index, 0, item);
+        ccui.ScrollView.prototype.addChild.call(this, item);
+
         this.remedyLayoutParameter(item);
-        this.addChild(item);
+//        this.addChild(item);
         this._refreshViewDirty = true;
     },
 
@@ -273,7 +314,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         if (!item) {
             return;
         }
-        cc.arrayRemoveObject(this._items, item);
+//        cc.arrayRemoveObject(this._items, item);
         this.removeChild(item);
         this._refreshViewDirty = true;
     },
@@ -283,6 +324,10 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
      */
     removeLastItem: function () {
         this.removeItem(this._items.length - 1);
+    },
+
+    removeAllItems: function(){
+        this.removeAllChildren();
     },
 
     /**
@@ -369,6 +414,32 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     },
 
     /**
+     * request refresh view
+     */
+    requestRefreshView: function () {
+        this._refreshViewDirty = true;
+    },
+
+    refreshView: function () {
+        for (var i = 0; i < this._items.length; i++) {
+            var item = this._items[i];
+            item.setLocalZOrder(i);
+            this.remedyLayoutParameter(item);
+        }
+        this.updateInnerContainerSize();
+    },
+
+    doLayout: function(){
+        ccui.Layout.prototype.doLayout.call(this);
+
+        if (this._refreshViewDirty)
+        {
+            this.refreshView();
+            this._refreshViewDirty = false;
+        }
+    },
+
+    /**
      *  add event listener
      * @param {Function} selector
      * @param {Object} target
@@ -378,15 +449,29 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         this._listViewEventSelector = selector;
     },
 
-    selectedItemEvent: function (state) {
+    addEventListener: function(callback){
+        this._eventCallback = callback;
+    },
+
+    selectedItemEvent: function (event) {
         if(this._listViewEventSelector&&this._listViewEventListener){
 
             switch(state){
                 case 0:
-                    this._listViewEventSelector.call(this._listViewEventListener, this, ccui.ListView.LISTVIEW_ONSELECTEDITEM_START);
+                    if (this._listViewEventListener && this._listViewEventSelector)
+                        this._listViewEventSelector.call(this._listViewEventListener, this, ccui.ListView.LISTVIEW_ONSELECTEDITEM_START);
+
+                    if(this._eventCallback)
+                        this._eventCallback(this, ccui.ListView.LISTVIEW_ONSELECTEDITEM_START);
+
                     break;
                 default:
-                    this._listViewEventSelector.call(this._listViewEventListener, this, ccui.ListView.LISTVIEW_ONSELECTEDITEM_END);
+                    if (this._listViewEventListener && this._listViewEventSelector)
+                        this._listViewEventSelector.call(this._listViewEventListener, this, ccui.ListView.LISTVIEW_ONSELECTEDITEM_END);
+
+                    if (this._eventCallback)
+                        this._eventCallback(this, ccui.ListView.LISTVIEW_ONSELECTEDITEM_END);
+
                     break;
             }
         }
@@ -403,7 +488,9 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
                 }
                 parent = parent.getParent();
             }
-            this.selectedItemEvent(handleState);
+            if (sender.isHighlighted()) {
+                this.selectedItemEvent(handleState);
+            }
         }
     },
 
@@ -415,29 +502,13 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         return this._curSelectedIndex;
     },
 
-    /**
-     * request refresh view
-     */
-    requestRefreshView: function () {
-        this._refreshViewDirty = true;
-    },
-
-    refreshView: function () {
-        for (var i = 0; i < this._items.length; i++) {
-            var item = this._items[i];
-            item.setLocalZOrder(i);
-            this.remedyLayoutParameter(item);
-        }
-        this.updateInnerContainerSize();
-    },
-
-    sortAllChildren: function () {
-        ccui.ScrollView.prototype.sortAllChildren.call(this);
-        if (this._refreshViewDirty) {
-            this.refreshView();
-            this._refreshViewDirty = false;
-        }
-    },
+//    sortAllChildren: function () {
+//        ccui.ScrollView.prototype.sortAllChildren.call(this);
+//        if (this._refreshViewDirty) {
+//            this.refreshView();
+//            this._refreshViewDirty = false;
+//        }
+//    },
 
     onSizeChanged: function () {
         ccui.ScrollView.prototype.onSizeChanged.call(this);
@@ -469,6 +540,11 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         this.setItemModel(listView._model);
         this.setItemsMargin(listView._itemsMargin);
         this.setGravity(listView._gravity);
+
+        this._listViewEventListener = listView._listViewEventListener;
+        this._listViewEventSelector = listView._listViewEventSelector;
+        this._eventCallback = listView._eventCallback;
+
     }
 });
 
@@ -480,7 +556,12 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
  * var uiPageView = ccui.ListView.create();
  */
 ccui.ListView.create = function () {
-     return new ccui.ListView();
+    var widget = new ccui.ListView();
+    if (widget && widget.init())
+    {
+        return widget;
+    }
+    return null;
 };
 
 // Constants
