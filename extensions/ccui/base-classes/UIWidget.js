@@ -121,6 +121,9 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
             this._layoutParameterDictionary = {};
             this.initRenderer();
             this.setBright(true);
+
+            this.onFocusChanged = this.onFocusChange.bind(this);
+
             this.ignoreContentAdaptWithSize(true);
             this.setAnchorPoint(cc.p(0.5, 0.5));
             this.setTouchEnabled(true);
@@ -833,10 +836,10 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
             widgetLostFocus = this._focusedWidget;
 
         if (widgetGetFocus != widgetLostFocus){
-            if (widgetGetFocus)
+            if (widgetGetFocus && widgetGetFocus.onFocusChanged)
                 widgetGetFocus.onFocusChanged(widgetLostFocus, widgetGetFocus);
 
-            if (widgetLostFocus)
+            if (widgetLostFocus && widgetGetFocus.onFocusChanged)
                 widgetLostFocus.onFocusChanged(widgetLostFocus, widgetGetFocus);
 
             cc.eventManager.dispatchEvent(new cc.EventFocus(widgetLostFocus, widgetGetFocus));

@@ -273,28 +273,6 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this._frontCrossDisabledRendererAdaptDirty = true;
     },
 
-    onTouchEnded: function (touch, event) {
-        var touchPoint = touch.getLocation();
-        this._touchEndPosition.x = touchPoint.x;
-        this._touchEndPosition.y = touchPoint.y;
-        if (this._focused) {
-            this.releaseUpEvent();
-            if (this._isSelected) {
-                this.setSelectedState(false);
-                this.unSelectedEvent();
-            }
-            else {
-                this.setSelectedState(true);
-                this.selectedEvent();
-            }
-        }
-        this.setFocused(false);
-        var widgetParent = this.getWidgetParent();
-        if (widgetParent) {
-            widgetParent.checkChildInfo(2, this, touchPoint);
-        }
-    },
-
     onPressStateChangedToNormal: function () {
         this._backGroundBoxRenderer.setVisible(true);
         this._backGroundSelectedBoxRenderer.setVisible(false);
