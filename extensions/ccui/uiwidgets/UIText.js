@@ -141,18 +141,12 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     setFontSize: function (size) {
         this._fontSize = size;
         this._labelRenderer.setFontSize(size);
-        this.labelScaleChangedWithSize();
-//        if (this._type == ccui.Text.Type.SYSTEM) {
-//            this._labelRenderer.setSystemFontSize(size);
-//        }
-//        else{
-//            var config = this._labelRenderer.getTTFConfig();
-//            config.fontSize = size;
-//            this._labelRenderer.setTTFConfig(config);
-//        }
+//        this.labelScaleChangedWithSize();
+//        var config = this._labelRenderer.getTTFConfig();
+//        config.fontSize = size;
 //        this._fontSize = size;
-//        this.updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
-//        this._labelRendererAdaptDirty = true;
+        this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
+        this._labelRendererAdaptDirty = true;
     },
 
     /**
@@ -170,7 +164,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     setFontName: function (name) {
         this._fontName = name;
         this._labelRenderer.setFontName(name);
-        this.labelScaleChangedWithSize();
+//        this.labelScaleChangedWithSize();
 //        if(FileUtils::getInstance()->isFileExist(name))
 //        {
 //            TTFConfig config = _labelRenderer->getTTFConfig();
@@ -184,8 +178,8 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
 //            _type = Type::SYSTEM;
 //        }
 //        _fontName = name;
-//        updateContentSizeWithTextureSize(_labelRenderer->getContentSize());
-//        _labelRendererAdaptDirty = true;
+        this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
+        this._labelRendererAdaptDirty = true;
     },
 
     /**
