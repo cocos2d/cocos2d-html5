@@ -180,9 +180,6 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
         this._elementRenders = [];
         this._leftSpaceWidth = 0;
         this._verticalSpace = 0;
-        this._elementRenderersContainer = null;
-
-        this.init();
     },
 
     initRenderer: function () {
@@ -294,7 +291,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
             if (leftLength > 0) {
                 var leftRenderer = cc.LabelTTF.create(leftWords.substr(0, leftLength), fontName, fontSize);
                 leftRenderer.setColor(color);
-                leftRenderer.setColor(color.a);
+                leftRenderer.setOpacity(color.a);
                 this.pushToContainer(leftRenderer);
             }
 

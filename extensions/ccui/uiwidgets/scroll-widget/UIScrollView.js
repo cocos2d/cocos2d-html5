@@ -87,7 +87,6 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      */
     ctor: function () {
         ccui.Layout.prototype.ctor.call(this);
-        this._innerContainer = null;
         this.direction = ccui.ScrollView.DIR_NONE;
         this._autoScrollDir = cc.p(0, 0);
         this._topBoundary = 0;//test
@@ -311,7 +310,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      */
     addChild: function (widget, zOrder, tag) {
         if(!widget)
-            return;
+            return false;
         zOrder = zOrder || widget.getLocalZOrder();
         tag = tag || widget.getTag();
         return this._innerContainer.addChild(widget, zOrder, tag);

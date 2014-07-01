@@ -51,7 +51,7 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
     initRenderer: function () {
 //        this._labelBMFontRenderer = cc.LabelBMFont.create();
 //        cc.Node.prototype.addChild.call(this, this._labelBMFontRenderer, ccui.TextBMFont.RENDERER_ZORDER, -1);
-        this._labelBMFontRenderer = cc.Label.create();
+        this._labelBMFontRenderer = cc.LabelBMFont.create();
         this.addProtectedChild(this._labelBMFontRenderer, ccui.TextBMFont.RENDERER_ZORDER, -1);
     },
 
@@ -64,18 +64,15 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
             return;
         }
         this._fntFileName = fileName;
-//        this._labelBMFontRenderer.initWithString("", fileName);
-//        this.updateAnchorPoint();
-//        this.labelBMFontScaleChangedWithSize();
-//        this._fileHasInit = true;
-//        this.setString(this._stringValue);
-//
-//        if (!this._labelBMFontRenderer.textureLoaded()) {
-//            this._labelBMFontRenderer.addLoadedEventListener(function () {
-//                this.labelBMFontScaleChangedWithSize();
-//            }, this);
-//        }
-        this._labelBMFontRenderer.setBMFontFilePath(fileName);
+        this._labelBMFontRenderer.initWithString("", fileName);
+        this.updateAnchorPoint();
+        this.labelBMFontScaleChangedWithSize();
+
+        if (!this._labelBMFontRenderer.textureLoaded()) {
+            this._labelBMFontRenderer.addLoadedEventListener(function () {
+                this.labelBMFontScaleChangedWithSize();
+            }, this);
+        }
 
         this._labelBMFontRenderer.setColor(this.getColor());
         this._labelBMFontRenderer.setOpacity(this.getOpacity());
@@ -127,8 +124,7 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
     },
 
     adaptRenderers: function(){
-        if (this._labelBMFontRendererAdaptDirty)
-        {
+        if (this._labelBMFontRendererAdaptDirty){
             this.labelBMFontScaleChangedWithSize();
             this._labelBMFontRendererAdaptDirty = false;
         }
