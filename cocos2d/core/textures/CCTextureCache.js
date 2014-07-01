@@ -25,7 +25,8 @@
  ****************************************************************************/
 
 /**
- * @namespace The global cache for cc.Texture2D
+ * @namespace cc.textureCache is the global cache for cc.Texture2D
+ * @name cc.textureCache
  */
 cc.textureCache = /** @lends cc.textureCache# */{
     _textures: {},

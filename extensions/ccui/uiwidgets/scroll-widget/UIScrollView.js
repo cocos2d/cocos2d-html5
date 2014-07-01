@@ -137,6 +137,11 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this.setUpdateEnabled(true);
     },
 
+    onExit:function(){
+        this.setUpdateEnabled(false);
+        ccui.Layout.prototype.onExit.call(this);
+    },
+
     initRenderer: function () {
         ccui.Layout.prototype.initRenderer.call(this);
         this._innerContainer = ccui.Layout.create();
