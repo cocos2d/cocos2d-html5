@@ -132,7 +132,9 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         }
         barRenderer.setColor(this.getColor());
         barRenderer.setOpacity(this.getOpacity());
-        this._barRendererTextureSize = barRenderer.getContentSize();
+        var bz = barRenderer.getContentSize();
+        this._barRendererTextureSize.width = bz.width;
+        this._barRendererTextureSize.height = bz.height;
 
         switch (this._direction) {
             case ccui.LoadingBar.TYPE_LEFT:
@@ -209,27 +211,22 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         if (this._totalLength <= 0)
             return;
         this._percent = percent;
-        if (!this._isTextureLoaded)
-            return;
+
         var res = this._percent / 100.0;
 
         if (this._scale9Enabled)
             this.setScale9Scale();
         else {
-/*            var x = 0, y = 0;                                            //TODO need test
-             if (this._renderBarTexType == ccui.Widget.PLIST_TEXTURE) {
-             var barNode = this._barRenderer;
-             if (barNode) {
-             var rect = barNode.getTextureRect();
-             x = rect.x;
-             y = rect.y;
-             }
-             }
-             this._barRenderer.setTextureRect(cc.rect(x, y, this._barRendererTextureSize.width * res, this._barRendererTextureSize.height));*/
             var spriteRenderer = this._barRenderer;
             var rect = spriteRenderer.getTextureRect();
-            rect.size.width = this._barRendererTextureSize.width * res;
-            spriteRenderer.setTextureRect(rect, spriteRenderer.isTextureRectRotated(), rect.size);
+            this._barRenderer.setTextureRect(
+                cc.rect(
+                    rect.x,
+                    rect.y,
+                    this._barRendererTextureSize.width * res,
+                    this._barRendererTextureSize.height
+                )
+            );
         }
     },
 
