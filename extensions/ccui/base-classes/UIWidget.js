@@ -1496,19 +1496,6 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
     getActionTag: function () {
         return this._actionTag;
     },
-    /**
-     * Set color
-     * @param {cc.Color} color
-     */
-    setColor: function (color) {
-        this._color.r = color.r;
-        this._color.g = color.g;
-        this._color.b = color.b;
-        this.updateTextureColor();
-        if (color.a !== undefined && !color.a_undefined) {
-            this.setOpacity(color.a);
-        }
-    },
 
     /**
      * Get color
@@ -1535,10 +1522,6 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
     getOpacity: function () {
         //return this._color.a;   //TODO
         return this._displayedOpacity;
-    },
-
-    updateTextureColor: function () {
-
     },
 
     updateTextureOpacity: function (opacity) {
