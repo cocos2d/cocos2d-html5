@@ -31,23 +31,23 @@
 ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     _curPageIdx: 0,
     _pages: null,
-    _touchMoveDir: null,
+    _touchMoveDirection: null,
     _touchStartLocation: 0,
     _touchMoveStartLocation: 0,
     _movePagePoint: null,
-    _leftChild: null,
-    _rightChild: null,
+    _leftBoundaryChild: null,
+    _rightBoundaryChild: null,
     _leftBoundary: 0,
     _rightBoundary: 0,
     _isAutoScrolling: false,
     _autoScrollDistance: 0,
     _autoScrollSpeed: 0,
-    _autoScrollDir: 0,
+    _autoScrollDirection: 0,
     _childFocusCancelOffset: 0,
     _pageViewEventListener: null,
     _pageViewEventSelector: null,
     _className:"PageView",
-    _touchMoveDirection: null,
+    _eventCallback: null,
 
     /**
      * allocates and initializes a UIPageView.
@@ -60,29 +60,26 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         ccui.Layout.prototype.ctor.call(this);
         this._curPageIdx = 0;
         this._pages = [];
-        this._touchMoveDir = ccui.PageView.TOUCH_DIR_LEFT;
+        this._touchMoveDirection = ccui.PageView.TOUCH_DIR_LEFT;
         this._touchStartLocation = 0;
         this._touchMoveStartLocation = 0;
         this._movePagePoint = null;
-        this._leftChild = null;
-        this._rightChild = null;
+        this._leftBoundaryChild = null;
+        this._rightBoundaryChild = null;
         this._leftBoundary = 0;
         this._rightBoundary = 0;
         this._isAutoScrolling = false;
         this._autoScrollDistance = 0;
         this._autoScrollSpeed = 0;
-        this._autoScrollDir = 0;
+        this._autoScrollDirection = 0;
         this._childFocusCancelOffset = 5;
         this._pageViewEventListener = null;
         this._pageViewEventSelector = null;
-
-        this.init();
     },
 
     init: function () {
         if (ccui.Layout.prototype.init.call(this)) {
             this.setClippingEnabled(true);
-//            this.setTouchEnabled(true);
             return true;
         }
         return false;
@@ -90,12 +87,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 
     onEnter:function(){
         ccui.Layout.prototype.onEnter.call(this);
-        this.setUpdateEnabled(true);
-    },
-
-    onExit:function(){
-        this.setUpdateEnabled(false);
-        ccui.Layout.prototype.onExit.call(this);
+        this.scheduleUpdate(true);
     },
 
     /**
@@ -105,26 +97,22 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      * @param {Boolean} forceCreate
      */
     addWidgetToPage: function (widget, pageIdx, forceCreate) {
-        if (!widget || pageIdx < 0) {
+        if (!widget || pageIdx < 0)
             return;
-        }
 
         var pageCount = this.getPageCount();
         if (pageIdx >= pageCount) {
             if (forceCreate) {
-                if (pageIdx > pageCount) {
-                    cc.log("pageIdx is %d, it will be added as page id [%d]", pageIdx, pageCount);
-                }
+                if (pageIdx > pageCount)
+                    cc.log("pageIdx is %d, it will be added as page id [%d]", pageIdx, pageCount)
                 var newPage = this.createPage();
                 newPage.addChild(widget);
                 this.addPage(newPage);
             }
-        }
-        else {
+        } else {
             var page = this._pages[pageIdx];
-            if (page) {
+            if (page)
                 page.addChild(widget);
-            }
         }
     },
 
@@ -134,7 +122,6 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      */
     createPage: function () {
         var newPage = ccui.Layout.create();
-//        newPage.setSize(this.getSize());
         newPage.setContentSize(this.getContentSize());
         return newPage;
     },
@@ -144,34 +131,11 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      * @param {ccui.Layout} page
      */
     addPage: function (page) {
-//        if (!page) {
-//            return;
-//        }
-//        if (page.getWidgetType() != ccui.Widget.TYPE_CONTAINER) {
-//            return;
-//        }
-//        if (this._pages.indexOf(page) != -1) {
-//            return;
-//        }
-//        var pSize = page.getSize();
-//        var pvSize = this.getSize();
-//        if (!(pSize.width==pvSize.width&&pSize.height==pvSize.height)) {
-//            cc.log("page size does not match pageview size, it will be force sized!");
-//            page.setSize(pvSize);
-//        }
-//        page.setPosition(this.getPositionXByIndex(this._pages.length), 0);
-//        this._pages.push(page);
-//        this.addChild(page);
-//        this.updateBoundaryPages();
         if (!page || this._pages.indexOf(page) != -1)
-        {
             return;
-        }
-
 
         this.addProtectedChild(page);
         this._pages.push(page);
-
         this._doLayoutDirty = true;
     },
 
@@ -181,60 +145,16 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      * @param {Number} idx
      */
     insertPage: function (page, idx) {
-//        if (idx < 0) {
-//            return;
-//        }
-//        if (!page) {
-//            return;
-//        }
-//        if (page.getWidgetType() != ccui.Widget.TYPE_CONTAINER) {
-//            return;
-//        }
-//        if (this._pages.indexOf(page) != -1) {
-//            return;
-//        }
-//
-//        var pageCount = this._pages.length;
-//        if (idx >= pageCount) {
-//            this.addPage(page);
-//        }
-//        else {
-//            this._pages.splice(idx, 0, page);
-//            page.setPosition(this.getPositionXByIndex(idx), 0);
-//            this.addChild(page);
-//            var pSize = page.getSize();
-//            var pvSize = this.getSize();
-//            if (!pSize.equals(pvSize)) {
-//                cc.log("page size does not match pageview size, it will be force sized!");
-//                page.setSize(pvSize);
-//            }
-//            var arrayPages = this._pages;
-//            var length = arrayPages.length;
-//            for (var i = (idx + 1); i < length; i++) {
-//                var behindPage = arrayPages[i];
-//                var formerPos = behindPage.getPosition();
-//                behindPage.setPosition(formerPos.x + this.getSize().width, 0);
-//            }
-//            this.updateBoundaryPages();
-//        }
         if (idx < 0 || !page || this._pages.indexOf(page) != -1)
-        {
             return;
-        }
-
 
         var pageCount = this.getPageCount();
         if (idx >= pageCount)
-        {
             this.addPage(page);
-        }
-        else
-        {
+        else {
             this._pages[idx] = page;
             this.addProtectedChild(page);
-
         }
-
         this._doLayoutDirty = true;
     },
 
@@ -246,14 +166,10 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         if (!page) {
             return;
         }
-//        this.removeChild(page);
-//        this.updateChildrenPosition();
-//        this.updateBoundaryPages();
         this.removeProtectedChild(page);
         var index = this._pages.indexOf(page);
         if(index > -1)
             this._pages.splice(index, 1);
-
         this._doLayoutDirty = true;
     },
 
@@ -272,22 +188,21 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     removeAllPages: function(){
-        for(var p in this._pages)
-        {
-            var node = this._pages[p];
-            this.removeProtectedChild(node);
+        var locPages = this._pages;
+        for(var i = 0, len = locPages.length; i < len; i++){
+            this.removeProtectedChild(locPages[i]);
         }
-        this._pages = [];
+        this._pages.length = 0;
     },
 
     updateBoundaryPages: function () {
         if (this._pages.length <= 0) {
-            this._leftChild = null;
-            this._rightChild = null;
+            this._leftBoundaryChild = null;
+            this._rightBoundaryChild = null;
             return;
         }
-        this._leftChild = this._pages[0];
-        this._rightChild = this._pages[this._pages.length-1];
+        this._leftBoundaryChild = this._pages[0];
+        this._rightBoundaryChild = this._pages[this._pages.length-1];
     },
 
     getPageCount: function(){
@@ -305,42 +220,32 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 
     onSizeChanged: function () {
         ccui.Layout.prototype.onSizeChanged.call(this);
-        this._rightBoundary = this.getSize().width;
-//        this.updateChildrenSize();
-//        this.updateChildrenPosition();
+        this._rightBoundary = this.getContentSize().width;
         this._doLayoutDirty = true;
     },
 
     updateAllPagesSize: function(){
         var selfSize = this.getContentSize();
-        for (var p in this._pages)
-        {
-            var page = this._pages[p];
-            page.setContentSize(selfSize);
+        var locPages = this._pages;
+        for (var i = 0, len = locPages.length; i < len; i++) {
+            locPages[i].setContentSize(selfSize);
         }
-
     },
 
     updateAllPagesPosition: function(){
         var pageCount = this.getPageCount();
-
-        if (pageCount <= 0)
-        {
+        if (pageCount <= 0) {
             this._curPageIdx = 0;
             return;
         }
 
         if (this._curPageIdx >= pageCount)
-        {
             this._curPageIdx = pageCount-1;
-        }
 
         var pageWidth = this.getContentSize().width;
-        for (var i=0; i<pageCount; i++)
-        {
-            var page = this._pages[i];
-            page.setPosition(cc.p((i-this._curPageIdx) * pageWidth, 0));
-
+        var locPages = this._pages;
+        for (var i=0; i< pageCount; i++){
+            locPages[i].setPosition(cc.p((i - this._curPageIdx) * pageWidth, 0));
         }
     },
 
@@ -349,14 +254,13 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      * @param {number} idx
      */
     scrollToPage: function (idx) {
-        if (idx < 0 || idx >= this._pages.length) {
+        if (idx < 0 || idx >= this._pages.length)
             return;
-        }
         this._curPageIdx = idx;
         var curPage = this._pages[idx];
         this._autoScrollDistance = -(curPage.getPosition().x);
         this._autoScrollSpeed = Math.abs(this._autoScrollDistance) / 0.2;
-        this._autoScrollDir = this._autoScrollDistance > 0 ? 1 : 0;
+        this._autoScrollDirection = this._autoScrollDistance > 0 ? 1 : 0;
         this._isAutoScrolling = true;
     },
 
@@ -367,9 +271,10 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     autoScroll: function(dt){
-        switch (this._autoScrollDir) {
+        var step;
+        switch (this._autoScrollDirection) {
             case 0:
-                var step = this._autoScrollSpeed * dt;
+                step = this._autoScrollSpeed * dt;
                 if (this._autoScrollDistance + step >= 0.0) {
                     step = -this._autoScrollDistance;
                     this._autoScrollDistance = 0.0;
@@ -385,7 +290,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
                 break;
                 break;
             case 1:
-                var step = this._autoScrollSpeed * dt;
+                step = this._autoScrollSpeed * dt;
                 if (this._autoScrollDistance - step <= 0.0) {
                     step = this._autoScrollDistance;
                     this._autoScrollDistance = 0.0;
@@ -405,28 +310,18 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     onTouchBegan: function (touch,event) {
-        var pass = ccui.Layout.prototype.onTouchBegan.call(this, touch,event);
-        if (this._hitted){
-            this.handlePressLogic(touch.getLocation());
-        }
+        var pass = ccui.Layout.prototype.onTouchBegan.call(this, touch, event);
+        if (this._hitted)
+            this.handlePressLogic(touch);
         return pass;
     },
 
-    onTouchMoved: function (touch,event) {
-//        var touchPoint = touch.getLocation();
-//        this._touchMovePosition.x = touchPoint.x;
-//        this._touchMovePosition.y = touchPoint.y;
-//        this.handleMoveLogic(touchPoint);
+    onTouchMoved: function (touch, event) {
         this.handleMoveLogic(touch);
         var widgetParent = this.getWidgetParent();
-        if (widgetParent) {
-            widgetParent.checkChildInfo(1, this, touch);
-        }
+        if (widgetParent)
+            widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_MOVED, this, touch);
         this.moveEvent();
-//        if (!this.hitTest(touchPoint)) {
-//            this.setFocused(false);
-//            this.onTouchEnded(touch,event);
-//        }
     },
 
     onTouchEnded: function (touch, event) {
@@ -435,22 +330,17 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     onTouchCancelled: function (touch, event) {
-//        var touchPoint = touch.getLocation();
         ccui.Layout.prototype.onTouchCancelled.call(this, touch, event);
-//        this.handleReleaseLogic(touchPoint);
         this.handleReleaseLogic(touch);
     },
 
-    doLayout: function(){
+    _doLayout: function(){
         if (!this._doLayoutDirty)
-        {
             return;
-        }
 
         this.updateAllPagesPosition();
         this.updateAllPagesSize();
         this.updateBoundaryPages();
-
 
         this._doLayoutDirty = false;
     },
@@ -466,28 +356,25 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     scrollPages: function (touchOffset) {
-        if (this._pages.length <= 0) {
+        if (this._pages.length <= 0)
             return false;
-        }
 
-        if (!this._leftChild || !this._rightChild) {
+        if (!this._leftBoundaryChild || !this._rightBoundaryChild)
             return false;
-        }
 
         var realOffset = touchOffset;
-
-        switch (this._touchMoveDir) {
+        switch (this._touchMoveDirection) {
             case ccui.PageView.TOUCH_DIR_LEFT: // left
-                if (this._rightChild.getRightBoundary() + touchOffset <= this._rightBoundary) {
-                    realOffset = this._rightBoundary - this._rightChild.getRightBoundary();
+                if (this._rightBoundaryChild.getRightBoundary() + touchOffset <= this._rightBoundary) {
+                    realOffset = this._rightBoundary - this._rightBoundaryChild.getRightBoundary();
                     this.movePages(realOffset);
                     return false;
                 }
                 break;
 
             case ccui.PageView.TOUCH_DIR_RIGHT: // right
-                if (this._leftChild.getLeftBoundary() + touchOffset >= this._leftBoundary) {
-                    realOffset = this._leftBoundary - this._leftChild.getLeftBoundary();
+                if (this._leftBoundaryChild.getLeftBoundary() + touchOffset >= this._leftBoundary) {
+                    realOffset = this._leftBoundary - this._leftBoundaryChild.getLeftBoundary();
                     this.movePages(realOffset);
                     return false;
                 }
@@ -501,31 +388,22 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     handlePressLogic: function (touchPoint) {
-//        var nsp = this.convertToNodeSpace(touchPoint);
-//        this._touchMoveStartLocation = nsp.x;
-//        this._touchStartLocation = nsp.x;
         //np-op
     },
 
-    handleMoveLogic: function (touchPoint) {
-        var nsp = this.convertToNodeSpace(touchPoint);
-        var offset = 0.0;
-        var moveX = nsp.x;
-        offset = moveX - this._touchMoveStartLocation;
-        this._touchMoveStartLocation = moveX;
+    handleMoveLogic: function (touch) {
+        var offset = touch.getLocation().x - touch.getPreviousLocation().x;
         if (offset < 0) {
-            this._touchMoveDir = ccui.PageView.TOUCH_DIR_LEFT;
-        }
-        else if (offset > 0) {
-            this._touchMoveDir = ccui.PageView.TOUCH_DIR_RIGHT;
+            this._touchMoveDirection = ccui.PageView.TOUCH_DIR_LEFT;
+        } else if (offset > 0) {
+            this._touchMoveDirection = ccui.PageView.TOUCH_DIR_RIGHT;
         }
         this.scrollPages(offset);
     },
 
     handleReleaseLogic: function (touchPoint) {
-        if (this._pages.length <= 0) {
+        if (this._pages.length <= 0)
             return;
-        }
         var curPage = this._pages[this._curPageIdx];
         if (curPage) {
             var curPagePos = curPage.getPosition();
@@ -544,8 +422,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
                     this.scrollPages(-curPageLocation);
                 else
                     this.scrollToPage(this._curPageIdx - 1);
-            }
-            else {
+            } else {
                 this.scrollToPage(this._curPageIdx);
             }
         }
@@ -558,7 +435,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
                 break;
             case 1:
                 var offset = 0;
-                offset = Math.abs(sender.getTouchStartPos().x - touchPoint.x);
+                offset = Math.abs(sender.getTouchBeganPosition().x - touchPoint.x);
                 if (offset > this._childFocusCancelOffset) {
                     sender.setFocused(false);
                     this.handleMoveLogic(touchPoint);
@@ -613,9 +490,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 
     getPage: function(index){
         if (index < 0 || index >= this.getPages().size())
-        {
             return null;
-        }
         return this._pages[index];
     },
 
@@ -641,32 +516,13 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 
     copySpecialProperties: function (pageView) {
         ccui.Layout.prototype.copySpecialProperties.call(this, pageView);
+        this._eventCallback = pageView._eventCallback;
+        this._pageViewEventListener = pageView._pageViewEventListener;
+        this._pageViewEventSelector = pageView._pageViewEventSelector;
     }
 
 
 
-
-//    /**
-//     * Add widget
-//     * @param {ccui.Widget} widget
-//     * @param {Number} zOrder
-//     * @param {Number} tag
-//     * @returns {boolean}
-//     */
-//    addChild: function (widget, zOrder, tag) {
-//        return ccui.Layout.prototype.addChild.call(this, widget, zOrder, tag);
-//    },
-//
-//    /**
-//     *  remove widget child override
-//     * @param {ccui.Widget} child
-//     * @param {Boolean} cleanup
-//     */
-//    removeChild: function (child, cleanup) {
-//        if(cleanup)
-//            cc.arrayRemoveObject(this._pages, child);
-//        ccui.Layout.prototype.removeChild.call(this, child, cleanup);
-//    },
 //
 //    updateChildrenSize: function () {
 //        if(this._pages){

@@ -244,32 +244,19 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         }
         return false;
     },
-    initStencil: null,
-    _initStencilForWebGL: function () {
-        this._clippingStencil = cc.DrawNode.create();
-        ccui.Layout._init_once = true;
-        if (ccui.Layout._init_once) {
-            cc.stencilBits = cc._renderContext.getParameter(cc._renderContext.STENCIL_BITS);
-            if (cc.stencilBits <= 0)
-                cc.log("Stencil buffer is not enabled.");
-            ccui.Layout._init_once = false;
-        }
-    },
-    _initStencilForCanvas: function () {
-        this._clippingStencil = cc.DrawNode.create();
-        var locContext = cc._renderContext;
+
+    __stencilDraw: function(ctx){
+        var locContext = ctx || cc._renderContext;
         var stencil = this._clippingStencil;
-        stencil.draw = function () {
-            var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
-            for (var i = 0; i < stencil._buffer.length; i++) {
-                var element = stencil._buffer[i];
-                var vertices = element.verts;
-                var firstPoint = vertices[0];
-                locContext.beginPath();
-                locContext.moveTo(firstPoint.x * locEGL_ScaleX, -firstPoint.y * locEGL_ScaleY);
-                for (var j = 1, len = vertices.length; j < len; j++)
-                    locContext.lineTo(vertices[j].x * locEGL_ScaleX, -vertices[j].y * locEGL_ScaleY);
-            }
+        var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
+        for (var i = 0; i < stencil._buffer.length; i++) {
+            var element = stencil._buffer[i];
+            var vertices = element.verts;
+            var firstPoint = vertices[0];
+            locContext.beginPath();
+            locContext.moveTo(firstPoint.x * locEGL_ScaleX, -firstPoint.y * locEGL_ScaleY);
+            for (var j = 1, len = vertices.length; j < len; j++)
+                locContext.lineTo(vertices[j].x * locEGL_ScaleX, -vertices[j].y * locEGL_ScaleY);
         }
     },
 
@@ -491,7 +478,44 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
 
         // draw (according to the stencil test func) this node and its childs
-        cc.Node.prototype.visit.call(this, ctx);
+        var i = 0;      // used by _children
+        var j = 0;      // used by _protectedChildren
+
+        this.sortAllChildren();
+        this.sortAllProtectedChildren();
+        var locChildren = this._children, locProtectChildren = this._protectedChildren;
+        var iLen = locChildren.length, jLen = locProtectChildren.length, child;
+        //
+        // draw children and protectedChildren zOrder < 0
+        //
+        for( ; i < iLen; i++ ){
+            child = locChildren[i];
+            if ( child && child.getLocalZOrder() < 0 )
+                child.visit();
+            else
+                break;
+        }
+
+        for( ; j < jLen; j++ ) {
+            child = locProtectChildren[j];
+            if ( child && child.getLocalZOrder() < 0 )
+                child.visit();
+            else
+                break;
+        }
+
+        //
+        // draw self
+        //
+        this.draw();
+
+        //
+        // draw children and protectedChildren zOrder >= 0
+        //
+        for (; i < iLen; i++)
+            locChildren[i].visit();
+        for (; j < jLen; j++)
+            locProtectChildren[j].visit();
 
         ///////////////////////////////////
         // CLEANUP
@@ -505,88 +529,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
         // we are done using this layer, decrement
         ccui.Layout._layer--;
-
-        //TODO new Code
-        /*if(!_visible)
-            return;
-
-        uint32_t flags = processParentFlags(parentTransform, parentFlags);
-
-        // IMPORTANT:
-        // To ease the migration to v3.0, we still support the Mat4 stack,
-        // but it is deprecated and your code should not rely on it
-        Director* director = Director.getInstance();
-        CCASSERT(nullptr != director, "Director is null when seting matrix stack");
-        director.pushMatrix(MATRIX_STACK_TYPE.MATRIX_STACK_MODELVIEW);
-        director.loadMatrix(MATRIX_STACK_TYPE.MATRIX_STACK_MODELVIEW, _modelViewTransform);
-        //Add group command
-
-        _groupCommand.init(_globalZOrder);
-        renderer.addCommand(&_groupCommand);
-
-        renderer.pushGroup(_groupCommand.getRenderQueueID());
-
-        _beforeVisitCmdStencil.init(_globalZOrder);
-        _beforeVisitCmdStencil.func = CC_CALLBACK_0(Layout.onBeforeVisitStencil, this);
-        renderer.addCommand(&_beforeVisitCmdStencil);
-
-        _clippingStencil.visit(renderer, _modelViewTransform, flags);
-
-        _afterDrawStencilCmd.init(_globalZOrder);
-        _afterDrawStencilCmd.func = CC_CALLBACK_0(Layout.onAfterDrawStencil, this);
-        renderer.addCommand(&_afterDrawStencilCmd);
-
-        int i = 0;      // used by _children
-        int j = 0;      // used by _protectedChildren
-
-        sortAllChildren();
-        sortAllProtectedChildren();
-
-        //
-        // draw children and protectedChildren zOrder < 0
-        //
-        for( ; i < _children.size(); i++ )
-        {
-            auto node = _children.at(i);
-
-            if ( node && node.getLocalZOrder() < 0 )
-                node.visit(renderer, _modelViewTransform, flags);
-            else
-                break;
-        }
-
-        for( ; j < _protectedChildren.size(); j++ )
-        {
-            auto node = _protectedChildren.at(j);
-
-            if ( node && node.getLocalZOrder() < 0 )
-                node.visit(renderer, _modelViewTransform, flags);
-            else
-                break;
-        }
-
-        //
-        // draw self
-        //
-        this.draw(renderer, _modelViewTransform, flags);
-
-        //
-        // draw children and protectedChildren zOrder >= 0
-        //
-        for(auto it=_protectedChildren.cbegin()+j; it != _protectedChildren.cend(); ++it)
-        (*it).visit(renderer, _modelViewTransform, flags);
-
-        for(auto it=_children.cbegin()+i; it != _children.cend(); ++it)
-        (*it).visit(renderer, _modelViewTransform, flags);
-
-
-        _afterVisitCmdStencil.init(_globalZOrder);
-        _afterVisitCmdStencil.func = CC_CALLBACK_0(Layout.onAfterVisitStencil, this);
-        renderer.addCommand(&_afterVisitCmdStencil);
-
-        renderer.popGroup();
-
-        director.popMatrix(MATRIX_STACK_TYPE.MATRIX_STACK_MODELVIEW);*/
     },
 
     _stencilClippingVisitForCanvas: function (ctx) {
@@ -624,9 +566,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             context.globalCompositeOperation = "destination-over";
             context.drawImage(locCache, 0, 0);
             context.restore();
-        }
-        // Clip mode, fast, but only support cc.DrawNode
-        else {
+        } else {    // Clip mode, fast, but only support cc.DrawNode
             var i, children = this._children, locChild;
 
             context.save();
@@ -637,25 +577,35 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             // Clip mode doesn't support recusive stencil, so once we used a clip stencil,
             // so if it has ClippingNode as a child, the child must uses composition stencil.
             this._cangodhelpme(true);
-            var len = children.length;
-            if (len > 0) {
-                this.sortAllChildren();
-                // draw children zOrder < 0
-                for (i = 0; i < len; i++) {
-                    locChild = children[i];
-                    if (locChild._localZOrder < 0)
-                        locChild.visit(context);
-                    else
-                        break;
-                }
-                this.draw(context);
-                for (; i < len; i++) {
-                    children[i].visit(context);
-                }
-            } else
-                this.draw(context);
-            this._cangodhelpme(false);
 
+            this.sortAllChildren();
+            this.sortAllProtectedChildren();
+
+            var j, locProtectChildren = this._protectedChildren;
+            var iLen = children, jLen = locProtectChildren.length;
+
+            // draw children zOrder < 0
+            for (i = 0; i < iLen; i++) {
+                locChild = children[i];
+                if (locChild && locChild._localZOrder < 0)
+                    locChild.visit(context);
+                else
+                    break;
+            }
+            for (j = 0; j < jLen; j++) {
+                locChild = locProtectChildren[j];
+                if (locChild && locChild._localZOrder < 0)
+                    locChild.visit(context);
+                else
+                    break;
+            }
+            //this.draw(context);
+            for (; i < iLen; i++)
+                children[i].visit(context);
+            for (; j < jLen; j++)
+                locProtectChildren[j].visit(context);
+
+            this._cangodhelpme(false);
             context.restore();
         }
     },
@@ -693,6 +643,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             case ccui.Layout.CLIPPING_STENCIL:
                 if (able){
                     this._clippingStencil = cc.DrawNode.create();
+                    this._clippingStencil.draw = this.__stencilDraw.bind(this);
                     if (this._running)
                         this._clippingStencil.onEnter();
                     this.setStencilClippingSize(this._size);
@@ -2225,11 +2176,11 @@ ccui.Layout._sharedCache = null;
 
 if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
     //WebGL
-    ccui.Layout.prototype.initStencil = ccui.Layout.prototype._initStencilForWebGL;
+    //ccui.Layout.prototype.initStencil = ccui.Layout.prototype._initStencilForWebGL;
     ccui.Layout.prototype.stencilClippingVisit = ccui.Layout.prototype._stencilClippingVisitForWebGL;
     ccui.Layout.prototype.scissorClippingVisit = ccui.Layout.prototype._scissorClippingVisitForWebGL;
 } else {
-    ccui.Layout.prototype.initStencil = ccui.Layout.prototype._initStencilForCanvas;
+    //ccui.Layout.prototype.initStencil = ccui.Layout.prototype._initStencilForCanvas;
     ccui.Layout.prototype.stencilClippingVisit = ccui.Layout.prototype._stencilClippingVisitForCanvas;
     ccui.Layout.prototype.scissorClippingVisit = ccui.Layout.prototype._stencilClippingVisitForCanvas;
 }

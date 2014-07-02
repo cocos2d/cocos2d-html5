@@ -191,7 +191,7 @@ cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Nod
      */
     sortAllProtectedChildren: function(){
         if (this._reorderProtectedChildDirty) {
-            var _children = this._children;
+            var _children = this._protectedChildren;
 
             // insertion sort
             var len = _children.length, i, j, tmp;

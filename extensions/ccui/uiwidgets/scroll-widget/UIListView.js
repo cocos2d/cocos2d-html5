@@ -423,11 +423,10 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         this.updateInnerContainerSize();
     },
 
-    doLayout: function(){
-        ccui.Layout.prototype.doLayout.call(this);
+    _doLayout: function(){
+        ccui.Layout.prototype._doLayout.call(this);
 
-        if (this._refreshViewDirty)
-        {
+        if (this._refreshViewDirty) {
             this.refreshView();
             this._refreshViewDirty = false;
         }

@@ -934,7 +934,7 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
         this.setHighlighted(this.hitTest(touchPoint));
         var widgetParent = this.getWidgetParent();
         if (widgetParent)
-            widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_MOVED, this, touchPoint);
+            widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_MOVED, this, touch);
         this.moveEvent();
     },
 
@@ -976,8 +976,7 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
             this._touchEventCallback(this, ccui.Widget.TOUCH_BAGAN);
 
         if (this._touchEventListener && this._touchEventSelector) {
-            if (this._touchEventSelector)
-                this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_BEGAN);
+            this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_BEGAN);
         }
     },
 
@@ -986,8 +985,7 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
             this._touchEventCallback(this, ccui.Widget.TOUCH_MOVED);
 
         if (this._touchEventListener && this._touchEventSelector) {
-            if (this._touchEventSelector)
-                this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_MOVED);
+            this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_MOVED);
         }
     },
 
@@ -996,8 +994,7 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
             this._touchEventCallback(this, ccui.Widget.TOUCH_ENDED);
 
         if (this._touchEventListener && this._touchEventSelector) {
-            if (this._touchEventSelector)
-                this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_ENDED);
+            this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_ENDED);
         }
     },
 
@@ -1005,9 +1002,8 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
         if (this._touchEventCallback)
             this._touchEventCallback(this, ccui.Widget.TOUCH_CANCELED);
 
-        if (this._touchEventSelector) {
-            if (this._touchEventSelector)
-                this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_CANCELED);
+        if (this._touchEventListener && this._touchEventSelector) {
+            this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_CANCELED);
         }
     },
 

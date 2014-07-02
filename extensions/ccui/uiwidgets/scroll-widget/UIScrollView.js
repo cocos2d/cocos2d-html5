@@ -861,7 +861,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     scrollChildren: function (touchOffsetX, touchOffsetY) {
         var scrollEnabled = true;
         this.scrollingEvent();
-        switch (this._direction) {
+        switch (this.direction) {
             case ccui.ScrollView.DIR_VERTICAL: // vertical
                 scrollEnabled = this.scrollChildrenVertical(touchOffsetX, touchOffsetY);
                 break;
@@ -1397,16 +1397,11 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     handlePressLogic: function (touch) {
-/*        this._touchBeganPosition = this.convertToNodeSpace(touchPoint);
-        this._touchMovingPoint = this._touchBeganPosition;*/
         this.startRecordSlidAction();
         this._bePressed = true;
     },
 
     handleMoveLogic: function (touch) {
-/*        this._touchMovePosition = this.convertToNodeSpace(touchPoint);
-        var delta = cc.pSub(this._touchMovePosition, this._touchMovingPoint);
-        this._touchMovingPoint = this._touchMovePosition;*/
         var delta = cc.pSub(touch.getLocation(), touch.getPreviousLocation());
         switch (this.direction) {
             case ccui.ScrollView.DIR_VERTICAL: // vertical
@@ -1431,7 +1426,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     onTouchBegan: function (touch, event) {
         var pass = ccui.Layout.prototype.onTouchBegan.call(this, touch, event);
         if (this._hitted)
-            this.handlePressLogic(this._touchBeganPosition);
+            this.handlePressLogic(touch);
         return pass;
     },
 
@@ -1449,10 +1444,6 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         ccui.Layout.prototype.onTouchCancelled.call(this, touch, event);
     },
 
-    onTouchLongClicked: function (touchPoint) {
-
-    },
-
     update: function (dt) {
         if (this._autoScroll)
             this.autoScrollChildren(dt);
@@ -1468,40 +1459,34 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Intercept touch event
-     * @param {number} handleState
+     * @param {number} event
      * @param {ccui.Widget} sender
-     * @param {cc.Point} touchPoint
+     * @param {cc.Touch} touch
      */
-    interceptTouchEvent: function (handleState, sender, touchPoint) {
-        switch (handleState) {
-            case 0:
-                this.handlePressLogic(touchPoint);
+    interceptTouchEvent: function (event, sender, touch) {
+        var touchPoint = touch.getLocation();
+        switch (event) {
+            case ccui.Widget.TOUCH_BAGAN:
+                this._touchBeganPosition.x = touchPoint.x;
+                this._touchBeganPosition.y = touchPoint.y;
+                this.handlePressLogic(touch);
                 break;
-            case 1:
-                var offset = cc.pSub(sender.getTouchStartPos(), touchPoint);
-                if (cc.pLength(offset) > this._childFocusCancelOffset) {
-                    sender.setFocused(false);
-                    this.handleMoveLogic(touchPoint);
+            case ccui.Widget.TOUCH_MOVED:
+                var offset = cc.pLength(cc.pSub(sender.getTouchBeganPosition(), touchPoint));
+                if (offset > this._childFocusCancelOffset) {
+                    sender.setHighlighted(false);
+                    this._touchMovePosition.x = touchPoint.x;
+                    this._touchMovePosition.y = touchPoint.y;
+                    this.handleMoveLogic(touch);
                 }
                 break;
-            case 2:
-                this.handleReleaseLogic(touchPoint);
-                break;
-            case 3:
-                this.handleReleaseLogic(touchPoint);
+            case ccui.Widget.TOUCH_CANCELED:
+            case ccui.Widget.TOUCH_ENDED:
+                this._touchEndPosition.x = touchPoint.x;
+                this._touchEndPosition.y = touchPoint.y;
+                this.handleReleaseLogic(touch);
                 break;
         }
-    },
-
-    /**
-     *
-     * @param {number} handleState
-     * @param {ccui.Widget} sender
-     * @param {cc.Point} touchPoint
-     */
-    checkChildInfo: function (handleState, sender, touchPoint) {
-        if (this._enabled && this._touchEnabled)
-            this.interceptTouchEvent(handleState, sender, touchPoint);
     },
 
     scrollToTopEvent: function () {
