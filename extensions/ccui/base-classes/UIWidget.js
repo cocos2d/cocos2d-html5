@@ -123,14 +123,18 @@ ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
             this.setBright(true);
 
             this.onFocusChanged = this.onFocusChange.bind(this);
+            this.onNextFocusedWidget = null;
+            this.setAnchorPoint(cc.p(0.5, 0.5));
 
             this.ignoreContentAdaptWithSize(true);
-            this.setAnchorPoint(cc.p(0.5, 0.5));
-            this.setTouchEnabled(true);
+
+//            this.setTouchEnabled(true);
             this.setCascadeColorEnabled(true);
             this.setCascadeOpacityEnabled(true);
+
+            return true;
         }
-        return true;
+        return false;
     },
 
     onEnter: function () {

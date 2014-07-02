@@ -97,7 +97,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._slidBallRenderer.addChild(this._slidBallNormalRenderer);
         this._slidBallRenderer.addChild(this._slidBallPressedRenderer);
         this._slidBallRenderer.addChild(this._slidBallDisabledRenderer);
-        this.addProtectedChild(this._slidBallRenderer, ccui.Slider.PROGRESSBAR_RENDERER_ZORDER, -1);
+        this.addProtectedChild(this._slidBallRenderer, ccui.Slider.BALL_RENDERER_ZORDER, -1);
     },
 
     /**
@@ -203,8 +203,8 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         }
 
         this._scale9Enabled = able;
-        cc.Node.prototype.removeChild.call(this, this._barRenderer, true);
-        cc.Node.prototype.removeChild.call(this, this._progressBarRenderer, true);
+        this.removeProtectedChild(this._barRenderer, true);
+        this.removeProtectedChild(this._progressBarRenderer, true);
         this._barRenderer = null;
         this._progressBarRenderer = null;
         if (this._scale9Enabled) {
