@@ -277,7 +277,6 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     },
 
     updateFlippedX: function () {
-//        this._labelRenderer.setFlippedX(this._flippedX);
 
         if (this._flippedX)
         {
@@ -317,12 +316,8 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
 
     labelScaleChangedWithSize: function () {
         if (this._ignoreSize) {
-            this._labelRenderer.setDimensions(cc.size(0, 0));
-
+            //this._labelRenderer.setDimensions(cc.size(0, 0));
             this._labelRenderer.setScale(1.0);
-//            var renderSize = this._labelRenderer.getContentSize();
-//            this._size.width = renderSize.width;
-//            this._size.height = renderSize.height;
             this._normalScaleValueX = this._normalScaleValueY = 1;
         } else {
             this._labelRenderer.setDimensions(cc.size(this._contentSize.width, this._contentSize.height));
