@@ -42,6 +42,7 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
     _insertText: false,
     _deleteBackward: false,
     _className: "UICCTextField",
+    _textFieldRendererAdaptDirty: true,
     ctor: function () {
         cc.TextFieldTTF.prototype.ctor.call(this);
         this.maxLengthEnabled = false;
@@ -523,6 +524,14 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         this._useTouchArea = enable;
     },
 
+    adaptRenderers: function(){
+        if (this._textFieldRendererAdaptDirty)
+        {
+            this.textfieldRendererScaleChangedWithSize();
+            this._textFieldRendererAdaptDirty = false;
+        }
+    },
+
     hitTest: function(pt){
         if (this._useTouchArea)
         {
@@ -612,7 +621,8 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
 
     _setFont: function (font) {
         this._textFieldRender._setFont(font);
-        this.textfieldRendererScaleChangedWithSize();
+//        this.textfieldRendererScaleChangedWithSize();
+        this._textFieldRendererAdaptDirty = true;
     },
 
     _getFont: function () {
@@ -947,7 +957,8 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
 
     onSizeChanged: function () {
         ccui.Widget.prototype.onSizeChanged.call(this);
-        this.textfieldRendererScaleChangedWithSize();
+//        this.textfieldRendererScaleChangedWithSize();
+        this._textFieldRendererAdaptDirty = true;
     },
 
     textfieldRendererScaleChangedWithSize: function () {
@@ -968,6 +979,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
             this._textFieldRender.setScaleX(scaleX);
             this._textFieldRender.setScaleY(scaleY);
         }
+        this._textFieldRender.setPosition(this._contentSize.width / 2, this._contentSize.height / 2);
     },
 
     /**
