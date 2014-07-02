@@ -60,7 +60,7 @@ ccui.LinearVerticalLayoutManager = ccui.LayoutManager.extend({
                     finalPosX += mg.left;
                     finalPosY -= mg.top;
                     child.setPosition(finalPosX, finalPosY);
-                    topBoundary = child.getPositionX() - child.getAnchorPoint().y * child.getContentSize().height - mg.bottom;
+                    topBoundary = child.getPositionY() - child.getAnchorPoint().y * child.getContentSize().height - mg.bottom;
                 }
             }
         }

@@ -61,7 +61,6 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
 
     init: function () {
         if (ccui.ScrollView.prototype.init.call(this)) {
-//            this._items = [];
             this.setLayoutType(ccui.Layout.LINEAR_VERTICAL);
             return true;
         }
@@ -109,13 +108,11 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     },
 
     remedyLayoutParameter: function (item) {
-        if (!item) {
+        if (!item)
             return;
-        }
         switch (this.direction) {
             case ccui.ScrollView.DIR_VERTICAL:
                 var llp = item.getLayoutParameter();
-//                var llp = item.getLayoutParameter(ccui.LayoutParameter.LINEAR);
                 if (!llp) {
                     var defaultLp = ccui.LinearLayoutParameter.create();
                     switch (this._gravity) {
@@ -131,21 +128,16 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
                         default:
                             break;
                     }
-                    if (this.getIndex(item) == 0) {
+                    if (this.getIndex(item) == 0)
                         defaultLp.setMargin(ccui.MarginZero());
-                    }
-                    else {
+                    else
                         defaultLp.setMargin(new ccui.Margin(0.0, this._itemsMargin, 0.0, 0.0));
-                    }
                     item.setLayoutParameter(defaultLp);
-                }
-                else {
-                    if (this.getIndex(item) == 0) {
+                } else {
+                    if (this.getIndex(item) == 0)
                         llp.setMargin(ccui.MarginZero());
-                    }
-                    else {
+                    else
                         llp.setMargin(new ccui.Margin(0, this._itemsMargin, 0, 0));
-                    }
                     switch (this._gravity) {
                         case ccui.ListView.GRAVITY_LEFT:
                             llp.setGravity(ccui.LinearLayoutParameter.LEFT);
@@ -162,7 +154,6 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
                 }
                 break;
             case ccui.ScrollView.DIR_HORIZONTAL:
-//                var llp = item.getLayoutParameter(ccui.LayoutParameter.LINEAR);
                 var llp = item.getLayoutParameter();
                 if (!llp) {
                     var defaultLp = ccui.LinearLayoutParameter.create();
@@ -179,21 +170,16 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
                         default:
                             break;
                     }
-                    if (this.getIndex(item) == 0) {
+                    if (this.getIndex(item) == 0)
                         defaultLp.setMargin(ccui.MarginZero());
-                    }
-                    else {
+                    else
                         defaultLp.setMargin(new ccui.Margin(this._itemsMargin, 0.0, 0.0, 0.0));
-                    }
                     item.setLayoutParameter(defaultLp);
-                }
-                else {
-                    if (this.getIndex(item) == 0) {
+                } else {
+                    if (this.getIndex(item) == 0)
                         llp.setMargin(ccui.MarginZero());
-                    }
-                    else {
+                    else
                         llp.setMargin(new ccui.Margin(this._itemsMargin, 0.0, 0.0, 0.0));
-                    }
                     switch (this._gravity) {
                         case ccui.ListView.GRAVITY_TOP:
                             llp.setGravity(ccui.LinearLayoutParameter.TOP);
@@ -222,7 +208,6 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
             return;
         }
         var newItem = this._model.clone();
-//        this._items.push(newItem);
         this.remedyLayoutParameter(newItem);
         this.addChild(newItem);
         this._refreshViewDirty = true;
@@ -238,8 +223,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         }
         var newItem = this._model.clone();
         this._items.splice(index, 0, newItem);
-        this.addChild(newItem);
-
+        ccui.ScrollView.prototype.addChild.call(this, newItem);
         this.remedyLayoutParameter(newItem);
 
         this._refreshViewDirty = true;
@@ -250,7 +234,6 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
      * @param {ccui.Widget} item
      */
     pushBackCustomItem: function (item) {
-//        this._items.push(item);
         this.remedyLayoutParameter(item);
         this.addChild(item);
         this._refreshViewDirty = true;
@@ -268,12 +251,10 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     removeChild: function(widget, cleaup){
         if (widget) {
             var index = this._items.indexOf(widget);
-            if(index > -1){
+            if(index > -1)
                 this._items.splice(index, 1);
-            }
+            ccui.ScrollView.prototype.removeChild.call(this, widget, cleaup);
         }
-
-        ccui.ScrollView.prototype.removeChild.call(this, widget, cleaup);
     },
 
     removeAllChildren: function(){
@@ -293,9 +274,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     insertCustomItem: function (item, index) {
         this._items.splice(index, 0, item);
         ccui.ScrollView.prototype.addChild.call(this, item);
-
         this.remedyLayoutParameter(item);
-//        this.addChild(item);
         this._refreshViewDirty = true;
     },
 
@@ -305,10 +284,8 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
      */
     removeItem: function (index) {
         var item = this.getItem(index);
-        if (!item) {
+        if (!item)
             return;
-        }
-//        cc.arrayRemoveObject(this._items, item);
         this.removeChild(item);
         this._refreshViewDirty = true;
     },
@@ -404,7 +381,6 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
                 break;
         }
         ccui.ScrollView.prototype.setDirection.call(this, dir);
-
     },
 
     /**
@@ -425,7 +401,6 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
 
     _doLayout: function(){
         ccui.Layout.prototype._doLayout.call(this);
-
         if (this._refreshViewDirty) {
             this.refreshView();
             this._refreshViewDirty = false;
@@ -447,27 +422,11 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     },
 
     selectedItemEvent: function (event) {
-        if(this._listViewEventSelector&&this._listViewEventListener){
-
-            switch(state){
-                case 0:
-                    if (this._listViewEventListener && this._listViewEventSelector)
-                        this._listViewEventSelector.call(this._listViewEventListener, this, ccui.ListView.LISTVIEW_ONSELECTEDITEM_START);
-
-                    if(this._eventCallback)
-                        this._eventCallback(this, ccui.ListView.LISTVIEW_ONSELECTEDITEM_START);
-
-                    break;
-                default:
-                    if (this._listViewEventListener && this._listViewEventSelector)
-                        this._listViewEventSelector.call(this._listViewEventListener, this, ccui.ListView.LISTVIEW_ONSELECTEDITEM_END);
-
-                    if (this._eventCallback)
-                        this._eventCallback(this, ccui.ListView.LISTVIEW_ONSELECTEDITEM_END);
-
-                    break;
-            }
-        }
+        var eventEnum = (event == ccui.Widget.TOUCH_BAGAN) ? ccui.ListView.ON_SELECTED_ITEM_START : ccui.ListView.ON_SELECTED_ITEM_END;
+        if (this._listViewEventListener && this._listViewEventSelector)
+            this._listViewEventSelector.call(this._listViewEventListener, this, eventEnum);
+        if(this._eventCallback)
+            this._eventCallback(this, eventEnum);
     },
 
     interceptTouchEvent: function (handleState, sender, touchPoint) {
@@ -481,9 +440,8 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
                 }
                 parent = parent.getParent();
             }
-            if (sender.isHighlighted()) {
+            if (sender.isHighlighted())
                 this.selectedItemEvent(handleState);
-            }
         }
     },
 
@@ -494,14 +452,6 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     getCurSelectedIndex: function () {
         return this._curSelectedIndex;
     },
-
-//    sortAllChildren: function () {
-//        ccui.ScrollView.prototype.sortAllChildren.call(this);
-//        if (this._refreshViewDirty) {
-//            this.refreshView();
-//            this._refreshViewDirty = false;
-//        }
-//    },
 
     onSizeChanged: function () {
         ccui.ScrollView.prototype.onSizeChanged.call(this);
@@ -556,8 +506,8 @@ ccui.ListView.create = function () {
 //listView event type
 ccui.ListView.EVENT_SELECTED_ITEM = 0;
 
-ccui.LISTVIEW_ONSELECTEDITEM_START = 0;
-ccui.LISTVIEW_ONSELECTEDITEM_END = 1;
+ccui.ListView.ON_SELECTED_ITEM_START = 0;
+ccui.ListView.ON_SELECTED_ITEM_END = 1;
 
 //listView gravity
 ccui.ListView.GRAVITY_LEFT = 0;
