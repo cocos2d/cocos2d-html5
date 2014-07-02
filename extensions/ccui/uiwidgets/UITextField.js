@@ -86,32 +86,6 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
         return false;
     },
     insertText: function (text, len) {        //todo need to delete
-//        var str_text = text;
-//        var locString = cc.TextFieldTTF.prototype.getString.call(this);
-//        var str_len = locString.length;
-//        var multiple, header;
-//        if (text != "\n") {
-//            if (this.maxLengthEnabled) {
-//                multiple = 1;
-//                header = text.charCodeAt(0);
-//                if (header < 0 || header > 127) {
-//                    multiple = 3;
-//                }
-//
-//                if (str_len + len > this.maxLength * multiple) {
-//                    str_text = str_text.substr(0, this.maxLength * multiple);
-//                    len = this.maxLength * multiple;
-//                }
-//            }
-//        }
-//        cc.TextFieldTTF.prototype.insertText.call(this, str_text, len);
-//
-//        // password
-//        if (this.passwordEnabled) {
-//            if (cc.TextFieldTTF.prototype.getCharCount.call(this) > 0) {
-//                this.setPasswordText(this._inputText);
-//            }
-//        }
         var input_text = text;
 
         if (text != "\n")
@@ -128,74 +102,6 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
                     }
                     return;
                 }
-
-//                if (
-//                    (cc.sys.os == cc.sys.OS_IOS) ||
-//                    (cc.sys.os == cc.sys.OS_OSX) ||
-//                    (cc.sys.os == cc.sys.OS_WINDOWS)
-//                ){
-//                    var input_count = text.length;
-//                    var total = text_count + input_count;
-//
-//                    if (total > this.maxLength)
-//                    {
-//                        var end = 0;
-//                        var length = this.maxLength - text_count;
-//
-//                        for (var i = 0; i < length; ++i)
-//                        {
-//                            var value = text[i];
-//
-//                            if (value >= 0 && value <= 127) // ascii
-//                            {
-//                                end++;
-//                            }
-//                            else
-//                            {
-//                                end += 3;
-//                            }
-//                        }
-//                        input_text = input_text.substr(0, end);
-//                        len  = end;
-//                    }
-//                }else if(cc.sys.os == cc.sys.OS_ANDROID){
-//                    var input_count = this._calcCharCount(text);
-//                    var total = text_count + input_count;
-//                    if (total > this.maxLength)
-//                    {
-//                        var ascii = 0;
-//                        var unicode = 0;
-//                        var end = 0;
-//                        var count = 0;
-//
-//                        for (var i = 0; i < total * 3; ++i)
-//                        {
-//                            var value = text[i];
-//
-//                            if (value >= 0 && value <= 127) // ascii
-//                            {
-//                                ascii++;
-//                                count++;
-//                            }
-//                            else
-//                            {
-//                                unicode++;
-//                                if (unicode % 3 == 0)
-//                                {
-//                                    count++;
-//                                }
-//                            }
-//
-//                            if (count == this.maxLength)
-//                            {
-//                                break;
-//                            }
-//                        }
-//                        end = ascii + unicode;
-//                        input_text = input_text.substr(0, end);
-//                        len  = end;
-//                    }
-//                }
             }
         }
         cc.TextFieldTTF.prototype.insertText.call(this, input_text, len);
@@ -323,109 +229,6 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
             ++pszText;
         }
         return n;
-    },
-
-    insertText: function(text, len){
-//        var input_text = text;
-//
-//        if (text !== "\n")
-//        {
-//            if (this.maxLengthEnabled)
-//            {
-//                var text_count = this._calcCharCount(this.getString());
-//                if (text_count >= this._maxLength)
-//                {
-//                    // password
-//                    if (this.passwordEnabled)
-//                    {
-//                        this.setPasswordText(this.getString());
-//                    }
-//                    return;
-//                }
-//
-//                if (
-//                    (cc.sys.os == cc.sys.OS_IOS) ||
-//                    (cc.sys.os == cc.sys.OS_OSX) ||
-//                    (cc.sys.os == cc.sys.OS_WINDOWS)
-//                    )
-//                var input_count = this._calcCharCount(text);
-//                var total = text_count + input_count;
-//
-//                if (total > this._maxLength)
-//                {
-//                    var end = 0;
-//                    var length = this._maxLength - text_count;
-//
-//                    for (var i = 0; i < length; ++i)
-//                    {
-//                        var value = text[i];
-//
-//                        if (value >= 0 && value <= 127) // ascii
-//                        {
-//                            end++;
-//                        }
-//                        else
-//                        {
-//                            end += 3;
-//                        }
-//                    }
-//                    input_text = input_text.substr(0, end);
-//                    len  = end;
-//                }
-//                else if (cc.sys.os == cc.sys.OS_ANDROID)
-//                {
-//                    var input_count = this._calcCharCount(text);
-//                    if (input_count > this._maxLength)
-//                    {
-//                        var ascii = 0;
-//                        var unicode = 0;
-//                        var end = 0;
-//                        var count = 0;
-//
-//                        for (var i = 0; i < input_count * 3; ++i)
-//                        {
-//                            var value = text[i];
-//
-//                            if (value >= 0 && value <= 127) // ascii
-//                            {
-//                                ascii++;
-//                                count++;
-//                            }
-//                            else
-//                            {
-//                                unicode++;
-//                                if (unicode % 3 == 0)
-//                                {
-//                                    count++;
-//                                }
-//                            }
-//
-//                            if (count == this._maxLength)
-//                            {
-//                                break;
-//                            }
-//                        }
-//                        end = ascii + unicode;
-//                        input_text = input_text.substr(0, end);
-//                        len  = end;
-//                    }
-//                }
-//            }
-//        }
-//        cc.TextFieldTTF.prototype.insertText.call(this, input_text, len);
-//
-//        // password
-//        if (this.passwordEnabled  && (cc.TextFieldTTF.prototype.getCharCount.call(this) > 0))
-//                this.setPasswordText(this.getString());
-        // password
-        if (this._passwordEnabled)
-        {
-            if (cc.TextFieldTTF.prototype.getCharCount() > 0)
-            {
-                this.setPasswordText(this.getString());
-            }
-        }
-
     },
     onDraw: function (sender) {
         return false;
@@ -710,15 +513,6 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
             this._textFieldRender.attachWithIME();
         }
         return pass;
-    },
-
-    /**
-     * touch ended
-     * @param touchPoint
-     */
-    onTouchEnded: function (touchPoint) {
-        ccui.Widget.prototype.onTouchEnded.call(this, touchPoint);
-        this._textFieldRender.attachWithIME();
     },
 
     /**
