@@ -54,6 +54,7 @@
                 <file name="cocos2d/core/sprites/SpritesWebGL.js"/>
                 <file name="cocos2d/core/sprites/SpritesPropertyDefine.js"/>
                 <file name="cocos2d/core/sprites/CCSprite.js"/>
+                <file name="cocos2d/core/sprites/CCBakeSprite.js"/>
                 <file name="cocos2d/core/sprites/CCAnimation.js"/>
                 <file name="cocos2d/core/sprites/CCAnimationCache.js"/>
                 <file name="cocos2d/core/sprites/CCSpriteFrame.js"/>
@@ -161,10 +162,14 @@
                 <file name="extensions/editbox/CCdomNode.js"/>
                 <file name="extensions/editbox/CCEditBox.js"/>
                 <file name="extensions/ccui/system/CocosGUI.js"/>
+                <file name="extensions/ccui/base-classes/CCProtectedNode.js"/>
                 <file name="extensions/ccui/base-classes/UIWidget.js"/>
                 <file name="extensions/ccui/layouts/UILayout.js"/>
                 <file name="extensions/ccui/layouts/UILayoutParameter.js"/>
                 <file name="extensions/ccui/layouts/UILayoutManager.js"/>
+                <file name="extensions/ccui/layouts/UIHBox.js"/>
+                <file name="extensions/ccui/layouts/UIVBox.js"/>
+                <file name="extensions/ccui/layouts/UIRelativeBox.js"/>
                 <file name="extensions/ccui/system/UIHelper.js"/>
                 <file name="extensions/ccui/uiwidgets/UIButton.js"/>
                 <file name="extensions/ccui/uiwidgets/UICheckBox.js"/>
