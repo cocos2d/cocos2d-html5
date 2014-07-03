@@ -343,18 +343,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         var gl = ctx || cc._renderContext;
 
         // if stencil buffer disabled
-        if (cc.stencilBits < 1) {
-            // draw everything, as if there where no stencil
-            cc.Node.prototype.visit.call(this, ctx);
-            return;
-        }
+        /*if (cc.stencilBits < 1) {
+         // draw everything, as if there where no stencil
+         cc.Node.prototype.visit.call(this, ctx);
+         return;
+         }*/
 
-        // return fast (draw nothing, or draw everything if in inverted mode) if:
-        // - nil stencil node
-        // - or stencil node invisible:
-        if (!this._clippingStencil || !this._clippingStencil.isVisible()) {
+        if (!this._clippingStencil || !this._clippingStencil.isVisible())
             return;
-        }
 
         // store the current stencil layer (position in the stencil buffer),
         // this will allow nesting up to n CCClippingNode,
@@ -373,9 +369,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             cc.Node.prototype.visit.call(this, ctx);
             return;
         }
-
-        ///////////////////////////////////
-        // INIT
 
         // increment the current layer
         ccui.Layout._layer++;
@@ -419,9 +412,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         // only disabling depth buffer update should do
         gl.depthMask(false);
 
-        ///////////////////////////////////
-        // CLEAR STENCIL BUFFER
-
         // manually clear the stencil buffer by drawing a fullscreen rectangle on it
         // setup the stencil test func like this:
         // for each pixel in the fullscreen rectangle
@@ -435,9 +425,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
         cc._drawingUtil.drawSolidRect(cc.p(0, 0), cc.pFromSize(cc.director.getWinSize()), cc.color(255, 255, 255, 255));
 
-        ///////////////////////////////////
-        // DRAW CLIPPING STENCIL
-
         // setup the stencil test func like this:
         // for each pixel in the stencil node
         //     never draw it into the frame buffer
@@ -446,34 +433,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
         gl.stencilOp(gl.REPLACE, gl.KEEP, gl.KEEP);
 
-
-        // draw the stencil node as if it was one of our child
-        // (according to the stencil test func/op and alpha (or alpha shader) test)
         cc.kmGLPushMatrix();
         this.transform();
-        this._clippingStencil.visit();
-        cc.kmGLPopMatrix();
 
-        // restore alpha test state
-        //if (this._alphaThreshold < 1) {
-        // XXX: we need to find a way to restore the shaders of the stencil node and its childs
-        //}
+        this._clippingStencil.visit();
 
         // restore the depth test state
         gl.depthMask(currentDepthWriteMask);
-        //if (currentDepthTestEnabled) {
-        //    glEnable(GL_DEPTH_TEST);
-        //}
 
-        ///////////////////////////////////
-        // DRAW CONTENT
-
-        // setup the stencil test func like this:
-        // for each pixel of this node and its childs
-        //     if all layers less than or equals to the current are set to 1 in the stencil buffer
-        //         draw the pixel and keep the current layer in the stencil buffer
-        //     else
-        //         do not draw the pixel but keep the current layer in the stencil buffer
         gl.stencilFunc(gl.EQUAL, mask_layer_le, mask_layer_le);
         gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
 
@@ -485,9 +452,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this.sortAllProtectedChildren();
         var locChildren = this._children, locProtectChildren = this._protectedChildren;
         var iLen = locChildren.length, jLen = locProtectChildren.length, child;
-        //
-        // draw children and protectedChildren zOrder < 0
-        //
         for( ; i < iLen; i++ ){
             child = locChildren[i];
             if ( child && child.getLocalZOrder() < 0 )
@@ -495,7 +459,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             else
                 break;
         }
-
         for( ; j < jLen; j++ ) {
             child = locProtectChildren[j];
             if ( child && child.getLocalZOrder() < 0 )
@@ -503,22 +466,11 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             else
                 break;
         }
-
-        //
-        // draw self
-        //
         this.draw();
-
-        //
-        // draw children and protectedChildren zOrder >= 0
-        //
         for (; i < iLen; i++)
             locChildren[i].visit();
         for (; j < jLen; j++)
             locProtectChildren[j].visit();
-
-        ///////////////////////////////////
-        // CLEANUP
 
         // manually restore the stencil state
         gl.stencilFunc(currentStencilFunc, currentStencilRef, currentStencilValueMask);
@@ -529,6 +481,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
         // we are done using this layer, decrement
         ccui.Layout._layer--;
+
+        cc.kmGLPopMatrix();
     },
 
     _stencilClippingVisitForCanvas: function (ctx) {
@@ -1790,11 +1744,9 @@ ccui.Layout._sharedCache = null;
 
 if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
     //WebGL
-    //ccui.Layout.prototype.initStencil = ccui.Layout.prototype._initStencilForWebGL;
     ccui.Layout.prototype.stencilClippingVisit = ccui.Layout.prototype._stencilClippingVisitForWebGL;
     ccui.Layout.prototype.scissorClippingVisit = ccui.Layout.prototype._scissorClippingVisitForWebGL;
 } else {
-    //ccui.Layout.prototype.initStencil = ccui.Layout.prototype._initStencilForCanvas;
     ccui.Layout.prototype.stencilClippingVisit = ccui.Layout.prototype._stencilClippingVisitForCanvas;
     ccui.Layout.prototype.scissorClippingVisit = ccui.Layout.prototype._stencilClippingVisitForCanvas;
 }
