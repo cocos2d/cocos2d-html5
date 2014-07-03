@@ -72,7 +72,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         if (ccui.Widget.prototype.init.call(this)) {
             this._isSelected = true;
             this.setTouchEnabled(true);
-            this.setSelectedState(false);
+//            this.setSelectedState(false);
             if(backGround === undefined)
                 this.loadTextures(backGround, backGroundSeleted, cross, backGroundDisabled, frontCrossDisabled, texType);
             return true;

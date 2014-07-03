@@ -371,10 +371,13 @@
         "pluginx" : [
             "core",
 
-            "extensions/pluginx/Plugin.js",
-            "extensions/pluginx/platform/facebook_sdk.js",
-            "extensions/pluginx/platform/facebook.js"
+            "external/pluginx/Plugin.js"
         ],
+        "plugin-facebook" : [
+            "external/pluginx/platform/facebook_sdk.js",
+            "external/pluginx/platform/facebook.js"
+        ],
+
         "spine":[
             "core",
 
@@ -382,7 +385,7 @@
             "extensions/spine/CCSkeleton.js",
             "extensions/spine/CCSkeletonAnimation.js"
         ],
-        "extensions" : ["gui", "ccbreader", "editbox", "cocostudio", "pluginx", "spine","ccpool"],
+        "extensions" : ["gui", "ccbreader", "editbox", "cocostudio", "spine", "ccpool"],
 
         "box2d" : [
             "core", "physics",
@@ -397,7 +400,7 @@
         "socketio" : [
             "external/socketio/socket.io.min.js"
         ],
-        "external" : ["box2d", "chipmunk", "socketio"]
+        "external" : ["box2d", "chipmunk", "socketio", "pluginx"]
     },
     "bootFile" : "CCBoot.js"
 }
