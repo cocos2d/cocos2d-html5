@@ -120,6 +120,4 @@ ccui.helper = {
 	    }
 	    return null;
 	}
-
 };
-ccui.helper;

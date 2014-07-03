@@ -42,18 +42,27 @@ cc.BatchNode = cc.Node.extend({
         }
     },
 
-    visit:function () {
+    visit:function (renderer, parentTransform, parentTransformUpdated) {
         // quick return if not visible. children won't be drawn.
         if (!this._visible) {
             return;
         }
+        var dirty = parentTransformUpdated || this._transformUpdated;
+        if(dirty)
+            this._modelViewTransform = this.transform(parentTransform);
+        this._transformUpdated = false;
+
+        // IMPORTANT:
+        // To ease the migration to v3.0, we still support the kmGL stack,
+        // but it is deprecated and your code should not rely on it
         this.kmGLPushMatrix();
         if (this.grid && this.grid.isActive()) {
             this.grid.beforeDraw();
         }
-        this.transform();
+
         this.sortAllChildren();
-        this.draw();
+        this.draw(renderer, this._modelViewTransform, dirty);
+
         // reset for next frame
         this.arrivalOrder = 0;
         if (this.grid && this.grid.isActive()) {
@@ -62,8 +71,8 @@ cc.BatchNode = cc.Node.extend({
         this.kmGLPopMatrix();
     },
 
-    draw:function (ctx) {
-        cc.nodeDrawSetup(this);
+    draw:function (renderer, transform, transformUpdated) {
+
         var child = null;
         for (var i = 0; i < this._children.length; i++) {
             child = this._children[i];

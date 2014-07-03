@@ -24,7 +24,58 @@
  ****************************************************************************/
 
 /**
- * Base class for ccui.LayoutParameter
+ * Base class for ccui.Margin
+ * @class
+ * @extends ccui.Class
+ */
+ccui.Margin = ccui.Class.extend(/** @lends ccui.Margin# */{
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    ctor: function (margin, top, right, bottom) {
+        if (margin && top === undefined) {
+            this.left = margin.left;
+            this.top = margin.top;
+            this.right = margin.right;
+            this.bottom = margin.bottom;
+        }
+        if (bottom !== undefined) {
+            this.left = margin;
+            this.top = top;
+            this.right = right;
+            this.bottom = bottom;
+        }
+    },
+    /**
+     *  set margin
+     * @param {Number} l
+     * @param {Number} t
+     * @param {Number} r
+     * @param {Number} b
+     */
+    setMargin: function (l, t, r, b) {
+        this.left = l;
+        this.top = t;
+        this.right = r;
+        this.bottom = b;
+    },
+    /**
+     *  check is equals
+     * @param {ccui.Margin} target
+     * @returns {boolean}
+     */
+    equals: function (target) {
+        return (this.left == target.left && this.top == target.top && this.right == target.right && this.bottom == target.bottom);
+    }
+});
+
+ccui.MarginZero = function(){
+    return new ccui.Margin(0,0,0,0);
+};
+
+/**
+ * Layout parameter define
  * @class
  * @extends ccui.Class
  */
@@ -41,10 +92,17 @@ ccui.LayoutParameter = ccui.Class.extend(/** @lends ccui.LayoutParameter# */{
      * @param {ccui.Margin} margin
      */
     setMargin: function (margin) {
-        this._margin.left = margin.left;
-        this._margin.top = margin.top;
-        this._margin.right = margin.right;
-        this._margin.bottom = margin.bottom;
+        if(typeof margin === 'object'){
+            this._margin.left = margin.left;
+            this._margin.top = margin.top;
+            this._margin.right = margin.right;
+            this._margin.bottom = margin.bottom;
+        }else{
+            this._margin.left = arguments[0];
+            this._margin.top = arguments[1];
+            this._margin.right = arguments[2];
+            this._margin.bottom = arguments[3];
+        }
     },
 
     /**
@@ -82,10 +140,7 @@ ccui.LayoutParameter = ccui.Class.extend(/** @lends ccui.LayoutParameter# */{
      * @param {ccui.LayoutParameter} model
      */
     copyProperties:function(model){
-        this._margin.left = model._margin.left;
-        this._margin.top = model._margin.top;
-        this._margin.right = model._margin.right;
-        this._margin.bottom = model._margin.bottom;
+        this._margin = model._margin;
     }
 });
 
@@ -98,9 +153,14 @@ ccui.LayoutParameter = ccui.Class.extend(/** @lends ccui.LayoutParameter# */{
  * var uiLayoutParameter = ccui.LayoutParameter.create();
  */
 ccui.LayoutParameter.create = function () {
-    var parameter = new ccui.LayoutParameter();
-    return parameter;
+    return new ccui.LayoutParameter();
 };
+
+// Constants
+//layout parameter type
+ccui.LayoutParameter.NONE = 0;
+ccui.LayoutParameter.LINEAR = 1;
+ccui.LayoutParameter.RELATIVE = 2;
 
 /**
  * Base class for ccui.LinearLayoutParameter
@@ -111,13 +171,13 @@ ccui.LinearLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.LinearL
     _linearGravity: null,
     ctor: function () {
         ccui.LayoutParameter.prototype.ctor.call(this);
-        this._linearGravity = ccui.LINEAR_GRAVITY_NONE;
+        this._linearGravity = ccui.LinearLayoutParameter.NONE;
         this._layoutParameterType = ccui.LayoutParameter.LINEAR;
     },
 
     /**
      * Sets LinearGravity parameter for LayoutParameter.
-     * @param {ccui.LINEAR_GRAVITY_NONE|ccui.LINEAR_GRAVITY_TOP|ccui.LINEAR_GRAVITY_RIGHT|ccui.LINEAR_GRAVITY_BOTTOM|ccui.LINEAR_GRAVITY_CENTER_VERTICAL|ccui.LINEAR_GRAVITY_CENTER_HORIZONTAL} gravity
+     * @param {Number} gravity
      */
     setGravity: function (gravity) {
         this._linearGravity = gravity;
@@ -125,7 +185,7 @@ ccui.LinearLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.LinearL
 
     /**
      * Gets LinearGravity parameter for LayoutParameter.
-     * @returns {ccui.LINEAR_GRAVITY_NONE|ccui.LINEAR_GRAVITY_TOP|ccui.LINEAR_GRAVITY_RIGHT|ccui.LINEAR_GRAVITY_BOTTOM|ccui.LINEAR_GRAVITY_CENTER_VERTICAL|ccui.LINEAR_GRAVITY_CENTER_HORIZONTAL}
+     * @returns {Number}
      */
     getGravity: function () {
         return this._linearGravity;
@@ -145,7 +205,13 @@ ccui.LinearLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.LinearL
      */
     copyProperties: function (model) {
         ccui.LayoutParameter.prototype.copyProperties.call(this, model);
-        this.setGravity(model._linearGravity);
+        var parameter = model;
+        if(parameter){
+            this.setAlign(parameter._relativeAlign);
+            this.setRelativeName(parameter._relativeLayoutName);
+            this.setRelativeToWidgetName(parameter._relativeWidgetName);
+            this.setGravity(model._linearGravity);
+        }
     }
 });
 
@@ -158,9 +224,18 @@ ccui.LinearLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.LinearL
  * var uiLinearLayoutParameter = ccui.LinearLayoutParameter.create();
  */
 ccui.LinearLayoutParameter.create = function () {
-    var parameter = new ccui.LinearLayoutParameter();
-    return parameter;
+    return new ccui.LinearLayoutParameter();
 };
+
+// Constants
+//Linear layout parameter LinearGravity
+ccui.LinearLayoutParameter.NONE = 0;
+ccui.LinearLayoutParameter.LEFT = 1;
+ccui.LinearLayoutParameter.TOP = 2;
+ccui.LinearLayoutParameter.RIGHT = 3;
+ccui.LinearLayoutParameter.BOTTOM = 4;
+ccui.LinearLayoutParameter.CENTER_VERTICAL = 5;
+ccui.LinearLayoutParameter.CENTER_HORIZONTAL = 6;
 
 /**
  * Base class for ccui.RelativeLayoutParameter
@@ -174,7 +249,7 @@ ccui.RelativeLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.Relat
     _put:false,
     ctor: function () {
         ccui.LayoutParameter.prototype.ctor.call(this);
-        this._relativeAlign = ccui.RELATIVE_ALIGN_NONE;
+        this._relativeAlign = ccui.RelativeLayoutParameter.NONE;
         this._relativeWidgetName = "";
         this._relativeLayoutName = "";
         this._put = false;
@@ -234,7 +309,7 @@ ccui.RelativeLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.Relat
      * @returns {ccui.RelativeLayoutParameter}
      */
     createCloneInstance:function(){
-        return ccui.LinearLayoutParameter.create();
+        return ccui.RelativeLayoutParameter.create();     //TODO
     },
 
     /**
@@ -258,13 +333,33 @@ ccui.RelativeLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.Relat
  * var uiRelativeLayoutParameter = ccui.RelativeLayoutParameter.create();
  */
 ccui.RelativeLayoutParameter.create = function () {
-    var parameter = new ccui.RelativeLayoutParameter();
-    return parameter;
+    return new ccui.RelativeLayoutParameter();
 };
 
-
 // Constants
-//layout parameter type
-ccui.LayoutParameter.NONE = 0;
-ccui.LayoutParameter.LINEAR = 1;
-ccui.LayoutParameter.RELATIVE = 2;
+//Relative layout parameter RelativeAlign
+ccui.RelativeLayoutParameter.NONE = 0;
+ccui.RelativeLayoutParameter.PARENT_TOP_LEFT = 1;
+ccui.RelativeLayoutParameter.PARENT_TOP_CENTER_HORIZONTAL = 2;
+ccui.RelativeLayoutParameter.PARENT_TOP_RIGHT = 3;
+ccui.RelativeLayoutParameter.PARENT_LEFT_CENTER_VERTICAL = 4;
+
+ccui.RelativeLayoutParameter.CENTER_IN_PARENT = 5;
+
+ccui.RelativeLayoutParameter.PARENT_RIGHT_CENTER_VERTICAL = 6;
+ccui.RelativeLayoutParameter.PARENT_LEFT_BOTTOM = 7;
+ccui.RelativeLayoutParameter.PARENT_BOTTOM_CENTER_HORIZONTAL = 8;
+ccui.RelativeLayoutParameter.PARENT_RIGHT_BOTTOM = 9;
+
+ccui.RelativeLayoutParameter.LOCATION_ABOVE_LEFTALIGN = 10;
+ccui.RelativeLayoutParameter.LOCATION_ABOVE_CENTER = 11;
+ccui.RelativeLayoutParameter.LOCATION_ABOVE_RIGHTALIGN = 12;
+ccui.RelativeLayoutParameter.LOCATION_LEFT_OF_TOPALIGN = 13;
+ccui.RelativeLayoutParameter.LOCATION_LEFT_OF_CENTER = 14;
+ccui.RelativeLayoutParameter.LOCATION_LEFT_OF_BOTTOMALIGN = 15;
+ccui.RelativeLayoutParameter.LOCATION_RIGHT_OF_TOPALIGN = 16;
+ccui.RelativeLayoutParameter.LOCATION_RIGHT_OF_CENTER = 17;
+ccui.RelativeLayoutParameter.LOCATION_RIGHT_OF_BOTTOMALIGN = 18;
+ccui.RelativeLayoutParameter.LOCATION_BELOW_LEFTALIGN = 19;
+ccui.RelativeLayoutParameter.LOCATION_BELOW_CENTER = 20;
+ccui.RelativeLayoutParameter.LOCATION_BELOW_RIGHTALIGN = 21;

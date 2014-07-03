@@ -194,7 +194,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     updateAtlasValues: null,
 
     _updateAtlasValuesForCanvas: function () {
-        var locString = this._string;
+        var locString = this._string || "";
         var n = locString.length;
         var texture = this.texture;
         var locItemWidth = this._itemWidth , locItemHeight = this._itemHeight;     //needn't multiply cc.contentScaleFactor(), because sprite's draw will do this

@@ -247,8 +247,10 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         var context = ctx || cc._renderContext;
         cc.nodeDrawSetup(this);
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-        context.uniform4fv(this._uniformColor, this._colorF32Array);
-        this.textureAtlas.drawNumberOfQuads(this.quadsToDraw, 0);
+        if(this._uniformColor && this._colorF32Array){
+            context.uniform4fv(this._uniformColor, this._colorF32Array);
+            this.textureAtlas.drawNumberOfQuads(this.quadsToDraw, 0);
+        }
     },
 
     /**
