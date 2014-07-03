@@ -214,20 +214,6 @@
                 <file name="extensions/cocostudio/trigger/TriggerObj.js"/>
                 <file name="extensions/cocostudio/reader/GUIReader.js"/>
                 <file name="extensions/cocostudio/reader/SceneReader.js"/>
-                <file name="extensions/pluginx/protocols/Config.js"/>
-                <file name="extensions/pluginx/protocols/PluginUtils.js"/>
-                <file name="extensions/pluginx/protocols/PluginProtocol.js"/>
-                <file name="extensions/pluginx/protocols/ProtocolSocial.js"/>
-                <file name="extensions/pluginx/protocols/ProtocolAds.js"/>
-                <file name="extensions/pluginx/protocols/ProtocolAnalytics.js"/>
-                <file name="extensions/pluginx/protocols/PluginFactory.js"/>
-                <file name="extensions/pluginx/protocols/PluginManager.js"/>
-                <file name="extensions/pluginx/plugins/SocialWeibo.js"/>
-                <file name="extensions/pluginx/plugins/SocialQQWeibo.js"/>
-                <file name="extensions/pluginx/plugins/SocialQzone.js"/>
-                <file name="extensions/pluginx/plugins/SocialTwitter.js"/>
-                <file name="extensions/pluginx/plugins/SocialFacebook.js"/>
-                <file name="extensions/pluginx/plugins/AnalyticsFlurry.js"/>
                 <file name="cocos2d/physics/CCPhysicsSprite.js"/>
                 <file name="cocos2d/physics/CCPhysicsDebugNode.js"/>
             </sources>
