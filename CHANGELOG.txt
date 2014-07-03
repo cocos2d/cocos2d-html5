@@ -1,5 +1,36 @@
 ChangeLog:
 
+Cocos2d-html5-v3.0 RC0 @ July.3, 2014
+
+* Added Facebook SDK plugin into Pluginx extension.
+* Refactoration of gui system `ccui` for better performance, usage and maintainbility.
+* Added `bake` function to `cc.Layer` to support layer baking.
+* Added object pool extension: `cc.pool`.
+* Added new easing functions: bezier action, quadratic actions, quartic actions, quintic actions, circle actions, cubic actions.
+* Made `cc.loader` continue the counter process even if a resource failed to be loaded.
+* Supported multiple property objects in `cc.Class.extend` function.
+* Refactored `ccui.Widget`'s `getLeftInParent`, `getBottomInParent`, `getRightInParent`, `getTopInParent` to `getLeftBoundary`, `getBottomBoundary`, `getRightBoundary`, `getTopBoundary`.
+* Refactored `cc.FadeIn.create(duration, toOpacity)` to `cc.FadeIn.create(duration)`.
+* Refactroed all string access functions in `ccui` extension to `setString` and `getString`.
+* Added `getContentSize` and `setContentSize` in `ccui` extension.
+* Changed the default alpha value of `cc.Color` from `undefined` to 255.
+* Made `cc.log` support formatted string.
+* [JSB] Improved `cc.AssetsManager` with multi-thread downloading, download resuming support, compressed file support, better progression informations, possibility to retry failed assets.
+
+* Bugs fix:
+    1. Fix bugs on creating sequence objcet or spawn object using new method.
+    2. Fix a bug that `ccui.LoadingBar`'s `setPercent` function will crash when its texture is in a plist file and scale9Enabled is true.
+    3. Fixed a bug of `cc.audioEngine` that it crashs when audio isn't correctly loaded and its duration is infinity.
+    4. Correction of the calculation of `cc.visibleRect`.
+    5. Fix `cc.Skin`'s bounding box calculation for canvas rendering.
+    6. Fix an issue that `cc.TextureCache` doesn't handle loaded texture in some case.
+    7. Fix an issue that texture rect could be zero sized in `initWithFile` function of `cc.Sprite`.
+    8. Fix a bug on inverted ClippingNode with DrawNode as stencil in Canvas render mode.
+    9. Fix a bug that `cc.SpriteFrame` didn't support initialization with texture name parameter.
+    10. Fix a bug on `ccs.ArmatureAnimation`'s loop parameter.
+    11. Fix a bug that `cc.JumpTo`'s `_delta` position calculation is incorrect.
+    12. Fix a bug of `cc._audioLoader` that it doesn't work when it failed to load an audio file.
+
 Cocos2d-html5-v3.0 beta @ May.23, 2014
 
 * Refactored actions to make it more friendly and easy-to-use.
