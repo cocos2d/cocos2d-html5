@@ -95,6 +95,8 @@ ccs.WidgetReader = {
                     var rParameter = parameter;
                     var relativeName = layoutParameterDic["relativeName"];
                     rParameter.setRelativeName(relativeName);
+                    var relativeToName = layoutParameterDic["relativeToName"];
+                    rParameter.setRelativeToWidgetName(relativeToName);
                     var align = layoutParameterDic["align"];
                     rParameter.setAlign(align);
                     break;
