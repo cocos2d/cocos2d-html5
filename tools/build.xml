@@ -5,8 +5,8 @@
              classpath="./compiler/compiler.jar"/>
     <target name="compile">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="./../lib/cocos2d-html5-v3.0-beta-min.js">
-            <!--sourceMapOutputFile="E:\Projects\cocos2d-js\samples\js-tests\publish\html5\sourcemap" sourceMapFormat="V3" -->
+                debug="false" output="./../lib/cocos2d-html5-v3.0-rc0-min.js">
+            <!--sourceMapOutputFile="./../lib/cocos2d-html5-v3.0-rc0-sourcemap" sourceMapFormat="V3" -->
             <sources dir="./../">
                 <file name="Base64Images.js"/>
                 <file name="CCBoot.js"/>
@@ -164,7 +164,7 @@
                 <file name="extensions/ccui/base-classes/UIWidget.js"/>
                 <file name="extensions/ccui/layouts/UILayout.js"/>
                 <file name="extensions/ccui/layouts/UILayoutParameter.js"/>
-                <file name="extensions/ccui/layouts/UILayoutDefine.js"/>
+                <file name="extensions/ccui/layouts/UILayoutManager.js"/>
                 <file name="extensions/ccui/system/UIHelper.js"/>
                 <file name="extensions/ccui/uiwidgets/UIButton.js"/>
                 <file name="extensions/ccui/uiwidgets/UICheckBox.js"/>
@@ -236,8 +236,8 @@
 
     <target name="compile_core">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="./../lib/cocos2d-html5-v3.0-beta-core-min.js">
-            <!--sourceMapOutputFile="E:\Projects\cocos2d-js\samples\js-tests\publish\html5\sourcemap" sourceMapFormat="V3" -->
+                debug="false" output="./../lib/cocos2d-html5-v3.0-rc0-core-min.js">
+            <!--sourceMapOutputFile="./../lib/cocos2d-html5-v3.0-rc0-core-sourcemap" sourceMapFormat="V3" -->
             <sources dir="./../">
                 <file name="CCBoot.js"/>
                 <file name="cocos2d/core/platform/CCClass.js"/>
