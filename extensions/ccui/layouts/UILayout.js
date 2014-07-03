@@ -1175,75 +1175,27 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     //clipping
     _onBeforeVisitStencil: function(){
-        /*s_layer++;
-        GLint mask_layer = 0x1 << s_layer;
-        GLint mask_layer_l = mask_layer - 1;
-        _mask_layer_le = mask_layer | mask_layer_l;
-        _currentStencilEnabled = glIsEnabled(GL_STENCIL_TEST);
-        glGetIntegerv(GL_STENCIL_WRITEMASK, (GLint *)&_currentStencilWriteMask);
-        glGetIntegerv(GL_STENCIL_FUNC, (GLint *)&_currentStencilFunc);
-        glGetIntegerv(GL_STENCIL_REF, &_currentStencilRef);
-        glGetIntegerv(GL_STENCIL_VALUE_MASK, (GLint *)&_currentStencilValueMask);
-        glGetIntegerv(GL_STENCIL_FAIL, (GLint *)&_currentStencilFail);
-        glGetIntegerv(GL_STENCIL_PASS_DEPTH_FAIL, (GLint *)&_currentStencilPassDepthFail);
-        glGetIntegerv(GL_STENCIL_PASS_DEPTH_PASS, (GLint *)&_currentStencilPassDepthPass);
-
-        glEnable(GL_STENCIL_TEST);
-        CHECK_GL_ERROR_DEBUG();
-        glStencilMask(mask_layer);
-        glGetBooleanv(GL_DEPTH_WRITEMASK, &_currentDepthWriteMask);
-        glDepthMask(GL_FALSE);
-        glStencilFunc(GL_NEVER, mask_layer, mask_layer);
-        glStencilOp(GL_ZERO, GL_KEEP, GL_KEEP);
-
-        this.drawFullScreenQuadClearStencil();
-
-        glStencilFunc(GL_NEVER, mask_layer, mask_layer);
-        glStencilOp(GL_REPLACE, GL_KEEP, GL_KEEP);*/
+        //TODO NEW RENDERER
     },
 
     _drawFullScreenQuadClearStencil:function(){
-        /*Director* director = Director.getInstance();
-        CCASSERT(nullptr != director, "Director is null when seting matrix stack");
-
-        director.pushMatrix(MATRIX_STACK_TYPE.MATRIX_STACK_PROJECTION);
-        director.loadIdentityMatrix(MATRIX_STACK_TYPE.MATRIX_STACK_PROJECTION);
-
-        director.pushMatrix(MATRIX_STACK_TYPE.MATRIX_STACK_MODELVIEW);
-        director.loadIdentityMatrix(MATRIX_STACK_TYPE.MATRIX_STACK_MODELVIEW);
-
-        DrawPrimitives.drawSolidRect(Vec2(-1,-1), Vec2(1,1), Color4F(1, 1, 1, 1));
-
-        director.popMatrix(MATRIX_STACK_TYPE.MATRIX_STACK_PROJECTION);
-        director.popMatrix(MATRIX_STACK_TYPE.MATRIX_STACK_MODELVIEW);*/
+        //TODO NEW RENDERER
     },
 
     _onAfterDrawStencil: function(){
-/*        glDepthMask(_currentDepthWriteMask);
-        glStencilFunc(GL_EQUAL, _mask_layer_le, _mask_layer_le);
-        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);*/
+        //TODO NEW RENDERER
     },
 
     _onAfterVisitStencil: function(){
-       /* glStencilFunc(_currentStencilFunc, _currentStencilRef, _currentStencilValueMask);
-        glStencilOp(_currentStencilFail, _currentStencilPassDepthFail, _currentStencilPassDepthPass);
-        glStencilMask(_currentStencilWriteMask);
-        if (!_currentStencilEnabled)
-        {
-            glDisable(GL_STENCIL_TEST);
-        }
-        s_layer--;*/
+        //TODO NEW RENDERER
     },
 
     _onAfterVisitScissor: function(){
-        /*Rect clippingRect = getClippingRect();
-        glEnable(GL_SCISSOR_TEST);
-        auto glview = Director.getInstance().getOpenGLView();
-        glview.setScissorInPoints(clippingRect.origin.x, clippingRect.origin.y, clippingRect.size.width, clippingRect.size.height);*/
+        //TODO NEW RENDERER
     },
 
     _onAfterVisitScissor: function(){
-        //glDisable(GL_SCISSOR_TEST);
+        //TODO NEW RENDERER
     },
 
     _updateBackGroundImageOpacity: function(){
