@@ -232,7 +232,7 @@ if (cc.sys._supportWebAudio) {
         this._volumeNode["gain"].value = volume;
     });
     /** @expose */
-    _p.ended;
+    _p.paused;
     cc.defineGetterSetter(_p, "paused", function () {
         return this._paused;
     });

@@ -24,11 +24,27 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var CCPool = cc.Class.extend({
-    _pool: null,
-    ctor: function () {
-        this._pool = {};
-    },
+/**
+ * @namespace
+ * @name cc.pool
+ * <p>
+ *  cc.pool is a singleton object serves as an object cache pool.<br/>
+ *  It can helps you to improve your game performance for objects which need frequent release and recreate operations<br/>
+ *  Some common use case is :
+ *      1. Bullets in game (die very soon, massive creation and recreation, no side effect on other objects)
+ *      2. Blocks in candy crash (massive creation and recreation)
+ *      etc...
+ * </p>
+ *
+ * @example
+ * var sp = new cc.Sprite("a.png");
+ * this.addChild(sp);
+ * cc.pool.putInPool(sp);
+ *
+ * cc.pool.getFromPool(cc.Sprite, "a.png");
+ */
+cc.pool = {
+    _pool: {},
 
     /**
      * Put the obj in pool
@@ -113,12 +129,4 @@ var CCPool = cc.Class.extend({
         }
         this._pool = {};
     }
-});
-CCPool._instance = null;
-CCPool._getInstance = function () {
-    if (!CCPool._instance) {
-        CCPool._instance = new CCPool();
-    }
-    return CCPool._instance;
-}
-cc.pool = CCPool._getInstance();
+};
