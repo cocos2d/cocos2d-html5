@@ -56,8 +56,6 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
     },
     onEnter: function () {
         cc.TextFieldTTF.prototype.setDelegate.call(this, this);
-//        cc.TextFieldTTF.prototype.onEnter.call(this);
-//        cc.TextFieldTTF.prototype.setDelegate.call(this, this);
     },
     //CCTextFieldDelegate
     onTextFieldAttachWithIME: function (sender) {
@@ -163,13 +161,8 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
         this._passwordStyleText = styleText;
     },
     setPasswordText: function (text) {
-//        var tempStr = "";
-//        for (var i = 0; i < text.length; ++i) {
-//            tempStr += this._passwordStyleText;
-//        }
-//        cc.LabelTTF.prototype.setString.call(this, tempStr);
         var tempStr = "";
-        var text_count = this._calcCharCount(text);
+        var text_count = text.length;
         var max = text_count;
 
         if (this.maxLengthEnabled)
@@ -182,7 +175,7 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
 
         for (var i = 0; i < max; ++i)
         {
-            tempStr.append(this._passwordStyleText);
+            tempStr += this._passwordStyleText;
         }
 
         cc.LabelTTF.prototype.setString.call(this, tempStr);
@@ -217,18 +210,6 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
             return true;
         }
         return false;
-    },
-    _calcCharCount: function(pszText){
-        var n = 0;
-        var ch = pszText;
-        if(!ch) {
-            if (0x80 != (0xC0 & ch))
-            {
-                ++n;
-            }
-            ++pszText;
-        }
-        return n;
     },
     onDraw: function (sender) {
         return false;
@@ -318,7 +299,6 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
      * @param {cc.Size} size
      */
     setTouchSize: function (size) {
-//        this._useTouchArea = true;
         this._touchWidth = size.width;
         this._touchHeight = size.height;
     },
@@ -401,7 +381,6 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
             this._textFieldRender.setString(text);
         }
         this._textFieldRendererAdaptDirty = true;
-//        this.textfieldRendererScaleChangedWithSize();
         this._updateContentSizeWithTextureSize(this._textFieldRender.getContentSize());
     },
 
@@ -411,7 +390,6 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     setPlaceHolder: function (value) {
         this._textFieldRender.setPlaceHolder(value);
         this._textFieldRendererAdaptDirty = true;
-//        this.textfieldRendererScaleChangedWithSize();
         this._updateContentSizeWithTextureSize(this._textFieldRender.getContentSize());
     },
 
@@ -424,7 +402,6 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
 
     _setFont: function (font) {
         this._textFieldRender._setFont(font);
-//        this.textfieldRendererScaleChangedWithSize();
         this._textFieldRendererAdaptDirty = true;
     },
 
@@ -437,8 +414,6 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
      * @param {cc.Size} size
      */
     setFontSize: function (size) {
-//        this._textFieldRender.setFontSize(size);
-//        this.textfieldRendererScaleChangedWithSize();
         this._textFieldRender.setFontSize(size);
         this._textFieldRendererAdaptDirty = true;
         this._updateContentSizeWithTextureSize(this._textFieldRender.getContentSize());
@@ -457,8 +432,6 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
      * @param {String} name
      */
     setFontName: function (name) {
-//        this._textFieldRender.setFontName(name);
-//        this.textfieldRendererScaleChangedWithSize();
         this._textFieldRender.setFontName(name);
         this._textFieldRendererAdaptDirty = true;
         this._updateContentSizeWithTextureSize(this._textFieldRender.getContentSize());
@@ -506,11 +479,14 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
      * touch began
      * @param {cc.Point} touchPoint
      */
-    onTouchBegan: function (touchPoint) {
-        var pass = ccui.Widget.prototype.onTouchBegan.call(this, touchPoint);
-        if (this._hitted)
+    onTouchBegan: function (touchPoint, unusedEvent) {
+        var self = this;
+        var pass = ccui.Widget.prototype.onTouchBegan.call(self, touchPoint, unusedEvent);
+        if (self._hitted)
         {
-            this._textFieldRender.attachWithIME();
+            setTimeout(function(){
+                self._textFieldRender.attachWithIME();
+            }, 0);
         }
         return pass;
     },
@@ -590,7 +566,6 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
             this.setInsertText(false);
 
             this._textFieldRendererAdaptDirty = true;
-//            this.textfieldRendererScaleChangedWithSize();
             this._updateContentSizeWithTextureSize(this._textFieldRender.getContentSize());
         }
         if (this.getDeleteBackward()) {
@@ -598,7 +573,6 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
             this.setDeleteBackward(false);
 
             this._textFieldRendererAdaptDirty = true;
-//            this.textfieldRendererScaleChangedWithSize();
             this._updateContentSizeWithTextureSize(this._textFieldRender.getContentSize());
         }
     },
@@ -711,21 +685,6 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         this._textFieldEventListener = target;
     },
 
-//    /**
-//     * check hit
-//     * @param {cc.Point} pt
-//     * @returns {boolean}
-//     */
-//    hitTest: function (pt) {
-//        var nsp = this.convertToNodeSpace(pt);
-//        var locSize = this._textFieldRender.getContentSize();
-//        var bb = cc.rect(-locSize.width * this._anchorPoint.x, -locSize.height * this._anchorPoint.y, locSize.width, locSize.height);
-//        if (nsp.x >= bb.x && nsp.x <= bb.x + bb.width && nsp.y >= bb.y && nsp.y <= bb.y + bb.height) {
-//            return true;
-//        }
-//        return false;
-//    },
-
     /**
      * override "setAnchorPoint" of widget.
      * @param {cc.Point|Number} point The anchor point of UILabelBMFont or The anchor point.x of UILabelBMFont.
@@ -751,7 +710,6 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
 
     onSizeChanged: function () {
         ccui.Widget.prototype.onSizeChanged.call(this);
-//        this.textfieldRendererScaleChangedWithSize();
         this._textFieldRendererAdaptDirty = true;
     },
 
