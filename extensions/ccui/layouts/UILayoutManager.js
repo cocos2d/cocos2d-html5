@@ -190,7 +190,7 @@ ccui.RelativeLayoutManager = ccui.LayoutManager.extend({
     _caculateFinalPositionWithRelativeWidget: function(layout){    //TODO typo
         var locWidget = this._widget;
         var ap = locWidget.getAnchorPoint();
-        var cs = locWidget.getSize();
+        var cs = locWidget.getContentSize();
 
         this._finalPositionX = 0.0;
         this._finalPositionY = 0.0;
@@ -253,7 +253,7 @@ ccui.RelativeLayoutManager = ccui.LayoutManager.extend({
                 if (relativeWidget){
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
-                    var rbs = relativeWidget.getSize();
+                    var rbs = relativeWidget.getContentSize();
                     var locationTop = relativeWidget.getTopBoundary();
                     this._finalPositionY = locationTop + ap.y * cs.height;
                     this._finalPositionX = relativeWidget.getLeftBoundary() + rbs.width * 0.5 + ap.x * cs.width - cs.width * 0.5;
@@ -283,7 +283,7 @@ ccui.RelativeLayoutManager = ccui.LayoutManager.extend({
                 if (relativeWidget) {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
-                    var rbs = relativeWidget.getSize();
+                    var rbs = relativeWidget.getContentSize();
                     var locationLeft = relativeWidget.getLeftBoundary();
                     this._finalPositionX = locationLeft - (1.0 - ap.x) * cs.width;
                     this._finalPositionY = relativeWidget.getBottomBoundary() + rbs.height * 0.5 + ap.y * cs.height - cs.height * 0.5;
@@ -313,7 +313,7 @@ ccui.RelativeLayoutManager = ccui.LayoutManager.extend({
                 if (relativeWidget){
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
-                    var rbs = relativeWidget.getSize();
+                    var rbs = relativeWidget.getContentSize();
                     var locationRight = relativeWidget.getRightBoundary();
                     this._finalPositionX = locationRight + ap.x * cs.width;
                     this._finalPositionY = relativeWidget.getBottomBoundary() + rbs.height * 0.5 + ap.y * cs.height - cs.height * 0.5;
@@ -343,7 +343,7 @@ ccui.RelativeLayoutManager = ccui.LayoutManager.extend({
                 if (relativeWidget) {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
-                    var rbs = relativeWidget.getSize();
+                    var rbs = relativeWidget.getContentSize();
                     var locationBottom = relativeWidget.getBottomBoundary();
 
                     this._finalPositionY = locationBottom - (1.0 - ap.y) * cs.height;

@@ -93,8 +93,10 @@ ccs.WidgetReader = {
                 case 2:
                     parameter = new ccui.RelativeLayoutParameter();
                     var rParameter = parameter;
-                    var relativeName = options["relativeName"];
+                    var relativeName = layoutParameterDic["relativeName"];
                     rParameter.setRelativeName(relativeName);
+                    var relativeToName = layoutParameterDic["relativeToName"];
+                    rParameter.setRelativeToWidgetName(relativeToName);
                     var align = layoutParameterDic["align"];
                     rParameter.setAlign(align);
                     break;
