@@ -251,8 +251,8 @@ if (cc.sys._supportWebAudio) {
 }
 
 /**
- * @namespace A simple Audio Engine engine API.
- * @name cc.audioEngine
+ * @namespace cc.audioEngine
+ * A simple Audio Engine engine API.
  */
 cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
     _soundSupported: false,      // if sound is not enabled, this engine's init() will return false

@@ -38,8 +38,7 @@ cc.GLToClipTransform = function (transformOut) {
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
- * @namespace
- * @name cc.director
+ * @namespace cc.director
  * <p>
  *    cc.director is a singleton of DisplayLinkDirector type director.<br/>
  *    Since the cc.director is a singleton, you don't need to call any constructor or create functions,<br/>
