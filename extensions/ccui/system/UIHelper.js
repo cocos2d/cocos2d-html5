@@ -25,7 +25,8 @@
 
 /**
  * UI Helper
- * @namespace ccui.helper
+ * @namespace
+ * @name ccui.helper
  */
 ccui.helper = {
 	/**

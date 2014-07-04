@@ -25,8 +25,9 @@
  ****************************************************************************/
 
 /**
- * @namespace cc.saxParser
  * A SAX Parser
+ * @namespace
+ * @name cc.saxParser
  */
 cc.SAXParser = cc.Class.extend(/** @lends cc.saxParser# */{
     _parser: null,
@@ -63,7 +64,8 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.saxParser# */{
 
 /**
  *
- * @namespace A plist Parser
+ * A plist Parser
+ * @namespace
  * @name cc.plistParser
  */
 cc.PlistParser = cc.SAXParser.extend(/** @lends cc.plistParser# */{

@@ -83,7 +83,8 @@ cc.ArrayForObjectSorting = cc.Class.extend(/** @lends cc.ArrayForObjectSorting# 
      * If the compare message does not result NSComparisonResult, sorting behavior
      * is not defined. It ignores duplicate entries and inserts next to it.
      *
-     * @param {object} addObject
+     * @function
+     * @param {Object} addObject    Object to insert
      */
     insertSortedObject:function (addObject) {
         if(!addObject)
@@ -98,7 +99,8 @@ cc.ArrayForObjectSorting = cc.Class.extend(/** @lends cc.ArrayForObjectSorting# 
      * Removes an object with given key and value. If no object is found in array
      * with the key and value, no action is taken.
      *
-     * @param value to remove
+     * @function
+     * @param {Object} delObject    Object to remove
      */
     removeSortedObject:function (delObject) {
         if (this.count() == 0) {
@@ -121,8 +123,9 @@ cc.ArrayForObjectSorting = cc.Class.extend(/** @lends cc.ArrayForObjectSorting# 
      * keep consistency of being sorted. If it is changed externally, it must be
      * sorted completely again.
      *
-     * @param value to set
-     * @param object the object which has the value
+     * @function
+     * @param {Number} tag          Tag to set
+     * @param {Object} setObject    The object which would be set
      */
     setObjectID_ofSortedObject:function (tag, setObject) {
         var idx = this.indexOfSortedObject(setObject);
@@ -158,8 +161,9 @@ cc.ArrayForObjectSorting = cc.Class.extend(/** @lends cc.ArrayForObjectSorting# 
      * Returns an object with given key and value. If no object is found,
      * it returns nil.
      *
-     * @param value to locate object
-     * @return object found or nil.
+     * @function
+     * @param {Number} tag  Tag to locate object
+     * @return {Object|null}
      */
     getObjectWithObjectID:function (tag) {
         return null;
@@ -173,8 +177,9 @@ cc.ArrayForObjectSorting = cc.Class.extend(/** @lends cc.ArrayForObjectSorting# 
      * would have been located. If object must be located at the end of array,
      * it returns the length of the array, which is out of bound.
      *
-     * @param value to locate object
-     * @return index of an object found
+     * @function
+     * @param {Number} idxObj   Id to locate object
+     * @return {Number} index of an object found
      */
     indexOfSortedObject:function (idxObj) {
         var idx = 0;
