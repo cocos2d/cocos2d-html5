@@ -40,9 +40,10 @@
  * cc.pool.putInPool(sp);
  *
  * cc.pool.getFromPool(cc.Sprite, "a.png");
- * @namespace cc.pool
+ * @namespace
+ * @name cc.pool
  */
-cc.pool = {
+cc.pool = /** @lends cc.pool# */{
     _pool: {},
 
     /**

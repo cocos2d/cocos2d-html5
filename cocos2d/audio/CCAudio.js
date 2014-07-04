@@ -251,8 +251,9 @@ if (cc.sys._supportWebAudio) {
 }
 
 /**
- * @namespace cc.audioEngine
  * A simple Audio Engine engine API.
+ * @namespace
+ * @name cc.audioEngine
  */
 cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
     _soundSupported: false,      // if sound is not enabled, this engine's init() will return false
@@ -678,7 +679,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
 if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
     /**
      * Extended AudioEngine for single audio mode.
-     * @class
      */
     cc.AudioEngineForSingle = cc.AudioEngine.extend({
         _waitingEffIds: [],

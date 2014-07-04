@@ -28,8 +28,9 @@
  ****************************************************************************/
 
 /**
- * @namespace cc.tiffReader
  * A tiff file reader, it can parse byte array to draw into a canvas
+ * @namespace
+ * @name cc.tiffReader
  */
 cc.tiffReader = /** @lends cc.tiffReader# */{
     _littleEndian: false,
@@ -227,7 +228,7 @@ cc.tiffReader = /** @lends cc.tiffReader# */{
     },
 
     /**
-     *
+     * @function
      * @param {Array} tiffData
      * @param {HTMLCanvasElement} canvas
      * @returns {*}

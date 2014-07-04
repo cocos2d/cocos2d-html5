@@ -25,10 +25,10 @@
 
 /**
  * The display manager of CocoStudio
- * @Class
+ * @Class ccs.DisplayManager
  * @extend cc.Class
  */
-ccs.DisplayManager = ccs.Class.extend(/** @lends cc.DisplayManager */{
+ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
     _decoDisplayList:null,
     _currentDecoDisplay:null,
     _displayRenderNode:null,
