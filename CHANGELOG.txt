@@ -15,7 +15,6 @@ Cocos2d-html5-v3.0 RC0 @ July.3, 2014
 * Added `getContentSize` and `setContentSize` in `ccui` extension.
 * Changed the default alpha value of `cc.Color` from `undefined` to 255.
 * Made `cc.log` support formatted string.
-* [JSB] Improved `cc.AssetsManager` with multi-thread downloading, download resuming support, compressed file support, better progression informations, possibility to retry failed assets.
 
 * Bugs fix:
     1. Fix bugs on creating sequence objcet or spawn object using new method.
