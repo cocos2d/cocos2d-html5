@@ -31,8 +31,8 @@ cc.Touches = [];
 cc.TouchesIntergerDict = {};
 
 /**
- * @namespace cc.view is the shared view object.
- * @name cc.view
+ * @namespace cc.view
+ * cc.view is the shared view object.
  */
 cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     _delegate: null,

@@ -23,8 +23,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 /**
- * @namespace Base object for ccs.uiReader
- * @name ccs.uiReader
+ * Base object for ccs.uiReader
+ * @namespace ccs.uiReader
  */
 ccs.uiReader = /** @lends ccs.uiReader# */{
     _filePath: "",
