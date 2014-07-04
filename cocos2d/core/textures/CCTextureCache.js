@@ -25,7 +25,8 @@
  ****************************************************************************/
 
 /**
- * @namespace The global cache for cc.Texture2D
+ * @namespace cc.textureCache
+ * cc.textureCache is the global cache for cc.Texture2D
  */
 cc.textureCache = /** @lends cc.textureCache# */{
     _textures: {},
@@ -331,6 +332,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             return tex;
         }
 
+        tex = locTexs[url] = new cc.Texture2D();
+        tex.url = url;
         if (!cc.loader.getRes(url)) {
             if (cc.loader._checkIsImageURL(url)) {
                 cc.loader.load(url, function (err) {
@@ -345,9 +348,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 });
             }
         }
+        else {
+            tex.handleLoadedTexture();
+        }
 
-        tex = locTexs[url] = new cc.Texture2D();
-        tex.url = url;
         return tex;
     };
 

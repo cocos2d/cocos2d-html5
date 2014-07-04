@@ -25,9 +25,8 @@
  ****************************************************************************/
 
 /**
- *
- * @namespace A SAX Parser
- * @name cc.saxParser
+ * @namespace cc.saxParser
+ * A SAX Parser
  */
 cc.SAXParser = cc.Class.extend(/** @lends cc.saxParser# */{
     _parser: null,

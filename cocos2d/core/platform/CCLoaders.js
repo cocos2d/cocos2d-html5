@@ -47,7 +47,7 @@ cc._imgLoader = {
         });
     }
 };
-cc.loader.register(["png", "jpg", "bmp","jpeg","gif"], cc._imgLoader);
+cc.loader.register(["png", "jpg", "bmp","jpeg","gif", "ico"], cc._imgLoader);
 cc._serverImgLoader = {
     load : function(realUrl, url, res, cb){
         cc.loader.cache[url] =  cc.loader.loadImg(res.src, function(err, img){
@@ -87,7 +87,7 @@ cc._fontLoader = {
         if(srcs instanceof Array){
             for(var i = 0, li = srcs.length; i < li; i++){
                 var src = srcs[i];
-                type = path.extname(src);
+                type = path.extname(src).toLowerCase();
                 fontStr += "url('" + srcs[i] + "') format('" + TYPE[type] + "')";
                 fontStr += (i == li - 1) ? ";" : ",";
             }

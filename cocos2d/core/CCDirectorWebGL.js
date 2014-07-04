@@ -48,6 +48,10 @@ cc._tmp.DirectorWebGL = function () {
 
         _t.setViewport();
 
+        var view = _t._openGLView,
+            ox = view._viewPortRect.x / view._scaleX,
+            oy = view._viewPortRect.y / view._scaleY;
+
         switch (projection) {
             case cc.Director.PROJECTION_2D:
                 cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
@@ -71,8 +75,8 @@ cc._tmp.DirectorWebGL = function () {
 
                 cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
                 cc.kmGLLoadIdentity();
-                var eye = cc.kmVec3Fill(null, size.width / 2, size.height / 2, zeye);
-                var center = cc.kmVec3Fill(null, size.width / 2, size.height / 2, 0.0);
+                var eye = cc.kmVec3Fill(null, -ox + size.width / 2, -oy + size.height / 2, zeye);
+                var center = cc.kmVec3Fill(null, -ox + size.width / 2, -oy + size.height / 2, 0.0);
                 var up = cc.kmVec3Fill(null, 0.0, 1.0, 0.0);
                 cc.kmMat4LookAt(matrixLookup, eye, center, up);
                 cc.kmGLMultMatrix(matrixLookup);
@@ -299,9 +303,10 @@ cc._tmp.DirectorWebGL = function () {
      * Sets the glViewport
      */
     _p.setViewport = function () {
-        if (this._openGLView) {
+        var view = this._openGLView;
+        if (view) {
             var locWinSizeInPoints = this._winSizeInPoints;
-            this._openGLView.setViewPortInPoints(0, 0, locWinSizeInPoints.width, locWinSizeInPoints.height);
+            view.setViewPortInPoints(-view._viewPortRect.x/view._scaleX, -view._viewPortRect.y/view._scaleY, locWinSizeInPoints.width, locWinSizeInPoints.height);
         }
     };
 

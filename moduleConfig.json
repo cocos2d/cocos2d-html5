@@ -92,6 +92,7 @@
             "cocos2d/core/sprites/SpritesPropertyDefine.js",
             "cocos2d/core/sprites/CCSprite.js",
             "cocos2d/core/sprites/CCSpriteBatchNode.js",
+            "cocos2d/core/sprites/CCBakeSprite.js",
             "cocos2d/core/sprites/CCAnimation.js",
             "cocos2d/core/sprites/CCAnimationCache.js",
             "cocos2d/core/sprites/CCSpriteFrame.js",
@@ -254,13 +255,22 @@
             "extensions/editbox/CCdomNode.js",
             "extensions/editbox/CCEditBox.js"
         ],
+        "ccpool" : [
+            "core", "gui",
+
+            "extensions/ccpool/CCPool.js"
+        ],
         "ccui" : [
             "core", "gui", "actions", "labels", "text-input","clipping-nodes",
+            "extensions/ccui/base-classes/CCProtectedNode.js",
             "extensions/ccui/system/CocosGUI.js",
             "extensions/ccui/base-classes/UIWidget.js",
             "extensions/ccui/layouts/UILayout.js",
             "extensions/ccui/layouts/UILayoutParameter.js",
-            "extensions/ccui/layouts/UILayoutDefine.js",
+            "extensions/ccui/layouts/UILayoutManager.js",
+            "extensions/ccui/layouts/UIHBox.js",
+            "extensions/ccui/layouts/UIRelativeBox.js",
+            "extensions/ccui/layouts/UIVBox.js",
             "extensions/ccui/system/UIHelper.js",
             "extensions/ccui/uiwidgets/UIButton.js",
             "extensions/ccui/uiwidgets/UICheckBox.js",
@@ -282,6 +292,7 @@
             "extensions/cocostudio/components/CCComponent.js",
             "extensions/cocostudio/components/CCComponentContainer.js",
             "extensions/cocostudio/CocoStudio.js",
+            "extensions/cocostudio/ActionManagerEx.js",
 
             "extensions/cocostudio/armature/utils/CCArmatureDefine.js",
             "extensions/cocostudio/armature/utils/CCDataReaderHelper.js",
@@ -318,7 +329,23 @@
             "extensions/cocostudio/trigger/TriggerObj.js",
 
             "extensions/cocostudio/reader/GUIReader.js",
-            "extensions/cocostudio/reader/SceneReader.js"
+            "extensions/cocostudio/reader/SceneReader.js",
+            "extensions/cocostudio/reader/widgetreader/WidgetReaderProtocol.js",
+            "extensions/cocostudio/reader/widgetreader/WidgetReader.js",
+
+            "extensions/cocostudio/reader/widgetreader/ButtonReader/ButtonReader.js",
+            "extensions/cocostudio/reader/widgetreader/CheckBoxReader/CheckBoxReader.js",
+            "extensions/cocostudio/reader/widgetreader/ImageViewReader/ImageViewReader.js",
+            "extensions/cocostudio/reader/widgetreader/LabelAtlasReader/LabelAtlasReader.js",
+            "extensions/cocostudio/reader/widgetreader/LabelBMFontReader/LabelBMFontReader.js",
+            "extensions/cocostudio/reader/widgetreader/LabelReader/LabelReader.js",
+            "extensions/cocostudio/reader/widgetreader/LayoutReader/LayoutReader.js",
+            "extensions/cocostudio/reader/widgetreader/ScrollViewReader/ScrollViewReader.js",
+            "extensions/cocostudio/reader/widgetreader/ListViewReader/ListViewReader.js",
+            "extensions/cocostudio/reader/widgetreader/LoadingBarReader/LoadingBarReader.js",
+            "extensions/cocostudio/reader/widgetreader/PageViewReader/PageViewReader.js",
+            "extensions/cocostudio/reader/widgetreader/SliderReader/SliderReader.js",
+            "extensions/cocostudio/reader/widgetreader/TextFieldReader/TextFieldReader.js"
         ],
         "gui" : [
             "core", "clipping-nodes", "render-texture", "actions", "progress-timer",
@@ -344,25 +371,13 @@
         "pluginx" : [
             "core",
 
-            "extensions/pluginx/protocols/Config.js",
-            "extensions/pluginx/protocols/PluginUtils.js",
-            "extensions/pluginx/protocols/PluginProtocol.js",
-            "extensions/pluginx/protocols/ProtocolSocial.js",
-            "extensions/pluginx/protocols/ProtocolAds.js",
-            "extensions/pluginx/protocols/ProtocolAnalytics.js",
-
-            "extensions/pluginx/protocols/PluginFactory.js",
-            "extensions/pluginx/protocols/PluginManager.js",
-
-
-            "extensions/pluginx/plugins/SocialWeibo.js",
-            "extensions/pluginx/plugins/SocialQQWeibo.js",
-            "extensions/pluginx/plugins/SocialQzone.js",
-            "extensions/pluginx/plugins/SocialTwitter.js",
-            "extensions/pluginx/plugins/SocialFacebook.js",
-
-            "extensions/pluginx/plugins/AnalyticsFlurry.js"
+            "external/pluginx/Plugin.js"
         ],
+        "plugin-facebook" : [
+            "external/pluginx/platform/facebook_sdk.js",
+            "external/pluginx/platform/facebook.js"
+        ],
+
         "spine":[
             "core",
 
@@ -370,7 +385,7 @@
             "extensions/spine/CCSkeleton.js",
             "extensions/spine/CCSkeletonAnimation.js"
         ],
-        "extensions" : ["gui", "ccbreader", "editbox", "cocostudio", "pluginx", "spine"],
+        "extensions" : ["gui", "ccbreader", "editbox", "cocostudio", "spine", "ccpool"],
 
         "box2d" : [
             "core", "physics",
@@ -385,7 +400,7 @@
         "socketio" : [
             "external/socketio/socket.io.min.js"
         ],
-        "external" : ["box2d", "chipmunk", "socketio"]
+        "external" : ["box2d", "chipmunk", "socketio", "pluginx"]
     },
     "bootFile" : "CCBoot.js"
 }

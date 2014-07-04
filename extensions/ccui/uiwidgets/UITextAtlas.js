@@ -38,6 +38,7 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
     _itemHeight: 0,
     _startCharMap: "",
     _className: "TextAtlas",
+    _labelAtlasRendererAdaptDirty: null,
 
     /**
      * allocates and initializes a UILabelAtlas.
@@ -52,7 +53,9 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
 
     initRenderer: function () {
         this._labelAtlasRenderer = new cc.LabelAtlas();
-        cc.Node.prototype.addChild.call(this, this._labelAtlasRenderer, ccui.TextAtlas.RENDERER_ZORDER, -1);
+        //cc.Node.prototype.addChild.call(this, this._labelAtlasRenderer, ccui.TextAtlas.RENDERER_ZORDER, -1);
+        this._labelAtlasRenderer.setAnchorPoint(cc.p(0.5, 0.5));
+        this.addProtectedChild(this._labelAtlasRenderer, ccui.TextAtlas.RENDERER_ZORDER, -1);
     },
 
     /**
@@ -69,26 +72,43 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
         this._itemWidth = itemWidth;
         this._itemHeight = itemHeight;
         this._startCharMap = startCharMap;
-        var renderer = this._labelAtlasRenderer;
-        renderer.initWithString(stringValue, charMapFile, itemWidth, itemHeight, startCharMap[0]);
-        this.updateAnchorPoint();
-        this.labelAtlasScaleChangedWithSize();
+//        var renderer = this._labelAtlasRenderer;
+//        renderer.initWithString(stringValue, charMapFile, itemWidth, itemHeight, startCharMap[0]);
+//        this.updateAnchorPoint();
+//        this.labelAtlasScaleChangedWithSize();
+//
+//        if (!renderer.textureLoaded()) {
+//            renderer.addLoadedEventListener(function () {
+//                this.labelAtlasScaleChangedWithSize();
+//            }, this);
+//        }
+        this._labelAtlasRenderer.initWithString(stringValue, this._charMapFileName, this._itemWidth, this._itemHeight, this._startCharMap[0]);
 
-        if (!renderer.textureLoaded()) {
-            renderer.addLoadedEventListener(function () {
-                this.labelAtlasScaleChangedWithSize();
-            }, this);
-        }
+        this._updateContentSizeWithTextureSize(this._labelAtlasRenderer.getContentSize());
+        this._labelAtlasRendererAdaptDirty = true;
+
+    },
+
+    /**
+     * set string value for ui text atlas.
+     * @param {String} value
+     */
+    setString: function (value) {
+        this._stringValue = value;
+        this._labelAtlasRenderer.setString(value);
+//        this.labelAtlasScaleChangedWithSize();
+        this._updateContentSizeWithTextureSize(this._labelAtlasRenderer.getContentSize());
+        this._labelAtlasRendererAdaptDirty = true;
     },
 
     /**
      * set string value for labelatlas.
+     * @deprecated
      * @param {String} value
      */
     setStringValue: function (value) {
-        this._stringValue = value;
-        this._labelAtlasRenderer.setString(value);
-        this.labelAtlasScaleChangedWithSize();
+        cc.log("Please use the setString");
+        this.setString(value);
     },
 
     /**
@@ -98,57 +118,38 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
      */
     getStringValue: function () {
         cc.log("Please use the getString");
-        return this._labelAtlasRenderer.getString();
+        return this.getString();
     },
 
     /**
-     * get string value for labelatlas.
+     * get string value for ui text atlas.
      * @returns {String}
      */
     getString: function () {
         return this._labelAtlasRenderer.getString();
     },
 
-    /**
-     * override "setAnchorPoint" of widget.
-     * @param {cc.Point|Number} point The anchor point of UILabelAtlas or The anchor point.x of UILabelAtlas.
-     * @param {Number} [y] The anchor point.y of UILabelAtlas.
-     */
-    setAnchorPoint: function (point, y) {
-        if (y === undefined) {
-            ccui.Widget.prototype.setAnchorPoint.call(this, point);
-            this._labelAtlasRenderer.setAnchorPoint(point);
-        } else {
-            ccui.Widget.prototype.setAnchorPoint.call(this, point, y);
-            this._labelAtlasRenderer.setAnchorPoint(point, y);
-        }
-    },
-    _setAnchorX: function (value) {
-        ccui.Widget.prototype._setAnchorX.call(this, value);
-        this._labelAtlasRenderer._setAnchorX(value);
-    },
-    _setAnchorY: function (value) {
-        ccui.Widget.prototype._setAnchorY.call(this, value);
-        this._labelAtlasRenderer._setAnchorY(value);
+    getStringLength: function(){
+        return this._labelAtlasRenderer.getStringLength();
     },
 
     onSizeChanged: function () {
         ccui.Widget.prototype.onSizeChanged.call(this);
-        this.labelAtlasScaleChangedWithSize();
+//        this.labelAtlasScaleChangedWithSize();
+        this._labelAtlasRendererAdaptDirty = true;
     },
 
-    /**
-     * override "getContentSize" method of widget.
-     * @returns {cc.Size}
-     */
-    getContentSize: function () {
+    adaptRenderers: function(){
+        if (this._labelAtlasRendererAdaptDirty)
+        {
+            this.labelAtlasScaleChangedWithSize();
+            this._labelAtlasRendererAdaptDirty = false;
+        }
+
+    },
+
+    getVirtualRendererSize: function(){
         return this._labelAtlasRenderer.getContentSize();
-    },
-    _getWidth: function () {
-        return this._labelAtlasRenderer._getWidth();
-    },
-    _getHeight: function () {
-        return this._labelAtlasRenderer._getHeight();
     },
 
     /**
@@ -162,9 +163,9 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
     labelAtlasScaleChangedWithSize: function () {
         if (this._ignoreSize) {
             this._labelAtlasRenderer.setScale(1.0);
-            var atlasRenderSize = this._labelAtlasRenderer.getContentSize();
-            this._size.width = atlasRenderSize.width;
-            this._size.height = atlasRenderSize.height;
+//            var atlasRenderSize = this._labelAtlasRenderer.getContentSize();
+//            this._size.width = atlasRenderSize.width;
+//            this._size.height = atlasRenderSize.height;
         }
         else {
             var textureSize = this._labelAtlasRenderer.getContentSize();
@@ -177,14 +178,7 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
             this._labelAtlasRenderer.setScaleX(scaleX);
             this._labelAtlasRenderer.setScaleY(scaleY);
         }
-    },
-
-    updateTextureColor: function () {
-        this.updateColorToRenderer(this._labelAtlasRenderer);
-    },
-
-    updateTextureOpacity: function () {
-        this.updateOpacityToRenderer(this._labelAtlasRenderer);
+        this._labelAtlasRenderer.setPosition(this._contentSize.width / 2.0, this._contentSize.height / 2.0);
     },
 
     /**
@@ -200,8 +194,56 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
     },
 
     copySpecialProperties: function (labelAtlas) {
-        this.setProperty(labelAtlas._stringValue, labelAtlas._charMapFileName, labelAtlas._itemWidth, labelAtlas._itemHeight, labelAtlas._startCharMap);
+        if (labelAtlas){
+            this.setProperty(labelAtlas._stringValue, labelAtlas._charMapFileName, labelAtlas._itemWidth, labelAtlas._itemHeight, labelAtlas._startCharMap);
+        }
     }
+
+
+//    /**
+//     * override "setAnchorPoint" of widget.
+//     * @param {cc.Point|Number} point The anchor point of UILabelAtlas or The anchor point.x of UILabelAtlas.
+//     * @param {Number} [y] The anchor point.y of UILabelAtlas.
+//     */
+//    setAnchorPoint: function (point, y) {
+//        if (y === undefined) {
+//            ccui.Widget.prototype.setAnchorPoint.call(this, point);
+//            this._labelAtlasRenderer.setAnchorPoint(point);
+//        } else {
+//            ccui.Widget.prototype.setAnchorPoint.call(this, point, y);
+//            this._labelAtlasRenderer.setAnchorPoint(point, y);
+//        }
+//    },
+//    _setAnchorX: function (value) {
+//        ccui.Widget.prototype._setAnchorX.call(this, value);
+//        this._labelAtlasRenderer._setAnchorX(value);
+//    },
+//    _setAnchorY: function (value) {
+//        ccui.Widget.prototype._setAnchorY.call(this, value);
+//        this._labelAtlasRenderer._setAnchorY(value);
+//    },
+//
+//    /**
+//     * override "getContentSize" method of widget.
+//     * @returns {cc.Size}
+//     */
+//    getContentSize: function () {
+//        return this._labelAtlasRenderer.getContentSize();
+//    },
+//    _getWidth: function () {
+//        return this._labelAtlasRenderer._getWidth();
+//    },
+//    _getHeight: function () {
+//        return this._labelAtlasRenderer._getHeight();
+//    },
+//
+//    updateTextureColor: function () {
+//        this.updateColorToRenderer(this._labelAtlasRenderer);
+//    },
+//
+//    updateTextureOpacity: function () {
+//        this.updateOpacityToRenderer(this._labelAtlasRenderer);
+//    }
 });
 
 var _p = ccui.TextAtlas.prototype;
@@ -209,7 +251,7 @@ var _p = ccui.TextAtlas.prototype;
 // Extended properties
 /** @expose */
 _p.string;
-cc.defineGetterSetter(_p, "string", _p.getString, _p.setStringValue);
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
 
 _p = null;
 
@@ -221,8 +263,15 @@ _p = null;
  * // example
  * var uiLabelAtlas = ccui.TextAtlas.create();
  */
-ccui.TextAtlas.create = function () {
-   return new ccui.TextAtlas();
+ccui.TextAtlas.create = function (stringValue, charMapFile, itemWidth, itemHeight, startCharMap) {
+    var widget = new ccui.TextAtlas();
+    if(widget && widget.init()){
+        if(arguments.length > 0){
+            widget.setProperty(stringValue, charMapFile, itemWidth, itemHeight, startCharMap);
+        }
+        return widget;
+    }
+    return null;
 };
 
 // Constants

@@ -192,7 +192,7 @@ cc.pLength = function (v) {
  * Calculates the distance between two points
  * @param {cc.Point} v1
  * @param {cc.Point} v2
- * @return {cc.pLength}
+ * @return {Number}
  */
 cc.pDistance = function (v1, v2) {
     return cc.pLength(cc.pSub(v1, v2));

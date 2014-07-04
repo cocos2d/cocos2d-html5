@@ -34,7 +34,7 @@
  *
  */
 ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
-    _clippingEnabled: null,
+    _clippingEnabled: false,
     _backGroundScale9Enabled: null,
     _backGroundImage: null,
     _backGroundImageFileName: null,
@@ -60,6 +60,31 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _clippingParent: null,
     _className: "Layout",
     _backGroundImageColor: null,
+    _finalPositionX: 0,
+    _finalPositionY: 0,
+
+    //clipping
+    _currentStencilEnabled: 0,
+    _currentStencilWriteMask: 0,
+    _currentStencilFunc: 0,
+    _currentStencilRef:0,
+    _currentStencilValueMask:0,
+    _currentStencilFail:0,
+    _currentStencilPassDepthFail:0,
+    _currentStencilPassDepthPass:0,
+    _currentDepthWriteMask:0,
+
+    _currentAlphaTestEnabled:0,
+    _currentAlphaTestFunc:0,
+    _currentAlphaTestRef:0,
+
+    _backGroundImageOpacity:0,
+
+    _mask_layer_le: 0,
+
+    _loopFocus: false,
+    _passFocusToChild: false,
+    _isFocusPassing:false,
 
     /**
      * allocates and initializes a UILayout.
@@ -69,80 +94,188 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * var uiLayout = new ccui.Layout();
      */
     ctor: function () {
+        this._layoutType = ccui.Layout.ABSOLUTE;
+        this._widgetType = ccui.Widget.TYPE_CONTAINER;
+        this._clippingType = ccui.Layout.CLIPPING_STENCIL;
+        this._colorType = ccui.Layout.BG_COLOR_NONE;
+
         ccui.Widget.prototype.ctor.call(this);
         this._backGroundImageCapInsets = cc.rect(0, 0, 0, 0);
-        this._colorType = ccui.Layout.BG_COLOR_NONE;
+
         this._color = cc.color(255, 255, 255, 255);
         this._startColor = cc.color(255, 255, 255, 255);
         this._endColor = cc.color(255, 255, 255, 255);
         this._alongVector = cc.p(0, -1);
         this._backGroundImageTextureSize = cc.size(0, 0);
-        this._layoutType = ccui.Layout.ABSOLUTE;
-        this._widgetType = ccui.Widget.TYPE_CONTAINER;
-        this._clippingType = ccui.Layout.CLIPPING_STENCIL;
+
         this._clippingRect = cc.rect(0, 0, 0, 0);
         this._backGroundImageColor = cc.color(255, 255, 255, 255);
     },
+    onEnter: function(){
+        ccui.Widget.prototype.onEnter.call(this);
+        if (this._clippingStencil)
+            this._clippingStencil.onEnter();
+        this._doLayoutDirty = true;
+        this._clippingRectDirty = true;
+    },
+    onExit: function(){
+        ccui.Widget.prototype.onExit.call(this);
+        if (this._clippingStencil)
+            this._clippingStencil.onExit();
+    },
+
+    /**
+     * If a layout is loop focused which means that the focus movement will be inside the layout
+     * @param {Boolean} loop pass true to let the focus movement loop inside the layout
+     */
+    setLoopFocus: function(loop){
+        this._loopFocus = loop;
+    },
+
+    /**
+     * Gets whether enable focus loop
+     * @returns {boolean}  If focus loop is enabled, then it will return true, otherwise it returns false. The default value is false.
+     */
+    isLoopFocus: function(){
+        return this._loopFocus;
+    },
+
+    /**
+     * @param pass To specify whether the layout pass its focus to its child
+     */
+    setPassFocusToChild: function(pass){
+        this._passFocusToChild = pass;
+    },
+
+    /**
+     * @returns {boolean} To query whether the layout will pass the focus to its children or not. The default value is true
+     */
+    isPassFocusToChild: function(){
+        return this._passFocusToChild;
+    },
+
+    /**
+     * When a widget is in a layout, you could call this method to get the next focused widget within a specified direction.
+     * If the widget is not in a layout, it will return itself
+     * @param direction the direction to look for the next focused widget in a layout
+     * @param current the current focused widget
+     * @returns {ccui.Widget} return the index of widget in the layout
+     */
+    findNextFocusedWidget: function(direction, current){
+        if (this._isFocusPassing || this.isFocused()) {
+            var parent = this.getParent();
+            this._isFocusPassing = false;
+
+            if (this._passFocusToChild) {
+                var w = this._passFocusToChild(direction, current);
+                if (w instanceof ccui.Layout && parent) {
+                    parent._isFocusPassing = true;
+                    return parent.findNextFocusedWidget(direction, this);
+                }
+                return w;
+            }
+
+            if (null == parent)
+                return this;
+            parent._isFocusPassing = true;
+            return parent.findNextFocusedWidget(direction, this);
+        } else if(current.isFocused() || current instanceof ccui.Layout) {
+            if (this._layoutType == ccui.Layout.LINEAR_HORIZONTAL) {
+                switch (direction){
+                    case ccui.Widget.LEFT:
+                        return this._getPreviousFocusedWidget(direction, current);
+                    break;
+                    case ccui.Widget.RIGHT:
+                        return this._getNextFocusedWidget(direction, current);
+                    break;
+                    case ccui.Widget.DOWN:
+                    case ccui.Widget.UP:
+                        if (this._isLastWidgetInContainer(this, direction)){
+                            if (this._isWidgetAncestorSupportLoopFocus(current, direction))
+                                return this.findNextFocusedWidget(direction, this);
+                            return current;
+                        } else {
+                            return this.findNextFocusedWidget(direction, this);
+                        }
+                    break;
+                    default:
+                        cc.assert(0, "Invalid Focus Direction");
+                        return current;
+                }
+            } else if (this._layoutType == ccui.Layout.LINEAR_VERTICAL) {
+                switch (direction){
+                    case ccui.Widget.LEFT:
+                    case ccui.Widget.RIGHT:
+                        if (this._isLastWidgetInContainer(this, direction)) {
+                            if (this._isWidgetAncestorSupportLoopFocus(current, direction))
+                                return this.findNextFocusedWidget(direction, this);
+                            return current;
+                        }
+                        else
+                            return this.findNextFocusedWidget(direction, this);
+                     break;
+                    case ccui.Widget.DOWN:
+                        return this._getNextFocusedWidget(direction, current);
+                        break;
+                    case ccui.Widget.UP:
+                        return this._getPreviousFocusedWidget(direction, current);
+                        break;
+                    default:
+                        cc.assert(0, "Invalid Focus Direction");
+                        return current;
+                }
+            } else {
+                cc.assert(0, "Un Supported Layout type, please use VBox and HBox instead!!!");
+                return current;
+            }
+        } else
+            return current;
+    },
+
+    onPassFocusToChild: null,
+
     init: function () {
-        if (cc.Node.prototype.init.call(this)) {
-            this._layoutParameterDictionary = {};
-            this._widgetChildren = [];
-            this.initRenderer();
+        if (ccui.Widget.prototype.init.call(this)) {
             this.ignoreContentAdaptWithSize(false);
             this.setSize(cc.size(0, 0));
-            this.setBright(true);
             this.setAnchorPoint(0, 0);
-            this.initStencil();
+            this.onPassFocusToChild  = this._findNearestChildWidgetIndex.bind(this);
             return true;
         }
         return false;
     },
-    initStencil: null,
-    _initStencilForWebGL: function () {
-        this._clippingStencil = cc.DrawNode.create();
-        ccui.Layout._init_once = true;
-        if (ccui.Layout._init_once) {
-            cc.stencilBits = cc._renderContext.getParameter(cc._renderContext.STENCIL_BITS);
-            if (cc.stencilBits <= 0)
-                cc.log("Stencil buffer is not enabled.");
-            ccui.Layout._init_once = false;
-        }
-    },
-    _initStencilForCanvas: function () {
-        this._clippingStencil = cc.DrawNode.create();
-        var locContext = cc._renderContext;
+
+    __stencilDraw: function(ctx){
+        var locContext = ctx || cc._renderContext;
         var stencil = this._clippingStencil;
-        stencil.draw = function () {
-            var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
-            for (var i = 0; i < stencil._buffer.length; i++) {
-                var element = stencil._buffer[i];
-                var vertices = element.verts;
-                var firstPoint = vertices[0];
-                locContext.beginPath();
-                locContext.moveTo(firstPoint.x * locEGL_ScaleX, -firstPoint.y * locEGL_ScaleY);
-                for (var j = 1, len = vertices.length; j < len; j++)
-                    locContext.lineTo(vertices[j].x * locEGL_ScaleX, -vertices[j].y * locEGL_ScaleY);
-            }
+        var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
+        for (var i = 0; i < stencil._buffer.length; i++) {
+            var element = stencil._buffer[i];
+            var vertices = element.verts;
+            var firstPoint = vertices[0];
+            locContext.beginPath();
+            locContext.moveTo(firstPoint.x * locEGL_ScaleX, -firstPoint.y * locEGL_ScaleY);
+            for (var j = 1, len = vertices.length; j < len; j++)
+                locContext.lineTo(vertices[j].x * locEGL_ScaleX, -vertices[j].y * locEGL_ScaleY);
         }
     },
 
     /**
      * Adds a widget to the container.
      * @param {ccui.Widget} widget
-     * @param {Number} zOrder
-     * @param {Number} tag
+     * @param {Number} [zOrder]
+     * @param {Number} [tag]
      */
     addChild: function (widget, zOrder, tag) {
-        if (!(widget instanceof ccui.Widget)) {
-            throw "the child add to Layout  must a type of cc.Widget";
+        if ((widget instanceof ccui.Widget)) {
+            this.supplyTheLayoutParameterLackToChild(widget);
         }
-        this.supplyTheLayoutParameterLackToChild(widget);
         ccui.Widget.prototype.addChild.call(this, widget, zOrder, tag);
         this._doLayoutDirty = true;
     },
 
     /**
-     * Remove widget
+     * Remove child widget from ccui.Layout
      * @param {ccui.Widget} widget
      * @param {Boolean} cleanup
      */
@@ -152,11 +285,20 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     /**
-     * Remove all widget
+     * Removes all children from the container with a cleanup.
      * @param {Boolean} cleanup
      */
     removeAllChildren: function (cleanup) {
         ccui.Widget.prototype.removeAllChildren.call(this, cleanup);
+        this._doLayoutDirty = true;
+    },
+
+    /**
+     * Removes all children from the container, and do a cleanup to all running actions depending on the cleanup parameter.
+     * @param {Boolean} cleanup true if all running actions on all children nodes should be cleanup, false otherwise.
+     */
+    removeAllChildrenWithCleanup: function(cleanup){
+        ccui.Widget.prototype.removeAllChildrenWithCleanup(cleanup);
         this._doLayoutDirty = true;
     },
 
@@ -169,9 +311,11 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     visit: function (ctx) {
-        if (!this._enabled) {
+        if (!this._visible)
             return;
-        }
+        this.adaptRenderers();
+        this._doLayout();
+
         if (this._clippingEnabled) {
             switch (this._clippingType) {
                 case ccui.Layout.CLIPPING_STENCIL:
@@ -183,9 +327,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 default:
                     break;
             }
-        }
-        else {
-            cc.Node.prototype.visit.call(this, ctx);
+        } else {
+            ccui.Widget.prototype.visit.call(this, ctx);
         }
     },
 
@@ -200,18 +343,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         var gl = ctx || cc._renderContext;
 
         // if stencil buffer disabled
-        if (cc.stencilBits < 1) {
-            // draw everything, as if there where no stencil
-            cc.Node.prototype.visit.call(this, ctx);
-            return;
-        }
+        /*if (cc.stencilBits < 1) {
+         // draw everything, as if there where no stencil
+         cc.Node.prototype.visit.call(this, ctx);
+         return;
+         }*/
 
-        // return fast (draw nothing, or draw everything if in inverted mode) if:
-        // - nil stencil node
-        // - or stencil node invisible:
-        if (!this._clippingStencil || !this._clippingStencil.isVisible()) {
+        if (!this._clippingStencil || !this._clippingStencil.isVisible())
             return;
-        }
 
         // store the current stencil layer (position in the stencil buffer),
         // this will allow nesting up to n CCClippingNode,
@@ -230,9 +369,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             cc.Node.prototype.visit.call(this, ctx);
             return;
         }
-
-        ///////////////////////////////////
-        // INIT
 
         // increment the current layer
         ccui.Layout._layer++;
@@ -276,9 +412,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         // only disabling depth buffer update should do
         gl.depthMask(false);
 
-        ///////////////////////////////////
-        // CLEAR STENCIL BUFFER
-
         // manually clear the stencil buffer by drawing a fullscreen rectangle on it
         // setup the stencil test func like this:
         // for each pixel in the fullscreen rectangle
@@ -292,9 +425,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
         cc._drawingUtil.drawSolidRect(cc.p(0, 0), cc.pFromSize(cc.director.getWinSize()), cc.color(255, 255, 255, 255));
 
-        ///////////////////////////////////
-        // DRAW CLIPPING STENCIL
-
         // setup the stencil test func like this:
         // for each pixel in the stencil node
         //     never draw it into the frame buffer
@@ -303,42 +433,44 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
         gl.stencilOp(gl.REPLACE, gl.KEEP, gl.KEEP);
 
-
-        // draw the stencil node as if it was one of our child
-        // (according to the stencil test func/op and alpha (or alpha shader) test)
         cc.kmGLPushMatrix();
         this.transform();
-        this._clippingStencil.visit();
-        cc.kmGLPopMatrix();
 
-        // restore alpha test state
-        //if (this._alphaThreshold < 1) {
-        // XXX: we need to find a way to restore the shaders of the stencil node and its childs
-        //}
+        this._clippingStencil.visit();
 
         // restore the depth test state
         gl.depthMask(currentDepthWriteMask);
-        //if (currentDepthTestEnabled) {
-        //    glEnable(GL_DEPTH_TEST);
-        //}
 
-        ///////////////////////////////////
-        // DRAW CONTENT
-
-        // setup the stencil test func like this:
-        // for each pixel of this node and its childs
-        //     if all layers less than or equals to the current are set to 1 in the stencil buffer
-        //         draw the pixel and keep the current layer in the stencil buffer
-        //     else
-        //         do not draw the pixel but keep the current layer in the stencil buffer
         gl.stencilFunc(gl.EQUAL, mask_layer_le, mask_layer_le);
         gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
 
         // draw (according to the stencil test func) this node and its childs
-        cc.Node.prototype.visit.call(this, ctx);
+        var i = 0;      // used by _children
+        var j = 0;      // used by _protectedChildren
 
-        ///////////////////////////////////
-        // CLEANUP
+        this.sortAllChildren();
+        this.sortAllProtectedChildren();
+        var locChildren = this._children, locProtectChildren = this._protectedChildren;
+        var iLen = locChildren.length, jLen = locProtectChildren.length, child;
+        for( ; i < iLen; i++ ){
+            child = locChildren[i];
+            if ( child && child.getLocalZOrder() < 0 )
+                child.visit();
+            else
+                break;
+        }
+        for( ; j < jLen; j++ ) {
+            child = locProtectChildren[j];
+            if ( child && child.getLocalZOrder() < 0 )
+                child.visit();
+            else
+                break;
+        }
+        this.draw();
+        for (; i < iLen; i++)
+            locChildren[i].visit();
+        for (; j < jLen; j++)
+            locProtectChildren[j].visit();
 
         // manually restore the stencil state
         gl.stencilFunc(currentStencilFunc, currentStencilRef, currentStencilValueMask);
@@ -349,6 +481,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
         // we are done using this layer, decrement
         ccui.Layout._layer--;
+
+        cc.kmGLPopMatrix();
     },
 
     _stencilClippingVisitForCanvas: function (ctx) {
@@ -386,9 +520,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             context.globalCompositeOperation = "destination-over";
             context.drawImage(locCache, 0, 0);
             context.restore();
-        }
-        // Clip mode, fast, but only support cc.DrawNode
-        else {
+        } else {    // Clip mode, fast, but only support cc.DrawNode
             var i, children = this._children, locChild;
 
             context.save();
@@ -399,25 +531,35 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             // Clip mode doesn't support recusive stencil, so once we used a clip stencil,
             // so if it has ClippingNode as a child, the child must uses composition stencil.
             this._cangodhelpme(true);
-            var len = children.length;
-            if (len > 0) {
-                this.sortAllChildren();
-                // draw children zOrder < 0
-                for (i = 0; i < len; i++) {
-                    locChild = children[i];
-                    if (locChild._localZOrder < 0)
-                        locChild.visit(context);
-                    else
-                        break;
-                }
-                this.draw(context);
-                for (; i < len; i++) {
-                    children[i].visit(context);
-                }
-            } else
-                this.draw(context);
-            this._cangodhelpme(false);
 
+            this.sortAllChildren();
+            this.sortAllProtectedChildren();
+
+            var j, locProtectChildren = this._protectedChildren;
+            var iLen = children.length, jLen = locProtectChildren.length;
+
+            // draw children zOrder < 0
+            for (i = 0; i < iLen; i++) {
+                locChild = children[i];
+                if (locChild && locChild._localZOrder < 0)
+                    locChild.visit(context);
+                else
+                    break;
+            }
+            for (j = 0; j < jLen; j++) {
+                locChild = locProtectChildren[j];
+                if (locChild && locChild._localZOrder < 0)
+                    locChild.visit(context);
+                else
+                    break;
+            }
+            //this.draw(context);
+            for (; i < iLen; i++)
+                children[i].visit(context);
+            for (; j < jLen; j++)
+                locProtectChildren[j].visit(context);
+
+            this._cangodhelpme(false);
             context.restore();
         }
     },
@@ -448,16 +590,21 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {Boolean} able
      */
     setClippingEnabled: function (able) {
-        if (able == this._clippingEnabled) {
+        if (able == this._clippingEnabled)
             return;
-        }
         this._clippingEnabled = able;
         switch (this._clippingType) {
             case ccui.Layout.CLIPPING_STENCIL:
-                if (able) {
-                    this.setStencilClippingSize(this._size);
-                }
-                else {
+                if (able){
+                    this._clippingStencil = cc.DrawNode.create();
+                    if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+                        this._clippingStencil.draw = this.__stencilDraw.bind(this);
+                    if (this._running)
+                        this._clippingStencil.onEnter();
+                    this.setStencilClippingSize(this._contentSize);
+                } else {
+                    if (this._running)
+                        this._clippingStencil.onExit();
                     this._clippingStencil = null;
                 }
                 break;
@@ -507,11 +654,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     getClippingRect: function () {
         if (this._clippingRectDirty) {
-            this._handleScissor = true;
             var worldPos = this.convertToWorldSpace(cc.p(0, 0));
             var t = this.nodeToWorldTransform();
-            var scissorWidth = this._size.width * t.a;
-            var scissorHeight = this._size.height * t.d;
+            var scissorWidth = this._contentSize.width * t.a;
+            var scissorHeight = this._contentSize.height * t.d;
             var parentClippingRect;
             var parent = this;
             var firstClippingParentFounded = false;
@@ -523,7 +669,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                             this._clippingParent = parent;
                             firstClippingParentFounded = true;
                         }
-
                         if (parent._clippingType == ccui.Layout.CLIPPING_SCISSOR) {
                             this._handleScissor = false;
                             break;
@@ -581,23 +726,22 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     onSizeChanged: function () {
         ccui.Widget.prototype.onSizeChanged.call(this);
-        this.setContentSize(this._size);
-        this.setStencilClippingSize(this._size);
+        this.setStencilClippingSize(this._contentSize);
         this._doLayoutDirty = true;
         this._clippingRectDirty = true;
         if (this._backGroundImage) {
-            this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
+            this._backGroundImage.setPosition(this._contentSize.width * 0.5, this._contentSize.height * 0.5);
             if (this._backGroundScale9Enabled) {
                 if (this._backGroundImage instanceof cc.Scale9Sprite) {
-                    this._backGroundImage.setPreferredSize(this._size);
+                    this._backGroundImage.setPreferredSize(this._contentSize);
                 }
             }
         }
         if (this._colorRender) {
-            this._colorRender.setContentSize(this._size);
+            this._colorRender.setContentSize(this._contentSize);
         }
         if (this._gradientRender) {
-            this._gradientRender.setContentSize(this._size);
+            this._gradientRender.setContentSize(this._contentSize);
         }
     },
 
@@ -609,16 +753,18 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         if (this._backGroundScale9Enabled == able) {
             return;
         }
-        cc.Node.prototype.removeChild.call(this, this._backGroundImage, true);
+        this.removeProtectedChild(this._backGroundImage);
+        //cc.Node.prototype.removeChild.call(this, this._backGroundImage, true);
         this._backGroundImage = null;
         this._backGroundScale9Enabled = able;
-        if (this._backGroundScale9Enabled) {
+       /* if (this._backGroundScale9Enabled) {
             this._backGroundImage = cc.Scale9Sprite.create();
         }
         else {
             this._backGroundImage = cc.Sprite.create();
         }
-        cc.Node.prototype.addChild.call(this, this._backGroundImage, ccui.Layout.BACKGROUND_IMAGE_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._backGroundImage, ccui.Layout.BACKGROUND_IMAGE_ZORDER, -1);*/
+        this.addBackGroundImage();
         this.setBackGroundImage(this._backGroundImageFileName, this._bgImageTexType);
         this.setBackGroundImageCapInsets(this._backGroundImageCapInsets);
     },
@@ -637,46 +783,56 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     setBackGroundImage: function (fileName, texType) {
-        if (!fileName) {
+        if (!fileName)
             return;
-        }
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
-        if (this._backGroundImage == null) {
+        if (this._backGroundImage == null)
             this.addBackGroundImage();
-        }
         this._backGroundImageFileName = fileName;
         this._bgImageTexType = texType;
-        switch (this._bgImageTexType) {
-            case ccui.Widget.LOCAL_TEXTURE:
-                this._backGroundImage.initWithFile(fileName);
-                break;
-            case ccui.Widget.PLIST_TEXTURE:
-                this._backGroundImage.initWithSpriteFrameName(fileName);
-                break;
-            default:
-                break;
-        }
         if (this._backGroundScale9Enabled) {
-            this._backGroundImage.setPreferredSize(this._size);
+            var bgiScale9 = this._backGroundImage;
+            switch (this._bgImageTexType) {
+                case ccui.Widget.LOCAL_TEXTURE:
+                    bgiScale9.initWithFile(fileName);
+                    break;
+                case ccui.Widget.PLIST_TEXTURE:
+                    bgiScale9.initWithSpriteFrameName(fileName);
+                    break;
+                default:
+                    break;
+            }
+            bgiScale9.setPreferredSize(this._contentSize);
+        } else {
+            var sprite = this._backGroundImage;
+            switch (this._bgImageTexType){
+                case ccui.Widget.LOCAL_TEXTURE:
+                    sprite.setTexture(fileName);
+                    break;
+                case ccui.Widget.PLIST_TEXTURE:
+                    sprite.setSpriteFrame(fileName);
+                    break;
+                default:
+                    break;
+            }
         }
         this._backGroundImageTextureSize = this._backGroundImage.getContentSize();
-        this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
-        this.updateBackGroundImageColor();
+        this._backGroundImage.setPosition(this._contentSize.width / 2.0, this._contentSize.height / 2.0);
+        this._updateBackGroundImageColor();
     },
 
     /**
-     * Sets a background image capinsets for layout, if the background image is a scale9 render.
+     * Sets a background image CapInsets for layout, if the background image is a scale9 render.
      * @param {cc.Rect} capInsets
      */
     setBackGroundImageCapInsets: function (capInsets) {
         this._backGroundImageCapInsets = capInsets;
-        if (this._backGroundScale9Enabled) {
+        if (this._backGroundScale9Enabled)
             this._backGroundImage.setCapInsets(capInsets);
-        }
     },
 
     /**
-     * Get  background image cap insets.
+     * Gets background image cap insets.
      * @returns {cc.Rect}
      */
     getBackGroundImageCapInsets: function () {
@@ -693,15 +849,13 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             case ccui.Layout.LINEAR_HORIZONTAL:
             case ccui.Layout.LINEAR_VERTICAL:
                 var layoutParameter = locChild.getLayoutParameter(ccui.LayoutParameter.LINEAR);
-                if (!layoutParameter) {
+                if (!layoutParameter)
                     locChild.setLayoutParameter(ccui.LinearLayoutParameter.create());
-                }
                 break;
             case ccui.Layout.RELATIVE:
                 var layoutParameter = locChild.getLayoutParameter(ccui.LayoutParameter.RELATIVE);
-                if (!layoutParameter) {
+                if (!layoutParameter)
                     locChild.setLayoutParameter(ccui.RelativeLayoutParameter.create());
-                }
                 break;
             default:
                 break;
@@ -714,23 +868,21 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     addBackGroundImage: function () {
         if (this._backGroundScale9Enabled) {
             this._backGroundImage = cc.Scale9Sprite.create();
-            this._backGroundImage.setPreferredSize(this._size);
-        }
-        else {
+            this._backGroundImage.setPreferredSize(this._contentSize);
+        } else {
             this._backGroundImage = cc.Sprite.create();
         }
-        cc.Node.prototype.addChild.call(this, this._backGroundImage, ccui.Layout.BACKGROUND_IMAGE_ZORDER, -1);
-        this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
+        this.addProtectedChild(this._backGroundImage, ccui.Layout.BACKGROUND_IMAGE_ZORDER, -1);
+        this._backGroundImage.setPosition(this._contentSize.width / 2.0, this._contentSize.height / 2.0);
     },
 
     /**
      * Remove the background image of layout.
      */
     removeBackGroundImage: function () {
-        if (!this._backGroundImage) {
+        if (!this._backGroundImage)
             return;
-        }
-        cc.Node.prototype.removeChild.call(this, this._backGroundImage, true);
+        this.removeProtectedChild(this._backGroundImage);
         this._backGroundImage = null;
         this._backGroundImageFileName = "";
         this._backGroundImageTextureSize = cc.size(0, 0);
@@ -741,29 +893,28 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {ccui.Layout.BG_COLOR_NONE|ccui.Layout.BG_COLOR_SOLID|ccui.Layout.BG_COLOR_GRADIENT} type
      */
     setBackGroundColorType: function (type) {
-        if (this._colorType == type) {
+        if (this._colorType == type)
             return;
-        }
         switch (this._colorType) {
             case ccui.Layout.BG_COLOR_NONE:
                 if (this._colorRender) {
-                    cc.Node.prototype.removeChild.call(this, this._colorRender, true);
+                    this.removeProtectedChild(this._colorRender);
                     this._colorRender = null;
                 }
                 if (this._gradientRender) {
-                    cc.Node.prototype.removeChild.call(this, this._gradientRender, true);
+                    this.removeProtectedChild(this._gradientRender);
                     this._gradientRender = null;
                 }
                 break;
             case ccui.Layout.BG_COLOR_SOLID:
                 if (this._colorRender) {
-                    cc.Node.prototype.removeChild.call(this, this._colorRender, true);
+                    this.removeProtectedChild(this._colorRender);
                     this._colorRender = null;
                 }
                 break;
             case ccui.Layout.BG_COLOR_GRADIENT:
                 if (this._gradientRender) {
-                    cc.Node.prototype.removeChild.call(this, this._gradientRender, true);
+                    this.removeProtectedChild(this._gradientRender);
                     this._gradientRender = null;
                 }
                 break;
@@ -776,19 +927,19 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 break;
             case ccui.Layout.BG_COLOR_SOLID:
                 this._colorRender = cc.LayerColor.create();
-                this._colorRender.setContentSize(this._size);
+                this._colorRender.setContentSize(this._contentSize);
                 this._colorRender.setOpacity(this._opacity);
                 this._colorRender.setColor(this._color);
-                cc.Node.prototype.addChild.call(this, this._colorRender, ccui.Layout.BACKGROUND_RENDERER_ZORDER, -1);
+                this.addProtectedChild(this._colorRender, ccui.Layout.BACKGROUND_RENDERER_ZORDER, -1);
                 break;
             case ccui.Layout.BG_COLOR_GRADIENT:
                 this._gradientRender = cc.LayerGradient.create(cc.color(255, 0, 0, 255), cc.color(0, 255, 0, 255));
-                this._gradientRender.setContentSize(this._size);
+                this._gradientRender.setContentSize(this._contentSize);
                 this._gradientRender.setOpacity(this._opacity);
                 this._gradientRender.setStartColor(this._startColor);
                 this._gradientRender.setEndColor(this._endColor);
                 this._gradientRender.setVector(this._alongVector);
-                cc.Node.prototype.addChild.call(this, this._gradientRender, ccui.Layout.BACKGROUND_RENDERER_ZORDER, -1);
+                this.addProtectedChild(this._gradientRender, ccui.Layout.BACKGROUND_RENDERER_ZORDER, -1);
                 break;
             default:
                 break;
@@ -915,10 +1066,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._backGroundImageColor.g = color.g;
         this._backGroundImageColor.b = color.b;
 
-        this.updateBackGroundImageColor();
-        if (color.a !== undefined && !color.a_undefined) {
-            this.setBackGroundImageOpacity(color.a);
-        }
+        this._updateBackGroundImageColor();
     },
 
     /**
@@ -947,8 +1095,9 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         return this._backGroundImageColor.a;
     },
 
-    updateBackGroundImageColor: function () {
-        this._backGroundImage.setColor(this._backGroundImageColor);
+    _updateBackGroundImageColor: function () {
+        if(this._backGroundImage)
+            this._backGroundImage.setColor(this._backGroundImageColor);
     },
 
     /**
@@ -965,11 +1114,12 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      */
     setLayoutType: function (type) {
         this._layoutType = type;
-        var layoutChildrenArray = this._widgetChildren;
+        var layoutChildrenArray = this._children;
         var locChild = null;
         for (var i = 0; i < layoutChildrenArray.length; i++) {
             locChild = layoutChildrenArray[i];
-            this.supplyTheLayoutParameterLackToChild(locChild);
+            if(locChild instanceof ccui.Widget)
+                this.supplyTheLayoutParameterLackToChild(locChild);
         }
         this._doLayoutDirty = true;
     },
@@ -989,471 +1139,523 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._doLayoutDirty = true;
     },
 
-    doLayout_LINEAR_VERTICAL: function () {
-        var layoutChildrenArray = this._widgetChildren;
-        var layoutSize = this.getSize();
-        var topBoundary = layoutSize.height;
-        for (var i = 0; i < layoutChildrenArray.length; ++i) {
-            var locChild = layoutChildrenArray[i];
-            var locLayoutParameter = locChild.getLayoutParameter(ccui.LayoutParameter.LINEAR);
-
-            if (locLayoutParameter) {
-                var locChildGravity = locLayoutParameter.getGravity();
-                var locAP = locChild.getAnchorPoint();
-                var locSize = locChild.getSize();
-                var locFinalPosX = locAP.x * locSize.width;
-                var locFinalPosY = topBoundary - ((1 - locAP.y) * locSize.height);
-                switch (locChildGravity) {
-                    case ccui.LINEAR_GRAVITY_NONE:
-                    case ccui.LINEAR_GRAVITY_LEFT:
-                        break;
-                    case ccui.LINEAR_GRAVITY_RIGHT:
-                        locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
-                        break;
-                    case ccui.LINEAR_GRAVITY_CENTER_HORIZONTAL:
-                        locFinalPosX = layoutSize.width / 2 - locSize.width * (0.5 - locAP.x);
-                        break;
-                    default:
-                        break;
-                }
-                var locMargin = locLayoutParameter.getMargin();
-                locFinalPosX += locMargin.left;
-                locFinalPosY -= locMargin.top;
-                locChild.setPosition(locFinalPosX, locFinalPosY);
-                topBoundary = locChild.getBottomInParent() - locMargin.bottom;
-            }
-        }
-    },
-    doLayout_LINEAR_HORIZONTAL: function () {
-        var layoutChildrenArray = this._widgetChildren;
-        var layoutSize = this.getSize();
-        var leftBoundary = 0;
-        for (var i = 0; i < layoutChildrenArray.length; ++i) {
-            var locChild = layoutChildrenArray[i];
-            var locLayoutParameter = locChild.getLayoutParameter(ccui.LayoutParameter.LINEAR);
-
-            if (locLayoutParameter) {
-                var locChildGravity = locLayoutParameter.getGravity();
-                var locAP = locChild.getAnchorPoint();
-                var locSize = locChild.getSize();
-                var locFinalPosX = leftBoundary + (locAP.x * locSize.width);
-                var locFinalPosY = layoutSize.height - (1 - locAP.y) * locSize.height;
-                switch (locChildGravity) {
-                    case ccui.LINEAR_GRAVITY_NONE:
-                    case ccui.LINEAR_GRAVITY_TOP:
-                        break;
-                    case ccui.LINEAR_GRAVITY_BOTTOM:
-                        locFinalPosY = locAP.y * locSize.height;
-                        break;
-                    case ccui.LINEAR_GRAVITY_CENTER_VERTICAL:
-                        locFinalPosY = layoutSize.height / 2 - locSize.height * (0.5 - locAP.y);
-                        break;
-                    default:
-                        break;
-                }
-                var locMargin = locLayoutParameter.getMargin();
-                locFinalPosX += locMargin.left;
-                locFinalPosY -= locMargin.top;
-                locChild.setPosition(locFinalPosX, locFinalPosY);
-                leftBoundary = locChild.getRightInParent() + locMargin.right;
-            }
-        }
-    },
-    doLayout_RELATIVE: function () {
-        var layoutChildrenArray = this._widgetChildren;
-        var length = layoutChildrenArray.length;
-        var unlayoutChildCount = length;
-        var layoutSize = this.getSize();
-
-        for (var i = 0; i < length; i++) {
-            var locChild = layoutChildrenArray[i];
-            var locLayoutParameter = locChild.getLayoutParameter(ccui.LayoutParameter.RELATIVE);
-            locLayoutParameter._put = false;
-        }
-
-        while (unlayoutChildCount > 0) {
-            for (var i = 0; i < length; i++) {
-                var locChild = layoutChildrenArray[i];
-                var locLayoutParameter = locChild.getLayoutParameter(ccui.LayoutParameter.RELATIVE);
-
-                if (locLayoutParameter) {
-                    if (locLayoutParameter._put) {
-                        continue;
-                    }
-                    var locAP = locChild.getAnchorPoint();
-                    var locSize = locChild.getSize();
-                    var locAlign = locLayoutParameter.getAlign();
-                    var locRelativeName = locLayoutParameter.getRelativeToWidgetName();
-                    var locRelativeWidget = null;
-                    var locRelativeWidgetLP = null;
-                    var locFinalPosX = 0;
-                    var locFinalPosY = 0;
-                    if (locRelativeName) {
-                        locRelativeWidget = ccui.helper.seekWidgetByRelativeName(this, locRelativeName);
-                        if (locRelativeWidget) {
-                            locRelativeWidgetLP = locRelativeWidget.getLayoutParameter(ccui.LayoutParameter.RELATIVE);
-                        }
-                    }
-                    switch (locAlign) {
-                        case ccui.RELATIVE_ALIGN_NONE:
-                        case ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT:
-                            locFinalPosX = locAP.x * locSize.width;
-                            locFinalPosY = layoutSize.height - ((1 - locAP.y) * locSize.height);
-                            break;
-                        case ccui.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL:
-                            locFinalPosX = layoutSize.width * 0.5 - locSize.width * (0.5 - locAP.x);
-                            locFinalPosY = layoutSize.height - ((1 - locAP.y) * locSize.height);
-                            break;
-                        case ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT:
-                            locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
-                            locFinalPosY = layoutSize.height - ((1 - locAP.y) * locSize.height);
-                            break;
-                        case ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL:
-                            locFinalPosX = locAP.x * locSize.width;
-                            locFinalPosY = layoutSize.height * 0.5 - locSize.height * (0.5 - locAP.y);
-                            break;
-                        case ccui.RELATIVE_ALIGN_PARENT_CENTER:
-                            locFinalPosX = layoutSize.width * 0.5 - locSize.width * (0.5 - locAP.x);
-                            locFinalPosY = layoutSize.height * 0.5 - locSize.height * (0.5 - locAP.y);
-                            break;
-                        case ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL:
-                            locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
-                            locFinalPosY = layoutSize.height * 0.5 - locSize.height * (0.5 - locAP.y);
-                            break;
-                        case ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM:
-                            locFinalPosX = locAP.x * locSize.width;
-                            locFinalPosY = locAP.y * locSize.height;
-                            break;
-                        case ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL:
-                            locFinalPosX = layoutSize.width * 0.5 - locSize.width * (0.5 - locAP.x);
-                            locFinalPosY = locAP.y * locSize.height;
-                            break;
-                        case ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM:
-                            locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
-                            locFinalPosY = locAP.y * locSize.height;
-                            break;
-
-                        case ccui.RELATIVE_ALIGN_LOCATION_ABOVE_LEFT:
-                            if (locRelativeWidget) {
-                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
-                                    continue;
-                                }
-                                var locationBottom = locRelativeWidget.getTopInParent();
-                                var locationLeft = locRelativeWidget.getLeftInParent();
-                                locFinalPosY = locationBottom + locAP.y * locSize.height;
-                                locFinalPosX = locationLeft + locAP.x * locSize.width;
-                            }
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_ABOVE_CENTER:
-                            if (locRelativeWidget) {
-                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
-                                    continue;
-                                }
-                                var rbs = locRelativeWidget.getSize();
-                                var locationBottom = locRelativeWidget.getTopInParent();
-
-                                locFinalPosY = locationBottom + locAP.y * locSize.height;
-                                locFinalPosX = locRelativeWidget.getLeftInParent() + rbs.width * 0.5 + locAP.x * locSize.width - locSize.width * 0.5;
-                            }
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_ABOVE_RIGHT:
-                            if (locRelativeWidget) {
-                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
-                                    continue;
-                                }
-                                var locationBottom = locRelativeWidget.getTopInParent();
-                                var locationRight = locRelativeWidget.getRightInParent();
-                                locFinalPosY = locationBottom + locAP.y * locSize.height;
-                                locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
-                            }
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_LEFT_TOP:
-                            if (locRelativeWidget) {
-                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
-                                    continue;
-                                }
-                                var locationTop = locRelativeWidget.getTopInParent();
-                                var locationRight = locRelativeWidget.getLeftInParent();
-                                locFinalPosY = locationTop - (1 - locAP.y) * locSize.height;
-                                locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
-                            }
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_LEFT_CENTER:
-                            if (locRelativeWidget) {
-                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
-                                    continue;
-                                }
-                                var rbs = locRelativeWidget.getSize();
-                                var locationRight = locRelativeWidget.getLeftInParent();
-                                locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
-
-                                locFinalPosY = locRelativeWidget.getBottomInParent() + rbs.height * 0.5 + locAP.y * locSize.height - locSize.height * 0.5;
-                            }
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_LEFT_BOTTOM:
-                            if (locRelativeWidget) {
-                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
-                                    continue;
-                                }
-                                var locationBottom = locRelativeWidget.getBottomInParent();
-                                var locationRight = locRelativeWidget.getLeftInParent();
-                                locFinalPosY = locationBottom + locAP.y * locSize.height;
-                                locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
-                            }
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_RIGHT_TOP:
-                            if (locRelativeWidget) {
-                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
-                                    continue;
-                                }
-                                var locationTop = locRelativeWidget.getTopInParent();
-                                var locationLeft = locRelativeWidget.getRightInParent();
-                                locFinalPosY = locationTop - (1 - locAP.y) * locSize.height;
-                                locFinalPosX = locationLeft + locAP.x * locSize.width;
-                            }
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_RIGHT_CENTER:
-                            if (locRelativeWidget) {
-                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
-                                    continue;
-                                }
-                                var rbs = locRelativeWidget.getSize();
-                                var locationLeft = locRelativeWidget.getRightInParent();
-                                locFinalPosX = locationLeft + locAP.x * locSize.width;
-
-                                locFinalPosY = locRelativeWidget.getBottomInParent() + rbs.height * 0.5 + locAP.y * locSize.height - locSize.height * 0.5;
-                            }
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_RIGHT_BOTTOM:
-                            if (locRelativeWidget) {
-                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
-                                    continue;
-                                }
-                                var locationBottom = locRelativeWidget.getBottomInParent();
-                                var locationLeft = locRelativeWidget.getRightInParent();
-                                locFinalPosY = locationBottom + locAP.y * locSize.height;
-                                locFinalPosX = locationLeft + locAP.x * locSize.width;
-                            }
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_BELOW_TOP:
-                            if (locRelativeWidget) {
-                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
-                                    continue;
-                                }
-                                var locationTop = locRelativeWidget.getBottomInParent();
-                                var locationLeft = locRelativeWidget.getLeftInParent();
-                                locFinalPosY = locationTop - (1 - locAP.y) * locSize.height;
-                                locFinalPosX = locationLeft + locAP.x * locSize.width;
-                            }
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_BELOW_CENTER:
-                            if (locRelativeWidget) {
-                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
-                                    continue;
-                                }
-                                var rbs = locRelativeWidget.getSize();
-                                var locationTop = locRelativeWidget.getBottomInParent();
-
-                                locFinalPosY = locationTop - (1 - locAP.y) * locSize.height;
-                                locFinalPosX = locRelativeWidget.getLeftInParent() + rbs.width * 0.5 + locAP.x * locSize.width - locSize.width * 0.5;
-                            }
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_BELOW_BOTTOM:
-                            if (locRelativeWidget) {
-                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
-                                    continue;
-                                }
-                                var locationTop = locRelativeWidget.getBottomInParent();
-                                var locationRight = locRelativeWidget.getRightInParent();
-                                locFinalPosY = locationTop - (1 - locAP.y) * locSize.height;
-                                locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    var locRelativeWidgetMargin, locRelativeWidgetLPAlign;
-                    var locMargin = locLayoutParameter.getMargin();
-                    if (locRelativeWidgetLP) {
-                        locRelativeWidgetMargin = locRelativeWidgetLP.getMargin();
-                        locRelativeWidgetLPAlign = locRelativeWidgetLP.getAlign();
-                    }
-                    //handle margin
-                    switch (locAlign) {
-                        case ccui.RELATIVE_ALIGN_NONE:
-                        case ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT:
-                            locFinalPosX += locMargin.left;
-                            locFinalPosY -= locMargin.top;
-                            break;
-                        case ccui.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL:
-                            locFinalPosY -= locMargin.top;
-                            break;
-                        case ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT:
-                            locFinalPosX -= locMargin.right;
-                            locFinalPosY -= locMargin.top;
-                            break;
-                        case ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL:
-                            locFinalPosX += locMargin.left;
-                            break;
-                        case ccui.RELATIVE_ALIGN_PARENT_CENTER:
-                            break;
-                        case ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL:
-                            locFinalPosX -= locMargin.right;
-                            break;
-                        case ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM:
-                            locFinalPosX += locMargin.left;
-                            locFinalPosY += locMargin.bottom;
-                            break;
-                        case ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL:
-                            locFinalPosY += locMargin.bottom;
-                            break;
-                        case ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM:
-                            locFinalPosX -= locMargin.right;
-                            locFinalPosY += locMargin.bottom;
-                            break;
-
-                        case ccui.RELATIVE_ALIGN_LOCATION_ABOVE_LEFT:
-                            locFinalPosY += locMargin.bottom;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT) {
-                                locFinalPosY += locRelativeWidgetMargin.top;
-                            }
-                            locFinalPosY += locMargin.left;
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_ABOVE_CENTER:
-                            locFinalPosY += locMargin.bottom;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT) {
-                                locFinalPosY += locRelativeWidgetMargin.top;
-                            }
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_ABOVE_RIGHT:
-                            locFinalPosY += locMargin.bottom;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT) {
-                                locFinalPosY += locRelativeWidgetMargin.top;
-                            }
-                            locFinalPosX -= locMargin.right;
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_LEFT_TOP:
-                            locFinalPosX -= locMargin.right;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL) {
-                                locFinalPosX -= locRelativeWidgetMargin.left;
-                            }
-                            locFinalPosY -= locMargin.top;
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_LEFT_CENTER:
-                            locFinalPosX -= locMargin.right;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL) {
-                                locFinalPosX -= locRelativeWidgetMargin.left;
-                            }
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_LEFT_BOTTOM:
-                            locFinalPosX -= locMargin.right;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL) {
-                                locFinalPosX -= locRelativeWidgetMargin.left;
-                            }
-                            locFinalPosY += locMargin.bottom;
-                            break;
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_RIGHT_TOP:
-                            locFinalPosX += locMargin.left;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL) {
-                                locFinalPosX += locRelativeWidgetMargin.right;
-                            }
-                            locFinalPosY -= locMargin.top;
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_RIGHT_CENTER:
-                            locFinalPosX += locMargin.left;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL) {
-                                locFinalPosX += locRelativeWidgetMargin.right;
-                            }
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_RIGHT_BOTTOM:
-                            locFinalPosX += locMargin.left;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL) {
-                                locFinalPosX += locRelativeWidgetMargin.right;
-                            }
-                            locFinalPosY += locMargin.bottom;
-                            break;
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_BELOW_TOP:
-                            locFinalPosY -= locMargin.top;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL) {
-                                locFinalPosY -= locRelativeWidgetMargin.bottom;
-                            }
-                            locFinalPosX += locMargin.left;
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_BELOW_CENTER:
-                            locFinalPosY -= locMargin.top;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL) {
-                                locFinalPosY -= locRelativeWidgetMargin.bottom;
-                            }
-                            break;
-                        case ccui.RELATIVE_ALIGN_LOCATION_BELOW_BOTTOM:
-                            locFinalPosY -= locMargin.top;
-                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL) {
-                                locFinalPosY -= locRelativeWidgetMargin.bottom;
-                            }
-                            locFinalPosX -= locMargin.right;
-                            break;
-                        default:
-                            break;
-                    }
-                    locChild.setPosition(locFinalPosX, locFinalPosY);
-                    locLayoutParameter._put = true;
-                    unlayoutChildCount--;
-                }
-            }
-        }
-    },
     _doLayout: function () {
-        if (!this._doLayoutDirty) {
+        if (!this._doLayoutDirty)
             return;
-        }
+
+        var executant = this._createLayoutManager();     //TODO create a layout manager every calling _doLayout?
+        if (executant)
+            executant._doLayout(this);
+        this._doLayoutDirty = false;
+    },
+
+    _createLayoutManager: function(){
+        var layoutMgr = null;
         switch (this._layoutType) {
-            case ccui.Layout.ABSOLUTE:
-                break;
             case ccui.Layout.LINEAR_VERTICAL:
-                this.doLayout_LINEAR_VERTICAL();
+                layoutMgr = ccui.LinearVerticalLayoutManager.create();
                 break;
             case ccui.Layout.LINEAR_HORIZONTAL:
-                this.doLayout_LINEAR_HORIZONTAL();
+                layoutMgr = ccui.LinearHorizontalLayoutManager.create();
                 break;
             case ccui.Layout.RELATIVE:
-                this.doLayout_RELATIVE();
-                break;
-            default:
+                layoutMgr = ccui.RelativeLayoutManager.create();
                 break;
         }
-        this._doLayoutDirty = false;
+        return layoutMgr;
+    },
+
+    _getLayoutContentSize: function(){
+        return this.getContentSize();
+    },
+
+    _getLayoutElements: function(){
+        return this.getChildren();
+    },
+
+    //clipping
+    _onBeforeVisitStencil: function(){
+        //TODO NEW RENDERER
+    },
+
+    _drawFullScreenQuadClearStencil:function(){
+        //TODO NEW RENDERER
+    },
+
+    _onAfterDrawStencil: function(){
+        //TODO NEW RENDERER
+    },
+
+    _onAfterVisitStencil: function(){
+        //TODO NEW RENDERER
+    },
+
+    _onAfterVisitScissor: function(){
+        //TODO NEW RENDERER
+    },
+
+    _onAfterVisitScissor: function(){
+        //TODO NEW RENDERER
+    },
+
+    _updateBackGroundImageOpacity: function(){
+        if (this._backGroundImage)
+            this._backGroundImage.setOpacity(this._backGroundImageOpacity);
+    },
+
+    _updateBackGroundImageRGBA: function(){
+        if (this._backGroundImage) {
+            this._backGroundImage.setColor(this._backGroundImageColor);
+            this._backGroundImage.setOpacity(this._backGroundImageOpacity);
+        }
+    },
+
+    _getLayoutAccumulatedSize: function(){
+        var children = this.getChildren();
+        var  layoutSize = cc.size(0, 0);
+        var widgetCount = 0, locSize;
+        for(var i = 0, len = children.length; i < len; i++) {
+            var layout = children[i];
+            if (null != layout && layout instanceof ccui.Layout){
+                locSize = layout._getLayoutAccumulatedSize();
+                layoutSize.width += locSize.width;
+                layoutSize.height += locSize.height;
+                // C++ layoutSize = layoutSize + layout.getLayoutAccumulatedSize();
+            } else {
+                if (layout instanceof ccui.Widget) {
+                    widgetCount++;
+                    var m = w.getLayoutParameter().getMargin();
+                    locSize = w.getContentSize();
+                    // c++ layoutSize = layoutSize + w.getContentSize() + cc.size(m.right + m.left,  m.top + m.bottom) * 0.5;
+                    layoutSize.width += locSize.width +  (m.right + m.left) * 0.5;
+                    layoutSize.height += locSize.height +  (m.top + m.bottom) * 0.5;
+                }
+            }
+        }
+
+        //substract extra size
+        var type = this.getLayoutType();
+        if (type == ccui.Layout.LINEAR_HORIZONTAL)
+            layoutSize.height = layoutSize.height - layoutSize.height/widgetCount * (widgetCount-1);
+
+        if (type == ccui.Layout.LINEAR_VERTICAL)
+            layoutSize.width = layoutSize.width - layoutSize.width/widgetCount * (widgetCount-1);
+        return layoutSize;
+    },
+
+    _findNearestChildWidgetIndex: function(direction, baseWidget){
+        if (baseWidget == null || baseWidget == this)
+            return this._findFirstFocusEnabledWidgetIndex();
+
+        var index = 0, locChildren = this.getChildren();
+        var count = locChildren.length;
+        var widgetPosition;
+
+        var distance = cc.FLT_MAX, found = 0;
+        if (direction == ccui.Widget.LEFT || direction == ccui.Widget.RIGHT || direction == ccui.Widget.DOWN || direction == ccui.Widget.UP) {
+            widgetPosition = this._getWorldCenterPoint(baseWidget);
+            while (index < count) {
+                var w = locChildren[index];
+                if (w && w instanceof ccui.Widget && w.isFocusEnabled()) {
+                    var length = (w instanceof ccui.Layout)? w._calculateNearestDistance(baseWidget)
+                        : cc.pLength(cc.pSub(this._getWorldCenterPoint(w), widgetPosition));
+
+                    if (length < distance){
+                        found = index;
+                        distance = length;
+                    }
+                }
+                index++;
+            }
+            return found;
+        }
+        cc.assert(0, "invalid focus direction!");
+        return 0;
+    },
+
+    _findFarestChildWidgetIndex: function(direction, baseWidget){
+        if (baseWidget == null || baseWidget == this)
+            return this._findFirstFocusEnabledWidgetIndex();
+
+        var index = 0;
+        var count = this.getChildren().size();
+
+        var distance = -cc.FLT_MAX;
+        var found = 0;
+        if (direction == ccui.Widget.LEFT || direction == ccui.Widget.RIGHT || direction == ccui.Widget.DOWN || direction == ccui.Widget.UP) {
+            var widgetPosition =  this._getWorldCenterPoint(baseWidget);
+            while (index <  count) {
+                if (w && w instanceof ccui.Widget && w.isFocusEnabled()) {
+                    var length = (w instanceof ccui.Layout)?w._calculateFarestDistance(baseWidget)
+                        : cc.pLength(cc.pSub(this._getWorldCenterPoint(w), widgetPosition));
+
+                    if (length > distance){
+                        found = index;
+                        distance = length;
+                    }
+                }
+                index++;
+            }
+            return  found;
+        }
+        cc.assert(0, "invalid focus direction!!!");
+        return 0;
+    },
+
+    _calculateNearestDistance: function(baseWidget){
+        var distance = cc.FLT_MAX;
+        var widgetPosition =  this._getWorldCenterPoint(baseWidget);
+        var locChildren = this._children;
+
+        for (var i = 0, len = locChildren.length; i < len; i++) {
+            var widget = locChildren[i];
+            var length;
+            if (widget instanceof ccui.Layout)
+                length = widget._calculateNearestDistance(baseWidget);
+            else {
+                if (widget instanceof ccui.Widget && widget.isFocusEnabled())
+                    length = cc.pLength(cc.pSub(this._getWorldCenterPoint(widget), widgetPosition));
+                else
+                    continue;
+            }
+
+            if (length < distance)
+                distance = length;
+        }
+        return distance;
+    },
+
+    _calculateFarestDistance:function(baseWidget){
+        var distance = -cc.FLT_MAX;
+        var widgetPosition =  this._getWorldCenterPoint(baseWidget);
+        var locChildren = this._children;
+
+        for (var i = 0, len = locChildren.length; i < len; i++) {
+            var layout = locChildren[i];
+            var length;
+            if (layout instanceof ccui.Layout)
+                length = layout._calculateFarestDistance(baseWidget);
+            else {
+                if (layout instanceof ccui.Widget && layout.isFocusEnabled()) {
+                    var wPosition = this._getWorldCenterPoint(w);
+                    length = cc.pLength(cc.pSub(wPosition, widgetPosition));
+                } else
+                    continue;
+            }
+
+            if (length > distance)
+                distance = length;
+        }
+        return distance;
+    },
+
+    _findProperSearchingFunctor: function(direction, baseWidget){
+        if (baseWidget == null)
+            return;
+
+        var previousWidgetPosition = this._getWorldCenterPoint(baseWidget);
+        var widgetPosition = this._getWorldCenterPoint(this._findFirstNonLayoutWidget());
+        if (direction == ccui.Widget.LEFT) {
+            if (previousWidgetPosition.x > widgetPosition.x)
+                this.onPassFocusToChild = this._findNearestChildWidgetIndex.bind(this);
+            else
+                this.onPassFocusToChild = this._findFarestChildWidgetIndex.bind(this);
+        }else if(direction == ccui.Widget.RIGHT){
+            if (previousWidgetPosition.x > widgetPosition.x)
+                this.onPassFocusToChild = this._findFarestChildWidgetIndex.bind(this);
+            else
+                this.onPassFocusToChild = this._findNearestChildWidgetIndex.bind(this);
+        }else if(direction == ccui.Widget.DOWN){
+            if (previousWidgetPosition.y > widgetPosition.y)
+                this.onPassFocusToChild = this._findNearestChildWidgetIndex.bind(this);
+            else
+                this.onPassFocusToChild = this._findFarestChildWidgetIndex.bind(this);
+        }else if(direction == ccui.Widget.UP){
+            if (previousWidgetPosition.y < widgetPosition.y)
+                this.onPassFocusToChild = this._findNearestChildWidgetIndex.bind(this);
+            else
+                this.onPassFocusToChild = this._findFarestChildWidgetIndex.bind(this);
+        }else
+            cc.assert(0, "invalid direction!");
+    },
+
+    _findFirstNonLayoutWidget:function(){
+        var locChildren = this._children;
+        for(var i = 0, len = locChildren.length; i < len; i++) {
+            var child = locChildren[i];
+            if (child instanceof ccui.Layout){
+                var widget = child._findFirstNonLayoutWidget();
+                if(widget)
+                    return widget;
+            } else{
+                if (child instanceof cc.Widget)
+                    return child;
+            }
+        }
+        return null;
+    },
+
+    _findFirstFocusEnabledWidgetIndex: function(){
+        var index = 0, locChildren = this.getChildren();
+        var count = locChildren.length;
+        while (index < count) {
+            var w = locChildren[index];
+            if (w && w instanceof ccui.Widget && w.isFocusEnabled())
+                return index;
+            index++;
+        }
+        //cc.assert(0, "invalid operation");
+        return 0;
+    },
+
+    _findFocusEnabledChildWidgetByIndex: function(index){
+        var widget = this._getChildWidgetByIndex(index);
+
+        if (widget){
+            if (widget.isFocusEnabled())
+                return widget;
+            index = index + 1;
+            return this._findFocusEnabledChildWidgetByIndex(index);
+        }
+        return null;
+    },
+
+    _getWorldCenterPoint: function(widget){
+        //FIXEDME: we don't need to calculate the content size of layout anymore
+        var widgetSize = widget instanceof ccui.Layout ? widget._getLayoutAccumulatedSize() :  widget.getContentSize();
+        return widget.convertToWorldSpace(cc.p(widgetSize.width /2, widgetSize.height /2));
+    },
+
+    _getNextFocusedWidget: function(direction, current){
+        var nextWidget = null, locChildren = this._children;
+        var  previousWidgetPos = locChildren.indexOf(current);
+        previousWidgetPos = previousWidgetPos + 1;
+        if (previousWidgetPos < locChildren.length) {
+            nextWidget = this._getChildWidgetByIndex(previousWidgetPos);
+            //handle widget
+            if (nextWidget) {
+                if (nextWidget.isFocusEnabled()) {
+                    if (nextWidget instanceof ccui.Layout) {
+                        nextWidget._isFocusPassing = true;
+                        return nextWidget.findNextFocusedWidget(direction, nextWidget);
+                    } else {
+                        this.dispatchFocusEvent(current, nextWidget);
+                        return nextWidget;
+                    }
+                } else
+                    return this._getNextFocusedWidget(direction, nextWidget);
+            } else
+                return current;
+        } else {
+            if (this._loopFocus) {
+                if (this._checkFocusEnabledChild()) {
+                    previousWidgetPos = 0;
+                    nextWidget = this._getChildWidgetByIndex(previousWidgetPos);
+                    if (nextWidget.isFocusEnabled()) {
+                        if (nextWidget instanceof ccui.Layout) {
+                            nextWidget._isFocusPassing = true;
+                            return nextWidget.findNextFocusedWidget(direction, nextWidget);
+                        } else {
+                            this.dispatchFocusEvent(current, nextWidget);
+                            return nextWidget;
+                        }
+                    } else
+                        return this._getNextFocusedWidget(direction, nextWidget);
+                } else {
+                    if (current instanceof ccui.Layout)
+                        return current;
+                    else
+                        return this._focusedWidget;
+                }
+            } else{
+                if (this._isLastWidgetInContainer(current, direction)){
+                    if (this._isWidgetAncestorSupportLoopFocus(this, direction))
+                        return this.findNextFocusedWidget(direction, this);
+                    if (current instanceof ccui.Layout)
+                        return current;
+                    else
+                        return this._focusedWidget;
+                } else
+                    return this.findNextFocusedWidget(direction, this);
+            }
+        }
+    },
+
+    _getPreviousFocusedWidget: function(direction, current){
+        var nextWidget = null, locChildren = this._children;
+        var previousWidgetPos = locChildren.indexOf(current);
+        previousWidgetPos = previousWidgetPos - 1;
+        if (previousWidgetPos >= 0){
+            nextWidget = this._getChildWidgetByIndex(previousWidgetPos);
+            if (nextWidget.isFocusEnabled()) {
+                if (nextWidget instanceof ccui.Layout){
+                    nextWidget._isFocusPassing = true;
+                    return nextWidget.findNextFocusedWidget(direction, nextWidget);
+                }
+                this.dispatchFocusEvent(current, nextWidget);
+                return nextWidget;
+            } else
+                //handling the disabled widget, there is no actual focus lose or get, so we don't need any envet
+                return this._getPreviousFocusedWidget(direction, nextWidget);
+        }else {
+            if (this._loopFocus){
+                if (this._checkFocusEnabledChild()) {
+                    previousWidgetPos = locChildren.length -1;
+                    nextWidget = this._getChildWidgetByIndex(previousWidgetPos);
+                    if (nextWidget.isFocusEnabled()){
+                        if (nextWidget instanceof ccui.Layout){
+                            nextWidget._isFocusPassing = true;
+                            return nextWidget.findNextFocusedWidget(direction, nextWidget);
+                        } else {
+                            this.dispatchFocusEvent(current, nextWidget);
+                            return nextWidget;
+                        }
+                    } else
+                        return this._getPreviousFocusedWidget(direction, nextWidget);
+                } else {
+                    if (current instanceof ccui.Layout)
+                        return current;
+                    else
+                        return this._focusedWidget;
+                }
+            } else {
+                if (this._isLastWidgetInContainer(current, direction)) {
+                    if (this._isWidgetAncestorSupportLoopFocus(this, direction))
+                        return this.findNextFocusedWidget(direction, this);
+
+                    if (current instanceof ccui.Layout)
+                        return current;
+                    else
+                        return this._focusedWidget;
+                } else
+                    return this.findNextFocusedWidget(direction, this);
+            }
+        }
+    },
+
+    _getChildWidgetByIndex: function (index) {
+        var locChildren = this._children;
+        var size = locChildren.length;
+        var count = 0, oldIndex = index;
+        while (index < size) {
+            var firstChild = locChildren[index];
+            if (firstChild && firstChild instanceof ccui.Widget)
+                return firstChild;
+            count++;
+            index++;
+        }
+
+        var begin = 0;
+        while (begin < oldIndex) {
+            var child = locChildren[begin];
+            if (child && child instanceof ccui.Widget)
+                return child;
+            count++;
+            begin++;
+        }
+        return null;
+    },
+
+    _isLastWidgetInContainer:function(widget, direction){
+        var parent = widget.getParent();
+        if (parent instanceof ccui.Layout)
+            return true;
+
+        var container = parent.getChildren();
+        var index = container.indexOf(widget);
+        if (parent.getLayoutType() == ccui.Layout.LINEAR_HORIZONTAL) {
+            if (direction == ccui.Widget.LEFT) {
+                if (index == 0)
+                    return true * this._isLastWidgetInContainer(parent, direction);
+                else
+                    return false;
+            }
+            if (direction == ccui.Widget.RIGHT) {
+                if (index == container.length - 1)
+                    return true * this._isLastWidgetInContainer(parent, direction);
+                else
+                    return false;
+            }
+            if (direction == ccui.Widget.DOWN)
+                return this._isLastWidgetInContainer(parent, direction);
+
+            if (direction == ccui.Widget.UP)
+                return this._isLastWidgetInContainer(parent, direction);
+        } else if(parent.getLayoutType() == ccui.Layout.LINEAR_VERTICAL){
+            if (direction == ccui.Widget.UP){
+                if (index == 0)
+                    return true * this._isLastWidgetInContainer(parent, direction);
+                else
+                    return false;
+            }
+            if (direction == ccui.Widget.DOWN) {
+                if (index == container.length - 1)
+                    return true * this._isLastWidgetInContainer(parent, direction);
+                else
+                    return false;
+            }
+            if (direction == ccui.Widget.LEFT)
+                return this._isLastWidgetInContainer(parent, direction);
+
+            if (direction == ccui.Widget.RIGHT)
+                return this._isLastWidgetInContainer(parent, direction);
+        }else {
+            cc.assert(0, "invalid layout Type");
+            return false;
+        }
+        return false;
+    },
+
+    _isWidgetAncestorSupportLoopFocus: function(widget, direction){
+        var parent = widget.getParent();
+        if (parent == null)
+            return false;
+        if (parent.isLoopFocus()) {
+            var layoutType = parent.getLayoutType();
+            if (layoutType == ccui.Layout.LINEAR_HORIZONTAL) {
+                if (direction == ccui.Widget.LEFT || direction == ccui.Widget.RIGHT)
+                    return true;
+                else
+                    return this._isWidgetAncestorSupportLoopFocus(parent, direction);
+            }
+            if (layoutType == ccui.Layout.LINEAR_VERTICAL){
+                if (direction == ccui.Widget.DOWN || direction == ccui.Widget.UP)
+                    return true;
+                else
+                    return this._isWidgetAncestorSupportLoopFocus(parent, direction);
+            } else
+                cc.assert(0, "invalid layout type");
+        } else
+            return this._isWidgetAncestorSupportLoopFocus(parent, direction);
+    },
+
+    _passFocusToChild: function(direction, current){
+        if (this._checkFocusEnabledChild()) {
+            var previousWidget = this.getCurrentFocusedWidget();
+            this._findProperSearchingFunctor(direction, previousWidget);
+
+            var index = this.onPassFocusToChild(direction, previousWidget);       //TODO need check
+
+            var widget = this._getChildWidgetByIndex(index);
+            if (widget instanceof ccui.Layout) {
+                widget._isFocusPassing = true;
+                return widget.findNextFocusedWidget(direction, widget);
+            } else {
+                this.dispatchFocusEvent(current, widget);
+                return widget;
+            }
+        }else
+            return this;
+    },
+
+    _checkFocusEnabledChild: function(){
+        var locChildren = this._children;
+        for(var i = 0, len = locChildren.length; i < len; i++){
+            var widget = locChildren[i];
+            if (widget && widget instanceof ccui.Widget && widget.isFocusEnabled())
+                return true;
+        }
+        return false;
     },
 
     /**
@@ -1484,6 +1686,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this.setLayoutType(layout._layoutType);
         this.setClippingEnabled(layout._clippingEnabled);
         this.setClippingType(layout._clippingType);
+        this._loopFocus = layout._loopFocus;
+        this._passFocusToChild = layout._passFocusToChild;
     }
 });
 ccui.Layout._init_once = null;
@@ -1493,11 +1697,9 @@ ccui.Layout._sharedCache = null;
 
 if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
     //WebGL
-    ccui.Layout.prototype.initStencil = ccui.Layout.prototype._initStencilForWebGL;
     ccui.Layout.prototype.stencilClippingVisit = ccui.Layout.prototype._stencilClippingVisitForWebGL;
     ccui.Layout.prototype.scissorClippingVisit = ccui.Layout.prototype._scissorClippingVisitForWebGL;
 } else {
-    ccui.Layout.prototype.initStencil = ccui.Layout.prototype._initStencilForCanvas;
     ccui.Layout.prototype.stencilClippingVisit = ccui.Layout.prototype._stencilClippingVisitForCanvas;
     ccui.Layout.prototype.scissorClippingVisit = ccui.Layout.prototype._stencilClippingVisitForCanvas;
 }

@@ -92,7 +92,7 @@ cc._LogInfos = {
     eventManager_setPriority: "Can't set fixed priority with scene graph based listener.",
     eventManager_addListener_2: "Invalid parameters.",
     eventManager_addListener_3: "listener must be a cc.EventListener object when adding a fixed priority listener",
-    eventManager_addListener_4: "The listener has been registered.",
+    eventManager_addListener_4: "The listener has been registered, please don't register it again.",
 
     LayerMultiplex_initWithLayers: "parameters should not be ending with null in Javascript",
     LayerMultiplex_switchTo: "Invalid index in MultiplexLayer switchTo message",
@@ -265,17 +265,28 @@ cc._logToWebPage = function (msg) {
 };
 
 //to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
+cc._formatString = function(arg){
+    if(typeof arg === 'object'){
+        try{
+            return JSON.stringify(arg);
+        }catch(err){
+            return "";
+        }
+    }else{
+        return arg;
+    }
+};
 if (console.log) {
     cc.log = function(msg){
         for (var i = 1; i < arguments.length; i++) {
-            msg = msg.replace("%s", arguments[i]);
+            msg = msg.replace(/(%s)|(%d)/, cc._formatString(arguments[i]));
         }
         console.log(msg);
     };
     cc.warn = console.warn ?
         function(msg){
             for (var i = 1; i < arguments.length; i++) {
-                msg = msg.replace("%s", arguments[i]);
+                msg = msg.replace(/(%s)|(%d)/, cc._formatString(arguments[i]));
             }
             console.warn(msg);
         } :
@@ -283,7 +294,7 @@ if (console.log) {
     cc.error = console.error ?
         function(msg){
             for (var i = 1; i < arguments.length; i++) {
-                msg = msg.replace("%s", arguments[i]);
+                msg = msg.replace(/(%s)|(%d)/, cc._formatString(arguments[i]));
             }
             console.error(msg);
         } :
@@ -291,7 +302,7 @@ if (console.log) {
     cc.assert = function (cond, msg) {
         if (!cond && msg) {
             for (var i = 2; i < arguments.length; i++) {
-                msg = msg.replace("%s", arguments[i]);
+                msg = msg.replace(/(%s)|(%d)/, cc._formatString(arguments[i]));
             }
             throw msg;
         }

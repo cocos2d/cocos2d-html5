@@ -34,6 +34,53 @@ ccs.FRAME_TYPE_TINT = 3;
 ccs.FRAME_TYPE_FADE = 4;
 ccs.FRAME_TYPE_MAX = 5;
 
+ccs.FrameEaseType = {
+    Custom : -1,
+
+    Linear : 0,
+
+    Sine_EaseIn : 1,
+    Sine_EaseOut : 2,
+    Sine_EaseInOut : 3,
+
+    Quad_EaseIn : 4,
+    Quad_EaseOut : 5,
+    Quad_EaseInOut : 6,
+
+    Cubic_EaseIn : 7,
+    Cubic_EaseOut : 8,
+    Cubic_EaseInOut : 9,
+
+    Quart_EaseIn : 10,
+    Quart_EaseOut : 11,
+    Quart_EaseInOut : 12,
+
+    Quint_EaseIn : 13,
+    Quint_EaseOut : 14,
+    Quint_EaseInOut : 15,
+
+    Expo_EaseIn : 16,
+    Expo_EaseOut : 17,
+    Expo_EaseInOut : 18,
+
+    Circ_EaseIn : 19,
+    Circ_EaseOut : 20,
+    Circ_EaseInOut : 21,
+
+    Elastic_EaesIn : 22,
+    Elastic_EaesOut : 23,
+    Elastic_EaesInOut : 24,
+
+    Back_EaseIn : 25,
+    Back_EaseOut : 26,
+    Back_EaseInOut : 27,
+
+    Bounce_EaseIn : 28,
+    Bounce_EaseOut : 29,
+    Bounce_EaseInOut : 30
+};
+
+
 /**
  * Base class for ccs.ActionFrame
  * @class
@@ -43,6 +90,7 @@ ccs.ActionFrame = ccs.Class.extend(/** @lends ccs.ActionFrame# */{
     frameType: 0,
     easingType: 0,
     frameIndex: 0,
+    frameTweenParameter: null,
     time: 0,
     ctor: function () {
         this.frameType = 0;
@@ -58,6 +106,123 @@ ccs.ActionFrame = ccs.Class.extend(/** @lends ccs.ActionFrame# */{
      */
     getAction: function (duration) {
         return null;
+    },
+
+    _getEasingAction : function (action) {
+        if (action === null) {
+            console.error("Action cannot be null!");
+            return null;
+        }
+
+        var resultAction;
+        switch (this.easingType) {
+            case ccs.FrameEaseType.Custom:
+                break;
+            case ccs.FrameEaseType.Linear:
+                resultAction = action;
+                break;
+            case ccs.FrameEaseType.Sine_EaseIn:
+                resultAction = action.easing(cc.easeSineIn());
+                break;
+            case ccs.FrameEaseType.Sine_EaseOut:
+                resultAction = action.easing(cc.easeSineOut());
+                break;
+            case ccs.FrameEaseType.Sine_EaseInOut:
+                resultAction = action.easing(cc.easeSineInOut());
+                break;
+            case ccs.FrameEaseType.Quad_EaseIn:
+                resultAction = action.easing(cc.easeQuadraticActionIn());
+                break;
+            case ccs.FrameEaseType.Quad_EaseOut:
+                resultAction = action.easing(cc.easeQuadraticActionOut());
+                break;
+            case ccs.FrameEaseType.Quad_EaseInOut:
+                resultAction = action.easing(cc.easeQuadraticActionInOut());
+                break;
+            case ccs.FrameEaseType.Cubic_EaseIn:
+                resultAction = action.easing(cc.easeCubicActionIn());
+                break;
+            case ccs.FrameEaseType.Cubic_EaseOut:
+                resultAction = action.easing(cc.easeCubicActionOut());
+                break;
+            case ccs.FrameEaseType.Cubic_EaseInOut:
+                resultAction = action.easing(cc.easeCubicActionInOut());
+                break;
+            case ccs.FrameEaseType.Quart_EaseIn:
+                resultAction = action.easing(cc.easeQuarticActionIn());
+                break;
+            case ccs.FrameEaseType.Quart_EaseOut:
+                resultAction = action.easing(cc.easeQuarticActionOut());
+                break;
+            case ccs.FrameEaseType.Quart_EaseInOut:
+                resultAction = action.easing(cc.easeQuarticActionInOut());
+                break;
+            case ccs.FrameEaseType.Quint_EaseIn:
+                resultAction = action.easing(cc.easeQuinticActionIn());
+                break;
+            case ccs.FrameEaseType.Quint_EaseOut:
+                resultAction = action.easing(cc.easeQuinticActionOut());
+                break;
+            case ccs.FrameEaseType.Quint_EaseInOut:
+                resultAction = action.easing(cc.easeQuinticActionInOut());
+                break;
+            case ccs.FrameEaseType.Expo_EaseIn:
+                resultAction = action.easing(cc.easeExponentialIn());
+                break;
+            case ccs.FrameEaseType.Expo_EaseOut:
+                resultAction = action.easing(cc.easeExponentialOut());
+                break;
+            case ccs.FrameEaseType.Expo_EaseInOut:
+                resultAction = action.easing(cc.easeExponentialInOut());
+                break;
+            case ccs.FrameEaseType.Circ_EaseIn:
+                resultAction = action.easing(cc.easeCircleActionIn());
+                break;
+            case ccs.FrameEaseType.Circ_EaseOut:
+                resultAction = action.easing(cc.easeCircleActionOut());
+                break;
+            case ccs.FrameEaseType.Circ_EaseInOut:
+                resultAction = action.easing(cc.easeCircleActionInOut());
+                break;
+            case ccs.FrameEaseType.Elastic_EaesIn:
+                resultAction = action.easing(cc.easeElasticIn());
+                break;
+            case ccs.FrameEaseType.Elastic_EaesOut:
+                resultAction = action.easing(cc.easeElasticOut());
+                break;
+            case ccs.FrameEaseType.Elastic_EaesInOut:
+                resultAction = action.easing(cc.easeElasticInOut());
+                break;
+            case ccs.FrameEaseType.Back_EaseIn:
+                resultAction = action.easing(cc.easeBackIn());
+                break;
+            case ccs.FrameEaseType.Back_EaseOut:
+                resultAction = action.easing(cc.easeBackOut());
+                break;
+            case ccs.FrameEaseType.Back_EaseInOut:
+                resultAction = action.easing(cc.easeBackInOut());
+                break;
+            case ccs.FrameEaseType.Bounce_EaseIn:
+                resultAction = action.easing(cc.easeBounceIn());
+                break;
+            case ccs.FrameEaseType.Bounce_EaseOut:
+                resultAction = action.easing(cc.easeBounceOut());
+                break;
+            case ccs.FrameEaseType.Bounce_EaseInOut:
+                resultAction = action.easing(cc.easeBounceInOut());
+                break;
+        }
+
+        return resultAction;
+    },
+    setEasingParameter: function(parameter){
+        this._Parameter = [];
+        for(var i=0;i<parameter.length;i++){
+            this._Parameter.push(parameter[i]);
+        }
+    },
+    setEasingType: function(easingType){
+        this._easingType = easingType;
     }
 });
 
@@ -103,7 +268,9 @@ ccs.ActionMoveFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionMoveFrame# */{
      * @returns {cc.MoveTo}
      */
     getAction: function (duration) {
-        return cc.MoveTo.create(duration, this._position);
+        var action = cc.MoveTo.create(duration, this._position);
+        action.easingType = this.easingType || ccs.FrameEaseType.Linear;
+        return this._getEasingAction(action);
     }
 });
 
@@ -160,7 +327,9 @@ ccs.ActionScaleFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionScaleFrame# *
      * @returns {cc.ScaleTo}
      */
     getAction: function (duration) {
-        return cc.ScaleTo.create(duration, this._scaleX, this._scaleY);
+        var action = cc.ScaleTo.create(duration, this._scaleX, this._scaleY);
+        action.easingType = this.easingType || ccs.FrameEaseType.Linear;
+        return this._getEasingAction(action);
     }
 });
 
@@ -199,7 +368,9 @@ ccs.ActionRotationFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionRotationFr
      * @returns {cc.RotateTo}
      */
     getAction: function (duration) {
-        return cc.RotateTo.create(duration, this._rotation);
+        var action = cc.RotateTo.create(duration, this._rotation);
+        action.easingType = this.easingType || ccs.FrameEaseType.Linear;
+        return this._getEasingAction(action);
     }
 });
 
@@ -238,7 +409,9 @@ ccs.ActionFadeFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionFadeFrame# */{
      * @returns {cc.FadeTo}
      */
     getAction: function (duration) {
-        return cc.FadeTo.create(duration, this._opacity);
+        var action = cc.FadeTo.create(duration, this._opacity);
+        action.easingType = this.easingType || ccs.FrameEaseType.Linear;
+        return this._getEasingAction(action);
     }
 });
 
@@ -281,6 +454,8 @@ ccs.ActionTintFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionTintFrame# */{
      * @returns {cc.TintTo}
      */
     getAction: function (duration) {
-        return cc.TintTo.create(duration, this._color.r, this._color.g, this._color.b);
+        var action = cc.TintTo.create(duration, this._color.r, this._color.g, this._color.b);
+        action.easingType = this.easingType || ccs.FrameEaseType.Linear;
+        return this._getEasingAction(action);
     }
 });

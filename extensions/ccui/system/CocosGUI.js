@@ -23,11 +23,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 /**
- * @namespace Base namespace of Cocos GUI
- * @name ccui
+ *  Base namespace of Cocos GUI
+ * @namespace ccui
  */
 var ccui = ccui || {};
 
+//These classes defines are use for jsDoc
 /**
  * The same as cc.Class
  * @class
@@ -42,6 +43,23 @@ ccui.Class.extend = ccui.Class.extend || cc.Class.extend;
  */
 ccui.Node = ccui.Node || cc.Node;
 ccui.Node.extend = ccui.Node.extend || cc.Node.extend;
+
+/**
+ * that same as cc.NodeRGBA
+ * @class
+ * @extends ccui.Node
+ */
+ccui.NodeRGBA = ccui.NodeRGBA || cc.NodeRGBA;
+ccui.NodeRGBA.extend = ccui.NodeRGBA.extend || cc.NodeRGBA.extend;
+
+
+/**
+ * that same as cc.Node
+ * @class
+ * @extends ccui.NodeRGBA
+ */
+ccui.ProtectedNode = ccui.ProtectedNode || cc.ProtectedNode;
+ccui.ProtectedNode.extend = ccui.ProtectedNode.extend || cc.ProtectedNode.extend;
 
 /**
  * Cocos GUI version

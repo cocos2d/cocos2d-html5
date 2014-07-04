@@ -64,11 +64,23 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
         for (var i = 0; i < actionframelist.length; i++) {
             var actionFrameDic = actionframelist[i];
             var frameInex = actionFrameDic["frameid"];
+            var frameTweenType = actionFrameDic["tweenType"];
+            var frameTweenParameterNum = actionFrameDic["tweenParameter"];
+
+            var frameTweenParameter = [];
+            for (var j = 0; j < frameTweenParameterNum; j++){
+                var value = actionFrameDic["tweenParameter"][j];
+                frameTweenParameter.push(value);
+            }
+
             if (actionFrameDic["positionx"] !== undefined) {
                 var positionX = actionFrameDic["positionx"];
                 var positionY = actionFrameDic["positiony"];
                 var actionFrame = new ccs.ActionMoveFrame();
-                actionFrame.frameIndex = frameInex;
+//                actionFrame.easingType = frameTweenType;
+//                actionFrame.frameIndex = frameInex;
+                actionFrame.setEasingType(frameTweenType);
+                actionFrame.setEasingParameter(frameTweenParameter);
                 actionFrame.setPosition(positionX, positionY);
                 var actionArray = this._frameArray[ccs.FRAME_TYPE_MOVE];
                 actionArray.push(actionFrame);
@@ -78,7 +90,10 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
                 var scaleX = actionFrameDic["scalex"];
                 var scaleY = actionFrameDic["scaley"];
                 var actionFrame = new ccs.ActionScaleFrame();
-                actionFrame.frameIndex = frameInex;
+//                actionFrame.easingType = frameTweenType;
+//                actionFrame.frameIndex = frameInex;
+                actionFrame.setEasingType(frameTweenType);
+                actionFrame.setEasingParameter(frameTweenParameter);
                 actionFrame.setScaleX(scaleX);
                 actionFrame.setScaleY(scaleY);
                 var actionArray = this._frameArray[ccs.FRAME_TYPE_SCALE];
@@ -88,7 +103,10 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
             if (actionFrameDic["rotation"] !== undefined) {
                 var rotation = actionFrameDic["rotation"];
                 var actionFrame = new ccs.ActionRotationFrame();
-                actionFrame.frameIndex = frameInex;
+//                actionFrame.easingType = frameTweenType;
+//                actionFrame.frameIndex = frameInex;
+                actionFrame.setEasingType(frameTweenType);
+                actionFrame.setEasingParameter(frameTweenParameter);
                 actionFrame.setRotation(rotation);
                 var actionArray = this._frameArray[ccs.FRAME_TYPE_ROTATE];
                 actionArray.push(actionFrame);
@@ -97,7 +115,10 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
             if (actionFrameDic["opacity"] !== undefined) {
                 var opacity = actionFrameDic["opacity"];
                 var actionFrame = new ccs.ActionFadeFrame();
-                actionFrame.frameIndex = frameInex;
+//                actionFrame.easingType = frameTweenType;
+//                actionFrame.frameIndex = frameInex;
+                actionFrame.setEasingType(frameTweenType);
+                actionFrame.setEasingParameter(frameTweenParameter);
                 actionFrame.setOpacity(opacity);
                 var actionArray = this._frameArray[ccs.FRAME_TYPE_FADE];
                 actionArray.push(actionFrame);
@@ -108,7 +129,10 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
                 var colorG = actionFrameDic["colorg"];
                 var colorB = actionFrameDic["colorb"];
                 var actionFrame = new ccs.ActionTintFrame();
-                actionFrame.frameIndex = frameInex;
+//                actionFrame.easingType = frameTweenType;
+//                actionFrame.frameIndex = frameInex;
+                actionFrame.setEasingType(frameTweenType);
+                actionFrame.setEasingParameter(frameTweenParameter);
                 actionFrame.setColor(cc.color(colorR, colorG, colorB));
                 var actionArray = this._frameArray[ccs.FRAME_TYPE_TINT];
                 actionArray.push(actionFrame);
@@ -260,12 +284,16 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
                     var locSrcFrame = locArray[j - 1];
                     var locDuration = (locFrame.frameIndex - locSrcFrame.frameIndex) * this.getUnitTime();
                     var locAction = locFrame.getAction(locDuration);
-                    locSequenceArray.push(locAction);
+                    if(locAction){
+                        locSequenceArray.push(locAction);
+                    }
                 }
             }
-            var locSequence = cc.Sequence.create(locSequenceArray);
-            if (locSequence != null) {
-                locSpawnArray.push(locSequence);
+            if(locSequenceArray){
+                var locSequence = cc.Sequence.create(locSequenceArray);
+                if (locSequence != null) {
+                    locSpawnArray.push(locSequence);
+                }
             }
         }
 

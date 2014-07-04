@@ -302,6 +302,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         for (var i = 0; i < selChildren.length; i++) {
             selChildren[i].pause();
         }
+        this._super();
     },
 
     /**
@@ -313,6 +314,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
             selChildren[i].resume();
         }
         this._container.resume();
+        this._super();
     },
 
     isDragging:function () {
@@ -648,8 +650,8 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         zOrder = zOrder || child.getLocalZOrder();
         tag = tag || child.getTag();
 
-        child.ignoreAnchorPointForPosition(false);
-        child.setAnchorPoint(0, 0);
+        //child.ignoreAnchorPointForPosition(false);
+        //child.setAnchorPoint(0, 0);
         if (this._container != child) {
             this._container.addChild(child, zOrder, tag);
         } else {

@@ -28,7 +28,8 @@
  ****************************************************************************/
 
 /**
- * @namespace A tiff file reader, it can parse byte array to draw into a canvas
+ * @namespace cc.tiffReader
+ * A tiff file reader, it can parse byte array to draw into a canvas
  */
 cc.tiffReader = /** @lends cc.tiffReader# */{
     _littleEndian: false,

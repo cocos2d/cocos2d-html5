@@ -36,15 +36,28 @@ cc.Color = function (r, g, b, a) {
     this.r = r || 0;
     this.g = g || 0;
     this.b = b || 0;
-    this.a = a;
+    this.a = a || 255;
 };
 
 /**
+ * Generate a color object based on multiple forms of parameters
+ * @example
+ *
+ * // 1. All channels seperately as parameters
+ * var color1 = cc.color(255, 255, 255, 255);
+ *
+ * // 2. Convert a hex string to a color
+ * var color2 = cc.color("#000000");
+ *
+ * // 3. An color object as parameter
+ * var color3 = cc.color({r: 255, g: 255, b: 255, a: 255});
+ *
+ * Alpha channel is optional. Default value is 255
  *
  * @param {Number|String|cc.Color} r
  * @param {Number} g
  * @param {Number} b
- * @param {Number} a
+ * @param {Number} [a=255]
  * @returns {cc.Color}
  */
 cc.color = function (r, g, b, a) {
@@ -53,8 +66,8 @@ cc.color = function (r, g, b, a) {
     if (typeof r === "string")
         return cc.hexToColor(r);
     if (typeof r === "object")
-        return {r: r.r, g: r.g, b: r.b, a: r.a};
-    return  {r: r, g: g, b: b, a: a };
+        return {r: r.r, g: r.g, b: r.b, a: r.a || 255};
+    return  {r: r, g: g, b: b, a: a || 255 };
 };
 
 /**

@@ -38,7 +38,7 @@ cc.UIInterfaceOrientationPortrait = 0;
  * <p>
  *  This class manages all events of input. include: touch, mouse, accelerometer, keyboard                                       <br/>
  * </p>
- * @namespace
+ * @namespace cc.inputManager
  */
 cc.inputManager = /** @lends cc.inputManager# */{
     _mousePressed: false,
@@ -349,6 +349,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
 
                 var pos = selfPointer.getHTMLElementPosition(element);
                 var location = selfPointer.getPointByEvent(event, pos);
+
                 if(!supportTouches)
                     selfPointer.handleTouchesBegin([selfPointer.getTouchByXY(location.x, location.y, pos)]);
 
@@ -358,6 +359,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
 
                 event.stopPropagation();
                 event.preventDefault();
+                element.focus();
             }, false);
 
             cc._addEventListener(element, "mouseup", function (event) {
@@ -443,7 +445,6 @@ cc.inputManager = /** @lends cc.inputManager# */{
 
                         _touchEvent.call(selfPointer, [selfPointer.getTouchByXY(event.clientX, event.clientY, pos)]);
                         event.stopPropagation();
-                        event.preventDefault();
                     }, false);
                 })(eventName, _pointerEventsMap[eventName]);
             }
@@ -460,6 +461,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
                 selfPointer.handleTouchesBegin(selfPointer.getTouchesByEvent(event, pos));
                 event.stopPropagation();
                 event.preventDefault();
+                element.focus();
             }, false);
 
             cc._addEventListener(element, "touchmove", function (event) {

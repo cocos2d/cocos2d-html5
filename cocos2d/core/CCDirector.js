@@ -38,7 +38,8 @@ cc.GLToClipTransform = function (transformOut) {
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
- * @namespace <p>
+ * @namespace cc.director
+ * <p>
  *    cc.director is a singleton of DisplayLinkDirector type director.<br/>
  *    Since the cc.director is a singleton, you don't need to call any constructor or create functions,<br/>
  *    the standard way to use it is by calling:<br/>
@@ -67,7 +68,6 @@ cc.GLToClipTransform = function (transformOut) {
  *      - Scheduled timers & drawing are synchronizes with the refresh rate of the display<br/>
  *      - Only supports animation intervals of 1/60 1/30 & 1/15<br/>
  * </p>
- * @name cc.director
  */
 cc.Director = cc.Class.extend(/** @lends cc.director# */{
     //Variables

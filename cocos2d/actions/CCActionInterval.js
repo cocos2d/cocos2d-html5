@@ -326,17 +326,16 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
 		if ((last >= 0) && (paramArray[last] == null))
 			cc.log("parameters should not be ending with null in Javascript");
 
-		if (last >= 0) {
-			var prev = paramArray[0], action1;
-			for (var i = 1; i < last; i++) {
-				if (paramArray[i]) {
-					action1 = prev;
-					prev = cc.Sequence.create();
-					prev.initWithTwoActions(action1, paramArray[i]);
-				}
-			}
-			this.initWithTwoActions(prev, paramArray[last]);
-		}
+        if (last >= 0) {
+            var prev = paramArray[0], action1;
+            for (var i = 1; i < last; i++) {
+                if (paramArray[i]) {
+                    action1 = prev;
+                    prev = cc.Sequence._actionOneTwo(action1, paramArray[i]);
+                }
+            }
+            this.initWithTwoActions(prev, paramArray[last]);
+        }
     },
 
     /** initializes the action <br/>
@@ -786,17 +785,16 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
 		if ((last >= 0) && (paramArray[last] == null))
 			cc.log("parameters should not be ending with null in Javascript");
 
-		if (last >= 0) {
-			var prev = paramArray[0], action1;
-			for (var i = 1; i < last; i++) {
-				if (paramArray[i]) {
-					action1 = prev;
-					prev = cc.Spwan.create();
-					prev.initWithTwoActions(action1, paramArray[i]);
-				}
-			}
-			this.initWithTwoActions(prev, paramArray[last]);
-		}
+        if (last >= 0) {
+            var prev = paramArray[0], action1;
+            for (var i = 1; i < last; i++) {
+                if (paramArray[i]) {
+                    action1 = prev;
+                    prev = cc.Spawn._actionOneTwo(action1, paramArray[i]);
+                }
+            }
+            this.initWithTwoActions(prev, paramArray[last]);
+        }
     },
 
     /** initializes the Spawn action with the 2 actions to spawn
@@ -894,7 +892,7 @@ cc.Spawn.create = function (/*Multiple Arguments*/tempArray) {
     var prev = paramArray[0];
     for (var i = 1; i < paramArray.length; i++) {
         if (paramArray[i] != null)
-            prev = this._actionOneTwo(prev, paramArray[i]);
+            prev = cc.Spawn._actionOneTwo(prev, paramArray[i]);
     }
     return prev;
 };
@@ -1657,14 +1655,55 @@ cc.JumpBy.create = function (duration, position, y, height, jumps) {
  * @extends cc.JumpBy
  */
 cc.JumpTo = cc.JumpBy.extend(/** @lends cc.JumpTo# */{
+    _endPosition:null,
 
-	/**
+    /**
+     * Constructor of JumpTo
+     * @param {Number} duration
+     * @param {cc.Point|Number} position
+     * @param {Number} [y]
+     * @param {Number} height
+     * @param {Number} jumps
+     * @example
+     * var actionTo = new cc.JumpTo(2, cc.p(300, 0), 50, 4);
+     * var actionTo = new cc.JumpTo(2, 300, 0, 50, 4);
+     */
+    ctor:function (duration, position, y, height, jumps) {
+        cc.JumpBy.prototype.ctor.call(this);
+        this._endPosition = cc.p(0, 0);
+
+        height !== undefined && this.initWithDuration(duration, position, y, height, jumps);
+    },
+    /**
+     * @param {Number} duration
+     * @param {cc.Point|Number} position
+     * @param {Number} [y]
+     * @param {Number} height
+     * @param {Number} jumps
+     * @return {Boolean}
+     * @example
+     * actionTo.initWithDuration(2, cc.p(300, 0), 50, 4);
+     * actionTo.initWithDuration(2, 300, 0, 50, 4);
+     */
+    initWithDuration:function (duration, position, y, height, jumps) {
+        if (cc.JumpBy.prototype.initWithDuration.call(this, duration, position, y, height, jumps)) {
+            if (jumps === undefined) {
+                y = position.y;
+                position = position.x;
+            }
+            this._endPosition.x = position;
+            this._endPosition.y = y;
+            return true;
+        }
+        return false;
+    },
+    /**
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
         cc.JumpBy.prototype.startWithTarget.call(this, target);
-        this._delta.x = this._delta.x - this._startPosition.x;
-        this._delta.y = this._delta.y - this._startPosition.y;
+        this._delta.x = this._endPosition.x - this._startPosition.x;
+        this._delta.y = this._endPosition.y - this._startPosition.y;
     },
 
     /**
@@ -1674,7 +1713,7 @@ cc.JumpTo = cc.JumpBy.extend(/** @lends cc.JumpTo# */{
     clone:function () {
         var action = new cc.JumpTo();
         this._cloneDecoration(action);
-        action.initWithDuration(this._duration, this._delta, this._height, this._jumps);
+        action.initWithDuration(this._duration, this._endPosition, this._height, this._jumps);
         return action;
     }
 });
@@ -2281,16 +2320,13 @@ cc.FadeIn = cc.FadeTo.extend(/** @lends cc.FadeIn# */{
 
 /**
  * @param {Number} duration duration in seconds
- * @param {Number} [toOpacity] to opacity
  * @return {cc.FadeIn}
  * @example
  * //example
  * var action = cc.FadeIn.create(1.0);
  */
-cc.FadeIn.create = function (duration, toOpacity) {
-    if(toOpacity == null)
-        toOpacity = 255;
-    return new cc.FadeIn(duration, toOpacity);
+cc.FadeIn.create = function (duration) {
+    return new cc.FadeIn(duration, 255);
 };
 
 

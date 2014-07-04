@@ -12,7 +12,7 @@ Core Developers:
 
     Ricardo Quesada
 
-    Huabin LING
+    Huabin LING (pandamicro)
 
     Sijie Wang
 
@@ -62,6 +62,7 @@ keisuke hata(Square)  @Seasons7    Code review, bug fix
 Marat Yakupov	    @moadib        Various bug fixes
 
 Liang Wu            @akira-cn      Touch location fix for designResolution
+                                   ScrollView on paused bugs fix
 
 Jimmy Sambuo        @jsambuo       AudioEngine improvements
 
@@ -114,6 +115,7 @@ XiaoJun Zheng        @SmallAiTT    _getResType error fix
                                    add node.js scripts for publishing game
                                    refactor cc.CCBReader
                                    cc.view bug fix
+                                   multiple property object supports in extend function
 
 Guozhu Cheng         @bengol       cc.SimpleAudioEngine bug fix
 
@@ -169,8 +171,22 @@ Bruno Assarisse      @bassarisse    cc.LabelBMFont bug fix
 
 musikov              @musikov       cc.ClippingNode bug fix
                                     cc.fontLoader bug fix
+                                    Inverted ClippingNode with DrawNode as stencil bug fix under canvas render mode
+                                    JumpTo bug with wrong _delta position bug fix
 
 Han XiaoLong         @kpkhxlgy0     cc.ParticleSytem bug fix
+
+AaronRZH             @AaronRZH      Creation of a sequence objcet or a spawn object by using new method bug fix
+
+Xiaodong Liu         @tianxing113   cc.Spawn.create bug fix
+                                    ccui.LoadingBar.setPercent crash bug fix
+
+Park Hyun Chen       @sincntx       Touch anywhere of screen to finish input when using cc.EditBox
+
+Ninja Lau            @mutoo         A typo bug in UILayout fix
+                                    One-loop CCArmatureAnimation can't finish when setSpeedScale is less than 1.0 bug fix
+
+Taras Tovchenko      @tovchenko     cc.Skin bounding box calculation bug fix under canvas render mode
 
 Retired Core Developers:
       Shengxiang Chen (Nero Chan)

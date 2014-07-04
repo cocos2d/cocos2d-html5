@@ -274,11 +274,12 @@ cc.rectContainsPoint = function (rect, point) {
  * @param {cc.Rect} rectB
  * @return {Boolean}
  */
-cc.rectIntersectsRect = function (rectA, rectB) {
-    return !(cc.rectGetMaxX(rectA) < cc.rectGetMinX(rectB) ||
-        cc.rectGetMaxX(rectB) < cc.rectGetMinX(rectA) ||
-        cc.rectGetMaxY(rectA) < cc.rectGetMinY(rectB) ||
-        cc.rectGetMaxY(rectB) < cc.rectGetMinY(rectA));
+cc.rectIntersectsRect = function (ra, rb) {
+    var maxax = ra.x + ra.width,
+        maxay = ra.y + ra.height,
+        maxbx = rb.x + rb.width,
+        maxby = rb.y + rb.height;
+    return !(maxax < rb.x || maxbx < ra.x || maxay < rb.y || maxby < ra.y);
 };
 
 /**

@@ -25,8 +25,9 @@
  ****************************************************************************/
 
 /**
- * @namespace <p>
- * Singleton that handles the loading of the sprite frames. It saves in a cache the sprite frames.<br/>
+ * @namespace cc.spriteFrameCache
+ * <p>
+ * cc.spriteFrameCache is a singleton that handles the loading of the sprite frames. It saves in a cache the sprite frames.<br/>
  * <br/>
  * example<br/>
  * // add SpriteFrames to spriteFrameCache With File<br/>

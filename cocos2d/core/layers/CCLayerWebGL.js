@@ -24,6 +24,14 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+cc._tmp.LayerDefineForWebGL = function(){
+    var _p = cc.Layer.prototype;
+    //Layer doesn't support bake function in WebGL
+    _p.bake = function(){};
+    _p.unbake = function(){};
+    _p.visit = cc.Node.prototype.visit;
+};
+
 cc._tmp.WebGLLayerColor = function () {
     //cc.LayerColor define start
     var _p = cc.LayerColor.prototype;

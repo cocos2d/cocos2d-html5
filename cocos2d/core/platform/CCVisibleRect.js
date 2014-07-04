@@ -25,104 +25,70 @@
  ****************************************************************************/
 
 /**
+ * cc.visibleRect define the actual visible rect of the current view,
+ * it should represent the same rect as cc.view.getViewportRect()
+ *
+ * @property {cc.Point}     topLeft         - Top left coordinate of the screen related to the game scene
+ * @property {cc.Point}     topRight        - Top right coordinate of the screen related to the game scene
+ * @property {cc.Point}     top             - Top center coordinate of the screen related to the game scene
+ * @property {cc.Point}     bottomLeft      - Bottom left coordinate of the screen related to the game scene
+ * @property {cc.Point}     bottomRight     - Bottom right coordinate of the screen related to the game scene
+ * @property {cc.Point}     bottom          - Bottom center coordinate of the screen related to the game scene
+ * @property {cc.Point}     center          - Center coordinate of the screen related to the game scene
+ * @property {cc.Point}     left            - Left center coordinate of the screen related to the game scene
+ * @property {cc.Point}     right           - Right center coordinate of the screen related to the game scene
+ * @property {Number}       width           - Width of the screen
+ * @property {Number}       height          - Height of the screen
  *
  * @type Object
  */
 cc.visibleRect = {
-    _topLeft:cc.p(0,0),
-    _topRight:cc.p(0,0),
-    _top:cc.p(0,0),
-    _bottomLeft:cc.p(0,0),
-    _bottomRight:cc.p(0,0),
-    _bottom:cc.p(0,0),
-    _center:cc.p(0,0),
-    _left:cc.p(0,0),
-    _right:cc.p(0,0),
-    _width:0,
-    _height:0,
-    init:function(size){
-        this._width = size.width;
-        this._height = size.height;
+    topLeft:cc.p(0,0),
+    topRight:cc.p(0,0),
+    top:cc.p(0,0),
+    bottomLeft:cc.p(0,0),
+    bottomRight:cc.p(0,0),
+    bottom:cc.p(0,0),
+    center:cc.p(0,0),
+    left:cc.p(0,0),
+    right:cc.p(0,0),
+    width:0,
+    height:0,
 
-        var w = this._width;
-        var h = this._height;
+    init:function(visibleRect){
+        var w = this.width = visibleRect.width;
+        var h = this.height = visibleRect.height;
+        var l = visibleRect.x,
+            b = visibleRect.y,
+            t = b + h,
+            r = l + w;
 
         //top
-        this._topLeft.y = h;
-        this._topRight.x = w;
-        this._topRight.y = h;
-        this._top.x = w/2;
-        this._top.y = h;
+        this.topLeft.x = l;
+        this.topLeft.y = t;
+        this.topRight.x = r;
+        this.topRight.y = t;
+        this.top.x = l + w/2;
+        this.top.y = t;
 
         //bottom
-        this._bottomRight.x = w;
-        this._bottom.x = w/2;
+        this.bottomLeft.x = l;
+        this.bottomLeft.y = b;
+        this.bottomRight.x = r;
+        this.bottomRight.y = b;
+        this.bottom.x = l + w/2;
+        this.bottom.y = b;
 
         //center
-        this._center.x = w/2;
-        this._center.y = h/2;
+        this.center.x = l + w/2;
+        this.center.y = b + h/2;
 
         //left
-        this._left.y = h/2;
+        this.left.x = l;
+        this.left.y = b + h/2;
 
         //right
-        this._right.x = w;
-        this._right.y = h/2;
+        this.right.x = r;
+        this.right.y = b + h/2;
     }
 };
-
-/** @expose */
-cc.visibleRect.width;
-cc.defineGetterSetter(cc.visibleRect, "width", function(){
-    return this._width;
-});
-/** @expose */
-cc.visibleRect.height;
-cc.defineGetterSetter(cc.visibleRect, "height", function(){
-    return this._height;
-});
-/** @expose */
-cc.visibleRect.topLeft;
-cc.defineGetterSetter(cc.visibleRect, "topLeft", function(){
-    return this._topLeft;
-});
-/** @expose */
-cc.visibleRect.topRight;
-cc.defineGetterSetter(cc.visibleRect, "topRight", function(){
-    return this._topRight;
-});
-/** @expose */
-cc.visibleRect.top;
-cc.defineGetterSetter(cc.visibleRect, "top", function(){
-    return this._top;
-});
-/** @expose */
-cc.visibleRect.bottomLeft;
-cc.defineGetterSetter(cc.visibleRect, "bottomLeft", function(){
-    return this._bottomLeft;
-});
-/** @expose */
-cc.visibleRect.bottomRight;
-cc.defineGetterSetter(cc.visibleRect, "bottomRight", function(){
-    return this._bottomRight;
-});
-/** @expose */
-cc.visibleRect.bottom;
-cc.defineGetterSetter(cc.visibleRect, "bottom", function(){
-    return this._bottom;
-});
-/** @expose */
-cc.visibleRect.center;
-cc.defineGetterSetter(cc.visibleRect, "center", function(){
-    return this._center;
-});
-/** @expose */
-cc.visibleRect.left;
-cc.defineGetterSetter(cc.visibleRect, "left", function(){
-    return this._left;
-});
-/** @expose */
-cc.visibleRect.right;
-cc.defineGetterSetter(cc.visibleRect, "right", function(){
-    return this._right;
-});

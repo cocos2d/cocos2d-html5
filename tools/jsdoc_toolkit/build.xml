@@ -65,11 +65,6 @@
                 <include name="core/labelttf/CCLabelTTF.js"/>
                 <include name="core/CCActionManager.js"/>
                 <include name="kazmath/utility.js"/>
-                <!--<include name="kazmath/vec2.js"/>
-                <include name="kazmath/vec3.js"/>
-                <include name="kazmath/vec4.js"/>
-                <include name="kazmath/ray2.js"/>
-                <include name="kazmath/mat3.js"/>-->
                 <include name="kazmath/mat4.js"/>
                 <include name="kazmath/plane.js"/>
                 <include name="kazmath/quaternion.js"/>
@@ -91,7 +86,6 @@
                 <include name="actions/CCAction.js"/>
                 <include name="actions/CCActionInterval.js"/>
                 <include name="actions/CCActionInstant.js"/>
-                <!--<include name="actions/CCActionCamera.js"/> -->
                 <include name="actions/CCActionEase.js"/>
                 <include name="actions/CCActionCatmullRom.js"/>
                 <include name="actions/CCActionTween.js"/>
@@ -110,8 +104,6 @@
                 <include name="compress/base64.js"/>
                 <include name="compress/gzip.js"/>
                 <include name="compress/zlib.min.js"/>
-                <!-- <include name="particle/CCPNGReader.js"/>
-                <include name="particle/CCTIFFReader.js"/> -->
                 <include name="particle/CCParticleSystem.js"/>
                 <include name="particle/CCParticleExamples.js"/>
                 <include name="particle/CCParticleBatchNode.js"/>
@@ -128,17 +120,6 @@
             </fileset>
 
             <fileset dir="${basedir}/../../../cocos2d-html5/extensions">
-                <!--<include name="CCBReader/CCBReaderUtil.js"/>
-                <include name="CCBReader/CCBValue.js"/>
-                <include name="CCBReader/CCBKeyframe.js"/>
-                <include name="CCBReader/CCBSequence.js"/>
-                <include name="CCBReader/CCNodeLoader.js"/>
-                <include name="CCBReader/CCBReader.js"/>
-                <include name="CCBReader/CCControlLoader.js"/>
-                <include name="CCBReader/CCSpriteLoader.js"/>
-                <include name="CCBReader/CCNodeLoaderLibrary.js"/>
-                <include name="CCBReader/CCBRelativePositioning.js"/>
-                <include name="CCBReader/CCBAnimationManager.js"/> -->
                 <include name="gui/control-extension/CCControlUtils.js"/>
                 <include name="gui/control-extension/CCControl.js"/>
                 <include name="gui/control-extension/CCControlButton.js"/>
@@ -156,10 +137,14 @@
                 <include name="gui/scrollview/CCScrollView.js"/>
                 <include name="gui/scrollview/CCTableView.js"/>
                 <include name="ccui/system/CocosGUI.js"/>
+                <include name="ccui/base-classes/CCProtectedNode.js"/>
                 <include name="ccui/base-classes/UIWidget.js"/>
                 <include name="ccui/layouts/UILayout.js"/>
                 <include name="ccui/layouts/UILayoutParameter.js"/>
-                <include name="ccui/layouts/UILayoutDefine.js"/>
+                <include name="ccui/layouts/UILayoutManager.js"/>
+                <include name="ccui/layouts/UIHBox.js"/>
+                <include name="ccui/layouts/UIVBox.js"/>
+                <include name="ccui/layouts/UIRelativeBox.js"/>
                 <include name="ccui/system/UIHelper.js"/>
                 <include name="ccui/uiwidgets/UIButton.js"/>
                 <include name="ccui/uiwidgets/UICheckBox.js"/>
@@ -172,11 +157,9 @@
                 <include name="ccui/uiwidgets/UISwitch.js"/>
                 <include name="ccui/uiwidgets/UITextField.js"/>
                 <include name="ccui/uiwidgets/Compatible/CompatibleClasses.js"/>
-                <include name="ccui/uiwidgets/ScrollWidget/UIScrollView.js"/>
-                <include name="ccui/uiwidgets/ScrollWidget/UIListView.js"/>
-                <include name="ccui/uiwidgets/ScrollWidget/UIPageView.js"/>
-                <include name="ccui/uiwidgets/ScrollWidget/UIScrollInterface.js"/>
-                <!--<include name="editbox/CCdomNode.js"/>-->
+                <include name="ccui/uiwidgets/scroll-widget/UIScrollView.js"/>
+                <include name="ccui/uiwidgets/scroll-widget/UIListView.js"/>
+                <include name="ccui/uiwidgets/scroll-widget/UIPageView.js"/>
                 <include name="editbox/CCEditBox.js"/>
                 <include name="cocostudio/CocoStudio.js"/>
                 <include name="cocostudio/components/CCComponent.js"/>
@@ -186,7 +169,6 @@
                 <include name="cocostudio/armature/utils/CCSpriteFrameCacheHelper.js"/>
                 <include name="cocostudio/armature/utils/CCTransformHelp.js"/>
                 <include name="cocostudio/armature/utils/CCTweenFunction.js"/>
-                <!--<include name="cocostudio/armature/utils/CCUtilMath.js"/>-->
                 <include name="cocostudio/armature/utils/CCArmatureDataManager.js"/>
                 <include name="cocostudio/armature/datas/CCDatas.js"/>
                 <include name="cocostudio/armature/display/CCDecorativeDisplay.js"/>

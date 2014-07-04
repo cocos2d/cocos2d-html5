@@ -25,9 +25,9 @@
  ****************************************************************************/
 
 /**
- * @namespace
+ * @namespace cc.animationCache
  * <p>
- *     Singleton that manages the Animations.<br/>
+ *     cc.animationCache is a singleton that manages the Animations.<br/>
  *     It saves in a cache the animations. You should use this class if you want to save your animations in a cache.<br/>
  * <br/>
  * example<br/>

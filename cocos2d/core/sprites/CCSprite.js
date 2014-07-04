@@ -828,16 +828,16 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         cc.assert(filename, cc._LogInfos.Sprite_initWithFile);
 
-        var texture = cc.textureCache.textureForKey(filename);
-        if (!texture) {
-            texture = cc.textureCache.addImage(filename);
-            return this.initWithTexture(texture, rect || cc.rect(0, 0, 0, 0));
+        var tex = cc.textureCache.textureForKey(filename);
+        if (!tex) {
+            tex = cc.textureCache.addImage(filename);
+            return this.initWithTexture(tex, rect || cc.rect(0, 0, tex._contentSize.width, tex._contentSize.height));
         } else {
             if (!rect) {
-                var size = texture.getContentSize();
+                var size = tex.getContentSize();
                 rect = cc.rect(0, 0, size.width, size.height);
             }
-            return this.initWithTexture(texture, rect);
+            return this.initWithTexture(tex, rect);
         }
     },
 
@@ -1309,8 +1309,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         if(texture) {
             var _x = rect.x + rect.width, _y = rect.y + rect.height;
-            cc.assert(_x <= texture.width, cc._LogInfos.RectWidth, texture.url);
-            cc.assert(_y <= texture.height, cc._LogInfos.RectHeight, texture.url);
+            if(_x > texture.width){
+                cc.error(cc._LogInfos.RectWidth, texture.url);
+            }
+            if(_y > texture.height){
+                cc.error(cc._LogInfos.RectHeight, texture.url);
+            }
         }
         _t._originalTexture = texture;
         _t.texture = texture;
@@ -1583,7 +1587,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                     locTextureCoord.x, locTextureCoord.y, locTextureCoord.width,  locTextureCoord.height,
                     flipXOffset, flipYOffset, locDrawSizeCanvas.width , locDrawSizeCanvas.height);
             }
-        } else if (locContentSize.width !== 0) {
+        } else if (!_t._texture && locTextureCoord.validRect) {
             var curColor = _t.color;
             context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
             context.fillRect(flipXOffset, flipYOffset, locContentSize.width * locEGL_ScaleX, locContentSize.height * locEGL_ScaleY);

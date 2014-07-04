@@ -539,7 +539,13 @@ cc.BuilderAnimationManager = cc.Class.extend({
                 // TODO only handle rotation, opacity, displayFrame, color
                 if(propName === "rotation"){
                     node.setRotation(value);
-                } else if(propName === "opacity"){
+                }  else if(propName == "rotationX")
+                {
+                    node.setRotationSkewX(value);
+                }else if(propName == "rotationY")
+                {
+                    node.setRotationSkewY(value);
+                }else if(propName === "opacity"){
                     node.setOpacity(value);
                 } else if(propName === "displayFrame"){
                     node.setSpriteFrame(value);

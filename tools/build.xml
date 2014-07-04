@@ -5,8 +5,8 @@
              classpath="./compiler/compiler.jar"/>
     <target name="compile">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="./../lib/cocos2d-html5-v3.0-beta-min.js">
-            <!--sourceMapOutputFile="E:\Projects\cocos2d-js\samples\js-tests\publish\html5\sourcemap" sourceMapFormat="V3" -->
+                debug="false" output="./../lib/cocos2d-html5-v3.0-rc0-min.js">
+            <!--sourceMapOutputFile="./../lib/cocos2d-html5-v3.0-rc0-sourcemap" sourceMapFormat="V3" -->
             <sources dir="./../">
                 <file name="Base64Images.js"/>
                 <file name="CCBoot.js"/>
@@ -54,6 +54,7 @@
                 <file name="cocos2d/core/sprites/SpritesWebGL.js"/>
                 <file name="cocos2d/core/sprites/SpritesPropertyDefine.js"/>
                 <file name="cocos2d/core/sprites/CCSprite.js"/>
+                <file name="cocos2d/core/sprites/CCBakeSprite.js"/>
                 <file name="cocos2d/core/sprites/CCAnimation.js"/>
                 <file name="cocos2d/core/sprites/CCAnimationCache.js"/>
                 <file name="cocos2d/core/sprites/CCSpriteFrame.js"/>
@@ -161,10 +162,14 @@
                 <file name="extensions/editbox/CCdomNode.js"/>
                 <file name="extensions/editbox/CCEditBox.js"/>
                 <file name="extensions/ccui/system/CocosGUI.js"/>
+                <file name="extensions/ccui/base-classes/CCProtectedNode.js"/>
                 <file name="extensions/ccui/base-classes/UIWidget.js"/>
                 <file name="extensions/ccui/layouts/UILayout.js"/>
                 <file name="extensions/ccui/layouts/UILayoutParameter.js"/>
-                <file name="extensions/ccui/layouts/UILayoutDefine.js"/>
+                <file name="extensions/ccui/layouts/UILayoutManager.js"/>
+                <file name="extensions/ccui/layouts/UIHBox.js"/>
+                <file name="extensions/ccui/layouts/UIVBox.js"/>
+                <file name="extensions/ccui/layouts/UIRelativeBox.js"/>
                 <file name="extensions/ccui/system/UIHelper.js"/>
                 <file name="extensions/ccui/uiwidgets/UIButton.js"/>
                 <file name="extensions/ccui/uiwidgets/UICheckBox.js"/>
@@ -214,20 +219,6 @@
                 <file name="extensions/cocostudio/trigger/TriggerObj.js"/>
                 <file name="extensions/cocostudio/reader/GUIReader.js"/>
                 <file name="extensions/cocostudio/reader/SceneReader.js"/>
-                <file name="extensions/pluginx/protocols/Config.js"/>
-                <file name="extensions/pluginx/protocols/PluginUtils.js"/>
-                <file name="extensions/pluginx/protocols/PluginProtocol.js"/>
-                <file name="extensions/pluginx/protocols/ProtocolSocial.js"/>
-                <file name="extensions/pluginx/protocols/ProtocolAds.js"/>
-                <file name="extensions/pluginx/protocols/ProtocolAnalytics.js"/>
-                <file name="extensions/pluginx/protocols/PluginFactory.js"/>
-                <file name="extensions/pluginx/protocols/PluginManager.js"/>
-                <file name="extensions/pluginx/plugins/SocialWeibo.js"/>
-                <file name="extensions/pluginx/plugins/SocialQQWeibo.js"/>
-                <file name="extensions/pluginx/plugins/SocialQzone.js"/>
-                <file name="extensions/pluginx/plugins/SocialTwitter.js"/>
-                <file name="extensions/pluginx/plugins/SocialFacebook.js"/>
-                <file name="extensions/pluginx/plugins/AnalyticsFlurry.js"/>
                 <file name="cocos2d/physics/CCPhysicsSprite.js"/>
                 <file name="cocos2d/physics/CCPhysicsDebugNode.js"/>
             </sources>
@@ -236,8 +227,8 @@
 
     <target name="compile_core">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="./../lib/cocos2d-html5-v3.0-beta-core-min.js">
-            <!--sourceMapOutputFile="E:\Projects\cocos2d-js\samples\js-tests\publish\html5\sourcemap" sourceMapFormat="V3" -->
+                debug="false" output="./../lib/cocos2d-html5-v3.0-rc0-core-min.js">
+            <!--sourceMapOutputFile="./../lib/cocos2d-html5-v3.0-rc0-core-sourcemap" sourceMapFormat="V3" -->
             <sources dir="./../">
                 <file name="CCBoot.js"/>
                 <file name="cocos2d/core/platform/CCClass.js"/>

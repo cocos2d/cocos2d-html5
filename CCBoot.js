@@ -67,17 +67,19 @@ cc._isNodeJs = typeof require !== 'undefined' && require("fs");
  * @param {object|array} obj
  * @param {function} iterator
  * @param {object} context
- * @param {object} [context]
  */
 cc.each = function (obj, iterator, context) {
-    if (!obj) return;
+    if (!obj)
+        return;
     if (obj instanceof Array) {
         for (var i = 0, li = obj.length; i < li; i++) {
-            if (iterator.call(context, obj[i], i) === false) return;
+            if (iterator.call(context, obj[i], i) === false)
+                return;
         }
     } else {
         for (var key in obj) {
-            if (iterator.call(context, obj[key], key) === false) return;
+            if (iterator.call(context, obj[key], key) === false)
+                return;
         }
     }
 };
@@ -106,25 +108,30 @@ cc.async = {
     // Counter for cc.async
     _counterFunc: function (err) {
         var counter = this.counter;
-        if (counter.err) return;
+        if (counter.err)
+            return;
         var length = counter.length;
         var results = counter.results;
         var option = counter.option;
         var cb = option.cb, cbTarget = option.cbTarget, trigger = option.trigger, triggerTarget = option.triggerTarget;
         if (err) {
             counter.err = err;
-            if (cb) return cb.call(cbTarget, err);
+            if (cb)
+                return cb.call(cbTarget, err);
             return;
         }
         var result = Array.apply(null, arguments).slice(1);
         var l = result.length;
-        if (l == 0) result = null;
-        else if (l == 1) result = result[0];
-        else result = result;
+        if (l == 0)
+            result = null;
+        else if (l == 1)
+            result = result[0];
         results[this.index] = result;
         counter.count--;
-        if (trigger) trigger.call(triggerTarget, result, length - counter.count, length);
-        if (counter.count == 0 && cb) cb.apply(cbTarget, [null, results]);
+        if (trigger)
+            trigger.call(triggerTarget, result, length - counter.count, length);
+        if (counter.count == 0 && cb)
+            cb.apply(cbTarget, [null, results]);
     },
 
     // Empty function for async.
@@ -140,24 +147,29 @@ cc.async = {
     parallel: function (tasks, option, cb) {
         var async = cc.async;
         if (cb !== undefined) {
-            if (typeof option == "function") option = {trigger: option};
+            if (typeof option == "function")
+                option = {trigger: option};
             option.cb = cb || option.cb;
-        }
-        else if (option !== undefined) {
-            if (typeof option == "function") option = {cb: option};
-        } else if (tasks !== undefined) option = {};
-        else throw "arguments error!";
+        } else if (option !== undefined) {
+            if (typeof option == "function")
+                option = {cb: option};
+        } else if (tasks !== undefined)
+            option = {};
+        else
+            throw "arguments error!";
         var isArr = tasks instanceof Array;
         var li = isArr ? tasks.length : Object.keys(tasks).length;
         if (li == 0) {
-            if (option.cb) option.cb.call(option.cbTarget, null);
+            if (option.cb)
+                option.cb.call(option.cbTarget, null);
             return;
         }
         var results = isArr ? [] : {};
         var counter = { length: li, count: li, option: option, results: results};
 
         cc.each(tasks, function (task, index) {
-            if (counter.err) return false;
+            if (counter.err)
+                return false;
             var counterFunc = !option.cb && !option.trigger ? async._emptyFunc : async._counterFunc.bind({counter: counter, index: index});//bind counter and index
             task(counterFunc, index);
         });
@@ -183,25 +195,26 @@ cc.async = {
             option = {iterator: option};
         if (len === 3)
             option.cb = cb || option.cb;
-        else if (len == 2);
-        else
+        else if(len < 2)
             throw "arguments error!";
-        if (typeof option == "function") option = {iterator: option};
+        if (typeof option == "function")
+            option = {iterator: option};
         if (cb !== undefined)
             option.cb = cb || option.cb;
-        else if (option !== undefined)
-            ;
-        else throw "arguments error!";
+        else if (tasks === undefined )
+            throw "arguments error!";
         var isArr = tasks instanceof Array;
         var li = isArr ? tasks.length : Object.keys(tasks).length;
-        if (li == 0) {
-            if (option.cb) option.cb.call(option.cbTarget, null);
+        if (li === 0) {
+            if (option.cb)
+                option.cb.call(option.cbTarget, null);
             return;
         }
         var results = isArr ? [] : {};
         var counter = { length: li, count: li, option: option, results: results};
         cc.each(tasks, function (task, index) {
-            if (counter.err) return false;
+            if (counter.err)
+                return false;
             var counterFunc = !option.cb ? self._emptyFunc : self._counterFunc.bind({counter: counter, index: index});//bind counter and index
             option.iterator.call(option.iteratorTarget, task, index, counterFunc);
         });
@@ -211,7 +224,6 @@ cc.async = {
 
 //+++++++++++++++++++++++++something about path begin++++++++++++++++++++++++++++++++
 cc.path = {
-
     /**
      * Join strings to be a path.
      * @example
@@ -244,6 +256,20 @@ cc.path = {
     extname: function (pathStr) {
         var temp = /(\.[^\.\/\?\\]*)(\?.*)?$/.exec(pathStr);
         return temp ? temp[1] : null;
+    },
+
+    /**
+     * Get the main name of a file name
+     * @param {string} fileName
+     * @returns {string}
+     */
+    mainFileName: function(fileName){
+        if(fileName){
+           var idx = fileName.lastIndexOf(".");
+            if(idx !== -1)
+               return fileName.substring(0,idx);
+        }
+        return fileName
     },
 
     /**
@@ -596,14 +622,17 @@ cc.loader = {
         if (obj)
             return cb(null, obj);
         var loader = self._register[type.toLowerCase()];
-        if (!loader)
-            return cb("loader for [" + type + "] not exists!");
+        if (!loader) {
+            cc.error("loader for [" + type + "] not exists!");
+            return cb();
+        }
         var basePath = loader.getBasePath ? loader.getBasePath() : self.resPath;
         var realUrl = self.getUrl(basePath, url);
         loader.load(realUrl, url, item, function (err, data) {
             if (err) {
                 cc.log(err);
                 self.cache[url] = null;
+                delete self.cache[url];
                 cb();
             } else {
                 self.cache[url] = data;
@@ -647,14 +676,12 @@ cc.loader = {
         if (cb !== undefined) {
             if (typeof option == "function")
                 option = {trigger: option};
-        }
-        else if (option !== undefined) {
+        } else if (option !== undefined) {
             if (typeof option == "function") {
                 cb = option;
                 option = {};
             }
-        }
-        else if (res !== undefined)
+        } else if (res !== undefined)
             option = {};
         else
             throw "arguments error!";
@@ -708,7 +735,7 @@ cc.loader = {
      *                 </dict>                                                                                         <br/>
      *              </plist>                                                                                           <br/>
      * </p>
-     * @param {String} filename  The plist file name.
+     * @param {String} url  The plist file name.
      * @param {Function} [cb]     callback
      */
     loadAliases: function (url, cb) {
@@ -722,7 +749,7 @@ cc.loader = {
 
     /**
      * Register a resource loader into loader.
-     * @param {string} extname
+     * @param {string} extNames
      * @param {function} loader
      */
     register: function (extNames, loader) {
@@ -1278,6 +1305,8 @@ cc._setup = function (el, width, height) {
     localCanvas.addClass("gameCanvas");
     localCanvas.setAttribute("width", width || 480);
     localCanvas.setAttribute("height", height || 320);
+    localCanvas.setAttribute("tabindex", 99);
+    localCanvas.style.outline = "none";
     localConStyle = localContainer.style;
     localConStyle.width = (width || 480) + "px";
     localConStyle.height = (height || 320) + "px";

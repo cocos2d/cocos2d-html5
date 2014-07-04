@@ -37,7 +37,7 @@ Contact us
 [1]: http://www.cocos2d-x.org "Cocos2d-html5"
 [2]: http://www.cocos2d-x.org "Cocos2d-X"
 [3]: http://www.cocos2d-x.org "www.cocos2d-x.org"
-[4]: http://www.cocos2d-x.org/embedded/cocos2d-x/classes.html "API References"
+[4]: http://www.cocos2d-x.org/wiki/Reference "API References"
 [5]: http://forum.cocos2d-x.org "http://forum.cocos2d-x.org"
 [6]: http://www.twitter.com/cocos2dhtml5 "http://www.twitter.com/cocos2dhtml5"
 [7]: http://t.sina.com.cn/cocos2dhtml5 "http://t.sina.com.cn/cocos2dhtml5"
