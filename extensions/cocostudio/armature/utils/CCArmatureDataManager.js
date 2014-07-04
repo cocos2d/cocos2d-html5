@@ -35,8 +35,8 @@ ccs.RelativeData = function(){
 };
 
 /**
- * @namespace Format and manage armature configuration and armature animation
- * @name ccs.armatureDataManager
+ * Format and manage armature configuration and armature animation
+ * @namespace ccs.armatureDataManager
  */
 ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
     _animationDatas: {},

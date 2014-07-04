@@ -24,10 +24,10 @@
  ****************************************************************************/
 
 /**
- * @namespace <p>
- *     The sprite frame cache helper
+ * The sprite frame cache helper
+ * @namespace ccs.spriteFrameCacheHelper
  */
-ccs.spriteFrameCacheHelper = /** @lends cc.spriteFrameCacheHelper# */ {
+ccs.spriteFrameCacheHelper = /** @lends ccs.spriteFrameCacheHelper# */ {
     _textureAtlasDic:{},
     _imagePaths:[],
 
