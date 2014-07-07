@@ -29,9 +29,15 @@
  * @extends cc.Class
  */
 cc.ActionTweenDelegate = cc.Class.extend(/** @lends cc.ActionTweenDelegate */{
-     updateTweenAction:function(value, key){
 
-     }
+    /**
+     * @function
+     * @param value
+     * @param key
+     */
+    updateTweenAction:function(value, key){
+
+    }
 });
 
 /**

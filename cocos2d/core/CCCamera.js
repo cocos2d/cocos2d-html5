@@ -42,10 +42,8 @@
  *                                                                                                                                     <br/>
  *     - It is recommended to use it ONLY if you are going to create 3D effects. For 2D effecs, use the action CCFollow or position/scale/rotate. *
  * </p>
- * @class
- * @extends cc.Class
  */
-cc.Camera = cc.Class.extend(/** @lends cc.Action# */{
+cc.Camera = cc.Class.extend({
     _eyeX:null,
     _eyeY:null,
     _eyeZ:null,

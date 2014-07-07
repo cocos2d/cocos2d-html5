@@ -24,7 +24,8 @@
  ****************************************************************************/
 /**
  * Base namespace of cocostuidio
- * @namespace ccs
+ * @namespace
+ * @name ccs
  */
 var ccs = ccs || {};
 
