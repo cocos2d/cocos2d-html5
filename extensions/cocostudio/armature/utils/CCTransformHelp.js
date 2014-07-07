@@ -69,7 +69,7 @@ ccs.TransformHelp.nodeToMatrix = function (node, matrix) {
         matrix.a = node.scaleX * Math.cos(node.skewY);
         matrix.b = node.scaleX * Math.sin(node.skewY);
         matrix.c = node.scaleY * Math.sin(node.skewX);
-        matrix.d = node.scaleY * Math.cos(node.skewY);
+        matrix.d = node.scaleY * Math.cos(node.skewX);
     }
     matrix.tx = node.x;
     matrix.ty = node.y;
