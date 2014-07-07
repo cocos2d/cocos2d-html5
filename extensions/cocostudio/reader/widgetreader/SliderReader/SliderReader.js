@@ -36,26 +36,28 @@ ccs.SliderReader = {
         var jsonPath = ccs.uiReader.getFilePath();
 
         var slider = widget;
+        var tp = jsonPath;
 
         var barTextureScale9Enable = options["scale9Enable"];
         slider.setScale9Enabled(barTextureScale9Enable);
         var bt = options["barFileName"];
         var barLength = options["length"];
+
+        var imageFileNameDic = options["barFileNameData"];
+        var imageFileType = imageFileNameDic["resourceType"];
+        var imageFileName = imageFileNameDic["path"];
+        var imageFileName_tp;
+
         if(bt){
             if(barTextureScale9Enable){
-                var imageFileNameDic = options["barFileNameData"];
-                var imageFileType = options["resourceType"];
                 switch(imageFileType){
                     case 0:
-                        var tp_b = jsonPath;
-                        var imageFileName = imageFileNameDic["path"];
-                        var imageFileName_tp = (imageFileName && imageFileName !== "" ) ?
-                            ( tp_b + imageFileName ) :
+                        imageFileName_tp = imageFileName ?
+                            ( tp + imageFileName ) :
                             null;
                         slider.loadBarTexture(imageFileName_tp);
                         break;
                     case 1:
-                        var imageFileName = imageFileNameDic["path"];
                         slider.loadBarTexture(imageFileName, 1 /*ui::UI_TEX_TYPE_PLIST*/);
                         break;
                     default:
@@ -64,19 +66,14 @@ ccs.SliderReader = {
                 slider.setSize(cc.size(barLength, slider.getContentSize().height));
             }
         }else{
-            var imageFileNameDic = options["barFileNameData"];
-            var imageFileType = imageFileNameDic["resourceType"];
             switch(imageFileType){
                 case 0:
-                    var tp_b = jsonPath;
-                    var imageFileName = imageFileNameDic["path"];
-                    var imageFileName_tp = ( imageFileName && imageFileName !== "" ) ?
-                        tp_b + imageFileName :
+                    imageFileName_tp = imageFileName ?
+                        tp + imageFileName :
                         null;
                         slider.loadBarTexture(imageFileName_tp);
                     break;
                 case 1:
-                    var imageFileName = imageFileNameDic["path"];
                     slider.loadBarTexture(imageFileName, 1 /*ui::UI_TEX_TYPE_PLIST*/);
                     break;
                 default:
@@ -85,17 +82,15 @@ ccs.SliderReader = {
         }
         var normalDic = options["ballNormalData"];
         var normalType = normalDic["resourceType"];
+        var normalFileName = normalDic["path"];
         switch(normalType){
             case 0:
-                var tp_n = jsonPath;
-                var normalFileName = normalDic["path"];
-                var normalFileName_tp = ( normalFileName && (normalFileName !== "") ) ?
-                    tp_n + normalFileName :
+                var normalFileName_tp = normalFileName ?
+                    tp + normalFileName :
                     null;
                 slider.loadSlidBallTextureNormal(normalFileName_tp);
                 break;
             case 1:
-                var normalFileName = normalDic["path"];
                 slider.loadSlidBallTextureNormal(normalFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
             default:
@@ -104,17 +99,19 @@ ccs.SliderReader = {
 
         var pressedDic = options["ballPressedData"];
         var pressedType = pressedDic["resourceType"];
+        var pressedFileName = pressedDic["path"];
+        if(pressedFileName === null){
+            pressedType = normalType;
+            pressedFileName = normalFileName;
+        }
         switch(pressedType){
             case 0:
-                var tp_p = jsonPath;
-                var pressedFileName = pressedDic["path"];
-                var pressedFileName_tp = ( pressedFileName && pressedFileName !== "" ) ?
-                    tp_p + pressedFileName :
+                var pressedFileName_tp = pressedFileName ?
+                    tp + pressedFileName :
                     null;
                 slider.loadSlidBallTexturePressed(pressedFileName_tp);
                 break;
             case 1:
-                var pressedFileName = pressedDic["path"];
                 slider.loadSlidBallTexturePressed(pressedFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
             default:
@@ -122,17 +119,15 @@ ccs.SliderReader = {
         }
         var disabledDic = options["ballDisabledData"];
         var disabledType = disabledDic["resourceType"];
+        var disabledFileName = disabledDic["path"];
         switch(disabledType){
             case 0:
-                var tp_d = jsonPath;
-                var disabledFileName = disabledDic["path"];
-                var disabledFileName_tp = ( disabledFileName && disabledFileName !== "" ) ?
-                    tp_d + disabledFileName :
+                var disabledFileName_tp = disabledFileName ?
+                    tp + disabledFileName :
                     null;
                 slider.loadSlidBallTextureDisabled(disabledFileName_tp);
                 break;
             case 1:
-                var disabledFileName = disabledDic["path"];
                 slider.loadSlidBallTextureDisabled(disabledFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
             default:
@@ -140,18 +135,19 @@ ccs.SliderReader = {
         }
         var progressBarDic = options["progressBarData"];
         var progressBarType = progressBarDic["resourceType"];
+        var imageProgressFileName = progressBarDic["path"];
+        if(imageProgressFileName){
+
+        }
         switch (progressBarType){
             case 0:
-                var tp_b = jsonPath;
-                var imageFileName = progressBarDic["path"];
-                var imageFileName_tp = ( imageFileName &&  imageFileName !== "" ) ?
-                    (tp_b + imageFileName) :
+                var imageProgressFileName_tp = imageProgressFileName ?
+                    (tp + imageFileName) :
                     null;
-                slider.loadProgressBarTexture(imageFileName_tp);
+                slider.loadProgressBarTexture(imageProgressFileName_tp);
                 break;
             case 1:
-                var imageFileName = progressBarDic["path"];
-                slider.loadProgressBarTexture(imageFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
+                slider.loadProgressBarTexture(imageProgressFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
             default:
                 break;
