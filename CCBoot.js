@@ -1350,18 +1350,36 @@ cc._setup = function (el, width, height) {
 
     // Init singletons
 
-    // View
+    /**
+     * @type {cc.EGLView}
+     * @name cc.view
+     * cc.view is the shared view object.
+     */
     cc.view = cc.EGLView._getInstance();
     // register system events
     cc.inputManager.registerSystemEvent(cc._canvas);
 
-    // Director
+    /**
+     * @type {cc.Director}
+     * @name cc.director
+     */
     cc.director = cc.Director._getInstance();
-    if (cc.director.setOpenGLView)cc.director.setOpenGLView(cc.view);
+    if (cc.director.setOpenGLView)
+        cc.director.setOpenGLView(cc.view);
+    /**
+     * @type {cc.Size}
+     * @name cc.winSize
+     * cc.winSize is the alias object for the size of the current game window.
+     */
     cc.winSize = cc.director.getWinSize();
 
     // Parsers
     cc.saxParser = new cc.SAXParser();
+    /**
+     * @type {cc.PlistParser}
+     * @name cc.plistParser
+     * A Plist Parser
+     */
     cc.plistParser = new cc.PlistParser();
 };
 
