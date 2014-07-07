@@ -1611,7 +1611,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         cc.g_NumberOfDraws++;
     };
 
-    if(cc.sys._supportCanvasNewBlendModes)
+    if(!cc.sys._supportCanvasNewBlendModes)
         _p._changeTextureColor =  function () {
             var locElement, locTexture = this._texture, locRect = this._textureRect_Canvas; //this.getTextureRect();
             if (locTexture && locRect.validRect && this._originalTexture) {
