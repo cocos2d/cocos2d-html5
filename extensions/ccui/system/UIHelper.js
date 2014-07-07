@@ -24,9 +24,9 @@
  ****************************************************************************/
 
 /**
+ * UI Helper
  * @namespace
  * @name ccui.helper
- * UI Helper
  */
 ccui.helper = {
 	/**
@@ -46,7 +46,7 @@ ccui.helper = {
 	    var length = arrayRootChildren.length;
 	    for (var i = 0; i < length; i++) {
 	        var child = arrayRootChildren[i];
-	        var res = this.seekWidgetByTag(child, tag);
+	        var res = ccui.helper.seekWidgetByTag(child, tag);
 	        if (res != null) {
 	            return res;
 	        }
@@ -71,7 +71,7 @@ ccui.helper = {
 	    var length = arrayRootChildren.length;
 	    for (var i = 0; i < length; i++) {
 	        var child = arrayRootChildren[i];
-	        var res = this.seekWidgetByName(child, name);
+	        var res = ccui.helper.seekWidgetByName(child, name);
 	        if (res != null) {
 	            return res;
 	        }
@@ -113,7 +113,7 @@ ccui.helper = {
 	    var arrayRootChildren = root.getChildren();
 	    for (var i = 0; i < arrayRootChildren.length; i++) {
 	        var child = arrayRootChildren[i];
-	        var res = this.seekActionWidgetByActionTag(child, tag);
+	        var res = ccui.helper.seekActionWidgetByActionTag(child, tag);
 	        if (res != null) {
 	            return res;
 	        }

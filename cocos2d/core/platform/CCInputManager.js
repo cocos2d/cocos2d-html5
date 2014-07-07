@@ -39,6 +39,7 @@ cc.UIInterfaceOrientationPortrait = 0;
  *  This class manages all events of input. include: touch, mouse, accelerometer, keyboard                                       <br/>
  * </p>
  * @namespace
+ * @name cc.inputManager
  */
 cc.inputManager = /** @lends cc.inputManager# */{
     _mousePressed: false,

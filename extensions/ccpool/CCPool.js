@@ -25,8 +25,6 @@
  ****************************************************************************/
 
 /**
- * @namespace
- * @name cc.pool
  * <p>
  *  cc.pool is a singleton object serves as an object cache pool.<br/>
  *  It can helps you to improve your game performance for objects which need frequent release and recreate operations<br/>
@@ -42,8 +40,10 @@
  * cc.pool.putInPool(sp);
  *
  * cc.pool.getFromPool(cc.Sprite, "a.png");
+ * @namespace
+ * @name cc.pool
  */
-cc.pool = {
+cc.pool = /** @lends cc.pool# */{
     _pool: {},
 
     /**

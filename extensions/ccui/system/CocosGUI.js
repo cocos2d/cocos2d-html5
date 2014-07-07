@@ -23,7 +23,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 /**
- * @namespace Base namespace of Cocos GUI
+ * Base namespace of Cocos GUI
+ * @namespace
  * @name ccui
  */
 var ccui = ccui || {};

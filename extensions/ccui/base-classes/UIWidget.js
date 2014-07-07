@@ -29,7 +29,7 @@
  * var uiWidget = ccui.Widget.create();
  * this.addChild(uiWidget);
  * @class
- * @extends cc.ProtectedNode
+ * @extends ccui.ProtectedNode
  *
  * @property {Number}           xPercent        - Position x in percentage of width
  * @property {Number}           yPercent        - Position y in percentage of height
@@ -46,7 +46,7 @@
  * @property {String}           name            - The name of the widget
  * @property {Number}           actionTag       - The action tag of the widget
  */
-ccui.Widget = cc.ProtectedNode.extend(/** @lends ccui.Widget# */{
+ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _enabled: true,            ///< Highest control of widget
     _bright: true,             ///< is this widget bright
     _touchEnabled: false,       ///< is this widget touch endabled

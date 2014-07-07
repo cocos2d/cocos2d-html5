@@ -25,8 +25,9 @@
  ****************************************************************************/
 
 /**
- * @namespace The fullscreen API provides an easy way for web content to be presented using the user's entire screen.
+ * The fullscreen API provides an easy way for web content to be presented using the user's entire screen.
  * It's invalid on safari,QQbrowser and android browser
+ * @namespace
  * @name cc.screen
  */
 cc.screen = /** @lends cc.screen# */{

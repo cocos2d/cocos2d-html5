@@ -25,8 +25,6 @@
  ****************************************************************************/
 
 /**
- * @namespace
- * @name cc.spriteFrameCache
  * <p>
  * cc.spriteFrameCache is a singleton that handles the loading of the sprite frames. It saves in a cache the sprite frames.<br/>
  * <br/>
@@ -34,6 +32,8 @@
  * // add SpriteFrames to spriteFrameCache With File<br/>
  * cc.spriteFrameCache.addSpriteFrames(s_grossiniPlist);<br/>
  * </p>
+ * @namespace
+ * @name cc.spriteFrameCache
  */
 cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
     _CCNS_REG1 : /^\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*$/,

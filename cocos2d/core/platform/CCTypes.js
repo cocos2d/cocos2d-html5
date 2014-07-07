@@ -24,14 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * The color class
- * @param {Number} r 0 to 255
- * @param {Number} g 0 to 255
- * @param {Number} b 0 to 255
- * @param {Number} a 0 to 255
- * @constructor
- */
 cc.Color = function (r, g, b, a) {
     this.r = r || 0;
     this.g = g || 0;
@@ -54,6 +46,8 @@ cc.Color = function (r, g, b, a) {
  *
  * Alpha channel is optional. Default value is 255
  *
+ * @class cc.Color
+ * @constructor
  * @param {Number|String|cc.Color} r
  * @param {Number} g
  * @param {Number} b
@@ -72,6 +66,7 @@ cc.color = function (r, g, b, a) {
 
 /**
  * returns true if both ccColor3B are equal. Otherwise it returns false.
+ * @function
  * @param {cc.Color} color1
  * @param {cc.Color} color2
  * @return {Boolean}  true if both ccColor3B are equal. Otherwise it returns false.
@@ -90,21 +85,15 @@ cc.Acceleration = function (x, y, z, timestamp) {
     this.timestamp = timestamp || 0;
 };
 
-/**
- * A vertex composed of 2 floats: x, y
- * @Class
- * @Construct
- * @param {Number} x1
- * @param {Number} y1
- */
 cc.Vertex2F = function (x1, y1) {
     this.x = x1 || 0;
     this.y = y1 || 0;
 };
 
 /**
- * helper macro that creates an Vertex2F type
- * @function
+ * Helper macro that creates an Vertex2F type composed of 2 floats: x, y
+ * @class cc.Vertex2F
+ * @constructor
  * @param {Number} x
  * @param {Number} y
  * @return {cc.Vertex2F}
@@ -113,14 +102,6 @@ cc.vertex2 = function (x, y) {
     return new cc.Vertex2F(x, y);
 };
 
-/**
- * A vertex composed of 3 floats: x, y, z
- * @Class
- * @Construct
- * @param {Number} x1
- * @param {Number} y1
- * @param {Number} z1
- */
 cc.Vertex3F = function (x1, y1, z1) {
     this.x = x1 || 0;
     this.y = y1 || 0;
@@ -128,8 +109,9 @@ cc.Vertex3F = function (x1, y1, z1) {
 };
 
 /**
- * helper macro that creates an Vertex3F type
- * @function
+ * Helper macro that creates an Vertex3F type composed of 3 floats: x, y, z
+ * @class cc.Vertex3F
+ * @constructor
  * @param {Number} x
  * @param {Number} y
  * @param {Number} z
@@ -139,21 +121,15 @@ cc.vertex3 = function (x, y, z) {
     return new cc.Vertex3F(x, y, z);
 };
 
-/**
- * A texcoord composed of 2 floats: u, y
- * @Class
- * @Construct
- * @param {Number} u1
- * @param {Number} v1
- */
 cc.Tex2F = function (u1, v1) {
     this.u = u1 || 0;
     this.v = v1 || 0;
 };
 
 /**
- * helper macro that creates an Tex2F type
- * @function
+ * Helper macro that creates an Tex2F type: A texcoord composed of 2 floats: u, y
+ * @class cc.Tex2F
+ * @constructor
  * @param {Number} u
  * @param {Number} v
  * @return {cc.Tex2F}
@@ -164,8 +140,8 @@ cc.tex2 = function (u, v) {
 
 /**
  * Blend Function used for textures
- * @Class
- * @Construct
+ * @Class cc.BlendFunc
+ * @Constructor
  * @param {Number} src1 source blend function
  * @param {Number} dst1 destination blend function
  */
@@ -181,6 +157,7 @@ cc.blendFuncDisable = function () {
 /**
  * convert a string of color for style to Color.
  * e.g. "#ff06ff"  to : cc.color(255,6,255)
+ * @function
  * @param {String} hex
  * @return {cc.Color}
  */
@@ -196,6 +173,7 @@ cc.hexToColor = function (hex) {
 /**
  * convert Color to a string of color for style.
  * e.g.  cc.color(255,6,255)  to : "#ff06ff"
+ * @function
  * @param {cc.Color} color
  * @return {String}
  */

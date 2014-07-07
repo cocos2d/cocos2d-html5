@@ -48,17 +48,20 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     /**
-     *  set the layer to cache all of children to a bake sprite, and draw itself by bake sprite. recommend using it in UI.
+     * set the layer to cache all of children to a bake sprite, and draw itself by bake sprite. recommend using it in UI.
+     * @function
      */
     bake: null,
 
     /**
      * cancel the layer to cache all of children to a bake sprite.
+     * @function
      */
     unbake: null,
 
     /**
      * Determines if the layer is baked.
+     * @function
      * @returns {boolean}
      */
     isBaked: function(){

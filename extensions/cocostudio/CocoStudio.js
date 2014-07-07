@@ -23,7 +23,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 /**
- * @namespace Base namespace of cocostuidio
+ * Base namespace of cocostuidio
+ * @namespace
  * @name ccs
  */
 var ccs = ccs || {};

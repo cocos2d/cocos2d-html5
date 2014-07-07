@@ -144,7 +144,9 @@ ccs.DataInfo = function () {
 };
 
 /**
- * @namespace CocoStudio data reader helper
+ * CocoStudio data reader helper
+ * @namespace
+ * @name ccs.dataReaderHelper
  */
 ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
     _configFileList: [],
