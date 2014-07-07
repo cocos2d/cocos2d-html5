@@ -793,6 +793,18 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         this.setDetachWithIME(textField.getDetachWithIME());
         this.setInsertText(textField.getInsertText());
         this.setDeleteBackward(textField.getDeleteBackward());
+    },
+
+    setTextAreaSize: function(size){
+        this._textFieldRender.setDimensions(size.width,size.height);
+    },
+
+    setTextHorizontalAlignment: function(alignment){
+        this._textFieldRender.setHorizontalAlignment(alignment);
+    },
+
+    setTextVerticalAlignment: function(alignment){
+        this._textFieldRender.setVerticalAlignment(alignment);
     }
 });
 
