@@ -1611,7 +1611,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         cc.g_NumberOfDraws++;
     };
 
-    if(!cc.sys._supportCanvasNewBlendModes)
+    if(cc.sys._supportCanvasNewBlendModes)
         _p._changeTextureColor =  function () {
             var locElement, locTexture = this._texture, locRect = this._textureRect_Canvas; //this.getTextureRect();
             if (locTexture && locRect.validRect && this._originalTexture) {
@@ -1624,9 +1624,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                     this._colorized = true;
                     //generate color texture cache
                     if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor)
-                        cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect, locElement);
+                        cc.generateTintImageWithLight(locElement, cacheTextureForColor, this._displayedColor, locRect, locElement);
                     else {
-                        locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect);
+                        locElement = cc.generateTintImageWithLight(locElement, cacheTextureForColor, this._displayedColor, locRect);
                         locTexture = new cc.Texture2D();
                         locTexture.initWithElement(locElement);
                         locTexture.handleLoadedTexture();
