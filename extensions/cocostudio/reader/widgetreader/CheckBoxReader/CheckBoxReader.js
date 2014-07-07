@@ -40,21 +40,21 @@ ccs.CheckBoxReader = {
     
         var backGroundDic = options["backGroundBoxData"];
         var backGroundType = backGroundDic["resourceType"];
+
+        var tp = jsonPath;
+        var backGroundFileName = backGroundDic["path"];
         switch (backGroundType)
         {
             case 0:
             {
-                var tp_b = jsonPath;
-                var backGroundFileName = backGroundDic["path"];
-                var backGroundFileName_tp = (backGroundFileName && backGroundFileName !== "") ?
-                    tp_b + backGroundFileName :
+                var backGroundFileName_tp = backGroundFileName ?
+                    tp + backGroundFileName :
                     null;
                 checkBox.loadTextureBackGround(backGroundFileName_tp);
                 break;
             }
             case 1:
             {
-                var backGroundFileName = backGroundDic["path"];
                 checkBox.loadTextureBackGround(backGroundFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
             }
@@ -64,21 +64,24 @@ ccs.CheckBoxReader = {
     
         var backGroundSelectedDic = options["backGroundBoxSelectedData"];
         var backGroundSelectedType = backGroundSelectedDic["resourceType"];
+        var backGroundSelectedFileName = backGroundSelectedDic["path"];
+        if(backGroundSelectedFileName === null){
+            backGroundSelectedType = backGroundType;
+            backGroundSelectedFileName = backGroundFileName;
+        }
+
         switch (backGroundSelectedType)
         {
             case 0:
             {
-                var tp_bs = jsonPath;
-                var backGroundSelectedFileName = backGroundSelectedDic["path"];
-                var backGroundSelectedFileName_tp = (backGroundSelectedFileName && backGroundSelectedFileName !== "") ?
-                    tp_bs + backGroundSelectedFileName :
+                var backGroundSelectedFileName_tp = backGroundSelectedFileName ?
+                    tp + backGroundSelectedFileName :
                     null;
                 checkBox.loadTextureBackGroundSelected(backGroundSelectedFileName_tp);
                 break;
             }
             case 1:
             {
-                var backGroundSelectedFileName = backGroundSelectedDic["path"];
                 checkBox.loadTextureBackGroundSelected(backGroundSelectedFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
             }
@@ -88,21 +91,19 @@ ccs.CheckBoxReader = {
     
         var frontCrossDic = options["frontCrossData"];
         var frontCrossType = frontCrossDic["resourceType"];
+        var frontCrossFileName = frontCrossDic["path"];
         switch (frontCrossType)
         {
             case 0:
             {
-                var tp_c = jsonPath;
-                var frontCrossFileName = frontCrossDic["path"];
-                var frontCrossFileName_tp = (frontCrossFileName && frontCrossFileName !== "") ?
-                    tp_c + frontCrossFileName :
+                var frontCrossFileName_tp = frontCrossFileName ?
+                    tp + frontCrossFileName :
                     null;
                 checkBox.loadTextureFrontCross(frontCrossFileName_tp);
                 break;
             }
             case 1:
             {
-                var frontCrossFileName = frontCrossDic["path"];
                 checkBox.loadTextureFrontCross(frontCrossFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
             }
@@ -112,21 +113,19 @@ ccs.CheckBoxReader = {
     
         var backGroundDisabledDic = options["backGroundBoxDisabledData"];
         var backGroundDisabledType = backGroundDisabledDic["resourceType"];
+        var backGroundDisabledFileName = backGroundDisabledDic["path"];
         switch (backGroundDisabledType)
         {
             case 0:
             {
-                var tp_bd = jsonPath;
-                var backGroundDisabledFileName = backGroundDisabledDic["path"];
-                var backGroundDisabledFileName_tp = (backGroundDisabledFileName && backGroundDisabledFileName !== "") ?
-                    tp_bd + backGroundDisabledFileName :
+                var backGroundDisabledFileName_tp = backGroundDisabledFileName ?
+                    tp + backGroundDisabledFileName :
                     null;
                 checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName_tp);
                 break;
             }
             case 1:
             {
-                var backGroundDisabledFileName = backGroundDisabledDic["path"];
                 checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
             }
@@ -136,29 +135,26 @@ ccs.CheckBoxReader = {
     
         var frontCrossDisabledDic = options["frontCrossDisabledData"];
         var frontCrossDisabledType = frontCrossDisabledDic["resourceType"];
+        var frontCrossDisabledFileName = options["path"];
         switch (frontCrossDisabledType)
         {
             case 0:
             {
-                var tp_cd = jsonPath;
-                var frontCrossDisabledFileName = options["path"];
-                var frontCrossDisabledFileName_tp = (frontCrossDisabledFileName && frontCrossDisabledFileName !== "") ?
-                    tp_cd + frontCrossDisabledFileName :
+                var frontCrossDisabledFileName_tp = frontCrossDisabledFileName ?
+                    tp + frontCrossDisabledFileName :
                     null;
                 checkBox.loadTextureFrontCrossDisabled(frontCrossDisabledFileName_tp);
                 break;
             }
             case 1:
             {
-                var frontCrossDisabledFileName = options["path"];
                 checkBox.loadTextureFrontCrossDisabled(frontCrossDisabledFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
             }
             default:
                 break;
         }
-    
-    
+
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };
