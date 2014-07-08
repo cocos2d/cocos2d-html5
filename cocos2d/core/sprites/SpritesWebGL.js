@@ -288,7 +288,7 @@ cc._tmp.WebGLSprite = function () {
                     _t._transformToBatch = _t.nodeToParentTransform();
                 } else {
                     //cc.assert(_t._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
-                    _t._transformToBatch = cc.AffineTransformConcat(_t.nodeToParentTransform(), locParent._transformToBatch);
+                    _t._transformToBatch = cc.affineTransformConcat(_t.nodeToParentTransform(), locParent._transformToBatch);
                 }
 
                 //
@@ -466,7 +466,7 @@ cc._tmp.WebGLSprite = function () {
             _t._quadDirty = true;
         } else {
             // using batch
-            _t._transformToBatch = cc.AffineTransformIdentity();
+            _t._transformToBatch = cc.affineTransformIdentity();
             _t.textureAtlas = _t._batchNode.textureAtlas; // weak ref
         }
     };

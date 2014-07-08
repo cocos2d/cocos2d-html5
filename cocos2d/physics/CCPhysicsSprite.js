@@ -293,7 +293,7 @@
             }
 
             // Rot, Translate Matrix
-            this._transform = cc.AffineTransformMake(c * locScaleX, s * locScaleX,
+            this._transform = cc.affineTransformMake(c * locScaleX, s * locScaleX,
                 -s * locScaleY, c * locScaleY,
                 x, y);
 
