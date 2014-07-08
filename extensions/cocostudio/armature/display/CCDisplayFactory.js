@@ -96,10 +96,10 @@ ccs.DisplayFactory.updateDisplay = function (bone,dt, dirty) {
                 helpTransform.tx = displayTransform.tx;
                 helpTransform.ty = displayTransform.ty;
                 var anchorPoint =  node.getAnchorPointInPoints();
-                anchorPoint = cc.PointApplyAffineTransform(anchorPoint, helpTransform);
+                anchorPoint = cc.pointApplyAffineTransform(anchorPoint, helpTransform);
                 helpTransform.tx = anchorPoint.x;
                 helpTransform.ty = anchorPoint.y;
-                var t = cc.AffineTransformConcat(helpTransform, bone.getArmature().nodeToParentTransform());
+                var t = cc.affineTransformConcat(helpTransform, bone.getArmature().nodeToParentTransform());
                 detector.updateTransform(t);
             }
         }
