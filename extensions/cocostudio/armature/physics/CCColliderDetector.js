@@ -278,7 +278,7 @@ ccs.ColliderDetector = ccs.Class.extend(/** @lends ccs.ColliderDetector# */{
             for (var j = 0; j < vs.length; j++) {
                 locHelpPoint.x = vs[j].x;
                 locHelpPoint.y = vs[j].y;
-                locHelpPoint = cc.PointApplyAffineTransform(locHelpPoint, t);
+                locHelpPoint = cc.pointApplyAffineTransform(locHelpPoint, t);
                 if (shape) {
                     shape.verts[j * 2] = locHelpPoint.x;
                     shape.verts[j * 2 + 1] = locHelpPoint.y;

@@ -45,7 +45,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         this._skinData = null;
         this.bone = null;
         this._displayName = "";
-        this._skinTransform = cc.AffineTransformIdentity();
+        this._skinTransform = cc.affineTransformIdentity();
         this._armature = null;
     },
     initWithSpriteFrameName: function (spriteFrameName) {
@@ -91,11 +91,11 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     },
 
     updateArmatureTransform: function () {
-        this._transform = cc.AffineTransformConcat(this._skinTransform, this.bone.nodeToArmatureTransform());
+        this._transform = cc.affineTransformConcat(this._skinTransform, this.bone.nodeToArmatureTransform());
         var locTransform = this._transform;
         var locArmature = this._armature;
         if (locArmature && locArmature.getBatchNode()) {
-            this._transform = cc.AffineTransformConcat(locTransform, locArmature.nodeToParentTransform());
+            this._transform = cc.affineTransformConcat(locTransform, locArmature.nodeToParentTransform());
         }
         if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             locTransform = this._transform;
@@ -116,7 +116,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
             transForm.c *= -1;
             transForm.b = [transForm.c, transForm.c = transForm.b][0];
         }
-        return cc.RectApplyAffineTransform(rect, transForm);
+        return cc.rectApplyAffineTransform(rect, transForm);
     },
 
     /**
@@ -128,7 +128,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     },
 
     nodeToWorldTransform: function () {
-        return cc.AffineTransformConcat(this._transform, this.bone.getArmature().nodeToWorldTransform());
+        return cc.affineTransformConcat(this._transform, this.bone.getArmature().nodeToWorldTransform());
     },
 
 
@@ -136,11 +136,11 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         var displayTransform = this._transform;
         var anchorPoint = this._anchorPointInPoints;
 
-        anchorPoint = cc.PointApplyAffineTransform(anchorPoint, displayTransform);
+        anchorPoint = cc.pointApplyAffineTransform(anchorPoint, displayTransform);
         displayTransform.tx = anchorPoint.x;
         displayTransform.ty = anchorPoint.y;
 
-        return cc.AffineTransformConcat(displayTransform, this.bone.getArmature().nodeToWorldTransform());
+        return cc.affineTransformConcat(displayTransform, this.bone.getArmature().nodeToWorldTransform());
     }
 });
 ccs.Skin.prototype.nodeToParentTransform = cc.Node.prototype._nodeToParentTransformForWebGL;
