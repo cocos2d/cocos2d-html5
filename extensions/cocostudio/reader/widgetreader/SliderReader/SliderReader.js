@@ -136,13 +136,10 @@ ccs.SliderReader = {
         var progressBarDic = options["progressBarData"];
         var progressBarType = progressBarDic["resourceType"];
         var imageProgressFileName = progressBarDic["path"];
-        if(imageProgressFileName){
-
-        }
         switch (progressBarType){
             case 0:
                 var imageProgressFileName_tp = imageProgressFileName ?
-                    (tp + imageFileName) :
+                    (tp + imageProgressFileName) :
                     null;
                 slider.loadProgressBarTexture(imageProgressFileName_tp);
                 break;
