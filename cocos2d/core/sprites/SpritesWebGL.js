@@ -175,7 +175,7 @@ cc._tmp.WebGLSprite = function () {
             rect = cc.rect(0, 0, texture.width, texture.height);
         }
 
-        if(texture) {
+        if(texture && texture.url) {
             var _x, _y;
             if(rotated){
                 _x = rect.x + rect.height;

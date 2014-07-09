@@ -2440,7 +2440,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                             cacheTextureForColor.tintCache.width = element.width;
                             cacheTextureForColor.tintCache.height = element.height;
                         }
-                        cc.generateTintImage(element, cacheTextureForColor, particle.color, this._pointRect, cacheTextureForColor.tintCache);
+                        cc.generateTintImageWithLight(element, cacheTextureForColor, particle.color, this._pointRect, cacheTextureForColor.tintCache);
                         element = cacheTextureForColor.tintCache;
                     }
                 }
