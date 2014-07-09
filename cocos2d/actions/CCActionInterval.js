@@ -2048,7 +2048,7 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
  * var actionTo = cc.ScaleTo.create(2, 0.5, 2);
  */
 cc.ScaleTo.create = function (duration, sx, sy) { //function overload
-    return cc.ScaleTo(duration, sx, sy);
+    return new cc.ScaleTo(duration, sx, sy);
 };
 
 
@@ -2188,7 +2188,7 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
  * var action = cc.Blink.create(2, 10);
  */
 cc.Blink.create = function (duration, blinks) {
-    return cc.Blink(duration, blinks);
+    return new cc.Blink(duration, blinks);
 };
 
 /** Fades an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from the current value to a custom one.
@@ -2359,7 +2359,7 @@ cc.FadeOut = cc.FadeTo.extend(/** @lends cc.FadeOut# */{
  * var action = cc.FadeOut.create(1.0);
  */
 cc.FadeOut.create = function (d) {
-    return cc.FadeOut(d, 0);
+    return new cc.FadeOut(d, 0);
 };
 
 /** Tints a cc.Node that implements the cc.NodeRGB protocol from current tint to a custom one.
