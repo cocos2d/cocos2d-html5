@@ -176,6 +176,15 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _showNode: false,
     _name: "",                     ///<a string label, an user defined string to identify this node
 
+    _displayedOpacity: 255,
+    _realOpacity: 255,
+    _displayedColor: null,
+    _realColor: null,
+    _cascadeColorEnabled: false,
+    _cascadeOpacityEnabled: false,
+    _usingNormalizedPosition: false,
+    _hashOfName: 0,
+
     _initNode: function () {
         var _t = this;
         _t._anchorPoint = cc.p(0, 0);
@@ -193,6 +202,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (cc.ComponentContainer) {
             _t._componentContainer = new cc.ComponentContainer(_t);
         }
+
+        this._displayedOpacity = 255;
+        this._realOpacity = 255;
+        this._displayedColor = cc.color(255, 255, 255, 255);
+        this._realColor = cc.color(255, 255, 255, 255);
+        this._cascadeColorEnabled = false;
+        this._cascadeOpacityEnabled = false;
     },
 
     /**
@@ -1153,31 +1169,73 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
      */
     addChild: function (child, localZOrder, tag) {
+        var child = child;
+        var localZOrder = localZOrder === undefined ? child._localZOrder : localZOrder;
+        var tag, name, setTag = false;
+        switch(typeof tag){
+            case 'undefined':
+                tag = undefined;
+                name = child._name;
+                break;
+            case 'string':
+                name = tag;
+                tag = undefined;
+                break;
+            case 'number':
+                setTag = true;
+                name = "";
+                break;
+        }
 
         cc.assert(child, cc._LogInfos.Node_addChild_3);
+        cc.assert(child._parent === null, "child already added. It can't be added again");
 
-        if (child === this) {
-            cc.log(cc._LogInfos.Node_addChild);
-            return;
+        this.addChildHelper(child, localZOrder, tag, name, setTag);
+
+    },
+
+    addChildHelper: function(child, localZOrder, tag, name, setTag){
+        if(!this._children){
+            this._children = [];
         }
 
-        if (child._parent !== null) {
-            cc.log(cc._LogInfos.Node_addChild_2);
-            return;
+        this._insertChild(child, localZOrder);
+
+        if(setTag){
+            child.setTag(tag);
+        }else{
+            child.setName(name);
         }
 
-        var tmpzOrder = (localZOrder != null) ? localZOrder : child._localZOrder;
-        child.tag = (tag != null) ? tag : child.tag;
-        this._insertChild(child, tmpzOrder);
-        child._parent = this;
-        this._cachedParent && (child._cachedParent = this._cachedParent);
+        child.setParent(this);
+        child.setOrderOfArrival(this.s_globalOrderOfArrival++);
 
-        if (this._running) {
+        if( this._running ){
             child.onEnter();
             // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
-            if (this._isTransitionFinished)
+            if (this._isTransitionFinished) {
                 child.onEnterTransitionDidFinish();
+            }
         }
+
+        if (this._cascadeColorEnabled)
+        {
+            this._enableCascadeColor();
+        }
+
+        if (this._cascadeOpacityEnabled)
+        {
+            this._enableCascadeOpacity();
+        }
+
+    },
+
+    getName: function(){
+        return this._name;
+    },
+
+    setName: function(name){
+        this._name = name;
     },
 
     // composition: REMOVE
@@ -2094,211 +2152,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             _t._transformDirty = false;
         }
         return _t._transform;
-    }
-});
-
-/**
- * allocates and initializes a node.
- * @constructs
- * @return {cc.Node}
- * @example
- * // example
- * var node = cc.Node.create();
- */
-cc.Node.create = function () {
-    return new cc.Node();
-};
-
-/**
- * cc.Node's state callback type
- * @constant
- * @type Number
- */
-cc.Node.StateCallbackType = {onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, updateTransform: 5, onExitTransitionDidStart: 6, sortAllChildren: 7};
-
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-
-    //redefine cc.Node
-    var _p = cc.Node.prototype;
-    _p.ctor = function () {
-        this._initNode();
-    };
-
-    _p.setNodeDirty = function () {
-        var _t = this;
-        _t._setNodeDirtyForCache();
-        _t._transformDirty === false && (_t._transformDirty = _t._inverseDirty = true);
-    };
-
-    _p.visit = function (ctx) {
-        var _t = this;
-        // quick return if not visible
-        if (!_t._visible)
-            return;
-
-        //visit for canvas
-        var context = ctx || cc._renderContext, i;
-        var children = _t._children, child;
-        context.save();
-        _t.transform(context);
-        var len = children.length;
-        if (len > 0) {
-            _t.sortAllChildren();
-            // draw children zOrder < 0
-            for (i = 0; i < len; i++) {
-                child = children[i];
-                if (child._localZOrder < 0)
-                    child.visit(context);
-                else
-                    break;
-            }
-            _t.draw(context);
-            for (; i < len; i++) {
-                children[i].visit(context);
-            }
-        } else
-            _t.draw(context);
-
-        this._cacheDirty = false;
-        _t.arrivalOrder = 0;
-        context.restore();
-    };
-
-    _p.transform = function (ctx) {
-        // transform for canvas
-        var context = ctx || cc._renderContext, eglViewer = cc.view;
-
-        var t = this.nodeToParentTransform();
-        context.transform(t.a, t.c, t.b, t.d, t.tx * eglViewer.getScaleX(), -t.ty * eglViewer.getScaleY());
-    };
-
-    _p.nodeToParentTransform = function () {
-        var _t = this;
-        if (_t._transformDirty) {
-            var t = _t._transform;// quick reference
-
-            // base position
-            t.tx = _t._position.x;
-            t.ty = _t._position.y;
-
-            // rotation Cos and Sin
-            var Cos = 1, Sin = 0;
-            if (_t._rotationX) {
-                Cos = Math.cos(_t._rotationRadiansX);
-                Sin = Math.sin(_t._rotationRadiansX);
-            }
-
-            // base abcd
-            t.a = t.d = Cos;
-            t.b = -Sin;
-            t.c = Sin;
-
-            var lScaleX = _t._scaleX, lScaleY = _t._scaleY;
-            var appX = _t._anchorPointInPoints.x, appY = _t._anchorPointInPoints.y;
-
-            // Firefox on Vista and XP crashes
-            // GPU thread in case of scale(0.0, 0.0)
-            var sx = (lScaleX < 0.000001 && lScaleX > -0.000001) ? 0.000001 : lScaleX,
-                sy = (lScaleY < 0.000001 && lScaleY > -0.000001) ? 0.000001 : lScaleY;
-
-            // skew
-            if (_t._skewX || _t._skewY) {
-                // offset the anchorpoint
-                var skx = Math.tan(-_t._skewX * Math.PI / 180);
-                var sky = Math.tan(-_t._skewY * Math.PI / 180);
-                if(skx === Infinity){
-                    skx = 99999999;
-                }
-                if(sky === Infinity){
-                    sky = 99999999;
-                }
-                var xx = appY * skx * sx;
-                var yy = appX * sky * sy;
-                t.a = Cos + -Sin * sky;
-                t.b = Cos * skx + -Sin;
-                t.c = Sin + Cos * sky;
-                t.d = Sin * skx + Cos;
-                t.tx += Cos * xx + -Sin * yy;
-                t.ty += Sin * xx + Cos * yy;
-            }
-
-            // scale
-            if (lScaleX !== 1 || lScaleY !== 1) {
-                t.a *= sx;
-                t.c *= sx;
-                t.b *= sy;
-                t.d *= sy;
-            }
-
-            // adjust anchorPoint
-            t.tx += Cos * -appX * sx + -Sin * appY * sy;
-            t.ty -= Sin * -appX * sx + Cos * appY * sy;
-
-            // if ignore anchorPoint
-            if (_t._ignoreAnchorPointForPosition) {
-                t.tx += appX;
-                t.ty += appY;
-            }
-
-            if (_t._additionalTransformDirty) {
-                _t._transform = cc.AffineTransformConcat(t, _t._additionalTransform);
-                _t._additionalTransformDirty = false;
-            }
-
-            _t._transformDirty = false;
-        }
-        return _t._transform;
-    };
-
-    _p = null;
-
-} else {
-    cc.assert(typeof cc._tmp.WebGLCCNode === "function", cc._LogInfos.MissingFile, "BaseNodesWebGL.js");
-    cc._tmp.WebGLCCNode();
-    delete cc._tmp.WebGLCCNode;
-}
-cc.assert(typeof cc._tmp.PrototypeCCNode === "function", cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
-cc._tmp.PrototypeCCNode();
-delete cc._tmp.PrototypeCCNode;
-
-
-/**
- * <p>
- *     cc.NodeRGBA is a subclass of cc.Node that implements the CCRGBAProtocol protocol.                       <br/>
- *     <br/>
- *     All features from CCNode are valid, plus the following new features:                                     <br/>
- *      - opacity                                                                                               <br/>
- *      - RGB colors                                                                                            <br/>
- *     <br/>
- *     Opacity/Color propagates into children that conform to the CCRGBAProtocol if cascadeOpacity/cascadeColor is enabled.   <br/>
- * </p>
- *
- * @class
- * @extends cc.Node
- *
- * @property {Number}       opacity             - Opacity of node
- * @property {Boolean}      opacityModifyRGB    - Indicate whether or not the opacity modify color
- * @property {Boolean}      cascadeOpacity      - Indicate whether or not it will set cascade opacity
- * @property {cc.Color}     color               - Color of node
- * @property {Boolean}      cascadeColor        - Indicate whether or not it will set cascade color
- */
-cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
-    RGBAProtocol: true,
-    _displayedOpacity: 255,
-    _realOpacity: 255,
-    _displayedColor: null,
-    _realColor: null,
-    _cascadeColorEnabled: false,
-    _cascadeOpacityEnabled: false,
-
-    ctor: function () {
-        cc.Node.prototype.ctor.call(this);
-        this._displayedOpacity = 255;
-        this._realOpacity = 255;
-        this._displayedColor = cc.color(255, 255, 255, 255);
-        this._realColor = cc.color(255, 255, 255, 255);
-        this._cascadeColorEnabled = false;
-        this._cascadeOpacityEnabled = false;
     },
 
     _updateColor: function(){
@@ -2498,22 +2351,6 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         }
     },
 
-    /**
-     * add a child to node
-     * @overried
-     * @param {cc.Node} child  A child node
-     * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setZOrder(int)
-     * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
-     */
-    addChild: function (child, zOrder, tag) {
-        cc.Node.prototype.addChild.call(this, child, zOrder, tag);
-
-        if (this._cascadeColorEnabled)
-            this._enableCascadeColor();
-        if (this._cascadeOpacityEnabled)
-            this._enableCascadeOpacity();
-    },
-
     setOpacityModifyRGB: function (opacityValue) {
     },
 
@@ -2521,15 +2358,170 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         return false;
     }
 });
-cc.NodeRGBA.create = function () {
-    var res = new cc.NodeRGBA();
-    res.init();
-    return res;
+
+/**
+ * allocates and initializes a node.
+ * @constructs
+ * @return {cc.Node}
+ * @example
+ * // example
+ * var node = cc.Node.create();
+ */
+cc.Node.create = function () {
+    return new cc.Node();
 };
 
-cc.assert(typeof cc._tmp.PrototypeCCNodeRGBA === "function", cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
-cc._tmp.PrototypeCCNodeRGBA();
-delete cc._tmp.PrototypeCCNodeRGBA;
+/**
+ * cc.Node's state callback type
+ * @constant
+ * @type Number
+ */
+cc.Node.StateCallbackType = {onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, updateTransform: 5, onExitTransitionDidStart: 6, sortAllChildren: 7};
+
+if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
+
+    //redefine cc.Node
+    var _p = cc.Node.prototype;
+    _p.ctor = function () {
+        this._initNode();
+    };
+
+    _p.setNodeDirty = function () {
+        var _t = this;
+        _t._setNodeDirtyForCache();
+        _t._transformDirty === false && (_t._transformDirty = _t._inverseDirty = true);
+    };
+
+    _p.visit = function (ctx) {
+        var _t = this;
+        // quick return if not visible
+        if (!_t._visible)
+            return;
+
+        //visit for canvas
+        var context = ctx || cc._renderContext, i;
+        var children = _t._children, child;
+        context.save();
+        _t.transform(context);
+        var len = children.length;
+        if (len > 0) {
+            _t.sortAllChildren();
+            // draw children zOrder < 0
+            for (i = 0; i < len; i++) {
+                child = children[i];
+                if (child._localZOrder < 0)
+                    child.visit(context);
+                else
+                    break;
+            }
+            _t.draw(context);
+            for (; i < len; i++) {
+                children[i].visit(context);
+            }
+        } else
+            _t.draw(context);
+
+        this._cacheDirty = false;
+        _t.arrivalOrder = 0;
+        context.restore();
+    };
+
+    _p.transform = function (ctx) {
+        // transform for canvas
+        var context = ctx || cc._renderContext, eglViewer = cc.view;
+
+        var t = this.nodeToParentTransform();
+        context.transform(t.a, t.c, t.b, t.d, t.tx * eglViewer.getScaleX(), -t.ty * eglViewer.getScaleY());
+    };
+
+    _p.nodeToParentTransform = function () {
+        var _t = this;
+        if (_t._transformDirty) {
+            var t = _t._transform;// quick reference
+
+            // base position
+            t.tx = _t._position.x;
+            t.ty = _t._position.y;
+
+            // rotation Cos and Sin
+            var Cos = 1, Sin = 0;
+            if (_t._rotationX) {
+                Cos = Math.cos(_t._rotationRadiansX);
+                Sin = Math.sin(_t._rotationRadiansX);
+            }
+
+            // base abcd
+            t.a = t.d = Cos;
+            t.b = -Sin;
+            t.c = Sin;
+
+            var lScaleX = _t._scaleX, lScaleY = _t._scaleY;
+            var appX = _t._anchorPointInPoints.x, appY = _t._anchorPointInPoints.y;
+
+            // Firefox on Vista and XP crashes
+            // GPU thread in case of scale(0.0, 0.0)
+            var sx = (lScaleX < 0.000001 && lScaleX > -0.000001) ? 0.000001 : lScaleX,
+                sy = (lScaleY < 0.000001 && lScaleY > -0.000001) ? 0.000001 : lScaleY;
+
+            // skew
+            if (_t._skewX || _t._skewY) {
+                // offset the anchorpoint
+                var skx = Math.tan(-_t._skewX * Math.PI / 180);
+                var sky = Math.tan(-_t._skewY * Math.PI / 180);
+                if(skx === Infinity){
+                    skx = 99999999;
+                }
+                if(sky === Infinity){
+                    sky = 99999999;
+                }
+                var xx = appY * skx * sx;
+                var yy = appX * sky * sy;
+                t.a = Cos + -Sin * sky;
+                t.b = Cos * skx + -Sin;
+                t.c = Sin + Cos * sky;
+                t.d = Sin * skx + Cos;
+                t.tx += Cos * xx + -Sin * yy;
+                t.ty += Sin * xx + Cos * yy;
+            }
+
+            // scale
+            if (lScaleX !== 1 || lScaleY !== 1) {
+                t.a *= sx;
+                t.c *= sx;
+                t.b *= sy;
+                t.d *= sy;
+            }
+
+            // adjust anchorPoint
+            t.tx += Cos * -appX * sx + -Sin * appY * sy;
+            t.ty -= Sin * -appX * sx + Cos * appY * sy;
+
+            // if ignore anchorPoint
+            if (_t._ignoreAnchorPointForPosition) {
+                t.tx += appX;
+                t.ty += appY;
+            }
+
+            if (_t._additionalTransformDirty) {
+                _t._transform = cc.AffineTransformConcat(t, _t._additionalTransform);
+                _t._additionalTransformDirty = false;
+            }
+
+            _t._transformDirty = false;
+        }
+        return _t._transform;
+    };
+
+    _p = null;
+
+} else {
+    cc.assert(typeof cc._tmp.WebGLCCNode === "function", cc._LogInfos.MissingFile, "BaseNodesWebGL.js");
+    cc._tmp.WebGLCCNode();
+    delete cc._tmp.WebGLCCNode;
+}
+cc.assert(typeof cc._tmp.PrototypeCCNode === "function", cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
+cc._tmp.PrototypeCCNode();
+delete cc._tmp.PrototypeCCNode;
 
 /**
  * Node on enter

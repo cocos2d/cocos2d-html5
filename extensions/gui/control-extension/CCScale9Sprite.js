@@ -37,7 +37,7 @@
  *
  * @see http://yannickloriot.com/library/ios/cccontrolextension/Classes/CCScale9Sprite.html
  * @class
- * @extends cc.NodeRGBA
+ * @extends cc.Node
  *
  * @property {cc.Size}  preferredSize   - The preferred size of the 9-slice sprite
  * @property {cc.Rect}  capInsets       - The cap insets of the 9-slice sprite
@@ -46,7 +46,7 @@
  * @property {Number}   insetRight      - The right inset of the 9-slice sprite
  * @property {Number}   insetBottom     - The bottom inset of the 9-slice sprite
  */
-cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
+cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     RGBAProtocol: true,
 
     _spriteRect: null,
@@ -199,7 +199,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     ctor: function () {
-        cc.NodeRGBA.prototype.ctor.call(this);
+        cc.Node.prototype.ctor.call(this);
         this._spriteRect = cc.rect(0, 0, 0, 0);
         this._capInsetsInternal = cc.rect(0, 0, 0, 0);
 
@@ -259,7 +259,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     updateDisplayedOpacity: function(parentOpacity){
-        cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
+        cc.Node.prototype.updateDisplayedOpacity.call(this, parentOpacity);
         this.setOpacity(this._displayedOpacity);
     },
 
@@ -290,7 +290,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     updateDisplayedColor: function(parentColor){
-        cc.NodeRGBA.prototype.updateDisplayedColor.call(this, parentColor);
+        cc.Node.prototype.updateDisplayedColor.call(this, parentColor);
         this.setColor(this._displayedColor);
     },
 
@@ -401,7 +401,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
             this._updatePositions();
             this._positionsAreDirty = false;
         }
-        cc.NodeRGBA.prototype.visit.call(this, ctx);
+        cc.Node.prototype.visit.call(this, ctx);
     },
 
     init: function () {

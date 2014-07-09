@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Node
+cc.ProtectedNode = cc.Node.extend({
     _protectedChildren: null,
     _reorderProtectedChildDirty: false,
 
@@ -33,7 +33,7 @@ cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Nod
     },
 
     ctor: function(){
-        cc.NodeRGBA.prototype.ctor.call(this);
+        cc.Node.prototype.ctor.call(this);
        this._protectedChildren = [];
     },
 

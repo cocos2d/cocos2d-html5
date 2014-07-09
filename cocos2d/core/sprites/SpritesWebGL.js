@@ -43,13 +43,13 @@ cc._tmp.WebGLSprite = function () {
     };
 
     _p.updateDisplayedOpacity = function (parentOpacity) {
-        cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
+        cc.Node.prototype.updateDisplayedOpacity.call(this, parentOpacity);
         this.updateColor();
     };
 
     _p.ctor = function (fileName, rect, rotated) {
         var self = this;
-        cc.NodeRGBA.prototype.ctor.call(self);
+        cc.Node.prototype.ctor.call(self);
         self._shouldBeHidden = false;
         self._offsetPosition = cc.p(0, 0);
         self._unflippedOffsetPositionFromCenter = cc.p(0, 0);
@@ -81,7 +81,7 @@ cc._tmp.WebGLSprite = function () {
         if (arguments.length > 0)
             return _t.initWithFile(arguments[0], arguments[1]);
 
-        cc.NodeRGBA.prototype.init.call(_t);
+        cc.Node.prototype.init.call(_t);
         _t.dirty = _t._recursiveDirty = false;
         _t._opacityModifyRGB = true;
 
@@ -125,7 +125,7 @@ cc._tmp.WebGLSprite = function () {
 
         rotated = rotated || false;
 
-        if (!cc.NodeRGBA.prototype.init.call(_t))
+        if (!cc.Node.prototype.init.call(_t))
             return false;
 
         _t._batchNode = null;
@@ -382,22 +382,22 @@ cc._tmp.WebGLSprite = function () {
         }
 
         //cc.Node already sets isReorderChildDirty_ so _t needs to be after batchNode check
-        cc.NodeRGBA.prototype.addChild.call(_t, child, localZOrder, tag);
+        cc.Node.prototype.addChild.call(_t, child, localZOrder, tag);
         _t._hasChildren = true;
     };
 
     _p.setOpacity = function (opacity) {
-        cc.NodeRGBA.prototype.setOpacity.call(this, opacity);
+        cc.Node.prototype.setOpacity.call(this, opacity);
         this.updateColor();
     };
 
     _p.setColor = function (color3) {
-        cc.NodeRGBA.prototype.setColor.call(this, color3);
+        cc.Node.prototype.setColor.call(this, color3);
         this.updateColor();
     };
 
     _p.updateDisplayedColor = function (parentColor) {
-        cc.NodeRGBA.prototype.updateDisplayedColor.call(this, parentColor);
+        cc.Node.prototype.updateDisplayedColor.call(this, parentColor);
         this.updateColor();
     };
 

@@ -285,7 +285,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
                 locChild.updateDisplayedOpacity(this._displayedOpacity);
             } else {
-                cc.NodeRGBA.prototype.updateDisplayedOpacity.call(locChild, this._displayedOpacity);
+                cc.Node.prototype.updateDisplayedOpacity.call(locChild, this._displayedOpacity);
                 locChild.setNodeDirty();
             }
         }
@@ -322,7 +322,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
                 locChild.updateDisplayedColor(this._displayedColor);
             } else {
-                cc.NodeRGBA.prototype.updateDisplayedColor.call(locChild, this._displayedColor);
+                cc.Node.prototype.updateDisplayedColor.call(locChild, this._displayedColor);
                 locChild.setNodeDirty();
             }
         }
@@ -524,8 +524,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 fontChar.updateDisplayedColor(self._displayedColor);
                 fontChar.updateDisplayedOpacity(self._displayedOpacity);
             } else {
-                cc.NodeRGBA.prototype.updateDisplayedColor.call(fontChar, self._displayedColor);
-                cc.NodeRGBA.prototype.updateDisplayedOpacity.call(fontChar, self._displayedOpacity);
+                cc.Node.prototype.updateDisplayedColor.call(fontChar, self._displayedColor);
+                cc.Node.prototype.updateDisplayedOpacity.call(fontChar, self._displayedOpacity);
                 fontChar.setNodeDirty();
             }
 
@@ -953,22 +953,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
 var _p = cc.LabelBMFont.prototype;
 
-// Extended properties
-/** @expose */
-_p.opacityModifyRGB;
-cc.defineGetterSetter(_p, "opacityModifyRGB", _p.isOpacityModifyRGB, _p.setOpacityModifyRGB);
-/** @expose */
-_p.opacity;
-cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
-/** @expose */
-_p.cascadeOpacity;
-cc.defineGetterSetter(_p, "cascadeOpacity", _p.isCascadeOpacityEnabled, _p.setCascadeOpacityEnabled);
-/** @expose */
-_p.color;
-cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
-/** @expose */
-_p.cascadeColor;
-cc.defineGetterSetter(_p, "cascadeColor", _p.isCascadeColorEnabled, _p.setCascadeColorEnabled);
 /** @expose */
 _p.string;
 cc.defineGetterSetter(_p, "string", _p.getString, _p._setStringForSetter);

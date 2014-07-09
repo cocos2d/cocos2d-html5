@@ -31,11 +31,11 @@ cc._globalFontNameRelease = false;
 /**
  * Subclass cc.MenuItem (or any subclass) to create your custom cc.MenuItem objects.
  * @class
- * @extends cc.NodeRGBA
+ * @extends cc.Node
  *
  * @property {Boolean}  enabled     - Indicate whether item is enabled
  */
-cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
+cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
     _enabled: false,
     _target: null,
     _callback: null,
@@ -48,7 +48,7 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
      * @param {cc.Node} target
      */
     ctor: function (callback, target) {
-        var nodeP = cc.NodeRGBA.prototype;
+        var nodeP = cc.Node.prototype;
         nodeP.ctor.call(this);
         this._target = null;
         this._callback = null;
