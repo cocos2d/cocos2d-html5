@@ -47,6 +47,16 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         nodep.setContentSize.call(this, cc.winSize);
     },
 
+    init: function(){
+        var _t = this;
+        _t._ignoreAnchorPointForPosition = true;
+        _t.setAnchorPoint(0.5, 0.5);
+        _t.setContentSize(cc.winSize);
+        _t.cascadeOpacity = false;
+        _t.cascadeColor = false;
+        return true;
+    },
+
     /**
      * set the layer to cache all of children to a bake sprite, and draw itself by bake sprite. recommend using it in UI.
      * @function
