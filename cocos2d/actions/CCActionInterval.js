@@ -1117,9 +1117,7 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
  * var actionBy = cc.RotateBy.create(2, 360);
  */
 cc.RotateBy.create = function (duration, deltaAngleX, deltaAngleY) {
-    var rotateBy = new cc.RotateBy();
-    rotateBy.initWithDuration(duration, deltaAngleX, deltaAngleY);
-    return rotateBy;
+    return new cc.RotateBy(duration, deltaAngleX, deltaAngleY);
 };
 
 
@@ -1504,10 +1502,7 @@ cc.SkewBy = cc.SkewTo.extend(/** @lends cc.SkewBy# */{
  * var actionBy = cc.SkewBy.create(2, 0, -90);
  */
 cc.SkewBy.create = function (t, sx, sy) {
-    var skewBy = new cc.SkewBy();
-    if (skewBy)
-        skewBy.initWithDuration(t, sx, sy);
-    return skewBy;
+    return new cc.SkewBy(t, sx, sy);
 };
 
 
@@ -2053,9 +2048,7 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
  * var actionTo = cc.ScaleTo.create(2, 0.5, 2);
  */
 cc.ScaleTo.create = function (duration, sx, sy) { //function overload
-    var scaleTo = new cc.ScaleTo();
-    scaleTo.initWithDuration(duration, sx, sy);
-    return scaleTo;
+    return cc.ScaleTo(duration, sx, sy);
 };
 
 
@@ -2195,9 +2188,7 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
  * var action = cc.Blink.create(2, 10);
  */
 cc.Blink.create = function (duration, blinks) {
-    var blink = new cc.Blink();
-    blink.initWithDuration(duration, blinks);
-    return blink;
+    return cc.Blink(duration, blinks);
 };
 
 /** Fades an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from the current value to a custom one.
@@ -2368,9 +2359,7 @@ cc.FadeOut = cc.FadeTo.extend(/** @lends cc.FadeOut# */{
  * var action = cc.FadeOut.create(1.0);
  */
 cc.FadeOut.create = function (d) {
-    var action = new cc.FadeOut();
-    action.initWithDuration(d, 0);
-    return action;
+    return cc.FadeOut(d, 0);
 };
 
 /** Tints a cc.Node that implements the cc.NodeRGB protocol from current tint to a custom one.
