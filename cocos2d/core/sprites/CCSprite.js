@@ -245,7 +245,7 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
  *
  * The default anchorPoint in cc.Sprite is (0.5, 0.5). </p>
  * @class
- * @extends cc.NodeRGBA
+ * @extends cc.Node
  *
  * @property {Boolean}              dirty               - Indicates whether the sprite needs to be updated.
  * @property {Boolean}              flippedX            - Indicates whether or not the spirte is flipped on x axis.
@@ -263,7 +263,7 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
  * var aSprite = new cc.Sprite();
  * aSprite.initWithFile("HelloHTML5World.png",cc.rect(0,0,480,320));
  */
-cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
+cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     RGBAProtocol:true,
 	dirty:false,
 	atlasIndex:0,
@@ -1182,13 +1182,13 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p.updateDisplayedOpacity = function (parentOpacity) {
-        cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
+        cc.Node.prototype.updateDisplayedOpacity.call(this, parentOpacity);
         this._setNodeDirtyForCache();
     };
 
     _p.ctor = function (fileName, rect, rotated) {
         var self = this;
-        cc.NodeRGBA.prototype.ctor.call(self);
+        cc.Node.prototype.ctor.call(self);
         self._shouldBeHidden = false;
         self._offsetPosition = cc.p(0, 0);
         self._unflippedOffsetPositionFromCenter = cc.p(0, 0);
@@ -1221,7 +1221,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         if (arguments.length > 0)
             return _t.initWithFile(arguments[0], arguments[1]);
 
-        cc.NodeRGBA.prototype.init.call(_t);
+        cc.Node.prototype.init.call(_t);
         _t.dirty = _t._recursiveDirty = false;
         _t._opacityModifyRGB = true;
 
@@ -1265,7 +1265,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             _t._rect = cc.rect(0, 0, rect.width, rect.height);
         }
 
-        if (!cc.NodeRGBA.prototype.init.call(_t))
+        if (!cc.Node.prototype.init.call(_t))
             return false;
 
         _t._batchNode = null;
@@ -1417,12 +1417,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             tag = child.tag;
 
         //cc.Node already sets isReorderChildDirty_ so this needs to be after batchNode check
-        cc.NodeRGBA.prototype.addChild.call(this, child, localZOrder, tag);
+        cc.Node.prototype.addChild.call(this, child, localZOrder, tag);
         this._hasChildren = true;
     };
 
     _p.setOpacity = function (opacity) {
-        cc.NodeRGBA.prototype.setOpacity.call(this, opacity);
+        cc.Node.prototype.setOpacity.call(this, opacity);
         this._setNodeDirtyForCache();
     };
 
@@ -1431,14 +1431,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var curColor = _t.color;
         if ((curColor.r === color3.r) && (curColor.g === color3.g) && (curColor.b === color3.b))
             return;
-
-        cc.NodeRGBA.prototype.setColor.call(_t, color3);
     };
 
     _p.updateDisplayedColor = function (parentColor) {
         var _t = this;
         var oldColor = _t.color;
-        cc.NodeRGBA.prototype.updateDisplayedColor.call(_t, parentColor);
+        cc.Node.prototype.updateDisplayedColor.call(_t, parentColor);
         var newColor = _t._displayedColor;
         if ((oldColor.r === newColor.r) && (oldColor.g === newColor.g) && (oldColor.b === newColor.b))
             return;

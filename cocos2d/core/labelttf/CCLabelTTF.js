@@ -227,7 +227,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     updateDisplayedOpacity: null,
     updateDisplayedOpacityForCanvas: function (parentOpacity) {
-        cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
+        cc.Node.prototype.updateDisplayedOpacity.call(this, parentOpacity);
         this._setColorsString();
     },
 
@@ -1031,7 +1031,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     var _p = cc.LabelTTF.prototype;
 
     _p.setColor = function (color3) {
-        cc.NodeRGBA.prototype.setColor.call(this, color3);
+        cc.Node.prototype.setColor.call(this, color3);
 
         this._setColorsString();
     };
@@ -1050,7 +1050,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p.updateDisplayedColor = function (parentColor) {
-        cc.NodeRGBA.prototype.updateDisplayedColor.call(this, parentColor);
+        cc.Node.prototype.updateDisplayedColor.call(this, parentColor);
         this._setColorsString();
     };
 

@@ -31,11 +31,11 @@ cc._globalFontNameRelease = false;
 /**
  * Subclass cc.MenuItem (or any subclass) to create your custom cc.MenuItem objects.
  * @class
- * @extends cc.NodeRGBA
+ * @extends cc.Node
  *
  * @property {Boolean}  enabled     - Indicate whether item is enabled
  */
-cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
+cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
     _enabled: false,
     _target: null,
     _callback: null,
@@ -48,7 +48,7 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
      * @param {cc.Node} target
      */
     ctor: function (callback, target) {
-        var nodeP = cc.NodeRGBA.prototype;
+        var nodeP = cc.Node.prototype;
         nodeP.ctor.call(this);
         this._target = null;
         this._callback = null;
@@ -1136,13 +1136,16 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
      * //this is useful for constructing a toggler without a callback function (you wish to control the behavior from somewhere else)
      */
     ctor: function (/*Multiple arguments follow*/) {
+
         cc.MenuItem.prototype.ctor.call(this);
         this._selectedIndex = 0;
         this.subItems = [];
         this._opacity = 0;
         this._color = cc.color.WHITE;
 
-        this.initWithItems(Array.prototype.slice.apply(arguments));
+        if(arguments.length > 0)
+            this.initWithItems(Array.prototype.slice.apply(arguments));
+
     },
 
     /**

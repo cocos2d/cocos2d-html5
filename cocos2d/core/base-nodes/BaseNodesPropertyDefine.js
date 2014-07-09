@@ -120,11 +120,7 @@ cc._tmp.PrototypeCCNode = function () {
     /** @expose */
     _p.glServerState;
     cc.defineGetterSetter(_p, "glServerState", _p.getGLServerState, _p.setGLServerState);
-};
 
-cc._tmp.PrototypeCCNodeRGBA = function () {
-
-    var _p = cc.NodeRGBA.prototype;
     /** @expose */
     _p.opacity;
     cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
@@ -141,5 +137,3 @@ cc._tmp.PrototypeCCNodeRGBA = function () {
     _p.cascadeColor;
     cc.defineGetterSetter(_p, "cascadeColor", _p.isCascadeColorEnabled, _p.setCascadeColorEnabled);
 };
-
-

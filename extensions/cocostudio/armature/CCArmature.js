@@ -26,7 +26,7 @@
 /**
  * Base class for ccs.Armature objects.
  * @class
- * @extends ccs.NodeRGBA
+ * @extends ccs.Node
  *
  * @property {ccs.Bone}                 parentBone      - The parent bone of the armature node
  * @property {ccs.ArmatureAnimation}    animation       - The animation
@@ -37,7 +37,7 @@
  * @property {Object}                   body            - The body of the armature
  * @property {ccs.ColliderFilter}       colliderFilter  - <@writeonly> The collider filter of the armature
  */
-ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
+ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     animation: null,
     armatureData: null,
     batchNode: null,
@@ -64,7 +64,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
      * var armature = new ccs.Armature();
      */
     ctor: function (name, parentBone) {
-        cc.NodeRGBA.prototype.ctor.call(this);
+        cc.Node.prototype.ctor.call(this);
         this.animation = null;
         this.armatureData = null;
         this.batchNode = null;
@@ -91,7 +91,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
      * @return {Boolean}
      */
     init: function (name, parentBone) {
-        cc.NodeRGBA.prototype.init.call(this);
+        cc.Node.prototype.init.call(this);
         if (parentBone) {
             this._parentBone = parentBone;
         }
@@ -163,11 +163,11 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
         return true;
     },
     onEnter: function () {
-        cc.NodeRGBA.prototype.onEnter.call(this);
+        cc.Node.prototype.onEnter.call(this);
         this.scheduleUpdate();
     },
     onExit: function () {
-        cc.NodeRGBA.prototype.onExit.call(this);
+        cc.Node.prototype.onExit.call(this);
         this.unscheduleUpdate();
     },
     /**

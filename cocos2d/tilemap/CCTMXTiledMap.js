@@ -106,7 +106,7 @@ cc.TMX_ORIENTATION_ISO = 2;
  * @property {Number}   tileWidth       - Width of a tile
  * @property {Number}   tileHeight      - Height of a tile
  */
-cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
+cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
 	properties: null,
 	mapOrientation: null,
 	objectGroups: null,
