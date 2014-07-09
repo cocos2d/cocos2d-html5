@@ -198,7 +198,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         _t._actionManager = director.getActionManager();
         _t._scheduler = director.getScheduler();
         _t._initializedNode = true;
-        _t._additionalTransform = cc.AffineTransformMakeIdentity();
+        _t._additionalTransform = cc.affineTransformMakeIdentity();
         if (cc.ComponentContainer) {
             _t._componentContainer = new cc.ComponentContainer(_t);
         }
@@ -1109,7 +1109,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getBoundingBox: function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
-        return cc._RectApplyAffineTransformIn(rect, this.nodeToParentTransform());
+        return cc._rectApplyAffineTransformIn(rect, this.nodeToParentTransform());
     },
 
     /**
@@ -1768,7 +1768,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     parentToNodeTransform: function () {
         if (this._inverseDirty) {
-            this._inverse = cc.AffineTransformInvert(this.nodeToParentTransform());
+            this._inverse = cc.affineTransformInvert(this.nodeToParentTransform());
             this._inverseDirty = false;
         }
         return this._inverse;
@@ -1781,7 +1781,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     nodeToWorldTransform: function () {
         var t = this.nodeToParentTransform();
         for (var p = this._parent; p != null; p = p.parent)
-            t = cc.AffineTransformConcat(t, p.nodeToParentTransform());
+            t = cc.affineTransformConcat(t, p.nodeToParentTransform());
         return t;
     },
 
@@ -1790,7 +1790,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.AffineTransform}
      */
     worldToNodeTransform: function () {
-        return cc.AffineTransformInvert(this.nodeToWorldTransform());
+        return cc.affineTransformInvert(this.nodeToWorldTransform());
     },
 
     /**
@@ -1799,7 +1799,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}
      */
     convertToNodeSpace: function (worldPoint) {
-        return cc.PointApplyAffineTransform(worldPoint, this.worldToNodeTransform());
+        return cc.pointApplyAffineTransform(worldPoint, this.worldToNodeTransform());
     },
 
     /**
@@ -1809,7 +1809,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     convertToWorldSpace: function (nodePoint) {
         nodePoint = nodePoint || cc.p(0,0);
-        return cc.PointApplyAffineTransform(nodePoint, this.nodeToWorldTransform());
+        return cc.pointApplyAffineTransform(nodePoint, this.nodeToWorldTransform());
     },
 
     /**
@@ -2049,7 +2049,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     getBoundingBoxToWorld: function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var trans = this.nodeToWorldTransform();
-        rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
+        rect = cc.rectApplyAffineTransform(rect, this.nodeToWorldTransform());
 
         //query child's BoundingBox
         if (!this._children)
@@ -2069,8 +2069,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _getBoundingBoxToCurrentNode: function (parentTransform) {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
-        var trans = (parentTransform == null) ? this.nodeToParentTransform() : cc.AffineTransformConcat(this.nodeToParentTransform(), parentTransform);
-        rect = cc.RectApplyAffineTransform(rect, trans);
+        var trans = (parentTransform == null) ? this.nodeToParentTransform() : cc.affineTransformConcat(this.nodeToParentTransform(), parentTransform);
+        rect = cc.rectApplyAffineTransform(rect, trans);
 
         //query child's BoundingBox
         if (!this._children)
@@ -2136,16 +2136,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             // XXX: Try to inline skew
             // If skew is needed, apply skew and then anchor point
             if (needsSkewMatrix) {
-                t = cc.AffineTransformConcat({a: 1.0, b: Math.tan(cc.degreesToRadians(_t._skewY)),
+                t = cc.affineTransformConcat({a: 1.0, b: Math.tan(cc.degreesToRadians(_t._skewY)),
                     c: Math.tan(cc.degreesToRadians(_t._skewX)), d: 1.0, tx: 0.0, ty: 0.0}, t);
 
                 // adjust anchor point
                 if (apx !== 0 || apy !== 0)
-                    t = cc.AffineTransformTranslate(t, napx, napy);
+                    t = cc.affineTransformTranslate(t, napx, napy);
             }
 
             if (_t._additionalTransformDirty) {
-                t = cc.AffineTransformConcat(t, _t._additionalTransform);
+                t = cc.affineTransformConcat(t, _t._additionalTransform);
                 _t._additionalTransformDirty = false;
             }
             _t._transform = t;

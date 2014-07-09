@@ -1136,35 +1136,16 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
      * //this is useful for constructing a toggler without a callback function (you wish to control the behavior from somewhere else)
      */
     ctor: function (/*Multiple arguments follow*/) {
-        var argc = arguments.length, callback, target;
-        // passing callback.
-        if (typeof arguments[argc - 2] === 'function') {
-            callback = arguments[argc - 2];
-            target = arguments[argc - 1];
-            argc = argc - 2;
-        } else if (typeof arguments[argc - 1] === 'function') {
-            callback = arguments[argc - 1];
-            argc = argc - 1;
-        }
 
-        cc.MenuItem.prototype.ctor.call(this, callback, target);
+        cc.MenuItem.prototype.ctor.call(this);
         this._selectedIndex = 0;
         this.subItems = [];
         this._opacity = 0;
         this._color = cc.color.WHITE;
 
-        if (argc > 0) {
-            var locSubItems = this.subItems;
-            locSubItems.length = 0;
-            for (var i = 0; i < argc; i++) {
-                if (arguments[i])
-                    locSubItems.push(arguments[i]);
-            }
-            this._selectedIndex = cc.UINT_MAX;
-            this.setSelectedIndex(0);
-            this.setCascadeColorEnabled(true);
-            this.setCascadeOpacityEnabled(true);
-        }
+        if(arguments.length > 0)
+            this.initWithItems(Array.prototype.slice.apply(arguments));
+
     },
 
     /**

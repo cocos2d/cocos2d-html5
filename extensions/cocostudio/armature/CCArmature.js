@@ -365,16 +365,16 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             // XXX: Try to inline skew
             // If skew is needed, apply skew and then anchor point
             if (needsSkewMatrix) {
-                t = cc.AffineTransformConcat({a: 1.0, b: Math.tan(cc.degreesToRadians(this._skewY)),
+                t = cc.affineTransformConcat({a: 1.0, b: Math.tan(cc.degreesToRadians(this._skewY)),
                     c: Math.tan(cc.degreesToRadians(this._skewX)), d: 1.0, tx: 0.0, ty: 0.0}, t);
 
                 // adjust anchor point
                 if (apx !== 0 || apy !== 0)
-                    t = cc.AffineTransformTranslate(t, napx, napy);
+                    t = cc.affineTransformTranslate(t, napx, napy);
             }
 
             if (this._additionalTransformDirty) {
-                t = cc.AffineTransformConcat(t, this._additionalTransform);
+                t = cc.affineTransformConcat(t, this._additionalTransform);
                 this._additionalTransformDirty = false;
             }
             this._transform = t;
@@ -451,7 +451,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             }
 
             if (this._additionalTransformDirty) {
-                this._transform = cc.AffineTransformConcat(this._transform, this._additionalTransform);
+                this._transform = cc.affineTransformConcat(this._transform, this._additionalTransform);
                 this._additionalTransformDirty = false;
             }
 
@@ -511,7 +511,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
                 boundingBox = cc.rect(minx, miny, maxx - minx, maxy - miny);
             }
         }
-        return cc.RectApplyAffineTransform(boundingBox, this.nodeToParentTransform());
+        return cc.rectApplyAffineTransform(boundingBox, this.nodeToParentTransform());
     },
 
     /**

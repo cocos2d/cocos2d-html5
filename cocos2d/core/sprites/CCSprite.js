@@ -25,12 +25,115 @@
  ****************************************************************************/
 
 /**
+ * Tint a texture using the "multiply" operation
+ * @param {HTMLImageElement} image
+ * @param {cc.Color} color
+ * @param {cc.Rect} [rect]
+ * @param {HTMLCanvasElement} renderCanvas
+ * @returns {HTMLCanvasElement}
+ */
+cc.generateTintImage = function(image, color, rect, renderCanvas){
+    renderCanvas = renderCanvas || cc.newElement("canvas");
+    rect = rect || cc.rect(0,0, image.width, image.height);
+
+    var context = renderCanvas.getContext( "2d" );
+    renderCanvas.width = rect.width;
+    renderCanvas.height = rect.height;
+
+    context.fillStyle = "rgb(" + color.r + "," + color.g + "," + color.b + ")";
+    context.fillRect(0, 0, rect.width, rect.height);
+    context.globalCompositeOperation = "multiply";
+    context.drawImage(image,
+        rect.x,
+        rect.y,
+        rect.width,
+        rect.height,
+        0,
+        0,
+        rect.width,
+        rect.height);
+    context.globalCompositeOperation = "destination-atop";
+    context.drawImage(image,
+        rect.x,
+        rect.y,
+        rect.width,
+        rect.height,
+        0,
+        0,
+        rect.width,
+        rect.height);
+    return renderCanvas;
+};
+
+/**
+ * generate tinted texture
+ * lighter:    The source and destination colors are added to each other, resulting in brighter colors,
+ * moving towards color values of 1 (maximum brightness for that color).
+ * @function
+ * @param {HTMLImageElement} texture
+ * @param {Array} tintedImgCache
+ * @param {cc.Color} color
+ * @param {cc.Rect} rect
+ * @param {HTMLCanvasElement} [renderCanvas]
+ * @return {HTMLCanvasElement}
+ */
+cc.generateTintImageWithLight = function (texture, tintedImgCache, color, rect, renderCanvas) {
+    if (!rect)
+        rect = cc.rect(0, 0, texture.width, texture.height);
+
+    var r = color.r / 255;
+    var g = color.g / 255;
+    var b = color.b / 255;
+
+    var w = Math.min(rect.width, tintedImgCache[0].width);
+    var h = Math.min(rect.height, tintedImgCache[0].height);
+    var buff = renderCanvas;
+    var ctx;
+
+    // Create a new buffer if required
+    if (!buff) {
+        buff = cc.newElement("canvas");
+        buff.width = w;
+        buff.height = h;
+        ctx = buff.getContext("2d");
+    } else {
+        ctx = buff.getContext("2d");
+        ctx.clearRect(0, 0, w, h);
+    }
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+
+    // Make sure to keep the renderCanvas alpha in mind in case of overdraw
+    var a = ctx.globalAlpha;
+    if (r > 0) {
+        ctx.globalAlpha = r * a;
+        ctx.drawImage(tintedImgCache[0], rect.x, rect.y, w, h, 0, 0, w, h);
+    }
+    if (g > 0) {
+        ctx.globalAlpha = g * a;
+        ctx.drawImage(tintedImgCache[1], rect.x, rect.y, w, h, 0, 0, w, h);
+    }
+    if (b > 0) {
+        ctx.globalAlpha = b * a;
+        ctx.drawImage(tintedImgCache[2], rect.x, rect.y, w, h, 0, 0, w, h);
+    }
+
+    if (r + g + b < 1) {
+        ctx.globalAlpha = a;
+        ctx.drawImage(tintedImgCache[3], rect.x, rect.y, w, h, 0, 0, w, h);
+    }
+
+    ctx.restore();
+    return buff;
+};
+
+/**
  * generate texture's cache for texture tint
  * @function
  * @param {HTMLImageElement} texture
  * @return {Array}
  */
-
 cc.generateTextureCacheForColor = function (texture) {
     if (texture.channelCache) {
         return texture.channelCache;
@@ -101,103 +204,6 @@ cc.generateTextureCacheForColor = function (texture) {
 cc.generateTextureCacheForColor.canvas = cc.newElement('canvas');
 cc.generateTextureCacheForColor.tempCanvas = cc.newElement('canvas');
 cc.generateTextureCacheForColor.tempCtx = cc.generateTextureCacheForColor.tempCanvas.getContext('2d');
-
-/**
- * generate tinted texture
- * source-in: Where source and destination overlaps and both are opaque, the source is displayed.
- * Everywhere else transparency is displayed.
- * @function
- * @param {HTMLImageElement} texture
- * @param {cc.Color} color
- * @param {cc.Rect} rect
- * @return {HTMLCanvasElement}
- */
-cc.generateTintImage2 = function (texture, color, rect) {
-    if (!rect) {
-        rect = cc.rect(0, 0, texture.width, texture.height);
-        rect = cc.rectPixelsToPoints(rect);
-    }
-
-    var buff = cc.newElement("canvas");
-    var ctx = buff.getContext("2d");
-
-    if (buff.width != rect.width) buff.width = rect.width;
-    if (buff.height != rect.height) buff.height = rect.height;
-    ctx.save();
-
-    ctx.drawImage(texture, rect.x, rect.y, rect.width, rect.height, 0, 0, rect.width, rect.height);
-
-    ctx.globalCompositeOperation = "source-in";
-    ctx.globalAlpha = color.a / 255.0;
-    ctx.fillStyle = "rgb(" + color.r + "," + color.g + "," + color.b + ")";
-    ctx.fillRect(0, 0, rect.width, rect.height);
-    ctx.restore();
-
-    return buff;
-};
-
-/**
- * generate tinted texture
- * lighter:    The source and destination colors are added to each other, resulting in brighter colors,
- * moving towards color values of 1 (maximum brightness for that color).
- * @function
- * @param {HTMLImageElement} texture
- * @param {Array} tintedImgCache
- * @param {cc.Color} color
- * @param {cc.Rect} rect
- * @param {HTMLCanvasElement} [renderCanvas]
- * @return {HTMLCanvasElement}
- */
-cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCanvas) {
-    if (!rect)
-        rect = cc.rect(0, 0, texture.width, texture.height);
-
-    var r = color.r / 255;
-    var g = color.g / 255;
-    var b = color.b / 255;
-
-    var w = Math.min(rect.width, tintedImgCache[0].width);
-    var h = Math.min(rect.height, tintedImgCache[0].height);
-    var buff = renderCanvas;
-    var ctx;
-
-    // Create a new buffer if required
-    if (!buff) {
-        buff = cc.newElement("canvas");
-        buff.width = w;
-        buff.height = h;
-        ctx = buff.getContext("2d");
-    } else {
-        ctx = buff.getContext("2d");
-        ctx.clearRect(0, 0, w, h);
-    }
-
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-
-    // Make sure to keep the renderCanvas alpha in mind in case of overdraw
-    var a = ctx.globalAlpha;
-    if (r > 0) {
-        ctx.globalAlpha = r * a;
-        ctx.drawImage(tintedImgCache[0], rect.x, rect.y, w, h, 0, 0, w, h);
-    }
-    if (g > 0) {
-        ctx.globalAlpha = g * a;
-        ctx.drawImage(tintedImgCache[1], rect.x, rect.y, w, h, 0, 0, w, h);
-    }
-    if (b > 0) {
-        ctx.globalAlpha = b * a;
-        ctx.drawImage(tintedImgCache[2], rect.x, rect.y, w, h, 0, 0, w, h);
-    }
-
-    if (r + g + b < 1) {
-        ctx.globalAlpha = a;
-        ctx.drawImage(tintedImgCache[3], rect.x, rect.y, w, h, 0, 0, w, h);
-    }
-
-    ctx.restore();
-    return buff;
-};
 
 cc.cutRotateImageToCanvas = function (texture, rect) {
     if (!texture)
@@ -518,9 +524,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     reorderChild:function (child, zOrder) {
-
         cc.assert(child, cc._LogInfos.Sprite_reorderChild_2);
-
         if(this._children.indexOf(child) === -1){
             cc.log(cc._LogInfos.Sprite_reorderChild);
             return;
@@ -825,7 +829,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * mySprite.initWithFile("HelloHTML5World.png",cc.rect(0,0,480,320));
      */
     initWithFile:function (filename, rect) {
-
         cc.assert(filename, cc._LogInfos.Sprite_initWithFile);
 
         var tex = cc.textureCache.textureForKey(filename);
@@ -1017,19 +1020,15 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             if (!locElement)
                 return;
 
-            var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
-            if (cacheTextureForColor) {
-                this._colorized = true;
-                //generate color texture cache
-                if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor)
-                    cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect, locElement);
-                else {
-                    locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect);
-                    locTexture = new cc.Texture2D();
-                    locTexture.initWithElement(locElement);
-                    locTexture.handleLoadedTexture();
-                    this.texture = locTexture;
-                }
+            this._colorized = true;
+            if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor)
+                cc.generateTintImage(this._originalTexture._htmlElementObj, this._displayedColor, locRect, locElement);
+            else {
+                locElement = cc.generateTintImage(this._originalTexture._htmlElementObj, this._displayedColor, locRect);
+                locTexture = new cc.Texture2D();
+                locTexture.initWithElement(locElement);
+                locTexture.handleLoadedTexture();
+                this.texture = locTexture;
             }
         }
     },
@@ -1396,7 +1395,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                     _t._transformToBatch = _t.nodeToParentTransform();
                 } else {
                     //cc.assert(_t._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
-                    _t._transformToBatch = cc.AffineTransformConcat(_t.nodeToParentTransform(), locParent._transformToBatch);
+                    _t._transformToBatch = cc.affineTransformConcat(_t.nodeToParentTransform(), locParent._transformToBatch);
                 }
             }
             _t._recursiveDirty = false;
@@ -1432,10 +1431,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var curColor = _t.color;
         if ((curColor.r === color3.r) && (curColor.g === color3.g) && (curColor.b === color3.b))
             return;
-
-        cc.Node.prototype.setColor.call(_t, color3);
-        _t._changeTextureColor();
-        _t._setNodeDirtyForCache();
     };
 
     _p.updateDisplayedColor = function (parentColor) {
@@ -1453,9 +1448,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var _t = this;
         if(typeof(newFrame) == "string"){
             newFrame = cc.spriteFrameCache.getSpriteFrame(newFrame);
-
             cc.assert(newFrame, cc._LogInfos.CCSpriteBatchNode_setSpriteFrame)
-
         }
 
         _t.setNodeDirty(true);
@@ -1514,11 +1507,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             _t.dirty = false;
         } else {
             // using batch
-            _t._transformToBatch = cc.AffineTransformIdentity();
+            _t._transformToBatch = cc.affineTransformIdentity();
             _t.textureAtlas = _t._batchNode.textureAtlas; // weak ref
         }
     };
-
 
     _p.setTexture = function (texture) {
         var _t = this;
@@ -1533,7 +1525,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         }
 
         // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
-
         cc.assert(!texture || texture instanceof cc.Texture2D, cc._LogInfos.CCSpriteBatchNode_setTexture);
 
         if (_t._texture != texture) {
@@ -1617,6 +1608,31 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             context.restore();
         cc.g_NumberOfDraws++;
     };
+
+    if(!cc.sys._supportCanvasNewBlendModes)
+        _p._changeTextureColor =  function () {
+            var locElement, locTexture = this._texture, locRect = this._textureRect_Canvas; //this.getTextureRect();
+            if (locTexture && locRect.validRect && this._originalTexture) {
+                locElement = locTexture.getHtmlElementObj();
+                if (!locElement)
+                    return;
+
+                var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
+                if (cacheTextureForColor) {
+                    this._colorized = true;
+                    //generate color texture cache
+                    if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor)
+                        cc.generateTintImageWithLight(locElement, cacheTextureForColor, this._displayedColor, locRect, locElement);
+                    else {
+                        locElement = cc.generateTintImageWithLight(locElement, cacheTextureForColor, this._displayedColor, locRect);
+                        locTexture = new cc.Texture2D();
+                        locTexture.initWithElement(locElement);
+                        locTexture.handleLoadedTexture();
+                        this.texture = locTexture;
+                    }
+                }
+            }
+        };
 
     delete _p;
 } else {

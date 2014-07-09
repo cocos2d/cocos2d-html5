@@ -75,7 +75,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
         this._childrenBone = [];
         this.parentBone = null;
         this.boneTransformDirty = true;
-        this._worldTransform = cc.AffineTransformMake(1, 0, 0, 1, 0, 0);
+        this._worldTransform = cc.affineTransformMake(1, 0, 0, 1, 0, 0);
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         this.blendDirty = false;
     },
@@ -212,7 +212,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
             ccs.TransformHelp.nodeToMatrix(locWorldInfo, locWorldTransform);
 
             if (locArmatureParentBone) {
-                this._worldTransform = cc.AffineTransformConcat(locWorldTransform, locArmature.nodeToParentTransform());
+                this._worldTransform = cc.affineTransformConcat(locWorldTransform, locArmature.nodeToParentTransform());
             }
         }
         ccs.DisplayFactory.updateDisplay(this, dt, this.boneTransformDirty || locArmature.getArmatureTransformDirty());
@@ -461,7 +461,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      * @returns {cc.AffineTransform}
      */
     nodeToWorldTransform: function () {
-        return cc.AffineTransformConcat(this._worldTransform, this._armature.nodeToWorldTransform());
+        return cc.affineTransformConcat(this._worldTransform, this._armature.nodeToWorldTransform());
     },
 
     /**

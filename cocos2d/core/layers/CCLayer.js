@@ -471,7 +471,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         //default size
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var trans = this.nodeToWorldTransform();
-        rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
+        rect = cc.rectApplyAffineTransform(rect, this.nodeToWorldTransform());
 
         //query child's BoundingBox
         if (!this._children || this._children.length === 0)
