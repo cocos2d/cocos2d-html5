@@ -281,7 +281,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
             var cacheTextureForColor = cc.textureCache.getTextureColors(element);
             if (cacheTextureForColor) {
                 var textureRect = cc.rect(0, 0, element.width, element.height);
-                element = cc.generateTintImage(element, cacheTextureForColor, this._realColor, textureRect);
+                element = cc.generateTintImageWithLight(element, cacheTextureForColor, this._realColor, textureRect);
                 var locTexture = new cc.Texture2D();
                 locTexture.initWithElement(element);
                 locTexture.handleLoadedTexture();
