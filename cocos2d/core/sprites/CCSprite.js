@@ -1306,7 +1306,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             rect = cc.rect(0, 0, texture.width, texture.height);
         }
 
-        if(texture) {
+        if(texture && texture.url) {
             var _x = rect.x + rect.width, _y = rect.y + rect.height;
             if(_x > texture.width){
                 cc.error(cc._LogInfos.RectWidth, texture.url);
