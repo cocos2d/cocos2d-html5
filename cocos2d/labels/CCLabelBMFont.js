@@ -222,10 +222,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 this.updateDisplayedColor(parentColor);
             }
         }
-
-        if (color.a !== undefined && !color.a_undefined) {
-            this.setOpacity(color.a);
-        }
     },
 
     /**
@@ -339,9 +335,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 return;
             var locElement = locTexture.getHtmlElementObj();
             var textureRect = cc.rect(0, 0, element.width, element.height);
-            if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
+            if (locElement instanceof HTMLCanvasElement && !this._rectRotated){
                 cc.generateTintImageWithMultiply(element, this._displayedColor, textureRect, locElement);
-            else {
+                this.setTexture(locTexture);
+            } else {
                 locElement = cc.generateTintImageWithMultiply(element, this._displayedColor, textureRect);
                 locTexture = new cc.Texture2D();
                 locTexture.initWithElement(locElement);
@@ -960,7 +957,7 @@ if(cc._renderType === cc._RENDER_TYPE_CANVAS && !cc.sys._supportCanvasNewBlendMo
             locElement = locTexture.getHtmlElementObj();
             if (!locElement)
                 return;
-            var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture.getHtmlElementObj());
+            var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
             if (cacheTextureForColor) {
                 if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
                     cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, null, locElement);
