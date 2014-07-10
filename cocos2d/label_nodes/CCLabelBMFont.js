@@ -661,25 +661,23 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     _changeTextureColor:function(){
-        if(cc.Browser.supportWebGL){
+        if(cc.Browser.supportWebGL)
             return;
-        }
-        var locElement, locTexture = this.getTexture();
+        var locTexture = this.getTexture();
         if (locTexture && locTexture.getContentSize().width>0) {
-            locElement = locTexture.getHtmlElementObj();
-            if (!locElement)
+            var element = this._originalTexture.getHtmlElementObj();
+            if(!element)
                 return;
-            var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture.getHtmlElementObj());
-            if (cacheTextureForColor) {
-                if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
-                    cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, null, locElement);
-                else{
-                    locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor);
-                    locTexture = new cc.Texture2D();
-                    locTexture.initWithElement(locElement);
-                    locTexture.handleLoadedTexture();
-                    this.setTexture(locTexture);
-                }
+            var locElement = locTexture.getHtmlElementObj();
+            var textureRect = cc.rect(0, 0, element.width, element.height);
+            if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
+                cc.generateTintImageWithMultiply(element, this._displayedColor, textureRect, locElement);
+            else {
+                locElement = cc.generateTintImageWithMultiply(element, this._displayedColor, textureRect);
+                locTexture = new cc.Texture2D();
+                locTexture.initWithElement(locElement);
+                locTexture.handleLoadedTexture();
+                this.setTexture(locTexture);
             }
         }
     },
@@ -1258,6 +1256,30 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         return sp.getPositionX() * this._scaleX + (sp.getContentSize().width * this._scaleX * (1 - sp.getAnchorPoint().x));
     }
 });
+
+if(!cc.Browser.supportWebGL && !sys._supportCanvasNewBlendModes)
+    cc.LabelBMFont.prototype._changeTextureColor = function(){
+        if(cc.Browser.supportWebGL)
+            return;
+        var locElement, locTexture = this.getTexture();
+        if (locTexture && locTexture.getContentSize().width>0) {
+            locElement = locTexture.getHtmlElementObj();
+            if (!locElement)
+                return;
+            var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture.getHtmlElementObj());
+            if (cacheTextureForColor) {
+                if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
+                    cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, null, locElement);
+                else{
+                    locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor);
+                    locTexture = new cc.Texture2D();
+                    locTexture.initWithElement(locElement);
+                    locTexture.handleLoadedTexture();
+                    this.setTexture(locTexture);
+                }
+            }
+        }
+    };
 
 /**
  * creates a bitmap font atlas with an initial string and the FNT file
