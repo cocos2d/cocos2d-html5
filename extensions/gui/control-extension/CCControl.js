@@ -77,7 +77,7 @@ cc.Control = cc.Layer.extend(/** @lends cc.Control# */{
         var children = this.getChildren();
         for (var i = 0, len = children.length; i < len; i++) {
             var selNode = children[i];
-            if (selNode && selNode.RGBAProtocol)
+            if (selNode)
                 selNode.setOpacityModifyRGB(opacityModifyRGB);
         }
     },

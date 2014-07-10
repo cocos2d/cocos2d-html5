@@ -2182,7 +2182,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._displayedOpacity = this._realOpacity = opacity;
 
         var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
+        if (locParent && locParent.cascadeOpacity)
             parentOpacity = locParent.getDisplayedOpacity();
         this.updateDisplayedOpacity(parentOpacity);
 
@@ -2199,7 +2199,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             var selChildren = this._children;
             for (var i = 0; i < selChildren.length; i++) {
                 var item = selChildren[i];
-                if (item && item.RGBAProtocol)
+                if (item)
                     item.updateDisplayedOpacity(this._displayedOpacity);
             }
         }
@@ -2230,7 +2230,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _enableCascadeOpacity: function () {
         var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
+        if (locParent && locParent.cascadeOpacity)
             parentOpacity = locParent.getDisplayedOpacity();
         this.updateDisplayedOpacity(parentOpacity);
     },
@@ -2241,7 +2241,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var selChildren = this._children;
         for (var i = 0; i < selChildren.length; i++) {
             var item = selChildren[i];
-            if (item && item.RGBAProtocol)
+            if (item)
                 item.updateDisplayedOpacity(255);
         }
     },
@@ -2275,7 +2275,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         locDisplayedColor.b = locRealColor.b = color.b;
 
         var parentColor, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.cascadeColor)
+        if (locParent && locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
             parentColor = cc.color.WHITE;
@@ -2300,7 +2300,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             var selChildren = this._children;
             for (var i = 0; i < selChildren.length; i++) {
                 var item = selChildren[i];
-                if (item && item.RGBAProtocol)
+                if (item)
                     item.updateDisplayedColor(locDispColor);
             }
         }
@@ -2330,7 +2330,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _enableCascadeColor: function () {
         var parentColor , locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.cascadeColor)
+        if (locParent && locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
             parentColor = cc.color.WHITE;
@@ -2346,7 +2346,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var selChildren = this._children, whiteColor = cc.color.WHITE;
         for (var i = 0; i < selChildren.length; i++) {
             var item = selChildren[i];
-            if (item && item.RGBAProtocol)
+            if (item)
                 item.updateDisplayedColor(whiteColor);
         }
     },

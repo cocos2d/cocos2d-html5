@@ -295,7 +295,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      */
     updateColor: function () {
         var display = this.displayManager.getDisplayRenderNode();
-        if (display && display.RGBAProtocol) {
+        if (display) {
             var locDisplayedColor = this._displayedColor;
             var locTweenData = this._tweenData;
             var locOpacity = this._displayedOpacity * locTweenData.a / 255;

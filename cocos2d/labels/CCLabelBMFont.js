@@ -70,7 +70,6 @@ cc.LABEL_AUTOMATIC_WIDTH = -1;
  * @property {Number}   boundingWidth   - Width of the bounding box of label, the real content width is limited by boundingWidth
  */
 cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
-    RGBAProtocol: true,
 
     _opacityModifyRGB: false,
 
@@ -218,7 +217,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             if (this._cascadeColorEnabled) {
                 var parentColor = cc.color.WHITE;
                 var locParent = this._parent;
-                if (locParent && locParent.RGBAProtocol && locParent.cascadeColor)
+                if (locParent && locParent.cascadeColor)
                     parentColor = locParent.getDisplayedColor();
                 this.updateDisplayedColor(parentColor);
             }
@@ -246,7 +245,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         if (locChildren) {
             for (var i = 0; i < locChildren.length; i++) {
                 var node = locChildren[i];
-                if (node && node.RGBAProtocol)
+                if (node)
                     node.opacityModifyRGB = this._opacityModifyRGB;
             }
         }
@@ -269,7 +268,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         if (this._cascadeOpacityEnabled) {
             var parentOpacity = 255;
             var locParent = this._parent;
-            if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
+            if (locParent && locParent.cascadeOpacity)
                 parentOpacity = locParent.getDisplayedOpacity();
             this.updateDisplayedOpacity(parentOpacity);
         }
