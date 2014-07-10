@@ -44,11 +44,17 @@ cc.generateTintImageWithMultiply = function(image, color, rect, renderCanvas){
     rect = rect || cc.rect(0,0, image.width, image.height);
 
     var context = renderCanvas.getContext( "2d" );
-    renderCanvas.width = rect.width;
-    renderCanvas.height = rect.height;
+    if(renderCanvas.width != rect.width || renderCanvas.height != rect.height){
+        renderCanvas.width = rect.width;
+        renderCanvas.height = rect.height;
+    }else{
+        context.globalCompositeOperation = "source-over";
+    }
 
-    context.fillStyle = "rgb(" + color.r + "," + color.g + "," + color.b + ")";
+    var selColor = (!color.a) ? color : cc.c3b(0 | (color.r * 255), 0 | (color.g * 255), 0 | (color.b * 255));
+    context.fillStyle = "rgb(" + selColor.r + "," + selColor.g + "," + selColor.b + ")";
     context.fillRect(0, 0, rect.width, rect.height);
+
     context.globalCompositeOperation = "multiply";
     context.drawImage(image,
         rect.x,
@@ -151,7 +157,7 @@ cc.generateTextureCacheForColor.tempCanvas = document.createElement('canvas');
 cc.generateTextureCacheForColor.tempCtx = cc.generateTextureCacheForColor.tempCanvas.getContext('2d');
 
 /**
- * generate tinted texture
+ * generate tinted texture with lighter, (It's very slow in chrome).
  * lighter:    The source and destination colors are added to each other, resulting in brighter colors,
  * moving towards color values of 1 (maximum brightness for that color).
  * @function
@@ -162,7 +168,7 @@ cc.generateTextureCacheForColor.tempCtx = cc.generateTextureCacheForColor.tempCa
  * @param {HTMLCanvasElement} [renderCanvas]
  * @return {HTMLCanvasElement}
  */
-cc.generateTintImageWithLighter = function (texture, tintedImgCache, color, rect, renderCanvas) {
+cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCanvas) {
     if (!rect)
         rect = cc.rect(0, 0, texture.width, texture.height);
 
@@ -2193,9 +2199,9 @@ if(cc.Browser.supportWebGL){
                     this._colorized = true;
                     //generate color texture cache
                     if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor)
-                        cc.generateTintImageWithLighter(locElement, cacheTextureForColor, this._displayedColor, locRect, locElement);
+                        cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect, locElement);
                     else {
-                        locElement = cc.generateTintImageWithLighter(locElement, cacheTextureForColor, this._displayedColor, locRect);
+                        locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect);
                         locTexture = new cc.Texture2D();
                         locTexture.initWithElement(locElement);
                         locTexture.handleLoadedTexture();
