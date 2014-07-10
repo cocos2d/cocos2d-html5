@@ -341,9 +341,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
             if (cacheTextureForColor) {
                 if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
-                    cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, null, locElement);
+                    cc.generateTintImage(this._originalTexture._htmlElementObj, this._displayedColor, null, locElement);
                 else {
-                    locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor);
+                    locElement = cc.generateTintImage(this._originalTexture._htmlElementObj, this._displayedColor);
                     locTexture = new cc.Texture2D();
                     locTexture.initWithElement(locElement);
                     locTexture.handleLoadedTexture();
@@ -531,7 +531,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
             var yOffset = locCfg.commonHeight - fontDef.yOffset;
             var fontPos = cc.p(nextFontPositionX + fontDef.xOffset + fontDef.rect.width * 0.5 + kerningAmount,
-                nextFontPositionY + yOffset - rect.height * 0.5 * cc.contentScaleFactor());
+                    nextFontPositionY + yOffset - rect.height * 0.5 * cc.contentScaleFactor());
             fontChar.setPosition(cc.pointPixelsToPoints(fontPos));
 
             // update kerning
@@ -952,6 +952,31 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 });
 
 var _p = cc.LabelBMFont.prototype;
+
+if(!cc.sys._supportCanvasNewBlendModes)
+    _p._changeTextureColor =  function () {
+        if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
+            return;
+        }
+        var locElement, locTexture = this.texture;
+        if (locTexture && locTexture.width > 0) {
+            locElement = locTexture.getHtmlElementObj();
+            if (!locElement)
+                return;
+            var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
+            if (cacheTextureForColor) {
+                if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
+                    cc.generateTintImageWithLight(locElement, cacheTextureForColor, this._displayedColor, null, locElement);
+                else {
+                    locElement = cc.generateTintImageWithLight(locElement, cacheTextureForColor, this._displayedColor);
+                    locTexture = new cc.Texture2D();
+                    locTexture.initWithElement(locElement);
+                    locTexture.handleLoadedTexture();
+                    this.texture = locTexture;
+                }
+            }
+        }
+    };
 
 /** @expose */
 _p.string;
