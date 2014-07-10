@@ -330,25 +330,24 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     _changeTextureColor: function () {
-        if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
+        if (cc._renderType == cc._RENDER_TYPE_WEBGL)
             return;
-        }
-        var locElement, locTexture = this.texture;
-        if (locTexture && locTexture.width > 0) {
-            locElement = locTexture.getHtmlElementObj();
-            if (!locElement)
+
+        var locTexture = this.getTexture();
+        if (locTexture && locTexture.getContentSize().width>0) {
+            var element = this._originalTexture.getHtmlElementObj();
+            if(!element)
                 return;
-            var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
-            if (cacheTextureForColor) {
-                if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
-                    cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, null, locElement);
-                else {
-                    locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor);
-                    locTexture = new cc.Texture2D();
-                    locTexture.initWithElement(locElement);
-                    locTexture.handleLoadedTexture();
-                    this.texture = locTexture;
-                }
+            var locElement = locTexture.getHtmlElementObj();
+            var textureRect = cc.rect(0, 0, element.width, element.height);
+            if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
+                cc.generateTintImageWithMultiply(element, this._displayedColor, textureRect, locElement);
+            else {
+                locElement = cc.generateTintImageWithMultiply(element, this._displayedColor, textureRect);
+                locTexture = new cc.Texture2D();
+                locTexture.initWithElement(locElement);
+                locTexture.handleLoadedTexture();
+                this.setTexture(locTexture);
             }
         }
     },
@@ -952,6 +951,30 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 });
 
 var _p = cc.LabelBMFont.prototype;
+
+if(cc._renderType === cc._RENDER_TYPE_CANVAS && !cc.sys._supportCanvasNewBlendModes)
+    _p._changeTextureColor = function(){
+        if(cc._renderType == cc._RENDER_TYPE_WEBGL)
+            return;
+        var locElement, locTexture = this.getTexture();
+        if (locTexture && locTexture.getContentSize().width>0) {
+            locElement = locTexture.getHtmlElementObj();
+            if (!locElement)
+                return;
+            var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture.getHtmlElementObj());
+            if (cacheTextureForColor) {
+                if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
+                    cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, null, locElement);
+                else{
+                    locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor);
+                    locTexture = new cc.Texture2D();
+                    locTexture.initWithElement(locElement);
+                    locTexture.handleLoadedTexture();
+                    this.setTexture(locTexture);
+                }
+            }
+        }
+    };
 
 /** @expose */
 _p.string;

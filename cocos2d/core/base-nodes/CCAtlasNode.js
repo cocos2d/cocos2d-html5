@@ -273,19 +273,25 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
             temp.b = temp.b * locDisplayedOpacity / 255;
         }
         cc.Node.prototype.setColor.call(this, color3);
+        this._changeTextureColor();
+    },
 
-        if (this.texture) {
+    _changeTextureColor: function(){
+        var locTexture = this.getTexture();
+        if (locTexture && this._originalTexture) {
             var element = this._originalTexture.getHtmlElementObj();
-            if (!element)
+            if(!element)
                 return;
-            var cacheTextureForColor = cc.textureCache.getTextureColors(element);
-            if (cacheTextureForColor) {
-                var textureRect = cc.rect(0, 0, element.width, element.height);
-                element = cc.generateTintImageWithLight(element, cacheTextureForColor, this._realColor, textureRect);
-                var locTexture = new cc.Texture2D();
-                locTexture.initWithElement(element);
+            var locElement = locTexture.getHtmlElementObj();
+            var textureRect = cc.rect(0, 0, element.width, element.height);
+            if (locElement instanceof HTMLCanvasElement)
+                cc.generateTintImageWithMultiply(element, this._displayedColor, textureRect, locElement);
+            else {
+                locElement = cc.generateTintImageWithMultiply(element, this._displayedColor, textureRect);
+                locTexture = new cc.Texture2D();
+                locTexture.initWithElement(locElement);
                 locTexture.handleLoadedTexture();
-                this.texture = locTexture;
+                this.setTexture(locTexture);
             }
         }
     },
@@ -418,6 +424,29 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     _p.getTexture = _p._getTextureForCanvas;
     _p.setTexture = _p._setTextureForCanvas;
     _p._calculateMaxItems = _p._calculateMaxItemsForCanvas;
+    if(!cc.sys._supportCanvasNewBlendModes)
+        _p._changeTextureColor = function(){
+            var locElement, locTexture = this.getTexture();
+            if (locTexture && this._originalTexture) {
+                locElement = locTexture.getHtmlElementObj();
+                if (!locElement)
+                    return;
+                var element = this._originalTexture.getHtmlElementObj();
+                var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(element);
+                if (cacheTextureForColor) {
+                    var textureRect = cc.rect(0, 0, element.width, element.height);
+                    if (locElement instanceof HTMLCanvasElement)
+                        cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, textureRect, locElement);
+                    else {
+                        locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, textureRect);
+                        locTexture = new cc.Texture2D();
+                        locTexture.initWithElement(locElement);
+                        locTexture.handleLoadedTexture();
+                        this.setTexture(locTexture);
+                    }
+                }
+            }
+        };
 }
 
 // Override properties
