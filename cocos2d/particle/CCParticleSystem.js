@@ -2587,7 +2587,7 @@ var _p = cc.ParticleSystem.prototype;
 
 if(cc._renderType === cc._RENDER_TYPE_CANVAS && !cc.sys._supportCanvasNewBlendModes)
     _p._changeTextureColor = function (element, color, rect) {
-        var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(element);
+        var cacheTextureForColor = cc.textureCache.getTextureColors(element);
         if (cacheTextureForColor) {
             // Create another cache for the tinted version
             // This speeds up things by a fair bit

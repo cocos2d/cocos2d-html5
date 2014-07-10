@@ -431,7 +431,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                 if (!locElement)
                     return;
                 var element = this._originalTexture.getHtmlElementObj();
-                var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(element);
+                var cacheTextureForColor = cc.textureCache.getTextureColors(element);
                 if (cacheTextureForColor) {
                     var textureRect = cc.rect(0, 0, element.width, element.height);
                     if (locElement instanceof HTMLCanvasElement)
