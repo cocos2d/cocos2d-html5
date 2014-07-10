@@ -44,7 +44,6 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     textureAtlas: null,
     quadsToDraw: 0,
 
-    RGBAProtocol: true,
     //! chars per row
     _itemsPerRow: 0,
     //! chars per column

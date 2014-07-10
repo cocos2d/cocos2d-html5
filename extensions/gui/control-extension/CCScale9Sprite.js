@@ -47,7 +47,6 @@
  * @property {Number}   insetBottom     - The bottom inset of the 9-slice sprite
  */
 cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
-    RGBAProtocol: true,
 
     _spriteRect: null,
     _capInsetsInternal: null,
@@ -252,7 +251,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         var scaleChildren = this._scale9Image.getChildren();
         for (var i = 0; i < scaleChildren.length; i++) {
             var selChild = scaleChildren[i];
-            if (selChild && selChild.RGBAProtocol)
+            if (selChild)
                 selChild.setOpacity(opacity);
         }
         this._color.a = opacity;
@@ -280,7 +279,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         var scaleChildren = this._scale9Image.getChildren();
         for (var i = 0; i < scaleChildren.length; i++) {
             var selChild = scaleChildren[i];
-            if (selChild && selChild.RGBAProtocol)
+            if (selChild)
                 selChild.setColor(color);
         }
 

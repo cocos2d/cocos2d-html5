@@ -294,10 +294,10 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
             }else if(displayRenderNode instanceof cc.ParticleSystem) {
                 displayRenderNode.resetSystem();
             }
-            if (displayRenderNode.RGBAProtocol)            {
-                displayRenderNode.setColor(this._bone.getDisplayedColor());
-                displayRenderNode.setOpacity(this._bone.getDisplayedOpacity());
-            }
+
+            displayRenderNode.setColor(this._bone.getDisplayedColor());
+            displayRenderNode.setOpacity(this._bone.getDisplayedOpacity());
+
             displayRenderNode.retain();
             this._displayType = this._currentDecoDisplay.getDisplayData().displayType;
             //todo

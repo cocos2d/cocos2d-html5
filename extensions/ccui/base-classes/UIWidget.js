@@ -1531,22 +1531,18 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     updateTextureOpacity: function (opacity) {
         for(var p in this._children){
             var item = this._children[p];
-            if(item && item.RGBAProtocol)
+            if(item)
                 item.setOpacity(opacity);
         }
     },
 
 
     updateColorToRenderer: function (renderer) {
-        if (renderer.RGBAProtocol) {
-            renderer.setColor(this._color);
-        }
+        renderer.setColor(this._color);
     },
 
     updateOpacityToRenderer: function (renderer) {
-        if (renderer.RGBAProtocol) {
-            renderer.setOpacity(this._color.a);
-        }
+        renderer.setOpacity(this._color.a);
     },
 
     updateRGBAToRenderer: function(renderer){

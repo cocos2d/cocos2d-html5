@@ -268,7 +268,6 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
  * aSprite.initWithFile("HelloHTML5World.png",cc.rect(0,0,480,320));
  */
 cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
-    RGBAProtocol:true,
 	dirty:false,
 	atlasIndex:0,
     textureAtlas:null,
