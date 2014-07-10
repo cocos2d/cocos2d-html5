@@ -2118,10 +2118,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
                     // color
                     if (!this._dontTint || cc._renderType === cc._RENDER_TYPE_CANVAS) {
-                        selParticle.color.r += (selParticle.deltaColor.r * dt);
-                        selParticle.color.g += (selParticle.deltaColor.g * dt);
-                        selParticle.color.b += (selParticle.deltaColor.b * dt);
-                        selParticle.color.a += (selParticle.deltaColor.a * dt);
+                        selParticle.color.r += 0|(selParticle.deltaColor.r * dt);
+                        selParticle.color.g += 0|(selParticle.deltaColor.g * dt);
+                        selParticle.color.b += 0|(selParticle.deltaColor.b * dt);
+                        selParticle.color.a += 0|(selParticle.deltaColor.a * dt);
                         selParticle.isChangeColor = true;
                     }
 
@@ -2399,14 +2399,12 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         else
             context.globalCompositeOperation = 'source-over';
 
+        var element = this._texture.getHtmlElementObj();
         for (var i = 0; i < this.particleCount; i++) {
             var particle = this._particles[i];
             var lpx = (0 | (particle.size * 0.5));
 
             if (this.drawMode == cc.ParticleSystem.TEXTURE_MODE) {
-
-                var element = this._texture.getHtmlElementObj();
-
                 // Delay drawing until the texture is fully loaded by the browser
                 if (!element.width || !element.height)
                     continue;
@@ -2424,30 +2422,13 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     Math.max((1 / h) * size, 0.000001)
                 );
 
-
                 if (particle.rotation)
                     context.rotate(cc.degreesToRadians(particle.rotation));
-
                 context.translate(-(0 | (w / 2)), -(0 | (h / 2)));
-                if (particle.isChangeColor) {
-
-                    var cacheTextureForColor = cc.textureCache.getTextureColors(element);
-                    if (cacheTextureForColor) {
-                        // Create another cache for the tinted version
-                        // This speeds up things by a fair bit
-                        if (!cacheTextureForColor.tintCache) {
-                            cacheTextureForColor.tintCache = cc.newElement('canvas');
-                            cacheTextureForColor.tintCache.width = element.width;
-                            cacheTextureForColor.tintCache.height = element.height;
-                        }
-                        cc.generateTintImageWithLight(element, cacheTextureForColor, particle.color, this._pointRect, cacheTextureForColor.tintCache);
-                        element = cacheTextureForColor.tintCache;
-                    }
-                }
-
-                context.drawImage(element, 0, 0);
+                var drawElement = particle.isChangeColor ? this._changeTextureColor(element, particle.color, this._pointRect) : element;
+                if(drawElement)
+                    context.drawImage(drawElement, 0, 0);
                 context.restore();
-
             } else {
                 context.save();
                 context.globalAlpha = particle.color.a / 255;
@@ -2464,6 +2445,18 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             }
         }
         context.restore();
+    },
+
+    _changeTextureColor: function(element, color, rect){
+        color.r = 0|color.r;
+        color.g = 0|color.g;
+        color.b = 0|color.b;
+        if (!element.tintCache) {
+            element.tintCache = document.createElement('canvas');
+            element.tintCache.width = element.width;
+            element.tintCache.height = element.height;
+        }
+        return cc.generateTintImageWithMultiply(element, color, rect, element.tintCache);
     },
 
     _drawForWebGL:function (ctx) {
@@ -2591,6 +2584,23 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 });
 
 var _p = cc.ParticleSystem.prototype;
+
+if(cc._renderType === cc._RENDER_TYPE_CANVAS && !cc.sys._supportCanvasNewBlendModes)
+    _p._changeTextureColor = function (element, color, rect) {
+        var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(element);
+        if (cacheTextureForColor) {
+            // Create another cache for the tinted version
+            // This speeds up things by a fair bit
+            if (!cacheTextureForColor.tintCache) {
+                cacheTextureForColor.tintCache = document.createElement('canvas');
+                cacheTextureForColor.tintCache.width = element.width;
+                cacheTextureForColor.tintCache.height = element.height;
+            }
+            cc.generateTintImage(element, cacheTextureForColor, color, rect, cacheTextureForColor.tintCache);
+            return cacheTextureForColor.tintCache;
+        }
+        return null
+    };
 
 // Extended properties
 /** @expose */
