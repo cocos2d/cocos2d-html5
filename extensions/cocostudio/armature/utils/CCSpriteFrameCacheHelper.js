@@ -34,22 +34,22 @@ ccs.spriteFrameCacheHelper = /** @lends ccs.spriteFrameCacheHelper# */ {
 
     addSpriteFrameFromFile:function (plistPath, imagePath) {
         cc.spriteFrameCache.addSpriteFrames(plistPath, imagePath);
-    },
+    }
 
-    getTexureAtlasWithTexture:function (texture) {
-        //todo
-        return null;
-        var textureName = texture.getName();
-        var atlas = this._textureAtlasDic[textureName];
-        if (atlas == null) {
-            atlas = cc.TextureAtlas.create(texture, 20);
-            this._textureAtlasDic[textureName] = atlas;
-        }
-        return atlas;
-    },
-
-	clear: function () {
-		this._textureAtlasDic = {};
-		this._imagePaths = [];
-	}
+//    getTexureAtlasWithTexture:function (texture) {
+//        //todo
+//        return null;
+//        var textureName = texture.getName();
+//        var atlas = this._textureAtlasDic[textureName];
+//        if (atlas == null) {
+//            atlas = cc.TextureAtlas.create(texture, 20);
+//            this._textureAtlasDic[textureName] = atlas;
+//        }
+//        return atlas;
+//    },
+//
+//	clear: function () {
+//		this._textureAtlasDic = {};
+//		this._imagePaths = [];
+//	}
 };

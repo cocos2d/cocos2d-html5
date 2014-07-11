@@ -28,9 +28,8 @@
  */
 ccs.CONST_VERSION = "version";
 ccs.CONST_VERSION_2_0 = 2.0;
-ccs.CONST_VERSION_COMBINED = 0.3;
+//ccs.CONST_VERSION_COMBINED = 0.3;
 
-ccs.CONST_SKELETON = "skeleton";
 ccs.CONST_ARMATURES = "armatures";
 ccs.CONST_ARMATURE = "armature";
 ccs.CONST_BONE = "b";
@@ -44,6 +43,8 @@ ccs.CONST_FRAME = "f";
 ccs.CONST_TEXTURE_ATLAS = "TextureAtlas";
 ccs.CONST_SUB_TEXTURE = "SubTexture";
 
+ccs.CONST_SKELETON = "skeleton";
+
 ccs.CONST_A_NAME = "name";
 ccs.CONST_A_DURATION = "dr";
 ccs.CONST_A_FRAME_INDEX = "fi";
@@ -54,8 +55,6 @@ ccs.CONST_A_MOVEMENT_SCALE = "sc";
 ccs.CONST_A_MOVEMENT_DELAY = "dl";
 ccs.CONST_A_DISPLAY_INDEX = "dI";
 
-ccs.CONST_A_VERT = "vert";
-ccs.CONST_A_FRAG = "frag";
 ccs.CONST_A_PLIST = "plist";
 
 ccs.CONST_A_PARENT = "parent";
@@ -68,14 +67,11 @@ ccs.CONST_A_EVENT = "evt";
 ccs.CONST_A_SOUND = "sd";
 ccs.CONST_A_SOUND_EFFECT = "sdE";
 ccs.CONST_A_TWEEN_EASING = "twE";
-ccs.CONST_A_TWEEN_ROTATION = "twR";
 ccs.CONST_A_EASING_PARAM = "twEP";
+ccs.CONST_A_TWEEN_ROTATION = "twR";
 ccs.CONST_A_IS_ARMATURE = "isArmature";
 ccs.CONST_A_DISPLAY_TYPE = "displayType";
 ccs.CONST_A_MOVEMENT = "mov";
-ccs.CONST_A_BLEND_TYPE = "bd";
-ccs.CONST_A_BLEND_SRC = "bd_src";
-ccs.CONST_A_BLEND_DST = "bd_dst";
 
 ccs.CONST_A_X = "x";
 ccs.CONST_A_Y = "y";
@@ -91,6 +87,10 @@ ccs.CONST_A_PIVOT_Y = "pY";
 ccs.CONST_A_COCOS2D_PIVOT_X = "cocos2d_pX";
 ccs.CONST_A_COCOS2D_PIVOT_Y = "cocos2d_pY";
 
+ccs.CONST_A_BLEND_TYPE = "bd";
+ccs.CONST_A_BLEND_SRC = "bd_src";
+ccs.CONST_A_BLEND_DST = "bd_dst";
+
 ccs.CONST_A_ALPHA = "a";
 ccs.CONST_A_RED = "r";
 ccs.CONST_A_GREEN = "g";
@@ -101,20 +101,14 @@ ccs.CONST_A_GREEN_OFFSET = "gM";
 ccs.CONST_A_BLUE_OFFSET = "bM";
 ccs.CONST_A_COLOR_TRANSFORM = "colorTransform";
 ccs.CONST_A_TWEEN_FRAME = "tweenFrame";
-ccs.CONST_A_ROTATION = "rotation";
-ccs.CONST_A_USE_COLOR_INFO = "uci";
 
 ccs.CONST_CONTOUR = "con";
 ccs.CONST_CONTOUR_VERTEX = "con_vt";
-
-ccs.CONST_MOVEMENT_EVENT_FRAME = "movementEventFrame";
-ccs.CONST_SOUND_FRAME = "soundFrame";
 
 ccs.CONST_FL_NAN = "NaN";
 
 ccs.CONST_FRAME_DATA = "frame_data";
 ccs.CONST_MOVEMENT_BONE_DATA = "mov_bone_data";
-ccs.CONST_MOVEMENT_FRAME_DATA = "mov_frame_data";
 ccs.CONST_MOVEMENT_DATA = "mov_data";
 ccs.CONST_ANIMATION_DATA = "animation_data";
 ccs.CONST_DISPLAY_DATA = "display_data";
@@ -156,6 +150,8 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
     _asyncRefCount: 0,
     _asyncRefTotalCount: 0,
 
+    //LoadData don't need
+
     setPositionReadScale: function (scale) {
         this._positionReadScale = scale;
     },
@@ -171,6 +167,10 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
     },
 
     addDataFromFile: function (filePath, isLoadSpriteFrame) {
+
+        /*
+         * Check if file is already added to ArmatureDataManager, if then return.
+         */
         if (this._configFileList.indexOf(filePath) != -1) {
             return;
         }
@@ -189,6 +189,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         else if (str == ".json" || str == ".exportjson") {
             this.addDataFromJson(filePath, dataInfo, isLoadSpriteFrame);
         }
+
     },
 
     addDataFromFileAsync: function (filePath, target, selector, isLoadSpriteFrame) {
