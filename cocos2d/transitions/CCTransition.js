@@ -31,19 +31,6 @@
 cc.SCENE_FADE = 4208917214;
 
 /**
- * cc.TransitionEaseScene can ease the actions of the scene protocol.
- * @class
- * @extends cc.Class
- */
-cc.TransitionEaseScene = cc.Class.extend(/** @lends cc.TransitionEaseScene# */{
-    /**
-     * returns the Ease action that will be performed on a linear action.
-     */
-    easeActionWithAction:function () {
-    }
-});
-
-/**
  * horizontal orientation Type where the Left is nearer
  * @constant
  * @type Number
