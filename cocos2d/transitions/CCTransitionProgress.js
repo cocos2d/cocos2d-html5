@@ -42,6 +42,16 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
     _sceneToBeModified:null,
     _className:"TransitionProgress",
 
+    /**
+     * @constructor
+     * @param {Number} t time
+     * @param {cc.Scene} scene
+     */
+    ctor:function (t, scene) {
+        cc.TransitionScene.prototype.ctor.call(this);
+        scene && this.initWithDuration(t, scene);
+    },
+
 	_setAttrs: function(node, x, y) {
 		node.attr({
 			x: x,
@@ -125,11 +135,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
  * @return {cc.TransitionProgress}
  */
 cc.TransitionProgress.create = function (t, scene) {
-    var tempScene = new cc.TransitionProgress();
-    if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
-        return tempScene;
-    }
-    return null;
+    return new cc.TransitionProgress(t, scene);
 };
 
 /**
@@ -139,6 +145,17 @@ cc.TransitionProgress.create = function (t, scene) {
  * @extends cc.TransitionProgress
  */
 cc.TransitionProgressRadialCCW = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressRadialCCW# */{
+
+    /**
+     * @constructor
+     * @param {Number} t time
+     * @param {cc.Scene} scene
+     */
+    ctor:function (t, scene) {
+        cc.TransitionProgress.prototype.ctor.call(this);
+        scene && this.initWithDuration(t, scene);
+    },
+
     _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.director.getWinSize();
 
@@ -166,11 +183,7 @@ cc.TransitionProgressRadialCCW = cc.TransitionProgress.extend(/** @lends cc.Tran
  * @return {cc.TransitionProgressRadialCCW}
  */
 cc.TransitionProgressRadialCCW.create = function (t, scene) {
-    var tempScene = new cc.TransitionProgressRadialCCW();
-    if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
-        return tempScene;
-    }
-    return null;
+    return new cc.TransitionProgressRadialCCW(t, scene);
 };
 
 /**
@@ -180,6 +193,16 @@ cc.TransitionProgressRadialCCW.create = function (t, scene) {
  * @extends cc.TransitionProgress
  */
 cc.TransitionProgressRadialCW = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressRadialCW# */{
+    /**
+     * @constructor
+     * @param {Number} t time
+     * @param {cc.Scene} scene
+     */
+    ctor:function (t, scene) {
+        cc.TransitionProgress.prototype.ctor.call(this);
+        scene && this.initWithDuration(t, scene);
+    },
+
     _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.director.getWinSize();
 
@@ -211,7 +234,7 @@ cc.TransitionProgressRadialCW.create = function (t, scene) {
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
         return tempScene;
     }
-    return null;
+    return new cc.TransitionProgressRadialCW(t, scene);
 };
 
 /**
@@ -221,6 +244,16 @@ cc.TransitionProgressRadialCW.create = function (t, scene) {
  * @extends cc.TransitionProgress
  */
 cc.TransitionProgressHorizontal = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressHorizontal# */{
+    /**
+     * @constructor
+     * @param {Number} t time
+     * @param {cc.Scene} scene
+     */
+    ctor:function (t, scene) {
+        cc.TransitionProgress.prototype.ctor.call(this);
+        scene && this.initWithDuration(t, scene);
+    },
+
     _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.director.getWinSize();
 
@@ -249,11 +282,7 @@ cc.TransitionProgressHorizontal = cc.TransitionProgress.extend(/** @lends cc.Tra
  * @return {cc.TransitionProgressHorizontal}
  */
 cc.TransitionProgressHorizontal.create = function (t, scene) {
-    var tempScene = new cc.TransitionProgressHorizontal();
-    if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
-        return tempScene;
-    }
-    return null;
+    return new cc.TransitionProgressHorizontal(t, scene);
 };
 
 /**
@@ -262,6 +291,17 @@ cc.TransitionProgressHorizontal.create = function (t, scene) {
  * @extends cc.TransitionProgress
  */
 cc.TransitionProgressVertical = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressVertical# */{
+
+    /**
+     * @constructor
+     * @param {Number} t time
+     * @param {cc.Scene} scene
+     */
+    ctor:function (t, scene) {
+        cc.TransitionProgress.prototype.ctor.call(this);
+        scene && this.initWithDuration(t, scene);
+    },
+
     _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.director.getWinSize();
 
@@ -290,11 +330,7 @@ cc.TransitionProgressVertical = cc.TransitionProgress.extend(/** @lends cc.Trans
  * @return {cc.TransitionProgressVertical}
  */
 cc.TransitionProgressVertical.create = function (t, scene) {
-    var tempScene = new cc.TransitionProgressVertical();
-    if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
-        return tempScene;
-    }
-    return null;
+    return new cc.TransitionProgressVertical(t, scene);
 };
 
 /**
@@ -303,6 +339,17 @@ cc.TransitionProgressVertical.create = function (t, scene) {
  * @extends cc.TransitionProgress
  */
 cc.TransitionProgressInOut = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressInOut# */{
+
+    /**
+     * @constructor
+     * @param {Number} t time
+     * @param {cc.Scene} scene
+     */
+    ctor:function (t, scene) {
+        cc.TransitionProgress.prototype.ctor.call(this);
+        scene && this.initWithDuration(t, scene);
+    },
+
     _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.director.getWinSize();
         var pNode = cc.ProgressTimer.create(texture.sprite);
@@ -338,11 +385,7 @@ cc.TransitionProgressInOut = cc.TransitionProgress.extend(/** @lends cc.Transiti
  * @return {cc.TransitionProgressInOut}
  */
 cc.TransitionProgressInOut.create = function (t, scene) {
-    var tempScene = new cc.TransitionProgressInOut();
-    if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
-        return tempScene;
-    }
-    return null;
+    return new cc.TransitionProgressInOut(t, scene);
 };
 
 /**
@@ -351,6 +394,17 @@ cc.TransitionProgressInOut.create = function (t, scene) {
  * @extends cc.TransitionProgress
  */
 cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressOutIn# */{
+
+    /**
+     * @constructor
+     * @param {Number} t time
+     * @param {cc.Scene} scene
+     */
+    ctor:function (t, scene) {
+        cc.TransitionProgress.prototype.ctor.call(this);
+        scene && this.initWithDuration(t, scene);
+    },
+    
     _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.director.getWinSize();
         var pNode = cc.ProgressTimer.create(texture.sprite);
@@ -378,9 +432,5 @@ cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.Transiti
  * @return {cc.TransitionProgressOutIn}
  */
 cc.TransitionProgressOutIn.create = function (t, scene) {
-    var tempScene = new cc.TransitionProgressOutIn();
-    if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
-        return tempScene;
-    }
-    return null;
+    return new cc.TransitionProgressOutIn(t, scene);
 };
