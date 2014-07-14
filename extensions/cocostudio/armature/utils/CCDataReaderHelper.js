@@ -340,60 +340,11 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         skeleton = null;
     },
 
-
-
-
-
-
-
-
-
-
-    clear: function () {
-        this._configFileList = [];
-        this._asyncRefCount = 0;
-        this._asyncRefTotalCount = 0;
-    },
-
-    _asyncCallBack: function (target, selector, percent) {
-        if (target && (typeof(selector) == "string")) {
-            target[selector](percent);
-        } else if (target && (typeof(selector) == "function")) {
-            selector.call(target, percent);
-        }
-    },
-    /**
-     * find the base file path
-     * @param filePath
-     * @returns {String}
-     * @private
-     */
-    _initBaseFilePath: function (filePath) {
-        var path = filePath;
-        var pos = path.lastIndexOf("/");
-        if (pos > -1)
-            path = path.substr(0, pos + 1);
-        else
-            path = "";
-        return path;
-    },
-
-    addDataFromXML: function (xml, dataInfo) {
-        /*
-         *  Need to get the full path of the xml file, or the Tiny XML can't find the xml at IOS
-         */
-        var xmlStr = cc.loader.getRes(xml);
-        if (!xmlStr) throw "Please load the resource first : " + xml;
-        var skeletonXML = cc.saxParser.parse(xmlStr);
-        var skeleton = skeletonXML.documentElement;
-        if (skeleton) {
-            this.addDataFromCache(skeleton, dataInfo);
-        }
-    },
-
     decodeArmature: function (armatureXML, dataInfo) {
-        var name = armatureXML.getAttribute(ccs.CONST_A_NAME);
         var armatureData = new ccs.ArmatureData();
+        armatureData.init();
+
+        var name = armatureXML.getAttribute(ccs.CONST_A_NAME);
         armatureData.name = name;
 
         var bonesXML = armatureXML.querySelectorAll(ccs.CONST_ARMATURE + " > " + ccs.CONST_BONE);
@@ -414,6 +365,23 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             }
             var boneData = this.decodeBone(boneXML, parentXML, dataInfo);
             armatureData.addBoneData(boneData);
+        }
+        return armatureData;
+    },
+
+    decodeArmatureFromJSON: function (json, dataInfo) {
+        var armatureData = new ccs.ArmatureData();
+
+        var name = json[ccs.CONST_A_NAME];
+        if (name) {
+            armatureData.name = name;
+        }
+
+        dataInfo.cocoStudioVersion = armatureData.dataVersion = json[ccs.CONST_VERSION] || 0.1;
+
+        var boneDataList = json[ccs.CONST_BONE_DATA];
+        for (var i = 0; i < boneDataList.length; i++) {
+            armatureData.addBoneData(this.decodeBoneFromJson(boneDataList[i], dataInfo));
         }
         return armatureData;
     },
@@ -439,6 +407,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         }
         return boneData;
     },
+
     decodeBoneDisplay: function (displayXML, dataInfo) {
         var isArmature = parseFloat(displayXML.getAttribute(ccs.CONST_A_IS_ARMATURE)) || 0;
         var displayData = null;
@@ -458,15 +427,18 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         return displayData;
     },
 
-
     decodeAnimation: function (animationXML, dataInfo) {
-        var name = animationXML.getAttribute(ccs.CONST_A_NAME);
         var aniData = new ccs.AnimationData();
+
+        var name = animationXML.getAttribute(ccs.CONST_A_NAME);
+
         var armatureData = ccs.armatureDataManager.getArmatureData(name);
+
         aniData.name = name;
 
         var movementsXML = animationXML.querySelectorAll(ccs.CONST_ANIMATION + " > " + ccs.CONST_MOVEMENT);
         var movementXML = null;
+
         for (var i = 0; i < movementsXML.length; i++) {
             movementXML = movementsXML[i];
             var movementData = this.decodeMovement(movementXML, armatureData, dataInfo);
@@ -476,10 +448,12 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
     },
 
     decodeMovement: function (movementXML, armatureData, dataInfo) {
-        var movName = movementXML.getAttribute(ccs.CONST_A_NAME);
         var movementData = new ccs.MovementData();
+
+        var movName = movementXML.getAttribute(ccs.CONST_A_NAME);
         movementData.name = movName;
-        var duration, durationTo, durationTween, loop = 0, tweenEasing = 0;
+
+        var duration, durationTo, durationTween, loop, tweenEasing = 0;
 
         duration = parseFloat(movementXML.getAttribute(ccs.CONST_A_DURATION)) || 0;
         movementData.duration = duration;
@@ -533,6 +507,8 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
 
     decodeMovementBone: function (movBoneXml, parentXml, boneData, dataInfo) {
         var movBoneData = new ccs.MovementBoneData();
+        movBoneData.init();
+
         var scale, delay;
 
         if (movBoneXml) {
@@ -565,8 +541,11 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         var totalDuration = 0;
 
         var name = movBoneXml.getAttribute(ccs.CONST_A_NAME);
+
         movBoneData.name = name;
+
         var framesXML = movBoneXml.querySelectorAll(ccs.CONST_BONE + " > " + ccs.CONST_FRAME);
+
         var j = 0;
         for (var ii = 0; ii < framesXML.length; ii++) {
             var frameXML = framesXML[ii];
@@ -612,6 +591,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         }
         return movBoneData;
     },
+
     decodeFrame: function (frameXML, parentFrameXml, boneData, dataInfo) {
         var frameData = new ccs.FrameData();
         frameData.movement = frameXML.getAttribute(ccs.CONST_A_MOVEMENT) || "";
@@ -737,6 +717,87 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         return frameData;
     },
 
+    decodeFrameFromJson: function (json, dataInfo) {
+        var frameData = new ccs.FrameData();
+
+        this.decodeNodeFromJson(frameData, json, dataInfo);
+
+        frameData.tweenEasing = json[ccs.CONST_A_TWEEN_EASING] || ccs.TweenType.linear;
+        frameData.displayIndex = json[ccs.CONST_A_DISPLAY_INDEX] || 0;
+        var bd_src = json[ccs.CONST_A_BLEND_SRC] || cc.BLEND_SRC;
+        var bd_dst = json[ccs.CONST_A_BLEND_DST] || cc.BLEND_DST;
+        frameData.blendFunc.src = bd_src;
+        frameData.blendFunc.dst = bd_dst;
+        frameData.duration = json[ccs.CONST_A_DURATION] || 0;
+        frameData.isTween = json[ccs.CONST_A_TWEEN_FRAME];
+
+        frameData.event = json[ccs.CONST_A_EVENT] || null;
+
+        if (dataInfo.cocoStudioVersion < ccs.CONST_VERSION_COMBINED)
+            frameData.duration = json[ccs.CONST_A_DURATION] || 0;
+        else
+            frameData.frameID = json[ccs.CONST_A_FRAME_INDEX] || 0;
+
+        var twEPs = json[ccs.CONST_A_EASING_PARAM] || [];
+        for (var i = 0; i < twEPs.length; i++) {
+            var twEP = twEPs[i];
+            frameData.easingParams[i] = twEP;
+        }
+
+        return frameData;
+    },
+
+
+
+
+
+
+
+
+
+
+    clear: function () {
+        this._configFileList = [];
+        this._asyncRefCount = 0;
+        this._asyncRefTotalCount = 0;
+    },
+
+    _asyncCallBack: function (target, selector, percent) {
+        if (target && (typeof(selector) == "string")) {
+            target[selector](percent);
+        } else if (target && (typeof(selector) == "function")) {
+            selector.call(target, percent);
+        }
+    },
+    /**
+     * find the base file path
+     * @param filePath
+     * @returns {String}
+     * @private
+     */
+    _initBaseFilePath: function (filePath) {
+        var path = filePath;
+        var pos = path.lastIndexOf("/");
+        if (pos > -1)
+            path = path.substr(0, pos + 1);
+        else
+            path = "";
+        return path;
+    },
+
+    addDataFromXML: function (xml, dataInfo) {
+        /*
+         *  Need to get the full path of the xml file, or the Tiny XML can't find the xml at IOS
+         */
+        var xmlStr = cc.loader.getRes(xml);
+        if (!xmlStr) throw "Please load the resource first : " + xml;
+        var skeletonXML = cc.saxParser.parse(xmlStr);
+        var skeleton = skeletonXML.documentElement;
+        if (skeleton) {
+            this.addDataFromCache(skeleton, dataInfo);
+        }
+    },
+
     decodeTexture: function (textureXML, dataInfo) {
         var textureData = new ccs.TextureData();
         if (textureXML.getAttribute(ccs.CONST_A_NAME)) {
@@ -832,23 +893,6 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
 
         armatureData = null;
         animationData = null;
-    },
-
-    decodeArmatureFromJSON: function (json, dataInfo) {
-        var armatureData = new ccs.ArmatureData();
-
-        var name = json[ccs.CONST_A_NAME];
-        if (name) {
-            armatureData.name = name;
-        }
-
-        dataInfo.cocoStudioVersion = armatureData.dataVersion = json[ccs.CONST_VERSION] || 0.1;
-
-        var boneDataList = json[ccs.CONST_BONE_DATA];
-        for (var i = 0; i < boneDataList.length; i++) {
-            armatureData.addBoneData(this.decodeBoneFromJson(boneDataList[i], dataInfo));
-        }
-        return armatureData;
     },
 
     decodeBoneFromJson: function (json, dataInfo) {
@@ -989,36 +1033,6 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             }
         }
         return movementBoneData;
-    },
-
-    decodeFrameFromJson: function (json, dataInfo) {
-        var frameData = new ccs.FrameData();
-        this.decodeNodeFromJson(frameData, json, dataInfo);
-        frameData.duration = json[ccs.CONST_A_DURATION] || 0;
-        frameData.tweenEasing = json[ccs.CONST_A_TWEEN_EASING] || ccs.TweenType.linear;
-        frameData.displayIndex = json[ccs.CONST_A_DISPLAY_INDEX] || 0;
-
-        var bd_src = json[ccs.CONST_A_BLEND_SRC] || cc.BLEND_SRC;
-        var bd_dst = json[ccs.CONST_A_BLEND_DST] || cc.BLEND_DST;
-        frameData.blendFunc.src = bd_src;
-        frameData.blendFunc.dst = bd_dst;
-
-        frameData.event = json[ccs.CONST_A_EVENT] || null;
-        if (json[ccs.CONST_A_TWEEN_FRAME] !== undefined) {
-            frameData.isTween = json[ccs.CONST_A_TWEEN_FRAME]
-        }
-        if (dataInfo.cocoStudioVersion < ccs.CONST_VERSION_COMBINED)
-            frameData.duration = json[ccs.CONST_A_DURATION] || 0;
-        else
-            frameData.frameID = json[ccs.CONST_A_FRAME_INDEX] || 0;
-
-        var twEPs = json[ccs.CONST_A_EASING_PARAM] || [];
-        for (var i = 0; i < twEPs.length; i++) {
-            var twEP = twEPs[i];
-            frameData.easingParams[i] = twEP;
-        }
-
-        return frameData;
     },
 
     decodeTextureFromJson: function (json) {

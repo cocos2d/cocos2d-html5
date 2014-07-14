@@ -118,7 +118,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         if (name != "") {
             //animationData
             animationData = armatureDataManager.getAnimationData(name);
-
             cc.assert(animationData, "AnimationData not exist!");
 
             this.animation.setAnimationData(animationData);
@@ -196,7 +195,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
 
         var bone = null;
 
-        if (parentName != "") {
+        if (parentName) {
             this.createBone(parentName);
             bone = ccs.Bone.create(boneName);
             this.addBone(bone, parentName);
@@ -442,32 +441,32 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this.unscheduleUpdate();
     },
 
-//    visit: function(renderer, parentTransform, parentFlags){
-//        //quick return if not visible. children won't be drawn.
-//        if (!this._visible)
-//        {
-//            return;
-//        }
-//
-////        var flags = this.processParentFlags(parentTransform, parentFlags);
-//
-//        // IMPORTANT:
-//        // To ease the migration to v3.0, we still support the Mat4 stack,
-//        // but it is deprecated and your code should not rely on it
+    visit: function(renderer, parentTransform, parentFlags){
+        //quick return if not visible. children won't be drawn.
+        if (!this._visible)
+        {
+            return;
+        }
+
+//        var flags = this.processParentFlags(parentTransform, parentFlags);
+
+        // IMPORTANT:
+        // To ease the migration to v3.0, we still support the Mat4 stack,
+        // but it is deprecated and your code should not rely on it
 //        var director = cc.director;
 //        cc.assert(null != director, "Director is null when seting matrix stack");
 //        director.pushMatrix(0);
 //        director.loadMatrix(1, this._modelViewTransform);
-//
-//
-//        this.sortAllChildren();
-//        this.draw(renderer, this._modelViewTransform, flags);
-//
-//        // reset for next frame
-//        this._orderOfArrival = 0;
-//
+
+
+        this.sortAllChildren();
+        this.draw(renderer, this._modelViewTransform);
+
+        // reset for next frame
+        this._orderOfArrival = 0;
+
 //        director.popMatrix(0);
-//    },
+    },
 
     getBoundingBox: function(){
         var minx, miny, maxx, maxy = 0;
@@ -507,7 +506,10 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
                         boundingBox.y + boundingBox.height;
                 }
 
-                boundingBox.setRect(minx, miny, maxx - minx, maxy - miny);
+                boundingBox.x = minx;
+                boundingBox.y = miny;
+                boundingBox.width = maxx - minx;
+                boundingBox.height = maxy - miny;
             }
 
         }
@@ -694,14 +696,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     setVersion: function (version) {
         this.version = version;
     }
-
-
-
-
-
-
-
-
 
 //    _nodeToParentTransformForWebGL: function () {
 //        if (this._transformDirty) {

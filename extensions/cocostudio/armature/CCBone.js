@@ -602,135 +602,130 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
 
     getWorldInfo: function(){
         return this._worldInfo;
+    },
+
+    /**
+     * release objects
+     */
+    release: function () {
+        CC_SAFE_RELEASE(this._tweenData);
+        for (var i = 0; i < this._childrenBone.length; i++) {
+            CC_SAFE_RELEASE(this._childrenBone[i]);
+        }
+        this._childrenBone = [];
+        CC_SAFE_RELEASE(this._tween);
+        CC_SAFE_RELEASE(this.displayManager);
+        CC_SAFE_RELEASE(this._boneData);
+        CC_SAFE_RELEASE(this._childArmature);
+    },
+
+    /**
+     * Rewrite visit ,when node draw, g_NumberOfDraws is changeless
+     */
+    visit: function (ctx) {
+        // quick return if not visible
+        if (!this._visible)
+            return;
+
+        var node = this.getDisplayManager().getDisplayRenderNode();
+        if (node) {
+            node.visit(ctx);
+        }
+    },
+
+    /**
+     * set display color
+     * @param {cc.Color} color
+     */
+    setColor: function (color) {
+        cc.Node.prototype.setColor.call(this, color);
+        this.updateColor();
+    },
+
+    /**
+     * set display opacity
+     * @param {Number} opacity  0-255
+     */
+    setOpacity: function (opacity) {
+        cc.Node.prototype.setOpacity.call(this, opacity);
+        this.updateColor();
+    },
+
+    /**
+     * child bone getter
+     * @return {Array}
+     */
+    getChildrenBone: function () {
+        return this._childrenBone;
+    },
+
+    /**
+     * return world transform
+     * @return {{a:0.b:0,c:0,d:0,tx:0,ty:0}}
+     */
+    nodeToArmatureTransform: function () {
+        return this._worldTransform;
+    },
+
+    /**
+     * Returns the world affine transform matrix. The matrix is in Pixels.
+     * @returns {cc.AffineTransform}
+     */
+    nodeToWorldTransform: function () {
+        return cc.affineTransformConcat(this._worldTransform, this._armature.nodeToWorldTransform());
+    },
+
+    addSkin: function (skin, index) {
+        index = index || 0;
+        return this.displayManager.addSkin(skin, index);
+    },
+
+    /**
+     * get the collider body list in this bone.
+     * @returns {*}
+     */
+    getColliderBodyList: function () {
+        var decoDisplay = this.displayManager.getCurrentDecorativeDisplay()
+        if (decoDisplay) {
+            var detector = decoDisplay.getColliderDetector()
+            if (detector) {
+                return detector.getColliderBodyList();
+            }
+        }
+        return [];
+    },
+
+    /**
+     * displayManager setter
+     * @param {ccs.DisplayManager}
+     */
+    setDisplayManager: function (displayManager) {
+        this.displayManager = displayManager;
+    },
+
+    /**
+     * ignoreMovementBoneData  getter
+     * @return {Boolean}
+     */
+    getIgnoreMovementBoneData: function () {
+        return this.ignoreMovementBoneData;
+    },
+
+    /**
+     * name  setter
+     * @param {String} name
+     */
+    setName: function (name) {
+        this.name = name;
+    },
+
+    /**
+     * name  getter
+     * @return {String}
+     */
+    getName: function () {
+        return this.name;
     }
-
-
-
-
-
-
-//    /**
-//     * release objects
-//     */
-//    release: function () {
-//        CC_SAFE_RELEASE(this._tweenData);
-//        for (var i = 0; i < this._childrenBone.length; i++) {
-//            CC_SAFE_RELEASE(this._childrenBone[i]);
-//        }
-//        this._childrenBone = [];
-//        CC_SAFE_RELEASE(this._tween);
-//        CC_SAFE_RELEASE(this.displayManager);
-//        CC_SAFE_RELEASE(this._boneData);
-//        CC_SAFE_RELEASE(this._childArmature);
-//    },
-//
-//    /**
-//     * Rewrite visit ,when node draw, g_NumberOfDraws is changeless
-//     */
-//    visit: function (ctx) {
-//        // quick return if not visible
-//        if (!this._visible)
-//            return;
-//
-//        var node = this.getDisplayManager().getDisplayRenderNode();
-//        if (node) {
-//            node.visit(ctx);
-//        }
-//    },
-//
-//    /**
-//     * set display color
-//     * @param {cc.Color} color
-//     */
-//    setColor: function (color) {
-//        cc.Node.prototype.setColor.call(this, color);
-//        this.updateColor();
-//    },
-//
-//    /**
-//     * set display opacity
-//     * @param {Number} opacity  0-255
-//     */
-//    setOpacity: function (opacity) {
-//        cc.Node.prototype.setOpacity.call(this, opacity);
-//        this.updateColor();
-//    },
-//
-//    /**
-//     * child bone getter
-//     * @return {Array}
-//     */
-//    getChildrenBone: function () {
-//        return this._childrenBone;
-//    },
-//
-//    /**
-//     * return world transform
-//     * @return {{a:0.b:0,c:0,d:0,tx:0,ty:0}}
-//     */
-//    nodeToArmatureTransform: function () {
-//        return this._worldTransform;
-//    },
-//
-//    /**
-//     * Returns the world affine transform matrix. The matrix is in Pixels.
-//     * @returns {cc.AffineTransform}
-//     */
-//    nodeToWorldTransform: function () {
-//        return cc.affineTransformConcat(this._worldTransform, this._armature.nodeToWorldTransform());
-//    },
-//
-//    addSkin: function (skin, index) {
-//        index = index || 0;
-//        return this.displayManager.addSkin(skin, index);
-//    },
-//
-//    /**
-//     * get the collider body list in this bone.
-//     * @returns {*}
-//     */
-//    getColliderBodyList: function () {
-//        var decoDisplay = this.displayManager.getCurrentDecorativeDisplay()
-//        if (decoDisplay) {
-//            var detector = decoDisplay.getColliderDetector()
-//            if (detector) {
-//                return detector.getColliderBodyList();
-//            }
-//        }
-//        return [];
-//    },
-//
-//    /**
-//     * displayManager setter
-//     * @param {ccs.DisplayManager}
-//     */
-//    setDisplayManager: function (displayManager) {
-//        this.displayManager = displayManager;
-//    },
-//
-//    /**
-//     * ignoreMovementBoneData  getter
-//     * @return {Boolean}
-//     */
-//    getIgnoreMovementBoneData: function () {
-//        return this.ignoreMovementBoneData;
-//    },
-//
-//    /**
-//     * name  setter
-//     * @param {String} name
-//     */
-//    setName: function (name) {
-//        this.name = name;
-//    },
-//
-//    /**
-//     * name  getter
-//     * @return {String}
-//     */
-//    getName: function () {
-//        return this.name;
-//    }
 });
 
 var _p = ccs.Bone.prototype;

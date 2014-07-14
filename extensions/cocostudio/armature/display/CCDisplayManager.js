@@ -32,7 +32,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
     _decoDisplayList:null,
     _currentDecoDisplay:null,
     _displayRenderNode:null,
-    _displayIndex:-1,
+    _displayIndex: null,
     _forceChangeDisplay:false,
     _bone:null,
     _visible:true,
@@ -42,7 +42,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
         this._decoDisplayList = [];
         this._currentDecoDisplay = null;
         this._displayRenderNode = null;
-        this._displayIndex = -1;
+        this._displayIndex = null;
         this._forceChangeDisplay = false;
         this._bone = null;
         this._visible = true;
@@ -181,6 +181,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
         this._decoDisplayList.splice(index, 1);
         if (index === this._displayIndex) {
             this.setCurrentDecorativeDisplay(null);
+            this._displayIndex = -1;
         }
     },
 
