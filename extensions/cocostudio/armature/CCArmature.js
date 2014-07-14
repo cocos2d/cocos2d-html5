@@ -219,7 +219,8 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     addBone: function (bone, parentName) {
 
         cc.assert(bone, "Argument must be non-nil");
-        cc.assert(bone.getName() && !this._boneDic[bone.getName()], "bone already added. It can't be added again");
+        if(bone.getName())
+            cc.assert(!this._boneDic[bone.getName()], "bone already added. It can't be added again");
 
         if (parentName) {
             var boneParent = this._boneDic[parentName];
@@ -304,7 +305,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         if (this._transformDirty)
             this._armatureTransformDirty = true;
 
-        return ccs.Node.prototype.getNodeToParentTransform.call(this);
+        return ccs.Node.prototype.nodeToParentTransform.call(this);
     },
 
     /**
@@ -312,7 +313,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
      */
     updateOffsetPoint: function () {
         // Set contentsize and Calculate anchor point.
-        var rect = this.boundingBox();
+        var rect = this.getBoundingBox();
         this.setContentSize(rect);
         var locOffsetPoint = this._offsetPoint;
         locOffsetPoint.x = -rect.x;
@@ -441,32 +442,32 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this.unscheduleUpdate();
     },
 
-    visit: function(renderer, parentTransform, parentFlags){
-        //quick return if not visible. children won't be drawn.
-        if (!this._visible)
-        {
-            return;
-        }
-
-//        var flags = this.processParentFlags(parentTransform, parentFlags);
-
-        // IMPORTANT:
-        // To ease the migration to v3.0, we still support the Mat4 stack,
-        // but it is deprecated and your code should not rely on it
-        var director = cc.director;
-        cc.assert(null != director, "Director is null when seting matrix stack");
-        director.pushMatrix(0);
-        director.loadMatrix(1, this._modelViewTransform);
-
-
-        this.sortAllChildren();
-        this.draw(renderer, this._modelViewTransform, flags);
-
-        // reset for next frame
-        this._orderOfArrival = 0;
-
-        director.popMatrix(0);
-    },
+//    visit: function(renderer, parentTransform, parentFlags){
+//        //quick return if not visible. children won't be drawn.
+//        if (!this._visible)
+//        {
+//            return;
+//        }
+//
+////        var flags = this.processParentFlags(parentTransform, parentFlags);
+//
+//        // IMPORTANT:
+//        // To ease the migration to v3.0, we still support the Mat4 stack,
+//        // but it is deprecated and your code should not rely on it
+//        var director = cc.director;
+//        cc.assert(null != director, "Director is null when seting matrix stack");
+//        director.pushMatrix(0);
+//        director.loadMatrix(1, this._modelViewTransform);
+//
+//
+//        this.sortAllChildren();
+//        this.draw(renderer, this._modelViewTransform, flags);
+//
+//        // reset for next frame
+//        this._orderOfArrival = 0;
+//
+//        director.popMatrix(0);
+//    },
 
     getBoundingBox: function(){
         var minx, miny, maxx, maxy = 0;

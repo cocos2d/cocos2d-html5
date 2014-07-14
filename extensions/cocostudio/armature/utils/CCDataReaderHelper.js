@@ -143,12 +143,21 @@ ccs.DataInfo = function () {
  * @name ccs.dataReaderHelper
  */
 ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
+
+    ConfigType: {
+        DragonBone_XML: 0,
+        CocoStudio_JSON: 1,
+        CocoStudio_Binary: 2
+    },
+
     _configFileList: [],
     _flashToolVersion: ccs.CONST_VERSION_2_0,
     _cocoStudioVersion: ccs.CONST_VERSION_COMBINED,
     _positionReadScale: 1,
     _asyncRefCount: 0,
     _asyncRefTotalCount: 0,
+
+    _dataQueue: null,
 
     //LoadData don't need
 
@@ -160,13 +169,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         return this._positionReadScale;
     },
 
-    clear: function () {
-        this._configFileList = [];
-        this._asyncRefCount = 0;
-        this._asyncRefTotalCount = 0;
-    },
-
-    addDataFromFile: function (filePath, isLoadSpriteFrame) {
+    addDataFromFile: function (filePath) {
 
         /*
          * Check if file is already added to ArmatureDataManager, if then return.
@@ -176,23 +179,34 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         }
         this._configFileList.push(filePath);
 
-        this._initBaseFilePath(filePath);
+        //! find the base file path
+        var basefilePath = this._initBaseFilePath(filePath);
+
+        // Read content from file
+        // Here the reader into the next process
 
         var str = cc.path.extname(filePath).toLowerCase();
 
         var dataInfo = new ccs.DataInfo();
         dataInfo.filename = filePath;
-        dataInfo.basefilePath = this._initBaseFilePath(filePath);
+        dataInfo.basefilePath = basefilePath;
         if (str == ".xml") {
-            this.addDataFromXML(filePath, dataInfo);
+            ccs.dataReaderHelper.addDataFromXML(filePath, dataInfo);
         }
         else if (str == ".json" || str == ".exportjson") {
-            this.addDataFromJson(filePath, dataInfo, isLoadSpriteFrame);
+            ccs.dataReaderHelper.addDataFromJson(filePath, dataInfo);
+        }
+        else if(str == ".csb"){
+            ccs.dataReaderHelper.addDataFromBinaryCache(filePath, dataInfo);
         }
 
     },
 
-    addDataFromFileAsync: function (filePath, target, selector, isLoadSpriteFrame) {
+    addDataFromFileAsync: function (imagePath, plistPath, filePath, target, selector) {
+        //TODO
+        /*
+         * Check if file is already added to ArmatureDataManager, if then return.
+         */
         if (this._configFileList.indexOf(filePath) != -1) {
             if (target && selector) {
                 if (this._asyncRefTotalCount == 0 && this._asyncRefCount == 0)
@@ -202,15 +216,143 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             }
             return;
         }
+        this._configFileList.push(filePath);
+
+        //! find the base file path
+//        var basefilePath = this._initBaseFilePath(filePath);
+
         this._asyncRefTotalCount++;
         this._asyncRefCount++;
         var self = this;
         var fun = function () {
-            self.addDataFromFile(filePath, isLoadSpriteFrame);
+            self.addDataFromFile(filePath);
             self._asyncRefCount--;
             self._asyncCallBack(target, selector, (self._asyncRefTotalCount - self._asyncRefCount) / self._asyncRefTotalCount);
         };
         cc.director.getScheduler().scheduleCallbackForTarget(this, fun, 0.1, false);
+    },
+
+    /*
+    addDataAsyncCallBack: function(dt){
+        //TODO
+        // the data is generated in loading thread
+        var dataQueue = this._dataQueue;
+
+        _dataInfoMutex.lock();
+        if (dataQueue->empty())
+        {
+            _dataInfoMutex.unlock();
+        }
+        else
+        {
+            DataInfo *pDataInfo = dataQueue->front();
+            dataQueue->pop();
+            _dataInfoMutex.unlock();
+
+            AsyncStruct *pAsyncStruct = pDataInfo->asyncStruct;
+
+
+            if (pAsyncStruct->imagePath != "" && pAsyncStruct->plistPath != "")
+            {
+                _getFileMutex.lock();
+                ArmatureDataManager::getInstance()->addSpriteFrameFromFile(pAsyncStruct->plistPath.c_str(), pAsyncStruct->imagePath.c_str(), pDataInfo->filename.c_str());
+                _getFileMutex.unlock();
+            }
+
+            while (!pDataInfo->configFileQueue.empty())
+            {
+                std::string configPath = pDataInfo->configFileQueue.front();
+                _getFileMutex.lock();
+                ArmatureDataManager::getInstance()->addSpriteFrameFromFile((pAsyncStruct->baseFilePath + configPath + ".plist").c_str(), (pAsyncStruct->baseFilePath + configPath + ".png").c_str(),pDataInfo->filename.c_str());
+                _getFileMutex.unlock();
+                pDataInfo->configFileQueue.pop();
+            }
+
+
+            Ref* target = pAsyncStruct->target;
+            SEL_SCHEDULE selector = pAsyncStruct->selector;
+
+            --_asyncRefCount;
+
+            if (target && selector)
+            {
+                (target->*selector)((_asyncRefTotalCount - _asyncRefCount) / (float)_asyncRefTotalCount);
+                target->release();
+            }
+
+
+            delete pAsyncStruct;
+            delete pDataInfo;
+
+            if (0 == _asyncRefCount)
+            {
+                _asyncRefTotalCount = 0;
+                Director::getInstance()->getScheduler()->unschedule(schedule_selector(DataReaderHelper::addDataAsyncCallBack), this);
+            }
+        }
+    },
+    */
+
+    removeConfigFile: function (configFile) {
+//        cc.arrayRemoveObject(this._configFileList, configFile);
+        var len = this._configFileList.length;
+        var it = this._configFileList[len];
+        for (var i = 0;i<len; i++)
+        {
+            if (this._configFileList[i] == configFile)
+            {
+                it = i;
+            }
+        }
+
+        if (it != this._configFileList[len])
+        {
+            cc.arrayRemoveObject(this._configFileList, configFile);
+        }
+
+    },
+
+    addDataFromCache: function (skeleton, dataInfo) {
+        //TODO
+        if (!skeleton) {
+            cc.log("XML error  or  XML is empty.");
+            return;
+        }
+        dataInfo.flashToolVersion = parseFloat(skeleton.getAttribute(ccs.CONST_VERSION));
+        var armaturesXML = skeleton.querySelectorAll(ccs.CONST_SKELETON + " > " + ccs.CONST_ARMATURES + " >  " + ccs.CONST_ARMATURE + "");
+        var armatureDataManager = ccs.armatureDataManager;
+        for (var i = 0; i < armaturesXML.length; i++) {
+            var armatureData = this.decodeArmature(armaturesXML[i], dataInfo);
+            armatureDataManager.addArmatureData(armatureData.name, armatureData, dataInfo.filename);
+        }
+
+        var animationsXML = skeleton.querySelectorAll(ccs.CONST_SKELETON + " > " + ccs.CONST_ANIMATIONS + " >  " + ccs.CONST_ANIMATION + "");
+        for (var i = 0; i < animationsXML.length; i++) {
+            var animationData = this.decodeAnimation(animationsXML[i], dataInfo);
+            armatureDataManager.addAnimationData(animationData.name, animationData, dataInfo.filename);
+        }
+
+        var texturesXML = skeleton.querySelectorAll(ccs.CONST_SKELETON + " > " + ccs.CONST_TEXTURE_ATLAS + " >  " + ccs.CONST_SUB_TEXTURE + "");
+        for (var i = 0; i < texturesXML.length; i++) {
+            var textureData = this.decodeTexture(texturesXML[i], dataInfo);
+            armatureDataManager.addTextureData(textureData.name, textureData, dataInfo.filename);
+        }
+        skeleton = null;
+    },
+
+
+
+
+
+
+
+
+
+
+    clear: function () {
+        this._configFileList = [];
+        this._asyncRefCount = 0;
+        this._asyncRefTotalCount = 0;
     },
 
     _asyncCallBack: function (target, selector, percent) {
@@ -247,33 +389,6 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         if (skeleton) {
             this.addDataFromCache(skeleton, dataInfo);
         }
-    },
-
-    addDataFromCache: function (skeleton, dataInfo) {
-        if (!skeleton) {
-            cc.log("XML error  or  XML is empty.");
-            return;
-        }
-        dataInfo.flashToolVersion = parseFloat(skeleton.getAttribute(ccs.CONST_VERSION));
-        var armaturesXML = skeleton.querySelectorAll(ccs.CONST_SKELETON + " > " + ccs.CONST_ARMATURES + " >  " + ccs.CONST_ARMATURE + "");
-        var armatureDataManager = ccs.armatureDataManager;
-        for (var i = 0; i < armaturesXML.length; i++) {
-            var armatureData = this.decodeArmature(armaturesXML[i], dataInfo);
-            armatureDataManager.addArmatureData(armatureData.name, armatureData, dataInfo.filename);
-        }
-
-        var animationsXML = skeleton.querySelectorAll(ccs.CONST_SKELETON + " > " + ccs.CONST_ANIMATIONS + " >  " + ccs.CONST_ANIMATION + "");
-        for (var i = 0; i < animationsXML.length; i++) {
-            var animationData = this.decodeAnimation(animationsXML[i], dataInfo);
-            armatureDataManager.addAnimationData(animationData.name, animationData, dataInfo.filename);
-        }
-
-        var texturesXML = skeleton.querySelectorAll(ccs.CONST_SKELETON + " > " + ccs.CONST_TEXTURE_ATLAS + " >  " + ccs.CONST_SUB_TEXTURE + "");
-        for (var i = 0; i < texturesXML.length; i++) {
-            var textureData = this.decodeTexture(texturesXML[i], dataInfo);
-            armatureDataManager.addTextureData(textureData.name, textureData, dataInfo.filename);
-        }
-        skeleton = null;
     },
 
     decodeArmature: function (armatureXML, dataInfo) {
@@ -674,6 +789,8 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
     },
     addDataFromJsonCache: function (dic, dataInfo, isLoadSpriteFrame) {
         dataInfo.contentScale = dic[ccs.CONST_CONTENT_SCALE] || 1;
+
+        // Decode armatures
         var armatureDataArr = dic[ccs.CONST_ARMATURE_DATA] || [];
         var armatureData;
         for (var i = 0; i < armatureDataArr.length; i++) {
@@ -681,6 +798,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             ccs.armatureDataManager.addArmatureData(armatureData.name, armatureData, dataInfo.filename);
         }
 
+        // Decode animations
         var animationDataArr = dic[ccs.CONST_ANIMATION_DATA] || [];
         var animationData;
         for (var i = 0; i < animationDataArr.length; i++) {
@@ -688,6 +806,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             ccs.armatureDataManager.addAnimationData(animationData.name, animationData, dataInfo.filename);
         }
 
+        // Decode textures
         var textureDataArr = dic[ccs.CONST_TEXTURE_DATA] || [];
         var textureData;
         for (var i = 0; i < textureDataArr.length; i++) {
@@ -695,7 +814,10 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             ccs.armatureDataManager.addTextureData(textureData.name, textureData, dataInfo.filename);
         }
 
-        if (isLoadSpriteFrame) {
+        // Auto load sprite file
+        var autoLoad = dataInfo.asyncStruct == null ? ccs.armatureDataManager.isAutoLoadSpriteFile() : dataInfo.asyncStruct.autoLoadSpriteFile;
+//        if (isLoadSpriteFrame) {
+        if (autoLoad) {
             var configFiles = dic[ccs.CONST_CONFIG_FILE_PATH] || [];
             var locFilePath, locPos, locPlistPath, locImagePath;
             for (var i = 0; i < configFiles.length; i++) {
@@ -959,9 +1081,5 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             node.isUseColorInfo = true;
             delete colorDic;
         }
-    },
-
-    removeConfigFile: function (configFile) {
-        cc.arrayRemoveObject(this._configFileList, configFile);
     }
 };

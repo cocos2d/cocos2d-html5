@@ -391,7 +391,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
 //        }
 //        var animationName = moveNames[animationIndex];
 //        this.play(animationName, durationTo, loop, 0);
-        var movName = this._animationData.movementNames;
+        var movName = this.animationData.movementNames;
         cc.assert((animationIndex > -1) && (animationIndex < movName.length));
 
         var animationName = movName[animationIndex];

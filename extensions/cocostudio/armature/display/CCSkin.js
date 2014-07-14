@@ -99,7 +99,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     },
 
     updateArmatureTransform: function () {
-        this._transform = cc.affineTransformConcat(this._skinTransform, this.bone.nodeToArmatureTransform());
+        this._transform = cc.affineTransformConcat(this.bone.getNodeToArmatureTransform(), this._skinTransform);
         var locTransform = this._transform;
         var locArmature = this._armature;
         if (locArmature && locArmature.getBatchNode()) {

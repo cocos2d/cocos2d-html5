@@ -233,7 +233,7 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
                 this.addRelativeData(configFilePath);
 
                 this._autoLoadSpriteFile = true;
-                ccs.DataReaderHelper.addDataFromFile(configFilePath);
+                ccs.dataReaderHelper.addDataFromFile(configFilePath);
                 break;
             case 3:
                 imagePath = arguments[0];
@@ -243,7 +243,7 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
                 this.addRelativeData(configFilePath);
 
                 this._autoLoadSpriteFile = false;
-                ccs.DataReaderHelper.addDataFromFile(configFilePath);
+                ccs.dataReaderHelper.addDataFromFile(configFilePath);
                 this.addSpriteFrameFromFile(plistPath, imagePath);
         }
     },
@@ -286,7 +286,7 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
                 this.addRelativeData(configFilePath);
 
                 this._autoLoadSpriteFile = true;
-                ccs.DataReaderHelper.addDataFromFileAsync("", "", configFilePath, target, selector);
+                ccs.dataReaderHelper.addDataFromFileAsync("", "", configFilePath, target, selector);
                 break;
             case 5:
                 imagePath = arguments[0];
@@ -298,7 +298,7 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
                 this.addRelativeData(configFilePath);
 
                 this._autoLoadSpriteFile = false;
-                ccs.DataReaderHelper.addDataFromFileAsync(imagePath, plistPath, configFilePath, target, selector);
+                ccs.dataReaderHelper.addDataFromFileAsync(imagePath, plistPath, configFilePath, target, selector);
                 this.addSpriteFrameFromFile(plistPath, imagePath);
 
         }
