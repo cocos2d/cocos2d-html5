@@ -76,8 +76,8 @@ ccs.TweenType = {
 
 ccs.TweenFunction = ccs.TweenFunction || ccs.Class.extend({});
 
-ccs.M_PI_X_2 = Math.PI * 2;
-ccs.M_PI_2 = Math.PI / 2;
+ccs.DOUBLE_PI = ccs.M_PI_X_2 = Math.PI * 2;
+ccs.HALF_PI = ccs.M_PI_2 = Math.PI / 2;
 ccs.M_PI = Math.PI;
 
 ccs.TweenFunction.tweenTo = function (time, type, easingParam) {
@@ -207,10 +207,10 @@ ccs.TweenFunction.linear = function (time) {
 
 // Sine Ease
 ccs.TweenFunction.sineEaseIn = function (time) {
-    return -1 * Math.cos(time * ccs.M_PI_2) + 1;
+    return -1 * Math.cos(time * ccs.HALF_PI) + 1;
 };
 ccs.TweenFunction.sineEaseOut = function (time) {
-    return Math.sin(time * ccs.M_PI_2);
+    return Math.sin(time * ccs.HALF_PI);
 };
 ccs.TweenFunction.sineEaseInOut = function (time) {
     return -0.5 * (Math.cos(ccs.M_PI * time) - 1);
@@ -336,7 +336,7 @@ ccs.TweenFunction.elasticEaseIn = function (time, easingParam) {
     else {
         var s = period / 4;
         time = time - 1;
-        newT = -Math.pow(2, 10 * time) * Math.sin((time - s) * ccs.M_PI_X_2 / period);
+        newT = -Math.pow(2, 10 * time) * Math.sin((time - s) * ccs.DOUBLE_PI / period);
     }
 
     return newT;
@@ -354,7 +354,7 @@ ccs.TweenFunction.elasticEaseOut = function (time, easingParam) {
     }
     else {
         var s = period / 4;
-        newT = Math.pow(2, -10 * time) * Math.sin((time - s) * ccs.M_PI_X_2 / period) + 1;
+        newT = Math.pow(2, -10 * time) * Math.sin((time - s) * ccs.DOUBLE_PI / period) + 1;
     }
 
     return newT;
@@ -380,10 +380,9 @@ ccs.TweenFunction.elasticEaseInOut = function (time, easingParam) {
 
         time = time - 1;
         if (time < 0) {
-            newT = -0.5 * Math.pow(2, 10 * time) * Math.sin((time - s) * ccs.M_PI_X_2 / period);
-        }
-        else {
-            newT = Math.pow(2, -10 * time) * Math.sin((time - s) * ccs.M_PI_X_2 / period) * 0.5 + 1;
+            newT = -0.5 * Math.pow(2, 10 * time) * Math.sin((time - s) * ccs.DOUBLE_PI / period);
+        } else {
+            newT = Math.pow(2, -10 * time) * Math.sin((time - s) * ccs.DOUBLE_PI / period) * 0.5 + 1;
         }
     }
     return newT;
