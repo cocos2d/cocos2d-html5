@@ -482,7 +482,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     onTouchBegan: function (touchPoint, unusedEvent) {
         var self = this;
         var pass = ccui.Widget.prototype.onTouchBegan.call(self, touchPoint, unusedEvent);
-        if (self._hitted)
+        if (self._hit)
         {
             setTimeout(function(){
                 self._textFieldRender.attachWithIME();

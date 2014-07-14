@@ -80,7 +80,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     positionType: null,
     _positionPercent: null,
     _reorderWidgetChildDirty: false,
-    _hitted: false,                          //TODO typo
+    _hit: false,
     _nodes: null,
     _touchListener: null,
     _color: null,
@@ -911,15 +911,15 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     onTouchBegan: function (touch, event) {
-        this._hitted = false;
+        this._hit = false;
         if (this.isVisible() && this.isEnabled() && this._isAncestorsEnabled() && this._isAncestorsVisible(this) ){
             var touchPoint = touch.getLocation();
             this._touchBeganPosition.x = touchPoint.x;
             this._touchBeganPosition.y = touchPoint.y;
             if(this.hitTest(this._touchBeganPosition) && this.isClippingParentContainsPoint(this._touchBeganPosition))
-                this._hitted = true;
+                this._hit = true;
         }
-        if (!this._hitted) {
+        if (!this._hit) {
             return false;
         }
         this.setHighlighted(true);

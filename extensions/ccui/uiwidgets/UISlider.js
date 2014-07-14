@@ -437,7 +437,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
 
     onTouchBegan: function (touch, event) {
         var pass = ccui.Widget.prototype.onTouchBegan.call(this, touch, event);
-        if (this._hitted) {
+        if (this._hit) {
             var nsp = this.convertToNodeSpace(this._touchBeganPosition);
             this.setPercent(this.getPercentWithBallPos(nsp.x));
             this.percentChangedEvent();

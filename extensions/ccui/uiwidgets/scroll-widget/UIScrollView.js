@@ -1432,7 +1432,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     onTouchBegan: function (touch, event) {
         var pass = ccui.Layout.prototype.onTouchBegan.call(this, touch, event);
-        if (this._hitted)
+        if (this._hit)
             this.handlePressLogic(touch);
         return pass;
     },
