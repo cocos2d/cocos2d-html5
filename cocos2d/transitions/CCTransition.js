@@ -255,7 +255,7 @@ cc.TransitionSceneOriented = cc.TransitionScene.extend(/** @lends cc.TransitionS
      */
     ctor:function (t, scene, orientation) {
         cc.TransitionScene.prototype.ctor.call(this);
-        orientation && this.initWithDuration(t, scene, orientation);
+        orientation != undefined && this.initWithDuration(t, scene, orientation);
     },
     /**
      * initialize the transition
