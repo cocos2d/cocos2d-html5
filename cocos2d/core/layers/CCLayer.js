@@ -156,11 +156,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
             //visit for canvas
             _t.sortAllChildren();
-            // draw children zOrder < 0
+            cc.view._setScaleXYForRenderTexture();
             for (i = 0; i < len; i++) {
                 children[i].visit(bakeContext);
             }
-
+            cc.view._resetScale();
             this._cacheDirty = false;
         }
 
@@ -440,6 +440,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             }
 
             var child;
+            cc.view._setScaleXYForRenderTexture();
             //visit for canvas
             if (len > 0) {
                 _t.sortAllChildren();
@@ -457,6 +458,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 }
             } else
                 _t.draw(bakeContext);
+            cc.view._resetScale();
             this._cacheDirty = false;
         }
 
