@@ -2276,6 +2276,16 @@ cc.FadeTo.create = function (duration, opacity) {
  */
 cc.FadeIn = cc.FadeTo.extend(/** @lends cc.FadeIn# */{
     _reverseAction: null,
+
+    /**
+     * @constructor
+     * @param {Number} duration duration in seconds
+     */
+    ctor:function (duration) {
+        cc.FadeTo.prototype.ctor.call(this);
+        duration && this.initWithDuration(duration, 255);
+    },
+
     /**
      * @return {cc.ActionInterval}
      */
@@ -2316,7 +2326,7 @@ cc.FadeIn = cc.FadeTo.extend(/** @lends cc.FadeIn# */{
  * var action = cc.FadeIn.create(1.0);
  */
 cc.FadeIn.create = function (duration) {
-    return new cc.FadeIn(duration, 255);
+    return new cc.FadeIn(duration);
 };
 
 
@@ -2326,6 +2336,16 @@ cc.FadeIn.create = function (duration) {
  * @extends cc.FadeTo
  */
 cc.FadeOut = cc.FadeTo.extend(/** @lends cc.FadeOut# */{
+
+    /**
+     * @constructor
+     * @param {Number} duration duration in seconds
+     */
+    ctor:function (duration) {
+        cc.FadeTo.prototype.ctor.call(this);
+        duration && this.initWithDuration(duration, 0);
+    },
+
     /**
      * @return {cc.ActionInterval}
      */
@@ -2358,7 +2378,7 @@ cc.FadeOut = cc.FadeTo.extend(/** @lends cc.FadeOut# */{
  * var action = cc.FadeOut.create(1.0);
  */
 cc.FadeOut.create = function (d) {
-    return new cc.FadeOut(d, 0);
+    return new cc.FadeOut(d);
 };
 
 /** Tints a cc.Node that implements the cc.NodeRGB protocol from current tint to a custom one.

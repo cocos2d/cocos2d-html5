@@ -36,6 +36,18 @@
  * @extends cc.TransitionScene
  */
 cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTurn# */{
+
+    /**
+     * @constructor
+     * @param {Number} t time in seconds
+     * @param {cc.Scene} scene
+     * @param {Boolean} backwards
+     */
+    ctor:function (t, scene, backwards) {
+        cc.TransitionScene.prototype.ctor.call(this);
+        this.initWithDuration(t, scene, backwards);
+    },
+
     /**
      * @type Boolean
      */
@@ -118,7 +130,5 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
  * var myTransition = cc.TransitionPageTurn.create(1.5, nextScene, true)//true means backwards
  */
 cc.TransitionPageTurn.create = function (t, scene, backwards) {
-    var transition = new cc.TransitionPageTurn();
-    transition.initWithDuration(t, scene, backwards);
-    return transition;
+    return new cc.TransitionPageTurn(t, scene, backwards);
 };
