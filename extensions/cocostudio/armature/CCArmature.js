@@ -300,6 +300,13 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         return this._boneDic;
     },
 
+    /**
+     * @deprecated
+     */
+    nodeToParentTransform: function(){
+        return this.getNodeToParentTransform();
+    },
+
     getNodeToParentTransform: function(){
         if (this._transformDirty)
             this._armatureTransformDirty = true;
@@ -375,62 +382,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this._armatureTransformDirty = false;
     },
 
-    draw: function (renderer, transform, flags) {
-
-        var len = this._children.length;
-        for (var i=0; i<len; i++)
-        {
-            var bone = this._children[i];
-            if (bone instanceof ccs.Bone)
-            {
-                var node = bone.getDisplayRenderNode();
-
-                if (null == node)
-                    continue;
-
-                switch (bone.getDisplayRenderNodeType())
-                {
-                    case 0:
-                    {
-                        var skin = node;
-                        skin.updateTransform();
-
-                        var blendDirty = bone.isBlendDirty();
-
-                        if (blendDirty)
-                        {
-                            skin.setBlendFunc(bone.getBlendFunc());
-                        }
-                        else
-                        {
-                            skin.setBlendFunc(this._blendFunc);
-                        }
-                        skin.draw(renderer, transform, flags);
-                    }
-                        break;
-                    case 1:
-                    {
-                        node.draw(renderer, transform, flags);
-                    }
-                        break;
-                    default:
-                    {
-                        node.visit(renderer, transform, flags);
-//                CC_NODE_DRAW_SETUP();
-                    }
-                        break;
-                }
-            }
-            else if(bone instanceof ccs.Node)
-            {
-                var node = bone;
-                node.visit(renderer, transform, flags);
-//            CC_NODE_DRAW_SETUP();
-            }
-        }
-
-    },
-
     onEnter: function () {
         cc.Node.prototype.onEnter.call(this);
         this.scheduleUpdate();
@@ -439,33 +390,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     onExit: function () {
         cc.Node.prototype.onExit.call(this);
         this.unscheduleUpdate();
-    },
-
-    visit: function(renderer, parentTransform, parentFlags){
-        //quick return if not visible. children won't be drawn.
-        if (!this._visible)
-        {
-            return;
-        }
-
-//        var flags = this.processParentFlags(parentTransform, parentFlags);
-
-        // IMPORTANT:
-        // To ease the migration to v3.0, we still support the Mat4 stack,
-        // but it is deprecated and your code should not rely on it
-//        var director = cc.director;
-//        cc.assert(null != director, "Director is null when seting matrix stack");
-//        director.pushMatrix(0);
-//        director.loadMatrix(1, this._modelViewTransform);
-
-
-        this.sortAllChildren();
-        this.draw(renderer, this._modelViewTransform);
-
-        // reset for next frame
-        this._orderOfArrival = 0;
-
-//        director.popMatrix(0);
     },
 
     getBoundingBox: function(){
@@ -886,13 +810,13 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
 });
 
 
-if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
-    //WebGL
-    ccs.Armature.prototype.nodeToParentTransform = ccs.Armature.prototype._nodeToParentTransformForWebGL;
-} else {
-    //Canvas
-    ccs.Armature.prototype.nodeToParentTransform = ccs.Armature.prototype._nodeToParentTransformForCanvas;
-}
+//if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
+//    //WebGL
+//    ccs.Armature.prototype.nodeToParentTransform = ccs.Armature.prototype._nodeToParentTransformForWebGL;
+//} else {
+//    //Canvas
+//    ccs.Armature.prototype.nodeToParentTransform = ccs.Armature.prototype._nodeToParentTransformForCanvas;
+//}
 
 var _p = ccs.Armature.prototype;
 

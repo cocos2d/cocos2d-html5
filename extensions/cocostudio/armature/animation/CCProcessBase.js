@@ -167,7 +167,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
             return false;
         }
 
-        var locNextFrameIndex = this._nextFrameIndex;
+        var locNextFrameIndex = this._nextFrameIndex === undefined ? 0 : this._nextFrameIndex;
         var locCurrentFrame = this._currentFrame;
         if (locNextFrameIndex <= 0) {
             this._currentPercent = 1;
@@ -188,7 +188,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
              */
             locCurrentFrame = ccs.fmodf(locCurrentFrame, locNextFrameIndex);
         }
-        this._currentFrame = locCurrentFrame
+        this._currentFrame = locCurrentFrame;
         this.updateHandler();
         return true;
     },

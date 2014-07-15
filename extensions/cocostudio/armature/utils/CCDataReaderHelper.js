@@ -239,45 +239,45 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         var dataQueue = this._dataQueue;
 
         _dataInfoMutex.lock();
-        if (dataQueue->empty())
+        if (dataQueue.empty())
         {
             _dataInfoMutex.unlock();
         }
         else
         {
-            DataInfo *pDataInfo = dataQueue->front();
-            dataQueue->pop();
+            DataInfo *pDataInfo = dataQueue.front();
+            dataQueue.pop();
             _dataInfoMutex.unlock();
 
-            AsyncStruct *pAsyncStruct = pDataInfo->asyncStruct;
+            AsyncStruct *pAsyncStruct = pDataInfo.asyncStruct;
 
 
-            if (pAsyncStruct->imagePath != "" && pAsyncStruct->plistPath != "")
+            if (pAsyncStruct.imagePath != "" && pAsyncStruct.plistPath != "")
             {
                 _getFileMutex.lock();
-                ArmatureDataManager::getInstance()->addSpriteFrameFromFile(pAsyncStruct->plistPath.c_str(), pAsyncStruct->imagePath.c_str(), pDataInfo->filename.c_str());
+                ArmatureDataManager::getInstance().addSpriteFrameFromFile(pAsyncStruct.plistPath.c_str(), pAsyncStruct.imagePath.c_str(), pDataInfo.filename.c_str());
                 _getFileMutex.unlock();
             }
 
-            while (!pDataInfo->configFileQueue.empty())
+            while (!pDataInfo.configFileQueue.empty())
             {
-                std::string configPath = pDataInfo->configFileQueue.front();
+                std::string configPath = pDataInfo.configFileQueue.front();
                 _getFileMutex.lock();
-                ArmatureDataManager::getInstance()->addSpriteFrameFromFile((pAsyncStruct->baseFilePath + configPath + ".plist").c_str(), (pAsyncStruct->baseFilePath + configPath + ".png").c_str(),pDataInfo->filename.c_str());
+                ArmatureDataManager::getInstance().addSpriteFrameFromFile((pAsyncStruct.baseFilePath + configPath + ".plist").c_str(), (pAsyncStruct.baseFilePath + configPath + ".png").c_str(),pDataInfo.filename.c_str());
                 _getFileMutex.unlock();
-                pDataInfo->configFileQueue.pop();
+                pDataInfo.configFileQueue.pop();
             }
 
 
-            Ref* target = pAsyncStruct->target;
-            SEL_SCHEDULE selector = pAsyncStruct->selector;
+            Ref* target = pAsyncStruct.target;
+            SEL_SCHEDULE selector = pAsyncStruct.selector;
 
             --_asyncRefCount;
 
             if (target && selector)
             {
-                (target->*selector)((_asyncRefTotalCount - _asyncRefCount) / (float)_asyncRefTotalCount);
-                target->release();
+                (target.*selector)((_asyncRefTotalCount - _asyncRefCount) / (float)_asyncRefTotalCount);
+                target.release();
             }
 
 
@@ -287,7 +287,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             if (0 == _asyncRefCount)
             {
                 _asyncRefTotalCount = 0;
-                Director::getInstance()->getScheduler()->unschedule(schedule_selector(DataReaderHelper::addDataAsyncCallBack), this);
+                Director::getInstance().getScheduler().unschedule(schedule_selector(DataReaderHelper::addDataAsyncCallBack), this);
             }
         }
     },
@@ -1075,12 +1075,8 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
 
         node.skewX = json[ccs.CONST_A_SKEW_X] || 0;
         node.skewY = json[ccs.CONST_A_SKEW_Y] || 0;
-        if (json[ccs.CONST_A_SCALE_X] !== undefined) {
-            node.scaleX = json[ccs.CONST_A_SCALE_X];
-        }
-        if (json[ccs.CONST_A_SCALE_Y] !== undefined) {
-            node.scaleY = json[ccs.CONST_A_SCALE_Y];
-        }
+        node.scaleX = json[ccs.CONST_A_SCALE_X] || 1;
+        node.scaleY = json[ccs.CONST_A_SCALE_Y] || 1;
 
         var colorDic = json[ccs.CONST_COLOR_INFO] || null;
         if (colorDic) {
@@ -1095,5 +1091,33 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             node.isUseColorInfo = true;
             delete colorDic;
         }
+//        var colorDic;
+//        if (dataInfo.cocoStudioVersion < ccs.VERSION_COLOR_READING)
+//        {
+//            colorDic = json[0];
+//            if (colorDic)
+//            {
+//                node.a = colorDic[ccs.CONST_A_ALPHA] || 255;
+//                node.r = colorDic[ccs.CONST_A_RED] || 255;
+//                node.g = colorDic[ccs.CONST_A_GREEN] || 255;
+//                node.b = colorDic[ccs.CONST_A_BLUE] || 255;
+//
+//                node.isUseColorInfo = true;
+//            }
+//        }
+//        else
+//        {
+//            colorDic = json[ccs.CONST_COLOR_INFO] || null;
+//            if (colorDic)
+//            {
+//                node.a = DICTOOL.getIntValue_json(colorDic, A_ALPHA, 255);
+//                node.r = DICTOOL.getIntValue_json(colorDic, A_RED, 255);
+//                node.g = DICTOOL.getIntValue_json(colorDic, A_GREEN, 255);
+//                node.b = DICTOOL.getIntValue_json(colorDic, A_BLUE, 255);
+//
+//                node.isUseColorInfo = true;
+//            }
+//        }
+
     }
 };

@@ -120,6 +120,8 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
         }
         this.name = this._boneData.name;
         this.setLocalZOrder(this._boneData.zOrder);
+        this.bonetest = true;
+
 
         this.displayManager.initDisplayList(boneData);
     },
@@ -282,7 +284,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      * update display zOrder
      */
     updateZOrder: function () {
-        if (this._armature.getArmatureData().dataVersion >= ccs.CONST_VERSION_COMBINED) {
+        if (this._armature.getArmatureData().dataVersion >= 0.3) {
             var zorder = this._tweenData.zOrder + this._boneData.zOrder;
             this.setLocalZOrder(zorder);
         }
