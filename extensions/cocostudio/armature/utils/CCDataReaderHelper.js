@@ -747,15 +747,6 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         return frameData;
     },
 
-
-
-
-
-
-
-
-
-
     clear: function () {
         this._configFileList = [];
         this._asyncRefCount = 0;

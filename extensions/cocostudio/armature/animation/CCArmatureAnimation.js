@@ -237,7 +237,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
 
         if (this._rawDuration == 0)
         {
-            this._loopType = SINGLE_FRAME;
+            this._loopType = ccs.ANIMATION_TYPE_SINGLE_FRAME;
         }
         else
         {
