@@ -48,9 +48,7 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
     },
-    initRenderer: function () {
-//        this._labelBMFontRenderer = cc.LabelBMFont.create();
-//        cc.Node.prototype.addChild.call(this, this._labelBMFontRenderer, ccui.TextBMFont.RENDERER_ZORDER, -1);
+    _initRenderer: function () {
         this._labelBMFontRenderer = cc.LabelBMFont.create();
         this.addProtectedChild(this._labelBMFontRenderer, ccui.TextBMFont.RENDERER_ZORDER, -1);
     },

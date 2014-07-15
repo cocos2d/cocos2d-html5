@@ -288,7 +288,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         ccui.Layout.prototype.onExit.call(this);
     },
 
-    initRenderer: function () {
+    _initRenderer: function () {
         this._textFieldRender = ccui.UICCTextField.create("input words here", "Thonburi", 20);
         this.addProtectedChild(this._textFieldRender, ccui.TextField.RENDERER_ZORDER, -1);
 

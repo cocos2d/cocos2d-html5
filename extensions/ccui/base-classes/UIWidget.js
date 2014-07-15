@@ -116,7 +116,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     init: function () {
         if (cc.ProtectedNode.prototype.init.call(this)) {
             this._layoutParameterDictionary = {};
-            this.initRenderer();
+            this._initRenderer();
             this.setBright(true);
 
             this.onFocusChanged = this.onFocusChange.bind(this);
@@ -232,7 +232,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     /**
      * initializes renderer of widget.
      */
-    initRenderer: function () {
+    _initRenderer: function () {
     },
 
     _setWidth: function (w) {

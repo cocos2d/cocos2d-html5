@@ -51,9 +51,8 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
         ccui.Widget.prototype.ctor.call(this);
     },
 
-    initRenderer: function () {
+    _initRenderer: function () {
         this._labelAtlasRenderer = new cc.LabelAtlas();
-        //cc.Node.prototype.addChild.call(this, this._labelAtlasRenderer, ccui.TextAtlas.RENDERER_ZORDER, -1);
         this._labelAtlasRenderer.setAnchorPoint(cc.p(0.5, 0.5));
         this.addProtectedChild(this._labelAtlasRenderer, ccui.TextAtlas.RENDERER_ZORDER, -1);
     },

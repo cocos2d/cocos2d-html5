@@ -143,8 +143,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, current);
     },
 
-    initRenderer: function () {
-        ccui.Layout.prototype.initRenderer.call(this);
+    _initRenderer: function () {
+        ccui.Layout.prototype._initRenderer.call(this);
         this._innerContainer = ccui.Layout.create();
         this.addProtectedChild(this._innerContainer, 1, 1);
     },

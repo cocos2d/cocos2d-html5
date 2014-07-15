@@ -182,7 +182,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
         this._verticalSpace = 0;
     },
 
-    initRenderer: function () {
+    _initRenderer: function () {
         this._elementRenderersContainer = cc.Node.create();
         this._elementRenderersContainer.setAnchorPoint(0.5, 0.5);
         this.addProtectedChild(this._elementRenderersContainer, 0, -1);

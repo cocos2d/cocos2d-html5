@@ -103,7 +103,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         return false;
     },
 
-    initRenderer: function () {
+    _initRenderer: function () {
         this._buttonNormalRenderer = cc.Sprite.create();
         this._buttonClickedRenderer = cc.Sprite.create();
         this._buttonDisableRenderer = cc.Sprite.create();

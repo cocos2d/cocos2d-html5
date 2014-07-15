@@ -80,7 +80,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         return false;
     },
 
-    initRenderer: function () {
+    _initRenderer: function () {
         this._backGroundBoxRenderer = cc.Sprite.create();
         this._backGroundSelectedBoxRenderer = cc.Sprite.create();
         this._frontCrossRenderer = cc.Sprite.create();
@@ -91,16 +91,6 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this.addProtectedChild(this._frontCrossRenderer, ccui.CheckBox.FRONT_CROSS_RENDERER_ZORDER, -1);
         this.addProtectedChild(this._backGroundBoxDisabledRenderer, ccui.CheckBox.BOX_DISABLED_RENDERER_ZORDER, -1);
         this.addProtectedChild(this._frontCrossDisabledRenderer, ccui.CheckBox.FRONT_CROSS_DISABLED_RENDERER_ZORDER, -1);
-
-        window.test = [
-            this._backGroundBoxRenderer,
-            this._backGroundSelectedBoxRenderer,
-            this._frontCrossRenderer,
-            this._backGroundBoxDisabledRenderer,
-            this._frontCrossDisabledRenderer
-        ];
-
-        window.a = this;
     },
 
     /**

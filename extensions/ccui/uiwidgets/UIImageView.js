@@ -59,7 +59,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         return true;
     },
 
-    initRenderer: function () {
+    _initRenderer: function () {
         this._imageRenderer = cc.Sprite.create();
         this.addProtectedChild(this._imageRenderer, ccui.ImageView.RENDERER_ZORDER, -1);
     },

@@ -82,7 +82,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         return false;
     },
 
-    initRenderer: function () {
+    _initRenderer: function () {
         this._barRenderer = cc.Sprite.create();
         this._progressBarRenderer = cc.Sprite.create();
         this._progressBarRenderer.setAnchorPoint(0.0, 0.5);
