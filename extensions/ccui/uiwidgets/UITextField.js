@@ -756,14 +756,6 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         return this._textFieldRender;
     },
 
-    updateTextureColor: function () {
-        this.updateColorToRenderer(this._textFieldRender);
-    },
-
-    updateTextureOpacity: function () {
-        this.updateOpacityToRenderer(this._textFieldRender);
-    },
-
     /**
      * Returns the "class name" of widget.
      * @returns {string}

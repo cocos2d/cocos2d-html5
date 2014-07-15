@@ -326,17 +326,14 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._ballNTexType = texType;
         switch (this._ballNTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
-//                this._slidBallNormalRenderer.initWithFile(normal);
                 this._slidBallNormalRenderer.setTexture(normal);
                 break;
             case ccui.Widget.PLIST_TEXTURE:
-//                this._slidBallNormalRenderer.initWithSpriteFrameName(normal);
                 this._slidBallNormalRenderer.setSpriteFrame(normal);
                 break;
             default:
                 break;
         }
-//        this.updateColorToRenderer(this._slidBallNormalRenderer);
         this._slidBallNormalRenderer.setColor(this.getColor());
         this._slidBallNormalRenderer.setOpacity(this.getOpacity());
     },
@@ -355,17 +352,14 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._ballPTexType = texType;
         switch (this._ballPTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
-//                this._slidBallPressedRenderer.initWithFile(pressed);
                 this._slidBallPressedRenderer.setTexture(pressed);
                 break;
             case ccui.Widget.PLIST_TEXTURE:
-//                this._slidBallPressedRenderer.initWithSpriteFrameName(pressed);
                 this._slidBallPressedRenderer.setSpriteFrame(pressed);
                 break;
             default:
                 break;
         }
-//        this.updateColorToRenderer(this._slidBallPressedRenderer);
         this._slidBallPressedRenderer.setColor(this.getColor());
         this._slidBallPressedRenderer.setOpacity(this.getOpacity());
     },
@@ -384,17 +378,14 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._ballDTexType = texType;
         switch (this._ballDTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
-//                this._slidBallDisabledRenderer.initWithFile(disabled);
                 this._slidBallDisabledRenderer.setTexture(disabled);
                 break;
             case ccui.Widget.PLIST_TEXTURE:
-//                this._slidBallDisabledRenderer.initWithSpriteFrameName(disabled);
                 this._slidBallDisabledRenderer.setSpriteFrame(disabled);
                 break;
             default:
                 break;
         }
-//        this.updateColorToRenderer(this._slidBallDisabledRenderer);
         this._slidBallDisabledRenderer.setColor(this.getColor());
         this._slidBallDisabledRenderer.setOpacity(this.getOpacity());
     },
@@ -658,22 +649,6 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._sliderEventSelector = slider._sliderEventSelector;
         this._eventCallback = slider._eventCallback;
 
-    },
-
-    updateTextureColor: function () {
-        this.updateColorToRenderer(this._barRenderer);
-        this.updateColorToRenderer(this._progressBarRenderer);
-        this.updateColorToRenderer(this._slidBallNormalRenderer);
-        this.updateColorToRenderer(this._slidBallPressedRenderer);
-        this.updateColorToRenderer(this._slidBallDisabledRenderer);
-    },
-
-    updateTextureOpacity: function () {
-        this.updateOpacityToRenderer(this._barRenderer);
-        this.updateOpacityToRenderer(this._progressBarRenderer);
-        this.updateOpacityToRenderer(this._slidBallNormalRenderer);
-        this.updateOpacityToRenderer(this._slidBallPressedRenderer);
-        this.updateOpacityToRenderer(this._slidBallDisabledRenderer);
     }
 });
 

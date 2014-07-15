@@ -526,22 +526,6 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         }
     },
 
-    updateTextureColor: function () {
-        this.updateColorToRenderer(this._backGroundBoxRenderer);
-        this.updateColorToRenderer(this._backGroundSelectedBoxRenderer);
-        this.updateColorToRenderer(this._frontCrossRenderer);
-        this.updateColorToRenderer(this._backGroundBoxDisabledRenderer);
-        this.updateColorToRenderer(this._frontCrossDisabledRenderer);
-    },
-
-    updateTextureOpacity: function () {
-        this.updateOpacityToRenderer(this._backGroundBoxRenderer);
-        this.updateOpacityToRenderer(this._backGroundSelectedBoxRenderer);
-        this.updateOpacityToRenderer(this._frontCrossRenderer);
-        this.updateOpacityToRenderer(this._backGroundBoxDisabledRenderer);
-        this.updateOpacityToRenderer(this._frontCrossDisabledRenderer);
-    },
-
     /**
      * Returns the "class name" of widget.
      * @returns {string}

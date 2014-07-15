@@ -327,14 +327,6 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         this._barRenderer.setPreferredSize(cc.size(width, this._size.height));
     },
 
-    updateTextureColor: function () {
-        this.updateColorToRenderer(this._barRenderer);
-    },
-
-    updateTextureOpacity: function () {
-        this.updateOpacityToRenderer(this._barRenderer);
-    },
-
     /**
      * Returns the "class name" of widget.
      * @returns {string}

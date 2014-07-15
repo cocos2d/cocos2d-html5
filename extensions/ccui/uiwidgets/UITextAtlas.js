@@ -74,7 +74,6 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
         this._startCharMap = startCharMap;
 //        var renderer = this._labelAtlasRenderer;
 //        renderer.initWithString(stringValue, charMapFile, itemWidth, itemHeight, startCharMap[0]);
-//        this.updateAnchorPoint();
 //        this.labelAtlasScaleChangedWithSize();
 //
 //        if (!renderer.textureLoaded()) {
@@ -236,14 +235,6 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
 //    _getHeight: function () {
 //        return this._labelAtlasRenderer._getHeight();
 //    },
-//
-//    updateTextureColor: function () {
-//        this.updateColorToRenderer(this._labelAtlasRenderer);
-//    },
-//
-//    updateTextureOpacity: function () {
-//        this.updateOpacityToRenderer(this._labelAtlasRenderer);
-//    }
 });
 
 var _p = ccui.TextAtlas.prototype;

@@ -454,15 +454,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
 //    _getHeight: function () {
 //        return this._labelRenderer._getHeight();
 //    },
-//
-//    updateTextureColor: function () {
-//        this.updateColorToRenderer(this._labelRenderer);
-//    },
-//
-//    updateTextureOpacity: function () {
-//        this.updateOpacityToRenderer(this._labelRenderer);
-//    },
-//
+
     copySpecialProperties: function (uiLabel) {
         if(uiLabel instanceof ccui.Label){
             this.setFontName(uiLabel._fontName);

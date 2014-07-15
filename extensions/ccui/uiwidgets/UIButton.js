@@ -790,12 +790,6 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         return this._titleRenderer.font;
     },
 
-    updateTextureColor: function () {
-        this.updateColorToRenderer(this._buttonNormalRenderer);
-        this.updateColorToRenderer(this._buttonClickedRenderer);
-        this.updateColorToRenderer(this._buttonDisableRenderer);
-    },
-
     /**
      * Returns the "class name" of widget.
      * @returns {string}

@@ -83,7 +83,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _mask_layer_le: 0,
 
     _loopFocus: false,
-    _passFocusToChild: false,
+    __passFocusToChild: false,
     _isFocusPassing:false,
 
     /**
@@ -144,14 +144,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param pass To specify whether the layout pass its focus to its child
      */
     setPassFocusToChild: function(pass){
-        this._passFocusToChild = pass;
+        this.__passFocusToChild = pass;
     },
 
     /**
      * @returns {boolean} To query whether the layout will pass the focus to its children or not. The default value is true
      */
     isPassFocusToChild: function(){
-        return this._passFocusToChild;
+        return this.__passFocusToChild;
     },
 
     /**
@@ -166,7 +166,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             var parent = this.getParent();
             this._isFocusPassing = false;
 
-            if (this._passFocusToChild) {
+            if (this.__passFocusToChild) {
                 var w = this._passFocusToChild(direction, current);
                 if (w instanceof ccui.Layout && parent) {
                     parent._isFocusPassing = true;
@@ -747,7 +747,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     /**
      * Sets background image use scale9 renderer.
-     * @param {Boolean} able
+     * @param {Boolean} able  true that use scale9 renderer, false otherwise.
      */
     setBackGroundImageScale9Enabled: function (able) {
         if (this._backGroundScale9Enabled == able) {
@@ -823,7 +823,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     /**
      * Sets a background image CapInsets for layout, if the background image is a scale9 render.
-     * @param {cc.Rect} capInsets
+     * @param {cc.Rect} capInsets  capinsets of background image.
      */
     setBackGroundImageCapInsets: function (capInsets) {
         this._backGroundImageCapInsets = capInsets;
@@ -947,7 +947,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     /**
-     * Get color type.
+     * Get background color type.
      * @returns {ccui.Layout.BG_COLOR_NONE|ccui.Layout.BG_COLOR_SOLID|ccui.Layout.BG_COLOR_GRADIENT}
      */
     getBackGroundColorType: function () {
@@ -964,21 +964,18 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             this._color.r = color.r;
             this._color.g = color.g;
             this._color.b = color.b;
-            if (this._colorRender) {
+            if (this._colorRender)
                 this._colorRender.setColor(color);
-            }
         } else {
             this._startColor.r = color.r;
             this._startColor.g = color.g;
             this._startColor.b = color.b;
 
-            if (this._gradientRender) {
+            if (this._gradientRender)
                 this._gradientRender.setStartColor(color);
-            }
             this._endColor = endColor;
-            if (this._gradientRender) {
+            if (this._gradientRender)
                 this._gradientRender.setEndColor(endColor);
-            }
         }
     },
 
@@ -1631,7 +1628,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     _passFocusToChild: function(direction, current){
         if (this._checkFocusEnabledChild()) {
-            var previousWidget = this.getCurrentFocusedWidget();
+            var previousWidget = ccui.Widget.getCurrentFocusedWidget();
             this._findProperSearchingFunctor(direction, previousWidget);
 
             var index = this.onPassFocusToChild(direction, previousWidget);       //TODO need check
@@ -1687,7 +1684,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this.setClippingEnabled(layout._clippingEnabled);
         this.setClippingType(layout._clippingType);
         this._loopFocus = layout._loopFocus;
-        this._passFocusToChild = layout._passFocusToChild;
+        this.__passFocusToChild = layout.__passFocusToChild;
     }
 });
 ccui.Layout._init_once = null;

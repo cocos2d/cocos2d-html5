@@ -284,14 +284,6 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         this._imageRenderer.setPosition(this._contentSize.width / 2.0, this._contentSize.height / 2.0);
     },
 
-    updateTextureColor: function () {
-        this.updateColorToRenderer(this._imageRenderer);
-    },
-
-    updateTextureOpacity: function () {
-        this.updateOpacityToRenderer(this._imageRenderer);
-    },
-
     /**
      * Returns the "class name" of widget.
      * @returns {string}

@@ -65,7 +65,6 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
         }
         this._fntFileName = fileName;
         this._labelBMFontRenderer.initWithString("", fileName);
-        this.updateAnchorPoint();
         this.labelBMFontScaleChangedWithSize();
 
         if (!this._labelBMFontRenderer.textureLoaded()) {
@@ -199,14 +198,6 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
 //    },
 //    _getHeight: function () {
 //        return this._labelBMFontRenderer._getHeight();
-//    },
-//
-//    updateTextureColor: function () {
-//        this.updateColorToRenderer(this._labelBMFontRenderer);
-//    },
-//
-//    updateTextureOpacity: function () {
-//        this.updateOpacityToRenderer(this._labelBMFontRenderer);
 //    },
 
     /**
