@@ -22,11 +22,19 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccui.LayoutManager = ccui.Class.extend({
-    _doLayout: function(layout){}
-});
+ccui.getLayoutManager = function (type) {
+    switch (type) {
+        case ccui.Layout.LINEAR_VERTICAL:
+            return ccui.linearVerticalLayoutManager;
+        case ccui.Layout.LINEAR_HORIZONTAL:
+            return ccui.linearHorizontalLayoutManager;
+        case ccui.Layout.RELATIVE:
+            return ccui.relativeLayoutManager;
+    }
+    return null;
+};
 
-ccui.LinearVerticalLayoutManager = ccui.LayoutManager.extend({
+ccui.linearVerticalLayoutManager = {
     _doLayout: function(layout){
         var layoutSize = layout._getLayoutContentSize();
         var container = layout._getLayoutElements();
@@ -65,13 +73,9 @@ ccui.LinearVerticalLayoutManager = ccui.LayoutManager.extend({
             }
         }
     }
-});
-
-ccui.LinearVerticalLayoutManager.create = function(){
-    return new ccui.LinearVerticalLayoutManager();
 };
 
-ccui.LinearHorizontalLayoutManager = ccui.LayoutManager.extend({
+ccui.linearHorizontalLayoutManager = {
     _doLayout: function(layout){
         var layoutSize = layout._getLayoutContentSize();
         var container = layout._getLayoutElements();
@@ -108,15 +112,11 @@ ccui.LinearHorizontalLayoutManager = ccui.LayoutManager.extend({
             }
         }
     }
-});
-
-ccui.LinearHorizontalLayoutManager.create = function(){
-    return new ccui.LinearHorizontalLayoutManager();
 };
 
-ccui.RelativeLayoutManager = ccui.LayoutManager.extend({
-    _unlayoutChildCount: null,
-    _widgetChildren: null,
+ccui.relativeLayoutManager = {
+    _unlayoutChildCount: 0,
+    _widgetChildren: [],
     _widget: null,
     _finalPositionX:0,
     _finalPositionY:0,
@@ -135,11 +135,11 @@ ccui.RelativeLayoutManager = ccui.LayoutManager.extend({
                     if (layoutParameter._put)
                         continue;
 
-                    var ret = this._caculateFinalPositionWithRelativeWidget(layout);
+                    var ret = this._calculateFinalPositionWithRelativeWidget(layout);
                     if (!ret)
                         continue;
 
-                    this._caculateFinalPositionWithRelativeAlign();
+                    this._calculateFinalPositionWithRelativeAlign();
 
                     this._widget.setPosition(this._finalPositionX, this._finalPositionY);
                     layoutParameter._put = true;
@@ -152,17 +152,17 @@ ccui.RelativeLayoutManager = ccui.LayoutManager.extend({
 
     _getAllWidgets: function(layout){
         var container = layout._getLayoutElements();
-        var widgetChildren = [];           //TODO
+        var locWidgetChildren = this._widgetChildren;
+        locWidgetChildren.length = 0;
         for (var i = 0, len = container.length; i < len; i++){
             var child = container[i];
             if (child) {
                 var layoutParameter = child.getLayoutParameter();
                 layoutParameter._put = false;
                 this._unlayoutChildCount++;
-                widgetChildren.push(child);
+                locWidgetChildren.push(child);
             }
         }
-        return widgetChildren;
     },
 
     _getRelativeWidget: function(widget){
@@ -187,7 +187,7 @@ ccui.RelativeLayoutManager = ccui.LayoutManager.extend({
         return relativeWidget;
     },
 
-    _caculateFinalPositionWithRelativeWidget: function(layout){    //TODO typo
+    _calculateFinalPositionWithRelativeWidget: function(layout){
         var locWidget = this._widget;
         var ap = locWidget.getAnchorPoint();
         var cs = locWidget.getContentSize();
@@ -366,7 +366,7 @@ ccui.RelativeLayoutManager = ccui.LayoutManager.extend({
         return true;
     },
 
-    _caculateFinalPositionWithRelativeAlign: function(){
+    _calculateFinalPositionWithRelativeAlign: function(){
         var layoutParameter = this._widget.getLayoutParameter();
 
         var mg = layoutParameter.getMargin();
@@ -453,8 +453,4 @@ ccui.RelativeLayoutManager = ccui.LayoutManager.extend({
                 break;
         }
     }
-});
-
-ccui.RelativeLayoutManager.create = function(){
-    return new ccui.RelativeLayoutManager();
 };

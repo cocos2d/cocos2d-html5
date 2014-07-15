@@ -1228,7 +1228,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         this.setBright(widget.isBright());
         this.setTouchEnabled(widget.isTouchEnabled());
         this.setLocalZOrder(widget.getLocalZOrder());
-        this.setUpdateEnabled(widget.isUpdateEnabled());
         this.setTag(widget.getTag());
         this.setName(widget.getName());
         this.setActionTag(widget.getActionTag());

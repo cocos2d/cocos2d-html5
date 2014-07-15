@@ -1131,26 +1131,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         if (!this._doLayoutDirty)
             return;
 
-        var executant = this._createLayoutManager();     //TODO create a layout manager every calling _doLayout?
+        var executant = ccui.getLayoutManager(this._layoutType);
         if (executant)
             executant._doLayout(this);
         this._doLayoutDirty = false;
-    },
-
-    _createLayoutManager: function(){
-        var layoutMgr = null;
-        switch (this._layoutType) {
-            case ccui.Layout.LINEAR_VERTICAL:
-                layoutMgr = ccui.LinearVerticalLayoutManager.create();
-                break;
-            case ccui.Layout.LINEAR_HORIZONTAL:
-                layoutMgr = ccui.LinearHorizontalLayoutManager.create();
-                break;
-            case ccui.Layout.RELATIVE:
-                layoutMgr = ccui.RelativeLayoutManager.create();
-                break;
-        }
-        return layoutMgr;
     },
 
     _getLayoutContentSize: function(){

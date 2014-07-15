@@ -43,6 +43,7 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
     _deleteBackward: false,
     _className: "UICCTextField",
     _textFieldRendererAdaptDirty: true,
+
     ctor: function () {
         cc.TextFieldTTF.prototype.ctor.call(this);
         this.maxLengthEnabled = false;
@@ -55,6 +56,7 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
         this._deleteBackward = false;
     },
     onEnter: function () {
+        cc.TextFieldTTF.prototype.onEnter.call(this);
         cc.TextFieldTTF.prototype.setDelegate.call(this, this);
     },
     //CCTextFieldDelegate
@@ -280,12 +282,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
 
     onEnter: function () {
         ccui.Widget.prototype.onEnter.call(this);
-        this.setUpdateEnabled(true);
-    },
-
-    onExit:function(){
-        this.setUpdateEnabled(false);
-        ccui.Layout.prototype.onExit.call(this);
+        this.scheduleUpdate();
     },
 
     _initRenderer: function () {
