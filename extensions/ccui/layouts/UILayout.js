@@ -313,7 +313,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     visit: function (ctx) {
         if (!this._visible)
             return;
-        this.adaptRenderers();
+        this._adaptRenderers();
         this._doLayout();
 
         if (this._clippingEnabled) {
@@ -1664,15 +1664,15 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         return "Layout";
     },
 
-    createCloneInstance: function () {
+    _createCloneInstance: function () {
         return ccui.Layout.create();
     },
 
-    copyClonedWidgetChildren: function (model) {
-        ccui.Widget.prototype.copyClonedWidgetChildren.call(this, model);
+    _copyClonedWidgetChildren: function (model) {
+        ccui.Widget.prototype._copyClonedWidgetChildren.call(this, model);
     },
 
-    copySpecialProperties: function (layout) {
+    _copySpecialProperties: function (layout) {
         this.setBackGroundImageScale9Enabled(layout._backGroundScale9Enabled);
         this.setBackGroundImage(layout._backGroundImageFileName, layout._bgImageTexType);
         this.setBackGroundImageCapInsets(layout._backGroundImageCapInsets);

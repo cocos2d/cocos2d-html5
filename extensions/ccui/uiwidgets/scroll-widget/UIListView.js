@@ -466,11 +466,11 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         return "ListView";
     },
 
-    createCloneInstance: function () {
+    _createCloneInstance: function () {
         return ccui.ListView.create();
     },
 
-    copyClonedWidgetChildren: function (model) {
+    _copyClonedWidgetChildren: function (model) {
         var arrayItems = model.getItems();
         for (var i = 0; i < arrayItems.length; i++) {
             var item = arrayItems[i];
@@ -478,8 +478,8 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         }
     },
 
-    copySpecialProperties: function (listView) {
-        ccui.ScrollView.prototype.copySpecialProperties.call(this, listView);
+    _copySpecialProperties: function (listView) {
+        ccui.ScrollView.prototype._copySpecialProperties.call(this, listView);
         this.setItemModel(listView._model);
         this.setItemsMargin(listView._itemsMargin);
         this.setGravity(listView._gravity);

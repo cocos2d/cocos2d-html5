@@ -134,15 +134,15 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
                 break;
         }
 
-        this.backGroundTextureScaleChangedWithSize();       //TODO need test
+        this.backGroundTextureScaleChangedWithSize();
         if (!bgBoxRenderer.textureLoaded()) {
             this._backGroundBoxRenderer.setContentSize(this._customSize);
             bgBoxRenderer.addLoadedEventListener(function () {
                 this.backGroundTextureScaleChangedWithSize();
             }, this);
         }
-        this.updateFlippedX();
-        this.updateFlippedY();
+        this._updateFlippedX();
+        this._updateFlippedY();
         this._backGroundBoxRenderer.setColor(this.getColor());
         this._backGroundBoxRenderer.setOpacity(this.getOpacity());
 
@@ -172,8 +172,8 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
                 break;
         }
 
-        this.updateFlippedX();
-        this.updateFlippedY();
+        this._updateFlippedX();
+        this._updateFlippedY();
         this._backGroundSelectedBoxRenderer.setColor(this.getColor());
         this._backGroundSelectedBoxRenderer.setOpacity(this.getOpacity());
         this._backGroundSelectedBoxRendererAdaptDirty = true;
@@ -200,8 +200,8 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
             default:
                 break;
         }
-        this.updateFlippedX();
-        this.updateFlippedY();
+        this._updateFlippedX();
+        this._updateFlippedY();
         this._frontCrossRenderer.setColor(this.getColor());
         this._frontCrossRenderer.setOpacity(this.getOpacity());
         this._frontCrossRendererAdaptDirty = true;
@@ -228,8 +228,8 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
             default:
                 break;
         }
-        this.updateFlippedX();
-        this.updateFlippedY();
+        this._updateFlippedX();
+        this._updateFlippedY();
         this._backGroundBoxDisabledRenderer.setColor(this.getColor());
         this._backGroundBoxDisabledRenderer.setOpacity(this.getOpacity());
         this._backGroundBoxDisabledRendererAdaptDirty = true;
@@ -256,8 +256,8 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
             default:
                 break;
         }
-        this.updateFlippedX();
-        this.updateFlippedY();
+        this._updateFlippedX();
+        this._updateFlippedY();
         this._frontCrossDisabledRenderer.setColor(this.getColor());
         this._frontCrossDisabledRenderer.setOpacity(this.getOpacity());
         this._frontCrossDisabledRendererAdaptDirty = true;
@@ -312,9 +312,8 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
             this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccui.CheckBox.EVENT_UNSELECTED);
     },
 
-    releaseUpEvent: function(){
-        ccui.Widget.prototype.releaseUpEvent.call(this);
-
+    _releaseUpEvent: function(){
+        ccui.Widget.prototype._releaseUpEvent.call(this);
         if (this._isSelected){
             this.setSelectedState(false);
             this.unSelectedEvent();
@@ -342,7 +341,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         return this._backGroundBoxRenderer.getContentSize();
     },
 
-    updateFlippedX: function () {
+    _updateFlippedX: function () {
         this._backGroundBoxRenderer.setFlippedX(this._flippedX);
         this._backGroundSelectedBoxRenderer.setFlippedX(this._flippedX);
         this._frontCrossRenderer.setFlippedX(this._flippedX);
@@ -350,7 +349,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this._frontCrossDisabledRenderer.setFlippedX(this._flippedX);
     },
 
-    updateFlippedY: function () {
+    _updateFlippedY: function () {
         this._backGroundBoxRenderer.setFlippedY(this._flippedY);
         this._backGroundSelectedBoxRenderer.setFlippedY(this._flippedY);
         this._frontCrossRenderer.setFlippedY(this._flippedY);
@@ -524,11 +523,11 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         return "CheckBox";
     },
 
-    createCloneInstance: function () {
+    _createCloneInstance: function () {
         return ccui.CheckBox.create();
     },
 
-    copySpecialProperties: function (uiCheckBox) {
+    _copySpecialProperties: function (uiCheckBox) {
         if (uiCheckBox instanceof ccui.CheckBox) {
             this.loadTextureBackGround(uiCheckBox._backGroundFileName, uiCheckBox._backGroundTexType);
             this.loadTextureBackGroundSelected(uiCheckBox._backGroundSelectedFileName, uiCheckBox._backGroundSelectedTexType);
@@ -542,7 +541,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         }
     },
 
-    adaptRenderers: function(){
+    _adaptRenderers: function(){
         if (this._backGroundBoxRendererAdaptDirty){
             this.backGroundTextureScaleChangedWithSize();
             this._backGroundBoxRendererAdaptDirty = false;

@@ -119,12 +119,11 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
         this._labelBMFontRendererAdaptDirty = true;
     },
 
-    adaptRenderers: function(){
+    _adaptRenderers: function(){
         if (this._labelBMFontRendererAdaptDirty){
             this.labelBMFontScaleChangedWithSize();
             this._labelBMFontRendererAdaptDirty = false;
         }
-
     },
 
     getVirtualRendererSize: function(){
@@ -203,15 +202,15 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
      */
     getDescription: function () {
         return "LabelBMFont";
-//    },
-//
-//    createCloneInstance: function () {
-//        return ccui.TextBMFont.create();
-//    },
-//
-//    copySpecialProperties: function (labelBMFont) {
-//        this.setFntFile(labelBMFont._fntFileName);
-//        this.setText(labelBMFont._stringValue);
+    },
+
+    _createCloneInstance: function () {
+        return ccui.TextBMFont.create();
+    },
+
+    _copySpecialProperties: function (labelBMFont) {
+        this.setFntFile(labelBMFont._fntFileName);
+        this.setString(labelBMFont._stringValue);
     }
 });
 

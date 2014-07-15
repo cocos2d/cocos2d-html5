@@ -307,39 +307,26 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         this._useTouchArea = enable;
     },
 
-    adaptRenderers: function(){
-        if (this._textFieldRendererAdaptDirty)
-        {
+    _adaptRenderers: function(){
+        if (this._textFieldRendererAdaptDirty) {
             this.textfieldRendererScaleChangedWithSize();
             this._textFieldRendererAdaptDirty = false;
         }
     },
 
     hitTest: function(pt){
-        if (this._useTouchArea)
-        {
+        if (this._useTouchArea) {
             var nsp = this.convertToNodeSpace(pt);
             var bb = cc.rect(
                 -this._touchWidth * this._anchorPoint.x,
                 -this._touchHeight * this._anchorPoint.y,
                 this._touchWidth, this._touchHeight
             );
-            if (
-                nsp.x >= bb.origin.x &&
-                nsp.x <= bb.origin.x + bb.size.width &&
-                nsp.y >= bb.origin.y &&
-                nsp.y <= bb.origin.y + bb.size.height
-            )
-            {
-                return true;
-            }
-        }
-        else
-        {
-            return ccui.Widget.prototype.hitTest.call(this, pt);
-        }
 
-        return false;
+            return ( nsp.x >= bb.x && nsp.x <= bb.x + bb.width &&
+                nsp.y >= bb.y && nsp.y <= bb.y + bb.height );
+        } else
+            return ccui.Widget.prototype.hitTest.call(this, pt);
     },
 
     /**
@@ -768,11 +755,11 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         this._textFieldRender.attachWithIME();
     },
 
-    createCloneInstance: function () {
+    _createCloneInstance: function () {
         return ccui.TextField.create();
     },
 
-    copySpecialProperties: function (textField) {
+    _copySpecialProperties: function (textField) {
         this.setString(textField._textFieldRender.getString());
         this.setPlaceHolder(textField.getString());
         this.setFontSize(textField._textFieldRender.getFontSize());

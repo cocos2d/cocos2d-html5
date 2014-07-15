@@ -110,8 +110,8 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
             imageRenderer.setCapInsets(this._capInsets);
         }
 
-        this.updateFlippedX();
-        this.updateFlippedY();
+        this._updateFlippedX();
+        this._updateFlippedY();
         imageRenderer.setColor(this.getColor());
         imageRenderer.setOpacity(this.getOpacity());
         this._updateContentSizeWithTextureSize(this._imageTextureSize);
@@ -127,21 +127,21 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
             this._imageRenderer.setTextureRect(rect);
     },
 
-    updateFlippedX: function () {
+    _updateFlippedX: function () {
         if (this._scale9Enabled)
             this._imageRenderer.setScaleX(this._flippedX ? -1 : 1);
         else
             this._imageRenderer.setFlippedX(this._flippedX);
     },
 
-    updateFlippedY: function () {
+    _updateFlippedY: function () {
         if (this._scale9Enabled)
             this._imageRenderer.setScaleY(this._flippedY ? -1 : 1);
         else
             this._imageRenderer.setFlippedY(this._flippedY);
     },
 
-    adaptRenderers: function(){
+    _adaptRenderers: function(){
         if (this._imageRendererAdaptDirty){
             this.imageTextureScaleChangedWithSize();
             this._imageRendererAdaptDirty = false;
@@ -296,11 +296,11 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
 
     },
 
-    createCloneInstance:function(){
+    _createCloneInstance:function(){
         return ccui.ImageView.create();
     },
 
-    copySpecialProperties: function (imageView) {
+    _copySpecialProperties: function (imageView) {
         if(imageView instanceof ccui.ImageView){
             this._prevIgnoreSize = imageView._prevIgnoreSize;
             this.setScale9Enabled(imageView._scale9Enabled);

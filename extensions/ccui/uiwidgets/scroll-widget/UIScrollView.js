@@ -1672,17 +1672,17 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         return "ScrollView";
     },
 
-    createCloneInstance: function(){
+    _createCloneInstance: function(){
         return ccui.ScrollView.create();
     },
 
-    copyClonedWidgetChildren: function (model) {
-        ccui.Layout.prototype.copyClonedWidgetChildren.call(this, model);
+    _copyClonedWidgetChildren: function (model) {
+        ccui.Layout.prototype._copyClonedWidgetChildren.call(this, model);
     },
 
-    copySpecialProperties: function (scrollView) {
+    _copySpecialProperties: function (scrollView) {
         if(scrollView instanceof ccui.ScrollView) {
-            ccui.Layout.prototype.copySpecialProperties.call(this, scrollView);
+            ccui.Layout.prototype._copySpecialProperties.call(this, scrollView);
             this.setInnerContainerSize(scrollView.getInnerContainerSize());
             this.setDirection(scrollView.direction);
             this.setBounceEnabled(scrollView.bounceEnabled);

@@ -321,7 +321,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         var widgetParent = this.getWidgetParent();
         if (widgetParent)
             widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_MOVED, this, touch);
-        this.moveEvent();
+        this._moveEvent();
     },
 
     onTouchEnded: function (touch, event) {
@@ -502,11 +502,11 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         return "PageView";
     },
 
-    createCloneInstance: function () {
+    _createCloneInstance: function () {
         return ccui.PageView.create();
     },
 
-    copyClonedWidgetChildren: function (model) {
+    _copyClonedWidgetChildren: function (model) {
         var arrayPages = model.getPages();
         for (var i = 0; i < arrayPages.length; i++) {
             var page = arrayPages[i];
@@ -514,14 +514,12 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         }
     },
 
-    copySpecialProperties: function (pageView) {
-        ccui.Layout.prototype.copySpecialProperties.call(this, pageView);
+    _copySpecialProperties: function (pageView) {
+        ccui.Layout.prototype._copySpecialProperties.call(this, pageView);
         this._eventCallback = pageView._eventCallback;
         this._pageViewEventListener = pageView._pageViewEventListener;
         this._pageViewEventSelector = pageView._pageViewEventSelector;
     }
-
-
 
 //
 //    updateChildrenSize: function () {

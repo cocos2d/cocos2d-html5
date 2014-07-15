@@ -315,7 +315,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         }
     },
 
-    adaptRenderers: function(){
+    _adaptRenderers: function(){
         if (this._barRendererAdaptDirty){
             this.barRendererScaleChangedWithSize();
             this._barRendererAdaptDirty = false;
@@ -335,11 +335,11 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         return "LoadingBar";
     },
 
-    createCloneInstance: function () {
+    _createCloneInstance: function () {
         return ccui.LoadingBar.create();
     },
 
-    copySpecialProperties: function (loadingBar) {
+    _copySpecialProperties: function (loadingBar) {
         if(loadingBar instanceof ccui.LoadingBar){
             this._prevIgnoreSize = loadingBar._prevIgnoreSize;
             this.setScale9Enabled(loadingBar._scale9Enabled);

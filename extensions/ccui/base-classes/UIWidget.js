@@ -146,16 +146,15 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
     visit: function (ctx) {
         if (this._visible) {
-            this.adaptRenderers();
+            this._adaptRenderers();
             cc.ProtectedNode.prototype.visit.call(this, ctx);
         }
     },
 
     getWidgetParent: function () {
         var widget = this.getParent();
-        if (widget instanceof ccui.Widget) {
+        if (widget instanceof ccui.Widget)
             return widget;
-        }
         return null;
     },
 
@@ -211,10 +210,8 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         this._eventDispatcher.removeEventListener(this._touchListener);
 
         //cleanup focused widget and focus navigation controller
-        if (ccui.Widget._focusedWidget == this){
-            //delete
+        if (ccui.Widget._focusedWidget == this)
             ccui.Widget._focusedWidget = null;
-        }
     },
 
     /**
@@ -771,7 +768,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         var widgetParent = this.getWidgetParent();
         if (widgetParent)
             widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_BEGAN, this, touch);
-        this.pushDownEvent();
+        this._pushDownEvent();
         return true;
     },
 
@@ -783,7 +780,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         var widgetParent = this.getWidgetParent();
         if (widgetParent)
             widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_MOVED, this, touch);
-        this.moveEvent();
+        this._moveEvent();
     },
 
     onTouchEnded: function (touch, event) {
@@ -796,9 +793,9 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         var highlight = this._highlight;
         this.setHighlighted(false);
         if (highlight)
-            this.releaseUpEvent();
+            this._releaseUpEvent();
         else
-            this.cancelUpEvent();
+            this._cancelUpEvent();
     },
 
     /**
@@ -807,7 +804,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      */
     onTouchCancelled: function (touchPoint) {
         this.setHighlighted(false);
-        this.cancelUpEvent();
+        this._cancelUpEvent();
     },
 
     /**
@@ -819,39 +816,32 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     //call back function called widget's state changed to dark.
-    pushDownEvent: function () {
+    _pushDownEvent: function () {
         if (this._touchEventCallback)
             this._touchEventCallback(this, ccui.Widget.TOUCH_BEGAN);
-
         if (this._touchEventListener && this._touchEventSelector)
             this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_BEGAN);
     },
 
-    moveEvent: function () {
+    _moveEvent: function () {
         if (this._touchEventCallback)
             this._touchEventCallback(this, ccui.Widget.TOUCH_MOVED);
-
-        if (this._touchEventListener && this._touchEventSelector) {
+        if (this._touchEventListener && this._touchEventSelector)
             this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_MOVED);
-        }
     },
 
-    releaseUpEvent: function () {
+    _releaseUpEvent: function () {
         if (this._touchEventCallback)
             this._touchEventCallback(this, ccui.Widget.TOUCH_ENDED);
-
-        if (this._touchEventListener && this._touchEventSelector) {
+        if (this._touchEventListener && this._touchEventSelector)
             this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_ENDED);
-        }
     },
 
-    cancelUpEvent: function () {
+    _cancelUpEvent: function () {
         if (this._touchEventCallback)
             this._touchEventCallback(this, ccui.Widget.TOUCH_CANCELED);
-
-        if (this._touchEventListener && this._touchEventSelector) {
+        if (this._touchEventListener && this._touchEventSelector)
             this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_CANCELED);
-        }
     },
 
     longClickEvent: function () {
@@ -1047,7 +1037,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      */
     setFlippedX: function (flipX) {
         this._flippedX = flipX;
-        this.updateFlippedX();
+        this._updateFlippedX();
     },
 
     /**
@@ -1070,7 +1060,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      */
     setFlippedY: function (flipY) {
         this._flippedY = flipY;
-        this.updateFlippedY();
+        this._updateFlippedY();
     },
 
     /**
@@ -1087,16 +1077,13 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         return this._flippedY;
     },
 
-    updateFlippedX: function () {
-
+    _updateFlippedX: function () {
     },
 
-    updateFlippedY: function () {
-
+    _updateFlippedY: function () {
     },
 
-    adaptRenderers: function(){
-
+    _adaptRenderers: function(){
     },
 
     /**
@@ -1213,30 +1200,29 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     clone: function () {
-        var clonedWidget = this.createCloneInstance();
-        clonedWidget.copyProperties(this);
-        clonedWidget.copyClonedWidgetChildren(this);
+        var clonedWidget = this._createCloneInstance();
+        clonedWidget._copyProperties(this);
+        clonedWidget._copyClonedWidgetChildren(this);
         return clonedWidget;
     },
 
-    createCloneInstance: function () {
+    _createCloneInstance: function () {
         return ccui.Widget.create();
     },
 
-    copyClonedWidgetChildren: function (model) {
+    _copyClonedWidgetChildren: function (model) {
         var widgetChildren = model.getChildren();
         for (var i = 0; i < widgetChildren.length; i++) {
             var locChild = widgetChildren[i];
-            if (locChild instanceof ccui.Widget) {
+            if (locChild instanceof ccui.Widget)
                 this.addChild(locChild.clone());
-            }
         }
     },
 
-    copySpecialProperties: function (model) {
+    _copySpecialProperties: function (model) {
     },
 
-    copyProperties: function (widget) {
+    _copyProperties: function (widget) {
         this.setEnabled(widget.isEnabled());
         this.setVisible(widget.isVisible());
         this.setBright(widget.isBright());
@@ -1254,7 +1240,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         this._customSize.width = widget._customSize.width;
         this._customSize.height = widget._customSize.height;
 
-        this.copySpecialProperties(widget);
+        this._copySpecialProperties(widget);
         this._sizeType = widget.getSizeType();
         this._sizePercent.x = widget._sizePercent.x;
         this._sizePercent.y = widget._sizePercent.y;

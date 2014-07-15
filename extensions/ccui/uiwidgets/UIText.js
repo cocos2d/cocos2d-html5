@@ -276,16 +276,18 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
 
     },
 
-    updateFlippedX: function () {
-
+    _updateFlippedX: function () {
         if (this._flippedX)
-        {
             this._labelRenderer.setScaleX(-1.0);
-        }
         else
-        {
             this._labelRenderer.setScaleX(1.0);
-        }
+    },
+
+    _updateFlippedY: function(){
+        if (this._flippedY)
+            this._labelRenderer.setScaleY(-1.0);
+        else
+            this._labelRenderer.setScaleY(1.0);
     },
 
     _onSizeChanged: function () {
@@ -293,7 +295,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
         this._labelRendererAdaptDirty = true;
     },
 
-    adaptRenderers: function(){
+    _adaptRenderers: function(){
         if (this._labelRendererAdaptDirty)
         {
             this.labelScaleChangedWithSize();
@@ -360,7 +362,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
         this._labelRenderer.disableEffect();
     },
 
-    createCloneInstance: function () {
+    _createCloneInstance: function () {
         return ccui.Text.create();
     },
 
@@ -413,10 +415,6 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
 //        return this.isTouchScaleChangeEnabled();
 //    },
 //
-//    updateFlippedY: function () {
-//        this._labelRenderer.setFlippedY(this._flippedY);
-//    },
-//
 //    /**
 //     * override "setAnchorPoint" of widget.
 //     * @param {cc.Point|Number} point The anchor point of UILabel or The anchor point.x of UILabel.
@@ -454,7 +452,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
 //        return this._labelRenderer._getHeight();
 //    },
 
-    copySpecialProperties: function (uiLabel) {
+    _copySpecialProperties: function (uiLabel) {
         if(uiLabel instanceof ccui.Label){
             this.setFontName(uiLabel._fontName);
             this.setFontSize(uiLabel.getFontSize());

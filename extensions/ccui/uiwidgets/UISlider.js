@@ -500,18 +500,15 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._progressBarRendererDirty = true;
     },
 
-    adaptRenderers: function(){
-        if (this._barRendererAdaptDirty)
-        {
+    _adaptRenderers: function(){
+        if (this._barRendererAdaptDirty) {
             this.barRendererScaleChangedWithSize();
             this._barRendererAdaptDirty = false;
         }
-        if (this._progressBarRendererDirty)
-        {
+        if (this._progressBarRendererDirty) {
             this.progressBarRendererScaleChangedWithSize();
             this._progressBarRendererDirty = false;
         }
-
     },
 
     getVirtualRendererSize: function(){
@@ -630,11 +627,11 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         return "Slider";
     },
 
-    createCloneInstance: function () {
+    _createCloneInstance: function () {
         return ccui.Slider.create();
     },
 
-    copySpecialProperties: function (slider) {
+    _copySpecialProperties: function (slider) {
         this._prevIgnoreSize = slider._prevIgnoreSize;
         this.setScale9Enabled(slider._scale9Enabled);
         this.loadBarTexture(slider._textureFile, slider._barTexType);

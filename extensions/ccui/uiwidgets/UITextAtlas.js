@@ -136,9 +136,8 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
         this._labelAtlasRendererAdaptDirty = true;
     },
 
-    adaptRenderers: function(){
-        if (this._labelAtlasRendererAdaptDirty)
-        {
+    _adaptRenderers: function(){
+        if (this._labelAtlasRendererAdaptDirty) {
             this.labelAtlasScaleChangedWithSize();
             this._labelAtlasRendererAdaptDirty = false;
         }
@@ -186,14 +185,13 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
         return "LabelAtlas";
     },
 
-    createCloneInstance: function () {
+    _createCloneInstance: function () {
         return ccui.TextAtlas.create();
     },
 
-    copySpecialProperties: function (labelAtlas) {
-        if (labelAtlas){
+    _copySpecialProperties: function (labelAtlas) {
+        if (labelAtlas)
             this.setProperty(labelAtlas._stringValue, labelAtlas._charMapFileName, labelAtlas._itemWidth, labelAtlas._itemHeight, labelAtlas._startCharMap);
-        }
     }
 
 
