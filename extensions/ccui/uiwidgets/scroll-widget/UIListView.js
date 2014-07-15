@@ -453,8 +453,8 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         return this._curSelectedIndex;
     },
 
-    onSizeChanged: function () {
-        ccui.ScrollView.prototype.onSizeChanged.call(this);
+    _onSizeChanged: function () {
+        ccui.ScrollView.prototype._onSizeChanged.call(this);
         this._refreshViewDirty = true;
     },
 

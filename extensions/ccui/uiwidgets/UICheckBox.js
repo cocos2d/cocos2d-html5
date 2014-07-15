@@ -407,8 +407,8 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this._frontCrossDisabledRenderer._setAnchorY(value);
     },
 
-    onSizeChanged: function () {
-        ccui.Widget.prototype.onSizeChanged.call(this);
+    _onSizeChanged: function () {
+        ccui.Widget.prototype._onSizeChanged.call(this);
         this._backGroundBoxRendererAdaptDirty = true;
         this._backGroundSelectedBoxRendererAdaptDirty = true;
         this._frontCrossRendererAdaptDirty = true;

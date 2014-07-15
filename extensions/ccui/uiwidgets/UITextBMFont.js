@@ -116,9 +116,8 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
         return this._labelBMFontRenderer.getStringLength();
     },
 
-    onSizeChanged: function () {
-        ccui.Widget.prototype.onSizeChanged.call(this);
-//        this.labelBMFontScaleChangedWithSize();
+    _onSizeChanged: function () {
+        ccui.Widget.prototype._onSizeChanged.call(this);
         this._labelBMFontRendererAdaptDirty = true;
     },
 

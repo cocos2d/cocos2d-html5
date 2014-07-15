@@ -494,10 +494,8 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         return this._percent;
     },
 
-    onSizeChanged: function () {
-        ccui.Widget.prototype.onSizeChanged.call(this);
-//        this.barRendererScaleChangedWithSize();
-//        this.progressBarRendererScaleChangedWithSize();
+    _onSizeChanged: function () {
+        ccui.Widget.prototype._onSizeChanged.call(this);
         this._barRendererAdaptDirty = true;
         this._progressBarRendererDirty = true;
     },

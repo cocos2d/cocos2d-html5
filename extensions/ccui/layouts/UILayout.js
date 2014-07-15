@@ -264,7 +264,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * Adds a widget to the container.
      * @param {ccui.Widget} widget
      * @param {Number} [zOrder]
-     * @param {Number} [tag]
+     * @param {Number|string} [tag] tag or name
      */
     addChild: function (widget, zOrder, tag) {
         if ((widget instanceof ccui.Widget)) {
@@ -304,7 +304,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     /**
      * Gets if layout is clipping enabled.
-     * @returns {Boolean}
+     * @returns {Boolean} if layout is clipping enabled.
      */
     isClippingEnabled: function () {
         return this._clippingEnabled;
@@ -587,7 +587,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     /**
      * Changes if layout can clip it's content and locChild.
-     * @param {Boolean} able
+     * If you really need this, please enable it. But it would reduce the rendering efficiency.
+     * @param {Boolean} able clipping enabled.
      */
     setClippingEnabled: function (able) {
         if (able == this._clippingEnabled)
@@ -614,7 +615,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     /**
-     * Set clipping type
+     * Sets clipping type
      * @param {ccui.Layout.CLIPPING_STENCIL|ccui.Layout.CLIPPING_SCISSOR} type
      */
     setClippingType: function (type) {
@@ -628,7 +629,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     /**
-     * Get clipping type
+     * Gets clipping type
      * @returns {ccui.Layout.CLIPPING_STENCIL|ccui.Layout.CLIPPING_SCISSOR}
      */
     getClippingType: function () {
@@ -724,8 +725,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         return this._clippingRect;
     },
 
-    onSizeChanged: function () {
-        ccui.Widget.prototype.onSizeChanged.call(this);
+    _onSizeChanged: function () {
+        ccui.Widget.prototype._onSizeChanged.call(this);
         this.setStencilClippingSize(this._contentSize);
         this._doLayoutDirty = true;
         this._clippingRectDirty = true;
@@ -1055,7 +1056,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     /**
-     * Set backGround image color
+     * Sets backGround image color
      * @param {cc.Color} color
      */
     setBackGroundImageColor: function (color) {
@@ -1067,7 +1068,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     /**
-     * Get backGround image color
+     * Gets backGround image Opacity
      * @param {Number} opacity
      */
     setBackGroundImageOpacity: function (opacity) {

@@ -288,9 +288,8 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
         }
     },
 
-    onSizeChanged: function () {
-        ccui.Widget.prototype.onSizeChanged.call(this);
-//        this.labelScaleChangedWithSize();
+    _onSizeChanged: function () {
+        ccui.Widget.prototype._onSizeChanged.call(this);
         this._labelRendererAdaptDirty = true;
     },
 

@@ -168,7 +168,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             locSize.width = this._customSize.width;
             locSize.height = this._customSize.height;
         }
-        this.onSizeChanged();
+        this._onSizeChanged();
     },
 
     _isAncestorsEnabled: function(){
@@ -245,7 +245,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             locW = widgetParent ? widgetParent.width : this._parent.width;
             this._sizePercent.x = locW > 0 ? this._customSize.width / locW : 0;
         }
-        this.onSizeChanged();
+        this._onSizeChanged();
     },
     _setHeight: function (h) {
         var locH = this._customSize.height = h;
@@ -257,7 +257,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             locH = widgetParent ? widgetParent.height : this._parent.height;
             this._sizePercent.y = locH > 0 ? this._customSize.height / locH : 0;
         }
-        this.onSizeChanged();
+        this._onSizeChanged();
     },
 
     /**
@@ -284,7 +284,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         }
         this._customSize.width = width;
         this._customSize.height = height;
-        this.onSizeChanged();
+        this._onSizeChanged();
     },
 
     _setWidthPercent: function (percent) {
@@ -296,7 +296,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         }
         this._ignoreSize || (this._size.width = width);
         this._customSize.width = width;
-        this.onSizeChanged();
+        this._onSizeChanged();
     },
     _setHeightPercent: function (percent) {
         this._sizePercent.y = percent;
@@ -307,7 +307,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         }
         this._ignoreSize || (this._size.height = height);
         this._customSize.height = height;
-        this.onSizeChanged();
+        this._onSizeChanged();
     },
 
     /**
@@ -351,7 +351,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             default:
                 break;
         }
-        this.onSizeChanged();
+        this._onSizeChanged();
         var absPos = this.getPosition();
         switch (this._positionType) {
             case ccui.Widget.POSITION_ABSOLUTE:
@@ -400,7 +400,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         var locSize = this._ignoreSize ? this.getContentSize(): this._customSize;
         this._size.width = locSize.width;
         this._size.height = locSize.height;
-        this.onSizeChanged();
+        this._onSizeChanged();
     },
 
     /**
@@ -463,7 +463,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     /**
      * call back function called when size changed.
      */
-    onSizeChanged: function () {
+    _onSizeChanged: function () {
         this.setContentSize(this._size);
         var locChildren =  this.getChildren();
         for (var i = 0, len = locChildren.length; i < len; i++) {
@@ -1286,7 +1286,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             if (parameter)
                 this.setLayoutParameter(parameter.clone());
         }
-        this.onSizeChanged();
+        this._onSizeChanged();
     },
 
     /*temp action*/
@@ -1409,7 +1409,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             this._sizePercent.x = locW > 0 ? this._customSize.width / locW : 0;
             this._sizePercent.y = locH > 0 ? this._customSize.height / locH : 0;
         }
-        this.onSizeChanged();
+        this._onSizeChanged();
     },
 
     /**

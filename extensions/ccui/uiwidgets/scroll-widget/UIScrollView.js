@@ -149,8 +149,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this.addProtectedChild(this._innerContainer, 1, 1);
     },
 
-    onSizeChanged: function () {
-        ccui.Layout.prototype.onSizeChanged.call(this);
+    _onSizeChanged: function () {
+        ccui.Layout.prototype._onSizeChanged.call(this);
         var locSize = this._contentSize;
         this._topBoundary = locSize.height;
         this._rightBoundary = locSize.width;

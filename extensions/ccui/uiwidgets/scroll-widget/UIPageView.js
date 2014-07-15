@@ -218,8 +218,8 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         return (this.getSize().width * (idx - this._curPageIdx));
     },
 
-    onSizeChanged: function () {
-        ccui.Layout.prototype.onSizeChanged.call(this);
+    _onSizeChanged: function () {
+        ccui.Layout.prototype._onSizeChanged.call(this);
         this._rightBoundary = this.getContentSize().width;
         this._doLayoutDirty = true;
     },

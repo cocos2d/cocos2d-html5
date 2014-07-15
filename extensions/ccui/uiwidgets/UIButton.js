@@ -571,8 +571,8 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this._titleRenderer.setPositionY(this._size.height * (0.5 - this._anchorPoint.y));
     },
 
-    onSizeChanged: function () {
-        ccui.Widget.prototype.onSizeChanged.call(this);
+    _onSizeChanged: function () {
+        ccui.Widget.prototype._onSizeChanged.call(this);
         this.updateTitleLocation();
         this.normalTextureScaleChangedWithSize();
         this.pressedTextureScaleChangedWithSize();

@@ -132,9 +132,8 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
         return this._labelAtlasRenderer.getStringLength();
     },
 
-    onSizeChanged: function () {
-        ccui.Widget.prototype.onSizeChanged.call(this);
-//        this.labelAtlasScaleChangedWithSize();
+    _onSizeChanged: function () {
+        ccui.Widget.prototype._onSizeChanged.call(this);
         this._labelAtlasRendererAdaptDirty = true;
     },
 

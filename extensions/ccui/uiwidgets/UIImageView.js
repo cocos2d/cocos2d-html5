@@ -237,8 +237,8 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
 	},
 
 
-    onSizeChanged: function () {
-        ccui.Widget.prototype.onSizeChanged.call(this);
+    _onSizeChanged: function () {
+        ccui.Widget.prototype._onSizeChanged.call(this);
         this._imageRendererAdaptDirty = true;
     },
 

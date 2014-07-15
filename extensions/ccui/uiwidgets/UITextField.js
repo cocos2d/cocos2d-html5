@@ -708,8 +708,8 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         this._textFieldRender._setAnchorY(value);
     },
 
-    onSizeChanged: function () {
-        ccui.Widget.prototype.onSizeChanged.call(this);
+    _onSizeChanged: function () {
+        ccui.Widget.prototype._onSizeChanged.call(this);
         this._textFieldRendererAdaptDirty = true;
     },
 
