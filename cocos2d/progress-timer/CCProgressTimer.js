@@ -169,7 +169,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
 
     ctor: null,
 
-    _ctorForCanvas: function () {
+    _ctorForCanvas: function (sprite) {
         cc.Node.prototype.ctor.call(this);
 
         this._type = cc.ProgressTimer.TYPE_RADIAL;
@@ -186,9 +186,11 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         this._radius = 0;
         this._counterClockWise = false;
         this._barRect = cc.rect(0, 0, 0, 0);
+
+        sprite && this._initWithSpriteForCanvas(sprite);
     },
 
-    _ctorForWebGL: function () {
+    _ctorForWebGL: function (sprite) {
         cc.Node.prototype.ctor.call(this);
         this._type = cc.ProgressTimer.TYPE_RADIAL;
         this._percentage = 0.0;
@@ -203,6 +205,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         this._vertexData = null;
         this._vertexArrayBuffer = null;
         this._vertexDataDirty = false;
+
+        sprite && this._initWithSpriteForWebGL(sprite);
     },
 
     /**
@@ -936,10 +940,7 @@ cc.defineGetterSetter(_p, "reverseDir", _p.isReverseDirection, _p.setReverseDire
  * var progress = cc.ProgressTimer.create('progress.png')
  */
 cc.ProgressTimer.create = function (sprite) {
-    var progressTimer = new cc.ProgressTimer();
-    if (progressTimer.initWithSprite(sprite))
-        return progressTimer;
-    return null;
+    return new cc.ProgressTimer(sprite);
 };
 
 /**
