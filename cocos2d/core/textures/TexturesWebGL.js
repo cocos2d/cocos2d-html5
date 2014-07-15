@@ -38,6 +38,7 @@ cc._tmp.WebGLTexture2D = function () {
      * @extends cc.Class
      *
      * @property {WebGLTexture}     name            - <@readonly> WebGLTexture Object
+     * @property {Number}           defaultPixelFormat - The default pixel format
      * @property {Number}           pixelFormat     - <@readonly> Pixel format of the texture
      * @property {Number}           pixelsWidth     - <@readonly> Width in pixels
      * @property {Number}           pixelsHeight    - <@readonly> Height in pixels

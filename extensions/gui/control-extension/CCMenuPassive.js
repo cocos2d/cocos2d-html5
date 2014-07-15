@@ -51,7 +51,6 @@ cc.Spacer.horizontalSpacer = function (space) {
  * @extend cc.Layer
  */
 cc.MenuPassive = cc.Layer.extend(/** @lends cc.MenuPassive# */{
-    RGBAProtocol:true,
 
     _color:null,
     _opacity:0,
@@ -73,7 +72,7 @@ cc.MenuPassive = cc.Layer.extend(/** @lends cc.MenuPassive# */{
 
         if (this._children && this._children.length > 0) {
             for (var i = 0; i < this._children.length; i++) {
-                if (this._children[i] && this._children[i].RGBAProtocol) {
+                if (this._children[i]) {
                     this._children[i].setColor(color);
                 }
             }
@@ -93,7 +92,7 @@ cc.MenuPassive = cc.Layer.extend(/** @lends cc.MenuPassive# */{
 
         if (this._children && this._children.length > 0) {
             for (var i = 0; i < this._children.length; i++) {
-                if (this._children[i] && this._children[i].RGBAProtocol) {
+                if (this._children[i]) {
                     this._children[i].setOpacity(opacity);
                 }
             }

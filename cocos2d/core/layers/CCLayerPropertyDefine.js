@@ -24,26 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc._tmp.PrototypeLayerRGBA = function () {
-    var _p = cc.LayerRGBA.prototype;
-    // Extended properties
-    /** @expose */
-    _p.opacityModifyRGB;
-    cc.defineGetterSetter(_p, "opacityModifyRGB", _p.isOpacityModifyRGB, _p.setOpacityModifyRGB);
-    /** @expose */
-    _p.opacity;
-    cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
-    /** @expose */
-    _p.cascadeOpacity;
-    cc.defineGetterSetter(_p, "cascadeOpacity", _p.isCascadeOpacityEnabled, _p.setCascadeOpacityEnabled);
-    /** @expose */
-    _p.color;
-    cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
-    /** @expose */
-    _p.cascadeColor;
-    cc.defineGetterSetter(_p, "cascadeColor", _p.isCascadeColorEnabled, _p.setCascadeColorEnabled);
-};
-
 cc._tmp.PrototypeLayerColor = function () {
     var _p = cc.LayerColor.prototype;
     // Override properties

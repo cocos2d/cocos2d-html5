@@ -102,7 +102,7 @@ cc.ControlButton = cc.Control.extend(/** @lends cc.ControlButton# */{
         var label = this._titleLabel;
         if (label && label.setString)
             label.setString(this._currentTitle);
-        if (label && label.RGBAProtocol)
+        if (label)
             label.setColor(this._currentTitleColor);
 
         var locContentSize = this.getContentSize();
@@ -158,7 +158,7 @@ cc.ControlButton = cc.Control.extend(/** @lends cc.ControlButton# */{
     },
 
     initWithLabelAndBackgroundSprite: function (label, backgroundSprite) {
-        if (!label || !label.RGBAProtocol)
+        if (!label)
             throw "cc.ControlButton.initWithLabelAndBackgroundSprite(): label should be non-null";
         if (!backgroundSprite)
             throw "cc.ControlButton.initWithLabelAndBackgroundSprite(): backgroundSprite should be non-null";
@@ -305,7 +305,7 @@ cc.ControlButton = cc.Control.extend(/** @lends cc.ControlButton# */{
          var controlChildren = this.getChildren();
          for (var i = 0; i < controlChildren.length; i++) {
          var selChild = controlChildren[i];
-         if (selChild && selChild.RGBAProtocol)
+         if (selChild)
          selChild.setOpacity(opacity);
          }*/
         var locTable = this._backgroundSpriteDispatchTable;

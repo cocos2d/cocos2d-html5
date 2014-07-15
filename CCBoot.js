@@ -1066,7 +1066,6 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.language = currLanguage;
 
     /** The type of browser */
-
     var browserType = sys.BROWSER_TYPE_UNKNOWN;
     var browserTypes = ua.match(/micromessenger|qqbrowser|mqqbrowser|ucbrowser|360browser|baiduboxapp|baidubrowser|maxthon|trident|opera|miuibrowser|firefox/i)
         || ua.match(/chrome|safari/i);
@@ -1092,6 +1091,21 @@ cc._initSys = function (config, CONFIG_KEY) {
         renderType = cc._RENDER_TYPE_CANVAS;
     }
 
+    sys._canUseCanvasNewBlendModes = function(){
+        var canvas = document.createElement('canvas');
+        canvas.width = 1;
+        canvas.height = 1;
+        var context = canvas.getContext('2d');
+        context.fillStyle = '#000';
+        context.fillRect(0,0,1,1);
+        context.globalCompositeOperation = 'multiply';
+        context.fillStyle = '#fff';
+        context.fillRect(0,0,1,1);
+        return context.getImageData(0,0,1,1).data[0] === 0;
+    };
+
+    //Whether or not the Canvas BlendModes are supported.
+    sys._supportCanvasNewBlendModes = sys._canUseCanvasNewBlendModes();
 
     if (renderType == cc._RENDER_TYPE_WEBGL) {
         if (!win.WebGLRenderingContext
@@ -1110,7 +1124,6 @@ cc._initSys = function (config, CONFIG_KEY) {
     }
     cc._renderType = renderType;
     //++++++++++++++++++something about cc._renderTYpe and cc._supportRender end++++++++++++++++++++++++++++++
-
 
     // check if browser supports Web Audio
     // check Web Audio's context
@@ -1134,7 +1147,6 @@ cc._initSys = function (config, CONFIG_KEY) {
         sys.localStorage = function () {
         };
     }
-
 
     var capabilities = sys.capabilities = {"canvas": true};
     if (cc._renderType == cc._RENDER_TYPE_WEBGL)
@@ -1350,18 +1362,36 @@ cc._setup = function (el, width, height) {
 
     // Init singletons
 
-    // View
+    /**
+     * @type {cc.EGLView}
+     * @name cc.view
+     * cc.view is the shared view object.
+     */
     cc.view = cc.EGLView._getInstance();
     // register system events
     cc.inputManager.registerSystemEvent(cc._canvas);
 
-    // Director
+    /**
+     * @type {cc.Director}
+     * @name cc.director
+     */
     cc.director = cc.Director._getInstance();
-    if (cc.director.setOpenGLView)cc.director.setOpenGLView(cc.view);
+    if (cc.director.setOpenGLView)
+        cc.director.setOpenGLView(cc.view);
+    /**
+     * @type {cc.Size}
+     * @name cc.winSize
+     * cc.winSize is the alias object for the size of the current game window.
+     */
     cc.winSize = cc.director.getWinSize();
 
     // Parsers
     cc.saxParser = new cc.SAXParser();
+    /**
+     * @type {cc.PlistParser}
+     * @name cc.plistParser
+     * A Plist Parser
+     */
     cc.plistParser = new cc.PlistParser();
 };
 
@@ -1544,9 +1574,7 @@ cc.game = {
         if (document["ccConfig"]) {
             self.config = _init(document["ccConfig"]);
         } else {
-
             try {
-
                 var cocos_script = document.getElementsByTagName('script');
                 for(var i=0;i<cocos_script.length;i++){
                     var _t = cocos_script[i].getAttribute('cocos');
@@ -1571,7 +1599,6 @@ cc.game = {
                 cc.log("Failed to read or parse project.json");
                 self.config = _init({});
             }
-
         }
         //init debug move to CCDebugger
         cc._initSys(self.config, CONFIG_KEY);

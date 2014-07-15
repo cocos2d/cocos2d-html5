@@ -1117,9 +1117,7 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
  * var actionBy = cc.RotateBy.create(2, 360);
  */
 cc.RotateBy.create = function (duration, deltaAngleX, deltaAngleY) {
-    var rotateBy = new cc.RotateBy();
-    rotateBy.initWithDuration(duration, deltaAngleX, deltaAngleY);
-    return rotateBy;
+    return new cc.RotateBy(duration, deltaAngleX, deltaAngleY);
 };
 
 
@@ -1504,10 +1502,7 @@ cc.SkewBy = cc.SkewTo.extend(/** @lends cc.SkewBy# */{
  * var actionBy = cc.SkewBy.create(2, 0, -90);
  */
 cc.SkewBy.create = function (t, sx, sy) {
-    var skewBy = new cc.SkewBy();
-    if (skewBy)
-        skewBy.initWithDuration(t, sx, sy);
-    return skewBy;
+    return new cc.SkewBy(t, sx, sy);
 };
 
 
@@ -2053,9 +2048,7 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
  * var actionTo = cc.ScaleTo.create(2, 0.5, 2);
  */
 cc.ScaleTo.create = function (duration, sx, sy) { //function overload
-    var scaleTo = new cc.ScaleTo();
-    scaleTo.initWithDuration(duration, sx, sy);
-    return scaleTo;
+    return new cc.ScaleTo(duration, sx, sy);
 };
 
 
@@ -2195,9 +2188,7 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
  * var action = cc.Blink.create(2, 10);
  */
 cc.Blink.create = function (duration, blinks) {
-    var blink = new cc.Blink();
-    blink.initWithDuration(duration, blinks);
-    return blink;
+    return new cc.Blink(duration, blinks);
 };
 
 /** Fades an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from the current value to a custom one.
@@ -2250,10 +2241,9 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
      */
     update:function (time) {
         time = this._computeEaseTime(time);
-        if (this.target.RGBAProtocol) {
-            var fromOpacity = this._fromOpacity !== undefined ? this._fromOpacity : 255;
-            this.target.opacity = fromOpacity + (this._toOpacity - fromOpacity) * time;
-        }
+        var fromOpacity = this._fromOpacity !== undefined ? this._fromOpacity : 255;
+        this.target.opacity = fromOpacity + (this._toOpacity - fromOpacity) * time;
+
     },
 
     /**
@@ -2261,9 +2251,9 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        if(this.target.RGBAProtocol){
-            this._fromOpacity = target.opacity;
-        }
+
+        this._fromOpacity = target.opacity;
+
     }
 });
 
@@ -2286,6 +2276,16 @@ cc.FadeTo.create = function (duration, opacity) {
  */
 cc.FadeIn = cc.FadeTo.extend(/** @lends cc.FadeIn# */{
     _reverseAction: null,
+
+    /**
+     * @constructor
+     * @param {Number} duration duration in seconds
+     */
+    ctor:function (duration) {
+        cc.FadeTo.prototype.ctor.call(this);
+        duration && this.initWithDuration(duration, 255);
+    },
+
     /**
      * @return {cc.ActionInterval}
      */
@@ -2326,7 +2326,7 @@ cc.FadeIn = cc.FadeTo.extend(/** @lends cc.FadeIn# */{
  * var action = cc.FadeIn.create(1.0);
  */
 cc.FadeIn.create = function (duration) {
-    return new cc.FadeIn(duration, 255);
+    return new cc.FadeIn(duration);
 };
 
 
@@ -2336,6 +2336,16 @@ cc.FadeIn.create = function (duration) {
  * @extends cc.FadeTo
  */
 cc.FadeOut = cc.FadeTo.extend(/** @lends cc.FadeOut# */{
+
+    /**
+     * @constructor
+     * @param {Number} duration duration in seconds
+     */
+    ctor:function (duration) {
+        cc.FadeTo.prototype.ctor.call(this);
+        duration && this.initWithDuration(duration, 0);
+    },
+
     /**
      * @return {cc.ActionInterval}
      */
@@ -2368,9 +2378,7 @@ cc.FadeOut = cc.FadeTo.extend(/** @lends cc.FadeOut# */{
  * var action = cc.FadeOut.create(1.0);
  */
 cc.FadeOut.create = function (d) {
-    var action = new cc.FadeOut();
-    action.initWithDuration(d, 0);
-    return action;
+    return new cc.FadeOut(d);
 };
 
 /** Tints a cc.Node that implements the cc.NodeRGB protocol from current tint to a custom one.
@@ -2431,9 +2439,8 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        if (this.target.RGBAProtocol) {
-            this._from = this.target.color;
-        }
+
+        this._from = this.target.color;
     },
 
     /**
@@ -2442,7 +2449,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
     update:function (time) {
         time = this._computeEaseTime(time);
         var locFrom = this._from, locTo = this._to;
-        if (locFrom && this.target.RGBAProtocol) {
+        if (locFrom) {
             this.target.color = cc.color(locFrom.r + (locTo.r - locFrom.r) * time,
                                         locFrom.g + (locTo.g - locFrom.g) * time,
 	                                    locFrom.b + (locTo.b - locFrom.b) * time);
@@ -2525,12 +2532,12 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        if (target.RGBAProtocol) {
-            var color = target.color;
-            this._fromR = color.r;
-            this._fromG = color.g;
-            this._fromB = color.b;
-        }
+
+        var color = target.color;
+        this._fromR = color.r;
+        this._fromG = color.g;
+        this._fromB = color.b;
+
     },
 
     /**
@@ -2538,11 +2545,11 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
      */
     update:function (time) {
         time = this._computeEaseTime(time);
-        if (this.target.RGBAProtocol) {
-            this.target.color = cc.color(this._fromR + this._deltaR * time,
-                                        this._fromG + this._deltaG * time,
-                                        this._fromB + this._deltaB * time);
-        }
+
+        this.target.color = cc.color(this._fromR + this._deltaR * time,
+                                    this._fromG + this._deltaG * time,
+                                    this._fromB + this._deltaB * time);
+
     },
 
     /**

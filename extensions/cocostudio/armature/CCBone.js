@@ -26,7 +26,7 @@
 /**
  * Base class for ccs.Bone objects.
  * @class
- * @extends ccs.NodeRGBA
+ * @extends ccs.Node
  *
  * @property {ccs.BoneData}         boneData                - The bone data
  * @property {ccs.Armature}         armature                - The armature
@@ -43,7 +43,7 @@
  * @property {Boolean}              blendDirty              - Indicate whether the blend is dirty
  *
  */
-ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
+ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
     _boneData: null,
     _armature: null,
     _childArmature: null,
@@ -63,7 +63,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
     _dataVersion: 0,
     _className: "Bone",
     ctor: function () {
-        cc.NodeRGBA.prototype.ctor.call(this);
+        cc.Node.prototype.ctor.call(this);
         this._boneData = null;
         this._armature = null;
         this._childArmature = null;
@@ -75,7 +75,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
         this._childrenBone = [];
         this.parentBone = null;
         this.boneTransformDirty = true;
-        this._worldTransform = cc.AffineTransformMake(1, 0, 0, 1, 0, 0);
+        this._worldTransform = cc.affineTransformMake(1, 0, 0, 1, 0, 0);
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         this.blendDirty = false;
     },
@@ -101,7 +101,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
      * @return {Boolean}
      */
     init: function (name) {
-        cc.NodeRGBA.prototype.init.call(this);
+        cc.Node.prototype.init.call(this);
         if (name) {
             this.name = name;
         }
@@ -212,7 +212,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
             ccs.TransformHelp.nodeToMatrix(locWorldInfo, locWorldTransform);
 
             if (locArmatureParentBone) {
-                this._worldTransform = cc.AffineTransformConcat(locWorldTransform, locArmature.nodeToParentTransform());
+                this._worldTransform = cc.affineTransformConcat(locWorldTransform, locArmature.nodeToParentTransform());
             }
         }
         ccs.DisplayFactory.updateDisplay(this, dt, this.boneTransformDirty || locArmature.getArmatureTransformDirty());
@@ -258,7 +258,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
      */
     updateDisplayedColor: function (color) {
         this._realColor = cc.color(255, 255, 255);
-        cc.NodeRGBA.prototype.updateDisplayedColor.call(this, color);
+        cc.Node.prototype.updateDisplayedColor.call(this, color);
         this.updateColor();
     },
 
@@ -268,7 +268,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
      */
     updateDisplayedOpacity: function (opacity) {
         this._realOpacity = 255;
-        cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, opacity);
+        cc.Node.prototype.updateDisplayedOpacity.call(this, opacity);
         this.updateColor();
     },
 
@@ -277,7 +277,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
      * @param {cc.Color} color
      */
     setColor: function (color) {
-        cc.NodeRGBA.prototype.setColor.call(this, color);
+        cc.Node.prototype.setColor.call(this, color);
         this.updateColor();
     },
 
@@ -286,7 +286,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
      * @param {Number} opacity  0-255
      */
     setOpacity: function (opacity) {
-        cc.NodeRGBA.prototype.setOpacity.call(this, opacity);
+        cc.Node.prototype.setOpacity.call(this, opacity);
         this.updateColor();
     },
 
@@ -295,7 +295,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
      */
     updateColor: function () {
         var display = this.displayManager.getDisplayRenderNode();
-        if (display && display.RGBAProtocol) {
+        if (display) {
             var locDisplayedColor = this._displayedColor;
             var locTweenData = this._tweenData;
             var locOpacity = this._displayedOpacity * locTweenData.a / 255;
@@ -461,7 +461,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
      * @returns {cc.AffineTransform}
      */
     nodeToWorldTransform: function () {
-        return cc.AffineTransformConcat(this._worldTransform, this._armature.nodeToWorldTransform());
+        return cc.affineTransformConcat(this._worldTransform, this._armature.nodeToWorldTransform());
     },
 
     /**

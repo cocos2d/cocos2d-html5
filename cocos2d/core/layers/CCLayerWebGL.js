@@ -59,7 +59,7 @@ cc._tmp.WebGLLayerColor = function () {
         _t._verticesFloat32Buffer = cc._renderContext.createBuffer();
         _t._colorsUint8Buffer = cc._renderContext.createBuffer();
 
-        cc.LayerRGBA.prototype.ctor.call(_t);
+        cc.Layer.prototype.ctor.call(_t);
         _t._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
 
         cc.LayerColor.prototype.init.call(_t, color, width, height);

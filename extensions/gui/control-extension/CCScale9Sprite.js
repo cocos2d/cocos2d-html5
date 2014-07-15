@@ -37,7 +37,7 @@
  *
  * @see http://yannickloriot.com/library/ios/cccontrolextension/Classes/CCScale9Sprite.html
  * @class
- * @extends cc.NodeRGBA
+ * @extends cc.Node
  *
  * @property {cc.Size}  preferredSize   - The preferred size of the 9-slice sprite
  * @property {cc.Rect}  capInsets       - The cap insets of the 9-slice sprite
@@ -46,8 +46,7 @@
  * @property {Number}   insetRight      - The right inset of the 9-slice sprite
  * @property {Number}   insetBottom     - The bottom inset of the 9-slice sprite
  */
-cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
-    RGBAProtocol: true,
+cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
     _spriteRect: null,
     _capInsetsInternal: null,
@@ -199,7 +198,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     ctor: function () {
-        cc.NodeRGBA.prototype.ctor.call(this);
+        cc.Node.prototype.ctor.call(this);
         this._spriteRect = cc.rect(0, 0, 0, 0);
         this._capInsetsInternal = cc.rect(0, 0, 0, 0);
 
@@ -252,14 +251,14 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         var scaleChildren = this._scale9Image.getChildren();
         for (var i = 0; i < scaleChildren.length; i++) {
             var selChild = scaleChildren[i];
-            if (selChild && selChild.RGBAProtocol)
+            if (selChild)
                 selChild.setOpacity(opacity);
         }
         this._color.a = opacity;
     },
 
     updateDisplayedOpacity: function(parentOpacity){
-        cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
+        cc.Node.prototype.updateDisplayedOpacity.call(this, parentOpacity);
         this.setOpacity(this._displayedOpacity);
     },
 
@@ -280,7 +279,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         var scaleChildren = this._scale9Image.getChildren();
         for (var i = 0; i < scaleChildren.length; i++) {
             var selChild = scaleChildren[i];
-            if (selChild && selChild.RGBAProtocol)
+            if (selChild)
                 selChild.setColor(color);
         }
 
@@ -290,7 +289,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     updateDisplayedColor: function(parentColor){
-        cc.NodeRGBA.prototype.updateDisplayedColor.call(this, parentColor);
+        cc.Node.prototype.updateDisplayedColor.call(this, parentColor);
         this.setColor(this._displayedColor);
     },
 
@@ -401,7 +400,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
             this._updatePositions();
             this._positionsAreDirty = false;
         }
-        cc.NodeRGBA.prototype.visit.call(this, ctx);
+        cc.Node.prototype.visit.call(this, ctx);
     },
 
     init: function () {
@@ -701,20 +700,20 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         x += center_w;
         var rightbottombounds = cc.rect(x, y, right_w, bottom_h);
 
-        var t = cc.AffineTransformMakeIdentity();
+        var t = cc.affineTransformMakeIdentity();
         if (!rotated) {
             // CCLog("!rotated");
-            t = cc.AffineTransformTranslate(t, rect.x, rect.y);
+            t = cc.affineTransformTranslate(t, rect.x, rect.y);
 
-            cc._RectApplyAffineTransformIn(centerbounds, t);
-            cc._RectApplyAffineTransformIn(rightbottombounds, t);
-            cc._RectApplyAffineTransformIn(leftbottombounds, t);
-            cc._RectApplyAffineTransformIn(righttopbounds, t);
-            cc._RectApplyAffineTransformIn(lefttopbounds, t);
-            cc._RectApplyAffineTransformIn(rightcenterbounds, t);
-            cc._RectApplyAffineTransformIn(leftcenterbounds, t);
-            cc._RectApplyAffineTransformIn(centerbottombounds, t);
-            cc._RectApplyAffineTransformIn(centertopbounds, t);
+            cc._rectApplyAffineTransformIn(centerbounds, t);
+            cc._rectApplyAffineTransformIn(rightbottombounds, t);
+            cc._rectApplyAffineTransformIn(leftbottombounds, t);
+            cc._rectApplyAffineTransformIn(righttopbounds, t);
+            cc._rectApplyAffineTransformIn(lefttopbounds, t);
+            cc._rectApplyAffineTransformIn(rightcenterbounds, t);
+            cc._rectApplyAffineTransformIn(leftcenterbounds, t);
+            cc._rectApplyAffineTransformIn(centerbottombounds, t);
+            cc._rectApplyAffineTransformIn(centertopbounds, t);
 
             // Centre
             this._centre = new cc.Sprite();
@@ -775,18 +774,18 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
             var rotatedcenterbottombounds = centerbottombounds;
             var rotatedcentertopbounds = centertopbounds;
 
-            t = cc.AffineTransformTranslate(t, rect.height + rect.x, rect.y);
-            t = cc.AffineTransformRotate(t, 1.57079633);
+            t = cc.affineTransformTranslate(t, rect.height + rect.x, rect.y);
+            t = cc.affineTransformRotate(t, 1.57079633);
 
-            centerbounds = cc.RectApplyAffineTransform(centerbounds, t);
-            rightbottombounds = cc.RectApplyAffineTransform(rightbottombounds, t);
-            leftbottombounds = cc.RectApplyAffineTransform(leftbottombounds, t);
-            righttopbounds = cc.RectApplyAffineTransform(righttopbounds, t);
-            lefttopbounds = cc.RectApplyAffineTransform(lefttopbounds, t);
-            rightcenterbounds = cc.RectApplyAffineTransform(rightcenterbounds, t);
-            leftcenterbounds = cc.RectApplyAffineTransform(leftcenterbounds, t);
-            centerbottombounds = cc.RectApplyAffineTransform(centerbottombounds, t);
-            centertopbounds = cc.RectApplyAffineTransform(centertopbounds, t);
+            centerbounds = cc.rectApplyAffineTransform(centerbounds, t);
+            rightbottombounds = cc.rectApplyAffineTransform(rightbottombounds, t);
+            leftbottombounds = cc.rectApplyAffineTransform(leftbottombounds, t);
+            righttopbounds = cc.rectApplyAffineTransform(righttopbounds, t);
+            lefttopbounds = cc.rectApplyAffineTransform(lefttopbounds, t);
+            rightcenterbounds = cc.rectApplyAffineTransform(rightcenterbounds, t);
+            leftcenterbounds = cc.rectApplyAffineTransform(leftcenterbounds, t);
+            centerbottombounds = cc.rectApplyAffineTransform(centerbottombounds, t);
+            centertopbounds = cc.rectApplyAffineTransform(centertopbounds, t);
 
             rotatedcenterbounds.x = centerbounds.x;
             rotatedcenterbounds.y = centerbounds.y;
