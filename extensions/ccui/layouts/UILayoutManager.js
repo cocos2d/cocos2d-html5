@@ -243,10 +243,8 @@ ccui.relativeLayoutManager = {
                 if (relativeWidget){
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
-                    var locationTop = relativeWidget.getTopBoundary();
-                    var locationLeft = relativeWidget.getLeftBoundary();
-                    this._finalPositionY = locationTop + ap.y * cs.height;
-                    this._finalPositionX = locationLeft + ap.x * cs.width;
+                    this._finalPositionY = relativeWidget.getTopBoundary() + ap.y * cs.height;
+                    this._finalPositionX = relativeWidget.getLeftBoundary() + ap.x * cs.width;
                 }
                 break;
             case ccui.RelativeLayoutParameter.LOCATION_ABOVE_CENTER:
@@ -254,8 +252,7 @@ ccui.relativeLayoutManager = {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
                     var rbs = relativeWidget.getContentSize();
-                    var locationTop = relativeWidget.getTopBoundary();
-                    this._finalPositionY = locationTop + ap.y * cs.height;
+                    this._finalPositionY = relativeWidget.getTopBoundary() + ap.y * cs.height;
                     this._finalPositionX = relativeWidget.getLeftBoundary() + rbs.width * 0.5 + ap.x * cs.width - cs.width * 0.5;
                 }
                 break;
@@ -263,20 +260,16 @@ ccui.relativeLayoutManager = {
                 if (relativeWidget) {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
-                    var locationTop = relativeWidget.getTopBoundary();
-                    var locationRight = relativeWidget.getRightBoundary();
-                    this._finalPositionY = locationTop + ap.y * cs.height;
-                    this._finalPositionX = locationRight - (1.0 - ap.x) * cs.width;
+                    this._finalPositionY = relativeWidget.getTopBoundary() + ap.y * cs.height;
+                    this._finalPositionX = relativeWidget.getRightBoundary() - (1.0 - ap.x) * cs.width;
                 }
                 break;
             case ccui.RelativeLayoutParameter.LOCATION_LEFT_OF_TOPALIGN:
                 if (relativeWidget){
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
-                    var locationTop = relativeWidget.getTopBoundary();
-                    var locationLeft = relativeWidget.getLeftBoundary();
-                    this._finalPositionY = locationTop - (1.0 - ap.y) * cs.height;
-                    this._finalPositionX = locationLeft - (1.0 - ap.x) * cs.width;
+                    this._finalPositionY = relativeWidget.getTopBoundary() - (1.0 - ap.y) * cs.height;
+                    this._finalPositionX = relativeWidget.getLeftBoundary() - (1.0 - ap.x) * cs.width;
                 }
                 break;
             case ccui.RelativeLayoutParameter.LOCATION_LEFT_OF_CENTER:
@@ -284,8 +277,7 @@ ccui.relativeLayoutManager = {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
                     var rbs = relativeWidget.getContentSize();
-                    var locationLeft = relativeWidget.getLeftBoundary();
-                    this._finalPositionX = locationLeft - (1.0 - ap.x) * cs.width;
+                    this._finalPositionX = relativeWidget.getLeftBoundary() - (1.0 - ap.x) * cs.width;
                     this._finalPositionY = relativeWidget.getBottomBoundary() + rbs.height * 0.5 + ap.y * cs.height - cs.height * 0.5;
                 }
                 break;
@@ -293,20 +285,16 @@ ccui.relativeLayoutManager = {
                 if (relativeWidget) {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
-                    var locationBottom = relativeWidget.getBottomBoundary();
-                    var locationLeft = relativeWidget.getLeftBoundary();
-                    this._finalPositionY = locationBottom + ap.y * cs.height;
-                    this._finalPositionX = locationLeft - (1.0 - ap.x) * cs.width;
+                    this._finalPositionY = relativeWidget.getBottomBoundary() + ap.y * cs.height;
+                    this._finalPositionX = relativeWidget.getLeftBoundary() - (1.0 - ap.x) * cs.width;
                 }
                 break;
             case ccui.RelativeLayoutParameter.LOCATION_RIGHT_OF_TOPALIGN:
                 if (relativeWidget){
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
-                    var locationTop = relativeWidget.getTopBoundary();
-                    var locationRight = relativeWidget.getRightBoundary();
-                    this._finalPositionY = locationTop - (1.0 - ap.y) * cs.height;
-                    this._finalPositionX = locationRight + ap.x * cs.width;
+                    this._finalPositionY = relativeWidget.getTopBoundary() - (1.0 - ap.y) * cs.height;
+                    this._finalPositionX = relativeWidget.getRightBoundary() + ap.x * cs.width;
                 }
                 break;
             case ccui.RelativeLayoutParameter.LOCATION_RIGHT_OF_CENTER:
@@ -323,20 +311,16 @@ ccui.relativeLayoutManager = {
                 if (relativeWidget){
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
-                    var locationBottom = relativeWidget.getBottomBoundary();
-                    var locationRight = relativeWidget.getRightBoundary();
-                    this._finalPositionY = locationBottom + ap.y * cs.height;
-                    this._finalPositionX = locationRight + ap.x * cs.width;
+                    this._finalPositionY = relativeWidget.getBottomBoundary() + ap.y * cs.height;
+                    this._finalPositionX = relativeWidget.getRightBoundary() + ap.x * cs.width;
                 }
                 break;
             case ccui.RelativeLayoutParameter.LOCATION_BELOW_LEFTALIGN:
                 if (relativeWidget){
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
-                    var locationBottom = relativeWidget.getBottomBoundary();
-                    var locationLeft = relativeWidget.getLeftBoundary();
-                    this._finalPositionY = locationBottom - (1.0 - ap.y) * cs.height;
-                    this._finalPositionX = locationLeft + ap.x * cs.width;
+                    this._finalPositionY =  relativeWidget.getBottomBoundary() - (1.0 - ap.y) * cs.height;
+                    this._finalPositionX = relativeWidget.getLeftBoundary() + ap.x * cs.width;
                 }
                 break;
             case ccui.RelativeLayoutParameter.LOCATION_BELOW_CENTER:
@@ -344,9 +328,7 @@ ccui.relativeLayoutManager = {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
                     var rbs = relativeWidget.getContentSize();
-                    var locationBottom = relativeWidget.getBottomBoundary();
-
-                    this._finalPositionY = locationBottom - (1.0 - ap.y) * cs.height;
+                    this._finalPositionY = relativeWidget.getBottomBoundary() - (1.0 - ap.y) * cs.height;
                     this._finalPositionX = relativeWidget.getLeftBoundary() + rbs.width * 0.5 + ap.x * cs.width - cs.width * 0.5;
                 }
                 break;
@@ -354,10 +336,8 @@ ccui.relativeLayoutManager = {
                 if (relativeWidget) {
                     if (this._relativeWidgetLP && !this._relativeWidgetLP._put)
                         return false;
-                    var locationBottom = relativeWidget.getBottomBoundary();
-                    var locationRight = relativeWidget.getRightBoundary();
-                    this._finalPositionY = locationBottom - (1.0 - ap.y) * cs.height;
-                    this._finalPositionX = locationRight - (1.0 - ap.x) * cs.width;
+                    this._finalPositionY = relativeWidget.getBottomBoundary() - (1.0 - ap.y) * cs.height;
+                    this._finalPositionX = relativeWidget.getRightBoundary() - (1.0 - ap.x) * cs.width;
                 }
                 break;
             default:
