@@ -877,6 +877,6 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
  * var multiLayer = cc.LayerMultiple.create(layer1, layer2, layer3);//any number of layers
  */
 cc.LayerMultiplex.create = function (/*Multiple Arguments*/) {
-    return new cc.LayerMultiplex(arguments);
+    return new cc.LayerMultiplex(Array.prototype.slice.call(arguments));
 };
 
