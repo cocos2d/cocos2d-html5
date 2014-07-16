@@ -1533,7 +1533,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 if (this._isLastWidgetInContainer(current, direction)) {
                     if (this._isWidgetAncestorSupportLoopFocus(this, direction))
                         return this.findNextFocusedWidget(direction, this);
-
                     return (current instanceof ccui.Layout) ? current : this._focusedWidget;
                 } else
                     return this.findNextFocusedWidget(direction, this);
