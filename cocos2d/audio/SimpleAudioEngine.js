@@ -1974,7 +1974,7 @@ cc.AudioEngine.isMusicPlaying = false;
  */
 cc.AudioEngine.getInstance = function () {
     if (!this._instance) {
-        if (cc.Browser.supportWebAudio) {
+        if (cc.Browser.supportWebAudio && location.origin != "file://") {
             this._instance = new cc.WebAudioEngine();
         } else {
             if (cc.Browser.multipleAudioWhiteList.indexOf(cc.Browser.type) !== -1)
