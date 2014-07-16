@@ -1608,7 +1608,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 } else {
                     var textureData = locValueForKey("textureImageData", dictionary);
 
-                    if (textureData && textureData.length == 0) {
+                    if (!str || 0 === str.length) {
                         tex = cc.textureCache.addImage(imgPath);
                         if (!tex)
                             return false;
