@@ -805,7 +805,10 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
      */
     ctor: function (layers) {
         cc.Layer.prototype.ctor.call(this);
-        layers && cc.LayerMultiplex.prototype.initWithLayers.call(this, layers);
+        if (layers instanceof Array)
+            cc.LayerMultiplex.prototype.initWithLayers.call(this, layers);
+        else
+            cc.LayerMultiplex.prototype.initWithLayers.call(this, Array.prototype.slice.call(arguments));
     },
 
     /**
@@ -876,6 +879,6 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
  * var multiLayer = cc.LayerMultiple.create(layer1, layer2, layer3);//any number of layers
  */
 cc.LayerMultiplex.create = function (/*Multiple Arguments*/) {
-    return new cc.LayerMultiplex(arguments);
+    return new cc.LayerMultiplex(Array.prototype.slice.call(arguments));
 };
 
