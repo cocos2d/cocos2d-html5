@@ -356,7 +356,8 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             }
         } else {
             image = new Image();
-            image.crossOrigin = "Anonymous";
+            if(location.origin != "file://")
+                image.crossOrigin = "Anonymous";
 
             image.__loadListener = this._clientLoadHandler.bind(image, path, this, selector, target);
             image.addEventListener("load", image.__loadListener);
@@ -372,7 +373,8 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
 
     _addImageBeforeRenderer:function(path){
         var texture = new Image();
-        texture.crossOrigin = "Anonymous";
+        if(location.origin != "file://")
+            texture.crossOrigin = "Anonymous";
 
         texture.__loadListener = this._beforeRendererLoadHandler.bind(texture, path, this);
         texture.addEventListener("load", texture.__loadListener);
@@ -414,7 +416,8 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             }
         } else {
             image = new Image();
-            image.crossOrigin = "Anonymous";
+            if(location.origin != "file://")
+                image.crossOrigin = "Anonymous";
 
             image.__loadListener = this._preloadHandler.bind(image, path, this);
             image.addEventListener("load", image.__loadListener);
