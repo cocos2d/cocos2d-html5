@@ -156,11 +156,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
             //visit for canvas
             _t.sortAllChildren();
-            // draw children zOrder < 0
+            cc.view._setScaleXYForRenderTexture();
             for (i = 0; i < len; i++) {
                 children[i].visit(bakeContext);
             }
-
+            cc.view._resetScale();
             this._cacheDirty = false;
         }
 
@@ -440,6 +440,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             }
 
             var child;
+            cc.view._setScaleXYForRenderTexture();
             //visit for canvas
             if (len > 0) {
                 _t.sortAllChildren();
@@ -457,6 +458,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 }
             } else
                 _t.draw(bakeContext);
+            cc.view._resetScale();
             this._cacheDirty = false;
         }
 
@@ -803,7 +805,10 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
      */
     ctor: function (layers) {
         cc.Layer.prototype.ctor.call(this);
-        layers && cc.LayerMultiplex.prototype.initWithLayers.call(this, layers);
+        if (layers instanceof Array)
+            cc.LayerMultiplex.prototype.initWithLayers.call(this, layers);
+        else
+            cc.LayerMultiplex.prototype.initWithLayers.call(this, Array.prototype.slice.call(arguments));
     },
 
     /**
@@ -874,6 +879,6 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
  * var multiLayer = cc.LayerMultiple.create(layer1, layer2, layer3);//any number of layers
  */
 cc.LayerMultiplex.create = function (/*Multiple Arguments*/) {
-    return new cc.LayerMultiplex(arguments);
+    return new cc.LayerMultiplex(Array.prototype.slice.call(arguments));
 };
 
