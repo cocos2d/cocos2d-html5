@@ -134,7 +134,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _transformGLDirty:null,
     _transform:null,
     _inverse:null,
-
+    _cachedParent: null,
     //since 2.0 api
     _reorderChildDirty:false,
     _shaderProgram:null,
@@ -2000,6 +2000,15 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
     },
 
+    _setCachedParent: function(cachedParent){
+        if(this._cachedParent ==  cachedParent)
+            return;
+
+        this._cachedParent = cachedParent;
+        var children = this._children;
+        for(var i = 0, len = children.length; i < len; i++)
+            children[i]._setCachedParent(cachedParent);
+    },
     /**
      * Returns a camera object that lets you move the node using a gluLookAt
      * @return {cc.Camera} A CCCamera object that lets you move the node using a gluLookAt

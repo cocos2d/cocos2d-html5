@@ -46,6 +46,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     _touchMode:cc.TOUCH_ALL_AT_ONCE,
     _isMouseEnabled:false,
     _mousePriority:0,
+    _isBaked: false,
+    _bakeSprite: null,
 	// This is only useful in mode TOUCH_ONE_BY_ONE
 	_swallowTouch:true,
 
@@ -587,7 +589,112 @@ cc.Layer.create = function () {
         return ret;
     return null;
 };
+if (!cc.Browser.supportWebGL) {
+    var p = cc.Layer.prototype;
+    p.bake = function(){
+        if (!this._isBaked) {
+            //limit: 1. its children's blendfunc are invalid.
+            this._isBaked = this._cacheDirty = true;
+            this._cachedParent = this;
+            var children = this._children;
+            for(var i = 0, len = children.length; i < len; i++)
+                children[i]._setCachedParent(this);
 
+            if (!this._bakeSprite)
+                this._bakeSprite = new cc.BakeSprite();
+        }
+    };
+
+    p.unbake = function(){
+        if (this._isBaked) {
+            this._isBaked = false;
+            this._cacheDirty = true;
+
+            this._cachedParent = null;
+            var children = this._children;
+            for(var i = 0, len = children.length; i < len; i++)
+                children[i]._setCachedParent(null);
+        }
+    };
+
+    p.visit = function(ctx){
+        if(!this._isBaked){
+            cc.Node.prototype.visit.call(this, ctx);
+            return;
+        }
+
+        var context = ctx || cc._renderContext, i;
+        var _t = this;
+        var children = _t._children;
+        var len = children.length;
+        // quick return if not visible
+        if (!_t._visible || len === 0)
+            return;
+
+        var locBakeSprite = this._bakeSprite;
+
+        context.save();
+        _t.transform(context);
+
+        if(this._cacheDirty){
+            //compute the bounding box of the bake layer.
+            var boundingBox = this._getBoundingBoxForBake();
+            boundingBox.width = 0 | boundingBox.width;
+            boundingBox.height = 0 | boundingBox.height;
+            var bakeContext = locBakeSprite.getCacheContext();
+            locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
+            bakeContext.translate(0 - boundingBox.x, boundingBox.height + boundingBox.y);
+
+            //reset the bake sprite's position
+            var anchor = locBakeSprite.getAnchorPointInPoints();
+            locBakeSprite.setPosition(anchor.x + boundingBox.x, anchor.y + boundingBox.y);
+
+            //visit for canvas
+            _t.sortAllChildren();
+            // draw children zOrder < 0
+            cc.EGLView.getInstance()._setScaleXYForRenderTexture();
+            for (i = 0; i < len; i++) {
+                children[i].visit(bakeContext);
+            }
+            cc.EGLView.getInstance()._resetScale();
+            this._cacheDirty = false;
+        }
+
+        //the bakeSprite is drawing
+        locBakeSprite.visit(context);
+
+        _t.arrivalOrder = 0;
+        context.restore();
+    };
+
+    p._getBoundingBoxForBake = function () {
+        var rect = null;
+
+        //query child's BoundingBox
+        if (!this._children || this._children.length === 0)
+            return cc.rect(0, 0, 10, 10);
+
+        var locChildren = this._children;
+        for (var i = 0; i < locChildren.length; i++) {
+            var child = locChildren[i];
+            if (child && child._visible) {
+                if(rect){
+                    var childRect = child._getBoundingBoxToCurrentNode();
+                    if (childRect)
+                        rect = cc.rectUnion(rect, childRect);
+                }else{
+                    rect = child._getBoundingBoxToCurrentNode();
+                }
+            }
+        }
+        return rect;
+    };
+    p = null;
+}else{
+    cc.assert(typeof cc._tmp.LayerDefineForWebGL === "function", cc._LogInfos.MissingFile, "CCLayerWebGL.js");
+    cc._tmp.LayerDefineForWebGL();
+    delete cc._tmp.LayerDefineForWebGL;
+}
 /**
  * <p>
  *     CCLayerRGBA is a subclass of CCLayer that implements the CCRGBAProtocol protocol using a solid color as the background.                        <br/>
