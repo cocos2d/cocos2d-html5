@@ -168,6 +168,7 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
 
     /**
      * Copy data from node
+     * @function
      * @param {ccs.BaseData} node
      */
     copy:function (node) {
@@ -188,6 +189,7 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
 
     /**
      * color setter
+     * @function
      * @param {cc.Color} color
      */
     setColor:function(color){
@@ -199,6 +201,7 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
 
     /**
      * color getter
+     * @function
      * @returns {cc.Color}
      */
     getColor:function(){
@@ -207,6 +210,7 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
 
     /**
      * Calculate two baseData's between value(to - from) and set to self
+     * @function
      * @param {ccs.BaseData} from
      * @param {ccs.BaseData} to
      * @param {Boolean} limit
@@ -265,6 +269,7 @@ ccs.DisplayData = ccs.Class.extend(/** @lends ccs.DisplayData# */{
     },
     /**
      * change display name to texture type
+     * @function
      * @param {String} displayName
      * @returns {String}
      */
@@ -280,6 +285,7 @@ ccs.DisplayData = ccs.Class.extend(/** @lends ccs.DisplayData# */{
     },
     /**
      * copy data
+     * @function
      * @param {ccs.DisplayData} displayData
      */
     copy:function (displayData) {
@@ -301,6 +307,7 @@ ccs.SpriteDisplayData = ccs.DisplayData.extend(/** @lends ccs.SpriteDisplayData#
     },
     /**
      * copy data
+     * @function
      * @param {ccs.SpriteDisplayData} displayData
      */
     copy:function (displayData) {
@@ -311,7 +318,7 @@ ccs.SpriteDisplayData = ccs.DisplayData.extend(/** @lends ccs.SpriteDisplayData#
 
 /**
  * Base class for ccs.ArmatureDisplayData objects.
- * @class
+ * @class ccs.ArmatureDisplayData
  * @extends ccs.DisplayData
  */
 ccs.ArmatureDisplayData = ccs.DisplayData.extend(/** @lends ccs.ArmatureDisplayData# */{
@@ -324,7 +331,7 @@ ccs.ArmatureDisplayData = ccs.DisplayData.extend(/** @lends ccs.ArmatureDisplayD
 
 /**
  * Base class for ccs.ParticleDisplayData objects.
- * @class
+ * @class ccs.ParticleDisplayData
  * @extends ccs.DisplayData
  */
 ccs.ParticleDisplayData = ccs.DisplayData.extend(/** @lends ccs.ParticleDisplayData# */{
@@ -335,7 +342,7 @@ ccs.ParticleDisplayData = ccs.DisplayData.extend(/** @lends ccs.ParticleDisplayD
 
 /**
  * Base class for ccs.BoneData objects.
- * @class
+ * @class ccs.BoneData
  * @extends ccs.BaseData
  */
 ccs.BoneData = ccs.BaseData.extend(/** @lends ccs.BoneData# */{
@@ -355,6 +362,7 @@ ccs.BoneData = ccs.BaseData.extend(/** @lends ccs.BoneData# */{
     },
     /**
      * add display data
+     * @function
      * @param {ccs.DisplayData} displayData
      */
     addDisplayData:function (displayData) {
@@ -363,6 +371,7 @@ ccs.BoneData = ccs.BaseData.extend(/** @lends ccs.BoneData# */{
 
     /**
      * get display data
+     * @function
      * @param {Number} index
      * @returns {ccs.DisplayData}
      */
@@ -373,7 +382,7 @@ ccs.BoneData = ccs.BaseData.extend(/** @lends ccs.BoneData# */{
 
 /**
  * Base class for ccs.ArmatureData objects.
- * @class
+ * @class ccs.ArmatureData
  * @extends ccs.Class
  */
 ccs.ArmatureData = ccs.Class.extend(/** @lends ccs.ArmatureData# */{
@@ -390,6 +399,7 @@ ccs.ArmatureData = ccs.Class.extend(/** @lends ccs.ArmatureData# */{
     },
     /**
      * add bone data
+     * @function
      * @param {ccs.BoneData} boneData
      */
     addBoneData:function (boneData) {
@@ -397,6 +407,7 @@ ccs.ArmatureData = ccs.Class.extend(/** @lends ccs.ArmatureData# */{
     },
     /**
      * get bone datas
+     * @function
      * @returns {Object}
      */
     getBoneDataDic:function () {
@@ -404,6 +415,7 @@ ccs.ArmatureData = ccs.Class.extend(/** @lends ccs.ArmatureData# */{
     },
     /**
      * get bone data by bone name
+     * @function
      * @param {String} boneName
      * @returns {ccs.BoneData}
      */
@@ -414,7 +426,7 @@ ccs.ArmatureData = ccs.Class.extend(/** @lends ccs.ArmatureData# */{
 
 /**
  * Base class for ccs.FrameData objects.
- * @class
+ * @class ccs.FrameData
  * @extends ccs.BaseData
  */
 ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
@@ -448,6 +460,7 @@ ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
 
         /**
          * copy data
+         * @function
          * @param frameData
          */
         copy:function (frameData) {
@@ -475,7 +488,7 @@ ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
 
 /**
  * Base class for ccs.MovementBoneData objects.
- * @class
+ * @class ccs.MovementBoneData
  * @extends ccs.Class
  */
 ccs.MovementBoneData = ccs.Class.extend(/** @lends ccs.MovementBoneData# */{
@@ -496,6 +509,7 @@ ccs.MovementBoneData = ccs.Class.extend(/** @lends ccs.MovementBoneData# */{
     },
     /**
      * add frame data
+     * @function
      * @param {ccs.FrameData} frameData
      */
     addFrameData:function (frameData) {
@@ -503,6 +517,7 @@ ccs.MovementBoneData = ccs.Class.extend(/** @lends ccs.MovementBoneData# */{
     },
     /**
      * get frame data
+     * @function
      * @param {Number} index
      * @returns {ccs.FrameData}
      */
@@ -513,7 +528,7 @@ ccs.MovementBoneData = ccs.Class.extend(/** @lends ccs.MovementBoneData# */{
 
 /**
  * Base class for ccs.MovementData objects.
- * @class
+ * @class ccs.MovementData
  * @extends ccs.Class
  */
 ccs.MovementData = ccs.Class.extend(/** @lends ccs.MovementData# */{
@@ -538,6 +553,7 @@ ccs.MovementData = ccs.Class.extend(/** @lends ccs.MovementData# */{
 
     /**
      * add movement bone data
+     * @function
      * @param {ccs.MovementBoneData} movBoneData
      */
     addMovementBoneData:function (movBoneData) {
@@ -546,6 +562,7 @@ ccs.MovementData = ccs.Class.extend(/** @lends ccs.MovementData# */{
 
     /**
      * get movement bone data
+     * @function
      * @param {String} boneName
      * @returns {ccs.MovementBoneData}
      */
@@ -556,7 +573,7 @@ ccs.MovementData = ccs.Class.extend(/** @lends ccs.MovementData# */{
 
 /**
  * Base class for ccs.AnimationData objects.
- * @class
+ * @class ccs.AnimationData
  * @extends ccs.Class
  */
 ccs.AnimationData = ccs.Class.extend(/** @lends ccs.AnimationData# */{
@@ -569,6 +586,7 @@ ccs.AnimationData = ccs.Class.extend(/** @lends ccs.AnimationData# */{
     },
     /**
      * add movement data
+     * @function
      * @param {ccs.MovementData} moveData
      */
     addMovement:function (moveData) {
@@ -577,6 +595,7 @@ ccs.AnimationData = ccs.Class.extend(/** @lends ccs.AnimationData# */{
     },
     /**
      * get movement data
+     * @function
      * @param {String} moveName
      * @returns {ccs.MovementData}
      */
@@ -584,7 +603,7 @@ ccs.AnimationData = ccs.Class.extend(/** @lends ccs.AnimationData# */{
         return this.moveDataDic[moveName];
     },
     /**
-     *
+     * @function
      * @returns {Number}
      */
     getMovementCount:function () {
@@ -594,6 +613,7 @@ ccs.AnimationData = ccs.Class.extend(/** @lends ccs.AnimationData# */{
 
 /**
  * contour vertex
+ * @class ccs.ContourVertex2
  * @param {Number} x
  * @param {Number} y
  * @constructor
@@ -605,7 +625,7 @@ ccs.ContourVertex2 = function (x, y) {
 
 /**
  * Base class for ccs.ContourData objects.
- * @class
+ * @class ccs.ContourData
  * @extends ccs.Class
  */
 ccs.ContourData = ccs.Class.extend({
@@ -621,6 +641,7 @@ ccs.ContourData = ccs.Class.extend({
 
     /**
      * add vertex
+     * @function
      * @param {cc.Point} p
      */
     addVertex: function (p) {
@@ -631,7 +652,7 @@ ccs.ContourData = ccs.Class.extend({
 
 /**
  * Base class for ccs.TextureData objects.
- * @class
+ * @class ccs.TextureData
  * @extends ccs.Class
  */
 ccs.TextureData = ccs.Class.extend(/** @lends ccs.TextureData# */{
@@ -656,6 +677,7 @@ ccs.TextureData = ccs.Class.extend(/** @lends ccs.TextureData# */{
 
     /**
      * set contourData
+     * @function
      * @param {ccs.ContourData} contourData
      */
     addContourData:function (contourData) {
@@ -664,6 +686,7 @@ ccs.TextureData = ccs.Class.extend(/** @lends ccs.TextureData# */{
 
     /**
      * get contourData
+     * @function
      * @param {Number} index
      * @returns {ccs.ContourData}
      */

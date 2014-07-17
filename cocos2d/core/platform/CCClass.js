@@ -30,6 +30,7 @@
 
 /**
  * @namespace
+ * @name cc
  */
 var cc = cc || {};
 

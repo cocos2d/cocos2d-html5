@@ -24,7 +24,8 @@
  ****************************************************************************/
 
 /**
- * @ignore
+ * @class ccs.TransformHelp
+ * @extend ccs.Class
  */
 ccs.TransformHelp = ccs.TransformHelp || ccs.Class.extend({});
 
@@ -35,6 +36,7 @@ ccs.TransformHelp.helpPoint2 = cc.p(0, 0);
 
 /**
  * @function
+ * @static
  * @param {ccs.BaseData} bone
  * @return {cc.AffineTransform}
  * Constructor
@@ -51,6 +53,7 @@ ccs.TransformHelp.transformFromParent = function (bone, parentBone) {
 
 /**
  * @function
+ * @static
  * @param {ccs.BaseData} node
  * @param {cc.AffineTransform} matrix
  */
@@ -74,6 +77,7 @@ ccs.TransformHelp.nodeToMatrix = function (node, matrix) {
 
 /**
  * @function
+ * @static
  * @param {cc.AffineTransform} matrix
  * @param {ccs.BaseData} node
  */
@@ -105,6 +109,7 @@ ccs.TransformHelp.matrixToNode = function (matrix, node) {
 
 /**
  * @function
+ * @static
  * @param {ccs.BaseData} target
  * @param {ccs.BaseData} source
  */
@@ -119,6 +124,7 @@ ccs.TransformHelp.nodeConcat = function (target, source) {
 
 /**
  * @function
+ * @static
  * @param {ccs.BaseData} target
  * @param {ccs.BaseData} source
  */
