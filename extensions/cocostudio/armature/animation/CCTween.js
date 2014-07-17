@@ -89,7 +89,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
      * @param {ccs.TweenType} tweenEasing
      */
     play:function (movementBoneData, durationTo, durationTween, loop, tweenEasing) {
-        ccs.ProcessBase.prototype.play.call(this, durationTo, tweenEasing, loop, tweenEasing);
+        ccs.ProcessBase.prototype.play.call(this, durationTo, durationTween, loop, tweenEasing);
 
         if(loop){
             this._loopType = ccs.ANIMATION_TYPE_TO_LOOP_FRONT;

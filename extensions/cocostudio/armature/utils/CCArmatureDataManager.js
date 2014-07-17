@@ -280,8 +280,8 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
         switch(arguments.length){
             case 3:
                 configFilePath = arguments[0];
-                selector = arguments[1];
-                target = arguments[2];
+                target = arguments[1];
+                selector = arguments[2];
 
                 this.addRelativeData(configFilePath);
 

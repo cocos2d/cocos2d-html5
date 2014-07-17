@@ -252,7 +252,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
             this._durationTween = durationTween;
         }
 
-        var movementBoneData = null;
+        var movementBoneData;
         this._tweenList = [];
 
         var map = this._armature.getBoneDic();
