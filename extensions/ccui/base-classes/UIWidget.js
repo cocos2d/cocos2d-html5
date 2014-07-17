@@ -125,7 +125,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
             this.ignoreContentAdaptWithSize(true);
 
-//            this.setTouchEnabled(true);
             this.setCascadeColorEnabled(true);
             this.setCascadeOpacityEnabled(true);
 
@@ -1576,7 +1575,7 @@ ccui.Widget.DOWN = 1;
 ccui.Widget.LOCAL_TEXTURE = 0;
 ccui.Widget.PLIST_TEXTURE = 1;
 
-//touch event type            //TODO why don't use a common define ?
+//touch event type
 ccui.Widget.TOUCH_BEGAN = 0;
 ccui.Widget.TOUCH_MOVED = 1;
 ccui.Widget.TOUCH_ENDED = 2;
