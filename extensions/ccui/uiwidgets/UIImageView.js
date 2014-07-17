@@ -70,31 +70,46 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTexture: function (fileName, texType) {
-        if (!fileName)
+        if (!fileName){
             return;
+        }
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._textureFile = fileName;
         this._imageTexType = texType;
         var imageRenderer = this._imageRenderer;
         switch (this._imageTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
-                if (this._scale9Enabled) {
-                    imageRenderer.initWithFile(fileName);
-                    imageRenderer.setCapInsets(this._capInsets);
-                } else
-                    imageRenderer.setTexture(fileName);
+                imageRenderer.initWithFile(fileName);
                 break;
             case ccui.Widget.PLIST_TEXTURE:
-                if (this._scale9Enabled) {
-                    imageRenderer.initWithSpriteFrameName(fileName);
-                    imageRenderer.setCapInsets(this._capInsets);
-                } else
-                    imageRenderer.setSpriteFrame(fileName);
+                imageRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
                 break;
         }
-        this._imageTextureSize = imageRenderer.getContentSize();
+
+        var locRendererSize = imageRenderer.getContentSize();
+        if(imageRenderer.textureLoaded()){
+            this._imageTextureSize.width = this._customSize.width ? this._customSize.width : locRendererSize.width;
+            this._imageTextureSize.height = this._customSize.height ? this._customSize.height : locRendererSize.height;
+        }else{
+            imageRenderer.addLoadedEventListener(function(){
+                var locSize = imageRenderer.getContentSize();
+                this._imageTextureSize.width = this._customSize.width ? this._customSize.width : locSize.width;
+                this._imageTextureSize.height = this._customSize.height ? this._customSize.height : locSize.height;
+                if (imageRenderer.setCapInsets) {
+                    imageRenderer.setCapInsets(this._capInsets);
+                }
+                this.imageTextureScaleChangedWithSize();
+            },this);
+            this._imageTextureSize.width = this._customSize.width;
+            this._imageTextureSize.height = this._customSize.height;
+        }
+
+        if (this._scale9Enabled) {
+            imageRenderer.setCapInsets(this._capInsets);
+        }
+
         this.updateFlippedX();
         this.updateFlippedY();
         imageRenderer.setColor(this.getColor());
