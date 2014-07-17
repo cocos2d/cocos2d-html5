@@ -28,7 +28,7 @@
  */
 ccs.CONST_VERSION = "version";
 ccs.CONST_VERSION_2_0 = 2.0;
-//ccs.CONST_VERSION_COMBINED = 0.3;
+ccs.CONST_VERSION_COMBINED = 0.3;
 
 ccs.CONST_ARMATURES = "armatures";
 ccs.CONST_ARMATURE = "armature";
@@ -152,7 +152,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
 
     _configFileList: [],
     _flashToolVersion: ccs.CONST_VERSION_2_0,
-    _cocoStudioVersion: ccs.CONST_VERSION_COMBINED,
+//    _cocoStudioVersion: ccs.CONST_VERSION_COMBINED,
     _positionReadScale: 1,
     _asyncRefCount: 0,
     _asyncRefTotalCount: 0,
@@ -209,11 +209,9 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         if (this._configFileList.indexOf(filePath) != -1) {
             if (target && selector) {
                 if (this._asyncRefTotalCount == 0 && this._asyncRefCount == 0)
-//                    this._asyncCallBack(target, selector, 1);
-                    target.selector(1);
+                    this._asyncCallBack(target, selector, 1);
                 else
-//                    this._asyncCallBack(target, selector, (this._asyncRefTotalCount - this._asyncRefCount) / this._asyncRefTotalCount);
-                    target.selector((this._asyncRefTotalCount - this._asyncRefCount) / this._asyncRefTotalCount);
+                    this._asyncCallBack(target, selector, (this._asyncRefTotalCount - this._asyncRefCount) / this._asyncRefTotalCount);
             }
             return;
         }
@@ -232,67 +230,6 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         };
         cc.director.getScheduler().scheduleCallbackForTarget(this, fun, 0.1, false);
     },
-
-    /*
-    addDataAsyncCallBack: function(dt){
-        //TODO
-        // the data is generated in loading thread
-        var dataQueue = this._dataQueue;
-
-        _dataInfoMutex.lock();
-        if (dataQueue.empty())
-        {
-            _dataInfoMutex.unlock();
-        }
-        else
-        {
-            DataInfo *pDataInfo = dataQueue.front();
-            dataQueue.pop();
-            _dataInfoMutex.unlock();
-
-            AsyncStruct *pAsyncStruct = pDataInfo.asyncStruct;
-
-
-            if (pAsyncStruct.imagePath != "" && pAsyncStruct.plistPath != "")
-            {
-                _getFileMutex.lock();
-                ArmatureDataManager::getInstance().addSpriteFrameFromFile(pAsyncStruct.plistPath.c_str(), pAsyncStruct.imagePath.c_str(), pDataInfo.filename.c_str());
-                _getFileMutex.unlock();
-            }
-
-            while (!pDataInfo.configFileQueue.empty())
-            {
-                std::string configPath = pDataInfo.configFileQueue.front();
-                _getFileMutex.lock();
-                ArmatureDataManager::getInstance().addSpriteFrameFromFile((pAsyncStruct.baseFilePath + configPath + ".plist").c_str(), (pAsyncStruct.baseFilePath + configPath + ".png").c_str(),pDataInfo.filename.c_str());
-                _getFileMutex.unlock();
-                pDataInfo.configFileQueue.pop();
-            }
-
-
-            Ref* target = pAsyncStruct.target;
-            SEL_SCHEDULE selector = pAsyncStruct.selector;
-
-            --_asyncRefCount;
-
-            if (target && selector)
-            {
-                (target.*selector)((_asyncRefTotalCount - _asyncRefCount) / (float)_asyncRefTotalCount);
-                target.release();
-            }
-
-
-            delete pAsyncStruct;
-            delete pDataInfo;
-
-            if (0 == _asyncRefCount)
-            {
-                _asyncRefTotalCount = 0;
-                Director::getInstance().getScheduler().unschedule(schedule_selector(DataReaderHelper::addDataAsyncCallBack), this);
-            }
-        }
-    },
-    */
 
     removeConfigFile: function (configFile) {
 //        cc.arrayRemoveObject(this._configFileList, configFile);
@@ -475,8 +412,8 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
                     skinData.y = (dic[ccs.CONST_A_Y] || 0) * this._positionReadScale;
                     skinData.scaleX = dic[ccs.CONST_A_SCALE_X] || 1;
                     skinData.scaleY = dic[ccs.CONST_A_SCALE_Y] || 1;
-                    skinData.skewX = dic[ccs.CONST_A_SKEW_X] || 1;
-                    skinData.skewY = dic[ccs.CONST_A_SKEW_Y] || 1;
+                    skinData.skewX = dic[ccs.CONST_A_SKEW_X];
+                    skinData.skewY = dic[ccs.CONST_A_SKEW_Y];
 
                     skinData.x *= dataInfo.contentScale;
                     skinData.y *= dataInfo.contentScale;
@@ -602,7 +539,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         movementData.durationTo = json[ccs.CONST_A_DURATION_TO] || 0;
         movementData.duration = json[ccs.CONST_A_DURATION] || 0;
 
-        if(json[ccs.CONST_A_DURATION]){
+        if(json[ccs.CONST_A_DURATION] == null){
             movementData.scale = 1;
         }else{
             movementData.scale = json[ccs.CONST_A_MOVEMENT_SCALE] || 1;
@@ -722,11 +659,12 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             movementBoneData.name = name;
         }
 
-        var length = json[ccs.CONST_FRAME_DATA] || [];
+        var framesData = json[ccs.CONST_FRAME_DATA] || [];
+        var length = framesData.length;
         for (var i = 0; i < length; i++)
         {
             var dic = json[ccs.CONST_FRAME_DATA][i];
-            var frameData = this.decodeFrame(dic, dataInfo);
+            var frameData = this.decodeFrameFromJson(dic, dataInfo);
             movementBoneData.addFrameData(frameData);
 
             if (dataInfo.cocoStudioVersion < ccs.CONST_VERSION_COMBINED)
@@ -736,7 +674,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             }
         }
 
-        if (dataInfo.cocoStudioVersion < ccs.VERSION_CHANGE_ROTATION_RANGE) {
+        if (dataInfo.cocoStudioVersion <= ccs.VERSION_CHANGE_ROTATION_RANGE) {
             //! Change rotation range from (-180 -- 180) to (-infinity -- infinity)
             var frames = movementBoneData.frameList;
             var pi = Math.PI;
@@ -1156,19 +1094,6 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         node.scaleX = json[ccs.CONST_A_SCALE_X] || 1;
         node.scaleY = json[ccs.CONST_A_SCALE_Y] || 1;
 
-//        var colorDic = json[ccs.CONST_COLOR_INFO] || null;
-//        if (colorDic) {
-//            //compatible old version
-//            if (dataInfo.cocoStudioVersion < ccs.VERSION_COLOR_READING) {
-//                colorDic = colorDic[0];
-//            }
-//            node.a = colorDic[ccs.CONST_A_ALPHA];
-//            node.r = colorDic[ccs.CONST_A_RED];
-//            node.g = colorDic[ccs.CONST_A_GREEN];
-//            node.b = colorDic[ccs.CONST_A_BLUE];
-//            node.isUseColorInfo = true;
-//            delete colorDic;
-//        }
         var colorDic;
         if (dataInfo.cocoStudioVersion < ccs.VERSION_COLOR_READING)
         {
