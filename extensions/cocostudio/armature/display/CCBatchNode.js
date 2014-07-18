@@ -44,8 +44,9 @@ ccs.BatchNode = cc.Node.extend(/** @lends ccs.BatchNode# */{
 
     addChild:function (child, zOrder, tag) {
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
-        if (child instanceof cc.Armature)
+        if (child instanceof cc.Armature){
             child.setBatchNode(this);
+        }
     },
 
     removeChild: function(child, cleanup){

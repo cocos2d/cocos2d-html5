@@ -215,7 +215,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             }
             return;
         }
-        this._configFileList.push(filePath);
+//        this._configFileList.push(filePath);
 
         //! find the base file path
 //        var basefilePath = this._initBaseFilePath(filePath);
@@ -413,10 +413,10 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
                     var skinData = displayData.skinData;
                     skinData.x = dic[ccs.CONST_A_X] * this._positionReadScale;
                     skinData.y = dic[ccs.CONST_A_Y] * this._positionReadScale;
-                    skinData.scaleX = dic[ccs.CONST_A_SCALE_X] || 1;
-                    skinData.scaleY = dic[ccs.CONST_A_SCALE_Y] || 1;
-                    skinData.skewX = dic[ccs.CONST_A_SKEW_X] || 1;
-                    skinData.skewY = dic[ccs.CONST_A_SKEW_Y] || 1;
+                    skinData.scaleX = dic[ccs.CONST_A_SCALE_X] == null ? 1 : dic[ccs.CONST_A_SCALE_X];
+                    skinData.scaleY = dic[ccs.CONST_A_SCALE_Y] == null ? 1 : dic[ccs.CONST_A_SCALE_Y];
+                    skinData.skewX = dic[ccs.CONST_A_SKEW_X] == null ? 1 : dic[ccs.CONST_A_SKEW_X];
+                    skinData.skewY = dic[ccs.CONST_A_SKEW_Y] == null ? 1 : dic[ccs.CONST_A_SKEW_Y];
 
                     skinData.x *= dataInfo.contentScale;
                     skinData.y *= dataInfo.contentScale;
@@ -494,14 +494,14 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
 
         var duration, durationTo, durationTween, loop, tweenEasing = 0;
 
-        duration = parseFloat(movementXML.getAttribute(ccs.CONST_A_DURATION)) || 0;
-        movementData.duration = duration;
+        duration = movementXML.getAttribute(ccs.CONST_A_DURATION);
+        movementData.duration = duration == null ? 0 : duration;
 
-        durationTo = parseFloat(movementXML.getAttribute(ccs.CONST_A_DURATION_TO)) || 0;
-        movementData.durationTo = durationTo;
+        durationTo = movementXML.getAttribute(ccs.CONST_A_DURATION_TO);
+        movementData.durationTo = durationTo == null ? 0 : durationTo;
 
-        durationTween = parseFloat(movementXML.getAttribute(ccs.CONST_A_DURATION_TWEEN)) || 0;
-        movementData.durationTween = durationTween;
+        durationTween = movementXML.getAttribute(ccs.CONST_A_DURATION_TWEEN);
+        movementData.durationTween = durationTween == null ? 0 : durationTween;
 
         loop = movementXML.getAttribute(ccs.CONST_A_LOOP);
         movementData.loop = loop ? Boolean(parseFloat(loop)) : true;
@@ -509,7 +509,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         var easing = movementXML.getAttribute(ccs.CONST_A_TWEEN_EASING);
         if (easing) {
             if (easing != ccs.CONST_FL_NAN) {
-                tweenEasing = parseFloat(easing) || 0;
+                tweenEasing = easing == null ? 0 : easing;
                 movementData.tweenEasing = tweenEasing == 2 ? ccs.TweenType.sineEaseInOut : tweenEasing;
             } else {
                 movementData.tweenEasing = ccs.TweenType.linear;
@@ -547,7 +547,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
     decodeMovementFromJson: function (json, dataInfo) {
         var movementData = new ccs.MovementData();
 
-        movementData.loop = json[ccs.CONST_A_LOOP] || false;
+        movementData.loop = json[ccs.CONST_A_LOOP] == null ? false : json[ccs.CONST_A_LOOP];
         movementData.durationTween = json[ccs.CONST_A_DURATION_TWEEN] || 0;
         movementData.durationTo = json[ccs.CONST_A_DURATION_TO] || 0;
         movementData.duration = json[ccs.CONST_A_DURATION] || 0;
@@ -555,10 +555,10 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         if(json[ccs.CONST_A_DURATION] == null){
             movementData.scale = 1;
         }else{
-            movementData.scale = json[ccs.CONST_A_MOVEMENT_SCALE] || 1;
+            movementData.scale = json[ccs.CONST_A_MOVEMENT_SCALE] == null ? 1 : json[ccs.CONST_A_MOVEMENT_SCALE];
         }
 
-        movementData.tweenEasing = json[ccs.CONST_A_TWEEN_EASING] || ccs.TweenType.linear;
+        movementData.tweenEasing = json[ccs.CONST_A_TWEEN_EASING] == null ? ccs.TweenType.linear : json[ccs.CONST_A_TWEEN_EASING];
         var name = json[ccs.CONST_A_NAME];
         if(name){
             movementData.name = name;
@@ -851,7 +851,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         }
 
         var colorTransformXML = frameXML.querySelectorAll(ccs.CONST_FRAME + " > " + ccs.CONST_A_COLOR_TRANSFORM);
-        if (colorTransformXML)
+        if (colorTransformXML && colorTransformXML.length > 0)
         {
             colorTransformXML = colorTransformXML[0];
             var alpha, red, green, blue = 100;
@@ -922,11 +922,11 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
 
         frameData.tweenEasing = json[ccs.CONST_A_TWEEN_EASING] || ccs.TweenType.linear;
         frameData.displayIndex = json[ccs.CONST_A_DISPLAY_INDEX];
-        var bd_src = json[ccs.CONST_A_BLEND_SRC] || cc.BLEND_SRC;
-        var bd_dst = json[ccs.CONST_A_BLEND_DST] || cc.BLEND_DST;
+        var bd_src = json[ccs.CONST_A_BLEND_SRC] == null ? cc.BLEND_SRC : json[ccs.CONST_A_BLEND_SRC];
+        var bd_dst = json[ccs.CONST_A_BLEND_DST] == null ? cc.BLEND_DST : json[ccs.CONST_A_BLEND_DST];
         frameData.blendFunc.src = bd_src;
         frameData.blendFunc.dst = bd_dst;
-        frameData.isTween = json[ccs.CONST_A_TWEEN_FRAME] || true;
+        frameData.isTween = json[ccs.CONST_A_TWEEN_FRAME] == null ? true : json[ccs.CONST_A_TWEEN_FRAME];
 
         var event = json[ccs.CONST_A_EVENT];
         if(event != null){
@@ -936,7 +936,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
 
         if (dataInfo.cocoStudioVersion < ccs.CONST_VERSION_COMBINED)
         {
-            frameData.duration = json[ccs.CONST_A_DURATION] || 1;
+            frameData.duration = json[ccs.CONST_A_DURATION] == null ? 1 : json[ccs.CONST_A_DURATION];
         }
         else
         {
@@ -1047,7 +1047,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
     },
 
     addDataFromJsonCache: function (dic, dataInfo) {
-        dataInfo.contentScale = dic[ccs.CONST_CONTENT_SCALE] || 1;
+        dataInfo.contentScale = dic[ccs.CONST_CONTENT_SCALE] == null ? 1 : dic[ccs.CONST_CONTENT_SCALE];
 
         // Decode armatures
         var armatureDataArr = dic[ccs.CONST_ARMATURE_DATA] || [];
@@ -1104,8 +1104,8 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
 
         node.skewX = json[ccs.CONST_A_SKEW_X] || 0;
         node.skewY = json[ccs.CONST_A_SKEW_Y] || 0;
-        node.scaleX = json[ccs.CONST_A_SCALE_X] || 1;
-        node.scaleY = json[ccs.CONST_A_SCALE_Y] || 1;
+        node.scaleX = json[ccs.CONST_A_SCALE_X] == null ? 1 : json[ccs.CONST_A_SCALE_X];
+        node.scaleY = json[ccs.CONST_A_SCALE_Y] == null ? 1 : json[ccs.CONST_A_SCALE_Y];
 
         var colorDic;
         if (dataInfo.cocoStudioVersion < ccs.VERSION_COLOR_READING)
@@ -1113,10 +1113,10 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             colorDic = json[0];
             if (colorDic)
             {
-                node.a = colorDic[ccs.CONST_A_ALPHA] || 255;
-                node.r = colorDic[ccs.CONST_A_RED] || 255;
-                node.g = colorDic[ccs.CONST_A_GREEN] || 255;
-                node.b = colorDic[ccs.CONST_A_BLUE] || 255;
+                node.a = colorDic[ccs.CONST_A_ALPHA] == null ? 255 : colorDic[ccs.CONST_A_ALPHA];
+                node.r = colorDic[ccs.CONST_A_RED] == null ? 255 : colorDic[ccs.CONST_A_RED];
+                node.g = colorDic[ccs.CONST_A_GREEN] == null ? 255 : colorDic[ccs.CONST_A_GREEN];
+                node.b = colorDic[ccs.CONST_A_BLUE] == null ? 255 : colorDic[ccs.CONST_A_BLUE];
 
                 node.isUseColorInfo = true;
             }
@@ -1126,10 +1126,10 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             colorDic = json[ccs.CONST_COLOR_INFO] || null;
             if (colorDic)
             {
-                node.a = colorDic[ccs.CONST_A_ALPHA] || 255;
-                node.r = colorDic[ccs.CONST_A_RED] || 255;
-                node.g = colorDic[ccs.CONST_A_GREEN] || 255;
-                node.b = colorDic[ccs.CONST_A_BLUE] || 255;
+                node.a = colorDic[ccs.CONST_A_ALPHA] == null ? 255 : colorDic[ccs.CONST_A_ALPHA];
+                node.r = colorDic[ccs.CONST_A_RED] == null ? 255 : colorDic[ccs.CONST_A_RED];
+                node.g = colorDic[ccs.CONST_A_GREEN] == null ? 255 : colorDic[ccs.CONST_A_GREEN];
+                node.b = colorDic[ccs.CONST_A_BLUE] == null ? 255 : colorDic[ccs.CONST_A_BLUE];
 
                 node.isUseColorInfo = true;
             }

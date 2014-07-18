@@ -128,6 +128,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
             //
             // calculate the Quad based on the Affine Matrix
             //
+            var transform = this.getNodeToParentTransform();
 
             var size = this._rect;
 
@@ -137,13 +138,13 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
             var x2 = x1 + size.width;
             var y2 = y1 + size.height;
 
-            var x = this._transform.tx;
-            var y = this._transform.ty;
+            var x = this.transform.tx;
+            var y = this.transform.ty;
 
-            var cr = this._transform.a;
-            var sr = this._transform.b;
-            var cr2 = this._transform.c;
-            var sr2 = -this._transform.d;
+            var cr = this.transform.a;
+            var sr = this.transform.b;
+            var cr2 = this.transform.c;
+            var sr2 = -this.transform.d;
             var ax = x1 * cr - y1 * sr2 + x;
             var ay = x1 * sr + y1 * cr2 + y;
 
