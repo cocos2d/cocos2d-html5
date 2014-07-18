@@ -749,10 +749,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             context.globalCompositeOperation = 'lighter';
 
         context.save();
-        var locEGLViewer = cc.view, opacityf = _t._displayedOpacity / 255.0;
-        var tWidth = _t.width * locEGLViewer.getScaleX(), tHeight = _t.height * locEGLViewer.getScaleY();
-        var tGradient = context.createLinearGradient(_t._gradientStartPoint.x, _t._gradientStartPoint.y,
-            _t._gradientEndPoint.x, _t._gradientEndPoint.y);
+        var opacityf = _t._displayedOpacity / 255.0;
+        var scaleX = cc.view.getScaleX(), scaleY = cc.view.getScaleY();
+        var tWidth = _t.width * scaleX, tHeight = _t.height * scaleY;
+        var tGradient = context.createLinearGradient(_t._gradientStartPoint.x * scaleX, _t._gradientStartPoint.y * scaleY,
+            _t._gradientEndPoint.x * scaleX, _t._gradientEndPoint.y * scaleY);
         var locDisplayedColor = _t._displayedColor, locEndColor = _t._endColor;
         tGradient.addColorStop(0, "rgba(" + Math.round(locDisplayedColor.r) + "," + Math.round(locDisplayedColor.g) + ","
             + Math.round(locDisplayedColor.b) + "," + (opacityf * (_t._startOpacity / 255)).toFixed(4) + ")");
@@ -764,6 +765,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         if (_t._rotation != 0)
             context.rotate(_t._rotationRadians);
         context.restore();
+        cc.g_NumberOfDraws++;
     };
     _p._updateColor = function () {
         var _t = this;
@@ -805,7 +807,10 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
      */
     ctor: function (layers) {
         cc.Layer.prototype.ctor.call(this);
-        layers && cc.LayerMultiplex.prototype.initWithLayers.call(this, layers);
+        if (layers instanceof Array)
+            cc.LayerMultiplex.prototype.initWithLayers.call(this, layers);
+        else
+            cc.LayerMultiplex.prototype.initWithLayers.call(this, Array.prototype.slice.call(arguments));
     },
 
     /**
@@ -876,6 +881,6 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
  * var multiLayer = cc.LayerMultiple.create(layer1, layer2, layer3);//any number of layers
  */
 cc.LayerMultiplex.create = function (/*Multiple Arguments*/) {
-    return new cc.LayerMultiplex(arguments);
+    return new cc.LayerMultiplex(Array.prototype.slice.call(arguments));
 };
 
