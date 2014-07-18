@@ -42,9 +42,9 @@ ccs.TransformHelp.helpParentNode = {};
  * @return {cc.AffineTransform}
  * Constructor
  */
-ccs.TransformHelp.transformFromParent = function (bone, parentBone) {
+ccs.TransformHelp.transformFromParent = function (bone, parentNode) {
     this.nodeToMatrix(bone, this.helpMatrix1);
-    this.nodeToMatrix(parentBone, this.helpMatrix2);
+    this.nodeToMatrix(parentNode, this.helpMatrix2);
 
     this.helpMatrix2 = cc.affineTransformInvert(this.helpMatrix2);
     this.helpMatrix1 = cc.affineTransformConcat(this.helpMatrix1, this.helpMatrix2);

@@ -402,18 +402,21 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             case ccs.DISPLAY_TYPE_SPRITE:
                 displayData = new ccs.SpriteDisplayData();
 
-                displayData.displayName = json[ccs.CONST_A_NAME] || "";
+                var name = json[ccs.CONST_A_NAME];
+                if(name != null){
+                    displayData.displayName =  name;
+                }
 
                 var dicArray = json[ccs.CONST_SKIN_DATA] || [];
                 var dic = dicArray[0];
                 if (dic) {
                     var skinData = displayData.skinData;
-                    skinData.x = (dic[ccs.CONST_A_X] || 0) * this._positionReadScale;
-                    skinData.y = (dic[ccs.CONST_A_Y] || 0) * this._positionReadScale;
+                    skinData.x = dic[ccs.CONST_A_X] * this._positionReadScale;
+                    skinData.y = dic[ccs.CONST_A_Y] * this._positionReadScale;
                     skinData.scaleX = dic[ccs.CONST_A_SCALE_X] || 1;
                     skinData.scaleY = dic[ccs.CONST_A_SCALE_Y] || 1;
-                    skinData.skewX = dic[ccs.CONST_A_SKEW_X];
-                    skinData.skewY = dic[ccs.CONST_A_SKEW_Y];
+                    skinData.skewX = dic[ccs.CONST_A_SKEW_X] || 1;
+                    skinData.skewY = dic[ccs.CONST_A_SKEW_Y] || 1;
 
                     skinData.x *= dataInfo.contentScale;
                     skinData.y *= dataInfo.contentScale;
@@ -421,11 +424,21 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
                 break;
             case ccs.DISPLAY_TYPE_ARMATURE:
                 displayData = new ccs.ArmatureDisplayData();
-                displayData.displayName = json[ccs.CONST_A_NAME] || "";
+                var name = json[ccs.CONST_A_NAME];
+                if(name != null){
+                    displayData.displayName = json[ccs.CONST_A_NAME];
+                }
                 break;
             case ccs.DISPLAY_TYPE_PARTICLE:
                 displayData = new ccs.ParticleDisplayData();
-                displayData.displayName = dataInfo.basefilePath + json[ccs.CONST_A_PLIST] || "";
+                var plist = json[ccs.CONST_A_PLIST];
+                if(plist != null){
+                    if(dataInfo.asyncStruct){
+                        displayData.displayName = dataInfo.asyncStruct.basefilePath + plist;
+                    }else{
+                        displayData.displayName = dataInfo.basefilePath + plist;
+                    }
+                }
                 break;
             default:
                 displayData = new ccs.SpriteDisplayData();
@@ -884,15 +897,15 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             //*  recalculate frame data from parent frame data, use for translate matrix
             var helpNode = new ccs.BaseData();
             if (dataInfo.flashToolVersion >= ccs.CONST_VERSION_2_0) {
-                helpNode.x = parseFloat(parentFrameXml.getAttribute(ccs.CONST_A_COCOS2DX_X)) || 0;
-                helpNode.y = parseFloat(parentFrameXml.getAttribute(ccs.CONST_A_COCOS2DX_Y)) || 0;
+                helpNode.x = parseFloat(parentFrameXml.getAttribute(ccs.CONST_A_COCOS2DX_X));
+                helpNode.y = parseFloat(parentFrameXml.getAttribute(ccs.CONST_A_COCOS2DX_Y));
             }
             else {
-                helpNode.x = parseFloat(parentFrameXml.getAttribute(ccs.CONST_A_X)) || 0;
-                helpNode.y = parseFloat(parentFrameXml.getAttribute(ccs.CONST_A_Y)) || 0;
+                helpNode.x = parseFloat(parentFrameXml.getAttribute(ccs.CONST_A_X));
+                helpNode.y = parseFloat(parentFrameXml.getAttribute(ccs.CONST_A_Y));
             }
-            helpNode.skewX = parseFloat(parentFrameXml.getAttribute(ccs.CONST_A_SKEW_X)) || 0;
-            helpNode.skewY = parseFloat(parentFrameXml.getAttribute(ccs.CONST_A_SKEW_Y)) || 0;
+            helpNode.skewX = parseFloat(parentFrameXml.getAttribute(ccs.CONST_A_SKEW_X));
+            helpNode.skewY = parseFloat(parentFrameXml.getAttribute(ccs.CONST_A_SKEW_Y));
 
             helpNode.y = -helpNode.y;
             helpNode.skewX = cc.degreesToRadians(helpNode.skewX);
@@ -908,7 +921,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         this.decodeNodeFromJson(frameData, json, dataInfo);
 
         frameData.tweenEasing = json[ccs.CONST_A_TWEEN_EASING] || ccs.TweenType.linear;
-        frameData.displayIndex = json[ccs.CONST_A_DISPLAY_INDEX] || 0;
+        frameData.displayIndex = json[ccs.CONST_A_DISPLAY_INDEX];
         var bd_src = json[ccs.CONST_A_BLEND_SRC] || cc.BLEND_SRC;
         var bd_dst = json[ccs.CONST_A_BLEND_DST] || cc.BLEND_DST;
         frameData.blendFunc.src = bd_src;
@@ -1081,13 +1094,13 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
     },
 
     decodeNodeFromJson: function (node, json, dataInfo) {
-        node.x = (json[ccs.CONST_A_X] || 0) * this._positionReadScale;
-        node.y = (json[ccs.CONST_A_Y] || 0) * this._positionReadScale;
+        node.x = json[ccs.CONST_A_X] * this._positionReadScale;
+        node.y = json[ccs.CONST_A_Y] * this._positionReadScale;
 
         node.x *= dataInfo.contentScale;
         node.y *= dataInfo.contentScale;
 
-        node.zOrder = json[ccs.CONST_A_Z] || 0;
+        node.zOrder = json[ccs.CONST_A_Z];
 
         node.skewX = json[ccs.CONST_A_SKEW_X] || 0;
         node.skewY = json[ccs.CONST_A_SKEW_Y] || 0;

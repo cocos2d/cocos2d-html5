@@ -253,8 +253,8 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
         }
 
         if (to.tweenRotate) {
-            this.skewX += to.tweenRotate * ccs.DOUBLE_PI;
-            this.skewY -= to.tweenRotate * ccs.DOUBLE_PI;
+            this.skewX += to.tweenRotate * ccs.PI * 2;
+            this.skewY -= to.tweenRotate * ccs.PI * 2;
         }
     }
 });
