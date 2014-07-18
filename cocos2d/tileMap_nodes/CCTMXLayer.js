@@ -121,7 +121,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             locCanvas.width = 0 | (locContentSize.width * 1.5 * scaleFactor);
             locCanvas.height = 0 | (locContentSize.height * 1.5 * scaleFactor);
 
-            this._cacheContext.translate(0, locCanvas.height);
+            if(this._layerOrientation === cc.TMX_ORIENTATION_HEX)
+                this._cacheContext.translate(0, locCanvas.height - this._mapTileSize.height * 0.5);                  //translate for hexagonal
+            else
+                this._cacheContext.translate(0, locCanvas.height);
             var locTexContentSize = this._cacheTexture._contentSize;
             locTexContentSize.width = locCanvas.width;
             locTexContentSize.height = locCanvas.height;
@@ -235,14 +238,22 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 var locSubCacheCanvasArr = this._subCacheCanvas;
                 for(var i = 0; i < locSubCacheCount; i++){
                     var selSubCanvas = locSubCacheCanvasArr[i];
-                    context.drawImage(locSubCacheCanvasArr[i], 0, 0, selSubCanvas.width, selSubCanvas.height,
-                        posX + i * this._subCacheWidth, -(posY + locCanvasHeight), selSubCanvas.width * eglViewer._scaleX, locCanvasHeight);
+                    if (this._layerOrientation === cc.TMX_ORIENTATION_HEX)
+                        context.drawImage(locSubCacheCanvasArr[i], 0, 0, selSubCanvas.width, selSubCanvas.height,
+                                posX + i * this._subCacheWidth, -(posY + locCanvasHeight) + this._mapTileSize.height * 0.5, selSubCanvas.width * eglViewer._scaleX, locCanvasHeight);
+                    else
+                        context.drawImage(locSubCacheCanvasArr[i], 0, 0, selSubCanvas.width, selSubCanvas.height,
+                                posX + i * this._subCacheWidth, -(posY + locCanvasHeight), selSubCanvas.width * eglViewer._scaleX, locCanvasHeight);
                 }
             } else{
                 //context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
                 //    posX, -(posY + locCacheCanvas.height ), locCacheCanvas.width, locCacheCanvas.height );
-                context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
-                    posX, -(posY + locCanvasHeight), locCacheCanvas.width * eglViewer._scaleX, locCanvasHeight);
+                if (this._layerOrientation === cc.TMX_ORIENTATION_HEX)
+                    context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
+                        posX, -(posY + locCanvasHeight) + this._mapTileSize.height * 0.5, locCacheCanvas.width * eglViewer._scaleX, locCanvasHeight);
+                else
+                    context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
+                        posX, -(posY + locCanvasHeight), locCacheCanvas.width * eglViewer._scaleX, locCanvasHeight);
             }
         }
     },
