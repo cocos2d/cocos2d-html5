@@ -52,7 +52,6 @@
         'core/textures/CCTextureCache.js',
         'core/textures/CCTextureAtlas.js',
         'core/scenes_nodes/CCScene.js',
-        'core/layers_nodes/CCLayerWebGL.js',
         'core/layers_nodes/CCLayer.js',
         'core/sprite_nodes/CCSprite.js',
         'core/sprite_nodes/CCAnimation.js',
