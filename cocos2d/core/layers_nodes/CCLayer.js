@@ -46,6 +46,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     _touchMode:cc.TOUCH_ALL_AT_ONCE,
     _isMouseEnabled:false,
     _mousePriority:0,
+    _isBaked: false,
+    _bakeSprite: null,
 	// This is only useful in mode TOUCH_ONE_BY_ONE
 	_swallowTouch:true,
 
@@ -587,7 +589,112 @@ cc.Layer.create = function () {
         return ret;
     return null;
 };
+if (!cc.Browser.supportWebGL) {
+    var p = cc.Layer.prototype;
+    p.bake = function(){
+        if (!this._isBaked) {
+            //limit: 1. its children's blendfunc are invalid.
+            this._isBaked = this._cacheDirty = true;
+            this._cachedParent = this;
+            var children = this._children;
+            for(var i = 0, len = children.length; i < len; i++)
+                children[i]._setCachedParent(this);
 
+            if (!this._bakeSprite)
+                this._bakeSprite = new cc.BakeSprite();
+        }
+    };
+
+    p.unbake = function(){
+        if (this._isBaked) {
+            this._isBaked = false;
+            this._cacheDirty = true;
+
+            this._cachedParent = null;
+            var children = this._children;
+            for(var i = 0, len = children.length; i < len; i++)
+                children[i]._setCachedParent(null);
+        }
+    };
+
+    p.visit = function(ctx){
+        if(!this._isBaked){
+            cc.Node.prototype.visit.call(this, ctx);
+            return;
+        }
+
+        var context = ctx || cc._renderContext, i;
+        var _t = this;
+        var children = _t._children;
+        var len = children.length;
+        // quick return if not visible
+        if (!_t._visible || len === 0)
+            return;
+
+        var locBakeSprite = this._bakeSprite;
+
+        context.save();
+        _t.transform(context);
+
+        if(this._cacheDirty){
+            //compute the bounding box of the bake layer.
+            var boundingBox = this._getBoundingBoxForBake();
+            boundingBox.width = 0 | boundingBox.width;
+            boundingBox.height = 0 | boundingBox.height;
+            var bakeContext = locBakeSprite.getCacheContext();
+            locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
+            bakeContext.translate(0 - boundingBox.x, boundingBox.height + boundingBox.y);
+
+            //reset the bake sprite's position
+            var anchor = locBakeSprite.getAnchorPointInPoints();
+            locBakeSprite.setPosition(anchor.x + boundingBox.x, anchor.y + boundingBox.y);
+
+            //visit for canvas
+            _t.sortAllChildren();
+            // draw children zOrder < 0
+            cc.EGLView.getInstance()._setScaleXYForRenderTexture();
+            for (i = 0; i < len; i++) {
+                children[i].visit(bakeContext);
+            }
+            cc.EGLView.getInstance()._resetScale();
+            this._cacheDirty = false;
+        }
+
+        //the bakeSprite is drawing
+        locBakeSprite.visit(context);
+
+        _t.arrivalOrder = 0;
+        context.restore();
+    };
+
+    p._getBoundingBoxForBake = function () {
+        var rect = null;
+
+        //query child's BoundingBox
+        if (!this._children || this._children.length === 0)
+            return cc.rect(0, 0, 10, 10);
+
+        var locChildren = this._children;
+        for (var i = 0; i < locChildren.length; i++) {
+            var child = locChildren[i];
+            if (child && child._visible) {
+                if(rect){
+                    var childRect = child._getBoundingBoxToCurrentNode();
+                    if (childRect)
+                        rect = cc.rectUnion(rect, childRect);
+                }else{
+                    rect = child._getBoundingBoxToCurrentNode();
+                }
+            }
+        }
+        return rect;
+    };
+    p = null;
+}else{
+    var p = cc.Layer.prototype;
+    p.bake = function(){};
+    p.unbake = function(){};
+}
 /**
  * <p>
  *     CCLayerRGBA is a subclass of CCLayer that implements the CCRGBAProtocol protocol using a solid color as the background.                        <br/>
@@ -1144,6 +1251,102 @@ cc.LayerColor.create = function (color, width, height) {
     return ret;
 };
 
+if (!cc.Browser.supportWebGL) {
+
+    var _p = cc.LayerColor.prototype;
+    //for bake
+    _p.visit = function (ctx) {
+        if (!this._isBaked) {
+            cc.Node.prototype.visit.call(this, ctx);
+            return;
+        }
+
+        var context = ctx || cc._renderContext, i;
+        var _t = this;
+        var children = _t._children;
+        var len = children.length;
+        // quick return if not visible
+        if (!_t._visible)
+            return;
+
+        var locBakeSprite = this._bakeSprite;
+
+        context.save();
+        _t.transform(context);
+
+        if (this._cacheDirty) {
+            //compute the bounding box of the bake layer.
+            var boundingBox = this._getBoundingBoxForBake();
+            boundingBox.width = 0 | boundingBox.width;
+            boundingBox.height = 0 | boundingBox.height;
+            var bakeContext = locBakeSprite.getCacheContext();
+            locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
+            var anchor = locBakeSprite.getAnchorPointInPoints(), locPos = this._position;
+            if (this._ignoreAnchorPointForPosition) {
+                bakeContext.translate(0 - boundingBox.x + locPos.x, boundingBox.height + boundingBox.y - locPos.y);
+                //reset the bake sprite's position
+                locBakeSprite.setPosition(anchor.x + boundingBox.x - locPos.x, anchor.y + boundingBox.y - locPos.y);
+            } else {
+                var selfAnchor = this.getAnchorPointInPoints();
+                var selfPos = {x: locPos.x - selfAnchor.x, y: locPos.y - selfAnchor.y};
+                bakeContext.translate(0 - boundingBox.x + selfPos.x, boundingBox.height + boundingBox.y - selfPos.y);
+                locBakeSprite.setPosition(anchor.x + boundingBox.x - selfPos.x, anchor.y + boundingBox.y - selfPos.y);
+            }
+
+            var child;
+            cc.EGLView.getInstance()._setScaleXYForRenderTexture();
+            //visit for canvas
+            if (len > 0) {
+                _t.sortAllChildren();
+                // draw children zOrder < 0
+                for (i = 0; i < len; i++) {
+                    child = children[i];
+                    if (child._zOrder < 0)
+                        child.visit(bakeContext);
+                    else
+                        break;
+                }
+                _t.draw(bakeContext);
+                for (; i < len; i++) {
+                    children[i].visit(bakeContext);
+                }
+            } else
+                _t.draw(bakeContext);
+            cc.EGLView.getInstance()._resetScale();
+            this._cacheDirty = false;
+        }
+
+        //the bakeSprite is drawing
+        locBakeSprite.visit(context);
+
+        _t.arrivalOrder = 0;
+        context.restore();
+    };
+
+    _p._getBoundingBoxForBake = function () {
+        //default size
+        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
+        var trans = this.nodeToWorldTransform();
+        rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
+
+        //query child's BoundingBox
+        if (!this._children || this._children.length === 0)
+            return rect;
+
+        var locChildren = this._children;
+        for (var i = 0; i < locChildren.length; i++) {
+            var child = locChildren[i];
+            if (child && child._visible) {
+                var childRect = child._getBoundingBoxToCurrentNode(trans);
+                rect = cc.rectUnion(rect, childRect);
+            }
+        }
+        return rect;
+    };
+
+//cc.LayerColor define end
+    _p = null;
+}
 /**
  * <p>
  * CCLayerGradient is a subclass of cc.LayerColor that draws gradients across the background.<br/>
@@ -1351,11 +1554,12 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             context.globalCompositeOperation = 'lighter';
 
         context.save();
-        var locEGLViewer = cc.EGLView.getInstance(), opacityf = this._displayedOpacity / 255.0;
-        var tWidth = this.getContentSize().width * locEGLViewer.getScaleX();
-        var tHeight = this.getContentSize().height * locEGLViewer.getScaleY();
-        var tGradient = context.createLinearGradient(this._gradientStartPoint.x, this._gradientStartPoint.y,
-            this._gradientEndPoint.x, this._gradientEndPoint.y);
+        var locEGLViewer = cc.EGLView.getInstance(),opacityf = this._displayedOpacity / 255.0;
+        var scaleX = locEGLViewer.getScaleX(), scaleY = locEGLViewer.getScaleY();
+        var tWidth = this.getContentSize().width * scaleX, tHeight = this.getContentSize().height * scaleY;
+        var tGradient = context.createLinearGradient(this._gradientStartPoint.x * scaleX, this._gradientStartPoint.y * scaleY,
+            this._gradientEndPoint.x * scaleX, this._gradientEndPoint.y * scaleY);
+
         var locDisplayedColor = this._displayedColor;
         var locEndColor = this._endColor;
         tGradient.addColorStop(0, "rgba(" + Math.round(locDisplayedColor.r) + "," + Math.round(locDisplayedColor.g) + ","
