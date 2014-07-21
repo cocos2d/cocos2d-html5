@@ -214,6 +214,11 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
                 this._worldTransform = cc.affineTransformConcat(locWorldTransform, locArmature.nodeToParentTransform());
             }
         }
+
+        this._worldTransform = locWorldTransform;
+        this._tweenData = locTweenData;
+        this._worldInfo = locWorldInfo;
+
         ccs.displayFactory.updateDisplay(this, dt, this.boneTransformDirty || locArmature.getArmatureTransformDirty());
 
         var locChildrenBone = this._childrenBone;
