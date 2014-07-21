@@ -1265,6 +1265,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to bottom boundary of ScrollView.
+     * @function
      */
     jumpToBottom: function () {
         this.jumpToDestination(this._innerContainer.getPositionX(), 0);
@@ -1272,6 +1273,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to top boundary of ScrollView.
+     * @function
      */
     jumpToTop: function () {
         this.jumpToDestination(this._innerContainer.getPositionX(), this._contentSize.height - this._innerContainer.getContentSize().height);
@@ -1279,6 +1281,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to left boundary of ScrollView.
+     * @function
      */
     jumpToLeft: function () {
         this.jumpToDestination(0, this._innerContainer.getPositionY());
@@ -1286,6 +1289,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to right boundary of ScrollView.
+     * @function
      */
     jumpToRight: function () {
         this.jumpToDestination(this._contentSize.width - this._innerContainer.getContentSize().width, this._innerContainer.getPositionY());
@@ -1293,6 +1297,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to top and left boundary of ScrollView.
+     * @function
      */
     jumpToTopLeft: function () {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
@@ -1304,6 +1309,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to top and right boundary of ScrollView.
+     * @function
      */
     jumpToTopRight: function () {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
@@ -1316,6 +1322,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to bottom and left boundary of ScrollView.
+     * @function
      */
     jumpToBottomLeft: function () {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
@@ -1327,6 +1334,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to bottom and right boundary of ScrollView.
+     * @function
      */
     jumpToBottomRight: function () {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
@@ -1338,6 +1346,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to vertical percent position of ScrollView.
+     * @function
+     * @param {Number} percent The destination vertical percent, accept value between 0 - 100
      */
     jumpToPercentVertical: function (percent) {
         var minY = this._contentSize.height - this._innerContainer.getContentSize().height;
@@ -1347,6 +1357,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to horizontal percent position of ScrollView.
+     * @function
+     * @param {Number} percent The destination vertical percent, accept value between 0 - 100
      */
     jumpToPercentHorizontal: function (percent) {
         var w = this._innerContainer.getContentSize().width - this._contentSize.width;
@@ -1355,6 +1367,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to both direction percent position of ScrollView.
+     * @function
+     * @param {Number} percent The destination vertical percent, accept value between 0 - 100
      */
     jumpToPercentBothDirection: function (percent) {
         if (this.direction != ccui.ScrollView.DIR_BOTH)

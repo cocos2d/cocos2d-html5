@@ -34,11 +34,10 @@
  */
 cc.ParticleFire = cc.ParticleSystem.extend(/** @lends cc.ParticleFire# */{
     /**
-     * initialize a fire particle system
-     * @return {Boolean}
+     * @constructor
      */
-    init:function () {
-        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 300 : 150);
+    ctor:function () {
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 300 : 150);
     },
 
     /**
@@ -110,11 +109,7 @@ cc.ParticleFire = cc.ParticleSystem.extend(/** @lends cc.ParticleFire# */{
  * var emitter = cc.ParticleFire.create();
  */
 cc.ParticleFire.create = function () {
-    var ret = new cc.ParticleFire();
-    if (ret.init()) {
-        return ret;
-    }
-    return null;
+    return new cc.ParticleFire();
 };
 
 /**
@@ -126,12 +121,12 @@ cc.ParticleFire.create = function () {
  * var emitter = cc.ParticleFireworks.create();
  */
 cc.ParticleFireworks = cc.ParticleSystem.extend(/** @lends cc.ParticleFireworks# */{
+
     /**
-     * initialize a fireworks particle system
-     * @return {Boolean}
+     * @constructor
      */
-    init:function () {
-        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 1500 : 150);
+    ctor:function () {
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 1500 : 150);
     },
 
     /**
@@ -200,11 +195,7 @@ cc.ParticleFireworks = cc.ParticleSystem.extend(/** @lends cc.ParticleFireworks#
  * var emitter = cc.ParticleFireworks.create();
  */
 cc.ParticleFireworks.create = function () {
-    var ret = new cc.ParticleFireworks();
-    if (ret.init()) {
-        return ret;
-    }
-    return null;
+    return new cc.ParticleFireworks();
 };
 
 /**
@@ -216,12 +207,12 @@ cc.ParticleFireworks.create = function () {
  * var emitter = cc.ParticleSun.create();
  */
 cc.ParticleSun = cc.ParticleSystem.extend(/** @lends cc.ParticleSun# */{
+
     /**
-     * initialize a sun particle system
-     * @return {Boolean}
+     * @constructor
      */
-    init:function () {
-        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 350 : 150);
+    ctor:function () {
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 350 : 150);
     },
 
     /**
@@ -292,11 +283,7 @@ cc.ParticleSun = cc.ParticleSystem.extend(/** @lends cc.ParticleSun# */{
  * var emitter = cc.ParticleSun.create();
  */
 cc.ParticleSun.create = function () {
-    var ret = new cc.ParticleSun();
-    if (ret.init()) {
-        return ret;
-    }
-    return null;
+    return new cc.ParticleSun();
 };
 
 //! @brief A  particle system
@@ -309,13 +296,12 @@ cc.ParticleSun.create = function () {
  * var emitter = cc.ParticleGalaxy.create();
  */
 cc.ParticleGalaxy = cc.ParticleSystem.extend(/** @lends cc.ParticleGalaxy# */{
+
     /**
-     * initialize a galaxy particle system
-     * @return {Boolean}
+     * @constructor
      */
-    init:function () {
-        //return this.initWithTotalParticles(200);
-        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 200 : 100);
+    ctor:function () {
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 200 : 100);
     },
 
     /**
@@ -388,11 +374,7 @@ cc.ParticleGalaxy = cc.ParticleSystem.extend(/** @lends cc.ParticleGalaxy# */{
  * var emitter = cc.ParticleGalaxy.create();
  */
 cc.ParticleGalaxy.create = function () {
-    var ret = new cc.ParticleGalaxy();
-    if (ret.init()) {
-        return ret;
-    }
-    return null;
+    return new cc.ParticleGalaxy();
 };
 
 /**
@@ -404,12 +386,9 @@ cc.ParticleGalaxy.create = function () {
  * var emitter = cc.ParticleFlower.create();
  */
 cc.ParticleFlower = cc.ParticleSystem.extend(/** @lends cc.ParticleFlower# */{
-    /**
-     * initialize a flower particle system
-     * @return {Boolean}
-     */
-    init:function () {
-        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 250 : 100);
+
+    ctor : function () {
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 250 : 100);
     },
 
     /**
@@ -483,11 +462,7 @@ cc.ParticleFlower = cc.ParticleSystem.extend(/** @lends cc.ParticleFlower# */{
  * var emitter = cc.ParticleFlower.create();
  */
 cc.ParticleFlower.create = function () {
-    var ret = new cc.ParticleFlower();
-    if (ret.init()) {
-        return ret;
-    }
-    return null;
+    return new cc.ParticleFlower();
 };
 
 //! @brief A meteor particle system
@@ -500,12 +475,12 @@ cc.ParticleFlower.create = function () {
  * var emitter = cc.ParticleMeteor.create();
  */
 cc.ParticleMeteor = cc.ParticleSystem.extend(/** @lends cc.ParticleMeteor# */{
+
     /**
-     * initialize a meteor particle system
-     * @return {Boolean}
+     * @constructor
      */
-    init:function () {
-        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 150 : 100);
+    ctor:function () {
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 150 : 100);
     },
 
     /**
@@ -579,11 +554,7 @@ cc.ParticleMeteor = cc.ParticleSystem.extend(/** @lends cc.ParticleMeteor# */{
  * var emitter = cc.ParticleMeteor.create();
  */
 cc.ParticleMeteor.create = function () {
-    var ret = new cc.ParticleMeteor();
-    if (ret.init()) {
-        return ret;
-    }
-    return null;
+    return new cc.ParticleMeteor();
 };
 
 /**
@@ -595,12 +566,12 @@ cc.ParticleMeteor.create = function () {
  * var emitter = cc.ParticleSpiral.create();
  */
 cc.ParticleSpiral = cc.ParticleSystem.extend(/** @lends cc.ParticleSpiral# */{
+
     /**
-     * initialize a spiral particle system
-     * @return {Boolean}
+     * @constructor
      */
-    init:function () {
-        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 500 : 100);
+    ctor:function() {
+        cc.ParticleSystem.prototype.ctor.call(this,(cc._renderType === cc._RENDER_TYPE_WEBGL) ? 500 : 100);
     },
 
     /**
@@ -674,11 +645,7 @@ cc.ParticleSpiral = cc.ParticleSystem.extend(/** @lends cc.ParticleSpiral# */{
  * var emitter = cc.ParticleSpiral.create();
  */
 cc.ParticleSpiral.create = function () {
-    var ret = new cc.ParticleSpiral();
-    if (ret.init()) {
-        return ret;
-    }
-    return null;
+    return new cc.ParticleSpiral();
 };
 
 /**
@@ -690,13 +657,12 @@ cc.ParticleSpiral.create = function () {
  * var emitter = cc.ParticleExplosion.create();
  */
 cc.ParticleExplosion = cc.ParticleSystem.extend(/** @lends cc.ParticleExplosion# */{
+
     /**
-     * initialize an explosion particle system
-     * @return {Boolean}
+     * @constructor
      */
-    init:function () {
-        //return this.initWithTotalParticles(700);
-        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 700 : 300);
+    ctor:function () {
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 700 : 300);
     },
 
     /**
@@ -769,11 +735,7 @@ cc.ParticleExplosion = cc.ParticleSystem.extend(/** @lends cc.ParticleExplosion#
  * var emitter = cc.ParticleExplosion.create();
  */
 cc.ParticleExplosion.create = function () {
-    var ret = new cc.ParticleExplosion();
-    if (ret.init()) {
-        return ret;
-    }
-    return null;
+    return new cc.ParticleExplosion();
 };
 
 /**
@@ -785,13 +747,12 @@ cc.ParticleExplosion.create = function () {
  * var emitter = cc.ParticleSmoke.create();
  */
 cc.ParticleSmoke = cc.ParticleSystem.extend(/** @lends cc.ParticleSmoke# */{
+
     /**
-     * initialize a smoke particle system
-     * @return {Boolean}
+     * @contructor
      */
-    init:function () {
-        //return this.initWithTotalParticles(200);
-        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 200 : 100);
+    ctor:function () {
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 200 : 100);
     },
 
     /**
@@ -861,11 +822,7 @@ cc.ParticleSmoke = cc.ParticleSystem.extend(/** @lends cc.ParticleSmoke# */{
  * var emitter = cc.ParticleFireworks.create();
  */
 cc.ParticleSmoke.create = function () {
-    var ret = new cc.ParticleSmoke();
-    if (ret.init()) {
-        return ret;
-    }
-    return null;
+    return new cc.ParticleSmoke();
 };
 
 /**
@@ -877,12 +834,12 @@ cc.ParticleSmoke.create = function () {
  * var emitter = cc.ParticleSnow.create();
  */
 cc.ParticleSnow = cc.ParticleSystem.extend(/** @lends cc.ParticleSnow# */{
+
     /**
-     * initialize a snow particle system
-     * @return {Boolean}
+     * @constructor
      */
-    init:function () {
-        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 700 : 250);
+    ctor:function () {
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 700 : 250);
     },
 
     /**
@@ -956,11 +913,7 @@ cc.ParticleSnow = cc.ParticleSystem.extend(/** @lends cc.ParticleSnow# */{
  * var emitter = cc.ParticleSnow.create();
  */
 cc.ParticleSnow.create = function () {
-    var ret = new cc.ParticleSnow();
-    if (ret.init()) {
-        return ret;
-    }
-    return null;
+    return new cc.ParticleSnow();
 };
 
 //! @brief A rain particle system
@@ -973,12 +926,12 @@ cc.ParticleSnow.create = function () {
  * var emitter = cc.ParticleRain.create();
  */
 cc.ParticleRain = cc.ParticleSystem.extend(/** @lends cc.ParticleRain# */{
+
     /**
-     * initialize a rain particle system
-     * @return {Boolean}
+     * @constructor
      */
-    init:function () {
-        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 1000 : 300);
+    ctor:function () {
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 1000 : 300);
     },
 
     /**
@@ -1052,9 +1005,5 @@ cc.ParticleRain = cc.ParticleSystem.extend(/** @lends cc.ParticleRain# */{
  * var emitter = cc.ParticleRain.create();
  */
 cc.ParticleRain.create = function () {
-    var ret = new cc.ParticleRain();
-    if (ret.init()) {
-        return ret;
-    }
-    return null;
+    return new cc.ParticleRain();
 };

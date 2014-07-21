@@ -705,9 +705,9 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
             } else if (four !== undefined && typeof three === "function") {
                 target = four;
                 callback = three;
-                disabledImage = selectedSprite;
+                disabledImage = cc.Sprite.create(selectedSprite);
             } else if (three === undefined) {
-                disabledImage = selectedSprite;
+                disabledImage = cc.Sprite.create(selectedSprite);
             }
             this.initWithNormalSprite(normalSprite, selectedSprite, disabledImage, callback, target);
         }
