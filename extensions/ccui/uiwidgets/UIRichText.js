@@ -42,7 +42,8 @@ ccui.RichElement = ccui.Class.extend(/** @lends ccui.RichElement# */{
         this.color.r = color.r;
         this.color.g = color.g;
         this.color.b = color.b;
-        this.color.a = opacity;
+        this.color.a = color.a;
+        this._opacity = opacity;
     }
 });
 
@@ -92,7 +93,7 @@ ccui.RichElementText.create = function (tag, color, opacity, text, fontName, fon
  * @extends ccui.RichElement
  */
 ccui.RichElementImage = ccui.RichElement.extend(/** @lends ccui.RichElementImage# */{
-    filePath: "",
+    _filePath: "",
     textureRect: null,
     textureType: 0,
     ctor: function () {
@@ -104,7 +105,7 @@ ccui.RichElementImage = ccui.RichElement.extend(/** @lends ccui.RichElementImage
     },
     init: function (tag, color, opacity, filePath) {
         ccui.RichElement.prototype.init.call(this, tag, color, opacity);
-        this.filePath = filePath;
+        this._filePath = filePath;
     }
 });
 
@@ -225,12 +226,13 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
             this._elementRenders.length = 0;
             var i, element, locRichElements = this._richElements;
             if (this._ignoreSize) {
-                this.addNewLine();
+                this._addNewLine();
                 for (i = 0; i < locRichElements.length; i++) {
                     element = locRichElements[i];
                     var elementRenderer = null;
                     switch (element.type) {
                         case ccui.RichElement.TEXT:
+                            //todo: There may be ambiguous
                             elementRenderer = cc.LabelTTF.create(element.text, element.fontName, element.fontSize);
                             break;
                         case ccui.RichElement.IMAGE:
@@ -244,21 +246,21 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                     }
                     elementRenderer.setColor(element.color);
                     elementRenderer.setOpacity(element.color.a);
-                    this.pushToContainer(elementRenderer);
+                    this._pushToContainer(elementRenderer);
                 }
             } else {
-                this.addNewLine();
+                this._addNewLine();
                 for (i = 0; i < locRichElements.length; i++) {
                     element = locRichElements[i];
                     switch (element.type) {
                         case ccui.RichElement.TEXT:
-                            this.handleTextRenderer(element.text, element.fontName, element.fontSize, element.color);
+                            this._handleTextRenderer(element.text, element.fontName, element.fontSize, element.color);
                             break;
                         case ccui.RichElement.IMAGE:
-                            this.handleImageRenderer(element.filePath, element.color, element.color.a);
+                            this._handleImageRenderer(element.filePath, element.color, element.color.a);
                             break;
                         case ccui.RichElement.CUSTOM:
-                            this.handleCustomRenderer(element.customNode);
+                            this._handleCustomRenderer(element.customNode);
                             break;
                         default:
                             break;
@@ -277,7 +279,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      * @param {Number} fontSize
      * @param {cc.Color} color
      */
-    handleTextRenderer: function (text, fontName, fontSize, color) {
+    _handleTextRenderer: function (text, fontName, fontSize, color) {
         var textRenderer = cc.LabelTTF.create(text, fontName, fontSize);
         var textRendererWidth = textRenderer.getContentSize().width;
         this._leftSpaceWidth -= textRendererWidth;
@@ -292,15 +294,15 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                 var leftRenderer = cc.LabelTTF.create(leftWords.substr(0, leftLength), fontName, fontSize);
                 leftRenderer.setColor(color);
                 leftRenderer.setOpacity(color.a);
-                this.pushToContainer(leftRenderer);
+                this._pushToContainer(leftRenderer);
             }
 
-            this.addNewLine();
-            this.handleTextRenderer(cutWords, fontName, fontSize, color);
+            this._addNewLine();
+            this._handleTextRenderer(cutWords, fontName, fontSize, color);
         } else {
             textRenderer.setColor(color);
             textRenderer.setOpacity(color.a);
-            this.pushToContainer(textRenderer);
+            this._pushToContainer(textRenderer);
         }
     },
 
@@ -310,27 +312,29 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      * @param {cc.Color} color
      * @param {Number} opacity
      */
-    handleImageRenderer: function (filePath, color, opacity) {
+    _handleImageRenderer: function (filePath, color, opacity) {
         var imageRenderer = cc.Sprite.create(filePath);
-        this.handleCustomRenderer(imageRenderer);
+        this._handleCustomRenderer(imageRenderer);
     },
+
+    _formarRenderers: function(){},
 
     /**
      * Handle custom renderer
      * @param {cc.Node} renderer
      */
-    handleCustomRenderer: function (renderer) {
+    _handleCustomRenderer: function (renderer) {
         var imgSize = renderer.getContentSize();
         this._leftSpaceWidth -= imgSize.width;
         if (this._leftSpaceWidth < 0) {
-            this.addNewLine();
-            this.pushToContainer(renderer);
+            this._addNewLine();
+            this._pushToContainer(renderer);
             this._leftSpaceWidth -= imgSize.width;
         } else
-            this.pushToContainer(renderer);
+            this._pushToContainer(renderer);
     },
 
-    addNewLine: function () {
+    _addNewLine: function () {
         this._leftSpaceWidth = this._customSize.width;
         this._elementRenders.push([]);
     },
@@ -376,13 +380,22 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                     var l = row[j];
                     l.setAnchorPoint(cc.p(0, 0));
                     l.setPosition(cc.p(nextPosX, nextPosY));
-                    locRenderersContainer.addChild(l, 1, i * 10 + j);
+                    locRenderersContainer.addChild(l, 1);
                     nextPosX += l.getContentSize().width;
                 }
             }
-            locRenderersContainer.setContentSize(this._size);
+            locRenderersContainer.setContentSize(this._contentSize);
         }
         this._elementRenders.length = 0;
+
+        var length = this._elementRenders.length;
+        for (var i = 0; i<length; i++)
+        {
+            var l = this._elementRenders[i];
+            l.clear();
+        }
+        this._elementRenders.clear();
+
         if (this._ignoreSize) {
             var s = this.getVirtualRendererSize();
             this._size.width = s.width;
@@ -399,16 +412,16 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      * Push renderer to container
      * @param {cc.Node} renderer
      */
-    pushToContainer: function (renderer) {
+    _pushToContainer: function (renderer) {
         if (this._elementRenders.length <= 0)
             return;
         this._elementRenders[this._elementRenders.length - 1].push(renderer);
     },
 
-    visit: function (ctx) {
+    visit: function (renderer, parentTransform, parentFlags) {
         if (this._enabled) {
             this.formatText();
-            ccui.Widget.prototype.visit.call(this, ctx);
+            ccui.Widget.prototype.visit.call(this, renderer, parentTransform, parentFlags);
         }
     },
 
@@ -430,14 +443,6 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
     },
 
     getVirtualRendererSize: function(){
-        return this._elementRenderersContainer.getContentSize();
-    },
-
-    /**
-     * Get content size
-     * @returns {cc.Size}
-     */
-    getContentSize: function () {
         return this._elementRenderersContainer.getContentSize();
     },
 

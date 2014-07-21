@@ -130,8 +130,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
             default:
                 break;
         }
-        barRenderer.setColor(this.getColor());
-        barRenderer.setOpacity(this.getOpacity());
+
         var bz = barRenderer.getContentSize();
         this._barRendererTextureSize.width = bz.width;
         this._barRendererTextureSize.height = bz.height;
@@ -148,7 +147,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
                     barRenderer.setFlippedX(true);
                 break;
         }
-        this.barRendererScaleChangedWithSize();
+        this._barRendererScaleChangedWithSize();
         this._updateContentSizeWithTextureSize(this._barRendererTextureSize);
         this._barRendererAdaptDirty = true;
     },
@@ -162,7 +161,9 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
             return;
         this._scale9Enabled = enabled;
         this.removeProtectedChild(this._barRenderer);
-        this._barRenderer = this._scale9Enabled? cc.Scale9Sprite.create():cc.Sprite.create();
+
+        this._barRenderer = this._scale9Enabled ? cc.Scale9Sprite.create() : cc.Sprite.create();
+
         this.loadTexture(this._textureFile, this._renderBarTexType);
         this.addProtectedChild(this._barRenderer, ccui.LoadingBar.RENDERER_ZORDER, -1);
         if (this._scale9Enabled) {
@@ -211,14 +212,14 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         if (this._totalLength <= 0)
             return;
         this._percent = percent;
-
         var res = this._percent / 100.0;
 
         if (this._scale9Enabled)
-            this.setScale9Scale();
+            this._setScale9Scale();
         else {
             var spriteRenderer = this._barRenderer;
             var rect = spriteRenderer.getTextureRect();
+            rect.width = this._barRendererTextureSize.width * res;
             this._barRenderer.setTextureRect(
                 cc.rect(
                     rect.x,
@@ -243,6 +244,13 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         this._barRendererAdaptDirty = true;
     },
 
+    _adaptRenderers: function(){
+        if (this._barRendererAdaptDirty){
+            this._barRendererScaleChangedWithSize();
+            this._barRendererAdaptDirty = false;
+        }
+    },
+
     /**
      * override "ignoreContentAdaptWithSize" method of widget.
      * @param {Boolean}ignore
@@ -260,27 +268,13 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
 
     /**
      * override "getContentSize" method of widget.
-     * @returns {cc.Size}
-     */
-    getContentSize: function () {
-        return this._barRendererTextureSize;
-    },
-    _getWidth: function () {
-        return this._barRendererTextureSize.width;
-    },
-    _getHeight: function () {
-        return this._barRendererTextureSize.height;
-    },
-
-    /**
-     * override "getContentSize" method of widget.
      * @returns {cc.Node}
      */
     getVirtualRenderer: function () {
         return this._barRenderer;
     },
 
-    barRendererScaleChangedWithSize: function () {
+    _barRendererScaleChangedWithSize: function () {
         var locBarRender = this._barRenderer;
         if (this._ignoreSize) {
             if (!this._scale9Enabled) {
@@ -290,7 +284,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         } else {
             this._totalLength = this._size.width;
             if (this._scale9Enabled)
-                this.setScale9Scale();
+                this._setScale9Scale();
             else {
                 var textureSize = this._barRendererTextureSize;
                 if (textureSize.width <= 0.0 || textureSize.height <= 0.0) {
@@ -315,14 +309,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         }
     },
 
-    _adaptRenderers: function(){
-        if (this._barRendererAdaptDirty){
-            this.barRendererScaleChangedWithSize();
-            this._barRendererAdaptDirty = false;
-        }
-    },
-
-    setScale9Scale: function () {
+    _setScale9Scale: function () {
         var width = (this._percent) / 100 * this._totalLength;
         this._barRenderer.setPreferredSize(cc.size(width, this._size.height));
     },
