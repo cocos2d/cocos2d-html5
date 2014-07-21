@@ -1585,13 +1585,13 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         if (parent.getLayoutType() == ccui.Layout.LINEAR_HORIZONTAL) {
             if (direction == ccui.Widget.LEFT) {
                 if (index == 0)
-                    return true * this._isLastWidgetInContainer(parent, direction);
+                    return this._isLastWidgetInContainer(parent, direction);
                 else
                     return false;
             }
             if (direction == ccui.Widget.RIGHT) {
                 if (index == container.length - 1)
-                    return true * this._isLastWidgetInContainer(parent, direction);
+                    return this._isLastWidgetInContainer(parent, direction);
                 else
                     return false;
             }
@@ -1603,13 +1603,13 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         } else if(parent.getLayoutType() == ccui.Layout.LINEAR_VERTICAL){
             if (direction == ccui.Widget.UP){
                 if (index == 0)
-                    return true * this._isLastWidgetInContainer(parent, direction);
+                    return this._isLastWidgetInContainer(parent, direction);
                 else
                     return false;
             }
             if (direction == ccui.Widget.DOWN) {
                 if (index == container.length - 1)
-                    return true * this._isLastWidgetInContainer(parent, direction);
+                    return this._isLastWidgetInContainer(parent, direction);
                 else
                     return false;
             }

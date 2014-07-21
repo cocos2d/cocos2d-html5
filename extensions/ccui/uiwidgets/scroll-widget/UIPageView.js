@@ -70,6 +70,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         this._childFocusCancelOffset = 5;
         this._pageViewEventListener = null;
         this._pageViewEventSelector = null;
+        this.setTouchEnabled(true);
     },
 
     init: function () {
@@ -307,6 +308,9 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     // onTouchBegan logic at ccui.Layout
+    onTouchBegan: function(touch, event){
+        ccui.Widget.prototype.onTouchBegan.call(this, touch, event);
+    },
 
     onTouchMoved: function (touch, event) {
         this._handleMoveLogic(touch);
