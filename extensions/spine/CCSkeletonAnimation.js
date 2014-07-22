@@ -139,6 +139,10 @@ sp.SkeletonAnimation = sp.Skeleton.extend({
     _state: null,
     _target: null,
     _callback: null,
+    ctor: function (skeletonDataFile, atlasFile, scale) {
+        sp.Skeleton.prototype.ctor.call(this);
+        atlasFile && this.initWithArgs(skeletonDataFile, atlasFile, scale);
+    },
     init: function () {
         this._super();
         this.setAnimationStateData(new spine.AnimationStateData(this._skeleton.data));
@@ -217,7 +221,5 @@ sp.SkeletonAnimation.createWithData = function (skeletonData) {
 };
 
 sp.SkeletonAnimation.create = function (skeletonDataFile, atlasFile/* or atlas*/, scale) {
-    var c = new sp.SkeletonAnimation();
-    c.initWithArgs.apply(c, arguments);
-    return c;
+    return new sp.SkeletonAnimation(skeletonDataFile, atlasFile, scale);
 };
