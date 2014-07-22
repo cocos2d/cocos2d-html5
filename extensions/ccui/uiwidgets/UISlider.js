@@ -421,10 +421,14 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         var nsp = this._slidBallNormalRenderer.convertToNodeSpace(pt);
         var ballSize = this._slidBallNormalRenderer.getContentSize();
         var ballRect = cc.rect(0,0, ballSize.width, ballSize.height);
-        if (ballRect.containsPoint(nsp)) {
+//        if (ballRect.containsPoint(nsp)) {
+        if (nsp.x >= ballRect.x &&
+            nsp.x <= (ballRect.x + ballRect.width) &&
+            nsp.y >= ballRect.y &&
+            nsp.y <= (ballRect.y +ballRect.height)) {
             return true;
         }
-        return cc.rectContainsPoint(ballRect, nsp);
+        return false;
     },
 
     onTouchBegan: function (touch, event) {
@@ -477,7 +481,9 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
 
     _percentChangedEvent: function () {
         if (this._sliderEventListener && this._sliderEventSelector) {
-            this._sliderEventSelector.call(this._sliderEventListener, this, ccui.Slider.EVENT_PERCENT_CHANGED);
+            this._sliderEventListener.call(this._sliderEventSelector,
+                this,
+                ccui.Slider.EVENT_PERCENT_CHANGED);
         }
         if (this._eventCallback) {
             this._eventCallback(ccui.Slider.EVENT_PERCENT_CHANGED);

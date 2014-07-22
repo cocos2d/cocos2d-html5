@@ -62,10 +62,11 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
             return;
         }
         this._fntFileName = fileName;
-        this._labelBMFontRenderer.setBMFontFilePath(fileName);
-        this.updateRGBAToRenderer(this._labelBMFontRenderer);
+//        this._labelBMFontRenderer.setBMFontFilePath(fileName);
+
         this._fntFileHasInit = true;
-        this.setString(this._stringValue);
+//        this.setString(this._stringValue);
+        this._labelBMFontRenderer.initWithString(this._stringValue, fileName);
     },
 
     /**

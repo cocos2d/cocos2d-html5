@@ -404,7 +404,8 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             return;
 
         this._ignoreSize = ignore;
-        this.setContentSize(ignore?this.getVirtualRendererSize():this._customSize);
+        this.setContentSize( ignore ? this.getVirtualRendererSize() : this._customSize );
+        this._onSizeChanged();
     },
 
     /**
@@ -1370,7 +1371,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @returns {cc.Size}
      */
     getSize: function () {
-        return cc.getContentSize();
+        return this.getContentSize();
     },
 
     /**

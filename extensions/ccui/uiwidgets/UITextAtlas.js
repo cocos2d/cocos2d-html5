@@ -51,7 +51,7 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
         ccui.Widget.prototype.ctor.call(this);
     },
 
-    initRenderer: function () {
+    _initRenderer: function () {
         this._labelAtlasRenderer = new cc.LabelAtlas();
         //cc.Node.prototype.addChild.call(this, this._labelAtlasRenderer, ccui.TextAtlas.RENDERER_ZORDER, -1);
         this._labelAtlasRenderer.setAnchorPoint(cc.p(0.5, 0.5));
@@ -74,8 +74,15 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
         this._startCharMap = startCharMap;
 //        this._labelAtlasRenderer.initWithString(stringValue, this._charMapFileName, this._itemWidth, this._itemHeight, this._startCharMap[0]);
 
-        this._labelAtlasRenderer.setCharMap(this._charMapFileName, this._itemWidth, this._itemHeight, this._startCharMap[0]);
-        this._labelAtlasRenderer.setString(stringValue);
+//        this._labelAtlasRenderer.setCharMap(this._charMapFileName, this._itemWidth, this._itemHeight, this._startCharMap[0]);
+//        this._labelAtlasRenderer.setString(stringValue);
+        this._labelAtlasRenderer.initWithString(
+            stringValue,
+            this._charMapFileName,
+            this._itemWidth,
+            this._itemHeight,
+            this._startCharMap[0]
+        );
 
         this._updateContentSizeWithTextureSize(this._labelAtlasRenderer.getContentSize());
         this._labelAtlasRendererAdaptDirty = true;
