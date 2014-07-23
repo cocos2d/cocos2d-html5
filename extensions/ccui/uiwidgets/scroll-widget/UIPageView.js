@@ -307,16 +307,11 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         }
     },
 
-    // onTouchBegan logic at ccui.Layout
-    onTouchBegan: function(touch, event){
-        ccui.Widget.prototype.onTouchBegan.call(this, touch, event);
-    },
-
     onTouchMoved: function (touch, event) {
         this._handleMoveLogic(touch);
         var widgetParent = this.getWidgetParent();
         if (widgetParent)
-            widgetParent._interceptTouchEvent(ccui.Widget.TOUCH_MOVED, this, touch);
+            widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_MOVED, this, touch);
         this._moveEvent();
     },
 
@@ -419,7 +414,8 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         }
     },
 
-    _interceptTouchEvent: function (handleState, sender, touchPoint) {
+    interceptTouchEvent: function (handleState, sender, touch) {
+        var touchPoint = touch.getLocation();
         switch (handleState) {
             case ccui.Widget.TOUCH_BEGAN:
                 break;
@@ -428,12 +424,12 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
                 offset = Math.abs(sender.getTouchBeganPosition().x - touchPoint.x);
                 if (offset > this._childFocusCancelOffset) {
                     sender.setFocused(false);
-                    this._handleMoveLogic(touchPoint);
+                    this._handleMoveLogic(touch);
                 }
                 break;
             case ccui.Widget.TOUCH_ENDED:
             case ccui.Widget.TOUCH_CANCELED:
-                this._handleReleaseLogic(touchPoint);
+                this._handleReleaseLogic(touch);
                 break;
         }
     },

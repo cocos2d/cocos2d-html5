@@ -1410,7 +1410,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * @param {ccui.Widget} sender
      * @param {cc.Touch} touch
      */
-    _interceptTouchEvent: function (event, sender, touch) {
+    interceptTouchEvent: function (event, sender, touch) {
         var touchPoint = touch.getLocation();
         switch (event) {
             case ccui.Widget.TOUCH_BEGAN:
