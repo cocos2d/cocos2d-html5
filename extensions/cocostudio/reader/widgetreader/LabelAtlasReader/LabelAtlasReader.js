@@ -65,8 +65,8 @@ ccs.LabelAtlasReader = {
                     break;
             }
         }
-    
-    
+
+
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
 
     }

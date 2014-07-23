@@ -68,8 +68,8 @@ ccs.LabelReader = {
         {
             label.setTextVerticalAlignment(options["vAlignment"]);
         }
-    
-    
+
+
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };
