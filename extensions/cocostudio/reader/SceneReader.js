@@ -28,7 +28,7 @@
  * @namespace
  * @name ccs.sceneReader
  */
-ccui.sceneReader = /** @lends ccs.sceneReader# */{
+ccs.sceneReader = /** @lends ccs.sceneReader# */{
     _baseBath:"",
     _listener:null,
     _selector:null,

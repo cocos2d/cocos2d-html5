@@ -23,34 +23,33 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+new ccs.TInfo("ButtonReader", ccui.ButtonReader);
+new ccs.TInfo("CheckBoxReader", ccui.CheckBoxReader);
+new ccs.TInfo("SliderReader", ccui.SliderReader);
+new ccs.TInfo("ImageViewReader", ccui.ImageViewReader);
+new ccs.TInfo("LoadingBarReader", ccui.LoadingBarReader);
+new ccs.TInfo("TextAtlasReader", ccui.TextAtlasReader);
+new ccs.TInfo("TextReader", ccui.TextReader);
+new ccs.TInfo("TextBMFontReader", ccui.TextBMFontReader);
+new ccs.TInfo("TextFieldReader", ccui.TextFieldReader);
+new ccs.TInfo("LayoutReader", ccui.LayoutReader);
+new ccs.TInfo("PageViewReader", ccui.PageViewReader);
+new ccs.TInfo("ScrollViewReader", ccui.ScrollViewReader);
+new ccs.TInfo("ListViewReader", ccui.ListViewReader);
 
-ccs.objectFactory.registerType("ButtonReader", ccui.ButtonReader);
-ccs.objectFactory.registerType("CheckBoxReader", ccui.CheckBoxReader);
-ccs.objectFactory.registerType("SliderReader", ccui.SliderReader);
-ccs.objectFactory.registerType("ImageViewReader", ccui.ImageViewReader);
-ccs.objectFactory.registerType("LoadingBarReader", ccui.LoadingBarReader);
-ccs.objectFactory.registerType("TextAtlasReader", ccui.TextAtlasReader);
-ccs.objectFactory.registerType("TextReader", ccui.TextReader);
-ccs.objectFactory.registerType("TextBMFontReader", ccui.TextBMFontReader);
-ccs.objectFactory.registerType("TextFieldReader", ccui.TextFieldReader);
-ccs.objectFactory.registerType("LayoutReader", ccui.LayoutReader);
-ccs.objectFactory.registerType("PageViewReader", ccui.PageViewReader);
-ccs.objectFactory.registerType("ScrollViewReader", ccui.ScrollViewReader);
-ccs.objectFactory.registerType("ListViewReader", ccui.ListViewReader);
-
-ccs.objectFactory.registerType("Button", ccui.Button);
-ccs.objectFactory.registerType("CheckBox", ccui.CheckBox);
-ccs.objectFactory.registerType("ImageView", ccui.ImageView);
-ccs.objectFactory.registerType("Text", ccui.Text);
-ccs.objectFactory.registerType("TextAtlas", ccui.TextAtlas);
-ccs.objectFactory.registerType("TextBMFont", ccui.TextBMFont);
-ccs.objectFactory.registerType("LoadingBar", ccui.LoadingBar);
-ccs.objectFactory.registerType("Slider", ccui.Slider);
-ccs.objectFactory.registerType("TextField", ccui.TextField);
-ccs.objectFactory.registerType("Layout", ccui.Layout);
-ccs.objectFactory.registerType("ListView", ccui.ListView);
-ccs.objectFactory.registerType("PageView", ccui.PageView);
-ccs.objectFactory.registerType("ScrollView", ccui.ScrollView);
+new ccs.TInfo("Button", ccui.Button);
+new ccs.TInfo("CheckBox", ccui.CheckBox);
+new ccs.TInfo("ImageView", ccui.ImageView);
+new ccs.TInfo("Text", ccui.Text);
+new ccs.TInfo("TextAtlas", ccui.TextAtlas);
+new ccs.TInfo("TextBMFont", ccui.TextBMFont);
+new ccs.TInfo("LoadingBar", ccui.LoadingBar);
+new ccs.TInfo("Slider", ccui.Slider);
+new ccs.TInfo("TextField", ccui.TextField);
+new ccs.TInfo("Layout", ccui.Layout);
+new ccs.TInfo("ListView", ccui.ListView);
+new ccs.TInfo("PageView", ccui.PageView);
+new ccs.TInfo("ScrollView", ccui.ScrollView);
 
 /**
  * Base object for ccs.uiReader
@@ -833,7 +832,8 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         return widget;
     },
     setPropsForAllWidgetFromJsonDictionary: function(reader, widget, options){
-        reader.setPropsFromJsonDictionary(widget, options);
+        if(reader && reader.setPropsFromJsonDictionary)
+            reader.setPropsFromJsonDictionary(widget, options);
     },
     setPropsForAllCustomWidgetFromJsonDictionary: function(classType, widget, customOptions){
         var guiReader = ccs.uiReader;
