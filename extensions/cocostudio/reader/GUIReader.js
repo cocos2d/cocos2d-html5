@@ -933,56 +933,56 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
 
             var render;
             if(widget instanceof ccui.Button){
-                render = ccui.ButtonReader;
+                render = ccs.ButtonReader;
             }else if(widget instanceof ccui.CheckBox){
                 render = ccs.CheckBoxReader;
             }else if (widget instanceof ccui.ImageView)
             {
-                render = ccui.ImageViewReader;
+                render = ccs.ImageViewReader;
             }
             else if (widget instanceof ccui.TextAtlas)
             {
-                render = ccui.LabelAtlasReader;
+                render = ccs.LabelAtlasReader;
             }
             else if (widget instanceof ccui.LabelBMFont)
             {
-                render = ccui.LabelBMFontReader;
+                render = ccs.LabelBMFontReader;
             }
             else if (widget instanceof ccui.Text)
             {
-                render = ccui.LabelReader;
+                render = ccs.LabelReader;
             }
             else if (widget instanceof ccui.LoadingBar)
             {
-                render = ccui.LoadingBarReader;
+                render = ccs.LoadingBarReader;
             }
             else if (widget instanceof ccui.Slider)
             {
-                render = ccui.SliderReader;
+                render = ccs.SliderReader;
             }
             else if (widget instanceof ccui.TextField)
             {
-                render = ccui.TextFieldReader;
+                render = ccs.TextFieldReader;
             }
             else if (widget instanceof ccui.ListView)
             {
-                render = ccui.ListViewReader;
+                render = ccs.ListViewReader;
             }
             else if (widget instanceof ccui.ScrollView)
             {
-                render = ccui.ScrollViewReader;
+                render = ccs.ScrollViewReader;
             }
             else if (widget instanceof ccui.PageView)
             {
-                render = ccui.PageViewReader;
+                render = ccs.PageViewReader;
             }
             else if (widget instanceof ccui.Layout)
             {
-                render = ccui.LayoutReader;
+                render = ccs.LayoutReader;
             }
             else if (widget instanceof ccui.Widget)
             {
-                render = ccui.WidgetReader;
+                render = ccs.WidgetReader;
             }
 
             this.setPropsForAllWidgetFromJsonDictionary(render, widget, uiOptions);

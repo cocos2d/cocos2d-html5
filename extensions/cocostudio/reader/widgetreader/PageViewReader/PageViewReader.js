@@ -23,16 +23,16 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccui.PageViewReader = {
+ccs.PageViewReader = {
 
     instancePageViewReader: null,
 
     getInstance: function(){
-        return ccui.PageViewReader;
+        return ccs.PageViewReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccui.LayoutReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.LayoutReader.setPropsFromJsonDictionary.call(this, widget, options);
     }
 };

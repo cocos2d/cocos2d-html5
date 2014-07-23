@@ -23,15 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccui.LabelBMFontReader = {
+ccs.LabelBMFontReader = {
     getInstance: function(){
-        return ccui.LabelBMFontReader;
+        return ccs.LabelBMFontReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
 
-        ccui.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
     
     
         var jsonPath = ccs.uiReader.getFilePath();
@@ -61,6 +61,6 @@ ccui.LabelBMFontReader = {
         labelBMFont.setString(text);
 
 
-        ccui.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };

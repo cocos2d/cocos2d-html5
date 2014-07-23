@@ -23,15 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccui.CheckBoxReader = {
+ccs.CheckBoxReader = {
 
     getInstance: function(){
-        return ccui.CheckBoxReader;
+        return ccs.CheckBoxReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccui.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
     
     
         var jsonPath = ccs.uiReader.getFilePath();
@@ -158,6 +158,6 @@ ccui.CheckBoxReader = {
                 break;
         }
 
-        ccui.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };

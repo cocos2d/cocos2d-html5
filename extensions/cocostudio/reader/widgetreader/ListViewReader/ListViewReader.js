@@ -23,15 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccui.ListViewReader = {
+ccs.ListViewReader = {
 
     getInstance: function(){
-        return ccui.ListViewReader;
+        return ccs.ListViewReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccui.ScrollViewReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.ScrollViewReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var listView = widget;
 

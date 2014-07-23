@@ -23,15 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccui.ButtonReader = {
+ccs.ButtonReader = {
 
     getInstance: function(){
-        return ccui.ButtonReader;
+        return ccs.ButtonReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccui.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
 
         var jsonPath = ccs.uiReader.getFilePath();
@@ -156,6 +156,6 @@ ccui.ButtonReader = {
         }
 
 
-        ccui.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };

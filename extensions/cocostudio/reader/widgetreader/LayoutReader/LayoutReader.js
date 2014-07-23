@@ -23,15 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccui.LayoutReader = {
+ccs.LayoutReader = {
 
     getInstance: function(){
-        return ccui.LayoutReader;
+        return ccs.LayoutReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccui.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var jsonPath = ccs.uiReader.getFilePath();
 
@@ -116,6 +116,6 @@ ccui.LayoutReader = {
         panel.setLayoutType(options["layoutType"]);
 
 
-        ccui.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };

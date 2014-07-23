@@ -23,15 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccui.TextFieldReader = {
+ccs.TextFieldReader = {
 
     getInstance: function(){
-        return ccui.TextFieldReader;
+        return ccs.TextFieldReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccui.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var textField = widget;
         var ph = options["placeHolder"];
@@ -86,7 +86,7 @@ ccui.TextFieldReader = {
             textField.setTextVerticalAlignment(va);
         }
 
-        ccui.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
 
     }
 };

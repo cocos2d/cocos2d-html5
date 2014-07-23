@@ -23,15 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccui.ScrollViewReader = {
+ccs.ScrollViewReader = {
 
     getInstance: function(){
-        return ccui.ScrollViewReader;
+        return ccs.ScrollViewReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccui.LayoutReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.LayoutReader.setPropsFromJsonDictionary.call(this, widget, options);
 
 
         var scrollView = widget;
@@ -46,6 +46,6 @@ ccui.ScrollViewReader = {
         scrollView.setBounceEnabled(options["bounceEnable"]);
 
 
-        ccui.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };
