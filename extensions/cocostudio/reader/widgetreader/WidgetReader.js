@@ -23,10 +23,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.WidgetReader = {
+ccui.WidgetReader = {
 
     getInstance: function(){
-        return ccs.WidgetReader;
+        return ccui.WidgetReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){

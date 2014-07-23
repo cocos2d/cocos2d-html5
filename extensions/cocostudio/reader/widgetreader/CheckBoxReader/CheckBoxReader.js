@@ -23,15 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.CheckBoxReader = {
+ccui.CheckBoxReader = {
 
     getInstance: function(){
-        return ccs.CheckBoxReader;
+        return ccui.CheckBoxReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccui.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
     
     
         var jsonPath = ccs.uiReader.getFilePath();
@@ -55,6 +55,7 @@ ccs.CheckBoxReader = {
             }
             case 1:
             {
+                var backGroundFileName = backGroundDic["path"];
                 checkBox.loadTextureBackGround(backGroundFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
             }
@@ -104,6 +105,7 @@ ccs.CheckBoxReader = {
             }
             case 1:
             {
+                var frontCrossFileName = frontCrossDic["path"];
                 checkBox.loadTextureFrontCross(frontCrossFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
             }
@@ -126,6 +128,7 @@ ccs.CheckBoxReader = {
             }
             case 1:
             {
+                var backGroundDisabledFileName = backGroundDisabledDic["path"];
                 checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
             }
@@ -155,6 +158,6 @@ ccs.CheckBoxReader = {
                 break;
         }
 
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccui.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };

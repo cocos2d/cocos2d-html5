@@ -40,6 +40,9 @@ ccs.objectFactory = {
     },
 
     registerType: function (t) {
+        if(t._className == "CustomImageView"){
+            void 0;
+        }
         this._typeMap[t._className] = t;
     },
 

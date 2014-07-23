@@ -23,15 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.ImageViewReader = {
+ccui.ImageViewReader = {
 
     getInstance: function(){
-        return ccs.ImageViewReader;
+        return ccui.ImageViewReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccui.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
     
     
         var jsonPath = ccs.uiReader.getFilePath();
@@ -92,8 +92,8 @@ ccs.ImageViewReader = {
             imageView.setCapInsets(cc.rect(cx, cy, cw, ch));
     
         }
-    
-    
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+
+
+        ccui.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };

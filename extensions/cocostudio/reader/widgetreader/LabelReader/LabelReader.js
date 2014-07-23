@@ -23,15 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.LabelReader = {
+ccui.LabelReader = {
 
     getInstance: function(){
-        return ccs.LabelReader;
+        return ccui.LabelReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccui.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
     
     
         var jsonPath = ccs.uiReader.getFilePath();
@@ -68,8 +68,8 @@ ccs.LabelReader = {
         {
             label.setTextVerticalAlignment(options["vAlignment"]);
         }
-    
-    
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+
+
+        ccui.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };

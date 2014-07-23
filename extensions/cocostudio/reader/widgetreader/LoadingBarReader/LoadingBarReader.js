@@ -23,15 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.LoadingBarReader = {
+ccui.LoadingBarReader = {
 
     getInstance: function(){
-        return ccs.LoadingBarReader;
+        return ccui.LoadingBarReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccui.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
 
         var jsonPath = ccs.uiReader.getFilePath();
@@ -77,6 +77,6 @@ ccs.LoadingBarReader = {
         loadingBar.setDirection(options["direction"]/*ui::LoadingBarType(options["direction"])*/);
         loadingBar.setPercent(options["percent"]);
 
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccui.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };

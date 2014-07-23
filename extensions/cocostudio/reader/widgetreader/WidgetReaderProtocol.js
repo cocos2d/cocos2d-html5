@@ -23,7 +23,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.WidgetReaderProtocol = ccs.Class.extend({
+ccui.WidgetReaderProtocol = ccui.Class.extend({
 
     setPropsFromJsonDictionary: function(widget, options){
 

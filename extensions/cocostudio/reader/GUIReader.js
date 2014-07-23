@@ -22,6 +22,36 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+ccs.objectFactory.registerType("ButtonReader", ccui.ButtonReader);
+ccs.objectFactory.registerType("CheckBoxReader", ccui.CheckBoxReader);
+ccs.objectFactory.registerType("SliderReader", ccui.SliderReader);
+ccs.objectFactory.registerType("ImageViewReader", ccui.ImageViewReader);
+ccs.objectFactory.registerType("LoadingBarReader", ccui.LoadingBarReader);
+ccs.objectFactory.registerType("TextAtlasReader", ccui.TextAtlasReader);
+ccs.objectFactory.registerType("TextReader", ccui.TextReader);
+ccs.objectFactory.registerType("TextBMFontReader", ccui.TextBMFontReader);
+ccs.objectFactory.registerType("TextFieldReader", ccui.TextFieldReader);
+ccs.objectFactory.registerType("LayoutReader", ccui.LayoutReader);
+ccs.objectFactory.registerType("PageViewReader", ccui.PageViewReader);
+ccs.objectFactory.registerType("ScrollViewReader", ccui.ScrollViewReader);
+ccs.objectFactory.registerType("ListViewReader", ccui.ListViewReader);
+
+ccs.objectFactory.registerType("Button", ccui.Button);
+ccs.objectFactory.registerType("CheckBox", ccui.CheckBox);
+ccs.objectFactory.registerType("ImageView", ccui.ImageView);
+ccs.objectFactory.registerType("Text", ccui.Text);
+ccs.objectFactory.registerType("TextAtlas", ccui.TextAtlas);
+ccs.objectFactory.registerType("TextBMFont", ccui.TextBMFont);
+ccs.objectFactory.registerType("LoadingBar", ccui.LoadingBar);
+ccs.objectFactory.registerType("Slider", ccui.Slider);
+ccs.objectFactory.registerType("TextField", ccui.TextField);
+ccs.objectFactory.registerType("Layout", ccui.Layout);
+ccs.objectFactory.registerType("ListView", ccui.ListView);
+ccs.objectFactory.registerType("PageView", ccui.PageView);
+ccs.objectFactory.registerType("ScrollView", ccui.ScrollView);
+
 /**
  * Base object for ccs.uiReader
  * @namespace
@@ -139,8 +169,10 @@ ccs.uiReader = /** @lends ccs.uiReader# */{
     },
     registerTypeAndCallBack: function(classType, ins, object, callback){
         var factoryCreate = ccs.objectFactory;
-        var t = new ccs.TInfo(classType, object);
+        var t = new ccs.TInfo(classType, ins);
         factoryCreate.registerType(t);
+        var t2 = new ccs.TInfo(classType + "Reader", object);
+        factoryCreate.registerType(t2);
 
         if(object){
             this._mapObject[classType] = object;
@@ -820,59 +852,62 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
     },
     widgetFromJsonDictionary: function (data) {
 
-        var widget = null;
         var classname = data["classname"];
         var uiOptions = data["options"];
-        if (classname == "Button") {
-            widget = ccui.Button.create();
+        var widget = ccs.objectFactory.createObject(classname);
+        if(!widget){
+            if (classname == "Button") {
+                widget = ccui.Button.create();
+            }
+            else if (classname == "CheckBox") {
+                widget = ccui.CheckBox.create();
+            }
+            else if (classname == "Label") {
+                widget = ccui.Text.create();
+            }
+            else if (classname == "LabelAtlas") {
+                widget = ccui.TextAtlas.create();
+            }
+            else if (classname == "LoadingBar") {
+                widget = ccui.LoadingBar.create();
+            } else if (classname == "ScrollView") {
+                widget = ccui.ScrollView.create();
+            }
+            else if (classname == "TextArea") {
+                widget = ccui.Text.create();
+            }
+            else if (classname == "TextButton") {
+                widget = ccui.Button.create();
+            }
+            else if (classname == "TextField") {
+                widget = ccui.TextField.create();
+            }
+            else if (classname == "ImageView") {
+                widget = ccui.ImageView.create();
+            }
+            else if (classname == "Panel") {
+                widget = ccui.Layout.create();
+            }
+            else if (classname == "Slider") {
+                widget = ccui.Slider.create();
+            }
+            else if (classname == "LabelBMFont") {
+                widget = ccui.TextBMFont.create();
+            }
+            else if (classname == "DragPanel") {
+                widget = ccui.ScrollView.create();
+            }
+            else if (classname == "ListView") {
+                widget = ccui.ListView.create();
+            }
+            else if (classname == "PageView") {
+                widget = ccui.PageView.create();
+            }
+            else if (classname == "Widget"){
+                widget = ccui.Widget.create();
+            }
         }
-        else if (classname == "CheckBox") {
-            widget = ccui.CheckBox.create();
-        }
-        else if (classname == "Label") {
-            widget = ccui.Text.create();
-        }
-        else if (classname == "LabelAtlas") {
-            widget = ccui.TextAtlas.create();
-        }
-        else if (classname == "LoadingBar") {
-            widget = ccui.LoadingBar.create();
-        } else if (classname == "ScrollView") {
-            widget = ccui.ScrollView.create();
-        }
-        else if (classname == "TextArea") {
-            widget = ccui.Text.create();
-        }
-        else if (classname == "TextButton") {
-            widget = ccui.Button.create();
-        }
-        else if (classname == "TextField") {
-            widget = ccui.TextField.create();
-        }
-        else if (classname == "ImageView") {
-            widget = ccui.ImageView.create();
-        }
-        else if (classname == "Panel") {
-            widget = ccui.Layout.create();
-        }
-        else if (classname == "Slider") {
-            widget = ccui.Slider.create();
-        }
-        else if (classname == "LabelBMFont") {
-            widget = ccui.TextBMFont.create();
-        }
-        else if (classname == "DragPanel") {
-            widget = ccui.ScrollView.create();
-        }
-        else if (classname == "ListView") {
-            widget = ccui.ListView.create();
-        }
-        else if (classname == "PageView") {
-            widget = ccui.PageView.create();
-        }
-        else if (classname == "Widget"){
-            widget = ccui.Widget.create();
-        }
+
 
         // create widget reader to parse properties of widget
         var readerName = classname;
@@ -887,7 +922,8 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
                 readerName = "Button";
                 break;
         }
-        readerName += "Reader";
+
+        readerName = readerName+"Reader";
         var reader = ccs.objectFactory.createWidgetReaderProtocol(readerName);
         if(reader){
             // widget parse with widget reader
@@ -897,56 +933,56 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
 
             var render;
             if(widget instanceof ccui.Button){
-                render = ccs.ButtonReader;
+                render = ccui.ButtonReader;
             }else if(widget instanceof ccui.CheckBox){
                 render = ccs.CheckBoxReader;
             }else if (widget instanceof ccui.ImageView)
             {
-                render = ccs.ImageViewReader;
+                render = ccui.ImageViewReader;
             }
             else if (widget instanceof ccui.TextAtlas)
             {
-                render = ccs.LabelAtlasReader;
+                render = ccui.LabelAtlasReader;
             }
             else if (widget instanceof ccui.LabelBMFont)
             {
-                render = ccs.LabelBMFontReader;
+                render = ccui.LabelBMFontReader;
             }
             else if (widget instanceof ccui.Text)
             {
-                render = ccs.LabelReader;
+                render = ccui.LabelReader;
             }
             else if (widget instanceof ccui.LoadingBar)
             {
-                render = ccs.LoadingBarReader;
+                render = ccui.LoadingBarReader;
             }
             else if (widget instanceof ccui.Slider)
             {
-                render = ccs.SliderReader;
+                render = ccui.SliderReader;
             }
             else if (widget instanceof ccui.TextField)
             {
-                render = ccs.TextFieldReader;
+                render = ccui.TextFieldReader;
             }
             else if (widget instanceof ccui.ListView)
             {
-                render = ccs.ListViewReader;
+                render = ccui.ListViewReader;
             }
             else if (widget instanceof ccui.ScrollView)
             {
-                render = ccs.ScrollViewReader;
+                render = ccui.ScrollViewReader;
             }
             else if (widget instanceof ccui.PageView)
             {
-                render = ccs.PageViewReader;
+                render = ccui.PageViewReader;
             }
             else if (widget instanceof ccui.Layout)
             {
-                render = ccs.LayoutReader;
+                render = ccui.LayoutReader;
             }
             else if (widget instanceof ccui.Widget)
             {
-                render = ccs.WidgetReader;
+                render = ccui.WidgetReader;
             }
 
             this.setPropsForAllWidgetFromJsonDictionary(render, widget, uiOptions);

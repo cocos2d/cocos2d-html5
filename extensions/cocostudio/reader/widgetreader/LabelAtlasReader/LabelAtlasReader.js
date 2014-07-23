@@ -23,15 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.LabelAtlasReader = {
+ccui.LabelAtlasReader = {
 
     getInstance: function(){
-        return ccs.LabelAtlasReader;
+        return ccui.LabelAtlasReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
 
-        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccui.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
     
     
         var jsonPath = ccs.uiReader.getFilePath();
@@ -65,9 +65,9 @@ ccs.LabelAtlasReader = {
                     break;
             }
         }
-    
-    
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+
+
+        ccui.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
 
     }
 };
