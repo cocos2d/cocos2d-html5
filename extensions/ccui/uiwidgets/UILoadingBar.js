@@ -263,7 +263,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
     },
 
     getVirtualRendererSize:function(){
-        return this._barRendererTextureSize;
+        return cc.size(this._barRendererTextureSize);
     },
 
     /**
@@ -275,14 +275,14 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
     },
 
     _barRendererScaleChangedWithSize: function () {
-        var locBarRender = this._barRenderer;
+        var locBarRender = this._barRenderer, locContentSize = this._contentSize;
         if (this._ignoreSize) {
             if (!this._scale9Enabled) {
                 this._totalLength = this._barRendererTextureSize.width;
                 locBarRender.setScale(1.0);
             }
         } else {
-            this._totalLength = this._size.width;
+            this._totalLength = locContentSize.width;
             if (this._scale9Enabled)
                 this._setScale9Scale();
             else {
@@ -291,18 +291,18 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
                     locBarRender.setScale(1.0);
                     return;
                 }
-                var scaleX = this._size.width / textureSize.width;
-                var scaleY = this._size.height / textureSize.height;
+                var scaleX = locContentSize.width / textureSize.width;
+                var scaleY = locContentSize.height / textureSize.height;
                 locBarRender.setScaleX(scaleX);
                 locBarRender.setScaleY(scaleY);
             }
         }
         switch (this._direction) {
             case ccui.LoadingBar.TYPE_LEFT:
-                locBarRender.setPosition(0, this._contentSize.height * 0.5);
+                locBarRender.setPosition(0, locContentSize.height * 0.5);
                 break;
             case ccui.LoadingBar.TYPE_RIGHT:
-                locBarRender.setPosition(this._totalLength, this._contentSize.height * 0.5);
+                locBarRender.setPosition(this._totalLength, locContentSize.height * 0.5);
                 break;
             default:
                 break;
@@ -311,7 +311,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
 
     _setScale9Scale: function () {
         var width = (this._percent) / 100 * this._totalLength;
-        this._barRenderer.setPreferredSize(cc.size(width, this._size.height));
+        this._barRenderer.setPreferredSize(cc.size(width, this._contentSize.height));
     },
 
     /**

@@ -240,17 +240,15 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     },
 
     _onPressStateChangedToNormal: function () {
-        if (!this._touchScaleChangeEnabled) {
+        if (!this._touchScaleChangeEnabled)
             return;
-        }
         this._labelRenderer.setScaleX(this._normalScaleValueX);
         this._labelRenderer.setScaleY(this._normalScaleValueY);
     },
 
     _onPressStateChangedToPressed: function () {
-        if (!this._touchScaleChangeEnabled) {
+        if (!this._touchScaleChangeEnabled)
             return;
-        }
         this._labelRenderer.setScaleX(this._normalScaleValueX + this._onSelectedScaleOffset);
         this._labelRenderer.setScaleY(this._normalScaleValueY + this._onSelectedScaleOffset);
     },
@@ -260,26 +258,17 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     },
 
     _updateFlippedX: function () {
-
         if (this._flippedX)
-        {
             this._labelRenderer.setScaleX(-1.0);
-        }
         else
-        {
             this._labelRenderer.setScaleX(1.0);
-        }
     },
 
     _updateFlippedY: function () {
         if (this._flippedY)
-        {
             this._labelRenderer.setScaleY(-1.0);
-        }
         else
-        {
             this._labelRenderer.setScaleY(1.0);
-        }
     },
 
     _onSizeChanged: function () {
@@ -288,8 +277,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     },
 
     _adaptRenderers: function(){
-        if (this._labelRendererAdaptDirty)
-        {
+        if (this._labelRendererAdaptDirty) {
             this._labelScaleChangedWithSize();
             this._labelRendererAdaptDirty = false;
         }

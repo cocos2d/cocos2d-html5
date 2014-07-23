@@ -337,7 +337,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
                 parentSize = this._parent.getContentSize();
         }
 
-        var locSize;
         switch (this._sizeType) {
             case ccui.Widget.SIZE_ABSOLUTE:
                 if(this._ignoreSize)

@@ -283,7 +283,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * @return {cc.Size}
      */
     getWinSize: function () {
-        return this._winSizeInPoints;
+        return cc.size(this._winSizeInPoints);
     },
 
     /**

@@ -342,11 +342,12 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
     formatRenderers: function () {
         var newContentSizeHeight = 0, locRenderersContainer = this._elementRenderersContainer;
         var locElementRenders = this._elementRenders;
+        var i, j, row, nextPosX, l;
         if (this._ignoreSize) {
             var newContentSizeWidth = 0;
-            var row = locElementRenders[0];
-            var nextPosX = 0;
-            for (var j = 0; j < row.length; j++) {
+            row = locElementRenders[0];
+            nextPosX = 0;
+            for (j = 0; j < row.length; j++) {
                 var l = row[j];
                 l.setAnchorPoint(cc.p(0, 0));
                 l.setPosition(cc.p(nextPosX, 0));
@@ -359,11 +360,11 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
             locRenderersContainer.setContentSize(cc.size(newContentSizeWidth, newContentSizeHeight));
         } else {
             var maxHeights = [];
-            for (var i = 0; i < locElementRenders.length; i++) {
-                var row = locElementRenders[i];
+            for (i = 0; i < locElementRenders.length; i++) {
+                row = locElementRenders[i];
                 var maxHeight = 0;
-                for (var j = 0; j < row.length; j++) {
-                    var l = row[j];
+                for (j = 0; j < row.length; j++) {
+                    l = row[j];
                     maxHeight = Math.max(l.getContentSize().height, maxHeight);
                 }
                 maxHeights[i] = maxHeight;
@@ -371,13 +372,13 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
             }
 
             var nextPosY = this._customSize.height;
-            for (var i = 0; i < locElementRenders.length; i++) {
-                var row = locElementRenders[i];
-                var nextPosX = 0;
+            for (i = 0; i < locElementRenders.length; i++) {
+                row = locElementRenders[i];
+                nextPosX = 0;
                 nextPosY -= (maxHeights[i] + this._verticalSpace);
 
-                for (var j = 0; j < row.length; j++) {
-                    var l = row[j];
+                for (j = 0; j < row.length; j++) {
+                    l = row[j];
                     l.setAnchorPoint(cc.p(0, 0));
                     l.setPosition(cc.p(nextPosX, nextPosY));
                     locRenderersContainer.addChild(l, 1);
@@ -386,25 +387,15 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
             }
             locRenderersContainer.setContentSize(this._contentSize);
         }
+
+        var length = locElementRenders.length;
+        for (i = 0; i<length; i++){
+            locElementRenders[i].length = 0;
+        }
         this._elementRenders.length = 0;
 
-        var length = this._elementRenders.length;
-        for (var i = 0; i<length; i++)
-        {
-            var l = this._elementRenders[i];
-            l.clear();
-        }
-        this._elementRenders.clear();
-
-        if (this._ignoreSize) {
-            var s = this.getVirtualRendererSize();
-            this._size.width = s.width;
-            this._size.height = s.height;
-        } else {
-            this._size.width = this._customSize.width;
-            this._size.height = this._customSize.height;
-        }
-        this._updateContentSizeWithTextureSize(this._size);
+        this.setContentSize(this._ignoreSize?this.getVirtualRendererSize():this._customSize);
+        this._updateContentSizeWithTextureSize(this._contentSize);
         locRenderersContainer.setPosition(this._contentSize.width * 0.5, this._contentSize.height * 0.5);
     },
 

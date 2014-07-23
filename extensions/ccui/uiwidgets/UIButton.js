@@ -182,7 +182,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     },
 
     getVirtualRendererSize: function(){
-        return this._normalTextureSize;
+        return cc.size(this._normalTextureSize);
     },
 
     /**

@@ -397,7 +397,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {cc.Point}
      */
     getOffsetPosition:function () {
-        return this._offsetPosition;
+        return cc.p(this._offsetPosition);
     },
 
 	_getOffsetX: function () {

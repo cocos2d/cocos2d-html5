@@ -133,21 +133,19 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
     },
 
     _labelBMFontScaleChangedWithSize: function () {
+        var locRenderer = this._labelBMFontRenderer;
         if (this._ignoreSize) {
-            this._labelBMFontRenderer.setScale(1.0);
-        }
-        else {
-            var textureSize = this._labelBMFontRenderer.getContentSize();
+            locRenderer.setScale(1.0);
+        } else {
+            var textureSize = locRenderer.getContentSize();
             if (textureSize.width <= 0.0 || textureSize.height <= 0.0) {
-                this._labelBMFontRenderer.setScale(1.0);
+                locRenderer.setScale(1.0);
                 return;
             }
-            var scaleX = this._size.width / textureSize.width;
-            var scaleY = this._size.height / textureSize.height;
-            this._labelBMFontRenderer.setScaleX(scaleX);
-            this._labelBMFontRenderer.setScaleY(scaleY);
+            locRenderer.setScaleX(this._contentSize.width / textureSize.width);
+            locRenderer.setScaleY(this._contentSize.height / textureSize.height);
         }
-        this._labelBMFontRenderer.setPosition(this._contentSize.width / 2.0, this._contentSize.height / 2.0);
+        locRenderer.setPosition(this._contentSize.width / 2.0, this._contentSize.height / 2.0);
     },
 
     _updateTextureColor: function () {

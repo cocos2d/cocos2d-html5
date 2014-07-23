@@ -214,7 +214,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
     },
 
     getVirtualRendererSize: function(){
-        return this._imageTextureSize;
+        return cc.size(this._imageTextureSize);
     },
 
     /**

@@ -161,21 +161,19 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
     },
 
     _labelAtlasScaleChangedWithSize: function () {
+        var locRenderer = this._labelAtlasRenderer;
         if (this._ignoreSize) {
-            this._labelAtlasRenderer.setScale(1.0);
-        }
-        else {
-            var textureSize = this._labelAtlasRenderer.getContentSize();
+            locRenderer.setScale(1.0);
+        } else {
+            var textureSize = locRenderer.getContentSize();
             if (textureSize.width <= 0.0 || textureSize.height <= 0.0) {
-                this._labelAtlasRenderer.setScale(1.0);
+                locRenderer.setScale(1.0);
                 return;
             }
-            var scaleX = this._size.width / textureSize.width;
-            var scaleY = this._size.height / textureSize.height;
-            this._labelAtlasRenderer.setScaleX(scaleX);
-            this._labelAtlasRenderer.setScaleY(scaleY);
+            locRenderer.setScaleX(this._contentSize.width / textureSize.width);
+            locRenderer.setScaleY(this._contentSize.height / textureSize.height);
         }
-        this._labelAtlasRenderer.setPosition(this._contentSize.width / 2.0, this._contentSize.height / 2.0);
+        locRenderer.setPosition(this._contentSize.width / 2.0, this._contentSize.height / 2.0);
     },
 
     /**
