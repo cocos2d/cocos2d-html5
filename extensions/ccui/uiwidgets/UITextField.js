@@ -125,43 +125,52 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
             }
         }
     },
+
     openIME: function () {
         cc.TextFieldTTF.prototype.attachWithIME.call(this);
     },
+
     closeIME: function () {
         cc.TextFieldTTF.prototype.detachWithIME.call(this);
     },
+
     setMaxLengthEnabled: function (enable) {
         this._maxLengthEnabled = enable;
     },
+
     isMaxLengthEnabled: function () {
         return this._maxLengthEnabled;
     },
+
     setMaxLength: function (length) {
         this._maxLength = length;
     },
+
     getMaxLength: function () {
         return this._maxLength;
     },
+
     getCharCount: function () {
         return cc.TextFieldTTF.prototype.getCharCount.call(this);
     },
+
     setPasswordEnabled: function (enable) {
         this._passwordEnabled = enable;
     },
+
     isPasswordEnabled: function () {
         return this._passwordEnabled;
     },
+
     setPasswordStyleText: function (styleText) {
-        if (styleText.length > 1) {
+        if (styleText.length > 1)
             return;
-        }
         var header = styleText.charCodeAt(0);
-        if (header < 33 || header > 126) {
+        if (header < 33 || header > 126)
             return;
-        }
         this._passwordStyleText = styleText;
     },
+
     setPasswordText: function (text) {
         var tempStr = "";
         var text_count = text.length;
@@ -503,10 +512,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         return this._textFieldRenderer.isPasswordEnabled();
     },
 
-    /**
-     * @param {String} enable
-     */
-    setPasswordStyleText: function (styleText) {
+    setPasswordStyleText: function(styleText){
         this._textFieldRenderer.setPasswordStyleText(styleText);
         this._passwordStyleText = styleText;
 
@@ -608,45 +614,38 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     _attachWithIMEEvent: function () {
-        if (this._textFieldEventListener && this._textFieldEventSelector) {
+        if (this._textFieldEventListener && this._textFieldEventSelector)
             this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_ATTACH_WITH_IME);
-        }
-        if (this._eventCallback) {
-            this._eventCallback(this, 0);
-        }
+        if (this._eventCallback)
+            this._eventCallback(this, ccui.TextField.EVENT_ATTACH_WITH_IME);
     },
 
     _detachWithIMEEvent: function () {
-        if (this._textFieldEventListener && this._textFieldEventSelector) {
+        if (this._textFieldEventListener && this._textFieldEventSelector)
             this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_DETACH_WITH_IME);
-        }
-        if (this._eventCallback) {
-            this._eventCallback(this, 1);
-        }
+        if (this._eventCallback)
+            this._eventCallback(this, ccui.TextField.EVENT_DETACH_WITH_IME);
     },
 
     _insertTextEvent: function () {
-        if (this._textFieldEventListener && this._textFieldEventSelector) {
+        if (this._textFieldEventListener && this._textFieldEventSelector)
             this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_INSERT_TEXT);
-        }
-        if (this._eventCallback) {
-            this._eventCallback(this, 2);
-        }
+        if (this._eventCallback)
+            this._eventCallback(this, ccui.TextField.EVENT_INSERT_TEXT);
     },
 
     _deleteBackwardEvent: function () {
-        if (this._textFieldEventListener && this._textFieldEventSelector) {
+        if (this._textFieldEventListener && this._textFieldEventSelector)
             this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_DELETE_BACKWARD);
-        }
-        if (this._eventCallback) {
-            this._eventCallback(this, 3);
-        }
+        if (this._eventCallback)
+            this._eventCallback(this, ccui.TextField.EVENT_DELETE_BACKWARD);
     },
 
     /**
      * add event listener
      * @param {Object} target
      * @param {Function} selector
+     * @deprecated
      */
     addEventListenerTextField: function (target, selector) {
         this._textFieldEventSelector = selector;
