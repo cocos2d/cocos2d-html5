@@ -237,7 +237,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     init: function () {
         if (ccui.Widget.prototype.init.call(this)) {
             this.ignoreContentAdaptWithSize(false);
-            this.setSize(cc.size(0, 0));
+            this.setContentSize(cc.size(0, 0));
             this.setAnchorPoint(0, 0);
             this.onPassFocusToChild  = this._findNearestChildWidgetIndex.bind(this);
             return true;

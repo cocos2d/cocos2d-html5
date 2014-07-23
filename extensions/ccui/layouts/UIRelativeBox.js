@@ -39,7 +39,7 @@ ccui.RelativeBox = ccui.Layout.extend(/** @lends ccui.RelativeBox# */{
 
     initWithSize: function(size){
         if(this.init()){
-            this.setSize(size);
+            this.setContentSize(size);
             return true;
         }
         return false;
