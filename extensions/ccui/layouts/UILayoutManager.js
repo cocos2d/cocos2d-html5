@@ -114,9 +114,17 @@ ccui.linearHorizontalLayoutManager = {
     }
 };
 
+var ooo = [];
+
 ccui.relativeLayoutManager = {
     _unlayoutChildCount: 0,
-    _widgetChildren: [],
+//    _widgetChildren: [],
+    get _widgetChildren(){
+        return ooo;
+    },
+    set _widgetChildren(a){
+        ooo = a;
+    },
     _widget: null,
     _finalPositionX:0,
     _finalPositionY:0,
@@ -163,6 +171,7 @@ ccui.relativeLayoutManager = {
                 locWidgetChildren.push(child);
             }
         }
+        return locWidgetChildren;
     },
 
     _getRelativeWidget: function(widget){

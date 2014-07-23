@@ -48,15 +48,19 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
      */
     ctor: function () {
         this._capInsets = cc.rect(0,0,0,0);
-        this._imageTextureSize = cc.size(this._size.width, this._size.height);
+        this._imageTextureSize = cc.size(this._capInsets.width, this._capInsets.height);
         ccui.Widget.prototype.ctor.call(this);
     },
 
     init: function(imageFileName, texType){
-        ccui.Widget.prototype.init.call(this);
-         if(imageFileName !== undefined)
-            this.loadTexture(imageFileName, texType);
-        return true;
+        if(ccui.Widget.prototype.init.call(this)){
+            if(imageFileName === undefined)
+                this._imageTexType = ccui.Widget.LOCAL_TEXTURE;
+            else
+                this.loadTexture(imageFileName, texType);
+            return true;
+        }
+        return false;
     },
 
     _initRenderer: function () {
@@ -70,6 +74,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTexture: function (fileName, texType) {
+        //TODO: May cause the resource file must be pre loaded
         if (!fileName) {
             return;
         }
@@ -79,41 +84,31 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         var imageRenderer = this._imageRenderer;
         switch (this._imageTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
-                imageRenderer.initWithFile(fileName);
+                if(this._scale9Enabled){
+                    imageRenderer.initWithFile(fileName);
+                    imageRenderer.setCapInsets(this._capInsets);
+                }else{
+                    imageRenderer.setTexture(fileName);
+                }
+//                imageRenderer.initWithFile(fileName);
                 break;
             case ccui.Widget.PLIST_TEXTURE:
-                imageRenderer.initWithSpriteFrameName(fileName);
+                if(this._scale9Enabled){
+                    imageRenderer.initWithSpriteFrameName(fileName);
+                    imageRenderer.setCapInsets(this._capInsets);
+                }else{
+                    imageRenderer.setSpriteFrame(fileName);
+                }
+//                imageRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
                 break;
         }
 
-        var locRendererSize = imageRenderer.getContentSize();
-        if(imageRenderer.textureLoaded()){
-            this._imageTextureSize.width = this._customSize.width ? this._customSize.width : locRendererSize.width;
-            this._imageTextureSize.height = this._customSize.height ? this._customSize.height : locRendererSize.height;
-        }else{
-            imageRenderer.addLoadedEventListener(function(){
-                var locSize = imageRenderer.getContentSize();
-                this._imageTextureSize.width = this._customSize.width ? this._customSize.width : locSize.width;
-                this._imageTextureSize.height = this._customSize.height ? this._customSize.height : locSize.height;
-                if (imageRenderer.setCapInsets) {
-                    imageRenderer.setCapInsets(this._capInsets);
-                }
-                this.imageTextureScaleChangedWithSize();
-            },this);
-            this._imageTextureSize.width = this._customSize.width;
-            this._imageTextureSize.height = this._customSize.height;
-        }
-
-        if (this._scale9Enabled) {
-            imageRenderer.setCapInsets(this._capInsets);
-        }
-
+        this._imageTextureSize = imageRenderer.getContentSize();
         this._updateFlippedX();
         this._updateFlippedY();
-        imageRenderer.setColor(this.getColor());
-        imageRenderer.setOpacity(this.getOpacity());
+
         this._updateContentSizeWithTextureSize(this._imageTextureSize);
         this._imageRendererAdaptDirty = true;
     },
@@ -139,13 +134,6 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
             this._imageRenderer.setScaleY(this._flippedY ? -1 : 1);
         else
             this._imageRenderer.setFlippedY(this._flippedY);
-    },
-
-    _adaptRenderers: function(){
-        if (this._imageRendererAdaptDirty){
-            this.imageTextureScaleChangedWithSize();
-            this._imageRendererAdaptDirty = false;
-        }
     },
 
     /**
@@ -213,48 +201,21 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         return this._capInsets;
     },
 
-    /**
-     * override "setAnchorPoint" of widget.
-     * @param {cc.Point|Number} point The anchor point of UIImageView or The anchor point.x of UIImageView.
-     * @param {Number} [y] The anchor point.y of UIImageView.
-     */
-    setAnchorPoint: function (point, y) {
-        if(y === undefined){
-	        ccui.Widget.prototype.setAnchorPoint.call(this, point);
-	        this._imageRenderer.setAnchorPoint(point);
-        } else {
-	        ccui.Widget.prototype.setAnchorPoint.call(this, point, y);
-	        this._imageRenderer.setAnchorPoint(point, y);
-        }
-    },
-	_setAnchorX: function (value) {
-		ccui.Widget.prototype._setAnchorX.call(this, value);
-		this._imageRenderer._setAnchorX(value);
-	},
-	_setAnchorY: function (value) {
-		ccui.Widget.prototype._setAnchorY.call(this, value);
-		this._imageRenderer._setAnchorY(value);
-	},
-
-
     _onSizeChanged: function () {
         ccui.Widget.prototype._onSizeChanged.call(this);
         this._imageRendererAdaptDirty = true;
     },
 
-    /**
-     * override "getContentSize" method of widget.
-     * @returns {cc.Size}
-     */
-    getContentSize: function () {
+    _adaptRenderers: function(){
+        if (this._imageRendererAdaptDirty){
+            this._imageTextureScaleChangedWithSize();
+            this._imageRendererAdaptDirty = false;
+        }
+    },
+
+    getVirtualRendererSize: function(){
         return this._imageTextureSize;
     },
-	_getWidth: function () {
-		return this._imageTextureSize.width;
-	},
-	_getHeight: function () {
-		return this._imageTextureSize.height;
-	},
 
     /**
      * override "getVirtualRenderer" method of widget.
@@ -264,21 +225,21 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         return this._imageRenderer;
     },
 
-    imageTextureScaleChangedWithSize: function () {
+    _imageTextureScaleChangedWithSize: function () {
         if (this._ignoreSize) {
             if (!this._scale9Enabled)
                 this._imageRenderer.setScale(1.0);
         } else {
             if (this._scale9Enabled)
-                this._imageRenderer.setPreferredSize(this._size);
+                this._imageRenderer.setPreferredSize(this._contentSize);
             else {
                 var textureSize = this._imageRenderer.getContentSize();
                 if (textureSize.width <= 0.0 || textureSize.height <= 0.0) {
                     this._imageRenderer.setScale(1.0);
                     return;
                 }
-                this._imageRenderer.setScaleX(this._size.width / textureSize.width);
-                this._imageRenderer.setScaleY(this._size.height / textureSize.height);
+                this._imageRenderer.setScaleX(this._contentSize.width / textureSize.width);
+                this._imageRenderer.setScaleY(this._contentSize.height / textureSize.height);
             }
         }
         this._imageRenderer.setPosition(this._contentSize.width / 2.0, this._contentSize.height / 2.0);
@@ -290,10 +251,6 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
      */
     getDescription: function () {
         return "ImageView";
-    },
-
-    getVirtualRendererSize: function(){
-
     },
 
     _createCloneInstance:function(){
