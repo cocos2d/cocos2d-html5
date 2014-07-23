@@ -55,6 +55,7 @@ ccs.CheckBoxReader = {
             }
             case 1:
             {
+                var backGroundFileName = backGroundDic["path"];
                 checkBox.loadTextureBackGround(backGroundFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
             }
@@ -104,6 +105,7 @@ ccs.CheckBoxReader = {
             }
             case 1:
             {
+                var frontCrossFileName = frontCrossDic["path"];
                 checkBox.loadTextureFrontCross(frontCrossFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
             }
@@ -126,6 +128,7 @@ ccs.CheckBoxReader = {
             }
             case 1:
             {
+                var backGroundDisabledFileName = backGroundDisabledDic["path"];
                 checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
             }

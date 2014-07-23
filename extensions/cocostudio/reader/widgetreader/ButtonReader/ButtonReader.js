@@ -154,8 +154,8 @@ ccs.ButtonReader = {
         {
             button.setTitleFontName(options["fontName"]);
         }
-    
-    
+
+
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };
