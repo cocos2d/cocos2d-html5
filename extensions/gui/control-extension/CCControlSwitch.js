@@ -40,8 +40,10 @@ cc.ControlSwitch = cc.Control.extend(/** @lends cc.ControlSwitch# */{
     /** A Boolean value that determines the off/on state of the switch. */
     _on:false,
     _className:"ControlSwitch",
-    ctor:function () {
+    ctor:function (maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel) {
         cc.Control.prototype.ctor.call(this);
+
+        offLabel && this.initWithMaskSprite(maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel);
     },
 
     /** Creates a switch with a mask sprite, on/off sprites for on/off states, a thumb sprite and an on/off labels. */
@@ -156,11 +158,7 @@ cc.ControlSwitch = cc.Control.extend(/** @lends cc.ControlSwitch# */{
 
 /** Creates a switch with a mask sprite, on/off sprites for on/off states and a thumb sprite. */
 cc.ControlSwitch.create = function (maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel) {
-    var pRet = new cc.ControlSwitch();
-    if (pRet && pRet.initWithMaskSprite(maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel)) {
-        return pRet;
-    }
-    return null;
+    return new cc.ControlSwitch(maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel);
 };
 
 /**

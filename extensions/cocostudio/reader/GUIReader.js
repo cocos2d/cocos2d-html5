@@ -1016,7 +1016,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
                         {
                             if(child.getPositionType() == ccui.Widget.POSITION_PERCENT)
                             {
-                                var position = child.getPosition();
+                                var position = child.getPositionPercent();
                                 var anchor = widget.getAnchorPoint();
                                 child.setPositionPercent(cc.p(position.x + anchor.x, position.y + anchor.y));
                             }
