@@ -169,6 +169,19 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
         return this._fontName;
     },
 
+    _setFont: function (font) {
+        var res = cc.LabelTTF._fontStyleRE.exec(font);
+        if (res) {
+            this._fontSize = parseInt(res[1]);
+            this._fontName = res[2];
+            this._labelRenderer._setFont(font);
+            this._labelScaleChangedWithSize();
+        }
+    },
+    _getFont: function () {
+        return this._labelRenderer._getFont();
+    },
+
     getType: function(){
         return  this._type;
     },
@@ -296,24 +309,25 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     },
 
     _labelScaleChangedWithSize: function () {
+        var locContentSize = this._contentSize;
         if (this._ignoreSize) {
             this._labelRenderer.setScale(1.0);
             this._normalScaleValueX = this._normalScaleValueY = 1;
         } else {
-            this._labelRenderer.setDimensions(cc.size(this._contentSize.width, this._contentSize.height));
+            this._labelRenderer.setDimensions(cc.size(locContentSize.width, locContentSize.height));
             var textureSize = this._labelRenderer.getContentSize();
             if (textureSize.width <= 0.0 || textureSize.height <= 0.0) {
                 this._labelRenderer.setScale(1.0);
                 return;
             }
-            var scaleX = this._contentSize.width / textureSize.width;
-            var scaleY = this._contentSize.height / textureSize.height;
+            var scaleX = locContentSize.width / textureSize.width;
+            var scaleY = locContentSize.height / textureSize.height;
             this._labelRenderer.setScaleX(scaleX);
             this._labelRenderer.setScaleY(scaleY);
             this._normalScaleValueX = scaleX;
             this._normalScaleValueY = scaleY;
         }
-        this._labelRenderer.setPosition(this._contentSize.width / 2.0, this._contentSize.height / 2.0);
+        this._labelRenderer.setPosition(locContentSize.width / 2.0, locContentSize.height / 2.0);
     },
 
     /**

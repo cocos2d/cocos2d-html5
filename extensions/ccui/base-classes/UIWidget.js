@@ -242,11 +242,10 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     _setWidth: function (w) {
+        cc.Node.prototype._setWidth.call(this, w);
         this._customSize.width = w;
         if(this._ignoreSize)
             this._contentSize = this.getVirtualRendererSize();
-        else
-            this._contentSize.width = w;
 
         if (this._running) {
             var widgetParent = this.getWidgetParent();
@@ -256,11 +255,10 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         this._onSizeChanged();
     },
     _setHeight: function (h) {
+        cc.Node.prototype._setHeight.call(this, h);
         this._customSize.height = h;
         if(this._ignoreSize)
             this._contentSize = this.getVirtualRendererSize();
-        else
-            this._contentSize.height = h;
 
         if (this._running) {
             var widgetParent = this.getWidgetParent();
