@@ -24,12 +24,11 @@
  ****************************************************************************/
 
 /**
- * Base class for ccui.HBox
+ * The horizontal box of Cocos UI.
  * @class
  * @extends ccui.Layout
  */
 ccui.HBox = ccui.Layout.extend(/** @lends ccui.HBox# */{
-
     init: function(){
         if(ccui.Layout.prototype.init.call(this)){
             this.setLayoutType(ccui.Layout.LINEAR_HORIZONTAL);
@@ -40,7 +39,7 @@ ccui.HBox = ccui.Layout.extend(/** @lends ccui.HBox# */{
 
     initWithSize: function(size){
         if(this.init()){
-            this.setSize(size);
+            this.setContentSize(size);
             return true;
         }
         return false;
@@ -50,10 +49,11 @@ ccui.HBox = ccui.Layout.extend(/** @lends ccui.HBox# */{
 ccui.HBox.create = function(size){
     var widget = new ccui.HBox();
     if(size){
-        if(widget.initWithSize()){
+        if(widget.initWithSize(size))
             return widget;
-        }
-        return null;
+    }else {
+        if(widget.init())
+            return widget;
     }
-    return widget;
+    return null;
 };

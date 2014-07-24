@@ -24,12 +24,11 @@
  ****************************************************************************/
 
 /**
- * Base class for ccui.RelativeBox
+ * The Relative box for Cocos UI layout.
  * @class
  * @extends ccui.Layout
  */
 ccui.RelativeBox = ccui.Layout.extend(/** @lends ccui.RelativeBox# */{
-
     init: function(){
         if(ccui.Layout.prototype.init.call(this)){
             this.setLayoutType(ccui.Layout.RELATIVE);
@@ -40,7 +39,7 @@ ccui.RelativeBox = ccui.Layout.extend(/** @lends ccui.RelativeBox# */{
 
     initWithSize: function(size){
         if(this.init()){
-            this.setSize(size);
+            this.setContentSize(size);
             return true;
         }
         return false;
@@ -50,10 +49,11 @@ ccui.RelativeBox = ccui.Layout.extend(/** @lends ccui.RelativeBox# */{
 ccui.RelativeBox.create = function(size){
     var widget = new ccui.RelativeBox();
     if(size){
-        if(widget.initWithSize()){
+        if(widget.initWithSize(size))
             return widget;
-        }
-        return null;
+    } else {
+        if(widget.init())
+            return widget;
     }
-    return widget;
+    return null;
 };
