@@ -751,14 +751,14 @@ cc.defineGetterSetter(_p, "fontSize", _p.getFontSize, _p.setFontSize);
 _p.fontName;
 cc.defineGetterSetter(_p, "fontName", _p.getFontName, _p.setFontName);
 /** @expose */
-_p._maxLengthEnabled;
-cc.defineGetterSetter(_p, "_maxLengthEnabled", _p.isMaxLengthEnabled, _p.setMaxLengthEnabled);
+_p.maxLengthEnabled;
+cc.defineGetterSetter(_p, "maxLengthEnabled", _p.isMaxLengthEnabled, _p.setMaxLengthEnabled);
 /** @expose */
-_p._maxLength;
-cc.defineGetterSetter(_p, "_maxLength", _p.getMaxLength, _p.setMaxLength);
+_p.maxLength;
+cc.defineGetterSetter(_p, "maxLength", _p.getMaxLength, _p.setMaxLength);
 /** @expose */
-_p._passwordEnabled;
-cc.defineGetterSetter(_p, "_passwordEnabled", _p.isPasswordEnabled, _p.setPasswordEnabled);
+_p.passwordEnabled;
+cc.defineGetterSetter(_p, "passwordEnabled", _p.isPasswordEnabled, _p.setPasswordEnabled);
 
 _p = null;
 
