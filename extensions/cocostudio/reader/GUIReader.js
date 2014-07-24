@@ -1012,7 +1012,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
                     }
                     else
                     {
-                        if(widget instanceof ccui.Layout)
+                        if(!(widget instanceof ccui.Layout))
                         {
                             if(child.getPositionType() == ccui.Widget.POSITION_PERCENT)
                             {
