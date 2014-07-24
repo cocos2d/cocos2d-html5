@@ -55,51 +55,46 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
         this._insertText = false;
         this._deleteBackward = false;
     },
+
     onEnter: function () {
         cc.TextFieldTTF.prototype.onEnter.call(this);
         cc.TextFieldTTF.prototype.setDelegate.call(this, this);
     },
+
     //CCTextFieldDelegate
     onTextFieldAttachWithIME: function (sender) {
         this.setAttachWithIME(true);
         return false;
     },
-    onTextFieldInsertText: function (sender, text, len) {
-        if (len == 1 && text == "\n") {
-            return false;
-        }
-        this.setInsertText(true);
-        if (this._maxLengthEnabled) {
-            if (cc.TextFieldTTF.prototype.getCharCount.call(this) >= this._maxLength) {
-                return true;
-            }
-        }
 
-        return false;
+    onTextFieldInsertText: function (sender, text, len) {
+        if (len == 1 && text == "\n")
+            return false;
+
+        this.setInsertText(true);
+        return (this._maxLengthEnabled) && (cc.TextFieldTTF.prototype.getCharCount.call(this) >= this._maxLength);
     },
+
     onTextFieldDeleteBackward: function (sender, delText, nLen) {
         this.setDeleteBackward(true);
         return false;
     },
+
     onTextFieldDetachWithIME: function (sender) {
         this.setDetachWithIME(true);
         return false;
     },
-    insertText: function (text, len) {        //todo need to delete
+
+    insertText: function (text, len) {
         var input_text = text;
 
-        if (text != "\n")
-        {
-            if (this._maxLengthEnabled)
-            {
+        if (text != "\n"){
+            if (this._maxLengthEnabled){
                 var text_count = this.getString().length;
-                if (text_count >= this._maxLength)
-                {
+                if (text_count >= this._maxLength){
                     // password
                     if (this._passwordEnabled)
-                    {
                         this.setPasswordText(this.getString());
-                    }
                     return;
                 }
             }
@@ -107,23 +102,15 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
         cc.TextFieldTTF.prototype.insertText.call(this, input_text, len);
 
         // password
-        if (this._passwordEnabled)
-        {
-            if (cc.TextFieldTTF.prototype.getCharCount.call(this) > 0)
-            {
-                this.setPasswordText(this.getString());
-            }
-        }
+        if (this._passwordEnabled && cc.TextFieldTTF.prototype.getCharCount.call(this) > 0)
+            this.setPasswordText(this.getString());
     },
+
     deleteBackward: function () {
         cc.TextFieldTTF.prototype.deleteBackward.call(this);
 
-        if (cc.TextFieldTTF.prototype.getCharCount.call(this) > 0) {
-            // password
-            if (this._passwordEnabled) {
-                this.setPasswordText(this._inputText);
-            }
-        }
+        if (cc.TextFieldTTF.prototype.getCharCount.call(this) > 0 && this._passwordEnabled)
+            this.setPasswordText(this._inputText);
     },
 
     openIME: function () {
@@ -176,45 +163,47 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
         var text_count = text.length;
         var max = text_count;
 
-        if (this._maxLengthEnabled)
-        {
-            if (text_count > this._maxLength)
-            {
-                max = this._maxLength;
-            }
-        }
+        if (this._maxLengthEnabled && text_count > this._maxLength)
+            max = this._maxLength;
 
         for (var i = 0; i < max; ++i)
-        {
             tempStr += this._passwordStyleText;
-        }
 
         cc.LabelTTF.prototype.setString.call(this, tempStr);
     },
+
     setAttachWithIME: function (attach) {
         this._attachWithIME = attach;
     },
+
     getAttachWithIME: function () {
         return this._attachWithIME;
     },
+
     setDetachWithIME: function (detach) {
         this._detachWithIME = detach;
     },
+
     getDetachWithIME: function () {
         return this._detachWithIME;
     },
+
     setInsertText: function (insert) {
         this._insertText = insert;
     },
+
     getInsertText: function () {
         return this._insertText;
     },
+
     setDeleteBackward: function (deleteBackward) {
         this._deleteBackward = deleteBackward;
     },
+
     getDeleteBackward: function () {
         return this._deleteBackward;
     },
+
     init: function () {
         if (ccui.Widget.prototype.init.call(this)) {
             this.setTouchEnabled(true);
@@ -222,6 +211,7 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
         }
         return false;
     },
+
     onDraw: function (sender) {
         return false;
     }
@@ -230,9 +220,8 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
 ccui.UICCTextField.create = function (placeholder, fontName, fontSize) {
     var ret = new ccui.UICCTextField();
     if (ret && ret.initWithString("", fontName, fontSize)) {
-        if (placeholder) {
+        if (placeholder)
             ret.setPlaceHolder(placeholder);
-        }
         return ret;
     }
     return null;
@@ -291,7 +280,6 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     _initRenderer: function () {
         this._textFieldRenderer = ccui.UICCTextField.create("input words here", "Thonburi", 20);
         this.addProtectedChild(this._textFieldRenderer, ccui.TextField.RENDERER_ZORDER, -1);
-
     },
 
     /**
@@ -305,13 +293,6 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
 
     setTouchAreaEnabled: function(enable){
         this._useTouchArea = enable;
-    },
-
-    _adaptRenderers: function(){
-        if (this._textFieldRendererAdaptDirty) {
-            this.textfieldRendererScaleChangedWithSize();
-            this._textFieldRendererAdaptDirty = false;
-        }
     },
 
     hitTest: function(pt){
@@ -460,8 +441,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     onTouchBegan: function (touchPoint, unusedEvent) {
         var self = this;
         var pass = ccui.Widget.prototype.onTouchBegan.call(self, touchPoint, unusedEvent);
-        if (self._hit)
-        {
+        if (self._hit) {
             setTimeout(function(){
                 self._textFieldRenderer.attachWithIME();
             }, 0);
@@ -669,7 +649,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     _textfieldRendererScaleChangedWithSize: function () {
-        if (this._ignoreSize)
+        if (!this._ignoreSize)
             this._textFieldRenderer.setDimensions(this._contentSize);
         this._textFieldRenderer.setPosition(this._contentSize.width / 2, this._contentSize.height / 2);
     },
@@ -718,7 +698,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     setTextAreaSize: function(size){
-        this._textFieldRenderer.setDimensions(size);
+        this.setContentSize(size);
     },
 
     setTextHorizontalAlignment: function(alignment){
@@ -737,7 +717,6 @@ ccui.TextField.create = function(placeholder, fontName, fontSize){
             widget.setPlaceHolder(placeholder);
             widget.setFontName(fontName);
             widget.setFontSize(fontSize);
-
         }
         return widget;
     }
