@@ -185,7 +185,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
 
         this._progressBarRenderer.setAnchorPoint(cc.p(0, 0.5));
         var tz = this._progressBarRenderer.getContentSize();
-//        this._progressBarTextureSize = {width: tz.width, height: tz.height};
+        this._progressBarTextureSize = {width: tz.width, height: tz.height};
         this._progressBarRendererDirty = true;
     },
 
