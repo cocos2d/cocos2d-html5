@@ -369,7 +369,25 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
             this.setTextHorizontalAlignment(uiLabel._labelRenderer.getHorizontalAlignment());
             this.setTextVerticalAlignment(uiLabel._labelRenderer.getVerticalAlignment());
         }
+    },
+
+    _setBoundingWidth: function (value) {
+        this._textAreaSize.width = value;
+        this._labelRenderer._setBoundingWidth(value);
+        this._labelScaleChangedWithSize();
+    },
+    _setBoundingHeight: function (value) {
+        this._textAreaSize.height = value;
+        this._labelRenderer._setBoundingHeight(value);
+        this._labelScaleChangedWithSize();
+    },
+    _getBoundingWidth: function () {
+        return this._textAreaSize.width;
+    },
+    _getBoundingHeight: function () {
+        return this._textAreaSize.height;
     }
+
 });
 
 var _p = ccui.Text.prototype;
