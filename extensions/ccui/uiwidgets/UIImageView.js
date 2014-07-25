@@ -74,7 +74,6 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTexture: function (fileName, texType) {
-        //TODO: May cause the resource file must be pre loaded
         if (!fileName) {
             return;
         }
@@ -88,18 +87,18 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
                     imageRenderer.initWithFile(fileName);
                     imageRenderer.setCapInsets(this._capInsets);
                 }else{
-                    imageRenderer.setTexture(fileName);
+                    //SetTexture cannot load resource
+                    imageRenderer.initWithFile(fileName);
                 }
-//                imageRenderer.initWithFile(fileName);
                 break;
             case ccui.Widget.PLIST_TEXTURE:
                 if(this._scale9Enabled){
                     imageRenderer.initWithSpriteFrameName(fileName);
                     imageRenderer.setCapInsets(this._capInsets);
                 }else{
-                    imageRenderer.setSpriteFrame(fileName);
+                    //SetTexture cannot load resource
+                    imageRenderer.initWithSpriteFrameName(fileName);
                 }
-//                imageRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
                 break;
