@@ -88,18 +88,18 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
                     imageRenderer.initWithFile(fileName);
                     imageRenderer.setCapInsets(this._capInsets);
                 }else{
-                    imageRenderer.setTexture(fileName);
+//                    imageRenderer.setTexture(fileName);
+                    imageRenderer.initWithFile(fileName);
                 }
-//                imageRenderer.initWithFile(fileName);
                 break;
             case ccui.Widget.PLIST_TEXTURE:
                 if(this._scale9Enabled){
                     imageRenderer.initWithSpriteFrameName(fileName);
                     imageRenderer.setCapInsets(this._capInsets);
                 }else{
-                    imageRenderer.setSpriteFrame(fileName);
+//                    imageRenderer.setSpriteFrame(fileName);
+                    imageRenderer.initWithSpriteFrameName(fileName);
                 }
-//                imageRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
                 break;
