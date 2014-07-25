@@ -995,9 +995,6 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         var uiOptions = data["options"];
         var widget = this.createGUI(classname);
 
-        if(uiOptions.tag === 15){
-            void 0;
-        }
         var readerName = this.getWidgetReaderClassName(classname);
 
         var reader = this.createWidgetReaderProtocol(readerName);
