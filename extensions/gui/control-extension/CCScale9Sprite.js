@@ -197,7 +197,14 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         locCenter.setPosition(leftWidth, bottomHeight);
     },
 
-    ctor: function () {
+    /**
+     * @constructor
+     * @param file
+     * @param rect
+     * @param capInsets
+     * @returns {Scale9Sprite}
+     */
+    ctor: function (file, rect, capInsets) {
         cc.Node.prototype.ctor.call(this);
         this._spriteRect = cc.rect(0, 0, 0, 0);
         this._capInsetsInternal = cc.rect(0, 0, 0, 0);
@@ -209,6 +216,20 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         this._opacity = 255;
         this._capInsets = cc.rect(0, 0, 0, 0);
         this._loadedEventListeners = [];
+
+        if(file != undefined){
+            if(file instanceof cc.SpriteFrame)
+                this.initWithSpriteFrame(file, rect);
+            else{
+                var frame = cc.spriteFrameCache.getSpriteFrame(file);
+                if(frame != null)
+                    this.initWithSpriteFrame(frame, rect);
+                else
+                    this.initWithFile(file, rect, capInsets);
+            }
+        }else{
+            this.init();
+        }
     },
 
     /** Original sprite's size. */
@@ -931,55 +952,16 @@ _p = null;
  * @see initWithFile:rect:centerRegion:
  */
 cc.Scale9Sprite.create = function (file, rect, capInsets) {
-    var pReturn;
-    if (arguments.length === 2) {
-        if (typeof(file) == "string") {
-            pReturn = new cc.Scale9Sprite();
-            if (pReturn && pReturn.initWithFile(file, rect)) {
-                return pReturn;
-            }
-        } else if (file instanceof cc.Rect) {
-            pReturn = new cc.Scale9Sprite();
-            if (pReturn && pReturn.initWithFile(file, capInsets)) {
-                return pReturn;
-            }
-        }
-    } else if (arguments.length === 3) {
-        pReturn = new cc.Scale9Sprite();
-        if (pReturn && pReturn.initWithFile(file, rect, capInsets)) {
-            return pReturn;
-        }
-    } else if (arguments.length === 1) {
-        pReturn = new cc.Scale9Sprite();
-        if (pReturn && pReturn.initWithFile(file)) {
-            return pReturn;
-        }
-    } else if (arguments.length === 0) {
-        pReturn = new cc.Scale9Sprite();
-        if (pReturn && pReturn.init()) {
-            return pReturn;
-        }
-    }
-    return null;
+    return new cc.Scale9Sprite(file, rect, capInsets);
 };
 
 cc.Scale9Sprite.createWithSpriteFrame = function (spriteFrame, capInsets) {
-    var pReturn = new cc.Scale9Sprite();
-    if (pReturn && pReturn.initWithSpriteFrame(spriteFrame, capInsets)) {
-        return pReturn;
-    }
-    return null;
+    return new cc.Scale9Sprite(spriteFrame, capInsets);
 };
 
 cc.Scale9Sprite.createWithSpriteFrameName = function (spriteFrameName, capInsets) {
-    if(!spriteFrameName)
-        throw "cc.Scale9Sprite.createWithSpriteFrameName(): spriteFrameName should be non-null";
-    var pReturn = new cc.Scale9Sprite();
-    if (pReturn && pReturn.initWithSpriteFrameName(spriteFrameName, capInsets))
-        return pReturn;
-    return null;
+    return new cc.Scale9Sprite(spriteFrameName, capInsets);
 };
-
 
 /**
  * @ignore
