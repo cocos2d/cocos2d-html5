@@ -45,6 +45,10 @@ ccs.CheckBoxReader = {
         var backGroundSelectedDic = options["backGroundBoxSelectedData"];
         var backGroundSelectedType = backGroundSelectedDic["resourceType"];
         var backGroundSelectedTexturePath = ccs.WidgetReader.getResourcePath(backGroundSelectedDic, "path", backGroundSelectedType);
+        if(!backGroundSelectedTexturePath){
+            backGroundSelectedType = backGroundType;
+            backGroundSelectedTexturePath = backGroundTexturePath;
+        }
         checkBox.loadTextureBackGroundSelected(backGroundSelectedTexturePath, backGroundSelectedType);
 
         //load frontCross image
@@ -57,6 +61,10 @@ ccs.CheckBoxReader = {
         var backGroundDisabledDic = options["backGroundBoxDisabledData"];
         var backGroundDisabledType = backGroundDisabledDic["resourceType"];
         var backGroundDisabledFileName = ccs.WidgetReader.getResourcePath(backGroundDisabledDic, "path", backGroundDisabledType);
+        if(!backGroundDisabledFileName){
+            backGroundDisabledType = frontCrossType;
+            backGroundDisabledFileName = frontCrossFileName;
+        }
         checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName, backGroundDisabledType);
 
         ///load frontCrossDisabledData

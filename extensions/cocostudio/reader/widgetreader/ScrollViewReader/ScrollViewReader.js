@@ -36,11 +36,11 @@ ccs.ScrollViewReader = {
 
         var scrollView = widget;
 
-        var innerWidth = options["innerWidth"];
-        var innerHeight = options["innerHeight"];
+        var innerWidth = options["innerWidth"] || 200;
+        var innerHeight = options["innerHeight"] || 200;
         scrollView.setInnerContainerSize(cc.size(innerWidth, innerHeight));
 
-        var direction = options["direction"];
+        var direction = options["direction"] || 1;
         scrollView.setDirection(direction);
 
         scrollView.setBounceEnabled(options["bounceEnable"]);
