@@ -39,6 +39,7 @@
     factoryCreate.registerType({_className: "PageViewReader", _fun: ccs.PageViewReader});
     factoryCreate.registerType({_className: "ScrollViewReader", _fun: ccs.ScrollViewReader});
     factoryCreate.registerType({_className: "ListViewReader", _fun: ccs.ListViewReader});
+    factoryCreate.registerType({_className: "WidgetReader", _fun: ccs.WidgetReader});
 
     factoryCreate.registerType({_className: "Button", _fun: ccui.Button});
     factoryCreate.registerType({_className: "CheckBox", _fun: ccui.CheckBox});
@@ -175,8 +176,6 @@ ccs.uiReader = /** @lends ccs.uiReader# */{
         var factoryCreate = ccs.objectFactory;
         var t = new ccs.TInfo(classType, ins);
         factoryCreate.registerType(t);
-        var t2 = new ccs.TInfo(classType + "Reader", object);
-        factoryCreate.registerType(t2);
 
         if(object){
             this._mapObject[classType] = object;
@@ -986,7 +985,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
 
         if (object && selector)
         {
-            object.selector.call(this, classType, widget, customOptions);
+            selector(classType, widget, customOptions);
         }
 
     },
@@ -996,6 +995,9 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         var uiOptions = data["options"];
         var widget = this.createGUI(classname);
 
+        if(uiOptions.tag === 15){
+            void 0;
+        }
         var readerName = this.getWidgetReaderClassName(classname);
 
         var reader = this.createWidgetReaderProtocol(readerName);
@@ -1024,184 +1026,6 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
 
         }
 
-        var childrenItem = data["children"];
-        for(var i=0; i<childrenItem.length; i++){
-            var child = this.widgetFromJsonDictionary(childrenItem[i]);
-            if(child){
-                if(widget instanceof ccui.PageView)
-                {
-                    widget.addPage(child);
-                }
-                else
-                {
-                    if(widget instanceof ccui.ListView)
-                    {
-                        widget.pushBackCustomItem(child);
-                    }
-                    else
-                    {
-                        if(!(widget instanceof ccui.Layout))
-                        {
-                            if(child.getPositionType() == ccui.Widget.POSITION_PERCENT)
-                            {
-                                var position = child.getPositionPercent();
-                                var anchor = widget.getAnchorPoint();
-                                child.setPositionPercent(cc.p(position.x + anchor.x, position.y + anchor.y));
-                            }
-                            var AnchorPointIn = widget.getAnchorPointInPoints();
-                            child.setPosition(cc.p(child.getPositionX() + AnchorPointIn.x, child.getPositionY() + AnchorPointIn.y));
-                        }
-                        widget.addChild(child);
-                    }
-                }
-            }
-        }
-        return widget;
-
-        if(!widget){
-            if (classname == "Button") {
-                widget = ccui.Button.create();
-            }
-            else if (classname == "CheckBox") {
-                widget = ccui.CheckBox.create();
-            }
-            else if (classname == "Label") {
-                widget = ccui.Text.create();
-            }
-            else if (classname == "LabelAtlas") {
-                widget = ccui.TextAtlas.create();
-            }
-            else if (classname == "LoadingBar") {
-                widget = ccui.LoadingBar.create();
-            } else if (classname == "ScrollView") {
-                widget = ccui.ScrollView.create();
-            }
-            else if (classname == "TextArea") {
-                widget = ccui.Text.create();
-            }
-            else if (classname == "TextButton") {
-                widget = ccui.Button.create();
-            }
-            else if (classname == "TextField") {
-                widget = ccui.TextField.create();
-            }
-            else if (classname == "ImageView") {
-                widget = ccui.ImageView.create();
-            }
-            else if (classname == "Panel") {
-                widget = ccui.Layout.create();
-            }
-            else if (classname == "Slider") {
-                widget = ccui.Slider.create();
-            }
-            else if (classname == "LabelBMFont") {
-                widget = ccui.TextBMFont.create();
-            }
-            else if (classname == "DragPanel") {
-                widget = ccui.ScrollView.create();
-            }
-            else if (classname == "ListView") {
-                widget = ccui.ListView.create();
-            }
-            else if (classname == "PageView") {
-                widget = ccui.PageView.create();
-            }
-            else if (classname == "Widget"){
-                widget = ccui.Widget.create();
-            }
-        }
-
-        if(uiOptions.tag === 15){
-            void 0;
-        }
-
-        // create widget reader to parse properties of widget
-        var readerName = classname;
-        switch(readerName){
-            case "Panel":
-                readerName = "Layout";
-                break;
-            case "TextArea":
-                readerName = "Label";
-                break;
-            case "TextButton":
-                readerName = "Button";
-                break;
-        }
-
-        readerName = readerName+"Reader";
-        var reader = ccs.objectFactory.createWidgetReaderProtocol(readerName);
-        if(reader){
-            // widget parse with widget reader
-            this.setPropsForAllWidgetFromJsonDictionary(reader, widget, uiOptions);
-        }else{
-            // 1st., custom widget parse properties of parent widget with parent widget reader
-
-            var render;
-            if(widget instanceof ccui.Button){
-                render = ccs.ButtonReader;
-            }else if(widget instanceof ccui.CheckBox){
-                render = ccs.CheckBoxReader;
-            }else if (widget instanceof ccui.ImageView)
-            {
-                render = ccs.ImageViewReader;
-            }
-            else if (widget instanceof ccui.TextAtlas)
-            {
-                render = ccs.LabelAtlasReader;
-            }
-            else if (widget instanceof ccui.LabelBMFont)
-            {
-                render = ccs.LabelBMFontReader;
-            }
-            else if (widget instanceof ccui.Text)
-            {
-                render = ccs.LabelReader;
-            }
-            else if (widget instanceof ccui.LoadingBar)
-            {
-                render = ccs.LoadingBarReader;
-            }
-            else if (widget instanceof ccui.Slider)
-            {
-                render = ccs.SliderReader;
-            }
-            else if (widget instanceof ccui.TextField)
-            {
-                render = ccs.TextFieldReader;
-            }
-            else if (widget instanceof ccui.ListView)
-            {
-                render = ccs.ListViewReader;
-            }
-            else if (widget instanceof ccui.ScrollView)
-            {
-                render = ccs.ScrollViewReader;
-            }
-            else if (widget instanceof ccui.PageView)
-            {
-                render = ccs.PageViewReader;
-            }
-            else if (widget instanceof ccui.Layout)
-            {
-                render = ccs.LayoutReader;
-            }
-            else if (widget instanceof ccui.Widget)
-            {
-                render = ccs.WidgetReader;
-            }
-
-            this.setPropsForAllWidgetFromJsonDictionary(render, widget, uiOptions);
-
-            // 2nd., custom widget parse with custom reader
-            var customProperty = uiOptions["customProperty"];
-            var customJsonDict = uiOptions;
-            if (!uiOptions)
-            {
-                cc.log("GetParseError");
-            }
-            this.setPropsForAllCustomWidgetFromJsonDictionary(classname, widget, customJsonDict);
-        }
         var childrenItem = data["children"];
         for(var i=0; i<childrenItem.length; i++){
             var child = this.widgetFromJsonDictionary(childrenItem[i]);
