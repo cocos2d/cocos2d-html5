@@ -114,17 +114,9 @@ ccui.linearHorizontalLayoutManager = {
     }
 };
 
-var ooo = [];
-
 ccui.relativeLayoutManager = {
     _unlayoutChildCount: 0,
-//    _widgetChildren: [],
-    get _widgetChildren(){
-        return ooo;
-    },
-    set _widgetChildren(a){
-        ooo = a;
-    },
+    _widgetChildren: [],
     _widget: null,
     _finalPositionX:0,
     _finalPositionY:0,
