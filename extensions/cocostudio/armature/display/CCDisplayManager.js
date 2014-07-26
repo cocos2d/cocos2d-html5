@@ -291,6 +291,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
         if (displayRenderNode) {
             if (displayRenderNode instanceof ccs.Armature) {
                 this._bone.setChildArmature(displayRenderNode);
+                displayRenderNode.setParentBone(this._bone);
             }else if(displayRenderNode instanceof cc.ParticleSystem) {
                 displayRenderNode.resetSystem();
             }
