@@ -140,9 +140,6 @@ ccs.WidgetReader = {
         widget.setFlippedY(options["flipY"]);
     },
     setAnchorPointForWidget: function(widget, options){
-        if(options.name === "Image6"){
-            void 0;
-        }
         var isAnchorPointXExists = options["anchorPointX"];
         var anchorPointXInFile;
         if (isAnchorPointXExists != null) {
