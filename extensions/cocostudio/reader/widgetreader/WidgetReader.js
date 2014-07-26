@@ -164,5 +164,24 @@ ccs.WidgetReader = {
             widget.setAnchorPoint(cc.p(anchorPointXInFile, anchorPointYInFile));
         }
 
+    },
+    getResourcePath: function(dict, key, texType){
+        var jsonPath = ccs.uiReader.getFilePath();
+        var imageFileName = dict[key];
+        var imageFileName_tp;
+        if (null != imageFileName)
+        {
+            if (texType == 0) {
+                imageFileName_tp = jsonPath + imageFileName;
+            }
+            else if(texType == 1){
+                imageFileName_tp = imageFileName;
+            }
+            else{
+                cc.assert(0, "invalid TextureResType!!!");
+            }
+        }
+        return imageFileName_tp;
+
     }
 };
