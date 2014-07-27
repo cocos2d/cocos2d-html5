@@ -62,7 +62,7 @@ cc.ControlButton = cc.Control.extend(/** @lends cc.ControlButton# */{
     _marginH: 0,
     _className: "ControlButton",
 
-    ctor: function () {
+    ctor: function (label, backgroundSprite, fontSize) {
         cc.Control.prototype.ctor.call(this);
         this._preferredSize = cc.size(0, 0);
         this._labelAnchorPoint = cc.p(0, 0);
@@ -72,6 +72,15 @@ cc.ControlButton = cc.Control.extend(/** @lends cc.ControlButton# */{
         this._titleColorDispatchTable = {};
         this._titleLabelDispatchTable = {};
         this._backgroundSpriteDispatchTable = {};
+
+        if(fontSize != undefined)
+            this.initWithTitleAndFontNameAndFontSize(label, backgroundSprite, fontSize);
+        else if(backgroundSprite != undefined)
+            this.initWithLabelAndBackgroundSprite(label, backgroundSprite);
+        else if(label != undefined)
+            this.initWithBackgroundSprite(label);
+        else
+            this.init();
     },
 
     init: function () {
@@ -665,25 +674,8 @@ cc.defineGetterSetter(_p, "labelAnchor", _p.getLabelAnchorPoint, _p.setLabelAnch
 
 _p = null;
 
-cc.ControlButton.create = function (label, backgroundSprite) {
-    var controlButton;
-    if (arguments.length == 0) {
-        controlButton = new cc.ControlButton();
-        if (controlButton && controlButton.init()) {
-            return controlButton;
-        }
-        return null;
-    } else if (arguments.length == 1) {
-        controlButton = new cc.ControlButton();
-        controlButton.initWithBackgroundSprite(arguments[0]);
-    } else if (arguments.length == 2) {
-        controlButton = new cc.ControlButton();
-        controlButton.initWithLabelAndBackgroundSprite(label, backgroundSprite);
-    } else if (arguments.length == 3) {
-        controlButton = new cc.ControlButton();
-        controlButton.initWithTitleAndFontNameAndFontSize(arguments[0], arguments[1], arguments[2]);
-    }
-    return controlButton;
+cc.ControlButton.create = function (label, backgroundSprite, fontSize) {
+    return new cc.ControlButton(label, backgroundSprite, fontSize);
 };
 
 

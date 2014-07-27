@@ -32,127 +32,49 @@ ccs.CheckBoxReader = {
     setPropsFromJsonDictionary: function(widget, options){
 
         ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
-    
-    
-        var jsonPath = ccs.uiReader.getFilePath();
-    
+
         var checkBox = widget;
-    
+
+        //load background image
         var backGroundDic = options["backGroundBoxData"];
         var backGroundType = backGroundDic["resourceType"];
+        var backGroundTexturePath = ccs.WidgetReader.getResourcePath(backGroundDic, "path", backGroundType);
+        checkBox.loadTextureBackGround(backGroundTexturePath, backGroundType);
 
-        var tp = jsonPath;
-        var backGroundFileName = backGroundDic["path"];
-        switch (backGroundType)
-        {
-            case 0:
-            {
-                var backGroundFileName_tp = backGroundFileName ?
-                    tp + backGroundFileName :
-                    null;
-                checkBox.loadTextureBackGround(backGroundFileName_tp);
-                break;
-            }
-            case 1:
-            {
-                checkBox.loadTextureBackGround(backGroundFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
-                break;
-            }
-            default:
-                break;
-        }
-    
+        //load background selected image
         var backGroundSelectedDic = options["backGroundBoxSelectedData"];
         var backGroundSelectedType = backGroundSelectedDic["resourceType"];
-        var backGroundSelectedFileName = backGroundSelectedDic["path"];
-        if(backGroundSelectedFileName === null){
+        var backGroundSelectedTexturePath = ccs.WidgetReader.getResourcePath(backGroundSelectedDic, "path", backGroundSelectedType);
+        if(!backGroundSelectedTexturePath){
             backGroundSelectedType = backGroundType;
-            backGroundSelectedFileName = backGroundFileName;
+            backGroundSelectedTexturePath = backGroundTexturePath;
         }
+        checkBox.loadTextureBackGroundSelected(backGroundSelectedTexturePath, backGroundSelectedType);
 
-        switch (backGroundSelectedType)
-        {
-            case 0:
-            {
-                var backGroundSelectedFileName_tp = backGroundSelectedFileName ?
-                    tp + backGroundSelectedFileName :
-                    null;
-                checkBox.loadTextureBackGroundSelected(backGroundSelectedFileName_tp);
-                break;
-            }
-            case 1:
-            {
-                checkBox.loadTextureBackGroundSelected(backGroundSelectedFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
-                break;
-            }
-            default:
-                break;
-        }
-    
+        //load frontCross image
         var frontCrossDic = options["frontCrossData"];
         var frontCrossType = frontCrossDic["resourceType"];
-        var frontCrossFileName = frontCrossDic["path"];
-        switch (frontCrossType)
-        {
-            case 0:
-            {
-                var frontCrossFileName_tp = frontCrossFileName ?
-                    tp + frontCrossFileName :
-                    null;
-                checkBox.loadTextureFrontCross(frontCrossFileName_tp);
-                break;
-            }
-            case 1:
-            {
-                checkBox.loadTextureFrontCross(frontCrossFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
-                break;
-            }
-            default:
-                break;
-        }
-    
+        var frontCrossFileName = ccs.WidgetReader.getResourcePath(frontCrossDic, "path", frontCrossType);
+        checkBox.loadTextureFrontCross(frontCrossFileName, frontCrossType);
+
+        //load backGroundBoxDisabledData
         var backGroundDisabledDic = options["backGroundBoxDisabledData"];
         var backGroundDisabledType = backGroundDisabledDic["resourceType"];
-        var backGroundDisabledFileName = backGroundDisabledDic["path"];
-        switch (backGroundDisabledType)
-        {
-            case 0:
-            {
-                var backGroundDisabledFileName_tp = backGroundDisabledFileName ?
-                    tp + backGroundDisabledFileName :
-                    null;
-                checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName_tp);
-                break;
-            }
-            case 1:
-            {
-                checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
-                break;
-            }
-            default:
-                break;
+        var backGroundDisabledFileName = ccs.WidgetReader.getResourcePath(backGroundDisabledDic, "path", backGroundDisabledType);
+        if(!backGroundDisabledFileName){
+            backGroundDisabledType = frontCrossType;
+            backGroundDisabledFileName = frontCrossFileName;
         }
-    
+        checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName, backGroundDisabledType);
+
+        ///load frontCrossDisabledData
         var frontCrossDisabledDic = options["frontCrossDisabledData"];
         var frontCrossDisabledType = frontCrossDisabledDic["resourceType"];
-        var frontCrossDisabledFileName = options["path"];
-        switch (frontCrossDisabledType)
-        {
-            case 0:
-            {
-                var frontCrossDisabledFileName_tp = frontCrossDisabledFileName ?
-                    tp + frontCrossDisabledFileName :
-                    null;
-                checkBox.loadTextureFrontCrossDisabled(frontCrossDisabledFileName_tp);
-                break;
-            }
-            case 1:
-            {
-                checkBox.loadTextureFrontCrossDisabled(frontCrossDisabledFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
-                break;
-            }
-            default:
-                break;
+        var frontCrossDisabledFileName = ccs.WidgetReader.getResourcePath(frontCrossDisabledDic, "path", frontCrossDisabledType);
+        checkBox.loadTextureFrontCrossDisabled(frontCrossDisabledFileName, frontCrossDisabledType);
+
+        if (options["selectedState"]){
+            checkBox.setSelectedState(options["selectedState"]);
         }
 
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);

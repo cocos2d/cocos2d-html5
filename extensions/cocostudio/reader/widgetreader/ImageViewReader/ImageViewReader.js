@@ -92,8 +92,8 @@ ccs.ImageViewReader = {
             imageView.setCapInsets(cc.rect(cx, cy, cw, ch));
     
         }
-    
-    
+
+
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };
