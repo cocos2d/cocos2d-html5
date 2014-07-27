@@ -42,7 +42,7 @@ cc.IMAGE_FORMAT_PNG = 1;
  * @constant
  * @type Number
  */
-cc.IMAGE_FORMAT_RAWDATA = 2;
+cc.IMAGE_FORMAT_RAWDATA = 9;
 
 /**
  * @param {Number} x
