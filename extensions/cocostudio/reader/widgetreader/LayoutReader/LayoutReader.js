@@ -39,7 +39,7 @@ ccs.LayoutReader = {
 
         var w = 0, h = 0;
         var adaptScreen = options["adaptScreen"];
-        if (adaptScreen){
+        if (adaptScreen != null){
             var screenSize = cc.director.getWinSize();
             w = screenSize.width;
             h = screenSize.height;
@@ -104,7 +104,6 @@ ccs.LayoutReader = {
             }
         }
 
-
         if (backGroundScale9Enable)
         {
             var cx = options["capInsetsX"];
@@ -114,8 +113,6 @@ ccs.LayoutReader = {
             panel.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
         }
         panel.setLayoutType(options["layoutType"]);
-
-
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };

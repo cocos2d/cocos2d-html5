@@ -71,7 +71,7 @@ ccs.WidgetReader = {
         widget.setPosition(cc.p(x, y));
 
 
-        var sx = options["scalex"] || 1;
+        var sx = options["scaleX"] || 1;
         widget.setScaleX(sx);
 
         var sy = options["scaleY"] || 1;
@@ -157,7 +157,7 @@ ccs.WidgetReader = {
             anchorPointYInFile = widget.getAnchorPoint().y;
         }
 
-        if (isAnchorPointXExists || isAnchorPointYExists) {
+        if (isAnchorPointXExists != null || isAnchorPointYExists != null) {
             widget.setAnchorPoint(cc.p(anchorPointXInFile, anchorPointYInFile));
         }
 
