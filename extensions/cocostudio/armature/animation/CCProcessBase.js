@@ -145,7 +145,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
      * @param {Number} durationTo
      * @param {ccs.TweenType} tweenEasing
      */
-    play: function (durationTo, tweenEasing) {
+    play: function (durationTo, tweenEasing, loop, tweenEasing) {
         this._isComplete = false;
         this._isPause = false;
         this._isPlaying = true;
@@ -158,10 +158,16 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
         if (this._isComplete || this._isPause) {
             return false;
         }
-        if (this._rawDuration <= 0) {
+
+        /*
+         *  Fileter the m_iDuration <=0 and dt >1
+         *  If dt>1, generally speaking  the reason is the device is stuck.
+         */
+        if (this._rawDuration <= 0 || dt > 1) {
             return false;
         }
-        var locNextFrameIndex = this._nextFrameIndex;
+
+        var locNextFrameIndex = this._nextFrameIndex === undefined ? 0 : this._nextFrameIndex;
         var locCurrentFrame = this._currentFrame;
         if (locNextFrameIndex <= 0) {
             this._currentPercent = 1;
@@ -182,16 +188,9 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
              */
             locCurrentFrame = ccs.fmodf(locCurrentFrame, locNextFrameIndex);
         }
-        this._currentFrame = locCurrentFrame
+        this._currentFrame = locCurrentFrame;
         this.updateHandler();
         return true;
-    },
-
-    /**
-     * update will call this handler, you can handle your logic here
-     */
-    updateHandler: function () {
-        //override
     },
 
     /**
@@ -218,6 +217,16 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     getCurrentFrameIndex: function () {
         this._curFrameIndex = (this._rawDuration - 1) * this._currentPercent;
         return this._curFrameIndex;
+    },
+
+
+
+
+    /**
+     * update will call this handler, you can handle your logic here
+     */
+    updateHandler: function () {
+        //override
     },
 
     /**

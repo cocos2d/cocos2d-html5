@@ -77,7 +77,8 @@ ccs.displayFactory = {
                 this.updateArmatureDisplay(bone, display, dt);
                 break;
             default:
-                display.setAdditionalTransform(bone.getNodeToArmatureTransform());
+                var transform = bone.getNodeToArmatureTransform();
+                display.setAdditionalTransform(transform);
                 break;
         }
         if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT || ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX) {
@@ -87,18 +88,22 @@ ccs.displayFactory = {
                 if (detector) {
                     var node = decoDisplay.getDisplay();
                     var displayTransform = node.nodeToParentTransform();
-                    var helpTransform = this._helpTransform;
-                    helpTransform.a = displayTransform.a;
-                    helpTransform.b = displayTransform.b;
-                    helpTransform.c = displayTransform.c;
-                    helpTransform.d = displayTransform.d;
-                    helpTransform.tx = displayTransform.tx;
-                    helpTransform.ty = displayTransform.ty;
                     var anchorPoint =  node.getAnchorPointInPoints();
-                    anchorPoint = cc.pointApplyAffineTransform(anchorPoint, helpTransform);
-                    helpTransform.tx = anchorPoint.x;
-                    helpTransform.ty = anchorPoint.y;
-                    var t = cc.affineTransformConcat(helpTransform, bone.getArmature().nodeToParentTransform());
+//                    anchorPoint = cc.pointApplyAffineTransform(anchorPoint, helpTransform);
+                    anchorPoint = cc.pointApplyAffineTransform(anchorPoint, displayTransform);
+                    displayTransform.x = anchorPoint.x;
+                    displayTransform.y = anchorPoint.y;
+
+//                    var helpTransform = this._helpTransform;
+//                    helpTransform.a = displayTransform.a;
+//                    helpTransform.b = displayTransform.b;
+//                    helpTransform.c = displayTransform.c;
+//                    helpTransform.d = displayTransform.d;
+//                    helpTransform.tx = displayTransform.tx;
+//                    helpTransform.ty = displayTransform.ty;
+//                    helpTransform.tx = anchorPoint.x;
+//                    helpTransform.ty = anchorPoint.y;
+                    var t = cc.affineTransformConcat(bone.getArmature().nodeToParentTransform(), displayTransform);
                     detector.updateTransform(t);
                 }
             }
@@ -127,32 +132,43 @@ ccs.displayFactory = {
             skin = ccs.Skin.createWithSpriteFrameName(textureName + ".png");
 
         decoDisplay.setDisplay(skin);
+
+        if(skin == null){
+            return;
+        }
+
         skin.setBone(bone);
         this.initSpriteDisplay(bone, decoDisplay, displayData.displayName, skin);
+
         var armature = bone.getArmature();
         if (armature) {
             if (armature.getArmatureData().dataVersion >= ccs.CONST_VERSION_COMBINED)
                 skin.setSkinData(displayData.skinData);
             else
-                skin.setSkinData(bone.getBoneData());
+                skin.setSkinData(bone.boneData);
         }
     },
 
     initSpriteDisplay: function (bone, decoDisplay, displayName, skin) {
+        //! remove .xxx
         var textureName = displayName;
         var startPos = textureName.lastIndexOf(".");
+
         if (startPos != -1)
             textureName = textureName.substring(0, startPos);
+
         var textureData = ccs.armatureDataManager.getTextureData(textureName);
         if (textureData) {
             //! Init display anchorPoint, every Texture have a anchor point
             skin.setAnchorPoint(textureData.pivotX, textureData.pivotY);
         }
+
         if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT || ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX) {
             if (textureData && textureData.contourDataList.length > 0) {
-                var detector = ccs.ColliderDetector.create(bone);
-                detector.addContourDataList(textureData.contourDataList);
-                decoDisplay.setColliderDetector(detector);
+                //! create ContourSprite
+                var colliderDetector = ccs.ColliderDetector.create(bone);
+                colliderDetector.addContourDataList(textureData.contourDataList);
+                decoDisplay.setColliderDetector(colliderDetector);
             }
         }
     },
@@ -161,6 +177,7 @@ ccs.displayFactory = {
         var adp = new ccs.ArmatureDisplayData();
         adp.copy(displayData);
         decoDisplay.setDisplayData(adp);
+
         this.createArmatureDisplay(bone, decoDisplay);
     },
 
@@ -181,6 +198,7 @@ ccs.displayFactory = {
         var adp = new ccs.ParticleDisplayData();
         adp.copy(displayData);
         decoDisplay.setDisplayData(adp);
+
         this.createParticleDisplay(bone, decoDisplay);
     },
 

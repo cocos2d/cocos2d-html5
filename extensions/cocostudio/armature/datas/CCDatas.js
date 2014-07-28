@@ -179,11 +179,14 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
         this.x = node.x;
         this.y = node.y;
         this.zOrder = node.zOrder;
+
         this.scaleX = node.scaleX;
         this.scaleY = node.scaleY;
         this.skewX = node.skewX;
         this.skewY = node.skewY;
+
         this.tweenRotate = node.tweenRotate;
+
         this.isUseColorInfo = node.isUseColorInfo;
         this.r = node.r;
         this.g = node.g;
@@ -250,8 +253,8 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
         }
 
         if (to.tweenRotate) {
-            this.skewX += to.tweenRotate * ccs.DOUBLE_PI;
-            this.skewY -= to.tweenRotate * ccs.DOUBLE_PI;
+            this.skewX += to.tweenRotate * ccs.PI * 2;
+            this.skewY -= to.tweenRotate * ccs.PI * 2;
         }
     }
 });
@@ -312,6 +315,9 @@ ccs.SpriteDisplayData = ccs.DisplayData.extend(/** @lends ccs.SpriteDisplayData#
     copy:function (displayData) {
         ccs.DisplayData.prototype.copy.call(this,displayData);
         this.skinData = displayData.skinData;
+    },
+    SpriteDisplayData: function(){
+        this.displayType = ccs.DISPLAY_TYPE_SPRITE;
     }
 });
 
@@ -364,6 +370,7 @@ ccs.BoneData = ccs.BaseData.extend(/** @lends ccs.BoneData# */{
 
     init: function () {
         this.displayDataList.length = 0;
+        return true;
     },
     /**
      * add display data
@@ -474,22 +481,24 @@ ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
         copy:function (frameData) {
             ccs.BaseData.prototype.copy.call(this, frameData);
             this.duration = frameData.duration;
-            this.tweenEasing = frameData.tweenEasing;
             this.displayIndex = frameData.displayIndex;
-            this.movement = frameData.movement;
-            this.event = frameData.event;
-            this.sound = frameData.sound;
-            this.soundEffect = frameData.soundEffect;
-            this.blendFunc = frameData.blendFunc;
-            this.isTween = frameData.isTween;
 
+            this.tweenEasing = frameData.tweenEasing;
             this.easingParamNumber = frameData.easingParamNumber;
-            this.easingParams.length = 0;
+
+//            this.movement = frameData.movement;
+//            this.event = frameData.event;
+//            this.sound = frameData.sound;
+//            this.soundEffect = frameData.soundEffect;
+//            this.easingParams.length = 0;
             if (this.easingParamNumber != 0){
                 for (var i = 0; i<this.easingParamNumber; i++){
                     this.easingParams[i] = frameData.easingParams[i];
                 }
             }
+            this.blendFunc = frameData.blendFunc;
+            this.isTween = frameData.isTween;
+
         }
     }
 );
@@ -514,7 +523,7 @@ ccs.MovementBoneData = ccs.Class.extend(/** @lends ccs.MovementBoneData# */{
     },
 
     init:function () {
-        this.frameList.length = 0;
+        return true;
     },
     /**
      * add frame data

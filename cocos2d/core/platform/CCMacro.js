@@ -402,6 +402,12 @@ cc.ONE_MINUS_DST_ALPHA = 0x305;
  * @constant
  * @type Number
  */
+cc.DST_COLOR = 0x0307;
+
+/**
+ * @constant
+ * @type Number
+ */
 cc.ONE_MINUS_DST_COLOR = 0x0307;
 
 /**

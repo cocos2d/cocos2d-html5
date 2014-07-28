@@ -161,13 +161,25 @@ ccs.TweenFunction.tweenTo = function (time, type, easingParam) {
             break;
 
         case ccs.TweenType.elasticEaseIn:
-            delta = this.elasticEaseIn(time, easingParam);
+            var period = 0.3;
+            if(null != easingParam){
+                period = easingParam[0];
+            }
+            delta = this.elasticEaseIn(time, period);
             break;
         case ccs.TweenType.elasticEaseOut:
-            delta = this.elasticEaseOut(time, easingParam);
+            var period = 0.3;
+            if(null != easingParam){
+                period = easingParam[0];
+            }
+            delta = this.elasticEaseOut(time, period);
             break;
         case ccs.TweenType.elasticEaseInOut:
-            delta = this.elasticEaseInOut(time, easingParam);
+            var period = 0.3;
+            if(null != easingParam){
+                period = easingParam[0];
+            }
+            delta = this.elasticEaseInOut(time, period);
             break;
 
         case ccs.TweenType.backEaseIn:
@@ -458,4 +470,33 @@ ccs.TweenFunction.customEase = function (time, easingParam) {
         return easingParam[1] * tt * tt * tt + 3 * easingParam[3] * time * tt * tt + 3 * easingParam[5] * time * time * tt + easingParam[7] * time * time * time;
     }
     return time;
+};
+
+ccs.TweenFunction.easeIn = function(time, rate){
+    return Math.pow(time, rate);
+};
+
+ccs.TweenFunction.easeOut = function(time, rate){
+    return Math.pow(time, 1 / rate);
+};
+
+ccs.TweenFunction.easeInOut = function(time, rate){
+    time *= 2;
+    if(time < 1){
+        return 0.5 * Math.pow(time, rate);
+    }else{
+        return 1 - 0.5 * Math.pow(2 - time, rate);
+    }
+};
+
+ccs.TweenFunction.quadraticIn = function(time){
+    return Math.pow(time, 2);
+};
+
+ccs.TweenFunction.quadraticOut = function(time){
+    return -time * (time - 2);
+};
+
+ccs.TweenFunction.bezieratFunction = function(a, b, c, d, t){
+    return (Math.pow(1-t,3) * a + 3*t*(Math.pow(1-t,2))*b + 3*Math.pow(t,2)*(1-t)*c + Math.pow(t,3)*d );
 };
