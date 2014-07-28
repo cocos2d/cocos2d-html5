@@ -209,11 +209,10 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
 
     getNodeToWorldTransformAR: function(){
         var displayTransform = this._transform;
-        var anchorPoint = this._anchorPointInPoints;
 
-        anchorPoint = cc.pointApplyAffineTransform(anchorPoint, displayTransform);
-        displayTransform.tx = anchorPoint.x;
-        displayTransform.ty = anchorPoint.y;
+        this._anchorPointInPoints = cc.pointApplyAffineTransform(this._anchorPointInPoints, displayTransform);
+        displayTransform.tx = this._anchorPointInPoints.x;
+        displayTransform.ty = this._anchorPointInPoints.y;
 
         return cc.affineTransformConcat(
             displayTransform,

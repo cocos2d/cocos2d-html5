@@ -160,7 +160,7 @@ ccs.displayFactory = {
         var textureData = ccs.armatureDataManager.getTextureData(textureName);
         if (textureData) {
             //! Init display anchorPoint, every Texture have a anchor point
-            skin.setAnchorPoint(textureData.pivotX, textureData.pivotY);
+            skin.setAnchorPoint(cc.p(textureData.pivotX, textureData.pivotY));
         }
 
         if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT || ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX) {

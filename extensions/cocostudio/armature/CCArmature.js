@@ -325,7 +325,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         locOffsetPoint.x = -rect.x;
         locOffsetPoint.y = -rect.y;
         if (rect.width != 0 && rect.height != 0) {
-            this.setAnchorPoint(locOffsetPoint.x / rect.width, locOffsetPoint.y / rect.height);
+            this.setAnchorPoint(cc.p(locOffsetPoint.x / rect.width, locOffsetPoint.y / rect.height));
         }
     },
 
