@@ -160,7 +160,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         var baseNb = Math.floor(text.length * width / tWidth);
         // Next line is a line with line break
         var nextlinebreak = text.indexOf('\n');
-        if (baseNb * 0.8 >= nextlinebreak && nextlinebreak > 0) return nextlinebreak + 1;
+        if (baseNb * 0.8 >= nextlinebreak && nextlinebreak > -1) return nextlinebreak + 1;
         // Text width smaller than requested width
         if (tWidth < width) return text.length;
 
