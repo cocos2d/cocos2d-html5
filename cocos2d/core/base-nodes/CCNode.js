@@ -733,7 +733,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}  The anchor point of node.
      */
     getAnchorPoint: function () {
-        return this._anchorPoint;
+        return cc.p(this._anchorPoint);
     },
 
     /**
@@ -810,7 +810,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point} The anchor point in absolute pixels.
      */
     getAnchorPointInPoints: function () {
-        return this._anchorPointInPoints;
+        return cc.p(this._anchorPointInPoints);
     },
 
     _getWidth: function () {
@@ -838,7 +838,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Size} The untransformed size of the node.
      */
     getContentSize: function () {
-        return this._contentSize;
+        return cc.size(this._contentSize);
     },
 
     /**

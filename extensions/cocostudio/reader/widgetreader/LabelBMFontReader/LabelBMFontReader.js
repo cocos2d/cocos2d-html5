@@ -59,8 +59,8 @@ ccs.LabelBMFontReader = {
     
         var text = options["text"];
         labelBMFont.setString(text);
-    
-    
+
+
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };

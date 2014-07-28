@@ -24,23 +24,21 @@
  ****************************************************************************/
 
 /**
- * Base class for ccui.RelativeBox
+ * The vertical box of Cocos UI.
  * @class
  * @extends ccui.Layout
  */
-ccui.VBox = ccui.Layout.extend(/** @lends ccui.RelativeBox# */{
-
+ccui.VBox = ccui.Layout.extend(/** @lends ccui.VBox# */{
     init: function(){
         if(ccui.Layout.prototype.init.call(this)){
-            this.setLayoutType(ccui.Layout.VERTICAL);
+            this.setLayoutType(ccui.Layout.LINEAR_VERTICAL);
             return true;
         }
         return false;
     },
-
     initWithSize: function(size){
         if(this.init()){
-            this.setSize(size);
+            this.setContentSize(size);
             return true;
         }
         return false;
@@ -50,10 +48,11 @@ ccui.VBox = ccui.Layout.extend(/** @lends ccui.RelativeBox# */{
 ccui.VBox.create = function(size){
     var widget = new ccui.VBox();
     if(size){
-        if(widget.initWithSize()){
+        if(widget.initWithSize(size))
             return widget;
-        }
-        return null;
+    } else {
+        if(widget.init())
+            return widget;
     }
-    return widget;
+    return null;
 };
