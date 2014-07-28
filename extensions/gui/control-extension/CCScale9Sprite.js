@@ -143,9 +143,6 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         var horizontalScale = sizableWidth / locCenterContentSize.width;
         var verticalScale = sizableHeight / locCenterContentSize.height;
 
-        locCenter.setScaleX(horizontalScale);
-        locCenter.setScaleY(verticalScale);
-
         var rescaledWidth = locCenterContentSize.width * horizontalScale;
         var rescaledHeight = locCenterContentSize.height * verticalScale;
 
@@ -165,6 +162,9 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
                 verticalScale = rescaledHeight/locCenterContentSize.height;
             }
         }
+
+        locCenter.setScaleX(horizontalScale);
+        locCenter.setScaleY(verticalScale);
 
         var locLeft = this._left, locRight = this._right, locTop = this._top, locBottom = this._bottom;
         var tempAP = cc.p(0, 0);
