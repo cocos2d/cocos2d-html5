@@ -185,7 +185,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Point}
      */
     getOffsetInPixels:function () {
-        return this._offsetInPixels;
+        return cc.p(this._offsetInPixels);
     },
 
     /**
@@ -204,7 +204,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Size}
      */
     getOriginalSizeInPixels:function () {
-        return this._originalSizeInPixels;
+        return cc.size(this._originalSizeInPixels);
     },
 
     /**
@@ -222,7 +222,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Size}
      */
     getOriginalSize:function () {
-        return this._originalSize;
+        return cc.size(this._originalSize);
     },
 
     /**
@@ -296,7 +296,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Point}
      */
     getOffset:function () {
-        return this._offset;
+        return cc.p(this._offset);
     },
 
     /**

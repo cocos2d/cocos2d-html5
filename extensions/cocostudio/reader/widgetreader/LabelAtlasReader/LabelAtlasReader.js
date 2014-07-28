@@ -32,8 +32,7 @@ ccs.LabelAtlasReader = {
     setPropsFromJsonDictionary: function(widget, options){
 
         ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
-    
-    
+
         var jsonPath = ccs.uiReader.getFilePath();
     
         var labelAtlas = widget;
@@ -42,7 +41,7 @@ ccs.LabelAtlasReader = {
         var iw = options["itemWidth"];
         var ih = options["itemHeight"];
         var scm = options["startCharMap"];
-        if (sv && cmf && iw && ih && scm){
+        if (sv != null && cmf && iw != null && ih != null && scm != null){
             var cmftDic = options["charMapFileData"];
             var cmfType = cmftDic["resourceType"];
             switch (cmfType){
@@ -65,8 +64,6 @@ ccs.LabelAtlasReader = {
                     break;
             }
         }
-    
-    
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
 
     }

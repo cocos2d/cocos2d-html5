@@ -47,7 +47,6 @@
  * @property {Number}   insetBottom     - The bottom inset of the 9-slice sprite
  */
 cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
-
     _spriteRect: null,
     _capInsetsInternal: null,
     _positionsAreDirty: false,
@@ -63,7 +62,6 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     _bottom: null,
     _bottomRight: null,
 
-    _colorUnmodified: null,
     _opacityModifyRGB: false,
 
     _originalSize: null,
@@ -141,8 +139,10 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
         var sizableWidth = size.width - locTopLeftContentSize.width - locTopRight.getContentSize().width;
         var sizableHeight = size.height - locTopLeftContentSize.height - locBottomRight.getContentSize().height;
+
         var horizontalScale = sizableWidth / locCenterContentSize.width;
         var verticalScale = sizableHeight / locCenterContentSize.height;
+
         var rescaledWidth = locCenterContentSize.width * horizontalScale;
         var rescaledHeight = locCenterContentSize.height * verticalScale;
 
@@ -162,6 +162,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
                 verticalScale = rescaledHeight/locCenterContentSize.height;
             }
         }
+
         locCenter.setScaleX(horizontalScale);
         locCenter.setScaleY(verticalScale);
 
@@ -197,18 +198,36 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         locCenter.setPosition(leftWidth, bottomHeight);
     },
 
-    ctor: function () {
+    /**
+     * @constructor
+     * @param {string|cc.SpriteFrame} file file name of texture or a SpriteFrame
+     * @param {cc.Rect} rect
+     * @param {cc.Rect} capInsets
+     * @returns {Scale9Sprite}
+     */
+    ctor: function (file, rect, capInsets) {
         cc.Node.prototype.ctor.call(this);
         this._spriteRect = cc.rect(0, 0, 0, 0);
         this._capInsetsInternal = cc.rect(0, 0, 0, 0);
 
-        this._colorUnmodified = cc.color(255, 255, 255, 255);
         this._originalSize = cc.size(0, 0);
         this._preferredSize = cc.size(0, 0);
-        this._color = cc.color(255, 255, 255, 255);
-        this._opacity = 255;
         this._capInsets = cc.rect(0, 0, 0, 0);
         this._loadedEventListeners = [];
+
+        if(file != undefined){
+            if(file instanceof cc.SpriteFrame)
+                this.initWithSpriteFrame(file, rect);
+            else{
+                var frame = cc.spriteFrameCache.getSpriteFrame(file);
+                if(frame != null)
+                    this.initWithSpriteFrame(frame, rect);
+                else
+                    this.initWithFile(file, rect, capInsets);
+            }
+        }else{
+            this.init();
+        }
     },
 
     /** Original sprite's size. */
@@ -240,57 +259,56 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 	},
 
     /** Opacity: conforms to CCRGBAProtocol protocol */
-    getOpacity: function () {
-        return this._opacity;
-    },
     setOpacity: function (opacity) {
-        if(!this._scale9Image){
+        if(!this._scale9Image)
             return;
-        }
-        this._opacity = opacity;
+        cc.Node.prototype.setOpacity.call(this, opacity);
         var scaleChildren = this._scale9Image.getChildren();
         for (var i = 0; i < scaleChildren.length; i++) {
             var selChild = scaleChildren[i];
             if (selChild)
                 selChild.setOpacity(opacity);
         }
-        this._color.a = opacity;
     },
 
     updateDisplayedOpacity: function(parentOpacity){
+        if(!this._scale9Image)
+            return;
+
         cc.Node.prototype.updateDisplayedOpacity.call(this, parentOpacity);
-        this.setOpacity(this._displayedOpacity);
+        var scaleChildren = this._scale9Image.getChildren();
+        for (var i = 0; i < scaleChildren.length; i++) {
+            var selChild = scaleChildren[i];
+            if (selChild)
+                selChild.updateDisplayedOpacity(parentOpacity);
+        }
     },
 
     /** Color: conforms to CCRGBAProtocol protocol */
-    getColor: function () {
-        var locColor = this._color;
-        return cc.color(locColor.r, locColor.g, locColor.b, locColor.a);
-    },
     setColor: function (color) {
-        if(!this._scale9Image){
+        if(!this._scale9Image)
             return;
-        }
-        var locColor = this._color;
-        locColor.r = color.r;
-        locColor.g = color.g;
-        locColor.b = color.b;
 
+        cc.Node.prototype.setColor.call(this, color);
         var scaleChildren = this._scale9Image.getChildren();
         for (var i = 0; i < scaleChildren.length; i++) {
             var selChild = scaleChildren[i];
             if (selChild)
                 selChild.setColor(color);
         }
-
-        if (color.a !== undefined && !color.a_undefined) {
-            this.setOpacity(color.a);
-        }
     },
 
     updateDisplayedColor: function(parentColor){
+        if(!this._scale9Image)
+            return;
+
         cc.Node.prototype.updateDisplayedColor.call(this, parentColor);
-        this.setColor(this._displayedColor);
+        var scaleChildren = this._scale9Image.getChildren();
+        for (var i = 0; i < scaleChildren.length; i++) {
+            var selChild = scaleChildren[i];
+            if (selChild)
+                selChild.updateDisplayedColor(parentColor);
+        }
     },
 
     getCapInsets: function () {
@@ -298,9 +316,8 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     setCapInsets: function (capInsets) {
-        if(!this._scale9Image){
+        if(!this._scale9Image)
             return;
-        }
         //backup the contentSize
         var contentSize = this._contentSize;
         var tempWidth = contentSize.width, tempHeight = contentSize.height;
@@ -386,10 +403,12 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 	    cc.Node.prototype.setContentSize.call(this, size, height);
         this._positionsAreDirty = true;
     },
+
 	_setWidth: function (value) {
 		cc.Node.prototype._setWidth.call(this, value);
 		this._positionsAreDirty = true;
 	},
+
 	_setHeight: function (value) {
 		cc.Node.prototype._setHeight.call(this, value);
 		this._positionsAreDirty = true;
@@ -407,15 +426,24 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         return this.initWithBatchNode(null, cc.rect(0, 0, 0, 0), false, cc.rect(0, 0, 0, 0));
     },
 
+    /**
+     * Initializes a 9-slice sprite with a SpriteBatchNode.
+     * @param {cc.SpriteBatchNode} batchNode
+     * @param {cc.Rect} rect
+     * @param {boolean|cc.Rect} rotated
+     * @param {cc.Rect} [capInsets]
+     * @returns {boolean}
+     */
     initWithBatchNode: function (batchNode, rect, rotated, capInsets) {
         if (capInsets === undefined) {
             capInsets = rotated;
             rotated = false;
         }
 
-        if (batchNode) {
+        if (batchNode)
             this.updateWithBatchNode(batchNode, rect, rotated, capInsets);
-        }
+        this.setCascadeColorEnabled(true);
+        this.setCascadeOpacityEnabled(true);
         this.setAnchorPoint(0.5, 0.5);
         this._positionsAreDirty = true;
         return true;
@@ -428,11 +456,10 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
      * to resize the sprite will all it's 9-slice goodness intact.
      * It respects the anchorPoint too.
      *
-     * @param file The name of the texture file.
-     * @param rect The rectangle that describes the sub-part of the texture that
-     * is the whole image. If the shape is the whole texture, set this to the
-     * texture's full rect.
-     * @param capInsets The values to use for the cap insets.
+     * @param {String} file The name of the texture file.
+     * @param {cc.Rect} rect The rectangle that describes the sub-part of the texture that
+     * is the whole image. If the shape is the whole texture, set this to the texture's full rect.
+     * @param {cc.Rect} capInsets The values to use for the cap insets.
      */
     initWithFile: function (file, rect, capInsets) {
         if (file instanceof cc.Rect) {
@@ -531,26 +558,24 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
      * cap insets of a sprite. In both cases, you get back a new image and the
      * original sprite remains untouched.
      *
-     * @param capInsets The values to use for the cap insets.
+     * @param {cc.Rect} capInsets The values to use for the cap insets.
      */
     resizableSpriteWithCapInsets: function (capInsets) {
         var pReturn = new cc.Scale9Sprite();
-        if (pReturn && pReturn.initWithBatchNode(this._scale9Image, this._spriteRect, false, capInsets)) {
+        if (pReturn && pReturn.initWithBatchNode(this._scale9Image, this._spriteRect, false, capInsets))
             return pReturn;
-        }
         return null;
     },
 
     /** sets the premultipliedAlphaOpacity property.
      If set to NO then opacity will be applied as: glColor(R,G,B,opacity);
-     If set to YES then oapcity will be applied as: glColor(opacity, opacity, opacity, opacity );
+     If set to YES then opacity will be applied as: glColor(opacity, opacity, opacity, opacity );
      Textures with premultiplied alpha will have this property by default on YES. Otherwise the default value is NO
      @since v0.8
      */
     setOpacityModifyRGB: function (value) {
-        if(!this._scale9Image){
+        if(!this._scale9Image)
             return;
-        }
         this._opacityModifyRGB = value;
         var scaleChildren = this._scale9Image.getChildren();
         if (scaleChildren) {
@@ -566,6 +591,14 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         return this._opacityModifyRGB;
     },
 
+    /**
+     *
+     * @param {cc.SpriteBatchNode} batchNode
+     * @param {cc.Rect} originalRect
+     * @param {boolean} rotated
+     * @param {cc.Rect} capInsets
+     * @returns {boolean}
+     */
     updateWithBatchNode: function (batchNode, originalRect, rotated, capInsets) {
         var opacity = this.getOpacity();
         var color = this.getColor();
@@ -574,9 +607,12 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         // Release old sprites
         this.removeAllChildren(true);
 
-        if (this._scale9Image != batchNode){
+        if (this._scale9Image != batchNode)
             this._scale9Image = batchNode;
-        }
+
+        if(!this._scale9Image)
+            return false;
+
         var tmpTexture = batchNode.getTexture();
         var locLoaded = tmpTexture.isLoaded();
         this._textureLoaded = locLoaded;
@@ -585,7 +621,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
                 this._positionsAreDirty = true;
                 this._callLoadedEventCallbacks();
             },this);
-            return;
+            return true;
         }
         var locScale9Image = this._scale9Image;
         locScale9Image.removeAllChildren(true);
@@ -631,8 +667,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             locCapInsetsInternal.width = capInsets.width;
             locCapInsetsInternal.height = capInsets.height;
         }
-        var w = rect.width;
-        var h = rect.height;
+        var w = rect.width, h = rect.height;
 
         // If there is no specified center region
         if (cc._rectEqualToZero(locCapInsetsInternal)) {
@@ -643,18 +678,13 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             locCapInsetsInternal.height = h / 3;
         }
 
-        var left_w = locCapInsetsInternal.x;
-        var center_w = locCapInsetsInternal.width;
-        var right_w = w - (left_w + center_w);
+        var left_w = locCapInsetsInternal.x, center_w = locCapInsetsInternal.width, right_w = w - (left_w + center_w);
 
-        var top_h = locCapInsetsInternal.y;
-        var center_h = locCapInsetsInternal.height;
-        var bottom_h = h - (top_h + center_h);
+        var top_h = locCapInsetsInternal.y, center_h = locCapInsetsInternal.height, bottom_h = h - (top_h + center_h);
 
         // calculate rects
         // ... top row
-        var x = 0.0;
-        var y = 0.0;
+        var x = 0.0, y = 0.0;
 
         // top left
         var lefttopbounds = cc.rect(x, y, left_w, top_h);
@@ -860,20 +890,22 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             locScale9Image.addChild(this._bottomRight, 2, cc.Scale9Sprite.POSITIONS_BOTTOMRIGHT);
         }
 
-        this.setContentSize(rect);
+        this.setContentSize(rect.width, rect.height);
         this.addChild(locScale9Image);
 
         if (this._spritesGenerated) {
             // Restore color and opacity
             this.setOpacity(opacity);
-            if(color.r !== 255 || color.g !== 255 || color.b !== 255){
-                this.setColor(color);
-            }
+            this.setColor(color);
         }
         this._spritesGenerated = true;
         return true;
     },
 
+    /**
+     * set the sprite frame of cc.Scale9Sprite
+     * @param {cc.SpriteFrame} spriteFrame
+     */
     setSpriteFrame: function (spriteFrame) {
         var batchNode = cc.SpriteBatchNode.create(spriteFrame.getTexture(), 9);
         // the texture is rotated on Canvas render mode, so isRotated always is false.
@@ -927,59 +959,22 @@ _p = null;
 /**
  * Creates a 9-slice sprite with a texture file, a delimitation zone and
  * with the specified cap insets.
- *
- * @see initWithFile:rect:centerRegion:
+ * @param {String|cc.SpriteFrame} file file name of texture or a cc.Sprite object
+ * @param {cc.Rect} rect the rect of the texture
+ * @param {cc.Rect} capInsets the cap insets of cc.Scale9Sprite
+ * @returns {cc.Scale9Sprite}
  */
 cc.Scale9Sprite.create = function (file, rect, capInsets) {
-    var pReturn;
-    if (arguments.length === 2) {
-        if (typeof(file) == "string") {
-            pReturn = new cc.Scale9Sprite();
-            if (pReturn && pReturn.initWithFile(file, rect)) {
-                return pReturn;
-            }
-        } else if (file instanceof cc.Rect) {
-            pReturn = new cc.Scale9Sprite();
-            if (pReturn && pReturn.initWithFile(file, capInsets)) {
-                return pReturn;
-            }
-        }
-    } else if (arguments.length === 3) {
-        pReturn = new cc.Scale9Sprite();
-        if (pReturn && pReturn.initWithFile(file, rect, capInsets)) {
-            return pReturn;
-        }
-    } else if (arguments.length === 1) {
-        pReturn = new cc.Scale9Sprite();
-        if (pReturn && pReturn.initWithFile(file)) {
-            return pReturn;
-        }
-    } else if (arguments.length === 0) {
-        pReturn = new cc.Scale9Sprite();
-        if (pReturn && pReturn.init()) {
-            return pReturn;
-        }
-    }
-    return null;
+    return new cc.Scale9Sprite(file, rect, capInsets);
 };
 
 cc.Scale9Sprite.createWithSpriteFrame = function (spriteFrame, capInsets) {
-    var pReturn = new cc.Scale9Sprite();
-    if (pReturn && pReturn.initWithSpriteFrame(spriteFrame, capInsets)) {
-        return pReturn;
-    }
-    return null;
+    return new cc.Scale9Sprite(spriteFrame, capInsets);
 };
 
 cc.Scale9Sprite.createWithSpriteFrameName = function (spriteFrameName, capInsets) {
-    if(!spriteFrameName)
-        throw "cc.Scale9Sprite.createWithSpriteFrameName(): spriteFrameName should be non-null";
-    var pReturn = new cc.Scale9Sprite();
-    if (pReturn && pReturn.initWithSpriteFrameName(spriteFrameName, capInsets))
-        return pReturn;
-    return null;
+    return new cc.Scale9Sprite(spriteFrameName, capInsets);
 };
-
 
 /**
  * @ignore

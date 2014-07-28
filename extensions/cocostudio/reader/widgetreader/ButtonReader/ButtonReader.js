@@ -33,7 +33,6 @@ ccs.ButtonReader = {
 
         ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
-
         var jsonPath = ccs.uiReader.getFilePath();
 
         var button = widget;
@@ -119,21 +118,15 @@ ccs.ButtonReader = {
             button.setCapInsets(cc.rect(cx, cy, cw, ch));
             var sw = options["scale9Width"];
             var sh = options["scale9Height"];
-            if (sw && sh)
+            if (sw != null && sh != null)
             {
-                var swf = options["scale9Width"];
-                var shf = options["scale9Height"];
-                button.setSize(cc.size(swf, shf));
+                button.setSize(cc.size(sw, sh));
             }
         }
-        var tt = options["text"];
-        if (tt)
+        var text = options["text"];
+        if (text != null)
         {
-            var text = options["text"];
-            if (text)
-            {
-                button.setTitleText(text);
-            }
+            button.setTitleText(text);
         }
     
         var cr = options["textColorR"];
@@ -145,7 +138,7 @@ ccs.ButtonReader = {
     
         button.setTitleColor(cc.color(cri,cgi,cbi));
         var fs = options["fontSize"];
-        if (fs)
+        if (fs != null)
         {
             button.setTitleFontSize(options["fontSize"]);
         }
@@ -154,8 +147,6 @@ ccs.ButtonReader = {
         {
             button.setTitleFontName(options["fontName"]);
         }
-    
-    
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };

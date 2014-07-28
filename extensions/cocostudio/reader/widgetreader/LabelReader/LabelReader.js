@@ -32,44 +32,39 @@ ccs.LabelReader = {
     setPropsFromJsonDictionary: function(widget, options){
 
         ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
-    
-    
-        var jsonPath = ccs.uiReader.getFilePath();
-    
+
         var label = widget;
         var touchScaleChangeAble = options["touchScaleEnable"];
         label.setTouchScaleChangeEnabled(touchScaleChangeAble);
         var text = options["text"];
         label.setString(text);
         var fs = options["fontSize"];
-        if (fs)
+        if (fs != null)
         {
             label.setFontSize(options["fontSize"]);
         }
         var fn = options["fontName"];
-        if (fn)
+        if (fn != null)
         {
             label.setFontName(options["fontName"]);
         }
         var aw = options["areaWidth"];
         var ah = options["areaHeight"];
-        if (aw && ah)
+        if (aw != null && ah != null)
         {
             var size = cc.size(options["areaWidth"], options["areaHeight"]);
             label.setTextAreaSize(size);
         }
         var ha = options["hAlignment"];
-        if (ha)
+        if (ha != null)
         {
             label.setTextHorizontalAlignment(options["hAlignment"]);
         }
         var va = options["vAlignment"];
-        if (va)
+        if (va != null)
         {
             label.setTextVerticalAlignment(options["vAlignment"]);
         }
-    
-    
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };

@@ -257,10 +257,10 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
         this._displayRenderNode = displayRenderNode;
 
         if (displayRenderNode) {
-            if (displayRenderNode instanceof ccs.Armature){
-                locBone.setChildArmature(displayRenderNode);
-                displayRenderNode.setParentBone(locBone);
-            } else if(displayRenderNode instanceof cc.ParticleSystem)
+            if (displayRenderNode instanceof ccs.Armature) {
+                this._bone.setChildArmature(displayRenderNode);
+                displayRenderNode.setParentBone(this._bone);
+            }else if(displayRenderNode instanceof cc.ParticleSystem)
                 displayRenderNode.resetSystem();
 
             displayRenderNode.setColor(locBone.getDisplayedColor());

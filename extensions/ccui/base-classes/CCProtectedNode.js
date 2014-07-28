@@ -22,7 +22,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.ProtectedNode = cc.Node.extend({
+/**
+ * A class inhert from cc.Node, use for saving some protected children in other list.
+ * @class
+ * @extends cc.Node
+ */
+cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
     _protectedChildren: null,
     _reorderProtectedChildDirty: false,
 
@@ -57,7 +62,6 @@ cc.ProtectedNode = cc.Node.extend({
         child.setOrderOfArrival(cc.s_globalOrderOfArrival);
 
         //TODO USE PHYSICS
-
         if(this._running){
             child.onEnter();
             // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
@@ -161,7 +165,6 @@ cc.ProtectedNode = cc.Node.extend({
             }
 
             //TODO USE PHYSICS
-
             if (cleanup)
                 child.cleanup();
             // set parent nil at the end
@@ -306,14 +309,10 @@ cc.ProtectedNode = cc.Node.extend({
         _t.draw(context);
         // draw children zOrder >= 0
         for (; i < childLen; i++) {
-            if (locChildren[i]) {
-                locChildren[i].visit();
-            }
+            locChildren[i] && locChildren[i].visit();
         }
         for (; j < pLen; j++) {
-            if (locProtectedChildren[j]) {
-                locProtectedChildren[j].visit();
-            }
+            locProtectedChildren[j] && locProtectedChildren[j].visit();
         }
 
         _t.arrivalOrder = 0;
