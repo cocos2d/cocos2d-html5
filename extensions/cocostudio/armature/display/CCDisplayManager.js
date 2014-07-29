@@ -321,11 +321,11 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
      * @returns {boolean}
      */
     containPoint: function (point, y) {
-        if (y !== undefined)
-           point = cc.p(point, y);
-
         if (!this._visible || this._displayIndex < 0)
             return false;
+
+        if (y !== undefined)
+            point = cc.p(point, y);
 
         if(this._currentDecoDisplay.getDisplayData().displayType == ccs.DISPLAY_TYPE_SPRITE){
             /*
