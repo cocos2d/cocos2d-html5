@@ -56,8 +56,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     _className: "Armature",
     _realAnchorPointInPoints: null,
 
-    nodeToParentTransform: null,
-
     /**
      * Create a armature node.
      * Constructor of ccs.Armature

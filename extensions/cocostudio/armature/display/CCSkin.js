@@ -55,7 +55,6 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
             return false;
         var pFrame = cc.spriteFrameCache.getSpriteFrame(spriteFrameName);
 
-        this._displayName = spriteFrameName;
         var ret = true;
         if(pFrame){
             this.initWithSpriteFrame(pFrame);
@@ -84,17 +83,10 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         this.setRotationY(cc.radiansToDegrees(-skinData.skewY));
         this.setPosition(skinData.x, skinData.y);
 
-//        var localTransform = this.nodeToParentTransform();
-//        var skinTransform = this._skinTransform;
-//        skinTransform.a = localTransform.a;
-//        skinTransform.b = localTransform.b;
-//        skinTransform.c = localTransform.c;
-//        skinTransform.d = localTransform.d;
-//        skinTransform.tx = localTransform.tx;
-//        skinTransform.ty = localTransform.ty;
+        this._skinTransform = this.getNodeToParentTransform ?
+            this.getNodeToParentTransform() :
+            this.nodeToParentTransform();
 
-        //this.getNodeToParentTransform
-        this._skinTransform = this.nodeToParentTransform();
         this.updateArmatureTransform();
     },
 
@@ -103,18 +95,11 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     },
 
     updateArmatureTransform: function () {
-        this._transform = cc.affineTransformConcat(this.bone.getNodeToArmatureTransform(), this._skinTransform);
-//        var locTransform = this._transform;
-//        var locArmature = this._armature;
-//        if (locArmature && locArmature.getBatchNode()) {
-//            this._transform = cc.affineTransformConcat(locTransform, locArmature.nodeToParentTransform());
-//        }
-//        if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-//            locTransform = this._transform;
-//            locTransform.b *= -1;
-//            locTransform.c *= -1;
-//            locTransform.b = [locTransform.c, locTransform.c = locTransform.b][0];
-//        }
+        //TODO cc.TransformConcat
+        this._transform = cc.affineTransformConcat(
+            this.bone.getNodeToArmatureTransform(),
+            this._skinTransform
+        );
     },
 
     updateTransform: function(){
@@ -128,7 +113,9 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
             //
             // calculate the Quad based on the Affine Matrix
             //
-            var transform = this.nodeToParentTransform();
+            var transform = this.getNodeToParentTransform ?
+                this.getNodeToParentTransform() :
+                this.nodeToParentTransform();
 
             var size = this._rect;
 
@@ -157,6 +144,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
             var dx = x1 * cr - y2 * sr2 + x;
             var dy = x1 * sr + y2 * cr2 + y;
 
+            //TODO _positionZ
             this.SET_VERTEX3F(
                 this._quad.bl.vertices,
                 this.RENDER_IN_SUBPIXEL(ax),
@@ -201,6 +189,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     },
 
     getNodeToWorldTransform: function(){
+        //TODO cc.TransformConcat
         return cc.affineTransformConcat(
             this._bone.getArmature().getNodeToWorldTransform(),
             this._transform
@@ -210,10 +199,12 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     getNodeToWorldTransformAR: function(){
         var displayTransform = this._transform;
 
+        //TODO cc.PointApplyTransform
         this._anchorPointInPoints = cc.pointApplyAffineTransform(this._anchorPointInPoints, displayTransform);
         displayTransform.tx = this._anchorPointInPoints.x;
         displayTransform.ty = this._anchorPointInPoints.y;
 
+        //TODO cc.TransformConcat
         return cc.affineTransformConcat(
             displayTransform,
             this.bone.getArmature().nodeToWorldTransform()
