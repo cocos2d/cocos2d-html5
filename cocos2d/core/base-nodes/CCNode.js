@@ -1768,7 +1768,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * The matrix is in Pixels.
      * @return {cc.AffineTransform}
      */
-    parentToNodeTransform: function () {
+    getParentToNodeTransform: function () {
         if (this._inverseDirty) {
             this._inverse = cc.affineTransformInvert(this.getNodeToParentTransform());
             this._inverseDirty = false;
@@ -1777,10 +1777,17 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
+     * @deprecated
+     */
+    parentToNodeTransform: function () {
+        return this.getParentToNodeTransform();
+    },
+
+    /**
      *  Returns the world affine transform matrix. The matrix is in Pixels.
      * @return {cc.AffineTransform}
      */
-    nodeToWorldTransform: function () {
+    getNodeToWorldTransform: function () {
         var t = this.getNodeToParentTransform();
         for (var p = this._parent; p != null; p = p.parent)
             t = cc.affineTransformConcat(t, p.getNodeToParentTransform());
@@ -1788,11 +1795,25 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
+     * @deprecated
+     */
+    nodeToWorldTransform: function(){
+        return this.getNodeToWorldTransform();
+    },
+
+    /**
      * Returns the inverse world affine transform matrix. The matrix is in Pixels.
      * @return {cc.AffineTransform}
      */
-    worldToNodeTransform: function () {
+    getWorldToNodeTransform: function () {
         return cc.affineTransformInvert(this.nodeToWorldTransform());
+    },
+
+    /**
+     * @deprecated
+     */
+    worldToNodeTransform: function () {
+        return this.getWorldToNodeTransform();
     },
 
     /**
