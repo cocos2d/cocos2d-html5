@@ -46,15 +46,16 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
     _passLastFrame:false,
     ctor:function () {
         ccs.ProcessBase.prototype.ctor.call(this);
+        this._movementBoneData = null;
         this._tweenData = null;
-        this._to = null;
         this._from = null;
+        this._to = null;
         this._between = null;
         this._bone = null;
-        this._movementBoneData = null;
+
         this._frameTweenEasing = ccs.TweenType.linear;
-        this._toIndex = 0;
         this._fromIndex = 0;
+        this._toIndex = 0;
         this.animation = null;
         this._passLastFrame = false;
     },
@@ -71,8 +72,6 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         this._bone = bone;
         this._tweenData = this._bone.getTweenData();
         this._tweenData.displayIndex = -1;
-//         var armature = bone.getArmature();
-//        if (armature) this.animation = armature.getAnimation();
 
         this._animation = this._bone.getArmature() != null ?
             this._bone.getArmature().getAnimation() :
@@ -103,7 +102,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
 
         var difMovement = movementBoneData != this._movementBoneData;
 
-        this._movementBoneData = movementBoneData;
+        this.setMovementBoneData(movementBoneData);
         this._rawDuration = this._movementBoneData.duration;
 
         var nextKeyFrame = this._movementBoneData.getFrameData(0);
@@ -218,8 +217,6 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
                     break;
                 default:
                     this._currentFrame = ccs.fmodf(this._currentFrame, this._nextFrameIndex);
-                    this._totalDuration = 0;
-                    this._betweenDuration = 0;
                     break;
             }
         }
@@ -245,8 +242,13 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
      * @param {ccs.FrameData} to
      * @param {Boolean} limit
      */
-    setBetween:function (from, to, limit) {
-        limit = Boolean(limit);
+    setBetween:function (from, to) {
+
+        var limit = true;
+        if(arguments[2] != null){
+            limit = Boolean(limit);
+        }
+
         do
         {
             if (from.displayIndex < 0 && to.displayIndex >= 0) {
@@ -283,9 +285,6 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
 
             if (!displayManager.getForceChangeDisplay()) {
                 displayManager.changeDisplayWithIndex(displayIndex, false);
-//                var locRenderNode = displayManager.getDisplayRenderNode();
-//                if(locRenderNode)
-//                    locRenderNode.setBlendFunc(keyFrameData.blendFunc);
             }
 
             //! Update bone zorder, bone's zorder is determined by frame zorder and bone zorder
@@ -435,7 +434,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
      * @param {ccs.ArmatureAnimation} animation
      */
     setAnimation:function (animation) {
-        this.animation = animation;
+        this._animation = animation;
     },
 
     /**
@@ -443,13 +442,13 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
      * @return {ccs.ArmatureAnimation}
      */
     getAnimation:function () {
-        return this.animation;
-    },
-
-    release:function () {
-        this._from = null;
-        this._between = null;
+        return this._animation;
     }
+
+//    release:function () {
+//        this._from = null;
+//        this._between = null;
+//    }
 });
 
 /**
