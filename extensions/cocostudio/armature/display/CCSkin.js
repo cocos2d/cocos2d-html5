@@ -54,17 +54,14 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         if(spriteFrameName == "")
             return false;
         var pFrame = cc.spriteFrameCache.getSpriteFrame(spriteFrameName);
-
         var ret = true;
-        if(pFrame){
+        if(pFrame)
             this.initWithSpriteFrame(pFrame);
-        }else{
-            cc.log("Cann't find CCSpriteFrame with %s. Please check your .plist file", spriteFrameName);
+        else{
+            cc.log("Can't find CCSpriteFrame with %s. Please check your .plist file", spriteFrameName);
             ret = false;
         }
-
         this._displayName = spriteFrameName;
-
         return ret;
     },
 
@@ -95,28 +92,22 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     },
 
     updateArmatureTransform: function () {
-        //TODO cc.TransformConcat
         this._transform = cc.affineTransformConcat(
             this.bone.getNodeToArmatureTransform(),
             this._skinTransform
         );
     },
 
-    updateTransform: function(){
+    _updateTransformForWebGL: function(){
+        var locQuad = this._quad;
         // If it is not visible, or one of its ancestors is not visible, then do nothing:
         if( !this._visible)
-        {
-            this._quad.br.vertices = this._quad.tl.vertices = this._quad.tr.vertices = this._quad.bl.vertices = cc.p(0, 0);
-        }
-        else
-        {
+            locQuad.br.vertices = locQuad.tl.vertices = locQuad.tr.vertices = locQuad.bl.vertices = {x: 0, y:0, z:0};
+        else {
             //
             // calculate the Quad based on the Affine Matrix
             //
-            var transform = this.getNodeToParentTransform ?
-                this.getNodeToParentTransform() :
-                this.nodeToParentTransform();
-
+            var transform = this.getNodeToParentTransform ? this.getNodeToParentTransform() : this.nodeToParentTransform();
             var size = this._rect;
 
             var x1 = this._offsetPosition.x;
@@ -144,38 +135,15 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
             var dx = x1 * cr - y2 * sr2 + x;
             var dy = x1 * sr + y2 * cr2 + y;
 
-            //TODO _positionZ
-            this.SET_VERTEX3F(
-                this._quad.bl.vertices,
-                this.RENDER_IN_SUBPIXEL(ax),
-                this.RENDER_IN_SUBPIXEL(ay),
-                this._localZOrder
-            );
-            this.SET_VERTEX3F(
-                this._quad.br.vertices,
-                this.RENDER_IN_SUBPIXEL(bx),
-                this.RENDER_IN_SUBPIXEL(by),
-                this._localZOrder
-            );
-            this.SET_VERTEX3F(
-                this._quad.tl.vertices,
-                this.RENDER_IN_SUBPIXEL(dx),
-                this.RENDER_IN_SUBPIXEL(dy),
-                this._localZOrder
-            );
-            this.SET_VERTEX3F(
-                this._quad.tr.vertices,
-                this.RENDER_IN_SUBPIXEL(cx),
-                this.RENDER_IN_SUBPIXEL(cy),
-                this._localZOrder
-            );
+            this.SET_VERTEX3F(locQuad.bl.vertices,this.RENDER_IN_SUBPIXEL(ax), this.RENDER_IN_SUBPIXEL(ay),this._vertexZ);
+            this.SET_VERTEX3F(locQuad.br.vertices,this.RENDER_IN_SUBPIXEL(bx), this.RENDER_IN_SUBPIXEL(by),this._vertexZ);
+            this.SET_VERTEX3F(locQuad.tl.vertices,this.RENDER_IN_SUBPIXEL(dx), this.RENDER_IN_SUBPIXEL(dy),this._vertexZ);
+            this.SET_VERTEX3F(locQuad.tr.vertices,this.RENDER_IN_SUBPIXEL(cx), this.RENDER_IN_SUBPIXEL(cy),this._vertexZ);
         }
 
         // MARMALADE CHANGE: ADDED CHECK FOR nullptr, TO PERMIT SPRITES WITH NO BATCH NODE / TEXTURE ATLAS
         if (this._textureAtlas)
-        {
-            this._textureAtlas.updateQuad(this._quad, this._textureAtlas.getTotalQuads());
-        }
+            this._textureAtlas.updateQuad(locQuad, this._textureAtlas.getTotalQuads());
     },
 
     SET_VERTEX3F: function(_v_, _x_, _y_, _z_){
@@ -211,26 +179,11 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         );
     },
 
-//    draw: function(renderer, transform, flags){
-////        var mv = Director::getInstance()->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
-//
-//        //TODO implement z order
-//        this._quadCommand.init(
-//            this._globalZOrder,
-//            this._texture.getName(),
-//            this.getGLProgramState(),
-//            this._blendFunc,
-//            this._quad, 1, mv);
-//        renderer.addCommand(this._quadCommand);
-//    },
-
     setBone: function (bone) {
         this.bone = bone;
         var armature = this.bone.getArmature();
         if(armature)
-        {
             this._armature = armature;
-        }
     },
 
     getBone: function () {
@@ -244,21 +197,6 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     getDisplayName: function () {
         return this._displayName;
     },
-
-//    /** returns a "local" axis aligned bounding box of the node. <br/>
-//     * The returned box is relative only to its parent.
-//     * @return {cc.Rect}
-//     */
-//    getBoundingBox: function () {
-//        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
-//        var transForm = this.nodeToParentTransform();
-//        if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-//            transForm.b *= -1;
-//            transForm.c *= -1;
-//            transForm.b = [transForm.c, transForm.c = transForm.b][0];
-//        }
-//        return cc.rectApplyAffineTransform(rect, transForm);
-//    },
 
     /**
      * @deprecated
@@ -276,7 +214,13 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         return this.getNodeToWorldTransformAR();
     }
 });
-ccs.Skin.prototype.nodeToParentTransform = cc.Node.prototype._nodeToParentTransformForWebGL;
+if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
+    ccs.Skin.prototype.updateTransform = ccs.Skin.prototype._updateTransformForWebGL;
+}else{
+    //ccs.Skin.prototype.updateTransform = cc.Sprite.prototype.updateTransform;
+}
+//ccs.Skin.prototype.nodeToParentTransform = cc.Node.prototype._getNodeToParentTransformForWebGL;
+
 
 var _p = ccs.Skin.prototype;
 

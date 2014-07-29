@@ -1044,6 +1044,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} Var  The arrival order.
      */
     setOrderOfArrival: function (Var) {
+        if(this.arrivalOrder == NaN)
+            debugger;
         this.arrivalOrder = Var;
     },
 
@@ -1109,7 +1111,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getBoundingBox: function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
-        return cc._rectApplyAffineTransformIn(rect, this.nodeToParentTransform());
+        return cc._rectApplyAffineTransformIn(rect, this.getNodeToParentTransform());
     },
 
     /**
@@ -1710,7 +1712,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      *<p>  Sets the additional transform.<br/>
-     *  The additional transform will be concatenated at the end of nodeToParentTransform.<br/>
+     *  The additional transform will be concatenated at the end of getNodeToParentTransform.<br/>
      *  It could be used to simulate `parent-child` relationship between two nodes (e.g. one is in BatchNode, another isn't).<br/>
      *  </p>
      *  @example
@@ -1732,7 +1734,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * spriteA.setPosition(ccp(200, 200));
      *
      * // Gets the spriteA's transform.
-     * var t = spriteA.nodeToParentTransform();
+     * var t = spriteA.getNodeToParentTransform();
      *
      * // Sets the additional transform to spriteB, spriteB's position will based on its pseudo parent i.e. spriteA.
      * spriteB.setAdditionalTransform(t);
@@ -1741,7 +1743,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * spriteA.setScale(2);
      *
      * // Gets the spriteA's transform.
-     * t = spriteA.nodeToParentTransform();
+     * t = spriteA.getNodeToParentTransform();
      *
      * // Sets the additional transform to spriteB, spriteB's scale will based on its pseudo parent i.e. spriteA.
      * spriteB.setAdditionalTransform(t);
@@ -1750,7 +1752,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * spriteA.setRotation(20);
      *
      * // Gets the spriteA's transform.
-     * t = spriteA.nodeToParentTransform();
+     * t = spriteA.getNodeToParentTransform();
      *
      * // Sets the additional transform to spriteB, spriteB's rotation will based on its pseudo parent i.e. spriteA.
      * spriteB.setAdditionalTransform(t);
@@ -1768,7 +1770,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     parentToNodeTransform: function () {
         if (this._inverseDirty) {
-            this._inverse = cc.affineTransformInvert(this.nodeToParentTransform());
+            this._inverse = cc.affineTransformInvert(this.getNodeToParentTransform());
             this._inverseDirty = false;
         }
         return this._inverse;
@@ -1779,9 +1781,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.AffineTransform}
      */
     nodeToWorldTransform: function () {
-        var t = this.nodeToParentTransform();
+        var t = this.getNodeToParentTransform();
         for (var p = this._parent; p != null; p = p.parent)
-            t = cc.affineTransformConcat(t, p.nodeToParentTransform());
+            t = cc.affineTransformConcat(t, p.getNodeToParentTransform());
         return t;
     },
 
@@ -1950,8 +1952,19 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * The matrix is in Pixels.
      * @function
      * @return {cc.AffineTransform}
+     * @deprecated
      */
-    nodeToParentTransform: null,
+    nodeToParentTransform: function(){
+        return this.getNodeToParentTransform();
+    },
+
+    /**
+     * Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.<br/>
+     * The matrix is in Pixels.
+     * @function
+     * @return {cc.AffineTransform}
+     */
+    getNodeToParentTransform: null,
 
     _setNodeDirtyForCache: function () {
         if (this._cacheDirty === false) {
@@ -2069,7 +2082,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _getBoundingBoxToCurrentNode: function (parentTransform) {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
-        var trans = (parentTransform == null) ? this.nodeToParentTransform() : cc.affineTransformConcat(this.nodeToParentTransform(), parentTransform);
+        var trans = (parentTransform == null) ? this.getNodeToParentTransform() : cc.affineTransformConcat(this.getNodeToParentTransform(), parentTransform);
         rect = cc.rectApplyAffineTransform(rect, trans);
 
         //query child's BoundingBox
@@ -2088,7 +2101,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         return rect;
     },
 
-    _nodeToParentTransformForWebGL: function () {
+    _getNodeToParentTransformForWebGL: function () {
         var _t = this;
         if (_t._transformDirty) {
             // Translate values
@@ -2430,11 +2443,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         // transform for canvas
         var context = ctx || cc._renderContext, eglViewer = cc.view;
 
-        var t = this.nodeToParentTransform();
+        var t = this.getNodeToParentTransform();
         context.transform(t.a, t.c, t.b, t.d, t.tx * eglViewer.getScaleX(), -t.ty * eglViewer.getScaleY());
     };
 
-    _p.nodeToParentTransform = function () {
+    _p.getNodeToParentTransform = function () {
         var _t = this;
         if (_t._transformDirty) {
             var t = _t._transform;// quick reference

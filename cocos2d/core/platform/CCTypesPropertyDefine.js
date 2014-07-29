@@ -149,17 +149,17 @@ cc._tmp.PrototypeColor = function () {
     };
 
     /** @expose */
-    _p.DISABLE;
-    cc.defineGetterSetter(_p, "DISABLE", _p._disable);
+    cc.BlendFunc.DISABLE;
+    cc.defineGetterSetter(cc.BlendFunc, "DISABLE", cc.BlendFunc._disable);
     /** @expose */
-    _p.ALPHA_PREMULTIPLIED;
-    cc.defineGetterSetter(_p, "ALPHA_PREMULTIPLIED", _p._alphaPremultiplied);
+    cc.BlendFunc.ALPHA_PREMULTIPLIED;
+    cc.defineGetterSetter(cc.BlendFunc, "ALPHA_PREMULTIPLIED", cc.BlendFunc._alphaPremultiplied);
     /** @expose */
-    _p.ALPHA_NON_PREMULTIPLIED;
-    cc.defineGetterSetter(_p, "ALPHA_NON_PREMULTIPLIED", _p._alphaNonPremultiplied);
+    cc.BlendFunc.ALPHA_NON_PREMULTIPLIED;
+    cc.defineGetterSetter(cc.BlendFunc, "ALPHA_NON_PREMULTIPLIED", cc.BlendFunc._alphaNonPremultiplied);
     /** @expose */
-    _p.ADDITIVE;
-    cc.defineGetterSetter(_p, "ADDITIVE", _p._additive);
+    cc.BlendFunc.ADDITIVE;
+    cc.defineGetterSetter(cc.BlendFunc, "ADDITIVE", cc.BlendFunc._additive);
 };
 
 

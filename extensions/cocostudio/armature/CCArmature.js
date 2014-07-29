@@ -274,7 +274,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     getNodeToParentTransform: function(){
         if (this._transformDirty)
             this._armatureTransformDirty = true;
-        return ccs.Node.prototype.nodeToParentTransform.call(this);
+        return ccs.Node.prototype.getNodeToParentTransform.call(this);
     },
 
     /**
