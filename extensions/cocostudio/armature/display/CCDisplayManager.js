@@ -257,9 +257,13 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
         this._displayRenderNode = displayRenderNode;
 
         if (displayRenderNode) {
-            if (displayRenderNode instanceof ccs.Armature) {
+            if (displayRenderNode instanceof ccs.Armature){
                 this._bone.setChildArmature(displayRenderNode);
                 displayRenderNode.setParentBone(this._bone);
+            }else if(displayRenderNode instanceof cc.ParticleSystem)
+            if (displayRenderNode instanceof ccs.Armature){
+                locBone.setChildArmature(displayRenderNode);
+                displayRenderNode.setParentBone(locBone);
             }else if(displayRenderNode instanceof cc.ParticleSystem)
                 displayRenderNode.resetSystem();
 
@@ -321,11 +325,11 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
      * @returns {boolean}
      */
     containPoint: function (point, y) {
-        if (y !== undefined)
-           point = cc.p(point, y);
-
         if (!this._visible || this._displayIndex < 0)
             return false;
+
+        if (y !== undefined)
+            point = cc.p(point, y);
 
         if(this._currentDecoDisplay.getDisplayData().displayType == ccs.DISPLAY_TYPE_SPRITE){
             /*

@@ -389,10 +389,10 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
 
     /**
      * zOrder setter
-     * @param {Number}
+     * @param {Number} zOrder
      */
     setLocalZOrder: function (zOrder) {
-        if (this._zOrder != zOrder)
+        if (this._localZOrder != zOrder)
             cc.Node.prototype.setLocalZOrder.call(this, zOrder);
     },
 

@@ -134,6 +134,33 @@ cc._tmp.PrototypeColor = function () {
     /** @expose */
     _p.GRAY;
     cc.defineGetterSetter(_p, "GRAY", _p._getGray);
+
+    _p = cc.BlendFunc;
+    _p._disable = function(){
+        return new cc.BlendFunc(cc.ONE, cc.ZERO);
+    };
+    _p._alphaPremultiplied = function(){
+        return new cc.BlendFunc(cc.ONE, cc.ONE_MINUS_SRC_ALPHA);
+    };
+    _p._alphaNonPremultiplied = function(){
+        return new cc.BlendFunc(cc.SRC_ALPHA, cc.ONE_MINUS_SRC_ALPHA);
+    };
+    _p._additive = function(){
+        return new cc.BlendFunc(cc.SRC_ALPHA, cc.ONE);
+    };
+
+    /** @expose */
+    _p.DISABLE;
+    cc.defineGetterSetter(_p, "DISABLE", _p._disable);
+    /** @expose */
+    _p.ALPHA_PREMULTIPLIED;
+    cc.defineGetterSetter(_p, "ALPHA_PREMULTIPLIED", _p._alphaPremultiplied);
+    /** @expose */
+    _p.ALPHA_NON_PREMULTIPLIED;
+    cc.defineGetterSetter(_p, "ALPHA_NON_PREMULTIPLIED", _p._alphaNonPremultiplied);
+    /** @expose */
+    _p.ADDITIVE;
+    cc.defineGetterSetter(_p, "ADDITIVE", _p._additive);
 };
 
 

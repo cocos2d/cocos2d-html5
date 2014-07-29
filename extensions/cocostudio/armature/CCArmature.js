@@ -41,7 +41,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     animation: null,
     armatureData: null,
     batchNode: null,
-    name: "",
     _textureAtlas: null,
     _parentBone: null,
     _boneDic: null,
@@ -66,21 +65,11 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
      */
     ctor: function (name, parentBone) {
         cc.Node.prototype.ctor.call(this);
-        this.animation = null;
-        this.armatureData = null;
-        this.batchNode = null;
         this.name = "";
-        this._textureAtlas = null;
-        this._parentBone = null;
-        this._boneDic = null;
-        this._topBoneList = null;
+        this._topBoneList = [];
         this._armatureIndexDic = {};
         this._offsetPoint = cc.p(0, 0);
-        this.version = 0;
         this._armatureTransformDirty = true;
-        this._body = null;
-        this._textureAtlasDic = null;
-        this._blendFunc = null;
         this._realAnchorPointInPoints = cc.p(0, 0);
 
         parentBone && ccs.Armature.prototype.init.call(this, name, parentBone);
@@ -88,28 +77,23 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
 
     /**
      * Initializes a CCArmature with the specified name and CCBone
-     * @param {String} name
-     * @param {ccs.Bone} parentBone
+     * @param {String} [name]
+     * @param {ccs.Bone} [parentBone]
      * @return {Boolean}
      */
     init: function (name, parentBone) {
         cc.Node.prototype.init.call(this);
-        if (parentBone) {
+        if (parentBone)
             this._parentBone = parentBone;
-        }
         this.removeAllChildren();
         this.animation = new ccs.ArmatureAnimation();
         this.animation.init(this);
 
         this._boneDic = {};
-        this._topBoneList = [];
-
-        //this._textureAtlasDic = {};
+        this._topBoneList.length = 0;
 
         this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
-
         this.name = name || "";
-
         var armatureDataManager = ccs.armatureDataManager;
 
         var animationData;
@@ -122,7 +106,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
 
             //armatureData
             var armatureData = armatureDataManager.getArmatureData(name);
-            cc.assert(armatureData, "");
+            cc.assert(armatureData, "ArmatureData not exist!");
 
             this.armatureData = armatureData;
 
@@ -134,19 +118,13 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
                 //! init bone's  Tween to 1st movement's 1st frame
                 do {
                     var movData = animationData.getMovement(animationData.movementNames[0]);
-                    if (!movData) {
-                        break;
-                    }
+                    if (!movData) break;
 
                     var _movBoneData = movData.getMovementBoneData(bone.getName());
-                    if (!_movBoneData || _movBoneData.frameList.length <= 0) {
-                        break;
-                    }
+                    if (!_movBoneData || _movBoneData.frameList.length <= 0) break;
 
                     var frameData = _movBoneData.getFrameData(0);
-                    if (!frameData) {
-                        break;
-                    }
+                    if (!frameData) break;
 
                     bone.getTweenData().copy(frameData);
                     bone.changeDisplayWithIndex(frameData.displayIndex, false);
@@ -168,9 +146,8 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
 
             this.animation.setAnimationData(animationData);
         }
-        if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
+        if (cc._renderType === cc._RENDER_TYPE_WEBGL)
             this.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR));
-        }
 
         this.setCascadeOpacityEnabled(true);
         this.setCascadeColorEnabled(true);
@@ -178,21 +155,19 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     },
 
     /**
-     * create a bone
+     * create a bone with name
      * @param {String} boneName
      * @return {ccs.Bone}
      */
     createBone: function (boneName) {
         var existedBone = this.getBone(boneName);
-        if (existedBone) {
+        if (existedBone)
             return existedBone;
-        }
 
         var boneData = this.armatureData.getBoneData(boneName);
         var parentName = boneData.parentName;
 
         var bone = null;
-
         if (parentName) {
             this.createBone(parentName);
             bone = ccs.Bone.create(boneName);
@@ -204,117 +179,44 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
 
         bone.setBoneData(boneData);
         bone.getDisplayManager().changeDisplayWithIndex(-1, false);
-
         return bone;
     },
 
     /**
-     * add a bone
-     * @param {ccs.Bone} bone
-     * @param {String} parentName
+     * Add a Bone to this Armature
+     * @param {ccs.Bone} bone  The Bone you want to add to Armature
+     * @param {String} parentName The parent Bone's name you want to add to. If it's  null, then set Armature to its parent
      */
     addBone: function (bone, parentName) {
-
         cc.assert(bone, "Argument must be non-nil");
+        var locBoneDic = this._boneDic;
         if(bone.getName())
-            cc.assert(!this._boneDic[bone.getName()], "bone already added. It can't be added again");
+            cc.assert(!locBoneDic[bone.getName()], "bone already added. It can't be added again");
 
         if (parentName) {
-            var boneParent = this._boneDic[parentName];
-            if (boneParent) {
+            var boneParent = locBoneDic[parentName];
+            if (boneParent)
                 boneParent.addChildBone(bone);
-            }
-            else {
+            else
                 this._topBoneList.push(bone);
-            }
-        }
-        else {
+        } else
             this._topBoneList.push(bone);
-        }
         bone.setArmature(this);
 
-        this._boneDic[bone.getName()] = bone;
+        locBoneDic[bone.getName()] = bone;
         this.addChild(bone);
     },
 
-    visit: function(){
-        if(!this._visible){
-            return;
-        }
-        this.sortAllChildren();
-        this.draw();
-        this._orderOfArrival = 0;
-    },
-
-    draw: function(renderer, transform, flags){
-        if (this._parentBone == null && this._batchNode == null)
-        {
-//        CC_NODE_DRAW_SETUP();
-        }
-
-
-        for (var i=0; i<this._children.length; i++)
-        {
-            var object = this._children[i];
-            if (object instanceof ccs.Bone)
-            {
-                var node = object.getDisplayRenderNode();
-
-                if (null == node)
-                    continue;
-
-                switch (object.getDisplayRenderNodeType())
-                {
-                    case ccs.DISPLAY_TYPE_SPRITE:
-                    {
-                        var skin = node;
-                        skin.updateTransform();
-
-                        var func = object.getBlendFunc();
-
-                        if (func.src != this._blendFunc.src || func.dst != this._blendFunc.dst)
-                        {
-                            skin.setBlendFunc(object.getBlendFunc());
-                        }
-                        else
-                        {
-                            skin.setBlendFunc(this._blendFunc);
-                        }
-                        skin.draw(renderer, transform, flags);
-                    }
-                        break;
-                    case ccs.DISPLAY_TYPE_ARMATURE:
-                    {
-                        node.draw(renderer, transform, flags);
-                    }
-                        break;
-                    default:
-                    {
-                        node.visit(renderer, transform, flags);
-//                CC_NODE_DRAW_SETUP();
-                    }
-                        break;
-                }
-            }
-            else if(object instanceof ccs.Node)
-            {
-                object.visit(renderer, transform, flags);
-//            CC_NODE_DRAW_SETUP();
-            }
-        }
-    },
-
     /**
-     * remove a bone
-     * @param {ccs.Bone} bone
-     * @param {Boolean} recursion
+     * Remove a bone with the specified name. If recursion it will also remove child Bone recursively.
+     * @param {ccs.Bone} bone The bone you want to remove
+     * @param {Boolean} recursion Determine whether remove the bone's child  recursion.
      */
     removeBone: function (bone, recursion) {
         cc.assert(bone, "bone must be added to the bone dictionary!");
 
         bone.setArmature(null);
         bone.removeFromParent(recursion);
-
         cc.arrayRemoveObject(this._topBoneList, bone);
 
         delete  this._boneDic[bone.getName()];
@@ -322,8 +224,8 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     },
 
     /**
-     * get a bone by name
-     * @param {String} name
+     * Gets a bone with the specified name
+     * @param {String} name The bone's name you want to get
      * @return {ccs.Bone}
      */
     getBone: function (name) {
@@ -332,17 +234,15 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
 
     /**
      * Change a bone's parent with the specified parent name.
-     * @param {ccs.Bone} bone
-     * @param {String} parentName
+     * @param {ccs.Bone} bone The bone you want to change parent
+     * @param {String} parentName The new parent's name
      */
     changeBoneParent: function (bone, parentName) {
         cc.assert(bone, "bone must be added to the bone dictionary!");
 
         var parentBone = bone.getParentBone();
         if (parentBone) {
-
-            cc.arrayRemoveObject(parentBone.getChildrenBone(), bone);
-
+            cc.arrayRemoveObject(parentBone.getChildren(), bone);
             bone.setParentBone(null);
         }
 
@@ -351,15 +251,14 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             if (boneParent) {
                 boneParent.addChildBone(bone);
                 cc.arrayRemoveObject(this._topBoneList, bone);
-            } else {
+            } else
                 this._topBoneList.push(bone);
-            }
         }
     },
 
     /**
      * Get CCArmature's bone dictionary
-     * @return {Object}
+     * @return {Object} Armature's bone dictionary
      */
     getBoneDic: function () {
         return this._boneDic;
@@ -375,7 +274,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     getNodeToParentTransform: function(){
         if (this._transformDirty)
             this._armatureTransformDirty = true;
-
         return ccs.Node.prototype.nodeToParentTransform.call(this);
     },
 
@@ -389,23 +287,29 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         var locOffsetPoint = this._offsetPoint;
         locOffsetPoint.x = -rect.x;
         locOffsetPoint.y = -rect.y;
-        if (rect.width != 0 && rect.height != 0) {
+        if (rect.width != 0 && rect.height != 0)
             this.setAnchorPoint(cc.p(locOffsetPoint.x / rect.width, locOffsetPoint.y / rect.height));
-        }
     },
 
-    setAnchorPoint: function(point){
-        if(point.x != this._anchorPoint.x || point.y != this._anchorPoint.y){
-            this._anchorPoint.x = point.x;
-            this._anchorPoint.y = point.y;
-            this._anchorPointInPoints = cc.p(
-                    this._contentSize.width * this._anchorPoint.x - this._offsetPoint.x,
-                    this._contentSize.height * this._anchorPoint.y - this._offsetPoint.y
-            );
-            this._realAnchorPointInPoints = cc.p(
-                    this._contentSize.width * this._anchorPoint.x,
-                    this._contentSize.height * this._anchorPoint.y
-            );
+    setAnchorPoint: function(point, y){
+        var ax, ay;
+        if(y !== undefined){
+            ax = point;
+            ay = y;
+        }else{
+            ax = point.x;
+            ay = point.y;
+        }
+        var locAnchorPoint = this._anchorPoint;
+        if(ax != locAnchorPoint.x || ay != locAnchorPoint.y){
+            var contentSize = this._contentSize ;
+            locAnchorPoint.x = ax;
+            locAnchorPoint.y = ay;
+            this._anchorPointInPoints.x = contentSize.width * locAnchorPoint.x - this._offsetPoint.x;
+            this._anchorPointInPoints.y = contentSize.height * locAnchorPoint.y - this._offsetPoint.y;
+
+            this._realAnchorPointInPoints.x = contentSize.width * locAnchorPoint.x;
+            this._realAnchorPointInPoints.x = contentSize.height * locAnchorPoint.y;
             this._transformDirty = this._inverseDirty = true;
         }
     },
@@ -415,7 +319,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     },
 
     /**
-     * armatureAnimation setter
+     * Sets animation to this Armature
      * @param {ccs.ArmatureAnimation} animation
      */
     setAnimation: function (animation) {
@@ -423,7 +327,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     },
 
     /**
-     * armatureAnimation getter
+     * Gets the animation of this Armature.
      * @return {ccs.ArmatureAnimation}
      */
     getAnimation: function () {
@@ -441,10 +345,56 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     update: function (dt) {
         this.animation.update(dt);
         var locTopBoneList = this._topBoneList;
-        for (var i = 0; i < locTopBoneList.length; i++) {
+        for (var i = 0; i < locTopBoneList.length; i++)
             locTopBoneList[i].update(dt);
-        }
         this._armatureTransformDirty = false;
+    },
+
+    draw: function(ctx){
+        if (this._parentBone == null && this._batchNode == null) {
+            //        CC_NODE_DRAW_SETUP();
+        }
+
+        var locChildren = this._children;
+        var alphaPremultiplied = cc.BlendFunc.ALPHA_PREMULTIPLIED, alphaNonPremultipled = cc.BlendFunc.ALPHA_NON_PREMULTIPLIED;
+        for (var i = 0, len = locChildren.length; i< len; i++) {
+            var selBone = locChildren[i];
+            if (selBone) {
+                var node = selBone.getDisplayRenderNode();
+
+                if (null == node)
+                    continue;
+
+                switch (selBone.getDisplayRenderNodeType()) {
+                    case ccs.DISPLAY_TYPE_SPRITE:
+                        if(node instanceof ccs.Skin){
+                            node.updateTransform();
+
+                            var func = selBone.getBlendFunc();
+                            if (func.src != alphaPremultiplied.src || func.dst != alphaPremultiplied.dst)
+                                node.setBlendFunc(selBone.getBlendFunc());
+                            else {
+                                if ((this._blendFunc.src == alphaPremultiplied.src && this._blendFunc.dst == alphaPremultiplied.dst)
+                                    && !node.getTexture().hasPremultipliedAlpha())
+                                    node.setBlendFunc(alphaNonPremultipled);
+                                else
+                                    node.setBlendFunc(this._blendFunc);
+                            }
+                            node.draw(ctx);
+                        }
+                        break;
+                    case ccs.DISPLAY_TYPE_ARMATURE:
+                        node.draw(ctx);
+                        break;
+                    default:
+                        node.visit(ctx);
+                        break;
+                }
+            } else if(node instanceof cc.Node) {
+                node.visit(ctx);
+                //            CC_NODE_DRAW_SETUP();
+            }
+        }
     },
 
     onEnter: function () {
@@ -457,52 +407,93 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this.unscheduleUpdate();
     },
 
-    getBoundingBox: function(){
-        var minx, miny, maxx, maxy = 0;
+    vist: null,
 
+    _visitForCanvas: function(ctx){
+        var context = ctx || cc._renderContext;
+        // quick return if not visible. children won't be drawn.
+        if (!this._visible)
+            return;
+
+        //TODO need test
+        context.save();
+        this.transform(context);
+
+        this.sortAllChildren();
+        this.draw(ctx);
+
+        // reset for next frame
+        this._cacheDirty = false;
+        this.arrivalOrder = 0;
+
+        context.restore();
+    },
+
+    _visitForWebGL: function(){
+        // quick return if not visible. children won't be drawn.
+        if (!this._visible)
+            return;
+
+        var context = cc._renderContext, i, currentStack = cc.current_stack;
+
+        //cc.kmGLPushMatrixWitMat4(_t._stackMatrix);
+        //optimize performance for javascript
+        currentStack.stack.push(currentStack.top);
+        cc.kmMat4Assign(this._stackMatrix, currentStack.top);
+        currentStack.top = this._stackMatrix;
+
+        this.transform();                              //TODO
+
+        this.sortAllChildren();
+        this.draw(context);
+
+        // reset for next frame
+        this.arrivalOrder = 0;
+
+        //cc.kmGLPopMatrix();
+        //optimize performance for javascript
+        currentStack.top = currentStack.stack.pop();
+    },
+
+    /**
+     * This boundingBox will calculate all bones' boundingBox every time
+     * @returns {cc.Rect}
+     */
+    getBoundingBox: function(){
+        var minX, minY, maxX, maxY = 0;
         var first = true;
 
-        var boundingBox = cc.rect(0, 0, 0, 0);
+        var boundingBox = cc.rect(0, 0, 0, 0), locChildren = this._children;
 
-        var len = this._children.length;
-        for (var i=0; i<len; i++)
-        {
-            var bone = this._children[i];
-            if (bone)
-            {
+        var len = locChildren.length;
+        for (var i=0; i<len; i++) {
+            var bone = locChildren[i];
+            if (bone) {
                 var r = bone.getDisplayManager().getBoundingBox();
                 if (r.x == 0 && r.y == 0 && r.width == 0 && r.height == 0)
                     continue;
 
-                if(first)
-                {
-                    minx = r.x;
-                    miny = r.y;
-                    maxx = r.x + r.width;
-                    maxy = r.y + r.height;
-
+                if(first) {
+                    minX = r.x;
+                    minY = r.y;
+                    maxX = r.x + r.width;
+                    maxY = r.y + r.height;
                     first = false;
-                }
-                else
-                {
-                    minx = r.x < boundingBox.x ? r.x : boundingBox.x;
-                    miny = r.y < boundingBox.y ? r.y : boundingBox.y;
-                    maxx = r.x + r.width > boundingBox.x + boundingBox.width ?
-                        r.x + r.width :
-                        boundingBox.x + boundingBox.width;
-                    maxy = r.y + r.height > boundingBox.y + boundingBox.height ?
-                        r.y + r.height :
-                        boundingBox.y + boundingBox.height;
+                } else {
+                    minX = r.x < boundingBox.x ? r.x : boundingBox.x;
+                    minY = r.y < boundingBox.y ? r.y : boundingBox.y;
+                    maxX = r.x + r.width > boundingBox.x + boundingBox.width ?
+                        r.x + r.width : boundingBox.x + boundingBox.width;
+                    maxY = r.y + r.height > boundingBox.y + boundingBox.height ?
+                        r.y + r.height : boundingBox.y + boundingBox.height;
                 }
 
-                boundingBox.x = minx;
-                boundingBox.y = miny;
-                boundingBox.width = maxx - minx;
-                boundingBox.height = maxy - miny;
+                boundingBox.x = minX;
+                boundingBox.y = minY;
+                boundingBox.width = maxX - minX;
+                boundingBox.height = maxY - minY;
             }
-
         }
-
         return cc.rectApplyAffineTransform(boundingBox, this.getNodeToParentTransform());
     },
 
@@ -513,26 +504,24 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
      * @returns {ccs.Bone}
      */
     getBoneAtPoint: function (x, y) {
-        for (var i = this._children.length - 1; i >= 0; i--) {
-            var child = this._children[i];
-            if (child instanceof ccs.Bone) {
-                if (child.getDisplayManager().containPoint(x, y)) {
-                    return child;
-                }
-            }
+        var locChildren = this._children;
+        for (var i = locChildren.length - 1; i >= 0; i--) {
+            var child = locChildren[i];
+            if (child instanceof ccs.Bone && child.getDisplayManager().containPoint(x, y))
+                return child;
         }
         return null;
     },
 
     /**
-     * parent bone setter
+     * Sets parent bone of this Armature
      * @param {ccs.Bone} parentBone
      */
     setParentBone: function (parentBone) {
         this._parentBone = parentBone;
-        for (var key in this._boneDic) {
-            var bone = this._boneDic[key];
-            bone.setArmature(this);
+        var locBoneDic = this._boneDic;
+        for (var key in locBoneDic) {
+            locBoneDic[key].setArmature(this);
         }
     },
 
@@ -548,20 +537,9 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
      * draw contour
      */
     drawContour: function () {
-//        cc._drawingUtil.setDrawColor(255, 255, 255, 255);
-//        cc._drawingUtil.setLineWidth(1);
-//        for (var key in this._boneDic) {
-//            var bone = this._boneDic[key];
-//            var bodyList = bone.getColliderBodyList();
-//            for (var i = 0; i < bodyList.length; i++) {
-//                var body = bodyList[i];
-//                var vertexList = body.getCalculatedVertexList();
-//                cc._drawingUtil.drawPoly(vertexList, vertexList.length, true);
-//            }
-//        }
-        for(var i=0; i<this._boneDic.length; i++)
-        {
-            var bone = this._boneDic[i];
+        var locBoneDic = this._boneDic;
+        for (var i = 0; i < locBoneDic.length; i++) {
+            var bone = locBoneDic[i];
             var detector = bone.getColliderDetector();
 
             if (!detector)
@@ -569,21 +547,18 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
 
             var bodyList = detector.getColliderBodyList();
 
-            for (var j=0; i<bodyList.length; j++)
-            {
+            for (var j=0; i<bodyList.length; j++) {
                 var body = bodyList[j];
                 var vertexList = body.getCalculatedVertexList();
 
                 var length = vertexList.length;
-                var points = cc.p(vertexList[0]);
-                for (var i = 0; i<length; i++)
-                {
-                    var p = vertexList[i];
-                    points[i].x = p.x;
-                    points[i].y = p.y;
+                var points = [];
+                for (var k = 0; k<length; k++) {
+                    var p = vertexList[k];
+                    points[k].x = p.x;
+                    points[k].y = p.y;
                 }
-                cc.DrawingPrimitive.prototype.drawPoly( points, length, true );
-
+                cc._drawingUtil.drawPoly(points, length, true);
             }
         }
     },
@@ -594,9 +569,9 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
 
         this._body = body;
         this._body.data = this;
-        var child, displayObject;
-        for (var i = 0; i < this._children.length; i++) {
-            child = this._children[i];
+        var child, displayObject, locChildren = this._children;
+        for (var i = 0; i < locChildren.length; i++) {
+            child = locChildren[i];
             if (child instanceof ccs.Bone) {
                 var displayList = child.getDisplayManager().getDecorativeDisplayList();
                 for (var j = 0; j < displayList.length; j++) {
@@ -640,14 +615,14 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
      * @param {ccs.ColliderFilter} filter
      */
     setColliderFilter: function (filter) {
-        for (var key in this._boneDic) {
-            var bone = this._boneDic[key];
-            bone.setColliderFilter(filter);
+        var locBoneDic = this._boneDic;
+        for (var key in locBoneDic) {
+            locBoneDic[key].setColliderFilter(filter);
         }
     },
 
     /**
-     * armatureData getter
+     * Gets the armatureData of this Armature
      * @return {ccs.ArmatureData}
      */
     getArmatureData: function () {
@@ -655,7 +630,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     },
 
     /**
-     * armatureData setter
+     * Sets armatureData to this Armature
      * @param {ccs.ArmatureData} armatureData
      */
     setArmatureData: function (armatureData) {
@@ -685,203 +660,18 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     setVersion: function (version) {
         this.version = version;
     }
-
-//    _nodeToParentTransformForWebGL: function () {
-//        if (this._transformDirty) {
-//            this._armatureTransformDirty = true;
-//            // Translate values
-//            var x = this._position.x;
-//            var y = this._position.y;
-//            var apx = this._anchorPointInPoints.x, napx = -apx;
-//            var apy = this._anchorPointInPoints.y, napy = -apy;
-//            var scx = this._scaleX, scy = this._scaleY;
-//
-//            if (this._ignoreAnchorPointForPosition) {
-//                x += apx;
-//                y += apy;
-//            }
-//
-//            // Rotation values
-//            // Change rotation code to handle X and Y
-//            // If we skew with the exact same value for both x and y then we're simply just rotating
-//            var cx = 1, sx = 0, cy = 1, sy = 0;
-//            if (this._rotationX !== 0 || this._rotationY !== 0) {
-//                cx = Math.cos(-this._rotationRadiansX);
-//                sx = Math.sin(-this._rotationRadiansX);
-//                cy = Math.cos(-this._rotationRadiansY);
-//                sy = Math.sin(-this._rotationRadiansY);
-//            }
-//
-//            // Add offset point
-//            x += cy * this._offsetPoint.x * this._scaleX + -sx * this._offsetPoint.y * this._scaleY;
-//            y += sy * this._offsetPoint.x * this._scaleX + cx * this._offsetPoint.y * this._scaleY;
-//
-//            var needsSkewMatrix = ( this._skewX || this._skewY );
-//
-//            // optimization:
-//            // inline anchor point calculation if skew is not needed
-//            // Adjusted transform calculation for rotational skew
-//            if (!needsSkewMatrix && (apx !== 0 || apy !== 0)) {
-//                x += cy * napx * scx + -sx * napy * scy;
-//                y += sy * napx * scx + cx * napy * scy;
-//            }
-//
-//            // Build Transform Matrix
-//            // Adjusted transform calculation for rotational skew
-//            var t = {a: cy * scx, b: sy * scx, c: -sx * scy, d: cx * scy, tx: x, ty: y};
-//
-//            // XXX: Try to inline skew
-//            // If skew is needed, apply skew and then anchor point
-//            if (needsSkewMatrix) {
-//                t = cc.affineTransformConcat({a: 1.0, b: Math.tan(cc.degreesToRadians(this._skewY)),
-//                    c: Math.tan(cc.degreesToRadians(this._skewX)), d: 1.0, tx: 0.0, ty: 0.0}, t);
-//
-//                // adjust anchor point
-//                if (apx !== 0 || apy !== 0)
-//                    t = cc.affineTransformTranslate(t, napx, napy);
-//            }
-//
-//            if (this._additionalTransformDirty) {
-//                t = cc.affineTransformConcat(t, this._additionalTransform);
-//                this._additionalTransformDirty = false;
-//            }
-//            this._transform = t;
-//            this._transformDirty = false;
-//        }
-//        return this._transform;
-//    },
-//
-//    _nodeToParentTransformForCanvas: function () {
-//        if (!this._transform)
-//            this._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
-//        if (this._transformDirty) {
-//            this._armatureTransformDirty = true;
-//            var t = this._transform;// quick reference
-//            // base position
-//            t.tx = this._position.x;
-//            t.ty = this._position.y;
-//
-//            // rotation Cos and Sin
-//            var Cos = 1, Sin = 0;
-//            if (this._rotationX) {
-//                Cos = Math.cos(-this._rotationRadiansX);
-//                Sin = Math.sin(-this._rotationRadiansX);
-//            }
-//
-//            // base abcd
-//            t.a = t.d = Cos;
-//            t.c = -Sin;
-//            t.b = Sin;
-//
-//            var lScaleX = this._scaleX, lScaleY = this._scaleY;
-//            var appX = this._anchorPointInPoints.x, appY = this._anchorPointInPoints.y;
-//
-//            // Firefox on Vista and XP crashes
-//            // GPU thread in case of scale(0.0, 0.0)
-//            var sx = (lScaleX < 0.000001 && lScaleX > -0.000001) ? 0.000001 : lScaleX,
-//                sy = (lScaleY < 0.000001 && lScaleY > -0.000001) ? 0.000001 : lScaleY;
-//
-//            // Add offset point
-//            t.tx += Cos * this._offsetPoint.x * lScaleX + -Sin * this._offsetPoint.y * lScaleY;
-//            t.ty += Sin * this._offsetPoint.x * lScaleX + Cos * this._offsetPoint.y * lScaleY;
-//
-//            // skew
-//            if (this._skewX || this._skewY) {
-//                // offset the anchorpoint
-//                var skx = Math.tan(-this._skewX * Math.PI / 180);
-//                var sky = Math.tan(-this._skewY * Math.PI / 180);
-//                var xx = appY * skx * sx;
-//                var yy = appX * sky * sy;
-//                t.a = Cos + -Sin * sky;
-//                t.c = Cos * skx + -Sin;
-//                t.b = Sin + Cos * sky;
-//                t.d = Sin * skx + Cos;
-//                t.tx += Cos * xx + -Sin * yy;
-//                t.ty += Sin * xx + Cos * yy;
-//            }
-//
-//            // scale
-//            if (lScaleX !== 1 || lScaleY !== 1) {
-//                t.a *= sx;
-//                t.b *= sx;
-//                t.c *= sy;
-//                t.d *= sy;
-//            }
-//
-//            // adjust anchorPoint
-//            t.tx += Cos * -appX * sx + -Sin * -appY * sy;
-//            t.ty += Sin * -appX * sx + Cos * -appY * sy;
-//
-//            // if ignore anchorPoint
-//            if (this._ignoreAnchorPointForPosition) {
-//                t.tx += appX
-//                t.ty += appY;
-//            }
-//
-//            if (this._additionalTransformDirty) {
-//                this._transform = cc.affineTransformConcat(this._transform, this._additionalTransform);
-//                this._additionalTransformDirty = false;
-//            }
-//
-//            t.tx = t.tx | 0;
-//            t.ty = t.ty | 0;
-//            this._transformDirty = false;
-//        }
-//        return this._transform;
-//    },
-//
-//    /**
-//     * This boundingBox will calculate all bones' boundingBox every time
-//     * @return {cc.rect}
-//     */
-//    boundingBox: function () {
-//        var minx = 0, miny = 0, maxx = 0, maxy = 0;
-//        var first = true;
-//        var boundingBox = cc.rect(0, 0, 0, 0);
-//        for (var i = 0; i < this._children.length; i++) {
-//            var bone = this._children[i];
-//            if (bone instanceof ccs.Bone) {
-//                var r = bone.getDisplayManager().getBoundingBox();
-//                if (first) {
-//                    minx = cc.rectGetMinX(r);
-//                    miny = cc.rectGetMinY(r);
-//                    maxx = cc.rectGetMaxX(r);
-//                    maxy = cc.rectGetMaxY(r);
-//
-//                    first = false;
-//                }
-//                else {
-//                    minx = cc.rectGetMinX(r) < cc.rectGetMinX(boundingBox) ? cc.rectGetMinX(r) : cc.rectGetMinX(boundingBox);
-//                    miny = cc.rectGetMinY(r) < cc.rectGetMinY(boundingBox) ? cc.rectGetMinY(r) : cc.rectGetMinY(boundingBox);
-//                    maxx = cc.rectGetMaxX(r) > cc.rectGetMaxX(boundingBox) ? cc.rectGetMaxX(r) : cc.rectGetMaxX(boundingBox);
-//                    maxy = cc.rectGetMaxY(r) > cc.rectGetMaxY(boundingBox) ? cc.rectGetMaxY(r) : cc.rectGetMaxY(boundingBox);
-//                }
-//                boundingBox = cc.rect(minx, miny, maxx - minx, maxy - miny);
-//            }
-//        }
-//        return cc.rectApplyAffineTransform(boundingBox, this.nodeToParentTransform());
-//    },
-//
-//    getTexureAtlasWithTexture: function () {
-//        return null;
-//    },
-//    getName: function () {
-//        return this.name;
-//    },
-//    setName: function (name) {
-//        this.name = name;
-//    }
-
 });
 
 
-//if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
-//    //WebGL
-//    ccs.Armature.prototype.nodeToParentTransform = ccs.Armature.prototype._nodeToParentTransformForWebGL;
-//} else {
-//    //Canvas
-//    ccs.Armature.prototype.nodeToParentTransform = ccs.Armature.prototype._nodeToParentTransformForCanvas;
-//}
+if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
+    //WebGL
+    ccs.Armature.prototype.visit = ccs.Armature.prototype._visitForWebGL;
+    //ccs.Armature.prototype.nodeToParentTransform = ccs.Armature.prototype._nodeToParentTransformForWebGL;
+} else {
+    //Canvas
+    ccs.Armature.prototype.visit = ccs.Armature.prototype._visitForCanvas;
+    //ccs.Armature.prototype.nodeToParentTransform = ccs.Armature.prototype._nodeToParentTransformForCanvas;
+}
 
 var _p = ccs.Armature.prototype;
 
@@ -898,9 +688,9 @@ cc.defineGetterSetter(_p, "colliderFilter", null, _p.setColliderFilter);
 _p = null;
 
 /**
- * allocates and initializes a armature.
- * @param {String} name
- * @param {ccs.Bone} parentBone
+ * Allocates an armature, and use the ArmatureData named name in ArmatureDataManager to initializes the armature.
+ * @param {String} [name] Bone name
+ * @param {ccs.Bone} [parentBone] the parent bone
  * @return {ccs.Armature}
  * @example
  * // example
