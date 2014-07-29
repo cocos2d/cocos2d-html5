@@ -160,7 +160,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
 
     /**
      * update worldTransform
-     * @param dt
+     * @param {Number} delta
      */
     update: function (delta) {
 
@@ -168,14 +168,10 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
             this._boneTransformDirty = this._boneTransformDirty || this._parentBone.isTransformDirty();
 
         if (this._armatureParentBone && !this._boneTransformDirty)
-        {
             this._boneTransformDirty = this._armatureParentBone.isTransformDirty();
-        }
 
-        if (this._boneTransformDirty)
-        {
-            if (this._dataVersion >= ccs.CONST_VERSION_COMBINED)
-            {
+        if (this._boneTransformDirty){
+            if (this._dataVersion >= ccs.CONST_VERSION_COMBINED){
                 ccs.TransformHelp.nodeConcat(this._tweenData, this._boneData);
                 this._tweenData.scaleX -= 1;
                 this._tweenData.scaleY -= 1;
@@ -191,24 +187,16 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
             this._worldInfo.skewY = this._tweenData.skewY + this._skewY - this._rotationY;
 
             if(this._parentBone)
-            {
                 this.applyParentTransform(this._parentBone);
-            }
-            else
-            {
+            else {
                 if (this._armatureParentBone)
-                {
                     this.applyParentTransform(this._armatureParentBone);
-                }
             }
 
             ccs.TransformHelp.nodeToMatrix(this._worldInfo, this._worldTransform);
 
             if (this._armatureParentBone)
-            {
-                //TODO TransformConcat
-                this._worldTransform = cc.affineTransformConcat(this._worldTransform, this._armature.getNodeToParentTransform());
-            }
+                this._worldTransform = cc.affineTransformConcat(this._worldTransform, this._armature.getNodeToParentTransform());            //TODO TransformConcat
         }
 
         ccs.displayFactory.updateDisplay(this, delta, this._boneTransformDirty || this._armature.getArmatureTransformDirty());
