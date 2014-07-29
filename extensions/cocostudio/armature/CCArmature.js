@@ -239,6 +239,73 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this.addChild(bone);
     },
 
+    visit: function(){
+        if(!this._visible){
+            return;
+        }
+        this.sortAllChildren();
+        this.draw();
+        this._orderOfArrival = 0;
+    },
+
+    draw: function(renderer, transform, flags){
+        if (this._parentBone == null && this._batchNode == null)
+        {
+//        CC_NODE_DRAW_SETUP();
+        }
+
+
+        for (var i=0; i<this._children.length; i++)
+        {
+            var object = this._children[i];
+            if (object instanceof ccs.Bone)
+            {
+                var node = object.getDisplayRenderNode();
+
+                if (null == node)
+                    continue;
+
+                switch (object.getDisplayRenderNodeType())
+                {
+                    case ccs.DISPLAY_TYPE_SPRITE:
+                    {
+                        var skin = node;
+                        skin.updateTransform();
+
+                        var func = object.getBlendFunc();
+
+                        if (func.src != this._blendFunc.src || func.dst != this._blendFunc.dst)
+                        {
+                            skin.setBlendFunc(object.getBlendFunc());
+                        }
+                        else
+                        {
+                            skin.setBlendFunc(this._blendFunc);
+                        }
+                        skin.draw(renderer, transform, flags);
+                    }
+                        break;
+                    case ccs.DISPLAY_TYPE_ARMATURE:
+                    {
+                        node.draw(renderer, transform, flags);
+                    }
+                        break;
+                    default:
+                    {
+                        node.visit(renderer, transform, flags);
+//                CC_NODE_DRAW_SETUP();
+                    }
+                        break;
+                }
+            }
+            else if(object instanceof ccs.Node)
+            {
+                object.visit(renderer, transform, flags);
+//            CC_NODE_DRAW_SETUP();
+            }
+        }
+    },
+
     /**
      * remove a bone
      * @param {ccs.Bone} bone
