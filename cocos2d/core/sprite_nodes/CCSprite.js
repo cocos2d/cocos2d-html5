@@ -664,6 +664,26 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     /**
+     * X axis position setter (override cc.Node )
+     * @param {Number} x X axis position
+     * @override
+     */
+    setPositionX:function (x) {
+        cc.Node.prototype.setPositionX.call(this, x);
+        this.SET_DIRTY_RECURSIVELY();
+    },
+
+    /**
+     * Y axis position setter (override cc.Node )
+     * @param {Number} y Y axis position
+     * @override
+     */
+    setPositionY:function (y) {
+        cc.Node.prototype.setPositionY.call(this, y);
+        this.SET_DIRTY_RECURSIVELY();
+    },
+
+    /**
      * Rotation setter (override cc.Node )
      * @param {Number} rotation
      * @override
