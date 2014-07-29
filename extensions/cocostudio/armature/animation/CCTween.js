@@ -443,6 +443,10 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
      */
     getAnimation:function () {
         return this._animation;
+    },
+
+    setMovementBoneData: function(data){
+        this._movementBoneData = data;
     }
 
 //    release:function () {
