@@ -48,7 +48,7 @@ ccs.SliderReader = {
         var imageFileName = imageFileNameDic["path"];
         var imageFileName_tp;
 
-        if(bt){
+        if(bt != null){
             if(barTextureScale9Enable){
                 switch(imageFileType){
                     case 0:
