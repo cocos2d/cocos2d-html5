@@ -741,7 +741,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
             var location = cc.EGLView.getInstance().convertToLocationInView(tx, ty, pos);
             var touch = new cc.Touch(location.x,  location.y);
-            //TODO this feature only chrome support
+            //TODO this feature is only supported on chrome
             //if((event.button == 0) && (event.which == 1))
             //    touch._setPressed(true);
             touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);

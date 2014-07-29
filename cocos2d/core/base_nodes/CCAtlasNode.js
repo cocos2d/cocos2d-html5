@@ -252,17 +252,23 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
             temp.b = temp.b * locDisplayedOpacity / 255;
         }
         cc.NodeRGBA.prototype.setColor.call(this, color3);
+        this._changeTextureColor();
+    },
 
-        if (this.getTexture()) {
+    _changeTextureColor: function(){
+        var locTexture = this.getTexture();
+        if (locTexture && this._originalTexture) {
             var element = this._originalTexture.getHtmlElementObj();
             if(!element)
                 return;
-            var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(element);
-            if (cacheTextureForColor) {
-                var textureRect = cc.rect(0, 0, element.width, element.height);
-                element = cc.generateTintImage(element, cacheTextureForColor, this._realColor, textureRect);
-                var locTexture = new cc.Texture2D();
-                locTexture.initWithElement(element);
+            var locElement = locTexture.getHtmlElementObj();
+            var textureRect = cc.rect(0, 0, element.width, element.height);
+            if (locElement instanceof HTMLCanvasElement)
+                cc.generateTintImageWithMultiply(element, this._displayedColor, textureRect, locElement);
+            else {
+                locElement = cc.generateTintImageWithMultiply(element, this._displayedColor, textureRect);
+                locTexture = new cc.Texture2D();
+                locTexture.initWithElement(locElement);
                 locTexture.handleLoadedTexture();
                 this.setTexture(locTexture);
             }
@@ -391,6 +397,29 @@ if(cc.Browser.supportWebGL){
     cc.AtlasNode.prototype.getTexture = cc.AtlasNode.prototype._getTextureForCanvas;
     cc.AtlasNode.prototype.setTexture = cc.AtlasNode.prototype._setTextureForCanvas;
     cc.AtlasNode.prototype._calculateMaxItems = cc.AtlasNode.prototype._calculateMaxItemsForCanvas;
+    if(!sys._supportCanvasNewBlendModes)
+        cc.AtlasNode.prototype._changeTextureColor = function(){
+            var locElement, locTexture = this.getTexture();
+            if (locTexture && this._originalTexture) {
+                locElement = locTexture.getHtmlElementObj();
+                if (!locElement)
+                    return;
+                var element = this._originalTexture.getHtmlElementObj();
+                var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(element);
+                if (cacheTextureForColor) {
+                    var textureRect = cc.rect(0, 0, element.width, element.height);
+                    if (locElement instanceof HTMLCanvasElement)
+                        cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, textureRect, locElement);
+                    else {
+                        locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, textureRect);
+                        locTexture = new cc.Texture2D();
+                        locTexture.initWithElement(locElement);
+                        locTexture.handleLoadedTexture();
+                        this.setTexture(locTexture);
+                    }
+                }
+            }
+        };
 }
 
 /** creates a cc.AtlasNode with an Atlas file the width and height of each item and the quantity of items to render

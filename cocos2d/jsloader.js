@@ -59,6 +59,7 @@
         'core/sprite_nodes/CCSpriteFrame.js',
         'core/sprite_nodes/CCSpriteFrameCache.js',
         'core/sprite_nodes/CCSpriteBatchNode.js',
+        'core/sprite_nodes/CCBakeSprite.js',
         'core/CCConfiguration.js',
         'core/CCDirector.js',
         'core/CCCamera.js',

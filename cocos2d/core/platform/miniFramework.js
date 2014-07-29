@@ -94,7 +94,7 @@ cc.Browser.multipleAudioWhiteList = ["baidubrowser", "opera", "firefox", "chrome
     cc._userRenderMode = parseInt(c["renderMode"]) || 0;
 
     var notInWhiteList = cc.Browser.webglWhiteList.indexOf(cc.Browser.type) == -1;
-    if (cc._userRenderMode === 1 || (cc._userRenderMode === 0 && (cc.Browser.isMobile || notInWhiteList))) {
+    if (cc._userRenderMode === 1 || (cc._userRenderMode === 0 && (cc.Browser.isMobile || notInWhiteList)) || (location.origin == "file://")) {
         //canvas only
         cc.Browser.supportWebGL = false;
     } else {
