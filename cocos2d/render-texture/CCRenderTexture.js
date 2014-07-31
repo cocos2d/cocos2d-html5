@@ -381,10 +381,10 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     /**
      * starts rendering to the texture while clearing the texture first.<br/>
      * This is more efficient then calling -clear first and then -begin
-     * @param {Number} r red 0-1
-     * @param {Number} g green 0-1
-     * @param {Number} b blue 0-1
-     * @param {Number} a alpha 0-1 0 is transparent
+     * @param {Number} r red 0-255
+     * @param {Number} g green 0-255
+     * @param {Number} b blue 0-255
+     * @param {Number} a alpha 0-255 0 is transparent
      * @param {Number} [depthValue=]
      * @param {Number} [stencilValue=]
      */
@@ -393,7 +393,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         depthValue = depthValue || gl.COLOR_BUFFER_BIT;
         stencilValue = stencilValue || (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        this._beginWithClear(r, g, b, a, depthValue, stencilValue, (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT));
+        this._beginWithClear(r / 255, g / 255, b / 255, a / 255, depthValue, stencilValue, (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT));
     },
 
     _beginWithClear: null,
