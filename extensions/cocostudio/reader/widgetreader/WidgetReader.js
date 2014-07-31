@@ -46,7 +46,7 @@ ccs.WidgetReader = {
         var w = 0;
         var h = 0;
         var adaptScreen = options["adaptScreen"];
-        if (adaptScreen !== undefined)
+        if (adaptScreen)
         {
             var screenSize = cc.director.getWinSize();
             w = screenSize.width;

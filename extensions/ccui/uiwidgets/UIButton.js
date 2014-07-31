@@ -209,6 +209,26 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._normalFileName = normal;
         this._normalTexType = texType;
+
+        var self = this;
+        if(!this._buttonNormalRenderer.texture || !this._buttonNormalRenderer.texture.isLoaded()){
+            this._buttonNormalRenderer.addLoadedEventListener(function(){
+
+                self._findLayout();
+
+                self._normalTextureSize = self._buttonNormalRenderer.getContentSize();
+                self._updateFlippedX();
+                self._updateFlippedY();
+
+                self._buttonNormalRenderer.setColor(self.getColor());
+                self._buttonNormalRenderer.setOpacity(self.getOpacity());
+
+                self._updateContentSizeWithTextureSize(self._normalTextureSize);
+                self._normalTextureLoaded = true;
+                self._normalTextureAdaptDirty = true;
+            });
+        }
+
         if (this._scale9Enabled) {
             var normalRendererScale9 = this._buttonNormalRenderer;
             switch (this._normalTexType){
@@ -226,10 +246,12 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             var normalRenderer = this._buttonNormalRenderer;
             switch (this._normalTexType){
                 case ccui.Widget.LOCAL_TEXTURE:
-                    normalRenderer.setTexture(normal);
+                    //SetTexture cannot load resource
+                    normalRenderer.initWithFile(normal);
                     break;
                 case ccui.Widget.PLIST_TEXTURE:
-                    normalRenderer.setSpriteFrame(normal);
+                    //SetTexture cannot load resource
+                    normalRenderer.initWithSpriteFrameName(normal);
                     break;
                 default:
                     break;
@@ -258,6 +280,22 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._clickedFileName = selected;
         this._pressedTexType = texType;
+
+        var self = this;
+        if(!this._buttonClickedRenderer.texture || !this._buttonClickedRenderer.texture.isLoaded()){
+            this._buttonClickedRenderer.addLoadedEventListener(function(){
+
+                self._findLayout();
+
+                self._pressedTextureSize = self._buttonClickedRenderer.getContentSize();
+                self._updateFlippedX();
+                self._updateFlippedY();
+
+                self._pressedTextureLoaded = true;
+                self._pressedTextureAdaptDirty = true;
+            });
+        }
+
         if (this._scale9Enabled) {
             var clickedRendererScale9 = this._buttonClickedRenderer;
             switch (this._pressedTexType) {
@@ -275,10 +313,12 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             var clickedRenderer = this._buttonClickedRenderer;
             switch (this._pressedTexType) {
                 case ccui.Widget.LOCAL_TEXTURE:
-                    clickedRenderer.setTexture(selected);
+                    //SetTexture cannot load resource
+                    clickedRenderer.initWithFile(selected);
                     break;
                 case ccui.Widget.PLIST_TEXTURE:
-                    clickedRenderer.setSpriteFrame(selected);
+                    //SetTexture cannot load resource
+                    clickedRenderer.initWithSpriteFrameName(selected);
                     break;
                 default:
                     break;
@@ -304,6 +344,22 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._disabledFileName = disabled;
         this._disabledTexType = texType;
+
+        var self = this;
+        if(!this._buttonDisableRenderer.texture || !this._buttonDisableRenderer.texture.isLoaded()){
+            this._buttonDisableRenderer.addLoadedEventListener(function() {
+
+                self._findLayout();
+
+                self._disabledTextureSize = self._buttonDisableRenderer.getContentSize();
+                self._updateFlippedX();
+                self._updateFlippedY();
+
+                self._disabledTextureLoaded = true;
+                self._disabledTextureAdaptDirty = true;
+            });
+        }
+
         if (this._scale9Enabled) {
             var disabledScale9 = this._buttonDisableRenderer;
             switch (this._disabledTexType) {
@@ -321,10 +377,12 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             var disabledRenderer = this._buttonDisableRenderer;
             switch (this._disabledTexType) {
                 case ccui.Widget.LOCAL_TEXTURE:
-                    disabledRenderer.setTexture(disabled);
+                    //SetTexture cannot load resource
+                    disabledRenderer.initWithFile(disabled);
                     break;
                 case ccui.Widget.PLIST_TEXTURE:
-                    disabledRenderer.setSpriteFrame(disabled);
+                    //SetTexture cannot load resource
+                    disabledRenderer.initWithSpriteFrameName(disabled);
                     break;
                 default:
                     break;
