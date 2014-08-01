@@ -274,7 +274,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         locOffsetPoint.x = -rect.x;
         locOffsetPoint.y = -rect.y;
         if (rect.width != 0 && rect.height != 0)
-            this.setAnchorPoint(cc.p(locOffsetPoint.x / rect.width, locOffsetPoint.y / rect.height));
+            this.setAnchorPoint(locOffsetPoint.x / rect.width, locOffsetPoint.y / rect.height);
     },
 
     setAnchorPoint: function(point, y){
@@ -296,8 +296,24 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
 
             this._realAnchorPointInPoints.x = contentSize.width * locAnchorPoint.x;
             this._realAnchorPointInPoints.y = contentSize.height * locAnchorPoint.y;
-            this._transformDirty = this._inverseDirty = true;
+            this.setNodeDirty();
         }
+    },
+
+    _setAnchorX: function (x) {
+        if (this._anchorPoint.x === x) return;
+        this._anchorPoint.x = x;
+        this._anchorPointInPoints.x = this._contentSize.width * x - this._offsetPoint.x;
+        this._realAnchorPointInPoints.x = this._contentSize.width * x;
+        this.setNodeDirty();
+    },
+
+    _setAnchorY: function (y) {
+        if (this._anchorPoint.y === y) return;
+        this._anchorPoint.y = y;
+        this._anchorPointInPoints.y = this._contentSize.height * y - this._offsetPoint.y;
+        this._realAnchorPointInPoints.y = this._contentSize.height * y;
+        this.setNodeDirty();
     },
 
     getAnchorPointInPoints: function(){

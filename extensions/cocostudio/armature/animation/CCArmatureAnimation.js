@@ -223,7 +223,8 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         var tweenEasing = this._movementData.tweenEasing;
         loop = (!loop || loop < 0) ? this._movementData.loop : loop;
         this._onMovementList = false;
-        ccs.ProcessBase.prototype.play(durationTo, durationTween, loop, tweenEasing);
+
+        ccs.ProcessBase.prototype.play.call(this, durationTo, durationTween, loop, tweenEasing);
 
         if (this._rawDuration == 0)
             this._loopType = ccs.ANIMATION_TYPE_SINGLE_FRAME;

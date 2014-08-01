@@ -968,7 +968,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {String} name
      */
     setName: function(name){
-         this._name
+         this._name = name;
     },
 
     /**

@@ -175,14 +175,14 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
 
     update: function (dt) {
         if (this._isComplete || this._isPause)
-            return false;
+            return;
 
         /*
          *  Fileter the m_iDuration <=0 and dt >1
          *  If dt>1, generally speaking  the reason is the device is stuck.
          */
         if (this._rawDuration <= 0 || dt > 1)
-            return false;
+            return;
 
         var locNextFrameIndex = this._nextFrameIndex === undefined ? 0 : this._nextFrameIndex;
         var locCurrentFrame = this._currentFrame;
@@ -206,7 +206,6 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
         }
         this._currentFrame = locCurrentFrame;
         this.updateHandler();
-        return true;
     },
 
     /**
