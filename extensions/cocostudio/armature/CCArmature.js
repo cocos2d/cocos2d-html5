@@ -295,7 +295,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             this._anchorPointInPoints.y = contentSize.height * locAnchorPoint.y - this._offsetPoint.y;
 
             this._realAnchorPointInPoints.x = contentSize.width * locAnchorPoint.x;
-            this._realAnchorPointInPoints.x = contentSize.height * locAnchorPoint.y;
+            this._realAnchorPointInPoints.y = contentSize.height * locAnchorPoint.y;
             this._transformDirty = this._inverseDirty = true;
         }
     },
@@ -395,156 +395,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     onExit: function () {
         cc.Node.prototype.onExit.call(this);
         this.unscheduleUpdate();
-    },
-
-    _getNodeToParentTransformForWebGL: function () {
-        if (this._transformDirty) {
-            this._armatureTransformDirty = true;
-            // Translate values
-            var x = this._position.x;
-            var y = this._position.y;
-            var apx = this._anchorPointInPoints.x, napx = -apx;
-            var apy = this._anchorPointInPoints.y, napy = -apy;
-            var scx = this._scaleX, scy = this._scaleY;
-
-            if (this._ignoreAnchorPointForPosition) {
-                x += apx;
-                y += apy;
-            }
-
-            // Rotation values
-            // Change rotation code to handle X and Y
-            // If we skew with the exact same value for both x and y then we're simply just rotating
-            var cx = 1, sx = 0, cy = 1, sy = 0;
-            if (this._rotationX !== 0 || this._rotationY !== 0) {
-                cx = Math.cos(-this._rotationRadiansX);
-                sx = Math.sin(-this._rotationRadiansX);
-                cy = Math.cos(-this._rotationRadiansY);
-                sy = Math.sin(-this._rotationRadiansY);
-            }
-
-            // Add offset point
-            x += cy * this._offsetPoint.x * this._scaleX + -sx * this._offsetPoint.y * this._scaleY;
-            y += sy * this._offsetPoint.x * this._scaleX + cx * this._offsetPoint.y * this._scaleY;
-
-            var needsSkewMatrix = ( this._skewX || this._skewY );
-
-            // optimization:
-            // inline anchor point calculation if skew is not needed
-            // Adjusted transform calculation for rotational skew
-            if (!needsSkewMatrix && (apx !== 0 || apy !== 0)) {
-                x += cy * napx * scx + -sx * napy * scy;
-                y += sy * napx * scx + cx * napy * scy;
-            }
-
-            // Build Transform Matrix
-            // Adjusted transform calculation for rotational skew
-            var t = this._transform;
-            t.a = cy * scx;
-            t.b = sy * scx;
-            t.c = -sx * scy;
-            t.d = cx * scy;
-            t.tx = x;
-            t.ty = y;
-
-            // XXX: Try to inline skew
-            // If skew is needed, apply skew and then anchor point
-            if (needsSkewMatrix) {
-                t = cc.affineTransformConcat({a: 1.0, b: Math.tan(cc.degreesToRadians(this._skewY)),
-                    c: Math.tan(cc.degreesToRadians(this._skewX)), d: 1.0, tx: 0.0, ty: 0.0}, t);
-
-                // adjust anchor point
-                if (apx !== 0 || apy !== 0)
-                    t = cc.affineTransformTranslate(t, napx, napy);
-            }
-
-            if (this._additionalTransformDirty) {
-                t = cc.affineTransformConcat(t, this._additionalTransform);
-                this._additionalTransformDirty = false;
-            }
-            this._transform = t;
-            this._transformDirty = false;
-        }
-        return this._transform;
-    },
-
-    _getNodeToParentTransformForCanvas: function () {
-        if (!this._transform)
-            this._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
-        if (this._transformDirty) {
-            this._armatureTransformDirty = true;
-            var t = this._transform;// quick reference
-            // base position
-            t.tx = this._position.x;
-            t.ty = this._position.y;
-
-            // rotation Cos and Sin
-            var Cos = 1, Sin = 0;
-            if (this._rotationX) {
-                Cos = Math.cos(-this._rotationRadiansX);
-                Sin = Math.sin(-this._rotationRadiansX);
-            }
-
-            // base abcd
-            t.a = t.d = Cos;
-            t.c = -Sin;
-            t.b = Sin;
-
-            var lScaleX = this._scaleX, lScaleY = this._scaleY;
-            var appX = this._anchorPointInPoints.x, appY = this._anchorPointInPoints.y;
-
-            // Firefox on Vista and XP crashes
-            // GPU thread in case of scale(0.0, 0.0)
-            var sx = (lScaleX < 0.000001 && lScaleX > -0.000001) ? 0.000001 : lScaleX,
-                sy = (lScaleY < 0.000001 && lScaleY > -0.000001) ? 0.000001 : lScaleY;
-
-            // Add offset point
-            t.tx += Cos * this._offsetPoint.x * lScaleX + -Sin * this._offsetPoint.y * lScaleY;
-            t.ty += Sin * this._offsetPoint.x * lScaleX + Cos * this._offsetPoint.y * lScaleY;
-
-            // skew
-            if (this._skewX || this._skewY) {
-                // offset the anchorpoint
-                var skx = Math.tan(-this._skewX * Math.PI / 180);
-                var sky = Math.tan(-this._skewY * Math.PI / 180);
-                var xx = appY * skx * sx;
-                var yy = appX * sky * sy;
-                t.a = Cos + -Sin * sky;
-                t.c = Cos * skx + -Sin;
-                t.b = Sin + Cos * sky;
-                t.d = Sin * skx + Cos;
-                t.tx += Cos * xx + -Sin * yy;
-                t.ty += Sin * xx + Cos * yy;
-            }
-
-            // scale
-            if (lScaleX !== 1 || lScaleY !== 1) {
-                t.a *= sx;
-                t.b *= sx;
-                t.c *= sy;
-                t.d *= sy;
-            }
-
-            // adjust anchorPoint
-            t.tx += Cos * -appX * sx + -Sin * -appY * sy;
-            t.ty += Sin * -appX * sx + Cos * -appY * sy;
-
-            // if ignore anchorPoint
-            if (this._ignoreAnchorPointForPosition) {
-                t.tx += appX;
-                t.ty += appY;
-            }
-
-            if (this._additionalTransformDirty) {
-                this._transform = cc.affineTransformConcat(this._transform, this._additionalTransform);
-                this._additionalTransformDirty = false;
-            }
-
-            t.tx = t.tx | 0;
-            t.ty = t.ty | 0;
-            this._transformDirty = false;
-        }
-        return this._transform;
     },
 
     visit: null,
@@ -798,14 +648,10 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
 });
 
 if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
- //WebGL
- ccs.Armature.prototype.visit = ccs.Armature.prototype._visitForWebGL;
- ccs.Armature.prototype.getNodeToParentTransform = ccs.Armature.prototype._getNodeToParentTransformForWebGL;
- } else {
- //Canvas
- ccs.Armature.prototype.visit = ccs.Armature.prototype._visitForCanvas;
- ccs.Armature.prototype.getNodeToParentTransform = ccs.Armature.prototype._getNodeToParentTransformForCanvas;
- }
+    ccs.Armature.prototype.visit = ccs.Armature.prototype._visitForWebGL;
+} else {
+    ccs.Armature.prototype.visit = ccs.Armature.prototype._visitForCanvas;
+}
 
 var _p = ccs.Armature.prototype;
 

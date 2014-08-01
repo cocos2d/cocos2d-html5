@@ -1106,6 +1106,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Returns a "local" axis aligned bounding box of the node. <br/>
+     * @deprecated
+     * @return {cc.Rect}
+     */
+    boundingBox: function(){
+        cc.log(cc._LogInfos.Node_boundingBox);
+        return this.getBoundingBox();
+    },
+
+    /**
+     * Returns a "local" axis aligned bounding box of the node. <br/>
      * The returned box is relative only to its parent.
      * @note This method returns a temporary variable, so it can't returns const CCRect&
      * @const
@@ -1212,7 +1222,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
 
         child.setParent(this);
-        child.setOrderOfArrival(this.s_globalOrderOfArrival++);
+        child.setOrderOfArrival(cc.s_globalOrderOfArrival++);
 
         if( this._running ){
             child.onEnter();
@@ -1232,14 +1242,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             this._enableCascadeOpacity();
         }
 
-    },
-
-    getName: function(){
-        return this._name;
-    },
-
-    setName: function(name){
-        this._name = name;
     },
 
     // composition: REMOVE
