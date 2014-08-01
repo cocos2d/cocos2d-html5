@@ -929,7 +929,8 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         contourData.init();
 
         var vertexPointList = json[ccs.CONST_VERTEX_POINT] || [];
-        for (var i = vertexPointList.length - 1; i >= 0; i--) {
+        var len = vertexPointList.length;
+        for (var i = 0; i < len; i++) {
             var dic = vertexPointList[i];
             var vertex = cc.p(0, 0);
             vertex.x = dic[ccs.CONST_A_X] || 0;
