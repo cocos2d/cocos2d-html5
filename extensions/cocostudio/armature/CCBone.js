@@ -596,20 +596,14 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
 //        return this.displayManager.addSkin(skin, index);
 //    },
 
-//    /**
-//     * get the collider body list in this bone.
-//     * @returns {*}
-//     */
-//    getColliderBodyList: function () {
-//        var decoDisplay = this.displayManager.getCurrentDecorativeDisplay()
-//        if (decoDisplay) {
-//            var detector = decoDisplay.getColliderDetector()
-//            if (detector) {
-//                return detector.getColliderBodyList();
-//            }
-//        }
-//        return [];
-//    },
+    /**
+     * @deprecated
+     * get the collider body list in this bone.
+     * @returns {*}
+     */
+    getColliderBodyList: function () {
+        return this.getColliderDetector();
+    },
 
 //    /**
 //     * displayManager setter
