@@ -41,7 +41,14 @@ ccs.AnimationEvent = ccs.Class.extend(/** @lends ccs.AnimationEvent# */{
     _arguments: null,
     _callFunc: null,
     _selectorTarget: null,
-    ctor: function (target, callFunc, data) {
+
+    /**
+     *
+     * @param {function} callFunc
+     * @param {object} target
+     * @param {object} [data]
+     */
+    ctor: function (callFunc,target, data) {
         this._data = data;
         this._callFunc = callFunc;
         this._selectorTarget = target;
@@ -101,32 +108,20 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     _onMovementList: false,
     _movementListLoop: false,
     _movementIndex: 0,
-    _movementEventListener: null,
     _movementListDurationTo: -1,
+
     _movementEventCallFunc: null,
+    _frameEventCallFunc: null,
+    _movementEventTarget: null,
+    _frameEventTarget:null,
+    _movementEventListener: null,
+    _frameEventListener: null,
 
     ctor: function () {
         ccs.ProcessBase.prototype.ctor.call(this);
 
-        this._animationData = null;
-        this._speedScale = 1;
-        this._movementData = null;
-        this._armature = null;
-        this._movementID = "";
-        this._toIndex = 0;
-        this._ignoreFrameEvent = false;
+        this._tweenList = [];
         this._movementList = [];
-        this._movementListLoop = false;
-        this._movementListDurationTo = -1;
-
-        this._movementEventCallFunc = null;
-        this._frameEventCallFunc = null;
-        this._movementEventTarget = null;
-        this._frameEventTarget = null;
-
-        this._movementEventListener = null;
-        this._frameEventListener = null;
-
         this._frameEventQueue = [];
         this._movementEventQueue = [];
     },
@@ -138,29 +133,29 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
      */
     init: function (armature) {
         this._armature = armature;
-        this._tweenList = [];
+        this._tweenList.length = 0;
         return true;
     },
 
     pause: function () {
-        for (var i = 0; i < this._tweenList.length; i++) {
-            this._tweenList[i].pause();
-        }
+        var locTweenList = this._tweenList;
+        for (var i = 0; i < locTweenList.length; i++)
+            locTweenList[i].pause();
         ccs.ProcessBase.prototype.pause.call(this);
     },
 
     resume: function () {
-        for (var i = 0; i < this._tweenList.length; i++) {
-            this._tweenList[i].resume();
-        }
+        var locTweenList = this._tweenList;
+        for (var i = 0; i < locTweenList.length; i++)
+            locTweenList[i].resume();
         ccs.ProcessBase.prototype.resume.call(this);
     },
 
     stop: function () {
-        for (var i = 0; i < this._tweenList.length; i++) {
-            this._tweenList[i].stop();
-        }
-        this._tweenList = [];
+        var locTweenList = this._tweenList;
+        for (var i = 0; i < locTweenList.length; i++)
+            locTweenList[i].stop();
+        locTweenList.length = 0;
         ccs.ProcessBase.prototype.stop.call(this);
     },
 
@@ -177,18 +172,16 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
      * @param {Number} speedScale
      */
     setSpeedScale: function (speedScale) {
-        if (speedScale == this._speedScale) {
+        if (speedScale == this._speedScale)
             return;
-        }
         this._speedScale = speedScale;
         this._processScale = !this._movementData ? this._speedScale : this._speedScale * this._movementData.scale;
         var dict = this._armature.getBoneDic();
         for (var key in dict) {
             var bone = dict[key];
             bone.getTween().setProcessScale(this._processScale);
-            if (bone.getChildArmature()) {
+            if (bone.getChildArmature())
                 bone.getChildArmature().getAnimation().setProcessScale(this._processScale);
-            }
         }
     },
 
@@ -220,38 +213,22 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
 
         //! Get key frame count
         this._rawDuration = this._movementData.duration;
-
         this._movementID = animationName;
-
         this._processScale = this._speedScale * this._movementData.scale;
 
         //! Further processing parameters
         durationTo = (durationTo == -1) ? this._movementData.durationTo : durationTo;
-
         var durationTween = this._movementData.durationTween == 0 ? this._rawDuration : this._movementData.durationTween;
 
         var tweenEasing = this._movementData.tweenEasing;
         loop = (!loop || loop < 0) ? this._movementData.loop : loop;
-
         this._onMovementList = false;
-
         ccs.ProcessBase.prototype.play(durationTo, durationTween, loop, tweenEasing);
 
-
         if (this._rawDuration == 0)
-        {
             this._loopType = ccs.ANIMATION_TYPE_SINGLE_FRAME;
-        }
-        else
-        {
-            if (loop)
-            {
-                this._loopType = ccs.ANIMATION_TYPE_TO_LOOP_FRONT;
-            }
-            else
-            {
-                this._loopType = ccs.ANIMATION_TYPE_NO_LOOP;
-            }
+        else {
+            this._loopType = loop ? ccs.ANIMATION_TYPE_TO_LOOP_FRONT : ccs.ANIMATION_TYPE_NO_LOOP;
             this._durationTween = durationTween;
         }
 
@@ -259,37 +236,27 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         this._tweenList = [];
 
         var map = this._armature.getBoneDic();
-        for(var element in map)
-        {
+        for(var element in map) {
             var bone = map[element];
             movementBoneData = this._movementData.movBoneDataDic[bone.getName()];
 
             var tween = bone.getTween();
-            if(movementBoneData && movementBoneData.frameList.length > 0)
-            {
+            if(movementBoneData && movementBoneData.frameList.length > 0) {
                 this._tweenList.push(tween);
                 movementBoneData.duration = this._movementData.duration;
                 tween.play(movementBoneData, durationTo, durationTween, loop, tweenEasing);
-
                 tween.setProcessScale(this._processScale);
 
                 if (bone.getChildArmature())
-                {
                     bone.getChildArmature().getAnimation().setProcessScale(this._processScale);
-                }
-            }
-            else
-            {
-                if(!bone.isIgnoreMovementBoneData())
-                {
+            } else {
+                if(!bone.isIgnoreMovementBoneData()){
                     //! this bone is not include in this movement, so hide it
                     bone.getDisplayManager().changeDisplayWithIndex(-1, false);
                     tween.stop();
                 }
-
             }
         }
-
         this._armature.update(0);
     },
 
@@ -327,12 +294,13 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
      * @param {Boolean} loop
      */
     playWithNames: function (movementNames, durationTo, loop) {
-        this._movementList = [];
         this._movementListLoop = loop;
         this._onMovementList = true;
         this._movementIndex = 0;
-
-        this._movementList = movementNames;
+        if(movementNames instanceof Array)
+            this._movementList = movementNames;
+        else
+            this._movementList.length = 0;
 
         this.updateMovementList();
     },
@@ -344,7 +312,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
      * @param {Boolean} loop
      */
     playWithIndexes: function (movementIndexes, durationTo, loop) {
-        this._movementList = [];
+        this._movementList.length = 0;
         this._movementListLoop = loop;
         this._movementListDurationTo = durationTo;
         this._onMovementList = true;
@@ -386,9 +354,9 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         this._currentPercent = this._curFrameIndex / (this._movementData.duration - 1);
         this._currentFrame = this._nextFrameIndex * this._currentPercent;
 
-        for (var i = 0; i < this._tweenList.length; i++) {
-            var tween = this._tweenList[i];
-            tween.gotoAndPlay(frameIndex);
+        var locTweenList = this._tweenList;
+        for (var i = 0; i < locTweenList.length; i++) {
+            locTweenList[i].gotoAndPlay(frameIndex);
         }
         this._armature.update(0);
         this._ignoreFrameEvent = ignoreFrameEvent;
@@ -414,45 +382,28 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     update: function (dt) {
         ccs.ProcessBase.prototype.update.call(this, dt);
 
-        for (var i = 0; i < this._tweenList.length; i++) {
-            this._tweenList[i].update(dt);
-        }
+        var locTweenList = this._tweenList;
+        for (var i = 0; i < locTweenList.length; i++)
+            locTweenList[i].update(dt);
 
-        if(this._frameEventQueue.length > 0 || this._movementEventQueue.length > 0)
-        {
-            this._armature.retain();
-        }
-
-        var frameEvents = this._frameEventQueue;
+        var frameEvents = this._frameEventQueue, event;
         while (frameEvents.length > 0) {
-            var event = frameEvents.shift();
-
+            event = frameEvents.shift();
             this._ignoreFrameEvent = true;
-
-            if(this._frameEventTarget){
-                this._frameEventTarget._frameEventCallFunc(event.bone, event.frameEventName, event.originFrameIndex, event.currentFrameIndex);
-            }
-
-            if(this._frameEventListener){
+            if(this._frameEventCallFunc)
+                this._frameEventCallFunc.call(this._frameEventTarget, event.bone, event.frameEventName, event.originFrameIndex, event.currentFrameIndex);
+            if(this._frameEventListener)
                 this._frameEventListener(event.bone, event.frameEventName, event.originFrameIndex, event.currentFrameIndex);
-            }
-
             this._ignoreFrameEvent = false;
         }
 
         var movementEvents = this._movementEventQueue;
         while (movementEvents.length > 0) {
-            var event = movementEvents.shift();
-
-            if(this._movementEventTarget)
-            {
-                this._movementEventTarget._movementEventCallFunc(event.armature, event.movementType, event.movementID);
-            }
-
+            event = movementEvents.shift();
+            if(this._movementEventCallFunc)
+                this._movementEventCallFunc.call(this._movementEventTarget, event.armature, event.movementType, event.movementID);
             if (this._movementEventListener)
-            {
                 this._movementEventListener(event.armature, event.movementType, event.movementID);
-            }
         }
     },
 
@@ -472,6 +423,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
                         this.movementEvent(this._armature, ccs.MovementEventType.start, this._movementID);
                         break;
                     }
+                    break;
                 case ccs.ANIMATION_TYPE_MAX:
                 case ccs.ANIMATION_TYPE_SINGLE_FRAME:
                     locCurrentPercent = 1;
@@ -487,14 +439,12 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
                     locCurrentPercent = ccs.fmodf(locCurrentPercent, 1);
                     this._currentFrame = this._nextFrameIndex == 0 ? 0 : ccs.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._nextFrameIndex = this._durationTween > 0 ? this._durationTween : 1;
-
                     this.movementEvent(this, ccs.MovementEventType.start, this._movementID);
                     break;
                 default:
                     //locCurrentPercent = ccs.fmodf(locCurrentPercent, 1);
                     this._currentFrame = ccs.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._toIndex = 0;
-
                     this.movementEvent(this._armature, ccs.MovementEventType.loopComplete, this._movementID);
                     break;
             }
@@ -514,10 +464,10 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
 
     /**
      * connect a event
-     * @param {Object} target
      * @param {function} callFunc
+     * @param {Object} target
      */
-    setMovementEventCallFunc: function (target, callFunc) {
+    setMovementEventCallFunc: function (callFunc, target) {
         if(arguments.length == 1){
             this._frameEventListener = target;
         }else if(arguments.length == 2){
@@ -528,10 +478,10 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
 
     /**
      * connect a event
-     * @param {Object} target
      * @param {function} callFunc
+     * @param {Object} target
      */
-    setFrameEventCallFunc: function (target, callFunc) {
+    setFrameEventCallFunc: function (callFunc, target) {
         if(arguments.length == 1){
             this._frameEventListener = target;
         }else if(arguments.length == 2){
@@ -555,7 +505,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
      * @param {Number} currentFrameIndex
      */
     frameEvent: function (bone, frameEventName, originFrameIndex, currentFrameIndex) {
-        if ((this._frameEvent && this._frameEventCallFunc) || this._frameEventListener) {
+        if ((this._frameEventTarget && this._frameEventCallFunc) || this._frameEventListener) {
             var frameEvent = new ccs.FrameEvent();
             frameEvent.bone = bone;
             frameEvent.frameEventName = frameEventName;
@@ -567,7 +517,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     },
 
     movementEvent: function (armature, movementType, movementID) {
-        if ((this._movementEvent && this._movementEventCallFunc) || this._movementEventListener) {
+        if ((this._movementEventTarget && this._movementEventCallFunc) || this._movementEventListener) {
             var event = new ccs.MovementEvent();
             event.armature = armature;
             event.movementType = movementType;
@@ -578,53 +528,28 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
 
     updateMovementList: function () {
         if (this._onMovementList) {
+            var movementObj, locMovementList = this._movementList;
             if (this._movementListLoop) {
-                var movementObj = this._movementList[this._movementIndex];
+                movementObj = locMovementList[this._movementIndex];
                 this.play(movementObj, movementObj.durationTo, 0);
                 this._movementIndex++;
-                if (this._movementIndex >= this._movementList.length) {
+                if (this._movementIndex >= locMovementList.length)
                     this._movementIndex = 0;
-                }
-            }
-            else {
-                if (this._movementIndex < this._movementList.length) {
-                    var movementObj = this._movementList[this._movementIndex];
+            } else {
+                if (this._movementIndex < locMovementList.length) {
+                    movementObj = locMovementList[this._movementIndex];
                     this.play(movementObj, movementObj.durationTo, 0);
                     this._movementIndex++;
-                }
-                else {
+                } else
                     this._onMovementList = false;
-                }
             }
             this._onMovementList = true;
         }
     },
 
-//    /**
-//     * call event
-//     * @param {Array} args
-//     */
-//    callMovementEvent: function (args) {
-//        if (this._movementEvent) {
-//            this._movementEvent.setArguments(args);
-//            this._movementEvent.call();
-//        }
-//    },
-
-//    /**
-//     * call event
-//     * @param {Array} args
-//     */
-//    callFrameEvent: function (args) {
-//        if (this._frameEvent) {
-//            this._frameEvent.setArguments(args);
-//            this._frameEvent.call();
-//        }
-//    },
-
     /**
      * animationData setter
-     * @param {ccs.AnimationData} aniData
+     * @param {ccs.AnimationData} data
      */
     setAnimationData: function (data) {
         if(this._animationData != data)
@@ -654,14 +579,6 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     isIgnoreFrameEvent: function () {
         return this._ignoreFrameEvent;
     }
-
-//    /**
-//     * Sets whether the frame event is ignored
-//     * @param {Boolean} bool
-//     */
-//    setIgnoreFrameEvent: function (bool) {
-//        this.ignoreFrameEvent = bool;
-//    }
 });
 
 var _p = ccs.ArmatureAnimation.prototype;

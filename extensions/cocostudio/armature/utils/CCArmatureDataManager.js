@@ -253,54 +253,31 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
      * @param {String} imagePath
      * @param {String} plistPath
      * @param {String} configFilePath
+     * @param {Function} selector
      * @param {Object} target
-     * @param {Function} configFilePath
      */
-    addArmatureFileInfoAsync:function (/*imagePath, plistPath, configFilePath, target, selector*/) {
-//        var imagePath, plistPath, configFilePath, target, selector;
-//        var isLoadSpriteFrame = false;
-//        if (arguments.length == 3) {
-//            configFilePath = arguments[0];
-//            selector = arguments[1];
-//            target = arguments[2];
-//            isLoadSpriteFrame = true;
-//            this.addRelativeData(configFilePath);
-//        } else if (arguments.length == 5){
-//            imagePath = arguments[0];
-//            plistPath = arguments[1];
-//            configFilePath = arguments[2];
-//            selector = arguments[3];
-//            target = arguments[4];
-//            this.addRelativeData(configFilePath);
-//            this.addSpriteFrameFromFile(plistPath, imagePath, configFilePath);
-//        }
-//        ccs.dataReaderHelper.addDataFromFileAsync(configFilePath,target,selector,isLoadSpriteFrame);
-
+    addArmatureFileInfoAsync:function (/*imagePath, plistPath, configFilePath, selector, target*/) {
         var imagePath, plistPath, configFilePath, target, selector;
         switch(arguments.length){
             case 3:
                 configFilePath = arguments[0];
                 target = arguments[1];
                 selector = arguments[2];
-
                 this.addRelativeData(configFilePath);
-
                 this._autoLoadSpriteFile = true;
-                ccs.dataReaderHelper.addDataFromFileAsync("", "", configFilePath, target, selector);
+                ccs.dataReaderHelper.addDataFromFileAsync("", "", configFilePath, selector,target);
                 break;
             case 5:
                 imagePath = arguments[0];
                 plistPath = arguments[1];
                 configFilePath = arguments[2];
-                target = arguments[3];
-                selector = arguments[4];
-
+                target = arguments[4];
+                selector = arguments[3];
                 this.addRelativeData(configFilePath);
 
                 this._autoLoadSpriteFile = false;
                 ccs.dataReaderHelper.addDataFromFileAsync(imagePath, plistPath, configFilePath, target, selector);
                 this.addSpriteFrameFromFile(plistPath, imagePath);
-
         }
 
     },
@@ -309,12 +286,12 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
      * Add sprite frame to CCSpriteFrameCache, it will save display name and it's relative image name
      * @param {String} plistPath
      * @param {String} imagePath
+     * @param {String} configFilePath
      */
     addSpriteFrameFromFile:function (plistPath, imagePath, configFilePath) {
         var data = this.getRelativeData(configFilePath);
-        if(data){
+        if(data)
             data.plistFiles.push(plistPath);
-        }
         ccs.spriteFrameCacheHelper.addSpriteFrameFromFile(plistPath, imagePath);
     },
 

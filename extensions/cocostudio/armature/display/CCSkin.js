@@ -73,17 +73,20 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
 
     setSkinData: function (skinData) {
         this._skinData = skinData;
-
         this.setScaleX(skinData.scaleX);
         this.setScaleY(skinData.scaleY);
         this.setRotationX(cc.radiansToDegrees(skinData.skewX));
         this.setRotationY(cc.radiansToDegrees(-skinData.skewY));
         this.setPosition(skinData.x, skinData.y);
 
-        this._skinTransform = this.getNodeToParentTransform ?
-            this.getNodeToParentTransform() :
-            this.nodeToParentTransform();
-
+        var localTransform = this.getNodeToParentTransform ? this.getNodeToParentTransform() : this.nodeToParentTransform();
+        var skinTransform = this._skinTransform;
+        skinTransform.a = localTransform.a;
+        skinTransform.b = localTransform.b;
+        skinTransform.c = localTransform.c;
+        skinTransform.d = localTransform.d;
+        skinTransform.tx = localTransform.tx;
+        skinTransform.ty = localTransform.ty;
         this.updateArmatureTransform();
     },
 
@@ -93,8 +96,8 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
 
     updateArmatureTransform: function () {
         this._transform = cc.affineTransformConcat(
-            this.bone.getNodeToArmatureTransform(),
-            this._skinTransform
+            this._skinTransform,
+            this.bone.getNodeToArmatureTransform()
         );
     },
 
@@ -113,16 +116,11 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
             var x1 = this._offsetPosition.x;
             var y1 = this._offsetPosition.y;
 
-            var x2 = x1 + size.width;
-            var y2 = y1 + size.height;
+            var x2 = x1 + size.width, y2 = y1 + size.height;
+            var x = transform.tx, y = transform.ty;
 
-            var x = transform.tx;
-            var y = transform.ty;
-
-            var cr = transform.a;
-            var sr = transform.b;
-            var cr2 = transform.c;
-            var sr2 = -transform.d;
+            var cr = transform.a, sr = transform.b;
+            var cr2 = transform.d, sr2 = -transform.c;
             var ax = x1 * cr - y1 * sr2 + x;
             var ay = x1 * sr + y1 * cr2 + y;
 
@@ -135,15 +133,17 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
             var dx = x1 * cr - y2 * sr2 + x;
             var dy = x1 * sr + y2 * cr2 + y;
 
-            this.SET_VERTEX3F(locQuad.bl.vertices,this.RENDER_IN_SUBPIXEL(ax), this.RENDER_IN_SUBPIXEL(ay),this._vertexZ);
-            this.SET_VERTEX3F(locQuad.br.vertices,this.RENDER_IN_SUBPIXEL(bx), this.RENDER_IN_SUBPIXEL(by),this._vertexZ);
-            this.SET_VERTEX3F(locQuad.tl.vertices,this.RENDER_IN_SUBPIXEL(dx), this.RENDER_IN_SUBPIXEL(dy),this._vertexZ);
-            this.SET_VERTEX3F(locQuad.tr.vertices,this.RENDER_IN_SUBPIXEL(cx), this.RENDER_IN_SUBPIXEL(cy),this._vertexZ);
+            var locVertexZ = this._vertexZ;
+            this.SET_VERTEX3F(locQuad.bl.vertices,this.RENDER_IN_SUBPIXEL(ax), this.RENDER_IN_SUBPIXEL(ay),locVertexZ);
+            this.SET_VERTEX3F(locQuad.br.vertices,this.RENDER_IN_SUBPIXEL(bx), this.RENDER_IN_SUBPIXEL(by),locVertexZ);
+            this.SET_VERTEX3F(locQuad.tl.vertices,this.RENDER_IN_SUBPIXEL(dx), this.RENDER_IN_SUBPIXEL(dy),locVertexZ);
+            this.SET_VERTEX3F(locQuad.tr.vertices,this.RENDER_IN_SUBPIXEL(cx), this.RENDER_IN_SUBPIXEL(cy),locVertexZ);
         }
 
         // MARMALADE CHANGE: ADDED CHECK FOR nullptr, TO PERMIT SPRITES WITH NO BATCH NODE / TEXTURE ATLAS
         if (this._textureAtlas)
             this._textureAtlas.updateQuad(locQuad, this._textureAtlas.getTotalQuads());
+        this._quadDirty = true;
     },
 
     SET_VERTEX3F: function(_v_, _x_, _y_, _z_){
@@ -157,26 +157,16 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     },
 
     getNodeToWorldTransform: function(){
-        //TODO cc.TransformConcat
-        return cc.affineTransformConcat(
-            this._bone.getArmature().getNodeToWorldTransform(),
-            this._transform
-        );
+        return cc.affineTransformConcat(this._transform,this.bone.getArmature().getNodeToWorldTransform());
     },
 
     getNodeToWorldTransformAR: function(){
         var displayTransform = this._transform;
-
-        //TODO cc.PointApplyTransform
         this._anchorPointInPoints = cc.pointApplyAffineTransform(this._anchorPointInPoints, displayTransform);
         displayTransform.tx = this._anchorPointInPoints.x;
         displayTransform.ty = this._anchorPointInPoints.y;
 
-        //TODO cc.TransformConcat
-        return cc.affineTransformConcat(
-            displayTransform,
-            this.bone.getArmature().nodeToWorldTransform()
-        );
+        return cc.affineTransformConcat( displayTransform,this.bone.getArmature().nodeToWorldTransform());
     },
 
     setBone: function (bone) {
@@ -196,22 +186,6 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
      */
     getDisplayName: function () {
         return this._displayName;
-    },
-
-    /**
-     * @deprecated
-     * @returns {cc.AffineTransform}
-     */
-    nodeToWorldTransform: function () {
-        return this.getNodeToWorldTransform();
-    },
-
-    /**
-     * @deprecated
-     * @returns {cc.AffineTransform}
-     */
-    nodeToWorldTransformAR: function () {
-        return this.getNodeToWorldTransformAR();
     }
 });
 if (cc._renderType == cc._RENDER_TYPE_WEBGL) {

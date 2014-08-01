@@ -35,7 +35,6 @@
  * @property {Array}                childrenBone            - <@readonly> All children bones
  * @property {ccs.Tween}            tween                   - <@readonly> Tween
  * @property {ccs.FrameData}        tweenData               - <@readonly> The tween data
- * @property {Boolean}              transformDirty          - Indicate whether the transform is dirty
  * @property {ccs.ColliderFilter}   colliderFilter          - The collider filter
  * @property {ccs.DisplayManager}   displayManager          - The displayManager
  * @property {Boolean}              ignoreMovementBoneData  - Indicate whether force the bone to show When CCArmature play a animation and there isn't a CCMovementBoneData of this bone in this CCMovementData.
@@ -51,10 +50,8 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
     ignoreMovementBoneData: false,
     _tween: null,
     _tweenData: null,
-    name: "",
-    _childrenBone: null,
     _parentBone: null,
-    boneTransformDirty: false,
+    _boneTransformDirty: false,
     _worldTransform: null,
     _blendFunc: 0,
     blendDirty: false,
@@ -74,16 +71,13 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
         this.ignoreMovementBoneData = false;
 
         this._worldTransform = cc.affineTransformMake(1, 0, 0, 1, 0, 0);
-        this.boneTransformDirty = true;
+        this._boneTransformDirty = true;
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         this.blendDirty = false;
         this._worldInfo = null;
 
         this._armatureParentBone = null;
         this._dataVersion = 0;
-
-        this.name = "";
-        this._childrenBone = [];
     },
 
     /**
@@ -94,7 +88,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
     init: function (name) {
 //        cc.Node.prototype.init.call(this);
         if (name) {
-            this.name = name;
+            this._name = name;
         }
         this._tweenData = new ccs.FrameData();
 
@@ -117,13 +111,11 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
     setBoneData: function (boneData) {
         cc.assert(boneData, "_boneData must not be null");
 
-        if(this._boneData != boneData){
+        if(this._boneData != boneData)
             this._boneData = boneData;
-        }
 
-        this.name = this._boneData.name;
+        this.setName(this._boneData.name);
         this._localZOrder = this._boneData.zOrder;
-
         this._displayManager.initDisplayList(boneData);
     },
 
@@ -163,7 +155,6 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      * @param {Number} delta
      */
     update: function (delta) {
-
         if (this._parentBone)
             this._boneTransformDirty = this._boneTransformDirty || this._parentBone.isTransformDirty();
 
@@ -178,7 +169,6 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
             }
 
             this._worldInfo.copy(this._tweenData);
-
             this._worldInfo.x = this._tweenData.x + this._position.x;
             this._worldInfo.y = this._tweenData.y + this._position.y;
             this._worldInfo.scaleX = this._tweenData.scaleX * this._scaleX;
@@ -194,18 +184,15 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
             }
 
             ccs.TransformHelp.nodeToMatrix(this._worldInfo, this._worldTransform);
-
             if (this._armatureParentBone)
                 this._worldTransform = cc.affineTransformConcat(this._worldTransform, this._armature.getNodeToParentTransform());            //TODO TransformConcat
         }
 
         ccs.displayFactory.updateDisplay(this, delta, this._boneTransformDirty || this._armature.getArmatureTransformDirty());
-
         for(var i=0; i<this._children.length; i++) {
             var childBone = this._children[i];
             childBone.update(delta);
         }
-
         this._boneTransformDirty = false;
     },
 
@@ -274,8 +261,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
         if (this._armature.getArmatureData().dataVersion >= ccs.CONST_VERSION_COMBINED) {
             var zorder = this._tweenData.zOrder + this._boneData.zOrder;
             this.setLocalZOrder(zorder);
-        }
-        else {
+        } else {
             this.setLocalZOrder(this._tweenData.zOrder);
         }
     },
@@ -288,8 +274,8 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
         cc.assert(child, "Argument must be non-nil");
         cc.assert(!child.parentBone, "child already added. It can't be added again");
 
-        if (this._childrenBone.indexOf(child) < 0) {
-            this._childrenBone.push(child);
+        if (this._children.indexOf(child) < 0) {
+            this._children.push(child);
             child.setParentBone(this);
         }
     },
@@ -300,26 +286,19 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      * @param {Boolean} recursion
      */
     removeChildBone: function (bone, recursion) {
-        if (this._children.length > 0 && this._children.getIndex(bone) != -1 )
-        {
-            if(recursion)
-            {
+        if (this._children.length > 0 && this._children.getIndex(bone) != -1 ) {
+            if(recursion) {
                 var ccbones = bone._children;
-
-                for(var i=0; i<ccbones.length; i++)
-                {
+                for(var i=0; i<ccbones.length; i++){
                     var ccBone = ccbones[i];
                     bone.removeChildBone(ccBone, recursion);
                 }
             }
 
             bone.setParentBone(null);
-
             bone.getDisplayManager().setCurrentDecorativeDisplay(null);
-
             cc.arrayRemoveObject(this._children, bone);
         }
-
     },
 
     /**
@@ -413,7 +392,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      * Add display and use  _displayData init the display.
      * If index already have a display, then replace it.
      * If index is current display index, then also change display to _index
-     * @param {cc.Display} displayData it include the display information, like DisplayType.
+     * @param {ccs.DisplayData} displayData it include the display information, like DisplayType.
      *          If you want to create a sprite display, then create a CCSpriteDisplayData param
      *@param {Number}    index the index of the display you want to replace or add to
      *          -1 : append display from back
@@ -465,13 +444,10 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
 
     getColliderDetector: function(){
         var decoDisplay = this._displayManager.getCurrentDecorativeDisplay();
-        if (decoDisplay)
-        {
+        if (decoDisplay){
             var detector = decoDisplay.getColliderDetector();
             if (detector)
-            {
                 return detector;
-            }
         }
         return null;
 
@@ -510,7 +486,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
 
     /**
      * transform dirty setter
-     * @param {Boolean}
+     * @param {Boolean} dirty
      */
     setTransformDirty: function (dirty) {
         this._boneTransformDirty = dirty;
@@ -573,20 +549,6 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
         return this._worldInfo;
     },
 
-//    /**
-//     * release objects
-//     */
-//    release: function () {
-//        CC_SAFE_RELEASE(this._tweenData);
-//        for (var i = 0; i < this._childrenBone.length; i++) {
-//            CC_SAFE_RELEASE(this._childrenBone[i]);
-//        }
-//        this._childrenBone = [];
-//        CC_SAFE_RELEASE(this._tween);
-//        CC_SAFE_RELEASE(this.displayManager);
-//        CC_SAFE_RELEASE(this._boneData);
-//        CC_SAFE_RELEASE(this._childArmature);
-//    },
 //
 //    /**
 //     * Rewrite visit ,when node draw, g_NumberOfDraws is changeless
@@ -601,31 +563,14 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
 //            node.visit(ctx);
 //        }
 //    },
-//
-//    /**
-//     * set display color
-//     * @param {cc.Color} color
-//     */
-//    setColor: function (color) {
-//        cc.Node.prototype.setColor.call(this, color);
-//        this.updateColor();
-//    },
-//
-//    /**
-//     * set display opacity
-//     * @param {Number} opacity  0-255
-//     */
-//    setOpacity: function (opacity) {
-//        cc.Node.prototype.setOpacity.call(this, opacity);
-//        this.updateColor();
-//    },
 
     /**
      * child bone getter
      * @return {Array}
+     * @deprecated
      */
     getChildrenBone: function () {
-        return this._childrenBone;
+        return this._children;
     },
 
     /**
@@ -680,22 +625,6 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      */
     getIgnoreMovementBoneData: function () {
         return this.isIgnoreMovementBoneData();
-    },
-
-    /**
-     * name  setter
-     * @param {String} name
-     */
-    setName: function (name) {
-        this.name = name;
-    },
-
-    /**
-     * name  getter
-     * @return {String}
-     */
-    getName: function () {
-        return this.name;
     }
 });
 

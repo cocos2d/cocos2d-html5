@@ -719,8 +719,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Boolean} Var true if the node is visible, false if the node is hidden.
      */
     setVisible: function (Var) {
-        this._visible = Var;
-        this.setNodeDirty();
+        if(this._visible != Var){
+            this._visible = Var;
+            if(Var)this.setNodeDirty();
+        }
     },
 
     /**
@@ -2537,7 +2539,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             }
 
             if (_t._additionalTransformDirty) {
-                _t._transform = cc.AffineTransformConcat(t, _t._additionalTransform);
+                _t._transform = cc.affineTransformConcat(t, _t._additionalTransform);
                 _t._additionalTransformDirty = false;
             }
 
