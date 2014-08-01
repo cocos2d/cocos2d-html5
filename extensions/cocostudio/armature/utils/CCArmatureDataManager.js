@@ -261,8 +261,8 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
         switch(arguments.length){
             case 3:
                 configFilePath = arguments[0];
-                target = arguments[1];
-                selector = arguments[2];
+                target = arguments[2];
+                selector = arguments[1];
                 this.addRelativeData(configFilePath);
                 this._autoLoadSpriteFile = true;
                 ccs.dataReaderHelper.addDataFromFileAsync("", "", configFilePath, selector,target);
@@ -276,10 +276,9 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
                 this.addRelativeData(configFilePath);
 
                 this._autoLoadSpriteFile = false;
-                ccs.dataReaderHelper.addDataFromFileAsync(imagePath, plistPath, configFilePath, target, selector);
+                ccs.dataReaderHelper.addDataFromFileAsync(imagePath, plistPath, configFilePath, selector, target);
                 this.addSpriteFrameFromFile(plistPath, imagePath);
         }
-
     },
 
     /**
