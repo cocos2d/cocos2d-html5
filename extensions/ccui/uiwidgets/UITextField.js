@@ -627,7 +627,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
      * @param {Function} selector
      * @deprecated
      */
-    addEventListenerTextField: function (target, selector) {
+    addEventListenerTextField: function (selector, target) {
         this._textFieldEventSelector = selector;
         this._textFieldEventListener = target;
     },

@@ -1514,9 +1514,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._running = false;
         this.pause();
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onExit);
-        if (this._componentContainer) {
-            this._componentContainer.removeAll();
-        }
     },
 
     // actions

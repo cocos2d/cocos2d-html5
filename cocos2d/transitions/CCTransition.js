@@ -724,7 +724,7 @@ cc.TransitionSlideInB = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * initializes the scenes
      */
     initScenes:function () {
-        this._inScene.setPosition(0, cc.director.getWinSize().height - cc.ADJUST_FACTOR);
+        this._inScene.setPosition(0, -(cc.director.getWinSize().height - cc.ADJUST_FACTOR));
     },
 
     /**
@@ -732,7 +732,7 @@ cc.TransitionSlideInB = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * @return {cc.MoveBy}
      */
     action:function () {
-        return cc.MoveBy.create(this._duration, cc.p(0, -(cc.director.getWinSize().height - cc.ADJUST_FACTOR)));
+        return cc.MoveBy.create(this._duration, cc.p(0, cc.director.getWinSize().height - cc.ADJUST_FACTOR));
     }
 });
 
@@ -772,7 +772,7 @@ cc.TransitionSlideInT = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * initializes the scenes
      */
     initScenes:function () {
-        this._inScene.setPosition(0, -(cc.director.getWinSize().height - cc.ADJUST_FACTOR));
+        this._inScene.setPosition(0, cc.director.getWinSize().height - cc.ADJUST_FACTOR);
     },
 
     /**
@@ -780,7 +780,7 @@ cc.TransitionSlideInT = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * @return {cc.MoveBy}
      */
     action:function () {
-        return cc.MoveBy.create(this._duration, cc.p(0, cc.director.getWinSize().height - cc.ADJUST_FACTOR));
+        return cc.MoveBy.create(this._duration, cc.p(0, -(cc.director.getWinSize().height - cc.ADJUST_FACTOR)));
     }
 });
 

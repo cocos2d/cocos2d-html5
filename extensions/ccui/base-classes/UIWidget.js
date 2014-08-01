@@ -1449,6 +1449,18 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             cc.Node.prototype.removeChild.call(this, node);
         }
         this._nodes.length = 0;
+    },
+
+    _findLayout: function(){
+        var layout = this._parent;
+        while(layout){
+            if(layout._doLayout){
+                layout._doLayoutDirty = true;
+                break;
+            }else{
+                layout = layout._parent;
+            }
+        }
     }
 });
 
