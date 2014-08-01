@@ -476,7 +476,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      * @param {Function} selector
      * @param {Object} target
      */
-    addEventListenerSlider: function (target, selector) {
+    addEventListenerSlider: function (selector, target) {
         this._sliderEventSelector = selector;
         this._sliderEventListener = target;
     },
@@ -487,7 +487,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
 
     _percentChangedEvent: function () {
         if (this._sliderEventListener && this._sliderEventSelector) {
-            this._sliderEventListener.call(this._sliderEventSelector,
+            this._sliderEventSelector.call(this._sliderEventListener,
                 this,
                 ccui.Slider.EVENT_PERCENT_CHANGED);
         }
