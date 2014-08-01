@@ -379,6 +379,13 @@ cc.defineGetterSetter(_p, "plusLabel", _p.getPlusLabel, _p.setPlusLabel);
 
 _p = null;
 
+
+/**
+ * @constructor
+ * @param minusSprite
+ * @param plusSprite
+ * @returns {ControlStepper}
+ */
 cc.ControlStepper.create = function (minusSprite, plusSprite) {
     return new cc.ControlStepper(minusSprite, plusSprite);
 };

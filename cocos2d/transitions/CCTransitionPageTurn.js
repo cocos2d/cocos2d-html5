@@ -121,6 +121,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
  * Creates a base transition with duration and incoming scene.<br/>
  * If back is true then the effect is reversed to appear as if the incoming<br/>
  * scene is being turned from left over the outgoing scene.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @param {Boolean} backwards

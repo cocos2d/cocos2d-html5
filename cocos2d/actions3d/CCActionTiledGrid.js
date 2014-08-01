@@ -99,6 +99,7 @@ cc.ShakyTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.ShakyTiles3D# */{
 
 /**
  * creates the action with a range, whether or not to shake Z vertices, a grid size, and duration
+ * @deprecated
  * @param {Number} duration
  * @param {cc.Size} gridSize
  * @param {Number} range
@@ -188,6 +189,7 @@ cc.ShatteredTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.ShatteredTiles3D
 
 /**
  * creates the action with a range, whether of not to shatter Z vertices, a grid size and duration
+ * @deprecated
  * @param {Number} duration
  * @param {cc.Size} gridSize
  * @param {Number} range
@@ -360,6 +362,7 @@ cc.ShuffleTiles = cc.TiledGrid3DAction.extend(/** @lends cc.ShuffleTiles# */{
 
 /**
  * creates the action with a random seed, the grid size and the duration
+ * @deprecated
  * @param {Number} duration
  * @param {cc.Size} gridSize
  * @param {Number} seed
@@ -450,6 +453,7 @@ cc.FadeOutTRTiles = cc.TiledGrid3DAction.extend(/** @lends cc.FadeOutTRTiles# */
 
 /**
  * creates the action with the grid size and the duration
+ * @deprecated
  * @param duration
  * @param gridSize
  * @return {cc.FadeOutTRTiles}
@@ -480,6 +484,7 @@ cc.FadeOutBLTiles = cc.FadeOutTRTiles.extend(/** @lends cc.FadeOutBLTiles# */{
 
 /**
  * creates the action with the grid size and the duration
+ * @deprecated
  * @param duration
  * @param gridSize
  * @return {cc.FadeOutBLTiles}
@@ -516,6 +521,7 @@ cc.FadeOutUpTiles = cc.FadeOutTRTiles.extend(/** @lends cc.FadeOutUpTiles# */{
 
 /**
  * creates the action with the grid size and the duration
+ * @deprecated
  * @param {Number} duration
  * @param {cc.Size} gridSize
  * @return {cc.FadeOutUpTiles}
@@ -540,6 +546,7 @@ cc.FadeOutDownTiles = cc.FadeOutUpTiles.extend(/** @lends cc.FadeOutDownTiles# *
 
 /**
  * creates the action with the grid size and the duration
+ * @deprecated
  * @param {Number} duration
  * @param {cc.Size} gridSize
  * @return {cc.FadeOutDownTiles}
@@ -655,6 +662,7 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend(/** @lends cc.TurnOffTiles# */{
 
 /**
  * creates the action with a random seed, the grid size and the duration
+ * @deprecated
  * @param {Number} duration
  * @param {cc.Size} gridSize
  * @param {Number|Null} [seed=0]
@@ -765,6 +773,7 @@ cc.WavesTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.WavesTiles3D# */{
 
 /**
  * creates the action with a number of waves, the waves amplitude, the grid size and the duration
+ * @deprecated
  * @param {Number} duration
  * @param {cc.Size} gridSize
  * @param {Number} waves
@@ -883,6 +892,7 @@ cc.JumpTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.JumpTiles3D# */{
 
 /**
  * creates the action with the number of jumps, the sin amplitude, the grid size and the duration
+ * @deprecated
  * @param {Number} duration
  * @param {cc.Size} gridSize
  * @param {Number} numberOfJumps
@@ -952,6 +962,7 @@ cc.SplitRows = cc.TiledGrid3DAction.extend(/** @lends cc.SplitRows# */{
 
 /**
  * creates the action with the number of rows to split and the duration
+ * @deprecated
  * @param {Number} duration
  * @param {Number} rows
  * @return {cc.SplitRows}
@@ -1021,6 +1032,7 @@ cc.SplitCols = cc.TiledGrid3DAction.extend(/** @lends cc.SplitCols# */{
 
 /**
  * creates the action with the number of columns to split and the duration
+ * @deprecated
  * @param {Number} duration
  * @param {Number} cols
  * @return {cc.SplitCols}

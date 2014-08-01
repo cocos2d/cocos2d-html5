@@ -97,6 +97,7 @@ cc.ProgressTo = cc.ActionInterval.extend(/** @lends cc.ProgressTo# */{
 });
 
 /** Creates and initializes with a duration and a percent
+ * @deprecated
  * @param {Number} duration duration in seconds
  * @param {Number} percent
  * @return {cc.ProgressTo}
@@ -179,6 +180,7 @@ cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
 });
 
 /** Creates and initializes the action with a duration, a "from" percentage and a "to" percentage
+ * @deprecated
  * @param {Number} duration duration in seconds
  * @param {Number} fromPercentage
  * @param {Number} toPercentage

@@ -52,6 +52,7 @@ cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
 
 /**
  * creates a scene
+ * @deprecated
  * @return {cc.Scene}
  * @example
  * // Example

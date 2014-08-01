@@ -1761,7 +1761,7 @@ _p = null;
 
 /**
  * allocates and initializes a UILayout.
- * @constructs
+ * @deprecated
  * @return {ccui.Layout}
  * @example
  * // example

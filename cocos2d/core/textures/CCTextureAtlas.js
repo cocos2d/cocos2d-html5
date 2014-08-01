@@ -631,6 +631,7 @@ cc.defineGetterSetter(_p, "quads", _p.getQuads, _p.setQuads);
 /**
  * <p>Creates a TextureAtlas with an filename and with an initial capacity for Quads. <br />
  * The TextureAtlas capacity can be increased in runtime. </p>
+ * @deprecated
  * @param {String|cc.Texture2D} fileName
  * @param {Number} capacity
  * @return {cc.TextureAtlas|Null}
@@ -646,6 +647,12 @@ cc.defineGetterSetter(_p, "quads", _p.getQuads, _p.setQuads);
 cc.TextureAtlas.create = function (fileName, capacity) {
     return new cc.TextureAtlas(fileName, capacity);
 };
+
+/**
+ * @deprecated
+ * @type {Function}
+ */
+cc.TextureAtlas.createWithTexture = cc.TextureAtlas.create;
 
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     cc.assert(typeof cc._tmp.WebGLTextureAtlas === "function", cc._LogInfos.MissingFile, "TexturesWebGL.js");

@@ -1066,6 +1066,7 @@ cc.DrawNode = cc._renderType == cc._RENDER_TYPE_WEBGL ? cc.DrawNodeWebGL : cc.Dr
 
 /**
  * Creates a DrawNode
+ * @deprecated
  * @return {cc.DrawNode}
  */
 cc.DrawNode.create = function () {

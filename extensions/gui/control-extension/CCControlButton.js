@@ -674,6 +674,13 @@ cc.defineGetterSetter(_p, "labelAnchor", _p.getLabelAnchorPoint, _p.setLabelAnch
 
 _p = null;
 
+/**
+ * @deprecated
+ * @param label
+ * @param backgroundSprite
+ * @param fontSize
+ * @returns {ControlButton}
+ */
 cc.ControlButton.create = function (label, backgroundSprite, fontSize) {
     return new cc.ControlButton(label, backgroundSprite, fontSize);
 };

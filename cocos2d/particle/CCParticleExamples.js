@@ -103,6 +103,7 @@ cc.ParticleFire = cc.ParticleSystem.extend(/** @lends cc.ParticleFire# */{
 
 /**
  * Create a fire particle system
+ * @deprecated
  * @return {cc.ParticleFire}
  *
  * @example
@@ -189,6 +190,7 @@ cc.ParticleFireworks = cc.ParticleSystem.extend(/** @lends cc.ParticleFireworks#
 
 /**
  * Create a fireworks particle system
+ * @deprecated
  * @return {cc.ParticleFireworks}
  *
  * @example
@@ -277,6 +279,7 @@ cc.ParticleSun = cc.ParticleSystem.extend(/** @lends cc.ParticleSun# */{
 
 /**
  * Create a sun particle system
+ * @deprecated
  * @return {cc.ParticleSun}
  *
  * @example
@@ -368,6 +371,7 @@ cc.ParticleGalaxy = cc.ParticleSystem.extend(/** @lends cc.ParticleGalaxy# */{
 });
 /**
  * Create a galaxy particle system
+ * @deprecated
  * @return {cc.ParticleGalaxy}
  *
  * @example
@@ -456,6 +460,7 @@ cc.ParticleFlower = cc.ParticleSystem.extend(/** @lends cc.ParticleFlower# */{
 
 /**
  * Create a flower particle system
+ * @deprecated
  * @return {cc.ParticleFlower}
  *
  * @example
@@ -548,6 +553,7 @@ cc.ParticleMeteor = cc.ParticleSystem.extend(/** @lends cc.ParticleMeteor# */{
 
 /**
  * Create a meteor particle system
+ * @deprecated
  * @return {cc.ParticleMeteor}
  *
  * @example
@@ -639,6 +645,7 @@ cc.ParticleSpiral = cc.ParticleSystem.extend(/** @lends cc.ParticleSpiral# */{
 
 /**
  * Create a spiral particle system
+ * @deprecated
  * @return {cc.ParticleSpiral}
  *
  * @example
@@ -729,6 +736,7 @@ cc.ParticleExplosion = cc.ParticleSystem.extend(/** @lends cc.ParticleExplosion#
 
 /**
  * Create an explosion particle system
+ * @deprecated
  * @return {cc.ParticleExplosion}
  *
  * @example
@@ -816,6 +824,7 @@ cc.ParticleSmoke = cc.ParticleSystem.extend(/** @lends cc.ParticleSmoke# */{
 
 /**
  * Create a smoke particle system
+ * @deprecated
  * @return {cc.ParticleSmoke}
  *
  * @example
@@ -907,6 +916,7 @@ cc.ParticleSnow = cc.ParticleSystem.extend(/** @lends cc.ParticleSnow# */{
 
 /**
  * Create a snow particle system
+ * @deprecated
  * @return {cc.ParticleSnow}
  *
  * @example
@@ -999,6 +1009,7 @@ cc.ParticleRain = cc.ParticleSystem.extend(/** @lends cc.ParticleRain# */{
 
 /**
  * Create a rain particle system
+ * @deprecated
  * @return {cc.ParticleRain}
  *
  * @example

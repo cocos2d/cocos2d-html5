@@ -106,6 +106,7 @@ cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
 /** creates the action of ActionEase
  * @param {cc.ActionInterval} action
  * @return {cc.ActionEase}
+ * @deprecated
  * @example
  * // example
  * var moveEase = cc.ActionEase.create(action);
@@ -185,6 +186,7 @@ cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
  * @param {cc.ActionInterval} action
  * @param {Number} rate
  * @return {cc.EaseRateAction}
+ * @deprecated
  * @example
  * // example
  * var moveEaseRateAction = cc.EaseRateAction.create(action, 3.0);
@@ -221,6 +223,7 @@ cc.EaseIn = cc.EaseRateAction.extend(/** @lends cc.EaseIn# */{
 });
 
 /** Creates the action with the inner action and the rate parameter
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @param {Number} rate
  * @return {cc.EaseIn}
@@ -272,6 +275,7 @@ cc.EaseOut = cc.EaseRateAction.extend(/** @lends cc.EaseOut# */{
 });
 
 /** Creates the action with the inner action and the rate parameter
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @param {Number} rate
  * @return {cc.EaseOut}
@@ -327,6 +331,7 @@ cc.EaseInOut = cc.EaseRateAction.extend(/** @lends cc.EaseInOut# */{
 });
 
 /** Creates the action with the inner action and the rate parameter
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @param {Number} rate
  * @return {cc.EaseInOut}
@@ -382,6 +387,7 @@ cc.EaseExponentialIn = cc.ActionEase.extend(/** @lends cc.EaseExponentialIn# */{
 });
 
 /** creates the action
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseExponentialIn}
  * @example
@@ -432,6 +438,7 @@ cc.EaseExponentialOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialOut# *
 });
 
 /** creates the action
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseExponentialOut}
  * @example
@@ -489,6 +496,7 @@ cc.EaseExponentialInOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialInOu
 });
 
 /** creates an EaseExponentialInOut action
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseExponentialInOut}
  * @example
@@ -547,6 +555,7 @@ cc.EaseSineIn = cc.ActionEase.extend(/** @lends cc.EaseSineIn# */{
 });
 
 /** creates an EaseSineIn action
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseSineIn}
  * @example
@@ -598,6 +607,7 @@ cc.EaseSineOut = cc.ActionEase.extend(/** @lends cc.EaseSineOut# */{
 });
 
 /** creates an EaseSineOut action
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseSineOut}
  * @example
@@ -649,6 +659,7 @@ cc.EaseSineInOut = cc.ActionEase.extend(/** @lends cc.EaseSineInOut# */{
 });
 
 /** creates the action
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseSineInOut}
  * @example
@@ -736,6 +747,7 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
 });
 
 /** Creates the action with the inner action and the period in radians (default is 0.3)
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @param {Number} [period=0.3]
  * @return {cc.EaseElastic}
@@ -784,6 +796,7 @@ cc.EaseElasticIn = cc.EaseElastic.extend(/** @lends cc.EaseElasticIn# */{
 });
 
 /** Creates the action with the inner action and the period in radians (default is 0.3)
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @param {Number} [period=0.3]
  * @return {cc.EaseElasticIn}
@@ -866,6 +879,7 @@ cc.EaseElasticOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticOut# */{
 });
 
 /** Creates the action with the inner action and the period in radians (default is 0.3)
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @param {Number} [period=0.3]
  * @return {cc.EaseElasticOut}
@@ -947,6 +961,7 @@ cc.EaseElasticInOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticInOut# */{
 });
 
 /** Creates the action with the inner action and the period in radians (default is 0.3)
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @param {Number} [period=0.3]
  * @return {cc.EaseElasticInOut}
@@ -1026,6 +1041,7 @@ cc.EaseBounce = cc.ActionEase.extend(/** @lends cc.EaseBounce# */{
 });
 
 /** creates an ease bounce action
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBounce}
  * @example
@@ -1066,6 +1082,7 @@ cc.EaseBounceIn = cc.EaseBounce.extend(/** @lends cc.EaseBounceIn# */{
 });
 
 /** creates the action
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBounceIn}
  * @example
@@ -1133,6 +1150,7 @@ cc.EaseBounceOut = cc.EaseBounce.extend(/** @lends cc.EaseBounceOut# */{
 });
 
 /** creates the action
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBounceOut}
  * @example
@@ -1191,6 +1209,7 @@ cc.EaseBounceInOut = cc.EaseBounce.extend(/** @lends cc.EaseBounceInOut# */{
 });
 
 /** creates the action
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBounceInOut}
  * @example
@@ -1253,6 +1272,7 @@ cc.EaseBackIn = cc.ActionEase.extend(/** @lends cc.EaseBackIn# */{
 
 
 /** creates the action
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBackIn}
  * @example
@@ -1308,6 +1328,7 @@ cc.EaseBackOut = cc.ActionEase.extend(/** @lends cc.EaseBackOut# */{
 });
 
 /** creates the action
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBackOut}
  * @example
@@ -1370,6 +1391,7 @@ cc.EaseBackInOut = cc.ActionEase.extend(/** @lends cc.EaseBackInOut# */{
 
 
 /** creates the action
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBackInOut}
  * @example
@@ -1444,6 +1466,7 @@ cc.EaseBezierAction = cc.ActionEase.extend(/** @lends cc.EaseBezierAction# */{
 
 /**
  * creates the action
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionIn}
  */
@@ -1491,6 +1514,7 @@ cc.EaseQuadraticActionIn = cc.ActionEase.extend(/** @lends cc.EaseQuadraticActio
 
 /**
  * creates the action
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionIn}
  */
@@ -1534,6 +1558,7 @@ cc.EaseQuadraticActionOut = cc.ActionEase.extend(/** @lends cc.EaseQuadraticActi
 
 /**
  * creates the action
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1583,6 +1608,7 @@ cc.EaseQuadraticActionInOut = cc.ActionEase.extend(/** @lends cc.EaseQuadraticAc
 
 /**
  * creates the action
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1624,6 +1650,7 @@ cc.EaseQuarticActionIn = cc.ActionEase.extend(/** @lends cc.EaseQuarticActionIn#
 
 /**
  * creates the action
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1666,6 +1693,7 @@ cc.EaseQuarticActionOut = cc.ActionEase.extend(/** @lends cc.EaseQuarticActionOu
 
 /**
  * creates the action
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1711,6 +1739,7 @@ cc.EaseQuarticActionInOut = cc.ActionEase.extend(/** @lends cc.EaseQuarticAction
 
 /**
  * creates the action
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1752,6 +1781,7 @@ cc.EaseQuinticActionIn = cc.ActionEase.extend(/** @lends cc.EaseQuinticActionIn#
 
 /**
  * creates the action
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1794,6 +1824,7 @@ cc.EaseQuinticActionOut = cc.ActionEase.extend(/** @lends cc.EaseQuinticActionOu
 
 /**
  * creates the action
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1839,6 +1870,7 @@ cc.EaseQuinticActionInOut = cc.ActionEase.extend(/** @lends cc.EaseQuinticAction
 
 /**
  * creates the action
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1880,6 +1912,7 @@ cc.EaseCircleActionIn = cc.ActionEase.extend(/** @lends cc.EaseCircleActionIn# *
 
 /**
  * creates the action
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1922,6 +1955,7 @@ cc.EaseCircleActionOut = cc.ActionEase.extend(/** @lends cc.EaseCircleActionOut#
 
 /**
  * creates the action
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1967,6 +2001,7 @@ cc.EaseCircleActionInOut = cc.ActionEase.extend(/** @lends cc.EaseCircleActionIn
 
 /**
  * creates the action
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -2008,6 +2043,7 @@ cc.EaseCubicActionIn = cc.ActionEase.extend(/** @lends cc.EaseCubicActionIn# */{
 
 /**
  * creates the action
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -2050,6 +2086,7 @@ cc.EaseCubicActionOut = cc.ActionEase.extend(/** @lends cc.EaseCubicActionOut# *
 
 /**
  * creates the action
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -2096,6 +2133,7 @@ cc.EaseCubicActionInOut = cc.ActionEase.extend(/** @lends cc.EaseCubicActionInOu
 
 /**
  * creates the action
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */

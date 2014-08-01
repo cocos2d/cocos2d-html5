@@ -463,6 +463,7 @@ _p.quadsToDraw;
 
 
 /** creates a cc.AtlasNode with an Atlas file the width and height of each item and the quantity of items to render
+ * @deprecated
  * @param {String} tile
  * @param {Number} tileWidth
  * @param {Number} tileHeight

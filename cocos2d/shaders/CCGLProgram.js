@@ -671,6 +671,7 @@ cc.GLProgram = cc.Class.extend({
 
 /**
  * Create a cc.GLProgram object
+ * @deprecated
  * @param {String} vShaderFileName
  * @param {String} fShaderFileName
  * @returns {cc.GLProgram}

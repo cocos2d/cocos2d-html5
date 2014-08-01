@@ -2358,7 +2358,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
 /**
  * allocates and initializes a node.
- * @constructs
+ * @deprecated
  * @return {cc.Node}
  * @example
  * // example

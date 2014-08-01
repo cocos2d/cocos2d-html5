@@ -125,6 +125,7 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
 
 /**
  * Creates an initializes the action with the property name (key), and the from and to parameters.
+ * @deprecated
  * @param {Number} duration
  * @param {String} key
  * @param {Number} from
@@ -132,10 +133,7 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
  * @return {cc.ActionTween}
  */
 cc.ActionTween.create = function (duration, key, from, to) {
-    var ret = new cc.ActionTween();
-    if (ret.initWithDuration(duration, key, from, to))
-        return ret;
-    return null;
+    return new cc.ActionTween(duration, key, from, to);
 };
 
 cc.action = cc.Action.create;

@@ -708,6 +708,7 @@ _p = null;
 
 /**
  * allocates and initializes a armature.
+ * @deprecated
  * @param {String} name
  * @param {ccs.Bone} parentBone
  * @return {ccs.Armature}

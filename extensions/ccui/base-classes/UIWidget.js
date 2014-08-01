@@ -1517,7 +1517,7 @@ _p = null;
 
 /**
  * allocates and initializes a UIWidget.
- * @constructs
+ * @deprecated
  * @return {ccui.Widget}
  * @example
  * // example

@@ -227,6 +227,7 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
  * @param {Number} angleX
  * @param {Number} deltaAngleX
  * @return {cc.OrbitCamera}
+ * @deprecated
  */
 cc.OrbitCamera.create = function (t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX) {
     return new cc.OrbitCamera(t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX);

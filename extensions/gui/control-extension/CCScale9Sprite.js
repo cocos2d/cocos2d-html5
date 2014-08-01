@@ -959,6 +959,7 @@ _p = null;
 /**
  * Creates a 9-slice sprite with a texture file, a delimitation zone and
  * with the specified cap insets.
+ * @deprecated
  * @param {String|cc.SpriteFrame} file file name of texture or a cc.Sprite object
  * @param {cc.Rect} rect the rect of the texture
  * @param {cc.Rect} capInsets the cap insets of cc.Scale9Sprite
@@ -968,10 +969,22 @@ cc.Scale9Sprite.create = function (file, rect, capInsets) {
     return new cc.Scale9Sprite(file, rect, capInsets);
 };
 
+/**
+ * @deprecated
+ * @param spriteFrame
+ * @param capInsets
+ * @returns {Scale9Sprite}
+ */
 cc.Scale9Sprite.createWithSpriteFrame = function (spriteFrame, capInsets) {
     return new cc.Scale9Sprite(spriteFrame, capInsets);
 };
 
+/**
+ * @deprecated
+ * @param spriteFrameName
+ * @param capInsets
+ * @returns {Scale9Sprite}
+ */
 cc.Scale9Sprite.createWithSpriteFrameName = function (spriteFrameName, capInsets) {
     return new cc.Scale9Sprite(spriteFrameName, capInsets);
 };

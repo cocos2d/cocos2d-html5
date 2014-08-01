@@ -287,6 +287,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
 });
 
 /**
+ * @deprecated
  * @param {Number} d duration in seconds
  * @return {cc.ActionInterval}
  * @example
@@ -445,6 +446,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
     }
 });
 /** helper constructor to create an array of sequenceable actions
+ * @deprecated
  * @param {Array|cc.FiniteTimeAction} tempArray
  * @return {cc.Sequence}
  * @example
@@ -632,6 +634,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
 });
 /**
  * Creates a Repeat action. Times is an unsigned integer between 1 and pow(2,30)
+ * @deprecated
  * @param {cc.FiniteTimeAction} action
  * @param {Number} times
  * @return {cc.Repeat}
@@ -750,6 +753,7 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
 });
 /**
  * Create a acton which repeat forever
+ * @deprecated
  * @param {cc.FiniteTimeAction} action
  * @return {cc.RepeatForever}
  * @example
@@ -878,6 +882,7 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
 });
 
 /**
+ * @deprecated
  * @param {Array|cc.FiniteTimeAction}tempArray
  * @return {cc.FiniteTimeAction}
  * @example
@@ -1013,6 +1018,7 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
 
 /**
  * Creates a RotateTo action with separate rotation angles
+ * @deprecated
  * @param {Number} duration duration in seconds
  * @param {Number} deltaAngleX deltaAngleX in degrees.
  * @param {Number} [deltaAngleY] deltaAngleY in degrees.
@@ -1108,6 +1114,7 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
 });
 
 /**
+ * @deprecated
  * @param {Number} duration duration in seconds
  * @param {Number} deltaAngleX deltaAngleX in degrees
  * @param {Number} [deltaAngleY] deltaAngleY in degrees
@@ -1237,6 +1244,7 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
 });
 
 /**
+ * @deprecated
  * @param {Number} duration duration in seconds
  * @param {cc.Point|Number} deltaPos
  * @param {Number} deltaY
@@ -1316,6 +1324,7 @@ cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
     }
 });
 /**
+ * @deprecated
  * @param {Number} duration duration in seconds
  * @param {cc.Point} position
  * @param {Number} y
@@ -1415,6 +1424,7 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
     }
 });
 /**
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {Number} sx
  * @param {Number} sy
@@ -1493,6 +1503,7 @@ cc.SkewBy = cc.SkewTo.extend(/** @lends cc.SkewBy# */{
     }
 });
 /**
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {Number} sx sx skew in degrees for X axis
  * @param {Number} sy sy skew in degrees for Y axis
@@ -1630,6 +1641,7 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
 });
 
 /**
+ * @deprecated
  * @param {Number} duration
  * @param {cc.Point|Number} position
  * @param {Number} [y]
@@ -1714,6 +1726,7 @@ cc.JumpTo = cc.JumpBy.extend(/** @lends cc.JumpTo# */{
 });
 
 /**
+ * @deprecated
  * @param {Number} duration
  * @param {cc.Point|Number} position
  * @param {Number} [y]
@@ -1868,6 +1881,7 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
 });
 
 /**
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {Array} c Array of points
  * @return {cc.BezierBy}
@@ -1941,6 +1955,7 @@ cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
     }
 });
 /**
+ * @deprecated
  * @param {Number} t
  * @param {Array} c array of points
  * @return {cc.BezierTo}
@@ -2035,6 +2050,7 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
     }
 });
 /**
+ * @deprecated
  * @param {Number} duration
  * @param {Number} sx  scale parameter in X
  * @param {Number} [sy] scale parameter in Y, if Null equal to sx
@@ -2088,6 +2104,7 @@ cc.ScaleBy = cc.ScaleTo.extend(/** @lends cc.ScaleBy# */{
     }
 });
 /**
+ * @deprecated
  * @param {Number} duration duration in seconds
  * @param {Number} sx sx  scale parameter in X
  * @param {Number|Null} [sy=] sy scale parameter in Y, if Null equal to sx
@@ -2180,6 +2197,7 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
     }
 });
 /**
+ * @deprecated
  * @param {Number} duration  duration in seconds
  * @param blinks blinks in times
  * @return {cc.Blink}
@@ -2258,6 +2276,7 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
 });
 
 /**
+ * @deprecated
  * @param {Number} duration
  * @param {Number} opacity 0-255, 0 is transparent
  * @return {cc.FadeTo}
@@ -2319,6 +2338,7 @@ cc.FadeIn = cc.FadeTo.extend(/** @lends cc.FadeIn# */{
 });
 
 /**
+ * @deprecated
  * @param {Number} duration duration in seconds
  * @return {cc.FadeIn}
  * @example
@@ -2371,6 +2391,7 @@ cc.FadeOut = cc.FadeTo.extend(/** @lends cc.FadeOut# */{
 });
 
 /**
+ * @deprecated
  * @param {Number} d  duration in seconds
  * @return {cc.FadeOut}
  * @example
@@ -2458,6 +2479,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
 });
 
 /**
+ * @deprecated
  * @param {Number} duration
  * @param {Number} red 0-255
  * @param {Number} green  0-255
@@ -2564,6 +2586,7 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
 });
 
 /**
+ * @deprecated
  * @param {Number} duration  duration in seconds
  * @param {Number} deltaRed
  * @param {Number} deltaGreen
@@ -2611,6 +2634,7 @@ cc.DelayTime = cc.ActionInterval.extend(/** @lends cc.DelayTime# */{
 });
 
 /**
+ * @deprecated
  * @param {Number} d duration in seconds
  * @return {cc.DelayTime}
  * @example
@@ -2710,6 +2734,7 @@ cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
 });
 
 /**
+ * @deprecated
  * @param {cc.FiniteTimeAction} action
  * @return {cc.ReverseTime}
  * @example
@@ -2887,6 +2912,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
 
 /**
  * create the animate with animation
+ * @deprecated
  * @param {cc.Animation} animation
  * @return {cc.Animate}
  * @example
@@ -2981,6 +3007,7 @@ cc.TargetedAction = cc.ActionInterval.extend(/** @lends cc.TargetedAction# */{
 
 /**
  * Create an action with the specified action and forced target
+ * @deprecated
  * @param {cc.Node} target
  * @param {cc.FiniteTimeAction} action
  * @return {cc.TargetedAction}
