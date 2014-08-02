@@ -58,14 +58,18 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     /**
      * allocates and initializes a UILabel.
      * Constructor of ccui.Text
+     * @constructor
      * @example
      * // example
      * var uiLabel = new ccui.Text();
      */
-    ctor: function () {
+    ctor: function (textContent, fontName, fontSize) {
         this._type = ccui.Text.Type.SYSTEM;
         this._textAreaSize = cc.size(0, 0);
         ccui.Widget.prototype.ctor.call(this);
+
+        fontSize && this.init(textContent, fontName, fontSize);
+
     },
 
     init: function (textContent, fontName, fontSize) {
@@ -425,26 +429,14 @@ _p = null;
 
 /**
  * allocates and initializes a UILabel.
- * @constructs
+ * @deprecated
  * @return {ccui.Text}
  * @example
  * // example
  * var uiLabel = ccui.Text.create();
  */
 ccui.Label = ccui.Text.create = function (textContent, fontName, fontSize) {
-    var widget = new ccui.Text();
-    if(arguments.length > 0){
-        if (widget && widget.init(textContent, fontName, fontSize))
-        {
-            return widget;
-        }
-    }else{
-        if (widget && widget.init())
-        {
-            return widget;
-        }
-    }
-    return null;
+    return ccui.Text(textContent, fontName, fontSize);
 };
 
 ccui.Text.RENDERER_ZORDER = -1;

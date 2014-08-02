@@ -81,7 +81,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this._textureAtlasDic = null;
         this._blendFunc = null;
 
-        parentBone && ccs.Armature.prototype.init.call(this, name, parentBone);
+        name && ccs.Armature.prototype.init.call(this, name, parentBone);
     },
 
     /**
@@ -708,6 +708,7 @@ _p = null;
 
 /**
  * allocates and initializes a armature.
+ * @deprecated
  * @param {String} name
  * @param {ccs.Bone} parentBone
  * @return {ccs.Armature}

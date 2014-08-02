@@ -65,13 +65,16 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     /**
      * allocates and initializes a UICheckBox.
      * Constructor of ccui.CheckBox
+     * @constructor
      * @example
      * // example
      * var uiCheckBox = new ccui.CheckBox();
      */
-    ctor: function () {
+    ctor: function (backGround, backGroundSeleted,cross,backGroundDisabled,frontCrossDisabled,texType) {
         ccui.Widget.prototype.ctor.call(this);
         this.setTouchEnabled(true);
+
+        texType && this.init(backGround, backGroundSeleted,cross,backGroundDisabled,frontCrossDisabled,texType);
     },
     init: function (backGround, backGroundSeleted, cross, backGroundDisabled, frontCrossDisabled, texType) {
         if (ccui.Widget.prototype.init.call(this)) {
@@ -602,6 +605,7 @@ _p = null;
 
 /**
  * allocates and initializes a UICheckBox.
+ * @deprecated
  * @param {string} [backGround]     backGround texture.
  * @param {string} [backGroundSeleted]  backGround selected state texture.
  * @param {string} [cross]  cross texture.
@@ -614,12 +618,7 @@ _p = null;
  * var uiCheckBox = ccui.CheckBox.create();
  */
 ccui.CheckBox.create = function (backGround, backGroundSeleted, cross, backGroundDisabled, frontCrossDisabled, texType) {
-    var widget = new ccui.CheckBox();
-    if(backGround === undefined)
-        widget.init();
-    else
-        widget.init(backGround, backGroundSeleted,cross,backGroundDisabled,frontCrossDisabled,texType);
-    return widget;
+    return ccui.CheckBox(backGround, backGroundSeleted,cross,backGroundDisabled,frontCrossDisabled,texType);
 };
 
 // Constants
