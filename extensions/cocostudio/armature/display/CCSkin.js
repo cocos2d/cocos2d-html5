@@ -134,10 +134,20 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
             var dy = x1 * sr + y2 * cr2 + y;
 
             var locVertexZ = this._vertexZ;
-            this.SET_VERTEX3F(locQuad.bl.vertices,this.RENDER_IN_SUBPIXEL(ax), this.RENDER_IN_SUBPIXEL(ay),locVertexZ);
-            this.SET_VERTEX3F(locQuad.br.vertices,this.RENDER_IN_SUBPIXEL(bx), this.RENDER_IN_SUBPIXEL(by),locVertexZ);
-            this.SET_VERTEX3F(locQuad.tl.vertices,this.RENDER_IN_SUBPIXEL(dx), this.RENDER_IN_SUBPIXEL(dy),locVertexZ);
-            this.SET_VERTEX3F(locQuad.tr.vertices,this.RENDER_IN_SUBPIXEL(cx), this.RENDER_IN_SUBPIXEL(cy),locVertexZ);
+            if(!cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
+                ax = 0 | ax;
+                ay = 0 | ay;
+                bx = 0 | bx;
+                by = 0 | by;
+                cx = 0 | cx;
+                cy = 0 | cy;
+                dx = 0 | dx;
+                dy = 0 | dy;
+            }
+            this.SET_VERTEX3F(locQuad.bl.vertices,ax, ay,locVertexZ);
+            this.SET_VERTEX3F(locQuad.br.vertices,bx, by,locVertexZ);
+            this.SET_VERTEX3F(locQuad.tl.vertices,dx, dy,locVertexZ);
+            this.SET_VERTEX3F(locQuad.tr.vertices,cx, cy,locVertexZ);
         }
 
         // MARMALADE CHANGE: ADDED CHECK FOR nullptr, TO PERMIT SPRITES WITH NO BATCH NODE / TEXTURE ATLAS
@@ -153,7 +163,10 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     },
 
     RENDER_IN_SUBPIXEL: function(__ARGS__){
-        return Math.ceil(__ARGS__);
+        if(!cc.SPRITEBATCHNODE_RENDER_SUBPIXEL)
+            return Math.ceil(__ARGS__);
+        else
+            return __ARGS__;
     },
 
     getNodeToWorldTransform: function(){

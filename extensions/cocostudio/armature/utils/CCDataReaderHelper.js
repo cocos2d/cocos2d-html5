@@ -639,7 +639,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             }
         }
 
-        if (dataInfo.cocoStudioVersion <= ccs.VERSION_CHANGE_ROTATION_RANGE) {
+        if (dataInfo.cocoStudioVersion < ccs.VERSION_CHANGE_ROTATION_RANGE) {
             //! Change rotation range from (-180 -- 180) to (-infinity -- infinity)
             var frames = movementBoneData.frameList;
             var pi = Math.PI;

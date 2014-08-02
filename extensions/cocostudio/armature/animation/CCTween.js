@@ -47,18 +47,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
 
     ctor:function () {
         ccs.ProcessBase.prototype.ctor.call(this);
-        this._movementBoneData = null;
-        this._tweenData = null;
-        this._from = null;
-        this._to = null;
-        this._between = null;
-        this._bone = null;
-
         this._frameTweenEasing = ccs.TweenType.linear;
-        this._fromIndex = 0;
-        this._toIndex = 0;
-        this._animation = null;
-        this._passLastFrame = false;
     },
 
     /**
@@ -295,7 +284,6 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         var locBetween = this._between;
         if (!locFrom.isTween)
             percent = 0;
-
         node.x = locFrom.x + percent * locBetween.x;
         node.y = locFrom.y + percent * locBetween.y;
         node.scaleX = locFrom.scaleX + percent * locBetween.scaleX;
