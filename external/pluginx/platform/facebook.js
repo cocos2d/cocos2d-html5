@@ -78,7 +78,7 @@ plugin.extend('facebook', {
             if (response && response.status === 'connected') {
                 //login - save user info
                 self.userInfo = response.authResponse;
-                typeof callback === 'function' && callback(0);
+                typeof callback === 'function' && callback(0, 'logged');
             }else{
                 typeof callback === 'function' && callback(1);
             }
