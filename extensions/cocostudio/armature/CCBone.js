@@ -162,19 +162,21 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
             this._boneTransformDirty = this._armatureParentBone.isTransformDirty();
 
         if (this._boneTransformDirty){
+            var locTweenData = this._tweenData;
             if (this._dataVersion >= ccs.CONST_VERSION_COMBINED){
-                ccs.TransformHelp.nodeConcat(this._tweenData, this._boneData);
-                this._tweenData.scaleX -= 1;
-                this._tweenData.scaleY -= 1;
+                ccs.TransformHelp.nodeConcat(locTweenData, this._boneData);
+                locTweenData.scaleX -= 1;
+                locTweenData.scaleY -= 1;
             }
 
-            this._worldInfo.copy(this._tweenData);
-            this._worldInfo.x = this._tweenData.x + this._position.x;
-            this._worldInfo.y = this._tweenData.y + this._position.y;
-            this._worldInfo.scaleX = this._tweenData.scaleX * this._scaleX;
-            this._worldInfo.scaleY = this._tweenData.scaleY * this._scaleY;
-            this._worldInfo.skewX = this._tweenData.skewX + this._skewX + this._rotationX;
-            this._worldInfo.skewY = this._tweenData.skewY + this._skewY - this._rotationY;
+            var locWorldInfo = this._worldInfo;
+            locWorldInfo.copy(locTweenData);
+            locWorldInfo.x = locTweenData.x + this._position.x;
+            locWorldInfo.y = locTweenData.y + this._position.y;
+            locWorldInfo.scaleX = locTweenData.scaleX * this._scaleX;
+            locWorldInfo.scaleY = locTweenData.scaleY * this._scaleY;
+            locWorldInfo.skewX = locTweenData.skewX + this._skewX + this._rotationX;
+            locWorldInfo.skewY = locTweenData.skewY + this._skewY - this._rotationY;
 
             if(this._parentBone)
                 this.applyParentTransform(this._parentBone);
@@ -183,7 +185,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
                     this.applyParentTransform(this._armatureParentBone);
             }
 
-            ccs.TransformHelp.nodeToMatrix(this._worldInfo, this._worldTransform);
+            ccs.TransformHelp.nodeToMatrix(locWorldInfo, this._worldTransform);
             if (this._armatureParentBone)
                 this._worldTransform = cc.affineTransformConcat(this._worldTransform, this._armature.getNodeToParentTransform());            //TODO TransformConcat
         }

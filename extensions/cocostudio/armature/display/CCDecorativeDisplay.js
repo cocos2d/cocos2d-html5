@@ -92,11 +92,8 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
     },
 
     release:function () {
-        CC_SAFE_RELEASE(this._display);
         this._display = null;
-        CC_SAFE_RELEASE(this._displayData);
         this._displayData = null;
-        CC_SAFE_RELEASE(this._colliderDetector);
         this._colliderDetector = null;
     }
 });
@@ -110,8 +107,7 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
  */
 ccs.DecorativeDisplay.create = function () {
     var decorativeDisplay = new ccs.DecorativeDisplay();
-    if (decorativeDisplay && decorativeDisplay.init()) {
+    if (decorativeDisplay && decorativeDisplay.init())
         return decorativeDisplay;
-    }
     return null;
 };

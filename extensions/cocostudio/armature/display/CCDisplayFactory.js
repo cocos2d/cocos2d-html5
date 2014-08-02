@@ -88,22 +88,17 @@ ccs.displayFactory = {
                 if (detector) {
                     var node = decoDisplay.getDisplay();
                     var displayTransform = node.nodeToParentTransform();
-                    var anchorPoint =  node.getAnchorPointInPoints();
-//                    anchorPoint = cc.pointApplyAffineTransform(anchorPoint, helpTransform);
-                    anchorPoint = cc.pointApplyAffineTransform(anchorPoint, displayTransform);
-                    displayTransform.x = anchorPoint.x;
-                    displayTransform.y = anchorPoint.y;
-
-//                    var helpTransform = this._helpTransform;
-//                    helpTransform.a = displayTransform.a;
-//                    helpTransform.b = displayTransform.b;
-//                    helpTransform.c = displayTransform.c;
-//                    helpTransform.d = displayTransform.d;
-//                    helpTransform.tx = displayTransform.tx;
-//                    helpTransform.ty = displayTransform.ty;
-//                    helpTransform.tx = anchorPoint.x;
-//                    helpTransform.ty = anchorPoint.y;
-                    var t = cc.affineTransformConcat(bone.getArmature().nodeToParentTransform(), displayTransform);
+                    var helpTransform = this._helpTransform;
+                    helpTransform.a = displayTransform.a;
+                    helpTransform.b = displayTransform.b;
+                    helpTransform.c = displayTransform.c;
+                    helpTransform.d = displayTransform.d;
+                    helpTransform.tx = displayTransform.tx;
+                    helpTransform.ty = displayTransform.ty;
+                    var anchorPoint = cc.pointApplyAffineTransform(node.getAnchorPointInPoints(), helpTransform);
+                    helpTransform.tx = anchorPoint.x;
+                    helpTransform.ty = anchorPoint.y;
+                    var t = cc.affineTransformConcat(helpTransform, bone.getArmature().nodeToParentTransform());
                     detector.updateTransform(t);
                 }
             }
@@ -133,9 +128,8 @@ ccs.displayFactory = {
 
         decoDisplay.setDisplay(skin);
 
-        if(skin == null){
+        if(skin == null)
             return;
-        }
 
         skin.setBone(bone);
         this.initSpriteDisplay(bone, decoDisplay, displayData.displayName, skin);
@@ -198,7 +192,6 @@ ccs.displayFactory = {
         var adp = new ccs.ParticleDisplayData();
         adp.copy(displayData);
         decoDisplay.setDisplayData(adp);
-
         this.createParticleDisplay(bone, decoDisplay);
     },
 
