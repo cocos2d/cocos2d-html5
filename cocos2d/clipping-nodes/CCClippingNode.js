@@ -514,6 +514,7 @@ cc.ClippingNode._getSharedCache = function () {
 /**
  * Creates and initializes a clipping node with an other node as its stencil.                               <br/>
  * The stencil node will be retained.
+ * @deprecated
  * @param {cc.Node} [stencil=null]
  * @return {cc.ClippingNode}
  */

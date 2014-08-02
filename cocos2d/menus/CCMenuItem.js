@@ -183,6 +183,7 @@ cc.defineGetterSetter(_p, "enabled", _p.isEnabled, _p.setEnabled);
 /**
  * creates an empty menu item with target and callback<br/>
  * Not recommended to use the base class, should use more defined menu item classes
+ * @deprecated
  * @param {function|String} callback callback
  * @param {cc.Node} target
  * @return {cc.MenuItem}
@@ -410,6 +411,7 @@ cc.defineGetterSetter(_p, "label", _p.getLabel, _p.setLabel);
 
 
 /**
+ * @deprecated
  * @param {cc.Node} label
  * @param {function|String|Null} [selector=]
  * @param {cc.Node|Null} [target=]
@@ -469,6 +471,7 @@ cc.MenuItemAtlasFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemAtlasFont# 
 
 /**
  * create menu item from string with font
+ * @deprecated
  * @param {String} value the text to display
  * @param {String} charMapFile the character map file
  * @param {Number} itemWidth
@@ -627,6 +630,7 @@ cc.MenuItemFont.fontName = function () {
 
 /**
  * create a menu item from string
+ * @deprecated
  * @param {String} value the text to display
  * @param {String|function|Null} callback the callback to run, either in function name or pass in the actual function
  * @param {cc.Node|Null} target the target to run callback
@@ -961,6 +965,7 @@ cc.defineGetterSetter(_p, "disabledImage", _p.getDisabledImage, _p.setDisabledIm
 
 /**
  * create a menu item from sprite
+ * @deprecated
  * @param {Image} normalSprite normal state image
  * @param {Image|Null} selectedSprite selected state image
  * @param {Image|cc.Node|Null} three disabled state image OR target node
@@ -1087,6 +1092,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
 
 /**
  * creates a new menu item image
+ * @deprecated
  * @param {String} normalImage file name for normal state
  * @param {String} selectedImage image for selected state
  * @param {String|cc.Node} three Disabled image OR callback function
@@ -1345,6 +1351,7 @@ cc.defineGetterSetter(_p, "selectedIndex", _p.getSelectedIndex, _p.setSelectedIn
 /**
  * create a simple container class that "toggles" it's inner items<br/>
  * The inner items can be any MenuItem
+ * @deprecated
  * @return {cc.MenuItemToggle}
  * @example
  * // Example

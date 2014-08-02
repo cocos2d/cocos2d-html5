@@ -1169,6 +1169,7 @@ cc.LabelTTF._fontStyleRE = /^(\d+)px\s+['"]?([\w\s\d]+)['"]?$/;
 
 /**
  * creates a cc.LabelTTF from a font name, alignment, dimension and font size
+ * @deprecated
  * @param {String} text
  * @param {String|cc.FontDefinition} [fontName="Arial"]
  * @param {Number} [fontSize=16]
@@ -1190,6 +1191,11 @@ cc.LabelTTF.create = function (text, fontName, fontSize, dimensions, hAlignment,
     return new cc.LabelTTF(text, fontName, fontSize, dimensions, hAlignment, vAlignment);
 };
 
+/**
+ * @deprecated
+ * @type {Function}
+ */
+cc.LabelTTF.createWithFontDefinition = cc.LabelTTF.create;
 
 if (cc.USE_LA88_LABELS)
     cc.LabelTTF._SHADER_PROGRAM = cc.SHADER_POSITION_TEXTURECOLOR;

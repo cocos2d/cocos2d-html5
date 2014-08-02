@@ -390,6 +390,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
  *    Create a cc.SpriteFrame with a texture filename, rect, rotated, offset and originalSize in pixels.<br/>
  *    The originalSize is the size in pixels of the frame before being trimmed.
  * </p>
+ * @deprecated
  * @param {String|cc.Texture2D} filename
  * @param {cc.Rect} rect if parameters' length equal 2, rect in points, else rect in pixels
  * @param {Boolean} rotated
@@ -411,6 +412,12 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
 cc.SpriteFrame.create = function (filename, rect, rotated, offset, originalSize) {
     return new cc.SpriteFrame(filename,rect,rotated,offset,originalSize);
 };
+
+/**
+ * @deprecated
+ * @type {Function}
+ */
+cc.SpriteFrame.createWithTexture = cc.SpriteFrame.create;
 
 cc.SpriteFrame._frameWithTextureForCanvas = function (texture, rect, rotated, offset, originalSize) {
     var spriteFrame = new cc.SpriteFrame();

@@ -1693,7 +1693,7 @@ _p = null;
 
 /**
  * allocates and initializes a UIScrollView.
- * @constructs
+ * @deprecated
  * @return {ccui.ScrollView}
  * @example
  * // example

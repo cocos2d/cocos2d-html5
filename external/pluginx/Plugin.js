@@ -1,152 +1,111 @@
-(function(w){
+(function(){
 
     if(cc === undefined){
         return;
     }
 
     var config = cc.game.config.plugin || {};
-    var SDK = {
-        user: null,
-        share: null,
-        social: null
-    };
 
-    var Plugin = {
-        getSDK: function(){
-            return SDK;
+    //Native plugin usage
+    var PluginManager = function(){};
+
+    PluginManager.prototype = {
+        constructor: PluginManager,
+
+        /**
+         * @returns {PluginManager}
+         */
+        getInstance: function(){
+            return this;
         },
-        isSupportFunction: function(name){
-            if(typeof this[name] === 'function'){
-                return true;
-            }else{
-                return false;
-            }
-        },
-        getUserPlugin: function(){
-            return {
-                callStringFuncWithParam: function(){
-                    return this.callFuncWithParam.apply(this, arguments);
-                },
-                callFuncWithParam: function(name, opt){
-                    if(config['common'] && config['common']['user'] && pluginList[config['common']['user']]){
-                        var _plugin = pluginList[config['common']['user']];
-                        if(typeof _plugin.user[name] == 'function'){
-                            return _plugin.user[name](opt);
-                        }else if(typeof _plugin[name] == 'function'){
-                            return _plugin[name](opt);
-                        }
-                    }
-                }
-            };
-        },
-        getSharePlugin: function(){
-            return {
-                callStringFuncWithParam: function(){
-                    return this.callFuncWithParam.apply(this, arguments);
-                },
-                callFuncWithParam: function(name, opt){
-                    if(config['common'] && config['common']['share'] && pluginList[config['common']['share']]){
-                        var _plugin = pluginList[config['common']['share']];
-                        if(typeof _plugin.share[name] == 'function'){
-                            return _plugin.share[name](opt);
-                        }else if(typeof _plugin[name] == 'function'){
-                            return _plugin[name](opt);
-                        }
-                    }
-                }
-            };
-        }
-    };
 
-    var pluginList = {};
-
-    Plugin.extend = function(name, method){
-        var use = false;
-        for(var p in config['common']){
-            if(config['common'][p] == name){
-                for(var o in method[p]){
-                    Plugin[o] = method[p][o];
-                }
-                use = true;
-                SDK[p] = name;
-            }
-        }
-        if(use){
-            method.init(config[name]);
-        }
-        pluginList[name] = method;
-    };
-
-    var pluginManager = {
+        /**
+         * @param {String} pluginName
+         */
         loadPlugin: function(pluginName){
-            if(!pluginName){
-                cc.log("PliginManager - PluginName error");
-                return null;
-            }
-            var info = pluginName.match(/[A-Z][a-z]+/g);
 
-            if(info.length !== 2){
-                cc.log("PliginManager - PluginName error");
-                return null;
-            }
+        },
 
-            var pluginObj = {
-                setDebugMode: function(){},
-                startSession: function(){},
-                setCaptureUncaughtException: function(){},
-                callFuncWithParam: function(funName){
-                    if(!pluginList[pluginN]){
-                        return;
-                    }
-                    var _fun = pluginList[pluginN]['common'][funName];
-                    if(_fun){
-                        var _arg = Array.prototype.slice.call(arguments, 1);
-                        return _fun.apply(_fun, _arg);
-                    }
-                    return;
-                },
-                getPluginName: function(){
-                    return pluginN;
-                },
-                getPluginVersion: function(){
-                    return "1.0";
-                },
-                callStringFuncWithParam: function(){
-                    return pluginObj.callFuncWithParam.apply(pluginObj, arguments);
-                }
-            };
-            var moduleN = info[0].toLowerCase();
-            var pluginN = info[1].toLowerCase();
-            if(!pluginList[pluginN]){
-                cc.log("Plugin does not exist");
-                return pluginObj;
-            }
-            pluginList[pluginN].init();
-            for(var p in pluginList[pluginN][moduleN]){
-                pluginObj[p] = pluginList[pluginN][moduleN][p];
-            }
-            return pluginObj;
+        /**
+         *
+         * @param pluginName
+         */
+        unloadPlugin: function(pluginName){
 
         }
     };
 
-    w['plugin'] = {
-        extend: Plugin.extend,
-        agentManager: Plugin,
-        AgentManager: {
-            getInstance: function(){
-                return plugin.agentManager;
+    var PluginAssembly = function(){};
+
+    PluginAssembly.prototype = {
+        constructor: PluginAssembly,
+
+        /**
+         * @param {Boolean} debug
+         */
+        setDebugMode: function(debug){},
+
+        /**
+         * @param {String} appKey
+         */
+        startSession: function(appKey){},
+
+        /**
+         * @param {Boolean} Capture
+         */
+        setCaptureUncaughtException: function(Capture){},
+
+        /**
+         * @param {String} funName
+         * @param {All} Params
+         */
+        callFuncWithParam: function(funName){
+            if(typeof this[funName] === 'function'){
+                return this[funName].apply(this, Array.prototype.splice.call(arguments, 1));
+            }else{
+                cc.log("function is not define");
             }
         },
-        PluginManager: {
-            getInstance: function(){
-                return pluginManager;
-            }
+
+        /**
+         * @param {String} funName
+         * @param {All} Params
+         */
+        callStringFuncWithParam: function(funName){
+            this.callFuncWithParam.apply(arguments);
+        },
+
+        /**
+         * @returns {String}
+         */
+        getPluginName: function(){
+            return this._name;
+        },
+
+        /**
+         * @returns {String}
+         */
+        getPluginVersion: function(){
+            return this._version;
         }
     };
 
+    PluginAssembly.extend = function(name, porp){
+        var p, prototype = {};
+        for(p in PluginAssembly.prototype){
+            prototype[p] = PluginAssembly.prototype[p];
+        }
+        for(p in porp){
+            prototype[p] = porp[p];
+        }
+        var tmp = eval("(function " + name + "Plugin(){})");
+        prototype.constructor = tmp;
+        tmp.prototype = prototype;
+        return tmp;
+    };
 
-    plugin.PluginParam = function(type, value){
+    //Param
+    var Param = function(type, value){
         var paramType = plugin.PluginParam.ParamType,tmpValue;
         switch(type){
             case paramType.TypeInt:
@@ -170,7 +129,7 @@
         return tmpValue
     };
 
-    plugin.PluginParam.ParamType = {
+    Param.ParamType = {
         TypeInt:1,
         TypeFloat:2,
         TypeBool:3,
@@ -178,7 +137,7 @@
         TypeStringMap:5
     };
 
-    plugin.PluginParam.AdsResultCode = {
+    Param.AdsResultCode = {
         AdsReceived:0,
         FullScreenViewShown:1,
         FullScreenViewDismissed:2,
@@ -188,18 +147,37 @@
         UnknownError:6
     };
 
-    plugin.PluginParam.PayResultCode = {
+    Param.PayResultCode = {
         PaySuccess:0,
         PayFail:1,
         PayCancel:2,
         PayTimeOut:3
     };
 
-    plugin.PluginParam.ShareResultCode = {
+    Param.ShareResultCode = {
         ShareSuccess:0,
         ShareFail:1,
         ShareCancel:2,
         ShareTimeOut:3
     };
 
-})(window);
+    var PluginList = {};
+
+    var Plugin = {
+
+        extend: function(name, extend){
+            PluginList[name] = new (PluginAssembly.extend(name, extend));
+            typeof PluginList[name].ctor === "function" && PluginList[name].ctor(config[name]);
+        },
+
+        PluginList: PluginList,
+
+        PluginParam: Param,
+
+        PluginManager: new PluginManager()
+
+    };
+
+    window.plugin = Plugin;
+
+})();

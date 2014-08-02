@@ -222,6 +222,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
 });
 
 /**
+ * @deprecated
  * @return {cc.ParallaxNode}
  * @example
  * //example

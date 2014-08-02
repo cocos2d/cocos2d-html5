@@ -85,6 +85,7 @@ cc.Show = cc.ActionInstant.extend(/** @lends cc.Show# */{
     }
 });
 /**
+ * @deprecated
  * @return {cc.Show}
  * @example
  * // example
@@ -119,6 +120,7 @@ cc.Hide = cc.ActionInstant.extend(/** @lends cc.Hide# */{
     }
 });
 /**
+ * @deprecated
  * @return {cc.Hide}
  * @example
  * // example
@@ -154,6 +156,7 @@ cc.ToggleVisibility = cc.ActionInstant.extend(/** @lends cc.ToggleVisibility# */
 });
 
 /**
+ * @deprecated
  * @return {cc.ToggleVisibility}
  * @example
  * // example
@@ -203,6 +206,7 @@ cc.RemoveSelf = cc.ActionInstant.extend({
 /**
  * Create a RemoveSelf object with a flag indicate whether the target should be cleaned up while removing.
  *
+ * @deprecated
  * @param {Boolean} [isNeedCleanUp=true]
  * @return {cc.RemoveSelf}
  *
@@ -270,6 +274,7 @@ cc.FlipX = cc.ActionInstant.extend(/** @lends cc.FlipX# */{
 /**
  * Create a FlipX action to flip or unflip the target
  *
+ * @deprecated
  * @param {Boolean} flip Indicate whether the target should be flipped or not
  * @return {cc.FlipX}
  * @example
@@ -334,6 +339,7 @@ cc.FlipY = cc.ActionInstant.extend(/** @lends cc.FlipY# */{
 /**
  * Create a FlipY action to flip or unflip the target
  *
+ * @deprecated
  * @param {Boolean} flip
  * @return {cc.FlipY}
  * @example
@@ -401,6 +407,7 @@ cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
 });
 /**
  * Creates a Place action with a position
+ * @deprecated
  * @param {cc.Point|Number} pos
  * @param {Number} [y]
  * @return {cc.Place}
@@ -515,6 +522,7 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
 });
 /**
  * Creates the action with the callback
+ * @deprecated
  * @param {function} selector
  * @param {object|null} [selectorTarget]
  * @param {*|null} [data] data for function, it accepts all data types.
