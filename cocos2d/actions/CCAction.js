@@ -182,6 +182,7 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
 /** Allocates and initializes the action
  * @returns {cc.Action}
  * @example
+ * @deprecated
  * // example
  * var action = cc.Action.create();
  */
@@ -365,6 +366,7 @@ cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
  * @param {cc.ActionInterval} action
  * @param {Number} speed
  * @return {cc.Speed}
+ * @deprecated
  */
 cc.Speed.create = function (action, speed) {
     return new cc.Speed(action, speed);
@@ -557,6 +559,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
  * @param {cc.Node} followedNode
  * @param {cc.Rect} rect
  * @return {cc.Follow|Null} returns the cc.Follow object on success
+ * @deprecated
  * @example
  * // example
  * // creates the action with a set boundary

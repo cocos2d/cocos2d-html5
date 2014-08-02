@@ -894,6 +894,7 @@ cc.defineGetterSetter(_p, "tileHeight", _p._getTileHeight, _p._setTileHeight);
 
 /**
  * Creates a TMX Format with a tmx file or content string
+ * @deprecated
  * @param {String} tmxFile fileName or content string
  * @param {String} resourcePath  If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
  * @return {cc.TMXMapInfo}

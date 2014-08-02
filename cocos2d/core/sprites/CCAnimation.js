@@ -134,6 +134,7 @@ cc.AnimationFrame = cc.Class.extend(/** @lends cc.AnimationFrame# */{
 
 /**
  * Creates an animation frame.
+ * @deprecated
  * @param {cc.SpriteFrame} spriteFrame
  * @param {Number} delayUnits
  * @param {object} userInfo
@@ -428,6 +429,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
 
 /**
  * Creates an animation.
+ * @deprecated
  * @param {Array} frames
  * @param {Number} delay
  * @param {Number} [loops=1]
@@ -458,3 +460,9 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
 cc.Animation.create = function (frames, delay, loops) {
     return new cc.Animation(frames, delay, loops);
 };
+
+/**
+ * @deprecated
+ * @type {Function}
+ */
+cc.Animation.createWithAnimationFrames = cc.Animation.create;

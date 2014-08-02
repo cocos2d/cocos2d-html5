@@ -51,6 +51,16 @@ cc.ControlHuePicker = cc.Control.extend(/** @lends cc.ControlHuePicker# */{
     _startPos:null,
     _className:"ControlHuePicker",
 
+    /**
+     * @constructor
+     * @param target
+     * @param pos
+     */
+    ctor:function(target, pos) {
+        cc.Control.prototype.ctor.call(this);
+        pos && this.initWithTargetAndPos(target, pos);
+    },
+
     //maunally put in the setters
     getHue:function () {
         return this._hue;
@@ -197,8 +207,12 @@ cc.defineGetterSetter(_p, "startPos", _p.getStartPos);
 
 _p = null;
 
+/**
+ * @deprecated
+ * @param target
+ * @param pos
+ * @returns {ControlHuePicker}
+ */
 cc.ControlHuePicker.create = function (target, pos) {
-    var pRet = new cc.ControlHuePicker();
-    pRet.initWithTargetAndPos(target, pos);
-    return pRet;
+    return new cc.ControlHuePicker(target, pos);
 };

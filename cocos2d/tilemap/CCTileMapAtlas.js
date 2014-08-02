@@ -292,6 +292,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
 /**
  * <p>Creates a cc.TileMap with a tile file (atlas) with a map file and the width and height of each tile in points.<br />
  * The tile file will be loaded using the TextureMgr. </p>
+ * @deprecated
  * @param {String} tile
  * @param {String} mapFile
  * @param {Number} tileWidth

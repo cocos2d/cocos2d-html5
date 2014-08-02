@@ -156,7 +156,9 @@ cc.ControlSwitch = cc.Control.extend(/** @lends cc.ControlSwitch# */{
     }
 });
 
-/** Creates a switch with a mask sprite, on/off sprites for on/off states and a thumb sprite. */
+/** Creates a switch with a mask sprite, on/off sprites for on/off states and a thumb sprite.
+ *  @deprecated
+ */
 cc.ControlSwitch.create = function (maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel) {
     return new cc.ControlSwitch(maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel);
 };

@@ -226,14 +226,18 @@ cc.EditBox = cc.ControlButton.extend({
     _className: "EditBox",
 
     /**
-     * * Constructor.
-     * */
-    ctor: function (boxSize) {
+     * @constructor
+     * @param size
+     * @param normal9SpriteBg
+     * @param press9SpriteBg
+     * @param disabled9SpriteBg
+     */
+    ctor: function (size, normal9SpriteBg, press9SpriteBg, disabled9SpriteBg) {
         cc.ControlButton.prototype.ctor.call(this);
 
         this._textColor = cc.color.WHITE;
         this._placeholderColor = cc.color.GRAY;
-        this.setContentSize(boxSize);
+        this.setContentSize(size);
         var tmpDOMSprite = this._domInputSprite = new cc.Sprite();
         tmpDOMSprite.draw = function () {
         };                           //redefine draw function
@@ -292,13 +296,21 @@ cc.EditBox = cc.ControlButton.extend({
         cc.DOM.convert(tmpDOMSprite);
         tmpDOMSprite.dom.appendChild(tmpEdTxt);
         tmpDOMSprite.dom.showTooltipDiv = false;
-        tmpDOMSprite.dom.style.width = (boxSize.width - 6) + "px";
-        tmpDOMSprite.dom.style.height = (boxSize.height - 6) + "px";
+        tmpDOMSprite.dom.style.width = (size.width - 6) + "px";
+        tmpDOMSprite.dom.style.height = (size.height - 6) + "px";
 
         //this._domInputSprite.dom.style.borderWidth = "1px";
         //this._domInputSprite.dom.style.borderStyle = "solid";
         //this._domInputSprite.dom.style.borderRadius = "8px";
         tmpDOMSprite.canvas.remove();
+
+        if (this.initWithSizeAndBackgroundSprite(size, normal9SpriteBg)) {
+            if (press9SpriteBg)
+                this.setBackgroundSpriteForState(press9SpriteBg, cc.CONTROL_STATE_HIGHLIGHTED);
+
+            if (disabled9SpriteBg)
+                this.setBackgroundSpriteForState(disabled9SpriteBg, cc.CONTROL_STATE_DISABLED);
+        }
     },
 
     /**
@@ -667,21 +679,14 @@ cc.EditBox.getRect = function (node) {
 
 /**
  * create a edit box with size and background-color or
+ * @deprecated
  * @param {cc.Size} size
  * @param {cc.Scale9Sprite } normal9SpriteBg
  * @param {cc.Scale9Sprite } [press9SpriteBg]
  * @param {cc.Scale9Sprite } [disabled9SpriteBg]
  */
 cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9SpriteBg) {
-    var edbox = new cc.EditBox(size);
-    if (edbox.initWithSizeAndBackgroundSprite(size, normal9SpriteBg)) {
-        if (press9SpriteBg)
-            edbox.setBackgroundSpriteForState(press9SpriteBg, cc.CONTROL_STATE_HIGHLIGHTED);
-
-        if (disabled9SpriteBg)
-            edbox.setBackgroundSpriteForState(disabled9SpriteBg, cc.CONTROL_STATE_DISABLED);
-    }
-    return edbox;
+    return new cc.EditBox(size, normal9SpriteBg, press9SpriteBg, disabled9SpriteBg);
 };
 
 

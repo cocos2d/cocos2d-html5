@@ -273,6 +273,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
 
 /**
  * create one cc.GridBase Object
+ * @deprecated
  * @param {cc.Size} gridSize
  * @param {cc.Texture2D} [texture=]
  * @param {Boolean} [flipped=]
@@ -481,6 +482,7 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
 
 /**
  * create one Grid3D object
+ * @deprecated
  * @param {cc.Size} gridSize
  * @param {cc.Texture2D} [texture=]
  * @param {Boolean} [flipped=]
@@ -718,6 +720,7 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
 
 /**
  * create one TiledGrid3D object
+ * @deprecated
  * @param {cc.Size} gridSize
  * @param {cc.Texture2D} [texture=]
  * @param {Boolean} [flipped=]

@@ -102,7 +102,13 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
     _touchListener: null,
     _className:"ScrollView",
 
-    ctor:function () {
+    /**
+     * @contructor
+     * @param size
+     * @param container
+     * @returns {ScrollView}
+     */
+    ctor:function (size, container) {
         cc.Layer.prototype.ctor.call(this);
         this._contentOffset = cc.p(0,0);
         this._maxInset = cc.p(0, 0);
@@ -113,6 +119,12 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         this._viewSize = cc.size(0, 0);
         this._parentScissorRect = new cc.Rect(0,0,0,0);
         this._tmpViewRect = new cc.Rect(0,0,0,0);
+
+        if(container != undefined)
+            this.initWithViewSize(size, container);
+        else
+            this.initWithViewSize(cc.size(200, 200), null);
+
     },
 
     init:function () {
@@ -921,19 +933,11 @@ _p = null;
 
 /**
  * Returns an autoreleased scroll view object.
- *
+ * @deprecated
  * @param {cc.Size} size view size
  * @param {cc.Node} container parent object
  * @return {cc.ScrollView} scroll view object
  */
 cc.ScrollView.create = function (size, container) {
-    var pRet = new cc.ScrollView();
-    if (arguments.length == 2) {
-        if (pRet && pRet.initWithViewSize(size, container))
-            return pRet;
-    } else {
-        if (pRet && pRet.init())
-            return pRet;
-    }
-    return null;
+    return new cc.ScrollView(size, container);
 };

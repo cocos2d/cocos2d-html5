@@ -607,6 +607,7 @@ _p.enabled;
 
 /**
  * create a new menu
+ * @deprecated
  * @param {...cc.MenuItem|null} menuItems
  * @return {cc.Menu}
  * @example

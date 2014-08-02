@@ -432,6 +432,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
 /**
  * create a cc.ProtectedNode object;
+ * @deprecated
  */
 cc.ProtectedNode.create = function(){
     return new cc.ProtectedNode();

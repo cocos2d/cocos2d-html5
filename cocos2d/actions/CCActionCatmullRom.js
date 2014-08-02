@@ -271,6 +271,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
  * @param {Array} points array of control points
  * @param {Number} tension
  * @return {cc.CardinalSplineTo}
+ * @deprecated
  *
  * @example
  * //create a cc.CardinalSplineTo
@@ -387,6 +388,7 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
  * @param {Array} points
  * @param {Number} tension
  * @return {cc.CardinalSplineBy}
+ * @deprecated
  */
 cc.CardinalSplineBy.create = function (duration, points, tension) {
     return new cc.CardinalSplineBy(duration, points, tension);
@@ -447,6 +449,7 @@ cc.CatmullRomTo = cc.CardinalSplineTo.extend(/** @lends cc.CatmullRomTo# */{
  * @param {Number} dt
  * @param {Array} points
  * @return {cc.CatmullRomTo}
+ * @deprecated
  *
  * @example
  * var action1 = cc.CatmullRomTo.create(3, array);
@@ -508,7 +511,7 @@ cc.CatmullRomBy = cc.CardinalSplineBy.extend({
 
 /**
  * Creates an action with a Cardinal Spline array of points and tension
- *
+ * @deprecated
  * @example
  * var action1 = cc.CatmullRomBy.create(3, array);
  */

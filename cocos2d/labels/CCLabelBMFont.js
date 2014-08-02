@@ -984,6 +984,7 @@ cc.defineGetterSetter(_p, "textAlign", _p._getAlignment, _p.setAlignment);
 
 /**
  * creates a bitmap font atlas with an initial string and the FNT file
+ * @deprecated
  * @param {String} str
  * @param {String} fntFile
  * @param {Number} [width=-1]

@@ -415,6 +415,7 @@ cc.defineGetterSetter(_p, "placeHolder", _p.getPlaceHolder, _p.setPlaceHolder);
 
 /**
  *  creates a cc.TextFieldTTF from a fontName, alignment, dimension and font size
+ * @deprecated
  * @param {String} placeholder
  * @param {cc.Size} dimensions
  * @param {Number} alignment
