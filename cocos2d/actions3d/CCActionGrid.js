@@ -101,14 +101,23 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
 
 /**
  * creates the action with size and duration
- * @deprecated
  * @param {Number} duration
  * @param {cc.Size} gridSize
  * @return {cc.GridAction}
  */
-cc.GridAction.create = function (duration, gridSize) {
+cc.gridAction = function (duration, gridSize) {
     return new cc.GridAction(duration, gridSize);
 };
+/**
+ * Please use cc.gridAction instead
+ * creates the action with size and duration
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @return {cc.GridAction}
+ * @static
+ * @deprecated
+ */
+cc.GridAction.create = cc.gridAction;
 
 /**
  * Base class for cc.Grid3D actions.                     <br/>
@@ -156,14 +165,23 @@ cc.Grid3DAction = cc.GridAction.extend(/** @lends cc.Grid3DAction# */{
 
 /**
  * creates the action with size and duration
- * @deprecated
  * @param {Number} duration
  * @param {cc.Size} gridSize
  * @return {cc.Grid3DAction}
  */
-cc.Grid3DAction.create = function (duration, gridSize) {
+cc.grid3DAction = function (duration, gridSize) {
     return new cc.Grid3DAction(duration, gridSize);
 };
+/**
+ * Please use cc.grid3DAction instead
+ * creates the action with size and duration
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @return {cc.Grid3DAction}
+ * @static
+ * @deprecated
+ */
+cc.Grid3DAction.create = cc.grid3DAction;
 
 /**
  * Base class for cc.TiledGrid3D actions
@@ -210,14 +228,23 @@ cc.TiledGrid3DAction = cc.GridAction.extend(/** @lends cc.TiledGrid3DAction# */{
 
 /**
  * Creates the action with duration and grid size
- * @deprecated
  * @param {Number} duration
  * @param {cc.Size} gridSize
  * @return {cc.TiledGrid3DAction}
  */
-cc.TiledGrid3DAction.create = function (duration, gridSize) {
+cc.tiledGrid3DAction = function (duration, gridSize) {
     return new cc.TiledGrid3DAction(duration, gridSize);
 };
+/**
+ * Please use cc.tiledGrid3DAction instead
+ * Creates the action with duration and grid size
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @return {cc.TiledGrid3DAction}
+ * @static
+ * @deprecated
+ */
+cc.TiledGrid3DAction.create = cc.tiledGrid3DAction;
 
 /**
  * <p>
@@ -240,12 +267,19 @@ cc.StopGrid = cc.ActionInstant.extend(/** @lends cc.StopGrid# */{
 
 /**
  * Allocates and initializes the action
- * @deprecated
  * @return {cc.StopGrid}
  */
-cc.StopGrid.create = function () {
+cc.stopGrid = function () {
     return new cc.StopGrid();
 };
+/**
+ * Please use cc.stopGrid instead
+ * Allocates and initializes the action
+ * @return {cc.StopGrid}
+ * @static
+ * @deprecated
+ */
+cc.StopGrid.create = cc.stopGrid;
 
 /**
  * cc.ReuseGrid action
@@ -284,10 +318,18 @@ cc.ReuseGrid = cc.ActionInstant.extend(/** @lends cc.ReuseGrid# */{
 
 /**
  * creates an action with the number of times that the current grid will be reused
- * @deprecated
  * @param {Number} times
  * @return {cc.ReuseGrid}
  */
-cc.ReuseGrid.create = function (times) {
+cc.reuseGrid = function (times) {
     return new cc.ReuseGrid(times);
 };
+/**
+ * Please use cc.reuseGrid instead
+ * creates an action with the number of times that the current grid will be reused
+ * @param {Number} times
+ * @return {cc.ReuseGrid}
+ * @static
+ * @deprecated
+ */
+cc.ReuseGrid.create = cc.reuseGrid;
