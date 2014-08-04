@@ -764,7 +764,7 @@ _p = null;
 
 /**
  * allocates and initializes a UITextField.
- * @constructs
+ * @deprecated
  * @return {ccui.TextField}
  * @example
  * // example

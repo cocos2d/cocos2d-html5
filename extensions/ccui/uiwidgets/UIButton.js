@@ -83,11 +83,12 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     /**
      * allocates and initializes a UIButton.
      * Constructor of ccui.Button
+     * @constructor
      * @example
      * // example
      * var uiButton = new ccui.Button();
      */
-    ctor: function () {
+    ctor: function (normalImage, selectedImage, disableImage, texType) {
         this._capInsetsNormal = cc.rect(0, 0, 0, 0);
         this._capInsetsPressed = cc.rect(0, 0, 0, 0);
         this._capInsetsDisabled = cc.rect(0, 0, 0, 0);
@@ -97,6 +98,8 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this._titleColor = cc.color.WHITE;
         ccui.Widget.prototype.ctor.call(this);
         this.setTouchEnabled(true);
+
+        texType && this.init(normalImage, selectedImage, disableImage, texType);
     },
 
     init: function (normalImage, selectedImage,disableImage, texType) {
@@ -814,6 +817,7 @@ _p = null;
 
 /**
  * allocates and initializes a UIButton.
+ * @deprecated
  * @param {string} [normalImage]    normal state texture name
  * @param {string} [selectedImage]  selected state texture name
  * @param {string} [disableImage]   disabled state texture name
@@ -824,15 +828,7 @@ _p = null;
  * var uiButton = ccui.Button.create();
  */
 ccui.Button.create = function (normalImage, selectedImage, disableImage, texType) {
-    var btn = new ccui.Button();
-    if(normalImage === undefined){
-        if(btn && btn.init())
-            return btn;
-    }else{
-        if(btn && btn.init(normalImage, selectedImage, disableImage, texType))
-            return btn;
-    }
-    return null;
+    return new ccui.Button(normalImage, selectedImage, disableImage, texType);
 };
 
 // Constants

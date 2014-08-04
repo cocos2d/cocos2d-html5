@@ -76,8 +76,8 @@ ccs.TweenType = {
 
 ccs.TweenFunction = ccs.TweenFunction || ccs.Class.extend({});
 
-ccs.M_PI_X_2 = Math.PI * 2;
-ccs.M_PI_2 = Math.PI / 2;
+ccs.DOUBLE_PI = ccs.M_PI_X_2 = Math.PI * 2;
+ccs.HALF_PI = ccs.M_PI_2 = Math.PI / 2;
 ccs.M_PI = Math.PI;
 
 ccs.TweenFunction.tweenTo = function (time, type, easingParam) {
@@ -161,13 +161,25 @@ ccs.TweenFunction.tweenTo = function (time, type, easingParam) {
             break;
 
         case ccs.TweenType.elasticEaseIn:
-            delta = this.elasticEaseIn(time, easingParam);
+            var period = 0.3;
+            if(null != easingParam){
+                period = easingParam[0];
+            }
+            delta = this.elasticEaseIn(time, period);
             break;
         case ccs.TweenType.elasticEaseOut:
-            delta = this.elasticEaseOut(time, easingParam);
+            var period = 0.3;
+            if(null != easingParam){
+                period = easingParam[0];
+            }
+            delta = this.elasticEaseOut(time, period);
             break;
         case ccs.TweenType.elasticEaseInOut:
-            delta = this.elasticEaseInOut(time, easingParam);
+            var period = 0.3;
+            if(null != easingParam){
+                period = easingParam[0];
+            }
+            delta = this.elasticEaseInOut(time, period);
             break;
 
         case ccs.TweenType.backEaseIn:
@@ -207,10 +219,10 @@ ccs.TweenFunction.linear = function (time) {
 
 // Sine Ease
 ccs.TweenFunction.sineEaseIn = function (time) {
-    return -1 * Math.cos(time * ccs.M_PI_2) + 1;
+    return -1 * Math.cos(time * ccs.HALF_PI) + 1;
 };
 ccs.TweenFunction.sineEaseOut = function (time) {
-    return Math.sin(time * ccs.M_PI_2);
+    return Math.sin(time * ccs.HALF_PI);
 };
 ccs.TweenFunction.sineEaseInOut = function (time) {
     return -0.5 * (Math.cos(ccs.M_PI * time) - 1);
@@ -336,7 +348,7 @@ ccs.TweenFunction.elasticEaseIn = function (time, easingParam) {
     else {
         var s = period / 4;
         time = time - 1;
-        newT = -Math.pow(2, 10 * time) * Math.sin((time - s) * ccs.M_PI_X_2 / period);
+        newT = -Math.pow(2, 10 * time) * Math.sin((time - s) * ccs.DOUBLE_PI / period);
     }
 
     return newT;
@@ -354,7 +366,7 @@ ccs.TweenFunction.elasticEaseOut = function (time, easingParam) {
     }
     else {
         var s = period / 4;
-        newT = Math.pow(2, -10 * time) * Math.sin((time - s) * ccs.M_PI_X_2 / period) + 1;
+        newT = Math.pow(2, -10 * time) * Math.sin((time - s) * ccs.DOUBLE_PI / period) + 1;
     }
 
     return newT;
@@ -380,10 +392,9 @@ ccs.TweenFunction.elasticEaseInOut = function (time, easingParam) {
 
         time = time - 1;
         if (time < 0) {
-            newT = -0.5 * Math.pow(2, 10 * time) * Math.sin((time - s) * ccs.M_PI_X_2 / period);
-        }
-        else {
-            newT = Math.pow(2, -10 * time) * Math.sin((time - s) * ccs.M_PI_X_2 / period) * 0.5 + 1;
+            newT = -0.5 * Math.pow(2, 10 * time) * Math.sin((time - s) * ccs.DOUBLE_PI / period);
+        } else {
+            newT = Math.pow(2, -10 * time) * Math.sin((time - s) * ccs.DOUBLE_PI / period) * 0.5 + 1;
         }
     }
     return newT;
@@ -459,4 +470,33 @@ ccs.TweenFunction.customEase = function (time, easingParam) {
         return easingParam[1] * tt * tt * tt + 3 * easingParam[3] * time * tt * tt + 3 * easingParam[5] * time * time * tt + easingParam[7] * time * time * time;
     }
     return time;
+};
+
+ccs.TweenFunction.easeIn = function(time, rate){
+    return Math.pow(time, rate);
+};
+
+ccs.TweenFunction.easeOut = function(time, rate){
+    return Math.pow(time, 1 / rate);
+};
+
+ccs.TweenFunction.easeInOut = function(time, rate){
+    time *= 2;
+    if(time < 1){
+        return 0.5 * Math.pow(time, rate);
+    }else{
+        return 1 - 0.5 * Math.pow(2 - time, rate);
+    }
+};
+
+ccs.TweenFunction.quadraticIn = function(time){
+    return Math.pow(time, 2);
+};
+
+ccs.TweenFunction.quadraticOut = function(time){
+    return -time * (time - 2);
+};
+
+ccs.TweenFunction.bezieratFunction = function(a, b, c, d, t){
+    return (Math.pow(1-t,3) * a + 3*t*(Math.pow(1-t,2))*b + 3*Math.pow(t,2)*(1-t)*c + Math.pow(t,3)*d );
 };
