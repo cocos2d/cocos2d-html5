@@ -92,9 +92,9 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
         var pNode = this._progressTimerNodeWithRenderTexture(texture);
 
         // create the blend action
-        var layerAction = cc.Sequence.create(
-            cc.ProgressFromTo.create(this._duration, this._from, this._to),
-            cc.CallFunc.create(this.finish, this));
+        var layerAction = cc.sequence(
+            cc.progressFromTo(this._duration, this._from, this._to),
+            cc.callFunc(this.finish, this));
         // run the blend action
         pNode.runAction(layerAction);
 

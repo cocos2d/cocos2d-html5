@@ -1158,7 +1158,7 @@ cc.LabelTTF._textAlign = ["left", "center", "right"];
 cc.LabelTTF._textBaseline = ["top", "middle", "bottom"];
 
 // Class static properties for measure util
-cc.LabelTTF._checkRegEx = /(.+?|[\s\n\r\-\/\\\:]|[\u4E00-\u9FA5\uFE30-\uFFA0\u3040-\u309F\u30A0-\u30FF\u3001])/;
+cc.LabelTTF._checkRegEx = /(.+?)([\s\n\r\-\/\\\:]|[\u4E00-\u9FA5\uFE30-\uFFA0\u3040-\u309F\u30A0-\u30FF\u3001])/;
 cc.LabelTTF._reverseCheckRegEx = /(.*)([\s\n\r\-\/\\\:]|[\u4E00-\u9FA5\uFE30-\uFFA0\u3040-\u309F\u30A0-\u30FF\u3001])/;
 cc.LabelTTF._checkEnRegEx = /[\s\-\/\\\:]/;
 cc.LabelTTF._checkSymbol = /^[\u007e\u0021\u0040\u0023\u0024\u0025\u005e\u0026\u002a\u0028\u0029\u005f\u002b\u007b\u007d\u005b\u005d\u003a\u0026\u0071\u0075\u006f\u0074\u003b\u007c\u003b\u0026\u0023\u0033\u0039\u003b\u005c\u0026\u006c\u0074\u003b\u0026\u0067\u0074\u003b\u003f\u002c\u002e\u002f\uff01\u0040\uffe5\u2026\uff08\uff09\u2014\u002b\u3010\u3011\uff1a\u201c\u007c\uff1b\u2018\u3001\u300a\u300b\uff1f\uff0c\u3002\u3001\u000d\u000a]/;

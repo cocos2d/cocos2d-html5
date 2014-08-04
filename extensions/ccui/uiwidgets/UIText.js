@@ -436,7 +436,7 @@ _p = null;
  * var uiLabel = ccui.Text.create();
  */
 ccui.Label = ccui.Text.create = function (textContent, fontName, fontSize) {
-    return ccui.Text(textContent, fontName, fontSize);
+    return new ccui.Text(textContent, fontName, fontSize);
 };
 
 ccui.Text.RENDERER_ZORDER = -1;

@@ -227,7 +227,7 @@ _p = null;
  * var uiLabelAtlas = ccui.TextAtlas.create();
  */
 ccui.TextAtlas.create = function (stringValue, charMapFile, itemWidth, itemHeight, startCharMap) {
-    return ccui.TextAtlas(stringValue, charMapFile, itemWidth, itemHeight, startCharMap);
+    return new ccui.TextAtlas(stringValue, charMapFile, itemWidth, itemHeight, startCharMap);
 };
 
 // Constants
