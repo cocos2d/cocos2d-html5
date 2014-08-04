@@ -822,6 +822,12 @@ cc.loader = {
     var onShow = function () {
         if (cc.eventManager && cc.game._eventShow)
             cc.eventManager.dispatchEvent(cc.game._eventShow);
+
+        if(cc.game._intervalId){
+            window.cancelAnimationFrame(cc.game._intervalId);
+
+            cc.game._runMainLoop();
+        }
     };
 
     if (hidden) {
@@ -832,6 +838,10 @@ cc.loader = {
     } else {
         cc._addEventListener(win, "blur", onHidden, false);
         cc._addEventListener(win, "focus", onShow, false);
+    }
+
+    if(navigator.userAgent.indexOf("MicroMessenger") > -1){
+        win.onfocus = function(){ onShow() };
     }
 
     if ("onpageshow" in window && "onpagehide" in window) {
@@ -1289,7 +1299,27 @@ cc._setup = function (el, width, height) {
         win.webkitRequestAnimationFrame ||
         win.mozRequestAnimationFrame ||
         win.oRequestAnimationFrame ||
-        win.msRequestAnimationFrame;
+        win.msRequestAnimationFrame ||
+        function(callback){
+            var self = this;
+            return setTimeout(function(){
+                callback();
+            }, 1000 / self.config[self.CONFIG_KEY.frameRate]);
+        };
+
+    win.cancelAnimationFrame = window.cancelAnimationFrame ||
+        window.cancelRequestAnimationFrame ||
+        window.msCancelRequestAnimationFrame ||
+        window.mozCancelRequestAnimationFrame ||
+        window.oCancelRequestAnimationFrame ||
+        window.webkitCancelRequestAnimationFrame ||
+        window.msCancelAnimationFrame ||
+        window.mozCancelAnimationFrame ||
+        window.webkitCancelAnimationFrame ||
+        window.oCancelAnimationFrame ||
+        function(id){
+            clearTimeout(id);
+        };
 
     var element = cc.$(el) || cc.$('#' + el);
     var localCanvas, localContainer, localConStyle;
@@ -1478,7 +1508,8 @@ cc.game = {
     setFrameRate: function (frameRate) {
         var self = this, config = self.config, CONFIG_KEY = self.CONFIG_KEY;
         config[CONFIG_KEY.frameRate] = frameRate;
-        if (self._intervalId) clearInterval(self._intervalId);
+        if (self._intervalId)
+            window.cancelAnimationFrame(self._intervalId);
         self._paused = true;
         self._runMainLoop();
     },
@@ -1488,23 +1519,18 @@ cc.game = {
      */
     _runMainLoop: function () {
         var self = this, callback, config = self.config, CONFIG_KEY = self.CONFIG_KEY,
-            win = window, frameRate = config[CONFIG_KEY.frameRate],
             director = cc.director;
+
         director.setDisplayStats(config[CONFIG_KEY.showFPS]);
-        if (win.requestAnimFrame && frameRate == 60) {
-            callback = function () {
-                if (!self._paused) {
-                    director.mainLoop();
-                    win.requestAnimFrame(callback);
-                }
-            };
-            win.requestAnimFrame(callback);
-        } else {
-            callback = function () {
+
+        callback = function () {
+            if (!self._paused) {
                 director.mainLoop();
-            };
-            self._intervalId = setInterval(callback, 1000.0 / frameRate);
-        }
+                self._intervalId = window.requestAnimFrame(callback);
+            }
+        };
+
+        window.requestAnimFrame(callback);
         self._paused = false;
     },
 
