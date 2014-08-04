@@ -551,21 +551,6 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
         return this._worldInfo;
     },
 
-//
-//    /**
-//     * Rewrite visit ,when node draw, g_NumberOfDraws is changeless
-//     */
-//    visit: function (ctx) {
-//        // quick return if not visible
-//        if (!this._visible)
-//            return;
-//
-//        var node = this.getDisplayManager().getDisplayRenderNode();
-//        if (node) {
-//            node.visit(ctx);
-//        }
-//    },
-
     /**
      * child bone getter
      * @return {Array}
@@ -593,27 +578,17 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
         return this.getNodeToWorldTransform();
     },
 
-//    addSkin: function (skin, index) {
-//        index = index || 0;
-//        return this.displayManager.addSkin(skin, index);
-//    },
-
     /**
      * @deprecated
      * get the collider body list in this bone.
      * @returns {*}
      */
     getColliderBodyList: function () {
-        return this.getColliderDetector();
+        var detector = this.getColliderDetector();
+        if(detector)
+            return detector.getColliderBodyList();
+        return null;
     },
-
-//    /**
-//     * displayManager setter
-//     * @param {ccs.DisplayManager}
-//     */
-//    setDisplayManager: function (displayManager) {
-//        this.displayManager = displayManager;
-//    },
 
     /**
      * ignoreMovementBoneData  getter

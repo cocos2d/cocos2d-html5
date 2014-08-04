@@ -538,28 +538,19 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
      * draw contour
      */
     drawContour: function () {
+        cc._drawingUtil.setDrawColor(255, 255, 255, 255);
+        cc._drawingUtil.setLineWidth(1);
         var locBoneDic = this._boneDic;
-        for (var i = 0; i < locBoneDic.length; i++) {
-            var bone = locBoneDic[i];
+        for (var key in locBoneDic) {
+            var bone = locBoneDic[key];
             var detector = bone.getColliderDetector();
-
-            if (!detector)
+            if(!detector)
                 continue;
-
             var bodyList = detector.getColliderBodyList();
-
-            for (var j=0; i<bodyList.length; j++) {
-                var body = bodyList[j];
+            for (var i = 0; i < bodyList.length; i++) {
+                var body = bodyList[i];
                 var vertexList = body.getCalculatedVertexList();
-
-                var length = vertexList.length;
-                var points = [];
-                for (var k = 0; k<length; k++) {
-                    var p = vertexList[k];
-                    points[k].x = p.x;
-                    points[k].y = p.y;
-                }
-                cc._drawingUtil.drawPoly(points, length, true);
+                cc._drawingUtil.drawPoly(vertexList, vertexList.length, true);
             }
         }
     },
