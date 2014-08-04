@@ -101,6 +101,7 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
 
 /**
  * creates the action with size and duration
+ * @function
  * @param {Number} duration
  * @param {cc.Size} gridSize
  * @return {cc.GridAction}
@@ -165,6 +166,7 @@ cc.Grid3DAction = cc.GridAction.extend(/** @lends cc.Grid3DAction# */{
 
 /**
  * creates the action with size and duration
+ * @function
  * @param {Number} duration
  * @param {cc.Size} gridSize
  * @return {cc.Grid3DAction}
@@ -228,6 +230,7 @@ cc.TiledGrid3DAction = cc.GridAction.extend(/** @lends cc.TiledGrid3DAction# */{
 
 /**
  * Creates the action with duration and grid size
+ * @function
  * @param {Number} duration
  * @param {cc.Size} gridSize
  * @return {cc.TiledGrid3DAction}
@@ -251,7 +254,7 @@ cc.TiledGrid3DAction.create = cc.tiledGrid3DAction;
  * cc.StopGrid action.                                               <br/>
  * @warning Don't call this action if another grid action is active.                 <br/>
  * Call if you want to remove the the grid effect. Example:                          <br/>
- * cc.Sequence.create(Lens.action(...), cc.StopGrid.create(...), null);              <br/>
+ * cc.sequence(Lens.action(...), cc.stopGrid(...), null);              <br/>
  * </p>
  * @class
  * @extends cc.ActionInstant
@@ -267,6 +270,7 @@ cc.StopGrid = cc.ActionInstant.extend(/** @lends cc.StopGrid# */{
 
 /**
  * Allocates and initializes the action
+ * @function
  * @return {cc.StopGrid}
  */
 cc.stopGrid = function () {
@@ -318,6 +322,7 @@ cc.ReuseGrid = cc.ActionInstant.extend(/** @lends cc.ReuseGrid# */{
 
 /**
  * creates an action with the number of times that the current grid will be reused
+ * @function
  * @param {Number} times
  * @return {cc.ReuseGrid}
  */
