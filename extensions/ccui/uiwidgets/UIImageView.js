@@ -294,7 +294,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
  * var uiImageView = ccui.ImageView.create();
  */
 ccui.ImageView.create = function (imageFileName, texType) {
-    return ccui.ImageView(imageFileName, texType);
+    return new ccui.ImageView(imageFileName, texType);
 };
 
 // Constants

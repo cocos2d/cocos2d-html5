@@ -398,7 +398,7 @@ _p = null;
  * var uiLoadingBar = ccui.LoadingBar.create();
  */
 ccui.LoadingBar.create = function (textureName, percentage) {
-    return ccui.LoadingBar(textureName, percentage);
+    return new ccui.LoadingBar(textureName, percentage);
 };
 
 // Constants
