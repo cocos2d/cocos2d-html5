@@ -840,7 +840,9 @@ cc.loader = {
         cc._addEventListener(win, "focus", onShow, false);
     }
 
-    win.onfocus = function(){ onShow() };
+    if(navigator.userAgent.indexOf("MicroMessenger") > -1){
+        win.onfocus = function(){ onShow() };
+    }
 
     if ("onpageshow" in window && "onpagehide" in window) {
         cc._addEventListener(win, "pagehide", onHidden, false);
