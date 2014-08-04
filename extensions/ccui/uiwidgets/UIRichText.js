@@ -126,7 +126,7 @@ ccui.RichElementImage = ccui.RichElement.extend(/** @lends ccui.RichElementImage
  * @returns {ccui.RichElementImage}
  */
 ccui.RichElementImage.create = function (tag, color, opacity, filePath) {
-    return ccui.RichElementImage(tag, color, opacity, filePath);
+    return new ccui.RichElementImage(tag, color, opacity, filePath);
 };
 
 /**
