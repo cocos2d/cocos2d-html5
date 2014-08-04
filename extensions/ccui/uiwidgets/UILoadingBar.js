@@ -49,15 +49,21 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
     /**
      * allocates and initializes a UILoadingBar.
      * Constructor of ccui.LoadingBar
+     * @constructor
      * @example
      * // example
      * var uiLoadingBar = new ccui.LoadingBar;
      */
-    ctor: function () {
+    ctor: function (textureName, percentage) {
         this._direction = ccui.LoadingBar.TYPE_LEFT;
         this._barRendererTextureSize = cc.size(0, 0);
         this._capInsets = cc.rect(0, 0, 0, 0);
         ccui.Widget.prototype.ctor.call(this);
+
+        if(textureName !== undefined)
+            this.loadTexture(textureName);
+        if(percentage !== undefined)
+            this.setPercent(percentage);
     },
 
     _initRenderer: function () {
@@ -383,6 +389,7 @@ _p = null;
 
 /**
  * allocates and initializes a UILoadingBar.
+ * @deprecated
  * @param {string} textureName
  * @param {Number} percentage
  * @return {ccui.LoadingBar}
@@ -391,12 +398,7 @@ _p = null;
  * var uiLoadingBar = ccui.LoadingBar.create();
  */
 ccui.LoadingBar.create = function (textureName, percentage) {
-    var loadingBar = new ccui.LoadingBar();
-    if(textureName !== undefined)
-        loadingBar.loadTexture(textureName);
-    if(percentage !== undefined)
-        loadingBar.setPercent(percentage);
-    return loadingBar;
+    return ccui.LoadingBar(textureName, percentage);
 };
 
 // Constants

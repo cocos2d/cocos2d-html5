@@ -60,12 +60,14 @@ ccui.RichElementText = ccui.RichElement.extend(/** @lends ccui.RichElementText# 
     _text: "",
     _fontName: "",
     _fontSize: 0,
-    ctor: function () {
+    ctor: function (tag, color, opacity, text, fontName, fontSize) {
         ccui.RichElement.prototype.ctor.call(this);
         this._type = ccui.RichElement.TEXT;
         this._text = "";
         this._fontName = "";
         this._fontSize = 0;
+
+        fontSize && this.init(tag, color, opacity, text, fontName, fontSize);
     },
     init: function (tag, color, opacity, text, fontName, fontSize) {
         ccui.RichElement.prototype.init.call(this, tag, color, opacity);
@@ -77,6 +79,7 @@ ccui.RichElementText = ccui.RichElement.extend(/** @lends ccui.RichElementText# 
 
 /**
  * Create a richElementText
+ * @deprecated
  * @param {Number} tag
  * @param {cc.Color} color
  * @param {Number} opacity
@@ -86,9 +89,7 @@ ccui.RichElementText = ccui.RichElement.extend(/** @lends ccui.RichElementText# 
  * @returns {ccui.RichElementText}
  */
 ccui.RichElementText.create = function (tag, color, opacity, text, fontName, fontSize) {
-    var element = new ccui.RichElementText();
-    element.init(tag, color, opacity, text, fontName, fontSize);
-    return element;
+    return new ccui.RichElementText(tag, color, opacity, text, fontName, fontSize);
 };
 
 /**
@@ -100,12 +101,14 @@ ccui.RichElementImage = ccui.RichElement.extend(/** @lends ccui.RichElementImage
     _filePath: "",
     _textureRect: null,
     _textureType: 0,
-    ctor: function () {
+    ctor: function (tag, color, opacity, filePath) {
         ccui.RichElement.prototype.ctor.call(this);
         this._type = ccui.RichElement.IMAGE;
         this._filePath = "";
         this._textureRect = cc.rect(0, 0, 0, 0);
         this._textureType = 0;
+
+        filePath && this.init(tag, color, opacity, filePath);
     },
     init: function (tag, color, opacity, filePath) {
         ccui.RichElement.prototype.init.call(this, tag, color, opacity);
@@ -115,6 +118,7 @@ ccui.RichElementImage = ccui.RichElement.extend(/** @lends ccui.RichElementImage
 
 /**
  * Create a richElementImage
+ * @deprecated
  * @param {Number} tag
  * @param {cc.Color} color
  * @param {Number} opacity
@@ -122,9 +126,7 @@ ccui.RichElementImage = ccui.RichElement.extend(/** @lends ccui.RichElementImage
  * @returns {ccui.RichElementImage}
  */
 ccui.RichElementImage.create = function (tag, color, opacity, filePath) {
-    var element = new ccui.RichElementImage();
-    element.init(tag, color, opacity, filePath);
-    return element;
+    return ccui.RichElementImage(tag, color, opacity, filePath);
 };
 
 /**
@@ -134,10 +136,12 @@ ccui.RichElementImage.create = function (tag, color, opacity, filePath) {
  */
 ccui.RichElementCustomNode = ccui.RichElement.extend(/** @lends ccui.RichElementCustomNode# */{
     _customNode: null,
-    ctor: function () {
+    ctor: function (tag, color, opacity, customNode) {
         ccui.RichElement.prototype.ctor.call(this);
         this._type = ccui.RichElement.CUSTOM;
         this._customNode = null;
+
+        customNode && this.init(tag, color, opacity, customNode);
     },
     init: function (tag, color, opacity, customNode) {
         ccui.RichElement.prototype.init.call(this, tag, color, opacity);
@@ -147,6 +151,7 @@ ccui.RichElementCustomNode = ccui.RichElement.extend(/** @lends ccui.RichElement
 
 /**
  * Create a richElementCustomNode
+ * @deprecated
  * @param {Number} tag
  * @param {Number} color
  * @param {Number} opacity
@@ -154,9 +159,7 @@ ccui.RichElementCustomNode = ccui.RichElement.extend(/** @lends ccui.RichElement
  * @returns {ccui.RichElementCustomNode}
  */
 ccui.RichElementCustomNode.create = function (tag, color, opacity, customNode) {
-    var element = new ccui.RichElementCustomNode();
-    element.init(tag, color, opacity, customNode);
-    return element;
+    return new ccui.RichElementCustomNode(tag, color, opacity, customNode);
 };
 
 /**
@@ -459,6 +462,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
 
 /**
  * create a rich text
+ * @deprecated
  * @returns {RichText}
  * @example
  * var uiRichText = ccui.RichTex.create();

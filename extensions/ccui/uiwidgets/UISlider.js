@@ -649,19 +649,14 @@ _p = null;
 
 /**
  * allocates and initializes a UISlider.
- * @constructs
+ * @deprecated
  * @return {ccui.Slider}
  * @example
  * // example
  * var uiSlider = ccui.Slider.create();
  */
 ccui.Slider.create = function () {
-    var widget = new ccui.Slider();
-    if (widget && widget.init())
-    {
-        return widget;
-    }
-    return null;
+    return new ccui.Slider();
 };
 
 // Constant
