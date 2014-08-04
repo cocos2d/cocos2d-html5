@@ -276,10 +276,7 @@ cc._tmp.WebGLSprite = function () {
             var locQuad = _t._quad, locParent = _t._parent;
             // If it is not visible, or one of its ancestors is not visible, then do nothing:
             if (!_t._visible || ( locParent && locParent != _t._batchNode && locParent._shouldBeHidden)) {
-                locQuad.br.vertices = {x: 0, y: 0, z: 0};
-                locQuad.tl.vertices = {x: 0, y: 0, z: 0};
-                locQuad.tr.vertices = {x: 0, y: 0, z: 0};
-                locQuad.bl.vertices = {x: 0, y: 0, z: 0};
+                locQuad.br.vertices = locQuad.tl.vertices = locQuad.tr.vertices = locQuad.bl.vertices = {x: 0, y: 0, z: 0};
                 _t._shouldBeHidden = true;
             } else {
                 _t._shouldBeHidden = false;
