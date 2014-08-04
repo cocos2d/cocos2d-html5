@@ -71,7 +71,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this._armatureTransformDirty = true;
         this._realAnchorPointInPoints = cc.p(0, 0);
 
-        parentBone && ccs.Armature.prototype.init.call(this, name, parentBone);
+        name && ccs.Armature.prototype.init.call(this, name, parentBone);
     },
 
     /**
