@@ -2117,7 +2117,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     }
 
                     // color
-                    if (!this._dontTint || cc._renderType === cc._RENDER_TYPE_CANVAS) {
+                    if (!this._dontTint || cc._renderType === cc._RENDER_TYPE_WEBGL) {
                         selParticle.color.r += 0|(selParticle.deltaColor.r * dt);
                         selParticle.color.g += 0|(selParticle.deltaColor.g * dt);
                         selParticle.color.b += 0|(selParticle.deltaColor.b * dt);

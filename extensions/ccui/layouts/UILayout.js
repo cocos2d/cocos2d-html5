@@ -489,7 +489,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         }
         var context = ctx || cc._renderContext;
         // Composition mode, costy but support texture stencil
-        if (this._cangodhelpme() || this._clippingStencil instanceof cc.Sprite) {
+        //if (this._cangodhelpme() || this._clippingStencil instanceof cc.Sprite) {
+        if (this._clippingStencil instanceof cc.Sprite) {
             // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
             var canvas = context.canvas;
             var locCache = ccui.Layout._getSharedCache();
@@ -500,7 +501,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
             context.save();
             // Draw everything first using node visit function
-            cc.Node.prototype.visit.call(this, context);
+            cc.ProtectedNode.prototype.visit.call(this, context);
 
             context.globalCompositeOperation = "destination-in";
 
@@ -525,7 +526,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
             // Clip mode doesn't support recusive stencil, so once we used a clip stencil,
             // so if it has ClippingNode as a child, the child must uses composition stencil.
-            this._cangodhelpme(true);
+            //this._cangodhelpme(true);
 
             this.sortAllChildren();
             this.sortAllProtectedChildren();
@@ -554,17 +555,17 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             for (; j < jLen; j++)
                 locProtectChildren[j].visit(context);
 
-            this._cangodhelpme(false);
+            //this._cangodhelpme(false);
             context.restore();
         }
     },
 
-    _godhelpme: false,
+    /*_godhelpme: false,
     _cangodhelpme: function (godhelpme) {
         if (godhelpme === true || godhelpme === false)
             cc.ClippingNode.prototype._godhelpme = godhelpme;
         return cc.ClippingNode.prototype._godhelpme;
-    },
+    },*/
 
     _scissorClippingVisit: null,
     _scissorClippingVisitForWebGL: function (ctx) {
@@ -599,7 +600,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                         this._clippingStencil.onEnter();
                     this._setStencilClippingSize(this._contentSize);
                 } else {
-                    if (this._running)
+                    if (this._running && this._clippingStencil)
                         this._clippingStencil.onExit();
                     this._clippingStencil = null;
                 }
@@ -614,9 +615,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {ccui.Layout.CLIPPING_STENCIL|ccui.Layout.CLIPPING_SCISSOR} type
      */
     setClippingType: function (type) {
-        if (type == this._clippingType) {
+        if (type == this._clippingType)
             return;
-        }
         var clippingEnabled = this.isClippingEnabled();
         this.setClippingEnabled(false);
         this._clippingType = type;
