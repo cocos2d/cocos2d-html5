@@ -306,8 +306,18 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         var scaleChildren = this._scale9Image.getChildren();
         for (var i = 0; i < scaleChildren.length; i++) {
             var selChild = scaleChildren[i];
-            if (selChild)
-                selChild.updateDisplayedColor(parentColor);
+            if (selChild){
+                cc.Node.prototype.updateDisplayedColor.call(selChild, parentColor);
+
+                if(
+                    parentColor.r !== 255 ||
+                    parentColor.g !== 255 ||
+                    parentColor.b !== 255
+                ){
+                    selChild._changeTextureColor();
+                    selChild._setNodeDirtyForCache();
+                }
+            }
         }
     },
 
