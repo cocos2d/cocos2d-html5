@@ -1667,10 +1667,6 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this._innerContainer.removeAllNodes();
     },
 
-    visit: function(ctx){
-        this._super(ctx);
-    },
-
     /**
      * Add node for scrollView
      * @param {cc.Node}node

@@ -311,8 +311,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     visit: function (ctx) {
-        if(this._name == "list")
-            void(0);
         if (!this._visible)
             return;
         this._adaptRenderers();
