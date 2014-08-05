@@ -140,7 +140,10 @@ ccui.LayoutParameter = ccui.Class.extend(/** @lends ccui.LayoutParameter# */{
      * @param {ccui.LayoutParameter} model
      */
     _copyProperties:function(model){
-        this._margin = model._margin;
+        this._margin.bottom = model._margin.bottom;
+        this._margin.left = model._margin.left;
+        this._margin.right = model._margin.right;
+        this._margin.top = model._margin.top;
     }
 });
 
