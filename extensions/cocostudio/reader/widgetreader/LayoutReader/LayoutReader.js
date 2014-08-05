@@ -104,7 +104,6 @@ ccs.LayoutReader = {
             }
         }
 
-
         if (backGroundScale9Enable)
         {
             var cx = options["capInsetsX"];
@@ -114,8 +113,6 @@ ccs.LayoutReader = {
             panel.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
         }
         panel.setLayoutType(options["layoutType"]);
-
-
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };

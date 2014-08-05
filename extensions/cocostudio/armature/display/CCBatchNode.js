@@ -23,12 +23,19 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.BatchNode = cc.Node.extend({
+/**
+ * A batchNode to Armature
+ * @class ccs.BatchNode
+ * @extends cc.Node
+ */
+ccs.BatchNode = cc.Node.extend(/** @lends ccs.BatchNode# */{
     _atlas:null,
     _className:"BatchNode",
+
     ctor:function () {
         this._atlas = null;
     },
+
     init:function () {
         var ret = cc.Node.prototype.init.call(this);
         this.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR));
@@ -37,16 +44,22 @@ cc.BatchNode = cc.Node.extend({
 
     addChild:function (child, zOrder, tag) {
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
-        if (child instanceof cc.Armature) {
+        if (child instanceof cc.Armature){
             child.setBatchNode(this);
         }
     },
 
+    removeChild: function(child, cleanup){
+        if (child instanceof cc.Armature)
+            child.setBatchNode(null);
+        cc.Node.prototype.removeChild.call(this, child, cleanup);
+    },
+
     visit:function (renderer, parentTransform, parentTransformUpdated) {
         // quick return if not visible. children won't be drawn.
-        if (!this._visible) {
+        if (!this._visible)
             return;
-        }
+
         var dirty = parentTransformUpdated || this._transformUpdated;
         if(dirty)
             this._modelViewTransform = this.transform(parentTransform);
@@ -55,27 +68,30 @@ cc.BatchNode = cc.Node.extend({
         // IMPORTANT:
         // To ease the migration to v3.0, we still support the kmGL stack,
         // but it is deprecated and your code should not rely on it
-        this.kmGLPushMatrix();
-        if (this.grid && this.grid.isActive()) {
+        cc.kmGLPushMatrixWitMat4(this._stackMatrix);
+
+        if (this.grid && this.grid.isActive())
             this.grid.beforeDraw();
-        }
 
         this.sortAllChildren();
         this.draw(renderer, this._modelViewTransform, dirty);
 
         // reset for next frame
         this.arrivalOrder = 0;
-        if (this.grid && this.grid.isActive()) {
+        if (this.grid && this.grid.isActive())
             this.grid.afterDraw(this);
-        }
-        this.kmGLPopMatrix();
+
+        cc.kmGLPopMatrix();
     },
 
     draw:function (renderer, transform, transformUpdated) {
+        var locChildren = this._children;
+        if(locChildren.length === 0)
+            return;
 
         var child = null;
-        for (var i = 0; i < this._children.length; i++) {
-            child = this._children[i];
+        for (var i = 0, len = locChildren.length; i < len; i++) {
+            child = locChildren[i];
             child.visit();
             if (child instanceof cc.Armature) {
                 this._atlas = child.getTextureAtlas();
@@ -87,8 +103,9 @@ cc.BatchNode = cc.Node.extend({
         }
     }
 });
-cc.BatchNode.create = function () {
-    var batchNode = new cc.BatchNode();
+
+ccs.BatchNode.create = function () {
+    var batchNode = new ccs.BatchNode();
     if (batchNode && batchNode.init()) {
         return batchNode;
     }

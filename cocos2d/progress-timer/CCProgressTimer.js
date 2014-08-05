@@ -933,6 +933,7 @@ cc.defineGetterSetter(_p, "reverseDir", _p.isReverseDirection, _p.setReverseDire
 
 /**
  * create a progress timer object with image file name that renders the inner sprite according to the percentage
+ * @deprecated
  * @param {cc.Sprite} sprite
  * @return {cc.ProgressTimer}
  * @example

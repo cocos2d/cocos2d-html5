@@ -332,11 +332,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         }
     },
 
-    sortAllChildren: function () {
-        ccui.Widget.prototype.sortAllChildren.call(this);
-        this._doLayout();
-    },
-
     _stencilClippingVisit: null,
 
     _stencilClippingVisitForWebGL: function (ctx) {
@@ -782,10 +777,12 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             var sprite = this._backGroundImage;
             switch (this._bgImageTexType){
                 case ccui.Widget.LOCAL_TEXTURE:
-                    sprite.setTexture(fileName);
+                    //SetTexture cannot load resource
+                    sprite.initWithFile(fileName);
                     break;
                 case ccui.Widget.PLIST_TEXTURE:
-                    sprite.setSpriteFrame(fileName);
+                    //SetTexture cannot load resource
+                    sprite.initWithSpriteFrameName(fileName);
                     break;
                 default:
                     break;
@@ -1116,6 +1113,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _doLayout: function () {
         if (!this._doLayoutDirty)
             return;
+
+        this.sortAllChildren();
 
         var executant = ccui.getLayoutManager(this._layoutType);
         if (executant)
@@ -1762,7 +1761,7 @@ _p = null;
 
 /**
  * allocates and initializes a UILayout.
- * @constructs
+ * @deprecated
  * @return {ccui.Layout}
  * @example
  * // example

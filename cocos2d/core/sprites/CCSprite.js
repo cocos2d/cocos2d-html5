@@ -1125,7 +1125,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
 /**
  * Create a sprite with image path or frame name or texture or spriteFrame.
- * @constructs
+ * @deprecated
  * @param {String|cc.SpriteFrame|HTMLImageElement|cc.Texture2D} fileName  The string which indicates a path to image file, e.g., "scene1/monster.png".
  * @param {cc.Rect} rect  Only the contents inside rect of pszFileName's texture will be applied for this sprite.
  * @param {Boolean} [rotated] Whether or not the texture rectangle is rotated.
@@ -1154,7 +1154,23 @@ cc.Sprite.create = function (fileName, rect, rotated) {
     return new cc.Sprite(fileName, rect, rotated);
 };
 
+/**
+ * @deprecated
+ * @type {Function}
+ */
+cc.Sprite.createWithTexture = cc.Sprite.create;
 
+/**
+ * @deprecated
+ * @type {Function}
+ */
+cc.Sprite.createWithSpriteFrameName = cc.Sprite.create;
+
+/**
+ * @deprecated
+ * @type {Function}
+ */
+cc.Sprite.createWithSpriteFrame = cc.Sprite.create;
 /**
  * cc.Sprite invalid index on the cc.SpriteBatchNode
  * @constant

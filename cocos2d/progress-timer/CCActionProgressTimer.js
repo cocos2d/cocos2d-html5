@@ -96,17 +96,29 @@ cc.ProgressTo = cc.ActionInterval.extend(/** @lends cc.ProgressTo# */{
     }
 });
 
-/** Creates and initializes with a duration and a percent
+/**
+ * Creates and initializes with a duration and a percent
+ * @function
  * @param {Number} duration duration in seconds
  * @param {Number} percent
  * @return {cc.ProgressTo}
  * @example
  * // example
- * var to = cc.ProgressTo.create(2, 100);
+ * var to = cc.progressTo(2, 100);
  */
-cc.ProgressTo.create = function (duration, percent) {
+cc.progressTo = function (duration, percent) {
     return new cc.ProgressTo(duration, percent);
 };
+/**
+ * Please use cc.progressTo instead
+ * Creates and initializes with a duration and a percent
+ * @static
+ * @deprecated
+ * @param {Number} duration duration in seconds
+ * @param {Number} percent
+ * @return {cc.ProgressTo}
+ */
+cc.ProgressTo.create = cc.progressTo;
 
 /**
  * Progress from a percentage to another percentage
@@ -179,14 +191,26 @@ cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
 });
 
 /** Creates and initializes the action with a duration, a "from" percentage and a "to" percentage
+ * @function
  * @param {Number} duration duration in seconds
  * @param {Number} fromPercentage
  * @param {Number} toPercentage
  * @return {cc.ProgressFromTo}
  * @example
  * // example
- *  var fromTO = cc.ProgressFromTo.create(2, 100.0, 0.0);
+ *  var fromTO = cc.progressFromTo(2, 100.0, 0.0);
  */
-cc.ProgressFromTo.create = function (duration, fromPercentage, toPercentage) {
+cc.progressFromTo = function (duration, fromPercentage, toPercentage) {
     return new cc.ProgressFromTo(duration, fromPercentage, toPercentage);
 };
+/**
+ * Please use cc.progressFromTo instead
+ * Creates and initializes the action with a duration, a "from" percentage and a "to" percentage
+ * @static
+ * @deprecated
+ * @param {Number} duration duration in seconds
+ * @param {Number} fromPercentage
+ * @param {Number} toPercentage
+ * @return {cc.ProgressFromTo}
+ */
+cc.ProgressFromTo.create = cc.progressFromTo;

@@ -83,11 +83,12 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     /**
      * allocates and initializes a UIButton.
      * Constructor of ccui.Button
+     * @constructor
      * @example
      * // example
      * var uiButton = new ccui.Button();
      */
-    ctor: function () {
+    ctor: function (normalImage, selectedImage, disableImage, texType) {
         this._capInsetsNormal = cc.rect(0, 0, 0, 0);
         this._capInsetsPressed = cc.rect(0, 0, 0, 0);
         this._capInsetsDisabled = cc.rect(0, 0, 0, 0);
@@ -97,6 +98,8 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this._titleColor = cc.color.WHITE;
         ccui.Widget.prototype.ctor.call(this);
         this.setTouchEnabled(true);
+
+        texType && this.init(normalImage, selectedImage, disableImage, texType);
     },
 
     init: function (normalImage, selectedImage,disableImage, texType) {
@@ -209,6 +212,26 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._normalFileName = normal;
         this._normalTexType = texType;
+
+        var self = this;
+        if(!this._buttonNormalRenderer.texture || !this._buttonNormalRenderer.texture.isLoaded()){
+            this._buttonNormalRenderer.addLoadedEventListener(function(){
+
+                self._findLayout();
+
+                self._normalTextureSize = self._buttonNormalRenderer.getContentSize();
+                self._updateFlippedX();
+                self._updateFlippedY();
+
+                self._buttonNormalRenderer.setColor(self.getColor());
+                self._buttonNormalRenderer.setOpacity(self.getOpacity());
+
+                self._updateContentSizeWithTextureSize(self._normalTextureSize);
+                self._normalTextureLoaded = true;
+                self._normalTextureAdaptDirty = true;
+            });
+        }
+
         if (this._scale9Enabled) {
             var normalRendererScale9 = this._buttonNormalRenderer;
             switch (this._normalTexType){
@@ -226,10 +249,12 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             var normalRenderer = this._buttonNormalRenderer;
             switch (this._normalTexType){
                 case ccui.Widget.LOCAL_TEXTURE:
-                    normalRenderer.setTexture(normal);
+                    //SetTexture cannot load resource
+                    normalRenderer.initWithFile(normal);
                     break;
                 case ccui.Widget.PLIST_TEXTURE:
-                    normalRenderer.setSpriteFrame(normal);
+                    //SetTexture cannot load resource
+                    normalRenderer.initWithSpriteFrameName(normal);
                     break;
                 default:
                     break;
@@ -258,6 +283,22 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._clickedFileName = selected;
         this._pressedTexType = texType;
+
+        var self = this;
+        if(!this._buttonClickedRenderer.texture || !this._buttonClickedRenderer.texture.isLoaded()){
+            this._buttonClickedRenderer.addLoadedEventListener(function(){
+
+                self._findLayout();
+
+                self._pressedTextureSize = self._buttonClickedRenderer.getContentSize();
+                self._updateFlippedX();
+                self._updateFlippedY();
+
+                self._pressedTextureLoaded = true;
+                self._pressedTextureAdaptDirty = true;
+            });
+        }
+
         if (this._scale9Enabled) {
             var clickedRendererScale9 = this._buttonClickedRenderer;
             switch (this._pressedTexType) {
@@ -275,10 +316,12 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             var clickedRenderer = this._buttonClickedRenderer;
             switch (this._pressedTexType) {
                 case ccui.Widget.LOCAL_TEXTURE:
-                    clickedRenderer.setTexture(selected);
+                    //SetTexture cannot load resource
+                    clickedRenderer.initWithFile(selected);
                     break;
                 case ccui.Widget.PLIST_TEXTURE:
-                    clickedRenderer.setSpriteFrame(selected);
+                    //SetTexture cannot load resource
+                    clickedRenderer.initWithSpriteFrameName(selected);
                     break;
                 default:
                     break;
@@ -304,6 +347,22 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._disabledFileName = disabled;
         this._disabledTexType = texType;
+
+        var self = this;
+        if(!this._buttonDisableRenderer.texture || !this._buttonDisableRenderer.texture.isLoaded()){
+            this._buttonDisableRenderer.addLoadedEventListener(function() {
+
+                self._findLayout();
+
+                self._disabledTextureSize = self._buttonDisableRenderer.getContentSize();
+                self._updateFlippedX();
+                self._updateFlippedY();
+
+                self._disabledTextureLoaded = true;
+                self._disabledTextureAdaptDirty = true;
+            });
+        }
+
         if (this._scale9Enabled) {
             var disabledScale9 = this._buttonDisableRenderer;
             switch (this._disabledTexType) {
@@ -321,10 +380,12 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             var disabledRenderer = this._buttonDisableRenderer;
             switch (this._disabledTexType) {
                 case ccui.Widget.LOCAL_TEXTURE:
-                    disabledRenderer.setTexture(disabled);
+                    //SetTexture cannot load resource
+                    disabledRenderer.initWithFile(disabled);
                     break;
                 case ccui.Widget.PLIST_TEXTURE:
-                    disabledRenderer.setSpriteFrame(disabled);
+                    //SetTexture cannot load resource
+                    disabledRenderer.initWithSpriteFrameName(disabled);
                     break;
                 default:
                     break;
@@ -756,6 +817,7 @@ _p = null;
 
 /**
  * allocates and initializes a UIButton.
+ * @deprecated
  * @param {string} [normalImage]    normal state texture name
  * @param {string} [selectedImage]  selected state texture name
  * @param {string} [disableImage]   disabled state texture name
@@ -766,15 +828,7 @@ _p = null;
  * var uiButton = ccui.Button.create();
  */
 ccui.Button.create = function (normalImage, selectedImage, disableImage, texType) {
-    var btn = new ccui.Button();
-    if(normalImage === undefined){
-        if(btn && btn.init())
-            return btn;
-    }else{
-        if(btn && btn.init(normalImage, selectedImage, disableImage, texType))
-            return btn;
-    }
-    return null;
+    return new ccui.Button(normalImage, selectedImage, disableImage, texType);
 };
 
 // Constants

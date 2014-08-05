@@ -85,14 +85,22 @@ cc.Show = cc.ActionInstant.extend(/** @lends cc.Show# */{
     }
 });
 /**
+ * @function
  * @return {cc.Show}
  * @example
  * // example
- * var showAction = cc.Show.create();
+ * var showAction = cc.show();
  */
-cc.Show.create = function () {
+cc.show = function () {
     return new cc.Show();
 };
+/**
+ * Please use cc.show instead
+ * @static
+ * @deprecated
+ * @return {cc.Show}
+ */
+cc.Show.create = cc.show;
 
 /**
  * Hide the node
@@ -119,14 +127,21 @@ cc.Hide = cc.ActionInstant.extend(/** @lends cc.Hide# */{
     }
 });
 /**
+ * @function
  * @return {cc.Hide}
  * @example
  * // example
- * var hideAction = cc.Hide.create();
+ * var hideAction = cc.hide();
  */
-cc.Hide.create = function () {
+cc.hide = function () {
     return new cc.Hide();
 };
+/**
+ * @static
+ * @deprecated
+ * @return {cc.Hide}
+ */
+cc.Hide.create = cc.hide;
 
 
 /** Toggles the visibility of a node
@@ -154,14 +169,22 @@ cc.ToggleVisibility = cc.ActionInstant.extend(/** @lends cc.ToggleVisibility# */
 });
 
 /**
+ * @function
  * @return {cc.ToggleVisibility}
  * @example
  * // example
- * var toggleVisibilityAction = cc.ToggleVisibility.create();
+ * var toggleVisibilityAction = cc.toggleVisibility();
  */
-cc.ToggleVisibility.create = function () {
+cc.toggleVisibility = function () {
     return new cc.ToggleVisibility();
 };
+/**
+ * Please use cc.toggleVisibility instead
+ * @static
+ * @deprecated
+ * @return {cc.ToggleVisibility}
+ */
+cc.ToggleVisibility.create = cc.toggleVisibility;
 
 cc.RemoveSelf = cc.ActionInstant.extend({
      _isNeedCleanUp: true,
@@ -203,16 +226,27 @@ cc.RemoveSelf = cc.ActionInstant.extend({
 /**
  * Create a RemoveSelf object with a flag indicate whether the target should be cleaned up while removing.
  *
+ * @function
  * @param {Boolean} [isNeedCleanUp=true]
  * @return {cc.RemoveSelf}
  *
  * @example
  * // example
- * var removeSelfAction = cc.RemoveSelf.create();
+ * var removeSelfAction = cc.removeSelf();
  */
-cc.RemoveSelf.create = function(isNeedCleanUp){
+cc.removeSelf = function(isNeedCleanUp){
     return new cc.RemoveSelf(isNeedCleanUp);
 };
+/**
+ * Please use cc.removeSelf instead
+ * Create a RemoveSelf object with a flag indicate whether the target should be cleaned up while removing.
+ *
+ * @static
+ * @deprecated
+ * @param {Boolean} [isNeedCleanUp=true]
+ * @return {cc.RemoveSelf}
+ */
+cc.RemoveSelf.create = cc.removeSelf;
 
 /**
  * Flips the sprite horizontally
@@ -270,14 +304,25 @@ cc.FlipX = cc.ActionInstant.extend(/** @lends cc.FlipX# */{
 /**
  * Create a FlipX action to flip or unflip the target
  *
+ * @function
  * @param {Boolean} flip Indicate whether the target should be flipped or not
  * @return {cc.FlipX}
  * @example
- * var flipXAction = cc.FlipX.create(true);
+ * var flipXAction = cc.flipX(true);
  */
-cc.FlipX.create = function (flip) {
+cc.flipX = function (flip) {
     return new cc.FlipX(flip);
 };
+/**
+ * Plese use cc.flipX instead
+ * Create a FlipX action to flip or unflip the target
+ *
+ * @static
+ * @deprecated
+ * @param {Boolean} flip Indicate whether the target should be flipped or not
+ * @return {cc.FlipX}
+ */
+cc.FlipX.create = cc.flipX;
 
 /**
  * Flips the sprite vertically
@@ -334,14 +379,25 @@ cc.FlipY = cc.ActionInstant.extend(/** @lends cc.FlipY# */{
 /**
  * Create a FlipY action to flip or unflip the target
  *
+ * @function
  * @param {Boolean} flip
  * @return {cc.FlipY}
  * @example
- * var flipYAction = cc.FlipY.create(true);
+ * var flipYAction = cc.flipY(true);
  */
-cc.FlipY.create = function (flip) {
+cc.flipY = function (flip) {
     return new cc.FlipY(flip);
 };
+/**
+ * Please use cc.flipY instead
+ * Create a FlipY action to flip or unflip the target
+ *
+ * @static
+ * @deprecated
+ * @param {Boolean} flip
+ * @return {cc.FlipY}
+ */
+cc.FlipY.create = cc.flipY;
 
 
 /** Places the node in a certain position
@@ -401,17 +457,28 @@ cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
 });
 /**
  * Creates a Place action with a position
+ * @function
  * @param {cc.Point|Number} pos
  * @param {Number} [y]
  * @return {cc.Place}
  * @example
  * // example
- * var placeAction = cc.Place.create(cc.p(200, 200));
- * var placeAction = cc.Place.create(200, 200);
+ * var placeAction = cc.place(cc.p(200, 200));
+ * var placeAction = cc.place(200, 200);
  */
-cc.Place.create = function (pos, y) {
+cc.place = function (pos, y) {
     return new cc.Place(pos, y);
 };
+/**
+ * Please use cc.place instead
+ * Creates a Place action with a position
+ * @static
+ * @deprecated
+ * @param {cc.Point|Number} pos
+ * @param {Number} [y]
+ * @return {cc.Place}
+ */
+cc.Place.create = cc.place;
 
 
 /** Calls a 'callback'
@@ -515,6 +582,7 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
 });
 /**
  * Creates the action with the callback
+ * @function
  * @param {function} selector
  * @param {object|null} [selectorTarget]
  * @param {*|null} [data] data for function, it accepts all data types.
@@ -522,11 +590,22 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
  * @example
  * // example
  * // CallFunc without data
- * var finish = cc.CallFunc.create(this.removeSprite, this);
+ * var finish = cc.callFunc(this.removeSprite, this);
  *
  * // CallFunc with data
- * var finish = cc.CallFunc.create(this.removeFromParentAndCleanup, this._grossini,  true);
+ * var finish = cc.callFunc(this.removeFromParentAndCleanup, this._grossini,  true);
  */
-cc.CallFunc.create = function (selector, selectorTarget, data) {
+cc.callFunc = function (selector, selectorTarget, data) {
     return new cc.CallFunc(selector, selectorTarget, data);
 };
+/**
+ * Please use cc.callFunc instead
+ * Creates the action with the callback
+ * @static
+ * @deprecated
+ * @param {function} selector
+ * @param {object|null} [selectorTarget]
+ * @param {*|null} [data] data for function, it accepts all data types.
+ * @return {cc.CallFunc}
+ */
+cc.CallFunc.create = cc.callFunc;

@@ -108,11 +108,20 @@ cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
  * @return {cc.ActionEase}
  * @example
  * // example
- * var moveEase = cc.ActionEase.create(action);
+ * var moveEase = cc.actionEase(action);
  */
-cc.ActionEase.create = function (action) {
+cc.actionEase = function (action) {
     return new cc.ActionEase(action);
 };
+/**
+ * Please use cc.actionEase instead
+ * creates the action of ActionEase
+ * @param {cc.ActionInterval} action
+ * @return {cc.ActionEase}
+ * @static
+ * @deprecated
+ */
+cc.ActionEase.create = cc.actionEase;
 
 /**
  * Base class for Easing actions with rate parameters
@@ -187,11 +196,21 @@ cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
  * @return {cc.EaseRateAction}
  * @example
  * // example
- * var moveEaseRateAction = cc.EaseRateAction.create(action, 3.0);
+ * var moveEaseRateAction = cc.easeRateAction(action, 3.0);
  */
-cc.EaseRateAction.create = function (action, rate) {
+cc.easeRateAction = function (action, rate) {
     return new cc.EaseRateAction(action, rate);
 };
+/**
+ * Please use cc.easeRateAction instead
+ * Creates the action with the inner action and the rate parameter
+ * @param {cc.ActionInterval} action
+ * @param {Number} rate
+ * @return {cc.EaseRateAction}
+ * @static
+ * @deprecated
+ */
+cc.EaseRateAction.create = cc.easeRateAction;
 
 /**
  * cc.EaseIn action with a rate
@@ -220,18 +239,26 @@ cc.EaseIn = cc.EaseRateAction.extend(/** @lends cc.EaseIn# */{
     }
 });
 
-/** Creates the action with the inner action and the rate parameter
+/**
+ * Creates the action with the inner action and the rate parameter
+ * @static
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @param {Number} rate
  * @return {cc.EaseIn}
- * @example
- * // example
- * var moveEaseIn = cc.EaseIn.create(action, 3.0);
  */
 cc.EaseIn.create = function (action, rate) {
     return new cc.EaseIn(action, rate);
 };
 
+/** Creates the action easing object with the rate parameter
+ * @function
+ * @param {Number} rate
+ * @return {Object}
+ * @example
+ * // example
+ * action.easing(cc.easeIn(3.0));
+ */
 cc.easeIn = function (rate) {
     return {
         _rate: rate,
@@ -272,17 +299,24 @@ cc.EaseOut = cc.EaseRateAction.extend(/** @lends cc.EaseOut# */{
 });
 
 /** Creates the action with the inner action and the rate parameter
+ * @static
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @param {Number} rate
  * @return {cc.EaseOut}
- * @example
- * // example
- * var moveEaseOut = cc.EaseOut.create(action, 3.0);
  */
 cc.EaseOut.create = function (action, rate) {
     return new cc.EaseOut(action, rate);
 };
 
+/** Creates the action easing object with the rate parameter
+ * @function
+ * @param {Number} rate
+ * @return {Object}
+ * @example
+ * // example
+ * action.easing(cc.easeOut(3.0));
+ */
 cc.easeOut = function (rate) {
     return {
         _rate: rate,
@@ -327,17 +361,24 @@ cc.EaseInOut = cc.EaseRateAction.extend(/** @lends cc.EaseInOut# */{
 });
 
 /** Creates the action with the inner action and the rate parameter
+ * @static
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @param {Number} rate
  * @return {cc.EaseInOut}
- * @example
- * // example
- * var moveEaseInOut = cc.EaseInOut.create(action, 3.0);
  */
 cc.EaseInOut.create = function (action, rate) {
     return new cc.EaseInOut(action, rate);
 };
 
+/** Creates the action easing object with the rate parameter
+ * @function
+ * @param {Number} rate
+ * @return {Object}
+ * @example
+ * // example
+ * action.easing(cc.easeInOut(3.0));
+ */
 cc.easeInOut = function (rate) {
     return {
         _rate: rate,
@@ -382,11 +423,10 @@ cc.EaseExponentialIn = cc.ActionEase.extend(/** @lends cc.EaseExponentialIn# */{
 });
 
 /** creates the action
+ * @static
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseExponentialIn}
- * @example
- * // example
- * var moveEaseExponentialIn = cc.EaseExponentialIn.create(action);
  */
 cc.EaseExponentialIn.create = function (action) {
     return new cc.EaseExponentialIn(action);
@@ -400,6 +440,14 @@ cc._easeExponentialInObj = {
         return cc._easeExponentialOutObj;
     }
 };
+
+/** creates the action easing object
+ * @function
+ * @return {Object}
+ * @example
+ * // example
+ * action.easing(cc.easeExponentialIn());
+ */
 cc.easeExponentialIn = function(){
     return cc._easeExponentialInObj;
 };
@@ -432,11 +480,10 @@ cc.EaseExponentialOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialOut# *
 });
 
 /** creates the action
+ * @static
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseExponentialOut}
- * @example
- * // example
- * var moveEaseExponentialOut = cc.EaseExponentialOut.create(action);
  */
 cc.EaseExponentialOut.create = function (action) {
     return new cc.EaseExponentialOut(action);
@@ -450,6 +497,12 @@ cc._easeExponentialOutObj = {
         return cc._easeExponentialInObj;
     }
 };
+/** creates the action easing object
+ * @return {cc.EaseExponentialOut}
+ * @example
+ * // example
+ * action.easing(cc.easeExponentialOut());
+ */
 cc.easeExponentialOut = function(){
     return cc._easeExponentialOutObj;
 };
@@ -489,11 +542,10 @@ cc.EaseExponentialInOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialInOu
 });
 
 /** creates an EaseExponentialInOut action
+ * @static
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseExponentialInOut}
- * @example
- * // example
- * var moveEaseExponentialInOut = cc.EaseExponentialInOut.create(action);
  */
 cc.EaseExponentialInOut.create = function (action) {
     return new cc.EaseExponentialInOut(action);
@@ -514,6 +566,14 @@ cc._easeExponentialInOutObj = {
         return cc._easeExponentialInOutObj;
     }
 };
+/**
+ * creates an EaseExponentialInOut action easing object
+ * @function
+ * @return {Object}
+ * @example
+ * // example
+ * action.easing(cc.easeExponentialInOut());
+ */
 cc.easeExponentialInOut = function(){
     return cc._easeExponentialInOutObj;
 };
@@ -547,11 +607,10 @@ cc.EaseSineIn = cc.ActionEase.extend(/** @lends cc.EaseSineIn# */{
 });
 
 /** creates an EaseSineIn action
+ * @static
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseSineIn}
- * @example
- * // example
- * var moveSineIn = cc.EaseSineIn.create(action);
  */
 cc.EaseSineIn.create = function (action) {
     return new cc.EaseSineIn(action);
@@ -565,6 +624,13 @@ cc._easeSineInObj = {
         return cc._easeSineOutObj;
     }
 };
+/** creates an EaseSineIn action
+ * @function
+ * @return {Object}
+ * @example
+ * // example
+ * action.easing(cc.easeSineIn());
+ */
 cc.easeSineIn = function(){
     return cc._easeSineInObj;
 };
@@ -598,11 +664,10 @@ cc.EaseSineOut = cc.ActionEase.extend(/** @lends cc.EaseSineOut# */{
 });
 
 /** creates an EaseSineOut action
+ * @static
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseSineOut}
- * @example
- * // example
- * var moveEaseOut = cc.EaseSineOut.create(action);
  */
 cc.EaseSineOut.create = function (action) {
     return new cc.EaseSineOut(action);
@@ -616,6 +681,13 @@ cc._easeSineOutObj = {
         return cc._easeSineInObj;
     }
 };
+/** creates an EaseSineOut action easing object
+ * @function
+ * @return {Object}
+ * @example
+ * // example
+ * action.easing(cc.easeSineOut());
+ */
 cc.easeSineOut = function(){
     return cc._easeSineOutObj;
 };
@@ -649,11 +721,10 @@ cc.EaseSineInOut = cc.ActionEase.extend(/** @lends cc.EaseSineInOut# */{
 });
 
 /** creates the action
+ * @static
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseSineInOut}
- * @example
- * // example
- * var moveEaseSineInOut = cc.EaseSineInOut.create(action);
  */
 cc.EaseSineInOut.create = function (action) {
     return new cc.EaseSineInOut(action);
@@ -667,6 +738,13 @@ cc._easeSineInOutObj = {
         return cc._easeSineInOutObj;
     }
 };
+/**
+ * creates the action easing object
+ * @return {cc.EaseSineInOut}
+ * @example
+ * // example
+ * action.easing(cc.easeSineInOut());
+ */
 cc.easeSineInOut = function(){
     return cc._easeSineInOutObj;
 };
@@ -736,12 +814,11 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
 });
 
 /** Creates the action with the inner action and the period in radians (default is 0.3)
+ * @static
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @param {Number} [period=0.3]
  * @return {cc.EaseElastic}
- * @example
- * // example
- * var moveEaseElastic = cc.EaseElastic.create(action, 3.0);
  */
 cc.EaseElastic.create = function (action, period) {
     return new cc.EaseElastic(action, period);
@@ -784,12 +861,10 @@ cc.EaseElasticIn = cc.EaseElastic.extend(/** @lends cc.EaseElasticIn# */{
 });
 
 /** Creates the action with the inner action and the period in radians (default is 0.3)
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @param {Number} [period=0.3]
  * @return {cc.EaseElasticIn}
- * @example
- * // example
- * var moveEaseElasticIn = cc.EaseElasticIn.create(action, 3.0);
  */
 cc.EaseElasticIn.create = function (action, period) {
     return new cc.EaseElasticIn(action, period);
@@ -808,6 +883,14 @@ cc._easeElasticInObj = {
     }
 };
 
+/** Creates the action easing obejct with the period in radians (default is 0.3)
+ * @function
+ * @param {Number} [period=0.3]
+ * @return {Object}
+ * @example
+ * // example
+ * action.easing(cc.easeElasticIn(3.0));
+ */
 cc.easeElasticIn = function (period) {
     if(period && period !== 0.3){
         return {
@@ -866,12 +949,10 @@ cc.EaseElasticOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticOut# */{
 });
 
 /** Creates the action with the inner action and the period in radians (default is 0.3)
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @param {Number} [period=0.3]
  * @return {cc.EaseElasticOut}
- * @example
- * // example
- * var moveEaseElasticOut = cc.EaseElasticOut.create(action, 3.0);
  */
 cc.EaseElasticOut.create = function (action, period) {
     return new cc.EaseElasticOut(action, period);
@@ -886,7 +967,14 @@ cc._easeElasticOutObj = {
         return cc._easeElasticInObj;
     }
 };
-
+/** Creates the action easing object with the period in radians (default is 0.3)
+ * @function
+ * @param {Number} [period=0.3]
+ * @return {Object}
+ * @example
+ * // example
+ * action.easing(cc.easeElasticOut(3.0));
+ */
 cc.easeElasticOut = function (period) {
     if(period && period !== 0.3){
         return {
@@ -947,17 +1035,23 @@ cc.EaseElasticInOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticInOut# */{
 });
 
 /** Creates the action with the inner action and the period in radians (default is 0.3)
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @param {Number} [period=0.3]
  * @return {cc.EaseElasticInOut}
- * @example
- * // example
- * var moveEaseElasticInOut = cc.EaseElasticInOut.create(action, 3.0);
  */
 cc.EaseElasticInOut.create = function (action, period) {
     return new cc.EaseElasticInOut(action, period);
 };
 
+/** Creates the action easing object with the period in radians (default is 0.3)
+ * @function
+ * @param {Number} [period=0.3]
+ * @return {Object}
+ * @example
+ * // example
+ * action.easing(cc.easeElasticInOut(3.0));
+ */
 cc.easeElasticInOut = function (period) {
     period = period || 0.3;
     return {
@@ -1026,11 +1120,10 @@ cc.EaseBounce = cc.ActionEase.extend(/** @lends cc.EaseBounce# */{
 });
 
 /** creates an ease bounce action
+ * @static
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBounce}
- * @example
- * // example
- * var moveEaseBounce = cc.EaseBounce.create(action);
  */
 cc.EaseBounce.create = function (action) {
     return new cc.EaseBounce(action);
@@ -1066,11 +1159,10 @@ cc.EaseBounceIn = cc.EaseBounce.extend(/** @lends cc.EaseBounceIn# */{
 });
 
 /** creates the action
+ * @static
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBounceIn}
- * @example
- * // example
- * var moveEaseBounceIn = cc.EaseBounceIn.create(action);
  */
 cc.EaseBounceIn.create = function (action) {
     return new cc.EaseBounceIn(action);
@@ -1099,6 +1191,13 @@ cc._easeBounceInObj = {
         return cc._easeBounceOutObj;
     }
 };
+/** creates the action easing object
+ * @function
+ * @return {Object}
+ * @example
+ * // example
+ * action.easing(cc.easeBounceIn());
+ */
 cc.easeBounceIn = function(){
     return cc._easeBounceInObj;
 };
@@ -1133,11 +1232,10 @@ cc.EaseBounceOut = cc.EaseBounce.extend(/** @lends cc.EaseBounceOut# */{
 });
 
 /** creates the action
+ * @static
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBounceOut}
- * @example
- * // example
- * var moveEaseBounceOut = cc.EaseBounceOut.create(action);
  */
 cc.EaseBounceOut.create = function (action) {
     return new cc.EaseBounceOut(action);
@@ -1151,6 +1249,14 @@ cc._easeBounceOutObj = {
         return cc._easeBounceInObj;
     }
 };
+/**
+ * Creates the action easing object
+ * @function
+ * @return {Object}
+ * @example
+ * // example
+ * action.easing(cc.easeBounceOut());
+ */
 cc.easeBounceOut = function(){
     return cc._easeBounceOutObj;
 };
@@ -1191,11 +1297,10 @@ cc.EaseBounceInOut = cc.EaseBounce.extend(/** @lends cc.EaseBounceInOut# */{
 });
 
 /** creates the action
+ * @static
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBounceInOut}
- * @example
- * // example
- * var moveEaseBounceInOut = cc.EaseBounceInOut.create(action);
  */
 cc.EaseBounceInOut.create = function (action) {
     return new cc.EaseBounceInOut(action);
@@ -1216,7 +1321,14 @@ cc._easeBounceInOutObj = {
         return cc._easeBounceInOutObj;
     }
 };
-
+/**
+ * Creates the action easing object
+ * @function
+ * @return {Object}
+ * @example
+ * // example
+ * action.easing(cc.easeBounceInOut());
+ */
 cc.easeBounceInOut = function(){
     return cc._easeBounceInOutObj;
 };
@@ -1253,11 +1365,10 @@ cc.EaseBackIn = cc.ActionEase.extend(/** @lends cc.EaseBackIn# */{
 
 
 /** creates the action
+ * @static
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBackIn}
- * @example
- * // example
- * var moveEaseBackIn = cc.EaseBackIn.create(action);
  */
 cc.EaseBackIn.create = function (action) {
     return new cc.EaseBackIn(action);
@@ -1272,7 +1383,13 @@ cc._easeBackInObj = {
         return cc._easeBackOutObj;
     }
 };
-
+/** creates the action easing object
+ * @function
+ * @return {Object}
+ * @example
+ * // example
+ * action.easing(cc.easeBackIn());
+ */
 cc.easeBackIn = function(){
     return cc._easeBackInObj;
 };
@@ -1308,11 +1425,10 @@ cc.EaseBackOut = cc.ActionEase.extend(/** @lends cc.EaseBackOut# */{
 });
 
 /** creates the action
+ * @static
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBackOut}
- * @example
- * // example
- * var moveEaseBackOut = cc.EaseBackOut.create(action);
  */
 cc.EaseBackOut.create = function (action) {
     return new cc.EaseBackOut(action);
@@ -1328,7 +1444,13 @@ cc._easeBackOutObj = {
         return cc._easeBackInObj;
     }
 };
-
+/** creates the action easing object
+ * @function
+ * @return {Object}
+ * @example
+ * // example
+ * action.easing(cc.easeBackOut());
+ */
 cc.easeBackOut = function(){
     return cc._easeBackOutObj;
 };
@@ -1370,11 +1492,10 @@ cc.EaseBackInOut = cc.ActionEase.extend(/** @lends cc.EaseBackInOut# */{
 
 
 /** creates the action
+ * @static
+ * @deprecated
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBackInOut}
- * @example
- * // example
- * var moveEaseBackInOut = cc.EaseBackInOut.create(action);
  */
 cc.EaseBackInOut.create = function (action) {
     return new cc.EaseBackInOut(action);
@@ -1395,7 +1516,13 @@ cc._easeBackInOutObj = {
         return cc._easeBackInOutObj;
     }
 };
-
+/** creates the action easing object
+ * @function
+ * @return {Object}
+ * @example
+ * // example
+ * action.easing(cc.easeBackInOut());
+ */
 cc.easeBackInOut = function(){
     return cc._easeBackInOutObj;
 };
@@ -1444,6 +1571,8 @@ cc.EaseBezierAction = cc.ActionEase.extend(/** @lends cc.EaseBezierAction# */{
 
 /**
  * creates the action
+ * @static
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionIn}
  */
@@ -1451,6 +1580,14 @@ cc.EaseBezierAction.create = function(action){
     return new cc.EaseBezierAction(action);
 };
 
+/**
+ * creates the action easing object
+ * @param {Number} p0 The first bezier parameter
+ * @param {Number} p1 The second bezier parameter
+ * @param {Number} p2 The third bezier parameter
+ * @param {Number} p3 The fourth bezier parameter
+ * @returns {Object}
+ */
 cc.easeBezierAction = function(p0, p1, p2, p3){
     return {
         easing: function(time){
@@ -1491,6 +1628,8 @@ cc.EaseQuadraticActionIn = cc.ActionEase.extend(/** @lends cc.EaseQuadraticActio
 
 /**
  * creates the action
+ * @static
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionIn}
  */
@@ -1504,7 +1643,10 @@ cc._easeQuadraticActionIn = {
         return cc._easeQuadraticActionIn;
     }
 };
-
+/**
+ * creates the action easing object
+ * @returns {Object}
+ */
 cc.easeQuadraticActionIn = function(){
     return cc._easeQuadraticActionIn;
 };
@@ -1534,6 +1676,8 @@ cc.EaseQuadraticActionOut = cc.ActionEase.extend(/** @lends cc.EaseQuadraticActi
 
 /**
  * creates the action
+ * @static
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1547,7 +1691,11 @@ cc._easeQuadraticActionOut = {
         return cc._easeQuadraticActionOut;
     }
 };
-
+/**
+ * creates the action easing object
+ * @function
+ * @returns {Object}
+ */
 cc.easeQuadraticActionOut = function(){
     return cc._easeQuadraticActionOut;
 };
@@ -1583,6 +1731,8 @@ cc.EaseQuadraticActionInOut = cc.ActionEase.extend(/** @lends cc.EaseQuadraticAc
 
 /**
  * creates the action
+ * @static
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1596,7 +1746,11 @@ cc._easeQuadraticActionInOut = {
         return cc._easeQuadraticActionInOut;
     }
 };
-
+/**
+ * creates the action easing object
+ * @function
+ * @returns {Object}
+ */
 cc.easeQuadraticActionInOut = function(){
     return cc._easeQuadraticActionInOut;
 };
@@ -1624,6 +1778,8 @@ cc.EaseQuarticActionIn = cc.ActionEase.extend(/** @lends cc.EaseQuarticActionIn#
 
 /**
  * creates the action
+ * @static
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1637,7 +1793,11 @@ cc._easeQuarticActionIn = {
         return cc._easeQuarticActionIn;
     }
 };
-
+/**
+ * creates the action easing object
+ * @function
+ * @returns {Object}
+ */
 cc.easeQuarticActionIn = function(){
     return cc._easeQuarticActionIn;
 };
@@ -1666,6 +1826,8 @@ cc.EaseQuarticActionOut = cc.ActionEase.extend(/** @lends cc.EaseQuarticActionOu
 
 /**
  * creates the action
+ * @static
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1679,7 +1841,11 @@ cc._easeQuarticActionOut = {
         return cc._easeQuarticActionOut;
     }
 };
-
+/**
+ * creates the action easing object
+ * @function
+ * @returns {Object}
+ */
 cc.easeQuarticActionOut = function(){
     return cc._easeQuarticActionOut;
 };
@@ -1711,6 +1877,8 @@ cc.EaseQuarticActionInOut = cc.ActionEase.extend(/** @lends cc.EaseQuarticAction
 
 /**
  * creates the action
+ * @static
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1724,7 +1892,11 @@ cc._easeQuarticActionInOut = {
         return cc._easeQuarticActionInOut;
     }
 };
-
+/**
+ * creates the action easing object
+ * @function
+ * @returns {Object}
+ */
 cc.easeQuarticActionInOut = function(){
     return cc._easeQuarticActionInOut;
 };
@@ -1752,6 +1924,8 @@ cc.EaseQuinticActionIn = cc.ActionEase.extend(/** @lends cc.EaseQuinticActionIn#
 
 /**
  * creates the action
+ * @static
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1765,7 +1939,11 @@ cc._easeQuinticActionIn = {
         return cc._easeQuinticActionIn;
     }
 };
-
+/**
+ * creates the action easing object
+ * @function
+ * @returns {Object}
+ */
 cc.easeQuinticActionIn = function(){
     return cc._easeQuinticActionIn;
 };
@@ -1794,6 +1972,8 @@ cc.EaseQuinticActionOut = cc.ActionEase.extend(/** @lends cc.EaseQuinticActionOu
 
 /**
  * creates the action
+ * @static
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1807,7 +1987,11 @@ cc._easeQuinticActionOut = {
         return cc._easeQuinticActionOut;
     }
 };
-
+/**
+ * creates the action easing object
+ * @function
+ * @returns {Object}
+ */
 cc.easeQuinticActionOut = function(){
     return cc._easeQuinticActionOut;
 };
@@ -1839,6 +2023,8 @@ cc.EaseQuinticActionInOut = cc.ActionEase.extend(/** @lends cc.EaseQuinticAction
 
 /**
  * creates the action
+ * @static
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1852,7 +2038,11 @@ cc._easeQuinticActionInOut = {
         return cc._easeQuinticActionInOut;
     }
 };
-
+/**
+ * creates the action easing object
+ * @function
+ * @returns {Object}
+ */
 cc.easeQuinticActionInOut = function(){
     return cc._easeQuinticActionInOut;
 };
@@ -1880,6 +2070,8 @@ cc.EaseCircleActionIn = cc.ActionEase.extend(/** @lends cc.EaseCircleActionIn# *
 
 /**
  * creates the action
+ * @static
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1893,7 +2085,11 @@ cc._easeCircleActionIn = {
         return cc._easeCircleActionIn;
     }
 };
-
+/**
+ * creates the action easing object
+ * @function
+ * @returns {Object}
+ */
 cc.easeCircleActionIn = function(){
     return cc._easeCircleActionIn;
 };
@@ -1922,6 +2118,8 @@ cc.EaseCircleActionOut = cc.ActionEase.extend(/** @lends cc.EaseCircleActionOut#
 
 /**
  * creates the action
+ * @static
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1935,7 +2133,11 @@ cc._easeCircleActionOut = {
         return cc._easeCircleActionOut;
     }
 };
-
+/**
+ * creates the action easing object
+ * @function
+ * @returns {Object}
+ */
 cc.easeCircleActionOut = function(){
     return cc._easeCircleActionOut;
 };
@@ -1967,6 +2169,8 @@ cc.EaseCircleActionInOut = cc.ActionEase.extend(/** @lends cc.EaseCircleActionIn
 
 /**
  * creates the action
+ * @static
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -1980,7 +2184,11 @@ cc._easeCircleActionInOut = {
         return cc._easeCircleActionInOut;
     }
 };
-
+/**
+ * creates the action easing object
+ * @function
+ * @returns {Object}
+ */
 cc.easeCircleActionInOut = function(){
     return cc._easeCircleActionInOut;
 };
@@ -2008,6 +2216,8 @@ cc.EaseCubicActionIn = cc.ActionEase.extend(/** @lends cc.EaseCubicActionIn# */{
 
 /**
  * creates the action
+ * @static
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -2021,7 +2231,11 @@ cc._easeCubicActionIn = {
         return cc._easeCubicActionIn;
     }
 };
-
+/**
+ * creates the action easing object
+ * @function
+ * @returns {Object}
+ */
 cc.easeCubicActionIn = function(){
     return cc._easeCubicActionIn;
 };
@@ -2050,6 +2264,8 @@ cc.EaseCubicActionOut = cc.ActionEase.extend(/** @lends cc.EaseCubicActionOut# *
 
 /**
  * creates the action
+ * @static
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -2063,7 +2279,11 @@ cc._easeCubicActionOut = {
         return cc._easeCubicActionOut;
     }
 };
-
+/**
+ * creates the action easing object
+ * @function
+ * @returns {Object}
+ */
 cc.easeCubicActionOut = function(){
     return cc._easeCubicActionOut;
 };
@@ -2096,6 +2316,8 @@ cc.EaseCubicActionInOut = cc.ActionEase.extend(/** @lends cc.EaseCubicActionInOu
 
 /**
  * creates the action
+ * @static
+ * @deprecated
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
  */
@@ -2109,7 +2331,11 @@ cc._easeCubicActionInOut = {
         return cc._easeCubicActionInOut;
     }
 };
-
+/**
+ * creates the action easing object
+ * @function
+ * @returns {Object}
+ */
 cc.easeCubicActionInOut = function(){
     return cc._easeCubicActionInOut;
 };

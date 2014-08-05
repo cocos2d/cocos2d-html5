@@ -229,6 +229,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
 });
 /**
  * creates a base transition with duration and incoming scene
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene the scene to transit with
  * @return {cc.TransitionScene|Null}
@@ -274,6 +275,7 @@ cc.TransitionSceneOriented = cc.TransitionScene.extend(/** @lends cc.TransitionS
 
 /**
  * creates a base transition with duration and incoming scene
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} orientation
@@ -334,6 +336,7 @@ cc.TransitionRotoZoom = cc.TransitionScene.extend(/** @lends cc.TransitionRotoZo
 
 /**
  * Creates a Transtion rotation and zoom
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene the scene to work with
  * @return {cc.TransitionRotoZoom}
@@ -392,6 +395,7 @@ cc.TransitionJumpZoom = cc.TransitionScene.extend(/** @lends cc.TransitionJumpZo
 
 /**
  * creates a scene transition that zooms then jump across the screen, the same for the incoming scene
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @return {cc.TransitionJumpZoom}
@@ -454,6 +458,7 @@ cc.TransitionMoveInL = cc.TransitionScene.extend(/** @lends cc.TransitionMoveInL
 
 /**
  * creates an action that  Move in from to the left the incoming scene.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @return {cc.TransitionMoveInL}
@@ -490,6 +495,7 @@ cc.TransitionMoveInR = cc.TransitionMoveInL.extend(/** @lends cc.TransitionMoveI
 
 /**
  * create a scene transition that Move in from to the right the incoming scene.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @return {cc.TransitionMoveInR}
@@ -526,6 +532,7 @@ cc.TransitionMoveInT = cc.TransitionMoveInL.extend(/** @lends cc.TransitionMoveI
 
 /**
  * Move in from to the top the incoming scene.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @return {cc.TransitionMoveInT}
@@ -563,6 +570,7 @@ cc.TransitionMoveInB = cc.TransitionMoveInL.extend(/** @lends cc.TransitionMoveI
 
 /**
  * create a scene transition that Move in from to the bottom the incoming scene.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @return {cc.TransitionMoveInB}
@@ -644,6 +652,7 @@ cc.TransitionSlideInL = cc.TransitionScene.extend(/** @lends cc.TransitionSlideI
 
 /**
  * create a transition that a new scene is slided from left
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @return {cc.TransitionSlideInL}
@@ -690,6 +699,7 @@ cc.TransitionSlideInR = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
 
 /**
  * create Slide in the incoming scene from the right border.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @return {cc.TransitionSlideInR}
@@ -724,7 +734,7 @@ cc.TransitionSlideInB = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * initializes the scenes
      */
     initScenes:function () {
-        this._inScene.setPosition(0, cc.director.getWinSize().height - cc.ADJUST_FACTOR);
+        this._inScene.setPosition(0, -(cc.director.getWinSize().height - cc.ADJUST_FACTOR));
     },
 
     /**
@@ -732,12 +742,13 @@ cc.TransitionSlideInB = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * @return {cc.MoveBy}
      */
     action:function () {
-        return cc.MoveBy.create(this._duration, cc.p(0, -(cc.director.getWinSize().height - cc.ADJUST_FACTOR)));
+        return cc.MoveBy.create(this._duration, cc.p(0, cc.director.getWinSize().height - cc.ADJUST_FACTOR));
     }
 });
 
 /**
  * create a Slide in the incoming scene from the bottom border.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @return {cc.TransitionSlideInB}
@@ -772,7 +783,7 @@ cc.TransitionSlideInT = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * initializes the scenes
      */
     initScenes:function () {
-        this._inScene.setPosition(0, -(cc.director.getWinSize().height - cc.ADJUST_FACTOR));
+        this._inScene.setPosition(0, cc.director.getWinSize().height - cc.ADJUST_FACTOR);
     },
 
     /**
@@ -780,12 +791,13 @@ cc.TransitionSlideInT = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * @return {cc.MoveBy}
      */
     action:function () {
-        return cc.MoveBy.create(this._duration, cc.p(0, cc.director.getWinSize().height - cc.ADJUST_FACTOR));
+        return cc.MoveBy.create(this._duration, cc.p(0, -(cc.director.getWinSize().height - cc.ADJUST_FACTOR)));
     }
 });
 
 /**
  * create a Slide in the incoming scene from the top border.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @return {cc.TransitionSlideInT}
@@ -849,6 +861,7 @@ cc.TransitionShrinkGrow = cc.TransitionScene.extend(/** @lends cc.TransitionShri
 
 /**
  * Shrink the outgoing scene while grow the incoming scene
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @return {cc.TransitionShrinkGrow}
@@ -921,6 +934,7 @@ cc.TransitionFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
 /**
  * Flips the screen horizontally.<br/>
  * The front face is the outgoing scene and the back face is the incoming scene.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
@@ -996,6 +1010,7 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
 /**
  * Flips the screen vertically.<br/>
  * The front face is the outgoing scene and the back face is the incoming scene.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
@@ -1071,6 +1086,7 @@ cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.Trans
 /**
  * Flips the screen half horizontally and half vertically.<br/>
  * The front face is the outgoing scene and the back face is the incoming scene.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
@@ -1152,6 +1168,7 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
 /**
  * Flips the screen horizontally doing a zoom out/in<br/>
  * The front face is the outgoing scene and the back face is the incoming scene.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
@@ -1231,6 +1248,7 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
 /**
  * Flips the screen vertically doing a little zooming out/in<br/>
  * The front face is the outgoing scene and the back face is the incoming scene.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
@@ -1309,6 +1327,7 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.T
 /**
  *  Flips the screen half horizontally and half vertically doing a little zooming out/in.<br/>
  * The front face is the outgoing scene and the back face is the incoming scene.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
@@ -1392,6 +1411,7 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
 
 /**
  * Fade out the outgoing scene and then fade in the incoming scene.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @param {cc.Color} color
@@ -1504,6 +1524,7 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
 
 /**
  * Cross fades two scenes using the cc.RenderTexture object.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @return {cc.TransitionCrossFade}
@@ -1561,6 +1582,7 @@ cc.TransitionTurnOffTiles = cc.TransitionScene.extend(/** @lends cc.TransitionTu
 
 /**
  *  Turn off the tiles of the outgoing scene in random order
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @return {cc.TransitionTurnOffTiles}
@@ -1622,6 +1644,7 @@ cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplit
 
 /**
  * The odd columns goes upwards while the even columns goes downwards.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @return {cc.TransitionSplitCols}
@@ -1659,6 +1682,7 @@ cc.TransitionSplitRows = cc.TransitionSplitCols.extend(/** @lends cc.TransitionS
 
 /**
  * The odd rows goes to the left while the even rows goes to the right.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @return {cc.TransitionSplitRows}
@@ -1727,6 +1751,7 @@ cc.TransitionFadeTR = cc.TransitionScene.extend(/** @lends cc.TransitionFadeTR# 
 
 /**
  *  Fade the tiles of the outgoing scene from the left-bottom corner the to top-right corner.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @return {cc.TransitionFadeTR}
@@ -1766,6 +1791,7 @@ cc.TransitionFadeBL = cc.TransitionFadeTR.extend(/** @lends cc.TransitionFadeBL#
 
 /**
  * Fade the tiles of the outgoing scene from the top-right corner to the bottom-left corner.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @return {cc.TransitionFadeBL}
@@ -1805,6 +1831,7 @@ cc.TransitionFadeUp = cc.TransitionFadeTR.extend(/** @lends cc.TransitionFadeUp#
 
 /**
  * Fade the tiles of the outgoing scene from the top-right corner to the bottom-left corner.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @return {cc.TransitionFadeUp}
@@ -1844,6 +1871,7 @@ cc.TransitionFadeDown = cc.TransitionFadeTR.extend(/** @lends cc.TransitionFadeD
 
 /**
  * Fade the tiles of the outgoing scene from the top to the bottom.
+ * @deprecated
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @return {cc.TransitionFadeDown}

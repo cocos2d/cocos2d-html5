@@ -545,4 +545,4 @@ cc._tmp.WebGLColor = function () {
             enumerable: true
         }
     });
-}
+};

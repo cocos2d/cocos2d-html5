@@ -2685,12 +2685,19 @@ cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
  *    This plist files can be create manually or with Particle Designer:<br/>
  *    http://particledesigner.71squared.com/<br/>
  * </p>
+ * @deprecated
  * @param {String|Number} plistFile
  * @return {cc.ParticleSystem}
  */
 cc.ParticleSystem.create = function (plistFile) {
     return new cc.ParticleSystem(plistFile);
 };
+
+/**
+ * @deprecated
+ * @type {Function}
+ */
+cc.ParticleSystem.createWithTotalParticles = cc.ParticleSystem.create;
 
 // Different modes
 /**

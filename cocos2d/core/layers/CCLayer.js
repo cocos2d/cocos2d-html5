@@ -83,6 +83,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
 
 /**
  * creates a layer
+ * @deprecated
  * @example
  * // Example
  * var myLayer = cc.Layer.create();
@@ -361,6 +362,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
 /**
  * creates a cc.Layer with color, width and height in Points
+ * @deprecated
  * @param {cc.Color} color
  * @param {Number|Null} [width=]
  * @param {Number|Null} [height=]
@@ -730,6 +732,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
 /**
  * creates a gradient layer
+ * @deprecated
  * @param {cc.Color} start starting color
  * @param {cc.Color} end ending color
  * @param {cc.Point|Null} v
@@ -875,6 +878,7 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
 
 /**
  * creates a cc.LayerMultiplex with one or more layers using a variable argument list.
+ * @deprecated
  * @return {cc.LayerMultiplex|Null}
  * @example
  * // Example

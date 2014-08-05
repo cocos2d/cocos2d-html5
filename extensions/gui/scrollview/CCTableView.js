@@ -195,10 +195,21 @@ cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
     _cellsPositions:null,                       //vector with all cell positions
     _touchedCell:null,
 
-    ctor:function () {
+    /**
+     * @constructor
+     * @param dataSource
+     * @param size
+     * @param container
+     */
+    ctor:function (dataSource, size, container) {
         cc.ScrollView.prototype.ctor.call(this);
         this._oldDirection = cc.SCROLLVIEW_DIRECTION_NONE;
         this._cellsPositions = [];
+
+        this.initWithViewSize(size, container);
+        this.setDataSource(dataSource);
+        this._updateCellPositions();
+        this._updateContentSize();
     },
 
     __indexFromOffset:function (offset) {
@@ -696,17 +707,12 @@ _p = null;
 
 /**
  * An initialized table view object
- *
+ * @deprecated
  * @param {cc.TableViewDataSource} dataSource data source;
  * @param {cc.Size} size view size
  * @param {cc.Node} [container] parent object for cells
  * @return {cc.TableView} table view
  */
 cc.TableView.create = function (dataSource, size, container) {
-    var table = new cc.TableView();
-    table.initWithViewSize(size, container);
-    table.setDataSource(dataSource);
-    table._updateCellPositions();
-    table._updateContentSize();
-    return table;
+    return cc.TableView(dataSource, size, container);
 };

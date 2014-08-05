@@ -46,7 +46,7 @@ ccs.WidgetReader = {
         var w = 0;
         var h = 0;
         var adaptScreen = options["adaptScreen"];
-        if (adaptScreen !== undefined)
+        if (adaptScreen)
         {
             var screenSize = cc.director.getWinSize();
             w = screenSize.width;
@@ -71,7 +71,7 @@ ccs.WidgetReader = {
         widget.setPosition(cc.p(x, y));
 
 
-        var sx = options["scalex"] || 1;
+        var sx = options["scaleX"] || 1;
         widget.setScaleX(sx);
 
         var sy = options["scaleY"] || 1;
@@ -140,9 +140,6 @@ ccs.WidgetReader = {
         widget.setFlippedY(options["flipY"]);
     },
     setAnchorPointForWidget: function(widget, options){
-        if(options.name === "Image6"){
-            void 0;
-        }
         var isAnchorPointXExists = options["anchorPointX"];
         var anchorPointXInFile;
         if (isAnchorPointXExists != null) {
@@ -160,7 +157,7 @@ ccs.WidgetReader = {
             anchorPointYInFile = widget.getAnchorPoint().y;
         }
 
-        if (isAnchorPointXExists || isAnchorPointYExists) {
+        if (isAnchorPointXExists != null || isAnchorPointYExists != null) {
             widget.setAnchorPoint(cc.p(anchorPointXInFile, anchorPointYInFile));
         }
 

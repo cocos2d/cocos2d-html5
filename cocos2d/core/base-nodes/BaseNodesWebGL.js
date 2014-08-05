@@ -145,6 +145,5 @@ cc._tmp.WebGLCCNode = function () {
         }
     };
 
-    _p.nodeToParentTransform = _p._nodeToParentTransformForWebGL;
-
+    _p.getNodeToParentTransform = _p._getNodeToParentTransformForWebGL;
 };

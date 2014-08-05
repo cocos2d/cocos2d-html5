@@ -180,14 +180,24 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
     }
 });
 /** Allocates and initializes the action
+ * @function
  * @returns {cc.Action}
  * @example
  * // example
- * var action = cc.Action.create();
+ * var action = cc.action();
  */
-cc.Action.create = function () {
+cc.action = function () {
     return new cc.Action();
 };
+/**
+ * Please use cc.action instead
+ * Allocates and initializes the action
+ * @returns {cc.Action}
+ * @example
+ * @static
+ * @deprecated
+ */
+cc.Action.create = cc.action;
 
 
 /**
@@ -360,15 +370,27 @@ cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
         return this._innerAction;
     }
 });
-/** creates the action
+/** creates the speed action
+ * @function
  *
  * @param {cc.ActionInterval} action
  * @param {Number} speed
  * @return {cc.Speed}
  */
-cc.Speed.create = function (action, speed) {
+cc.speed = function (action, speed) {
     return new cc.Speed(action, speed);
 };
+/**
+ * Please use cc.speed instead
+ * creates the action
+ *
+ * @param {cc.ActionInterval} action
+ * @param {Number} speed
+ * @return {cc.Speed}
+ * @static
+ * @deprecated
+ */
+cc.Speed.create = cc.speed;
 
 /**
  * cc.Follow is an action that "follows" a node.
@@ -376,7 +398,7 @@ cc.Speed.create = function (action, speed) {
  * @example
  * //example
  * //Instead of using cc.Camera as a "follower", use this action instead.
- * layer.runAction(cc.Follow.actionWithTarget(hero));
+ * layer.runAction(cc.follow(hero));
 
  * @class
  * @extends cc.Action
@@ -554,6 +576,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
 });
 /** creates the action with a set boundary <br/>
  * creates the action with no boundary set
+ * @function
  * @param {cc.Node} followedNode
  * @param {cc.Rect} rect
  * @return {cc.Follow|Null} returns the cc.Follow object on success
@@ -561,14 +584,26 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
  * // example
  * // creates the action with a set boundary
  * var sprite = cc.Sprite.create("spriteFileName");
- * var followAction = cc.Follow.create(sprite, cc.rect(0, 0, s.width * 2 - 100, s.height));
+ * var followAction = cc.follow(sprite, cc.rect(0, 0, s.width * 2 - 100, s.height));
  * this.runAction(followAction);
  *
  * // creates the action with no boundary set
  * var sprite = cc.Sprite.create("spriteFileName");
- * var followAction = cc.Follow.create(sprite);
+ * var followAction = cc.follow(sprite);
  * this.runAction(followAction);
  */
-cc.Follow.create = function (followedNode, rect) {
+cc.follow = function (followedNode, rect) {
     return new cc.Follow(followedNode, rect);
 };
+
+/**
+ * Please use cc.follow instead
+ * creates the action with a set boundary <br/>
+ * creates the action with no boundary set
+ * @param {cc.Node} followedNode
+ * @param {cc.Rect} rect
+ * @return {cc.Follow|Null} returns the cc.Follow object on success
+ * @static
+ * @deprecated
+ */
+cc.Follow.create = cc.follow;

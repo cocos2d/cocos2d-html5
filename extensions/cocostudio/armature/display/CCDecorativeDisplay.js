@@ -24,14 +24,14 @@
  ****************************************************************************/
 
 /**
- * Base class for ccs.DecorativeDisplay
+ * Decorative a display node for Cocos Armature
  * @class
  * @extends ccs.Class
  */
 ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
-    _display:null,
-    _colliderDetector:null,
-    _displayData:null,
+    _display: null,
+    _colliderDetector: null,
+    _displayData: null,
 
     ctor:function () {
         this._display = null;
@@ -44,7 +44,7 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
     },
 
     /**
-     * display setter
+     * sets display node
      * @param {cc.Node} display
      */
     setDisplay:function (display) {
@@ -52,7 +52,7 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
     },
 
     /**
-     * display getter
+     * gets the display node
      * @returns {cc.Node}
      */
     getDisplay:function () {
@@ -60,7 +60,7 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
     },
 
     /**
-     * colliderDetector setter
+     * sets collide detector
      * @param {ccs.ColliderDetector} colliderDetector
      */
     setColliderDetector:function (colliderDetector) {
@@ -68,7 +68,7 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
     },
 
     /**
-     * colliderDetector getter
+     * sets collide detector
      * @returns {ccs.ColliderDetector}
      */
     getColliderDetector:function () {
@@ -76,7 +76,7 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
     },
 
     /**
-     * display data setter
+     * sets display data
      * @param {ccs.DisplayData} displayData
      */
     setDisplayData:function (displayData) {
@@ -84,26 +84,22 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
     },
 
     /**
-     * display data getter
+     * gets display data
      * @returns {ccs.DisplayData}
      */
     getDisplayData:function () {
         return this._displayData;
     },
+
     release:function () {
-        CC_SAFE_RELEASE(this._display);
         this._display = null;
-        CC_SAFE_RELEASE(this._displayData);
         this._displayData = null;
-        CC_SAFE_RELEASE(this._colliderDetector);
         this._colliderDetector = null;
     }
-
 });
 
 /**
  * allocates and initializes a decorative display.
- * @constructs
  * @return {ccs.DecorativeDisplay}
  * @example
  * // example
@@ -111,8 +107,7 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
  */
 ccs.DecorativeDisplay.create = function () {
     var decorativeDisplay = new ccs.DecorativeDisplay();
-    if (decorativeDisplay && decorativeDisplay.init()) {
+    if (decorativeDisplay && decorativeDisplay.init())
         return decorativeDisplay;
-    }
     return null;
 };

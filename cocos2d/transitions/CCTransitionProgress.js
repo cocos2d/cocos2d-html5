@@ -92,9 +92,9 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
         var pNode = this._progressTimerNodeWithRenderTexture(texture);
 
         // create the blend action
-        var layerAction = cc.Sequence.create(
-            cc.ProgressFromTo.create(this._duration, this._from, this._to),
-            cc.CallFunc.create(this.finish, this));
+        var layerAction = cc.sequence(
+            cc.progressFromTo(this._duration, this._from, this._to),
+            cc.callFunc(this.finish, this));
         // run the blend action
         pNode.runAction(layerAction);
 
@@ -129,6 +129,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
 
 /**
  * create a cc.TransitionProgress object
+ * @deprecated
  * @function
  * @param {Number} t time
  * @param {cc.Scene} scene
@@ -178,6 +179,7 @@ cc.TransitionProgressRadialCCW = cc.TransitionProgress.extend(/** @lends cc.Tran
 /**
  * create a cc.TransitionProgressRadialCCW object
  * @function
+ * @deprecated
  * @param {Number} t time
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgressRadialCCW}
@@ -225,6 +227,7 @@ cc.TransitionProgressRadialCW = cc.TransitionProgress.extend(/** @lends cc.Trans
 /**
  * create a cc.TransitionProgressRadialCW object
  * @function
+ * @deprecated
  * @param {Number} t time
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgressRadialCW}
@@ -277,6 +280,7 @@ cc.TransitionProgressHorizontal = cc.TransitionProgress.extend(/** @lends cc.Tra
 /**
  * create a cc.TransitionProgressHorizontal object
  * @function
+ * @deprecated
  * @param {Number} t time
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgressHorizontal}
@@ -325,6 +329,7 @@ cc.TransitionProgressVertical = cc.TransitionProgress.extend(/** @lends cc.Trans
 /**
  * create a cc.TransitionProgressVertical object
  * @function
+ * @deprecated
  * @param {Number} t time
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgressVertical}
@@ -380,6 +385,7 @@ cc.TransitionProgressInOut = cc.TransitionProgress.extend(/** @lends cc.Transiti
 /**
  * create a cc.TransitionProgressInOut object
  * @function
+ * @deprecated
  * @param {Number} t time
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgressInOut}
@@ -427,6 +433,7 @@ cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.Transiti
 /**
  * create a cc.TransitionProgressOutIn object
  * @function
+ * @deprecated
  * @param {Number} t time
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgressOutIn}

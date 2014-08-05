@@ -299,7 +299,7 @@ _p = null;
 /**
  * Creates a slider with a given background sprite and a progress bar and a
  * thumb item.
- *
+ * @deprecated
  * @see initWithBackgroundSprite:progressSprite:thumbMenuItem:
  */
 cc.ControlSlider.create = function (bgFile, progressFile, thumbFile) {

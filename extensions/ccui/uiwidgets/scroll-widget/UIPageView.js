@@ -510,17 +510,14 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 });
 /**
  * allocates and initializes a UIPageView.
- * @constructs
+ * @deprecated
  * @return {ccui.PageView}
  * @example
  * // example
  * var uiPageView = ccui.PageView.create();
  */
 ccui.PageView.create = function () {
-    var  widget = new ccui.PageView();
-    if (widget && widget.init())
-        return widget;
-    return null;
+    return new ccui.PageView();
 };
 
 // Constants

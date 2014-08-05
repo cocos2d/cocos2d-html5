@@ -59,6 +59,7 @@ cc._LogInfos = {
     Node_addChild_2: "child already added. It can't be added again",
     Node_addChild_3: "child must be non-null",
     Node_removeFromParentAndCleanup: "removeFromParentAndCleanup is deprecated. Use removeFromParent instead",
+    Node_boundingBox: "boundingBox is deprecated. Use getBoundingBox instead",
     Node_removeChildByTag: "argument tag is an invalid tag",
     Node_removeChildByTag_2: "cocos2d: removeChildByTag(tag = %s): child not found!",
     Node_removeAllChildrenWithCleanup: "removeAllChildrenWithCleanup is deprecated. Use removeAllChildren instead",

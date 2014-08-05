@@ -393,6 +393,7 @@ cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
  * a) string, fntFile                                                                               <br/>
  * b) label, textureFilename, width, height, startChar                                              <br/>
  * </p>
+ * @deprecated
  * @param {String} strText
  * @param {String} charMapFile  charMapFile or fntFile
  * @param {Number} [itemWidth=0]
