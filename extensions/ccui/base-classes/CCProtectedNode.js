@@ -262,7 +262,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
             children[i] && children[i].visit(context);
         }
         for (; j < pLen; j++) {
-            locProtectedChildren[i] && locProtectedChildren[i].visit(context);
+            locProtectedChildren[j] && locProtectedChildren[j].visit(context);
         }
 
         this._cacheDirty = false;

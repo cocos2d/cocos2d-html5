@@ -426,7 +426,7 @@ cc.checkGLErrorDebug = function () {
     if (cc.renderMode == cc._RENDER_TYPE_WEBGL) {
         var _error = cc._renderContext.getError();
         if (_error) {
-            cc.log(CC._localZOrder.checkGLErrorDebug, _error);
+            cc.log(cc._LogInfos.checkGLErrorDebug, _error);
         }
     }
 };
