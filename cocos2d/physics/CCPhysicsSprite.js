@@ -266,7 +266,7 @@
                 cc.Sprite.prototype.setRotation.call(this, -cc.radiansToDegrees(this._body.a));
             }
         },
-        nodeToParentTransform:function () {
+        getNodeToParentTransform:function () {
             if(cc._renderType === cc._RENDER_TYPE_CANVAS)
                 return this._nodeToParentTransformForCanvas();
 
