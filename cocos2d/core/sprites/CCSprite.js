@@ -1455,7 +1455,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     _p.updateDisplayedColor = function (parentColor) {
         var _t = this;
-        var oldColor = _t.color;
+        var oldColor = _t.getDisplayedColor();
         cc.Node.prototype.updateDisplayedColor.call(_t, parentColor);
         var newColor = _t._displayedColor;
         if ((oldColor.r === newColor.r) && (oldColor.g === newColor.g) && (oldColor.b === newColor.b))
