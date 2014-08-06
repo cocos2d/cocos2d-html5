@@ -211,6 +211,9 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         this._movementData = this._animationData.getMovement(animationName);
         cc.assert(this._movementData, "this._movementData can not be null");
 
+        durationTo = (durationTo === undefined) ? -1 : durationTo;
+        loop = (loop === undefined) ? -1 : loop;
+
         //! Get key frame count
         this._rawDuration = this._movementData.duration;
         this._movementID = animationName;
@@ -295,7 +298,11 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
      * @param {Boolean} loop
      */
     playWithNames: function (movementNames, durationTo, loop) {
+        durationTo = (durationTo === undefined) ? -1 : durationTo;
+        loop = (loop === undefined) ? true : loop;
+
         this._movementListLoop = loop;
+        this._movementListDurationTo = durationTo;
         this._onMovementList = true;
         this._movementIndex = 0;
         if(movementNames instanceof Array)
@@ -313,6 +320,9 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
      * @param {Boolean} loop
      */
     playWithIndexes: function (movementIndexes, durationTo, loop) {
+        durationTo = (durationTo === undefined) ? -1 : durationTo;
+        loop = (loop === undefined) ? true : loop;
+
         this._movementList.length = 0;
         this._movementListLoop = loop;
         this._movementListDurationTo = durationTo;
