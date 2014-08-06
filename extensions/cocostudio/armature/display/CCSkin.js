@@ -178,7 +178,6 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         this._anchorPointInPoints = cc.pointApplyAffineTransform(this._anchorPointInPoints, displayTransform);
         displayTransform.tx = this._anchorPointInPoints.x;
         displayTransform.ty = this._anchorPointInPoints.y;
-
         return cc.affineTransformConcat( displayTransform,this.bone.getArmature().nodeToWorldTransform());
     },
 
