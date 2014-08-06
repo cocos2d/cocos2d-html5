@@ -1222,8 +1222,8 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         this.setName(widget.getName());
         this.setActionTag(widget.getActionTag());
 
-        this._ignoreSize.width = widget._ignoreSize.width;
-        this._ignoreSize.height = widget._ignoreSize.height;
+        this._ignoreSize = widget._ignoreSize;
+
         this.setContentSize(widget._contentSize);
         this._customSize.width = widget._customSize.width;
         this._customSize.height = widget._customSize.height;
