@@ -333,9 +333,8 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      */
     setChildArmature: function (armature) {
         if (this._childArmature != armature) {
-            if (armature == null && this._childArmature) {
+            if (armature == null && this._childArmature)
                 this._childArmature.setParentBone(null);
-            }
             this._childArmature = armature;
         }
     },
@@ -370,7 +369,6 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
     },
 
     getNodeToWorldTransform: function(){
-        //TODO TransformConcat
         return cc.affineTransformConcat(this._worldTransform, this._armature.getNodeToWorldTransform());
     },
 
@@ -452,7 +450,6 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
                 return detector;
         }
         return null;
-
     },
 
     /**
@@ -468,7 +465,6 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
                 locDetector.setColliderFilter(filter);
             }
         }
-
     },
 
     /**
@@ -479,9 +475,8 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
         var decoDisplay = this.displayManager.getCurrentDecorativeDisplay();
         if (decoDisplay) {
             var detector = decoDisplay.getColliderDetector();
-            if (detector) {
+            if (detector)
                 return detector.getColliderFilter();
-            }
         }
         return null;
     },
@@ -636,8 +631,7 @@ _p = null;
  */
 ccs.Bone.create = function (name) {
     var bone = new ccs.Bone();
-    if (bone && bone.init(name)) {
+    if (bone && bone.init(name))
         return bone;
-    }
     return null;
 };
