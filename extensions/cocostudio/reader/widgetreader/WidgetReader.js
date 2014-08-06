@@ -30,7 +30,7 @@ ccs.WidgetReader = {
 
     setPropsFromJsonDictionary: function(widget, options){
         var ignoreSizeExsit = options["ignoreSize"];
-        if(ignoreSizeExsit)
+        if(ignoreSizeExsit != null)
             widget.ignoreContentAdaptWithSize(ignoreSizeExsit);
 
         widget.setSizeType(options["sizeType"]);
