@@ -306,6 +306,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _newTextureWhenChangeColor: null,         //hack property for LabelBMFont
     _className:"Sprite",
 
+    //Only for texture update judgment
+    _oldDisplayColor: cc.color.WHITE,
+
     textureLoaded:function(){
         return this._textureLoaded;
     },
@@ -1448,6 +1451,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p.setColor = function (color3) {
         var _t = this;
         var curColor = _t.color;
+        this._oldDisplayColor = curColor;
         if ((curColor.r === color3.r) && (curColor.g === color3.g) && (curColor.b === color3.b))
             return;
         cc.Node.prototype.setColor.call(_t, color3);
@@ -1455,10 +1459,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     _p.updateDisplayedColor = function (parentColor) {
         var _t = this;
-        var oldColor = _t.getDisplayedColor();
         cc.Node.prototype.updateDisplayedColor.call(_t, parentColor);
-        var newColor = _t._displayedColor;
-        if ((oldColor.r === newColor.r) && (oldColor.g === newColor.g) && (oldColor.b === newColor.b))
+        var oColor = _t._oldDisplayColor;
+        var nColor = _t._displayedColor;
+        if (oColor.r === nColor.r && oColor.g === nColor.g && oColor.b === nColor.b)
             return;
 
         _t._changeTextureColor();
