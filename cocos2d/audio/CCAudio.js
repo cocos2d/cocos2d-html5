@@ -82,6 +82,9 @@ if (cc.sys._supportWebAudio) {
             sourceNode["connect"](volumeNode);
             volumeNode["connect"](_ctx["destination"]);
             sourceNode.loop = self._loop;
+            sourceNode.onended = function(){
+                self._stopped = true;
+            };
 
             self._paused = false;
             self._stopped = false;
@@ -130,10 +133,13 @@ if (cc.sys._supportWebAudio) {
             if (self._loadState == -1) {
                 self._loadState = 0;
                 return;
-            } else if (self._loadState != 1) return;
+            } else if (self._loadState != 1)
+                return;
 
             var sourceNode = self._sourceNode;
-            if (!self._stopped && sourceNode && sourceNode["playbackState"] == 2) return;//playing
+            if (!self._stopped && sourceNode && sourceNode["playbackState"] == 2)
+                return;//playing
+
             self.startTime = _ctx.currentTime;
             this._play(0);
         },
