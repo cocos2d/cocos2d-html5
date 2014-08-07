@@ -90,7 +90,6 @@ ccs.actionManager = /** @lends ccs.actionManager# */{
      */
     releaseActions: function () {
         this._actionDic = {};
-
     },
 
 	/**
