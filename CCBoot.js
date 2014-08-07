@@ -887,148 +887,275 @@ cc._initSys = function (config, CONFIG_KEY) {
     /**
      * Canvas of render type
      * @constant
-     * @type Number
+     * @type {Number}
      */
     cc._RENDER_TYPE_CANVAS = 0;
 
     /**
      * WebGL of render type
      * @constant
-     * @type Number
+     * @type {Number}
      */
     cc._RENDER_TYPE_WEBGL = 1;
 
-    var sys = cc.sys = {};
+    /**
+     * System variables
+     * @memberof cc
+     * @global
+     * @type {Object}
+     * @name cc.sys
+     */
+    cc.sys = {};
+    var sys = cc.sys;
 
     /**
      * English language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_ENGLISH = "en";
 
     /**
      * Chinese language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_CHINESE = "zh";
 
     /**
      * French language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_FRENCH = "fr";
 
     /**
      * Italian language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_ITALIAN = "it";
 
     /**
      * German language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_GERMAN = "de";
 
     /**
      * Spanish language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_SPANISH = "es";
 
     /**
      * Russian language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_RUSSIAN = "ru";
 
     /**
      * Korean language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_KOREAN = "ko";
 
     /**
      * Japanese language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_JAPANESE = "ja";
 
     /**
      * Hungarian language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_HUNGARIAN = "hu";
 
     /**
      * Portuguese language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_PORTUGUESE = "pt";
 
     /**
      * Arabic language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_ARABIC = "ar";
 
     /**
      * Norwegian language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_NORWEGIAN = "no";
 
     /**
      * Polish language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_POLISH = "pl";
 
     /**
+     * @memberof cc.sys
      * @constant
      * @type {string}
      */
     sys.OS_WINDOWS = "Windows";
     /**
+     * @memberof cc.sys
      * @constant
      * @type {string}
      */
     sys.OS_IOS = "iOS";
     /**
+     * @memberof cc.sys
      * @constant
      * @type {string}
      */
     sys.OS_OSX = "OS X";
     /**
+     * @memberof cc.sys
      * @constant
      * @type {string}
      */
     sys.OS_UNIX = "UNIX";
     /**
+     * @memberof cc.sys
      * @constant
      * @type {string}
      */
     sys.OS_LINUX = "Linux";
     /**
+     * @memberof cc.sys
      * @constant
      * @type {string}
      */
     sys.OS_ANDROID = "Android";
     sys.OS_UNKNOWN = "Unknown";
+
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.WINDOWS = 0;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.LINUX = 1;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.MACOS = 2;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.ANDROID = 3;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.IPHONE = 4;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.IPAD = 5;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.BLACKBERRY = 6;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.NACL = 7;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.EMSCRIPTEN = 8;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.TIZEN = 9;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.WINRT = 10;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.WP8 = 11;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.MOBILE_BROWSER = 100;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.DESKTOP_BROWSER = 101;
 
     sys.BROWSER_TYPE_WECHAT = "wechat";
     sys.BROWSER_TYPE_ANDROID = "androidbrowser";
@@ -1050,14 +1177,14 @@ cc._initSys = function (config, CONFIG_KEY) {
     /**
      * Is native ? This is set to be true in jsb auto.
      * @constant
-     * @type Boolean
+     * @type {Boolean}
      */
     sys.isNative = false;
 
     /**
      * WhiteList of browser for WebGL.
      * @constant
-     * @type Array
+     * @type {Array}
      */
     var webglWhiteList = [sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_SAFARI];
     var multipleAudioWhiteList = [
@@ -1069,6 +1196,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     var ua = nav.userAgent.toLowerCase();
 
     sys.isMobile = ua.indexOf('mobile') != -1 || ua.indexOf('android') != -1;
+    sys.platform = sys.isMobile ? sys.MOBILE_BROWSER : sys.DESKTOP_BROWSER;
 
     var currLanguage = nav.language;
     currLanguage = currLanguage ? currLanguage : nav.browserLanguage;
@@ -1205,6 +1333,7 @@ cc._initSys = function (config, CONFIG_KEY) {
         str += "browserType : " + self.browserType + "\r\n";
         str += "capabilities : " + JSON.stringify(self.capabilities) + "\r\n";
         str += "os : " + self.os + "\r\n";
+        str += "platform : " + self.platform + "\r\n";
         cc.log(str);
     }
 };
@@ -1216,52 +1345,52 @@ cc._initSys = function (config, CONFIG_KEY) {
 /**
  * Device oriented vertically, home button on the bottom
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.ORIENTATION_PORTRAIT = 0;
 
 /**
  * Device oriented vertically, home button on the top
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.ORIENTATION_PORTRAIT_UPSIDE_DOWN = 1;
 
 /**
  * Device oriented horizontally, home button on the right
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.ORIENTATION_LANDSCAPE_LEFT = 2;
 
 /**
  * Device oriented horizontally, home button on the left
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.ORIENTATION_LANDSCAPE_RIGHT = 3;
 
 /**
  * drawing primitive of game engine
- * @type cc.DrawingPrimitive
+ * @type {cc.DrawingPrimitive}
  */
 cc._drawingUtil = null;
 
 /**
  * main Canvas 2D/3D Context of game engine
- * @type CanvasRenderingContext2D|WebGLRenderingContext
+ * @type {CanvasRenderingContext2D|WebGLRenderingContext}
  */
 cc._renderContext = null;
 
 /**
  * main Canvas of game engine
- * @type HTMLCanvasElement
+ * @type {HTMLCanvasElement}
  */
 cc._canvas = null;
 
 /**
  * This Div element contain all game canvas
- * @type HTMLDivElement
+ * @type {HTMLDivElement}
  */
 cc._gameDiv = null;
 
@@ -1448,6 +1577,10 @@ cc._setContextMenuEnable = function (enabled) {
 
 /**
  * An object to boot the game.
+ * @memberof cc
+ * @global
+ * @type {Object}
+ * @name cc.game
  */
 cc.game = {
     DEBUG_MODE_NONE: 0,
@@ -1467,7 +1600,7 @@ cc.game = {
     /**
      * Key of config
      * @constant
-     * @type Object
+     * @type {Object}
      */
     CONFIG_KEY: {
         engineDir: "engineDir",
@@ -1489,19 +1622,19 @@ cc.game = {
 
     /**
      * Config of game
-     * @type Object
+     * @type {Object}
      */
     config: null,
 
     /**
      * Callback when the scripts of engine have been load.
-     * @type Function
+     * @type {Function}
      */
     onStart: null,
 
     /**
      * Callback when game exits.
-     * @type Function
+     * @type {Function}
      */
     onStop: null,
 
