@@ -696,6 +696,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
         //register canvas mouse event
         element.addEventListener("mousedown", function (event) {
+            cc.Director.getInstance().getTouchDispatcher()._setMousePressed(true);
             var pos = cc.getHTMLElementPosition(element);
 
             var tx, ty;
@@ -722,6 +723,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         });
 
         element.addEventListener("mouseup", function (event) {
+            cc.Director.getInstance().getTouchDispatcher()._setMousePressed(false);
             cc.ProcessMouseupEvent(element, event);
         });
 
