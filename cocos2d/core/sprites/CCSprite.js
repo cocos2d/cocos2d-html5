@@ -559,6 +559,16 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
+     * visible setter  (override cc.Node )
+     * @param {Boolean} visible
+     * @override
+     */
+    setVisible:function (visible) {
+        cc.Node.prototype.setVisible.call(this, visible);
+        this.setDirtyRecursively(true);
+    },
+
+    /**
      * Removes all children from the container  (override cc.Node )
      * @param cleanup whether or not cleanup all running actions
      * @override
