@@ -1807,7 +1807,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.AffineTransform}
      */
     getWorldToNodeTransform: function () {
-        return cc.affineTransformInvert(this.nodeToWorldTransform());
+        return cc.affineTransformInvert(this.getNodeToWorldTransform());
     },
 
     /**
@@ -1823,7 +1823,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}
      */
     convertToNodeSpace: function (worldPoint) {
-        return cc.pointApplyAffineTransform(worldPoint, this.worldToNodeTransform());
+        return cc.pointApplyAffineTransform(worldPoint, this.getWorldToNodeTransform());
     },
 
     /**
@@ -1833,7 +1833,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     convertToWorldSpace: function (nodePoint) {
         nodePoint = nodePoint || cc.p(0,0);
-        return cc.pointApplyAffineTransform(nodePoint, this.nodeToWorldTransform());
+        return cc.pointApplyAffineTransform(nodePoint, this.getNodeToWorldTransform());
     },
 
     /**

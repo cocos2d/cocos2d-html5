@@ -337,20 +337,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _stencilClippingVisitForWebGL: function (ctx) {
         var gl = ctx || cc._renderContext;
 
-        // if stencil buffer disabled
-        /*if (cc.stencilBits < 1) {
-         // draw everything, as if there where no stencil
-         cc.Node.prototype.visit.call(this, ctx);
-         return;
-         }*/
-
         if (!this._clippingStencil || !this._clippingStencil.isVisible())
             return;
-
-        // store the current stencil layer (position in the stencil buffer),
-        // this will allow nesting up to n CCClippingNode,
-        // where n is the number of bits of the stencil buffer.
-        ccui.Layout._layer = -1;
 
         // all the _stencilBits are in use?
         if (ccui.Layout._layer + 1 == cc.stencilBits) {
@@ -365,14 +353,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             return;
         }
 
-        // increment the current layer
         ccui.Layout._layer++;
 
-        // mask of the current layer (ie: for layer 3: 00000100)
         var mask_layer = 0x1 << ccui.Layout._layer;
-        // mask of all layers less than the current (ie: for layer 3: 00000011)
         var mask_layer_l = mask_layer - 1;
-        // mask of all layers less than or equal to the current (ie: for layer 3: 00000111)
         var mask_layer_le = mask_layer | mask_layer_l;
 
         // manually save the stencil state
@@ -385,57 +369,38 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         var currentStencilPassDepthFail = gl.getParameter(gl.STENCIL_PASS_DEPTH_FAIL);
         var currentStencilPassDepthPass = gl.getParameter(gl.STENCIL_PASS_DEPTH_PASS);
 
-        // enable stencil use
         gl.enable(gl.STENCIL_TEST);
-        // check for OpenGL error while enabling stencil test
-        //cc.checkGLErrorDebug();
 
-        // all bits on the stencil buffer are readonly, except the current layer bit,
-        // this means that operation like glClear or glStencilOp will be masked with this value
         gl.stencilMask(mask_layer);
 
-        // manually save the depth test state
-        //GLboolean currentDepthTestEnabled = GL_TRUE;
-        //currentDepthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
         var currentDepthWriteMask = gl.getParameter(gl.DEPTH_WRITEMASK);
 
-        // disable depth test while drawing the stencil
-        //glDisable(GL_DEPTH_TEST);
-        // disable update to the depth buffer while drawing the stencil,
-        // as the stencil is not meant to be rendered in the real scene,
-        // it should never prevent something else to be drawn,
-        // only disabling depth buffer update should do
         gl.depthMask(false);
 
-        // manually clear the stencil buffer by drawing a fullscreen rectangle on it
-        // setup the stencil test func like this:
-        // for each pixel in the fullscreen rectangle
-        //     never draw it into the frame buffer
-        //     if not in inverted mode: set the current layer value to 0 in the stencil buffer
-        //     if in inverted mode: set the current layer value to 1 in the stencil buffer
         gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
         gl.stencilOp(gl.ZERO, gl.KEEP, gl.KEEP);
 
         // draw a fullscreen solid rectangle to clear the stencil buffer
-        //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
-        cc._drawingUtil.drawSolidRect(cc.p(0, 0), cc.pFromSize(cc.director.getWinSize()), cc.color(255, 255, 255, 255));
+        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+        cc.kmGLPushMatrix();
+        cc.kmGLLoadIdentity();
+        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+        cc.kmGLPushMatrix();
+        cc.kmGLLoadIdentity();
+        cc._drawingUtil.drawSolidRect(cc.p(-1,-1), cc.p(1,1), cc.color(255, 255, 255, 255));
+        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+        cc.kmGLPopMatrix();
+        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+        cc.kmGLPopMatrix();
 
-        // setup the stencil test func like this:
-        // for each pixel in the stencil node
-        //     never draw it into the frame buffer
-        //     if not in inverted mode: set the current layer value to 1 in the stencil buffer
-        //     if in inverted mode: set the current layer value to 0 in the stencil buffer
         gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
         gl.stencilOp(gl.REPLACE, gl.KEEP, gl.KEEP);
 
         cc.kmGLPushMatrix();
         this.transform();
-
         this._clippingStencil.visit();
 
-        // restore the depth test state
         gl.depthMask(currentDepthWriteMask);
-
         gl.stencilFunc(gl.EQUAL, mask_layer_le, mask_layer_le);
         gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
 
@@ -473,8 +438,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         gl.stencilMask(currentStencilWriteMask);
         if (!currentStencilEnabled)
             gl.disable(gl.STENCIL_TEST);
-
-        // we are done using this layer, decrement
         ccui.Layout._layer--;
 
         cc.kmGLPopMatrix();
@@ -489,7 +452,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         }
         var context = ctx || cc._renderContext;
         // Composition mode, costy but support texture stencil
-        if (this._cangodhelpme() || this._clippingStencil instanceof cc.Sprite) {
+        if (this._clippingStencil instanceof cc.Sprite) {
             // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
             var canvas = context.canvas;
             var locCache = ccui.Layout._getSharedCache();
@@ -500,7 +463,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
             context.save();
             // Draw everything first using node visit function
-            cc.Node.prototype.visit.call(this, context);
+            cc.ProtectedNode.prototype.visit.call(this, context);
 
             context.globalCompositeOperation = "destination-in";
 
@@ -525,8 +488,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
             // Clip mode doesn't support recusive stencil, so once we used a clip stencil,
             // so if it has ClippingNode as a child, the child must uses composition stencil.
-            this._cangodhelpme(true);
-
             this.sortAllChildren();
             this.sortAllProtectedChildren();
 
@@ -554,16 +515,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             for (; j < jLen; j++)
                 locProtectChildren[j].visit(context);
 
-            this._cangodhelpme(false);
             context.restore();
         }
-    },
-
-    _godhelpme: false,
-    _cangodhelpme: function (godhelpme) {
-        if (godhelpme === true || godhelpme === false)
-            cc.ClippingNode.prototype._godhelpme = godhelpme;
-        return cc.ClippingNode.prototype._godhelpme;
     },
 
     _scissorClippingVisit: null,
@@ -599,7 +552,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                         this._clippingStencil.onEnter();
                     this._setStencilClippingSize(this._contentSize);
                 } else {
-                    if (this._running)
+                    if (this._running && this._clippingStencil)
                         this._clippingStencil.onExit();
                     this._clippingStencil = null;
                 }
@@ -614,9 +567,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {ccui.Layout.CLIPPING_STENCIL|ccui.Layout.CLIPPING_SCISSOR} type
      */
     setClippingType: function (type) {
-        if (type == this._clippingType) {
+        if (type == this._clippingType)
             return;
-        }
         var clippingEnabled = this.isClippingEnabled();
         this.setClippingEnabled(false);
         this._clippingType = type;
@@ -1729,7 +1681,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 });
 ccui.Layout._init_once = null;
 ccui.Layout._visit_once = null;
-ccui.Layout._layer = null;
+ccui.Layout._layer = -1;
 ccui.Layout._sharedCache = null;
 
 if (cc._renderType == cc._RENDER_TYPE_WEBGL) {

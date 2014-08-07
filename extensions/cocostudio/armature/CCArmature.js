@@ -384,7 +384,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
                                         node.setBlendFunc(this._blendFunc);
                                 }
                                 node.draw(ctx);
-                            } else {
+                            } else{
                                 node.visit(ctx);
                             }
                         }
@@ -421,7 +421,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         if (!this._visible)
             return;
 
-        //TODO need test
         context.save();
         this.transform(context);
 
@@ -446,7 +445,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         cc.kmMat4Assign(this._stackMatrix, currentStack.top);
         currentStack.top = this._stackMatrix;
 
-        this.transform();                              //TODO
+        this.transform();
 
         this.sortAllChildren();
         this.draw(context);
@@ -608,9 +607,8 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
      */
     setColliderFilter: function (filter) {
         var locBoneDic = this._boneDic;
-        for (var key in locBoneDic) {
+        for (var key in locBoneDic)
             locBoneDic[key].setColliderFilter(filter);
-        }
     },
 
     /**
@@ -685,8 +683,7 @@ _p = null;
  */
 ccs.Armature.create = function (name, parentBone) {
     var armature = new ccs.Armature();
-    if (armature.init(name, parentBone)) {
+    if (armature.init(name, parentBone))
         return armature;
-    }
     return null;
 };

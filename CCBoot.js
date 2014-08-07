@@ -1295,16 +1295,20 @@ cc._setup = function (el, width, height) {
     if (cc._setupCalled) return;
     else cc._setupCalled = true;
     var win = window;
+    var lastTime = new Date();
+    var frameTime = 1000 / cc.game.config[cc.game.CONFIG_KEY.frameRate];
     win.requestAnimFrame = win.requestAnimationFrame ||
         win.webkitRequestAnimationFrame ||
         win.mozRequestAnimationFrame ||
         win.oRequestAnimationFrame ||
         win.msRequestAnimationFrame ||
         function(callback){
-            var self = this;
-            return setTimeout(function(){
-                callback();
-            }, 1000 / self.config[self.CONFIG_KEY.frameRate]);
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, frameTime - (currTime - lastTime));
+            var id = window.setTimeout(function() { callback(); },
+                timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
         };
 
     win.cancelAnimationFrame = window.cancelAnimationFrame ||
@@ -1699,3 +1703,11 @@ cc.game = {
 };
 cc.game._initConfig();
 //+++++++++++++++++++++++++something about CCGame end+++++++++++++++++++++++++++++
+
+Function.prototype.bind = Function.prototype.bind || function (bind) {
+    var self = this;
+    return function () {
+        var args = Array.prototype.slice.call(arguments);
+        return self.apply(bind || null, args);
+    };
+};

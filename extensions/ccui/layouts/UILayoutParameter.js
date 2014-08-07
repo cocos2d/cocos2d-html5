@@ -140,7 +140,10 @@ ccui.LayoutParameter = ccui.Class.extend(/** @lends ccui.LayoutParameter# */{
      * @param {ccui.LayoutParameter} model
      */
     _copyProperties:function(model){
-        this._margin = model._margin;
+        this._margin.bottom = model._margin.bottom;
+        this._margin.left = model._margin.left;
+        this._margin.right = model._margin.right;
+        this._margin.top = model._margin.top;
     }
 });
 
@@ -205,13 +208,8 @@ ccui.LinearLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.LinearL
      */
     _copyProperties: function (model) {
         ccui.LayoutParameter.prototype._copyProperties.call(this, model);
-        var parameter = model;
-        if(parameter){
-            this.setAlign(parameter._relativeAlign);
-            this.setRelativeName(parameter._relativeLayoutName);
-            this.setRelativeToWidgetName(parameter._relativeWidgetName);
+        if (model instanceof ccui.LinearLayoutParameter)
             this.setGravity(model._linearGravity);
-        }
     }
 });
 
@@ -309,7 +307,7 @@ ccui.RelativeLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.Relat
      * @returns {ccui.RelativeLayoutParameter}
      */
     _createCloneInstance:function(){
-        return ccui.RelativeLayoutParameter.create();     //TODO
+        return ccui.RelativeLayoutParameter.create();
     },
 
     /**
@@ -318,9 +316,11 @@ ccui.RelativeLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.Relat
      */
     _copyProperties:function(model){
         ccui.LayoutParameter.prototype._copyProperties.call(this, model);
-        this.setAlign(model._relativeAlign);
-        this.setRelativeToWidgetName(model._relativeWidgetName);
-        this.setRelativeName(model._relativeLayoutName);
+        if (model instanceof ccui.RelativeLayoutParameter) {
+            this.setAlign(model._relativeAlign);
+            this.setRelativeToWidgetName(model._relativeWidgetName);
+            this.setRelativeName(model._relativeLayoutName);
+        }
     }
 });
 

@@ -154,76 +154,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _measure: function (text) {
         return this._getLabelContext().measureText(text).width;
     },
-    _checkNextline: function (text, width) {
-        var tWidth = this._measure(text);
-        // Estimated word number per line
-        var baseNb = Math.floor(text.length * width / tWidth);
-        // Next line is a line with line break
-        var nextlinebreak = text.indexOf('\n');
-        if (baseNb * 0.85 >= nextlinebreak && nextlinebreak > -1) return nextlinebreak + 1;
-        // Text width smaller than requested width
-        if (tWidth < width) return text.length;
-
-        var found = false, l = width + 1, idfound = -1, index = baseNb, result,
-            re = cc.LabelTTF._checkRegEx,
-            reversre = cc.LabelTTF._reverseCheckRegEx,
-            enre = cc.LabelTTF._checkEnRegEx,
-            substr = text.substr(baseNb);
-
-        // Forward check
-        // Find next special caracter or chinese caracters
-        while (result = re.exec(substr)) {
-            index += result[0].length;
-            var tem = text.substr(0, index);
-            l = this._measure(tem);
-            if (result[2] == '\n' && l < width) {
-                found = true;
-                idfound = index;
-                break;
-            }
-            if (l > width) {
-                if (idfound != -1)
-                    found = true;
-                break;
-            }
-            idfound = index;
-            substr = text.substr(index);
-        }
-        if (found){
-            if(cc.LabelTTF._checkSymbol.test(substr)){
-                idfound--;
-            }
-            return idfound;
-        }
-
-        // Backward check when forward check failed
-        substr = text.substr(0, baseNb + 1);
-        idfound = baseNb;
-        while (result = reversre.exec(substr)) {
-            // BUG: Not secured if check with result[0]
-
-            if(substr !== result[0]){
-                idfound = result[0].length;
-                substr = result[0];
-            }else{
-                idfound = result[1].length;
-                substr = result[1];
-                //If the first is a symbol
-                if(result[2]){
-                    if(cc.LabelTTF._checkSymbol.test(result[2])){
-                        continue;
-                    }
-                }
-            }
-            l = this._measure(substr);
-            if (l < width) {
-                break;
-            }
-        }
-
-        // Avoid when idfound == 0, the process may enter in a infinite loop
-        return idfound || 1;
-    },
 
     /**
      * Prints out a description of this class
@@ -842,6 +772,70 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return this._labelContext;
     },
 
+    _checkWarp: function(strArr, i, maxWidth){
+        var text = strArr[i];
+        var allWidth = this._measure(text);
+        if(allWidth > maxWidth && text.length > 1){
+
+            var fuzzyLen = text.length * ( maxWidth / allWidth ) | 0;
+            var tmpText = text.substr(fuzzyLen);
+            var width = allWidth - this._measure(tmpText);
+            var sLine;
+            var pushNum = 0;
+
+            //Exceeded the size
+            while(width > maxWidth){
+                fuzzyLen *= maxWidth / width | 0;
+                tmpText = text.substr(fuzzyLen);
+                width = allWidth - this._measure(tmpText);
+            }
+
+            //Find the truncation point
+            while(width < maxWidth){
+
+                if(tmpText){
+                    var exec = cc.LabelTTF._wordRex.exec(tmpText);
+                    pushNum = exec ? exec[0].length : 1;
+                    sLine = tmpText;
+                }
+
+                fuzzyLen = fuzzyLen + pushNum;
+
+                tmpText = text.substr(fuzzyLen);
+
+                width = allWidth - this._measure(tmpText);
+            }
+
+            fuzzyLen -= pushNum;
+
+            var sText = text.substr(0, fuzzyLen);
+
+            //symbol in the first
+            if(cc.LabelTTF.wrapInspection){
+                if(cc.LabelTTF._symbolRex.test(sLine || tmpText)){
+                    var result = cc.LabelTTF._lastWordRex.exec(sText);
+                    fuzzyLen -= result ? result[0].length : 0;
+
+                    sLine = text.substr(fuzzyLen);
+                    sText = text.substr(0, fuzzyLen);
+                }
+            }
+
+            //To judge whether a English words are truncated
+            if(cc.LabelTTF._firsrEnglish.test(sLine)){
+                var result = cc.LabelTTF._lastEnglish.exec(sText);
+                if(result && sText !== result[0]){
+                    fuzzyLen -= result[0].length;
+                    sLine = text.substr(fuzzyLen);
+                    sText = text.substr(0, fuzzyLen);
+                }
+            }
+
+            strArr[i] = sLine || tmpText;
+            strArr.splice(i, 0, sText);
+        }
+    },
+
     _updateTTF: function () {
         var locDimensionsWidth = this._dimensions.width, i, strLength;
         var locLineWidth = this._lineWidths;
@@ -851,14 +845,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._measureConfig();
         if (locDimensionsWidth !== 0) {
             // Content processing
-            var text = this._string;
-            this._strings = [];
-            for (i = 0, strLength = this._string.length; i < strLength;) {
-                // Find the index of next line
-                var next = this._checkNextline(text.substr(i), locDimensionsWidth);
-                var append = text.substr(i, next);
-                this._strings.push(append);
-                i += next;
+            this._strings = this._string.split('\n');
+
+            for(i = 0; i < this._strings.length; i++){
+                this._checkWarp(this._strings, i, locDimensionsWidth);
             }
         } else {
             this._strings = this._string.split('\n');
@@ -1157,12 +1147,16 @@ cc.LabelTTF._textAlign = ["left", "center", "right"];
 
 cc.LabelTTF._textBaseline = ["top", "middle", "bottom"];
 
-// Class static properties for measure util
-cc.LabelTTF._checkRegEx = /(.+?)([\s\n\r\-\/\\\:]|[\u4E00-\u9FA5\uFE30-\uFFA0\u3040-\u309F\u30A0-\u30FF\u3001])/;
-cc.LabelTTF._reverseCheckRegEx = /(.*)([\s\n\r\-\/\\\:]|[\u4E00-\u9FA5\uFE30-\uFFA0\u3040-\u309F\u30A0-\u30FF\u3001])/;
-cc.LabelTTF._checkEnRegEx = /[\s\-\/\\\:]/;
-cc.LabelTTF._checkSymbol = /^[\u007e\u0021\u0040\u0023\u0024\u0025\u005e\u0026\u002a\u0028\u0029\u005f\u002b\u007b\u007d\u005b\u005d\u003a\u0026\u0071\u0075\u006f\u0074\u003b\u007c\u003b\u0026\u0023\u0033\u0039\u003b\u005c\u0026\u006c\u0074\u003b\u0026\u0067\u0074\u003b\u003f\u002c\u002e\u002f\uff01\u0040\uffe5\u2026\uff08\uff09\u2014\u002b\u3010\u3011\uff1a\u201c\u007c\uff1b\u2018\u3001\u300a\u300b\uff1f\uff0c\u3002\u3001\u000d\u000a]/;
-cc.LabelTTF._checkCharacter = /[\u4E00-\u9FA5\uFE30-\uFFA0\u3040-\u309F\u30A0-\u30FF]/;
+//check the first character
+cc.LabelTTF.wrapInspection = true;
+
+//Support: English French German
+//Other as Oriental Language
+cc.LabelTTF._wordRex = /([a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+|\S)/;
+cc.LabelTTF._symbolRex = /^[!,.:;}\]%\?>、‘“》？。，！]/;
+cc.LabelTTF._lastWordRex = /([a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+|\S)$/;
+cc.LabelTTF._lastEnglish = /[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+$/;
+cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
 // Only support style in this format: "18px Verdana" or "18px 'Helvetica Neue'"
 cc.LabelTTF._fontStyleRE = /^(\d+)px\s+['"]?([\w\s\d]+)['"]?$/;
