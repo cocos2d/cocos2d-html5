@@ -25,8 +25,6 @@
  ****************************************************************************/
 
 cc._tmp.WebGLSprite = function () {
-
-
     var _p = cc.Sprite.prototype;
 
     _p._spriteFrameLoadedCallback = function(spriteFrame){
