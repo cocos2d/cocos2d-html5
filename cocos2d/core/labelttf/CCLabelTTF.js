@@ -783,15 +783,21 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             var sLine;
             var pushNum = 0;
 
+            //Increased while cycle maximum ceiling. default 100 time
+            var checkWhile = 0;
+
             //Exceeded the size
-            while(width > maxWidth){
-                fuzzyLen *= maxWidth / width | 0;
+            while(width > maxWidth && checkWhile++ < 100){
+                fuzzyLen *= maxWidth / width;
+                fuzzyLen = fuzzyLen | 0;
                 tmpText = text.substr(fuzzyLen);
                 width = allWidth - this._measure(tmpText);
             }
 
+            checkWhile = 0;
+
             //Find the truncation point
-            while(width < maxWidth){
+            while(width < maxWidth && checkWhile++ < 100){
 
                 if(tmpText){
                     var exec = cc.LabelTTF._wordRex.exec(tmpText);
