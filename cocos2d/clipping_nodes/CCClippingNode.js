@@ -131,11 +131,6 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
             return;
         }
 
-        // store the current stencil layer (position in the stencil buffer),
-        // this will allow nesting up to n CCClippingNode,
-        // where n is the number of bits of the stencil buffer.
-        cc.ClippingNode._layer = -1;
-
         // all the _stencilBits are in use?
         if (cc.ClippingNode._layer + 1 == cc.stencilBits) {
             // warn once
