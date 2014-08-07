@@ -131,11 +131,6 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
             return;
         }
 
-        // store the current stencil layer (position in the stencil buffer),
-        // this will allow nesting up to n CCClippingNode,
-        // where n is the number of bits of the stencil buffer.
-        cc.ClippingNode._layer = -1;
-
         // all the _stencilBits are in use?
         if (cc.ClippingNode._layer + 1 == cc.stencilBits) {
             // warn once
@@ -207,8 +202,18 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         gl.stencilOp(!this._inverted ? gl.ZERO : gl.REPLACE, gl.KEEP, gl.KEEP);
 
         // draw a fullscreen solid rectangle to clear the stencil buffer
-        //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
-        cc.drawingUtil.drawSolidRect(cc.PointZero(), cc.pFromSize(cc.Director.getInstance().getWinSize()), cc.c4f(1, 1, 1, 1));
+        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+        cc.kmGLPushMatrix();
+        cc.kmGLLoadIdentity();
+        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+        cc.kmGLPushMatrix();
+        cc.kmGLLoadIdentity();
+        cc.drawingUtil.drawSolidRect(cc.p(-1,-1), cc.p(1,1), cc.c4f(1, 1, 1, 1));
+        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+        cc.kmGLPopMatrix();
+        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+        cc.kmGLPopMatrix();
+
 
         ///////////////////////////////////
         // DRAW CLIPPING STENCIL
@@ -459,7 +464,7 @@ if (cc.Browser.supportWebGL) {
 
 cc.ClippingNode._init_once = null;
 cc.ClippingNode._visit_once = null;
-cc.ClippingNode._layer = null;
+cc.ClippingNode._layer = -1;
 cc.ClippingNode._sharedCache = null;
 
 cc.ClippingNode._getSharedCache = function () {
