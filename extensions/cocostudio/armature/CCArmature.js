@@ -357,8 +357,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             //        CC_NODE_DRAW_SETUP();
         }
 
-        ctx = ctx || cc._renderContext;
-
         var locChildren = this._children;
         var alphaPremultiplied = cc.BlendFunc.ALPHA_PREMULTIPLIED, alphaNonPremultipled = cc.BlendFunc.ALPHA_NON_PREMULTIPLIED;
         for (var i = 0, len = locChildren.length; i< len; i++) {
@@ -387,12 +385,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
                                 }
                                 node.draw(ctx);
                             } else{
-                                ctx.save();
-                                var t = node.getNodeToParentTransform();
-                                ctx.transform(t.a, t.c, t.b, t.d, t.tx * cc.view.getScaleX(), -t.ty * cc.view.getScaleY());
-                                node.draw(ctx);
-                                ctx.restore();
-                                //node.visit(ctx);
+                                node.visit(ctx);
                             }
                         }
                         break;

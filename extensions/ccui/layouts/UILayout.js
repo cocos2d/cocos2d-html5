@@ -381,7 +381,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         gl.stencilOp(gl.ZERO, gl.KEEP, gl.KEEP);
 
         // draw a fullscreen solid rectangle to clear the stencil buffer
-        //cc._drawingUtil.drawSolidRect(cc.p(0, 0), cc.pFromSize(cc.director.getWinSize()), cc.color(255, 255, 255, 255));
         cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
         cc.kmGLPushMatrix();
         cc.kmGLLoadIdentity();
