@@ -225,8 +225,17 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         gl.stencilOp(!this.inverted ? gl.ZERO : gl.REPLACE, gl.KEEP, gl.KEEP);
 
         // draw a fullscreen solid rectangle to clear the stencil buffer
-        //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
-        cc._drawingUtil.drawSolidRect(cc.p(0, 0), cc.pFromSize(cc.director.getWinSize()), cc.color(255, 255, 255, 255));
+        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+        cc.kmGLPushMatrix();
+        cc.kmGLLoadIdentity();
+        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+        cc.kmGLPushMatrix();
+        cc.kmGLLoadIdentity();
+        cc._drawingUtil.drawSolidRect(cc.p(-1,-1), cc.p(1,1), cc.color(255, 255, 255, 255));
+        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+        cc.kmGLPopMatrix();
+        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+        cc.kmGLPopMatrix();
 
         ///////////////////////////////////
         // DRAW CLIPPING STENCIL
@@ -266,9 +275,6 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
         // restore the depth test state
         gl.depthMask(currentDepthWriteMask);
-        //if (currentDepthTestEnabled) {
-        //    glEnable(GL_DEPTH_TEST);
-        //}
 
         ///////////////////////////////////
         // DRAW CONTENT
