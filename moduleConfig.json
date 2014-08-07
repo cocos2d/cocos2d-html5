@@ -292,7 +292,6 @@
             "extensions/cocostudio/components/CCComponent.js",
             "extensions/cocostudio/components/CCComponentContainer.js",
             "extensions/cocostudio/CocoStudio.js",
-            "extensions/cocostudio/ActionManagerEx.js",
 
             "extensions/cocostudio/armature/utils/CCArmatureDefine.js",
             "extensions/cocostudio/armature/utils/CCDataReaderHelper.js",
