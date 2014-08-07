@@ -384,8 +384,9 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
                                         node.setBlendFunc(this._blendFunc);
                                 }
                                 node.draw(ctx);
-                            } else
+                            } else{
                                 node.visit(ctx);
+                            }
                         }
                         break;
                     case ccs.DISPLAY_TYPE_ARMATURE:
