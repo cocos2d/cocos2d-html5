@@ -44,6 +44,7 @@ spine.BoneData.prototype = {
 spine.SlotData = function (name, boneData) {
     this.name = name;
     this.boneData = boneData;
+    this.r = this.g = this.b = this.a = 1;                  //FOR google compiler Advance mode
 };
 spine.SlotData.prototype = {
     r: 1, g: 1, b: 1, a: 1,
@@ -819,6 +820,7 @@ spine.RegionAttachment = function (name) {
     this.offset.length = 8;
     this.uvs = [];
     this.uvs.length = 8;
+    this["type"] = spine.AttachmentType.region;                //FOR advance mode
 };
 
 spine.RegionAttachment.prototype = {
@@ -903,6 +905,7 @@ spine.RegionAttachment.prototype = {
 spine.BoundingBoxAttachment = function (name) {
     this.name = name;
     this.vertices = [];
+    this["type"] = spine.AttachmentType.boundingBox;     //FOR advance mode
 };
 
 spine.BoundingBoxAttachment.prototype = {

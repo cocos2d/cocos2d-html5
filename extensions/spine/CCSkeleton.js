@@ -39,8 +39,8 @@ sp.VERTEX_INDEX = {
 
 sp.ATTACHMENT_TYPE = {
     REGION: 0,
-    REGION_SEQUENCE: 1,
-    BOUNDING_BOX: 2
+    BOUNDING_BOX: 1,
+    REGION_SEQUENCE: 2
 };
 
 sp.Skeleton = cc.Node.extend({
