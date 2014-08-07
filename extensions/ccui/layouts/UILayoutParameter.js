@@ -316,7 +316,7 @@ ccui.RelativeLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.Relat
      */
     _copyProperties:function(model){
         ccui.LayoutParameter.prototype._copyProperties.call(this, model);
-        if (mode instanceof ccui.RelativeLayoutParameter) {
+        if (model instanceof ccui.RelativeLayoutParameter) {
             this.setAlign(model._relativeAlign);
             this.setRelativeToWidgetName(model._relativeWidgetName);
             this.setRelativeName(model._relativeLayoutName);

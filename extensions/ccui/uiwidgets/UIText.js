@@ -364,7 +364,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     },
 
     _copySpecialProperties: function (uiLabel) {
-        if(uiLabel instanceof ccui.Label){
+        if(uiLabel instanceof ccui.Text){
             this.setFontName(uiLabel._fontName);
             this.setFontSize(uiLabel.getFontSize());
             this.setString(uiLabel.getString());
