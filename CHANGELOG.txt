@@ -19,20 +19,20 @@ Cocos2d-html5-v3.0 RC2 @ Aug.8, 2014
 * Upgraded HelloWorld project with v3.0 APIs.
 
 * Bugs fix:
-    1. Fixed a transform error in ccs.TransformHelp.
-    2. Fixed a bug of cc.MenuItemToggle that callback is not correctly initialized when using new construction.  
-    3. Fixed a bug in cc.layer's bake function that its position is incorrect when cc.view is scaled.
-    4. Fixed a bug of cc.LayerMultiplex.
-    5. Fixed a bug of cc.TMXLayer that it can't display all map image when its type is hexagonal.
-    6. Fixed a bug of cc.ControlSwitch.
-    7. Fixed image format constant inconsistence.  
-    8. Fixed a bug of ccui.Widget that it is invisible after popScene.
-    9. Correct behavior of cc.TransitionSlideInB and cc.TransitionSlideInT.
-    10. Fixed a bug of requestAnimFrame that it doesn't work after re-focus WeChat browser on Samsung mobile.
-    11. Fixed bugs of ccui.Widget and ccui.Text's clone functions.
-    12. Fixed a bug of ccui.Layout that its clipping area is incorrect.
-    13. Fixed a bug of CCBoot.js that bind function is undefined in Safari for iOS 5.1.
-    14. Fixed a bug of cc.WebAudio that sourceNode's playbackState is invalid on some browsers.
+	1. Fixed a bug of cc.WebAudio that sourceNode's playbackState is invalid on some browsers.
+	2. Fixed a bug of cc.MenuItemToggle that callback is not correctly initialized when using new construction.
+	3. Fixed a bug of ccui.Layout that its clipping area is incorrect.
+	4. Fixed a bug of requestAnimFrame that it doesn't work after re-focus WeChat browser on Samsung mobile.
+	5. Fixed a bug of CCBoot.js that bind function is undefined in Safari for iOS 5.1.
+	6. Fixed a bug in cc.layer's bake function that its position is incorrect when cc.view is scaled.
+	7. Fixed a bug of cc.LayerMultiplex.
+	8. Fixed a bug of cc.TMXLayer that it can't display all map image when its type is hexagonal.
+	9. Fixed a transform error in ccs.TransformHelp.
+	10. Fixed a bug of cc.ControlSwitch.
+	11. Fixed image format constant inconsistence.
+	12. Fixed a bug of ccui.Widget that it is invisible after popScene.
+	13. Correct behavior of cc.TransitionSlideInB and cc.TransitionSlideInT.
+	14. Fixed bugs of ccui.Widget and ccui.Text's clone functions.
 
 
 Cocos2d-html5-v3.0 RC0 @ July.3, 2014
