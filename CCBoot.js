@@ -1797,8 +1797,7 @@ cc.game = {
         var self = this;
         var config = self.config, CONFIG_KEY = self.CONFIG_KEY, engineDir = config[CONFIG_KEY.engineDir], loader = cc.loader;
         if (!cc._supportRender) {
-            cc.error("Can not support render!")
-            return;
+            throw "The renderer doesn't support the renderMode " + config[CONFIG_KEY.renderMode];
         }
         self._prepareCalled = true;
 

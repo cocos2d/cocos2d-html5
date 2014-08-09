@@ -70,7 +70,6 @@ cc.LABEL_AUTOMATIC_WIDTH = -1;
  * @property {Number}   boundingWidth   - Width of the bounding box of label, the real content width is limited by boundingWidth
  */
 cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
-
     _opacityModifyRGB: false,
 
     _string: "",
