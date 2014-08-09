@@ -86,7 +86,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _lineWidths: null,
     _className: "LabelTTF",
 
-
     /**
      * creates a cc.LabelTTF from a font name, alignment, dimension and font size
      * Constructor of cc.LabelTTF
@@ -926,7 +925,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         if (this._string.length === 0) {
             locLabelCanvas.width = 1;
-            locLabelCanvas.height = locContentSize.height;
+            locLabelCanvas.height = locContentSize.height || 1;
+            this._texture && this._texture.handleLoadedTexture();
             this.setTextureRect(cc.rect(0, 0, 1, locContentSize.height));
             return true;
         }

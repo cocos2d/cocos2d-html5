@@ -208,9 +208,8 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
                         _children[j+1] = _children[j];
                     }else if(tmp._localZOrder === _children[j]._localZOrder && tmp.arrivalOrder < _children[j].arrivalOrder){
                         _children[j+1] = _children[j];
-                    }else{
+                    }else
                         break;
-                    }
                     j--;
                 }
                 _children[j+1] = tmp;
@@ -375,18 +374,18 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         this._displayedOpacity = this._realOpacity * parentOpacity/255.0;
         this._updateColor();
 
+        var i,len, locChildren, _opacity = this._displayedOpacity;
         if (this._cascadeOpacityEnabled){
-            var i,len, locChildren = this._children, _opacity = this._displayedOpacity;
+            locChildren = this._children;
             for(i = 0, len = locChildren.length;i < len; i++){
                 if(locChildren[i].updateDisplayedOpacity)
                     locChildren[i].updateDisplayedOpacity(_opacity);
             }
-
-            locChildren = this._protectedChildren;
-            for(i = 0, len = locChildren.length;i < len; i++){
-                if(locChildren[i].updateDisplayedOpacity)
-                    locChildren[i].updateDisplayedOpacity(_opacity);
-            }
+        }
+        locChildren = this._protectedChildren;
+        for(i = 0, len = locChildren.length;i < len; i++){
+            if(locChildren[i])
+                locChildren[i].setOpacity(_opacity);
         }
     },
 
@@ -397,18 +396,19 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         displayedColor.b = realColor.b * parentColor.b/255.0;
         this._updateColor();
 
+        var i, len, locChildren;
         if (this._cascadeColorEnabled){
-            var i, len, locChildren = this._children;
+            locChildren = this._children;
             for(i = 0, len = locChildren.length; i < len; i++){
                 if(locChildren[i].updateDisplayedColor)
                     locChildren[i].updateDisplayedColor(displayedColor);
             }
+        }
 
-            locChildren = this._protectedChildren;
-            for(i =0, len = locChildren.length; i < len; i++) {
-                if (locChildren[i].updateDisplayedColor)
-                    locChildren[i].updateDisplayedColor(displayedColor);
-            }
+        locChildren = this._protectedChildren;
+        for(i =0, len = locChildren.length; i < len; i++) {
+            if (locChildren[i])
+                locChildren[i].setColor(realColor);
         }
     },
 
@@ -420,7 +420,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
 
         locChildren = this._protectedChildren;
         for(i =0, len = locChildren.length; i < len; i++)
-            locChildren[i].updateDisplayedColor(white);
+            locChildren[i].setColor(white);
     }
 });
 
