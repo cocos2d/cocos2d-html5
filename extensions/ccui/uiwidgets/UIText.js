@@ -85,7 +85,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     },
 
     _initRenderer: function () {
-        this._labelRenderer = cc.LabelTTF.create();
+        this._labelRenderer = new cc.LabelTTF();
         this.addProtectedChild(this._labelRenderer, ccui.Text.RENDERER_ZORDER, -1);
     },
 

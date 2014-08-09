@@ -712,8 +712,9 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             this._addBackGroundImage();
         this._backGroundImageFileName = fileName;
         this._bgImageTexType = texType;
+        var locBackgroundImage = this._backGroundImage;
         if (this._backGroundScale9Enabled) {
-            var bgiScale9 = this._backGroundImage;
+            var bgiScale9 = locBackgroundImage;
             switch (this._bgImageTexType) {
                 case ccui.Widget.LOCAL_TEXTURE:
                     bgiScale9.initWithFile(fileName);
@@ -726,7 +727,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             }
             bgiScale9.setPreferredSize(this._contentSize);
         } else {
-            var sprite = this._backGroundImage;
+            var sprite = locBackgroundImage;
             switch (this._bgImageTexType){
                 case ccui.Widget.LOCAL_TEXTURE:
                     //SetTexture cannot load resource
@@ -740,9 +741,22 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                     break;
             }
         }
-        this._backGroundImageTextureSize = this._backGroundImage.getContentSize();
-        this._backGroundImage.setPosition(this._contentSize.width * 0.5, this._contentSize.height * 0.5);
+        this._backGroundImageTextureSize = locBackgroundImage.getContentSize();
+        locBackgroundImage.setPosition(this._contentSize.width * 0.5, this._contentSize.height * 0.5);
         this._updateBackGroundImageColor();
+
+        /*//async load callback
+        var self = this;
+        if(!locBackgroundImage.texture || !locBackgroundImage.texture.isLoaded()){
+            locBackgroundImage.addLoadedEventListener(function(){
+                self._backGroundImageTextureSize = locBackgroundImage.getContentSize();
+                locBackgroundImage.setPosition(self._contentSize.width * 0.5, self._contentSize.height * 0.5);
+                self._updateBackGroundImageColor();
+
+                self._imageRendererAdaptDirty = true;
+                self._findLayout();
+            });
+        }*/
     },
 
     /**

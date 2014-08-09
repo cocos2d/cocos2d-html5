@@ -1209,17 +1209,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     addChildHelper: function(child, localZOrder, tag, name, setTag){
-        if(!this._children){
+        if(!this._children)
             this._children = [];
-        }
 
         this._insertChild(child, localZOrder);
-
-        if(setTag){
+        if(setTag)
             child.setTag(tag);
-        }else{
+        else
             child.setName(name);
-        }
 
         child.setParent(this);
         child.setOrderOfArrival(cc.s_globalOrderOfArrival++);
@@ -1227,21 +1224,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if( this._running ){
             child.onEnter();
             // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
-            if (this._isTransitionFinished) {
+            if (this._isTransitionFinished)
                 child.onEnterTransitionDidFinish();
-            }
         }
 
         if (this._cascadeColorEnabled)
-        {
             this._enableCascadeColor();
-        }
-
         if (this._cascadeOpacityEnabled)
-        {
             this._enableCascadeOpacity();
-        }
-
     },
 
     // composition: REMOVE
@@ -2316,9 +2306,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             parentColor = cc.color.WHITE;
         this.updateDisplayedColor(parentColor);
 
-        if (color.a !== undefined && !color.a_undefined) {
+        /*if (color.a !== undefined && !color.a_undefined) {              //setColor doesn't support changing opacity, please use setOpacity
             this.setOpacity(color.a);
-        }
+        }*/
     },
 
     /**
