@@ -369,6 +369,11 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             default:
                 break;
         }
+        if(this._parent instanceof ccui.ImageView){
+            var renderer = this._parent._imageRenderer;
+            if(renderer && !renderer._textureLoaded)
+                return;
+        }
         this.setPosition(absPos);
     },
 

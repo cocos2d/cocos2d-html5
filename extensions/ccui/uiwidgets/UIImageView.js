@@ -85,17 +85,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         this._textureFile = fileName;
         this._imageTexType = texType;
         var imageRenderer = self._imageRenderer;
-        if(!imageRenderer.texture || !imageRenderer.texture.isLoaded()){
-            imageRenderer.addLoadedEventListener(function(){
-                self._findLayout();
 
-                self._imageTextureSize = imageRenderer.getContentSize();
-                self._updateFlippedX();
-                self._updateFlippedY();
-                self._updateContentSizeWithTextureSize(self._imageTextureSize);
-                self._imageRendererAdaptDirty = true;
-            });
-        }
         switch (self._imageTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
                 if(self._scale9Enabled){
@@ -117,6 +107,18 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
                 break;
             default:
                 break;
+        }
+
+        if(!imageRenderer.texture || !imageRenderer.texture.isLoaded()){
+            imageRenderer.addLoadedEventListener(function(){
+                self._findLayout();
+
+                self._imageTextureSize = imageRenderer.getContentSize();
+                self._updateFlippedX();
+                self._updateFlippedY();
+                self._updateContentSizeWithTextureSize(self._imageTextureSize);
+                self._imageRendererAdaptDirty = true;
+            });
         }
 
         self._imageTextureSize = imageRenderer.getContentSize();
