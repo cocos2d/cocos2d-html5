@@ -2,18 +2,21 @@ ChangeLog:
 
 Cocos2d-html5-v3.0 RC2 @ Aug.8, 2014
 
-* Fix ctor functions bugs to support new construction.
-* Migrate Cocos UI and fixed bugs.
-* Refactor Cocos UI for more stable and friendly user experience.
-* Merge cc.NodeRGBA and cc.LayerRGBA to cc.Node.
-* Upgrade Cocostudio reader to support version 1.5.x.
-* Refactor cc.Sprite's setColor to improve its performance.
-* Improve implementation of all Actions lower case alias creation functions.
-* Upgrade Cocostudio Armature animation from Cocos2d-x v3.2.
-* Upgrade cc.Scale9Sprite from Cocos2d-x 3.2.
-* Improve cc.LabelTTF's line break algorithms to support multi-languages.
-* Rename CCAffineTransform.js's functions to lowercase started functions.
+* Refactored Cocos UI for more stable and friendly user experience.
+* Upgraded Cocostudio reader to support version 1.2 - 1.5.x.
+* Upgraded Cocostudio Armature animation from Cocos2d-x v3.2.
+* Added back 2.x createWithXXX functions and deprecate all create/createWithXXX functions.
+* Merged cc.NodeRGBA and cc.LayerRGBA to cc.Node.
+* Fixed ctor functions bugs to support new construction.
+* Refactored cc.Sprite's setColor to improve its performance.
+* Renamed CCAffineTransform.js's functions to lowercase started functions.
+* Upgraded cc.Scale9Sprite from Cocos2d-x 3.2.
+* Improved cc.LabelTTF's line break algorithms to support multi-languages.
 * Made cc.RenderTexture's beginWithClear accept color value from 0-255.
+* Improved implementation of all Actions lower case alias creation functions.
+* Added lower case creation functions for 3d actions and progress actions.
+* Added cc.sys.platform API for detecting platform.
+* Upgraded HelloWorld project with v3.0 APIs.
 
 * Bugs fix:
 	1. Fixed a bug of cc.WebAudio that sourceNode's playbackState is invalid on some browsers.
