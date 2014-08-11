@@ -116,6 +116,9 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
                 self._imageTextureSize = imageRenderer.getContentSize();
                 self._updateFlippedX();
                 self._updateFlippedY();
+
+                self._updateChildrenDisplayedRGBA();
+
                 self._updateContentSizeWithTextureSize(self._imageTextureSize);
                 self._imageRendererAdaptDirty = true;
             });
@@ -124,6 +127,8 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         self._imageTextureSize = imageRenderer.getContentSize();
         self._updateFlippedX();
         self._updateFlippedY();
+
+        this._updateChildrenDisplayedRGBA();
 
         self._updateContentSizeWithTextureSize(self._imageTextureSize);
         self._imageRendererAdaptDirty = true;
