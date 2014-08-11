@@ -234,13 +234,14 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         //direct draw image by canvas drawImage
         if (locCacheCanvas) {
             var locSubCacheCount = this._subCacheCount, locCanvasHeight = locCacheCanvas.height * eglViewer._scaleY;
+            var halfTileSize = this._mapTileSize.height * 0.5 * eglViewer._scaleY;
             if(locSubCacheCount > 0) {
                 var locSubCacheCanvasArr = this._subCacheCanvas;
                 for(var i = 0; i < locSubCacheCount; i++){
                     var selSubCanvas = locSubCacheCanvasArr[i];
                     if (this._layerOrientation === cc.TMX_ORIENTATION_HEX)
                         context.drawImage(locSubCacheCanvasArr[i], 0, 0, selSubCanvas.width, selSubCanvas.height,
-                                posX + i * this._subCacheWidth, -(posY + locCanvasHeight) + this._mapTileSize.height * 0.5, selSubCanvas.width * eglViewer._scaleX, locCanvasHeight);
+                                posX + i * this._subCacheWidth, -(posY + locCanvasHeight) + halfTileSize, selSubCanvas.width * eglViewer._scaleX, locCanvasHeight);
                     else
                         context.drawImage(locSubCacheCanvasArr[i], 0, 0, selSubCanvas.width, selSubCanvas.height,
                                 posX + i * this._subCacheWidth, -(posY + locCanvasHeight), selSubCanvas.width * eglViewer._scaleX, locCanvasHeight);
@@ -250,7 +251,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 //    posX, -(posY + locCacheCanvas.height ), locCacheCanvas.width, locCacheCanvas.height );
                 if (this._layerOrientation === cc.TMX_ORIENTATION_HEX)
                     context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
-                        posX, -(posY + locCanvasHeight) + this._mapTileSize.height * 0.5, locCacheCanvas.width * eglViewer._scaleX, locCanvasHeight);
+                        posX, -(posY + locCanvasHeight) + halfTileSize, locCacheCanvas.width * eglViewer._scaleX, locCanvasHeight);
                 else
                     context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
                         posX, -(posY + locCanvasHeight), locCacheCanvas.width * eglViewer._scaleX, locCanvasHeight);
