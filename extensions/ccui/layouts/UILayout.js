@@ -298,7 +298,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {Boolean} cleanup true if all running actions on all children nodes should be cleanup, false otherwise.
      */
     removeAllChildrenWithCleanup: function(cleanup){
-        ccui.Widget.prototype.removeAllChildrenWithCleanup(cleanup);
+        ccui.Widget.prototype.removeAllChildrenWithCleanup.call(this, cleanup);
         this._doLayoutDirty = true;
     },
 
