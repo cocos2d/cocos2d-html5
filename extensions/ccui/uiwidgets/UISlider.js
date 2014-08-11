@@ -118,6 +118,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
             barRenderer.addLoadedEventListener(function(){
 
                 self._findLayout();
+                self._updateChildrenDisplayedRGBA();
 
                 self._barRendererAdaptDirty = true;
                 self._progressBarRendererDirty = true;
@@ -137,6 +138,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
             default:
                 break;
         }
+        this._updateChildrenDisplayedRGBA();
 
         this._barRendererAdaptDirty = true;
         this._progressBarRendererDirty = true;
@@ -162,6 +164,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
             progressBarRenderer.addLoadedEventListener(function(){
 
                 self._findLayout();
+                self._updateChildrenDisplayedRGBA();
 
                 self._progressBarRenderer.setAnchorPoint(cc.p(0, 0.5));
                 var tz = self._progressBarRenderer.getContentSize();
@@ -182,6 +185,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
             default:
                 break;
         }
+        this._updateChildrenDisplayedRGBA();
 
         this._progressBarRenderer.setAnchorPoint(cc.p(0, 0.5));
         var tz = this._progressBarRenderer.getContentSize();
@@ -329,6 +333,15 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._slidBallNormalTextureFile = normal;
         this._ballNTexType = texType;
+
+        var self = this;
+        if(!this._slidBallNormalRenderer.texture || !this._slidBallNormalRenderer.texture.isLoaded()){
+            this._slidBallNormalRenderer.addLoadedEventListener(function(){
+
+                self._updateChildrenDisplayedRGBA();
+            });
+        }
+
         switch (this._ballNTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
                 //SetTexture cannot load resource
@@ -341,6 +354,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
             default:
                 break;
         }
+        this._updateChildrenDisplayedRGBA();
     },
 
     /**
@@ -355,6 +369,15 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._slidBallPressedTextureFile = pressed;
         this._ballPTexType = texType;
+
+        var self = this;
+        if(!this._slidBallPressedRenderer.texture || !this._slidBallPressedRenderer.texture.isLoaded()){
+            this._slidBallPressedRenderer.addLoadedEventListener(function(){
+
+                self._updateChildrenDisplayedRGBA();
+            });
+        }
+
         switch (this._ballPTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
                 //SetTexture cannot load resource
@@ -367,6 +390,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
             default:
                 break;
         }
+        this._updateChildrenDisplayedRGBA();
     },
 
     /**
@@ -381,6 +405,15 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._slidBallDisabledTextureFile = disabled;
         this._ballDTexType = texType;
+
+        var self = this;
+        if(!this._slidBallDisabledRenderer.texture || !this._slidBallDisabledRenderer.texture.isLoaded()){
+            this._slidBallDisabledRenderer.addLoadedEventListener(function(){
+
+                self._updateChildrenDisplayedRGBA();
+            });
+        }
+
         switch (this._ballDTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
                 //SetTexture cannot load resource
@@ -393,6 +426,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
             default:
                 break;
         }
+        this._updateChildrenDisplayedRGBA();
     },
 
     /**
