@@ -384,9 +384,8 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         }
         locChildren = this._protectedChildren;
         for(i = 0, len = locChildren.length;i < len; i++){
-            var tmpOpacity = _opacity * locChildren[i].getOpacity() / 255;
             if(locChildren[i])
-                locChildren[i].setOpacity(tmpOpacity);
+                locChildren[i].updateDisplayedOpacity(_opacity);
         }
     },
 
@@ -408,14 +407,8 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
 
         locChildren = this._protectedChildren;
         for(i =0, len = locChildren.length; i < len; i++) {
-
-            var tmpColor = locChildren[i]._realColor;
-            var tmpR = realColor.r * tmpColor.r / 255;
-            var tmpG = realColor.g * tmpColor.g / 255;
-            var tmpB = realColor.b * tmpColor.b / 255;
-
             if (locChildren[i])
-                locChildren[i].setColor(cc.color(tmpR, tmpG,tmpB));
+                locChildren[i].updateDisplayedColor(displayedColor);
         }
     },
 
