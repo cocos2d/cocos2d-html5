@@ -1462,7 +1462,14 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
                 layout = layout._parent;
             }
         }
+    },
+
+    _updateChildrenDisplayedRGBA: function(){
+
+        this.setColor(this.getColor());
+        this.setOpacity(this.getOpacity());
     }
+
 });
 
 var _p = ccui.Widget.prototype;

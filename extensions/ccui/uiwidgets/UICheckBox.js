@@ -140,7 +140,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
                 self._updateFlippedX();
                 self._updateFlippedY();
-
+                self._updateChildrenDisplayedRGBA();
                 self._updateContentSizeWithTextureSize(self._backGroundBoxRenderer.getContentSize());
                 self._backGroundBoxRendererAdaptDirty = true;
             });
@@ -168,6 +168,8 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this._updateFlippedX();
         this._updateFlippedY();
 
+        this._updateChildrenDisplayedRGBA();
+
         this._updateContentSizeWithTextureSize(this._backGroundBoxRenderer.getContentSize());
         this._backGroundBoxRendererAdaptDirty = true;
     },
@@ -193,6 +195,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
                 self._updateFlippedX();
                 self._updateFlippedY();
+                self._updateChildrenDisplayedRGBA();
                 self._backGroundSelectedBoxRendererAdaptDirty = true;
             });
         }
@@ -212,6 +215,9 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
         this._updateFlippedX();
         this._updateFlippedY();
+
+        this._updateChildrenDisplayedRGBA();
+
         this._backGroundSelectedBoxRendererAdaptDirty = true;
     },
 
@@ -235,6 +241,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
                 self._updateFlippedX();
                 self._updateFlippedY();
+                self._updateChildrenDisplayedRGBA();
                 self._frontCrossRendererAdaptDirty = true;
             });
         }
@@ -253,6 +260,9 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         }
         this._updateFlippedX();
         this._updateFlippedY();
+
+        this._updateChildrenDisplayedRGBA();
+
         this._frontCrossRendererAdaptDirty = true;
     },
 
@@ -276,6 +286,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
                 self._updateFlippedX();
                 self._updateFlippedY();
+                self._updateChildrenDisplayedRGBA();
                 self._backGroundBoxDisabledRendererAdaptDirty = true;
             });
         }
@@ -294,6 +305,9 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         }
         this._updateFlippedX();
         this._updateFlippedY();
+
+        this._updateChildrenDisplayedRGBA();
+
         this._backGroundBoxDisabledRendererAdaptDirty = true;
     },
 
@@ -317,6 +331,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
                 self._updateFlippedX();
                 self._updateFlippedY();
+                self._updateChildrenDisplayedRGBA();
                 self._frontCrossDisabledRendererAdaptDirty = true;
             });
         }
@@ -335,6 +350,9 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         }
         this._updateFlippedX();
         this._updateFlippedY();
+
+        this._updateChildrenDisplayedRGBA();
+
         this._frontCrossDisabledRendererAdaptDirty = true;
     },
 
