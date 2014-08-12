@@ -86,7 +86,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _lineWidths: null,
     _className: "LabelTTF",
 
-
     /**
      * creates a cc.LabelTTF from a font name, alignment, dimension and font size
      * Constructor of cc.LabelTTF
@@ -154,61 +153,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _measure: function (text) {
         return this._getLabelContext().measureText(text).width;
     },
-    _checkNextline: function (text, width) {
-        var tWidth = this._measure(text);
-        // Estimated word number per line
-        var baseNb = Math.floor(text.length * width / tWidth);
-        // Next line is a line with line break
-        var nextlinebreak = text.indexOf('\n');
-        if (baseNb * 0.8 >= nextlinebreak && nextlinebreak > 0) return nextlinebreak + 1;
-        // Text width smaller than requested width
-        if (tWidth < width) return text.length;
-
-        var found = false, l = width + 1, idfound = -1, index = baseNb, result,
-            re = cc.LabelTTF._checkRegEx,
-            reversre = cc.LabelTTF._reverseCheckRegEx,
-            enre = cc.LabelTTF._checkEnRegEx,
-            substr = text.substr(baseNb);
-
-        // Forward check
-        // Find next special caracter or chinese caracters
-        while (result = re.exec(substr)) {
-            index += result[0].length;
-            var tem = text.substr(0, index);
-            l = this._measure(tem);
-            if (result[2] == '\n' && l < width) {
-                found = true;
-                idfound = index;
-                break;
-            }
-            if (l > width) {
-                if (idfound != -1)
-                    found = true;
-                break;
-            }
-            idfound = index;
-            substr = text.substr(index);
-        }
-        if (found) return idfound;
-
-        // Backward check when forward check failed
-        substr = text.substr(0, baseNb);
-        idfound = baseNb;
-        while (result = reversre.exec(substr)) {
-            // BUG: Not secured if check with result[0]
-            idfound = result[1].length;
-            substr = result[1];
-            l = this._measure(substr);
-            if (l < width) {
-                if (enre.test(result[2]))
-                    idfound++;
-                break;
-            }
-        }
-
-        // Avoid when idfound == 0, the process may enter in a infinite loop
-        return idfound || 1;
-    },
 
     /**
      * Prints out a description of this class
@@ -227,7 +171,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     updateDisplayedOpacity: null,
     updateDisplayedOpacityForCanvas: function (parentOpacity) {
-        cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
+        cc.Node.prototype.updateDisplayedOpacity.call(this, parentOpacity);
         this._setColorsString();
     },
 
@@ -260,7 +204,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @return {cc.Size}
      */
     getDimensions: function () {
-        return cc.size(this._dimensions.width, this._dimensions.height);
+        return cc.size(this._dimensions);
     },
 
     /**
@@ -651,11 +595,20 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     /**
      * set Dimensions of cc.LabelTTF
-     * @param {cc.Size} dim
+     * @param {cc.Size|Number} dim dimensions or width of dimensions
+     * @param {Number} [height] height of dimensions
      */
-    setDimensions: function (dim) {
-        if (dim.width != this._dimensions.width || dim.height != this._dimensions.height) {
-            this._dimensions = dim;
+    setDimensions: function (dim, height) {
+        var width;
+        if(height === undefined){
+            width = dim.width;
+            height = dim.height;
+        }else
+            width = dim;
+
+        if (width != this._dimensions.width || height != this._dimensions.height) {
+            this._dimensions.width = width;
+            this._dimensions.height = height;
             this._updateString();
             // Force udpate
             this._needUpdateTexture = true;
@@ -818,6 +771,76 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return this._labelContext;
     },
 
+    _checkWarp: function(strArr, i, maxWidth){
+        var text = strArr[i];
+        var allWidth = this._measure(text);
+        if(allWidth > maxWidth && text.length > 1){
+
+            var fuzzyLen = text.length * ( maxWidth / allWidth ) | 0;
+            var tmpText = text.substr(fuzzyLen);
+            var width = allWidth - this._measure(tmpText);
+            var sLine;
+            var pushNum = 0;
+
+            //Increased while cycle maximum ceiling. default 100 time
+            var checkWhile = 0;
+
+            //Exceeded the size
+            while(width > maxWidth && checkWhile++ < 100){
+                fuzzyLen *= maxWidth / width;
+                fuzzyLen = fuzzyLen | 0;
+                tmpText = text.substr(fuzzyLen);
+                width = allWidth - this._measure(tmpText);
+            }
+
+            checkWhile = 0;
+
+            //Find the truncation point
+            while(width < maxWidth && checkWhile++ < 100){
+
+                if(tmpText){
+                    var exec = cc.LabelTTF._wordRex.exec(tmpText);
+                    pushNum = exec ? exec[0].length : 1;
+                    sLine = tmpText;
+                }
+
+                fuzzyLen = fuzzyLen + pushNum;
+
+                tmpText = text.substr(fuzzyLen);
+
+                width = allWidth - this._measure(tmpText);
+            }
+
+            fuzzyLen -= pushNum;
+
+            var sText = text.substr(0, fuzzyLen);
+
+            //symbol in the first
+            if(cc.LabelTTF.wrapInspection){
+                if(cc.LabelTTF._symbolRex.test(sLine || tmpText)){
+                    var result = cc.LabelTTF._lastWordRex.exec(sText);
+                    fuzzyLen -= result ? result[0].length : 0;
+
+                    sLine = text.substr(fuzzyLen);
+                    sText = text.substr(0, fuzzyLen);
+                }
+            }
+
+            //To judge whether a English words are truncated
+            if(cc.LabelTTF._firsrEnglish.test(sLine)){
+                var result = cc.LabelTTF._lastEnglish.exec(sText);
+                if(result && sText !== result[0]){
+                    fuzzyLen -= result[0].length;
+                    sLine = text.substr(fuzzyLen);
+                    sText = text.substr(0, fuzzyLen);
+                }
+            }
+
+            strArr[i] = sLine || tmpText;
+            strArr.splice(i, 0, sText);
+        }
+    },
+
     _updateTTF: function () {
         var locDimensionsWidth = this._dimensions.width, i, strLength;
         var locLineWidth = this._lineWidths;
@@ -827,14 +850,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._measureConfig();
         if (locDimensionsWidth !== 0) {
             // Content processing
-            var text = this._string;
-            this._strings = [];
-            for (i = 0, strLength = this._string.length; i < strLength;) {
-                // Find the index of next line
-                var next = this._checkNextline(text.substr(i), locDimensionsWidth);
-                var append = text.substr(i, next);
-                this._strings.push(append);
-                i += next;
+            this._strings = this._string.split('\n');
+
+            for(i = 0; i < this._strings.length; i++){
+                this._checkWarp(this._strings, i, locDimensionsWidth);
             }
         } else {
             this._strings = this._string.split('\n');
@@ -906,7 +925,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         if (this._string.length === 0) {
             locLabelCanvas.width = 1;
-            locLabelCanvas.height = locContentSize.height;
+            locLabelCanvas.height = locContentSize.height || 1;
+            this._texture && this._texture.handleLoadedTexture();
             this.setTextureRect(cc.rect(0, 0, 1, locContentSize.height));
             return true;
         }
@@ -1031,7 +1051,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     var _p = cc.LabelTTF.prototype;
 
     _p.setColor = function (color3) {
-        cc.NodeRGBA.prototype.setColor.call(this, color3);
+        cc.Node.prototype.setColor.call(this, color3);
 
         this._setColorsString();
     };
@@ -1050,7 +1070,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p.updateDisplayedColor = function (parentColor) {
-        cc.NodeRGBA.prototype.updateDisplayedColor.call(this, parentColor);
+        cc.Node.prototype.updateDisplayedColor.call(this, parentColor);
         this._setColorsString();
     };
 
@@ -1133,16 +1153,23 @@ cc.LabelTTF._textAlign = ["left", "center", "right"];
 
 cc.LabelTTF._textBaseline = ["top", "middle", "bottom"];
 
-// Class static properties for measure util
-cc.LabelTTF._checkRegEx = /(.+?)([\s\n\r\-\/\\\:]|[\u4E00-\u9FA5]|[\uFE30-\uFFA0])/;
-cc.LabelTTF._reverseCheckRegEx = /(.*)([\s\n\r\-\/\\\:]|[\u4E00-\u9FA5]|[\uFE30-\uFFA0])/;
-cc.LabelTTF._checkEnRegEx = /[\s\-\/\\\:]/;
+//check the first character
+cc.LabelTTF.wrapInspection = true;
+
+//Support: English French German
+//Other as Oriental Language
+cc.LabelTTF._wordRex = /([a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+|\S)/;
+cc.LabelTTF._symbolRex = /^[!,.:;}\]%\?>、‘“》？。，！]/;
+cc.LabelTTF._lastWordRex = /([a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+|\S)$/;
+cc.LabelTTF._lastEnglish = /[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+$/;
+cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
 // Only support style in this format: "18px Verdana" or "18px 'Helvetica Neue'"
 cc.LabelTTF._fontStyleRE = /^(\d+)px\s+['"]?([\w\s\d]+)['"]?$/;
 
 /**
  * creates a cc.LabelTTF from a font name, alignment, dimension and font size
+ * @deprecated
  * @param {String} text
  * @param {String|cc.FontDefinition} [fontName="Arial"]
  * @param {Number} [fontSize=16]
@@ -1164,6 +1191,11 @@ cc.LabelTTF.create = function (text, fontName, fontSize, dimensions, hAlignment,
     return new cc.LabelTTF(text, fontName, fontSize, dimensions, hAlignment, vAlignment);
 };
 
+/**
+ * @deprecated
+ * @type {Function}
+ */
+cc.LabelTTF.createWithFontDefinition = cc.LabelTTF.create;
 
 if (cc.USE_LA88_LABELS)
     cc.LabelTTF._SHADER_PROGRAM = cc.SHADER_POSITION_TEXTURECOLOR;

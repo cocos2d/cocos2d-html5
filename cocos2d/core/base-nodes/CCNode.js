@@ -176,6 +176,15 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _showNode: false,
     _name: "",                     ///<a string label, an user defined string to identify this node
 
+    _displayedOpacity: 255,
+    _realOpacity: 255,
+    _displayedColor: null,
+    _realColor: null,
+    _cascadeColorEnabled: false,
+    _cascadeOpacityEnabled: false,
+    _usingNormalizedPosition: false,
+    _hashOfName: 0,
+
     _initNode: function () {
         var _t = this;
         _t._anchorPoint = cc.p(0, 0);
@@ -189,10 +198,17 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         _t._actionManager = director.getActionManager();
         _t._scheduler = director.getScheduler();
         _t._initializedNode = true;
-        _t._additionalTransform = cc.AffineTransformMakeIdentity();
+        _t._additionalTransform = cc.affineTransformMakeIdentity();
         if (cc.ComponentContainer) {
             _t._componentContainer = new cc.ComponentContainer(_t);
         }
+
+        this._displayedOpacity = 255;
+        this._realOpacity = 255;
+        this._displayedColor = cc.color(255, 255, 255, 255);
+        this._realColor = cc.color(255, 255, 255, 255);
+        this._cascadeColorEnabled = false;
+        this._cascadeOpacityEnabled = false;
     },
 
     /**
@@ -703,8 +719,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Boolean} Var true if the node is visible, false if the node is hidden.
      */
     setVisible: function (Var) {
-        this._visible = Var;
-        this.setNodeDirty();
+        if(this._visible != Var){
+            this._visible = Var;
+            if(Var)this.setNodeDirty();
+        }
     },
 
     /**
@@ -717,7 +735,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}  The anchor point of node.
      */
     getAnchorPoint: function () {
-        return this._anchorPoint;
+        return cc.p(this._anchorPoint);
     },
 
     /**
@@ -794,7 +812,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point} The anchor point in absolute pixels.
      */
     getAnchorPointInPoints: function () {
-        return this._anchorPointInPoints;
+        return cc.p(this._anchorPointInPoints);
     },
 
     _getWidth: function () {
@@ -822,7 +840,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Size} The untransformed size of the node.
      */
     getContentSize: function () {
-        return this._contentSize;
+        return cc.size(this._contentSize);
     },
 
     /**
@@ -950,7 +968,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {String} name
      */
     setName: function(name){
-         this._name
+         this._name = name;
     },
 
     /**
@@ -1028,6 +1046,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} Var  The arrival order.
      */
     setOrderOfArrival: function (Var) {
+        if(this.arrivalOrder == NaN)
+            debugger;
         this.arrivalOrder = Var;
     },
 
@@ -1086,6 +1106,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Returns a "local" axis aligned bounding box of the node. <br/>
+     * @deprecated
+     * @return {cc.Rect}
+     */
+    boundingBox: function(){
+        cc.log(cc._LogInfos.Node_boundingBox);
+        return this.getBoundingBox();
+    },
+
+    /**
+     * Returns a "local" axis aligned bounding box of the node. <br/>
      * The returned box is relative only to its parent.
      * @note This method returns a temporary variable, so it can't returns const CCRect&
      * @const
@@ -1093,7 +1123,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getBoundingBox: function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
-        return cc._RectApplyAffineTransformIn(rect, this.nodeToParentTransform());
+        return cc._rectApplyAffineTransformIn(rect, this.getNodeToParentTransform());
     },
 
     /**
@@ -1153,31 +1183,55 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
      */
     addChild: function (child, localZOrder, tag) {
+        var child = child;
+        var localZOrder = localZOrder === undefined ? child._localZOrder : localZOrder;
+        var tag, name, setTag = false;
+        switch(typeof tag){
+            case 'undefined':
+                tag = undefined;
+                name = child._name;
+                break;
+            case 'string':
+                name = tag;
+                tag = undefined;
+                break;
+            case 'number':
+                setTag = true;
+                name = "";
+                break;
+        }
 
         cc.assert(child, cc._LogInfos.Node_addChild_3);
+        cc.assert(child._parent === null, "child already added. It can't be added again");
 
-        if (child === this) {
-            cc.log(cc._LogInfos.Node_addChild);
-            return;
-        }
+        this.addChildHelper(child, localZOrder, tag, name, setTag);
 
-        if (child._parent !== null) {
-            cc.log(cc._LogInfos.Node_addChild_2);
-            return;
-        }
+    },
 
-        var tmpzOrder = (localZOrder != null) ? localZOrder : child._localZOrder;
-        child.tag = (tag != null) ? tag : child.tag;
-        this._insertChild(child, tmpzOrder);
-        child._parent = this;
-        this._cachedParent && (child._cachedParent = this._cachedParent);
+    addChildHelper: function(child, localZOrder, tag, name, setTag){
+        if(!this._children)
+            this._children = [];
 
-        if (this._running) {
+        this._insertChild(child, localZOrder);
+        if(setTag)
+            child.setTag(tag);
+        else
+            child.setName(name);
+
+        child.setParent(this);
+        child.setOrderOfArrival(cc.s_globalOrderOfArrival++);
+
+        if( this._running ){
             child.onEnter();
             // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
             if (this._isTransitionFinished)
                 child.onEnterTransitionDidFinish();
         }
+
+        if (this._cascadeColorEnabled)
+            this._enableCascadeColor();
+        if (this._cascadeOpacityEnabled)
+            this._enableCascadeOpacity();
     },
 
     // composition: REMOVE
@@ -1452,9 +1506,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._running = false;
         this.pause();
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onExit);
-        if (this._componentContainer) {
-            this._componentContainer.removeAll();
-        }
     },
 
     // actions
@@ -1652,7 +1703,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      *<p>  Sets the additional transform.<br/>
-     *  The additional transform will be concatenated at the end of nodeToParentTransform.<br/>
+     *  The additional transform will be concatenated at the end of getNodeToParentTransform.<br/>
      *  It could be used to simulate `parent-child` relationship between two nodes (e.g. one is in BatchNode, another isn't).<br/>
      *  </p>
      *  @example
@@ -1674,7 +1725,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * spriteA.setPosition(ccp(200, 200));
      *
      * // Gets the spriteA's transform.
-     * var t = spriteA.nodeToParentTransform();
+     * var t = spriteA.getNodeToParentTransform();
      *
      * // Sets the additional transform to spriteB, spriteB's position will based on its pseudo parent i.e. spriteA.
      * spriteB.setAdditionalTransform(t);
@@ -1683,7 +1734,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * spriteA.setScale(2);
      *
      * // Gets the spriteA's transform.
-     * t = spriteA.nodeToParentTransform();
+     * t = spriteA.getNodeToParentTransform();
      *
      * // Sets the additional transform to spriteB, spriteB's scale will based on its pseudo parent i.e. spriteA.
      * spriteB.setAdditionalTransform(t);
@@ -1692,7 +1743,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * spriteA.setRotation(20);
      *
      * // Gets the spriteA's transform.
-     * t = spriteA.nodeToParentTransform();
+     * t = spriteA.getNodeToParentTransform();
      *
      * // Sets the additional transform to spriteB, spriteB's rotation will based on its pseudo parent i.e. spriteA.
      * spriteB.setAdditionalTransform(t);
@@ -1708,31 +1759,52 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * The matrix is in Pixels.
      * @return {cc.AffineTransform}
      */
-    parentToNodeTransform: function () {
+    getParentToNodeTransform: function () {
         if (this._inverseDirty) {
-            this._inverse = cc.AffineTransformInvert(this.nodeToParentTransform());
+            this._inverse = cc.affineTransformInvert(this.getNodeToParentTransform());
             this._inverseDirty = false;
         }
         return this._inverse;
     },
 
     /**
+     * @deprecated
+     */
+    parentToNodeTransform: function () {
+        return this.getParentToNodeTransform();
+    },
+
+    /**
      *  Returns the world affine transform matrix. The matrix is in Pixels.
      * @return {cc.AffineTransform}
      */
-    nodeToWorldTransform: function () {
-        var t = this.nodeToParentTransform();
+    getNodeToWorldTransform: function () {
+        var t = this.getNodeToParentTransform();
         for (var p = this._parent; p != null; p = p.parent)
-            t = cc.AffineTransformConcat(t, p.nodeToParentTransform());
+            t = cc.affineTransformConcat(t, p.getNodeToParentTransform());
         return t;
+    },
+
+    /**
+     * @deprecated
+     */
+    nodeToWorldTransform: function(){
+        return this.getNodeToWorldTransform();
     },
 
     /**
      * Returns the inverse world affine transform matrix. The matrix is in Pixels.
      * @return {cc.AffineTransform}
      */
+    getWorldToNodeTransform: function () {
+        return cc.affineTransformInvert(this.getNodeToWorldTransform());
+    },
+
+    /**
+     * @deprecated
+     */
     worldToNodeTransform: function () {
-        return cc.AffineTransformInvert(this.nodeToWorldTransform());
+        return this.getWorldToNodeTransform();
     },
 
     /**
@@ -1741,7 +1813,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}
      */
     convertToNodeSpace: function (worldPoint) {
-        return cc.PointApplyAffineTransform(worldPoint, this.worldToNodeTransform());
+        return cc.pointApplyAffineTransform(worldPoint, this.getWorldToNodeTransform());
     },
 
     /**
@@ -1751,7 +1823,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     convertToWorldSpace: function (nodePoint) {
         nodePoint = nodePoint || cc.p(0,0);
-        return cc.PointApplyAffineTransform(nodePoint, this.nodeToWorldTransform());
+        return cc.pointApplyAffineTransform(nodePoint, this.getNodeToWorldTransform());
     },
 
     /**
@@ -1892,8 +1964,19 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * The matrix is in Pixels.
      * @function
      * @return {cc.AffineTransform}
+     * @deprecated
      */
-    nodeToParentTransform: null,
+    nodeToParentTransform: function(){
+        return this.getNodeToParentTransform();
+    },
+
+    /**
+     * Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.<br/>
+     * The matrix is in Pixels.
+     * @function
+     * @return {cc.AffineTransform}
+     */
+    getNodeToParentTransform: null,
 
     _setNodeDirtyForCache: function () {
         if (this._cacheDirty === false) {
@@ -1991,7 +2074,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     getBoundingBoxToWorld: function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var trans = this.nodeToWorldTransform();
-        rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
+        rect = cc.rectApplyAffineTransform(rect, this.nodeToWorldTransform());
 
         //query child's BoundingBox
         if (!this._children)
@@ -2011,8 +2094,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _getBoundingBoxToCurrentNode: function (parentTransform) {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
-        var trans = (parentTransform == null) ? this.nodeToParentTransform() : cc.AffineTransformConcat(this.nodeToParentTransform(), parentTransform);
-        rect = cc.RectApplyAffineTransform(rect, trans);
+        var trans = (parentTransform == null) ? this.getNodeToParentTransform() : cc.affineTransformConcat(this.getNodeToParentTransform(), parentTransform);
+        rect = cc.rectApplyAffineTransform(rect, trans);
 
         //query child's BoundingBox
         if (!this._children)
@@ -2030,7 +2113,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         return rect;
     },
 
-    _nodeToParentTransformForWebGL: function () {
+    _getNodeToParentTransformForWebGL: function () {
         var _t = this;
         if (_t._transformDirty) {
             // Translate values
@@ -2078,28 +2161,232 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             // XXX: Try to inline skew
             // If skew is needed, apply skew and then anchor point
             if (needsSkewMatrix) {
-                t = cc.AffineTransformConcat({a: 1.0, b: Math.tan(cc.degreesToRadians(_t._skewY)),
+                t = cc.affineTransformConcat({a: 1.0, b: Math.tan(cc.degreesToRadians(_t._skewY)),
                     c: Math.tan(cc.degreesToRadians(_t._skewX)), d: 1.0, tx: 0.0, ty: 0.0}, t);
 
                 // adjust anchor point
                 if (apx !== 0 || apy !== 0)
-                    t = cc.AffineTransformTranslate(t, napx, napy);
+                    t = cc.affineTransformTranslate(t, napx, napy);
             }
 
             if (_t._additionalTransformDirty) {
-                t = cc.AffineTransformConcat(t, _t._additionalTransform);
+                t = cc.affineTransformConcat(t, _t._additionalTransform);
                 _t._additionalTransformDirty = false;
             }
             _t._transform = t;
             _t._transformDirty = false;
         }
         return _t._transform;
+    },
+
+    _updateColor: function(){
+        //TODO
+    },
+
+    /**
+     * Get the opacity of Node
+     * @returns {number} opacity
+     */
+    getOpacity: function () {
+        return this._realOpacity;
+    },
+
+    /**
+     * Get the displayed opacity of Node
+     * @returns {number} displayed opacity
+     */
+    getDisplayedOpacity: function () {
+        return this._displayedOpacity;
+    },
+
+    /**
+     * Set the opacity of Node
+     * @param {Number} opacity
+     */
+    setOpacity: function (opacity) {
+        this._displayedOpacity = this._realOpacity = opacity;
+
+        var parentOpacity = 255, locParent = this._parent;
+        if (locParent && locParent.cascadeOpacity)
+            parentOpacity = locParent.getDisplayedOpacity();
+        this.updateDisplayedOpacity(parentOpacity);
+
+        this._displayedColor.a = this._realColor.a = opacity;
+    },
+
+    /**
+     * Update displayed opacity
+     * @param {Number} parentOpacity
+     */
+    updateDisplayedOpacity: function (parentOpacity) {
+        this._displayedOpacity = this._realOpacity * parentOpacity / 255.0;
+        if (this._cascadeOpacityEnabled) {
+            var selChildren = this._children;
+            for (var i = 0; i < selChildren.length; i++) {
+                var item = selChildren[i];
+                if (item)
+                    item.updateDisplayedOpacity(this._displayedOpacity);
+            }
+        }
+    },
+
+    /**
+     * whether or not it will set cascade opacity.
+     * @returns {boolean}
+     */
+    isCascadeOpacityEnabled: function () {
+        return this._cascadeOpacityEnabled;
+    },
+
+    /**
+     * Enable or disable cascade opacity
+     * @param {boolean} cascadeOpacityEnabled
+     */
+    setCascadeOpacityEnabled: function (cascadeOpacityEnabled) {
+        if (this._cascadeOpacityEnabled === cascadeOpacityEnabled)
+            return;
+
+        this._cascadeOpacityEnabled = cascadeOpacityEnabled;
+        if (cascadeOpacityEnabled)
+            this._enableCascadeOpacity();
+        else
+            this._disableCascadeOpacity();
+    },
+
+    _enableCascadeOpacity: function () {
+        var parentOpacity = 255, locParent = this._parent;
+        if (locParent && locParent.cascadeOpacity)
+            parentOpacity = locParent.getDisplayedOpacity();
+        this.updateDisplayedOpacity(parentOpacity);
+    },
+
+    _disableCascadeOpacity: function () {
+        this._displayedOpacity = this._realOpacity;
+
+        var selChildren = this._children;
+        for (var i = 0; i < selChildren.length; i++) {
+            var item = selChildren[i];
+            if (item)
+                item.updateDisplayedOpacity(255);
+        }
+    },
+
+    /**
+     * Get the color of Node
+     * @returns {cc.Color}
+     */
+    getColor: function () {
+        var locRealColor = this._realColor;
+        return cc.color(locRealColor.r, locRealColor.g, locRealColor.b, locRealColor.a);
+    },
+
+    /**
+     * Get the displayed color of Node
+     * @returns {cc.Color}
+     */
+    getDisplayedColor: function () {
+        var tmpColor = this._displayedColor;
+        return cc.color(tmpColor.r, tmpColor.g, tmpColor.b, tmpColor.a);
+    },
+
+    /**
+     * Set the color of Node.
+     * @param {cc.Color} color When color not set alpha like cc.color(128,128,128),only change the color. When color set alpha like cc.color(128,128,128,100),then change the color and alpha.
+     */
+    setColor: function (color) {
+        var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
+        locDisplayedColor.r = locRealColor.r = color.r;
+        locDisplayedColor.g = locRealColor.g = color.g;
+        locDisplayedColor.b = locRealColor.b = color.b;
+
+        var parentColor, locParent = this._parent;
+        if (locParent && locParent.cascadeColor)
+            parentColor = locParent.getDisplayedColor();
+        else
+            parentColor = cc.color.WHITE;
+        this.updateDisplayedColor(parentColor);
+
+        /*if (color.a !== undefined && !color.a_undefined) {              //setColor doesn't support changing opacity, please use setOpacity
+            this.setOpacity(color.a);
+        }*/
+    },
+
+    /**
+     * update the displayed color of Node
+     * @param {cc.Color} parentColor
+     */
+    updateDisplayedColor: function (parentColor) {
+        var locDispColor = this._displayedColor, locRealColor = this._realColor;
+        locDispColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
+        locDispColor.g = 0 | (locRealColor.g * parentColor.g / 255.0);
+        locDispColor.b = 0 | (locRealColor.b * parentColor.b / 255.0);
+
+        if (this._cascadeColorEnabled) {
+            var selChildren = this._children;
+            for (var i = 0; i < selChildren.length; i++) {
+                var item = selChildren[i];
+                if (item)
+                    item.updateDisplayedColor(locDispColor);
+            }
+        }
+    },
+
+    /**
+     * whether or not it will set cascade color.
+     * @returns {boolean}
+     */
+    isCascadeColorEnabled: function () {
+        return this._cascadeColorEnabled;
+    },
+
+    /**
+     * Enable or disable cascade color
+     * @param {boolean} cascadeColorEnabled
+     */
+    setCascadeColorEnabled: function (cascadeColorEnabled) {
+        if (this._cascadeColorEnabled === cascadeColorEnabled)
+            return;
+        this._cascadeColorEnabled = cascadeColorEnabled;
+        if (this._cascadeColorEnabled)
+            this._enableCascadeColor();
+        else
+            this._disableCascadeColor();
+    },
+
+    _enableCascadeColor: function () {
+        var parentColor , locParent = this._parent;
+        if (locParent && locParent.cascadeColor)
+            parentColor = locParent.getDisplayedColor();
+        else
+            parentColor = cc.color.WHITE;
+        this.updateDisplayedColor(parentColor);
+    },
+
+    _disableCascadeColor: function () {
+        var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
+        locDisplayedColor.r = locRealColor.r;
+        locDisplayedColor.g = locRealColor.g;
+        locDisplayedColor.b = locRealColor.b;
+
+        var selChildren = this._children, whiteColor = cc.color.WHITE;
+        for (var i = 0; i < selChildren.length; i++) {
+            var item = selChildren[i];
+            if (item)
+                item.updateDisplayedColor(whiteColor);
+        }
+    },
+
+    setOpacityModifyRGB: function (opacityValue) {
+    },
+
+    isOpacityModifyRGB: function () {
+        return false;
     }
 });
 
 /**
  * allocates and initializes a node.
- * @constructs
+ * @deprecated
  * @return {cc.Node}
  * @example
  * // example
@@ -2168,11 +2455,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         // transform for canvas
         var context = ctx || cc._renderContext, eglViewer = cc.view;
 
-        var t = this.nodeToParentTransform();
+        var t = this.getNodeToParentTransform();
         context.transform(t.a, t.c, t.b, t.d, t.tx * eglViewer.getScaleX(), -t.ty * eglViewer.getScaleY());
     };
 
-    _p.nodeToParentTransform = function () {
+    _p.getNodeToParentTransform = function () {
         var _t = this;
         if (_t._transformDirty) {
             var t = _t._transform;// quick reference
@@ -2241,7 +2528,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             }
 
             if (_t._additionalTransformDirty) {
-                _t._transform = cc.AffineTransformConcat(t, _t._additionalTransform);
+                _t._transform = cc.affineTransformConcat(t, _t._additionalTransform);
                 _t._additionalTransformDirty = false;
             }
 
@@ -2260,276 +2547,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 cc.assert(typeof cc._tmp.PrototypeCCNode === "function", cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
 cc._tmp.PrototypeCCNode();
 delete cc._tmp.PrototypeCCNode;
-
-
-/**
- * <p>
- *     cc.NodeRGBA is a subclass of cc.Node that implements the CCRGBAProtocol protocol.                       <br/>
- *     <br/>
- *     All features from CCNode are valid, plus the following new features:                                     <br/>
- *      - opacity                                                                                               <br/>
- *      - RGB colors                                                                                            <br/>
- *     <br/>
- *     Opacity/Color propagates into children that conform to the CCRGBAProtocol if cascadeOpacity/cascadeColor is enabled.   <br/>
- * </p>
- *
- * @class
- * @extends cc.Node
- *
- * @property {Number}       opacity             - Opacity of node
- * @property {Boolean}      opacityModifyRGB    - Indicate whether or not the opacity modify color
- * @property {Boolean}      cascadeOpacity      - Indicate whether or not it will set cascade opacity
- * @property {cc.Color}     color               - Color of node
- * @property {Boolean}      cascadeColor        - Indicate whether or not it will set cascade color
- */
-cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
-    RGBAProtocol: true,
-    _displayedOpacity: 255,
-    _realOpacity: 255,
-    _displayedColor: null,
-    _realColor: null,
-    _cascadeColorEnabled: false,
-    _cascadeOpacityEnabled: false,
-
-    ctor: function () {
-        cc.Node.prototype.ctor.call(this);
-        this._displayedOpacity = 255;
-        this._realOpacity = 255;
-        this._displayedColor = cc.color(255, 255, 255, 255);
-        this._realColor = cc.color(255, 255, 255, 255);
-        this._cascadeColorEnabled = false;
-        this._cascadeOpacityEnabled = false;
-    },
-
-    _updateColor: function(){
-        //TODO
-    },
-
-    /**
-     * Get the opacity of Node
-     * @returns {number} opacity
-     */
-    getOpacity: function () {
-        return this._realOpacity;
-    },
-
-    /**
-     * Get the displayed opacity of Node
-     * @returns {number} displayed opacity
-     */
-    getDisplayedOpacity: function () {
-        return this._displayedOpacity;
-    },
-
-    /**
-     * Set the opacity of Node
-     * @param {Number} opacity
-     */
-    setOpacity: function (opacity) {
-        this._displayedOpacity = this._realOpacity = opacity;
-
-        var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
-            parentOpacity = locParent.getDisplayedOpacity();
-        this.updateDisplayedOpacity(parentOpacity);
-
-        this._displayedColor.a = this._realColor.a = opacity;
-    },
-
-    /**
-     * Update displayed opacity
-     * @param {Number} parentOpacity
-     */
-    updateDisplayedOpacity: function (parentOpacity) {
-        this._displayedOpacity = this._realOpacity * parentOpacity / 255.0;
-        if (this._cascadeOpacityEnabled) {
-            var selChildren = this._children;
-            for (var i = 0; i < selChildren.length; i++) {
-                var item = selChildren[i];
-                if (item && item.RGBAProtocol)
-                    item.updateDisplayedOpacity(this._displayedOpacity);
-            }
-        }
-    },
-
-    /**
-     * whether or not it will set cascade opacity.
-     * @returns {boolean}
-     */
-    isCascadeOpacityEnabled: function () {
-        return this._cascadeOpacityEnabled;
-    },
-
-    /**
-     * Enable or disable cascade opacity
-     * @param {boolean} cascadeOpacityEnabled
-     */
-    setCascadeOpacityEnabled: function (cascadeOpacityEnabled) {
-        if (this._cascadeOpacityEnabled === cascadeOpacityEnabled)
-            return;
-
-        this._cascadeOpacityEnabled = cascadeOpacityEnabled;
-        if (cascadeOpacityEnabled)
-            this._enableCascadeOpacity();
-        else
-            this._disableCascadeOpacity();
-    },
-
-    _enableCascadeOpacity: function () {
-        var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
-            parentOpacity = locParent.getDisplayedOpacity();
-        this.updateDisplayedOpacity(parentOpacity);
-    },
-
-    _disableCascadeOpacity: function () {
-        this._displayedOpacity = this._realOpacity;
-
-        var selChildren = this._children;
-        for (var i = 0; i < selChildren.length; i++) {
-            var item = selChildren[i];
-            if (item && item.RGBAProtocol)
-                item.updateDisplayedOpacity(255);
-        }
-    },
-
-    /**
-     * Get the color of Node
-     * @returns {cc.Color}
-     */
-    getColor: function () {
-        var locRealColor = this._realColor;
-        return cc.color(locRealColor.r, locRealColor.g, locRealColor.b, locRealColor.a);
-    },
-
-    /**
-     * Get the displayed color of Node
-     * @returns {cc.Color}
-     */
-    getDisplayedColor: function () {
-        var tmpColor = this._displayedColor;
-        return cc.color(tmpColor.r, tmpColor.g, tmpColor.b, tmpColor.a);
-    },
-
-    /**
-     * Set the color of Node.
-     * @param {cc.Color} color When color not set alpha like cc.color(128,128,128),only change the color. When color set alpha like cc.color(128,128,128,100),then change the color and alpha.
-     */
-    setColor: function (color) {
-        var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
-        locDisplayedColor.r = locRealColor.r = color.r;
-        locDisplayedColor.g = locRealColor.g = color.g;
-        locDisplayedColor.b = locRealColor.b = color.b;
-
-        var parentColor, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.cascadeColor)
-            parentColor = locParent.getDisplayedColor();
-        else
-            parentColor = cc.color.WHITE;
-        this.updateDisplayedColor(parentColor);
-
-        if (color.a !== undefined && !color.a_undefined) {
-            this.setOpacity(color.a);
-        }
-    },
-
-    /**
-     * update the displayed color of Node
-     * @param {cc.Color} parentColor
-     */
-    updateDisplayedColor: function (parentColor) {
-        var locDispColor = this._displayedColor, locRealColor = this._realColor;
-        locDispColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
-        locDispColor.g = 0 | (locRealColor.g * parentColor.g / 255.0);
-        locDispColor.b = 0 | (locRealColor.b * parentColor.b / 255.0);
-
-        if (this._cascadeColorEnabled) {
-            var selChildren = this._children;
-            for (var i = 0; i < selChildren.length; i++) {
-                var item = selChildren[i];
-                if (item && item.RGBAProtocol)
-                    item.updateDisplayedColor(locDispColor);
-            }
-        }
-    },
-
-    /**
-     * whether or not it will set cascade color.
-     * @returns {boolean}
-     */
-    isCascadeColorEnabled: function () {
-        return this._cascadeColorEnabled;
-    },
-
-    /**
-     * Enable or disable cascade color
-     * @param {boolean} cascadeColorEnabled
-     */
-    setCascadeColorEnabled: function (cascadeColorEnabled) {
-        if (this._cascadeColorEnabled === cascadeColorEnabled)
-            return;
-        this._cascadeColorEnabled = cascadeColorEnabled;
-        if (this._cascadeColorEnabled)
-            this._enableCascadeColor();
-        else
-            this._disableCascadeColor();
-    },
-
-    _enableCascadeColor: function () {
-        var parentColor , locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.cascadeColor)
-            parentColor = locParent.getDisplayedColor();
-        else
-            parentColor = cc.color.WHITE;
-        this.updateDisplayedColor(parentColor);
-    },
-
-    _disableCascadeColor: function () {
-        var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
-        locDisplayedColor.r = locRealColor.r;
-        locDisplayedColor.g = locRealColor.g;
-        locDisplayedColor.b = locRealColor.b;
-
-        var selChildren = this._children, whiteColor = cc.color.WHITE;
-        for (var i = 0; i < selChildren.length; i++) {
-            var item = selChildren[i];
-            if (item && item.RGBAProtocol)
-                item.updateDisplayedColor(whiteColor);
-        }
-    },
-
-    /**
-     * add a child to node
-     * @overried
-     * @param {cc.Node} child  A child node
-     * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setZOrder(int)
-     * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
-     */
-    addChild: function (child, zOrder, tag) {
-        cc.Node.prototype.addChild.call(this, child, zOrder, tag);
-
-        if (this._cascadeColorEnabled)
-            this._enableCascadeColor();
-        if (this._cascadeOpacityEnabled)
-            this._enableCascadeOpacity();
-    },
-
-    setOpacityModifyRGB: function (opacityValue) {
-    },
-
-    isOpacityModifyRGB: function () {
-        return false;
-    }
-});
-cc.NodeRGBA.create = function () {
-    var res = new cc.NodeRGBA();
-    res.init();
-    return res;
-};
-
-cc.assert(typeof cc._tmp.PrototypeCCNodeRGBA === "function", cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
-cc._tmp.PrototypeCCNodeRGBA();
-delete cc._tmp.PrototypeCCNodeRGBA;
 
 /**
  * Node on enter

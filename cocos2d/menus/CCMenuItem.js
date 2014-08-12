@@ -31,11 +31,11 @@ cc._globalFontNameRelease = false;
 /**
  * Subclass cc.MenuItem (or any subclass) to create your custom cc.MenuItem objects.
  * @class
- * @extends cc.NodeRGBA
+ * @extends cc.Node
  *
  * @property {Boolean}  enabled     - Indicate whether item is enabled
  */
-cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
+cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
     _enabled: false,
     _target: null,
     _callback: null,
@@ -48,7 +48,7 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
      * @param {cc.Node} target
      */
     ctor: function (callback, target) {
-        var nodeP = cc.NodeRGBA.prototype;
+        var nodeP = cc.Node.prototype;
         nodeP.ctor.call(this);
         this._target = null;
         this._callback = null;
@@ -183,6 +183,7 @@ cc.defineGetterSetter(_p, "enabled", _p.isEnabled, _p.setEnabled);
 /**
  * creates an empty menu item with target and callback<br/>
  * Not recommended to use the base class, should use more defined menu item classes
+ * @deprecated
  * @param {function|String} callback callback
  * @param {cc.Node} target
  * @return {cc.MenuItem}
@@ -410,6 +411,7 @@ cc.defineGetterSetter(_p, "label", _p.getLabel, _p.setLabel);
 
 
 /**
+ * @deprecated
  * @param {cc.Node} label
  * @param {function|String|Null} [selector=]
  * @param {cc.Node|Null} [target=]
@@ -469,6 +471,7 @@ cc.MenuItemAtlasFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemAtlasFont# 
 
 /**
  * create menu item from string with font
+ * @deprecated
  * @param {String} value the text to display
  * @param {String} charMapFile the character map file
  * @param {Number} itemWidth
@@ -627,6 +630,7 @@ cc.MenuItemFont.fontName = function () {
 
 /**
  * create a menu item from string
+ * @deprecated
  * @param {String} value the text to display
  * @param {String|function|Null} callback the callback to run, either in function name or pass in the actual function
  * @param {cc.Node|Null} target the target to run callback
@@ -705,9 +709,9 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
             } else if (four !== undefined && typeof three === "function") {
                 target = four;
                 callback = three;
-                disabledImage = selectedSprite;
+                disabledImage = cc.Sprite.create(selectedSprite);
             } else if (three === undefined) {
-                disabledImage = selectedSprite;
+                disabledImage = cc.Sprite.create(selectedSprite);
             }
             this.initWithNormalSprite(normalSprite, selectedSprite, disabledImage, callback, target);
         }
@@ -961,6 +965,7 @@ cc.defineGetterSetter(_p, "disabledImage", _p.getDisabledImage, _p.setDisabledIm
 
 /**
  * create a menu item from sprite
+ * @deprecated
  * @param {Image} normalSprite normal state image
  * @param {Image|Null} selectedSprite selected state image
  * @param {Image|cc.Node|Null} three disabled state image OR target node
@@ -1087,6 +1092,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
 
 /**
  * creates a new menu item image
+ * @deprecated
  * @param {String} normalImage file name for normal state
  * @param {String} selectedImage image for selected state
  * @param {String|cc.Node} three Disabled image OR callback function
@@ -1136,35 +1142,16 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
      * //this is useful for constructing a toggler without a callback function (you wish to control the behavior from somewhere else)
      */
     ctor: function (/*Multiple arguments follow*/) {
-        var argc = arguments.length, callback, target;
-        // passing callback.
-        if (typeof arguments[argc - 2] === 'function') {
-            callback = arguments[argc - 2];
-            target = arguments[argc - 1];
-            argc = argc - 2;
-        } else if (typeof arguments[argc - 1] === 'function') {
-            callback = arguments[argc - 1];
-            argc = argc - 1;
-        }
 
-        cc.MenuItem.prototype.ctor.call(this, callback, target);
+        cc.MenuItem.prototype.ctor.call(this);
         this._selectedIndex = 0;
         this.subItems = [];
         this._opacity = 0;
         this._color = cc.color.WHITE;
 
-        if (argc > 0) {
-            var locSubItems = this.subItems;
-            locSubItems.length = 0;
-            for (var i = 0; i < argc; i++) {
-                if (arguments[i])
-                    locSubItems.push(arguments[i]);
-            }
-            this._selectedIndex = cc.UINT_MAX;
-            this.setSelectedIndex(0);
-            this.setCascadeColorEnabled(true);
-            this.setCascadeOpacityEnabled(true);
-        }
+        if(arguments.length > 0)
+            this.initWithItems(Array.prototype.slice.apply(arguments));
+
     },
 
     /**
@@ -1364,6 +1351,7 @@ cc.defineGetterSetter(_p, "selectedIndex", _p.getSelectedIndex, _p.setSelectedIn
 /**
  * create a simple container class that "toggles" it's inner items<br/>
  * The inner items can be any MenuItem
+ * @deprecated
  * @return {cc.MenuItemToggle}
  * @example
  * // Example

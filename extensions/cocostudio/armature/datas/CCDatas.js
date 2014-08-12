@@ -138,12 +138,17 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
     x:0,
     y:0,
     zOrder:0,
+    /**
+     * x y skewX skewY scaleX scaleY used to calculate transform matrix
+     * skewX, skewY can have rotation effect
+     * To get more matrix information, you can have a look at this pape : http://www.senocular.com/flash/tutorials/transformmatrix/
+     */
     skewX:0,
     skewY:0,
     scaleX:1,
     scaleY:1,
-    tweenRotate:0,
-    isUseColorInfo:false,
+    tweenRotate:0,                               //! SkewX, SkewY, and TweenRotate effect the rotation
+    isUseColorInfo:false,                       //! Whether or not this frame have the color changed Info
     r:255,
     g:255,
     b:255,
@@ -165,20 +170,23 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
         this.a = 255;
     },
 
-
     /**
      * Copy data from node
+     * @function
      * @param {ccs.BaseData} node
      */
     copy:function (node) {
         this.x = node.x;
         this.y = node.y;
         this.zOrder = node.zOrder;
+
         this.scaleX = node.scaleX;
         this.scaleY = node.scaleY;
         this.skewX = node.skewX;
         this.skewY = node.skewY;
+
         this.tweenRotate = node.tweenRotate;
+
         this.isUseColorInfo = node.isUseColorInfo;
         this.r = node.r;
         this.g = node.g;
@@ -188,6 +196,7 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
 
     /**
      * color setter
+     * @function
      * @param {cc.Color} color
      */
     setColor:function(color){
@@ -199,6 +208,7 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
 
     /**
      * color getter
+     * @function
      * @returns {cc.Color}
      */
     getColor:function(){
@@ -207,6 +217,7 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
 
     /**
      * Calculate two baseData's between value(to - from) and set to self
+     * @function
      * @param {ccs.BaseData} from
      * @param {ccs.BaseData} to
      * @param {Boolean} limit
@@ -231,23 +242,19 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
         }
 
         if (limit) {
-            if (this.skewX > cc.PI) {
-                this.skewX -= ccs.M_PI_X_2;
-            }
-            if (this.skewX < -cc.PI) {
-                this.skewX += ccs.M_PI_X_2;
-            }
-            if (this.skewY > cc.PI) {
-                this.skewY -= ccs.M_PI_X_2;
-            }
-            if (this.skewY < -cc.PI) {
-                this.skewY += ccs.M_PI_X_2;
-            }
+            if (this.skewX > ccs.M_PI)
+                this.skewX -= ccs.DOUBLE_PI;
+            if (this.skewX < -ccs.M_PI)
+                this.skewX += ccs.DOUBLE_PI;
+            if (this.skewY > ccs.M_PI)
+                this.skewY -= ccs.DOUBLE_PI;
+            if (this.skewY < -ccs.M_PI)
+                this.skewY += ccs.DOUBLE_PI;
         }
 
         if (to.tweenRotate) {
-            this.skewX += to.tweenRotate * ccs.M_PI_X_2;
-            this.skewY -= to.tweenRotate * ccs.M_PI_X_2;
+            this.skewX += to.tweenRotate * ccs.PI * 2;
+            this.skewY -= to.tweenRotate * ccs.PI * 2;
         }
     }
 });
@@ -258,13 +265,14 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
  * @extends ccs.Class
  */
 ccs.DisplayData = ccs.Class.extend(/** @lends ccs.DisplayData# */{
-    displayType:ccs.DISPLAY_TYPE_MAX,
-    displayName:"",
-    ctor:function () {
+    displayType: ccs.DISPLAY_TYPE_MAX,
+    displayName: "",
+    ctor: function () {
         this.displayType = ccs.DISPLAY_TYPE_MAX;
     },
     /**
      * change display name to texture type
+     * @function
      * @param {String} displayName
      * @returns {String}
      */
@@ -273,13 +281,13 @@ ccs.DisplayData = ccs.Class.extend(/** @lends ccs.DisplayData# */{
         var textureName = displayName;
         var startPos = textureName.lastIndexOf(".");
 
-        if (startPos != -1) {
+        if (startPos != -1)
             textureName = textureName.substring(0, startPos);
-        }
         return textureName;
     },
     /**
      * copy data
+     * @function
      * @param {ccs.DisplayData} displayData
      */
     copy:function (displayData) {
@@ -301,17 +309,21 @@ ccs.SpriteDisplayData = ccs.DisplayData.extend(/** @lends ccs.SpriteDisplayData#
     },
     /**
      * copy data
+     * @function
      * @param {ccs.SpriteDisplayData} displayData
      */
     copy:function (displayData) {
         ccs.DisplayData.prototype.copy.call(this,displayData);
         this.skinData = displayData.skinData;
+    },
+    SpriteDisplayData: function(){
+        this.displayType = ccs.DISPLAY_TYPE_SPRITE;
     }
 });
 
 /**
  * Base class for ccs.ArmatureDisplayData objects.
- * @class
+ * @class ccs.ArmatureDisplayData
  * @extends ccs.DisplayData
  */
 ccs.ArmatureDisplayData = ccs.DisplayData.extend(/** @lends ccs.ArmatureDisplayData# */{
@@ -324,7 +336,7 @@ ccs.ArmatureDisplayData = ccs.DisplayData.extend(/** @lends ccs.ArmatureDisplayD
 
 /**
  * Base class for ccs.ParticleDisplayData objects.
- * @class
+ * @class ccs.ParticleDisplayData
  * @extends ccs.DisplayData
  */
 ccs.ParticleDisplayData = ccs.DisplayData.extend(/** @lends ccs.ParticleDisplayData# */{
@@ -334,27 +346,35 @@ ccs.ParticleDisplayData = ccs.DisplayData.extend(/** @lends ccs.ParticleDisplayD
 });
 
 /**
- * Base class for ccs.BoneData objects.
- * @class
+ * <p>
+ *      BoneData used to init a Bone.                                                               <br/>
+ *      BoneData keeps a DisplayData list, a Bone can have many display to change.                  <br/>
+ *      The display information saved in the DisplayData                                            <br/>
+ * </p>
+ * @class ccs.BoneData
  * @extends ccs.BaseData
  */
 ccs.BoneData = ccs.BaseData.extend(/** @lends ccs.BoneData# */{
-    displayDataList:null,
-    name:"",
-    parentName:"",
-    boneDataTransform:null,
-    ctor:function () {
+    displayDataList: null,
+    name: "",
+    parentName: "",
+    boneDataTransform: null,
+
+    ctor: function () {
         this.displayDataList = [];
         this.name = "";
         this.parentName = "";
         this.boneDataTransform = null;
 
     },
-    init:function () {
 
+    init: function () {
+        this.displayDataList.length = 0;
+        return true;
     },
     /**
      * add display data
+     * @function
      * @param {ccs.DisplayData} displayData
      */
     addDisplayData:function (displayData) {
@@ -363,6 +383,7 @@ ccs.BoneData = ccs.BaseData.extend(/** @lends ccs.BoneData# */{
 
     /**
      * get display data
+     * @function
      * @param {Number} index
      * @returns {ccs.DisplayData}
      */
@@ -372,8 +393,12 @@ ccs.BoneData = ccs.BaseData.extend(/** @lends ccs.BoneData# */{
 });
 
 /**
- * Base class for ccs.ArmatureData objects.
- * @class
+ * <p>
+ * ArmatureData saved the Armature name and BoneData needed for the CCBones in this Armature      <br/>
+ * When we create a Armature, we need to get each Bone's BoneData as it's init information.       <br/>
+ * So we can get a BoneData from the Dictionary saved in the ArmatureData.                        <br/>
+ * </p>
+ * @class ccs.ArmatureData
  * @extends ccs.Class
  */
 ccs.ArmatureData = ccs.Class.extend(/** @lends ccs.ArmatureData# */{
@@ -389,14 +414,14 @@ ccs.ArmatureData = ccs.Class.extend(/** @lends ccs.ArmatureData# */{
         return true;
     },
     /**
-     * add bone data
+     * adds bone data to dictionary
      * @param {ccs.BoneData} boneData
      */
     addBoneData:function (boneData) {
         this.boneDataDic[boneData.name] = boneData;
     },
     /**
-     * get bone datas
+     * gets bone data dictionary
      * @returns {Object}
      */
     getBoneDataDic:function () {
@@ -404,6 +429,7 @@ ccs.ArmatureData = ccs.Class.extend(/** @lends ccs.ArmatureData# */{
     },
     /**
      * get bone data by bone name
+     * @function
      * @param {String} boneName
      * @returns {ccs.BoneData}
      */
@@ -414,7 +440,7 @@ ccs.ArmatureData = ccs.Class.extend(/** @lends ccs.ArmatureData# */{
 
 /**
  * Base class for ccs.FrameData objects.
- * @class
+ * @class ccs.FrameData
  * @extends ccs.BaseData
  */
 ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
@@ -430,6 +456,7 @@ ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
         blendFunc:0,
         frameID:0,
         isTween:true,
+
         ctor:function () {
             ccs.BaseData.prototype.ctor.call(this);
             this.duration = 1;
@@ -448,34 +475,37 @@ ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
 
         /**
          * copy data
+         * @function
          * @param frameData
          */
         copy:function (frameData) {
             ccs.BaseData.prototype.copy.call(this, frameData);
             this.duration = frameData.duration;
-            this.tweenEasing = frameData.tweenEasing;
             this.displayIndex = frameData.displayIndex;
-            this.movement = frameData.movement;
-            this.event = frameData.event;
-            this.sound = frameData.sound;
-            this.soundEffect = frameData.soundEffect;
-            this.blendFunc = frameData.blendFunc;
-            this.isTween = frameData.isTween;
 
+            this.tweenEasing = frameData.tweenEasing;
             this.easingParamNumber = frameData.easingParamNumber;
-            this.easingParams = [];
-            if (this.easingParamNumber != 0)            {
-                for (var i = 0; i<this.easingParamNumber; i++)                {
+
+//            this.movement = frameData.movement;
+//            this.event = frameData.event;
+//            this.sound = frameData.sound;
+//            this.soundEffect = frameData.soundEffect;
+//            this.easingParams.length = 0;
+            if (this.easingParamNumber != 0){
+                for (var i = 0; i<this.easingParamNumber; i++){
                     this.easingParams[i] = frameData.easingParams[i];
                 }
             }
+            this.blendFunc = frameData.blendFunc;
+            this.isTween = frameData.isTween;
+
         }
     }
 );
 
 /**
  * Base class for ccs.MovementBoneData objects.
- * @class
+ * @class ccs.MovementBoneData
  * @extends ccs.Class
  */
 ccs.MovementBoneData = ccs.Class.extend(/** @lends ccs.MovementBoneData# */{
@@ -491,11 +521,13 @@ ccs.MovementBoneData = ccs.Class.extend(/** @lends ccs.MovementBoneData# */{
         this.frameList = [];
         this.name = "";
     },
+
     init:function () {
-        this.frameList = [];
+        return true;
     },
     /**
      * add frame data
+     * @function
      * @param {ccs.FrameData} frameData
      */
     addFrameData:function (frameData) {
@@ -503,6 +535,7 @@ ccs.MovementBoneData = ccs.Class.extend(/** @lends ccs.MovementBoneData# */{
     },
     /**
      * get frame data
+     * @function
      * @param {Number} index
      * @returns {ccs.FrameData}
      */
@@ -512,88 +545,98 @@ ccs.MovementBoneData = ccs.Class.extend(/** @lends ccs.MovementBoneData# */{
 });
 
 /**
- * Base class for ccs.MovementData objects.
- * @class
- * @extends ccs.Class
+ * The movement data information of Cocos Armature.
+ * @class ccs.MovementData
+ * @constructor
  */
-ccs.MovementData = ccs.Class.extend(/** @lends ccs.MovementData# */{
-    movBoneDataDic:null,
-    duration:0,
-    scale:1,
-    durationTo:0,
-    durationTween:ccs.TweenType.linear,
-    loop:true,
-    tweenEasing:2,
-    name:"",
-    ctor:function () {
-        this.name = "";
-        this.duration = 0;
-        this.scale = 1;
-        this.durationTo = 0;
-        this.durationTween = 0;
-        this.loop = true;
-        this.tweenEasing = ccs.TweenType.linear;
-        this.movBoneDataDic = {};
-    },
-
+ccs.MovementData = function(){
+    this.name = "";
+    this.duration = 0;
+    this.scale = 1;
     /**
-     * add movement bone data
-     * @param {ccs.MovementBoneData} movBoneData
+     * Change to this movement will last durationTo frames. Use this effect can avoid too suddenly changing.
+     *
+     * Example : current movement is "stand", we want to change to "run", then we fill durationTo frames before
+     * change to "run" instead of changing to "run" directly.
      */
-    addMovementBoneData:function (movBoneData) {
-        this.movBoneDataDic[ movBoneData.name] = movBoneData;
-    },
-
+    this.durationTo = 0;
     /**
-     * get movement bone data
-     * @param {String} boneName
-     * @returns {ccs.MovementBoneData}
+     * This is different from duration, durationTween contain tween effect.
+     * duration is the raw time that the animation will last, it's the same with the time you edit in the Action Editor.
+     * durationTween is the actual time you want this animation last.
+     * Example : If we edit 10 frames in the flash, then duration is 10. When we set durationTween to 50, the movement will last 50 frames, the extra 40 frames will auto filled with tween effect
      */
-    getMovementBoneData:function (boneName) {
-        return  this.movBoneDataDic[boneName];
-    }
-});
+    this.durationTween = 0;
+    this.loop = true;                            //! whether the movement was looped
+    /**
+     * Which tween easing effect the movement use
+     * TWEEN_EASING_MAX : use the value from MovementData get from flash design panel
+     */
+    this.tweenEasing = ccs.TweenType.linear;
+    this.movBoneDataDic = {};
+};
 
 /**
- * Base class for ccs.AnimationData objects.
- * @class
+ * add a movement bone data to dictionary
+ * @param {ccs.MovementBoneData} movBoneData
+ */
+ccs.MovementData.prototype.addMovementBoneData = function(movBoneData){
+    this.movBoneDataDic[ movBoneData.name] = movBoneData;
+};
+
+/**
+ * add a movement bone data from dictionary by name
+ * @param boneName
+ * @returns {ccs.MovementBoneData}
+ */
+ccs.MovementData.prototype.getMovementBoneData = function(boneName){
+    return  this.movBoneDataDic[boneName];
+};
+
+/**
+ * <p>
+ * The animation data information of Cocos Armature. It include all movement information for the Armature.         <br/>
+ * The struct is AnimationData -> MovementData -> MovementBoneData -> FrameData                                    <br/>
+ *                                              -> MovementFrameData                                               <br/>
+ * </p>
+ * @class ccs.AnimationData
  * @extends ccs.Class
  */
-ccs.AnimationData = ccs.Class.extend(/** @lends ccs.AnimationData# */{
-    moveDataDic:null,
-    movementNames:null,
-    name:"",
-    ctor:function () {
-        this.moveDataDic = {};
-        this.movementNames = [];
-    },
-    /**
-     * add movement data
-     * @param {ccs.MovementData} moveData
-     */
-    addMovement:function (moveData) {
-        this.moveDataDic[moveData.name] = moveData;
-        this.movementNames.push(moveData.name);
-    },
-    /**
-     * get movement data
-     * @param {String} moveName
-     * @returns {ccs.MovementData}
-     */
-    getMovement:function (moveName) {
-        return this.moveDataDic[moveName];
-    },
-    /**
-     *
-     * @returns {Number}
-     */
-    getMovementCount:function () {
-        return Object.keys(this.moveDataDic).length;
-    }
-});
+ccs.AnimationData = function(){
+    this.movementDataDic = {};
+    this.movementNames = [];
+    this.name = "";
+};
+
+/**
+ * adds movement data to the movement data dictionary
+ * @param {ccs.MovementData} moveData
+ */
+ccs.AnimationData.prototype.addMovement = function(moveData){
+    this.movementDataDic[moveData.name] = moveData;
+    this.movementNames.push(moveData.name);
+};
+
+/**
+ * gets movement data from movement data dictionary
+ * @param {String} moveName
+ * @returns {ccs.MovementData}
+ */
+ccs.AnimationData.prototype.getMovement = function(moveName){
+    return this.movementDataDic[moveName];
+};
+
+/**
+ * gets the count of movement data dictionary
+ * @returns {Number}
+ */
+ccs.AnimationData.prototype.getMovementCount = function(){
+    return Object.keys(this.movementDataDic).length;
+};
 
 /**
  * contour vertex
+ * @class ccs.ContourVertex2
  * @param {Number} x
  * @param {Number} y
  * @constructor
@@ -604,70 +647,58 @@ ccs.ContourVertex2 = function (x, y) {
 };
 
 /**
- * Base class for ccs.ContourData objects.
- * @class
- * @extends ccs.Class
+ * The Contour data information of Cocos Armature.
+ * @class ccs.ContourData
+ * @constructor
  */
-ccs.ContourData = ccs.Class.extend({
-    vertexList:null,
-    ctor:function () {
-        this.vertexList = [];
-    },
+ccs.ContourData = function(){
+    this.vertexList = [];
+};
 
-    init:function () {
-        this.vertexList = [];
-        return true;
-    },
-
-    /**
-     * add vertex
-     * @param {cc.Point} p
-     */
-    addVertex: function (p) {
-       var v = ccs.ContourVertex2(p.x, p.y);
-       this.vertexList.push(v);
-    }
-});
+ccs.ContourData.prototype.init = function(){
+    this.vertexList.length = 0;
+    return true;
+};
 
 /**
- * Base class for ccs.TextureData objects.
- * @class
- * @extends ccs.Class
+ * add a vertex object to vertex list
+ * @param {cc.Point} p
  */
-ccs.TextureData = ccs.Class.extend(/** @lends ccs.TextureData# */{
-    height:0,
-    width:0,
-    pivotX:0,
-    pivotY:0,
-    name:"",
-    contourDataList:null,
-    ctor:function () {
-        this.height = 0;
-        this.width = 0;
-        this.pivotX = 0.5;
-        this.pivotY = 0.5;
-        this.name = "";
-        this.contourDataList = [];
-    },
+ccs.ContourData.prototype.addVertex = function(p){
+    //var v = new ccs.ContourVertex2(p.x, p.y);              //ccs.ContourVertex2 is same as cc.Point, so we needn't create a ccs.ContourVertex2 object
+    this.vertexList.push(p);
+};
 
-    init:function () {
-        this.contourDataList = [];
-    },
+/**
+ * The texture data information of Cocos Armature
+ * @class ccs.TextureData
+ */
+ccs.TextureData = function(){
+    this.height = 0;
+    this.width = 0;
+    this.pivotX = 0.5;
+    this.pivotY = 0.5;
+    this.name = "";
+    this.contourDataList = [];
+};
 
-    /**
-     * set contourData
-     * @param {ccs.ContourData} contourData
-     */
-    addContourData:function (contourData) {
-        this.contourDataList.push(contourData);
-    },
+ccs.TextureData.prototype.init = function(){
+    this.contourDataList.length = 0;
+};
 
-    /**
-     * get contourData
-     * @param {Number} index
-     * @returns {ccs.ContourData}
-     */
-    getContourData:function (index) {
-        return this.contourDataList[index];
-    }
-});
+/**
+ * adds a contourData to contourDataList
+ * @param {ccs.ContourData} contourData
+ */
+ccs.TextureData.prototype.addContourData = function(contourData){
+    this.contourDataList.push(contourData);
+};
+
+/**
+ * gets a contourData from contourDataList by index
+ * @param {Number} index
+ * @returns {ccs.ContourData}
+ */
+ccs.TextureData.prototype.getContourData = function(index){
+    return this.contourDataList[index];
+};

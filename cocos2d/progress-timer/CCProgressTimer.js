@@ -30,7 +30,7 @@
  * It renders the inner sprite according to the percentage.<br/>
  * The progress can be Radial, Horizontal or vertical.
  * @class
- * @extends cc.NodeRGBA
+ * @extends cc.Node
  *
  * @property {cc.Point}     midPoint        <p>- Midpoint is used to modify the progress start position.<br/>
  *                                          If you're using radials type then the midpoint changes the center point<br/>
@@ -46,7 +46,7 @@
  * @property {cc.Sprite}    sprite          - The sprite to show the progress percentage.
  * @property {Boolean}      reverseDir      - Indicate whether the direction is reversed.
  */
-cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
+cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     _type:null,
     _percentage:0.0,
     _sprite:null,
@@ -169,8 +169,8 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
     ctor: null,
 
-    _ctorForCanvas: function () {
-        cc.NodeRGBA.prototype.ctor.call(this);
+    _ctorForCanvas: function (sprite) {
+        cc.Node.prototype.ctor.call(this);
 
         this._type = cc.ProgressTimer.TYPE_RADIAL;
         this._percentage = 0.0;
@@ -186,10 +186,12 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         this._radius = 0;
         this._counterClockWise = false;
         this._barRect = cc.rect(0, 0, 0, 0);
+
+        sprite && this._initWithSpriteForCanvas(sprite);
     },
 
-    _ctorForWebGL: function () {
-        cc.NodeRGBA.prototype.ctor.call(this);
+    _ctorForWebGL: function (sprite) {
+        cc.Node.prototype.ctor.call(this);
         this._type = cc.ProgressTimer.TYPE_RADIAL;
         this._percentage = 0.0;
         this._midPoint = cc.p(0, 0);
@@ -203,6 +205,8 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         this._vertexData = null;
         this._vertexArrayBuffer = null;
         this._vertexDataDirty = false;
+
+        sprite && this._initWithSpriteForWebGL(sprite);
     },
 
     /**
@@ -929,6 +933,7 @@ cc.defineGetterSetter(_p, "reverseDir", _p.isReverseDirection, _p.setReverseDire
 
 /**
  * create a progress timer object with image file name that renders the inner sprite according to the percentage
+ * @deprecated
  * @param {cc.Sprite} sprite
  * @return {cc.ProgressTimer}
  * @example
@@ -936,10 +941,7 @@ cc.defineGetterSetter(_p, "reverseDir", _p.isReverseDirection, _p.setReverseDire
  * var progress = cc.ProgressTimer.create('progress.png')
  */
 cc.ProgressTimer.create = function (sprite) {
-    var progressTimer = new cc.ProgressTimer();
-    if (progressTimer.initWithSprite(sprite))
-        return progressTimer;
-    return null;
+    return new cc.ProgressTimer(sprite);
 };
 
 /**

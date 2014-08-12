@@ -70,8 +70,6 @@ cc.LABEL_AUTOMATIC_WIDTH = -1;
  * @property {Number}   boundingWidth   - Width of the bounding box of label, the real content width is limited by boundingWidth
  */
 cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
-    RGBAProtocol: true,
-
     _opacityModifyRGB: false,
 
     _string: "",
@@ -218,14 +216,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             if (this._cascadeColorEnabled) {
                 var parentColor = cc.color.WHITE;
                 var locParent = this._parent;
-                if (locParent && locParent.RGBAProtocol && locParent.cascadeColor)
+                if (locParent && locParent.cascadeColor)
                     parentColor = locParent.getDisplayedColor();
                 this.updateDisplayedColor(parentColor);
             }
-        }
-
-        if (color.a !== undefined && !color.a_undefined) {
-            this.setOpacity(color.a);
         }
     },
 
@@ -246,7 +240,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         if (locChildren) {
             for (var i = 0; i < locChildren.length; i++) {
                 var node = locChildren[i];
-                if (node && node.RGBAProtocol)
+                if (node)
                     node.opacityModifyRGB = this._opacityModifyRGB;
             }
         }
@@ -269,7 +263,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         if (this._cascadeOpacityEnabled) {
             var parentOpacity = 255;
             var locParent = this._parent;
-            if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
+            if (locParent && locParent.cascadeOpacity)
                 parentOpacity = locParent.getDisplayedOpacity();
             this.updateDisplayedOpacity(parentOpacity);
         }
@@ -285,7 +279,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
                 locChild.updateDisplayedOpacity(this._displayedOpacity);
             } else {
-                cc.NodeRGBA.prototype.updateDisplayedOpacity.call(locChild, this._displayedOpacity);
+                cc.Node.prototype.updateDisplayedOpacity.call(locChild, this._displayedOpacity);
                 locChild.setNodeDirty();
             }
         }
@@ -322,7 +316,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
                 locChild.updateDisplayedColor(this._displayedColor);
             } else {
-                cc.NodeRGBA.prototype.updateDisplayedColor.call(locChild, this._displayedColor);
+                cc.Node.prototype.updateDisplayedColor.call(locChild, this._displayedColor);
                 locChild.setNodeDirty();
             }
         }
@@ -330,25 +324,25 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     _changeTextureColor: function () {
-        if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
+        if (cc._renderType == cc._RENDER_TYPE_WEBGL)
             return;
-        }
-        var locElement, locTexture = this.texture;
-        if (locTexture && locTexture.width > 0) {
-            locElement = locTexture.getHtmlElementObj();
-            if (!locElement)
+
+        var locTexture = this.getTexture();
+        if (locTexture && locTexture.getContentSize().width>0) {
+            var element = this._originalTexture.getHtmlElementObj();
+            if(!element)
                 return;
-            var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
-            if (cacheTextureForColor) {
-                if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
-                    cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, null, locElement);
-                else {
-                    locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor);
-                    locTexture = new cc.Texture2D();
-                    locTexture.initWithElement(locElement);
-                    locTexture.handleLoadedTexture();
-                    this.texture = locTexture;
-                }
+            var locElement = locTexture.getHtmlElementObj();
+            var textureRect = cc.rect(0, 0, element.width, element.height);
+            if (locElement instanceof HTMLCanvasElement && !this._rectRotated){
+                cc.generateTintImageWithMultiply(element, this._displayedColor, textureRect, locElement);
+                this.setTexture(locTexture);
+            } else {
+                locElement = cc.generateTintImageWithMultiply(element, this._displayedColor, textureRect);
+                locTexture = new cc.Texture2D();
+                locTexture.initWithElement(locElement);
+                locTexture.handleLoadedTexture();
+                this.setTexture(locTexture);
             }
         }
     },
@@ -524,8 +518,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 fontChar.updateDisplayedColor(self._displayedColor);
                 fontChar.updateDisplayedOpacity(self._displayedOpacity);
             } else {
-                cc.NodeRGBA.prototype.updateDisplayedColor.call(fontChar, self._displayedColor);
-                cc.NodeRGBA.prototype.updateDisplayedOpacity.call(fontChar, self._displayedOpacity);
+                cc.Node.prototype.updateDisplayedColor.call(fontChar, self._displayedColor);
+                cc.Node.prototype.updateDisplayedOpacity.call(fontChar, self._displayedOpacity);
                 fontChar.setNodeDirty();
             }
 
@@ -953,22 +947,30 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
 var _p = cc.LabelBMFont.prototype;
 
-// Extended properties
-/** @expose */
-_p.opacityModifyRGB;
-cc.defineGetterSetter(_p, "opacityModifyRGB", _p.isOpacityModifyRGB, _p.setOpacityModifyRGB);
-/** @expose */
-_p.opacity;
-cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
-/** @expose */
-_p.cascadeOpacity;
-cc.defineGetterSetter(_p, "cascadeOpacity", _p.isCascadeOpacityEnabled, _p.setCascadeOpacityEnabled);
-/** @expose */
-_p.color;
-cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
-/** @expose */
-_p.cascadeColor;
-cc.defineGetterSetter(_p, "cascadeColor", _p.isCascadeColorEnabled, _p.setCascadeColorEnabled);
+if(cc._renderType === cc._RENDER_TYPE_CANVAS && !cc.sys._supportCanvasNewBlendModes)
+    _p._changeTextureColor = function(){
+        if(cc._renderType == cc._RENDER_TYPE_WEBGL)
+            return;
+        var locElement, locTexture = this.getTexture();
+        if (locTexture && locTexture.getContentSize().width>0) {
+            locElement = locTexture.getHtmlElementObj();
+            if (!locElement)
+                return;
+            var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
+            if (cacheTextureForColor) {
+                if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
+                    cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, null, locElement);
+                else{
+                    locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor);
+                    locTexture = new cc.Texture2D();
+                    locTexture.initWithElement(locElement);
+                    locTexture.handleLoadedTexture();
+                    this.setTexture(locTexture);
+                }
+            }
+        }
+    };
+
 /** @expose */
 _p.string;
 cc.defineGetterSetter(_p, "string", _p.getString, _p._setStringForSetter);
@@ -981,6 +983,7 @@ cc.defineGetterSetter(_p, "textAlign", _p._getAlignment, _p.setAlignment);
 
 /**
  * creates a bitmap font atlas with an initial string and the FNT file
+ * @deprecated
  * @param {String} str
  * @param {String} fntFile
  * @param {Number} [width=-1]

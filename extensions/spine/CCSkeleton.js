@@ -39,11 +39,11 @@ sp.VERTEX_INDEX = {
 
 sp.ATTACHMENT_TYPE = {
     REGION: 0,
-    REGION_SEQUENCE: 1,
-    BOUNDING_BOX: 2
+    BOUNDING_BOX: 1,
+    REGION_SEQUENCE: 2
 };
 
-sp.Skeleton = cc.NodeRGBA.extend({
+sp.Skeleton = cc.Node.extend({
     _skeleton: null,
     _rootBone: null,
     _timeScale: 1,
@@ -54,7 +54,7 @@ sp.Skeleton = cc.NodeRGBA.extend({
     _atlas: null,
     _blendFunc: null,
     ctor:function(){
-        cc.NodeRGBA.prototype.ctor.call(this);
+        cc.Node.prototype.ctor.call(this);
         this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
     },
     init: function () {

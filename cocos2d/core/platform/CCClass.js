@@ -30,6 +30,7 @@
 
 /**
  * @namespace
+ * @name cc
  */
 var cc = cc || {};
 
@@ -216,14 +217,6 @@ ClassManager.compileSuper.ClassManager = ClassManager;
             }
         };
         return Class;
-    };
-
-    Function.prototype.bind = Function.prototype.bind || function (bind) {
-        var self = this;
-        return function () {
-            var args = Array.prototype.slice.call(arguments);
-            return self.apply(bind || null, args);
-        };
     };
 })();
 

@@ -25,7 +25,8 @@
 
 /**
  * Base singleton object for ccs.ActionManager
- * @namespace ccs.actionManager
+ * @namespace
+ * @name ccs.actionManager
  */
 ccs.actionManager = /** @lends ccs.actionManager# */{
     _actionDic: {},
@@ -89,7 +90,6 @@ ccs.actionManager = /** @lends ccs.actionManager# */{
      */
     releaseActions: function () {
         this._actionDic = {};
-
     },
 
 	/**

@@ -72,7 +72,7 @@ cc.ControlStepper = cc.Control.extend(/** @lends cc.ControlStepper# */{
     _touchedPart:cc.CONTROL_STEPPER_PARTNONE,
     _autorepeatCount:0,
     _className:"ControlStepper",
-    ctor:function () {
+    ctor:function (minusSprite, plusSprite) {
         cc.Control.prototype.ctor.call(this);
         this._minusSprite = null;
         this._plusSprite = null;
@@ -88,6 +88,9 @@ cc.ControlStepper = cc.Control.extend(/** @lends cc.ControlStepper# */{
         this._touchInsideFlag = false;
         this._touchedPart = cc.CONTROL_STEPPER_PARTNONE;
         this._autorepeatCount = 0;
+
+        plusSprite && this.initWithMinusSpriteAndPlusSprite(minusSprite, plusSprite);
+
     },
 
     initWithMinusSpriteAndPlusSprite:function (minusSprite, plusSprite) {
@@ -376,10 +379,13 @@ cc.defineGetterSetter(_p, "plusLabel", _p.getPlusLabel, _p.setPlusLabel);
 
 _p = null;
 
+
+/**
+ * @constructor
+ * @param minusSprite
+ * @param plusSprite
+ * @returns {ControlStepper}
+ */
 cc.ControlStepper.create = function (minusSprite, plusSprite) {
-    var pRet = new cc.ControlStepper();
-    if (pRet && pRet.initWithMinusSpriteAndPlusSprite(minusSprite, plusSprite)) {
-        return pRet;
-    }
-    return null;
+    return new cc.ControlStepper(minusSprite, plusSprite);
 };

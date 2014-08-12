@@ -141,7 +141,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             locCanvas.width = 0 | (locContentSize.width * 1.5 * scaleFactor);
             locCanvas.height = 0 | (locContentSize.height * 1.5 * scaleFactor);
 
-            this._cacheContext.translate(0, locCanvas.height);
+            if(this.layerOrientation === cc.TMX_ORIENTATION_HEX)
+                this._cacheContext.translate(0, locCanvas.height - (this._mapTileSize.height * 0.5));                  //translate for hexagonal
+            else
+                this._cacheContext.translate(0, locCanvas.height);
             var locTexContentSize = this._cacheTexture._contentSize;
             locTexContentSize.width = locCanvas.width;
             locTexContentSize.height = locCanvas.height;
@@ -250,18 +253,25 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         //direct draw image by canvas drawImage
         if (locCacheCanvas) {
             var locSubCacheCount = this._subCacheCount, locCanvasHeight = locCacheCanvas.height * eglViewer._scaleY;
+            var halfTileSize = this._mapTileSize.height * 0.5 * eglViewer._scaleY;
             if(locSubCacheCount > 0) {
                 var locSubCacheCanvasArr = this._subCacheCanvas;
                 for(var i = 0; i < locSubCacheCount; i++){
                     var selSubCanvas = locSubCacheCanvasArr[i];
-                    context.drawImage(locSubCacheCanvasArr[i], 0, 0, selSubCanvas.width, selSubCanvas.height,
-                        posX + i * this._subCacheWidth, -(posY + locCanvasHeight), selSubCanvas.width * eglViewer._scaleX, locCanvasHeight);
+                    if (this.layerOrientation === cc.TMX_ORIENTATION_HEX)
+                        context.drawImage(locSubCacheCanvasArr[i], 0, 0, selSubCanvas.width, selSubCanvas.height,
+                                posX + i * this._subCacheWidth, -(posY + locCanvasHeight) + halfTileSize, selSubCanvas.width * eglViewer._scaleX, locCanvasHeight);
+                    else
+                        context.drawImage(locSubCacheCanvasArr[i], 0, 0, selSubCanvas.width, selSubCanvas.height,
+                                posX + i * this._subCacheWidth, -(posY + locCanvasHeight), selSubCanvas.width * eglViewer._scaleX, locCanvasHeight);
                 }
             } else{
-                //context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
-                //    posX, -(posY + locCacheCanvas.height ), locCacheCanvas.width, locCacheCanvas.height );
-                context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
-                    posX, -(posY + locCanvasHeight), locCacheCanvas.width * eglViewer._scaleX, locCanvasHeight);
+                if (this.layerOrientation === cc.TMX_ORIENTATION_HEX)
+                    context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
+                        posX, -(posY + locCanvasHeight) + halfTileSize, locCacheCanvas.width * eglViewer._scaleX, locCanvasHeight);
+                else
+                    context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
+                        posX, -(posY + locCanvasHeight), locCacheCanvas.width * eglViewer._scaleX, locCanvasHeight);
             }
         }
     },
@@ -1081,6 +1091,7 @@ cc.defineGetterSetter(_p, "tileHeight", _p._getTileHeight, _p._setTileHeight);
 
 /**
  * Creates a cc.TMXLayer with an tile set info, a layer info and a map info
+ * @deprecated
  * @param {cc.TMXTilesetInfo} tilesetInfo
  * @param {cc.TMXLayerInfo} layerInfo
  * @param {cc.TMXMapInfo} mapInfo

@@ -266,7 +266,13 @@
                 cc.Sprite.prototype.setRotation.call(this, -cc.radiansToDegrees(this._body.a));
             }
         },
-        nodeToParentTransform:function () {
+        /**
+         * @deprecated
+         */
+        nodeToParentTransform: function(){
+            return this.getNodeToParentTransform();
+        },
+        getNodeToParentTransform:function () {
             if(cc._renderType === cc._RENDER_TYPE_CANVAS)
                 return this._nodeToParentTransformForCanvas();
 
@@ -293,7 +299,7 @@
             }
 
             // Rot, Translate Matrix
-            this._transform = cc.AffineTransformMake(c * locScaleX, s * locScaleX,
+            this._transform = cc.affineTransformMake(c * locScaleX, s * locScaleX,
                 -s * locScaleY, c * locScaleY,
                 x, y);
 
@@ -366,6 +372,7 @@
 
     /**
      * Create a PhysicsSprite with filename and rect
+     * @deprecated
      * @param {String|cc.Texture2D|cc.SpriteFrame} fileName
      * @param {cc.Rect} rect
      * @return {cc.PhysicsSprite}
@@ -392,4 +399,16 @@
     cc.PhysicsSprite.create = function (fileName, rect) {
         return new cc.PhysicsSprite(fileName, rect);
     };
+
+    /**
+     * @deprecated
+     * @type {Function}
+     */
+    cc.PhysicsSprite.createWithSpriteFrameName = cc.PhysicsSprite.create;
+
+    /**
+     * @deprecated
+     * @type {Function}
+     */
+    cc.PhysicsSprite.createWithSpriteFrame = cc.PhysicsSprite.create;
 })();

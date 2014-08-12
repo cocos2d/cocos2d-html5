@@ -50,11 +50,11 @@ cc.DEFAULT_PADDING = 5;
  *  - You can add MenuItem objects in runtime using addChild:<br/>
  *  - But the only accepted children are MenuItem objects</p>
  * @class
- * @extends cc.LayerRGBA
+ * @extends cc.Layer
  *
  * @property {Boolean}  enabled - Indicates whether or not the menu is enabled
  */
-cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
+cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     enabled: false,
 
     _color: null,
@@ -76,7 +76,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * var myMenu2 = cc.Menu.create([menuitem1, menuitem2, menuitem3]);
      */
     ctor: function (menuItems) {
-        cc.LayerRGBA.prototype.ctor.call(this);
+        cc.Layer.prototype.ctor.call(this);
         this._color = cc.color.WHITE;
         this.enabled = false;
         this._opacity = 255;
@@ -209,7 +209,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * @return {Boolean}
      */
     initWithArray: function (arrayOfItems) {
-        if (cc.LayerRGBA.prototype.init.call(this)) {
+        if (cc.Layer.prototype.init.call(this)) {
             this.enabled = true;
 
             // menu in the center of the screen
@@ -607,6 +607,7 @@ _p.enabled;
 
 /**
  * create a new menu
+ * @deprecated
  * @param {...cc.MenuItem|null} menuItems
  * @return {cc.Menu}
  * @example

@@ -107,7 +107,7 @@ cc.PointObject.create = function (ratio, offset) {
  *
  * @property {Array}    parallaxArray   - Parallax nodes array
  */
-cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
+cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
 	parallaxArray:null,
 
     _lastPosition:null,
@@ -131,7 +131,7 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
      * Constructor
      */
     ctor:function () {
-        cc.NodeRGBA.prototype.ctor.call(this);
+        cc.Node.prototype.ctor.call(this);
         this.parallaxArray = [];
         this._lastPosition = cc.p(-100, -100);
     },
@@ -160,7 +160,7 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
 
 	    child.setPosition(this._position.x * ratio.x + offset.x, this._position.y * ratio.y + offset.y);
 
-        cc.NodeRGBA.prototype.addChild.call(this, child, z, child.tag);
+        cc.Node.prototype.addChild.call(this, child, z, child.tag);
     },
 
     /**
@@ -180,7 +180,7 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
                 break;
             }
         }
-        cc.NodeRGBA.prototype.removeChild.call(this, child, cleanup);
+        cc.Node.prototype.removeChild.call(this, child, cleanup);
     },
 
     /**
@@ -189,7 +189,7 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
      */
     removeAllChildren:function (cleanup) {
         this.parallaxArray.length = 0;
-        cc.NodeRGBA.prototype.removeAllChildren.call(this, cleanup);
+        cc.Node.prototype.removeAllChildren.call(this, cleanup);
     },
 
     /**
@@ -207,7 +207,7 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
             }
             this._lastPosition = pos;
         }
-        cc.NodeRGBA.prototype.visit.call(this);
+        cc.Node.prototype.visit.call(this);
     },
 
     _absolutePosition:function () {
@@ -222,6 +222,7 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
 });
 
 /**
+ * @deprecated
  * @return {cc.ParallaxNode}
  * @example
  * //example

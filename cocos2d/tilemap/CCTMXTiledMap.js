@@ -106,7 +106,7 @@ cc.TMX_ORIENTATION_ISO = 2;
  * @property {Number}   tileWidth       - Width of a tile
  * @property {Number}   tileHeight      - Height of a tile
  */
-cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
+cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
 	properties: null,
 	mapOrientation: null,
 	objectGroups: null,
@@ -436,6 +436,7 @@ cc.defineGetterSetter(_p, "tileHeight", _p._getTileHeight, _p._setTileHeight);
 /**
  * Creates a TMX Tiled Map with a TMX file  or content string.
  * Implementation cc.TMXTiledMap
+ * @deprecated
  * @param {String} tmxFile tmxFile fileName or content string
  * @param {String} resourcePath   If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
  * @return {cc.TMXTiledMap|undefined}

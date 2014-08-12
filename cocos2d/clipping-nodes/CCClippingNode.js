@@ -153,7 +153,6 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         // store the current stencil layer (position in the stencil buffer),
         // this will allow nesting up to n CCClippingNode,
         // where n is the number of bits of the stencil buffer.
-        cc.ClippingNode._layer = -1;
 
         // all the _stencilBits are in use?
         if (cc.ClippingNode._layer + 1 == cc.stencilBits) {
@@ -226,8 +225,17 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         gl.stencilOp(!this.inverted ? gl.ZERO : gl.REPLACE, gl.KEEP, gl.KEEP);
 
         // draw a fullscreen solid rectangle to clear the stencil buffer
-        //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
-        cc._drawingUtil.drawSolidRect(cc.p(0, 0), cc.pFromSize(cc.director.getWinSize()), cc.color(255, 255, 255, 255));
+        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+        cc.kmGLPushMatrix();
+        cc.kmGLLoadIdentity();
+        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+        cc.kmGLPushMatrix();
+        cc.kmGLLoadIdentity();
+        cc._drawingUtil.drawSolidRect(cc.p(-1,-1), cc.p(1,1), cc.color(255, 255, 255, 255));
+        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+        cc.kmGLPopMatrix();
+        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+        cc.kmGLPopMatrix();
 
         ///////////////////////////////////
         // DRAW CLIPPING STENCIL
@@ -267,9 +275,6 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
         // restore the depth test state
         gl.depthMask(currentDepthWriteMask);
-        //if (currentDepthTestEnabled) {
-        //    glEnable(GL_DEPTH_TEST);
-        //}
 
         ///////////////////////////////////
         // DRAW CONTENT
@@ -504,7 +509,7 @@ _p.stencil;
 
 cc.ClippingNode._init_once = null;
 cc.ClippingNode._visit_once = null;
-cc.ClippingNode._layer = null;
+cc.ClippingNode._layer = -1;
 cc.ClippingNode._sharedCache = null;
 
 cc.ClippingNode._getSharedCache = function () {
@@ -514,6 +519,7 @@ cc.ClippingNode._getSharedCache = function () {
 /**
  * Creates and initializes a clipping node with an other node as its stencil.                               <br/>
  * The stencil node will be retained.
+ * @deprecated
  * @param {cc.Node} [stencil=null]
  * @return {cc.ClippingNode}
  */

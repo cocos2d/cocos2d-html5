@@ -25,7 +25,8 @@
 
 /**
  * The sprite frame cache helper
- * @namespace ccs.spriteFrameCacheHelper
+ * @namespace
+ * @name ccs.spriteFrameCacheHelper
  */
 ccs.spriteFrameCacheHelper = /** @lends ccs.spriteFrameCacheHelper# */ {
     _textureAtlasDic:{},

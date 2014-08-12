@@ -32,8 +32,7 @@ ccs.ImageViewReader = {
     setPropsFromJsonDictionary: function(widget, options){
 
         ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
-    
-    
+
         var jsonPath = ccs.uiReader.getFilePath();
     
         var imageView = widget;
@@ -71,8 +70,7 @@ ccs.ImageViewReader = {
             scale9Enable = options["scale9Enable"];
         }
         imageView.setScale9Enabled(scale9Enable);
-    
-    
+
         if (scale9Enable)
         {
             var sw = options["scale9Width"];
@@ -92,8 +90,6 @@ ccs.ImageViewReader = {
             imageView.setCapInsets(cc.rect(cx, cy, cw, ch));
     
         }
-    
-    
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };

@@ -32,133 +32,51 @@ ccs.CheckBoxReader = {
     setPropsFromJsonDictionary: function(widget, options){
 
         ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
-    
-    
-        var jsonPath = ccs.uiReader.getFilePath();
-    
+
         var checkBox = widget;
-    
+
+        //load background image
         var backGroundDic = options["backGroundBoxData"];
         var backGroundType = backGroundDic["resourceType"];
-        switch (backGroundType)
-        {
-            case 0:
-            {
-                var tp_b = jsonPath;
-                var backGroundFileName = backGroundDic["path"];
-                var backGroundFileName_tp = (backGroundFileName && backGroundFileName !== "") ?
-                    tp_b + backGroundFileName :
-                    null;
-                checkBox.loadTextureBackGround(backGroundFileName_tp);
-                break;
-            }
-            case 1:
-            {
-                var backGroundFileName = backGroundDic["path"];
-                checkBox.loadTextureBackGround(backGroundFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
-                break;
-            }
-            default:
-                break;
-        }
-    
+        var backGroundTexturePath = ccs.WidgetReader.getResourcePath(backGroundDic, "path", backGroundType);
+        checkBox.loadTextureBackGround(backGroundTexturePath, backGroundType);
+
+        //load background selected image
         var backGroundSelectedDic = options["backGroundBoxSelectedData"];
         var backGroundSelectedType = backGroundSelectedDic["resourceType"];
-        switch (backGroundSelectedType)
-        {
-            case 0:
-            {
-                var tp_bs = jsonPath;
-                var backGroundSelectedFileName = backGroundSelectedDic["path"];
-                var backGroundSelectedFileName_tp = (backGroundSelectedFileName && backGroundSelectedFileName !== "") ?
-                    tp_bs + backGroundSelectedFileName :
-                    null;
-                checkBox.loadTextureBackGroundSelected(backGroundSelectedFileName_tp);
-                break;
-            }
-            case 1:
-            {
-                var backGroundSelectedFileName = backGroundSelectedDic["path"];
-                checkBox.loadTextureBackGroundSelected(backGroundSelectedFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
-                break;
-            }
-            default:
-                break;
+        var backGroundSelectedTexturePath = ccs.WidgetReader.getResourcePath(backGroundSelectedDic, "path", backGroundSelectedType);
+        if(!backGroundSelectedTexturePath){
+            backGroundSelectedType = backGroundType;
+            backGroundSelectedTexturePath = backGroundTexturePath;
         }
-    
+        checkBox.loadTextureBackGroundSelected(backGroundSelectedTexturePath, backGroundSelectedType);
+
+        //load frontCross image
         var frontCrossDic = options["frontCrossData"];
         var frontCrossType = frontCrossDic["resourceType"];
-        switch (frontCrossType)
-        {
-            case 0:
-            {
-                var tp_c = jsonPath;
-                var frontCrossFileName = frontCrossDic["path"];
-                var frontCrossFileName_tp = (frontCrossFileName && frontCrossFileName !== "") ?
-                    tp_c + frontCrossFileName :
-                    null;
-                checkBox.loadTextureFrontCross(frontCrossFileName_tp);
-                break;
-            }
-            case 1:
-            {
-                var frontCrossFileName = frontCrossDic["path"];
-                checkBox.loadTextureFrontCross(frontCrossFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
-                break;
-            }
-            default:
-                break;
-        }
-    
+        var frontCrossFileName = ccs.WidgetReader.getResourcePath(frontCrossDic, "path", frontCrossType);
+        checkBox.loadTextureFrontCross(frontCrossFileName, frontCrossType);
+
+        //load backGroundBoxDisabledData
         var backGroundDisabledDic = options["backGroundBoxDisabledData"];
         var backGroundDisabledType = backGroundDisabledDic["resourceType"];
-        switch (backGroundDisabledType)
-        {
-            case 0:
-            {
-                var tp_bd = jsonPath;
-                var backGroundDisabledFileName = backGroundDisabledDic["path"];
-                var backGroundDisabledFileName_tp = (backGroundDisabledFileName && backGroundDisabledFileName !== "") ?
-                    tp_bd + backGroundDisabledFileName :
-                    null;
-                checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName_tp);
-                break;
-            }
-            case 1:
-            {
-                var backGroundDisabledFileName = backGroundDisabledDic["path"];
-                checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
-                break;
-            }
-            default:
-                break;
+        var backGroundDisabledFileName = ccs.WidgetReader.getResourcePath(backGroundDisabledDic, "path", backGroundDisabledType);
+        if(!backGroundDisabledFileName){
+            backGroundDisabledType = frontCrossType;
+            backGroundDisabledFileName = frontCrossFileName;
         }
-    
+        checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName, backGroundDisabledType);
+
+        ///load frontCrossDisabledData
         var frontCrossDisabledDic = options["frontCrossDisabledData"];
         var frontCrossDisabledType = frontCrossDisabledDic["resourceType"];
-        switch (frontCrossDisabledType)
-        {
-            case 0:
-            {
-                var tp_cd = jsonPath;
-                var frontCrossDisabledFileName = options["path"];
-                var frontCrossDisabledFileName_tp = (frontCrossDisabledFileName && frontCrossDisabledFileName !== "") ?
-                    tp_cd + frontCrossDisabledFileName :
-                    null;
-                checkBox.loadTextureFrontCrossDisabled(frontCrossDisabledFileName_tp);
-                break;
-            }
-            case 1:
-            {
-                var frontCrossDisabledFileName = options["path"];
-                checkBox.loadTextureFrontCrossDisabled(frontCrossDisabledFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
-                break;
-            }
-            default:
-                break;
+        var frontCrossDisabledFileName = ccs.WidgetReader.getResourcePath(frontCrossDisabledDic, "path", frontCrossDisabledType);
+        checkBox.loadTextureFrontCrossDisabled(frontCrossDisabledFileName, frontCrossDisabledType);
+
+        if (options["selectedState"]){
+            checkBox.setSelectedState(options["selectedState"]);
         }
-    
-    
+
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };

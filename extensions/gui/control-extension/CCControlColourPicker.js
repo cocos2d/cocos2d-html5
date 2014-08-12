@@ -44,6 +44,10 @@ cc.ControlColourPicker = cc.Control.extend(/** @lends cc.ControlColourPicker# */
 
     _background:null,
     _className:"ControlColourPicker",
+    ctor:function () {
+        cc.Control.prototype.ctor.call(this);
+        this.init();
+    },
     hueSliderValueChanged:function (sender, controlEvent) {
         this._hsv.h = sender.getHue();
 
@@ -169,10 +173,12 @@ cc.defineGetterSetter(_p, "background", _p.getBackground);
 
 _p = null;
 
+/**
+ * @deprecated
+ * @returns {ControlColourPicker}
+ */
 cc.ControlColourPicker.create = function () {
-    var pRet = new cc.ControlColourPicker();
-    pRet.init();
-    return pRet;
+    return new cc.ControlColourPicker();
 };
 
 // compatible with NPM

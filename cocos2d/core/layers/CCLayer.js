@@ -47,18 +47,31 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         nodep.setContentSize.call(this, cc.winSize);
     },
 
+    init: function(){
+        var _t = this;
+        _t._ignoreAnchorPointForPosition = true;
+        _t.setAnchorPoint(0.5, 0.5);
+        _t.setContentSize(cc.winSize);
+        _t.cascadeOpacity = false;
+        _t.cascadeColor = false;
+        return true;
+    },
+
     /**
-     *  set the layer to cache all of children to a bake sprite, and draw itself by bake sprite. recommend using it in UI.
+     * set the layer to cache all of children to a bake sprite, and draw itself by bake sprite. recommend using it in UI.
+     * @function
      */
     bake: null,
 
     /**
      * cancel the layer to cache all of children to a bake sprite.
+     * @function
      */
     unbake: null,
 
     /**
      * Determines if the layer is baked.
+     * @function
      * @returns {boolean}
      */
     isBaked: function(){
@@ -70,6 +83,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
 
 /**
  * creates a layer
+ * @deprecated
  * @example
  * // Example
  * var myLayer = cc.Layer.create();
@@ -143,11 +157,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
             //visit for canvas
             _t.sortAllChildren();
-            // draw children zOrder < 0
+            cc.view._setScaleXYForRenderTexture();
             for (i = 0; i < len; i++) {
                 children[i].visit(bakeContext);
             }
-
+            cc.view._resetScale();
             this._cacheDirty = false;
         }
 
@@ -189,283 +203,15 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
 /**
  * <p>
- *     CCLayerRGBA is a subclass of CCLayer that implements the CCRGBAProtocol protocol using a solid color as the background.                        <br/>
- *     All features from CCLayer are valid, plus the following new features that propagate into children that conform to the CCRGBAProtocol:          <br/>
- *       - opacity                                                                                                                                    <br/>
- *       - RGB colors
- * </p>
- * @class
- * @extends cc.Layer
- *
- * @property {Number}       opacity             - Opacity of layer
- * @property {Boolean}      opacityModifyRGB    - Indicate whether or not the opacity modify color
- * @property {Boolean}      cascadeOpacity      - Indicate whether or not it will set cascade opacity
- * @property {cc.Color}     color               - Color of layer
- * @property {Boolean}      cascadeColor        - Indicate whether or not it will set cascade color
- */
-cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
-    RGBAProtocol: true,
-    _displayedOpacity: 255,
-    _realOpacity: 255,
-    _displayedColor: null,
-    _realColor: null,
-    _cascadeOpacityEnabled: false,
-    _cascadeColorEnabled: false,
-    _className: "LayerRGBA",
-
-    /**
-     * Constructor of cc.LayerRGBA
-     */
-    ctor: function () {
-        cc.Layer.prototype.ctor.call(this);
-        this._displayedColor = cc.color(255, 255, 255, 255);
-        this._realColor = cc.color(255, 255, 255, 255);
-    },
-
-    init: function () {
-        var nodep = cc.Layer.prototype, _t = this;
-        _t._ignoreAnchorPointForPosition = true;
-        nodep.setAnchorPoint.call(_t, 0.5, 0.5);
-        nodep.setContentSize.call(_t, cc.winSize);
-        _t.cascadeOpacity = false;
-        _t.cascadeColor = false;
-        return true;
-    },
-
-    /**
-     * Get the opacity of Layer
-     * @returns {number} opacity
-     */
-    getOpacity: function () {
-        return this._realOpacity;
-    },
-
-    /**
-     * Get the displayed opacity of Layer
-     * @returns {number} displayed opacity
-     */
-    getDisplayedOpacity: function () {
-        return this._displayedOpacity;
-    },
-
-    /**
-     * Override synthesized setOpacity to recurse items
-     * @param {Number} opacity
-     */
-    setOpacity: function (opacity) {
-        var _t = this;
-        _t._displayedOpacity = _t._realOpacity = opacity;
-
-        var parentOpacity = 255, locParent = _t._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
-            parentOpacity = locParent.getDisplayedOpacity();
-        _t.updateDisplayedOpacity(parentOpacity);
-
-        _t._displayedColor.a = _t._realColor.a = opacity;
-    },
-
-    /**
-     * Update displayed opacity of Layer
-     * @param {Number} parentOpacity
-     */
-    updateDisplayedOpacity: function (parentOpacity) {
-        var _t = this;
-        _t._displayedOpacity = 0 | (_t._realOpacity * parentOpacity / 255.0);
-
-        if (_t._cascadeOpacityEnabled) {
-            var locChildren = _t._children, selItem;
-            for (var i = 0; i < locChildren.length; i++) {
-                selItem = locChildren[i];
-                if (selItem && selItem.RGBAProtocol)
-                    selItem.updateDisplayedOpacity(_t._displayedOpacity);
-            }
-        }
-    },
-
-    /**
-     * whether or not it will set cascade opacity.
-     * @returns {boolean}
-     */
-    isCascadeOpacityEnabled: function () {
-        return this._cascadeOpacityEnabled;
-    },
-
-    /**
-     * Enable or disable cascade opacity
-     * @param {boolean} cascadeOpacityEnabled
-     */
-    setCascadeOpacityEnabled: function (cascadeOpacityEnabled) {
-        if (this._cascadeOpacityEnabled === cascadeOpacityEnabled)
-            return;
-
-        this._cascadeOpacityEnabled = cascadeOpacityEnabled;
-        if (cascadeOpacityEnabled)
-            this._enableCascadeOpacity();
-        else
-            this._disableCascadeOpacity();
-    },
-
-    _enableCascadeOpacity: function () {
-        var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
-            parentOpacity = locParent.getDisplayedOpacity();
-        this.updateDisplayedOpacity(parentOpacity);
-    },
-
-    _disableCascadeOpacity: function () {
-        this._displayedOpacity = this._realOpacity;
-        var selChildren = this._children, item;
-        for (var i = 0; i < selChildren.length; i++) {
-            item = selChildren[i];
-            if (item && item.RGBAProtocol)
-                item.updateDisplayedOpacity(255);
-        }
-    },
-
-    /**
-     * Get the color of Layer
-     * @returns {cc.Color}
-     */
-    getColor: function () {
-        var locRealColor = this._realColor;
-        return cc.color(locRealColor.r, locRealColor.g, locRealColor.b, locRealColor.a);
-    },
-
-    /**
-     * Get the displayed color of Layer
-     * @returns {cc.Color}
-     */
-    getDisplayedColor: function () {
-        var locDisplayedColor = this._displayedColor;
-        return cc.color(locDisplayedColor.r, locDisplayedColor.g, locDisplayedColor.b);
-    },
-
-    /**
-     * Set the color of Layer
-     * @param {cc.Color} color
-     */
-    setColor: function (color) {
-        var locDisplayed = this._displayedColor, locRealColor = this._realColor;
-        locDisplayed.r = locRealColor.r = color.r;
-        locDisplayed.g = locRealColor.g = color.g;
-        locDisplayed.b = locRealColor.b = color.b;
-
-        var parentColor, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.cascadeColor)
-            parentColor = locParent.getDisplayedColor();
-        else
-            parentColor = cc.color.WHITE;
-        this.updateDisplayedColor(parentColor);
-
-        if (color.a !== undefined && !color.a_undefined) {
-            this.setOpacity(color.a);
-        }
-    },
-
-    /**
-     * update the displayed color of Node
-     * @param {cc.Color} parentColor
-     */
-    updateDisplayedColor: function (parentColor) {
-        var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
-        locDisplayedColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
-        locDisplayedColor.g = 0 | (locRealColor.g * parentColor.g / 255.0);
-        locDisplayedColor.b = 0 | (locRealColor.b * parentColor.b / 255.0);
-
-        if (this._cascadeColorEnabled) {
-            var locChildren = this._children, selItem;
-            for (var i = 0; i < locChildren.length; i++) {
-                selItem = locChildren[i];
-                if (selItem && selItem.RGBAProtocol)
-                    selItem.updateDisplayedColor(locDisplayedColor);
-            }
-        }
-    },
-
-    /**
-     * whether or not it will set cascade color.
-     * @returns {boolean}
-     */
-    isCascadeColorEnabled: function () {
-        return this._cascadeColorEnabled;
-    },
-
-    /**
-     * Enable or disable cascade color
-     * @param {boolean} cascadeColorEnabled
-     */
-    setCascadeColorEnabled: function (cascadeColorEnabled) {
-        if (this._cascadeColorEnabled === cascadeColorEnabled)
-            return;
-        this._cascadeColorEnabled = cascadeColorEnabled;
-        if (this._cascadeColorEnabled)
-            this._enableCascadeColor();
-        else
-            this._disableCascadeColor();
-    },
-
-    _enableCascadeColor: function () {
-        var parentColor , locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.cascadeColor)
-            parentColor = locParent.getDisplayedColor();
-        else
-            parentColor = cc.color.WHITE;
-        this.updateDisplayedColor(parentColor);
-    },
-
-    _disableCascadeColor: function () {
-        var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
-        locDisplayedColor.r = locRealColor.r;
-        locDisplayedColor.g = locRealColor.g;
-        locDisplayedColor.b = locRealColor.b;
-
-        var selChildren = this._children, whiteColor = cc.color.WHITE, item, i;
-        for (i = 0; i < selChildren.length; i++) {
-            item = selChildren[i];
-            if (item && item.RGBAProtocol)
-                item.updateDisplayedColor(whiteColor);
-        }
-    },
-
-    /**
-     * add a child to layer
-     * @overried
-     * @param {cc.Node} child  A child node
-     * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setLocalZOrder(int)
-     * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
-     */
-    addChild: function (child, zOrder, tag) {
-        cc.Node.prototype.addChild.call(this, child, zOrder, tag);
-
-        if (this._cascadeColorEnabled)
-            this._enableCascadeColor();
-        if (this._cascadeOpacityEnabled)
-            this._enableCascadeOpacity();
-    },
-
-    setOpacityModifyRGB: function (bValue) {
-    },
-
-    isOpacityModifyRGB: function () {
-        return false;
-    }
-});
-
-cc.assert(typeof cc._tmp.PrototypeLayerRGBA === "function", cc._LogInfos.MissingFile, "CCLayerPropertyDefine.js");
-cc._tmp.PrototypeLayerRGBA();
-delete cc._tmp.PrototypeLayerRGBA;
-
-/**
- * <p>
  * CCLayerColor is a subclass of CCLayer that implements the CCRGBAProtocol protocol.       <br/>
  *  All features from CCLayer are valid, plus the following new features:                   <br/>
  * <ul><li>opacity</li>                                                                     <br/>
  * <li>RGB colors</li></ul>                                                                 <br/>
  * </p>
  * @class
- * @extends cc.LayerRGBA
+ * @extends cc.Layer
  */
-cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
+cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     _blendFunc: null,
     _className: "LayerColor",
 
@@ -522,12 +268,12 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     },
 
     setColor: function (color) {
-        cc.LayerRGBA.prototype.setColor.call(this, color);
+        cc.Layer.prototype.setColor.call(this, color);
         this._updateColor();
     },
 
     setOpacity: function (opacity) {
-        cc.LayerRGBA.prototype.setOpacity.call(this, opacity);
+        cc.Layer.prototype.setOpacity.call(this, opacity);
         this._updateColor();
     },
 
@@ -597,12 +343,12 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     _updateColor: null,
 
     updateDisplayedColor: function (parentColor) {
-        cc.LayerRGBA.prototype.updateDisplayedColor.call(this, parentColor);
+        cc.Layer.prototype.updateDisplayedColor.call(this, parentColor);
         this._updateColor();
     },
 
     updateDisplayedOpacity: function (parentOpacity) {
-        cc.LayerRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
+        cc.Layer.prototype.updateDisplayedOpacity.call(this, parentOpacity);
         this._updateColor();
     },
 
@@ -616,6 +362,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
 
 /**
  * creates a cc.Layer with color, width and height in Points
+ * @deprecated
  * @param {cc.Color} color
  * @param {Number|Null} [width=]
  * @param {Number|Null} [height=]
@@ -637,12 +384,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     //cc.LayerColor define start
     var _p = cc.LayerColor.prototype;
     _p.ctor = function (color, width, height) {
-        cc.LayerRGBA.prototype.ctor.call(this);
+        cc.Layer.prototype.ctor.call(this);
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         cc.LayerColor.prototype.init.call(this, color, width, height);
     };
-    _p._setWidth = cc.LayerRGBA.prototype._setWidth;
-    _p._setHeight = cc.LayerRGBA.prototype._setHeight;
+    _p._setWidth = cc.Layer.prototype._setWidth;
+    _p._setHeight = cc.Layer.prototype._setHeight;
     _p._updateColor = function () {
     };
     _p.draw = function (ctx) {
@@ -695,6 +442,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             }
 
             var child;
+            cc.view._setScaleXYForRenderTexture();
             //visit for canvas
             if (len > 0) {
                 _t.sortAllChildren();
@@ -712,6 +460,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 }
             } else
                 _t.draw(bakeContext);
+            cc.view._resetScale();
             this._cacheDirty = false;
         }
 
@@ -726,7 +475,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         //default size
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var trans = this.nodeToWorldTransform();
-        rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
+        rect = cc.rectApplyAffineTransform(rect, this.nodeToWorldTransform());
 
         //query child's BoundingBox
         if (!this._children || this._children.length === 0)
@@ -983,6 +732,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
 /**
  * creates a gradient layer
+ * @deprecated
  * @param {cc.Color} start starting color
  * @param {cc.Color} end ending color
  * @param {cc.Point|Null} v
@@ -1002,10 +752,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             context.globalCompositeOperation = 'lighter';
 
         context.save();
-        var locEGLViewer = cc.view, opacityf = _t._displayedOpacity / 255.0;
-        var tWidth = _t.width * locEGLViewer.getScaleX(), tHeight = _t.height * locEGLViewer.getScaleY();
-        var tGradient = context.createLinearGradient(_t._gradientStartPoint.x, _t._gradientStartPoint.y,
-            _t._gradientEndPoint.x, _t._gradientEndPoint.y);
+        var opacityf = _t._displayedOpacity / 255.0;
+        var scaleX = cc.view.getScaleX(), scaleY = cc.view.getScaleY();
+        var tWidth = _t.width * scaleX, tHeight = _t.height * scaleY;
+        var tGradient = context.createLinearGradient(_t._gradientStartPoint.x * scaleX, _t._gradientStartPoint.y * scaleY,
+            _t._gradientEndPoint.x * scaleX, _t._gradientEndPoint.y * scaleY);
         var locDisplayedColor = _t._displayedColor, locEndColor = _t._endColor;
         tGradient.addColorStop(0, "rgba(" + Math.round(locDisplayedColor.r) + "," + Math.round(locDisplayedColor.g) + ","
             + Math.round(locDisplayedColor.b) + "," + (opacityf * (_t._startOpacity / 255)).toFixed(4) + ")");
@@ -1017,6 +768,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         if (_t._rotation != 0)
             context.rotate(_t._rotationRadians);
         context.restore();
+        cc.g_NumberOfDraws++;
     };
     _p._updateColor = function () {
         var _t = this;
@@ -1058,7 +810,10 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
      */
     ctor: function (layers) {
         cc.Layer.prototype.ctor.call(this);
-        layers && cc.LayerMultiplex.prototype.initWithLayers.call(this, layers);
+        if (layers instanceof Array)
+            cc.LayerMultiplex.prototype.initWithLayers.call(this, layers);
+        else
+            cc.LayerMultiplex.prototype.initWithLayers.call(this, Array.prototype.slice.call(arguments));
     },
 
     /**
@@ -1123,12 +878,13 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
 
 /**
  * creates a cc.LayerMultiplex with one or more layers using a variable argument list.
+ * @deprecated
  * @return {cc.LayerMultiplex|Null}
  * @example
  * // Example
  * var multiLayer = cc.LayerMultiple.create(layer1, layer2, layer3);//any number of layers
  */
 cc.LayerMultiplex.create = function (/*Multiple Arguments*/) {
-    return new cc.LayerMultiplex(arguments);
+    return new cc.LayerMultiplex(Array.prototype.slice.call(arguments));
 };
 

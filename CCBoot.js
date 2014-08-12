@@ -822,6 +822,12 @@ cc.loader = {
     var onShow = function () {
         if (cc.eventManager && cc.game._eventShow)
             cc.eventManager.dispatchEvent(cc.game._eventShow);
+
+        if(cc.game._intervalId){
+            window.cancelAnimationFrame(cc.game._intervalId);
+
+            cc.game._runMainLoop();
+        }
     };
 
     if (hidden) {
@@ -832,6 +838,10 @@ cc.loader = {
     } else {
         cc._addEventListener(win, "blur", onHidden, false);
         cc._addEventListener(win, "focus", onShow, false);
+    }
+
+    if(navigator.userAgent.indexOf("MicroMessenger") > -1){
+        win.onfocus = function(){ onShow() };
     }
 
     if ("onpageshow" in window && "onpagehide" in window) {
@@ -877,148 +887,275 @@ cc._initSys = function (config, CONFIG_KEY) {
     /**
      * Canvas of render type
      * @constant
-     * @type Number
+     * @type {Number}
      */
     cc._RENDER_TYPE_CANVAS = 0;
 
     /**
      * WebGL of render type
      * @constant
-     * @type Number
+     * @type {Number}
      */
     cc._RENDER_TYPE_WEBGL = 1;
 
-    var sys = cc.sys = {};
+    /**
+     * System variables
+     * @memberof cc
+     * @global
+     * @type {Object}
+     * @name cc.sys
+     */
+    cc.sys = {};
+    var sys = cc.sys;
 
     /**
      * English language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_ENGLISH = "en";
 
     /**
      * Chinese language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_CHINESE = "zh";
 
     /**
      * French language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_FRENCH = "fr";
 
     /**
      * Italian language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_ITALIAN = "it";
 
     /**
      * German language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_GERMAN = "de";
 
     /**
      * Spanish language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_SPANISH = "es";
 
     /**
      * Russian language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_RUSSIAN = "ru";
 
     /**
      * Korean language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_KOREAN = "ko";
 
     /**
      * Japanese language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_JAPANESE = "ja";
 
     /**
      * Hungarian language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_HUNGARIAN = "hu";
 
     /**
      * Portuguese language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_PORTUGUESE = "pt";
 
     /**
      * Arabic language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_ARABIC = "ar";
 
     /**
      * Norwegian language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_NORWEGIAN = "no";
 
     /**
      * Polish language code
+     * @memberof cc.sys
      * @constant
-     * @type Number
+     * @type {Number}
      */
     sys.LANGUAGE_POLISH = "pl";
 
     /**
+     * @memberof cc.sys
      * @constant
      * @type {string}
      */
     sys.OS_WINDOWS = "Windows";
     /**
+     * @memberof cc.sys
      * @constant
      * @type {string}
      */
     sys.OS_IOS = "iOS";
     /**
+     * @memberof cc.sys
      * @constant
      * @type {string}
      */
     sys.OS_OSX = "OS X";
     /**
+     * @memberof cc.sys
      * @constant
      * @type {string}
      */
     sys.OS_UNIX = "UNIX";
     /**
+     * @memberof cc.sys
      * @constant
      * @type {string}
      */
     sys.OS_LINUX = "Linux";
     /**
+     * @memberof cc.sys
      * @constant
      * @type {string}
      */
     sys.OS_ANDROID = "Android";
     sys.OS_UNKNOWN = "Unknown";
+
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.WINDOWS = 0;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.LINUX = 1;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.MACOS = 2;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.ANDROID = 3;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.IPHONE = 4;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.IPAD = 5;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.BLACKBERRY = 6;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.NACL = 7;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.EMSCRIPTEN = 8;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.TIZEN = 9;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.WINRT = 10;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.WP8 = 11;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.MOBILE_BROWSER = 100;
+    /**
+     * @memberof cc.sys
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.DESKTOP_BROWSER = 101;
 
     sys.BROWSER_TYPE_WECHAT = "wechat";
     sys.BROWSER_TYPE_ANDROID = "androidbrowser";
@@ -1040,14 +1177,14 @@ cc._initSys = function (config, CONFIG_KEY) {
     /**
      * Is native ? This is set to be true in jsb auto.
      * @constant
-     * @type Boolean
+     * @type {Boolean}
      */
     sys.isNative = false;
 
     /**
      * WhiteList of browser for WebGL.
      * @constant
-     * @type Array
+     * @type {Array}
      */
     var webglWhiteList = [sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_SAFARI];
     var multipleAudioWhiteList = [
@@ -1059,6 +1196,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     var ua = nav.userAgent.toLowerCase();
 
     sys.isMobile = ua.indexOf('mobile') != -1 || ua.indexOf('android') != -1;
+    sys.platform = sys.isMobile ? sys.MOBILE_BROWSER : sys.DESKTOP_BROWSER;
 
     var currLanguage = nav.language;
     currLanguage = currLanguage ? currLanguage : nav.browserLanguage;
@@ -1066,7 +1204,6 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.language = currLanguage;
 
     /** The type of browser */
-
     var browserType = sys.BROWSER_TYPE_UNKNOWN;
     var browserTypes = ua.match(/micromessenger|qqbrowser|mqqbrowser|ucbrowser|360browser|baiduboxapp|baidubrowser|maxthon|trident|opera|miuibrowser|firefox/i)
         || ua.match(/chrome|safari/i);
@@ -1088,10 +1225,25 @@ cc._initSys = function (config, CONFIG_KEY) {
     var tempCanvas = cc.newElement("Canvas");
     cc._supportRender = true;
     var notInWhiteList = webglWhiteList.indexOf(sys.browserType) == -1;
-    if (userRenderMode === 1 || (userRenderMode === 0 && (sys.isMobile || notInWhiteList))) {
+    if (userRenderMode === 1 || (userRenderMode === 0 && (sys.isMobile || notInWhiteList)) || (location.origin == "file://")) {
         renderType = cc._RENDER_TYPE_CANVAS;
     }
 
+    sys._canUseCanvasNewBlendModes = function(){
+        var canvas = document.createElement('canvas');
+        canvas.width = 1;
+        canvas.height = 1;
+        var context = canvas.getContext('2d');
+        context.fillStyle = '#000';
+        context.fillRect(0,0,1,1);
+        context.globalCompositeOperation = 'multiply';
+        context.fillStyle = '#fff';
+        context.fillRect(0,0,1,1);
+        return context.getImageData(0,0,1,1).data[0] === 0;
+    };
+
+    //Whether or not the Canvas BlendModes are supported.
+    sys._supportCanvasNewBlendModes = sys._canUseCanvasNewBlendModes();
 
     if (renderType == cc._RENDER_TYPE_WEBGL) {
         if (!win.WebGLRenderingContext
@@ -1110,7 +1262,6 @@ cc._initSys = function (config, CONFIG_KEY) {
     }
     cc._renderType = renderType;
     //++++++++++++++++++something about cc._renderTYpe and cc._supportRender end++++++++++++++++++++++++++++++
-
 
     // check if browser supports Web Audio
     // check Web Audio's context
@@ -1134,7 +1285,6 @@ cc._initSys = function (config, CONFIG_KEY) {
         sys.localStorage = function () {
         };
     }
-
 
     var capabilities = sys.capabilities = {"canvas": true};
     if (cc._renderType == cc._RENDER_TYPE_WEBGL)
@@ -1183,6 +1333,7 @@ cc._initSys = function (config, CONFIG_KEY) {
         str += "browserType : " + self.browserType + "\r\n";
         str += "capabilities : " + JSON.stringify(self.capabilities) + "\r\n";
         str += "os : " + self.os + "\r\n";
+        str += "platform : " + self.platform + "\r\n";
         cc.log(str);
     }
 };
@@ -1194,52 +1345,52 @@ cc._initSys = function (config, CONFIG_KEY) {
 /**
  * Device oriented vertically, home button on the bottom
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.ORIENTATION_PORTRAIT = 0;
 
 /**
  * Device oriented vertically, home button on the top
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.ORIENTATION_PORTRAIT_UPSIDE_DOWN = 1;
 
 /**
  * Device oriented horizontally, home button on the right
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.ORIENTATION_LANDSCAPE_LEFT = 2;
 
 /**
  * Device oriented horizontally, home button on the left
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.ORIENTATION_LANDSCAPE_RIGHT = 3;
 
 /**
  * drawing primitive of game engine
- * @type cc.DrawingPrimitive
+ * @type {cc.DrawingPrimitive}
  */
 cc._drawingUtil = null;
 
 /**
  * main Canvas 2D/3D Context of game engine
- * @type CanvasRenderingContext2D|WebGLRenderingContext
+ * @type {CanvasRenderingContext2D|WebGLRenderingContext}
  */
 cc._renderContext = null;
 
 /**
  * main Canvas of game engine
- * @type HTMLCanvasElement
+ * @type {HTMLCanvasElement}
  */
 cc._canvas = null;
 
 /**
  * This Div element contain all game canvas
- * @type HTMLDivElement
+ * @type {HTMLDivElement}
  */
 cc._gameDiv = null;
 
@@ -1273,11 +1424,35 @@ cc._setup = function (el, width, height) {
     if (cc._setupCalled) return;
     else cc._setupCalled = true;
     var win = window;
+    var lastTime = new Date();
+    var frameTime = 1000 / cc.game.config[cc.game.CONFIG_KEY.frameRate];
     win.requestAnimFrame = win.requestAnimationFrame ||
         win.webkitRequestAnimationFrame ||
         win.mozRequestAnimationFrame ||
         win.oRequestAnimationFrame ||
-        win.msRequestAnimationFrame;
+        win.msRequestAnimationFrame ||
+        function(callback){
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, frameTime - (currTime - lastTime));
+            var id = window.setTimeout(function() { callback(); },
+                timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+
+    win.cancelAnimationFrame = window.cancelAnimationFrame ||
+        window.cancelRequestAnimationFrame ||
+        window.msCancelRequestAnimationFrame ||
+        window.mozCancelRequestAnimationFrame ||
+        window.oCancelRequestAnimationFrame ||
+        window.webkitCancelRequestAnimationFrame ||
+        window.msCancelAnimationFrame ||
+        window.mozCancelAnimationFrame ||
+        window.webkitCancelAnimationFrame ||
+        window.oCancelAnimationFrame ||
+        function(id){
+            clearTimeout(id);
+        };
 
     var element = cc.$(el) || cc.$('#' + el);
     var localCanvas, localContainer, localConStyle;
@@ -1350,18 +1525,36 @@ cc._setup = function (el, width, height) {
 
     // Init singletons
 
-    // View
+    /**
+     * @type {cc.EGLView}
+     * @name cc.view
+     * cc.view is the shared view object.
+     */
     cc.view = cc.EGLView._getInstance();
     // register system events
     cc.inputManager.registerSystemEvent(cc._canvas);
 
-    // Director
+    /**
+     * @type {cc.Director}
+     * @name cc.director
+     */
     cc.director = cc.Director._getInstance();
-    if (cc.director.setOpenGLView)cc.director.setOpenGLView(cc.view);
+    if (cc.director.setOpenGLView)
+        cc.director.setOpenGLView(cc.view);
+    /**
+     * @type {cc.Size}
+     * @name cc.winSize
+     * cc.winSize is the alias object for the size of the current game window.
+     */
     cc.winSize = cc.director.getWinSize();
 
     // Parsers
     cc.saxParser = new cc.SAXParser();
+    /**
+     * @type {cc.PlistParser}
+     * @name cc.plistParser
+     * A Plist Parser
+     */
     cc.plistParser = new cc.PlistParser();
 };
 
@@ -1384,6 +1577,10 @@ cc._setContextMenuEnable = function (enabled) {
 
 /**
  * An object to boot the game.
+ * @memberof cc
+ * @global
+ * @type {Object}
+ * @name cc.game
  */
 cc.game = {
     DEBUG_MODE_NONE: 0,
@@ -1403,7 +1600,7 @@ cc.game = {
     /**
      * Key of config
      * @constant
-     * @type Object
+     * @type {Object}
      */
     CONFIG_KEY: {
         engineDir: "engineDir",
@@ -1425,19 +1622,19 @@ cc.game = {
 
     /**
      * Config of game
-     * @type Object
+     * @type {Object}
      */
     config: null,
 
     /**
      * Callback when the scripts of engine have been load.
-     * @type Function
+     * @type {Function}
      */
     onStart: null,
 
     /**
      * Callback when game exits.
-     * @type Function
+     * @type {Function}
      */
     onStop: null,
 
@@ -1448,7 +1645,8 @@ cc.game = {
     setFrameRate: function (frameRate) {
         var self = this, config = self.config, CONFIG_KEY = self.CONFIG_KEY;
         config[CONFIG_KEY.frameRate] = frameRate;
-        if (self._intervalId) clearInterval(self._intervalId);
+        if (self._intervalId)
+            window.cancelAnimationFrame(self._intervalId);
         self._paused = true;
         self._runMainLoop();
     },
@@ -1458,23 +1656,18 @@ cc.game = {
      */
     _runMainLoop: function () {
         var self = this, callback, config = self.config, CONFIG_KEY = self.CONFIG_KEY,
-            win = window, frameRate = config[CONFIG_KEY.frameRate],
             director = cc.director;
+
         director.setDisplayStats(config[CONFIG_KEY.showFPS]);
-        if (win.requestAnimFrame && frameRate == 60) {
-            callback = function () {
-                if (!self._paused) {
-                    director.mainLoop();
-                    win.requestAnimFrame(callback);
-                }
-            };
-            win.requestAnimFrame(callback);
-        } else {
-            callback = function () {
+
+        callback = function () {
+            if (!self._paused) {
                 director.mainLoop();
-            };
-            self._intervalId = setInterval(callback, 1000.0 / frameRate);
-        }
+                self._intervalId = window.requestAnimFrame(callback);
+            }
+        };
+
+        window.requestAnimFrame(callback);
         self._paused = false;
     },
 
@@ -1544,9 +1737,7 @@ cc.game = {
         if (document["ccConfig"]) {
             self.config = _init(document["ccConfig"]);
         } else {
-
             try {
-
                 var cocos_script = document.getElementsByTagName('script');
                 for(var i=0;i<cocos_script.length;i++){
                     var _t = cocos_script[i].getAttribute('cocos');
@@ -1571,7 +1762,6 @@ cc.game = {
                 cc.log("Failed to read or parse project.json");
                 self.config = _init({});
             }
-
         }
         //init debug move to CCDebugger
         cc._initSys(self.config, CONFIG_KEY);
@@ -1607,8 +1797,7 @@ cc.game = {
         var self = this;
         var config = self.config, CONFIG_KEY = self.CONFIG_KEY, engineDir = config[CONFIG_KEY.engineDir], loader = cc.loader;
         if (!cc._supportRender) {
-            cc.error("Can not support render!")
-            return;
+            throw "The renderer doesn't support the renderMode " + config[CONFIG_KEY.renderMode];
         }
         self._prepareCalled = true;
 
@@ -1646,3 +1835,11 @@ cc.game = {
 };
 cc.game._initConfig();
 //+++++++++++++++++++++++++something about CCGame end+++++++++++++++++++++++++++++
+
+Function.prototype.bind = Function.prototype.bind || function (bind) {
+    var self = this;
+    return function () {
+        var args = Array.prototype.slice.call(arguments);
+        return self.apply(bind || null, args);
+    };
+};

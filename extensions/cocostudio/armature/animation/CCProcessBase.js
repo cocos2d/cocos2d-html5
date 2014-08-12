@@ -99,6 +99,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     _nextFrameIndex: 0,
     _curFrameIndex: null,
     _isLoopBack: false,
+
     ctor: function () {
         this._processScale = 1;
         this._isComplete = true;
@@ -141,27 +142,49 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     },
 
     /**
-     * Play the Process
-     * @param {Number} durationTo
-     * @param {ccs.TweenType} tweenEasing
+     * Play animation by animation name.
+     * @param {Number} durationTo The frames between two animation changing-over.
+     *         It's meaning is changing to this animation need how many frames
+     *         -1 : use the value from MovementData get from flash design panel
+     * @param {Number} durationTween  The frame count you want to play in the game.
+     *         if  _durationTween is 80, then the animation will played 80 frames in a loop
+     *         -1 : use the value from MovementData get from flash design panel
+     * @param {Number} loop Whether the animation is loop
+     *         loop < 0 : use the value from MovementData get from flash design panel
+     *         loop = 0 : this animation is not loop
+     *         loop > 0 : this animation is loop
+     * @param {Number} tweenEasing  Tween easing is used for calculate easing effect
+     *          TWEEN_EASING_MAX : use the value from MovementData get from flash design panel
+     *          -1 : fade out
+     *          0  : line
+     *          1  : fade in
+     *          2  : fade in and out
      */
-    play: function (durationTo, tweenEasing) {
+    play: function (durationTo, durationTween, loop, tweenEasing) {
         this._isComplete = false;
         this._isPause = false;
         this._isPlaying = true;
         this._currentFrame = 0;
+        /*
+         *  Set m_iTotalFrames to durationTo, it is used for change tween between two animation.
+         *  When changing end, m_iTotalFrames will be set to _durationTween
+         */
         this._nextFrameIndex = durationTo;
         this._tweenEasing = tweenEasing;
     },
 
     update: function (dt) {
-        if (this._isComplete || this._isPause) {
-            return false;
-        }
-        if (this._rawDuration <= 0) {
-            return false;
-        }
-        var locNextFrameIndex = this._nextFrameIndex;
+        if (this._isComplete || this._isPause)
+            return;
+
+        /*
+         *  Fileter the m_iDuration <=0 and dt >1
+         *  If dt>1, generally speaking  the reason is the device is stuck.
+         */
+        if (this._rawDuration <= 0 || dt > 1)
+            return;
+
+        var locNextFrameIndex = this._nextFrameIndex === undefined ? 0 : this._nextFrameIndex;
         var locCurrentFrame = this._currentFrame;
         if (locNextFrameIndex <= 0) {
             this._currentPercent = 1;
@@ -173,7 +196,6 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
              *  animation speed slower or quicker.
              */
             locCurrentFrame += this._processScale * (dt / this.animationInternal);
-
             this._currentPercent = locCurrentFrame / locNextFrameIndex;
 
             /*
@@ -182,16 +204,8 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
              */
             locCurrentFrame = ccs.fmodf(locCurrentFrame, locNextFrameIndex);
         }
-        this._currentFrame = locCurrentFrame
+        this._currentFrame = locCurrentFrame;
         this.updateHandler();
-        return true;
-    },
-
-    /**
-     * update will call this handler, you can handle your logic here
-     */
-    updateHandler: function () {
-        //override
     },
 
     /**
@@ -200,12 +214,10 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
      */
     gotoFrame: function (frameIndex) {
         var locLoopType = this._loopType;
-        if (locLoopType == ccs.ANIMATION_TYPE_NO_LOOP) {
+        if (locLoopType == ccs.ANIMATION_TYPE_NO_LOOP)
             locLoopType = ccs.ANIMATION_TYPE_MAX;
-        }
-        else if (locLoopType == ccs.ANIMATION_TYPE_TO_LOOP_FRONT) {
+        else if (locLoopType == ccs.ANIMATION_TYPE_TO_LOOP_FRONT)
             locLoopType = ccs.ANIMATION_TYPE_LOOP_FRONT;
-        }
         this._loopType = locLoopType;
         this._curFrameIndex = frameIndex;
         this._nextFrameIndex = this._durationTween;
@@ -218,6 +230,13 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     getCurrentFrameIndex: function () {
         this._curFrameIndex = (this._rawDuration - 1) * this._currentPercent;
         return this._curFrameIndex;
+    },
+
+    /**
+     * update will call this handler, you can handle your logic here
+     */
+    updateHandler: function () {
+        //override
     },
 
     /**

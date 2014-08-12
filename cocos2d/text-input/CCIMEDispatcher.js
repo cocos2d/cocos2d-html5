@@ -133,7 +133,8 @@ cc.IMEDelegate = cc.Class.extend(/** @lends cc.IMEDelegate# */{
 
 /**
  * Input Method Edit Message Dispatcher.
- * @namespace cc.imeDispatcher
+ * @namespace
+ * @name cc.imeDispatcher
  */
 cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
     _domInputControl:null,

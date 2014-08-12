@@ -54,6 +54,21 @@ cc.ControlPotentiometer = cc.Control.extend(/** @lends cc.ControlPotentiometer# 
     _maximumValue:1,
     _className:"ControlPotentiometer",
 
+    ctor:function (backgroundFile, progressFile, thumbFile) {
+        cc.Control.prototype.ctor.call(this);
+        if (thumbFile != undefined) {
+            // Prepare track for potentiometer
+            var backgroundSprite = cc.Sprite.create(backgroundFile);
+
+            // Prepare thumb for potentiometer
+            var thumbSprite = cc.Sprite.create(thumbFile);
+
+            // Prepare progress for potentiometer
+            var progressTimer = cc.ProgressTimer.create(cc.Sprite.create(progressFile));
+            this.initWithTrackSprite_ProgressTimer_ThumbSprite(backgroundSprite, progressTimer, thumbSprite);
+        }
+    },
+
     /**
      *
      * @param {cc.Sprite} trackSprite
@@ -273,20 +288,13 @@ cc.defineGetterSetter(_p, "prevLocation", _p.getPreviousLocation, _p.setPrevious
 
 _p = null;
 
+/**
+ * @deprecated
+ * @param backgroundFile
+ * @param progressFile
+ * @param thumbFile
+ * @returns {ControlPotentiometer}
+ */
 cc.ControlPotentiometer.create = function (backgroundFile, progressFile, thumbFile) {
-    var pRet = new cc.ControlPotentiometer();
-    if (pRet) {
-        // Prepare track for potentiometer
-        var backgroundSprite = cc.Sprite.create(backgroundFile);
-
-        // Prepare thumb for potentiometer
-        var thumbSprite = cc.Sprite.create(thumbFile);
-
-        // Prepare progress for potentiometer
-        var progressTimer = cc.ProgressTimer.create(cc.Sprite.create(progressFile));
-        if (pRet.initWithTrackSprite_ProgressTimer_ThumbSprite(backgroundSprite, progressTimer, thumbSprite)) {
-            return pRet;
-        }
-    }
-    return null;
+    return new cc.ControlPotentiometer(backgroundFile, progressFile, thumbFile);
 };

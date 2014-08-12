@@ -122,8 +122,8 @@ ccui.LayoutParameter = ccui.Class.extend(/** @lends ccui.LayoutParameter# */{
     },
 
     clone:function(){
-        var parameter = this.createCloneInstance();
-        parameter.copyProperties(this);
+        var parameter = this._createCloneInstance();
+        parameter._copyProperties(this);
         return parameter;
     },
 
@@ -131,7 +131,7 @@ ccui.LayoutParameter = ccui.Class.extend(/** @lends ccui.LayoutParameter# */{
      * create clone instance.
      * @returns {ccui.LayoutParameter}
      */
-    createCloneInstance:function(){
+    _createCloneInstance:function(){
         return ccui.LayoutParameter.create();
     },
 
@@ -139,8 +139,11 @@ ccui.LayoutParameter = ccui.Class.extend(/** @lends ccui.LayoutParameter# */{
      * copy properties
      * @param {ccui.LayoutParameter} model
      */
-    copyProperties:function(model){
-        this._margin = model._margin;
+    _copyProperties:function(model){
+        this._margin.bottom = model._margin.bottom;
+        this._margin.left = model._margin.left;
+        this._margin.right = model._margin.right;
+        this._margin.top = model._margin.top;
     }
 });
 
@@ -195,7 +198,7 @@ ccui.LinearLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.LinearL
      * create clone instance.
      * @returns {ccui.LinearLayoutParameter}
      */
-    createCloneInstance: function () {
+    _createCloneInstance: function () {
         return ccui.LinearLayoutParameter.create();
     },
 
@@ -203,15 +206,10 @@ ccui.LinearLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.LinearL
      * copy properties
      * @param {ccui.LinearLayoutParameter} model
      */
-    copyProperties: function (model) {
-        ccui.LayoutParameter.prototype.copyProperties.call(this, model);
-        var parameter = model;
-        if(parameter){
-            this.setAlign(parameter._relativeAlign);
-            this.setRelativeName(parameter._relativeLayoutName);
-            this.setRelativeToWidgetName(parameter._relativeWidgetName);
+    _copyProperties: function (model) {
+        ccui.LayoutParameter.prototype._copyProperties.call(this, model);
+        if (model instanceof ccui.LinearLayoutParameter)
             this.setGravity(model._linearGravity);
-        }
     }
 });
 
@@ -308,19 +306,21 @@ ccui.RelativeLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.Relat
      * create clone instance.
      * @returns {ccui.RelativeLayoutParameter}
      */
-    createCloneInstance:function(){
-        return ccui.RelativeLayoutParameter.create();     //TODO
+    _createCloneInstance:function(){
+        return ccui.RelativeLayoutParameter.create();
     },
 
     /**
      * copy properties
      * @param {ccui.RelativeLayoutParameter} model
      */
-    copyProperties:function(model){
-        ccui.LayoutParameter.prototype.copyProperties.call(this, model);
-        this.setAlign(model._relativeAlign);
-        this.setRelativeToWidgetName(model._relativeWidgetName);
-        this.setRelativeName(model._relativeLayoutName);
+    _copyProperties:function(model){
+        ccui.LayoutParameter.prototype._copyProperties.call(this, model);
+        if (model instanceof ccui.RelativeLayoutParameter) {
+            this.setAlign(model._relativeAlign);
+            this.setRelativeToWidgetName(model._relativeWidgetName);
+            this.setRelativeName(model._relativeLayoutName);
+        }
     }
 });
 

@@ -24,7 +24,7 @@
  ****************************************************************************/
 
 /**
- * Base class for ccui.ScrollView
+ * The ScrollView control of Cocos UI
  * @class
  * @extends ccui.Layout
  *
@@ -39,8 +39,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     direction: null,
     _autoScrollDir: null,
 
-    _topBoundary: 0,//test
-    _bottomBoundary: 0,//test
+    _topBoundary: 0,
+    _bottomBoundary: 0,
     _leftBoundary: 0,
     _rightBoundary: 0,
 
@@ -78,6 +78,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     _scrollViewEventSelector: null,
     _className: "ScrollView",
     _eventCallback: null,
+
     /**
      * allocates and initializes a UIScrollView.
      * Constructor of ccui.ScrollView
@@ -89,36 +90,16 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         ccui.Layout.prototype.ctor.call(this);
         this.direction = ccui.ScrollView.DIR_NONE;
         this._autoScrollDir = cc.p(0, 0);
-        this._topBoundary = 0;//test
-        this._bottomBoundary = 0;//test
-        this._leftBoundary = 0;
-        this._rightBoundary = 0;
-        this._bounceTopBoundary = 0;
-        this._bounceBottomBoundary = 0;
-        this._bounceLeftBoundary = 0;
-        this._bounceRightBoundary = 0;
-        this._autoScroll = false;
-        this._autoScrollAddUpTime = 0;
-        this._autoScrollOriginalSpeed = 0;
+
         this._autoScrollAcceleration = -1000;
-        this._isAutoScrollSpeedAttenuated = false;
-        this._needCheckAutoScrollDestination = false;
         this._autoScrollDestination = cc.p(0, 0);
-        this._bePressed = false;
         this._slidTime = 0;
         this._moveChildPoint = cc.p(0, 0);
         this._childFocusCancelOffset = 5;
-        this._leftBounceNeeded = false;
-        this._topBounceNeeded = false;
-        this._rightBounceNeeded = false;
-        this._bottomBounceNeeded = false;
-        this.bounceEnabled = false;
-        this._bouncing = false;
         this._bounceDir = cc.p(0, 0);
         this._bounceOriginalSpeed = 0;
         this.inertiaScrollEnabled = true;
-        this._scrollViewEventListener = null;
-        this._scrollViewEventSelector = null;
+        this.setTouchEnabled(true);
     },
 
     init: function () {
@@ -135,6 +116,14 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this.scheduleUpdate(true);
     },
 
+    /**
+     * When a widget is in a layout, you could call this method to get the next focused widget within a specified direction.             <br/>
+     * If the widget is not in a layout, it will return itself
+     *
+     * @param {Number} direction the direction to look for the next focused widget in a layout
+     * @param {ccui.Widget} current the current focused widget
+     * @returns {ccui.Widget}
+     */
     findNextFocusedWidget: function(direction, current){
         if (this.getLayoutType() == ccui.Layout.LINEAR_VERTICAL
             || this.getLayoutType() == ccui.Layout.LINEAR_HORIZONTAL) {
@@ -143,14 +132,14 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, current);
     },
 
-    initRenderer: function () {
-        ccui.Layout.prototype.initRenderer.call(this);
+    _initRenderer: function () {
+        ccui.Layout.prototype._initRenderer.call(this);
         this._innerContainer = ccui.Layout.create();
         this.addProtectedChild(this._innerContainer, 1, 1);
     },
 
-    onSizeChanged: function () {
-        ccui.Layout.prototype.onSizeChanged.call(this);
+    _onSizeChanged: function () {
+        ccui.Layout.prototype._onSizeChanged.call(this);
         var locSize = this._contentSize;
         this._topBoundary = locSize.height;
         this._rightBoundary = locSize.width;
@@ -159,63 +148,57 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this._bounceTopBoundary = locSize.height - bounceBoundaryParameterY;
         this._bounceBottomBoundary = bounceBoundaryParameterY;
         this._bounceLeftBoundary = bounceBoundaryParameterX;
-        this._bounceRightBoundary = this._contentSize.width - bounceBoundaryParameterX;
+        this._bounceRightBoundary = locSize.width - bounceBoundaryParameterX;
         var innerSize = this._innerContainer.getContentSize();
-        var orginInnerSizeWidth = innerSize.width;
-        var orginInnerSizeHeight = innerSize.height;
-        var innerSizeWidth = Math.max(orginInnerSizeWidth, locSize.width);
-        var innerSizeHeight = Math.max(orginInnerSizeHeight, locSize.height);
-        this._innerContainer.setContentSize(cc.size(innerSizeWidth, innerSizeHeight));
+        this._innerContainer.setContentSize(cc.size(Math.max(innerSize.width, locSize.width), Math.max(innerSize.height, locSize.height)));
         this._innerContainer.setPosition(0, locSize.height - this._innerContainer.getContentSize().height);
     },
 
     /**
      * Changes inner container size of ScrollView.     <br/>
-     * Inner container size must be larger than or equal scrollview's size.
+     * Inner container size must be larger than or equal the size of ScrollView.
      * @param {cc.Size} size inner container size.
      */
     setInnerContainerSize: function (size) {
+        var innerContainer = this._innerContainer;
         var locSize = this._contentSize;
-        var innerSizeWidth = locSize.width;
-        var innerSizeHeight = locSize.height;
-        var originalInnerSize = this._innerContainer.getContentSize();
+        var innerSizeWidth = locSize.width, innerSizeHeight = locSize.height;
+        var originalInnerSize = innerContainer.getContentSize();
         if (size.width < locSize.width)
-            cc.log("Inner width <= scrollview width, it will be force sized!");
+            cc.log("Inner width <= ScrollView width, it will be force sized!");
         else
             innerSizeWidth = size.width;
 
         if (size.height < locSize.height)
-            cc.log("Inner height <= scrollview height, it will be force sized!");
+            cc.log("Inner height <= ScrollView height, it will be force sized!");
         else
             innerSizeHeight = size.height;
 
-        this._innerContainer.setSize(cc.size(innerSizeWidth, innerSizeHeight));
+        innerContainer.setContentSize(cc.size(innerSizeWidth, innerSizeHeight));
         var newInnerSize, offset;
         switch (this.direction) {
             case ccui.ScrollView.DIR_VERTICAL:
-                newInnerSize = this._innerContainer.getContentSize();
+                newInnerSize = innerContainer.getContentSize();
                 offset = originalInnerSize.height - newInnerSize.height;
-                this.scrollChildren(0, offset);
+                this._scrollChildren(0, offset);
                 break;
             case ccui.ScrollView.DIR_HORIZONTAL:
-                if (this._innerContainer.getRightBoundary() <= locSize.width) {
-                    newInnerSize = this._innerContainer.getContentSize();
+                if (innerContainer.getRightBoundary() <= locSize.width) {
+                    newInnerSize = innerContainer.getContentSize();
                     offset = originalInnerSize.width - newInnerSize.width;
-                    this.scrollChildren(offset, 0);
+                    this._scrollChildren(offset, 0);
                 }
                 break;
             case ccui.ScrollView.DIR_BOTH:
-                newInnerSize = this._innerContainer.getContentSize();
+                newInnerSize = innerContainer.getContentSize();
                 var offsetY = originalInnerSize.height - newInnerSize.height;
-                var offsetX = 0;
-                if (this._innerContainer.getRightBoundary() <= locSize.width)
-                    offsetX = originalInnerSize.width - newInnerSize.width;
-                this.scrollChildren(offsetX, offsetY);
+                var offsetX = (innerContainer.getRightBoundary() <= locSize.width) ? originalInnerSize.width - newInnerSize.width : 0;
+                this._scrollChildren(offsetX, offsetY);
                 break;
             default:
                 break;
         }
-        var innerContainer = this._innerContainer;
+
         var innerSize = innerContainer.getContentSize();
         var innerPos = innerContainer.getPosition();
         var innerAP = innerContainer.getAnchorPoint();
@@ -228,6 +211,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         if (innerContainer.getTopBoundary() < locSize.height)
             innerContainer.setPosition(innerPos.x, locSize.height - (1.0 - innerAP.y) * innerSize.height);
     },
+
     _setInnerWidth: function (width) {
         var locW = this._contentSize.width,
             innerWidth = locW,
@@ -245,7 +229,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
                 if (container.getRightBoundary() <= locW) {
                     var newInnerWidth = container.width;
                     var offset = oldInnerWidth - newInnerWidth;
-                    this.scrollChildren(offset, 0);
+                    this._scrollChildren(offset, 0);
                 }
                 break;
         }
@@ -273,7 +257,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             case ccui.ScrollView.DIR_BOTH:
                 var newInnerHeight = innerHeight;
                 var offset = oldInnerHeight - newInnerHeight;
-                this.scrollChildren(0, offset);
+                this._scrollChildren(0, offset);
                 break;
         }
         var innerAY = container.anchorY;
@@ -287,7 +271,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Gets inner container size of ScrollView.     <br/>
-     * Inner container size must be larger than or equal scrollview's size.
+     * Inner container size must be larger than or equal ScrollView's size.
      *
      * @return inner container size.
      */
@@ -305,7 +289,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * Add widget
      * @param {cc.Node} widget
      * @param {Number} [zOrder]
-     * @param {Number} [tag]
+     * @param {Number|string} [tag] tag or name
      * @returns {boolean}
      */
     addChild: function (widget, zOrder, tag) {
@@ -335,7 +319,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * get inner children
+     * get inner container's children
      * @returns {Array}
      */
     getChildren: function () {
@@ -343,7 +327,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * get the count of inner children
+     * get the count of inner container's children
      * @returns {Number}
      */
     getChildrenCount: function () {
@@ -368,201 +352,154 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         return this._innerContainer.getChildByName(name);
     },
 
-    /**
-     * Add node for scrollView
-     * @param {cc.Node}node
-     * @param {Number} zOrder
-     * @param {Number} tag
-     */
-    addNode: function (node, zOrder, tag) {
-        this._innerContainer.addNode(node, zOrder, tag);
-    },
-
-    /**
-     * Get node by tag
-     * @param {Number} tag
-     * @returns {cc.Node}
-     */
-    getNodeByTag: function (tag) {
-        return this._innerContainer.getNodeByTag(tag);
-    },
-
-    /**
-     * Get all node
-     * @returns {Array}
-     */
-    getNodes: function () {
-        return this._innerContainer.getNodes();
-    },
-
-    /**
-     * Remove a node
-     * @param {cc.Node} node
-     */
-    removeNode: function (node) {
-        this._innerContainer.removeNode(node);
-    },
-
-    /**
-     * Remove a node by tag
-     * @param {Number} tag
-     */
-    removeNodeByTag: function (tag) {
-        this._innerContainer.removeNodeByTag(tag);
-    },
-
-    /**
-     * Remove all node
-     */
-    removeAllNodes: function () {
-        this._innerContainer.removeAllNodes();
-    },
-
-    moveChildren: function (offsetX, offsetY) {
-        var pos = this._innerContainer.getPosition();
-        this._moveChildPoint.x = pos.x + offsetX;
-        this._moveChildPoint.y = pos.y + offsetY;
+    _moveChildren: function (offsetX, offsetY) {
+        var locContainer = this._innerContainer;
+        //var pos = this._innerContainer.getPosition();
+        this._moveChildPoint.x = locContainer.x + offsetX;
+        this._moveChildPoint.y = locContainer.y + offsetY;
         this._innerContainer.setPosition(this._moveChildPoint);
     },
 
-    autoScrollChildren: function (dt) {
+    _autoScrollChildren: function (dt) {
         var lastTime = this._autoScrollAddUpTime;
         this._autoScrollAddUpTime += dt;
         if (this._isAutoScrollSpeedAttenuated) {
             var nowSpeed = this._autoScrollOriginalSpeed + this._autoScrollAcceleration * this._autoScrollAddUpTime;
             if (nowSpeed <= 0) {
-                this.stopAutoScrollChildren();
-                this.checkNeedBounce();
+                this._stopAutoScrollChildren();
+                this._checkNeedBounce();
             } else {
                 var timeParam = lastTime * 2 + dt;
                 var offset = (this._autoScrollOriginalSpeed + this._autoScrollAcceleration * timeParam * 0.5) * dt;
                 var offsetX = offset * this._autoScrollDir.x;
                 var offsetY = offset * this._autoScrollDir.y;
-                if (!this.scrollChildren(offsetX, offsetY)) {
-                    this.stopAutoScrollChildren();
-                    this.checkNeedBounce();
+                if (!this._scrollChildren(offsetX, offsetY)) {
+                    this._stopAutoScrollChildren();
+                    this._checkNeedBounce();
                 }
             }
         } else {
             if (this._needCheckAutoScrollDestination) {
                 var xOffset = this._autoScrollDir.x * dt * this._autoScrollOriginalSpeed;
                 var yOffset = this._autoScrollDir.y * dt * this._autoScrollOriginalSpeed;
-                var notDone = this.checkCustomScrollDestination(xOffset, yOffset);
-                var scrollCheck = this.scrollChildren(xOffset, yOffset);
+                var notDone = this._checkCustomScrollDestination(xOffset, yOffset);
+                var scrollCheck = this._scrollChildren(xOffset, yOffset);
                 if (!notDone || !scrollCheck) {
-                    this.stopAutoScrollChildren();
-                    this.checkNeedBounce();
+                    this._stopAutoScrollChildren();
+                    this._checkNeedBounce();
                 }
             } else {
-                if (!this.scrollChildren(this._autoScrollDir.x * dt * this._autoScrollOriginalSpeed,
+                if (!this._scrollChildren(this._autoScrollDir.x * dt * this._autoScrollOriginalSpeed,
                         this._autoScrollDir.y * dt * this._autoScrollOriginalSpeed)) {
-                    this.stopAutoScrollChildren();
-                    this.checkNeedBounce();
+                    this._stopAutoScrollChildren();
+                    this._checkNeedBounce();
                 }
             }
         }
     },
 
-    bounceChildren: function (dt) {
+    _bounceChildren: function (dt) {
         var locSpeed = this._bounceOriginalSpeed;
         var locBounceDir = this._bounceDir;
-        if (locSpeed <= 0.0) {
-            this.stopBounceChildren();
-        }
-        if (!this.bounceScrollChildren(locBounceDir.x * dt * locSpeed, locBounceDir.y * dt * locSpeed)) {
-            this.stopBounceChildren();
-        }
+        if (locSpeed <= 0.0)
+            this._stopBounceChildren();
+        if (!this._bounceScrollChildren(locBounceDir.x * dt * locSpeed, locBounceDir.y * dt * locSpeed))
+            this._stopBounceChildren();
     },
 
-    checkNeedBounce: function () {
+    _checkNeedBounce: function () {
         if (!this.bounceEnabled)
             return false;
-        this.checkBounceBoundary();
-        if (this._topBounceNeeded || this._bottomBounceNeeded || this._leftBounceNeeded || this._rightBounceNeeded) {
+        this._checkBounceBoundary();
+        var locTopBounceNeeded = this._topBounceNeeded, locBottomBounceNeeded = this._bottomBounceNeeded,
+            locLeftBounceNeeded = this._leftBounceNeeded, locRightBounceNeeded = this._rightBounceNeeded;
+
+        if (locTopBounceNeeded || locBottomBounceNeeded || locLeftBounceNeeded || locRightBounceNeeded) {
             var scrollVector, orSpeed;
-            if (this._topBounceNeeded && this._leftBounceNeeded) {
-                scrollVector = cc.pSub(cc.p(0.0, this._contentSize.height), cc.p(this._innerContainer.getLeftBoundary(), this._innerContainer.getTopBoundary()));
+            var locContentSize = this._contentSize, locInnerContainer = this._innerContainer;
+            if (locTopBounceNeeded && locLeftBounceNeeded) {
+                scrollVector = cc.pSub(cc.p(0.0, locContentSize.height), cc.p(locInnerContainer.getLeftBoundary(), locInnerContainer.getTopBoundary()));
                 orSpeed = cc.pLength(scrollVector) / 0.2;
                 this._bounceDir = cc.pNormalize(scrollVector);
-                this.startBounceChildren(orSpeed);
-            } else if (this._topBounceNeeded && this._rightBounceNeeded) {
-                scrollVector = cc.pSub(cc.p(this._contentSize.width, this._contentSize.height), cc.p(this._innerContainer.getRightBoundary(), this._innerContainer.getTopBoundary()));
+                this._startBounceChildren(orSpeed);
+            } else if (locTopBounceNeeded && locRightBounceNeeded) {
+                scrollVector = cc.pSub(cc.p(locContentSize.width, locContentSize.height), cc.p(locInnerContainer.getRightBoundary(), locInnerContainer.getTopBoundary()));
                 orSpeed = cc.pLength(scrollVector) / 0.2;
                 this._bounceDir = cc.pNormalize(scrollVector);
-                this.startBounceChildren(orSpeed);
-            } else if (this._bottomBounceNeeded && this._leftBounceNeeded) {
-                scrollVector = cc.pSub(cc.p(0, 0), cc.p(this._innerContainer.getLeftBoundary(), this._innerContainer.getBottomBoundary()));
+                this._startBounceChildren(orSpeed);
+            } else if (locBottomBounceNeeded && locLeftBounceNeeded) {
+                scrollVector = cc.pSub(cc.p(0, 0), cc.p(locInnerContainer.getLeftBoundary(), locInnerContainer.getBottomBoundary()));
                 orSpeed = cc.pLength(scrollVector) / 0.2;
                 this._bounceDir = cc.pNormalize(scrollVector);
-                this.startBounceChildren(orSpeed);
-            } else if (this._bottomBounceNeeded && this._rightBounceNeeded) {
-                scrollVector = cc.pSub(cc.p(this._contentSize.width, 0.0), cc.p(this._innerContainer.getRightBoundary(), this._innerContainer.getBottomBoundary()));
+                this._startBounceChildren(orSpeed);
+            } else if (locBottomBounceNeeded && locRightBounceNeeded) {
+                scrollVector = cc.pSub(cc.p(locContentSize.width, 0.0), cc.p(locInnerContainer.getRightBoundary(), locInnerContainer.getBottomBoundary()));
                 orSpeed = cc.pLength(scrollVector) / 0.2;
                 this._bounceDir = cc.pNormalize(scrollVector);
-                this.startBounceChildren(orSpeed);
-            } else if (this._topBounceNeeded) {
-                scrollVector = cc.pSub(cc.p(0, this._contentSize.height), cc.p(0.0, this._innerContainer.getTopBoundary()));
+                this._startBounceChildren(orSpeed);
+            } else if (locTopBounceNeeded) {
+                scrollVector = cc.pSub(cc.p(0, locContentSize.height), cc.p(0.0, locInnerContainer.getTopBoundary()));
                 orSpeed = cc.pLength(scrollVector) / 0.2;
                 this._bounceDir = cc.pNormalize(scrollVector);
-                this.startBounceChildren(orSpeed);
-            } else if (this._bottomBounceNeeded) {
-                scrollVector = cc.pSub(cc.p(0, 0), cc.p(0.0, this._innerContainer.getBottomBoundary()));
+                this._startBounceChildren(orSpeed);
+            } else if (locBottomBounceNeeded) {
+                scrollVector = cc.pSub(cc.p(0, 0), cc.p(0.0, locInnerContainer.getBottomBoundary()));
                 orSpeed = cc.pLength(scrollVector) / 0.2;
                 this._bounceDir = cc.pNormalize(scrollVector);
-                this.startBounceChildren(orSpeed);
-            } else if (this._leftBounceNeeded) {
-                scrollVector = cc.pSub(cc.p(0, 0), cc.p(this._innerContainer.getLeftBoundary(), 0.0));
+                this._startBounceChildren(orSpeed);
+            } else if (locLeftBounceNeeded) {
+                scrollVector = cc.pSub(cc.p(0, 0), cc.p(locInnerContainer.getLeftBoundary(), 0.0));
                 orSpeed = cc.pLength(scrollVector) / 0.2;
                 this._bounceDir = cc.pNormalize(scrollVector);
-                this.startBounceChildren(orSpeed);
-            } else if (this._rightBounceNeeded) {
-                scrollVector = cc.pSub(cc.p(this._contentSize.width, 0), cc.p(this._innerContainer.getRightBoundary(), 0.0));
+                this._startBounceChildren(orSpeed);
+            } else if (locRightBounceNeeded) {
+                scrollVector = cc.pSub(cc.p(locContentSize.width, 0), cc.p(locInnerContainer.getRightBoundary(), 0.0));
                 orSpeed = cc.pLength(scrollVector) / 0.2;
                 this._bounceDir = cc.pNormalize(scrollVector);
-                this.startBounceChildren(orSpeed);
+                this._startBounceChildren(orSpeed);
             }
             return true;
         }
         return false;
     },
 
-    checkBounceBoundary: function () {
-        var icBottomPos = this._innerContainer.getBottomBoundary();
+    _checkBounceBoundary: function () {
+        var locContainer = this._innerContainer;
+        var icBottomPos = locContainer.getBottomBoundary();
         if (icBottomPos > this._bottomBoundary) {
-            this.scrollToBottomEvent();
+            this._scrollToBottomEvent();
             this._bottomBounceNeeded = true;
-        } else {
+        } else
             this._bottomBounceNeeded = false;
-        }
-        var icTopPos = this._innerContainer.getTopBoundary();
+
+        var icTopPos = locContainer.getTopBoundary();
         if (icTopPos < this._topBoundary) {
-            this.scrollToTopEvent();
+            this._scrollToTopEvent();
             this._topBounceNeeded = true;
-        } else {
+        } else
             this._topBounceNeeded = false;
-        }
-        var icRightPos = this._innerContainer.getRightBoundary();
+
+        var icRightPos = locContainer.getRightBoundary();
         if (icRightPos < this._rightBoundary) {
-            this.scrollToRightEvent();
+            this._scrollToRightEvent();
             this._rightBounceNeeded = true;
-        } else {
+        } else
             this._rightBounceNeeded = false;
-        }
-        var icLeftPos = this._innerContainer.getLeftBoundary();
+
+        var icLeftPos = locContainer.getLeftBoundary();
         if (icLeftPos > this._leftBoundary) {
-            this.scrollToLeftEvent();
+            this._scrollToLeftEvent();
             this._leftBounceNeeded = true;
-        } else {
+        } else
             this._leftBounceNeeded = false;
-        }
     },
 
-    startBounceChildren: function (v) {
+    _startBounceChildren: function (v) {
         this._bounceOriginalSpeed = v;
         this._bouncing = true;
     },
 
-    stopBounceChildren: function () {
+    _stopBounceChildren: function () {
         this._bouncing = false;
         this._bounceOriginalSpeed = 0.0;
         this._leftBounceNeeded = false;
@@ -571,8 +508,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this._bottomBounceNeeded = false;
     },
 
-    startAutoScrollChildrenWithOriginalSpeed: function (dir, v, attenuated, acceleration) {
-        this.stopAutoScrollChildren();
+    _startAutoScrollChildrenWithOriginalSpeed: function (dir, v, attenuated, acceleration) {
+        this._stopAutoScrollChildren();
         this._autoScrollDir = dir;
         this._isAutoScrollSpeedAttenuated = attenuated;
         this._autoScrollOriginalSpeed = v;
@@ -580,7 +517,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this._autoScrollAcceleration = acceleration;
     },
 
-    startAutoScrollChildrenWithDestination: function (des, time, attenuated) {
+    _startAutoScrollChildrenWithDestination: function (des, time, attenuated) {
         this._needCheckAutoScrollDestination = false;
         this._autoScrollDestination = des;
         var dis = cc.pSub(des, this._innerContainer.getPosition());
@@ -595,10 +532,10 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             this._needCheckAutoScrollDestination = true;
             orSpeed = disLength / time;
         }
-        this.startAutoScrollChildrenWithOriginalSpeed(dir, orSpeed, attenuated, acceleration);
+        this._startAutoScrollChildrenWithOriginalSpeed(dir, orSpeed, attenuated, acceleration);
     },
 
-    jumpToDestination: function (dstX, dstY) {
+    _jumpToDestination: function (dstX, dstY) {
         if (dstX.x !== undefined) {
             dstY = dstX.y;
             dstX = dstX.x;
@@ -626,224 +563,222 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this._innerContainer.setPosition(finalOffsetX, finalOffsetY);
     },
 
-    stopAutoScrollChildren: function () {
+    _stopAutoScrollChildren: function () {
         this._autoScroll = false;
         this._autoScrollOriginalSpeed = 0;
         this._autoScrollAddUpTime = 0;
     },
 
-    bounceScrollChildren: function (touchOffsetX, touchOffsetY) {
+    _bounceScrollChildren: function (touchOffsetX, touchOffsetY) {
         var scrollEnabled = true;
         var realOffsetX, realOffsetY, icRightPos, icTopPos, icBottomPos;
+        var locContainer = this._innerContainer;
         if (touchOffsetX > 0.0 && touchOffsetY > 0.0){              //first quadrant //bounce to top-right
             realOffsetX = touchOffsetX;
             realOffsetY = touchOffsetY;
-            icRightPos = this._innerContainer.getRightBoundary();
+            icRightPos = locContainer.getRightBoundary();
             if (icRightPos + realOffsetX >= this._rightBoundary) {
                 realOffsetX = this._rightBoundary - icRightPos;
-                this.bounceRightEvent();
+                this._bounceRightEvent();
                 scrollEnabled = false;
             }
-            icTopPos = this._innerContainer.getTopBoundary();
+            icTopPos = locContainer.getTopBoundary();
             if (icTopPos + touchOffsetY >= this._topBoundary) {
                 realOffsetY = this._topBoundary - icTopPos;
-                this.bounceTopEvent();
+                this._bounceTopEvent();
                 scrollEnabled = false;
             }
-            this.moveChildren(realOffsetX, realOffsetY);
+            this._moveChildren(realOffsetX, realOffsetY);
         } else if (touchOffsetX < 0.0 && touchOffsetY > 0.0){       //second quadrant //bounce to top-left
             realOffsetX = touchOffsetX;
             realOffsetY = touchOffsetY;
-            icLefrPos = this._innerContainer.getLeftBoundary();
+            icLefrPos = locContainer.getLeftBoundary();
             if (icLefrPos + realOffsetX <= this._leftBoundary) {
                 realOffsetX = this._leftBoundary - icLefrPos;
-                this.bounceLeftEvent();
+                this._bounceLeftEvent();
                 scrollEnabled = false;
             }
-            icTopPos = this._innerContainer.getTopBoundary();
+            icTopPos = locContainer.getTopBoundary();
             if (icTopPos + touchOffsetY >= this._topBoundary) {
                 realOffsetY = this._topBoundary - icTopPos;
-                this.bounceTopEvent();
+                this._bounceTopEvent();
                 scrollEnabled = false;
             }
-            this.moveChildren(realOffsetX, realOffsetY);
+            this._moveChildren(realOffsetX, realOffsetY);
         }else if (touchOffsetX < 0.0 && touchOffsetY < 0.0){ //third quadrant //bounce to bottom-left
             realOffsetX = touchOffsetX;
             realOffsetY = touchOffsetY;
-            var icLefrPos = this._innerContainer.getLeftBoundary();
+            var icLefrPos = locContainer.getLeftBoundary();
             if (icLefrPos + realOffsetX <= this._leftBoundary) {
                 realOffsetX = this._leftBoundary - icLefrPos;
-                this.bounceLeftEvent();
+                this._bounceLeftEvent();
                 scrollEnabled = false;
             }
-            icBottomPos = this._innerContainer.getBottomBoundary();
+            icBottomPos = locContainer.getBottomBoundary();
             if (icBottomPos + touchOffsetY <= this._bottomBoundary) {
                 realOffsetY = this._bottomBoundary - icBottomPos;
-                this.bounceBottomEvent();
+                this._bounceBottomEvent();
                 scrollEnabled = false;
             }
-            this.moveChildren(realOffsetX, realOffsetY);
+            this._moveChildren(realOffsetX, realOffsetY);
         } else if (touchOffsetX > 0.0 && touchOffsetY < 0.0){ //forth quadrant //bounce to bottom-right
             realOffsetX = touchOffsetX;
             realOffsetY = touchOffsetY;
-            icRightPos = this._innerContainer.getRightBoundary();
+            icRightPos = locContainer.getRightBoundary();
             if (icRightPos + realOffsetX >= this._rightBoundary) {
                 realOffsetX = this._rightBoundary - icRightPos;
-                this.bounceRightEvent();
+                this._bounceRightEvent();
                 scrollEnabled = false;
             }
-            icBottomPos = this._innerContainer.getBottomBoundary();
+            icBottomPos = locContainer.getBottomBoundary();
             if (icBottomPos + touchOffsetY <= this._bottomBoundary) {
                 realOffsetY = this._bottomBoundary - icBottomPos;
-                this.bounceBottomEvent();
+                this._bounceBottomEvent();
                 scrollEnabled = false;
             }
-            this.moveChildren(realOffsetX, realOffsetY);
+            this._moveChildren(realOffsetX, realOffsetY);
         } else if (touchOffsetX == 0.0 && touchOffsetY > 0.0){ // bounce to top
             realOffsetY = touchOffsetY;
-            icTopPos = this._innerContainer.getTopBoundary();
+            icTopPos = locContainer.getTopBoundary();
             if (icTopPos + touchOffsetY >= this._topBoundary) {
                 realOffsetY = this._topBoundary - icTopPos;
-                this.bounceTopEvent();
+                this._bounceTopEvent();
                 scrollEnabled = false;
             }
-            this.moveChildren(0.0, realOffsetY);
+            this._moveChildren(0.0, realOffsetY);
         } else if (touchOffsetX == 0.0 && touchOffsetY < 0.0) {//bounce to bottom
-
             realOffsetY = touchOffsetY;
-            icBottomPos = this._innerContainer.getBottomBoundary();
+            icBottomPos = locContainer.getBottomBoundary();
             if (icBottomPos + touchOffsetY <= this._bottomBoundary) {
                 realOffsetY = this._bottomBoundary - icBottomPos;
-                this.bounceBottomEvent();
+                this._bounceBottomEvent();
                 scrollEnabled = false;
             }
-            this.moveChildren(0.0, realOffsetY);
-        }
-        else if (touchOffsetX > 0.0 && touchOffsetY == 0.0) //bounce to right
-        {
+            this._moveChildren(0.0, realOffsetY);
+        } else if (touchOffsetX > 0.0 && touchOffsetY == 0.0){ //bounce to right
             realOffsetX = touchOffsetX;
-            icRightPos = this._innerContainer.getRightBoundary();
+            icRightPos = locContainer.getRightBoundary();
             if (icRightPos + realOffsetX >= this._rightBoundary) {
                 realOffsetX = this._rightBoundary - icRightPos;
-                this.bounceRightEvent();
+                this._bounceRightEvent();
                 scrollEnabled = false;
             }
-            this.moveChildren(realOffsetX, 0.0);
+            this._moveChildren(realOffsetX, 0.0);
         }else if (touchOffsetX < 0.0 && touchOffsetY == 0.0){ //bounce to left
-
             realOffsetX = touchOffsetX;
-            var icLeftPos = this._innerContainer.getLeftBoundary();
+            var icLeftPos = locContainer.getLeftBoundary();
             if (icLeftPos + realOffsetX <= this._leftBoundary) {
                 realOffsetX = this._leftBoundary - icLeftPos;
-                this.bounceLeftEvent();
+                this._bounceLeftEvent();
                 scrollEnabled = false;
             }
-            this.moveChildren(realOffsetX, 0.0);
+            this._moveChildren(realOffsetX, 0.0);
         }
         return scrollEnabled;
     },
 
-    checkCustomScrollDestination: function (touchOffsetX, touchOffsetY) {
+    _checkCustomScrollDestination: function (touchOffsetX, touchOffsetY) {
         var scrollEnabled = true;
         var icBottomPos, icLeftPos, icRightPos, icTopPos;
+        var locContainer = this._innerContainer, locDestination = this._autoScrollDestination;
         switch (this.direction) {
             case ccui.ScrollView.DIR_VERTICAL: // vertical
                 if (this._autoScrollDir.y > 0) {
-                    icBottomPos = this._innerContainer.getBottomBoundary();
-                    if (icBottomPos + touchOffsetY >= this._autoScrollDestination.y) {
-                        touchOffsetY = this._autoScrollDestination.y - icBottomPos;
+                    icBottomPos = locContainer.getBottomBoundary();
+                    if (icBottomPos + touchOffsetY >= locDestination.y) {
+                        touchOffsetY = locDestination.y - icBottomPos;
                         scrollEnabled = false;
                     }
                 } else {
-                    icBottomPos = this._innerContainer.getBottomBoundary();
-                    if (icBottomPos + touchOffsetY <= this._autoScrollDestination.y) {
-                        touchOffsetY = this._autoScrollDestination.y - icBottomPos;
+                    icBottomPos = locContainer.getBottomBoundary();
+                    if (icBottomPos + touchOffsetY <= locDestination.y) {
+                        touchOffsetY = locDestination.y - icBottomPos;
                         scrollEnabled = false;
                     }
                 }
                 break;
             case ccui.ScrollView.DIR_HORIZONTAL: // horizontal
                 if (this._autoScrollDir.x > 0) {
-                    icLeftPos = this._innerContainer.getLeftBoundary();
-                    if (icLeftPos + touchOffsetX >= this._autoScrollDestination.x) {
-                        touchOffsetX = this._autoScrollDestination.x - icLeftPos;
+                    icLeftPos = locContainer.getLeftBoundary();
+                    if (icLeftPos + touchOffsetX >= locDestination.x) {
+                        touchOffsetX = locDestination.x - icLeftPos;
                         scrollEnabled = false;
                     }
                 } else {
-                    icLeftPos = this._innerContainer.getLeftBoundary();
-                    if (icLeftPos + touchOffsetX <= this._autoScrollDestination.x) {
-                        touchOffsetX = this._autoScrollDestination.x - icLeftPos;
+                    icLeftPos = locContainer.getLeftBoundary();
+                    if (icLeftPos + touchOffsetX <= locDestination.x) {
+                        touchOffsetX = locDestination.x - icLeftPos;
                         scrollEnabled = false;
                     }
                 }
                 break;
             case ccui.ScrollView.DIR_BOTH:
                 if (touchOffsetX > 0.0 && touchOffsetY > 0.0){ // up right
-                    icLeftPos = this._innerContainer.getLeftBoundary();
-                    if (icLeftPos + touchOffsetX >= this._autoScrollDestination.x) {
-                        touchOffsetX = this._autoScrollDestination.x - icLeftPos;
+                    icLeftPos = locContainer.getLeftBoundary();
+                    if (icLeftPos + touchOffsetX >= locDestination.x) {
+                        touchOffsetX = locDestination.x - icLeftPos;
                         scrollEnabled = false;
                     }
-                    icBottomPos = this._innerContainer.getBottomBoundary();
-                    if (icBottomPos + touchOffsetY >= this._autoScrollDestination.y) {
-                        touchOffsetY = this._autoScrollDestination.y - icBottomPos;
+                    icBottomPos = locContainer.getBottomBoundary();
+                    if (icBottomPos + touchOffsetY >= locDestination.y) {
+                        touchOffsetY = locDestination.y - icBottomPos;
                         scrollEnabled = false;
                     }
                 } else if (touchOffsetX < 0.0 && touchOffsetY > 0.0){ // up left
-                    icRightPos = this._innerContainer.getRightBoundary();
-                    if (icRightPos + touchOffsetX <= this._autoScrollDestination.x) {
-                        touchOffsetX = this._autoScrollDestination.x - icRightPos;
+                    icRightPos = locContainer.getRightBoundary();
+                    if (icRightPos + touchOffsetX <= locDestination.x) {
+                        touchOffsetX = locDestination.x - icRightPos;
                         scrollEnabled = false;
                     }
-                    icBottomPos = this._innerContainer.getBottomBoundary();
-                    if (icBottomPos + touchOffsetY >= this._autoScrollDestination.y) {
-                        touchOffsetY = this._autoScrollDestination.y - icBottomPos;
+                    icBottomPos = locContainer.getBottomBoundary();
+                    if (icBottomPos + touchOffsetY >= locDestination.y) {
+                        touchOffsetY = locDestination.y - icBottomPos;
                         scrollEnabled = false;
                     }
                 } else if (touchOffsetX < 0.0 && touchOffsetY < 0.0){ // down left
-                    icRightPos = this._innerContainer.getRightBoundary();
-                    if (icRightPos + touchOffsetX <= this._autoScrollDestination.x) {
-                        touchOffsetX = this._autoScrollDestination.x - icRightPos;
+                    icRightPos = locContainer.getRightBoundary();
+                    if (icRightPos + touchOffsetX <= locDestination.x) {
+                        touchOffsetX = locDestination.x - icRightPos;
                         scrollEnabled = false;
                     }
-                    icTopPos = this._innerContainer.getTopBoundary();
-                    if (icTopPos + touchOffsetY <= this._autoScrollDestination.y) {
-                        touchOffsetY = this._autoScrollDestination.y - icTopPos;
+                    icTopPos = locContainer.getTopBoundary();
+                    if (icTopPos + touchOffsetY <= locDestination.y) {
+                        touchOffsetY = locDestination.y - icTopPos;
                         scrollEnabled = false;
                     }
                 } else if (touchOffsetX > 0.0 && touchOffsetY < 0.0){ // down right
-                    icLeftPos = this._innerContainer.getLeftBoundary();
-                    if (icLeftPos + touchOffsetX >= this._autoScrollDestination.x) {
-                        touchOffsetX = this._autoScrollDestination.x - icLeftPos;
+                    icLeftPos = locContainer.getLeftBoundary();
+                    if (icLeftPos + touchOffsetX >= locDestination.x) {
+                        touchOffsetX = locDestination.x - icLeftPos;
                         scrollEnabled = false;
                     }
-                    icTopPos = this._innerContainer.getTopBoundary();
-                    if (icTopPos + touchOffsetY <= this._autoScrollDestination.y) {
-                        touchOffsetY = this._autoScrollDestination.y - icTopPos;
+                    icTopPos = locContainer.getTopBoundary();
+                    if (icTopPos + touchOffsetY <= locDestination.y) {
+                        touchOffsetY = locDestination.y - icTopPos;
                         scrollEnabled = false;
                     }
                 } else if (touchOffsetX == 0.0 && touchOffsetY > 0.0){ // up
-                    icBottomPos = this._innerContainer.getBottomBoundary();
-                    if (icBottomPos + touchOffsetY >= this._autoScrollDestination.y) {
-                        touchOffsetY = this._autoScrollDestination.y - icBottomPos;
+                    icBottomPos = locContainer.getBottomBoundary();
+                    if (icBottomPos + touchOffsetY >= locDestination.y) {
+                        touchOffsetY = locDestination.y - icBottomPos;
                         scrollEnabled = false;
                     }
                 } else if (touchOffsetX < 0.0 && touchOffsetY == 0.0){ // left
-                    icRightPos = this._innerContainer.getRightBoundary();
-                    if (icRightPos + touchOffsetX <= this._autoScrollDestination.x) {
-                        touchOffsetX = this._autoScrollDestination.x - icRightPos;
+                    icRightPos = locContainer.getRightBoundary();
+                    if (icRightPos + touchOffsetX <= locDestination.x) {
+                        touchOffsetX = locDestination.x - icRightPos;
                         scrollEnabled = false;
                     }
                 } else if (touchOffsetX == 0.0 && touchOffsetY < 0.0){ // down
-                    icTopPos = this._innerContainer.getTopBoundary();
-                    if (icTopPos + touchOffsetY <= this._autoScrollDestination.y) {
-                        touchOffsetY = this._autoScrollDestination.y - icTopPos;
+                    icTopPos = locContainer.getTopBoundary();
+                    if (icTopPos + touchOffsetY <= locDestination.y) {
+                        touchOffsetY = locDestination.y - icTopPos;
                         scrollEnabled = false;
                     }
                 } else if (touchOffsetX > 0.0 && touchOffsetY == 0.0){ // right
-                    icLeftPos = this._innerContainer.getLeftBoundary();
-                    if (icLeftPos + touchOffsetX >= this._autoScrollDestination.x) {
-                        touchOffsetX = this._autoScrollDestination.x - icLeftPos;
+                    icLeftPos = locContainer.getLeftBoundary();
+                    if (icLeftPos + touchOffsetX >= locDestination.x) {
+                        touchOffsetX = locDestination.x - icLeftPos;
                         scrollEnabled = false;
                     }
                 }
@@ -859,18 +794,18 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         return this._autoScrollOriginalSpeed * dt;
     },
 
-    scrollChildren: function (touchOffsetX, touchOffsetY) {
+    _scrollChildren: function (touchOffsetX, touchOffsetY) {
         var scrollEnabled = true;
-        this.scrollingEvent();
+        this._scrollingEvent();
         switch (this.direction) {
             case ccui.ScrollView.DIR_VERTICAL: // vertical
-                scrollEnabled = this.scrollChildrenVertical(touchOffsetX, touchOffsetY);
+                scrollEnabled = this._scrollChildrenVertical(touchOffsetX, touchOffsetY);
                 break;
             case ccui.ScrollView.DIR_HORIZONTAL: // horizontal
-                scrollEnabled = this.scrollChildrenHorizontal(touchOffsetX, touchOffsetY);
+                scrollEnabled = this._scrollChildrenHorizontal(touchOffsetX, touchOffsetY);
                 break;
             case ccui.ScrollView.DIR_BOTH:
-                scrollEnabled = this.scrollChildrenBoth(touchOffsetX, touchOffsetY);
+                scrollEnabled = this._scrollChildrenBoth(touchOffsetX, touchOffsetY);
                 break;
             default:
                 break;
@@ -878,258 +813,249 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         return scrollEnabled;
     },
 
-    scrollChildrenVertical: function(touchOffsetX, touchOffsetY){
+    _scrollChildrenVertical: function(touchOffsetX, touchOffsetY){
         var realOffset = touchOffsetY;
         var scrollEnabled = true;
-        var icBottomPos, icTopPos;
+        var icBottomPos, icTopPos, locContainer = this._innerContainer;
         if (this.bounceEnabled) {
-            icBottomPos = this._innerContainer.getBottomBoundary();
+            icBottomPos = locContainer.getBottomBoundary();
             if (icBottomPos + touchOffsetY >= this._bounceBottomBoundary) {
                 realOffset = this._bounceBottomBoundary - icBottomPos;
-                this.scrollToBottomEvent();
+                this._scrollToBottomEvent();
                 scrollEnabled = false;
             }
-            icTopPos = this._innerContainer.getTopBoundary();
+            icTopPos = locContainer.getTopBoundary();
             if (icTopPos + touchOffsetY <= this._bounceTopBoundary) {
                 realOffset = this._bounceTopBoundary - icTopPos;
-                this.scrollToTopEvent();
+                this._scrollToTopEvent();
                 scrollEnabled = false;
 
             }
         } else {
-            icBottomPos = this._innerContainer.getBottomBoundary();
+            icBottomPos = locContainer.getBottomBoundary();
             if (icBottomPos + touchOffsetY >= this._bottomBoundary){
                 realOffset = this._bottomBoundary - icBottomPos;
-                this.scrollToBottomEvent();
+                this._scrollToBottomEvent();
                 scrollEnabled = false;
             }
-            icTopPos = this._innerContainer.getTopBoundary();
+            icTopPos = locContainer.getTopBoundary();
             if (icTopPos + touchOffsetY <= this._topBoundary) {
                 realOffset = this._topBoundary - icTopPos;
-                this.scrollToTopEvent();
+                this._scrollToTopEvent();
                 scrollEnabled = false;
             }
         }
-        this.moveChildren(0.0, realOffset);
+        this._moveChildren(0.0, realOffset);
         return scrollEnabled;
     },
 
-    scrollChildrenHorizontal: function(touchOffsetX, touchOffestY){
+    _scrollChildrenHorizontal: function(touchOffsetX, touchOffestY){
         var scrollEnabled = true;
         var realOffset = touchOffsetX;
-        var icRightPos, icLeftPos;
+        var icRightPos, icLeftPos, locContainer = this._innerContainer;
         if (this.bounceEnabled){
-            icRightPos = this._innerContainer.getRightBoundary();
-            if (icRightPos + touchOffsetX <= this._bounceRightBoundary)
-            {
+            icRightPos = locContainer.getRightBoundary();
+            if (icRightPos + touchOffsetX <= this._bounceRightBoundary) {
                 realOffset = this._bounceRightBoundary - icRightPos;
-                this.scrollToRightEvent();
+                this._scrollToRightEvent();
                 scrollEnabled = false;
             }
-            icLeftPos = this._innerContainer.getLeftBoundary();
-            if (icLeftPos + touchOffsetX >= this._bounceLeftBoundary)
-            {
+            icLeftPos = locContainer.getLeftBoundary();
+            if (icLeftPos + touchOffsetX >= this._bounceLeftBoundary) {
                 realOffset = this._bounceLeftBoundary - icLeftPos;
-                this.scrollToLeftEvent();
+                this._scrollToLeftEvent();
                 scrollEnabled = false;
             }
         } else {
-            icRightPos = this._innerContainer.getRightBoundary();
+            icRightPos = locContainer.getRightBoundary();
             if (icRightPos + touchOffsetX <= this._rightBoundary) {
                 realOffset = this._rightBoundary - icRightPos;
-                this.scrollToRightEvent();
+                this._scrollToRightEvent();
                 scrollEnabled = false;
             }
-            icLeftPos = this._innerContainer.getLeftBoundary();
-            if (icLeftPos + touchOffsetX >= this._leftBoundary)
-            {
+            icLeftPos = locContainer.getLeftBoundary();
+            if (icLeftPos + touchOffsetX >= this._leftBoundary) {
                 realOffset = this._leftBoundary - icLeftPos;
-                this.scrollToLeftEvent();
+                this._scrollToLeftEvent();
                 scrollEnabled = false;
             }
         }
-        this.moveChildren(realOffset, 0.0);
+        this._moveChildren(realOffset, 0.0);
         return scrollEnabled;
     },
 
-    scrollChildrenBoth: function (touchOffsetX, touchOffsetY) {
+    _scrollChildrenBoth: function (touchOffsetX, touchOffsetY) {
         var scrollEnabled = true;
         var realOffsetX = touchOffsetX;
         var realOffsetY = touchOffsetY;
         var icLeftPos, icBottomPos, icRightPos, icTopPos;
+        var locContainer = this._innerContainer;
         if (this.bounceEnabled) {
             if (touchOffsetX > 0.0 && touchOffsetY > 0.0) { // up right
-                icLeftPos = this._innerContainer.getLeftBoundary();
+                icLeftPos = locContainer.getLeftBoundary();
                 if (icLeftPos + touchOffsetX >= this._bounceLeftBoundary) {
                     realOffsetX = this._bounceLeftBoundary - icLeftPos;
-                    this.scrollToLeftEvent();
+                    this._scrollToLeftEvent();
                     scrollEnabled = false;
                 }
-
-                icBottomPos = this._innerContainer.getBottomBoundary();
+                icBottomPos = locContainer.getBottomBoundary();
                 if (icBottomPos + touchOffsetY >= this._bounceBottomBoundary) {
                     realOffsetY = this._bounceBottomBoundary - icBottomPos;
-                    this.scrollToBottomEvent();
+                    this._scrollToBottomEvent();
                     scrollEnabled = false;
                 }
             } else if (touchOffsetX < 0.0 && touchOffsetY > 0.0) { // up left
-                icRightPos = this._innerContainer.getRightBoundary();
+                icRightPos = locContainer.getRightBoundary();
                 if (icRightPos + touchOffsetX <= this._bounceRightBoundary) {
                     realOffsetX = this._bounceRightBoundary - icRightPos;
-                    this.scrollToRightEvent();
+                    this._scrollToRightEvent();
                     scrollEnabled = false;
                 }
-
-                icBottomPos = this._innerContainer.getBottomBoundary();
+                icBottomPos = locContainer.getBottomBoundary();
                 if (icBottomPos + touchOffsetY >= this._bounceBottomBoundary) {
                     realOffsetY = this._bounceBottomBoundary - icBottomPos;
-                    this.scrollToBottomEvent();
+                    this._scrollToBottomEvent();
                     scrollEnabled = false;
                 }
             } else if (touchOffsetX < 0.0 && touchOffsetY < 0.0) { // down left
-                icRightPos = this._innerContainer.getRightBoundary();
+                icRightPos = locContainer.getRightBoundary();
                 if (icRightPos + touchOffsetX <= this._bounceRightBoundary) {
                     realOffsetX = this._bounceRightBoundary - icRightPos;
-                    this.scrollToRightEvent();
+                    this._scrollToRightEvent();
                     scrollEnabled = false;
                 }
-
-                icTopPos = this._innerContainer.getTopBoundary();
+                icTopPos = locContainer.getTopBoundary();
                 if (icTopPos + touchOffsetY <= this._bounceTopBoundary) {
                     realOffsetY = this._bounceTopBoundary - icTopPos;
-                    this.scrollToTopEvent();
+                    this._scrollToTopEvent();
                     scrollEnabled = false;
                 }
             } else if (touchOffsetX > 0.0 && touchOffsetY < 0.0){ // down right
-                icLeftPos = this._innerContainer.getLeftBoundary();
+                icLeftPos = locContainer.getLeftBoundary();
                 if (icLeftPos + touchOffsetX >= this._bounceLeftBoundary) {
                     realOffsetX = this._bounceLeftBoundary - icLeftPos;
-                    this.scrollToLeftEvent();
+                    this._scrollToLeftEvent();
                     scrollEnabled = false;
                 }
-
-                icTopPos = this._innerContainer.getTopBoundary();
+                icTopPos = locContainer.getTopBoundary();
                 if (icTopPos + touchOffsetY <= this._bounceTopBoundary) {
                     realOffsetY = this._bounceTopBoundary - icTopPos;
-                    this.scrollToTopEvent();
+                    this._scrollToTopEvent();
                     scrollEnabled = false;
                 }
             } else if (touchOffsetX == 0.0 && touchOffsetY > 0.0){ // up
-                icBottomPos = this._innerContainer.getBottomBoundary();
+                icBottomPos = locContainer.getBottomBoundary();
                 if (icBottomPos + touchOffsetY >= this._bounceBottomBoundary) {
                     realOffsetY = this._bounceBottomBoundary - icBottomPos;
-                    this.scrollToBottomEvent();
+                    this._scrollToBottomEvent();
                     scrollEnabled = false;
                 }
             } else if (touchOffsetX < 0.0 && touchOffsetY == 0.0){ // left
-                icRightPos = this._innerContainer.getRightBoundary();
+                icRightPos = locContainer.getRightBoundary();
                 if (icRightPos + touchOffsetX <= this._bounceRightBoundary) {
                     realOffsetX = this._bounceRightBoundary - icRightPos;
-                    this.scrollToRightEvent();
+                    this._scrollToRightEvent();
                     scrollEnabled = false;
                 }
             } else if (touchOffsetX == 0.0 && touchOffsetY < 0.0){ // down
-                icTopPos = this._innerContainer.getTopBoundary();
+                icTopPos = locContainer.getTopBoundary();
                 if (icTopPos + touchOffsetY <= this._bounceTopBoundary) {
                     realOffsetY = this._bounceTopBoundary - icTopPos;
-                    this.scrollToTopEvent();
+                    this._scrollToTopEvent();
                     scrollEnabled = false;
                 }
             } else if (touchOffsetX > 0.0 && touchOffsetY == 0.0){ // right
-                icLeftPos = this._innerContainer.getLeftBoundary();
+                icLeftPos = locContainer.getLeftBoundary();
                 if (icLeftPos + touchOffsetX >= this._bounceLeftBoundary) {
                     realOffsetX = this._bounceLeftBoundary - icLeftPos;
-                    this.scrollToLeftEvent();
+                    this._scrollToLeftEvent();
                     scrollEnabled = false;
                 }
             }
         } else {
             if (touchOffsetX > 0.0 && touchOffsetY > 0.0){ // up right
-                icLeftPos = this._innerContainer.getLeftBoundary();
+                icLeftPos = locContainer.getLeftBoundary();
                 if (icLeftPos + touchOffsetX >= this._leftBoundary) {
                     realOffsetX = this._leftBoundary - icLeftPos;
-                    this.scrollToLeftEvent();
+                    this._scrollToLeftEvent();
                     scrollEnabled = false;
                 }
-
-                icBottomPos = this._innerContainer.getBottomBoundary();
+                icBottomPos = locContainer.getBottomBoundary();
                 if (icBottomPos + touchOffsetY >= this._bottomBoundary) {
                     realOffsetY = this._bottomBoundary - icBottomPos;
-                    this.scrollToBottomEvent();
+                    this._scrollToBottomEvent();
                     scrollEnabled = false;
                 }
             } else if (touchOffsetX < 0.0 && touchOffsetY > 0.0){ // up left
-                icRightPos = this._innerContainer.getRightBoundary();
+                icRightPos = locContainer.getRightBoundary();
                 if (icRightPos + touchOffsetX <= this._rightBoundary) {
                     realOffsetX = this._rightBoundary - icRightPos;
-                    this.scrollToRightEvent();
+                    this._scrollToRightEvent();
                     scrollEnabled = false;
                 }
-
-                icBottomPos = this._innerContainer.getBottomBoundary();
+                icBottomPos = locContainer.getBottomBoundary();
                 if (icBottomPos + touchOffsetY >= this._bottomBoundary) {
                     realOffsetY = this._bottomBoundary - icBottomPos;
-                    this.scrollToBottomEvent();
+                    this._scrollToBottomEvent();
                     scrollEnabled = false;
                 }
             } else if (touchOffsetX < 0.0 && touchOffsetY < 0.0){ // down left
-                icRightPos = this._innerContainer.getRightBoundary();
+                icRightPos = locContainer.getRightBoundary();
                 if (icRightPos + touchOffsetX <= this._rightBoundary) {
                     realOffsetX = this._rightBoundary - icRightPos;
-                    this.scrollToRightEvent();
+                    this._scrollToRightEvent();
                     scrollEnabled = false;
                 }
-
-                icTopPos = this._innerContainer.getTopBoundary();
+                icTopPos = locContainer.getTopBoundary();
                 if (icTopPos + touchOffsetY <= this._topBoundary) {
                     realOffsetY = this._topBoundary - icTopPos;
-                    this.scrollToTopEvent();
+                    this._scrollToTopEvent();
                     scrollEnabled = false;
                 }
             } else if (touchOffsetX > 0.0 && touchOffsetY < 0.0){ // down right
-                icLeftPos = this._innerContainer.getLeftBoundary();
+                icLeftPos = locContainer.getLeftBoundary();
                 if (icLeftPos + touchOffsetX >= this._leftBoundary) {
                     realOffsetX = this._leftBoundary - icLeftPos;
-                    this.scrollToLeftEvent();
+                    this._scrollToLeftEvent();
                     scrollEnabled = false;
                 }
                 icTopPos = this._innerContainer.getTopBoundary();
                 if (icTopPos + touchOffsetY <= this._topBoundary) {
                     realOffsetY = this._topBoundary - icTopPos;
-                    this.scrollToTopEvent();
+                    this._scrollToTopEvent();
                     scrollEnabled = false;
                 }
             } else if (touchOffsetX == 0.0 && touchOffsetY > 0.0) { // up
                 icBottomPos = this._innerContainer.getBottomBoundary();
                 if (icBottomPos + touchOffsetY >= this._bottomBoundary) {
                     realOffsetY = this._bottomBoundary - icBottomPos;
-                    this.scrollToBottomEvent();
+                    this._scrollToBottomEvent();
                     scrollEnabled = false;
                 }
             } else if (touchOffsetX < 0.0 && touchOffsetY == 0.0){ // left
                 icRightPos = this._innerContainer.getRightBoundary();
                 if (icRightPos + touchOffsetX <= this._rightBoundary) {
                     realOffsetX = this._rightBoundary - icRightPos;
-                    this.scrollToRightEvent();
+                    this._scrollToRightEvent();
                     scrollEnabled = false;
                 }
             } else if (touchOffsetX == 0.0 && touchOffsetY < 0.0){  // down
                 icTopPos = this._innerContainer.getTopBoundary();
                 if (icTopPos + touchOffsetY <= this._topBoundary) {
                     realOffsetY = this._topBoundary - icTopPos;
-                    this.scrollToTopEvent();
+                    this._scrollToTopEvent();
                     scrollEnabled = false;
                 }
             }  else if (touchOffsetX > 0.0 && touchOffsetY == 0.0){ // right
                 icLeftPos = this._innerContainer.getLeftBoundary();
                 if (icLeftPos + touchOffsetX >= this._leftBoundary) {
                     realOffsetX = this._leftBoundary - icLeftPos;
-                    this.scrollToLeftEvent();
+                    this._scrollToLeftEvent();
                     scrollEnabled = false;
                 }
             }
         }
-        this.moveChildren(realOffsetX, realOffsetY);
+        this._moveChildren(realOffsetX, realOffsetY);
         return scrollEnabled;
     },
 
@@ -1139,7 +1065,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * @param {Boolean} attenuated
      */
     scrollToBottom: function (time, attenuated) {
-        this.startAutoScrollChildrenWithDestination(cc.p(this._innerContainer.getPositionX(), 0), time, attenuated);
+        this._startAutoScrollChildrenWithDestination(cc.p(this._innerContainer.getPositionX(), 0), time, attenuated);
     },
 
     /**
@@ -1148,7 +1074,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * @param {Boolean} attenuated
      */
     scrollToTop: function (time, attenuated) {
-        this.startAutoScrollChildrenWithDestination(
+        this._startAutoScrollChildrenWithDestination(
             cc.p(this._innerContainer.getPositionX(), this._contentSize.height - this._innerContainer.getContentSize().height), time, attenuated);
     },
 
@@ -1158,7 +1084,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * @param {Boolean} attenuated
      */
     scrollToLeft: function (time, attenuated) {
-        this.startAutoScrollChildrenWithDestination(cc.p(0, this._innerContainer.getPositionY()), time, attenuated);
+        this._startAutoScrollChildrenWithDestination(cc.p(0, this._innerContainer.getPositionY()), time, attenuated);
     },
 
     /**
@@ -1167,7 +1093,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * @param {Boolean} attenuated
      */
     scrollToRight: function (time, attenuated) {
-        this.startAutoScrollChildrenWithDestination(
+        this._startAutoScrollChildrenWithDestination(
             cc.p(this._contentSize.width - this._innerContainer.getContentSize().width, this._innerContainer.getPositionY()), time, attenuated);
     },
 
@@ -1181,7 +1107,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             cc.log("Scroll direction is not both!");
             return;
         }
-        this.startAutoScrollChildrenWithDestination(cc.p(0, this._contentSize.height - this._innerContainer.getContentSize().height), time, attenuated);
+        this._startAutoScrollChildrenWithDestination(cc.p(0, this._contentSize.height - this._innerContainer.getContentSize().height), time, attenuated);
     },
 
     /**
@@ -1195,7 +1121,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             return;
         }
         var inSize = this._innerContainer.getContentSize();
-        this.startAutoScrollChildrenWithDestination(cc.p(this._contentSize.width - inSize.width,
+        this._startAutoScrollChildrenWithDestination(cc.p(this._contentSize.width - inSize.width,
                 this._contentSize.height - inSize.height), time, attenuated);
     },
 
@@ -1209,7 +1135,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             cc.log("Scroll direction is not both!");
             return;
         }
-        this.startAutoScrollChildrenWithDestination(cc.p(0, 0), time, attenuated);
+        this._startAutoScrollChildrenWithDestination(cc.p(0, 0), time, attenuated);
     },
 
     /**
@@ -1222,7 +1148,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             cc.log("Scroll direction is not both!");
             return;
         }
-        this.startAutoScrollChildrenWithDestination(cc.p(this._contentSize.width - this._innerContainer.getContentSize().width, 0), time, attenuated);
+        this._startAutoScrollChildrenWithDestination(cc.p(this._contentSize.width - this._innerContainer.getContentSize().width, 0), time, attenuated);
     },
 
     /**
@@ -1234,7 +1160,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     scrollToPercentVertical: function (percent, time, attenuated) {
         var minY = this._contentSize.height - this._innerContainer.getContentSize().height;
         var h = -minY;
-        this.startAutoScrollChildrenWithDestination(cc.p(this._innerContainer.getPositionX(), minY + percent * h / 100), time, attenuated);
+        this._startAutoScrollChildrenWithDestination(cc.p(this._innerContainer.getPositionX(), minY + percent * h / 100), time, attenuated);
     },
 
     /**
@@ -1245,7 +1171,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      */
     scrollToPercentHorizontal: function (percent, time, attenuated) {
         var w = this._innerContainer.getContentSize().width - this._contentSize.width;
-        this.startAutoScrollChildrenWithDestination(cc.p(-(percent * w / 100), this._innerContainer.getPositionY()), time, attenuated);
+        this._startAutoScrollChildrenWithDestination(cc.p(-(percent * w / 100), this._innerContainer.getPositionY()), time, attenuated);
     },
 
     /**
@@ -1260,50 +1186,56 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         var minY = this._contentSize.height - this._innerContainer.getContentSize().height;
         var h = -minY;
         var w = this._innerContainer.getContentSize().width - this._contentSize.width;
-        this.startAutoScrollChildrenWithDestination(cc.p(-(percent.x * w / 100), minY + percent.y * h / 100), time, attenuated);
+        this._startAutoScrollChildrenWithDestination(cc.p(-(percent.x * w / 100), minY + percent.y * h / 100), time, attenuated);
     },
 
     /**
      * Move inner container to bottom boundary of ScrollView.
+     * @function
      */
     jumpToBottom: function () {
-        this.jumpToDestination(this._innerContainer.getPositionX(), 0);
+        this._jumpToDestination(this._innerContainer.getPositionX(), 0);
     },
 
     /**
      * Move inner container to top boundary of ScrollView.
+     * @function
      */
     jumpToTop: function () {
-        this.jumpToDestination(this._innerContainer.getPositionX(), this._contentSize.height - this._innerContainer.getContentSize().height);
+        this._jumpToDestination(this._innerContainer.getPositionX(), this._contentSize.height - this._innerContainer.getContentSize().height);
     },
 
     /**
      * Move inner container to left boundary of ScrollView.
+     * @function
      */
     jumpToLeft: function () {
-        this.jumpToDestination(0, this._innerContainer.getPositionY());
+        this._jumpToDestination(0, this._innerContainer.getPositionY());
     },
 
     /**
      * Move inner container to right boundary of ScrollView.
+     * @function
      */
     jumpToRight: function () {
-        this.jumpToDestination(this._contentSize.width - this._innerContainer.getContentSize().width, this._innerContainer.getPositionY());
+        this._jumpToDestination(this._contentSize.width - this._innerContainer.getContentSize().width, this._innerContainer.getPositionY());
     },
 
     /**
      * Move inner container to top and left boundary of ScrollView.
+     * @function
      */
     jumpToTopLeft: function () {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
             cc.log("Scroll direction is not both!");
             return;
         }
-        this.jumpToDestination(0, this._contentSize.height - this._innerContainer.getContentSize().height);
+        this._jumpToDestination(0, this._contentSize.height - this._innerContainer.getContentSize().height);
     },
 
     /**
      * Move inner container to top and right boundary of ScrollView.
+     * @function
      */
     jumpToTopRight: function () {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
@@ -1311,50 +1243,58 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             return;
         }
         var inSize = this._innerContainer.getContentSize();
-        this.jumpToDestination(this._contentSize.width - inSize.width, this._contentSize.height - inSize.height);
+        this._jumpToDestination(this._contentSize.width - inSize.width, this._contentSize.height - inSize.height);
     },
 
     /**
      * Move inner container to bottom and left boundary of ScrollView.
+     * @function
      */
     jumpToBottomLeft: function () {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
             cc.log("Scroll direction is not both!");
             return;
         }
-        this.jumpToDestination(0, 0);
+        this._jumpToDestination(0, 0);
     },
 
     /**
      * Move inner container to bottom and right boundary of ScrollView.
+     * @function
      */
     jumpToBottomRight: function () {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
             cc.log("Scroll direction is not both!");
             return;
         }
-        this.jumpToDestination(this._contentSize.width - this._innerContainer.getContentSize().width, 0);
+        this._jumpToDestination(this._contentSize.width - this._innerContainer.getContentSize().width, 0);
     },
 
     /**
      * Move inner container to vertical percent position of ScrollView.
+     * @function
+     * @param {Number} percent The destination vertical percent, accept value between 0 - 100
      */
     jumpToPercentVertical: function (percent) {
         var minY = this._contentSize.height - this._innerContainer.getContentSize().height;
         var h = -minY;
-        this.jumpToDestination(this._innerContainer.getPositionX(), minY + percent * h / 100);
+        this._jumpToDestination(this._innerContainer.getPositionX(), minY + percent * h / 100);
     },
 
     /**
      * Move inner container to horizontal percent position of ScrollView.
+     * @function
+     * @param {Number} percent The destination vertical percent, accept value between 0 - 100
      */
     jumpToPercentHorizontal: function (percent) {
         var w = this._innerContainer.getContentSize().width - this._contentSize.width;
-        this.jumpToDestination(-(percent * w / 100), this._innerContainer.getPositionY());
+        this._jumpToDestination(-(percent * w / 100), this._innerContainer.getPositionY());
     },
 
     /**
      * Move inner container to both direction percent position of ScrollView.
+     * @function
+     * @param {cc.Point} percent The destination vertical percent, accept value between 0 - 100
      */
     jumpToPercentBothDirection: function (percent) {
         if (this.direction != ccui.ScrollView.DIR_BOTH)
@@ -1363,19 +1303,19 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         var minY = this._contentSize.height - inSize.height;
         var h = -minY;
         var w = inSize.width - this._contentSize.width;
-        this.jumpToDestination(-(percent.x * w / 100), minY + percent.y * h / 100);
+        this._jumpToDestination(-(percent.x * w / 100), minY + percent.y * h / 100);
     },
 
-    startRecordSlidAction: function () {
+    _startRecordSlidAction: function () {
         if (this._autoScroll)
-            this.stopAutoScrollChildren();
+            this._stopAutoScrollChildren();
         if (this._bouncing)
-            this.stopBounceChildren();
+            this._stopBounceChildren();
         this._slidTime = 0.0;
     },
 
-    endRecordSlidAction: function () {
-        if (!this.checkNeedBounce() && this.inertiaScrollEnabled) {
+    _endRecordSlidAction: function () {
+        if (!this._checkNeedBounce() && this.inertiaScrollEnabled) {
             if (this._slidTime <= 0.016)
                 return;
             var totalDis = 0;
@@ -1398,53 +1338,53 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
                     break;
             }
             var orSpeed = Math.min(Math.abs(totalDis) / (this._slidTime), ccui.ScrollView.AUTO_SCROLL_MAX_SPEED);
-            this.startAutoScrollChildrenWithOriginalSpeed(dir, orSpeed, true, -1000);
+            this._startAutoScrollChildrenWithOriginalSpeed(dir, orSpeed, true, -1000);
             this._slidTime = 0;
         }
     },
 
-    handlePressLogic: function (touch) {
-        this.startRecordSlidAction();
+    _handlePressLogic: function (touch) {
+        this._startRecordSlidAction();
         this._bePressed = true;
     },
 
-    handleMoveLogic: function (touch) {
+    _handleMoveLogic: function (touch) {
         var delta = cc.pSub(touch.getLocation(), touch.getPreviousLocation());
         switch (this.direction) {
             case ccui.ScrollView.DIR_VERTICAL: // vertical
-                this.scrollChildren(0.0, delta.y);
+                this._scrollChildren(0.0, delta.y);
                 break;
             case ccui.ScrollView.DIR_HORIZONTAL: // horizontal
-                this.scrollChildren(delta.x, 0);
+                this._scrollChildren(delta.x, 0);
                 break;
             case ccui.ScrollView.DIR_BOTH: // both
-                this.scrollChildren(delta.x, delta.y);
+                this._scrollChildren(delta.x, delta.y);
                 break;
             default:
                 break;
         }
     },
 
-    handleReleaseLogic: function (touch) {
-        this.endRecordSlidAction();
+    _handleReleaseLogic: function (touch) {
+        this._endRecordSlidAction();
         this._bePressed = false;
     },
 
     onTouchBegan: function (touch, event) {
         var pass = ccui.Layout.prototype.onTouchBegan.call(this, touch, event);
-        if (this._hitted)
-            this.handlePressLogic(touch);
+        if (this._hit)
+            this._handlePressLogic(touch);
         return pass;
     },
 
     onTouchMoved: function (touch, event) {
         ccui.Layout.prototype.onTouchMoved.call(this, touch, event);
-        this.handleMoveLogic(touch);
+        this._handleMoveLogic(touch);
     },
 
     onTouchEnded: function (touch, event) {
         ccui.Layout.prototype.onTouchEnded.call(this, touch, event);
-        this.handleReleaseLogic(touch);
+        this._handleReleaseLogic(touch);
     },
 
     onTouchCancelled: function (touch, event) {
@@ -1453,30 +1393,30 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     update: function (dt) {
         if (this._autoScroll)
-            this.autoScrollChildren(dt);
+            this._autoScrollChildren(dt);
         if (this._bouncing)
-            this.bounceChildren(dt);
-        this.recordSlidTime(dt);
+            this._bounceChildren(dt);
+        this._recordSlidTime(dt);
     },
 
-    recordSlidTime: function (dt) {
+    _recordSlidTime: function (dt) {
         if (this._bePressed)
             this._slidTime += dt;
     },
 
     /**
      * Intercept touch event
-     * @param {number} event
+     * @param {number} event event type
      * @param {ccui.Widget} sender
      * @param {cc.Touch} touch
      */
     interceptTouchEvent: function (event, sender, touch) {
         var touchPoint = touch.getLocation();
         switch (event) {
-            case ccui.Widget.TOUCH_BAGAN:
+            case ccui.Widget.TOUCH_BEGAN:
                 this._touchBeganPosition.x = touchPoint.x;
                 this._touchBeganPosition.y = touchPoint.y;
-                this.handlePressLogic(touch);
+                this._handlePressLogic(touch);
                 break;
             case ccui.Widget.TOUCH_MOVED:
                 var offset = cc.pLength(cc.pSub(sender.getTouchBeganPosition(), touchPoint));
@@ -1484,98 +1424,86 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
                     sender.setHighlighted(false);
                     this._touchMovePosition.x = touchPoint.x;
                     this._touchMovePosition.y = touchPoint.y;
-                    this.handleMoveLogic(touch);
+                    this._handleMoveLogic(touch);
                 }
                 break;
             case ccui.Widget.TOUCH_CANCELED:
             case ccui.Widget.TOUCH_ENDED:
                 this._touchEndPosition.x = touchPoint.x;
                 this._touchEndPosition.y = touchPoint.y;
-                this.handleReleaseLogic(touch);
+                this._handleReleaseLogic(touch);
                 break;
         }
     },
 
-    scrollToTopEvent: function () {
+    _scrollToTopEvent: function () {
         if (this._scrollViewEventListener && this._scrollViewEventSelector)
             this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_SCROLL_TO_TOP);
         if (this._eventCallback)
             this._eventCallback(this,ccui.ScrollView.EVENT_SCROLL_TO_TOP);
     },
 
-    scrollToBottomEvent: function () {
+    _scrollToBottomEvent: function () {
         if (this._scrollViewEventListener && this._scrollViewEventSelector)
             this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_SCROLL_TO_BOTTOM);
         if (this._eventCallback)
             this._eventCallback(this,ccui.ScrollView.EVENT_SCROLL_TO_BOTTOM);
     },
 
-    scrollToLeftEvent: function () {
-        if (this._scrollViewEventListener && this._scrollViewEventSelector) {
+    _scrollToLeftEvent: function () {
+        if (this._scrollViewEventListener && this._scrollViewEventSelector)
             this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_SCROLL_TO_LEFT);
-        }
-        if (this._eventCallback) {
+        if (this._eventCallback)
             this._eventCallback(this,ccui.ScrollView.EVENT_SCROLL_TO_LEFT);
-        }
     },
 
-    scrollToRightEvent: function () {
-        if (this._scrollViewEventListener && this._scrollViewEventSelector) {
+    _scrollToRightEvent: function () {
+        if (this._scrollViewEventListener && this._scrollViewEventSelector)
             this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_SCROLL_TO_RIGHT);
-        }
-        if (this._eventCallback) {
+        if (this._eventCallback)
             this._eventCallback(this, ccui.ScrollView.EVENT_SCROLL_TO_RIGHT);
-        }
     },
 
-    scrollingEvent: function () {
-        if (this._scrollViewEventListener && this._scrollViewEventSelector) {
+    _scrollingEvent: function () {
+        if (this._scrollViewEventListener && this._scrollViewEventSelector)
             this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_SCROLLING);
-        }
-        if (this._eventCallback) {
+        if (this._eventCallback)
             this._eventCallback(this,ccui.ScrollView.EVENT_SCROLLING);
-        }
     },
 
-    bounceTopEvent: function () {
-        if (this._scrollViewEventListener && this._scrollViewEventSelector) {
+    _bounceTopEvent: function () {
+        if (this._scrollViewEventListener && this._scrollViewEventSelector) 
             this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_BOUNCE_TOP);
-        }
-        if (this._eventCallback) {
+        if (this._eventCallback) 
             this._eventCallback(this,ccui.ScrollView.EVENT_BOUNCE_TOP);
-        }
     },
 
-    bounceBottomEvent: function () {
-        if (this._scrollViewEventListener && this._scrollViewEventSelector) {
+    _bounceBottomEvent: function () {
+        if (this._scrollViewEventListener && this._scrollViewEventSelector) 
             this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_BOUNCE_BOTTOM);
-        }
-        if (this._eventCallback) {
+        if (this._eventCallback)
             this._eventCallback(this,ccui.ScrollView.EVENT_BOUNCE_BOTTOM);
-        }
     },
 
-    bounceLeftEvent: function () {
-        if (this._scrollViewEventListener && this._scrollViewEventSelector) {
+    _bounceLeftEvent: function () {
+        if (this._scrollViewEventListener && this._scrollViewEventSelector)
             this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_BOUNCE_LEFT);
-        }
-        if (this._eventCallback) {
+        if (this._eventCallback)
             this._eventCallback(this, ccui.ScrollView.EVENT_BOUNCE_LEFT);
-        }
     },
 
-    bounceRightEvent: function () {
-        if (this._scrollViewEventListener && this._scrollViewEventSelector) {
+    _bounceRightEvent: function () {
+        if (this._scrollViewEventListener && this._scrollViewEventSelector)
             this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_BOUNCE_RIGHT);
-        }
-        if (this._eventCallback) {
+        if (this._eventCallback)
             this._eventCallback(this, ccui.ScrollView.EVENT_BOUNCE_RIGHT);
-        }
     },
 
     /**
+     * Add call back function called ScrollView event triggered
      * @param {Function} selector
      * @param {Object} target
+     * @deprecated
      */
     addEventListenerScrollView: function (selector, target) {
         this._scrollViewEventSelector = selector;
@@ -1589,6 +1517,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     /**
      * Changes scroll direction of ScrollView.
      * @param {ccui.ScrollView.DIR_NONE | ccui.ScrollView.DIR_VERTICAL | ccui.ScrollView.DIR_HORIZONTAL | ccui.ScrollView.DIR_BOTH} dir
+     *   Direction::VERTICAL means vertical scroll, Direction::HORIZONTAL means horizontal scroll
      */
     setDirection: function (dir) {
         this.direction = dir;
@@ -1635,7 +1564,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * Gets inner container of ScrollView.  Inner container is the container .of ScrollView's children.
+     * Gets inner container of ScrollView. Inner container is the container of ScrollView's children.
      * @returns {ccui.Layout}
      */
     getInnerContainer: function () {
@@ -1672,17 +1601,17 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         return "ScrollView";
     },
 
-    createCloneInstance: function(){
+    _createCloneInstance: function(){
         return ccui.ScrollView.create();
     },
 
-    copyClonedWidgetChildren: function (model) {
-        ccui.Layout.prototype.copyClonedWidgetChildren.call(this, model);
+    _copyClonedWidgetChildren: function (model) {
+        ccui.Layout.prototype._copyClonedWidgetChildren.call(this, model);
     },
 
-    copySpecialProperties: function (scrollView) {
+    _copySpecialProperties: function (scrollView) {
         if(scrollView instanceof ccui.ScrollView) {
-            ccui.Layout.prototype.copySpecialProperties.call(this, scrollView);
+            ccui.Layout.prototype._copySpecialProperties.call(this, scrollView);
             this.setInnerContainerSize(scrollView.getInnerContainerSize());
             this.setDirection(scrollView.direction);
             this.setBounceEnabled(scrollView.bounceEnabled);
@@ -1691,6 +1620,62 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             this._scrollViewEventSelector = scrollView._scrollViewEventSelector;
             this._eventCallback = scrollView._eventCallback;
         }
+    },
+
+    /**
+     * Get node by tag
+     * @param {Number} tag
+     * @returns {cc.Node}
+     * @deprecated
+     */
+    getNodeByTag: function (tag) {
+        return this._innerContainer.getNodeByTag(tag);
+    },
+
+    /**
+     * Get all nodes of inner container
+     * @returns {Array}
+     * @deprecated
+     */
+    getNodes: function () {
+        return this._innerContainer.getNodes();
+    },
+
+    /**
+     * Remove a node
+     * @param {cc.Node} node
+     * @deprecated
+     */
+    removeNode: function (node) {
+        this._innerContainer.removeNode(node);
+    },
+
+    /**
+     * Remove a node by tag
+     * @param {Number} tag
+     * @deprecated
+     */
+    removeNodeByTag: function (tag) {
+        this._innerContainer.removeNodeByTag(tag);
+    },
+
+    /**
+     * Remove all node
+     * @deprecated
+     */
+    removeAllNodes: function () {
+        this._innerContainer.removeAllNodes();
+    },
+
+    /**
+     * Add node for scrollView
+     * @param {cc.Node}node
+     * @param {Number} zOrder
+     * @param {Number} tag
+     * @deprecated
+     */
+    addNode: function (node, zOrder, tag) {
+        this._innerContainer.addNode(node, zOrder, tag);
     }
 });
 
@@ -1708,7 +1693,7 @@ _p = null;
 
 /**
  * allocates and initializes a UIScrollView.
- * @constructs
+ * @deprecated
  * @return {ccui.ScrollView}
  * @example
  * // example

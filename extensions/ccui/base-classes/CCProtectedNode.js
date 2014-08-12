@@ -22,7 +22,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Node
+/**
+ * A class inhert from cc.Node, use for saving some protected children in other list.
+ * @class
+ * @extends cc.Node
+ */
+cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
     _protectedChildren: null,
     _reorderProtectedChildDirty: false,
 
@@ -33,7 +38,7 @@ cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Nod
     },
 
     ctor: function(){
-        cc.NodeRGBA.prototype.ctor.call(this);
+        cc.Node.prototype.ctor.call(this);
        this._protectedChildren = [];
     },
 
@@ -57,7 +62,6 @@ cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Nod
         child.setOrderOfArrival(cc.s_globalOrderOfArrival);
 
         //TODO USE PHYSICS
-
         if(this._running){
             child.onEnter();
             // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
@@ -161,7 +165,6 @@ cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Nod
             }
 
             //TODO USE PHYSICS
-
             if (cleanup)
                 child.cleanup();
             // set parent nil at the end
@@ -205,9 +208,8 @@ cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Nod
                         _children[j+1] = _children[j];
                     }else if(tmp._localZOrder === _children[j]._localZOrder && tmp.arrivalOrder < _children[j].arrivalOrder){
                         _children[j+1] = _children[j];
-                    }else{
+                    }else
                         break;
-                    }
                     j--;
                 }
                 _children[j+1] = tmp;
@@ -259,7 +261,7 @@ cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Nod
             children[i] && children[i].visit(context);
         }
         for (; j < pLen; j++) {
-            locProtectedChildren[i] && locProtectedChildren[i].visit(context);
+            locProtectedChildren[j] && locProtectedChildren[j].visit(context);
         }
 
         this._cacheDirty = false;
@@ -306,14 +308,10 @@ cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Nod
         _t.draw(context);
         // draw children zOrder >= 0
         for (; i < childLen; i++) {
-            if (locChildren[i]) {
-                locChildren[i].visit();
-            }
+            locChildren[i] && locChildren[i].visit();
         }
         for (; j < pLen; j++) {
-            if (locProtectedChildren[j]) {
-                locProtectedChildren[j].visit();
-            }
+            locProtectedChildren[j] && locProtectedChildren[j].visit();
         }
 
         _t.arrivalOrder = 0;
@@ -376,18 +374,18 @@ cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Nod
         this._displayedOpacity = this._realOpacity * parentOpacity/255.0;
         this._updateColor();
 
+        var i,len, locChildren, _opacity = this._displayedOpacity;
         if (this._cascadeOpacityEnabled){
-            var i,len, locChildren = this._children, _opacity = this._displayedOpacity;
+            locChildren = this._children;
             for(i = 0, len = locChildren.length;i < len; i++){
                 if(locChildren[i].updateDisplayedOpacity)
                     locChildren[i].updateDisplayedOpacity(_opacity);
             }
-
-            locChildren = this._protectedChildren;
-            for(i = 0, len = locChildren.length;i < len; i++){
-                if(locChildren[i].updateDisplayedOpacity)
-                    locChildren[i].updateDisplayedOpacity(_opacity);
-            }
+        }
+        locChildren = this._protectedChildren;
+        for(i = 0, len = locChildren.length;i < len; i++){
+            if(locChildren[i])
+                locChildren[i].updateDisplayedOpacity(_opacity);
         }
     },
 
@@ -398,18 +396,19 @@ cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Nod
         displayedColor.b = realColor.b * parentColor.b/255.0;
         this._updateColor();
 
+        var i, len, locChildren;
         if (this._cascadeColorEnabled){
-            var i, len, locChildren = this._children;
+            locChildren = this._children;
             for(i = 0, len = locChildren.length; i < len; i++){
                 if(locChildren[i].updateDisplayedColor)
                     locChildren[i].updateDisplayedColor(displayedColor);
             }
+        }
 
-            locChildren = this._protectedChildren;
-            for(i =0, len = locChildren.length; i < len; i++) {
-                if (locChildren[i].updateDisplayedColor)
-                    locChildren[i].updateDisplayedColor(displayedColor);
-            }
+        locChildren = this._protectedChildren;
+        for(i =0, len = locChildren.length; i < len; i++) {
+            if (locChildren[i])
+                locChildren[i].updateDisplayedColor(displayedColor);
         }
     },
 
@@ -421,7 +420,7 @@ cc.ProtectedNode = cc.NodeRGBA.extend({      //TODO  merge cc.NodeRGBA to cc.Nod
 
         locChildren = this._protectedChildren;
         for(i =0, len = locChildren.length; i < len; i++)
-            locChildren[i].updateDisplayedColor(white);
+            locChildren[i].setColor(white);
     }
 });
 
@@ -433,6 +432,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
 /**
  * create a cc.ProtectedNode object;
+ * @deprecated
  */
 cc.ProtectedNode.create = function(){
     return new cc.ProtectedNode();

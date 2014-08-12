@@ -37,13 +37,13 @@ var CC_SAFE_RELEASE = function (obj) {
 };
 
 ccs.isSpriteContainPoint = function (sprite, point, outPoint) {
-    var p = cc.p(0, 0);
+    var p = sprite.convertToNodeSpace(point);
     if (outPoint) {
-        p = sprite.convertToNodeSpace(point);
+        outPoint.x = p.x;
+        outPoint.y = p.y;
     }
     var s = sprite.getContentSize();
-    var r = cc.rect(0, 0, s.width, s.height);
-    return cc.rectContainsPoint(r, p);
+    return cc.rectContainsPoint(cc.rect(0, 0, s.width, s.height), p);
 };
 ccs.SPRITE_CONTAIN_POINT = ccs.isSpriteContainPoint;
 ccs.SPRITE_CONTAIN_POINT_WITH_RETURN = ccs.isSpriteContainPoint;

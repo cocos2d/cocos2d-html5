@@ -24,7 +24,8 @@
  ****************************************************************************/
 /**
  * Base namespace of cocostuidio
- * @namespace ccs
+ * @namespace
+ * @name ccs
  */
 var ccs = ccs || {};
 
@@ -42,14 +43,6 @@ ccs.Class.extend = ccs.Class.extend || cc.Class.extend;
  */
 ccs.Node = ccs.Node || cc.Node;
 ccs.Node.extend = ccs.Node.extend || cc.Node.extend;
-
-/**
- * The same as cc.RBGA
- * @class
- * @extends ccs.Class
- */
-ccs.NodeRGBA = ccs.NodeRGBA || cc.NodeRGBA;
-ccs.NodeRGBA.extend = ccs.NodeRGBA.extend || cc.NodeRGBA.extend;
 
 /**
  * The same as cc.Sprite

@@ -29,11 +29,8 @@ ccs.LabelBMFontReader = {
     },
 
     setPropsFromJsonDictionary: function(widget, options){
-
-
         ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
-    
-    
+
         var jsonPath = ccs.uiReader.getFilePath();
     
         var labelBMFont = widget;
@@ -58,9 +55,7 @@ ccs.LabelBMFontReader = {
         }
     
         var text = options["text"];
-        labelBMFont.setText(text);
-    
-    
+        labelBMFont.setString(text);
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };

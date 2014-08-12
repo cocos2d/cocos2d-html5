@@ -34,13 +34,13 @@
  * length is the how many pixels the texture is stretched across. The texture               <br/>
  * is vertically aligned along the streak segment.
  * @class
- * @extends cc.NodeRGBA
+ * @extends cc.Node
  *
  * @property {cc.Texture2D} texture                         - Texture used for the motion streak.
  * @property {Boolean}      fastMode                        - Indicate whether use fast mode.
  * @property {Boolean}      startingPositionInitialized     - Indicate whether starting position initialized.
  */
-cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
+cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     texture:null,
     fastMode:false,
     startingPositionInitialized:false,
@@ -79,7 +79,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      * @param {string|cc.Texture2D} texture texture filename or texture
      */
     ctor: function (fade, minSeg, stroke, color, texture) {
-        cc.NodeRGBA.prototype.ctor.call(this);
+        cc.Node.prototype.ctor.call(this);
         this._positionR = cc.p(0, 0);
         this._blendFunc = new cc.BlendFunc(cc.SRC_ALPHA, cc.ONE_MINUS_SRC_ALPHA);
         this._vertexWebGLBuffer = cc._renderContext.createBuffer();
@@ -495,6 +495,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
 
 /**
  * creates and initializes a motion streak with fade in seconds, minimum segments, stroke's width, color, texture filename or texture
+ * @deprecated
  * @param {Number} fade time to fade
  * @param {Number} minSeg minimum segment size
  * @param {Number} stroke stroke's width

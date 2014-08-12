@@ -24,17 +24,14 @@
  ****************************************************************************/
 
 ccs.WidgetReader = {
-
     getInstance: function(){
         return ccs.WidgetReader;
     },
 
     setPropsFromJsonDictionary: function(widget, options){
-
         var ignoreSizeExsit = options["ignoreSize"];
-        if(ignoreSizeExsit){
+        if(ignoreSizeExsit != null)
             widget.ignoreContentAdaptWithSize(ignoreSizeExsit);
-        }
 
         widget.setSizeType(options["sizeType"]);
         widget.setPositionType(options["positionType"]);
@@ -42,9 +39,18 @@ ccs.WidgetReader = {
         widget.setSizePercent(cc.p(options["sizePercentX"], options["sizePercentY"]));
         widget.setPositionPercent(cc.p(options["positionPercentX"], options["positionPercentY"]));
 
-        var w = options["width"];
-        var h = options["height"];
-        widget.setSize(cc.size(w, h));
+        /* adapt screen */
+        var w = 0, h = 0;
+        var adaptScreen = options["adaptScreen"];
+        if (adaptScreen) {
+            var screenSize = cc.director.getWinSize();
+            w = screenSize.width;
+            h = screenSize.height;
+        } else {
+            w = options["width"];
+            h = options["height"];
+        }
+        widget.setContentSize(w, h);
 
         widget.setTag(options["tag"]);
         widget.setActionTag(options["actiontag"]);
@@ -55,29 +61,24 @@ ccs.WidgetReader = {
 
         var x = options["x"];
         var y = options["y"];
-        widget.setPosition(cc.p(x, y));
+        widget.setPosition(x, y);
 
+        var sx = options["scaleX"] || 1;
+        widget.setScaleX(sx);
 
-        var sx = options["scalex"];
-        if(sx){
-            widget.setScaleX(sx);
-        }
-        var sy = options["scaleY"];
-        if(sy){
-            widget.setScaleY(sy);
-        }
-        var rt = options["rotation"];
-        if(rt){
-            widget.setRotation(rt);
-        }
-        var vb = options["visible"];
-        if(vb){
+        var sy = options["scaleY"] || 1;
+        widget.setScaleY(sy);
+
+        var rt = options["rotation"] || 0;
+        widget.setRotation(rt);
+
+        var vb = options["visible"] || false;
+        if(vb != null)
             widget.setVisible(vb);
-        }
         widget.setLocalZOrder(options["ZOrder"]);
 
         var layout = options["layoutParameter"];
-        if(layout){
+        if(layout != null){
             var layoutParameterDic = options["layoutParameter"];
             var paramType = layoutParameterDic["type"];
             var parameter = null;
@@ -103,32 +104,59 @@ ccs.WidgetReader = {
                 default:
                     break;
             }
-            if(parameter){
-                var mgl = layoutParameterDic["marginLeft"];
-                var mgt = layoutParameterDic["marginTop"];
-                var mgr = layoutParameterDic["marginRight"];
-                var mgb = layoutParameterDic["marginDown"];
+            if(parameter != null){
+                var mgl = layoutParameterDic["marginLeft"]||0;
+                var mgt = layoutParameterDic["marginTop"]||0;
+                var mgr = layoutParameterDic["marginRight"]||0;
+                var mgb = layoutParameterDic["marginDown"]||0;
                 parameter.setMargin(mgl, mgt, mgr, mgb);
                 widget.setLayoutParameter(parameter);
             }
         }
-
     },
     setColorPropsFromJsonDictionary: function(widget, options){
         var op = options["opacity"];
-        if(op){
+        if(op != null)
             widget.setOpacity(op);
+        var colorR = options["colorR"];
+        var colorG = options["colorG"];
+        var colorB = options["colorB"];
+        widget.setColor(cc.color((colorR == null) ? 255 : colorR, (colorG == null) ? 255 : colorG, (colorB == null) ? 255 : colorB));
+
+        ccs.WidgetReader.setAnchorPointForWidget(widget, options);
+        widget.setFlippedX(options["flipX"]);
+        widget.setFlippedY(options["flipY"]);
+    },
+    setAnchorPointForWidget: function(widget, options){
+        var isAnchorPointXExists = options["anchorPointX"];
+        var anchorPointXInFile;
+        if (isAnchorPointXExists != null)
+            anchorPointXInFile = options["anchorPointX"];
+        else
+            anchorPointXInFile = widget.getAnchorPoint().x;
+
+        var isAnchorPointYExists = options["anchorPointY"];
+        var anchorPointYInFile;
+        if (isAnchorPointYExists != null)
+            anchorPointYInFile = options["anchorPointY"];
+        else
+            anchorPointYInFile = widget.getAnchorPoint().y;
+
+        if (isAnchorPointXExists != null || isAnchorPointYExists != null)
+            widget.setAnchorPoint(cc.p(anchorPointXInFile, anchorPointYInFile));
+    },
+
+    getResourcePath: function(dict, key, texType){
+        var imageFileName = dict[key];
+        var imageFileName_tp;
+        if (null != imageFileName) {
+            if (texType == 0)
+                imageFileName_tp = ccs.uiReader.getFilePath() + imageFileName;
+            else if(texType == 1)
+                imageFileName_tp = imageFileName;
+            else
+                cc.assert(0, "invalid TextureResType!!!");
         }
-        var colorR = options["colorR"] || 255;
-        var colorG = options["colorG"] || 255;
-        var colorB = options["colorB"] || 255;
-        widget.setColor(cc.color(colorR, colorG, colorB));
-        var apx = options["anchorPointX"];
-        var apxf = apx || (widget.getWidgetType() === ccs.WidgetType ? 0.5 : 0);
-        var apy = options["anchorPointY"];
-        var apyf = apy || (widget.getWidgetType() === ccs.WidgetType ? 0.5 : 0);
-        widget.setAnchorPoint(cc.p(apxf, apyf));
-//        widget.setFlipX(options["flipX"]);
-//        widget.setFlipX(options["flipY"]);
+        return imageFileName_tp;
     }
 };

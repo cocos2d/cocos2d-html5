@@ -25,7 +25,8 @@
  ****************************************************************************/
 
 /**
- * @namespace cc.configuration contains some openGL variables
+ * cc.configuration contains some openGL variables
+ * @namespace
  * @name cc.configuration
  */
 cc.configuration = /** @lends cc.configuration# */{

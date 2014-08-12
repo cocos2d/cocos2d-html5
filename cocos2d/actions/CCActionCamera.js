@@ -86,7 +86,7 @@ cc.ActionCamera = cc.ActionInterval.extend(/** @lends cc.ActionCamera# */{
     },
 
     reverse:function () {
-        return cc.ReverseTime.create(this);
+        return cc.reverseTime(this);
     }
 });
 
@@ -219,6 +219,7 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
 
 /**
  * creates a cc.OrbitCamera action with radius, delta-radius,  z, deltaZ, x, deltaX
+ * @function
  * @param {Number} t time
  * @param {Number} radius
  * @param {Number} deltaRadius
@@ -228,6 +229,21 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
  * @param {Number} deltaAngleX
  * @return {cc.OrbitCamera}
  */
-cc.OrbitCamera.create = function (t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX) {
+cc.orbitCamera = function (t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX) {
     return new cc.OrbitCamera(t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX);
 };
+/**
+ * Please use cc.orbitCamera instead
+ * creates a cc.OrbitCamera action with radius, delta-radius,  z, deltaZ, x, deltaX
+ * @param {Number} t time
+ * @param {Number} radius
+ * @param {Number} deltaRadius
+ * @param {Number} angleZ
+ * @param {Number} deltaAngleZ
+ * @param {Number} angleX
+ * @param {Number} deltaAngleX
+ * @return {cc.OrbitCamera}
+ * @static
+ * @deprecated
+ */
+cc.OrbitCamera.create = cc.orbitCamera;
