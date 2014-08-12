@@ -538,6 +538,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         // XXX: so, it should be AFTER the insertQuad
         sprite.dirty = true;
         sprite.updateTransform();
+        sprite._setCachedParent(this);
         this._children.splice(index, 0, sprite);
     },
 
