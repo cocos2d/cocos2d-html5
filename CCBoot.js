@@ -881,8 +881,9 @@ cc.loader = {
 
 /**
  * A string tool to construct a string with format string.
- * for example: cc.formatStr("a: %d, b: %b", a, b);
- * @param {String} formatStr format String
+ * for example:
+ *      cc.formatStr("a: %d, b: %b", a, b);
+ *      cc.formatStr(a, b, c);
  * @returns {String}
  */
 cc.formatStr = function(){
@@ -922,6 +923,7 @@ cc.formatStr = function(){
     }
     return str;
 };
+
 
 //+++++++++++++++++++++++++something about window events begin+++++++++++++++++++++++++++
 (function () {
