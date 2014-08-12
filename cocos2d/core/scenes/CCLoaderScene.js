@@ -27,7 +27,6 @@ cc.LoaderScene = cc.Scene.extend({
     _interval : null,
     _label : null,
     _className:"LoaderScene",
-    _loadingPool:null,
 
     init : function(){
         var self = this;
