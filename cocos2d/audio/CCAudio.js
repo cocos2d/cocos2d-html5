@@ -82,6 +82,7 @@ if (cc.sys._supportWebAudio) {
             sourceNode["connect"](volumeNode);
             volumeNode["connect"](_ctx["destination"]);
             sourceNode.loop = self._loop;
+            /** @expose */
             sourceNode.onended = function(){
                 self._stopped = true;
             };
