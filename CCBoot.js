@@ -66,7 +66,7 @@ cc._isNodeJs = typeof require !== 'undefined' && require("fs");
  * Iterate over an object or an array, executing a function for each matched element.
  * @param {object|array} obj
  * @param {function} iterator
- * @param {object} context
+ * @param {object} [context]
  */
 cc.each = function (obj, iterator, context) {
     if (!obj)
@@ -104,120 +104,184 @@ cc.isCrossOrigin = function (url) {
 };
 
 //+++++++++++++++++++++++++something about async begin+++++++++++++++++++++++++++++++
-cc.async = {
-    // Counter for cc.async
-    _counterFunc: function (err) {
-        var counter = this.counter;
-        if (counter.err)
-            return;
-        var length = counter.length;
-        var results = counter.results;
-        var option = counter.option;
-        var cb = option.cb, cbTarget = option.cbTarget, trigger = option.trigger, triggerTarget = option.triggerTarget;
-        if (err) {
-            counter.err = err;
-            if (cb)
-                return cb.call(cbTarget, err);
-            return;
-        }
-        var result = Array.apply(null, arguments).slice(1);
-        var l = result.length;
-        if (l == 0)
-            result = null;
-        else if (l == 1)
-            result = result[0];
-        results[this.index] = result;
-        counter.count--;
-        if (trigger)
-            trigger.call(triggerTarget, result, length - counter.count, length);
-        if (counter.count == 0 && cb)
-            cb.apply(cbTarget, [null, results]);
-    },
+/**
+ * Async Pool class, a helper of cc.async
+ * @param {Object|Array} srcObj
+ * @param {Number} limit the limit of parallel number
+ * @param {function} iterator
+ * @param {function} onEnd
+ * @param {object} target
+ * @constructor
+ */
+cc.AsyncPool = function(srcObj, limit, iterator, onEnd, target){
+    var self = this;
+    self._srcObj = srcObj;
+    self._limit = limit;
+    self._pool = [];
+    self._iterator = iterator;
+    self._iteratorTarget = target;
+    self._onEnd = onEnd;
+    self._onEndTarget = target;
+    self._results = srcObj instanceof Array ? [] : {};
+    self._isErr = false;
 
-    // Empty function for async.
-    _emptyFunc: function () {
+    cc.each(srcObj, function(value, index){
+        self._pool.push({index : index, value : value});
+    });
+
+    self.size = self._pool.length;
+    self.finishedSize = 0;
+    self._workingSize = 0;
+
+    self._limit = self._limit || self.size;
+
+    self.onIterator = function(iterator, target){
+        self._iterator = iterator;
+        self._iteratorTarget = target;
+    };
+
+    self.onEnd = function(endCb, endCbTarget){
+        self._onEnd = endCb;
+        self._onEndTarget = endCbTarget;
+    };
+
+    self._handleItem = function(){
+        var self = this;
+        if(self._pool.length == 0)
+            return;                                                         //return directly if the array's length = 0
+        if(self._workingSize >= self._limit)
+            return;                                                         //return directly if the working size great equal limit number
+        var item = self._pool.shift();
+        var value = item.value, index = item.index;
+        self._workingSize++;
+        self._iterator.call(self._iteratorTarget, value, index, function(err){
+            if(self._isErr)
+                return;
+
+            self.finishedSize++;
+            self._workingSize--;
+            if(err) {
+                self._isErr = true;
+                if(self._onEnd)
+                    self._onEnd.call(self._onEndTarget, err);
+                return
+            }
+
+            var arr = Array.prototype.slice.call(arguments);
+            arr.splice(0, 1);
+            self._results[this.index] = arr[0];
+            if(self.finishedSize == self.size) {
+                if(self._onEnd)
+                    self._onEnd.call(self._onEndTarget, null, self._results);
+                return
+            }
+            self._handleItem();
+        }.bind(item), self);
+    };
+
+    self.flow = function(){
+        var self = this;
+        if(self._pool.length == 0) {
+            if(self._onEnd)
+                self._onEnd.call(self._onEndTarget, null, []);
+                return;
+        }
+        for(var i = 0; i < self._limit; i++)
+            self._handleItem();
+    }
+};
+
+cc.async = {
+    /**
+     * Do tasks series.
+     * @param {Array|Object} tasks
+     * @param {function} [cb] callback
+     * @param {Object} [target]
+     * @return {cc.AsyncPool}
+     */
+    series : function(tasks, cb, target){
+        var asyncPool = new cc.AsyncPool(tasks, 1, function(func, index, cb1){
+            func.call(target, cb1);
+        }, cb, target);
+        asyncPool.flow();
+        return asyncPool;
     },
 
     /**
      * Do tasks parallel.
-     * @param {array} tasks
-     * @param {object|function} [option]
-     * @param {function} [cb]
+     * @param {Array|Object} tasks
+     * @param {function} cb callback
+     * @param {Object} [target]
+     * @return {cc.AsyncPool}
      */
-    parallel: function (tasks, option, cb) {
-        var async = cc.async;
-        if (cb !== undefined) {
-            if (typeof option == "function")
-                option = {trigger: option};
-            option.cb = cb || option.cb;
-        } else if (option !== undefined) {
-            if (typeof option == "function")
-                option = {cb: option};
-        } else if (tasks !== undefined)
-            option = {};
-        else
-            throw "arguments error!";
-        var isArr = tasks instanceof Array;
-        var li = isArr ? tasks.length : Object.keys(tasks).length;
-        if (li == 0) {
-            if (option.cb)
-                option.cb.call(option.cbTarget, null);
-            return;
-        }
-        var results = isArr ? [] : {};
-        var counter = { length: li, count: li, option: option, results: results};
+    parallel : function(tasks, cb, target){
+        var asyncPool = new cc.AsyncPool(tasks, 0, function(func, index, cb1){
+            func.call(target, cb1);
+        }, cb, target);
+        asyncPool.flow();
+        return asyncPool;
+    },
 
-        cc.each(tasks, function (task, index) {
-            if (counter.err)
-                return false;
-            var counterFunc = !option.cb && !option.trigger ? async._emptyFunc : async._counterFunc.bind({counter: counter, index: index});//bind counter and index
-            task(counterFunc, index);
-        });
+    /**
+     * Do tasks waterfall.
+     * @param {Array|Object} tasks
+     * @param {function} cb callback
+     * @param {Object} [target]
+     * @return {cc.AsyncPool}
+     */
+    waterfall : function(tasks, cb, target){
+        var args = [];
+        var asyncPool = new cc.AsyncPool(tasks, 1,
+            function (func, index, cb1) {
+                args.push(function (err) {
+                    args = Array.prototype.slice.apply(arguments);
+                    args.splice(0, 1);
+                    cb1.apply(null, arguments);
+                });
+                func.apply(target, args);
+            }, function (err, results) {
+                if (!cb)
+                    return;
+                if (err)
+                    return cb.call(target, err);
+                cb.call(target, null, results[results.length - 1]);
+            });
+        asyncPool.flow();
+        return asyncPool;
     },
 
     /**
      * Do tasks by iterator.
-     * The format of the option should be:
-     *  {
-     *      cb: function,
-     *      target: object,
-     *      iterator: function,
-     *      iteratorTarget: function
-     *  }
-     * @param {array} tasks
-     * @param {object|function} [option]
-     * @param {function} [cb]
+     * @param {Array|Object} tasks
+     * @param {function|Object} iterator
+     * @param {function} cb callback
+     * @param {Object} [target]
+     * @return {cc.AsyncPool}
      */
-    map: function (tasks, option, cb) {
-        var self = this;
-        var len = arguments.length;
-        if (typeof option == "function")
-            option = {iterator: option};
-        if (len === 3)
-            option.cb = cb || option.cb;
-        else if(len < 2)
-            throw "arguments error!";
-        if (typeof option == "function")
-            option = {iterator: option};
-        if (cb !== undefined)
-            option.cb = cb || option.cb;
-        else if (tasks === undefined )
-            throw "arguments error!";
-        var isArr = tasks instanceof Array;
-        var li = isArr ? tasks.length : Object.keys(tasks).length;
-        if (li === 0) {
-            if (option.cb)
-                option.cb.call(option.cbTarget, null);
-            return;
+    map : function(tasks, iterator, cb, target){
+        var locIterator = iterator;
+        if(typeof(iterator) == "object"){
+            cb = iterator.cb;
+            target = iterator.iteratorTarget;
+            locIterator = iterator.iterator;
         }
-        var results = isArr ? [] : {};
-        var counter = { length: li, count: li, option: option, results: results};
-        cc.each(tasks, function (task, index) {
-            if (counter.err)
-                return false;
-            var counterFunc = !option.cb ? self._emptyFunc : self._counterFunc.bind({counter: counter, index: index});//bind counter and index
-            option.iterator.call(option.iteratorTarget, task, index, counterFunc);
-        });
+        var asyncPool = new cc.AsyncPool(tasks, 0, locIterator, cb, target);
+        asyncPool.flow();
+        return asyncPool;
+    },
+
+    /**
+     * Do tasks by iterator limit.
+     * @param {Array|Object} tasks
+     * @param {Number} limit
+     * @param {function} iterator
+     * @param {function} cb callback
+     * @param {Object} [target]
+     */
+    mapLimit : function(tasks, limit, iterator, cb, target){
+        var asyncPool = new cc.AsyncPool(tasks, limit, iterator, cb, target);
+        asyncPool.flow();
+        return asyncPool;
     }
 };
 //+++++++++++++++++++++++++something about async end+++++++++++++++++++++++++++++++++
@@ -410,23 +474,24 @@ cc.loader = {
      * Load js files.
      * If the third parameter doesn't exist, then the baseDir turns to be "".
      *
-     * @param {string} [baseDir]   The pre path for jsList.
+     * @param {string} [baseDir]   The pre path for jsList or the list of js path.
      * @param {array} jsList    List of js path.
-     * @param {function} [cb]        Callback function
+     * @param {function} [cb]  Callback function
      * @returns {*}
      */
     loadJs: function (baseDir, jsList, cb) {
         var self = this, localJsCache = self._jsCache,
             args = self._getArgs4Js(arguments);
 
+        var preDir = args[0], list = args[1], callback = args[2];
         if (navigator.userAgent.indexOf("Trident/5") > -1) {
-            self._loadJs4Dependency(args[0], args[1], 0, args[2]);
+            self._loadJs4Dependency(preDir, list, 0, callback);
         } else {
-            cc.async.map(args[1], function (item, index, cb1) {
-                var jsPath = cc.path.join(args[0], item);
+            cc.async.map(list, function (item, index, cb1) {
+                var jsPath = cc.path.join(preDir, item);
                 if (localJsCache[jsPath]) return cb1(null);
                 self._createScript(jsPath, false, cb1);
-            }, args[2]);
+            }, callback);
         }
     },
     /**
@@ -574,9 +639,8 @@ cc.loader = {
         var opt = {
             isCrossOrigin: true
         };
-        if (cb !== undefined) {
+        if (cb !== undefined)
             opt.isCrossOrigin = option.isCrossOrigin == null ? opt.isCrossOrigin : option.isCrossOrigin;
-        }
         else if (option !== undefined)
             cb = option;
 
@@ -654,12 +718,15 @@ cc.loader = {
             var type = path.extname(url);
             type = type ? type.toLowerCase() : "";
             var loader = self._register[type];
-            if (!loader) basePath = self.resPath;
-            else basePath = loader.getBasePath ? loader.getBasePath() : self.resPath;
+            if (!loader)
+                basePath = self.resPath;
+            else
+                basePath = loader.getBasePath ? loader.getBasePath() : self.resPath;
         }
-        url = cc.path.join(basePath || "", url)
+        url = cc.path.join(basePath || "", url);
         if (url.match(/[\/(\\\\)]lang[\/(\\\\)]/i)) {
-            if (langPathCache[url]) return langPathCache[url];
+            if (langPathCache[url])
+                return langPathCache[url];
             var extname = path.extname(url) || "";
             url = langPathCache[url] = url.substring(0, url.length - extname.length) + "_" + cc.sys.language + extname;
         }
@@ -671,31 +738,47 @@ cc.loader = {
      * @param {string} res
      * @param {function|Object} [option] option or cb
      * @param {function} [cb]
+     * @return {cc.AsyncPool}
      */
-    load: function (res, option, cb) {
-        if (cb !== undefined) {
-            if (typeof option == "function")
-                option = {trigger: option};
-        } else if (option !== undefined) {
-            if (typeof option == "function") {
-                cb = option;
-                option = {};
-            }
-        } else if (res !== undefined)
-            option = {};
-        else
+    /**
+     * Load resources then call the callback.
+     * @param {string} resources
+     * @param {function|Object} [option] option or cb
+     * @param {function} [cb]
+     */
+    load : function(resources, option, cb){
+        var self = this;
+        var len = arguments.length;
+        if(len == 0)
             throw "arguments error!";
-        option.cb = function (err, results) {
-            if (err)
-                cc.log(err);
-            if (cb)
-                cb(results);
-        };
-        if (!(res instanceof Array))
-            res = [res];
-        option.iterator = this._loadResIterator;
-        option.iteratorTarget = this;
-        cc.async.map(res, option);
+
+        if(len == 3){
+            if(typeof option == "function"){
+                if(typeof cb == "function")
+                    option = {trigger : option, cb : cb };
+                else
+                    option = { cb : option, cbTarget : cb};
+            }
+        }else if(len == 2){
+            if(typeof option == "function")
+                option = {cb : option};
+        }
+
+        if(!(resources instanceof Array))
+            resources = [resources];
+        var asyncPool = new cc.AsyncPool(resources, 0, function(value, index, cb1, aPool){
+            self._loadResIterator(value, index, function(err){
+                if(err)
+                    return cb1(err);
+                var arr = Array.prototype.slice.call(arguments);
+                arr.splice(0, 1);
+                if(option.trigger)
+                    option.trigger.call(option.triggerTarget, arr, aPool.size, aPool.finishedSize); //call trigger
+                cb1();
+            });
+        }, option.cb, option.cbTarget);
+        asyncPool.flow();
+        return asyncPool;
     },
 
     _handleAliases: function (fileNames, cb) {
@@ -744,7 +827,8 @@ cc.loader = {
             self.load(url, function (results) {
                 self._handleAliases(results[0]["filenames"], cb);
             });
-        } else self._handleAliases(dict["filenames"], cb);
+        } else
+            self._handleAliases(dict["filenames"], cb);
     },
 
     /**
@@ -755,7 +839,8 @@ cc.loader = {
     register: function (extNames, loader) {
         if (!extNames || !loader) return;
         var self = this;
-        if (typeof extNames == "string") return this._register[extNames.trim().toLowerCase()] = loader;
+        if (typeof extNames == "string")
+            return this._register[extNames.trim().toLowerCase()] = loader;
         for (var i = 0, li = extNames.length; i < li; i++) {
             self._register["." + extNames[i].trim().toLowerCase()] = loader;
         }
@@ -786,14 +871,11 @@ cc.loader = {
      */
     releaseAll: function () {
         var locCache = this.cache, aliases = this._aliases;
-        for (var key in locCache) {
+        for (var key in locCache)
             delete locCache[key];
-        }
-        for (var key in aliases) {
+        for (var key in aliases)
             delete aliases[key];
-        }
     }
-
 };
 //+++++++++++++++++++++++++something about loader end+++++++++++++++++++++++++++++
 
