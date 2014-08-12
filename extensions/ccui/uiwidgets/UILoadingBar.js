@@ -141,6 +141,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
                             barRenderer.setFlippedX(true);
                         break;
                 }
+                self._updateChildrenDisplayedRGBA();
                 self._barRendererScaleChangedWithSize();
                 self._updateContentSizeWithTextureSize(self._barRendererTextureSize);
                 self._barRendererAdaptDirty = true;
@@ -184,6 +185,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
                     barRenderer.setFlippedX(true);
                 break;
         }
+        this._updateChildrenDisplayedRGBA();
         this._barRendererScaleChangedWithSize();
         this._updateContentSizeWithTextureSize(this._barRendererTextureSize);
         this._barRendererAdaptDirty = true;

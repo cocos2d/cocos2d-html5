@@ -25,10 +25,9 @@
 
 cc.LoaderScene = cc.Scene.extend({
     _interval : null,
-    _length : 0,
-    _count : 0,
     _label : null,
     _className:"LoaderScene",
+
     init : function(){
         var self = this;
 
@@ -37,7 +36,7 @@ cc.LoaderScene = cc.Scene.extend({
         var logoHeight = 200;
 
         // bg
-        var bgLayer = self._bgLayer = cc.LayerColor.create(cc.color(32, 32, 32, 255));
+        var bgLayer = self._bgLayer = new cc.LayerColor(cc.color(32, 32, 32, 255));
         bgLayer.setPosition(cc.visibleRect.bottomLeft);
         self.addChild(bgLayer, 0);
 
@@ -100,23 +99,15 @@ cc.LoaderScene = cc.Scene.extend({
         var self = this;
         self.unschedule(self._startLoading);
         var res = self.resources;
-        self._length = res.length;
-        self._count = 0;
-        cc.loader.load(res, function(result, count){ self._count = count; }, function(){
-            if(self.cb)
-                self.cb();
-        });
-        self.schedule(self._updatePercent);
-    },
-
-    _updatePercent: function () {
-        var self = this;
-        var count = self._count;
-        var length = self._length;
-        var percent = (count / length * 100) | 0;
-        percent = Math.min(percent, 100);
-        self._label.setString("Loading... " + percent + "%");
-        if(count >= length) self.unschedule(self._updatePercent);
+        cc.loader.load(res,
+            function (result, count, loadedCount) {
+                var percent = (loadedCount / count * 100) | 0;
+                percent = Math.min(percent, 100);
+                self._label.setString("Loading... " + percent + "%");
+            }, function () {
+                if (self.cb)
+                    self.cb();
+            });
     }
 });
 cc.LoaderScene.preload = function(resources, cb){

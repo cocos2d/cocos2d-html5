@@ -122,10 +122,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             this.setAnchorPoint(cc.p(0.5, 0.5));
 
             this.ignoreContentAdaptWithSize(true);
-
-            this.setCascadeColorEnabled(true);
-            this.setCascadeOpacityEnabled(true);
-
             return true;
         }
         return false;
@@ -372,6 +368,11 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
                 break;
             default:
                 break;
+        }
+        if(this._parent instanceof ccui.ImageView){
+            var renderer = this._parent._imageRenderer;
+            if(renderer && !renderer._textureLoaded)
+                return;
         }
         this.setPosition(absPos);
     },
@@ -911,7 +912,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         if (this._running) {
             var widgetParent = this.getWidgetParent();
             if (widgetParent) {
-                var pSize = widgetParent.getSize();
+                var pSize = widgetParent.getContentSize();
                 if (pSize.width <= 0 || pSize.height <= 0) {
                     this._positionPercent.x = 0;
                     this._positionPercent.y = 0;
@@ -1461,7 +1462,14 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
                 layout = layout._parent;
             }
         }
+    },
+
+    _updateChildrenDisplayedRGBA: function(){
+
+        this.setColor(this.getColor());
+        this.setOpacity(this.getOpacity());
     }
+
 });
 
 var _p = ccui.Widget.prototype;

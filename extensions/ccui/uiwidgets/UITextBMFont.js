@@ -67,12 +67,20 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
         if (!fileName) {
             return;
         }
-        this._fntFileName = fileName;
+        var _self = this;
+        _self._fntFileName = fileName;
 //        this._labelBMFontRenderer.setBMFontFilePath(fileName);
 
-        this._fntFileHasInit = true;
+        _self._fntFileHasInit = true;
 //        this.setString(this._stringValue);
-        this._labelBMFontRenderer.initWithString(this._stringValue, fileName);
+        _self._labelBMFontRenderer.initWithString(this._stringValue, fileName);
+
+        var locRenderer = _self._labelBMFontRenderer;
+        if(!locRenderer._textureLoaded){
+             locRenderer.addLoadedEventListener(function(){
+                 _self.updateSizeAndPosition();
+             });
+        }
     },
 
     /**
@@ -92,9 +100,7 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
     setString: function (value) {
         this._stringValue = value;
         if (!this._fntFileHasInit)
-        {
             return;
-        }
         this._labelBMFontRenderer.setString(value);
         this._updateContentSizeWithTextureSize(this._labelBMFontRenderer.getContentSize());
         this._labelBMFontRendererAdaptDirty = true;
@@ -123,7 +129,6 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
             this._labelBMFontScaleChangedWithSize();
             this._labelBMFontRendererAdaptDirty = false;
         }
-
     },
 
     getVirtualRendererSize: function(){
@@ -154,18 +159,6 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
         locRenderer.setPosition(this._contentSize.width / 2.0, this._contentSize.height / 2.0);
     },
 
-    _updateTextureColor: function () {
-        this.updateColorToRenderer(this._labelBMFontRenderer);
-    },
-
-    _updateTextureOpacity: function () {
-        this.updateOpacityToRenderer(this._labelBMFontRenderer);
-    },
-
-    _updateTextureRGBA: function(){
-        this.updateRGBAToRenderer(this._labelBMFontRenderer);
-    },
-
     /**
      * Returns the "class name" of widget.
      * @returns {string}
@@ -180,7 +173,7 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
 
     copySpecialProperties: function (labelBMFont) {
         this.setFntFile(labelBMFont._fntFileName);
-        this.setText(labelBMFont._stringValue);
+        this.setString(labelBMFont._stringValue);
     }
 });
 

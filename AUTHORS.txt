@@ -187,10 +187,12 @@ Ninja Lau            @mutoo         A typo bug in UILayout fix
                                     One-loop CCArmatureAnimation can't finish when setSpeedScale is less than 1.0 bug fix
                                     A transform error in CCTransformHelp.js fix
                                     ccs.DisplayManager bug fix
+                                    Fix child armature lost _parentBone issue;
 
 Taras Tovchenko      @tovchenko     cc.Skin bounding box calculation bug fix under canvas render mode
 
 Minh Quy             @MQuy          cc.MenuItemSprite bug fix
+                                    Check empty string for textureData 
 
 Retired Core Developers:
       Shengxiang Chen (Nero Chan)

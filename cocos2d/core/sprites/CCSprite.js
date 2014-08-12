@@ -559,6 +559,16 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
+     * visible setter  (override cc.Node )
+     * @param {Boolean} visible
+     * @override
+     */
+    setVisible:function (visible) {
+        cc.Node.prototype.setVisible.call(this, visible);
+        this.setDirtyRecursively(true);
+    },
+
+    /**
      * Removes all children from the container  (override cc.Node )
      * @param cleanup whether or not cleanup all running actions
      * @override
@@ -706,7 +716,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param frameIndex
      */
     setDisplayFrameWithAnimationName:function (animationName, frameIndex) {
-
         cc.assert(animationName, cc._LogInfos.Sprite_setDisplayFrameWithAnimationName_3);
 
         var cache = cc.animationCache.getAnimation(animationName);
@@ -1364,6 +1373,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         _t.texture = sender;
         _t.setTextureRect(locRect, _t._rectRotated);
+
+        //set the texture's color after the it loaded
+        var locColor = this._displayedColor;
+        if(locColor.r != 255 || locColor.g != 255 || locColor.b != 255)
+            _t._changeTextureColor();
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"

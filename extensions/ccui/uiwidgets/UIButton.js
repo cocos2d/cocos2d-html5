@@ -222,6 +222,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
                 self._normalTextureSize = self._buttonNormalRenderer.getContentSize();
                 self._updateFlippedX();
                 self._updateFlippedY();
+                self._updateChildrenDisplayedRGBA();
 
                 self._buttonNormalRenderer.setColor(self.getColor());
                 self._buttonNormalRenderer.setOpacity(self.getOpacity());
@@ -264,8 +265,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this._updateFlippedX();
         this._updateFlippedY();
 
-        this._buttonNormalRenderer.setColor(this.getColor());
-        this._buttonNormalRenderer.setOpacity(this.getOpacity());
+        this._updateChildrenDisplayedRGBA();
 
         this._updateContentSizeWithTextureSize(this._normalTextureSize);
         this._normalTextureLoaded = true;
@@ -293,6 +293,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
                 self._pressedTextureSize = self._buttonClickedRenderer.getContentSize();
                 self._updateFlippedX();
                 self._updateFlippedY();
+                self._updateChildrenDisplayedRGBA();
 
                 self._pressedTextureLoaded = true;
                 self._pressedTextureAdaptDirty = true;
@@ -331,6 +332,8 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this._updateFlippedX();
         this._updateFlippedY();
 
+        this._updateChildrenDisplayedRGBA();
+
         this._pressedTextureLoaded = true;
         this._pressedTextureAdaptDirty = true;
     },
@@ -357,6 +360,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
                 self._disabledTextureSize = self._buttonDisableRenderer.getContentSize();
                 self._updateFlippedX();
                 self._updateFlippedY();
+                self._updateChildrenDisplayedRGBA();
 
                 self._disabledTextureLoaded = true;
                 self._disabledTextureAdaptDirty = true;
@@ -394,6 +398,8 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this._disabledTextureSize = this._buttonDisableRenderer.getContentSize();
         this._updateFlippedX();
         this._updateFlippedY();
+
+        this._updateChildrenDisplayedRGBA();
 
         this._disabledTextureLoaded = true;
         this._disabledTextureAdaptDirty = true;
