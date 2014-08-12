@@ -879,6 +879,49 @@ cc.loader = {
 };
 //+++++++++++++++++++++++++something about loader end+++++++++++++++++++++++++++++
 
+/**
+ * A string tool to construct a string with format string.
+ * for example: cc.formatStr("a: %d, b: %b", a, b);
+ * @param {String} formatStr format String
+ * @returns {String}
+ */
+cc.formatStr = function(){
+    var args = arguments;
+    var l = args.length;
+    if(l < 1)
+        return "";
+
+    var str = args[0];
+    var needToFormat = true;
+    if(typeof str == "object"){
+        str = JSON.stringify(str);
+        needToFormat = false;
+    }
+    for(var i = 1; i < l; ++i){
+        var arg = args[i];
+        arg = typeof arg == "object" ? JSON.stringify(arg) : arg;
+        if(needToFormat){
+            while(true){
+                var result = null;
+                if(typeof arg == "number"){
+                    result = str.match(/(%d)|(%s)/);
+                    if(result){
+                        str = str.replace(/(%d)|(%s)/, arg);
+                        break;
+                    }
+                }
+                result = str.match(/%s/);
+                if(result)
+                    str = str.replace(/%s/, arg);
+                else
+                    str += "    " + arg;
+                break;
+            }
+        }else
+            str += "    " + arg;
+    }
+    return str;
+};
 
 //+++++++++++++++++++++++++something about window events begin+++++++++++++++++++++++++++
 (function () {
