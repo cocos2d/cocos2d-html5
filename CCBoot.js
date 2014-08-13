@@ -516,10 +516,12 @@ cc.loader = {
         s.src = jsPath;
         self._jsCache[jsPath] = true;
         cc._addEventListener(s, 'load', function () {
+            s.parentNode.removeChild(s);
             this.removeEventListener('load', arguments.callee, false);
             cb();
         }, false);
         cc._addEventListener(s, 'error', function () {
+            s.parentNode.removeChild(s);
             cb("Load " + jsPath + " failed!");
         }, false);
         d.body.appendChild(s);
