@@ -762,6 +762,8 @@ cc.loader = {
         }else if(len == 2){
             if(typeof option == "function")
                 option = {cb : option};
+        }else if(len == 1){
+            option = {};
         }
 
         if(!(resources instanceof Array))
