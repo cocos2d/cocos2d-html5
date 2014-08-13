@@ -1839,7 +1839,6 @@ cc.game = {
 
     /**
      * Init config.
-     * @param cb
      * @returns {*}
      * @private
      */
