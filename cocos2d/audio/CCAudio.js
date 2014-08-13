@@ -82,10 +82,13 @@ if (cc.sys._supportWebAudio) {
             sourceNode["connect"](volumeNode);
             volumeNode["connect"](_ctx["destination"]);
             sourceNode.loop = self._loop;
-            /** @expose */
-            sourceNode.onended = function(){
-                self._stopped = true;
-            };
+            sourceNode._stopped = false;
+
+            if(!sourceNode["playbackState"]){
+                sourceNode["onended"] = function(){
+                    this._stopped = true;
+                };
+            }
 
             self._paused = false;
             self._stopped = false;
@@ -122,7 +125,8 @@ if (cc.sys._supportWebAudio) {
         },
         _stop: function () {
             var self = this, sourceNode = self._sourceNode;
-            if (self._stopped) return;
+            if (self._stopped)
+                return;
             if (sourceNode.stop)
                 sourceNode.stop(0);
             else
@@ -138,7 +142,7 @@ if (cc.sys._supportWebAudio) {
                 return;
 
             var sourceNode = self._sourceNode;
-            if (!self._stopped && sourceNode && sourceNode["playbackState"] == 2)
+            if (!self._stopped && sourceNode && (sourceNode["playbackState"] == 2 || !sourceNode._stopped))
                 return;//playing
 
             self.startTime = _ctx.currentTime;
@@ -247,7 +251,16 @@ if (cc.sys._supportWebAudio) {
     _p.ended;
     cc.defineGetterSetter(_p, "ended", function () {
         var sourceNode = this._sourceNode;
-        return !this._paused && (this._stopped || !sourceNode || sourceNode["playbackState"] == 3);
+        if(this._paused)
+           return false;
+        if(this._stopped && !sourceNode)
+            return true;
+        if(sourceNode["playbackState"] == null){
+            return sourceNode._stopped;
+        } else {
+            return sourceNode["playbackState"] == 3;
+        }
+
     });
     /** @expose */
     _p.played;
@@ -316,7 +329,8 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
      */
     playMusic: function (url, loop) {
         var self = this;
-        if (!self._soundSupported) return;
+        if (!self._soundSupported)
+            return;
 
         var audio = self._currMusic;
         if (audio)
@@ -326,7 +340,8 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
             self._currMusic = audio;
             self._currMusicPath = url;
         }
-        if (!audio) return;
+        if (!audio)
+            return;
         audio.loop = loop || false;
         self._playMusic(audio);
     },
@@ -374,6 +389,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
     _stopAudio: function (audio) {
         if (audio && !audio.ended) {
             if (audio.stop) {//cc.WebAudio
+                console.log("close audio:" + audio.__instanceId);
                 audio.stop();
             } else {
                 if(audio.duration && audio.duration != Infinity)
