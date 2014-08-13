@@ -355,6 +355,10 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         }
 
         texture = this.getTexture();
+
+        this._rectInPixels = rect;
+        rect = this._rect = cc.rectPixelsToPoints(rect);
+        
         if(texture && texture.url) {
             var _x, _y;
             if(rotated){
@@ -372,8 +376,6 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
             }
         }
 
-        this._rectInPixels = rect;
-        this._rect = cc.rectPixelsToPoints(rect);
         this._offsetInPixels.x = offset.x;
         this._offsetInPixels.y = offset.y;
         cc._pointPixelsToPointsOut(offset, this._offset);
