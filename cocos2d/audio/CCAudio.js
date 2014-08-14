@@ -389,10 +389,9 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
             if (audio.stop) {//cc.WebAudio
                 audio.stop();
             } else {
+                audio.pause();
                 if(audio.duration && audio.duration != Infinity)
                     audio.currentTime = audio.duration;
-                else
-                    audio.pause();
             }
             return true;
         }
