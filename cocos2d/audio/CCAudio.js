@@ -1025,8 +1025,7 @@ cc._audioLoader = {
     },
     _loadAudio: function (url, audio, cb, delFlag) {
         var _Audio;
-        //if (typeof(window["cc"]) != "object" && cc.sys.browserType == "firefox")
-        if (cc.sys.browserType == "firefox")
+        if (typeof(window["cc"]) != "object" && cc.sys.browserType == "firefox")
             _Audio = Audio;                  //The WebAudio of FireFox  doesn't work after google closure compiler compiled with advanced mode
         else
             _Audio = (location.origin == "file://") ? Audio : (cc.WebAudio || Audio);
