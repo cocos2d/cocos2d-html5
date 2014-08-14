@@ -770,15 +770,15 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             var alpha, red, green, blue;
             var alphaOffset, redOffset, greenOffset, blueOffset;
 
-            alpha = colorTransformXML.getAttribute(ccs.CONST_A_ALPHA) || 0;
-            red = colorTransformXML.getAttribute(ccs.CONST_A_RED) || 0;
-            green = colorTransformXML.getAttribute(ccs.CONST_A_GREEN) || 0;
-            blue = colorTransformXML.getAttribute(ccs.CONST_A_BLUE) || 0;
+            alpha = parseFloat(colorTransformXML.getAttribute(ccs.CONST_A_ALPHA)) || 0;
+            red = parseFloat(colorTransformXML.getAttribute(ccs.CONST_A_RED)) || 0;
+            green = parseFloat(colorTransformXML.getAttribute(ccs.CONST_A_GREEN)) || 0;
+            blue = parseFloat(colorTransformXML.getAttribute(ccs.CONST_A_BLUE)) || 0;
 
-            alphaOffset = colorTransformXML.getAttribute(ccs.CONST_A_ALPHA_OFFSET) || 0;
-            redOffset = colorTransformXML.getAttribute(ccs.CONST_A_RED_OFFSET) || 0;
-            greenOffset = colorTransformXML.getAttribute(ccs.CONST_A_GREEN_OFFSET) || 0;
-            blueOffset = colorTransformXML.getAttribute(ccs.CONST_A_BLUE_OFFSET) || 0;
+            alphaOffset = parseFloat(colorTransformXML.getAttribute(ccs.CONST_A_ALPHA_OFFSET)) || 0;
+            redOffset = parseFloat(colorTransformXML.getAttribute(ccs.CONST_A_RED_OFFSET)) || 0;
+            greenOffset = parseFloat(colorTransformXML.getAttribute(ccs.CONST_A_GREEN_OFFSET)) || 0;
+            blueOffset = parseFloat(colorTransformXML.getAttribute(ccs.CONST_A_BLUE_OFFSET)) || 0;
 
             frameData.a = 2.55 * alphaOffset + alpha;
             frameData.r = 2.55 * redOffset + red;
