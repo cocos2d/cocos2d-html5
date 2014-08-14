@@ -183,17 +183,15 @@ plugin.extend('facebook', {
 
         info['name'] = info['site'] || info['name'];
         delete info['site'];
-        delete info['name'];
 
         info['href'] = info['siteUrl'] || info['link'];
         delete info['siteUrl'];
         delete info['link'];
 
-        info['picture'] = info['imageUrl'] || info['imagePath'] || info['photo'] || info['picture'] || info['image'];
+        info['image'] = info['imageUrl'] || info['imagePath'] || info['photo'] || info['picture'] || info['image'];
         delete info['imageUrl'];
         delete info['imagePath'];
         delete info['photo'];
-        delete info['image'];
 
 
         info['caption'] = info['title'] || info['caption'];
@@ -205,9 +203,20 @@ plugin.extend('facebook', {
 
         if(info['method'] == 'share_open_graph' && info['url']){
             if(info['url']){
-                info['action_properties'] = JSON.stringify({
-                    object: info['url']
-                });
+                var obj = {};
+                if(info["preview_property"])
+                    obj[info["preview_property"]] = info["url"];
+                else
+                    obj["object"] = info["url"];
+
+                for(var p in info){
+                    if(p != "method" && p != "action_type" && p != "action_properties"){
+                        info[p] && (obj[p] = info[p]);
+                        delete info[p];
+                    }
+                }
+
+                info['action_properties'] = JSON.stringify(obj);
             }else{
                 return;
             }
@@ -226,6 +235,7 @@ plugin.extend('facebook', {
             return;
         }
 
+        console.log(info);
         FB.ui(info,
             function(response) {
                 if (response) {
