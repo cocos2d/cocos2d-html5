@@ -230,6 +230,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
     updateDisplayedColor: function (color) {
         this._realColor = cc.color(255, 255, 255);
         cc.Node.prototype.updateDisplayedColor.call(this, color);
+        this.updateColor();
     },
 
     /**
@@ -239,6 +240,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
     updateDisplayedOpacity: function (opacity) {
         this._realOpacity = 255;
         cc.Node.prototype.updateDisplayedOpacity.call(this, opacity);
+        this.updateColor();
     },
 
     /**
