@@ -235,7 +235,6 @@ plugin.extend('facebook', {
             return;
         }
 
-        console.log(info);
         FB.ui(info,
             function(response) {
                 if (response) {
