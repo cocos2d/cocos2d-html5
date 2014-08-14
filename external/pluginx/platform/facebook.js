@@ -103,7 +103,6 @@ plugin.extend('facebook', {
      * @param callback
      */
     requestPermissions: function(permissions, callback){
-        permissions.push("user_hometown");
         var permissionsStr = permissions.join(',');
         var self = this;
         FB.login(function(response){
