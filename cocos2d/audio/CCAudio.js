@@ -255,18 +255,16 @@ if (cc.sys._supportWebAudio) {
            return false;
         if(this._stopped && !sourceNode)
             return true;
-        if(sourceNode["playbackState"] == null){
+        if(sourceNode["playbackState"] == null)
             return sourceNode._stopped;
-        } else {
+        else
             return sourceNode["playbackState"] == 3;
-        }
-
     });
     /** @expose */
     _p.played;
     cc.defineGetterSetter(_p, "played", function () {
         var sourceNode = this._sourceNode;
-        return sourceNode && sourceNode["playbackState"] == 2;
+        return sourceNode && (sourceNode["playbackState"] == 2 || !sourceNode._stopped);
     });
 }
 
@@ -389,7 +387,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
     _stopAudio: function (audio) {
         if (audio && !audio.ended) {
             if (audio.stop) {//cc.WebAudio
-                console.log("close audio:" + audio.__instanceId);
                 audio.stop();
             } else {
                 if(audio.duration && audio.duration != Infinity)
@@ -430,8 +427,10 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
     },
     _resumeAudio: function (audio) {
         if (audio && !audio.ended) {
-            if (audio.resume) audio.resume();//cc.WebAudio
-            else audio.play();
+            if (audio.resume)
+                audio.resume();//cc.WebAudio
+            else
+                audio.play();
         }
     },
 
@@ -1026,7 +1025,11 @@ cc._audioLoader = {
         return this._supportedAudioTypes.indexOf(type.toLowerCase()) >= 0;
     },
     _loadAudio: function (url, audio, cb, delFlag) {
-        var _Audio = (location.origin == "file://") ? Audio : (cc.WebAudio || Audio);
+        var _Audio;
+        if (typeof(window["cc"]) != "object" && cc.sys.browserType == "firefox")
+            _Audio = Audio;                  //The WebAudio of FireFox  doesn't work after google closure compiler compiled with advanced mode
+        else
+            _Audio = (location.origin == "file://") ? Audio : (cc.WebAudio || Audio);
         if (arguments.length == 2) {
             cb = audio;
             audio = new _Audio();
