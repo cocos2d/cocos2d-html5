@@ -54,9 +54,9 @@ plugin.extend('facebook', {
             if (response.authResponse) {
                 //save user info
                 self.userInfo = response.authResponse;
-                typeof callback === 'function' && callback(0, JSON.stringify(response));
+                typeof callback === 'function' && callback(0, "login success");
             } else {
-                typeof callback === 'function' && callback(1, JSON.stringify(response));
+                typeof callback === 'function' && callback(1, "login failed");
             }
         }, { scope: '' });
     },
@@ -75,9 +75,9 @@ plugin.extend('facebook', {
             if (response && response.status === 'connected') {
                 //login - save user info
                 self.userInfo = response.authResponse;
-                typeof callback === 'function' && callback(0, JSON.stringify(response));
+                typeof callback === 'function' && callback(0, "logged in");
             }else{
-                typeof callback === 'function' && callback(1, JSON.stringify(response));
+                typeof callback === 'function' && callback(1, "logged out");
             }
         });
     },
@@ -91,9 +91,9 @@ plugin.extend('facebook', {
             if(response.authResponse){
                 // user is now logged out
                 self.userInfo = {};
-                typeof callback === 'function' && callback(0, JSON.stringify(response));
+                typeof callback === 'function' && callback(0, "logout success");
             }else{
-                typeof callback === 'function' && callback(1, JSON.stringify(response));
+                typeof callback === 'function' && callback(1, "logout failed");
             }
         });
     },
@@ -106,13 +106,13 @@ plugin.extend('facebook', {
         var permissionsStr = permissions.join(',');
         var self = this;
         FB.login(function(response){
-            console.log(response)
             if (response.authResponse) {
+                var permissList = response.authResponse['grantedScopes'].split(",");
                 //save user info
                 self.userInfo = response.authResponse;
-                typeof callback === 'function' && callback(0, JSON.stringify(response));
+                typeof callback === 'function' && callback(0, JSON.stringify(permissList));
             } else {
-                typeof callback === 'function' && callback(1, JSON.stringify(response));
+                typeof callback === 'function' && callback(1, "request failed");
             }
         }, {
             scope: permissionsStr,
@@ -241,9 +241,9 @@ plugin.extend('facebook', {
                     if(response.post_id)
                         typeof callback === 'function' && callback(0, JSON.stringify(response));
                     else
-                        typeof callback === 'function' && callback(response.error_code, JSON.stringify(response));
+                        typeof callback === 'function' && callback(response.error_code, response.error_message);
                 } else {
-                    typeof callback === 'function' && callback(1, JSON.stringify(response));
+                    typeof callback === 'function' && callback(1, "Unknow error");
                 }
             });
     },
