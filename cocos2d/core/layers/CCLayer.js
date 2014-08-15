@@ -335,20 +335,8 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
             locBlendFunc.src = src;
             locBlendFunc.dst = dst;
         }
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS){
-            if(!locBlendFunc){
-                 _t._blendFuncStr = "source";
-            }else{
-                if(( locBlendFunc.src == cc.SRC_ALPHA && locBlendFunc.dst == cc.ONE) || (locBlendFunc.src == cc.ONE && locBlendFunc.dst == cc.ONE))
-                    _t._blendFuncStr = "lighter";
-                else if(locBlendFunc.src == cc.ZERO && locBlendFunc.dst == cc.SRC_ALPHA)
-                    _t._blendFuncStr = "destination-in";
-                else if(locBlendFunc.src == cc.ZERO && locBlendFunc.dst == cc.ONE_MINUS_SRC_ALPHA)
-                    _t._blendFuncStr = "destination-out";
-                else
-                    _t._blendFuncStr = "source";
-            }
-        }
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
+            _t._blendFuncStr = cc._getCompositeOperationByBlendFunc(locBlendFunc);
     },
 
     _setWidth: null,
