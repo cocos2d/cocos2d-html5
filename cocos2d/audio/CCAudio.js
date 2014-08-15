@@ -82,9 +82,13 @@ if (cc.sys._supportWebAudio) {
             sourceNode["connect"](volumeNode);
             volumeNode["connect"](_ctx["destination"]);
             sourceNode.loop = self._loop;
-            sourceNode.onended = function(){
-                self._stopped = true;
-            };
+            sourceNode._stopped = false;
+
+            if(!sourceNode["playbackState"]){
+                sourceNode["onended"] = function(){
+                    this._stopped = true;
+                };
+            }
 
             self._paused = false;
             self._stopped = false;
@@ -121,7 +125,8 @@ if (cc.sys._supportWebAudio) {
         },
         _stop: function () {
             var self = this, sourceNode = self._sourceNode;
-            if (self._stopped) return;
+            if (self._stopped)
+                return;
             if (sourceNode.stop)
                 sourceNode.stop(0);
             else
@@ -137,7 +142,7 @@ if (cc.sys._supportWebAudio) {
                 return;
 
             var sourceNode = self._sourceNode;
-            if (!self._stopped && sourceNode && sourceNode["playbackState"] == 2)
+            if (!self._stopped && sourceNode && (sourceNode["playbackState"] == 2 || !sourceNode._stopped))
                 return;//playing
 
             self.startTime = _ctx.currentTime;
@@ -246,13 +251,20 @@ if (cc.sys._supportWebAudio) {
     _p.ended;
     cc.defineGetterSetter(_p, "ended", function () {
         var sourceNode = this._sourceNode;
-        return !this._paused && (this._stopped || !sourceNode || sourceNode["playbackState"] == 3);
+        if(this._paused)
+           return false;
+        if(this._stopped && !sourceNode)
+            return true;
+        if(sourceNode["playbackState"] == null)
+            return sourceNode._stopped;
+        else
+            return sourceNode["playbackState"] == 3;
     });
     /** @expose */
     _p.played;
     cc.defineGetterSetter(_p, "played", function () {
         var sourceNode = this._sourceNode;
-        return sourceNode && sourceNode["playbackState"] == 2;
+        return sourceNode && (sourceNode["playbackState"] == 2 || !sourceNode._stopped);
     });
 }
 
@@ -315,7 +327,8 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
      */
     playMusic: function (url, loop) {
         var self = this;
-        if (!self._soundSupported) return;
+        if (!self._soundSupported)
+            return;
 
         var audio = self._currMusic;
         if (audio)
@@ -325,7 +338,8 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
             self._currMusic = audio;
             self._currMusicPath = url;
         }
-        if (!audio) return;
+        if (!audio)
+            return;
         audio.loop = loop || false;
         self._playMusic(audio);
     },
@@ -343,7 +357,8 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
                 audio.stop();
             } else {
                 audio.pause();
-                audio.currentTime = 0;
+                if (audio.readyState > 2)
+                    audio.currentTime = 0;
             }
         }
         this._musicPlayState = 2;
@@ -375,10 +390,9 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
             if (audio.stop) {//cc.WebAudio
                 audio.stop();
             } else {
-                if(audio.duration && audio.duration != Infinity)
+                audio.pause();
+                if (audio.readyState > 2 && audio.duration && audio.duration != Infinity)
                     audio.currentTime = audio.duration;
-                else
-                    audio.pause();
             }
             return true;
         }
@@ -413,8 +427,10 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
     },
     _resumeAudio: function (audio) {
         if (audio && !audio.ended) {
-            if (audio.resume) audio.resume();//cc.WebAudio
-            else audio.play();
+            if (audio.resume)
+                audio.resume();//cc.WebAudio
+            else
+                audio.play();
         }
     },
 
@@ -485,7 +501,8 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
             var eff = effList[i];
             if (eff.ended) {
                 audio = eff;
-                audio.currentTime = 0;
+                if (audio.readyState > 2)
+                    audio.currentTime = 0;
                 if (window.chrome)
                     audio.load();
                 break;
@@ -824,7 +841,8 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
             var self = this, audio = self._effectCache4Single[url], locLoader = cc.loader,
                 waitings = self._waitingEffIds, pauseds = self._pausedEffIds, effects = self._effects;
             if (audio) {
-                audio.currentTime = 0;                          //reset current time
+                if (audio.readyState > 2)
+                    audio.currentTime = 0;                          //reset current time
             } else {
                 audio = self._getAudioByUrl(url);
                 if (!audio) return null;
@@ -856,7 +874,7 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
                 return;
             for (var key in sglCache) {
                 var eff = sglCache[key];
-                if(eff.duration && eff.duration != Infinity)
+                if (eff.readyState > 2 && eff.duration && eff.duration != Infinity)
                     eff.currentTime = eff.duration;
             }
             waitings.length = 0;
@@ -866,7 +884,7 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
                 for (var i = 0, li = list.length; i < li; i++) {
                     var eff = list[i];
                     eff.loop = false;
-                    if(eff.duration && eff.duration != Infinity)
+                    if (eff.readyState > 2 && eff.duration && eff.duration != Infinity)
                         eff.currentTime = eff.duration;
                 }
             }
@@ -884,7 +902,7 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
                 else self._resumeAudio(currEffect);
             } else if (self._needToResumeMusic) {
                 var currMusic = self._currMusic;
-                if (currMusic.duration && currMusic.duration != Infinity) {//calculate current time
+                if (currMusic.readyState > 2 && currMusic.duration && currMusic.duration != Infinity) {//calculate current time
                     var temp = currMusic.currentTime + self._expendTime4Music;
                     temp = temp - currMusic.duration * ((temp / currMusic.duration) | 0);
                     currMusic.currentTime = temp;
@@ -912,7 +930,7 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
                 if (eff._isToPlay || eff.loop || (eff.duration && eff.currentTime + expendTime < eff.duration)) {
                     self._currEffectId = effId;
                     self._currEffect = eff;
-                    if (!eff._isToPlay && eff.duration && eff.duration != Infinity) {
+                    if (!eff._isToPlay && eff.readyState > 2 && eff.duration && eff.duration != Infinity) {
                         var temp = eff.currentTime + expendTime;
                         temp = temp - eff.duration * ((temp / eff.duration) | 0);
                         eff.currentTime = temp;
@@ -920,7 +938,7 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
                     eff._isToPlay = false;
                     return eff;
                 } else {
-                    if(eff.duration && eff.duration != Infinity)
+                    if (eff.readyState > 2 && eff.duration && eff.duration != Infinity)
                         eff.currentTime = eff.duration;
                 }
             }
@@ -1009,7 +1027,11 @@ cc._audioLoader = {
         return this._supportedAudioTypes.indexOf(type.toLowerCase()) >= 0;
     },
     _loadAudio: function (url, audio, cb, delFlag) {
-        var _Audio = (location.origin == "file://") ? Audio : (cc.WebAudio || Audio);
+        var _Audio;
+        if (typeof(window["cc"]) != "object" && cc.sys.browserType == "firefox")
+            _Audio = Audio;                  //The WebAudio of FireFox  doesn't work after google closure compiler compiled with advanced mode
+        else
+            _Audio = (location.origin == "file://") ? Audio : (cc.WebAudio || Audio);
         if (arguments.length == 2) {
             cb = audio;
             audio = new _Audio();

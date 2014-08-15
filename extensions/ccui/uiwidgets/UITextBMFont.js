@@ -195,7 +195,7 @@ _p = null;
  * var uiLabelBMFont = ccui.TextBMFont.create();
  */
 ccui.TextBMFont.create = function (text, filename) {
-    return new ccui.ccui.TextBMFont(text, filename);
+    return new ccui.TextBMFont(text, filename);
 };
 
 // Constants

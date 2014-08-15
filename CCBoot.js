@@ -516,10 +516,12 @@ cc.loader = {
         s.src = jsPath;
         self._jsCache[jsPath] = true;
         cc._addEventListener(s, 'load', function () {
+            s.parentNode.removeChild(s);
             this.removeEventListener('load', arguments.callee, false);
             cb();
         }, false);
         cc._addEventListener(s, 'error', function () {
+            s.parentNode.removeChild(s);
             cb("Load " + jsPath + " failed!");
         }, false);
         d.body.appendChild(s);
@@ -762,6 +764,8 @@ cc.loader = {
         }else if(len == 2){
             if(typeof option == "function")
                 option = {cb : option};
+        }else if(len == 1){
+            option = {};
         }
 
         if(!(resources instanceof Array))
@@ -1809,7 +1813,12 @@ cc.game = {
             }
             if (!self._prepareCalled) {
                 self.prepare(function () {
-                    if (cc._supportRender) {
+                    self._prepared = true;
+                });
+            }
+            if (cc._supportRender) {
+                self._checkPrepare = setInterval(function () {
+                    if (self._prepared) {
                         cc._setup(self.config[self.CONFIG_KEY.id]);
                         self._runMainLoop();
                         self._eventHide = self._eventHide || new cc.EventCustom(self.EVENT_HIDE);
@@ -1817,23 +1826,9 @@ cc.game = {
                         self._eventShow = self._eventShow || new cc.EventCustom(self.EVENT_SHOW);
                         self._eventShow.setUserData(self);
                         self.onStart();
+                        clearInterval(self._checkPrepare);
                     }
-                });
-            } else {
-                if (cc._supportRender) {
-                    self._checkPrepare = setInterval(function () {
-                        if (self._prepared) {
-                            cc._setup(self.config[self.CONFIG_KEY.id]);
-                            self._runMainLoop();
-                            self._eventHide = self._eventHide || new cc.EventCustom(self.EVENT_HIDE);
-                            self._eventHide.setUserData(self);
-                            self._eventShow = self._eventShow || new cc.EventCustom(self.EVENT_SHOW);
-                            self._eventShow.setUserData(self);
-                            self.onStart();
-                            clearInterval(self._checkPrepare);
-                        }
-                    }, 10);
-                }
+                }, 10);
             }
         };
         document.body ?
@@ -1846,7 +1841,6 @@ cc.game = {
 
     /**
      * Init config.
-     * @param cb
      * @returns {*}
      * @private
      */
