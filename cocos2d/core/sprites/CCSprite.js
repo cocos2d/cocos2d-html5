@@ -756,14 +756,14 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         return this._texture;
     },
 
-    _quad:null, // vertex coords, texture coords and color info
-    _quadWebBuffer:null,
-    _quadDirty:false,
-    _colorized:false,
-    _isLighterMode:false,
-    _originalTexture:null,
-    _textureRect_Canvas:null,
-    _drawSize_Canvas:null,
+    _quad: null, // vertex coords, texture coords and color info
+    _quadWebBuffer: null,
+    _quadDirty: false,
+    _colorized: false,
+    _blendFuncStr: "source",
+    _originalTexture: null,
+    _textureRect_Canvas: null,
+    _drawSize_Canvas: null,
 
     /**
      * Constructor
@@ -1235,7 +1235,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p.setBlendFunc = function (src, dst) {
-        var locBlendFunc = this._blendFunc;
+        var _t = this, locBlendFunc = this._blendFunc;
         if (dst === undefined) {
             locBlendFunc.src = src.src;
             locBlendFunc.dst = src.dst;
@@ -1243,8 +1243,20 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             locBlendFunc.src = src;
             locBlendFunc.dst = dst;
         }
-        this._isLighterMode = (locBlendFunc &&
-            (( locBlendFunc.src == cc.SRC_ALPHA && locBlendFunc.dst == cc.ONE) || (locBlendFunc.src == cc.ONE && locBlendFunc.dst == cc.ONE)));
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS){
+            if(!locBlendFunc){
+                _t._blendFuncStr = "source";
+            }else{
+                if(( locBlendFunc.src == cc.SRC_ALPHA && locBlendFunc.dst == cc.ONE) || (locBlendFunc.src == cc.ONE && locBlendFunc.dst == cc.ONE))
+                    _t._blendFuncStr = "lighter";
+                else if(locBlendFunc.src == cc.ZERO && locBlendFunc.dst == cc.SRC_ALPHA)
+                    _t._blendFuncStr = "destination-in";
+                else if(locBlendFunc.src == cc.ZERO && locBlendFunc.dst == cc.ONE_MINUS_SRC_ALPHA)
+                    _t._blendFuncStr = "destination-out";
+                else
+                    _t._blendFuncStr = "source";
+            }
+        }
     };
 
     _p.init = function () {
@@ -1580,8 +1592,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             return;
 
         var context = ctx || cc._renderContext;
-        if (_t._isLighterMode)
-            context.globalCompositeOperation = 'lighter';
+        if (_t._blendFuncStr != "source")
+            context.globalCompositeOperation = _t._blendFuncStr;
 
         var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
 

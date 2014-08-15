@@ -425,8 +425,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         var context = ctx || cc._renderContext;
 
         var locSprite = this._sprite;
-        if (locSprite._isLighterMode)
-            context.globalCompositeOperation = 'lighter';
+        if (locSprite._blendFuncStr != "source")
+            context.globalCompositeOperation = locSprite._blendFuncStr;
 
         var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
 
