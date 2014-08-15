@@ -106,11 +106,11 @@ plugin.extend('facebook', {
         var permissionsStr = permissions.join(',');
         var self = this;
         FB.login(function(response){
-            console.log(response)
             if (response.authResponse) {
+                var permissList = response.authResponse['grantedScopes'].split(",");
                 //save user info
                 self.userInfo = response.authResponse;
-                typeof callback === 'function' && callback(0, JSON.stringify(response));
+                typeof callback === 'function' && callback(0, JSON.stringify(permissList));
             } else {
                 typeof callback === 'function' && callback(1, JSON.stringify(response));
             }
