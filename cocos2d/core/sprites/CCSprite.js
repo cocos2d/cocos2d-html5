@@ -1329,7 +1329,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 _t._rect.width = rect.width;
                 _t._rect.height = rect.height;
             }
+            if(_t.texture)
+                _t.texture.removeLoadedEventListener(_t);
             texture.addLoadedEventListener(_t._textureLoadedCallback, _t);
+            _t.texture = texture;
             return true;
         }
 
