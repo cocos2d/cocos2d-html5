@@ -226,6 +226,21 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
     return nCanvas;
 };
 
+cc._getCompositeOperationByBlendFunc = function(blendFunc){
+    if(!blendFunc)
+        return "source";
+    else{
+        if(( blendFunc.src == cc.SRC_ALPHA && blendFunc.dst == cc.ONE) || (blendFunc.src == cc.ONE && blendFunc.dst == cc.ONE))
+            return "lighter";
+        else if(blendFunc.src == cc.ZERO && blendFunc.dst == cc.SRC_ALPHA)
+            return "destination-in";
+        else if(blendFunc.src == cc.ZERO && blendFunc.dst == cc.ONE_MINUS_SRC_ALPHA)
+            return "destination-out";
+        else
+            return "source";
+    }
+};
+
 /**
  * <p>cc.Sprite is a 2d image ( http://en.wikipedia.org/wiki/Sprite_(computer_graphics) )  <br/>
  *
@@ -1243,20 +1258,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             locBlendFunc.src = src;
             locBlendFunc.dst = dst;
         }
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS){
-            if(!locBlendFunc){
-                _t._blendFuncStr = "source";
-            }else{
-                if(( locBlendFunc.src == cc.SRC_ALPHA && locBlendFunc.dst == cc.ONE) || (locBlendFunc.src == cc.ONE && locBlendFunc.dst == cc.ONE))
-                    _t._blendFuncStr = "lighter";
-                else if(locBlendFunc.src == cc.ZERO && locBlendFunc.dst == cc.SRC_ALPHA)
-                    _t._blendFuncStr = "destination-in";
-                else if(locBlendFunc.src == cc.ZERO && locBlendFunc.dst == cc.ONE_MINUS_SRC_ALPHA)
-                    _t._blendFuncStr = "destination-out";
-                else
-                    _t._blendFuncStr = "source";
-            }
-        }
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
+            _t._blendFuncStr = cc._getCompositeOperationByBlendFunc(locBlendFunc);
     };
 
     _p.init = function () {
