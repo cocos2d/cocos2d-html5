@@ -254,6 +254,7 @@ cc.EditBox = cc.ControlButton.extend({
         tmpEdTxt.style.height = "100%";
         tmpEdTxt.style.active = 0;
         tmpEdTxt.style.outline = "medium";
+        tmpEdTxt.style.padding = "0";
         var onCanvasClick = function() {
             tmpEdTxt.blur();
         };
