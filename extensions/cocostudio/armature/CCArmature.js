@@ -146,7 +146,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             this.animation.setAnimationData(animationData);
         }
         if (cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR));
+            this.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
 
         this.setCascadeOpacityEnabled(true);
         this.setCascadeColorEnabled(true);
@@ -366,6 +366,9 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
 
                 if (null == node)
                     continue;
+
+                if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+                    node.setShaderProgram(this._shaderProgram);
 
                 switch (selBone.getDisplayRenderNodeType()) {
                     case ccs.DISPLAY_TYPE_SPRITE:
