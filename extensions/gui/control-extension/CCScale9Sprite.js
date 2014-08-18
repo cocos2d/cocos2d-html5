@@ -490,21 +490,23 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         var texture = cc.textureCache.textureForKey(file);
         if (!texture) {
             texture = cc.textureCache.addImage(file);
-            var locLoaded = texture.isLoaded();
-            this._textureLoaded = locLoaded;
-            if(!locLoaded){
-                texture.addLoadedEventListener(function(sender){
-                    // the texture is rotated on Canvas render mode, so isRotated always is false.
-                    var preferredSize = this._preferredSize;
-                    preferredSize = cc.size(preferredSize.width, preferredSize.height);
-                    var size  = sender.getContentSize();
-                    this.updateWithBatchNode(this._scale9Image, cc.rect(0,0,size.width,size.height), false, this._capInsets);
-                    this.setPreferredSize(preferredSize);
-                    this._positionsAreDirty = true;
-                    this._callLoadedEventCallbacks();
-                }, this);
-            }
         }
+
+        var locLoaded = texture.isLoaded();
+        this._textureLoaded = locLoaded;
+        if(!locLoaded){
+            texture.addLoadedEventListener(function(sender){
+                // the texture is rotated on Canvas render mode, so isRotated always is false.
+                var preferredSize = this._preferredSize;
+                preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                var size  = sender.getContentSize();
+                this.updateWithBatchNode(this._scale9Image, cc.rect(0,0,size.width,size.height), false, this._capInsets);
+                this.setPreferredSize(preferredSize);
+                this._positionsAreDirty = true;
+                this._callLoadedEventCallbacks();
+            }, this);
+        }
+
         return this.initWithBatchNode(cc.SpriteBatchNode.create(file, 9), rect, false, capInsets);
     },
 
