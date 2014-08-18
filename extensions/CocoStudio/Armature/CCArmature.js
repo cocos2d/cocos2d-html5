@@ -133,7 +133,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
             this._animation.setAnimationData(animationData);
         }
         if (cc.renderContextType === cc.WEBGL) {
-            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR));
+            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
         }
 
         this.setCascadeOpacityEnabled(true);
@@ -290,9 +290,19 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
         for (var i = 0; i < locTopBoneList.length; i++) {
             locTopBoneList[i].update(dt);
         }
+        if (cc.renderContextType === cc.WEBGL) {
+            var locChildren = this._children;
+            for (var j = 0, len = locChildren.length; j < len; j++) {
+                var selBone = locChildren[j];
+                if (selBone) {
+                    var node = selBone.getDisplayManager().getDisplayRenderNode();
+                    if (node && this._shaderProgram)
+                        node.setShaderProgram(this._shaderProgram);
+                }
+            }
+        }
         this._armatureTransformDirty = false;
     },
-
 
     nodeToParentTransform: null,
 
@@ -424,7 +434,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
 
             // if ignore anchorPoint
             if (this._ignoreAnchorPointForPosition) {
-                t.tx += appX
+                t.tx += appX;
                 t.ty += appY;
             }
 
@@ -479,8 +489,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
                     maxy = cc.rectGetMaxY(r);
 
                     first = false;
-                }
-                else {
+                } else {
                     minx = cc.rectGetMinX(r) < cc.rectGetMinX(boundingBox) ? cc.rectGetMinX(r) : cc.rectGetMinX(boundingBox);
                     miny = cc.rectGetMinY(r) < cc.rectGetMinY(boundingBox) ? cc.rectGetMinY(r) : cc.rectGetMinY(boundingBox);
                     maxx = cc.rectGetMaxX(r) > cc.rectGetMaxX(boundingBox) ? cc.rectGetMaxX(r) : cc.rectGetMaxX(boundingBox);
