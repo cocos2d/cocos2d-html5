@@ -290,14 +290,16 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
         for (var i = 0; i < locTopBoneList.length; i++) {
             locTopBoneList[i].update(dt);
         }
-        if (cc.renderContextType === cc.WEBGL) {
+        if (cc.renderContextType === cc.WEBGL && this._shaderProgram) {
             var locChildren = this._children;
             for (var j = 0, len = locChildren.length; j < len; j++) {
                 var selBone = locChildren[j];
-                if (selBone) {
+                if (selBone && selBone.getDisplayManager && selBone.getDisplayManager()) {
                     var node = selBone.getDisplayManager().getDisplayRenderNode();
-                    if (node && this._shaderProgram)
+                    if (node)
                         node.setShaderProgram(this._shaderProgram);
+                }else if(selBone instanceof cc.Node){
+                        selBone.setShaderProgram(this._shaderProgram);
                 }
             }
         }
