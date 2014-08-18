@@ -121,7 +121,6 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         return cc.AffineTransformConcat(this._transform, this._bone.getArmature().nodeToWorldTransform());
     },
 
-
     nodeToWorldTransformAR: function () {
         var displayTransform = this._transform;
         var anchorPoint = this._anchorPointInPoints;
