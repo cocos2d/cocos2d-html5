@@ -361,7 +361,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         var alphaPremultiplied = cc.BlendFunc.ALPHA_PREMULTIPLIED, alphaNonPremultipled = cc.BlendFunc.ALPHA_NON_PREMULTIPLIED;
         for (var i = 0, len = locChildren.length; i< len; i++) {
             var selBone = locChildren[i];
-            if (selBone) {
+            if (selBone && selBone.getDisplayRenderNode) {
                 var node = selBone.getDisplayRenderNode();
 
                 if (null == node)
@@ -400,6 +400,8 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
                         break;
                 }
             } else if(selBone instanceof cc.Node) {
+                if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+                    selBone.setShaderProgram(this._shaderProgram);
                 selBone.visit(ctx);
                 //            CC_NODE_DRAW_SETUP();
             }
