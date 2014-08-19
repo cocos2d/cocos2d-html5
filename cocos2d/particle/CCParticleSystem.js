@@ -1601,7 +1601,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 // Try to get the texture from the cache
                 var textureName = locValueForKey("textureFileName", dictionary);
                 var imgPath = cc.path.changeBasename(this._plistFile, textureName);
-                var tex = cc.textureCache.textureForKey(imgPath);
+                var tex = cc.textureCache.getTextureForKey(imgPath);
 
                 if (tex) {
                     this.setTexture(tex);
@@ -1638,7 +1638,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
                         cc.textureCache.cacheImage(imgPath, canvasObj);
 
-                        var addTexture = cc.textureCache.textureForKey(imgPath);
+                        var addTexture = cc.textureCache.getTextureForKey(imgPath);
                         if(!addTexture)
                             cc.log("cc.ParticleSystem.initWithDictionary() : error loading the texture");
                         this.setTexture(addTexture);
