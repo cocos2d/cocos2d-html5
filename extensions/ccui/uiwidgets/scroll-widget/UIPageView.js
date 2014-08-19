@@ -418,8 +418,12 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         var touchPoint = touch.getLocation();
         switch (handleState) {
             case ccui.Widget.TOUCH_BEGAN:
+                this._touchBeganPosition.x = touchPoint.x;
+                this._touchBeganPosition.y = touchPoint.y;
                 break;
             case ccui.Widget.TOUCH_MOVED:
+                this._touchMovePosition.x = touchPoint.x;
+                this._touchMovePosition.y = touchPoint.y;
                 var offset = 0;
                 offset = Math.abs(sender.getTouchBeganPosition().x - touchPoint.x);
                 if (offset > this._childFocusCancelOffset) {
@@ -428,6 +432,8 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
                 }
                 break;
             case ccui.Widget.TOUCH_ENDED:
+                this._touchEndPosition.x = touchPoint.x;
+                this._touchEndPosition.y = touchPoint.y;
             case ccui.Widget.TOUCH_CANCELED:
                 this._handleReleaseLogic(touch);
                 break;
