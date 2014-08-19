@@ -190,6 +190,7 @@ cc._LogInfos = {
 
     textureCache_addPVRTCImage: "TextureCache:addPVRTCImage does not support on HTML5",
     textureCache_addETCImage: "TextureCache:addPVRTCImage does not support on HTML5",
+    textureCache_textureForKey: "textureForKey is deprecated. Please use getTextureForKey instead.",
     textureCache_addPVRImage: "addPVRImage does not support on HTML5",
     textureCache_addUIImage: "cocos2d: Couldn't add UIImage in TextureCache",
     textureCache_dumpCachedTextureInfo: "cocos2d: '%s' id=%s %s x %s",
