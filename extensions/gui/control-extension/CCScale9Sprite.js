@@ -309,16 +309,17 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             if (selChild){
                 cc.Node.prototype.updateDisplayedColor.call(selChild, parentColor);
 
-                if(
-                    cc._renderType === cc._RENDER_TYPE_CANVAS && (
-                    parentColor.r !== 255 ||
-                    parentColor.g !== 255 ||
-                    parentColor.b !== 255
-
-                    )
+                if(cc._renderType === cc._RENDER_TYPE_CANVAS){
+                    if(
+                        parentColor.r !== 255 ||
+                        parentColor.g !== 255 ||
+                        parentColor.b !== 255
                     ){
-                    selChild._changeTextureColor();
-                    selChild._setNodeDirtyForCache();
+                        selChild._changeTextureColor();
+                        selChild._setNodeDirtyForCache();
+                    }
+                }else{
+                    selChild.updateDisplayedColor(parentColor);
                 }
             }
         }
