@@ -307,18 +307,18 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         for (var i = 0; i < scaleChildren.length; i++) {
             var selChild = scaleChildren[i];
             if (selChild){
-                cc.Node.prototype.updateDisplayedColor.call(selChild, parentColor);
-
-                if(
-                    cc._renderType === cc._RENDER_TYPE_CANVAS && (
-                    parentColor.r !== 255 ||
-                    parentColor.g !== 255 ||
-                    parentColor.b !== 255
-
-                    )
+                if(cc._renderType === cc._RENDER_TYPE_CANVAS){
+                    cc.Node.prototype.updateDisplayedColor.call(selChild, parentColor);
+                    if(
+                        parentColor.r !== 255 ||
+                        parentColor.g !== 255 ||
+                        parentColor.b !== 255
                     ){
-                    selChild._changeTextureColor();
-                    selChild._setNodeDirtyForCache();
+                        selChild._changeTextureColor();
+                        selChild._setNodeDirtyForCache();
+                    }
+                }else{
+                    selChild.updateDisplayedColor(parentColor);
                 }
             }
         }
