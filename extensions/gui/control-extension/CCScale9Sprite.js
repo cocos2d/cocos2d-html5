@@ -487,7 +487,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         if(!file)
             throw "cc.Scale9Sprite.initWithFile(): file should be non-null";
 
-        var texture = cc.textureCache.textureForKey(file);
+        var texture = cc.textureCache.getTextureForKey(file);
         if (!texture) {
             texture = cc.textureCache.addImage(file);
         }

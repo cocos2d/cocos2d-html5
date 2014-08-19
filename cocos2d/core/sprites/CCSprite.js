@@ -861,7 +861,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     initWithFile:function (filename, rect) {
         cc.assert(filename, cc._LogInfos.Sprite_initWithFile);
 
-        var tex = cc.textureCache.textureForKey(filename);
+        var tex = cc.textureCache.getTextureForKey(filename);
         if (!tex) {
             tex = cc.textureCache.addImage(filename);
             return this.initWithTexture(tex, rect || cc.rect(0, 0, tex._contentSize.width, tex._contentSize.height));
