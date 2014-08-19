@@ -393,7 +393,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         depthValue = depthValue || gl.COLOR_BUFFER_BIT;
         stencilValue = stencilValue || (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        this._beginWithClear(r / 255, g / 255, b / 255, a / 255, depthValue, stencilValue, (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT));
+        this._beginWithClear(r , g , b , a , depthValue, stencilValue, (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT));
     },
 
     _beginWithClear: null,
@@ -417,6 +417,11 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     _beginWithClearForWebGL: function (r, g, b, a, depthValue, stencilValue, flags) {
+        r = r / 255;
+        g = g / 255;
+        b = b / 255;
+        a = a / 255;
+
         this.begin();
 
         var gl = cc._renderContext;

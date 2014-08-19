@@ -226,6 +226,21 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
     return nCanvas;
 };
 
+cc._getCompositeOperationByBlendFunc = function(blendFunc){
+    if(!blendFunc)
+        return "source";
+    else{
+        if(( blendFunc.src == cc.SRC_ALPHA && blendFunc.dst == cc.ONE) || (blendFunc.src == cc.ONE && blendFunc.dst == cc.ONE))
+            return "lighter";
+        else if(blendFunc.src == cc.ZERO && blendFunc.dst == cc.SRC_ALPHA)
+            return "destination-in";
+        else if(blendFunc.src == cc.ZERO && blendFunc.dst == cc.ONE_MINUS_SRC_ALPHA)
+            return "destination-out";
+        else
+            return "source";
+    }
+};
+
 /**
  * <p>cc.Sprite is a 2d image ( http://en.wikipedia.org/wiki/Sprite_(computer_graphics) )  <br/>
  *
@@ -756,14 +771,14 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         return this._texture;
     },
 
-    _quad:null, // vertex coords, texture coords and color info
-    _quadWebBuffer:null,
-    _quadDirty:false,
-    _colorized:false,
-    _isLighterMode:false,
-    _originalTexture:null,
-    _textureRect_Canvas:null,
-    _drawSize_Canvas:null,
+    _quad: null, // vertex coords, texture coords and color info
+    _quadWebBuffer: null,
+    _quadDirty: false,
+    _colorized: false,
+    _blendFuncStr: "source",
+    _originalTexture: null,
+    _textureRect_Canvas: null,
+    _drawSize_Canvas: null,
 
     /**
      * Constructor
@@ -846,7 +861,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     initWithFile:function (filename, rect) {
         cc.assert(filename, cc._LogInfos.Sprite_initWithFile);
 
-        var tex = cc.textureCache.textureForKey(filename);
+        var tex = cc.textureCache.getTextureForKey(filename);
         if (!tex) {
             tex = cc.textureCache.addImage(filename);
             return this.initWithTexture(tex, rect || cc.rect(0, 0, tex._contentSize.width, tex._contentSize.height));
@@ -1235,7 +1250,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p.setBlendFunc = function (src, dst) {
-        var locBlendFunc = this._blendFunc;
+        var _t = this, locBlendFunc = this._blendFunc;
         if (dst === undefined) {
             locBlendFunc.src = src.src;
             locBlendFunc.dst = src.dst;
@@ -1243,8 +1258,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             locBlendFunc.src = src;
             locBlendFunc.dst = dst;
         }
-        this._isLighterMode = (locBlendFunc &&
-            (( locBlendFunc.src == cc.SRC_ALPHA && locBlendFunc.dst == cc.ONE) || (locBlendFunc.src == cc.ONE && locBlendFunc.dst == cc.ONE)));
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
+            _t._blendFuncStr = cc._getCompositeOperationByBlendFunc(locBlendFunc);
     };
 
     _p.init = function () {
@@ -1329,7 +1344,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 _t._rect.width = rect.width;
                 _t._rect.height = rect.height;
             }
+            if(_t.texture)
+                _t.texture.removeLoadedEventListener(_t);
             texture.addLoadedEventListener(_t._textureLoadedCallback, _t);
+            _t.texture = texture;
             return true;
         }
 
@@ -1580,8 +1598,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             return;
 
         var context = ctx || cc._renderContext;
-        if (_t._isLighterMode)
-            context.globalCompositeOperation = 'lighter';
+        if (_t._blendFuncStr != "source")
+            context.globalCompositeOperation = _t._blendFuncStr;
 
         var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
 

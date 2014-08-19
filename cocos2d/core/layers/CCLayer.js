@@ -277,7 +277,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._updateColor();
     },
 
-    _isLighterMode: false,
+    _blendFuncStr: "source",
     /**
      * Constructor of cc.LayerColor
      * @function
@@ -327,13 +327,16 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {Number} dst
      */
     setBlendFunc: function (src, dst) {
-        var _t = this;
-        if (dst === undefined)
-            _t._blendFunc = src;
-        else
-            _t._blendFunc = {src: src, dst: dst};
+        var _t = this, locBlendFunc = this._blendFunc;
+        if (dst === undefined) {
+            locBlendFunc.src = src.src;
+            locBlendFunc.dst = src.dst;
+        } else {
+            locBlendFunc.src = src;
+            locBlendFunc.dst = dst;
+        }
         if (cc._renderType === cc._RENDER_TYPE_CANVAS)
-            _t._isLighterMode = (_t._blendFunc && (_t._blendFunc.src == 1) && (_t._blendFunc.dst == 771));
+            _t._blendFuncStr = cc._getCompositeOperationByBlendFunc(locBlendFunc);
     },
 
     _setWidth: null,
@@ -748,8 +751,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     var _p = cc.LayerGradient.prototype;
     _p.draw = function (ctx) {
         var context = ctx || cc._renderContext, _t = this;
-        if (_t._isLighterMode)
-            context.globalCompositeOperation = 'lighter';
+        if (_t._blendFuncStr != "source")
+            context.globalCompositeOperation = _t._blendFuncStr;
 
         context.save();
         var opacityf = _t._displayedOpacity / 255.0;

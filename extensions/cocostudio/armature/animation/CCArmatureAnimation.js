@@ -181,7 +181,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
             var bone = dict[key];
             bone.getTween().setProcessScale(this._processScale);
             if (bone.getChildArmature())
-                bone.getChildArmature().getAnimation().setProcessScale(this._processScale);
+                bone.getChildArmature().getAnimation().setSpeedScale(this._processScale);
         }
     },
 
@@ -252,7 +252,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
                 tween.setProcessScale(this._processScale);
 
                 if (bone.getChildArmature())
-                    bone.getChildArmature().getAnimation().setProcessScale(this._processScale);
+                    bone.getChildArmature().getAnimation().setSpeedScale(this._processScale);
             } else {
                 if(!bone.isIgnoreMovementBoneData()){
                     //! this bone is not include in this movement, so hide it

@@ -490,8 +490,11 @@ cc.DOM.parentDOM = function (x) {
 };
 
 cc.DOM._createEGLViewDiv = function(p){
-    var eglViewDiv = cc.$new("div");
-    eglViewDiv.id = "EGLViewDiv";
+    var eglViewDiv = cc.$("#EGLViewDiv");
+    if(!eglViewDiv){
+        eglViewDiv = cc.$new("div");
+        eglViewDiv.id = "EGLViewDiv";
+    }
 
     var eglViewer = cc.view;
     var designSize = eglViewer.getDesignResolutionSize();

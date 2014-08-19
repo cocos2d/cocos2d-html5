@@ -61,7 +61,8 @@ cc.pool = /** @lends cc.pool# */{
             if (!this._pool[pid]) {
                 this._pool[pid] = [];
             }
-            obj.unuse();
+            if(obj.unuse)
+                obj.unuse();    //define by user.   use to initialize the state of objects.
             obj.retain();//use for jsb
             this._pool[pid].push(obj);
         }
@@ -75,10 +76,7 @@ cc.pool = /** @lends cc.pool# */{
     hasObj: function (objClass) {
         var pid = objClass.prototype.__pid;
         var list = this._pool[pid];
-        if (!list || list.length == 0) {
-            return false;
-        }
-        return true;
+        return (list && list.length > 0);
     },
 
     /**
@@ -92,7 +90,7 @@ cc.pool = /** @lends cc.pool# */{
             if (list) {
                 for (var i = 0; i < list.length; i++) {
                     if (obj === list[i]) {
-                        obj.release()//use for jsb
+                        obj.release();          //use for jsb
                         list.splice(i, 1);
                     }
                 }
@@ -112,7 +110,8 @@ cc.pool = /** @lends cc.pool# */{
             var args = Array.prototype.slice.call(arguments);
             args.shift();
             var obj = list.pop();
-            obj.reuse.apply(obj, args);
+            if(obj.reuse)
+                obj.reuse.apply(obj, args);       //define by user.
             return obj;
         }
     },
@@ -121,10 +120,12 @@ cc.pool = /** @lends cc.pool# */{
      *  remove all objs in pool and reset the pool
      */
     drainAllPools: function () {
-        for (var i in this._pool) {
-            for (var j = 0; j < this._pool[i].length; j++) {
-                var obj = this._pool[i][j];
-                obj.release()
+        var locPool = this._pool;
+        for (var selKey in locPool) {
+            for (var j = 0; j < locPool[selKey].length; j++) {
+                var obj = locPool[selKey][j];
+                if(obj && obj.release)
+                    obj.release()
             }
         }
         this._pool = {};
