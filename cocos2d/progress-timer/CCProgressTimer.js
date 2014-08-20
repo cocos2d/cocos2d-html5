@@ -469,7 +469,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         //draw sprite
         if (locSprite._texture && locTextureCoord.validRect) {
             var image = locSprite._texture.getHtmlElementObj();
-            if (this._colorized) {
+            if (locSprite._colorized) {
                 context.drawImage(image,
                     0, 0, locTextureCoord.width, locTextureCoord.height,
                     flipXOffset, flipYOffset, locDrawSizeCanvas.width, locDrawSizeCanvas.height);
