@@ -62,6 +62,13 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     _bottom: null,
     _bottomRight: null,
 
+    //cache in canvas on Canvas mode
+    _cacheSprite: null,
+    _cacheCanvas: null,
+    _cacheContext: null,
+    _cacheTexture: null,
+    _scale9Dirty: true,
+
     _opacityModifyRGB: false,
 
     _originalSize: null,
@@ -149,17 +156,17 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         var leftWidth = locBottomLeftContentSize.width;
         var bottomHeight = locBottomLeftContentSize.height;
 
-        if(cc._renderType == cc._RENDER_TYPE_WEBGL){
+        if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
             //browser is in canvas mode, need to manually control rounding to prevent overlapping pixels
             var roundedRescaledWidth = Math.round(rescaledWidth);
-            if(rescaledWidth != roundedRescaledWidth) {
+            if (rescaledWidth != roundedRescaledWidth) {
                 rescaledWidth = roundedRescaledWidth;
-                horizontalScale = rescaledWidth/locCenterContentSize.width;
+                horizontalScale = rescaledWidth / locCenterContentSize.width;
             }
             var roundedRescaledHeight = Math.round(rescaledHeight);
-            if(rescaledHeight != roundedRescaledHeight) {
+            if (rescaledHeight != roundedRescaledHeight) {
                 rescaledHeight = roundedRescaledHeight;
-                verticalScale = rescaledHeight/locCenterContentSize.height;
+                verticalScale = rescaledHeight / locCenterContentSize.height;
             }
         }
 
@@ -180,22 +187,45 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
         // Position corners
         locBottomLeft.setPosition(0, 0);
-        locBottomRight.setPosition( (leftWidth + rescaledWidth) + 0.5 | 0, 0);
-        locTopLeft.setPosition(0, (bottomHeight + rescaledHeight) + 0.5 | 0);
-        locTopRight.setPosition( (leftWidth + rescaledWidth) + 0.5 | 0, (bottomHeight + rescaledHeight) + 0.5 | 0);
+        locBottomRight.setPosition(leftWidth + rescaledWidth, 0);
+        locTopLeft.setPosition(0, bottomHeight + rescaledHeight);
+        locTopRight.setPosition(leftWidth + rescaledWidth, bottomHeight + rescaledHeight);
 
         // Scale and position borders
-        locLeft.setPosition(0, (bottomHeight) + 0.5 | 0);
+        locLeft.setPosition(0, bottomHeight);
         locLeft.setScaleY(verticalScale);
-        locRight.setPosition( (leftWidth + rescaledWidth) + 0.5 | 0, (bottomHeight) + 0.5 | 0);
+        locRight.setPosition(leftWidth + rescaledWidth, bottomHeight);
         locRight.setScaleY(verticalScale);
-        locBottom.setPosition( (leftWidth) + 0.5 | 0, 0);
+        locBottom.setPosition(leftWidth, 0);
         locBottom.setScaleX(horizontalScale);
-        locTop.setPosition( (leftWidth) + 0.5 | 0, (bottomHeight + rescaledHeight) + 0.5 | 0);
+        locTop.setPosition(leftWidth, bottomHeight + rescaledHeight);
         locTop.setScaleX(horizontalScale);
 
         // Position centre
-        locCenter.setPosition( (leftWidth) + 0.5 | 0, (bottomHeight) + 0.5 | 0);
+        locCenter.setPosition(leftWidth, bottomHeight);
+    },
+
+    _cacheScale9Sprite: function(){
+        var size = this._contentSize, locCanvas = this._cacheCanvas;
+        var contentSizeChanged = false;
+        if(locCanvas.width != size.width || locCanvas.height != size.height){
+            locCanvas.width = size.width;
+            locCanvas.height = size.height;
+            this._cacheContext.translate(0, size.height);
+            contentSizeChanged = true;
+        }
+
+        //cc._renderContext = this._cacheContext;
+        cc.view._setScaleXYForRenderTexture();
+        this._scale9Image.visit(this._cacheContext);
+        //cc._renderContext = cc._mainRenderContextBackup;
+        cc.view._resetScale();
+
+        if(contentSizeChanged)
+            this._cacheSprite.setTextureRect(cc.rect(0,0, size.width, size.height));
+
+        if(!this._cacheSprite.getParent())
+            this.addChild(this._cacheSprite);
     },
 
     /**
@@ -214,6 +244,20 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         this._preferredSize = cc.size(0, 0);
         this._capInsets = cc.rect(0, 0, 0, 0);
         this._loadedEventListeners = [];
+
+        //cache
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
+            var locCacheCanvas = this._cacheCanvas = cc.newElement('canvas');
+            locCacheCanvas.width = 1;
+            locCacheCanvas.height = 1;
+            this._cacheContext = locCacheCanvas.getContext("2d");
+            var locTexture = this._cacheTexture = new cc.Texture2D();
+            locTexture.initWithElement(locCacheCanvas);
+            locTexture.handleLoadedTexture();
+            this._cacheSprite = new cc.Sprite(locTexture);
+            this._cacheSprite.setAnchorPoint(0,0);
+            this.addChild(this._cacheSprite);
+        }
 
         if(file != undefined){
             if(file instanceof cc.SpriteFrame)
@@ -269,6 +313,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             if (selChild)
                 selChild.setOpacity(opacity);
         }
+        this._scale9Dirty = true;
     },
 
     updateDisplayedOpacity: function(parentOpacity){
@@ -282,6 +327,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             if (selChild)
                 selChild.updateDisplayedOpacity(parentOpacity);
         }
+        this._scale9Dirty = true;
     },
 
     /** Color: conforms to CCRGBAProtocol protocol */
@@ -296,6 +342,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             if (selChild)
                 selChild.setColor(color);
         }
+        this._scale9Dirty = true;
     },
 
     updateDisplayedColor: function(parentColor){
@@ -322,6 +369,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
                 }
             }
         }
+        this._scale9Dirty = true;
     },
 
     getCapInsets: function () {
@@ -431,6 +479,11 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         if (this._positionsAreDirty) {
             this._updatePositions();
             this._positionsAreDirty = false;
+            this._scale9Dirty = true;
+        }
+        if(this._scale9Dirty && cc._renderType === cc._RENDER_TYPE_CANVAS){
+            this._scale9Dirty = false;
+            this._cacheScale9Sprite();
         }
         cc.Node.prototype.visit.call(this, ctx);
     },
@@ -514,7 +567,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
      * Initializes a 9-slice sprite with an sprite frame and with the specified
      * cap insets.
      * Once the sprite is created, you can then call its "setContentSize:" method
-     * to resize the sprite will all it's 9-slice goodness intract.
+     * to resize the sprite will all it's 9-slice goodness interact.
      * It respects the anchorPoint too.
      *
      * @param spriteFrame The sprite frame object.
@@ -547,7 +600,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
      * Initializes a 9-slice sprite with an sprite frame name and with the specified
      * cap insets.
      * Once the sprite is created, you can then call its "setContentSize:" method
-     * to resize the sprite will all it's 9-slice goodness intract.
+     * to resize the sprite will all it's 9-slice goodness interact.
      * It respects the anchorPoint too.
      *
      * @param spriteFrameName The sprite frame name.
@@ -607,7 +660,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     /**
-     *
+     * Update the scale9Sprite with a SpriteBatchNode.
      * @param {cc.SpriteBatchNode} batchNode
      * @param {cc.Rect} originalRect
      * @param {boolean} rotated
@@ -906,7 +959,8 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         }
 
         this.setContentSize(rect.width, rect.height);
-        this.addChild(locScale9Image);
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+            this.addChild(locScale9Image);
 
         if (this._spritesGenerated) {
             // Restore color and opacity
