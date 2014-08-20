@@ -145,7 +145,7 @@
             else {
                 cc.log("PhysicsSprite body or PTIMRatio was not set");
             }
-            this._super();
+            this._super_visit();
         },
         setIgnoreBodyRotation: function(b) {
             this._ignoreBodyRotation = b;

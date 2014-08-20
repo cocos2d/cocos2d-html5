@@ -314,7 +314,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         for (var i = 0; i < selChildren.length; i++) {
             selChildren[i].pause();
         }
-        this._super();
+        this._super_pause();
     },
 
     /**
@@ -326,7 +326,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
             selChildren[i].resume();
         }
         this._container.resume();
-        this._super();
+        this._super_resume();
     },
 
     isDragging:function () {

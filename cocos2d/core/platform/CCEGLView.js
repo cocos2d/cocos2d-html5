@@ -790,24 +790,24 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
 
     var EqualToWindow = EqualToFrame.extend({
         preApply: function (view) {
-	        this._super(view);
+	        this._super_preApply(view);
             view._frame = document.documentElement;
         },
 
         apply: function (view) {
-            this._super(view);
+            this._super_apply(view);
             this._fixContainer();
         }
     });
 
     var ProportionalToWindow = ProportionalToFrame.extend({
         preApply: function (view) {
-	        this._super(view);
+	        this._super_preApply(view);
             view._frame = document.documentElement;
         },
 
         apply: function (view, designedResolution) {
-            this._super(view, designedResolution);
+            this._super_apply(view, designedResolution);
             this._fixContainer();
         }
     });

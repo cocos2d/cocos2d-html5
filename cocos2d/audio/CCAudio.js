@@ -716,7 +716,7 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
 
         _playMusic: function (audio) {
             this._stopAllEffects();
-            this._super(audio);
+            this._super__playMusic(audio);
         },
 
         resumeMusic: function () {
@@ -725,7 +725,7 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
                 self._stopAllEffects();
                 self._needToResumeMusic = false;
                 self._expendTime4Music = 0;
-                self._super();
+                self._super_resumeMusic();
             }
         },
 
