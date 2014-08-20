@@ -177,13 +177,12 @@ plugin.extend('facebook', {
                 if (response) {
                     if(response['post_id'])
                         typeof callback === 'function' && callback(0, {
-                            didComplete: 1,
+                            didComplete: true,
                             post_id: response['post_id']
                         });
                     else
-                        typeof callback === 'function' && callback(0, {
-                            didComplete: 0,
-                            post_id: undefined
+                        typeof callback === 'function' && callback(response.error_code || 1, {
+                            error_message: "Unknown"
                         });
                 } else {
                     typeof callback === 'function' && callback(1, {
@@ -264,7 +263,7 @@ plugin.extend('facebook', {
                 if (response) {
                     if(response['post_id'])
                         typeof callback === 'function' && callback(0, {
-                            didComplete: 1,
+                            didComplete: true,
                             post_id: response['post_id']
                         });
                     else
