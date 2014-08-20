@@ -2118,10 +2118,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
                     // color
                     if (!this._dontTint || cc._renderType === cc._RENDER_TYPE_WEBGL) {
-                        selParticle.color.r += 0|(selParticle.deltaColor.r * dt);
-                        selParticle.color.g += 0|(selParticle.deltaColor.g * dt);
-                        selParticle.color.b += 0|(selParticle.deltaColor.b * dt);
-                        selParticle.color.a += 0|(selParticle.deltaColor.a * dt);
+                        selParticle.color.r += selParticle.deltaColor.r * dt;
+                        selParticle.color.g += selParticle.deltaColor.g * dt;
+                        selParticle.color.b += selParticle.deltaColor.b * dt;
+                        selParticle.color.a += selParticle.deltaColor.a * dt;
                         selParticle.isChangeColor = true;
                     }
 
@@ -2448,9 +2448,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     _changeTextureColor: function(element, color, rect){
-        color.r = 0|color.r;
-        color.g = 0|color.g;
-        color.b = 0|color.b;
         if (!element.tintCache) {
             element.tintCache = document.createElement('canvas');
             element.tintCache.width = element.width;
