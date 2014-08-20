@@ -44,7 +44,7 @@ cc.generateTintImageWithMultiply = function(image, color, rect, renderCanvas){
         context.globalCompositeOperation = "source-over";
     }
 
-    context.fillStyle = "rgb(" + color.r + "," + color.g + "," + color.b + ")";
+    context.fillStyle = "rgb(" + (0|color.r) + "," + (0|color.g) + "," + (0|color.b) + ")";
     context.fillRect(0, 0, rect.width, rect.height);
     context.globalCompositeOperation = "multiply";
     context.drawImage(image,
