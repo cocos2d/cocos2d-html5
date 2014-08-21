@@ -114,9 +114,9 @@ var ClassManager = {
         for(var idx = 0, li = arguments.length; idx < li; ++idx) {
             var prop = arguments[idx];
             desc.value = function(){
-                console.log("`_super(..)` has been deprecated, use `_super_METHOD_NAME(..)` instead.");
                 for(name in prop){
                     if(prop[name] === this._super.caller){
+                        console.log('`this._super(..)` has been deprecated, use `this._super_' + name + '(..)` instead.');
                         return _super[name].apply(this, arguments);
                     }
                 }
