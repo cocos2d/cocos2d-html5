@@ -201,7 +201,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         this._scale9Enabled = enabled;
         this.removeProtectedChild(this._barRenderer);
 
-        this._barRenderer = this._scale9Enabled ? cc.Scale9Sprite.create() : cc.Sprite.create();
+        this._barRenderer = this._scale9Enabled ? new ccui.Scale9Sprite() : cc.Sprite.create();
 
         this.loadTexture(this._textureFile, this._renderBarTexType);
         this.addProtectedChild(this._barRenderer, ccui.LoadingBar.RENDERER_ZORDER, -1);
