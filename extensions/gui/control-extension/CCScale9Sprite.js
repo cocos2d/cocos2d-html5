@@ -278,12 +278,12 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
     /** Original sprite's size. */
     getOriginalSize: function () {
-        return this._originalSize;
+        return cc.size(this._originalSize);
     },
 
     //if the preferredSize component is given as -1, it is ignored
     getPreferredSize: function () {
-        return this._preferredSize;
+        return cc.size(this._preferredSize);
     },
     _getPreferredWidth: function () {
         return this._preferredSize.width;
@@ -375,7 +375,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     getCapInsets: function () {
-        return this._capInsets;
+        return cc.rect(this._capInsets);
     },
 
     setCapInsets: function (capInsets) {
