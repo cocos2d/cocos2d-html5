@@ -206,6 +206,8 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     _cacheScale9Sprite: function(){
+        if(!this._scale9Image)
+            return;
         var size = this._contentSize, locCanvas = this._cacheCanvas;
         var contentSizeChanged = false;
         if(locCanvas.width != size.width || locCanvas.height != size.height){
