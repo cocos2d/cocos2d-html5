@@ -140,9 +140,9 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this.removeProtectedChild(this._buttonDisableRenderer);
 
         if (this._scale9Enabled) {
-            this._buttonNormalRenderer = cc.Scale9Sprite.create();
-            this._buttonClickedRenderer = cc.Scale9Sprite.create();
-            this._buttonDisableRenderer = cc.Scale9Sprite.create();
+            this._buttonNormalRenderer = new ccui.Scale9Sprite();
+            this._buttonClickedRenderer = new ccui.Scale9Sprite();
+            this._buttonDisableRenderer = new ccui.Scale9Sprite();
         } else {
             this._buttonNormalRenderer = cc.Sprite.create();
             this._buttonClickedRenderer = cc.Sprite.create();

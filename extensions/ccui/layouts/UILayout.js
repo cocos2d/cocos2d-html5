@@ -667,7 +667,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._clippingRectDirty = true;
         if (this._backGroundImage) {
             this._backGroundImage.setPosition(locContentSize.width * 0.5, locContentSize.height * 0.5);
-            if (this._backGroundScale9Enabled && this._backGroundImage instanceof cc.Scale9Sprite)
+            if (this._backGroundScale9Enabled && this._backGroundImage instanceof ccui.Scale9Sprite)
                 this._backGroundImage.setPreferredSize(locContentSize);
         }
         if (this._colorRender)
@@ -805,7 +805,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      */
     _addBackGroundImage: function () {
         if (this._backGroundScale9Enabled) {
-            this._backGroundImage = cc.Scale9Sprite.create();
+            this._backGroundImage = ccui.Scale9Sprite.create();
             this._backGroundImage.setPreferredSize(this._contentSize);
         } else
             this._backGroundImage = cc.Sprite.create();
