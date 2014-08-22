@@ -288,11 +288,12 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             this._depthRenderBuffer = gl.createRenderbuffer();
             gl.bindRenderbuffer(gl.RENDERBUFFER, this._depthRenderBuffer);
             gl.renderbufferStorage(gl.RENDERBUFFER, depthStencilFormat, powW, powH);
-            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
-
-            // if depth format is the one with stencil part, bind same render buffer as stencil attachment
-            //if (depthStencilFormat == gl.DEPTH24_STENCIL8)
-            //    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
+            if(depthStencilFormat == gl.DEPTH_STENCIL)
+                gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
+            else if(depthStencilFormat == gl.STENCIL_INDEX || depthStencilFormat == gl.STENCIL_INDEX8)
+                gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
+            else if(depthStencilFormat == gl.DEPTH_COMPONENT16)
+                gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
         }
 
         // check if it worked (probably worth doing :) )

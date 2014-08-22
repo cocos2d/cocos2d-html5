@@ -164,6 +164,7 @@
                 <file name="extensions/editbox/CCEditBox.js"/>
                 <file name="extensions/ccui/system/CocosGUI.js"/>
                 <file name="extensions/ccui/base-classes/UIWidget.js"/>
+                <file name="extensions/ccui/base-classes/UIScale9Sprite.js"/>
                 <file name="extensions/ccui/layouts/UILayout.js"/>
                 <file name="extensions/ccui/layouts/UILayoutParameter.js"/>
                 <file name="extensions/ccui/layouts/UILayoutManager.js"/>

@@ -169,7 +169,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         this.removeProtectedChild(this._imageRenderer);
         this._imageRenderer = null;
         if (this._scale9Enabled) {
-            this._imageRenderer = cc.Scale9Sprite.create();
+            this._imageRenderer = new ccui.Scale9Sprite();
         } else {
             this._imageRenderer = cc.Sprite.create();
         }

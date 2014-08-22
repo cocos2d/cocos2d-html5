@@ -51,18 +51,18 @@ plugin.extend('facebook', {
     login: function(callback){
         var self = this;
         FB.login(function(response) {
-            if (response.authResponse) {
+            if (response['authResponse']) {
                 //save user info
-                self.userInfo = response.authResponse;
-                typeof callback === 'function' && callback(0, "login success");
+                self.userInfo = response['authResponse'];
+                typeof callback === 'function' && callback(0, {
+                    accessToken: response['authResponse']['accessToken']
+                });
             } else {
-                typeof callback === 'function' && callback(1, "login failed");
+                typeof callback === 'function' && callback(response['error_code'] || 1, {
+                    error_message: "unknown"
+                });
             }
         }, { scope: '' });
-    },
-
-    isLogedIn: function(callback){
-        return this.isLoggedIn(callback);
     },
 
     /**
@@ -72,12 +72,18 @@ plugin.extend('facebook', {
     isLoggedIn: function(callback){
         var self = this;
         FB.getLoginStatus(function(response) {
-            if (response && response.status === 'connected') {
+            if (response && response['status'] === 'connected') {
                 //login - save user info
-                self.userInfo = response.authResponse;
-                typeof callback === 'function' && callback(0, "logged in");
+                self.userInfo = response['authResponse'];
+                typeof callback === 'function' && callback(0, {
+                    isLoggedIn: true,
+                    accessToken: response['authResponse']['accessToken']
+                });
             }else{
-                typeof callback === 'function' && callback(1, "logged out");
+                typeof callback === 'function' && callback(0, {
+                    isLoggedIn: false,
+                    accessToken: ""
+                });
             }
         });
     },
@@ -88,12 +94,14 @@ plugin.extend('facebook', {
     logout: function(callback){
         var self = this;
         FB.logout(function(response) {
-            if(response.authResponse){
+            if(response['authResponse']){
                 // user is now logged out
                 self.userInfo = {};
-                typeof callback === 'function' && callback(0, "logout success");
+                typeof callback === 'function' && callback(0, {});
             }else{
-                typeof callback === 'function' && callback(1, "logout failed");
+                typeof callback === 'function' && callback(response['error_code'] || 1, {
+                    error_message: response['error_message'] || "Unknown"
+                });
             }
         });
     },
@@ -106,13 +114,17 @@ plugin.extend('facebook', {
         var permissionsStr = permissions.join(',');
         var self = this;
         FB.login(function(response){
-            if (response.authResponse) {
-                var permissList = response.authResponse['grantedScopes'].split(",");
+            if (response['authResponse']) {
+                var permissList = response['authResponse']['grantedScopes'].split(",");
                 //save user info
-                self.userInfo = response.authResponse;
-                typeof callback === 'function' && callback(0, JSON.stringify(permissList));
+                self.userInfo = response['authResponse'];
+                typeof callback === 'function' && callback(0, {
+                    permissions: permissList
+                });
             } else {
-                typeof callback === 'function' && callback(1, "request failed");
+                typeof callback === 'function' && callback(response['error_code'] || 1, {
+                    error_message: response['error_message'] || "Unknown"
+                });
             }
         }, {
             scope: permissionsStr,
@@ -133,12 +145,16 @@ plugin.extend('facebook', {
         }else{
             var self = this;
             FB.getLoginStatus(function(response) {
-                if (response && response.status === 'connected') {
+                if (response && response['status'] === 'connected') {
                     //login - save user info
-                    self.userInfo = response.authResponse;
-                    callback(0, response.authResponse.accessToken);
+                    self.userInfo = response['authResponse'];
+                    typeof callback === 'function' && callback(0, {
+                        accessToken: response['authResponse']['accessToken']
+                    });
                 }else{
-                    callback(1, undefined);
+                    typeof callback === 'function' && callback(response['error_code'] || 1, {
+                        error_message: response['error_message'] || "Unknown"
+                    });
                 }
             });
         }
@@ -159,12 +175,19 @@ plugin.extend('facebook', {
             },
             function(response) {
                 if (response) {
-                    if(response.post_id)
-                        typeof callback === 'function' && callback(0, JSON.stringify(response));
+                    if(response['post_id'])
+                        typeof callback === 'function' && callback(0, {
+                            didComplete: true,
+                            post_id: response['post_id']
+                        });
                     else
-                        typeof callback === 'function' && callback(3, JSON.stringify(response));
+                        typeof callback === 'function' && callback(response.error_code || 1, {
+                            error_message: "Unknown"
+                        });
                 } else {
-                    typeof callback === 'function' && callback(4, JSON.stringify(response));
+                    typeof callback === 'function' && callback(1, {
+                        error_message: "Unknown"
+                    });
                 }
             });
     },
@@ -238,12 +261,19 @@ plugin.extend('facebook', {
         FB.ui(info,
             function(response) {
                 if (response) {
-                    if(response.post_id)
-                        typeof callback === 'function' && callback(0, JSON.stringify(response));
+                    if(response['post_id'])
+                        typeof callback === 'function' && callback(0, {
+                            didComplete: true,
+                            post_id: response['post_id']
+                        });
                     else
-                        typeof callback === 'function' && callback(response.error_code, response.error_message);
+                        typeof callback === 'function' && callback(response['error_code'] || 1, {
+                            error_message: response['error_message']
+                        });
                 } else {
-                    typeof callback === 'function' && callback(1, "Unknow error");
+                    typeof callback === 'function' && callback(1, {
+                        error_message:"Unknow error"
+                    });
                 }
             });
     },
@@ -259,7 +289,7 @@ plugin.extend('facebook', {
             if(response.error){
                 callback(response.error.code, JSON.stringify(response))
             }else{
-                callback(0, JSON.stringify(response));
+                callback(0, response);
             }
         });
     },
@@ -277,12 +307,15 @@ plugin.extend('facebook', {
          */
 
         info.method = 'pay';
+        info.action = 'purchaseitem';
 
         FB.ui(info, function(response) {
             if(response.error_code){
-                callback(response.error_code, JSON.stringify(response));
+                callback(response.error_code, {
+                    error_message: response.error_message
+                });
             }else{
-                callback(0, JSON.stringify(response));
+                callback(0, response);
             }
         })
     }

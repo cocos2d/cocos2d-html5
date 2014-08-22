@@ -139,6 +139,7 @@
                 <include name="ccui/system/CocosGUI.js"/>
                 <include name="ccui/base-classes/CCProtectedNode.js"/>
                 <include name="ccui/base-classes/UIWidget.js"/>
+                <include name="ccui/base-classes/UIScale9Sprite.js"/>
                 <include name="ccui/layouts/UILayout.js"/>
                 <include name="ccui/layouts/UILayoutParameter.js"/>
                 <include name="ccui/layouts/UILayoutManager.js"/>
