@@ -265,7 +265,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     },
 
     visit: function(ctx){
-        this._super(ctx);
+        this._super_visit(ctx);
     },
 
     //////////////////////////////////////////////////////////////////////////

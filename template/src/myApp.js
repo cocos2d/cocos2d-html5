@@ -6,7 +6,7 @@ var MyLayer = cc.Layer.extend({
 
         //////////////////////////////
         // 1. super init first
-        this._super();
+        this._super_init();
 
         /////////////////////////////
         // 2. add a menu item with "X" image, which is clicked to quit the program
@@ -49,7 +49,7 @@ var MyLayer = cc.Layer.extend({
 
 var MyScene = cc.Scene.extend({
     onEnter:function () {
-        this._super();
+        this._super_onEnter();
         var layer = new MyLayer();
         this.addChild(layer);
         layer.init();

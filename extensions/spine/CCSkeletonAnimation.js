@@ -144,7 +144,7 @@ sp.SkeletonAnimation = sp.Skeleton.extend({
         atlasFile && this.initWithArgs(skeletonDataFile, atlasFile, scale);
     },
     init: function () {
-        this._super();
+        this._super_init();
         this.setAnimationStateData(new spine.AnimationStateData(this._skeleton.data));
     },
     setAnimationStateData: function (stateData) {
@@ -188,7 +188,7 @@ sp.SkeletonAnimation = sp.Skeleton.extend({
         this._state.clearTrack(trackIndex);
     },
     update: function (dt) {
-        this._super(dt);
+        this._super_update(dt);
 
         dt *= this._timeScale;
         this._state.update(dt);
