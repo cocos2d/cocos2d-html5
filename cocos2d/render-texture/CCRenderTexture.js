@@ -130,6 +130,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      */
     _ctorForCanvas: function (width, height, format, depthStencilFormat) {
         cc.Node.prototype.ctor.call(this);
+        this._cascadeColorEnabled = true;
+        this._cascadeOpacityEnabled = true;
         this._clearColor = cc.color(255, 255, 255, 255);
         this._clearColorStr = "rgba(255,255,255,1)";
 
@@ -158,6 +160,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      */
     _ctorForWebGL: function (width, height, format, depthStencilFormat) {
         cc.Node.prototype.ctor.call(this);
+        this._cascadeColorEnabled = true;
+        this._cascadeOpacityEnabled = true;
         this._clearColor = cc.color(0, 0, 0, 0);
 
         if(width !== undefined && height !== undefined){

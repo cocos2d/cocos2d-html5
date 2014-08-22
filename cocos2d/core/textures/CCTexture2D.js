@@ -167,7 +167,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         /**
          * HTMLElement Object getter
-         * @return {HTMLElement}
+         * @return {HTMLImageElement|HTMLCanvasElement}
          */
         getHtmlElementObj: function () {
             return this._htmlElementObj;

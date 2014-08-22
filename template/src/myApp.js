@@ -102,14 +102,6 @@ var MyLayer = cc.Layer.extend({
         this.sprite.setPosition(size.width / 2, size.height / 2);
         this.sprite.setScale(size.height/this.sprite.getContentSize().height);
         this.addChild(this.sprite, 0);
-
-        var hair = new cc.Sprite("style3.png");
-        hair.setPosition(size.width / 2, size.height / 2);
-        this.addChild(hair, 10);
-
-        //hair.setColor(cc.color.RED);
-
-        window.hair = hair;
     }
 });
 
