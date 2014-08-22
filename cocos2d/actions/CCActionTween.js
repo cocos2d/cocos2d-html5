@@ -25,19 +25,18 @@
  ****************************************************************************/
 
 /**
+ *
  * @class
  * @extends cc.Class
  */
 cc.ActionTweenDelegate = cc.Class.extend(/** @lends cc.ActionTweenDelegate */{
 
     /**
-     * @function
+     * Update Tween Action.
      * @param value
      * @param key
      */
-    updateTweenAction:function(value, key){
-
-    }
+    updateTweenAction:function(value, key){}
 });
 
 /**
@@ -94,8 +93,10 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
         }
         return false;
     },
+
     /**
-     * @param {cc.Node} target
+     * Start this tween with target.
+     * @param {cc.ActionTweenDelegate} target
      */
     startWithTarget:function (target) {
         if(!target || !target.updateTweenAction)
@@ -103,19 +104,30 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         this.delta = this.to - this.from;
     },
+
     /**
-     * @param {Number} dt
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number}  dt
      */
     update:function (dt) {
         this.target.updateTweenAction(this.to - this.delta * (1 - dt), this.key);
     },
+
     /**
+     * returns a reversed action.
      * @return {cc.ActionTween}
      */
     reverse:function () {
-        return cc.actionTween(this.duration, this.key, this.to, this.from);
+        return new cc.ActionTween(this.duration, this.key, this.to, this.from);
     },
 
+    /**
+     * to copy object with deep copy.
+     * returns a clone of action.
+     *
+     * @return {cc.ActionTween}
+     */
     clone:function(){
         var action = new cc.ActionTween();
         action.initWithDuration(this._duration, this.key, this.from, this.to);
@@ -135,11 +147,12 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
 cc.actionTween = function (duration, key, from, to) {
     return new cc.ActionTween(duration, key, from, to);
 };
+
 /**
- * Please use cc.actionTween instead
+ * Please use cc.actionTween instead.
  * Creates an initializes the action with the property name (key), and the from and to parameters.
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.actionTween instead.
  * @param {Number} duration
  * @param {String} key
  * @param {Number} from
