@@ -1422,7 +1422,7 @@ cc._initSys = function (config, CONFIG_KEY) {
         capabilities["opengl"] = true;
     if (docEle['ontouchstart'] !== undefined || nav.msPointerEnabled)
         capabilities["touches"] = true;
-    else if (docEle['onmouseup'] !== undefined)
+    if (docEle['onmouseup'] !== undefined)
         capabilities["mouse"] = true;
     if (docEle['onkeyup'] !== undefined)
         capabilities["keyboard"] = true;
