@@ -141,7 +141,9 @@ plugin.extend('facebook', {
         }
 
         if(this.userInfo.accessToken){
-            callback(0, this.userInfo.accessToken);
+            callback(0, {
+                accessToken: this.userInfo['accessToken']
+            });
         }else{
             var self = this;
             FB.getLoginStatus(function(response) {
@@ -253,7 +255,7 @@ plugin.extend('facebook', {
             info['method'] != 'share_open_graph' &&
             info['method'] != 'share_link' &&
             info['method'] != 'apprequests'
-        ){
+            ){
             cc.log('web is not supported what this it method');
             return;
         }
@@ -267,9 +269,7 @@ plugin.extend('facebook', {
                             post_id: response['post_id']
                         });
                     else
-                        typeof callback === 'function' && callback(response['error_code'] || 1, {
-                            error_message: response['error_message']
-                        });
+                        typeof callback === 'function' && callback(0, response);
                 } else {
                     typeof callback === 'function' && callback(1, {
                         error_message:"Unknow error"
@@ -287,11 +287,33 @@ plugin.extend('facebook', {
     request: function(path, httpmethod, params, callback){
         FB.api(path, httpmethod, params, function(response){
             if(response.error){
-                callback(response.error.code, JSON.stringify(response))
+                callback(response['error']['code'], {
+                    error_message: response['error']['message'] || 'Unknown'
+                })
             }else{
                 callback(0, response);
             }
         });
+    },
+
+    getPermissionList: function(callback){
+        FB.api("/me/permissions", function(response){
+            if(response['data']){
+                var permissionList = [];
+                for(var i=0; i<response['data'].length; i++){
+                    permissionList.push(response['data'][i]['permission']);
+                }
+                typeof callback == 'function' && callback(0, {
+                    permissions: permissionList
+                });
+            }else{
+                if(!response['error'])
+                    response['error'] = {};
+                typeof callback == 'function' && callback(response['error']['code'] || 1, {
+                    error_message: response['error']['message'] || 'Unknown'
+                });
+            }
+        })
     },
 
     destroyInstance: function(){},
@@ -310,9 +332,9 @@ plugin.extend('facebook', {
         info.action = 'purchaseitem';
 
         FB.ui(info, function(response) {
-            if(response.error_code){
-                callback(response.error_code, {
-                    error_message: response.error_message
+            if(response['error_code']){
+                callback(response['error_code'] || 1, {
+                    error_message: response['error_message'] || 'Unknown'
                 });
             }else{
                 callback(0, response);
