@@ -222,7 +222,7 @@ ccs.ActionFrame = ccs.Class.extend(/** @lends ccs.ActionFrame# */{
         }
     },
     setEasingType: function(easingType){
-        this._easingType = easingType;
+        this.easingType = easingType;
     }
 });
 
