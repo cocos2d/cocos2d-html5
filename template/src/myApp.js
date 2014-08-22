@@ -1,3 +1,61 @@
+cc.Sprite.prototype.setBorder = function(cr, cg, cb, ca , r, f){
+    var _dfc = cc.color.WHITE;
+    r = r || (arguments.length == 2 ? cg : 5);
+    f = f || 1;//精细度
+    switch (arguments.length){
+        case 0: cr = _dfc.r; cg = _dfc.g; cb = _dfc.b; ca = _dfc.a; break;
+        case 1:
+        case 2: cg = cr.g; cb = cr.b; ca = cr.a; cr = cr.r; break;
+        case 3: ca = _dfc.a; break;
+    }
+    var that = this,
+        x = that.x, y = that.y,
+        w = that.width, h = that.height,
+        dc = cc.size(w + r, h + r);
+    that.removeBorder();
+
+    var mTxt = new cc.RenderTexture(dc.width, dc.height),
+        cx = 0,  ox = dc.width / 2, oy = dc.height / 2;
+
+    var visitSprite = function(xx, yy){
+        if(cc.sys.isNative){
+            var spr = new cc.Sprite(that.getTexture());
+            spr.attr({x : xx, y : yy, width :  w, height : h});
+            spr.visit();
+        } else {
+            that.setPosition(xx, yy);
+            that.visit();
+        }
+    };
+
+    mTxt.beginWithClear(0, 0, 0, 0);
+    for(var rd = 0; rd <= r; rd += f){
+        cx = Math.sqrt(Math.pow(r, 2) - Math.pow(rd, 2));
+        visitSprite(ox + rd, oy + cx);
+        visitSprite(ox - rd, oy + cx);
+        visitSprite(ox - rd, oy - cx);
+        visitSprite(ox + rd, oy - cx);
+    }
+    mTxt.end();
+    that.setPosition(x, y);
+
+    var nTxt = new cc.RenderTexture(dc.width, dc.height);
+    nTxt.setPosition(w / 2, h / 2);
+
+    mTxt.setPosition(ox, oy);
+    mTxt.getSprite().setBlendFunc(cc.ZERO, cc.SRC_ALPHA);
+    nTxt.beginWithClear(cr, cg, cb, ca);
+    mTxt.visit();
+    nTxt.end();
+
+    that.addChild(that.borderTex = nTxt, -1);
+    return nTxt;
+};
+
+cc.Sprite.prototype.removeBorder = function(){
+    this.borderTex && this.borderTex.removeFromParent(true);
+};
+
 var MyLayer = cc.Layer.extend({
     helloLabel:null,
     sprite:null,
@@ -44,6 +102,14 @@ var MyLayer = cc.Layer.extend({
         this.sprite.setPosition(size.width / 2, size.height / 2);
         this.sprite.setScale(size.height/this.sprite.getContentSize().height);
         this.addChild(this.sprite, 0);
+
+        var hair = new cc.Sprite("style3.png");
+        hair.setPosition(size.width / 2, size.height / 2);
+        this.addChild(hair, 10);
+
+        //hair.setColor(cc.color.RED);
+
+        window.hair = hair;
     }
 });
 
