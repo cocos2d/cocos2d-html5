@@ -327,9 +327,10 @@ plugin.extend('facebook', {
          * Reference document
          * https://developers.facebook.com/docs/payments/reference/paydialog
          */
-
-        info.method = 'pay';
-        info.action = 'purchaseitem';
+        if(!info['method'])
+            info['method'] = 'pay';
+        if(!info['action'])
+            info['action'] = 'purchaseitem';
 
         FB.ui(info, function(response) {
             if(response['error_code']){
