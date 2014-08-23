@@ -230,6 +230,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
     /**
      * transforms and draws itself, and visit its children and protected children.
      * @override
+     * @function
      * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx context of renderer
      */
     visit: null,

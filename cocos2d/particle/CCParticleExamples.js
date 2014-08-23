@@ -34,7 +34,8 @@
  */
 cc.ParticleFire = cc.ParticleSystem.extend(/** @lends cc.ParticleFire# */{
     /**
-     * @constructor
+     * Constructor
+     * @function
      */
     ctor:function () {
         cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 300 : 150);
@@ -122,9 +123,9 @@ cc.ParticleFire.create = function () {
  * var emitter = cc.ParticleFireworks.create();
  */
 cc.ParticleFireworks = cc.ParticleSystem.extend(/** @lends cc.ParticleFireworks# */{
-
     /**
-     * @constructor
+     * Constructor
+     * @function
      */
     ctor:function () {
         cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 1500 : 150);
@@ -209,9 +210,9 @@ cc.ParticleFireworks.create = function () {
  * var emitter = cc.ParticleSun.create();
  */
 cc.ParticleSun = cc.ParticleSystem.extend(/** @lends cc.ParticleSun# */{
-
     /**
-     * @constructor
+     * Constructor
+     * @function
      */
     ctor:function () {
         cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 350 : 150);
@@ -299,9 +300,9 @@ cc.ParticleSun.create = function () {
  * var emitter = cc.ParticleGalaxy.create();
  */
 cc.ParticleGalaxy = cc.ParticleSystem.extend(/** @lends cc.ParticleGalaxy# */{
-
     /**
-     * @constructor
+     * Constructor
+     * @function
      */
     ctor:function () {
         cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 200 : 100);
@@ -480,9 +481,9 @@ cc.ParticleFlower.create = function () {
  * var emitter = cc.ParticleMeteor.create();
  */
 cc.ParticleMeteor = cc.ParticleSystem.extend(/** @lends cc.ParticleMeteor# */{
-
     /**
-     * @constructor
+     * Constructor
+     * @function
      */
     ctor:function () {
         cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 150 : 100);
@@ -572,9 +573,9 @@ cc.ParticleMeteor.create = function () {
  * var emitter = cc.ParticleSpiral.create();
  */
 cc.ParticleSpiral = cc.ParticleSystem.extend(/** @lends cc.ParticleSpiral# */{
-
     /**
-     * @constructor
+     * Constructor
+     * @function
      */
     ctor:function() {
         cc.ParticleSystem.prototype.ctor.call(this,(cc._renderType === cc._RENDER_TYPE_WEBGL) ? 500 : 100);
@@ -664,9 +665,9 @@ cc.ParticleSpiral.create = function () {
  * var emitter = cc.ParticleExplosion.create();
  */
 cc.ParticleExplosion = cc.ParticleSystem.extend(/** @lends cc.ParticleExplosion# */{
-
     /**
-     * @constructor
+     * Constructor
+     * @function
      */
     ctor:function () {
         cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 700 : 300);
@@ -755,9 +756,9 @@ cc.ParticleExplosion.create = function () {
  * var emitter = cc.ParticleSmoke.create();
  */
 cc.ParticleSmoke = cc.ParticleSystem.extend(/** @lends cc.ParticleSmoke# */{
-
     /**
-     * @contructor
+     * Constructor
+     * @function
      */
     ctor:function () {
         cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 200 : 100);
@@ -843,9 +844,9 @@ cc.ParticleSmoke.create = function () {
  * var emitter = cc.ParticleSnow.create();
  */
 cc.ParticleSnow = cc.ParticleSystem.extend(/** @lends cc.ParticleSnow# */{
-
     /**
-     * @constructor
+     * Constructor
+     * @function
      */
     ctor:function () {
         cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 700 : 250);
@@ -936,9 +937,9 @@ cc.ParticleSnow.create = function () {
  * var emitter = cc.ParticleRain.create();
  */
 cc.ParticleRain = cc.ParticleSystem.extend(/** @lends cc.ParticleRain# */{
-
     /**
-     * @constructor
+     * Constructor
+     * @function
      */
     ctor:function () {
         cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 1000 : 300);

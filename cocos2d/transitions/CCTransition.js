@@ -70,6 +70,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
     /**
      * creates a base transition with duration and incoming scene
      * Constructor of cc.TransitionScene
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene the scene to transit with
      */
@@ -249,7 +250,8 @@ cc.TransitionSceneOriented = cc.TransitionScene.extend(/** @lends cc.TransitionS
     _orientation:0,
 
     /**
-     * @constructor
+     * Constructor of TransitionSceneOriented
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} orientation
@@ -296,7 +298,8 @@ cc.TransitionSceneOriented.create = function (t, scene, orientation) {
 cc.TransitionRotoZoom = cc.TransitionScene.extend(/** @lends cc.TransitionRotoZoom# */{
 
     /**
-     * @constructor
+     * Constructor of TransitionRotoZoom
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
@@ -355,7 +358,8 @@ cc.TransitionRotoZoom.create = function (t, scene) {
  */
 cc.TransitionJumpZoom = cc.TransitionScene.extend(/** @lends cc.TransitionJumpZoom# */{
     /**
-     * @constructor
+     * Constructor of TransitionJumpZoom
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
@@ -411,7 +415,8 @@ cc.TransitionJumpZoom.create = function (t, scene) {
  */
 cc.TransitionMoveInL = cc.TransitionScene.extend(/** @lends cc.TransitionMoveInL# */{
     /**
-     * @constructor
+     * Constructor of TransitionMoveInL
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
@@ -477,7 +482,8 @@ cc.TransitionMoveInL.create = function (t, scene) {
  */
 cc.TransitionMoveInR = cc.TransitionMoveInL.extend(/** @lends cc.TransitionMoveInR# */{
     /**
-     * @constructor
+     * Constructor of TransitionMoveInR
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
@@ -514,7 +520,8 @@ cc.TransitionMoveInR.create = function (t, scene) {
  */
 cc.TransitionMoveInT = cc.TransitionMoveInL.extend(/** @lends cc.TransitionMoveInT# */{
     /**
-     * @constructor
+     * Constructor of TransitionMoveInT
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
@@ -551,7 +558,8 @@ cc.TransitionMoveInT.create = function (t, scene) {
  */
 cc.TransitionMoveInB = cc.TransitionMoveInL.extend(/** @lends cc.TransitionMoveInB# */{
     /**
-     * @constructor
+     * Constructor of TransitionMoveInB
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
@@ -599,7 +607,8 @@ cc.ADJUST_FACTOR = 0.5;
  */
 cc.TransitionSlideInL = cc.TransitionScene.extend(/** @lends cc.TransitionSlideInL# */{
     /**
-     * @constructor
+     * Constructor of TransitionSlideInL
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
@@ -671,7 +680,8 @@ cc.TransitionSlideInL.create = function (t, scene) {
  */
 cc.TransitionSlideInR = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSlideInR# */{
     /**
-     * @constructor
+     * Constructor of TransitionSlideInR
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
@@ -718,7 +728,8 @@ cc.TransitionSlideInR.create = function (t, scene) {
  */
 cc.TransitionSlideInB = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSlideInB# */{
     /**
-     * @constructor
+     * Constructor of TransitionSlideInB
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
@@ -767,7 +778,8 @@ cc.TransitionSlideInB.create = function (t, scene) {
  */
 cc.TransitionSlideInT = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSlideInT# */{
     /**
-     * @constructor
+     * Constructor of TransitionSlideInT
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
@@ -816,7 +828,8 @@ cc.TransitionSlideInT.create = function (t, scene) {
  */
 cc.TransitionShrinkGrow = cc.TransitionScene.extend(/** @lends cc.TransitionShrinkGrow# */{
     /**
-     * @constructor
+     * Constructor of TransitionShrinkGrow
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
@@ -881,7 +894,8 @@ cc.TransitionShrinkGrow.create = function (t, scene) {
  */
 cc.TransitionFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionFlipX# */{
     /**
-     * @constructor
+     * Constructor of TransitionFlipX
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
@@ -959,7 +973,8 @@ cc.TransitionFlipX.create = function (t, scene, o) {
 cc.TransitionFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionFlipY# */{
 
     /**
-     * @constructor
+     * Constructor of TransitionFlipY
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
@@ -1033,9 +1048,9 @@ cc.TransitionFlipY.create = function (t, scene, o) {
  * @extends cc.TransitionSceneOriented
  */
 cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionFlipAngular# */{
-
     /**
-     * @constructor
+     * Constructor of TransitionFlipAngular
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
@@ -1111,7 +1126,8 @@ cc.TransitionFlipAngular.create = function (t, scene, o) {
 cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionZoomFlipX# */{
 
     /**
-     * @constructor
+     * Constructor of TransitionZoomFlipX
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
@@ -1193,7 +1209,8 @@ cc.TransitionZoomFlipX.create = function (t, scene, o) {
 cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionZoomFlipY# */{
 
     /**
-     * @constructor
+     * Constructor of TransitionZoomFlipY
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
@@ -1273,7 +1290,8 @@ cc.TransitionZoomFlipY.create = function (t, scene, o) {
 cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionZoomFlipAngular# */{
 
     /**
-     * @constuctor
+     * Constructor of TransitionZoomFlipAngular
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
@@ -1352,11 +1370,15 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
     _color:null,
 
     /**
-     * Constructor
+     * Constructor of TransitionFade
+     * @function
+     * @param {Number} t time in seconds
+     * @param {cc.Scene} scene
+     * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
      */
     ctor:function (t, scene, color) {
         cc.TransitionScene.prototype.ctor.call(this);
-        this._color = cc.color()
+        this._color = cc.color();
         scene && this.initWithDuration(t, scene, color);
     },
 
@@ -1366,17 +1388,17 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
     onEnter:function () {
         cc.TransitionScene.prototype.onEnter.call(this);
 
-        var l = cc.LayerColor.create(this._color);
+        var l = new cc.LayerColor(this._color);
         this._inScene.visible = false;
 
         this.addChild(l, 2, cc.SCENE_FADE);
         var f = this.getChildByTag(cc.SCENE_FADE);
 
-        var a = cc.Sequence.create(
-            cc.FadeIn.create(this._duration / 2),
-            cc.CallFunc.create(this.hideOutShowIn, this), //CCCallFunc.actionWithTarget:self selector:@selector(hideOutShowIn)],
-            cc.FadeOut.create(this._duration / 2),
-            cc.CallFunc.create(this.finish, this) //:self selector:@selector(finish)],
+        var a = cc.sequence(
+            cc.fadeIn(this._duration / 2),
+            cc.callFunc(this.hideOutShowIn, this),
+            cc.fadeOut(this._duration / 2),
+            cc.callFunc(this.finish, this)
         );
         f.runAction(a);
     },
@@ -1431,7 +1453,8 @@ cc.TransitionFade.create = function (t, scene, color) {
  */
 cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCrossFade# */{
     /**
-     * @constructor
+     * Constructor of TransitionCrossFade
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
@@ -1544,7 +1567,8 @@ cc.TransitionCrossFade.create = function (t, scene) {
 cc.TransitionTurnOffTiles = cc.TransitionScene.extend(/** @lends cc.TransitionTurnOffTiles# */{
 
     /**
-     * @constructor
+     * Constructor of TransitionCrossFade
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
@@ -1602,7 +1626,8 @@ cc.TransitionTurnOffTiles.create = function (t, scene) {
 cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplitCols# */{
 
     /**
-     * @constructor
+     * Constructor of TransitionSplitCols
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
@@ -1664,7 +1689,8 @@ cc.TransitionSplitCols.create = function (t, scene) {
 cc.TransitionSplitRows = cc.TransitionSplitCols.extend(/** @lends cc.TransitionSplitRows# */{
 
     /**
-     * @constructor
+     * Constructor of TransitionSplitRows
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
@@ -1702,7 +1728,8 @@ cc.TransitionSplitRows.create = function (t, scene) {
 cc.TransitionFadeTR = cc.TransitionScene.extend(/** @lends cc.TransitionFadeTR# */{
 
     /**
-     * @constructor
+     * Constructor of TransitionFadeTR
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
@@ -1769,9 +1796,9 @@ cc.TransitionFadeTR.create = function (t, scene) {
  * @extends cc.TransitionFadeTR
  */
 cc.TransitionFadeBL = cc.TransitionFadeTR.extend(/** @lends cc.TransitionFadeBL# */{
-
     /**
-     * @constructor
+     * Constructor of TransitionFadeBL
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
@@ -1811,7 +1838,8 @@ cc.TransitionFadeBL.create = function (t, scene) {
 cc.TransitionFadeUp = cc.TransitionFadeTR.extend(/** @lends cc.TransitionFadeUp# */{
 
     /**
-     * @constuctor
+     * Constructor of TransitionFadeUp
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
@@ -1822,10 +1850,10 @@ cc.TransitionFadeUp = cc.TransitionFadeTR.extend(/** @lends cc.TransitionFadeUp#
 
     /**
      * @param {cc.Size} size
-     * @return {*}
+     * @return {cc.FadeOutUpTiles}
      */
     actionWithSize:function (size) {
-        return cc.FadeOutUpTiles.create(this._duration, size);
+        return new cc.FadeOutUpTiles(this._duration, size);
     }
 });
 
@@ -1851,7 +1879,8 @@ cc.TransitionFadeUp.create = function (t, scene) {
 cc.TransitionFadeDown = cc.TransitionFadeTR.extend(/** @lends cc.TransitionFadeDown# */{
 
     /**
-     * @constuctor
+     * Constructor of TransitionFadeDown
+     * @function
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      */
