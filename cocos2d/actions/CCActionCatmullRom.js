@@ -33,9 +33,10 @@
  ****************************************************************************/
 
 /**
- * <p>Returns the Cardinal Spline position for a given set of control points, tension and time CatmullRom Spline formula: <br/>
- *   s(-ttt + 2tt - t)P1 + s(-ttt + tt)P2 + (2ttt - 3tt + 1)P2 + s(ttt - 2tt + t)P3 + (-2ttt + 3tt)P3 + s(ttt - tt)P4
- * </p>
+ * Returns the Cardinal Spline position for a given set of control points, tension and time. <br />
+ * CatmullRom Spline formula. <br />
+ * s(-ttt + 2tt - t)P1 + s(-ttt + tt)P2 + (2ttt - 3tt + 1)P2 + s(ttt - 2tt + t)P3 + (-2ttt + 3tt)P3 + s(ttt - tt)P4
+ *
  * @function
  * @param {cc.Point} p0
  * @param {cc.Point} p1
@@ -64,9 +65,9 @@ cc.cardinalSplineAt = function (p0, p1, p2, p3, tension, t) {
     return cc.p(x, y);
 };
 
-
 /**
  * returns a new copy of the array reversed.
+ *
  * @return {Array}
  */
 cc.reverseControlPoints = function (controlPoints) {
@@ -77,7 +78,14 @@ cc.reverseControlPoints = function (controlPoints) {
     return newArray;
 };
 
-cc.copyControlPoints = function (controlPoints) {
+
+/**
+ * returns a new clone of the controlPoints
+ *
+ * @param controlPoints
+ * @returns {Array}
+ */
+cc.cloneControlPoints = function (controlPoints) {
     var newArray = [];
     for (var i = 0; i < controlPoints.length; i++)
         newArray.push(cc.p(controlPoints[i].x, controlPoints[i].y));
@@ -85,7 +93,17 @@ cc.copyControlPoints = function (controlPoints) {
 };
 
 /**
+ * returns a new clone of the controlPoints
+ *
+ * @deprecated since v3.0
+ * @param controlPoints
+ * @returns {Array}
+ */
+cc.copyControlPoints = cc.cloneControlPoints;
+
+/**
  * returns a point from the array
+ *
  * @param {Array} controlPoints
  * @param {Number} pos
  * @return {Array}
@@ -96,7 +114,9 @@ cc.getControlPointAt = function (controlPoints, pos) {
 };
 
 /**
- * reverse the current control point array inline, without generating a new one
+ * reverse the current control point array inline, without generating a new one <br />
+ *
+ * @param controlPoints
  */
 cc.reverseControlPointsInline = function (controlPoints) {
     var len = controlPoints.length;
@@ -110,7 +130,9 @@ cc.reverseControlPointsInline = function (controlPoints) {
 
 
 /**
- * Cardinal Spline path. http://en.wikipedia.org/wiki/Cubic_Hermite_spline#Cardinal_spline
+ * Cardinal Spline path. {@link http://en.wikipedia.org/wiki/Cubic_Hermite_spline#Cardinal_spline}
+ * Absolute coordinates.
+ *
  * @class
  * @extends cc.ActionInterval
  *
@@ -147,9 +169,11 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
 
     /**
      * initializes the action with a duration and an array of points
+     *
      * @param {Number} duration
      * @param {Array} points array of control points
      * @param {Number} tension
+     *
      * @return {Boolean}
      */
     initWithDuration:function (duration, points, tension) {
@@ -166,6 +190,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
 
     /**
      * returns a new clone of the action
+     *
      * @returns {cc.CardinalSplineTo}
      */
     clone:function () {
@@ -175,6 +200,8 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
     },
 
     /**
+     * called before the action start. It will also set the target.
+     *
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -186,23 +213,25 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
     },
 
     /**
-     * @param {Number} time
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number}  dt
      */
-    update:function (time) {
-        time = this._computeEaseTime(time);
+    update:function (dt) {
+        dt = this._computeEaseTime(dt);
         var p, lt;
         var ps = this._points;
         // eg.
         // p..p..p..p..p..p..p
         // 1..2..3..4..5..6..7
         // want p to be 1, 2, 3, 4, 5, 6
-        if (time == 1) {
+        if (dt == 1) {
             p = ps.length - 1;
             lt = 1;
         } else {
             var locDT = this._deltaT;
-            p = 0 | (time / locDT);
-            lt = (time - locDT * p) / locDT;
+            p = 0 | (dt / locDT);
+            lt = (dt - locDT * p) / locDT;
         }
 
         var newPos = cc.cardinalSplineAt(
@@ -230,7 +259,9 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
     },
 
     /**
-     * reverse a new cc.CardinalSplineTo
+     * reverse a new cc.CardinalSplineTo. <br />
+     * Along the track of movement in the opposite.
+     *
      * @return {cc.CardinalSplineTo}
      */
     reverse:function () {
@@ -240,6 +271,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
 
     /**
      * update position of target
+     *
      * @param {cc.Point} newPos
      */
     updatePosition:function (newPos) {
@@ -249,6 +281,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
 
     /**
      * Points getter
+     *
      * @return {Array}
      */
     getPoints:function () {
@@ -257,6 +290,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
 
     /**
      * Points setter
+     *
      * @param {Array} points
      */
     setPoints:function (points) {
@@ -265,7 +299,8 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
 });
 
 /**
- * creates an action with a Cardinal Spline array of points and tension
+ * creates an action with a Cardinal Spline array of points and tension.
+ *
  * @function
  * @param {Number} duration
  * @param {Array} points array of control points
@@ -279,21 +314,25 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
 cc.cardinalSplineTo = function (duration, points, tension) {
     return new cc.CardinalSplineTo(duration, points, tension);
 };
+
 /**
- * Please use cc.cardinalSplineTo instead
+ * Please use cc.cardinalSplineTo instead. <br />
  * creates an action with a Cardinal Spline array of points and tension
+ *
  * @function
  * @param {Number} duration
  * @param {Array} points array of control points
  * @param {Number} tension
  * @return {cc.CardinalSplineTo}
  * @static
- * @deprecated
+ * @deprecated since v3.0
  */
 cc.CardinalSplineTo.create = cc.cardinalSplineTo;
 
 /**
- * Cardinal Spline path.  http://en.wikipedia.org/wiki/Cubic_Hermite_spline#Cardinal_spline
+ * Cardinal Spline path. {@link http://en.wikipedia.org/wiki/Cubic_Hermite_spline#Cardinal_spline}
+ * Relative coordinates.
+ *
  * @class
  * @extends cc.CardinalSplineTo
  *
@@ -320,6 +359,8 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
     },
 
     /**
+     * called before the action start. It will also set the target.
+     *
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -330,6 +371,7 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
 
     /**
      * reverse a new cc.CardinalSplineBy
+     *
      * @return {cc.CardinalSplineBy}
      */
     reverse:function () {
@@ -370,6 +412,7 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
 
     /**
      * update position of target
+     *
      * @param {cc.Point} newPos
      */
     updatePosition:function (newPos) {
@@ -383,6 +426,7 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
 
     /**
      * returns a new clone of the action
+     *
      * @returns {cc.CardinalSplineBy}
      */
     clone:function () {
@@ -393,35 +437,38 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
 });
 
 /**
- * creates an action with a Cardinal Spline array of points and tension
+ * creates an action with a Cardinal Spline array of points and tension.
+ *
  * @function
  * @param {Number} duration
  * @param {Array} points
  * @param {Number} tension
+ *
  * @return {cc.CardinalSplineBy}
  */
 cc.cardinalSplineBy = function (duration, points, tension) {
     return new cc.CardinalSplineBy(duration, points, tension);
 };
+
 /**
- * Please use cc.cardinalSplineBy instead
- * creates an action with a Cardinal Spline array of points and tension
+ * Please use cc.cardinalSplineBy instead.
+ * creates an action with a Cardinal Spline array of points and tension.
  * @function
  * @param {Number} duration
  * @param {Array} points
  * @param {Number} tension
  * @return {cc.CardinalSplineBy}
  * @static
- * @deprecated
+ * @deprecated since v3.0
  */
 cc.CardinalSplineBy.create = cc.cardinalSplineBy;
 
 /**
- * <p>
- *   An action that moves the target with a CatmullRom curve to a destination point.<br/>
- *   A Catmull Rom is a Cardinal Spline with a tension of 0.5.  <br/>
- *   http://en.wikipedia.org/wiki/Cubic_Hermite_spline#Catmull.E2.80.93Rom_spline
- * </p>
+ * An action that moves the target with a CatmullRom curve to a destination point.<br/>
+ * A Catmull Rom is a Cardinal Spline with a tension of 0.5.  <br/>
+ * {@link http://en.wikipedia.org/wiki/Cubic_Hermite_spline#Catmull.E2.80.93Rom_spline}
+ * Absolute coordinates.
+ *
  * @class
  * @extends cc.CardinalSplineTo
  *
@@ -447,7 +494,6 @@ cc.CatmullRomTo = cc.CardinalSplineTo.extend(/** @lends cc.CatmullRomTo# */{
     /**
      * Initializes the action with a duration and an array of points
      *
-     * @function
      * @param {Number} dt
      * @param {Array} points
      */
@@ -467,7 +513,8 @@ cc.CatmullRomTo = cc.CardinalSplineTo.extend(/** @lends cc.CatmullRomTo# */{
 });
 
 /**
- * creates an action with a Cardinal Spline array of points and tension
+ * creates an action with a Cardinal Spline array of points and tension.
+ *
  * @function
  * @param {Number} dt
  * @param {Array} points
@@ -480,22 +527,23 @@ cc.catmullRomTo = function (dt, points) {
     return new cc.CatmullRomTo(dt, points);
 };
 /**
- * Please use cc.catmullRomTo instead
- * creates an action with a Cardinal Spline array of points and tension
+ * Please use cc.catmullRomTo instead.
+ * creates an action with a Cardinal Spline array of points and tension.
+ *
  * @param {Number} dt
  * @param {Array} points
  * @return {cc.CatmullRomTo}
  * @static
- * @deprecated
+ * @deprecated since v3.0
  */
 cc.CatmullRomTo.create = cc.catmullRomTo;
 
 /**
- * <p>
- *   An action that moves the target with a CatmullRom curve by a certain distance.  <br/>
- *   A Catmull Rom is a Cardinal Spline with a tension of 0.5.<br/>
- *   http://en.wikipedia.org/wiki/Cubic_Hermite_spline#Catmull.E2.80.93Rom_spline
- * </p>
+ * An action that moves the target with a CatmullRom curve by a certain distance.  <br/>
+ * A Catmull Rom is a Cardinal Spline with a tension of 0.5.<br/>
+ * http://en.wikipedia.org/wiki/Cubic_Hermite_spline#Catmull.E2.80.93Rom_spline
+ * Relative coordinates.
+ *
  * @class
  * @extends cc.CardinalSplineBy
  *
@@ -557,6 +605,6 @@ cc.catmullRomBy = function (dt, points) {
  * Please use cc.catmullRomBy instead
  * Creates an action with a Cardinal Spline array of points and tension
  * @static
- * @deprecated
+ * @deprecated since v3.0
  */
 cc.CatmullRomBy.create = cc.catmullRomBy;
