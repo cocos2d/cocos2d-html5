@@ -512,7 +512,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             this._buttonClickedRenderer.setVisible(true);
             this._buttonDisableRenderer.setVisible(false);
             if (this._scale9Enabled)
-                locNormalRenderer.setColor(cc.Color.GRAY);
+                locNormalRenderer.setColor(cc.color.GRAY);
             else {
                 locNormalRenderer.stopAllActions();
                 locNormalRenderer.setScale(this._normalTextureScaleXInSize + 0.1, this._normalTextureScaleYInSize + 0.1);
