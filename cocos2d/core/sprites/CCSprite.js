@@ -34,6 +34,7 @@
  */
 cc.generateTintImageWithMultiply = function(image, color, rect, renderCanvas){
     renderCanvas = renderCanvas || cc.newElement("canvas");
+
     rect = rect || cc.rect(0,0, image.width, image.height);
 
     var context = renderCanvas.getContext( "2d" );
@@ -1051,7 +1052,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 return;
 
             this._colorized = true;
-            if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor)
+            if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor
+                && this._originalTexture._htmlElementObj != locElement)
                 cc.generateTintImageWithMultiply(this._originalTexture._htmlElementObj, this._displayedColor, locRect, locElement);
             else {
                 locElement = cc.generateTintImageWithMultiply(this._originalTexture._htmlElementObj, this._displayedColor, locRect);

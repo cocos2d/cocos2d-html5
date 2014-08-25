@@ -333,15 +333,21 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
         var audio = self._currMusic;
         if (audio)
             this._stopAudio(audio);
-        if (url != self._currMusicPath) {
+        if(cc.sys.isMobile && cc.sys.os == cc.sys.OS_IOS){
             audio = self._getAudioByUrl(url);
-            self._currMusic = audio;
+            self._currMusic = audio.cloneNode();
             self._currMusicPath = url;
+        }else{
+            if (url != self._currMusicPath) {
+                audio = self._getAudioByUrl(url);
+                self._currMusic = audio;
+                self._currMusicPath = url;
+            }
         }
-        if (!audio)
+        if (!self._currMusic)
             return;
-        audio.loop = loop || false;
-        self._playMusic(audio);
+        self._currMusic.loop = loop || false;
+        self._playMusic(self._currMusic);
     },
     _getAudioByUrl: function (url) {
         var locLoader = cc.loader, audio = locLoader.getRes(url);
@@ -497,31 +503,40 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
         if (!self._soundSupported) return null;
 
         var effList = this._getEffectList(url);
-        for (var i = 0, li = effList.length; i < li; i++) {
-            var eff = effList[i];
-            if (eff.ended) {
-                audio = eff;
-                if (audio.readyState > 2)
-                    audio.currentTime = 0;
-                if (window.chrome)
-                    audio.load();
-                break;
+        if(cc.sys.isMobile && cc.sys.os == cc.sys.OS_IOS){
+            audio = this._getEffectAudio(effList, url);
+        }else{
+            for (var i = 0, li = effList.length; i < li; i++) {
+                var eff = effList[i];
+                if (eff.ended) {
+                    audio = eff;
+                    if (audio.readyState > 2)
+                        audio.currentTime = 0;
+                    if (window.chrome)
+                        audio.load();
+                    break;
+                }
+            }
+            if (!audio) {
+                audio = this._getEffectAudio(effList, url);
+                audio && effList.push(audio);
             }
         }
-        if (!audio) {
-            if (effList.length >= this._maxAudioInstance) {
-                cc.log("Error: " + url + " greater than " + this._maxAudioInstance);
-                return null;
-            }
-            audio = self._getAudioByUrl(url);
-            if (!audio)
-                return null;
-            audio = audio.cloneNode(true);
-            if (self._effectPauseCb)
-                cc._addEventListener(audio, "pause", self._effectPauseCb);
-            audio.volume = this._effectsVolume;
-            effList.push(audio);
+        return audio;
+    },
+    _getEffectAudio: function(effList, url){
+        var audio;
+        if (effList.length >= this._maxAudioInstance) {
+            cc.log("Error: " + url + " greater than " + this._maxAudioInstance);
+            return null;
         }
+        audio = this._getAudioByUrl(url);
+        if (!audio)
+            return null;
+        audio = audio.cloneNode(true);
+        if (this._effectPauseCb)
+            cc._addEventListener(audio, "pause", this._effectPauseCb);
+        audio.volume = this._effectsVolume;
         return audio;
     },
     /**

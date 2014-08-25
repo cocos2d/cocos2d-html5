@@ -1,7 +1,40 @@
+/****************************************************************************
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
+
+ http://www.cocos2d-x.org
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ ****************************************************************************/
+
+/**
+ * Facebook APIs <br />
+ * FacebookAgent...
+ *
+ * @property {String} name - plugin name
+ * @property {String} version - API version
+ * @property {Object} userInfo - store user data
+ * @property {Object} HttpMethod - store http method static param
+ * @property {Number} CodeSucceed - success code
+ */
 plugin.extend('facebook', {
     name: "",
     version: "",
-    loggedIn: false,
     userInfo: null,
 
     HttpMethod: {
@@ -10,6 +43,12 @@ plugin.extend('facebook', {
         'Delete': 'delete'
     },
 
+    CodeSucceed: 0,
+
+    /**
+     * Initialize Facebook sdk
+     * @param {Object} config
+     */
     ctor: function(config){
         this.name = "facebook";
         this.version = "1.0";
@@ -37,6 +76,7 @@ plugin.extend('facebook', {
     },
 
     /**
+     * Gets the current object
      * @returns {FacebookAgent}
      */
     getInstance: function(){
@@ -44,9 +84,11 @@ plugin.extend('facebook', {
     },
 
     /**
+     * Login to facebook
      * @param {Function} callback
-     *  callback @param {Number} code
-     *  callback @param {String} mag
+     * @example
+     * //example
+     * plugin.FacebookAgent.login();
      */
     login: function(callback){
         var self = this;
@@ -62,34 +104,47 @@ plugin.extend('facebook', {
                     error_message: "unknown"
                 });
             }
-        }, { scope: '' });
+        }, { scope: 'publish_actions' });
     },
 
     /**
+     * Checking login status
      * @param {Function} callback
-     * @return {Boolean}
+     * @example
+     * //example
+     * plugin.FacebookAgent.isLoggedIn(type, msg);
      */
     isLoggedIn: function(callback){
         var self = this;
         FB.getLoginStatus(function(response) {
-            if (response && response['status'] === 'connected') {
-                //login - save user info
-                self.userInfo = response['authResponse'];
-                typeof callback === 'function' && callback(0, {
-                    isLoggedIn: true,
-                    accessToken: response['authResponse']['accessToken']
-                });
+            if(response){
+                if (response['status'] === 'connected') {
+                    //login - save user info
+                    self.userInfo = response['authResponse'];
+                    typeof callback === 'function' && callback(0, {
+                        isLoggedIn: true,
+                        accessToken: response['authResponse']['accessToken']
+                    });
+                }else{
+                    typeof callback === 'function' && callback(0, {
+                        isLoggedIn: false,
+                        accessToken: ""
+                    });
+                }
             }else{
-                typeof callback === 'function' && callback(0, {
-                    isLoggedIn: false,
-                    accessToken: ""
+                typeof callback === 'function' && callback(1, {
+                    error_message: 'Unknown'
                 });
             }
         });
     },
 
     /**
+     * Logout of facebook
      * @param {Function} callback
+     * @example
+     * //example
+     * plugin.FacebookAgent.logout(callback);
      */
     logout: function(callback){
         var self = this;
@@ -107,8 +162,12 @@ plugin.extend('facebook', {
     },
 
     /**
+     * Acquiring new permissions
      * @param permissions
      * @param callback
+     * @example
+     * //example
+     * plugin.FacebookAgent.requestPermissions(["manage_pages"], callback);
      */
     requestPermissions: function(permissions, callback){
         var permissionsStr = permissions.join(',');
@@ -133,7 +192,11 @@ plugin.extend('facebook', {
     },
 
     /**
+     * Acquiring AccessToken
      * @param {Function} callback
+     * @example
+     * //example
+     * plugin.FacebookAgent.requestPermissions(callback);
      */
     requestAccessToken: function(callback){
         if(typeof callback !== 'function'){
@@ -141,18 +204,20 @@ plugin.extend('facebook', {
         }
 
         if(this.userInfo.accessToken){
-            callback(0, this.userInfo.accessToken);
+            callback(0, {
+                accessToken: this.userInfo['accessToken']
+            });
         }else{
             var self = this;
             FB.getLoginStatus(function(response) {
                 if (response && response['status'] === 'connected') {
                     //login - save user info
                     self.userInfo = response['authResponse'];
-                    typeof callback === 'function' && callback(0, {
+                    callback(0, {
                         accessToken: response['authResponse']['accessToken']
                     });
                 }else{
-                    typeof callback === 'function' && callback(response['error_code'] || 1, {
+                    callback(response['error_code'] || 1, {
                         error_message: response['error_message'] || "Unknown"
                     });
                 }
@@ -161,6 +226,7 @@ plugin.extend('facebook', {
     },
 
     /**
+     * Share something
      * @param info
      * @param callback
      */
@@ -193,6 +259,7 @@ plugin.extend('facebook', {
     },
 
     /**
+     * Various pop
      * @param info
      * @param callback
      */
@@ -253,7 +320,7 @@ plugin.extend('facebook', {
             info['method'] != 'share_open_graph' &&
             info['method'] != 'share_link' &&
             info['method'] != 'apprequests'
-        ){
+            ){
             cc.log('web is not supported what this it method');
             return;
         }
@@ -267,9 +334,7 @@ plugin.extend('facebook', {
                             post_id: response['post_id']
                         });
                     else
-                        typeof callback === 'function' && callback(response['error_code'] || 1, {
-                            error_message: response['error_message']
-                        });
+                        typeof callback === 'function' && callback(0, response);
                 } else {
                     typeof callback === 'function' && callback(1, {
                         error_message:"Unknow error"
@@ -279,24 +344,56 @@ plugin.extend('facebook', {
     },
 
     /**
+     * FB.api package
      * @param {String} path
      * @param {Number} httpmethod
      * @param {Object} params
      * @param {Function} callback
      */
     request: function(path, httpmethod, params, callback){
+        if(typeof params === 'function'){
+            callback = params;
+            params = {};
+        }
         FB.api(path, httpmethod, params, function(response){
             if(response.error){
-                callback(response.error.code, JSON.stringify(response))
+                typeof callback === 'function' && callback(response['error']['code'], {
+                    error_message: response['error']['message'] || 'Unknown'
+                })
             }else{
-                callback(0, response);
+                typeof callback === 'function' && callback(0, response);
             }
         });
+    },
+
+    /**
+     * Get permission list
+     * @param callback
+     */
+    getPermissionList: function(callback){
+        FB.api("/me/permissions", function(response){
+            if(response['data']){
+                var permissionList = [];
+                for(var i=0; i<response['data'].length; i++){
+                    permissionList.push(response['data'][i]['permission']);
+                }
+                typeof callback == 'function' && callback(0, {
+                    permissions: permissionList
+                });
+            }else{
+                if(!response['error'])
+                    response['error'] = {};
+                typeof callback == 'function' && callback(response['error']['code'] || 1, {
+                    error_message: response['error']['message'] || 'Unknown'
+                });
+            }
+        })
     },
 
     destroyInstance: function(){},
 
     /**
+     * Payment request
      * @param {Object} info
      * @param {Function} callback
      */
@@ -305,14 +402,13 @@ plugin.extend('facebook', {
          * Reference document
          * https://developers.facebook.com/docs/payments/reference/paydialog
          */
-
-        info.method = 'pay';
-        info.action = 'purchaseitem';
+        info['method'] = 'pay';
+        info['action'] = 'purchaseitem';
 
         FB.ui(info, function(response) {
-            if(response.error_code){
-                callback(response.error_code, {
-                    error_message: response.error_message
+            if(response['error_code']){
+                callback(response['error_code'] || 1, {
+                    error_message: response['error_message'] || 'Unknown'
                 });
             }else{
                 callback(0, response);

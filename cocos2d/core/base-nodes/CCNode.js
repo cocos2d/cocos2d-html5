@@ -1464,7 +1464,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *     Event callback that is invoked every time when CCNode enters the 'stage'.                                   <br/>
      *     If the CCNode enters the 'stage' with a transition, this event is called when the transition starts.        <br/>
      *     During onEnter you can't access a "sister/brother" node.                                                    <br/>
-     *     If you override onEnter, you shall call its parent's one, e.g., CCNode::onEnter().
+     *     If you override onEnter, you shall call its parent's one, e.g., this._super();
      * </p>
      */
     onEnter: function () {
@@ -1478,7 +1478,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * <p>
      *     Event callback that is invoked when the CCNode enters in the 'stage'.                                                        <br/>
      *     If the CCNode enters the 'stage' with a transition, this event is called when the transition finishes.                       <br/>
-     *     If you override onEnterTransitionDidFinish, you shall call its parent's one, e.g. CCNode::onEnterTransitionDidFinish()
+     *     If you override onEnterTransitionDidFinish, you shall call its parent's one, e.g. this._super();
      * </p>
      */
     onEnterTransitionDidFinish: function () {

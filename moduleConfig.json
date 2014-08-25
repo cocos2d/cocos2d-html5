@@ -254,7 +254,7 @@
             "extensions/editbox/CCEditBox.js"
         ],
         "ccpool" : [
-            "core", "gui",
+            "core",
 
             "extensions/ccpool/CCPool.js"
         ],
