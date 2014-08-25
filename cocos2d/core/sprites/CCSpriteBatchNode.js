@@ -1007,7 +1007,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             //sorted now check all children
             if (locChildren.length > 0) {
                 //first sort all children recursively based on zOrder
-                this._arrayMakeObjectsPerformSelector(locChildren, cc.Node.StateCallbackType.sortAllChildren);
+                this._arrayMakeObjectsPerformSelector(locChildren, cc.Node._StateCallbackType.sortAllChildren);
             }
             this._reorderChildDirty = false;
         }
@@ -1036,7 +1036,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             //sorted now check all children
             if (childrenArr.length > 0) {
                 //first sort all children recursively based on zOrder
-                this._arrayMakeObjectsPerformSelector(childrenArr, cc.Node.StateCallbackType.sortAllChildren);
+                this._arrayMakeObjectsPerformSelector(childrenArr, cc.Node._StateCallbackType.sortAllChildren);
 
                 var index = 0;
                 //fast dispatch, give every child a new atlasIndex based on their relative zOrder (keep parent -> child relations intact)
@@ -1061,7 +1061,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         //cc.nodeDrawSetup(this);
         this._shaderProgram.use();
         this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.updateTransform);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.updateTransform);
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
 
         this.textureAtlas.drawQuads();

@@ -722,7 +722,7 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
 	 * Create a acton which repeat forever
 	 * @param {cc.FiniteTimeAction} action
 	 * @example
-	 * var repeat = new cc.RepeatForever(cc.rotateBy(1.0, 360));
+	 * var repeat = cc.rotateBy(1.0, 360).repeatForever();
 	 */
     ctor:function (action) {
         cc.ActionInterval.prototype.ctor.call(this);
