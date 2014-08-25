@@ -30,7 +30,7 @@
  * @constructor
  * @param {Number} x
  * @param {Number} y
- * @see cc.p()
+ * @see cc.p
  */
 cc.Point = function (x, y) {
     this.x = x || 0;
@@ -81,7 +81,7 @@ cc.pointEqualToPoint = function (point1, point2) {
  * @constructor
  * @param {Number} width
  * @param {Number} height
- * @see cc.size()
+ * @see cc.size
  */
 cc.Size = function (width, height) {
     this.width = width || 0;
@@ -132,7 +132,7 @@ cc.sizeEqualToSize = function (size1, size2) {
  * @constructor
  * @param {Number} width
  * @param {Number} height
- * @see cc.rect()
+ * @see cc.rect
  */
 cc.Rect = function (x, y, width, height) {
     this.x = x||0;

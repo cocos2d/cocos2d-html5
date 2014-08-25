@@ -36,7 +36,10 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     _startPoint:null,
 
     /**
-     * Constructor
+     * @constructor
+     * @param {Number} x
+     * @param {Number} y
+     * @param {Number} id
      */
     ctor:function (x, y, id) {
         this._point = cc.p(x || 0, y || 0);
@@ -44,7 +47,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     },
 
     /**
-     * returns the current touch location in OpenGL coordinates
+     * Returns the current touch location in OpenGL coordinates
      * @return {cc.Point}
      */
     getLocation:function () {
@@ -54,7 +57,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     },
 
 	/**
-	 * gets location X axis data
+	 * Returns X axis location value
 	 * @returns {number}
 	 */
 	getLocationX: function () {
@@ -62,7 +65,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
 	},
 
 	/**
-	 * gets location Y axis data
+     * Returns Y axis location value
 	 * @returns {number}
 	 */
 	getLocationY: function () {
@@ -70,7 +73,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
 	},
 
     /**
-     * returns the previous touch location in OpenGL coordinates
+     * Returns the previous touch location in OpenGL coordinates
      * @return {cc.Point}
      */
     getPreviousLocation:function () {
@@ -80,7 +83,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     },
 
     /**
-     * returns the start touch location in OpenGL coordinates
+     * Returns the start touch location in OpenGL coordinates
      * @returns {cc.Point}
      */
     getStartLocation: function() {
@@ -90,7 +93,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     },
 
     /**
-     * returns the delta of 2 current touches locations in screen coordinates
+     * Returns the delta distance from the previous touche to the current one in screen coordinates
      * @return {cc.Point}
      */
     getDelta:function () {
@@ -98,7 +101,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     },
 
     /**
-     * returns the current touch location in screen coordinates
+     * Returns the current touch location in screen coordinates
      * @return {cc.Point}
      */
     getLocationInView: function() {
@@ -106,7 +109,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     },
 
     /**
-     * returns the previous touch location in screen coordinates
+     * Returns the previous touch location in screen coordinates
      * @return {cc.Point}
      */
     getPreviousLocationInView: function(){
@@ -114,7 +117,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     },
 
     /**
-     * returns the start touch location in screen coordinates
+     * Returns the start touch location in screen coordinates
      * @return {cc.Point}
      */
     getStartLocationInView: function(){
@@ -122,7 +125,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     },
 
     /**
-     * Gets the id of cc.Touch
+     * Returns the id of cc.Touch
      * @return {Number}
      */
     getID:function () {
@@ -130,9 +133,9 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     },
 
     /**
-     * Gets the id of cc.Touch
+     * Returns the id of cc.Touch
      * @return {Number}
-     * @deprecated
+     * @deprecated since v3.0, please use getID() instead
      */
     getId:function () {
         cc.log("getId is deprecated. Please use getID instead.")
@@ -140,7 +143,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     },
 
     /**
-     * set information to touch
+     * Sets information to touch
      * @param {Number} id
      * @param  {Number} x
      * @param  {Number} y
