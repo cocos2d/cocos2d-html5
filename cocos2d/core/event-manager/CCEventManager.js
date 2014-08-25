@@ -319,6 +319,8 @@ cc.eventManager = /** @lends cc.eventManager# */{
 
     _sortEventListenersOfSceneGraphPriorityDes : function(l1, l2){
         var locNodePriorityMap = cc.eventManager._nodePriorityMap;
+        if(!l1 || !l2 || !l1._getSceneGraphPriority() || !l2._getSceneGraphPriority())
+            debugger;
         return locNodePriorityMap[l2._getSceneGraphPriority().__instanceId] - locNodePriorityMap[l1._getSceneGraphPriority().__instanceId];
     },
 
