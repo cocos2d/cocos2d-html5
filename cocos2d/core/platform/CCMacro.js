@@ -711,3 +711,77 @@ cc.SELECTED_TAG = 8802;
  * @type Number
  */
 cc.DISABLE_TAG = 8803;
+
+
+// Array utils
+
+/**
+ * Verify Array's Type
+ * @param {Array} arr
+ * @param {function} type
+ * @return {Boolean}
+ * @function
+ */
+cc.arrayVerifyType = function (arr, type) {
+    if (arr && arr.length > 0) {
+        for (var i = 0; i < arr.length; i++) {
+            if (!(arr[i] instanceof  type)) {
+                cc.log("element type is wrong!");
+                return false;
+            }
+        }
+    }
+    return true;
+};
+
+/**
+ * Searches for the first occurance of object and removes it. If object is not found the function has no effect.
+ * @function
+ * @param {Array} arr Source Array
+ * @param {*} delObj  remove object
+ */
+cc.arrayRemoveObject = function (arr, delObj) {
+    for (var i = 0, l = arr.length; i < l; i++) {
+        if (arr[i] == delObj) {
+            arr.splice(i, 1);
+            break;
+        }
+    }
+};
+
+/**
+ * Removes from arr all values in minusArr. For each Value in minusArr, the first matching instance in arr will be removed.
+ * @function
+ * @param {Array} arr Source Array
+ * @param {Array} minusArr minus Array
+ */
+cc.arrayRemoveArray = function (arr, minusArr) {
+    for (var i = 0, l = minusArr.length; i < l; i++) {
+        cc.arrayRemoveObject(arr, minusArr[i]);
+    }
+};
+
+/**
+ * Inserts some objects at index
+ * @function
+ * @param {Array} arr
+ * @param {Array} addObjs
+ * @param {Number} index
+ * @return {Array}
+ */
+cc.arrayAppendObjectsToIndex = function(arr, addObjs,index){
+    arr.splice.apply(arr, [index, 0].concat(addObjs));
+    return arr;
+};
+
+/**
+ * Copy an array's item to a new array (its performance is better than Array.slice)
+ * @param {Array} arr
+ * @returns {Array}
+ */
+cc.copyArray = function(arr){
+    var i, len = arr.length, arr_clone = new Array(len);
+    for (i = 0; i < len; i += 1)
+        arr_clone[i] = arr[i];
+    return arr_clone;
+};
