@@ -126,7 +126,7 @@ cc._tmp.PrototypeCCNode = function () {
     cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
     /** @expose */
     _p.opacityModifyRGB;
-    cc.defineGetterSetter(_p, "opacityModifyRGB", _p.isOpacityModifyRGB, _p.setOpacityModifyRGB);
+    cc.defineGetterSetter(_p, "opacityModifyRGB", _p.isOpacityModifyRGB);
     /** @expose */
     _p.cascadeOpacity;
     cc.defineGetterSetter(_p, "cascadeOpacity", _p.isCascadeOpacityEnabled, _p.setCascadeOpacityEnabled);
