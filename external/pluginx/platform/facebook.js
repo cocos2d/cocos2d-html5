@@ -10,6 +10,8 @@ plugin.extend('facebook', {
         'Delete': 'delete'
     },
 
+    CodeSucceed: 0,
+
     ctor: function(config){
         this.name = "facebook";
         this.version = "1.0";
