@@ -122,6 +122,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     },
 
     /**
+     * Gets the id of cc.Touch
      * @return {Number}
      */
     getID:function () {
@@ -129,9 +130,12 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     },
 
     /**
+     * Gets the id of cc.Touch
      * @return {Number}
+     * @deprecated
      */
     getId:function () {
+        cc.log("getId is deprecated. Please use getID instead.")
         return this._id;
     },
 
