@@ -104,9 +104,8 @@ cc.inputManager = /** @lends cc.inputManager# */{
                     cc.log(cc._LogInfos.inputManager_handleTouchesBegin, unusedIndex);
                     continue;
                 }
-                //curTouch = this._touches[unusedIndex] = curTouch;
-                curTouch = this._touches[unusedIndex] = new cc.Touch();
-                curTouch._setPoint(selTouch._point);
+                //curTouch = this._touches[unusedIndex] = selTouch;
+                curTouch = this._touches[unusedIndex] = new cc.Touch(selTouch._point.x, selTouch._point.y, selTouch.getID());
                 curTouch._setPrevPoint(selTouch._prevPoint);
                 locTouchIntDict[touchID] = unusedIndex;
                 handleTouches.push(curTouch);
@@ -220,9 +219,9 @@ cc.inputManager = /** @lends cc.inputManager# */{
     getPreTouch: function(touch){
         var preTouch = null;
         var locPreTouchPool = this._preTouchPool;
-        var id = touch.getId();
+        var id = touch.getID();
         for (var i = locPreTouchPool.length - 1; i >= 0; i--) {
-            if (locPreTouchPool[i].getId() == id) {
+            if (locPreTouchPool[i].getID() == id) {
                 preTouch = locPreTouchPool[i];
                 break;
             }
@@ -235,9 +234,9 @@ cc.inputManager = /** @lends cc.inputManager# */{
     setPreTouch: function(touch){
         var find = false;
         var locPreTouchPool = this._preTouchPool;
-        var id = touch.getId();
+        var id = touch.getID();
         for (var i = locPreTouchPool.length - 1; i >= 0; i--) {
-            if (locPreTouchPool[i].getId() == id) {
+            if (locPreTouchPool[i].getID() == id) {
                 locPreTouchPool[i] = touch;
                 find = true;
                 break;
