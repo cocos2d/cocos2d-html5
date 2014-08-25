@@ -338,7 +338,7 @@ cc._tmp.WebGLSprite = function () {
 
         // recursively iterate over children
         if (_t._hasChildren)
-            _t._arrayMakeObjectsPerformSelector(_t._children, cc.Node.StateCallbackType.updateTransform);
+            _t._arrayMakeObjectsPerformSelector(_t._children, cc.Node._StateCallbackType.updateTransform);
 
         if (cc.SPRITE_DEBUG_DRAW) {
             // draw bounding box
