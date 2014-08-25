@@ -117,9 +117,6 @@ cc._tmp.PrototypeCCNode = function () {
     /** @expose */
     _p.shaderProgram;
     cc.defineGetterSetter(_p, "shaderProgram", _p.getShaderProgram, _p.setShaderProgram);
-    /** @expose */
-    _p.glServerState;
-    cc.defineGetterSetter(_p, "glServerState", _p.getGLServerState, _p.setGLServerState);
 
     /** @expose */
     _p.opacity;

@@ -111,7 +111,7 @@ cc.s_globalOrderOfArrival = 1;
  * @property {cc.Color}             color               - Color of node, default value is white: (255, 255, 255)
  * @property {Boolean}              cascadeColor        - Indicate whether node's color value affect its child nodes, default value is false
  * @property {Number}               opacity             - Opacity of node, default value is 255
- * @property {Boolean}              opacityModifyRGB    - <@readonly>Indicate whether opacity affect the color value, default value is false
+ * @property {Boolean}              opacityModifyRGB    - Indicate whether opacity affect the color value, default value is false
  * @property {Boolean}              cascadeOpacity      - Indicate whether node's opacity value affect its child nodes, default value is false
  * @property {Array}                children            - <@readonly> All children nodes
  * @property {Number}               childrenCount       - <@readonly> Number of children
@@ -235,7 +235,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             return;
 
         var i, len = array.length, node;
-        var nodeCallbackType = cc.Node.StateCallbackType;
+        var nodeCallbackType = cc.Node._StateCallbackType;
         switch (callbackType) {
             case nodeCallbackType.onEnter:
                 for (i = 0; i < len; i++) {
@@ -1199,7 +1199,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         cc.eventManager.removeListeners(this);
 
         // timers
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.cleanup);
     },
 
     // composition: GET
@@ -1273,11 +1273,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         cc.assert(child, cc._LogInfos.Node_addChild_3);
         cc.assert(child._parent === null, "child already added. It can't be added again");
 
-        this.addChildHelper(child, localZOrder, tag, name, setTag);
+        this._addChildHelper(child, localZOrder, tag, name, setTag);
 
     },
 
-    addChildHelper: function(child, localZOrder, tag, name, setTag){
+    _addChildHelper: function(child, localZOrder, tag, name, setTag){
         if(!this._children)
             this._children = [];
 
@@ -1503,10 +1503,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         // DON'T draw your stuff outside this method
     },
 
-    /** performs OpenGL view-matrix transformation of it's ancestors.<br/>
-     * Generally the ancestors are already transformed, but in certain cases (eg: attaching a FBO) <br/>
-     * it's necessary to transform the ancestors again.
-     */
+    // Internal use only, do not call it by yourself,
     transformAncestors: function () {
         if (this._parent != null) {
             this._parent.transformAncestors();
@@ -1527,7 +1524,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     onEnter: function () {
         this._isTransitionFinished = false;
         this._running = true;//should be running before resumeSchedule
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnter);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onEnter);
         this.resume();
     },
 
@@ -1541,7 +1538,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     onEnterTransitionDidFinish: function () {
         this._isTransitionFinished = true;
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnterTransitionDidFinish);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onEnterTransitionDidFinish);
     },
 
     /**
@@ -1551,7 +1548,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      */
     onExitTransitionDidStart: function () {
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onExitTransitionDidStart);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onExitTransitionDidStart);
     },
 
     /**
@@ -1566,7 +1563,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     onExit: function () {
         this._running = false;
         this.pause();
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onExit);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onExit);
     },
 
     // actions
@@ -1989,7 +1986,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     updateTransform: function () {
         // Recursively iterate over children
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.updateTransform);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.updateTransform);
     },
 
     /**
@@ -2024,7 +2021,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Returns a component identified by the name given
+     * Returns a component identified by the name given.
      * @function
      * @param {String} name The name to search for
      * @return {cc.Component} The component found
@@ -2034,7 +2031,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Adds a component
+     * Adds a component to the node's component container.
      * @function
      * @param {cc.Component} component
      */
@@ -2043,15 +2040,17 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * removes a component by its name or a component
-     * @param {String|cc.Component} name
+     * Removes a component identified by the given name or removes the component object given
+     * @function
+     * @param {String|cc.Component} component
      */
-    removeComponent: function (name) {
-        return this._componentContainer.remove(name);
+    removeComponent: function (component) {
+        return this._componentContainer.remove(component);
     },
 
     /**
-     * removes all components
+     * Removes all components
+     * @function
      */
     removeAllComponents: function () {
         this._componentContainer.removeAll();
@@ -2059,6 +2058,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     grid: null,
 
+    /**
+     * <p>The cc.Node's constructor. <br/>
+     * This function will automatically be invoked when you create a node using new construction: "var node = new cc.Node()".<br/>
+     * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
+     * @constructor
+     */
     ctor: null,
 
     /**
@@ -2069,18 +2074,18 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     visit: null,
 
     /**
-     * Performs OpenGL view-matrix transformation based on position, scale, rotation and other attributes.
+     * Performs view-matrix transformation based on position, scale, rotation and other attributes.
      * @function
-     * @param {CanvasRenderingContext2D|null} ctx Render context
+     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx Render context
      */
     transform: null,
 
     /**
-     * Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.<br/>
-     * The matrix is in Pixels.
+     * <p>Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.<br/>
+     * The matrix is in Pixels.</p>
      * @function
      * @return {cc.AffineTransform}
-     * @deprecated
+     * @deprecated since v3.0, please use getNodeToParentTransform instead
      */
     nodeToParentTransform: function(){
         return this.getNodeToParentTransform();
@@ -2090,7 +2095,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.<br/>
      * The matrix is in Pixels.
      * @function
-     * @return {cc.AffineTransform}
+     * @return {cc.AffineTransform} The affine transform object
      */
     getNodeToParentTransform: null,
 
@@ -2116,7 +2121,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Returns a camera object that lets you move the node using a gluLookAt
+     * @function
      * @return {cc.Camera} A CCCamera object that lets you move the node using a gluLookAt
+     * @deprecated since v3.0, no alternative function
      * @example
      * var camera = node.getCamera();
      * camera.setEye(0, 0, 415/2);
@@ -2130,16 +2137,22 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Returns a grid object that is used when applying effects
+     * <p>Returns a grid object that is used when applying effects.<br/>
+     * This function have been deprecated, please use cc.NodeGrid to run grid actions</p>
+     * @function
      * @return {cc.GridBase} A CCGrid object that is used when applying effects
+     * @deprecated since v3.0, no alternative function
      */
     getGrid: function () {
         return this.grid;
     },
 
     /**
-     * Changes a grid object that is used when applying effects
+     * <p>Changes a grid object that is used when applying effects<br/>
+     * This function have been deprecated, please use cc.NodeGrid to run grid actions</p>
+     * @function
      * @param {cc.GridBase} grid A CCGrid object that is used when applying effects
+     * @deprecated since v3.0, no alternative function
      */
     setGrid: function (grid) {
         this.grid = grid;
@@ -2147,7 +2160,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Return the shader program currently used for this node
-     * @return {cc.GLProgram} The shader program currelty used for this node
+     * @function
+     * @return {cc.GLProgram} The shader program currently used for this node
      */
     getShaderProgram: function () {
         return this._shaderProgram;
@@ -2160,9 +2174,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *     Since v2.0, each rendering node must set its shader program.
      *     It should be set in initialize phase.
      * </p>
+     * @function
      * @param {cc.GLProgram} newShaderProgram The shader program which fetchs from CCShaderCache.
      * @example
-     *  node.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+     * node.setGLProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
      */
     setShaderProgram: function (newShaderProgram) {
         this._shaderProgram = newShaderProgram;
@@ -2170,7 +2185,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Returns the state of OpenGL server side.
+     * @function
      * @return {Number} The state of OpenGL server side.
+     * @deprecated since v3.0, no need anymore
      */
     getGLServerState: function () {
         return this._glServerState;
@@ -2178,19 +2195,23 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Sets the state of OpenGL server side.
+     * @function
      * @param {Number} state The state of OpenGL server side.
+     * @deprecated since v3.0, no need anymore
      */
     setGLServerState: function (state) {
         this._glServerState = state;
     },
 
-    /** returns a "world" axis aligned bounding box of the node. <br/>
+    /**
+     * Returns a "world" axis aligned bounding box of the node.
+     * @function
      * @return {cc.Rect}
      */
     getBoundingBoxToWorld: function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
-        var trans = this.nodeToWorldTransform();
-        rect = cc.rectApplyAffineTransform(rect, this.nodeToWorldTransform());
+        var trans = this.getNodeToWorldTransform();
+        rect = cc.rectApplyAffineTransform(rect, this.getNodeToWorldTransform());
 
         //query child's BoundingBox
         if (!this._children)
@@ -2301,6 +2322,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Returns the opacity of Node
+     * @function
      * @returns {number} opacity
      */
     getOpacity: function () {
@@ -2308,7 +2330,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Returns the displayed opacity of Node
+     * Returns the displayed opacity of Node,
+     * the difference between displayed opacity and opacity is that displayed opacity is calculated based on opacity and parent node's opacity when cascade opacity enabled.
+     * @function
      * @returns {number} displayed opacity
      */
     getDisplayedOpacity: function () {
@@ -2317,6 +2341,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Sets the opacity of Node
+     * @function
      * @param {Number} opacity
      */
     setOpacity: function (opacity) {
@@ -2332,6 +2357,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Update displayed opacity
+     * @function
      * @param {Number} parentOpacity
      */
     updateDisplayedOpacity: function (parentOpacity) {
@@ -2347,7 +2373,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * whether or not it will set cascade opacity.
+     * Returns whether node's opacity value affect its child nodes.
+     * @function
      * @returns {boolean}
      */
     isCascadeOpacityEnabled: function () {
@@ -2355,7 +2382,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Enable or disable cascade opacity
+     * Enable or disable cascade opacity, if cascade enabled, child nodes' opacity will be the multiplication of parent opacity and its own opacity.
+     * @function
      * @param {boolean} cascadeOpacityEnabled
      */
     setCascadeOpacityEnabled: function (cascadeOpacityEnabled) {
@@ -2389,6 +2417,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Returns the color of Node
+     * @function
      * @returns {cc.Color}
      */
     getColor: function () {
@@ -2397,7 +2426,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Returns the displayed color of Node
+     * Returns the displayed color of Node,
+     * the difference between displayed color and color is that displayed color is calculated based on color and parent node's color when cascade color enabled.
+     * @function
      * @returns {cc.Color}
      */
     getDisplayedColor: function () {
@@ -2406,8 +2437,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Sets the color of Node.
-     * @param {cc.Color} color When color not set alpha like cc.color(128,128,128),only change the color. When color set alpha like cc.color(128,128,128,100),then change the color and alpha.
+     * <p>Sets the color of Node.<br/>
+     * When color doesn't include opacity value like cc.color(128,128,128), this function only change the color. <br/>
+     * When color include opacity like cc.color(128,128,128,100), then this function will change the color and the opacity.</p>
+     * @function
+     * @param {cc.Color} color The new coloe given
      */
     setColor: function (color) {
         var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
@@ -2428,7 +2462,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * update the displayed color of Node
+     * Update the displayed color of Node
+     * @function
      * @param {cc.Color} parentColor
      */
     updateDisplayedColor: function (parentColor) {
@@ -2448,7 +2483,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * whether or not it will set cascade color.
+     * Returns whether node's color value affect its child nodes.
+     * @function
      * @returns {boolean}
      */
     isCascadeColorEnabled: function () {
@@ -2456,7 +2492,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Enable or disable cascade color
+     * Enable or disable cascade color, if cascade enabled, child nodes' opacity will be the cascade value of parent color and its own color.
      * @param {boolean} cascadeColorEnabled
      */
     setCascadeColorEnabled: function (cascadeColorEnabled) {
@@ -2492,32 +2528,35 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
     },
 
+    /**
+     * Set whether color should be changed with the opacity value,
+     * useless in cc.Node, but this function is overrided in some class to have such behavior.
+     * @function
+     * @param {Boolean} value
+     */
     setOpacityModifyRGB: function (opacityValue) {
     },
 
+    /**
+     * Get whether color should be changed with the opacity value
+     * @function
+     * @return {Boolean}
+     */
     isOpacityModifyRGB: function () {
         return false;
     }
 });
 
 /**
- * allocates and initializes a node.
- * @deprecated
+ * Allocates and initializes a node.
+ * @deprecated since v3.0, please use new construction instead.
  * @return {cc.Node}
- * @example
- * // example
- * var node = cc.Node.create();
  */
 cc.Node.create = function () {
     return new cc.Node();
 };
 
-/**
- * cc.Node's state callback type
- * @constant
- * @type Number
- */
-cc.Node.StateCallbackType = {onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, updateTransform: 5, onExitTransitionDidStart: 6, sortAllChildren: 7};
+cc.Node._StateCallbackType = {onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, updateTransform: 5, onExitTransitionDidStart: 6, sortAllChildren: 7};
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
@@ -2663,18 +2702,3 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 cc.assert(typeof cc._tmp.PrototypeCCNode === "function", cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
 cc._tmp.PrototypeCCNode();
 delete cc._tmp.PrototypeCCNode;
-
-/**
- * Node on enter
- * @constant
- */
-cc.Node.ON_ENTER = 0;
-/**
- * Node on exit
- * @constant
- */
-cc.Node.ON_EXIT = 1;
-
-cc.Node.ON_ENTER_TRANSITION_DID_FINISH = 2;
-cc.Node.ON_EXIT_TRANSITOIN_DID_START = 3;
-cc.Node.ON_CLEAN_UP = 4;
