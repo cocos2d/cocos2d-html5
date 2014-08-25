@@ -1778,10 +1778,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     *<p>  Sets the additional transform.<br/>
+     *<p>Sets the additional transform.<br/>
      *  The additional transform will be concatenated at the end of getNodeToParentTransform.<br/>
      *  It could be used to simulate `parent-child` relationship between two nodes (e.g. one is in BatchNode, another isn't).<br/>
      *  </p>
+     *  @function
+     *  @param {cc.AffineTransform} additionalTransform  The additional transform
      *  @example
      * // create a batchNode
      * var batch= cc.SpriteBatchNode.create("Icon-114.png");
@@ -1833,6 +1835,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Returns the matrix that transform parent's space coordinates to the node's (local) space coordinates.<br/>
      * The matrix is in Pixels.
+     * @function
      * @return {cc.AffineTransform}
      */
     getParentToNodeTransform: function () {
@@ -1844,14 +1847,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * @deprecated
+     * @function
+     * @deprecated since v3.0, please use getParentToNodeTransform instead
      */
     parentToNodeTransform: function () {
         return this.getParentToNodeTransform();
     },
 
     /**
-     *  Returns the world affine transform matrix. The matrix is in Pixels.
+     * Returns the world affine transform matrix. The matrix is in Pixels.
+     * @function
      * @return {cc.AffineTransform}
      */
     getNodeToWorldTransform: function () {
@@ -1862,7 +1867,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * @deprecated
+     * @function
+     * @deprecated since v3.0, please use getNodeToWorldTransform instead
      */
     nodeToWorldTransform: function(){
         return this.getNodeToWorldTransform();
@@ -1870,6 +1876,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Returns the inverse world affine transform matrix. The matrix is in Pixels.
+     * @function
      * @return {cc.AffineTransform}
      */
     getWorldToNodeTransform: function () {
@@ -1877,7 +1884,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * @deprecated
+     * @function
+     * @deprecated since v3.0, please use getWorldToNodeTransform instead
      */
     worldToNodeTransform: function () {
         return this.getWorldToNodeTransform();
@@ -1885,6 +1893,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Converts a Point to node (local) space coordinates. The result is in Points.
+     * @function
      * @param {cc.Point} worldPoint
      * @return {cc.Point}
      */
@@ -1894,6 +1903,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Converts a Point to world space coordinates. The result is in Points.
+     * @function
      * @param {cc.Point} nodePoint
      * @return {cc.Point}
      */
@@ -1905,6 +1915,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Converts a Point to node (local) space coordinates. The result is in Points.<br/>
      * treating the returned/received node point as anchor relative.
+     * @function
      * @param {cc.Point} worldPoint
      * @return {cc.Point}
      */
@@ -1915,6 +1926,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Converts a local Point to world space coordinates.The result is in Points.<br/>
      * treating the returned/received node point as anchor relative.
+     * @function
      * @param {cc.Point} nodePoint
      * @return {cc.Point}
      */
@@ -1930,7 +1942,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /** convenience methods which take a cc.Touch instead of cc.Point
-     * @param {cc.Touch} touch
+     * @function
+     * @param {cc.Touch} touch The touch object
      * @return {cc.Point}
      */
     convertTouchToNodeSpace: function (touch) {
@@ -1942,7 +1955,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * converts a cc.Touch (world coordinates) into a local coordiante. This method is AR (Anchor Relative).
-     * @param {cc.Touch}touch
+     * @function
+     * @param {cc.Touch} touch The touch object
      * @return {cc.Point}
      */
     convertTouchToNodeSpaceAR: function (touch) {
@@ -1952,9 +1966,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Update will be called automatically every frame if "scheduleUpdate" is called, and the node is "live" <br/>
-     * (override me)
-     * @param {Number} dt deltaTime
+     * Update will be called automatically every frame if "scheduleUpdate" is called when the node is "live".<br/>
+     * The default behavior is to invoke the visit function of node's componentContainer.<br/>
+     * Override me to implement your own update logic.
+     * @function
+     * @param {Number} dt Delta time since last update
      */
     update: function (dt) {
         if (this._componentContainer && !this._componentContainer.isEmpty())
@@ -1969,6 +1985,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * As the result, you apply CCSpriteBatchNode's optimization on your customed CCNode.            <br/>
      * e.g., batchNode->addChild(myCustomNode), while you can only addChild(sprite) before.
      * </p>
+     * @function
      */
     updateTransform: function () {
         // Recursively iterate over children
@@ -1976,26 +1993,49 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Currently JavaScript Bindings (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
+     * <p>Currently JavaScript Bindings (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
      * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB.
-     * This is a hack, and should be removed once JSB fixes the retain/release bug
+     * This is a hack, and should be removed once JSB fixes the retain/release bug<br/>
+     * You will need to retain an object if you created an engine object and haven't added it into the scene graph during the same frame.<br/>
+     * Otherwise, JSB's native autorelease pool will consider this object a useless one and release it directly,<br/>
+     * when you want to use it later, a "Invalid Native Object" error will be raised.<br/>
+     * The retain function can increase a reference count for the native object to avoid it being released,<br/>
+     * you need to manually invoke release function when you think this object is no longer needed, otherwise, there will be memory learks.<br/>
+     * retain and release function call should be paired in developer's game code.</p>
+     * @function
+     * @see release()
      */
     retain: function () {
     },
+    /**
+     * <p>Currently JavaScript Bindings (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
+     * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB.
+     * This is a hack, and should be removed once JSB fixes the retain/release bug<br/>
+     * You will need to retain an object if you created an engine object and haven't added it into the scene graph during the same frame.<br/>
+     * Otherwise, JSB's native autorelease pool will consider this object a useless one and release it directly,<br/>
+     * when you want to use it later, a "Invalid Native Object" error will be raised.<br/>
+     * The retain function can increase a reference count for the native object to avoid it being released,<br/>
+     * you need to manually invoke release function when you think this object is no longer needed, otherwise, there will be memory learks.<br/>
+     * retain and release function call should be paired in developer's game code.</p>
+     * @function
+     * @see retain()
+     */
     release: function () {
     },
 
     /**
-     * gets a component by its name
-     * @param {String} name
-     * @return {cc.Component} gets a component by its name
+     * Returns a component identified by the name given
+     * @function
+     * @param {String} name The name to search for
+     * @return {cc.Component} The component found
      */
     getComponent: function (name) {
         return this._componentContainer.getComponent(name);
     },
 
     /**
-     * adds a component
+     * Adds a component
+     * @function
      * @param {cc.Component} component
      */
     addComponent: function (component) {
