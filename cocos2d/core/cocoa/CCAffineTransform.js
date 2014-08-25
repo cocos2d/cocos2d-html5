@@ -29,7 +29,6 @@
  * Please do not use its constructor directly, use cc.affineTransformMake alias function instead.
  * </p>
  * @class cc.AffineTransform
- * @constructor
  * @param {Number} a
  * @param {Number} b
  * @param {Number} c

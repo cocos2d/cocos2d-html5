@@ -87,6 +87,7 @@ cc.s_globalOrderOfArrival = 1;
  * -# The grid will capture the screen <br/>
  * -# The node will be moved according to the camera values (camera) <br/>
  * -# The grid will render the captured screen <br/></P>
+ *
  * @class
  * @extends cc.Class
  *
@@ -2059,10 +2060,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     grid: null,
 
     /**
-     * <p>The cc.Node's constructor. <br/>
-     * This function will automatically be invoked when you create a node using new construction: "var node = new cc.Node()".<br/>
-     * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
-     * @constructor
+     * <p>Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.</p>
+     * @function
      */
     ctor: null,
 
@@ -2550,6 +2549,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 /**
  * Allocates and initializes a node.
  * @deprecated since v3.0, please use new construction instead.
+ * @see cc.Node
  * @return {cc.Node}
  */
 cc.Node.create = function () {

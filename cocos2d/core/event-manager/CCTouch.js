@@ -24,9 +24,13 @@
  ****************************************************************************/
 
 /**
- * The data of touch event
+ * The touch event class
  * @class
  * @extends cc.Class
+ *
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} id
  */
 cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     _point:null,
@@ -35,12 +39,6 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     _startPointCaptured: false,
     _startPoint:null,
 
-    /**
-     * @constructor
-     * @param {Number} x
-     * @param {Number} y
-     * @param {Number} id
-     */
     ctor:function (x, y, id) {
         this._point = cc.p(x || 0, y || 0);
         this._id = id || 0;

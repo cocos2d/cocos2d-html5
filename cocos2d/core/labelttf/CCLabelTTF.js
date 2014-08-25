@@ -25,12 +25,27 @@
  ****************************************************************************/
 
 /**
- * cc.LabelTTF is a subclass of cc.TextureNode that knows how to render text labels with system font or a ttf font file<br/>
+ * <p>cc.LabelTTF is a subclass of cc.TextureNode that knows how to render text labels with system font or a ttf font file<br/>
  * All features from cc.Sprite are valid in cc.LabelTTF<br/>
  * cc.LabelTTF objects are slow for js-binding on mobile devices.<br/>
  * Consider using cc.LabelAtlas or cc.LabelBMFont instead.<br/>
+ * You can create a cc.LabelTTF from a font name, alignment, dimension and font size or a cc.FontDefinition object.</p>
  * @class
  * @extends cc.Sprite
+ *
+ * @param {String} text
+ * @param {String|cc.FontDefinition} [fontName="Arial"]
+ * @param {Number} [fontSize=16]
+ * @param {cc.Size} [dimensions=cc.size(0,0)]
+ * @param {Number} [hAlignment=cc.TEXT_ALIGNMENT_LEFT]
+ * @param {Number} [vAlignment=cc.VERTICAL_TEXT_ALIGNMENT_TOP]
+ * @example
+ * var myLabel = new cc.LabelTTF('label text',  'Times New Roman', 32, cc.size(320,32), cc.TEXT_ALIGNMENT_LEFT);
+ *
+ * var fontDef = new cc.FontDefinition();
+ * fontDef.fontName = "Arial";
+ * fontDef.fontSize = "32";
+ * var myLabel = new cc.LabelTTF('label text',  fontDef);
  *
  * @property {String}       string          - Content string of label
  * @property {Number}       textAlign       - Horizontal Alignment of label: cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT
@@ -86,23 +101,44 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _className: "LabelTTF",
 
     /**
-     * creates a cc.LabelTTF from a font name, alignment, dimension and font size
-     * Constructor of cc.LabelTTF
-     * @constructor
-     * @param {String} text
-     * @param {String|cc.FontDefinition} [fontName="Arial"]
-     * @param {Number} [fontSize=16]
-     * @param {cc.Size} [dimensions=cc.size(0,0)]
-     * @param {Number} [hAlignment=cc.TEXT_ALIGNMENT_LEFT]
-     * @param {Number} [vAlignment=cc.VERTICAL_TEXT_ALIGNMENT_TOP]
-     * @example
-     * var myLabel = new cc.LabelTTF('label text',  'Times New Roman', 32, cc.size(320,32), cc.TEXT_ALIGNMENT_LEFT);
-     *
-     * var fontDef = new cc.FontDefinition();
-     * fontDef.fontName = "Arial";
-     * fontDef.fontSize = "32";
-     * var myLabel = new cc.LabelTTF('label text',  fontDef);
+     * Initializes the cc.LabelTTF with a font name, alignment, dimension and font size, do not call it by yourself, you should pass the correct arguments in constructor to initialize the label.
+     * @param {String} label string
+     * @param {String} fontName
+     * @param {Number} fontSize
+     * @param {cc.Size} [dimensions=]
+     * @param {Number} [hAlignment=]
+     * @param {Number} [vAlignment=]
+     * @return {Boolean} return false on error
      */
+    initWithString: function (label, fontName, fontSize, dimensions, hAlignment, vAlignment) {
+        var strInfo;
+        if (label)
+            strInfo = label + "";
+        else
+            strInfo = "";
+
+        fontSize = fontSize || 16;
+        dimensions = dimensions || cc.size(0, fontSize);
+        hAlignment = hAlignment || cc.TEXT_ALIGNMENT_LEFT;
+        vAlignment = vAlignment || cc.VERTICAL_TEXT_ALIGNMENT_TOP;
+
+        this._opacityModifyRGB = false;
+        this._dimensions = cc.size(dimensions.width, dimensions.height);
+        this._fontName = fontName || "Arial";
+        this._hAlignment = hAlignment;
+        this._vAlignment = vAlignment;
+
+        //this._fontSize = (cc._renderType === cc._RENDER_TYPE_CANVAS) ? fontSize : fontSize * cc.contentScaleFactor();
+        this._fontSize = fontSize;
+        this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
+        this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName, this._fontSize);
+        this.string = strInfo;
+        this._setColorsString();
+        this._updateTexture();
+        this._needUpdateTexture = false;
+        return true;
+    },
+
     ctor: function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
         cc.Sprite.prototype.ctor.call(this);
 
@@ -220,45 +256,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      */
     getFontName: function () {
         return this._fontName;
-    },
-
-    /**
-     * Initializes the cc.LabelTTF with a font name, alignment, dimension and font size, do not call it by yourself, you should pass the correct arguments in constructor to initialize the label.
-     * @param {String} label string
-     * @param {String} fontName
-     * @param {Number} fontSize
-     * @param {cc.Size} [dimensions=]
-     * @param {Number} [hAlignment=]
-     * @param {Number} [vAlignment=]
-     * @return {Boolean} return false on error
-     */
-    initWithString: function (label, fontName, fontSize, dimensions, hAlignment, vAlignment) {
-        var strInfo;
-        if (label)
-            strInfo = label + "";
-        else
-            strInfo = "";
-
-        fontSize = fontSize || 16;
-        dimensions = dimensions || cc.size(0, fontSize);
-        hAlignment = hAlignment || cc.TEXT_ALIGNMENT_LEFT;
-        vAlignment = vAlignment || cc.VERTICAL_TEXT_ALIGNMENT_TOP;
-
-        this._opacityModifyRGB = false;
-        this._dimensions = cc.size(dimensions.width, dimensions.height);
-        this._fontName = fontName || "Arial";
-        this._hAlignment = hAlignment;
-        this._vAlignment = vAlignment;
-
-        //this._fontSize = (cc._renderType === cc._RENDER_TYPE_CANVAS) ? fontSize : fontSize * cc.contentScaleFactor();
-        this._fontSize = fontSize;
-        this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
-        this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName, this._fontSize);
-        this.string = strInfo;
-        this._setColorsString();
-        this._updateTexture();
-        this._needUpdateTexture = false;
-        return true;
     },
 
     /**
@@ -1171,7 +1168,7 @@ cc.LabelTTF._fontStyleRE = /^(\d+)px\s+['"]?([\w\s\d]+)['"]?$/;
 /**
  * creates a cc.LabelTTF from a font name, alignment, dimension and font size
  * @deprecated since v3.0, please use the new construction instead
- * @see cc.LabelTTF#ctor
+ * @see cc.LabelTTF
  * @static
  * @param {String} text
  * @param {String|cc.FontDefinition} [fontName="Arial"]
@@ -1187,7 +1184,8 @@ cc.LabelTTF.create = function (text, fontName, fontSize, dimensions, hAlignment,
 
 /**
  * @deprecated since v3.0, please use the new construction instead
- * @type {Function}
+ * @function
+ * @static
  */
 cc.LabelTTF.createWithFontDefinition = cc.LabelTTF.create;
 

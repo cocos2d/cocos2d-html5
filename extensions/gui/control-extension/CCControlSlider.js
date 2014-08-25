@@ -300,7 +300,7 @@ _p = null;
  * Creates a slider with a given background sprite and a progress bar and a
  * thumb item.
  * @deprecated
- * @see cc.ControlSlider#ctor
+ * @see cc.ControlSlider
  */
 cc.ControlSlider.create = function (bgFile, progressFile, thumbFile) {
     return new cc.ControlSlider(bgFile, progressFile, thumbFile);
