@@ -391,7 +391,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         this.unscheduleAllCallbacks();
 
         // timers
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.cleanup);
         if (this.dom) {
             this.dom.remove();
         }

@@ -104,7 +104,10 @@ cc.inputManager = /** @lends cc.inputManager# */{
                     cc.log(cc._LogInfos.inputManager_handleTouchesBegin, unusedIndex);
                     continue;
                 }
-                curTouch = this._touches[unusedIndex] = selTouch;
+                //curTouch = this._touches[unusedIndex] = curTouch;
+                curTouch = this._touches[unusedIndex] = new cc.Touch();
+                curTouch._setPoint(selTouch._point);
+                curTouch._setPrevPoint(selTouch._prevPoint);
                 locTouchIntDict[touchID] = unusedIndex;
                 handleTouches.push(curTouch);
             }
@@ -174,7 +177,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
             }
             if(locTouches[index]){
                 locTouches[index]._setPoint(selTouch._point);
-                locTouches[index]._setPrevPoint(selTouch._prevPoint);         //TODO
+                locTouches[index]._setPrevPoint(selTouch._prevPoint);
                 handleTouches.push(locTouches[index]);
                 this._removeUsedIndexBit(index);
                 delete locTouchesIntDict[touchID];

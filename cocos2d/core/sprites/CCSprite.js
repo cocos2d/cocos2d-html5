@@ -530,7 +530,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             }
 
             if (this._batchNode) {
-                this._arrayMakeObjectsPerformSelector(_children, cc.Node.StateCallbackType.sortAllChildren);
+                this._arrayMakeObjectsPerformSelector(_children, cc.Node._StateCallbackType.sortAllChildren);
             }
 
             //don't need to check children recursively, that's done in visit of each child
@@ -1460,7 +1460,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         // recursively iterate over children
         if (_t._hasChildren)
-            _t._arrayMakeObjectsPerformSelector(_t._children, cc.Node.StateCallbackType.updateTransform);
+            _t._arrayMakeObjectsPerformSelector(_t._children, cc.Node._StateCallbackType.updateTransform);
     };
 
     _p.addChild = function (child, localZOrder, tag) {
