@@ -25,9 +25,9 @@
  ****************************************************************************/
 
 /**
- * cc.LabelTTF is a subclass of cc.TextureNode that knows how to render text labels<br/>
- * All features from cc.TextureNode are valid in cc.LabelTTF<br/>
- * cc.LabelTTF objects are slow for js-binding on mobile devices.Consider using cc.LabelAtlas or cc.LabelBMFont instead. <br/>
+ * cc.LabelTTF is a subclass of cc.TextureNode that knows how to render text labels with system font or a ttf font file<br/>
+ * All features from cc.Sprite are valid in cc.LabelTTF<br/>
+ * cc.LabelTTF objects are slow for js-binding on mobile devices.<br/>
  * Consider using cc.LabelAtlas or cc.LabelBMFont instead.<br/>
  * @class
  * @extends cc.Sprite
@@ -47,7 +47,6 @@
  * @property {Number}       shadowOffsetY   - The y axis offset of shadow
  * @property {Number}       shadowOpacity   - The opacity of shadow
  * @property {Number}       shadowBlur      - The blur size of shadow
- *
  */
 cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _dimensions: null,
@@ -89,6 +88,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     /**
      * creates a cc.LabelTTF from a font name, alignment, dimension and font size
      * Constructor of cc.LabelTTF
+     * @constructor
      * @param {String} text
      * @param {String|cc.FontDefinition} [fontName="Arial"]
      * @param {Number} [fontSize=16]
@@ -154,10 +154,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return this._getLabelContext().measureText(text).width;
     },
 
-    /**
-     * Prints out a description of this class
-     * @return {String}
-     */
     description: function () {
         return "<cc.LabelTTF | FontName =" + this._fontName + " FontSize = " + this._fontSize.toFixed(1) + ">";
     },
@@ -167,16 +163,18 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _setColorsString: null,
 
     updateDisplayedColor: null,
+
     setOpacity: null,
 
     updateDisplayedOpacity: null,
+
     updateDisplayedOpacityForCanvas: function (parentOpacity) {
         cc.Node.prototype.updateDisplayedOpacity.call(this, parentOpacity);
         this._setColorsString();
     },
 
     /**
-     * returns the text of the label
+     * Returns the text of the label
      * @return {String}
      */
     getString: function () {
@@ -184,7 +182,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     /**
-     * return Horizontal Alignment of cc.LabelTTF
+     * Returns Horizontal Alignment of cc.LabelTTF
      * @return {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT}
      */
     getHorizontalAlignment: function () {
@@ -192,7 +190,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     /**
-     * return Vertical Alignment of cc.LabelTTF
+     * Returns Vertical Alignment of cc.LabelTTF
      * @return {cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM}
      */
     getVerticalAlignment: function () {
@@ -200,7 +198,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     /**
-     * return Dimensions of cc.LabelTTF
+     * Returns the dimensions of cc.LabelTTF, the dimension is the maximum size of the label, set it so that label will automatically change lines when necessary.
+     * @see cc.LabelTTF#setDimensions, cc.LabelTTF#boundingWidth and cc.LabelTTF#boundingHeight
      * @return {cc.Size}
      */
     getDimensions: function () {
@@ -208,7 +207,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     /**
-     * return font size of cc.LabelTTF
+     * Returns font size of cc.LabelTTF
      * @return {Number}
      */
     getFontSize: function () {
@@ -216,7 +215,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     /**
-     * return font name of cc.LabelTTF
+     * Returns font name of cc.LabelTTF
      * @return {String}
      */
     getFontName: function () {
@@ -224,7 +223,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     /**
-     * initializes the cc.LabelTTF with a font name, alignment, dimension and font size
+     * Initializes the cc.LabelTTF with a font name, alignment, dimension and font size, do not call it by yourself, you should pass the correct arguments in constructor to initialize the label.
      * @param {String} label string
      * @param {String} fontName
      * @param {Number} fontSize
@@ -263,7 +262,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     /**
-     * initializes the CCLabelTTF with a font name, alignment, dimension and font size
+     * Initializes the CCLabelTTF with a font name, alignment, dimension and font size, do not call it by yourself, you should pass the correct arguments in constructor to initialize the label.
      * @param {String} text
      * @param {cc.FontDefinition} textDefinition
      * @return {Boolean}
@@ -271,7 +270,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     initWithStringAndTextDefinition: null,
 
     /**
-     * set the text definition used by this label
+     * Sets the text definition used by this label
      * @param {cc.FontDefinition} theDefinition
      */
     setTextDefinition: function (theDefinition) {
@@ -280,7 +279,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     /**
-     * get the text definition used by this label
+     * Extract the text definition used by this label
      * @return {cc.FontDefinition}
      */
     getTextDefinition: function () {
@@ -288,10 +287,11 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     /**
-     * enable or disable shadow for the label
-     * @param {cc.Point} shadowOffset
-     * @param {Number} shadowOpacity (0 to 1)
-     * @param {Number} shadowBlur
+     * Enable or disable shadow for the label
+     * @param {Number} shadowOffsetX The x axis offset of the shadow
+     * @param {Number} shadowOffsetY The y axis offset of the shadow
+     * @param {Number} shadowOpacity The opacity of the shadow (0 to 1)
+     * @param {Number} shadowBlur The blur size of the shadow
      */
     enableShadow: function (shadowOffsetX, shadowOffsetY, shadowOpacity, shadowBlur) {
         shadowOpacity = shadowOpacity || 0.5;
@@ -383,7 +383,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     /**
-     * disable shadow rendering
+     * Disable shadow rendering
      */
     disableShadow: function () {
         if (this._shadowEnabled) {
@@ -393,9 +393,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     /**
-     * enable or disable stroke
-     * @param {cc.Color} strokeColor
-     * @param {Number} strokeSize
+     * Enable label stroke with stroke parameters
+     * @param {cc.Color} strokeColor The color of stroke
+     * @param {Number} strokeSize The size of stroke
      */
     enableStroke: function (strokeColor, strokeSize) {
         if (this._strokeEnabled === false)
@@ -447,7 +447,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     /**
-     * disable stroke
+     * Disable label stroke
      */
     disableStroke: function () {
         if (this._strokeEnabled) {
@@ -457,9 +457,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     /**
-     * set text tinting
+     * Sets the text fill color
      * @function
-     * @param {cc.Color} tintColor
+     * @param {cc.Color} fillColor The fill color of the label
      */
     setFontFillColor: null,
 
@@ -548,10 +548,11 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     _fontClientHeight: 18,
+
     /**
-     * changes the string to render
+     * Changes the text content of the label
      * @warning Changing the string is as expensive as creating a new cc.LabelTTF. To obtain better performance use cc.LabelAtlas
-     * @param {String} text text for the label
+     * @param {String} text Text content for the label
      */
     setString: function (text) {
         text = String(text);
@@ -567,8 +568,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _updateString: function () {
         this._string = this._originalText;
     },
+
     /**
-     * set Horizontal Alignment of cc.LabelTTF
+     * Sets Horizontal Alignment of cc.LabelTTF
      * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} alignment Horizontal Alignment
      */
     setHorizontalAlignment: function (alignment) {
@@ -581,7 +583,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     /**
-     * set Vertical Alignment of cc.LabelTTF
+     * Sets Vertical Alignment of cc.LabelTTF
      * @param {cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM} verticalAlignment
      */
     setVerticalAlignment: function (verticalAlignment) {
@@ -594,7 +596,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     /**
-     * set Dimensions of cc.LabelTTF
+     * Set Dimensions of cc.LabelTTF, the dimension is the maximum size of the label, set it so that label will automatically change lines when necessary.
      * @param {cc.Size|Number} dim dimensions or width of dimensions
      * @param {Number} [height] height of dimensions
      */
@@ -640,7 +642,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     /**
-     * set font size of cc.LabelTTF
+     * Sets font size of cc.LabelTTF
      * @param {Number} fontSize
      */
     setFontSize: function (fontSize) {
@@ -654,7 +656,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     /**
-     * set font name of cc.LabelTTF
+     * Sets font name of cc.LabelTTF
      * @param {String} fontName
      */
     setFontName: function (fontName) {
@@ -902,6 +904,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._anchorPointInPoints.y = (locStrokeShadowOffsetY * 0.5) + ((locSize.height - locStrokeShadowOffsetY) * locAP.y);
     },
 
+    /**
+     * Returns the actual content size of the label, the content size is the real size that the label occupied while dimension is the outer bounding box of the label.
+     * @returns {cc.Size} The content size
+     */
     getContentSize: function () {
         if (this._needUpdateTexture)
             this._updateTTF();
@@ -959,11 +965,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         cc.Sprite.prototype.visit.call(this, context);
     },
 
-    /**
-     * Draw sprite to canvas
-     * @function
-     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx Render context of canvas, 2d or 3d
-     */
     draw: null,
 
     _setTextureCoords: function (rect) {
@@ -1169,7 +1170,9 @@ cc.LabelTTF._fontStyleRE = /^(\d+)px\s+['"]?([\w\s\d]+)['"]?$/;
 
 /**
  * creates a cc.LabelTTF from a font name, alignment, dimension and font size
- * @deprecated
+ * @deprecated since v3.0, please use the new construction instead
+ * @see cc.LabelTTF#ctor
+ * @static
  * @param {String} text
  * @param {String|cc.FontDefinition} [fontName="Arial"]
  * @param {Number} [fontSize=16]
@@ -1177,22 +1180,13 @@ cc.LabelTTF._fontStyleRE = /^(\d+)px\s+['"]?([\w\s\d]+)['"]?$/;
  * @param {Number} [hAlignment=cc.TEXT_ALIGNMENT_LEFT]
  * @param {Number} [vAlignment=cc.VERTICAL_TEXT_ALIGNMENT_TOP]
  * @return {cc.LabelTTF|Null}
- * @example
- * // Example
- * 1.
- * var myLabel = cc.LabelTTF.create('label text',  'Times New Roman', 32, cc.size(320,32), cc.TEXT_ALIGNMENT_LEFT);
- * 2.
- * var fontDef = new cc.FontDefinition();
- * fontDef.fontName = "Arial";
- * fontDef.fontSize = "32";
- * var myLabel = cc.LabelTTF.create('label text',  fontDef);
  */
 cc.LabelTTF.create = function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
     return new cc.LabelTTF(text, fontName, fontSize, dimensions, hAlignment, vAlignment);
 };
 
 /**
- * @deprecated
+ * @deprecated since v3.0, please use the new construction instead
  * @type {Function}
  */
 cc.LabelTTF.createWithFontDefinition = cc.LabelTTF.create;

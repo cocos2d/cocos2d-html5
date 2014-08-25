@@ -2441,7 +2441,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * When color doesn't include opacity value like cc.color(128,128,128), this function only change the color. <br/>
      * When color include opacity like cc.color(128,128,128,100), then this function will change the color and the opacity.</p>
      * @function
-     * @param {cc.Color} color The new coloe given
+     * @param {cc.Color} color The new color given
      */
     setColor: function (color) {
         var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
