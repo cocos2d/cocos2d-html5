@@ -527,7 +527,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
                 var cSize = cc.size(0,0);
                 if (widgetParent){
                     cSize.width = widgetParent.getSize().width * this._sizePercent.x;
-                    cSize.height = widgetParent.getSize().height * this._sizePercent.x;
+                    cSize.height = widgetParent.getSize().height * this._sizePercent.y;
                 }else{
                     cSize.width = this._parent.getContentSize().width * this._sizePercent.x;
                     cSize.height = this._parent.getContentSize().height * this._sizePercent.y;
