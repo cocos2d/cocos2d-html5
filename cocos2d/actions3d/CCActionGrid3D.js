@@ -25,7 +25,7 @@
  ****************************************************************************/
 
 /**
- * cc.Waves3D action
+ * cc.Waves3D action.
  * @class
  * @extends cc.Grid3DAction
  */
@@ -96,7 +96,12 @@ cc.Waves3D = cc.Grid3DAction.extend(/** @lends cc.Waves3D# */{
         return false;
     },
 
-    update:function (time) {
+    /**
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number}  dt
+     */
+    update:function (dt) {
         var locGridSize = this._gridSize;
         var locAmplitude = this._amplitude, locPos = cc.p(0, 0);
         var locAmplitudeRate = this._amplitudeRate, locWaves = this._waves;
@@ -105,8 +110,8 @@ cc.Waves3D = cc.Grid3DAction.extend(/** @lends cc.Waves3D# */{
                 locPos.x = i;
                 locPos.y = j;
                 var v = this.originalVertex(locPos);
-                v.z += (Math.sin(Math.PI * time * locWaves * 2 + (v.y + v.x) * 0.01) * locAmplitude * locAmplitudeRate);
-                //cc.log("v.z offset is" + (Math.sin(Math.PI * time * this._waves * 2 + (v.y + v.x) * 0.01) * this._amplitude * this._amplitudeRate));
+                v.z += (Math.sin(Math.PI * dt * locWaves * 2 + (v.y + v.x) * 0.01) * locAmplitude * locAmplitudeRate);
+                //cc.log("v.z offset is" + (Math.sin(Math.PI * dt * this._waves * 2 + (v.y + v.x) * 0.01) * this._amplitude * this._amplitudeRate));
                 this.setVertex(locPos, v);
             }
         }
@@ -114,7 +119,7 @@ cc.Waves3D = cc.Grid3DAction.extend(/** @lends cc.Waves3D# */{
 });
 
 /**
- * Create a wave 3d action with duration, grid size, waves and amplitude
+ * Create a wave 3d action with duration, grid size, waves and amplitude.
  * @function
  * @param {Number} duration
  * @param {cc.Size} gridSize
@@ -125,19 +130,20 @@ cc.waves3D = function (duration, gridSize, waves, amplitude) {
     return new cc.Waves3D(duration, gridSize, waves, amplitude);
 };
 /**
- * Please use cc.waves3D instead
- * Create a wave 3d action with duration, grid size, waves and amplitude
+ * Please use cc.waves3D instead. <br />
+ * Create a wave 3d action with duration, grid size, waves and amplitude.
  * @param {Number} duration
  * @param {cc.Size} gridSize
  * @param {Number} waves
  * @param {Number} amplitude
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.waves3D instead.
  */
 cc.Waves3D.create = cc.waves3D;
 
 /**
- * cc.FlipX3D action
+ * cc.FlipX3D action. <br />
+ * Flip around.
  * @class
  * @extends cc.Grid3DAction
  */
@@ -178,8 +184,13 @@ cc.FlipX3D = cc.Grid3DAction.extend(/** @lends cc.FlipX3D# */{
         return  cc.Grid3DAction.prototype.initWithDuration.call(this, duration, gridSize);
     },
 
-    update:function (time) {
-        var angle = Math.PI * time; // 180 degrees
+    /**
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number}  dt
+     */
+    update:function (dt) {
+        var angle = Math.PI * dt; // 180 degrees
         var mz = Math.sin(angle);
         angle = angle / 2.0; // x calculates degrees from 0 to 90
         var mx = Math.cos(angle);
@@ -242,7 +253,8 @@ cc.FlipX3D = cc.Grid3DAction.extend(/** @lends cc.FlipX3D# */{
 });
 
 /**
- * Create a Flip X 3D action with duration
+ * Create a Flip X 3D action with duration. <br />
+ * Flip around.
  * @function
  * @param {Number} duration
  * @return {cc.FlipX3D}
@@ -250,18 +262,21 @@ cc.FlipX3D = cc.Grid3DAction.extend(/** @lends cc.FlipX3D# */{
 cc.flipX3D = function (duration) {
     return new cc.FlipX3D(duration);
 };
+
 /**
- * Please use cc.flipX3D instead
- * Create a Flip X 3D action with duration
+ * Please use cc.flipX3D instead. <br />
+ * Create a Flip X 3D action with duration. <br />
+ * Flip around.
  * @param {Number} duration
  * @return {cc.FlipX3D}
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.flipX3D instead.
  */
 cc.FlipX3D.create = cc.flipX3D;
 
 /**
- * cc.FlipY3D action
+ * cc.FlipY3D action. <br />
+ * Upside down.
  * @class
  * @extends cc.FlipX3D
  */
@@ -278,8 +293,13 @@ cc.FlipY3D = cc.FlipX3D.extend(/** @lends cc.FlipY3D# */{
 		else cc.GridAction.prototype.ctor.call(this);
 	},
 
-    update:function (time) {
-        var angle = Math.PI * time; // 180 degrees
+    /**
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number}  dt
+     */
+    update:function (dt) {
+        var angle = Math.PI * dt; // 180 degrees
         var mz = Math.sin(angle);
         angle = angle / 2.0;     // x calculates degrees from 0 to 90
         var my = Math.cos(angle);
@@ -343,7 +363,8 @@ cc.FlipY3D = cc.FlipX3D.extend(/** @lends cc.FlipY3D# */{
 });
 
 /**
- * Create a flip Y 3d action with duration
+ * Create a flip Y 3d action with duration. <br />
+ * Upside down.
  * @function
  * @param {Number} duration
  * @return {cc.FlipY3D}
@@ -351,28 +372,30 @@ cc.FlipY3D = cc.FlipX3D.extend(/** @lends cc.FlipY3D# */{
 cc.flipY3D = function (duration) {
     return new cc.FlipY3D(duration);
 };
+
 /**
- * Please use cc.flipY3D instead
- * Create a flip Y 3d action with duration
+ * Please use cc.flipY3D instead. <br />
+ * Create a flip Y 3d action with duration.
  * @param {Number} duration
  * @return {cc.FlipY3D}
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.flipY3D instead.
  */
 cc.FlipY3D.create = cc.flipY3D;
 
 /**
- * cc.Lens3D action
+ * cc.Lens3D action. <br />
+ * Upside down.
  * @class
  * @extends cc.FlipX3D
  */
 cc.Lens3D = cc.Grid3DAction.extend(/** @lends cc.Lens3D# */{
-    /* lens center position */
+    //lens center position
     _position:null,
     _radius:0,
-    /** lens effect. Defaults to 0.7 - 0 means no effect, 1 is very strong effect */
+    //lens effect. Defaults to 0.7 - 0 means no effect, 1 is very strong effect
     _lensEffect:0,
-    /** lens is concave. (true = concave, false = convex) default is convex i.e. false */
+    //lens is concave. (true = concave, false = convex) default is convex i.e. false
     _concave:false,
     _dirty:false,
 
@@ -454,7 +477,12 @@ cc.Lens3D = cc.Grid3DAction.extend(/** @lends cc.Lens3D# */{
         return false;
     },
 
-    update:function (time) {
+    /**
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number}  dt
+     */
+    update:function (dt) {
         if (this._dirty) {
             var locGridSizeWidth = this._gridSize.width, locGridSizeHeight = this._gridSize.height;
             var locRadius = this._radius, locLensEffect = this._lensEffect;
@@ -509,6 +537,7 @@ cc.Lens3D = cc.Grid3DAction.extend(/** @lends cc.Lens3D# */{
 cc.lens3D = function (duration, gridSize, position, radius) {
     return new cc.Lens3D(duration, gridSize, position, radius);
 };
+
 /**
  * Please use cc.lens3D instead
  * creates a lens 3d action with center position, radius
@@ -518,7 +547,7 @@ cc.lens3D = function (duration, gridSize, position, radius) {
  * @param {Number} radius
  * @return {cc.Lens3D}
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.lens3D instead.
  */
 cc.Lens3D.create = cc.lens3D;
 
@@ -623,7 +652,12 @@ cc.Ripple3D = cc.Grid3DAction.extend(/** @lends cc.Ripple3D# */{
         return false;
     },
 
-    update:function (time) {
+    /**
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number}  dt
+     */
+    update:function (dt) {
         var locGridSizeWidth = this._gridSize.width, locGridSizeHeight = this._gridSize.height;
         var locPos = cc.p(0, 0), locRadius = this._radius;
         var locWaves = this._waves, locAmplitude = this._amplitude, locAmplitudeRate = this._amplitudeRate;
@@ -641,13 +675,14 @@ cc.Ripple3D = cc.Grid3DAction.extend(/** @lends cc.Ripple3D# */{
                 if (r < locRadius) {
                     r = locRadius - r;
                     var rate = Math.pow(r / locRadius, 2);
-                    v.z += (Math.sin(time * Math.PI * locWaves * 2 + r * 0.1) * locAmplitude * locAmplitudeRate * rate);
+                    v.z += (Math.sin(dt * Math.PI * locWaves * 2 + r * 0.1) * locAmplitude * locAmplitudeRate * rate);
                 }
                 this.setVertex(locPos, v);
             }
         }
     }
 });
+
 /**
  * creates a ripple 3d action with radius, number of waves, amplitude
  * @function
@@ -662,6 +697,7 @@ cc.Ripple3D = cc.Grid3DAction.extend(/** @lends cc.Ripple3D# */{
 cc.ripple3D = function (duration, gridSize, position, radius, waves, amplitude) {
     return new cc.Ripple3D(duration, gridSize, position, radius, waves, amplitude);
 };
+
 /**
  * Please use cc.ripple3D instead
  * creates a ripple 3d action with radius, number of waves, amplitude
@@ -673,7 +709,7 @@ cc.ripple3D = function (duration, gridSize, position, radius, waves, amplitude) 
  * @param {Number} amplitude
  * @return {cc.Ripple3D}
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.ripple3D instead.
  */
 cc.Ripple3D.create = cc.ripple3D;
 
@@ -716,7 +752,12 @@ cc.Shaky3D = cc.Grid3DAction.extend(/** @lends cc.Shaky3D# */{
         return false;
     },
 
-    update:function (time) {
+    /**
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number}  dt
+     */
+    update:function (dt) {
         var locGridSizeWidth = this._gridSize.width, locGridSizeHeight = this._gridSize.height;
         var locRandRange = this._randRange, locShakeZ = this._shakeZ, locP = cc.p(0, 0);
         var v;
@@ -747,6 +788,7 @@ cc.Shaky3D = cc.Grid3DAction.extend(/** @lends cc.Shaky3D# */{
 cc.shaky3D = function (duration, gridSize, range, shakeZ) {
     return new cc.Shaky3D(duration, gridSize, range, shakeZ);
 };
+
 /**
  * Please use cc.shaky3D instead
  * creates the action with a range, shake Z vertices, a grid and duration
@@ -756,7 +798,7 @@ cc.shaky3D = function (duration, gridSize, range, shakeZ) {
  * @param {Boolean} shakeZ
  * @return {cc.Shaky3D}
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.shaky3D instead.
  */
 cc.Shaky3D.create = cc.shaky3D;
 
@@ -833,7 +875,12 @@ cc.Liquid = cc.Grid3DAction.extend(/** @lends cc.Liquid# */{
         return false;
     },
 
-    update:function (time) {
+    /**
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number}  dt
+     */
+    update:function (dt) {
         var locSizeWidth = this._gridSize.width, locSizeHeight = this._gridSize.height, locPos = cc.p(0, 0);
         var locWaves = this._waves, locAmplitude = this._amplitude, locAmplitudeRate = this._amplitudeRate;
         var v;
@@ -862,6 +909,7 @@ cc.Liquid = cc.Grid3DAction.extend(/** @lends cc.Liquid# */{
 cc.liquid = function (duration, gridSize, waves, amplitude) {
     return new cc.Liquid(duration, gridSize, waves, amplitude);
 };
+
 /**
  * Please use cc.liquid instead
  * creates the action with amplitude, a grid and duration
@@ -871,7 +919,7 @@ cc.liquid = function (duration, gridSize, waves, amplitude) {
  * @param {Number} amplitude
  * @return {cc.Liquid}
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.liquid instead.
  */
 cc.Liquid.create = cc.liquid;
 
@@ -956,7 +1004,12 @@ cc.Waves = cc.Grid3DAction.extend(/** @lends cc.Waves# */{
         return false;
     },
 
-    update:function (time) {
+    /**
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number}  dt
+     */
+    update:function (dt) {
         var locSizeWidth = this._gridSize.width, locSizeHeight = this._gridSize.height, locPos = cc.p(0, 0);
         var locVertical = this._vertical, locHorizontal = this._horizontal;
         var locWaves = this._waves, locAmplitude = this._amplitude, locAmplitudeRate = this._amplitudeRate;
@@ -1002,7 +1055,7 @@ cc.waves = function (duration, gridSize, waves, amplitude, horizontal, vertical)
  * @param {Boolean} vertical
  * @return {cc.Waves}
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.waves instead.
  */
 cc.Waves.create = cc.waves;
 
@@ -1096,7 +1149,12 @@ cc.Twirl = cc.Grid3DAction.extend(/** @lends cc.Twirl# */{
         return false;
     },
 
-    update:function (time) {
+    /**
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number}  dt
+     */
+    update:function (dt) {
         var c = this._position;
         var locSizeWidth = this._gridSize.width, locSizeHeight = this._gridSize.height, locPos = cc.p(0, 0);
         var amp = 0.1 * this._amplitude * this._amplitudeRate;
@@ -1149,6 +1207,6 @@ cc.twirl = function (duration, gridSize, position, twirls, amplitude) {
  * @param {Number} amplitude
  * @return {cc.Twirl}
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.twirl instead.
  */
 cc.Twirl.create = cc.twirl;
