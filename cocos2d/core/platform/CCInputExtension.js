@@ -92,16 +92,29 @@ _p.didAccelerate = function (eventData) {
         return;
 
     var mAcceleration = _t._acceleration;
+
+    var x, y, z;
+
     if (_t._accelDeviceEvent == window.DeviceMotionEvent) {
         var eventAcceleration = eventData["accelerationIncludingGravity"];
-        mAcceleration.x = _t._accelMinus * eventAcceleration.x * 0.1;
-        mAcceleration.y = _t._accelMinus * eventAcceleration.y * 0.1;
-        mAcceleration.z = eventAcceleration.z * 0.1;
+        x = _t._accelMinus * eventAcceleration.x * 0.1;
+        y = _t._accelMinus * eventAcceleration.y * 0.1;
+        z = eventAcceleration.z * 0.1;
     } else {
-        mAcceleration.x = (eventData["gamma"] / 90) * 0.981;
-        mAcceleration.y = -(eventData["beta"] / 90) * 0.981;
-        mAcceleration.z = (eventData["alpha"] / 90) * 0.981;
+        x = (eventData["gamma"] / 90) * 0.981;
+        y = -(eventData["beta"] / 90) * 0.981;
+        z = (eventData["alpha"] / 90) * 0.981;
     }
+
+    if(cc.sys.os === cc.sys.OS_ANDROID){
+        mAcceleration.x = -x;
+        mAcceleration.y = -y;
+    }else{
+        mAcceleration.x = x;
+        mAcceleration.y = y;
+    }
+    mAcceleration.z = z;
+
     mAcceleration.timestamp = eventData.timeStamp || Date.now();
 
     var tmpX = mAcceleration.x;
