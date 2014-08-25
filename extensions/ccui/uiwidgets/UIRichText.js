@@ -191,7 +191,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
     },
 
     _initRenderer: function () {
-        this._elementRenderersContainer = cc.Node.create();
+        this._elementRenderersContainer = new cc.Node();
         this._elementRenderersContainer.setAnchorPoint(0.5, 0.5);
         this.addProtectedChild(this._elementRenderersContainer, 0, -1);
     },
@@ -324,8 +324,6 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
         this._handleCustomRenderer(imageRenderer);
     },
 
-    _formarRenderers: function(){},
-
     /**
      * Handle custom renderer
      * @param {cc.Node} renderer
@@ -364,7 +362,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                 newContentSizeHeight = Math.max(newContentSizeHeight, iSize.height);
                 nextPosX += iSize.width;
             }
-            locRenderersContainer.setContentSize(cc.size(newContentSizeWidth, newContentSizeHeight));
+            locRenderersContainer.setContentSize(newContentSizeWidth, newContentSizeHeight);
         } else {
             var maxHeights = [];
             for (i = 0; i < locElementRenders.length; i++) {
@@ -453,6 +451,16 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
             this._formatTextDirty = true;
             ccui.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
         }
+    },
+
+    /**
+     * Gets the content size of ccui.RichText
+     * @override
+     * @return {cc.Size}
+     */
+    getContentSize: function(){
+        this.formatText();
+        return cc.Node.prototype.getContentSize.l(this);
     },
 
     getDescription: function(){

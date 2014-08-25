@@ -208,10 +208,9 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._barRenderer = null;
         this._progressBarRenderer = null;
         if (this._scale9Enabled) {
-            this._barRenderer = cc.Scale9Sprite.create();
-            this._progressBarRenderer = cc.Scale9Sprite.create();
-        }
-        else {
+            this._barRenderer = new ccui.Scale9Sprite();
+            this._progressBarRenderer = new ccui.Scale9Sprite();
+        } else {
             this._barRenderer = cc.Sprite.create();
             this._progressBarRenderer = cc.Sprite.create();
         }

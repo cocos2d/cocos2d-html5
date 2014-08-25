@@ -34,6 +34,7 @@
  */
 cc.generateTintImageWithMultiply = function(image, color, rect, renderCanvas){
     renderCanvas = renderCanvas || cc.newElement("canvas");
+
     rect = rect || cc.rect(0,0, image.width, image.height);
 
     var context = renderCanvas.getContext( "2d" );
@@ -44,7 +45,7 @@ cc.generateTintImageWithMultiply = function(image, color, rect, renderCanvas){
         context.globalCompositeOperation = "source-over";
     }
 
-    context.fillStyle = "rgb(" + color.r + "," + color.g + "," + color.b + ")";
+    context.fillStyle = "rgb(" + (0|color.r) + "," + (0|color.g) + "," + (0|color.b) + ")";
     context.fillRect(0, 0, rect.width, rect.height);
     context.globalCompositeOperation = "multiply";
     context.drawImage(image,
@@ -861,7 +862,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     initWithFile:function (filename, rect) {
         cc.assert(filename, cc._LogInfos.Sprite_initWithFile);
 
-        var tex = cc.textureCache.textureForKey(filename);
+        var tex = cc.textureCache.getTextureForKey(filename);
         if (!tex) {
             tex = cc.textureCache.addImage(filename);
             return this.initWithTexture(tex, rect || cc.rect(0, 0, tex._contentSize.width, tex._contentSize.height));
@@ -1051,7 +1052,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 return;
 
             this._colorized = true;
-            if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor)
+            if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor
+                && this._originalTexture._htmlElementObj != locElement)
                 cc.generateTintImageWithMultiply(this._originalTexture._htmlElementObj, this._displayedColor, locRect, locElement);
             else {
                 locElement = cc.generateTintImageWithMultiply(this._originalTexture._htmlElementObj, this._displayedColor, locRect);

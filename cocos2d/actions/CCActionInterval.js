@@ -70,14 +70,16 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
 		d !== undefined && this.initWithDuration(d);
     },
 
-    /** how many seconds had elapsed since the actions started to run.
+    /**
+     * How many seconds had elapsed since the actions started to run.
      * @return {Number}
      */
     getElapsed:function () {
         return this._elapsed;
     },
 
-    /** initializes the action
+    /**
+     * Initializes the action.
      * @param {Number} d duration in seconds
      * @return {Boolean}
      */
@@ -91,7 +93,8 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
         return true;
     },
 
-    /** returns true if the action has finished
+    /**
+     * Returns true if the action has finished.
      * @return {Boolean}
      */
     isDone:function () {
@@ -99,7 +102,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     },
 
     /**
-     * Some additional parameters of cloning
+     * Some additional parameters of cloning.
      * @param {cc.Action} action
      * @private
      */
@@ -112,11 +115,6 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
         action._repeatMethod = this._repeatMethod;
     },
 
-    /**
-     *
-     * @param action
-     * @private
-     */
     _reverseEaseList: function(action){
         if(this._easeList){
             action._easeList = [];
@@ -127,7 +125,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     },
 
     /**
-     * returns a new clone of the action
+     * Returns a new clone of the action.
      * @returns {cc.ActionInterval}
      */
     clone:function () {
@@ -136,6 +134,15 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
         return action;
     },
 
+    /**
+     * Implementation of ease motion.
+     *
+     * @example
+     * //example
+     * action.easeing(cc.easeIn(3.0));
+     * @param {Object} easeObj
+     * @returns {cc.ActionInterval}
+     */
     easing: function (easeObj) {
         if (this._easeList)
             this._easeList.length = 0;
@@ -156,7 +163,10 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     },
 
     /**
-     * @param {Number} dt delta time in seconds
+     * called every frame with it's delta time. <br />
+     * DON'T override unless you know what you are doing.
+     *
+     * @param {Number} dt
      */
     step:function (dt) {
         if (this._firstTick) {
@@ -187,6 +197,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     },
 
     /**
+     * Start this action with target.
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -196,7 +207,10 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     },
 
     /**
-     * @return {Null}
+     * returns a reversed action. <br />
+     * Will be overwrite.
+     *
+     * @return {null}
      */
     reverse:function () {
         cc.log("cc.IntervalAction: reverse not implemented.");
@@ -204,6 +218,8 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     },
 
     /**
+     * Set amplitude rate.
+     * @warning It should be overridden in subclass.
      * @param {Number} amp
      */
     setAmplitudeRate:function (amp) {
@@ -212,7 +228,9 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     },
 
     /**
-     * @return {Number}
+     * Get amplitude rate.
+     * @warning It should be overridden in subclass.
+     * @return {Number} 0
      */
     getAmplitudeRate:function () {
         // Abstract class needs implementation
@@ -240,6 +258,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     },
 
     /**
+     * Get this action speed.
      * @return {Number}
      */
     getSpeed: function(){
@@ -247,7 +266,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     },
 
     /**
-     *
+     * Set this action speed.
      * @param {Number} speed
      * @returns {cc.ActionInterval}
      */
@@ -287,6 +306,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
 });
 
 /**
+ * An interval action is an action that takes place within a certain period of time.
  * @function
  * @param {Number} d duration in seconds
  * @return {cc.ActionInterval}
@@ -297,17 +317,19 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
 cc.actionInterval = function (d) {
     return new cc.ActionInterval(d);
 };
+
 /**
- * Please use cc.actionInterval instead
+ * Please use cc.actionInterval instead.
+ * An interval action is an action that takes place within a certain period of time.
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.actionInterval instead.
  * @param {Number} d duration in seconds
  * @return {cc.ActionInterval}
  */
 cc.ActionInterval.create = cc.actionInterval;
 
-
-/** Runs actions sequentially, one after another
+/**
+ * Runs actions sequentially, one after another.
  * @class
  * @extends cc.ActionInterval
  */
@@ -347,7 +369,8 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
         }
     },
 
-    /** initializes the action <br/>
+    /**
+     * Initializes the action <br/>
      * @param {cc.FiniteTimeAction} actionOne
      * @param {cc.FiniteTimeAction} actionTwo
      * @return {Boolean}
@@ -376,6 +399,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
     },
 
     /**
+     * Start the action with target.
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -385,7 +409,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
     },
 
     /**
-     * stop the action
+     * stop the action.
      */
     stop:function () {
         // Issue #1305
@@ -395,15 +419,16 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
     },
 
     /**
-     * @param {Number} time  time in seconds
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     * @param {Number}  dt
      */
-    update:function (time) {
-        time = this._computeEaseTime(time);
+    update:function (dt) {
+        dt = this._computeEaseTime(dt);
         var new_t, found = 0;
         var locSplit = this._split, locActions = this._actions, locLast = this._last;
-        if (time < locSplit) {
+        if (dt < locSplit) {
             // action[0]
-            new_t = (locSplit !== 0) ? time / locSplit : 1;
+            new_t = (locSplit !== 0) ? dt / locSplit : 1;
 
             if (found === 0 && locLast === 1) {
                 // Reverse mode ?
@@ -416,7 +441,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
         } else {
             // action[1]
             found = 1;
-            new_t = (locSplit === 1) ? 1 : (time - locSplit) / (1 - locSplit);
+            new_t = (locSplit === 1) ? 1 : (dt - locSplit) / (1 - locSplit);
 
             if (locLast === -1) {
                 // action[0] was skipped, execute it.
@@ -444,7 +469,8 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * Returns a reversed action.
+     * @return {cc.Sequence}
      */
     reverse:function () {
         var action = cc.Sequence._actionOneTwo(this._actions[1].reverse(), this._actions[0].reverse());
@@ -453,6 +479,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
         return action;
     }
 });
+
 /** helper constructor to create an array of sequenceable actions
  * @function
  * @param {Array|cc.FiniteTimeAction} tempArray
@@ -477,11 +504,12 @@ cc.sequence = function (/*Multiple Arguments*/tempArray) {
     }
     return prev;
 };
+
 /**
- * Please use cc.sequence instead
+ * Please use cc.sequence instead.
  * helper constructor to create an array of sequenceable actions
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.sequence instead.
  * @param {Array|cc.FiniteTimeAction} tempArray
  * @return {cc.Sequence}
  */
@@ -498,7 +526,6 @@ cc.Sequence._actionOneTwo = function (actionOne, actionTwo) {
     sequence.initWithTwoActions(actionOne, actionTwo);
     return sequence;
 };
-
 
 /**
  * Repeats an action a number of times.
@@ -560,6 +587,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
     },
 
     /**
+     * Start the action with target.
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -578,17 +606,18 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
     },
 
     /**
-     * @param {Number} time time in seconds
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     * @param {Number}  dt
      */
-    update:function (time) {
-        time = this._computeEaseTime(time);
+    update:function (dt) {
+        dt = this._computeEaseTime(dt);
         var locInnerAction = this._innerAction;
         var locDuration = this._duration;
         var locTimes = this._times;
         var locNextDt = this._nextDt;
 
-        if (time >= locNextDt) {
-            while (time > locNextDt && this._total < locTimes) {
+        if (dt >= locNextDt) {
+            while (dt > locNextDt && this._total < locTimes) {
                 locInnerAction.update(1);
                 this._total++;
                 locInnerAction.stop();
@@ -598,7 +627,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
             }
 
             // fix for issue #1288, incorrect end value of repeat
-            if (time >= 1.0 && this._total < locTimes)
+            if (dt >= 1.0 && this._total < locTimes)
                 this._total++;
 
             // don't set a instant action back or update it, it has no use because it has no duration
@@ -608,15 +637,16 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
                     locInnerAction.stop();
                 } else {
                     // issue #390 prevent jerk, use right update
-                    locInnerAction.update(time - (locNextDt - locInnerAction._duration / locDuration));
+                    locInnerAction.update(dt - (locNextDt - locInnerAction._duration / locDuration));
                 }
             }
         } else {
-            locInnerAction.update((time * locTimes) % 1.0);
+            locInnerAction.update((dt * locTimes) % 1.0);
         }
     },
 
     /**
+     * Return true if the action has finished.
      * @return {Boolean}
      */
     isDone:function () {
@@ -624,16 +654,18 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * returns a reversed action.
+     * @return {cc.Repeat}
      */
     reverse:function () {
-        var action = cc.repeat(this._innerAction.reverse(), this._times);
+        var action = new cc.Repeat(this._innerAction.reverse(), this._times);
         this._cloneDecoration(action);
         this._reverseEaseList(action);
         return action;
     },
 
     /**
+     * Set inner Action.
      * @param {cc.FiniteTimeAction} action
      */
     setInnerAction:function (action) {
@@ -643,12 +675,14 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
     },
 
     /**
+     * Get inner Action.
      * @return {cc.FiniteTimeAction}
      */
     getInnerAction:function () {
         return this._innerAction;
     }
 });
+
 /**
  * Creates a Repeat action. Times is an unsigned integer between 1 and pow(2,30)
  * @function
@@ -662,11 +696,12 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
 cc.repeat = function (action, times) {
     return new cc.Repeat(action, times);
 };
+
 /**
  * Please use cc.repeat instead
  * Creates a Repeat action. Times is an unsigned integer between 1 and pow(2,30)
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.repeat instead.
  * @param {cc.FiniteTimeAction} action
  * @param {Number} times
  * @return {cc.Repeat}
@@ -680,7 +715,6 @@ cc.Repeat.create = cc.repeat;
  * @class
  * @extends cc.ActionInterval
  */
-
 cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
     _innerAction:null, //CCActionInterval
 
@@ -721,6 +755,7 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
     },
 
     /**
+     * Start the action with target.
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -729,6 +764,8 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
     },
 
     /**
+     * called every frame with it's delta time. <br />
+     * DON'T override unless you know what you are doing.
      * @param dt delta time in seconds
      */
     step:function (dt) {
@@ -745,6 +782,7 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
     },
 
     /**
+     * Return true if the action has finished.
      * @return {Boolean}
      */
     isDone:function () {
@@ -752,17 +790,18 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * Returns a reversed action.
+     * @return {cc.RepeatForever}
      */
     reverse:function () {
-        var action = cc.repeatForever(this._innerAction.reverse());
+        var action = new cc.RepeatForever(this._innerAction.reverse());
         this._cloneDecoration(action);
         this._reverseEaseList(action);
         return action;
     },
 
     /**
-     *
+     * Set inner action.
      * @param {cc.ActionInterval} action
      */
     setInnerAction:function (action) {
@@ -772,12 +811,14 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
     },
 
     /**
+     * Get inner action.
      * @return {cc.ActionInterval}
      */
     getInnerAction:function () {
         return this._innerAction;
     }
 });
+
 /**
  * Create a acton which repeat forever
  * @function
@@ -790,11 +831,12 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
 cc.repeatForever = function (action) {
     return new cc.RepeatForever(action);
 };
+
 /**
  * Please use cc.repeatForever instead
  * Create a acton which repeat forever
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.repeatForever instead.
  * @param {cc.FiniteTimeAction} action
  * @return {cc.RepeatForever}
  */
@@ -878,6 +920,7 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
     },
 
     /**
+     * Start the action with target.
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -896,18 +939,20 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
     },
 
     /**
-     * @param {Number} time time in seconds
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     * @param {Number}  dt
      */
-    update:function (time) {
-        time = this._computeEaseTime(time);
+    update:function (dt) {
+        dt = this._computeEaseTime(dt);
         if (this._one)
-            this._one.update(time);
+            this._one.update(dt);
         if (this._two)
-            this._two.update(time);
+            this._two.update(dt);
     },
 
     /**
-     * @return {cc.FiniteTimeAction}
+     * Returns a reversed action.
+     * @return {cc.Spawn}
      */
     reverse:function () {
         var action = cc.Spawn._actionOneTwo(this._one.reverse(), this._two.reverse());
@@ -918,7 +963,7 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
 });
 
 /**
- * Create a spawn action which runs several actions in parallel
+ * Create a spawn action which runs several actions in parallel.
  * @function
  * @param {Array|cc.FiniteTimeAction}tempArray
  * @return {cc.FiniteTimeAction}
@@ -938,10 +983,12 @@ cc.spawn = function (/*Multiple Arguments*/tempArray) {
     }
     return prev;
 };
+
 /**
- * Please use cc.spawn instead
+ * Please use cc.spawn instead.
+ * Create a spawn action which runs several actions in parallel.
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.spawn instead.
  * @param {Array|cc.FiniteTimeAction}tempArray
  * @return {cc.FiniteTimeAction}
  */
@@ -960,7 +1007,8 @@ cc.Spawn._actionOneTwo = function (action1, action2) {
 };
 
 
-/** Rotates a cc.Node object to a certain angle by modifying it's
+/**
+ * Rotates a cc.Node object to a certain angle by modifying it's.
  * rotation attribute. <br/>
  * The direction will be decided by the shortest angle.
  * @class
@@ -991,6 +1039,7 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
     },
 
     /**
+     * Initializes the action.
      * @param {Number} duration
      * @param {Number} deltaAngleX
      * @param {Number} deltaAngleY
@@ -1017,6 +1066,7 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
     },
 
     /**
+     * Start the action with target.
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -1043,26 +1093,29 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
     },
 
     /**
-     * RotateTo reverse not implemented
+     * RotateTo reverse not implemented.
+     * Will be overridden.
      */
     reverse:function () {
         cc.log("cc.RotateTo.reverse(): it should be overridden in subclass.");
     },
 
     /**
-     * @param {Number} time time in seconds
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     * @param {Number}  dt
      */
-    update:function (time) {
-        time = this._computeEaseTime(time);
+    update:function (dt) {
+        dt = this._computeEaseTime(dt);
         if (this.target) {
-            this.target.rotationX = this._startAngleX + this._diffAngleX * time;
-            this.target.rotationY = this._startAngleY + this._diffAngleY * time;
+            this.target.rotationX = this._startAngleX + this._diffAngleX * dt;
+            this.target.rotationY = this._startAngleY + this._diffAngleY * dt;
         }
     }
 });
 
 /**
- * Creates a RotateTo action with separate rotation angles
+ * Creates a RotateTo action with separate rotation angles.
+ * To specify the angle of rotation.
  * @function
  * @param {Number} duration duration in seconds
  * @param {Number} deltaAngleX deltaAngleX in degrees.
@@ -1075,11 +1128,13 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
 cc.rotateTo = function (duration, deltaAngleX, deltaAngleY) {
     return new cc.RotateTo(duration, deltaAngleX, deltaAngleY);
 };
+
 /**
  * Please use cc.rotateTo instead
- * Creates a RotateTo action with separate rotation angles
+ * Creates a RotateTo action with separate rotation angles.
+ * To specify the angle of rotation.
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.rotateTo instead.
  * @param {Number} duration duration in seconds
  * @param {Number} deltaAngleX deltaAngleX in degrees.
  * @param {Number} [deltaAngleY] deltaAngleY in degrees.
@@ -1088,7 +1143,9 @@ cc.rotateTo = function (duration, deltaAngleX, deltaAngleY) {
 cc.RotateTo.create = cc.rotateTo;
 
 
-/** Rotates a cc.Node object clockwise a number of degrees by modifying it's rotation attribute.
+/**
+ * Rotates a cc.Node object clockwise a number of degrees by modifying it's rotation attribute.
+ * Relative to its properties to modify.
  * @class
  * @extends  cc.ActionInterval
  */
@@ -1113,6 +1170,7 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
     },
 
     /**
+     * Initializes the action.
      * @param {Number} duration duration in seconds
      * @param {Number} deltaAngleX deltaAngleX in degrees
      * @param {Number} [deltaAngleY=] deltaAngleY in degrees
@@ -1139,6 +1197,7 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
     },
 
     /**
+     * Start the action with target.
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -1148,21 +1207,23 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
     },
 
     /**
-     * @param {Number} time
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     * @param {Number}  dt
      */
-    update:function (time) {
-        time = this._computeEaseTime(time);
+    update:function (dt) {
+        dt = this._computeEaseTime(dt);
         if (this.target) {
-            this.target.rotationX = this._startAngleX + this._angleX * time;
-            this.target.rotationY = this._startAngleY + this._angleY * time;
+            this.target.rotationX = this._startAngleX + this._angleX * dt;
+            this.target.rotationY = this._startAngleY + this._angleY * dt;
         }
     },
 
     /**
+     * Returns a reversed action.
      * @return {cc.RotateBy}
      */
     reverse:function () {
-        var action = cc.rotateBy(this._duration, -this._angleX, -this._angleY);
+        var action = new cc.RotateBy(this._duration, -this._angleX, -this._angleY);
         this._cloneDecoration(action);
         this._reverseEaseList(action);
         return action;
@@ -1170,6 +1231,8 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
 });
 
 /**
+ * Rotates a cc.Node object clockwise a number of degrees by modifying it's rotation attribute.
+ * Relative to its properties to modify.
  * @function
  * @param {Number} duration duration in seconds
  * @param {Number} deltaAngleX deltaAngleX in degrees
@@ -1183,9 +1246,11 @@ cc.rotateBy = function (duration, deltaAngleX, deltaAngleY) {
     return new cc.RotateBy(duration, deltaAngleX, deltaAngleY);
 };
 /**
- * Please use cc.rotateBy instead
+ * Please use cc.rotateBy instead.
+ * Rotates a cc.Node object clockwise a number of degrees by modifying it's rotation attribute.
+ * Relative to its properties to modify.
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.rotateBy instead.
  * @param {Number} duration duration in seconds
  * @param {Number} deltaAngleX deltaAngleX in degrees
  * @param {Number} [deltaAngleY] deltaAngleY in degrees
@@ -1228,6 +1293,7 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
     },
 
     /**
+     * Initializes the action.
      * @param {Number} duration duration in seconds
      * @param {cc.Point} position
      * @param {Number} [y]
@@ -1259,7 +1325,8 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
     },
 
     /**
-     * @param {Number} target
+     * Start the action with target.
+     * @param {cc.Node} target
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
@@ -1272,13 +1339,14 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
     },
 
     /**
-     * @param {Number} time time in seconds
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     * @param {Number} dt
      */
-    update:function (time) {
-        time = this._computeEaseTime(time);
+    update:function (dt) {
+        dt = this._computeEaseTime(dt);
         if (this.target) {
-            var x = this._positionDelta.x * time;
-            var y = this._positionDelta.y * time;
+            var x = this._positionDelta.x * dt;
+            var y = this._positionDelta.y * dt;
             var locStartPosition = this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
                 var targetX = this.target.getPositionX();
@@ -1300,9 +1368,10 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
 
     /**
      * MoveTo reverse is not implemented
+     * @return {cc.MoveBy}
      */
     reverse:function () {
-        var action = cc.moveBy(this._duration, cc.p(-this._positionDelta.x, -this._positionDelta.y));
+        var action = new cc.MoveBy(this._duration, cc.p(-this._positionDelta.x, -this._positionDelta.y));
         this._cloneDecoration(action);
         this._reverseEaseList(action);
         return action;
@@ -1310,6 +1379,8 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
 });
 
 /**
+ * Create the action.
+ * Relative to its coordinate moves a certain distance.
  * @function
  * @param {Number} duration duration in seconds
  * @param {cc.Point|Number} deltaPos
@@ -1323,7 +1394,8 @@ cc.moveBy = function (duration, deltaPos, deltaY) {
     return new cc.MoveBy(duration, deltaPos, deltaY);
 };
 /**
- * Please use cc.moveBy instead
+ * Please use cc.moveBy instead.
+ * Relative to its coordinate moves a certain distance.
  * @static
  * @deprecated
  * @param {Number} duration duration in seconds
@@ -1360,6 +1432,7 @@ cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
     },
 
     /**
+     * Initializes the action.
      * @param {Number} duration  duration in seconds
      * @param {cc.Point} position
      * @param {Number} y
@@ -1391,6 +1464,7 @@ cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
     },
 
     /**
+     * Start the action with target.
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -1399,7 +1473,10 @@ cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
         this._positionDelta.y = this._endPosition.y - target.getPositionY();
     }
 });
+
 /**
+ * Create new action.
+ * Moving to the specified coordinates.
  * @function
  * @param {Number} duration duration in seconds
  * @param {cc.Point} position
@@ -1413,9 +1490,10 @@ cc.moveTo = function (duration, position, y) {
     return new cc.MoveTo(duration, position, y);
 };
 /**
- * Please use cc.moveTo instead
+ * Please use cc.moveTo instead.
+ * Moving to the specified coordinates.
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.moveTo instead.
  * @param {Number} duration duration in seconds
  * @param {cc.Point} position
  * @param {Number} y
@@ -1453,6 +1531,7 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
     },
 
     /**
+     * Initializes the action.
      * @param {Number} t time in seconds
      * @param {Number} sx
      * @param {Number} sy
@@ -1480,6 +1559,7 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
     },
 
     /**
+     * Start the action with target.
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -1501,15 +1581,19 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
     },
 
     /**
-     * @param {Number} t time in seconds
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     * @param {Number} dt
      */
-    update:function (t) {
-        t = this._computeEaseTime(t);
-        this.target.skewX = this._startSkewX + this._deltaX * t;
-        this.target.skewY = this._startSkewY + this._deltaY * t;
+    update:function (dt) {
+        dt = this._computeEaseTime(dt);
+        this.target.skewX = this._startSkewX + this._deltaX * dt;
+        this.target.skewY = this._startSkewY + this._deltaY * dt;
     }
 });
 /**
+ * Create new action.
+ * Skews a cc.Node object to given angles by modifying it's skewX and skewY attributes.
+ * Changes to the specified value.
  * @function
  * @param {Number} t time in seconds
  * @param {Number} sx
@@ -1523,9 +1607,11 @@ cc.skewTo = function (t, sx, sy) {
     return new cc.SkewTo(t, sx, sy);
 };
 /**
- * Please use cc.skewTo instead
+ * Please use cc.skewTo instead.
+ * Skews a cc.Node object to given angles by modifying it's skewX and skewY attributes。
+ * Changes to the specified value.
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.skewTo instead.
  * @param {Number} t time in seconds
  * @param {Number} sx
  * @param {Number} sy
@@ -1533,7 +1619,9 @@ cc.skewTo = function (t, sx, sy) {
  */
 cc.SkewTo.create = cc.skewTo;
 
-/** Skews a cc.Node object by skewX and skewY degrees
+/**
+ * Skews a cc.Node object by skewX and skewY degrees.
+ * Relative to its attribute modification.
  * @class
  * @extends cc.SkewTo
  */
@@ -1551,6 +1639,7 @@ cc.SkewBy = cc.SkewTo.extend(/** @lends cc.SkewBy# */{
 	},
 
     /**
+     * Initializes the action.
      * @param {Number} t time in seconds
      * @param {Number} deltaSkewX  skew in degrees for X axis
      * @param {Number} deltaSkewY  skew in degrees for Y axis
@@ -1578,6 +1667,7 @@ cc.SkewBy = cc.SkewTo.extend(/** @lends cc.SkewBy# */{
     },
 
     /**
+     * Start the action width target.
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -1589,16 +1679,20 @@ cc.SkewBy = cc.SkewTo.extend(/** @lends cc.SkewBy# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * Returns a reversed action.
+     * @return {cc.SkewBy}
      */
     reverse:function () {
-        var action = cc.skewBy(this._duration, -this._skewX, -this._skewY);
+        var action = new cc.SkewBy(this._duration, -this._skewX, -this._skewY);
         this._cloneDecoration(action);
         this._reverseEaseList(action);
         return action;
     }
 });
+
 /**
+ * Skews a cc.Node object by skewX and skewY degrees. <br />
+ * Relative to its attribute modification.
  * @function
  * @param {Number} t time in seconds
  * @param {Number} sx sx skew in degrees for X axis
@@ -1612,7 +1706,9 @@ cc.skewBy = function (t, sx, sy) {
     return new cc.SkewBy(t, sx, sy);
 };
 /**
- * Please use cc.skewBy instead
+ * Please use cc.skewBy instead. <br />
+ * Skews a cc.Node object by skewX and skewY degrees. <br />
+ * Relative to its attribute modification.
  * @static
  * @deprecated
  * @param {Number} t time in seconds
@@ -1623,7 +1719,9 @@ cc.skewBy = function (t, sx, sy) {
 cc.SkewBy.create = cc.skewBy;
 
 
-/**  Moves a cc.Node object simulating a parabolic jump movement by modifying it's position attribute.
+/**
+ * Moves a cc.Node object simulating a parabolic jump movement by modifying it's position attribute.
+ * Relative to its movement.
  * @class
  * @extends cc.ActionInterval
  */
@@ -1654,6 +1752,7 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
 		height !== undefined && this.initWithDuration(duration, position, y, height, jumps);
     },
     /**
+     * Initializes the action.
      * @param {Number} duration
      * @param {cc.Point|Number} position
      * @param {Number} [y]
@@ -1693,6 +1792,7 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
     },
 
     /**
+     * Start the action with target.
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -1706,16 +1806,17 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
     },
 
     /**
-     * @param {Number} time
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     * @param {Number} dt
      */
-    update:function (time) {
-        time = this._computeEaseTime(time);
+    update:function (dt) {
+        dt = this._computeEaseTime(dt);
         if (this.target) {
-            var frac = time * this._jumps % 1.0;
+            var frac = dt * this._jumps % 1.0;
             var y = this._height * 4 * frac * (1 - frac);
-            y += this._delta.y * time;
+            y += this._delta.y * dt;
 
-            var x = this._delta.x * time;
+            var x = this._delta.x * dt;
             var locStartPosition = this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
                 var targetX = this.target.getPositionX();
@@ -1736,10 +1837,11 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * Returns a reversed action.
+     * @return {cc.JumpBy}
      */
     reverse:function () {
-        var action = cc.jumpBy(this._duration, cc.p(-this._delta.x, -this._delta.y), this._height, this._jumps);
+        var action = new cc.JumpBy(this._duration, cc.p(-this._delta.x, -this._delta.y), this._height, this._jumps);
         this._cloneDecoration(action);
         this._reverseEaseList(action);
         return action;
@@ -1747,6 +1849,8 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
 });
 
 /**
+ * Moves a cc.Node object simulating a parabolic jump movement by modifying it's position attribute.
+ * Relative to its movement.
  * @function
  * @param {Number} duration
  * @param {cc.Point|Number} position
@@ -1763,7 +1867,9 @@ cc.jumpBy = function (duration, position, y, height, jumps) {
     return new cc.JumpBy(duration, position, y, height, jumps);
 };
 /**
- * Please use cc.jumpBy instead
+ * Please use cc.jumpBy instead. <br />
+ * Moves a cc.Node object simulating a parabolic jump movement by modifying it's position attribute. <br />
+ * Relative to its movement.
  * @static
  * @deprecated
  * @param {Number} duration
@@ -1775,7 +1881,9 @@ cc.jumpBy = function (duration, position, y, height, jumps) {
  */
 cc.JumpBy.create = cc.jumpBy;
 
-/**  Moves a cc.Node object to a parabolic position simulating a jump movement by modifying it's position attribute.
+/**
+ * Moves a cc.Node object to a parabolic position simulating a jump movement by modifying it's position attribute. <br />
+ * Jump to the specified location.
  * @class
  * @extends cc.JumpBy
  */
@@ -1800,6 +1908,7 @@ cc.JumpTo = cc.JumpBy.extend(/** @lends cc.JumpTo# */{
         height !== undefined && this.initWithDuration(duration, position, y, height, jumps);
     },
     /**
+     * Initializes the action.
      * @param {Number} duration
      * @param {cc.Point|Number} position
      * @param {Number} [y]
@@ -1823,6 +1932,7 @@ cc.JumpTo = cc.JumpBy.extend(/** @lends cc.JumpTo# */{
         return false;
     },
     /**
+     * Start the action with target.
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -1844,6 +1954,8 @@ cc.JumpTo = cc.JumpBy.extend(/** @lends cc.JumpTo# */{
 });
 
 /**
+ * Moves a cc.Node object to a parabolic position simulating a jump movement by modifying it's position attribute. <br />
+ * Jump to the specified location.
  * @function
  * @param {Number} duration
  * @param {cc.Point|Number} position
@@ -1860,7 +1972,9 @@ cc.jumpTo = function (duration, position, y, height, jumps) {
     return new cc.JumpTo(duration, position, y, height, jumps);
 };
 /**
- * Please use cc.jumpTo instead
+ * Please use cc.jumpTo instead.
+ * Moves a cc.Node object to a parabolic position simulating a jump movement by modifying it's position attribute. <br />
+ * Jump to the specified location.
  * @static
  * @deprecated
  * @param {Number} duration
@@ -1889,6 +2003,7 @@ cc.bezierAt = function (a, b, c, d, t) {
 };
 
 /** An action that moves the target with a cubic Bezier curve by a certain distance.
+ * Relative to its movement.
  * @class
  * @extends cc.ActionInterval
  */
@@ -1914,6 +2029,7 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
 		c && this.initWithDuration(t, c);
     },
     /**
+     * Initializes the action.
      * @param {Number} t time in seconds
      * @param {Array} c Array of points
      * @return {Boolean}
@@ -1943,6 +2059,7 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
     },
 
     /**
+     * Start the action with target.
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -1956,10 +2073,11 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
     },
 
     /**
+     * Called once per frame. Time is the number of seconds of a frame interval.
      * @param {Number} time
      */
-    update:function (time) {
-        time = this._computeEaseTime(time);
+    update:function (dt) {
+        dt = this._computeEaseTime(dt);
         if (this.target) {
             var locConfig = this._config;
             var xa = 0;
@@ -1972,8 +2090,8 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
             var yc = locConfig[1].y;
             var yd = locConfig[2].y;
 
-            var x = cc.bezierAt(xa, xb, xc, xd, time);
-            var y = cc.bezierAt(ya, yb, yc, yd, time);
+            var x = cc.bezierAt(xa, xb, xc, xd, dt);
+            var y = cc.bezierAt(ya, yb, yc, yd, dt);
 
             var locStartPosition = this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
@@ -1995,7 +2113,8 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * Returns a reversed action.
+     * @return {cc.BezierBy}
      */
     reverse:function () {
         var locConfig = this._config;
@@ -2003,7 +2122,7 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
             cc.pAdd(locConfig[1], cc.pNeg(locConfig[2])),
             cc.pAdd(locConfig[0], cc.pNeg(locConfig[2])),
             cc.pNeg(locConfig[2]) ];
-        var action = cc.bezierBy(this._duration, r);
+        var action = new cc.BezierBy(this._duration, r);
         this._cloneDecoration(action);
         this._reverseEaseList(action);
         return action;
@@ -2011,6 +2130,8 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
 });
 
 /**
+ * An action that moves the target with a cubic Bezier curve by a certain distance.
+ * Relative to its movement.
  * @function
  * @param {Number} t time in seconds
  * @param {Array} c Array of points
@@ -2024,7 +2145,9 @@ cc.bezierBy = function (t, c) {
     return new cc.BezierBy(t, c);
 };
 /**
- * Please use cc.bezierBy instead
+ * Please use cc.bezierBy instead.
+ * An action that moves the target with a cubic Bezier curve by a certain distance.
+ * Relative to its movement.
  * @static
  * @deprecated
  * @param {Number} t time in seconds
@@ -2056,6 +2179,7 @@ cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
     },
 
     /**
+     * Initializes the action.
      * @param {Number} t time in seconds
      * @param {Array} c Array of points
      * @return {Boolean}
@@ -2080,6 +2204,7 @@ cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
     },
 
     /**
+     * Start the action with target.
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -2094,6 +2219,7 @@ cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
     }
 });
 /**
+ * An action that moves the target with a cubic Bezier curve to a destination point.
  * @function
  * @param {Number} t
  * @param {Array} c array of points
@@ -2150,6 +2276,7 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
     },
 
     /**
+     * Initializes the action.
      * @param {Number} duration
      * @param {Number} sx
      * @param {Number} [sy=]
@@ -2176,6 +2303,7 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
     },
 
     /**
+     * Start the action with target.
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -2187,17 +2315,19 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
     },
 
     /**
+     * Called once per frame. Time is the number of seconds of a frame interval.
      * @param {Number} time
      */
-    update:function (time) {
-        time = this._computeEaseTime(time);
+    update:function (dt) {
+        dt = this._computeEaseTime(dt);
         if (this.target) {
-            this.target.scaleX = this._startScaleX + this._deltaX * time;
-	        this.target.scaleY = this._startScaleY + this._deltaY * time;
+            this.target.scaleX = this._startScaleX + this._deltaX * dt;
+	        this.target.scaleY = this._startScaleY + this._deltaY * dt;
         }
     }
 });
 /**
+ * Scales a cc.Node object to a zoom factor by modifying it's scale attribute.
  * @function
  * @param {Number} duration
  * @param {Number} sx  scale parameter in X
@@ -2215,7 +2345,8 @@ cc.scaleTo = function (duration, sx, sy) { //function overload
     return new cc.ScaleTo(duration, sx, sy);
 };
 /**
- * Please use cc.scaleTo instead
+ * Please use cc.scaleTo instead.
+ * Scales a cc.Node object to a zoom factor by modifying it's scale attribute.
  * @static
  * @deprecated
  * @param {Number} duration
@@ -2227,12 +2358,14 @@ cc.ScaleTo.create = cc.scaleTo;
 
 
 /** Scales a cc.Node object a zoom factor by modifying it's scale attribute.
+ * Relative to its changes.
  * @class
  * @extends cc.ScaleTo
  */
 cc.ScaleBy = cc.ScaleTo.extend(/** @lends cc.ScaleBy# */{
     /**
-     * @param {Number} target
+     * Start the action with target.
+     * @param {cc.Node} target
      */
     startWithTarget:function (target) {
         cc.ScaleTo.prototype.startWithTarget.call(this, target);
@@ -2241,10 +2374,11 @@ cc.ScaleBy = cc.ScaleTo.extend(/** @lends cc.ScaleBy# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * Returns a reversed action.
+     * @return {cc.ScaleBy}
      */
     reverse:function () {
-        var action = cc.scaleBy(this._duration, 1 / this._endScaleX, 1 / this._endScaleY);
+        var action = new cc.ScaleBy(this._duration, 1 / this._endScaleX, 1 / this._endScaleY);
         this._cloneDecoration(action);
         this._reverseEaseList(action);
         return action;
@@ -2262,6 +2396,8 @@ cc.ScaleBy = cc.ScaleTo.extend(/** @lends cc.ScaleBy# */{
     }
 });
 /**
+ * Scales a cc.Node object a zoom factor by modifying it's scale attribute.
+ * Relative to its changes.
  * @function
  * @param {Number} duration duration in seconds
  * @param {Number} sx sx  scale parameter in X
@@ -2278,7 +2414,9 @@ cc.scaleBy = function (duration, sx, sy) {
     return new cc.ScaleBy(duration, sx, sy);
 };
 /**
- * Please use cc.scaleBy instead
+ * Please use cc.scaleBy instead.
+ * Scales a cc.Node object a zoom factor by modifying it's scale attribute.
+ * Relative to its changes.
  * @static
  * @deprecated
  * @param {Number} duration duration in seconds
@@ -2309,6 +2447,7 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
     },
 
     /**
+     * Initializes the action.
      * @param {Number} duration duration in seconds
      * @param {Number} blinks blinks in times
      * @return {Boolean}
@@ -2333,38 +2472,48 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
     },
 
     /**
-     * @param {Number} time time in seconds
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     * @param {Number} dt time in seconds
      */
-    update:function (time) {
-        time = this._computeEaseTime(time);
+    update:function (dt) {
+        dt = this._computeEaseTime(dt);
         if (this.target && !this.isDone()) {
             var slice = 1.0 / this._times;
-            var m = time % slice;
+            var m = dt % slice;
             this.target.visible = (m > (slice / 2));
         }
     },
 
+    /**
+     * Start the action with target.
+     * @param {cc.Node} target
+     */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         this._originalState = target.visible;
     },
 
+    /**
+     * stop the action
+     */
     stop:function () {
         this.target.visible = this._originalState;
         cc.ActionInterval.prototype.stop.call(this);
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * Returns a reversed action.
+     * @return {cc.Blink}
      */
     reverse:function () {
-        var action = cc.blink(this._duration, this._times);
+        var action = new cc.Blink(this._duration, this._times);
         this._cloneDecoration(action);
         this._reverseEaseList(action);
         return action;
     }
 });
 /**
+ * Blinks a cc.Node object by modifying it's visible attribute.
  * @function
  * @param {Number} duration  duration in seconds
  * @param blinks blinks in times
@@ -2377,7 +2526,8 @@ cc.blink = function (duration, blinks) {
     return new cc.Blink(duration, blinks);
 };
 /**
- * Please use cc.blink instead
+ * Please use cc.blink instead.
+ * Blinks a cc.Node object by modifying it's visible attribute.
  * @static
  * @deprecated
  * @param {Number} duration  duration in seconds
@@ -2408,6 +2558,7 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
     },
 
     /**
+     * Initializes the action.
      * @param {Number} duration  duration in seconds
      * @param {Number} opacity
      * @return {Boolean}
@@ -2432,6 +2583,7 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
     },
 
     /**
+     * Called once per frame. Time is the number of seconds of a frame interval.
      * @param {Number} time time in seconds
      */
     update:function (time) {
@@ -2442,17 +2594,17 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
     },
 
     /**
-     * @param {cc.Sprite} target
+     * Start this action with target.
+     * @param {cc.Node} target
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-
         this._fromOpacity = target.opacity;
-
     }
 });
 
 /**
+ * Fades an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from the current value to a custom one.
  * @function
  * @param {Number} duration
  * @param {Number} opacity 0-255, 0 is transparent
@@ -2465,7 +2617,8 @@ cc.fadeTo = function (duration, opacity) {
     return new cc.FadeTo(duration, opacity);
 };
 /**
- * Please use cc.fadeTo instead
+ * Please use cc.fadeTo instead.
+ * Fades an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from the current value to a custom one.
  * @static
  * @deprecated
  * @param {Number} duration
@@ -2492,7 +2645,8 @@ cc.FadeIn = cc.FadeTo.extend(/** @lends cc.FadeIn# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * Returns a reversed action.
+     * @return {cc.FadeOut}
      */
     reverse:function () {
         var action = new cc.FadeOut();
@@ -2514,7 +2668,8 @@ cc.FadeIn = cc.FadeTo.extend(/** @lends cc.FadeIn# */{
     },
 
     /**
-     * @param {cc.Sprite} target
+     * Start the action with target.
+     * @param {cc.Node} target
      */
     startWithTarget:function (target) {
         if(this._reverseAction)
@@ -2524,6 +2679,7 @@ cc.FadeIn = cc.FadeTo.extend(/** @lends cc.FadeIn# */{
 });
 
 /**
+ * Fades In an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from 0 to 255.
  * @function
  * @param {Number} duration duration in seconds
  * @return {cc.FadeIn}
@@ -2535,7 +2691,8 @@ cc.fadeIn = function (duration) {
     return new cc.FadeIn(duration);
 };
 /**
- * Please use cc.fadeIn instead
+ * Please use cc.fadeIn instead.
+ * Fades In an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from 0 to 255.
  * @static
  * @deprecated
  * @param {Number} duration duration in seconds
@@ -2561,7 +2718,8 @@ cc.FadeOut = cc.FadeTo.extend(/** @lends cc.FadeOut# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * Returns a reversed action.
+     * @return {cc.FadeIn}
      */
     reverse:function () {
         var action = new cc.FadeIn();
@@ -2585,6 +2743,7 @@ cc.FadeOut = cc.FadeTo.extend(/** @lends cc.FadeOut# */{
 });
 
 /**
+ * Fades Out an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from 255 to 0.
  * @function
  * @param {Number} d  duration in seconds
  * @return {cc.FadeOut}
@@ -2596,7 +2755,8 @@ cc.fadeOut = function (d) {
     return new cc.FadeOut(d);
 };
 /**
- * Please use cc.fadeOut instead
+ * Please use cc.fadeOut instead.
+ * Fades Out an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from 255 to 0.
  * @static
  * @deprecated
  * @param {Number} d  duration in seconds
@@ -2631,6 +2791,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
     },
 
     /**
+     * Initializes the action.
      * @param {Number} duration
      * @param {Number} red 0-255
      * @param {Number} green 0-255
@@ -2658,7 +2819,8 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
     },
 
     /**
-     * @param {cc.Sprite} target
+     * Start the action with target.
+     * @param {cc.Node} target
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
@@ -2667,20 +2829,22 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
     },
 
     /**
-     * @param {Number} time time in seconds
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     * @param {Number} dt time in seconds
      */
-    update:function (time) {
-        time = this._computeEaseTime(time);
+    update:function (dt) {
+        dt = this._computeEaseTime(dt);
         var locFrom = this._from, locTo = this._to;
         if (locFrom) {
-            this.target.color = cc.color(locFrom.r + (locTo.r - locFrom.r) * time,
-                                        locFrom.g + (locTo.g - locFrom.g) * time,
-	                                    locFrom.b + (locTo.b - locFrom.b) * time);
+            this.target.color = cc.color(locFrom.r + (locTo.r - locFrom.r) * dt,
+                                        locFrom.g + (locTo.g - locFrom.g) * dt,
+	                                    locFrom.b + (locTo.b - locFrom.b) * dt);
         }
     }
 });
 
 /**
+ * Tints a cc.Node that implements the cc.NodeRGB protocol from current tint to a custom one.
  * @function
  * @param {Number} duration
  * @param {Number} red 0-255
@@ -2695,7 +2859,8 @@ cc.tintTo = function (duration, red, green, blue) {
     return new cc.TintTo(duration, red, green, blue);
 };
 /**
- * Please use cc.tintTo instead
+ * Please use cc.tintTo instead.
+ * Tints a cc.Node that implements the cc.NodeRGB protocol from current tint to a custom one.
  * @static
  * @deprecated
  * @param {Number} duration
@@ -2708,6 +2873,7 @@ cc.TintTo.create = cc.tintTo;
 
 
 /**  Tints a cc.Node that implements the cc.NodeRGB protocol from current tint to a custom one.
+ * Relative to their own color change.
  * @class
  * @extends cc.ActionInterval
  */
@@ -2735,6 +2901,7 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
     },
 
     /**
+     * Initializes the action.
      * @param {Number} duration
      * @param {Number} deltaRed 0-255
      * @param {Number} deltaGreen 0-255
@@ -2763,7 +2930,8 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
     },
 
     /**
-     * @param {cc.Sprite} target
+     * Start the action with target.
+     * @param {cc.Node} target
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
@@ -2776,22 +2944,24 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
     },
 
     /**
-     * @param {Number} time time in seconds
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     * @param {Number} dt time in seconds
      */
-    update:function (time) {
-        time = this._computeEaseTime(time);
+    update:function (dt) {
+        dt = this._computeEaseTime(dt);
 
-        this.target.color = cc.color(this._fromR + this._deltaR * time,
-                                    this._fromG + this._deltaG * time,
-                                    this._fromB + this._deltaB * time);
+        this.target.color = cc.color(this._fromR + this._deltaR * dt,
+                                    this._fromG + this._deltaG * dt,
+                                    this._fromB + this._deltaB * dt);
 
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * Returns a reversed action.
+     * @return {cc.TintBy}
      */
     reverse:function () {
-        var action = cc.tintBy(this._duration, -this._deltaR, -this._deltaG, -this._deltaB);
+        var action = new cc.TintBy(this._duration, -this._deltaR, -this._deltaG, -this._deltaB);
         this._cloneDecoration(action);
         this._reverseEaseList(action);
         return action;
@@ -2799,6 +2969,8 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
 });
 
 /**
+ * Tints a cc.Node that implements the cc.NodeRGB protocol from current tint to a custom one.
+ * Relative to their own color change.
  * @function
  * @param {Number} duration  duration in seconds
  * @param {Number} deltaRed
@@ -2813,7 +2985,9 @@ cc.tintBy = function (duration, deltaRed, deltaGreen, deltaBlue) {
     return new cc.TintBy(duration, deltaRed, deltaGreen, deltaBlue);
 };
 /**
- * Please use cc.tintBy instead
+ * Please use cc.tintBy instead.
+ * Tints a cc.Node that implements the cc.NodeRGB protocol from current tint to a custom one.
+ * Relative to their own color change.
  * @static
  * @deprecated
  * @param {Number} duration  duration in seconds
@@ -2830,16 +3004,18 @@ cc.TintBy.create = cc.tintBy;
  */
 cc.DelayTime = cc.ActionInterval.extend(/** @lends cc.DelayTime# */{
     /**
-     * @param {Number} time time in seconds
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     * Will be overwrite.
+     * @param {Number} dt time in seconds
      */
-    update:function (time) {
-    },
+    update:function (dt) {},
 
     /**
-     * @return {cc.ActionInterval}
+     * Returns a reversed action.
+     * @return {cc.DelayTime}
      */
     reverse:function () {
-        var action = cc.delayTime(this._duration);
+        var action = new cc.DelayTime(this._duration);
         this._cloneDecoration(action);
         this._reverseEaseList(action);
         return action;
@@ -2858,6 +3034,7 @@ cc.DelayTime = cc.ActionInterval.extend(/** @lends cc.DelayTime# */{
 });
 
 /**
+ * Delays the action a certain amount of seconds
  * @function
  * @param {Number} d duration in seconds
  * @return {cc.DelayTime}
@@ -2869,7 +3046,8 @@ cc.delayTime = function (d) {
     return new cc.DelayTime(d);
 };
 /**
- * Please use cc.delayTime instead
+ * Please use cc.delayTime instead.
+ * Delays the action a certain amount of seconds
  * @static
  * @deprecated
  * @param {Number} d duration in seconds
@@ -2933,6 +3111,7 @@ cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
     },
 
     /**
+     * Start the action with target.
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -2941,15 +3120,17 @@ cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
     },
 
     /**
-     * @param {Number} time time in seconds
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     * @param {Number} dt time in seconds
      */
-    update:function (time) {
-        time = this._computeEaseTime(time);
+    update:function (dt) {
+        dt = this._computeEaseTime(dt);
         if (this._other)
-            this._other.update(1 - time);
+            this._other.update(1 - dt);
     },
 
     /**
+     * Returns a reversed action.
      * @return {cc.ActionInterval}
      */
     reverse:function () {
@@ -2966,6 +3147,7 @@ cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
 });
 
 /**
+ * Executes an action in reverse order, from time=duration to time=0.
  * @function
  * @param {cc.FiniteTimeAction} action
  * @return {cc.ReverseTime}
@@ -2977,7 +3159,8 @@ cc.reverseTime = function (action) {
     return new cc.ReverseTime(action);
 };
 /**
- * Please use cc.reverseTime instead
+ * Please use cc.reverseTime instead.
+ * Executes an action in reverse order, from time=duration to time=0.
  * @static
  * @deprecated
  * @param {cc.FiniteTimeAction} action
@@ -3072,6 +3255,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
     },
 
     /**
+     * Start the action with target.
      * @param {cc.Sprite} target
      */
     startWithTarget:function (target) {
@@ -3083,29 +3267,30 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
     },
 
     /**
-     * @param {Number} time
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     * @param {Number} dt
      */
-    update:function (time) {
-        time = this._computeEaseTime(time);
+    update:function (dt) {
+        dt = this._computeEaseTime(dt);
         // if t==1, ignore. Animation should finish with t==1
-        if (time < 1.0) {
-            time *= this._animation.getLoops();
+        if (dt < 1.0) {
+            dt *= this._animation.getLoops();
 
             // new loop?  If so, reset frame counter
-            var loopNumber = 0 | time;
+            var loopNumber = 0 | dt;
             if (loopNumber > this._executedLoops) {
                 this._nextFrame = 0;
                 this._executedLoops++;
             }
 
             // new t for animations
-            time = time % 1.0;
+            dt = dt % 1.0;
         }
 
         var frames = this._animation.getFrames();
         var numberOfFrames = frames.length, locSplitTimes = this._splitTimes;
         for (var i = this._nextFrame; i < numberOfFrames; i++) {
-            if (locSplitTimes[i] <= time) {
+            if (locSplitTimes[i] <= dt) {
                 this.target.setSpriteFrame(frames[i].getSpriteFrame());
                 this._nextFrame = i + 1;
             } else {
@@ -3116,7 +3301,8 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * Returns a reversed action.
+     * @return {cc.Animate}
      */
     reverse:function () {
         var locAnimation = this._animation;
@@ -3133,7 +3319,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
         }
         var newAnim = cc.Animation.create(newArray, locAnimation.getDelayPerUnit(), locAnimation.getLoops());
         newAnim.setRestoreOriginalFrame(locAnimation.getRestoreOriginalFrame());
-        var action = cc.animate(newAnim);
+        var action = new cc.Animate(newAnim);
         this._cloneDecoration(action);
         this._reverseEaseList(action);
 
@@ -3222,18 +3408,29 @@ cc.TargetedAction = cc.ActionInterval.extend(/** @lends cc.TargetedAction# */{
         return action;
     },
 
+    /**
+     * Start the action with target.
+     * @param {cc.Node} target
+     */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         this._action.startWithTarget(this._forcedTarget);
     },
 
+    /**
+     * stop the action
+     */
     stop:function () {
         this._action.stop();
     },
 
-    update:function (time) {
-        time = this._computeEaseTime(time);
-        this._action.update(time);
+    /**
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     * @param {Number} dt
+     */
+    update:function (dt) {
+        dt = this._computeEaseTime(dt);
+        this._action.update(dt);
     },
 
     /**

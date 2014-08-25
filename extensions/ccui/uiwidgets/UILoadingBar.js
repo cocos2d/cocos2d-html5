@@ -201,7 +201,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         this._scale9Enabled = enabled;
         this.removeProtectedChild(this._barRenderer);
 
-        this._barRenderer = this._scale9Enabled ? cc.Scale9Sprite.create() : cc.Sprite.create();
+        this._barRenderer = this._scale9Enabled ? new ccui.Scale9Sprite() : cc.Sprite.create();
 
         this.loadTexture(this._textureFile, this._renderBarTexType);
         this.addProtectedChild(this._barRenderer, ccui.LoadingBar.RENDERER_ZORDER, -1);
@@ -248,9 +248,9 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
     setPercent: function (percent) {
         if (percent < 0 || percent > 100)
             return;
+        this._percent = percent;
         if (this._totalLength <= 0)
             return;
-        this._percent = percent;
         var res = this._percent / 100.0;
 
         if (this._scale9Enabled)
@@ -268,6 +268,12 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
                 )
             );
         }
+    },
+
+    setContentSize: function(contentSize, height){
+        ccui.Widget.prototype.setContentSize.call(this, contentSize, height);
+        var locWidth = (height === undefined) ? contentSize.width : contentSize;
+        this._totalLength = locWidth;
     },
 
     /**

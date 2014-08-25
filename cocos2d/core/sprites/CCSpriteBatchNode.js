@@ -144,7 +144,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {Boolean}
      */
     initWithFile: function (fileImage, capacity) {
-        var texture2D = cc.textureCache.textureForKey(fileImage);
+        var texture2D = cc.textureCache.getTextureForKey(fileImage);
         if (!texture2D)
             texture2D = cc.textureCache.addImage(fileImage);
         return this.initWithTexture(texture2D, capacity);
@@ -165,7 +165,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {Boolean}
      */
     init: function (fileImage, capacity) {
-        var texture2D = cc.textureCache.textureForKey(fileImage);
+        var texture2D = cc.textureCache.getTextureForKey(fileImage);
         if (!texture2D)
             texture2D = cc.textureCache.addImage(fileImage);
         return this.initWithTexture(texture2D, capacity);
@@ -405,7 +405,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         var texture2D;
         capacity = capacity || cc.DEFAULT_SPRITE_BATCH_CAPACITY;
         if (typeof(fileImage) == "string") {
-            texture2D = cc.textureCache.textureForKey(fileImage);
+            texture2D = cc.textureCache.getTextureForKey(fileImage);
             if (!texture2D)
                 texture2D = cc.textureCache.addImage(fileImage);
         }
@@ -422,7 +422,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         var texture2D;
         capacity = capacity || cc.DEFAULT_SPRITE_BATCH_CAPACITY;
         if (typeof(fileImage) == "string") {
-            texture2D = cc.textureCache.textureForKey(fileImage);
+            texture2D = cc.textureCache.getTextureForKey(fileImage);
             if (!texture2D)
                 texture2D = cc.textureCache.addImage(fileImage);
         }

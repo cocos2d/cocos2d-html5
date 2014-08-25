@@ -371,8 +371,19 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      * Return properties dictionary for tile GID
      * @param {Number} GID
      * @return {object}
+     * @deprecated
      */
     propertiesForGID:function (GID) {
+        cc.log("propertiesForGID is deprecated. Please use getPropertiesForGID instead.");
+        return this.getPropertiesForGID[GID];
+    },
+
+    /**
+     * Return properties dictionary for tile GID
+     * @param {Number} GID
+     * @return {object}
+     */
+    getPropertiesForGID: function(GID) {
         return this._tileProperties[GID];
     },
 

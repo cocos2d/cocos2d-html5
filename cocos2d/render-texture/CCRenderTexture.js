@@ -130,6 +130,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      */
     _ctorForCanvas: function (width, height, format, depthStencilFormat) {
         cc.Node.prototype.ctor.call(this);
+        this._cascadeColorEnabled = true;
+        this._cascadeOpacityEnabled = true;
         this._clearColor = cc.color(255, 255, 255, 255);
         this._clearColorStr = "rgba(255,255,255,1)";
 
@@ -158,6 +160,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      */
     _ctorForWebGL: function (width, height, format, depthStencilFormat) {
         cc.Node.prototype.ctor.call(this);
+        this._cascadeColorEnabled = true;
+        this._cascadeOpacityEnabled = true;
         this._clearColor = cc.color(0, 0, 0, 0);
 
         if(width !== undefined && height !== undefined){
@@ -209,8 +213,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @function
      * @param {Number} width
      * @param {Number} height
-     * @param {cc.IMAGE_FORMAT_JPEG|cc.IMAGE_FORMAT_PNG|cc.IMAGE_FORMAT_RAWDATA} format
-     * @param {Number} depthStencilFormat
+     * @param {cc.IMAGE_FORMAT_JPEG|cc.IMAGE_FORMAT_PNG|cc.IMAGE_FORMAT_RAWDATA} [format]
+     * @param {Number} [depthStencilFormat]
      * @return {Boolean}
      */
     initWithWidthAndHeight: null,
@@ -223,7 +227,12 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         var texture = new cc.Texture2D();
         texture.initWithElement(locCacheCanvas);
         texture.handleLoadedTexture();
-        this.sprite = cc.Sprite.create(texture);
+        var locSprite = this.sprite = cc.Sprite.create(texture);
+        locSprite.setBlendFunc(cc.ONE, cc.ONE_MINUS_SRC_ALPHA);
+        // Disabled by default.
+        this.autoDraw = false;
+        // add sprite for backward compatibility
+        this.addChild(locSprite);
         return true;
     },
 
@@ -288,11 +297,12 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             this._depthRenderBuffer = gl.createRenderbuffer();
             gl.bindRenderbuffer(gl.RENDERBUFFER, this._depthRenderBuffer);
             gl.renderbufferStorage(gl.RENDERBUFFER, depthStencilFormat, powW, powH);
-            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
-
-            // if depth format is the one with stencil part, bind same render buffer as stencil attachment
-            //if (depthStencilFormat == gl.DEPTH24_STENCIL8)
-            //    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
+            if(depthStencilFormat == gl.DEPTH_STENCIL)
+                gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
+            else if(depthStencilFormat == gl.STENCIL_INDEX || depthStencilFormat == gl.STENCIL_INDEX8)
+                gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
+            else if(depthStencilFormat == gl.DEPTH_COMPONENT16)
+                gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
         }
 
         // check if it worked (probably worth doing :) )
