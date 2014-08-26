@@ -147,7 +147,6 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
     /**
      * Removes all children from the container with a cleanup.
      * @see cc.ProtectedNode#removeAllProtectedChildrenWithCleanup
-     * @deprecated since v3.0 please use removeAllProtectedChildrenWithCleanup instead
      */
     removeAllProtectedChildren: function(){
         this.removeAllProtectedChildrenWithCleanup(true);
