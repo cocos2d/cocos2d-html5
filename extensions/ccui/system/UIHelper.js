@@ -24,7 +24,7 @@
  ****************************************************************************/
 
 /**
- * UI Helper
+ * UI Helper object contains some functions for seek widget
  * @namespace
  * @name ccui.helper
  */
@@ -95,7 +95,12 @@ ccui.helper = {
 	    return null;
 	},
 
-	/*temp action*/
+    /**
+     * Finds a widget whose action tag equals to param name from root widget.
+     * @param {ccui.Widget} root
+     * @param {Number} tag
+     * @returns {ccui.Widget}
+     */
 	seekActionWidgetByActionTag: function (root, tag) {
 	    if (!root)
 	        return null;

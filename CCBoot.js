@@ -737,16 +737,10 @@ cc.loader = {
 
     /**
      * Load resources then call the callback.
-     * @param {string} res
-     * @param {function|Object} [option] option or cb
-     * @param {function} [cb]
-     * @return {cc.AsyncPool}
-     */
-    /**
-     * Load resources then call the callback.
      * @param {string} resources
      * @param {function|Object} [option] option or cb
      * @param {function} [cb]
+     * @return {cc.AsyncPool}
      */
     load : function(resources, option, cb){
         var self = this;

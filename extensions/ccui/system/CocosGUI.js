@@ -22,8 +22,9 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
 /**
- * Base namespace of Cocos GUI
+ * The namespace of Cocos UI
  * @namespace
  * @name ccui
  */
@@ -55,7 +56,7 @@ ccui.ProtectedNode = ccui.ProtectedNode || cc.ProtectedNode;
 ccui.ProtectedNode.extend = ccui.ProtectedNode.extend || cc.ProtectedNode.extend;
 
 /**
- * Cocos GUI version
+ * Cocos UI version
  * @type {String}
  */
 ccui.cocosGUIVersion = "CocosGUI v1.0.0.0";
