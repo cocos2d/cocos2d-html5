@@ -1784,19 +1784,40 @@ cc.game = {
         self._paused = true;
         self._runMainLoop();
     },
+
+    _now: window.performance && (
+                  performance.now ||
+                  performance.mozNow ||
+                  performance.msNow ||
+                  performance.oNow ||
+                  performance.webkitNow ),
+
+    /**
+     * @private
+     */
+    _getTime: function() {
+        return ( this._now && this._now.call( performance ) ) || ( new Date().getTime() );
+    },
+
     /**
      * Run game.
      * @private
      */
     _runMainLoop: function () {
         var self = this, callback, config = self.config, CONFIG_KEY = self.CONFIG_KEY,
-            director = cc.director;
+            director = cc.director,
+            frameTime = 1000 / config[CONFIG_KEY.frameRate], then = self._getTime();
 
         director.setDisplayStats(config[CONFIG_KEY.showFPS]);
 
         callback = function () {
             if (!self._paused) {
-                director.mainLoop();
+                var now = self._getTime(), delta = now - then;
+                if (delta > frameTime) {
+                    then = now - (delta % frameTime);
+
+                    director.mainLoop();
+                }
                 self._intervalId = window.requestAnimFrame(callback);
             }
         };
