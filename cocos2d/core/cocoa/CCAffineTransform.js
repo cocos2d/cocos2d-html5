@@ -29,14 +29,13 @@
  * Please do not use its constructor directly, use cc.affineTransformMake alias function instead.
  * </p>
  * @class cc.AffineTransform
- * @constructor
  * @param {Number} a
  * @param {Number} b
  * @param {Number} c
  * @param {Number} d
  * @param {Number} tx
  * @param {Number} ty
- * @see cc.affineTransformMake()
+ * @see cc.affineTransformMake
  */
 cc.AffineTransform = function (a, b, c, d, tx, ty) {
     this.a = a;
@@ -112,7 +111,7 @@ cc.affineTransformMakeIdentity = function () {
  * 
  * @return {cc.AffineTransform}
  * @deprecated since v3.0, please use cc.affineTransformMakeIdentity() instead
- * @see cc.affineTransformMakeIdentity()
+ * @see cc.affineTransformMakeIdentity
  */
 cc.affineTransformIdentity = function () {
     return {a: 1.0, b: 0.0, c: 0.0, d: 1.0, tx: 0.0, ty: 0.0};

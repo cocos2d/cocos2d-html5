@@ -27,10 +27,9 @@
 /**
  * cc.Point is the class for point object, please do not use its constructor to create points, use cc.p() alias function instead.
  * @class cc.Point
- * @constructor
  * @param {Number} x
  * @param {Number} y
- * @see cc.p()
+ * @see cc.p
  */
 cc.Point = function (x, y) {
     this.x = x || 0;
@@ -78,10 +77,9 @@ cc.pointEqualToPoint = function (point1, point2) {
 /**
  * cc.Size is the class for size object, please do not use its constructor to create sizes, use cc.size() alias function instead.
  * @class cc.Size
- * @constructor
  * @param {Number} width
  * @param {Number} height
- * @see cc.size()
+ * @see cc.size
  */
 cc.Size = function (width, height) {
     this.width = width || 0;
@@ -129,10 +127,9 @@ cc.sizeEqualToSize = function (size1, size2) {
 /**
  * cc.Rect is the class for rect object, please do not use its constructor to create rects, use cc.rect() alias function instead.
  * @class cc.Rect
- * @constructor
  * @param {Number} width
  * @param {Number} height
- * @see cc.rect()
+ * @see cc.rect
  */
 cc.Rect = function (x, y, width, height) {
     this.x = x||0;

@@ -194,12 +194,33 @@ cc.EventListener = cc.Class.extend(/** @lends cc.EventListener# */{
     },
 
     /**
-     * Currently JavaScript Bindings (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
+     * <p>Currently JavaScript Bindings (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
      * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB.
-     * This is a hack, and should be removed once JSB fixes the retain/release bug
+     * This is a hack, and should be removed once JSB fixes the retain/release bug<br/>
+     * You will need to retain an object if you created a listener and haven't added it any target node during the same frame.<br/>
+     * Otherwise, JSB's native autorelease pool will consider this object a useless one and release it directly,<br/>
+     * when you want to use it later, a "Invalid Native Object" error will be raised.<br/>
+     * The retain function can increase a reference count for the native object to avoid it being released,<br/>
+     * you need to manually invoke release function when you think this object is no longer needed, otherwise, there will be memory learks.<br/>
+     * retain and release function call should be paired in developer's game code.</p>
+     * @function
+     * @see cc.EventListener#release
      */
     retain:function () {
     },
+    /**
+     * <p>Currently JavaScript Bindings (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
+     * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB.
+     * This is a hack, and should be removed once JSB fixes the retain/release bug<br/>
+     * You will need to retain an object if you created a listener and haven't added it any target node during the same frame.<br/>
+     * Otherwise, JSB's native autorelease pool will consider this object a useless one and release it directly,<br/>
+     * when you want to use it later, a "Invalid Native Object" error will be raised.<br/>
+     * The retain function can increase a reference count for the native object to avoid it being released,<br/>
+     * you need to manually invoke release function when you think this object is no longer needed, otherwise, there will be memory learks.<br/>
+     * retain and release function call should be paired in developer's game code.</p>
+     * @function
+     * @see cc.EventListener#retain
+     */
     release:function () {
     }
 });
@@ -407,6 +428,8 @@ cc._EventListenerTouchAllAtOnce.create = function(){
 
 /**
  * Create a EventListener object by json object
+ * @function
+ * @static
  * @param {object} argObj a json object
  * @returns {cc.EventListener}
  * @example
