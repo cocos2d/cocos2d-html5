@@ -2472,17 +2472,19 @@ cc.ScaleBy.create = cc.scaleBy;
 /** Blinks a cc.Node object by modifying it's visible attribute
  * @class
  * @extends cc.ActionInterval
+ * @param {Number} duration  duration in seconds
+ * @param {Number} blinks  blinks in times
+ * @example
+ * var action = new cc.Blink(2, 10);
  */
 cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
     _times:0,
     _originalState:false,
 
 	/**
-	 * Constructor of cc.Blink
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @param {Number} duration  duration in seconds
 	 * @param {Number} blinks  blinks in times
-	 * @example
-	 * var action = new cc.Blink(2, 10);
 	 */
     ctor:function (duration, blinks) {
         cc.ActionInterval.prototype.ctor.call(this);
@@ -2583,17 +2585,19 @@ cc.Blink.create = cc.blink;
  * @warning This action doesn't support "reverse"
  * @class
  * @extends cc.ActionInterval
+ * @param {Number} duration
+ * @param {Number} opacity 0-255, 0 is transparent
+ * @example
+ * var action = new cc.FadeTo(1.0, 0);
  */
 cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
     _toOpacity:0,
     _fromOpacity:0,
 
 	/**
-	 * Constructor of cc.FadeTo
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
 	 * @param {Number} duration
 	 * @param {Number} opacity 0-255, 0 is transparent
-	 * @example
-	 * var action = new cc.FadeTo(1.0, 0);
 	 */
     ctor:function (duration, opacity) {
         cc.ActionInterval.prototype.ctor.call(this);
@@ -2674,12 +2678,13 @@ cc.FadeTo.create = cc.fadeTo;
  * The "reverse" of this action is FadeOut
  * @class
  * @extends cc.FadeTo
+ * @param {Number} duration duration in seconds
  */
 cc.FadeIn = cc.FadeTo.extend(/** @lends cc.FadeIn# */{
     _reverseAction: null,
 
     /**
-     * @constructor
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @param {Number} duration duration in seconds
      */
     ctor:function (duration) {
@@ -2748,11 +2753,12 @@ cc.FadeIn.create = cc.fadeIn;
  * The "reverse" of this action is FadeIn
  * @class
  * @extends cc.FadeTo
+ * @param {Number} duration duration in seconds
  */
 cc.FadeOut = cc.FadeTo.extend(/** @lends cc.FadeOut# */{
 
     /**
-     * @constructor
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @param {Number} duration duration in seconds
      */
     ctor:function (duration) {
@@ -2811,19 +2817,23 @@ cc.FadeOut.create = cc.fadeOut;
  * @warning This action doesn't support "reverse"
  * @class
  * @extends cc.ActionInterval
+ * @param {Number} duration
+ * @param {Number} red 0-255
+ * @param {Number} green  0-255
+ * @param {Number} blue 0-255
+ * @example
+ * var action = new cc.TintTo(2, 255, 0, 255);
  */
 cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
     _to:null,
     _from:null,
 
 	/**
-	 * Constructor of cc.TintTo
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
 	 * @param {Number} duration
 	 * @param {Number} red 0-255
 	 * @param {Number} green  0-255
 	 * @param {Number} blue 0-255
-	 * @example
-	 * var action = new cc.TintTo(2, 255, 0, 255);
 	 */
     ctor:function (duration, red, green, blue) {
         cc.ActionInterval.prototype.ctor.call(this);
@@ -2919,6 +2929,12 @@ cc.TintTo.create = cc.tintTo;
  * Relative to their own color change.
  * @class
  * @extends cc.ActionInterval
+ * @param {Number} duration  duration in seconds
+ * @param {Number} deltaRed
+ * @param {Number} deltaGreen
+ * @param {Number} deltaBlue
+ * @example
+ * var action = new cc.TintBy(2, -127, -255, -127);
  */
 cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
     _deltaR:0,
@@ -2930,13 +2946,11 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
     _fromB:0,
 
 	/**
-	 * Constructor of cc.TintBy
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
 	 * @param {Number} duration  duration in seconds
 	 * @param {Number} deltaRed
 	 * @param {Number} deltaGreen
 	 * @param {Number} deltaBlue
-	 * @example
-	 * var action = new cc.TintBy(2, -127, -255, -127);
 	 */
     ctor:function (duration, deltaRed, deltaGreen, deltaBlue) {
         cc.ActionInterval.prototype.ctor.call(this);
