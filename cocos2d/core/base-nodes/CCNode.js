@@ -87,6 +87,7 @@ cc.s_globalOrderOfArrival = 1;
  * -# The grid will capture the screen <br/>
  * -# The node will be moved according to the camera values (camera) <br/>
  * -# The grid will render the captured screen <br/></P>
+ *
  * @class
  * @extends cc.Class
  *
@@ -745,7 +746,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Returns if the node is visible
      * @function
-     * @see setVisible(bool)
+     * @see cc.Node#setVisible
      * @return {Boolean} true if the node is visible, false if the node is hidden.
      */
     isVisible: function () {
@@ -849,7 +850,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Returns a copy of the anchor point in absolute pixels.  <br/>
      * you can only read it. If you wish to modify it, use setAnchorPoint
-     * @see getAnchorPoint()
+     * @see cc.Node#getAnchorPoint
      * @function
      * @return {cc.Point} The anchor point in absolute pixels.
      */
@@ -948,7 +949,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Returns whether the anchor point will be ignored when you position this node.<br/>
      * When anchor point ignored, position will be calculated based on the origin point (0, 0) in parent's coordinates.
      * @function
-     * @see ignoreAnchorPointForPosition(bool)
+     * @see cc.Node#ignoreAnchorPointForPosition
      * @return {Boolean} true if the anchor point will be ignored when you position this node.
      */
     isIgnoreAnchorPointForPosition: function () {
@@ -1006,7 +1007,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Changes the tag that is used to identify the node easily. <br/>
      * Please refer to getTag for the sample code.
      * @function
-     * @see getTag()
+     * @see cc.Node#getTag
      * @param {Number} tag A integer that identifies the node.
      */
     setTag: function (tag) {
@@ -1112,7 +1113,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * <p>Returns the CCActionManager object that is used by all actions.<br/>
      * (IMPORTANT: If you set a new cc.ActionManager, then previously created actions are going to be removed.)</p>
      * @function
-     * @see setActionManager()
+     * @see cc.Node#setActionManager
      * @return {cc.ActionManager} A CCActionManager object.
      */
     getActionManager: function () {
@@ -1310,7 +1311,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * If the node orphan, then nothing happens.
      * @function
      * @param {Boolean} cleanup true if all actions and callbacks on this node should be removed, false otherwise.
-     * @see removeFromParentAndCleanup(bool)
+     * @see cc.Node#removeFromParentAndCleanup
      */
     removeFromParent: function (cleanup) {
         if (this._parent) {
@@ -1359,7 +1360,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      * @param {Number} tag An integer number that identifies a child node
      * @param {Boolean} cleanup true if all running actions and callbacks on the child node will be cleanup, false otherwise.
-     * @see removeChildByTag(int, bool)
+     * @see cc.Node#removeChildByTag
      */
     removeChildByTag: function (tag, cleanup) {
         if (tag === cc.NODE_TAG_INVALID)
@@ -1616,7 +1617,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Returns an action from the running action list by its tag.
      * @function
-     * @see setTag(int), getTag().
+     * @see cc.Node#getTag and cc.Node#setTag
      * @param {Number} tag
      * @return {cc.Action} The action object with the given tag.
      */
@@ -1669,7 +1670,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Unschedules the "update" method.
      * @function
-     * @see scheduleUpdate();
+     * @see cc.Node#scheduleUpdate
      */
     unscheduleUpdate: function () {
         this.scheduler.unscheduleUpdateForTarget(this);
@@ -1700,7 +1701,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Schedules a callback function that runs only once, with a delay of 0 or larger
      * @function
-     * @see schedule(function, float, unsigned int, float)
+     * @see cc.Node#schedule
      * @param {function} callback_fn  A function wrapped as a selector
      * @param {Number} delay  The amount of time that the first tick will wait before execution.
      */
@@ -1711,7 +1712,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * unschedules a custom callback function.
      * @function
-     * @see schedule(function, float, unsigned int, float)
+     * @see cc.Node#schedule
      * @param {function} callback_fn  A function wrapped as a selector
      */
     unschedule: function (callback_fn) {
@@ -2000,7 +2001,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * you need to manually invoke release function when you think this object is no longer needed, otherwise, there will be memory learks.<br/>
      * retain and release function call should be paired in developer's game code.</p>
      * @function
-     * @see release()
+     * @see cc.Node#release
      */
     retain: function () {
     },
@@ -2015,7 +2016,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * you need to manually invoke release function when you think this object is no longer needed, otherwise, there will be memory learks.<br/>
      * retain and release function call should be paired in developer's game code.</p>
      * @function
-     * @see retain()
+     * @see cc.Node#retain
      */
     release: function () {
     },
@@ -2059,10 +2060,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     grid: null,
 
     /**
-     * <p>The cc.Node's constructor. <br/>
-     * This function will automatically be invoked when you create a node using new construction: "var node = new cc.Node()".<br/>
-     * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
-     * @constructor
+     * <p>Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.</p>
+     * @function
      */
     ctor: null,
 
@@ -2441,7 +2440,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * When color doesn't include opacity value like cc.color(128,128,128), this function only change the color. <br/>
      * When color include opacity like cc.color(128,128,128,100), then this function will change the color and the opacity.</p>
      * @function
-     * @param {cc.Color} color The new coloe given
+     * @param {cc.Color} color The new color given
      */
     setColor: function (color) {
         var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
@@ -2550,6 +2549,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 /**
  * Allocates and initializes a node.
  * @deprecated since v3.0, please use new construction instead.
+ * @see cc.Node
  * @return {cc.Node}
  */
 cc.Node.create = function () {

@@ -31,8 +31,17 @@
  *
  * <p>All features from cc.Node are valid</p>
  *
+ * <p>You can create a cc.AtlasNode with an Atlas file, the width, the height of each item and the quantity of items to render</p>
+ *
  * @class
  * @extends cc.Node
+ *
+ * @param {String} tile
+ * @param {Number} tileWidth
+ * @param {Number} tileHeight
+ * @param {Number} itemsToRender
+ * @example
+ * var node = new cc.AtlasNode("pathOfTile", 16, 16, 1);
  *
  * @property {cc.Texture2D}     texture         - Current used texture
  * @property {cc.TextureAtlas}  textureAtlas    - Texture atlas for cc.AtlasNode
@@ -62,15 +71,11 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     _className: "AtlasNode",
 
     /**
-     * Creates a cc.AtlasNode with an Atlas file the width and height of each item and the quantity of items to render
-     * Constructor of cc.AtlasNode
-     * @constructor
+     * <p>Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      * @param {String} tile
      * @param {Number} tileWidth
      * @param {Number} tileHeight
      * @param {Number} itemsToRender
-     * @example
-     * var node = new cc.AtlasNode("pathOfTile", 16, 16, 1);
      */
     ctor: function (tile, tileWidth, tileHeight, itemsToRender) {
         cc.Node.prototype.ctor.call(this);

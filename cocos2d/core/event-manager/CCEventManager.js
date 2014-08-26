@@ -23,18 +23,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * copy an array's item to a new array (its performance is better than Array.slice)
- * @param {Array} arr
- * @returns {Array}
- */
-cc.copyArray = function(arr){
-    var i, len = arr.length, arr_clone = new Array(len);
-    for (i = 0; i < len; i += 1)
-        arr_clone[i] = arr[i];
-    return arr_clone;
-};
-
 cc._EventListenerVector = cc.Class.extend({
     _fixedListeners: null,
     _sceneGraphListeners: null,
@@ -102,10 +90,10 @@ cc.__getListenerID = function (event) {
 
 /**
  * <p>
- *  This class manages event listener subscriptions and event dispatching.                                      <br/>
+ *  cc.eventManager object manages event listener subscriptions and event dispatching.                                      <br/>
  *                                                                                                              <br/>
- *  The EventListener list is managed in such a way that event listeners can be added and removed even          <br/>
- *  from within an EventListener, while events are being dispatched.
+ *  The EventListener list is managed in such way so that event listeners can be added and removed          <br/>
+ *  while events are being dispatched.
  * </p>
  * @namespace
  * @name cc.eventManager
