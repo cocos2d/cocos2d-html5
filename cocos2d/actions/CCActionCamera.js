@@ -41,7 +41,7 @@ cc.ActionCamera = cc.ActionInterval.extend(/** @lends cc.ActionCamera# */{
     _upZOrig:0,
 
     /**
-     * Constructor of cc.ActionCamera.
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      */
     ctor:function(){
         var _t = this;
@@ -126,8 +126,8 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
     _radDeltaX: 0.0,
 
 	/**
-	 * creates a cc.OrbitCamera action with radius, delta-radius,  z, deltaZ, x, deltaX
-	 * Constructor of cc.OrbitCamera
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * creates a cc.OrbitCamera action with radius, delta-radius,  z, deltaZ, x, deltaX.
 	 * @param {Number} t time
 	 * @param {Number} radius
 	 * @param {Number} deltaRadius

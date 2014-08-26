@@ -50,7 +50,7 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
     //**************Public Functions***********
 
     /**
-     * Constructor of cc.Action.
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      */
     ctor:function () {
         this.originalTarget = null;
@@ -242,7 +242,7 @@ cc.FiniteTimeAction = cc.Action.extend(/** @lends cc.FiniteTimeAction# */{
     _duration:0,
 
     /**
-     * Constructor of cc.FiniteTimeAction.
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      */
     ctor:function () {
         cc.Action.prototype.ctor.call(this);
@@ -300,14 +300,15 @@ cc.FiniteTimeAction = cc.Action.extend(/** @lends cc.FiniteTimeAction# */{
  * @warning This action can't be Sequenceable because it is not an cc.IntervalAction
  * @class
  * @extends cc.Action
+ * @param {cc.ActionInterval} action
+ * @param {Number} speed
  */
 cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
     _speed:0.0,
     _innerAction:null,
 
 	/**
-	 * Constructor of cc.Speed.
-     *
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
 	 * @param {cc.ActionInterval} action
 	 * @param {Number} speed
 	 */
@@ -473,6 +474,19 @@ cc.Speed.create = cc.speed;
  * @property {Number}  topBoundary - world topBoundary.
  * @property {Number}  bottomBoundary - world bottomBoundary.
  *
+ * @param {cc.Node} followedNode
+ * @param {cc.Rect} rect
+ * @example
+ * // creates the action with a set boundary
+ * var sprite = new cc.Sprite("spriteFileName");
+ * var followAction = new cc.Follow(sprite, cc.rect(0, 0, s.width * 2 - 100, s.height));
+ * this.runAction(followAction);
+ *
+ * // creates the action with no boundary set
+ * var sprite = new cc.Sprite("spriteFileName");
+ * var followAction = new cc.Follow(sprite);
+ * this.runAction(followAction);
+ *
  * @class
  * @extends cc.Action
  */
@@ -494,22 +508,11 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
     bottomBoundary:0.0,
 
 	/**
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
 	 * creates the action with a set boundary. <br/>
 	 * creates the action with no boundary set.
-	 *
-	 * Constructor of cc.Follow
-	 * @param {cc.Node} followedNode
-	 * @param {cc.Rect} rect
-	 * @example
-	 * // creates the action with a set boundary
-	 * var sprite = new cc.Sprite("spriteFileName");
-	 * var followAction = new cc.Follow(sprite, cc.rect(0, 0, s.width * 2 - 100, s.height));
-	 * this.runAction(followAction);
-	 *
-	 * // creates the action with no boundary set
-	 * var sprite = new cc.Sprite("spriteFileName");
-	 * var followAction = new cc.Follow(sprite);
-	 * this.runAction(followAction);
+     * @param {cc.Node} followedNode
+     * @param {cc.Rect} rect
 	 */
     ctor:function (followedNode, rect) {
         cc.Action.prototype.ctor.call(this);

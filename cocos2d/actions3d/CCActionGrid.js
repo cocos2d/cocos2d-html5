@@ -28,13 +28,14 @@
  * Base class for Grid actions
  * @class
  * @extends cc.ActionInterval
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
  */
 cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
     _gridSize:null,
 
 	/**
-	 * Creates a grid action with duration and grid size
-	 * Constructor of cc.GridAction
+	 * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 */
@@ -312,13 +313,13 @@ cc.StopGrid.create = cc.stopGrid;
  * cc.ReuseGrid action
  * @class
  * @extends cc.ActionInstant
+ * @param {Number} times
  */
 cc.ReuseGrid = cc.ActionInstant.extend(/** @lends cc.ReuseGrid# */{
     _times:null,
 
 	/**
-	 * creates an action with the number of times that the current grid will be reused
-	 * Constructor of cc.ReuseGrid
+	 * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
 	 * @param {Number} times
 	 */
 	ctor: function(times) {

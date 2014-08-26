@@ -25,9 +25,14 @@
  ****************************************************************************/
 
 /**
- * cc.Waves3D action.
+ * cc.Waves3D action. <br />
+ * Reference the test cases (Effects Advanced Test)
  * @class
  * @extends cc.Grid3DAction
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @param {Number} waves
+ * @param {Number} amplitude
  */
 cc.Waves3D = cc.Grid3DAction.extend(/** @lends cc.Waves3D# */{
     _waves: 0,
@@ -35,7 +40,8 @@ cc.Waves3D = cc.Grid3DAction.extend(/** @lends cc.Waves3D# */{
     _amplitudeRate: 0,
 
 	/**
-	 * Create a wave 3d action with duration, grid size, waves and amplitude
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Create a wave 3d action with duration, grid size, waves and amplitude.
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {Number} waves
@@ -143,15 +149,17 @@ cc.Waves3D.create = cc.waves3D;
 
 /**
  * cc.FlipX3D action. <br />
- * Flip around.
+ * Flip around. <br />
+ * Reference the test cases (Effects Test)
  * @class
  * @extends cc.Grid3DAction
+ * @param {Number} duration
  */
 cc.FlipX3D = cc.Grid3DAction.extend(/** @lends cc.FlipX3D# */{
 
 	/**
-	 * Create a Flip X 3D action with duration
-	 * Constructor of cc.FlipX3D
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Create a Flip X 3D action with duration.
 	 * @param {Number} duration
 	 */
 	ctor: function(duration) {
@@ -276,15 +284,17 @@ cc.FlipX3D.create = cc.flipX3D;
 
 /**
  * cc.FlipY3D action. <br />
- * Upside down.
+ * Upside down. <br />
+ * Reference the test cases (Effects Test)
  * @class
  * @extends cc.FlipX3D
+ * @param {Number} duration
  */
 cc.FlipY3D = cc.FlipX3D.extend(/** @lends cc.FlipY3D# */{
 
 	/**
-	 * Create a flip Y 3d action with duration
-	 * Constructor of cc.FlipY3D
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Create a flip Y 3d action with duration.
 	 * @param {Number} duration
 	 */
 	ctor: function(duration) {
@@ -385,9 +395,14 @@ cc.FlipY3D.create = cc.flipY3D;
 
 /**
  * cc.Lens3D action. <br />
- * Upside down.
+ * Upside down. <br />
+ * Reference the test cases (Effects Test)
  * @class
  * @extends cc.FlipX3D
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @param {cc.Point} position
+ * @param {Number} radius
  */
 cc.Lens3D = cc.Grid3DAction.extend(/** @lends cc.Lens3D# */{
     //lens center position
@@ -400,8 +415,8 @@ cc.Lens3D = cc.Grid3DAction.extend(/** @lends cc.Lens3D# */{
     _dirty:false,
 
 	/**
-	 * creates a lens 3d action with center position, radius
-	 * Constructor of cc.Lens3D
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * creates a lens 3d action with center position, radius.
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {cc.Point} position
@@ -552,9 +567,16 @@ cc.lens3D = function (duration, gridSize, position, radius) {
 cc.Lens3D.create = cc.lens3D;
 
 /**
- * cc.Ripple3D action
+ * cc.Ripple3D action. <br />
+ * Reference the test cases (Effects Test)
  * @class
  * @extends cc.Grid3DAction
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @param {cc.Point} position
+ * @param {Number} radius
+ * @param {Number} waves
+ * @param {Number} amplitude
  */
 cc.Ripple3D = cc.Grid3DAction.extend(/** @lends cc.Ripple3D# */{
     /* center position */
@@ -565,8 +587,8 @@ cc.Ripple3D = cc.Grid3DAction.extend(/** @lends cc.Ripple3D# */{
     _amplitudeRate: 0,
 
 	/**
-	 * creates a ripple 3d action with radius, number of waves, amplitude
-	 * Constructor of cc.Ripple3D
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * creates a ripple 3d action with radius, number of waves, amplitude.
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {cc.Point} position
@@ -714,17 +736,22 @@ cc.ripple3D = function (duration, gridSize, position, radius, waves, amplitude) 
 cc.Ripple3D.create = cc.ripple3D;
 
 /**
- * cc.Shaky3D action
+ * cc.Shaky3D action. <br />
+ * Reference the test cases (Effects Test)
  * @class
  * @extends cc.Grid3DAction
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @param {Number} range
+ * @param {Boolean} shakeZ
  */
 cc.Shaky3D = cc.Grid3DAction.extend(/** @lends cc.Shaky3D# */{
     _randRange: 0,
     _shakeZ: false,
 
 	/**
-	 * Create a shaky3d action with a range, shake Z vertices
-	 * Constructor of cc.Shaky3D
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Create a shaky3d action with a range, shake Z vertices.
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {Number} range
@@ -803,9 +830,14 @@ cc.shaky3D = function (duration, gridSize, range, shakeZ) {
 cc.Shaky3D.create = cc.shaky3D;
 
 /**
- * cc.Liquid action
+ * cc.Liquid action. <br />
+ * Reference the test cases (Effects Test)
  * @class
  * @extends cc.Grid3DAction
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @param {Number} waves
+ * @param {Number} amplitude
  */
 cc.Liquid = cc.Grid3DAction.extend(/** @lends cc.Liquid# */{
     _waves: 0,
@@ -813,8 +845,8 @@ cc.Liquid = cc.Grid3DAction.extend(/** @lends cc.Liquid# */{
     _amplitudeRate: 0,
 
 	/**
-	 * Create a liquid action with amplitude, a grid and duration
-	 * Constructor of cc.Liquid
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Create a liquid action with amplitude, a grid and duration.
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {Number} waves
@@ -924,9 +956,16 @@ cc.liquid = function (duration, gridSize, waves, amplitude) {
 cc.Liquid.create = cc.liquid;
 
 /**
- * cc.Waves action
+ * cc.Waves action. <br />
+ * Reference the test cases (Effects Test)
  * @class
  * @extends cc.Grid3DAction
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @param {Number} waves
+ * @param {Number} amplitude
+ * @param {Boolean} horizontal
+ * @param {Boolean} vertical
  */
 cc.Waves = cc.Grid3DAction.extend(/** @lends cc.Waves# */{
     _waves: 0,
@@ -936,8 +975,8 @@ cc.Waves = cc.Grid3DAction.extend(/** @lends cc.Waves# */{
     _horizontal: false,
 
 	/**
-	 * Create a wave action with amplitude, horizontal sin, vertical sin, a grid and duration
-	 * Constructor of cc.Waves
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Create a wave action with amplitude, horizontal sin, vertical sin, a grid and duration.
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {Number} waves
@@ -1061,9 +1100,15 @@ cc.Waves.create = cc.waves;
 
 /** @brief  */
 /**
- * cc.Twirl action
+ * cc.Twirl action. <br />
+ * Reference the test cases (Effects Test)
  * @class
  * @extends cc.Grid3DAction
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @param {cc.Point} position
+ * @param {Number} twirls
+ * @param {Number} amplitude
  */
 cc.Twirl = cc.Grid3DAction.extend(/** @lends cc.Twirl# */{
     /* twirl center */
@@ -1073,8 +1118,8 @@ cc.Twirl = cc.Grid3DAction.extend(/** @lends cc.Twirl# */{
     _amplitudeRate: 0,
 
 	/**
-	 * Create a grid 3d action with center position, number of twirls, amplitude, a grid size and duration
-	 * Constructor of cc.Twirl
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Create a grid 3d action with center position, number of twirls, amplitude, a grid size and duration.
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {cc.Point} position
