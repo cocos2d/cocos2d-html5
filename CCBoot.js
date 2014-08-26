@@ -1793,7 +1793,7 @@ cc.game = {
      * @private
      */
     _getTime: function() {
-        return ( self._now && self._now.call( performance ) ) || ( new Date().getTime() );
+        return ( this._now && this._now.call( performance ) ) || ( new Date().getTime() );
     },
 
     /**
