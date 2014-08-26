@@ -31,6 +31,19 @@
  */
 cc.stencilBits = -1;
 
+/**
+ * <p>
+ *     Sets the shader program for this node
+ *
+ *     Since v2.0, each rendering node must set its shader program.
+ *     It should be set in initialize phase.
+ * </p>
+ * @function
+ * @param {cc.Node} node
+ * @param {cc.GLProgram} program The shader program which fetchs from CCShaderCache.
+ * @example
+ * cc.setGLProgram(node, cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+ */
 cc.setProgram = function (node, program) {
     node.shaderProgram = program;
 
@@ -54,8 +67,8 @@ cc.setProgram = function (node, program) {
  *
  * @property {Number}   alphaThreshold  - Threshold for alpha value.
  * @property {Boolean}  inverted        - Indicate whether in inverted mode.
- * @property {cc.Node}  stencil         - he cc.Node to use as a stencil to do the clipping.
  */
+//@property {cc.Node}  stencil         - he cc.Node to use as a stencil to do the clipping.
 cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     alphaThreshold: 0,
     inverted: false,
@@ -80,7 +93,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     },
 
     /**
-     * Initializes a clipping node with an other node as its stencil.                          <br/>
+     * Initializes a clipping node with an other node as its stencil. <br/>
      * The stencil node will be retained, and its parent will be set to this clipping node.
      * @param {cc.Node} [stencil=null]
      */
@@ -109,26 +122,65 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         this.inverted = false;
     },
 
+    /**
+     * <p>
+     *     Event callback that is invoked every time when node enters the 'stage'.                                   <br/>
+     *     If the CCNode enters the 'stage' with a transition, this event is called when the transition starts.        <br/>
+     *     During onEnter you can't access a "sister/brother" node.                                                    <br/>
+     *     If you override onEnter, you must call its parent's onEnter function with this._super().
+     * </p>
+     * @function
+     */
     onEnter: function () {
         cc.Node.prototype.onEnter.call(this);
         this._stencil.onEnter();
     },
 
+    /**
+     * <p>
+     *     Event callback that is invoked when the node enters in the 'stage'.                                                        <br/>
+     *     If the node enters the 'stage' with a transition, this event is called when the transition finishes.                       <br/>
+     *     If you override onEnterTransitionDidFinish, you shall call its parent's onEnterTransitionDidFinish with this._super()
+     * </p>
+     * @function
+     */
     onEnterTransitionDidFinish: function () {
         cc.Node.prototype.onEnterTransitionDidFinish.call(this);
         this._stencil.onEnterTransitionDidFinish();
     },
 
+    /**
+     * <p>
+     *     callback that is called every time the node leaves the 'stage'.  <br/>
+     *     If the node leaves the 'stage' with a transition, this callback is called when the transition starts. <br/>
+     *     If you override onExitTransitionDidStart, you shall call its parent's onExitTransitionDidStart with this._super()
+     * </p>
+     * @function
+     */
     onExitTransitionDidStart: function () {
         this._stencil.onExitTransitionDidStart();
         cc.Node.prototype.onExitTransitionDidStart.call(this);
     },
 
+    /**
+     * <p>
+     * callback that is called every time the node leaves the 'stage'. <br/>
+     * If the node leaves the 'stage' with a transition, this callback is called when the transition finishes. <br/>
+     * During onExit you can't access a sibling node.                                                             <br/>
+     * If you override onExit, you shall call its parent's onExit with this._super().
+     * </p>
+     * @function
+     */
     onExit: function () {
         this._stencil.onExit();
         cc.Node.prototype.onExit.call(this);
     },
 
+    /**
+     * Recursive method that visit its children and draw them
+     * @function
+     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
+     */
     visit: null,
 
     _visitForWebGL: function (ctx) {
@@ -402,6 +454,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     },
 
     /**
+     * Set stencil.
      * @function
      * @param {cc.Node} stencil
      */
@@ -472,7 +525,6 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         return this.inverted;
     },
 
-
     /**
      * set whether or not invert of stencil
      * @param {Boolean} inverted
@@ -517,11 +569,14 @@ cc.ClippingNode._getSharedCache = function () {
 };
 
 /**
- * Creates and initializes a clipping node with an other node as its stencil.                               <br/>
+ * Creates and initializes a clipping node with an other node as its stencil. <br/>
  * The stencil node will be retained.
- * @deprecated
+ * @deprecated since v3.0, please use getNodeToParentTransform instead
  * @param {cc.Node} [stencil=null]
  * @return {cc.ClippingNode}
+ * @example
+ * //example
+ * new cc.ClippingNode(stencil);
  */
 cc.ClippingNode.create = function (stencil) {
     return new cc.ClippingNode(stencil);
