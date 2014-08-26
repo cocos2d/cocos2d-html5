@@ -260,19 +260,19 @@ cc.ToggleVisibility.create = cc.toggleVisibility;
  * Delete self in the next frame.
  * @class
  * @extends cc.ActionInstant
+ * @param {Boolean} [isNeedCleanUp=true]
+ *
+ * @example
+ * // example
+ * var removeSelfAction = new cc.RemoveSelf(false);
  */
 cc.RemoveSelf = cc.ActionInstant.extend({
      _isNeedCleanUp: true,
 
 	/**
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
 	 * Create a RemoveSelf object with a flag indicate whether the target should be cleaned up while removing.
-	 *
-	 * Constructor of cc.RemoveSelf
 	 * @param {Boolean} [isNeedCleanUp=true]
-	 *
-	 * @example
-	 * // example
-	 * var removeSelfAction = new cc.RemoveSelf(false);
 	 */
     ctor:function(isNeedCleanUp){
         cc.FiniteTimeAction.prototype.ctor.call(this);
@@ -290,7 +290,7 @@ cc.RemoveSelf = cc.ActionInstant.extend({
     },
 
     /**
-     * Init the cc.RemoveSelf with isNeedCleanUp.
+     * Initialization of the node, please do not call this function by yourself, you should pass the parameters to constructor to initialize it .
      * @param isNeedCleanUp
      * @returns {boolean}
      */
@@ -347,18 +347,18 @@ cc.RemoveSelf.create = cc.removeSelf;
  * Flips the sprite horizontally.
  * @class
  * @extends cc.ActionInstant
+ * @param {Boolean} flip Indicate whether the target should be flipped or not
+ *
+ * @example
+ * var flipXAction = new cc.FlipX(true);
  */
 cc.FlipX = cc.ActionInstant.extend(/** @lends cc.FlipX# */{
     _flippedX:false,
 
 	/**
-	 * Create a FlipX action to flip or unflip the target
-	 *
-	 * Constructor of cc.FlipX
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Create a FlipX action to flip or unflip the target.
 	 * @param {Boolean} flip Indicate whether the target should be flipped or not
-	 *
-	 * @example
-	 * var flipXAction = new cc.FlipX(true);
 	 */
     ctor:function(flip){
         cc.FiniteTimeAction.prototype.ctor.call(this);
@@ -434,17 +434,18 @@ cc.FlipX.create = cc.flipX;
  * Flips the sprite vertically
  * @class
  * @extends cc.ActionInstant
+ * @param {Boolean} flip
+ * @example
+ * var flipYAction = new cc.FlipY(true);
  */
 cc.FlipY = cc.ActionInstant.extend(/** @lends cc.FlipY# */{
     _flippedY:false,
 
 	/**
-	 * Create a FlipY action to flip or unflip the target
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Create a FlipY action to flip or unflip the target.
 	 *
-	 * Constructor of cc.FlipY
 	 * @param {Boolean} flip
-	 * @example
-	 * var flipYAction = new cc.FlipY(true);
 	 */
     ctor: function(flip){
         cc.FiniteTimeAction.prototype.ctor.call(this);
@@ -521,20 +522,21 @@ cc.FlipY.create = cc.flipY;
  * Places the node in a certain position
  * @class
  * @extends cc.ActionInstant
+ * @param {cc.Point|Number} pos
+ * @param {Number} [y]
+ * @example
+ * var placeAction = new cc.Place.create(cc.p(200, 200));
+ * var placeAction = new cc.Place.create(200, 200);
  */
 cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
     _x: 0,
 	_y: 0,
 
 	/**
-	 * Creates a Place action with a position
-	 *
-	 * Constructor of cc.Place
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Creates a Place action with a position.
 	 * @param {cc.Point|Number} pos
 	 * @param {Number} [y]
-	 * @example
-	 * var placeAction = new cc.Place.create(cc.p(200, 200));
-	 * var placeAction = new cc.Place.create(200, 200);
 	 */
     ctor:function(pos, y){
         cc.FiniteTimeAction.prototype.ctor.call(this);
@@ -615,6 +617,16 @@ cc.Place.create = cc.place;
  * Calls a 'callback'.
  * @class
  * @extends cc.ActionInstant
+ * @param {function} selector
+ * @param {object|null} [selectorTarget]
+ * @param {*|null} [data] data for function, it accepts all data types.
+ * @example
+ * // example
+ * // CallFunc without data
+ * var finish = new cc.CallFunc(this.removeSprite, this);
+ *
+ * // CallFunc with data
+ * var finish = new cc.CallFunc(this.removeFromParentAndCleanup, this,  true);
  */
 cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
     _selectorTarget:null,
@@ -623,19 +635,11 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
     _data:null,
 
 	/**
-	 * Creates a CallFunc action with the callback
-	 *
-	 * Constructor of cc.CallFunc
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Creates a CallFunc action with the callback.
 	 * @param {function} selector
 	 * @param {object|null} [selectorTarget]
 	 * @param {*|null} [data] data for function, it accepts all data types.
-	 * @example
-	 * // example
-	 * // CallFunc without data
-	 * var finish = new cc.CallFunc(this.removeSprite, this);
-	 *
-	 * // CallFunc with data
-	 * var finish = new cc.CallFunc(this.removeFromParentAndCleanup, this,  true);
 	 */
     ctor:function(selector, selectorTarget, data){
         cc.FiniteTimeAction.prototype.ctor.call(this);

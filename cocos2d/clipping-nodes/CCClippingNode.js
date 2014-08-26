@@ -64,6 +64,7 @@ cc.setProgram = function (node, program) {
  * </p>
  * @class
  * @extends cc.Node
+ * @param {cc.Node} [stencil=null]
  *
  * @property {Number}   alphaThreshold  - Threshold for alpha value.
  * @property {Boolean}  inverted        - Indicate whether in inverted mode.
@@ -77,9 +78,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     _godhelpme: false,
 
     /**
-     * Creates and initializes a clipping node with an other node as its stencil.
-     * The stencil node will be retained.
-     * Constructor of cc.ClippingNode
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @param {cc.Node} [stencil=null]
      */
     ctor: function (stencil) {
@@ -93,11 +92,12 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     },
 
     /**
-     * Initializes a clipping node with an other node as its stencil. <br/>
-     * The stencil node will be retained, and its parent will be set to this clipping node.
+     * Initialization of the node, please do not call this function by yourself, you should pass the parameters to constructor to initialize it .
+     * @function
      * @param {cc.Node} [stencil=null]
      */
     init: null,
+
     _className: "ClippingNode",
 
     _initForWebGL: function (stencil) {

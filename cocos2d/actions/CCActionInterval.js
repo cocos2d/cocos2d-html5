@@ -39,9 +39,9 @@
  *
  * @class
  * @extends cc.FiniteTimeAction
- * @Example
- * // example
- * var pingPongAction = cc.sequence(action, action.reverse());
+ * @param {Number} d duration in seconds
+ * @example
+ * var actionInterval = new cc.ActionInterval(3);
  */
 cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     _elapsed:0,
@@ -54,10 +54,8 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     _speedMethod: false,//Compatible with speed class, Discard after can be deleted
 
 	/**
-	 * constructor of cc.ActionInterval
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
 	 * @param {Number} d duration in seconds
-	 * @example
-	 * var actionInterval = new cc.ActionInterval(3);
 	 */
     ctor:function (d) {
         this._speed = 1;
@@ -332,21 +330,23 @@ cc.ActionInterval.create = cc.actionInterval;
  * Runs actions sequentially, one after another.
  * @class
  * @extends cc.ActionInterval
+ * @param {Array|cc.FiniteTimeAction} tempArray
+ * @example
+ * // create sequence with actions
+ * var seq = new cc.Sequence(act1, act2);
+ *
+ * // create sequence with array
+ * var seq = new cc.Sequence(actArray);
  */
 cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
     _actions:null,
     _split:null,
     _last:0,
 
-	/** Create an array of sequenceable actions
-	 * Constructor of cc.Sequence
+	/**
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+     * Create an array of sequenceable actions.
 	 * @param {Array|cc.FiniteTimeAction} tempArray
-	 * @example
-	 * // create sequence with actions
-	 * var seq = new cc.Sequence(act1, act2);
-	 *
-	 * // create sequence with array
-	 * var seq = new cc.Sequence(actArray);
 	 */
     ctor:function (tempArray) {
         cc.ActionInterval.prototype.ctor.call(this);
@@ -532,6 +532,10 @@ cc.Sequence._actionOneTwo = function (actionOne, actionTwo) {
  * To repeat an action forever use the CCRepeatForever action.
  * @class
  * @extends cc.ActionInterval
+ * @param {cc.FiniteTimeAction} action
+ * @param {Number} times
+ * @example
+ * var rep = new cc.Repeat(cc.sequence(jump2, jump1), 5);
  */
 cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
     _times:0,
@@ -541,12 +545,10 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
     _innerAction:null, //CCFiniteTimeAction
 
 	/**
-	 * Creates a Repeat action. Times is an unsigned integer between 1 and pow(2,30)
-	 * Constructor of cc.Repeat
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Creates a Repeat action. Times is an unsigned integer between 1 and pow(2,30).
 	 * @param {cc.FiniteTimeAction} action
 	 * @param {Number} times
-	 * @example
-	 * var rep = new cc.Repeat(cc.sequence(jump2, jump1), 5);
 	 */
     ctor: function (action, times) {
         cc.ActionInterval.prototype.ctor.call(this);
@@ -714,15 +716,17 @@ cc.Repeat.create = cc.repeat;
  * @warning This action can't be Sequenceable because it is not an IntervalAction
  * @class
  * @extends cc.ActionInterval
+ * @param {cc.FiniteTimeAction} action
+ * @example
+ * var rep = new cc.RepeatForever(cc.sequence(jump2, jump1), 5);
  */
 cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
     _innerAction:null, //CCActionInterval
 
 	/**
-	 * Create a acton which repeat forever
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Create a acton which repeat forever.
 	 * @param {cc.FiniteTimeAction} action
-	 * @example
-	 * var repeat = cc.rotateBy(1.0, 360).repeatForever();
 	 */
     ctor:function (action) {
         cc.ActionInterval.prototype.ctor.call(this);
@@ -839,6 +843,9 @@ cc.repeatForever = function (action) {
  * @deprecated since v3.0 <br /> Please use cc.repeatForever instead.
  * @param {cc.FiniteTimeAction} action
  * @return {cc.RepeatForever}
+ * @param {Array|cc.FiniteTimeAction} tempArray
+ * @example
+ * var action = new cc.Spawn(cc.jumpBy(2, cc.p(300, 0), 50, 4), cc.rotateBy(2, 720));
  */
 cc.RepeatForever.create = cc.repeatForever;
 
@@ -852,10 +859,8 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
     _two:null,
 
 	/**
-	 * Constructor of cc.Spawn
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
 	 * @param {Array|cc.FiniteTimeAction} tempArray
-	 * @example
-	 * var action = new cc.Spawn(cc.jumpBy(2, cc.p(300, 0), 50, 4), cc.rotateBy(2, 720));
 	 */
     ctor:function (tempArray) {
         cc.ActionInterval.prototype.ctor.call(this);
@@ -1013,6 +1018,11 @@ cc.Spawn._actionOneTwo = function (action1, action2) {
  * The direction will be decided by the shortest angle.
  * @class
  * @extends cc.ActionInterval
+ * @param {Number} duration duration in seconds
+ * @param {Number} deltaAngleX deltaAngleX in degrees.
+ * @param {Number} [deltaAngleY] deltaAngleY in degrees.
+ * @example
+ * var rotateTo = new cc.RotateTo(2, 61.0);
  */
 cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
     _dstAngleX:0,
@@ -1024,13 +1034,11 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
     _diffAngleY:0,
 
 	/**
-	 * Creates a RotateTo action with x and y rotation angles
-	 * Constructor of cc.RotateTo
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Creates a RotateTo action with x and y rotation angles.
 	 * @param {Number} duration duration in seconds
 	 * @param {Number} deltaAngleX deltaAngleX in degrees.
 	 * @param {Number} [deltaAngleY] deltaAngleY in degrees.
-	 * @example
-	 * var rotateTo = new cc.RotateTo(2, 61.0);
 	 */
     ctor:function (duration, deltaAngleX, deltaAngleY) {
         cc.ActionInterval.prototype.ctor.call(this);
@@ -1148,6 +1156,11 @@ cc.RotateTo.create = cc.rotateTo;
  * Relative to its properties to modify.
  * @class
  * @extends  cc.ActionInterval
+ * @param {Number} duration duration in seconds
+ * @param {Number} deltaAngleX deltaAngleX in degrees
+ * @param {Number} [deltaAngleY] deltaAngleY in degrees
+ * @example
+ * var actionBy = new cc.RotateBy(2, 360);
  */
 cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
     _angleX:0,
@@ -1156,12 +1169,10 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
     _startAngleY:0,
 
 	/**
-	 * Constructor of cc.RotateBy
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
 	 * @param {Number} duration duration in seconds
 	 * @param {Number} deltaAngleX deltaAngleX in degrees
 	 * @param {Number} [deltaAngleY] deltaAngleY in degrees
-	 * @example
-	 * var actionBy = new cc.RotateBy(2, 360);
 	 */
     ctor: function (duration, deltaAngleX, deltaAngleY) {
         cc.ActionInterval.prototype.ctor.call(this);
@@ -1268,6 +1279,11 @@ cc.RotateBy.create = cc.rotateBy;
  * </p>
  * @class
  * @extends cc.ActionInterval
+ * @param {Number} duration duration in seconds
+ * @param {cc.Point|Number} deltaPos
+ * @param {Number} [deltaY]
+ * @example
+ * var actionTo = cc.moveBy(2, cc.p(windowSize.width - 40, windowSize.height - 40));
  */
 cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
     _positionDelta:null,
@@ -1275,12 +1291,11 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
     _previousPosition:null,
 
 	/**
-	 * Constructor of cc.MoveBy
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
 	 * @param {Number} duration duration in seconds
 	 * @param {cc.Point|Number} deltaPos
 	 * @param {Number} [deltaY]
 	 * @example
-	 * var actionTo = cc.moveBy(2, cc.p(windowSize.width - 40, windowSize.height - 40));
 	 */
     ctor:function (duration, deltaPos, deltaY) {
         cc.ActionInterval.prototype.ctor.call(this);
@@ -1412,17 +1427,20 @@ cc.MoveBy.create = cc.moveBy;
  * movement will be the sum of individual movements.
  * @class
  * @extends cc.MoveBy
+ * @param {Number} duration duration in seconds
+ * @param {cc.Point|Number} position
+ * @param {Number} y
+ * @example
+ * var actionBy = new cc.MoveTo(2, cc.p(80, 80));
  */
 cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
     _endPosition:null,
 
 	/**
-	 * Constructor of cc.MoveTo
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
 	 * @param {Number} duration duration in seconds
 	 * @param {cc.Point|Number} position
 	 * @param {Number} y
-	 * @example
-	 * var actionBy = new cc.MoveTo(2, cc.p(80, 80));
 	 */
     ctor:function (duration, position, y) {
         cc.MoveBy.prototype.ctor.call(this);
@@ -1505,6 +1523,11 @@ cc.MoveTo.create = cc.moveTo;
  * Skews a cc.Node object to given angles by modifying it's skewX and skewY attributes
  * @class
  * @extends cc.ActionInterval
+ * @param {Number} t time in seconds
+ * @param {Number} sx
+ * @param {Number} sy
+ * @example
+ * var actionTo = new cc.SkewTo(2, 37.2, -37.2);
  */
 cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
     _skewX:0,
@@ -1517,12 +1540,10 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
     _deltaY:0,
 
 	/**
-	 * Constructor of cc.SkewTo
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
 	 * @param {Number} t time in seconds
 	 * @param {Number} sx
 	 * @param {Number} sy
-	 * @example
-	 * var actionTo = new cc.SkewTo(2, 37.2, -37.2);
 	 */
     ctor: function (t, sx, sy) {
         cc.ActionInterval.prototype.ctor.call(this);
@@ -1624,11 +1645,14 @@ cc.SkewTo.create = cc.skewTo;
  * Relative to its attribute modification.
  * @class
  * @extends cc.SkewTo
+ * @param {Number} t time in seconds
+ * @param {Number} sx  skew in degrees for X axis
+ * @param {Number} sy  skew in degrees for Y axis
  */
 cc.SkewBy = cc.SkewTo.extend(/** @lends cc.SkewBy# */{
 
 	/**
-	 * Constructor of cc.SkewBy
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
 	 * @param {Number} t time in seconds
 	 * @param {Number} sx  skew in degrees for X axis
 	 * @param {Number} sy  skew in degrees for Y axis
@@ -1724,6 +1748,14 @@ cc.SkewBy.create = cc.skewBy;
  * Relative to its movement.
  * @class
  * @extends cc.ActionInterval
+ * @param {Number} duration
+ * @param {cc.Point|Number} position
+ * @param {Number} [y]
+ * @param {Number} height
+ * @param {Number} jumps
+ * @example
+ * var actionBy = new cc.JumpBy(2, cc.p(300, 0), 50, 4);
+ * var actionBy = new cc.JumpBy(2, 300, 0, 50, 4);
  */
 cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
     _startPosition:null,
@@ -1733,15 +1765,12 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
     _previousPosition:null,
 
 	/**
-	 * Constructor of JumpBy
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
 	 * @param {Number} duration
 	 * @param {cc.Point|Number} position
 	 * @param {Number} [y]
 	 * @param {Number} height
 	 * @param {Number} jumps
-	 * @example
-	 * var actionBy = new cc.JumpBy(2, cc.p(300, 0), 50, 4);
-	 * var actionBy = new cc.JumpBy(2, 300, 0, 50, 4);
 	 */
     ctor:function (duration, position, y, height, jumps) {
         cc.ActionInterval.prototype.ctor.call(this);
@@ -1886,20 +1915,25 @@ cc.JumpBy.create = cc.jumpBy;
  * Jump to the specified location.
  * @class
  * @extends cc.JumpBy
+ * @param {Number} duration
+ * @param {cc.Point|Number} position
+ * @param {Number} [y]
+ * @param {Number} height
+ * @param {Number} jumps
+ * @example
+ * var actionTo = new cc.JumpTo(2, cc.p(300, 0), 50, 4);
+ * var actionTo = new cc.JumpTo(2, 300, 0, 50, 4);
  */
 cc.JumpTo = cc.JumpBy.extend(/** @lends cc.JumpTo# */{
     _endPosition:null,
 
     /**
-     * Constructor of JumpTo
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @param {Number} duration
      * @param {cc.Point|Number} position
      * @param {Number} [y]
      * @param {Number} height
      * @param {Number} jumps
-     * @example
-     * var actionTo = new cc.JumpTo(2, cc.p(300, 0), 50, 4);
-     * var actionTo = new cc.JumpTo(2, 300, 0, 50, 4);
      */
     ctor:function (duration, position, y, height, jumps) {
         cc.JumpBy.prototype.ctor.call(this);
@@ -2006,6 +2040,11 @@ cc.bezierAt = function (a, b, c, d, t) {
  * Relative to its movement.
  * @class
  * @extends cc.ActionInterval
+ * @param {Number} t time in seconds
+ * @param {Array} c Array of points
+ * @example
+ * var bezier = [cc.p(0, windowSize.height / 2), cc.p(300, -windowSize.height / 2), cc.p(300, 100)];
+ * var bezierForward = new cc.BezierBy(3, bezier);
  */
 cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
     _config:null,
@@ -2013,12 +2052,9 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
     _previousPosition:null,
 
 	/**
-	 * Constructor of BezierBy
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
 	 * @param {Number} t time in seconds
 	 * @param {Array} c Array of points
-	 * @example
-	 * var bezier = [cc.p(0, windowSize.height / 2), cc.p(300, -windowSize.height / 2), cc.p(300, 100)];
-	 * var bezierForward = new cc.BezierBy(3, bezier);
 	 */
     ctor:function (t, c) {
         cc.ActionInterval.prototype.ctor.call(this);
@@ -2028,6 +2064,7 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
 
 		c && this.initWithDuration(t, c);
     },
+
     /**
      * Initializes the action.
      * @param {Number} t time in seconds
@@ -2160,16 +2197,19 @@ cc.BezierBy.create = cc.bezierBy;
 /** An action that moves the target with a cubic Bezier curve to a destination point.
  * @class
  * @extends cc.BezierBy
+ * @param {Number} t
+ * @param {Array} c array of points
+ * @example
+ * var bezier = [cc.p(0, windowSize.height / 2), cc.p(300, -windowSize.height / 2), cc.p(300, 100)];
+ * var bezierTo = new cc.BezierTo(2, bezier);
  */
 cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
     _toConfig:null,
 
 	/**
-	 * Constructor of cc.BezierTo
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
 	 * @param {Number} t
 	 * @param {Array} c array of points
-	 * @example
-	 * var bezier = [cc.p(0, windowSize.height / 2), cc.p(300, -windowSize.height / 2), cc.p(300, 100)];
 	 * var bezierTo = new cc.BezierTo(2, bezier);
 	 */
     ctor:function (t, c) {
@@ -2247,6 +2287,15 @@ cc.BezierTo.create = cc.bezierTo;
  * @warning This action doesn't support "reverse"
  * @class
  * @extends cc.ActionInterval
+ * @param {Number} duration
+ * @param {Number} sx  scale parameter in X
+ * @param {Number} [sy] scale parameter in Y, if Null equal to sx
+ * @example
+ * // It scales to 0.5 in both X and Y.
+ * var actionTo = new cc.ScaleTo(2, 0.5);
+ *
+ * // It scales to 0.5 in x and 2 in Y
+ * var actionTo = new cc.ScaleTo(2, 0.5, 2);
  */
 cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
     _scaleX:1,
@@ -2259,16 +2308,10 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
     _deltaY:0,
 
 	/**
-	 * Constructor of cc.ScaleTo
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
 	 * @param {Number} duration
 	 * @param {Number} sx  scale parameter in X
 	 * @param {Number} [sy] scale parameter in Y, if Null equal to sx
-	 * @example
-	 * // It scales to 0.5 in both X and Y.
-	 * var actionTo = new cc.ScaleTo(2, 0.5);
-	 *
-	 * // It scales to 0.5 in x and 2 in Y
-	 * var actionTo = new cc.ScaleTo(2, 0.5, 2);
 	 */
     ctor:function (duration, sx, sy) {
         cc.ActionInterval.prototype.ctor.call(this);
@@ -3064,15 +3107,16 @@ cc.DelayTime.create = cc.delayTime;
  * </p>
  * @class
  * @extends cc.ActionInterval
+ * @param {cc.FiniteTimeAction} action
+ * @example
+ *  var reverse = new cc.ReverseTime(this);
  */
 cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
     _other:null,
 
 	/**
-	 * Constructor of cc.ReverseTime
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
 	 * @param {cc.FiniteTimeAction} action
-	 * @example
-	 *  var reverse = new cc.ReverseTime(this);
 	 */
     ctor:function (action) {
         cc.ActionInterval.prototype.ctor.call(this);
@@ -3172,6 +3216,10 @@ cc.ReverseTime.create = cc.reverseTime;
 /**  Animates a sprite given the name of an Animation
  * @class
  * @extends cc.ActionInterval
+ * @param {cc.Animation} animation
+ * @example
+ * // create the animation with animation
+ * var anim = new cc.Animate(dance_grey);
  */
 cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
     _animation:null,
@@ -3181,12 +3229,9 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
     _splitTimes:null,
 
 	/**
-	 * Constructor of cc.Animate
-	 * create the animate with animation
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * create the animate with animation.
 	 * @param {cc.Animation} animation
-	 * @example
-	 * // create the animation with animation
-	 * var anim = new cc.Animate(dance_grey);
 	 */
     ctor:function (animation) {
         cc.ActionInterval.prototype.ctor.call(this);
@@ -3366,14 +3411,16 @@ cc.Animate.create = cc.animate;
  * </p>
  * @class
  * @extends cc.ActionInterval
+ * @param {cc.Node} target
+ * @param {cc.FiniteTimeAction} action
  */
 cc.TargetedAction = cc.ActionInterval.extend(/** @lends cc.TargetedAction# */{
     _action:null,
     _forcedTarget:null,
 
 	/**
-	 * Create an action with the specified action and forced target
-	 * Constructor of cc.TargetedAction
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Create an action with the specified action and forced target.
 	 * @param {cc.Node} target
 	 * @param {cc.FiniteTimeAction} action
 	 */

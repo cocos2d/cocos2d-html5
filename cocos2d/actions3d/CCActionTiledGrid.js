@@ -29,14 +29,18 @@
  * Reference the test cases (Effects Test)
  * @class
  * @extends cc.TiledGrid3DAction
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @param {Number} range
+ * @param {Boolean} shakeZ
  */
 cc.ShakyTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.ShakyTiles3D# */{
     _randRange:0,
     _shakeZ:false,
 
 	/**
-	 * Creates the action with a range, whether or not to shake Z vertices, a grid size, and duration.  <br />
-	 * Constructor of cc.ShakyTiles3D
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Creates the action with a range, whether or not to shake Z vertices, a grid size, and duration.
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {Number} range
@@ -135,6 +139,10 @@ cc.ShakyTiles3D.create = cc.shakyTiles3D;
  * Reference the test cases (Effects Test)
  * @class
  * @extends cc.TiledGrid3DAction
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @param {Number} range
+ * @param {Boolean} shatterZ
  */
 cc.ShatteredTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.ShatteredTiles3D# */{
     _randRange:0,
@@ -142,8 +150,8 @@ cc.ShatteredTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.ShatteredTiles3D
     _shatterZ:false,
 
 	/**
-	 * Creates the action with a range, whether of not to shatter Z vertices, a grid size and duration. <br />
-	 * Constructor of cc.ShatteredTiles3D
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Creates the action with a range, whether of not to shatter Z vertices, a grid size and duration.
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {Number} range
@@ -259,6 +267,9 @@ cc.Tile = function (position, startPosition, delta) {
  * Reference the test cases (Effects Test)
  * @class
  * @extends cc.TiledGrid3DAction
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @param {Number} seed
  */
 cc.ShuffleTiles = cc.TiledGrid3DAction.extend(/** @lends cc.ShuffleTiles# */{
     _seed:0,
@@ -267,8 +278,8 @@ cc.ShuffleTiles = cc.TiledGrid3DAction.extend(/** @lends cc.ShuffleTiles# */{
     _tiles:null,
 
 	/**
-	 * Creates the action with a random seed, the grid size and the duration. <br />
-	 * Constructor of cc.ShuffleTiles
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Creates the action with a random seed, the grid size and the duration.
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {Number} seed
@@ -681,6 +692,15 @@ cc.FadeOutDownTiles.create = cc.fadeOutDownTiles;
  * Reference the test cases (Effects Test)
  * @class
  * @extends cc.TiledGrid3DAction
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @param {Number|Null} [seed=0]
+ * @example
+ * // turnOffTiles without seed
+ * var toff = new cc.TurnOffTiles(this._duration, cc.size(x, y));
+ *
+ * // turnOffTiles with seed
+ * var toff = new cc.TurnOffTiles(this._duration, cc.size(x, y), 0);
  */
 cc.TurnOffTiles = cc.TiledGrid3DAction.extend(/** @lends cc.TurnOffTiles# */{
     _seed:null,
@@ -688,16 +708,11 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend(/** @lends cc.TurnOffTiles# */{
     _tilesOrder:null,
 
 	/**
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
 	 * Creates the action with a random seed, the grid size and the duration.
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {Number|Null} [seed=0]
-	 * @example
-	 * // turnOffTiles without seed
-	 * var toff = new cc.TurnOffTiles(this._duration, cc.size(x, y));
-	 *
-	 * // turnOffTiles with seed
-	 * var toff = new cc.TurnOffTiles(this._duration, cc.size(x, y), 0);
 	 */
     ctor:function (duration, gridSize, seed) {
         cc.GridAction.prototype.ctor.call(this);
@@ -823,6 +838,10 @@ cc.TurnOffTiles.create = cc.turnOffTiles;
  * Reference the test cases (Effects Test)
  * @class
  * @extends cc.TiledGrid3DAction
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @param {Number} waves
+ * @param {Number} amplitude
  */
 cc.WavesTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.WavesTiles3D# */{
     _waves:0,
@@ -830,8 +849,8 @@ cc.WavesTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.WavesTiles3D# */{
     _amplitudeRate:0,
 
 	/**
-	 * creates the action with a number of waves, the waves amplitude, the grid size and the duration
-	 * Constructor of cc.WavesTiles3D
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * creates the action with a number of waves, the waves amplitude, the grid size and the duration.
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {Number} waves
@@ -947,6 +966,10 @@ cc.WavesTiles3D.create = cc.wavesTiles3D;
  * Reference the test cases (Effects Test)
  * @class
  * @extends cc.TiledGrid3DAction
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @param {Number} numberOfJumps
+ * @param {Number} amplitude
  */
 cc.JumpTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.JumpTiles3D# */{
     _jumps:0,
@@ -954,8 +977,8 @@ cc.JumpTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.JumpTiles3D# */{
     _amplitudeRate:0,
 
 	/**
-	 * creates the action with the number of jumps, the sin amplitude, the grid size and the duration
-	 * Constructor of cc.JumpTiles3D
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * creates the action with the number of jumps, the sin amplitude, the grid size and the duration.
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {Number} numberOfJumps
@@ -1086,14 +1109,16 @@ cc.JumpTiles3D.create = cc.jumpTiles3D;
  * Reference the test cases (Effects Test)
  * @class
  * @extends cc.TiledGrid3DAction
+ * @param {Number} duration
+ * @param {Number} rows
  */
 cc.SplitRows = cc.TiledGrid3DAction.extend(/** @lends cc.SplitRows# */{
     _rows:0,
     _winSize:null,
 
 	/**
-	 * creates the action with the number of rows to split and the duration
-	 * Constructor of cc.SplitRows
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * creates the action with the number of rows to split and the duration.
 	 * @param {Number} duration
 	 * @param {Number} rows
 	 */
@@ -1176,14 +1201,16 @@ cc.SplitRows.create = cc.splitRows;
  * Reference the test cases (Effects Test)
  * @class
  * @extends cc.TiledGrid3DAction
+ * @param {Number} duration
+ * @param {Number} cols
  */
 cc.SplitCols = cc.TiledGrid3DAction.extend(/** @lends cc.SplitCols# */{
     _cols:0,
     _winSize:null,
 
 	/**
-	 * Creates the action with the number of columns to split and the duration
-	 * Constructor of cc.SplitCols
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Creates the action with the number of columns to split and the duration.
 	 * @param {Number} duration
 	 * @param {Number} cols
 	 */
