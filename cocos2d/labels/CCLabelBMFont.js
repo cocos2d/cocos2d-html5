@@ -175,7 +175,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
-     * add texture loaded event listener
+     * add texture loaded event listener. <br />
+     * Will execute the callback in the loaded.
      * @param {Function} callback
      * @param {Object} target
      */
@@ -238,7 +239,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
-     * conforms to cc.RGBAProtocol protocol
+     * Conforms to cc.RGBAProtocol protocol.
      * @return {Boolean}
      */
     isOpacityModifyRGB: function () {

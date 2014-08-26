@@ -406,10 +406,11 @@ cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
 
 /**
  * <p>
- *  Create a label atlas.
- *  It accepts two groups of parameters:                                                            <br/>
- * a) string, fntFile                                                                               <br/>
- * b) label, textureFilename, width, height, startChar                                              <br/>
+ *     Please use new cc.LabelAtlas instead. <br />
+ *     Create a label atlas. <br />
+ *     It accepts two groups of parameters:                                                            <br/>
+ *         a) string, fntFile                                                                               <br/>
+ *         b) label, textureFilename, width, height, startChar                                              <br/>
  * </p>
  * @deprecated since v3.0 please use new cc.LabelAtlas
  * @param {String} strText
@@ -417,7 +418,7 @@ cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
  * @param {Number} [itemWidth=0]
  * @param {Number} [itemHeight=0]
  * @param {Number} [startCharMap=""]
- * @return {cc.LabelAtlas|Null} returns the LabelAtlas object on success
+ * @return {cc.LabelAtlas} returns the LabelAtlas object on success
  * @example
  * //Example
  * //creates the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas
