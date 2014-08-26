@@ -46,13 +46,14 @@ cc.MENU_HANDLER_PRIORITY = -128;
 cc.DEFAULT_PADDING = 5;
 
 /**
- * <p> Features and Limitation:<br/>
+ <p> Features and Limitation:<br/>
  *  - You can add MenuItem objects in runtime using addChild:<br/>
  *  - But the only accepted children are MenuItem objects</p>
  * @class
  * @extends cc.Layer
- *
- * @property {Boolean}  enabled - Indicates whether or not the menu is enabled
+ * @param {...cc.MenuItem|null} menuItems}
+ * @example
+ * var layer = new cc.Menu(menuitem1, menuitem2, menuitem3);
  */
 cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     enabled: false,
@@ -65,15 +66,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     _className: "Menu",
 
     /**
-     * Constructor of cc.Menu
-     * @function
-     * @param {...cc.MenuItem|null} menuItems
-     *
-     * @example
-     * // Example
-     * //there is no limit on how many menu item you can pass in
-     * var myMenu1 = cc.Menu.create(menuitem1, menuitem2, menuitem3);
-     * var myMenu2 = cc.Menu.create([menuitem1, menuitem2, menuitem3]);
+     * Constructor of cc.Menu override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      */
     ctor: function (menuItems) {
         cc.Layer.prototype.ctor.call(this);
@@ -113,7 +106,14 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         }
         this.initWithArray(items);
     },
-
+    /**
+     * <p>
+     *     Event callback that is invoked every time when CCMenu enters the 'stage'.                                   <br/>
+     *     If the CCMenu enters the 'stage' with a transition, this event is called when the transition starts.        <br/>
+     *     During onEnter you can't access a "sister/brother" node.                                                    <br/>
+     *     If you override onEnter, you must call its parent's onEnter function with this._super().
+     * </p>
+     */
     onEnter: function () {
         var locListener = this._touchListener;
         if (!locListener._isRegistered())
@@ -122,6 +122,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     },
 
     /**
+     * return the color for cc.Menu
      * @return {cc.Color}
      */
     getColor: function () {
@@ -130,6 +131,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     },
 
     /**
+     * set the color for cc.Menu
      * @param {cc.Color} color
      */
     setColor: function (color) {
@@ -151,6 +153,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     },
 
     /**
+     * return the opacity for this menu
      * @return {Number}
      */
     getOpacity: function () {
@@ -158,6 +161,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     },
 
     /**
+     * set the opacity for this menu
      * @param {Number} opa
      */
     setOpacity: function (opa) {
@@ -205,7 +209,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
 
     /**
      * initializes a cc.Menu with a Array of cc.MenuItem objects
-     * @param {Array} arrayOfItems
+     * @param {Array} array Of cc.MenuItem Items
      * @return {Boolean}
      */
     initWithArray: function (arrayOfItems) {
@@ -237,9 +241,10 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     },
 
     /**
+     * add a child for  cc.Menu
      * @param {cc.Node} child
-     * @param {Number|Null} [zOrder=]
-     * @param {Number|Null} [tag=]
+     * @param {Number|Null} [zOrder=] zOrder for the child
+     * @param {Number|Null} [tag=] tag for the child
      */
     addChild: function (child, zOrder, tag) {
         if (!(child instanceof cc.MenuItem))
@@ -389,6 +394,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     },
     /**
      * align menu items in rows
+     * @param {Number}
      * @example
      * // Example
      * menu.alignItemsInRows(5,3)//this will align items to 2 rows, first row with 5 items, second row with 3
@@ -483,8 +489,9 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     },
 
     /**
-     * @param {cc.Node} child
-     * @param {boolean} cleanup
+     * remove a child from cc.Menu
+     * @param {cc.Node} child the child you want to remove
+     * @param {boolean} cleanup whether to cleanup
      */
     removeChild: function (child, cleanup) {
         if (child == null)
@@ -559,7 +566,12 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     },
 
     /**
-     * custom on exit
+     * <p>
+     * callback that is called every time the cc.Menu leaves the 'stage'.                                         <br/>
+     * If the cc.Menu leaves the 'stage' with a transition, this callback is called when the transition finishes. <br/>
+     * During onExit you can't access a sibling node.                                                             <br/>
+     * If you override onExit, you shall call its parent's onExit with this._super().
+     * </p>
      */
     onExit: function () {
         if (this._state == cc.MENU_STATE_TRACKING_TOUCH) {
@@ -571,10 +583,16 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         }
         cc.Node.prototype.onExit.call(this);
     },
-
+    /**
+     * only use for jsbinding
+     * @param value
+     */
     setOpacityModifyRGB: function (value) {
     },
-
+    /**
+     * only use for jsbinding
+      * @returns {boolean}
+     */
     isOpacityModifyRGB: function () {
         return false;
     },
@@ -607,7 +625,7 @@ _p.enabled;
 
 /**
  * create a new menu
- * @deprecated
+ * @deprecated  since v3.0, please use new cc.Menu(menuitem1, menuitem2, menuitem3) to create a new menu
  * @param {...cc.MenuItem|null} menuItems
  * @return {cc.Menu}
  * @example
