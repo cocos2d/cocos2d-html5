@@ -451,13 +451,13 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 
     /**
      * Intercept touch event, handle its child's touch event.
-     * @param {Number} event event type
+     * @param {Number} eventType event type
      * @param {ccui.Widget} sender
      * @param {cc.Touch} touch
      */
-    interceptTouchEvent: function (event, sender, touch) {
+    interceptTouchEvent: function (eventType, sender, touch) {
         var touchPoint = touch.getLocation();
-        switch (event) {
+        switch (eventType) {
             case ccui.Widget.TOUCH_BEGAN:
                 this._touchBeganPosition.x = touchPoint.x;
                 this._touchBeganPosition.y = touchPoint.y;
@@ -475,6 +475,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
             case ccui.Widget.TOUCH_ENDED:
                 this._touchEndPosition.x = touchPoint.x;
                 this._touchEndPosition.y = touchPoint.y;
+                break;
             case ccui.Widget.TOUCH_CANCELED:
                 this._handleReleaseLogic(touch);
                 break;
