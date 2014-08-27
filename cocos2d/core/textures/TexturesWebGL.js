@@ -201,7 +201,7 @@ cc._tmp.WebGLTexture2D = function () {
 
         /**
          * whether or not use mipmap
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         hasMipmaps: function () {
             return this._hasMipmaps;
@@ -209,7 +209,7 @@ cc._tmp.WebGLTexture2D = function () {
 
         /**
          * description
-         * @returns {string}
+         * @return {string}
          */
         description: function () {
             var _t = this;
@@ -434,7 +434,7 @@ cc._tmp.WebGLTexture2D = function () {
 
         /**
          * whether texture is loaded
-         * @returns {Boolean}
+         * @return {Boolean}
          */
         isLoaded: function () {
             return this._isLoaded;
