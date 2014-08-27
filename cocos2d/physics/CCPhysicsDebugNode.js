@@ -113,6 +113,7 @@ cc.DrawConstraint = function (constraint, renderer) {
 
 cc.CONSTRAINT_COLOR = cc.color(0, 255, 0, 128);
 
+
 /**
  * <p>A Node that draws the components of a physics engine.<br/>
  * Supported physics engines:<br/>
@@ -125,17 +126,16 @@ cc.CONSTRAINT_COLOR = cc.color(0, 255, 0, 128);
  * @property {cp.Space} space     Physic world space
  */
 cc.PhysicsDebugNode = cc.DrawNode.extend({
-	_space:null,
+    _space:null,
     _className:"PhysicsDebugNode",
 
     /**
      * constructor of cc.PhysicsDebugNode
      * @param {cp.Space} space
      */
-    ctor: function () {
+    ctor: function (space) {
         cc.DrawNode.prototype.ctor.call(this);
-        if(this.init())
-            this._space = space;
+        this._space = space;
     },
 
     /**
@@ -159,11 +159,11 @@ cc.PhysicsDebugNode = cc.DrawNode.extend({
      * @param {object} context
      */
     draw:function (context) {
-        if (!this.space)
+        if (!this._space)
             return;
 
-        this.space.eachShape(cc.DrawShape.bind(this));
-        this.space.eachConstraint(cc.DrawConstraint.bind(this));
+        this._space.eachShape(cc.DrawShape.bind(this));
+        this._space.eachConstraint(cc.DrawConstraint.bind(this));
         cc.DrawNode.prototype.draw.call(this);
         this.clear();
     }
@@ -178,5 +178,3 @@ cc.PhysicsDebugNode = cc.DrawNode.extend({
 cc.PhysicsDebugNode.create = function (space) {
     return new cc.PhysicsDebugNode(space);
 };
-
-
