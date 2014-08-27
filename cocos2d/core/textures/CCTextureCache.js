@@ -359,7 +359,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                     if (err)
                         return cb ? cb(err) : err;
                     cc.textureCache.handleLoadedTexture(url);
-                    cb && cb(null, img);
+                    cb && cb(target, img);
                 });
             }
         }

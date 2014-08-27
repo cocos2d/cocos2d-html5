@@ -933,7 +933,7 @@ cc._tmp.WebGLTextureCache = function () {
                     if (err)
                         return cb ? cb(err) : err;
                     cc.textureCache.handleLoadedTexture(url);
-                    cb && cb(null, img);
+                    cb && cb(target, img);
                 });
             }
         }
