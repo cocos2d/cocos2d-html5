@@ -129,20 +129,35 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         url: null,
 
+        /**
+         * constructor of cc.Texture2D
+         */
         ctor: function () {
             this._contentSize = cc.size(0, 0);
             this._isLoaded = false;
             this._htmlElementObj = null;
         },
 
+        /**
+         * get width in pixels
+         * @return {Number}
+         */
         getPixelsWide: function () {
             return this._contentSize.width;
         },
 
+        /**
+         * get height of in pixels
+         * @return {Number}
+         */
         getPixelsHigh: function () {
             return this._contentSize.height;
         },
 
+        /**
+         * get content size
+         * @returns {cc.Size}
+         */
         getContentSize: function () {
             var locScaleFactor = cc.contentScaleFactor();
             return cc.size(this._contentSize.width / locScaleFactor, this._contentSize.height / locScaleFactor);
@@ -155,10 +170,18 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             return this._contentSize.height / cc.contentScaleFactor();
         },
 
+        /**
+         * get content size in pixels
+         * @returns {cc.Size}
+         */
         getContentSizeInPixels: function () {
             return this._contentSize;
         },
 
+        /**
+         * init with HTML element
+         * @param {HTMLImageElement|HTMLCanvasElement} element
+         */
         initWithElement: function (element) {
             if (!element)
                 return;
@@ -173,10 +196,17 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             return this._htmlElementObj;
         },
 
+        /**
+         * check whether texture is loaded
+         * @returns {boolean}
+         */
         isLoaded: function () {
             return this._isLoaded;
         },
 
+        /**
+         * handle loaded texture
+         */
         handleLoadedTexture: function () {
             var self = this
             if (self._isLoaded) return;
@@ -194,6 +224,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             self._callLoadedEventCallbacks();
         },
 
+        /**
+         * description of cc.Texture2D
+         * @returns {string}
+         */
         description: function () {
             return "<cc.Texture2D | width = " + this._contentSize.width + " height " + this._contentSize.height + ">";
         },
@@ -281,16 +315,28 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             //support only in WebGl rendering mode
         },
 
+        /**
+         * init with ETC file
+         * @warning does not support on HTML5
+         */
         initWithETCFile: function (file) {
             cc.log(cc._LogInfos.Texture2D_initWithETCFile);
             return false;
         },
 
+        /**
+         * init with PVR file
+         * @warning does not support on HTML5
+         */
         initWithPVRFile: function (file) {
             cc.log(cc._LogInfos.Texture2D_initWithPVRFile);
             return false;
         },
 
+        /**
+         * init with PVRTC data
+         * @warning does not support on HTML5
+         */
         initWithPVRTCData: function (data, level, bpp, hasAlpha, length, pixelFormat) {
             cc.log(cc._LogInfos.Texture2D_initWithPVRTCData);
             return false;
@@ -322,12 +368,21 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             return -1;
         },
 
+        /**
+         * add listener for loaded event
+         * @param {Function} callback
+         * @param {cc.Node} target
+         */
         addLoadedEventListener: function (callback, target) {
             if (!this._loadedEventListeners)
                 this._loadedEventListeners = [];
             this._loadedEventListeners.push({eventCallback: callback, eventTarget: target});
         },
 
+        /**
+         * remove listner for loaded event
+         * @param {cc.Node} target
+         */
         removeLoadedEventListener: function (target) {
             if (!this._loadedEventListeners)
                 return;
