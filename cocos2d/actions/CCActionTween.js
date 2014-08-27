@@ -54,6 +54,10 @@ cc.ActionTweenDelegate = cc.Class.extend(/** @lends cc.ActionTweenDelegate */{
  * // scaleA and scaleB are equivalents
  * var scaleA = cc.scaleTo(2,3);
  * var scaleB = cc.actionTween(2,"scale",1,3);
+ * @param {Number} duration
+ * @param {String} key
+ * @param {Number} from
+ * @param {Number} to
  */
 cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
     key:"",
@@ -62,8 +66,8 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
     delta:0,
 
 	/**
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
 	 * Creates an initializes the action with the property name (key), and the from and to parameters.
-	 * Constructor of cc.ActionTween
 	 * @param {Number} duration
 	 * @param {String} key
 	 * @param {Number} from

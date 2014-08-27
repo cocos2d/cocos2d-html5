@@ -737,16 +737,10 @@ cc.loader = {
 
     /**
      * Load resources then call the callback.
-     * @param {string} res
-     * @param {function|Object} [option] option or cb
-     * @param {function} [cb]
-     * @return {cc.AsyncPool}
-     */
-    /**
-     * Load resources then call the callback.
      * @param {string} resources
      * @param {function|Object} [option] option or cb
      * @param {function} [cb]
+     * @return {cc.AsyncPool}
      */
     load : function(resources, option, cb){
         var self = this;
@@ -1557,33 +1551,42 @@ cc._setup = function (el, width, height) {
     var win = window;
     var lastTime = new Date();
     var frameTime = 1000 / cc.game.config[cc.game.CONFIG_KEY.frameRate];
-    win.requestAnimFrame = win.requestAnimationFrame ||
-        win.webkitRequestAnimationFrame ||
-        win.mozRequestAnimationFrame ||
-        win.oRequestAnimationFrame ||
-        win.msRequestAnimationFrame ||
-        function(callback){
-            var currTime = new Date().getTime();
-            var timeToCall = Math.max(0, frameTime - (currTime - lastTime));
-            var id = window.setTimeout(function() { callback(); },
-                timeToCall);
-            lastTime = currTime + timeToCall;
-            return id;
-        };
 
-    win.cancelAnimationFrame = window.cancelAnimationFrame ||
-        window.cancelRequestAnimationFrame ||
-        window.msCancelRequestAnimationFrame ||
-        window.mozCancelRequestAnimationFrame ||
-        window.oCancelRequestAnimationFrame ||
-        window.webkitCancelRequestAnimationFrame ||
-        window.msCancelAnimationFrame ||
-        window.mozCancelAnimationFrame ||
-        window.webkitCancelAnimationFrame ||
-        window.oCancelAnimationFrame ||
-        function(id){
-            clearTimeout(id);
-        };
+    var stTime = function(callback){
+        var currTime = new Date().getTime();
+        var timeToCall = Math.max(0, frameTime - (currTime - lastTime));
+        var id = window.setTimeout(function() { callback(); },
+            timeToCall);
+        lastTime = currTime + timeToCall;
+        return id;
+    };
+
+    var ctTime = function(id){
+        clearTimeout(id);
+    };
+
+    if(cc.game.config[cc.game.CONFIG_KEY.frameRate] != 60){
+        win.requestAnimFrame = stTime;
+        win.cancelAnimationFrame = ctTime;
+    }else{
+        win.requestAnimFrame = win.requestAnimationFrame ||
+            win.webkitRequestAnimationFrame ||
+            win.mozRequestAnimationFrame ||
+            win.oRequestAnimationFrame ||
+            win.msRequestAnimationFrame ||
+            stTime;
+        win.cancelAnimationFrame = window.cancelAnimationFrame ||
+            window.cancelRequestAnimationFrame ||
+            window.msCancelRequestAnimationFrame ||
+            window.mozCancelRequestAnimationFrame ||
+            window.oCancelRequestAnimationFrame ||
+            window.webkitCancelRequestAnimationFrame ||
+            window.msCancelAnimationFrame ||
+            window.mozCancelAnimationFrame ||
+            window.webkitCancelAnimationFrame ||
+            window.oCancelAnimationFrame ||
+            ctTime;
+    }
 
     var element = cc.$(el) || cc.$('#' + el);
     var localCanvas, localContainer, localConStyle;

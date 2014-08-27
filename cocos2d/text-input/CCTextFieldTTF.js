@@ -89,6 +89,19 @@ cc.TextFieldDelegate = cc.Class.extend(/** @lends cc.TextFieldDelegate# */{
  * @property {Number}       charCount           - <@readonly> Characators count
  * @property {String}       placeHolder         - Place holder for the field
  * @property {cc.Color}     colorSpaceHolder
+ *
+ * @param {String} placeholder
+ * @param {cc.Size} dimensions
+ * @param {Number} alignment
+ * @param {String} fontName
+ * @param {Number} fontSize
+ *
+ * @example
+ * //example
+ * // When five parameters
+ * var textField = new cc.TextFieldTTF("<click here for input>", cc.size(100,50), cc.TEXT_ALIGNMENT_LEFT,"Arial", 32);
+ * // When three parameters
+ * var textField = new cc.TextFieldTTF("<click here for input>", "Arial", 32);
  */
 cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
 	delegate:null,
@@ -101,19 +114,13 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     _className:"TextFieldTTF",
 
     /**
-     *  creates a cc.TextFieldTTF from a fontName, alignment, dimension and font size   <br/>
-     * Constructor of cc.TextFieldTTF
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+     * creates a cc.TextFieldTTF from a fontName, alignment, dimension and font size.
      * @param {String} placeholder
      * @param {cc.Size} dimensions
      * @param {Number} alignment
      * @param {String} fontName
      * @param {Number} fontSize
-     * @example
-     * //example
-     * // When five parameters
-     * var textField = cc.TextFieldTTF.create("<click here for input>", cc.size(100,50), cc.TEXT_ALIGNMENT_LEFT,"Arial", 32);
-     * // When three parameters
-     * var textField = cc.TextFieldTTF.create("<click here for input>", "Arial", 32);
      */
     ctor:function (placeholder, dimensions, alignment, fontName, fontSize) {
         this.colorSpaceHolder = cc.color(127, 127, 127);
@@ -132,6 +139,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     },
 
     /**
+     * Gets the delegate.
      * @return {cc.Node}
      */
     getDelegate:function () {
@@ -139,6 +147,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     },
 
     /**
+     * Set the delegate.
      * @param {cc.Node} value
      */
     setDelegate:function (value) {
@@ -146,6 +155,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     },
 
     /**
+     * Gets the char count.
      * @return {Number}
      */
     getCharCount:function () {
@@ -153,6 +163,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     },
 
     /**
+     * Gets the color of space holder.
      * @return {cc.Color}
      */
     getColorSpaceHolder:function () {
@@ -160,11 +171,13 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     },
 
     /**
+     * Gets the color of space holder.
      * @param {cc.Color} value
      */
     setColorSpaceHolder:function (value) {
         this.colorSpaceHolder = value;
     },
+
     /**
      * Initializes the cc.TextFieldTTF with a font name, alignment, dimension and font size
      * @param {String} placeholder
@@ -218,6 +231,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     },
 
     /**
+     * Gets the string
      * @return {String}
      */
     getString:function () {
@@ -225,6 +239,8 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     },
 
     /**
+     * Set the place holder. <br />
+     * display this string if string equal "".
      * @param {String} text
      */
     setPlaceHolder:function (text) {
@@ -235,6 +251,8 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     },
 
     /**
+     * Gets the place holder. <br />
+     * default display string.
      * @return {String}
      */
     getPlaceHolder:function () {
@@ -242,7 +260,8 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     },
 
     /**
-     * @param {CanvasContext} ctx
+     * Render function using the canvas 2d context or WebGL context, internal usage only, please do not call this function.
+     * @param {CanvasRenderingContext2D | WebGLRenderingContext} ctx The render context
      */
     draw:function (ctx) {
         //console.log("size",this._contentSize);
@@ -264,6 +283,10 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         this.color = color;
     },
 
+    /**
+     * Recursive method that visit its children and draw them.
+     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
+     */
     visit: function(ctx){
         this._super(ctx);
     },
@@ -288,6 +311,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     },
 
     /**
+     * Return whether to allow attach with IME.
      * @return {Boolean}
      */
     canAttachWithIME:function () {
@@ -301,6 +325,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     },
 
     /**
+     * Return whether to allow detach with IME.
      * @return {Boolean}
      */
     canDetachWithIME:function () {
@@ -314,7 +339,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     },
 
     /**
-     *  Delete backward
+     * Delete backward
      */
     deleteBackward:function () {
         var strLen = this._inputText.length;
@@ -349,6 +374,8 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     },
 
     /**
+     * Append the text. <br />
+     * Input the character.
      * @param {String} text
      * @param {Number} len
      */
@@ -382,7 +409,9 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         // if delegate hasn't process, detach with ime as default
         this.detachWithIME();
     },
+
     /**
+     * Gets the input text.
      * @return {String}
      */
     getContentText:function () {
@@ -414,8 +443,9 @@ cc.defineGetterSetter(_p, "placeHolder", _p.getPlaceHolder, _p.setPlaceHolder);
 
 
 /**
- *  creates a cc.TextFieldTTF from a fontName, alignment, dimension and font size
- * @deprecated
+ * Please use new TextFieldTTF instead. <br />
+ * Creates a cc.TextFieldTTF from a fontName, alignment, dimension and font size.
+ * @deprecated since v3.0 Please use new TextFieldTTF instead.
  * @param {String} placeholder
  * @param {cc.Size} dimensions
  * @param {Number} alignment

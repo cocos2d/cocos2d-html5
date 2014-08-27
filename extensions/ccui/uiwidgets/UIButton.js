@@ -24,7 +24,7 @@
  ****************************************************************************/
 
 /**
- * Base class for ccui.Button
+ * The button controls of Cocos UI.
  * @class
  * @extends ccui.Widget
  *
