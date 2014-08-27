@@ -83,8 +83,8 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
     },
 
     /**
-     * Create a cc.EaseSineOut action. Opposite with the original motion trajectory.
-     * @return {cc.EaseSineOut}
+     * Create a cc.ReverseTime action. Opposite with the original motion trajectory.
+     * @return {cc.ReverseTime}
      */
     reverse:function () {
         return new cc.ReverseTime(this);
