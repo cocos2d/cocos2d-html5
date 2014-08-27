@@ -27,6 +27,8 @@
 /**
  * @class
  * @extends cc.Class
+ * @example
+ * var element = new cc.HashElement();
  */
 cc.HashElement = cc.Class.extend(/** @lends cc.HashElement# */{
     actions:null,
@@ -60,6 +62,8 @@ cc.HashElement = cc.Class.extend(/** @lends cc.HashElement# */{
  * - When you want to pause / resume the actions<br/>
  * @class
  * @extends cc.Class
+ * @example
+ * var mng = new cc.ActionManager();
  */
 cc.ActionManager = cc.Class.extend({
     _hashTargets:null,

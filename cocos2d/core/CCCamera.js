@@ -58,7 +58,9 @@ cc.Camera = cc.Class.extend({
 
     _dirty:null,
     _lookupMatrix:null,
-
+    /**
+     * constructor of cc.Camera
+     */
     ctor:function () {
         this._lookupMatrix = new cc.kmMat4();
         this.restore();
@@ -129,7 +131,7 @@ cc.Camera = cc.Class.extend({
      * @param {Number} eyeX
      * @param {Number} eyeY
      * @param {Number} eyeZ
-     * @deprecated This function will be deprecated sooner or later.
+     * @deprecated This function will be deprecated sooner or later please use setEye instead.
      */
     setEyeXYZ:function (eyeX, eyeY, eyeZ) {
         this.setEye(eyeX,eyeY,eyeZ);
@@ -154,7 +156,7 @@ cc.Camera = cc.Class.extend({
      * @param {Number} centerX
      * @param {Number} centerY
      * @param {Number} centerZ
-     * @deprecated  This function will be deprecated sooner or later.
+     * @deprecated  This function will be deprecated sooner or later please use setCenter instead.
      */
     setCenterXYZ:function (centerX, centerY, centerZ) {
         this.setCenter(centerX,centerY,centerZ);
@@ -205,7 +207,7 @@ cc.Camera = cc.Class.extend({
      * @param {Number} eyeY
      * @param {Number} eyeZ
      * @return {Object}
-     * @deprecated This function will be deprecated sooner or later.
+     * @deprecated This function will be deprecated sooner or later, please use getEye instead.
      */
     getEyeXYZ:function (eyeX, eyeY, eyeZ) {
         return {x:this._eyeX , y:this._eyeY , z: this._eyeZ };
@@ -225,7 +227,7 @@ cc.Camera = cc.Class.extend({
      * @param {Number} centerY
      * @param {Number} centerZ
      * @return {Object}
-     * @deprecated This function will be deprecated sooner or later.
+     * @deprecated This function will be deprecated sooner or later,please use getCenter instead.
      */
     getCenterXYZ:function (centerX, centerY, centerZ) {
         return {x:this._centerX ,y:this._centerY ,z:this._centerZ };
@@ -245,7 +247,7 @@ cc.Camera = cc.Class.extend({
      * @param {Number} upY
      * @param {Number} upZ
      * @return {Object}
-     * @deprecated This function will be deprecated sooner or later.
+     * @deprecated This function will be deprecated sooner or later,please use getUp instead.
      */
     getUpXYZ:function (upX, upY, upZ) {
         return {x:this._upX,y:this._upY,z:this._upZ};
