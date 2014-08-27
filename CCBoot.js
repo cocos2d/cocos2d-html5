@@ -1567,7 +1567,10 @@ cc._setup = function (el, width, height) {
         clearTimeout(id);
     };
 
-    if(cc.game.config[cc.game.CONFIG_KEY.frameRate] != 60){
+    if(cc.sys.os === cc.sys.OS_IOS && cc.sys.browserType === cc.sys.BROWSER_TYPE_WECHAT){
+        win.requestAnimFrame = stTime;
+        win.cancelAnimationFrame = ctTime;
+    }else if(cc.game.config[cc.game.CONFIG_KEY.frameRate] != 60){
         win.requestAnimFrame = stTime;
         win.cancelAnimationFrame = ctTime;
     }else{

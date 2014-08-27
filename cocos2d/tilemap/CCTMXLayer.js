@@ -179,6 +179,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
     /**
      * Return texture of cc.SpriteBatchNode
+     * @function
      * @return {cc.Texture2D}
      */
 	getTexture: null,
@@ -189,6 +190,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
     /**
      * don't call visit on it's children ( override visit of cc.Node )
+     * @function
      * @override
      * @param {CanvasRenderingContext2D} ctx
      */
@@ -240,6 +242,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
     /**
      * draw cc.SpriteBatchNode (override draw of cc.Node)
+     * @function
      * @param {CanvasRenderingContext2D} ctx
      */
     draw:null,
@@ -277,6 +280,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     /**
+     * Gets layer size.
      * @return {cc.Size}
      */
     getLayerSize:function () {
@@ -284,6 +288,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     /**
+     * Set layer size
      * @param {cc.Size} Var
      */
     setLayerSize:function (Var) {
@@ -313,6 +318,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     /**
+     * Set the map tile size.
      * @param {cc.Size} Var
      */
     setMapTileSize:function (Var) {
@@ -342,6 +348,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     /**
+     * Pointer to the map of tiles
      * @param {Array} Var
      */
     setTiles:function (Var) {
@@ -357,6 +364,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     /**
+     * Tile set information for the layer
      * @param {cc.TMXTilesetInfo} Var
      */
     setTileset:function (Var) {
@@ -372,6 +380,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     /**
+     * Layer orientation, which is the same as the map orientation
      * @param {Number} Var
      */
     setLayerOrientation:function (Var) {
@@ -387,6 +396,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     /**
+     * properties from the layer. They can be added using Tiled
      * @param {Array} Var
      */
     setProperties:function (Var) {
@@ -790,6 +800,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     /**
+     * Gets the layer name
      * @return {String}
      */
     getLayerName:function () {
@@ -797,6 +808,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     /**
+     * Set the layer name
      * @param {String} layerName
      */
     setLayerName:function (layerName) {
@@ -1091,7 +1103,7 @@ cc.defineGetterSetter(_p, "tileHeight", _p._getTileHeight, _p._setTileHeight);
 
 /**
  * Creates a cc.TMXLayer with an tile set info, a layer info and a map info
- * @deprecated
+ * @deprecated since v3.0 please use new cc.TMXLayer(tilesetInfo, layerInfo, mapInfo) instead.
  * @param {cc.TMXTilesetInfo} tilesetInfo
  * @param {cc.TMXLayerInfo} layerInfo
  * @param {cc.TMXMapInfo} mapInfo

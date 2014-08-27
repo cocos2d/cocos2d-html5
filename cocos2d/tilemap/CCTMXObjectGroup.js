@@ -39,6 +39,11 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
     _positionOffset: null,
     _objects: null,
 
+    /**
+     * <p>The cc.TMXObjectGroup's constructor. <br/>
+     * This function will automatically be invoked when you create a node using new construction: "var node = new cc.TMXObjectGroup()".<br/>
+     * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
+     */
     ctor:function () {
         this.groupName = "";
         this._positionOffset = cc.p(0,0);
@@ -55,6 +60,7 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
     },
 
     /**
+     * Offset position of child objects
      * @param {cc.Point} offset
      */
     setPositionOffset:function (offset) {
@@ -71,6 +77,7 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
     },
 
     /**
+     * List of properties stored in a dictionary
      * @param {object} Var
      */
     setProperties:function (Var) {
@@ -78,6 +85,7 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
     },
 
     /**
+     * Gets the Group name.
      * @return {String}
      */
     getGroupName:function () {
@@ -85,6 +93,7 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
     },
 
     /**
+     * Set the Group name
      * @param {String} groupName
      */
     setGroupName:function (groupName) {
@@ -120,6 +129,7 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
     },
 
     /**
+     * Gets the objects.
      * @return {Array}
      */
     getObjects:function () {
@@ -127,6 +137,7 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
     },
 
     /**
+     * Set the objects.
      * @param {object} objects
      */
     setObjects:function (objects) {
