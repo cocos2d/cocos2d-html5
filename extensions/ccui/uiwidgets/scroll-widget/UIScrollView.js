@@ -80,8 +80,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     _eventCallback: null,
 
     /**
-     * allocates and initializes a UIScrollView.
-     * Constructor of ccui.ScrollView
+     * Allocates and initializes a UIScrollView.
+     * Constructor of ccui.ScrollView. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @example
      * // example
      * var uiScrollView = new ccui.ScrollView();
@@ -102,6 +102,10 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this.setTouchEnabled(true);
     },
 
+    /**
+     * Initializes a ccui.ScrollView. Please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
+     * @returns {boolean}
+     */
     init: function () {
         if (ccui.Layout.prototype.init.call(this)) {
             this.setClippingEnabled(true);
@@ -111,6 +115,10 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         return false;
     },
 
+    /**
+     * Calls the parent class' onEnter and schedules update function.
+     * @override
+     */
     onEnter: function () {
         ccui.Layout.prototype.onEnter.call(this);
         this.scheduleUpdate(true);
@@ -234,13 +242,12 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
                 break;
         }
         var innerAX = container.anchorX;
-        if (container.getLeftBoundary() > 0.0) {
+        if (container.getLeftBoundary() > 0.0)
             container.x = innerAX * innerWidth;
-        }
-        if (container.getRightBoundary() < locW) {
+        if (container.getRightBoundary() < locW)
             container.x = locW - ((1.0 - innerAX) * innerWidth);
-        }
     },
+
     _setInnerHeight: function (height) {
         var locH = this._contentSize.height,
             innerHeight = locH,
@@ -261,19 +268,17 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
                 break;
         }
         var innerAY = container.anchorY;
-        if (container.getLeftBoundary() > 0.0) {
+        if (container.getLeftBoundary() > 0.0)
             container.y = innerAY * innerHeight;
-        }
-        if (container.getRightBoundary() < locH) {
+        if (container.getRightBoundary() < locH)
             container.y = locH - ((1.0 - innerAY) * innerHeight);
-        }
     },
 
     /**
-     * Gets inner container size of ScrollView.     <br/>
+     * Returns inner container size of ScrollView.     <br/>
      * Inner container size must be larger than or equal ScrollView's size.
      *
-     * @return inner container size.
+     * @return {cc.Size} inner container size.
      */
     getInnerContainerSize: function () {
         return this._innerContainer.getContentSize();
@@ -286,7 +291,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * Add widget
+     * Add child to ccui.ScrollView.
      * @param {cc.Node} widget
      * @param {Number} [zOrder]
      * @param {Number|string} [tag] tag or name
@@ -300,16 +305,24 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         return this._innerContainer.addChild(widget, zOrder, tag);
     },
 
+    /**
+     * Removes all children.
+     */
     removeAllChildren: function () {
         this.removeAllChildrenWithCleanup(true);
     },
 
+    /**
+     * Removes all children.
+     * @param {Boolean} cleanup
+     */
     removeAllChildrenWithCleanup: function(cleanup){
         this._innerContainer.removeAllChildrenWithCleanup(cleanup);
     },
 
     /**
-     *  remove widget child override
+     * Removes widget child
+     * @override
      * @param {ccui.Widget} child
      * @param {Boolean} cleanup
      * @returns {boolean}
@@ -319,7 +332,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * get inner container's children
+     * Returns inner container's children
      * @returns {Array}
      */
     getChildren: function () {
@@ -327,7 +340,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * get the count of inner container's children
+     * Gets the count of inner container's children
      * @returns {Number}
      */
     getChildrenCount: function () {
@@ -510,7 +523,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     _startAutoScrollChildrenWithOriginalSpeed: function (dir, v, attenuated, acceleration) {
         this._stopAutoScrollChildren();
-        this._autoScrollDir = dir;
+        this._autoScrollDir.x = dir.x;
+        this._autoScrollDir.y = dir.y;
         this._isAutoScrollSpeedAttenuated = attenuated;
         this._autoScrollOriginalSpeed = v;
         this._autoScroll = true;
@@ -787,11 +801,6 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
                 break;
         }
         return scrollEnabled;
-    },
-
-    getCurAutoScrollDistance: function (dt) {
-        this._autoScrollOriginalSpeed -= this._autoScrollAcceleration * dt;
-        return this._autoScrollOriginalSpeed * dt;
     },
 
     _scrollChildren: function (touchOffsetX, touchOffsetY) {
@@ -1191,7 +1200,6 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to bottom boundary of ScrollView.
-     * @function
      */
     jumpToBottom: function () {
         this._jumpToDestination(this._innerContainer.getPositionX(), 0);
@@ -1199,7 +1207,6 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to top boundary of ScrollView.
-     * @function
      */
     jumpToTop: function () {
         this._jumpToDestination(this._innerContainer.getPositionX(), this._contentSize.height - this._innerContainer.getContentSize().height);
@@ -1207,7 +1214,6 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to left boundary of ScrollView.
-     * @function
      */
     jumpToLeft: function () {
         this._jumpToDestination(0, this._innerContainer.getPositionY());
@@ -1215,7 +1221,6 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to right boundary of ScrollView.
-     * @function
      */
     jumpToRight: function () {
         this._jumpToDestination(this._contentSize.width - this._innerContainer.getContentSize().width, this._innerContainer.getPositionY());
@@ -1223,7 +1228,6 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to top and left boundary of ScrollView.
-     * @function
      */
     jumpToTopLeft: function () {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
@@ -1235,7 +1239,6 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to top and right boundary of ScrollView.
-     * @function
      */
     jumpToTopRight: function () {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
@@ -1248,7 +1251,6 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to bottom and left boundary of ScrollView.
-     * @function
      */
     jumpToBottomLeft: function () {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
@@ -1260,7 +1262,6 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to bottom and right boundary of ScrollView.
-     * @function
      */
     jumpToBottomRight: function () {
         if (this.direction != ccui.ScrollView.DIR_BOTH) {
@@ -1272,7 +1273,6 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to vertical percent position of ScrollView.
-     * @function
      * @param {Number} percent The destination vertical percent, accept value between 0 - 100
      */
     jumpToPercentVertical: function (percent) {
@@ -1283,7 +1283,6 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to horizontal percent position of ScrollView.
-     * @function
      * @param {Number} percent The destination vertical percent, accept value between 0 - 100
      */
     jumpToPercentHorizontal: function (percent) {
@@ -1293,7 +1292,6 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Move inner container to both direction percent position of ScrollView.
-     * @function
      * @param {cc.Point} percent The destination vertical percent, accept value between 0 - 100
      */
     jumpToPercentBothDirection: function (percent) {
@@ -1370,6 +1368,12 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this._bePressed = false;
     },
 
+    /**
+     * The touch began event callback handler of ccui.ScrollView.
+     * @param {cc.Touch} touch
+     * @param {cc.Event} event
+     * @returns {boolean}
+     */
     onTouchBegan: function (touch, event) {
         var pass = ccui.Layout.prototype.onTouchBegan.call(this, touch, event);
         if (this._hit)
@@ -1377,20 +1381,39 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         return pass;
     },
 
+    /**
+     * The touch moved event callback handler of ccui.ScrollView.
+     * @param {cc.Touch} touch
+     * @param {cc.Event} event
+     */
     onTouchMoved: function (touch, event) {
         ccui.Layout.prototype.onTouchMoved.call(this, touch, event);
         this._handleMoveLogic(touch);
     },
 
+    /**
+     * The touch ended event callback handler of ccui.ScrollView.
+     * @param {cc.Touch} touch
+     * @param {cc.Event} event
+     */
     onTouchEnded: function (touch, event) {
         ccui.Layout.prototype.onTouchEnded.call(this, touch, event);
         this._handleReleaseLogic(touch);
     },
 
+    /**
+     * The touch canceled event callback of ccui.ScrollView.
+     * @param {cc.Touch} touch
+     * @param {cc.Event} event
+     */
     onTouchCancelled: function (touch, event) {
         ccui.Layout.prototype.onTouchCancelled.call(this, touch, event);
     },
 
+    /**
+     * The update callback handler.
+     * @param {Number} dt
+     */
     update: function (dt) {
         if (this._autoScroll)
             this._autoScrollChildren(dt);
@@ -1405,7 +1428,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * Intercept touch event
+     * Intercept touch event, handle its child's touch event.
+     * @override
      * @param {number} event event type
      * @param {ccui.Widget} sender
      * @param {cc.Touch} touch
@@ -1500,16 +1524,20 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * Add call back function called ScrollView event triggered
+     * Adds callback function called ScrollView event triggered
      * @param {Function} selector
      * @param {Object} target
-     * @deprecated
+     * @deprecated since v3.0, please use addEventListener instead.
      */
     addEventListenerScrollView: function (selector, target) {
         this._scrollViewEventSelector = selector;
         this._scrollViewEventListener = target;
     },
 
+    /**
+     * Adds callback function called ScrollView event triggered
+     * @param {function} callback
+     */
     addEventListener: function(callback){
         this._eventCallback = callback;
     },
@@ -1524,7 +1552,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * Gets scroll direction of ScrollView.
+     * Returns scroll direction of ScrollView.
      * @returns {ccui.ScrollView.DIR_NONE | ccui.ScrollView.DIR_VERTICAL | ccui.ScrollView.DIR_HORIZONTAL | ccui.ScrollView.DIR_BOTH}
      */
     getDirection: function () {
@@ -1532,7 +1560,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * set bounce enabled
+     * Sets bounce enabled
      * @param {Boolean} enabled
      */
     setBounceEnabled: function (enabled) {
@@ -1540,7 +1568,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * get whether bounce is enabled
+     * Returns whether bounce is enabled
      * @returns {boolean}
      */
     isBounceEnabled: function () {
@@ -1548,7 +1576,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * set inertiaScroll enabled
+     * Sets inertiaScroll enabled
      * @param {boolean} enabled
      */
     setInertiaScrollEnabled: function (enabled) {
@@ -1556,7 +1584,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * get whether inertiaScroll is enabled
+     * Returns whether inertiaScroll is enabled
      * @returns {boolean}
      */
     isInertiaScrollEnabled: function () {
@@ -1572,7 +1600,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * Sets LayoutType.
+     * Sets LayoutType of ccui.ScrollView.
      * @param {ccui.Layout.ABSOLUTE|ccui.Layout.LINEAR_VERTICAL|ccui.Layout.LINEAR_HORIZONTAL|ccui.Layout.RELATIVE} type
      */
     setLayoutType: function (type) {
@@ -1580,7 +1608,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * Gets LayoutType.
+     * Returns the layout type of ccui.ScrollView.
      * @returns {ccui.Layout.ABSOLUTE|ccui.Layout.LINEAR_VERTICAL|ccui.Layout.LINEAR_HORIZONTAL|ccui.Layout.RELATIVE}
      */
     getLayoutType: function () {
@@ -1594,7 +1622,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * Returns the "class name" of widget.
+     * Returns the "class name" of ccui.ScrollView.
      * @returns {string}
      */
     getDescription: function () {
@@ -1623,45 +1651,45 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * Get node by tag
+     * Returns a node by tag
      * @param {Number} tag
      * @returns {cc.Node}
-     * @deprecated
+     * @deprecated  since v3.0, please use getChildByTag instead.
      */
     getNodeByTag: function (tag) {
         return this._innerContainer.getNodeByTag(tag);
     },
 
     /**
-     * Get all nodes of inner container
+     * Returns all nodes of inner container
      * @returns {Array}
-     * @deprecated
+     * @deprecated since v3.0, please use getChildren instead.
      */
     getNodes: function () {
         return this._innerContainer.getNodes();
     },
 
     /**
-     * Remove a node
+     * Removes a node from ccui.ScrollView.
      * @param {cc.Node} node
-     * @deprecated
+     * @deprecated since v3.0, please use removeChild instead.
      */
     removeNode: function (node) {
         this._innerContainer.removeNode(node);
     },
 
     /**
-     * Remove a node by tag
+     * Removes a node by tag
      * @param {Number} tag
-     * @deprecated
+     * @deprecated since v3.0, please use removeChildByTag instead.
      */
     removeNodeByTag: function (tag) {
         this._innerContainer.removeNodeByTag(tag);
     },
 
     /**
-     * Remove all node
-     * @deprecated
+     * Remove all node from ccui.ScrollView.
+     * @deprecated since v3.0, please use removeAllChildren instead.
      */
     removeAllNodes: function () {
         this._innerContainer.removeAllNodes();
@@ -1669,10 +1697,10 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Add node for scrollView
-     * @param {cc.Node}node
+     * @param {cc.Node} node
      * @param {Number} zOrder
      * @param {Number} tag
-     * @deprecated
+     * @deprecated since v3.0, please use addChild instead.
      */
     addNode: function (node, zOrder, tag) {
         this._innerContainer.addNode(node, zOrder, tag);
@@ -1693,7 +1721,7 @@ _p = null;
 
 /**
  * allocates and initializes a UIScrollView.
- * @deprecated
+ * @deprecated since v3.0, please use new ccui.ScrollView() instead.
  * @return {ccui.ScrollView}
  * @example
  * // example
@@ -1705,24 +1733,97 @@ ccui.ScrollView.create = function () {
 
 // Constants
 //ScrollView direction
+/**
+ * The none flag of ccui.ScrollView's direction.
+ * @constant
+ * @type {number}
+ */
 ccui.ScrollView.DIR_NONE = 0;
+/**
+ * The vertical flag of ccui.ScrollView's direction.
+ * @constant
+ * @type {number}
+ */
 ccui.ScrollView.DIR_VERTICAL = 1;
+/**
+ * The horizontal flag of ccui.ScrollView's direction.
+ * @constant
+ * @type {number}
+ */
 ccui.ScrollView.DIR_HORIZONTAL = 2;
+/**
+ * The both flag of ccui.ScrollView's direction.
+ * @constant
+ * @type {number}
+ */
 ccui.ScrollView.DIR_BOTH = 3;
 
 //ScrollView event
+/**
+ * The flag scroll to top of ccui.ScrollView's event.
+ * @constant
+ * @type {number}
+ */
 ccui.ScrollView.EVENT_SCROLL_TO_TOP = 0;
+/**
+ * The flag scroll to bottom of ccui.ScrollView's event.
+ * @constant
+ * @type {number}
+ */
 ccui.ScrollView.EVENT_SCROLL_TO_BOTTOM = 1;
+/**
+ * The flag scroll to left of ccui.ScrollView's event.
+ * @constant
+ * @type {number}
+ */
 ccui.ScrollView.EVENT_SCROLL_TO_LEFT = 2;
+/**
+ * The flag scroll to right of ccui.ScrollView's event.
+ * @constant
+ * @type {number}
+ */
 ccui.ScrollView.EVENT_SCROLL_TO_RIGHT = 3;
+/**
+ * The scrolling flag of ccui.ScrollView's event.
+ * @constant
+ * @type {number}
+ */
 ccui.ScrollView.EVENT_SCROLLING = 4;
+/**
+ * The flag bounce top of ccui.ScrollView's event.
+ * @constant
+ * @type {number}
+ */
 ccui.ScrollView.EVENT_BOUNCE_TOP = 5;
+/**
+ * The flag bounce bottom of ccui.ScrollView's event.
+ * @constant
+ * @type {number}
+ */
 ccui.ScrollView.EVENT_BOUNCE_BOTTOM = 6;
+/**
+ * The flag bounce left of ccui.ScrollView's event.
+ * @constant
+ * @type {number}
+ */
 ccui.ScrollView.EVENT_BOUNCE_LEFT = 7;
+/**
+ * The flag bounce right of ccui.ScrollView's event.
+ * @constant
+ * @type {number}
+ */
 ccui.ScrollView.EVENT_BOUNCE_RIGHT = 8;
 
-
+/**
+ * The auto scroll max speed of ccui.ScrollView.
+ * @constant
+ * @type {number}
+ */
 ccui.ScrollView.AUTO_SCROLL_MAX_SPEED = 1000;
+
+/**
+ * @ignore
+ */
 ccui.ScrollView.SCROLLDIR_UP = cc.p(0, 1);
 ccui.ScrollView.SCROLLDIR_DOWN = cc.p(0, -1);
 ccui.ScrollView.SCROLLDIR_LEFT = cc.p(-1, 0);

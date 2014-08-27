@@ -38,7 +38,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
     },
 
     /**
-     * Constructor
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @function
      */
     ctor: function(){
@@ -484,7 +484,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
 /**
  * create a cc.ProtectedNode object;
- * @deprecated
+ * @deprecated since v3.0, please use new cc.ProtectedNode() instead.
  * @return cc.ProtectedNode
  */
 cc.ProtectedNode.create = function(){

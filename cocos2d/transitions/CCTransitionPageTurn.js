@@ -34,11 +34,15 @@
  * <p>cc.director.setDepthBufferFormat(kDepthBuffer16);</p>
  * @class
  * @extends cc.TransitionScene
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @param {Boolean} backwards
+ * @example
+ * var trans = new cc.TransitionPageTurn(t, scene, backwards);
  */
 cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTurn# */{
 
     /**
-     * @constructor
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      * @param {Boolean} backwards
@@ -79,9 +83,9 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
      */
     actionWithSize:function (vector) {
         if (this._back)
-            return cc.ReverseTime.create(cc.PageTurn3D.create(this._duration, vector));        // Get hold of the PageTurn3DAction
+            return cc.reverseTime(cc.pageTurn3D(this._duration, vector));        // Get hold of the PageTurn3DAction
         else
-            return cc.PageTurn3D.create(this._duration, vector);     // Get hold of the PageTurn3DAction
+            return cc.pageTurn3D(this._duration, vector);     // Get hold of the PageTurn3DAction
     },
 
     /**
@@ -102,12 +106,12 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
         var action = this.actionWithSize(cc.size(x, y));
 
         if (!this._back) {
-            this._outScene.runAction( cc.Sequence.create(action,cc.CallFunc.create(this.finish, this),cc.StopGrid.create()));
+            this._outScene.runAction( cc.sequence(action,cc.CallFunc.create(this.finish, this),cc.StopGrid.create()));
         } else {
             // to prevent initial flicker
             this._inScene.visible = false;
             this._inScene.runAction(
-                cc.Sequence.create(cc.Show.create(),action, cc.CallFunc.create(this.finish, this), cc.StopGrid.create())
+                cc.sequence(cc.show(),action, cc.callFunc(this.finish, this), cc.stopGrid())
             );
         }
     },
@@ -121,13 +125,12 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
  * Creates a base transition with duration and incoming scene.<br/>
  * If back is true then the effect is reversed to appear as if the incoming<br/>
  * scene is being turned from left over the outgoing scene.
- * @deprecated
+ * @deprecated since v3.0,please use new cc.TransitionPageTurn(t, scene, backwards) instead.
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
  * @param {Boolean} backwards
  * @return {cc.TransitionPageTurn}
  * @example
- * // Example
  * var myTransition = cc.TransitionPageTurn.create(1.5, nextScene, true)//true means backwards
  */
 cc.TransitionPageTurn.create = function (t, scene, backwards) {

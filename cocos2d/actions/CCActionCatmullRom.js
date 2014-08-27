@@ -94,8 +94,7 @@ cc.cloneControlPoints = function (controlPoints) {
 
 /**
  * returns a new clone of the controlPoints
- *
- * @deprecated since v3.0
+ * @deprecated since v3.0 please use cc.cloneControlPoints() instead.
  * @param controlPoints
  * @returns {Array}
  */
@@ -323,7 +322,7 @@ cc.cardinalSplineTo = function (duration, points, tension) {
  * @param {Number} tension
  * @return {cc.CardinalSplineTo}
  * @static
- * @deprecated since v3.0
+ * @deprecated since v3.0 please use cc.cardinalSplineTo(duration, points, tension) instead.
  */
 cc.CardinalSplineTo.create = cc.cardinalSplineTo;
 
@@ -459,7 +458,7 @@ cc.cardinalSplineBy = function (duration, points, tension) {
  * @param {Number} tension
  * @return {cc.CardinalSplineBy}
  * @static
- * @deprecated since v3.0
+ * @deprecated since v3.0 please use cc.cardinalSplineBy(duration, points, tension);
  */
 cc.CardinalSplineBy.create = cc.cardinalSplineBy;
 
@@ -532,7 +531,7 @@ cc.catmullRomTo = function (dt, points) {
  * @param {Array} points
  * @return {cc.CatmullRomTo}
  * @static
- * @deprecated since v3.0
+ * @deprecated since v3.0 please use cc.catmullRomTo(dt, points) instead.
  */
 cc.CatmullRomTo.create = cc.catmullRomTo;
 
@@ -601,6 +600,6 @@ cc.catmullRomBy = function (dt, points) {
  * Please use cc.catmullRomBy instead
  * Creates an action with a Cardinal Spline array of points and tension
  * @static
- * @deprecated since v3.0
+ * @deprecated since v3.0 please cc.catmullRomBy(dt, points) instead.
  */
 cc.CatmullRomBy.create = cc.catmullRomBy;
