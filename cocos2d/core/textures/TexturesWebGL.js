@@ -552,11 +552,17 @@ cc._tmp.WebGLTexture2D = function () {
         /**
          * sets the min filter, mag filter, wrap s and wrap t texture parameters. <br/>
          * If the texture size is NPOT (non power of 2), then in can only use gl.CLAMP_TO_EDGE in gl.TEXTURE_WRAP_{S,T}.
-         * @param texParams
+         * @param {Object|Number} texParams texParams object or minFilter
+         * @param {Number} [magFilter]
+         * @param {Number} [wrapS]
+         * @param {Number} [wrapT]
          */
-        setTexParameters: function (texParams) {
+        setTexParameters: function (texParams, magFilter, wrapS, wrapT) {
             var _t = this;
             var gl = cc._renderContext;
+
+            if(magFilter !== undefined)
+                texParams = {minFilter: texParams, magFilter: magFilter, wrapS: wrapS, wrapT: wrapT};
 
             cc.assert((_t._pixelsWide == cc.NextPOT(_t._pixelsWide) && _t._pixelsHigh == cc.NextPOT(_t._pixelsHigh)) ||
                 (texParams.wrapS == gl.CLAMP_TO_EDGE && texParams.wrapT == gl.CLAMP_TO_EDGE),
