@@ -2060,7 +2060,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     grid: null,
 
     /**
-     * <p>Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.</p>
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @function
      */
     ctor: null,

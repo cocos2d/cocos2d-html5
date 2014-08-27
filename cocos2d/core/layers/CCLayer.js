@@ -208,8 +208,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
  * <p>
  * CCLayerColor is a subclass of CCLayer that implements the CCRGBAProtocol protocol.       <br/>
  *  All features from CCLayer are valid, plus the following new features:                   <br/>
- * opacity                                                                     <br/>
- * RGB colors                                                                </p>
+ * - opacity                                                                     <br/>
+ * - RGB colors                                                                </p>
  * @class
  * @extends cc.Layer
  *

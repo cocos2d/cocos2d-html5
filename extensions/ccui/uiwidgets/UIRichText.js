@@ -492,6 +492,14 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
         ccui.Widget.prototype.setAnchorPoint.call(this, pt);
         this._elementRenderersContainer.setAnchorPoint(pt);
     },
+    _setAnchorX: function (x) {
+        ccui.Widget.prototype._setAnchorX.call(this, x);
+        this._elementRenderersContainer._setAnchorX(x);
+    },
+    _setAnchorY: function (y) {
+        ccui.Widget.prototype._setAnchorY.call(this, y);
+        this._elementRenderersContainer._setAnchorY(y);
+    },
 
     /**
      * Returns the renderer container's content size.
@@ -521,7 +529,15 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      */
     getContentSize: function(){
         this.formatText();
-        return cc.Node.prototype.getContentSize.l(this);
+        return cc.Node.prototype.getContentSize.call(this);
+    },
+    _getWidth: function() {
+        this.formatText();
+        return cc.Node.prototype._getWidth.call(this);
+    },
+    _getHeight: function() {
+        this.formatText();
+        return cc.Node.prototype._getHeight.call(this);
     },
 
     /**
