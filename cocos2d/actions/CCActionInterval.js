@@ -1412,7 +1412,7 @@ cc.moveBy = function (duration, deltaPos, deltaY) {
  * Please use cc.moveBy instead.
  * Relative to its coordinate moves a certain distance.
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.moveBy instead.
  * @param {Number} duration duration in seconds
  * @param {cc.Point|Number} deltaPos
  * @param {Number} deltaY
@@ -1734,7 +1734,7 @@ cc.skewBy = function (t, sx, sy) {
  * Skews a cc.Node object by skewX and skewY degrees. <br />
  * Relative to its attribute modification.
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.skewBy instead.
  * @param {Number} t time in seconds
  * @param {Number} sx sx skew in degrees for X axis
  * @param {Number} sy sy skew in degrees for Y axis
@@ -1900,7 +1900,7 @@ cc.jumpBy = function (duration, position, y, height, jumps) {
  * Moves a cc.Node object simulating a parabolic jump movement by modifying it's position attribute. <br />
  * Relative to its movement.
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.jumpBy instead.
  * @param {Number} duration
  * @param {cc.Point|Number} position
  * @param {Number} [y]
@@ -2010,7 +2010,7 @@ cc.jumpTo = function (duration, position, y, height, jumps) {
  * Moves a cc.Node object to a parabolic position simulating a jump movement by modifying it's position attribute. <br />
  * Jump to the specified location.
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.jumpTo instead.
  * @param {Number} duration
  * @param {cc.Point|Number} position
  * @param {Number} [y]
@@ -2186,7 +2186,7 @@ cc.bezierBy = function (t, c) {
  * An action that moves the target with a cubic Bezier curve by a certain distance.
  * Relative to its movement.
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.bezierBy instead.
  * @param {Number} t time in seconds
  * @param {Array} c Array of points
  * @return {cc.BezierBy}
@@ -2275,7 +2275,7 @@ cc.bezierTo = function (t, c) {
 /**
  * Please use cc.bezierTo instead
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.bezierTo instead.
  * @param {Number} t
  * @param {Array} c array of points
  * @return {cc.BezierTo}
@@ -2391,7 +2391,7 @@ cc.scaleTo = function (duration, sx, sy) { //function overload
  * Please use cc.scaleTo instead.
  * Scales a cc.Node object to a zoom factor by modifying it's scale attribute.
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.scaleTo instead.
  * @param {Number} duration
  * @param {Number} sx  scale parameter in X
  * @param {Number} [sy] scale parameter in Y, if Null equal to sx
@@ -2461,7 +2461,7 @@ cc.scaleBy = function (duration, sx, sy) {
  * Scales a cc.Node object a zoom factor by modifying it's scale attribute.
  * Relative to its changes.
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.scaleBy() instead.
  * @param {Number} duration duration in seconds
  * @param {Number} sx sx  scale parameter in X
  * @param {Number|Null} [sy=] sy scale parameter in Y, if Null equal to sx
@@ -2574,7 +2574,7 @@ cc.blink = function (duration, blinks) {
  * Please use cc.blink instead.
  * Blinks a cc.Node object by modifying it's visible attribute.
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.blink instead.
  * @param {Number} duration  duration in seconds
  * @param blinks blinks in times
  * @return {cc.Blink}
@@ -2667,7 +2667,7 @@ cc.fadeTo = function (duration, opacity) {
  * Please use cc.fadeTo instead.
  * Fades an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from the current value to a custom one.
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.fadeTo instead.
  * @param {Number} duration
  * @param {Number} opacity 0-255, 0 is transparent
  * @return {cc.FadeTo}
@@ -2742,7 +2742,7 @@ cc.fadeIn = function (duration) {
  * Please use cc.fadeIn instead.
  * Fades In an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from 0 to 255.
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.fadeIn() instead.
  * @param {Number} duration duration in seconds
  * @return {cc.FadeIn}
  */
@@ -2807,7 +2807,7 @@ cc.fadeOut = function (d) {
  * Please use cc.fadeOut instead.
  * Fades Out an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from 255 to 0.
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.fadeOut instead.
  * @param {Number} d  duration in seconds
  * @return {cc.FadeOut}
  */
@@ -2915,7 +2915,7 @@ cc.tintTo = function (duration, red, green, blue) {
  * Please use cc.tintTo instead.
  * Tints a cc.Node that implements the cc.NodeRGB protocol from current tint to a custom one.
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.tintTo instead.
  * @param {Number} duration
  * @param {Number} red 0-255
  * @param {Number} green  0-255
@@ -3046,7 +3046,7 @@ cc.tintBy = function (duration, deltaRed, deltaGreen, deltaBlue) {
  * Tints a cc.Node that implements the cc.NodeRGB protocol from current tint to a custom one.
  * Relative to their own color change.
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.tintBy instead.
  * @param {Number} duration  duration in seconds
  * @param {Number} deltaRed
  * @param {Number} deltaGreen
@@ -3106,7 +3106,7 @@ cc.delayTime = function (d) {
  * Please use cc.delayTime instead.
  * Delays the action a certain amount of seconds
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.delaTime instead.
  * @param {Number} d duration in seconds
  * @return {cc.DelayTime}
  */
@@ -3220,7 +3220,7 @@ cc.reverseTime = function (action) {
  * Please use cc.reverseTime instead.
  * Executes an action in reverse order, from time=duration to time=0.
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.reverseTime instead.
  * @param {cc.FiniteTimeAction} action
  * @return {cc.ReverseTime}
  */
@@ -3412,7 +3412,7 @@ cc.animate = function (animation) {
  * Please use cc.animate instead
  * create the animate with animation
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.animate instead.
  * @param {cc.Animation} animation
  * @return {cc.Animate}
  */
@@ -3526,7 +3526,7 @@ cc.targetedAction = function (target, action) {
  * Please use cc.targetedAction instead
  * Create an action with the specified action and forced target
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.targetedAction instead.
  * @param {cc.Node} target
  * @param {cc.FiniteTimeAction} action
  * @return {cc.TargetedAction}

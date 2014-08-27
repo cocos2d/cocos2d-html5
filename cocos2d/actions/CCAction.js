@@ -220,7 +220,7 @@ cc.action = function () {
  * Please use cc.action instead. <br/>
  * Allocates and initializes the action.
  *
- * @deprecated since v3.0
+ * @deprecated since v3.0 please use cc.action() instead.
  * @static
  * @returns {cc.Action}
  */
@@ -457,7 +457,7 @@ cc.speed = function (action, speed) {
  * @param {Number} speed
  * @return {cc.Speed}
  * @static
- * @deprecated since v3.0
+ * @deprecated since v3.0 please use cc.speed() instead.
  */
 cc.Speed.create = cc.speed;
 
@@ -686,6 +686,6 @@ cc.follow = function (followedNode, rect) {
  * @param {cc.Rect} rect
  * @return {cc.Follow|Null} returns the cc.Follow object on success
  * @static
- * @deprecated since v3.0
+ * @deprecated since v3.0 please cc.follow() instead.
  */
 cc.Follow.create = cc.follow;

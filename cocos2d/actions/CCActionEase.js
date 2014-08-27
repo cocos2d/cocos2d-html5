@@ -30,6 +30,8 @@
  * @extends cc.ActionInterval
  * @param {cc.ActionInterval} action
  *
+ * @deprecated since v3.0 Does not recommend the use of the base object.
+ *
  * @example
  * var moveEase = new cc.ActionEase(action);
  */
@@ -144,7 +146,7 @@ cc.actionEase = function (action) {
  * @param {cc.ActionInterval} action
  * @return {cc.ActionEase}
  * @static
- * @deprecated since v3.0
+ * @deprecated since v3.0 please use cc.actionEase(action) instead.
  */
 cc.ActionEase.create = cc.actionEase;
 
@@ -156,9 +158,13 @@ cc.ActionEase.create = cc.actionEase;
  * @param {cc.ActionInterval} action
  * @param {Number} rate
  *
+ * @deprecated since v3.0 please cc.easeRateAction(action, 3.0);
+ *
  * @example
- * // example
- * var moveEaseRateAction = new cc.EaseRateAction(action, 3.0);
+ * //The old usage
+ * cc.EaseRateAction.create(action, 3.0);
+ * //The new usage
+ * var moveEaseRateAction = cc.easeRateAction(action, 3.0);
  */
 cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
     _rate:0,
@@ -251,7 +257,12 @@ cc.easeRateAction = function (action, rate) {
  * @param {Number} rate
  * @return {cc.EaseRateAction}
  * @static
- * @deprecated since v3.0
+ * @deprecated since v3.0 please use cc.easeRateAction(action, rate)
+ * @example
+ * //The old usage
+ * cc.EaseRateAction.create(action, 3.0);
+ * //The new usage
+ * var moveEaseRateAction = cc.easeRateAction(action, 3.0);
  */
 cc.EaseRateAction.create = cc.easeRateAction;
 
@@ -260,6 +271,14 @@ cc.EaseRateAction.create = cc.easeRateAction;
  *
  * @class
  * @extends cc.EaseRateAction
+ *
+ * @deprecated since v3.0 please use action.easing(cc.easeIn(3));
+ *
+ * @example
+ * //The old usage
+ * cc.EaseIn.create(action, 3);
+ * //The new usage
+ * action.easing(cc.easeIn(3.0));
  */
 cc.EaseIn = cc.EaseRateAction.extend(/** @lends cc.EaseIn# */{
 
@@ -298,10 +317,14 @@ cc.EaseIn = cc.EaseRateAction.extend(/** @lends cc.EaseIn# */{
  * From slow to fast.
  *
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeIn instead.
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeIn(3))
+ *
  * @example
- *  // example
+ * //The old usage
+ * cc.EaseIn.create(action, 3);
+ * //The new usage
  * action.easing(cc.easeIn(3.0));
+ *
  * @param {cc.ActionInterval} action
  * @param {Number} rate
  * @return {cc.EaseIn}
@@ -335,8 +358,17 @@ cc.easeIn = function (rate) {
 
 /**
  * cc.EaseOut action with a rate. From fast to slow.
+ *
  * @class
  * @extends cc.EaseRateAction
+ *
+ * @deprecated since v3.0 please use action.easing(cc.easeOut(3))
+ *
+ * @example
+ * //The old usage
+ * cc.EaseOut.create(action, 3);
+ * //The new usage
+ * action.easing(cc.easeOut(3.0));
  */
 cc.EaseOut = cc.EaseRateAction.extend(/** @lends cc.EaseOut# */{
     /**
@@ -375,9 +407,13 @@ cc.EaseOut = cc.EaseRateAction.extend(/** @lends cc.EaseOut# */{
  *
  * @static
  * @deprecated since v3.0 <br /> Please use cc.easeOut instead.
+ *
  * @example
- *  // example
+ * //The old usage
+ * cc.EaseOut.create(action, 3);
+ * //The new usage
  * action.easing(cc.easeOut(3.0));
+ *
  * @param {cc.ActionInterval} action
  * @param {Number} rate
  * @return {cc.EaseOut}
@@ -410,10 +446,18 @@ cc.easeOut = function (rate) {
 };
 
 /**
- * cc.EaseInOut action with a rate.
+ * cc.EaseInOut action with a rate. <br />
  * Slow to fast then to slow.
  * @class
  * @extends cc.EaseRateAction
+ *
+ * @deprecated since v3.0 please use action.easing(cc.easeInOut(3.0))
+ *
+ * @example
+ * //The old usage
+ * cc.EaseInOut.create(action, 3);
+ * //The new usage
+ * action.easing(cc.easeInOut(3.0));
  */
 cc.EaseInOut = cc.EaseRateAction.extend(/** @lends cc.EaseInOut# */{
     /**
@@ -454,10 +498,14 @@ cc.EaseInOut = cc.EaseRateAction.extend(/** @lends cc.EaseInOut# */{
  * Creates the action with the inner action and the rate parameter.
  * Slow to fast then to slow.
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeInOut instead.
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeInOut(3.0))
+ *
  * @example
- * // example
+ * //The old usage
+ * cc.EaseInOut.create(action, 3);
+ * //The new usage
  * action.easing(cc.easeInOut(3.0));
+ *
  * @param {cc.ActionInterval} action
  * @param {Number} rate
  * @return {cc.EaseInOut}
@@ -467,13 +515,14 @@ cc.EaseInOut.create = function (action, rate) {
 };
 
 /**
- * Creates the action easing object with the rate parameter.
+ * Creates the action easing object with the rate parameter. <br />
  * Slow to fast then to slow.
  * @function
  * @param {Number} rate
  * @return {Object}
+ *
  * @example
- * // example
+ * //The new usage
  * action.easing(cc.easeInOut(3.0));
  */
 cc.easeInOut = function (rate) {
@@ -498,6 +547,14 @@ cc.easeInOut = function (rate) {
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 please action.easing(cc.easeExponentialIn())
+ *
+ * @example
+ * //The old usage
+ * cc.EaseExponentialIn.create(action);
+ * //The new usage
+ * action.easing(cc.easeExponentialIn());
  */
 cc.EaseExponentialIn = cc.ActionEase.extend(/** @lends cc.EaseExponentialIn# */{
     /**
@@ -535,12 +592,15 @@ cc.EaseExponentialIn = cc.ActionEase.extend(/** @lends cc.EaseExponentialIn# */{
  * Reference easeInExpo: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeExponentialIn instead.
- * @example
- * // example
- * action.easing(cc.easeExponentialIn());
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeExponentialIn())
  * @param {cc.ActionInterval} action
  * @return {cc.EaseExponentialIn}
+ *
+ * @example
+ * //The old usage
+ * cc.EaseExponentialIn.create(action);
+ * //The new usage
+ * action.easing(cc.easeExponentialIn());
  */
 cc.EaseExponentialIn.create = function (action) {
     return new cc.EaseExponentialIn(action);
@@ -575,6 +635,14 @@ cc.easeExponentialIn = function(){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 please use action.easing(cc.easeExponentialOut())
+ *
+ * @example
+ * //The old usage
+ * cc.EaseExponentialOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeExponentialOut());
  */
 cc.EaseExponentialOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialOut# */{
     /**
@@ -612,12 +680,15 @@ cc.EaseExponentialOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialOut# *
  * Reference easeOutExpo: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeExponentialOut instead.
- * @example
- * // example
- * action.easing(cc.easeExponentialOut());
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeExponentialOut())
  * @param {cc.ActionInterval} action
- * @return {cc.EaseExponentialOut}
+ * @return {Object}
+ *
+ * @example
+ * //The old usage
+ * cc.EaseExponentialOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeExponentialOut());
  */
 cc.EaseExponentialOut.create = function (action) {
     return new cc.EaseExponentialOut(action);
@@ -637,7 +708,7 @@ cc._easeExponentialOutObj = {
  * Reference easeOutExpo: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  *
- * @return {cc.EaseExponentialOut}
+ * @return {Object}
  * @example
  * // example
  * action.easing(cc.easeExponentialOut());
@@ -653,6 +724,14 @@ cc.easeExponentialOut = function(){
  *
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 please use action.easing(cc.easeExponentialInOut)
+ *
+ * @example
+ * //The old usage
+ * cc.EaseExponentialInOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeExponentialInOut());
  */
 cc.EaseExponentialInOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialInOut# */{
     /**
@@ -697,12 +776,15 @@ cc.EaseExponentialInOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialInOu
  * Reference easeInOutExpo: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeExponentialInOut instead.
- * @example
- * // example
- * action.easing(cc.easeExponentialInOut());
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeExponentialInOut)
  * @param {cc.ActionInterval} action
  * @return {cc.EaseExponentialInOut}
+ *
+ * @example
+ * //The old usage
+ * cc.EaseExponentialInOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeExponentialInOut());
  */
 cc.EaseExponentialInOut.create = function (action) {
     return new cc.EaseExponentialInOut(action);
@@ -744,6 +826,14 @@ cc.easeExponentialInOut = function(){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 please use action.easing(cc.easeSineIn())
+ *
+ * @example
+ * //The old usage
+ * cc.EaseSineIn.create(action);
+ * //The new usage
+ * action.easing(cc.easeSineIn());
  */
 cc.EaseSineIn = cc.ActionEase.extend(/** @lends cc.EaseSineIn# */{
     /**
@@ -782,12 +872,15 @@ cc.EaseSineIn = cc.ActionEase.extend(/** @lends cc.EaseSineIn# */{
  * Reference easeInSine: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeSineIn instead.
- * @example
- * // example
- * action.easing(cc.easeSineIn());
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeSineIn())
  * @param {cc.ActionInterval} action
  * @return {cc.EaseSineIn}
+ *
+ * @example
+ * //The old usage
+ * cc.EaseSineIn.create(action);
+ * //The new usage
+ * action.easing(cc.easeSineIn());
  */
 cc.EaseSineIn.create = function (action) {
     return new cc.EaseSineIn(action);
@@ -821,6 +914,14 @@ cc.easeSineIn = function(){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 please use action.easing(cc.easeSineOut())
+ *
+ * @example
+ * //The old usage
+ * cc.EaseSineOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeSineOut());
  */
 cc.EaseSineOut = cc.ActionEase.extend(/** @lends cc.EaseSineOut# */{
     /**
@@ -859,12 +960,15 @@ cc.EaseSineOut = cc.ActionEase.extend(/** @lends cc.EaseSineOut# */{
  * Reference easeOutSine: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeSineOut instead.
- * @example
- * // example
- * action.easing(cc.easeSineOut());
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeSineOut())
  * @param {cc.ActionInterval} action
  * @return {cc.EaseSineOut}
+ *
+ * @example
+ * //The old usage
+ * cc.EaseSineOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeSineOut());
  */
 cc.EaseSineOut.create = function (action) {
     return new cc.EaseSineOut(action);
@@ -899,6 +1003,14 @@ cc.easeSineOut = function(){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 please use action.easing(cc.easeSineInOut())
+ *
+ * @example
+ * //The old usage
+ * cc.EaseSineInOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeSineInOut());
  */
 cc.EaseSineInOut = cc.ActionEase.extend(/** @lends cc.EaseSineInOut# */{
     /**
@@ -939,9 +1051,12 @@ cc.EaseSineInOut = cc.ActionEase.extend(/** @lends cc.EaseSineInOut# */{
  * @static
  * @param {cc.ActionInterval} action
  * @return {cc.EaseSineInOut}
- * @deprecated since v3.0 <br /> Please use cc.easeSineInOut instead.
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeSineInOut())
+ *
  * @example
- * // example
+ * //The old usage
+ * cc.EaseSineInOut.create(action);
+ * //The new usage
  * action.easing(cc.easeSineInOut());
  */
 cc.EaseSineInOut.create = function (action) {
@@ -961,7 +1076,7 @@ cc._easeSineInOutObj = {
  * creates the action easing object. <br />
  * Reference easeInOutSine: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
- * @return {cc.EaseSineInOut}
+ * @return {Object}
  * @example
  * // example
  * action.easing(cc.easeSineInOut());
@@ -976,9 +1091,8 @@ cc.easeSineInOut = function(){
  * @extends cc.ActionEase
  * @param {cc.ActionInterval} action
  * @param {Number} [period=0.3]
- * @example
- * // example
- * var moveEaseElastic = new cc.EaseElastic(action, 3.0);
+ *
+ * @deprecated since v3.0 Does not recommend the use of the base object.
  */
 cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
     _period: 0.3,
@@ -1049,7 +1163,7 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
 /**
  * Creates the action with the inner action and the period in radians (default is 0.3).
  * @static
- * @deprecated since v3.0
+ * @deprecated since v3.0 Does not recommend the use of the base object.
  * @param {cc.ActionInterval} action
  * @param {Number} [period=0.3]
  * @return {cc.EaseElastic}
@@ -1065,6 +1179,14 @@ cc.EaseElastic.create = function (action, period) {
  * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.EaseElastic
+ *
+ * @deprecated since v3.0 please use action.easing(cc.easeElasticIn())
+ *
+ * @example
+ * //The old usage
+ * cc.EaseElasticIn.create(action, period);
+ * //The new usage
+ * action.easing(cc.easeElasticIn(period));
  */
 cc.EaseElasticIn = cc.EaseElastic.extend(/** @lends cc.EaseElasticIn# */{
     /**
@@ -1109,10 +1231,14 @@ cc.EaseElasticIn = cc.EaseElastic.extend(/** @lends cc.EaseElasticIn# */{
  * Creates the action with the inner action and the period in radians (default is 0.3). <br />
  * Reference easeInElastic: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
- * @deprecated since v3.0 <br /> Please use cc.easeElasticIn instead.
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeElasticIn(period))
+ *
  * @example
- * // example
- * action.easing(cc.easeElasticIn(3.0));
+ * //The old usage
+ * cc.EaseElasticIn.create(action, period);
+ * //The new usage
+ * action.easing(cc.easeElasticIn(period));
+ *
  * @param {cc.ActionInterval} action
  * @param {Number} [period=0.3]
  * @return {cc.EaseElasticIn}
@@ -1170,6 +1296,14 @@ cc.easeElasticIn = function (period) {
  * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.EaseElastic
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeElasticOut(period))
+ *
+ * @example
+ * //The old usage
+ * cc.EaseElasticOut.create(action, period);
+ * //The new usage
+ * action.easing(cc.easeElasticOut(period));
  */
 cc.EaseElasticOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticOut# */{
     /**
@@ -1214,13 +1348,16 @@ cc.EaseElasticOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticOut# */{
  * Creates the action with the inner action and the period in radians (default is 0.3). <br />
  * Reference easeOutElastic: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
- * @deprecated since v3.0 <br /> Please use cc.easeElasticOut instead.
- * @example
- * // example
- * action.easing(cc.easeElasticOut(3.0));
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeElasticOut(period))
  * @param {cc.ActionInterval} action
  * @param {Number} [period=0.3]
  * @return {cc.EaseElasticOut}
+ *
+ * @example
+ * //The old usage
+ * cc.EaseElasticOut.create(action, period);
+ * //The new usage
+ * action.easing(cc.easeElasticOut(period));
  */
 cc.EaseElasticOut.create = function (action, period) {
     return new cc.EaseElasticOut(action, period);
@@ -1268,6 +1405,14 @@ cc.easeElasticOut = function (period) {
  * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.EaseElastic
+ *
+ * @deprecated since v3.0 please use action.easing(cc.easeElasticInOut())
+ *
+ * @example
+ * //The old usage
+ * cc.EaseElasticInOut.create(action, period);
+ * //The new usage
+ * action.easing(cc.easeElasticInOut(period));
  */
 cc.EaseElasticInOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticInOut# */{
     /**
@@ -1320,13 +1465,16 @@ cc.EaseElasticInOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticInOut# */{
  * Creates the action with the inner action and the period in radians (default is 0.3). <br />
  * Reference easeInOutElastic: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
- * @deprecated since v3.0 <br /> Please use cc.easeElasticInOut instead.
- * @example
- * // example
- * action.easing(cc.easeElasticInOut(3.0));
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeElasticInOut(period))
  * @param {cc.ActionInterval} action
  * @param {Number} [period=0.3]
  * @return {cc.EaseElasticInOut}
+ *
+ * @example
+ * //The old usage
+ * cc.EaseElasticInOut.create(action, period);
+ * //The new usage
+ * action.easing(cc.easeElasticInOut(period));
  */
 cc.EaseElasticInOut.create = function (action, period) {
     return new cc.EaseElasticInOut(action, period);
@@ -1373,6 +1521,9 @@ cc.easeElasticInOut = function (period) {
 
 /**
  * cc.EaseBounce abstract class.
+ *
+ * @deprecated since v3.0 Does not recommend the use of the base object.
+ *
  * @class
  * @extends cc.ActionEase
  */
@@ -1420,7 +1571,7 @@ cc.EaseBounce = cc.ActionEase.extend(/** @lends cc.EaseBounce# */{
 /**
  * Creates an ease bounce action.
  * @static
- * @deprecated since v3.0
+ * @deprecated since v3.0 Does not recommend the use of the base object.
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBounce}
  */
@@ -1434,6 +1585,14 @@ cc.EaseBounce.create = function (action) {
  * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.EaseBounce
+ *
+ * @deprecated since v3.0 please use action.easing(cc.easeBounceIn())
+ *
+ * @example
+ * //The old usage
+ * cc.EaseBounceIn.create(action);
+ * //The new usage
+ * action.easing(cc.easeBounceIn());
  */
 cc.EaseBounceIn = cc.EaseBounce.extend(/** @lends cc.EaseBounceIn# */{
     /**
@@ -1471,12 +1630,15 @@ cc.EaseBounceIn = cc.EaseBounce.extend(/** @lends cc.EaseBounceIn# */{
  * Creates the action. <br />
  * Eased bounce effect at the beginning.
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeBounceIn instead.
- * @example
- * // example
- * action.easing(cc.easeBounceIn());
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeBounceIn())
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBounceIn}
+ *
+ * @example
+ * //The old usage
+ * cc.EaseBounceIn.create(action);
+ * //The new usage
+ * action.easing(cc.easeBounceIn());
  */
 cc.EaseBounceIn.create = function (action) {
     return new cc.EaseBounceIn(action);
@@ -1525,6 +1687,14 @@ cc.easeBounceIn = function(){
  * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.EaseBounce
+ *
+ * @deprecated since v3.0 please use action.easing(cc.easeBounceOut())
+ *
+ * @example
+ * //The old usage
+ * cc.EaseBounceOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeBounceOut());
  */
 cc.EaseBounceOut = cc.EaseBounce.extend(/** @lends cc.EaseBounceOut# */{
     /**
@@ -1562,12 +1732,15 @@ cc.EaseBounceOut = cc.EaseBounce.extend(/** @lends cc.EaseBounceOut# */{
  * Creates the action. <br />
  * Eased bounce effect at the ending.
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeBounceOut instead.
- * @example
- * // example
- * action.easing(cc.easeBounceOut());
+ * @deprecated since v3.0 please use action.easing(cc.easeBounceOut())
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBounceOut}
+ *
+ * @example
+ * //The old usage
+ * cc.EaseBounceOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeBounceOut());
  */
 cc.EaseBounceOut.create = function (action) {
     return new cc.EaseBounceOut(action);
@@ -1601,6 +1774,14 @@ cc.easeBounceOut = function(){
  * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.EaseBounce
+ *
+ * @deprecated since v3.0 <br /> Please use acton.easing(cc.easeBounceInOut())
+ *
+ * @example
+ * //The old usage
+ * cc.EaseBounceInOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeBounceInOut());
  */
 cc.EaseBounceInOut = cc.EaseBounce.extend(/** @lends cc.EaseBounceInOut# */{
     /**
@@ -1644,12 +1825,15 @@ cc.EaseBounceInOut = cc.EaseBounce.extend(/** @lends cc.EaseBounceInOut# */{
  * Creates the action. <br />
  * Eased bounce effect at the begining and ending.
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeBounceInOut instead.
- * @example
- * // example
- * action.easing(cc.easeBounceInOut());
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeBounceInOut())
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBounceInOut}
+ *
+ * @example
+ * //The old usage
+ * cc.EaseBounceInOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeBounceInOut());
  */
 cc.EaseBounceInOut.create = function (action) {
     return new cc.EaseBounceInOut(action);
@@ -1670,6 +1854,7 @@ cc._easeBounceInOutObj = {
         return cc._easeBounceInOutObj;
     }
 };
+
 /**
  * Creates the action easing object. <br />
  * Eased bounce effect at the begining and ending.
@@ -1689,6 +1874,14 @@ cc.easeBounceInOut = function(){
  * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 please use action.easing(cc.easeBackIn())
+ *
+ * @example
+ * //The old usage
+ * cc.EaseBackIn.create(action);
+ * //The new usage
+ * action.easing(cc.easeBackIn());
  */
 cc.EaseBackIn = cc.ActionEase.extend(/** @lends cc.EaseBackIn# */{
     /**
@@ -1728,12 +1921,15 @@ cc.EaseBackIn = cc.ActionEase.extend(/** @lends cc.EaseBackIn# */{
  * Creates the cc.EaseBackIn. <br />
  * In the opposite direction to move slowly, and then accelerated to the right direction.
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeBackIn instead.
- * @example
- * // example
- * action.easing(cc.easeBackIn());
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeBackIn())
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBackIn}
+ *
+ * @example
+ * //The old usage
+ * cc.EaseBackIn.create(action);
+ * //The new usage
+ * action.easing(cc.easeBackIn());
  */
 cc.EaseBackIn.create = function (action) {
     return new cc.EaseBackIn(action);
@@ -1768,6 +1964,14 @@ cc.easeBackIn = function(){
  * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 please use action.easing(cc.easeBackOut());
+ *
+ * @example
+ * //The old usage
+ * cc.EaseBackOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeBackOut());
  */
 cc.EaseBackOut = cc.ActionEase.extend(/** @lends cc.EaseBackOut# */{
     /**
@@ -1806,12 +2010,15 @@ cc.EaseBackOut = cc.ActionEase.extend(/** @lends cc.EaseBackOut# */{
  * Creates the action. <br />
  * Fast moving more than the finish, and then slowly back to the finish.
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeBackOut instead.
- * @example
- * // example
- * action.easing(cc.easeBackOut());
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeBackOut());
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBackOut}
+ *
+ * @example
+ * //The old usage
+ * cc.EaseBackOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeBackOut());
  */
 cc.EaseBackOut.create = function (action) {
     return new cc.EaseBackOut(action);
@@ -1827,6 +2034,7 @@ cc._easeBackOutObj = {
         return cc._easeBackInObj;
     }
 };
+
 /**
  * Creates the action easing object. <br />
  * Fast moving more than the finish, and then slowly back to the finish.
@@ -1846,6 +2054,14 @@ cc.easeBackOut = function(){
  * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeBackInOut())
+ *
+ * @example
+ * //The old usage
+ * cc.EaseBackInOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeBackInOut());
  */
 cc.EaseBackInOut = cc.ActionEase.extend(/** @lends cc.EaseBackInOut# */{
     /**
@@ -1890,12 +2106,16 @@ cc.EaseBackInOut = cc.ActionEase.extend(/** @lends cc.EaseBackInOut# */{
  * Creates the action. <br />
  * Begining of cc.EaseBackIn. Ending of cc.EaseBackOut.
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeBackInOut instead.
- * @example
- * // example
- * action.easing(cc.easeBackInOut());
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBackInOut}
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeBackInOut())
+ *
+ * @example
+ * //The old usage
+ * cc.EaseBackInOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeBackInOut());
  */
 cc.EaseBackInOut.create = function (action) {
     return new cc.EaseBackInOut(action);
@@ -1916,6 +2136,7 @@ cc._easeBackInOutObj = {
         return cc._easeBackInOutObj;
     }
 };
+
 /**
  * Creates the action easing object. <br />
  * Begining of cc.EaseBackIn. Ending of cc.EaseBackOut.
@@ -1936,6 +2157,15 @@ cc.easeBackInOut = function(){
  * @class
  * @extends cc.ActionEase
  * @param {cc.Action} action
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeBezierAction())
+ *
+ * @example
+ * //The old usage
+ * var action = cc.EaseBezierAction.create(action);
+ * action.setBezierParamer(0.5, 0.5, 1.0, 1.0);
+ * //The new usage
+ * action.easing(cc.easeBezierAction(0.5, 0.5, 1.0, 1.0));
  */
 cc.EaseBezierAction = cc.ActionEase.extend(/** @lends cc.EaseBezierAction# */{
 
@@ -2010,12 +2240,17 @@ cc.EaseBezierAction = cc.ActionEase.extend(/** @lends cc.EaseBezierAction# */{
  * After creating the cc.EaseBezierAction, also need to manually call setBezierParamer. <br />
  * According to the set point, calculate the trajectory.
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeBezierAction instead.
- * @example
- * // example
- * action.easing(cc.easeBezierAction(0.5, 0.5, 1.0, 1.0));
  * @param action
  * @returns {cc.EaseBezierAction}
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeBezierAction())
+ *
+ * @example
+ * //The old usage
+ * var action = cc.EaseBezierAction.create(action);
+ * action.setBezierParamer(0.5, 0.5, 1.0, 1.0);
+ * //The new usage
+ * action.easing(cc.easeBezierAction(0.5, 0.5, 1.0, 1.0));
  */
 cc.EaseBezierAction.create = function(action){
     return new cc.EaseBezierAction(action);
@@ -2051,6 +2286,14 @@ cc.easeBezierAction = function(p0, p1, p2, p3){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeQuadraticAction())
+ *
+ * @example
+ * //The old usage
+ * cc.EaseQuadraticActionIn.create(action);
+ * //The new usage
+ * action.easing(cc.easeQuadraticActionIn());
  */
 cc.EaseQuadraticActionIn = cc.ActionEase.extend(/** @lends cc.EaseQuadraticActionIn# */{
 
@@ -2094,12 +2337,16 @@ cc.EaseQuadraticActionIn = cc.ActionEase.extend(/** @lends cc.EaseQuadraticActio
  * Reference easeInQuad: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeQuadraticAction instead.
- * @example
- * //example
- * action.easing(cc.easeQuadraticActionIn());
  * @param action
  * @returns {cc.EaseQuadraticActionIn}
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeQuadraticAction())
+ *
+ * @example
+ * //The old usage
+ * cc.EaseQuadraticActionIn.create(action);
+ * //The new usage
+ * action.easing(cc.easeQuadraticActionIn());
  */
 cc.EaseQuadraticActionIn.create = function(action){
     return new cc.EaseQuadraticActionIn(action);
@@ -2131,6 +2378,14 @@ cc.easeQuadraticActionIn = function(){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeQuadraticActionOut())
+ *
+ * @example
+ * //The old usage
+ * cc.EaseQuadraticActionOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeQuadraticActionOut());
  */
 cc.EaseQuadraticActionOut = cc.ActionEase.extend(/** @lends cc.EaseQuadraticActionOut# */{
 
@@ -2173,12 +2428,16 @@ cc.EaseQuadraticActionOut = cc.ActionEase.extend(/** @lends cc.EaseQuadraticActi
  * Reference easeOutQuad: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeQuadraticActionOut instead.
- * @example
- * //example
- * action.easing(cc.easeQuadraticActionOut());
  * @param action
  * @returns {cc.EaseQuadraticActionOut}
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeQuadraticActionOut())
+ *
+ * @example
+ * //The old usage
+ * cc.EaseQuadraticActionOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeQuadraticActionOut());
  */
 cc.EaseQuadraticActionOut.create = function(action){
     return new cc.EaseQuadraticActionOut(action);
@@ -2210,6 +2469,14 @@ cc.easeQuadraticActionOut = function(){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeQuadraticActionInOut())
+ *
+ * @example
+ * //The old usage
+ * cc.EaseQuadraticActionInOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeQuadraticActionInOut());
  */
 cc.EaseQuadraticActionInOut = cc.ActionEase.extend(/** @lends cc.EaseQuadraticActionInOut# */{
     _updateTime: function(time){
@@ -2259,10 +2526,15 @@ cc.EaseQuadraticActionInOut = cc.ActionEase.extend(/** @lends cc.EaseQuadraticAc
  * Reference easeInOutQuad: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeQuadraticActionInOut() instead.
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeQuadraticActionInOut())
+ *
  * @example
- * //example
+ * //The old usage
+ * cc.EaseQuadraticActionInOut.create(action);
+ * //The new usage
  * action.easing(cc.easeQuadraticActionInOut());
+ *
  * @param action
  * @returns {cc.EaseQuadraticActionInOut}
  */
@@ -2297,6 +2569,14 @@ cc.easeQuadraticActionInOut = function(){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeQuarticActionIn());
+ *
+ * @example
+ * //The old usage
+ * cc.EaseQuarticActionIn.create(action);
+ * //The new usage
+ * action.easing(cc.easeQuarticActionIn());
  */
 cc.EaseQuarticActionIn = cc.ActionEase.extend(/** @lends cc.EaseQuarticActionIn# */{
     _updateTime: function(time){
@@ -2338,10 +2618,15 @@ cc.EaseQuarticActionIn = cc.ActionEase.extend(/** @lends cc.EaseQuarticActionIn#
  * Reference easeInQuart: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeQuarticIn() instead.
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeQuarticActionIn());
+ *
  * @example
- * //example
+ * //The old usage
+ * cc.EaseQuarticActionIn.create(action);
+ * //The new usage
  * action.easing(cc.easeQuarticActionIn());
+ *
  * @param action
  * @returns {cc.EaseQuarticActionIn}
  */
@@ -2375,6 +2660,14 @@ cc.easeQuarticActionIn = function(){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.QuarticActionOut());
+ *
+ * @example
+ * //The old usage
+ * cc.EaseQuarticActionOut.create(action);
+ * //The new usage
+ * action.easing(cc.EaseQuarticActionOut());
  */
 cc.EaseQuarticActionOut = cc.ActionEase.extend(/** @lends cc.EaseQuarticActionOut# */{
     _updateTime: function(time){
@@ -2417,10 +2710,15 @@ cc.EaseQuarticActionOut = cc.ActionEase.extend(/** @lends cc.EaseQuarticActionOu
  * Reference easeOutQuart: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeQuarticActionOut() instead.
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.QuarticActionOut());
+ *
  * @example
- * //example
+ * //The old usage
+ * cc.EaseQuarticActionOut.create(action);
+ * //The new usage
  * action.easing(cc.EaseQuarticActionOut());
+ *
  * @param action
  * @returns {cc.EaseQuarticActionOut}
  */
@@ -2455,6 +2753,14 @@ cc.easeQuarticActionOut = function(){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeQuarticActionInOut());
+ *
+ * @example
+ * //The old usage
+ * cc.EaseQuarticActionInOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeQuarticActionInOut());
  */
 cc.EaseQuarticActionInOut = cc.ActionEase.extend(/** @lends cc.EaseQuarticActionInOut# */{
     _updateTime: function(time){
@@ -2500,10 +2806,15 @@ cc.EaseQuarticActionInOut = cc.ActionEase.extend(/** @lends cc.EaseQuarticAction
  * Reference easeInOutQuart: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeQuarticActionInOut() instead.
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeQuarticActionInOut());
+ *
  * @example
- * //example
+ * //The old usage
+ * cc.EaseQuarticActionInOut.create(action);
+ * //The new usage
  * action.easing(cc.easeQuarticActionInOut());
+ *
  * @param action
  * @returns {cc.EaseQuarticActionInOut}
  */
@@ -2534,6 +2845,14 @@ cc.easeQuarticActionInOut = function(){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeQuinticActionIn());
+ *
+ * @example
+ * //The old usage
+ * cc.EaseQuinticActionIn.create(action);
+ * //The new usage
+ * action.easing(cc.easeQuinticActionIn());
  */
 cc.EaseQuinticActionIn = cc.ActionEase.extend(/** @lends cc.EaseQuinticActionIn# */{
     _updateTime: function(time){
@@ -2575,10 +2894,15 @@ cc.EaseQuinticActionIn = cc.ActionEase.extend(/** @lends cc.EaseQuinticActionIn#
  * Reference easeInQuint: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeQuinticActionIn() instead.
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeQuinticActionIn());
+ *
  * @example
- * //example
+ * //The old usage
+ * cc.EaseQuinticActionIn.create(action);
+ * //The new usage
  * action.easing(cc.easeQuinticActionIn());
+ *
  * @param action
  * @returns {cc.EaseQuinticActionIn}
  */
@@ -2613,6 +2937,14 @@ cc.easeQuinticActionIn = function(){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeQuadraticActionOut());
+ *
+ * @example
+ * //The old usage
+ * cc.EaseQuinticActionOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeQuadraticActionOut());
  */
 cc.EaseQuinticActionOut = cc.ActionEase.extend(/** @lends cc.EaseQuinticActionOut# */{
     _updateTime: function(time){
@@ -2655,10 +2987,15 @@ cc.EaseQuinticActionOut = cc.ActionEase.extend(/** @lends cc.EaseQuinticActionOu
  * Reference easeOutQuint: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeQuadraticActionOut() instead.
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeQuadraticActionOut());
+ *
  * @example
- * //example
+ * //The old usage
+ * cc.EaseQuinticActionOut.create(action);
+ * //The new usage
  * action.easing(cc.easeQuadraticActionOut());
+ *
  * @param action
  * @returns {cc.EaseQuinticActionOut}
  */
@@ -2672,6 +3009,7 @@ cc._easeQuinticActionOut = {
         return cc._easeQuinticActionOut;
     }
 };
+
 /**
  * Creates the action easing object. <br />
  * Reference easeOutQuint: <br />
@@ -2692,6 +3030,14 @@ cc.easeQuinticActionOut = function(){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeQuinticActionInOut());
+ *
+ * @example
+ * //The old usage
+ * cc.EaseQuinticActionInOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeQuinticActionInOut());
  */
 cc.EaseQuinticActionInOut = cc.ActionEase.extend(/** @lends cc.EaseQuinticActionInOut# */{
     _updateTime: function(time){
@@ -2737,10 +3083,15 @@ cc.EaseQuinticActionInOut = cc.ActionEase.extend(/** @lends cc.EaseQuinticAction
  * Reference easeInOutQuint: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeQuinticActionInOut() instead.
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeQuinticActionInOut());
+ *
  * @example
- * //example
+ * //The old usage
+ * cc.EaseQuinticActionInOut.create(action);
+ * //The new usage
  * action.easing(cc.easeQuinticActionInOut());
+ *
  * @param action
  * @returns {cc.EaseQuinticActionInOut}
  */
@@ -2775,6 +3126,14 @@ cc.easeQuinticActionInOut = function(){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeCircleActionIn());
+ *
+ * @example
+ * //The old usage
+ * cc.EaseCircleActionIn.create(action);
+ * //The new usage
+ * action.easing(cc.easeCircleActionIn());
  */
 cc.EaseCircleActionIn = cc.ActionEase.extend(/** @lends cc.EaseCircleActionIn# */{
     _updateTime: function(time){
@@ -2816,10 +3175,15 @@ cc.EaseCircleActionIn = cc.ActionEase.extend(/** @lends cc.EaseCircleActionIn# *
  * Reference easeInCirc: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeCircleActionIn() instead.
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeCircleActionIn());
+ *
  * @example
- * //example
+ * //The old usage
+ * cc.EaseCircleActionIn.create(action);
+ * //The new usage
  * action.easing(cc.easeCircleActionIn());
+ *
  * @param action
  * @returns {cc.EaseCircleActionIn}
  */
@@ -2854,6 +3218,14 @@ cc.easeCircleActionIn = function(){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeCircleActionOut());
+ *
+ * @example
+ * //The old usage
+ * cc.EaseCircleActionOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeCircleActionOut());
  */
 cc.EaseCircleActionOut = cc.ActionEase.extend(/** @lends cc.EaseCircleActionOut# */{
     _updateTime: function(time){
@@ -2896,10 +3268,15 @@ cc.EaseCircleActionOut = cc.ActionEase.extend(/** @lends cc.EaseCircleActionOut#
  * Reference easeOutCirc: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeCircleActionOut() instead.
- * @exampple
- * //example
- * actioneasing(cc.easeCircleActionOut());
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeCircleActionOut());
+ *
+ * @example
+ * //The old usage
+ * cc.EaseCircleActionOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeCircleActionOut());
+ *
  * @param action
  * @returns {cc.EaseCircleActionOut}
  */
@@ -2934,6 +3311,14 @@ cc.easeCircleActionOut = function(){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeCircleActionInOut());
+ *
+ * @example
+ * //The old usage
+ * cc.EaseCircleActionInOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeCircleActionInOut());
  */
 cc.EaseCircleActionInOut = cc.ActionEase.extend(/** @lends cc.EaseCircleActionInOut# */{
     _updateTime: function(time){
@@ -2979,10 +3364,15 @@ cc.EaseCircleActionInOut = cc.ActionEase.extend(/** @lends cc.EaseCircleActionIn
  * Reference easeInOutCirc: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeCircleActionInOut instead.
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeCircleActionInOut());
+ *
  * @example
- * //example
+ * //The old usage
+ * cc.EaseCircleActionInOut.create(action);
+ * //The new usage
  * action.easing(cc.easeCircleActionInOut());
+ *
  * @param action
  * @returns {cc.EaseCircleActionInOut}
  */
@@ -3017,6 +3407,14 @@ cc.easeCircleActionInOut = function(){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 <br /> action.easing(cc.easeCubicActionIn());
+ *
+ * @example
+ * //The old usage
+ * cc.EaseCubicActionIn.create(action);
+ * //The new usage
+ * action.easing(cc.easeCubicActionIn());
  */
 cc.EaseCubicActionIn = cc.ActionEase.extend(/** @lends cc.EaseCubicActionIn# */{
     _updateTime: function(time){
@@ -3058,10 +3456,15 @@ cc.EaseCubicActionIn = cc.ActionEase.extend(/** @lends cc.EaseCubicActionIn# */{
  * Reference easeInCubic: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeCubicActionOut() instead.
+ *
+ * @deprecated since v3.0 <br /> action.easing(cc.easeCubicActionIn());
+ *
  * @example
- * //example
+ * //The old usage
+ * cc.EaseCubicActionIn.create(action);
+ * //The new usage
  * action.easing(cc.easeCubicActionIn());
+ *
  * @param action
  * @returns {cc.EaseCubicActionIn}
  */
@@ -3075,6 +3478,7 @@ cc._easeCubicActionIn = {
         return cc._easeCubicActionIn;
     }
 };
+
 /**
  * Creates the action easing object. <br />
  * Reference easeInCubic: <br />
@@ -3095,6 +3499,14 @@ cc.easeCubicActionIn = function(){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeCubicActionOut());
+ *
+ * @example
+ * //The old usage
+ * cc.EaseCubicActionOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeCubicActionOut());
  */
 cc.EaseCubicActionOut = cc.ActionEase.extend(/** @lends cc.EaseCubicActionOut# */{
     _updateTime: function(time){
@@ -3137,10 +3549,15 @@ cc.EaseCubicActionOut = cc.ActionEase.extend(/** @lends cc.EaseCubicActionOut# *
  * Reference easeOutCubic: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeCubicActionOut() instead.
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeCubicActionOut());
+ *
  * @example
- * //example
+ * //The old usage
+ * cc.EaseCubicActionOut.create(action);
+ * //The new usage
  * action.easing(cc.easeCubicActionOut());
+ *
  * @param action
  * @returns {cc.EaseCubicActionOut}
  */
@@ -3175,6 +3592,14 @@ cc.easeCubicActionOut = function(){
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @class
  * @extends cc.ActionEase
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeCubicActionInOut());
+ *
+ * @example
+ * //The old usage
+ * cc.EaseCubicActionInOut.create(action);
+ * //The new usage
+ * action.easing(cc.easeCubicActionInOut());
  */
 cc.EaseCubicActionInOut = cc.ActionEase.extend(/** @lends cc.EaseCubicActionInOut# */{
     _updateTime: function(time){
@@ -3220,10 +3645,15 @@ cc.EaseCubicActionInOut = cc.ActionEase.extend(/** @lends cc.EaseCubicActionInOu
  * Reference easeInOutCubic: <br />
  * {@link http://www.zhihu.com/question/21981571/answer/19925418}
  * @static
- * @deprecated since v3.0 <br /> Please use cc.easeCubicActionInOut() instead.
+ *
+ * @deprecated since v3.0 <br /> Please use action.easing(cc.easeCubicActionInOut());
+ *
  * @example
- * //example
+ * //The old usage
+ * cc.EaseCubicActionInOut.create(action);
+ * //The new usage
  * action.easing(cc.easeCubicActionInOut());
+ *
  * @param action
  * @returns {cc.EaseCubicActionInOut}
  */

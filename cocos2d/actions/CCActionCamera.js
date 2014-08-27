@@ -279,6 +279,6 @@ cc.orbitCamera = function (t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, 
  * @param {Number} deltaAngleX
  * @return {cc.OrbitCamera}
  * @static
- * @deprecated since v3.0
+ * @deprecated since v3.0 please use cc.orbitCamera() instead.
  */
 cc.OrbitCamera.create = cc.orbitCamera;
