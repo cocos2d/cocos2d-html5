@@ -483,7 +483,7 @@ cc.TransitionMoveInL = cc.TransitionScene.extend(/** @lends cc.TransitionMoveInL
      * @return {cc.EaseOut}
      */
     easeActionWithAction:function (action) {
-        return cc.EaseOut(action, 2.0);
+        return new cc.EaseOut(action, 2.0);
     }
 });
 
@@ -689,7 +689,7 @@ cc.TransitionSlideInL = cc.TransitionScene.extend(/** @lends cc.TransitionSlideI
      * @return {*}
      */
     easeActionWithAction:function (action) {
-        return cc.EaseInOut(action, 2.0);
+        return new cc.EaseInOut(action, 2.0);
     }
 });
 
@@ -896,12 +896,12 @@ cc.TransitionShrinkGrow = cc.TransitionScene.extend(/** @lends cc.TransitionShri
 		    anchorY: 0.5
 	    });
 
-        var scaleOut = cc.ScaleTo.create(this._duration, 0.01);
-        var scaleIn = cc.ScaleTo.create(this._duration, 1.0);
+        var scaleOut = cc.scaleTo(this._duration, 0.01);
+        var scaleIn = cc.scaleTo(this._duration, 1.0);
 
         this._inScene.runAction(this.easeActionWithAction(scaleIn));
         this._outScene.runAction(
-            cc.Sequence.create(this.easeActionWithAction(scaleOut), cc.CallFunc.create(this.finish, this))
+            cc.sequence(this.easeActionWithAction(scaleOut), cc.callFunc(this.finish, this))
         );
     },
 
@@ -910,7 +910,7 @@ cc.TransitionShrinkGrow = cc.TransitionScene.extend(/** @lends cc.TransitionShri
      * @return {cc.EaseOut}
      */
     easeActionWithAction:function (action) {
-        return cc.EaseOut(action, 2.0);
+        return new cc.EaseOut(action, 2.0);
     }
 });
 
@@ -1720,7 +1720,7 @@ cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplit
      * @return {cc.EaseInOut}
      */
     easeActionWithAction:function (action) {
-        return cc.EaseInOut(action, 3.0);
+        return new cc.EaseInOut(action, 3.0);
     },
 
     /**
