@@ -125,19 +125,39 @@ cc.CONSTRAINT_COLOR = cc.color(0, 255, 0, 128);
  * @property {cp.Space} space     Physic world space
  */
 cc.PhysicsDebugNode = cc.DrawNode.extend({
-	space:null,
-
-    _spaceObj:null,
+	_space:null,
     _className:"PhysicsDebugNode",
 
+    /**
+     * constructor of cc.PhysicsDebugNode
+     * @param {cp.Space} space
+     */
+    ctor: function () {
+        cc.DrawNode.prototype.ctor.call(this);
+        if(this.init())
+            this._space = space;
+    },
+
+    /**
+     * get space
+     * @returns {cp.Space}
+     */
     getSpace:function () {
-        return this.space;
+        return this._space;
     },
 
+    /**
+     * set space
+     * @param {cp.Space} space
+     */
     setSpace:function (space) {
-        this.space = space;
+        this._space = space;
     },
 
+    /**
+     * draw
+     * @param {object} context
+     */
     draw:function (context) {
         if (!this.space)
             return;
@@ -149,26 +169,14 @@ cc.PhysicsDebugNode = cc.DrawNode.extend({
     }
 });
 
-/** Create a debug node for an Objective-Chipmunk space. */
-cc.PhysicsDebugNode.debugNodeForChipmunkSpace = function (space) {
-    var node = new cc.PhysicsDebugNode();
-    if (node.init()) {
-        node._spaceObj = space;
-        node.space = space.space;
-        return node;
-    }
-    return null;
+/**
+ * Create a debug node for a regular Chipmunk space.
+ * @deprecated since v3.0, please use new cc.PhysicsDebugNode(space)
+ * @param {cp.Space} space
+ * @return {cc.PhysicsDebugNode}
+ */
+cc.PhysicsDebugNode.create = function (space) {
+    return new cc.PhysicsDebugNode(space);
 };
 
-/** Create a debug node for a regular Chipmunk space. */
-cc.PhysicsDebugNode.debugNodeForCPSpace = function (space) {
-    var node = new cc.PhysicsDebugNode();
-    if (node.init()) {
-        node.space = space;
-        return node;
-    }
-    return null;
-};
-
-cc.PhysicsDebugNode.create = cc.PhysicsDebugNode.debugNodeForCPSpace;
 
