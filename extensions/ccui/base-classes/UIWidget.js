@@ -90,7 +90,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _touchEventCallback: null,
 
     /**
-     * Constructor
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @function
      */
     ctor: function () {
@@ -112,7 +112,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     /**
-     * initializes state of widget.
+     * initializes state of widget. please do not call this function by yourself, you should pass the parameters to constructor to initialize it .
      * @returns {boolean}
      */
     init: function () {
@@ -560,7 +560,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             else
                 this.setBrightStyle(ccui.Widget.BRIGHT_STYLE_NORMAL);
         } else
-            this.onPressStateChangedToDisabled();
+            this._onPressStateChangedToDisabled();
     },
 
     /**
@@ -720,7 +720,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             this._brightStyle = ccui.Widget.BRIGHT_STYLE_NONE;
             this.setBrightStyle(ccui.Widget.BRIGHT_STYLE_NORMAL);
         } else
-            this.onPressStateChangedToDisabled();
+            this._onPressStateChangedToDisabled();
     },
 
     /**
@@ -735,32 +735,23 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         this._brightStyle = style;
         switch (this._brightStyle) {
             case ccui.Widget.BRIGHT_STYLE_NORMAL:
-                this.onPressStateChangedToNormal();
+                this._onPressStateChangedToNormal();
                 break;
             case ccui.Widget.BRIGHT_STYLE_HIGH_LIGHT:
-                this.onPressStateChangedToPressed();
+                this._onPressStateChangedToPressed();
                 break;
             default:
                 break;
         }
     },
 
-    /**
-     * The call back function is calling when widget's state changed to normal.
-     */
-    onPressStateChangedToNormal: function () {
+    _onPressStateChangedToNormal: function () {
     },
 
-    /**
-     * call back function called widget's state changed to selected.
-     */
-    onPressStateChangedToPressed: function () {
+    _onPressStateChangedToPressed: function () {
     },
 
-    /**
-     * call back function called widget's state changed to dark.
-     */
-    onPressStateChangedToDisabled: function () {
+    _onPressStateChangedToDisabled: function () {
     },
 
     /**
@@ -1339,7 +1330,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
     /**
      * Gets the left boundary position of this widget.
-     * @deprecated
+     * @deprecated since v3.0, please use getLeftBoundary instead.
      * @returns {number}
      */
     getLeftInParent: function(){
@@ -1349,7 +1340,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
     /**
      * Gets the bottom boundary position of this widget.
-     * @deprecated
+     * @deprecated since v3.0, please use getBottomBoundary instead.
      * @returns {number}
      */
     getBottomInParent: function(){
@@ -1359,7 +1350,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
     /**
      * Gets the right boundary position of this widget.
-     * @deprecated
+     * @deprecated since v3.0, please use getRightBoundary instead.
      * @returns {number}
      */
     getRightInParent: function(){
@@ -1369,7 +1360,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
     /**
      * Gets the top boundary position of this widget.
-     * @deprecated
+     * @deprecated since v3.0, please use getTopBoundary instead.
      * @returns {number}
      */
     getTopInParent: function(){
@@ -1379,7 +1370,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
     /**
      * Gets the touch end point of widget when widget is selected.
-     * @deprecated
+     * @deprecated since v3.0, please use getTouchEndPosition instead.
      * @returns {cc.Point} the touch end point.
      */
     getTouchEndPos: function () {
@@ -1389,7 +1380,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
     /**
      *Gets the touch move point of widget when widget is selected.
-     * @deprecated
+     * @deprecated since v3.0, please use getTouchMovePosition instead.
      * @returns {cc.Point} the touch move point.
      */
     getTouchMovePos: function () {
@@ -1399,7 +1390,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
     /**
      * Checks a point if in parent's area.
-     * @deprecated
+     * @deprecated since v3.0, please use isClippingParentContainsPoint instead.
      * @param {cc.Point} pt
      * @returns {Boolean}
      */
@@ -1410,7 +1401,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
     /**
      * Gets the touch began point of widget when widget is selected.
-     * @deprecated
+     * @deprecated since v3.0, please use getTouchBeganPosition instead.
      * @returns {cc.Point} the touch began point.
      */
     getTouchStartPos: function () {
@@ -1420,7 +1411,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
     /**
      * Changes the size that is widget's size
-     * @deprecated
+     * @deprecated since v3.0, please use setContentSize instead.
      * @param {cc.Size} size  that is widget's size
      */
     setSize: function (size) {
@@ -1429,7 +1420,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
     /**
      * Returns size of widget
-     * @deprecated
+     * @deprecated since v3.0, please use getContentSize instead.
      * @returns {cc.Size}
      */
     getSize: function () {
@@ -1437,11 +1428,11 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     /**
-     * add node for widget (this function is deleted in -x)
+     * Adds a node for widget (this function is deleted in -x)
      * @param {cc.Node} node
      * @param {Number} zOrder
      * @param {Number} tag
-     * @deprecated
+     * @deprecated since v3.0, please use addChild instead.
      */
     addNode: function (node, zOrder, tag) {
         if (node instanceof ccui.Widget) {
@@ -1453,8 +1444,8 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     /**
-     * get node by tag
-     * @deprecated
+     * Gets node by tag
+     * @deprecated since v3.0, please use getChildByTag instead.
      * @param {Number} tag
      * @returns {cc.Node}
      */
@@ -1470,8 +1461,8 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     /**
-     * get all node
-     * @deprecated
+     * Returns all children.
+     * @deprecated since v3.0, please use getChildren instead.
      * @returns {Array}
      */
     getNodes: function () {
@@ -1479,19 +1470,19 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     /**
-     * remove node
-     * @deprecated
+     * Removes a node from ccui.Widget
+     * @deprecated since v3.0, please use removeChild instead.
      * @param {cc.Node} node
      * @param {Boolean} cleanup
      */
     removeNode: function (node, cleanup) {
-        cc.Node.prototype.removeChild.call(this, node);
+        cc.Node.prototype.removeChild.call(this, node, cleanup);
         cc.arrayRemoveObject(this._nodes, node);
     },
 
     /**
-     *  remove node by tag
-     * @deprecated
+     * Removes node by tag
+     * @deprecated since v3.0, please use removeChildByTag instead.
      * @param {Number} tag
      * @param {Boolean} [cleanup]
      */
@@ -1504,8 +1495,8 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     /**
-     * remove all node
-     * @deprecated
+     * Removes all node
+     * @deprecated since v3.0, please use removeAllChildren instead.
      */
     removeAllNodes: function () {
         for (var i = 0; i < this._nodes.length; i++) {
@@ -1530,7 +1521,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         this.setColor(this.getColor());
         this.setOpacity(this.getOpacity());
     }
-
 });
 
 var _p = ccui.Widget.prototype;
@@ -1744,6 +1734,11 @@ ccui.Widget.POSITION_PERCENT = 1;
 cc.EventFocus = cc.Event.extend(/** @lends cc.EventFocus# */{
     _widgetGetFocus: null,
     _widgetLoseFocus: null,
+    /**
+     * Constructor function.
+     * @param {ccui.Widget} widgetLoseFocus
+     * @param {ccui.Widget} widgetGetFocus
+     */
     ctor: function(widgetLoseFocus, widgetGetFocus){
         this._widgetGetFocus = widgetGetFocus;
         this._widgetLoseFocus = widgetLoseFocus;

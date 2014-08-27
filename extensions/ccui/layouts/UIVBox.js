@@ -42,7 +42,7 @@ ccui.VBox = ccui.Layout.extend(/** @lends ccui.VBox# */{
     },
 
     /**
-     * Initializes a VBox.
+     * Initializes a VBox. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
      * @override
      * @returns {boolean}
      */
