@@ -225,6 +225,9 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
 
     /**
      * Constructor of cc.MenuItemLabel
+     * @param {cc.Node} label
+     * @param {function|String} selector
+     * @param {cc.Node} target
      */
     ctor: function (label, selector, target) {
         cc.MenuItem.prototype.ctor.call(this, selector, target);
@@ -460,7 +463,14 @@ cc.MenuItemLabel.create = function (label, selector, target) {
 cc.MenuItemAtlasFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemAtlasFont# */{
 
     /**
-        the contructor of cc.MenuItemAtlasFont
+     * the contructor of cc.MenuItemAtlasFont
+     * @param {String} value
+     * @param {String} charMapFile
+     * @param {Number} itemWidth
+     * @param {Number} itemHeight
+     * @param {String} startCharMap a single character
+     * @param {function|String|Null} callback
+     * @param {cc.Node|Null} target
      */
     ctor: function (value, charMapFile, itemWidth, itemHeight, startCharMap, callback, target) {
         var label;
@@ -536,6 +546,9 @@ cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
 
     /**
      * Constructor of cc.MenuItemFont
+     * @param {String} value text for the menu item
+     * @param {function|String} callback
+     * @param {cc.Node} target
      */
     ctor: function (value, callback, target) {
         var label;
@@ -718,6 +731,11 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
 
     /**
      * Constructor of cc.MenuItemSprite
+     * @param {Image|Null} normalSprite normal state image
+     * @param {Image|Null} selectedSprite selected state image
+     * @param {Image|cc.Node|Null} three disabled state image OR target node
+     * @param {String|function|cc.Node|Null} four callback function name in string or actual function, OR target Node
+     * @param {String|function|Null} five callback function name in string or actual function
      */
     ctor: function (normalSprite, selectedSprite, three, four, five) {
         cc.MenuItem.prototype.ctor.call(this);
@@ -1054,6 +1072,11 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
 
     /**
      * Constructor of cc.MenuItemImage
+     * @param {string|null} normalImage
+     * @param {string|null} selectedImage
+     * @param {string|null} disabledImage
+     * @param {function|string|null} callback
+     * @param {cc.Node|null} target
      */
     ctor: function (normalImage, selectedImage, three, four, five) {
         var normalSprite = null,
@@ -1415,7 +1438,7 @@ cc.defineGetterSetter(_p, "selectedIndex", _p.getSelectedIndex, _p.setSelectedIn
 /**
  * create a simple container class that "toggles" it's inner items<br/>
  * The inner items can be any MenuItem
- * @deprecated since since v3.0 please use new cc.MenuItemToggle(params) instead
+ * @deprecated since v3.0 please use new cc.MenuItemToggle(params) instead
  * @return {cc.MenuItemToggle}
  * @example
  * // Example

@@ -46,7 +46,7 @@ cc.MENU_HANDLER_PRIORITY = -128;
 cc.DEFAULT_PADDING = 5;
 
 /**
- <p> Features and Limitation:<br/>
+ *<p> Features and Limitation:<br/>
  *  - You can add MenuItem objects in runtime using addChild:<br/>
  *  - But the only accepted children are MenuItem objects</p>
  * @class
@@ -67,6 +67,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
 
     /**
      * Constructor of cc.Menu override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+     * @param {...cc.MenuItem|null} menuItems}
      */
     ctor: function (menuItems) {
         cc.Layer.prototype.ctor.call(this);
