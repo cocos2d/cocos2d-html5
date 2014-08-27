@@ -118,7 +118,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             strInfo = "";
 
         fontSize = fontSize || 16;
-        dimensions = dimensions || cc.size(0, fontSize);
+        dimensions = dimensions || cc.size(0, 0/*fontSize*/);
         hAlignment = hAlignment || cc.TEXT_ALIGNMENT_LEFT;
         vAlignment = vAlignment || cc.VERTICAL_TEXT_ALIGNMENT_TOP;
 
