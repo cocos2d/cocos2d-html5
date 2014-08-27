@@ -46,6 +46,7 @@ if (cc.ENABLE_GL_STATE_CACHE) {
 /**
  * Invalidates the GL state cache.<br/>
  * If CC_ENABLE_GL_STATE_CACHE it will reset the GL state cache.
+ * @function
  */
 cc.glInvalidateStateCache = function () {
     cc.kmGLFreeAll();
@@ -67,6 +68,7 @@ cc.glInvalidateStateCache = function () {
 /**
  * Uses the GL program in case program is different than the current one.<br/>
  * If CC_ENABLE_GL_STATE_CACHE is disabled, it will the glUseProgram() directly.
+ * @function
  * @param {WebGLProgram} program
  */
 cc.glUseProgram = function (program) {
@@ -85,6 +87,7 @@ if(!cc.ENABLE_GL_STATE_CACHE){
 /**
  * Deletes the GL program. If it is the one that is being used, it invalidates it.<br/>
  * If CC_ENABLE_GL_STATE_CACHE is disabled, it will the glDeleteProgram() directly.
+ * @function
  * @param {WebGLProgram} program
  */
 cc.glDeleteProgram = function (program) {
@@ -98,6 +101,7 @@ cc.glDeleteProgram = function (program) {
 /**
  * Uses a blending function in case it not already used.<br/>
  * If CC_ENABLE_GL_STATE_CACHE is disabled, it will the glBlendFunc() directly.
+ * @function
  * @param {Number} sfactor
  * @param {Number} dfactor
  */
@@ -109,6 +113,11 @@ cc.glBlendFunc = function (sfactor, dfactor) {
     }
 };
 
+/**
+ * @function
+ * @param {Number} sfactor
+ * @param {Number} dfactor
+ */
 cc.setBlending = function (sfactor, dfactor) {
     var ctx = cc._renderContext;
     if ((sfactor === ctx.ONE) && (dfactor === ctx.ZERO)) {
@@ -121,6 +130,11 @@ cc.setBlending = function (sfactor, dfactor) {
     }
 };
 
+/**
+ * @function
+ * @param {Number} sfactor
+ * @param {Number} dfactor
+ */
 cc.glBlendFuncForParticle = function(sfactor, dfactor) {
     if ((sfactor !== cc._blendingSource) || (dfactor !== cc._blendingDest)) {
         cc._blendingSource = sfactor;
@@ -143,6 +157,7 @@ if(!cc.ENABLE_GL_STATE_CACHE){
 /**
  * Resets the blending mode back to the cached state in case you used glBlendFuncSeparate() or glBlendEquation().<br/>
  * If CC_ENABLE_GL_STATE_CACHE is disabled, it will just set the default blending mode using GL_FUNC_ADD.
+ * @function
  */
 cc.glBlendResetToCache = function () {
     var ctx = cc._renderContext;
@@ -155,6 +170,7 @@ cc.glBlendResetToCache = function () {
 
 /**
  * sets the projection matrix as dirty
+ * @function
  */
 cc.setProjectionMatrixDirty = function () {
     cc._currentProjectionMatrix = -1;
@@ -170,6 +186,7 @@ cc.setProjectionMatrixDirty = function () {
  *                                                              <br/>
  *    These flags can be ORed. The flags that are not present, will be disabled.
  * </p>
+ * @function
  * @param {cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR | cc.VERTEX_ATTRIB_FLAG_TEX_OORDS} flags
  */
 cc.glEnableVertexAttribs = function (flags) {
@@ -208,6 +225,7 @@ cc.glEnableVertexAttribs = function (flags) {
 /**
  * If the texture is not already bound, it binds it.<br/>
  * If CC_ENABLE_GL_STATE_CACHE is disabled, it will call glBindTexture() directly.
+ * @function
  * @param {cc.Texture2D} textureId
  */
 cc.glBindTexture2D = function (textureId) {
@@ -217,6 +235,7 @@ cc.glBindTexture2D = function (textureId) {
 /**
  * If the texture is not already bound to a given unit, it binds it.<br/>
  * If CC_ENABLE_GL_STATE_CACHE is disabled, it will call glBindTexture() directly.
+ * @function
  * @param {Number} textureUnit
  * @param {cc.Texture2D} textureId
  */
@@ -246,6 +265,7 @@ if (!cc.ENABLE_GL_STATE_CACHE){
 /**
  * It will delete a given texture. If the texture was bound, it will invalidate the cached. <br/>
  * If CC_ENABLE_GL_STATE_CACHE is disabled, it will call glDeleteTextures() directly.
+ * @function
  * @param {WebGLTexture} textureId
  */
 cc.glDeleteTexture = function (textureId) {
@@ -255,6 +275,7 @@ cc.glDeleteTexture = function (textureId) {
 /**
  * It will delete a given texture. If the texture was bound, it will invalidate the cached for the given texture unit.<br/>
  * If CC_ENABLE_GL_STATE_CACHE is disabled, it will call glDeleteTextures() directly.
+ * @function
  * @param {Number} textureUnit
  * @param {WebGLTexture} textureId
  */
@@ -269,7 +290,8 @@ cc.glDeleteTextureN = function (textureUnit, textureId) {
 /**
  * If the vertex array is not already bound, it binds it.<br/>
  * If CC_ENABLE_GL_STATE_CACHE is disabled, it will call glBindVertexArray() directly.
- * @param vaoId
+ * @function
+ * @param {Number} vaoId
  */
 cc.glBindVAO = function (vaoId) {
     if (!cc.TEXTURE_ATLAS_USE_VAO)
@@ -289,6 +311,7 @@ cc.glBindVAO = function (vaoId) {
 /**
  * It will enable / disable the server side GL states.<br/>
  * If CC_ENABLE_GL_STATE_CACHE is disabled, it will call glEnable() directly.
+ * @function
  * @param {Number} flags
  */
 cc.glEnable = function (flags) {

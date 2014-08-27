@@ -34,7 +34,12 @@
  as the private API may change with little or no warning.
  */
 
-// Helper. Converts an array of numbers into an array of vectors(x,y)
+/**
+ *  Converts an array of numbers into an array of vectors(x,y)
+ *  @function
+ *  @param {Array} verts
+ *  @return {Array}
+ */
 cc.__convertVerts = function (verts) {
     var ret = [];
     for (var i = 0; i < verts.length / 2; i++) {
@@ -43,6 +48,12 @@ cc.__convertVerts = function (verts) {
     return ret;
 };
 
+/**
+ * color for body
+ * @function
+ * @param {cp.Body} body
+ * @return {cc.color}
+ */
 cc.ColorForBody = function (body) {
     if (body.isRogue() || body.isSleeping()) {
         return cc.color(128, 128, 128, 128);
@@ -53,6 +64,11 @@ cc.ColorForBody = function (body) {
     }
 };
 
+/**
+ * draw shape
+ * @param {cp.Shape} shape
+ * @param renderer
+ */
 cc.DrawShape = function (shape, renderer) {
     var body = shape.body;
     var color = cc.ColorForBody(body);
@@ -74,6 +90,11 @@ cc.DrawShape = function (shape, renderer) {
     }
 };
 
+/**
+ * draw constraint
+ * @param {cp.Constraint} constraint
+ * @param renderer
+ */
 cc.DrawConstraint = function (constraint, renderer) {
     var body_a = constraint.a;
     var body_b = constraint.b;
@@ -111,6 +132,10 @@ cc.DrawConstraint = function (constraint, renderer) {
     }
 };
 
+/**
+ * @constant
+ * @type {cc.color}
+ */
 cc.CONSTRAINT_COLOR = cc.color(0, 255, 0, 128);
 
 
