@@ -36,14 +36,26 @@ cc.NodeGrid = cc.Node.extend({
     grid: null,
     _target: null,
 
+    /**
+     * Gets the grid object.
+     * @returns {cc.GridBase}
+     */
     getGrid: function () {
         return this.grid;
     },
 
+    /**
+     * Set the grid object.
+     * @param {cc.GridBase} grid
+     */
     setGrid: function (grid) {
         this.grid = grid;
     },
 
+    /**
+     * Set the target
+     * @param {cc.Node} target
+     */
     setTarget: function (target) {
         //var self = this;
         //self._target && self.removeChild(self._target);
@@ -51,6 +63,14 @@ cc.NodeGrid = cc.Node.extend({
         //self.addChild(self._target);
     },
 
+    /** <p>"add" logic MUST only be in this method <br/> </p>
+     *
+     * <p>If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.</p>
+     * @function
+     * @param {cc.Node} child  A child node
+     * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setZOrder(int)
+     * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
+     */
     addChild: function (child, zOrder, tag) {
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
 
@@ -58,6 +78,9 @@ cc.NodeGrid = cc.Node.extend({
             this._target = child;
     },
 
+    /**
+     * Recursive method that visit its children and draw them
+     */
     visit: function () {
         var self = this;
         // quick return if not visible
@@ -141,10 +164,10 @@ cc.defineGetterSetter(_p, "target", null, _p.setTarget);
 
 
 /**
- * Creates a NodeGrid
+ * Creates a NodeGrid. <br />
  * Implementation cc.NodeGrid
- * @deprecated
- * @return {cc.NodeGrid|null}
+ * @deprecated since v3.0 please new cc.NodeGrid instead.
+ * @return {cc.NodeGrid}
  */
 cc.NodeGrid.create = function () {
     return new cc.NodeGrid();

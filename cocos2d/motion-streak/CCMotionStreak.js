@@ -560,6 +560,9 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
  * @param {Number} color
  * @param {string|cc.Texture2D} texture texture filename or texture
  * @return {cc.MotionStreak}
+ * @example
+ * //example
+ * new cc.MotionStreak(2, 3, 32, cc.color.GREEN, s_streak);
  */
 cc.MotionStreak.create = function (fade, minSeg, stroke, color, texture) {
     return new cc.MotionStreak(fade, minSeg, stroke, color, texture);
