@@ -911,7 +911,7 @@ cc.defineGetterSetter(_p, "clearColorVal", _p.getClearColor, _p.setClearColor);
 
 /**
  * creates a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid
- * @deprecated
+ * @deprecated since v3.0 please use new cc.RenderTexture() instead.
  * @param {Number} width
  * @param {Number} height
  * @param {cc.IMAGE_FORMAT_JPEG|cc.IMAGE_FORMAT_PNG|cc.IMAGE_FORMAT_RAWDATA} format
