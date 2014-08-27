@@ -47,7 +47,7 @@ cc.pool = /** @lends cc.pool# */{
     _pool: {},
 
     /**
-     * Put the obj in pool
+     * Put the cc.Node object in pool
      * @param obj
      */
     putInPool: function (obj) {
@@ -69,7 +69,7 @@ cc.pool = /** @lends cc.pool# */{
     },
 
     /**
-     * Check if this kind of obj has already in pool
+     * Check if this kind of object has already in pool
      * @param objClass
      * @returns {boolean} if this kind of obj is already in pool return true,else return false;
      */
@@ -80,7 +80,7 @@ cc.pool = /** @lends cc.pool# */{
     },
 
     /**
-     * Remove the obj if you want to delete it;
+     * Remove the object if you want to delete it;
      * @param obj
      */
     removeObject: function (obj) {
@@ -99,7 +99,7 @@ cc.pool = /** @lends cc.pool# */{
     },
 
     /**
-     * Get the obj from pool
+     * Get the object from pool
      * @param args
      * @returns {*} call the reuse function an return the obj
      */
@@ -117,7 +117,7 @@ cc.pool = /** @lends cc.pool# */{
     },
 
     /**
-     *  remove all objs in pool and reset the pool
+     *  remove all object in pool and reset the pool
      */
     drainAllPools: function () {
         var locPool = this._pool;
