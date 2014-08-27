@@ -30,8 +30,23 @@
  * @extends cc.AtlasNode
  *
  * @property {String}   string  - Content string of label
+ *
+ * @param {String} strText
+ * @param {String} charMapFile  charMapFile or fntFile
+ * @param {Number} [itemWidth=0]
+ * @param {Number} [itemHeight=0]
+ * @param {Number} [startCharMap=""]
+ * @example
+ * //creates the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas
+ * var myLabel = new cc.LabelAtlas('Text to display', 'CharMapfile.png', 12, 20, ' ')
+ *
+ * //creates the cc.LabelAtlas with a string, a fnt file
+ * var myLabel = new cc.LabelAtlas('Text to display', 'CharMapFile.plist‘);
  */
 cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
+
+    //property String is Getter and Setter
+
     // string to render
     _string: null,
     // the first char in the charmap
@@ -43,22 +58,17 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 
     /**
      * <p>
-     *  Create a label atlas.
-     *  It accepts two groups of parameters:                                                            <br/>
-     * a) string, fntFile                                                                               <br/>
-     * b) label, textureFilename, width, height, startChar                                              <br/>
+     *  Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+     *  Create a label atlas. <br />
+     *  It accepts two groups of parameters: <br/>
+     * a) string, fntFile <br/>
+     * b) label, textureFilename, width, height, startChar <br/>
      * </p>
      * @param {String} strText
      * @param {String} charMapFile  charMapFile or fntFile
      * @param {Number} [itemWidth=0]
      * @param {Number} [itemHeight=0]
      * @param {Number} [startCharMap=""]
-     * @example
-     * //creates the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas
-     * var myLabel = new cc.LabelAtlas('Text to display', 'CharMapfile.png', 12, 20, ' ')
-     *
-     * //creates the cc.LabelAtlas with a string, a fnt file
-     * var myLabel = new cc.LabelAtlas('Text to display', 'CharMapFile.plist‘);
      */
     ctor: function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
         cc.AtlasNode.prototype.ctor.call(this);
@@ -67,7 +77,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     },
 
     /**
-     * return  texture is loaded
+     * Return  texture is loaded.
      * @returns {boolean}
      */
     textureLoaded: function () {
@@ -75,9 +85,9 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     },
 
     /**
-     * add texture loaded event listener
+     * Add texture loaded event listener.
      * @param {Function} callback
-     * @param {Object} target
+     * @param {cc.Node} target
      */
     addLoadedEventListener: function (callback, target) {
         if (!this._loadedEventListeners)
@@ -96,13 +106,14 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         }
         locListeners.length = 0;
     },
+
     /**
      * <p>
-     * initializes the cc.LabelAtlas with a string, a char map file(the atlas),                     <br/>
-     * the width and height of each element and the starting char of the atlas                      <br/>
-     *  It accepts two groups of parameters:                                                        <br/>
-     * a) string, fntFile                                                                           <br/>
-     * b) label, textureFilename, width, height, startChar                                          <br/>
+     *  initializes the cc.LabelAtlas with a string, a char map file(the atlas), <br/>
+     *  the width and height of each element and the starting char of the atlas <br/>
+     *  It accepts two groups of parameters: <br/>
+     * a) string, fntFile <br/>
+     * b) label, textureFilename, width, height, startChar <br/>
      * </p>
      * @param {String} strText
      * @param {String|cc.Texture2D} charMapFile  charMapFile or fntFile or texture file
@@ -155,12 +166,14 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     },
 
     /**
+     * Set the color.
      * @param {cc.Color} color3
      */
     setColor: function (color3) {
         cc.AtlasNode.prototype.setColor.call(this, color3);
         this.updateAtlasValues();
     },
+
     /**
      * return the text of this label
      * @return {String}
@@ -188,8 +201,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     },
 
     /**
-     * @function
      * Atlas generation
+     * @function
      */
     updateAtlasValues: null,
 
@@ -347,6 +360,11 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         this.quadsToDraw = len;
     },
 
+    /**
+     * set the opacity
+     * @function
+     * @param {Number} opacity
+     */
     setOpacity: null,
 
     _setOpacityForCanvas: function (opacity) {
@@ -388,18 +406,19 @@ cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
 
 /**
  * <p>
- *  Create a label atlas.
- *  It accepts two groups of parameters:                                                            <br/>
- * a) string, fntFile                                                                               <br/>
- * b) label, textureFilename, width, height, startChar                                              <br/>
+ *     Please use new cc.LabelAtlas instead. <br />
+ *     Create a label atlas. <br />
+ *     It accepts two groups of parameters:                                                            <br/>
+ *         a) string, fntFile                                                                               <br/>
+ *         b) label, textureFilename, width, height, startChar                                              <br/>
  * </p>
- * @deprecated
+ * @deprecated since v3.0 please use new cc.LabelAtlas
  * @param {String} strText
  * @param {String} charMapFile  charMapFile or fntFile
  * @param {Number} [itemWidth=0]
  * @param {Number} [itemHeight=0]
  * @param {Number} [startCharMap=""]
- * @return {cc.LabelAtlas|Null} returns the LabelAtlas object on success
+ * @return {cc.LabelAtlas} returns the LabelAtlas object on success
  * @example
  * //Example
  * //creates the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas

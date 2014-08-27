@@ -28,18 +28,18 @@
  * Base class for Easing actions
  * @class
  * @extends cc.ActionInterval
+ * @param {cc.ActionInterval} action
+ *
+ * @example
+ * var moveEase = new cc.ActionEase(action);
  */
 cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
     _inner:null,
 
 	/**
-	 * creates the action of ActionEase
-	 *
-	 * Constructor of cc.ActionEase
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * creates the action of ActionEase.
 	 * @param {cc.ActionInterval} action
-	 *
-	 * @example
-	 * var moveEase = new cc.ActionEase(action);
 	 */
     ctor: function (action) {
         cc.ActionInterval.prototype.ctor.call(this);
@@ -153,20 +153,21 @@ cc.ActionEase.create = cc.actionEase;
  *
  * @class
  * @extends cc.ActionEase
+ * @param {cc.ActionInterval} action
+ * @param {Number} rate
+ *
+ * @example
+ * // example
+ * var moveEaseRateAction = new cc.EaseRateAction(action, 3.0);
  */
 cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
     _rate:0,
 
 	/**
-	 * Creates the action with the inner action and the rate parameter
-	 *
-	 * Constructor of cc.EaseRateAction
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Creates the action with the inner action and the rate parameter.
 	 * @param {cc.ActionInterval} action
 	 * @param {Number} rate
-	 *
-	 * @example
-	 * // example
-	 * var moveEaseRateAction = new cc.EaseRateAction(action, 3.0);
 	 */
     ctor: function(action, rate){
         cc.ActionEase.prototype.ctor.call(this);
@@ -973,19 +974,20 @@ cc.easeSineInOut = function(){
  * Ease Elastic abstract class.
  * @class
  * @extends cc.ActionEase
+ * @param {cc.ActionInterval} action
+ * @param {Number} [period=0.3]
+ * @example
+ * // example
+ * var moveEaseElastic = new cc.EaseElastic(action, 3.0);
  */
 cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
     _period: 0.3,
 
-	/** Creates the action with the inner action and the period in radians (default is 0.3)
-	 *
-	 * Constructor of cc.EaseElastic
+	/**
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+     * Creates the action with the inner action and the period in radians (default is 0.3).
 	 * @param {cc.ActionInterval} action
 	 * @param {Number} [period=0.3]
-	 *
-	 * @example
-	 * // example
-	 * var moveEaseElastic = new cc.EaseElastic(action, 3.0);
 	 */
     ctor:function(action, period){
         cc.ActionEase.prototype.ctor.call(this);
@@ -1933,6 +1935,7 @@ cc.easeBackInOut = function(){
  * According to the set point, calculate the trajectory.
  * @class
  * @extends cc.ActionEase
+ * @param {cc.Action} action
  */
 cc.EaseBezierAction = cc.ActionEase.extend(/** @lends cc.EaseBezierAction# */{
 
@@ -1942,6 +1945,7 @@ cc.EaseBezierAction = cc.ActionEase.extend(/** @lends cc.EaseBezierAction# */{
     _p3: null,
 
     /**
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
      * Initialization requires the application of Bessel curve of action.
      * @param {cc.Action} action
      */

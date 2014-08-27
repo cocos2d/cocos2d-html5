@@ -29,6 +29,7 @@ if (cc.sys._supportWebAudio) {
     /**
      * A class of Web Audio.
      * @class
+     * @param src
      * @extends cc.Class
      */
     cc.WebAudio = cc.Class.extend({
@@ -58,7 +59,7 @@ if (cc.sys._supportWebAudio) {
         _loadState: -1,//-1 : not loaded, 0 : waiting, 1 : loaded, -2 : load failed
 
         /**
-         * creates an WebAudio with the src.
+         * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
          * @param src
          */
         ctor: function (src) {
@@ -338,7 +339,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
     _playings: [],//only store when window is hidden
 
     /**
-     * creates an audio.
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      */
     ctor: function () {
         var self = this;
@@ -776,6 +777,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
 if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
     /**
      * Extended AudioEngine for single audio mode.
+     * @namespace
      */
     cc.AudioEngineForSingle = cc.AudioEngine.extend({
         _waitingEffIds: [],
