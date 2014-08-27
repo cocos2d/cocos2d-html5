@@ -41,6 +41,8 @@ cc.ProgressTo = cc.ActionInterval.extend(/** @lends cc.ProgressTo# */{
 	/**
 	 * Creates a ProgressTo action with a duration and a percent
 	 * Constructor of cc.ProgressTo
+     * @param {Number} duration duration in seconds
+     * @param {Number} percent
 	 */
     ctor: function(duration, percent){
         cc.ActionInterval.prototype.ctor.call(this);
@@ -148,6 +150,9 @@ cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
 	/**
 	 * Creates and initializes the action with a duration, a "from" percentage and a "to" percentage
 	 * Constructor of cc.ProgressFromTo
+     * @param {Number} duration duration in seconds
+     * @param {Number} fromPercentage
+     * @param {Number} toPercentage
 	 */
     ctor:function(duration, fromPercentage, toPercentage){
         cc.ActionInterval.prototype.ctor.call(this);
