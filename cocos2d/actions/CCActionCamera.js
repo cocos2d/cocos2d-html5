@@ -103,12 +103,20 @@ cc.ActionCamera = cc.ActionInterval.extend(/** @lends cc.ActionCamera# */{
      *
      */
     reverse:function () {
-        return cc.reverseTime(this);
+        return new cc.ReverseTime(this);
     }
 });
 
 /**
- * Orbits the camera around the center of the screen using spherical coordinates
+ * Orbits the camera around the center of the screen using spherical coordinates.
+ *
+ * @param {Number} t time
+ * @param {Number} radius
+ * @param {Number} deltaRadius
+ * @param {Number} angleZ
+ * @param {Number} deltaAngleZ
+ * @param {Number} angleX
+ * @param {Number} deltaAngleX
  *
  * @class
  * @extends cc.ActionCamera

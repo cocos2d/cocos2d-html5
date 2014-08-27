@@ -110,7 +110,7 @@ cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
      * - The action will be x coordinates of 0 move to 100. <br />
      * - The reversed action will be x of 100 move to 0.
      * - Will be rewritten
-     * @return {cc.ActionInterval}
+     * @return {cc.ActionEase}
      */
     reverse:function () {
         return new cc.ActionEase(this._inner.reverse());
@@ -214,7 +214,7 @@ cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
      * to copy object with deep copy.
      * returns a clone of action.
      *
-     * @returns {cc.ActionEase}
+     * @returns {cc.EaseRateAction}
      */
     clone:function(){
         var action = new cc.EaseRateAction();

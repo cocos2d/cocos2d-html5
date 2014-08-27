@@ -411,7 +411,7 @@ cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
      * - The reversed action will be x of 100 move to 0.
      * - Will be rewritten
      *
-     * @return {cc.ActionInterval}
+     * @return {cc.Speed}
      */
     reverse:function () {
         return new cc.Speed(this._innerAction.reverse(), this._speed);

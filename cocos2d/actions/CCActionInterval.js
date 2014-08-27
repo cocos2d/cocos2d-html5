@@ -1295,7 +1295,6 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
 	 * @param {Number} duration duration in seconds
 	 * @param {cc.Point|Number} deltaPos
 	 * @param {Number} [deltaY]
-	 * @example
 	 */
     ctor:function (duration, deltaPos, deltaY) {
         cc.ActionInterval.prototype.ctor.call(this);
@@ -1335,7 +1334,7 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
     clone:function () {
         var action = new cc.MoveBy();
         this._cloneDecoration(action);
-        action.initWithDuration(this._duration, this._positionDelta)
+        action.initWithDuration(this._duration, this._positionDelta);
         return action;
     },
 
@@ -2111,7 +2110,7 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
 
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
-     * @param {Number} time
+     * @param {Number} dt
      */
     update:function (dt) {
         dt = this._computeEaseTime(dt);
@@ -2359,7 +2358,7 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
 
     /**
      * Called once per frame. Time is the number of seconds of a frame interval.
-     * @param {Number} time
+     * @param {Number} dt
      */
     update:function (dt) {
         dt = this._computeEaseTime(dt);
@@ -3376,7 +3375,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
                 newArray.push(element.clone());
             }
         }
-        var newAnim = cc.Animation.create(newArray, locAnimation.getDelayPerUnit(), locAnimation.getLoops());
+        var newAnim = new cc.Animation(newArray, locAnimation.getDelayPerUnit(), locAnimation.getLoops());
         newAnim.setRestoreOriginalFrame(locAnimation.getRestoreOriginalFrame());
         var action = new cc.Animate(newAnim);
         this._cloneDecoration(action);
