@@ -42,10 +42,10 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     _eventCallback: null,
     /**
      * allocates and initializes a UIListView.
-     * Constructor of ccui.ListView
+     * Constructor of ccui.ListView, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @example
      * // example
-     * var uiPageView = new ccui.ListView();
+     * var aListView = new ccui.ListView();
      */
     ctor: function () {
         ccui.ScrollView.prototype.ctor.call(this);
@@ -56,6 +56,11 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         this.init();
     },
 
+    /**
+     * Initializes a ccui.ListView. Please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
+     * @returns {boolean}
+     * @override
+     */
     init: function () {
         if (ccui.ScrollView.prototype.init.call(this)) {
             this.setLayoutType(ccui.Layout.LINEAR_VERTICAL);
@@ -420,7 +425,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
      *  add event listener
      * @param {Function} selector
      * @param {Object} target
-     * @deprecated
+     * @deprecated since v3.0, please use addEventListener instead.
      */
     addEventListenerListView: function (selector, target) {
         this._listViewEventListener = target;
@@ -504,7 +509,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
 
 /**
  * allocates and initializes a UIListView.
- * @deprecated
+ * @deprecated since v3.0, please use new ccui.ListView() instead.
  * @example
  * // example
  * var uiPageView = ccui.ListView.create();

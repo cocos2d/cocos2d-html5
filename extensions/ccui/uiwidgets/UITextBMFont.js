@@ -39,9 +39,10 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
     _labelBMFontRendererAdaptDirty: true,
 
     /**
-     * allocates and initializes a UILabelBMFont.
-     * Constructor of ccui.TextBMFont
-     * @constructor
+     * allocates and initializes a UILabelBMFont.                <br/>
+     * Constructor of ccui.TextBMFont. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+     * @param {String} text
+     * @param {String} filename
      * @example
      * // example
      * var uiLabelBMFont = new ccui.TextBMFont();
@@ -55,7 +56,7 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
         }
     },
     _initRenderer: function () {
-        this._labelBMFontRenderer = cc.LabelBMFont.create();
+        this._labelBMFontRenderer = new cc.LabelBMFont();
         this.addProtectedChild(this._labelBMFontRenderer, ccui.TextBMFont.RENDERER_ZORDER, -1);
     },
 
@@ -69,10 +70,8 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
         }
         var _self = this;
         _self._fntFileName = fileName;
-//        this._labelBMFontRenderer.setBMFontFilePath(fileName);
 
         _self._fntFileHasInit = true;
-//        this.setString(this._stringValue);
         _self._labelBMFontRenderer.initWithString(this._stringValue, fileName);
 
         var locRenderer = _self._labelBMFontRenderer;
@@ -85,7 +84,7 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
 
     /**
      * set string value for labelbmfont
-     * @deprecated
+     * @deprecated since v3.0, please use setString instead.
      * @param {String} value
      */
     setText: function (value) {
@@ -167,11 +166,11 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
         return "LabelBMFont";
     },
 
-    createCloneInstance: function () {
-        return ccui.TextBMFont.create();
+    _createCloneInstance: function () {
+        return new ccui.TextBMFont();
     },
 
-    copySpecialProperties: function (labelBMFont) {
+    _copySpecialProperties: function (labelBMFont) {
         this.setFntFile(labelBMFont._fntFileName);
         this.setString(labelBMFont._stringValue);
     }
@@ -188,7 +187,7 @@ _p = null;
 
 /**
  * allocates and initializes a UILabelBMFont.
- * @deprecated
+ * @deprecated since v3.0, please use new ccui.TextBMFont() instead.
  * @return {ccui.TextBMFont}
  * @example
  * // example

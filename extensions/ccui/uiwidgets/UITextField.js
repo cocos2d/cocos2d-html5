@@ -24,7 +24,8 @@
  ****************************************************************************/
 
 /**
- * Base class for ccui.UICCTextField
+ * The renderer of ccui.TextField.
+ * @private
  * @class
  * @extends cc.TextFieldTTF
  *
@@ -32,7 +33,7 @@
  * @property {Number}   maxLength           - The max length of the text field
  * @property {Boolean}  passwordEnabled     - Indicate whether the text field is for entering password
  */
-ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
+ccui._TextFieldRenderer = cc.TextFieldTTF.extend(/** @lends ccui._TextFieldRenderer# */{
     _maxLengthEnabled: false,
     _maxLength: 0,
     _passwordEnabled: false,
@@ -41,9 +42,12 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
     _detachWithIME: false,
     _insertText: false,
     _deleteBackward: false,
-    _className: "UICCTextField",
+    _className: "_TextFieldRenderer",
     _textFieldRendererAdaptDirty: true,
 
+    /**
+     * Constructor of ccui._TextFieldRenderer.
+     */
     ctor: function () {
         cc.TextFieldTTF.prototype.ctor.call(this);
         this._maxLengthEnabled = false;
@@ -204,21 +208,13 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
         return this._deleteBackward;
     },
 
-    init: function () {
-        if (ccui.Widget.prototype.init.call(this)) {
-            this.setTouchEnabled(true);
-            return true;
-        }
-        return false;
-    },
-
     onDraw: function (sender) {
         return false;
     }
 });
 
-ccui.UICCTextField.create = function (placeholder, fontName, fontSize) {
-    var ret = new ccui.UICCTextField();
+ccui._TextFieldRenderer.create = function (placeholder, fontName, fontSize) {
+    var ret = new ccui._TextFieldRenderer();
     if (ret && ret.initWithString("", fontName, fontSize)) {
         if (placeholder)
             ret.setPlaceHolder(placeholder);
@@ -255,7 +251,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
 
     /**
      * allocates and initializes a UITextField.
-     * Constructor of ccui.TextField
+     * Constructor of ccui.TextField. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @example
      * // example
      * var uiTextField = new ccui.TextField();
@@ -264,6 +260,11 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         ccui.Widget.prototype.ctor.call(this);
     },
 
+    /**
+     * Initializes a ccui.TextField. Please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
+     * @returns {boolean}
+     * @override
+     */
     init: function(){
         if(ccui.Widget.prototype.init.call(this)){
             this.setTouchEnabled(true);
@@ -278,7 +279,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     _initRenderer: function () {
-        this._textFieldRenderer = ccui.UICCTextField.create("input words here", "Thonburi", 20);
+        this._textFieldRenderer = ccui._TextFieldRenderer.create("input words here", "Thonburi", 20);
         this.addProtectedChild(this._textFieldRenderer, ccui.TextField.RENDERER_ZORDER, -1);
     },
 
@@ -320,7 +321,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
 
     /**
      *  Changes the string value of textField.
-     * @deprecated
+     * @deprecated since v3.0, please use setString instead.
      * @param {String} text
      */
     setText: function (text) {
@@ -414,7 +415,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
 
     /**
      * get textField string value
-     * @deprecated
+     * @deprecated since v3.0, please use getString instead.
      * @returns {String}
      */
     getStringValue: function () {
@@ -625,7 +626,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
      * add event listener
      * @param {Object} target
      * @param {Function} selector
-     * @deprecated
+     * @deprecated since v3.0, please use addEventListener instead.
      */
     addEventListenerTextField: function (selector, target) {
         this._textFieldEventSelector = selector;
@@ -764,7 +765,7 @@ _p = null;
 
 /**
  * allocates and initializes a UITextField.
- * @deprecated
+ * @deprecated since v3.0, please use new ccui.TextField() instead.
  * @return {ccui.TextField}
  * @example
  * // example

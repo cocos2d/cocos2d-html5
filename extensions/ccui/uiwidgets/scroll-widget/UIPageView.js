@@ -53,7 +53,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 
     /**
      * allocates and initializes a UIPageView.
-     * Constructor of ccui.PageView
+     * Constructor of ccui.PageView. please do not call this function by yourself, you should pass the parameters to constructor to initialize it .
      * @example
      * // example
      * var uiPageView = new ccui.PageView();
@@ -73,6 +73,10 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         this.setTouchEnabled(true);
     },
 
+    /**
+     * Initializes a ccui.PageView. Please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
+     * @returns {boolean}
+     */
     init: function () {
         if (ccui.Layout.prototype.init.call(this)) {
             this.setClippingEnabled(true);
@@ -516,7 +520,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 });
 /**
  * allocates and initializes a UIPageView.
- * @deprecated
+ * @deprecated since v3.0, please use new ccui.PageView() instead.
  * @return {ccui.PageView}
  * @example
  * // example

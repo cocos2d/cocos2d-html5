@@ -81,7 +81,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * allocates and initializes a UIScrollView.
-     * Constructor of ccui.ScrollView
+     * Constructor of ccui.ScrollView. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @example
      * // example
      * var uiScrollView = new ccui.ScrollView();
@@ -102,6 +102,10 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this.setTouchEnabled(true);
     },
 
+    /**
+     * Initializes a ccui.ScrollView. Please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
+     * @returns {boolean}
+     */
     init: function () {
         if (ccui.Layout.prototype.init.call(this)) {
             this.setClippingEnabled(true);
@@ -1503,7 +1507,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * Add call back function called ScrollView event triggered
      * @param {Function} selector
      * @param {Object} target
-     * @deprecated
+     * @deprecated since v3.0, please use addEventListener instead.
      */
     addEventListenerScrollView: function (selector, target) {
         this._scrollViewEventSelector = selector;
@@ -1623,28 +1627,28 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * Get node by tag
+     * Returns a node by tag
      * @param {Number} tag
      * @returns {cc.Node}
-     * @deprecated
+     * @deprecated  since v3.0, please use getChildByTag instead.
      */
     getNodeByTag: function (tag) {
         return this._innerContainer.getNodeByTag(tag);
     },
 
     /**
-     * Get all nodes of inner container
+     * Returns all nodes of inner container
      * @returns {Array}
-     * @deprecated
+     * @deprecated since v3.0, please use getChildren instead.
      */
     getNodes: function () {
         return this._innerContainer.getNodes();
     },
 
     /**
-     * Remove a node
+     * Removes a node
      * @param {cc.Node} node
-     * @deprecated
+     * @deprecated since v3.0, please use removeChild instead.
      */
     removeNode: function (node) {
         this._innerContainer.removeNode(node);
@@ -1653,7 +1657,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     /**
      * Remove a node by tag
      * @param {Number} tag
-     * @deprecated
+     * @deprecated since v3.0, please use removeChildByTag instead.
      */
     removeNodeByTag: function (tag) {
         this._innerContainer.removeNodeByTag(tag);
@@ -1661,7 +1665,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     /**
      * Remove all node
-     * @deprecated
+     * @deprecated since v3.0, please use removeAllChildren instead.
      */
     removeAllNodes: function () {
         this._innerContainer.removeAllNodes();
@@ -1672,7 +1676,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * @param {cc.Node}node
      * @param {Number} zOrder
      * @param {Number} tag
-     * @deprecated
+     * @deprecated since v3.0, please use addChild instead.
      */
     addNode: function (node, zOrder, tag) {
         this._innerContainer.addNode(node, zOrder, tag);
@@ -1693,7 +1697,7 @@ _p = null;
 
 /**
  * allocates and initializes a UIScrollView.
- * @deprecated
+ * @deprecated since v3.0, please use new ccui.ScrollView() instead.
  * @return {ccui.ScrollView}
  * @example
  * // example
