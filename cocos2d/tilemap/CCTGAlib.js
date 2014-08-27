@@ -82,7 +82,7 @@ cc.ImageTGA = function (status, type, pixelDepth, width, height, imageData, flip
 };
 
 /**
- *  load the image header field from stream. We only keep those that matter!
+ * load the image header field from stream. We only keep those that matter!
  * @param {Array} buffer
  * @param {Number} bufSize
  * @param {cc.ImageTGA} psInfo
@@ -118,7 +118,7 @@ cc.tgaLoadHeader = function (buffer, bufSize, psInfo) {
 };
 
 /**
- * loads the image pixels. You shouldn't call this function directly
+ * loads the image pixels. You shouldn't call this function directly.
  * @param {Array} buffer
  * @param {Number} bufSize
  * @param {cc.ImageTGA} psInfo
@@ -192,6 +192,13 @@ cc.tgaDestroy = function (psInfo) {
     psInfo = null;
 };
 
+/**
+ * Load RLE image data
+ * @param buffer
+ * @param bufSize
+ * @param psInfo
+ * @returns {boolean}
+ */
 cc.tgaLoadRLEImageData = function (buffer, bufSize, psInfo) {
     var mode, total, i, index = 0 , skip = 0, flag = 0;
     var aux = [], runlength = 0;
@@ -250,6 +257,10 @@ cc.tgaLoadRLEImageData = function (buffer, bufSize, psInfo) {
     return true;
 };
 
+/**
+ * ImageTGA Flip
+ * @param {cc.ImageTGA} psInfo
+ */
 cc.tgaFlipImage = function (psInfo) {
     // mode equal the number of components for each pixel
     var mode = psInfo.pixelDepth / 8;
@@ -275,20 +286,39 @@ cc.__setDataToArray = function (sourceData, destArray, startIndex) {
         destArray[startIndex + i] = sourceData[i];
 };
 
-
+/**
+ * Binary Stream Reader
+ *
+ * @class
+ * @param binaryData
+ */
 cc.BinaryStreamReader = cc.Class.extend({
     _binaryData:null,
     _offset:0,
 
+    /**
+     * <p>The cc.BinaryStreamReader's constructor. <br/>
+     * This function will automatically be invoked when you create a node using new construction: "var node = new cc.BinaryStreamReader()".<br/>
+     * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
+     * @param binaryData
+     */
     ctor:function (binaryData) {
         this._binaryData = binaryData;
     },
 
+    /**
+     * Set the binaryData.
+     * @param binaryData
+     */
     setBinaryData:function (binaryData) {
         this._binaryData = binaryData;
         this._offset = 0;
     },
 
+    /**
+     * Gets the binaryData.
+     * @returns {Object}
+     */
     getBinaryData:function () {
         return this._binaryData;
     },
