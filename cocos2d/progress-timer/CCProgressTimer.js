@@ -45,6 +45,7 @@
  * @property {Number}       percentage      - Percentage to change progress, from 0 to 100.
  * @property {cc.Sprite}    sprite          - The sprite to show the progress percentage.
  * @property {Boolean}      reverseDir      - Indicate whether the direction is reversed.
+ *
  */
 cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     _type:null,
@@ -131,14 +132,23 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             this._updateProgress();
         }
     },
-
+    /**
+     * only use for jsbinding
+     * @param bValue
+     */
     setOpacityModifyRGB:function (bValue) {
     },
-
+    /**
+     * only use for jsbinding
+     * @returns {boolean}
+     */
     isOpacityModifyRGB:function () {
         return false;
     },
-
+    /**
+     * return if reverse direction
+     * @returns {boolean}
+     */
     isReverseDirection:function () {
         return this._reverseDirection;
     },
@@ -167,6 +177,11 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     _vertexWebGLBuffer:null,
     _vertexDataDirty:false,
 
+    /**
+     * constructor of cc.cc.ProgressTimer
+     * @function
+     * @param {cc.Sprite} sprite
+     */
     ctor: null,
 
     _ctorForCanvas: function (sprite) {
@@ -219,7 +234,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     },
 
     /**
-     * Opacity
+     *  set opacity of sprite
      * @param {Number} opacity
      */
     setOpacity:function (opacity) {
@@ -244,6 +259,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     },
 
     /**
+     * set reverse cc.ProgressTimer
      * @function
      * @param {Boolean} reverse
      */
@@ -266,6 +282,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     },
 
     /**
+     * set sprite for cc.ProgressTimer
      * @function
      * @param {cc.Sprite} sprite
      */
@@ -933,7 +950,7 @@ cc.defineGetterSetter(_p, "reverseDir", _p.isReverseDirection, _p.setReverseDire
 
 /**
  * create a progress timer object with image file name that renders the inner sprite according to the percentage
- * @deprecated
+ * @deprecated since v3.0,please use new cc.ProgressTimer(sprite) instead.
  * @param {cc.Sprite} sprite
  * @return {cc.ProgressTimer}
  * @example
