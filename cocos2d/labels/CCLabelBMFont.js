@@ -66,10 +66,31 @@ cc.LABEL_AUTOMATIC_WIDTH = -1;
  * @extends cc.SpriteBatchNode
  *
  * @property {String}   string          - Content string of label
- * @property {enum}     textAlign       - Horizontal Alignment of label, cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT
+ * @property {Number}   textAlign       - Horizontal Alignment of label, cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT
  * @property {Number}   boundingWidth   - Width of the bounding box of label, the real content width is limited by boundingWidth
+ *
+ * @param {String} str
+ * @param {String} fntFile
+ * @param {Number} [width=-1]
+ * @param {Number} [alignment=cc.TEXT_ALIGNMENT_LEFT]
+ * @param {cc.Point} [imageOffset=cc.p(0,0)]
+ *
+ * @example
+ * // Example 01
+ * var label1 = new cc.LabelBMFont("Test case", "test.fnt");
+ *
+ * // Example 02
+ * var label2 = new cc.LabelBMFont("test case", "test.fnt", 200, cc.TEXT_ALIGNMENT_LEFT);
+ *
+ * // Example 03
+ * var label3 = new cc.LabelBMFont("This is a \n test case", "test.fnt", 200, cc.TEXT_ALIGNMENT_LEFT, cc.p(0,0));
  */
 cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
+
+    //property string is Getter and Setter.
+    //property textAlign is Getter and Setter.
+    //property boundingWidth is Getter and Setter.
+
     _opacityModifyRGB: false,
 
     _string: "",
@@ -126,22 +147,13 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
-     * creates a bitmap font atlas with an initial string and the FNT file
-     * Constructor of cc.LabelBMFont
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+     * creates a bitmap font atlas with an initial string and the FNT file.
      * @param {String} str
      * @param {String} fntFile
      * @param {Number} [width=-1]
      * @param {Number} [alignment=cc.TEXT_ALIGNMENT_LEFT]
      * @param {cc.Point} [imageOffset=cc.p(0,0)]
-     * @example
-     * // Example 01
-     * var label1 = new cc.LabelBMFont("Test case", "test.fnt");
-     *
-     * // Example 02
-     * var label2 = new cc.LabelBMFont("test case", "test.fnt", 200, cc.TEXT_ALIGNMENT_LEFT);
-     *
-     * // Example 03
-     * var label3 = new cc.LabelBMFont("This is a \n test case", "test.fnt", 200, cc.TEXT_ALIGNMENT_LEFT, cc.p(0,0));
      */
     ctor: function (str, fntFile, width, alignment, imageOffset) {
         var self = this;
@@ -153,6 +165,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         this.initWithString(str, fntFile, width, alignment, imageOffset);
     },
+
     /**
      * return  texture is loaded
      * @returns {boolean}
@@ -162,7 +175,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
-     * add texture loaded event listener
+     * add texture loaded event listener. <br />
+     * Will execute the callback in the loaded.
      * @param {Function} callback
      * @param {Object} target
      */
@@ -184,6 +198,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
+     * Draw this font.
      * @param {CanvasRenderingContext2D} ctx
      */
     draw: function (ctx) {
@@ -224,7 +239,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
-     * conforms to cc.RGBAProtocol protocol
+     * Conforms to cc.RGBAProtocol protocol.
      * @return {Boolean}
      */
     isOpacityModifyRGB: function () {
@@ -232,6 +247,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
+     * Set whether to support cc.RGBAProtocol protocol
      * @param {Boolean} opacityModifyRGB
      */
     setOpacityModifyRGB: function (opacityModifyRGB) {
@@ -246,10 +262,18 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         }
     },
 
+    /**
+     * Gets the real opacity.
+     * @returns {number}
+     */
     getOpacity: function () {
         return this._realOpacity;
     },
 
+    /**
+     * Gets the display opacity.
+     * @returns {number}
+     */
     getDisplayedOpacity: function () {
         return this._displayedOpacity;
     },
@@ -271,6 +295,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         this._displayedColor.a = this._realColor.a = opacity;
     },
 
+    /**
+     * Override synthesized update pacity to recurse items
+     * @param parentOpacity
+     */
     updateDisplayedOpacity: function (parentOpacity) {
         this._displayedOpacity = this._realOpacity * parentOpacity / 255.0;
         var locChildren = this._children;
@@ -286,23 +314,47 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         this._changeTextureColor();
     },
 
+    /**
+     * Checking cascade opacity enabled
+     * @returns {boolean}
+     */
     isCascadeOpacityEnabled: function () {
         return false;
     },
 
+    /**
+     * Set cascade opacity enabled
+     * @param {Boolean} cascadeOpacityEnabled
+     */
     setCascadeOpacityEnabled: function (cascadeOpacityEnabled) {
         this._cascadeOpacityEnabled = cascadeOpacityEnabled;
     },
 
+    /**
+     * Gets the real color. <br />
+     * Create a new cc.Color clone in this real color.
+     * @returns {cc.Color}
+     */
     getColor: function () {
         var locRealColor = this._realColor;
         return cc.color(locRealColor.r, locRealColor.g, locRealColor.b, locRealColor.a);
     },
 
+    /**
+     * Gets the display color. <br />
+     * Create a new cc.Color clone in this display color.
+     * @returns {cc.Color}
+     */
     getDisplayedColor: function () {
-        return this._displayedColor;
+        var dc = this._displayedColor;
+        return cc.color(dc.r, dc.g, dc.b, dc.a);
     },
 
+    /**
+     * Update the display color. <br />
+     * Only update this label display color.
+     * @returns {cc.Color}
+     */
     updateDisplayedColor: function (parentColor) {
         var locDispColor = this._displayedColor;
         var locRealColor = this._realColor;
@@ -347,16 +399,24 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         }
     },
 
+    /**
+     * Checking cascade color enabled
+     * @returns {boolean}
+     */
     isCascadeColorEnabled: function () {
         return false;
     },
 
+    /**
+     * Override synthesized setOpacity to recurse items
+     * @param {Boolean} cascadeColorEnabled
+     */
     setCascadeColorEnabled: function (cascadeColorEnabled) {
         this._cascadeColorEnabled = cascadeColorEnabled;
     },
 
     /**
-     *  init LabelBMFont
+     * Initialization of the node, please do not call this function by yourself, you should pass the parameters to constructor to initialize it .
      */
     init: function () {
         return this.initWithString(null, null, null, null, null);
@@ -542,7 +602,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
-     * update String
+     * Update String. <br />
+     * Only update this label displa string.
      * @param {Boolean} fromUpdate
      */
     updateString: function (fromUpdate) {
@@ -562,7 +623,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
-     * get the text of this label
+     * Gets the text of this label
      * @return {String}
      */
     getString: function () {
@@ -570,7 +631,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
-     * set the text
+     * Set the text
      * @param {String} newString
      * @param {Boolean|null} needUpdateLabel
      */
@@ -590,7 +651,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
-     * @deprecated
+     * Set the text. <br />
+     * Change this Label display string.
+     * @deprecated since v3.0 please use .setString
      * @param label
      */
     setCString: function (label) {
@@ -598,7 +661,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
-     *  update Label
+     * Update Label. <br />
+     * Update this Label display string and more...
      */
     updateLabel: function () {
         var self = this;
@@ -663,7 +727,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 }
 
                 // Whitespace.
-                if (cc.isspace_unicode(character)) {
+                if (this._isspace_unicode(character)) {
                     last_word.push(character);
                     multiline_string = multiline_string.concat(last_word);
                     last_word.length = 0;
@@ -680,7 +744,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
                         var found = multiline_string.lastIndexOf(" ");
                         if (found != -1)
-                            cc.utf8_trim_ws(multiline_string);
+                            this._utf8_trim_ws(multiline_string);
                         else
                             multiline_string = [];
 
@@ -692,7 +756,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                         startOfLine = -1;
                         i++;
                     } else {
-                        cc.utf8_trim_ws(last_word);
+                        this._utf8_trim_ws(last_word);
 
                         last_word.push('\n');
                         multiline_string = multiline_string.concat(last_word);
@@ -794,7 +858,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
-     * Set text alignment
+     * Set text alignment.
      * @param {Number} alignment
      */
     setAlignment: function (alignment) {
@@ -807,6 +871,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
+     * Set the bounding width. <br />
+     * max with display width. The exceeding string will be wrapping.
      * @param {Number} width
      */
     setBoundingWidth: function (width) {
@@ -819,6 +885,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
+     * Set the param to change English word warp according to whether the space. <br />
+     * default is false.
      * @param {Boolean}  breakWithoutSpace
      */
     setLineBreakWithoutSpace: function (breakWithoutSpace) {
@@ -827,8 +895,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
+     * Set scale. <br />
+     * Input a number, will be decrease or increase the font size. <br />
      * @param {Number} scale
-     * @param {Number} [scaleY=null]
+     * @param {Number} [scaleY=null] default is scale
      */
     setScale: function (scale, scaleY) {
         cc.Node.prototype.setScale.call(this, scale, scaleY);
@@ -836,6 +906,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
+     * Set scale of x. <br />
+     * Input a number, will be decrease or increase the font size. <br />
+     * Horizontal scale.
      * @param {Number} scaleX
      */
     setScaleX: function (scaleX) {
@@ -844,6 +917,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
+     * Set scale of x. <br />
+     * Input a number, will be decrease or increase the font size. <br />
+     * Longitudinal scale.
      * @param {Number} scaleY
      */
     setScaleY: function (scaleY) {
@@ -853,7 +929,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
     //TODO
     /**
-     * set fnt file path
+     * set fnt file path. <br />
+     * Change the fnt file path.
      * @param {String} fntFile
      */
     setFntFile: function (fntFile) {
@@ -892,6 +969,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
+     * Return the fnt file path.
      * @return {String}
      */
     getFntFile: function () {
@@ -899,7 +977,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
-     * set the AnchorPoint of the labelBMFont
+     * Set the AnchorPoint of the labelBMFont. <br />
+     * In order to change the location of label.
      * @override
      * @param {cc.Point|Number} point The anchor point of labelBMFont or The anchor point.x of labelBMFont.
      * @param {Number} [y] The anchor point.y of labelBMFont.
@@ -913,17 +992,18 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         cc.Node.prototype._setAnchor.call(this, p);
         this.updateLabel();
     },
+
     _setAnchorX: function (x) {
         cc.Node.prototype._setAnchorX.call(this, x);
         this.updateLabel();
     },
+
     _setAnchorY: function (y) {
         cc.Node.prototype._setAnchorY.call(this, y);
         this.updateLabel();
     },
 
-    _atlasNameFromFntFile: function (fntFile) {
-    },
+    _atlasNameFromFntFile: function (fntFile) {},
 
     _kerningAmountForFirst: function (first, second) {
         var ret = 0;
@@ -942,6 +1022,45 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
     _getLetterPosXRight: function (sp) {
         return sp.getPositionX() * this._scaleX + (sp._getWidth() * this._scaleX * sp._getAnchorX());
+    },
+
+    //Checking whether the character is a whitespace
+    _isspace_unicode: function(ch){
+        ch = ch.charCodeAt(0);
+        return  ((ch >= 9 && ch <= 13) || ch == 32 || ch == 133 || ch == 160 || ch == 5760
+            || (ch >= 8192 && ch <= 8202) || ch == 8232 || ch == 8233 || ch == 8239
+            || ch == 8287 || ch == 12288)
+    },
+
+    _utf8_trim_ws: function(str){
+        var len = str.length;
+
+        if (len <= 0)
+            return;
+
+        var last_index = len - 1;
+
+        // Only start trimming if the last character is whitespace..
+        if (this._isspace_unicode(str[last_index])) {
+            for (var i = last_index - 1; i >= 0; --i) {
+                if (this._isspace_unicode(str[i])) {
+                    last_index = i;
+                }
+                else {
+                    break;
+                }
+            }
+            this._utf8_trim_from(str, last_index);
+        }
+    },
+
+    //Trims str st str=[0, index) after the operation.
+    //Return value: the trimmed string.
+    _utf8_trim_from: function(str, index){
+        var len = str.length;
+        if (index >= len || index < 0)
+            return;
+        str.splice(index, len);
     }
 });
 
@@ -983,7 +1102,7 @@ cc.defineGetterSetter(_p, "textAlign", _p._getAlignment, _p.setAlignment);
 
 /**
  * creates a bitmap font atlas with an initial string and the FNT file
- * @deprecated
+ * @deprecated since v3.0 please use new cc.LabelBMFont
  * @param {String} str
  * @param {String} fntFile
  * @param {Number} [width=-1]
@@ -1003,56 +1122,6 @@ cc.defineGetterSetter(_p, "textAlign", _p._getAlignment, _p.setAlignment);
 cc.LabelBMFont.create = function (str, fntFile, width, alignment, imageOffset) {
     return new cc.LabelBMFont(str, fntFile, width, alignment, imageOffset);
 };
-
-/**
- * @param {String} ch
- * @return {Boolean}  weather the character is a whitespace character.
- */
-cc.isspace_unicode = function (ch) {
-    ch = ch.charCodeAt(0);
-    return  ((ch >= 9 && ch <= 13) || ch == 32 || ch == 133 || ch == 160 || ch == 5760
-        || (ch >= 8192 && ch <= 8202) || ch == 8232 || ch == 8233 || ch == 8239
-        || ch == 8287 || ch == 12288)
-};
-
-/**
- * @param {Array} str
- */
-cc.utf8_trim_ws = function (str) {
-    var len = str.length;
-
-    if (len <= 0)
-        return;
-
-    var last_index = len - 1;
-
-    // Only start trimming if the last character is whitespace..
-    if (cc.isspace_unicode(str[last_index])) {
-        for (var i = last_index - 1; i >= 0; --i) {
-            if (cc.isspace_unicode(str[i])) {
-                last_index = i;
-            }
-            else {
-                break;
-            }
-        }
-        cc.utf8_trim_from(str, last_index);
-    }
-};
-
-/**
- * Trims str st str=[0, index) after the operation.
- * Return value: the trimmed string.
- * @param {Array} str  he string to trim
- * @param {Number} index  the index to start trimming from.
- */
-cc.utf8_trim_from = function (str, index) {
-    var len = str.length;
-    if (index >= len || index < 0)
-        return;
-    str.splice(index, len);
-};
-
 
 cc._fntLoader = {
     INFO_EXP: /info [^\n]*(\n|$)/gi,
@@ -1079,6 +1148,13 @@ cc._fntLoader = {
         }
         return obj;
     },
+
+    /**
+     * Parse Fnt string.
+     * @param fntStr
+     * @param url
+     * @returns {{}}
+     */
     parseFnt: function (fntStr, url) {
         var self = this, fnt = {};
         //padding
@@ -1089,7 +1165,7 @@ cc._fntLoader = {
             top: parseInt(paddingArr[1]),
             right: parseInt(paddingArr[2]),
             bottom: parseInt(paddingArr[3])
-        }
+        };
 
         //common
         var commonObj = self._parseStrToObj(fntStr.match(self.COMMON_EXP)[0]);
@@ -1132,6 +1208,13 @@ cc._fntLoader = {
         return fnt;
     },
 
+    /**
+     * load the fnt
+     * @param realUrl
+     * @param url
+     * @param res
+     * @param cb
+     */
     load: function (realUrl, url, res, cb) {
         var self = this;
         cc.loader.loadTxt(realUrl, function (err, txt) {

@@ -61,7 +61,7 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
     /**
      * to copy object with deep copy.
      *
-     * @deprecated since v3.0
+     * @deprecated since v3.0 please use .clone
      *
      * @return {cc.Action}
      */
