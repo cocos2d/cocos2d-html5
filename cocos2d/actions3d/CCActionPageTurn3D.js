@@ -108,6 +108,6 @@ cc.pageTurn3D = function (duration, gridSize) {
  * @param {cc.Size} gridSize
  * @return {cc.PageTurn3D}
  * @static
- * @deprecated
+ * @deprecated since v3.0 please use cc.pageTurn3D instead.
  */
 cc.PageTurn3D.create = cc.pageTurn3D;

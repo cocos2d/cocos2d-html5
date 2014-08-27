@@ -87,7 +87,7 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
      * @return {cc.EaseSineOut}
      */
     reverse:function () {
-        return cc.ReverseTime.create(this);
+        return new cc.ReverseTime(this);
     },
 
     /**
@@ -305,7 +305,7 @@ cc.stopGrid = function () {
  * Allocates and initializes the action
  * @return {cc.StopGrid}
  * @static
- * @ deprecated since v3.0 <br /> Please use cc.stopGrid instead.
+ * @deprecated since v3.0 <br /> Please use cc.stopGrid instead.
  */
 cc.StopGrid.create = cc.stopGrid;
 

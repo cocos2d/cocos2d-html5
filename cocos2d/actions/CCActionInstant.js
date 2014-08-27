@@ -310,7 +310,7 @@ cc.RemoveSelf = cc.ActionInstant.extend({
      * to copy object with deep copy.
      * returns a clone of action.
      *
-     * @return {cc.ToggleVisibility}
+     * @return {cc.RemoveSelf}
      */
     clone:function(){
         return new cc.RemoveSelf(this._isNeedCleanUp);
