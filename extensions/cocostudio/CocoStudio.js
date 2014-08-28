@@ -23,7 +23,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 /**
- * Base namespace of cocostuidio
+ * The main namespace of Cocostudio, all classes, functions, properties and constants of Spine are defined in this namespace
  * @namespace
  * @name ccs
  */
@@ -62,6 +62,7 @@ ccs.Component.extend = ccs.Component.extend || cc.Component.extend;
 
 /**
  * CocoStudio version
+ * @constant
  * @type {string}
  */
 ccs.cocostudioVersion = "v1.3.0.0";

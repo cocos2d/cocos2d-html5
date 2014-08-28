@@ -736,9 +736,48 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     }
 });
 
+/**
+ * The event projection changed of cc.Director
+ * @constant
+ * @type {string}
+ * @example
+ *   cc.eventManager.addCustomListener(cc.Director.EVENT_PROJECTION_CHANGED, function(event) {
+ *           cc.log("Projection changed.");
+ *       });
+ */
 cc.Director.EVENT_PROJECTION_CHANGED = "director_projection_changed";
+
+/**
+ * The event after draw of cc.Director
+ * @constant
+ * @type {string}
+ * @example
+ *   cc.eventManager.addCustomListener(cc.Director.EVENT_AFTER_DRAW, function(event) {
+ *           cc.log("after draw event.");
+ *       });
+ */
 cc.Director.EVENT_AFTER_DRAW = "director_after_draw";
+
+/**
+ * The event after visit of cc.Director
+ * @constant
+ * @type {string}
+ * @example
+ *   cc.eventManager.addCustomListener(cc.Director.EVENT_AFTER_VISIT, function(event) {
+ *           cc.log("after visit event.");
+ *       });
+ */
 cc.Director.EVENT_AFTER_VISIT = "director_after_visit";
+
+/**
+ * The event after update of cc.Director
+ * @constant
+ * @type {string}
+ * @example
+ *   cc.eventManager.addCustomListener(cc.Director.EVENT_AFTER_UPDATE, function(event) {
+ *           cc.log("after update event.");
+ *       });
+ */
 cc.Director.EVENT_AFTER_UPDATE = "director_after_update";
 
 /***************************************************
@@ -808,30 +847,30 @@ cc.defaultFPS = 60;
 
 //Possible OpenGL projections used by director
 /**
- * sets a 2D projection (orthogonal projection)
+ * The flag 2D projection of cc.Director (orthogonal projection)
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.Director.PROJECTION_2D = 0;
 
 /**
- * sets a 3D projection with a fovy=60, znear=0.5f and zfar=1500.
+ * The flag 3D projection with a fovy=60, znear=0.5f and zfar=1500.
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.Director.PROJECTION_3D = 1;
 
 /**
- * it calls "updateProjection" on the projection delegate.
+ * The flag custom projection, if cc.Director's projection set to it, it calls "updateProjection" on the projection delegate.
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.Director.PROJECTION_CUSTOM = 3;
 
 /**
- * Default projection is 3D projection
+ * The flag default projection of cc.Director, Default projection is 3D projection
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.Director.PROJECTION_DEFAULT = cc.Director.PROJECTION_3D;
 
