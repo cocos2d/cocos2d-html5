@@ -24,6 +24,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * @ignore
+ */
 sp._atlasPage_createTexture_webGL = function (self, path) {
     var texture = cc.textureCache.addImage(path);
     self.rendererObject = cc.TextureAtlas.create(texture, 128);
@@ -52,11 +55,10 @@ sp._atlasLoader = {
             sp._atlasPage_createTexture_canvas(page,texturePath);
     },
     unload:function(obj){
-
     }
 };
 
-sp.regionAttachment_computeWorldVertices = function(self, x, y, bone, vertices){
+sp._regionAttachment_computeWorldVertices = function(self, x, y, bone, vertices){
     var offset = self.offset;
     x += bone.worldX;
     y += bone.worldY;
@@ -128,6 +130,11 @@ sp._regionAttachment_updateSlotForCanvas = function(self, slot, points) {
     points.push(cc.p(vertices[VERTEX.X2], vertices[VERTEX.Y2]));
 };
 
+/**
+ * The event type of spine skeleton animation. It contains event types: START(0), END(1), COMPLETE(2), EVENT(3).
+ * @constant
+ * @type {{START: number, END: number, COMPLETE: number, EVENT: number}}
+ */
 sp.ANIMATION_EVENT_TYPE = {
     START: 0,
     END: 1,
@@ -135,18 +142,32 @@ sp.ANIMATION_EVENT_TYPE = {
     EVENT: 3
 };
 
-sp.SkeletonAnimation = sp.Skeleton.extend({
+/**
+ * The skeleton animation of spine. It updates animation's state and skeleton's world transform.
+ * @class
+ * @extends sp.Skeleton
+ * @example
+ * var spineBoy = new sp.SkeletonAnimation('res/skeletons/spineboy.json', 'res/skeletons/spineboy.atlas');
+ * this.addChild(spineBoy, 4);
+ */
+sp.SkeletonAnimation = sp.Skeleton.extend(/** @lends sp.SkeletonAnimation# */{
     _state: null,
     _target: null,
     _callback: null,
-    ctor: function (skeletonDataFile, atlasFile, scale) {
-        sp.Skeleton.prototype.ctor.call(this);
-        atlasFile && this.initWithArgs(skeletonDataFile, atlasFile, scale);
-    },
+
+    /**
+     * Initializes a sp.SkeletonAnimation. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
+     * @override
+     */
     init: function () {
-        this._super();
+        sp.Skeleton.prototype.init.call(this);
         this.setAnimationStateData(new spine.AnimationStateData(this._skeleton.data));
     },
+
+    /**
+     * Sets animation state data to sp.SkeletonAnimation.
+     * @param {spine.AnimationStateData} stateData
+     */
     setAnimationStateData: function (stateData) {
         var state = new spine.AnimationState(stateData);
         state.onStart = this._onAnimationStateStart.bind(this);
@@ -155,38 +176,90 @@ sp.SkeletonAnimation = sp.Skeleton.extend({
         state.onEvent = this._onAnimationStateEvent.bind(this);
         this._state = state;
     },
+
+    /**
+     * Mix applies all keyframe values, interpolated for the specified time and mixed with the current values.  <br/>
+     * @param {String} fromAnimation
+     * @param {String} toAnimation
+     * @param {Number} duration
+     */
     setMix: function (fromAnimation, toAnimation, duration) {
         this._state.data.setMixByName(fromAnimation, toAnimation, duration);
     },
+
+    /**
+     * Sets event listener of sp.SkeletonAnimation.
+     * @param {Object} target
+     * @param {Function} callback
+     */
     setAnimationListener: function (target, callback) {
         this._target = target;
         this._callback = callback;
     },
+
+    /**
+     * Set the current animation. Any queued animations are cleared.
+     * @param {Number} trackIndex
+     * @param {String} name
+     * @param {Boolean} loop
+     * @returns {spine.TrackEntry|null}
+     */
     setAnimation: function (trackIndex, name, loop) {
         var animation = this._skeleton.data.findAnimation(name);
         if (!animation) {
             cc.log("Spine: Animation not found: " + name);
-            return 0;
+            return null;
         }
         return this._state.setAnimation(trackIndex, animation, loop);
     },
+
+    /**
+     * Adds an animation to be played delay seconds after the current or last queued animation.
+     * @param {Number} trackIndex
+     * @param {String} name
+     * @param {Boolean} loop
+     * @param {Number} delay
+     * @returns {spine.TrackEntry|null}
+     */
     addAnimation: function (trackIndex, name, loop, delay) {
         var animation = this._skeleton.data.findAnimation(name);
         if (!animation) {
             cc.log("Spine: Animation not found:" + name);
-            return 0;
+            return null;
         }
         return this._state.addAnimation(trackIndex, animation, loop, delay);
     },
+
+    /**
+     * Returns track entry by trackIndex.
+     * @param trackIndex
+     * @returns {spine.TrackEntry|null}
+     */
     getCurrent: function (trackIndex) {
         return this._state.getCurrent(trackIndex);
     },
+
+    /**
+     * Clears all tracks of animation state.
+     */
     clearTracks: function () {
         this._state.clearTracks();
     },
+
+    /**
+     * Clears track of animation state by trackIndex.
+     * @param {Number} trackIndex
+     */
     clearTrack: function (trackIndex) {
         this._state.clearTrack(trackIndex);
     },
+
+    /**
+     * Update will be called automatically every frame if "scheduleUpdate" is called when the node is "live".
+     * It updates animation's state and skeleton's world transform.
+     * @param {Number} dt Delta time since last update
+     * @override
+     */
     update: function (dt) {
         this._super(dt);
 
@@ -195,6 +268,7 @@ sp.SkeletonAnimation = sp.Skeleton.extend({
         this._state.apply(this._skeleton);
         this._skeleton.updateWorldTransform();
     },
+
     _onAnimationStateStart: function (trackIndex) {
         this._animationStateCallback(trackIndex, sp.ANIMATION_EVENT_TYPE.START, null, 0);
     },
@@ -214,12 +288,14 @@ sp.SkeletonAnimation = sp.Skeleton.extend({
     }
 });
 
-sp.SkeletonAnimation.createWithData = function (skeletonData) {
-    var c = new sp.SkeletonAnimation();
-    c.initWithArgs.apply(c, arguments);
-    return c;
-};
-
+/**
+ * Creates a skeleton animation object.
+ * @deprecated since v3.0, please use new sp.SkeletonAnimation(skeletonDataFile, atlasFile, scale) instead.
+ * @param {spine.SkeletonData|String} skeletonDataFile
+ * @param {String|spine.Atlas|spine.SkeletonData} atlasFile atlas filename or atlas data or owns SkeletonData
+ * @param {Number} [scale] scale can be specified on the JSON or binary loader which will scale the bone positions, image sizes, and animation translations.
+ * @returns {sp.Skeleton}
+ */
 sp.SkeletonAnimation.create = function (skeletonDataFile, atlasFile/* or atlas*/, scale) {
     return new sp.SkeletonAnimation(skeletonDataFile, atlasFile, scale);
 };

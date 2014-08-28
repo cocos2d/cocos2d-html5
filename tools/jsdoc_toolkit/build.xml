@@ -192,6 +192,8 @@
                 <include name="cocostudio/components/CCComRender.js"/>
                 <include name="cocostudio/reader/GUIReader.js"/>
                 <include name="cocostudio/reader/SceneReader.js"/>
+                <include name="spine/CCSkeleton.js"/>
+                <include name="spine/CCSkeletonAnimation.js"/>
             </fileset>
         </jsdoctoolkit>
     </target>
