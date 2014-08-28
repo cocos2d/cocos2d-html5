@@ -162,21 +162,21 @@ ccs.TweenFunction.tweenTo = function (time, type, easingParam) {
 
         case ccs.TweenType.elasticEaseIn:
             var period = 0.3;
-            if(null != easingParam){
+            if(null != easingParam && easingParam.length > 0){
                 period = easingParam[0];
             }
             delta = this.elasticEaseIn(time, period);
             break;
         case ccs.TweenType.elasticEaseOut:
             var period = 0.3;
-            if(null != easingParam){
+            if(null != easingParam && easingParam.length > 0){
                 period = easingParam[0];
             }
             delta = this.elasticEaseOut(time, period);
             break;
         case ccs.TweenType.elasticEaseInOut:
             var period = 0.3;
-            if(null != easingParam){
+            if(null != easingParam && easingParam.length > 0){
                 period = easingParam[0];
             }
             delta = this.elasticEaseInOut(time, period);
@@ -454,8 +454,7 @@ ccs.TweenFunction.bounceEaseInOut = function (time) {
     if (time < 0.5) {
         time = time * 2;
         newT = (1 - ccs.bounceTime(1 - time)) * 0.5;
-    }
-    else {
+    } else {
         newT = ccs.bounceTime(time * 2 - 1) * 0.5 + 0.5;
     }
 
