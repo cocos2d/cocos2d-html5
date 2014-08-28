@@ -25,7 +25,7 @@
  ****************************************************************************/
 
 /**
- * Canvas of DrawingPrimitive implement version
+ * Canvas of DrawingPrimitive implement version use for WebGlMode
  * @class
  * @extends cc.Class
  */
@@ -37,6 +37,10 @@ cc.DrawingPrimitiveWebGL = cc.Class.extend(/** @lends cc.DrawingPrimitiveWebGL# 
     _colorArray: null,
     _pointSizeLocation:-1,
     _pointSize:-1,
+    /**
+     * contructor of cc.DrawingPrimitiveWebGL
+     * @param ctx rendercontext
+     */
     ctor:function (ctx) {
         if (ctx == null)
             ctx = cc._renderContext;
