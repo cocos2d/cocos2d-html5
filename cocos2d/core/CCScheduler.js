@@ -36,6 +36,7 @@ cc.PRIORITY_NON_SYSTEM = cc.PRIORITY_SYSTEM + 1;
 /**
  * A list double-linked list used for "updates with priority"
  * @Class
+ * @name cc.ListEntry
  * @param {cc.ListEntry} prev
  * @param {cc.ListEntry} next
  * @param {cc.Class} target not retained (retained by hashUpdateEntry)
@@ -55,6 +56,7 @@ cc.ListEntry = function (prev, next, target, priority, paused, markedForDeletion
 /**
  * A update entry list
  * @Class
+ * @name cc.HashUpdateEntry
  * @param {cc.ListEntry} list Which list does it belong to ?
  * @param {cc.ListEntry} entry entry in the list
  * @param {cc.Class} target hash key (retained)

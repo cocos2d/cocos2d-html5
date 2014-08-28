@@ -25,12 +25,13 @@
  ****************************************************************************/
 
 /**
+ * Color class, please use cc.color() to construct a color
  * @class cc.Color
  * @param {Number} r
  * @param {Number} g
  * @param {Number} b
  * @param {Number} a
- * @constructor
+ * @see cc.color
  */
 cc.Color = function (r, g, b, a) {
     this.r = r || 0;

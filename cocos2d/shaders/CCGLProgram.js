@@ -33,11 +33,11 @@ cc.HashUniformEntry = function (value, location, hh) {
 };
 
 /**
- * Class that implements a glProgram
+ * Class that implements a WebGL program
  * @class
  * @extends cc.Class
  */
-cc.GLProgram = cc.Class.extend({
+cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
     _glContext: null,
     _programObj: null,
     _vertShader: null,

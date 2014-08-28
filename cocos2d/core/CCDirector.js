@@ -846,7 +846,7 @@ cc.Director.EVENT_AFTER_UPDATE = "director_after_update";
 /***************************************************
  * implementation of DisplayLinkDirector
  **************************************************/
-cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.director# */{
+cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.Director# */{
     invalid: false,
 
     /**
