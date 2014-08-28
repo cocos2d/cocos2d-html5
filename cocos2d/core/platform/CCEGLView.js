@@ -32,8 +32,8 @@ cc.TouchesIntergerDict = {};
 
 /**
  * cc.view is the shared view object.
- * @namespace
- * @name cc.view
+ * @class
+ * @extend cc.Class
  */
 cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     _delegate: null,
@@ -81,6 +81,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     __resizeWithBrowserSize: false,
     _isAdjustViewPort: true,
 
+    /**
+     * Constructor of cc.EGLView
+     */
     ctor: function () {
         var _t = this, d = document, _strategyer = cc.ContainerStrategy, _strategy = cc.ContentStrategy;
         _t._frame = (cc.container.parentNode === d.body) ? d.documentElement : cc.container.parentNode;
@@ -122,6 +125,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             this.setDesignResolutionSize(width, height, this._resolutionPolicy);
     },
 
+    /**
+     * set whether to resize glview with browser wize
+     * @param {Number} enabled
+     */
     resizeWithBrowserSize: function (enabled) {
         var adjustSize, _t = this;
         if (enabled) {
@@ -141,6 +148,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         }
     },
 
+    /**
+     * set callback function for resize
+     * @param {Function} callback
+     */
     setResizeCallback: function (callback) {
         if (typeof callback == "function" || callback == null) {
             this._resizeCallback = callback;
@@ -223,6 +234,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         this._initialized = true;
     },
 
+    /**
+     * set whether to adjust view port
+     * @param enabled
+     */
     adjustViewPort: function (enabled) {
         this._isAdjustViewPort = enabled;
     },
@@ -294,6 +309,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     /**
      * Open or close IME keyboard , subclass must implement this method.
+     * @param {Boolean} isOpen
      */
     setIMEKeyboardState: function (isOpen) {
     },
@@ -515,6 +531,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     /**
      * Get whether GL_SCISSOR_TEST is enable
+     * @return {Boolean}
      */
     isScissorEnabled: function () {
         var gl = cc._renderContext;
@@ -551,6 +568,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     /**
      * Get the opengl view port rectangle.
+     * @return {cc.rect}
      */
     getViewPortRect: function () {
         return this._viewPortRect;
@@ -558,6 +576,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     /**
      * Get scale factor of the horizontal direction.
+     * @return {Number}
      */
     getScaleX: function () {
         return this._scaleX;
@@ -565,6 +584,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     /**
      * Get scale factor of the vertical direction.
+     * @return {Number}
      */
     getScaleY: function () {
         return this._scaleY;
@@ -572,6 +592,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     /**
      * Get device pixel ratio for retina display.
+     * @return {Number}
      */
     getDevicePixelRatio: function() {
         return this._devicePixelRatio;
@@ -579,6 +600,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     /**
      * Get the real location in view
+     * @param {Number} tx
+     * @param {Number} ty
+     * @param {cc.Point} relatedPos
      */
     convertToLocationInView: function (tx, ty, relatedPos) {
         return {x: this._devicePixelRatio * (tx - relatedPos.left), y: this._devicePixelRatio * (relatedPos.top + relatedPos.height - ty)};
@@ -604,6 +628,11 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     }
 });
 
+/**
+ * @function
+ * @return {cc.EGLView}
+ * @private
+ */
 cc.EGLView._getInstance = function () {
     if (!this._instance) {
         this._instance = this._instance || new cc.EGLView();
@@ -758,12 +787,20 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
 (function () {
 
 // Container scale strategys
+    /**
+     * @class
+     * @extends cc.ContainerStrategy
+     */
     var EqualToFrame = cc.ContainerStrategy.extend({
         apply: function (view) {
             this._setupContainer(view, view._frameSize.width, view._frameSize.height);
         }
     });
 
+    /**
+     * @class
+     * @extends cc.ContainerStrategy
+     */
     var ProportionalToFrame = cc.ContainerStrategy.extend({
         apply: function (view, designedResolution) {
             var frameW = view._frameSize.width, frameH = view._frameSize.height, containerStyle = cc.container.style,
@@ -788,6 +825,10 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
         }
     });
 
+    /**
+     * @class
+     * @extends EqualToFrame
+     */
     var EqualToWindow = EqualToFrame.extend({
         preApply: function (view) {
 	        this._super(view);
@@ -800,6 +841,10 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
         }
     });
 
+    /**
+     * @class
+     * @extends ProportionalToFrame
+     */
     var ProportionalToWindow = ProportionalToFrame.extend({
         preApply: function (view) {
 	        this._super(view);
@@ -812,6 +857,10 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
         }
     });
 
+    /**
+     * @class
+     * @extends cc.ContainerStrategy
+     */
     var OriginalContainer = cc.ContainerStrategy.extend({
         apply: function (view) {
             this._setupContainer(view, cc._canvas.width, cc._canvas.height);
@@ -919,6 +968,11 @@ cc.ResolutionPolicy = cc.Class.extend(/** @lends cc.ResolutionPolicy# */{
 	_containerStrategy: null,
     _contentStrategy: null,
 
+    /**
+     * Constructor of cc.ResolutionPolicy
+     * @param {cc.ContainerStrategy} containerStg
+     * @param {cc.ContentStrategy} contentStg
+     */
     ctor: function (containerStg, contentStg) {
         this.setContainerStrategy(containerStg);
         this.setContentStrategy(contentStg);
@@ -974,40 +1028,44 @@ cc.ResolutionPolicy = cc.Class.extend(/** @lends cc.ResolutionPolicy# */{
     }
 });
 
-/*
+/**
  * @memberOf cc.ResolutionPolicy#
  * @name EXACT_FIT
- * @const
+ * @constant
+ * @type Number
  * @static
  * The entire application is visible in the specified area without trying to preserve the original aspect ratio.<br/>
  * Distortion can occur, and the application may appear stretched or compressed.
  */
 cc.ResolutionPolicy.EXACT_FIT = 0;
 
-/*
+/**
  * @memberOf cc.ResolutionPolicy#
  * @name NO_BORDER
- * @const
+ * @constant
+ * @type Number
  * @static
  * The entire application fills the specified area, without distortion but possibly with some cropping,<br/>
  * while maintaining the original aspect ratio of the application.
  */
 cc.ResolutionPolicy.NO_BORDER = 1;
 
-/*
+/**
  * @memberOf cc.ResolutionPolicy#
  * @name SHOW_ALL
- * @const
+ * @constant
+ * @type Number
  * @static
  * The entire application is visible in the specified area without distortion while maintaining the original<br/>
  * aspect ratio of the application. Borders can appear on two sides of the application.
  */
 cc.ResolutionPolicy.SHOW_ALL = 2;
 
-/*
+/**
  * @memberOf cc.ResolutionPolicy#
  * @name FIXED_HEIGHT
- * @const
+ * @constant
+ * @type Number
  * @static
  * The application takes the height of the design resolution size and modifies the width of the internal<br/>
  * canvas so that it fits the aspect ratio of the device<br/>
@@ -1016,10 +1074,11 @@ cc.ResolutionPolicy.SHOW_ALL = 2;
  */
 cc.ResolutionPolicy.FIXED_HEIGHT = 3;
 
-/*
+/**
  * @memberOf cc.ResolutionPolicy#
  * @name FIXED_WIDTH
- * @const
+ * @constant
+ * @type Number
  * @static
  * The application takes the width of the design resolution size and modifies the height of the internal<br/>
  * canvas so that it fits the aspect ratio of the device<br/>
@@ -1028,10 +1087,11 @@ cc.ResolutionPolicy.FIXED_HEIGHT = 3;
  */
 cc.ResolutionPolicy.FIXED_WIDTH = 4;
 
-/*
+/**
  * @memberOf cc.ResolutionPolicy#
  * @name UNKNOWN
- * @const
+ * @constant
+ * @type Number
  * @static
  * Unknow policy
  */

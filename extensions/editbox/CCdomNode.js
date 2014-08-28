@@ -25,7 +25,7 @@
 /**
  * the DOM object
  * @namespace
- * @name
+ * @name cc.DOM
  */
 cc.DOM = {};
 

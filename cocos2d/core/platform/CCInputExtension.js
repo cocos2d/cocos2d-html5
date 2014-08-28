@@ -27,6 +27,7 @@ var _p = cc.inputManager;
 
 /**
  * whether enable accelerometer event
+ * @function
  * @param {Boolean} isEnable
  */
 _p.setAccelerometerEnabled = function(isEnable){
@@ -47,6 +48,7 @@ _p.setAccelerometerEnabled = function(isEnable){
 
 /**
  * set accelerometer interval value
+ * @function
  * @param {Number} interval
  */
 _p.setAccelerometerInterval = function(interval){
