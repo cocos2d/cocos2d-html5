@@ -921,8 +921,8 @@ cc.Liquid = cc.Grid3DAction.extend(/** @lends cc.Liquid# */{
                 locPos.x = i;
                 locPos.y = j;
                 v = this.originalVertex(locPos);
-                v.x = (v.x + (Math.sin(time * Math.PI * locWaves * 2 + v.x * .01) * locAmplitude * locAmplitudeRate));
-                v.y = (v.y + (Math.sin(time * Math.PI * locWaves * 2 + v.y * .01) * locAmplitude * locAmplitudeRate));
+                v.x = (v.x + (Math.sin(dt * Math.PI * locWaves * 2 + v.x * .01) * locAmplitude * locAmplitudeRate));
+                v.y = (v.y + (Math.sin(dt * Math.PI * locWaves * 2 + v.y * .01) * locAmplitude * locAmplitudeRate));
                 this.setVertex(locPos, v);
             }
         }
@@ -1059,9 +1059,9 @@ cc.Waves = cc.Grid3DAction.extend(/** @lends cc.Waves# */{
                 locPos.y = j;
                 v = this.originalVertex(locPos);
                 if (locVertical)
-                    v.x = (v.x + (Math.sin(time * Math.PI * locWaves * 2 + v.y * .01) * locAmplitude * locAmplitudeRate));
+                    v.x = (v.x + (Math.sin(dt * Math.PI * locWaves * 2 + v.y * .01) * locAmplitude * locAmplitudeRate));
                 if (locHorizontal)
-                    v.y = (v.y + (Math.sin(time * Math.PI * locWaves * 2 + v.x * .01) * locAmplitude * locAmplitudeRate));
+                    v.y = (v.y + (Math.sin(dt * Math.PI * locWaves * 2 + v.x * .01) * locAmplitude * locAmplitudeRate));
                 this.setVertex(locPos, v);
             }
         }
@@ -1214,7 +1214,7 @@ cc.Twirl = cc.Grid3DAction.extend(/** @lends cc.Twirl# */{
                 avg.x = i - (locSizeWidth / 2.0);
                 avg.y = j - (locSizeHeight / 2.0);
 
-                a = cc.pLength(avg) * Math.cos(Math.PI / 2.0 + time * Math.PI * locTwirls * 2) * amp;
+                a = cc.pLength(avg) * Math.cos(Math.PI / 2.0 + dt * Math.PI * locTwirls * 2) * amp;
 
                 dX = Math.sin(a) * (v.y - c.y) + Math.cos(a) * (v.x - c.x);
                 dY = Math.cos(a) * (v.y - c.y) - Math.sin(a) * (v.x - c.x);

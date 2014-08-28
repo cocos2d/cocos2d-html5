@@ -36,7 +36,6 @@ cc.PointObject = cc.Class.extend(/** @lends cc.PointObject# */{
     _child:null,
 
     ctor: function(ratio, offset){
-        cc.Class.prototype.ctor.call(this);
         this.initWithCCPoint(ratio, offset);
     },
 

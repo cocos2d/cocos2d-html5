@@ -85,12 +85,10 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         this._textureLoaded = false;
 
         if(filename !== undefined && rect !== undefined ){
-            if(rotated === undefined || offset === undefined || originalSize === undefined){
+            if(rotated === undefined || offset === undefined || originalSize === undefined)
                 this.initWithTexture(filename, rect);
-            }
-            else{
+            else
                 this.initWithTexture(filename, rect, rotated, offset, originalSize)
-            }
         }
     },
 
@@ -359,7 +357,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         this._rectInPixels = rect;
         rect = this._rect = cc.rectPixelsToPoints(rect);
         
-        if(texture && texture.url) {
+        if(texture && texture.url && texture.isLoaded()) {
             var _x, _y;
             if(rotated){
                 _x = rect.x + rect.height;
