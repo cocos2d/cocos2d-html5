@@ -62,6 +62,7 @@
                 <file name="cocos2d/core/sprites/CCSpriteFrameCache.js"/>
                 <file name="cocos2d/core/sprites/CCSpriteBatchNode.js"/>
                 <file name="cocos2d/core/CCConfiguration.js"/>
+                <file name="cocos2d/core/CCDirectorWebGL.js"/>
                 <file name="cocos2d/core/CCDirector.js"/>
                 <file name="cocos2d/core/CCCamera.js"/>
                 <file name="cocos2d/core/CCScheduler.js"/>
@@ -132,7 +133,6 @@
                 <file name="cocos2d/tilemap/CCTMXLayer.js"/>
                 <file name="cocos2d/parallax/CCParallaxNode.js"/>
                 <file name="cocos2d/audio/CCAudio.js"/>
-                <file name="jsb_api.js"/>
                 <file name="extensions/gui/control-extension/CCControl.js"/>
                 <file name="extensions/gui/control-extension/CCControlButton.js"/>
                 <file name="extensions/gui/control-extension/CCControlUtils.js"/>
