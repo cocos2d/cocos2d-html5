@@ -31,6 +31,10 @@
  */
 var cc = cc || {};
 
+/**
+ * @namespace
+ * @name ClassManager
+ */
 var ClassManager = {
     id : (0|(Math.random()*998)),
 

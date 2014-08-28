@@ -23,19 +23,23 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
+/**
+ * @const
+ * @type {number}
+ */
 cc.PI2 = Math.PI * 2;
 
 /**
- * Canvas of DrawingPrimitive implement version
+ * Canvas of DrawingPrimitive implement version use for canvasMode
  * @class
  * @extends cc.Class
+ * @param {CanvasRenderingContext2D} renderContext
  */
 cc.DrawingPrimitiveCanvas = cc.Class.extend(/** @lends cc.DrawingPrimitiveCanvas# */{
     _cacheArray:[],
     _renderContext:null,
     /**
-     * Constructor
+     * Constructor of cc.DrawingPrimitiveCanvas
      * @param {CanvasRenderingContext2D} renderContext
      */
     ctor:function (renderContext) {

@@ -129,7 +129,7 @@ ccs.uiReader = /** @lends ccs.uiReader# */{
     },
 
     /**
-     *  create uiWidget from a josn file that exported by cocostudio UI editor
+     * create uiWidget from a josn file that exported by cocostudio UI editor
      * @param {String} fileName
      * @returns {ccui.Widget}
      */

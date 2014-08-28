@@ -775,22 +775,17 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
 
 /**
  * Creates a ccui.TextField.
+ * @deprecated since v3.0, please use new ccui.TextField() instead.
  * @param {String} placeholder
  * @param {String} fontName
  * @param {Number} fontSize
  * @returns {ccui.TextField}
+ * @example
+ * // example
+ * var uiTextField = ccui.TextField.create();
  */
 ccui.TextField.create = function(placeholder, fontName, fontSize){
-    var widget = new ccui.TextField(placeholder, fontName, fontSize);
-    if (widget && widget.init()) {
-        if(placeholder && fontName && fontSize){
-            widget.setPlaceHolder(placeholder);
-            widget.setFontName(fontName);
-            widget.setFontSize(fontSize);
-        }
-        return widget;
-    }
-    return null;
+    return new ccui.TextField(placeholder, fontName, fontSize);
 };
 
 var _p = ccui.TextField.prototype;
@@ -822,18 +817,6 @@ _p.passwordEnabled;
 cc.defineGetterSetter(_p, "passwordEnabled", _p.isPasswordEnabled, _p.setPasswordEnabled);
 
 _p = null;
-
-/**
- * allocates and initializes a UITextField.
- * @deprecated since v3.0, please use new ccui.TextField() instead.
- * @return {ccui.TextField}
- * @example
- * // example
- * var uiTextField = ccui.TextField.create();
- */
-ccui.TextField.create = function () {
-    return new ccui.TextField();
-};
 
 // Constants
 //TextField event

@@ -43,6 +43,7 @@ cc.TouchesIntergerDict = {};
  *  - cc.view.methodName(); <br/>
  * @class
  * @name cc.view
+ * @extend cc.Class
  */
 cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     _delegate: null,
@@ -90,6 +91,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     __resizeWithBrowserSize: false,
     _isAdjustViewPort: true,
 
+    /**
+     * Constructor of cc.EGLView
+     */
     ctor: function () {
         var _t = this, d = document, _strategyer = cc.ContainerStrategy, _strategy = cc.ContentStrategy;
         _t._frame = (cc.container.parentNode === d.body) ? d.documentElement : cc.container.parentNode;
@@ -134,7 +138,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     /**
      * Sets whether resize canvas automatically when browser's size changed.<br/>
      * Useful only on web.
-     * @param enabled Whether enable automatic resize with browser's resize event
+     * @param {Boolean} enabled Whether enable automatic resize with browser's resize event
      */
     resizeWithBrowserSize: function (enabled) {
         var adjustSize, _t = this;
@@ -160,7 +164,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * this callback will be invoked before applying resolution policy, <br/>
      * so you can do any additional modifications within the callback.<br/>
      * Useful only on web.
-     * @param callback The callback function
+     * @param {Function} callback The callback function
      */
     setResizeCallback: function (callback) {
         if (typeof callback == "function" || callback == null) {
@@ -246,7 +250,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * It's enabled by default, we strongly suggest you not to disable it.<br/>
      * And even when it's enabled, you can still set your own "viewport" meta, it won't be overridden<br/>
      * Only useful on web
-     * @param enabled Enable automatic modification to "viewport" meta
+     * @param {Boolean} enabled Enable automatic modification to "viewport" meta
      */
     adjustViewPort: function (enabled) {
         this._isAdjustViewPort = enabled;
@@ -323,6 +327,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     /**
      * Open or close IME keyboard , subclass must implement this method.
+     * @param {Boolean} isOpen
      */
     setIMEKeyboardState: function (isOpen) {
     },
@@ -552,6 +557,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     /**
      * Returns whether GL_SCISSOR_TEST is enable
+     * @return {Boolean}
      */
     isScissorEnabled: function () {
         var gl = cc._renderContext;
@@ -650,6 +656,11 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     }
 });
 
+/**
+ * @function
+ * @return {cc.EGLView}
+ * @private
+ */
 cc.EGLView._getInstance = function () {
     if (!this._instance) {
         this._instance = this._instance || new cc.EGLView();
@@ -804,12 +815,20 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
 (function () {
 
 // Container scale strategys
+    /**
+     * @class
+     * @extends cc.ContainerStrategy
+     */
     var EqualToFrame = cc.ContainerStrategy.extend({
         apply: function (view) {
             this._setupContainer(view, view._frameSize.width, view._frameSize.height);
         }
     });
 
+    /**
+     * @class
+     * @extends cc.ContainerStrategy
+     */
     var ProportionalToFrame = cc.ContainerStrategy.extend({
         apply: function (view, designedResolution) {
             var frameW = view._frameSize.width, frameH = view._frameSize.height, containerStyle = cc.container.style,
@@ -834,6 +853,10 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
         }
     });
 
+    /**
+     * @class
+     * @extends EqualToFrame
+     */
     var EqualToWindow = EqualToFrame.extend({
         preApply: function (view) {
 	        this._super(view);
@@ -846,6 +869,10 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
         }
     });
 
+    /**
+     * @class
+     * @extends ProportionalToFrame
+     */
     var ProportionalToWindow = ProportionalToFrame.extend({
         preApply: function (view) {
 	        this._super(view);
@@ -858,6 +885,10 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
         }
     });
 
+    /**
+     * @class
+     * @extends cc.ContainerStrategy
+     */
     var OriginalContainer = cc.ContainerStrategy.extend({
         apply: function (view) {
             this._setupContainer(view, cc._canvas.width, cc._canvas.height);
@@ -967,6 +998,11 @@ cc.ResolutionPolicy = cc.Class.extend(/** @lends cc.ResolutionPolicy# */{
 	_containerStrategy: null,
     _contentStrategy: null,
 
+    /**
+     * Constructor of cc.ResolutionPolicy
+     * @param {cc.ContainerStrategy} containerStg
+     * @param {cc.ContentStrategy} contentStg
+     */
     ctor: function (containerStg, contentStg) {
         this.setContainerStrategy(containerStg);
         this.setContentStrategy(contentStg);
@@ -1022,40 +1058,44 @@ cc.ResolutionPolicy = cc.Class.extend(/** @lends cc.ResolutionPolicy# */{
     }
 });
 
-/*
+/**
  * @memberOf cc.ResolutionPolicy#
  * @name EXACT_FIT
- * @const
+ * @constant
+ * @type Number
  * @static
  * The entire application is visible in the specified area without trying to preserve the original aspect ratio.<br/>
  * Distortion can occur, and the application may appear stretched or compressed.
  */
 cc.ResolutionPolicy.EXACT_FIT = 0;
 
-/*
+/**
  * @memberOf cc.ResolutionPolicy#
  * @name NO_BORDER
- * @const
+ * @constant
+ * @type Number
  * @static
  * The entire application fills the specified area, without distortion but possibly with some cropping,<br/>
  * while maintaining the original aspect ratio of the application.
  */
 cc.ResolutionPolicy.NO_BORDER = 1;
 
-/*
+/**
  * @memberOf cc.ResolutionPolicy#
  * @name SHOW_ALL
- * @const
+ * @constant
+ * @type Number
  * @static
  * The entire application is visible in the specified area without distortion while maintaining the original<br/>
  * aspect ratio of the application. Borders can appear on two sides of the application.
  */
 cc.ResolutionPolicy.SHOW_ALL = 2;
 
-/*
+/**
  * @memberOf cc.ResolutionPolicy#
  * @name FIXED_HEIGHT
- * @const
+ * @constant
+ * @type Number
  * @static
  * The application takes the height of the design resolution size and modifies the width of the internal<br/>
  * canvas so that it fits the aspect ratio of the device<br/>
@@ -1064,10 +1104,11 @@ cc.ResolutionPolicy.SHOW_ALL = 2;
  */
 cc.ResolutionPolicy.FIXED_HEIGHT = 3;
 
-/*
+/**
  * @memberOf cc.ResolutionPolicy#
  * @name FIXED_WIDTH
- * @const
+ * @constant
+ * @type Number
  * @static
  * The application takes the width of the design resolution size and modifies the height of the internal<br/>
  * canvas so that it fits the aspect ratio of the device<br/>
@@ -1076,10 +1117,11 @@ cc.ResolutionPolicy.FIXED_HEIGHT = 3;
  */
 cc.ResolutionPolicy.FIXED_WIDTH = 4;
 
-/*
+/**
  * @memberOf cc.ResolutionPolicy#
  * @name UNKNOWN
- * @const
+ * @constant
+ * @type Number
  * @static
  * Unknow policy
  */

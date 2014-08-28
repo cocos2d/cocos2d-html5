@@ -720,7 +720,7 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
 
 /**
  * create one TiledGrid3D object
- * @deprecated
+ * @deprecated since v3.0, plese use new cc.TiledGrid3D(gridSize, texture, flipped) instead
  * @param {cc.Size} gridSize
  * @param {cc.Texture2D} [texture=]
  * @param {Boolean} [flipped=]

@@ -28,6 +28,8 @@
  * cc.configuration contains some openGL variables
  * @namespace
  * @name cc.configuration
+ * @example
+ * var textureSize = cc.configuration.getMaxTextureSize();
  */
 cc.configuration = /** @lends cc.configuration# */{
 	// Type constants

@@ -369,7 +369,7 @@ cc.TransitionProgressVertical.create = function (t, scene) {
 cc.TransitionProgressInOut = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressInOut# */{
 
     /**
-     * @constructor
+     * The constructor of cc.TransitionProgressInOut. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @param {Number} t time
      * @param {cc.Scene} scene
      */
@@ -425,7 +425,7 @@ cc.TransitionProgressInOut.create = function (t, scene) {
 cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressOutIn# */{
 
     /**
-     * @constructor
+     * The constructor of cc.TransitionProgressOutIn. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @param {Number} t time
      * @param {cc.Scene} scene
      */

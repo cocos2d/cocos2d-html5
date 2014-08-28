@@ -800,27 +800,46 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 });
 
 /**
- * Event name for projection change
+ * The event projection changed of cc.Director
  * @constant
- * @type {String}
+ * @type {string}
+ * @example
+ *   cc.eventManager.addCustomListener(cc.Director.EVENT_PROJECTION_CHANGED, function(event) {
+ *           cc.log("Projection changed.");
+ *       });
  */
 cc.Director.EVENT_PROJECTION_CHANGED = "director_projection_changed";
+
 /**
- * Event name for draw finish event in each frame
+ * The event after draw of cc.Director
  * @constant
- * @type {String}
+ * @type {string}
+ * @example
+ *   cc.eventManager.addCustomListener(cc.Director.EVENT_AFTER_DRAW, function(event) {
+ *           cc.log("after draw event.");
+ *       });
  */
 cc.Director.EVENT_AFTER_DRAW = "director_after_draw";
+
 /**
- * Event name for after visit event in each frame
+ * The event after visit of cc.Director
  * @constant
- * @type {String}
+ * @type {string}
+ * @example
+ *   cc.eventManager.addCustomListener(cc.Director.EVENT_AFTER_VISIT, function(event) {
+ *           cc.log("after visit event.");
+ *       });
  */
 cc.Director.EVENT_AFTER_VISIT = "director_after_visit";
+
 /**
- * Event name for after update event in each frame
+ * The event after update of cc.Director
  * @constant
- * @type {String}
+ * @type {string}
+ * @example
+ *   cc.eventManager.addCustomListener(cc.Director.EVENT_AFTER_UPDATE, function(event) {
+ *           cc.log("after update event.");
+ *       });
  */
 cc.Director.EVENT_AFTER_UPDATE = "director_after_update";
 
@@ -905,14 +924,14 @@ cc.Director.PROJECTION_2D = 0;
 cc.Director.PROJECTION_3D = 1;
 
 /**
- * Constant for custom projection
+ * Constant for custom projection, if cc.Director's projection set to it, it calls "updateProjection" on the projection delegate.
  * @constant
  * @type {Number}
  */
 cc.Director.PROJECTION_CUSTOM = 3;
 
 /**
- * Default projection is 3D projection
+ * Constant for default projection of cc.Director, default projection is 3D projection
  * @constant
  * @type {Number}
  */

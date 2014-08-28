@@ -231,7 +231,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     /**
-     * @constructor
+     * The constructor of cc.Scale9Sprite. Override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @param {string|cc.SpriteFrame} file file name of texture or a SpriteFrame
      * @param {cc.Rect} rect
      * @param {cc.Rect} capInsets

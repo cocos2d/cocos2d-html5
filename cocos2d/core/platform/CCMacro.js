@@ -74,11 +74,11 @@ cc.UINT_MAX = 0xffffffff;
  *  modified from c++ macro, you need to pass in the x and y variables names in string, <br/>
  *  and then a reference to the whole object as third variable
  * </p>
- * @param x
- * @param y
- * @param ref
+ * @param {String} x
+ * @param {String} y
+ * @param {Object} ref
  * @function
- * @deprecated
+ * @deprecated since v3.0
  */
 cc.swap = function (x, y, ref) {
     if ((typeof ref) == 'object' && (typeof ref.x) != 'undefined' && (typeof ref.y) != 'undefined') {
@@ -149,6 +149,12 @@ cc.degreesToRadians = function (angle) {
 cc.radiansToDegrees = function (angle) {
     return angle * cc.DEG;
 };
+/**
+ * converts radians to degrees
+ * @param {Number} angle
+ * @return {Number}
+ * @function
+ */
 cc.radiansToDegress = function (angle) {
     cc.log(cc._LogInfos.radiansToDegress);
     return angle * cc.DEG;
@@ -249,6 +255,7 @@ cc.FLT_EPSILON = 0.0000001192092896;
  *     On Mac it returns 1;<br/>
  *     On iPhone it returns 2 if RetinaDisplay is On. Otherwise it returns 1
  * </p>
+ * @return {Number}
  * @function
  */
 cc.contentScaleFactor = cc.IS_RETINA_DISPLAY_SUPPORTED ? function () {
@@ -270,7 +277,8 @@ cc.pointPointsToPixels = function (points) {
 
 /**
  * Converts a Point in pixels to points
- * @param {Point} pixels
+ * @param {cc.Rect} pixels
+ * @return {cc.Point}
  * @function
  */
 cc.pointPixelsToPoints = function (pixels) {
@@ -315,6 +323,7 @@ cc._sizePixelsToPointsOut = function (sizeInPixels, outSize) {
 /**
  * Converts a rect in pixels to points
  * @param {cc.Rect} pixel
+ * @return {cc.Rect}
  * @function
  */
 cc.rectPixelsToPoints = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (pixel) {
@@ -328,6 +337,7 @@ cc.rectPixelsToPoints = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (pixel) {
 /**
  * Converts a rect in points to pixels
  * @param {cc.Rect} point
+ * @return {cc.Rect}
  * @function
  */
 cc.rectPointsToPixels = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
@@ -416,6 +426,10 @@ cc.ONE_MINUS_CONSTANT_ALPHA	= 0x8004;
  */
 cc.ONE_MINUS_CONSTANT_COLOR	= 0x8002;
 
+/**
+ * Check webgl error.Error will be shown in console if exists.
+ * @function
+ */
 cc.checkGLErrorDebug = function () {
     if (cc.renderMode == cc._RENDER_TYPE_WEBGL) {
         var _error = cc._renderContext.getError();
@@ -777,7 +791,7 @@ cc.arrayAppendObjectsToIndex = function(arr, addObjs,index){
 /**
  * Copy an array's item to a new array (its performance is better than Array.slice)
  * @param {Array} arr
- * @returns {Array}
+ * @return {Array}
  */
 cc.copyArray = function(arr){
     var i, len = arr.length, arr_clone = new Array(len);
