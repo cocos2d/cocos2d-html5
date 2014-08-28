@@ -26,12 +26,26 @@
 /**
  * ignore
  */
+
+/**
+ * @constant
+ * @type {number}
+ */
 cc.UIInterfaceOrientationLandscapeLeft = -90;
-
+/**
+ * @constant
+ * @type {number}
+ */
 cc.UIInterfaceOrientationLandscapeRight = 90;
-
+/**
+ * @constant
+ * @type {number}
+ */
 cc.UIInterfaceOrientationPortraitUpsideDown = 180;
-
+/**
+ * @constant
+ * @type {number}
+ */
 cc.UIInterfaceOrientationPortrait = 0;
 
 /**
@@ -91,6 +105,10 @@ cc.inputManager = /** @lends cc.inputManager# */{
 
     _glView: null,
 
+    /**
+     * @function
+     * @param {Array} touches
+     */
     handleTouchesBegin: function (touches) {
         var selTouch, index, curTouch, touchID, handleTouches = [], locTouchIntDict = this._touchesIntegerDict;
         for(var i = 0, len = touches.length; i< len; i ++){
@@ -119,6 +137,10 @@ cc.inputManager = /** @lends cc.inputManager# */{
         }
     },
 
+    /**
+     * @function
+     * @param {Array} touches
+     */
     handleTouchesMove: function(touches){
         var selTouch, index, touchID, handleTouches = [], locTouches = this._touches;
         for(var i = 0, len = touches.length; i< len; i ++){
@@ -144,6 +166,10 @@ cc.inputManager = /** @lends cc.inputManager# */{
         }
     },
 
+    /**
+     * @function
+     * @param {Array} touches
+     */
     handleTouchesEnd: function(touches){
         var handleTouches = this.getSetOfTouchesEndOrCancel(touches);
         if(handleTouches.length > 0) {
@@ -154,6 +180,10 @@ cc.inputManager = /** @lends cc.inputManager# */{
         }
     },
 
+    /**
+     * @function
+     * @param {Array} touches
+     */
     handleTouchesCancel: function(touches){
         var handleTouches = this.getSetOfTouchesEndOrCancel(touches);
         if(handleTouches.length > 0) {
@@ -164,6 +194,11 @@ cc.inputManager = /** @lends cc.inputManager# */{
         }
     },
 
+    /**
+     * @function
+     * @param {Array} touches
+     * @returns {Array}
+     */
     getSetOfTouchesEndOrCancel: function(touches) {
         var selTouch, index, touchID, handleTouches = [], locTouches = this._touches, locTouchesIntDict = this._touchesIntegerDict;
         for(var i = 0, len = touches.length; i< len; i ++){
@@ -185,6 +220,11 @@ cc.inputManager = /** @lends cc.inputManager# */{
         return handleTouches;
     },
 
+    /**
+     * @function
+     * @param {HTMLElement} element
+     * @return {Object}
+     */
     getHTMLElementPosition: function (element) {
         var docElem = document.documentElement;
         var win = window;
@@ -216,6 +256,11 @@ cc.inputManager = /** @lends cc.inputManager# */{
         };
     },
 
+    /**
+     * @function
+     * @param {cc.Touch} touch
+     * @return {cc.Touch}
+     */
     getPreTouch: function(touch){
         var preTouch = null;
         var locPreTouchPool = this._preTouchPool;
@@ -231,6 +276,10 @@ cc.inputManager = /** @lends cc.inputManager# */{
         return preTouch;
     },
 
+    /**
+     * @function
+     * @param {cc.Touch} touch
+     */
     setPreTouch: function(touch){
         var find = false;
         var locPreTouchPool = this._preTouchPool;
@@ -252,6 +301,13 @@ cc.inputManager = /** @lends cc.inputManager# */{
         }
     },
 
+    /**
+     * @function
+     * @param {Number} tx
+     * @param {Number} ty
+     * @param {cc.Point} pos
+     * @return {cc.Touch}
+     */
     getTouchByXY: function(tx, ty, pos){
         var locPreTouch = this._preTouchPoint;
         var location = this._glView.convertToLocationInView(tx, ty, pos);
@@ -262,6 +318,13 @@ cc.inputManager = /** @lends cc.inputManager# */{
         return touch;
     },
 
+    /**
+     * @function
+     * @param {cc.Point} location
+     * @param {cc.Point} pos
+     * @param {Number} eventType
+     * @returns {cc.EventMouse}
+     */
     getMouseEvent: function(location, pos, eventType){
         var locPreMouse = this._prevMousePoint;
         this._glView._convertMouseToLocationInView(location, pos);
@@ -273,6 +336,12 @@ cc.inputManager = /** @lends cc.inputManager# */{
         return mouseEvent;
     },
 
+    /**
+     * @function
+     * @param {Touch} event
+     * @param {cc.Point} pos
+     * @return {cc.Point}
+     */
     getPointByEvent: function(event, pos){
         if (event.pageX != null)  //not avalable in <= IE8
             return {x: event.pageX, y: event.pageY};
@@ -282,6 +351,12 @@ cc.inputManager = /** @lends cc.inputManager# */{
         return {x: event.clientX, y: event.clientY};
     },
 
+    /**
+     * @function
+     * @param {Touch} event
+     * @param {cc.Point} pos
+     * @returns {Array}
+     */
     getTouchesByEvent: function(event, pos){
         var touchArr = [], locView = this._glView;
         var touch_event, touch, preLocation;
@@ -314,6 +389,10 @@ cc.inputManager = /** @lends cc.inputManager# */{
         return touchArr;
     },
 
+    /**
+     * @function
+     * @param {HTMLElement} element
+     */
     registerSystemEvent: function(element){
         if(this._isRegisterEvent) return;
 
@@ -514,6 +593,10 @@ cc.inputManager = /** @lends cc.inputManager# */{
 
     _registerAccelerometerEvent: function(){},
 
+    /**
+     * @function
+     * @param {Number} dt
+     */
     update:function(dt){
         if(this._accelCurTime > this._accelInterval){
             this._accelCurTime -= this._accelInterval;

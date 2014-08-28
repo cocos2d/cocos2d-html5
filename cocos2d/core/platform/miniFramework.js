@@ -28,7 +28,7 @@
  * the dollar sign, classic like jquery, this selector add extra methods to HTMLElement without touching its prototype</br>
  * it is also chainable like jquery
  * @param {HTMLElement|String} x pass in a css selector in string or the whole HTMLElement
- * @class
+ * @function
  * @return {cc.$}
  */
 cc.$ = function (x) {

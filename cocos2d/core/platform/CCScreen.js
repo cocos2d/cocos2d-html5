@@ -75,6 +75,10 @@ cc.screen = /** @lends cc.screen# */{
 		]
 	],
 
+    /**
+     * initialize
+     * @function
+     */
     init: function () {
 	    this._fn = {};
 	    var i, val, map = this._fnMap, valL;
@@ -124,6 +128,7 @@ cc.screen = /** @lends cc.screen# */{
 
     /**
      * exit the full mode.
+     * @return {Boolean}
      */
     exitFullScreen: function () {
         return this._supportsFullScreen ? document[ this._fn.exitFullscreen ]() : true;
