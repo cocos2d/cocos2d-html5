@@ -48,8 +48,8 @@ cc.animationCache = /** @lends cc.animationCache# */{
     },
 
     /**
-     *  Deletes a cc.Animation from the cache.
-     * @param  {String} name
+     * Deletes a cc.Animation from the cache.
+     * @param {String} name
      */
     removeAnimation:function (name) {
         if (!name) {
@@ -75,14 +75,6 @@ cc.animationCache = /** @lends cc.animationCache# */{
         return null;
     },
 
-    /**
-     * <p>
-     *     Adds an animation from an NSDictionary<br/>
-     *     Make sure that the frames were previously loaded in the cc.SpriteFrameCache.
-     * </p>
-     * @param {object} dictionary
-     * @param {String} plist
-     */
     _addAnimationsWithDictionary:function (dictionary,plist) {
         var animations = dictionary["animations"];
         if (!animations) {
@@ -117,7 +109,7 @@ cc.animationCache = /** @lends cc.animationCache# */{
 
     /**
      * <p>
-     *    Adds an animation from a plist file.<br/>
+     *    Adds an animations from a plist file.<br/>
      *    Make sure that the frames were previously loaded in the cc.SpriteFrameCache.
      * </p>
      * @param {String} plist

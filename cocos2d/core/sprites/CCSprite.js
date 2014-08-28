@@ -71,7 +71,7 @@ cc.generateTintImageWithMultiply = function(image, color, rect, renderCanvas){
 };
 
 /**
- * generate tinted texture with lighter.
+ * Generate tinted texture with lighter.
  * lighter:    The source and destination colors are added to each other, resulting in brighter colors,
  * moving towards color values of 1 (maximum brightness for that color).
  * @function
@@ -134,7 +134,7 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
 };
 
 /**
- * generate texture's cache for texture tint
+ * Generates texture's cache for texture tint
  * @function
  * @param {HTMLImageElement} texture
  * @return {Array}
@@ -267,6 +267,28 @@ cc._getCompositeOperationByBlendFunc = function(blendFunc){
  * @class
  * @extends cc.Node
  *
+ * @param {String|cc.SpriteFrame|HTMLImageElement|cc.Texture2D} fileName  The string which indicates a path to image file, e.g., "scene1/monster.png".
+ * @param {cc.Rect} rect  Only the contents inside rect of pszFileName's texture will be applied for this sprite.
+ * @param {Boolean} [rotated] Whether or not the texture rectangle is rotated.
+ * @example
+ *
+ * 1.Create a sprite with image path and rect
+ * var sprite1 = new cc.Sprite("res/HelloHTML5World.png");
+ * var sprite2 = new cc.Sprite("res/HelloHTML5World.png",cc.rect(0,0,480,320));
+ *
+ * 2.Create a sprite with a sprite frame name. Must add "#" before frame name.
+ * var sprite = new cc.Sprite('#grossini_dance_01.png');
+ *
+ * 3.Create a sprite with a sprite frame
+ * var spriteFrame = cc.spriteFrameCache.getSpriteFrame("grossini_dance_01.png");
+ * var sprite = new cc.Sprite(spriteFrame);
+ *
+ * 4.Create a sprite with an existing texture contained in a CCTexture2D object
+ *      After creation, the rect will be the size of the texture, and the offset will be (0,0).
+ * var texture = cc.textureCache.addImage("HelloHTML5World.png");
+ * var sprite1 = new cc.Sprite(texture);
+ * var sprite2 = new cc.Sprite(texture, cc.rect(0,0,480,320));
+ *
  * @property {Boolean}              dirty               - Indicates whether the sprite needs to be updated.
  * @property {Boolean}              flippedX            - Indicates whether or not the spirte is flipped on x axis.
  * @property {Boolean}              flippedY            - Indicates whether or not the spirte is flipped on y axis.
@@ -278,10 +300,6 @@ cc._getCompositeOperationByBlendFunc = function(blendFunc){
  * @property {cc.TextureAtlas}      textureAtlas        - The weak reference of the cc.TextureAtlas when the sprite is rendered using via cc.SpriteBatchNode.
  * @property {cc.SpriteBatchNode}   batchNode           - The batch node object if this sprite is rendered by cc.SpriteBatchNode.
  * @property {cc.V3F_C4B_T2F_Quad}  quad                - <@readonly> The quad (tex coords, vertex coords and color) information.
- *
- * @example
- * var aSprite = new cc.Sprite();
- * aSprite.initWithFile("HelloHTML5World.png",cc.rect(0,0,480,320));
  */
 cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 	dirty:false,
@@ -325,10 +343,19 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     //Only for texture update judgment
     _oldDisplayColor: cc.color.WHITE,
 
+    /**
+     * Returns whether the texture have been loaded
+     * @returns {boolean}
+     */
     textureLoaded:function(){
         return this._textureLoaded;
     },
 
+    /**
+     * Add a event listener for texture loaded event.
+     * @param {Function} callback
+     * @param {Object} target
+     */
     addLoadedEventListener:function(callback, target){
         if(!this._loadedEventListeners)
             this._loadedEventListeners = [];
@@ -347,15 +374,15 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * Whether or not the Sprite needs to be updated in the Atlas
-     * @return {Boolean} true if the sprite needs to be updated in the Atlas, false otherwise.
+     * Returns whether or not the Sprite needs to be updated in the Atlas
+     * @return {Boolean} True if the sprite needs to be updated in the Atlas, false otherwise.
      */
     isDirty:function () {
         return this.dirty;
     },
 
     /**
-     * Makes the Sprite to be updated in the Atlas.
+     * Makes the sprite to be updated in the Atlas.
      * @param {Boolean} bDirty
      */
     setDirty:function (bDirty) {
@@ -379,7 +406,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * Set the index used on the TextureAtlas.
+     * Sets the index used on the TextureAtlas.
      * @warning Don't modify this value unless you know what you are doing
      * @param {Number} atlasIndex
      */
@@ -388,7 +415,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * returns the rect of the cc.Sprite in points
+     * Returns the rect of the cc.Sprite in points
      * @return {cc.Rect}
      */
     getTextureRect:function () {
@@ -396,7 +423,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * Gets the weak reference of the cc.TextureAtlas when the sprite is rendered using via cc.SpriteBatchNode
+     * Returns the weak reference of the cc.TextureAtlas when the sprite is rendered using via cc.SpriteBatchNode
      * @return {cc.TextureAtlas}
      */
     getTextureAtlas:function () {
@@ -412,7 +439,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * Gets the offset position of the sprite. Calculated automatically by editors like Zwoptex.
+     * Returns the offset position of the sprite. Calculated automatically by editors like Zwoptex.
      * @return {cc.Point}
      */
     getOffsetPosition:function () {
@@ -427,7 +454,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 	},
 
     /**
-     * conforms to cc.TextureProtocol protocol
+     * Returns the blend function
      * @return {cc.BlendFunc}
      */
     getBlendFunc:function () {
@@ -435,13 +462,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * Initializes a sprite with an SpriteFrame. The texture and rect in SpriteFrame will be applied on this sprite
+     * Initializes a sprite with an SpriteFrame. The texture and rect in SpriteFrame will be applied on this sprite.<br/>
+     * Please pass parameters to the constructor to initialize the sprite, do not call this function yourself,
      * @param {cc.SpriteFrame} spriteFrame A CCSpriteFrame object. It should includes a valid texture and a rect
      * @return {Boolean}  true if the sprite is initialized properly, false otherwise.
-     * @example
-     * var spriteFrame = cc.spriteFrameCache.getSpriteFrame("grossini_dance_01.png");
-     * var sprite = new cc.Sprite();
-     * sprite.initWithSpriteFrame(spriteFrame);
      */
     initWithSpriteFrame:function (spriteFrame) {
 
@@ -466,6 +490,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * Initializes a sprite with a sprite frame name. <br/>
      * A cc.SpriteFrame will be fetched from the cc.SpriteFrameCache by name.  <br/>
      * If the cc.SpriteFrame doesn't exist it will raise an exception. <br/>
+     * Please pass parameters to the constructor to initialize the sprite, do not call this function yourself.
      * @param {String} spriteFrameName A key string that can fected a volid cc.SpriteFrame from cc.SpriteFrameCache
      * @return {Boolean} true if the sprite is initialized properly, false otherwise.
      * @example
@@ -480,7 +505,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * tell the sprite to use batch node render.
+     * Tell the sprite to use batch node render.
      * @param {cc.SpriteBatchNode} batchNode
      */
     useBatchNode:function (batchNode) {
@@ -505,6 +530,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this._rect.height = rect.height;
     },
 
+    /**
+     * Sort all children of this sprite node.
+     * @override
+     */
     sortAllChildren:function () {
         if (this._reorderChildDirty) {
             var _children = this._children;
@@ -563,7 +592,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * Removes a child from the sprite. (override cc.Node )
+     * Removes a child from the sprite.
      * @param child
      * @param cleanup  whether or not cleanup all running actions
      * @override
@@ -575,7 +604,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * visible setter  (override cc.Node )
+     * Sets whether the sprite is visible or not.
      * @param {Boolean} visible
      * @override
      */
@@ -585,7 +614,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * Removes all children from the container  (override cc.Node )
+     * Removes all children from the container.
      * @param cleanup whether or not cleanup all running actions
      * @override
      */
@@ -605,8 +634,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     //
 
 	/**
-	 * set Recursively is or isn't Dirty
-	 * used only when parent is cc.SpriteBatchNode
+	 * Sets recursively the dirty flag.
+	 * Used only when parent is cc.SpriteBatchNode
 	 * @param {Boolean} value
 	 */
 	setDirtyRecursively:function (value) {
@@ -639,7 +668,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 	},
 
     /**
-     * IsRelativeAnchorPoint setter  (override cc.Node )
+     * Sets whether ignore anchor point for positioning
      * @param {Boolean} relative
      * @override
      */
@@ -677,12 +706,12 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
     /**
      * <p>
-     *     Returns the flag which indicates whether the sprite is flipped horizontally or not.                      <br/>
+     * Returns the flag which indicates whether the sprite is flipped horizontally or not.                      <br/>
      *                                                                                                              <br/>
      * It only flips the texture of the sprite, and not the texture of the sprite's children.                       <br/>
      * Also, flipping the texture doesn't alter the anchorPoint.                                                    <br/>
      * If you want to flip the anchorPoint too, and/or to flip the children too use:                                <br/>
-     *      sprite->setScaleX(sprite->getScaleX() * -1);  <p/>
+     *      sprite.setScaleX(sprite.getScaleX() * -1);  <p/>
      * @return {Boolean} true if the sprite is flipped horizontally, false otherwise.
      */
     isFlippedX:function () {
@@ -696,7 +725,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      *      It only flips the texture of the sprite, and not the texture of the sprite's children.                  <br/>
      *      Also, flipping the texture doesn't alter the anchorPoint.                                               <br/>
      *      If you want to flip the anchorPoint too, and/or to flip the children too use:                           <br/>
-     *         sprite->setScaleY(sprite->getScaleY() * -1); <p/>
+     *         sprite.setScaleY(sprite.getScaleY() * -1); <p/>
      * @return {Boolean} true if the sprite is flipped vertically, false otherwise.
      */
     isFlippedY:function () {
@@ -707,29 +736,33 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     // RGBA protocol
     //
     /**
-     * opacity: conforms to CCRGBAProtocol protocol
+     * Sets whether opacity modify color or not.
      * @function
      * @param {Boolean} modify
      */
     setOpacityModifyRGB:null,
 
     /**
-     * return IsOpacityModifyRGB value
+     * Returns whether opacity modify color or not.
      * @return {Boolean}
      */
     isOpacityModifyRGB:function () {
         return this._opacityModifyRGB;
     },
 
+    /**
+     * Update the display opacity.
+     * @function
+     */
     updateDisplayedOpacity: null,
 
     // Animation
 
     /**
-     * changes the display frame with animation name and index.<br/>
+     * Changes the display frame with animation name and index.<br/>
      * The animation name will be get from the CCAnimationCache
-     * @param animationName
-     * @param frameIndex
+     * @param {String} animationName
+     * @param {Number} frameIndex
      */
     setDisplayFrameWithAnimationName:function (animationName, frameIndex) {
         cc.assert(animationName, cc._LogInfos.Sprite_setDisplayFrameWithAnimationName_3);
@@ -768,6 +801,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     // CCTextureProtocol
+    /**
+     * Returns the texture of the sprite node
+     * @returns {cc.Texture2D}
+     */
     getTexture:function () {
         return this._texture;
     },
@@ -781,13 +818,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _textureRect_Canvas: null,
     _drawSize_Canvas: null,
 
-    /**
-     * Constructor
-     * @function
-     * @param {String|cc.SpriteFrame|cc.SpriteBatchNode|HTMLImageElement|cc.Texture2D} fileName sprite construct parameter
-     * @param {cc.Rect} rect  Only the contents inside rect of pszFileName's texture will be applied for this sprite.
-     * @param {Boolean} [rotated] Whether or not the texture rectangle is rotated.
-     */
     ctor: null,
 
 	_softInit: function (fileName, rect, rotated) {
@@ -838,7 +868,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     setBlendFunc: null,
 
     /**
-     * Initializes an empty sprite with nothing init.
+     * Initializes an empty sprite with nothing init.<br/>
+     * Please pass parameters to the constructor to initialize the sprite, do not call this function yourself.
      * @function
      * @return {Boolean}
      */
@@ -846,18 +877,16 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
     /**
      * <p>
-     *     Initializes a sprite with an image filename.
+     *     Initializes a sprite with an image filename.<br/>
      *
-     *     This method will find pszFilename from local file system, load its content to CCTexture2D,
-     *     then use CCTexture2D to create a sprite.
-     *     After initialization, the rect used will be the size of the image. The offset will be (0,0).
+     *     This method will find pszFilename from local file system, load its content to CCTexture2D,<br/>
+     *     then use CCTexture2D to create a sprite.<br/>
+     *     After initialization, the rect used will be the size of the image. The offset will be (0,0).<br/>
+     *     Please pass parameters to the constructor to initialize the sprite, do not call this function yourself.
      * </p>
      * @param {String} filename The path to an image file in local file system
      * @param {cc.Rect} rect The rectangle assigned the content area from texture.
      * @return {Boolean} true if the sprite is initialized properly, false otherwise.
-     * @example
-     * var mySprite = new cc.Sprite();
-     * mySprite.initWithFile("HelloHTML5World.png",cc.rect(0,0,480,320));
      */
     initWithFile:function (filename, rect) {
         cc.assert(filename, cc._LogInfos.Sprite_initWithFile);
@@ -877,39 +906,36 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
     /**
      * Initializes a sprite with a texture and a rect in points, optionally rotated.  <br/>
-     * After initialization, the rect used will be the size of the texture, and the offset will be (0,0).
+     * After initialization, the rect used will be the size of the texture, and the offset will be (0,0).<br/>
+     * Please pass parameters to the constructor to initialize the sprite, do not call this function yourself.
      * @function
      * @param {cc.Texture2D|HTMLImageElement|HTMLCanvasElement} texture A pointer to an existing CCTexture2D object. You can use a CCTexture2D object for many sprites.
      * @param {cc.Rect} rect Only the contents inside rect of this texture will be applied for this sprite.
      * @param {Boolean} [rotated] Whether or not the texture rectangle is rotated.
      * @return {Boolean} true if the sprite is initialized properly, false otherwise.
-     * @example
-     * var img =cc.textureCache.addImage("HelloHTML5World.png");
-     * var mySprite = new cc.Sprite();
-     * mySprite.initWithTexture(img,cc.rect(0,0,480,320));
      */
     initWithTexture: null,
 
     _textureLoadedCallback: null,
 
     /**
-     * updates the texture rect of the CCSprite in points.
+     * Updates the texture rect of the CCSprite in points.
      * @function
      * @param {cc.Rect} rect a rect of texture
-     * @param {Boolean} rotated
-     * @param {cc.Size} untrimmedSize
+     * @param {Boolean} [rotated] Whether or not the texture is rotated
+     * @param {cc.Size} [untrimmedSize] The original pixels size of the texture
      */
     setTextureRect:null,
 
     // BatchNode methods
     /**
-     * updates the quad according the the rotation, position, scale values.
+     * Updates the quad according the the rotation, position, scale values.
      * @function
      */
     updateTransform: null,
 
     /**
-     * Add child to sprite (override cc.Node )
+     * Add child to sprite (override cc.Node)
      * @function
      * @param {cc.Sprite} child
      * @param {Number} localZOrder  child's zOrder
@@ -952,31 +978,35 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * Opacity setter
+     * Sets opacity of the sprite
      * @function
      * @param {Number} opacity
      */
     setOpacity:null,
 
     /**
-     * Color setter
+     * Sets color of the sprite
      * @function
      * @param {cc.Color} color3
      */
     setColor: null,
 
+    /**
+     * Updates the display color
+     * @function
+     */
     updateDisplayedColor: null,
 
     // Frames
     /**
-     * Sets a new spriteFrame to the cc.Sprite.
+     * Sets a new sprite frame to the sprite.
      * @function
      * @param {cc.SpriteFrame|String} newFrame
      */
     setSpriteFrame: null,
 
     /**
-     * Sets a new display frame to the cc.Sprite.
+     * Sets a new display frame to the sprite.
      * @param {cc.SpriteFrame|String} newFrame
      * @deprecated
      */
@@ -1019,7 +1049,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
     // CCTextureProtocol
     /**
-     * Texture of sprite setter
+     * Sets the texture of sprite
      * @function
      * @param {cc.Texture2D|String} texture
      */
@@ -1154,56 +1184,41 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
 /**
  * Create a sprite with image path or frame name or texture or spriteFrame.
- * @deprecated
+ * @deprecated since v3.0, please use new construction instead
+ * @see cc.Sprite
  * @param {String|cc.SpriteFrame|HTMLImageElement|cc.Texture2D} fileName  The string which indicates a path to image file, e.g., "scene1/monster.png".
  * @param {cc.Rect} rect  Only the contents inside rect of pszFileName's texture will be applied for this sprite.
  * @param {Boolean} [rotated] Whether or not the texture rectangle is rotated.
  * @return {cc.Sprite} A valid sprite object
- * @example
- *
- * 1.Create a sprite with image path and rect
- * var sprite1 = cc.Sprite.create("res/HelloHTML5World.png");
- * var sprite2 = cc.Sprite.create("res/HelloHTML5World.png",cc.rect(0,0,480,320));
- *
- * 2.Create a sprite with a sprite frame name. Must add "#" before frame name.
- * var sprite = cc.Sprite.create('#grossini_dance_01.png');
- *
- * 3.Create a sprite with a sprite frame
- * var spriteFrame = cc.spriteFrameCache.getSpriteFrame("grossini_dance_01.png");
- * var sprite = cc.Sprite.create(spriteFrame);
- *
- * 4.Create a sprite with an exsiting texture contained in a CCTexture2D object
- *      After creation, the rect will be the size of the texture, and the offset will be (0,0).
- * var texture = cc.textureCache.addImage("HelloHTML5World.png");
- * var sprite1 = cc.Sprite.create(texture);
- * var sprite2 = cc.Sprite.create(texture, cc.rect(0,0,480,320));
- *
  */
 cc.Sprite.create = function (fileName, rect, rotated) {
     return new cc.Sprite(fileName, rect, rotated);
 };
 
 /**
- * @deprecated
- * @type {Function}
+ * @deprecated since v3.0, please use new construction instead
+ * @see cc.Sprite
+ * @function
  */
 cc.Sprite.createWithTexture = cc.Sprite.create;
 
 /**
- * @deprecated
- * @type {Function}
+ * @deprecated since v3.0, please use new construction instead
+ * @see cc.Sprite
+ * @function
  */
 cc.Sprite.createWithSpriteFrameName = cc.Sprite.create;
 
 /**
- * @deprecated
- * @type {Function}
+ * @deprecated since v3.0, please use new construction instead
+ * @see cc.Sprite
+ * @function
  */
 cc.Sprite.createWithSpriteFrame = cc.Sprite.create;
 /**
  * cc.Sprite invalid index on the cc.SpriteBatchNode
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.Sprite.INDEX_NOT_INITIALIZED = -1;
 

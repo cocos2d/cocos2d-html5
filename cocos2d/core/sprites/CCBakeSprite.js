@@ -22,7 +22,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.BakeSprite = cc.Sprite.extend({
+/**
+ * cc.BakeSprite is a type of sprite that will be cached.
+ * @class
+ * @extend cc.Sprite
+ */
+cc.BakeSprite = cc.Sprite.extend(/** @lends cc.BakeSprite# */{
     _cacheCanvas: null,
     _cacheContext: null,
 
