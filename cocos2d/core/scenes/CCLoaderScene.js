@@ -22,12 +22,22 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
+/**
+ * <p>cc.LoaderScene is a scene that you can load it when you loading files</p>
+ * <p>cc.LoaderScene can present thedownload progress </p>
+ * @class
+ * @extends cc.Scene
+ * @example
+ * var lc = new cc.LoaderScene();
+ */
 cc.LoaderScene = cc.Scene.extend({
     _interval : null,
     _label : null,
     _className:"LoaderScene",
-
+    /**
+     * Contructor of cc.LoaderScene
+     * @returns {boolean}
+     */
     init : function(){
         var self = this;
 
@@ -71,13 +81,17 @@ cc.LoaderScene = cc.Scene.extend({
         logo.y = centerPos.y;
         self._bgLayer.addChild(logo, 10);
     },
-
+    /**
+     * custom onEnter
+     */
     onEnter: function () {
         var self = this;
         cc.Node.prototype.onEnter.call(self);
         self.schedule(self._startLoading, 0.3);
     },
-
+    /**
+     * custom onExit
+     */
     onExit: function () {
         cc.Node.prototype.onExit.call(this);
         var tmpStr = "Loading... 0%";
@@ -110,6 +124,18 @@ cc.LoaderScene = cc.Scene.extend({
             });
     }
 });
+/**
+ * <p>cc.LoaderScene.preload can present a loaderScene with download progress.</p>
+ * <p>when all the resource are downloaded it will invoke call function</p>
+ * @param resources
+ * @param cb
+ * @returns {cc.LoaderScene|*}
+ * @example
+ * //Example
+ * cc.LoaderScene.preload(g_resources, function () {
+        cc.director.runScene(new HelloWorldScene());
+    }, this);
+ */
 cc.LoaderScene.preload = function(resources, cb){
     var _cc = cc;
     if(!_cc.loaderScene) {

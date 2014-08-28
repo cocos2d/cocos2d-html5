@@ -38,6 +38,8 @@ cc.associateWithNative = function (jsObj, superclass) {
 
 /**
  * keymap
+ * @namespace
+ * @name cc.Key
  * @example
  * //Example
  * //to mark a keydown
@@ -203,6 +205,12 @@ cc.FMT_WEBP = 4;
  */
 cc.FMT_UNKNOWN = 5;
 
+/**
+ * get image format by image data
+ * @function
+ * @param {Array} imgData
+ * @returns {Number}
+ */
 cc.getImageFormatByData = function (imgData) {
 	// if it is a png file buffer.
     if (imgData.length > 8 && imgData[0] == 0x89
@@ -225,10 +233,13 @@ cc.getImageFormatByData = function (imgData) {
 	return cc.FMT_UNKNOWN;
 };
 
-//
-// Another way to subclass: Using Google Closure.
-// The following code was copied + pasted from goog.base / goog.inherits
-//
+/**
+ * Another way to subclass: Using Google Closure.
+ * The following code was copied + pasted from goog.base / goog.inherits
+ * @function
+ * @param {Function} childCtor
+ * @param {Function} parentCtor
+ */
 cc.inherits = function (childCtor, parentCtor) {
     function tempCtor() {}
     tempCtor.prototype = parentCtor.prototype;
@@ -242,6 +253,9 @@ cc.inherits = function (childCtor, parentCtor) {
 // }
 };
 
+/**
+ * @deprecated since v3.0, please use extend and _super
+ */
 cc.base = function(me, opt_methodName, var_args) {
     var caller = arguments.callee.caller;
     if (caller.superClass_) {

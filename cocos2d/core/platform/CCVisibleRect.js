@@ -40,7 +40,8 @@
  * @property {Number}       width           - Width of the screen
  * @property {Number}       height          - Height of the screen
  *
- * @type Object
+ * @namespace
+ * @name cc.visibleRect
  */
 cc.visibleRect = {
     topLeft:cc.p(0,0),
@@ -55,6 +56,10 @@ cc.visibleRect = {
     width:0,
     height:0,
 
+    /**
+     * initialize
+     * @param {cc.Rect} visibleRect
+     */
     init:function(visibleRect){
         var w = this.width = visibleRect.width;
         var h = this.height = visibleRect.height;
