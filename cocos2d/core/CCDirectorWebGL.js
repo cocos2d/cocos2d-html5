@@ -229,17 +229,6 @@ cc._tmp.DirectorWebGL = function () {
         _t._FPSLabel.setPosition(_t._FPSLabel.width / 2 + locStatsPosition.x, _t._FPSLabel.height / 2 + locStatsPosition.y);
     };
 
-
-    /**
-     * <p>
-     *     converts a UIKit coordinate to an OpenGL coordinate<br/>
-     *     Useful to convert (multi) touches coordinates to the current layout (portrait or landscape)
-     * </p>
-     * @param {cc.Point} uiPoint
-     * @return {cc.Point}
-     *
-     * convertToGL move to CCDirectorWebGL
-     */
     _p.convertToGL = function (uiPoint) {
         var transform = new cc.kmMat4();
         cc.GLToClipTransform(transform);
@@ -259,12 +248,6 @@ cc._tmp.DirectorWebGL = function () {
         return cc.p(glCoord.x, glCoord.y);
     };
 
-    /**
-     * <p>converts an OpenGL coordinate to a UIKit coordinate<br/>
-     * Useful to convert node points to window points for calls such as glScissor</p>
-     * @param {cc.Point} glPoint
-     * @return {cc.Point}
-     */
     _p.convertToUI = function (glPoint) {
         var transform = new cc.kmMat4();
         cc.GLToClipTransform(transform);
@@ -299,9 +282,6 @@ cc._tmp.DirectorWebGL = function () {
         return (this._winSizeInPoints.height / 1.1566 );
     };
 
-    /**
-     * Sets the glViewport
-     */
     _p.setViewport = function () {
         var view = this._openGLView;
         if (view) {
@@ -310,26 +290,14 @@ cc._tmp.DirectorWebGL = function () {
         }
     };
 
-    /**
-     *  Get the CCEGLView, where everything is rendered
-     * @return {*}
-     */
     _p.getOpenGLView = function () {
         return this._openGLView;
     };
 
-    /**
-     * Sets an OpenGL projection
-     * @return {Number}
-     */
     _p.getProjection = function () {
         return this._projection;
     };
 
-    /**
-     * enables/disables OpenGL alpha blending
-     * @param {Boolean} on
-     */
     _p.setAlphaBlending = function (on) {
         if (on)
             cc.glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
@@ -338,10 +306,6 @@ cc._tmp.DirectorWebGL = function () {
         //cc.checkGLErrorDebug();
     };
 
-
-    /**
-     * sets the OpenGL default values
-     */
     _p.setGLDefaultValues = function () {
         var _t = this;
         _t.setAlphaBlending(true);

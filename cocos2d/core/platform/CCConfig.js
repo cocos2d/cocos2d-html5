@@ -25,15 +25,13 @@
  ****************************************************************************/
 
 /**
- * <p>
- * The current version of Cocos2d-html5 being used.<br/>
+ * The current version of Cocos2d-JS being used.<br/>
  * Please DO NOT remove this String, it is an important flag for bug tracking.<br/>
  * If you post a bug to forum, please attach this flag.
- * </p>
- * @constant
- * @type String
+ * @type {String}
+ * @name cc.ENGINE_VERSION
  */
-window["CocosEngine"] = cc.ENGINE_VERSION = "Cocos2d-JS v3.0 RC2";
+window["CocosEngine"] = cc.ENGINE_VERSION = "Cocos2d-JS v3.0 RC3";
 
 /**
  * <p>
@@ -52,17 +50,19 @@ window["CocosEngine"] = cc.ENGINE_VERSION = "Cocos2d-JS v3.0 RC2";
  *      - cc.QuadParticleSystem                                                      <br/>
  *      - cc.TileMap                                                                 <br/>
  *                                                                                  <br/>
- *  To enabled set it to 1. Disabled by default.
+ *  To enabled set it to 1. Disabled by default.<br/>
+ *  To modify it, in Web engine please refer to CCConfig.js, in JSB please refer to CCConfig.h
  * </p>
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL = 0;
 
 /**
- * Position of the FPS (Default: 0,0 (bottom-left corner))
+ * Position of the FPS (Default: 0,0 (bottom-left corner))<br/>
+ * To modify it, in Web engine please refer to CCConfig.js, in JSB please refer to CCConfig.h
  * @constant
- * @type cc.Point
+ * @type {cc.Point}
  */
 cc.DIRECTOR_STATS_POSITION = cc.p(0, 0);
 
@@ -73,9 +73,10 @@ cc.DIRECTOR_STATS_POSITION = cc.p(0, 0);
  *   Having a bigger number means a more reliable FPS<br/>
  *   <br/>
  *   Default value: 0.1f<br/>
+ *   To modify it, in Web engine please refer to CCConfig.js, in JSB please refer to CCConfig.h
  * </p>
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.DIRECTOR_FPS_INTERVAL = 0.5;
 
@@ -84,10 +85,11 @@ cc.DIRECTOR_FPS_INTERVAL = 0.5;
  *    If enabled, the cc.Node objects (cc.Sprite, cc.Label,etc) will be able to render in subpixels.<br/>
  *    If disabled, integer pixels will be used.<br/>
  *    <br/>
- *    To enable set it to 1. Enabled by default.
+ *    To enable set it to 1. Enabled by default.<br/>
+ *    To modify it, in Web engine please refer to CCConfig.js, in JSB please refer to CCConfig.h
  * </p>
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.COCOSNODE_RENDER_SUBPIXEL = 1;
 
@@ -96,10 +98,11 @@ cc.COCOSNODE_RENDER_SUBPIXEL = 1;
  *   If enabled, the cc.Sprite objects rendered with cc.SpriteBatchNode will be able to render in subpixels.<br/>
  *   If disabled, integer pixels will be used.<br/>
  *   <br/>
- *   To enable set it to 1. Enabled by default.
+ *   To enable set it to 1. Enabled by default.<br/>
+ *   To modify it, in Web engine please refer to CCConfig.js, in JSB please refer to CCConfig.h
  * </p>
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.SPRITEBATCHNODE_RENDER_SUBPIXEL = 1;
 
@@ -108,10 +111,11 @@ cc.SPRITEBATCHNODE_RENDER_SUBPIXEL = 1;
  *     If most of your images have pre-multiplied alpha, set it to 1 (if you are going to use .PNG/.JPG file images).<br/>
  *     Only set to 0 if ALL your images by-pass Apple UIImage loading system (eg: if you use libpng or PVR images)<br/>
  *     <br/>
- *     To enable set it to a value different than 0. Enabled by default.
+ *     To enable set it to a value different than 0. Enabled by default.<br/>
+ *     To modify it, in Web engine please refer to CCConfig.js, in JSB please refer to CCConfig.h
  * </p>
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA = 0;
 
@@ -120,10 +124,11 @@ cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA = 0;
  *   Use GL_TRIANGLE_STRIP instead of GL_TRIANGLES when rendering the texture atlas.<br/>
  *   It seems it is the recommend way, but it is much slower, so, enable it at your own risk<br/>
  *   <br/>
- *   To enable set it to a value different than 0. Disabled by default.
+ *   To enable set it to a value different than 0. Disabled by default.<br/>
+ *   To modify it, in Web engine please refer to CCConfig.js, in JSB please refer to CCConfig.h
  * </p>
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.TEXTURE_ATLAS_USE_TRIANGLE_STRIP = 0;
 
@@ -134,9 +139,10 @@ cc.TEXTURE_ATLAS_USE_TRIANGLE_STRIP = 0;
  *    So for certain cases, where you might need hundreds of VAO objects, it might be a good idea to disable it.<br/>
  *    <br/>
  *    To disable it set it to 0. disable by default.(Not Supported on WebGL)<br/>
+ *    To modify it, in Web engine please refer to CCConfig.js, in JSB please refer to CCConfig.h
  * </p>
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.TEXTURE_ATLAS_USE_VAO = 0;
 
@@ -150,10 +156,11 @@ cc.TEXTURE_ATLAS_USE_VAO = 0;
  *  To enable set it to a value different than 0. Disabled by default. <br/>
  *  <br/>
  *  This value governs only the PNG, GIF, BMP, images.<br/>
- *  This value DOES NOT govern the PVR (PVR.GZ, PVR.CCZ) files. If NPOT PVR is loaded, then it will create an NPOT texture ignoring this value.
+ *  This value DOES NOT govern the PVR (PVR.GZ, PVR.CCZ) files. If NPOT PVR is loaded, then it will create an NPOT texture ignoring this value.<br/>
+ *  To modify it, in Web engine please refer to CCConfig.js, in JSB please refer to CCConfig.h
  * </p>
  * @constant
- * @type Number
+ * @type {Number}
  * @deprecated This value will be removed in 1.1 and NPOT textures will be loaded by default if the device supports it.
  */
 cc.TEXTURE_NPOT_SUPPORT = 0;
@@ -166,10 +173,11 @@ cc.TEXTURE_NPOT_SUPPORT = 0;
  *    To enable set it to 1. Use 0 to disable it. Enabled by default.<br/>
  *    <br/>
  *    This value governs only the PNG, GIF, BMP, images.<br/>
- *    This value DOES NOT govern the PVR (PVR.GZ, PVR.CCZ) files. If NPOT PVR is loaded, then it will create an NPOT texture ignoring this value.
+ *    This value DOES NOT govern the PVR (PVR.GZ, PVR.CCZ) files. If NPOT PVR is loaded, then it will create an NPOT texture ignoring this value.<br/>
+ *    To modify it, in Web engine please refer to CCConfig.js, in JSB please refer to CCConfig.h
  * </p>
  * @constant
- * @type Number
+ * @type {Number}
  * @deprecated This value will be removed in 1.1 and NPOT textures will be loaded by default if the device supports it.
  */
 cc.RETINA_DISPLAY_SUPPORT = 1;
@@ -184,7 +192,7 @@ cc.RETINA_DISPLAY_SUPPORT = 1;
  *    Platforms: Only used on Retina Display devices like iPhone 4.
  * </p>
  * @constant
- * @type String
+ * @type {String}
  */
 cc.RETINA_DISPLAY_FILENAME_SUFFIX = "-hd";
 
@@ -197,7 +205,7 @@ cc.RETINA_DISPLAY_FILENAME_SUFFIX = "-hd";
  *     This feature is enabled by default.
  * </p>
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.USE_LA88_LABELS = 1;
 
@@ -212,7 +220,7 @@ cc.USE_LA88_LABELS = 1;
  *      2 -- draw texture box
  * </p>
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.SPRITE_DEBUG_DRAW = 0;
 
@@ -224,7 +232,7 @@ cc.SPRITE_DEBUG_DRAW = 0;
  *    To enable set it to a value different than 0. Disabled by default.
  * </p>
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.SPRITEBATCHNODE_DEBUG_DRAW = 0;
 
@@ -236,7 +244,7 @@ cc.SPRITEBATCHNODE_DEBUG_DRAW = 0;
  *   To enable set it to a value different than 0. Disabled by default.<br/>
  * </p>
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.LABELBMFONT_DEBUG_DRAW = 0;
 
@@ -248,21 +256,21 @@ cc.LABELBMFONT_DEBUG_DRAW = 0;
  *    To enable set it to a value different than 0. Disabled by default.
  * </p>
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.LABELATLAS_DEBUG_DRAW = 0;
 
 /**
- * whether or not support retina display
+ * Whether or not support retina display
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.IS_RETINA_DISPLAY_SUPPORTED = 1;
 
 /**
- * default engine
+ * Default engine
  * @constant
- * @type String
+ * @type {String}
  */
 cc.DEFAULT_ENGINE = cc.ENGINE_VERSION + "-canvas";
 
@@ -290,6 +298,6 @@ cc.ENABLE_STACKABLE_ACTIONS = 1;
  *      If you are migrating your code from GL ES 1.1, then keep it disabled. Once all your code works as expected, turn it on.
  * </p>
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.ENABLE_GL_STATE_CACHE = 1;

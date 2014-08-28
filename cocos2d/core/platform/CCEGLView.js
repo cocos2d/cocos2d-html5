@@ -31,8 +31,18 @@ cc.Touches = [];
 cc.TouchesIntergerDict = {};
 
 /**
- * cc.view is the shared view object.
+ * cc.view is the singleton object which represents the game window.<br/>
+ * It's main task include: <br/>
+ *  - Apply the design resolution policy<br/>
+ *  - Provide interaction with the window, like resize event on web, retina display support, etc...<br/>
+ *  - Manage the game view port which can be different with the window<br/>
+ *  - Manage the content scale and translation<br/>
+ * <br/>
+ * Since the cc.view is a singleton, you don't need to call any constructor or create functions,<br/>
+ * the standard way to use it is by calling:<br/>
+ *  - cc.view.methodName(); <br/>
  * @class
+ * @name cc.view
  * @extend cc.Class
  */
 cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
@@ -126,8 +136,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * set whether to resize glview with browser wize
-     * @param {Number} enabled
+     * Sets whether resize canvas automatically when browser's size changed.<br/>
+     * Useful only on web.
+     * @param {Boolean} enabled Whether enable automatic resize with browser's resize event
      */
     resizeWithBrowserSize: function (enabled) {
         var adjustSize, _t = this;
@@ -149,8 +160,11 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * set callback function for resize
-     * @param {Function} callback
+     * Sets the callback function for cc.view's resize action,<br/>
+     * this callback will be invoked before applying resolution policy, <br/>
+     * so you can do any additional modifications within the callback.<br/>
+     * Useful only on web.
+     * @param {Function} callback The callback function
      */
     setResizeCallback: function (callback) {
         if (typeof callback == "function" || callback == null) {
@@ -227,24 +241,25 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     _adjustSizeToBrowser: function () {
     },
 
-    /**
-     * init
-     */
     initialize: function () {
         this._initialized = true;
     },
 
     /**
-     * set whether to adjust view port
-     * @param enabled
+     * Sets whether the engine modify the "viewport" meta in your web page.<br/>
+     * It's enabled by default, we strongly suggest you not to disable it.<br/>
+     * And even when it's enabled, you can still set your own "viewport" meta, it won't be overridden<br/>
+     * Only useful on web
+     * @param {Boolean} enabled Enable automatic modification to "viewport" meta
      */
     adjustViewPort: function (enabled) {
         this._isAdjustViewPort = enabled;
     },
 
 	/**
-	 * Retina support is enabled by default for Apple device but disabled for other devices,
-	 * it takes effect only when you called setDesignResolutionPolicy
+	 * Retina support is enabled by default for Apple device but disabled for other devices,<br/>
+	 * it takes effect only when you called setDesignResolutionPolicy<br/>
+     * Only useful on web
 	 * @param {Boolean} enabled  Enable or disable retina display
 	 */
 	enableRetina: function(enabled) {
@@ -252,7 +267,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 	},
 
 	/**
-	 * Check whether retina display is enabled.
+	 * Check whether retina display is enabled.<br/>
+     * Only useful on web
 	 * @return {Boolean}
 	 */
 	isRetinaEnabled: function() {
@@ -260,8 +276,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 	},
 
     /**
-     * If enabled, the application will try automatically to enter full screen mode on mobile devices
-     * You can pass true as parameter to enable it and disable it by passing false
+     * If enabled, the application will try automatically to enter full screen mode on mobile devices<br/>
+     * You can pass true as parameter to enable it and disable it by passing false.<br/>
+     * Only useful on web
      * @param {Boolean} enabled  Enable or disable auto full screen on mobile devices
      */
     enableAutoFullScreen: function(enabled) {
@@ -269,8 +286,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Check whether auto full screen is enabled.
-     * @return {Boolean}
+     * Check whether auto full screen is enabled.<br/>
+     * Only useful on web
+     * @return {Boolean} Auto full screen enabled or not
      */
     isAutoFullScreenEnabled: function() {
         return this._autoFullScreen;
@@ -283,7 +301,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Get whether render system is ready(no matter opengl or canvas),
+     * Get whether render system is ready(no matter opengl or canvas),<br/>
      * this name is for the compatibility with cocos2d-x, subclass must implement this method.
      * @return {Boolean}
      */
@@ -315,9 +333,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * <p>
-     *   The resolution translate on EGLView
-     * </p>
+     * Sets the resolution translate on EGLView
      * @param {Number} offsetLeft
      * @param {Number} offsetTop
      */
@@ -326,9 +342,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * <p>
-     *   get the resolution translate on EGLView
-     * </p>
+     * Returns the resolution translate on EGLView
      * @return {cc.Size|Object}
      */
     getContentTranslateLeftTop: function () {
@@ -336,8 +350,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Get the frame size of EGL view.
-     * In general, it returns the screen size since the EGL view is a fullscreen view.
+     * Returns the frame size of the view.<br/>
+     * On native platforms, it returns the screen size since the view is a fullscreen view.<br/>
+     * On web, it returns the size of the canvas's outer DOM element.
      * @return {cc.Size}
      */
     getFrameSize: function () {
@@ -345,7 +360,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Set the frame size of EGL view.
+     * On native, it sets the frame size of view.<br/>
+     * On web, it sets the size of the canvas's outer DOM element.
      * @param {Number} width
      * @param {Number} height
      */
@@ -359,11 +375,14 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         cc.director.setProjection(cc.director.getProjection());
     },
 
+    /**
+     * Empty function
+     */
     centerWindow: function () {
     },
 
     /**
-     * Get the visible area size of OpenGL view port.
+     * Returns the visible area size of the view port.
      * @return {cc.Size}
      */
     getVisibleSize: function () {
@@ -371,19 +390,24 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Get the visible origin of OpenGL view port.
+     * Returns the visible origin of the view port.
      * @return {cc.Point}
      */
     getVisibleOrigin: function () {
         return cc.p(this._visibleRect.x,this._visibleRect.y);
     },
 
+    /**
+     * Returns whether developer can set content's scale factor.
+     * @return {Boolean}
+     */
     canSetContentScaleFactor: function () {
         return true;
     },
 
     /**
-     * Get the current resolution policy
+     * Returns the current resolution policy
+     * @see cc.ResolutionPolicy
      * @return {cc.ResolutionPolicy}
      */
     getResolutionPolicy: function () {
@@ -391,7 +415,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Set the current resolution policy
+     * Sets the current resolution policy
+     * @see cc.ResolutionPolicy
      * @param {cc.ResolutionPolicy|Number} resolutionPolicy
      */
     setResolutionPolicy: function (resolutionPolicy) {
@@ -416,16 +441,17 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Set the design resolution size.
+     * Sets the resolution policy with designed view size in points.<br/>
+     * The resolution policy include: <br/>
+     * [1] ResolutionExactFit       Fill screen by stretch-to-fit: if the design resolution ratio of width to height is different from the screen resolution ratio, your game view will be stretched.<br/>
+     * [2] ResolutionNoBorder       Full screen without black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two areas of your game view will be cut.<br/>
+     * [3] ResolutionShowAll        Full screen with black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two black borders will be shown.<br/>
+     * [4] ResolutionFixedHeight    Scale the content's height to screen's height and proportionally scale its width<br/>
+     * [5] ResolutionFixedWidth     Scale the content's width to screen's width and proportionally scale its height<br/>
+     * [cc.ResolutionPolicy]        [Web only feature] Custom resolution policy, constructed by cc.ResolutionPolicy<br/>
      * @param {Number} width Design resolution width.
      * @param {Number} height Design resolution height.
-     * @param {cc.ResolutionPolicy|Number} resolutionPolicy The resolution policy desired, you may choose:
-     * [1] ResolutionExactFit       Fill screen by stretch-to-fit: if the design resolution ratio of width to height is different from the screen resolution ratio, your game view will be stretched.
-     * [2] ResolutionNoBorder       Full screen without black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two areas of your game view will be cut.
-     * [3] ResolutionShowAll        Full screen with black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two black borders will be shown.
-     * [4] ResolutionFixedHeight    Scale the content's height to screen's height and proportionally scale its width
-     * [5] ResolutionFixedWidth     Scale the content's width to screen's width and proportionally scale its height
-     * [cc.ResolutionPolicy]        Custom resolution policy, constructed by cc.ResolutionPolicy
+     * @param {cc.ResolutionPolicy|Number} resolutionPolicy The resolution policy desired
      */
     setDesignResolutionSize: function (width, height, resolutionPolicy) {
         // Defensive code
@@ -491,7 +517,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Get design resolution size.
+     * Returns the designed size for the view.
      * Default resolution size is the same as 'getFrameSize'.
      * @return {cc.Size}
      */
@@ -500,7 +526,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Set opengl view port rectangle with points.
+     * Sets view port rectangle with points.
      * @param {Number} x
      * @param {Number} y
      * @param {Number} w width
@@ -515,7 +541,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Set Scissor rectangle with points.
+     * Sets Scissor rectangle with points.
      * @param {Number} x
      * @param {Number} y
      * @param {Number} w
@@ -530,7 +556,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Get whether GL_SCISSOR_TEST is enable
+     * Returns whether GL_SCISSOR_TEST is enable
      * @return {Boolean}
      */
     isScissorEnabled: function () {
@@ -539,7 +565,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Get the current scissor rectangle
+     * Returns the current scissor rectangle
      * @return {cc.Rect}
      */
     getScissorRect: function () {
@@ -550,6 +576,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
+     * Sets the name of the view
      * @param {String} viewName
      */
     setViewName: function (viewName) {
@@ -559,7 +586,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * get view name
+     * Returns the name of the view
      * @return {String}
      */
     getViewName: function () {
@@ -567,15 +594,15 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Get the opengl view port rectangle.
-     * @return {cc.rect}
+     * Returns the view port rectangle.
+     * @return {cc.Rect}
      */
     getViewPortRect: function () {
         return this._viewPortRect;
     },
 
     /**
-     * Get scale factor of the horizontal direction.
+     * Returns scale factor of the horizontal direction (X axis).
      * @return {Number}
      */
     getScaleX: function () {
@@ -583,7 +610,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Get scale factor of the vertical direction.
+     * Returns scale factor of the vertical direction (Y axis).
      * @return {Number}
      */
     getScaleY: function () {
@@ -591,7 +618,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Get device pixel ratio for retina display.
+     * Returns device pixel ratio for retina display.
      * @return {Number}
      */
     getDevicePixelRatio: function() {
@@ -599,10 +626,11 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Get the real location in view
-     * @param {Number} tx
-     * @param {Number} ty
-     * @param {cc.Point} relatedPos
+     * Returns the real location in view for a translation based on a related position
+     * @param {Number} tx The X axis translation
+     * @param {Number} ty The Y axis translation
+     * @param {Object} relatedPos The related position object including "left", "top", "width", "height" informations
+     * @return {cc.Point}
      */
     convertToLocationInView: function (tx, ty, relatedPos) {
         return {x: this._devicePixelRatio * (tx - relatedPos.left), y: this._devicePixelRatio * (relatedPos.top + relatedPos.height - ty)};
@@ -963,6 +991,8 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
  *
  * @class
  * @extends cc.Class
+ * @param {cc.ContainerStrategy} containerStg The container strategy
+ * @param {cc.ContentStrategy} contentStg The content strategy
  */
 cc.ResolutionPolicy = cc.Class.extend(/** @lends cc.ResolutionPolicy# */{
 	_containerStrategy: null,
