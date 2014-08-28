@@ -135,7 +135,7 @@ ccs.ActionFrame = ccs.Class.extend(/** @lends ccs.ActionFrame# */{
      */
     ctor: function () {
         this.frameType = 0;
-        this.easingType = 0;
+        this.easingType = ccs.FrameEaseType.Linear;
         this.frameIndex = 0;
         this.time = 0;
     },
@@ -316,9 +316,7 @@ ccs.ActionMoveFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionMoveFrame# */{
      * @returns {cc.MoveTo}
      */
     getAction: function (duration) {
-        var action = cc.moveTo(duration, this._position);
-        action.easingType = this.easingType || ccs.FrameEaseType.Linear;
-        return this._getEasingAction(action);
+        return this._getEasingAction(cc.moveTo(duration, this._position));
     }
 });
 
@@ -375,9 +373,7 @@ ccs.ActionScaleFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionScaleFrame# *
      * @returns {cc.ScaleTo}
      */
     getAction: function (duration) {
-        var action = cc.scaleTo(duration, this._scaleX, this._scaleY);
-        action.easingType = this.easingType || ccs.FrameEaseType.Linear;
-        return this._getEasingAction(action);
+        return this._getEasingAction(cc.scaleTo(duration, this._scaleX, this._scaleY));
     }
 });
 
@@ -413,12 +409,20 @@ ccs.ActionRotationFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionRotationFr
     /**
      * Gets the CCAction of ActionFrame.
      * @param {number} duration
+     * @param {cc.ActionFrame} [srcFrame]
      * @returns {cc.RotateTo}
      */
-    getAction: function (duration) {
-        var action = cc.rotateTo(duration, this._rotation);
-        action.easingType = this.easingType || ccs.FrameEaseType.Linear;
-        return this._getEasingAction(action);
+    getAction: function (duration, srcFrame) {
+        if(srcFrame === undefined)
+            return this._getEasingAction(cc.rotateTo(duration, this._rotation));
+        else {
+            if (!(srcFrame instanceof cc.ActionRotationFrame))
+                return this.getAction(duration);
+            else{
+                var diffRotation = this._rotation - srcFrame._rotation;
+                return this._getEasingAction(cc.rotateBy(duration,diffRotation));
+            }
+        }
     }
 });
 
@@ -457,9 +461,7 @@ ccs.ActionFadeFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionFadeFrame# */{
      * @returns {cc.FadeTo}
      */
     getAction: function (duration) {
-        var action = cc.fadeTo(duration, this._opacity);
-        action.easingType = this.easingType || ccs.FrameEaseType.Linear;
-        return this._getEasingAction(action);
+        return this._getEasingAction(cc.fadeTo(duration, this._opacity));
     }
 });
 
@@ -502,8 +504,6 @@ ccs.ActionTintFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionTintFrame# */{
      * @returns {cc.TintTo}
      */
     getAction: function (duration) {
-        var action = cc.tintTo(duration, this._color.r, this._color.g, this._color.b);
-        action.easingType = this.easingType || ccs.FrameEaseType.Linear;
-        return this._getEasingAction(action);
+        return this._getEasingAction(cc.tintTo(duration, this._color.r, this._color.g, this._color.b));
     }
 });
