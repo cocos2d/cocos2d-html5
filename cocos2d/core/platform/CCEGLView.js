@@ -31,8 +31,17 @@ cc.Touches = [];
 cc.TouchesIntergerDict = {};
 
 /**
- * cc.view is the shared view object.
- * @namespace
+ * cc.view is the singleton object which represents the game window.<br/>
+ * It's main task include: <br/>
+ *  - Apply the design resolution policy<br/>
+ *  - Provide interaction with the window, like resize event on web, retina display support, etc...<br/>
+ *  - Manage the game view port which can be different with the window<br/>
+ *  - Manage the content scale and translation<br/>
+ * <br/>
+ * Since the cc.view is a singleton, you don't need to call any constructor or create functions,<br/>
+ * the standard way to use it is by calling:<br/>
+ *  - cc.view.methodName(); <br/>
+ * @class
  * @name cc.view
  */
 cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
