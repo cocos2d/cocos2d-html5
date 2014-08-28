@@ -36,7 +36,6 @@ cc.PRIORITY_NON_SYSTEM = cc.PRIORITY_SYSTEM + 1;
 /**
  * A list double-linked list used for "updates with priority"
  * @Class
- * @Construct
  * @param {cc.ListEntry} prev
  * @param {cc.ListEntry} next
  * @param {cc.Class} target not retained (retained by hashUpdateEntry)
@@ -54,9 +53,8 @@ cc.ListEntry = function (prev, next, target, priority, paused, markedForDeletion
 };
 
 /**
- *  a update entry list
+ * A update entry list
  * @Class
- * @Construct
  * @param {cc.ListEntry} list Which list does it belong to ?
  * @param {cc.ListEntry} entry entry in the list
  * @param {cc.Class} target hash key (retained)
@@ -73,7 +71,6 @@ cc.HashUpdateEntry = function (list, entry, target, hh) {
 /**
  * Hash Element used for "selectors with interval"
  * @Class
- * @Construct
  * @param {Array} timers
  * @param {cc.Class} target  hash key (retained)
  * @param {Number} timerIndex
@@ -234,9 +231,6 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     _currentTargetSalvaged:false,
     _updateHashLocked:false, //If true unschedule will not remove anything from a hash. Elements will only be marked for deletion.
 
-    /**
-     * Constructor
-     */
     ctor:function () {
         var self = this;
         self._timeScale = 1.0;
@@ -329,7 +323,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     },
 
     /**
-     * returns time scale of scheduler
+     * Returns time scale of scheduler
      * @return {Number}
      */
     getTimeScale:function () {
@@ -632,7 +626,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     /**
      * Pause all selectors from all targets with a minimum priority. <br/>
      * You should only call this with kCCPriorityNonSystemMin or higher.
-     * @param minPriority
+     * @param {Number} minPriority
      */
     pauseAllTargetsWithMinPriority:function (minPriority) {
         var idsWithSelectors = [];
@@ -662,7 +656,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     /**
      * Resume selectors on a set of targets.<br/>
      * This can be useful for undoing a call to pauseAllCallbacks.
-     * @param targetsToResume
+     * @param {Array} targetsToResume
      */
     resumeTargets:function (targetsToResume) {
         if (!targetsToResume)
