@@ -32,7 +32,7 @@
  * // add SpriteFrames to spriteFrameCache With File<br/>
  * cc.spriteFrameCache.addSpriteFrames(s_grossiniPlist);<br/>
  * </p>
- * @namespace
+ * @class
  * @name cc.spriteFrameCache
  */
 cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{

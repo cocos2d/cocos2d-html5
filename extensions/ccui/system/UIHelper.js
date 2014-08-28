@@ -24,8 +24,8 @@
  ****************************************************************************/
 
 /**
- * UI Helper object contains some functions for seek widget
- * @namespace
+ * ccui.helper is the singleton object which is the Helper object contains some functions for seek widget
+ * @class
  * @name ccui.helper
  */
 ccui.helper = {

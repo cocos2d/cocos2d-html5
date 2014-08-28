@@ -317,8 +317,8 @@ if (cc.sys._supportWebAudio) {
 }
 
 /**
- * A simple Audio Engine engine API.
- * @namespace
+ * cc.audioEngine is the singleton object, it provide simple audio APIs.
+ * @class
  * @name cc.audioEngine
  */
 cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
@@ -775,10 +775,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
 
 
 if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
-    /**
-     * Extended AudioEngine for single audio mode.
-     * @namespace
-     */
+
     cc.AudioEngineForSingle = cc.AudioEngine.extend({
         _waitingEffIds: [],
         _pausedEffIds: [],
@@ -795,12 +792,6 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
             this._super(audio);
         },
 
-        /**
-         * Resume playing music.
-         * @example
-         * //example
-         * cc.audioEngine.resumeMusic();
-         */
         resumeMusic: function () {
             var self = this;
             if (self._musicPlayState == 1) {
@@ -811,15 +802,6 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
             }
         },
 
-        /**
-         * Play sound effect.
-         * @param {String} url The path of the sound effect with filename extension.
-         * @param {Boolean} loop Whether to loop the effect playing, default value is false
-         * @return {Number|null} the audio id
-         * @example
-         * //example
-         * var soundId = cc.audioEngine.playEffect(path);
-         */
         playEffect: function (url, loop) {
             var self = this, currEffect = self._currEffect;
             var audio = loop ? self._getEffect(url) : self._getSingleEffect(url);
@@ -844,23 +826,10 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
             return audioId;
         },
 
-        /**
-         * Pause playing sound effect.
-         * @param {Number} audioID The return value of function playEffect.
-         * @example
-         * //example
-         * cc.audioEngine.pauseEffect(audioID);
-         */
         pauseEffect: function (effectId) {
             cc.log("pauseEffect not supported in single audio mode!");
         },
 
-        /**
-         * Pause all playing sound effect.
-         * @example
-         * //example
-         * cc.audioEngine.pauseAllEffects();
-         */
         pauseAllEffects: function () {
             var self = this, waitings = self._waitingEffIds, pauseds = self._pausedEffIds, currEffect = self._currEffect;
             if (!currEffect) return;
@@ -872,23 +841,10 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
             currEffect.pause();
         },
 
-        /**
-         * Resume playing sound effect.
-         * @param {Number} effectId The return value of function playEffect.
-         * @audioID
-         * //example
-         * cc.audioEngine.resumeEffect(audioID);
-         */
         resumeEffect: function (effectId) {
             cc.log("resumeEffect not supported in single audio mode!");
         },
 
-        /**
-         * Resume all playing sound effect
-         * @example
-         * //example
-         * cc.audioEngine.resumeAllEffects();
-         */
         resumeAllEffects: function () {
             var self = this, waitings = self._waitingEffIds, pauseds = self._pausedEffIds;
 
@@ -912,13 +868,6 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
             }
         },
 
-        /**
-         * Stop playing sound effect.
-         * @param {Number} effectId The return value of function playEffect.
-         * @example
-         * //example
-         * cc.audioEngine.stopEffect(audioID);
-         */
         stopEffect: function (effectId) {
             var self = this, currEffect = self._currEffect, waitings = self._waitingEffIds, pauseds = self._pausedEffIds;
             if (currEffect && this._currEffectId == effectId) {//if the eff to be stopped is currEff
@@ -934,12 +883,6 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
             }
         },
 
-        /**
-         * Stop all playing sound effects.
-         * @example
-         * //example
-         * cc.audioEngine.stopAllEffects();
-         */
         stopAllEffects: function () {
             var self = this;
             self._stopAllEffects();
@@ -951,13 +894,6 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
             }
         },
 
-        /**
-         * Unload the preloaded effect from internal buffer
-         * @param {String} url
-         * @example
-         * //example
-         * cc.audioEngine.unloadEffect(EFFECT_FILE);
-         */
         unloadEffect: function (url) {
             var self = this, locLoader = cc.loader, locEffects = self._effects, effCache = self._effectCache4Single,
                 effectList = self._getEffectList(url), currEffect = self._currEffect;
@@ -1110,16 +1046,10 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
     });
 }
 
-/**
- * Resource loader for audio.
- */
 cc._audioLoader = {
     _supportedAudioTypes: null,
 
-    /**
-     * Get audio default path.
-     * @returns {cc.loader.audioPath|*}
-     */
+    // Get audio default path.
     getBasePath: function () {
         return cc.loader.audioPath;
     },
@@ -1157,11 +1087,7 @@ cc._audioLoader = {
         locLoader.cache[url] = audio;
     },
 
-    /**
-     * Check whether to support this type of file
-     * @param type
-     * @returns {boolean}
-     */
+    //Check whether to support this type of file
     audioTypeSupported: function (type) {
         if (!type) return false;
         return this._supportedAudioTypes.indexOf(type.toLowerCase()) >= 0;
@@ -1205,9 +1131,7 @@ cc._audioLoader = {
         return audio;
     },
 
-    /**
-     * Load this audio.
-     */
+    // Load this audio.
     load: function (realUrl, url, res, cb) {
         var tryArr = [];
         this._load(realUrl, url, res, -1, tryArr, null, cb);

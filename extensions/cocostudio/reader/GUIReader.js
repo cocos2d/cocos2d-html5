@@ -58,8 +58,8 @@
 })();
 
 /**
- * Base object for ccs.uiReader
- * @namespace
+ * ccs.uiReader is a singleton object which is the reader for Cocos Studio ui.
+ * @class
  * @name ccs.uiReader
  */
 ccs.uiReader = /** @lends ccs.uiReader# */{

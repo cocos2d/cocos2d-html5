@@ -26,13 +26,13 @@
 
 /**
  * <p>
- *     cc.animationCache is a singleton that manages the Animations.<br/>
+ *     cc.animationCache is a singleton object that manages the Animations.<br/>
  *     It saves in a cache the animations. You should use this class if you want to save your animations in a cache.<br/>
  * <br/>
  * example<br/>
  * cc.animationCache.addAnimation(animation,"animation1");<br/>
  * </p>
- * @namespace
+ * @class
  * @name cc.animationCache
  */
 cc.animationCache = /** @lends cc.animationCache# */{

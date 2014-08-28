@@ -24,8 +24,8 @@
  ****************************************************************************/
 
 /**
- * The sprite frame cache helper
- * @namespace
+ * ccs.spriteFrameCacheHelper is a singleton object, it's a sprite frame cache helper
+ * @class
  * @name ccs.spriteFrameCacheHelper
  */
 ccs.spriteFrameCacheHelper = /** @lends ccs.spriteFrameCacheHelper# */ {

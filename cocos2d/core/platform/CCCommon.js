@@ -247,7 +247,8 @@ cc.inherits = function (childCtor, parentCtor) {
 };
 
 /**
- * @deprecated since v3.0, please use extend and _super
+ * @deprecated since v3.0, please use cc.Class.extend and _super
+ * @cc.Class.extend
  */
 cc.base = function(me, opt_methodName, var_args) {
     var caller = arguments.callee.caller;
