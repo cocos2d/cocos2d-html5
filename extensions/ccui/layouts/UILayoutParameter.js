@@ -39,7 +39,7 @@ ccui.Margin = ccui.Class.extend(/** @lends ccui.Margin# */{
     right: 0,
     bottom: 0,
     /**
-     *
+     * Constructor of ccui.Margin.
      * @param {Number|ccui.Margin} margin a margin or left
      * @param {Number} [top]
      * @param {Number} [right]
@@ -396,7 +396,7 @@ ccui.RelativeLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.Relat
 /**
  * Allocates and initializes a RelativeLayoutParameter.
  * @function
- * @deprecated
+ * @deprecated since v3.0, please use new ccui.RelativeLayoutParameter() instead.
  * @return {ccui.RelativeLayoutParameter}
  * @example
  * // example

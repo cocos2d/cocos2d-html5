@@ -233,7 +233,8 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     },
 
     /**
-     * @constructor
+     * Constructor function. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+     * @function
      * @param {string|cc.SpriteFrame} file file name of texture or a SpriteFrame
      * @param {cc.Rect} rect
      * @param {cc.Rect} capInsets
@@ -492,6 +493,10 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         cc.Node.prototype.visit.call(this, ctx);
     },
 
+    /**
+     * Initializes a ccui.Scale9Sprite. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
+     * @returns {boolean}
+     */
     init: function () {
         return this.initWithBatchNode(null, cc.rect(0, 0, 0, 0), false, cc.rect(0, 0, 0, 0));
     },
@@ -1032,7 +1037,7 @@ _p = null;
 /**
  * Creates a 9-slice sprite with a texture file, a delimitation zone and
  * with the specified cap insets.
- * @deprecated
+ * @deprecated since v3.0, please use new ccui.Scale9Sprite(file, rect, capInsets) instead.
  * @param {String|cc.SpriteFrame} file file name of texture or a cc.Sprite object
  * @param {cc.Rect} rect the rect of the texture
  * @param {cc.Rect} capInsets the cap insets of ccui.Scale9Sprite
@@ -1044,7 +1049,7 @@ ccui.Scale9Sprite.create = function (file, rect, capInsets) {
 
 /**
  * create a ccui.Scale9Sprite with Sprite frame.
- * @deprecated
+ * @deprecated since v3.0, please use "new ccui.Scale9Sprite(spriteFrame, capInsets)" instead.
  * @param {cc.SpriteFrame} spriteFrame
  * @param {cc.Rect} capInsets
  * @returns {ccui.Scale9Sprite}
@@ -1055,7 +1060,7 @@ ccui.Scale9Sprite.createWithSpriteFrame = function (spriteFrame, capInsets) {
 
 /**
  * create a ccui.Scale9Sprite with a Sprite frame name
- * @deprecated
+ * @deprecated since v3.0, please use "new ccui.Scale9Sprite(spriteFrameName, capInsets)" instead.
  * @param {string} spriteFrameName
  * @param {cc.Rect} capInsets
  * @returns {Scale9Sprite}

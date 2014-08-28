@@ -24,9 +24,19 @@
  ****************************************************************************/
 
 /**
- * Base class for ccui.ListView
+ * The list view control of Cocos UI.
  * @class
  * @extends ccui.ScrollView
+ * @example
+ * var listView = new ccui.ListView();
+ * // set list view ex direction
+ * listView.setDirection(ccui.ScrollView.DIR_VERTICAL);
+ * listView.setTouchEnabled(true);
+ * listView.setBounceEnabled(true);
+ * listView.setBackGroundImage("res/cocosui/green_edit.png");
+ * listView.setBackGroundImageScale9Enabled(true);
+ * listView.setContentSize(cc.size(240, 130));
+ * this.addChild(listView);
  */
 ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     _model: null,
@@ -42,10 +52,10 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     _eventCallback: null,
     /**
      * allocates and initializes a UIListView.
-     * Constructor of ccui.ListView
+     * Constructor of ccui.ListView, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @example
      * // example
-     * var uiPageView = new ccui.ListView();
+     * var aListView = new ccui.ListView();
      */
     ctor: function () {
         ccui.ScrollView.prototype.ctor.call(this);
@@ -56,6 +66,11 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         this.init();
     },
 
+    /**
+     * Initializes a ccui.ListView. Please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
+     * @returns {boolean}
+     * @override
+     */
     init: function () {
         if (ccui.ScrollView.prototype.init.call(this)) {
             this.setLayoutType(ccui.Layout.LINEAR_VERTICAL);
@@ -231,6 +246,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
 
     /**
      * add child to ListView
+     * @override
      * @param {cc.Node} widget
      * @param {Number} [zOrder]
      * @param {Number|String} [tag]  tag or name
@@ -247,6 +263,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
 
     /**
      * remove child from ListView
+     * @override
      * @param {cc.Node} widget
      * @param {Boolean} [cleanup=true]
      */
@@ -259,17 +276,24 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         }
     },
 
+    /**
+     * Removes all children from ccui.ListView.
+     */
     removeAllChildren: function(){
         this.removeAllChildrenWithCleanup(true);
     },
 
+    /**
+     * Removes all children from ccui.ListView and do a cleanup all running actions depending on the cleanup parameter.
+     * @param {Boolean} cleanup
+     */
     removeAllChildrenWithCleanup: function(cleanup){
         ccui.ScrollView.prototype.removeAllChildrenWithCleanup.call(this, cleanup);
         this._items = [];
     },
 
     /**
-     * Push back custom item into ListView.
+     * Push back custom item into ccui.ListView.
      * @param {ccui.Widget} item
      * @param {Number} index
      */
@@ -293,12 +317,15 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     },
 
     /**
-     * Removes the last item of ListView.
+     * Removes the last item of ccui.ListView.
      */
     removeLastItem: function () {
         this.removeItem(this._items.length - 1);
     },
 
+    /**
+     * Removes all items from ccui.ListView.
+     */
     removeAllItems: function(){
         this.removeAllChildren();
     },
@@ -336,9 +363,8 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
      * @param {ccui.ListView.GRAVITY_LEFT|ccui.ListView.GRAVITY_RIGHT|ccui.ListView.GRAVITY_CENTER_HORIZONTAL|ccui.ListView.GRAVITY_BOTTOM|ccui.ListView.GRAVITY_CENTER_VERTICAL} gravity
      */
     setGravity: function (gravity) {
-        if (this._gravity == gravity) {
+        if (this._gravity == gravity)
             return;
-        }
         this._gravity = gravity;
         this._refreshViewDirty = true;
     },
@@ -348,15 +374,14 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
      * @param {Number} margin
      */
     setItemsMargin: function (margin) {
-        if (this._itemsMargin == margin) {
+        if (this._itemsMargin == margin)
             return;
-        }
         this._itemsMargin = margin;
         this._refreshViewDirty = true;
     },
 
     /**
-     * Get the margin between each item.
+     * Returns the margin between each item.
      * @returns {Number}
      */
     getItemsMargin:function(){
@@ -364,7 +389,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     },
 
     /**
-     * Changes scroll direction of scrollview.
+     * Changes scroll direction of ccui.ListView.
      * @param {ccui.ScrollView.DIR_NONE | ccui.ScrollView.DIR_VERTICAL | ccui.ScrollView.DIR_HORIZONTAL | ccui.ScrollView.DIR_BOTH} dir
      */
     setDirection: function (dir) {
@@ -385,12 +410,15 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     },
 
     /**
-     * request refresh view
+     * Requests refresh list view.
      */
     requestRefreshView: function () {
         this._refreshViewDirty = true;
     },
 
+    /**
+     * Refreshes list view.
+     */
     refreshView: function () {
         var locItems = this._items;
         for (var i = 0; i < locItems.length; i++) {
@@ -402,7 +430,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     },
 
     /**
-     * public the _doLayout for Editor
+     * provides a public _doLayout function for Editor. it calls _doLayout.
      */
     doLayout: function(){
         this._doLayout();
@@ -417,16 +445,20 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     },
 
     /**
-     *  add event listener
+     * Adds event listener to ccui.ListView.
      * @param {Function} selector
      * @param {Object} target
-     * @deprecated
+     * @deprecated since v3.0, please use addEventListener instead.
      */
     addEventListenerListView: function (selector, target) {
         this._listViewEventListener = target;
         this._listViewEventSelector = selector;
     },
 
+    /**
+     * Adds event listener to ccui.ListView.
+     * @param {function} callback
+     */
     addEventListener: function(callback){
         this._eventCallback = callback;
     },
@@ -439,9 +471,15 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
             this._eventCallback(this, eventEnum);
     },
 
-    interceptTouchEvent: function (handleState, sender, touch) {
-        ccui.ScrollView.prototype.interceptTouchEvent.call(this, handleState, sender, touch);
-        if (handleState != ccui.Widget.TOUCH_MOVED) {
+    /**
+     * Intercept touch event, handle its child's touch event.
+     * @param {Number} eventType
+     * @param {ccui.Widget} sender
+     * @param {cc.Touch} touch
+     */
+    interceptTouchEvent: function (eventType, sender, touch) {
+        ccui.ScrollView.prototype.interceptTouchEvent.call(this, eventType, sender, touch);
+        if (eventType != ccui.Widget.TOUCH_MOVED) {
             var parent = sender;
             while (parent) {
                 if (parent && parent.getParent() == this._innerContainer) {
@@ -451,12 +489,12 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
                 parent = parent.getParent();
             }
             if (sender.isHighlighted())
-                this._selectedItemEvent(handleState);
+                this._selectedItemEvent(eventType);
         }
     },
 
     /**
-     * get current selected index
+     * Returns current selected index
      * @returns {number}
      */
     getCurSelectedIndex: function () {
@@ -469,7 +507,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     },
 
     /**
-     * Returns the "class name" of widget.
+     * Returns the "class name" of ccui.ListView.
      * @returns {string}
      */
     getDescription: function () {
@@ -504,7 +542,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
 
 /**
  * allocates and initializes a UIListView.
- * @deprecated
+ * @deprecated since v3.0, please use new ccui.ListView() instead.
  * @example
  * // example
  * var uiPageView = ccui.ListView.create();
@@ -515,15 +553,60 @@ ccui.ListView.create = function () {
 
 // Constants
 //listView event type
+/**
+ * The flag selected item of ccui.ListView's event.
+ * @constant
+ * @type {number}
+ */
 ccui.ListView.EVENT_SELECTED_ITEM = 0;
 
+/**
+ * The flag selected item start of ccui.ListView's event.
+ * @constant
+ * @type {number}
+ */
 ccui.ListView.ON_SELECTED_ITEM_START = 0;
+/**
+ * The flag selected item end of ccui.ListView's event.
+ * @constant
+ * @type {number}
+ */
 ccui.ListView.ON_SELECTED_ITEM_END = 1;
 
 //listView gravity
+/**
+ * The left flag of ccui.ListView's gravity.
+ * @constant
+ * @type {number}
+ */
 ccui.ListView.GRAVITY_LEFT = 0;
+/**
+ * The right flag of ccui.ListView's gravity.
+ * @constant
+ * @type {number}
+ */
 ccui.ListView.GRAVITY_RIGHT = 1;
+/**
+ * The center horizontal flag of ccui.ListView's gravity.
+ * @constant
+ * @type {number}
+ */
 ccui.ListView.GRAVITY_CENTER_HORIZONTAL = 2;
+/**
+ * The top flag of ccui.ListView's gravity.
+ * @constant
+ * @type {number}
+ */
 ccui.ListView.GRAVITY_TOP = 3;
+/**
+ * The bottom flag of ccui.ListView's gravity.
+ * @constant
+ * @type {number}
+ */
 ccui.ListView.GRAVITY_BOTTOM = 4;
+/**
+ * The center vertical flag of ccui.ListView's gravity.
+ * @constant
+ * @type {number}
+ */
 ccui.ListView.GRAVITY_CENTER_VERTICAL = 5;

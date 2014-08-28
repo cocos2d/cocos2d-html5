@@ -71,12 +71,17 @@ cc._tmp.WebGLTexture2D = function () {
         url: null,
         _loadedEventListeners: null,
 
-        /*public:*/
+        /**
+         * constructor of cc.Texture2D
+         */
         ctor: function () {
             this._contentSize = cc.size(0, 0);
             this._pixelFormat = cc.Texture2D.defaultPixelFormat;
         },
 
+        /**
+         * release texture
+         */
         releaseTexture: function () {
             if (this._webTextureObj)
                 cc._renderContext.deleteTexture(this._webTextureObj);
@@ -130,24 +135,42 @@ cc._tmp.WebGLTexture2D = function () {
             return this._contentSize.height / cc.contentScaleFactor();
         },
 
+        /**
+         * get content size in pixels
+         * @return {cc.Size}
+         */
         getContentSizeInPixels: function () {
             return this._contentSize;
         },
 
-        /** texture max S */
+        /**
+         * texture max S
+         * @return {Number}
+         */
         getMaxS: function () {
             return this.maxS;
         },
 
+        /**
+         * set texture max S
+         * @param {Number} maxS
+         */
         setMaxS: function (maxS) {
             this.maxS = maxS;
         },
 
-        /** texture max T */
+        /**
+         * get texture max T
+         * @return {Number}
+         */
         getMaxT: function () {
             return this.maxT;
         },
 
+        /**
+         * set texture max T
+         * @param {Number} maxT
+         */
         setMaxT: function (maxT) {
             this.maxT = maxT;
         },
@@ -176,10 +199,18 @@ cc._tmp.WebGLTexture2D = function () {
             return this._hasPremultipliedAlpha;
         },
 
+        /**
+         * whether or not use mipmap
+         * @return {Boolean}
+         */
         hasMipmaps: function () {
             return this._hasMipmaps;
         },
 
+        /**
+         * description
+         * @return {string}
+         */
         description: function () {
             var _t = this;
             return "<cc.Texture2D | Name = " + _t._name + " | Dimensions = " + _t._pixelsWide + " x " + _t._pixelsHigh
@@ -382,6 +413,10 @@ cc._tmp.WebGLTexture2D = function () {
             return this._initPremultipliedATextureWithImage(uiImage, imageWidth, imageHeight);
         },
 
+        /**
+         * init with HTML element
+         * @param {HTMLImageElement|HTMLCanvasElement} element
+         */
         initWithElement: function (element) {
             if (!element)
                 return;
@@ -397,10 +432,17 @@ cc._tmp.WebGLTexture2D = function () {
             return this._htmlElementObj;
         },
 
+        /**
+         * whether texture is loaded
+         * @return {Boolean}
+         */
         isLoaded: function () {
             return this._isLoaded;
         },
 
+        /**
+         * handler of texture loaded event
+         */
         handleLoadedTexture: function () {
             var self = this;
             // Not sure about this ! Some texture need to be updated even after loaded
@@ -510,11 +552,17 @@ cc._tmp.WebGLTexture2D = function () {
         /**
          * sets the min filter, mag filter, wrap s and wrap t texture parameters. <br/>
          * If the texture size is NPOT (non power of 2), then in can only use gl.CLAMP_TO_EDGE in gl.TEXTURE_WRAP_{S,T}.
-         * @param texParams
+         * @param {Object|Number} texParams texParams object or minFilter
+         * @param {Number} [magFilter]
+         * @param {Number} [wrapS]
+         * @param {Number} [wrapT]
          */
-        setTexParameters: function (texParams) {
+        setTexParameters: function (texParams, magFilter, wrapS, wrapT) {
             var _t = this;
             var gl = cc._renderContext;
+
+            if(magFilter !== undefined)
+                texParams = {minFilter: texParams, magFilter: magFilter, wrapS: wrapS, wrapT: wrapT};
 
             cc.assert((_t._pixelsWide == cc.NextPOT(_t._pixelsWide) && _t._pixelsHigh == cc.NextPOT(_t._pixelsHigh)) ||
                 (texParams.wrapS == gl.CLAMP_TO_EDGE && texParams.wrapT == gl.CLAMP_TO_EDGE),
@@ -710,12 +758,21 @@ cc._tmp.WebGLTexture2D = function () {
             return true;
         },
 
+        /**
+         * add listener of loaded event
+         * @param {Function} callback
+         * @param {cc.Node} target
+         */
         addLoadedEventListener: function (callback, target) {
             if (!this._loadedEventListeners)
                 this._loadedEventListeners = [];
             this._loadedEventListeners.push({eventCallback: callback, eventTarget: target});
         },
 
+        /**
+         * return listener of loaded event
+         * @param {cc.Node} target
+         */
         removeLoadedEventListener: function (target) {
             if (!this._loadedEventListeners)
                 return;
@@ -876,7 +933,7 @@ cc._tmp.WebGLTextureCache = function () {
                     if (err)
                         return cb ? cb(err) : err;
                     cc.textureCache.handleLoadedTexture(url);
-                    cb && cb(null, img);
+                    cb && cb(target, img);
                 });
             }
         }

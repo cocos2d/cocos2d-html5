@@ -255,7 +255,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     onPassFocusToChild: null,
 
     /**
-     * override "init" method of widget.
+     * override "init" method of widget. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
      * @returns {boolean}
      * @override
      */
@@ -792,10 +792,16 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     /**
      * Sets a background image CapInsets for layout, if the background image is a scale9 render.
-     * @param {cc.Rect} capInsets  capinsets of background image.
+     * @param {cc.Rect} capInsets capinsets of background image.
      */
     setBackGroundImageCapInsets: function (capInsets) {
-        this._backGroundImageCapInsets = capInsets;
+        if(!capInsets)
+            return;
+        var locInsets = this._backGroundImageCapInsets;
+        locInsets.x = capInsets.x;
+        locInsets.y = capInsets.y;
+        locInsets.width = capInsets.width;
+        locInsets.height = capInsets.height;
         if (this._backGroundScale9Enabled)
             this._backGroundImage.setCapInsets(capInsets);
     },
@@ -805,7 +811,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {cc.Rect}
      */
     getBackGroundImageCapInsets: function () {
-        return this._backGroundImageCapInsets;
+        return cc.rect(this._backGroundImageCapInsets);
     },
 
     _supplyTheLayoutParameterLackToChild: function (locChild) {
@@ -1755,7 +1761,7 @@ _p = null;
 
 /**
  * allocates and initializes a UILayout.
- * @deprecated
+ * @deprecated since v3.0, please use new ccui.Layout() instead.
  * @return {ccui.Layout}
  * @example
  * // example

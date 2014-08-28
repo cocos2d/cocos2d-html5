@@ -422,6 +422,11 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         this.dirty = true;
     },
 
+    /**
+     * Removes a given number of quads at a given index
+     * @param {Number} index
+     * @param {Number} amount
+     */
     removeQuadsAtIndex: function (index, amount) {
 
         cc.assert(index + amount <= this._totalQuads, cc._LogInfos.TextureAtlas_removeQuadsAtIndex);
@@ -631,7 +636,7 @@ cc.defineGetterSetter(_p, "quads", _p.getQuads, _p.setQuads);
 /**
  * <p>Creates a TextureAtlas with an filename and with an initial capacity for Quads. <br />
  * The TextureAtlas capacity can be increased in runtime. </p>
- * @deprecated
+ * @deprecated since v3.0, please use new cc.TextureAtlas(fileName, capacity) instead
  * @param {String|cc.Texture2D} fileName
  * @param {Number} capacity
  * @return {cc.TextureAtlas|Null}
@@ -649,8 +654,8 @@ cc.TextureAtlas.create = function (fileName, capacity) {
 };
 
 /**
- * @deprecated
- * @type {Function}
+ * @deprecated  since v3.0, please use new cc.TextureAtlas(texture) instead
+ * @function
  */
 cc.TextureAtlas.createWithTexture = cc.TextureAtlas.create;
 

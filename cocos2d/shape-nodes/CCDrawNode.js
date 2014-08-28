@@ -95,9 +95,11 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     _drawColor: null,
     _className:"DrawNodeCanvas",
 
-	/**
-	 * Constructor of cc.DrawNode for Canvas
-	 */
+    /**
+     * <p>The cc.DrawNodeCanvas's constructor. <br/>
+     * This function will automatically be invoked when you create a node using new construction: "var node = new cc.DrawNodeCanvas()".<br/>
+     * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
+     */
     ctor: function () {
         cc.Node.prototype.ctor.call(this);
         this._buffer = [];
@@ -108,10 +110,19 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     },
 
     // ----common function start ----
+    /**
+     * Gets the blend func
+     * @returns {Object}
+     */
     getBlendFunc: function () {
         return this._blendFunc;
     },
 
+    /**
+     * Set the blend func
+     * @param blendFunc
+     * @param dst
+     */
     setBlendFunc: function (blendFunc, dst) {
         if (dst === undefined) {
             this._blendFunc.src = blendFunc.src;
@@ -164,7 +175,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
      * draws a rectangle given the origin and destination point measured in points.
      * @param {cc.Point} origin
      * @param {cc.Point} destination
-     *  @param {cc.Color} fillColor
+     * @param {cc.Color} fillColor
      * @param {Number} lineWidth
      * @param {cc.Color} lineColor
      */
@@ -362,7 +373,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     },
 
     /**
-     *  draw a dot at a position, with a given radius and color
+     * draw a dot at a position, with a given radius and color
      * @param {cc.Point} pos
      * @param {Number} radius
      * @param {cc.Color} color
@@ -457,6 +468,10 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
         return this.drawPoly_(vertsCopy, fillColor, lineWidth, color);     
     },
 
+    /**
+     * Render function using the canvas 2d context or WebGL context, internal usage only, please do not call this function
+     * @param {CanvasRenderingContext2D | WebGLRenderingContext} ctx The render context
+     */
     draw: function (ctx) {
         var context = ctx || cc._renderContext, _t = this;
         if ((_t._blendFunc && (_t._blendFunc.src == cc.SRC_ALPHA) && (_t._blendFunc.dst == cc.ONE)))
@@ -557,6 +572,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     }
 });
 
+//Just only a note
 cc.DrawNodeWebGL = cc.Node.extend({
     _bufferCapacity:0,
     _buffer:null,
@@ -608,26 +624,14 @@ cc.DrawNodeWebGL = cc.Node.extend({
         return false;
     },
 
-    /**
-     * line width setter
-     * @param {Number} width
-     */
     setLineWidth: function (width) {
         this._lineWidth = width;
     },
 
-    /**
-     * line width getter
-     * @returns {Number}
-     */
     getLineWidth: function () {
         return this._lineWidth;
     },
 
-    /**
-     * draw color setter
-     * @param {cc.Color} color
-     */
     setDrawColor: function (color) {
         var locDrawColor = this._drawColor;
         locDrawColor.r = color.r;
@@ -636,22 +640,10 @@ cc.DrawNodeWebGL = cc.Node.extend({
         locDrawColor.a = color.a;
     },
 
-    /**
-     * draw color getter
-     * @returns {cc.Color}
-     */
     getDrawColor: function () {
         return  cc.color(this._drawColor.r, this._drawColor.g, this._drawColor.b, this._drawColor.a);
     },
 
-    /**
-     * draws a rectangle given the origin and destination point measured in points.
-     * @param {cc.Point} origin
-     * @param {cc.Point} destination
-     *  @param {cc.Color} fillColor
-     * @param {Number} lineWidth
-     * @param {cc.Color} lineColor
-     */
     drawRect: function (origin, destination, fillColor, lineWidth, lineColor) {
         lineWidth = lineWidth || this._lineWidth;
         lineColor = lineColor || this.getDrawColor();
@@ -664,17 +656,6 @@ cc.DrawNodeWebGL = cc.Node.extend({
             this.drawPoly(vertices, fillColor, lineWidth, lineColor);
     },
 
-    /**
-     * draws a circle given the center, radius and number of segments.
-     * @override
-     * @param {cc.Point} center center of circle
-     * @param {Number} radius
-     * @param {Number} angle angle in radians
-     * @param {Number} segments
-     * @param {Boolean} drawLineToCenter
-     * @param {Number} lineWidth
-     * @param {cc.Color} color
-     */
     drawCircle: function (center, radius, angle, segments, drawLineToCenter, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
         color = color || this.getDrawColor();
@@ -695,16 +676,6 @@ cc.DrawNodeWebGL = cc.Node.extend({
             this.drawSegment(vertices[i], vertices[i + 1], lineWidth, color);
     },
 
-    /**
-     * draws a quad bezier path
-     * @override
-     * @param {cc.Point} origin
-     * @param {cc.Point} control
-     * @param {cc.Point} destination
-     * @param {Number} segments
-     * @param {Number} lineWidth
-     * @param {cc.Color} color
-     */
     drawQuadBezier: function (origin, control, destination, segments, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
         color = color || this.getDrawColor();
@@ -721,17 +692,6 @@ cc.DrawNodeWebGL = cc.Node.extend({
         this._drawSegments(vertices, lineWidth, color, false);
     },
 
-    /**
-     * draws a cubic bezier path
-     * @override
-     * @param {cc.Point} origin
-     * @param {cc.Point} control1
-     * @param {cc.Point} control2
-     * @param {cc.Point} destination
-     * @param {Number} segments
-     * @param {Number} lineWidth
-     * @param {cc.Color} color
-     */
     drawCubicBezier: function (origin, control1, control2, destination, segments, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
         color = color || this.getDrawColor();
@@ -748,27 +708,10 @@ cc.DrawNodeWebGL = cc.Node.extend({
         this._drawSegments(vertices, lineWidth, color, false);
     },
 
-    /**
-     * draw a CatmullRom curve
-     * @override
-     * @param {Array} points
-     * @param {Number} segments
-     * @param {Number} lineWidth
-     * @param {cc.Color} color
-     */
     drawCatmullRom: function (points, segments, lineWidth, color) {
         this.drawCardinalSpline(points, 0.5, segments, lineWidth, color);
     },
 
-    /**
-     * draw a cardinal spline path
-     * @override
-     * @param {Array} config
-     * @param {Number} tension
-     * @param {Number} segments
-     * @param {Number} lineWidth
-     * @param {cc.Color} color
-     */
     drawCardinalSpline: function (config, tension, segments, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
         color = color || this.getDrawColor();
@@ -1066,7 +1009,7 @@ cc.DrawNode = cc._renderType == cc._RENDER_TYPE_WEBGL ? cc.DrawNodeWebGL : cc.Dr
 
 /**
  * Creates a DrawNode
- * @deprecated
+ * @deprecated since v3.0 please use new cc.DrawNode() instead.
  * @return {cc.DrawNode}
  */
 cc.DrawNode.create = function () {

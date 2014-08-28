@@ -42,7 +42,7 @@ ccui.RelativeBox = ccui.Layout.extend(/** @lends ccui.RelativeBox# */{
     },
 
     /**
-     * Initializes a relative box
+     * Initializes a relative box. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
      * @override
      * @returns {boolean}
      */
@@ -70,7 +70,7 @@ ccui.RelativeBox = ccui.Layout.extend(/** @lends ccui.RelativeBox# */{
 
 /**
  * Creates a relative box
- * @deprecated
+ * @deprecated  since v3.0, please use new ccui.RelativeBox(size) instead.
  * @param {cc.Size} size
  * @returns {ccui.RelativeBox}
  */

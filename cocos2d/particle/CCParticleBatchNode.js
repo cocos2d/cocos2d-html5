@@ -54,9 +54,21 @@ cc.PARTICLE_DEFAULT_CAPACITY = 500;
  * </p>
  * @class
  * @extends cc.ParticleSystem
+ * @param {String|cc.Texture2D} fileImage
+ * @param {Number} capacity
  *
  * @property {cc.Texture2D|HTMLImageElement|HTMLCanvasElement}  texture         - The used texture
  * @property {cc.TextureAtlas}                                  textureAtlas    - The texture atlas used for drawing the quads
+ *
+ * @example
+ * 1.
+ * //Create a cc.ParticleBatchNode with image path  and capacity
+ * var particleBatchNode = new cc.ParticleBatchNode("res/grossini_dance.png",30);
+ *
+ * 2.
+ * //Create a cc.ParticleBatchNode with a texture and capacity
+ * var texture = cc.TextureCache.getInstance().addImage("res/grossini_dance.png");
+ * var particleBatchNode = new cc.ParticleBatchNode(texture, 30);
  */
 cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 	textureAtlas:null,
@@ -318,8 +330,9 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     },
 
     /**
-     * @override
-     * @param {CanvasContext} ctx
+     * Render function using the canvas 2d context or WebGL context, internal usage only, please do not call this function
+     * @function
+     * @param {CanvasRenderingContext2D | WebGLRenderingContext} ctx The render context
      */
     draw:function (ctx) {
         //cc.PROFILER_STOP("CCParticleBatchNode - draw");
@@ -361,7 +374,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
     /**
      * set the blending function used for the texture
-     * @param {Number|cc.BlencFunc} src
+     * @param {Number|Object} src
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
@@ -385,6 +398,11 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
     // override visit.
     // Don't call visit on it's children
+    /**
+     * Recursive method that visit its children and draw them
+     * @function
+     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
+     */
     visit:function (ctx) {
         if (cc._renderType === cc._RENDER_TYPE_CANVAS)
             return;
@@ -479,19 +497,19 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         return {newIndex:newIndex, oldIndex:oldIndex};
     },
 
-    /**
-     * <p>
-     *     don't use lazy sorting, reordering the particle systems quads afterwards would be too complex                                    <br/>
-     *     XXX research whether lazy sorting + freeing current quads and calloc a new block with size of capacity would be faster           <br/>
-     *     XXX or possibly using vertexZ for reordering, that would be fastest                                                              <br/>
-     *     this helper is almost equivalent to CCNode's addChild, but doesn't make use of the lazy sorting                                  <br/>
-     * </p>
-     * @param {cc.ParticleSystem} child
-     * @param {Number} z
-     * @param {Number} aTag
-     * @return {Number}
-     * @private
-     */
+    //
+    // <p>
+    //     don't use lazy sorting, reordering the particle systems quads afterwards would be too complex                                    <br/>
+    //     XXX research whether lazy sorting + freeing current quads and calloc a new block with size of capacity would be faster           <br/>
+    //     XXX or possibly using vertexZ for reordering, that would be fastest                                                              <br/>
+    //     this helper is almost equivalent to CCNode's addChild, but doesn't make use of the lazy sorting                                  <br/>
+    // </p>
+    // @param {cc.ParticleSystem} child
+    // @param {Number} z
+    // @param {Number} aTag
+    // @return {Number}
+    // @private
+    //
     _addChildHelper:function (child, z, aTag) {
         if(!child)
             throw "cc.ParticleBatchNode._addChildHelper(): child should be non-null";
@@ -552,7 +570,7 @@ cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
 
 /**
  * initializes the particle system with the name of a file on disk (for a list of supported formats look at the cc.Texture2D class), a capacity of particles
- * @deprecated
+ * @deprecated since v3.0 please use new cc.ParticleBatchNode(filename, capacity) instead.
  * @param {String|cc.Texture2D} fileImage
  * @param {Number} capacity
  * @return {cc.ParticleBatchNode}

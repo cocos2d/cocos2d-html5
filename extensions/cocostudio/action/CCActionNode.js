@@ -73,54 +73,51 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
                 frameTweenParameter.push(value);
             }
 
+            var actionFrame, actionArray;
             if (actionFrameDic["positionx"] !== undefined) {
                 var positionX = actionFrameDic["positionx"];
                 var positionY = actionFrameDic["positiony"];
-                var actionFrame = new ccs.ActionMoveFrame();
-//                actionFrame.easingType = frameTweenType;
-//                actionFrame.frameIndex = frameInex;
+                actionFrame = new ccs.ActionMoveFrame();
+                actionFrame.frameIndex = frameInex;
                 actionFrame.setEasingType(frameTweenType);
                 actionFrame.setEasingParameter(frameTweenParameter);
                 actionFrame.setPosition(positionX, positionY);
-                var actionArray = this._frameArray[ccs.FRAME_TYPE_MOVE];
+                actionArray = this._frameArray[ccs.FRAME_TYPE_MOVE];
                 actionArray.push(actionFrame);
             }
 
             if (actionFrameDic["scalex"] !== undefined) {
                 var scaleX = actionFrameDic["scalex"];
                 var scaleY = actionFrameDic["scaley"];
-                var actionFrame = new ccs.ActionScaleFrame();
-//                actionFrame.easingType = frameTweenType;
-//                actionFrame.frameIndex = frameInex;
+                actionFrame = new ccs.ActionScaleFrame();
+                actionFrame.frameIndex = frameInex;
                 actionFrame.setEasingType(frameTweenType);
                 actionFrame.setEasingParameter(frameTweenParameter);
                 actionFrame.setScaleX(scaleX);
                 actionFrame.setScaleY(scaleY);
-                var actionArray = this._frameArray[ccs.FRAME_TYPE_SCALE];
+                actionArray = this._frameArray[ccs.FRAME_TYPE_SCALE];
                 actionArray.push(actionFrame);
             }
 
             if (actionFrameDic["rotation"] !== undefined) {
                 var rotation = actionFrameDic["rotation"];
-                var actionFrame = new ccs.ActionRotationFrame();
-//                actionFrame.easingType = frameTweenType;
-//                actionFrame.frameIndex = frameInex;
+                actionFrame = new ccs.ActionRotationFrame();
+                actionFrame.frameIndex = frameInex;
                 actionFrame.setEasingType(frameTweenType);
                 actionFrame.setEasingParameter(frameTweenParameter);
                 actionFrame.setRotation(rotation);
-                var actionArray = this._frameArray[ccs.FRAME_TYPE_ROTATE];
+                actionArray = this._frameArray[ccs.FRAME_TYPE_ROTATE];
                 actionArray.push(actionFrame);
             }
 
             if (actionFrameDic["opacity"] !== undefined) {
                 var opacity = actionFrameDic["opacity"];
-                var actionFrame = new ccs.ActionFadeFrame();
-//                actionFrame.easingType = frameTweenType;
-//                actionFrame.frameIndex = frameInex;
+                actionFrame = new ccs.ActionFadeFrame();
+                actionFrame.frameIndex = frameInex;
                 actionFrame.setEasingType(frameTweenType);
                 actionFrame.setEasingParameter(frameTweenParameter);
                 actionFrame.setOpacity(opacity);
-                var actionArray = this._frameArray[ccs.FRAME_TYPE_FADE];
+                actionArray = this._frameArray[ccs.FRAME_TYPE_FADE];
                 actionArray.push(actionFrame);
             }
 
@@ -128,13 +125,12 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
                 var colorR = actionFrameDic["colorr"];
                 var colorG = actionFrameDic["colorg"];
                 var colorB = actionFrameDic["colorb"];
-                var actionFrame = new ccs.ActionTintFrame();
-//                actionFrame.easingType = frameTweenType;
-//                actionFrame.frameIndex = frameInex;
+                actionFrame = new ccs.ActionTintFrame();
+                actionFrame.frameIndex = frameInex;
                 actionFrame.setEasingType(frameTweenType);
                 actionFrame.setEasingParameter(frameTweenParameter);
                 actionFrame.setColor(cc.color(colorR, colorG, colorB));
-                var actionArray = this._frameArray[ccs.FRAME_TYPE_TINT];
+                actionArray = this._frameArray[ccs.FRAME_TYPE_TINT];
                 actionArray.push(actionFrame);
             }
             actionFrameDic = null;
@@ -304,7 +300,6 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
 
     /**
      * Play the action.
-     * @param {Boolean} loop
      * @param {cc.CallFunc} fun
      */
     playAction: function (fun) {

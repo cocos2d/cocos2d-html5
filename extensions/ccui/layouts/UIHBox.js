@@ -42,7 +42,7 @@ ccui.HBox = ccui.Layout.extend(/** @lends ccui.HBox# */{
     },
 
     /**
-     * Initialize a HBox
+     * Initialize a HBox. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
      * @override
      * @returns {boolean}
      */
@@ -70,7 +70,7 @@ ccui.HBox = ccui.Layout.extend(/** @lends ccui.HBox# */{
 
 /**
  * Creates a HBox object
- * @deprecated
+ * @deprecated since v3.0, please use new ccui.HBox(size) instead.
  * @param {cc.Size} size
  * @returns {ccui.HBox}
  */
