@@ -65,6 +65,8 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
             var actionFrameDic = actionframelist[i];
             var frameInex = actionFrameDic["frameid"];
             var frameTweenType = actionFrameDic["tweenType"];
+            if(frameTweenType == null)
+                frameTweenType = 0;
             var frameTweenParameterNum = actionFrameDic["tweenParameter"];
 
             var frameTweenParameter = [];
@@ -286,7 +288,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
                 }
             }
             if(locSequenceArray){
-                var locSequence = cc.Sequence.create(locSequenceArray);
+                var locSequence = cc.sequence(locSequenceArray);
                 if (locSequence != null) {
                     locSpawnArray.push(locSequence);
                 }
@@ -294,7 +296,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
         }
 
         this._action = null;
-        this._actionSpawn = cc.Spawn.create(locSpawnArray);
+        this._actionSpawn = cc.spawn(locSpawnArray);
         return this._actionSpawn;
     },
 
@@ -307,9 +309,9 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
             return;
         }
         if(fun){
-            this._action = cc.Sequence.create(this._actionSpawn,fun);
+            this._action = cc.sequence(this._actionSpawn,fun);
         }else{
-            this._action = cc.Sequence.create(this._actionSpawn);
+            this._action = cc.sequence(this._actionSpawn);
         }
         this.runAction();
     },
