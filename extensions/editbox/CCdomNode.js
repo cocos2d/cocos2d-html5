@@ -24,8 +24,8 @@
  ****************************************************************************/
 /**
  * the DOM object
- * @class
- * @type {Object}
+ * @namespace
+ * @name
  */
 cc.DOM = {};
 
@@ -609,7 +609,7 @@ cc.DOM.placeHolder = function (x) {
  * It currently only supports cc.Sprite and cc.MenuItem
  * @function
  * @param {cc.Sprite|cc.MenuItem|Array} nodeObject
-    * * @example
+ * @example
  * // example
  * cc.DOM.convert(Sprite1, Sprite2, Menuitem);
  *
