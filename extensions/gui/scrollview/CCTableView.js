@@ -196,7 +196,7 @@ cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
     _touchedCell:null,
 
     /**
-     * @constructor
+     * The
      * @param dataSource
      * @param size
      * @param container
