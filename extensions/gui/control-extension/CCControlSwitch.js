@@ -29,7 +29,7 @@
 /**
  * CCControlSwitch: Switch control ui component
  * @class
- * @extend cc.Control
+ * @extends cc.Control
  */
 cc.ControlSwitch = cc.Control.extend(/** @lends cc.ControlSwitch# */{
     /** Sprite which represents the view. */
@@ -166,7 +166,7 @@ cc.ControlSwitch.create = function (maskSprite, onSprite, offSprite, thumbSprite
 /**
  * ControlSwitchSprite: Sprite switch control ui component
  * @class
- * @extend cc.Sprite
+ * @extends cc.Sprite
  *
  * @property {Number}           sliderX         - Slider's x position
  * @property {cc.Point}         onPos           - The position of slider when switch is on

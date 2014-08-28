@@ -107,8 +107,7 @@ cc.pool = /** @lends cc.pool# */{
         if (this.hasObject(objClass)) {
             var pid = objClass.prototype.__pid;
             var list = this._pool[pid];
-            var args = Array.prototype.slice.call(arguments);
-            args.shift();
+            var args = Array.prototype.slice.call(arguments, 1);
             var obj = list.pop();
             if(obj.reuse)
                 obj.reuse.apply(obj, args);       //define by user.

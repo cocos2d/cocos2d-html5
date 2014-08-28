@@ -60,7 +60,7 @@ cc.ScrollViewDelegate = cc.Class.extend({
  * ScrollView support for cocos2d -x.
  * It provides scroll view functionalities to cocos2d projects natively.
  * @class
- * @extend cc.Layer
+ * @extends cc.Layer
  *
  * @property {cc.Point}                 minOffset   - <@readonly> The current container's minimum offset
  * @property {cc.Point}                 maxOffset   - <@readonly> The current container's maximum offset

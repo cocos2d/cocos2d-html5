@@ -23,7 +23,7 @@ var MyLayer = cc.Layer.extend({
             },this);
         closeItem.setAnchorPoint(0.5, 0.5);
 
-        var menu = cc.Menu.create(closeItem);
+        var menu = new cc.Menu(closeItem);
         menu.setPosition(0, 0);
         this.addChild(menu, 1);
         closeItem.setPosition(size.width - 20, 20);
@@ -32,7 +32,7 @@ var MyLayer = cc.Layer.extend({
         // 3. add your codes below...
         // add a label shows "Hello World"
         // create and initialize a label
-        this.helloLabel = cc.LabelTTF.create("Hello World", "Impact", 38);
+        this.helloLabel = new cc.LabelTTF("Hello World", "Impact", 38);
         // position the label on the center of the screen
         this.helloLabel.setPosition(size.width / 2, size.height - 40);
         // add the label as a child to this layer

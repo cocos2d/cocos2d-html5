@@ -167,8 +167,7 @@ cc.AsyncPool = function(srcObj, limit, iterator, onEnd, target){
                 return
             }
 
-            var arr = Array.prototype.slice.call(arguments);
-            arr.splice(0, 1);
+            var arr = Array.prototype.slice.call(arguments, 1);
             self._results[this.index] = arr[0];
             if(self.finishedSize == self.size) {
                 if(self._onEnd)
@@ -234,8 +233,7 @@ cc.async = {
         var asyncPool = new cc.AsyncPool(tasks, 1,
             function (func, index, cb1) {
                 args.push(function (err) {
-                    args = Array.prototype.slice.apply(arguments);
-                    args.splice(0, 1);
+                    args = Array.prototype.slice.call(arguments, 1);
                     cb1.apply(null, arguments);
                 });
                 func.apply(target, args);
@@ -770,11 +768,10 @@ cc.loader = {
             self._loadResIterator(value, index, function(err){
                 if(err)
                     return cb1(err);
-                var arr = Array.prototype.slice.call(arguments);
-                arr.splice(0, 1);
+                var arr = Array.prototype.slice.call(arguments, 1);
                 if(option.trigger)
-                    option.trigger.call(option.triggerTarget, arr, aPool.size, aPool.finishedSize); //call trigger
-                cb1();
+                    option.trigger.call(option.triggerTarget, arr[0], aPool.size, aPool.finishedSize); //call trigger
+                cb1(null, arr[0]);
             });
         }, option.cb, option.cbTarget);
         asyncPool.flow();
@@ -824,7 +821,7 @@ cc.loader = {
     loadAliases: function (url, cb) {
         var self = this, dict = self.getRes(url);
         if (!dict) {
-            self.load(url, function (results) {
+            self.load(url, function (err, results) {
                 self._handleAliases(results[0]["filenames"], cb);
             });
         } else
