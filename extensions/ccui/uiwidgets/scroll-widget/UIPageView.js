@@ -530,4 +530,4 @@ ccui.PageView.TOUCH_DIR_RIGHT = 1;
 
 //PageView auto scroll direction
 ccui.PageView.DIRECTION_LEFT = 0;
-ccui.PageView.DIRECTION_RIGHT = 0;
+ccui.PageView.DIRECTION_RIGHT = 1;
