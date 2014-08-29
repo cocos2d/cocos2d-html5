@@ -74,11 +74,10 @@ cc._tmp.WebGLColor = function () {
         this._rU8[0] = r || 0;
         this._gU8[0] = g || 0;
         this._bU8[0] = b || 0;
-        this._aU8[0] = a || 255;
+        this._aU8[0] = (a == null) ? 255 : a;
 
-        if (a === undefined) {
+        if (a === undefined)
             this.a_undefined = true;
-        }
     };
     /**
      * @constant
