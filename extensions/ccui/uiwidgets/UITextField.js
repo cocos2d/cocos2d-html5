@@ -251,14 +251,12 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
      */
     ctor: function (placeholder, fontName, fontSize) {
         ccui.Widget.prototype.ctor.call(this);
-        if (this.init()) {
-            if(placeholder)
-                this.setPlaceHolder(placeholder);
-            if(fontName)
-                this.setFontName(fontName);
-            if(fontSize)
-                this.setFontSize(fontSize);
-        }
+        if (placeholder)
+            this.setPlaceHolder(placeholder);
+        if (fontName)
+            this.setFontName(fontName);
+        if (fontSize)
+            this.setFontSize(fontSize);
     },
 
     /**
