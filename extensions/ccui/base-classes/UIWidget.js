@@ -972,7 +972,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
                     this._positionPercent.x = 0;
                     this._positionPercent.y = 0;
                 } else {
-                    if (posY) {
+                    if (posY == undefined) {
                         this._positionPercent.x = pos / pSize.width;
                         this._positionPercent.y = posY / pSize.height;
                     } else {
