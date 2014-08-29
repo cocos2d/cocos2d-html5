@@ -132,8 +132,8 @@ cc.IMEDelegate = cc.Class.extend(/** @lends cc.IMEDelegate# */{
 });
 
 /**
- * Input Method Edit Message Dispatcher.
- * @namespace
+ * cc.imeDispatcher is a singleton object which manage input message dispatching.
+ * @class
  * @name cc.imeDispatcher
  */
 cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
@@ -149,9 +149,6 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
         this._lastClickPosition = cc.p(0, 0);
     },
 
-    /**
-     * Initialization of the node, please do not call this function by yourself, you should pass the parameters to constructor to initialize it .
-     */
     init:function () {
         if (cc.sys.isMobile)
             return;

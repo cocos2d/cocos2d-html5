@@ -120,8 +120,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
      * @property {Number}           maxS            - Texture max S
      * @property {Number}           maxT            - Texture max T
      */
-
-    cc.Texture2D = cc.Class.extend({
+    cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
         _contentSize: null,
         _isLoaded: false,
         _htmlElementObj: null,
@@ -129,9 +128,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         url: null,
 
-        /**
-         * constructor of cc.Texture2D
-         */
         ctor: function () {
             this._contentSize = cc.size(0, 0);
             this._isLoaded = false;

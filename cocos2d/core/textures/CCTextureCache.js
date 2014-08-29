@@ -25,8 +25,8 @@
  ****************************************************************************/
 
 /**
- * cc.textureCache is the global cache for cc.Texture2D
- * @namespace
+ * cc.textureCache is a singleton object, it's the global cache for cc.Texture2D
+ * @class
  * @name cc.textureCache
  */
 cc.textureCache = /** @lends cc.textureCache# */{

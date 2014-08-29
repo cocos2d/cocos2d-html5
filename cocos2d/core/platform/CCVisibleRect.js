@@ -25,7 +25,7 @@
  ****************************************************************************/
 
 /**
- * cc.visibleRect define the actual visible rect of the current view,
+ * cc.visibleRect is a singleton object which defines the actual visible rect of the current view,
  * it should represent the same rect as cc.view.getViewportRect()
  *
  * @property {cc.Point}     topLeft         - Top left coordinate of the screen related to the game scene
@@ -40,7 +40,7 @@
  * @property {Number}       width           - Width of the screen
  * @property {Number}       height          - Height of the screen
  *
- * @namespace
+ * @class
  * @name cc.visibleRect
  */
 cc.visibleRect = {

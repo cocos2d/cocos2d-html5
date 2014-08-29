@@ -138,8 +138,8 @@ ccs.DataInfo = function () {
 };
 
 /**
- * CocoStudio data reader helper
- * @namespace
+ * ccs.dataReaderHelper is a singleton object for reading CocoStudio data
+ * @class
  * @name ccs.dataReaderHelper
  */
 ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{

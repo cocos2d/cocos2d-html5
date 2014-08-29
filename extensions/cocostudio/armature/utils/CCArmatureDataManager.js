@@ -35,8 +35,8 @@ ccs.RelativeData = function(){
 };
 
 /**
- * Format and manage armature configuration and armature animation
- * @namespace
+ * ccs.armatureDataManager is a singleton object which format and manage armature configuration and armature animation
+ * @class
  * @name ccs.armatureDataManager
  */
 ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
