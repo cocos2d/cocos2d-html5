@@ -1119,6 +1119,11 @@ cc._audioLoader = {
                 this.removeEventListener(canplaythrough, arguments.callee, false);
                 this.removeEventListener(error, arguments.callee, false);
             }, false);
+
+            if(cc.sys.browserType === cc.sys.BROWSER_TYPE_WECHAT){
+                error = "emptied";
+            }
+
             cc._addEventListener(audio, error, function () {
                 cb("load " + url + " failed");
                 if(delFlag){
