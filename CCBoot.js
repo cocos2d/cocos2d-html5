@@ -85,6 +85,25 @@ cc.each = function (obj, iterator, context) {
 };
 
 /**
+ * Copy all of the properties in source objects to target object and return the target object.
+ * @param {object} target
+ * @param {object} *sources
+ * @returns {object}
+ */
+cc.extend = function(target) {
+    sources = arguments.length >= 2 ? Array.prototype.slice.call(arguments, 1) : [];
+
+    cc.each(sources, function(src) {
+        for(var key in src) {
+            if (src.hasOwnProperty(key)) {
+                target[key] = src[key];
+            }
+        }
+    })
+    return target;
+};
+
+/**
  * Check the url whether cross origin
  * @param {String} url
  * @returns {boolean}
