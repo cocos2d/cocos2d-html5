@@ -1119,13 +1119,22 @@ cc._audioLoader = {
                 this.removeEventListener(canplaythrough, arguments.callee, false);
                 this.removeEventListener(error, arguments.callee, false);
             }, false);
-            cc._addEventListener(audio, error, function () {
+
+            var audioCB = function () {
+                audio.removeEventListener("emptied", audioCB);
+                audio.removeEventListener(error, audioCB);
                 cb("load " + url + " failed");
                 if(delFlag){
                     this.removeEventListener(canplaythrough, arguments.callee, false);
                     this.removeEventListener(error, arguments.callee, false);
                 }
-            }, false);
+            };
+
+            if(cc.sys.browserType === cc.sys.BROWSER_TYPE_WECHAT){
+                cc._addEventListener(audio, "emptied", audioCB, false);
+            }
+
+            cc._addEventListener(audio, error, audioCB, false);
             audio.load();
         }
         return audio;
