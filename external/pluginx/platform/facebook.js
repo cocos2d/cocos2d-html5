@@ -310,10 +310,6 @@ plugin.extend('facebook', {
             }else{
                 return;
             }
-        }else{
-            if(!info['href']){
-                return;
-            }
         }
 
         if(
