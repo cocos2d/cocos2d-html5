@@ -284,7 +284,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      * @param {ccui.RichElement} element
      */
     removeElement: function (element) {
-        if (typeof element === "number")
+        if (cc.isNumber(element))
             this._richElements.splice(element, 1);
          else
             cc.arrayRemoveObject(this._richElements, element);

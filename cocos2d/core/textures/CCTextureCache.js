@@ -373,7 +373,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p = null;
 
 } else {
-    cc.assert(typeof cc._tmp.WebGLTextureCache === "function", cc._LogInfos.MissingFile, "TexturesWebGL.js");
+    cc.assert(cc.isFunction(cc._tmp.WebGLTextureCache), cc._LogInfos.MissingFile, "TexturesWebGL.js");
     cc._tmp.WebGLTextureCache();
     delete cc._tmp.WebGLTextureCache;
 }

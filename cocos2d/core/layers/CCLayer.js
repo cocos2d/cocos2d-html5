@@ -199,7 +199,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
     p = null;
 }else{
-    cc.assert(typeof cc._tmp.LayerDefineForWebGL === "function", cc._LogInfos.MissingFile, "CCLayerWebGL.js");
+    cc.assert(cc.isFunction(cc._tmp.LayerDefineForWebGL), cc._LogInfos.MissingFile, "CCLayerWebGL.js");
     cc._tmp.LayerDefineForWebGL();
     delete cc._tmp.LayerDefineForWebGL;
 }
@@ -498,12 +498,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     //cc.LayerColor define end
     _p = null;
 } else {
-    cc.assert(typeof cc._tmp.WebGLLayerColor === "function", cc._LogInfos.MissingFile, "CCLayerWebGL.js");
+    cc.assert(cc.isFunction(cc._tmp.WebGLLayerColor), cc._LogInfos.MissingFile, "CCLayerWebGL.js");
     cc._tmp.WebGLLayerColor();
     delete cc._tmp.WebGLLayerColor;
 }
 
-cc.assert(typeof cc._tmp.PrototypeLayerColor === "function", cc._LogInfos.MissingFile, "CCLayerPropertyDefine.js");
+cc.assert(cc.isFunction(cc._tmp.PrototypeLayerColor), cc._LogInfos.MissingFile, "CCLayerPropertyDefine.js");
 cc._tmp.PrototypeLayerColor();
 delete cc._tmp.PrototypeLayerColor;
 
@@ -793,12 +793,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     //cc.LayerGradient define end
     _p = null;
 } else {
-    cc.assert(typeof cc._tmp.WebGLLayerGradient === "function", cc._LogInfos.MissingFile, "CCLayerWebGL.js");
+    cc.assert(cc.isFunction(cc._tmp.WebGLLayerGradient), cc._LogInfos.MissingFile, "CCLayerWebGL.js");
     cc._tmp.WebGLLayerGradient();
     delete cc._tmp.WebGLLayerGradient;
 }
 
-cc.assert(typeof cc._tmp.PrototypeLayerGradient === "function", cc._LogInfos.MissingFile, "CCLayerPropertyDefine.js");
+cc.assert(cc.isFunction(cc._tmp.PrototypeLayerGradient), cc._LogInfos.MissingFile, "CCLayerPropertyDefine.js");
 cc._tmp.PrototypeLayerGradient();
 delete cc._tmp.PrototypeLayerGradient;
 

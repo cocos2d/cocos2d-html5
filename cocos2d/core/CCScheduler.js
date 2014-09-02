@@ -148,7 +148,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
 
     _doCallback:function(){
         var self = this;
-        if (typeof(self._callback) == "string")
+        if (cc.isString(self._callback))
             self._target[self._callback](self._elapsed);
         else // if (typeof(this._callback) == "function") {
             self._callback.call(self._target, self._elapsed);

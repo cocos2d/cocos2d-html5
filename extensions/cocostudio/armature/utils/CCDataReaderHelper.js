@@ -1030,7 +1030,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
     },
 
     _asyncCallBack: function (selector, target, percent) {
-        if(selector && typeof selector === 'function')
+        if(selector && cc.isFunction(selector))
             selector.call(target, percent);
         if(target && selector && typeof selector === 'string')
             target[selector](percent);

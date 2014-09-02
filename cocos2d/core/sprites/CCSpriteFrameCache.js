@@ -163,7 +163,7 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
             texture = cc.textureCache.addImage(texturePath);
         }else if(texture instanceof cc.Texture2D){
             //do nothing
-        }else if(typeof texture == "string"){//string
+        }else if(cc.isString(texture)){//string
             texture = cc.textureCache.addImage(texture);
         }else{
             cc.assert(0, cc._LogInfos.spriteFrameCache_addSpriteFrames_3);

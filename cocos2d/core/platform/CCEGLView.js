@@ -164,10 +164,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * this callback will be invoked before applying resolution policy, <br/>
      * so you can do any additional modifications within the callback.<br/>
      * Useful only on web.
-     * @param {Function} callback The callback function
+     * @param {Function|null} callback The callback function
      */
     setResizeCallback: function (callback) {
-        if (typeof callback == "function" || callback == null) {
+        if (cc.isFunction(callback) || callback == null) {
             this._resizeCallback = callback;
         }
     },

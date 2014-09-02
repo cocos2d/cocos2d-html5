@@ -1256,19 +1256,15 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var child = child;
         var localZOrder = localZOrder === undefined ? child._localZOrder : localZOrder;
         var tag, name, setTag = false;
-        switch(typeof tag){
-            case 'undefined':
-                tag = undefined;
-                name = child._name;
-                break;
-            case 'string':
-                name = tag;
-                tag = undefined;
-                break;
-            case 'number':
-                setTag = true;
-                name = "";
-                break;
+        if(cc.isUndefined(tag)){
+            tag = undefined;
+            name = child._name;
+        } else if(cc.isString(tag)){
+            name = tag;
+            tag = undefined;
+        } else if(cc.isNumber(tag)){
+            setTag = true;
+            name = "";
         }
 
         cc.assert(child, cc._LogInfos.Node_addChild_3);
@@ -2695,10 +2691,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p = null;
 
 } else {
-    cc.assert(typeof cc._tmp.WebGLCCNode === "function", cc._LogInfos.MissingFile, "BaseNodesWebGL.js");
+    cc.assert(cc.isFunction(cc._tmp.WebGLCCNode), cc._LogInfos.MissingFile, "BaseNodesWebGL.js");
     cc._tmp.WebGLCCNode();
     delete cc._tmp.WebGLCCNode;
 }
-cc.assert(typeof cc._tmp.PrototypeCCNode === "function", cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
+cc.assert(cc.isFunction(cc._tmp.PrototypeCCNode), cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
 cc._tmp.PrototypeCCNode();
 delete cc._tmp.PrototypeCCNode;

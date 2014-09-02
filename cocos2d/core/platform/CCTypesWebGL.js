@@ -42,11 +42,11 @@ cc._tmp.WebGLColor = function () {
     cc.color = function (r, g, b, a, arrayBuffer, offset) {
         if (r === undefined)
             return new cc.Color(0, 0, 0, 255, arrayBuffer, offset);
-        if (typeof r === "string") {
+        if (cc.isString(r)) {
             var color = cc.hexToColor(r);
             return new cc.Color(color.r, color.g, color.b, color.a);
         }
-        if (typeof r === "object")
+        if (cc.isObject(r))
             return new cc.Color(r.r, r.g, r.b, r.a, r.arrayBuffer, r.offset);
         return new cc.Color(r, g, b, a, arrayBuffer, offset);
     };

@@ -823,7 +823,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 	_softInit: function (fileName, rect, rotated) {
 		if (fileName === undefined)
 			cc.Sprite.prototype.init.call(this);
-		else if (typeof(fileName) === "string") {
+		else if (cc.isString(fileName)) {
 			if (fileName[0] === "#") {
 				// Init with a sprite frame name
 				var frameName = fileName.substr(1, fileName.length - 1);
@@ -833,8 +833,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 				// Init  with filename and rect
 				cc.Sprite.prototype.init.call(this, fileName, rect);
 			}
-		}
-		else if (typeof(fileName) === "object") {
+		} else if (cc.isObject(fileName)) {
 			if (fileName instanceof cc.Texture2D) {
 				// Init  with texture and rect
 				this.initWithTexture(fileName, rect, rotated);
@@ -1520,7 +1519,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     _p.setSpriteFrame = function (newFrame) {
         var _t = this;
-        if(typeof(newFrame) == "string"){
+        if(cc.isString(newFrame)){
             newFrame = cc.spriteFrameCache.getSpriteFrame(newFrame);
             cc.assert(newFrame, cc._LogInfos.CCSpriteBatchNode_setSpriteFrame)
         }
@@ -1588,7 +1587,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     _p.setTexture = function (texture) {
         var _t = this;
-        if(texture && (typeof(texture) === "string")){
+        if(texture && (cc.isString(texture))){
             texture = cc.textureCache.addImage(texture);
             _t.setTexture(texture);
 
@@ -1710,12 +1709,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     delete _p;
 } else {
-    cc.assert(typeof cc._tmp.WebGLSprite === "function", cc._LogInfos.MissingFile, "SpritesWebGL.js");
+    cc.assert(cc.isFunction(cc._tmp.WebGLSprite), cc._LogInfos.MissingFile, "SpritesWebGL.js");
     cc._tmp.WebGLSprite();
     delete cc._tmp.WebGLSprite;
 }
 
-cc.assert(typeof cc._tmp.PrototypeSprite === "function", cc._LogInfos.MissingFile, "SpritesPropertyDefine.js");
+cc.assert(cc.isFunction(cc._tmp.PrototypeSprite), cc._LogInfos.MissingFile, "SpritesPropertyDefine.js");
 cc._tmp.PrototypeSprite();
 delete cc._tmp.PrototypeSprite;
 

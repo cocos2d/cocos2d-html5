@@ -64,9 +64,9 @@ cc.Color = function (r, g, b, a) {
 cc.color = function (r, g, b, a) {
     if (r === undefined)
         return {r: 0, g: 0, b: 0, a: 255};
-    if (typeof r === "string")
+    if (cc.isString(r))
         return cc.hexToColor(r);
-    if (typeof r === "object")
+    if (cc.isObject(r))
         return {r: r.r, g: r.g, b: r.b, a: (r.a == null) ? 255 : r.a};
     return  {r: r, g: g, b: b, a: (r.a == null) ? 255 : r.a};
 };
@@ -363,12 +363,12 @@ cc.FontDefinition = function () {
 };
 
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-    cc.assert(typeof cc._tmp.WebGLColor === "function", cc._LogInfos.MissingFile, "CCTypesWebGL.js");
+    cc.assert(cc.isFunction(cc._tmp.WebGLColor), cc._LogInfos.MissingFile, "CCTypesWebGL.js");
     cc._tmp.WebGLColor();
     delete cc._tmp.WebGLColor;
 }
 
-cc.assert(typeof cc._tmp.PrototypeColor === "function", cc._LogInfos.MissingFile, "CCTypesPropertyDefine.js");
+cc.assert(cc.isFunction(cc._tmp.PrototypeColor), cc._LogInfos.MissingFile, "CCTypesPropertyDefine.js");
 cc._tmp.PrototypeColor();
 delete cc._tmp.PrototypeColor;
 

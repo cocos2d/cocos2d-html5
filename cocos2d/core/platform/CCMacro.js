@@ -81,7 +81,7 @@ cc.UINT_MAX = 0xffffffff;
  * @deprecated since v3.0
  */
 cc.swap = function (x, y, ref) {
-    if ((typeof ref) == 'object' && (typeof ref.x) != 'undefined' && (typeof ref.y) != 'undefined') {
+    if (cc.isObject(ref) && !cc.isUndefined(ref.x) && !cc.isUndefined(ref.y)) {
         var tmp = ref[x];
         ref[x] = ref[y];
         ref[y] = tmp;

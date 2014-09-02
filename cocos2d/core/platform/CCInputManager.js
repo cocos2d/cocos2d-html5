@@ -229,7 +229,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
         var docElem = document.documentElement;
         var win = window;
         var box = null;
-        if (typeof element.getBoundingClientRect === 'function') {
+        if (cc.isFunction(element.getBoundingClientRect)) {
             box = element.getBoundingClientRect();
         } else {
             if (element instanceof HTMLCanvasElement) {

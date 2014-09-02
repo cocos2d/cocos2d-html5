@@ -255,7 +255,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         if(!texture)
             throw "cc.MotionStreak.initWithFade(): Invalid filename or texture";
 
-        if (typeof(texture) === "string")
+        if (cc.isString(texture))
             texture = cc.textureCache.addImage(texture);
 
         cc.Node.prototype.setPosition.call(this, cc.p(0,0));

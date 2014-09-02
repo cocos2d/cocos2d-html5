@@ -34,7 +34,7 @@ ccs.objectFactory = {
         var o = null;
         var t = this._typeMap[className];
         if (t) {
-            if(typeof t._fun == "function"){
+            if(cc.isFunction(t._fun)){
                 o = new t._fun();
             }else{
                 o = t._fun;
