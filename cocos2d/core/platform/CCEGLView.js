@@ -178,12 +178,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         var sWidth = Math.min(window.screen.availWidth, window.screen.width) * window.devicePixelRatio;
         var sHeight = Math.min(window.screen.availHeight, window.screen.height) * window.devicePixelRatio;
         //Calibration of the actual resolution may be smaller
-        if(this._frame.clientWidth >= sWidth * 0.8){
+        if(cc.sys.isMobile && this._frame.clientWidth >= sWidth * 0.8){
             locFrameSize.width = sWidth / window.devicePixelRatio;
         }else{
             locFrameSize.width = this._frame.clientWidth;
         }
-        if(this._frame.clientWidth >= sHeight * 0.8){
+        if(cc.sys.isMobile && this._frame.clientWidth >= sHeight * 0.8){
             locFrameSize.height = sHeight / window.devicePixelRatio;
         }else{
             locFrameSize.height = this._frame.clientHeight;
