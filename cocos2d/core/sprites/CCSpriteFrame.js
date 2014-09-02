@@ -349,7 +349,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         originalSize = originalSize || rect;
         rotated = rotated || false;
 
-        if (typeof(texture) == "string"){
+        if (cc.isString(texture)){
             this._texture = null;
             this._textureFilename = texture;
         } else if (texture instanceof cc.Texture2D){

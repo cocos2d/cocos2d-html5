@@ -71,7 +71,7 @@
 
             if (fileName === undefined) {
                 cc.PhysicsSprite.prototype.init.call(this);
-            }else if (typeof(fileName) === "string") {
+            }else if (cc.isString(fileName)) {
                 if (fileName[0] === "#") {
                     //init with a sprite frame name
                     var frameName = fileName.substr(1, fileName.length - 1);
@@ -81,7 +81,7 @@
                     //init  with filename and rect
                     this.init(fileName, rect);
                 }
-            }else if (typeof(fileName) === "object") {
+            }else if (cc.isObject(fileName)) {
                 if (fileName instanceof cc.Texture2D) {
                     //init  with texture and rect
                     this.initWithTexture(fileName, rect);
@@ -234,7 +234,7 @@
 
             if (fileName === undefined) {
                 cc.PhysicsSprite.prototype.init.call(this);
-            }else if (typeof(fileName) === "string") {
+            }else if (cc.isString(fileName)) {
                 if (fileName[0] === "#") {
                     //init with a sprite frame name
                     var frameName = fileName.substr(1, fileName.length - 1);
@@ -244,7 +244,7 @@
                     //init  with filename and rect
                     this.init(fileName, rect);
                 }
-            }else if (typeof(fileName) === "object") {
+            }else if (cc.isObject(fileName)) {
                 if (fileName instanceof cc.Texture2D) {
                     //init  with texture and rect
                     this.initWithTexture(fileName, rect);

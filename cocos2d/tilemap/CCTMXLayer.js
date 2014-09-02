@@ -1055,7 +1055,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                     break;
             }
         }
-        if(typeof item != "number")
+        if(!cc.isNumber(item))
             cc.log("cc.TMXLayer._atlasIndexForExistantZ(): TMX atlas index not found. Shall not happen");
         return i;
     },

@@ -91,7 +91,7 @@ cc.each = function (obj, iterator, context) {
  * @returns {object}
  */
 cc.extend = function(target) {
-    sources = arguments.length >= 2 ? Array.prototype.slice.call(arguments, 1) : [];
+    var sources = arguments.length >= 2 ? Array.prototype.slice.call(arguments, 1) : [];
 
     cc.each(sources, function(src) {
         for(var key in src) {
@@ -99,7 +99,7 @@ cc.extend = function(target) {
                 target[key] = src[key];
             }
         }
-    })
+    });
     return target;
 };
 
@@ -144,7 +144,6 @@ cc.isArray = function(obj) {
  * @param {*} obj
  * @returns {boolean}
  */
-
 cc.isUndefined = function(obj) {
     return typeof obj == 'undefined';
 };
@@ -158,7 +157,7 @@ cc.isObject = function(obj) {
     var type = typeof obj;
 
     return type == 'function' || (obj && type == 'object');
-}
+};
 
 /**
  * Check the url whether cross origin
@@ -814,8 +813,8 @@ cc.loader = {
     /**
      * Load resources then call the callback.
      * @param {string} resources
-     * @param {function|Object} [option] option or cb
-     * @param {function} [cb]
+     * @param {function} [option] callback or trigger
+     * @param {function|Object} [cb]
      * @return {cc.AsyncPool}
      */
     load : function(resources, option, cb){
@@ -1001,16 +1000,16 @@ cc.formatStr = function(){
 //+++++++++++++++++++++++++something about window events begin+++++++++++++++++++++++++++
 (function () {
     var win = window, hidden, visibilityChange, _undef = "undefined";
-    if (typeof document.hidden !== _undef) {
+    if (!cc.isUndefined(document.hidden)) {
         hidden = "hidden";
         visibilityChange = "visibilitychange";
-    } else if (typeof document.mozHidden !== _undef) {
+    } else if (!cc.isUndefined(document.mozHidden)) {
         hidden = "mozHidden";
         visibilityChange = "mozvisibilitychange";
-    } else if (typeof document.msHidden !== _undef) {
+    } else if (!cc.isUndefined(document.msHidden)) {
         hidden = "msHidden";
         visibilityChange = "msvisibilitychange";
-    } else if (typeof document.webkitHidden !== _undef) {
+    } else if (!cc.isUndefined(document.webkitHidden)) {
         hidden = "webkitHidden";
         visibilityChange = "webkitvisibilitychange";
     }
@@ -2039,7 +2038,7 @@ cc.game._initConfig();
 //+++++++++++++++++++++++++something about CCGame end+++++++++++++++++++++++++++++
 
 Function.prototype.bind = Function.prototype.bind || function (oThis) {
-    if (typeof this !== "function") {
+    if (!cc.isFunction(this)) {
         // closest thing possible to the ECMAScript 5
         // internal IsCallable function
         throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");

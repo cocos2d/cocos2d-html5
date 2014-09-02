@@ -76,12 +76,6 @@ cc.BuilderValue = cc.Class.extend({
 });
 
 cc.BuilderValue.create = function (value) {
-    var ret = new cc.BuilderValue();
-    if(ret){
-        if(typeof(value) == "number"){
-
-        }
-    }
-    return ret;
+    return new cc.BuilderValue();
 };
 

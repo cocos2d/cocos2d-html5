@@ -1005,7 +1005,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     if (cc._fpsImage) {
         cc.Director._fpsImage.src = cc._fpsImage;
     }
-    cc.assert(typeof cc._tmp.DirectorWebGL === "function", cc._LogInfos.MissingFile, "CCDirectorWebGL.js");
+    cc.assert(cc.isFunction(cc._tmp.DirectorWebGL), cc._LogInfos.MissingFile, "CCDirectorWebGL.js");
     cc._tmp.DirectorWebGL();
     delete cc._tmp.DirectorWebGL;
 }

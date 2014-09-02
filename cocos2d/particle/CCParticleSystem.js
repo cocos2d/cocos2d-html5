@@ -364,7 +364,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             this._quadsArrayBuffer = null;
         }
 
-        if (!plistFile || typeof(plistFile) === "number") {
+        if (!plistFile || cc.isNumber(plistFile)) {
             var ton = plistFile || 100;
             this.setDrawMode(cc.ParticleSystem.TEXTURE_MODE);
             this.initWithTotalParticles(ton);

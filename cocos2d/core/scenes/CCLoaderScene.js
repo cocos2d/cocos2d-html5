@@ -104,7 +104,8 @@ cc.LoaderScene = cc.Scene.extend({
      * @param {Function|String} cb
      */
     initWithResources: function (resources, cb) {
-        if(typeof resources == "string") resources = [resources];
+        if(cc.isString(resources))
+            resources = [resources];
         this.resources = resources || [];
         this.cb = cb;
     },

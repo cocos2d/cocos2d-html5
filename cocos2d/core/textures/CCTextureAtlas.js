@@ -74,10 +74,9 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     ctor: function (fileName, capacity) {
         this._buffersVBO = [];
 
-        if (typeof(fileName) == "string") {
+        if (cc.isString(fileName)) {
             this.initWithFile(fileName, capacity);
-        }
-        else if (fileName instanceof cc.Texture2D) {
+        } else if (fileName instanceof cc.Texture2D) {
             this.initWithTexture(fileName, capacity);
         }
     },
@@ -660,11 +659,11 @@ cc.TextureAtlas.create = function (fileName, capacity) {
 cc.TextureAtlas.createWithTexture = cc.TextureAtlas.create;
 
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-    cc.assert(typeof cc._tmp.WebGLTextureAtlas === "function", cc._LogInfos.MissingFile, "TexturesWebGL.js");
+    cc.assert(cc.isFunction(cc._tmp.WebGLTextureAtlas), cc._LogInfos.MissingFile, "TexturesWebGL.js");
     cc._tmp.WebGLTextureAtlas();
     delete cc._tmp.WebGLTextureAtlas;
 }
 
-cc.assert(typeof cc._tmp.PrototypeTextureAtlas === "function", cc._LogInfos.MissingFile, "TexturesPropertyDefine.js");
+cc.assert(cc.isFunction(cc._tmp.PrototypeTextureAtlas), cc._LogInfos.MissingFile, "TexturesPropertyDefine.js");
 cc._tmp.PrototypeTextureAtlas();
 delete cc._tmp.PrototypeTextureAtlas;

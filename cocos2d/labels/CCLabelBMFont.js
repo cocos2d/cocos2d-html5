@@ -639,7 +639,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         newString = String(newString);
         if (needUpdateLabel == null)
             needUpdateLabel = true;
-        if (newString == null || typeof(newString) != "string")
+        if (newString == null || !cc.isString(newString))
             newString = newString + "";
 
         this._initialString = newString;

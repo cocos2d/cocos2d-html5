@@ -261,14 +261,14 @@ cc._logToWebPage = function (msg) {
         logListStyle.margin = 0;
 
     }
-    msg = typeof msg == "string" ? msg : JSON.stringify(msg);
+    msg = cc.isString(msg) ? msg : JSON.stringify(msg);
     logList.value = logList.value + msg + "\r\n";
     logList.scrollTop = logList.scrollHeight;
 };
 
 //to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
 cc._formatString = function (arg) {
-    if (typeof arg === 'object') {
+    if (cc.isObject(arg)) {
         try {
             return JSON.stringify(arg);
         } catch (err) {
