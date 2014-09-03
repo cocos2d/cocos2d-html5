@@ -86,25 +86,39 @@ plugin.extend('facebook', {
     /**
      * Login to facebook
      * @param {Function} callback
+     * @param {Array} permissions
      * @example
      * //example
      * plugin.FacebookAgent.login();
      */
-    login: function(callback){
+    login: function(callback, permissions){
         var self = this;
+        permissions = permissions || [];
+        if(!permissions.some(function(item){
+            if(item == 'publish_actions')
+                return true;
+        })){
+            permissions.push("publish_actions");
+        }
+        var permissionsStr = permissions.join(',');
         FB.login(function(response) {
             if (response['authResponse']) {
                 //save user info
                 self.userInfo = response['authResponse'];
+                var permissList = response['authResponse']['grantedScopes'].split(",");
                 typeof callback === 'function' && callback(0, {
-                    accessToken: response['authResponse']['accessToken']
+                    accessToken: response['authResponse']['accessToken'],
+                    permissions: permissList
                 });
             } else {
                 typeof callback === 'function' && callback(response['error_code'] || 1, {
                     error_message: "unknown"
                 });
             }
-        }, { scope: 'publish_actions' });
+        }, {
+            scope: permissionsStr,
+            return_scopes: true
+        });
     },
 
     /**
@@ -163,6 +177,7 @@ plugin.extend('facebook', {
 
     /**
      * Acquiring new permissions
+     * @deprecated since v3.0
      * @param permissions
      * @param callback
      * @example
@@ -214,7 +229,8 @@ plugin.extend('facebook', {
                     //login - save user info
                     self.userInfo = response['authResponse'];
                     callback(0, {
-                        accessToken: response['authResponse']['accessToken']
+                        accessToken: response['authResponse']['accessToken'],
+
                     });
                 }else{
                     callback(response['error_code'] || 1, {
@@ -318,8 +334,7 @@ plugin.extend('facebook', {
 
         if(
             info['method'] != 'share_open_graph' &&
-            info['method'] != 'share_link' &&
-            info['method'] != 'apprequests'
+            info['method'] != 'share_link'
             ){
             cc.log('web is not supported what this it method');
             return;
@@ -350,7 +365,7 @@ plugin.extend('facebook', {
      * @param {Object} params
      * @param {Function} callback
      */
-    request: function(path, httpmethod, params, callback){
+    api: function(path, httpmethod, params, callback){
         if(typeof params === 'function'){
             callback = params;
             params = {};
@@ -414,5 +429,88 @@ plugin.extend('facebook', {
                 callback(0, response);
             }
         })
+    },
+
+    /**
+     * Various pop
+     * @param info
+     * @param callback
+     */
+    appRequest: function(info, callback){
+        if(!info){
+            return;
+        }
+
+        info['method'] = "apprequests";
+        delete info['dialog'];
+
+        info['name'] = info['site'] || info['name'];
+        delete info['site'];
+
+        info['href'] = info['siteUrl'] || info['link'];
+        delete info['siteUrl'];
+        delete info['link'];
+
+        info['image'] = info['imageUrl'] || info['imagePath'] || info['photo'] || info['picture'] || info['image'];
+        delete info['imageUrl'];
+        delete info['imagePath'];
+        delete info['photo'];
+
+
+        info['caption'] = info['title'] || info['caption'];
+        delete info['title'];
+
+        info['description'] = info['text'] || info['description'];
+        delete info['text'];
+        delete info['description'];
+
+        if(info['method'] == 'share_open_graph' && info['url']){
+            if(info['url']){
+                var obj = {};
+                if(info["preview_property"])
+                    obj[info["preview_property"]] = info["url"];
+                else
+                    obj["object"] = info["url"];
+
+                for(var p in info){
+                    if(p != "method" && p != "action_type" && p != "action_properties"){
+                        info[p] && (obj[p] = info[p]);
+                        delete info[p];
+                    }
+                }
+
+                info['action_properties'] = JSON.stringify(obj);
+            }else{
+                return;
+            }
+        }else{
+            if(!info['href']){
+                return;
+            }
+        }
+
+        if(
+            info['method'] != 'apprequests'
+            ){
+            cc.log('web is not supported what this it method');
+            return;
+        }
+
+        FB.ui(info,
+            function(response) {
+                if (response) {
+                    if(response['post_id'])
+                        typeof callback === 'function' && callback(0, {
+                            didComplete: true,
+                            post_id: response['post_id']
+                        });
+                    else
+                        typeof callback === 'function' && callback(0, response);
+                } else {
+                    typeof callback === 'function' && callback(1, {
+                        error_message:"Unknow error"
+                    });
+                }
+            });
     }
 });
