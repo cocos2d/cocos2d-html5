@@ -58,8 +58,6 @@ cc.DEFAULT_PADDING = 5;
 cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     enabled: false,
 
-    _color: null,
-    _opacity: 0,
     _selectedItem: null,
     _state: -1,
     _touchListener: null,
@@ -67,7 +65,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
 
     /**
      * Constructor of cc.Menu override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
-     * @param {...cc.MenuItem|null} menuItems}
+     * @param {...cc.MenuItem|null} menuItems
      */
     ctor: function (menuItems) {
         cc.Layer.prototype.ctor.call(this);
@@ -120,59 +118,6 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         if (!locListener._isRegistered())
             cc.eventManager.addListener(locListener, this);
         cc.Node.prototype.onEnter.call(this);
-    },
-
-    /**
-     * return the color for cc.Menu
-     * @return {cc.Color}
-     */
-    getColor: function () {
-        var locColor = this._color;
-        return cc.color(locColor.r, locColor.g, locColor.b, locColor.a);
-    },
-
-    /**
-     * set the color for cc.Menu
-     * @param {cc.Color} color
-     */
-    setColor: function (color) {
-        var locColor = this._color;
-        locColor.r = color.r;
-        locColor.g = color.g;
-        locColor.b = color.b;
-
-        var locChildren = this._children;
-        if (locChildren && locChildren.length > 0) {
-            for (var i = 0; i < locChildren.length; i++) {
-                locChildren[i].setColor(color);
-            }
-        }
-
-        if (color.a !== undefined && !color.a_undefined) {
-            this.setOpacity(color.a);
-        }
-    },
-
-    /**
-     * return the opacity for this menu
-     * @return {Number}
-     */
-    getOpacity: function () {
-        return this._opacity;
-    },
-
-    /**
-     * set the opacity for this menu
-     * @param {Number} opa
-     */
-    setOpacity: function (opa) {
-        this._opacity = opa;
-        var locChildren = this._children;
-        if (locChildren && locChildren.length > 0) {
-            for (var i = 0; i < locChildren.length; i++)
-                locChildren[i].setOpacity(opa);
-        }
-        this._color.a = opa;
     },
 
     /**
