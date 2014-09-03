@@ -107,6 +107,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
 	delegate:null,
 	colorSpaceHolder:null,
 
+    _colorText: null,
     _lens:null,
     _inputText:"",
     _placeHolder:"",
@@ -124,6 +125,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
      */
     ctor:function (placeholder, dimensions, alignment, fontName, fontSize) {
         this.colorSpaceHolder = cc.color(127, 127, 127);
+        this._colorText = cc.color(255,255,255, 255);
         cc.imeDispatcher.addDelegate(this);
         cc.LabelTTF.prototype.ctor.call(this);
 
@@ -163,19 +165,33 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     },
 
     /**
-     * Gets the color of space holder.
+     * Returns the color of space holder.
      * @return {cc.Color}
      */
     getColorSpaceHolder:function () {
-        return this.colorSpaceHolder;
+        return cc.color(this.colorSpaceHolder);
     },
 
     /**
-     * Gets the color of space holder.
+     * Sets the color of space holder.
      * @param {cc.Color} value
      */
     setColorSpaceHolder:function (value) {
-        this.colorSpaceHolder = value;
+        this.colorSpaceHolder.r = value.r;
+        this.colorSpaceHolder.g = value.g;
+        this.colorSpaceHolder.b = value.b;
+        this.colorSpaceHolder.a = cc.isUndefined(value.a) ? 255 : value.a;
+    },
+
+    /**
+     * Sets the color of cc.TextFieldTTF's text.
+     * @param {cc.Color} textColor
+     */
+    setTextColor:function(textColor){
+        this._colorText.r = textColor.r;
+        this._colorText.g = textColor.g;
+        this._colorText.b = textColor.b;
+        this._colorText.a = cc.isUndefined(textColor.a) ? 255 : textColor.a;
     },
 
     /**
@@ -197,15 +213,13 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     initWithPlaceHolder:function (placeholder, dimensions, alignment, fontName, fontSize) {
         switch (arguments.length) {
             case 5:
-                if (placeholder) {
+                if (placeholder)
                     this.setPlaceHolder(placeholder);
-                }
                 return this.initWithString(this._placeHolder,fontName, fontSize, dimensions, alignment);
                 break;
             case 3:
-                if (placeholder) {
+                if (placeholder)
                     this.setPlaceHolder(placeholder);
-                }
                 return this.initWithString(this._placeHolder, arguments[1], arguments[2]);
                 break;
             default:
@@ -223,10 +237,15 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         this._inputText = text || "";
 
         // if there is no input text, display placeholder instead
-        if (!this._inputText.length)
+        if (!this._inputText.length){
             cc.LabelTTF.prototype.setString.call(this, this._placeHolder);
-        else
+            this.setColor(this.colorSpaceHolder);
+        } else {
             cc.LabelTTF.prototype.setString.call(this,this._inputText);
+            this.setColor(this._colorText);
+        }
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            this._updateTexture();
         this._charCount = this._inputText.length;
     },
 
@@ -247,6 +266,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         this._placeHolder = text || "";
         if (!this._inputText.length) {
             cc.LabelTTF.prototype.setString.call(this,this._placeHolder);
+            this.setColor(this.colorSpaceHolder);
         }
     },
 
@@ -269,18 +289,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         if (this.delegate && this.delegate.onDraw(this))
             return;
 
-        if (this._inputText && this._inputText.length > 0) {
-            cc.LabelTTF.prototype.draw.call(this, context);
-            return;
-        }
-
-        // draw placeholder
-        var color = this.color;
-        this.color = this.colorSpaceHolder;
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
-            this._updateTexture();
         cc.LabelTTF.prototype.draw.call(this, context);
-        this.color = color;
     },
 
     /**
@@ -359,6 +368,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
             this._inputText = "";
             this._charCount = 0;
             cc.LabelTTF.prototype.setString.call(this,this._placeHolder);
+            this.setColor(this.colorSpaceHolder);
             return;
         }
 

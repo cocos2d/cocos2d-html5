@@ -382,6 +382,30 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
+     * Returns the color of ccui.TextField's place holder.
+     * @returns {cc.Color}
+     */
+    getPlaceHolderColor: function(){
+        return this._textFieldRenderer.getPlaceHolderColor();
+    },
+
+    /**
+     * Sets the place holder color to ccui.TextField.
+     * @param color
+     */
+    setPlaceHolderColor: function(color){
+        this._textFieldRenderer.setColorSpaceHolder(color);
+    },
+
+    /**
+     * Sets the text color to ccui.TextField
+     * @param textColor
+     */
+    setTextColor: function(textColor){
+        this._textFieldRenderer.setTextColor(textColor);
+    },
+
+    /**
      * Sets font size for ccui.TextField.
      * @param {Number} size
      */
@@ -762,12 +786,12 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         this._textFieldRenderer.setVerticalAlignment(alignment);
     },
     _setFont: function (font) {
-        this._textFieldRender._setFont(font);
+        this._textFieldRenderer._setFont(font);
         this._textFieldRendererAdaptDirty = true;
     },
 
     _getFont: function () {
-        return this._textFieldRender._getFont();
+        return this._textFieldRenderer._getFont();
     }
 });
 
