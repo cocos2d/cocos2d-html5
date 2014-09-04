@@ -23,14 +23,27 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.CheckBoxReader = {
-
+/**
+ * The ccui.CheckBox's properties reader for GUIReader.
+ * @class
+ * @name ccs.CheckBoxReader
+ **/
+ccs.CheckBoxReader = /** @lends ccs.CheckBoxReader# */{
+    /**
+     * Gets the ccs.CheckBoxReader.
+     * @deprecated since v3.0, please use ccs.CheckBoxReader directly.
+     * @returns {ccs.CheckBoxReader}
+     */
     getInstance: function(){
         return ccs.CheckBoxReader;
     },
 
+    /**
+     * Sets ccui.CheckBox's properties from json dictionary.
+     * @param {ccui.CheckBox} widget
+     * @param {Object} options
+     */
     setPropsFromJsonDictionary: function(widget, options){
-
         ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var checkBox = widget;
@@ -38,13 +51,13 @@ ccs.CheckBoxReader = {
         //load background image
         var backGroundDic = options["backGroundBoxData"];
         var backGroundType = backGroundDic["resourceType"];
-        var backGroundTexturePath = ccs.WidgetReader.getResourcePath(backGroundDic, "path", backGroundType);
+        var backGroundTexturePath = ccs.WidgetReader._getResourcePath(backGroundDic, "path", backGroundType);
         checkBox.loadTextureBackGround(backGroundTexturePath, backGroundType);
 
         //load background selected image
         var backGroundSelectedDic = options["backGroundBoxSelectedData"];
         var backGroundSelectedType = backGroundSelectedDic["resourceType"];
-        var backGroundSelectedTexturePath = ccs.WidgetReader.getResourcePath(backGroundSelectedDic, "path", backGroundSelectedType);
+        var backGroundSelectedTexturePath = ccs.WidgetReader._getResourcePath(backGroundSelectedDic, "path", backGroundSelectedType);
         if(!backGroundSelectedTexturePath){
             backGroundSelectedType = backGroundType;
             backGroundSelectedTexturePath = backGroundTexturePath;
@@ -54,13 +67,13 @@ ccs.CheckBoxReader = {
         //load frontCross image
         var frontCrossDic = options["frontCrossData"];
         var frontCrossType = frontCrossDic["resourceType"];
-        var frontCrossFileName = ccs.WidgetReader.getResourcePath(frontCrossDic, "path", frontCrossType);
+        var frontCrossFileName = ccs.WidgetReader._getResourcePath(frontCrossDic, "path", frontCrossType);
         checkBox.loadTextureFrontCross(frontCrossFileName, frontCrossType);
 
         //load backGroundBoxDisabledData
         var backGroundDisabledDic = options["backGroundBoxDisabledData"];
         var backGroundDisabledType = backGroundDisabledDic["resourceType"];
-        var backGroundDisabledFileName = ccs.WidgetReader.getResourcePath(backGroundDisabledDic, "path", backGroundDisabledType);
+        var backGroundDisabledFileName = ccs.WidgetReader._getResourcePath(backGroundDisabledDic, "path", backGroundDisabledType);
         if(!backGroundDisabledFileName){
             backGroundDisabledType = frontCrossType;
             backGroundDisabledFileName = frontCrossFileName;
@@ -70,12 +83,11 @@ ccs.CheckBoxReader = {
         ///load frontCrossDisabledData
         var frontCrossDisabledDic = options["frontCrossDisabledData"];
         var frontCrossDisabledType = frontCrossDisabledDic["resourceType"];
-        var frontCrossDisabledFileName = ccs.WidgetReader.getResourcePath(frontCrossDisabledDic, "path", frontCrossDisabledType);
+        var frontCrossDisabledFileName = ccs.WidgetReader._getResourcePath(frontCrossDisabledDic, "path", frontCrossDisabledType);
         checkBox.loadTextureFrontCrossDisabled(frontCrossDisabledFileName, frontCrossDisabledType);
 
-        if (options["selectedState"]){
+        if (options["selectedState"])
             checkBox.setSelectedState(options["selectedState"]);
-        }
 
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }

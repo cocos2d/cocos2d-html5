@@ -23,11 +23,26 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.WidgetReader = {
+/**
+ * The ccui.Widget's properties reader for GUIReader.
+ * @class
+ * @name ccs.WidgetReader
+ **/
+ccs.WidgetReader = /** @lends ccs.WidgetReader# */{
+    /**
+     * Gets the ccs.WidgetReader.
+     * @deprecated since v3.0, please use ccs.WidgetReader directly.
+     * @returns {ccs.WidgetReader}
+     */
     getInstance: function(){
         return ccs.WidgetReader;
     },
 
+    /**
+     * Sets widget's properties from json dictionary
+     * @param {ccui.Widget} widget
+     * @param {object} options
+     */
     setPropsFromJsonDictionary: function(widget, options){
         var ignoreSizeExsit = options["ignoreSize"];
         if(ignoreSizeExsit != null)
@@ -114,6 +129,12 @@ ccs.WidgetReader = {
             }
         }
     },
+
+    /**
+     * Sets widget's color, anchor point and flipped properties from json dictionary
+     * @param {ccui.Widget} widget
+     * @param {object} options
+     */
     setColorPropsFromJsonDictionary: function(widget, options){
         var op = options["opacity"];
         if(op != null)
@@ -123,11 +144,12 @@ ccs.WidgetReader = {
         var colorB = options["colorB"];
         widget.setColor(cc.color((colorR == null) ? 255 : colorR, (colorG == null) ? 255 : colorG, (colorB == null) ? 255 : colorB));
 
-        ccs.WidgetReader.setAnchorPointForWidget(widget, options);
+        ccs.WidgetReader._setAnchorPointForWidget(widget, options);
         widget.setFlippedX(options["flipX"]);
         widget.setFlippedY(options["flipY"]);
     },
-    setAnchorPointForWidget: function(widget, options){
+
+    _setAnchorPointForWidget: function(widget, options){
         var isAnchorPointXExists = options["anchorPointX"];
         var anchorPointXInFile;
         if (isAnchorPointXExists != null)
@@ -146,7 +168,7 @@ ccs.WidgetReader = {
             widget.setAnchorPoint(cc.p(anchorPointXInFile, anchorPointYInFile));
     },
 
-    getResourcePath: function(dict, key, texType){
+    _getResourcePath: function(dict, key, texType){
         var imageFileName = dict[key];
         var imageFileName_tp;
         if (null != imageFileName) {

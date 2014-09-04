@@ -426,7 +426,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
 
     /**
      * Stop playing music.
-     * @param {Boolean} releaseData If release the music data or not.As default value is false.
+     * @param {Boolean} [releaseData] If release the music data or not.As default value is false.
      * @example
      * //example
      * cc.audioEngine.stopMusic();

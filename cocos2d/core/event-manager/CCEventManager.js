@@ -23,6 +23,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * @ignore
+ */
 cc._EventListenerVector = cc.Class.extend({
     _fixedListeners: null,
     _sceneGraphListeners: null,

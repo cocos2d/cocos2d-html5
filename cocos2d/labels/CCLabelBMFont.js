@@ -612,7 +612,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
     /**
      * Update String. <br />
-     * Only update this label displa string.
+     * Only update this label display string.
      * @param {Boolean} fromUpdate
      */
     updateString: function (fromUpdate) {
