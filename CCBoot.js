@@ -1361,8 +1361,16 @@ cc._initSys = function (config, CONFIG_KEY) {
         context.fillStyle = '#000';
         context.fillRect(0,0,1,1);
         context.globalCompositeOperation = 'multiply';
-        context.fillStyle = '#fff';
-        context.fillRect(0,0,1,1);
+
+        var canvas2 = document.createElement('canvas');
+        canvas2.width = 1;
+        canvas2.height = 1;
+        var context2 = canvas2.getContext('2d');
+        context2.fillStyle = '#fff';
+        context2.fillRect(0,0,1,1);
+
+        context.drawImage(canvas2, 0, 0, 1, 1);
+
         return context.getImageData(0,0,1,1).data[0] === 0;
     };
 
