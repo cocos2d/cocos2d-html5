@@ -91,7 +91,7 @@ plugin.extend('facebook', {
      * //example
      * plugin.FacebookAgent.login();
      */
-    login: function(callback, permissions){
+    login: function(permissions,callback){
         var self = this;
         permissions = permissions || [];
         if(!permissions.some(function(item){
