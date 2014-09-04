@@ -23,93 +23,85 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.ButtonReader = {
-
+/**
+ * The ccui.Button's properties reader for GUIReader.
+ * @class
+ * @name ccs.ButtonReader
+ **/
+ccs.ButtonReader = /** @lends ccs.ButtonReader# */{
+    /**
+     * Gets the ccs.ButtonReader.
+     * @deprecated since v3.0, please use ccs.ButtonReader directly.
+     * @returns {ccs.ButtonReader}
+     */
     getInstance: function(){
         return ccs.ButtonReader;
     },
 
+    /**
+     * Sets ccui.Button's properties from json dictionary.
+     * @param {ccui.Button} widget
+     * @param {Object} options
+     */
     setPropsFromJsonDictionary: function(widget, options){
-
         ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
-
         var jsonPath = ccs.uiReader.getFilePath();
 
         var button = widget;
         var scale9Enable = options["scale9Enable"];
         button.setScale9Enabled(scale9Enable);
     
-        var normalDic = options["normalData"];
-        var normalType = normalDic["resourceType"];
-        switch (normalType)
-        {
+        var normalDic = options["normalData"], normalType = normalDic["resourceType"];
+        switch (normalType) {
             case 0:
-            {
                 var tp_n = jsonPath;
                 var normalFileName = normalDic["path"];
                 var normalFileName_tp = (normalFileName && normalFileName !== "") ?
-                    tp_n + normalFileName :
-                    null;
+                    tp_n + normalFileName : null;
                 button.loadTextureNormal(normalFileName_tp);
                 break;
-            }
             case 1:
-            {
                 var normalFileName = normalDic["path"];
                 button.loadTextureNormal(normalFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
-            }
             default:
                 break;
         }
         var pressedDic = options["pressedData"];
         var pressedType = pressedDic["resourceType"];
-        switch (pressedType)
-        {
+        switch (pressedType) {
             case 0:
-            {
                 var tp_p = jsonPath;
                 var pressedFileName = pressedDic["path"];
                 var pressedFileName_tp = (pressedFileName && pressedFileName !== "") ?
-                    tp_p + pressedFileName :
-                    null;;
+                    tp_p + pressedFileName : null;
                 button.loadTexturePressed(pressedFileName_tp);
                 break;
-            }
             case 1:
-            {
                 var pressedFileName = pressedDic["path"];
                 button.loadTexturePressed(pressedFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
-            }
             default:
                 break;
         }
         var disabledDic = options["disabledData"];
         var disabledType = disabledDic["resourceType"];
-        switch (disabledType)
-        {
+        switch (disabledType){
             case 0:
-            {
                 var tp_d = jsonPath;
                 var disabledFileName = disabledDic["path"];
                 var disabledFileName_tp = (disabledFileName && disabledFileName !== "") ?
-                    tp_d + disabledFileName :
-                    null;
+                    tp_d + disabledFileName : null;
                 button.loadTextureDisabled(disabledFileName_tp);
                 break;
-            }
             case 1:
-            {
                 var disabledFileName = disabledDic["path"];
                 button.loadTextureDisabled(disabledFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
-            }
             default:
                 break;
         }
-        if (scale9Enable)
-        {
+        if (scale9Enable) {
             var cx = options["capInsetsX"];
             var cy = options["capInsetsY"];
             var cw = options["capInsetsWidth"];
@@ -119,15 +111,11 @@ ccs.ButtonReader = {
             var sw = options["scale9Width"];
             var sh = options["scale9Height"];
             if (sw != null && sh != null)
-            {
                 button.setSize(cc.size(sw, sh));
-            }
         }
         var text = options["text"];
         if (text != null)
-        {
             button.setTitleText(text);
-        }
     
         var cr = options["textColorR"];
         var cg = options["textColorG"];
@@ -139,14 +127,10 @@ ccs.ButtonReader = {
         button.setTitleColor(cc.color(cri,cgi,cbi));
         var fs = options["fontSize"];
         if (fs != null)
-        {
             button.setTitleFontSize(options["fontSize"]);
-        }
         var fn = options["fontName"];
         if (fn)
-        {
             button.setTitleFontName(options["fontName"]);
-        }
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     }
 };
