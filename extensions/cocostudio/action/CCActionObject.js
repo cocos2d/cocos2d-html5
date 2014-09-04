@@ -24,7 +24,7 @@
  ****************************************************************************/
 
 /**
- * Base class for ccs.ActionObject
+ * The Cocostudio's action object.
  * @class
  * @extends ccs.Class
  */
@@ -37,7 +37,12 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
     _unitTime: 0,
     _currentTime: 0,
     _scheduler:null,
+    _callback: null,
     _fTotalTime: 0,
+
+    /**
+     * Construction of ccs.ActionObject.
+     */
     ctor: function () {
         this._actionNodeList = [];
         this._name = "";
@@ -47,12 +52,11 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
         this._unitTime = 0.1;
         this._currentTime = 0;
         this._fTotalTime = 0;
-        this._scheduler = new cc.Scheduler();
-        cc.director.getScheduler().scheduleUpdateForTarget(this._scheduler, 0, false);
+        this._scheduler = cc.director.getScheduler();
     },
 
     /**
-     * Sets name for object
+     * Sets name to ccs.ActionObject
      * @param {string} name
      */
     setName: function (name) {
@@ -60,7 +64,7 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
     },
 
     /**
-     * Gets name for object
+     * Returns name fo ccs.ActionObject
      * @returns {string}
      */
     getName: function () {
@@ -76,7 +80,7 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
     },
 
     /**
-     * Gets if the action will loop play.
+     * Returns if the action will loop play.
      * @returns {boolean}
      */
     getLoop: function () {
@@ -97,15 +101,15 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
     },
 
     /**
-     * Gets the time interval of frame.
-     * @returns {number}
+     * Returns the time interval of frame.
+     * @returns {number} the time interval of frame
      */
     getUnitTime: function () {
         return this._unitTime;
     },
 
     /**
-     * Gets the current time of frame.
+     * Returns the current time of frame.
      * @returns {number}
      */
     getCurrentTime: function () {
@@ -114,19 +118,23 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
 
     /**
      * Sets the current time of frame.
-     * @param time
+     * @param {Number} time the current time of frame
      */
     setCurrentTime: function (time) {
         this._currentTime = time;
     },
 
+    /**
+     * Returns the total time of frame.
+     * @returns {number} the total time of frame
+     */
     getTotalTime: function(){
         return this._fTotalTime;
     },
 
     /**
-     * Return if the action is playing.
-     * @returns {boolean}
+     * Returns if the action is playing.
+     * @returns {boolean}  true if the action is playing, false the otherwise
      */
     isPlaying: function () {
         return this._playing;
@@ -163,9 +171,8 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
      * @param {ccs.ActionNode} node
      */
     addActionNode: function (node) {
-        if (!node) {
+        if (!node)
             return;
-        }
         this._actionNodeList.push(node);
         node.setUnitTime(this._unitTime);
     },
@@ -175,50 +182,49 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
      * @param {ccs.ActionNode} node
      */
     removeActionNode: function (node) {
-        if (node == null) {
+        if (node == null)
             return;
-        }
         cc.arrayRemoveObject(this._actionNodeList, node);
     },
 
     /**
-     * Play the action.
-     * @param {cc.CallFunc} fun
+     * Plays the action.
+     * @param {cc.CallFunc} [fun]  Action Call Back
      */
     play: function (fun) {
         this.stop();
         this.updateToFrameByTime(0);
-        var frameNum = this._actionNodeList.length;
+        var locActionNodeList = this._actionNodeList;
+        var frameNum = locActionNodeList.length;
         for (var i = 0; i < frameNum; i++) {
-            var locActionNode = this._actionNodeList[i];
-            locActionNode.playAction(fun);
+            locActionNodeList[i].playAction(fun);
         }
-        if (this._loop) {
+        if (this._loop)
             this._scheduler.scheduleCallbackForTarget(this, this.simulationActionUpdate, 0, cc.REPEAT_FOREVER, 0, false);
-    }
+        if(fun !== undefined)
+            this._callback = fun;
     },
 
     /**
-     * pause the action.
+     * Pauses the action.
      */
     pause: function () {
         this._pause = true;
     },
 
     /**
-     * stop the action.
+     * Stop the action.
      */
     stop: function () {
-        for (var i = 0; i < this._actionNodeList.length; i++) {
-            var locActionNode = this._actionNodeList[i];
-            locActionNode.stopAction();
-        }
+        var locActionNodeList = this._actionNodeList;
+        for (var i = 0; i < locActionNodeList.length; i++)
+            locActionNodeList[i].stopAction();
         this._scheduler.unscheduleCallbackForTarget(this, this.simulationActionUpdate);
         this._pause = false;
     },
 
     /**
-     * Method of update frame .
+     * Updates frame by time.
      */
     updateToFrameByTime: function (time) {
         this._currentTime = time;
@@ -227,20 +233,27 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
             locActionNode.updateActionToTimeLine(time);
         }
     },
+
+    /**
+     * scheduler update function
+     * @param {Number} dt delta time
+     */
     simulationActionUpdate: function (dt) {
-        if (this._loop) {
-            var isEnd = true;
-            var actionNodeList = this._actionNodeList;
-            for (var i = 0; i < actionNodeList.length; i++) {
-                var actionNode = actionNodeList[i];
-                if (actionNode.isActionDoneOnce() == false) {
-                    isEnd = false;
-                    break;
-                }
+        var isEnd = true, locNodeList = this._actionNodeList;
+        for(var i = 0, len = locNodeList.length; i < len; i++) {
+            if (!locNodeList[i].isActionDoneOnce()){
+                isEnd = false;
+                break;
             }
-            if (isEnd) {
+        }
+
+        if (isEnd){
+            if (this._callback != null)
+                this._callback.execute();
+            if (this._loop)
                 this.play();
-            }
+            else
+                this._scheduler.unschedule(this.simulationActionUpdate, this);
         }
     }
 });
