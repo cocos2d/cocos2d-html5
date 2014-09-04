@@ -368,7 +368,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
                 locChild.updateDisplayedColor(this._displayedColor);
             } else {
-                cc.Node.prototype.updateDisplayedColor.call(locChild, this._displayedColor);
+                if(cc.sys._supportCanvasNewBlendModes)
+                    cc.Node.prototype.updateDisplayedColor.call(locChild, this._displayedColor);
+                else
+                    locChild.updateDisplayedColor(this._displayedColor);
                 locChild.setNodeDirty();
             }
         }
