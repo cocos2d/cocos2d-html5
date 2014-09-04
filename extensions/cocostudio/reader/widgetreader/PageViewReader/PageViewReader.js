@@ -23,16 +23,27 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.PageViewReader = {
-
-    instancePageViewReader: null,
-
+/**
+ * The ccui.PageView's properties reader for GUIReader.
+ * @class
+ * @name ccs.PageViewReader
+ **/
+ccs.PageViewReader = /** @lends ccs.PageViewReader# */{
+    /**
+     * Gets the ccs.PageViewReader.
+     * @deprecated since v3.0, please use ccs.PageViewReader directly.
+     * @returns {ccs.PageViewReader}
+     */
     getInstance: function(){
         return ccs.PageViewReader;
     },
 
+    /**
+     * Sets ccui.PageView's properties from json dictionary.
+     * @param {ccui.PageView} widget
+     * @param {Object} options
+     */
     setPropsFromJsonDictionary: function(widget, options){
-
         ccs.LayoutReader.setPropsFromJsonDictionary.call(this, widget, options);
     }
 };

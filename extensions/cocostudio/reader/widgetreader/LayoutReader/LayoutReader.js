@@ -23,16 +23,28 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.LayoutReader = {
-
+/**
+ * The ccui.Layout's properties reader for GUIReader.
+ * @class
+ * @name ccs.LayoutReader
+ **/
+ccs.LayoutReader = /** @lends ccs.LayoutReader# */{
+    /**
+     * Gets the ccs.LayoutReader.
+     * @deprecated since v3.0, please use ccs.LayoutReader directly.
+     * @returns {ccs.LayoutReader}
+     */
     getInstance: function(){
         return ccs.LayoutReader;
     },
 
+    /**
+     * Sets ccui.Layout's properties from json dictionary.
+     * @param {ccui.Layout} widget
+     * @param {Object} options
+     */
     setPropsFromJsonDictionary: function(widget, options){
-
         ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
-
         var jsonPath = ccs.uiReader.getFilePath();
 
         var panel = widget;

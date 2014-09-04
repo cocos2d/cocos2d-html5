@@ -23,11 +23,26 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.LabelBMFontReader = {
+/**
+ * The ccui.TextBMFont's properties reader for GUIReader.
+ * @class
+ * @name ccs.LabelBMFontReader
+ **/
+ccs.LabelBMFontReader = /** @lends ccs.LabelBMFontReader# */{
+    /**
+     * Gets the ccs.LabelBMFontReader.
+     * @deprecated since v3.0, please use ccs.LabelBMFontReader directly.
+     * @returns {ccs.LabelBMFontReader}
+     */
     getInstance: function(){
         return ccs.LabelBMFontReader;
     },
 
+    /**
+     * Sets ccui.TextBMFont's properties from json dictionary.
+     * @param {ccui.TextBMFont} widget
+     * @param {Object} options
+     */
     setPropsFromJsonDictionary: function(widget, options){
         ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
@@ -37,16 +52,13 @@ ccs.LabelBMFontReader = {
     
         var cmftDic = options["fileNameData"];
         var cmfType = cmftDic["resourceType"];
-        switch (cmfType)
-        {
+        switch (cmfType) {
             case 0:
-            {
                 var tp_c = jsonPath;
                 var cmfPath = cmftDic["path"];
                 var cmf_tp = tp_c + cmfPath;
                 labelBMFont.setFntFile(cmf_tp);
                 break;
-            }
             case 1:
                 cc.log("Wrong res type of LabelAtlas!");
                 break;

@@ -23,35 +23,44 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.TextFieldReader = {
-
+/**
+ * The ccui.TextField's properties reader for GUIReader.
+ * @class
+ * @name ccs.TextFieldReader
+ **/
+ccs.TextFieldReader = /** @lends ccs.TextFieldReader# */{
+    /**
+     * Gets the ccs.TextFieldReader.
+     * @deprecated since v3.0, please use ccs.TextFieldReader directly.
+     * @returns {ccs.TextFieldReader}
+     */
     getInstance: function(){
         return ccs.TextFieldReader;
     },
 
+    /**
+     * Sets ccui.TextField's properties from json dictionary.
+     * @param {ccui.TextField} widget
+     * @param {Object} options
+     */
     setPropsFromJsonDictionary: function(widget, options){
-
         ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var textField = widget;
         var ph = options["placeHolder"];
-        if(ph){
+        if(ph)
             textField.setPlaceHolder(ph);
-        }
         textField.setString(options["text"]);
         var fs = options["fontSize1"];
-        if(fs){
+        if(fs)
             textField.setFontSize(fs);
-        }
         var fn = options["fontName"];
-        if(fn){
+        if(fn)
             textField.setFontName(fn);
-        }
         var tsw = options["touchSizeWidth"];
         var tsh = options["touchSizeHeight"];
-        if(tsw && tsh){
+        if(tsw && tsh)
             textField.setTouchSize(tsw, tsh);
-        }
 
         var dw = options["width"];
         var dh = options["height"];
@@ -67,9 +76,8 @@ ccs.TextFieldReader = {
         }
         var passwordEnable = options["passwordEnable"];
         textField.setPasswordEnabled(passwordEnable);
-        if(passwordEnable){
+        if(passwordEnable)
             textField.setPasswordStyleText(options["passwordStyleText"]);
-        }
 
         var aw = options["areaWidth"];
         var ah = options["areaHeight"];
@@ -78,15 +86,12 @@ ccs.TextFieldReader = {
             textField.setTextAreaSize(size);
         }
         var ha = options["hAlignment"];
-        if(ha){
+        if(ha)
             textField.setTextHorizontalAlignment(ha);
-        }
         var va = options["vAlignment"];
-        if(va){
+        if(va)
             textField.setTextVerticalAlignment(va);
-        }
 
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
-
     }
 };

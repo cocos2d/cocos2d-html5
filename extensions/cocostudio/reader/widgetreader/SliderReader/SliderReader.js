@@ -23,14 +23,27 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.SliderReader = {
-
+/**
+ * The ccui.Slider's properties reader for GUIReader.
+ * @class
+ * @name ccs.SliderReader
+ **/
+ccs.SliderReader = /** @lends ccs.SliderReader# */{
+    /**
+     * Gets the ccs.SliderReader.
+     * @deprecated since v3.0, please use ccs.SliderReader directly.
+     * @returns {ccs.SliderReader}
+     */
     getInstance: function(){
         return ccs.SliderReader;
     },
 
+    /**
+     * Sets ccui.Slider's properties from json dictionary.
+     * @param {ccui.Slider} widget
+     * @param {Object} options
+     */
     setPropsFromJsonDictionary: function(widget, options){
-
         ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var jsonPath = ccs.uiReader.getFilePath();
