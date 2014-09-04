@@ -38,12 +38,12 @@ plugin.extend('facebook', {
     userInfo: null,
 
     HttpMethod: {
-        'Get': 'get',
-        'Post': 'post',
-        'Delete': 'delete'
+        'GET': 'get',
+        'POST': 'post',
+        'DELETE': 'delete'
     },
 
-    CodeSucceed: 0,
+    CODE_SUCCEED: 0,
 
     /**
      * Initialize Facebook sdk
@@ -166,7 +166,7 @@ plugin.extend('facebook', {
             if(response['authResponse']){
                 // user is now logged out
                 self.userInfo = {};
-                typeof callback === 'function' && callback(0, {});
+                typeof callback === 'function' && callback(0, {"isLoggedIn" : false});
             }else{
                 typeof callback === 'function' && callback(response['error_code'] || 1, {
                     error_message: response['error_message'] || "Unknown"
@@ -229,7 +229,7 @@ plugin.extend('facebook', {
                     //login - save user info
                     self.userInfo = response['authResponse'];
                     callback(0, {
-                        accessToken: response['authResponse']['accessToken'],
+                        accessToken: response['authResponse']['accessToken']
 
                     });
                 }else{
