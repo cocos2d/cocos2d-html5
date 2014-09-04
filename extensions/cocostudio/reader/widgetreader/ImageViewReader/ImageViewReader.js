@@ -23,42 +23,48 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.ImageViewReader = {
-
+/**
+ * The ccui.ImageView's properties reader for GUIReader.
+ * @class
+ * @name ccs.ImageViewReader
+ **/
+ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
+    /**
+     * Gets the ccs.ImageViewReader.
+     * @deprecated since v3.0, please use ccs.ImageViewReader directly.
+     * @returns {ccs.ImageViewReader}
+     */
     getInstance: function(){
         return ccs.ImageViewReader;
     },
 
+    /**
+     * Sets ccui.ImageView's properties from json dictionary.
+     * @param {ccui.ImageView} widget
+     * @param {Object} options
+     */
     setPropsFromJsonDictionary: function(widget, options){
-
         ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var jsonPath = ccs.uiReader.getFilePath();
     
         var imageView = widget;
     
-        var imageFileNameDic = options["fileNameData"];
-        var imageFileNameType = imageFileNameDic["resourceType"];
-        switch (imageFileNameType)
-        {
+        var imageFileNameDic = options["fileNameData"], imageFileNameType = imageFileNameDic["resourceType"];
+        switch (imageFileNameType){
             case 0:
-            {
                 var tp_i = jsonPath;
                 var imageFileName = imageFileNameDic["path"];
                 var imageFileName_tp = null;
-                if (imageFileName && imageFileName !== "")
-                {
+                if (imageFileName && imageFileName !== "") {
                     imageFileName_tp = tp_i + imageFileName;
                     imageView.loadTexture(imageFileName_tp);
                 }
                 break;
-            }
             case 1:
-            {
                 var imageFileName = imageFileNameDic["path"];
                 imageView.loadTexture(imageFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
                 break;
-            }
             default:
                 break;
         }
