@@ -510,8 +510,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
         // reset director's member variables to fit visible rect
         var director = cc.director;
-        cc.winSize.width = director._winSizeInPoints.width = _t._visibleRect.width;
-        cc.winSize.height = director._winSizeInPoints.height = _t._visibleRect.height;
+        director._winSizeInPoints.width = _t._designResolutionSize.width;
+        director._winSizeInPoints.heihgt = _t._designResolutionSize.heihgt;
+        cc.winSize.width = director._winSizeInPoints.width;
+        cc.winSize.height = director._winSizeInPoints.height;
 
         policy.postApply(_t);
 
@@ -947,13 +949,11 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
         apply: function (view, designedResolution) {
             var containerW = cc._canvas.width, containerH = cc._canvas.height,
                 designW = designedResolution.width, designH = designedResolution.height,
-                scaleX = containerW / designW, scaleY = containerH / designH, scale,
-                contentW, contentH;
+                scaleX = containerW / designW, scaleY = containerH / designH, scale;
 
-            scaleX < scaleY ? (scale = scaleY, contentW = designW * scale, contentH = containerH)
-                : (scale = scaleX, contentW = containerW, contentH = designH * scale);
+            scaleX < scaleY ? ( scale = scaleY ): ( scale = scaleX );
 
-            return this._buildResult(containerW, containerH, contentW, contentH, scale, scale);
+            return this._buildResult(containerW, containerH, containerW, containerH, scale, scale);
         }
     });
 
