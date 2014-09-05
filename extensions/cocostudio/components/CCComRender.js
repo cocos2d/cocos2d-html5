@@ -24,12 +24,17 @@
  ****************************************************************************/
 
 /**
- * Base class for ccs.ComRender
+ * The render component for Cocostudio.
  * @class
  * @extends ccs.Component
  */
 ccs.ComRender = ccs.Component.extend(/** @lends ccs.ComRender# */{
     _render: null,
+    /**
+     * Construction of ccs.ComRender
+     * @param {cc.Node} node
+     * @param {String} comName
+     */
     ctor: function (node, comName) {
         cc.Component.prototype.ctor.call(this);
         this._render = node;
@@ -37,12 +42,17 @@ ccs.ComRender = ccs.Component.extend(/** @lends ccs.ComRender# */{
         this.isRenderer = true;
     },
 
+    /**
+     * The callback calls when a render component enter stage.
+     */
     onEnter: function () {
-        if (this._owner) {
+        if (this._owner)
             this._owner.addChild(this._render);
-        }
     },
 
+    /**
+     * The callback calls when a render component exit stage.
+     */
     onExit: function () {
         if (this._owner) {
             this._owner.removeChild(this._render, true);
@@ -51,7 +61,7 @@ ccs.ComRender = ccs.Component.extend(/** @lends ccs.ComRender# */{
     },
 
     /**
-     * Node getter
+     * Returns a render node
      * @returns {cc.Node}
      */
     getNode: function () {
@@ -59,16 +69,17 @@ ccs.ComRender = ccs.Component.extend(/** @lends ccs.ComRender# */{
     },
 
     /**
-     * Node setter
+     * Sets a render node to component.
      * @param {cc.Node} node
      */
     setNode: function (node) {
         this._render = node;
     }
 });
+
 /**
  * allocates and initializes a ComRender.
- * @constructs
+ * @deprecated since v3.0, please use new construction instead.
  * @return {ccs.ComRender}
  * @example
  * // example
@@ -76,8 +87,7 @@ ccs.ComRender = ccs.Component.extend(/** @lends ccs.ComRender# */{
  */
 ccs.ComRender.create = function (node, comName) {
     var com = new ccs.ComRender(node, comName);
-    if (com && com.init()) {
+    if (com && com.init())
         return com;
-    }
     return null;
 };
