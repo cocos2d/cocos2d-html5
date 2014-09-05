@@ -24,7 +24,8 @@
  ****************************************************************************/
 
 /**
- * movement event type
+ * movement event type enum
+ * @constant
  * @type {Object}
  */
 ccs.MovementEventType = {
@@ -32,8 +33,10 @@ ccs.MovementEventType = {
     complete: 1,
     loopComplete: 2
 };
+
 /**
- * Base class for cc.MovementEvent objects.
+ * The animation event class, it has the callback, target and arguments.
+ * @deprecated since v3.0.
  * @class
  * @extends ccs.Class
  */
@@ -43,7 +46,7 @@ ccs.AnimationEvent = ccs.Class.extend(/** @lends ccs.AnimationEvent# */{
     _selectorTarget: null,
 
     /**
-     *
+     * Constructor of ccs.AnimationEvent
      * @param {function} callFunc
      * @param {object} target
      * @param {object} [data]
@@ -54,26 +57,36 @@ ccs.AnimationEvent = ccs.Class.extend(/** @lends ccs.AnimationEvent# */{
         this._selectorTarget = target;
     },
     call: function () {
-        if (this._callFunc) {
+        if (this._callFunc)
             this._callFunc.apply(this._selectorTarget, this._arguments);
-        }
     },
     setArguments: function (args) {
         this._arguments = args;
     }
 });
+
 /**
- * movement event
+ * The movement event class for Armature.
  * @constructor
+ *
+ * @property {ccs.Armature}             armature        - The armature reference of movement event.
+ * @property {Number}                   movementType    - The type of movement.
+ * @property {String}                   movementID      - The ID of movement.
  */
 ccs.MovementEvent = function () {
     this.armature = null;
-    this.movementType = "";
+    this.movementType = ccs.MovementEventType.start;
     this.movementID = "";
 };
+
 /**
- * frame event
+ * The frame event class for Armature.
  * @constructor
+ *
+ * @property {ccs.Bone}             bone                - The bone reference of frame event.
+ * @property {String}               frameEventName      - The name of frame event.
+ * @property {Number}               originFrameIndex    - The index of origin frame.
+ * @property {Number}               currentFrameIndex   - The index of current frame.
  */
 ccs.FrameEvent = function () {
     this.bone = null;
@@ -81,8 +94,9 @@ ccs.FrameEvent = function () {
     this.originFrameIndex = 0;
     this.currentFrameIndex = 0;
 };
+
 /**
- * Base class for ccs.ArmatureAnimation objects.
+ * The Animation class for Armature, it plays armature animation, and controls speed scale and manages animation frame.
  * @class
  * @extends ccs.ProcessBase
  *
@@ -91,7 +105,6 @@ ccs.FrameEvent = function () {
  * @property {Boolean}              ignoreFrameEvent    - Indicate whether the frame event is ignored
  * @property {Number}               speedScale          - Animation play speed scale
  * @property {Number}               animationScale      - Animation play speed scale
- *
  */
 ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation# */{
     _animationData: null,
@@ -117,6 +130,9 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     _movementEventListener: null,
     _frameEventListener: null,
 
+    /**
+     * The Construction of ccs.ArmatureAnimation
+     */
     ctor: function () {
         ccs.ProcessBase.prototype.ctor.call(this);
 
@@ -127,7 +143,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     },
 
     /**
-     * init with a CCArmature
+     * Initializes with an armature object
      * @param {ccs.Armature} armature
      * @return {Boolean}
      */
@@ -137,6 +153,9 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         return true;
     },
 
+    /**
+     * Pauses armature animation.
+     */
     pause: function () {
         var locTweenList = this._tweenList;
         for (var i = 0; i < locTweenList.length; i++)
@@ -144,6 +163,9 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         ccs.ProcessBase.prototype.pause.call(this);
     },
 
+    /**
+     * Resumes armature animation.
+     */
     resume: function () {
         var locTweenList = this._tweenList;
         for (var i = 0; i < locTweenList.length; i++)
@@ -151,6 +173,9 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         ccs.ProcessBase.prototype.resume.call(this);
     },
 
+    /**
+     * Stops armature animation.
+     */
     stop: function () {
         var locTweenList = this._tweenList;
         for (var i = 0; i < locTweenList.length; i++)
@@ -159,16 +184,26 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         ccs.ProcessBase.prototype.stop.call(this);
     },
 
+    /**
+     * Sets animation play speed scale.
+     * @deprecated since v3.0, please use setSpeedScale instead.
+     * @param {Number} animationScale
+     */
     setAnimationScale: function (animationScale) {
-        return this.setSpeedScale(animationScale);
+        this.setSpeedScale(animationScale);
     },
 
+    /**
+     * Returns animation play speed scale.
+     * @deprecated since v3.0, please use getSpeedScale instead.
+     * @returns {Number}
+     */
     getAnimationScale: function () {
         return this.getSpeedScale();
     },
 
     /**
-     * scale animation play speed
+     * Sets animation play speed scale.
      * @param {Number} speedScale
      */
     setSpeedScale: function (speedScale) {
@@ -185,6 +220,10 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         }
     },
 
+    /**
+     * Returns animation play speed scale.
+     * @returns {Number}
+     */
     getSpeedScale: function () {
         return this._speedScale;
     },
@@ -266,12 +305,13 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     },
 
     /**
-     * Play animation with index, the o ther param is the same to play.
+     * Plays animation with index, the other param is the same to play.
      * @param {Number} animationIndex
      * @param {Number} durationTo
      * @param {Number} durationTween
      * @param {Number} loop
-     * @param {Number} tweenEasing
+     * @param {Number} [tweenEasing]
+     * @deprecated since v3.0, please use playWithIndex instead.
      */
     playByIndex: function (animationIndex, durationTo, durationTween, loop, tweenEasing) {
         cc.log("playByIndex is deprecated. Use playWithIndex instead.");
@@ -279,8 +319,8 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     },
 
     /**
-     * Play animation with index, the other param is the same to play.
-     * @param {Number||Array} animationIndex
+     * Plays animation with index, the other param is the same to play.
+     * @param {Number|Array} animationIndex
      * @param {Number} durationTo
      * @param {Number} loop
      */
@@ -293,7 +333,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     },
 
     /**
-     * play with names
+     * Plays animation with names
      * @param {Array} movementNames
      * @param {Number} durationTo
      * @param {Boolean} loop
@@ -310,13 +350,12 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
             this._movementList = movementNames;
         else
             this._movementList.length = 0;
-
         this.updateMovementList();
     },
 
     /**
-     *  play by indexes
-     * @param movementIndexes
+     * Plays animation by indexes
+     * @param {Array} movementIndexes
      * @param {Number} durationTo
      * @param {Boolean} loop
      */
@@ -341,14 +380,16 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     },
 
     /**
-     * Go to specified frame and play current movement.
-     * You need first switch to the movement you want to play, then call this function.
-     *
-     * example : playByIndex(0);
-     *           gotoAndPlay(0);
-     *           playByIndex(1);
-     *           gotoAndPlay(0);
-     *           gotoAndPlay(15);
+     * <p>
+     * Goes to specified frame and plays current movement.                                  <br/>
+     * You need first switch to the movement you want to play, then call this function.     <br/>
+     *                                                                                      <br/>
+     * example : playByIndex(0);                                                            <br/>
+     *           gotoAndPlay(0);                                                            <br/>
+     *           playByIndex(1);                                                            <br/>
+     *           gotoAndPlay(0);                                                            <br/>
+     *           gotoAndPlay(15);                                                           <br/>
+     * </p>
      * @param {Number} frameIndex
      */
     gotoAndPlay: function (frameIndex) {
@@ -367,15 +408,14 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         this._currentFrame = this._nextFrameIndex * this._currentPercent;
 
         var locTweenList = this._tweenList;
-        for (var i = 0; i < locTweenList.length; i++) {
+        for (var i = 0; i < locTweenList.length; i++)
             locTweenList[i].gotoAndPlay(frameIndex);
-        }
         this._armature.update(0);
         this._ignoreFrameEvent = ignoreFrameEvent;
     },
 
     /**
-     * Go to specified frame and pause current movement.
+     * Goes to specified frame and pauses current movement.
      * @param {Number} frameIndex
      */
     gotoAndPause: function (frameIndex) {
@@ -384,13 +424,17 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     },
 
     /**
-     * get movement count
+     * Returns the length of armature's movements
      * @return {Number}
      */
     getMovementCount: function () {
         return this._animationData.getMovementCount();
     },
 
+    /**
+     * Updates the state of ccs.Tween list, calls frame event's callback and calls movement event's callback.
+     * @param {Number} dt
+     */
     update: function (dt) {
         ccs.ProcessBase.prototype.update.call(this, dt);
 
@@ -420,9 +464,9 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     },
 
     /**
-     * update will call this handler, you can handle your logic here
+     * Updates will call this handler, you can handle your logic here
      */
-    updateHandler: function () {
+    updateHandler: function () {      //TODO set it to protected in v3.1
         var locCurrentPercent = this._currentPercent;
         if (locCurrentPercent >= 1) {
             switch (this._loopType) {
@@ -465,7 +509,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     },
 
     /**
-     * Get current movementID
+     * Returns the Id of current movement
      * @returns {String}
      */
     getCurrentMovementID: function () {
@@ -475,7 +519,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     },
 
     /**
-     * connect a event
+     * Sets movement event callback to animation.
      * @param {function} callFunc
      * @param {Object} target
      */
@@ -489,7 +533,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     },
 
     /**
-     * connect a event
+     * Sets frame event callback to animation.
      * @param {function} callFunc
      * @param {Object} target
      */
@@ -503,7 +547,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     },
 
     /**
-     * userObject setter
+     * Sets user object to animation.
      * @param {Object} userObject
      */
     setUserObject: function (userObject) {
@@ -511,6 +555,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     },
 
     /**
+     * Emits a frame event
      * @param {ccs.Bone} bone
      * @param {String} frameEventName
      * @param {Number} originFrameIndex
@@ -523,11 +568,16 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
             frameEvent.frameEventName = frameEventName;
             frameEvent.originFrameIndex = originFrameIndex;
             frameEvent.currentFrameIndex = currentFrameIndex;
-
             this._frameEventQueue.push(frameEvent);
         }
     },
 
+    /**
+     * Emits a movement event
+     * @param {ccs.Armature} armature
+     * @param {Number} movementType
+     * @param {String} movementID
+     */
     movementEvent: function (armature, movementType, movementID) {
         if ((this._movementEventTarget && this._movementEventCallFunc) || this._movementEventListener) {
             var event = new ccs.MovementEvent();
@@ -538,6 +588,9 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         }
     },
 
+    /**
+     * Updates movement list.
+     */
     updateMovementList: function () {
         if (this._onMovementList) {
             var movementObj, locMovementList = this._movementList;
@@ -560,7 +613,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     },
 
     /**
-     * animationData setter
+     * Sets animation data to animation.
      * @param {ccs.AnimationData} data
      */
     setAnimationData: function (data) {
@@ -569,7 +622,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     },
 
     /**
-     * animationData getter
+     * Returns animation data of animation.
      * @return {ccs.AnimationData}
      */
     getAnimationData: function () {
@@ -577,7 +630,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     },
 
     /**
-     * userObject getter
+     * Returns the user object of animation.
      * @return {Object}
      */
     getUserObject: function () {
@@ -606,17 +659,15 @@ cc.defineGetterSetter(_p, "animationScale", _p.getAnimationScale, _p.setAnimatio
 _p = null;
 
 /**
- * allocates and initializes a ArmatureAnimation.
- * @constructs
+ * Allocates and initializes a ArmatureAnimation.
  * @return {ccs.ArmatureAnimation}
  * @example
  * // example
  * var animation = ccs.ArmatureAnimation.create();
  */
-ccs.ArmatureAnimation.create = function (armature) {
+ccs.ArmatureAnimation.create = function (armature) {    //TODO it will be deprecated in v3.1
     var animation = new ccs.ArmatureAnimation();
-    if (animation && animation.init(armature)) {
+    if (animation && animation.init(armature))
         return animation;
-    }
     return null;
 };

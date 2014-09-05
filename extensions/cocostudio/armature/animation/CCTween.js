@@ -24,7 +24,7 @@
  ****************************************************************************/
 
 /**
- * Base class for ccs.Tween objects.
+ * The tween class for Armature.
  * @class
  * @extends ccs.ProcessBase
  *
@@ -45,13 +45,16 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
     _animation:null,
     _passLastFrame:false,
 
+    /**
+     * Construction of ccs.Tween.
+     */
     ctor:function () {
         ccs.ProcessBase.prototype.ctor.call(this);
         this._frameTweenEasing = ccs.TweenType.linear;
     },
 
     /**
-     * init with a CCBone
+     * initializes a ccs.Tween with a CCBone
      * @param {ccs.Bone} bone
      * @return {Boolean}
      */
@@ -70,7 +73,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
     },
 
     /**
-     * Start the Process
+     * Plays the tween.
      * @param {ccs.MovementBoneData} movementBoneData
      * @param {Number} durationTo
      * @param {Number} durationTween
@@ -121,6 +124,10 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         this.tweenNodeTo(0);
     },
 
+    /**
+     * Goes to specified frame and plays frame.
+     * @param {Number} frameIndex
+     */
     gotoAndPlay: function (frameIndex) {
         ccs.ProcessBase.prototype.gotoFrame.call(this, frameIndex);
 
@@ -135,6 +142,10 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         this._currentFrame = this._nextFrameIndex * this._currentPercent;
     },
 
+    /**
+     * Goes to specified frame and pauses frame.
+     * @param {Number} frameIndex
+     */
     gotoAndPause: function (frameIndex) {
         this.gotoAndPlay(frameIndex);
         this.pause();
@@ -217,7 +228,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
      * @param {ccs.FrameData} to
      * @param {Boolean} [limit=true]
      */
-    setBetween:function (from, to, limit) {
+    setBetween:function (from, to, limit) {   //TODO set tweenColorTo to protected in v3.1
         if(limit === undefined)
             limit = true;
         do {
@@ -245,7 +256,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
      * Update display index and process the key frame event when arrived a key frame
      * @param {ccs.FrameData} keyFrameData
      */
-    arriveKeyFrame:function (keyFrameData) {
+    arriveKeyFrame:function (keyFrameData) {                         //TODO set tweenColorTo to protected in v3.1
         if (keyFrameData) {
             var locBone = this._bone;
             var displayManager = locBone.getDisplayManager();
@@ -270,13 +281,14 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
             }
         }
     },
+
     /**
      * According to the percent to calculate current CCFrameData with tween effect
      * @param {Number} percent
      * @param {ccs.FrameData} [node]
      * @return {ccs.FrameData}
      */
-    tweenNodeTo:function (percent, node) {
+    tweenNodeTo:function (percent, node) {         //TODO set tweenColorTo to protected in v3.1
         if (!node)
             node = this._tweenData;
 
@@ -298,7 +310,12 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         return node;
     },
 
-    tweenColorTo:function(percent,node){
+    /**
+     * According to the percent to calculate current color with tween effect
+     * @param {Number} percent
+     * @param {ccs.FrameData} node
+     */
+    tweenColorTo:function(percent,node){    //TODO set tweenColorTo to protected in v3.1
         var locFrom = this._from;
         var locBetween = this._between;
         node.a = locFrom.a + percent * locBetween.a;
@@ -313,7 +330,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
      * @param {Number} currentPercent
      * @return {Number}
      */
-    updateFrameData:function (currentPercent) {
+    updateFrameData:function (currentPercent) {                             //TODO set tweenColorTo to protected in v3.1
         if (currentPercent > 1 && this._movementBoneData.delay != 0)
             currentPercent = ccs.fmodf(currentPercent,1);
 
@@ -385,9 +402,8 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         return currentPercent;
     },
 
-
     /**
-     * animation setter
+     * Sets Armature animation to ccs.Tween.
      * @param {ccs.ArmatureAnimation} animation
      */
     setAnimation:function (animation) {
@@ -395,13 +411,17 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
     },
 
     /**
-     * animation getter
+     * Returns Armature animation of ccs.Tween.
      * @return {ccs.ArmatureAnimation}
      */
     getAnimation:function () {
         return this._animation;
     },
 
+    /**
+     * Sets movement bone data to ccs.Tween.
+     * @param data
+     */
     setMovementBoneData: function(data){
         this._movementBoneData = data;
     }
@@ -417,15 +437,14 @@ cc.defineGetterSetter(_p, "animation", _p.getAnimation, _p.setAnimation);
 _p = null;
 
 /**
- * allocates and initializes a ArmatureAnimation.
- * @constructs
+ * Allocates and initializes a ArmatureAnimation.
  * @param {ccs.Bone} bone
  * @return {ccs.Tween}
  * @example
  * // example
  * var animation = ccs.ArmatureAnimation.create();
  */
-ccs.Tween.create = function (bone) {
+ccs.Tween.create = function (bone) {      //TODO it will be deprecated in v3.1
     var tween = new ccs.Tween();
     if (tween && tween.init(bone))
         return tween;
