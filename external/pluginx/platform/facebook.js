@@ -97,7 +97,7 @@ plugin.extend('facebook', {
             callback = permissions;
             permissions = [];
         }
-        if(!permissions.some(function(item){
+        if(permissions.every(function(item){
             if(item != 'publish_actions')
                 return true;
         })){
