@@ -511,7 +511,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         // reset director's member variables to fit visible rect
         var director = cc.director;
         director._winSizeInPoints.width = _t._designResolutionSize.width;
-        director._winSizeInPoints.heihgt = _t._designResolutionSize.heihgt;
+        director._winSizeInPoints.height = _t._designResolutionSize.height;
         cc.winSize.width = director._winSizeInPoints.width;
         cc.winSize.height = director._winSizeInPoints.height;
 
