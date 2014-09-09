@@ -200,39 +200,58 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     _setViewPortMeta: function (width, height) {
         if (this._isAdjustViewPort) {
-	        var viewportMetas = {width: "device-width", "user-scalable": "no", "maximum-scale": "1.0", "initial-scale": "1.0"},
-                elems = document.getElementsByName("viewport"), vp, content;
-            if (elems.length == 0) {
-                vp = cc.newElement("meta");
-                vp.name = "viewport";
-                vp.content = "";
-                document.head.appendChild(vp);
+            var viewportMetas,
+                elems = document.getElementsByName("viewport"),
+                vp, content;
+
+            vp = document.getElementById("cocosMetaElement");
+            if(vp){
+                document.head.removeChild(vp);
             }
-            else vp = elems[0];
 
-	        // For avoiding Android Firefox issue, to remove once firefox fixes its issue.
-	        if (cc.sys.isMobile && cc.sys.browserType == cc.sys.BROWSER_TYPE_FIREFOX) {
-		        vp.content = "initial-scale:1";
-		        return;
-	        }
+            vp = cc.newElement("meta");
+            vp.id = "cocosMetaElement";
+            vp.name = "viewport";
+            vp.content = "";
 
-            content = vp.content;
+            // For avoiding Android Firefox issue, to remove once firefox fixes its issue.
+            if (cc.sys.isMobile && cc.sys.browserType == cc.sys.BROWSER_TYPE_FIREFOX) {
+                viewportMetas = {width: "device-width", "initial-scale": "1.0"};
+
+            }else{
+                viewportMetas = {width: "device-width", "user-scalable": "no", "maximum-scale": "1.0", "initial-scale": "1.0"};
+            }
+
+            content = "";
             for (var key in viewportMetas) {
+                var a = true;
                 var pattern = new RegExp(key);
-                if (!pattern.test(content)) {
-                    content += (content == "" ? "" : ",") + key + "=" + viewportMetas[key];
+                for(var i=0; i<elems.length; i++){
+                    if (pattern.test(elems[i].content)) {
+                        a = false;
+                        break;
+                    }
+                }
+                if(a){
+                    content += "," + key + "=" + viewportMetas[key];
                 }
             }
-            /*
-            if(width<=320){
-                width = 321;
+            if(content != ""){
+                content = content.substr(1);
             }
-            if(height)
-                content ="height="+height+","+content;
-            if(width)
-                content ="width="+width+","+content;
-            */
+
+            /*
+             if(width<=320){
+             width = 321;
+             }
+             if(height)
+             content ="height="+height+","+content;
+             if(width)
+             content ="width="+width+","+content;
+             */
             vp.content = content;
+
+            document.head.appendChild(vp);
         }
     },
 
