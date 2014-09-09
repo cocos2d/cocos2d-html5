@@ -29,16 +29,18 @@
 var jsb = jsb || {};
 
 /**
- * @type {Object}
- * @name jsb.fileUtils
- * jsb.fileUtils is the native file utils singleton object,
- * please refer to Cocos2d-x API to know how to use it.
+ * ATTENTION: USE jsb.fileUtils INSTEAD OF jsb.FileUtils.<br/>
+ * jsb.fileUtils is the native file utils' singleton object,<br/>
+ * please refer to Cocos2d-x's API to know how to use it.<br/>
  * Only available in JSB
+ * @class
+ * @name jsb.fileUtils
+ * @extend cc.Class
  */
-jsb.fileUtils = {
+jsb.fileUtils = /** @lends jsb.FileUtils# */{
 
     /**
-     * @method fullPathForFilename
+     * @function fullPathForFilename
      * @param {String} arg0
      * @return {String}
      */
@@ -48,7 +50,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method getStringFromFile
+     * @function getStringFromFile
      * @param {String} arg0
      * @return {String}
      */
@@ -58,7 +60,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method removeFile
+     * @function removeFile
      * @param {String} arg0
      * @return {bool}
      */
@@ -68,7 +70,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method isAbsolutePath
+     * @function isAbsolutePath
      * @param {String} arg0
      * @return {bool}
      */
@@ -78,7 +80,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method renameFile
+     * @function renameFile
      * @param {String} arg0
      * @param {String} arg1
      * @param {String} arg2
@@ -90,7 +92,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method loadFilenameLookupDictionaryFromFile
+     * @function loadFilenameLookupDictionaryFromFile
      * @param {String} arg0
      */
     loadFilenameLookupDictionaryFromFile : function (str)
@@ -98,7 +100,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method isPopupNotify
+     * @function isPopupNotify
      * @return {bool}
      */
     isPopupNotify : function ()
@@ -107,7 +109,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method getValueVectorFromFile
+     * @function getValueVectorFromFile
      * @param {String} arg0
      * @return {Array}
      */
@@ -117,7 +119,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method getSearchPaths
+     * @function getSearchPaths
      * @return {Array}
      */
     getSearchPaths : function ()
@@ -126,7 +128,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method writeToFile
+     * @function writeToFile
      * @param {map_object} arg0
      * @param {String} arg1
      * @return {bool}
@@ -137,7 +139,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method getValueMapFromFile
+     * @function getValueMapFromFile
      * @param {String} arg0
      * @return {map_object}
      */
@@ -147,7 +149,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method getFileSize
+     * @function getFileSize
      * @param {String} arg0
      * @return {long}
      */
@@ -157,7 +159,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method removeDirectory
+     * @function removeDirectory
      * @param {String} arg0
      * @return {bool}
      */
@@ -167,7 +169,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method setSearchPaths
+     * @function setSearchPaths
      * @param {Array} arg0
      */
     setSearchPaths : function (array)
@@ -175,7 +177,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method writeStringToFile
+     * @function writeStringToFile
      * @param {String} arg0
      * @param {String} arg1
      * @return {bool}
@@ -186,7 +188,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method setSearchResolutionsOrder
+     * @function setSearchResolutionsOrder
      * @param {Array} arg0
      */
     setSearchResolutionsOrder : function (array)
@@ -194,7 +196,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method addSearchResolutionsOrder
+     * @function addSearchResolutionsOrder
      * @param {String} arg0
      */
     addSearchResolutionsOrder : function (str)
@@ -202,7 +204,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method addSearchPath
+     * @function addSearchPath
      * @param {String} arg0
      */
     addSearchPath : function (str)
@@ -210,7 +212,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method isFileExist
+     * @function isFileExist
      * @param {String} arg0
      * @return {bool}
      */
@@ -220,14 +222,14 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method purgeCachedEntries
+     * @function purgeCachedEntries
      */
     purgeCachedEntries : function ()
     {
     },
 
     /**
-     * @method fullPathFromRelativeFile
+     * @function fullPathFromRelativeFile
      * @param {String} arg0
      * @param {String} arg1
      * @return {String}
@@ -238,7 +240,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method isDirectoryExist
+     * @function isDirectoryExist
      * @param {String} arg0
      * @return {bool}
      */
@@ -248,7 +250,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method getSearchResolutionsOrder
+     * @function getSearchResolutionsOrder
      * @return {Array}
      */
     getSearchResolutionsOrder : function ()
@@ -257,7 +259,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method createDirectory
+     * @function createDirectory
      * @param {String} arg0
      * @return {bool}
      */
@@ -267,7 +269,7 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method createDirectories
+     * @function createDirectories
      * @param {String} arg0
      * @return {bool}
      */
@@ -277,12 +279,170 @@ jsb.fileUtils = {
     },
 
     /**
-     * @method getWritablePath
+     * @function getWritablePath
      * @return {String}
      */
     getWritablePath : function ()
     {
         return ;
+    }
+
+};
+
+/**
+ * @class EventAssetsManager
+ */
+jsb.EventAssetsManager = {
+
+    /**
+     * @function getAssetsManager
+     * @return {cc.AssetsManager}
+     */
+    getAssetsManager : function (
+        )
+    {
+        return cc.AssetsManager;
+    },
+
+    /**
+     * @function getAssetId
+     * @return {String}
+     */
+    getAssetId : function (
+        )
+    {
+        return ;
+    },
+
+    /**
+     * @function getCURLECode
+     * @return {int}
+     */
+    getCURLECode : function (
+        )
+    {
+        return 0;
+    },
+
+    /**
+     * @function getMessage
+     * @return {String}
+     */
+    getMessage : function (
+        )
+    {
+        return ;
+    },
+
+    /**
+     * @function getCURLMCode
+     * @return {int}
+     */
+    getCURLMCode : function (
+        )
+    {
+        return 0;
+    },
+
+    /**
+     * @function getPercentByFile
+     * @return {float}
+     */
+    getPercentByFile : function (
+        )
+    {
+        return 0;
+    },
+
+    /**
+     * @function getEventCode
+     * @return {cc.EventAssetsManager::EventCode}
+     */
+    getEventCode : function (
+        )
+    {
+        return 0;
+    },
+
+    /**
+     * @function getPercent
+     * @return {float}
+     */
+    getPercent : function (
+        )
+    {
+        return 0;
+    },
+
+    /**
+     * @function EventAssetsManager
+     * @constructor
+     * @param {String} arg0
+     * @param {cc.AssetsManager} arg1
+     * @param {cc.EventAssetsManager::EventCode} arg2
+     * @param {float} arg3
+     * @param {float} arg4
+     * @param {String} arg5
+     * @param {String} arg6
+     * @param {int} arg7
+     * @param {int} arg8
+     */
+    EventAssetsManager : function (
+        str,
+        assetsmanager,
+        eventcode,
+        float,
+        float,
+        str,
+        str,
+        int,
+        int
+        )
+    {
+    }
+};
+
+
+/**
+ * @class EventListenerAssetsManager
+ */
+jsb.EventListenerAssetsManager = {
+
+    /**
+     * @function init
+     * @param {cc.AssetsManager} arg0
+     * @param {function} arg1
+     * @return {bool}
+     */
+    init : function (
+        assetsmanager,
+        func
+        )
+    {
+        return false;
+    },
+
+    /**
+     * @function create
+     * @param {cc.AssetsManager} arg0
+     * @param {function} arg1
+     * @return {cc.EventListenerAssetsManager}
+     */
+    create : function (
+        assetsmanager,
+        func
+        )
+    {
+        return cc.EventListenerAssetsManager;
+    },
+
+    /**
+     * @function EventListenerAssetsManager
+     * @constructor
+     */
+    EventListenerAssetsManager : function (
+        )
+    {
     }
 
 };
@@ -296,7 +456,7 @@ jsb.fileUtils = {
 jsb.AssetsManager = {
 
     /**
-     * @method getState
+     * @function getState
      * @return {jsb.AssetsManager::State}
      */
     getState : function ()
@@ -305,14 +465,14 @@ jsb.AssetsManager = {
     },
 
     /**
-     * @method checkUpdate
+     * @function checkUpdate
      */
     checkUpdate : function ()
     {
     },
 
     /**
-     * @method getStoragePath
+     * @function getStoragePath
      * @return {String}
      */
     getStoragePath : function ()
@@ -321,14 +481,14 @@ jsb.AssetsManager = {
     },
 
     /**
-     * @method update
+     * @function update
      */
     update : function ()
     {
     },
 
     /**
-     * @method getLocalManifest
+     * @function getLocalManifest
      * @return {jsb.Manifest}
      */
     getLocalManifest : function ()
@@ -337,7 +497,7 @@ jsb.AssetsManager = {
     },
 
     /**
-     * @method getRemoteManifest
+     * @function getRemoteManifest
      * @return {jsb.Manifest}
      */
     getRemoteManifest : function ()
@@ -346,14 +506,14 @@ jsb.AssetsManager = {
     },
 
     /**
-     * @method downloadFailedAssets
+     * @function downloadFailedAssets
      */
     downloadFailedAssets : function ()
     {
     },
 
     /**
-     * @method create
+     * @function create
      * @param {String} arg0
      * @param {String} arg1
      * @return {jsb.AssetsManager}
@@ -364,7 +524,7 @@ jsb.AssetsManager = {
     },
 
     /**
-     * @method AssetsManager
+     * @function AssetsManager
      * @constructor
      * @param {String} arg0
      * @param {String} arg1
@@ -381,7 +541,7 @@ jsb.AssetsManager = {
 jsb.Manifest = {
 
     /**
-     * @method getManifestFileUrl
+     * @function getManifestFileUrl
      * @return {String}
      */
     getManifestFileUrl : function ()
@@ -390,7 +550,7 @@ jsb.Manifest = {
     },
 
     /**
-     * @method isVersionLoaded
+     * @function isVersionLoaded
      * @return {bool}
      */
     isVersionLoaded : function ()
@@ -399,7 +559,7 @@ jsb.Manifest = {
     },
 
     /**
-     * @method isLoaded
+     * @function isLoaded
      * @return {bool}
      */
     isLoaded : function ()
@@ -408,7 +568,7 @@ jsb.Manifest = {
     },
 
     /**
-     * @method getPackageUrl
+     * @function getPackageUrl
      * @return {String}
      */
     getPackageUrl : function ()
@@ -417,7 +577,7 @@ jsb.Manifest = {
     },
 
     /**
-     * @method getVersion
+     * @function getVersion
      * @return {String}
      */
     getVersion : function ()
@@ -426,7 +586,7 @@ jsb.Manifest = {
     },
 
     /**
-     * @method getVersionFileUrl
+     * @function getVersionFileUrl
      * @return {String}
      */
     getVersionFileUrl : function ()
@@ -440,11 +600,11 @@ jsb.Manifest = {
  * @name jsb.reflection
  * jsb.reflection is a bridge to let you invoke Java static functions.
  * please refer to this document to know how to use it: http://www.cocos2d-x.org/docs/manual/framework/html5/v3/reflection/en
- * Only available on Android platform
+ * Only available on iOS/Mac/Android platform
  */
-jsb.reflection = {
+jsb.reflection = /** @lends jsb.reflection# */{
     /**
-     * @method callStaticMethod
+     * @function callStaticMethod
      */
     callStaticMethod : function(){
     }
