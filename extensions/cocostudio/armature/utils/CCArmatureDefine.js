@@ -36,6 +36,10 @@ ccs.AUTO_ADD_SPRITE_FRAME_NAME_PREFIX = false;
 ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT = false;
 ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX = false;
 
+/**
+ * Returns the version of Armature.
+ * @returns {string}
+ */
 ccs.armatureVersion = function(){
     return "v1.1.0.0";
 };

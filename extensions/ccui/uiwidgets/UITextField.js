@@ -346,7 +346,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
      * @param {String} text
      */
     setString: function (text) {
-        if (!text)
+        if (text == null)
             return;
 
         text = String(text);
