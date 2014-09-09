@@ -443,51 +443,6 @@ plugin.extend('facebook', {
         info['method'] = "apprequests";
         delete info['dialog'];
 
-        info['name'] = info['site'] || info['name'];
-        delete info['site'];
-
-        info['href'] = info['siteUrl'] || info['link'];
-        delete info['siteUrl'];
-        delete info['link'];
-
-        info['image'] = info['imageUrl'] || info['imagePath'] || info['photo'] || info['picture'] || info['image'];
-        delete info['imageUrl'];
-        delete info['imagePath'];
-        delete info['photo'];
-
-
-        info['caption'] = info['title'] || info['caption'];
-        delete info['title'];
-
-        info['description'] = info['text'] || info['description'];
-        delete info['text'];
-        delete info['description'];
-
-        if(info['method'] == 'share_open_graph' && info['url']){
-            if(info['url']){
-                var obj = {};
-                if(info["preview_property"])
-                    obj[info["preview_property"]] = info["url"];
-                else
-                    obj["object"] = info["url"];
-
-                for(var p in info){
-                    if(p != "method" && p != "action_type" && p != "action_properties"){
-                        info[p] && (obj[p] = info[p]);
-                        delete info[p];
-                    }
-                }
-
-                info['action_properties'] = JSON.stringify(obj);
-            }else{
-                return;
-            }
-        }else{
-            if(!info['href']){
-                return;
-            }
-        }
-
         if(
             info['method'] != 'apprequests'
             ){
