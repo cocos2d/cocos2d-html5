@@ -68,7 +68,7 @@ cc.color = function (r, g, b, a) {
         return cc.hexToColor(r);
     if (cc.isObject(r))
         return {r: r.r, g: r.g, b: r.b, a: (r.a == null) ? 255 : r.a};
-    return  {r: r, g: g, b: b, a: (r.a == null) ? 255 : r.a};
+    return  {r: r, g: g, b: b, a: (a == null ? 255 : a)};
 };
 
 /**

@@ -473,10 +473,9 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
                 }
                 break;
             case ccui.Widget.TOUCH_ENDED:
+            case ccui.Widget.TOUCH_CANCELED:
                 this._touchEndPosition.x = touchPoint.x;
                 this._touchEndPosition.y = touchPoint.y;
-                break;
-            case ccui.Widget.TOUCH_CANCELED:
                 this._handleReleaseLogic(touch);
                 break;
         }

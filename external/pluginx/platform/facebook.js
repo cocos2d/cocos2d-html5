@@ -93,9 +93,12 @@ plugin.extend('facebook', {
      */
     login: function(permissions,callback){
         var self = this;
-        permissions = permissions || [];
-        if(!permissions.some(function(item){
-            if(item == 'publish_actions')
+        if(typeof permissions == 'function'){
+            callback = permissions;
+            permissions = [];
+        }
+        if(permissions.every(function(item){
+            if(item != 'publish_actions')
                 return true;
         })){
             permissions.push("publish_actions");
