@@ -722,7 +722,7 @@ cc.loader = {
             cb = option;
 
         var img = new Image();
-        if (opt.isCrossOrigin && location.origin != "file://")
+        if (opt.isCrossOrigin && location.origin != "file://", new RegExp(window.location.hostname).test(url))
             img.crossOrigin = "Anonymous";
 
         cc._addEventListener(img, "load", function () {

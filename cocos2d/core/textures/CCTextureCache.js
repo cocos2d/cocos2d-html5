@@ -343,7 +343,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         //remove judge
         var tex = locTexs[url] || locTexs[cc.loader._aliases[url]];
         if (tex) {
-            cb && cb.call(target);
+            cb && cb.call(target, tex);
             return tex;
         }
 
@@ -359,7 +359,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                     if (err)
                         return cb ? cb(err) : err;
                     cc.textureCache.handleLoadedTexture(url);
-                    cb && cb(target, img);
+                    cb && cb.call(target, tex);
                 });
             }
         }
