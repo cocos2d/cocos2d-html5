@@ -197,6 +197,7 @@ Taras Tovchenko      @tovchenko     cc.Skin bounding box calculation bug fix und
 
 Minh Quy             @MQuy          cc.MenuItemSprite bug fix
                                     Check empty string for textureData
+                                    Adds type check functions
 
 Michael Yin          @layerssss     cc.game refactored
 
