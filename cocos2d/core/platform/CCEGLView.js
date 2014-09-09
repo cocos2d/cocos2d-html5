@@ -222,21 +222,15 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
                 viewportMetas = {width: "device-width", "user-scalable": "no", "maximum-scale": "1.0", "initial-scale": "1.0"};
             }
 
-            content = "";
+            content = elems ? elems[0].content : "";
             for (var key in viewportMetas) {
-                var a = true;
                 var pattern = new RegExp(key);
-                for(var i=0; i<elems.length; i++){
-                    if (pattern.test(elems[i].content)) {
-                        a = false;
-                        break;
-                    }
-                }
-                if(a){
+
+                if (!pattern.test(content)) {
                     content += "," + key + "=" + viewportMetas[key];
                 }
             }
-            if(content != ""){
+            if(!elems && content != ""){
                 content = content.substr(1);
             }
 
