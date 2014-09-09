@@ -355,9 +355,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                     cb && cb.call(target);
                 });
             } else {
-                cc.loader.cache[url] = cc.loader.loadImg(url, function (err, img) {
+                cc.loader.loadImg(url, function (err, img) {
                     if (err)
                         return cb ? cb(err) : err;
+                    cc.loader.cache[url] = img;
                     cc.textureCache.handleLoadedTexture(url);
                     cb && cb.call(target, tex);
                 });

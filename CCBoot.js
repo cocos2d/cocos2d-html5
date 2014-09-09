@@ -732,10 +732,16 @@ cc.loader = {
                 cb(null, img);
         };
 
-        var ecb = function (msg) {
+        var ecb = function () {
             this.removeEventListener('error', ecb, false);
-            if (cb)
-                cb("load image failed");
+
+            if(img.crossOrigin.toLowerCase() == "anonymous"){
+                opt.isCrossOrigin = false;
+                cc.loader.loadImg(url, opt, cb);
+            }else{
+                typeof cb == "function" && cb("load image failed");
+            }
+
         };
 
         cc._addEventListener(img, "load", lcb);
