@@ -725,17 +725,27 @@ cc.loader = {
         if (opt.isCrossOrigin && location.origin != "file://")
             img.crossOrigin = "Anonymous";
 
-        cc._addEventListener(img, "load", function () {
-            this.removeEventListener('load', arguments.callee, false);
-            this.removeEventListener('error', arguments.callee, false);
+        var lcb = function () {
+            this.removeEventListener('load', lcb, false);
+            this.removeEventListener('error', ecb, false);
             if (cb)
                 cb(null, img);
-        });
-        cc._addEventListener(img, "error", function () {
-            this.removeEventListener('error', arguments.callee, false);
-            if (cb)
-                cb("load image failed");
-        });
+        };
+
+        var ecb = function () {
+            this.removeEventListener('error', ecb, false);
+
+            if(img.crossOrigin.toLowerCase() == "anonymous"){
+                opt.isCrossOrigin = false;
+                cc.loader.loadImg(url, opt, cb);
+            }else{
+                typeof cb == "function" && cb("load image failed");
+            }
+
+        };
+
+        cc._addEventListener(img, "load", lcb);
+        cc._addEventListener(img, "error", ecb);
         img.src = url;
         return img;
     },

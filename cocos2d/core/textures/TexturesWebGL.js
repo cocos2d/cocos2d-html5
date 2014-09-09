@@ -919,7 +919,7 @@ cc._tmp.WebGLTextureCache = function () {
         }
         var tex = locTexs[url] || locTexs[cc.loader._aliases[url]];
         if (tex) {
-            cb && cb.call(target);
+            cb && cb.call(target, tex);
             return tex;
         }
 
@@ -929,11 +929,12 @@ cc._tmp.WebGLTextureCache = function () {
                     cb && cb.call(target);
                 });
             } else {
-                cc.loader.cache[url] = cc.loader.loadImg(url, function (err, img) {
+                cc.loader.loadImg(url, function (err, img) {
                     if (err)
                         return cb ? cb(err) : err;
+                    cc.loader.cache[url] = img;
                     cc.textureCache.handleLoadedTexture(url);
-                    cb && cb(target, img);
+                    cb && cb.call(target, tex);
                 });
             }
         }
