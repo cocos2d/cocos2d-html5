@@ -41,6 +41,9 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     _armature: null,
     _className: "Skin",
 
+    /**
+     * Construction of ccs.Skin.
+     */
     ctor: function () {
         cc.Sprite.prototype.ctor.call(this);
         this._skinData = null;
@@ -50,6 +53,11 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         this._armature = null;
     },
 
+    /**
+     * Initializes with sprite frame name
+     * @param {String} spriteFrameName
+     * @returns {Boolean}
+     */
     initWithSpriteFrameName: function (spriteFrameName) {
         if(spriteFrameName == "")
             return false;
@@ -65,12 +73,21 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         return ret;
     },
 
+    /**
+     * Initializes with texture file name.
+     * @param {String} fileName
+     * @returns {Boolean}
+     */
     initWithFile: function (fileName) {
         var ret = cc.Sprite.prototype.initWithFile.call(this, fileName);
         this._displayName = fileName;
         return ret;
     },
 
+    /**
+     * Sets skin data to ccs.Skin.
+     * @param {ccs.BaseData} skinData
+     */
     setSkinData: function (skinData) {
         this._skinData = skinData;
         this.setScaleX(skinData.scaleX);
@@ -90,10 +107,17 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         this.updateArmatureTransform();
     },
 
+    /**
+     * Returns skin date of ccs.Skin.
+     * @returns {ccs.BaseData}
+     */
     getSkinData: function () {
         return this._skinData;
     },
 
+    /**
+     * Updates armature skin's transform with skin transform and bone's transform.
+     */
     updateArmatureTransform: function () {
         this._transform = cc.affineTransformConcat(
             this._skinTransform,
@@ -168,6 +192,10 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
             return __ARGS__;
     },
 
+    /**
+     * Returns skin's world transform.
+     * @returns {cc.AffineTransform}
+     */
     getNodeToWorldTransform: function(){
         return cc.affineTransformConcat(this._transform,this.bone.getArmature().getNodeToWorldTransform());
     },
@@ -180,6 +208,10 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         return cc.affineTransformConcat( displayTransform,this.bone.getArmature().nodeToWorldTransform());
     },
 
+    /**
+     * Sets the bone reference to ccs.Skin.
+     * @param bone
+     */
     setBone: function (bone) {
         this.bone = bone;
         var armature = this.bone.getArmature();
@@ -187,6 +219,10 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
             this._armature = armature;
     },
 
+    /**
+     * Returns the bone reference of ccs.Skin.
+     * @returns {null}
+     */
     getBone: function () {
         return this.bone;
     },

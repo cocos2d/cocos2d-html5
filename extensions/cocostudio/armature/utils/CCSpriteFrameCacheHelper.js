@@ -32,11 +32,21 @@ ccs.spriteFrameCacheHelper = /** @lends ccs.spriteFrameCacheHelper# */ {
     _textureAtlasDic:{},
     _imagePaths:[],
 
+    /**
+     * Adds sprite frame from file
+     * @param plistPath
+     * @param imagePath
+     */
     addSpriteFrameFromFile:function (plistPath, imagePath) {
         cc.spriteFrameCache.addSpriteFrames(plistPath, imagePath);
     },
 
-    getTexureAtlasWithTexture:function (texture) {
+    /**
+     * Returns texture atlas with texture.
+     * @param texture
+     * @returns {*}
+     */
+    getTextureAtlasWithTexture:function (texture) {
         //todo
         return null;
         var textureName = texture.getName();
@@ -48,6 +58,9 @@ ccs.spriteFrameCacheHelper = /** @lends ccs.spriteFrameCacheHelper# */ {
         return atlas;
     },
 
+    /**
+     * Clear the sprite frame cache's data.
+     */
 	clear: function () {
 		this._textureAtlasDic = {};
 		this._imagePaths = [];

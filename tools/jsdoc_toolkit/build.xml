@@ -21,6 +21,7 @@
         <jsdoctoolkit jsdochome="${jsdoc.dir}/" template="WouterBos-Codeview-a091d81" outputdir="${out.dir}" includeprivate="false">
             <fileset dir="${src.dir}">
                 <include name="./../CCBoot.js"/>
+                <include name="./../jsb_apis.js"/>
                 <include name="core/platform/CCClass.js"/>
                 <include name="core/platform/CCCommon.js"/>
                 <include name="core/cocoa/CCGeometry.js"/>
