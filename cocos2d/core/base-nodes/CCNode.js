@@ -1371,11 +1371,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter.
-     * @deprecated since v3.0, please use removeAllChildren() instead
      * @param {Boolean | null } cleanup
      */
     removeAllChildrenWithCleanup: function (cleanup) {
-        cc.log(cc._LogInfos.Node_removeAllChildrenWithCleanup);
+        //cc.log(cc._LogInfos.Node_removeAllChildrenWithCleanup);        //TODO It should be discuss in v3.0
         this.removeAllChildren(cleanup);
     },
 
