@@ -722,20 +722,24 @@ cc.loader = {
             cb = option;
 
         var img = new Image();
-        if (opt.isCrossOrigin && location.origin != "file://" && new RegExp(window.location.hostname).test(url))
+        if (opt.isCrossOrigin && location.origin != "file://")
             img.crossOrigin = "Anonymous";
 
-        cc._addEventListener(img, "load", function () {
-            this.removeEventListener('load', arguments.callee, false);
-            this.removeEventListener('error', arguments.callee, false);
+        var lcb = function () {
+            this.removeEventListener('load', lcb, false);
+            this.removeEventListener('error', ecb, false);
             if (cb)
                 cb(null, img);
-        });
-        cc._addEventListener(img, "error", function () {
-            this.removeEventListener('error', arguments.callee, false);
+        };
+
+        var ecb = function (msg) {
+            this.removeEventListener('error', ecb, false);
             if (cb)
                 cb("load image failed");
-        });
+        };
+
+        cc._addEventListener(img, "load", lcb);
+        cc._addEventListener(img, "error", ecb);
         img.src = url;
         return img;
     },
