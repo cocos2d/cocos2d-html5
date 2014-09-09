@@ -200,7 +200,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     _setViewPortMeta: function (width, height) {
         if (this._isAdjustViewPort) {
-	        var viewportMetas = {"user-scalable": "no", "maximum-scale": "1.0", "initial-scale": "1.0", width: "device-width"},
+	        var viewportMetas = {width: "device-width", "user-scalable": "no", "maximum-scale": "1.0", "initial-scale": "1.0"},
                 elems = document.getElementsByName("viewport"), vp, content;
             if (elems.length == 0) {
                 vp = cc.newElement("meta");
