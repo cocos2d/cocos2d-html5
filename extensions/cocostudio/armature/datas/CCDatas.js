@@ -122,27 +122,55 @@ ccs.BLEND_TYPE_ALPHA = 12;
  */
 ccs.BLEND_TYPE_ERASE = 13;
 
-
 //DisplayType
+/**
+ * The Sprite flag of display render type.
+ * @constant
+ * @type Number
+ */
 ccs.DISPLAY_TYPE_SPRITE = 0;
+/**
+ * The Armature flag of display render type.
+ * @constant
+ * @type Number
+ */
 ccs.DISPLAY_TYPE_ARMATURE = 1;
+/**
+ * The Particle flag of display render type.
+ * @constant
+ * @type Number
+ */
 ccs.DISPLAY_TYPE_PARTICLE = 2;
 ccs.DISPLAY_TYPE_MAX = 3;
 
 /**
- * Base class for ccs.BaseData objects.
+ * <p>
+ *     The base data class for Armature. it contains position, zOrder, skew, scale, color datas.                                       <br/>
+ *     x y skewX skewY scaleX scaleY used to calculate transform matrix                                                                <br/>
+ *     skewX, skewY can have rotation effect                                                                                           <br/>
+ *     To get more matrix information, you can have a look at this pape : http://www.senocular.com/flash/tutorials/transformmatrix/    <br/>
+ * </p>
  * @class
  * @extends ccs.Class
+ *
+ * @property {Number}         x                - x
+ * @property {Number}         y                - y
+ * @property {Number}         zOrder           - zOrder
+ * @property {Number}         skewX            - skewX
+ * @property {Number}         skewY            - skewY
+ * @property {Number}         scaleX           - scaleX
+ * @property {Number}         scaleY           - scaleY
+ * @property {Number}         tweenRotate      - tween Rotate
+ * @property {Number}         isUseColorInfo   - is Use Color Info
+ * @property {Number}         r                - r of color
+ * @property {Number}         g                - g of color
+ * @property {Number}         b                - b of color
+ * @property {Number}         a                - a of color
  */
 ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
     x:0,
     y:0,
     zOrder:0,
-    /**
-     * x y skewX skewY scaleX scaleY used to calculate transform matrix
-     * skewX, skewY can have rotation effect
-     * To get more matrix information, you can have a look at this pape : http://www.senocular.com/flash/tutorials/transformmatrix/
-     */
     skewX:0,
     skewY:0,
     scaleX:1,
@@ -154,6 +182,9 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
     b:255,
     a:255,
 
+    /**
+     * Construction of ccs.BaseData
+     */
     ctor:function () {
         this.x = 0;
         this.y = 0;
@@ -195,7 +226,7 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
     },
 
     /**
-     * color setter
+     * Sets color to base data.
      * @function
      * @param {cc.Color} color
      */
@@ -207,7 +238,7 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
     },
 
     /**
-     * color getter
+     * Returns the color of ccs.BaseData
      * @function
      * @returns {cc.Color}
      */
@@ -260,18 +291,25 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
 });
 
 /**
- * Base class for ccs.DisplayData objects.
+ * The class use for save display data.
  * @class
  * @extends ccs.Class
+ *
+ * @property {Number}         displayType                - the display type
+ * @property {String}         displayName                - the display name
  */
 ccs.DisplayData = ccs.Class.extend(/** @lends ccs.DisplayData# */{
     displayType: ccs.DISPLAY_TYPE_MAX,
     displayName: "",
+
+    /**
+     * Construction of ccs.DisplayData
+     */
     ctor: function () {
         this.displayType = ccs.DISPLAY_TYPE_MAX;
     },
     /**
-     * change display name to texture type
+     * Changes display name to texture type
      * @function
      * @param {String} displayName
      * @returns {String}
@@ -285,6 +323,7 @@ ccs.DisplayData = ccs.Class.extend(/** @lends ccs.DisplayData# */{
             textureName = textureName.substring(0, startPos);
         return textureName;
     },
+
     /**
      * copy data
      * @function
@@ -297,12 +336,18 @@ ccs.DisplayData = ccs.Class.extend(/** @lends ccs.DisplayData# */{
 });
 
 /**
- * Base class for ccs.SpriteDisplayData objects.
+ * The sprite display data class.
  * @class
  * @extends ccs.DisplayData
+ *
+ * @property {ccs.BaseData}         skinData                - the skin data
  */
 ccs.SpriteDisplayData = ccs.DisplayData.extend(/** @lends ccs.SpriteDisplayData# */{
     skinData:null,
+
+    /**
+     * Construction of ccs.SpriteDisplayData
+     */
     ctor:function () {
         this.skinData = new ccs.BaseData();
         this.displayType = ccs.DISPLAY_TYPE_SPRITE;
@@ -315,19 +360,18 @@ ccs.SpriteDisplayData = ccs.DisplayData.extend(/** @lends ccs.SpriteDisplayData#
     copy:function (displayData) {
         ccs.DisplayData.prototype.copy.call(this,displayData);
         this.skinData = displayData.skinData;
-    },
-    SpriteDisplayData: function(){
-        this.displayType = ccs.DISPLAY_TYPE_SPRITE;
     }
 });
 
 /**
- * Base class for ccs.ArmatureDisplayData objects.
+ * The armature display data class
  * @class ccs.ArmatureDisplayData
  * @extends ccs.DisplayData
  */
 ccs.ArmatureDisplayData = ccs.DisplayData.extend(/** @lends ccs.ArmatureDisplayData# */{
-    displayName:"",
+    /**
+     * Construction of ccs.ArmatureDisplayData
+     */
     ctor:function () {
         this.displayName = "";
         this.displayType = ccs.DISPLAY_TYPE_ARMATURE;
@@ -335,11 +379,14 @@ ccs.ArmatureDisplayData = ccs.DisplayData.extend(/** @lends ccs.ArmatureDisplayD
 });
 
 /**
- * Base class for ccs.ParticleDisplayData objects.
+ * The particle display data class.
  * @class ccs.ParticleDisplayData
  * @extends ccs.DisplayData
  */
 ccs.ParticleDisplayData = ccs.DisplayData.extend(/** @lends ccs.ParticleDisplayData# */{
+    /**
+     * Construction of ccs.ParticleDisplayData
+     */
     ctor:function () {
         this.displayType = ccs.DISPLAY_TYPE_PARTICLE;
     }
@@ -353,6 +400,11 @@ ccs.ParticleDisplayData = ccs.DisplayData.extend(/** @lends ccs.ParticleDisplayD
  * </p>
  * @class ccs.BoneData
  * @extends ccs.BaseData
+ *
+ * @property {Array}                    displayDataList                - the display data list
+ * @property {String}                   name                           - the name of Bone
+ * @property {String}                   parentName                     - the parent name of bone
+ * @property {cc.AffineTransform}       boneDataTransform              - the bone transform data
  */
 ccs.BoneData = ccs.BaseData.extend(/** @lends ccs.BoneData# */{
     displayDataList: null,
@@ -360,20 +412,26 @@ ccs.BoneData = ccs.BaseData.extend(/** @lends ccs.BoneData# */{
     parentName: "",
     boneDataTransform: null,
 
+    /**
+     * Construction of ccs.BoneData
+     */
     ctor: function () {
         this.displayDataList = [];
         this.name = "";
         this.parentName = "";
         this.boneDataTransform = null;
-
     },
 
+    /**
+     * Initializes a ccs.BoneData
+     * @returns {boolean}
+     */
     init: function () {
         this.displayDataList.length = 0;
         return true;
     },
     /**
-     * add display data
+     * Adds display data to list
      * @function
      * @param {ccs.DisplayData} displayData
      */
@@ -382,7 +440,7 @@ ccs.BoneData = ccs.BaseData.extend(/** @lends ccs.BoneData# */{
     },
 
     /**
-     * get display data
+     * Returns display data with index.
      * @function
      * @param {Number} index
      * @returns {ccs.DisplayData}
@@ -400,35 +458,50 @@ ccs.BoneData = ccs.BaseData.extend(/** @lends ccs.BoneData# */{
  * </p>
  * @class ccs.ArmatureData
  * @extends ccs.Class
+ *
+ * @property {Object}                    boneDataDic                - the bone data dictionary
+ * @property {String}                    name                       - the name of armature data
+ * @property {Number}                    dataVersion                - the data version of armature data
  */
 ccs.ArmatureData = ccs.Class.extend(/** @lends ccs.ArmatureData# */{
     boneDataDic:null,
     name:"",
     dataVersion:0.1,
+
+    /**
+     * Construction of ccs.ArmatureData
+     */
     ctor:function () {
         this.boneDataDic = {};
         this.name = "";
         this.dataVersion = 0.1;
     },
+
+    /**
+     * Initializes a ccs.ArmatureData
+     * @returns {boolean}
+     */
     init:function () {
         return true;
     },
+
     /**
-     * adds bone data to dictionary
+     * Adds bone data to dictionary
      * @param {ccs.BoneData} boneData
      */
     addBoneData:function (boneData) {
         this.boneDataDic[boneData.name] = boneData;
     },
+
     /**
-     * gets bone data dictionary
+     * Gets bone data dictionary
      * @returns {Object}
      */
     getBoneDataDic:function () {
         return this.boneDataDic;
     },
     /**
-     * get bone data by bone name
+     * Gets bone data by bone name
      * @function
      * @param {String} boneName
      * @returns {ccs.BoneData}
@@ -439,9 +512,22 @@ ccs.ArmatureData = ccs.Class.extend(/** @lends ccs.ArmatureData# */{
 });
 
 /**
- * Base class for ccs.FrameData objects.
+ * FrameData saved the frame data needed for armature animation in this Armature.
  * @class ccs.FrameData
  * @extends ccs.BaseData
+ *
+ * @property {Number}                    duration                - the duration of frame
+ * @property {Number}                    tweenEasing             - the easing type of frame
+ * @property {Number}                    easingParamNumber       - the count of easing parameters.
+ * @property {Object}                    easingParams            - the dictionary of easing parameters.
+ * @property {Number}                    displayIndex            - the display renderer index.
+ * @property {String}                    movement                - the movement name.
+ * @property {String}                    event                   - the event name
+ * @property {String}                    sound                   - the sound path.
+ * @property {String}                    soundEffect             - the sound effect path.
+ * @property {Object}                    blendFunc               - the blendFunc of frame.
+ * @property {Number}                    frameID                 - the frame ID of frame
+ * @property {Boolean}                   isTween                 - the flag which frame whether is tween.
  */
 ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
         duration:0,
@@ -453,10 +539,13 @@ ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
         event:"",
         sound:"",
         soundEffect:"",
-        blendFunc:0,
+        blendFunc:null,
         frameID:0,
         isTween:true,
 
+        /**
+         * Construction of ccs.FrameData.
+         */
         ctor:function () {
             ccs.BaseData.prototype.ctor.call(this);
             this.duration = 1;
@@ -492,6 +581,7 @@ ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
 //            this.soundEffect = frameData.soundEffect;
 //            this.easingParams.length = 0;
             if (this.easingParamNumber != 0){
+                this.easingParams.length = 0;
                 for (var i = 0; i<this.easingParamNumber; i++){
                     this.easingParams[i] = frameData.easingParams[i];
                 }
@@ -504,9 +594,15 @@ ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
 );
 
 /**
- * Base class for ccs.MovementBoneData objects.
+ * MovementBoneData saved the name, delay, frame list of Bone's movement.
  * @class ccs.MovementBoneData
  * @extends ccs.Class
+ *
+ * @property {Number}                    delay             - the delay of bone's movement.
+ * @property {Number}                    scale             - the scale of bone's movement.
+ * @property {Number}                    duration          - the duration of bone's movement.
+ * @property {Array}                     frameList         - the frame list of bone's movement.
+ * @property {String}                    name              - the name of bone's movement.
  */
 ccs.MovementBoneData = ccs.Class.extend(/** @lends ccs.MovementBoneData# */{
     delay:0,
@@ -514,6 +610,10 @@ ccs.MovementBoneData = ccs.Class.extend(/** @lends ccs.MovementBoneData# */{
     duration:0,
     frameList:null,
     name:"",
+
+    /**
+     * Construction of ccs.MovementBoneData.
+     */
     ctor:function () {
         this.delay = 0;
         this.scale = 1;
@@ -522,19 +622,22 @@ ccs.MovementBoneData = ccs.Class.extend(/** @lends ccs.MovementBoneData# */{
         this.name = "";
     },
 
+    /**
+     * Initializes a ccs.MovementBoneData.
+     * @returns {boolean}
+     */
     init:function () {
         return true;
     },
     /**
-     * add frame data
-     * @function
+     * Adds frame data to frame list.
      * @param {ccs.FrameData} frameData
      */
     addFrameData:function (frameData) {
         this.frameList.push(frameData);
     },
     /**
-     * get frame data
+     * Gets frame data by Index.
      * @function
      * @param {Number} index
      * @returns {ccs.FrameData}
@@ -687,7 +790,7 @@ ccs.TextureData.prototype.init = function(){
 };
 
 /**
- * adds a contourData to contourDataList
+ * Adds a contourData to contourDataList
  * @param {ccs.ContourData} contourData
  */
 ccs.TextureData.prototype.addContourData = function(contourData){
