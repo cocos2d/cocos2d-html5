@@ -41,7 +41,6 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
     _checkBoxEventListener: null,
     _checkBoxEventSelector:null,
-    _checkBoxEventCallback: null,
 
     _backGroundTexType: ccui.Widget.LOCAL_TEXTURE,
     _backGroundSelectedTexType: ccui.Widget.LOCAL_TEXTURE,
@@ -415,17 +414,21 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     },
 
     _selectedEvent: function () {
-        if(this._checkBoxEventCallback)
-            this._checkBoxEventCallback(this, ccui.CheckBox.EVENT_SELECTED);
-        if (this._checkBoxEventListener && this._checkBoxEventSelector)
-            this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccui.CheckBox.EVENT_SELECTED);
+        if(this._checkBoxEventSelector){
+            if (this._checkBoxEventListener)
+                this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccui.CheckBox.EVENT_SELECTED);
+            else
+                this._checkBoxEventSelector(this, ccui.CheckBox.EVENT_SELECTED);
+        }
     },
 
     _unSelectedEvent: function () {
-        if(this._checkBoxEventCallback)
-            this._checkBoxEventCallback(this, ccui.CheckBox.EVENT_UNSELECTED);
-        if (this._checkBoxEventListener && this._checkBoxEventSelector)
-            this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccui.CheckBox.EVENT_UNSELECTED);
+        if(this._checkBoxEventSelector){
+            if (this._checkBoxEventListener)
+                this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccui.CheckBox.EVENT_UNSELECTED);
+            else
+                this._checkBoxEventSelector(this, ccui.CheckBox.EVENT_UNSELECTED);
+        }
     },
 
     _releaseUpEvent: function(){
@@ -442,20 +445,21 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     /**
      * add event listener to ccui.CheckBox. it would called when checkbox is selected or unselected.
      * @param {Function} selector
-     * @param {Object} target
+     * @param {Object} [target=]
      * @deprecated since v3.0, please use addEventListener instead.
      */
     addEventListenerCheckBox: function (selector, target) {
-        this._checkBoxEventSelector = selector;
-        this._checkBoxEventListener = target;
+        this.addEventListener(selector, target);
     },
 
     /**
      * add a call back function would called when checkbox is selected or unselected.
-     * @param {function} callback
+     * @param {Function} selector
+     * @param {Object} [target=]
      */
-    addEventListener: function(callback){
-        this._checkBoxEventCallback = callback;
+    addEventListener: function(selector, target){
+        this._checkBoxEventSelector = selector;
+        this._checkBoxEventListener = target;
     },
 
     /**
@@ -613,7 +617,6 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
             this.setSelectedState(uiCheckBox._isSelected);
             this._checkBoxEventListener = uiCheckBox._checkBoxEventListener;
             this._checkBoxEventSelector = uiCheckBox._checkBoxEventSelector;
-            this._checkBoxEventCallback = uiCheckBox._checkBoxEventCallback;
         }
     },
 
