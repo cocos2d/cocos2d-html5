@@ -216,11 +216,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
             // For avoiding Android Firefox issue, to remove once firefox fixes its issue.
             if (cc.sys.isMobile && cc.sys.browserType == cc.sys.BROWSER_TYPE_FIREFOX) {
-                viewportMetas = {width: "device-width", "initial-scale": "1.0"};
-
+                viewportMetas = {"width": "device-width", "initial-scale": "1.0"};
             }else{
-                viewportMetas = {width: "device-width", "user-scalable": "no", "maximum-scale": "1.0", "initial-scale": "1.0"};
+                viewportMetas = {"width": "device-width", "user-scalable": "no", "maximum-scale": "1.0", "initial-scale": "1.0"};
             }
+            if(cc.sys.isMobile)
+                viewportMetas["target-densitydpi"] = "high-dpi";
 
             content = elems ? elems[0].content : "";
             for (var key in viewportMetas) {
