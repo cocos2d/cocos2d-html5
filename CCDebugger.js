@@ -261,7 +261,6 @@ cc._logToWebPage = function (msg) {
         logListStyle.margin = 0;
 
     }
-    msg = cc.isString(msg) ? msg : msg.toString();
     logList.value = logList.value + msg + "\r\n";
     logList.scrollTop = logList.scrollHeight;
 };
