@@ -1104,8 +1104,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} Var  The arrival order.
      */
     setOrderOfArrival: function (Var) {
-        if(this.arrivalOrder == NaN)
-            debugger;
         this.arrivalOrder = Var;
     },
 
