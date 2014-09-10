@@ -647,50 +647,59 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     _attachWithIMEEvent: function () {
-        if (this._textFieldEventListener && this._textFieldEventSelector)
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_ATTACH_WITH_IME);
-        if (this._eventCallback)
-            this._eventCallback(this, ccui.TextField.EVENT_ATTACH_WITH_IME);
+        if(this._textFieldEventSelector){
+            if (this._textFieldEventListener)
+                this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_ATTACH_WITH_IME);
+            else
+                this._textFieldEventSelector(this, ccui.TextField.EVENT_ATTACH_WITH_IME);
+        }
     },
 
     _detachWithIMEEvent: function () {
-        if (this._textFieldEventListener && this._textFieldEventSelector)
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_DETACH_WITH_IME);
-        if (this._eventCallback)
-            this._eventCallback(this, ccui.TextField.EVENT_DETACH_WITH_IME);
+        if(this._textFieldEventSelector){
+            if (this._textFieldEventListener)
+                this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_DETACH_WITH_IME);
+            else
+                this._textFieldEventSelector(this, ccui.TextField.EVENT_DETACH_WITH_IME);
+        }
     },
 
     _insertTextEvent: function () {
-        if (this._textFieldEventListener && this._textFieldEventSelector)
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_INSERT_TEXT);
-        if (this._eventCallback)
-            this._eventCallback(this, ccui.TextField.EVENT_INSERT_TEXT);
+        if(this._textFieldEventSelector){
+            if (this._textFieldEventListener)
+                this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_INSERT_TEXT);
+            else
+                this._textFieldEventSelector(this, ccui.TextField.EVENT_INSERT_TEXT);
+        }
     },
 
     _deleteBackwardEvent: function () {
-        if (this._textFieldEventListener && this._textFieldEventSelector)
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_DELETE_BACKWARD);
-        if (this._eventCallback)
-            this._eventCallback(this, ccui.TextField.EVENT_DELETE_BACKWARD);
+        if(this._textFieldEventSelector){
+            if (this._textFieldEventListener)
+                this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_DELETE_BACKWARD);
+            else
+                this._textFieldEventSelector(this, ccui.TextField.EVENT_DELETE_BACKWARD);
+        }
     },
 
     /**
      * Adds event listener to cuci.TextField.
-     * @param {Object} target
+     * @param {Object} [target=]
      * @param {Function} selector
      * @deprecated since v3.0, please use addEventListener instead.
      */
     addEventListenerTextField: function (selector, target) {
-        this._textFieldEventSelector = selector;
-        this._textFieldEventListener = target;
+        this.addEventListener(selector, target);
     },
 
     /**
      * Adds event listener callback.
-     * @param {function} callback
+     * @param {Object} [target=]
+     * @param {Function} selector
      */
-    addEventListener: function(callback){
-        this._eventCallback = callback;
+    addEventListener: function(selector, target){
+        this._textFieldEventSelector = selector;
+        this._textFieldEventListener = target;
     },
 
     _onSizeChanged: function () {
