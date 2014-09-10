@@ -30,6 +30,11 @@
 cc.Touches = [];
 cc.TouchesIntergerDict = {};
 
+cc.DENSITYDPI_DEVICE = "device-dpi";
+cc.DENSITYDPI_HIGH = "high-dpi";
+cc.DENSITYDPI_MEDIUM = "medium-dpi";
+cc.DENSITYDPI_LOW = "low-dpi";
+
 /**
  * cc.view is the singleton object which represents the game window.<br/>
  * It's main task include: <br/>
@@ -90,6 +95,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     _frameZoomFactor: 1.0,
     __resizeWithBrowserSize: false,
     _isAdjustViewPort: true,
+    _targetDensityDPI: null,
 
     /**
      * Constructor of cc.EGLView
@@ -121,6 +127,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
         _t._hDC = cc._canvas;
         _t._hRC = cc._renderContext;
+        _t._targetDensityDPI = cc.DENSITYDPI_HIGH;
     },
 
     // Resize helper functions
@@ -133,6 +140,30 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         }
         if (width > 0)
             this.setDesignResolutionSize(width, height, this._resolutionPolicy);
+    },
+
+    /**
+     * <p>
+     * Sets view's target-densitydpi for android mobile browser. it can be set to:           <br/>
+     *   1. cc.DENSITYDPI_DEVICE, value is "device-dpi"                                      <br/>
+     *   2. cc.DENSITYDPI_HIGH, value is "high-dpi"  (default value)                         <br/>
+     *   3. cc.DENSITYDPI_MEDIUM, value is "medium-dpi" (browser's default value)            <br/>
+     *   4. cc.DENSITYDPI_LOW, value is "low-dpi"                                            <br/>
+     *   5. Custom value, e.g: "480"                                                         <br/>
+     * </p>
+     * @param {String} densityDPI
+     */
+    setTargetDensityDPI: function(densityDPI){
+        this._targetDensityDPI = densityDPI;
+        this._setViewPortMeta();
+    },
+
+    /**
+     * Returns the current target-densitydpi value of cc.view.
+     * @returns {String}
+     */
+    getTargetDensityDPI: function(){
+        return this._targetDensityDPI;
     },
 
     /**
@@ -221,7 +252,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
                 viewportMetas = {"width": "device-width", "user-scalable": "no", "maximum-scale": "1.0", "initial-scale": "1.0"};
             }
             if(cc.sys.isMobile)
-                viewportMetas["target-densitydpi"] = "high-dpi";
+                viewportMetas["target-densitydpi"] = this._targetDensityDPI;
 
             content = elems ? elems[0].content : "";
             for (var key in viewportMetas) {
