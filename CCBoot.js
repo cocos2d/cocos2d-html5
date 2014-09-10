@@ -981,7 +981,6 @@ cc.formatStr = function(){
     }
     for(var i = 1; i < l; ++i){
         var arg = args[i];
-        arg = typeof arg == "object" ? JSON.stringify(arg) : arg;
         if(needToFormat){
             while(true){
                 var result = null;
