@@ -1377,6 +1377,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.BROWSER_TYPE_BAIDU = "baidubrowser";
     sys.BROWSER_TYPE_MAXTHON = "maxthon";
     sys.BROWSER_TYPE_OPERA = "opera";
+    sys.BROWSER_TYPE_OUPENG = "oupeng";
     sys.BROWSER_TYPE_MIUI = "miuibrowser";
     sys.BROWSER_TYPE_FIREFOX = "firefox";
     sys.BROWSER_TYPE_SAFARI = "safari";
@@ -1397,7 +1398,7 @@ cc._initSys = function (config, CONFIG_KEY) {
      */
     var webglWhiteList = [sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_SAFARI];
     var multipleAudioWhiteList = [
-        sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME,
+        sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_BAIDU_APP,
         sys.BROWSER_TYPE_SAFARI, sys.BROWSER_TYPE_UC, sys.BROWSER_TYPE_QQ, sys.BROWSER_TYPE_MOBILE_QQ, sys.BROWSER_TYPE_IE
     ];
 
@@ -1414,7 +1415,7 @@ cc._initSys = function (config, CONFIG_KEY) {
 
     /** The type of browser */
     var browserType = sys.BROWSER_TYPE_UNKNOWN;
-    var browserTypes = ua.match(/micromessenger|qqbrowser|mqqbrowser|ucbrowser|360browser|baiduboxapp|baidubrowser|maxthon|trident|opera|miuibrowser|firefox/i)
+    var browserTypes = ua.match(/micromessenger|qqbrowser|mqqbrowser|ucbrowser|360browser|baiduboxapp|baidubrowser|maxthon|trident|oupeng|opera|miuibrowser|firefox/i)
         || ua.match(/chrome|safari/i);
     if (browserTypes && browserTypes.length > 0) {
         browserType = browserTypes[0].toLowerCase();
@@ -1426,7 +1427,9 @@ cc._initSys = function (config, CONFIG_KEY) {
     }
     sys.browserType = browserType;
 
+
     sys._supportMultipleAudio = multipleAudioWhiteList.indexOf(sys.browserType) > -1;
+
 
     //++++++++++++++++++something about cc._renderTYpe and cc._supportRender begin++++++++++++++++++++++++++++
     var userRenderMode = parseInt(config[CONFIG_KEY.renderMode]);
