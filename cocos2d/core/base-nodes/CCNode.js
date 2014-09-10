@@ -1271,7 +1271,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         cc.assert(child._parent === null, "child already added. It can't be added again");
 
         this._addChildHelper(child, localZOrder, tag, name, setTag);
-
     },
 
     _addChildHelper: function(child, localZOrder, tag, name, setTag){
