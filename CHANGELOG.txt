@@ -1,5 +1,26 @@
 ChangeLog:
 
+Cocos2d-JS-v3.0 Final @ Sep.10, 2014
+
+* Facebook SDK Beta2: Added `appRequest` API.
+* Facebook SDK Beta2: Added permission request in `login` API, removed `requestPermission` API.
+* Facebook SDK Beta2: Renamed `request` API to `api`.
+* Facebook SDK Beta2: Renamed `publishInstall` API to `activateApp`.
+* Added some type check functions.
+* Added audio support for wechat browser.
+* Added setPlaceHolderColor and setTextColor to ccui.TextField.
+* Added API reference for Cocos Studio extension.
+
+* Bugs fix:
+    1. Fixed an issue of `cc.Menu` that its item's touch priority is different than cc.eventManager.
+    2. Fixed an issue of `cc.view` that its NO_BORDER mode doesn't work correctly.
+    3. Fixed an issue of `cc.LabelBMFont` that its content size is different than JSB.
+    4. Fixed an issue of `cc.LabelBMFont` that its `setColor` is invalid on some mobile devices.
+    5. Fixed an issue of `cc.PageView` that it can't receive TOUCH_CANCEL event.
+    6. Fixed an issue of `cc.loader` that it can't load cross origin textures.
+    7. Fixed an issue that Facebook SDK Web's `appRequest` wraps info parameter incorrectly.
+    8. Fixed an issue of ccui widgets' `addEventListener` that it doesn't accept function's target as parameter.
+
 Cocos2d-JS-v3.0 RC3 @ Aug.29, 2014
 
 * Facebook SDK Beta: Unified the callback parameters for different platform.
