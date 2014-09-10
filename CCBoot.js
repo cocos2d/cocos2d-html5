@@ -977,7 +977,6 @@ cc.formatStr = function(){
     var str = args[0];
     var needToFormat = true;
     if(typeof str == "object"){
-        str = JSON.stringify(str);
         needToFormat = false;
     }
     for(var i = 1; i < l; ++i){
