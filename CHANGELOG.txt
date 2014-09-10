@@ -6,6 +6,7 @@ Cocos2d-JS-v3.0 Final @ Sep.10, 2014
 * Facebook SDK Beta2: Added permission request in `login` API, removed `requestPermission` API.
 * Facebook SDK Beta2: Renamed `request` API to `api`.
 * Facebook SDK Beta2: Renamed `publishInstall` API to `activateApp`.
+* Added getter and setter function for browser's density dpi: `cc.view.setTargetDensityDPI`, `cc.view.getTargetDensityDPI`.
 * Added some type check functions.
 * Added audio support for wechat browser.
 * Added setPlaceHolderColor and setTextColor to ccui.TextField.
