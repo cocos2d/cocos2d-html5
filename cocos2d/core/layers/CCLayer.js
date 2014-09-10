@@ -126,6 +126,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         }
     };
 
+    p.addChild = function(child, localZOrder, tag){
+        cc.Node.prototype.addChild.call(this, child, localZOrder, tag);
+        if(child._parent == this && this._isBaked)
+            child._setCachedParent(this);
+    };
+
     p.visit = function(ctx){
         if(!this._isBaked){
             cc.Node.prototype.visit.call(this, ctx);
