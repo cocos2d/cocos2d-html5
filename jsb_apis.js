@@ -23,8 +23,15 @@
  ****************************************************************************/
 
 /**
- * @namespace jsb
+ * The namespace for jsb exclusive APIs, all APIs in this namespace should never be used in Web engine.
+ * So please check whether the running environment is native or not before any usage.
+ * @namespace
  * @name jsb
+ * @example
+ *
+ * if(cc.sys.isNative) {
+ *     cc.log(cc.fileUtils.fullPathForFilename("test.js"));
+ * }
  */
 var jsb = jsb || {};
 
@@ -37,7 +44,7 @@ var jsb = jsb || {};
  * @name jsb.fileUtils
  * @extend cc.Class
  */
-jsb.fileUtils = /** @lends jsb.FileUtils# */{
+jsb.fileUtils = /** @lends jsb.fileUtils# */{
 
     /**
      * @function fullPathForFilename
@@ -290,9 +297,9 @@ jsb.fileUtils = /** @lends jsb.FileUtils# */{
 };
 
 /**
- * @class EventAssetsManager
+ * @class
  */
-jsb.EventAssetsManager = {
+jsb.EventAssetsManager = cc.Class.extend(/** @lends jsb.EventAssetsManager# */{
 
     /**
      * @function getAssetsManager
@@ -400,13 +407,13 @@ jsb.EventAssetsManager = {
         )
     {
     }
-};
+});
 
 
 /**
- * @class EventListenerAssetsManager
+ * @class
  */
-jsb.EventListenerAssetsManager = {
+jsb.EventListenerAssetsManager = cc.Class.extend(/** @lends jsb.EventListenerAssetsManager# */{
 
     /**
      * @function init
@@ -445,15 +452,15 @@ jsb.EventListenerAssetsManager = {
     {
     }
 
-};
+});
 
 /**
- * @class jsb.AssetsManager
+ * @class
  * jsb.AssetsManager is the native AssetsManager for your game resources or scripts.
  * please refer to this document to know how to use it: http://www.cocos2d-x.org/docs/manual/framework/html5/v3/assets-manager/en
  * Only available in JSB
  */
-jsb.AssetsManager = {
+jsb.AssetsManager = cc.Class.extend(/** @lends jsb.AssetsManager# */{
 
     /**
      * @function getState
@@ -533,12 +540,12 @@ jsb.AssetsManager = {
     {
     }
 
-};
+});
 
 /**
- * @class jsb.Manifest
+ * @class
  */
-jsb.Manifest = {
+jsb.Manifest = cc.Class.extend(/** @lends jsb.Manifest# */{
 
     /**
      * @function getManifestFileUrl
@@ -593,18 +600,18 @@ jsb.Manifest = {
     {
         return ;
     }
-};
+});
 
 /**
- * @type {Object}
- * @name jsb.reflection
  * jsb.reflection is a bridge to let you invoke Java static functions.
  * please refer to this document to know how to use it: http://www.cocos2d-x.org/docs/manual/framework/html5/v3/reflection/en
  * Only available on iOS/Mac/Android platform
+ * @class
+ * @name jsb.reflection
  */
 jsb.reflection = /** @lends jsb.reflection# */{
     /**
-     * @function callStaticMethod
+     * @function
      */
     callStaticMethod : function(){
     }
