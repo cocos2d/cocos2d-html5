@@ -49,7 +49,6 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
 
     _listViewEventListener: null,
     _listViewEventSelector: null,
-    _eventCallback: null,
     /**
      * allocates and initializes a UIListView.
      * Constructor of ccui.ListView, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
@@ -447,28 +446,31 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     /**
      * Adds event listener to ccui.ListView.
      * @param {Function} selector
-     * @param {Object} target
+     * @param {Object} [target=]
      * @deprecated since v3.0, please use addEventListener instead.
      */
     addEventListenerListView: function (selector, target) {
-        this._listViewEventListener = target;
-        this._listViewEventSelector = selector;
+        this.addEventListener(selector, target);
     },
 
     /**
      * Adds event listener to ccui.ListView.
-     * @param {function} callback
+     * @param {Function} selector
+     * @param {Object} [target=]
      */
-    addEventListener: function(callback){
-        this._eventCallback = callback;
+    addEventListener: function(selector, target){
+        this._listViewEventListener = target;
+        this._listViewEventSelector = selector;
     },
 
     _selectedItemEvent: function (event) {
         var eventEnum = (event == ccui.Widget.TOUCH_BEGAN) ? ccui.ListView.ON_SELECTED_ITEM_START : ccui.ListView.ON_SELECTED_ITEM_END;
-        if (this._listViewEventListener && this._listViewEventSelector)
-            this._listViewEventSelector.call(this._listViewEventListener, this, eventEnum);
-        if(this._eventCallback)
-            this._eventCallback(this, eventEnum);
+        if(this._listViewEventSelector){
+            if (this._listViewEventListener)
+                this._listViewEventSelector.call(this._listViewEventListener, this, eventEnum);
+            else
+                this._listViewEventSelector(this, eventEnum);
+        }
     },
 
     /**
@@ -535,7 +537,6 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
 
             this._listViewEventListener = listView._listViewEventListener;
             this._listViewEventSelector = listView._listViewEventSelector;
-            this._eventCallback = listView._eventCallback;
         }
     }
 });

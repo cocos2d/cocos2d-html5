@@ -77,7 +77,6 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     _scrollViewEventListener: null,
     _scrollViewEventSelector: null,
     _className: "ScrollView",
-    _eventCallback: null,
 
     /**
      * Allocates and initializes a UIScrollView.
@@ -1461,85 +1460,104 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     _scrollToTopEvent: function () {
-        if (this._scrollViewEventListener && this._scrollViewEventSelector)
-            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_SCROLL_TO_TOP);
-        if (this._eventCallback)
-            this._eventCallback(this,ccui.ScrollView.EVENT_SCROLL_TO_TOP);
+        if(this._scrollViewEventSelector){
+            if (this._scrollViewEventListener)
+                this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_SCROLL_TO_TOP);
+            else
+                this._scrollViewEventSelector(this, ccui.ScrollView.EVENT_SCROLL_TO_TOP);
+        }
     },
 
     _scrollToBottomEvent: function () {
-        if (this._scrollViewEventListener && this._scrollViewEventSelector)
-            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_SCROLL_TO_BOTTOM);
-        if (this._eventCallback)
-            this._eventCallback(this,ccui.ScrollView.EVENT_SCROLL_TO_BOTTOM);
+        if(this._scrollViewEventSelector){
+            if (this._scrollViewEventListener)
+                this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_SCROLL_TO_BOTTOM);
+            else
+                this._scrollViewEventSelector(this, ccui.ScrollView.EVENT_SCROLL_TO_BOTTOM);
+        }
     },
 
     _scrollToLeftEvent: function () {
-        if (this._scrollViewEventListener && this._scrollViewEventSelector)
-            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_SCROLL_TO_LEFT);
-        if (this._eventCallback)
-            this._eventCallback(this,ccui.ScrollView.EVENT_SCROLL_TO_LEFT);
+        if(this._scrollViewEventSelector){
+            if (this._scrollViewEventListener)
+                this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_SCROLL_TO_LEFT);
+            else
+                this._scrollViewEventSelector(this, ccui.ScrollView.EVENT_SCROLL_TO_LEFT);
+        }
     },
 
     _scrollToRightEvent: function () {
-        if (this._scrollViewEventListener && this._scrollViewEventSelector)
-            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_SCROLL_TO_RIGHT);
-        if (this._eventCallback)
-            this._eventCallback(this, ccui.ScrollView.EVENT_SCROLL_TO_RIGHT);
+        if(this._scrollViewEventSelector){
+            if (this._scrollViewEventListener)
+                this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_SCROLL_TO_RIGHT);
+            else
+                this._scrollViewEventSelector(this, ccui.ScrollView.EVENT_SCROLL_TO_RIGHT);
+        }
     },
 
     _scrollingEvent: function () {
-        if (this._scrollViewEventListener && this._scrollViewEventSelector)
-            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_SCROLLING);
-        if (this._eventCallback)
-            this._eventCallback(this,ccui.ScrollView.EVENT_SCROLLING);
+        if(this._scrollViewEventSelector){
+            if (this._scrollViewEventListener)
+                this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_SCROLLING);
+            else
+                this._scrollViewEventSelector(this, ccui.ScrollView.EVENT_SCROLLING);
+        }
     },
 
     _bounceTopEvent: function () {
-        if (this._scrollViewEventListener && this._scrollViewEventSelector) 
-            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_BOUNCE_TOP);
-        if (this._eventCallback) 
-            this._eventCallback(this,ccui.ScrollView.EVENT_BOUNCE_TOP);
+        if(this._scrollViewEventSelector){
+            if (this._scrollViewEventListener)
+                this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_BOUNCE_TOP);
+            else
+                this._scrollViewEventSelector(this, ccui.ScrollView.EVENT_BOUNCE_TOP);
+        }
     },
 
     _bounceBottomEvent: function () {
-        if (this._scrollViewEventListener && this._scrollViewEventSelector) 
-            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_BOUNCE_BOTTOM);
-        if (this._eventCallback)
-            this._eventCallback(this,ccui.ScrollView.EVENT_BOUNCE_BOTTOM);
+        if(this._scrollViewEventSelector){
+            if (this._scrollViewEventListener)
+                this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_BOUNCE_BOTTOM);
+            else
+                this._scrollViewEventSelector(this, ccui.ScrollView.EVENT_BOUNCE_BOTTOM);
+        }
     },
 
     _bounceLeftEvent: function () {
-        if (this._scrollViewEventListener && this._scrollViewEventSelector)
-            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_BOUNCE_LEFT);
-        if (this._eventCallback)
-            this._eventCallback(this, ccui.ScrollView.EVENT_BOUNCE_LEFT);
+        if(this._scrollViewEventSelector){
+            if (this._scrollViewEventListener)
+                this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_BOUNCE_LEFT);
+            else
+                this._scrollViewEventSelector(this, ccui.ScrollView.EVENT_BOUNCE_LEFT);
+        }
     },
 
     _bounceRightEvent: function () {
-        if (this._scrollViewEventListener && this._scrollViewEventSelector)
-            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_BOUNCE_RIGHT);
-        if (this._eventCallback)
-            this._eventCallback(this, ccui.ScrollView.EVENT_BOUNCE_RIGHT);
+        if(this._scrollViewEventSelector){
+            if (this._scrollViewEventListener)
+                this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.ScrollView.EVENT_BOUNCE_RIGHT);
+            else
+                this._scrollViewEventSelector(this, ccui.ScrollView.EVENT_BOUNCE_RIGHT);
+        }
     },
 
     /**
      * Adds callback function called ScrollView event triggered
      * @param {Function} selector
-     * @param {Object} target
+     * @param {Object} [target=]
      * @deprecated since v3.0, please use addEventListener instead.
      */
     addEventListenerScrollView: function (selector, target) {
-        this._scrollViewEventSelector = selector;
-        this._scrollViewEventListener = target;
+        this.addEventListener(selector, target);
     },
 
     /**
      * Adds callback function called ScrollView event triggered
-     * @param {function} callback
+     * @param {Function} selector
+     * @param {Object} [target=]
      */
-    addEventListener: function(callback){
-        this._eventCallback = callback;
+    addEventListener: function(selector, target){
+        this._scrollViewEventSelector = selector;
+        this._scrollViewEventListener = target;
     },
 
     /**
@@ -1646,7 +1664,6 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             this.setInertiaScrollEnabled(scrollView.inertiaScrollEnabled);
             this._scrollViewEventListener = scrollView._scrollViewEventListener;
             this._scrollViewEventSelector = scrollView._scrollViewEventSelector;
-            this._eventCallback = scrollView._eventCallback;
         }
     },
 

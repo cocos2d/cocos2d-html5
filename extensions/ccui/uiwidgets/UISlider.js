@@ -506,29 +506,29 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     /**
      * add event listener
      * @param {Function} selector
-     * @param {Object} target
+     * @param {Object} [target=]
+     * @deprecated since v3.0, please use addEventListener instead.
      */
     addEventListenerSlider: function (selector, target) {
-        this._sliderEventSelector = selector;
-        this._sliderEventListener = target;
+        this.addEventListener(selector, target);
     },
 
     /**
      * Adds a callback
-     * @param {function} callback
+     * @param {Function} selector
+     * @param {Object} [target=]
      */
-    addEventListener: function(callback){
-        this._eventCallback = callback;
+    addEventListener: function(selector, target){
+        this._sliderEventSelector = selector;
+        this._sliderEventListener = target;
     },
 
     _percentChangedEvent: function () {
-        if (this._sliderEventListener && this._sliderEventSelector) {
-            this._sliderEventSelector.call(this._sliderEventListener,
-                this,
-                ccui.Slider.EVENT_PERCENT_CHANGED);
-        }
-        if (this._eventCallback) {
-            this._eventCallback(ccui.Slider.EVENT_PERCENT_CHANGED);
+        if(this._sliderEventSelector){
+            if (this._sliderEventListener)
+                this._sliderEventSelector.call(this._sliderEventListener, this, ccui.Slider.EVENT_PERCENT_CHANGED);
+            else
+                this._sliderEventSelector(this, ccui.Slider.EVENT_PERCENT_CHANGED);
         }
     },
 
@@ -673,7 +673,6 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this.setPercent(slider.getPercent());
         this._sliderEventListener = slider._sliderEventListener;
         this._sliderEventSelector = slider._sliderEventSelector;
-        this._eventCallback = slider._eventCallback;
 
     }
 });

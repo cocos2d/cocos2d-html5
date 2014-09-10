@@ -54,7 +54,6 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     _pageViewEventListener: null,
     _pageViewEventSelector: null,
     _className:"PageView",
-    _eventCallback: null,
 
     /**
      * Allocates and initializes a UIPageView.
@@ -482,29 +481,32 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     _pageTurningEvent: function () {
-        if (this._pageViewEventListener && this._pageViewEventSelector)
-            this._pageViewEventSelector.call(this._pageViewEventListener, this, ccui.PageView.EVENT_TURNING);
-        if (this._eventCallback)
-            this._eventCallback(this, ccui.PageView.EVENT_TURNING);
+        if(this._pageViewEventSelector){
+            if (this._pageViewEventListener)
+                this._pageViewEventSelector.call(this._pageViewEventListener, this, ccui.PageView.EVENT_TURNING);
+            else
+                this._pageViewEventSelector(this, ccui.PageView.EVENT_TURNING);
+        }
     },
 
     /**
      * Adds event listener to ccui.PageView.
      * @param {Function} selector
-     * @param {Object} target
+     * @param {Object} [target=]
      * @deprecated since v3.0, please use addEventListener instead.
      */
     addEventListenerPageView: function (selector, target) {
-        this._pageViewEventSelector = selector;
-        this._pageViewEventListener = target;
+        this.addEventListener(selector, target);
     },
 
     /**
      * Adds event listener to ccui.PageView.
-     * @param callback
+     * @param {Function} selector
+     * @param {Object} [target=]
      */
-    addEventListener: function(callback){
-        this._eventCallback = callback;
+    addEventListener: function(selector, target){
+        this._pageViewEventSelector = selector;
+        this._pageViewEventListener = target;
     },
 
     /**
@@ -556,7 +558,6 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 
     _copySpecialProperties: function (pageView) {
         ccui.Layout.prototype._copySpecialProperties.call(this, pageView);
-        this._eventCallback = pageView._eventCallback;
         this._pageViewEventListener = pageView._pageViewEventListener;
         this._pageViewEventSelector = pageView._pageViewEventSelector;
     }
