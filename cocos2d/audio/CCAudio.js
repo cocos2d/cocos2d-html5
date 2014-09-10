@@ -773,9 +773,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
 
 });
 
-
-if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0) {
-
+if (!cc.sys._supportWebAudio && !cc.sys._supportMultipleAudio) {
     cc.AudioEngineForSingle = cc.AudioEngine.extend({
         _waitingEffIds: [],
         _pausedEffIds: [],
