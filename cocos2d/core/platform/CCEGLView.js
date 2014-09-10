@@ -200,14 +200,14 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     _setViewPortMeta: function (width, height) {
         if (this._isAdjustViewPort) {
-            var viewportMetas,
-                elems = document.getElementsByName("viewport"),
-                vp, content;
-
-            vp = document.getElementById("cocosMetaElement");
+            var vp = document.getElementById("cocosMetaElement");
             if(vp){
                 document.head.removeChild(vp);
             }
+
+            var viewportMetas,
+                elems = document.getElementsByName("viewport"),
+                content;
 
             vp = cc.newElement("meta");
             vp.id = "cocosMetaElement";
