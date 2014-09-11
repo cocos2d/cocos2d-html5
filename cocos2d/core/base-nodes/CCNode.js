@@ -1557,6 +1557,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._running = false;
         this.pause();
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onExit);
+        this.removeAllComponents();
     },
 
     // actions
@@ -2042,7 +2043,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Removes all components
+     * Removes all components of cc.Node, it called when cc.Node is exiting from stage.
      * @function
      */
     removeAllComponents: function () {
