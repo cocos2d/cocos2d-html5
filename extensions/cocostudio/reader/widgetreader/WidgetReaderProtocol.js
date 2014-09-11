@@ -24,7 +24,6 @@
  ****************************************************************************/
 
 ccs.WidgetReaderProtocol = ccs.Class.extend({
-
     setPropsFromJsonDictionary: function(widget, options){
 
     }

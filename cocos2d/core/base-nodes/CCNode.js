@@ -32,92 +32,101 @@
 cc.NODE_TAG_INVALID = -1;
 
 /**
- *  XXX: Yes, nodes might have a sort problem once every 15 days if the game runs at 60 FPS and each frame sprites are reordered.
- * @type Number
+ * XXX: Yes, nodes might have a sort problem once every 15 days if the game runs at 60 FPS and each frame sprites are reordered.
  */
 cc.s_globalOrderOfArrival = 1;
 
-/** <p>cc.Node is the main element. Anything thats gets drawn or contains things that get drawn is a cc.Node.<br/>
- The most popular cc.Nodes are: cc.Scene, cc.Layer, cc.Sprite, cc.Menu.<br/></p>
-
- <p>The main features of a cc.Node are: <br/>
- - They can contain other cc.Node nodes (addChild, getChildByTag, removeChild, etc) <br/>
- - They can schedule periodic callback (schedule, unschedule, etc) <br/>
- - They can execute actions (runAction, stopAction, etc) <br/></p>
-
- <p>Some cc.Node nodes provide extra functionality for them or their children.</p>
-
- <p>Subclassing a cc.Node usually means (one/all) of: <br/>
- - overriding init to initialize resources and schedule callbacks  <br/>
- - create callbacks to handle the advancement of time <br/>
- - overriding draw to render the node   <br/></p>
-
- <p>Features of cc.Node: <br/>
- - position  <br/>
- - scale (x, y) <br/>
- - rotation (in degrees, clockwise) <br/>
- - anchor point<br/>
- - size <br/>
- - visible<br/>
- - z-order <br/>
- - openGL z position <br/></P>
-
- <p> Default values: <br/>
- - rotation: 0 <br/>
- - position: (x=0,y=0) <br/>
- - scale: (x=1,y=1) <br/>
- - contentSize: (x=0,y=0)<br/>
- - anchorPoint: (x=0,y=0)<br/></p>
-
- <p> Limitations:<br/>
- - A cc.Node is a "void" object. It doesn't have a texture <br/></P>
-
- <p>Order in transformations with grid disabled <br/>
- -# The node will be translated (position)  <br/>
- -# The node will be rotated (rotation)<br/>
- -# The node will be scaled (scale)  <br/>
-
- <p>Order in transformations with grid enabled<br/>
- -# The node will be translated (position)<br/>
- -# The node will be rotated (rotation) <br/>
- -# The node will be scaled (scale) <br/>
- -# The grid will capture the screen <br/>
- -# The node will be moved according to the camera values (camera) <br/>
- -# The grid will render the captured screen <br/></P>
+/**
+ * <p>cc.Node is the root class of all node. Anything that gets drawn or contains things that get drawn is a cc.Node.<br/>
+ * The most popular cc.Nodes are: cc.Scene, cc.Layer, cc.Sprite, cc.Menu.</p>
+ *
+ * <p>The main features of a cc.Node are: <br/>
+ * - They can contain other cc.Node nodes (addChild, getChildByTag, removeChild, etc) <br/>
+ * - They can schedule periodic callback (schedule, unschedule, etc) <br/>
+ * - They can execute actions (runAction, stopAction, etc) <br/></p>
+ *
+ * <p>Some cc.Node nodes provide extra functionality for them or their children.</p>
+ *
+ * <p>Subclassing a cc.Node usually means (one/all) of: <br/>
+ * - overriding constructor function "ctor" to initialize resources and schedule callbacks<br/>
+ * - create callbacks to handle the advancement of time<br/></p>
+ *
+ * <p>Features of cc.Node: <br/>
+ * - position  <br/>
+ * - scale (x, y) <br/>
+ * - rotation (in degrees, clockwise)<br/>
+ * - anchor point<br/>
+ * - size <br/>
+ * - color <br/>
+ * - opacity <br/>
+ * - visible<br/>
+ * - z-order<br/>
+ * - WebGL z position<br/></P>
+ *
+ * <p> Default values: <br/>
+ * - rotation: 0 <br/>
+ * - position: (x=0,y=0) <br/>
+ * - scale: (x=1,y=1) <br/>
+ * - contentSize: (x=0,y=0)<br/>
+ * - anchorPoint: (x=0,y=0)<br/>
+ * - color: (r=255,g=255,b=255)<br/>
+ * - opacity: 255</p>
+ *
+ * <p> Limitations:<br/>
+ * - A cc.Node is a "void" object. It doesn't have a texture <br/></P>
+ *
+ * <p>Order in transformations with grid disabled <br/>
+ * -# The node will be translated (position)  <br/>
+ * -# The node will be rotated (rotation)<br/>
+ * -# The node will be scaled (scale)  <br/>
+ *
+ * <p>Order in transformations with grid enabled<br/>
+ * -# The node will be translated (position)<br/>
+ * -# The node will be rotated (rotation) <br/>
+ * -# The node will be scaled (scale) <br/>
+ * -# The grid will capture the screen <br/>
+ * -# The node will be moved according to the camera values (camera) <br/>
+ * -# The grid will render the captured screen <br/></P>
+ *
  * @class
  * @extends cc.Class
  *
- * @property {Number}               x               - x axis position of node
- * @property {Number}               y               - y axis position of node
- * @property {Number}               width           - Width of node
- * @property {Number}               height          - Height of node
- * @property {Number}               anchorX         - Anchor point's position on x axis
- * @property {Number}               anchorY         - Anchor point's position on y axis
- * @property {Number}               skewX           - Skew x
- * @property {Number}               skewY           - Skew y
- * @property {Number}               zIndex          - Z order in depth which stands for the drawing order
- * @property {Number}               vertexZ         - WebGL Z vertex of this node, z order works OK if all the nodes uses the same openGL Z vertex
- * @property {Number}               rotation        - Rotation of node
- * @property {Number}               rotationX       - Rotation on x axis
- * @property {Number}               rotationY       - Rotation on y axis
- * @property {Number}               scale           - Scale of node
- * @property {Number}               scaleX          - Scale on x axis
- * @property {Number}               scaleY          - Scale on y axis
- * @property {Array}                children        - <@readonly> All children nodes
- * @property {Number}               childrenCount   - <@readonly> Number of children
- * @property {cc.Node}              parent          - Parent node
- * @property {Boolean}              visible         - Indicate whether node is visible or not
- * @property {Boolean}              running         - <@readonly> Indicate whether node is running or not
- * @property {Boolean}              ignoreAnchor    - Indicate whether ignore the anchor point property for positionning
- * @property {Number}               tag             - Tag of node
- * @property {Object}               userData        - Custom user data
- * @property {Object}               userObject      - User assigned CCObject, similar to userData, but instead of holding a void* it holds an id
- * @property {Number}               arrivalOrder    - The arrival order, indicates which children is added previously
- * @property {cc.ActionManager}     actionManager   - The CCActionManager object that is used by all actions.
- * @property {cc.Scheduler}         scheduler       - cc.Scheduler used to schedule all "updates" and timers.
- * @property {cc.GridBase}          grid            - grid object that is used when applying effects
- * @property {cc.GLProgram}         shaderProgram   - The shader program currently used for this node
- * @property {Number}               glServerState   - The state of OpenGL server side
+ * @property {Number}               x                   - x axis position of node
+ * @property {Number}               y                   - y axis position of node
+ * @property {Number}               width               - Width of node
+ * @property {Number}               height              - Height of node
+ * @property {Number}               anchorX             - Anchor point's position on x axis
+ * @property {Number}               anchorY             - Anchor point's position on y axis
+ * @property {Boolean}              ignoreAnchor        - Indicate whether ignore the anchor point property for positioning
+ * @property {Number}               skewX               - Skew x
+ * @property {Number}               skewY               - Skew y
+ * @property {Number}               zIndex              - Z order in depth which stands for the drawing order
+ * @property {Number}               vertexZ             - WebGL Z vertex of this node, z order works OK if all the nodes uses the same openGL Z vertex
+ * @property {Number}               rotation            - Rotation of node
+ * @property {Number}               rotationX           - Rotation on x axis
+ * @property {Number}               rotationY           - Rotation on y axis
+ * @property {Number}               scale               - Scale of node
+ * @property {Number}               scaleX              - Scale on x axis
+ * @property {Number}               scaleY              - Scale on y axis
+ * @property {Boolean}              visible             - Indicate whether node is visible or not
+ * @property {cc.Color}             color               - Color of node, default value is white: (255, 255, 255)
+ * @property {Boolean}              cascadeColor        - Indicate whether node's color value affect its child nodes, default value is false
+ * @property {Number}               opacity             - Opacity of node, default value is 255
+ * @property {Boolean}              opacityModifyRGB    - Indicate whether opacity affect the color value, default value is false
+ * @property {Boolean}              cascadeOpacity      - Indicate whether node's opacity value affect its child nodes, default value is false
+ * @property {Array}                children            - <@readonly> All children nodes
+ * @property {Number}               childrenCount       - <@readonly> Number of children
+ * @property {cc.Node}              parent              - Parent node
+ * @property {Boolean}              running             - <@readonly> Indicate whether node is running or not
+ * @property {Number}               tag                 - Tag of node
+ * @property {Object}               userData            - Custom user data
+ * @property {Object}               userObject          - User assigned CCObject, similar to userData, but instead of holding a void* it holds an id
+ * @property {Number}               arrivalOrder        - The arrival order, indicates which children is added previously
+ * @property {cc.ActionManager}     actionManager       - The CCActionManager object that is used by all actions.
+ * @property {cc.Scheduler}         scheduler           - cc.Scheduler used to schedule all "updates" and timers.
+ * @property {cc.GridBase}          grid                - grid object that is used when applying effects
+ * @property {cc.GLProgram}         shaderProgram       - The shader program currently used for this node
+ * @property {Number}               glServerState       - The state of OpenGL server side
  */
 cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _localZOrder: 0,                                     ///< Local order (relative to its siblings) used to sort the node
@@ -213,6 +222,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Initializes the instance of cc.Node
+     * @function
      * @returns {boolean} Whether the initialization was successful.
      */
     init: function () {
@@ -221,17 +231,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         return true;
     },
 
-    /**
-     * @param {Array} array
-     * @param {cc.Node.StateCallbackType} callbackType
-     * @private
-     */
     _arrayMakeObjectsPerformSelector: function (array, callbackType) {
         if (!array || array.length === 0)
             return;
 
         var i, len = array.length, node;
-        var nodeCallbackType = cc.Node.StateCallbackType;
+        var nodeCallbackType = cc.Node._StateCallbackType;
         switch (callbackType) {
             case nodeCallbackType.onEnter:
                 for (i = 0; i < len; i++) {
@@ -289,16 +294,18 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * set the dirty node
+     * Sets node's dirty flag to true so that it can be updated in visit function of the next frame
+     * @function
      */
     setNodeDirty: null,
 
     /**
-     *  <p>Properties configuration function </br>
-     *  All properties in attrs will be set to the node, </br>
-     *  when the setter of the node is available, </br>
-     *  the property will be set via setter function.</br>
-     *  </p>
+     * <p>Properties configuration function </br>
+     * All properties in attrs will be set to the node, </br>
+     * when the setter of the node is available, </br>
+     * the property will be set via setter function.</br>
+     * </p>
+     * @function
      * @param {Object} attrs Properties to be set to node
      */
     attr: function (attrs) {
@@ -308,12 +315,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     *  <p>get the skew degrees in X </br>
-     *  The X skew angle of the node in degrees.  <br/>
-     *  This angle describes the shear distortion in the X direction.<br/>
-     *  Thus, it is the angle between the Y axis and the left edge of the shape </br>
-     *  The default skewX angle is 0. Positive values distort the node in a CW direction.</br>
-     *  </p>
+     * <p>Returns the skew degrees in X </br>
+     * The X skew angle of the node in degrees.  <br/>
+     * This angle describes the shear distortion in the X direction.<br/>
+     * Thus, it is the angle between the Y axis and the left edge of the shape </br>
+     * The default skewX angle is 0. Positive values distort the node in a CW direction.</br>
+     * </p>
+     * @function
      * @return {Number} The X skew angle of the node in degrees.
      */
     getSkewX: function () {
@@ -322,12 +330,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * <p>
-     *     Changes the X skew angle of the node in degrees.                                                    <br/>
-     *                                                                                                         <br/>
-     *      This angle describes the shear distortion in the X direction.                                      <br/>
-     *      Thus, it is the angle between the Y axis and the left edge of the shape                            <br/>
-     *      The default skewX angle is 0. Positive values distort the node in a CW direction.
+     * Changes the X skew angle of the node in degrees.                                                    <br/>
+     * <br/>
+     * This angle describes the shear distortion in the X direction.                                       <br/>
+     * Thus, it is the angle between the Y axis and the left edge of the shape                             <br/>
+     * The default skewX angle is 0. Positive values distort the node in a CW direction.
      * </p>
+     * @function
      * @param {Number} newSkewX The X skew angle of the node in degrees.
      */
     setSkewX: function (newSkewX) {
@@ -336,12 +345,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * <p>get the skew degrees in Y               <br/>
+     * <p>Returns the skew degrees in Y               <br/>
      * The Y skew angle of the node in degrees.                            <br/>
      * This angle describes the shear distortion in the Y direction.       <br/>
      * Thus, it is the angle between the X axis and the bottom edge of the shape       <br/>
      * The default skewY angle is 0. Positive values distort the node in a CCW direction.    <br/>
      * </p>
+     * @function
      * @return {Number} The Y skew angle of the node in degrees.
      */
     getSkewY: function () {
@@ -356,6 +366,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Thus, it is the angle between the X axis and the bottom edge of the shape                               <br/>
      * The default skewY angle is 0. Positive values distort the node in a CCW direction.                      <br/>
      * </p>
+     * @function
      * @param {Number} newSkewY  The Y skew angle of the node in degrees.
      */
     setSkewY: function (newSkewY) {
@@ -369,10 +380,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * The Node's parent will sort all its children based ont the LocalZOrder value.                                   <br/>
      * If two nodes have the same LocalZOrder, then the node that was added first to the children's array              <br/>
      * will be in front of the other node in the array.                                                                <br/>
-     *                                                                                                                 <br/>
-     * Also, the Scene Graph is traversed using the "In-Order" tree traversal algorithm ( http://en.wikipedia.org/wiki/Tree_traversal#In-order )                <br/>
+     * <br/>
+     * Also, the Scene Graph is traversed using the "In-Order" tree traversal algorithm ( http://en.wikipedia.org/wiki/Tree_traversal#In-order )
+     * <br/>
      * And Nodes that have LocalZOder values < 0 are the "left" subtree                                                 <br/>
      * While Nodes with LocalZOder >=0 are the "right" subtree.    </p>
+     * @function
      * @param {Number} localZOrder
      */
     setLocalZOrder: function (localZOrder) {
@@ -382,17 +395,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         cc.eventManager._setDirtyForNode(this);
     },
 
-    /**
-     * Helper function used by `setLocalZOrder`. Don't use it unless you know what you are doing.
-     * @param {Number} localZOrder
-     * @private
-     */
+    //Helper function used by `setLocalZOrder`. Don't use it unless you know what you are doing.
     _setLocalZOrder: function (localZOrder) {
         this._localZOrder = localZOrder;
     },
 
     /**
-     * Gets the local Z order of this node.
+     * Returns the local Z order of this node.
+     * @function
      * @returns {Number} The local (relative to its siblings) Z order.
      */
     getLocalZOrder: function () {
@@ -400,9 +410,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * zOrder getter
+     * Returns z order of this node
+     * @function
      * @return {Number}
-     * @deprecated
+     * @deprecated since 3.0, please use getLocalZOrder instead
      */
     getZOrder: function () {
         cc.log(cc._LogInfos.Node_getZOrder);
@@ -418,8 +429,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *      The larger number it is, the later this node will be drawn in each message loop.                              <br/>
      *      Please refer to setVertexZ(float) for the difference.
      * </p>
+     * @function
      * @param {Number} z Z order of this node.
-     * @deprecated
+     * @deprecated since 3.0, please use setLocalZOrder instead
      */
     setZOrder: function (z) {
         cc.log(cc._LogInfos.Node_setZOrder);
@@ -439,6 +451,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *                                                                                                                                    <br/>
      * Limitations: Global Z Order can't be used used by Nodes that have SpriteBatchNode as one of their ancestors.                       <br/>
      * And if ClippingNode is one of the ancestors, then "global Z order" will be relative to the ClippingNode.   </p>
+     * @function
      * @param {Number} globalZOrder
      */
     setGlobalZOrder: function (globalZOrder) {
@@ -449,7 +462,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Returns the Node's Global Z Order.
+     * Return the Node's Global Z Order.
+     * @function
      * @returns {number} The node's global Z order
      */
     getGlobalZOrder: function () {
@@ -457,7 +471,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Gets WebGL Z vertex of this node.
+     * Returns WebGL Z vertex of this node.
+     * @function
      * @return {Number} WebGL Z vertex of this node
      */
     getVertexZ: function () {
@@ -469,12 +484,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *     Sets the real WebGL Z vertex.                                                                          <br/>
      *                                                                                                            <br/>
      *      Differences between openGL Z vertex and cocos2d Z order:                                              <br/>
-     *      - OpenGL Z modifies the Z vertex, and not the Z order in the relation between parent-children         <br/>
-     *      - OpenGL Z might require to set 2D projection                                                         <br/>
-     *      - cocos2d Z order works OK if all the nodes uses the same openGL Z vertex. eg: vertexZ = 0            <br/>
+     *      - WebGL Z modifies the Z vertex, and not the Z order in the relation between parent-children         <br/>
+     *      - WebGL Z might require to set 2D projection                                                         <br/>
+     *      - cocos2d Z order works OK if all the nodes uses the same WebGL Z vertex. eg: vertexZ = 0            <br/>
      *                                                                                                            <br/>
      *      @warning Use it at your own risk since it might break the cocos2d parent-children z order
      * </p>
+     * @function
      * @param {Number} Var
      */
     setVertexZ: function (Var) {
@@ -482,7 +498,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * The rotation (angle) of the node in degrees. 0 is the default rotation angle. Positive values rotate node CW.
+     * Returns the rotation (angle) of the node in degrees. 0 is the default rotation angle. Positive values rotate node clockwise.
+     * @function
      * @return {Number} The rotation of the node in degrees.
      */
     getRotation: function () {
@@ -498,6 +515,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *      0 is the default rotation angle.                                                             <br/>
      *      Positive values rotate node clockwise, and negative values for anti-clockwise.
      * </p>
+     * @function
      * @param {Number} newRotation The rotation of the node in degrees.
      */
     setRotation: function (newRotation) {
@@ -508,9 +526,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * The rotation (angle) of the node in degrees. 0 is the default rotation angle. <br/>
-     * Positive values rotate node CW. It only modifies the X rotation performing a horizontal rotational skew .
-     * (support only in WebGl rendering mode)
+     * Returns the X axis rotation (angle) which represent a horizontal rotational skew of the node in degrees. <br/>
+     * 0 is the default rotation angle. Positive values rotate node clockwise<br/>
+     * (support only in WebGL rendering mode)
+     * @function
      * @return {Number} The X rotation in degrees.
      */
     getRotationX: function () {
@@ -520,7 +539,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * <p>
      *     Sets the X rotation (angle) of the node in degrees which performs a horizontal rotational skew.        <br/>
-     *                                                                                                            <br/>
+     *     (support only in WebGL rendering mode)                                                                 <br/>
      *     0 is the default rotation angle.                                                                       <br/>
      *     Positive values rotate node clockwise, and negative values for anti-clockwise.
      * </p>
@@ -533,8 +552,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * The rotation (angle) of the node in degrees. 0 is the default rotation angle.  <br/>
-     * Positive values rotate node CW. It only modifies the Y rotation performing a vertical rotational skew .
+     * Returns the Y axis rotation (angle) which represent a vertical rotational skew of the node in degrees. <br/>
+     * 0 is the default rotation angle. Positive values rotate node clockwise<br/>
+     * (support only in WebGL rendering mode)
+     * @function
      * @return {Number} The Y rotation in degrees.
      */
     getRotationY: function () {
@@ -544,9 +565,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * <p>
      *    Sets the Y rotation (angle) of the node in degrees which performs a vertical rotational skew.         <br/>
-     *                                                                                                          <br/>
-     *      0 is the default rotation angle.                                                                    <br/>
-     *      Positive values rotate node clockwise, and negative values for anti-clockwise.
+     *    (support only in WebGL rendering mode)                                                                <br/>
+     *    0 is the default rotation angle.                                                                      <br/>
+     *    Positive values rotate node clockwise, and negative values for anti-clockwise.
      * </p>
      * @param rotationY The Y rotation in degrees.
      */
@@ -556,9 +577,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this.setNodeDirty();
     },
 
-    /** Get the scale factor of the node.
-     * @warning: Assert when _scaleX != _scaleY.
-     * @return {Number}
+    /**
+     * Returns the scale factor of the node.
+     * @warning: Assertion will fail when _scaleX != _scaleY.
+     * @function
+     * @return {Number} The scale factor
      */
     getScale: function () {
         if (this._scaleX !== this._scaleY)
@@ -567,7 +590,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * The scale factor of the node. 1.0 is the default scale factor. It modifies the X and Y scale at the same time.
+     * Sets the scale factor of the node. 1.0 is the default scale factor. This function can modify the X and Y scale at the same time.
+     * @function
      * @param {Number} scale or scaleX value
      * @param {Number} [scaleY=]
      */
@@ -579,6 +603,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Returns the scale factor on X axis of this node
+     * @function
      * @return {Number} The scale factor on X axis.
      */
     getScaleX: function () {
@@ -590,6 +615,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *     Changes the scale factor on X axis of this node                                   <br/>
      *     The deafult value is 1.0 if you haven't changed it before
      * </p>
+     * @function
      * @param {Number} newScaleX The scale factor on X axis.
      */
     setScaleX: function (newScaleX) {
@@ -599,6 +625,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Returns the scale factor on Y axis of this node
+     * @function
      * @return {Number} The scale factor on Y axis.
      */
     getScaleY: function () {
@@ -610,6 +637,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *     Changes the scale factor on Y axis of this node                                            <br/>
      *     The Default value is 1.0 if you haven't changed it before.
      * </p>
+     * @function
      * @param {Number} newScaleY The scale factor on Y axis.
      */
     setScaleY: function (newScaleY) {
@@ -619,15 +647,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * <p>
-     *     Changes the position (x,y) of the node in OpenGL coordinates
-     *     Usually we use ccp(x,y) to compose CCPoint object.
-     *     The original point (0,0) is at the left-bottom corner of screen.
-     *     and Passing two numbers (x,y) is much efficient than passing CCPoint object.
+     *     Changes the position (x,y) of the node in cocos2d coordinates.<br/>
+     *     The original point (0,0) is at the left-bottom corner of screen.<br/>
+     *     Usually we use cc.p(x,y) to compose CCPoint object.<br/>
+     *     and Passing two numbers (x,y) is more efficient than passing CCPoint object.
      * </p>
-     * @param {cc.Point|Number} newPosOrxValue The position (x,y) of the node in coordinates or  X coordinate for position
+     * @function
+     * @param {cc.Point|Number} newPosOrxValue The position (x,y) of the node in coordinates or the X coordinate for position
      * @param {Number} [yValue] Y coordinate for position
      * @example
-     *    var size = cc.director.getWinSize();
+     *    var size = cc.winSize;
      *    node.setPosition(size.width/2, size.height/2);
      */
     setPosition: function (newPosOrxValue, yValue) {
@@ -643,8 +672,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * <p>Position (x,y) of the node in OpenGL coordinates. (0,0) is the left-bottom corner. </p>
-     * @const
+     * <p>Returns a copy of the position (x,y) of the node in cocos2d coordinates. (0,0) is the left-bottom corner.</p>
+     * @function
      * @return {cc.Point} The position (x,y) of the node in OpenGL coordinates
      */
     getPosition: function () {
@@ -652,6 +681,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
+     * <p>Returns the x axis position of the node in cocos2d coordinates.</p>
+     * @function
      * @return {Number}
      */
     getPositionX: function () {
@@ -659,7 +690,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * @param {Number} x
+     * <p>Sets the x axis position of the node in cocos2d coordinates.</p>
+     * @function
+     * @param {Number} x The new position in x axis
      */
     setPositionX: function (x) {
         this._position.x = x;
@@ -667,6 +700,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
+     * <p>Returns the y axis position of the node in cocos2d coordinates.</p>
+     * @function
      * @return {Number}
      */
     getPositionY: function () {
@@ -674,7 +709,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * @param {Number} y
+     * <p>Sets the y axis position of the node in cocos2d coordinates.</p>
+     * @function
+     * @param {Number} y The new position in y axis
      */
     setPositionY: function (y) {
         this._position.y = y;
@@ -682,7 +719,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Get the amount of children.
+     * Returns the amount of children.
+     * @function
      * @return {Number} The amount of children.
      */
     getChildrenCount: function () {
@@ -690,23 +728,25 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Return an array of children  <br/>
+     * Returns an array of all children  <br/>
      * Composing a "tree" structure is a very important feature of CCNode
+     * @function
      * @return {Array} An array of children
      * @example
      *  //This sample code traverses all children nodes, and set their position to (0,0)
      *  var allChildren = parent.getChildren();
-     * for(var i = 0; i< allChildren.length; i++) {
-     *     allChildren[i].setPosition(0,0);
-     * }
+     *  for(var i = 0; i< allChildren.length; i++) {
+     *      allChildren[i].setPosition(0,0);
+     *  }
      */
     getChildren: function () {
         return this._children;
     },
 
     /**
-     * Determines if the node is visible
-     * @see setVisible(bool)
+     * Returns if the node is visible
+     * @function
+     * @see cc.Node#setVisible
      * @return {Boolean} true if the node is visible, false if the node is hidden.
      */
     isVisible: function () {
@@ -715,23 +755,25 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Sets whether the node is visible <br/>
-     * The default value is true, a node is default to visible
-     * @param {Boolean} Var true if the node is visible, false if the node is hidden.
+     * The default value is true
+     * @function
+     * @param {Boolean} visible Pass true to make the node visible, false to hide the node.
      */
-    setVisible: function (Var) {
-        if(this._visible != Var){
-            this._visible = Var;
-            if(Var)this.setNodeDirty();
+    setVisible: function (visible) {
+        if(this._visible != visible){
+            this._visible = visible;
+            if(visible) this.setNodeDirty();
         }
     },
 
     /**
-     *  <p>anchorPoint is the point around which all transformations and positioning manipulations take place.<br/>
+     *  <p>Returns a copy of the anchor point.<br/>
+     *  Anchor point is the point around which all transformations and positioning manipulations take place.<br/>
      *  It's like a pin in the node where it is "attached" to its parent. <br/>
      *  The anchorPoint is normalized, like a percentage. (0,0) means the bottom-left corner and (1,1) means the top-right corner. <br/>
      *  But you can use values higher than (1,1) and lower than (0,0) too.  <br/>
-     *  The default anchorPoint is (0.5,0.5), so it starts in the center of the node. <br/></p>
-     *  @const
+     *  The default anchor point is (0.5,0.5), so it starts at the center of the node. <br/></p>
+     * @function
      * @return {cc.Point}  The anchor point of node.
      */
     getAnchorPoint: function () {
@@ -742,14 +784,15 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * <p>
      *     Sets the anchor point in percent.                                                                                              <br/>
      *                                                                                                                                    <br/>
-     *     anchorPoint is the point around which all transformations and positioning manipulations take place.                            <br/>
+     *     anchor point is the point around which all transformations and positioning manipulations take place.                            <br/>
      *     It's like a pin in the node where it is "attached" to its parent.                                                              <br/>
      *     The anchorPoint is normalized, like a percentage. (0,0) means the bottom-left corner and (1,1) means the top-right corner.     <br/>
      *     But you can use values higher than (1,1) and lower than (0,0) too.                                                             <br/>
-     *     The default anchorPoint is (0.5,0.5), so it starts in the center of the node.
+     *     The default anchor point is (0.5,0.5), so it starts at the center of the node.
      * </p>
-     * @param {cc.Point|Number} point The anchor point of node or The anchor point.x of node.
-     * @param {Number} [y] The anchor point.y of node.
+     * @function
+     * @param {cc.Point|Number} point The anchor point of node or The x axis anchor of node.
+     * @param {Number} [y] The y axis anchor of node.
      */
     setAnchorPoint: function (point, y) {
         var locAnchorPoint = this._anchorPoint;
@@ -805,10 +848,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     *  The anchorPoint in absolute pixels.  <br/>
-     *  you can only read it. If you wish to modify it, use anchorPoint instead
-     *  @see getAnchorPoint()
-     *  @const
+     * Returns a copy of the anchor point in absolute pixels.  <br/>
+     * you can only read it. If you wish to modify it, use setAnchorPoint
+     * @see cc.Node#getAnchorPoint
+     * @function
      * @return {cc.Point} The anchor point in absolute pixels.
      */
     getAnchorPointInPoints: function () {
@@ -833,10 +876,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * <p>The untransformed size of the node. <br/>
+     * <p>Returns a copy the untransformed size of the node. <br/>
      * The contentSize remains the same no matter the node is scaled or rotated.<br/>
-     * All nodes has a size. Layer and Scene has the same size of the screen. <br/></p>
-     * @const
+     * All nodes has a size. Layer and Scene has the same size of the screen by default. <br/></p>
+     * @function
      * @return {cc.Size} The untransformed size of the node.
      */
     getContentSize: function () {
@@ -850,6 +893,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *     The contentSize remains the same no matter the node is scaled or rotated.            <br/>
      *     All nodes has a size. Layer and Scene has the same size of the screen.
      * </p>
+     * @function
      * @param {cc.Size|Number} size The untransformed size of the node or The untransformed size's width of the node.
      * @param {Number} [height] The untransformed size's height of the node.
      */
@@ -877,6 +921,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *     Returns whether or not the node accepts event callbacks.                                     <br/>
      *     Running means the node accept event callbacks like onEnter(), onExit(), update()
      * </p>
+     * @function
      * @return {Boolean} Whether or not the node is running.
      */
     isRunning: function () {
@@ -884,8 +929,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Returns a pointer to the parent node
-     * @return {cc.Node} A pointer to the parent node
+     * Returns a reference to the parent node
+     * @function
+     * @return {cc.Node} A reference to the parent node
      */
     getParent: function () {
         return this._parent;
@@ -893,16 +939,18 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Sets the parent node
-     * @param {cc.Node} Var A pointer to the parent node
+     * @param {cc.Node} parent A reference to the parent node
      */
-    setParent: function (Var) {
-        this._parent = Var;
+    setParent: function (parent) {
+        this._parent = parent;
     },
 
     /**
-     * Gets whether the anchor point will be (0,0) when you position this node.
-     * @see ignoreAnchorPointForPosition(bool)
-     * @return {Boolean} true if the anchor point will be (0,0) when you position this node.
+     * Returns whether the anchor point will be ignored when you position this node.<br/>
+     * When anchor point ignored, position will be calculated based on the origin point (0, 0) in parent's coordinates.
+     * @function
+     * @see cc.Node#ignoreAnchorPointForPosition
+     * @return {Boolean} true if the anchor point will be ignored when you position this node.
      */
     isIgnoreAnchorPointForPosition: function () {
         return this._ignoreAnchorPointForPosition;
@@ -910,12 +958,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * <p>
-     *     Sets whether the anchor point will be (0,0) when you position this node.                              <br/>
-     *                                                                                                           <br/>
+     *     Sets whether the anchor point will be ignored when you position this node.                              <br/>
+     *     When anchor point ignored, position will be calculated based on the origin point (0, 0) in parent's coordinates.  <br/>
      *     This is an internal method, only used by CCLayer and CCScene. Don't call it outside framework.        <br/>
      *     The default value is false, while in CCLayer and CCScene are true
      * </p>
-     * @param {Boolean} newValue true if anchor point will be (0,0) when you position this node
+     * @function
+     * @param {Boolean} newValue true if anchor point will be ignored when you position this node
      */
     ignoreAnchorPointForPosition: function (newValue) {
         if (newValue != this._ignoreAnchorPointForPosition) {
@@ -926,7 +975,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Returns a tag that is used to identify the node easily.
-     *
+     * @function
      * @return {Number} An integer that identifies the node.
      * @example
      *  //You can set tags to node then identify them easily.
@@ -957,14 +1006,17 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Changes the tag that is used to identify the node easily. <br/>
      * Please refer to getTag for the sample code.
-     * @param {Number} Var A integer that identifies the node.
+     * @function
+     * @see cc.Node#getTag
+     * @param {Number} tag A integer that identifies the node.
      */
-    setTag: function (Var) {
-        this.tag = Var;
+    setTag: function (tag) {
+        this.tag = tag;
     },
 
     /**
      * Changes the name that is used to identify the node easily.
+     * @function
      * @param {String} name
      */
     setName: function(name){
@@ -973,6 +1025,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Returns a string that is used to identify the node.
+     * @function
      * @returns {string} A string that identifies the node.
      */
     getName: function(){
@@ -984,6 +1037,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *     Returns a custom user data pointer                                                               <br/>
      *     You can set everything in UserData pointer, a data block, a structure or an object.
      * </p>
+     * @function
      * @return {object}  A custom user data pointer
      */
     getUserData: function () {
@@ -992,10 +1046,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * <p>
-     *    Sets a custom user data pointer                                                                   <br/>
-     *    You can set everything in UserData pointer, a data block, a structure or an object, etc.
+     *    Sets a custom user data reference                                                                   <br/>
+     *    You can set everything in UserData reference, a data block, a structure or an object, etc.
      * </p>
-     * @warning Don't forget to release the memory manually,especially before you change this data pointer, and before this node is autoreleased.
+     * @function
+     * @warning Don't forget to release the memory manually in JSB, especially before you change this data pointer, and before this node is autoreleased.
      * @param {object} Var A custom user data
      */
     setUserData: function (Var) {
@@ -1003,8 +1058,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Returns a user assigned CCObject.                             <br/>
-     * Similar to userData, but instead of holding a void* it holds an id
+     * Returns a user assigned cocos2d object.                             <br/>
+     * Similar to userData, but instead of holding all kinds of data it can only hold a cocos2d object
+     * @function
      * @return {object} A user assigned CCObject
      */
     getUserObject: function () {
@@ -1013,12 +1069,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * <p>
-     *      Returns a user assigned CCObject                                                                                       <br/>
-     *      Similar to UserData, but instead of holding a void* it holds an object.                                               <br/>
-     *      The UserObject will be retained once in this method, and the previous UserObject (if existed) will be release.         <br/>
+     *      Sets a user assigned cocos2d object                                                                                       <br/>
+     *      Similar to UserData, but instead of holding all kinds of data it can only hold a cocos2d object                        <br/>
+     *      In JSB, the UserObject will be retained once in this method, and the previous UserObject (if existed) will be release. <br/>
      *      The UserObject will be released in CCNode's destruction.
      * </p>
-     * @param {object} newValue A user assigned CCObject
+     * @param {object} newValue A user cocos2d object
      */
     setUserObject: function (newValue) {
         if (this.userObject != newValue) {
@@ -1028,7 +1084,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
 
     /**
-     * Returns the arrival order, indicates which children is added previously.
+     * Returns the arrival order, indicates which children should be added previously.
+     * @function
      * @return {Number} The arrival order.
      */
     getOrderOfArrival: function () {
@@ -1042,19 +1099,19 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *     A node which called addChild subsequently will take a larger arrival order,                              <br/>
      *     If two children have the same Z order, the child with larger arrival order will be drawn later.
      * </p>
+     * @function
      * @warning This method is used internally for zOrder sorting, don't change this manually
      * @param {Number} Var  The arrival order.
      */
     setOrderOfArrival: function (Var) {
-        if(this.arrivalOrder == NaN)
-            debugger;
         this.arrivalOrder = Var;
     },
 
     /**
-     * <p>Gets the CCActionManager object that is used by all actions.<br/>
+     * <p>Returns the CCActionManager object that is used by all actions.<br/>
      * (IMPORTANT: If you set a new cc.ActionManager, then previously created actions are going to be removed.)</p>
-     * @see setActionManager()
+     * @function
+     * @see cc.Node#setActionManager
      * @return {cc.ActionManager} A CCActionManager object.
      */
     getActionManager: function () {
@@ -1066,6 +1123,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * <p>Sets the cc.ActionManager object that is used by all actions. </p>
+     * @function
      * @warning If you set a new CCActionManager, then previously created actions will be removed.
      * @param {cc.ActionManager} actionManager A CCActionManager object that is used by all actions.
      */
@@ -1078,9 +1136,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * <p>
-     *   cc.Scheduler used to schedule all "updates" and timers.<br/>
-     *   IMPORTANT: If you set a new cc.Scheduler, then previously created timers/update are going to be removed.
+     *   Returns the cc.Scheduler object used to schedule all "updates" and timers.
      * </p>
+     * @function
      * @return {cc.Scheduler} A CCScheduler object.
      */
     getScheduler: function () {
@@ -1093,7 +1151,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * <p>
      *   Sets a CCScheduler object that is used to schedule all "updates" and timers.           <br/>
+     *   IMPORTANT: If you set a new cc.Scheduler, then previously created timers/update are going to be removed.
      * </p>
+     * @function
      * @warning If you set a new CCScheduler, then previously created timers/update are going to be removed.
      * @param scheduler A cc.Scheduler object that is used to schedule all "update" and timers.
      */
@@ -1106,7 +1166,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Returns a "local" axis aligned bounding box of the node. <br/>
-     * @deprecated
+     * @deprecated since v3.0, please use getBoundingBox instead
      * @return {cc.Rect}
      */
     boundingBox: function(){
@@ -1117,9 +1177,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Returns a "local" axis aligned bounding box of the node. <br/>
      * The returned box is relative only to its parent.
-     * @note This method returns a temporary variable, so it can't returns const CCRect&
-     * @const
-     * @return {cc.Rect}
+     * @function
+     * @return {cc.Rect} The calculated bounding box of the node
      */
     getBoundingBox: function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
@@ -1128,6 +1187,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Stops all running actions and schedulers
+     * @function
      */
     cleanup: function () {
         // actions
@@ -1138,12 +1198,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         cc.eventManager.removeListeners(this);
 
         // timers
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.cleanup);
     },
 
     // composition: GET
     /**
-     * Gets a child from the container given its tag
+     * Returns a child from the container given its tag
+     * @function
      * @param {Number} aTag An identifier to find the child node.
      * @return {cc.Node} a CCNode object whose tag equals to the input parameter
      */
@@ -1159,6 +1220,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         return null;
     },
 
+    /**
+     * Returns a child from the container given its name
+     * @function
+     * @param {Number} name An identifier to find the child node.
+     * @return {cc.Node} a CCNode object whose name equals to the input parameter
+     */
     getChildByName: function(name){
         if(!name){
             cc.log("Invalid name");
@@ -1172,12 +1239,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
         return null;
     },
+
     // composition: ADD
 
-    /** <p>"add" logic MUST only be on this method <br/> </p>
+    /** <p>"add" logic MUST only be in this method <br/> </p>
      *
      * <p>If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.</p>
-     *
+     * @function
      * @param {cc.Node} child  A child node
      * @param {Number} [localZOrder=]  Z order for drawing priority. Please refer to setZOrder(int)
      * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
@@ -1186,29 +1254,24 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var child = child;
         var localZOrder = localZOrder === undefined ? child._localZOrder : localZOrder;
         var tag, name, setTag = false;
-        switch(typeof tag){
-            case 'undefined':
-                tag = undefined;
-                name = child._name;
-                break;
-            case 'string':
-                name = tag;
-                tag = undefined;
-                break;
-            case 'number':
-                setTag = true;
-                name = "";
-                break;
+        if(cc.isUndefined(tag)){
+            tag = undefined;
+            name = child._name;
+        } else if(cc.isString(tag)){
+            name = tag;
+            tag = undefined;
+        } else if(cc.isNumber(tag)){
+            setTag = true;
+            name = "";
         }
 
         cc.assert(child, cc._LogInfos.Node_addChild_3);
         cc.assert(child._parent === null, "child already added. It can't be added again");
 
-        this.addChildHelper(child, localZOrder, tag, name, setTag);
-
+        this._addChildHelper(child, localZOrder, tag, name, setTag);
     },
 
-    addChildHelper: function(child, localZOrder, tag, name, setTag){
+    _addChildHelper: function(child, localZOrder, tag, name, setTag){
         if(!this._children)
             this._children = [];
 
@@ -1239,8 +1302,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Remove itself from its parent node. If cleanup is true, then also remove all actions and callbacks. <br/>
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
      * If the node orphan, then nothing happens.
+     * @function
      * @param {Boolean} cleanup true if all actions and callbacks on this node should be removed, false otherwise.
-     * @see removeFromParentAndCleanup(bool)
+     * @see cc.Node#removeFromParentAndCleanup
      */
     removeFromParent: function (cleanup) {
         if (this._parent) {
@@ -1253,7 +1317,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Removes this node itself from its parent node.  <br/>
      * If the node orphan, then nothing happens.
-     * @deprecated
+     * @deprecated since v3.0, please use removeFromParent() instead
      * @param {Boolean} cleanup true if all actions and callbacks on this node should be removed, false otherwise.
      */
     removeFromParentAndCleanup: function (cleanup) {
@@ -1263,10 +1327,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /** <p>Removes a child from the container. It will also cleanup all running actions depending on the cleanup parameter. </p>
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
-     *<p> "remove" logic MUST only be on this method  <br/>
+     * <p> "remove" logic MUST only be on this method  <br/>
      * If a class wants to extend the 'removeChild' behavior it only needs <br/>
      * to override this method </p>
-     *
+     * @function
      * @param {cc.Node} child  The child node which will be removed.
      * @param {Boolean|null} [cleanup=null]  true if all running actions and callbacks on the child node will be cleanup, false otherwise.
      */
@@ -1286,9 +1350,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Removes a child from the container by tag value. It will also cleanup all running actions depending on the cleanup parameter.
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
+     * @function
      * @param {Number} tag An integer number that identifies a child node
      * @param {Boolean} cleanup true if all running actions and callbacks on the child node will be cleanup, false otherwise.
-     * @see removeChildByTag(int, bool)
+     * @see cc.Node#removeChildByTag
      */
     removeChildByTag: function (tag, cleanup) {
         if (tag === cc.NODE_TAG_INVALID)
@@ -1303,17 +1368,17 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter.
-     * @deprecated
      * @param {Boolean | null } cleanup
      */
     removeAllChildrenWithCleanup: function (cleanup) {
-        cc.log(cc._LogInfos.Node_removeAllChildrenWithCleanup);
+        //cc.log(cc._LogInfos.Node_removeAllChildrenWithCleanup);        //TODO It should be discuss in v3.0
         this.removeAllChildren(cleanup);
     },
 
     /**
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter. <br/>
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
+     * @function
      * @param {Boolean | null } cleanup true if all running actions on all children nodes should be cleanup, false otherwise.
      */
     removeAllChildren: function (cleanup) {
@@ -1342,11 +1407,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
     },
 
-    /**
-     * @param {cc.Node} child
-     * @param {Boolean} doCleanup
-     * @private
-     */
     _detachChild: function (child, doCleanup) {
         // IMPORTANT:
         //  -1st do onExit
@@ -1367,11 +1427,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         cc.arrayRemoveObject(this._children, child);
     },
 
-    /** helper used by reorderChild & add
-     * @param {cc.Node} child
-     * @param {Number} z
-     * @private
-     */
     _insertChild: function (child, z) {
         this._reorderChildDirty = true;
         this._children.push(child);
@@ -1380,6 +1435,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /** Reorders a child according to a new z value. <br/>
      * The child MUST be already added.
+     * @function
      * @param {cc.Node} child An already added child node. It MUST be already added.
      * @param {Number} zOrder Z order for drawing priority. Please refer to setZOrder(int)
      */
@@ -1397,6 +1453,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *     Sorts the children array once before drawing, instead of every time when a child is added or reordered.    <br/>
      *     This approach can improves the performance massively.
      * </p>
+     * @function
      * @note Don't call this manually unless a child added needs to be removed in the same frame
      */
     sortAllChildren: function () {
@@ -1428,18 +1485,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
     },
 
-    // draw
-    /** <p>Override this method to draw your own node. <br/>
-     * The following GL states will be enabled by default: <br/>
-     - glEnableClientState(GL_VERTEX_ARRAY);  <br/>
-     - glEnableClientState(GL_COLOR_ARRAY); <br/>
-     - glEnableClientState(GL_TEXTURE_COORD_ARRAY); <br/>
-     - glEnable(GL_TEXTURE_2D); </p>
-
-     <p>AND YOU SHOULD NOT DISABLE THEM AFTER DRAWING YOUR NODE</p>
-
-     <p>But if you enable any other GL state, you should disable it after drawing your node. </p>
-     * @param {CanvasContext} ctx
+    /**
+     * Render function using the canvas 2d context or WebGL context, internal usage only, please do not call this function
+     * @function
+     * @param {CanvasRenderingContext2D | WebGLRenderingContext} ctx The render context
      */
     draw: function (ctx) {
         // override me
@@ -1447,10 +1496,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         // DON'T draw your stuff outside this method
     },
 
-    /** performs OpenGL view-matrix transformation of it's ancestors.<br/>
-     * Generally the ancestors are already transformed, but in certain cases (eg: attaching a FBO) <br/>
-     * it's necessary to transform the ancestors again.
-     */
+    // Internal use only, do not call it by yourself,
     transformAncestors: function () {
         if (this._parent != null) {
             this._parent.transformAncestors();
@@ -1464,13 +1510,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *     Event callback that is invoked every time when CCNode enters the 'stage'.                                   <br/>
      *     If the CCNode enters the 'stage' with a transition, this event is called when the transition starts.        <br/>
      *     During onEnter you can't access a "sister/brother" node.                                                    <br/>
-     *     If you override onEnter, you shall call its parent's one, e.g., CCNode::onEnter().
+     *     If you override onEnter, you must call its parent's onEnter function with this._super().
      * </p>
+     * @function
      */
     onEnter: function () {
         this._isTransitionFinished = false;
         this._running = true;//should be running before resumeSchedule
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnter);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onEnter);
         this.resume();
     },
 
@@ -1478,20 +1525,23 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * <p>
      *     Event callback that is invoked when the CCNode enters in the 'stage'.                                                        <br/>
      *     If the CCNode enters the 'stage' with a transition, this event is called when the transition finishes.                       <br/>
-     *     If you override onEnterTransitionDidFinish, you shall call its parent's one, e.g. CCNode::onEnterTransitionDidFinish()
+     *     If you override onEnterTransitionDidFinish, you shall call its parent's onEnterTransitionDidFinish with this._super()
      * </p>
+     * @function
      */
     onEnterTransitionDidFinish: function () {
         this._isTransitionFinished = true;
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnterTransitionDidFinish);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onEnterTransitionDidFinish);
     },
 
     /**
      * <p>callback that is called every time the cc.Node leaves the 'stage'.  <br/>
-     * If the cc.Node leaves the 'stage' with a transition, this callback is called when the transition starts. </p>
+     * If the cc.Node leaves the 'stage' with a transition, this callback is called when the transition starts. <br/>
+     * If you override onExitTransitionDidStart, you shall call its parent's onExitTransitionDidStart with this._super()</p>
+     * @function
      */
     onExitTransitionDidStart: function () {
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onExitTransitionDidStart);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onExitTransitionDidStart);
     },
 
     /**
@@ -1499,19 +1549,21 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * callback that is called every time the cc.Node leaves the 'stage'.                                         <br/>
      * If the cc.Node leaves the 'stage' with a transition, this callback is called when the transition finishes. <br/>
      * During onExit you can't access a sibling node.                                                             <br/>
-     * If you override onExit, you shall call its parent's one, e.g., CCNode::onExit().
+     * If you override onExit, you shall call its parent's onExit with this._super().
      * </p>
+     * @function
      */
     onExit: function () {
         this._running = false;
         this.pause();
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onExit);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onExit);
     },
 
     // actions
     /**
      * Executes an action, and returns the action that is executed.<br/>
-     * The node becomes the action's target. Refer to CCAction::getTarget()
+     * The node becomes the action's target. Refer to cc.Action's getTarget()
+     * @function
      * @warning Starting from v0.8 actions don't retain their target anymore.
      * @param {cc.Action} action
      * @return {cc.Action} An Action pointer
@@ -1526,6 +1578,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Stops and removes all actions from the running action list .
+     * @function
      */
     stopAllActions: function () {
         this.actionManager && this.actionManager.removeAllActionsFromTarget(this);
@@ -1533,6 +1586,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Stops and removes an action from the running action list.
+     * @function
      * @param {cc.Action} action An action object to be removed.
      */
     stopAction: function (action) {
@@ -1541,6 +1595,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Removes an action from the running action list by its tag.
+     * @function
      * @param {Number} tag A tag that indicates the action to be removed.
      */
     stopActionByTag: function (tag) {
@@ -1552,8 +1607,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Gets an action from the running action list by its tag.
-     * @see setTag(int), getTag().
+     * Returns an action from the running action list by its tag.
+     * @function
+     * @see cc.Node#getTag and cc.Node#setTag
      * @param {Number} tag
      * @return {cc.Action} The action object with the given tag.
      */
@@ -1565,10 +1621,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         return this.actionManager.getActionByTag(tag, this);
     },
 
-    /** Returns the numbers of actions that are running plus the ones that are schedule to run (actions in actionsToAdd and actions arrays).<br/>
+    /** <p>Returns the numbers of actions that are running plus the ones that are schedule to run (actions in actionsToAdd and actions arrays).<br/>
      *    Composable actions are counted as 1 action. Example:<br/>
      *    If you are running 1 Sequence of 7 actions, it will return 1. <br/>
-     *    If you are running 7 Sequences of 2 actions, it will return 7.
+     *    If you are running 7 Sequences of 2 actions, it will return 7.</p>
+     * @function
      * @return {Number} The number of actions that are running plus the ones that are schedule to run
      */
     getNumberOfRunningActions: function () {
@@ -1578,10 +1635,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     // cc.Node - Callbacks
     // timers
     /**
-     * schedules the "update" method.                                                                           <br/>
+     * <p>schedules the "update" method.                                                                           <br/>
      * It will use the order number 0. This method will be called every frame.                                  <br/>
      * Scheduled methods with a lower order value will be called before the ones that have a higher order value.<br/>
-     * Only one "update" method could be scheduled per node.
+     * Only one "update" method could be scheduled per node.</p>
+     * @function
      */
     scheduleUpdate: function () {
         this.scheduleUpdateWithPriority(0);
@@ -1594,6 +1652,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Scheduled callback functions with a lower priority will be called before the ones that have a higher value.<br/>
      * Only one "update" callback function could be scheduled per node (You can't have 2 'update' callback functions).<br/>
      * </p>
+     * @function
      * @param {Number} priority
      */
     scheduleUpdateWithPriority: function (priority) {
@@ -1601,17 +1660,18 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * unschedules the "update" method.
-     * @see scheduleUpdate();
+     * Unschedules the "update" method.
+     * @function
+     * @see cc.Node#scheduleUpdate
      */
     unscheduleUpdate: function () {
         this.scheduler.unscheduleUpdateForTarget(this);
     },
 
     /**
-     * Schedules a custom selector.         <br/>
-     * If the selector is already scheduled, then the interval parameter will be updated without scheduling it again.
-     *
+     * <p>Schedules a custom selector.         <br/>
+     * If the selector is already scheduled, then the interval parameter will be updated without scheduling it again.</p>
+     * @function
      * @param {function} callback_fn A function wrapped as a selector
      * @param {Number} interval  Tick interval in seconds. 0 means tick every frame. If interval = 0, it's recommended to use scheduleUpdate() instead.
      * @param {Number} repeat    The selector will be executed (repeat + 1) times, you can use kCCRepeatForever for tick infinitely.
@@ -1632,7 +1692,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Schedules a callback function that runs only once, with a delay of 0 or larger
-     * @see schedule(SEL_SCHEDULE, float, unsigned int, float)
+     * @function
+     * @see cc.Node#schedule
      * @param {function} callback_fn  A function wrapped as a selector
      * @param {Number} delay  The amount of time that the first tick will wait before execution.
      */
@@ -1642,7 +1703,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * unschedules a custom callback function.
-     * @see schedule(SEL_SCHEDULE, float, unsigned int, float)
+     * @function
+     * @see cc.Node#schedule
      * @param {function} callback_fn  A function wrapped as a selector
      */
     unschedule: function (callback_fn) {
@@ -1654,8 +1716,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * unschedule all scheduled callback functions: custom callback functions, and the 'update' callback function.<br/>
-     * Actions are not affected by this method.
+     * <p>unschedule all scheduled callback functions: custom callback functions, and the 'update' callback function.<br/>
+     * Actions are not affected by this method.</p>
+     * @function
      */
     unscheduleAllCallbacks: function () {
         this.scheduler.unscheduleAllCallbacksForTarget(this);
@@ -1664,7 +1727,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Resumes all scheduled selectors and actions.<br/>
      * This method is called internally by onEnter
-     * @deprecated
+     * @function
+     * @deprecated since v3.0, please use resume() instead
      */
     resumeSchedulerAndActions: function () {
         cc.log(cc._LogInfos.Node_resumeSchedulerAndActions);
@@ -1672,8 +1736,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Resumes all scheduled selectors and actions.<br/>
-     * This method is called internally by onEnter
+     * <p>Resumes all scheduled selectors and actions.<br/>
+     * This method is called internally by onEnter</p>
      */
     resume: function () {
         this.scheduler.resumeTarget(this);
@@ -1682,9 +1746,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Pauses all scheduled selectors and actions.<br/>
-     * This method is called internally by onExit
-     * @deprecated
+     * <p>Pauses all scheduled selectors and actions.<br/>
+     * This method is called internally by onExit</p>
+     * @deprecated since v3.0, please use pause instead
+     * @function
      */
     pauseSchedulerAndActions: function () {
         cc.log(cc._LogInfos.Node_pauseSchedulerAndActions);
@@ -1692,8 +1757,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Pauses all scheduled selectors and actions.<br/>
-     * This method is called internally by onExit
+     * <p>Pauses all scheduled selectors and actions.<br/>
+     * This method is called internally by onExit</p>
+     * @function
      */
     pause: function () {
         this.scheduler.pauseTarget(this);
@@ -1702,10 +1768,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     *<p>  Sets the additional transform.<br/>
+     *<p>Sets the additional transform.<br/>
      *  The additional transform will be concatenated at the end of getNodeToParentTransform.<br/>
      *  It could be used to simulate `parent-child` relationship between two nodes (e.g. one is in BatchNode, another isn't).<br/>
      *  </p>
+     *  @function
+     *  @param {cc.AffineTransform} additionalTransform  The additional transform
      *  @example
      * // create a batchNode
      * var batch= cc.SpriteBatchNode.create("Icon-114.png");
@@ -1757,6 +1825,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Returns the matrix that transform parent's space coordinates to the node's (local) space coordinates.<br/>
      * The matrix is in Pixels.
+     * @function
      * @return {cc.AffineTransform}
      */
     getParentToNodeTransform: function () {
@@ -1768,14 +1837,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * @deprecated
+     * @function
+     * @deprecated since v3.0, please use getParentToNodeTransform instead
      */
     parentToNodeTransform: function () {
         return this.getParentToNodeTransform();
     },
 
     /**
-     *  Returns the world affine transform matrix. The matrix is in Pixels.
+     * Returns the world affine transform matrix. The matrix is in Pixels.
+     * @function
      * @return {cc.AffineTransform}
      */
     getNodeToWorldTransform: function () {
@@ -1786,7 +1857,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * @deprecated
+     * @function
+     * @deprecated since v3.0, please use getNodeToWorldTransform instead
      */
     nodeToWorldTransform: function(){
         return this.getNodeToWorldTransform();
@@ -1794,6 +1866,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Returns the inverse world affine transform matrix. The matrix is in Pixels.
+     * @function
      * @return {cc.AffineTransform}
      */
     getWorldToNodeTransform: function () {
@@ -1801,7 +1874,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * @deprecated
+     * @function
+     * @deprecated since v3.0, please use getWorldToNodeTransform instead
      */
     worldToNodeTransform: function () {
         return this.getWorldToNodeTransform();
@@ -1809,6 +1883,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Converts a Point to node (local) space coordinates. The result is in Points.
+     * @function
      * @param {cc.Point} worldPoint
      * @return {cc.Point}
      */
@@ -1818,6 +1893,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Converts a Point to world space coordinates. The result is in Points.
+     * @function
      * @param {cc.Point} nodePoint
      * @return {cc.Point}
      */
@@ -1829,6 +1905,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Converts a Point to node (local) space coordinates. The result is in Points.<br/>
      * treating the returned/received node point as anchor relative.
+     * @function
      * @param {cc.Point} worldPoint
      * @return {cc.Point}
      */
@@ -1839,6 +1916,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Converts a local Point to world space coordinates.The result is in Points.<br/>
      * treating the returned/received node point as anchor relative.
+     * @function
      * @param {cc.Point} nodePoint
      * @return {cc.Point}
      */
@@ -1854,7 +1932,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /** convenience methods which take a cc.Touch instead of cc.Point
-     * @param {cc.Touch} touch
+     * @function
+     * @param {cc.Touch} touch The touch object
      * @return {cc.Point}
      */
     convertTouchToNodeSpace: function (touch) {
@@ -1866,7 +1945,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * converts a cc.Touch (world coordinates) into a local coordiante. This method is AR (Anchor Relative).
-     * @param {cc.Touch}touch
+     * @function
+     * @param {cc.Touch} touch The touch object
      * @return {cc.Point}
      */
     convertTouchToNodeSpaceAR: function (touch) {
@@ -1876,9 +1956,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Update will be called automatically every frame if "scheduleUpdate" is called, and the node is "live" <br/>
-     * (override me)
-     * @param {Number} dt deltaTime
+     * Update will be called automatically every frame if "scheduleUpdate" is called when the node is "live".<br/>
+     * The default behavior is to invoke the visit function of node's componentContainer.<br/>
+     * Override me to implement your own update logic.
+     * @function
+     * @param {Number} dt Delta time since last update
      */
     update: function (dt) {
         if (this._componentContainer && !this._componentContainer.isEmpty())
@@ -1893,33 +1975,57 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * As the result, you apply CCSpriteBatchNode's optimization on your customed CCNode.            <br/>
      * e.g., batchNode->addChild(myCustomNode), while you can only addChild(sprite) before.
      * </p>
+     * @function
      */
     updateTransform: function () {
         // Recursively iterate over children
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.updateTransform);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.updateTransform);
     },
 
     /**
-     * Currently JavaScript Bindings (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
+     * <p>Currently JavaScript Bindings (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
      * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB.
-     * This is a hack, and should be removed once JSB fixes the retain/release bug
+     * This is a hack, and should be removed once JSB fixes the retain/release bug<br/>
+     * You will need to retain an object if you created an engine object and haven't added it into the scene graph during the same frame.<br/>
+     * Otherwise, JSB's native autorelease pool will consider this object a useless one and release it directly,<br/>
+     * when you want to use it later, a "Invalid Native Object" error will be raised.<br/>
+     * The retain function can increase a reference count for the native object to avoid it being released,<br/>
+     * you need to manually invoke release function when you think this object is no longer needed, otherwise, there will be memory learks.<br/>
+     * retain and release function call should be paired in developer's game code.</p>
+     * @function
+     * @see cc.Node#release
      */
     retain: function () {
     },
+    /**
+     * <p>Currently JavaScript Bindings (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
+     * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB.
+     * This is a hack, and should be removed once JSB fixes the retain/release bug<br/>
+     * You will need to retain an object if you created an engine object and haven't added it into the scene graph during the same frame.<br/>
+     * Otherwise, JSB's native autorelease pool will consider this object a useless one and release it directly,<br/>
+     * when you want to use it later, a "Invalid Native Object" error will be raised.<br/>
+     * The retain function can increase a reference count for the native object to avoid it being released,<br/>
+     * you need to manually invoke release function when you think this object is no longer needed, otherwise, there will be memory learks.<br/>
+     * retain and release function call should be paired in developer's game code.</p>
+     * @function
+     * @see cc.Node#retain
+     */
     release: function () {
     },
 
     /**
-     * gets a component by its name
-     * @param {String} name
-     * @return {cc.Component} gets a component by its name
+     * Returns a component identified by the name given.
+     * @function
+     * @param {String} name The name to search for
+     * @return {cc.Component} The component found
      */
     getComponent: function (name) {
         return this._componentContainer.getComponent(name);
     },
 
     /**
-     * adds a component
+     * Adds a component to the node's component container.
+     * @function
      * @param {cc.Component} component
      */
     addComponent: function (component) {
@@ -1927,15 +2033,17 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * removes a component by its name or a component
-     * @param {String|cc.Component} name
+     * Removes a component identified by the given name or removes the component object given
+     * @function
+     * @param {String|cc.Component} component
      */
-    removeComponent: function (name) {
-        return this._componentContainer.remove(name);
+    removeComponent: function (component) {
+        return this._componentContainer.remove(component);
     },
 
     /**
-     * removes all components
+     * Removes all components
+     * @function
      */
     removeAllComponents: function () {
         this._componentContainer.removeAll();
@@ -1943,6 +2051,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     grid: null,
 
+    /**
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+     * @function
+     */
     ctor: null,
 
     /**
@@ -1953,18 +2065,18 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     visit: null,
 
     /**
-     * Performs OpenGL view-matrix transformation based on position, scale, rotation and other attributes.
+     * Performs view-matrix transformation based on position, scale, rotation and other attributes.
      * @function
-     * @param {CanvasRenderingContext2D|null} ctx Render context
+     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx Render context
      */
     transform: null,
 
     /**
-     * Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.<br/>
-     * The matrix is in Pixels.
+     * <p>Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.<br/>
+     * The matrix is in Pixels.</p>
      * @function
      * @return {cc.AffineTransform}
-     * @deprecated
+     * @deprecated since v3.0, please use getNodeToParentTransform instead
      */
     nodeToParentTransform: function(){
         return this.getNodeToParentTransform();
@@ -1974,7 +2086,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.<br/>
      * The matrix is in Pixels.
      * @function
-     * @return {cc.AffineTransform}
+     * @return {cc.AffineTransform} The affine transform object
      */
     getNodeToParentTransform: null,
 
@@ -2000,7 +2112,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Returns a camera object that lets you move the node using a gluLookAt
+     * @function
      * @return {cc.Camera} A CCCamera object that lets you move the node using a gluLookAt
+     * @deprecated since v3.0, no alternative function
      * @example
      * var camera = node.getCamera();
      * camera.setEye(0, 0, 415/2);
@@ -2014,16 +2128,22 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Returns a grid object that is used when applying effects
+     * <p>Returns a grid object that is used when applying effects.<br/>
+     * This function have been deprecated, please use cc.NodeGrid to run grid actions</p>
+     * @function
      * @return {cc.GridBase} A CCGrid object that is used when applying effects
+     * @deprecated since v3.0, no alternative function
      */
     getGrid: function () {
         return this.grid;
     },
 
     /**
-     * Changes a grid object that is used when applying effects
+     * <p>Changes a grid object that is used when applying effects<br/>
+     * This function have been deprecated, please use cc.NodeGrid to run grid actions</p>
+     * @function
      * @param {cc.GridBase} grid A CCGrid object that is used when applying effects
+     * @deprecated since v3.0, no alternative function
      */
     setGrid: function (grid) {
         this.grid = grid;
@@ -2031,7 +2151,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Return the shader program currently used for this node
-     * @return {cc.GLProgram} The shader program currelty used for this node
+     * @function
+     * @return {cc.GLProgram} The shader program currently used for this node
      */
     getShaderProgram: function () {
         return this._shaderProgram;
@@ -2044,9 +2165,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *     Since v2.0, each rendering node must set its shader program.
      *     It should be set in initialize phase.
      * </p>
+     * @function
      * @param {cc.GLProgram} newShaderProgram The shader program which fetchs from CCShaderCache.
      * @example
-     *  node.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+     * node.setGLProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
      */
     setShaderProgram: function (newShaderProgram) {
         this._shaderProgram = newShaderProgram;
@@ -2054,7 +2176,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Returns the state of OpenGL server side.
+     * @function
      * @return {Number} The state of OpenGL server side.
+     * @deprecated since v3.0, no need anymore
      */
     getGLServerState: function () {
         return this._glServerState;
@@ -2062,19 +2186,23 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Sets the state of OpenGL server side.
+     * @function
      * @param {Number} state The state of OpenGL server side.
+     * @deprecated since v3.0, no need anymore
      */
     setGLServerState: function (state) {
         this._glServerState = state;
     },
 
-    /** returns a "world" axis aligned bounding box of the node. <br/>
+    /**
+     * Returns a "world" axis aligned bounding box of the node.
+     * @function
      * @return {cc.Rect}
      */
     getBoundingBoxToWorld: function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
-        var trans = this.nodeToWorldTransform();
-        rect = cc.rectApplyAffineTransform(rect, this.nodeToWorldTransform());
+        var trans = this.getNodeToWorldTransform();
+        rect = cc.rectApplyAffineTransform(rect, this.getNodeToWorldTransform());
 
         //query child's BoundingBox
         if (!this._children)
@@ -2184,7 +2312,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Get the opacity of Node
+     * Returns the opacity of Node
+     * @function
      * @returns {number} opacity
      */
     getOpacity: function () {
@@ -2192,7 +2321,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Get the displayed opacity of Node
+     * Returns the displayed opacity of Node,
+     * the difference between displayed opacity and opacity is that displayed opacity is calculated based on opacity and parent node's opacity when cascade opacity enabled.
+     * @function
      * @returns {number} displayed opacity
      */
     getDisplayedOpacity: function () {
@@ -2200,7 +2331,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Set the opacity of Node
+     * Sets the opacity of Node
+     * @function
      * @param {Number} opacity
      */
     setOpacity: function (opacity) {
@@ -2216,6 +2348,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Update displayed opacity
+     * @function
      * @param {Number} parentOpacity
      */
     updateDisplayedOpacity: function (parentOpacity) {
@@ -2231,7 +2364,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * whether or not it will set cascade opacity.
+     * Returns whether node's opacity value affect its child nodes.
+     * @function
      * @returns {boolean}
      */
     isCascadeOpacityEnabled: function () {
@@ -2239,7 +2373,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Enable or disable cascade opacity
+     * Enable or disable cascade opacity, if cascade enabled, child nodes' opacity will be the multiplication of parent opacity and its own opacity.
+     * @function
      * @param {boolean} cascadeOpacityEnabled
      */
     setCascadeOpacityEnabled: function (cascadeOpacityEnabled) {
@@ -2272,7 +2407,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Get the color of Node
+     * Returns the color of Node
+     * @function
      * @returns {cc.Color}
      */
     getColor: function () {
@@ -2281,7 +2417,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Get the displayed color of Node
+     * Returns the displayed color of Node,
+     * the difference between displayed color and color is that displayed color is calculated based on color and parent node's color when cascade color enabled.
+     * @function
      * @returns {cc.Color}
      */
     getDisplayedColor: function () {
@@ -2290,8 +2428,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Set the color of Node.
-     * @param {cc.Color} color When color not set alpha like cc.color(128,128,128),only change the color. When color set alpha like cc.color(128,128,128,100),then change the color and alpha.
+     * <p>Sets the color of Node.<br/>
+     * When color doesn't include opacity value like cc.color(128,128,128), this function only change the color. <br/>
+     * When color include opacity like cc.color(128,128,128,100), then this function will change the color and the opacity.</p>
+     * @function
+     * @param {cc.Color} color The new color given
      */
     setColor: function (color) {
         var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
@@ -2312,7 +2453,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * update the displayed color of Node
+     * Update the displayed color of Node
+     * @function
      * @param {cc.Color} parentColor
      */
     updateDisplayedColor: function (parentColor) {
@@ -2332,7 +2474,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * whether or not it will set cascade color.
+     * Returns whether node's color value affect its child nodes.
+     * @function
      * @returns {boolean}
      */
     isCascadeColorEnabled: function () {
@@ -2340,7 +2483,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Enable or disable cascade color
+     * Enable or disable cascade color, if cascade enabled, child nodes' opacity will be the cascade value of parent color and its own color.
      * @param {boolean} cascadeColorEnabled
      */
     setCascadeColorEnabled: function (cascadeColorEnabled) {
@@ -2376,32 +2519,36 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
     },
 
+    /**
+     * Set whether color should be changed with the opacity value,
+     * useless in cc.Node, but this function is overrided in some class to have such behavior.
+     * @function
+     * @param {Boolean} value
+     */
     setOpacityModifyRGB: function (opacityValue) {
     },
 
+    /**
+     * Get whether color should be changed with the opacity value
+     * @function
+     * @return {Boolean}
+     */
     isOpacityModifyRGB: function () {
         return false;
     }
 });
 
 /**
- * allocates and initializes a node.
- * @deprecated
+ * Allocates and initializes a node.
+ * @deprecated since v3.0, please use new construction instead.
+ * @see cc.Node
  * @return {cc.Node}
- * @example
- * // example
- * var node = cc.Node.create();
  */
 cc.Node.create = function () {
     return new cc.Node();
 };
 
-/**
- * cc.Node's state callback type
- * @constant
- * @type Number
- */
-cc.Node.StateCallbackType = {onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, updateTransform: 5, onExitTransitionDidStart: 6, sortAllChildren: 7};
+cc.Node._StateCallbackType = {onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, updateTransform: 5, onExitTransitionDidStart: 6, sortAllChildren: 7};
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
@@ -2540,25 +2687,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p = null;
 
 } else {
-    cc.assert(typeof cc._tmp.WebGLCCNode === "function", cc._LogInfos.MissingFile, "BaseNodesWebGL.js");
+    cc.assert(cc.isFunction(cc._tmp.WebGLCCNode), cc._LogInfos.MissingFile, "BaseNodesWebGL.js");
     cc._tmp.WebGLCCNode();
     delete cc._tmp.WebGLCCNode;
 }
-cc.assert(typeof cc._tmp.PrototypeCCNode === "function", cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
+cc.assert(cc.isFunction(cc._tmp.PrototypeCCNode), cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
 cc._tmp.PrototypeCCNode();
 delete cc._tmp.PrototypeCCNode;
-
-/**
- * Node on enter
- * @constant
- */
-cc.Node.ON_ENTER = 0;
-/**
- * Node on exit
- * @constant
- */
-cc.Node.ON_EXIT = 1;
-
-cc.Node.ON_ENTER_TRANSITION_DID_FINISH = 2;
-cc.Node.ON_EXIT_TRANSITOIN_DID_START = 3;
-cc.Node.ON_CLEAN_UP = 4;

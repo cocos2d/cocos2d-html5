@@ -29,18 +29,38 @@ cc._tmp = cc._tmp || {};
 
 cc._tmp.WebGLColor = function () {
     //redefine some types with ArrayBuffer for WebGL
+    /**
+     * @class cc.Color
+     * @param {Number} r
+     * @param {Number}g
+     * @param {Number} b
+     * @param {Number} a
+     * @param {Array} arrayBuffer
+     * @param {Number} offset
+     * @returns {cc.Color}
+     */
     cc.color = function (r, g, b, a, arrayBuffer, offset) {
         if (r === undefined)
             return new cc.Color(0, 0, 0, 255, arrayBuffer, offset);
-        if (typeof r === "string") {
+        if (cc.isString(r)) {
             var color = cc.hexToColor(r);
             return new cc.Color(color.r, color.g, color.b, color.a);
         }
-        if (typeof r === "object")
+        if (cc.isObject(r))
             return new cc.Color(r.r, r.g, r.b, r.a, r.arrayBuffer, r.offset);
         return new cc.Color(r, g, b, a, arrayBuffer, offset);
     };
     //redefine cc.Color
+    /**
+     * @class cc.Color
+     * @param {Number} r
+     * @param {Number}g
+     * @param {Number} b
+     * @param {Number} a
+     * @param {Array} arrayBuffer
+     * @param {Number} offset
+     * @constructor
+     */
     cc.Color = function (r, g, b, a, arrayBuffer, offset) {
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Color.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
@@ -54,12 +74,15 @@ cc._tmp.WebGLColor = function () {
         this._rU8[0] = r || 0;
         this._gU8[0] = g || 0;
         this._bU8[0] = b || 0;
-        this._aU8[0] = a || 255;
+        this._aU8[0] = (a == null) ? 255 : a;
 
-        if (a === undefined) {
+        if (a === undefined)
             this.a_undefined = true;
-        }
     };
+    /**
+     * @constant
+     * @type {number}
+     */
     cc.Color.BYTES_PER_ELEMENT = 4;
 
     var _p = cc.Color.prototype;
@@ -103,6 +126,14 @@ cc._tmp.WebGLColor = function () {
 
 
     //redefine cc.Vertex2F
+    /**
+     * @class cc.Vertex2F
+     * @param {Number} x
+     * @param {Number}y
+     * @param {Array} arrayBuffer
+     * @param {Number}offset
+     * @constructor
+     */
     cc.Vertex2F = function (x, y, arrayBuffer, offset) {
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Vertex2F.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
@@ -112,6 +143,10 @@ cc._tmp.WebGLColor = function () {
         this._xF32[0] = x || 0;
         this._yF32[0] = y || 0;
     };
+    /**
+     * @constant
+     * @type {number}
+     */
     cc.Vertex2F.BYTES_PER_ELEMENT = 8;
     Object.defineProperties(cc.Vertex2F.prototype, {
         x: {
@@ -135,6 +170,15 @@ cc._tmp.WebGLColor = function () {
     });
 
     // redefine cc.Vertex3F
+    /**
+     * @class cc.Vertex3F
+     * @param {Number} x
+     * @param {Number} y
+     * @param {Number}z
+     * @param {Array} arrayBuffer
+     * @param {Number} offset
+     * @constructor
+     */
     cc.Vertex3F = function (x, y, z, arrayBuffer, offset) {
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Vertex3F.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
@@ -147,6 +191,10 @@ cc._tmp.WebGLColor = function () {
         this._zF32 = new Float32Array(locArrayBuffer, locOffset + Float32Array.BYTES_PER_ELEMENT * 2, 1);
         this._zF32[0] = z || 0;
     };
+    /**
+     * @constant
+     * @type {number}
+     */
     cc.Vertex3F.BYTES_PER_ELEMENT = 12;
     Object.defineProperties(cc.Vertex3F.prototype, {
         x: {
@@ -179,6 +227,14 @@ cc._tmp.WebGLColor = function () {
     });
 
     // redefine cc.Tex2F
+    /**
+     * @class cc.Tex2F
+     * @param {Number} u
+     * @param {Number} v
+     * @param {Array} arrayBuffer
+     * @param {Number} offset
+     * @constructor
+     */
     cc.Tex2F = function (u, v, arrayBuffer, offset) {
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Tex2F.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
@@ -188,6 +244,10 @@ cc._tmp.WebGLColor = function () {
         this._uF32[0] = u || 0;
         this._vF32[0] = v || 0;
     };
+    /**
+     * @constants
+     * @type {number}
+     */
     cc.Tex2F.BYTES_PER_ELEMENT = 8;
     Object.defineProperties(cc.Tex2F.prototype, {
         u: {
@@ -211,6 +271,16 @@ cc._tmp.WebGLColor = function () {
     });
 
     //redefine cc.Quad2
+    /**
+     * @class cc.Quad2
+     * @param {cc.Vertex2F} tl
+     * @param {cc.Vertex2F} tr
+     * @param {cc.Vertex2F} bl
+     * @param {cc.Vertex2F} br
+     * @param {Array} arrayBuffer
+     * @param {Number} offset
+     * @constructor
+     */
     cc.Quad2 = function (tl, tr, bl, br, arrayBuffer, offset) {
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Quad2.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
@@ -221,11 +291,15 @@ cc._tmp.WebGLColor = function () {
         this._bl = bl ? new cc.Vertex2F(bl.x, bl.y, locArrayBuffer, locElementLen * 2) : new cc.Vertex2F(0, 0, locArrayBuffer, locElementLen * 2);
         this._br = br ? new cc.Vertex2F(br.x, br.y, locArrayBuffer, locElementLen * 3) : new cc.Vertex2F(0, 0, locArrayBuffer, locElementLen * 3);
     };
+    /**
+     * @constant
+     * @type {number}
+     */
     cc.Quad2.BYTES_PER_ELEMENT = 32;
 
     /**
      * A 3D Quad. 4 * 3 floats
-     * @Class
+     * @Class cc.Quad3
      * @Construct
      * @param {cc.Vertex3F} bl1
      * @param {cc.Vertex3F} br1
@@ -283,6 +357,15 @@ cc._tmp.WebGLColor = function () {
     });
 
     //redefine cc.V3F_C4B_T2F
+    /**
+     * @class cc.V3F_C4B_T2F
+     * @param {cc.Vertex3F} vertices
+     * @param { cc.color} colors
+     * @param {cc.Tex2F} texCoords
+     * @param {Array} arrayBuffer
+     * @param {Number} offset
+     * @constructor
+     */
     cc.V3F_C4B_T2F = function (vertices, colors, texCoords, arrayBuffer, offset) {
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V3F_C4B_T2F.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
@@ -295,6 +378,10 @@ cc._tmp.WebGLColor = function () {
         this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT) :
             new cc.Tex2F(0, 0, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT);
     };
+    /**
+     * @constant
+     * @type {number}
+     */
     cc.V3F_C4B_T2F.BYTES_PER_ELEMENT = 24;
     Object.defineProperties(cc.V3F_C4B_T2F.prototype, {
         vertices: {
@@ -335,6 +422,16 @@ cc._tmp.WebGLColor = function () {
     });
 
     //redefine cc.V3F_C4B_T2F_Quad
+    /**
+     * @cc.class cc.V3F_C4B_T2F_Quad
+     * @param {cc.V3F_C4B_T2F} tl
+     * @param {cc.V3F_C4B_T2F} bl
+     * @param {cc.V3F_C4B_T2F} tr
+     * @param {cc.V3F_C4B_T2F} br
+     * @param {Array} arrayBuffer
+     * @param {Number} offset
+     * @constructor
+     */
     cc.V3F_C4B_T2F_Quad = function (tl, bl, tr, br, arrayBuffer, offset) {
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
@@ -349,6 +446,10 @@ cc._tmp.WebGLColor = function () {
         this._br = br ? new cc.V3F_C4B_T2F(br.vertices, br.colors, br.texCoords, locArrayBuffer, locOffset + locElementLen * 3) :
             new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset + locElementLen * 3);
     };
+    /**
+     * @constant
+     * @type {number}
+     */
     cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT = 96;
     Object.defineProperties(cc.V3F_C4B_T2F_Quad.prototype, {
         tl: {
@@ -406,10 +507,19 @@ cc._tmp.WebGLColor = function () {
             enumerable: true
         }
     });
+    /**
+     * @function
+     * @returns {cc.V3F_C4B_T2F_Quad}
+     */
     cc.V3F_C4B_T2F_QuadZero = function () {
         return new cc.V3F_C4B_T2F_Quad();
     };
 
+    /**
+     * @function
+     * @param {cc.V3F_C4B_T2F_Quad} sourceQuad
+     * @return {cc.V3F_C4B_T2F_Quad}
+     */
     cc.V3F_C4B_T2F_QuadCopy = function (sourceQuad) {
         if (!sourceQuad)
             return  cc.V3F_C4B_T2F_QuadZero();
@@ -432,6 +542,11 @@ cc._tmp.WebGLColor = function () {
         };
     };
 
+    /**
+     * @function
+     * @param {Array} sourceQuads
+     * @returns {Array}
+     */
     cc.V3F_C4B_T2F_QuadsCopy = function (sourceQuads) {
         if (!sourceQuads)
             return [];
@@ -444,6 +559,15 @@ cc._tmp.WebGLColor = function () {
     };
 
     //redefine cc.V2F_C4B_T2F
+    /**
+     * @class cc.V2F_C4B_T2F
+     * @param {new cc.Vertex2F} vertices
+     * @param {cc.color} colors
+     * @param {cc.Tex2F} texCoords
+     * @param {Array} arrayBuffer
+     * @param {Number} offset
+     * @constructor
+     */
     cc.V2F_C4B_T2F = function (vertices, colors, texCoords, arrayBuffer, offset) {
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V2F_C4B_T2F.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
@@ -456,6 +580,10 @@ cc._tmp.WebGLColor = function () {
         this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT) :
             new cc.Tex2F(0, 0, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT);
     };
+    /**
+     * @constant
+     * @type {number}
+     */
     cc.V2F_C4B_T2F.BYTES_PER_ELEMENT = 20;
     Object.defineProperties(cc.V2F_C4B_T2F.prototype, {
         vertices: {
@@ -494,6 +622,15 @@ cc._tmp.WebGLColor = function () {
     });
 
     //redefine cc.V2F_C4B_T2F_Triangle
+    /**
+     * @class cc.V2F_C4B_T2F_Triangle
+     * @param {cc.V2F_C4B_T2F} a
+     * @param {cc.V2F_C4B_T2F} b
+     * @param {cc.V2F_C4B_T2F} c
+     * @param {Array} arrayBuffer
+     * @param {Number} offset
+     * @constructor
+     */
     cc.V2F_C4B_T2F_Triangle = function (a, b, c, arrayBuffer, offset) {
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
@@ -506,6 +643,10 @@ cc._tmp.WebGLColor = function () {
         this._c = c ? new cc.V2F_C4B_T2F(c.vertices, c.colors, c.texCoords, locArrayBuffer, locOffset + locElementLen * 2) :
             new cc.V2F_C4B_T2F(null, null, null, locArrayBuffer, locOffset + locElementLen * 2);
     };
+    /**
+     * @constant
+     * @type {number}
+     */
     cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT = 60;
     Object.defineProperties(cc.V2F_C4B_T2F_Triangle.prototype, {
         a: {

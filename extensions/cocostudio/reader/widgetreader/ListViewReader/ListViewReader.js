@@ -23,14 +23,27 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.ListViewReader = {
-
+/**
+ * The ccui.ListView's properties reader for GUIReader.
+ * @class
+ * @name ccs.ListViewReader
+ **/
+ccs.ListViewReader = /** @lends ccs.ListViewReader# */{
+    /**
+     * Gets the ccs.ListViewReader.
+     * @deprecated since v3.0, please use ccs.ListViewReader directly.
+     * @returns {ccs.ListViewReader}
+     */
     getInstance: function(){
         return ccs.ListViewReader;
     },
 
+    /**
+     * Sets ccui.ListView's properties from json dictionary.
+     * @param {ccui.ListView} widget
+     * @param {Object} options
+     */
     setPropsFromJsonDictionary: function(widget, options){
-
         ccs.ScrollViewReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var listView = widget;

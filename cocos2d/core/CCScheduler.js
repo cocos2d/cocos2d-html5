@@ -32,70 +32,11 @@
  */
 cc.PRIORITY_NON_SYSTEM = cc.PRIORITY_SYSTEM + 1;
 
-/**
- * Verify Array's Type
- * @param {Array} arr
- * @param {function} type
- * @return {Boolean}
- * @function
- */
-cc.arrayVerifyType = function (arr, type) {
-    if (arr && arr.length > 0) {
-        for (var i = 0; i < arr.length; i++) {
-            if (!(arr[i] instanceof  type)) {
-                cc.log(cc._LogInfos.arrayVerifyType);
-                return false;
-            }
-        }
-    }
-    return true;
-};
-
-/**
- * Searches for the first occurance of object and removes it. If object is not found the function has no effect.
- * @function
- * @param {Array} arr Source Array
- * @param {*} delObj  remove object
- */
-cc.arrayRemoveObject = function (arr, delObj) {
-    for (var i = 0, l = arr.length; i < l; i++) {
-        if (arr[i] == delObj) {
-            arr.splice(i, 1);
-            break;
-        }
-    }
-};
-
-/**
- * Removes from arr all values in minusArr. For each Value in minusArr, the first matching instance in arr will be removed.
- * @function
- * @param {Array} arr Source Array
- * @param {Array} minusArr minus Array
- */
-cc.arrayRemoveArray = function (arr, minusArr) {
-    for (var i = 0, l = minusArr.length; i < l; i++) {
-        cc.arrayRemoveObject(arr, minusArr[i]);
-    }
-};
-
-/**
- * Inserts some objects at index
- * @function
- * @param {Array} arr
- * @param {Array} addObjs
- * @param {Number} index
- * @return {Array}
- */
-cc.arrayAppendObjectsToIndex = function(arr, addObjs,index){
-    arr.splice.apply(arr, [index, 0].concat(addObjs));
-    return arr;
-};
-
 //data structures
 /**
  * A list double-linked list used for "updates with priority"
  * @Class
- * @Construct
+ * @name cc.ListEntry
  * @param {cc.ListEntry} prev
  * @param {cc.ListEntry} next
  * @param {cc.Class} target not retained (retained by hashUpdateEntry)
@@ -113,9 +54,9 @@ cc.ListEntry = function (prev, next, target, priority, paused, markedForDeletion
 };
 
 /**
- *  a update entry list
+ * A update entry list
  * @Class
- * @Construct
+ * @name cc.HashUpdateEntry
  * @param {cc.ListEntry} list Which list does it belong to ?
  * @param {cc.ListEntry} entry entry in the list
  * @param {cc.Class} target hash key (retained)
@@ -132,7 +73,6 @@ cc.HashUpdateEntry = function (list, entry, target, hh) {
 /**
  * Hash Element used for "selectors with interval"
  * @Class
- * @Construct
  * @param {Array} timers
  * @param {cc.Class} target  hash key (retained)
  * @param {Number} timerIndex
@@ -208,7 +148,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
 
     _doCallback:function(){
         var self = this;
-        if (typeof(self._callback) == "string")
+        if (cc.isString(self._callback))
             self._target[self._callback](self._elapsed);
         else // if (typeof(this._callback) == "function") {
             self._callback.call(self._target, self._elapsed);
@@ -293,9 +233,6 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     _currentTargetSalvaged:false,
     _updateHashLocked:false, //If true unschedule will not remove anything from a hash. Elements will only be marked for deletion.
 
-    /**
-     * Constructor
-     */
     ctor:function () {
         var self = this;
         self._timeScale = 1.0;
@@ -388,7 +325,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     },
 
     /**
-     * returns time scale of scheduler
+     * Returns time scale of scheduler
      * @return {Number}
      */
     getTimeScale:function () {
@@ -691,7 +628,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     /**
      * Pause all selectors from all targets with a minimum priority. <br/>
      * You should only call this with kCCPriorityNonSystemMin or higher.
-     * @param minPriority
+     * @param {Number} minPriority
      */
     pauseAllTargetsWithMinPriority:function (minPriority) {
         var idsWithSelectors = [];
@@ -721,7 +658,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     /**
      * Resume selectors on a set of targets.<br/>
      * This can be useful for undoing a call to pauseAllCallbacks.
-     * @param targetsToResume
+     * @param {Array} targetsToResume
      */
     resumeTargets:function (targetsToResume) {
         if (!targetsToResume)

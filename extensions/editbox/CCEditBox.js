@@ -145,6 +145,10 @@ cc.EDITBOX_INPUT_FLAG_INITIAL_CAPS_SENTENCE = 3;
  */
 cc.EDITBOX_INPUT_FLAG_INITIAL_CAPS_ALL_CHARACTERS = 4;
 
+/**
+ * @class
+ * @extends cc.Class
+ */
 cc.EditBoxDelegate = cc.Class.extend({
     /**
      * This method is called when an edit box gains focus after keyboard is shown.
@@ -226,11 +230,11 @@ cc.EditBox = cc.ControlButton.extend({
     _className: "EditBox",
 
     /**
-     * @constructor
-     * @param size
-     * @param normal9SpriteBg
-     * @param press9SpriteBg
-     * @param disabled9SpriteBg
+     * constructor of cc.EditBox
+     * @param {cc.Size} size
+     * @param {cc.Scale9Sprite} normal9SpriteBg
+     * @param {cc.Scale9Sprite} press9SpriteBg
+     * @param {cc.Scale9Sprite} disabled9SpriteBg
      */
     ctor: function (size, normal9SpriteBg, press9SpriteBg, disabled9SpriteBg) {
         cc.ControlButton.prototype.ctor.call(this);
@@ -254,6 +258,7 @@ cc.EditBox = cc.ControlButton.extend({
         tmpEdTxt.style.height = "100%";
         tmpEdTxt.style.active = 0;
         tmpEdTxt.style.outline = "medium";
+        tmpEdTxt.style.padding = "0";
         var onCanvasClick = function() {
             tmpEdTxt.blur();
         };
@@ -550,6 +555,7 @@ cc.EditBox = cc.ControlButton.extend({
     /* override functions */
     /**
      * Set the delegate for edit box.
+     * @param {cc.EditBoxDelegate} delegate
      */
     setDelegate: function (delegate) {
         this._delegate = delegate;
@@ -610,7 +616,11 @@ cc.EditBox = cc.ControlButton.extend({
         //this._editBoxImpl.openKeyboard();
     },
 
-    //HTML5 Only
+    /**
+     * @warning HTML5 Only
+     * @param {cc.Size} size
+     * @param {cc.color} bgColor
+     */
     initWithBackgroundColor: function (size, bgColor) {
         this._edWidth = size.width;
         this.dom.style.width = this._edWidth.toString() + "px";
@@ -671,6 +681,12 @@ cc.defineGetterSetter(_p, "returnType", null, _p.setReturnType);
 
 _p = null;
 
+/**
+ * get the rect of a node in world coordinate frame
+ * @function
+ * @param {cc.Node} node
+ * @return {cc.rect}
+ */
 cc.EditBox.getRect = function (node) {
     var contentSize = node.getContentSize();
     var rect = cc.rect(0, 0, contentSize.width, contentSize.height);
@@ -679,11 +695,12 @@ cc.EditBox.getRect = function (node) {
 
 /**
  * create a edit box with size and background-color or
- * @deprecated
+ * @deprecated since v3.0, please use new cc.EditBox(size, normal9SpriteBg, press9SpriteBg, disabled9SpriteBg) instead
  * @param {cc.Size} size
  * @param {cc.Scale9Sprite } normal9SpriteBg
  * @param {cc.Scale9Sprite } [press9SpriteBg]
  * @param {cc.Scale9Sprite } [disabled9SpriteBg]
+ * @return {cc.EditBox}
  */
 cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9SpriteBg) {
     return new cc.EditBox(size, normal9SpriteBg, press9SpriteBg, disabled9SpriteBg);

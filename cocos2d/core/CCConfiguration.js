@@ -25,9 +25,11 @@
  ****************************************************************************/
 
 /**
- * cc.configuration contains some openGL variables
- * @namespace
+ * cc.configuration is a singleton object which contains some openGL variables
+ * @class
  * @name cc.configuration
+ * @example
+ * var textureSize = cc.configuration.getMaxTextureSize();
  */
 cc.configuration = /** @lends cc.configuration# */{
 	// Type constants

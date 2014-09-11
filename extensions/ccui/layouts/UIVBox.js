@@ -24,11 +24,28 @@
  ****************************************************************************/
 
 /**
- * The vertical box of Cocos UI.
+ * The vertical box of Cocos UI. Its layout type is ccui.Layout.LINEAR_VERTICAL.
  * @class
  * @extends ccui.Layout
  */
 ccui.VBox = ccui.Layout.extend(/** @lends ccui.VBox# */{
+    /**
+     * The constructor of ccui.VBox
+     * @function
+     * @param {cc.Size} size
+     */
+    ctor: function(size){
+        if(size)
+            this.initWithSize(size);
+        else
+            this.init();
+    },
+
+    /**
+     * Initializes a VBox. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
+     * @override
+     * @returns {boolean}
+     */
     init: function(){
         if(ccui.Layout.prototype.init.call(this)){
             this.setLayoutType(ccui.Layout.LINEAR_VERTICAL);
@@ -36,6 +53,12 @@ ccui.VBox = ccui.Layout.extend(/** @lends ccui.VBox# */{
         }
         return false;
     },
+
+    /**
+     * Initializes a VBox with size.
+     * @param {cc.Size} size
+     * @returns {boolean}
+     */
     initWithSize: function(size){
         if(this.init()){
             this.setContentSize(size);
@@ -45,14 +68,11 @@ ccui.VBox = ccui.Layout.extend(/** @lends ccui.VBox# */{
     }
 });
 
+/**
+ * Creates a VBox
+ * @param {cc.Size} size
+ * @returns {ccui.VBox}
+ */
 ccui.VBox.create = function(size){
-    var widget = new ccui.VBox();
-    if(size){
-        if(widget.initWithSize(size))
-            return widget;
-    } else {
-        if(widget.init())
-            return widget;
-    }
-    return null;
+    return new ccui.VBox(size);
 };

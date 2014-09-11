@@ -32,7 +32,7 @@
  * // add SpriteFrames to spriteFrameCache With File<br/>
  * cc.spriteFrameCache.addSpriteFrames(s_grossiniPlist);<br/>
  * </p>
- * @namespace
+ * @class
  * @name cc.spriteFrameCache
  */
 cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
@@ -43,70 +43,24 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
     _spriteFramesAliases: {},
     _frameConfigCache : {},
 
-    /**
-     * Returns a Core Graphics rectangle structure corresponding to the data in a given string. <br/>
-     * The string is not localized, so items are always separated with a comma. <br/>
-     * If the string is not well-formed, the function returns cc.rect(0, 0, 0, 0).
-     * @function
-     * @param {String} content content A string object whose contents are of the form "{{x,y},{w, h}}",<br/>
-     * where x is the x coordinate, y is the y coordinate, w is the width, and h is the height. <br/>
-     * These components can represent integer or float values.
-     * @return {cc.Rect} A Core Graphics structure that represents a rectangle.
-     * Constructor
-     * @example
-     * // example
-     * var rect = this._rectFromString("{{3,2},{4,5}}");
-     */
     _rectFromString :  function (content) {
         var result = this._CCNS_REG2.exec(content);
         if(!result) return cc.rect(0, 0, 0, 0);
         return cc.rect(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3]), parseFloat(result[4]));
     },
 
-    /**
-     * Returns a Core Graphics point structure corresponding to the data in a given string.
-     * @function
-     * @param {String} content   A string object whose contents are of the form "{x,y}",
-     * where x is the x coordinate and y is the y coordinate.<br/>
-     * The x and y values can represent integer or float values. <br/>
-     * The string is not localized, so items are always separated with a comma.<br/>
-     * @return {cc.Point} A Core Graphics structure that represents a point.<br/>
-     * If the string is not well-formed, the function returns cc.p(0,0).
-     * Constructor
-     * @example
-     * //example
-     * var point = this._pointFromString("{3.0,2.5}");
-     */
     _pointFromString : function (content) {
         var result = this._CCNS_REG1.exec(content);
         if(!result) return cc.p(0,0);
         return cc.p(parseFloat(result[1]), parseFloat(result[2]));
     },
-    /**
-     * Returns a Core Graphics size structure corresponding to the data in a given string.
-     * @function
-     * @param {String} content   A string object whose contents are of the form "{w, h}",<br/>
-     * where w is the width and h is the height.<br/>
-     * The w and h values can be integer or float values. <br/>
-     * The string is not localized, so items are always separated with a comma.<br/>
-     * @return {cc.Size} A Core Graphics structure that represents a size.<br/>
-     * If the string is not well-formed, the function returns cc.size(0,0).
-     * @example
-     * // example
-     * var size = this._sizeFromString("{3.0,2.5}");
-     */
+
     _sizeFromString : function (content) {
         var result = this._CCNS_REG1.exec(content);
         if(!result) return cc.size(0, 0);
         return cc.size(parseFloat(result[1]), parseFloat(result[2]));
     },
 
-    /**
-     * Get the real data structure of frame used by engine.
-     * @param url
-     * @returns {*}
-     * @private
-     */
     _getFrameConfig : function(url){
         var dict = cc.loader.getRes(url);
 
@@ -209,7 +163,7 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
             texture = cc.textureCache.addImage(texturePath);
         }else if(texture instanceof cc.Texture2D){
             //do nothing
-        }else if(typeof texture == "string"){//string
+        }else if(cc.isString(texture)){//string
             texture = cc.textureCache.addImage(texture);
         }else{
             cc.assert(0, cc._LogInfos.spriteFrameCache_addSpriteFrames_3);
@@ -317,7 +271,7 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
      *     Sprite Frames stored in this file will be removed.<br/>
      *     It is convinient to call this method when a specific texture needs to be removed.<br/>
      * </p>
-     * @param {String} url plist filename
+     * @param {String} url Plist filename
      */
     removeSpriteFramesFromFile: function (url) {
         var self = this, spriteFrames = self._spriteFrames,
@@ -337,7 +291,7 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
     /**
      * <p>
      *    Removes all Sprite Frames associated with the specified textures.<br/>
-     *    It is convinient to call this method when a specific texture needs to be removed.
+     *    It is convenient to call this method when a specific texture needs to be removed.
      * </p>
      * @param {HTMLImageElement|HTMLCanvasElement|cc.Texture2D} texture
      */

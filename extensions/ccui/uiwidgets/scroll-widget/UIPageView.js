@@ -27,6 +27,11 @@
  * The PageView control of Cocos UI.
  * @class
  * @extends ccui.Layout
+ * @exmaple
+ * var pageView = new ccui.PageView();
+ * pageView.setTouchEnabled(true);
+ * pageView.addPage(new ccui.Layout());
+ * this.addChild(pageView);
  */
 ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     _curPageIdx: 0,
@@ -49,11 +54,10 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     _pageViewEventListener: null,
     _pageViewEventSelector: null,
     _className:"PageView",
-    _eventCallback: null,
 
     /**
-     * allocates and initializes a UIPageView.
-     * Constructor of ccui.PageView
+     * Allocates and initializes a UIPageView.
+     * Constructor of ccui.PageView. please do not call this function by yourself, you should pass the parameters to constructor to initialize it .
      * @example
      * // example
      * var uiPageView = new ccui.PageView();
@@ -73,6 +77,10 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         this.setTouchEnabled(true);
     },
 
+    /**
+     * Initializes a ccui.PageView. Please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
+     * @returns {boolean}
+     */
     init: function () {
         if (ccui.Layout.prototype.init.call(this)) {
             this.setClippingEnabled(true);
@@ -81,6 +89,10 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         return false;
     },
 
+    /**
+     * Calls the parent class' onEnter and schedules update function.
+     * @override
+     */
     onEnter:function(){
         ccui.Layout.prototype.onEnter.call(this);
         this.scheduleUpdate(true);
@@ -112,11 +124,6 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         }
     },
 
-    /**
-     * create page
-     * @returns {ccui.Layout}
-     * @protected
-     */
     _createPage: function () {
         var newPage = ccui.Layout.create();
         newPage.setContentSize(this.getContentSize());
@@ -124,7 +131,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     /**
-     * Push back a page to PageView.
+     * Adds a page to ccui.PageView.
      * @param {ccui.Layout} page
      */
     addPage: function (page) {
@@ -137,7 +144,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     /**
-     * Insert a page to PageView.
+     * Inserts a page in the specified location.
      * @param {ccui.Layout} page page to be added to PageView.
      * @param {Number} idx index
      */
@@ -156,13 +163,12 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     /**
-     * Remove a page of PageView.
+     * Removes a page from PageView.
      * @param {ccui.Layout} page
      */
     removePage: function (page) {
-        if (!page) {
+        if (!page)
             return;
-        }
         this.removeChild(page);
         var index = this._pages.indexOf(page);
         if(index > -1)
@@ -171,7 +177,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     /**
-     * Remove a page at index of PageView.
+     * Removes a page at index of PageView.
      * @param {number} index
      */
     removePageAtIndex: function (index) {
@@ -183,13 +189,12 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     /**
-     * remove all pages from PageView
+     * Removes all pages from PageView
      */
     removeAllPages: function(){
         var locPages = this._pages;
-        for(var i = 0, len = locPages.length; i < len; i++){
+        for(var i = 0, len = locPages.length; i < len; i++)
             this.removeChild(locPages[i]);
-        }
         this._pages.length = 0;
     },
 
@@ -261,15 +266,28 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         this._isAutoScrolling = true;
     },
 
+    /**
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     * @override
+     * @param {Number} dt
+     */
     update: function (dt) {
         if (this._isAutoScrolling)
             this._autoScroll(dt);
     },
 
+    /**
+     * Does nothing. ccui.PageView's layout type is ccui.Layout.ABSOLUTE.
+     * @override
+     * @param {Number} type
+     */
     setLayoutType:function(type){
-
     },
 
+    /**
+     * Returns the layout type of ccui.PageView. it's always ccui.Layout.ABSOLUTE.
+     * @returns {number}
+     */
     getLayoutType: function(){
         return ccui.Layout.ABSOLUTE;
     },
@@ -307,6 +325,12 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         }
     },
 
+    /**
+     * The touch moved event callback handler of ccui.PageView.
+     * @override
+     * @param {cc.Touch} touch
+     * @param {cc.Event} event
+     */
     onTouchMoved: function (touch, event) {
         this._handleMoveLogic(touch);
         var widgetParent = this.getWidgetParent();
@@ -315,11 +339,22 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         this._moveEvent();
     },
 
+    /**
+     * The touch ended event callback handler of ccui.PageView.
+     * @override
+     * @param {cc.Touch} touch
+     * @param {cc.Event} event
+     */
     onTouchEnded: function (touch, event) {
         ccui.Layout.prototype.onTouchEnded.call(this, touch, event);
         this._handleReleaseLogic(touch);
     },
 
+    /**
+     * The touch canceled event callback handler of ccui.PageView.
+     * @param {cc.Touch} touch
+     * @param {cc.Event} event
+     */
     onTouchCancelled: function (touch, event) {
         ccui.Layout.prototype.onTouchCancelled.call(this, touch, event);
         this._handleReleaseLogic(touch);
@@ -349,7 +384,6 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     _scrollPages: function (touchOffset) {
         if (this._pages.length <= 0)
             return false;
-
         if (!this._leftBoundaryChild || !this._rightBoundaryChild)
             return false;
 
@@ -414,12 +448,22 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         }
     },
 
-    interceptTouchEvent: function (handleState, sender, touch) {
+    /**
+     * Intercept touch event, handle its child's touch event.
+     * @param {Number} eventType event type
+     * @param {ccui.Widget} sender
+     * @param {cc.Touch} touch
+     */
+    interceptTouchEvent: function (eventType, sender, touch) {
         var touchPoint = touch.getLocation();
-        switch (handleState) {
+        switch (eventType) {
             case ccui.Widget.TOUCH_BEGAN:
+                this._touchBeganPosition.x = touchPoint.x;
+                this._touchBeganPosition.y = touchPoint.y;
                 break;
             case ccui.Widget.TOUCH_MOVED:
+                this._touchMovePosition.x = touchPoint.x;
+                this._touchMovePosition.y = touchPoint.y;
                 var offset = 0;
                 offset = Math.abs(sender.getTouchBeganPosition().x - touchPoint.x);
                 if (offset > this._childFocusCancelOffset) {
@@ -429,33 +473,44 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
                 break;
             case ccui.Widget.TOUCH_ENDED:
             case ccui.Widget.TOUCH_CANCELED:
+                this._touchEndPosition.x = touchPoint.x;
+                this._touchEndPosition.y = touchPoint.y;
                 this._handleReleaseLogic(touch);
                 break;
         }
     },
 
     _pageTurningEvent: function () {
-        if (this._pageViewEventListener && this._pageViewEventSelector)
-            this._pageViewEventSelector.call(this._pageViewEventListener, this, ccui.PageView.EVENT_TURNING);
-        if (this._eventCallback)
-            this._eventCallback(this, ccui.PageView.EVENT_TURNING);
+        if(this._pageViewEventSelector){
+            if (this._pageViewEventListener)
+                this._pageViewEventSelector.call(this._pageViewEventListener, this, ccui.PageView.EVENT_TURNING);
+            else
+                this._pageViewEventSelector(this, ccui.PageView.EVENT_TURNING);
+        }
     },
 
     /**
+     * Adds event listener to ccui.PageView.
      * @param {Function} selector
-     * @param {Object} target
+     * @param {Object} [target=]
+     * @deprecated since v3.0, please use addEventListener instead.
      */
     addEventListenerPageView: function (selector, target) {
+        this.addEventListener(selector, target);
+    },
+
+    /**
+     * Adds event listener to ccui.PageView.
+     * @param {Function} selector
+     * @param {Object} [target=]
+     */
+    addEventListener: function(selector, target){
         this._pageViewEventSelector = selector;
         this._pageViewEventListener = target;
     },
 
-    addEventListener: function(callback){
-        this._eventCallback = callback;
-    },
-
     /**
-     * get current page index
+     * Returns current page index
      * @returns {number}
      */
     getCurPageIndex: function () {
@@ -463,7 +518,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     /**
-     * get all pages of PageView
+     * Returns all pages of PageView
      * @returns {Array}
      */
     getPages:function(){
@@ -471,7 +526,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     /**
-     * get a page from PageView by index
+     * Returns a page from PageView by index
      * @param {Number} index
      * @returns {ccui.Layout}
      */
@@ -482,7 +537,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     /**
-     * Returns the "class name" of widget.
+     * Returns the "class name" of ccui.PageView.
      * @returns {string}
      */
     getDescription: function () {
@@ -503,14 +558,13 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 
     _copySpecialProperties: function (pageView) {
         ccui.Layout.prototype._copySpecialProperties.call(this, pageView);
-        this._eventCallback = pageView._eventCallback;
         this._pageViewEventListener = pageView._pageViewEventListener;
         this._pageViewEventSelector = pageView._pageViewEventSelector;
     }
 });
 /**
  * allocates and initializes a UIPageView.
- * @deprecated
+ * @deprecated since v3.0, please use new ccui.PageView() instead.
  * @return {ccui.PageView}
  * @example
  * // example
@@ -522,12 +576,37 @@ ccui.PageView.create = function () {
 
 // Constants
 //PageView event
+/**
+ * The turning flag of ccui.PageView's event.
+ * @constant
+ * @type {number}
+ */
 ccui.PageView.EVENT_TURNING = 0;
 
 //PageView touch direction
+/**
+ * The left flag of ccui.PageView's touch direction.
+ * @constant
+ * @type {number}
+ */
 ccui.PageView.TOUCH_DIR_LEFT = 0;
+/**
+ * The right flag of ccui.PageView's touch direction.
+ * @constant
+ * @type {number}
+ */
 ccui.PageView.TOUCH_DIR_RIGHT = 1;
 
 //PageView auto scroll direction
+/**
+ * The right flag of ccui.PageView's auto scroll direction.
+ * @constant
+ * @type {number}
+ */
 ccui.PageView.DIRECTION_LEFT = 0;
+/**
+ * The right flag of ccui.PageView's auto scroll direction.
+ * @constant
+ * @type {number}
+ */
 ccui.PageView.DIRECTION_RIGHT = 1;

@@ -23,14 +23,27 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.LabelReader = {
-
+/**
+ * The ccui.Text's properties reader for GUIReader.
+ * @class
+ * @name ccs.LabelReader
+ **/
+ccs.LabelReader = /** @lends ccs.LabelReader# */{
+    /**
+     * Gets the ccs.LabelReader.
+     * @deprecated since v3.0, please use ccs.LabelReader directly.
+     * @returns {ccs.LabelReader}
+     */
     getInstance: function(){
         return ccs.LabelReader;
     },
 
+    /**
+     * Sets ccui.Text's properties from json dictionary.
+     * @param {ccui.Text} widget
+     * @param {Object} options
+     */
     setPropsFromJsonDictionary: function(widget, options){
-
         ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var label = widget;

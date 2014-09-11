@@ -43,7 +43,7 @@ cc.TABLEVIEW_FILL_BOTTOMUP = 1;
  * Abstract class for SWTableView cell node
  * @class
  * @abstract
- * @extend cc.Node
+ * @extends cc.Node
  *
  * @property {Number}   objectId    - The index used internally by SWTableView and its subclasses
  */
@@ -178,7 +178,7 @@ cc.TableViewDataSource = cc.Class.extend(/** @lends cc.TableViewDataSource# */{
  * this is a very basic, minimal implementation to bring UITableView-like component into cocos2d world.
  *
  * @class
- * @extend cc.ScrollView
+ * @extends cc.ScrollView
  *
  * @property {cc.TableViewDataSource}   dataSource          - The data source of the table view
  * @property {cc.TableViewDelegate}     delegate            - The event delegate of the table view
@@ -196,7 +196,7 @@ cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
     _touchedCell:null,
 
     /**
-     * @constructor
+     * The
      * @param dataSource
      * @param size
      * @param container

@@ -60,9 +60,9 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend(/** @lends cc.ControlSa
     _className:"ControlSaturationBrightnessPicker",
 
     /**
-     * @constructor
-     * @param target
-     * @param pos
+     * The constructor of cc.ControlSaturationBrightnessPicker
+     * @param {cc.Node} target
+     * @param {cc.Point} pos position
      */
     ctor:function (target, pos) {
         cc.Control.prototype.ctor.call(this);
@@ -247,9 +247,9 @@ cc.defineGetterSetter(_p, "startPos", _p.getStartPos);
 _p = null;
 
 /**
- * @constructor
- * @param target
- * @param pos
+ * Creates a cc.ControlSaturationBrightnessPicker
+ * @param {cc.Node} target
+ * @param {cc.Point} pos position
  * @returns {ControlSaturationBrightnessPicker}
  */
 cc.ControlSaturationBrightnessPicker.create = function (target, pos) {

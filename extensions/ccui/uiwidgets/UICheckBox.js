@@ -24,7 +24,7 @@
  ****************************************************************************/
 
 /**
- * Base class for ccui.CheckBox
+ * The CheckBox control of Cocos UI.
  * @class
  * @extends ccui.Widget
  *
@@ -41,7 +41,6 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
     _checkBoxEventListener: null,
     _checkBoxEventSelector:null,
-    _checkBoxEventCallback: null,
 
     _backGroundTexType: ccui.Widget.LOCAL_TEXTURE,
     _backGroundSelectedTexType: ccui.Widget.LOCAL_TEXTURE,
@@ -64,24 +63,41 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
     /**
      * allocates and initializes a UICheckBox.
-     * Constructor of ccui.CheckBox
-     * @constructor
+     * Constructor of ccui.CheckBox, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+     * @param {String} backGround
+     * @param {String} backGroundSelected
+     * @param {String} cross
+     * @param {String} backGroundDisabled
+     * @param {String} frontCrossDisabled
+     * @param {Number} [texType=ccui.Widget.LOCAL_TEXTURE]
      * @example
      * // example
      * var uiCheckBox = new ccui.CheckBox();
      */
-    ctor: function (backGround, backGroundSeleted,cross,backGroundDisabled,frontCrossDisabled,texType) {
+    ctor: function (backGround, backGroundSelected,cross,backGroundDisabled,frontCrossDisabled,texType) {
         ccui.Widget.prototype.ctor.call(this);
         this.setTouchEnabled(true);
 
-        texType && this.init(backGround, backGroundSeleted,cross,backGroundDisabled,frontCrossDisabled,texType);
+        texType && this.init(backGround, backGroundSelected,cross,backGroundDisabled,frontCrossDisabled,texType);
     },
-    init: function (backGround, backGroundSeleted, cross, backGroundDisabled, frontCrossDisabled, texType) {
+
+    /**
+     * Initializes a checkBox. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
+     * @param {String} backGround
+     * @param {String} backGroundSelected
+     * @param {String} cross
+     * @param {String} backGroundDisabled
+     * @param {String} frontCrossDisabled
+     * @param {Number} [texType=ccui.Widget.LOCAL_TEXTURE]
+     * @returns {boolean}
+     * @override
+     */
+    init: function (backGround, backGroundSelected, cross, backGroundDisabled, frontCrossDisabled, texType) {
         if (ccui.Widget.prototype.init.call(this)) {
             this._isSelected = true;
-            this.setSelectedState(false);                                     //TODO need test
+            this.setSelectedState(false);
             if(backGround === undefined)
-                this.loadTextures(backGround, backGroundSeleted, cross, backGroundDisabled, frontCrossDisabled, texType);
+                this.loadTextures(backGround, backGroundSelected, cross, backGroundDisabled, frontCrossDisabled, texType);
             return true;
         }
         return false;
@@ -102,7 +118,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     },
 
     /**
-     * Load textures for checkbox.
+     * Loads textures for checkbox.
      * @param {String} backGround
      * @param {String} backGroundSelected
      * @param {String} cross
@@ -119,8 +135,8 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     },
 
     /**
-     * Load backGround texture for checkbox.
-     * @param {String} backGround
+     * Loads background texture for checkbox.
+     * @param {String} backGround background filename
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTextureBackGround: function (backGround, texType) {
@@ -175,7 +191,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     },
 
     /**
-     * Load backGroundSelected texture for checkbox.
+     * Loads selected state of background texture for checkbox.
      * @param {String} backGroundSelected
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
@@ -222,7 +238,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     },
 
     /**
-     * Load cross texture for checkbox.
+     * Loads cross texture for checkbox.
      * @param {String} cross
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
@@ -236,7 +252,6 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         var self = this;
         if(!this._frontCrossRenderer.texture || !this._frontCrossRenderer.texture.isLoaded()){
             this._frontCrossRenderer.addLoadedEventListener(function(){
-
                 self._findLayout();
 
                 self._updateFlippedX();
@@ -267,7 +282,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     },
 
     /**
-     * Load backGroundDisabled texture for checkbox.
+     * Loads disabled state of backGround texture for checkbox.
      * @param {String} backGroundDisabled
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
@@ -281,7 +296,6 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         var self = this;
         if(!this._backGroundBoxDisabledRenderer.texture || !this._backGroundBoxDisabledRenderer.texture.isLoaded()){
             this._backGroundBoxDisabledRenderer.addLoadedEventListener(function(){
-
                 self._findLayout();
 
                 self._updateFlippedX();
@@ -312,7 +326,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     },
 
     /**
-     * Load frontCrossDisabled texture for checkbox.
+     * Loads frontCrossDisabled texture for checkbox.
      * @param {String} frontCrossDisabled
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
@@ -356,21 +370,21 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this._frontCrossDisabledRendererAdaptDirty = true;
     },
 
-    onPressStateChangedToNormal: function () {
+    _onPressStateChangedToNormal: function () {
         this._backGroundBoxRenderer.setVisible(true);
         this._backGroundSelectedBoxRenderer.setVisible(false);
         this._backGroundBoxDisabledRenderer.setVisible(false);
         this._frontCrossDisabledRenderer.setVisible(false);
     },
 
-    onPressStateChangedToPressed: function () {
+    _onPressStateChangedToPressed: function () {
         this._backGroundBoxRenderer.setVisible(false);
         this._backGroundSelectedBoxRenderer.setVisible(true);
         this._backGroundBoxDisabledRenderer.setVisible(false);
         this._frontCrossDisabledRenderer.setVisible(false);
     },
 
-    onPressStateChangedToDisabled: function () {
+    _onPressStateChangedToDisabled: function () {
         this._backGroundBoxRenderer.setVisible(false);
         this._backGroundSelectedBoxRenderer.setVisible(false);
         this._backGroundBoxDisabledRenderer.setVisible(true);
@@ -380,6 +394,10 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         }
     },
 
+    /**
+     * Sets the selected state to ccui.CheckBox
+     * @param {Boolean} selected
+     */
     setSelectedState: function (selected) {
         if (selected == this._isSelected)
             return;
@@ -387,22 +405,30 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this._frontCrossRenderer.setVisible(this._isSelected);
     },
 
+    /**
+     * Returns the selected state of ccui.CheckBox.
+     * @returns {boolean}
+     */
     getSelectedState: function () {
         return this._isSelected;
     },
 
     _selectedEvent: function () {
-        if(this._checkBoxEventCallback)
-            this._checkBoxEventCallback(this, ccui.CheckBox.EVENT_SELECTED);
-        if (this._checkBoxEventListener && this._checkBoxEventSelector)
-            this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccui.CheckBox.EVENT_SELECTED);
+        if(this._checkBoxEventSelector){
+            if (this._checkBoxEventListener)
+                this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccui.CheckBox.EVENT_SELECTED);
+            else
+                this._checkBoxEventSelector(this, ccui.CheckBox.EVENT_SELECTED);
+        }
     },
 
     _unSelectedEvent: function () {
-        if(this._checkBoxEventCallback)
-            this._checkBoxEventCallback(this, ccui.CheckBox.EVENT_UNSELECTED);
-        if (this._checkBoxEventListener && this._checkBoxEventSelector)
-            this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccui.CheckBox.EVENT_UNSELECTED);
+        if(this._checkBoxEventSelector){
+            if (this._checkBoxEventListener)
+                this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccui.CheckBox.EVENT_UNSELECTED);
+            else
+                this._checkBoxEventSelector(this, ccui.CheckBox.EVENT_UNSELECTED);
+        }
     },
 
     _releaseUpEvent: function(){
@@ -417,24 +443,29 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     },
 
     /**
-     * add event listener
+     * add event listener to ccui.CheckBox. it would called when checkbox is selected or unselected.
      * @param {Function} selector
-     * @param {Object} target
-     * @deprecated
+     * @param {Object} [target=]
+     * @deprecated since v3.0, please use addEventListener instead.
      */
     addEventListenerCheckBox: function (selector, target) {
+        this.addEventListener(selector, target);
+    },
+
+    /**
+     * add a call back function would called when checkbox is selected or unselected.
+     * @param {Function} selector
+     * @param {Object} [target=]
+     */
+    addEventListener: function(selector, target){
         this._checkBoxEventSelector = selector;
         this._checkBoxEventListener = target;
     },
 
     /**
-     * add a call back function would called when checkbox is selected or unselected.
-     * @param {function} callback
+     * Returns the content size of Renderer.
+     * @returns {cc.Size}
      */
-    addEventListener: function(callback){
-        this._checkBoxEventCallback = callback;
-    },
-
     getVirtualRendererSize: function(){
         return this._backGroundBoxRenderer.getContentSize();
     },
@@ -466,7 +497,8 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
     /**
      * override "getVirtualRenderer" method of widget.
-     * @returns {cc.Node}
+     * @override
+     * @returns {cc.Node} the renderer of ccui.CheckBox.
      */
     getVirtualRenderer: function () {
         return this._backGroundBoxRenderer;
@@ -564,6 +596,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
     /**
      * Returns the "class name" of widget.
+     * @override
      * @returns {string}
      */
     getDescription: function () {
@@ -584,7 +617,6 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
             this.setSelectedState(uiCheckBox._isSelected);
             this._checkBoxEventListener = uiCheckBox._checkBoxEventListener;
             this._checkBoxEventSelector = uiCheckBox._checkBoxEventSelector;
-            this._checkBoxEventCallback = uiCheckBox._checkBoxEventCallback;
         }
     },
 
@@ -623,7 +655,7 @@ _p = null;
 
 /**
  * allocates and initializes a UICheckBox.
- * @deprecated
+ * @deprecated since v3.0, please use new ccui.CheckBox() instead.
  * @param {string} [backGround]     backGround texture.
  * @param {string} [backGroundSeleted]  backGround selected state texture.
  * @param {string} [cross]  cross texture.
@@ -641,12 +673,47 @@ ccui.CheckBox.create = function (backGround, backGroundSeleted, cross, backGroun
 
 // Constants
 //CheckBoxEvent type
+/**
+ * The selected state of ccui.CheckBox's event.
+ * @constant
+ * @type {number}
+ */
 ccui.CheckBox.EVENT_SELECTED = 0;
+/**
+ * The unselected state of ccui.CheckBox's event.
+ * @constant
+ * @type {number}
+ */
 ccui.CheckBox.EVENT_UNSELECTED = 1;
 
 //Render zorder
+/**
+ * The normal background renderer's zOrder
+ * @constant
+ * @type {number}
+ */
 ccui.CheckBox.BOX_RENDERER_ZORDER = -1;
+/**
+ * The selected Background renderer's zOrder
+ * @constant
+ * @type {number}
+ */
 ccui.CheckBox.BOX_SELECTED_RENDERER_ZORDER = -1;
+/**
+ * The disabled Background renderer's zOrder
+ * @constant
+ * @type {number}
+ */
 ccui.CheckBox.BOX_DISABLED_RENDERER_ZORDER = -1;
+/**
+ * The normal front renderer's zOrder
+ * @constant
+ * @type {number}
+ */
 ccui.CheckBox.FRONT_CROSS_RENDERER_ZORDER = -1;
+/**
+ * The disabled front renderer's zOrder
+ * @constant
+ * @type {number}
+ */
 ccui.CheckBox.FRONT_CROSS_DISABLED_RENDERER_ZORDER = -1;

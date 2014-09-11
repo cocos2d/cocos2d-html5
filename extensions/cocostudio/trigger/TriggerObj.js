@@ -23,57 +23,112 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.BaseTriggerCondition = ccs.Class.extend({
+/**
+ * The base class of trigger condition.
+ * @class
+ * @extends ccs.Class
+ */
+ccs.BaseTriggerCondition = ccs.Class.extend(/** @lends ccs.BaseTriggerCondition# */{
+    /**
+     * Construction of ccs.BaseTriggerCondition
+     */
     ctor:function(){
-
     },
 
+    /**
+     * initializes a BaseTriggerCondition class.
+     * @returns {boolean}
+     */
     init: function () {
         return true;
     },
 
+    /**
+     * Detects trigger condition
+     * @returns {boolean}
+     */
     detect: function () {
         return true;
     },
 
+    /**
+     * Serialize a BaseTriggerCondition object.
+     * @param jsonVal
+     */
     serialize: function (jsonVal) {
     },
 
+    /**
+     * Removes all condition
+     */
     removeAll: function () {
     }
 });
-ccs.BaseTriggerAction = ccs.Class.extend({
-    ctor:function(){
 
+/**
+ * The base class of trigger action
+ * @class
+ * @extends ccs.Class
+ */
+ccs.BaseTriggerAction = ccs.Class.extend(/** @lends ccs.BaseTriggerAction# */{
+    /**
+     * Construction of ccs.BaseTriggerAction
+     */
+    ctor:function(){
     },
 
+    /**
+     * Initializes a BaseTriggerAction object.
+     * @returns {boolean}
+     */
     init: function () {
         return true;
     },
 
+    /**
+     * Sets the action to done.
+     */
     done: function () {
-
     },
 
+    /**
+     * Serializes a ccs.BaseTriggerAction object.
+     * @param jsonVal
+     */
     serialize: function (jsonVal) {
     },
 
+    /**
+     * Removes all actions.
+     */
     removeAll: function () {
     }
 });
 
-ccs.TriggerObj = ccs.Class.extend({
+/**
+ * The trigger object of Cocostudio.
+ * @class
+ * @extends ccs.Class
+ */
+ccs.TriggerObj = ccs.Class.extend(/** @lends ccs.TriggerObj# */{
     _cons: null,
     _acts: null,
     _id: 0,
     _enable: true,
     _vInt: null,
 
+    /**
+     * Construction of trigger object.
+     */
     ctor: function () {
         this._id = 0;
         this._enable = true;
     },
 
+    /**
+     * Initializes a ccs.TriggerObj
+     * @returns {boolean}
+     */
     init: function () {
         this._cons = [];
         this._acts = [];
@@ -81,6 +136,10 @@ ccs.TriggerObj = ccs.Class.extend({
         return true;
     },
 
+    /**
+     * Detects trigger's conditions.
+     * @returns {boolean}
+     */
     detect: function () {
         if (!this._enable || this._cons.length == 0) {
             return true;
@@ -89,26 +148,29 @@ ccs.TriggerObj = ccs.Class.extend({
         var obj = null;
         for (var i = 0; i < this._cons.length; i++) {
             obj = this._cons[i];
-            if (obj && obj.detect) {
+            if (obj && obj.detect)
                 ret = ret && obj.detect();
-            }
         }
         return ret;
     },
 
+    /**
+     * Sets trigger's actions to done.
+     */
     done: function () {
-        if (!this._enable || this._acts.length == 0) {
+        if (!this._enable || this._acts.length == 0)
             return;
-        }
         var obj;
         for (var i = 0; i < this._acts.length; i++) {
             obj = this._acts[i];
-            if (obj && obj.done) {
+            if (obj && obj.done)
                 obj.done();
-            }
         }
     },
 
+    /**
+     * Removes all condition and actions from ccs.TriggerObj.
+     */
     removeAll: function () {
         var obj = null;
         for (var i = 0; i < this._cons.length; i++) {
@@ -125,6 +187,10 @@ ccs.TriggerObj = ccs.Class.extend({
         this._acts = [];
     },
 
+    /**
+     * Serializes ccs.TriggerObj
+     * @param jsonVal
+     */
     serialize: function (jsonVal) {
         this._id = jsonVal["id"] || 0;
         var conditions = jsonVal["conditions"] || [];
@@ -168,14 +234,26 @@ ccs.TriggerObj = ccs.Class.extend({
         }
     },
 
+    /**
+     * Returns the id of ccs.TriggerObj.
+     * @returns {number}
+     */
     getId: function () {
         return this._id;
     },
 
+    /**
+     * Sets enable value.
+     * @param {Boolean} enable
+     */
     setEnable: function (enable) {
         this._enable = enable;
     },
 
+    /**
+     * Returns the events of ccs.TriggerObj.
+     * @returns {null|Array}
+     */
     getEvents: function () {
         return this._vInt;
     }

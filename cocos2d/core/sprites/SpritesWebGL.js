@@ -338,7 +338,7 @@ cc._tmp.WebGLSprite = function () {
 
         // recursively iterate over children
         if (_t._hasChildren)
-            _t._arrayMakeObjectsPerformSelector(_t._children, cc.Node.StateCallbackType.updateTransform);
+            _t._arrayMakeObjectsPerformSelector(_t._children, cc.Node._StateCallbackType.updateTransform);
 
         if (cc.SPRITE_DEBUG_DRAW) {
             // draw bounding box
@@ -398,9 +398,8 @@ cc._tmp.WebGLSprite = function () {
 
     _p.setSpriteFrame = function (newFrame) {
         var _t = this;
-        if(typeof(newFrame) == "string"){
+        if(cc.isString(newFrame)){
             newFrame = cc.spriteFrameCache.getSpriteFrame(newFrame);
-
             cc.assert(newFrame, cc._LogInfos.Sprite_setSpriteFrame);
         }
 
@@ -468,7 +467,7 @@ cc._tmp.WebGLSprite = function () {
 
     _p.setTexture = function (texture) {
         var _t = this;
-        if(texture && (typeof(texture) === "string")){
+        if(texture && (cc.isString(texture))){
             texture = cc.textureCache.addImage(texture);
             _t.setTexture(texture);
 

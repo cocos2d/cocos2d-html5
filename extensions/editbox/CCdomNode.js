@@ -24,8 +24,8 @@
  ****************************************************************************/
 /**
  * the DOM object
- * @class
- * @type {Object}
+ * @namespace
+ * @name cc.DOM
  */
 cc.DOM = {};
 
@@ -357,7 +357,11 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         //if dom does not have parent, but node has no parent and its running
         if (this.dom && !this.dom.parentNode) {
             if (!this.getParent()) {
-                this.dom.appendTo(cc.container);
+                if(this.dom.id == ""){
+                    cc.DOM._createEGLViewDiv(this);
+                }else{
+                    this.dom.appendTo(cc.container);
+                }
             } else {
                 cc.DOM.parentDOM(this);
             }
@@ -387,7 +391,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         this.unscheduleAllCallbacks();
 
         // timers
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.cleanup);
         if (this.dom) {
             this.dom.remove();
         }
@@ -478,41 +482,48 @@ cc.DOM.parentDOM = function (x) {
             if (eglViewDiv) {
                 p.dom.appendTo(eglViewDiv);
             } else {
-                eglViewDiv = cc.$new("div");
-                eglViewDiv.id = "EGLViewDiv";
-
-                var eglViewer = cc.view;
-                var designSize = eglViewer.getDesignResolutionSize();
-                var viewPortRect = eglViewer.getViewPortRect();
-                var screenSize = eglViewer.getFrameSize();
-	            var pixelRatio = eglViewer.getDevicePixelRatio();
-                var designSizeWidth = designSize.width, designSizeHeight = designSize.height;
-                if ((designSize.width === 0) && (designSize.height === 0)) {
-                    designSizeWidth = screenSize.width;
-                    designSizeHeight = screenSize.height;
-                }
-
-                var viewPortWidth = viewPortRect.width/pixelRatio;
-                if ((viewPortRect.width === 0) && (viewPortRect.height === 0)) {
-                    viewPortWidth = screenSize.width;
-                }
-
-                eglViewDiv.style.position = 'absolute';
-                //x.dom.style.display='block';
-                eglViewDiv.style.width = designSizeWidth + "px";
-                eglViewDiv.style.maxHeight = designSizeHeight + "px";
-                eglViewDiv.style.margin = 0;
-
-                eglViewDiv.resize(eglViewer.getScaleX()/pixelRatio, eglViewer.getScaleY()/pixelRatio);
-                eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
-                eglViewDiv.style.bottom = "0px";
-
-                p.dom.appendTo(eglViewDiv);
-                eglViewDiv.appendTo(cc.container);
+                cc.DOM._createEGLViewDiv(p);
             }
         }
     }
     return true;
+};
+
+cc.DOM._createEGLViewDiv = function(p){
+    var eglViewDiv = cc.$("#EGLViewDiv");
+    if(!eglViewDiv){
+        eglViewDiv = cc.$new("div");
+        eglViewDiv.id = "EGLViewDiv";
+    }
+
+    var eglViewer = cc.view;
+    var designSize = eglViewer.getDesignResolutionSize();
+    var viewPortRect = eglViewer.getViewPortRect();
+    var screenSize = eglViewer.getFrameSize();
+    var pixelRatio = eglViewer.getDevicePixelRatio();
+    var designSizeWidth = designSize.width, designSizeHeight = designSize.height;
+    if ((designSize.width === 0) && (designSize.height === 0)) {
+        designSizeWidth = screenSize.width;
+        designSizeHeight = screenSize.height;
+    }
+
+    var viewPortWidth = viewPortRect.width/pixelRatio;
+    if ((viewPortRect.width === 0) && (viewPortRect.height === 0)) {
+        viewPortWidth = screenSize.width;
+    }
+
+    eglViewDiv.style.position = 'absolute';
+    //x.dom.style.display='block';
+    eglViewDiv.style.width = designSizeWidth + "px";
+    eglViewDiv.style.maxHeight = designSizeHeight + "px";
+    eglViewDiv.style.margin = 0;
+
+    eglViewDiv.resize(eglViewer.getScaleX()/pixelRatio, eglViewer.getScaleY()/pixelRatio);
+    eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
+    eglViewDiv.style.bottom = "0px";
+
+    p.dom.appendTo(eglViewDiv);
+    eglViewDiv.appendTo(cc.container);
 };
 
 /**
@@ -598,7 +609,7 @@ cc.DOM.placeHolder = function (x) {
  * It currently only supports cc.Sprite and cc.MenuItem
  * @function
  * @param {cc.Sprite|cc.MenuItem|Array} nodeObject
-    * * @example
+ * @example
  * // example
  * cc.DOM.convert(Sprite1, Sprite2, Menuitem);
  *

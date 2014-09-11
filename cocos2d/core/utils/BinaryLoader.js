@@ -27,6 +27,7 @@
 
 /**
  * Load binary data by url.
+ * @function
  * @param {String} url
  * @param {Function} [cb]
  */
@@ -65,6 +66,12 @@ cc.loader._str2Uint8Array = function (strData) {
     return arrData;
 };
 
+/**
+ * Load binary data by url synchronously
+ * @function
+ * @param {String} url
+ * @return {Uint8Array}
+ */
 cc.loader.loadBinarySync = function (url) {
     var self = this;
     var req = this.getXMLHttpRequest();

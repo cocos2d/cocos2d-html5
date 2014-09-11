@@ -43,7 +43,8 @@ cc.Event = cc.Class.extend(/** @lends cc.Event# */{
 
     /**
      * Gets the event type
-     * @returns {number}
+     * @function
+     * @returns {Number}
      */
     getType: function () {
         return this._type;
@@ -51,6 +52,7 @@ cc.Event = cc.Class.extend(/** @lends cc.Event# */{
 
     /**
      * Stops propagation for current event
+     * @function
      */
     stopPropagation: function () {
         this._isStopped = true;
@@ -58,6 +60,7 @@ cc.Event = cc.Class.extend(/** @lends cc.Event# */{
 
     /**
      * Checks whether the event has been stopped
+     * @function
      * @returns {boolean}
      */
     isStopped: function () {
@@ -70,6 +73,7 @@ cc.Event = cc.Class.extend(/** @lends cc.Event# */{
      *     note: It only be available when the event listener is associated with node.                <br/>
      *          It returns 0 when the listener is associated with fixed priority.
      * </p>
+     * @function
      * @returns {cc.Node}  The target with which the event associates.
      */
     getCurrentTarget: function () {
@@ -117,6 +121,7 @@ cc.Event.CUSTOM = 4;
 cc.EventCustom = cc.Event.extend(/** @lends cc.EventCustom# */{
     _eventName: null,
     _userData: null,                                 // User data
+
     ctor: function (eventName) {
         cc.Event.prototype.ctor.call(this, cc.Event.CUSTOM);
         this._eventName = eventName;
@@ -168,7 +173,7 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
     },
 
     /**
-     * sets scroll data
+     * Sets scroll data
      * @param {number} scrollX
      * @param {number} scrollY
      */
@@ -178,7 +183,7 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
     },
 
     /**
-     * gets scrollX data
+     * Returns the x axis scroll value
      * @returns {number}
      */
     getScrollX: function () {
@@ -186,7 +191,7 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
     },
 
     /**
-     * gets scrollY data
+     * Returns the y axis scroll value
      * @returns {number}
      */
     getScrollY: function () {
@@ -194,7 +199,7 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
     },
 
     /**
-     * Set cursor location
+     * Sets cursor location
      * @param {number} x
      * @param {number} y
      */
@@ -204,7 +209,7 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
     },
 
 	/**
-	 * Get cursor location
+	 * Returns cursor location
 	 * @return {cc.Point} location
 	 */
     getLocation: function () {
@@ -212,7 +217,7 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
     },
 
 	/**
-	 * returns the current touch location in screen coordinates
+	 * Returns the current cursor location in screen coordinates
 	 * @return {cc.Point}
 	 */
 	getLocationInView: function() {
@@ -224,14 +229,26 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
         this._prevY = y;
     },
 
+    /**
+     * Returns the delta distance from the previous location to current location
+     * @return {cc.Point}
+     */
     getDelta: function () {
         return {x: this._x - this._prevX, y: this._y - this._prevY};
     },
 
+    /**
+     * Returns the X axis delta distance from the previous location to current location
+     * @return {Number}
+     */
     getDeltaX: function () {
         return this._x - this._prevX;
     },
 
+    /**
+     * Returns the Y axis delta distance from the previous location to current location
+     * @return {Number}
+     */
     getDeltaY: function () {
         return this._y - this._prevY;
     },
@@ -245,7 +262,7 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
     },
 
     /**
-     * Gets mouse button
+     * Returns mouse button
      * @returns {number}
      */
     getButton: function () {
@@ -253,7 +270,7 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
     },
 
     /**
-     * gets location X axis data
+     * Returns location X axis data
      * @returns {number}
      */
     getLocationX: function () {
@@ -261,7 +278,7 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
     },
 
     /**
-     * gets location Y axis data
+     * Returns location Y axis data
      * @returns {number}
      */
     getLocationY: function () {
@@ -372,7 +389,7 @@ cc.EventTouch = cc.Event.extend(/** @lends cc.EventTouch# */{
     },
 
     /**
-     * Gets event code
+     * Returns event code
      * @returns {number}
      */
     getEventCode: function () {
@@ -380,7 +397,7 @@ cc.EventTouch = cc.Event.extend(/** @lends cc.EventTouch# */{
     },
 
     /**
-     * Get touches of event
+     * Returns touches of event
      * @returns {Array}
      */
     getTouches: function () {
@@ -396,10 +413,11 @@ cc.EventTouch = cc.Event.extend(/** @lends cc.EventTouch# */{
     }
 });
 
+/**
+ * The maximum touch numbers
+ * @constant
+ * @type {Number}
+ */
 cc.EventTouch.MAX_TOUCHES = 5;
 
-/**
- * The event code of Touch event.
- * @type {Object}
- */
 cc.EventTouch.EventCode = {BEGAN: 0, MOVED: 1, ENDED: 2, CANCELLED: 3};

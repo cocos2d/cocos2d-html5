@@ -24,6 +24,7 @@
  ****************************************************************************/
 
 /**
+ *  use to calculate the matrix of node from parent node
  * @class ccs.TransformHelp
  * @extend ccs.Class
  */
@@ -36,10 +37,10 @@ ccs.TransformHelp.helpPoint2 = cc.p(0, 0);
 ccs.TransformHelp.helpParentNode = {};
 
 /**
+ * Calculate a BaseData's transform matrix from parent node.
  * @function
  * @static
  * @param {ccs.BaseData} bone
- * @return {cc.AffineTransform}
  * Constructor
  */
 ccs.TransformHelp.transformFromParent = function (bone, parentNode) {

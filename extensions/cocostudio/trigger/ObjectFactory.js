@@ -23,60 +23,63 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.objectFactory = {
+/**
+ * The singleton object that creating object factory, it creates object with class name, and manager the type mapping.
+ * @class
+ * @name ccs.objectFactory
+ */
+ccs.objectFactory = /** @lends ccs.objectFactory# */{
     _typeMap: {},
 
-    destroyInstance: function () {
-        this._instance = null;
-    },
-
+    /**
+     * Creates object with class name. if the the class name without register in type map, it returns null.
+     * @param {String} className
+     * @returns {*}
+     */
     createObject: function (className) {
         var o = null;
         var t = this._typeMap[className];
         if (t) {
-            if(typeof t._fun == "function"){
+            if(cc.isFunction(t._fun))
                 o = new t._fun();
-            }else{
+            else
                 o = t._fun;
-            }
         }
         return o;
     },
 
+    /**
+     * Registers class type in type map.
+     * @param {ccs.TInfo} t
+     */
     registerType: function (t) {
         this._typeMap[t._className] = t;
     },
 
+    /**
+     * Creates ccui widget object.
+     * @param {String} name widget name
+     * @returns {ccui.Widget|null}
+     */
     createGUI: function(name){
         var object = null;
-        if(name === "Panel"){
+        if(name === "Panel")
             name = "Layout";
-        }else if(name === "TextArea"){
+        else if(name === "TextArea")
             name = "Label";
-        }else if(name === "TextButton"){
+        else if(name === "TextButton")
             name = "Button";
-        }
 
         var t = this._typeMap[name];
-        if(t && t._fun){
+        if(t && t._fun)
             object = t._fun;
-        }
 
         return object;
     },
 
-    createWidgetReaderProtocol: function(name){
-        var object = null;
-
-        var t = this._typeMap[name];
-        if(t && t._fun){
-            object = t._fun;
-        }
-
-        return object;
+    removeAll: function(){
+        this._typeMap = {};
     }
-
-
 };
 
 ccs.TInfo = ccs.Class.extend({

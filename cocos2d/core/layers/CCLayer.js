@@ -25,9 +25,7 @@
  ****************************************************************************/
 
 /** cc.Layer is a subclass of cc.Node that implements the TouchEventsDelegate protocol.<br/>
- * All features from cc.Node are valid, plus the following new features:<br/>
- * It can receive iPhone Touches<br/>
- * It can receive Accelerometer input
+ * All features from cc.Node are valid, plus the bake feature: Baked layer can cache a static layer to improve performance
  * @class
  * @extends cc.Node
  */
@@ -37,7 +35,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     _className: "Layer",
 
     /**
-     * Constructor of cc.Layer
+     * <p>Constructor of cc.Layer, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
     ctor: function () {
         var nodep = cc.Node.prototype;
@@ -47,6 +45,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         nodep.setContentSize.call(this, cc.winSize);
     },
 
+    /**
+     * Initialization of the layer, please do not call this function by yourself, you should pass the parameters to constructor to initialize a layer
+     */
     init: function(){
         var _t = this;
         _t._ignoreAnchorPointForPosition = true;
@@ -58,14 +59,18 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     /**
-     * set the layer to cache all of children to a bake sprite, and draw itself by bake sprite. recommend using it in UI.
+     * Sets the layer to cache all of children to a bake sprite, and draw itself by bake sprite. recommend using it in UI.<br/>
+     * This is useful only in html5 engine
      * @function
+     * @see cc.Layer#unbake
      */
     bake: null,
 
     /**
-     * cancel the layer to cache all of children to a bake sprite.
+     * Cancel the layer to cache all of children to a bake sprite.<br/>
+     * This is useful only in html5 engine
      * @function
+     * @see cc.Layer#bake
      */
     unbake: null,
 
@@ -73,6 +78,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * Determines if the layer is baked.
      * @function
      * @returns {boolean}
+     * @see cc.Layer#bake and cc.Layer#unbake
      */
     isBaked: function(){
         return this._isBaked;
@@ -82,12 +88,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
 });
 
 /**
- * creates a layer
- * @deprecated
- * @example
- * // Example
- * var myLayer = cc.Layer.create();
- * //Yes! it's that simple
+ * Creates a layer
+ * @deprecated since v3.0, please use the new construction instead
+ * @see cc.Layer
  * @return {cc.Layer|Null}
  */
 cc.Layer.create = function () {
@@ -121,6 +124,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             for(var i = 0, len = children.length; i < len; i++)
                 children[i]._setCachedParent(null);
         }
+    };
+
+    p.addChild = function(child, localZOrder, tag){
+        cc.Node.prototype.addChild.call(this, child, localZOrder, tag);
+        if(child._parent == this && this._isBaked)
+            child._setCachedParent(this);
     };
 
     p.visit = function(ctx){
@@ -196,7 +205,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
     p = null;
 }else{
-    cc.assert(typeof cc._tmp.LayerDefineForWebGL === "function", cc._LogInfos.MissingFile, "CCLayerWebGL.js");
+    cc.assert(cc.isFunction(cc._tmp.LayerDefineForWebGL), cc._LogInfos.MissingFile, "CCLayerWebGL.js");
     cc._tmp.LayerDefineForWebGL();
     delete cc._tmp.LayerDefineForWebGL;
 }
@@ -205,18 +214,30 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
  * <p>
  * CCLayerColor is a subclass of CCLayer that implements the CCRGBAProtocol protocol.       <br/>
  *  All features from CCLayer are valid, plus the following new features:                   <br/>
- * <ul><li>opacity</li>                                                                     <br/>
- * <li>RGB colors</li></ul>                                                                 <br/>
- * </p>
+ * - opacity                                                                     <br/>
+ * - RGB colors                                                                </p>
  * @class
  * @extends cc.Layer
+ *
+ * @param {cc.Color} [color=] The color of the layer
+ * @param {Number} [width=] The width of the layer
+ * @param {Number} [height=] The height of the layer
+ *
+ * @example
+ * // Example
+ * //Create a yellow color layer as background
+ * var yellowBackground = new cc.LayerColor(cc.color(255,255,0,255));
+ * //If you didnt pass in width and height, it defaults to the same size as the canvas
+ *
+ * //create a yellow box, 200 by 200 in size
+ * var yellowBox = new cc.LayerColor(cc.color(255,255,0,255), 200, 200);
  */
 cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     _blendFunc: null,
     _className: "LayerColor",
 
     /**
-     * blendFunc getter
+     * Returns the blend function
      * @return {cc.BlendFunc}
      */
     getBlendFunc: function () {
@@ -224,8 +245,9 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     },
 
     /**
-     * change width and height in Points
-     * @deprecated
+     * Changes width and height
+     * @deprecated since v3.0 please use setContentSize instead
+     * @see cc.Node#setContentSize
      * @param {Number} w width
      * @param {Number} h height
      */
@@ -235,8 +257,9 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     },
 
     /**
-     * change width in Points
-     * @deprecated
+     * Changes width in Points
+     * @deprecated since v3.0 please use setContentSize instead
+     * @see cc.Node#setContentSize
      * @param {Number} w width
      */
     changeWidth: function (w) {
@@ -245,24 +268,17 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
     /**
      * change height in Points
-     * @deprecated
+     * @deprecated since v3.0 please use setContentSize instead
+     * @see cc.Node#setContentSize
      * @param {Number} h height
      */
     changeHeight: function (h) {
         this.height = h;
     },
 
-    /**
-     * set OpacityModifyRGB of cc.LayerColor
-     * @param {Boolean}  value
-     */
     setOpacityModifyRGB: function (value) {
     },
 
-    /**
-     * is OpacityModifyRGB
-     * @return {Boolean}
-     */
     isOpacityModifyRGB: function () {
         return false;
     },
@@ -277,7 +293,8 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._updateColor();
     },
 
-    _isLighterMode: false,
+    _blendFuncStr: "source",
+
     /**
      * Constructor of cc.LayerColor
      * @function
@@ -288,6 +305,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     ctor: null,
 
     /**
+     * Initialization of the layer, please do not call this function by yourself, you should pass the parameters to constructor to initialize a layer
      * @param {cc.Color} [color=]
      * @param {Number} [width=]
      * @param {Number} [height=]
@@ -322,18 +340,21 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     },
 
     /**
-     * blendFunc setter
-     * @param {Number} src
-     * @param {Number} dst
+     * Sets the blend func, you can pass either a cc.BlendFunc object or source and destination value separately
+     * @param {Number|cc.BlendFunc} src
+     * @param {Number} [dst]
      */
     setBlendFunc: function (src, dst) {
-        var _t = this;
-        if (dst === undefined)
-            _t._blendFunc = src;
-        else
-            _t._blendFunc = {src: src, dst: dst};
+        var _t = this, locBlendFunc = this._blendFunc;
+        if (dst === undefined) {
+            locBlendFunc.src = src.src;
+            locBlendFunc.dst = src.dst;
+        } else {
+            locBlendFunc.src = src;
+            locBlendFunc.dst = dst;
+        }
         if (cc._renderType === cc._RENDER_TYPE_CANVAS)
-            _t._isLighterMode = (_t._blendFunc && (_t._blendFunc.src == 1) && (_t._blendFunc.dst == 771));
+            _t._blendFuncStr = cc._getCompositeOperationByBlendFunc(locBlendFunc);
     },
 
     _setWidth: null,
@@ -352,29 +373,17 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._updateColor();
     },
 
-    /**
-     * Renders the layer
-     * @function
-     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
-     */
     draw: null
 });
 
 /**
- * creates a cc.Layer with color, width and height in Points
- * @deprecated
+ * Creates a cc.Layer with color, width and height in Points
+ * @deprecated since v3.0 please use the new construction instead
+ * @see cc.LayerColor
  * @param {cc.Color} color
  * @param {Number|Null} [width=]
  * @param {Number|Null} [height=]
  * @return {cc.LayerColor}
- * @example
- * // Example
- * //Create a yellow color layer as background
- * var yellowBackground = cc.LayerColor.create(cc.color(255,255,0,255));
- * //If you didnt pass in width and height, it defaults to the same size as the canvas
- *
- * //create a yellow box, 200 by 200 in size
- * var yellowBox = cc.LayerColor.create(cc.color(255,255,0,255), 200, 200);
  */
 cc.LayerColor.create = function (color, width, height) {
     return new cc.LayerColor(color, width, height);
@@ -495,12 +504,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     //cc.LayerColor define end
     _p = null;
 } else {
-    cc.assert(typeof cc._tmp.WebGLLayerColor === "function", cc._LogInfos.MissingFile, "CCLayerWebGL.js");
+    cc.assert(cc.isFunction(cc._tmp.WebGLLayerColor), cc._LogInfos.MissingFile, "CCLayerWebGL.js");
     cc._tmp.WebGLLayerColor();
     delete cc._tmp.WebGLLayerColor;
 }
 
-cc.assert(typeof cc._tmp.PrototypeLayerColor === "function", cc._LogInfos.MissingFile, "CCLayerPropertyDefine.js");
+cc.assert(cc.isFunction(cc._tmp.PrototypeLayerColor), cc._LogInfos.MissingFile, "CCLayerPropertyDefine.js");
 cc._tmp.PrototypeLayerColor();
 delete cc._tmp.PrototypeLayerColor;
 
@@ -526,6 +535,10 @@ delete cc._tmp.PrototypeLayerColor;
  * @class
  * @extends cc.LayerColor
  *
+ * @param {cc.Color} start Starting color
+ * @param {cc.Color} end Ending color
+ * @param {cc.Point} [v=cc.p(0, -1)] A vector defines the gradient direction, default direction is from top to bottom
+ *
  * @property {cc.Color} startColor              - Start color of the color gradient
  * @property {cc.Color} endColor                - End color of the color gradient
  * @property {Number}   startOpacity            - Start opacity of the color gradient
@@ -546,9 +559,9 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
     /**
      * Constructor of cc.LayerGradient
-     * @param {cc.Color} start starting color
+     * @param {cc.Color} start
      * @param {cc.Color} end
-     * @param {cc.Point|Null} v
+     * @param {cc.Point} [v=cc.p(0, -1)]
      */
     ctor: function (start, end, v) {
         var _t = this;
@@ -565,6 +578,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
+     * Initialization of the layer, please do not call this function by yourself, you should pass the parameters to constructor to initialize a layer
      * @param {cc.Color} start starting color
      * @param {cc.Color} end
      * @param {cc.Point|Null} v
@@ -600,7 +614,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
     /**
      * Sets the untransformed size of the LayerGradient.
-     * @override
      * @param {cc.Size|Number} size The untransformed size of the LayerGradient or The untransformed size's width of the LayerGradient.
      * @param {Number} [height] The untransformed size's height of the LayerGradient.
      */
@@ -619,7 +632,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
-     * get the starting color
+     * Returns the starting color
      * @return {cc.Color}
      */
     getStartColor: function () {
@@ -627,7 +640,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
-     * set the starting color
+     * Sets the starting color
      * @param {cc.Color} color
      * @example
      * // Example
@@ -639,7 +652,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
-     * set the end gradient color
+     * Sets the end gradient color
      * @param {cc.Color} color
      * @example
      * // Example
@@ -652,7 +665,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
-     * get the end color
+     * Returns the end color
      * @return {cc.Color}
      */
     getEndColor: function () {
@@ -660,7 +673,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
-     * set starting gradient opacity
+     * Sets starting gradient opacity
      * @param {Number} o from 0 to 255, 0 is transparent
      */
     setStartOpacity: function (o) {
@@ -669,7 +682,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
-     * get the starting gradient opacity
+     * Returns the starting gradient opacity
      * @return {Number}
      */
     getStartOpacity: function () {
@@ -677,7 +690,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
-     * set the end gradient opacity
+     * Sets the end gradient opacity
      * @param {Number} o
      */
     setEndOpacity: function (o) {
@@ -686,7 +699,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
-     * get the end gradient opacity
+     * Returns the end gradient opacity
      * @return {Number}
      */
     getEndOpacity: function () {
@@ -694,7 +707,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
-     * set vector
+     * Sets the direction vector of the gradient
      * @param {cc.Point} Var
      */
     setVector: function (Var) {
@@ -704,13 +717,15 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
+     * Returns the direction vector of the gradient
      * @return {cc.Point}
      */
     getVector: function () {
         return cc.p(this._alongVector.x, this._alongVector.y);
     },
 
-    /** is Compressed Interpolation
+    /**
+     * Returns whether compressed interpolation is enabled
      * @return {Boolean}
      */
     isCompressedInterpolation: function () {
@@ -718,6 +733,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
+     * Sets whether compressed interpolation is enabled
      * @param {Boolean} compress
      */
     setCompressedInterpolation: function (compress) {
@@ -731,8 +747,9 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 });
 
 /**
- * creates a gradient layer
- * @deprecated
+ * Creates a gradient layer
+ * @deprecated since v3.0, please use the new construction instead
+ * @see cc.layerGradient
  * @param {cc.Color} start starting color
  * @param {cc.Color} end ending color
  * @param {cc.Point|Null} v
@@ -748,8 +765,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     var _p = cc.LayerGradient.prototype;
     _p.draw = function (ctx) {
         var context = ctx || cc._renderContext, _t = this;
-        if (_t._isLighterMode)
-            context.globalCompositeOperation = 'lighter';
+        if (_t._blendFuncStr != "source")
+            context.globalCompositeOperation = _t._blendFuncStr;
 
         context.save();
         var opacityf = _t._displayedOpacity / 255.0;
@@ -782,12 +799,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     //cc.LayerGradient define end
     _p = null;
 } else {
-    cc.assert(typeof cc._tmp.WebGLLayerGradient === "function", cc._LogInfos.MissingFile, "CCLayerWebGL.js");
+    cc.assert(cc.isFunction(cc._tmp.WebGLLayerGradient), cc._LogInfos.MissingFile, "CCLayerWebGL.js");
     cc._tmp.WebGLLayerGradient();
     delete cc._tmp.WebGLLayerGradient;
 }
 
-cc.assert(typeof cc._tmp.PrototypeLayerGradient === "function", cc._LogInfos.MissingFile, "CCLayerPropertyDefine.js");
+cc.assert(cc.isFunction(cc._tmp.PrototypeLayerGradient), cc._LogInfos.MissingFile, "CCLayerPropertyDefine.js");
 cc._tmp.PrototypeLayerGradient();
 delete cc._tmp.PrototypeLayerGradient;
 
@@ -796,8 +813,12 @@ delete cc._tmp.PrototypeLayerGradient;
  * Features:<br/>
  *  <ul><li>- It supports one or more children</li>
  *  <li>- Only one children will be active a time</li></ul>
- *  @class
- *  @extends cc.Layer
+ * @class
+ * @extends cc.Layer
+ * @param {Array} layers an array of cc.Layer
+ * @example
+ * // Example
+ * var multiLayer = new cc.LayerMultiple(layer1, layer2, layer3);//any number of layers
  */
 cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
     _enabledLayer: 0,
@@ -817,6 +838,7 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
     },
 
     /**
+     * Initialization of the layer multiplex, please do not call this function by yourself, you should pass the parameters to constructor to initialize a layer multiplex
      * @param {Array} layers an array of cc.Layer
      * @return {Boolean}
      */
@@ -831,7 +853,7 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
     },
 
     /**
-     * switches to a certain layer indexed by n.<br/>
+     * Switches to a certain layer indexed by n.<br/>
      * The current (old) layer will be removed from it's parent with 'cleanup:YES'.
      * @param {Number} n the layer index to switch to
      */
@@ -846,7 +868,8 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
         this.addChild(this._layers[n]);
     },
 
-    /** release the current layer and switches to another layer indexed by n.<br/>
+    /**
+     * Release the current layer and switches to another layer indexed by n.<br/>
      * The current (old) layer will be removed from it's parent with 'cleanup:YES'.
      * @param {Number} n the layer index to switch to
      */
@@ -865,6 +888,7 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
     },
 
     /**
+     * Add a layer to the multiplex layers list
      * @param {cc.Layer} layer
      */
     addLayer: function (layer) {
@@ -877,14 +901,11 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
 });
 
 /**
- * creates a cc.LayerMultiplex with one or more layers using a variable argument list.
- * @deprecated
+ * Creates a cc.LayerMultiplex with one or more layers using a variable argument list.
+ * @deprecated since v3.0, please use new construction instead
+ * @see cc.LayerMultiplex
  * @return {cc.LayerMultiplex|Null}
- * @example
- * // Example
- * var multiLayer = cc.LayerMultiple.create(layer1, layer2, layer3);//any number of layers
  */
 cc.LayerMultiplex.create = function (/*Multiple Arguments*/) {
     return new cc.LayerMultiplex(Array.prototype.slice.call(arguments));
 };
-

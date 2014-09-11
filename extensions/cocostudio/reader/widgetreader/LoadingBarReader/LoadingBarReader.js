@@ -23,14 +23,27 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.LoadingBarReader = {
-
+/**
+ * The ccui.LoadingBar's properties reader for GUIReader.
+ * @class
+ * @name ccs.LoadingBarReader
+ **/
+ccs.LoadingBarReader = /** @lends ccs.LoadingBarReader# */{
+    /**
+     * Gets the ccs.LoadingBarReader.
+     * @deprecated since v3.0, please use ccs.LoadingBarReader directly.
+     * @returns {ccs.LoadingBarReader}
+     */
     getInstance: function(){
         return ccs.LoadingBarReader;
     },
 
+    /**
+     * Sets ccui.LoadingBar's properties from json dictionary.
+     * @param {ccui.LoadingBar} widget
+     * @param {Object} options
+     */
     setPropsFromJsonDictionary: function(widget, options){
-
         ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
 

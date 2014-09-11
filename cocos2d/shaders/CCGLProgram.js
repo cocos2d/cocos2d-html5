@@ -33,11 +33,11 @@ cc.HashUniformEntry = function (value, location, hh) {
 };
 
 /**
- * Class that implements a glProgram
+ * Class that implements a WebGL program
  * @class
  * @extends cc.Class
  */
-cc.GLProgram = cc.Class.extend({
+cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
     _glContext: null,
     _programObj: null,
     _vertShader: null,
@@ -122,6 +122,9 @@ cc.GLProgram = cc.Class.extend({
 		vShaderFileName && fShaderFileName && this.init(vShaderFileName, fShaderFileName);
     },
 
+    /**
+     * destroy program
+     */
     destroyProgram: function () {
         this._vertShader = null;
         this._fragShader = null;
@@ -294,10 +297,18 @@ cc.GLProgram = cc.Class.extend({
         return this._glContext.getUniformLocation(this._programObj, name);
     },
 
+    /**
+     * get uniform MVP matrix
+     * @returns {WebGLUniformLocation}
+     */
     getUniformMVPMatrix: function () {
         return this._uniforms[cc.UNIFORM_MVPMATRIX];
     },
 
+    /**
+     * get uniform sampler
+     * @returns {WebGLUniformLocation}
+     */
     getUniformSampler: function () {
         return this._uniforms[cc.UNIFORM_SAMPLER];
     },
@@ -671,7 +682,7 @@ cc.GLProgram = cc.Class.extend({
 
 /**
  * Create a cc.GLProgram object
- * @deprecated
+ * @deprecated since v3.0, please use new cc.GLProgram(vShaderFileName, fShaderFileName) instead
  * @param {String} vShaderFileName
  * @param {String} fShaderFileName
  * @returns {cc.GLProgram}

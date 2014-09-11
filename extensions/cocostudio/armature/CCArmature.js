@@ -24,7 +24,7 @@
  ****************************************************************************/
 
 /**
- * Base class for ccs.Armature objects.
+ * The main class of Armature, it plays armature animation, manages and updates bones' state.
  * @class
  * @extends ccs.Node
  *
@@ -70,7 +70,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this._offsetPoint = cc.p(0, 0);
         this._armatureTransformDirty = true;
         this._realAnchorPointInPoints = cc.p(0, 0);
-
         name && ccs.Armature.prototype.init.call(this, name, parentBone);
     },
 
@@ -146,7 +145,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             this.animation.setAnimationData(animationData);
         }
         if (cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR));
+            this.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
 
         this.setCascadeOpacityEnabled(true);
         this.setCascadeColorEnabled(true);
@@ -277,6 +276,12 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             this.setAnchorPoint(locOffsetPoint.x / rect.width, locOffsetPoint.y / rect.height);
     },
 
+    /**
+     * Sets armature's anchor point, because it need to consider offset point, so here is the override function.
+     * @override
+     * @param {cc.Point|Number} point point or x of point
+     * @param {Number} [y] y of point
+     */
     setAnchorPoint: function(point, y){
         var ax, ay;
         if(y !== undefined){
@@ -316,6 +321,11 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this.setNodeDirty();
     },
 
+    /**
+     * Returns the anchor point in points of ccs.Armature.
+     * @override
+     * @returns {cc.Point}
+     */
     getAnchorPointInPoints: function(){
         return this._realAnchorPointInPoints;
     },
@@ -344,6 +354,11 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         return this._armatureTransformDirty;
     },
 
+    /**
+     * The update callback of ccs.Armature, it updates animation's state and updates bone's state.
+     * @override
+     * @param {Number} dt
+     */
     update: function (dt) {
         this.animation.update(dt);
         var locTopBoneList = this._topBoneList;
@@ -352,6 +367,11 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this._armatureTransformDirty = false;
     },
 
+    /**
+     * Draws armature's display render node.
+     * @override
+     * @param  {CanvasRenderingContext2D | WebGLRenderingContext} ctx The render context
+     */
     draw: function(ctx){
         if (this._parentBone == null && this._batchNode == null) {
             //        CC_NODE_DRAW_SETUP();
@@ -361,11 +381,14 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         var alphaPremultiplied = cc.BlendFunc.ALPHA_PREMULTIPLIED, alphaNonPremultipled = cc.BlendFunc.ALPHA_NON_PREMULTIPLIED;
         for (var i = 0, len = locChildren.length; i< len; i++) {
             var selBone = locChildren[i];
-            if (selBone) {
+            if (selBone && selBone.getDisplayRenderNode) {
                 var node = selBone.getDisplayRenderNode();
 
                 if (null == node)
                     continue;
+
+                if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+                    node.setShaderProgram(this._shaderProgram);
 
                 switch (selBone.getDisplayRenderNodeType()) {
                     case ccs.DISPLAY_TYPE_SPRITE:
@@ -397,17 +420,27 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
                         break;
                 }
             } else if(selBone instanceof cc.Node) {
+                if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+                    selBone.setShaderProgram(this._shaderProgram);
                 selBone.visit(ctx);
                 //            CC_NODE_DRAW_SETUP();
             }
         }
     },
 
+    /**
+     * The callback when ccs.Armature enter stage.
+     * @override
+     */
     onEnter: function () {
         cc.Node.prototype.onEnter.call(this);
         this.scheduleUpdate();
     },
 
+    /**
+     * The callback when ccs.Armature exit stage.
+     * @override
+     */
     onExit: function () {
         cc.Node.prototype.onExit.call(this);
         this.unscheduleUpdate();
@@ -526,7 +559,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     },
 
     /**
-     * return parent bone
+     * Return parent bone of ccs.Armature.
      * @returns {ccs.Bone}
      */
     getParentBone: function () {
@@ -553,6 +586,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             }
         }
     },
+
 
     setBody: function (body) {
         if (this._body == body)
@@ -586,7 +620,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     },
 
     /**
-     * conforms to cc.TextureProtocol protocol
+     * Sets the blendFunc to ccs.Armature
      * @param {cc.BlendFunc} blendFunc
      */
     setBlendFunc: function (blendFunc) {
@@ -594,7 +628,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     },
 
     /**
-     * blendFunc getter
+     * Returns the blendFunc of ccs.Armature
      * @returns {cc.BlendFunc}
      */
     getBlendFunc: function () {
@@ -612,7 +646,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     },
 
     /**
-     * Gets the armatureData of this Armature
+     * Returns the armatureData of ccs.Armature
      * @return {ccs.ArmatureData}
      */
     getArmatureData: function () {

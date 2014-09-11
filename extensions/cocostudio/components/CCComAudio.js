@@ -24,29 +24,42 @@
  ****************************************************************************/
 
 /**
- * Base class for ccs.ComAudio
+ * The audio component for Cocostudio.
  * @class
  * @extends ccs.Component
  */
 ccs.ComAudio = ccs.Component.extend(/** @lends ccs.ComAudio# */{
     _filePath: "",
     _loop: false,
+
+    /**
+     * Construction of ccs.ComAudio
+     */
     ctor: function () {
         cc.Component.prototype.ctor.call(this);
         this._name = "Audio";
     },
+
+    /**
+     * Initializes a ccs.ComAudio.
+     * @returns {boolean}
+     */
     init: function () {
         return true;
     },
 
-    onEnter: function () {
-    },
-
+    /**
+     * The callback calls when a audio component enter stage.
+     * @override
+     */
     onExit: function () {
         this.stopBackgroundMusic(true);
         this.stopAllEffects();
     },
 
+    /**
+     * Stops all audios.
+     */
     end: function () {
         cc.audioEngine.end();
     },
@@ -61,8 +74,8 @@ ccs.ComAudio = ccs.Component.extend(/** @lends ccs.ComAudio# */{
 
     /**
      * Play background music
-     * @param {String} pszFilePath
-     * @param {Boolean} loop
+     * @param {String} [pszFilePath]
+     * @param {Boolean} [loop]
      */
     playBackgroundMusic: function (pszFilePath, loop) {
         if(pszFilePath){
@@ -151,16 +164,15 @@ ccs.ComAudio = ccs.Component.extend(/** @lends ccs.ComAudio# */{
 
     /**
      * Play sound effect.
-     * @param {String} pszFilePath
-     * @param {Boolean} loop
+     * @param {String} [pszFilePath]
+     * @param {Boolean} [loop]
      * @returns {Boolean}
      */
     playEffect: function (pszFilePath, loop) {
-        if (pszFilePath) {
+        if (pszFilePath)
             return cc.audioEngine.playEffect(pszFilePath, loop);
-        } else {
+         else
             return cc.audioEngine.playEffect(this._filePath, this._loop);
-        }
     },
 
     /**
@@ -235,7 +247,7 @@ ccs.ComAudio = ccs.Component.extend(/** @lends ccs.ComAudio# */{
     },
 
     /**
-     * Set loop
+     * Sets audio component whether plays loop
      * @param {Boolean} loop
      */
     setLoop: function (loop) {
@@ -243,7 +255,7 @@ ccs.ComAudio = ccs.Component.extend(/** @lends ccs.ComAudio# */{
     },
 
     /**
-     * File path Getter
+     * Returns the file path of audio component.
      * @returns {string}
      */
     getFile: function () {
@@ -251,16 +263,17 @@ ccs.ComAudio = ccs.Component.extend(/** @lends ccs.ComAudio# */{
     },
 
     /**
-     * Whether is loop
+     * Returns audio component whether plays loop
      * @returns {boolean}
      */
     isLoop: function () {
         return this._loop;
     }
 });
+
 /**
  * allocates and initializes a ComAudio.
- * @constructs
+ * @deprecated since v3.0, please use new construction instead.
  * @return {ccs.ComAudio}
  * @example
  * // example
@@ -268,8 +281,7 @@ ccs.ComAudio = ccs.Component.extend(/** @lends ccs.ComAudio# */{
  */
 ccs.ComAudio.create = function () {
     var com = new ccs.ComAudio();
-    if (com && com.init()) {
+    if (com && com.init())
         return com;
-    }
     return null;
 };

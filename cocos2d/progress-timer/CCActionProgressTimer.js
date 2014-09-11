@@ -29,6 +29,10 @@
  * Progress to percentage
  * @class
  * @extends cc.ActionInterval
+ * @param {Number} duration duration in seconds
+ * @param {Number} percent
+ * @example
+ * var to = new cc.ProgressTo(2, 100);
  */
 cc.ProgressTo = cc.ActionInterval.extend(/** @lends cc.ProgressTo# */{
     _to:0,
@@ -37,10 +41,8 @@ cc.ProgressTo = cc.ActionInterval.extend(/** @lends cc.ProgressTo# */{
 	/**
 	 * Creates a ProgressTo action with a duration and a percent
 	 * Constructor of cc.ProgressTo
-	 * @param {Number} duration duration in seconds
-	 * @param {Number} percent
-	 * @example
-	 * var to = new cc.ProgressTo(2, 100);
+     * @param {Number} duration duration in seconds
+     * @param {Number} percent
 	 */
     ctor: function(duration, percent){
         cc.ActionInterval.prototype.ctor.call(this);
@@ -62,19 +64,26 @@ cc.ProgressTo = cc.ActionInterval.extend(/** @lends cc.ProgressTo# */{
         }
         return false;
     },
-
+    /**
+     * return a new cc.ProgressTo, all the configuration is the same as the original
+     * @returns {cc.ProgressTo}
+     */
     clone:function(){
         var action = new cc.ProgressTo();
         action.initWithDuration(this._duration, this._to);
         return action;
     },
-
+    /**
+     * reverse hasn't been supported
+     * @returns {null}
+     */
     reverse: function(){
         cc.log("cc.ProgressTo.reverse(): reverse hasn't been supported.");
         return null;
     },
 
     /**
+     * start with a target
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -88,6 +97,7 @@ cc.ProgressTo = cc.ActionInterval.extend(/** @lends cc.ProgressTo# */{
     },
 
     /**
+     * custom update
      * @param {Number} time time in seconds
      */
     update:function (time) {
@@ -113,10 +123,13 @@ cc.progressTo = function (duration, percent) {
  * Please use cc.progressTo instead
  * Creates and initializes with a duration and a percent
  * @static
- * @deprecated
+ * @deprecated since v3.0,please use cc.progressTo instead.
  * @param {Number} duration duration in seconds
  * @param {Number} percent
  * @return {cc.ProgressTo}
+ * @example
+ * //example
+ * var progress = cc.ProgressTo.create(duration,percent);
  */
 cc.ProgressTo.create = cc.progressTo;
 
@@ -124,6 +137,11 @@ cc.ProgressTo.create = cc.progressTo;
  * Progress from a percentage to another percentage
  * @class
  * @extends cc.ActionInterval
+ * @param {Number} duration duration in seconds
+ * @param {Number} fromPercentage
+ * @param {Number} toPercentage
+ * @example
+ *  var fromTo = new cc.ProgressFromTo(2, 100.0, 0.0);
  */
 cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
     _to:0,
@@ -132,11 +150,9 @@ cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
 	/**
 	 * Creates and initializes the action with a duration, a "from" percentage and a "to" percentage
 	 * Constructor of cc.ProgressFromTo
-	 * @param {Number} duration duration in seconds
-	 * @param {Number} fromPercentage
-	 * @param {Number} toPercentage
-	 * @example
-	 *  var fromTo = new cc.ProgressFromTo(2, 100.0, 0.0);
+     * @param {Number} duration duration in seconds
+     * @param {Number} fromPercentage
+     * @param {Number} toPercentage
 	 */
     ctor:function(duration, fromPercentage, toPercentage){
         cc.ActionInterval.prototype.ctor.call(this);
@@ -160,7 +176,10 @@ cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
         }
         return false;
     },
-
+    /**
+     * return a new cc.ProgressTo, all the configuration is the same as the original
+     * @returns {cc.ProgressFromTo}
+     */
     clone:function(){
         var action = new cc.ProgressFromTo();
         action.initWithDuration(this._duration, this._from, this._to);
@@ -171,10 +190,11 @@ cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.ProgressFromTo.create(this._duration, this._to, this._from);
+        return cc.progressFromTo(this._duration, this._to, this._from);
     },
 
     /**
+     * start with a target
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -198,19 +218,21 @@ cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
  * @return {cc.ProgressFromTo}
  * @example
  * // example
- *  var fromTO = cc.progressFromTo(2, 100.0, 0.0);
+ *  var fromTo = cc.progressFromTo(2, 100.0, 0.0);
  */
 cc.progressFromTo = function (duration, fromPercentage, toPercentage) {
     return new cc.ProgressFromTo(duration, fromPercentage, toPercentage);
 };
 /**
- * Please use cc.progressFromTo instead
  * Creates and initializes the action with a duration, a "from" percentage and a "to" percentage
  * @static
- * @deprecated
+ * @deprecated since v3.0,please use cc.ProgressFromTo(duration, fromPercentage, toPercentage) instead.
  * @param {Number} duration duration in seconds
  * @param {Number} fromPercentage
  * @param {Number} toPercentage
  * @return {cc.ProgressFromTo}
+ * @example
+ * //example
+ * var progress = cc.ProgressFromTo.create(duration, fromPercentage, toPercentage);
  */
 cc.ProgressFromTo.create = cc.progressFromTo;

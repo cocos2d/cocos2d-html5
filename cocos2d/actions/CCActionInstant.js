@@ -25,13 +25,14 @@
  ****************************************************************************/
 
 /**
- * Instant actions are immediate actions. They don't have a duration like
+ * Instant actions are immediate actions. They don't have a duration like.
  * the CCIntervalAction actions.
  * @class
  * @extends cc.FiniteTimeAction
  */
 cc.ActionInstant = cc.FiniteTimeAction.extend(/** @lends cc.ActionInstant# */{
     /**
+     * return true if the action has finished.
      * @return {Boolean}
      */
     isDone:function () {
@@ -39,6 +40,8 @@ cc.ActionInstant = cc.FiniteTimeAction.extend(/** @lends cc.ActionInstant# */{
     },
 
     /**
+     * called every frame with it's delta time. <br />
+     * DON'T override unless you know what you are doing.
      * @param {Number} dt
      */
     step:function (dt) {
@@ -46,45 +49,78 @@ cc.ActionInstant = cc.FiniteTimeAction.extend(/** @lends cc.ActionInstant# */{
     },
 
     /**
-     * @param {Number} time
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number} dt
      */
-    update:function (time) {
+    update:function (dt) {
         //nothing
     },
 
+    /**
+     * returns a reversed action. <br />
+     * For example: <br />
+     * - The action will be x coordinates of 0 move to 100. <br />
+     * - The reversed action will be x of 100 move to 0.
+     * - Will be rewritten
+     * @returns {cc.Action}
+     */
     reverse:function(){
         return this.clone();
     },
 
+    /**
+     * to copy object with deep copy.
+     * returns a clone of action.
+     *
+     * @return {cc.FiniteTimeAction}
+     */
     clone:function(){
         return new cc.ActionInstant();
     }
 });
 
-/**  Show the node
+/**
+ * Show the node.
  * @class
  * @extends cc.ActionInstant
  */
 cc.Show = cc.ActionInstant.extend(/** @lends cc.Show# */{
+
     /**
-     * @param {Number} time
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number} dt
      */
-    update:function (time) {
+    update:function (dt) {
         this.target.visible = true;
     },
 
     /**
-     * @return {cc.FiniteTimeAction}
+     * returns a reversed action. <br />
+     * For example: <br />
+     * - The action will be x coordinates of 0 move to 100. <br />
+     * - The reversed action will be x of 100 move to 0.
+     * - Will be rewritten
+     * @returns {cc.Hide}
      */
     reverse:function () {
-        return cc.Hide.create();
+        return new cc.Hide();
     },
 
+    /**
+     * to copy object with deep copy.
+     * returns a clone of action.
+     *
+     * @return {cc.FiniteTimeAction}
+     */
     clone:function(){
         return new cc.Show();
     }
 });
+
 /**
+ * Show the Node.
  * @function
  * @return {cc.Show}
  * @example
@@ -94,39 +130,56 @@ cc.Show = cc.ActionInstant.extend(/** @lends cc.Show# */{
 cc.show = function () {
     return new cc.Show();
 };
+
 /**
- * Please use cc.show instead
+ * Show the Node. Please use cc.show instead.
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.show instead.
  * @return {cc.Show}
  */
 cc.Show.create = cc.show;
 
 /**
- * Hide the node
+ * Hide the node.
  * @class
  * @extends cc.ActionInstant
  */
 cc.Hide = cc.ActionInstant.extend(/** @lends cc.Hide# */{
+
     /**
-     * @param {Number} time
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number} dt
      */
-    update:function (time) {
+    update:function (dt) {
         this.target.visible = false;
     },
 
     /**
-     * @return {cc.FiniteTimeAction}
+     * returns a reversed action. <br />
+     * For example: <br />
+     * - The action will be x coordinates of 0 move to 100. <br />
+     * - The reversed action will be x of 100 move to 0.
+     * - Will be rewritten
+     * @returns {cc.Show}
      */
     reverse:function () {
-        return cc.Show.create();
+        return new cc.Show();
     },
 
+    /**
+     * to copy object with deep copy.
+     * returns a clone of action.
+     *
+     * @return {cc.Hide}
+     */
     clone:function(){
         return new cc.Hide();
     }
 });
+
 /**
+ * Hide the node.
  * @function
  * @return {cc.Hide}
  * @example
@@ -136,39 +189,55 @@ cc.Hide = cc.ActionInstant.extend(/** @lends cc.Hide# */{
 cc.hide = function () {
     return new cc.Hide();
 };
+
 /**
+ * Hide the node. Please use cc.hide instead.
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.hide instead.
  * @return {cc.Hide}
+ * @example
+ * // example
+ * var hideAction = cc.hide();
  */
 cc.Hide.create = cc.hide;
 
-
-/** Toggles the visibility of a node
+/**
+ * Toggles the visibility of a node.
  * @class
  * @extends cc.ActionInstant
  */
 cc.ToggleVisibility = cc.ActionInstant.extend(/** @lends cc.ToggleVisibility# */{
+
     /**
-     * @param {Number} time
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number} dt
      */
-    update:function (time) {
+    update:function (dt) {
         this.target.visible = !this.target.visible;
     },
 
     /**
-     * @return {cc.ToggleVisibility}
+     * returns a reversed action.
+     * @returns {cc.ToggleVisibility}
      */
     reverse:function () {
         return new cc.ToggleVisibility();
     },
 
+    /**
+     * to copy object with deep copy.
+     * returns a clone of action.
+     *
+     * @return {cc.ToggleVisibility}
+     */
     clone:function(){
         return new cc.ToggleVisibility();
     }
 });
 
 /**
+ * Toggles the visibility of a node.
  * @function
  * @return {cc.ToggleVisibility}
  * @example
@@ -178,26 +247,32 @@ cc.ToggleVisibility = cc.ActionInstant.extend(/** @lends cc.ToggleVisibility# */
 cc.toggleVisibility = function () {
     return new cc.ToggleVisibility();
 };
+
 /**
- * Please use cc.toggleVisibility instead
+ * Toggles the visibility of a node. Please use cc.toggleVisibility instead.
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.toggleVisibility instead.
  * @return {cc.ToggleVisibility}
  */
 cc.ToggleVisibility.create = cc.toggleVisibility;
 
+/**
+ * Delete self in the next frame.
+ * @class
+ * @extends cc.ActionInstant
+ * @param {Boolean} [isNeedCleanUp=true]
+ *
+ * @example
+ * // example
+ * var removeSelfAction = new cc.RemoveSelf(false);
+ */
 cc.RemoveSelf = cc.ActionInstant.extend({
      _isNeedCleanUp: true,
 
 	/**
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
 	 * Create a RemoveSelf object with a flag indicate whether the target should be cleaned up while removing.
-	 *
-	 * Constructor of cc.RemoveSelf
 	 * @param {Boolean} [isNeedCleanUp=true]
-	 *
-	 * @example
-	 * // example
-	 * var removeSelfAction = new cc.RemoveSelf(false);
 	 */
     ctor:function(isNeedCleanUp){
         cc.FiniteTimeAction.prototype.ctor.call(this);
@@ -205,19 +280,38 @@ cc.RemoveSelf = cc.ActionInstant.extend({
 	    isNeedCleanUp !== undefined && this.init(isNeedCleanUp);
     },
 
-    update:function(time){
+    /**
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number} dt
+     */
+    update:function(dt){
         this.target.removeFromParent(this._isNeedCleanUp);
     },
 
+    /**
+     * Initialization of the node, please do not call this function by yourself, you should pass the parameters to constructor to initialize it .
+     * @param isNeedCleanUp
+     * @returns {boolean}
+     */
     init:function(isNeedCleanUp){
         this._isNeedCleanUp = isNeedCleanUp;
         return true;
     },
 
+    /**
+     * returns a reversed action.
+     */
     reverse:function(){
         return new cc.RemoveSelf(this._isNeedCleanUp);
     },
 
+    /**
+     * to copy object with deep copy.
+     * returns a clone of action.
+     *
+     * @return {cc.RemoveSelf}
+     */
     clone:function(){
         return new cc.RemoveSelf(this._isNeedCleanUp);
     }
@@ -237,33 +331,34 @@ cc.RemoveSelf = cc.ActionInstant.extend({
 cc.removeSelf = function(isNeedCleanUp){
     return new cc.RemoveSelf(isNeedCleanUp);
 };
+
 /**
- * Please use cc.removeSelf instead
+ * Please use cc.removeSelf instead.
  * Create a RemoveSelf object with a flag indicate whether the target should be cleaned up while removing.
  *
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.removeSelf instead.
  * @param {Boolean} [isNeedCleanUp=true]
  * @return {cc.RemoveSelf}
  */
 cc.RemoveSelf.create = cc.removeSelf;
 
 /**
- * Flips the sprite horizontally
+ * Flips the sprite horizontally.
  * @class
  * @extends cc.ActionInstant
+ * @param {Boolean} flip Indicate whether the target should be flipped or not
+ *
+ * @example
+ * var flipXAction = new cc.FlipX(true);
  */
 cc.FlipX = cc.ActionInstant.extend(/** @lends cc.FlipX# */{
     _flippedX:false,
 
 	/**
-	 * Create a FlipX action to flip or unflip the target
-	 *
-	 * Constructor of cc.FlipX
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Create a FlipX action to flip or unflip the target.
 	 * @param {Boolean} flip Indicate whether the target should be flipped or not
-	 *
-	 * @example
-	 * var flipXAction = new cc.FlipX(true);
 	 */
     ctor:function(flip){
         cc.FiniteTimeAction.prototype.ctor.call(this);
@@ -272,6 +367,7 @@ cc.FlipX = cc.ActionInstant.extend(/** @lends cc.FlipX# */{
     },
 
     /**
+     * initializes the action with a set flipX.
      * @param {Boolean} flip
      * @return {Boolean}
      */
@@ -281,19 +377,28 @@ cc.FlipX = cc.ActionInstant.extend(/** @lends cc.FlipX# */{
     },
 
     /**
-     * @param {Number} time
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number}  dt
      */
-    update:function (time) {
+    update:function (dt) {
         this.target.flippedX = this._flippedX;
     },
 
     /**
-     * @return {cc.FiniteTimeAction}
+     * returns a reversed action.
+     * @return {cc.FlipX}
      */
     reverse:function () {
-        return cc.FlipX.create(!this._flippedX);
+        return new cc.FlipX(!this._flippedX);
     },
 
+    /**
+     * to copy object with deep copy.
+     * returns a clone of action.
+     *
+     * @return {cc.FiniteTimeAction}
+     */
     clone:function(){
         var action = new cc.FlipX();
         action.initWithFlipX(this._flippedX);
@@ -302,7 +407,7 @@ cc.FlipX = cc.ActionInstant.extend(/** @lends cc.FlipX# */{
 });
 
 /**
- * Create a FlipX action to flip or unflip the target
+ * Create a FlipX action to flip or unflip the target.
  *
  * @function
  * @param {Boolean} flip Indicate whether the target should be flipped or not
@@ -313,12 +418,13 @@ cc.FlipX = cc.ActionInstant.extend(/** @lends cc.FlipX# */{
 cc.flipX = function (flip) {
     return new cc.FlipX(flip);
 };
+
 /**
- * Plese use cc.flipX instead
+ * Plese use cc.flipX instead.
  * Create a FlipX action to flip or unflip the target
  *
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Plese use cc.flipX instead.
  * @param {Boolean} flip Indicate whether the target should be flipped or not
  * @return {cc.FlipX}
  */
@@ -328,17 +434,18 @@ cc.FlipX.create = cc.flipX;
  * Flips the sprite vertically
  * @class
  * @extends cc.ActionInstant
+ * @param {Boolean} flip
+ * @example
+ * var flipYAction = new cc.FlipY(true);
  */
 cc.FlipY = cc.ActionInstant.extend(/** @lends cc.FlipY# */{
     _flippedY:false,
 
 	/**
-	 * Create a FlipY action to flip or unflip the target
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Create a FlipY action to flip or unflip the target.
 	 *
-	 * Constructor of cc.FlipY
 	 * @param {Boolean} flip
-	 * @example
-	 * var flipYAction = new cc.FlipY(true);
 	 */
     ctor: function(flip){
         cc.FiniteTimeAction.prototype.ctor.call(this);
@@ -346,7 +453,9 @@ cc.FlipY = cc.ActionInstant.extend(/** @lends cc.FlipY# */{
 
 		flip !== undefined && this.initWithFlipY(flip);
     },
+
     /**
+     * initializes the action with a set flipY.
      * @param {Boolean} flip
      * @return {Boolean}
      */
@@ -356,28 +465,37 @@ cc.FlipY = cc.ActionInstant.extend(/** @lends cc.FlipY# */{
     },
 
     /**
-     * @param {Number} time
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number}  dt
      */
-    update:function (time) {
-        //this._super();
+    update:function (dt) {
         this.target.flippedY = this._flippedY;
     },
 
     /**
-     * @return {cc.FiniteTimeAction}
+     * returns a reversed action.
+     * @return {cc.FlipY}
      */
     reverse:function () {
-        return cc.FlipY.create(!this._flippedY);
+        return new cc.FlipY(!this._flippedY);
     },
 
+    /**
+     * to copy object with deep copy.
+     * returns a clone of action.
+     *
+     * @return {cc.FlipY}
+     */
     clone:function(){
         var action = new cc.FlipY();
         action.initWithFlipY(this._flippedY);
         return action;
     }
 });
+
 /**
- * Create a FlipY action to flip or unflip the target
+ * Create a FlipY action to flip or unflip the target.
  *
  * @function
  * @param {Boolean} flip
@@ -388,35 +506,37 @@ cc.FlipY = cc.ActionInstant.extend(/** @lends cc.FlipY# */{
 cc.flipY = function (flip) {
     return new cc.FlipY(flip);
 };
+
 /**
  * Please use cc.flipY instead
  * Create a FlipY action to flip or unflip the target
  *
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.flipY instead.
  * @param {Boolean} flip
  * @return {cc.FlipY}
  */
 cc.FlipY.create = cc.flipY;
 
-
-/** Places the node in a certain position
+/**
+ * Places the node in a certain position
  * @class
  * @extends cc.ActionInstant
+ * @param {cc.Point|Number} pos
+ * @param {Number} [y]
+ * @example
+ * var placeAction = new cc.Place.create(cc.p(200, 200));
+ * var placeAction = new cc.Place.create(200, 200);
  */
 cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
     _x: 0,
 	_y: 0,
 
 	/**
-	 * Creates a Place action with a position
-	 *
-	 * Constructor of cc.Place
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Creates a Place action with a position.
 	 * @param {cc.Point|Number} pos
 	 * @param {Number} [y]
-	 * @example
-	 * var placeAction = new cc.Place.create(cc.p(200, 200));
-	 * var placeAction = new cc.Place.create(200, 200);
 	 */
     ctor:function(pos, y){
         cc.FiniteTimeAction.prototype.ctor.call(this);
@@ -432,8 +552,10 @@ cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
 		}
     },
 
-    /** Initializes a Place action with a position
-     * @param {cc.Point} pos
+    /**
+     * Initializes a Place action with a position
+     * @param {number} x
+     * @param {number} y
      * @return {Boolean}
      */
     initWithPosition: function (x, y) {
@@ -443,20 +565,29 @@ cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
     },
 
     /**
-     * @param {Number} time
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number}  dt
      */
-    update:function (time) {
+    update:function (dt) {
         this.target.setPosition(this._x, this._y);
     },
 
+    /**
+     * to copy object with deep copy.
+     * returns a clone of action.
+     *
+     * @return {cc.Place}
+     */
     clone:function(){
         var action = new cc.Place();
         action.initWithPosition(this._x, this._y);
         return action;
     }
 });
+
 /**
- * Creates a Place action with a position
+ * Creates a Place action with a position.
  * @function
  * @param {cc.Point|Number} pos
  * @param {Number} [y]
@@ -469,11 +600,12 @@ cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
 cc.place = function (pos, y) {
     return new cc.Place(pos, y);
 };
+
 /**
- * Please use cc.place instead
- * Creates a Place action with a position
+ * Please use cc.place instead.
+ * Creates a Place action with a position.
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.place instead.
  * @param {cc.Point|Number} pos
  * @param {Number} [y]
  * @return {cc.Place}
@@ -481,9 +613,20 @@ cc.place = function (pos, y) {
 cc.Place.create = cc.place;
 
 
-/** Calls a 'callback'
+/**
+ * Calls a 'callback'.
  * @class
  * @extends cc.ActionInstant
+ * @param {function} selector
+ * @param {object|null} [selectorTarget]
+ * @param {*|null} [data] data for function, it accepts all data types.
+ * @example
+ * // example
+ * // CallFunc without data
+ * var finish = new cc.CallFunc(this.removeSprite, this);
+ *
+ * // CallFunc with data
+ * var finish = new cc.CallFunc(this.removeFromParentAndCleanup, this,  true);
  */
 cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
     _selectorTarget:null,
@@ -492,19 +635,11 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
     _data:null,
 
 	/**
-	 * Creates a CallFunc action with the callback
-	 *
-	 * Constructor of cc.CallFunc
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * Creates a CallFunc action with the callback.
 	 * @param {function} selector
 	 * @param {object|null} [selectorTarget]
 	 * @param {*|null} [data] data for function, it accepts all data types.
-	 * @example
-	 * // example
-	 * // CallFunc without data
-	 * var finish = new cc.CallFunc(this.removeSprite, this);
-	 *
-	 * // CallFunc with data
-	 * var finish = new cc.CallFunc(this.removeFromParentAndCleanup, this,  true);
 	 */
     ctor:function(selector, selectorTarget, data){
         cc.FiniteTimeAction.prototype.ctor.call(this);
@@ -545,14 +680,16 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
     },
 
     /**
-     * @param {Number} time
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number}  dt
      */
-    update:function (time) {
-        //this._super(target);
+    update:function (dt) {
         this.execute();
     },
 
     /**
+     * Get selectorTarget.
      * @return {object}
      */
     getTargetCallback:function () {
@@ -560,6 +697,7 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
     },
 
     /**
+     * Set selectorTarget.
      * @param {object} sel
      */
     setTargetCallback:function (sel) {
@@ -570,6 +708,12 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
         }
     },
 
+    /**
+     * to copy object with deep copy.
+     * returns a clone of action.
+     *
+     * @return {cc.CallFunc}
+     */
     clone:function(){
        var action = new cc.CallFunc();
         if(this._selectorTarget){
@@ -580,6 +724,7 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
         return action;
     }
 });
+
 /**
  * Creates the action with the callback
  * @function
@@ -598,11 +743,12 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
 cc.callFunc = function (selector, selectorTarget, data) {
     return new cc.CallFunc(selector, selectorTarget, data);
 };
+
 /**
- * Please use cc.callFunc instead
- * Creates the action with the callback
+ * Please use cc.callFunc instead.
+ * Creates the action with the callback.
  * @static
- * @deprecated
+ * @deprecated since v3.0 <br /> Please use cc.callFunc instead.
  * @param {function} selector
  * @param {object|null} [selectorTarget]
  * @param {*|null} [data] data for function, it accepts all data types.

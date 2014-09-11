@@ -22,6 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * Gets the layout manager by ccui.Layout's layout type.
+ * @param {Number} type
+ * @returns {ccui.linearVerticalLayoutManager|ccui.linearHorizontalLayoutManager|ccui.relativeLayoutManager|null}
+ */
 ccui.getLayoutManager = function (type) {
     switch (type) {
         case ccui.Layout.LINEAR_VERTICAL:
@@ -34,7 +39,12 @@ ccui.getLayoutManager = function (type) {
     return null;
 };
 
-ccui.linearVerticalLayoutManager = {
+/**
+ * ccui.linearVerticalLayoutManager is a singleton object which is the linear vertical layout manager for ccui.Layout.
+ * @class
+ * @name ccui.linearVerticalLayoutManager
+ */
+ccui.linearVerticalLayoutManager = /** @lends ccui.linearVerticalLayoutManager# */{
     _doLayout: function(layout){
         var layoutSize = layout._getLayoutContentSize();
         var container = layout._getLayoutElements();
@@ -75,7 +85,12 @@ ccui.linearVerticalLayoutManager = {
     }
 };
 
-ccui.linearHorizontalLayoutManager = {
+/**
+ * ccui.linearHorizontalLayoutManager is a singleton object which is the linear horizontal layout manager for ccui.Layout
+ * @class
+ * @name ccui.linearHorizontalLayoutManager
+ */
+ccui.linearHorizontalLayoutManager = /** @lends ccui.linearHorizontalLayoutManager# */{
     _doLayout: function(layout){
         var layoutSize = layout._getLayoutContentSize();
         var container = layout._getLayoutElements();
@@ -114,7 +129,12 @@ ccui.linearHorizontalLayoutManager = {
     }
 };
 
-ccui.relativeLayoutManager = {
+/**
+ * ccui.relativeLayoutManager is the singleton object which is the relative layout manager for ccui.Layout, it has a _doLayout function to do layout.
+ * @class
+ * @name ccui.relativeLayoutManager
+ */
+ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
     _unlayoutChildCount: 0,
     _widgetChildren: [],
     _widget: null,

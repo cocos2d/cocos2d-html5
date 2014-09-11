@@ -52,9 +52,9 @@ cc.ControlHuePicker = cc.Control.extend(/** @lends cc.ControlHuePicker# */{
     _className:"ControlHuePicker",
 
     /**
-     * @constructor
-     * @param target
-     * @param pos
+     * The constructor of cc.ControlHuePicker
+     * @param {cc.Node} target
+     * @param {cc.Point} pos position
      */
     ctor:function(target, pos) {
         cc.Control.prototype.ctor.call(this);

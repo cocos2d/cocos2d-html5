@@ -27,12 +27,24 @@
  * Base class for ccui.Margin
  * @class
  * @extends ccui.Class
+ *
+ * @property {Number}           left       - Left of margin
+ * @property {Number}           top        - Top of margin
+ * @property {Number}           right      - right of margin
+ * @property {Number}           bottom     - bottom of margin
  */
 ccui.Margin = ccui.Class.extend(/** @lends ccui.Margin# */{
     left: 0,
     top: 0,
     right: 0,
     bottom: 0,
+    /**
+     * Constructor of ccui.Margin.
+     * @param {Number|ccui.Margin} margin a margin or left
+     * @param {Number} [top]
+     * @param {Number} [right]
+     * @param {Number} [bottom]
+     */
     ctor: function (margin, top, right, bottom) {
         if (margin && top === undefined) {
             this.left = margin.left;
@@ -48,11 +60,11 @@ ccui.Margin = ccui.Class.extend(/** @lends ccui.Margin# */{
         }
     },
     /**
-     *  set margin
-     * @param {Number} l
-     * @param {Number} t
-     * @param {Number} r
-     * @param {Number} b
+     * Sets boundary of margin
+     * @param {Number} l left
+     * @param {Number} t top
+     * @param {Number} r right
+     * @param {Number} b bottom
      */
     setMargin: function (l, t, r, b) {
         this.left = l;
@@ -61,7 +73,7 @@ ccui.Margin = ccui.Class.extend(/** @lends ccui.Margin# */{
         this.bottom = b;
     },
     /**
-     *  check is equals
+     * Checks target whether equals itself.
      * @param {ccui.Margin} target
      * @returns {boolean}
      */
@@ -70,29 +82,39 @@ ccui.Margin = ccui.Class.extend(/** @lends ccui.Margin# */{
     }
 });
 
+/**
+ * Gets a zero margin object
+ * @function
+ * @returns {ccui.Margin}
+ */
 ccui.MarginZero = function(){
     return new ccui.Margin(0,0,0,0);
 };
 
 /**
- * Layout parameter define
+ * Layout parameter contains a margin and layout parameter type. It uses for ccui.LayoutManager.
  * @class
  * @extends ccui.Class
  */
 ccui.LayoutParameter = ccui.Class.extend(/** @lends ccui.LayoutParameter# */{
     _margin: null,
     _layoutParameterType: null,
+
+    /**
+     * The constructor of ccui.LayoutParameter.
+     * @function
+     */
     ctor: function () {
         this._margin = new ccui.Margin();
         this._layoutParameterType = ccui.LayoutParameter.NONE;
     },
 
     /**
-     * Sets Margin parameter for LayoutParameter.
+     * Sets Margin to LayoutParameter.
      * @param {ccui.Margin} margin
      */
     setMargin: function (margin) {
-        if(typeof margin === 'object'){
+        if(cc.isObject(margin)){
             this._margin.left = margin.left;
             this._margin.top = margin.top;
             this._margin.right = margin.right;
@@ -106,7 +128,7 @@ ccui.LayoutParameter = ccui.Class.extend(/** @lends ccui.LayoutParameter# */{
     },
 
     /**
-     * Gets Margin parameter of LayoutParameter.
+     * Gets Margin of LayoutParameter.
      * @returns {ccui.Margin}
      */
     getMargin: function () {
@@ -115,12 +137,16 @@ ccui.LayoutParameter = ccui.Class.extend(/** @lends ccui.LayoutParameter# */{
 
     /**
      * Gets LayoutParameterType of LayoutParameter.
-     * @returns {ccui.UILayoutParameterType}
+     * @returns {Number}
      */
     getLayoutType: function () {
         return this._layoutParameterType;
     },
 
+    /**
+     * Clones a ccui.LayoutParameter object from itself.
+     * @returns {ccui.LayoutParameter}
+     */
     clone:function(){
         var parameter = this._createCloneInstance();
         parameter._copyProperties(this);
@@ -132,11 +158,11 @@ ccui.LayoutParameter = ccui.Class.extend(/** @lends ccui.LayoutParameter# */{
      * @returns {ccui.LayoutParameter}
      */
     _createCloneInstance:function(){
-        return ccui.LayoutParameter.create();
+        return new ccui.LayoutParameter();
     },
 
     /**
-     * copy properties
+     * copy properties from model.
      * @param {ccui.LayoutParameter} model
      */
     _copyProperties:function(model){
@@ -161,17 +187,36 @@ ccui.LayoutParameter.create = function () {
 
 // Constants
 //layout parameter type
+/**
+ * The none of ccui.LayoutParameter's type.
+ * @constant
+ * @type {number}
+ */
 ccui.LayoutParameter.NONE = 0;
+/**
+ * The linear of ccui.LayoutParameter's type.
+ * @constant
+ * @type {number}
+ */
 ccui.LayoutParameter.LINEAR = 1;
+/**
+ * The relative of ccui.LayoutParameter's type.
+ * @constant
+ * @type {number}
+ */
 ccui.LayoutParameter.RELATIVE = 2;
 
 /**
- * Base class for ccui.LinearLayoutParameter
+ * The linear of Layout parameter. its parameter type is ccui.LayoutParameter.LINEAR.
  * @class
  * @extends ccui.LayoutParameter
  */
 ccui.LinearLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.LinearLayoutParameter# */{
     _linearGravity: null,
+    /**
+     * The constructor of ccui.LinearLayoutParameter.
+     * @function
+     */
     ctor: function () {
         ccui.LayoutParameter.prototype.ctor.call(this);
         this._linearGravity = ccui.LinearLayoutParameter.NONE;
@@ -179,7 +224,7 @@ ccui.LinearLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.LinearL
     },
 
     /**
-     * Sets LinearGravity parameter for LayoutParameter.
+     * Sets LinearGravity to LayoutParameter.
      * @param {Number} gravity
      */
     setGravity: function (gravity) {
@@ -187,25 +232,17 @@ ccui.LinearLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.LinearL
     },
 
     /**
-     * Gets LinearGravity parameter for LayoutParameter.
+     * Gets LinearGravity of LayoutParameter.
      * @returns {Number}
      */
     getGravity: function () {
         return this._linearGravity;
     },
 
-    /**
-     * create clone instance.
-     * @returns {ccui.LinearLayoutParameter}
-     */
     _createCloneInstance: function () {
         return ccui.LinearLayoutParameter.create();
     },
 
-    /**
-     * copy properties
-     * @param {ccui.LinearLayoutParameter} model
-     */
     _copyProperties: function (model) {
         ccui.LayoutParameter.prototype._copyProperties.call(this, model);
         if (model instanceof ccui.LinearLayoutParameter)
@@ -227,16 +264,52 @@ ccui.LinearLayoutParameter.create = function () {
 
 // Constants
 //Linear layout parameter LinearGravity
+/**
+ * The none of ccui.LinearLayoutParameter's linear gravity.
+ * @constant
+ * @type {number}
+ */
 ccui.LinearLayoutParameter.NONE = 0;
+
+/**
+ * The left of ccui.LinearLayoutParameter's linear gravity.
+ * @constant
+ * @type {number}
+ */
 ccui.LinearLayoutParameter.LEFT = 1;
+/**
+ * The top of ccui.LinearLayoutParameter's linear gravity.
+ * @constant
+ * @type {number}
+ */
 ccui.LinearLayoutParameter.TOP = 2;
+/**
+ * The right of ccui.LinearLayoutParameter's linear gravity.
+ * @constant
+ * @type {number}
+ */
 ccui.LinearLayoutParameter.RIGHT = 3;
+/**
+ * The bottom of ccui.LinearLayoutParameter's linear gravity.
+ * @constant
+ * @type {number}
+ */
 ccui.LinearLayoutParameter.BOTTOM = 4;
+/**
+ * The center vertical of ccui.LinearLayoutParameter's linear gravity.
+ * @constant
+ * @type {number}
+ */
 ccui.LinearLayoutParameter.CENTER_VERTICAL = 5;
+/**
+ * The center horizontal of ccui.LinearLayoutParameter's linear gravity.
+ * @constant
+ * @type {number}
+ */
 ccui.LinearLayoutParameter.CENTER_HORIZONTAL = 6;
 
 /**
- * Base class for ccui.RelativeLayoutParameter
+ * The relative of layout parameter. Its layout parameter type is ccui.LayoutParameter.RELATIVE.
  * @class
  * @extends ccui.LayoutParameter
  */
@@ -245,6 +318,10 @@ ccui.RelativeLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.Relat
     _relativeWidgetName: "",
     _relativeLayoutName: "",
     _put:false,
+    /**
+     * The constructor of ccui.RelativeLayoutParameter
+     * @function
+     */
     ctor: function () {
         ccui.LayoutParameter.prototype.ctor.call(this);
         this._relativeAlign = ccui.RelativeLayoutParameter.NONE;
@@ -256,7 +333,7 @@ ccui.RelativeLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.Relat
 
     /**
      * Sets RelativeAlign parameter for LayoutParameter.
-     * @param {ccui.RELATIVE_ALIGN_*} align
+     * @param {Number} align
      */
     setAlign: function (align) {
         this._relativeAlign = align;
@@ -264,7 +341,7 @@ ccui.RelativeLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.Relat
 
     /**
      * Gets RelativeAlign parameter for LayoutParameter.
-     * @returns {ccui.RELATIVE_ALIGN_*}
+     * @returns {Number}
      */
     getAlign: function () {
         return this._relativeAlign;
@@ -302,18 +379,10 @@ ccui.RelativeLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.Relat
         return this._relativeLayoutName;
     },
 
-    /**
-     * create clone instance.
-     * @returns {ccui.RelativeLayoutParameter}
-     */
     _createCloneInstance:function(){
         return ccui.RelativeLayoutParameter.create();
     },
 
-    /**
-     * copy properties
-     * @param {ccui.RelativeLayoutParameter} model
-     */
     _copyProperties:function(model){
         ccui.LayoutParameter.prototype._copyProperties.call(this, model);
         if (model instanceof ccui.RelativeLayoutParameter) {
@@ -325,8 +394,9 @@ ccui.RelativeLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.Relat
 });
 
 /**
- * allocates and initializes a RelativeLayoutParameter.
- * @constructs
+ * Allocates and initializes a RelativeLayoutParameter.
+ * @function
+ * @deprecated since v3.0, please use new ccui.RelativeLayoutParameter() instead.
  * @return {ccui.RelativeLayoutParameter}
  * @example
  * // example
@@ -338,30 +408,140 @@ ccui.RelativeLayoutParameter.create = function () {
 
 // Constants
 //Relative layout parameter RelativeAlign
+/**
+ * The none of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.NONE = 0;
+/**
+ * The parent's top left of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.PARENT_TOP_LEFT = 1;
+/**
+ * The parent's top center horizontal of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.PARENT_TOP_CENTER_HORIZONTAL = 2;
+/**
+ * The parent's top right of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.PARENT_TOP_RIGHT = 3;
+/**
+ * The parent's left center vertical of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.PARENT_LEFT_CENTER_VERTICAL = 4;
 
+/**
+ * The center in parent of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.CENTER_IN_PARENT = 5;
 
+/**
+ * The parent's right center vertical of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.PARENT_RIGHT_CENTER_VERTICAL = 6;
+/**
+ * The parent's left bottom of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.PARENT_LEFT_BOTTOM = 7;
+/**
+ * The parent's bottom center horizontal of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.PARENT_BOTTOM_CENTER_HORIZONTAL = 8;
+/**
+ * The parent's right bottom of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.PARENT_RIGHT_BOTTOM = 9;
 
+/**
+ * The location above left align of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.LOCATION_ABOVE_LEFTALIGN = 10;
+/**
+ * The location above center of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.LOCATION_ABOVE_CENTER = 11;
+/**
+ * The location above right align of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.LOCATION_ABOVE_RIGHTALIGN = 12;
+/**
+ * The location left of top align of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.LOCATION_LEFT_OF_TOPALIGN = 13;
+/**
+ * The location left of center of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.LOCATION_LEFT_OF_CENTER = 14;
+/**
+ * The location left of bottom align of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.LOCATION_LEFT_OF_BOTTOMALIGN = 15;
+/**
+ * The location right of top align of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.LOCATION_RIGHT_OF_TOPALIGN = 16;
+/**
+ * The location right of center of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.LOCATION_RIGHT_OF_CENTER = 17;
+/**
+ * The location right of bottom align of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.LOCATION_RIGHT_OF_BOTTOMALIGN = 18;
+/**
+ * The location below left align of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.LOCATION_BELOW_LEFTALIGN = 19;
+/**
+ * The location below center of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.LOCATION_BELOW_CENTER = 20;
+/**
+ * The location below right align of ccui.RelativeLayoutParameter's relative align.
+ * @constant
+ * @type {number}
+ */
 ccui.RelativeLayoutParameter.LOCATION_BELOW_RIGHTALIGN = 21;
 
 /**

@@ -24,8 +24,8 @@
  ****************************************************************************/
 
 /**
- * Base singleton object for ccs.ActionManager
- * @namespace
+ * Base singleton object for ccs.ActionManager.
+ * @class
  * @name ccs.actionManager
  */
 ccs.actionManager = /** @lends ccs.actionManager# */{
@@ -60,14 +60,12 @@ ccs.actionManager = /** @lends ccs.actionManager# */{
      */
     getActionByName: function (jsonName, actionName) {
         var actionList = this._actionDic[jsonName];
-        if (!actionList) {
+        if (!actionList)
             return null;
-        }
         for (var i = 0; i < actionList.length; i++) {
             var locAction = actionList[i];
-            if (actionName == locAction.getName()) {
+            if (actionName == locAction.getName())
                 return locAction;
-            }
         }
         return null;
     },
@@ -80,9 +78,8 @@ ccs.actionManager = /** @lends ccs.actionManager# */{
      */
     playActionByName: function (jsonName, actionName, fun) {
         var action = this.getActionByName(jsonName, actionName);
-        if (action) {
+        if (action)
             action.play(fun);
-        }
     },
 
     /**

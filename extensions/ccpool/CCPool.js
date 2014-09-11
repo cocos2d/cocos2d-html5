@@ -40,14 +40,14 @@
  * cc.pool.putInPool(sp);
  *
  * cc.pool.getFromPool(cc.Sprite, "a.png");
- * @namespace
+ * @class
  * @name cc.pool
  */
 cc.pool = /** @lends cc.pool# */{
     _pool: {},
 
     /**
-     * Put the obj in pool
+     * Put the cc.Node object in pool
      * @param obj
      */
     putInPool: function (obj) {
@@ -61,38 +61,36 @@ cc.pool = /** @lends cc.pool# */{
             if (!this._pool[pid]) {
                 this._pool[pid] = [];
             }
-            obj.unuse();
+            if(obj.unuse)
+                obj.unuse();    //define by user.   use to initialize the state of objects.
             obj.retain();//use for jsb
             this._pool[pid].push(obj);
         }
     },
 
     /**
-     * Check if this kind of obj has already in pool
+     * Check if this kind of object has already in pool
      * @param objClass
      * @returns {boolean} if this kind of obj is already in pool return true,else return false;
      */
-    hasObj: function (objClass) {
+    hasObject: function (objClass) {
         var pid = objClass.prototype.__pid;
         var list = this._pool[pid];
-        if (!list || list.length == 0) {
-            return false;
-        }
-        return true;
+        return (list && list.length > 0);
     },
 
     /**
-     * Remove the obj if you want to delete it;
+     * Remove the object if you want to delete it;
      * @param obj
      */
-    removeObj: function (obj) {
+    removeObject: function (obj) {
         var pid = obj.constructor.prototype.__pid;
         if (pid) {
             var list = this._pool[pid];
             if (list) {
                 for (var i = 0; i < list.length; i++) {
                     if (obj === list[i]) {
-                        obj.release()//use for jsb
+                        obj.release();          //use for jsb
                         list.splice(i, 1);
                     }
                 }
@@ -101,30 +99,32 @@ cc.pool = /** @lends cc.pool# */{
     },
 
     /**
-     * Get the obj from pool
+     * Get the object from pool
      * @param args
      * @returns {*} call the reuse function an return the obj
      */
     getFromPool: function (objClass/*,args*/) {
-        if (this.hasObj(objClass)) {
+        if (this.hasObject(objClass)) {
             var pid = objClass.prototype.__pid;
             var list = this._pool[pid];
-            var args = Array.prototype.slice.call(arguments);
-            args.shift();
+            var args = Array.prototype.slice.call(arguments, 1);
             var obj = list.pop();
-            obj.reuse.apply(obj, args);
+            if(obj.reuse)
+                obj.reuse.apply(obj, args);       //define by user.
             return obj;
         }
     },
 
     /**
-     *  remove all objs in pool and reset the pool
+     *  remove all object in pool and reset the pool
      */
     drainAllPools: function () {
-        for (var i in this._pool) {
-            for (var j = 0; j < this._pool[i].length; j++) {
-                var obj = this._pool[i][j];
-                obj.release()
+        var locPool = this._pool;
+        for (var selKey in locPool) {
+            for (var j = 0; j < locPool[selKey].length; j++) {
+                var obj = locPool[selKey][j];
+                if(obj && obj.release)
+                    obj.release()
             }
         }
         this._pool = {};

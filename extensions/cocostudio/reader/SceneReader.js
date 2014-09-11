@@ -24,8 +24,8 @@
  ****************************************************************************/
 
 /**
- * Base singleton object for ccs.sceneReader
- * @namespace
+ * ccs.sceneReader is the reader for Cocos Studio scene editor.
+ * @class
  * @name ccs.sceneReader
  */
 ccs.sceneReader = /** @lends ccs.sceneReader# */{
@@ -35,7 +35,7 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
     _node: null,
 
     /**
-     * create node with json file that exported by CocoStudio scene editor
+     * Creates a node with json file that exported by CocoStudio scene editor
      * @param pszFileName
      * @returns {cc.Node}
      */
@@ -44,16 +44,16 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
         do{
             this._baseBath = cc.path.dirname(pszFileName);
             var jsonDict = cc.loader.getRes(pszFileName);
-            if (!jsonDict) throw "Please load the resource first : " + pszFileName;
+            if (!jsonDict)
+                throw "Please load the resource first : " + pszFileName;
             this._node = this.createObject(jsonDict, null);
             ccs.triggerManager.parse(jsonDict["Triggers"]||[]);
         }while(0);
-
         return this._node;
     },
 
     /**
-     *  create object from data
+     *  create UI object from data
      * @param {Object} inputFiles
      * @param {cc.Node} parenet
      * @returns {cc.Node}
@@ -78,7 +78,7 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
                 if (!subDict) {
                     break;
                 }
-                var className = subDict["classname"];
+                className = subDict["classname"];
                 var comName = subDict["name"];
 
                 var fileData = subDict["fileData"];
@@ -249,96 +249,102 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
             var gameobjects = inputFiles["gameobjects"];
             for (var i = 0; i < gameobjects.length; i++) {
                 var subDict = gameobjects[i];
-                if (!subDict) {
+                if (!subDict)
                     break;
-                }
                 this.createObject(subDict, gb);
                 subDict = null;
             }
-
             return gb;
         }
 
         return null;
     },
 
-
-    nodeByTag: function (parent, tag) {
-        if (parent == null) {
+    _nodeByTag: function (parent, tag) {
+        if (parent == null)
             return null;
-        }
         var retNode = null;
         var children = parent.getChildren();
-
         for (var i = 0; i < children.length; i++) {
             var child = children[i];
             if (child && child.getTag() == tag) {
                 retNode = child;
                 break;
-            }
-            else {
-                retNode = this.nodeByTag(child, tag);
-                if (retNode) {
+            } else {
+                retNode = this._nodeByTag(child, tag);
+                if (retNode)
                     break;
-                }
             }
         }
         return retNode;
     },
 
+    /**
+     * Get a node by tag.
+     * @param {Number} tag
+     * @returns {cc.Node|null}
+     */
     getNodeByTag: function (tag) {
-        if (this._node == null) {
+        if (this._node == null)
             return null;
-        }
-        if (this._node.getTag() == tag) {
+        if (this._node.getTag() == tag)
             return this._node;
-        }
-        return this.nodeByTag(this._node, tag);
+        return this._nodeByTag(this._node, tag);
     },
 
     /**
-     * set property
+     * Sets properties from json dictionary.
      * @param {cc.Node} node
      * @param {Object} dict
      */
     setPropertyFromJsonDict: function (node, dict) {
-        var x = (typeof dict["x"] === 'undefined')?0:dict["x"];
-        var y = (typeof dict["y"] === 'undefined')?0:dict["y"];
+        var x = (cc.isUndefined(dict["x"]))?0:dict["x"];
+        var y = (cc.isUndefined(dict["y"]))?0:dict["y"];
         node.setPosition(x, y);
 
-        var bVisible = Boolean((typeof dict["visible"] === 'undefined')?1:dict["visible"]);
+        var bVisible = Boolean((cc.isUndefined(dict["visible"]))?1:dict["visible"]);
         node.setVisible(bVisible);
 
-        var nTag = (typeof dict["objecttag"] === 'undefined')?-1:dict["objecttag"];
+        var nTag = (cc.isUndefined(dict["objecttag"]))?-1:dict["objecttag"];
         node.setTag(nTag);
 
-        var nZorder = (typeof dict["zorder"] === 'undefined')?0:dict["zorder"];
+        var nZorder = (cc.isUndefined(dict["zorder"]))?0:dict["zorder"];
         node.setLocalZOrder(nZorder);
 
-        var fScaleX = (typeof dict["scalex"] === 'undefined')?1:dict["scalex"];
-        var fScaleY = (typeof dict["scaley"] === 'undefined')?1:dict["scaley"];
+        var fScaleX = (cc.isUndefined(dict["scalex"]))?1:dict["scalex"];
+        var fScaleY = (cc.isUndefined(dict["scaley"]))?1:dict["scaley"];
         node.setScaleX(fScaleX);
         node.setScaleY(fScaleY);
 
-        var fRotationZ = (typeof dict["rotation"] === 'undefined')?0:dict["rotation"];
+        var fRotationZ = (cc.isUndefined(dict["rotation"]))?0:dict["rotation"];
         node.setRotation(fRotationZ);
     },
+
+    /**
+     * Sets the listener to reader.
+     * @param {function} selector
+     * @param {Object} listener the target object.
+     */
     setTarget : function(selector,listener){
         this._listener = listener;
         this._selector = selector;
     },
+
     _callSelector:function(obj,subDict){
-        if(this._selector){
+        if(this._selector)
             this._selector.call(this._listener,obj,subDict);
-        }
     },
 
+    /**
+     * Returns the version of ccs.SceneReader.
+     * @returns {string}
+     */
 	version: function () {
 		return "1.2.0.0";
 	},
 
     /**
-     * Clear data
+     * Clear all triggers and stops all sounds.
      */
     clear: function () {
 	    ccs.triggerManager.removeAll();

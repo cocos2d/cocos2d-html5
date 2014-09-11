@@ -364,7 +364,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             this._quadsArrayBuffer = null;
         }
 
-        if (!plistFile || typeof(plistFile) === "number") {
+        if (!plistFile || cc.isNumber(plistFile)) {
             var ton = plistFile || 100;
             this.setDrawMode(cc.ParticleSystem.TEXTURE_MODE);
             this.initWithTotalParticles(ton);
@@ -1601,7 +1601,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 // Try to get the texture from the cache
                 var textureName = locValueForKey("textureFileName", dictionary);
                 var imgPath = cc.path.changeBasename(this._plistFile, textureName);
-                var tex = cc.textureCache.textureForKey(imgPath);
+                var tex = cc.textureCache.getTextureForKey(imgPath);
 
                 if (tex) {
                     this.setTexture(tex);
@@ -1638,7 +1638,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
                         cc.textureCache.cacheImage(imgPath, canvasObj);
 
-                        var addTexture = cc.textureCache.textureForKey(imgPath);
+                        var addTexture = cc.textureCache.getTextureForKey(imgPath);
                         if(!addTexture)
                             cc.log("cc.ParticleSystem.initWithDictionary() : error loading the texture");
                         this.setTexture(addTexture);
@@ -1715,6 +1715,11 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         return true;
     },
 
+    /**
+     * Unschedules the "update" method.
+     * @function
+     * @see scheduleUpdate();
+     */
     destroyParticleSystem:function () {
         this.unscheduleUpdate();
     },
@@ -2118,10 +2123,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
                     // color
                     if (!this._dontTint || cc._renderType === cc._RENDER_TYPE_WEBGL) {
-                        selParticle.color.r += 0|(selParticle.deltaColor.r * dt);
-                        selParticle.color.g += 0|(selParticle.deltaColor.g * dt);
-                        selParticle.color.b += 0|(selParticle.deltaColor.b * dt);
-                        selParticle.color.a += 0|(selParticle.deltaColor.a * dt);
+                        selParticle.color.r += selParticle.deltaColor.r * dt;
+                        selParticle.color.g += selParticle.deltaColor.g * dt;
+                        selParticle.color.b += selParticle.deltaColor.b * dt;
+                        selParticle.color.a += selParticle.deltaColor.a * dt;
                         selParticle.isChangeColor = true;
                     }
 
@@ -2199,17 +2204,20 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             this.postStep();
     },
 
+    /**
+     * update emitter's status (dt = 0)
+     */
     updateWithNoTime:function () {
         this.update(0);
     },
 
-    /**
-     * return the string found by key in dict.
-     * @param {string} key
-     * @param {object} dict
-     * @return {String} "" if not found; return the string if found.
-     * @private
-     */
+    //
+    // return the string found by key in dict.
+    // @param {string} key
+    // @param {object} dict
+    // @return {String} "" if not found; return the string if found.
+    // @private
+    //
     _valueForKey:function (key, dict) {
         if (dict) {
             var pString = dict[key];
@@ -2239,6 +2247,12 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         }
     },
 
+    /**
+     * to copy object with deep copy.
+     * returns a clone of action.
+     *
+     * @return {cc.ParticleSystem}
+     */
     clone:function () {
         var retParticle = new cc.ParticleSystem();
 
@@ -2448,9 +2462,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     _changeTextureColor: function(element, color, rect){
-        color.r = 0|color.r;
-        color.g = 0|color.g;
-        color.b = 0|color.b;
         if (!element.tintCache) {
             element.tintCache = document.createElement('canvas');
             element.tintCache.width = element.width;
@@ -2685,7 +2696,7 @@ cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
  *    This plist files can be create manually or with Particle Designer:<br/>
  *    http://particledesigner.71squared.com/<br/>
  * </p>
- * @deprecated
+ * @deprecated since v3.0 please use new cc.ParticleSysytem(plistFile) instead.
  * @param {String|Number} plistFile
  * @return {cc.ParticleSystem}
  */
@@ -2694,8 +2705,14 @@ cc.ParticleSystem.create = function (plistFile) {
 };
 
 /**
- * @deprecated
- * @type {Function}
+ * <p> return the string found by key in dict. <br/>
+ *    This plist files can be create manually or with Particle Designer:<br/>
+ *    http://particledesigner.71squared.com/<br/>
+ * </p>
+ * @deprecated since v3.0 please use new cc.ParticleSysytem(plistFile) instead.
+ * @function
+ * @param {String|Number} plistFile
+ * @return {cc.ParticleSystem}
  */
 cc.ParticleSystem.createWithTotalParticles = cc.ParticleSystem.create;
 

@@ -109,7 +109,7 @@ cc._fontLoader = {
     load : function(realUrl, url, res, cb){
         var self = this;
         var type = res.type, name = res.name, srcs = res.srcs;
-        if(typeof res == "string"){
+        if(cc.isString(res)){
             type = cc.path.extname(res);
             name = cc.path.basename(res, type);
             self._loadFont(name, res, type);

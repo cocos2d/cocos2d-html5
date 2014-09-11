@@ -26,13 +26,17 @@
 
 /**
  * A SAX Parser
- * @namespace
+ * @class
  * @name cc.saxParser
+ * @extends cc.Class
  */
 cc.SAXParser = cc.Class.extend(/** @lends cc.saxParser# */{
     _parser: null,
     _isSupportDOMParser: null,
 
+    /**
+     * Constructor of cc.SAXParser
+     */
     ctor: function () {
         if (window.DOMParser) {
             this._isSupportDOMParser = true;
@@ -42,6 +46,11 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.saxParser# */{
         }
     },
 
+    /**
+     * @function
+     * @param {String} xmlTxt
+     * @return {Document}
+     */
     parse : function(xmlTxt){
         return this._parseXML(xmlTxt);
     },
@@ -64,9 +73,10 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.saxParser# */{
 
 /**
  *
- * A plist Parser
- * @namespace
+ * cc.plistParser is a singleton object for parsing plist files
+ * @class
  * @name cc.plistParser
+ * @extends cc.SAXParser
  */
 cc.PlistParser = cc.SAXParser.extend(/** @lends cc.plistParser# */{
 
