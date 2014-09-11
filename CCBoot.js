@@ -1673,6 +1673,118 @@ cc._initSys = function (config, CONFIG_KEY) {
 
 //+++++++++++++++++++++++++something about sys end+++++++++++++++++++++++++++++
 
+//+++++++++++++++++++++++++something about cc.moduleLoader begin+++++++++++++++++++++++++++++
+/**
+ * A loader to load js by moduleConfig.json.
+ */
+cc.moduleLoader = {
+    /**
+     * Get js list of a module configured in configConfig.json
+     * @param moduleMap         map of "module" in configConfig.json
+     * @param moduleName        the module name to load
+     * @param dir               the dir of userModule relative to index.html
+     * @param jsAddedCache      the cache of js and module that has got
+     * @returns {Array}
+     * @private
+     */
+    _getJsListOfModule: function (moduleMap, moduleName, dir, jsAddedCache) {
+        jsAddedCache = jsAddedCache || {};
+        if (jsAddedCache[moduleName]) return [];//if this module has been loaded
+        dir = dir || "";
+        var jsList = [];
+        var tempList = moduleMap[moduleName];
+        if (tempList == null) throw "can not find module [" + moduleName + "]";
+        var ccPath = cc.path;
+        for (var i = 0, li = tempList.length; i < li; i++) {
+            var item = tempList[i];
+            if (jsAddedCache[item]) continue;
+            var extname = ccPath.extname(item);
+            if (!extname) {//this is a module
+                var arr = this._getJsListOfModule(moduleMap, item, dir, jsAddedCache);
+                if (arr) jsList = jsList.concat(arr);
+            } else if (extname.toLowerCase() == ".js") jsList.push(ccPath.join(dir, item));
+            jsAddedCache[item] = 1;//cache
+        }
+        return jsList;
+    },
+    /**
+     * Get all js list of a userModule.
+     * @param moduleRoot    the dir of userModule relative to index.html
+     * @param modules       modules of this userModule to be loaded
+     * @param cb
+     */
+    getModuleJsList : function(moduleRoot, modules, cb){
+        var self = this;
+        //先获取到moduleConfig.json
+        var moduleConfigPath = cc.path.join(moduleRoot, "moduleConfig.json");
+        cc.loader.loadJson([moduleConfigPath], function(err, moduleConfig){
+            if(err) return cb(err);
+            var moduleMap = moduleConfig["module"];
+            var resultList = [];
+            modules = modules || ["default"];//set it default while it is empty
+            for(var i = 0, li = modules.length; i < li; ++i){
+                resultList = resultList.concat(self._getJsListOfModule(moduleMap, modules[i], moduleRoot))
+            }
+            cb(null, resultList);
+        });
+    },
+    /**
+     * Get all js list by userModuleCfgList
+     * @param {Array} moduleCfgList
+     * @param cb
+     */
+    getJsList : function(moduleCfgList, cb){
+        var self = this;
+        var tempList = [];
+        for(var i = 0, li = moduleCfgList.length; i < li; ++i){
+            var cfg = moduleCfgList[i];//cfg can be a string or an object
+            if(typeof cfg == "string"){
+                tempList.push({moduleRoot:cfg});
+            }else{
+                for(var moduleRoot in cfg){
+                    tempList.push({moduleRoot:moduleRoot, modules:cfg[moduleRoot]});
+                }
+            }
+        }
+        cc.async.map(tempList, function(value, index, cb1){
+            self.getModuleJsList(value.moduleRoot, value.modules, cb1);
+        }, function(err, results){
+            if(err) return cb(err);
+
+            var resultList = []
+            for(var i = 0, li = results.length; i < li; ++i){
+                resultList = resultList.concat(results[i]);
+            }
+            cb(null, resultList);
+        });
+    },
+
+    /**
+     * Load all js list by userModuleCfgList.
+     * @param {Array} moduleCfgList
+     * @param cb
+     */
+    load : function(moduleCfgList, cb){
+        this.getJsList(moduleCfgList, function(err, jsList){
+            if(err) return cb(err);
+            cc.loader.loadJs(jsList, cb);
+        });
+    },
+
+    /**
+     * Load all js list by userModuleCfgList with loading image.
+     * @param {Array} moduleCfgList
+     * @param cb
+     */
+    loadWithImg : function(moduleCfgList, cb){
+        this.getJsList(moduleCfgList, function(err, jsList){
+            if(err) return cb(err);
+            cc.loader.loadJsWithImg(jsList, cb);
+        });
+    }
+}
+//+++++++++++++++++++++++++something about cc.moduleLoader end+++++++++++++++++++++++++++
+
 //+++++++++++++++++++++++++something about CCGame begin+++++++++++++++++++++++++++
 
 /**
@@ -2092,28 +2204,6 @@ cc.game = /** @lends cc.game# */{
         cc._initSys(self.config, CONFIG_KEY);
     },
 
-    //cache for js and module that has added into jsList to be loaded.
-    _jsAddedCache: {},
-    _getJsListOfModule: function (moduleMap, moduleName, dir) {
-        var jsAddedCache = this._jsAddedCache;
-        if (jsAddedCache[moduleName]) return null;
-        dir = dir || "";
-        var jsList = [];
-        var tempList = moduleMap[moduleName];
-        if (!tempList) throw "can not find module [" + moduleName + "]";
-        var ccPath = cc.path;
-        for (var i = 0, li = tempList.length; i < li; i++) {
-            var item = tempList[i];
-            if (jsAddedCache[item]) continue;
-            var extname = ccPath.extname(item);
-            if (!extname) {
-                var arr = this._getJsListOfModule(moduleMap, item, dir);
-                if (arr) jsList = jsList.concat(arr);
-            } else if (extname.toLowerCase() == ".js") jsList.push(ccPath.join(dir, item));
-            jsAddedCache[item] = 1;
-        }
-        return jsList;
-    },
     /**
      * Prepare game.
      * @param cb
@@ -2135,21 +2225,15 @@ cc.game = /** @lends cc.game# */{
                 if (cb) cb();
             });
         } else {
-            //load cc's jsList first
-            var ccModulesPath = cc.path.join(engineDir, "moduleConfig.json");
-            loader.loadJson(ccModulesPath, function (err, modulesJson) {
+            var moduleCfg4Engine = {};//moduleCfg for cocos
+            var modules = config["modules"] || [];
+            if (cc._renderType == cc._RENDER_TYPE_WEBGL) modules.splice(0, 0, "shaders");
+            else if (modules.indexOf("core") < 0) modules.splice(0, 0, "core");
+            moduleCfg4Engine[engineDir] = modules;
+            var cfgList = [moduleCfg4Engine];
+            cc.moduleLoader.loadWithImg(cfgList, function(err){
                 if (err) throw err;
-                var modules = config["modules"] || [];
-                var moduleMap = modulesJson["module"];
-                var newJsList = [];
-                if (cc._renderType == cc._RENDER_TYPE_WEBGL) modules.splice(0, 0, "shaders");
-                else if (modules.indexOf("core") < 0) modules.splice(0, 0, "core");
-                for (var i = 0, li = modules.length; i < li; i++) {
-                    var arr = self._getJsListOfModule(moduleMap, modules[i], engineDir);
-                    if (arr) newJsList = newJsList.concat(arr);
-                }
-                newJsList = newJsList.concat(jsList);
-                cc.loader.loadJsWithImg(newJsList, function (err) {
+                cc.moduleLoader.loadWithImg(config["userModules"] || [], function(err){
                     if (err) throw err;
                     self._prepared = true;
                     if (cb) cb();
