@@ -254,7 +254,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             if(cc.sys.isMobile)
                 viewportMetas["target-densitydpi"] = this._targetDensityDPI;
 
-            content = elems ? elems[0].content : "";
+            content = (elems && elems.length>0) ? elems[0].content : "";
             for (var key in viewportMetas) {
                 var pattern = new RegExp(key);
 
