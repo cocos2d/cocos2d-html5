@@ -2021,7 +2021,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Component} The component found
      */
     getComponent: function (name) {
-        return this._componentContainer.getComponent(name);
+        if(this._componentContainer)
+            return this._componentContainer.getComponent(name);
+        return null;
     },
 
     /**
@@ -2030,7 +2032,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {cc.Component} component
      */
     addComponent: function (component) {
-        this._componentContainer.add(component);
+        if(this._componentContainer)
+            this._componentContainer.add(component);
     },
 
     /**
@@ -2039,7 +2042,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {String|cc.Component} component
      */
     removeComponent: function (component) {
-        return this._componentContainer.remove(component);
+        if(this._componentContainer)
+            return this._componentContainer.remove(component);
+        return false;
     },
 
     /**
@@ -2047,7 +2052,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      */
     removeAllComponents: function () {
-        this._componentContainer.removeAll();
+        if(this._componentContainer)
+            this._componentContainer.removeAll();
     },
 
     grid: null,
