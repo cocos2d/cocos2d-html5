@@ -2076,7 +2076,7 @@ var requirejs, require, define;
 }(this));
 
 var require_config = {
-    baseUrl: 'frameworks/cocos2d-html5/modules',
+    baseUrl: '../../frameworks/cocos2d-html5/modules',
 
     paths: {
         root: '../',
@@ -2290,7 +2290,7 @@ var require_config = {
             exports: "cc"
         },
 
-        "NodeAtlas" : {
+        "cocos2d/core/base-nodes/CCAtlasNode" : {
             deps: [
                 "Node",
                 "cocos2d/core/base-nodes/CCAtlasNode"
@@ -2300,18 +2300,7 @@ var require_config = {
             }
         },
 
-        "AnimationFrame" : {
-            deps: [
-                "core",
-                "Sprite",
-                "cocos2d/core/sprites/CCAnimation"
-            ],
-            init: function() {
-                return cc.AnimationFrame;
-            }
-        },
-
-        "Animation" : {
+        "cocos2d/core/sprites/CCAnimation" : {
             deps: [
                 "Sprite",
                 "cocos2d/core/sprites/CCAnimation"
@@ -2321,7 +2310,7 @@ var require_config = {
             }
         },
 
-        "animationCache" : {
+        "cocos2d/core/sprites/CCAnimationCache" : {
             deps: [
                 "Sprite",
                 "Animation",
@@ -2332,7 +2321,7 @@ var require_config = {
             }
         },
 
-        "SpriteFrame" : {
+        "cocos2d/core/sprites/CCSpriteFrame" : {
             deps: [
                 "Sprite",
                 "cocos2d/core/sprites/CCSpriteFrame"
@@ -2342,7 +2331,7 @@ var require_config = {
             }
         },
 
-        "spriteFrameCache" : {
+        "cocos2d/core/sprites/CCSpriteFrameCache" : {
             deps: [
                 "SpriteFrame",
                 "cocos2d/core/sprites/CCSpriteFrameCache"
