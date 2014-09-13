@@ -65,7 +65,7 @@ cc._addEventListener = function (element, type, listener, useCapture) {
 };
 
 //is nodejs ? Used to support node-webkit.
-cc._isNodeJs = typeof require !== 'undefined' && require("fs");
+//cc._isNodeJs = typeof require !== 'undefined' && require("fs");
 
 /**
  * Iterate over an object or an array, executing a function for each matched element.
@@ -2129,11 +2129,12 @@ cc.game = /** @lends cc.game# */{
         var jsList = config[CONFIG_KEY.jsList] || [];
         if (cc.Class) {//is single file
             //load user's jsList only
-            loader.loadJsWithImg("", jsList, function (err) {
-                if (err) throw err;
-                self._prepared = true;
-                if (cb) cb();
-            });
+//            loader.loadJsWithImg("", jsList, function (err) {
+//                if (err) throw err;
+//                self._prepared = true;
+//                if (cb) cb();
+//            });
+            cb();
         } else {
             //load cc's jsList first
             var ccModulesPath = cc.path.join(engineDir, "moduleConfig.json");
@@ -2149,11 +2150,12 @@ cc.game = /** @lends cc.game# */{
                     if (arr) newJsList = newJsList.concat(arr);
                 }
                 newJsList = newJsList.concat(jsList);
-                cc.loader.loadJsWithImg(newJsList, function (err) {
-                    if (err) throw err;
-                    self._prepared = true;
-                    if (cb) cb();
-                });
+//                cc.loader.loadJsWithImg(newJsList, function (err) {
+//                    if (err) throw err;
+//                    self._prepared = true;
+//                    if (cb) cb();
+//                });
+                cb();
             });
         }
     }

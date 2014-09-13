@@ -70,6 +70,16 @@
             "cocos2d/core/event-manager/CCEventManager.js",
             "cocos2d/core/event-manager/CCEventExtension.js",
 
+            "cocos2d/core/CCConfiguration.js",
+
+            "cocos2d/core/CCDirectorWebGL.js",
+            "cocos2d/core/CCDirector.js",
+
+            "cocos2d/core/CCCamera.js",
+            "cocos2d/core/CCScheduler.js",
+
+            "cocos2d/core/CCActionManager.js",
+
             "cocos2d/core/base-nodes/BaseNodesWebGL.js",
             "cocos2d/core/base-nodes/BaseNodesPropertyDefine.js",
             "cocos2d/core/base-nodes/CCNode.js",
@@ -97,21 +107,13 @@
             "cocos2d/core/sprites/CCAnimationCache.js",
             "cocos2d/core/sprites/CCSpriteFrame.js",
             "cocos2d/core/sprites/CCSpriteFrameCache.js",
-            "cocos2d/core/CCConfiguration.js",
 
-            "cocos2d/core/CCDirectorWebGL.js",
-            "cocos2d/core/CCDirector.js",
-
-            "cocos2d/core/CCCamera.js",
-            "cocos2d/core/CCScheduler.js",
             "cocos2d/core/CCDrawingPrimitivesCanvas.js",
             "cocos2d/core/CCDrawingPrimitivesWebGL.js",
 
             "cocos2d/core/labelttf/LabelTTFWebGL.js",
             "cocos2d/core/labelttf/LabelTTFPropertyDefine.js",
-            "cocos2d/core/labelttf/CCLabelTTF.js",
-
-            "cocos2d/core/CCActionManager.js"
+            "cocos2d/core/labelttf/CCLabelTTF.js"
         ],
         "effects" : [
             "core",
