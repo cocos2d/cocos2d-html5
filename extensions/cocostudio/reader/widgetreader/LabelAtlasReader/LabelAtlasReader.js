@@ -44,14 +44,13 @@ ccs.LabelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
      * @param {Object} options
      */
     setPropsFromJsonDictionary: function(widget, options){
-
         ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var jsonPath = ccs.uiReader.getFilePath();
     
         var labelAtlas = widget;
         var sv = options["stringValue"];
-        var cmf = options["charMapFileData"] || options["charMapFile"];
+        var cmf = options["charMapFileData"];   // || options["charMapFile"];
         var iw = options["itemWidth"];
         var ih = options["itemHeight"];
         var scm = options["startCharMap"];
@@ -63,13 +62,7 @@ ccs.LabelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
                     var tp_c = jsonPath;
                     var cmfPath = cmftDic["path"];
                     var cmf_tp = tp_c + cmfPath;
-                    labelAtlas.setProperty(
-                        options["stringValue"],
-                        cmf_tp,
-                        options["itemWidth"],
-                        options["itemHeight"],
-                        options["startCharMap"]
-                    );
+                    labelAtlas.setProperty(sv, cmf_tp, iw, ih, scm);
                     break;
                 case 1:
                     cc.log("Wrong res type of LabelAtlas!");
