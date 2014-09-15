@@ -679,7 +679,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend(/** @lends cc
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var labelAtlas = widget;
 
-        var cmft = options["charMapFile"], svValue = options["stringValue"], iwValue = options["itemWidth"];
+        var cmft = options["charMapFileData"], svValue = options["stringValue"], iwValue = options["itemWidth"];
         var ihValue = options["itemHeight"], scmValue = options["startCharMap"];
         var sv = (svValue !== undefined);
         var cmf = (cmft !== undefined);
