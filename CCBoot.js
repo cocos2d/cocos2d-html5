@@ -1715,7 +1715,7 @@ cc.moduleLoader = {
      */
     getModuleJsList : function(moduleRoot, modules, cb){
         var self = this;
-        //先获取到moduleConfig.json
+        //get moduleConfig.json first
         var moduleConfigPath = cc.path.join(moduleRoot, "moduleConfig.json");
         cc.loader.loadJson([moduleConfigPath], function(err, moduleConfig){
             if(err) return cb(err);
@@ -2065,6 +2065,8 @@ cc.game = /** @lends cc.game# */{
         frameRate: "frameRate",
         id: "id",
         renderMode: "renderMode",
+        modules: "modules",
+        userModules: "userModules",
         jsList: "jsList",
         classReleaseMode: "classReleaseMode"
     },
@@ -2210,36 +2212,34 @@ cc.game = /** @lends cc.game# */{
      */
     prepare: function (cb) {
         var self = this;
-        var config = self.config, CONFIG_KEY = self.CONFIG_KEY, engineDir = config[CONFIG_KEY.engineDir], loader = cc.loader;
+        var config = self.config, CONFIG_KEY = self.CONFIG_KEY, engineDir = config[CONFIG_KEY.engineDir], loader = cc.loader,moduleLoader = cc.moduleLoader;
         if (!cc._supportRender) {
             throw "The renderer doesn't support the renderMode " + config[CONFIG_KEY.renderMode];
         }
         self._prepareCalled = true;
-
+        var cfgList = [];
         var jsList = config[CONFIG_KEY.jsList] || [];
-        if (cc.Class) {//is single file
-            //load user's jsList only
-            loader.loadJsWithImg("", jsList, function (err) {
-                if (err) throw err;
-                self._prepared = true;
-                if (cb) cb();
-            });
-        } else {
+        if (!cc.Class) {
             var moduleCfg4Engine = {};//moduleCfg for cocos
-            var modules = config["modules"] || [];
-            if (cc._renderType == cc._RENDER_TYPE_WEBGL) modules.splice(0, 0, "shaders");
-            else if (modules.indexOf("core") < 0) modules.splice(0, 0, "core");
+            var modules = config[CONFIG_KEY.modules] || [];
+            if (cc._renderType == cc._RENDER_TYPE_WEBGL)
+                modules.splice(0, 0, "shaders");
+            else if (modules.indexOf("core") < 0)
+                modules.splice(0, 0, "core");
             moduleCfg4Engine[engineDir] = modules;
-            var cfgList = [moduleCfg4Engine];
-            cc.moduleLoader.loadWithImg(cfgList, function(err){
+            cfgList.push(moduleCfg4Engine);
+        }
+        moduleLoader.loadWithImg(cfgList, function(err){
+            if (err) throw err;
+            moduleLoader.loadWithImg(config[CONFIG_KEY.userModules] || [], function(err){
                 if (err) throw err;
-                cc.moduleLoader.loadWithImg(config["userModules"] || [], function(err){
+                loader.loadJsWithImg("", jsList, function (err) {
                     if (err) throw err;
-                    self._prepared = true;
+                    self._prepareCalled = true;
                     if (cb) cb();
                 });
             });
-        }
+        });
     }
 };
 cc.game._initConfig();
