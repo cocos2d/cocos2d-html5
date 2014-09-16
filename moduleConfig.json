@@ -344,7 +344,13 @@
             "extensions/cocostudio/reader/widgetreader/WidgetReader.js",
 
             "extensions/cocostudio/reader/GUIReader.js",
-            "extensions/cocostudio/reader/SceneReader.js"
+            "extensions/cocostudio/reader/SceneReader.js",
+
+            "extensions/cocostudio/reader/timeline/ActionTimeline.js",
+            "extensions/cocostudio/reader/timeline/ActionTimelineCache.js",
+            "extensions/cocostudio/reader/timeline/Frame.js",
+            "extensions/cocostudio/reader/timeline/NodeReader.js",
+            "extensions/cocostudio/reader/timeline/Timeline.js"
         ],
         "gui" : [
             "core", "clipping-nodes", "render-texture", "actions", "progress-timer",

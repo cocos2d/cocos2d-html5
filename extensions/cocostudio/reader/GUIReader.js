@@ -193,6 +193,10 @@ ccs.uiReader = /** @lends ccs.uiReader# */{
         return this._filePath;
     },
 
+    setFilePath: function(path){
+        this._filePath = path;
+    },
+
     /**
      * Returns the parsed object map.
      * @returns {Object}
