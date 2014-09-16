@@ -961,8 +961,12 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         }
 
         this.setContentSize(rect.width, rect.height);
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL){
             this.addChild(locScale9Image);
+        }else{
+            if(!this._cacheSprite.getParent())
+                this.addChild(this._cacheSprite);
+        }
 
         if (this._spritesGenerated) {
             // Restore color and opacity
