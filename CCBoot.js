@@ -313,19 +313,21 @@ cc.async = /** @lends cc.async# */{
      */
     waterfall : function(tasks, cb, target){
         var args = [];
+        var lastResults = [null];//the array to store the last results
         var asyncPool = new cc.AsyncPool(tasks, 1,
             function (func, index, cb1) {
                 args.push(function (err) {
                     args = Array.prototype.slice.call(arguments, 1);
+                    if(tasks.length - 1 == index) lastResults = lastResults.concat(args);//while the last task
                     cb1.apply(null, arguments);
                 });
                 func.apply(target, args);
-            }, function (err, results) {
+            }, function (err) {
                 if (!cb)
                     return;
                 if (err)
                     return cb.call(target, err);
-                cb.call(target, null, results[results.length - 1]);
+                cb.apply(target, lastResults);
             });
         asyncPool.flow();
         return asyncPool;
