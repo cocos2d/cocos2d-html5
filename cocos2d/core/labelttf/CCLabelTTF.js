@@ -135,8 +135,13 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this.string = strInfo;
         this._setColorsString();
         this._updateTexture();
-        this._needUpdateTexture = false;
+        this._setUpdateTextureDirty();
         return true;
+    },
+
+    _setUpdateTextureDirty: function(){
+        this._renderCmdDiry = this._needUpdateTexture = true;
+        cc.renderer.pushDirtyNode(this);
     },
 
     ctor: function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
@@ -308,8 +313,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         if (this._shadowBlur != shadowBlur)
             this._shadowBlur = shadowBlur;
-
-        this._needUpdateTexture = true;
+        this._setUpdateTextureDirty();
     },
 
     _getShadowOffsetX: function () {
@@ -321,7 +325,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         if (this._shadowOffset.x != x) {
             this._shadowOffset.x = x;
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -334,7 +338,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         if (this._shadowOffset._y != y) {
             this._shadowOffset._y = y;
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -348,7 +352,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (this._shadowOffset.x != offset.x || this._shadowOffset.y != offset.y) {
             this._shadowOffset.x = offset.x;
             this._shadowOffset.y = offset.y;
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -362,7 +366,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (this._shadowOpacity != shadowOpacity) {
             this._shadowOpacity = shadowOpacity;
             this._setColorsString();
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -375,7 +379,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         if (this._shadowBlur != shadowBlur) {
             this._shadowBlur = shadowBlur;
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -385,7 +389,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     disableShadow: function () {
         if (this._shadowEnabled) {
             this._shadowEnabled = false;
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -408,8 +412,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         if (this._strokeSize !== strokeSize)
             this._strokeSize = strokeSize || 0;
-
-        this._needUpdateTexture = true;
+        this._setUpdateTextureDirty();
     },
 
     _getStrokeStyle: function () {
@@ -425,8 +428,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             locStrokeColor.g = strokeStyle.g;
             locStrokeColor.b = strokeStyle.b;
             this._setColorsString();
-
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -436,10 +438,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _setLineWidth: function (lineWidth) {
         if (this._strokeEnabled === false)
             this._strokeEnabled = true;
-
         if (this._strokeSize !== lineWidth) {
             this._strokeSize = lineWidth || 0;
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -449,7 +450,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     disableStroke: function () {
         if (this._strokeEnabled) {
             this._strokeEnabled = false;
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -559,7 +560,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._updateString();
 
             // Force update
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
     _updateString: function () {
@@ -575,7 +576,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._hAlignment = alignment;
 
             // Force update
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -588,7 +589,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._vAlignment = verticalAlignment;
 
             // Force update
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -610,7 +611,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._dimensions.height = height;
             this._updateString();
             // Force udpate
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -622,7 +623,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._dimensions.width = width;
             this._updateString();
             // Force udpate
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -634,7 +635,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._dimensions.height = height;
             this._updateString();
             // Force udpate
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -648,7 +649,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._fontStyleStr = fontSize + "px '" + this._fontName + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName, fontSize);
             // Force update
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -662,7 +663,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName, this._fontSize);
             // Force update
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -677,7 +678,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._fontStyleStr = fontStyle;
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName, this._fontSize);
             // Force update
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -1050,12 +1051,28 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     _p.setColor = function (color3) {
         cc.Node.prototype.setColor.call(this, color3);
-
         this._setColorsString();
     };
 
+    _p._transformForRenderer = function(){
+        if (this._needUpdateTexture) {
+            this._needUpdateTexture = false;
+            this._updateTexture();
+            this.toRenderer();
+        }
+        cc.Node.prototype._transformForRenderer.call(this);
+    };
+
+    _p.toRenderer = function(){
+        if (this._needUpdateTexture) {
+            this._needUpdateTexture = false;
+            this._updateTexture();
+        }
+        cc.Sprite.prototype.toRenderer.call(this);
+    };
+
     _p._setColorsString = function () {
-        this._needUpdateTexture = true;
+        this._setUpdateTextureDirty();
 
         var locDisplayColor = this._displayedColor, locDisplayedOpacity = this._displayedOpacity;
         var locStrokeColor = this._strokeColor, locFontFillColor = this._textFillColor;
@@ -1077,7 +1094,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             return;
         cc.Sprite.prototype.setOpacity.call(this, opacity);
         this._setColorsString();
-        this._needUpdateTexture = true;
+        this._setUpdateTextureDirty();
     };
 
     //TODO: _p._updateDisplayedOpacityForCanvas
@@ -1101,7 +1118,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             locTextFillColor.b = tintColor.b;
 
             this._setColorsString();
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     };
 
@@ -1114,9 +1131,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         this.setContentSize(untrimmedSize);
         this.setVertexRect(rect);
 
-        var locTextureCoordRect = this._textureRect_Canvas;
+        var locTextureCoordRect = this._rendererCmd._textureCoord;
         locTextureCoordRect.x = rect.x;
         locTextureCoordRect.y = rect.y;
+        locTextureCoordRect.renderX = rect.x;
+        locTextureCoordRect.renderY = rect.y;
         locTextureCoordRect.width = rect.width;
         locTextureCoordRect.height = rect.height;
         locTextureCoordRect.validRect = !(locTextureCoordRect.width === 0 || locTextureCoordRect.height === 0
