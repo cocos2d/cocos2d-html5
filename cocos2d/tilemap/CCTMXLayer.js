@@ -799,6 +799,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         this.tiles[zz] = 0;
         this._atlasIndexArray.splice(atlasIndex, 1);
         cc.SpriteBatchNode.prototype.removeChild.call(this, sprite, cleanup);
+        cc.renderer.childrenOrderDirty = true;
     },
 
     /**
@@ -1019,6 +1020,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             this._reusedTile.initWithTexture(this._textureForCanvas, rect, false);
             this._reusedTile.batchNode = this;
             this._reusedTile.parent = this;
+            this._reusedTile._cachedParent = this;
         }
         return this._reusedTile;
     },

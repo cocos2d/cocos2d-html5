@@ -255,6 +255,7 @@ cc.GradientRectRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scal
     context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
     var opacity = _t._opacity, locRect = this._drawingRect;
+    //TODO need cache gradient object
     var gradient = context.createLinearGradient(_t._startPoint.x, _t._startPoint.y, _t._endPoint.x, _t._endPoint.y);
     var locStartColor = _t._startColor, locEndColor = _t._endColor;
     gradient.addColorStop(0, "rgba(" + Math.round(locStartColor.r) + "," + Math.round(locStartColor.g) + ","
@@ -625,7 +626,7 @@ cc.ClippingNodeClipRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, s
 
         context.restore();
     }
-    var t = cc.AffineTransformInvert(this._node._transformWorld);
+    var t = cc.affineTransformInvert(this._node._transformWorld);
     context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
     context.clip();
 };
@@ -703,7 +704,7 @@ cc.TMXLayerRenderCmdCanvas.prototype._renderingChildToCache = function(scaleX, s
         locCacheContext.save();
         locCacheContext.clearRect(0, 0, locCanvas.width, -locCanvas.height);
         //reset the cache context
-        var t = cc.AffineTransformInvert(this._transform);
+        var t = cc.affineTransformInvert(this._transform);
         locCacheContext.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
         for(var i = 0, len = locCacheCmds.length; i < len; i++){

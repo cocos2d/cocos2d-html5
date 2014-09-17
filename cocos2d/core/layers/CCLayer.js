@@ -792,7 +792,6 @@ cc.LayerGradient.create = function (start, end, v) {
     return new cc.LayerGradient(start, end, v);
 };
 
-
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     //cc.LayerGradient define start
     var _p = cc.LayerGradient.prototype;
