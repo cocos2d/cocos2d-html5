@@ -74,6 +74,10 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     alphaThreshold: 0,
     inverted: false,
 
+    _rendererSaveCmd: null,
+    _rendererClipCmd: null,
+    _rendererRestoreCmd: null,
+
     _stencil: null,
     _godhelpme: false,
 
@@ -86,6 +90,10 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         this._stencil = null;
         this.alphaThreshold = 0;
         this.inverted = false;
+
+        this._rendererSaveCmd = new cc.ClippingNodeSaveRenderCmdCanvas(this);
+        this._rendererClipCmd = new cc.ClippingNodeClipRenderCmdCanvas(this);
+        this._rendererRestoreCmd = new cc.ClippingNodeRestoreRenderCmdCanvas(this);
 
         stencil = stencil || null;
         cc.ClippingNode.prototype.init.call(this, stencil);
@@ -466,16 +474,25 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
     _setStencilForCanvas: function (stencil) {
         this._stencil = stencil;
+        if(stencil._buffer){
+            for(var i=0; i<stencil._buffer.length; i++){
+                stencil._buffer[i].isFill = false;
+                stencil._buffer[i].isStroke = false;
+            }
+        }
         var locContext = cc._renderContext;
         // For texture stencil, use the sprite itself
-        if (stencil instanceof cc.Sprite) {
-            return;
-        }
+        //if (stencil instanceof cc.Sprite) {
+        //    return;
+        //}
         // For shape stencil, rewrite the draw of stencil ,only init the clip path and draw nothing.
-        else if (stencil instanceof cc.DrawNode) {
-            stencil.draw = function () {
-                var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
-                locContext.beginPath();
+        //else
+        if (stencil instanceof cc.DrawNode) {
+            stencil._rendererCmd.rendering = function (ctx, scaleX, scaleY) {
+                scaleX = scaleX || cc.view.getScaleX();
+                scaleY = scaleY ||cc.view.getScaleY();
+                var context = ctx || cc._renderContext;
+                context.beginPath();
                 for (var i = 0; i < stencil._buffer.length; i++) {
                     var element = stencil._buffer[i];
                     var vertices = element.verts;
@@ -484,11 +501,11 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
                     //    "Only clockwise polygons should be used as stencil");
 
                     var firstPoint = vertices[0];
-                    locContext.moveTo(firstPoint.x * locEGL_ScaleX, -firstPoint.y * locEGL_ScaleY);
+                    context.moveTo(firstPoint.x * scaleX, -firstPoint.y * scaleY);
                     for (var j = 1, len = vertices.length; j < len; j++)
-                        locContext.lineTo(vertices[j].x * locEGL_ScaleX, -vertices[j].y * locEGL_ScaleY);
+                        context.lineTo(vertices[j].x * scaleX, -vertices[j].y * scaleY);
                 }
-            }
+            };
         }
     },
 

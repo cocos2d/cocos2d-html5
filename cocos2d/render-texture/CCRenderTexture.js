@@ -149,6 +149,10 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         }
     },
 
+    _initRendererCmd: function(){
+        this._rendererCmd = new cc.RenderTextureRenderCmdCanvas(this);
+    },
+
     _ctorForWebGL: function (width, height, format, depthStencilFormat) {
         cc.Node.prototype.ctor.call(this);
         this._cascadeColorEnabled = true;
@@ -230,6 +234,10 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         this.autoDraw = false;
         // add sprite for backward compatibility
         this.addChild(locSprite);
+        var locCmd = this._rendererCmd;
+        locCmd._sprite = this.sprite;
+        locCmd._cacheCanvas = this._cacheCanvas;
+        locCmd._cacheContext = this._cacheContext;
         return true;
     },
 
@@ -331,8 +339,11 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     begin: null,
 
     _beginForCanvas: function () {
-        cc._renderContext = this._cacheContext;
-        cc.view._setScaleXYForRenderTexture();
+        //old code
+        //cc._renderContext = this._cacheContext;
+        //cc.view._setScaleXYForRenderTexture();
+
+        cc.renderer._isCacheToCanvasOn = true;
 
         /*// Save the current matrix
          cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
@@ -473,8 +484,11 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     end: null,
 
     _endForCanvas: function () {
-        cc._renderContext = cc._mainRenderContextBackup;
-        cc.view._resetScale();
+        //old code
+        //cc._renderContext = cc._mainRenderContextBackup;
+        //cc.view._resetScale();
+
+        cc.renderer._renderingToCacheCanvas(this._cacheContext);
 
         //TODO
         /*//restore viewport
@@ -603,13 +617,9 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             return;
 
         ctx = ctx || cc._renderContext;
-        ctx.save();
-
-        this.draw(ctx);                                                   // update children of RenderTexture before
         this.transform(ctx);
-        this.sprite.visit();                                             // draw the RenderTexture
-
-        ctx.restore();
+        this.toRenderer();
+        this.sprite.visit(ctx);                                             // draw the RenderTexture
 
         this.arrivalOrder = 0;
     },
@@ -870,6 +880,16 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      */
     setAutoDraw:function (autoDraw) {
         this.autoDraw = autoDraw;
+    },
+
+    toRenderer: function(){
+        if(!this._rendererCmd)
+            return;
+
+        var locCmd = this._rendererCmd;
+        locCmd._clearFlags = this.clearFlags;
+        locCmd.autoDraw = this.autoDraw;
+        locCmd._sprite = this.sprite;
     }
 });
 

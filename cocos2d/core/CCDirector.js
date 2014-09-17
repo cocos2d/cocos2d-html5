@@ -212,6 +212,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      *  Draw the scene. This method is called every frame. Don't call it manually.
      */
     drawScene: function () {
+        var renderer = cc.renderer;
         // calculate "global" dt
         this.calculateDeltaTime();
 
@@ -229,11 +230,19 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this.setNextScene();
         }
 
-        if (this._beforeVisitScene) this._beforeVisitScene();
+        if (this._beforeVisitScene)
+            this._beforeVisitScene();
 
         // draw the scene
         if (this._runningScene) {
-            this._runningScene.visit();
+            if (renderer.childrenOrderDirty === true) {
+                cc.renderer.clearRenderCommands();
+                this._runningScene._curLevel = 0;                          //level start from 0;
+                this._runningScene.visit();
+                renderer.resetFlag();
+            } else if (renderer.transformDirty() === true)
+                renderer.transform();
+
             cc.eventManager.dispatchEvent(this._eventAfterVisit);
         }
 
@@ -244,9 +253,10 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (this._displayStats)
             this._showStats();
 
-        if (this._afterVisitScene) this._afterVisitScene();
+        if (this._afterVisitScene)
+            this._afterVisitScene();
 
-        //TODO
+        renderer.rendering(cc._renderContext);
         cc.eventManager.dispatchEvent(this._eventAfterDraw);
         this._totalFrames++;
 
@@ -528,6 +538,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         }
 
         this._runningScene = this._nextScene;
+        cc.renderer.childrenOrderDirty = true;
 
         this._nextScene = null;
         if ((!runningIsTransition) && (this._runningScene != null)) {

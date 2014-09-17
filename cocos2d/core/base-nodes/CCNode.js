@@ -2368,6 +2368,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     updateDisplayedOpacity: function (parentOpacity) {
         this._displayedOpacity = this._realOpacity * parentOpacity / 255.0;
+        if(this._rendererCmd && this._rendererCmd._opacity !== undefined)
+            this._rendererCmd._opacity = this._displayedOpacity / 255;
         if (this._cascadeOpacityEnabled) {
             var selChildren = this._children;
             for (var i = 0; i < selChildren.length; i++) {

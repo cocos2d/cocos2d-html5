@@ -397,10 +397,45 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         cc.LayerColor.prototype.init.call(this, color, width, height);
     };
-    _p._setWidth = cc.Layer.prototype._setWidth;
-    _p._setHeight = cc.Layer.prototype._setHeight;
-    _p._updateColor = function () {
+    _p._initRendererCmd = function(){
+        this._rendererCmd = new cc.RectRenderCmdCanvas(this);
     };
+    _p._setWidth = function(width){
+        cc.Node.prototype._setWidth.call(this, width);
+        this._rendererCmd._drawingRect.width = width;
+    };
+    _p._setHeight = function(height){
+        cc.Node.prototype._setHeight.call(this, height);
+        this._rendererCmd._drawingRect.height = height;
+    };
+    _p._updateColor = function () {
+        var locCmd = this._rendererCmd;
+        if(!locCmd || !locCmd._color)
+            return;
+        var locColor = this._displayedColor;
+        locCmd._color.r = locColor.r;
+        locCmd._color.g = locColor.g;
+        locCmd._color.b = locColor.b;
+        locCmd._color.a = this._displayedOpacity / 255;
+    };
+
+    _p.toRenderer = function(){
+        if(!this._rendererCmd)
+            return;
+
+        var locCmd = this._rendererCmd;
+        var locColor = this._displayedColor;
+        locCmd._isLighterMode = this._isLighterMode;
+
+        locCmd._color.r = locColor.r;
+        locCmd._color.g = locColor.g;
+        locCmd._color.b = locColor.b;
+        locCmd._color.a = this._displayedOpacity / 255;
+
+        locCmd._drawingRect.width = this.width * cc.view.getScaleX();
+        locCmd._drawingRect.height = this.height * cc.view.getScaleY();
+    };
+
     _p.draw = function (ctx) {
         var context = ctx || cc._renderContext, _t = this;
         var locEGLViewer = cc.view, locDisplayedColor = _t._displayedColor;
@@ -553,8 +588,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _endOpacity: 255,
     _alongVector: null,
     _compressedInterpolation: false,
-    _gradientStartPoint: null,
-    _gradientEndPoint: null,
     _className: "LayerGradient",
 
     /**
@@ -572,9 +605,11 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         _t._alongVector = cc.p(0, -1);
         _t._startOpacity = 255;
         _t._endOpacity = 255;
-        _t._gradientStartPoint = cc.p(0, 0);
-        _t._gradientEndPoint = cc.p(0, 0);
         cc.LayerGradient.prototype.init.call(_t, start, end, v);
+    },
+
+    _initRendererCmd: function(){
+        this._rendererCmd = new cc.GradientRectRenderCmdCanvas(this);
     },
 
     /**
@@ -604,8 +639,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
         _t._alongVector = v;
         _t._compressedInterpolation = true;
-        _t._gradientStartPoint = cc.p(0, 0);
-        _t._gradientEndPoint = cc.p(0, 0);
 
         cc.LayerColor.prototype.init.call(_t, cc.color(start.r, start.g, start.b, 255));
         cc.LayerGradient.prototype._updateColor.call(_t);
@@ -763,38 +796,38 @@ cc.LayerGradient.create = function (start, end, v) {
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     //cc.LayerGradient define start
     var _p = cc.LayerGradient.prototype;
-    _p.draw = function (ctx) {
-        var context = ctx || cc._renderContext, _t = this;
-        if (_t._blendFuncStr != "source")
-            context.globalCompositeOperation = _t._blendFuncStr;
+    _p.toRenderer = function(){
+        if(!this._rendererCmd)
+            return;
 
-        context.save();
-        var opacityf = _t._displayedOpacity / 255.0;
-        var scaleX = cc.view.getScaleX(), scaleY = cc.view.getScaleY();
-        var tWidth = _t.width * scaleX, tHeight = _t.height * scaleY;
-        var tGradient = context.createLinearGradient(_t._gradientStartPoint.x * scaleX, _t._gradientStartPoint.y * scaleY,
-            _t._gradientEndPoint.x * scaleX, _t._gradientEndPoint.y * scaleY);
-        var locDisplayedColor = _t._displayedColor, locEndColor = _t._endColor;
-        tGradient.addColorStop(0, "rgba(" + Math.round(locDisplayedColor.r) + "," + Math.round(locDisplayedColor.g) + ","
-            + Math.round(locDisplayedColor.b) + "," + (opacityf * (_t._startOpacity / 255)).toFixed(4) + ")");
-        tGradient.addColorStop(1, "rgba(" + Math.round(locEndColor.r) + "," + Math.round(locEndColor.g) + ","
-            + Math.round(locEndColor.b) + "," + (opacityf * (_t._endOpacity / 255)).toFixed(4) + ")");
-        context.fillStyle = tGradient;
-        context.fillRect(0, 0, tWidth, -tHeight);
+        var locCmd = this._rendererCmd;
+        //set the data to the rendererCmd
+        var locColor = this._displayedColor, locEndColor = this._endColor;
+        locCmd._isLighterMode = this._isLighterMode;
+        locCmd._opacity = this._displayedOpacity/255;
 
-        if (_t._rotation != 0)
-            context.rotate(_t._rotationRadians);
-        context.restore();
-        cc.g_NumberOfDraws++;
+        locCmd._startColor.r = locColor.r;
+        locCmd._startColor.g = locColor.g;
+        locCmd._startColor.b = locColor.b;
+        locCmd._startColor.a = locColor.a;
+
+        locCmd._endColor.r = locEndColor.r;
+        locCmd._endColor.g = locEndColor.g;
+        locCmd._endColor.b = locEndColor.b;
+        locCmd._endColor.a = locEndColor.a;
+
+        locCmd._drawingRect.width = this.width * cc.view.getScaleX();
+        locCmd._drawingRect.height = this.height * cc.view.getScaleY();
     };
     _p._updateColor = function () {
         var _t = this;
         var locAlongVector = _t._alongVector, tWidth = _t.width * 0.5, tHeight = _t.height * 0.5;
 
-        _t._gradientStartPoint.x = tWidth * (-locAlongVector.x) + tWidth;
-        _t._gradientStartPoint.y = tHeight * locAlongVector.y - tHeight;
-        _t._gradientEndPoint.x = tWidth * locAlongVector.x + tWidth;
-        _t._gradientEndPoint.y = tHeight * (-locAlongVector.y) - tHeight;
+        var locCmd = this._rendererCmd;
+        locCmd._startPoint.x = tWidth * (-locAlongVector.x) + tWidth;
+        locCmd._startPoint.y = tHeight * locAlongVector.y - tHeight;
+        locCmd._endPoint.x = tWidth * locAlongVector.x + tWidth;
+        locCmd._endPoint.y = tHeight * (-locAlongVector.y) - tHeight;
     };
     //cc.LayerGradient define end
     _p = null;

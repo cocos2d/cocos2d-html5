@@ -72,7 +72,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     //Only used when vertexZ is used
     _vertexZvalue: null,
     _useAutomaticVertexZ: null,
-    _alphaFuncValue: null,
     //used for optimization
     _reusedTile: null,
     _atlasIndexArray: null,
@@ -82,13 +81,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     _cacheCanvas:null,
     _cacheContext:null,
     _cacheTexture:null,
-    // Sub caches for avoid Chrome big image draw issue
-    _subCacheCanvas:null,
-    _subCacheContext:null,
-    _subCacheCount:0,
-    _subCacheWidth:0,
-    // Maximum pixel number by cache, a little more than 3072*3072, real limit is 4096*4096
-    _maxCachePixel:10000000,
     _className:"TMXLayer",
 
     /**
@@ -123,6 +115,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         }
         if(mapInfo !== undefined)
             this.initWithTilesetInfo(tilesetInfo, layerInfo, mapInfo);
+    },
+
+    _initRendererCmd: function(){
+        this._rendererCmd = new cc.TMXLayerRenderCmdCanvas(this);
     },
 
     /**
@@ -197,47 +193,53 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     visit: null,
 
     _visitForCanvas: function (ctx) {
-        var context = ctx || cc._renderContext;
+        //TODO it will implement dynamic compute child cutting automation.
+        var i, len, locChildren = this._children;
         // quick return if not visible
-        if (!this._visible)
+        if (!this._visible || !locChildren || locChildren.length === 0)
             return;
 
-        context.save();
-        this.transform(ctx);
-        var i, locChildren = this._children;
+        if( this._parent)
+            this._curLevel = this._parent._curLevel + 1;
+
+        this.toRenderer();
+        this.transform();
 
         if (this._cacheDirty) {
-            //
-            var eglViewer = cc.view;
-            eglViewer._setScaleXYForRenderTexture();
-            //add dirty region
-            var locCacheContext = this._cacheContext, locCacheCanvas = this._cacheCanvas;
-            locCacheContext.clearRect(0, 0, locCacheCanvas.width, -locCacheCanvas.height);
-            locCacheContext.save();
-            locCacheContext.translate(this._anchorPointInPoints.x, -(this._anchorPointInPoints.y));
-            if (locChildren) {
-                this.sortAllChildren();
-                for (i = 0; i < locChildren.length; i++) {
-                    if (locChildren[i])
-                        locChildren[i].visit(locCacheContext);
-                }
-            }
-            locCacheContext.restore();
-            // Update sub caches if needed
-            if(this._subCacheCount > 0) {
-                var subCacheW = this._subCacheWidth, subCacheH = locCacheCanvas.height;
-                for(i = 0; i < this._subCacheCount; i++) {
-                    this._subCacheContext[i].drawImage(locCacheCanvas, i * subCacheW, 0, subCacheW, subCacheH, 0, 0, subCacheW, subCacheH);
+            var locCacheContext = this._cacheContext, locCanvas = this._cacheCanvas, locView = cc.view;
+            //begin cache
+            cc.renderer._isCacheToCanvasOn = true;
+
+            this.sortAllChildren();
+            for (i = 0, len =  locChildren.length; i < len; i++) {
+                if (locChildren[i]){
+                    locChildren[i].visit();
+                    locChildren[i]._cacheDirty = false;
                 }
             }
 
-            //reset Scale
-            eglViewer._resetScale();
+            //copy cached render cmd array to TMXLayer renderer
+            this._rendererCmd._copyRendererCmds(cc.renderer._cacheToCanvasCmds);
+
+            locCacheContext.save();
+            locCacheContext.clearRect(0, 0, locCanvas.width, -locCanvas.height);
+            var t = cc.affineTransformInvert(this._transformWorld);
+            locCacheContext.transform(t.a, t.c, t.b, t.d, t.tx * locView.getScaleX(), -t.ty * locView.getScaleY());
+
+            //draw to cache canvas
+            cc.renderer._renderingToCacheCanvas(locCacheContext);
+            locCacheContext.restore();
             this._cacheDirty = false;
         }
-        // draw RenderTexture
-        this.draw(ctx);
-        context.restore();
+        cc.renderer.pushRenderCommand(this._rendererCmd);
+    },
+
+    //set the cache dirty flag for canvas
+    _setNodeDirtyForCache: function () {
+        this._cacheDirty  = true;
+        if(cc.renderer._transformNodePool.indexOf(this) === -1)
+            cc.renderer.pushDirtyNode(this);
+        this._renderCmdDiry = true;
     },
 
     /**
