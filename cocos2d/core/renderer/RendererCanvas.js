@@ -648,7 +648,6 @@ cc.PhysicsDebugNodeRenderCmdCanvas = function(node){
 };
 
 cc.PhysicsDebugNodeRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
-
     var _node = this._node;
 
     if (!_node.space)

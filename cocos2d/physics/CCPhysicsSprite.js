@@ -90,7 +90,14 @@
                     this.initWithSpriteFrame(fileName);
                 }
             }
+            //this._transformCmd = new cc.PhysicsSpriteTransformCmdCanvas(this);
+            //cc.rendererCanvas.pushRenderCommand(this._transformCmd);
         },
+
+        //visit: function(){
+        //    cc.Sprite.prototype.visit.call(this);
+        //    cc.rendererCanvas.pushRenderCommand(this._transformCmd);
+        //},
 
         /**
          * set body
@@ -199,6 +206,7 @@
             this._ignoreBodyRotation = b;
         }
     };
+
     var chipmunkAPI = {
         _ignoreBodyRotation:false,
         _body:null, //physics body
@@ -253,6 +261,13 @@
                     this.initWithSpriteFrame(fileName);
                 }
             }
+            this._transformCmd = new cc.PhysicsSpriteTransformCmdCanvas(this);
+            cc.rendererCanvas.pushRenderCommand(this._transformCmd);
+        },
+
+        visit: function(){
+            cc.Sprite.prototype.visit.call(this);
+            cc.rendererCanvas.pushRenderCommand(this._transformCmd);
         },
 
         /**
@@ -371,7 +386,7 @@
 
         /**
          * get the affine transform matrix of node to parent coordinate frame
-         * @retur {cc.AffineTransform}
+         * @return {cc.AffineTransform}
          */
         getNodeToParentTransform:function () {
             if(cc._renderType === cc._RENDER_TYPE_CANVAS)
@@ -460,7 +475,7 @@
         setDirty: function(){ },
 
         /**
-         * set whether to ignore ratation of body
+         * set whether to ignore rotation of body
          * @param {Boolean} b
          */
         setIgnoreBodyRotation: function(b) {
