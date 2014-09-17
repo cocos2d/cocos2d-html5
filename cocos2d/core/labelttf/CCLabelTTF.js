@@ -80,6 +80,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _shadowOpacity: 0,
     _shadowBlur: 0,
     _shadowColorStr: null,
+    _shadowColor: null,
 
     // font stroke
     _strokeEnabled: false,
@@ -290,12 +291,25 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     /**
      * Enable or disable shadow for the label
-     * @param {Number} shadowOffsetX The x axis offset of the shadow
-     * @param {Number} shadowOffsetY The y axis offset of the shadow
-     * @param {Number} shadowOpacity The opacity of the shadow (0 to 1)
-     * @param {Number} shadowBlur The blur size of the shadow
+     * @param {cc.Color | Number} a Color or The x axis offset of the shadow
+     * @param {cc.Size | Number} b Size or The y axis offset of the shadow
+     * @param {Number} c The blur size of the shadow or The opacity of the shadow (0 to 1)
+     * @param {null | Number} d Null or The blur size of the shadow
+     * @example
+     *   old:
+     *     labelttf.enableShadow(shadowOffsetX, shadowOffsetY, shadowOpacity, shadowBlur);
+     *   new:
+     *     labelttf.enableShadow(shadowColor, offset, blurRadius);
      */
-    enableShadow: function (shadowOffsetX, shadowOffsetY, shadowOpacity, shadowBlur) {
+    enableShadow: function (a, b, c, d) {
+        if(a.r != null && a.g != null && a.b != null && a.a != null){
+            this._enableShadow(a, b, c);
+        }else{
+            this._enableShadowNoneColor(a, b, c, d)
+        }
+    },
+
+    _enableShadowNoneColor: function(shadowOffsetX, shadowOffsetY, shadowOpacity, shadowBlur){
         shadowOpacity = shadowOpacity || 0.5;
         if (false === this._shadowEnabled)
             this._shadowEnabled = true;
@@ -314,6 +328,24 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (this._shadowBlur != shadowBlur)
             this._shadowBlur = shadowBlur;
         this._setUpdateTextureDirty();
+    },
+
+    _enableShadow: function(shadowColor, offset, blurRadius){
+
+        if(!this._shadowColor){
+            this._shadowColor = cc.color(255, 255, 255, 128);
+        }
+        this._shadowColor.r = shadowColor.r;
+        this._shadowColor.g = shadowColor.g;
+        this._shadowColor.b = shadowColor.b;
+
+        var x, y, a, b;
+        x = offset.width || offset.x || 0;
+        y = offset.height || offset.y || 0;
+        a = (shadowColor.a != null) ? (shadowColor.a / 255) : 0.5;
+        b = blurRadius;
+
+        this._enableShadowNoneColor(x, y, a, b);
     },
 
     _getShadowOffsetX: function () {
@@ -1074,10 +1106,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p._setColorsString = function () {
         this._setUpdateTextureDirty();
 
-        var locDisplayColor = this._displayedColor, locDisplayedOpacity = this._displayedOpacity;
+        var locDisplayColor = this._displayedColor,
+            locDisplayedOpacity = this._displayedOpacity,
+            locShadowColor = this._shadowColor || this._displayedColor;
         var locStrokeColor = this._strokeColor, locFontFillColor = this._textFillColor;
 
-        this._shadowColorStr = "rgba(" + (0 | (locDisplayColor.r * 0.5)) + "," + (0 | (locDisplayColor.g * 0.5)) + "," + (0 | (locDisplayColor.b * 0.5)) + "," + this._shadowOpacity + ")";
+        this._shadowColorStr = "rgba(" + (0 | (locShadowColor.r * 0.5)) + "," + (0 | (locShadowColor.g * 0.5)) + "," + (0 | (locShadowColor.b * 0.5)) + "," + this._shadowOpacity + ")";
         this._fillColorStr = "rgba(" + (0 | (locDisplayColor.r / 255 * locFontFillColor.r)) + "," + (0 | (locDisplayColor.g / 255 * locFontFillColor.g)) + ","
             + (0 | (locDisplayColor.b / 255 * locFontFillColor.b)) + ", " + locDisplayedOpacity / 255 + ")";
         this._strokeColorStr = "rgba(" + (0 | (locDisplayColor.r / 255 * locStrokeColor.r)) + "," + (0 | (locDisplayColor.g / 255 * locStrokeColor.g)) + ","
