@@ -650,11 +650,11 @@ cc.PhysicsDebugNodeRenderCmdCanvas = function(node){
 cc.PhysicsDebugNodeRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
     var _node = this._node;
 
-    if (!_node.space)
+    if (!_node._space)
         return;
 
-    _node.space.eachShape(cc.DrawShape.bind(_node));
-    _node.space.eachConstraint(cc.DrawConstraint.bind(_node));
+    _node._space.eachShape(cc.DrawShape.bind(_node));
+    _node._space.eachConstraint(cc.DrawConstraint.bind(_node));
     cc.DrawNodeRenderCmdCanvas.prototype.rendering.call(this, ctx, scaleX, scaleY);
     _node.clear();
 };
