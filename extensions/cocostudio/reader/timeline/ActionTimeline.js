@@ -118,16 +118,14 @@
 
         _stepToFrame: function(frameIndex){
             var size = this._timelineList.length;
-            for(var i = 0; i < size; i++)
-            {
+            for(var i = 0; i < size; i++){
                 this._timelineList[i]._stepToFrame(frameIndex);
             }
         },
 
         //emit frame event, call it when enter a frame
         _emitFrameEvent: function(frame){
-            if(this._frameEventListener)
-            {
+            if(this._frameEventListener){
                 this._frameEventListener(frame);
             }
         },
@@ -346,8 +344,7 @@
             newAction.setDuration(this._duration);
             newAction.setTimeSpeed(this._timeSpeed);
 
-            for (var a in this._timelineMap)
-            {
+            for (var a in this._timelineMap){
                 var timelines = this._timelineMap[a];
                 for(var b in timelines)
                 {
@@ -384,8 +381,7 @@
 
             this._stepToFrame(this._currentFrame);
 
-            if(this._time > this._endFrame * this._frameInternal)
-            {
+            if(this._time > this._endFrame * this._frameInternal){
                 this._playing = this._loop;
                 if(!this._playing)
                     this._time = this._endFrame * this._frameInternal;
@@ -413,13 +409,14 @@
         startWithTarget: function(target){
             cc.Action.prototype.startWithTarget.call(this, target);
 
+            var self = this;
             var callback = function(child){
                 var data = child.getUserObject();
 
                 if(data) {
                     var actionTag = data.getActionTag();
-                    if(this._timelineMap[actionTag]) {
-                        var timelines = this._timelineMap[actionTag];
+                    if(self._timelineMap[actionTag]) {
+                        var timelines = self._timelineMap[actionTag];
                         for (var i=0; i<timelines.length; i++) {
                             var timeline = timelines[i];
                             timeline.setNode(child);
@@ -428,7 +425,7 @@
                 }
             };
 
-            this._foreachNodeDescendant(target, callback.bind(this));
+            this._foreachNodeDescendant(target, callback);
         },
 
         /**

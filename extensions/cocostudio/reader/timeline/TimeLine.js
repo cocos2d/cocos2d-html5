@@ -22,6 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * timeline object
+ * @class
+ * @extend ccs.Class
+ */
 ccs.Timeline = ccs.Class.extend({
 
     //{ccs.Frame}
@@ -72,7 +77,7 @@ ccs.Timeline = ccs.Class.extend({
     },
 
     /**
-     *
+     * Get the frame list
      * @returns {ccs.Frame}
      */
     getFrames: function(){
@@ -80,7 +85,7 @@ ccs.Timeline = ccs.Class.extend({
     },
 
     /**
-     *
+     * push frame to frame list
      * @param {ccs.Frame} frame
      */
     addFrame: function(frame){
@@ -89,7 +94,7 @@ ccs.Timeline = ccs.Class.extend({
     },
 
     /**
-     *
+     * insert the frame to frame list
      * @param {ccs.Frame} frame
      * @param {Number} index
      */
@@ -100,7 +105,7 @@ ccs.Timeline = ccs.Class.extend({
     },
 
     /**
-     *
+     * remove frame
      * @param {ccs.Frame} frame
      */
     removeFrame: function(frame){
@@ -109,7 +114,7 @@ ccs.Timeline = ccs.Class.extend({
     },
 
     /**
-     *
+     * Set the action tag
      * @param {Number} tag
      */
     setActionTag: function(tag){
@@ -117,6 +122,7 @@ ccs.Timeline = ccs.Class.extend({
     },
 
     /**
+     * Gets the action tag
      * return {Number}
      */
     getActionTag: function(){
@@ -124,7 +130,7 @@ ccs.Timeline = ccs.Class.extend({
     },
 
     /**
-     *
+     * Set the node
      * @param {cc.Node} node
      */
     setNode: function(node){
@@ -137,7 +143,7 @@ ccs.Timeline = ccs.Class.extend({
     },
 
     /**
-     *
+     * Gets the node
      * return {cc.Node}
      */
     getNode: function(){
@@ -145,7 +151,7 @@ ccs.Timeline = ccs.Class.extend({
     },
 
     /**
-     *
+     * Set the action timeline
      * @param {ccs.ActionTimeline} action
      */
     setActionTimeline: function(action){
@@ -153,7 +159,7 @@ ccs.Timeline = ccs.Class.extend({
     },
 
     /**
-     *
+     * get the action timeline
      * return {cc.Action}
      */
     getActionTimeline: function(){
@@ -161,7 +167,8 @@ ccs.Timeline = ccs.Class.extend({
     },
 
     /**
-     *
+     * to copy object with deep copy.
+     * returns a clone of action.
      * @return {ccs.Timeline}
      */
     clone: function(){
@@ -305,6 +312,12 @@ ccs.Timeline = ccs.Class.extend({
 
 });
 
+/**
+ * Create the Timeline
+ *
+ * @deprecated v3.0, please use new ccs.Timeline() instead.
+ * @returns {ccs.Timeline}
+ */
 ccs.Timeline.create = function(){
     return new ccs.Timeline();
 };
