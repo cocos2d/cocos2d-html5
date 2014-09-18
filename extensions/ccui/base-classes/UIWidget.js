@@ -517,13 +517,14 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
         this._touchEnabled = enable;                                  //TODO need consider remove and re-add.
         if (this._touchEnabled) {
-            this._touchListener = cc.EventListener.create({
-                event: cc.EventListener.TOUCH_ONE_BY_ONE,
-                swallowTouches: true,
-                onTouchBegan: this.onTouchBegan.bind(this),
-                onTouchMoved: this.onTouchMoved.bind(this),
-                onTouchEnded: this.onTouchEnded.bind(this)
-            });
+            if(!this._touchListener)
+                this._touchListener = cc.EventListener.create({
+                    event: cc.EventListener.TOUCH_ONE_BY_ONE,
+                    swallowTouches: true,
+                    onTouchBegan: this.onTouchBegan.bind(this),
+                    onTouchMoved: this.onTouchMoved.bind(this),
+                    onTouchEnded: this.onTouchEnded.bind(this)
+                });
             cc.eventManager.addListener(this._touchListener, this);
         } else {
             cc.eventManager.removeListener(this._touchListener);
