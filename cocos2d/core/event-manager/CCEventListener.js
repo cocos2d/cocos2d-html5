@@ -41,7 +41,7 @@ cc.EventListener = cc.Class.extend(/** @lends cc.EventListener# */{
 
     _fixedPriority: 0,                      // The higher the number, the higher the priority, 0 is for scene graph base priority.
     _node: null,                           // scene graph based priority
-    _paused: false,                        // Whether the listener is paused
+    _paused: true,                        // Whether the listener is paused
     _isEnabled: true,                      // Whether the listener is enabled
 
     /**
