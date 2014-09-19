@@ -80,6 +80,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
     _stencil: null,
     _godhelpme: false,
+    _clipElemType: null,
 
     /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
@@ -366,66 +367,42 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     },
 
     _visitForCanvas: function (ctx) {
-        // return fast (draw nothing, or draw everything if in inverted mode) if:
-        // - nil stencil node
-        // - or stencil node invisible:
+
+        this._transformDirty = false;
+        this.setNodeDirty();
+
+        // Composition mode, costy but support texture stencil
+        if (this._cangodhelpme() || this._stencil instanceof cc.Sprite) {
+            this._clipElemType = true;
+        }else{
+            this._clipElemType = false;
+        }
+        var context = ctx || cc._renderContext;
+        var i, children = this._children, locChild;
+
         if (!this._stencil || !this._stencil.visible) {
             if (this.inverted)
                 cc.Node.prototype.visit.call(this, ctx);   // draw everything
             return;
         }
 
-        var context = ctx || cc._renderContext;
-        var canvas = context.canvas;
-        // Composition mode, costy but support texture stencil
-        if (this._cangodhelpme() || this._stencil instanceof cc.Sprite) {
-            // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
-            var locCache = cc.ClippingNode._getSharedCache();
-            locCache.width = canvas.width;
-            locCache.height = canvas.height;
-            var locCacheCtx = locCache.getContext("2d");
-            locCacheCtx.drawImage(canvas, 0, 0);
+        if(this._rendererSaveCmd)
+            cc.renderer.pushRenderCommand(this._rendererSaveCmd);
 
-            context.save();
+        if(this._clipElemType){
+
             // Draw everything first using node visit function
             cc.Node.prototype.visit.call(this, context);
-
-            context.globalCompositeOperation = this.inverted ? "destination-out" : "destination-in";
-
-            this.transform(context);
-            this._stencil.visit();
-
-            context.restore();
-
-            // Redraw the cached canvas, so that the cliped area shows the background etc.
-            context.save();
-            context.setTransform(1, 0, 0, 1, 0, 0);
-            context.globalCompositeOperation = "destination-over";
-            context.drawImage(locCache, 0, 0);
-            context.restore();
-        }
-        // Clip mode, fast, but only support cc.DrawNode
-        else {
-            var i, children = this._children, locChild;
-
-            context.save();
-            this.transform(context);
+        }else{
             this._stencil.visit(context);
-            if (this.inverted) {
-                context.save();
+        }
 
-                context.setTransform(1, 0, 0, 1, 0, 0);
+        if(this._rendererClipCmd)
+            cc.renderer.pushRenderCommand(this._rendererClipCmd);
 
-                context.moveTo(0, 0);
-                context.lineTo(0, canvas.height);
-                context.lineTo(canvas.width, canvas.height);
-                context.lineTo(canvas.width, 0);
-                context.lineTo(0, 0);
-
-                context.restore();
-            }
-            context.clip();
-
+        if(this._clipElemType){
+            this._stencil.visit();
+        }else{
             // Clip mode doesn't support recusive stencil, so once we used a clip stencil,
             // so if it has ClippingNode as a child, the child must uses composition stencil.
             this._cangodhelpme(true);
@@ -440,16 +417,107 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
                     else
                         break;
                 }
-                this.draw(context);
+                if(this._rendererCmd)
+                    cc.renderer.pushRenderCommand(this._rendererCmd);
                 for (; i < len; i++) {
                     children[i].visit(context);
                 }
             } else
-                this.draw(context);
+            if(this._rendererCmd)
+                cc.renderer.pushRenderCommand(this._rendererCmd);
             this._cangodhelpme(false);
 
-            context.restore();
         }
+
+        if(this._rendererRestoreCmd)
+            cc.renderer.pushRenderCommand(this._rendererRestoreCmd);
+
+
+//        return;
+//        // return fast (draw nothing, or draw everything if in inverted mode) if:
+//        // - nil stencil node
+//        // - or stencil node invisible:
+//        if (!this._stencil || !this._stencil.visible) {
+//            if (this.inverted)
+//                cc.Node.prototype.visit.call(this, ctx);   // draw everything
+//            return;
+//        }
+//
+//        var context = ctx || cc._renderContext;
+//        var canvas = context.canvas;
+//        // Composition mode, costy but support texture stencil
+//        if (this._cangodhelpme() || this._stencil instanceof cc.Sprite) {
+//            // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
+//            var locCache = cc.ClippingNode._getSharedCache();
+//            locCache.width = canvas.width;
+//            locCache.height = canvas.height;
+//            var locCacheCtx = locCache.getContext("2d");
+//            locCacheCtx.drawImage(canvas, 0, 0);
+//
+//            context.save();
+//            // Draw everything first using node visit function
+//            cc.Node.prototype.visit.call(this, context);
+//
+//            context.globalCompositeOperation = this.inverted ? "destination-out" : "destination-in";
+//
+//            this.transform(context);
+//            this._stencil.visit();
+//
+//            context.restore();
+//
+//            // Redraw the cached canvas, so that the cliped area shows the background etc.
+//            context.save();
+//            context.setTransform(1, 0, 0, 1, 0, 0);
+//            context.globalCompositeOperation = "destination-over";
+//            context.drawImage(locCache, 0, 0);
+//            context.restore();
+//        }
+//        // Clip mode, fast, but only support cc.DrawNode
+//        else {
+//            var i, children = this._children, locChild;
+//
+//            context.save();
+//            this.transform(context);
+//            this._stencil.visit(context);
+//            if (this.inverted) {
+//                context.save();
+//
+//                context.setTransform(1, 0, 0, 1, 0, 0);
+//
+//                context.moveTo(0, 0);
+//                context.lineTo(0, canvas.height);
+//                context.lineTo(canvas.width, canvas.height);
+//                context.lineTo(canvas.width, 0);
+//                context.lineTo(0, 0);
+//
+//                context.restore();
+//            }
+//            context.clip();
+//
+//            // Clip mode doesn't support recusive stencil, so once we used a clip stencil,
+//            // so if it has ClippingNode as a child, the child must uses composition stencil.
+//            this._cangodhelpme(true);
+//            var len = children.length;
+//            if (len > 0) {
+//                this.sortAllChildren();
+//                // draw children zOrder < 0
+//                for (i = 0; i < len; i++) {
+//                    locChild = children[i];
+//                    if (locChild._localZOrder < 0)
+//                        locChild.visit(context);
+//                    else
+//                        break;
+//                }
+//                this.draw(context);
+//                for (; i < len; i++) {
+//                    children[i].visit(context);
+//                }
+//            } else
+//                this.draw(context);
+//            this._cangodhelpme(false);
+//
+//            context.restore();
+//        }
     },
 
     /**
