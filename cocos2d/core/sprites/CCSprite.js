@@ -1073,7 +1073,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     _changeTextureColor: function () {
-        var locElement, locTexture = this._texture, locRect = this._textureRect_Canvas; //this.getTextureRect();
+        var locElement, locTexture = this._texture, locRect = this._rendererCmd._textureCoord; //this.getTextureRect();
         if (locTexture && locRect.validRect && this._originalTexture) {
             locElement = locTexture.getHtmlElementObj();
             if (!locElement)
@@ -1258,7 +1258,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         self._newTextureWhenChangeColor = false;
         self._textureLoaded = true;
-        self._textureRect_Canvas = {x: 0, y: 0, width: 0, height:0, validRect: false};
         self._drawSize_Canvas = cc.size(0, 0);
 
         self._softInit(fileName, rect, rotated);
@@ -1626,6 +1625,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         locCmd._isLighterMode = this._isLighterMode;
         locCmd._opacity = this._displayedOpacity / 255;
 
+        locCmd._color = this._displayedColor;
+
         var _t = this, locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
 
         var locRect = _t._rect,
@@ -1651,7 +1652,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     if(!cc.sys._supportCanvasNewBlendModes)
         _p._changeTextureColor =  function () {
-            var locElement, locTexture = this._texture, locRect = this._textureRect_Canvas; //this.getTextureRect();
+            var locElement, locTexture = this._texture, locRect = this._rendererCmd._textureCoord; //this.getTextureRect();
             if (locTexture && locRect.validRect && this._originalTexture) {
                 locElement = locTexture.getHtmlElementObj();
                 if (!locElement)

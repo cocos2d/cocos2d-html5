@@ -55,7 +55,7 @@ if(cc._renderType === cc._RENDER_TYPE_CANVAS) {
             var locCmds = this._cacheToCanvasCmds, i, len;
             if (!ctx)
                 cc.log("The context of RenderTexture is invalid.");
-            for (i = 0, len = locCmds.length; i < len; i++) {
+                for (i = 0, len = locCmds.length; i < len; i++) {
                 locCmds[i].rendering(ctx, 1, 1);
             }
 
@@ -183,19 +183,31 @@ if(cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
             if (_t._texture && locTextureCoord.validRect) {
                 if (_t._texture._isLoaded) {
+
                     context.globalAlpha = _t._opacity;
-                    image = _t._texture._htmlElementObj;
-                    context.drawImage(
-                        image,
-                        locTextureCoord.renderX,
-                        locTextureCoord.renderY,
-                        locTextureCoord.width,
-                        locTextureCoord.height,
+                    var image = _t._node._texture.getHtmlElementObj();
+                    if (_t._node._colorized) {
+                        context.drawImage(image,
+                            0,
+                            0,
+                            locTextureCoord.width,
+                            locTextureCoord.height,
                             t.tx * scaleX + locDrawingRect.x,
                             -t.ty * scaleY + locDrawingRect.y,
-                        locDrawingRect.width,
-                        locDrawingRect.height
-                    );
+                            locDrawingRect.width,
+                            locDrawingRect.height);
+                    } else {
+                        context.drawImage(
+                            image,
+                            locTextureCoord.renderX,
+                            locTextureCoord.renderY,
+                            locTextureCoord.width,
+                            locTextureCoord.height,
+                            t.tx * scaleX + locDrawingRect.x,
+                            -t.ty * scaleY + locDrawingRect.y,
+                            locDrawingRect.width,
+                            locDrawingRect.height);
+                    }
                 }
             } else if (!_t._texture && locTextureCoord.validRect && _node._displayedColor) {
                 curColor = _node._displayedColor;
