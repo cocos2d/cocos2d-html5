@@ -2601,23 +2601,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         }
         this._quadsArrayBuffer = locQuadsArrayBuffer;
         return true;
-    },
-
-    toRenderer: function(){
-        if(!this._rendererCmd)
-            return;
-
-        var locCmd = this._rendererCmd;
-        locCmd._isBlendAdditive = this.isBlendAdditive();
-        locCmd._drawMode = this.drawMode;
-        locCmd._shapeType = this.shapeType;
-        locCmd._texture = this._texture;
-
-        var locRect = this._pointRect;
-        locCmd._pointRect.x = locRect.x;
-        locCmd._pointRect.y = locRect.y;
-        locCmd._pointRect.width = locRect.width;
-        locCmd._pointRect.height = locRect.height;
     }
 });
 
