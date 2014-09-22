@@ -206,6 +206,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         this._vertexData = null;
         this._vertexArrayBuffer = null;
         this._vertexDataDirty = false;
+        this._rendererCmd = new cc.ProgressRenderCmdWebGL(this);
 
         sprite && this._initWithSpriteForWebGL(sprite);
     },
