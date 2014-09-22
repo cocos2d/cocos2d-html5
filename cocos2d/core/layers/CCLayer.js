@@ -419,23 +419,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         locCmd._color.a = this._displayedOpacity / 255;
     };
 
-    _p.toRenderer = function(){
-        if(!this._rendererCmd)
-            return;
-
-        var locCmd = this._rendererCmd;
-        var locColor = this._displayedColor;
-        locCmd._isLighterMode = this._isLighterMode;
-
-        locCmd._color.r = locColor.r;
-        locCmd._color.g = locColor.g;
-        locCmd._color.b = locColor.b;
-        locCmd._color.a = this._displayedOpacity / 255;
-
-        locCmd._drawingRect.width = this.width * cc.view.getScaleX();
-        locCmd._drawingRect.height = this.height * cc.view.getScaleY();
-    };
-
     _p.draw = function (ctx) {
         var context = ctx || cc._renderContext, _t = this;
         var locEGLViewer = cc.view, locDisplayedColor = _t._displayedColor;
@@ -795,29 +778,6 @@ cc.LayerGradient.create = function (start, end, v) {
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     //cc.LayerGradient define start
     var _p = cc.LayerGradient.prototype;
-    _p.toRenderer = function(){
-        if(!this._rendererCmd)
-            return;
-
-        var locCmd = this._rendererCmd;
-        //set the data to the rendererCmd
-        var locColor = this._displayedColor, locEndColor = this._endColor;
-        locCmd._isLighterMode = this._isLighterMode;
-        locCmd._opacity = this._displayedOpacity/255;
-
-        locCmd._startColor.r = locColor.r;
-        locCmd._startColor.g = locColor.g;
-        locCmd._startColor.b = locColor.b;
-        locCmd._startColor.a = locColor.a;
-
-        locCmd._endColor.r = locEndColor.r;
-        locCmd._endColor.g = locEndColor.g;
-        locCmd._endColor.b = locEndColor.b;
-        locCmd._endColor.a = locEndColor.a;
-
-        locCmd._drawingRect.width = this.width * cc.view.getScaleX();
-        locCmd._drawingRect.height = this.height * cc.view.getScaleY();
-    };
     _p._updateColor = function () {
         var _t = this;
         var locAlongVector = _t._alongVector, tWidth = _t.width * 0.5, tHeight = _t.height * 0.5;

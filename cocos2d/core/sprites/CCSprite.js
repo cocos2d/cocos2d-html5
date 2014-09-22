@@ -1073,7 +1073,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     _changeTextureColor: function () {
-        var locElement, locTexture = this._texture, locRect = this._textureRect_Canvas; //this.getTextureRect();
+        var locElement, locTexture = this._texture, locRect = this._rendererCmd._textureCoord; //this.getTextureRect();
         if (locTexture && locRect.validRect && this._originalTexture) {
             locElement = locTexture.getHtmlElementObj();
             if (!locElement)
@@ -1173,11 +1173,15 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         }
         this._quadDirty = true;
     },
-    /**
-     * draw sprite to canvas
-     * @function
-     */
-    draw: null
+
+    visit: function(){
+        cc.Node.prototype.visit.call(this);
+        var _t = this, locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
+        var locRect = _t._rect,
+            locDrawSizeCanvas = _t._drawSize_Canvas;
+        locDrawSizeCanvas.width = locRect.width * locEGL_ScaleX;
+        locDrawSizeCanvas.height = locRect.height * locEGL_ScaleY;
+    }
 });
 
 /**
@@ -1258,7 +1262,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         self._newTextureWhenChangeColor = false;
         self._textureLoaded = true;
-        self._textureRect_Canvas = {x: 0, y: 0, width: 0, height:0, validRect: false};
         self._drawSize_Canvas = cc.size(0, 0);
 
         self._softInit(fileName, rect, rotated);
@@ -1445,7 +1448,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         _t._offsetPosition.x = relativeOffset.x + (_t._contentSize.width - _t._rect.width) / 2;
         _t._offsetPosition.y = relativeOffset.y + (_t._contentSize.height - _t._rect.height) / 2;
 
-        this.toRenderer();
+        _t._rendererCmd._drawingRect.x = _t._offsetPosition.x;
+        _t._rendererCmd._drawingRect.y = _t._offsetPosition.y - _t._rect.height;
 
         // rendering using batch node
         if (_t._batchNode) {
@@ -1616,42 +1620,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         }
     };
 
-    _p.toRenderer = function(){
-        if(!this._rendererCmd)
-            return;
-
-        var locCmd = this._rendererCmd;
-        //set the data to the rendererCmd
-        locCmd._texture = this._texture;
-        locCmd._isLighterMode = this._isLighterMode;
-        locCmd._opacity = this._displayedOpacity / 255;
-
-        var _t = this, locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
-
-        var locRect = _t._rect,
-            locOffsetPosition = _t._offsetPosition,
-            locDrawSizeCanvas = _t._drawSize_Canvas;
-        var flipXOffset = 0 | (locOffsetPosition.x),
-            flipYOffset = -locOffsetPosition.y - locRect.height;
-        locDrawSizeCanvas.width = locRect.width * locEGL_ScaleX;
-        locDrawSizeCanvas.height = locRect.height * locEGL_ScaleY;
-
-        if (_t._flippedX)
-            flipXOffset = -locOffsetPosition.x - locRect.width;
-        if (_t._flippedY)
-            flipYOffset = locOffsetPosition.y;
-        flipXOffset *= locEGL_ScaleX;
-        flipYOffset *= locEGL_ScaleY;
-
-        locCmd._drawingRect.x = flipXOffset;
-        locCmd._drawingRect.y = flipYOffset;
-        locCmd._drawingRect.width = locDrawSizeCanvas.width;
-        locCmd._drawingRect.height = locDrawSizeCanvas.height;
-    };
-
     if(!cc.sys._supportCanvasNewBlendModes)
         _p._changeTextureColor =  function () {
-            var locElement, locTexture = this._texture, locRect = this._textureRect_Canvas; //this.getTextureRect();
+            var locElement, locTexture = this._texture, locRect = this._rendererCmd._textureCoord; //this.getTextureRect();
             if (locTexture && locRect.validRect && this._originalTexture) {
                 locElement = locTexture.getHtmlElementObj();
                 if (!locElement)

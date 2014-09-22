@@ -27,6 +27,28 @@
  Created by Jung Sang-Taik on 2012-03-16
  ****************************************************************************/
 
+cc.Scale9SpriteStartCmd = function(node){
+    this._node = node;
+};
+
+cc.Scale9SpriteStartCmd.prototype.rendering = function(ctx){
+    ctx = ctx || cc._renderContext;
+
+    var p = this._node._transformWorld;
+    ctx.save();
+    ctx.transform(p.a, p.b, p.c, p.d, p.tx, -p.ty);
+};
+
+cc.Scale9SpriteEndCmd = function(node){
+    this._node = node;
+};
+
+cc.Scale9SpriteEndCmd.prototype.rendering = function(ctx){
+    ctx = ctx || cc._renderContext;
+    ctx.restore();
+};
+
+
 /**
  * A 9-slice sprite for cocos2d.
  *
@@ -217,6 +239,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             contentSizeChanged = true;
         }
 
+        cc.renderer.pushRenderCommand(this._rendererStartCmd);
         //cc._renderContext = this._cacheContext;
         cc.view._setScaleXYForRenderTexture();
         this._scale9Image.visit(this._cacheContext);
@@ -246,6 +269,9 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         this._preferredSize = cc.size(0, 0);
         this._capInsets = cc.rect(0, 0, 0, 0);
         this._loadedEventListeners = [];
+
+        this._rendererStartCmd = new cc.Scale9SpriteStartCmd(this);
+        this._rendererCmd = new cc.Scale9SpriteEndCmd(this);
 
         //cache
         if(cc._renderType === cc._RENDER_TYPE_CANVAS){
