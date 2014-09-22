@@ -202,7 +202,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         if( this._parent)
             this._curLevel = this._parent._curLevel + 1;
 
-        this.toRenderer();
         this.transform();
 
         if (this._cacheDirty) {
