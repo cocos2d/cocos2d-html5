@@ -174,4 +174,130 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
         context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
     };
+
+    cc.DrawNodeRenderCmdWebGL = function (node) {
+        this._node = node;
+    };
+
+    cc.DrawNodeRenderCmdWebGL.prototype.rendering = function(ctx){
+        var _t = this._node;
+        cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
+        _t._shaderProgram.use();
+        _t._shaderProgram.setUniformsForBuiltins();
+        _t._render();
+    };
+
+    cc.MontionStreakCmdWebGL = function(node){
+        this._node = node;
+    };
+
+    cc.MontionStreakCmdWebGL.prototype.rendering = function(ctx){
+        var _t = this._node;
+        if (_t._nuPoints <= 1)
+            return;
+
+        if(_t.texture && _t.texture.isLoaded()){
+            ctx = ctx || cc._renderContext;
+            cc.nodeDrawSetup(_t);
+            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
+            cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
+
+            cc.glBindTexture2D(_t.texture);
+
+            //position
+            ctx.bindBuffer(ctx.ARRAY_BUFFER, _t._verticesBuffer);
+            ctx.bufferData(ctx.ARRAY_BUFFER, _t._vertices, ctx.DYNAMIC_DRAW);
+            ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, ctx.FLOAT, false, 0, 0);
+
+            //texcoords
+            ctx.bindBuffer(ctx.ARRAY_BUFFER, _t._texCoordsBuffer);
+            ctx.bufferData(ctx.ARRAY_BUFFER, _t._texCoords, ctx.DYNAMIC_DRAW);
+            ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, ctx.FLOAT, false, 0, 0);
+
+            //colors
+            ctx.bindBuffer(ctx.ARRAY_BUFFER, _t._colorPointerBuffer);
+            ctx.bufferData(ctx.ARRAY_BUFFER, _t._colorPointer, ctx.DYNAMIC_DRAW);
+            ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, ctx.UNSIGNED_BYTE, true, 0, 0);
+
+            ctx.drawArrays(ctx.TRIANGLE_STRIP, 0, _t._nuPoints * 2);
+            cc.g_NumberOfDraws ++;
+        }
+    };
+
+    cc.ProgressRenderCmdWebGL = function (node) {
+        this._node = node;
+    };
+
+    cc.ProgressRenderCmdWebGL.prototype.rendering = function(ctx){
+        var _t = this._node;
+        var context = ctx || cc._renderContext;
+        if (!_t._vertexData || !_t._sprite)
+            return;
+
+        _t._shaderProgram.use();
+        _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);
+
+        var blendFunc = _t._sprite.getBlendFunc();
+        cc.glBlendFunc(blendFunc.src, blendFunc.dst);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
+
+        cc.glBindTexture2D(_t._sprite.texture);
+
+        context.bindBuffer(context.ARRAY_BUFFER, _t._vertexWebGLBuffer);
+        if(_t._vertexDataDirty){
+            context.bufferData(context.ARRAY_BUFFER, _t._vertexArrayBuffer, context.DYNAMIC_DRAW);
+            _t._vertexDataDirty = false;
+        }
+        var locVertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT;
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, locVertexDataLen, 0);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, locVertexDataLen, 8);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, context.FLOAT, false, locVertexDataLen, 12);
+
+        if (_t._type === cc.ProgressTimer.TYPE_RADIAL)
+            context.drawArrays(context.TRIANGLE_FAN, 0, _t._vertexDataCount);
+        else if (_t._type == cc.ProgressTimer.TYPE_BAR) {
+            if (!_t._reverseDirection)
+                context.drawArrays(context.TRIANGLE_STRIP, 0, _t._vertexDataCount);
+            else {
+                context.drawArrays(context.TRIANGLE_STRIP, 0, _t._vertexDataCount / 2);
+                context.drawArrays(context.TRIANGLE_STRIP, 4, _t._vertexDataCount / 2);
+                // 2 draw calls
+                cc.g_NumberOfDraws++;
+            }
+        }
+        cc.g_NumberOfDraws++;
+    };
+
+    cc.ParticleRenderCmdWebGL = function(node){
+        this._node = node;
+    };
+
+    cc.ParticleRenderCmdWebGL.prototype.rendering = function(ctx){
+        var _t = this._node;
+        if(!_t._texture)
+            return;
+
+        var gl = ctx || cc._renderContext;
+
+        _t._shaderProgram.use();
+        _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);//setUniformForModelViewAndProjectionMatrixWithMat4();
+
+        cc.glBindTexture2D(_t._texture);
+        cc.glBlendFuncForParticle(_t._blendFunc.src, _t._blendFunc.dst);
+
+        //cc.assert(this._particleIdx == this.particleCount, "Abnormal error in particle quad");
+
+        //
+        // Using VBO without VAO
+        //
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, _t._buffersVBO[0]);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);               // vertices
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);          // colors
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);            // tex coords
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _t._buffersVBO[1]);
+        gl.drawElements(gl.TRIANGLES, _t._particleIdx * 6, gl.UNSIGNED_SHORT, 0);
+    };
 }

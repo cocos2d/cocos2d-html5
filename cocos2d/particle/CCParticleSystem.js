@@ -374,7 +374,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     _initRendererCmd: function(){
-        this._rendererCmd = new cc.ParticleRenderCmdCanvas(this);
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            this._rendererCmd = new cc.ParticleRenderCmdCanvas(this);
+        else
+            this._rendererCmd = new cc.ParticleRenderCmdWebGL(this);
     },
 
     /**
@@ -2604,7 +2607,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     toRenderer: function(){
-        if(!this._rendererCmd)
+        if(!this._rendererCmd || cc._renderType === cc._RENDER_TYPE_WEBGL)
             return;
 
         var locCmd = this._rendererCmd;

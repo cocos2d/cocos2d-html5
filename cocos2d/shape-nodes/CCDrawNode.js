@@ -617,6 +617,10 @@ cc.DrawNodeWebGL = cc.Node.extend({
 
 	    this.init();
     },
+    
+    _initRendererCmd: function(){
+        this._rendererCmd = new cc.DrawNodeRenderCmdWebGL(this);
+    },
 
     init:function () {
         if (cc.Node.prototype.init.call(this)) {
