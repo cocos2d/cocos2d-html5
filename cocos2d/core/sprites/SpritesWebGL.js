@@ -63,6 +63,10 @@ cc._tmp.WebGLSprite = function () {
         self._softInit(fileName, rect, rotated);
     };
 
+    _p._initRendererCmd = function(){
+        this._rendererCmd = new cc.TextureRenderCmdWebGL(this);
+    };
+
     _p.setBlendFunc = function (src, dst) {
         var locBlendFunc = this._blendFunc;
         if (dst === undefined) {
