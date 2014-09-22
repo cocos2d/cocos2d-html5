@@ -596,22 +596,41 @@ if(cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     cc.ClippingNodeSaveRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-
+    var node = this._node;
         var context = ctx || cc._renderContext;
 
+    if(node._clipElemType){
+        var locCache = cc.ClippingNode._getSharedCache();
+        var canvas = context.canvas;
+        locCache.width = canvas.width;
+        locCache.height = canvas.height;
+        var locCacheCtx = locCache.getContext("2d");
+        locCacheCtx.drawImage(canvas, 0, 0);
         context.save();
-
-        var t = this._node._transformWorld;
+    }else{
+        node.transform();
+        var t = node._transformWorld;
+        context.save();
+        context.save();
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
-    };
+    }
+};
 
     cc.ClippingNodeClipRenderCmdCanvas = function (node) {
         this._node = node;
     };
 
-    cc.ClippingNodeClipRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-        var context = ctx || cc._renderContext;
-        if (this._node.inverted) {
+cc.ClippingNodeClipRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
+    var node = this._node;
+    var context = ctx || cc._renderContext;
+
+    if(node._clipElemType){
+        context.globalCompositeOperation = node.inverted ? "destination-out" : "destination-in";
+        var t = node._transformWorld;
+        context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+    }else{
+        context.restore();
+        if (node.inverted) {
             var canvas = context.canvas;
             context.save();
 
@@ -625,19 +644,53 @@ if(cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
             context.restore();
         }
-        var t = cc.affineTransformInvert(this._node._transformWorld);
-        context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
         context.clip();
-    };
+    }
+};
 
     cc.ClippingNodeRestoreRenderCmdCanvas = function (node) {
         this._node = node;
     };
 
-    cc.ClippingNodeRestoreRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-        var context = ctx || cc._renderContext;
+cc.ClippingNodeRestoreRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
+
+    var node = this._node;
+    var i, children = node._children, locChild;
+    var locCache = cc.ClippingNode._getSharedCache();
+    var context = ctx || cc._renderContext;
+    if(node._clipElemType){
         context.restore();
-    };
+
+        // Redraw the cached canvas, so that the cliped area shows the background etc.
+        context.save();
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.globalCompositeOperation = "destination-over";
+        context.drawImage(locCache, 0, 0);
+        context.restore();
+    }else{
+        // so if it has ClippingNode as a child, the child must uses composition stencil.
+        node._cangodhelpme(true);
+        var len = children.length;
+        if (len > 0) {
+            node.sortAllChildren();
+            // draw children zOrder < 0
+            for (i = 0; i < len; i++) {
+                locChild = children[i];
+                if (locChild._localZOrder < 0)
+                    locChild.visit(context);
+                else
+                    break;
+            }
+            node.draw(context);
+            for (; i < len; i++) {
+                children[i].visit(context);
+            }
+        } else
+            node.draw(context);
+        node._cangodhelpme(false);
+        context.restore();
+    }
+};
 
 
 //CHIPMUNK
