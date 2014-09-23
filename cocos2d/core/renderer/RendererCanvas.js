@@ -817,4 +817,15 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         }
         cc.g_NumberOfDraws++;
     };
+
+    cc.CustomRenderCmdCanvas = function(node, func){
+        this._node = node;
+        this._callback = func;
+    };
+
+    cc.CustomRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
+        if(!this._callback)
+            return;
+        this._callback.call(this.node, ctx, scaleX, scaleY);
+    };
 }
