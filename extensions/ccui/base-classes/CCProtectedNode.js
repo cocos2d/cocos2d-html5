@@ -268,7 +268,9 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
                 break;
         }
 
-        _t.draw(context);
+//        _t.draw(context);
+        if(this._rendererCmd)
+            cc.renderer.pushRenderCommand(this._rendererCmd);
 
         for (; i < childLen; i++)
             children[i] && children[i].visit(context);
@@ -316,7 +318,10 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
             else
                 break;
         }
-        _t.draw(context);
+//        _t.draw(context);
+        if(this._rendererCmd)
+            cc.renderer.pushRenderCommand(this._rendererCmd);
+
         // draw children zOrder >= 0
         for (; i < childLen; i++) {
             locChildren[i] && locChildren[i].visit();
