@@ -126,8 +126,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             //Sprite setTextureRect override ^.^
             get x(){ return node._offsetPosition.x; },
             get y(){ return node._offsetPosition.y - node._rect.height; },
-            get width(){ return node._drawSize_Canvas.width; },
-            get height(){ return node._drawSize_Canvas.height; }
+            get width(){ return node._rect.width; },
+            get height(){ return node._rect.height; }
         };
     };
 
@@ -167,8 +167,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                         locTextureCoord.height,
                         locDrawingRect.x,
                         locDrawingRect.y,
-                        locDrawingRect.width,
-                        locDrawingRect.height
+                        locDrawingRect.width * scaleX,
+                        locDrawingRect.height * scaleY
                     );
 
                 }
@@ -826,6 +826,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     cc.CustomRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
         if(!this._callback)
             return;
-        this._callback.call(this.node, ctx, scaleX, scaleY);
+        this._callback.call(this._node, ctx, scaleX, scaleY);
     };
 }
