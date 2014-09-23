@@ -300,4 +300,19 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _t._buffersVBO[1]);
         gl.drawElements(gl.TRIANGLES, _t._particleIdx * 6, gl.UNSIGNED_SHORT, 0);
     };
+
+    cc.ParticleBatchNodeRenderCmdWebGL = function(node){
+        this._node = node;
+    };
+
+    cc.ParticleBatchNodeRenderCmdWebGL.prototype.rendering = function(ctx){
+        var _t = this._node;
+        if (_t.textureAtlas.totalQuads == 0)
+            return;
+
+        _t._shaderProgram.use();
+        _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);
+        cc.glBlendFuncForParticle(_t._blendFunc.src, _t._blendFunc.dst);
+        _t.textureAtlas.drawQuads();
+    };
 }
