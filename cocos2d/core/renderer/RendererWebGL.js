@@ -394,4 +394,15 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
             node.textureAtlas.drawNumberOfQuads(node.quadsToDraw, 0);
         }
     };
+
+    cc.CustomRenderCmdWebGL = function(node, func){
+        this._node = node;
+        this._callback = func;
+    };
+
+    cc.CustomRenderCmdWebGL.prototype.rendering = function(ctx){
+        if(!this._callback)
+            return;
+        this._callback.call(this.node, ctx);
+    };
 }
