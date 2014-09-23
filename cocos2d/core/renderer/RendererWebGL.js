@@ -149,7 +149,7 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         cc.g_NumberOfDraws++;
     };
 
-    //LayerColor renderer command
+    //LayerColor render command
     cc.RectRenderCmdWebGL = function(node){
         this._node = node;
     };
@@ -314,5 +314,110 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);
         cc.glBlendFuncForParticle(_t._blendFunc.src, _t._blendFunc.dst);
         _t.textureAtlas.drawQuads();
+    };
+
+    //RenderTexture render command
+    cc.RenderTextureRenderCmdWebGL = function(node){
+        this._node = node;
+    };
+
+    cc.RenderTextureRenderCmdWebGL.prototype.rendering = function(ctx){
+        var gl = ctx || cc._renderContext;
+        var node = this._node;
+        if (node.autoDraw) {
+            node.begin();
+
+            var locClearFlags = this.clearFlags;
+            if (locClearFlags) {
+                var oldClearColor = [0.0, 0.0, 0.0, 0.0];
+                var oldDepthClearValue = 0.0;
+                var oldStencilClearValue = 0;
+
+                // backup and set
+                if (locClearFlags & gl.COLOR_BUFFER_BIT) {
+                    oldClearColor = gl.getParameter(gl.COLOR_CLEAR_VALUE);
+                    gl.clearColor(node._clearColor.r/255, node._clearColor.g/255, node._clearColor.b/255, node._clearColor.a/255);
+                }
+
+                if (locClearFlags & gl.DEPTH_BUFFER_BIT) {
+                    oldDepthClearValue = gl.getParameter(gl.DEPTH_CLEAR_VALUE);
+                    gl.clearDepth(node.clearDepthVal);
+                }
+
+                if (locClearFlags & gl.STENCIL_BUFFER_BIT) {
+                    oldStencilClearValue = gl.getParameter(gl.STENCIL_CLEAR_VALUE);
+                    gl.clearStencil(node.clearStencilVal);
+                }
+
+                // clear
+                gl.clear(locClearFlags);
+
+                // restore
+                if (locClearFlags & gl.COLOR_BUFFER_BIT)
+                    gl.clearColor(oldClearColor[0], oldClearColor[1], oldClearColor[2], oldClearColor[3]);
+
+                if (locClearFlags & gl.DEPTH_BUFFER_BIT)
+                    gl.clearDepth(oldDepthClearValue);
+
+                if (locClearFlags & gl.STENCIL_BUFFER_BIT)
+                    gl.clearStencil(oldStencilClearValue);
+            }
+
+            //! make sure all children are drawn
+            node.sortAllChildren();
+            var locChildren = node._children;
+            for (var i = 0; i < locChildren.length; i++) {
+                var getChild = locChildren[i];
+                if (getChild != node.sprite)
+                    getChild.visit();
+            }
+            node.end();
+        }
+    };
+
+    cc.SpriteBatchNodeRenderCmdWebGL = function(node){
+        this._node = node;
+    };
+
+    cc.SpriteBatchNodeRenderCmdWebGL.prototype.rendering = function(ctx){
+        var node = this._node;
+        if (node.textureAtlas.totalQuads === 0)
+            return;
+
+        //cc.nodeDrawSetup(this);
+        node._shaderProgram.use();
+        node._shaderProgram._setUniformForMVPMatrixWithMat4(node._stackMatrix);
+        node._arrayMakeObjectsPerformSelector(node._children, cc.Node._StateCallbackType.updateTransform);
+        cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
+
+        node.textureAtlas.drawQuads();
+    };
+
+    cc.AtlasNodeRenderCmdWebGL = function(node){
+        this._node = node;
+    };
+
+    cc.AtlasNodeRenderCmdWebGL.prototype.rendering = function(ctx){
+        var context = ctx || cc._renderContext, node = this._node;
+
+        node._shaderProgram.use();
+        node._shaderProgram._setUniformForMVPMatrixWithMat4(node._stackMatrix);
+
+        cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
+        if(node._uniformColor && node._colorF32Array){
+            context.uniform4fv(node._uniformColor, node._colorF32Array);
+            node.textureAtlas.drawNumberOfQuads(node.quadsToDraw, 0);
+        }
+    };
+
+    cc.CustomRenderCmdWebGL = function(node, func){
+        this._node = node;
+        this._callback = func;
+    };
+
+    cc.CustomRenderCmdWebGL.prototype.rendering = function(ctx){
+        if(!this._callback)
+            return;
+        this._callback.call(this.node, ctx);
     };
 }

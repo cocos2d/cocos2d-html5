@@ -256,7 +256,6 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * textureAtlas.initWithTexture(texture, 3);
      */
     initWithTexture: function (texture, capacity) {
-
         cc.assert(texture, cc._LogInfos.TextureAtlas_initWithTexture);
 
         capacity = 0 | (capacity);
@@ -293,9 +292,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} index
      */
     updateQuad: function (quad, index) {
-
         cc.assert(quad, cc._LogInfos.TextureAtlas_updateQuad);
-
         cc.assert(index >= 0 && index < this._capacity, cc._LogInfos.TextureAtlas_updateQuad_2);
 
         this._totalQuads = Math.max(index + 1, this._totalQuads);
@@ -310,7 +307,6 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} index
      */
     insertQuad: function (quad, index) {
-
         cc.assert(index < this._capacity, cc._LogInfos.TextureAtlas_insertQuad_2);
 
         this._totalQuads++;
@@ -406,7 +402,6 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} index
      */
     removeQuadAtIndex: function (index) {
-
         cc.assert(index < this._totalQuads, cc._LogInfos.TextureAtlas_removeQuadAtIndex);
 
         var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
@@ -427,7 +422,6 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} amount
      */
     removeQuadsAtIndex: function (index, amount) {
-
         cc.assert(index + amount <= this._totalQuads, cc._LogInfos.TextureAtlas_removeQuadsAtIndex);
 
         this._totalQuads -= amount;
@@ -555,9 +549,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
             if (amount === 0)
                 return;
         } else {
-
             cc.assert((newIndex + amount) <= this._totalQuads, cc._LogInfos.TextureAtlas_moveQuadsFromIndex_2);
-
             cc.assert(oldIndex < this._totalQuads, cc._LogInfos.TextureAtlas_moveQuadsFromIndex_3);
 
             if (oldIndex == newIndex)

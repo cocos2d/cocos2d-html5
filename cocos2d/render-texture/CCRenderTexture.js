@@ -150,7 +150,11 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     _initRendererCmd: function(){
-        this._rendererCmd = new cc.RenderTextureRenderCmdCanvas(this);
+        //TODO need merge in some code
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            this._rendererCmd = new cc.RenderTextureRenderCmdCanvas(this);
+        else
+            this._rendererCmd = new cc.RenderTextureRenderCmdWebGL(this);
     },
 
     _ctorForWebGL: function (width, height, format, depthStencilFormat) {
@@ -284,9 +288,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         if (cc.configuration.checkForGLExtension("GL_QCOM")) {
             this._textureCopy = new cc.Texture2D();
-            if (!this._textureCopy) {
+            if (!this._textureCopy)
                 return false;
-            }
             this._textureCopy.initWithData(data, this._pixelFormat, powW, powH, cc.size(width, height));
         }
 
@@ -631,18 +634,21 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         cc.kmGLPushMatrix();
 
-        var locGrid = this.grid;
+/*        var locGrid = this.grid;
         if (locGrid && locGrid.isActive()) {
             locGrid.beforeDraw();
             this.transformAncestors();
-        }
+        }*/
 
         this.transform(ctx);
+        this.toRenderer();
+
         this.sprite.visit();
         this.draw(ctx);
 
-        if (locGrid && locGrid.isActive())
-            locGrid.afterDraw(this);
+        //TODO GridNode
+/*        if (locGrid && locGrid.isActive())
+            locGrid.afterDraw(this);*/
 
         cc.kmGLPopMatrix();
 

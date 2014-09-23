@@ -115,7 +115,6 @@ cc._tmp.WebGLCCNode = function () {
 /*        if (locGrid && locGrid._active)
             locGrid.afterDraw(_t);*/
 
-        //cc.kmGLPopMatrix();
         //optimize performance for javascript
         currentStack.top = currentStack.stack.pop();
     };
