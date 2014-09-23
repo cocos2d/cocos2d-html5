@@ -82,7 +82,7 @@ cc._tmp.WebGLCCNode = function () {
         if (locGrid && locGrid._active)
             locGrid.beforeDraw();*/
 
-        _t.toRenderer();
+        //_t.toRenderer();
         _t.transform();
 
         var locChildren = _t._children;

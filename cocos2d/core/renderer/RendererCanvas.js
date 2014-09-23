@@ -113,10 +113,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     cc.TextureRenderCmdCanvas = function (node) {
         this._node = node;
 
-        this._transform = node._transformWorld;         //reference of node's transformWorld
-        this._texture = null;
-        this._isLighterMode = false;
-        this._opacity = 1;
         this._textureCoord = {
             renderX: 0,                             //the x of texture coordinate for render, when texture tinted, its value doesn't equal x.
             renderY: 0,                             //the y of texture coordinate for render, when texture tinted, its value doesn't equal y.
@@ -124,37 +120,45 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             y: 0,                                   //the y of texture coordinate for node.
             width: 0,
             height: 0,
-            validRect: false                       //
+            validRect: false
         };
-        this._drawingRect = cc.rect(0, 0, 0, 0);
+        this._drawingRect = {
+            //Sprite setTextureRect override ^.^
+            get x(){ return node._offsetPosition.x; },
+            get y(){ return node._offsetPosition.y - node._rect.height; },
+            get width(){ return node._drawSize_Canvas.width; },
+            get height(){ return node._drawSize_Canvas.height; }
+        };
     };
 
     cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-        var _t = this;
-        var _node = _t._node;
+        var self = this,
+            node = self._node;
+
         var context = ctx || cc._renderContext,
-            locTextureCoord = _t._textureCoord;
-        if (!locTextureCoord.validRect || !_node._visible)
+            locTextureCoord = self._textureCoord;
+
+        if (!locTextureCoord.validRect || !node._visible)
             return;  //draw nothing
 
-        var t = this._transform, locDrawingRect = _t._drawingRect, image, curColor;
-        if (t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1 || _node._flippedX || _node._flippedY) {
+        var t = node._transformWorld, locDrawingRect = self._drawingRect, image, curColor;
+        if (t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1 || node._flippedX || node._flippedY) {
             context.save();
             //transform
             context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
-            if (_t._isLighterMode)
+            if (node._isLighterMode)
                 context.globalCompositeOperation = 'lighter';
 
-            if (_node._flippedX)
+            if (node._flippedX)
                 context.scale(-1, 1);
-            if (_node._flippedY)
+            if (node._flippedY)
                 context.scale(1, -1);
 
-            if (_t._texture && locTextureCoord.validRect) {
-                if (_t._texture._isLoaded) {
-                    context.globalAlpha = _t._opacity;
-                    image = _t._texture._htmlElementObj;
+            if (node._texture && locTextureCoord.validRect) {
+                if (node._texture._isLoaded) {
+                    context.globalAlpha = node._opacity;
+                    image = node._texture._htmlElementObj;
 
                     context.drawImage(image,
                         locTextureCoord.renderX,
@@ -169,40 +173,52 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
                 }
 
-            } else if (!_t._texture && locTextureCoord.validRect) {
-                curColor = _t._color;
-                context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + _t._opacity + ")";
+            } else if (!node._texture && locTextureCoord.validRect) {
+                curColor = node._color;
+                context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + node._opacity + ")";
                 context.fillRect(locDrawingRect.x, locDrawingRect.y, locDrawingRect.width, locDrawingRect.height);
             }
             context.restore();
         } else {
-            if (_t._isLighterMode) {
+            if (node._isLighterMode) {
                 context.save();
                 context.globalCompositeOperation = 'lighter';
             }
 
-            if (_t._texture && locTextureCoord.validRect) {
-                if (_t._texture._isLoaded) {
-                    context.globalAlpha = _t._opacity;
-                    image = _t._texture._htmlElementObj;
-                    context.drawImage(
-                        image,
-                        locTextureCoord.renderX,
-                        locTextureCoord.renderY,
-                        locTextureCoord.width,
-                        locTextureCoord.height,
+            if (node._texture && locTextureCoord.validRect) {
+                if (node._texture._isLoaded) {
+
+                    context.globalAlpha = node._opacity;
+                    image = node._texture.getHtmlElementObj();
+                    if (node._colorized) {
+                        context.drawImage(image,
+                            0,
+                            0,
+                            locTextureCoord.width,
+                            locTextureCoord.height,
                             t.tx * scaleX + locDrawingRect.x,
                             -t.ty * scaleY + locDrawingRect.y,
-                        locDrawingRect.width,
-                        locDrawingRect.height
-                    );
+                            locDrawingRect.width,
+                            locDrawingRect.height);
+                    } else {
+                        context.drawImage(
+                            image,
+                            locTextureCoord.renderX,
+                            locTextureCoord.renderY,
+                            locTextureCoord.width,
+                            locTextureCoord.height,
+                            t.tx * scaleX + locDrawingRect.x,
+                            -t.ty * scaleY + locDrawingRect.y,
+                            locDrawingRect.width,
+                            locDrawingRect.height);
+                    }
                 }
-            } else if (!_t._texture && locTextureCoord.validRect && _node._displayedColor) {
-                curColor = _node._displayedColor;
-                context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + _t._opacity + ")";
+            } else if (!node._texture && locTextureCoord.validRect && node._displayedColor) {
+                curColor = node._displayedColor;
+                context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + node._opacity + ")";
                 context.fillRect(t.tx * scaleX + locDrawingRect.x, -t.ty * scaleY + locDrawingRect.y, locDrawingRect.width, locDrawingRect.height);
             }
-            if (_t._isLighterMode)
+            if (node._isLighterMode)
                 context.restore();
         }
         cc.g_NumberOfDraws++;
@@ -211,21 +227,33 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     cc.RectRenderCmdCanvas = function (node) {
         this._node = node;
 
-        this._transform = node._transformWorld; //{a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
-        this._isLighterMode = false;
-        this._drawingRect = cc.rect(0, 0, 0, 0);
-        this._color = cc.color(255, 255, 255, 255);
+        this._drawingRect = {
+            x: 0,
+            y: 0,
+            get width(){
+                return node.width * cc.view.getScaleX();
+            },
+            get height(){
+                return node.height * cc.view.getScaleY()
+            }
+        };
     };
 
     cc.RectRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-        var context = ctx || cc._renderContext, t = this._transform, curColor = this._color, locRect = this._drawingRect;
+        var context = ctx || cc._renderContext,
+            node = this._node,
+            t = node._transformWorld,
+            curColor = node._displayedColor,
+            opacity = node._displayedOpacity / 255,
+            locRect = this._drawingRect;
+
         context.save();
-        if (this._isLighterMode)
+        if (node._isLighterMode)
             context.globalCompositeOperation = 'lighter';
         //transform
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
         context.fillStyle = "rgba(" + (0 | curColor.r) + "," + (0 | curColor.g) + ","
-            + (0 | curColor.b) + "," + curColor.a + ")";
+            + (0 | curColor.b) + "," + opacity + ")";
         context.fillRect(locRect.x, locRect.y, locRect.width, -locRect.height);
 
         context.restore();
@@ -235,28 +263,33 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     cc.GradientRectRenderCmdCanvas = function (node) {
         this._node = node;
 
-        this._transform = node._transformWorld; // {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
-        this._isLighterMode = false;
-        this._opacity = 1;
-        this._drawingRect = cc.rect(0, 0, 0, 0);
-        this._startColor = cc.color(255, 255, 255, 255);
-        this._endColor = cc.color(255, 255, 255, 255);
+        this._drawingRect = {
+            x: 0,
+            y: 0,
+            get width(){ return node.width * cc.view.getScaleX(); },
+            get height(){ return node.height * cc.view.getScaleY(); }
+        };
         this._startPoint = cc.p(0, 0);
         this._endPoint = cc.p(0, 0);
     };
 
     cc.GradientRectRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-        var context = ctx || cc._renderContext, _t = this, t = this._transform;
+        var context = ctx || cc._renderContext,
+            self = this,
+            node = self._node,
+            t = node._transformWorld;
         context.save();
-        if (_t._isLighterMode)
+        if (node._isLighterMode)
             context.globalCompositeOperation = 'lighter';
         //transform
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
-        var opacity = _t._opacity, locRect = this._drawingRect;
+        var opacity = node._displayedOpacity / 255,
+            locRect = this._drawingRect;
         //TODO need cache gradient object
-        var gradient = context.createLinearGradient(_t._startPoint.x, _t._startPoint.y, _t._endPoint.x, _t._endPoint.y);
-        var locStartColor = _t._startColor, locEndColor = _t._endColor;
+        var gradient = context.createLinearGradient(self._startPoint.x, self._startPoint.y, self._endPoint.x, self._endPoint.y);
+        var locStartColor = node._displayedColor,
+            locEndColor = node._endColor;
         gradient.addColorStop(0, "rgba(" + Math.round(locStartColor.r) + "," + Math.round(locStartColor.g) + ","
             + Math.round(locStartColor.b) + "," + (opacity * (locStartColor.a / 255)).toFixed(4) + ")");
         gradient.addColorStop(1, "rgba(" + Math.round(locEndColor.r) + "," + Math.round(locEndColor.g) + ","
@@ -270,34 +303,30 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     cc.ParticleRenderCmdCanvas = function (node) {
         this._node = node;
-
-        this._transform = node._transformWorld;     //{a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
-        this._isBlendAdditive = false;
-        this._drawMode = cc.ParticleSystem.SHAPE_MODE;
-        this._shapeType = cc.ParticleSystem.BALL_SHAPE;
-        this._texture = null;
-        this._pointRect = {x: 0, y: 0, width: 0, height: 0};
     };
 
     cc.ParticleRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-        var context = ctx || cc._renderContext, t = this._transform;
+        var context = ctx || cc._renderContext,
+            node = this._node,
+            t = node._transformWorld,
+            pointRect = node._pointRect;
         context.save();
         //transform
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
-        if (this._isBlendAdditive)
+        if (node.isBlendAdditive())
             context.globalCompositeOperation = 'lighter';
         else
             context.globalCompositeOperation = 'source-over';
 
         var i, particle, lpx;
         var particleCount = this._node.particleCount, particles = this._node._particles;
-        if (this._drawMode == cc.ParticleSystem.TEXTURE_MODE) {
+        if (cc.ParticleSystem.SHAPE_MODE == cc.ParticleSystem.TEXTURE_MODE) {
             // Delay drawing until the texture is fully loaded by the browser
-            if (!this._texture || !this._texture._isLoaded) {
+            if (!node._texture || !node._texture._isLoaded) {
                 context.restore();
                 return;
             }
-            var element = this._texture.getHtmlElementObj();
+            var element = node._texture.getHtmlElementObj();
             if (!element.width || !element.height) {
                 context.restore();
                 return;
@@ -314,8 +343,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 context.translate((0 | particle.drawPos.x), -(0 | particle.drawPos.y));
 
                 var size = Math.floor(particle.size / 4) * 4;
-                var w = this._pointRect.width;
-                var h = this._pointRect.height;
+                var w = pointRect.width;
+                var h = pointRect.height;
 
                 context.scale(Math.max((1 / w) * size, 0.000001), Math.max((1 / h) * size, 0.000001));
 
@@ -348,7 +377,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
                 context.save();
                 context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
-                if (this._shapeType == cc.ParticleSystem.STAR_SHAPE) {
+                if (cc.ParticleSystem.BALL_SHAPE == cc.ParticleSystem.STAR_SHAPE) {
                     if (particle.rotation)
                         context.rotate(cc.degreesToRadians(particle.rotation));
                     drawTool.drawStar(context, lpx, particle.color);
@@ -361,12 +390,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         cc.g_NumberOfDraws++;
     };
 
-// the canvas implement of renderCommand for cc.ProgressTimer
+    // the canvas implement of renderCommand for cc.ProgressTimer
     cc.ProgressRenderCmdCanvas = function (node) {
         this._PI180 = Math.PI / 180;
 
         this._node = node;
-        this._transform = node._transformWorld;
         this._sprite = null;
         this._type = cc.ProgressTimer.TYPE_RADIAL;
         this._barRect = cc.rect(0, 0, 0, 0);
@@ -378,13 +406,15 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     cc.ProgressRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-        var context = ctx || cc._renderContext, locSprite = this._sprite;
+        var context = ctx || cc._renderContext,
+            node = this._node,
+            locSprite = this._sprite;
 
         var locTextureCoord = locSprite._rendererCmd._textureCoord;
         if (!locSprite._texture || !locTextureCoord.validRect)
             return;
 
-        var t = this._transform;
+        var t = node._transformWorld;
         context.save();
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
@@ -444,28 +474,24 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         cc.g_NumberOfDraws++;
     };
 
-// the canvas implement of renderCommand for cc.RenderTexture
+    // the canvas implement of renderCommand for cc.RenderTexture
     cc.RenderTextureRenderCmdCanvas = function (node) {
         this._node = node;
 
-        this._transform = node._transformWorld;
-        this._clearFlags = node.clearFlags;
-        this.autoDraw = node.autoDraw;
-
+        //CCRenderTexture _initWithWidthAndHeightForCanvas
         this._cacheCanvas = null;
         this._cacheContext = null;
-
-        this._sprite = null;
     };
 
     cc.RenderTextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
         // auto draw flag
-        var context = ctx || cc._renderContext;
+        var context = ctx || cc._renderContext,
+            node = this._node;
         var locNode = this._node, cacheCanvas = this._cacheCanvas, cacheCtx = this._cacheContext;
-        if (this.autoDraw) {
+        if (node.autoDraw) {
             locNode.begin();
 
-            if (this._clearFlags) {
+            if (node._clearFlags) {
                 cacheCtx.save();
                 cacheCtx.fillStyle = this._clearColorStr;
                 cacheCtx.clearRect(0, 0, cacheCanvas.width, -cacheCanvas.height);
@@ -596,6 +622,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     cc.ClippingNodeSaveRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
+        var context = ctx || cc._renderContext;
         var node = this._node;
         var context = ctx || cc._renderContext;
 
@@ -693,7 +720,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
 
-//CHIPMUNK
+    //CHIPMUNK
     cc.PhysicsDebugNodeRenderCmdCanvas = function (node) {
         this._node = node;
         this._buffer = node._buffer;
@@ -727,7 +754,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         }
     };
 
-//--- TMXLayer's render command ---
+    //--- TMXLayer's render command ---
     cc.TMXLayerRenderCmdCanvas = function (tmxLayer) {
         this._node = tmxLayer;
 

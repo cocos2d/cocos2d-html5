@@ -621,7 +621,6 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         ctx = ctx || cc._renderContext;
         this.transform(ctx);
-        this.toRenderer();
         this.sprite.visit(ctx);                                             // draw the RenderTexture
 
         this.arrivalOrder = 0;
@@ -886,16 +885,6 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      */
     setAutoDraw:function (autoDraw) {
         this.autoDraw = autoDraw;
-    },
-
-    toRenderer: function(){
-        if(!this._rendererCmd)
-            return;
-
-        var locCmd = this._rendererCmd;
-        locCmd._clearFlags = this.clearFlags;
-        locCmd.autoDraw = this.autoDraw;
-        locCmd._sprite = this.sprite;
     }
 });
 

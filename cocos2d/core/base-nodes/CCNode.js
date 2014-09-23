@@ -2554,10 +2554,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         return false;
     },
 
-    toRenderer: function(){
-        //send the update to renderer.
-    },
-
     _initRendererCmd: function(){
     },
 
@@ -2605,7 +2601,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         //visit for canvas
         var i, children = _t._children, child;
-        _t.toRenderer();
         _t.transform();
         var len = children.length;
         if (len > 0) {
