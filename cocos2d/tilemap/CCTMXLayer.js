@@ -118,7 +118,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     _initRendererCmd: function(){
-        this._rendererCmd = new cc.TMXLayerRenderCmdCanvas(this);
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            this._rendererCmd = new cc.TMXLayerRenderCmdCanvas(this);
+        else
+            this._rendererCmd = new cc.TMXLayerRenderCmdWebGL(this);
     },
 
     /**
