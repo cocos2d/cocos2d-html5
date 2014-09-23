@@ -86,6 +86,10 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
         itemsToRender !== undefined && this.initWithTileFile(tile, tileWidth, tileHeight, itemsToRender);
     },
 
+    _initRendererCmd: function () {
+        this._rendererCmd = new cc.AtlasNodeRenderCmdWebGL(this);
+    },
+
     /**
      * Updates the Atlas (indexed vertex array).
      * Empty implementation, shall be overridden in subclasses
