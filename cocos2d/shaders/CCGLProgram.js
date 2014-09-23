@@ -571,6 +571,36 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
             this.setUniformLocationWith4f(this._uniforms[cc.UNIFORM_RANDOM01], Math.random(), Math.random(), Math.random(), Math.random());
     },
 
+    _setUniformsForBuiltinsForRenderer: function (node) {
+        var matrixP = new cc.kmMat4();
+        //var matrixMV = new cc.kmMat4();
+        var matrixMVP = new cc.kmMat4();
+
+        cc.kmGLGetMatrix(cc.KM_GL_PROJECTION, matrixP);
+        //cc.kmGLGetMatrix(cc.KM_GL_MODELVIEW, node._stackMatrix);
+
+        cc.kmMat4Multiply(matrixMVP, matrixP, node._stackMatrix);
+
+        this.setUniformLocationWithMatrix4fv(this._uniforms[cc.UNIFORM_PMATRIX], matrixP.mat, 1);
+        this.setUniformLocationWithMatrix4fv(this._uniforms[cc.UNIFORM_MVMATRIX], node._stackMatrix.mat, 1);
+        this.setUniformLocationWithMatrix4fv(this._uniforms[cc.UNIFORM_MVPMATRIX], matrixMVP.mat, 1);
+
+        if (this._usesTime) {
+            var director = cc.director;
+            // This doesn't give the most accurate global time value.
+            // Cocos2D doesn't store a high precision time value, so this will have to do.
+            // Getting Mach time per frame per shader using time could be extremely expensive.
+            var time = director.getTotalFrames() * director.getAnimationInterval();
+
+            this.setUniformLocationWith4f(this._uniforms[cc.UNIFORM_TIME], time / 10.0, time, time * 2, time * 4);
+            this.setUniformLocationWith4f(this._uniforms[cc.UNIFORM_SINTIME], time / 8.0, time / 4.0, time / 2.0, Math.sin(time));
+            this.setUniformLocationWith4f(this._uniforms[cc.UNIFORM_COSTIME], time / 8.0, time / 4.0, time / 2.0, Math.cos(time));
+        }
+
+        if (this._uniforms[cc.UNIFORM_RANDOM01] != -1)
+            this.setUniformLocationWith4f(this._uniforms[cc.UNIFORM_RANDOM01], Math.random(), Math.random(), Math.random(), Math.random());
+    },
+
     /**
      * will update the MVP matrix on the MVP uniform if it is different than the previous call for this same shader program.
      */

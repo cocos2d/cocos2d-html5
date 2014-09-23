@@ -826,6 +826,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     cc.CustomRenderCmdCanvas.prototype.rendering = function(ctx, scaleX, scaleY){
         if(!this._callback)
             return;
-        this._callback.call(this.node, ctx, scaleX, scaleY);
+        this._callback.call(this._node, ctx, scaleX, scaleY);
     };
 }
