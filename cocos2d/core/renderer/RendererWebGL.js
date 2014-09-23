@@ -301,6 +301,21 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         gl.drawElements(gl.TRIANGLES, _t._particleIdx * 6, gl.UNSIGNED_SHORT, 0);
     };
 
+    cc.ParticleBatchNodeRenderCmdWebGL = function(node){
+        this._node = node;
+    };
+
+    cc.ParticleBatchNodeRenderCmdWebGL.prototype.rendering = function(ctx){
+        var _t = this._node;
+        if (_t.textureAtlas.totalQuads == 0)
+            return;
+
+        _t._shaderProgram.use();
+        _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);
+        cc.glBlendFuncForParticle(_t._blendFunc.src, _t._blendFunc.dst);
+        _t.textureAtlas.drawQuads();
+    };
+
     //RenderTexture render command
     cc.RenderTextureRenderCmdWebGL = function(node){
         this._node = node;
@@ -405,4 +420,10 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
             return;
         this._callback.call(this.node, ctx);
     };
+
+    cc.TMXLayerRenderCmdWebGL = function(node){
+        this._node = node;
+    };
+
+    cc.TMXLayerRenderCmdWebGL.prototype.rendering = cc.SpriteBatchNodeRenderCmdWebGL.prototype.rendering;
 }
