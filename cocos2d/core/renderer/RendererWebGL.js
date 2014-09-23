@@ -420,4 +420,10 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
             return;
         this._callback.call(this.node, ctx);
     };
+
+    cc.TMXLayerRenderCmdWebGL = function(node){
+        this._node = node;
+    };
+
+    cc.TMXLayerRenderCmdWebGL.prototype.rendering = cc.SpriteBatchNodeRenderCmdWebGL.prototype.rendering;
 }
