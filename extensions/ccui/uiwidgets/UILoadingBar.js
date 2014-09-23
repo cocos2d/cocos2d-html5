@@ -69,7 +69,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
 
     _initRenderer: function () {
         this._barRenderer = cc.Sprite.create();
-        cc.Node.prototype.addChild.call(this, this._barRenderer, ccui.LoadingBar.RENDERER_ZORDER, -1);
+        this.addProtectedChild(this._barRenderer, ccui.LoadingBar.RENDERER_ZORDER, -1);
         this._barRenderer.setAnchorPoint(0.0, 0.5);
     },
 
