@@ -161,11 +161,14 @@ cc.PhysicsDebugNode = cc.DrawNode.extend({
     ctor: function (space) {
         cc.DrawNode.prototype.ctor.call(this);
         this._space = space;
-        this._rendererCmd = new cc.PhysicsDebugNodeRenderCmdCanvas(this);
-
-        cc.rendererCanvas.pushRenderCommand(this._rendererCmd);
     },
 
+    _initRendererCmd:function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            this._rendererCmd = new cc.PhysicsDebugNodeRenderCmdCanvas(this);
+        else
+            this._rendererCmd = new cc.PhysicsDebugNodeRenderCmdWebGL(this);
+    },
     /**
      * get space
      * @returns {cp.Space}
