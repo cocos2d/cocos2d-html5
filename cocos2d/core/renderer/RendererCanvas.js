@@ -744,11 +744,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawPoly = cc.DrawNodeRenderCmdCanvas.prototype._drawPoly;
 
-    cc.PhysicsSpriteTransformCmdCanvas = function (node) {
+    cc.PhysicsSpriteTransformCmd = function (node) {
         this._node = node;
     };
 
-    cc.PhysicsSpriteTransformCmdCanvas.prototype.rendering = function () {
+    cc.PhysicsSpriteTransformCmd.prototype.rendering = function () {
         if (this._node.transform) {
             this._node.transform();
         }
