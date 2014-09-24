@@ -28,8 +28,8 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         _transformNodePool: [],                              //save nodes transform dirty
         _renderCmds: [],                                     //save renderer commands
 
-        _isCacheToCanvasOn: false,                          //a switch that whether cache the rendererCmd to cacheToCanvasCmds
-        _cacheToCanvasCmds: [],                              // an array saves the renderer commands need for cache to other canvas
+        _isCacheToBufferOn: false,                          //a switch that whether cache the rendererCmd to cacheToCanvasCmds
+        _cacheToBufferCmds: [],                              // an array saves the renderer commands need for cache to other canvas
 
         /**
          * drawing all renderer command to context (default is cc._renderContext)
@@ -43,6 +43,21 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
             for (i = 0, len = locCmds.length; i < len; i++) {
                 locCmds[i].rendering(context);
             }
+        },
+
+        /**
+         * drawing all renderer command to cache canvas' context
+         * @param {CanvasRenderingContext2D} ctx
+         */
+        _renderingToBuffer: function (ctx) {
+            var locCmds = this._cacheToCanvasCmds, i, len;
+            ctx = ctx || cc._renderContext;
+            for (i = 0, len = locCmds.length; i < len; i++) {
+                locCmds[i].rendering(ctx, 1, 1);
+            }
+
+            locCmds.length = 0;
+            this._isCacheToCanvasOn = false;
         },
 
         //reset renderer's flag
@@ -83,9 +98,9 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         },
 
         pushRenderCommand: function (cmd) {
-            if (this._isCacheToCanvasOn) {
-                if (this._cacheToCanvasCmds.indexOf(cmd) === -1)
-                    this._cacheToCanvasCmds.push(cmd);
+            if (this._isCacheToBufferOn) {
+                if (this._cacheToBufferCmds.indexOf(cmd) === -1)
+                    this._cacheToBufferCmds.push(cmd);
             } else {
                 if (this._renderCmds.indexOf(cmd) === -1)
                     this._renderCmds.push(cmd);
