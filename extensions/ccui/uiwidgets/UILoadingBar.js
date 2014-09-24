@@ -286,7 +286,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
      */
     setContentSize: function(contentSize, height){
         ccui.Widget.prototype.setContentSize.call(this, contentSize, height);
-        this._totalLength = (height === undefined) ? contentSize.width : contentSize;;
+        this._totalLength = (height === undefined) ? contentSize.width : contentSize;
     },
 
     /**

@@ -1479,7 +1479,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p.addChild = function (child, localZOrder, tag) {
-
         cc.assert(child, cc._LogInfos.CCSpriteBatchNode_addChild_2);
 
         if (localZOrder == null)
