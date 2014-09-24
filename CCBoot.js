@@ -752,7 +752,7 @@ cc.loader = /** @lends cc.loader# */{
         var ecb = function () {
             this.removeEventListener('error', ecb, false);
 
-            if(img.crossOrigin.toLowerCase() == "anonymous"){
+            if(img.crossOrigin && img.crossOrigin.toLowerCase() == "anonymous"){
                 opt.isCrossOrigin = false;
                 cc.loader.loadImg(url, opt, cb);
             }else{
