@@ -161,6 +161,9 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             this._buttonDisableRenderer = cc.Sprite.create();
         }
 
+        this._buttonClickedRenderer.setVisible(false);
+        this._buttonDisableRenderer.setVisible(false);
+
         this.loadTextureNormal(this._normalFileName, this._normalTexType);
         this.loadTexturePressed(this._clickedFileName, this._pressedTexType);
         this.loadTextureDisabled(this._disabledFileName, this._disabledTexType);

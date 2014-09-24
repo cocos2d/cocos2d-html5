@@ -27,29 +27,6 @@
  Created by Jung Sang-Taik on 2012-03-16
  ****************************************************************************/
 
-
-ccui.Scale9SpriteStartCanvasCmd = function(node){
-    this._node = node;
-};
-
-ccui.Scale9SpriteStartCanvasCmd.prototype.rendering = function(ctx){
-    ctx = ctx || cc._renderContext;
-
-    var p = this._node._transformWorld;
-    ctx.save();
-    ctx.transform(p.a, p.b, p.c, p.d, p.tx, -p.ty);
-};
-
-ccui.Scale9SpriteEndCanvasCmd = function(node){
-    this._node = node;
-};
-
-ccui.Scale9SpriteEndCanvasCmd.prototype.rendering = function(ctx){
-    ctx = ctx || cc._renderContext;
-    ctx.restore();
-};
-
-
 /**
  * <p>
  * A 9-slice sprite for cocos2d UI.                                                                    <br/>
@@ -242,10 +219,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
             contentSizeChanged = true;
         }
 
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-            cc.renderer.pushRenderCommand(this._rendererStartCanvasCmd);
-        }
-
         //cc._renderContext = this._cacheContext;
         cc.view._setScaleXYForRenderTexture();
         this._scale9Image.visit(this._cacheContext);
@@ -280,8 +253,17 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         //cache
         if(cc._renderType === cc._RENDER_TYPE_CANVAS){
 
-            this._rendererCmd = new cc.Scale9SpriteEndCanvasCmd(this);
-            this._rendererStartCanvasCmd = new cc.Scale9SpriteStartCanvasCmd(this);
+            this._rendererStartCanvasCmd = new cc.CustomRenderCmdCanvas(this, function(ctx){
+                ctx = ctx || cc._renderContext;
+
+                var p = this._transformWorld;
+                ctx.save();
+                ctx.transform(p.a, p.b, p.c, p.d, p.tx, -p.ty);
+            });
+            this._rendererEndCanvasCmd = new cc.CustomRenderCmdCanvas(this, function(ctx){
+                ctx = ctx || cc._renderContext;
+                ctx.restore();
+            });
 
             var locCacheCanvas = this._cacheCanvas = cc.newElement('canvas');
             locCacheCanvas.width = 1;
@@ -326,6 +308,14 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         return this._preferredSize.height;
     },
     setPreferredSize: function (preferredSize) {
+
+        if (this._positionsAreDirty) {
+            this._updatePositions();
+            this._positionsAreDirty = false;
+            this._scale9Dirty = true;
+        }
+
+
         this.setContentSize(preferredSize);
         this._preferredSize = preferredSize;
     },
@@ -512,16 +502,23 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     },
 
     visit: function (ctx) {
+        if(!this._visible){
+            return;
+        }
+
         if (this._positionsAreDirty) {
             this._updatePositions();
             this._positionsAreDirty = false;
             this._scale9Dirty = true;
         }
-        if(this._scale9Dirty && cc._renderType === cc._RENDER_TYPE_CANVAS){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
+            cc.renderer.pushRenderCommand(this._rendererStartCanvasCmd);
             this._scale9Dirty = false;
             this._cacheScale9Sprite();
+
+            cc.Node.prototype.visit.call(this, ctx);
+            cc.renderer.pushRenderCommand(this._rendererEndCanvasCmd);
         }
-        cc.Node.prototype.visit.call(this, ctx);
     },
 
     /**
