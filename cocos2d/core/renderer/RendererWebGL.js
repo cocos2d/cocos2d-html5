@@ -50,14 +50,14 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
          * @param {CanvasRenderingContext2D} ctx
          */
         _renderingToBuffer: function (ctx) {
-            var locCmds = this._cacheToCanvasCmds, i, len;
+            var locCmds = this._cacheToBufferCmds, i, len;
             ctx = ctx || cc._renderContext;
             for (i = 0, len = locCmds.length; i < len; i++) {
-                locCmds[i].rendering(ctx, 1, 1);
+                locCmds[i].rendering(ctx);
             }
 
             locCmds.length = 0;
-            this._isCacheToCanvasOn = false;
+            this._isCacheToBufferOn = false;
         },
 
         //reset renderer's flag
@@ -342,7 +342,7 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         if (node.autoDraw) {
             node.begin();
 
-            var locClearFlags = this.clearFlags;
+            var locClearFlags = node.clearFlags;
             if (locClearFlags) {
                 var oldClearColor = [0.0, 0.0, 0.0, 0.0];
                 var oldDepthClearValue = 0.0;
