@@ -656,7 +656,9 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         //this.toRenderer();
 
         this.sprite.visit();
-        this.draw(ctx);
+        //this.draw(ctx);
+        if(this._rendererCmd)
+            cc.renderer.pushRenderCommand(this._rendererCmd);
 
         //TODO GridNode
 /*        if (locGrid && locGrid.isActive())

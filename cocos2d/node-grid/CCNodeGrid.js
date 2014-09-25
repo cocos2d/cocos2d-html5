@@ -35,6 +35,15 @@
 cc.NodeGrid = cc.Node.extend({
     grid: null,
     _target: null,
+    _gridBeginCommand:null,
+    _gridEndCommand:null,
+
+    ctor: function(){
+        cc.Node.prototype.ctor.call(this);
+
+        this._gridBeginCommand = new cc.CustomRenderCmdWebGL(this, this.onGridBeginDraw);
+        this._gridEndCommand = new cc.CustomRenderCmdWebGL(this, this.onGridEndDraw);
+    },
 
     /**
      * Gets the grid object.
@@ -78,6 +87,18 @@ cc.NodeGrid = cc.Node.extend({
             this._target = child;
     },
 
+    onGridBeginDraw: function(){
+        var isWebGL = cc._renderType == cc._RENDER_TYPE_WEBGL, locGrid = this.grid;
+        if (isWebGL && locGrid && locGrid._active)
+            locGrid.beforeDraw();
+    },
+
+    onGridEndDraw: function(){
+        var isWebGL = cc._renderType == cc._RENDER_TYPE_WEBGL, locGrid = this.grid;
+        if (isWebGL && locGrid && locGrid._active)
+            locGrid.afterDraw(this._target);
+    },
+
     /**
      * Recursive method that visit its children and draw them
      */
@@ -86,27 +107,40 @@ cc.NodeGrid = cc.Node.extend({
         // quick return if not visible
         if (!self._visible)
             return;
-
-        var isWebGL = cc._renderType == cc._RENDER_TYPE_WEBGL;
-        var locGrid = self.grid;
-        if (isWebGL && locGrid && locGrid._active)
-            locGrid.beforeDraw();
+        var isWebGL = cc._renderType == cc._RENDER_TYPE_WEBGL, locGrid = this.grid;
+        var currentStack = cc.current_stack;
+        currentStack.stack.push(currentStack.top);
+        cc.kmMat4Assign(this._stackMatrix, currentStack.top);
+        currentStack.top = this._stackMatrix;
 
         self.transform();
+
+        var beforeProjectionType = cc.director.PROJECTION_DEFAULT;
+        if (isWebGL && locGrid && locGrid._active){
+            beforeProjectionType = cc.director.getProjection();
+            locGrid.set2DProjection();
+        }
+        cc.renderer.pushRenderCommand(this._gridBeginCommand);
+
+        if(this._target)
+            this._target.visit();
 
         var locChildren = this._children;
         if (locChildren && locChildren.length > 0) {
             var childLen = locChildren.length;
             this.sortAllChildren();
             // draw children
-            for (i = 0; i < childLen; i++) {
+            for (var i = 0; i < childLen; i++) {
                 var child = locChildren[i];
                 child && child.visit();
             }
         }
 
-        if (isWebGL && locGrid && locGrid._active)
-            locGrid.afterDraw(self._target);
+        if(isWebGL && locGrid && locGrid._active)
+            cc.director.setProjection(beforeProjectionType);
+
+        cc.renderer.pushRenderCommand(this._gridEndCommand);
+        currentStack.top = currentStack.stack.pop();
     },
 
     _transformForWebGL: function () {
