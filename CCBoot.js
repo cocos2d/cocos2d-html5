@@ -790,8 +790,8 @@ cc.loader = /** @lends cc.loader# */{
         if (obj)
             return cb(null, obj);
         var loader = null;
-        if(type) {
-            self._register[type.toLowerCase()];
+        if (type) {
+            loader = self._register[type.toLowerCase()];
         }
         if (!loader) {
             cc.error("loader for [" + type + "] not exists!");
