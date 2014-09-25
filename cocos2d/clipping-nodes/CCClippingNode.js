@@ -78,6 +78,10 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     _rendererClipCmd: null,
     _rendererRestoreCmd: null,
 
+    _beforeVisitCmd: null,
+    _afterDrawStencilCmd: null,
+    _afterVisitCmd: null,
+
     _stencil: null,
     _godhelpme: false,
     _clipElemType: null,
@@ -91,13 +95,20 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         this._stencil = null;
         this.alphaThreshold = 0;
         this.inverted = false;
-
-        this._rendererSaveCmd = new cc.ClippingNodeSaveRenderCmdCanvas(this);
-        this._rendererClipCmd = new cc.ClippingNodeClipRenderCmdCanvas(this);
-        this._rendererRestoreCmd = new cc.ClippingNodeRestoreRenderCmdCanvas(this);
-
         stencil = stencil || null;
         cc.ClippingNode.prototype.init.call(this, stencil);
+    },
+
+    _initRendererCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
+            this._rendererSaveCmd = new cc.ClippingNodeSaveRenderCmdCanvas(this);
+            this._rendererClipCmd = new cc.ClippingNodeClipRenderCmdCanvas(this);
+            this._rendererRestoreCmd = new cc.ClippingNodeRestoreRenderCmdCanvas(this);
+        }else{
+            this._beforeVisitCmd = new cc.CustomRenderCmdWebGL(this, this.onBeforeVisit);
+            this._afterDrawStencilCmd  = new cc.CustomRenderCmdWebGL(this, this.onAfterDrawStencil);
+            this._afterVisitCmd = new cc.CustomRenderCmdWebGL(this, this.onAfterVisit);
+        }
     },
 
     /**
@@ -227,7 +238,27 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
             cc.Node.prototype.visit.call(this, ctx);
             return;
         }
+        cc.renderer.pushRenderCommand(this._beforeVisitCmd);
 
+        // draw the stencil node as if it was one of our child
+        // (according to the stencil test func/op and alpha (or alpha shader) test)
+        cc.kmGLPushMatrix();
+        this.transform();
+        this._stencil._stackMatrix = this._stackMatrix;
+        this._stencil.visit();
+        cc.kmGLPopMatrix();
+
+        cc.renderer.pushRenderCommand(this._afterDrawStencilCmd);
+
+        // draw (according to the stencil test func) this node and its childs
+        cc.Node.prototype.visit.call(this, ctx);
+
+        cc.renderer.pushRenderCommand(this._afterVisitCmd);
+
+    },
+
+    onBeforeVisit: function(ctx){
+        var gl = gl || ctx;
         ///////////////////////////////////
         // INIT
 
@@ -239,17 +270,17 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         // mask of all layers less than the current (ie: for layer 3: 00000011)
         var mask_layer_l = mask_layer - 1;
         // mask of all layers less than or equal to the current (ie: for layer 3: 00000111)
-        var mask_layer_le = mask_layer | mask_layer_l;
-
+        //var mask_layer_le = mask_layer | mask_layer_l;
+        this._mask_layer_le = mask_layer | mask_layer_l;
         // manually save the stencil state
-        var currentStencilEnabled = gl.isEnabled(gl.STENCIL_TEST);
-        var currentStencilWriteMask = gl.getParameter(gl.STENCIL_WRITEMASK);
-        var currentStencilFunc = gl.getParameter(gl.STENCIL_FUNC);
-        var currentStencilRef = gl.getParameter(gl.STENCIL_REF);
-        var currentStencilValueMask = gl.getParameter(gl.STENCIL_VALUE_MASK);
-        var currentStencilFail = gl.getParameter(gl.STENCIL_FAIL);
-        var currentStencilPassDepthFail = gl.getParameter(gl.STENCIL_PASS_DEPTH_FAIL);
-        var currentStencilPassDepthPass = gl.getParameter(gl.STENCIL_PASS_DEPTH_PASS);
+        this._currentStencilEnabled = gl.isEnabled(gl.STENCIL_TEST);
+        this._currentStencilWriteMask = gl.getParameter(gl.STENCIL_WRITEMASK);
+        this._currentStencilFunc = gl.getParameter(gl.STENCIL_FUNC);
+        this._currentStencilRef = gl.getParameter(gl.STENCIL_REF);
+        this._currentStencilValueMask = gl.getParameter(gl.STENCIL_VALUE_MASK);
+        this._currentStencilFail = gl.getParameter(gl.STENCIL_FAIL);
+        this._currentStencilPassDepthFail = gl.getParameter(gl.STENCIL_PASS_DEPTH_FAIL);
+        this._currentStencilPassDepthPass = gl.getParameter(gl.STENCIL_PASS_DEPTH_PASS);
 
         // enable stencil use
         gl.enable(gl.STENCIL_TEST);
@@ -263,8 +294,8 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         // manually save the depth test state
         //GLboolean currentDepthTestEnabled = GL_TRUE;
         //currentDepthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
-        var currentDepthWriteMask = gl.getParameter(gl.DEPTH_WRITEMASK);
-
+        //var currentDepthWriteMask = gl.getParameter(gl.DEPTH_WRITEMASK);
+        this._currentDepthWriteMask = gl.getParameter(gl.DEPTH_WRITEMASK);
         // disable depth test while drawing the stencil
         //glDisable(GL_DEPTH_TEST);
         // disable update to the depth buffer while drawing the stencil,
@@ -321,21 +352,26 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
             // XXX: we should have a way to apply shader to all nodes without having to do this
             cc.setProgram(this._stencil, program);
         }
-
-        // draw the stencil node as if it was one of our child
-        // (according to the stencil test func/op and alpha (or alpha shader) test)
-        cc.kmGLPushMatrix();
-        this.transform();
-        this._stencil.visit();
-        cc.kmGLPopMatrix();
-
+    },
+    _currentStencilFunc: null,
+    _currentStencilRef: null,
+    _currentStencilValueMask: null,
+    _currentStencilFail: null,
+    _currentStencilPassDepthFail: null,
+    _currentStencilPassDepthPass:null,
+    _currentStencilWriteMask:null,
+    _currentStencilEnabled:null,
+    _currentDepthWriteMask: null,
+    _mask_layer_le: null,
+    onAfterDrawStencil: function(ctx){
+        var gl = gl || ctx;
         // restore alpha test state
         //if (this.alphaThreshold < 1) {
         // XXX: we need to find a way to restore the shaders of the stencil node and its childs
         //}
 
         // restore the depth test state
-        gl.depthMask(currentDepthWriteMask);
+        gl.depthMask(this._currentDepthWriteMask);
 
         ///////////////////////////////////
         // DRAW CONTENT
@@ -346,20 +382,20 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         //         draw the pixel and keep the current layer in the stencil buffer
         //     else
         //         do not draw the pixel but keep the current layer in the stencil buffer
-        gl.stencilFunc(gl.EQUAL, mask_layer_le, mask_layer_le);
+        gl.stencilFunc(gl.EQUAL, this._mask_layer_le, this._mask_layer_le);
         gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
+    },
 
-        // draw (according to the stencil test func) this node and its childs
-        cc.Node.prototype.visit.call(this, ctx);
-
+    onAfterVisit: function(ctx){
+        var gl = gl || ctx;
         ///////////////////////////////////
         // CLEANUP
 
         // manually restore the stencil state
-        gl.stencilFunc(currentStencilFunc, currentStencilRef, currentStencilValueMask);
-        gl.stencilOp(currentStencilFail, currentStencilPassDepthFail, currentStencilPassDepthPass);
-        gl.stencilMask(currentStencilWriteMask);
-        if (!currentStencilEnabled)
+        gl.stencilFunc(this._currentStencilFunc, this._currentStencilRef, this._currentStencilValueMask);
+        gl.stencilOp(this._currentStencilFail, this._currentStencilPassDepthFail, this._currentStencilPassDepthPass);
+        gl.stencilMask(this._currentStencilWriteMask);
+        if (!this._currentStencilEnabled)
             gl.disable(gl.STENCIL_TEST);
 
         // we are done using this layer, decrement
@@ -572,7 +608,7 @@ cc.ClippingNode._getSharedCache = function () {
 /**
  * Creates and initializes a clipping node with an other node as its stencil. <br/>
  * The stencil node will be retained.
- * @deprecated since v3.0, please use getNodeToParentTransform instead
+ * @deprecated since v3.0, please use "new cc.ClippingNode(stencil)" instead
  * @param {cc.Node} [stencil=null]
  * @return {cc.ClippingNode}
  * @example

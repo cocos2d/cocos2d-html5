@@ -183,7 +183,7 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         var _t = this._node;
         cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
         _t._shaderProgram.use();
-        _t._shaderProgram.setUniformsForBuiltins();
+        _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);
         _t._render();
     };
 
@@ -198,7 +198,8 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
 
         if(_t.texture && _t.texture.isLoaded()){
             ctx = ctx || cc._renderContext;
-            cc.nodeDrawSetup(_t);
+            _t._shaderProgram.use();
+            _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);
             cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
             cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
 
