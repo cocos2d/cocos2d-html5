@@ -789,7 +789,10 @@ cc.loader = /** @lends cc.loader# */{
         var obj = self.cache[url];
         if (obj)
             return cb(null, obj);
-        var loader = self._register[type.toLowerCase()];
+        var loader = null;
+        if(type) {
+            self._register[type.toLowerCase()];
+        }
         if (!loader) {
             cc.error("loader for [" + type + "] not exists!");
             return cb();
