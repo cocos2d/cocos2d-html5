@@ -246,7 +246,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         var children = _t._children, child;
         var locChildren = _t._children, locProtectedChildren = this._protectedChildren;
         var childLen = locChildren.length, pLen = locProtectedChildren.length;
-        context.save();
+//        context.save();
         _t.transform(context);
 
         _t.sortAllChildren();
@@ -268,7 +268,9 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
                 break;
         }
 
-        _t.draw(context);
+//        _t.draw(context);
+        if(this._rendererCmd)
+            cc.renderer.pushRenderCommand(this._rendererCmd);
 
         for (; i < childLen; i++)
             children[i] && children[i].visit(context);
@@ -277,7 +279,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
 
         this._cacheDirty = false;
         _t.arrivalOrder = 0;
-        context.restore();
+//        context.restore();
     },
 
     _visitForWebGL: function(){
@@ -316,7 +318,10 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
             else
                 break;
         }
-        _t.draw(context);
+//        _t.draw(context);
+        if(this._rendererCmd)
+            cc.renderer.pushRenderCommand(this._rendererCmd);
+
         // draw children zOrder >= 0
         for (; i < childLen; i++) {
             locChildren[i] && locChildren[i].visit();

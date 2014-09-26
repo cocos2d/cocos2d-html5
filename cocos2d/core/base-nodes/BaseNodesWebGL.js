@@ -77,11 +77,6 @@ cc._tmp.WebGLCCNode = function () {
         cc.kmMat4Assign(_t._stackMatrix, currentStack.top);
         currentStack.top = _t._stackMatrix;
 
-        //TODO GridNode
-/*        var locGrid = _t.grid;
-        if (locGrid && locGrid._active)
-            locGrid.beforeDraw();*/
-
         //_t.toRenderer();
         _t.transform();
 
@@ -110,10 +105,6 @@ cc._tmp.WebGLCCNode = function () {
         }
 
         _t.arrivalOrder = 0;
-
-        //TODO GridNode
-/*        if (locGrid && locGrid._active)
-            locGrid.afterDraw(_t);*/
 
         //optimize performance for javascript
         currentStack.top = currentStack.stack.pop();

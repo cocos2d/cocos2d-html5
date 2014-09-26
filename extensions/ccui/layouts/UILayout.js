@@ -87,6 +87,13 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     __passFocusToChild: false,                                                  //on default, it will pass the focus to the next nearest widget
     _isFocusPassing:false,                                                      //when finding the next focused widget, use this variable to pass focus between layout & widget
 
+    //add renderer for webgl
+    _beforeVisitCmdStencil: null,
+    _afterDrawStencilCmd: null,
+    _afterVisitCmdStencil: null,
+    _beforeVisitCmdScissor: null,
+    _afterVisitCmdScissor: null,
+
     /**
      * Allocates and initializes an UILayout.
      * Constructor of ccui.Layout
@@ -112,6 +119,12 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
         this._clippingRect = cc.rect(0, 0, 0, 0);
         this._backGroundImageColor = cc.color(255, 255, 255, 255);
+
+        this._beforeVisitCmdStencil = new cc.CustomRenderCmdWebGL(this, this._onBeforeVisitStencil);
+        this._afterDrawStencilCmd = new cc.CustomRenderCmdWebGL(this, this._onAfterDrawStencil);
+        this._afterVisitCmdStencil = new cc.CustomRenderCmdWebGL(this, this._onAfterVisitStencil);
+        this._beforeVisitCmdScissor = new cc.CustomRenderCmdWebGL(this, this._onBeforeVisitScissor);
+        this._afterVisitCmdScissor = new cc.CustomRenderCmdWebGL(this, this._onAfterVisitScissor);
     },
 
     /**
@@ -388,56 +401,18 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             return;
         }
 
-        ccui.Layout._layer++;
+        cc.renderer.pushRenderCommand(this._beforeVisitCmdStencil);
 
-        var mask_layer = 0x1 << ccui.Layout._layer;
-        var mask_layer_l = mask_layer - 1;
-        var mask_layer_le = mask_layer | mask_layer_l;
+        //optimize performance for javascript
+        var currentStack = cc.current_stack;
+        currentStack.stack.push(currentStack.top);
+        cc.kmMat4Assign(this._stackMatrix, currentStack.top);
+        currentStack.top = this._stackMatrix;
 
-        // manually save the stencil state
-        var currentStencilEnabled = gl.isEnabled(gl.STENCIL_TEST);
-        var currentStencilWriteMask = gl.getParameter(gl.STENCIL_WRITEMASK);
-        var currentStencilFunc = gl.getParameter(gl.STENCIL_FUNC);
-        var currentStencilRef = gl.getParameter(gl.STENCIL_REF);
-        var currentStencilValueMask = gl.getParameter(gl.STENCIL_VALUE_MASK);
-        var currentStencilFail = gl.getParameter(gl.STENCIL_FAIL);
-        var currentStencilPassDepthFail = gl.getParameter(gl.STENCIL_PASS_DEPTH_FAIL);
-        var currentStencilPassDepthPass = gl.getParameter(gl.STENCIL_PASS_DEPTH_PASS);
-
-        gl.enable(gl.STENCIL_TEST);
-
-        gl.stencilMask(mask_layer);
-
-        var currentDepthWriteMask = gl.getParameter(gl.DEPTH_WRITEMASK);
-
-        gl.depthMask(false);
-
-        gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
-        gl.stencilOp(gl.ZERO, gl.KEEP, gl.KEEP);
-
-        // draw a fullscreen solid rectangle to clear the stencil buffer
-        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
-        cc.kmGLPushMatrix();
-        cc.kmGLLoadIdentity();
-        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-        cc.kmGLPushMatrix();
-        cc.kmGLLoadIdentity();
-        cc._drawingUtil.drawSolidRect(cc.p(-1,-1), cc.p(1,1), cc.color(255, 255, 255, 255));
-        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
-        cc.kmGLPopMatrix();
-        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-        cc.kmGLPopMatrix();
-
-        gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
-        gl.stencilOp(gl.REPLACE, gl.KEEP, gl.KEEP);
-
-        cc.kmGLPushMatrix();
         this.transform();
         this._clippingStencil.visit();
 
-        gl.depthMask(currentDepthWriteMask);
-        gl.stencilFunc(gl.EQUAL, mask_layer_le, mask_layer_le);
-        gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
+        cc.renderer.pushRenderCommand(this._afterDrawStencilCmd);
 
         // draw (according to the stencil test func) this node and its childs
         var i = 0;      // used by _children
@@ -461,21 +436,18 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             else
                 break;
         }
-        this.draw();
+        //this.draw();    //draw self
+        if(this._rendererCmd)
+            cc.renderer.pushRenderCommand(this._rendererCmd);
         for (; i < iLen; i++)
             locChildren[i].visit();
         for (; j < jLen; j++)
             locProtectChildren[j].visit();
 
-        // manually restore the stencil state
-        gl.stencilFunc(currentStencilFunc, currentStencilRef, currentStencilValueMask);
-        gl.stencilOp(currentStencilFail, currentStencilPassDepthFail, currentStencilPassDepthPass);
-        gl.stencilMask(currentStencilWriteMask);
-        if (!currentStencilEnabled)
-            gl.disable(gl.STENCIL_TEST);
-        ccui.Layout._layer--;
+        cc.renderer.pushRenderCommand(this._afterVisitCmdStencil);
 
-        cc.kmGLPopMatrix();
+        //optimize performance for javascript
+        currentStack.top = currentStack.stack.pop();
     },
 
     _stencilClippingVisitForCanvas: function (ctx) {
@@ -556,16 +528,9 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     _scissorClippingVisit: null,
     _scissorClippingVisitForWebGL: function (ctx) {
-        var clippingRect = this._getClippingRect();
-        var gl = ctx || cc._renderContext;
-        if (this._handleScissor) {
-            gl.enable(gl.SCISSOR_TEST);
-        }
-        cc.view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
-        cc.Node.prototype.visit.call(this);
-        if (this._handleScissor) {
-            gl.disable(gl.SCISSOR_TEST);
-        }
+        cc.renderer.pushRenderCommand(this._beforeVisitCmdScissor);
+        cc.ProtectedNode.prototype.visit.call(this);
+        cc.renderer.pushRenderCommand(this._afterVisitCmdScissor);
     },
 
     /**
@@ -775,19 +740,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._backGroundImageTextureSize = locBackgroundImage.getContentSize();
         locBackgroundImage.setPosition(this._contentSize.width * 0.5, this._contentSize.height * 0.5);
         this._updateBackGroundImageColor();
-
-        /*//async load callback
-        var self = this;
-        if(!locBackgroundImage.texture || !locBackgroundImage.texture.isLoaded()){
-            locBackgroundImage.addLoadedEventListener(function(){
-                self._backGroundImageTextureSize = locBackgroundImage.getContentSize();
-                locBackgroundImage.setPosition(self._contentSize.width * 0.5, self._contentSize.height * 0.5);
-                self._updateBackGroundImageColor();
-
-                self._imageRendererAdaptDirty = true;
-                self._findLayout();
-            });
-        }*/
     },
 
     /**
@@ -1131,28 +1083,89 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     //clipping
-    _onBeforeVisitStencil: function(){
-        //TODO NEW RENDERER
+    _onBeforeVisitStencil: function(ctx){
+        var gl = ctx || cc._renderContext;
+
+        ccui.Layout._layer++;
+
+        var mask_layer = 0x1 << ccui.Layout._layer;
+        var mask_layer_l = mask_layer - 1;
+        this._mask_layer_le = mask_layer | mask_layer_l;
+
+        // manually save the stencil state
+        this._currentStencilEnabled = gl.isEnabled(gl.STENCIL_TEST);
+        this._currentStencilWriteMask = gl.getParameter(gl.STENCIL_WRITEMASK);
+        this._currentStencilFunc = gl.getParameter(gl.STENCIL_FUNC);
+        this._currentStencilRef = gl.getParameter(gl.STENCIL_REF);
+        this._currentStencilValueMask = gl.getParameter(gl.STENCIL_VALUE_MASK);
+        this._currentStencilFail = gl.getParameter(gl.STENCIL_FAIL);
+        this._currentStencilPassDepthFail = gl.getParameter(gl.STENCIL_PASS_DEPTH_FAIL);
+        this._currentStencilPassDepthPass = gl.getParameter(gl.STENCIL_PASS_DEPTH_PASS);
+
+        gl.enable(gl.STENCIL_TEST);
+
+        gl.stencilMask(mask_layer);
+
+        this._currentDepthWriteMask = gl.getParameter(gl.DEPTH_WRITEMASK);
+
+        gl.depthMask(false);
+
+        gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
+        gl.stencilOp(gl.ZERO, gl.KEEP, gl.KEEP);
+
+        // draw a fullscreen solid rectangle to clear the stencil buffer
+        this._drawFullScreenQuadClearStencil();
+
+        gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
+        gl.stencilOp(gl.REPLACE, gl.KEEP, gl.KEEP);
     },
 
     _drawFullScreenQuadClearStencil:function(){
-        //TODO NEW RENDERER
+        // draw a fullscreen solid rectangle to clear the stencil buffer
+        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+        cc.kmGLPushMatrix();
+        cc.kmGLLoadIdentity();
+        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+        cc.kmGLPushMatrix();
+        cc.kmGLLoadIdentity();
+        cc._drawingUtil.drawSolidRect(cc.p(-1,-1), cc.p(1,1), cc.color(255, 255, 255, 255));
+        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+        cc.kmGLPopMatrix();
+        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+        cc.kmGLPopMatrix();
     },
 
-    _onAfterDrawStencil: function(){
-        //TODO NEW RENDERER
+    _onAfterDrawStencil: function(ctx){
+        var gl = ctx || cc._renderContext;
+        gl.depthMask(this._currentDepthWriteMask);
+        gl.stencilFunc(gl.EQUAL, this._mask_layer_le, this._mask_layer_le);
+        gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
     },
 
-    _onAfterVisitStencil: function(){
-        //TODO NEW RENDERER
+    _onAfterVisitStencil: function(ctx){
+        var gl = ctx || cc._renderContext;
+        // manually restore the stencil state
+        gl.stencilFunc(this._currentStencilFunc, this._currentStencilRef, this._currentStencilValueMask);
+        gl.stencilOp(this._currentStencilFail, this._currentStencilPassDepthFail, this._currentStencilPassDepthPass);
+        gl.stencilMask(this._currentStencilWriteMask);
+        if (!this._currentStencilEnabled)
+            gl.disable(gl.STENCIL_TEST);
+        ccui.Layout._layer--;
     },
 
-    _onAfterVisitScissor: function(){
-        //TODO NEW RENDERER
+    _onBeforeVisitScissor: function(ctx){
+        var clippingRect = this._getClippingRect();
+        var gl = ctx || cc._renderContext;
+        if (this._handleScissor) {
+            gl.enable(gl.SCISSOR_TEST);
+        }
+        cc.view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
     },
 
-    _onAfterVisitScissor: function(){
-        //TODO NEW RENDERER
+    _onAfterVisitScissor: function(ctx){
+        if (this._handleScissor) {
+            gl.disable(gl.SCISSOR_TEST);
+        }
     },
 
     _updateBackGroundImageOpacity: function(){

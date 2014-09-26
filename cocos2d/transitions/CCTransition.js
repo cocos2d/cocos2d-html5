@@ -1690,6 +1690,11 @@ cc.TransitionTurnOffTiles.create = function (t, scene) {
  * var trans = new cc.TransitionSplitCols(time,scene);
  */
 cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplitCols# */{
+    _gridProxy: null,
+
+    _switchTargetToInscene: function(){
+        this._gridProxy.setTarget(this._inScene);
+    },
 
     /**
      * Constructor of TransitionSplitCols
@@ -1698,6 +1703,7 @@ cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplit
      */
     ctor:function (t, scene) {
         cc.TransitionScene.prototype.ctor.call(this);
+        this._gridProxy = new cc.NodeGrid();
         scene && this.initWithDuration(t, scene);
     },
     /**
@@ -1705,15 +1711,28 @@ cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplit
      */
     onEnter:function () {
         cc.TransitionScene.prototype.onEnter.call(this);
-        this._inScene.visible = false;
+        //this._inScene.visible = false;
+        this._gridProxy.setTarget(this._outScene);
+        this._gridProxy.onEnter();
 
         var split = this.action();
         var seq = cc.sequence(
-            split, cc.callFunc(this.hideOutShowIn, this), split.reverse());
+            split, cc.callFunc(this._switchTargetToInscene, this), split.reverse());
 
-        this.runAction(
+        this._gridProxy.runAction(
             cc.sequence(this.easeActionWithAction(seq), cc.callFunc(this.finish, this), cc.stopGrid())
         );
+    },
+
+    onExit: function(){
+        this._gridProxy.setTarget(null);
+        this._gridProxy.onExit();
+        cc.TransitionScene.prototype.onExit.call(this);
+    },
+
+    visit: function(){
+        cc.TransitionScene.prototype.visit.call(this);
+        this._gridProxy.visit();
     },
 
     /**

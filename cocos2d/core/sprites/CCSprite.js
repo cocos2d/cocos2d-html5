@@ -1172,17 +1172,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             locQuad.tr.texCoords.v = top;
         }
         this._quadDirty = true;
-    },
-
-    visit: function(){
-        cc.Node.prototype.visit.call(this);
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-            return;
-        var _t = this, locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
-        var locRect = _t._rect,
-            locDrawSizeCanvas = _t._drawSize_Canvas;
-        locDrawSizeCanvas.width = locRect.width * locEGL_ScaleX;
-        locDrawSizeCanvas.height = locRect.height * locEGL_ScaleY;
     }
 });
 
@@ -1490,7 +1479,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p.addChild = function (child, localZOrder, tag) {
-
         cc.assert(child, cc._LogInfos.CCSpriteBatchNode_addChild_2);
 
         if (localZOrder == null)
