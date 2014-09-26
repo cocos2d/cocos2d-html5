@@ -518,6 +518,8 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
 
             cc.Node.prototype.visit.call(this, ctx);
             cc.renderer.pushRenderCommand(this._rendererEndCanvasCmd);
+        }else{
+            cc.Node.prototype.visit.call(this, ctx);
         }
     },
 
