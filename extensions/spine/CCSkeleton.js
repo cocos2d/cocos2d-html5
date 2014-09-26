@@ -92,6 +92,11 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
             this.initWithArgs(skeletonDataFile, atlasFile, scale);
     },
 
+    _initRendererCmd:function () {
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+            this._rendererCmd = new cc.SkeletonRenderCmdWebGL(this);
+    },
+
     /**
      * Initializes a sp.Skeleton. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
      */
