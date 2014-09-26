@@ -233,11 +233,9 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
             ret = cc.pAdd(ret, cn.getPosition());
         }
         return ret;
-    }
-});
+    },
 
-if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-    cc.ParallaxNode.prototype._transformForRenderer = function(){
+    _transformForRenderer:function () {
         var pos = this._absolutePosition();
         if (!cc.pointEqualToPoint(pos, this._lastPosition)) {
             var locParallaxArray = this.parallaxArray;
@@ -245,13 +243,13 @@ if(cc._renderType === cc._RENDER_TYPE_CANVAS){
                 var point = locParallaxArray[i];
                 var child = point.getChild();
                 child.setPosition(-pos.x + pos.x * point.getRatio().x + point.getOffset().x,
-                        -pos.y + pos.y * point.getRatio().y + point.getOffset().y);
+                    -pos.y + pos.y * point.getRatio().y + point.getOffset().y);
             }
             this._lastPosition = pos;
         }
         cc.Node.prototype._transformForRenderer.call(this);
-    };
-}
+    }
+});
 
 /**
  * Create new parallax node.
