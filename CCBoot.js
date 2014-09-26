@@ -789,7 +789,10 @@ cc.loader = /** @lends cc.loader# */{
         var obj = self.cache[url];
         if (obj)
             return cb(null, obj);
-        var loader = self._register[type.toLowerCase()];
+        var loader = null;
+        if (type) {
+            loader = self._register[type.toLowerCase()];
+        }
         if (!loader) {
             cc.error("loader for [" + type + "] not exists!");
             return cb();
@@ -1454,7 +1457,8 @@ cc._initSys = function (config, CONFIG_KEY) {
      */
     sys.isNative = false;
 
-    var webglWhiteList = [sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_SAFARI];
+    var browserSupportWebGL = [sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_SAFARI];
+    var osSupportWebGL = [sys.OS_IOS, sys.OS_WINDOWS, sys.OS_OSX, sys.OS_LINUX];
     var multipleAudioWhiteList = [
         sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_BAIDU_APP,
         sys.BROWSER_TYPE_SAFARI, sys.BROWSER_TYPE_UC, sys.BROWSER_TYPE_QQ, sys.BROWSER_TYPE_MOBILE_QQ, sys.BROWSER_TYPE_IE
@@ -1510,6 +1514,24 @@ cc._initSys = function (config, CONFIG_KEY) {
      */
     sys.browserType = browserType;
 
+    // Get the os of system
+    var iOS = ( ua.match(/(iPad|iPhone|iPod)/i) ? true : false );
+    var isAndroid = ua.match(/android/i) || nav.platform.match(/android/i) ? true : false;
+    var osName = sys.OS_UNKNOWN;
+    if (nav.appVersion.indexOf("Win") != -1) osName = sys.OS_WINDOWS;
+    else if (iOS) osName = sys.OS_IOS;
+    else if (nav.appVersion.indexOf("Mac") != -1) osName = sys.OS_OSX;
+    else if (nav.appVersion.indexOf("X11") != -1) osName = sys.OS_UNIX;
+    else if (isAndroid) osName = sys.OS_ANDROID;
+    else if (nav.appVersion.indexOf("Linux") != -1) osName = sys.OS_LINUX;
+
+    /**
+     * Indicate the running os name
+     * @memberof cc.sys
+     * @name os
+     * @type {String}
+     */
+    sys.os = osName;
 
     sys._supportMultipleAudio = multipleAudioWhiteList.indexOf(sys.browserType) > -1;
 
@@ -1519,8 +1541,8 @@ cc._initSys = function (config, CONFIG_KEY) {
     var renderType = cc._RENDER_TYPE_WEBGL;
     var tempCanvas = cc.newElement("Canvas");
     cc._supportRender = true;
-    var notInWhiteList = webglWhiteList.indexOf(sys.browserType) == -1;
-    if (userRenderMode === 1 || (userRenderMode === 0 && (sys.isMobile || notInWhiteList)) || (location.origin == "file://")) {
+    var notSupportGL = browserSupportWebGL.indexOf(sys.browserType) == -1 || osSupportWebGL.indexOf(sys.os) == -1;
+    if (userRenderMode === 1 || (userRenderMode === 0 && notSupportGL) || (location.origin == "file://")) {
         renderType = cc._RENDER_TYPE_CANVAS;
     }
 
@@ -1564,7 +1586,7 @@ cc._initSys = function (config, CONFIG_KEY) {
         }
     }
     cc._renderType = renderType;
-    //++++++++++++++++++something about cc._renderTYpe and cc._supportRender end++++++++++++++++++++++++++++++
+    //++++++++++++++++++something about cc._renderType and cc._supportRender end++++++++++++++++++++++++++++++
 
     // check if browser supports Web Audio
     // check Web Audio's context
@@ -1604,25 +1626,6 @@ cc._initSys = function (config, CONFIG_KEY) {
         capabilities["keyboard"] = true;
     if (win.DeviceMotionEvent || win.DeviceOrientationEvent)
         capabilities["accelerometer"] = true;
-
-    // Get the os of system
-    var iOS = ( ua.match(/(iPad|iPhone|iPod)/i) ? true : false );
-    var isAndroid = ua.match(/android/i) || nav.platform.match(/android/i) ? true : false;
-    var osName = sys.OS_UNKNOWN;
-    if (nav.appVersion.indexOf("Win") != -1) osName = sys.OS_WINDOWS;
-    else if (iOS) osName = sys.OS_IOS;
-    else if (nav.appVersion.indexOf("Mac") != -1) osName = sys.OS_OSX;
-    else if (nav.appVersion.indexOf("X11") != -1) osName = sys.OS_UNIX;
-    else if (isAndroid) osName = sys.OS_ANDROID;
-    else if (nav.appVersion.indexOf("Linux") != -1) osName = sys.OS_LINUX;
-
-    /**
-     * Indicate the running os name
-     * @memberof cc.sys
-     * @name os
-     * @type {String}
-     */
-    sys.os = osName;
 
     /**
      * Forces the garbage collection

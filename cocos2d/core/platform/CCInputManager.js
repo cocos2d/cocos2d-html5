@@ -574,7 +574,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
                 var pos = selfPointer.getHTMLElementPosition(element);
                 pos.left -= document.body.scrollLeft;
                 pos.top -= document.body.scrollTop;
-                locView.handleTouchesCancel(selfPointer.getTouchesByEvent(event, pos));
+                selfPointer.handleTouchesCancel(selfPointer.getTouchesByEvent(event, pos));
                 event.stopPropagation();
                 event.preventDefault();
             }, false);
