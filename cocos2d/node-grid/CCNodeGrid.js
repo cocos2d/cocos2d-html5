@@ -41,8 +41,10 @@ cc.NodeGrid = cc.Node.extend({
     ctor: function(){
         cc.Node.prototype.ctor.call(this);
 
-        this._gridBeginCommand = new cc.CustomRenderCmdWebGL(this, this.onGridBeginDraw);
-        this._gridEndCommand = new cc.CustomRenderCmdWebGL(this, this.onGridEndDraw);
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL){
+            this._gridBeginCommand = new cc.CustomRenderCmdWebGL(this, this.onGridBeginDraw);
+            this._gridEndCommand = new cc.CustomRenderCmdWebGL(this, this.onGridEndDraw);
+        }
     },
 
     /**
@@ -108,22 +110,27 @@ cc.NodeGrid = cc.Node.extend({
         if (!self._visible)
             return;
         var isWebGL = cc._renderType == cc._RENDER_TYPE_WEBGL, locGrid = this.grid;
-        var currentStack = cc.current_stack;
-        currentStack.stack.push(currentStack.top);
-        cc.kmMat4Assign(this._stackMatrix, currentStack.top);
-        currentStack.top = this._stackMatrix;
+        if(isWebGL){
+            var currentStack = cc.current_stack;
+            currentStack.stack.push(currentStack.top);
+            cc.kmMat4Assign(this._stackMatrix, currentStack.top);
+            currentStack.top = this._stackMatrix;
+        }
 
         self.transform();
 
-        var beforeProjectionType = cc.director.PROJECTION_DEFAULT;
-        if (isWebGL && locGrid && locGrid._active){
-            beforeProjectionType = cc.director.getProjection();
-            locGrid.set2DProjection();
-        }
-        cc.renderer.pushRenderCommand(this._gridBeginCommand);
+        if(isWebGL){
+            var beforeProjectionType = cc.director.PROJECTION_DEFAULT;
+            if (isWebGL && locGrid && locGrid._active){
+                beforeProjectionType = cc.director.getProjection();
+                locGrid.set2DProjection();
+            }
+            if(this._gridBeginCommand)
+                cc.renderer.pushRenderCommand(this._gridBeginCommand);
 
-        if(this._target)
-            this._target.visit();
+            if(this._target)
+                this._target.visit();
+        }
 
         var locChildren = this._children;
         if (locChildren && locChildren.length > 0) {
@@ -136,11 +143,12 @@ cc.NodeGrid = cc.Node.extend({
             }
         }
 
-        if(isWebGL && locGrid && locGrid._active)
+        if(isWebGL && locGrid && locGrid._active){
             cc.director.setProjection(beforeProjectionType);
-
-        cc.renderer.pushRenderCommand(this._gridEndCommand);
-        currentStack.top = currentStack.stack.pop();
+            if(this._gridEndCommand)
+                cc.renderer.pushRenderCommand(this._gridEndCommand);
+            currentStack.top = currentStack.stack.pop();
+        }
     },
 
     _transformForWebGL: function () {
