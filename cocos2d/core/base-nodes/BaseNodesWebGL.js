@@ -110,9 +110,9 @@ cc._tmp.WebGLCCNode = function () {
         currentStack.top = currentStack.stack.pop();
     };
 
-    _p._transformForRenderer = function () {                                  //TODO parentMatrix
+    _p._transformForRenderer = function (pMatrix) {
         var t4x4 = this._transform4x4, stackMatrix = this._stackMatrix,
-            parentMatrix = this._parent ? this._parent._stackMatrix : cc.current_stack.top;
+            parentMatrix = pMatrix || (this._parent ? this._parent._stackMatrix : cc.current_stack.top);
 
         // Convert 3x3 into 4x4 matrix
         var trans = this.nodeToParentTransform();
