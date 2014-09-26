@@ -94,6 +94,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _beforeVisitCmdScissor: null,
     _afterVisitCmdScissor: null,
 
+    _clipElemType: false,
+
     /**
      * Allocates and initializes an UILayout.
      * Constructor of ccui.Layout
@@ -120,11 +122,19 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._clippingRect = cc.rect(0, 0, 0, 0);
         this._backGroundImageColor = cc.color(255, 255, 255, 255);
 
-        this._beforeVisitCmdStencil = new cc.CustomRenderCmdWebGL(this, this._onBeforeVisitStencil);
-        this._afterDrawStencilCmd = new cc.CustomRenderCmdWebGL(this, this._onAfterDrawStencil);
-        this._afterVisitCmdStencil = new cc.CustomRenderCmdWebGL(this, this._onAfterVisitStencil);
-        this._beforeVisitCmdScissor = new cc.CustomRenderCmdWebGL(this, this._onBeforeVisitScissor);
-        this._afterVisitCmdScissor = new cc.CustomRenderCmdWebGL(this, this._onAfterVisitScissor);
+        if(cc._renderType == cc._RENDER_TYPE_CANVAS){
+            this._rendererSaveCmd = new cc.CustomRenderCmdCanvas(this, this._onRenderSaveCmd);
+            this._rendererSaveCmdSprite = new cc.CustomRenderCmdCanvas(this, this._onRenderSaveSpriteCmd);
+            this._rendererClipCmd = new cc.CustomRenderCmdCanvas(this, this._onRenderClipCmd);
+            this._rendererRestoreCmd = new cc.CustomRenderCmdCanvas(this, this._onRenderRestoreCmd);
+
+        }else{
+            this._beforeVisitCmdStencil = new cc.CustomRenderCmdWebGL(this, this._onBeforeVisitStencil);
+            this._afterDrawStencilCmd = new cc.CustomRenderCmdWebGL(this, this._onAfterDrawStencil);
+            this._afterVisitCmdStencil = new cc.CustomRenderCmdWebGL(this, this._onAfterVisitStencil);
+            this._beforeVisitCmdScissor = new cc.CustomRenderCmdWebGL(this, this._onBeforeVisitScissor);
+            this._afterVisitCmdScissor = new cc.CustomRenderCmdWebGL(this, this._onAfterVisitScissor);
+        }
     },
 
     /**
@@ -451,53 +461,46 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     _stencilClippingVisitForCanvas: function (ctx) {
-        // return fast (draw nothing, or draw everything if in inverted mode) if:
-        // - nil stencil node
-        // - or stencil node invisible:
         if (!this._clippingStencil || !this._clippingStencil.isVisible()) {
             return;
         }
-        var context = ctx || cc._renderContext;
-        // Composition mode, costy but support texture stencil
-        if (this._clippingStencil instanceof cc.Sprite) {
-            // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
-            var canvas = context.canvas;
-            var locCache = ccui.Layout._getSharedCache();
-            locCache.width = canvas.width;
-            locCache.height = canvas.height;
-            var locCacheCtx = locCache.getContext("2d");
-            locCacheCtx.drawImage(canvas, 0, 0);
 
-            context.save();
-            // Draw everything first using node visit function
+        var i, locChild;
+        if (this._stencil instanceof cc.Sprite) {
+            this._clipElemType = true;
+        }else{
+            this._clipElemType = false;
+        }
+
+        var context = ctx || cc._renderContext;
+
+        this.transform();
+
+        if(this._rendererSaveCmd)
+            cc.renderer.pushRenderCommand(this._rendererSaveCmd);
+
+        if (this._clipElemType) {
             cc.ProtectedNode.prototype.visit.call(this, context);
 
-            context.globalCompositeOperation = "destination-in";
+            if(this._rendererSaveCmdSprite)
+                cc.renderer.pushRenderCommand(this._rendererSaveCmdSprite);
 
-            this.transform(context);
             this._clippingStencil.visit();
 
-            context.restore();
-
-            // Redraw the cached canvas, so that the cliped area shows the background etc.
-            context.save();
-            context.setTransform(1, 0, 0, 1, 0, 0);
-            context.globalCompositeOperation = "destination-over";
-            context.drawImage(locCache, 0, 0);
-            context.restore();
-        } else {    // Clip mode, fast, but only support cc.DrawNode
-            var i, children = this._children, locChild;
-
-            context.save();
-            this.transform(context);
+        }else{
             this._clippingStencil.visit(context);
-            context.clip();
+        }
 
-            // Clip mode doesn't support recusive stencil, so once we used a clip stencil,
-            // so if it has ClippingNode as a child, the child must uses composition stencil.
+        if(this._rendererClipCmd)
+            cc.renderer.pushRenderCommand(this._rendererClipCmd);
+
+        if (this._clipElemType) {
+
+        }else{
             this.sortAllChildren();
             this.sortAllProtectedChildren();
 
+            var children = this._children;
             var j, locProtectChildren = this._protectedChildren;
             var iLen = children.length, jLen = locProtectChildren.length;
 
@@ -522,6 +525,66 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             for (; j < jLen; j++)
                 locProtectChildren[j].visit(context);
 
+            if(this._rendererRestoreCmd)
+                cc.renderer.pushRenderCommand(this._rendererRestoreCmd);
+        }
+    },
+
+    _onRenderSaveCmd: function(ctx, scaleX, scaleY){
+        var context = ctx || cc._renderContext;
+
+        if (this._clipElemType) {
+            var canvas = context.canvas;
+            this._locCache = ccui.Layout._getSharedCache();
+            this._locCache.width = canvas.width;
+            this._locCache.height = canvas.height;
+            var locCacheCtx = this._locCache.getContext("2d");
+            locCacheCtx.drawImage(canvas, 0, 0);
+
+            context.save();
+        }else{
+            this.transform();
+            var t = this._transformWorld;
+            context.save();
+            context.save();
+            context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+        }
+
+    },
+    _onRenderSaveSpriteCmd: function(ctx){
+        var context = ctx || cc._renderContext;
+
+        if (this._clipElemType) {
+            context.globalCompositeOperation = "destination-in";
+
+            this.transform(context);
+        }else{}
+    },
+    _onRenderClipCmd: function(ctx){
+
+        var context = ctx || cc._renderContext;
+
+        if (this._clipElemType) {
+
+        }else{
+            context.restore();
+            context.clip();
+        }
+    },
+    _onRenderRestoreCmd: function(ctx){
+
+        var context = ctx || cc._renderContext;
+
+        if (this._clipElemType) {
+            context.restore();
+
+            // Redraw the cached canvas, so that the cliped area shows the background etc.
+            context.save();
+            context.setTransform(1, 0, 0, 1, 0, 0);
+            context.globalCompositeOperation = "destination-over";
+            context.drawImage(this._node._locCache, 0, 0);
+            context.restore();
+        }else{
             context.restore();
         }
     },

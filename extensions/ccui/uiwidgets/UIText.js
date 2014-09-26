@@ -434,6 +434,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     },
 
     _transformForRenderer: function(){
+        this._adaptRenderers();
         cc.Node.prototype.transform.call(this);
         this._labelRenderer._transformForRenderer();
     }
