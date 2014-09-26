@@ -246,7 +246,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         var children = _t._children, child;
         var locChildren = _t._children, locProtectedChildren = this._protectedChildren;
         var childLen = locChildren.length, pLen = locProtectedChildren.length;
-        context.save();
+//        context.save();
         _t.transform(context);
 
         _t.sortAllChildren();
@@ -279,7 +279,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
 
         this._cacheDirty = false;
         _t.arrivalOrder = 0;
-        context.restore();
+//        context.restore();
     },
 
     _visitForWebGL: function(){

@@ -431,6 +431,11 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     },
     _getBoundingHeight: function () {
         return this._textAreaSize.height;
+    },
+
+    _transformForRenderer: function(){
+        cc.Node.prototype.transform.call(this);
+        this._labelRenderer._transformForRenderer();
     }
 
 });

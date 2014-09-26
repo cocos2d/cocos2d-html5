@@ -87,7 +87,8 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     },
 
     _initRendererCmd: function () {
-        this._rendererCmd = new cc.AtlasNodeRenderCmdWebGL(this);
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+            this._rendererCmd = new cc.AtlasNodeRenderCmdWebGL(this);
     },
 
     /**
