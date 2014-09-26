@@ -485,6 +485,37 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     cc.ProtectedNode.prototype.visit =  cc.ProtectedNode.prototype._visitForCanvas;
 }else{
     cc.ProtectedNode.prototype.visit =  cc.ProtectedNode.prototype._visitForWebGL;
+    cc.ProtectedNode.prototype._transformForRenderer = function () {
+        var t4x4 = this._transform4x4, stackMatrix = this._stackMatrix,
+            parentMatrix = this._parent ? this._parent._stackMatrix : cc.current_stack.top;
+
+        // Convert 3x3 into 4x4 matrix
+        var trans = this.nodeToParentTransform();
+        var t4x4Mat = t4x4.mat;
+        t4x4Mat[0] = trans.a;
+        t4x4Mat[4] = trans.c;
+        t4x4Mat[12] = trans.tx;
+        t4x4Mat[1] = trans.b;
+        t4x4Mat[5] = trans.d;
+        t4x4Mat[13] = trans.ty;
+
+        // Update Z vertex manually
+        t4x4Mat[14] = this._vertexZ;
+
+        //optimize performance for Javascript
+        cc.kmMat4Multiply(stackMatrix, parentMatrix, t4x4);
+
+        this._renderCmdDiry = false;
+        if(!this._children || this._children.length === 0)
+            return;
+        var i, len, locChildren = this._children;
+        for(i = 0, len = locChildren.length; i< len; i++){
+            locChildren[i]._transformForRenderer();
+        }
+        locChildren = this._protectedChildren;
+        for( i = 0, len = locChildren.length; i< len; i++)
+            locChildren[i]._transformForRenderer();
+    };
 }
 
 /**

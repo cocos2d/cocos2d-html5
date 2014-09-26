@@ -726,3 +726,27 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
 cc.GLProgram.create = function (vShaderFileName, fShaderFileName) {
     return new cc.GLProgram(vShaderFileName, fShaderFileName);
 };
+
+/**
+ * <p>
+ *     Sets the shader program for this node
+ *
+ *     Since v2.0, each rendering node must set its shader program.
+ *     It should be set in initialize phase.
+ * </p>
+ * @function
+ * @param {cc.Node} node
+ * @param {cc.GLProgram} program The shader program which fetches from CCShaderCache.
+ * @example
+ * cc.setGLProgram(node, cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+ */
+cc.setProgram = function (node, program) {
+    node.shaderProgram = program;
+
+    var children = node.children;
+    if (!children)
+        return;
+
+    for (var i = 0; i < children.length; i++)
+        cc.setProgram(children[i], program);
+};
