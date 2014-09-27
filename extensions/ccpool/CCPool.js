@@ -63,7 +63,7 @@ cc.pool = /** @lends cc.pool# */{
             }
             if(obj.unuse)
                 obj.unuse();    //define by user.   use to initialize the state of objects.
-            obj.retain();//use for jsb
+            obj.retain && obj.retain();//use for jsb
             this._pool[pid].push(obj);
         }
     },
@@ -109,6 +109,7 @@ cc.pool = /** @lends cc.pool# */{
             var list = this._pool[pid];
             var args = Array.prototype.slice.call(arguments, 1);
             var obj = list.pop();
+            obj.release && obj.release();//use for jsb
             if(obj.reuse)
                 obj.reuse.apply(obj, args);       //define by user.
             return obj;
