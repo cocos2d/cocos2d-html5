@@ -71,6 +71,11 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this._armatureTransformDirty = true;
         this._realAnchorPointInPoints = cc.p(0, 0);
         name && ccs.Armature.prototype.init.call(this, name, parentBone);
+
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
+            this._rendererStartCmd = new cc.CustomRenderCmdCanvas(this, this._startRendererCmdForCanvas);
+            this._rendererEndCmd = new cc.CustomRenderCmdCanvas(this, this._endRendererCmdForCanvas);
+        }
     },
 
     /**
@@ -373,6 +378,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
      * @param  {CanvasRenderingContext2D | WebGLRenderingContext} ctx The render context
      */
     draw: function(ctx){
+        //TODO REMOVE THIS FUNCTION
         if (this._parentBone == null && this._batchNode == null) {
             //        CC_NODE_DRAW_SETUP();
         }
@@ -458,7 +464,43 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this.transform(context);
 
         this.sortAllChildren();
+
+        if(this._rendererStartCmd)
+            cc.renderer.pushRenderCommand(this._rendererStartCmd);
         this.draw(ctx);
+        if(this._rendererEndCmd)
+            cc.renderer.pushRenderCommand(this._rendererEndCmd);
+
+        // reset for next frame
+        this._cacheDirty = false;
+        this.arrivalOrder = 0;
+
+        context.restore();
+    },
+
+    _startRendererCmdForCanvas: function(ctx){
+        var context = ctx || cc._renderContext;
+        context.save();
+        this.transform(context);
+        var t = this._transformWorld;
+        ctx.transform(t.a, t.b, t.c, t.d, t.tx, -t.ty);
+
+        var locChildren = this._children;
+        for (var i = 0, len = locChildren.length; i< len; i++) {
+            var selBone = locChildren[i];
+            if (selBone && selBone.getDisplayRenderNode) {
+                var node = selBone.getDisplayRenderNode();
+
+                if (null == node)
+                    continue;
+
+                node.visit();
+            }
+        }
+    },
+
+    _endRendererCmdForCanvas: function(ctx){
+        var context = ctx || cc._renderContext;
 
         // reset for next frame
         this._cacheDirty = false;
