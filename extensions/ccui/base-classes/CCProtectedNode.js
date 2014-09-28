@@ -483,6 +483,42 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     cc.ProtectedNode.prototype.visit =  cc.ProtectedNode.prototype._visitForCanvas;
+    cc.ProtectedNode.prototype._transformForRenderer = function () {
+        var t = this.nodeToParentTransform(), worldT = this._transformWorld;
+        if(this._parent){
+            var pt = this._parent._transformWorld;
+            //worldT = cc.AffineTransformConcat(t, pt);
+            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
+            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
+            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
+            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
+            if(this._skewX || this._skewY){
+                var plt = this._parent._transform;
+                var xOffset = -(plt.b + plt.c) * t.ty ;
+                var yOffset = -(plt.b + plt.c) * t.tx;
+                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
+                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
+            }else{
+                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx);          //tx
+                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty);		  //ty
+            }
+        } else {
+            worldT.a = t.a;
+            worldT.b = t.b;
+            worldT.c = t.c;
+            worldT.d = t.d;
+            worldT.tx = t.tx;
+            worldT.ty = t.ty;
+        }
+        this._renderCmdDiry = false;
+        var i, len, locChildren = this._children;
+        for(i = 0, len = locChildren.length; i< len; i++){
+            locChildren[i]._transformForRenderer();
+        }
+        locChildren = this._protectedChildren;
+        for( i = 0, len = locChildren.length; i< len; i++)
+            locChildren[i]._transformForRenderer();
+    };
 }else{
     cc.ProtectedNode.prototype.visit =  cc.ProtectedNode.prototype._visitForWebGL;
     cc.ProtectedNode.prototype._transformForRenderer = function () {
