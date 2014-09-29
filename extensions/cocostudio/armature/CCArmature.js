@@ -494,7 +494,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
                 if (null == node)
                     continue;
 
-                node.visit();
+                node._transformForRenderer();
             }
         }
     },
@@ -725,6 +725,24 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
      */
     setVersion: function (version) {
         this.version = version;
+    },
+
+    _transformForRenderer: function(){
+
+        ccs.Node.prototype._transformForRenderer.call(this);
+
+        var locChildren = this._children;
+        for (var i = 0, len = locChildren.length; i< len; i++) {
+            var selBone = locChildren[i];
+            if (selBone && selBone.getDisplayRenderNode) {
+                var node = selBone.getDisplayRenderNode();
+
+                if (null == node)
+                    continue;
+
+                node._transformForRenderer();
+            }
+        }
     }
 });
 
