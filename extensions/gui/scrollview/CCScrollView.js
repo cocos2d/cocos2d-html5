@@ -445,6 +445,8 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         if (!this.isVisible())
             return;
 
+        this.setNodeDirty();
+
         if (this._touches.length === 1 && this._dragging) { // scrolling
             this._touchMoved = true;
             //var frameOriginal = this.getParent().convertToWorldSpace(this.getPosition());
