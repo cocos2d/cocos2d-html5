@@ -236,6 +236,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
             return;
         }
         this.setCurrentDecorativeDisplay(this._decoDisplayList[index]);
+        cc.renderer.childrenOrderDirty = true;
     },
 
     /**

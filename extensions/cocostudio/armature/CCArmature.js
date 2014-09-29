@@ -494,7 +494,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
                 if (null == node)
                     continue;
 
-                node.visit();
+                node._transformForRenderer();
             }
         }
     },
