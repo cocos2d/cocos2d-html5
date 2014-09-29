@@ -100,7 +100,7 @@ cc.ComponentContainer = cc.Class.extend(/** @lends cc.ComponentContainer# */{
     },
 
     _removeByComponent:function(component){
-        if(component)
+        if(!component)
             return false;
         component.onExit();
         component.setOwner(null);

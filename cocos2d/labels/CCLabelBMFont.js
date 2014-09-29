@@ -44,7 +44,7 @@ cc.LABEL_AUTOMATIC_WIDTH = -1;
  * <li>- scaled</li>
  * <li>- translated</li>
  * <li>- tinted</li>
- * <li>- chage the opacity</li>
+ * <li>- change the opacity</li>
  * <li>- It can be used as part of a menu item.</li>
  * <li>- anchorPoint can be used to align the "label"</li>
  * <li>- Supports AngelCode text format</li></ul></p>
@@ -368,10 +368,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
                 locChild.updateDisplayedColor(this._displayedColor);
             } else {
-                if(cc.sys._supportCanvasNewBlendModes)
-                    cc.Node.prototype.updateDisplayedColor.call(locChild, this._displayedColor);
-                else
-                    locChild.updateDisplayedColor(this._displayedColor);
+                cc.Node.prototype.updateDisplayedColor.call(locChild, this._displayedColor);
                 locChild.setNodeDirty();
             }
         }
@@ -1075,29 +1072,47 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
 var _p = cc.LabelBMFont.prototype;
 
-if(cc._renderType === cc._RENDER_TYPE_CANVAS && !cc.sys._supportCanvasNewBlendModes)
-    _p._changeTextureColor = function(){
-        if(cc._renderType == cc._RENDER_TYPE_WEBGL)
-            return;
-        var locElement, locTexture = this.getTexture();
-        if (locTexture && locTexture.getContentSize().width>0) {
-            locElement = locTexture.getHtmlElementObj();
-            if (!locElement)
+if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
+    if (!cc.sys._supportCanvasNewBlendModes) {
+        _p._changeTextureColor = function () {
+            if (cc._renderType == cc._RENDER_TYPE_WEBGL)
                 return;
-            var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
-            if (cacheTextureForColor) {
-                if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
-                    cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, null, locElement);
-                else{
-                    locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor);
-                    locTexture = new cc.Texture2D();
-                    locTexture.initWithElement(locElement);
-                    locTexture.handleLoadedTexture();
-                    this.setTexture(locTexture);
+            var locElement, locTexture = this.getTexture();
+            if (locTexture && locTexture.getContentSize().width > 0) {
+                locElement = locTexture.getHtmlElementObj();
+                if (!locElement)
+                    return;
+                var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
+                if (cacheTextureForColor) {
+                    if (locElement instanceof HTMLCanvasElement && !this._rectRotated) {
+                        cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, null, locElement);
+                        this.setTexture(locTexture);
+                    } else {
+                        locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor);
+                        locTexture = new cc.Texture2D();
+                        locTexture.initWithElement(locElement);
+                        locTexture.handleLoadedTexture();
+                        this.setTexture(locTexture);
+                    }
                 }
             }
+        };
+    }
+    _p.setTexture = function (texture) {
+        var locChildren = this._children;
+        var locDisplayedColor = this._displayedColor;
+        for (var i = 0; i < locChildren.length; i++) {
+            var selChild = locChildren[i];
+            var childDColor = selChild._displayedColor;
+            if (this._textureForCanvas != selChild._texture && (childDColor.r !== locDisplayedColor.r ||
+                childDColor.g !== locDisplayedColor.g || childDColor.b !== locDisplayedColor.b))
+                continue;
+            selChild.texture = texture;
         }
+        this._textureForCanvas = texture;
     };
+}
+
 
 /** @expose */
 _p.string;

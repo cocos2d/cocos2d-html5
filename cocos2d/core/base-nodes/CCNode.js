@@ -1104,8 +1104,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} Var  The arrival order.
      */
     setOrderOfArrival: function (Var) {
-        if(this.arrivalOrder == NaN)
-            debugger;
         this.arrivalOrder = Var;
     },
 
@@ -1271,7 +1269,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         cc.assert(child._parent === null, "child already added. It can't be added again");
 
         this._addChildHelper(child, localZOrder, tag, name, setTag);
-
     },
 
     _addChildHelper: function(child, localZOrder, tag, name, setTag){
@@ -1560,6 +1557,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._running = false;
         this.pause();
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onExit);
+        this.removeAllComponents();
     },
 
     // actions
@@ -2023,7 +2021,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Component} The component found
      */
     getComponent: function (name) {
-        return this._componentContainer.getComponent(name);
+        if(this._componentContainer)
+            return this._componentContainer.getComponent(name);
+        return null;
     },
 
     /**
@@ -2032,7 +2032,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {cc.Component} component
      */
     addComponent: function (component) {
-        this._componentContainer.add(component);
+        if(this._componentContainer)
+            this._componentContainer.add(component);
     },
 
     /**
@@ -2041,15 +2042,18 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {String|cc.Component} component
      */
     removeComponent: function (component) {
-        return this._componentContainer.remove(component);
+        if(this._componentContainer)
+            return this._componentContainer.remove(component);
+        return false;
     },
 
     /**
-     * Removes all components
+     * Removes all components of cc.Node, it called when cc.Node is exiting from stage.
      * @function
      */
     removeAllComponents: function () {
-        this._componentContainer.removeAll();
+        if(this._componentContainer)
+            this._componentContainer.removeAll();
     },
 
     grid: null,

@@ -736,6 +736,15 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     },
 
     /**
+     * Get the title renderer.
+     * title ttf object.
+     * @returns {cc.LabelTTF}
+     */
+    getTitleRenderer: function(){
+        return this._titleRenderer;
+    },
+
+    /**
      * Sets title text to ccui.Button
      * @param {String} text
      */

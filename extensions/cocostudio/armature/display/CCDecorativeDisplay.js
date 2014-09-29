@@ -33,18 +33,25 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
     _colliderDetector: null,
     _displayData: null,
 
+    /**
+     * Construction of ccs.DecorativeDisplay
+     */
     ctor:function () {
         this._display = null;
         this._colliderDetector = null;
         this._displayData = null;
     },
 
+    /**
+     * Initializes a ccs.DecorativeDisplay
+     * @returns {boolean}
+     */
     init:function () {
         return true;
     },
 
     /**
-     * sets display node
+     * Sets display node to decorative
      * @param {cc.Node} display
      */
     setDisplay:function (display) {
@@ -52,7 +59,7 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
     },
 
     /**
-     * gets the display node
+     * Returns the display node
      * @returns {cc.Node}
      */
     getDisplay:function () {
@@ -60,7 +67,7 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
     },
 
     /**
-     * sets collide detector
+     * Sets collide detector
      * @param {ccs.ColliderDetector} colliderDetector
      */
     setColliderDetector:function (colliderDetector) {
@@ -68,7 +75,7 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
     },
 
     /**
-     * sets collide detector
+     * Returns collide detector
      * @returns {ccs.ColliderDetector}
      */
     getColliderDetector:function () {
@@ -76,7 +83,7 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
     },
 
     /**
-     * sets display data
+     * Sets display data
      * @param {ccs.DisplayData} displayData
      */
     setDisplayData:function (displayData) {
@@ -84,7 +91,7 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
     },
 
     /**
-     * gets display data
+     * Returns display data
      * @returns {ccs.DisplayData}
      */
     getDisplayData:function () {
@@ -99,7 +106,7 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
 });
 
 /**
- * allocates and initializes a decorative display.
+ * Allocates and initializes a decorative display.
  * @return {ccs.DecorativeDisplay}
  * @example
  * // example

@@ -193,6 +193,10 @@ ccs.uiReader = /** @lends ccs.uiReader# */{
         return this._filePath;
     },
 
+    setFilePath: function(path){
+        this._filePath = path;
+    },
+
     /**
      * Returns the parsed object map.
      * @returns {Object}
@@ -678,15 +682,17 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend(/** @lends cc
     setPropsForLabelAtlasFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var labelAtlas = widget;
-        var sv = (options["stringValue"] !== undefined);
-        var cmf = (options["charMapFile"] !== undefined);
-        var iw = (options["itemWidth"] !== undefined);
-        var ih = (options["itemHeight"] !== undefined);
-        var scm = (options["startCharMap"] !== undefined);
-        if (sv && cmf && iw && ih && scm && options["charMapFile"]) {
-            var cmft = options["charMapFile"];
+
+        var cmft = options["charMapFileData"], svValue = options["stringValue"], iwValue = options["itemWidth"];
+        var ihValue = options["itemHeight"], scmValue = options["startCharMap"];
+        var sv = (svValue !== undefined);
+        var cmf = (cmft !== undefined);
+        var iw = (iwValue !== undefined);
+        var ih = (ihValue !== undefined);
+        var scm = (scmValue !== undefined);
+        if (sv && cmf && iw && ih && scm && cmft) {
             var cmf_tp = this._filePath + cmft;
-            labelAtlas.setProperty(options["stringValue"], cmf_tp, options["itemWidth"], options["itemHeight"], options["startCharMap"]);
+            labelAtlas.setProperty(svValue, cmf_tp, iwValue, ihValue, scmValue);
         }
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     },

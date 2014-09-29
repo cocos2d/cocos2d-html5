@@ -27,6 +27,7 @@
  * @ignore
  */
 ccs.PT_RATIO = 32;
+
 /**
  * Base class for ccs.ColliderFilter
  * @class
@@ -38,16 +39,17 @@ ccs.ColliderFilter = ccs.Class.extend(/** @lends ccs.ColliderFilter# */{
     _categoryBits: 0,
     _groupIndex: 0,
     _maskBits: 0,
+
     ctor: function (collisionType, group) {
         this._collisionType = collisionType || 0;
         this._group = group || 0;
     },
+
     updateShape: function (shape) {
         if(shape instanceof cp.Shape){
             shape.collision_type = this._collisionType;
             shape.group = this._group;
         }else if(shape instanceof Box2D.b2FilterData){
-
             var filter = new Box2D.b2FilterData();
             filter.categoryBits = this._categoryBits;
             filter.groupIndex = this._groupIndex;
@@ -57,6 +59,7 @@ ccs.ColliderFilter = ccs.Class.extend(/** @lends ccs.ColliderFilter# */{
         }
     }
 });
+
 /**
  * Base class for ccs.ColliderBody
  * @class

@@ -380,7 +380,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
      * @param {cc.Size} outlineSize
      */
     enableOutline: function(outlineColor, outlineSize){
-        this._labelRenderer.enableOutline(outlineColor, outlineSize);
+        this._labelRenderer.enableStroke(outlineColor, outlineSize);
     },
 
     /**

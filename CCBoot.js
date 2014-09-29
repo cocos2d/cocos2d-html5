@@ -23,6 +23,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * The main namespace of Cocos2d-JS, all engine core classes, functions, properties and constants are defined in this namespace
+ * @namespace
+ * @name cc
+ */
 var cc = cc || {};
 cc._tmp = cc._tmp || {};
 cc._LogInfos = {};
@@ -265,7 +270,10 @@ cc.AsyncPool = function(srcObj, limit, iterator, onEnd, target){
     }
 };
 
-cc.async = {
+/**
+ * @class
+ */
+cc.async = /** @lends cc.async# */{
     /**
      * Do tasks series.
      * @param {Array|Object} tasks
@@ -305,19 +313,21 @@ cc.async = {
      */
     waterfall : function(tasks, cb, target){
         var args = [];
+        var lastResults = [null];//the array to store the last results
         var asyncPool = new cc.AsyncPool(tasks, 1,
             function (func, index, cb1) {
                 args.push(function (err) {
                     args = Array.prototype.slice.call(arguments, 1);
+                    if(tasks.length - 1 == index) lastResults = lastResults.concat(args);//while the last task
                     cb1.apply(null, arguments);
                 });
                 func.apply(target, args);
-            }, function (err, results) {
+            }, function (err) {
                 if (!cb)
                     return;
                 if (err)
                     return cb.call(target, err);
-                cb.call(target, null, results[results.length - 1]);
+                cb.apply(target, lastResults);
             });
         asyncPool.flow();
         return asyncPool;
@@ -360,7 +370,10 @@ cc.async = {
 //+++++++++++++++++++++++++something about async end+++++++++++++++++++++++++++++++++
 
 //+++++++++++++++++++++++++something about path begin++++++++++++++++++++++++++++++++
-cc.path = {
+/**
+ * @class
+ */
+cc.path = /** @lends cc.path# */{
     /**
      * Join strings to be a path.
      * @example
@@ -502,7 +515,11 @@ cc.path = {
 //+++++++++++++++++++++++++something about path end++++++++++++++++++++++++++++++++
 
 //+++++++++++++++++++++++++something about loader start+++++++++++++++++++++++++++
-cc.loader = {
+/**
+ * Loader for resource loading process. It's a singleton object.
+ * @class
+ */
+cc.loader = /** @lends cc.loader# */{
     _jsCache: {},//cache for js
     _register: {},//register of loaders
     _langPathCache: {},//cache for lang path
@@ -735,7 +752,7 @@ cc.loader = {
         var ecb = function () {
             this.removeEventListener('error', ecb, false);
 
-            if(img.crossOrigin.toLowerCase() == "anonymous"){
+            if(img.crossOrigin && img.crossOrigin.toLowerCase() == "anonymous"){
                 opt.isCrossOrigin = false;
                 cc.loader.loadImg(url, opt, cb);
             }else{
@@ -772,7 +789,10 @@ cc.loader = {
         var obj = self.cache[url];
         if (obj)
             return cb(null, obj);
-        var loader = self._register[type.toLowerCase()];
+        var loader = null;
+        if (type) {
+            loader = self._register[type.toLowerCase()];
+        }
         if (!loader) {
             cc.error("loader for [" + type + "] not exists!");
             return cb();
@@ -977,12 +997,10 @@ cc.formatStr = function(){
     var str = args[0];
     var needToFormat = true;
     if(typeof str == "object"){
-        str = JSON.stringify(str);
         needToFormat = false;
     }
     for(var i = 1; i < l; ++i){
         var arg = args[i];
-        arg = typeof arg == "object" ? JSON.stringify(arg) : arg;
         if(needToFormat){
             while(true){
                 var result = null;
@@ -1109,9 +1127,7 @@ cc._initSys = function (config, CONFIG_KEY) {
 
     /**
      * System variables
-     * @memberof cc
-     * @global
-     * @type {Object}
+     * @namespace
      * @name cc.sys
      */
     cc.sys = {};
@@ -1120,6 +1136,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     /**
      * English language code
      * @memberof cc.sys
+     * @name LANGUAGE_ENGLISH
      * @constant
      * @type {Number}
      */
@@ -1128,6 +1145,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     /**
      * Chinese language code
      * @memberof cc.sys
+     * @name LANGUAGE_CHINESE
      * @constant
      * @type {Number}
      */
@@ -1136,6 +1154,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     /**
      * French language code
      * @memberof cc.sys
+     * @name LANGUAGE_FRENCH
      * @constant
      * @type {Number}
      */
@@ -1144,6 +1163,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     /**
      * Italian language code
      * @memberof cc.sys
+     * @name LANGUAGE_ITALIAN
      * @constant
      * @type {Number}
      */
@@ -1152,6 +1172,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     /**
      * German language code
      * @memberof cc.sys
+     * @name LANGUAGE_GERMAN
      * @constant
      * @type {Number}
      */
@@ -1160,14 +1181,25 @@ cc._initSys = function (config, CONFIG_KEY) {
     /**
      * Spanish language code
      * @memberof cc.sys
+     * @name LANGUAGE_SPANISH
      * @constant
      * @type {Number}
      */
     sys.LANGUAGE_SPANISH = "es";
 
     /**
+     * Spanish language code
+     * @memberof cc.sys
+     * @name LANGUAGE_DUTCH
+     * @constant
+     * @type {Number}
+     */
+    sys.LANGUAGE_DUTCH = "du";
+
+    /**
      * Russian language code
      * @memberof cc.sys
+     * @name LANGUAGE_RUSSIAN
      * @constant
      * @type {Number}
      */
@@ -1176,6 +1208,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     /**
      * Korean language code
      * @memberof cc.sys
+     * @name LANGUAGE_KOREAN
      * @constant
      * @type {Number}
      */
@@ -1184,6 +1217,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     /**
      * Japanese language code
      * @memberof cc.sys
+     * @name LANGUAGE_JAPANESE
      * @constant
      * @type {Number}
      */
@@ -1192,6 +1226,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     /**
      * Hungarian language code
      * @memberof cc.sys
+     * @name LANGUAGE_HUNGARIAN
      * @constant
      * @type {Number}
      */
@@ -1200,6 +1235,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     /**
      * Portuguese language code
      * @memberof cc.sys
+     * @name LANGUAGE_PORTUGUESE
      * @constant
      * @type {Number}
      */
@@ -1208,6 +1244,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     /**
      * Arabic language code
      * @memberof cc.sys
+     * @name LANGUAGE_ARABIC
      * @constant
      * @type {Number}
      */
@@ -1216,6 +1253,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     /**
      * Norwegian language code
      * @memberof cc.sys
+     * @name LANGUAGE_NORWEGIAN
      * @constant
      * @type {Number}
      */
@@ -1224,6 +1262,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     /**
      * Polish language code
      * @memberof cc.sys
+     * @name LANGUAGE_POLISH
      * @constant
      * @type {Number}
      */
@@ -1231,44 +1270,57 @@ cc._initSys = function (config, CONFIG_KEY) {
 
     /**
      * @memberof cc.sys
+     * @name OS_WINDOWS
      * @constant
      * @type {string}
      */
     sys.OS_WINDOWS = "Windows";
     /**
      * @memberof cc.sys
+     * @name OS_IOS
      * @constant
      * @type {string}
      */
     sys.OS_IOS = "iOS";
     /**
      * @memberof cc.sys
+     * @name OS_OSX
      * @constant
      * @type {string}
      */
     sys.OS_OSX = "OS X";
     /**
      * @memberof cc.sys
+     * @name OS_UNIX
      * @constant
      * @type {string}
      */
     sys.OS_UNIX = "UNIX";
     /**
      * @memberof cc.sys
+     * @name OS_LINUX
      * @constant
      * @type {string}
      */
     sys.OS_LINUX = "Linux";
     /**
      * @memberof cc.sys
+     * @name OS_ANDROID
      * @constant
      * @type {string}
      */
     sys.OS_ANDROID = "Android";
+    /**
+     * @memberof cc.sys
+     * @name OS_UNKNOWN
+     * @constant
+     * @type {string}
+     */
     sys.OS_UNKNOWN = "Unknown";
 
     /**
      * @memberof cc.sys
+     * @name WINDOWS
      * @constant
      * @default
      * @type {Number}
@@ -1276,6 +1328,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.WINDOWS = 0;
     /**
      * @memberof cc.sys
+     * @name LINUX
      * @constant
      * @default
      * @type {Number}
@@ -1283,6 +1336,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.LINUX = 1;
     /**
      * @memberof cc.sys
+     * @name MACOS
      * @constant
      * @default
      * @type {Number}
@@ -1290,6 +1344,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.MACOS = 2;
     /**
      * @memberof cc.sys
+     * @name ANDROID
      * @constant
      * @default
      * @type {Number}
@@ -1297,6 +1352,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.ANDROID = 3;
     /**
      * @memberof cc.sys
+     * @name IPHONE
      * @constant
      * @default
      * @type {Number}
@@ -1304,6 +1360,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.IPHONE = 4;
     /**
      * @memberof cc.sys
+     * @name IPAD
      * @constant
      * @default
      * @type {Number}
@@ -1311,6 +1368,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.IPAD = 5;
     /**
      * @memberof cc.sys
+     * @name BLACKBERRY
      * @constant
      * @default
      * @type {Number}
@@ -1318,6 +1376,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.BLACKBERRY = 6;
     /**
      * @memberof cc.sys
+     * @name NACL
      * @constant
      * @default
      * @type {Number}
@@ -1325,6 +1384,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.NACL = 7;
     /**
      * @memberof cc.sys
+     * @name EMSCRIPTEN
      * @constant
      * @default
      * @type {Number}
@@ -1332,6 +1392,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.EMSCRIPTEN = 8;
     /**
      * @memberof cc.sys
+     * @name TIZEN
      * @constant
      * @default
      * @type {Number}
@@ -1339,6 +1400,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.TIZEN = 9;
     /**
      * @memberof cc.sys
+     * @name WINRT
      * @constant
      * @default
      * @type {Number}
@@ -1346,6 +1408,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.WINRT = 10;
     /**
      * @memberof cc.sys
+     * @name WP8
      * @constant
      * @default
      * @type {Number}
@@ -1353,6 +1416,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.WP8 = 11;
     /**
      * @memberof cc.sys
+     * @name MOBILE_BROWSER
      * @constant
      * @default
      * @type {Number}
@@ -1360,6 +1424,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.MOBILE_BROWSER = 100;
     /**
      * @memberof cc.sys
+     * @name DESKTOP_BROWSER
      * @constant
      * @default
      * @type {Number}
@@ -1377,6 +1442,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.BROWSER_TYPE_BAIDU = "baidubrowser";
     sys.BROWSER_TYPE_MAXTHON = "maxthon";
     sys.BROWSER_TYPE_OPERA = "opera";
+    sys.BROWSER_TYPE_OUPENG = "oupeng";
     sys.BROWSER_TYPE_MIUI = "miuibrowser";
     sys.BROWSER_TYPE_FIREFOX = "firefox";
     sys.BROWSER_TYPE_SAFARI = "safari";
@@ -1385,36 +1451,52 @@ cc._initSys = function (config, CONFIG_KEY) {
 
     /**
      * Is native ? This is set to be true in jsb auto.
-     * @constant
+     * @memberof cc.sys
+     * @name isNative
      * @type {Boolean}
      */
     sys.isNative = false;
 
-    /**
-     * WhiteList of browser for WebGL.
-     * @constant
-     * @type {Array}
-     */
-    var webglWhiteList = [sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_SAFARI];
+    var browserSupportWebGL = [sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_SAFARI];
+    var osSupportWebGL = [sys.OS_IOS, sys.OS_WINDOWS, sys.OS_OSX, sys.OS_LINUX];
     var multipleAudioWhiteList = [
-        sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME,
+        sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_BAIDU_APP,
         sys.BROWSER_TYPE_SAFARI, sys.BROWSER_TYPE_UC, sys.BROWSER_TYPE_QQ, sys.BROWSER_TYPE_MOBILE_QQ, sys.BROWSER_TYPE_IE
     ];
 
     var win = window, nav = win.navigator, doc = document, docEle = doc.documentElement;
     var ua = nav.userAgent.toLowerCase();
 
+    /**
+     * Indicate whether system is mobile system
+     * @memberof cc.sys
+     * @name isMobile
+     * @type {Boolean}
+     */
     sys.isMobile = ua.indexOf('mobile') != -1 || ua.indexOf('android') != -1;
+
+    /**
+     * Indicate the running platform
+     * @memberof cc.sys
+     * @name platform
+     * @type {Number}
+     */
     sys.platform = sys.isMobile ? sys.MOBILE_BROWSER : sys.DESKTOP_BROWSER;
 
     var currLanguage = nav.language;
     currLanguage = currLanguage ? currLanguage : nav.browserLanguage;
     currLanguage = currLanguage ? currLanguage.split("-")[0] : sys.LANGUAGE_ENGLISH;
+
+    /**
+     * Indicate the current language of the running system
+     * @memberof cc.sys
+     * @name language
+     * @type {String}
+     */
     sys.language = currLanguage;
 
-    /** The type of browser */
     var browserType = sys.BROWSER_TYPE_UNKNOWN;
-    var browserTypes = ua.match(/micromessenger|qqbrowser|mqqbrowser|ucbrowser|360browser|baiduboxapp|baidubrowser|maxthon|trident|opera|miuibrowser|firefox/i)
+    var browserTypes = ua.match(/micromessenger|qqbrowser|mqqbrowser|ucbrowser|360browser|baiduboxapp|baidubrowser|maxthon|trident|oupeng|opera|miuibrowser|firefox/i)
         || ua.match(/chrome|safari/i);
     if (browserTypes && browserTypes.length > 0) {
         browserType = browserTypes[0].toLowerCase();
@@ -1424,17 +1506,43 @@ cc._initSys = function (config, CONFIG_KEY) {
             browserType = sys.BROWSER_TYPE_ANDROID;
         else if (browserType == "trident") browserType = sys.BROWSER_TYPE_IE;
     }
+    /**
+     * Indicate the running browser type
+     * @memberof cc.sys
+     * @name browserType
+     * @type {String}
+     */
     sys.browserType = browserType;
 
+    // Get the os of system
+    var iOS = ( ua.match(/(iPad|iPhone|iPod)/i) ? true : false );
+    var isAndroid = ua.match(/android/i) || nav.platform.match(/android/i) ? true : false;
+    var osName = sys.OS_UNKNOWN;
+    if (nav.appVersion.indexOf("Win") != -1) osName = sys.OS_WINDOWS;
+    else if (iOS) osName = sys.OS_IOS;
+    else if (nav.appVersion.indexOf("Mac") != -1) osName = sys.OS_OSX;
+    else if (nav.appVersion.indexOf("X11") != -1) osName = sys.OS_UNIX;
+    else if (isAndroid) osName = sys.OS_ANDROID;
+    else if (nav.appVersion.indexOf("Linux") != -1) osName = sys.OS_LINUX;
+
+    /**
+     * Indicate the running os name
+     * @memberof cc.sys
+     * @name os
+     * @type {String}
+     */
+    sys.os = osName;
+
     sys._supportMultipleAudio = multipleAudioWhiteList.indexOf(sys.browserType) > -1;
+
 
     //++++++++++++++++++something about cc._renderTYpe and cc._supportRender begin++++++++++++++++++++++++++++
     var userRenderMode = parseInt(config[CONFIG_KEY.renderMode]);
     var renderType = cc._RENDER_TYPE_WEBGL;
     var tempCanvas = cc.newElement("Canvas");
     cc._supportRender = true;
-    var notInWhiteList = webglWhiteList.indexOf(sys.browserType) == -1;
-    if (userRenderMode === 1 || (userRenderMode === 0 && (sys.isMobile || notInWhiteList)) || (location.origin == "file://")) {
+    var notSupportGL = browserSupportWebGL.indexOf(sys.browserType) == -1 || osSupportWebGL.indexOf(sys.os) == -1;
+    if (userRenderMode === 1 || (userRenderMode === 0 && notSupportGL) || (location.origin == "file://")) {
         renderType = cc._RENDER_TYPE_CANVAS;
     }
 
@@ -1478,7 +1586,7 @@ cc._initSys = function (config, CONFIG_KEY) {
         }
     }
     cc._renderType = renderType;
-    //++++++++++++++++++something about cc._renderTYpe and cc._supportRender end++++++++++++++++++++++++++++++
+    //++++++++++++++++++something about cc._renderType and cc._supportRender end++++++++++++++++++++++++++++++
 
     // check if browser supports Web Audio
     // check Web Audio's context
@@ -1488,7 +1596,11 @@ cc._initSys = function (config, CONFIG_KEY) {
         sys._supportWebAudio = false;
     }
 
-    /** LocalStorage is a local storage component.
+    /**
+     * cc.sys.localStorage is a local storage component.
+     * @memberof cc.sys
+     * @name localStorage
+     * @type {Object}
      */
     try {
         var localStorage = sys.localStorage = win.localStorage;
@@ -1515,33 +1627,42 @@ cc._initSys = function (config, CONFIG_KEY) {
     if (win.DeviceMotionEvent || win.DeviceOrientationEvent)
         capabilities["accelerometer"] = true;
 
-    /** Get the os of system */
-    var iOS = ( ua.match(/(iPad|iPhone|iPod)/i) ? true : false );
-    var isAndroid = ua.match(/android/i) || nav.platform.match(/android/i) ? true : false;
-    var osName = sys.OS_UNKNOWN;
-    if (nav.appVersion.indexOf("Win") != -1) osName = sys.OS_WINDOWS;
-    else if (iOS) osName = sys.OS_IOS;
-    else if (nav.appVersion.indexOf("Mac") != -1) osName = sys.OS_OSX;
-    else if (nav.appVersion.indexOf("X11") != -1) osName = sys.OS_UNIX;
-    else if (isAndroid) osName = sys.OS_ANDROID;
-    else if (nav.appVersion.indexOf("Linux") != -1) osName = sys.OS_LINUX;
-    sys.os = osName;
-
-    // Forces the garbage collector
+    /**
+     * Forces the garbage collection
+     * @memberof cc.sys
+     * @name garbageCollect
+     * @function
+     */
     sys.garbageCollect = function () {
         // N/A in cocos2d-html5
     };
 
-    // Dumps rooted objects
+    /**
+     * Dumps rooted objects
+     * @memberof cc.sys
+     * @name dumpRoot
+     * @function
+     */
     sys.dumpRoot = function () {
         // N/A in cocos2d-html5
     };
 
-    // restarts the JS VM
+    /**
+     * Restart the JS VM
+     * @memberof cc.sys
+     * @name restartVM
+     * @function
+     */
     sys.restartVM = function () {
         // N/A in cocos2d-html5
     };
 
+    /**
+     * Dump system informations
+     * @memberof cc.sys
+     * @name dump
+     * @function
+     */
     sys.dump = function () {
         var self = this;
         var str = "";
@@ -1806,12 +1927,10 @@ cc._setContextMenuEnable = function (enabled) {
 
 /**
  * An object to boot the game.
- * @memberof cc
- * @global
- * @type {Object}
+ * @class
  * @name cc.game
  */
-cc.game = {
+cc.game = /** @lends cc.game# */{
     DEBUG_MODE_NONE: 0,
     DEBUG_MODE_INFO: 1,
     DEBUG_MODE_WARN: 2,
@@ -1879,10 +1998,7 @@ cc.game = {
         self._paused = true;
         self._runMainLoop();
     },
-    /**
-     * Run game.
-     * @private
-     */
+    //Run game.
     _runMainLoop: function () {
         var self = this, callback, config = self.config, CONFIG_KEY = self.CONFIG_KEY,
             director = cc.director;
@@ -1937,11 +2053,6 @@ cc.game = {
             }, false);
     },
 
-    /**
-     * Init config.
-     * @returns {*}
-     * @private
-     */
     _initConfig: function () {
         var self = this, CONFIG_KEY = self.CONFIG_KEY;
         var _init = function (cfg) {
