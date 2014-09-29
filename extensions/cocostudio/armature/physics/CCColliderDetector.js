@@ -331,8 +331,10 @@ ccs.ColliderDetector = ccs.Class.extend(/** @lends ccs.ColliderDetector# */{
                     var b = shape.verts[(j + 1) % shape.verts.length];
                     var n = cp.v.normalize(cp.v.perp(cp.v.sub(b, shape.verts[j])));
 
-                    shape.axes[j].n = n;
-                    shape.axes[j].d = cp.v.dot(n, shape.verts[j]);
+                    if(shape.axes){
+                        shape.axes[j].n = n;
+                        shape.axes[j].d = cp.v.dot(n, shape.verts[j]);
+                    }
 //                    var b = shape.verts[(i + 1) % shape.numVerts];
 //                    var n = cp.v.normalize(cp.v.perp(cp.v.sub(b, shape.verts[i])));
 //

@@ -610,7 +610,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 if (able){
                     this._clippingStencil = cc.DrawNode.create();
                     if(cc._renderType === cc._RENDER_TYPE_CANVAS)
-                        this._clippingStencil.draw = this.__stencilDraw.bind(this);
+                        this._clippingStencil._rendererCmd.rendering = this.__stencilDraw.bind(this);
                     if (this._running)
                         this._clippingStencil.onEnter();
                     this._setStencilClippingSize(this._contentSize);
