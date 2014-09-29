@@ -27,27 +27,6 @@
  Created by Jung Sang-Taik on 2012-03-16
  ****************************************************************************/
 
-cc.Scale9SpriteStartCanvasCmd = function(node){
-    this._node = node;
-};
-
-cc.Scale9SpriteStartCanvasCmd.prototype.rendering = function(ctx){
-    ctx = ctx || cc._renderContext;
-
-    var p = this._node._transformWorld;
-    ctx.save();
-    ctx.transform(p.a, p.b, p.c, p.d, p.tx, -p.ty);
-};
-
-cc.Scale9SpriteEndCanvasCmd = function(node){
-    this._node = node;
-};
-
-cc.Scale9SpriteEndCanvasCmd.prototype.rendering = function(ctx){
-    ctx = ctx || cc._renderContext;
-    ctx.restore();
-};
-
 /**
  * A 9-slice sprite for cocos2d.
  *
@@ -238,10 +217,6 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             contentSizeChanged = true;
         }
 
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-            cc.renderer.pushRenderCommand(this._rendererStartCanvasCmd);
-        }
-
         //cc._renderContext = this._cacheContext;
         cc.view._setScaleXYForRenderTexture();
         this._scale9Image.visit(this._cacheContext);
@@ -256,7 +231,8 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     /**
-     * The constructor of cc.Scale9Sprite. Override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+     * Constructor function. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+     * @function
      * @param {string|cc.SpriteFrame} file file name of texture or a SpriteFrame
      * @param {cc.Rect} rect
      * @param {cc.Rect} capInsets
@@ -272,12 +248,20 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         this._capInsets = cc.rect(0, 0, 0, 0);
         this._loadedEventListeners = [];
 
-
         //cache
         if(cc._renderType === cc._RENDER_TYPE_CANVAS){
 
-            this._rendererCmd = new cc.Scale9SpriteEndCanvasCmd(this);
-            this._rendererStartCanvasCmd = new cc.Scale9SpriteStartCanvasCmd(this);
+            this._rendererStartCanvasCmd = new cc.CustomRenderCmdCanvas(this, function(ctx){
+                ctx = ctx || cc._renderContext;
+
+                var p = this._transformWorld;
+                ctx.save();
+                ctx.transform(p.a, p.b, p.c, p.d, p.tx, -p.ty);
+            });
+            this._rendererEndCanvasCmd = new cc.CustomRenderCmdCanvas(this, function(ctx){
+                ctx = ctx || cc._renderContext;
+                ctx.restore();
+            });
 
             var locCacheCanvas = this._cacheCanvas = cc.newElement('canvas');
             locCacheCanvas.width = 1;
@@ -322,6 +306,14 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         return this._preferredSize.height;
     },
     setPreferredSize: function (preferredSize) {
+
+        if (this._positionsAreDirty) {
+            this._updatePositions();
+            this._positionsAreDirty = false;
+            this._scale9Dirty = true;
+        }
+
+
         this.setContentSize(preferredSize);
         this._preferredSize = preferredSize;
     },
@@ -392,7 +384,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
                         parentColor.r !== 255 ||
                         parentColor.g !== 255 ||
                         parentColor.b !== 255
-                    ){
+                        ){
                         selChild._changeTextureColor();
                         selChild._setNodeDirtyForCache();
                     }
@@ -508,18 +500,31 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     visit: function (ctx) {
+        if(!this._visible){
+            return;
+        }
+
         if (this._positionsAreDirty) {
             this._updatePositions();
             this._positionsAreDirty = false;
             this._scale9Dirty = true;
         }
-        if(this._scale9Dirty && cc._renderType === cc._RENDER_TYPE_CANVAS){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
+            cc.renderer.pushRenderCommand(this._rendererStartCanvasCmd);
             this._scale9Dirty = false;
             this._cacheScale9Sprite();
+
+            cc.Node.prototype.visit.call(this, ctx);
+            cc.renderer.pushRenderCommand(this._rendererEndCanvasCmd);
+        }else{
+            cc.Node.prototype.visit.call(this, ctx);
         }
-        cc.Node.prototype.visit.call(this, ctx);
     },
 
+    /**
+     * Initializes a ccui.Scale9Sprite. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
+     * @returns {boolean}
+     */
     init: function () {
         return this.initWithBatchNode(null, cc.rect(0, 0, 0, 0), false, cc.rect(0, 0, 0, 0));
     },
@@ -570,7 +575,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         }
 
         if(!file)
-            throw "cc.Scale9Sprite.initWithFile(): file should be non-null";
+            throw "ccui.Scale9Sprite.initWithFile(): file should be non-null";
 
         var texture = cc.textureCache.getTextureForKey(file);
         if (!texture) {
@@ -607,7 +612,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
      */
     initWithSpriteFrame: function (spriteFrame, capInsets) {
         if(!spriteFrame || !spriteFrame.getTexture())
-            throw "cc.Scale9Sprite.initWithSpriteFrame(): spriteFrame should be non-null and its texture should be non-null";
+            throw "ccui.Scale9Sprite.initWithSpriteFrame(): spriteFrame should be non-null and its texture should be non-null";
 
         capInsets = capInsets || cc.rect(0, 0, 0, 0);
         var locLoaded = spriteFrame.textureLoaded();
@@ -640,12 +645,12 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
      */
     initWithSpriteFrameName: function (spriteFrameName, capInsets) {
         if(!spriteFrameName)
-            throw "cc.Scale9Sprite.initWithSpriteFrameName(): spriteFrameName should be non-null";
+            throw "ccui.Scale9Sprite.initWithSpriteFrameName(): spriteFrameName should be non-null";
         capInsets = capInsets || cc.rect(0, 0, 0, 0);
 
         var frame = cc.spriteFrameCache.getSpriteFrame(spriteFrameName);
         if (frame == null) {
-            cc.log("cc.Scale9Sprite.initWithSpriteFrameName(): can't find the sprite frame by spriteFrameName");
+            cc.log("ccui.Scale9Sprite.initWithSpriteFrameName(): can't find the sprite frame by spriteFrameName");
             return false;
         }
 
@@ -661,7 +666,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
      * @param {cc.Rect} capInsets The values to use for the cap insets.
      */
     resizableSpriteWithCapInsets: function (capInsets) {
-        var pReturn = new cc.Scale9Sprite();
+        var pReturn = new ccui.Scale9Sprite();
         if (pReturn && pReturn.initWithBatchNode(this._scale9Image, this._spriteRect, false, capInsets))
             return pReturn;
         return null;
@@ -848,47 +853,47 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             // Centre
             this._centre = new cc.Sprite();
             this._centre.initWithTexture(selTexture, centerbounds);
-            locScale9Image.addChild(this._centre, 0, cc.Scale9Sprite.POSITIONS_CENTRE);
+            locScale9Image.addChild(this._centre, 0, ccui.Scale9Sprite.POSITIONS_CENTRE);
 
             // Top
             this._top = new cc.Sprite();
             this._top.initWithTexture(selTexture, centertopbounds);
-            locScale9Image.addChild(this._top, 1, cc.Scale9Sprite.POSITIONS_TOP);
+            locScale9Image.addChild(this._top, 1, ccui.Scale9Sprite.POSITIONS_TOP);
 
             // Bottom
             this._bottom = new cc.Sprite();
             this._bottom.initWithTexture(selTexture, centerbottombounds);
-            locScale9Image.addChild(this._bottom, 1, cc.Scale9Sprite.POSITIONS_BOTTOM);
+            locScale9Image.addChild(this._bottom, 1, ccui.Scale9Sprite.POSITIONS_BOTTOM);
 
             // Left
             this._left = new cc.Sprite();
             this._left.initWithTexture(selTexture, leftcenterbounds);
-            locScale9Image.addChild(this._left, 1, cc.Scale9Sprite.POSITIONS_LEFT);
+            locScale9Image.addChild(this._left, 1, ccui.Scale9Sprite.POSITIONS_LEFT);
 
             // Right
             this._right = new cc.Sprite();
             this._right.initWithTexture(selTexture, rightcenterbounds);
-            locScale9Image.addChild(this._right, 1, cc.Scale9Sprite.POSITIONS_RIGHT);
+            locScale9Image.addChild(this._right, 1, ccui.Scale9Sprite.POSITIONS_RIGHT);
 
             // Top left
             this._topLeft = new cc.Sprite();
             this._topLeft.initWithTexture(selTexture, lefttopbounds);
-            locScale9Image.addChild(this._topLeft, 2, cc.Scale9Sprite.POSITIONS_TOPLEFT);
+            locScale9Image.addChild(this._topLeft, 2, ccui.Scale9Sprite.POSITIONS_TOPLEFT);
 
             // Top right
             this._topRight = new cc.Sprite();
             this._topRight.initWithTexture(selTexture, righttopbounds);
-            locScale9Image.addChild(this._topRight, 2, cc.Scale9Sprite.POSITIONS_TOPRIGHT);
+            locScale9Image.addChild(this._topRight, 2, ccui.Scale9Sprite.POSITIONS_TOPRIGHT);
 
             // Bottom left
             this._bottomLeft = new cc.Sprite();
             this._bottomLeft.initWithTexture(selTexture, leftbottombounds);
-            locScale9Image.addChild(this._bottomLeft, 2, cc.Scale9Sprite.POSITIONS_BOTTOMLEFT);
+            locScale9Image.addChild(this._bottomLeft, 2, ccui.Scale9Sprite.POSITIONS_BOTTOMLEFT);
 
             // Bottom right
             this._bottomRight = new cc.Sprite();
             this._bottomRight.initWithTexture(selTexture, rightbottombounds);
-            locScale9Image.addChild(this._bottomRight, 2, cc.Scale9Sprite.POSITIONS_BOTTOMRIGHT);
+            locScale9Image.addChild(this._bottomRight, 2, ccui.Scale9Sprite.POSITIONS_BOTTOMRIGHT);
         } else {
             // set up transformation of coordinates
             // to handle the case where the sprite is stored rotated
@@ -947,56 +952,52 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             // Centre
             this._centre = new cc.Sprite();
             this._centre.initWithTexture(selTexture, rotatedcenterbounds, true);
-            locScale9Image.addChild(this._centre, 0, cc.Scale9Sprite.POSITIONS_CENTRE);
+            locScale9Image.addChild(this._centre, 0, ccui.Scale9Sprite.POSITIONS_CENTRE);
 
             // Top
             this._top = new cc.Sprite();
             this._top.initWithTexture(selTexture, rotatedcentertopbounds, true);
-            locScale9Image.addChild(this._top, 1, cc.Scale9Sprite.POSITIONS_TOP);
+            locScale9Image.addChild(this._top, 1, ccui.Scale9Sprite.POSITIONS_TOP);
 
             // Bottom
             this._bottom = new cc.Sprite();
             this._bottom.initWithTexture(selTexture, rotatedcenterbottombounds, true);
-            locScale9Image.addChild(this._bottom, 1, cc.Scale9Sprite.POSITIONS_BOTTOM);
+            locScale9Image.addChild(this._bottom, 1, ccui.Scale9Sprite.POSITIONS_BOTTOM);
 
             // Left
             this._left = new cc.Sprite();
             this._left.initWithTexture(selTexture, rotatedleftcenterbounds, true);
-            locScale9Image.addChild(this._left, 1, cc.Scale9Sprite.POSITIONS_LEFT);
+            locScale9Image.addChild(this._left, 1, ccui.Scale9Sprite.POSITIONS_LEFT);
 
             // Right
             this._right = new cc.Sprite();
             this._right.initWithTexture(selTexture, rotatedrightcenterbounds, true);
-            locScale9Image.addChild(this._right, 1, cc.Scale9Sprite.POSITIONS_RIGHT);
+            locScale9Image.addChild(this._right, 1, ccui.Scale9Sprite.POSITIONS_RIGHT);
 
             // Top left
             this._topLeft = new cc.Sprite();
             this._topLeft.initWithTexture(selTexture, rotatedlefttopbounds, true);
-            locScale9Image.addChild(this._topLeft, 2, cc.Scale9Sprite.POSITIONS_TOPLEFT);
+            locScale9Image.addChild(this._topLeft, 2, ccui.Scale9Sprite.POSITIONS_TOPLEFT);
 
             // Top right
             this._topRight = new cc.Sprite();
             this._topRight.initWithTexture(selTexture, rotatedrighttopbounds, true);
-            locScale9Image.addChild(this._topRight, 2, cc.Scale9Sprite.POSITIONS_TOPRIGHT);
+            locScale9Image.addChild(this._topRight, 2, ccui.Scale9Sprite.POSITIONS_TOPRIGHT);
 
             // Bottom left
             this._bottomLeft = new cc.Sprite();
             this._bottomLeft.initWithTexture(selTexture, rotatedleftbottombounds, true);
-            locScale9Image.addChild(this._bottomLeft, 2, cc.Scale9Sprite.POSITIONS_BOTTOMLEFT);
+            locScale9Image.addChild(this._bottomLeft, 2, ccui.Scale9Sprite.POSITIONS_BOTTOMLEFT);
 
             // Bottom right
             this._bottomRight = new cc.Sprite();
             this._bottomRight.initWithTexture(selTexture, rotatedrightbottombounds, true);
-            locScale9Image.addChild(this._bottomRight, 2, cc.Scale9Sprite.POSITIONS_BOTTOMRIGHT);
+            locScale9Image.addChild(this._bottomRight, 2, ccui.Scale9Sprite.POSITIONS_BOTTOMRIGHT);
         }
 
         this.setContentSize(rect.width, rect.height);
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL){
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
             this.addChild(locScale9Image);
-        }else{
-            if(!this._cacheSprite.getParent())
-                this.addChild(this._cacheSprite);
-        }
 
         if (this._spritesGenerated) {
             // Restore color and opacity
@@ -1008,7 +1009,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     /**
-     * set the sprite frame of cc.Scale9Sprite
+     * set the sprite frame of ccui.Scale9Sprite
      * @param {cc.SpriteFrame} spriteFrame
      */
     setSpriteFrame: function (spriteFrame) {
