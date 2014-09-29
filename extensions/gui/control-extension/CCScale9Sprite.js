@@ -27,27 +27,6 @@
  Created by Jung Sang-Taik on 2012-03-16
  ****************************************************************************/
 
-cc.Scale9SpriteStartCanvasCmd = function(node){
-    this._node = node;
-};
-
-cc.Scale9SpriteStartCanvasCmd.prototype.rendering = function(ctx){
-    ctx = ctx || cc._renderContext;
-
-    var p = this._node._transformWorld;
-    ctx.save();
-    ctx.transform(p.a, p.b, p.c, p.d, p.tx, -p.ty);
-};
-
-cc.Scale9SpriteEndCanvasCmd = function(node){
-    this._node = node;
-};
-
-cc.Scale9SpriteEndCanvasCmd.prototype.rendering = function(ctx){
-    ctx = ctx || cc._renderContext;
-    ctx.restore();
-};
-
 /**
  * A 9-slice sprite for cocos2d.
  *
@@ -238,10 +217,6 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             contentSizeChanged = true;
         }
 
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-            cc.renderer.pushRenderCommand(this._rendererStartCanvasCmd);
-        }
-
         //cc._renderContext = this._cacheContext;
         cc.view._setScaleXYForRenderTexture();
         this._scale9Image.visit(this._cacheContext);
@@ -256,7 +231,8 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     /**
-     * The constructor of cc.Scale9Sprite. Override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+     * Constructor function. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+     * @function
      * @param {string|cc.SpriteFrame} file file name of texture or a SpriteFrame
      * @param {cc.Rect} rect
      * @param {cc.Rect} capInsets
@@ -272,12 +248,20 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         this._capInsets = cc.rect(0, 0, 0, 0);
         this._loadedEventListeners = [];
 
-
         //cache
         if(cc._renderType === cc._RENDER_TYPE_CANVAS){
 
-            this._rendererCmd = new cc.Scale9SpriteEndCanvasCmd(this);
-            this._rendererStartCanvasCmd = new cc.Scale9SpriteStartCanvasCmd(this);
+            this._rendererStartCanvasCmd = new cc.CustomRenderCmdCanvas(this, function(ctx){
+                ctx = ctx || cc._renderContext;
+
+                var p = this._transformWorld;
+                ctx.save();
+                ctx.transform(p.a, p.b, p.c, p.d, p.tx, -p.ty);
+            });
+            this._rendererEndCanvasCmd = new cc.CustomRenderCmdCanvas(this, function(ctx){
+                ctx = ctx || cc._renderContext;
+                ctx.restore();
+            });
 
             var locCacheCanvas = this._cacheCanvas = cc.newElement('canvas');
             locCacheCanvas.width = 1;
@@ -322,6 +306,14 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         return this._preferredSize.height;
     },
     setPreferredSize: function (preferredSize) {
+
+        if (this._positionsAreDirty) {
+            this._updatePositions();
+            this._positionsAreDirty = false;
+            this._scale9Dirty = true;
+        }
+
+
         this.setContentSize(preferredSize);
         this._preferredSize = preferredSize;
     },
@@ -392,7 +384,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
                         parentColor.r !== 255 ||
                         parentColor.g !== 255 ||
                         parentColor.b !== 255
-                    ){
+                        ){
                         selChild._changeTextureColor();
                         selChild._setNodeDirtyForCache();
                     }
@@ -508,18 +500,31 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     visit: function (ctx) {
+        if(!this._visible){
+            return;
+        }
+
         if (this._positionsAreDirty) {
             this._updatePositions();
             this._positionsAreDirty = false;
             this._scale9Dirty = true;
         }
-        if(this._scale9Dirty && cc._renderType === cc._RENDER_TYPE_CANVAS){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
+            cc.renderer.pushRenderCommand(this._rendererStartCanvasCmd);
             this._scale9Dirty = false;
             this._cacheScale9Sprite();
+
+            cc.Node.prototype.visit.call(this, ctx);
+            cc.renderer.pushRenderCommand(this._rendererEndCanvasCmd);
+        }else{
+            cc.Node.prototype.visit.call(this, ctx);
         }
-        cc.Node.prototype.visit.call(this, ctx);
     },
 
+    /**
+     * Initializes a cc.Scale9Sprite. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
+     * @returns {boolean}
+     */
     init: function () {
         return this.initWithBatchNode(null, cc.rect(0, 0, 0, 0), false, cc.rect(0, 0, 0, 0));
     },
@@ -991,12 +996,8 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         }
 
         this.setContentSize(rect.width, rect.height);
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL){
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
             this.addChild(locScale9Image);
-        }else{
-            if(!this._cacheSprite.getParent())
-                this.addChild(this._cacheSprite);
-        }
 
         if (this._spritesGenerated) {
             // Restore color and opacity

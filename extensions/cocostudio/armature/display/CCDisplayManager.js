@@ -300,6 +300,9 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
             this._displayType = this._currentDecoDisplay.getDisplayData().displayType;
         }else
             this._displayType = ccs.DISPLAY_TYPE_MAX;
+
+
+        cc.renderer.childrenOrderDirty = true;
     },
 
     /**
