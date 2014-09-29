@@ -102,6 +102,9 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
     _touchListener: null,
     _className:"ScrollView",
 
+    _beforeDrawCmd:null,
+    _afterDrawCmd:null,
+
     /**
      * @contructor
      * @param size
@@ -125,6 +128,13 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         else
             this.initWithViewSize(cc.size(200, 200), null);
 
+    },
+
+    _initRendererCmd:function () {
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL){
+            this._beforeDrawCmd = new cc.CustomRenderCmdWebGL(this, this._onBeforeDraw);
+            this._afterDrawCmd = new cc.CustomRenderCmdWebGL(this, this._onAfterDraw);
+        }
     },
 
     init:function () {
@@ -618,11 +628,11 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
             context.restore();
         } else {
             cc.kmGLPushMatrix();
-            var locGrid = this.grid;
-            if (locGrid && locGrid.isActive()) {
-                locGrid.beforeDraw();
-                this.transformAncestors();
-            }
+//            var locGrid = this.grid;
+//            if (locGrid && locGrid.isActive()) {
+//                locGrid.beforeDraw();
+//                this.transformAncestors();
+//            }
 
             this.transform(context);
             this._beforeDraw(context);
@@ -638,18 +648,22 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
                 }
 
                 // this draw
-                this.draw(context);
+                //this.draw(context);
+                if(this._rendererCmd)
+                    cc.renderer.pushRenderCommand(this._rendererCmd);
 
                 // draw children zOrder >= 0
                 for (; i < childrenLen; i++)
                     locChildren[i].visit();
             } else{
-                this.draw(context);
+                //this.draw(context);
+                if(this._rendererCmd)
+                    cc.renderer.pushRenderCommand(this._rendererCmd);
             }
 
             this._afterDraw(context);
-            if (locGrid && locGrid.isActive())
-                locGrid.afterDraw(this);
+//            if (locGrid && locGrid.isActive())
+//                locGrid.afterDraw(this);
 
             cc.kmGLPopMatrix();
         }
@@ -809,7 +823,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
     _beforeDraw:function (context) {
         if (this._clippingToBounds) {
             this._scissorRestored = false;
-            var frame = this._getViewRect(), locEGLViewer = cc.view;
+            var locEGLViewer = cc.view;
 
             var scaleX = this.getScaleX();
             var scaleY = this.getScaleY();
@@ -826,25 +840,31 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
                 ctx.clip();
                 ctx.closePath();
             } else {
-                var EGLViewer = cc.view;
-                if(EGLViewer.isScissorEnabled()){
-                    this._scissorRestored = true;
-                    this._parentScissorRect = EGLViewer.getScissorRect();
-                    //set the intersection of m_tParentScissorRect and frame as the new scissor rect
-                    if (cc.rectIntersection(frame, this._parentScissorRect)) {
-                        var locPSRect = this._parentScissorRect;
-                        var x = Math.max(frame.x, locPSRect.x);
-                        var y = Math.max(frame.y, locPSRect.y);
-                        var xx = Math.min(frame.x + frame.width, locPSRect.x + locPSRect.width);
-                        var yy = Math.min(frame.y + frame.height, locPSRect.y + locPSRect.height);
-                        EGLViewer.setScissorInPoints(x, y, xx - x, yy - y);
-                    }
-                }else{
-                    ctx.enable(ctx.SCISSOR_TEST);
-                    //clip
-                    EGLViewer.setScissorInPoints(frame.x, frame.y, frame.width, frame.height);
-                }
+                cc.renderer.pushRenderCommand(this._beforeDrawCmd);
             }
+        }
+    },
+
+    _onBeforeDraw:function(){
+        var EGLViewer = cc.view;
+        var frame = this._getViewRect();
+        if(EGLViewer.isScissorEnabled()){
+            this._scissorRestored = true;
+            this._parentScissorRect = EGLViewer.getScissorRect();
+            //set the intersection of m_tParentScissorRect and frame as the new scissor rect
+            if (cc.rectIntersection(frame, this._parentScissorRect)) {
+                var locPSRect = this._parentScissorRect;
+                var x = Math.max(frame.x, locPSRect.x);
+                var y = Math.max(frame.y, locPSRect.y);
+                var xx = Math.min(frame.x + frame.width, locPSRect.x + locPSRect.width);
+                var yy = Math.min(frame.y + frame.height, locPSRect.y + locPSRect.height);
+                EGLViewer.setScissorInPoints(x, y, xx - x, yy - y);
+            }
+        }else{
+            var ctx = cc._renderContext;
+            ctx.enable(ctx.SCISSOR_TEST);
+            //clip
+            EGLViewer.setScissorInPoints(frame.x, frame.y, frame.width, frame.height);
         }
     },
     /**
@@ -853,13 +873,16 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
      */
     _afterDraw:function (context) {
         if (this._clippingToBounds && cc._renderType === cc._RENDER_TYPE_WEBGL) {
-            if (this._scissorRestored) {  //restore the parent's scissor rect
-                var rect = this._parentScissorRect;
-                cc.view.setScissorInPoints(rect.x, rect.y, rect.width, rect.height)
-            }else{
-                var ctx = context || cc._renderContext;
-                ctx.disable(ctx.SCISSOR_TEST);
-            }
+            cc.renderer.pushRenderCommand(this._afterDrawCmd);
+        }
+    },
+    _onAfterDraw:function(){
+        if (this._scissorRestored) {  //restore the parent's scissor rect
+            var rect = this._parentScissorRect;
+            cc.view.setScissorInPoints(rect.x, rect.y, rect.width, rect.height)
+        }else{
+            var ctx = cc._renderContext;
+            ctx.disable(ctx.SCISSOR_TEST);
         }
     },
     /**
