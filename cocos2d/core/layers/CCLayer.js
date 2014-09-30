@@ -481,16 +481,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                     else
                         break;
                 }
-//                _t.draw(bakeContext);
                 if(_t._rendererCmd)
                     cc.renderer.pushRenderCommand(_t._rendererCmd);
                 for (; i < len; i++) {
                     children[i].visit(bakeContext);
                 }
             } else
-//                _t.draw(bakeContext);
-            if(_t._rendererCmd)
-                cc.renderer.pushRenderCommand(_t._rendererCmd);
+                if(_t._rendererCmd)
+                    cc.renderer.pushRenderCommand(_t._rendererCmd);
             cc.view._resetScale();
             this._cacheDirty = false;
         }
@@ -596,13 +594,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     _initRendererCmd: function(){
-        if(!(this._rendererCmd instanceof cc.GradientRectRenderCmdCanvas))
-            this._rendererCmd = new cc.GradientRectRenderCmdCanvas(this);
-    },
-
-    visit: function(){
-        this._super();
-        void 0;
+        this._rendererCmd = new cc.GradientRectRenderCmdCanvas(this);
     },
 
     /**
