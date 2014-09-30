@@ -147,8 +147,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             //transform
             context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
-            if (node._isLighterMode)
-                context.globalCompositeOperation = 'lighter';
+            if (node._blendFuncStr)
+                context.globalCompositeOperation = node._blendFuncStr || 'lighter';
 
             if (node._flippedX)
                 context.scale(-1, 1);
@@ -157,7 +157,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
             if (node._texture && locTextureCoord.validRect) {
                 if (node._texture._isLoaded) {
-                    context.globalAlpha = node._opacity;
+                    context.globalAlpha = (node._displayedOpacity / 255);
                     image = node._texture._htmlElementObj;
 
                     context.drawImage(image,
@@ -175,20 +175,20 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
             } else if (!node._texture && locTextureCoord.validRect) {
                 curColor = node._color;
-                context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + node._opacity + ")";
+                context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + node._displayedOpacity + ")";
                 context.fillRect(locDrawingRect.x, locDrawingRect.y, locDrawingRect.width, locDrawingRect.height);
             }
             context.restore();
         } else {
-            if (node._isLighterMode) {
+            if (node._blendFuncStr) {
                 context.save();
-                context.globalCompositeOperation = 'lighter';
+                context.globalCompositeOperation = node._blendFuncStr || 'lighter';
             }
 
             if (node._texture && locTextureCoord.validRect) {
                 if (node._texture._isLoaded) {
 
-                    context.globalAlpha = node._opacity;
+                    context.globalAlpha = (node._displayedOpacity / 255);
                     image = node._texture.getHtmlElementObj();
                     if (node._colorized) {
                         context.drawImage(image,
@@ -196,10 +196,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                             0,
                             locTextureCoord.width,
                             locTextureCoord.height,
-                            t.tx * scaleX + locDrawingRect.x,
-                            -t.ty * scaleY + locDrawingRect.y,
-                            locDrawingRect.width,
-                            locDrawingRect.height);
+                            (t.tx + locDrawingRect.x) * scaleY,
+                            (-t.ty + locDrawingRect.y) * scaleY,
+                            locDrawingRect.width * scaleX,
+                            locDrawingRect.height * scaleX);
                     } else {
                         context.drawImage(
                             image,
@@ -207,18 +207,21 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                             locTextureCoord.renderY,
                             locTextureCoord.width,
                             locTextureCoord.height,
-                            t.tx * scaleX + locDrawingRect.x,
-                            -t.ty * scaleY + locDrawingRect.y,
-                            locDrawingRect.width,
-                            locDrawingRect.height);
+                            (t.tx + locDrawingRect.x) * scaleY,
+                            (-t.ty + locDrawingRect.y) * scaleY,
+                            locDrawingRect.width * scaleX,
+                            locDrawingRect.height * scaleX);
                     }
                 }
             } else if (!node._texture && locTextureCoord.validRect && node._displayedColor) {
+
+                context.globalAlpha = (node._displayedOpacity / 255);
                 curColor = node._displayedColor;
-                context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + node._opacity + ")";
+                context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + node._displayedOpacity + ")";
                 context.fillRect(t.tx * scaleX + locDrawingRect.x, -t.ty * scaleY + locDrawingRect.y, locDrawingRect.width, locDrawingRect.height);
+
             }
-            if (node._isLighterMode)
+            if (node._blendFuncStr)
                 context.restore();
         }
         cc.g_NumberOfDraws++;
@@ -248,8 +251,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             locRect = this._drawingRect;
 
         context.save();
-        if (node._isLighterMode)
-            context.globalCompositeOperation = 'lighter';
+        if (node._blendFuncStr)
+            context.globalCompositeOperation = node._blendFuncStr || 'lighter';
         //transform
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
         context.fillStyle = "rgba(" + (0 | curColor.r) + "," + (0 | curColor.g) + ","
@@ -279,8 +282,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             node = self._node,
             t = node._transformWorld;
         context.save();
-        if (node._isLighterMode)
-            context.globalCompositeOperation = 'lighter';
+        if (node._blendFuncStr)
+            context.globalCompositeOperation = node._blendFuncStr || 'lighter';
         //transform
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
@@ -418,8 +421,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         context.save();
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
-        if (locSprite._isLighterMode)
-            context.globalCompositeOperation = 'lighter';
+        if (locSprite._blendFuncStr)
+            context.globalCompositeOperation = node._blendFuncStr || 'lighter';
 
         context.globalAlpha = locSprite._displayedOpacity / 255;
 
