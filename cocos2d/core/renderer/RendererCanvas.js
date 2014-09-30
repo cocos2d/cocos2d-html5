@@ -147,8 +147,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             //transform
             context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
-            if (node._blendFuncStr)
-                context.globalCompositeOperation = node._blendFuncStr || 'lighter';
+            if (node._blendFunc)
+                context.globalCompositeOperation = node._blendFuncStr || 'source';
 
             if (node._flippedX)
                 context.scale(-1, 1);
@@ -193,9 +193,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             }
             context.restore();
         } else {
-            if (node._blendFuncStr) {
+            if (node._blendFunc) {
                 context.save();
-                context.globalCompositeOperation = node._blendFuncStr || 'lighter';
+                context.globalCompositeOperation = node._blendFuncStr || 'source';
             }
 
             if (node._texture && locTextureCoord.validRect) {
@@ -234,7 +234,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 context.fillRect(t.tx * scaleX + locDrawingRect.x, -t.ty * scaleY + locDrawingRect.y, locDrawingRect.width, locDrawingRect.height);
 
             }
-            if (node._blendFuncStr)
+            if (node._blendFunc)
                 context.restore();
         }
         cc.g_NumberOfDraws++;
@@ -264,8 +264,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             locRect = this._drawingRect;
 
         context.save();
-        if (node._blendFuncStr)
-            context.globalCompositeOperation = node._blendFuncStr || 'lighter';
+        if (node._blendFunc)
+            context.globalCompositeOperation = node._blendFuncStr || 'source';
         //transform
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
         context.fillStyle = "rgba(" + (0 | curColor.r) + "," + (0 | curColor.g) + ","
@@ -295,8 +295,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             node = self._node,
             t = node._transformWorld;
         context.save();
-        if (node._blendFuncStr)
-            context.globalCompositeOperation = node._blendFuncStr || 'lighter';
+        if (node._blendFunc)
+            context.globalCompositeOperation = node._blendFuncStr || 'source';
         //transform
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
@@ -434,8 +434,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         context.save();
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
-        if (locSprite._blendFuncStr)
-            context.globalCompositeOperation = node._blendFuncStr || 'lighter';
+        if (locSprite._blendFunc)
+            context.globalCompositeOperation = node._blendFuncStr || 'source';
 
         context.globalAlpha = locSprite._displayedOpacity / 255;
 
