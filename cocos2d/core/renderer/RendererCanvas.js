@@ -160,16 +160,29 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                     context.globalAlpha = (node._displayedOpacity / 255);
                     image = node._texture._htmlElementObj;
 
-                    context.drawImage(image,
-                        locTextureCoord.renderX,
-                        locTextureCoord.renderY,
-                        locTextureCoord.width,
-                        locTextureCoord.height,
-                        locDrawingRect.x,
-                        locDrawingRect.y,
-                        locDrawingRect.width * scaleX,
-                        locDrawingRect.height * scaleY
-                    );
+                    if (node._colorized) {
+                        context.drawImage(image,
+                            0,
+                            0,
+                            locTextureCoord.width,
+                            locTextureCoord.height,
+                            locDrawingRect.x * scaleX,
+                            locDrawingRect.y * scaleY,
+                            locDrawingRect.width * scaleX,
+                            locDrawingRect.height * scaleY
+                        );
+                    } else {
+                        context.drawImage(image,
+                            locTextureCoord.renderX,
+                            locTextureCoord.renderY,
+                            locTextureCoord.width,
+                            locTextureCoord.height,
+                            locDrawingRect.x * scaleX,
+                            locDrawingRect.y * scaleY,
+                            locDrawingRect.width * scaleX,
+                            locDrawingRect.height * scaleY
+                        );
+                    }
 
                 }
 
@@ -196,10 +209,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                             0,
                             locTextureCoord.width,
                             locTextureCoord.height,
-                            (t.tx + locDrawingRect.x) * scaleY,
+                            (t.tx + locDrawingRect.x) * scaleX,
                             (-t.ty + locDrawingRect.y) * scaleY,
                             locDrawingRect.width * scaleX,
-                            locDrawingRect.height * scaleX);
+                            locDrawingRect.height * scaleY);
                     } else {
                         context.drawImage(
                             image,
@@ -207,10 +220,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                             locTextureCoord.renderY,
                             locTextureCoord.width,
                             locTextureCoord.height,
-                            (t.tx + locDrawingRect.x) * scaleY,
+                            (t.tx + locDrawingRect.x) * scaleX,
                             (-t.ty + locDrawingRect.y) * scaleY,
                             locDrawingRect.width * scaleX,
-                            locDrawingRect.height * scaleX);
+                            locDrawingRect.height * scaleY);
                     }
                 }
             } else if (!node._texture && locTextureCoord.validRect && node._displayedColor) {
