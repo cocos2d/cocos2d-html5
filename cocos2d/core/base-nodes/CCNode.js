@@ -2635,7 +2635,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             worldT.b = t.a * pt.b + t.b * pt.d;                               //b
             worldT.c = t.c * pt.a + t.d * pt.c;                               //c
             worldT.d = t.c * pt.b + t.d * pt.d;                               //d
-            if(this._skewX || this._skewY){
+            if(!this._skewX || this._skewY){
                 var plt = this._parent._transform;
                 var xOffset = -(plt.b + plt.c) * t.ty ;
                 var yOffset = -(plt.b + plt.c) * t.tx;
