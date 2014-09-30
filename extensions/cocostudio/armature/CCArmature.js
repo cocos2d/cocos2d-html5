@@ -71,10 +71,14 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this._armatureTransformDirty = true;
         this._realAnchorPointInPoints = cc.p(0, 0);
         name && ccs.Armature.prototype.init.call(this, name, parentBone);
+    },
 
+    _initRendererCmd:function () {
         if(cc._renderType === cc._RENDER_TYPE_CANVAS){
             this._rendererStartCmd = new cc.CustomRenderCmdCanvas(this, this._startRendererCmdForCanvas);
             this._rendererEndCmd = new cc.CustomRenderCmdCanvas(this, this._endRendererCmdForCanvas);
+        }else{
+            this._rendererCmd = new cc.ArmatureRenderCmdWebGL(this);
         }
     },
 
@@ -523,7 +527,8 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this.transform();
 
         this.sortAllChildren();
-        this.draw(context);
+        //this.draw(context);
+        cc.renderer.pushRenderCommand(this._rendererCmd);
 
         // reset for next frame
         this.arrivalOrder = 0;
