@@ -251,12 +251,12 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         //cache
         if(cc._renderType === cc._RENDER_TYPE_CANVAS){
 
-            this._rendererStartCanvasCmd = new cc.CustomRenderCmdCanvas(this, function(ctx){
+            this._rendererStartCanvasCmd = new cc.CustomRenderCmdCanvas(this, function(ctx, scaleX, scaleY){
                 ctx = ctx || cc._renderContext;
 
                 var p = this._transformWorld;
                 ctx.save();
-                ctx.transform(p.a, p.b, p.c, p.d, p.tx, -p.ty);
+                ctx.transform(p.a, p.b, p.c, p.d, p.tx * scaleX, -p.ty * scaleY);
             });
             this._rendererEndCanvasCmd = new cc.CustomRenderCmdCanvas(this, function(ctx){
                 ctx = ctx || cc._renderContext;

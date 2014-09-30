@@ -121,13 +121,13 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         this._tmpViewRect = new cc.Rect(0,0,0,0);
 
         if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-            this.startCmd = new cc.CustomRenderCmdCanvas(this, function(ctx){
+            this.startCmd = new cc.CustomRenderCmdCanvas(this, function(ctx, scaleX, scaleY){
                 ctx = ctx || cc.context;
                 ctx.save();
                 ctx.save();
                 this.transform();
                 var t = this._transformWorld;
-                ctx.transform(t.a, t.b, t.c, t.d, t.tx, -t.ty);
+                ctx.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
                 cc.ScrollView.prototype._beforeDraw.call(this);
             });
             this.endCmd = new cc.CustomRenderCmdCanvas(this, function(ctx){

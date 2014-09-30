@@ -478,12 +478,12 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         context.restore();
     },
 
-    _startRendererCmdForCanvas: function(ctx){
+    _startRendererCmdForCanvas: function(ctx, scaleX, scaleY){
         var context = ctx || cc._renderContext;
         context.save();
         this.transform(context);
         var t = this._transformWorld;
-        ctx.transform(t.a, t.b, t.c, t.d, t.tx, -t.ty);
+        ctx.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
 
         var locChildren = this._children;
         for (var i = 0, len = locChildren.length; i< len; i++) {
