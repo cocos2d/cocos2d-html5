@@ -806,7 +806,10 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     _transformForRenderer: function(){
 
         this._adaptRenderers();
-        cc.Node.prototype.transform.call(this);
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            cc.Node.prototype.transform.call(this);
+        else
+            cc.ProtectedNode.prototype._transformForRenderer.call(this);
         this._textFieldRenderer._transformForRenderer();
     }
 });
