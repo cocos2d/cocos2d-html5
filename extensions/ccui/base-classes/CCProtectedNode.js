@@ -542,8 +542,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         cc.kmMat4Multiply(stackMatrix, parentMatrix, t4x4);
 
         this._renderCmdDiry = false;
-        if(!this._children || this._children.length === 0)
-            return;
         var i, len, locChildren = this._children;
         for(i = 0, len = locChildren.length; i< len; i++){
             locChildren[i]._transformForRenderer();

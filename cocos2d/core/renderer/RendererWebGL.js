@@ -71,10 +71,9 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
             var locPool = this._transformNodePool;
             //sort the pool
             locPool.sort(this._sortNodeByLevelAsc);
-
             //transform node
             for (var i = 0, len = locPool.length; i < len; i++) {
-                if (locPool[i]._renderCmdDiry)        //TODO need modify name for LabelTTF
+                if (locPool[i]._renderCmdDiry)
                     locPool[i]._transformForRenderer();
             }
             locPool.length = 0;
