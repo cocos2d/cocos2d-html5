@@ -256,6 +256,7 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
         var k = Math.cos(za) * r + this._centerZOrig;
 
         this.target.getCamera().setEye(i, j, k);
+        this.target.setNodeDirty();
     }
 });
 
