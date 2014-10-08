@@ -126,6 +126,21 @@ cc.Camera = cc.Class.extend({
         cc.kmGLMultMatrix( this._lookupMatrix);
     },
 
+    _locateForRenderer: function(matrix){
+        if (this._dirty) {
+            var eye = new cc.kmVec3(), center = new cc.kmVec3(), up = new cc.kmVec3();
+
+            cc.kmVec3Fill( eye, this._eyeX, this._eyeY , this._eyeZ );
+            cc.kmVec3Fill( center, this._centerX, this._centerY, this._centerZ);
+
+            cc.kmVec3Fill( up, this._upX, this._upY, this._upZ);
+            cc.kmMat4LookAt( this._lookupMatrix, eye, center, up);
+
+            this._dirty = false;
+        }
+        cc.kmMat4Multiply(matrix, matrix, this._lookupMatrix);
+    },
+
     /**
      * sets the eye values in points
      * @param {Number} eyeX
