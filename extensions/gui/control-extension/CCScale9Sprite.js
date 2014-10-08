@@ -217,6 +217,8 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             contentSizeChanged = true;
         }
 
+        //begin cache
+        cc.renderer._isCacheToCanvasOn = true;
         //cc._renderContext = this._cacheContext;
         cc.view._setScaleXYForRenderTexture();
         this._scale9Image.visit(this._cacheContext);
@@ -228,6 +230,9 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
         if(!this._cacheSprite.getParent())
             this.addChild(this._cacheSprite);
+        cc.renderer._isCacheToCanvasOn = false;
+        //draw to cache canvas
+        cc.renderer._renderingToCacheCanvas(this._cacheContext);
     },
 
     /**
@@ -250,18 +255,6 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
         //cache
         if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-
-            this._rendererStartCanvasCmd = new cc.CustomRenderCmdCanvas(this, function(ctx, scaleX, scaleY){
-                ctx = ctx || cc._renderContext;
-
-                var p = this._transformWorld;
-                ctx.save();
-                ctx.transform(p.a, p.b, p.c, p.d, p.tx * scaleX, -p.ty * scaleY);
-            });
-            this._rendererEndCanvasCmd = new cc.CustomRenderCmdCanvas(this, function(ctx){
-                ctx = ctx || cc._renderContext;
-                ctx.restore();
-            });
 
             var locCacheCanvas = this._cacheCanvas = cc.newElement('canvas');
             locCacheCanvas.width = 1;
@@ -510,12 +503,10 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             this._scale9Dirty = true;
         }
         if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-            cc.renderer.pushRenderCommand(this._rendererStartCanvasCmd);
             this._scale9Dirty = false;
             this._cacheScale9Sprite();
 
             cc.Node.prototype.visit.call(this, ctx);
-            cc.renderer.pushRenderCommand(this._rendererEndCanvasCmd);
         }else{
             cc.Node.prototype.visit.call(this, ctx);
         }
