@@ -602,7 +602,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {ccui.Layout.CLIPPING_STENCIL|ccui.Layout.CLIPPING_SCISSOR} type
      */
     setClippingType: function (type) {
-        if (type == this._clippingType)
+        if (type == this._clippingType || cc._renderType === cc._RENDER_TYPE_CANVAS)
             return;
         var clippingEnabled = this.isClippingEnabled();
         this.setClippingEnabled(false);
