@@ -219,20 +219,16 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
         //begin cache
         cc.renderer._isCacheToCanvasOn = true;
-        //cc._renderContext = this._cacheContext;
-        cc.view._setScaleXYForRenderTexture();
-        this._scale9Image.visit(this._cacheContext);
-        //cc._renderContext = cc._mainRenderContextBackup;
-        cc.view._resetScale();
+        this._scale9Image.visit();
+
+        //draw to cache canvas
+        cc.renderer._renderingToCacheCanvas(this._cacheContext);
 
         if(contentSizeChanged)
             this._cacheSprite.setTextureRect(cc.rect(0,0, size.width, size.height));
 
         if(!this._cacheSprite.getParent())
             this.addChild(this._cacheSprite);
-        cc.renderer._isCacheToCanvasOn = false;
-        //draw to cache canvas
-        cc.renderer._renderingToCacheCanvas(this._cacheContext);
     },
 
     /**
