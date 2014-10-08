@@ -256,7 +256,14 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
                 var p = this._transformWorld;
                 ctx.save();
-                ctx.transform(p.a, p.b, p.c, p.d, p.tx * scaleX, -p.ty * scaleY);
+                ctx.transform(
+                    p.a,
+                    p.b,
+                    p.c,
+                    p.d,
+                    p.tx * scaleX,
+                    -p.ty * scaleY
+                );
             });
             this._rendererEndCanvasCmd = new cc.CustomRenderCmdCanvas(this, function(ctx){
                 ctx = ctx || cc._renderContext;
@@ -1035,6 +1042,86 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         this._insetTop = 0;
         this._insetRight = 0;
         this._insetBottom = 0;
+    },
+
+    getNodeToParentTransform: function(){
+        var _t = this;
+        if (_t._transformDirty) {
+            var t = _t._transform;// quick reference
+
+            // base position
+            t.tx = _t._position.x;
+            t.ty = _t._position.y;
+
+            // rotation Cos and Sin
+            var Cos = 1, Sin = 0;
+            if (_t._rotationX) {
+                Cos = Math.cos(_t._rotationRadiansX);
+                Sin = Math.sin(_t._rotationRadiansX);
+            }
+
+            // base abcd
+            t.a = t.d = Cos;
+            t.b = -Sin;
+            t.c = Sin;
+
+            var lScaleX = _t._scaleX, lScaleY = _t._scaleY;
+            var appX = _t._anchorPointInPoints.x, appY = _t._anchorPointInPoints.y;
+
+            // Firefox on Vista and XP crashes
+            // GPU thread in case of scale(0.0, 0.0)
+            var sx = (lScaleX < 0.000001 && lScaleX > -0.000001) ? 0.000001 : lScaleX,
+                sy = (lScaleY < 0.000001 && lScaleY > -0.000001) ? 0.000001 : lScaleY;
+
+            // skew
+            if (_t._skewX || _t._skewY) {
+                // offset the anchorpoint
+                var skx = Math.tan(-_t._skewX * Math.PI / 180);
+                var sky = Math.tan(-_t._skewY * Math.PI / 180);
+                if(skx === Infinity){
+                    skx = 99999999;
+                }
+                if(sky === Infinity){
+                    sky = 99999999;
+                }
+                var xx = appY * skx * sx;
+                var yy = appX * sky * sy;
+                t.a = Cos + -Sin * sky;
+                t.b = Cos * skx + -Sin;
+                t.c = Sin + Cos * sky;
+                t.d = Sin * skx + Cos;
+                t.tx += Cos * xx + -Sin * yy;
+                t.ty += Sin * xx + Cos * yy;
+            }
+
+            // scale
+            if (lScaleX !== 1 || lScaleY !== 1) {
+                t.a *= sx;
+                t.c *= sx;
+                t.b *= sy;
+                t.d *= sy;
+            }
+
+            // adjust anchorPoint
+            if(!this._flippedX)                 //TODO modify for new renderer
+                t.tx += Cos * -appX * sx + Sin * appY * sy;
+            if(!this._flippedY)
+                t.ty -= Sin * appX * sx + Cos * appY * sy;
+
+            // if ignore anchorPoint
+            if (_t._ignoreAnchorPointForPosition) {
+                t.tx += appX;
+                t.ty += appY;
+            }
+
+            if (_t._additionalTransformDirty) {
+                _t._transform = cc.affineTransformConcat(t, _t._additionalTransform);
+                _t._additionalTransformDirty = false;
+            }
+
+            _t._transformDirty = false;
+        }
+        return _t._transform;
     }
 });
 
