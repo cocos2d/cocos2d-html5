@@ -228,7 +228,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             this._cacheSprite.setTextureRect(cc.rect(0,0, size.width, size.height));
 
         if(!this._cacheSprite.getParent())
-            this.addChild(this._cacheSprite);
+            this.addChild(this._cacheSprite, -1);
     },
 
     /**
