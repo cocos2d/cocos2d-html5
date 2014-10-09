@@ -214,7 +214,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         }else{
             locFrameSize.width = this._frame.clientWidth;
         }
-        if(cc.sys.isMobile && this._frame.clientWidth >= sHeight * 0.8){
+        if(cc.sys.isMobile && this._frame.clientHeight >= sHeight * 0.8){
             locFrameSize.height = sHeight / window.devicePixelRatio;
         }else{
             locFrameSize.height = this._frame.clientHeight;
