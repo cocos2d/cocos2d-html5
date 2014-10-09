@@ -1589,10 +1589,16 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         if(texture && (cc.isString(texture))){
             texture = cc.textureCache.addImage(texture);
             _t.setTexture(texture);
-
             //TODO
             var size = texture.getContentSize();
             _t.setTextureRect(cc.rect(0,0, size.width, size.height));
+            //If image isn't loaded. Listen for the load event.
+            if(!texture._isLoaded){
+                texture.addLoadedEventListener(function(){
+                    var size = texture.getContentSize();
+                    _t.setTextureRect(cc.rect(0,0, size.width, size.height));
+                }, this);
+            }
             return;
         }
 
