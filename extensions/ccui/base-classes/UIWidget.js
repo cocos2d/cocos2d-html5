@@ -985,6 +985,9 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         }
 
         cc.Node.prototype.setPosition.call(this, pos, posY);
+        //TODO CHECK HERE, WEBGL DOSEN'T UPDATE ELEMENT
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+            cc.renderer.childrenOrderDirty = true;
     },
 
     setPositionX: function (x) {
