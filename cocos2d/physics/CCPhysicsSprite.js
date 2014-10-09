@@ -261,13 +261,25 @@
                     this.initWithSpriteFrame(fileName);
                 }
             }
-            this._transformCmd = new cc.PhysicsSpriteTransformCmd(this);
+
+            if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+                this._transformCmd = new cc.CustomRenderCmdCanvas(this, function(){
+                    if (this.transform) {
+                        this.transform();
+                    }
+                });
+            else
+                this._transformCmd = new cc.CustomRenderCmdWebGL(this, function(){
+                    if(this._transformForRenderer){
+                        this._transformForRenderer();
+                    }
+                });
             cc.renderer.pushRenderCommand(this._transformCmd);
         },
 
         visit: function(){
-            cc.Sprite.prototype.visit.call(this);
             cc.renderer.pushRenderCommand(this._transformCmd);
+            cc.Sprite.prototype.visit.call(this);
         },
 
         /**

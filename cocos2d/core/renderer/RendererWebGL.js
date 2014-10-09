@@ -457,16 +457,6 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         node.clear();
     };
 
-    cc.PhysicsSpriteTransformCmd = function (node) {
-        this._node = node;
-    };
-
-    cc.PhysicsSpriteTransformCmd.prototype.rendering = function () {
-        if (this._node.transform) {
-            this._node._transformForRenderer();
-        }
-    };
-
     cc.SkeletonRenderCmdWebGL = function(node){
         this._node = node;
     };
