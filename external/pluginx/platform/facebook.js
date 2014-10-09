@@ -495,7 +495,6 @@ plugin.extend('facebook', {
         delete info['imagePath'];
         delete info['photo'];
 
-
         info['caption'] = info['title'] || info['caption'];
         delete info['title'];
 
@@ -523,9 +522,9 @@ plugin.extend('facebook', {
                 return;
             }
         } else {
-            if (!info['href']) {
-                return;
-            }
+            //if (!info['href']) {
+            //    return;
+            //}
         }
 
         if (
