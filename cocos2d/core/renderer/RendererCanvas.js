@@ -125,7 +125,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         this._drawingRect = {
             //Sprite setTextureRect override ^.^
             get x(){ return node._offsetPosition.x; },
-            get y(){ return node._offsetPosition.y - node._rect.height; },
+            get y(){ return -node._offsetPosition.y - node._rect.height; },
             get width(){ return node._rect.width; },
             get height(){ return node._rect.height; }
         };
@@ -247,10 +247,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             x: 0,
             y: 0,
             get width(){
-                return node.width * cc.view.getScaleX();
+                return node.width;
             },
             get height(){
-                return node.height * cc.view.getScaleY()
+                return node.height;
             }
         };
     };
@@ -270,7 +270,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
         context.fillStyle = "rgba(" + (0 | curColor.r) + "," + (0 | curColor.g) + ","
             + (0 | curColor.b) + "," + opacity + ")";
-        context.fillRect(locRect.x, locRect.y, locRect.width, -locRect.height);
+        context.fillRect(locRect.x, locRect.y, locRect.width * scaleX, -locRect.height * scaleY);
 
         context.restore();
         cc.g_NumberOfDraws++;
@@ -282,8 +282,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         this._drawingRect = {
             x: 0,
             y: 0,
-            get width(){ return node.width * cc.view.getScaleX(); },
-            get height(){ return node.height * cc.view.getScaleY(); }
+            get width(){ return node.width; },
+            get height(){ return node.height; }
         };
         this._startPoint = cc.p(0, 0);
         this._endPoint = cc.p(0, 0);
@@ -311,7 +311,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         gradient.addColorStop(1, "rgba(" + Math.round(locEndColor.r) + "," + Math.round(locEndColor.g) + ","
             + Math.round(locEndColor.b) + "," + (locEndColor.a!=null?(opacity * (locEndColor.a / 255)).toFixed(4):255) + ")");
         context.fillStyle = gradient;
-        context.fillRect(locRect.x, locRect.y, locRect.width, -locRect.height);
+        context.fillRect(locRect.x, locRect.y, locRect.width * scaleX, -locRect.height * scaleY);
 
         context.restore();
         cc.g_NumberOfDraws++;
