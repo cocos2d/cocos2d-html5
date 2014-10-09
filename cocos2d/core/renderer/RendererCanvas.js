@@ -757,18 +757,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawSegment = cc.DrawNodeRenderCmdCanvas.prototype._drawSegment;
     cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawPoly = cc.DrawNodeRenderCmdCanvas.prototype._drawPoly;
 
-    cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawPoly = cc.DrawNodeRenderCmdCanvas.prototype._drawPoly;
-
-    cc.PhysicsSpriteTransformCmd = function (node) {
-        this._node = node;
-    };
-
-    cc.PhysicsSpriteTransformCmd.prototype.rendering = function () {
-        if (this._node.transform) {
-            this._node.transform();
-        }
-    };
-
     //--- TMXLayer's render command ---
     cc.TMXLayerRenderCmdCanvas = function (tmxLayer) {
         this._node = tmxLayer;
