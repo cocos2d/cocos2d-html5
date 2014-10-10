@@ -514,6 +514,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             this._cacheScale9Sprite();
             this.transform();
         }
+        cc.Node.prototype._transformForRenderer.call(this);
     },
 
     /**
