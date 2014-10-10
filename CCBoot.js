@@ -2008,6 +2008,8 @@ cc.game = /** @lends cc.game# */{
         callback = function () {
             if (!self._paused) {
                 director.mainLoop();
+                if(self._intervalId)
+                    window.cancelAnimationFrame(self._intervalId);
                 self._intervalId = window.requestAnimFrame(callback);
             }
         };
