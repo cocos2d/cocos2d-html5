@@ -476,46 +476,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         cc.g_NumberOfDraws++;
     };
 
-    // the canvas implement of renderCommand for cc.RenderTexture
-    cc.RenderTextureRenderCmdCanvas = function (node) {
-        this._node = node;
-
-        //CCRenderTexture _initWithWidthAndHeightForCanvas
-        this._cacheCanvas = null;
-        this._cacheContext = null;
-    };
-
-    cc.RenderTextureRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-        // auto draw flag
-        var context = ctx || cc._renderContext,
-            node = this._node;
-        var locNode = this._node, cacheCanvas = this._cacheCanvas, cacheCtx = this._cacheContext;
-        if (node.autoDraw) {
-            locNode.begin();
-
-            if (node._clearFlags) {
-                cacheCtx.save();
-                cacheCtx.fillStyle = this._clearColorStr;
-                cacheCtx.clearRect(0, 0, cacheCanvas.width, -cacheCanvas.height);
-                cacheCtx.fillRect(0, 0, cacheCanvas.width, -cacheCanvas.height);
-                cacheCtx.restore();
-            }
-
-            //! make sure all children are drawn
-            locNode.sortAllChildren();
-            var locChildren = locNode._children;
-            var childrenLen = locChildren.length;
-            var selfSprite = this.sprite;
-            for (var i = 0; i < childrenLen; i++) {
-                var getChild = locChildren[i];
-                if (getChild != selfSprite)
-                    getChild.visit();
-            }
-            locNode.end();
-        }
-        cc.g_NumberOfDraws++;
-    };
-
     cc.DrawNodeRenderCmdCanvas = function (node) {
         this._node = node;
         this._buffer = null;
@@ -683,7 +643,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     cc.ClippingNodeRestoreRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
 
         var node = this._node;
-        var i, children = node._children, locChild;
         var locCache = cc.ClippingNode._getSharedCache();
         var context = ctx || cc._renderContext;
         if (node._clipElemType) {
@@ -696,26 +655,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             context.drawImage(locCache, 0, 0);
             context.restore();
         } else {
-            // so if it has ClippingNode as a child, the child must uses composition stencil.
-            node._cangodhelpme(true);
-            var len = children.length;
-            if (len > 0) {
-                node.sortAllChildren();
-                // draw children zOrder < 0
-                for (i = 0; i < len; i++) {
-                    locChild = children[i];
-                    if (locChild._localZOrder < 0)
-                        locChild.visit(context);
-                    else
-                        break;
-                }
-                node.draw(context);
-                for (; i < len; i++) {
-                    children[i].visit(context);
-                }
-            } else
-                node.draw(context);
-            node._cangodhelpme(false);
             context.restore();
         }
     };
