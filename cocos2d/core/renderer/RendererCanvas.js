@@ -141,12 +141,15 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             locHeight = node._rect.height,
             image,
             curColor;
+
+        var blendChange = (node._blendFuncStr !== "source");
+
         if (t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1 || node._flippedX || node._flippedY) {
             context.save();
             //transform
             context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
-            if (node._blendFuncStr != "source")
+            if (blendChange)
                 context.globalCompositeOperation = node._blendFuncStr;
 
             if (node._flippedX)
@@ -154,7 +157,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             if (node._flippedY)
                 context.scale(1, -1);
 
-            if (node._texture && locTextureCoord.validRect) {
+            if (node._texture) {
                 if (node._texture._isLoaded) {
                     context.globalAlpha = (node._displayedOpacity / 255);
                     image = node._texture._htmlElementObj;
@@ -185,19 +188,19 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
                 }
 
-            } else if (!node._texture && locTextureCoord.validRect) {
+            } else if (!node._texture) {
                 curColor = node._color;
                 context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + node._displayedOpacity + ")";
                 context.fillRect(locX, locY, locWidth, locHeight);
             }
             context.restore();
         } else {
-            if (node._blendFuncStr != "source") {
+            if (blendChange) {
                 context.save();
                 context.globalCompositeOperation = node._blendFuncStr;
             }
 
-            if (node._texture && locTextureCoord.validRect) {
+            if (node._texture) {
                 if (node._texture._isLoaded) {
 
                     context.globalAlpha = (node._displayedOpacity / 255);
@@ -225,7 +228,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                             locHeight * scaleY);
                     }
                 }
-            } else if (!node._texture && locTextureCoord.validRect && node._displayedColor) {
+            } else if (!node._texture && node._displayedColor) {
 
                 context.globalAlpha = (node._displayedOpacity / 255);
                 curColor = node._displayedColor;
@@ -233,7 +236,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 context.fillRect(t.tx * scaleX + locX, -t.ty * scaleY + locY, locWidth, locHeight);
 
             }
-            if (node._blendFuncStr != "source")
+            if (blendChange)
                 context.restore();
         }
         cc.g_NumberOfDraws++;
