@@ -402,11 +402,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
     _p._setWidth = function(width){
         cc.Node.prototype._setWidth.call(this, width);
-        this._rendererCmd._drawingRect.width = width;
     };
     _p._setHeight = function(height){
         cc.Node.prototype._setHeight.call(this, height);
-        this._rendererCmd._drawingRect.height = height;
     };
     _p._updateColor = function () {
         var locCmd = this._rendererCmd;
