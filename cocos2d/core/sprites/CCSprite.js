@@ -1439,9 +1439,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         _t._offsetPosition.x = relativeOffset.x + (_t._contentSize.width - _t._rect.width) / 2;
         _t._offsetPosition.y = relativeOffset.y + (_t._contentSize.height - _t._rect.height) / 2;
 
-        _t._rendererCmd._drawingRect.x = _t._offsetPosition.x;
-        _t._rendererCmd._drawingRect.y = _t._offsetPosition.y - _t._rect.height;
-
         // rendering using batch node
         if (_t._batchNode) {
             // update dirty, don't update _recursiveDirty
