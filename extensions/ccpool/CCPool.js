@@ -60,22 +60,20 @@ cc.pool = /** @lends cc.pool# */{
      * @param obj
      */
     putInPool: function (obj) {
-        if (obj instanceof cc.Node) {
-            var pid = obj.constructor.prototype.__pid;
-            if (!pid) {
-                var desc = { writable: true, enumerable: false, configurable: true };
-                desc.value = ClassManager.getNewID();
-                Object.defineProperty(obj.constructor.prototype, '__pid', desc);
-            }
-            if (!this._pool[pid]) {
-                this._pool[pid] = [];
-            }
-            // JSB retain to avoid being auto released
-            obj.retain && obj.retain();
-            // User implementation for disable the object
-            obj.unuse && obj.unuse();
-            this._pool[pid].push(obj);
+        var pid = obj.constructor.prototype.__pid;
+        if (!pid) {
+            var desc = { writable: true, enumerable: false, configurable: true };
+            desc.value = ClassManager.getNewID();
+            Object.defineProperty(obj.constructor.prototype, '__pid', desc);
         }
+        if (!this._pool[pid]) {
+            this._pool[pid] = [];
+        }
+        // JSB retain to avoid being auto released
+        obj.retain && obj.retain();
+        // User implementation for disable the object
+        obj.unuse && obj.unuse();
+        this._pool[pid].push(obj);
     },
 
     /**
