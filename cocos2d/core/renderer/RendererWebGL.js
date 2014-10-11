@@ -71,10 +71,9 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
             var locPool = this._transformNodePool;
             //sort the pool
             locPool.sort(this._sortNodeByLevelAsc);
-
             //transform node
             for (var i = 0, len = locPool.length; i < len; i++) {
-                if (locPool[i]._renderCmdDiry)        //TODO need modify name for LabelTTF
+                if (locPool[i]._renderCmdDiry)
                     locPool[i]._transformForRenderer();
             }
             locPool.length = 0;
@@ -456,16 +455,6 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         node._space.eachConstraint(cc.DrawConstraint.bind(node));
         cc.DrawNode.prototype.draw.call(node);
         node.clear();
-    };
-
-    cc.PhysicsSpriteTransformCmd = function (node) {
-        this._node = node;
-    };
-
-    cc.PhysicsSpriteTransformCmd.prototype.rendering = function () {
-        if (this._node.transform) {
-            this._node._transformForRenderer();
-        }
     };
 
     cc.SkeletonRenderCmdWebGL = function(node){

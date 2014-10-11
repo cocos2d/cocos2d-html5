@@ -128,12 +128,37 @@ cc._tmp.WebGLCCNode = function () {
         //optimize performance for Javascript
         cc.kmMat4Multiply(stackMatrix, parentMatrix, t4x4);
 
+        // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
+        if (this._camera != null && !(this.grid != null && this.grid.isActive())) {
+            var apx = this._anchorPointInPoints.x, apy = this._anchorPointInPoints.y;
+            var translate = (apx !== 0.0 || apy !== 0.0);
+            if (translate){
+                if(!cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
+                    apx = 0 | apx;
+                    apy = 0 | apy;
+                }
+                //cc.kmGLTranslatef(apx, apy, 0);
+                var translation = new cc.kmMat4();
+                cc.kmMat4Translation(translation, apx, apy, 0);
+                cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
+
+                this._camera._locateForRenderer(stackMatrix);
+
+                //cc.kmGLTranslatef(-apx, -apy, 0);
+                cc.kmMat4Translation(translation, -apx, -apy, 0);
+                cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
+            } else {
+                this._camera._locateForRenderer(stackMatrix);
+            }
+        }
+
         this._renderCmdDiry = false;
         if(!this._children || this._children.length === 0)
             return;
         var i, len, locChildren = this._children;
         for(i = 0, len = locChildren.length; i< len; i++){
-            locChildren[i]._transformForRenderer();
+            locChildren[i]._transformForRenderer(stackMatrix);
+            //locChildren[i]._transformForRenderer();
         }
     };
 

@@ -208,7 +208,7 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     },
 
     _cacheScale9Sprite: function(){
-        if(!this._scale9Image)
+        if(!this._scale9Image && !this._scale9Dirty)
             return;
         var size = this._contentSize, locCanvas = this._cacheCanvas;
         var contentSizeChanged = false;
@@ -219,11 +219,13 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
             contentSizeChanged = true;
         }
 
-        //cc._renderContext = this._cacheContext;
-        cc.view._setScaleXYForRenderTexture();
-        this._scale9Image.visit(this._cacheContext);
-        //cc._renderContext = cc._mainRenderContextBackup;
-        cc.view._resetScale();
+        //begin cache
+        cc.renderer._isCacheToCanvasOn = true;
+        this._scale9Image.visit();
+
+        //draw to cache canvas
+        this._cacheContext.clearRect(0, 0, size.width, -size.height);
+        cc.renderer._renderingToCacheCanvas(this._cacheContext);
 
         if(contentSizeChanged)
             this._cacheSprite.setTextureRect(cc.rect(0,0, size.width, size.height));
@@ -252,18 +254,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
 
         //cache
         if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-
-            this._rendererStartCanvasCmd = new cc.CustomRenderCmdCanvas(this, function(ctx, scaleX, scaleY){
-                ctx = ctx || cc._renderContext;
-
-                var p = this._transformWorld;
-                ctx.save();
-                ctx.transform(p.a, p.b, p.c, p.d, p.tx * scaleX, -p.ty * scaleY);
-            });
-            this._rendererEndCanvasCmd = new cc.CustomRenderCmdCanvas(this, function(ctx){
-                ctx = ctx || cc._renderContext;
-                ctx.restore();
-            });
 
             var locCacheCanvas = this._cacheCanvas = cc.newElement('canvas');
             locCacheCanvas.width = 1;
@@ -512,15 +502,21 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
             this._scale9Dirty = true;
         }
         if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-            cc.renderer.pushRenderCommand(this._rendererStartCanvasCmd);
             this._scale9Dirty = false;
             this._cacheScale9Sprite();
 
             cc.Node.prototype.visit.call(this, ctx);
-            cc.renderer.pushRenderCommand(this._rendererEndCanvasCmd);
         }else{
             cc.Node.prototype.visit.call(this, ctx);
         }
+    },
+
+    _transformForRenderer: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
+            this._cacheScale9Sprite();
+            this.transform();
+        }
+        cc.Node.prototype._transformForRenderer.call(this);
     },
 
     /**

@@ -1439,9 +1439,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         _t._offsetPosition.x = relativeOffset.x + (_t._contentSize.width - _t._rect.width) / 2;
         _t._offsetPosition.y = relativeOffset.y + (_t._contentSize.height - _t._rect.height) / 2;
 
-        _t._rendererCmd._drawingRect.x = _t._offsetPosition.x;
-        _t._rendererCmd._drawingRect.y = _t._offsetPosition.y - _t._rect.height;
-
         // rendering using batch node
         if (_t._batchNode) {
             // update dirty, don't update _recursiveDirty
@@ -1592,10 +1589,16 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         if(texture && (cc.isString(texture))){
             texture = cc.textureCache.addImage(texture);
             _t.setTexture(texture);
-
             //TODO
             var size = texture.getContentSize();
             _t.setTextureRect(cc.rect(0,0, size.width, size.height));
+            //If image isn't loaded. Listen for the load event.
+            if(!texture._isLoaded){
+                texture.addLoadedEventListener(function(){
+                    var size = texture.getContentSize();
+                    _t.setTextureRect(cc.rect(0,0, size.width, size.height));
+                }, this);
+            }
             return;
         }
 

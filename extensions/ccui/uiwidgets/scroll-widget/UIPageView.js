@@ -437,8 +437,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
                     this._scrollPages(-curPageLocation);
                 else
                     this.scrollToPage(this._curPageIdx + 1);
-            }
-            else if (curPageLocation >= boundary) {
+            } else if (curPageLocation >= boundary) {
                 if (this._curPageIdx <= 0)
                     this._scrollPages(-curPageLocation);
                 else

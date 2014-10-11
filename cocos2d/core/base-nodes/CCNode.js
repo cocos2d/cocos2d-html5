@@ -1352,6 +1352,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             this._detachChild(child, cleanup);
 
         this.setNodeDirty();
+        cc.renderer.childrenOrderDirty = true;
     },
 
     /**
