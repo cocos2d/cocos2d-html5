@@ -399,11 +399,6 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
 
     _setTextureForCanvas: function (texture) {
         this._textureForCanvas = texture;
-        var children = this._children,
-            len = this._children.length;
-        for(var i=0; i<len; i++){
-            children[i].setTexture(texture);
-        }
     },
 
     _setTextureForWebGL: function (texture) {
