@@ -513,48 +513,50 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      */
     setDesignResolutionSize: function (width, height, resolutionPolicy) {
         // Defensive code
-        if (!width || !height) {
+        if (isNaN(width) || width == 0 || isNaN(height) || height == 0) {
             cc.log(cc._LogInfos.EGLView_setDesignResolutionSize);
             return;
         }
         var _t = this;
-        var director = cc.director;
-
-        if(resolutionPolicy !== _t._resolutionPolicy){
-            _t.setResolutionPolicy(resolutionPolicy);
-        }
+        var frameW = _t._frameSize.width, frameH = _t._frameSize.height;
+        var previousPolicy = _t._resolutionPolicy;
+        _t.setResolutionPolicy(resolutionPolicy);
         var policy = _t._resolutionPolicy;
-        if (policy){
+        if (policy)
             policy.preApply(_t);
-        } else {
+        else {
             cc.log(cc._LogInfos.EGLView_setDesignResolutionSize_2);
             return;
         }
 
+        // Reinit frame size
         if (cc.sys.isMobile)
             _t._setViewPortMeta(_t._frameSize.width, _t._frameSize.height);
-
         _t._initFrameSize();
-        var dSize = _t._designResolutionSize,
-            oSize = _t._originalDesignResolutionSize;
-        if ( dSize.width !== width || dSize.height !== height ){
-            // reset director's member variables to fit visible rect
-            director._winSizeInPoints.width = oSize.width = dSize.width = width;
-            director._winSizeInPoints.height = oSize.height = dSize.height = height;
+        _t._designResolutionSize = cc.size(width, height);
+        _t._originalDesignResolutionSize = cc.size(width, height);
 
-            policy.postApply(_t);
-            cc.winSize.width = director._winSizeInPoints.width;
-            cc.winSize.height = director._winSizeInPoints.height;
-        }
-
-        var result = policy.apply(_t, dSize);
+        var result = policy.apply(_t, _t._designResolutionSize);
         if (result.scale && result.scale.length == 2) {
             _t._scaleX = result.scale[0];
             _t._scaleY = result.scale[1];
-
-            _t._originalScaleX = _t._scaleX;
-            _t._originalScaleY = _t._scaleY;
         }
+        if (result.viewport) {
+            var vp = _t._viewPortRect = result.viewport, visible = _t._visibleRect;
+            visible.width = cc._canvas.width / _t._scaleX;
+            visible.height = cc._canvas.height / _t._scaleY;
+            visible.x = -vp.x / _t._scaleX;
+            visible.y = -vp.y / _t._scaleY;
+        }
+
+        // reset director's member variables to fit visible rect
+        var director = cc.director;
+        director._winSizeInPoints.width = _t._designResolutionSize.width;
+        director._winSizeInPoints.height = _t._designResolutionSize.height;
+
+        policy.postApply(_t);
+        cc.winSize.width = director._winSizeInPoints.width;
+        cc.winSize.height = director._winSizeInPoints.height;
 
         if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
             // reset director's member variables to fit visible rect
@@ -562,18 +564,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             director.setGLDefaultValues();
         }
 
-        if (result.viewport) {
-            var vp = _t._viewPortRect = result.viewport, visible = _t._visibleRect;
-            visible.width = cc._canvas.width / _t._scaleX;
-            visible.height = cc._canvas.height / _t._scaleY;
-            visible.x = -vp.x / _t._scaleX;
-            visible.y = -vp.y / _t._scaleY;
-            cc.visibleRect && cc.visibleRect.init(_t._visibleRect);
-        }
-
+        _t._originalScaleX = _t._scaleX;
+        _t._originalScaleY = _t._scaleY;
         // For editbox
         if (cc.DOM)
             cc.DOM._resetEGLViewDiv();
+        cc.visibleRect && cc.visibleRect.init(_t._visibleRect);
     },
 
     /**
