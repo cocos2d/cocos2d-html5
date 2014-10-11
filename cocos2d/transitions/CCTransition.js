@@ -948,7 +948,8 @@ cc.TransitionFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
      */
     ctor:function (t, scene, o) {
         cc.TransitionSceneOriented.prototype.ctor.call(this);
-        o = o || cc.TRANSITION_ORIENTATION_RIGHT_OVER;
+        if(o == null)
+            o = cc.TRANSITION_ORIENTATION_RIGHT_OVER;
         scene && this.initWithDuration(t, scene, o);
     },
 
@@ -1029,7 +1030,8 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
      */
     ctor:function (t, scene, o) {
         cc.TransitionSceneOriented.prototype.ctor.call(this);
-        o = o || cc.TRANSITION_ORIENTATION_UP_OVER;
+        if(o == null)
+            o = cc.TRANSITION_ORIENTATION_UP_OVER;
         scene && this.initWithDuration(t, scene, o);
     },
     /**
@@ -1107,7 +1109,8 @@ cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.Trans
      */
     ctor:function (t, scene, o) {
         cc.TransitionSceneOriented.prototype.ctor.call(this);
-        o = o || cc.TRANSITION_ORIENTATION_RIGHT_OVER;
+        if(o == null)
+            o = cc.TRANSITION_ORIENTATION_RIGHT_OVER;
         scene && this.initWithDuration(t, scene, o);
     },
     /**
@@ -1186,7 +1189,8 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
      */
     ctor:function (t, scene, o) {
         cc.TransitionSceneOriented.prototype.ctor.call(this);
-        o = o || cc.TRANSITION_ORIENTATION_RIGHT_OVER;
+        if(o == null)
+            o = cc.TRANSITION_ORIENTATION_RIGHT_OVER;
         scene && this.initWithDuration(t, scene, o);
     },
     /**
@@ -1271,7 +1275,8 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
      */
     ctor:function (t, scene, o) {
         cc.TransitionSceneOriented.prototype.ctor.call(this);
-        o = o || cc.TRANSITION_ORIENTATION_UP_OVER;
+        if(o == null)
+            o = cc.TRANSITION_ORIENTATION_UP_OVER;
         scene && this.initWithDuration(t, scene, o);
     },
     /**
@@ -1354,7 +1359,8 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.T
      */
     ctor:function (t, scene, o) {
         cc.TransitionSceneOriented.prototype.ctor.call(this);
-        o = o || cc.TRANSITION_ORIENTATION_RIGHT_OVER;
+        if(o == null)
+            o = cc.TRANSITION_ORIENTATION_RIGHT_OVER;
         scene && this.initWithDuration(t, scene, o);
     },
     /**
