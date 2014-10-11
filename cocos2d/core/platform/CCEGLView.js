@@ -518,8 +518,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             return;
         }
         var _t = this;
-        var frameW = _t._frameSize.width, frameH = _t._frameSize.height;
-        var previousPolicy = _t._resolutionPolicy;
         _t.setResolutionPolicy(resolutionPolicy);
         var policy = _t._resolutionPolicy;
         if (policy)
