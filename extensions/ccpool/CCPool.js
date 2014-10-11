@@ -46,41 +46,52 @@
 cc.pool = /** @lends cc.pool# */{
     _pool: {},
 
-    /**
-     * Put the cc.Node object in pool
-     * @param obj
-     */
-    putInPool: function (obj) {
-        if (obj instanceof cc.Node) {
-            var pid = obj.constructor.prototype.__pid;
-            if (!pid) {
-                var desc = { writable: true, enumerable: false, configurable: true };
-                desc.value = ClassManager.getNewID();
-                Object.defineProperty(obj.constructor.prototype, '__pid', desc);
-            }
-            if (!this._pool[pid]) {
-                this._pool[pid] = [];
-            }
-            if(obj.unuse)
-                obj.unuse();    //define by user.   use to initialize the state of objects.
-            obj.retain();//use for jsb
-            this._pool[pid].push(obj);
-        }
+    _releaseCB: function () {
+        this.release();
+    },
+
+    _autoRelease: function (obj) {
+        var running = obj._running === undefined ? false : !obj._running;
+        cc.director.getScheduler().scheduleCallbackForTarget(obj, this._releaseCB, 0, 0, 0, running)
     },
 
     /**
-     * Check if this kind of object has already in pool
+     * Put the obj in pool
+     * @param obj
+     */
+    putInPool: function (obj) {
+        var pid = obj.constructor.prototype.__pid;
+        if (!pid) {
+            var desc = { writable: true, enumerable: false, configurable: true };
+            desc.value = ClassManager.getNewID();
+            Object.defineProperty(obj.constructor.prototype, '__pid', desc);
+        }
+        if (!this._pool[pid]) {
+            this._pool[pid] = [];
+        }
+        // JSB retain to avoid being auto released
+        obj.retain && obj.retain();
+        // User implementation for disable the object
+        obj.unuse && obj.unuse();
+        this._pool[pid].push(obj);
+    },
+
+    /**
+     * Check if this kind of obj has already in pool
      * @param objClass
      * @returns {boolean} if this kind of obj is already in pool return true,else return false;
      */
     hasObject: function (objClass) {
         var pid = objClass.prototype.__pid;
         var list = this._pool[pid];
-        return (list && list.length > 0);
+        if (!list || list.length == 0) {
+            return false;
+        }
+        return true;
     },
 
     /**
-     * Remove the object if you want to delete it;
+     * Remove the obj if you want to delete it;
      * @param obj
      */
     removeObject: function (obj) {
@@ -90,7 +101,8 @@ cc.pool = /** @lends cc.pool# */{
             if (list) {
                 for (var i = 0; i < list.length; i++) {
                     if (obj === list[i]) {
-                        obj.release();          //use for jsb
+                        // JSB release to avoid memory leak
+                        obj.release && obj.release();
                         list.splice(i, 1);
                     }
                 }
@@ -99,7 +111,7 @@ cc.pool = /** @lends cc.pool# */{
     },
 
     /**
-     * Get the object from pool
+     * Get the obj from pool
      * @param args
      * @returns {*} call the reuse function an return the obj
      */
@@ -107,24 +119,26 @@ cc.pool = /** @lends cc.pool# */{
         if (this.hasObject(objClass)) {
             var pid = objClass.prototype.__pid;
             var list = this._pool[pid];
-            var args = Array.prototype.slice.call(arguments, 1);
+            var args = Array.prototype.slice.call(arguments);
+            args.shift();
             var obj = list.pop();
-            if(obj.reuse)
-                obj.reuse.apply(obj, args);       //define by user.
+            // User implementation for re-enable the object
+            obj.reuse && obj.reuse.apply(obj, args);
+            // JSB release to avoid memory leak
+            cc.sys.isNative && obj.release && this._autoRelease(obj);
             return obj;
         }
     },
 
     /**
-     *  remove all object in pool and reset the pool
+     *  remove all objs in pool and reset the pool
      */
     drainAllPools: function () {
-        var locPool = this._pool;
-        for (var selKey in locPool) {
-            for (var j = 0; j < locPool[selKey].length; j++) {
-                var obj = locPool[selKey][j];
-                if(obj && obj.release)
-                    obj.release()
+        for (var i in this._pool) {
+            for (var j = 0; j < this._pool[i].length; j++) {
+                var obj = this._pool[i][j];
+                // JSB release to avoid memory leak
+                obj.release && obj.release();
             }
         }
         this._pool = {};

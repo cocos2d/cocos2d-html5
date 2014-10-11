@@ -238,6 +238,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
             var viewportMetas,
                 elems = document.getElementsByName("viewport"),
+                currentVP = elems ? elems[0] : null,
                 content;
 
             vp = cc.newElement("meta");
@@ -254,7 +255,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             if(cc.sys.isMobile)
                 viewportMetas["target-densitydpi"] = this._targetDensityDPI;
 
-            content = (elems && elems.length>0) ? elems[0].content : "";
+            content = currentVP ? currentVP.content : "";
             for (var key in viewportMetas) {
                 var pattern = new RegExp(key);
 
@@ -276,6 +277,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
              content ="width="+width+","+content;
              */
             vp.content = content;
+            // For adopting certain android devices which don't support second viewport
+            currentVP.content = content;
 
             document.head.appendChild(vp);
         }
