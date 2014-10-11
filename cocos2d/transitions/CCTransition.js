@@ -1033,6 +1033,8 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
         cc.TransitionSceneOriented.prototype.ctor.call(this);
         if(o == null)
             o =  cc.TRANSITION_ORIENTATION_UP_OVER;
+        if(o == null)
+            o = cc.TRANSITION_ORIENTATION_UP_OVER;
         scene && this.initWithDuration(t, scene, o);
     },
     /**
