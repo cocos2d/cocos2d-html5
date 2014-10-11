@@ -201,11 +201,11 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         _t._render();
     };
 
-    cc.MontionStreakCmdWebGL = function(node){
+    cc.MotionStreakCmdWebGL = function(node){
         this._node = node;
     };
 
-    cc.MontionStreakCmdWebGL.prototype.rendering = function(ctx){
+    cc.MotionStreakCmdWebGL.prototype.rendering = function(ctx){
         var _t = this._node;
         if (_t._nuPoints <= 1)
             return;

@@ -118,7 +118,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     },
 
     _initRendererCmd:function(){
-        this._rendererCmd = new cc.MontionStreakCmdWebGL(this);
+        this._rendererCmd = new cc.MotionStreakCmdWebGL(this);
     },
 
     /**
