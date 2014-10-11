@@ -23,86 +23,116 @@
  ****************************************************************************/
 
 /**
- * Facebook APIs <br />
+ * Facebook SDK for Web Platform <br/>
  * FacebookAgent...
  *
  * @property {String} name - plugin name
  * @property {String} version - API version
- * @property {Object} userInfo - store user data
- * @property {Object} HttpMethod - store http method static param
- * @property {Number} CodeSucceed - success code
  */
 plugin.extend('facebook', {
     name: "",
     version: "",
-    userInfo: null,
+    _userInfo: null,
+    _isLoggedIn: false,
 
+    /**
+     * HTTP methods constants
+     * @constant
+     * @type {Object}
+     */
     HttpMethod: {
         'GET': 'get',
         'POST': 'post',
         'DELETE': 'delete'
     },
 
+    /**
+     * Succeed code returned in callbacks
+     * @constant
+     * @type {Number}
+     */
     CODE_SUCCEED: 0,
+
+    /**
+     * App event names constants
+     * @constant
+     * @type {Object}
+     */
     AppEvent: {
-        'ACTIVATED_APP': "fb_mobile_activate_app",
-        'COMPLETED_REGISTRATION': "fb_mobile_complete_registration",
-        'VIEWED_CONTENT': "fb_mobile_content_view",
-        'SEARCHED': "fb_mobile_search",
-        'RATED': "fb_mobile_rate",
-        'COMPLETED_TUTORIAL': "fb_mobile_tutorial_completion",
-        'ADDED_TO_CART': "fb_mobile_add_to_cart",
-        'ADDED_TO_WISHLIST': "fb_mobile_add_to_wishlist",
-        'INITIATED_CHECKOUT': "fb_mobile_initiated_checkout",
-        'ADDED_PAYMENT_INFO': "fb_mobile_add_payment_info",
-        'PURCHASED': "fb_mobile_purchase",
-        'ACHIEVED_LEVEL': "fb_mobile_level_achieved",
-        'UNLOCKED_ACHIEVEMENT': "fb_mobile_achievement_unlocked",
-        'SPENT_CREDITS': "fb_mobile_spent_credits"
+        'ACTIVATED_APP': FB.AppEvents.EventNames.ACTIVATED_APP,
+        'COMPLETED_REGISTRATION': FB.AppEvents.EventNames.COMPLETED_REGISTRATION,
+        'VIEWED_CONTENT': FB.AppEvents.EventNames.VIEWED_CONTENT,
+        'SEARCHED': FB.AppEvents.EventNames.SEARCHED,
+        'RATED': FB.AppEvents.EventNames.RATED,
+        'COMPLETED_TUTORIAL': FB.AppEvents.EventNames.COMPLETED_TUTORIAL,
+        'ADDED_TO_CART': FB.AppEvents.EventNames.ADDED_TO_CART,
+        'ADDED_TO_WISHLIST': FB.AppEvents.EventNames.ADDED_TO_WISHLIST,
+        'INITIATED_CHECKOUT': FB.AppEvents.EventNames.INITIATED_CHECKOUT,
+        'ADDED_PAYMENT_INFO': FB.AppEvents.EventNames.ADDED_PAYMENT_INFO,
+        'PURCHASED': FB.AppEvents.EventNames.PURCHASED,
+        'ACHIEVED_LEVEL': FB.AppEvents.EventNames.ACHIEVED_LEVEL,
+        'UNLOCKED_ACHIEVEMENT': FB.AppEvents.EventNames.UNLOCKED_ACHIEVEMENT,
+        'SPENT_CREDITS': FB.AppEvents.EventNames.SPENT_CREDITS
     },
 
+    /**
+     * App event parameter names constants
+     * @constant
+     * @type {Object}
+     */
     AppEventParam: {
-        'CURRENCY': "fb_currency",
-        'REGISTRATION_METHOD': "fb_registration_method",
-        'CONTENT_TYPE': "fb_content_type",
-        'CONTENT_ID': "fb_content_id",
-        'SEARCH_STRING': "fb_search_string",
-        'SUCCESS': "fb_success",
-        'MAX_RATING_VALUE': "fb_max_rating_value",
-        'PAYMENT_INFO_AVAILABLE': "fb_payment_info_available",
-        'NUM_ITEMS': "fb_num_items",
-        'DESCRIPTION': "fb_description"
+        'CURRENCY': FB.AppEvents.ParameterNames.CURRENCY,
+        'REGISTRATION_METHOD': FB.AppEvents.ParameterNames.REGISTRATION_METHOD,
+        'CONTENT_TYPE': FB.AppEvents.ParameterNames.CONTENT_TYPE,
+        'CONTENT_ID': FB.AppEvents.ParameterNames.CONTENT_ID,
+        'SEARCH_STRING': FB.AppEvents.ParameterNames.SEARCH_STRING,
+        'SUCCESS': FB.AppEvents.ParameterNames.SUCCESS,
+        'MAX_RATING_VALUE': FB.AppEvents.ParameterNames.MAX_RATING_VALUE,
+        'PAYMENT_INFO_AVAILABLE': FB.AppEvents.ParameterNames.PAYMENT_INFO_AVAILABLE,
+        'NUM_ITEMS': FB.AppEvents.ParameterNames.NUM_ITEMS,
+        'LEVEL': FB.AppEvents.ParameterNames.LEVEL,
+        'DESCRIPTION': FB.AppEvents.ParameterNames.DESCRIPTION
     },
+
+    /**
+     * App event parameter values constants
+     * @constant
+     * @type {Object}
+     */
     AppEventParamValue: {
         'VALUE_YES': "1",
         'VALUE_NO': "0"
     },
-    /**
-     * Initialize Facebook sdk
-     * @param {Object} config
-     */
+
+    _checkLoginStatus: function() {
+        var self = this;
+        FB.getLoginStatus(function (response) {
+            if (response && response.status === 'connected') {
+                //login
+                self._isLoggedIn = true;
+                //save user info
+                self._userInfo = response['authResponse'];
+            } else {
+                // Reset cached status
+                self._isLoggedIn = false;
+                self._userInfo = {};
+            }
+        });
+    },
+
     ctor: function (config) {
         this.name = "facebook";
         this.version = "1.0";
-        this.userInfo = {};
+        this._userInfo = {};
+        this._isLoggedIn = false;
 
         if (!FB) {
             return;
         }
 
-        var self = this;
         //This configuration will be read from the project.json.
         FB.init(config);
-        FB.getLoginStatus(function (response) {
-            if (response && response.status === 'connected') {
-                //login
-                self._isLogined = true;
-                //save user info
-                self.userInfo = response.authResponse;
-            } else {
-                self._isLogined = false;
-            }
-        });
+        this._checkLoginStatus();
 
         plugin.FacebookAgent = this;
     },
@@ -137,13 +167,16 @@ plugin.extend('facebook', {
         FB.login(function (response) {
             if (response['authResponse']) {
                 //save user info
-                self.userInfo = response['authResponse'];
+                self._isLoggedIn = true;
+                self._userInfo = response['authResponse'];
                 var permissList = response['authResponse']['grantedScopes'].split(",");
                 typeof callback === 'function' && callback(0, {
                     accessToken: response['authResponse']['accessToken'],
                     permissions: permissList
                 });
             } else {
+                self._isLoggedIn = false;
+                self._userInfo = {};
                 typeof callback === 'function' && callback(response['error_code'] || 1, {
                     error_message: "unknown"
                 });
@@ -155,34 +188,14 @@ plugin.extend('facebook', {
     },
     /**
      * Checking login status
-     * @param {Function} callback
+     * @return {Bool} Whether user is logged in
      * @example
      * //example
      * plugin.FacebookAgent.isLoggedIn(type, msg);
      */
-    isLoggedIn: function (callback) {
-        var self = this;
-        FB.getLoginStatus(function (response) {
-            if (response) {
-                if (response['status'] === 'connected') {
-                    //login - save user info
-                    self.userInfo = response['authResponse'];
-                    typeof callback === 'function' && callback(0, {
-                        isLoggedIn: true,
-                        accessToken: response['authResponse']['accessToken']
-                    });
-                } else {
-                    typeof callback === 'function' && callback(0, {
-                        isLoggedIn: false,
-                        accessToken: ""
-                    });
-                }
-            } else {
-                typeof callback === 'function' && callback(1, {
-                    error_message: 'Unknown'
-                });
-            }
-        });
+    isLoggedIn: function () {
+        //this._checkLoginStatus();
+        return this._isLoggedIn;
     },
 
     /**
@@ -197,7 +210,8 @@ plugin.extend('facebook', {
         FB.logout(function (response) {
             if (response['authResponse']) {
                 // user is now logged out
-                self.userInfo = {};
+                self._isLoggedIn = false;
+                self._userInfo = {};
                 typeof callback === 'function' && callback(0, {"isLoggedIn": false});
             } else {
                 typeof callback === 'function' && callback(response['error_code'] || 1, {
@@ -216,18 +230,21 @@ plugin.extend('facebook', {
      * //example
      * plugin.FacebookAgent.requestPermissions(["manage_pages"], callback);
      */
-    requestPermissions: function (permissions, callback) {
+    _requestPermissions: function (permissions, callback) {
         var permissionsStr = permissions.join(',');
         var self = this;
         FB.login(function (response) {
             if (response['authResponse']) {
                 var permissList = response['authResponse']['grantedScopes'].split(",");
                 //save user info
-                self.userInfo = response['authResponse'];
+                self._isLoggedIn = true;
+                self._userInfo = response['authResponse'];
                 typeof callback === 'function' && callback(0, {
                     permissions: permissList
                 });
             } else {
+                self._isLoggedIn = false;
+                self._userInfo = {};
                 typeof callback === 'function' && callback(response['error_code'] || 1, {
                     error_message: response['error_message'] || "Unknown"
                 });
@@ -240,45 +257,27 @@ plugin.extend('facebook', {
 
     /**
      * Acquiring AccessToken
-     * @param {Function} callback
+     * @return {String}
      * @example
      * //example
-     * plugin.FacebookAgent.requestPermissions(callback);
+     * var accessToken = plugin.FacebookAgent.getAccessToken();
      */
-    requestAccessToken: function (callback) {
-        if (typeof callback !== 'function') {
-            return;
-        }
-
-        if (this.userInfo.accessToken) {
-            callback(0, {
-                accessToken: this.userInfo['accessToken']
-            });
-        } else {
-            var self = this;
-            FB.getLoginStatus(function (response) {
-                if (response && response['status'] === 'connected') {
-                    //login - save user info
-                    self.userInfo = response['authResponse'];
-                    callback(0, {
-                        accessToken: response['authResponse']['accessToken']
-
-                    });
-                } else {
-                    callback(response['error_code'] || 1, {
-                        error_message: response['error_message'] || "Unknown"
-                    });
-                }
-            });
-        }
+    getAccessToken: function () {
+        return this._userInfo ? this._userInfo['accessToken'] : null;
     },
 
     /**
-     * Share something
-     * @param info
-     * @param callback
+     * Acquiring User ID
+     * @return {String}
+     * @example
+     * //example
+     * var userID = plugin.FacebookAgent.getUserID();
      */
-    share: function (info, callback) {
+    getUserID: function () {
+        return this._userInfo ? this._userInfo['userID'] : null;
+    },
+
+    _share: function (info, callback) {
         FB.ui({
                 method: 'share',
                 name: info['title'],
@@ -307,12 +306,21 @@ plugin.extend('facebook', {
     },
 
     /**
-     * Various pop
+     * Request a web dialog for Facebook sharing
      * @param info
      * @param callback
      */
-    webDialog: function (info, callback) {
+    dialog: function (info, callback) {
         if (!info) {
+            typeof callback === 'function' && callback(1, {
+                error_message: "No info parameter provided"
+            });
+            return;
+        }
+        if (!this.canPresentDialog(info)) {
+            typeof callback === 'function' && callback(1, {
+                error_message: "The requested dialog: " + info['dialog'] + " can not be presented on Web"
+            });
             return;
         }
         if (info['dialog'] === 'share_link') {
@@ -321,6 +329,11 @@ plugin.extend('facebook', {
                 info['href'] = info['link'];
             }
         } else {
+            // Compatible with feed_dialog
+            if (info['dialog'] == 'feed_dialog') {
+                info['dialog'] = 'share';
+            }
+
             info['method'] = info['dialog'];
             delete info['dialog'];
 
@@ -342,13 +355,12 @@ plugin.extend('facebook', {
 
             info['description'] = info['text'] || info['description'];
             delete info['text'];
-            delete info['description'];
 
-            if (info['method'] == 'share_open_graph' && info['url']) {
+            if (info['method'] == 'share_open_graph') {
                 if (info['url']) {
                     var obj = {};
-                    if (info["preview_property"])
-                        obj[info["preview_property"]] = info["url"];
+                    if (info["preview_property_name"])
+                        obj[info["preview_property_name"]] = info["url"];
                     else
                         obj["object"] = info["url"];
 
@@ -360,17 +372,7 @@ plugin.extend('facebook', {
                     }
 
                     info['action_properties'] = JSON.stringify(obj);
-                } else {
-                    return;
                 }
-            }
-
-            if (
-                info['method'] != 'share_open_graph' &&
-                    info['method'] != 'share_link'
-                ) {
-                cc.log('web is not supported what this it method');
-                return;
             }
         }
 
@@ -391,11 +393,23 @@ plugin.extend('facebook', {
                 }
             });
     },
-    canPresentDialog: function (map) {
-        return false;
+
+    /**
+     * Check whether the share request can be achieved
+     * @param info
+     */
+    canPresentDialog: function (info) {
+        if (info && info['dialog'] && (
+            info['dialog'] === 'share_link' ||
+            info['dialog'] === 'feed_dialog' ||
+            info['dialog'] === 'share_open_graph' ||
+            info['dialog'] === 'message_link'))
+            return true;
+        else
+            return false;
     },
     /**
-     * FB.api package
+     * FB.api
      * @param {String} path
      * @param {Number} httpmethod
      * @param {Object} params
@@ -417,11 +431,7 @@ plugin.extend('facebook', {
         });
     },
 
-    /**
-     * Get permission list
-     * @param callback
-     */
-    getPermissionList: function (callback) {
+    _getPermissionList: function (callback) {
         FB.api("/me/permissions", function (response) {
             if (response['data']) {
                 var permissionList = [];
@@ -471,17 +481,19 @@ plugin.extend('facebook', {
     },
 
     /**
-     * Various pop
-     * @param info
-     * @param callback
+     * Send an app requests to friends
+     * @param {Object} info
+     * @param {Function} callback
      */
     appRequest: function (info, callback) {
         if (!info) {
+            typeof callback === 'function' && callback(1, {
+                error_message: "No info parameter provided"
+            });
             return;
         }
 
         info['method'] = "apprequests";
-        delete info['dialog'];
 
         info['name'] = info['site'] || info['name'];
         delete info['site'];
@@ -500,39 +512,7 @@ plugin.extend('facebook', {
 
         info['description'] = info['text'] || info['description'];
         delete info['text'];
-        delete info['description'];
 
-        if (info['method'] == 'share_open_graph' && info['url']) {
-            if (info['url']) {
-                var obj = {};
-                if (info["preview_property"])
-                    obj[info["preview_property"]] = info["url"];
-                else
-                    obj["object"] = info["url"];
-
-                for (var p in info) {
-                    if (p != "method" && p != "action_type" && p != "action_properties") {
-                        info[p] && (obj[p] = info[p]);
-                        delete info[p];
-                    }
-                }
-
-                info['action_properties'] = JSON.stringify(obj);
-            } else {
-                return;
-            }
-        } else {
-            //if (!info['href']) {
-            //    return;
-            //}
-        }
-
-        if (
-            info['method'] != 'apprequests'
-            ) {
-            cc.log('web is not supported what this it method');
-            return;
-        }
         FB.ui(info,
             function (response) {
                 if (response) {
@@ -550,19 +530,12 @@ plugin.extend('facebook', {
                 }
             });
     },
+
     /**
-     * get userID
-     * @returns {String} userid
-     */
-    getUserID: function () {
-        return FB.getUserID();
-    },
-    /**
-     * logEvent for web
-     * @param eventName
-     * @param valueToSum
-     * @param parameters
-     * @constructor
+     * Log an event
+     * @param {String} eventName
+     * @param {Number} valueToSum
+     * @param {Object} parameters
      */
     logEvent: function (eventName, valueToSum, parameters) {
         if (eventName == undefined) return;
@@ -576,13 +549,21 @@ plugin.extend('facebook', {
             FB.AppEvents.logEvent(eventName, valueToSum, parameters);
         }
     },
+
     /**
      * Activate App
      */
     activateApp: function () {
         FB.AppEvents.activateApp();
     },
-    logPurchase:function(mount,currency,param){
-        FB.AppEvents.logPurchase(mount,currency,param);
+
+    /**
+     * Log a purchase
+     * @param {Number} amount Amount of the purchase
+     * @param {String} currency The currency
+     * @param {Object} param Supplemental parameters
+     */
+    logPurchase:function(amount, currency, param){
+        FB.AppEvents.logPurchase(amount, currency, param);
     }
 });
