@@ -333,7 +333,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
         gl.stencilOp(!this.inverted ? gl.REPLACE : gl.ZERO, gl.KEEP, gl.KEEP);
 
-        /*if (this.alphaThreshold < 1) {            //TODO desktop
+        if (this.alphaThreshold < 1) {            //TODO desktop
             // since glAlphaTest do not exists in OES, use a shader that writes
             // pixel only if greater than an alpha threshold
             var program = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
@@ -344,7 +344,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
             // we need to recursively apply this shader to all the nodes in the stencil node
             // XXX: we should have a way to apply shader to all nodes without having to do this
             cc.setProgram(this._stencil, program);
-        }*/
+        }
     },
 
     _drawFullScreenQuadClearStencil: function () {
