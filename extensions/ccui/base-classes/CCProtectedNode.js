@@ -278,7 +278,6 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
             locProtectedChildren[j] && locProtectedChildren[j].visit(context);
 
         this._cacheDirty = false;
-        _t.arrivalOrder = 0;
 //        context.restore();
     },
 
@@ -330,7 +329,6 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
             locProtectedChildren[j] && locProtectedChildren[j].visit();
         }
 
-        _t.arrivalOrder = 0;
         if (locGrid && locGrid._active)
             locGrid.afterDraw(_t);
 

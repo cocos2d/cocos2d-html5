@@ -2623,7 +2623,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             if(this._rendererCmd)
                 cc.renderer.pushRenderCommand(this._rendererCmd);
         }
-        _t.arrivalOrder = 0;
     };
 
     _p._transformForRenderer = function () {

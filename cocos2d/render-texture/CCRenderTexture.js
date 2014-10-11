@@ -634,8 +634,6 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         ctx = ctx || cc._renderContext;
         this.transform(ctx);
         this.sprite.visit(ctx);                                             // draw the RenderTexture
-
-        this.arrivalOrder = 0;
     },
 
     _visitForWebGL:function (ctx) {
@@ -665,8 +663,6 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             locGrid.afterDraw(this);*/
 
         cc.kmGLPopMatrix();
-
-        this.arrivalOrder = 0;
     },
 
     /**
