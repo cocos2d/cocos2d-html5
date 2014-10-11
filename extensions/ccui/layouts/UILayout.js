@@ -1808,9 +1808,13 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     _transformForRenderer: function(parentMatrix){
-        cc.Node.prototype._transformForRenderer.call(this, parentMatrix);
-        if(this._clippingStencil)
-            this._clippingStencil._transformForRenderer(this._stackMatrix);
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL){
+            ccui.Widget.prototype._transformForRenderer.call(this, parentMatrix);
+            if(this._clippingStencil)
+                this._clippingStencil._transformForRenderer(this._stackMatrix);
+        }else{
+            ccui.ProtectedNode.prototype._transformForRenderer.call(this);
+        }
     }
 });
 ccui.Layout._init_once = null;
