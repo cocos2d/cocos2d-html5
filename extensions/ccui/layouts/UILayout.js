@@ -1805,6 +1805,12 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this.setClippingType(layout._clippingType);
         this._loopFocus = layout._loopFocus;
         this.__passFocusToChild = layout.__passFocusToChild;
+    },
+
+    _transformForRenderer: function(parentMatrix){
+        cc.Node.prototype._transformForRenderer.call(this, parentMatrix);
+        if(this._clippingStencil)
+            this._clippingStencil._transformForRenderer(this._stackMatrix);
     }
 });
 ccui.Layout._init_once = null;

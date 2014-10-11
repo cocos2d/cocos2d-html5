@@ -1721,6 +1721,12 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      */
     addNode: function (node, zOrder, tag) {
         this._innerContainer.addNode(node, zOrder, tag);
+    },
+
+    _transformForRenderer: function(parentMatrix){
+        ccui.Layout.prototype._transformForRenderer.call(this, parentMatrix);
+        if(this._innerContainer)
+            this._innerContainer._transformForRenderer(this._stackMatrix);
     }
 });
 

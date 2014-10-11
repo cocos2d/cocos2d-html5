@@ -949,7 +949,8 @@ cc.TransitionFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
      */
     ctor:function (t, scene, o) {
         cc.TransitionSceneOriented.prototype.ctor.call(this);
-        o = o || cc.TRANSITION_ORIENTATION_RIGHT_OVER;
+        if(o == null)
+            o = cc.TRANSITION_ORIENTATION_RIGHT_OVER;
         scene && this.initWithDuration(t, scene, o);
     },
 
@@ -1030,7 +1031,8 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
      */
     ctor:function (t, scene, o) {
         cc.TransitionSceneOriented.prototype.ctor.call(this);
-        o = o || cc.TRANSITION_ORIENTATION_UP_OVER;
+        if(o == null)
+            o = cc.TRANSITION_ORIENTATION_UP_OVER;
         scene && this.initWithDuration(t, scene, o);
     },
     /**
@@ -1056,14 +1058,14 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
             outAngleZ = 0;
         }
 
-        inA = cc.Sequence.create(
-            cc.DelayTime.create(this._duration / 2), cc.Show.create(),
-            cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, 90, 0),
-            cc.CallFunc.create(this.finish, this)
+        inA = cc.sequence(
+            cc.delayTime(this._duration / 2), cc.show(),
+            cc.orbitCamera(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, 90, 0),
+            cc.callFunc(this.finish, this)
         );
-        outA = cc.Sequence.create(
-            cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 90, 0),
-            cc.Hide.create(), cc.DelayTime.create(this._duration / 2)
+        outA = cc.sequence(
+            cc.orbitCamera(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 90, 0),
+            cc.hide(), cc.delayTime(this._duration / 2)
         );
 
         this._inScene.runAction(inA);
@@ -1108,7 +1110,8 @@ cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.Trans
      */
     ctor:function (t, scene, o) {
         cc.TransitionSceneOriented.prototype.ctor.call(this);
-        o = o || cc.TRANSITION_ORIENTATION_RIGHT_OVER;
+        if(o == null)
+            o = cc.TRANSITION_ORIENTATION_RIGHT_OVER;
         scene && this.initWithDuration(t, scene, o);
     },
     /**
@@ -1187,7 +1190,8 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
      */
     ctor:function (t, scene, o) {
         cc.TransitionSceneOriented.prototype.ctor.call(this);
-        o = o || cc.TRANSITION_ORIENTATION_RIGHT_OVER;
+        if(o == null)
+            o = cc.TRANSITION_ORIENTATION_RIGHT_OVER;
         scene && this.initWithDuration(t, scene, o);
     },
     /**
@@ -1272,7 +1276,8 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
      */
     ctor:function (t, scene, o) {
         cc.TransitionSceneOriented.prototype.ctor.call(this);
-        o = o || cc.TRANSITION_ORIENTATION_UP_OVER;
+        if(o == null)
+            o = cc.TRANSITION_ORIENTATION_UP_OVER;
         scene && this.initWithDuration(t, scene, o);
     },
     /**
@@ -1355,7 +1360,8 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.T
      */
     ctor:function (t, scene, o) {
         cc.TransitionSceneOriented.prototype.ctor.call(this);
-        o = o || cc.TRANSITION_ORIENTATION_RIGHT_OVER;
+        if(o == null)
+            o = cc.TRANSITION_ORIENTATION_RIGHT_OVER;
         scene && this.initWithDuration(t, scene, o);
     },
     /**
@@ -1599,6 +1605,13 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
     },
 
     /**
+     * stuff gets drawn here
+     */
+    visit:function () {
+        cc.Node.prototype.visit.call(this);
+    },
+
+    /**
      * overide draw
      */
     draw:function () {
@@ -1629,7 +1642,7 @@ cc.TransitionCrossFade.create = function (t, scene) {
  * var trans = new cc.TransitionTurnOffTiles(time,scene);
  */
 cc.TransitionTurnOffTiles = cc.TransitionScene.extend(/** @lends cc.TransitionTurnOffTiles# */{
-
+    _gridProxy: null,
     /**
      * Constructor of TransitionCrossFade
      * @param {Number} t time in seconds
@@ -1637,6 +1650,7 @@ cc.TransitionTurnOffTiles = cc.TransitionScene.extend(/** @lends cc.TransitionTu
      */
     ctor:function (t, scene) {
         cc.TransitionScene.prototype.ctor.call(this);
+        this._gridProxy = new cc.NodeGrid();
         scene && this.initWithDuration(t, scene);
     },
 
@@ -1649,13 +1663,21 @@ cc.TransitionTurnOffTiles = cc.TransitionScene.extend(/** @lends cc.TransitionTu
      */
     onEnter:function () {
         cc.TransitionScene.prototype.onEnter.call(this);
+        this._gridProxy.setTarget(this._outScene);
+        this._gridProxy.onEnter();
+
         var winSize = cc.director.getWinSize();
         var aspect = winSize.width / winSize.height;
         var x = 0 | (12 * aspect);
         var y = 12;
         var toff = cc.turnOffTiles(this._duration, cc.size(x, y));
         var action = this.easeActionWithAction(toff);
-        this._outScene.runAction(cc.sequence(action, cc.callFunc(this.finish, this), cc.stopGrid()));
+        this._gridProxy.runAction(cc.sequence(action, cc.callFunc(this.finish, this), cc.stopGrid()));
+    },
+
+    visit: function(){
+        this._inScene.visit();
+        this._gridProxy.visit();
     },
 
     /**
@@ -1731,7 +1753,6 @@ cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplit
     },
 
     visit: function(){
-        cc.TransitionScene.prototype.visit.call(this);
         this._gridProxy.visit();
     },
 
@@ -1815,7 +1836,7 @@ cc.TransitionSplitRows.create = function (t, scene) {
  * var trans = new cc.TransitionFadeTR(time,scene);
  */
 cc.TransitionFadeTR = cc.TransitionScene.extend(/** @lends cc.TransitionFadeTR# */{
-
+    _gridProxy: null,
     /**
      * Constructor of TransitionFadeTR
      * @param {Number} t time in seconds
@@ -1823,6 +1844,7 @@ cc.TransitionFadeTR = cc.TransitionScene.extend(/** @lends cc.TransitionFadeTR# 
      */
     ctor:function (t, scene) {
         cc.TransitionScene.prototype.ctor.call(this);
+        this._gridProxy = new cc.NodeGrid();
         scene && this.initWithDuration(t, scene);
     },
     _sceneOrder:function () {
@@ -1835,16 +1857,23 @@ cc.TransitionFadeTR = cc.TransitionScene.extend(/** @lends cc.TransitionFadeTR# 
     onEnter:function () {
         cc.TransitionScene.prototype.onEnter.call(this);
 
+        this._gridProxy.setTarget(this._outScene);
+        this._gridProxy.onEnter();
+
         var winSize = cc.director.getWinSize();
         var aspect = winSize.width / winSize.height;
         var x = 0 | (12 * aspect);
         var y = 12;
 
         var action = this.actionWithSize(cc.size(x, y));
-        this._outScene.runAction(
-            cc.Sequence.create(this.easeActionWithAction(action), cc.CallFunc.create(this.finish, this),
-                cc.StopGrid.create())
+        this._gridProxy.runAction(
+            cc.sequence(this.easeActionWithAction(action), cc.callFunc(this.finish, this), cc.stopGrid())
         );
+    },
+
+    visit: function(){
+        this._inScene.visit();
+        this._gridProxy.visit();
     },
 
     /**

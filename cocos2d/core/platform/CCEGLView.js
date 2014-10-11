@@ -238,6 +238,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
             var viewportMetas,
                 elems = document.getElementsByName("viewport"),
+                currentVP = elems ? elems[0] : null,
                 content;
 
             vp = cc.newElement("meta");
@@ -254,7 +255,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             if(cc.sys.isMobile)
                 viewportMetas["target-densitydpi"] = this._targetDensityDPI;
 
-            content = (elems && elems.length>0) ? elems[0].content : "";
+            content = currentVP ? currentVP.content : "";
             for (var key in viewportMetas) {
                 var pattern = new RegExp(key);
 
@@ -276,6 +277,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
              content ="width="+width+","+content;
              */
             vp.content = content;
+            // For adopting certain android devices which don't support second viewport
+            currentVP.content = content;
 
             document.head.appendChild(vp);
         }
@@ -518,7 +521,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             return;
         }
         var _t = this;
-        var previousPolicy = _t._resolutionPolicy;
         _t.setResolutionPolicy(resolutionPolicy);
         var policy = _t._resolutionPolicy;
         if (policy)
@@ -529,15 +531,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         }
 
         // Reinit frame size
-        var frameW = _t._frameSize.width, frameH = _t._frameSize.height;
         if (cc.sys.isMobile)
             _t._setViewPortMeta(_t._frameSize.width, _t._frameSize.height);
         _t._initFrameSize();
-        // No change
-        if (previousPolicy == _t._resolutionPolicy
-            && width == _t._originalDesignResolutionSize.width && height == _t._originalDesignResolutionSize.height
-            && frameW == _t._frameSize.width && frameH == _t._frameSize.height)
-            return;
         _t._designResolutionSize = cc.size(width, height);
         _t._originalDesignResolutionSize = cc.size(width, height);
 
