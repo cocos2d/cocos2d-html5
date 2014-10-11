@@ -208,7 +208,7 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     },
 
     _cacheScale9Sprite: function(){
-        if(!this._scale9Image)
+        if(!this._scale9Image && !this._scale9Dirty)
             return;
         var size = this._contentSize, locCanvas = this._cacheCanvas;
         var contentSizeChanged = false;
@@ -224,6 +224,7 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         this._scale9Image.visit();
 
         //draw to cache canvas
+        this._cacheContext.clearRect(0, 0, size.width, -size.height);
         cc.renderer._renderingToCacheCanvas(this._cacheContext);
 
         if(contentSizeChanged)
@@ -508,6 +509,14 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         }else{
             cc.Node.prototype.visit.call(this, ctx);
         }
+    },
+
+    _transformForRenderer: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
+            this._cacheScale9Sprite();
+            this.transform();
+        }
+        cc.Node.prototype._transformForRenderer.call(this);
     },
 
     /**

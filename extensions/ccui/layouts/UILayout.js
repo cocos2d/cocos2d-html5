@@ -632,6 +632,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     setClippingType: function (type) {
         if (type == this._clippingType)
             return;
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS && type == ccui.Layout.CLIPPING_SCISSOR){
+            cc.log("Only supports STENCIL on canvas mode.");
+            return;
+        }
         var clippingEnabled = this.isClippingEnabled();
         this.setClippingEnabled(false);
         this._clippingType = type;
@@ -1801,6 +1805,12 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this.setClippingType(layout._clippingType);
         this._loopFocus = layout._loopFocus;
         this.__passFocusToChild = layout.__passFocusToChild;
+    },
+
+    _transformForRenderer: function(parentMatrix){
+        cc.Node.prototype._transformForRenderer.call(this, parentMatrix);
+        if(this._clippingStencil)
+            this._clippingStencil._transformForRenderer(this._stackMatrix);
     }
 });
 ccui.Layout._init_once = null;
