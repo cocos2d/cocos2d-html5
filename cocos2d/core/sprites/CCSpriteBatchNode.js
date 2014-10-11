@@ -888,7 +888,6 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
         //optimize performance for javascript
         currentStack.top = currentStack.stack.pop();
-        this.arrivalOrder = 0;
     },
 
     /**
