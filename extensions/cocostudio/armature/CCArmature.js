@@ -475,9 +475,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         if(this._rendererEndCmd)
             cc.renderer.pushRenderCommand(this._rendererEndCmd);
 
-        // reset for next frame
         this._cacheDirty = false;
-        this.arrivalOrder = 0;
 
         context.restore();
     },
@@ -506,9 +504,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     _endRendererCmdForCanvas: function(ctx){
         var context = ctx || cc._renderContext;
 
-        // reset for next frame
         this._cacheDirty = false;
-        this.arrivalOrder = 0;
 
         context.restore();
     },
@@ -530,8 +526,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         //this.draw(context);
         cc.renderer.pushRenderCommand(this._rendererCmd);
 
-        // reset for next frame
-        this.arrivalOrder = 0;
         currentStack.top = currentStack.stack.pop();
     },
 
