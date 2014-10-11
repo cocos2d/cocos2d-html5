@@ -131,7 +131,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var context = ctx || cc._renderContext,
             locTextureCoord = self._textureCoord;
 
-        if (!locTextureCoord.validRect || !node._visible)
+        if (!locTextureCoord.validRect)
             return;  //draw nothing
 
         var t = node._transformWorld,

@@ -321,7 +321,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     // Shared data
     //
     // texture
-    _rect:null, //Retangle of cc.Texture2D
+    _rect:null, //Rectangle of cc.Texture2D
     _rectRotated:false, //Whether the texture is rotated
 
     // Offset Position (used by Zwoptex)
