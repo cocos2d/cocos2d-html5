@@ -1809,7 +1809,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     _transformForRenderer: function(parentMatrix){
         if(cc._renderType === cc._RENDER_TYPE_WEBGL){
-            cc.Node.prototype._transformForRenderer.call(this, parentMatrix);
+            ccui.Widget.prototype._transformForRenderer.call(this, parentMatrix);
             if(this._clippingStencil)
                 this._clippingStencil._transformForRenderer(this._stackMatrix);
         }else{
