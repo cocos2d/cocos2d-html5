@@ -521,7 +521,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             return;
         }
         var _t = this;
-        var previousPolicy = _t._resolutionPolicy;
         _t.setResolutionPolicy(resolutionPolicy);
         var policy = _t._resolutionPolicy;
         if (policy)
@@ -532,15 +531,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         }
 
         // Reinit frame size
-        var frameW = _t._frameSize.width, frameH = _t._frameSize.height;
         if (cc.sys.isMobile)
             _t._setViewPortMeta(_t._frameSize.width, _t._frameSize.height);
         _t._initFrameSize();
-        // No change
-        if (previousPolicy == _t._resolutionPolicy
-            && width == _t._originalDesignResolutionSize.width && height == _t._originalDesignResolutionSize.height
-            && frameW == _t._frameSize.width && frameH == _t._frameSize.height)
-            return;
         _t._designResolutionSize = cc.size(width, height);
         _t._originalDesignResolutionSize = cc.size(width, height);
 
