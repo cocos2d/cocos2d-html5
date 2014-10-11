@@ -167,6 +167,7 @@ plugin.extend('facebook', {
         FB.login(function (response) {
             if (response['authResponse']) {
                 //save user info
+                self._isLoggedIn = true;
                 self._userInfo = response['authResponse'];
                 var permissList = response['authResponse']['grantedScopes'].split(",");
                 typeof callback === 'function' && callback(0, {
@@ -174,6 +175,8 @@ plugin.extend('facebook', {
                     permissions: permissList
                 });
             } else {
+                self._isLoggedIn = false;
+                self._userInfo = {};
                 typeof callback === 'function' && callback(response['error_code'] || 1, {
                     error_message: "unknown"
                 });
@@ -234,11 +237,14 @@ plugin.extend('facebook', {
             if (response['authResponse']) {
                 var permissList = response['authResponse']['grantedScopes'].split(",");
                 //save user info
+                self._isLoggedIn = true;
                 self._userInfo = response['authResponse'];
                 typeof callback === 'function' && callback(0, {
                     permissions: permissList
                 });
             } else {
+                self._isLoggedIn = false;
+                self._userInfo = {};
                 typeof callback === 'function' && callback(response['error_code'] || 1, {
                     error_message: response['error_message'] || "Unknown"
                 });
@@ -313,7 +319,7 @@ plugin.extend('facebook', {
         }
         if (!this.canPresentDialog(info)) {
             typeof callback === 'function' && callback(1, {
-                error_message: "The requested dialog: " + info['dialog'] + "can not be presented on Web"
+                error_message: "The requested dialog: " + info['dialog'] + " can not be presented on Web"
             });
             return;
         }
@@ -323,6 +329,11 @@ plugin.extend('facebook', {
                 info['href'] = info['link'];
             }
         } else {
+            // Compatible with feed_dialog
+            if (info['dialog'] == 'feed_dialog') {
+                info['dialog'] = 'share';
+            }
+
             info['method'] = info['dialog'];
             delete info['dialog'];
 
@@ -390,6 +401,7 @@ plugin.extend('facebook', {
     canPresentDialog: function (info) {
         if (info && info['dialog'] && (
             info['dialog'] === 'share_link' ||
+            info['dialog'] === 'feed_dialog' ||
             info['dialog'] === 'share_open_graph' ||
             info['dialog'] === 'message_link'))
             return true;
