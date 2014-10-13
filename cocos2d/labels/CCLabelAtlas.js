@@ -241,7 +241,6 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
                     fontChar.initWithTexture(texture, rect);
                     // restore to default in case they were modified
                     fontChar.visible = true;
-                    fontChar.opacity = this._displayedOpacity;
                 }
             }
             fontChar.setPosition(i * locItemWidth + locItemWidth / 2, locItemHeight / 2);
@@ -369,17 +368,6 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      * @param {Number} opacity
      */
     setOpacity: null,
-
-    _setOpacityForCanvas: function (opacity) {
-        if (this._displayedOpacity !== opacity) {
-            cc.AtlasNode.prototype.setOpacity.call(this, opacity);
-            var locChildren = this._children;
-            for (var i = 0, len = locChildren.length; i < len; i++) {
-                if (locChildren[i])
-                    locChildren[i].opacity = opacity;
-            }
-        }
-    },
 
     _setOpacityForWebGL: function (opacity) {
         if (this._opacity !== opacity)

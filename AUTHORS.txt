@@ -192,6 +192,8 @@ Ninja Lau            @mutoo         A typo bug in UILayout fix
                                     cc.eventManager bug fix
                                     ccs.Bone bug fix
                                     ccs.ActionFrame bug fix
+                                    ccui.Widget bug fix
+                                    ccui.LoadingBar bug fix
 
 Taras Tovchenko      @tovchenko     cc.Skin bounding box calculation bug fix under canvas render mode
 
@@ -202,6 +204,15 @@ Minh Quy             @MQuy          cc.MenuItemSprite bug fix
 Michael Yin          @layerssss     cc.game refactored
 
 Yang Yuchen          @yycdef        cc.sys bug fix
+
+K                    @kiwigrc       cc.ParticleSystem bug fix
+
+Claudio Freitas      @claudiofreitas    ccui.TextField typo fix.
+
+nopakos              @nopakos       cc.Texture2D bug fix
+
+Robert Rouhani       @Robmaister    cc.TMXMapInfo bug fix
+                                    cc.TMXLayer bug fix
 
 Retired Core Developers:
       Shengxiang Chen (Nero Chan)

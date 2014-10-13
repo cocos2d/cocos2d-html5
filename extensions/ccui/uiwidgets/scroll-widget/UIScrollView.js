@@ -1725,7 +1725,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     _transformForRenderer: function(parentMatrix){
         ccui.Layout.prototype._transformForRenderer.call(this, parentMatrix);
-        if(this._innerContainer)
+        if(this._innerContainer && cc._renderType === cc._RENDER_TYPE_WEBGL)
             this._innerContainer._transformForRenderer(this._stackMatrix);
     }
 });

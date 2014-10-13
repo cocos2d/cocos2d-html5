@@ -798,7 +798,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 bone = locSkeleton.bones[i];
                 var x = bone.data.length * bone.m00 + bone.worldX;
                 var y = bone.data.length * bone.m10 + bone.worldY;
-                drawingUtil.drawLine(cc.p(bone.worldX, bone.worldY), cc.p(x, y));
+                drawingUtil.drawLine(
+                    {x:bone.worldX, y:bone.worldY},
+                    {x:x, y:y});
             }
 
             // Bone origins.
@@ -807,7 +809,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
             for (i = 0, n = locSkeleton.bones.length; i < n; i++) {
                 bone = locSkeleton.bones[i];
-                drawingUtil.drawPoint(cc.p(bone.worldX, bone.worldY));
+                drawingUtil.drawPoint({x:bone.worldX, y:bone.worldY});
                 if (i === 0)
                     drawingUtil.setDrawColor(0, 255, 0, 255);
             }

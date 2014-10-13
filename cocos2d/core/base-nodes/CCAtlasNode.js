@@ -308,7 +308,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
             temp.g = temp.g * locDisplayedOpacity / 255;
             temp.b = temp.b * locDisplayedOpacity / 255;
         }
-        cc.Node.prototype.setColor.call(this, color3);
+//        cc.Node.prototype.setColor.call(this, color3);
         this._changeTextureColor();
     },
 
@@ -321,9 +321,9 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
             var locElement = locTexture.getHtmlElementObj();
             var textureRect = cc.rect(0, 0, element.width, element.height);
             if (locElement instanceof HTMLCanvasElement)
-                cc.generateTintImageWithMultiply(element, this._displayedColor, textureRect, locElement);
+                cc.generateTintImageWithMultiply(element, this._colorUnmodified, textureRect, locElement);
             else {
-                locElement = cc.generateTintImageWithMultiply(element, this._displayedColor, textureRect);
+                locElement = cc.generateTintImageWithMultiply(element, this._colorUnmodified, textureRect);
                 locTexture = new cc.Texture2D();
                 locTexture.initWithElement(locElement);
                 locTexture.handleLoadedTexture();

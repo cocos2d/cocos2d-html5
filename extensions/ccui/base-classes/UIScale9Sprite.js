@@ -208,7 +208,7 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     },
 
     _cacheScale9Sprite: function(){
-        if(!this._scale9Image && !this._scale9Dirty)
+        if(!this._scale9Image)
             return;
         var size = this._contentSize, locCanvas = this._cacheCanvas;
         var contentSizeChanged = false;
