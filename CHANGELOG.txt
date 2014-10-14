@@ -1,5 +1,31 @@
 ChangeLog:
 
+Cocos2d-JS v3.1 beta @ Oct.13, 2014
+
+* Refactoration of the web engine with new renderer on the architecture level, optimization is under going.
+* Released Facebook SDK for Cocos2d-JS beta2, its API have been significantly improved and stablized.
+* Upgraded MoonWarriors sample with new set of graphical assets.
+* Automatically enabled WebGL on iOS 8 safari.
+* Upgraded chipmunk.js to the newest version.
+* Supported setting color of shadow for `cc.LabelTTF`.
+* Added `getTitleRenderer` function to ccui.Button.
+* Supported Coco Studio timeline animation.
+* Set the default value of LabelAtlas's `cascadeOpacityEnabled` and `cascadeColorEnabled` to true.
+* Added a listener of texture to `cc.Sprite#setTexture` when the texture hasn't loaded.
+* Activated `cc.pool` for all kind of objects.
+* Added query test for chipmunk and added necessary JavaScript bindings.
+
+* Bugs fix:
+    1. Fixed a bug of `cc.ComponentContainer` that a 'if' statement behavior is incorrect.
+    2. Fixed a bug of `cc.Scale9Sprite` that the behavior of Canvas and WebGL is different.
+    3. Fixed a bug of `cc.EventListener` that its pause state should set to true.
+    4. Fixed a bug of `cc.ParticleSystem` that it should apply canvas scaling on canvas rendering mode.
+    5. Fixed a bug of CCBoot.js that `cc.loader` should add a condition to check whether `crossOrign` property is undefined on IE9 and IE10.
+    6. Fixed a bug of `ccui.Widget` that its `setPosition` function's behavior is incorrect.
+    7. Fixed a bug of `ccui.LoadingBar` that its `barRenderer` should add to protected children array.
+    8. Fixed a bug of `cc.Texture2D` that its `TEXTURE_MAG_FILTER` should set to LINEAR.
+    9. Fixed a bug of `cc.TMXMapInfo` that its doesn't parse `rotation` property.
+
 Cocos2d-JS-v3.0 Final @ Sep.10, 2014
 
 * Facebook SDK Beta2: Added `appRequest` API.
