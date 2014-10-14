@@ -1450,7 +1450,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var _t = this;
         //cc.assert(_t._batchNode, "updateTransform is only valid when cc.Sprite is being rendered using an cc.SpriteBatchNode");
 
-        // recaculate matrix only if it is dirty
+        // re-calculate matrix only if it is dirty
         if (_t.dirty) {
             // If it is not visible, or one of its ancestors is not visible, then do nothing:
             var locParent = _t._parent;

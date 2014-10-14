@@ -2539,9 +2539,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Set whether color should be changed with the opacity value,
-     * useless in cc.Node, but this function is overrided in some class to have such behavior.
+     * useless in cc.Node, but this function is override in some class to have such behavior.
      * @function
-     * @param {Boolean} value
+     * @param {Boolean} opacityValue
      */
     setOpacityModifyRGB: function (opacityValue) {
     },
@@ -2574,7 +2574,6 @@ cc.Node.create = function () {
 cc.Node._StateCallbackType = {onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, updateTransform: 5, onExitTransitionDidStart: 6, sortAllChildren: 7};
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-
     //redefine cc.Node
     var _p = cc.Node.prototype;
     _p.ctor = function () {

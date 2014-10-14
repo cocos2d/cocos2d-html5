@@ -102,7 +102,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _className: "LabelTTF",
 
     /**
-     * Initializes the cc.LabelTTF with a font name, alignment, dimension and font size, do not call it by yourself, you should pass the correct arguments in constructor to initialize the label.
+     * Initializes the cc.LabelTTF with a font name, alignment, dimension and font size, do not call it by yourself,
+     * you should pass the correct arguments in constructor to initialize the label.
      * @param {String} label string
      * @param {String} fontName
      * @param {Number} fontSize
@@ -179,8 +180,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         if (fontName && fontName instanceof cc.FontDefinition) {
             this.initWithStringAndTextDefinition(text, fontName);
-        }
-        else {
+        } else {
             cc.LabelTTF.prototype.initWithString.call(this, text, fontName, fontSize, dimensions, hAlignment, vAlignment);
         }
     },
