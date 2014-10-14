@@ -48,6 +48,9 @@
  * @property {Number}   insetRight      - The right inset of the 9-slice sprite
  * @property {Number}   insetBottom     - The bottom inset of the 9-slice sprite
  */
+
+//todo checking here. Maybe need synchronous.
+
 ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     _spriteRect: null,
     _capInsetsInternal: null,

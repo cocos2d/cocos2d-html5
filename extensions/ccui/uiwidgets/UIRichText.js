@@ -408,7 +408,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
             for (j = 0; j < row.length; j++) {
                 l = row[j];
                 l.setAnchorPoint(cc.p(0, 0));
-                l.setPosition(cc.p(nextPosX, 0));
+                l.setPosition(nextPosX, 0);
                 locRenderersContainer.addChild(l, 1, j);
                 var iSize = l.getContentSize();
                 newContentSizeWidth += iSize.width;

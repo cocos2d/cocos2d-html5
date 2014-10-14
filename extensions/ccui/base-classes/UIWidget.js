@@ -77,7 +77,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _sizePercent: null,
     _positionType: null,
     _positionPercent: null,
-    _reorderWidgetChildDirty: false,
     _hit: false,
     _nodes: null,
     _touchListener: null,
@@ -88,6 +87,8 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _highlight: false,
 
     _touchEventCallback: null,
+
+    _propagateTouchEvents: true,
 
     /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
@@ -184,6 +185,31 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             return false;
 
         return parentWidget._isAncestorsEnabled();
+    },
+
+    setPropagateTouchEvents: function(isPropagate){
+        this._propagateTouchEvents = isPropagate;
+    },
+
+    isPropagateTouchEvents: function(){
+        return this._propagateTouchEvents;
+    },
+
+    setSwallowTouches: function(swallow){
+        if (this._touchListener)
+        {
+            this._touchListener.setSwallowTouches(swallow);
+        }
+    },
+
+    isSwallowTouches: function(){
+        if (this._touchListener)
+        {
+            //todo
+            return true;
+            //return this._touchListener.isSwallowTouches();
+        }
+        return false;
     },
 
     _getAncensterWidget: function(node){
@@ -755,6 +781,11 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _onPressStateChangedToDisabled: function () {
     },
 
+    _updateChildrenDisplayedRGBA: function(){
+        this.setColor(this.getColor());
+        this.setOpacity(this.getOpacity());
+    },
+
     /**
      * A call back function when widget lost of focus.
      */
@@ -789,11 +820,25 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             return false;
         }
         this.setHighlighted(true);
-        var widgetParent = this.getWidgetParent();
-        if (widgetParent)
-            widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_BEGAN, this, touch);
+
+        /*
+         * Propagate touch events to its parents
+         */
+        if (this._propagateTouchEvents)
+        {
+            this.propagateTouchEvent(ccui.Widget.TOUCH_BEGAN, this, touch);
+        }
+
         this._pushDownEvent();
         return true;
+    },
+
+    propagateTouchEvent: function(event, sender, touch){
+        var widgetParent = this.getWidgetParent();
+        if (widgetParent)
+        {
+            widgetParent.interceptTouchEvent(event, sender, touch);
+        }
     },
 
     /**
@@ -877,6 +922,10 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             this._touchEventCallback(this, ccui.Widget.TOUCH_ENDED);
         if (this._touchEventListener && this._touchEventSelector)
             this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_ENDED);
+
+        if (this._clickEventListener) {
+            this._clickEventListener(this);
+        }
     },
 
     _cancelUpEvent: function () {
@@ -902,6 +951,10 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             this._touchEventSelector = selector;
             this._touchEventListener = target;
         }
+    },
+
+    addClickEventListener: function(callback){
+        this._clickEventListener = callback;
     },
 
     /**
@@ -1309,8 +1362,10 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         this._touchEventCallback = widget._touchEventCallback;
         this._touchEventListener = widget._touchEventListener;
         this._touchEventSelector = widget._touchEventSelector;
+        this._clickEventListener = widget._clickEventListener;
         this._focused = widget._focused;
         this._focusEnabled = widget._focusEnabled;
+        this._propagateTouchEvents = widget._propagateTouchEvents;
 
         for (var key in widget._layoutParameterDictionary) {
             var parameter = widget._layoutParameterDictionary[key];
@@ -1517,11 +1572,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             }else
                 layout = layout._parent;
         }
-    },
-
-    _updateChildrenDisplayedRGBA: function(){
-        this.setColor(this.getColor());
-        this.setOpacity(this.getOpacity());
     }
 });
 

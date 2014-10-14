@@ -177,8 +177,8 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
             locWorldInfo.y = locTweenData.y + this._position.y;
             locWorldInfo.scaleX = locTweenData.scaleX * this._scaleX;
             locWorldInfo.scaleY = locTweenData.scaleY * this._scaleY;
-            locWorldInfo.skewX = locTweenData.skewX + this._skewX + this._rotationX;
-            locWorldInfo.skewY = locTweenData.skewY + this._skewY - this._rotationY;
+            locWorldInfo.skewX = locTweenData.skewX + this._skewX + cc.degreesToRadians(this._rotationX);
+            locWorldInfo.skewY = locTweenData.skewY + this._skewY - cc.degreesToRadians(this._rotationY);
 
             if(this._parentBone)
                 this._applyParentTransform(this._parentBone);

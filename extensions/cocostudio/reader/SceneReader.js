@@ -254,6 +254,15 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
                 this.createObject(subDict, gb);
                 subDict = null;
             }
+
+            var canvasSizeDict = inputFiles["CanvasSize"];
+            if (canvasSizeDict)
+            {
+                var width = canvasSizeDict["_width"];
+                var height = canvasSizeDict["_height"];
+                gb.setContentSize(cc.size(width, height));
+            }
+
             return gb;
         }
 
@@ -318,6 +327,9 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
 
         var fRotationZ = (cc.isUndefined(dict["rotation"]))?0:dict["rotation"];
         node.setRotation(fRotationZ);
+
+        var sName = dict["name"] || "";
+        node.setName(sName);
     },
 
     /**

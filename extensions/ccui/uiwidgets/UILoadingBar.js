@@ -85,13 +85,15 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         switch (this._direction) {
             case ccui.LoadingBar.TYPE_LEFT:
                 this._barRenderer.setAnchorPoint(0.0, 0.5);
-                this._barRenderer.setPosition(-this._totalLength * 0.5, 0.0);
+                //todo check here old -> this._barRenderer.setPosition(-this._totalLength * 0.5, 0.0);
+                this._barRenderer.setPosition(0, 0);
                 if (!this._scale9Enabled)
                     this._barRenderer.setFlippedX(false);
                 break;
             case ccui.LoadingBar.TYPE_RIGHT:
                 this._barRenderer.setAnchorPoint(1.0, 0.5);
-                this._barRenderer.setPosition(this._totalLength * 0.5, 0.0);
+                //todo check here old -> this._barRenderer.setPosition(this._totalLength * 0.5, 0.0);
+                this._barRenderer.setPosition(0, 0);
                 if (!this._scale9Enabled)
                     this._barRenderer.setFlippedX(true);
                 break;

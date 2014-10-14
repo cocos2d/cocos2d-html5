@@ -50,7 +50,7 @@ ccs.TextFieldReader = /** @lends ccs.TextFieldReader# */{
         var ph = options["placeHolder"];
         if(ph)
             textField.setPlaceHolder(ph);
-        textField.setString(options["text"]);
+        textField.setString(options["text"] || "Text Field");
         var fs = options["fontSize1"];
         if(fs)
             textField.setFontSize(fs);

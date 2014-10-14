@@ -67,6 +67,8 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     _pressedTextureScaleXInSize: 1,
     _pressedTextureScaleYInSize: 1,
 
+    _zoomScale: 0.1,
+
     _normalTextureLoaded: false,
     _pressedTextureLoaded: false,
     _disabledTextureLoaded: false,
@@ -209,6 +211,10 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
      * @returns {cc.Size}
      */
     getVirtualRendererSize: function(){
+        var titleSize = this._titleRenderer.getContentSize();
+        if (!this._normalTextureLoaded && this._titleRenderer.getString().length > 0) {
+            return titleSize;
+        }
         return cc.size(this._normalTextureSize);
     },
 
@@ -526,13 +532,22 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
                 var zoomAction = cc.scaleTo(0.05, this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
                 this._buttonNormalRenderer.runAction(zoomAction);
                 this._buttonClickedRenderer.setScale(this._pressedTextureScaleXInSize, this._pressedTextureScaleYInSize);
+
+                this._titleRenderer.stopAllActions();
+                this._titleRenderer.runAction(zoomAction.clone());
             }
         } else {
-            if (this._scale9Enabled)
-                this._updateTexturesRGBA();
+            if (this._scale9Enabled){
+                //todo checking here. old -> this._updateTexturesRGBA();
+                this._buttonNormalRenderer.setColor(cc.color.WHITE);
+            }
             else {
                 this._buttonNormalRenderer.stopAllActions();
                 this._buttonNormalRenderer.setScale(this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
+
+                this._titleRenderer.stopAllActions();
+                this._titleRenderer.setScaleX(this._normalTextureScaleXInSize);
+                this._titleRenderer.setScaleY(this._normalTextureScaleYInSize);
             }
         }
     },
@@ -549,6 +564,10 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
                 var zoomAction = cc.scaleTo(0.05, this._pressedTextureScaleXInSize + 0.1,this._pressedTextureScaleYInSize + 0.1);
                 this._buttonClickedRenderer.runAction(zoomAction);
                 locNormalRenderer.setScale(this._pressedTextureScaleXInSize + 0.1, this._pressedTextureScaleYInSize + 0.1);
+
+                this._titleRenderer.stopAllActions();
+                //we must call zoomAction->clone here
+                this._titleRenderer.runAction(zoomAction.clone());
             }
         } else {
             locNormalRenderer.setVisible(true);
@@ -559,6 +578,10 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             else {
                 locNormalRenderer.stopAllActions();
                 locNormalRenderer.setScale(this._normalTextureScaleXInSize + 0.1, this._normalTextureScaleYInSize + 0.1);
+
+                this._titleRenderer.stopAllActions();
+                this._titleRenderer.setScaleX(this._normalTextureScaleXInSize + this._zoomScale);
+                this._titleRenderer.setScaleY(this._normalTextureScaleYInSize + this._zoomScale);
             }
         }
     },
@@ -739,20 +762,16 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     },
 
     /**
-     * Get the title renderer.
-     * title ttf object.
-     * @returns {cc.LabelTTF}
-     */
-    getTitleRenderer: function(){
-        return this._titleRenderer;
-    },
-
-    /**
      * Sets title text to ccui.Button
      * @param {String} text
      */
     setTitleText: function (text) {
         this._titleRenderer.setString(text);
+        if (this._ignoreSize)
+        {
+            var s = this.getVirtualRendererSize();
+            this.setContentSize(s);
+        }
     },
 
     /**
@@ -798,6 +817,14 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         return this._titleRenderer.getFontSize();
     },
 
+    setZoomScale: function(scale){
+        this._zoomScale = scale;
+    },
+
+    getZoomScale: function(){
+        return this._zoomScale;
+    },
+
     /**
      * Sets title fontName to ccui.Button.
      * @param {String} fontName
@@ -805,6 +832,15 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     setTitleFontName: function (fontName) {
         this._titleRenderer.setFontName(fontName);
         this._fontName = fontName;
+    },
+
+    /**
+     * Get the title renderer.
+     * title ttf object.
+     * @returns {cc.LabelTTF}
+     */
+    getTitleRenderer: function(){
+        return this._titleRenderer;
     },
 
     /**
@@ -849,6 +885,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this.setTitleFontSize(uiButton.getTitleFontSize());
         this.setTitleColor(uiButton.getTitleColor());
         this.setPressedActionEnabled(uiButton.pressedActionEnabled);
+        this.setZoomScale(uiButton._zoomScale);
     }
 });
 

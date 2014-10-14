@@ -210,6 +210,7 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
      */
     pause: function () {
         this._pause = true;
+        this._playing = false;
     },
 
     /**
@@ -221,6 +222,7 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
             locActionNodeList[i].stopAction();
         this._scheduler.unscheduleCallbackForTarget(this, this.simulationActionUpdate);
         this._pause = false;
+        this._playing = false;
     },
 
     /**
@@ -252,8 +254,10 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
                 this._callback.execute();
             if (this._loop)
                 this.play();
-            else
+            else{
+                this._playing = false;
                 this._scheduler.unschedule(this.simulationActionUpdate, this);
+            }
         }
     }
 });

@@ -99,6 +99,9 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._slidBallRenderer.addChild(this._slidBallNormalRenderer);
         this._slidBallRenderer.addChild(this._slidBallPressedRenderer);
         this._slidBallRenderer.addChild(this._slidBallDisabledRenderer);
+        this._slidBallRenderer.setCascadeColorEnabled(true);
+        this._slidBallRenderer.setCascadeOpacityEnabled(true);
+
         this.addProtectedChild(this._slidBallRenderer, ccui.Slider.BALL_RENDERER_ZORDER, -1);
     },
 
@@ -439,7 +442,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._percent = percent;
         var res = percent / 100.0;
         var dis = this._barLength * res;
-        this._slidBallRenderer.setPosition(cc.p(dis, this._contentSize.height / 2));
+        this._slidBallRenderer.setPosition(dis, this._contentSize.height / 2);
         if (this._scale9Enabled)
             this._progressBarRenderer.setPreferredSize(cc.size(dis, this._progressBarTextureSize.height));
         else {
