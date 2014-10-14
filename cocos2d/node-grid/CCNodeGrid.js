@@ -40,7 +40,6 @@ cc.NodeGrid = cc.Node.extend({
 
     ctor: function(){
         cc.Node.prototype.ctor.call(this);
-
         if(cc._renderType === cc._RENDER_TYPE_WEBGL){
             this._gridBeginCommand = new cc.CustomRenderCmdWebGL(this, this.onGridBeginDraw);
             this._gridEndCommand = new cc.CustomRenderCmdWebGL(this, this.onGridEndDraw);
@@ -68,25 +67,7 @@ cc.NodeGrid = cc.Node.extend({
      * @param {cc.Node} target
      */
     setTarget: function (target) {
-        //var self = this;
-        //self._target && self.removeChild(self._target);
         this._target = target;
-        //self.addChild(self._target);
-    },
-
-    /** <p>"add" logic MUST only be in this method <br/> </p>
-     *
-     * <p>If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.</p>
-     * @function
-     * @param {cc.Node} child  A child node
-     * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setZOrder(int)
-     * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
-     */
-    addChild: function (child, zOrder, tag) {
-        cc.Node.prototype.addChild.call(this, child, zOrder, tag);
-
-        if (child && !this._target)
-            this._target = child;
     },
 
     onGridBeginDraw: function(){
@@ -109,6 +90,7 @@ cc.NodeGrid = cc.Node.extend({
         // quick return if not visible
         if (!self._visible)
             return;
+
         var isWebGL = cc._renderType == cc._RENDER_TYPE_WEBGL, locGrid = this.grid;
         if(isWebGL){
             var currentStack = cc.current_stack;
@@ -120,10 +102,17 @@ cc.NodeGrid = cc.Node.extend({
         self.transform();
 
         if(isWebGL){
+
             var beforeProjectionType = cc.director.PROJECTION_DEFAULT;
-            if (isWebGL && locGrid && locGrid._active){
+            if (locGrid && locGrid._active){
+                //var backMatrix = new cc.kmMat4();
+                //cc.kmMat4Assign(backMatrix, this._stackMatrix);
+
                 beforeProjectionType = cc.director.getProjection();
-                locGrid.set2DProjection();
+                //locGrid.set2DProjection();
+
+                //reset this._stackMatrix to current_stack.top
+                //cc.kmMat4Assign(currentStack.top, backMatrix);
             }
             if(this._gridBeginCommand)
                 cc.renderer.pushRenderCommand(this._gridBeginCommand);
@@ -143,8 +132,10 @@ cc.NodeGrid = cc.Node.extend({
             }
         }
 
-        if(isWebGL && locGrid && locGrid._active){
-            cc.director.setProjection(beforeProjectionType);
+        if(isWebGL){
+            if(locGrid && locGrid._active){
+                //cc.director.setProjection(beforeProjectionType);
+            }
             if(this._gridEndCommand)
                 cc.renderer.pushRenderCommand(this._gridEndCommand);
             currentStack.top = currentStack.stack.pop();

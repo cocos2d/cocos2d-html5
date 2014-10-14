@@ -104,8 +104,6 @@ cc._tmp.WebGLCCNode = function () {
                 cc.renderer.pushRenderCommand(this._rendererCmd);
         }
 
-        _t.arrivalOrder = 0;
-
         //optimize performance for javascript
         currentStack.top = currentStack.stack.pop();
     };
@@ -150,7 +148,7 @@ cc._tmp.WebGLCCNode = function () {
                 cc.kmMat4Translation(translation, -apx, -apy, 0);
                 cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
             } else {
-                this._camera.locate();
+                this._camera._locateForRenderer(stackMatrix);
             }
         }
 

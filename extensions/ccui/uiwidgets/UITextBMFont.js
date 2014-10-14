@@ -77,7 +77,7 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
 
         var locRenderer = _self._labelBMFontRenderer;
         if(!locRenderer._textureLoaded){
-             locRenderer.addLoadedEventListener(function(){
+             locRenderer.addEventListener("load", function(){
                  _self.updateSizeAndPosition();
              });
         }

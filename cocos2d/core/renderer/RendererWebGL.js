@@ -201,11 +201,11 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         _t._render();
     };
 
-    cc.MontionStreakCmdWebGL = function(node){
+    cc.MotionStreakCmdWebGL = function(node){
         this._node = node;
     };
 
-    cc.MontionStreakCmdWebGL.prototype.rendering = function(ctx){
+    cc.MotionStreakCmdWebGL.prototype.rendering = function(ctx){
         var _t = this._node;
         if (_t._nuPoints <= 1)
             return;
@@ -630,11 +630,11 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
                         node.draw(ctx);
                         break;
                     default:
-                        node.visit(ctx);
+                        node.visit(ctx);                           //TODO need fix soon
                         break;
                 }
             } else if(selBone instanceof cc.Node) {
-                selBone.setShaderProgram(_t._shaderProgram);
+                selBone.setShaderProgram(_t._shaderProgram);       //TODO need fix soon
                 selBone.visit(ctx);
                 //            CC_NODE_DRAW_SETUP();
             }

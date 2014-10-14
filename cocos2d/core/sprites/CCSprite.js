@@ -321,7 +321,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     // Shared data
     //
     // texture
-    _rect:null, //Retangle of cc.Texture2D
+    _rect:null, //Rectangle of cc.Texture2D
     _rectRotated:false, //Whether the texture is rotated
 
     // Offset Position (used by Zwoptex)
@@ -335,7 +335,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _flippedY:false, //Whether the sprite is flipped vertically or not.
 
     _textureLoaded:false,
-    _loadedEventListeners: null,
     _newTextureWhenChangeColor: null,         //hack property for LabelBMFont
     _className:"Sprite",
 
@@ -354,22 +353,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * Add a event listener for texture loaded event.
      * @param {Function} callback
      * @param {Object} target
+     * @deprecated since 3.1, please use addEventListener instead
      */
     addLoadedEventListener:function(callback, target){
-        if(!this._loadedEventListeners)
-            this._loadedEventListeners = [];
-        this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
-    },
-
-    _callLoadedEventCallbacks:function(){
-        if(!this._loadedEventListeners)
-            return;
-        var locListeners = this._loadedEventListeners;
-        for(var i = 0, len = locListeners.length;  i < len; i++){
-            var selCallback = locListeners[i];
-            selCallback.eventCallback.call(selCallback.eventTarget, this);
-        }
-        locListeners.length = 0;
+        this.addEventListener("load", callback, target);
     },
 
     /**
@@ -473,7 +460,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if(!spriteFrame.textureLoaded()){
             //add event listener
             this._textureLoaded = false;
-            spriteFrame.addLoadedEventListener(this._spriteFrameLoadedCallback, this);
+            spriteFrame.addEventListener("load", this._spriteFrameLoadedCallback, this);
         }
 
         var rotated = cc._renderType === cc._RENDER_TYPE_CANVAS ? false : spriteFrame._rotated;
@@ -1227,7 +1214,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
             _t._changeTextureColor();
 
-        _t._callLoadedEventCallbacks();
+        _t.dispatchEvent("load");
     };
 
     _p.setOpacityModifyRGB = function (modify) {
@@ -1358,8 +1345,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 _t._rect.height = rect.height;
             }
             if(_t.texture)
-                _t.texture.removeLoadedEventListener(_t);
-            texture.addLoadedEventListener(_t._textureLoadedCallback, _t);
+                _t.texture.removeEventListener("load", _t);
+            texture.addEventListener("load", _t._textureLoadedCallback, _t);
             _t.texture = texture;
             return true;
         }
@@ -1413,7 +1400,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
         _t.batchNode = _t._batchNode;
-        _t._callLoadedEventCallbacks();
+        _t.dispatchEvent("load");
     };
 
     _p.setTextureRect = function (rect, rotated, untrimmedSize) {
@@ -1450,7 +1437,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var _t = this;
         //cc.assert(_t._batchNode, "updateTransform is only valid when cc.Sprite is being rendered using an cc.SpriteBatchNode");
 
-        // recaculate matrix only if it is dirty
+        // re-calculate matrix only if it is dirty
         if (_t.dirty) {
             // If it is not visible, or one of its ancestors is not visible, then do nothing:
             var locParent = _t._parent;
@@ -1534,13 +1521,13 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var locTextureLoaded = newFrame.textureLoaded();
         if (!locTextureLoaded) {
             _t._textureLoaded = false;
-            newFrame.addLoadedEventListener(function (sender) {
+            newFrame.addEventListener("load", function (sender) {
                 _t._textureLoaded = true;
                 var locNewTexture = sender.getTexture();
                 if (locNewTexture != _t._texture)
                     _t.texture = locNewTexture;
                 _t.setTextureRect(sender.getRect(), sender.isRotated(), sender.getOriginalSize());
-                _t._callLoadedEventCallbacks();
+                _t.dispatchEvent("load");
             }, _t);
         }
         // update texture before updating texture rect
@@ -1594,7 +1581,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             _t.setTextureRect(cc.rect(0,0, size.width, size.height));
             //If image isn't loaded. Listen for the load event.
             if(!texture._isLoaded){
-                texture.addLoadedEventListener(function(){
+                texture.addEventListener("load", function(){
                     var size = texture.getContentSize();
                     _t.setTextureRect(cc.rect(0,0, size.width, size.height));
                 }, this);
@@ -1638,12 +1625,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             }
         };
 
-    delete _p;
+    _p = null;
 } else {
     cc.assert(cc.isFunction(cc._tmp.WebGLSprite), cc._LogInfos.MissingFile, "SpritesWebGL.js");
     cc._tmp.WebGLSprite();
     delete cc._tmp.WebGLSprite;
 }
+
+cc.EventHelper.prototype.apply(cc.Sprite.prototype);
 
 cc.assert(cc.isFunction(cc._tmp.PrototypeSprite), cc._LogInfos.MissingFile, "SpritesPropertyDefine.js");
 cc._tmp.PrototypeSprite();

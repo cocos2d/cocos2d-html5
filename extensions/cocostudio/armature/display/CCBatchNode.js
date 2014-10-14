@@ -76,8 +76,6 @@ ccs.BatchNode = cc.Node.extend(/** @lends ccs.BatchNode# */{
         this.sortAllChildren();
         this.draw(renderer, this._modelViewTransform, dirty);
 
-        // reset for next frame
-        this.arrivalOrder = 0;
         if (this.grid && this.grid.isActive())
             this.grid.afterDraw(this);
 

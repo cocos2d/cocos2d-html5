@@ -177,7 +177,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         //the bakeSprite is drawing
         locBakeSprite.visit(context);
 
-        _t.arrivalOrder = 0;
         context.restore();
     };
 
@@ -494,7 +493,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         //the bakeSprite is drawing
         locBakeSprite.visit(context);
 
-        _t.arrivalOrder = 0;
         context.restore();
     };
 
