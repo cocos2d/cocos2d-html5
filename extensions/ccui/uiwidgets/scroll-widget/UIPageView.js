@@ -335,7 +335,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      */
     onTouchMoved: function (touch, event) {
 
-        ccui.Layout.prototype.onTouchMoved(touch, event);
+        ccui.Layout.prototype.onTouchMoved.call(this, touch, event);
         if (!this._isInterceptTouch)
         {
             this._handleMoveLogic(touch);

@@ -1795,7 +1795,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _copySpecialProperties: function (layout) {
         if(!(layout instanceof  ccui.Layout))
             return;
-        ccui.Widget.prototype._copySpecialProperties.call(this, layout);
         this.setBackGroundImageScale9Enabled(layout._backGroundScale9Enabled);
         this.setBackGroundImage(layout._backGroundImageFileName, layout._bgImageTexType);
         this.setBackGroundImageCapInsets(layout._backGroundImageCapInsets);
