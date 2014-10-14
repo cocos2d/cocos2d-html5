@@ -53,7 +53,6 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     _mapStartChar: null,
 
     _textureLoaded: false,
-    _loadedEventListeners: null,
     _className: "LabelAtlas",
 
     /**
@@ -91,23 +90,10 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      * Add texture loaded event listener.
      * @param {Function} callback
      * @param {cc.Node} target
+     * @deprecated since 3.1, please use addEventListener instead
      */
     addLoadedEventListener: function (callback, target) {
-        if (!this._loadedEventListeners)
-            this._loadedEventListeners = [];
-        this._loadedEventListeners.push({eventCallback: callback, eventTarget: target});
-    },
-
-    _callLoadedEventCallbacks: function () {
-        if (!this._loadedEventListeners)
-            return;
-        this._textureLoaded = true;
-        var locListeners = this._loadedEventListeners;
-        for (var i = 0, len = locListeners.length; i < len; i++) {
-            var selCallback = locListeners[i];
-            selCallback.eventCallback.call(selCallback.eventTarget, this);
-        }
-        locListeners.length = 0;
+        this.addEventListener("load", callback, target);
     },
 
     /**
@@ -154,10 +140,10 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         var locLoaded = texture.isLoaded();
         this._textureLoaded = locLoaded;
         if (!locLoaded) {
-            texture.addLoadedEventListener(function (sender) {
+            texture.addEventListener("load", function (sender) {
                 this.initWithTexture(texture, width, height, label.length);
                 this.string = label;
-                this._callLoadedEventCallbacks();
+                this.dispatchEvent("load");
             }, this);
         }
         if (this.initWithTexture(texture, width, height, label.length)) {
@@ -376,6 +362,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 });
 
 var _p = cc.LabelAtlas.prototype;
+cc.EventHelper.prototype.apply(_p);
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     _p.updateAtlasValues = _p._updateAtlasValuesForWebGL;
     _p.setString = _p._setStringForWebGL;

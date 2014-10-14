@@ -1301,7 +1301,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             this.setTextureWithRect(texture, cc.rect(0, 0, texture.width, texture.height));
         } else {
             this._textureLoaded = false;
-            texture.addLoadedEventListener(function(sender){
+            texture.addEventListener("load", function(sender){
                 this._textureLoaded = true;
                 this.setTextureWithRect(sender, cc.rect(0, 0, sender.width, sender.height));
             }, this);

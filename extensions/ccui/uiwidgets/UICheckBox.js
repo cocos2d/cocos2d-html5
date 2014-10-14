@@ -150,8 +150,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
         var self = this;
         if(!bgBoxRenderer.texture || !bgBoxRenderer.texture.isLoaded()){
-            bgBoxRenderer.addLoadedEventListener(function(){
-
+            bgBoxRenderer.addEventListener("load", function(){
                 self._findLayout();
 
                 self._updateFlippedX();
@@ -177,7 +176,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
         if (!bgBoxRenderer.textureLoaded()) {
             this._backGroundBoxRenderer.setContentSize(this._customSize);
-            bgBoxRenderer.addLoadedEventListener(function () {
+            bgBoxRenderer.addEventListener("load", function () {
                 this._updateContentSizeWithTextureSize(this._backGroundBoxRenderer.getContentSize());
             }, this);
         }
@@ -205,8 +204,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
         var self = this;
         if(!this._backGroundSelectedBoxRenderer.texture || !this._backGroundSelectedBoxRenderer.texture.isLoaded()){
-            this._backGroundSelectedBoxRenderer.addLoadedEventListener(function(){
-
+            this._backGroundSelectedBoxRenderer.addEventListener("load", function(){
                 self._findLayout();
 
                 self._updateFlippedX();
@@ -251,7 +249,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
         var self = this;
         if(!this._frontCrossRenderer.texture || !this._frontCrossRenderer.texture.isLoaded()){
-            this._frontCrossRenderer.addLoadedEventListener(function(){
+            this._frontCrossRenderer.addEventListener("load", function(){
                 self._findLayout();
 
                 self._updateFlippedX();
@@ -295,7 +293,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
         var self = this;
         if(!this._backGroundBoxDisabledRenderer.texture || !this._backGroundBoxDisabledRenderer.texture.isLoaded()){
-            this._backGroundBoxDisabledRenderer.addLoadedEventListener(function(){
+            this._backGroundBoxDisabledRenderer.addEventListener("load", function(){
                 self._findLayout();
 
                 self._updateFlippedX();
@@ -339,8 +337,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
         var self = this;
         if(!this._frontCrossDisabledRenderer.texture || !this._frontCrossDisabledRenderer.texture.isLoaded()){
-            this._frontCrossDisabledRenderer.addLoadedEventListener(function(){
-
+            this._frontCrossDisabledRenderer.addEventListener("load", function(){
                 self._findLayout();
 
                 self._updateFlippedX();

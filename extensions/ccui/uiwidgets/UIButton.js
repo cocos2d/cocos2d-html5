@@ -239,8 +239,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
         var self = this;
         if(!this._buttonNormalRenderer.texture || !this._buttonNormalRenderer.texture.isLoaded()){
-            this._buttonNormalRenderer.addLoadedEventListener(function(){
-
+            this._buttonNormalRenderer.addEventListener("load", function(){
                 self._findLayout();
 
                 self._normalTextureSize = self._buttonNormalRenderer.getContentSize();
@@ -310,8 +309,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
         var self = this;
         if(!this._buttonClickedRenderer.texture || !this._buttonClickedRenderer.texture.isLoaded()){
-            this._buttonClickedRenderer.addLoadedEventListener(function(){
-
+            this._buttonClickedRenderer.addEventListener("load", function(){
                 self._findLayout();
 
                 self._pressedTextureSize = self._buttonClickedRenderer.getContentSize();
@@ -377,8 +375,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
         var self = this;
         if(!this._buttonDisableRenderer.texture || !this._buttonDisableRenderer.texture.isLoaded()){
-            this._buttonDisableRenderer.addLoadedEventListener(function() {
-
+            this._buttonDisableRenderer.addEventListener("load", function() {
                 self._findLayout();
 
                 self._disabledTextureSize = self._buttonDisableRenderer.getContentSize();

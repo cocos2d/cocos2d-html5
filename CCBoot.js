@@ -758,7 +758,6 @@ cc.loader = /** @lends cc.loader# */{
             }else{
                 typeof cb == "function" && cb("load image failed");
             }
-
         };
 
         cc._addEventListener(img, "load", lcb);
