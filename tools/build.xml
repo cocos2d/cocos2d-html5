@@ -235,6 +235,12 @@
                 <file name="extensions/cocostudio/reader/widgetreader/WidgetReaderProtocol.js"/>
                 <file name="extensions/cocostudio/reader/GUIReader.js"/>
                 <file name="extensions/cocostudio/reader/SceneReader.js"/>
+                <file name="extensions/cocostudio/reader/timeline/ActionTimeline.js"/>
+                <file name="extensions/cocostudio/reader/timeline/ActionTimelineCache.js"/>
+                <file name="extensions/cocostudio/reader/timeline/Frame.js"/>
+                <file name="extensions/cocostudio/reader/timeline/NodeReader.js"/>
+                <file name="extensions/cocostudio/reader/timeline/Timeline.js"/>
+
                 <file name="cocos2d/physics/CCPhysicsSprite.js"/>
                 <file name="cocos2d/physics/CCPhysicsDebugNode.js"/>
                 <file name="extensions/spine/Spine.js"/>
