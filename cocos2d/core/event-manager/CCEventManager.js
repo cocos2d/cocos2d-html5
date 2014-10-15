@@ -646,6 +646,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
      *         A lower priority will be called before the ones that have a higher value. 0 priority is forbidden for fixed priority since it's used for scene graph based priority.
      *         The listener must be a cc.EventListener object when adding a fixed priority listener, because we can't remove a fixed priority listener without the listener handler,
      *         except calls removeAllListeners().
+     * @return {cc.EventListener} Return the listener. Needed in order to remove the event from the dispatcher.
      */
     addListener: function (listener, nodeOrPriority) {
         cc.assert(listener && nodeOrPriority, cc._LogInfos.eventManager_addListener_2);
@@ -679,6 +680,8 @@ cc.eventManager = /** @lends cc.eventManager# */{
             listener._setRegistered(true);
             this._addListener(listener);
         }
+
+        return listener;
     },
 
     /**
