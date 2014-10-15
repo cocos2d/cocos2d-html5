@@ -201,7 +201,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         }
     },
 
-    //TODO
     /**
      * tint this label
      * @param {cc.Color} color
@@ -920,7 +919,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         this.updateLabel();
     },
 
-    //TODO
     /**
      * set fnt file path. <br />
      * Change the fnt file path.
