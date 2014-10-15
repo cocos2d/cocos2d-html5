@@ -73,5 +73,135 @@ ccs.LabelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
         }
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
 
+    },
+
+    setPropsFromProtocolBuffers: function(widget, nodeTree){
+        ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+
+        var jsonPath = ccs.uiReader.getFilePath();
+
+        var labelAtlas = widget;
+        var options = nodeTree.textatlasoptions();
+        //        var sv = DICTOOL.checkObjectExist_json(options, P_StringValue);
+        //        var cmf = DICTOOL.checkObjectExist_json(options, P_CharMapFile);
+        //        var iw = DICTOOL.checkObjectExist_json(options, P_ItemWidth);
+        //        var ih = DICTOOL.checkObjectExist_json(options, P_ItemHeight);
+        //        var scm = DICTOOL.checkObjectExist_json(options, P_StartCharMap);
+
+        var cmftDic = options.charmapfiledata();
+        var cmfType = cmftDic.resourcetype();
+        switch (cmfType)
+        {
+            case 0:
+            {
+                var tp_c = jsonPath;
+                var cmfPath = cmftDic.path().c_str();
+                var cmf_tp = tp_c.append(cmfPath).c_str();
+                var stringValue = options.has_stringvalue() ? options.stringvalue() : "12345678";
+                var itemWidth = options.has_itemwidth() ? options.itemwidth() : 24;
+                var itemHeight = options.has_itemheight() ? options.itemheight() : 32;
+                labelAtlas.setProperty(stringValue,
+                                        cmf_tp,
+                                        itemWidth,
+                                        itemHeight,
+                                        options.startcharmap().c_str());
+                break;
+            }
+            case 1:
+                cc.log("Wrong res type of LabelAtlas!");
+                break;
+            default:
+                break;
+        }
+
+
+        // other commonly protperties
+        ccs.WidgetReader.prototype.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+    },
+
+    setPropsFromXML: function(widget, objectData){
+        ccs.WidgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+
+        var labelAtlas = widget;
+
+        var xmlPath = ccs.uiReader.getFilePath();
+
+        var stringValue = "", startChar = "";
+        var itemWidth = 0, itemHeight = 0;
+        var resourceType = 0;
+        var path = "", plistFile = "";
+
+        var opacity = 255;
+
+
+        // attributes
+        var attribute = objectData.FirstAttribute();
+        while (attribute)
+        {
+            var name = attribute.Name();
+            var value = attribute.Value();
+
+            if (name == "LabelText")
+            {
+                stringValue = value;
+            }
+            else if (name == "CharWidth")
+            {
+                itemWidth = atoi(value.c_str());
+            }
+            else if (name == "CharHeight")
+            {
+                itemHeight = atoi(value.c_str());
+            }
+            else if (name == "StartChar")
+            {
+                startChar = value;
+            }
+            else if (name == "Alpha")
+            {
+                opacity = atoi(value.c_str());
+            }
+
+            attribute = attribute.Next();
+        }
+
+        // child elements
+        var child = objectData.FirstChildElement();
+        while (child)
+        {
+            var name = child.Name();
+
+            if (name == "LabelAtlasFileImage_CNB")
+            {
+                var attribute = child.FirstAttribute();
+
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "Path")
+                    {
+                        path = value;
+                    }
+                    else if (name == "Type")
+                    {
+                        resourceType = (value == "Normal" || value == "Default" || value == "MarkedSubImage") ? 0 : 1;
+                    }
+                    else if (name == "Plist")
+                    {
+                        plistFile = value;
+                    }
+
+                    attribute = attribute.Next();
+                }
+            }
+
+            child = child.NextSiblingElement();
+        }
+
+        labelAtlas.setProperty(stringValue, xmlPath + path, itemWidth, itemHeight, startChar);
+
+        labelAtlas.setOpacity(opacity);
     }
 };

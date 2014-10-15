@@ -375,6 +375,9 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this._backGroundSelectedBoxRenderer.setVisible(false);
         this._backGroundBoxDisabledRenderer.setVisible(false);
         this._frontCrossDisabledRenderer.setVisible(false);
+        if (this._isSelected){
+            this._frontCrossRenderer.setVisible(true);
+        }
     },
 
     _onPressStateChangedToPressed: function () {

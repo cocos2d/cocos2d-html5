@@ -90,5 +90,362 @@ ccs.CheckBoxReader = /** @lends ccs.CheckBoxReader# */{
             checkBox.setSelectedState(options["selectedState"]);
 
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
-    }
+    },
+
+    setPropsFromProtocolBuffers: function(widget, nodeTree){
+        ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+
+        var checkBox = widget;
+        var options = nodeTree.checkboxoptions();
+
+		var protocolBuffersPath = ccs.uiReader.getFilePath();
+
+        //load background image
+		var  backGroundDic = options.backgroundboxdata();
+        var backGroundType = backGroundDic.resourcetype();
+		if (backGroundType == 1)
+		{
+			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + backGroundDic.plistfile());
+		}
+        var backGroundTexturePath = this.getResourcePath(backGroundDic.path(), backGroundType);
+        checkBox.loadTextureBackGround(backGroundTexturePath, backGroundType);
+
+        //load background selected image
+        var  backGroundSelectedDic = options.backgroundboxselecteddata();
+        var backGroundSelectedType = backGroundSelectedDic.resourcetype();
+		if (backGroundSelectedType == 1)
+		{
+			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + backGroundSelectedDic.plistfile());
+		}
+        var backGroundSelectedTexturePath = this.getResourcePath(backGroundSelectedDic.path(), backGroundSelectedType);
+        checkBox.loadTextureBackGroundSelected(backGroundSelectedTexturePath, backGroundSelectedType);
+
+        //load frontCross image
+        var  frontCrossDic = options.frontcrossdata();
+        var frontCrossType = frontCrossDic.resourcetype();
+		if (frontCrossType == 1)
+		{
+			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + frontCrossDic.plistfile());
+		}
+        var frontCrossFileName = this.getResourcePath(frontCrossDic.path(), frontCrossType);
+        checkBox.loadTextureFrontCross(frontCrossFileName, frontCrossType);
+
+        //load backGroundBoxDisabledData
+        var  backGroundDisabledDic = options.backgroundboxdisableddata();
+        var backGroundDisabledType = backGroundDisabledDic.resourcetype();
+		if (backGroundDisabledType == 1)
+		{
+			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + backGroundDisabledDic.plistfile());
+		}
+        var backGroundDisabledFileName = this.getResourcePath(backGroundDisabledDic.path(), backGroundDisabledType);
+        checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName, backGroundDisabledType);
+
+        ///load frontCrossDisabledData
+        var  frontCrossDisabledDic = options.frontcrossdisableddata();
+        var frontCrossDisabledType = frontCrossDisabledDic.resourcetype();
+		if (frontCrossDisabledType == 1)
+		{
+			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + frontCrossDisabledDic.plistfile());
+		}
+        var frontCrossDisabledFileName = this.getResourcePath(frontCrossDisabledDic.path(), frontCrossDisabledType);
+        checkBox.loadTextureFrontCrossDisabled(frontCrossDisabledFileName, frontCrossDisabledType);
+
+        checkBox.setSelectedState(options.selectedstate());
+
+		var displaystate = true;
+		if(options.has_displaystate())
+		{
+			displaystate = options.displaystate();
+		}
+		checkBox.setBright(displaystate);
+
+        // other commonly protperties
+        ccs.WidgetReader.prototype.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+    },
+
+    setPropsFromXML: function(widget, objectData){
+        ccs.WidgetReader.setPropsFromXML.call(this, widget, objectData);
+
+        var checkBox = widget;
+
+        var xmlPath = ccs.uiReader.getFilePath();
+
+        var opacity = 255;
+
+        // attributes
+        var attribute = objectData.FirstAttribute();
+        while (attribute)
+        {
+            var name = attribute.Name();
+            var value = attribute.Value();
+
+            if (name == "CheckedState")
+            {
+                checkBox.setSelectedState((value == "True") ? true : false);
+            }
+            else if (name == "DisplayState")
+            {
+                checkBox.setBright((value == "True") ? true : false);
+            }
+            else if (name == "Alpha")
+            {
+                opacity = atoi(value.c_str());
+            }
+
+            attribute = attribute.Next();
+        }
+
+        // child elements
+        var child = objectData.FirstChildElement();
+        while (child)
+        {
+            var name = child.Name();
+
+            if (name == "NormalBackFileData")
+            {
+                var attribute = child.FirstAttribute();
+                var resourceType = 0;
+                var path = "", plistFile = "";
+
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "Path")
+                    {
+                        path = value;
+                    }
+                    else if (name == "Type")
+                    {
+                        resourceType = this.getResourceType(value);
+                    }
+                    else if (name == "Plist")
+                    {
+                        plistFile = value;
+                    }
+
+                    attribute = attribute.Next();
+                }
+
+                switch (resourceType)
+                {
+                    case 0:
+                    {
+                        checkBox.loadTextureBackGround(xmlPath + path, ccui.Widget.TextureResType.LOCAL);
+                        break;
+                    }
+
+                    case 1:
+                    {
+                        cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                        checkBox.loadTextureBackGround(path, ccui.Widget.TextureResType.PLIST);
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
+            }
+            else if (name == "PressedBackFileData")
+            {
+                var attribute = child.FirstAttribute();
+                var resourceType = 0;
+                var path = "", plistFile = "";
+
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "Path")
+                    {
+                        path = value;
+                    }
+                    else if (name == "Type")
+                    {
+                        resourceType = this.getResourceType(value);
+                    }
+                    else if (name == "Plist")
+                    {
+                        plistFile = value;
+                    }
+
+                    attribute = attribute.Next();
+                }
+
+                switch (resourceType)
+                {
+                    case 0:
+                    {
+                        checkBox.loadTextureBackGroundSelected(xmlPath + path, ccui.Widget.TextureResType.LOCAL);
+                        break;
+                    }
+
+                    case 1:
+                    {
+                        cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                        checkBox.loadTextureBackGroundSelected(path, ccui.Widget.TextureResType.PLIST);
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
+            }
+            else if (name == "NodeNormalFileData")
+            {
+                var attribute = child.FirstAttribute();
+                var resourceType = 0;
+                var path = "", plistFile = "";
+
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "Path")
+                    {
+                        path = value;
+                    }
+                    else if (name == "Type")
+                    {
+                        resourceType = this.getResourceType(value);
+                    }
+                    else if (name == "Plist")
+                    {
+                        plistFile = value;
+                    }
+
+                    attribute = attribute.Next();
+                }
+
+                switch (resourceType)
+                {
+                    case 0:
+                    {
+                        checkBox.loadTextureFrontCross(xmlPath + path, ccui.Widget.TextureResType.LOCAL);
+                        break;
+                    }
+
+                    case 1:
+                    {
+                        cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                        checkBox.loadTextureFrontCross(path, ccui.Widget.TextureResType.PLIST);
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
+            }
+            else if (name == "DisableBackFileData")
+            {
+                var attribute = child.FirstAttribute();
+                var resourceType = 0;
+                var path = "", plistFile = "";
+
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "Path")
+                    {
+                        path = value;
+                    }
+                    else if (name == "Type")
+                    {
+                        resourceType = this.getResourceType(value);
+                    }
+                    else if (name == "Plist")
+                    {
+                        plistFile = value;
+                    }
+
+                    attribute = attribute.Next();
+                }
+
+                switch (resourceType)
+                {
+                    case 0:
+                    {
+                        checkBox.loadTextureBackGroundDisabled(xmlPath + path, ccui.Widget.TextureResType.LOCAL);
+                        break;
+                    }
+
+                    case 1:
+                    {
+                        cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                        checkBox.loadTextureBackGroundDisabled(path, ccui.Widget.TextureResType.PLIST);
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
+            }
+            else if (name == "NodeDisableFileData")
+            {
+                var attribute = child.FirstAttribute();
+                var resourceType = 0;
+                var path = "", plistFile = "";
+
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "Path")
+                    {
+                        path = value;
+                    }
+                    else if (name == "Type")
+                    {
+						resourceType = this.getResourceType(value);
+                    }
+                    else if (name == "Plist")
+                    {
+                        plistFile = value;
+                    }
+
+                    attribute = attribute.Next();
+                }
+
+                switch (resourceType)
+                {
+                    case 0:
+                    {
+                        checkBox.loadTextureFrontCrossDisabled(xmlPath + path, ccui.Widget.TextureResType.LOCAL);
+                        break;
+                    }
+
+                    case 1:
+                    {
+                        cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                        checkBox.loadTextureFrontCrossDisabled(path, ccui.Widget.TextureResType.PLIST);
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
+            }
+
+            child = child.NextSiblingElement();
+        }
+
+        checkBox.setOpacity(opacity);
+    },
+
+    getResourceType: function(key)
+	{
+		if(key == "Normal" || key == "Default" || key == "MarkedSubImage")
+		{
+			return 	0;
+		}
+
+		return 1;
+	}
+
 };

@@ -69,5 +69,127 @@ ccs.LabelBMFontReader = /** @lends ccs.LabelBMFontReader# */{
         var text = options["text"];
         labelBMFont.setString(text);
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+    },
+
+    setPropsFromProtocolBuffers: function(widget, nodeTree){
+        ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+
+        var jsonPath = ccs.uiReader.getFilePath();
+
+        var labelBMFont = widget;
+        var options = nodeTree.textbmfontoptions();
+
+
+        var cmftDic = options.filenamedata();
+        var cmfType = cmftDic.resourcetype();
+        switch (cmfType)
+        {
+            case 0:
+            {
+                var tp_c = jsonPath;
+                var cmfPath = cmftDic.path().c_str();
+                var cmf_tp = tp_c.append(cmfPath).c_str();
+                labelBMFont.setFntFile(cmf_tp);
+                break;
+            }
+            case 1:
+                cc.log("Wrong res type of LabelAtlas!");
+                break;
+            default:
+                break;
+        }
+
+        var text = (options.has_text()) ? options.text().c_str() : "Text Label";
+        labelBMFont.setString(text);
+
+
+        // other commonly protperties
+        ccs.WidgetReader.prototype.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+    },
+
+    setPropsFromXML: function(widget, nodeTree){
+        WidgetReader.setPropsFromXML(widget, objectData);
+
+        var labelBMFont = widget;
+
+        var xmlPath = ccs.uiReader.getFilePath();
+
+        var text = "";
+
+        var opacity = 255;
+
+        // attributes
+        var attribute = objectData.FirstAttribute();
+        while (attribute)
+        {
+            var name = attribute.Name();
+            var value = attribute.Value();
+
+            if (name == "LabelText")
+            {
+                text = value;
+            }
+            else if (name == "Alpha")
+            {
+                opacity = atoi(value.c_str());
+            }
+
+            attribute = attribute.Next();
+        }
+
+
+        // child elements
+        var child = objectData.FirstChildElement();
+        while (child)
+        {
+            var name = child.Name();
+
+            if (name == "LabelBMFontFile_CNB")
+            {
+                var attribute = child.FirstAttribute();
+                var resourceType = 0;
+                var path = "", plistFile = "";
+
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "Path")
+                    {
+                        path = value;
+                    }
+                    else if (name == "Type")
+                    {
+                        resourceType = (value == "Normal" || value == "Default" || value == "MarkedSubImage") ? 0 : 1;
+                    }
+                    else if (name == "Plist")
+                    {
+                        plistFile = value;
+                    }
+
+                    attribute = attribute.Next();
+                }
+
+                switch (resourceType)
+                {
+                    case 0:
+                    {
+                        labelBMFont.setFntFile(xmlPath + path);
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
+            }
+
+            child = child.NextSiblingElement();
+        }
+
+        labelBMFont.setString(text);
+
+        labelBMFont.setOpacity(opacity);
+    
     }
 };

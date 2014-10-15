@@ -63,7 +63,7 @@ ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
                 break;
             case 1:
                 var imageFileName = imageFileNameDic["path"];
-                imageView.loadTexture(imageFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
+                imageView.loadTexture(imageFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
                 break;
             default:
                 break;
@@ -97,5 +97,203 @@ ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
     
         }
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+    },
+
+    setPropsFromProtocolBuffers: function(widget, nodeTree){
+        ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+
+        var options = nodeTree.imageviewoptions();
+        var imageView = widget;
+
+		var protocolBuffersPath = ccs.uiReader.getFilePath();
+
+        var imageFileNameDic = options.filenamedata();
+        var imageFileNameType = imageFileNameDic.resourcetype();
+		if (imageFileNameType == 1)
+		{
+			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + imageFileNameDic.plistfile());
+		}
+        var imageFileName = this.getResourcePath(imageFileNameDic.path(), imageFileNameType);
+        imageView.loadTexture(imageFileName, imageFileNameType);
+
+
+        var scale9EnableExist = options.has_scale9enable();
+        var scale9Enable = false;
+        if (scale9EnableExist)
+        {
+            scale9Enable = options.scale9enable();
+        }
+        imageView.setScale9Enabled(scale9Enable);
+
+
+        if (scale9Enable)
+        {
+            imageView.setUnifySizeEnabled(false);
+            imageView.ignoreContentAdaptWithSize(false);
+
+            var swf = options.has_scale9width() ? options.scale9width() : 80;
+            var shf = options.has_scale9height() ? options.scale9height() : 80;
+            imageView.setContentSize(Size(swf, shf));
+
+
+            var cx = options.capinsetsx();
+            var cy = options.capinsetsy();
+            var cw = options.has_capinsetswidth() ? options.capinsetswidth() : 1.0;
+            var ch = options.has_capinsetsheight() ? options.capinsetsheight() : 1.0;
+
+            imageView.setCapInsets(Rect(cx, cy, cw, ch));
+
+        }
+
+        // other commonly protperties
+        ccs.WidgetReader.prototype.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+
+		var flipX   = options.flippedx();
+		var flipY   = options.flippedy();
+
+		if(flipX != false)
+			imageView.setFlippedX(flipX);
+		if(flipY != false)
+			imageView.setFlippedY(flipY);
+    },
+
+    setPropsFromXML: function(widget, objectData){
+        ccs.WidgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+
+        var imageView = widget;
+
+        var xmlPath = ccs.uiReader.getFilePath();
+
+        var scale9Enabled = false;
+        var cx = 0, cy = 0, cw = 0, ch = 0;
+        var swf = 0, shf = 0;
+
+        var opacity = 255;
+
+        // attributes
+        var attribute = objectData.FirstAttribute();
+        while (attribute)
+        {
+            var name = attribute.Name();
+            var value = attribute.Value();
+
+            if (name == "Scale9Enable")
+            {
+                if (value == "True")
+                {
+                    scale9Enabled = true;
+                }
+            }
+            else if (name == "Scale9OriginX")
+            {
+                cx = atof(value);
+            }
+            else if (name == "Scale9OriginY")
+            {
+                cy = atof(value);
+            }
+            else if (name == "Scale9Width")
+            {
+                cw = atof(value);
+            }
+            else if (name == "Scale9Height")
+            {
+                ch = atof(value);
+            }
+            else if (name == "Alpha")
+            {
+                opacity = atoi(value);
+            }
+
+            attribute = attribute.Next();
+        }
+
+        // child elements
+        var child = objectData.FirstChildElement();
+        while (child)
+        {
+            var name = child.Name();
+
+            if (name == "Size" && scale9Enabled)
+            {
+                var attribute = child.FirstAttribute();
+
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "X")
+                    {
+                        swf = atof(value);
+                    }
+                    else if (name == "Y")
+                    {
+                        shf = atof(value);
+                    }
+
+                    attribute = attribute.Next();
+                }
+            }
+            else if (name == "FileData")
+            {
+                var attribute = child.FirstAttribute();
+                var resourceType = 0;
+                var path = "", plistFile = "";
+
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "Path")
+                    {
+                        path = value;
+                    }
+                    else if (name == "Type")
+                    {
+                        resourceType = (value == "Normal" || value == "Default" || value == "MarkedSubImage") ? 0 : 1;
+                    }
+                    else if (name == "Plist")
+                    {
+                        plistFile = value;
+                    }
+
+                    attribute = attribute.Next();
+                }
+
+                switch (resourceType)
+                {
+                    case 0:
+                    {
+                        imageView.loadTexture(xmlPath + path, ccui.Widget.TextureResType.LOCAL);
+                        break;
+                    }
+
+                    case 1:
+                    {
+                        cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                        imageView.loadTexture(path, ccui.Widget.TextureResType.PLIST);
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
+            }
+
+            child = child.NextSiblingElement();
+        }
+
+        imageView.setScale9Enabled(scale9Enabled);
+
+        if (scale9Enabled)
+        {
+            imageView.setCapInsets(cc.rect(cx, cy, cw, ch));
+            imageView.setContentSize(cc.size(swf, shf));
+        }
+
+        imageView.setOpacity(opacity);
     }
+    
 };

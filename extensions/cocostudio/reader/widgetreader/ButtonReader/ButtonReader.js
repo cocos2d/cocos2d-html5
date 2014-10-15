@@ -62,7 +62,7 @@ ccs.ButtonReader = /** @lends ccs.ButtonReader# */{
                 break;
             case 1:
                 var normalFileName = normalDic["path"];
-                button.loadTextureNormal(normalFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
+                button.loadTextureNormal(normalFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
                 break;
             default:
                 break;
@@ -79,7 +79,7 @@ ccs.ButtonReader = /** @lends ccs.ButtonReader# */{
                 break;
             case 1:
                 var pressedFileName = pressedDic["path"];
-                button.loadTexturePressed(pressedFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
+                button.loadTexturePressed(pressedFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
                 break;
             default:
                 break;
@@ -96,7 +96,7 @@ ccs.ButtonReader = /** @lends ccs.ButtonReader# */{
                 break;
             case 1:
                 var disabledFileName = disabledDic["path"];
-                button.loadTextureDisabled(disabledFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
+                button.loadTextureDisabled(disabledFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
                 break;
             default:
                 break;
@@ -132,5 +132,459 @@ ccs.ButtonReader = /** @lends ccs.ButtonReader# */{
         if (fn)
             button.setTitleFontName(options["fontName"]);
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+    },
+
+    setPropsFromProtocolBuffers: function(widget, nodeTree){
+            ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+    
+            var button = widget;
+            var options = nodeTree.buttonoptions();
+    
+            var protocolBuffersPath = ccs.uiReader.getFilePath();
+    
+            var scale9Enable = options.scale9enable();
+            button.setScale9Enabled(scale9Enable);
+    
+    
+    		var normalDic = options.normaldata();
+            var normalType = normalDic.resourcetype();
+    		if (normalType == 1)
+    		{
+    			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + normalDic.plistfile());
+    		}
+            var normalTexturePath = this.getResourcePath(normalDic.path(), normalType);
+            button.loadTextureNormal(normalTexturePath, normalType);
+    
+    
+            var pressedDic = options.presseddata();
+            var pressedType = pressedDic.resourcetype();
+    		if (pressedType == 1)
+    		{
+    			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + pressedDic.plistfile());
+    		}
+            var pressedTexturePath = this.getResourcePath(pressedDic.path(), pressedType);
+            button.loadTexturePressed(pressedTexturePath, pressedType);
+    
+    
+            var disabledDic = options.disableddata();
+            var disabledType = disabledDic.resourcetype();
+    		if (disabledType == 1)
+    		{
+    			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + disabledDic.plistfile());
+    		}
+            var disabledTexturePath = this.getResourcePath(disabledDic.path(), disabledType);
+            button.loadTextureDisabled(disabledTexturePath, disabledType);
+    
+            if (scale9Enable)
+            {
+                button.setUnifySizeEnabled(false);
+                button.ignoreContentAdaptWithSize(false);
+    
+                var cx = options.capinsetsx();
+                var cy = options.capinsetsy();
+                var cw = options.capinsetswidth();
+                var ch = options.capinsetsheight();
+    
+                button.setCapInsets(Rect(cx, cy, cw, ch));
+                var sw = options.has_scale9width();
+                var sh = options.has_scale9height();
+                if (sw && sh)
+                {
+                    var swf = options.scale9width();
+                    var shf = options.scale9height();
+                    button.setContentSize(cc.size(swf, shf));
+                }
+            }
+            var tt = options.has_text();
+            if (tt)
+            {
+                var text = options.text();
+                if (text)
+                {
+                    button.setTitleText(text);
+                }
+            }
+    
+    
+            var cri = options.has_textcolorr() ? options.textcolorr() : 255;
+            var cgi = options.has_textcolorg() ? options.textcolorg() : 255;
+            var cbi = options.has_textcolorb() ? options.textcolorb() : 255;
+            button.setTitleColor(cc.color(cri,cgi,cbi));
+    
+    
+            var fontSize = options.has_fontsize() ? options.fontsize() : 14;
+            button.setTitleFontSize(fontSize);
+    
+    		var displaystate = true;
+    		if(options.has_displaystate())
+    		{
+    			displaystate = options.displaystate();
+    		}
+    		button.setBright(displaystate);
+    
+            var fontName = options.has_fontname() ? options.fontname() : "微软雅黑";
+            button.setTitleFontName(fontName);
+    
+            if (options.has_fontresource())
+    		{
+    			var resourceData = options.fontresource();
+    		    button.setTitleFontName(protocolBuffersPath + resourceData.path());
+    		}
+    
+            var widgetOption = nodeTree.widgetoptions();
+            button.setColor(cc.color(widgetOption.colorr(), widgetOption.colorg(), widgetOption.colorb()));
+            button.setOpacity(widgetOption.has_alpha() ? widgetOption.alpha() : 255);
+    
+    
+            // other commonly protperties
+            ccs.WidgetReader.prototype.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+    },
+
+    setPropsFromXML: function(widget, objectData){
+            ccs.WidgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+
+            var button = widget;
+    
+            var xmlPath = ccs.uiReader.getFilePath();
+    
+            var scale9Enabled = false;
+            var cx = 0, cy = 0, cw = 0, ch = 0;
+            var swf = 0, shf = 0;
+            var text = "";
+            var fontName = "微软雅黑";
+            var fontSize = 0;
+            var title_color_red = 255, title_color_green = 255, title_color_blue = 255;
+            var cri = 255, cgi = 255, cbi = 255;
+            var opacity = 255;
+    
+            // attributes
+            var attribute = objectData.FirstAttribute();
+            while (attribute)
+            {
+                var name = attribute.Name();
+                var value = attribute.Value();
+    
+                if (name == "Scale9Enable")
+                {
+                    if (value == "True")
+                    {
+                        scale9Enabled = true;
+                    }
+                }
+                else if (name == "Scale9OriginX")
+                {
+                    cx = atof(value());
+                }
+                else if (name == "Scale9OriginY")
+                {
+                    cy = atof(value());
+                }
+                else if (name == "Scale9Width")
+                {
+                    cw = atof(value());
+                }
+                else if (name == "Scale9Height")
+                {
+                    ch = atof(value());
+                }
+                else if (name == "ButtonText")
+                {
+                    text = value;
+                }
+                else if (name == "FontSize")
+                {
+                    fontSize = atoi(value);
+                }
+                else if (name == "FontName")
+                {
+                    fontName = value;
+                }
+                else if (name == "Alpha")
+                {
+                    opacity = atoi(value());
+                }
+                else if (name == "DisplayState")
+                {
+                    button.setBright((value == "True") ? true : false);
+                }
+    
+                attribute = attribute.Next();
+            }
+    
+            // child elements
+            var child = objectData.FirstChildElement();
+            while (child)
+            {
+                var name = child.Name();
+    
+                if (name == "Size" && scale9Enabled)
+                {
+                    var attribute = child.FirstAttribute();
+    
+                    while (attribute)
+                    {
+                        var name = attribute.Name();
+                        var value = attribute.Value();
+    
+                        if (name == "X")
+                        {
+                            swf = atof(value());
+                        }
+                        else if (name == "Y")
+                        {
+                            shf = atof(value());
+                        }
+    
+                        attribute = attribute.Next();
+                    }
+                }
+                else if (name == "CColor")
+                {
+                    var attribute = child.FirstAttribute();
+                    while (attribute)
+                    {
+                        var name = attribute.Name();
+                        var value = attribute.Value();
+    
+                        if (name == "R")
+                        {
+                            cri = atoi(value());
+                        }
+                        else if (name == "G")
+                        {
+                            cgi = atoi(value());
+                        }
+                        else if (name == "B")
+                        {
+                            cbi = atoi(value());
+                        }
+    
+                        attribute = attribute.Next();
+                    }
+                }
+                else if (name == "TextColor")
+                {
+                    var attribute = child.FirstAttribute();
+                    while (attribute)
+                    {
+                        var name = attribute.Name();
+                        var value = attribute.Value();
+    
+                        if (name == "R")
+                        {
+                            title_color_red = atoi(value());
+                        }
+                        else if (name == "G")
+                        {
+                            title_color_green = atoi(value());
+                        }
+                        else if (name == "B")
+                        {
+                            title_color_blue = atoi(value());
+                        }
+    
+                        attribute = attribute.Next();
+                    }
+                }
+                else if (name == "DisabledFileData")
+                {
+                    var attribute = child.FirstAttribute();
+                    var resourceType = 0;
+                    var path = "", plistFile = "";
+    
+                    while (attribute)
+                    {
+                        var name = attribute.Name();
+                        var value = attribute.Value();
+    
+                        if (name == "Path")
+                        {
+                            path = value;
+                        }
+                        else if (name == "Type")
+                        {
+                            resourceType = (value == "Normal" || value == "Default" || value == "MarkedSubImage") ? 0 : 1;
+                        }
+                        else if (name == "Plist")
+                        {
+                            plistFile = value;
+                        }
+    
+                        attribute = attribute.Next();
+                    }
+    
+                    switch (resourceType)
+                    {
+                        case 0:
+                        {
+                            button.loadTextureDisabled(xmlPath + path, Widget.TextureResType.LOCAL);
+                            break;
+                        }
+    
+                        case 1:
+                        {
+                            SpriteFrameCache.getInstance().addSpriteFramesWithFile(xmlPath + plistFile);
+                            button.loadTextureDisabled(path, Widget.TextureResType.PLIST);
+                            break;
+                        }
+    
+                        default:
+                            break;
+                    }
+                }
+                else if (name == "PressedFileData")
+                {
+                    var attribute = child.FirstAttribute();
+                    var resourceType = 0;
+                    var path = "", plistFile = "";
+    
+                    while (attribute)
+                    {
+                        var name = attribute.Name();
+                        var value = attribute.Value();
+    
+                        if (name == "Path")
+                        {
+                            path = value;
+                        }
+                        else if (name == "Type")
+                        {
+                            resourceType = (value == "Normal" || value == "Default" || value == "MarkedSubImage") ? 0 : 1;
+                        }
+                        else if (name == "Plist")
+                        {
+                            plistFile = value;
+                        }
+    
+                        attribute = attribute.Next();
+                    }
+    
+                    switch (resourceType)
+                    {
+                        case 0:
+                        {
+                            button.loadTexturePressed(xmlPath + path, Widget.TextureResType.LOCAL);
+                            break;
+                        }
+    
+                        case 1:
+                        {
+                            cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                            button.loadTexturePressed(path, Widget.TextureResType.PLIST);
+                            break;
+                        }
+    
+                        default:
+                            break;
+                    }
+                }
+                else if (name == "NormalFileData")
+                {
+                    var attribute = child.FirstAttribute();
+                    var resourceType = 0;
+                    var path = "", plistFile = "";
+    
+                    while (attribute)
+                    {
+                        var name = attribute.Name();
+                        var value = attribute.Value();
+    
+                        if (name == "Path")
+                        {
+                            path = value;
+                        }
+                        else if (name == "Type")
+                        {
+                            resourceType = (value == "Normal" || value == "Default" || value == "MarkedSubImage") ? 0 : 1;
+                        }
+                        else if (name == "Plist")
+                        {
+                            plistFile = value;
+                        }
+    
+                        attribute = attribute.Next();
+                    }
+    
+                    switch (resourceType)
+                    {
+                        case 0:
+                        {
+                            button.loadTextureNormal(xmlPath + path, Widget.TextureResType.LOCAL);
+                            break;
+                        }
+    
+                        case 1:
+                        {
+                            cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                            button.loadTextureNormal(path, Widget.TextureResType.PLIST);
+                            break;
+                        }
+    
+                        default:
+                            break;
+                    }
+                }
+                else if (name == "FontResource")
+                {
+                    var attribute = child.FirstAttribute();
+                    var resourceType = 0;
+                    var path = "", plistFile = "";
+    
+                    while (attribute)
+                    {
+                        var name = attribute.Name();
+                        var value = attribute.Value();
+    
+                        if (name == "Path")
+                        {
+                            path = value;
+                        }
+                        else if (name == "Type")
+                        {
+                            resourceType = (value == "Normal" || value == "Default") ? 0 : 1;
+                        }
+                        else if (name == "Plist")
+                        {
+                            plistFile = value;
+                        }
+    
+                        attribute = attribute.Next();
+                    }
+    
+                    switch (resourceType)
+                    {
+                        case 0:
+                        {
+                            fontName = xmlPath + path;
+                            break;
+                        }
+    
+                        default:
+                            break;
+                    }
+                }
+    
+                child = child.NextSiblingElement();
+            }
+    
+            button.setScale9Enabled(scale9Enabled);
+    
+    
+            if (scale9Enabled)
+            {
+                button.setUnifySizeEnabled(false);
+                button.ignoreContentAdaptWithSize(false);
+    
+                button.setCapInsets(cc.rect(cx, cy, cw, ch));
+                button.setContentSize(cc.size(swf, shf));
+            }
+    
+            button.setTitleText(text);
+            button.setTitleColor(cc.color(title_color_red, title_color_green, title_color_blue));
+            button.setTitleFontSize(fontSize);
+            button.setTitleFontName(fontName);
+    
+            button.setColor(cc.color(cri,cgi,cbi));
+            button.setOpacity(opacity);
     }
 };

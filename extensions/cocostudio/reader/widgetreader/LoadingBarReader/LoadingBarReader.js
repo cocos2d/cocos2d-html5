@@ -65,7 +65,7 @@ ccs.LoadingBarReader = /** @lends ccs.LoadingBarReader# */{
                 break;
             case 1:
                 var imageFileName = imageFileNameDic["path"];
-                loadingBar.loadTexture(imageFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
+                loadingBar.loadTexture(imageFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
                 break;
             default:
                 break;
@@ -87,9 +87,182 @@ ccs.LoadingBarReader = /** @lends ccs.LoadingBarReader# */{
             loadingBar.setSize(cc.size(width, height));
         }
 
-        loadingBar.setDirection(options["direction"]/*ui::LoadingBarType(options["direction"])*/);
+        loadingBar.setDirection(options["direction"]/*ui.LoadingBarType(options["direction"])*/);
         loadingBar.setPercent(options["percent"]);
 
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+    },
+
+    setPropsFromProtocolBuffers: function(widget, nodeTree){
+        ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+
+        var loadingBar = widget;
+        var options = nodeTree.loadingbaroptions();
+
+		var protocolBuffersPath = ccs.uiReader.getFilePath();
+
+		var imageFileNameDic = options.texturedata();
+        var imageFileNameType = imageFileNameDic.resourcetype();
+		if (imageFileNameType == 1)
+		{
+			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + imageFileNameDic.plistfile());
+		}
+        var imageFileName = this.getResourcePath(imageFileNameDic.path(), imageFileNameType);
+        loadingBar.loadTexture(imageFileName, imageFileNameType);
+
+
+        /* gui mark add load bar scale9 parse */
+        var scale9Enable = options.scale9enable();
+        loadingBar.setScale9Enabled(scale9Enable);
+
+
+        var cx = options.capinsetsx();
+        var cy = options.capinsetsy();
+        var cw = options.has_capinsetswidth() ? options.capinsetswidth() : 1;
+        var ch = options.has_capinsetsheight() ? options.capinsetsheight() : 1;
+
+        if (scale9Enable) {
+            loadingBar.setCapInsets(cc.rect(cx, cy, cw, ch));
+
+        }
+
+		var widgetOptions = nodeTree.widgetoptions();
+        var width = widgetOptions.width();
+        var height = widgetOptions.height();
+        loadingBar.setContentSize(cc.size(width, height));
+
+        /**/
+
+        loadingBar.setDirection(LoadingBar.Direction(options.direction()));
+        var percent = options.has_percent() ? options.percent() : 100;
+        loadingBar.setPercent(percent);
+
+
+        // other commonly protperties
+        ccs.WidgetReader.prototype.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+    },
+
+    setPropsFromXML: function(){
+        ccs.WidgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+
+        var loadingBar = widget;
+
+        var xmlPath = ccs.GUIReader.getFilePath();
+
+        var scale9Enabled = false;
+        var cx = 0, cy = 0, cw = 0, ch = 0;
+        var swf = 0, shf = 0;
+        var direction = 0;
+
+        var percent = 0;
+
+        var opacity = 255;
+
+        // attributes
+        var attribute = objectData.FirstAttribute();
+        while (attribute)
+        {
+            var name = attribute.Name();
+            var value = attribute.Value();
+
+            if (name == "ProgressType")
+            {
+                direction = (value == "Left_To_Right") ? 0 : 1;
+            }
+            else if (name == "ProgressInfo")
+            {
+                percent = atoi(value());
+            }
+            else if (name == "Scale9Enable")
+            {
+                if (value == "True")
+                {
+                    scale9Enabled = true;
+                }
+            }
+            else if (name == "Scale9OriginX")
+            {
+                cx = atof(value());
+            }
+            else if (name == "Scale9OriginY")
+            {
+                cy = atof(value());
+            }
+            else if (name == "Scale9Width")
+            {
+                cw = atof(value());
+            }
+            else if (name == "Scale9Height")
+            {
+                ch = atof(value());
+            }
+            else if (name == "Alpha")
+            {
+                opacity = atoi(value());
+            }
+
+            attribute = attribute.Next();
+        }
+
+        // child elements
+        var child = objectData.FirstChildElement();
+        while (child)
+        {
+            var name = child.Name();
+
+            if (name == "ImageFileData")
+            {
+                var attribute = child.FirstAttribute();
+                var resourceType = 0;
+                var path = "", plistFile = "";
+
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "Path")
+                    {
+                        path = value;
+                    }
+                    else if (name == "Type")
+                    {
+                        resourceType = (value == "Normal" || value == "Default" || value == "MarkedSubImage") ? 0 : 1;
+                    }
+                    else if (name == "Plist")
+                    {
+                        plistFile = value;
+                    }
+
+                    attribute = attribute.Next();
+                }
+
+                switch (resourceType)
+                {
+                    case 0:
+                    {
+                        loadingBar.loadTexture(xmlPath + path, ccui.Widget.TextureResType.LOCAL);
+                        break;
+                    }
+
+                    case 1:
+                    {
+                        cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                        loadingBar.loadTexture(path, ccui.Widget.TextureResType.PLIST);
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
+            }
+
+            child = child.NextSiblingElement();
+        }
+
+        loadingBar.setDirection(direction);
+        loadingBar.setPercent(percent);
+
+        loadingBar.setOpacity(opacity);
     }
 };

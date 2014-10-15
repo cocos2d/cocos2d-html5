@@ -579,7 +579,10 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     },
 
     _barRendererScaleChangedWithSize: function () {
-        if (this._ignoreSize) {
+        if(this._unifySize){
+            this._barLength = this._contentSize.width;
+            this._barRenderer.setPreferredSize(this._contentSize);
+        }else if (this._ignoreSize) {
             this._barRenderer.setScale(1.0);
             this._barLength = this._contentSize.width;
         }
@@ -605,7 +608,10 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     },
 
     _progressBarRendererScaleChangedWithSize: function () {
-        if (this._ignoreSize) {
+        if(this._unifySize){
+            this._barLength = this._contentSize.width;
+            this._barRenderer.setPreferredSize(this._contentSize);
+        }else if (this._ignoreSize) {
             if (!this._scale9Enabled) {
                 var ptextureSize = this._progressBarTextureSize;
                 var pscaleX = this._contentSize.width / ptextureSize.width;

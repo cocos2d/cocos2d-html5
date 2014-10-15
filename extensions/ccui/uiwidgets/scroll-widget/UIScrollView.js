@@ -142,6 +142,10 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     _initRenderer: function () {
         ccui.Layout.prototype._initRenderer.call(this);
         this._innerContainer = ccui.Layout.create();
+        this._innerContainer.setColor(cc.color(255,255,255));
+        this._innerContainer.setOpacity(255);
+        this._innerContainer.setCascadeColorEnabled(true);
+        this._innerContainer.setCascadeOpacityEnabled(true);
         this.addProtectedChild(this._innerContainer, 1, 1);
     },
 

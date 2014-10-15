@@ -22,6 +22,12 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+var PBP;
+if(CSParseBinary && dcodeIO && dcodeIO.ProtoBuf){
+    PBP = dcodeIO.ProtoBuf.loadProto(CSParseBinary).build().protocolbuffers;
+}else{
+    PBP = null;
+}
 
 (function(){
     var factoryCreate = ccs.objectFactory;
@@ -211,7 +217,245 @@ ccs.uiReader = /** @lends ccs.uiReader# */{
      */
     getParseCallBackMap: function(){
         return this._mapParseSelector;
+    },
+
+    widgetFromProtocolBuffers: function(url){
+
+
+        var classname = nodetree.classname();
+        cc.log("classname = %s", classname);
+
+        var widget = this.createGUI(classname);
+        var readerName = this.getWidgetReaderClassName(classname);
+
+        var reader = this.createWidgetReaderProtocol(readerName);
+
+        if (reader)
+        {
+            // widget parse with widget reader
+            this.setPropsForAllWidgetFromProtocolBuffers(reader, widget, nodetree);
+        }
+        else
+        {
+            //
+            // 1st., custom widget parse properties of parent widget with parent widget reader
+            readerName = this.getWidgetReaderClassName(widget);
+            reader =  this.createWidgetReaderProtocol(readerName);
+            if (reader && widget)
+            {
+                this.setPropsForAllWidgetFromProtocolBuffers(reader, widget, nodetree);
+
+                // 2nd., custom widget parse with custom reader
+                var widgetOptions = nodetree.widgetoptions();
+                var customProperty = widgetOptions.customproperty();
+                var customJsonDict;
+                customJsonDict.Parse(customProperty);
+                if (customJsonDict.HasParseError())
+                {
+                    cc.log("GetParseError %s\n", customJsonDict.GetParseError());
+                }
+                this.setPropsForAllCustomWidgetFromJsonDictionary(classname, widget, customJsonDict);
+            }
+            else
+            {
+                cc.log("Widget or WidgetReader doesn't exists!!!  Please check your json file.");
+            }
+            //
+        }
+
+        var size = nodetree.children_size();
+        cc.log("widget children size = %d", size);
+        for (var i = 0; i < size; ++i)
+        {
+            var subNodeTree = nodetree.children(i);
+            var child = this.widgetFromProtocolBuffers(subNodeTree);
+            cc.log("widget child = %p", child);
+            if (child)
+            {
+                var pageView = widget;
+                if (pageView instanceof ccui.PageView)
+                {
+                    pageView.addPage(child);
+                }
+                else
+                {
+                    var listView = widget;
+                    if (listView instanceof ccui.ListView)
+                    {
+                        listView.pushBackCustomItem(child);
+                    }
+                    else
+                    {
+                        widget.addChild(child);
+                    }
+                }
+            }
+        }
+
+        cc.log("widget = %p", widget);
+
+        return widget;
+    },
+
+    setPropsForAllWidgetFromProtocolBuffers: function(reader, widget, nodetree){
+        reader.setPropsFromProtocolBuffers(widget, nodetree);
+    },
+
+    widgetFromXML: function(objectData, classType){
+        var classname = classType.substr(0, classType.find("ObjectData"));
+        cc.log("classname = %s", classname);
+
+        var widget = this.createGUI(classname);
+        var readerName = this.getWidgetReaderClassName(classname);
+
+        var reader = this.createWidgetReaderProtocol(readerName);
+
+        if (reader)
+        {
+            // widget parse with widget reader
+            this.setPropsForAllWidgetFromXML(reader, widget, objectData);
+        }
+        else
+        {
+            //
+            // 1st., custom widget parse properties of parent widget with parent widget reader
+            readerName = this.getWidgetReaderClassName(widget);
+            reader =  this.createWidgetReaderProtocol(readerName);
+            if (reader && widget)
+            {
+                this.setPropsForAllWidgetFromXML(reader, widget, objectData);
+
+                // 2nd., custom widget parse with custom reader
+                //                const protocolbuffers::WidgetOptions& widgetOptions = nodetree.widgetoptions();
+                //                const char* customProperty = widgetOptions.customproperty().c_str();
+                var customProperty = "";
+                var customJsonDict;
+                customJsonDict.Parse(customProperty);
+                if (customJsonDict.HasParseError())
+                {
+                    cc.log("GetParseError %s\n", customJsonDict.GetParseError());
+                }
+                this.setPropsForAllCustomWidgetFromJsonDictionary(classname, widget, customJsonDict);
+            }
+            else
+            {
+                cc.log("Widget or WidgetReader doesn't exists!!!  Please check your json file.");
+            }
+            //
+        }
+
+
+
+
+
+        // children
+        var containChildrenElement = false;
+        objectData = objectData.FirstChildElement();
+
+        while (objectData)
+        {
+            cc.log("objectData name = %s", objectData.Name());
+
+            if ("Children" !== objectData.Name())
+            {
+                containChildrenElement = true;
+                break;
+            }
+
+            objectData = objectData.NextSiblingElement();
+        }
+
+        if (containChildrenElement)
+        {
+            objectData = objectData.FirstChildElement();
+            cc.log("objectData name = %s", objectData.Name());
+
+            while (objectData)
+            {
+                var attribute = objectData.FirstAttribute();
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "ctype")
+                    {
+                        var child = this.widgetFromXML(objectData, value);
+                        cc.log("child = %p", child);
+                        if (child)
+                        {
+                            var pageView = widget;
+                            var listView = widget;
+                            if (pageView instanceof ccui.PageView)
+                            {
+                                var layout = child;
+                                if (layout instanceof ccui.Layout)
+                                {
+                                    pageView.addPage(layout);
+                                }
+                            }
+                            else if (listView)
+                            {
+                                var widgetChild = child;
+                                if (widgetChild instanceof ccui.Widget)
+                                {
+                                    listView.pushBackCustomItem(widgetChild);
+                                }
+                            }
+                            else
+                            {
+                                widget.addChild(child);
+                            }
+                        }
+
+                        break;
+                    }
+
+                    attribute = attribute.Next();
+                }
+
+                //            Node* child = nodeFromXML(objectData, value);
+                //            CCLOG("child = %p", child);
+                //            if (child)
+                //            {
+                //                PageView* pageView = dynamic_cast<PageView*>(node);
+                //                ListView* listView = dynamic_cast<ListView*>(node);
+                //                if (pageView)
+                //                {
+                //                    Layout* layout = dynamic_cast<Layout*>(child);
+                //                    if (layout)
+                //                    {
+                //                        pageView.addPage(layout);
+                //                    }
+                //                }
+                //                else if (listView)
+                //                {
+                //                    Widget* widget = dynamic_cast<Widget*>(child);
+                //                    if (widget)
+                //                    {
+                //                        listView.pushBackCustomItem(widget);
+                //                    }
+                //                }
+                //                else
+                //                {
+                //                    node.addChild(child);
+                //                }
+                //            }
+
+                objectData = objectData.NextSiblingElement();
+            }
+        }
+        //
+
+        cc.log("widget = %p", widget);
+
+        return widget;
+    },
+
+    setPropsForAllWidgetFromXML: function(reader, widget, objectData){
+        reader.setPropsFromXML(widget, objectData);
     }
+
 };
 
 /**

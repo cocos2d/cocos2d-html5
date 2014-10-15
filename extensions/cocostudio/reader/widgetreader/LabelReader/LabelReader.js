@@ -79,5 +79,237 @@ ccs.LabelReader = /** @lends ccs.LabelReader# */{
             label.setTextVerticalAlignment(options["vAlignment"]);
         }
         ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+    },
+
+    setPropsFromProtocolBuffers: function(widget, nodeTree){
+		var label = widget;
+        var options = nodeTree.textoptions();
+
+		var IsCustomSize = options.iscustomsize();
+		label.ignoreContentAdaptWithSize(!IsCustomSize);
+
+        ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+
+        label.setUnifySizeEnabled(false);
+
+        var protocolBuffersPath = ccs.uiReader.getFilePath();
+
+        var touchScaleChangeAble = options.touchscaleenable();
+        label.setTouchScaleChangeEnabled(touchScaleChangeAble);
+        var text = options.has_text() ? options.text().c_str() : "Text Label";
+        label.setString(text);
+
+        var fontSize = options.has_fontsize() ? options.fontsize() : 20;
+        label.setFontSize(fontSize);
+
+        var fontName = options.has_fontname() ? options.fontname() : "微软雅黑";
+
+        var fontFilePath = protocolBuffersPath.append(fontName);
+		if (FileUtils.getInstance().isFileExist(fontFilePath))
+		{
+			label.setFontName(fontFilePath);
+		}
+		else{
+			label.setFontName(fontName);
+		}
+
+        var aw = options.has_areawidth();
+        var ah = options.has_areaheight();
+        if (aw && ah)
+        {
+            var size = Size(options.areawidth(), options.areaheight());
+            label.setTextAreaSize(size);
+        }
+        var ha = options.has_halignment();
+        if (ha)
+        {
+            label.setTextHorizontalAlignment(options.halignment());
+        }
+        var va = options.has_valignment();
+        if (va)
+        {
+            label.setTextVerticalAlignment(options.valignment());
+        }
+
+		if (options.has_fontresource())
+		{
+			var resourceData = options.fontresource();
+		    label.setFontName(protocolBuffersPath + resourceData.path());
+		}
+
+
+
+        // other commonly protperties
+        ccs.WidgetReader.prototype.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+    },
+
+    setPropsFromXML: function(widget, objectData){
+        ccs.WidgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+
+        var label = widget;
+
+        var xmlPath = ccs.uiReader.getFilePath();
+
+        var areaWidth = 0, areaHeight = 0;
+        var halignment = 0, valignment = 0;
+
+        var opacity = 255;
+
+        label.setUnifySizeEnabled(false);
+
+        label.setFontName("微软雅黑");
+
+        // attributes
+        var attribute = objectData.FirstAttribute();
+        while (attribute)
+        {
+            var name = attribute.Name();
+            var value = attribute.Value();
+
+            if (name == "TouchScaleChangeAble")
+            {
+                label.setTouchScaleChangeEnabled((value == "True") ? true : false);
+            }
+            else if (name == "LabelText")
+            {
+                label.setString(value);
+            }
+            else if (name == "FontSize")
+            {
+                label.setFontSize(atoi(value.c_str()));
+            }
+            else if (name == "FontName")
+            {
+                label.setFontName(value);
+            }
+            else if (name == "AreaWidth")
+            {
+                areaWidth = atoi(value.c_str());
+            }
+            else if (name == "AreaHeight")
+            {
+                areaHeight = atoi(value.c_str());
+            }
+            else if (name == "HorizontalAlignmentType")
+            {
+                if (value == "HT_Left")
+                {
+                    halignment = 0;
+                }
+                else if (value == "HT_Center")
+                {
+                    halignment = 1;
+                }
+                else if (value == "HT_Right")
+                {
+                    halignment = 2;
+                }
+            }
+            else if (name == "VerticalAlignmentType")
+            {
+                if (value == "VT_Top")
+                {
+                    valignment = 0;
+                }
+                else if (value == "VT_Center")
+                {
+                    valignment = 1;
+                }
+                else if (value == "VT_Bottom")
+                {
+                    valignment = 2;
+                }
+            }
+            else if (name == "Alpha")
+            {
+                opacity = atoi(value.c_str());
+            }
+
+            attribute = attribute.Next();
+        }
+
+        // child elements
+        var child = objectData.FirstChildElement();
+        while (child)
+        {
+            var name = child.Name();
+
+            if (name == "Size")
+            {
+                var attribute = child.FirstAttribute();
+                var width = 0, height = 0;
+
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "X")
+                    {
+                        width = atof(value.c_str());
+                    }
+                    else if (name == "Y")
+                    {
+                        height = atof(value.c_str());
+                    }
+
+                    attribute = attribute.Next();
+                }
+
+                label.ignoreContentAdaptWithSize(false);
+                label.setContentSize(cc.size(width, height));
+            }
+            else if (name == "FontResource")
+            {
+                var attribute = child.FirstAttribute();
+                var resourceType = 0;
+                var path = "", plistFile = "";
+
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "Path")
+                    {
+                        path = value;
+                    }
+                    else if (name == "Type")
+                    {
+                        resourceType = (value == "Normal" || value == "Default" || value == "MarkedSubImage") ? 0 : 1;
+                    }
+                    else if (name == "Plist")
+                    {
+                        plistFile = value;
+                    }
+
+                    attribute = attribute.Next();
+                }
+
+                switch (resourceType)
+                {
+                    case 0:
+                    {
+                        label.setFontName(xmlPath + path);
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
+            }
+
+            child = child.NextSiblingElement();
+        }
+
+        if (areaWidth != 0 || areaHeight != 0)
+        {
+            label.setTextAreaSize(cc.size(areaWidth, areaHeight));
+        }
+
+        label.setTextHorizontalAlignment(halignment);
+        label.setTextVerticalAlignment(valignment);
+
+        label.setOpacity(opacity);
     }
 };

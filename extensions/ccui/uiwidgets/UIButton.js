@@ -200,6 +200,16 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
      * @override
      */
     ignoreContentAdaptWithSize: function (ignore) {
+        if(this._unifySize){
+            if(this._scale9Enabled){
+                ccui.ProtectedNode.prototype.setContentSize.call(this, this._customSize);
+            }else{
+                var s = this.getVirtualRendererSize();
+                ccui.ProtectedNode.prototype.setContentSize.call(this, s);
+            }
+            this.onSizeChanged();
+            return;
+        }
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
             ccui.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
             this._prevIgnoreSize = ignore;
@@ -452,14 +462,32 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     setCapInsetsNormalRenderer: function (capInsets) {
         if(!capInsets)
             return;
+        var x = capInsets.origin.x;
+        var y = capInsets.origin.y;
+        var width = capInsets.size.width;
+        var height = capInsets.size.height;
+
+        if (this._normalTextureSize.width < width)
+        {
+            x = 0;
+            width = 0;
+        }
+        if (this._normalTextureSize.height < height)
+        {
+            y = 0;
+            height = 0;
+        }
+        var rect = cc.rect(x, y, width, height);
+
         var locInsets = this._capInsetsNormal;
-        locInsets.x = capInsets.x;
-        locInsets.y = capInsets.y;
-        locInsets.width = capInsets.width;
-        locInsets.height = capInsets.height;
+        locInsets.x = x;
+        locInsets.y = y;
+        locInsets.width = width;
+        locInsets.height = height;
+
         if (!this._scale9Enabled)
             return;
-        this._buttonNormalRenderer.setCapInsets(capInsets);
+        this._buttonNormalRenderer.setCapInsets(rect);
     },
 
     /**
@@ -477,14 +505,32 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     setCapInsetsPressedRenderer: function (capInsets) {
         if(!capInsets)
             return;
+
+        var x = capInsets.origin.x;
+        var y = capInsets.origin.y;
+        var width = capInsets.size.width;
+        var height = capInsets.size.height;
+
+        if (this._normalTextureSize.width < width)
+        {
+            x = 0;
+            width = 0;
+        }
+        if (this._normalTextureSize.height < height)
+        {
+            y = 0;
+            height = 0;
+        }
+        var rect = cc.rect(x, y, width, height);
+
         var locInsets = this._capInsetsPressed;
-        locInsets.x = capInsets.x;
-        locInsets.y = capInsets.y;
-        locInsets.width = capInsets.width;
-        locInsets.height = capInsets.height;
+        locInsets.x = x;
+        locInsets.y = y;
+        locInsets.width = width;
+        locInsets.height = height;
         if (!this._scale9Enabled)
             return;
-        this._buttonClickedRenderer.setCapInsets(capInsets);
+        this._buttonClickedRenderer.setCapInsets(rect);
     },
 
     /**
@@ -502,15 +548,33 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     setCapInsetsDisabledRenderer: function (capInsets) {
         if(!capInsets)
             return;
+
+        var x = capInsets.origin.x;
+        var y = capInsets.origin.y;
+        var width = capInsets.size.width;
+        var height = capInsets.size.height;
+
+        if (this._normalTextureSize.width < width)
+        {
+            x = 0;
+            width = 0;
+        }
+        if (this._normalTextureSize.height < height)
+        {
+            y = 0;
+            height = 0;
+        }
+        var rect = cc.rect(x, y, width, height);
+
         var locInsets = this._capInsetsDisabled;
-        locInsets.x = capInsets.x;
-        locInsets.y = capInsets.y;
-        locInsets.width = capInsets.width;
-        locInsets.height = capInsets.height;
+        locInsets.x = x;
+        locInsets.y = y;
+        locInsets.width = width;
+        locInsets.height = height;
 
         if (!this._scale9Enabled)
             return;
-        this._buttonDisableRenderer.setCapInsets(capInsets);
+        this._buttonDisableRenderer.setCapInsets(rect);
     },
 
     /**
@@ -659,7 +723,9 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     },
 
     _normalTextureScaleChangedWithSize: function () {
-        if (this._ignoreSize) {
+        if(this._unifySize){
+            this._buttonNormalRenderer.setPreferredSize(this._contentSize);
+        }else if (this._ignoreSize) {
             if (!this._scale9Enabled) {
                 this._buttonNormalRenderer.setScale(1.0);
                 this._normalTextureScaleXInSize = this._normalTextureScaleYInSize = 1;
@@ -713,7 +779,9 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     },
 
     _disabledTextureScaleChangedWithSize: function () {
-        if (this._ignoreSize) {
+        if(this._unifySize){
+            this._buttonNormalRenderer.setPreferredSize(this._contentSize);
+        }else if (this._ignoreSize) {
             if (!this._scale9Enabled)
                 this._buttonDisableRenderer.setScale(1.0);
         } else {

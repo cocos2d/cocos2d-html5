@@ -180,5 +180,402 @@ ccs.WidgetReader = /** @lends ccs.WidgetReader# */{
                 cc.assert(0, "invalid TextureResType!!!");
         }
         return imageFileName_tp;
+    },
+
+    setPropsFromProtocolBuffers: function(widget, nodeTree){
+        var options = nodeTree.widgetoptions();
+
+        widget.setCascadeColorEnabled(true);
+        widget.setCascadeOpacityEnabled(true);
+
+        widget.setUnifySizeEnabled(true);
+
+        var ignoreSizeExsit = options.has_ignoresize();
+        if (ignoreSizeExsit)
+        {
+            widget.ignoreContentAdaptWithSize(options.ignoresize());
+        }
+
+        widget.setSizeType(options.sizetype());
+        widget.setPositionType(options.positiontype());
+
+        widget.setSizePercent(cc.p(options.sizepercentx(), options.sizepercenty()));
+        widget.setPositionPercent(cc.p(options.positionpercentx(), options.positionpercenty()));
+
+        var w = options.width();
+        var h = options.height();
+        widget.setContentSize(cc.size(w, h));
+
+        widget.setTag(options.tag());
+        widget.setActionTag(options.actiontag());
+        widget.setTouchEnabled(options.touchable());
+        var name = options.name().c_str();
+        var widgetName = name ? name : "default";
+        widget.setName(widgetName);
+
+        var x = options.x();
+        var y = options.y();
+        widget.setPosition(cc.p(x, y));
+
+		if(options.has_alpha())
+		{
+			widget.setOpacity(options.alpha());
+		}
+
+        widget.setScaleX(options.has_scalex() ? options.scalex() : 1.0);
+
+
+        widget.setScaleY(options.has_scaley() ? options.scaley() : 1.0);
+
+
+//        widget.setRotation(options.has_rotation() ? options.rotation() : 0.0);
+
+		widget.setRotationSkewX(options.has_rotationskewx() ? options.rotationskewx() : 0.0);
+
+		widget.setRotationSkewY(options.has_rotationskewy() ? options.rotationskewy() : 0.0);
+
+        var vb = options.has_visible();
+        if (vb)
+        {
+            widget.setVisible(options.visible());
+        }
+
+        var z = options.zorder();
+        widget.setLocalZOrder(z);
+
+
+        var layout = options.has_layoutparameter();
+        if (layout)
+        {
+
+            var layoutParameterDic = options.layoutparameter();;
+            var paramType = layoutParameterDic.type();
+
+            var parameter = null;
+            switch (paramType)
+            {
+                case 0:
+                    break;
+                case 1:
+                {
+                    parameter = LinearLayoutParameter.create();
+                    var gravity = layoutParameterDic.gravity();
+                    parameter.setGravity(gravity);
+                    break;
+                }
+                case 2:
+                {
+                    parameter = RelativeLayoutParameter.create();
+                    var rParameter = parameter;
+                    var relativeName = layoutParameterDic.relativename().c_str();
+                    rParameter.setRelativeName(relativeName);
+                    var relativeToName = layoutParameterDic.relativetoname().c_str();
+                    rParameter.setRelativeToWidgetName(relativeToName);
+                    var align = layoutParameterDic.align();
+                    rParameter.setAlign(align);
+                    break;
+                }
+                default:
+                    break;
+            }
+            if (parameter)
+            {
+                var mgl = layoutParameterDic.marginleft();
+                var mgt = layoutParameterDic.margintop();
+                var mgr = layoutParameterDic.marginright();
+                var mgb = layoutParameterDic.margindown();
+                parameter.setMargin(Margin(mgl, mgt, mgr, mgb));
+                widget.setLayoutParameter(parameter);
+            }
+        }
+    },
+
+    setColorPropsFromProtocolBuffers: function(widget, nodeTree){
+        var options = nodeTree.widgetoptions();
+
+
+        var isColorRExists = options.has_colorr();
+        var isColorGExists = options.has_colorg();
+        var isColorBExists = options.has_colorb();
+
+        var colorR = options.colorr();
+        var colorG = options.colorg();
+        var colorB = options.colorb();
+
+        if (isColorRExists && isColorGExists && isColorBExists)
+        {
+            widget.setColor(cc.color(colorR, colorG, colorB));
+        }
+
+        this.setAnchorPointForWidget(widget, nodeTree);
+
+        var flipX = options.flipx();
+        var flipY = options.flipy();
+        widget.setFlippedX(flipX);
+        widget.setFlippedY(flipY);
+    },
+
+    setPropsFromXML: function(widget, objectData){
+        widget.setTouchEnabled(false);
+
+        widget.setCascadeColorEnabled(true);
+        widget.setCascadeOpacityEnabled(true);
+
+        widget.setUnifySizeEnabled(true);
+
+        widget.setScale(0, 0);
+
+        // attributes
+        var attribute = objectData.FirstAttribute();
+        while (attribute)
+        {
+            var name = attribute.Name();
+            var value = attribute.Value();
+
+            if (name == "Name")
+            {
+                var widgetName = value.c_str() ? value.c_str() :"default";
+                widget.setName(widgetName);
+            }
+            else if (name == "ActionTag")
+            {
+                var actionTag = atoi(value.c_str());
+                widget.setUserObject(timeline.ActionTimelineData.create(actionTag));
+            }
+            else if (name == "RotationSkewX")
+            {
+                widget.setRotationSkewX(atof(value.c_str()));
+            }
+            else if (name == "RotationSkewY")
+            {
+                widget.setRotationSkewY(atof(value.c_str()));
+            }
+            else if (name == "Rotation")
+            {
+//                widget.setRotation(atoi(value.c_str()));
+            }
+            else if (name == "ZOrder")
+            {
+                widget.setLocalZOrder(atoi(value.c_str()));
+            }
+            else if (name == "Visible")
+            {
+                widget.setVisible((value == "True") ? true : false);
+            }
+            else if (name == "VisibleForFrame")
+            {
+//                widget.setVisible((value == "True") ? true : false);
+            }
+            else if (name == "Alpha")
+            {
+                widget.setOpacity(atoi(value.c_str()));
+            }
+            else if (name == "Tag")
+            {
+                widget.setTag(atoi(value.c_str()));
+            }
+            else if (name == "FlipX")
+            {
+                widget.setFlippedX((value == "True") ? true : false);
+            }
+            else if (name == "FlipY")
+            {
+                widget.setFlippedY((value == "True") ? true : false);
+            }
+            else if (name == "TouchEnable")
+            {
+                widget.setTouchEnabled((value == "True") ? true : false);
+            }
+            else if (name == "ControlSizeType")
+            {
+                widget.ignoreContentAdaptWithSize((value == "Auto") ? true : false);
+            }
+
+            attribute = attribute.Next();
+        }
+
+        var child = objectData.FirstChildElement();
+        while (child)
+        {
+            var name = child.Name();
+            if (name == "Children")
+            {
+                break;
+            }
+            else if (name == "Position")
+            {
+                var attribute = child.FirstAttribute();
+
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "X")
+                    {
+                        widget.setPositionX(atof(value.c_str()));
+                    }
+                    else if (name == "Y")
+                    {
+                        widget.setPositionY(atof(value.c_str()));
+                    }
+
+                    attribute = attribute.Next();
+                }
+            }
+            else if (name == "Scale")
+            {
+                var attribute = child.FirstAttribute();
+
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "ScaleX")
+                    {
+                        widget.setScaleX(atof(value.c_str()));
+                    }
+                    else if (name == "ScaleY")
+                    {
+                        widget.setScaleY(atof(value.c_str()));
+                    }
+
+                    attribute = attribute.Next();
+                }
+            }
+            else if (name == "AnchorPoint")
+            {
+                var attribute = child.FirstAttribute();
+                var anchor_x = 0, anchor_y = 0;
+
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "ScaleX")
+                    {
+                        anchor_x = atof(value.c_str());
+                    }
+                    else if (name == "ScaleY")
+                    {
+                        anchor_y = atof(value.c_str());
+                    }
+
+                    attribute = attribute.Next();
+                }
+
+                widget.setAnchorPoint(cc.p(anchor_x, anchor_y));
+            }
+            else if (name == "CColor")
+            {
+                var attribute = child.FirstAttribute();
+                var red = 255, green = 255, blue = 255;
+
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "A")
+                    {
+                        widget.setOpacity(atoi(value.c_str()));
+                    }
+                    else if (name == "R")
+                    {
+                        red = atoi(value.c_str());
+                    }
+                    else if (name == "G")
+                    {
+                        green = atoi(value.c_str());
+                    }
+                    else if (name == "B")
+                    {
+                        blue = atoi(value.c_str());
+                    }
+
+                    attribute = attribute.Next();
+                }
+
+                widget.setColor(Color3B(red, green, blue));
+            }
+            else if (name == "Size")
+            {
+                var attribute = child.FirstAttribute();
+                var width = 0, height = 0;
+
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "X")
+                    {
+                        width = atof(value.c_str());
+                    }
+                    else if (name == "Y")
+                    {
+                        height = atof(value.c_str());
+                    }
+
+                    attribute = attribute.Next();
+                }
+
+                widget.setContentSize(cc.size(width, height));
+            }
+
+            child = child.NextSiblingElement();
+        }
+    },
+
+    setAnchorPointForWidget: function(widget, nodeTree){
+        var options = nodeTree.widgetoptions();
+
+        var isAnchorPointXExists = options.has_anchorpointx();
+        var anchorPointXInFile;
+        if (isAnchorPointXExists)
+        {
+            anchorPointXInFile = options.anchorpointx();
+        }
+        else
+        {
+            anchorPointXInFile = widget.getAnchorPoint().x;
+        }
+
+        var isAnchorPointYExists = options.has_anchorpointy();
+        var anchorPointYInFile;
+        if (isAnchorPointYExists)
+        {
+            anchorPointYInFile = options.anchorpointy();
+        }
+        else
+        {
+            anchorPointYInFile = widget.getAnchorPoint().y;
+        }
+
+        if (isAnchorPointXExists || isAnchorPointYExists)
+        {
+            widget.setAnchorPoint(cc.p(anchorPointXInFile, anchorPointYInFile));
+        }
+    },
+
+    getResourcePath: function(path, texType){
+        var filePath = ccs.uiReader.getFilePath();
+        var imageFileName = path;
+        var imageFileName_tp;
+        if (null != imageFileName && 0 != "" != imageFileName)
+        {
+            if (texType == ccui.Widget.TextureResType.LOCAL) {
+                imageFileName_tp = filePath + imageFileName;
+            }
+            else if(texType == ccui.Widget.TextureResType.PLIST){
+                imageFileName_tp = imageFileName;
+            }
+            else{
+                cc.assert(0, "invalid TextureResType!!!");
+            }
+        }
+        return imageFileName_tp;
     }
 };

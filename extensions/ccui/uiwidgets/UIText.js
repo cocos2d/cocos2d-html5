@@ -337,6 +337,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     _labelScaleChangedWithSize: function () {
         var locContentSize = this._contentSize;
         if (this._ignoreSize) {
+            this._labelRenderer.setDimensions(0,0);
             this._labelRenderer.setScale(1.0);
             this._normalScaleValueX = this._normalScaleValueY = 1;
         } else {
