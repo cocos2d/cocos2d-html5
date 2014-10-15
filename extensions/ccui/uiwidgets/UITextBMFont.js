@@ -191,7 +191,7 @@ var _p = ccui.TextBMFont.prototype;
 // Extended properties
 /** @expose */
 _p.string;
-cc.defineGetterSetter(_p, "string", _p.getString, _p.setStringValue);
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
 
 _p = null;
 
