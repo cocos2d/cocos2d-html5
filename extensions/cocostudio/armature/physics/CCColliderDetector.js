@@ -154,6 +154,8 @@ ccs.ColliderBody = ccs.Class.extend(/** @lends ccs.ColliderBody# */{
  * @class
  * @extends ccs.Class
  *
+ * @param {ccs.Bone} [bone]
+ *
  * @property {ccs.ColliderFilter}   colliderFilter  - The collider filter of the collider detector
  * @property {Boolean}              active          - Indicate whether the collider detector is active
  * @property {Object}               body            - The collider body
@@ -165,12 +167,15 @@ ccs.ColliderDetector = ccs.Class.extend(/** @lends ccs.ColliderDetector# */{
     _active: false,
     _filter: null,
     helpPoint: cc.p(0, 0),
-    ctor: function () {
+
+    ctor: function (bone) {
         this._colliderBodyList = [];
         this._bone = null;
         this._body = null;
         this._active = false;
         this._filter = null;
+
+        ccs.ColliderDetector.prototype.init.call(this, bone);
     },
     init: function (bone) {
         this._colliderBodyList.length = 0;
@@ -388,8 +393,5 @@ cc.defineGetterSetter(_p, "body", _p.getBody, _p.setBody);
 _p = null;
 
 ccs.ColliderDetector.create = function (bone) {
-    var colliderDetector = new ccs.ColliderDetector();
-    if (colliderDetector && colliderDetector.init(bone))
-        return colliderDetector;
-    return null;
+    return new ccs.ColliderDetector(bone);
 };

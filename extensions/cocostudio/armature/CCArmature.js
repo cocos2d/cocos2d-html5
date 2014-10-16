@@ -770,13 +770,8 @@ _p = null;
  * @param {String} [name] Bone name
  * @param {ccs.Bone} [parentBone] the parent bone
  * @return {ccs.Armature}
- * @example
- * // example
- * var armature = ccs.Armature.create();
+ * @deprecated since v3.1, please use new construction instead
  */
 ccs.Armature.create = function (name, parentBone) {
-    var armature = new ccs.Armature();
-    if (armature.init(name, parentBone))
-        return armature;
-    return null;
+    return new ccs.Armature(name, parentBone);
 };
