@@ -577,15 +577,6 @@ cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
  * @param {String|cc.Texture2D} fileImage
  * @param {Number} capacity
  * @return {cc.ParticleBatchNode}
- * @example
- * 1.
- * //Create a cc.ParticleBatchNode with image path  and capacity
- * var particleBatchNode = cc.ParticleBatchNode.create("res/grossini_dance.png",30);
- *
- * 2.
- * //Create a cc.ParticleBatchNode with a texture and capacity
- * var texture = cc.TextureCache.getInstance().addImage("res/grossini_dance.png");
- * var particleBatchNode = cc.ParticleBatchNode.create(texture, 30);
  */
 cc.ParticleBatchNode.create = function (fileImage, capacity) {
     return new cc.ParticleBatchNode(fileImage, capacity);

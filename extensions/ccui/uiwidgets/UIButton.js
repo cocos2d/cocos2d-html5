@@ -124,9 +124,9 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     },
 
     _initRenderer: function () {
-        this._buttonNormalRenderer = cc.Sprite.create();
-        this._buttonClickedRenderer = cc.Sprite.create();
-        this._buttonDisableRenderer = cc.Sprite.create();
+        this._buttonNormalRenderer = new cc.Sprite();
+        this._buttonClickedRenderer = new cc.Sprite();
+        this._buttonDisableRenderer = new cc.Sprite();
         this._titleRenderer = new cc.LabelTTF("");
         this._titleRenderer.setAnchorPoint(0.5, 0.5);
 
@@ -156,9 +156,9 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             this._buttonClickedRenderer = new ccui.Scale9Sprite();
             this._buttonDisableRenderer = new ccui.Scale9Sprite();
         } else {
-            this._buttonNormalRenderer = cc.Sprite.create();
-            this._buttonClickedRenderer = cc.Sprite.create();
-            this._buttonDisableRenderer = cc.Sprite.create();
+            this._buttonNormalRenderer = new cc.Sprite();
+            this._buttonClickedRenderer = new cc.Sprite();
+            this._buttonDisableRenderer = new cc.Sprite();
         }
 
         this._buttonClickedRenderer.setVisible(false);
@@ -832,7 +832,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     },
 
     _createCloneInstance: function () {
-        return ccui.Button.create();
+        return new ccui.Button();
     },
 
     _copySpecialProperties: function (uiButton) {
@@ -881,9 +881,6 @@ _p = null;
  * @param {string} [disableImage]   disabled state texture name
  * @param {string} [texType]
  * @return {ccui.Button}
- * @example
- * // example
- * var uiButton = ccui.Button.create();
  */
 ccui.Button.create = function (normalImage, selectedImage, disableImage, texType) {
     return new ccui.Button(normalImage, selectedImage, disableImage, texType);

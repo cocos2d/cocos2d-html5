@@ -104,11 +104,11 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     },
 
     _initRenderer: function () {
-        this._backGroundBoxRenderer = cc.Sprite.create();
-        this._backGroundSelectedBoxRenderer = cc.Sprite.create();
-        this._frontCrossRenderer = cc.Sprite.create();
-        this._backGroundBoxDisabledRenderer = cc.Sprite.create();
-        this._frontCrossDisabledRenderer = cc.Sprite.create();
+        this._backGroundBoxRenderer = new cc.Sprite();
+        this._backGroundSelectedBoxRenderer = new cc.Sprite();
+        this._frontCrossRenderer = new cc.Sprite();
+        this._backGroundBoxDisabledRenderer = new cc.Sprite();
+        this._frontCrossDisabledRenderer = new cc.Sprite();
 
         this.addProtectedChild(this._backGroundBoxRenderer, ccui.CheckBox.BOX_RENDERER_ZORDER, -1);
         this.addProtectedChild(this._backGroundSelectedBoxRenderer, ccui.CheckBox.BOX_SELECTED_RENDERER_ZORDER, -1);
@@ -604,7 +604,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     },
 
     _createCloneInstance: function () {
-        return ccui.CheckBox.create();
+        return new ccui.CheckBox();
     },
 
     _copySpecialProperties: function (uiCheckBox) {
@@ -665,7 +665,7 @@ _p = null;
  * @return {ccui.CheckBox}
  * @example
  * // example
- * var uiCheckBox = ccui.CheckBox.create();
+ * var uiCheckBox = new ccui.CheckBox();
  */
 ccui.CheckBox.create = function (backGround, backGroundSeleted, cross, backGroundDisabled, frontCrossDisabled, texType) {
     return new ccui.CheckBox(backGround, backGroundSeleted,cross,backGroundDisabled,frontCrossDisabled,texType);

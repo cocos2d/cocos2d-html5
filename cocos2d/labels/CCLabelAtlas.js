@@ -410,13 +410,6 @@ cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
  * @param {Number} [itemHeight=0]
  * @param {Number} [startCharMap=""]
  * @return {cc.LabelAtlas} returns the LabelAtlas object on success
- * @example
- * //Example
- * //creates the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas
- * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapfile.png', 12, 20, ' ')
- *
- * //creates the cc.LabelAtlas with a string, a fnt file
- * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapFile.plist‘);
  */
 cc.LabelAtlas.create = function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
     return new cc.LabelAtlas(strText, charMapFile, itemWidth, itemHeight, startCharMap);

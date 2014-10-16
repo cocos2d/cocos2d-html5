@@ -146,8 +146,6 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
  * @param {cc.Scene} scene
  * @param {Boolean} backwards
  * @return {cc.TransitionPageTurn}
- * @example
- * var myTransition = cc.TransitionPageTurn.create(1.5, nextScene, true)//true means backwards
  */
 cc.TransitionPageTurn.create = function (t, scene, backwards) {
     return new cc.TransitionPageTurn(t, scene, backwards);

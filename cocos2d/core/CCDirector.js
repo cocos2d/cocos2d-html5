@@ -983,9 +983,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         else
             fontSize = 0 | (_t._winSizeInPoints.width / 320 * 24);
 
-        _t._FPSLabel = cc.LabelTTF.create("000.0", "Arial", fontSize);
-        _t._SPFLabel = cc.LabelTTF.create("0.000", "Arial", fontSize);
-        _t._drawsLabel = cc.LabelTTF.create("0000", "Arial", fontSize);
+        _t._FPSLabel = new cc.LabelTTF("000.0", "Arial", fontSize);
+        _t._SPFLabel = new cc.LabelTTF("0.000", "Arial", fontSize);
+        _t._drawsLabel = new cc.LabelTTF("0000", "Arial", fontSize);
 
         var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
         _t._drawsLabel.setPosition(_t._drawsLabel.width / 2 + locStatsPosition.x, _t._drawsLabel.height * 5 / 2 + locStatsPosition.y);

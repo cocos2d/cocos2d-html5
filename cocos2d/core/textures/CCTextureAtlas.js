@@ -631,14 +631,6 @@ cc.defineGetterSetter(_p, "quads", _p.getQuads, _p.setQuads);
  * @param {String|cc.Texture2D} fileName
  * @param {Number} capacity
  * @return {cc.TextureAtlas|Null}
- * @example
- * 1.
- * //creates a TextureAtlas with  filename
- * var textureAtlas = cc.TextureAtlas.create("res/hello.png", 3);
- * 2.
- * //creates a TextureAtlas with texture
- * var texture = cc.textureCache.addImage("hello.png");
- * var textureAtlas = cc.TextureAtlas.create(texture, 3);
  */
 cc.TextureAtlas.create = function (fileName, capacity) {
     return new cc.TextureAtlas(fileName, capacity);

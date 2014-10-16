@@ -373,46 +373,46 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend(/** @lends cc
         var classname = data["classname"];
         var uiOptions = data["options"];
         if (classname == "Button") {
-            widget = ccui.Button.create();
+            widget = new ccui.Button();
             this.setPropsForButtonFromJsonDictionary(widget, uiOptions);
         } else if (classname == "CheckBox") {
-            widget = ccui.CheckBox.create();
+            widget = new ccui.CheckBox();
             this.setPropsForCheckBoxFromJsonDictionary(widget, uiOptions);
         } else if (classname == "Label") {
-            widget = ccui.Text.create();
+            widget = new ccui.Text();
             this.setPropsForLabelFromJsonDictionary(widget, uiOptions);
         } else if (classname == "LabelAtlas") {
-            widget = ccui.TextAtlas.create();
+            widget = new ccui.TextAtlas();
             this.setPropsForLabelAtlasFromJsonDictionary(widget, uiOptions);
         } else if (classname == "LoadingBar") {
-            widget = ccui.LoadingBar.create();
+            widget = new ccui.LoadingBar();
             this.setPropsForLoadingBarFromJsonDictionary(widget, uiOptions);
         } else if (classname == "ScrollView") {
-            widget = ccui.ScrollView.create();
+            widget = new ccui.ScrollView();
             this.setPropsForScrollViewFromJsonDictionary(widget, uiOptions);
         } else if (classname == "TextArea") {
-            widget = ccui.Text.create();
+            widget = new ccui.Text();
             this.setPropsForLabelFromJsonDictionary(widget, uiOptions);
         } else if (classname == "TextButton") {
-            widget = ccui.Button.create();
+            widget = new ccui.Button();
             this.setPropsForButtonFromJsonDictionary(widget, uiOptions);
         } else if (classname == "TextField") {
-            widget = ccui.TextField.create();
+            widget = new ccui.TextField();
             this.setPropsForTextFieldFromJsonDictionary(widget, uiOptions);
         } else if (classname == "ImageView") {
-            widget = ccui.ImageView.create();
+            widget = new ccui.ImageView();
             this.setPropsForImageViewFromJsonDictionary(widget, uiOptions);
         } else if (classname == "Panel") {
-            widget = ccui.Layout.create();
+            widget = new ccui.Layout();
             this.setPropsForLayoutFromJsonDictionary(widget, uiOptions);
         } else if (classname == "Slider") {
-            widget = ccui.Slider.create();
+            widget = new ccui.Slider();
             this.setPropsForSliderFromJsonDictionary(widget, uiOptions);
         } else if (classname == "LabelBMFont") {
-            widget = ccui.TextBMFont.create();
+            widget = new ccui.TextBMFont();
             this.setPropsForLabelBMFontFromJsonDictionary(widget, uiOptions);
         } else if (classname == "DragPanel") {
-            widget = ccui.ScrollView.create();
+            widget = new ccui.ScrollView();
             this.setPropsForScrollViewFromJsonDictionary(widget, uiOptions);
         }
         var children = data["children"];
@@ -1178,12 +1178,12 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend(/** @lends cc
                 case 0:
                     break;
                 case 1:
-                    parameter = ccui.LinearLayoutParameter.create();
+                    parameter = new ccui.LinearLayoutParameter();
                     var gravity = layoutParameterDic["gravity"];
                     parameter.setGravity(gravity);
                     break;
                 case 2:
-                    parameter = ccui.RelativeLayoutParameter.create();
+                    parameter = new ccui.RelativeLayoutParameter();
                     var relativeName = layoutParameterDic["relativeName"];
                     parameter.setRelativeName(relativeName);
                     var relativeToName = layoutParameterDic["relativeToName"];

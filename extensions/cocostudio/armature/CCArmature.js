@@ -142,10 +142,10 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             this.updateOffsetPoint();
         } else {
             this._name = "new_armature";
-            this.armatureData = ccs.ArmatureData.create();
+            this.armatureData = new ccs.ArmatureData();
             this.armatureData.name = this._name;
 
-            animationData = ccs.AnimationData.create();
+            animationData = new ccs.AnimationData();
             animationData.name = this._name;
 
             armatureDataManager.addArmatureData(this._name, this.armatureData);
@@ -177,10 +177,10 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         var bone = null;
         if (parentName) {
             this.createBone(parentName);
-            bone = ccs.Bone.create(boneName);
+            bone = new ccs.Bone(boneName);
             this.addBone(bone, parentName);
         } else {
-            bone = ccs.Bone.create(boneName);
+            bone = new ccs.Bone(boneName);
             this.addBone(bone, "");
         }
 

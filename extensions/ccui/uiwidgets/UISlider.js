@@ -85,15 +85,15 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     },
 
     _initRenderer: function () {
-        this._barRenderer = cc.Sprite.create();
-        this._progressBarRenderer = cc.Sprite.create();
+        this._barRenderer = new cc.Sprite();
+        this._progressBarRenderer = new cc.Sprite();
         this._progressBarRenderer.setAnchorPoint(0.0, 0.5);
         this.addProtectedChild(this._barRenderer, ccui.Slider.BASEBAR_RENDERER_ZORDER, -1);
         this.addProtectedChild(this._progressBarRenderer, ccui.Slider.PROGRESSBAR_RENDERER_ZORDER, -1);
-        this._slidBallNormalRenderer = cc.Sprite.create();
-        this._slidBallPressedRenderer = cc.Sprite.create();
+        this._slidBallNormalRenderer = new cc.Sprite();
+        this._slidBallPressedRenderer = new cc.Sprite();
         this._slidBallPressedRenderer.setVisible(false);
-        this._slidBallDisabledRenderer = cc.Sprite.create();
+        this._slidBallDisabledRenderer = new cc.Sprite();
         this._slidBallDisabledRenderer.setVisible(false);
         this._slidBallRenderer = new cc.Node();
         this._slidBallRenderer.addChild(this._slidBallNormalRenderer);
@@ -211,8 +211,8 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
             this._barRenderer = new ccui.Scale9Sprite();
             this._progressBarRenderer = new ccui.Scale9Sprite();
         } else {
-            this._barRenderer = cc.Sprite.create();
-            this._progressBarRenderer = cc.Sprite.create();
+            this._barRenderer = new cc.Sprite();
+            this._progressBarRenderer = new cc.Sprite();
         }
         this.loadBarTexture(this._textureFile, this._barTexType);
         this.loadProgressBarTexture(this._progressBarTextureFile, this._progressBarTexType);
@@ -659,7 +659,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     },
 
     _createCloneInstance: function () {
-        return ccui.Slider.create();
+        return new ccui.Slider();
     },
 
     _copySpecialProperties: function (slider) {
@@ -690,9 +690,6 @@ _p = null;
  * allocates and initializes a UISlider.
  * @deprecated since v3.0, please use new ccui.Slider() instead.
  * @return {ccui.Slider}
- * @example
- * // example
- * var uiSlider = ccui.Slider.create();
  */
 ccui.Slider.create = function () {
     return new ccui.Slider();

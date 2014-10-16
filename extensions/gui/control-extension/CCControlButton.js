@@ -84,7 +84,7 @@ cc.ControlButton = cc.Control.extend(/** @lends cc.ControlButton# */{
     },
 
     init: function () {
-        return this.initWithLabelAndBackgroundSprite(cc.LabelTTF.create("", "Arial", 12), cc.Scale9Sprite.create());
+        return this.initWithLabelAndBackgroundSprite(new cc.LabelTTF("", "Arial", 12), new cc.Scale9Sprite());
     },
 
     needsLayout: function () {
@@ -231,12 +231,12 @@ cc.ControlButton = cc.Control.extend(/** @lends cc.ControlButton# */{
     },
 
     initWithTitleAndFontNameAndFontSize: function (title, fontName, fontSize) {
-        var label = cc.LabelTTF.create(title, fontName, fontSize);
-        return this.initWithLabelAndBackgroundSprite(label, cc.Scale9Sprite.create());
+        var label = new cc.LabelTTF(title, fontName, fontSize);
+        return this.initWithLabelAndBackgroundSprite(label, new cc.Scale9Sprite());
     },
 
     initWithBackgroundSprite: function (sprite) {
-        var label = cc.LabelTTF.create("", "Arial", 30);//
+        var label = new cc.LabelTTF("", "Arial", 30);//
         return this.initWithLabelAndBackgroundSprite(label, sprite);
     },
 
@@ -380,7 +380,7 @@ cc.ControlButton = cc.Control.extend(/** @lends cc.ControlButton# */{
         this.needsLayout();
         if (this.zoomOnTouchDown) {
             var scaleValue = (this.isHighlighted() && this.isEnabled() && !this.isSelected()) ? 1.1 : 1.0;
-            var zoomAction = cc.ScaleTo.create(0.05, scaleValue);
+            var zoomAction = cc.scaleTo(0.05, scaleValue);
             zoomAction.setTag(cc.CONTROL_ZOOM_ACTION_TAG);
             this.runAction(zoomAction);
         }
@@ -544,7 +544,7 @@ cc.ControlButton = cc.Control.extend(/** @lends cc.ControlButton# */{
         var title = this.getTitleForState(state);
         if (!title)
             title = "";
-        this.setTitleLabelForState(cc.LabelTTF.create(title, fntFile, 12), state);
+        this.setTitleLabelForState(new cc.LabelTTF(title, fntFile, 12), state);
     },
 
     /**
@@ -594,7 +594,7 @@ cc.ControlButton = cc.Control.extend(/** @lends cc.ControlButton# */{
         var title = this.getTitleForState(state);
         if (!title)
             title = "";
-        this.setTitleLabelForState(cc.LabelBMFont.create(title, fntFile), state);
+        this.setTitleLabelForState(new cc.LabelBMFont(title, fntFile), state);
     },
 
     getTitleBMFontForState: function (state) {

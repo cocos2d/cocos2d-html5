@@ -310,7 +310,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                             elementRenderer = new cc.LabelTTF(element._text, element._fontName, element._fontSize);
                             break;
                         case ccui.RichElement.IMAGE:
-                            elementRenderer = cc.Sprite.create(element._filePath);
+                            elementRenderer = new cc.Sprite(element._filePath);
                             break;
                         case ccui.RichElement.CUSTOM:
                             elementRenderer = element._customNode;
@@ -374,7 +374,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
     },
 
     _handleImageRenderer: function (filePath, color, opacity) {
-        var imageRenderer = cc.Sprite.create(filePath);
+        var imageRenderer = new cc.Sprite(filePath);
         this._handleCustomRenderer(imageRenderer);
     },
 
@@ -553,8 +553,6 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
  * create a rich text
  * @deprecated since v3.0, please use new ccui.RichText() instead.
  * @returns {RichText}
- * @example
- * var uiRichText = ccui.RichTex.create();
  */
 ccui.RichText.create = function(){
     return new ccui.RichText();

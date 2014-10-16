@@ -49,7 +49,7 @@
          * @example
          *
          * 1.Create a sprite with image path and rect
-         * var physicsSprite1 = cc.PhysicsSprite.create("res/HelloHTML5World.png");
+         * var physicsSprite1 = new cc.PhysicsSprite("res/HelloHTML5World.png");
          * var physicsSprite2 = new cc.PhysicsSprite("res/HelloHTML5World.png",cc.rect(0,0,480,320));
          *
          * 2.Create a sprite with a sprite frame name. Must add "#" before fame name.
@@ -220,7 +220,7 @@
          * @example
          *
          * 1.Create a sprite with image path and rect
-         * var physicsSprite1 = cc.PhysicsSprite.create("res/HelloHTML5World.png");
+         * var physicsSprite1 = new cc.PhysicsSprite("res/HelloHTML5World.png");
          * var physicsSprite2 = new cc.PhysicsSprite("res/HelloHTML5World.png",cc.rect(0,0,480,320));
          *
          * 2.Create a sprite with a sprite frame name. Must add "#" before frame name.
@@ -512,25 +512,6 @@
      * @param {String|cc.Texture2D|cc.SpriteFrame} fileName
      * @param {cc.Rect} rect
      * @return {cc.PhysicsSprite}
-     * @example
-     *
-     * 1.Create a sprite with image path and rect
-     * var physicsSprite1 = cc.PhysicsSprite.create("res/HelloHTML5World.png");
-     * var physicsSprite2 = cc.PhysicsSprite.create("res/HelloHTML5World.png",cc.rect(0,0,480,320));
-     *
-     * 2.Create a sprite with a sprite frame name. Must add "#" before fame name.
-     * var physicsSprite = cc.PhysicsSprite.create('#grossini_dance_01.png');
-     *
-     * 3.Create a sprite with a sprite frame
-     * var spriteFrame = cc.spriteFrameCache.getSpriteFrame("grossini_dance_01.png");
-     * var physicsSprite = cc.PhysicsSprite.create(spriteFrame);
-     *
-     * 4.Creates a sprite with an exsiting texture contained in a CCTexture2D object
-     *      After creation, the rect will be the size of the texture, and the offset will be (0,0).
-     * var texture = cc.textureCache.addImage("HelloHTML5World.png");
-     * var physicsSprite1 = cc.PhysicsSprite.create(texture);
-     * var physicsSprite2 = cc.PhysicsSprite.create(texture, cc.rect(0,0,480,320));
-     *
      */
     cc.PhysicsSprite.create = function (fileName, rect) {
         return new cc.PhysicsSprite(fileName, rect);

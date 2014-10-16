@@ -462,12 +462,6 @@ cc.defineGetterSetter(_p, "placeHolder", _p.getPlaceHolder, _p.setPlaceHolder);
  * @param {String} fontName
  * @param {Number} fontSize
  * @return {cc.TextFieldTTF|Null}
- * @example
- * //example
- * // When five parameters
- * var textField = cc.TextFieldTTF.create("<click here for input>", cc.size(100,50), cc.TEXT_ALIGNMENT_LEFT,"Arial", 32);
- * // When three parameters
- * var textField = cc.TextFieldTTF.create("<click here for input>", "Arial", 32);
  */
 cc.TextFieldTTF.create = function (placeholder, dimensions, alignment, fontName, fontSize) {
     return new cc.TextFieldTTF(placeholder, dimensions, alignment, fontName, fontSize);

@@ -199,9 +199,6 @@ _p = null;
  * allocates and initializes a UILabelBMFont.
  * @deprecated since v3.0, please use new ccui.TextBMFont() instead.
  * @return {ccui.TextBMFont}
- * @example
- * // example
- * var uiLabelBMFont = ccui.TextBMFont.create();
  */
 ccui.TextBMFont.create = function (text, filename) {
     return new ccui.TextBMFont(text, filename);

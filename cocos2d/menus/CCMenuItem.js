@@ -401,7 +401,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
             else
                 this._originalScale = this.scale;
 
-            var zoomAction = cc.ScaleTo.create(0.1, this._originalScale * 1.2);
+            var zoomAction = cc.scaleTo(0.1, this._originalScale * 1.2);
             zoomAction.setTag(cc.ZOOM_ACTION_TAG);
             this.runAction(zoomAction);
         }
@@ -414,7 +414,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
         if (this._enabled) {
             cc.MenuItem.prototype.unselected.call(this);
             this.stopActionByTag(cc.ZOOM_ACTION_TAG);
-            var zoomAction = cc.ScaleTo.create(0.1, this._originalScale);
+            var zoomAction = cc.scaleTo(0.1, this._originalScale);
             zoomAction.setTag(cc.ZOOM_ACTION_TAG);
             this.runAction(zoomAction);
         }
@@ -475,7 +475,7 @@ cc.MenuItemAtlasFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemAtlasFont# 
     ctor: function (value, charMapFile, itemWidth, itemHeight, startCharMap, callback, target) {
         var label;
         if (value && value.length > 0) {
-            label = cc.LabelAtlas.create(value, charMapFile, itemWidth, itemHeight, startCharMap);
+            label = new cc.LabelAtlas(value, charMapFile, itemWidth, itemHeight, startCharMap);
         }
 
         cc.MenuItemLabel.prototype.ctor.call(this, label, callback, target);
@@ -516,12 +516,6 @@ cc.MenuItemAtlasFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemAtlasFont# 
  * @param {function|String|Null} [callback=null]
  * @param {cc.Node|Null} [target=]
  * @return {cc.MenuItemAtlasFont}
- * @example
- * // Example
- * var item = cc.MenuItemAtlasFont.create('text to display', 'font.fnt', 12, 32, ' ')
- *
- * //OR
- * var item = cc.MenuItemAtlasFont.create('text to display', 'font.fnt', 12, 32, ' ',  game.run, game)
  */
 cc.MenuItemAtlasFont.create = function (value, charMapFile, itemWidth, itemHeight, startCharMap, callback, target) {
     return new cc.MenuItemAtlasFont(value, charMapFile, itemWidth, itemHeight, startCharMap, callback, target);
@@ -579,7 +573,7 @@ cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
         this._fontName = cc._globalFontName;
         this._fontSize = cc._globalFontSize;
 
-        var label = cc.LabelTTF.create(value, this._fontName, this._fontSize);
+        var label = new cc.LabelTTF(value, this._fontName, this._fontSize);
         if (this.initWithLabel(label, callback, target)) {
             // do something ?
         }
@@ -621,7 +615,7 @@ cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
     },
 
     _recreateLabel: function () {
-        var label = cc.LabelTTF.create(this._label.string, this._fontName, this._fontSize);
+        var label = new cc.LabelTTF(this._label.string, this._fontName, this._fontSize);
         this.setLabel(label);
     }
 });
@@ -675,23 +669,11 @@ cc.MenuItemFont.fontName = function () {
 
 /**
  * create a menu item from string
- * @deprecated
+ * @deprecated since v3.0, please use new construction instead
  * @param {String} value the text to display
  * @param {String|function|Null} callback the callback to run, either in function name or pass in the actual function
  * @param {cc.Node|Null} target the target to run callback
  * @return {cc.MenuItemFont}
- * @example
- * // Example
- * var item = cc.MenuItemFont.create("Game start", 'start', Game)
- * //creates a menu item from string "Game start", and when clicked, it will run Game.start()
- *
- * var item = cc.MenuItemFont.create("Game start", game.start, Game)//same as above
- *
- * var item = cc.MenuItemFont.create("i do nothing")//create a text menu item that does nothing
- *
- * //you can set font size and name before or after
- * cc.MenuItemFont.setFontName('my Fancy Font');
- * cc.MenuItemFont.setFontSize(62);
  */
 cc.MenuItemFont.create = function (value, callback, target) {
     return new cc.MenuItemFont(value, callback, target);
@@ -758,9 +740,9 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
             } else if (four !== undefined && cc.isFunction(three)) {
                 target = four;
                 callback = three;
-                disabledImage = cc.Sprite.create(selectedSprite);
+                disabledImage = new cc.Sprite(selectedSprite);
             } else if (three === undefined) {
-                disabledImage = cc.Sprite.create(selectedSprite);
+                disabledImage = new cc.Sprite(selectedSprite);
             }
             this.initWithNormalSprite(normalSprite, selectedSprite, disabledImage, callback, target);
         }
@@ -1033,18 +1015,6 @@ cc.defineGetterSetter(_p, "disabledImage", _p.getDisabledImage, _p.setDisabledIm
  * @param {String|function|cc.Node|Null} four callback function name in string or actual function, OR target Node
  * @param {String|function|Null} five callback function name in string or actual function
  * @return {cc.MenuItemSprite}
- * @example
- * // Example
- * var item = cc.MenuItemSprite.create(normalImage)//create a menu item from a sprite with no functionality
- *
- * var item = cc.MenuItemSprite.create(normalImage, selectedImage)//create a menu Item, nothing will happen when clicked
- *
- * var item = cc.MenuItemSprite.create(normalImage, SelectedImage, disabledImage)//same above, but with disabled state image
- *
- * var item = cc.MenuItemSprite.create(normalImage, SelectedImage, 'callback', targetNode)//create a menu item, when clicked runs targetNode.callback()
- *
- * var item = cc.MenuItemSprite.create(normalImage, SelectedImage, disabledImage, targetNode.callback, targetNode)
- * //same as above, but with disabled image, and passing in callback function
  */
 cc.MenuItemSprite.create = function (normalSprite, selectedSprite, three, four, five) {
     return new cc.MenuItemSprite(normalSprite, selectedSprite, three, four, five || undefined);
@@ -1089,9 +1059,9 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
             cc.MenuItemSprite.prototype.ctor.call(this);
         }
         else {
-            normalSprite = cc.Sprite.create(normalImage);
+            normalSprite = new cc.Sprite(normalImage);
             selectedImage &&
-            (selectedSprite = cc.Sprite.create(selectedImage));
+            (selectedSprite = new cc.Sprite(selectedImage));
             if (four === undefined) {
                 callback = three;
             }
@@ -1100,7 +1070,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
                 target = four;
             }
             else if (five) {
-                disabledSprite = cc.Sprite.create(three);
+                disabledSprite = new cc.Sprite(three);
                 callback = four;
                 target = five;
             }
@@ -1113,7 +1083,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
      * @param {cc.SpriteFrame} frame
      */
     setNormalSpriteFrame: function (frame) {
-        this.setNormalImage(cc.Sprite.create(frame));
+        this.setNormalImage(new cc.Sprite(frame));
     },
 
     /**
@@ -1121,7 +1091,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
      * @param {cc.SpriteFrame} frame
      */
     setSelectedSpriteFrame: function (frame) {
-        this.setSelectedImage(cc.Sprite.create(frame));
+        this.setSelectedImage(new cc.Sprite(frame));
     },
 
     /**
@@ -1129,7 +1099,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
      * @param {cc.SpriteFrame} frame
      */
     setDisabledSpriteFrame: function (frame) {
-        this.setDisabledImage(cc.Sprite.create(frame));
+        this.setDisabledImage(new cc.Sprite(frame));
     },
 
     /**
@@ -1147,13 +1117,13 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
         var disabledSprite = null;
 
         if (normalImage) {
-            normalSprite = cc.Sprite.create(normalImage);
+            normalSprite = new cc.Sprite(normalImage);
         }
         if (selectedImage) {
-            selectedSprite = cc.Sprite.create(selectedImage);
+            selectedSprite = new cc.Sprite(selectedImage);
         }
         if (disabledImage) {
-            disabledSprite = cc.Sprite.create(disabledImage);
+            disabledSprite = new cc.Sprite(disabledImage);
         }
         return this.initWithNormalSprite(normalSprite, selectedSprite, disabledSprite, callback, target);
     }
@@ -1168,13 +1138,6 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
  * @param {String|function|Null} [four] callback function, either name in string or pass the whole function OR the target
  * @param {cc.Node|String|function|Null} [five] cc.Node target to run callback when clicked
  * @return {cc.MenuItemImage}
- * @example
- * // Example
- * //create a dom menu item with normal and selected state, when clicked it will run the run function from gameScene object
- * var item = cc.MenuItemImage.create('normal.png', 'selected.png', 'run', gameScene)
- *
- * //same as above, but pass in the actual function and disabled image
- * var item = cc.MenuItemImage.create('normal.png', 'selected.png', 'disabled.png', gameScene.run, gameScene)
  */
 cc.MenuItemImage.create = function (normalImage, selectedImage, three, four, five) {
     return new cc.MenuItemImage(normalImage, selectedImage, three, four, five);
@@ -1193,12 +1156,12 @@ cc.MenuItemImage.create = function (normalImage, selectedImage, three, four, fiv
  *@example
  * // Example
  * //create a toggle item with 2 menu items (which you can then toggle between them later)
- * var toggler = new cc.MenuItemToggle( cc.MenuItemFont.create("On"), cc.MenuItemFont.create("Off"), this.callback, this)
+ * var toggler = new cc.MenuItemToggle( new cc.MenuItemFont("On"), new cc.MenuItemFont("Off"), this.callback, this)
  * //Note: the first param is the target, the second is the callback function, afterwards, you can pass in any number of menuitems
  *
  * //if you pass only 1 variable, then it must be a cc.MenuItem
- * var notYetToggler = new cc.MenuItemToggle(cc.MenuItemFont.create("On"));//it is useless right now, until you add more stuff to it
- * notYetToggler.addSubItem(cc.MenuItemFont.create("Off"));
+ * var notYetToggler = new cc.MenuItemToggle(cc.MenuItemFont("On"));//it is useless right now, until you add more stuff to it
+ * notYetToggler.addSubItem(new cc.MenuItemFont("Off"));
  * //this is useful for constructing a toggler without a callback function (you wish to control the behavior from somewhere else)
  */
 cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
@@ -1441,16 +1404,6 @@ cc.defineGetterSetter(_p, "selectedIndex", _p.getSelectedIndex, _p.setSelectedIn
  * @deprecated since v3.0 please use new cc.MenuItemToggle(params) instead
  * @return {cc.MenuItemToggle}
  * @example
- * // Example
- *
- * //create a toggle item with 2 menu items (which you can then toggle between them later)
- * var toggler = cc.MenuItemToggle.create( cc.MenuItemFont.create("On"), cc.MenuItemFont.create("Off"), this.callback, this)
- * //Note: the first param is the target, the second is the callback function, afterwards, you can pass in any number of menuitems
- *
- * //if you pass only 1 variable, then it must be a cc.MenuItem
- * var notYetToggler = cc.MenuItemToggle.create(cc.MenuItemFont.create("On"));//it is useless right now, until you add more stuff to it
- * notYetToggler.addSubItem(cc.MenuItemFont.create("Off"));
- * //this is useful for constructing a toggler without a callback function (you wish to control the behavior from somewhere else)
  */
 cc.MenuItemToggle.create = function (/*Multiple arguments follow*/) {
     if ((arguments.length > 0) && (arguments[arguments.length - 1] == null))
