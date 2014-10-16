@@ -774,7 +774,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         if (this._backGroundImage == null){
             this._addBackGroundImage();
-            this._backGroundImage.setScale9Enabled(this._backGroundScale9Enabled);
+            this.setBackGroundImageScale9Enabled(this._backGroundScale9Enabled);
         }
         this._backGroundImageFileName = fileName;
         this._bgImageTexType = texType;

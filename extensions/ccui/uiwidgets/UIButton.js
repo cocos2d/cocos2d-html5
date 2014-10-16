@@ -207,7 +207,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
                 var s = this.getVirtualRendererSize();
                 ccui.ProtectedNode.prototype.setContentSize.call(this, s);
             }
-            this.onSizeChanged();
+            this._onSizeChanged();
             return;
         }
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
@@ -462,10 +462,10 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     setCapInsetsNormalRenderer: function (capInsets) {
         if(!capInsets)
             return;
-        var x = capInsets.origin.x;
-        var y = capInsets.origin.y;
-        var width = capInsets.size.width;
-        var height = capInsets.size.height;
+        var x = capInsets.x;
+        var y = capInsets.y;
+        var width = capInsets.width;
+        var height = capInsets.height;
 
         if (this._normalTextureSize.width < width)
         {
@@ -506,10 +506,10 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         if(!capInsets)
             return;
 
-        var x = capInsets.origin.x;
-        var y = capInsets.origin.y;
-        var width = capInsets.size.width;
-        var height = capInsets.size.height;
+        var x = capInsets.x;
+        var y = capInsets.y;
+        var width = capInsets.width;
+        var height = capInsets.height;
 
         if (this._normalTextureSize.width < width)
         {
@@ -549,10 +549,10 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         if(!capInsets)
             return;
 
-        var x = capInsets.origin.x;
-        var y = capInsets.origin.y;
-        var width = capInsets.size.width;
-        var height = capInsets.size.height;
+        var x = capInsets.x;
+        var y = capInsets.y;
+        var width = capInsets.width;
+        var height = capInsets.height;
 
         if (this._normalTextureSize.width < width)
         {
@@ -724,7 +724,8 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
     _normalTextureScaleChangedWithSize: function () {
         if(this._unifySize){
-            this._buttonNormalRenderer.setPreferredSize(this._contentSize);
+            if (this._scale9Enabled)
+                this._buttonNormalRenderer.setPreferredSize(this._contentSize);
         }else if (this._ignoreSize) {
             if (!this._scale9Enabled) {
                 this._buttonNormalRenderer.setScale(1.0);
@@ -780,7 +781,8 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
     _disabledTextureScaleChangedWithSize: function () {
         if(this._unifySize){
-            this._buttonNormalRenderer.setPreferredSize(this._contentSize);
+            if (this._scale9Enabled)
+                this._buttonNormalRenderer.setPreferredSize(this._contentSize);
         }else if (this._ignoreSize) {
             if (!this._scale9Enabled)
                 this._buttonDisableRenderer.setScale(1.0);
