@@ -267,18 +267,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
                 content = content.substr(1);
             }
 
-            /*
-             if(width<=320){
-             width = 321;
-             }
-             if(height)
-             content ="height="+height+","+content;
-             if(width)
-             content ="width="+width+","+content;
-             */
             vp.content = content;
             // For adopting certain android devices which don't support second viewport
-            currentVP.content = content;
+            if (currentVP)
+                currentVP.content = content;
 
             document.head.appendChild(vp);
         }
