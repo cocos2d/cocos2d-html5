@@ -26,16 +26,16 @@
 /**
  * The ccui.Widget's properties reader for GUIReader.
  * @class
- * @name ccs.WidgetReader
+ * @name ccs.widgetReader
  **/
-ccs.WidgetReader = /** @lends ccs.WidgetReader# */{
+ccs.widgetReader = /** @lends ccs.widgetReader# */{
     /**
      * Gets the ccs.WidgetReader.
      * @deprecated since v3.0, please use ccs.WidgetReader directly.
      * @returns {ccs.WidgetReader}
      */
     getInstance: function(){
-        return ccs.WidgetReader;
+        return ccs.widgetReader;
     },
 
     /**
@@ -144,7 +144,7 @@ ccs.WidgetReader = /** @lends ccs.WidgetReader# */{
         var colorB = options["colorB"];
         widget.setColor(cc.color((colorR == null) ? 255 : colorR, (colorG == null) ? 255 : colorG, (colorB == null) ? 255 : colorB));
 
-        ccs.WidgetReader._setAnchorPointForWidget(widget, options);
+        ccs.widgetReader._setAnchorPointForWidget(widget, options);
         widget.setFlippedX(options["flipX"]);
         widget.setFlippedY(options["flipY"]);
     },
@@ -307,7 +307,7 @@ ccs.WidgetReader = /** @lends ccs.WidgetReader# */{
             widget.setColor(cc.color(colorR, colorG, colorB));
         }
 
-        ccs.WidgetReader.setAnchorPointForWidget(widget, nodeTree);
+        ccs.widgetReader.setAnchorPointForWidget(widget, nodeTree);
 
         var flipX = options.flipX;
         var flipY = options.flipY;

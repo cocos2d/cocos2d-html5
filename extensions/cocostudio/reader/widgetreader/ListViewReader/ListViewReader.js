@@ -28,14 +28,14 @@
  * @class
  * @name ccs.ListViewReader
  **/
-ccs.ListViewReader = /** @lends ccs.ListViewReader# */{
+ccs.listViewReader = /** @lends ccs.ListViewReader# */{
     /**
      * Gets the ccs.ListViewReader.
      * @deprecated since v3.0, please use ccs.ListViewReader directly.
      * @returns {ccs.ListViewReader}
      */
     getInstance: function(){
-        return ccs.ListViewReader;
+        return ccs.listViewReader;
     },
 
     /**
@@ -44,7 +44,7 @@ ccs.ListViewReader = /** @lends ccs.ListViewReader# */{
      * @param {Object} options
      */
     setPropsFromJsonDictionary: function(widget, options){
-        ccs.ScrollViewReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.scrollViewReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var listView = widget;
 
@@ -59,7 +59,7 @@ ccs.ListViewReader = /** @lends ccs.ListViewReader# */{
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-        ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.widgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         var listView = widget;
         var options = nodeTree.listviewOptions;
@@ -116,7 +116,7 @@ ccs.ListViewReader = /** @lends ccs.ListViewReader# */{
 		{
 			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
 		}
-        var imageFileName = ccs.WidgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
+        var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
         listView.setBackGroundImage(imageFileName, imageFileNameType);
 
 
@@ -177,7 +177,7 @@ ccs.ListViewReader = /** @lends ccs.ListViewReader# */{
 
 
         // other commonly protperties
-        ccs.WidgetReader.setAnchorPointForWidget(widget, nodeTree);
+        ccs.widgetReader.setAnchorPointForWidget(widget, nodeTree);
 
         var flipX = widgetOptions.flipX;
         var flipY = widgetOptions.flipY;
@@ -186,7 +186,7 @@ ccs.ListViewReader = /** @lends ccs.ListViewReader# */{
     },
 
     setPropsFromXML: function(){
-        ccs.WidgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+        ccs.widgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
 
         var listView = widget;
 

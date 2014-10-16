@@ -32,20 +32,20 @@ if(CSParseBinary && dcodeIO && dcodeIO.ProtoBuf){
 (function(){
     var factoryCreate = ccs.objectFactory;
 
-    factoryCreate.registerType({_className:"ButtonReader", _fun: ccs.ButtonReader});
-    factoryCreate.registerType({_className: "CheckBoxReader", _fun: ccs.CheckBoxReader});
-    factoryCreate.registerType({_className: "SliderReader", _fun: ccs.SliderReader});
-    factoryCreate.registerType({_className: "ImageViewReader", _fun: ccs.ImageViewReader});
-    factoryCreate.registerType({_className: "LoadingBarReader", _fun: ccs.LoadingBarReader});
-    factoryCreate.registerType({_className: "TextAtlasReader", _fun: ccs.LabelAtlasReader});
-    factoryCreate.registerType({_className: "TextReader", _fun: ccs.LabelReader});
-    factoryCreate.registerType({_className: "TextBMFontReader", _fun: ccs.LabelBMFontReader});
-    factoryCreate.registerType({_className: "TextFieldReader", _fun: ccs.TextFieldReader});
-    factoryCreate.registerType({_className: "LayoutReader", _fun: ccs.LayoutReader});
-    factoryCreate.registerType({_className: "PageViewReader", _fun: ccs.PageViewReader});
-    factoryCreate.registerType({_className: "ScrollViewReader", _fun: ccs.ScrollViewReader});
-    factoryCreate.registerType({_className: "ListViewReader", _fun: ccs.ListViewReader});
-    factoryCreate.registerType({_className: "WidgetReader", _fun: ccs.WidgetReader});
+    factoryCreate.registerType({_className:"ButtonReader", _fun: ccs.buttonReader});
+    factoryCreate.registerType({_className: "CheckBoxReader", _fun: ccs.checkBoxReader});
+    factoryCreate.registerType({_className: "SliderReader", _fun: ccs.sliderReader});
+    factoryCreate.registerType({_className: "ImageViewReader", _fun: ccs.imageViewReader});
+    factoryCreate.registerType({_className: "LoadingBarReader", _fun: ccs.loadingBarReader});
+    factoryCreate.registerType({_className: "TextAtlasReader", _fun: ccs.labelAtlasReader});
+    factoryCreate.registerType({_className: "TextReader", _fun: ccs.labelReader});
+    factoryCreate.registerType({_className: "TextBMFontReader", _fun: ccs.labelBMFontReader});
+    factoryCreate.registerType({_className: "TextFieldReader", _fun: ccs.textFieldReader});
+    factoryCreate.registerType({_className: "LayoutReader", _fun: ccs.layoutReader});
+    factoryCreate.registerType({_className: "PageViewReader", _fun: ccs.pageViewReader});
+    factoryCreate.registerType({_className: "ScrollViewReader", _fun: ccs.scrollViewReader});
+    factoryCreate.registerType({_className: "ListViewReader", _fun: ccs.listViewReader});
+    factoryCreate.registerType({_className: "WidgetReader", _fun: ccs.widgetReader});
 
     factoryCreate.registerType({_className: "Button", _fun: ccui.Button});
     factoryCreate.registerType({_className: "CheckBox", _fun: ccui.CheckBox});

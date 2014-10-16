@@ -28,14 +28,14 @@
  * @class
  * @name ccs.ScrollViewReader
  **/
-ccs.ScrollViewReader = /** @lends ccs.ScrollViewReader# */{
+ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
     /**
      * Gets the ccs.ScrollViewReader.
      * @deprecated since v3.0, please use ccs.ScrollViewReader directly.
      * @returns {ccs.ScrollViewReader}
      */
     getInstance: function(){
-        return ccs.ScrollViewReader;
+        return ccs.scrollViewReader;
     },
 
     /**
@@ -44,7 +44,7 @@ ccs.ScrollViewReader = /** @lends ccs.ScrollViewReader# */{
      * @param {Object} options
      */
     setPropsFromJsonDictionary: function(widget, options){
-        ccs.LayoutReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.layoutReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var scrollView = widget;
         var innerWidth = options["innerWidth"] || 200;
@@ -55,11 +55,11 @@ ccs.ScrollViewReader = /** @lends ccs.ScrollViewReader# */{
         scrollView.setDirection(direction);
         scrollView.setBounceEnabled(options["bounceEnable"]);
 
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-        ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
 
         var scrollView = widget;
@@ -126,7 +126,7 @@ ccs.ScrollViewReader = /** @lends ccs.ScrollViewReader# */{
             {
                 cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
             }
-            var imageFileName = ccs.WidgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
+            var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
             scrollView.setBackGroundImage(imageFileName, imageFileNameType);
         }
 
@@ -177,7 +177,7 @@ ccs.ScrollViewReader = /** @lends ccs.ScrollViewReader# */{
 
 
         // other commonly protperties
-        ccs.WidgetReader.setAnchorPointForWidget(widget, nodeTree);
+        ccs.widgetReader.setAnchorPointForWidget(widget, nodeTree);
 
         var flipX = widgetOptions.flipX;
         var flipY = widgetOptions.flipY;
@@ -186,7 +186,7 @@ ccs.ScrollViewReader = /** @lends ccs.ScrollViewReader# */{
     },
 
     setPropsFromXML: function(widget, objectData){
-        ccs.WidgetReader.setPropsFromXML.call(this, widget, objectData);
+        ccs.widgetReader.setPropsFromXML.call(this, widget, objectData);
 
         var scrollView = widget;
 

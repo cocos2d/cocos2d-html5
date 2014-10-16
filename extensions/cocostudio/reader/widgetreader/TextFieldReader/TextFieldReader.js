@@ -28,14 +28,14 @@
  * @class
  * @name ccs.TextFieldReader
  **/
-ccs.TextFieldReader = /** @lends ccs.TextFieldReader# */{
+ccs.textFieldReader = /** @lends ccs.TextFieldReader# */{
     /**
      * Gets the ccs.TextFieldReader.
      * @deprecated since v3.0, please use ccs.TextFieldReader directly.
      * @returns {ccs.TextFieldReader}
      */
     getInstance: function(){
-        return ccs.TextFieldReader;
+        return ccs.textFieldReader;
     },
 
     /**
@@ -44,7 +44,7 @@ ccs.TextFieldReader = /** @lends ccs.TextFieldReader# */{
      * @param {Object} options
      */
     setPropsFromJsonDictionary: function(widget, options){
-        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var textField = widget;
         var ph = options["placeHolder"];
@@ -92,7 +92,7 @@ ccs.TextFieldReader = /** @lends ccs.TextFieldReader# */{
         if(va)
             textField.setTextVerticalAlignment(va);
 
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
@@ -110,8 +110,8 @@ ccs.TextFieldReader = /** @lends ccs.TextFieldReader# */{
             textField.setContentSize(cc.size(widgetOptions.width, widgetOptions.height));
         }
 
-        ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
-        ccs.WidgetReader.setAnchorPointForWidget.call(this, widget, nodeTree);
+        ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.widgetReader.setAnchorPointForWidget.call(this, widget, nodeTree);
 
         textField.setUnifySizeEnabled(false);
 
@@ -167,11 +167,11 @@ ccs.TextFieldReader = /** @lends ccs.TextFieldReader# */{
 		}
 
         // other commonly protperties
-        ccs.WidgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.widgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     },
 
     setPropsFromXML: function(widget, objectData){
-        ccs.WidgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+        ccs.widgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
 
         var textField = widget;
 

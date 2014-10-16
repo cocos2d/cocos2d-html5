@@ -28,14 +28,14 @@
  * @class
  * @name ccs.LoadingBarReader
  **/
-ccs.LoadingBarReader = /** @lends ccs.LoadingBarReader# */{
+ccs.loadingBarReader = /** @lends ccs.LoadingBarReader# */{
     /**
      * Gets the ccs.LoadingBarReader.
      * @deprecated since v3.0, please use ccs.LoadingBarReader directly.
      * @returns {ccs.LoadingBarReader}
      */
     getInstance: function(){
-        return ccs.LoadingBarReader;
+        return ccs.loadingBarReader;
     },
 
     /**
@@ -44,7 +44,7 @@ ccs.LoadingBarReader = /** @lends ccs.LoadingBarReader# */{
      * @param {Object} options
      */
     setPropsFromJsonDictionary: function(widget, options){
-        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
 
         var jsonPath = ccs.uiReader.getFilePath();
@@ -90,11 +90,11 @@ ccs.LoadingBarReader = /** @lends ccs.LoadingBarReader# */{
         loadingBar.setDirection(options["direction"]/*ui.LoadingBarType(options["direction"])*/);
         loadingBar.setPercent(options["percent"]);
 
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-        ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         var loadingBar = widget;
         var options = nodeTree.loadingBarOptions;
@@ -107,7 +107,7 @@ ccs.LoadingBarReader = /** @lends ccs.LoadingBarReader# */{
 		{
 			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
 		}
-        var imageFileName = ccs.WidgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
+        var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
         loadingBar.loadTexture(imageFileName, imageFileNameType);
 
 
@@ -139,11 +139,11 @@ ccs.LoadingBarReader = /** @lends ccs.LoadingBarReader# */{
 
 
         // other commonly protperties
-        ccs.WidgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.widgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     },
 
     setPropsFromXML: function(){
-        ccs.WidgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+        ccs.widgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
 
         var loadingBar = widget;
 

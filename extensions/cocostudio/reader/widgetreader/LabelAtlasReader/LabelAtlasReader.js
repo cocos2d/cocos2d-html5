@@ -28,14 +28,14 @@
  * @class
  * @name ccs.LabelAtlasReader
  **/
-ccs.LabelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
+ccs.labelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
     /**
      * Gets the ccs.LabelAtlasReader.
      * @deprecated since v3.0, please use ccs.LabelAtlasReader directly.
      * @returns {ccs.LabelAtlasReader}
      */
     getInstance: function(){
-        return ccs.LabelAtlasReader;
+        return ccs.labelAtlasReader;
     },
 
     /**
@@ -44,7 +44,7 @@ ccs.LabelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
      * @param {Object} options
      */
     setPropsFromJsonDictionary: function(widget, options){
-        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var jsonPath = ccs.uiReader.getFilePath();
     
@@ -71,12 +71,12 @@ ccs.LabelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
                     break;
             }
         }
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
 
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-        ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         var jsonPath = ccs.uiReader.getFilePath();
 
@@ -116,11 +116,11 @@ ccs.LabelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
 
 
         // other commonly protperties
-        ccs.WidgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.widgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     },
 
     setPropsFromXML: function(widget, objectData){
-        ccs.WidgetReader.setPropsFromXML.call(this, widget, objectData);
+        ccs.widgetReader.setPropsFromXML.call(this, widget, objectData);
 
         var labelAtlas = widget;
 

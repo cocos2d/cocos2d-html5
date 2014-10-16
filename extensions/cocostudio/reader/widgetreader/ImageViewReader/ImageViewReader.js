@@ -28,14 +28,14 @@
  * @class
  * @name ccs.ImageViewReader
  **/
-ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
+ccs.imageViewReader = /** @lends ccs.ImageViewReader# */{
     /**
      * Gets the ccs.ImageViewReader.
      * @deprecated since v3.0, please use ccs.ImageViewReader directly.
      * @returns {ccs.ImageViewReader}
      */
     getInstance: function(){
-        return ccs.ImageViewReader;
+        return ccs.imageViewReader;
     },
 
     /**
@@ -44,7 +44,7 @@ ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
      * @param {Object} options
      */
     setPropsFromJsonDictionary: function(widget, options){
-        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var jsonPath = ccs.uiReader.getFilePath();
     
@@ -96,11 +96,11 @@ ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
             imageView.setCapInsets(cc.rect(cx, cy, cw, ch));
     
         }
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-        ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         var options = nodeTree.imageViewOptions;
         var imageView = widget;
@@ -113,7 +113,7 @@ ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
 		{
 			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
 		}
-        var imageFileName = ccs.WidgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
+        var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
         imageView.loadTexture(imageFileName, imageFileNameType);
 
 
@@ -146,7 +146,7 @@ ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
         }
 
         // other commonly protperties
-        ccs.WidgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.widgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
 		var flipX   = options.flippedX;
 		var flipY   = options.flippedY;
@@ -158,7 +158,7 @@ ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
     },
 
     setPropsFromXML: function(widget, objectData){
-        ccs.WidgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+        ccs.widgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
 
         var imageView = widget;
 

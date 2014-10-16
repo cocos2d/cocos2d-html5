@@ -28,14 +28,14 @@
  * @class
  * @name ccs.SliderReader
  **/
-ccs.SliderReader = /** @lends ccs.SliderReader# */{
+ccs.sliderReader = /** @lends ccs.SliderReader# */{
     /**
      * Gets the ccs.SliderReader.
      * @deprecated since v3.0, please use ccs.SliderReader directly.
      * @returns {ccs.SliderReader}
      */
     getInstance: function(){
-        return ccs.SliderReader;
+        return ccs.sliderReader;
     },
 
     /**
@@ -44,7 +44,7 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
      * @param {Object} options
      */
     setPropsFromJsonDictionary: function(widget, options){
-        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var jsonPath = ccs.uiReader.getFilePath();
 
@@ -163,11 +163,11 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
                 break;
         }
 
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-        ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         var slider = widget;
         var options = nodeTree.sliderOptions;
@@ -189,7 +189,7 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
 		{
 			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
 		}
-        var imageFileName = ccs.WidgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
+        var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
         slider.loadBarTexture(imageFileName, imageFileNameType);
 
         if (barTextureScale9Enable)
@@ -204,7 +204,7 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
 		{
 			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + normalDic.plistFile);
 		}
-        imageFileName = ccs.WidgetReader.getResourcePath(normalDic.path, normalType);
+        imageFileName = ccs.widgetReader.getResourcePath(normalDic.path, normalType);
         slider.loadSlidBallTextureNormal(imageFileName, normalType);
 
 
@@ -215,7 +215,7 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
 		{
 			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + pressedDic.plistFile);
 		}
-        var pressedFileName = ccs.WidgetReader.getResourcePath(pressedDic.path, pressedType);
+        var pressedFileName = ccs.widgetReader.getResourcePath(pressedDic.path, pressedType);
         slider.loadSlidBallTexturePressed(pressedFileName, pressedType);
 
         //loading silder ball disable texture
@@ -225,7 +225,7 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
 		{
 			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + disabledDic.plistFile);
 		}
-        var disabledFileName = ccs.WidgetReader.getResourcePath(disabledDic.path, disabledType);
+        var disabledFileName = ccs.widgetReader.getResourcePath(disabledDic.path, disabledType);
         slider.loadSlidBallTextureDisabled(disabledFileName, disabledType);
 
         //load slider progress texture
@@ -235,7 +235,7 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
 		{
 			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + progressBarDic.plistFile);
 		}
-        var progressBarFileName = ccs.WidgetReader.getResourcePath(progressBarDic.path, progressBarType);
+        var progressBarFileName = ccs.widgetReader.getResourcePath(progressBarDic.path, progressBarType);
         slider.loadProgressBarTexture(progressBarFileName, progressBarType);
 
         var displaystate = true;
@@ -246,11 +246,11 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
 		slider.setBright(displaystate);
 
         // other commonly protperties
-        ccs.WidgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.widgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     },
 
     setPropsFromXML:function(widget, objectData){
-        ccs.WidgetReader.setPropsFromXML.call(this, widget, objectData);
+        ccs.widgetReader.setPropsFromXML.call(this, widget, objectData);
 
         var slider = widget;
 

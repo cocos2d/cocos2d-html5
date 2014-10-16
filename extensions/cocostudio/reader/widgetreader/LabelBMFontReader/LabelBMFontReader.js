@@ -28,14 +28,14 @@
  * @class
  * @name ccs.LabelBMFontReader
  **/
-ccs.LabelBMFontReader = /** @lends ccs.LabelBMFontReader# */{
+ccs.labelBMFontReader = /** @lends ccs.LabelBMFontReader# */{
     /**
      * Gets the ccs.LabelBMFontReader.
      * @deprecated since v3.0, please use ccs.LabelBMFontReader directly.
      * @returns {ccs.LabelBMFontReader}
      */
     getInstance: function(){
-        return ccs.LabelBMFontReader;
+        return ccs.labelBMFontReader;
     },
 
     /**
@@ -44,7 +44,7 @@ ccs.LabelBMFontReader = /** @lends ccs.LabelBMFontReader# */{
      * @param {Object} options
      */
     setPropsFromJsonDictionary: function(widget, options){
-        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var jsonPath = ccs.uiReader.getFilePath();
     
@@ -68,11 +68,11 @@ ccs.LabelBMFontReader = /** @lends ccs.LabelBMFontReader# */{
     
         var text = options["text"];
         labelBMFont.setString(text);
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-        ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         var jsonPath = ccs.uiReader.getFilePath();
 
@@ -106,11 +106,11 @@ ccs.LabelBMFontReader = /** @lends ccs.LabelBMFontReader# */{
 
 
         // other commonly protperties
-        ccs.WidgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.widgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     },
 
     setPropsFromXML: function(widget, nodeTree){
-        WidgetReader.setPropsFromXML(widget, objectData);
+        widgetReader.setPropsFromXML(widget, objectData);
 
         var labelBMFont = widget;
 

@@ -28,14 +28,14 @@
  * @class
  * @name ccs.LayoutReader
  **/
-ccs.LayoutReader = /** @lends ccs.LayoutReader# */{
+ccs.layoutReader = /** @lends ccs.LayoutReader# */{
     /**
      * Gets the ccs.LayoutReader.
      * @deprecated since v3.0, please use ccs.LayoutReader directly.
      * @returns {ccs.LayoutReader}
      */
     getInstance: function(){
-        return ccs.LayoutReader;
+        return ccs.layoutReader;
     },
 
     /**
@@ -44,7 +44,7 @@ ccs.LayoutReader = /** @lends ccs.LayoutReader# */{
      * @param {Object} options
      */
     setPropsFromJsonDictionary: function(widget, options){
-        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setPropsFromJsonDictionary.call(this, widget, options);
         var jsonPath = ccs.uiReader.getFilePath();
 
         var panel = widget;
@@ -125,11 +125,11 @@ ccs.LayoutReader = /** @lends ccs.LayoutReader# */{
             panel.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
         }
         panel.setLayoutType(options["layoutType"]);
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-        ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         var panel = widget;
 		var options = nodeTree.PanelOptions;
@@ -250,7 +250,7 @@ ccs.LayoutReader = /** @lends ccs.LayoutReader# */{
             {
                 cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
             }
-            var imageFileName = ccs.WidgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
+            var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
             panel.setBackGroundImage(imageFileName, imageFileNameType);
         }
 
@@ -293,7 +293,7 @@ ccs.LayoutReader = /** @lends ccs.LayoutReader# */{
 
 
         // other commonly protperties
-        ccs.WidgetReader._setAnchorPointForWidget(widget, nodeTree);
+        ccs.widgetReader._setAnchorPointForWidget(widget, nodeTree);
 
         var flipX = widgetOptions.flipX;
         var flipY = widgetOptions.flipY;
@@ -302,7 +302,7 @@ ccs.LayoutReader = /** @lends ccs.LayoutReader# */{
     },
 
     setPropsFromXML: function(widget, objectData){
-        ccs.WidgetReader.setPropsFromXML.call(this, widget, objectData);
+        ccs.widgetReader.setPropsFromXML.call(this, widget, objectData);
 
         var panel = widget;
 

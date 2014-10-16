@@ -28,14 +28,14 @@
  * @class
  * @name ccs.ButtonReader
  **/
-ccs.ButtonReader = /** @lends ccs.ButtonReader# */{
+ccs.buttonReader = /** @lends ccs.buttonReader# */{
     /**
      * Gets the ccs.ButtonReader.
      * @deprecated since v3.0, please use ccs.ButtonReader directly.
-     * @returns {ccs.ButtonReader}
+     * @returns {ccs.buttonReader}
      */
     getInstance: function(){
-        return ccs.ButtonReader;
+        return ccs.buttonReader;
     },
 
     /**
@@ -44,7 +44,7 @@ ccs.ButtonReader = /** @lends ccs.ButtonReader# */{
      * @param {Object} options
      */
     setPropsFromJsonDictionary: function(widget, options){
-        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setPropsFromJsonDictionary.call(this, widget, options);
         var jsonPath = ccs.uiReader.getFilePath();
 
         var button = widget;
@@ -131,11 +131,11 @@ ccs.ButtonReader = /** @lends ccs.ButtonReader# */{
         var fn = options["fontName"];
         if (fn)
             button.setTitleFontName(options["fontName"]);
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-            ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+            ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
     
             var button = widget;
             var options = nodeTree.buttonOptions;
@@ -152,7 +152,7 @@ ccs.ButtonReader = /** @lends ccs.ButtonReader# */{
     		{
     			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + normalDic.plistFile);
     		}
-            var normalTexturePath = ccs.WidgetReader.getResourcePath(normalDic.path, normalType);
+            var normalTexturePath = ccs.widgetReader.getResourcePath(normalDic.path, normalType);
             button.loadTextureNormal(normalTexturePath, normalType);
     
     
@@ -162,7 +162,7 @@ ccs.ButtonReader = /** @lends ccs.ButtonReader# */{
     		{
     			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + pressedDic.plistFile);
     		}
-            var pressedTexturePath = ccs.WidgetReader.getResourcePath(pressedDic.path, pressedType);
+            var pressedTexturePath = ccs.widgetReader.getResourcePath(pressedDic.path, pressedType);
             button.loadTexturePressed(pressedTexturePath, pressedType);
     
     
@@ -172,7 +172,7 @@ ccs.ButtonReader = /** @lends ccs.ButtonReader# */{
     		{
     			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + disabledDic.plistFile);
     		}
-            var disabledTexturePath = ccs.WidgetReader.getResourcePath(disabledDic.path, disabledType);
+            var disabledTexturePath = ccs.widgetReader.getResourcePath(disabledDic.path, disabledType);
             button.loadTextureDisabled(disabledTexturePath, disabledType);
     
             if (scale9Enable)
@@ -231,11 +231,11 @@ ccs.ButtonReader = /** @lends ccs.ButtonReader# */{
     
     
             // other commonly protperties
-            ccs.WidgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+            ccs.widgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     },
 
     setPropsFromXML: function(widget, objectData){
-            ccs.WidgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+            ccs.widgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
 
             var button = widget;
     

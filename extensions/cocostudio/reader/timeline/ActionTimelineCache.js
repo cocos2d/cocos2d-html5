@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var ActionTimelineCacheStatic = {
+var actionTimelineCacheStatic = {
     FrameType_VisibleFrame       : "VisibleFrame",
     FrameType_PositionFrame      : "PositionFrame",
     FrameType_ScaleFrame         : "ScaleFrame",
@@ -63,7 +63,7 @@ var ActionTimelineCacheStatic = {
  * @name ccs.ActionTimelineCache
  * @namespace
  */
-ccs.ActionTimelineCache = {
+ccs.actionTimelineCache = {
 
     _FrameCreateFunc: null,
     _Pair: null,
@@ -113,7 +113,7 @@ ccs.ActionTimelineCache = {
         var suffix = path.substr(pos + 1, path.length);
         cc.log("suffix = %s", suffix);
 
-        var cache = ccs.ActionTimelineCache;
+        var cache = ccs.actionTimelineCache;
         if (suffix == "csb"){
             return cache.createActionFromProtocolBuffers(filename);
         }else if (suffix == "json" || suffix == "ExportJson"){
@@ -161,17 +161,17 @@ ccs.ActionTimelineCache = {
         if(action)
             return action;
 
-        var json = content[ActionTimelineCacheStatic.ACTION];
+        var json = content[actionTimelineCacheStatic.ACTION];
 
         action = new ccs.ActionTimeline();
 
-        action.setDuration(json[ActionTimelineCacheStatic.DURATION]);
-        action.setTimeSpeed(json[ActionTimelineCacheStatic.TIME_SPEED] || 1);
+        action.setDuration(json[actionTimelineCacheStatic.DURATION]);
+        action.setTimeSpeed(json[actionTimelineCacheStatic.TIME_SPEED] || 1);
 
-        var timelineLength = json[ActionTimelineCacheStatic.TIMELINES].length;
+        var timelineLength = json[actionTimelineCacheStatic.TIMELINES].length;
         for (var i = 0; i<timelineLength; i++)
         {
-            var dic = json[ActionTimelineCacheStatic.TIMELINES][i];
+            var dic = json[actionTimelineCacheStatic.TIMELINES][i];
             var timeline = this._loadTimeline(dic);
 
             if(timeline)
@@ -240,31 +240,31 @@ ccs.ActionTimelineCache = {
         var timeline = null;
 
         // get frame type
-        var frameType = json[ActionTimelineCacheStatic.FRAME_TYPE];
+        var frameType = json[actionTimelineCacheStatic.FRAME_TYPE];
         if(frameType == null)
             return null;
 
         if(frameType && this._funcs[frameType]){
             timeline = new ccs.Timeline();
 
-            var actionTag = json[ActionTimelineCacheStatic.ACTION_TAG];
+            var actionTag = json[actionTimelineCacheStatic.ACTION_TAG];
             timeline.setActionTag(actionTag);
 
             var func = this._funcs[frameType];
 
-            var length = json[ActionTimelineCacheStatic.FRAMES].length;
+            var length = json[actionTimelineCacheStatic.FRAMES].length;
             for (var i = 0; i<length; i++){
-                var dic = json[ActionTimelineCacheStatic.FRAMES][i];
+                var dic = json[actionTimelineCacheStatic.FRAMES][i];
 
                 var frame = null;
 
                 if (func != null){
                     frame = func(dic);
 
-                    var frameIndex = dic[ActionTimelineCacheStatic.FRAME_INDEX];
+                    var frameIndex = dic[actionTimelineCacheStatic.FRAME_INDEX];
                     frame.setFrameIndex(frameIndex);
 
-                    var tween = dic[ActionTimelineCacheStatic.TWEEN] || false;
+                    var tween = dic[actionTimelineCacheStatic.TWEEN] || false;
                     frame.setTween(tween);
                 }
 
@@ -278,7 +278,7 @@ ccs.ActionTimelineCache = {
     _loadVisibleFrame: function(json){
         var frame = new ccs.VisibleFrame();
 
-        var visible = json[ActionTimelineCacheStatic.Value];
+        var visible = json[actionTimelineCacheStatic.Value];
         frame.setVisible(visible);
 
         return frame;
@@ -286,8 +286,8 @@ ccs.ActionTimelineCache = {
     _loadPositionFrame: function(json){
         var frame = new ccs.PositionFrame();
 
-        var x = json[ActionTimelineCacheStatic.X];
-        var y = json[ActionTimelineCacheStatic.Y];
+        var x = json[actionTimelineCacheStatic.X];
+        var y = json[actionTimelineCacheStatic.Y];
         frame.setPosition(cc.p(x,y));
 
         return frame;
@@ -296,8 +296,8 @@ ccs.ActionTimelineCache = {
     _loadScaleFrame: function(json){
         var frame = new ccs.ScaleFrame();
 
-        var scalex = json[ActionTimelineCacheStatic.X];
-        var scaley = json[ActionTimelineCacheStatic.Y];
+        var scalex = json[actionTimelineCacheStatic.X];
+        var scaley = json[actionTimelineCacheStatic.Y];
 
         frame.setScaleX(scalex);
         frame.setScaleY(scaley);
@@ -307,8 +307,8 @@ ccs.ActionTimelineCache = {
     _loadSkewFrame: function(json){
         var frame = new ccs.SkewFrame();
 
-        var skewx = json[ActionTimelineCacheStatic.X];
-        var skewy = json[ActionTimelineCacheStatic.Y];
+        var skewx = json[actionTimelineCacheStatic.X];
+        var skewy = json[actionTimelineCacheStatic.Y];
 
         frame.setSkewX(skewx);
         frame.setSkewY(skewy);
@@ -318,8 +318,8 @@ ccs.ActionTimelineCache = {
     _loadRotationSkewFrame: function(json){
         var frame = new ccs.RotationSkewFrame();
 
-        var skewx = json[ActionTimelineCacheStatic.X];
-        var skewy = json[ActionTimelineCacheStatic.Y];
+        var skewx = json[actionTimelineCacheStatic.X];
+        var skewy = json[actionTimelineCacheStatic.Y];
 
         frame.setSkewX(skewx);
         frame.setSkewY(skewy);
@@ -330,7 +330,7 @@ ccs.ActionTimelineCache = {
     _loadRotationFrame: function(json){
         var frame = new ccs.RotationFrame();
 
-        var rotation = json[ActionTimelineCacheStatic.ROTATION];
+        var rotation = json[actionTimelineCacheStatic.ROTATION];
         frame.setRotation(rotation);
 
         return frame;
@@ -338,8 +338,8 @@ ccs.ActionTimelineCache = {
     _loadAnchorPointFrame: function(json){
         var frame = new ccs.AnchorPointFrame();
 
-        var anchorx = json[ActionTimelineCacheStatic.X];
-        var anchory = json[ActionTimelineCacheStatic.Y];
+        var anchorx = json[actionTimelineCacheStatic.X];
+        var anchory = json[actionTimelineCacheStatic.Y];
 
         frame.setAnchorPoint(Point(anchorx, anchory));
 
@@ -348,8 +348,8 @@ ccs.ActionTimelineCache = {
     _loadInnerActionFrame: function(json){
         var frame = new ccs.InnerActionFrame();
 
-        var type = json[ActionTimelineCacheStatic.INNER_ACTION];
-        var startFrame = json[ActionTimelineCacheStatic.START_FRAME];
+        var type = json[actionTimelineCacheStatic.INNER_ACTION];
+        var startFrame = json[actionTimelineCacheStatic.START_FRAME];
 
         frame.setInnerActionType(type);
         frame.setStartFrameIndex(startFrame);
@@ -359,10 +359,10 @@ ccs.ActionTimelineCache = {
     _loadColorFrame: function(json){
         var frame = new ccs.ColorFrame();
 
-        var alpha = json[ActionTimelineCacheStatic.ALPHA];
-        var red   = json[ActionTimelineCacheStatic.RED];
-        var green = json[ActionTimelineCacheStatic.GREEN];
-        var blue  = json[ActionTimelineCacheStatic.BLUE];
+        var alpha = json[actionTimelineCacheStatic.ALPHA];
+        var red   = json[actionTimelineCacheStatic.RED];
+        var green = json[actionTimelineCacheStatic.GREEN];
+        var blue  = json[actionTimelineCacheStatic.BLUE];
 
         frame.setAlpha(alpha);
         frame.setColor(cc.color(red, green, blue));
@@ -372,7 +372,7 @@ ccs.ActionTimelineCache = {
     _loadTextureFrame: function(json){
         var frame = new ccs.TextureFrame();
 
-        var texture = json[ActionTimelineCacheStatic.Value];
+        var texture = json[actionTimelineCacheStatic.Value];
 
         if(texture != null) {
             var path = texture;
@@ -392,7 +392,7 @@ ccs.ActionTimelineCache = {
     _loadEventFrame: function(json){
         var frame = new ccs.EventFrame();
 
-        var evnt = json[ActionTimelineCacheStatic.Value];
+        var evnt = json[actionTimelineCacheStatic.Value];
 
         if(evnt != null)
             frame.setEvent(evnt);
@@ -402,7 +402,7 @@ ccs.ActionTimelineCache = {
     _loadZOrderFrame: function(json){
         var frame = new ccs.ZOrderFrame();
 
-        var zorder = json[ActionTimelineCacheStatic.Value];
+        var zorder = json[actionTimelineCacheStatic.Value];
         frame.setZOrder(zorder);
 
         return frame;
@@ -429,32 +429,32 @@ ccs.ActionTimelineCache = {
                 var frameProtobuf = timelineProtobuf.frames[i];
 
                 var frame = null;
-                if (ActionTimelineCacheStatic.FrameType_VisibleFrame === frameType){
+                if (actionTimelineCacheStatic.FrameType_VisibleFrame === frameType){
                     var visibleFrame = frameProtobuf.visibleFrame;
                     frame = this.loadVisibleFrameFromProtocolBuffers(visibleFrame);
 
-                }else if (ActionTimelineCacheStatic.FrameType_PositionFrame === frameType){
+                }else if (actionTimelineCacheStatic.FrameType_PositionFrame === frameType){
                     var positionFrame = frameProtobuf.positionFrame;
                     frame = this.loadPositionFrameFromProtocolBuffers(positionFrame);
-                }else if(ActionTimelineCacheStatic.FrameType_ScaleFrame === frameType){
+                }else if(actionTimelineCacheStatic.FrameType_ScaleFrame === frameType){
                     var scaleFrame = frameProtobuf.scaleFrame;
                     frame = this.loadScaleFrameFromProtocolBuffers(scaleFrame);
-                }else if (ActionTimelineCacheStatic.FrameType_RotationSkewFrame === frameType){
+                }else if (actionTimelineCacheStatic.FrameType_RotationSkewFrame === frameType){
                     var rotationSkewFrame = frameProtobuf.rotationSkewFrame;
                     frame = this.loadRotationSkewFrameFromProtocolBuffers(rotationSkewFrame);
-                }else if (ActionTimelineCacheStatic.FrameType_AnchorFrame === frameType){
+                }else if (actionTimelineCacheStatic.FrameType_AnchorFrame === frameType){
                     var anchorFrame = frameProtobuf.anchorPointFrame;
                     frame = this.loadAnchorPointFrameFromProtocolBuffers(anchorFrame);
-                }else if (ActionTimelineCacheStatic.FrameType_ColorFrame === frameType){
+                }else if (actionTimelineCacheStatic.FrameType_ColorFrame === frameType){
                     var colorFrame = frameProtobuf.colorFrame;
                     frame = this.loadColorFrameFromProtocolBuffers(colorFrame);
-                }else if (ActionTimelineCacheStatic.FrameType_TextureFrame === frameType){
+                }else if (actionTimelineCacheStatic.FrameType_TextureFrame === frameType){
                     var textureFrame = frameProtobuf.textureFrame;
                     frame = this.loadTextureFrameFromProtocolBuffers(textureFrame);
-                }else if (ActionTimelineCacheStatic.FrameType_EventFrame === frameType){
+                }else if (actionTimelineCacheStatic.FrameType_EventFrame === frameType){
                     var eventFrame = frameProtobuf.eventFrame;
                     frame = this.loadEventFrameFromProtocolBuffers(eventFrame);
-                }else if (ActionTimelineCacheStatic.FrameType_ZOrderFrame === frameType){
+                }else if (actionTimelineCacheStatic.FrameType_ZOrderFrame === frameType){
                     var zOrderFrame = frameProtobuf.zOrderFrame;
                     frame = this.loadZOrderFrameFromProtocolBuffers(zOrderFrame);
                 }
@@ -1191,6 +1191,6 @@ ccs.ActionTimelineCache = {
 
 };
 
-ccs.ActionTimelineCache.init();
+ccs.actionTimelineCache.init();
 
-ccs.ActionTimelineCache._sharedActionCache = null;
+ccs.actionTimelineCache._sharedActionCache = null;

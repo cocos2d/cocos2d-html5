@@ -28,14 +28,14 @@
  * @class
  * @name ccs.LabelReader
  **/
-ccs.LabelReader = /** @lends ccs.LabelReader# */{
+ccs.labelReader = /** @lends ccs.LabelReader# */{
     /**
      * Gets the ccs.LabelReader.
      * @deprecated since v3.0, please use ccs.LabelReader directly.
      * @returns {ccs.LabelReader}
      */
     getInstance: function(){
-        return ccs.LabelReader;
+        return ccs.labelReader;
     },
 
     /**
@@ -44,7 +44,7 @@ ccs.LabelReader = /** @lends ccs.LabelReader# */{
      * @param {Object} options
      */
     setPropsFromJsonDictionary: function(widget, options){
-        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var label = widget;
         var touchScaleChangeAble = options["touchScaleEnable"];
@@ -78,7 +78,7 @@ ccs.LabelReader = /** @lends ccs.LabelReader# */{
         {
             label.setTextVerticalAlignment(options["vAlignment"]);
         }
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
@@ -88,7 +88,7 @@ ccs.LabelReader = /** @lends ccs.LabelReader# */{
 		var IsCustomSize = options.IsCustomSize;
 		label.ignoreContentAdaptWithSize(!IsCustomSize);
 
-        ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         label.setUnifySizeEnabled(false);
 
@@ -138,11 +138,11 @@ ccs.LabelReader = /** @lends ccs.LabelReader# */{
 		}
 
         // other commonly protperties
-        ccs.WidgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.widgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     },
 
     setPropsFromXML: function(widget, objectData){
-        ccs.WidgetReader.setPropsFromXML.call(this, widget, objectData);
+        ccs.widgetReader.setPropsFromXML.call(this, widget, objectData);
 
         var label = widget;
 
