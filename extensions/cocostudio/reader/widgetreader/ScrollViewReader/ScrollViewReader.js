@@ -59,11 +59,11 @@ ccs.ScrollViewReader = /** @lends ccs.ScrollViewReader# */{
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-        ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
 
         var scrollView = widget;
-		var options = nodeTree.scrollviewOptions;
+		var options = nodeTree.scrollViewOptions;
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
@@ -120,14 +120,15 @@ ccs.ScrollViewReader = /** @lends ccs.ScrollViewReader# */{
 
 
 		var imageFileNameDic = options.backGroundImageData;
-        var imageFileNameType = imageFileNameDic.resourceType;
-		if (imageFileNameType == 1)
-		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
-		}
-        var imageFileName = ccs.WidgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
-        scrollView.setBackGroundImage(imageFileName, imageFileNameType);
-
+        if(imageFileNameDic){
+            var imageFileNameType = imageFileNameDic.resourceType;
+            if (imageFileNameType == 1)
+            {
+                cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
+            }
+            var imageFileName = ccs.WidgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
+            scrollView.setBackGroundImage(imageFileName, imageFileNameType);
+        }
 
         if (backGroundScale9Enable)
         {
@@ -185,7 +186,7 @@ ccs.ScrollViewReader = /** @lends ccs.ScrollViewReader# */{
     },
 
     setPropsFromXML: function(widget, objectData){
-        ccs.WidgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+        ccs.WidgetReader.setPropsFromXML.call(this, widget, objectData);
 
         var scrollView = widget;
 

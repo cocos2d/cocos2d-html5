@@ -48,11 +48,11 @@ ccs.PageViewReader = /** @lends ccs.PageViewReader# */{
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-        ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
 
         var pageView = widget;
-        var options = nodeTree.pageviewOptions;
+        var options = nodeTree.pageViewOptions;
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
@@ -108,13 +108,16 @@ ccs.PageViewReader = /** @lends ccs.PageViewReader# */{
 
 
 		var imageFileNameDic = options.backGroundImageData;
-        var imageFileNameType = imageFileNameDic.resourceType;
-		if (imageFileNameType == 1)
-		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
-		}
-        var imageFileName = this.getResourcePath(imageFileNameDic.path(), imageFileNameType);
-        pageView.setBackGroundImage(imageFileName, imageFileNameType);
+        if(imageFileNameDic){
+
+            var imageFileNameType = imageFileNameDic.resourceType;
+            if (imageFileNameType == 1)
+            {
+                cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
+            }
+            var imageFileName = ccs.WidgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
+            pageView.setBackGroundImage(imageFileName, imageFileNameType);
+        }
 
 
         if (backGroundScale9Enable)
@@ -132,7 +135,7 @@ ccs.PageViewReader = /** @lends ccs.PageViewReader# */{
             }
         }
 
-        var widgetOptions = nodeTree.widgetoptions();
+        var widgetOptions = nodeTree.widgetOptions;
 
         var red = widgetOptions.colorR!==null ? widgetOptions.colorR : 255;
         var green = widgetOptions.colorG!==null ? widgetOptions.colorG : 255;
@@ -161,7 +164,7 @@ ccs.PageViewReader = /** @lends ccs.PageViewReader# */{
     },
 
     setPropsFromXML: function(widget, objectData){
-        ccs.WidgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+        ccs.WidgetReader.setPropsFromXML.call(this, widget, objectData);
 
         var pageView = widget;
 

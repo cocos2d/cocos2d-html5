@@ -241,7 +241,7 @@ ccs.TextFieldReader = /** @lends ccs.TextFieldReader# */{
             }
             else if (name == "Alpha")
             {
-                opacity = atoi(value.c_str());
+                opacity = atoi(value);
             }
 
             attribute = attribute.Next();

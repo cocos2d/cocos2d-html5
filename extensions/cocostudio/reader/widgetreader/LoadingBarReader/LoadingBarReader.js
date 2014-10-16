@@ -97,7 +97,7 @@ ccs.LoadingBarReader = /** @lends ccs.LoadingBarReader# */{
         ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         var loadingBar = widget;
-        var options = nodeTree.loadingbarOptions;
+        var options = nodeTree.loadingBarOptions;
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
@@ -139,7 +139,7 @@ ccs.LoadingBarReader = /** @lends ccs.LoadingBarReader# */{
 
 
         // other commonly protperties
-        ccs.WidgetReader.prototype.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.WidgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     },
 
     setPropsFromXML: function(){

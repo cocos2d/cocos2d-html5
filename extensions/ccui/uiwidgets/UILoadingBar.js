@@ -134,12 +134,12 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
                     case ccui.LoadingBar.TYPE_LEFT:
                         barRenderer.setAnchorPoint(0.0,0.5);
                         if (!self._scale9Enabled)
-                            barRenderer.getSprite().setFlippedX(false);
+                            barRenderer/*.getSprite()*/.setFlippedX(false);
                         break;
                     case ccui.LoadingBar.TYPE_RIGHT:
                         barRenderer.setAnchorPoint(1.0,0.5);
                         if (!self._scale9Enabled)
-                            barRenderer.getSprite().setFlippedX(true);
+                            barRenderer/*.getSprite()*/.setFlippedX(true);
                         break;
                 }
                 self._updateChildrenDisplayedRGBA();

@@ -174,7 +174,7 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
-        var barTextureScale9Enable = options.scale9Enable;
+        var barTextureScale9Enable = !!options.scale9Enable;
         slider.setScale9Enabled(barTextureScale9Enable);
 
         slider.setPercent(options.percent);
@@ -189,10 +189,8 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
 		{
 			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
 		}
-        var imageFileName = ccs.WidgetReader.getResourcePath(imageFileNameDic.path(), imageFileNameType);
+        var imageFileName = ccs.WidgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
         slider.loadBarTexture(imageFileName, imageFileNameType);
-
-
 
         if (barTextureScale9Enable)
         {
@@ -200,7 +198,7 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
         }
 
         //loading normal slider ball texture
-        var normalDic = options.ballnormalData;
+        var normalDic = options.ballNormalData;
         var normalType = normalDic.resourceType;
 		if (normalType == 1)
 		{
@@ -211,7 +209,7 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
 
 
         //loading slider ball press texture
-        var pressedDic = options.ballpressedData;
+        var pressedDic = options.ballPressedData;
         var pressedType = pressedDic.resourceType;
 		if (pressedType == 1)
 		{
@@ -221,7 +219,7 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
         slider.loadSlidBallTexturePressed(pressedFileName, pressedType);
 
         //loading silder ball disable texture
-        var disabledDic = options.balldisabledData;
+        var disabledDic = options.ballDisabledData;
         var disabledType = disabledDic.resourceType;
 		if (disabledType == 1)
 		{
@@ -231,7 +229,7 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
         slider.loadSlidBallTextureDisabled(disabledFileName, disabledType);
 
         //load slider progress texture
-        var progressBarDic = options.progressbarData;
+        var progressBarDic = options.progressBarData;
         var progressBarType = progressBarDic.resourceType;
 		if (progressBarType == 1)
 		{
@@ -248,11 +246,11 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
 		slider.setBright(displaystate);
 
         // other commonly protperties
-        ccs.WidgetReader.prototype.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.WidgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     },
 
     setPropsFromXML:function(widget, objectData){
-        ccs.WidgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+        ccs.WidgetReader.setPropsFromXML.call(this, widget, objectData);
 
         var slider = widget;
 

@@ -368,7 +368,7 @@ ccs.WidgetReader = /** @lends ccs.WidgetReader# */{
             }
             else if (name == "Alpha")
             {
-                widget.setOpacity(atoi(value.c_str()));
+                widget.setOpacity(atoi(value));
             }
             else if (name == "Tag")
             {

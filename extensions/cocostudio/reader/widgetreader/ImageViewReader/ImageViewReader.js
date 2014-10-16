@@ -117,11 +117,11 @@ ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
         imageView.loadTexture(imageFileName, imageFileNameType);
 
 
-        var scale9EnableExist = options.scale9enAble!==null;
+        var scale9EnableExist = options.scale9Enable!==null;
         var scale9Enable = false;
         if (scale9EnableExist)
         {
-            scale9Enable = options.scale9enAble;
+            scale9Enable = options.scale9Enable;
         }
         imageView.setScale9Enabled(scale9Enable);
 

@@ -280,7 +280,7 @@ ccs.LayoutReader = /** @lends ccs.LayoutReader# */{
         var blue = widgetOptions.colorB!==null ? widgetOptions.colorB : 255;
         panel.setColor(cc.color(red, green, blue));
 
-        var opacity = widgetOptions.Alpha!==null ? widgetOptions.alpha : 255;
+        var opacity = widgetOptions.Alpha!==null ? widgetOptions.Alpha : 255;
         panel.setOpacity(opacity);
 
 //        var bgimgcr = widgetOptions.has_colorr() ? widgetOptions.colorr() : 255;
