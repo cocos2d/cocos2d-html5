@@ -147,7 +147,14 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
 
         this._barRendererAdaptDirty = true;
         this._progressBarRendererDirty = true;
-        this._updateContentSizeWithTextureSize(this.getContentSize());
+        this._updateContentSizeWithTextureSize(this._barRenderer.getContentSize());
+    },
+
+    setContentSize: function(a, b){
+        ccui.Widget.prototype.setContentSize.call(this,a , b);
+        if(this._scale9Enabled){
+            this._barRenderer.setContentSize(a, b);
+        }
     },
 
     /**
