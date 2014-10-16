@@ -100,28 +100,28 @@ ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-        ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
-        var options = nodeTree.imageviewoptions();
+        var options = nodeTree.imageviewOptions;
         var imageView = widget;
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
-        var imageFileNameDic = options.filenamedata();
-        var imageFileNameType = imageFileNameDic.resourcetype();
+        var imageFileNameDic = options.fileNameData;
+        var imageFileNameType = imageFileNameDic.resourceType;
 		if (imageFileNameType == 1)
 		{
-			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + imageFileNameDic.plistfile());
+			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
 		}
-        var imageFileName = this.getResourcePath(imageFileNameDic.path(), imageFileNameType);
+        var imageFileName = ccs.WidgetReader.getResourcePath(imageFileNameDic.path(), imageFileNameType);
         imageView.loadTexture(imageFileName, imageFileNameType);
 
 
-        var scale9EnableExist = options.has_scale9enable();
+        var scale9EnableExist = options.scale9enAble!==null;
         var scale9Enable = false;
         if (scale9EnableExist)
         {
-            scale9Enable = options.scale9enable();
+            scale9Enable = options.scale9enAble;
         }
         imageView.setScale9Enabled(scale9Enable);
 
@@ -131,25 +131,25 @@ ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
             imageView.setUnifySizeEnabled(false);
             imageView.ignoreContentAdaptWithSize(false);
 
-            var swf = options.has_scale9width() ? options.scale9width() : 80;
-            var shf = options.has_scale9height() ? options.scale9height() : 80;
-            imageView.setContentSize(Size(swf, shf));
+            var swf = options.scale9width!==null ? options.scale9Width : 80;
+            var shf = options.scale9height!==null ? options.scale9Height : 80;
+            imageView.setContentSize(cc.size(swf, shf));
 
 
-            var cx = options.capinsetsx();
-            var cy = options.capinsetsy();
-            var cw = options.has_capinsetswidth() ? options.capinsetswidth() : 1.0;
-            var ch = options.has_capinsetsheight() ? options.capinsetsheight() : 1.0;
+            var cx = options.capInsetsX;
+            var cy = options.capInsetsY;
+            var cw = options.capInsetsWidth!==null ? options.capInsetsWidth : 1.0;
+            var ch = options.capInsetsHeight!==null ? options.capInsetsHeight : 1.0;
 
-            imageView.setCapInsets(Rect(cx, cy, cw, ch));
+            imageView.setCapInsets(cc.rect(cx, cy, cw, ch));
 
         }
 
         // other commonly protperties
-        ccs.WidgetReader.prototype.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.WidgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
-		var flipX   = options.flippedx();
-		var flipY   = options.flippedy();
+		var flipX   = options.flippedX;
+		var flipY   = options.flippedY;
 
 		if(flipX != false)
 			imageView.setFlippedX(flipX);
@@ -266,14 +266,14 @@ ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
                 {
                     case 0:
                     {
-                        imageView.loadTexture(xmlPath + path, ccui.Widget.TextureResType.LOCAL);
+                        imageView.loadTexture(xmlPath + path, ccui.Widget.LOCAL_TEXTURE);
                         break;
                     }
 
                     case 1:
                     {
                         cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
-                        imageView.loadTexture(path, ccui.Widget.TextureResType.PLIST);
+                        imageView.loadTexture(path, ccui.Widget.PLIST_TEXTURE);
                         break;
                     }
 

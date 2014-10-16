@@ -77,30 +77,32 @@ ccs.LabelBMFontReader = /** @lends ccs.LabelBMFontReader# */{
         var jsonPath = ccs.uiReader.getFilePath();
 
         var labelBMFont = widget;
-        var options = nodeTree.textbmfontoptions();
+        var options = nodeTree.textBMFontOptions;
 
 
-        var cmftDic = options.filenamedata();
-        var cmfType = cmftDic.resourcetype();
-        switch (cmfType)
-        {
-            case 0:
+        if(options){
+            var cmftDic = options.fileNameData;
+            var cmfType = cmftDic.resourceType;
+            switch (cmfType)
             {
-                var tp_c = jsonPath;
-                var cmfPath = cmftDic.path().c_str();
-                var cmf_tp = tp_c.append(cmfPath).c_str();
-                labelBMFont.setFntFile(cmf_tp);
-                break;
+                case 0:
+                {
+                    var tp_c = jsonPath;
+                    var cmfPath = cmftDic.path();
+                    var cmf_tp = tp_c.append(cmfPath);
+                    labelBMFont.setFntFile(cmf_tp);
+                    break;
+                }
+                case 1:
+                    cc.log("Wrong res type of LabelAtlas!");
+                    break;
+                default:
+                    break;
             }
-            case 1:
-                cc.log("Wrong res type of LabelAtlas!");
-                break;
-            default:
-                break;
-        }
 
-        var text = (options.has_text()) ? options.text().c_str() : "Text Label";
-        labelBMFont.setString(text);
+            var text = options.text!==null ? options.text : "Text Label";
+            labelBMFont.setString(text);
+        }
 
 
         // other commonly protperties

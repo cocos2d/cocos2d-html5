@@ -62,13 +62,13 @@ ccs.ListViewReader = /** @lends ccs.ListViewReader# */{
         ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         var listView = widget;
-        var options = nodeTree.listviewoptions();
+        var options = nodeTree.listviewOptions;
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
-        listView.setClippingEnabled(options.clipable());
+        listView.setClippingEnabled(options.clipAble);
 
-        var backGroundScale9Enable = options.backgroundscale9enable();
+        var backGroundScale9Enable = options.backGroundScale9enAble;
         listView.setBackGroundImageScale9Enabled(backGroundScale9Enable);
 
 
@@ -84,68 +84,68 @@ ccs.ListViewReader = /** @lends ccs.ListViewReader# */{
 
 
 
-        cr = options.has_bgcolorr() ? options.bgcolorr() : 150;
-        cg = options.has_bgcolorg() ? options.bgcolorg() : 150;
-        cb = options.has_bgcolorb() ? options.bgcolorb() : 255;
+        cr = options.bgColorR!==null ? options.bgColorR : 150;
+        cg = options.bgColorG!==null ? options.bgColorG : 150;
+        cb = options.bgColorB!==null ? options.bgColorB : 255;
 
-        scr = options.has_bgstartcolorr() ? options.bgstartcolorr() : 255;
-        scg = options.has_bgstartcolorg() ? options.bgstartcolorg() : 255;
-        scb = options.has_bgstartcolorb() ? options.bgstartcolorb() : 255;
+        scr = options.bgStartColorR!==null ? options.bgStartColorR : 255;
+        scg = options.bgStartColorG!==null ? options.bgStartColorG : 255;
+        scb = options.bgStartColorB!==null ? options.bgStartColorB : 255;
 
-        ecr = options.has_bgendcolorr() ? options.bgendcolorr() : 150;
-        ecg = options.has_bgendcolorg() ? options.bgendcolorg() : 150;
-        ecb = options.has_bgendcolorb() ? options.bgendcolorb() : 255;
+        ecr = options.bgEndColorR!==null ? options.bgEndColorR : 150;
+        ecg = options.bgEndColorG!==null ? options.bgEndColorG : 150;
+        ecb = options.bgEndColorB!==null ? options.bgEndColorB : 255;
 
-        var bgcv1 = options.vectorx();
-        var bgcv2 = options.has_vectory() ? options.vectory() : -0.5;
+        var bgcv1 = options.vectorX;
+        var bgcv2 = options.vectorY!==null ? options.vectorY : -0.5;
         listView.setBackGroundColorVector(cc.p(bgcv1, bgcv2));
 
-        var co = options.has_bgcoloropacity() ? options.bgcoloropacity() : 100;
+        var co = options.bgColorOpacity!==null ? options.bgColorOpacity : 100;
 
-        var colorType = options.has_colortype() ? options.colortype() : 1;
-        listView.setBackGroundColorType(Layout.BackGroundColorType(colorType));
+        var colorType = options.colorType!==null ? options.colorType : 1;
+        listView.setBackGroundColorType(colorType);
 
         listView.setBackGroundColor(cc.color(scr, scg, scb),cc.color(ecr, ecg, ecb));
         listView.setBackGroundColor(cc.color(cr, cg, cb));
         listView.setBackGroundColorOpacity(co);
 
 
-		var imageFileNameDic = options.backgroundimagedata();
-        var imageFileNameType = imageFileNameDic.resourcetype();
+		var imageFileNameDic = options.backGroundImageData;
+        var imageFileNameType = imageFileNameDic.resourceType;
 		if (imageFileNameType == 1)
 		{
-			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + imageFileNameDic.plistfile());
+			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
 		}
-        var imageFileName = this.getResourcePath(imageFileNameDic.path(), imageFileNameType);
+        var imageFileName = ccs.WidgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
         listView.setBackGroundImage(imageFileName, imageFileNameType);
 
 
         if (backGroundScale9Enable)
         {
-            var cx = options.capinsetsx();
-            var cy = options.capinsetsy();
-            var cw = options.has_capinsetswidth() ? options.capinsetswidth() : 1;
-            var ch = options.has_capinsetsheight() ? options.capinsetsheight() : 1;
+            var cx = options.capInsetsX;
+            var cy = options.capInsetsY;
+            var cw = options.capInsetsWidth!==null ? options.capInsetsWidth : 1;
+            var ch = options.capInsetsHeight!==null ? options.capInsetsHeight : 1;
             listView.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
 
-            var sw = options.has_scale9width();
-            var sh = options.has_scale9height();
+            var sw = options.scale9width;
+            var sh = options.scale9height;
             if (sw && sh)
             {
-                var swf = options.scale9width();
-                var shf = options.scale9height();
+                var swf = options.scale9width;
+                var shf = options.scale9height;
                 listView.setContentSize(cc.size(swf, shf));
             }
         }
 
-        var widgetOptions = nodeTree.widgetoptions();
+        var widgetOptions = nodeTree.widgetOptions;
 
-        var red = widgetOptions.has_colorr() ? widgetOptions.colorr() : 255;
-        var green = widgetOptions.has_colorg() ? widgetOptions.colorg() : 255;
-        var blue = widgetOptions.has_colorb() ? widgetOptions.colorb() : 255;
+        var red = widgetOptions.colorR!==null ? widgetOptions.colorR : 255;
+        var green = widgetOptions.colorG!==null ? widgetOptions.colorG : 255;
+        var blue = widgetOptions.colorB!==null ? widgetOptions.colorB : 255;
         listView.setColor(cc.color(red, green, blue));
 
-        var opacity = widgetOptions.has_alpha() ? widgetOptions.alpha() : 255;
+        var opacity = widgetOptions.Alpha!=null ? widgetOptions.Alpha : 255;
         listView.setOpacity(opacity);
 
 //        var bgimgcr = widgetOptions.has_colorr() ? widgetOptions.colorr() : 255;
@@ -160,27 +160,27 @@ ccs.ListViewReader = /** @lends ccs.ListViewReader# */{
 
 
 
-        var innerWidth = options.has_innerwidth() ? options.innerwidth() : 200;
-        var innerHeight = options.has_innerheight() ? options.innerheight() : 200;
-        listView.setInnerContainerSize(Size(innerWidth, innerHeight));
-        listView.setBounceEnabled(options.bounceenable());
+        var innerWidth = options.innerWidth!==null ? options.innerWidth : 200;
+        var innerHeight = options.innerHeight!==null ? options.innerHeight : 200;
+        listView.setInnerContainerSize(cc.size(innerWidth, innerHeight));
+        listView.setBounceEnabled(options.bounceEnable);
 
-        var direction = options.has_direction() ? options.direction() : 2;
+        var direction = options.direction!=null ? options.direction : 2;
         listView.setDirection(direction);
 
-        var gravityValue = options.has_gravity() ? options.gravity() : 3;
+        var gravityValue = options.gravity!==null ? options.gravity : 3;
         var gravity = gravityValue;
         listView.setGravity(gravity);
 
-        var itemMargin = options.itemmargin();
+        var itemMargin = options.itemMargin;
         listView.setItemsMargin(itemMargin);
 
 
         // other commonly protperties
-        this.setAnchorPointForWidget(widget, nodeTree);
+        ccs.WidgetReader.setAnchorPointForWidget(widget, nodeTree);
 
-        var flipX = widgetOptions.flipx();
-        var flipY = widgetOptions.flipy();
+        var flipX = widgetOptions.flipX;
+        var flipY = widgetOptions.flipY;
         widget.setFlippedX(flipX);
         widget.setFlippedY(flipY);
     },
@@ -551,14 +551,14 @@ ccs.ListViewReader = /** @lends ccs.ListViewReader# */{
         {
             case 0:
             {
-                listView.setBackGroundImage(xmlPath + path, Widget.TextureResType.LOCAL);
+                listView.setBackGroundImage(xmlPath + path, ccui.Widget.LOCAL_TEXTURE);
                 break;
             }
 
             case 1:
             {
                 SpriteFrameCache.getInstance().addSpriteFramesWithFile(xmlPath + plistFile);
-                listView.setBackGroundImage(path, Widget.TextureResType.PLIST);
+                listView.setBackGroundImage(path, ccui.Widget.PLIST_TEXTURE);
                 break;
             }
 

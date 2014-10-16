@@ -83,68 +83,66 @@ ccs.LabelReader = /** @lends ccs.LabelReader# */{
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
 		var label = widget;
-        var options = nodeTree.textoptions();
+        var options = nodeTree.textOptions;
 
-		var IsCustomSize = options.iscustomsize();
+		var IsCustomSize = options.IsCustomSize;
 		label.ignoreContentAdaptWithSize(!IsCustomSize);
 
-        ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         label.setUnifySizeEnabled(false);
 
         var protocolBuffersPath = ccs.uiReader.getFilePath();
 
-        var touchScaleChangeAble = options.touchscaleenable();
+        var touchScaleChangeAble = options.touchScaleEnable;
         label.setTouchScaleChangeEnabled(touchScaleChangeAble);
-        var text = options.has_text() ? options.text().c_str() : "Text Label";
+        var text = options.text!==null ? options.text : "Text Label";
         label.setString(text);
 
-        var fontSize = options.has_fontsize() ? options.fontsize() : 20;
+        var fontSize = options.fontSize!==null ? options.fontSize : 20;
         label.setFontSize(fontSize);
 
-        var fontName = options.has_fontname() ? options.fontname() : "微软雅黑";
+        var fontName = options.fontName!==null ? options.fontName : "微软雅黑";
+        label.setFontName(fontName);
+//        var fontFilePath = protocolBuffersPath.append(fontName);
+//		if (FileUtils.getInstance().isFileExist(fontFilePath))
+//		{
+//			label.setFontName(fontFilePath);
+//		}
+//		else{
+//			label.setFontName(fontName);
+//		}
 
-        var fontFilePath = protocolBuffersPath.append(fontName);
-		if (FileUtils.getInstance().isFileExist(fontFilePath))
-		{
-			label.setFontName(fontFilePath);
-		}
-		else{
-			label.setFontName(fontName);
-		}
-
-        var aw = options.has_areawidth();
-        var ah = options.has_areaheight();
+        var aw = options.areaWidth;
+        var ah = options.areaHeight;
         if (aw && ah)
         {
-            var size = Size(options.areawidth(), options.areaheight());
+            var size = cc.size(aw, ah);
             label.setTextAreaSize(size);
         }
-        var ha = options.has_halignment();
+        var ha = options.hAlignment;
         if (ha)
         {
-            label.setTextHorizontalAlignment(options.halignment());
+            label.setTextHorizontalAlignment(ha);
         }
-        var va = options.has_valignment();
+        var va = options.vAlignment;
         if (va)
         {
-            label.setTextVerticalAlignment(options.valignment());
+            label.setTextVerticalAlignment(va);
         }
 
-		if (options.has_fontresource())
+		if (options.fontResource)
 		{
-			var resourceData = options.fontresource();
-		    label.setFontName(protocolBuffersPath + resourceData.path());
+			var resourceData = options.fontResource;
+		    label.setFontName(protocolBuffersPath + resourceData.path);
 		}
 
-
-
         // other commonly protperties
-        ccs.WidgetReader.prototype.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.WidgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     },
 
     setPropsFromXML: function(widget, objectData){
-        ccs.WidgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+        ccs.WidgetReader.setPropsFromXML.call(this, widget, objectData);
 
         var label = widget;
 

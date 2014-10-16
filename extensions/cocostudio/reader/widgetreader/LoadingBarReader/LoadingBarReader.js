@@ -94,47 +94,47 @@ ccs.LoadingBarReader = /** @lends ccs.LoadingBarReader# */{
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-        ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         var loadingBar = widget;
-        var options = nodeTree.loadingbaroptions();
+        var options = nodeTree.loadingbarOptions;
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
-		var imageFileNameDic = options.texturedata();
-        var imageFileNameType = imageFileNameDic.resourcetype();
+		var imageFileNameDic = options.textureData;
+        var imageFileNameType = imageFileNameDic.resourceType;
 		if (imageFileNameType == 1)
 		{
-			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + imageFileNameDic.plistfile());
+			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
 		}
-        var imageFileName = this.getResourcePath(imageFileNameDic.path(), imageFileNameType);
+        var imageFileName = ccs.WidgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
         loadingBar.loadTexture(imageFileName, imageFileNameType);
 
 
         /* gui mark add load bar scale9 parse */
-        var scale9Enable = options.scale9enable();
+        var scale9Enable = options.scale9Enable;
         loadingBar.setScale9Enabled(scale9Enable);
 
 
-        var cx = options.capinsetsx();
-        var cy = options.capinsetsy();
-        var cw = options.has_capinsetswidth() ? options.capinsetswidth() : 1;
-        var ch = options.has_capinsetsheight() ? options.capinsetsheight() : 1;
+        var cx = options.capinsetsX;
+        var cy = options.capinsetsY;
+        var cw = options.capinsetsWidth!=null ? options.capinsetsWidth : 1;
+        var ch = options.capinsetsHeight!=null ? options.capinsetsHeight : 1;
 
         if (scale9Enable) {
             loadingBar.setCapInsets(cc.rect(cx, cy, cw, ch));
 
         }
 
-		var widgetOptions = nodeTree.widgetoptions();
-        var width = widgetOptions.width();
-        var height = widgetOptions.height();
+		var widgetOptions = nodeTree.widgetOptions;
+        var width = widgetOptions.width;
+        var height = widgetOptions.height;
         loadingBar.setContentSize(cc.size(width, height));
 
         /**/
 
-        loadingBar.setDirection(LoadingBar.Direction(options.direction()));
-        var percent = options.has_percent() ? options.percent() : 100;
+        loadingBar.setDirection(options.direction);
+        var percent = options.percent!==null ? options.percent : 100;
         loadingBar.setPercent(percent);
 
 
@@ -241,14 +241,14 @@ ccs.LoadingBarReader = /** @lends ccs.LoadingBarReader# */{
                 {
                     case 0:
                     {
-                        loadingBar.loadTexture(xmlPath + path, ccui.Widget.TextureResType.LOCAL);
+                        loadingBar.loadTexture(xmlPath + path, ccui.Widget.LOCAL_TEXTURE);
                         break;
                     }
 
                     case 1:
                     {
                         cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
-                        loadingBar.loadTexture(path, ccui.Widget.TextureResType.PLIST);
+                        loadingBar.loadTexture(path, ccui.Widget.PLIST_TEXTURE);
                         break;
                     }
 

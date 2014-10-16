@@ -298,6 +298,7 @@
 
             "extensions/cocostudio/components/CCComponent.js",
             "extensions/cocostudio/components/CCComponentContainer.js",
+            "extensions/ccui/layouts/UILayoutComponent.js",
             "extensions/cocostudio/CocoStudio.js",
 
             "extensions/cocostudio/armature/utils/CCArmatureDefine.js",

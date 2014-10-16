@@ -52,14 +52,14 @@ ccs.PageViewReader = /** @lends ccs.PageViewReader# */{
 
 
         var pageView = widget;
-        var options = nodeTree.pageviewoptions();
+        var options = nodeTree.pageviewOptions;
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
-        cc.log("options.clipable() = %d", options.clipable());
-        pageView.setClippingEnabled(options.clipable());
+        cc.log("options.clipable() = %d", options.clipAble);
+        pageView.setClippingEnabled(options.clipAble);
 
-        var backGroundScale9Enable = options.backgroundscale9enable();
+        var backGroundScale9Enable = options.backGroundScale9Enable;
         pageView.setBackGroundImageScale9Enabled(backGroundScale9Enable);
 
 
@@ -73,45 +73,45 @@ ccs.PageViewReader = /** @lends ccs.PageViewReader# */{
         var ecg;
         var ecb;
 
-        cr = options.has_bgcolorr() ? options.bgcolorr() : 150;
-        cg = options.has_bgcolorg() ? options.bgcolorg() : 150;
-        cb = options.has_bgcolorb() ? options.bgcolorb() : 150;
+        cr = options.bgColorR!==null ? options.bgColorR : 150;
+        cg = options.bgColorG!==null ? options.bgColorG : 150;
+        cb = options.bgColorB!==null ? options.bgColorB : 150;
 
-        scr = options.has_bgstartcolorr() ? options.bgstartcolorr() : 255;
-        scg = options.has_bgstartcolorg() ? options.bgstartcolorg() : 255;
-        scb = options.has_bgstartcolorb() ? options.bgstartcolorb() : 255;
+        scr = options.bgStartColorR!==null ? options.bgStartColorR : 255;
+        scg = options.bgStartColorG!==null ? options.bgStartColorG : 255;
+        scb = options.bgStartColorB!==null ? options.bgStartColorB : 255;
 
-        ecr = options.has_bgendcolorr() ? options.bgendcolorr() : 255;
-        ecg = options.has_bgendcolorg() ? options.bgendcolorg() : 150;
-        ecb = options.has_bgendcolorb() ? options.bgendcolorb() : 100;
+        ecr = options.bgEndColorR!==null ? options.bgEndColorR : 255;
+        ecg = options.bgEndColorG!==null ? options.bgEndColorG : 150;
+        ecb = options.bgEndColorB!==null ? options.bgEndColorB : 100;
 
 		var bgcv1 = 0;
         var bgcv2 = -0.5;
-		if(options.has_vectorx())
+		if(options.vectorX!==null)
 		{
-			bgcv1 = options.vectorx();
+			bgcv1 = options.vectorX;
 		}
-		if(options.has_vectory())
+		if(options.vectorY!==null)
 		{
-			bgcv2 = options.vectory();
+			bgcv2 = options.vectorY;
 		}
         pageView.setBackGroundColorVector(cc.p(bgcv1, bgcv2));
 
-        var co = options.has_bgcoloropacity() ? options.bgcoloropacity() : 100;
+        var co = options.bgColorOpacity!==null ? options.bgColorOpacity : 100;
 
-        var colorType = options.has_colortype() ? options.colortype() : 1;
-        pageView.setBackGroundColorType(Layout.BackGroundColorType(colorType));
+        var colorType = options.colorType!==null ? options.colorType : 1;
+        pageView.setBackGroundColorType(colorType);
 
         pageView.setBackGroundColor(cc.color(scr, scg, scb),cc.color(ecr, ecg, ecb));
         pageView.setBackGroundColor(cc.color(cr, cg, cb));
         pageView.setBackGroundColorOpacity(co);
 
 
-		var imageFileNameDic = options.backgroundimagedata();
-        var imageFileNameType = imageFileNameDic.resourcetype();
+		var imageFileNameDic = options.backGroundImageData;
+        var imageFileNameType = imageFileNameDic.resourceType;
 		if (imageFileNameType == 1)
 		{
-			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + imageFileNameDic.plistfile());
+			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
 		}
         var imageFileName = this.getResourcePath(imageFileNameDic.path(), imageFileNameType);
         pageView.setBackGroundImage(imageFileName, imageFileNameType);
@@ -119,29 +119,27 @@ ccs.PageViewReader = /** @lends ccs.PageViewReader# */{
 
         if (backGroundScale9Enable)
         {
-            var cx = options.capinsetsx();
-            var cy = options.capinsetsy();
-            var cw = options.has_capinsetswidth() ? options.capinsetswidth() : 1;
-            var ch = options.has_capinsetsheight() ? options.capinsetsheight() : 1;
+            var cx = options.capInsetsX;
+            var cy = options.capInsetsY;
+            var cw = options.capInsetsWidth!==null ? options.capInsetsWidth : 1;
+            var ch = options.capInsetsHeight!==null ? options.capInsetsHeight : 1;
             pageView.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
-            var sw = options.has_scale9width();
-            var sh = options.has_scale9height();
+            var sw = options.scale9Width;
+            var sh = options.scale9Height;
             if (sw && sh)
             {
-                var swf = options.scale9width();
-                var shf = options.scale9height();
-                pageView.setContentSize(cc.size(swf, shf));
+                pageView.setContentSize(cc.size(sw, sh));
             }
         }
 
         var widgetOptions = nodeTree.widgetoptions();
 
-        var red = widgetOptions.has_colorr() ? widgetOptions.colorr() : 255;
-        var green = widgetOptions.has_colorg() ? widgetOptions.colorg() : 255;
-        var blue = widgetOptions.has_colorb() ? widgetOptions.colorb() : 255;
+        var red = widgetOptions.colorR!==null ? widgetOptions.colorR : 255;
+        var green = widgetOptions.colorG!==null ? widgetOptions.colorG : 255;
+        var blue = widgetOptions.colorB!==null ? widgetOptions.colorB : 255;
         pageView.setColor(cc.color(red, green, blue));
 
-        var opacity = widgetOptions.has_alpha() ? widgetOptions.alpha() : 255;
+        var opacity = widgetOptions.Alpha!==null ? widgetOptions.Alpha : 255;
         pageView.setOpacity(opacity);
 
 //        var bgimgcr = widgetOptions.has_colorr() ? widgetOptions.colorr() : 255;
@@ -154,10 +152,10 @@ ccs.PageViewReader = /** @lends ccs.PageViewReader# */{
 
 
         // other commonly protperties
-        this.setAnchorPointForWidget(widget, nodeTree);
+        ccs.WidgetReader.setAnchorPointForWidget(widget, nodeTree);
 
-        var flipX = widgetOptions.flipx();
-        var flipY = widgetOptions.flipy();
+        var flipX = widgetOptions.flipX;
+        var flipY = widgetOptions.flipY;
         widget.setFlippedX(flipX);
         widget.setFlippedY(flipY);
     },
@@ -435,14 +433,14 @@ ccs.PageViewReader = /** @lends ccs.PageViewReader# */{
         {
             case 0:
             {
-                pageView.setBackGroundImage(xmlPath + path, ccui.Widget.TextureResType.LOCAL);
+                pageView.setBackGroundImage(xmlPath + path, ccui.Widget.LOCAL_TEXTURE);
                 break;
             }
 
             case 1:
             {
                 cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
-                pageView.setBackGroundImage(path, ccui.Widget.TextureResType.PLIST);
+                pageView.setBackGroundImage(path, ccui.Widget.PLIST_TEXTURE);
                 break;
             }
 

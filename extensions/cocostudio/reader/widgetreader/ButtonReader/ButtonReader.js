@@ -120,9 +120,9 @@ ccs.ButtonReader = /** @lends ccs.ButtonReader# */{
         var cr = options["textColorR"];
         var cg = options["textColorG"];
         var cb = options["textColorB"];
-        var cri = cr?options["textColorR"]:255;
-        var cgi = cg?options["textColorG"]:255;
-        var cbi = cb?options["textColorB"]:255;
+        var cri = cr!==null?options["textColorR"]:255;
+        var cgi = cg!==null?options["textColorG"]:255;
+        var cbi = cb!==null?options["textColorB"]:255;
     
         button.setTitleColor(cc.color(cri,cgi,cbi));
         var fs = options["fontSize"];
@@ -135,44 +135,44 @@ ccs.ButtonReader = /** @lends ccs.ButtonReader# */{
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-            ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+            ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
     
             var button = widget;
-            var options = nodeTree.buttonoptions();
+            var options = nodeTree.buttonOptions;
     
             var protocolBuffersPath = ccs.uiReader.getFilePath();
     
-            var scale9Enable = options.scale9enable();
+            var scale9Enable = options.scale9Enable;
             button.setScale9Enabled(scale9Enable);
     
     
-    		var normalDic = options.normaldata();
-            var normalType = normalDic.resourcetype();
+    		var normalDic = options.normalData;
+            var normalType = normalDic.resourceType;
     		if (normalType == 1)
     		{
-    			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + normalDic.plistfile());
+    			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + normalDic.plistFile);
     		}
-            var normalTexturePath = this.getResourcePath(normalDic.path(), normalType);
+            var normalTexturePath = ccs.WidgetReader.getResourcePath(normalDic.path, normalType);
             button.loadTextureNormal(normalTexturePath, normalType);
     
     
-            var pressedDic = options.presseddata();
-            var pressedType = pressedDic.resourcetype();
+            var pressedDic = options.pressedData;
+            var pressedType = pressedDic.resourceType;
     		if (pressedType == 1)
     		{
-    			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + pressedDic.plistfile());
+    			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + pressedDic.plistFile);
     		}
-            var pressedTexturePath = this.getResourcePath(pressedDic.path(), pressedType);
+            var pressedTexturePath = ccs.WidgetReader.getResourcePath(pressedDic.path, pressedType);
             button.loadTexturePressed(pressedTexturePath, pressedType);
     
     
-            var disabledDic = options.disableddata();
-            var disabledType = disabledDic.resourcetype();
+            var disabledDic = options.disabledData;
+            var disabledType = disabledDic.resourceType;
     		if (disabledType == 1)
     		{
-    			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + disabledDic.plistfile());
+    			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + disabledDic.plistFile);
     		}
-            var disabledTexturePath = this.getResourcePath(disabledDic.path(), disabledType);
+            var disabledTexturePath = ccs.WidgetReader.getResourcePath(disabledDic.path, disabledType);
             button.loadTextureDisabled(disabledTexturePath, disabledType);
     
             if (scale9Enable)
@@ -180,64 +180,58 @@ ccs.ButtonReader = /** @lends ccs.ButtonReader# */{
                 button.setUnifySizeEnabled(false);
                 button.ignoreContentAdaptWithSize(false);
     
-                var cx = options.capinsetsx();
-                var cy = options.capinsetsy();
-                var cw = options.capinsetswidth();
-                var ch = options.capinsetsheight();
+                var cx = options.capInsetsX;
+                var cy = options.capInsetsY;
+                var cw = options.capInsetsWidth;
+                var ch = options.capInsetsHeight;
     
-                button.setCapInsets(Rect(cx, cy, cw, ch));
-                var sw = options.has_scale9width();
-                var sh = options.has_scale9height();
+                button.setCapInsets(cc.rect(cx, cy, cw, ch));
+                var sw = options.scale9Width;
+                var sh = options.scale9Height;
                 if (sw && sh)
                 {
-                    var swf = options.scale9width();
-                    var shf = options.scale9height();
-                    button.setContentSize(cc.size(swf, shf));
+                    button.setContentSize(cc.size(sw, sh));
                 }
             }
-            var tt = options.has_text();
+            var tt = options.text;
             if (tt)
             {
-                var text = options.text();
-                if (text)
-                {
-                    button.setTitleText(text);
-                }
+                button.setTitleText(tt);
             }
     
     
-            var cri = options.has_textcolorr() ? options.textcolorr() : 255;
-            var cgi = options.has_textcolorg() ? options.textcolorg() : 255;
-            var cbi = options.has_textcolorb() ? options.textcolorb() : 255;
+            var cri = options.textColorR!==null ? options.textColorR : 255;
+            var cgi = options.textColorG!==null ? options.textColorG : 255;
+            var cbi = options.textColorB!==null ? options.textColorB : 255;
             button.setTitleColor(cc.color(cri,cgi,cbi));
     
     
-            var fontSize = options.has_fontsize() ? options.fontsize() : 14;
+            var fontSize = options.fontSize!==null ? options.fontSize : 14;
             button.setTitleFontSize(fontSize);
     
     		var displaystate = true;
-    		if(options.has_displaystate())
+    		if(options.displaystate!==null)
     		{
-    			displaystate = options.displaystate();
+    			displaystate = options.displaystate;
     		}
     		button.setBright(displaystate);
     
-            var fontName = options.has_fontname() ? options.fontname() : "微软雅黑";
+            var fontName = options.fontName!==null ? options.fontName : "微软雅黑";
             button.setTitleFontName(fontName);
     
-            if (options.has_fontresource())
+            if (options.fontResource)
     		{
-    			var resourceData = options.fontresource();
-    		    button.setTitleFontName(protocolBuffersPath + resourceData.path());
+    			var resourceData = options.fontResource;
+    		    button.setTitleFontName(protocolBuffersPath + resourceData.path);
     		}
     
-            var widgetOption = nodeTree.widgetoptions();
-            button.setColor(cc.color(widgetOption.colorr(), widgetOption.colorg(), widgetOption.colorb()));
-            button.setOpacity(widgetOption.has_alpha() ? widgetOption.alpha() : 255);
+            var widgetOption = nodeTree.widgetOptions;
+            button.setColor(cc.color(widgetOption.colorR, widgetOption.colorG, widgetOption.colorB));
+            button.setOpacity(widgetOption.Alpha!==null ? widgetOption.Alpha : 255);
     
     
             // other commonly protperties
-            ccs.WidgetReader.prototype.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+            ccs.WidgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     },
 
     setPropsFromXML: function(widget, objectData){
@@ -417,14 +411,14 @@ ccs.ButtonReader = /** @lends ccs.ButtonReader# */{
                     {
                         case 0:
                         {
-                            button.loadTextureDisabled(xmlPath + path, Widget.TextureResType.LOCAL);
+                            button.loadTextureDisabled(xmlPath + path, ccui.Widget.LOCAL_TEXTURE);
                             break;
                         }
     
                         case 1:
                         {
                             SpriteFrameCache.getInstance().addSpriteFramesWithFile(xmlPath + plistFile);
-                            button.loadTextureDisabled(path, Widget.TextureResType.PLIST);
+                            button.loadTextureDisabled(path, ccui.Widget.PLIST_TEXTURE);
                             break;
                         }
     
@@ -463,14 +457,14 @@ ccs.ButtonReader = /** @lends ccs.ButtonReader# */{
                     {
                         case 0:
                         {
-                            button.loadTexturePressed(xmlPath + path, Widget.TextureResType.LOCAL);
+                            button.loadTexturePressed(xmlPath + path, ccui.Widget.LOCAL_TEXTURE);
                             break;
                         }
     
                         case 1:
                         {
                             cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
-                            button.loadTexturePressed(path, Widget.TextureResType.PLIST);
+                            button.loadTexturePressed(path, ccui.Widget.PLIST_TEXTURE);
                             break;
                         }
     
@@ -509,14 +503,14 @@ ccs.ButtonReader = /** @lends ccs.ButtonReader# */{
                     {
                         case 0:
                         {
-                            button.loadTextureNormal(xmlPath + path, Widget.TextureResType.LOCAL);
+                            button.loadTextureNormal(xmlPath + path, ccui.Widget.LOCAL_TEXTURE);
                             break;
                         }
     
                         case 1:
                         {
                             cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
-                            button.loadTextureNormal(path, Widget.TextureResType.PLIST);
+                            button.loadTextureNormal(path, ccui.Widget.PLIST_TEXTURE);
                             break;
                         }
     

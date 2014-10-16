@@ -63,13 +63,13 @@ ccs.ScrollViewReader = /** @lends ccs.ScrollViewReader# */{
 
 
         var scrollView = widget;
-		var options = nodeTree.scrollviewoptions();
+		var options = nodeTree.scrollviewOptions;
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
-        scrollView.setClippingEnabled(options.clipable());
+        scrollView.setClippingEnabled(options.clipAble);
 
-        var backGroundScale9Enable = options.backgroundscale9enable();
+        var backGroundScale9Enable = options.backGroundScale9Enable;
         scrollView.setBackGroundImageScale9Enabled(backGroundScale9Enable);
 
 
@@ -85,77 +85,75 @@ ccs.ScrollViewReader = /** @lends ccs.ScrollViewReader# */{
 
 
 
-        cr = options.has_bgcolorr() ? options.bgcolorr() : 255;
-        cg = options.has_bgcolorg() ? options.bgcolorg() : 150;
-        cb = options.has_bgcolorb() ? options.bgcolorb() : 100;
+        cr = options.bgColorR!==null ? options.bgColorR : 255;
+        cg = options.bgColorG!==null ? options.bgColorG : 150;
+        cb = options.bgColorB!==null ? options.bgColorB : 100;
 
-        scr = options.has_bgstartcolorr() ? options.bgstartcolorr() : 255;
-        scg = options.has_bgstartcolorg() ? options.bgstartcolorg() : 255;
-        scb = options.has_bgstartcolorb() ? options.bgstartcolorb() : 255;
+        scr = options.bgStartColorR!==null ? options.bgStartColorR : 255;
+        scg = options.bgStartColorG!==null ? options.bgStartColorG : 255;
+        scb = options.bgStartColorB!==null ? options.bgStartColorB : 255;
 
-        ecr = options.has_bgendcolorr() ? options.bgendcolorr() : 255;
-        ecg = options.has_bgendcolorg() ? options.bgendcolorg() : 150;
-        ecb = options.has_bgendcolorb() ? options.bgendcolorb() : 100;
+        ecr = options.bgEndColorR!==null ? options.bgEndColorR : 255;
+        ecg = options.bgEndColorG!==null ? options.bgEndColorG : 150;
+        ecb = options.bgEndColorB!==null ? options.bgEndColorB : 100;
 
 		var bgcv1 = 0;
         var bgcv2 = -0.5;
-		if(options.has_vectorx())
+		if(options.vectorX)
 		{
-			bgcv1 = options.vectorx();
+			bgcv1 = options.vectorX;
 		}
-		if(options.has_vectory())
+		if(options.vectorY!==null)
 		{
-			bgcv2 = options.vectory();
+			bgcv2 = options.vectorY;
 		}
         scrollView.setBackGroundColorVector(cc.p(bgcv1, bgcv2));
 
-        var co = options.has_bgcoloropacity() ? options.bgcoloropacity() : 100;
+        var co = options.bgColorOpacity!==null ? options.bgColorOpacity : 100;
 
-        var colorType = options.has_colortype() ? options.colortype() : 1;
-        scrollView.setBackGroundColorType(Layout.BackGroundColorType(colorType));
+        var colorType = options.colorType ? options.colorType : 1;
+        scrollView.setBackGroundColorType(colorType);
 
-        scrollView.setBackGroundColor(cc.color(scr, scg, scb),Color3B(ecr, ecg, ecb));
+        scrollView.setBackGroundColor(cc.color(scr, scg, scb),cc.color(ecr, ecg, ecb));
         scrollView.setBackGroundColor(cc.color(cr, cg, cb));
         scrollView.setBackGroundColorOpacity(co);
 
 
-		var imageFileNameDic = options.backgroundimagedata();
-        var imageFileNameType = imageFileNameDic.resourcetype();
+		var imageFileNameDic = options.backGroundImageData;
+        var imageFileNameType = imageFileNameDic.resourceType;
 		if (imageFileNameType == 1)
 		{
-			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + imageFileNameDic.plistfile());
+			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
 		}
-        var imageFileName = this.getResourcePath(imageFileNameDic.path(), imageFileNameType);
+        var imageFileName = ccs.WidgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
         scrollView.setBackGroundImage(imageFileName, imageFileNameType);
 
 
         if (backGroundScale9Enable)
         {
-            var cx = options.capinsetsx();
-            var cy = options.capinsetsy();
-            var cw = options.has_capinsetswidth() ? options.capinsetswidth() : 1;
-            var ch = options.has_capinsetsheight() ? options.capinsetsheight() : 1;
+            var cx = options.capInsetsX;
+            var cy = options.capInsetsY;
+            var cw = options.capInsetsWidth!==null ? options.capInsetsWidth : 1;
+            var ch = options.capInsetsHeight!==null ? options.capInsetsHeight : 1;
             scrollView.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
-            var sw = options.has_scale9width();
-            var sh = options.has_scale9height();
+            var sw = options.scale9Width;
+            var sh = options.scale9Height;
             if (sw && sh)
             {
-                var swf = options.scale9width();
-                var shf = options.scale9height();
-                scrollView.setContentSize(cc.size(swf, shf));
+                scrollView.setContentSize(cc.size(sw, sh));
             }
         }
 
-        scrollView.setLayoutType(options.layouttype());
+        scrollView.setLayoutType(options.layoutType);
 
-        var widgetOptions = nodeTree.widgetoptions();
+        var widgetOptions = nodeTree.widgetOptions;
 
-        var red = widgetOptions.has_colorr() ? widgetOptions.colorr() : 255;
-        var green = widgetOptions.has_colorg() ? widgetOptions.colorg() : 255;
-        var blue = widgetOptions.has_colorb() ? widgetOptions.colorb() : 255;
+        var red = widgetOptions.colorR!==null ? widgetOptions.colorR : 255;
+        var green = widgetOptions.colorG ? widgetOptions.colorG : 255;
+        var blue = widgetOptions.colorB ? widgetOptions.colorB : 255;
         scrollView.setColor(cc.color(red, green, blue));
 
-        var opacity = widgetOptions.has_alpha() ? widgetOptions.alpha() : 255;
+        var opacity = widgetOptions.Alpha!==null ? widgetOptions.Alpha : 255;
         scrollView.setOpacity(opacity);
 
 //        var bgimgcr = widgetOptions.has_colorr() ? widgetOptions.colorr() : 255;
@@ -169,19 +167,19 @@ ccs.ScrollViewReader = /** @lends ccs.ScrollViewReader# */{
 
 
 
-        var innerWidth = options.has_innerwidth() ? options.innerwidth() : 200;
-        var innerHeight = options.has_innerheight() ? options.innerheight() : 200;
+        var innerWidth = options.innerWidth!==null ? options.innerWidth : 200;
+        var innerHeight = options.innerHeight!==null ? options.innerHeight : 200;
         scrollView.setInnerContainerSize(cc.size(innerWidth, innerHeight));
-        var direction = options.has_direction() ? options.direction() : 1;
+        var direction = options.direction!==null ? options.direction : 1;
         scrollView.setDirection(direction);
-        scrollView.setBounceEnabled(options.bounceenable());
+        scrollView.setBounceEnabled(options.bounceenAble);
 
 
         // other commonly protperties
-        this.setAnchorPointForWidget(widget, nodeTree);
+        ccs.WidgetReader.setAnchorPointForWidget(widget, nodeTree);
 
-        var flipX = widgetOptions.flipx();
-        var flipY = widgetOptions.flipy();
+        var flipX = widgetOptions.flipX;
+        var flipY = widgetOptions.flipY;
         widget.setFlippedX(flipX);
         widget.setFlippedY(flipY);
     },
@@ -504,14 +502,14 @@ ccs.ScrollViewReader = /** @lends ccs.ScrollViewReader# */{
         {
             case 0:
             {
-                scrollView.setBackGroundImage(xmlPath + path, ccui.Widget.TextureResType.LOCAL);
+                scrollView.setBackGroundImage(xmlPath + path, ccui.Widget.LOCAL_TEXTURE);
                 break;
             }
 
             case 1:
             {
                 cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
-                scrollView.setBackGroundImage(path, ccui.Widget.TextureResType.PLIST);
+                scrollView.setBackGroundImage(path, ccui.Widget.PLIST_TEXTURE);
                 break;
             }
 

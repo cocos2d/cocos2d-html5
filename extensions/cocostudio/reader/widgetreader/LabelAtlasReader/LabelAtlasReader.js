@@ -76,35 +76,35 @@ ccs.LabelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-        ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         var jsonPath = ccs.uiReader.getFilePath();
 
         var labelAtlas = widget;
-        var options = nodeTree.textatlasoptions();
+        var options = nodeTree.textatlasOptions;
         //        var sv = DICTOOL.checkObjectExist_json(options, P_StringValue);
         //        var cmf = DICTOOL.checkObjectExist_json(options, P_CharMapFile);
         //        var iw = DICTOOL.checkObjectExist_json(options, P_ItemWidth);
         //        var ih = DICTOOL.checkObjectExist_json(options, P_ItemHeight);
         //        var scm = DICTOOL.checkObjectExist_json(options, P_StartCharMap);
 
-        var cmftDic = options.charmapfiledata();
-        var cmfType = cmftDic.resourcetype();
+        var cmftDic = options.charmapFileData;
+        var cmfType = cmftDic.resourceType;
         switch (cmfType)
         {
             case 0:
             {
                 var tp_c = jsonPath;
-                var cmfPath = cmftDic.path().c_str();
-                var cmf_tp = tp_c.append(cmfPath).c_str();
-                var stringValue = options.has_stringvalue() ? options.stringvalue() : "12345678";
-                var itemWidth = options.has_itemwidth() ? options.itemwidth() : 24;
-                var itemHeight = options.has_itemheight() ? options.itemheight() : 32;
+                var cmfPath = cmftDic.path;
+                var cmf_tp = tp_c.append(cmfPath);
+                var stringValue = options.stringValue!==null ? options.stringValue : "12345678";
+                var itemWidth = options.itemWidth!==null ? options.itemWidth : 24;
+                var itemHeight = options.has_itemheight ? options.itemHeight : 32;
                 labelAtlas.setProperty(stringValue,
                                         cmf_tp,
                                         itemWidth,
                                         itemHeight,
-                                        options.startcharmap().c_str());
+                                        options.startCharmap);
                 break;
             }
             case 1:
@@ -116,11 +116,11 @@ ccs.LabelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
 
 
         // other commonly protperties
-        ccs.WidgetReader.prototype.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.WidgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     },
 
     setPropsFromXML: function(widget, objectData){
-        ccs.WidgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+        ccs.WidgetReader.setPropsFromXML.call(this, widget, objectData);
 
         var labelAtlas = widget;
 

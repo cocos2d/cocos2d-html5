@@ -129,16 +129,16 @@ ccs.LayoutReader = /** @lends ccs.LayoutReader# */{
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-        ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         var panel = widget;
-		var options = nodeTree.paneloptions();
+		var options = nodeTree.PanelOptions;
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
-        panel.setClippingEnabled(options.clipable());
+        panel.setClippingEnabled(options.clipAble);
 
-        var backGroundScale9Enable = options.backgroundscale9enable();
+        var backGroundScale9Enable = options.backGroundScale9Enable;
         panel.setBackGroundImageScale9Enabled(backGroundScale9Enable);
 
 
@@ -154,121 +154,133 @@ ccs.LayoutReader = /** @lends ccs.LayoutReader# */{
 
         if (widget instanceof ccui.PageView)
         {
-            cr = options.has_bgcolorr() ? options.bgcolorr() : 150;
-            cg = options.has_bgcolorg() ? options.bgcolorg() : 150;
-            cb = options.has_bgcolorb() ? options.bgcolorb() : 150;
+            cr = 150;
+            cg = 150;
+            cb = 150;
 
-            scr = options.has_bgstartcolorr() ? options.bgstartcolorr() : 255;
-            scg = options.has_bgstartcolorg() ? options.bgstartcolorg() : 255;
-            scb = options.has_bgstartcolorb() ? options.bgstartcolorb() : 255;
+            scr = 255;
+            scg = 255;
+            scb = 255;
 
-            ecr = options.has_bgendcolorr() ? options.bgendcolorr() : 255;
-            ecg = options.has_bgendcolorg() ? options.bgendcolorg() : 150;
-            ecb = options.has_bgendcolorb() ? options.bgendcolorb() : 100;
+            ecr = 255;
+            ecg = 150;
+            ecb = 100;
         }
         else if(widget instanceof ccui.ListView)
         {
-            cr = options.has_bgcolorr() ? options.bgcolorr() : 150;
-            cg = options.has_bgcolorg() ? options.bgcolorg() : 150;
-            cb = options.has_bgcolorb() ? options.bgcolorb() : 255;
+            cr = 150;
+            cg = 150;
+            cb = 255;
 
-            scr = options.has_bgstartcolorr() ? options.bgstartcolorr() : 255;
-            scg = options.has_bgstartcolorg() ? options.bgstartcolorg() : 255;
-            scb = options.has_bgstartcolorb() ? options.bgstartcolorb() : 255;
+            scr = 255;
+            scg = 255;
+            scb = 255;
 
-            ecr = options.has_bgendcolorr() ? options.bgendcolorr() : 150;
-            ecg = options.has_bgendcolorg() ? options.bgendcolorg() : 150;
-            ecb = options.has_bgendcolorb() ? options.bgendcolorb() : 255;
+            ecr = 150;
+            ecg = 150;
+            ecb = 255;
         }
         else if(widget instanceof ccui.ScrollView)
         {
-            cr = options.has_bgcolorr() ? options.bgcolorr() : 255;
-            cg = options.has_bgcolorg() ? options.bgcolorg() : 150;
-            cb = options.has_bgcolorb() ? options.bgcolorb() : 100;
+            cr = 255;
+            cg = 150;
+            cb = 100;
 
-            scr = options.has_bgstartcolorr() ? options.bgstartcolorr() : 255;
-            scg = options.has_bgstartcolorg() ? options.bgstartcolorg() : 255;
-            scb = options.has_bgstartcolorb() ? options.bgstartcolorb() : 255;
+            scr = 255;
+            scg = 255;
+            scb = 255;
 
-            ecr = options.has_bgendcolorr() ? options.bgendcolorr() : 255;
-            ecg = options.has_bgendcolorg() ? options.bgendcolorg() : 150;
-            ecb = options.has_bgendcolorb() ? options.bgendcolorb() : 100;
+            ecr = 255;
+            ecg = 150;
+            ecb = 100;
         }
         else
         {
-            cr = options.has_bgcolorr() ? options.bgcolorr() : 150;
-            cg = options.has_bgcolorg() ? options.bgcolorg() : 200;
-            cb = options.has_bgcolorb() ? options.bgcolorb() : 255;
+            cr = 150;
+            cg = 200;
+            cb = 255;
 
-            scr = options.has_bgstartcolorr() ? options.bgstartcolorr() : 255;
-            scg = options.has_bgstartcolorg() ? options.bgstartcolorg() : 255;
-            scb = options.has_bgstartcolorb() ? options.bgstartcolorb() : 255;
+            scr = 255;
+            scg = 255;
+            scb = 255;
 
-            ecr = options.has_bgendcolorr() ? options.bgendcolorr() : 150;
-            ecg = options.has_bgendcolorg() ? options.bgendcolorg() : 200;
-            ecb = options.has_bgendcolorb() ? options.bgendcolorb() : 255;
+            ecr = 150;
+            ecg = 200;
+            ecb = 255;
         }
+
+        cr = options.bgColorR!==null ? options.bgColorR : cr;
+        cg = options.bgColorG!==null ? options.bgColorG : cg;
+        cb = options.bgColorB!==null ? options.bgColorB : cb;
+
+        scr = options.bgStartColorR!==null ? options.bgStartColorR : scr;
+        scg = options.bgStartColorG!==null ? options.bgStartColorG : scg;
+        scb = options.bgStartColorB!==null ? options.bgStartColorB : scb;
+
+        ecr = options.bgEndColorR!==null ? options.bgEndColorR : ecr;
+        ecg = options.bgEndColorG!==null ? options.bgEndColorG : ecg;
+        ecb = options.bgEndColorB!==null ? options.bgEndColorB : ecb;
 
         var bgcv1 = 0;
         var bgcv2 = -0.5;
-		if(options.has_vectorx())
+		if(options.vectorX!==null)
 		{
-			bgcv1 = options.vectorx();
+			bgcv1 = options.vectorX;
 		}
-		if(options.has_vectory())
+		if(options.vectorY)
 		{
-			bgcv2 = options.vectory();
+			bgcv2 = options.vectorY;
 		}
         panel.setBackGroundColorVector(cc.p(bgcv1, bgcv2));
 
-        var co = options.has_bgcoloropacity() ? options.bgcoloropacity() : 100;
+        var co = options.bgColorOpacity!==null ? options.bgColorOpacity : 100;
 
-        var colorType = options.has_colortype() ? options.colortype() : 1;
-        panel.setBackGroundColorType(Layout.BackGroundColorType(colorType));
+        var colorType = options.colorType!==null ? options.colorType : 1;
+        panel.setBackGroundColorType(colorType);
 
         panel.setBackGroundColor(cc.color(scr, scg, scb),cc.color(ecr, ecg, ecb));
         panel.setBackGroundColor(cc.color(cr, cg, cb));
         panel.setBackGroundColorOpacity(co);
 
 
-		var imageFileNameDic = options.backgroundimagedata();
-        var imageFileNameType = imageFileNameDic.resourcetype();
-		if (imageFileNameType == 1)
-		{
-			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + imageFileNameDic.plistfile());
-		}
-        var imageFileName = this.getResourcePath(imageFileNameDic.path(), imageFileNameType);
-        panel.setBackGroundImage(imageFileName, imageFileNameType);
+		var imageFileNameDic = options.backGroundImageData;
+        if(imageFileNameDic){
+            var imageFileNameType = imageFileNameDic.resourceType;
+            if (imageFileNameType == 1)
+            {
+                cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
+            }
+            var imageFileName = ccs.WidgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
+            panel.setBackGroundImage(imageFileName, imageFileNameType);
+        }
 
 
         if (backGroundScale9Enable)
         {
-            var cx = options.capinsetsx();
-            var cy = options.capinsetsy();
-            var cw = options.has_capinsetswidth() ? options.capinsetswidth() : 1;
-            var ch = options.has_capinsetsheight() ? options.capinsetsheight() : 1;
+            var cx = options.capInsetsX;
+            var cy = options.capInsetsY;
+            var cw = options.capInsetsWidth!==null ? options.capInsetsWidth : 1;
+            var ch = options.capInsetsHeight!==null ? options.capInsetsHeight : 1;
             panel.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
 
-            var sw = options.has_scale9width();
-            var sh = options.has_scale9height();
+            var sw = options.scale9Width;
+            var sh = options.scale9Height;
             if (sw && sh)
             {
-                var swf = options.scale9width();
-                var shf = options.scale9height();
-                panel.setContentSize(cc.size(swf, shf));
+                panel.setContentSize(cc.size(sw, sh));
             }
         }
 
-        panel.setLayoutType(options.layouttype());
+        panel.setLayoutType(options.layoutType);
 
-        var widgetOptions = nodeTree.widgetoptions();
+        var widgetOptions = nodeTree.widgetOptions;
 
-        var red = widgetOptions.has_colorr() ? widgetOptions.colorr() : 255;
-        var green = widgetOptions.has_colorg() ? widgetOptions.colorg() : 255;
-        var blue = widgetOptions.has_colorb() ? widgetOptions.colorb() : 255;
+        var red = widgetOptions.colorR!==null ? widgetOptions.colorR : 255;
+        var green = widgetOptions.colorG!==null ? widgetOptions.colorG : 255;
+        var blue = widgetOptions.colorB!==null ? widgetOptions.colorB : 255;
         panel.setColor(cc.color(red, green, blue));
 
-        var opacity = widgetOptions.has_alpha() ? widgetOptions.alpha() : 255;
+        var opacity = widgetOptions.Alpha!==null ? widgetOptions.alpha : 255;
         panel.setOpacity(opacity);
 
 //        var bgimgcr = widgetOptions.has_colorr() ? widgetOptions.colorr() : 255;
@@ -281,16 +293,16 @@ ccs.LayoutReader = /** @lends ccs.LayoutReader# */{
 
 
         // other commonly protperties
-        this.setAnchorPointForWidget(widget, nodeTree);
+        ccs.WidgetReader._setAnchorPointForWidget(widget, nodeTree);
 
-        var flipX = widgetOptions.flipx();
-        var flipY = widgetOptions.flipy();
+        var flipX = widgetOptions.flipX;
+        var flipY = widgetOptions.flipY;
         widget.setFlippedX(flipX);
         widget.setFlippedY(flipY);
     },
 
     setPropsFromXML: function(widget, objectData){
-        ccs.WidgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+        ccs.WidgetReader.setPropsFromXML.call(this, widget, objectData);
 
         var panel = widget;
 
@@ -564,14 +576,14 @@ ccs.LayoutReader = /** @lends ccs.LayoutReader# */{
         {
             case 0:
             {
-                panel.setBackGroundImage(xmlPath + path, ccui.Widget.TextureResType.LOCAL);
+                panel.setBackGroundImage(xmlPath + path, ccui.Widget.PLIST_TEXTURE);
                 break;
             }
 
             case 1:
             {
                 cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
-                panel.setBackGroundImage(path, ccui.Widget.TextureResType.PLIST);
+                panel.setBackGroundImage(path, ccui.Widget.PLIST_TEXTURE);
                 break;
             }
 

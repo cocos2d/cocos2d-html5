@@ -93,74 +93,74 @@ ccs.CheckBoxReader = /** @lends ccs.CheckBoxReader# */{
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-        ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         var checkBox = widget;
-        var options = nodeTree.checkboxoptions();
+        var options = nodeTree.checkboxOptions;
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
         //load background image
-		var  backGroundDic = options.backgroundboxdata();
-        var backGroundType = backGroundDic.resourcetype();
+		var  backGroundDic = options.backGroundBoxData;
+        var backGroundType = backGroundDic.resourceType;
 		if (backGroundType == 1)
 		{
-			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + backGroundDic.plistfile());
+			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + backGroundDic.plistFile);
 		}
-        var backGroundTexturePath = this.getResourcePath(backGroundDic.path(), backGroundType);
+        var backGroundTexturePath = ccs.WidgetReader.getResourcePath(backGroundDic.path, backGroundType);
         checkBox.loadTextureBackGround(backGroundTexturePath, backGroundType);
 
         //load background selected image
-        var  backGroundSelectedDic = options.backgroundboxselecteddata();
-        var backGroundSelectedType = backGroundSelectedDic.resourcetype();
+        var  backGroundSelectedDic = options.backGroundBoxSelectedData;
+        var backGroundSelectedType = backGroundSelectedDic.resourceType;
 		if (backGroundSelectedType == 1)
 		{
-			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + backGroundSelectedDic.plistfile());
+			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + backGroundSelectedDic.plistFile);
 		}
-        var backGroundSelectedTexturePath = this.getResourcePath(backGroundSelectedDic.path(), backGroundSelectedType);
+        var backGroundSelectedTexturePath = ccs.WidgetReader.getResourcePath(backGroundSelectedDic.path, backGroundSelectedType);
         checkBox.loadTextureBackGroundSelected(backGroundSelectedTexturePath, backGroundSelectedType);
 
         //load frontCross image
-        var  frontCrossDic = options.frontcrossdata();
-        var frontCrossType = frontCrossDic.resourcetype();
+        var  frontCrossDic = options.frontCrossData;
+        var frontCrossType = frontCrossDic.resourceType;
 		if (frontCrossType == 1)
 		{
-			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + frontCrossDic.plistfile());
+			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + frontCrossDic.plistFile);
 		}
-        var frontCrossFileName = this.getResourcePath(frontCrossDic.path(), frontCrossType);
+        var frontCrossFileName = ccs.WidgetReader.getResourcePath(frontCrossDic.path, frontCrossType);
         checkBox.loadTextureFrontCross(frontCrossFileName, frontCrossType);
 
         //load backGroundBoxDisabledData
-        var  backGroundDisabledDic = options.backgroundboxdisableddata();
-        var backGroundDisabledType = backGroundDisabledDic.resourcetype();
+        var  backGroundDisabledDic = options.backGroundBoxDisabledData;
+        var backGroundDisabledType = backGroundDisabledDic.resourceType;
 		if (backGroundDisabledType == 1)
 		{
-			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + backGroundDisabledDic.plistfile());
+			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + backGroundDisabledDic.plistFile);
 		}
-        var backGroundDisabledFileName = this.getResourcePath(backGroundDisabledDic.path(), backGroundDisabledType);
+        var backGroundDisabledFileName = ccs.WidgetReader.getResourcePath(backGroundDisabledDic.path, backGroundDisabledType);
         checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName, backGroundDisabledType);
 
         ///load frontCrossDisabledData
-        var  frontCrossDisabledDic = options.frontcrossdisableddata();
-        var frontCrossDisabledType = frontCrossDisabledDic.resourcetype();
+        var  frontCrossDisabledDic = options.frontCrossDisabledData;
+        var frontCrossDisabledType = frontCrossDisabledDic.resourceType;
 		if (frontCrossDisabledType == 1)
 		{
-			cc.SpriteFrameCache.addSpriteFramesWithFile(protocolBuffersPath + frontCrossDisabledDic.plistfile());
+			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + frontCrossDisabledDic.plistFile);
 		}
-        var frontCrossDisabledFileName = this.getResourcePath(frontCrossDisabledDic.path(), frontCrossDisabledType);
+        var frontCrossDisabledFileName = ccs.WidgetReader.getResourcePath(frontCrossDisabledDic.path, frontCrossDisabledType);
         checkBox.loadTextureFrontCrossDisabled(frontCrossDisabledFileName, frontCrossDisabledType);
 
-        checkBox.setSelectedState(options.selectedstate());
+        checkBox.setSelectedState(options.selectedState);
 
 		var displaystate = true;
-		if(options.has_displaystate())
+		if(options.displaystate!==null)
 		{
-			displaystate = options.displaystate();
+			displaystate = options.displaystate;
 		}
 		checkBox.setBright(displaystate);
 
         // other commonly protperties
-        ccs.WidgetReader.prototype.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.WidgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     },
 
     setPropsFromXML: function(widget, objectData){
@@ -232,14 +232,14 @@ ccs.CheckBoxReader = /** @lends ccs.CheckBoxReader# */{
                 {
                     case 0:
                     {
-                        checkBox.loadTextureBackGround(xmlPath + path, ccui.Widget.TextureResType.LOCAL);
+                        checkBox.loadTextureBackGround(xmlPath + path, ccui.Widget.LOCAL_TEXTURE);
                         break;
                     }
 
                     case 1:
                     {
                         cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
-                        checkBox.loadTextureBackGround(path, ccui.Widget.TextureResType.PLIST);
+                        checkBox.loadTextureBackGround(path, ccui.Widget.PLIST_TEXTURE);
                         break;
                     }
 
@@ -278,14 +278,14 @@ ccs.CheckBoxReader = /** @lends ccs.CheckBoxReader# */{
                 {
                     case 0:
                     {
-                        checkBox.loadTextureBackGroundSelected(xmlPath + path, ccui.Widget.TextureResType.LOCAL);
+                        checkBox.loadTextureBackGroundSelected(xmlPath + path, ccui.Widget.LOCAL_TEXTURE);
                         break;
                     }
 
                     case 1:
                     {
                         cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
-                        checkBox.loadTextureBackGroundSelected(path, ccui.Widget.TextureResType.PLIST);
+                        checkBox.loadTextureBackGroundSelected(path, ccui.Widget.PLIST_TEXTURE);
                         break;
                     }
 
@@ -324,14 +324,14 @@ ccs.CheckBoxReader = /** @lends ccs.CheckBoxReader# */{
                 {
                     case 0:
                     {
-                        checkBox.loadTextureFrontCross(xmlPath + path, ccui.Widget.TextureResType.LOCAL);
+                        checkBox.loadTextureFrontCross(xmlPath + path, ccui.Widget.LOCAL_TEXTURE);
                         break;
                     }
 
                     case 1:
                     {
                         cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
-                        checkBox.loadTextureFrontCross(path, ccui.Widget.TextureResType.PLIST);
+                        checkBox.loadTextureFrontCross(path, ccui.Widget.PLIST_TEXTURE);
                         break;
                     }
 
@@ -370,14 +370,14 @@ ccs.CheckBoxReader = /** @lends ccs.CheckBoxReader# */{
                 {
                     case 0:
                     {
-                        checkBox.loadTextureBackGroundDisabled(xmlPath + path, ccui.Widget.TextureResType.LOCAL);
+                        checkBox.loadTextureBackGroundDisabled(xmlPath + path, ccui.Widget.LOCAL_TEXTURE);
                         break;
                     }
 
                     case 1:
                     {
                         cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
-                        checkBox.loadTextureBackGroundDisabled(path, ccui.Widget.TextureResType.PLIST);
+                        checkBox.loadTextureBackGroundDisabled(path, ccui.Widget.PLIST_TEXTURE);
                         break;
                     }
 
@@ -416,14 +416,14 @@ ccs.CheckBoxReader = /** @lends ccs.CheckBoxReader# */{
                 {
                     case 0:
                     {
-                        checkBox.loadTextureFrontCrossDisabled(xmlPath + path, ccui.Widget.TextureResType.LOCAL);
+                        checkBox.loadTextureFrontCrossDisabled(xmlPath + path, ccui.Widget.LOCAL_TEXTURE);
                         break;
                     }
 
                     case 1:
                     {
                         cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
-                        checkBox.loadTextureFrontCrossDisabled(path, ccui.Widget.TextureResType.PLIST);
+                        checkBox.loadTextureFrontCrossDisabled(path, ccui.Widget.PLIST_TEXTURE);
                         break;
                     }
 

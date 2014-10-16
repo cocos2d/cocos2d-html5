@@ -183,73 +183,73 @@ ccs.WidgetReader = /** @lends ccs.WidgetReader# */{
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-        var options = nodeTree.widgetoptions();
+        var options = nodeTree.widgetOptions;
 
         widget.setCascadeColorEnabled(true);
         widget.setCascadeOpacityEnabled(true);
 
         widget.setUnifySizeEnabled(true);
 
-        var ignoreSizeExsit = options.has_ignoresize();
+        var ignoreSizeExsit = options.ignoreSize;
         if (ignoreSizeExsit)
         {
-            widget.ignoreContentAdaptWithSize(options.ignoresize());
+            widget.ignoreContentAdaptWithSize(options.ignoreSize);
         }
 
-        widget.setSizeType(options.sizetype());
-        widget.setPositionType(options.positiontype());
+        widget.setSizeType(options.sizeType);
+        widget.setPositionType(options.positionType);
 
-        widget.setSizePercent(cc.p(options.sizepercentx(), options.sizepercenty()));
-        widget.setPositionPercent(cc.p(options.positionpercentx(), options.positionpercenty()));
+        widget.setSizePercent(cc.p(options.sizePercentX, options.sizePercentY));
+        widget.setPositionPercent(cc.p(options.positionPercentX, options.positionPercentY));
 
-        var w = options.width();
-        var h = options.height();
+        var w = options.width;
+        var h = options.height;
         widget.setContentSize(cc.size(w, h));
 
-        widget.setTag(options.tag());
-        widget.setActionTag(options.actiontag());
-        widget.setTouchEnabled(options.touchable());
-        var name = options.name().c_str();
+        widget.setTag(options.tag);
+        widget.setActionTag(options.actionTag);
+        widget.setTouchEnabled(options.touchAble);
+        var name = options.name;
         var widgetName = name ? name : "default";
         widget.setName(widgetName);
 
-        var x = options.x();
-        var y = options.y();
+        var x = options.x;
+        var y = options.y;
         widget.setPosition(cc.p(x, y));
 
-		if(options.has_alpha())
+		if(options.Alpha)
 		{
-			widget.setOpacity(options.alpha());
+			widget.setOpacity(options.Alpha);
 		}
 
-        widget.setScaleX(options.has_scalex() ? options.scalex() : 1.0);
+        widget.setScaleX(options.scaleX!==null ? options.scaleX : 1);
 
 
-        widget.setScaleY(options.has_scaley() ? options.scaley() : 1.0);
+        widget.setScaleY(options.scaleY!==null ? options.scaleY : 1);
 
 
-//        widget.setRotation(options.has_rotation() ? options.rotation() : 0.0);
+//        widget.setRotation(options.has_rotation ? options.rotation : 0.0);
 
-		widget.setRotationSkewX(options.has_rotationskewx() ? options.rotationskewx() : 0.0);
+		widget.setRotationX(options.rotationSkewX!==null ? options.rotationSkewX : 0.0);
 
-		widget.setRotationSkewY(options.has_rotationskewy() ? options.rotationskewy() : 0.0);
+		widget.setRotationY(options.rotationSkewY!==null ? options.rotationSkewY : 0.0);
 
-        var vb = options.has_visible();
+        var vb = options.visible;
         if (vb)
         {
-            widget.setVisible(options.visible());
+            widget.setVisible(options.visible);
         }
 
-        var z = options.zorder();
+        var z = options.zorder;
         widget.setLocalZOrder(z);
 
 
-        var layout = options.has_layoutparameter();
+        var layout = options.layoutParameter;
         if (layout)
         {
 
-            var layoutParameterDic = options.layoutparameter();;
-            var paramType = layoutParameterDic.type();
+            var layoutParameterDic = options.layoutParameter;
+            var paramType = layoutParameterDic.type;
 
             var parameter = null;
             switch (paramType)
@@ -258,20 +258,20 @@ ccs.WidgetReader = /** @lends ccs.WidgetReader# */{
                     break;
                 case 1:
                 {
-                    parameter = LinearLayoutParameter.create();
-                    var gravity = layoutParameterDic.gravity();
+                    parameter = ccui.LinearLayoutParameter.create();
+                    var gravity = layoutParameterDic.gravity;
                     parameter.setGravity(gravity);
                     break;
                 }
                 case 2:
                 {
-                    parameter = RelativeLayoutParameter.create();
+                    parameter = ccui.RelativeLayoutParameter.create();
                     var rParameter = parameter;
-                    var relativeName = layoutParameterDic.relativename().c_str();
+                    var relativeName = layoutParameterDic.relativeName;
                     rParameter.setRelativeName(relativeName);
-                    var relativeToName = layoutParameterDic.relativetoname().c_str();
+                    var relativeToName = layoutParameterDic.relativeToName;
                     rParameter.setRelativeToWidgetName(relativeToName);
-                    var align = layoutParameterDic.align();
+                    var align = layoutParameterDic.align;
                     rParameter.setAlign(align);
                     break;
                 }
@@ -280,37 +280,37 @@ ccs.WidgetReader = /** @lends ccs.WidgetReader# */{
             }
             if (parameter)
             {
-                var mgl = layoutParameterDic.marginleft();
-                var mgt = layoutParameterDic.margintop();
-                var mgr = layoutParameterDic.marginright();
-                var mgb = layoutParameterDic.margindown();
-                parameter.setMargin(Margin(mgl, mgt, mgr, mgb));
+                var mgl = layoutParameterDic.marginLeft;
+                var mgt = layoutParameterDic.marginTop;
+                var mgr = layoutParameterDic.marginRight;
+                var mgb = layoutParameterDic.marginDown;
+                parameter.setMargin(new ccui.Margin(mgl, mgt, mgr, mgb));
                 widget.setLayoutParameter(parameter);
             }
         }
     },
 
     setColorPropsFromProtocolBuffers: function(widget, nodeTree){
-        var options = nodeTree.widgetoptions();
+        var options = nodeTree.widgetOptions;
 
 
-        var isColorRExists = options.has_colorr();
-        var isColorGExists = options.has_colorg();
-        var isColorBExists = options.has_colorb();
+        var isColorRExists = options.colorR!==null;
+        var isColorGExists = options.colorG!==null;
+        var isColorBExists = options.colorB!==null;
 
-        var colorR = options.colorr();
-        var colorG = options.colorg();
-        var colorB = options.colorb();
+        var colorR = options.colorR;
+        var colorG = options.colorG;
+        var colorB = options.colorB;
 
         if (isColorRExists && isColorGExists && isColorBExists)
         {
             widget.setColor(cc.color(colorR, colorG, colorB));
         }
 
-        this.setAnchorPointForWidget(widget, nodeTree);
+        ccs.WidgetReader.setAnchorPointForWidget(widget, nodeTree);
 
-        var flipX = options.flipx();
-        var flipY = options.flipy();
+        var flipX = options.flipX;
+        var flipY = options.flipY;
         widget.setFlippedX(flipX);
         widget.setFlippedY(flipY);
     },
@@ -530,24 +530,24 @@ ccs.WidgetReader = /** @lends ccs.WidgetReader# */{
     },
 
     setAnchorPointForWidget: function(widget, nodeTree){
-        var options = nodeTree.widgetoptions();
+        var options = nodeTree.widgetOptions;
 
-        var isAnchorPointXExists = options.has_anchorpointx();
+        var isAnchorPointXExists = options.anchorPointX;
         var anchorPointXInFile;
         if (isAnchorPointXExists)
         {
-            anchorPointXInFile = options.anchorpointx();
+            anchorPointXInFile = options.anchorPointX;
         }
         else
         {
             anchorPointXInFile = widget.getAnchorPoint().x;
         }
 
-        var isAnchorPointYExists = options.has_anchorpointy();
+        var isAnchorPointYExists = options.anchorPointY;
         var anchorPointYInFile;
         if (isAnchorPointYExists)
         {
-            anchorPointYInFile = options.anchorpointy();
+            anchorPointYInFile = options.anchorPointY;
         }
         else
         {
@@ -566,10 +566,10 @@ ccs.WidgetReader = /** @lends ccs.WidgetReader# */{
         var imageFileName_tp;
         if (null != imageFileName && 0 != "" != imageFileName)
         {
-            if (texType == ccui.Widget.TextureResType.LOCAL) {
+            if (texType == ccui.Widget.LOCAL_TEXTURE) {
                 imageFileName_tp = filePath + imageFileName;
             }
-            else if(texType == ccui.Widget.TextureResType.PLIST){
+            else if(texType == ccui.Widget.PLIST_TEXTURE){
                 imageFileName_tp = imageFileName;
             }
             else{
