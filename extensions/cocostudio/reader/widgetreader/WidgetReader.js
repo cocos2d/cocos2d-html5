@@ -258,14 +258,14 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
                     break;
                 case 1:
                 {
-                    parameter = ccui.LinearLayoutParameter.create();
+                    parameter = new ccui.LinearLayoutParameter();
                     var gravity = layoutParameterDic.gravity;
                     parameter.setGravity(gravity);
                     break;
                 }
                 case 2:
                 {
-                    parameter = ccui.RelativeLayoutParameter.create();
+                    parameter = new ccui.RelativeLayoutParameter();
                     var rParameter = parameter;
                     var relativeName = layoutParameterDic.relativeName;
                     rParameter.setRelativeName(relativeName);
@@ -339,24 +339,24 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
             }
             else if (name == "ActionTag")
             {
-                var actionTag = atoi(value.c_str());
-                widget.setUserObject(timeline.ActionTimelineData.create(actionTag));
+                var actionTag = atoi(value);
+                widget.setUserObject(new ccs.timeline.ActionTimelineData(actionTag));
             }
             else if (name == "RotationSkewX")
             {
-                widget.setRotationSkewX(atof(value.c_str()));
+                widget.setRotationSkewX(atof(value));
             }
             else if (name == "RotationSkewY")
             {
-                widget.setRotationSkewY(atof(value.c_str()));
+                widget.setRotationSkewY(atof(value));
             }
             else if (name == "Rotation")
             {
-//                widget.setRotation(atoi(value.c_str()));
+//                widget.setRotation(atoi(value));
             }
             else if (name == "ZOrder")
             {
-                widget.setLocalZOrder(atoi(value.c_str()));
+                widget.setLocalZOrder(atoi(value));
             }
             else if (name == "Visible")
             {

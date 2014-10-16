@@ -326,7 +326,7 @@ ccs.CSLoader = {
     
         if (classname == "Node")
         {
-            node = ccs.Node.create();
+            node = new ccs.Node();
             var options = nodetree.widgetOptions;
             this.setPropsForNodeFromProtocolBuffers(node, options);
     
@@ -334,7 +334,7 @@ ccs.CSLoader = {
         }
         else if (classname == "SingleNode")
         {
-            node = ccs.Node.create();
+            node = new ccs.Node();
             var options = nodetree.widgetOptions;
             this.setPropsForSingleNodeFromProtocolBuffers(node, options);
     
@@ -342,7 +342,7 @@ ccs.CSLoader = {
         }
         else if (classname == "Sprite")
         {
-            node = cc.Sprite.create();
+            node = new cc.Sprite();
             var nodeOptions = nodetree.widgetOptions;
             var options = nodetree.spriteOptions;
             this.setPropsForSpriteFromProtocolBuffers(node, options, nodeOptions);
@@ -389,7 +389,7 @@ ccs.CSLoader = {
         }
     	else if (classname == "SimpleAudio")
     	{
-            node = Node.create();
+            node = new cc.Node();
             var options = nodetree.widgetOptions;
             this.setPropsForSimpleAudioFromProtocolBuffers(node, options);
     
@@ -641,17 +641,17 @@ ccs.CSLoader = {
     
         if (classname == "Node")
         {
-            node = cc.Node.create();
+            node = new cc.Node();
             this.setPropsForNodeFromXML(node, objectData);
         }
         else if (classname == "SingleNode")
         {
-            node = cc.Node.create();
+            node = new cc.Node();
             this.setPropsForSingleNodeFromXML(node, objectData);
         }
         else if (classname == "Sprite")
         {
-            node = cc.Sprite.create();
+            node = new cc.Sprite();
             this.setPropsForSpriteFromXML(node, objectData);
         }
         else if (classname == "GameMap")
@@ -706,7 +706,7 @@ ccs.CSLoader = {
         else if (classname == "SimpleAudio")
         {
             // process as component options
-            node = ccs.Node.create();
+            node = new ccs.Node();
             this.setPropsForSimpleAudioFromXML(node, objectData);
     
             var component = this.createComponentFromXML(objectData, "ComAudio");
@@ -1014,7 +1014,7 @@ ccs.CSLoader = {
 
     // load nodes
     loadSimpleNode: function(json){
-        var node = ccs.Node.create();
+        var node = new ccs.Node();
 
         this.initNode(node, json);
 
@@ -1030,7 +1030,7 @@ ccs.CSLoader = {
         }
         else
         {
-            node = ccs.Node.create();
+            node = new ccs.Node();
         }
 
         this.initNode(node, json);
@@ -1049,7 +1049,7 @@ ccs.CSLoader = {
             if(!spriteFrame)
             {
                 path = this._jsonPath + path;
-                sprite = ccs.Sprite.create(path);
+                sprite = new ccs.Sprite(path);
             }
             else
             {
@@ -1058,13 +1058,13 @@ ccs.CSLoader = {
 
             if(!sprite)
             {
-                sprite = cc.Sprite.create();
+                sprite = new cc.Sprite();
                 cc.log("filePath is empty. Create a sprite with no texture");
             }
         }
         else
         {
-            sprite = ccs.Sprite.create();
+            sprite = new ccs.Sprite();
         }
 
         this.initNode(sprite, json);
@@ -1099,7 +1099,7 @@ ccs.CSLoader = {
     
         if (tmxFile && "" != tmxFile)
         {
-            tmx = cc.TMXTiledMap.create(tmxFile);
+            tmx = new cc.TMXTiledMap(tmxFile);
         }
         else if ((tmxString && "" != tmxString)
                  && (resourcePath && "" != resourcePath))
@@ -1201,7 +1201,7 @@ ccs.CSLoader = {
         return component;
     },
     loadComAudio: function(json){
-        var audio = ccs.ComAudio.create();
+        var audio = new ccs.ComAudio();
     
         var name = json[CSLoaderStatic.COMPONENT_NAME];
         var enabled = json[CSLoaderStatic.COMPONENT_ENABLED];
@@ -1369,7 +1369,7 @@ ccs.CSLoader = {
                 var path = this._protocolBuffersPath + fileNameData.path;
     			if (path != "")
     			{
-    				node = cc.ParticleSystemQuad.create(path);
+    				node = new cc.ParticleSystemQuad(path);
     			}
                 break;
             }
@@ -1400,7 +1400,7 @@ ccs.CSLoader = {
     
                 if (tmxFile && "" != tmxFile)
                 {
-                    node = cc.TMXTiledMap.create(tmxFile);
+                    node = new cc.TMXTiledMap(tmxFile);
                 }
                 break;
             }
@@ -1431,7 +1431,7 @@ ccs.CSLoader = {
     
         if (componentType == "ComAudio")
         {
-            component = ccs.ComAudio.create();
+            component = new ccs.ComAudio();
             var options = componentOptions.comAudioOptions;
             this.setPropsForComAudioFromProtocolBuffers(component, options);
         }
@@ -1443,7 +1443,7 @@ ccs.CSLoader = {
     
         if (componentType == "ComAudio")
         {
-            component = ccs.ComAudio.create();
+            component = new ccs.ComAudio();
             var options = componentOptions.comAudioOptions;
             this.setPropsForComAudioFromProtocolBuffers(component, options);
         }
@@ -1497,7 +1497,7 @@ ccs.CSLoader = {
             else if (name == "ActionTag")
             {
                 //atoi(value)
-                node.setUserObject(ccs.ActionTimelineData.create(value));
+                node.setUserObject(new ccs.ActionTimelineData(value));
             }
             else if (name == "RotationSkewX")
             {
@@ -1811,7 +1811,7 @@ ccs.CSLoader = {
                     {
                         if (path != "")
                         {
-                            node = cc.ParticleSystemQuad.create(this._xmlPath + path);
+                            node = new cc.ParticleSystemQuad(this._xmlPath + path);
                         }
                         break;
                     }
@@ -1876,7 +1876,7 @@ ccs.CSLoader = {
     
                         if (tmxFile && "" != tmxFile)
                         {
-                            node = cc.TMXTiledMap.create(tmxFile);
+                            node = new cc.TMXTiledMap(tmxFile);
                         }
                         break;
                     }
@@ -1909,7 +1909,7 @@ ccs.CSLoader = {
     
         if (componentType == "ComAudio")
         {
-            component = ccs.ComAudio.create();
+            component = new ccs.ComAudio();
             this.setPropsForComAudioFromXML(component, componentObjectData);
         }
     

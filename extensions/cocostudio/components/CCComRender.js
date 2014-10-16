@@ -40,6 +40,7 @@ ccs.ComRender = ccs.Component.extend(/** @lends ccs.ComRender# */{
         this._render = node;
         this._name = comName;
         this.isRenderer = true;
+        ccs.ComRender.prototype.init.call(this);
     },
 
     /**
@@ -86,8 +87,5 @@ ccs.ComRender = ccs.Component.extend(/** @lends ccs.ComRender# */{
  * var com = ccs.ComRender.create();
  */
 ccs.ComRender.create = function (node, comName) {
-    var com = new ccs.ComRender(node, comName);
-    if (com && com.init())
-        return com;
-    return null;
+    return new ccs.ComRender(node, comName);
 };

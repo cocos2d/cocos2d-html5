@@ -35,6 +35,7 @@ ccs.ComController = ccs.Component.extend(/** @lends ccs.ComController# */{
     ctor: function () {
         cc.Component.prototype.ctor.call(this);
         this._name = "ComController";
+        ccs.ComController.prototype.init.call(this);
     },
 
     /**
@@ -71,8 +72,5 @@ ccs.ComController = ccs.Component.extend(/** @lends ccs.ComController# */{
  * var com = ccs.ComController.create();
  */
 ccs.ComController.create = function () {
-    var com = new ccs.ComController();
-    if (com && com.init())
-        return com;
-    return null;
+    return new ccs.ComController();
 };

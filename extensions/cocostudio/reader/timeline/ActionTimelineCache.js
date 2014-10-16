@@ -799,7 +799,7 @@ ccs.actionTimelineCache = {
     
         if (frameType != "")
         {
-            timeline = Timeline.create();
+            timeline = new ccs.Timeline();
             timeline.setActionTag(actionTag);
         }
     
