@@ -40,7 +40,7 @@ ccs.triggerManager = /** @lends ccs.triggerManager# */{
     parse: function (triggers) {
         for (var i = 0; i < triggers.length; ++i) {
             var subDict = triggers[i];
-            var triggerObj = ccs.TriggerObj.create();
+            var triggerObj = new ccs.TriggerObj();
             triggerObj.serialize(subDict);
             var events = triggerObj.getEvents();
             for (var j = 0; j < events.length; j++) {

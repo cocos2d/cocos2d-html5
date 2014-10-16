@@ -141,7 +141,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     _initRenderer: function () {
         ccui.Layout.prototype._initRenderer.call(this);
-        this._innerContainer = ccui.Layout.create();
+        this._innerContainer = new ccui.Layout();
         this.addProtectedChild(this._innerContainer, 1, 1);
     },
 
@@ -1648,7 +1648,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     _createCloneInstance: function(){
-        return ccui.ScrollView.create();
+        return new ccui.ScrollView();
     },
 
     _copyClonedWidgetChildren: function (model) {
@@ -1746,9 +1746,6 @@ _p = null;
  * allocates and initializes a UIScrollView.
  * @deprecated since v3.0, please use new ccui.ScrollView() instead.
  * @return {ccui.ScrollView}
- * @example
- * // example
- * var uiScrollView = ccui.ScrollView.create();
  */
 ccui.ScrollView.create = function () {
     return new ccui.ScrollView();

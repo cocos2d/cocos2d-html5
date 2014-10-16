@@ -1013,11 +1013,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {cc.SpriteFrame}
      */
     displayFrame: function () {
-        return cc.SpriteFrame.create(this._texture,
-            cc.rectPointsToPixels(this._rect),
-            this._rectRotated,
-            cc.pointPointsToPixels(this._unflippedOffsetPositionFromCenter),
-            cc.sizePointsToPixels(this._contentSize));
+        return new cc.SpriteFrame(this._texture,
+                                  cc.rectPointsToPixels(this._rect),
+                                  this._rectRotated,
+                                  cc.pointPointsToPixels(this._unflippedOffsetPositionFromCenter),
+                                  cc.sizePointsToPixels(this._contentSize));
     },
 
     /**
@@ -1025,8 +1025,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @function
      * @param {cc.SpriteBatchNode|null} spriteBatchNode
      * @example
-     *  var batch = cc.SpriteBatchNode.create("Images/grossini_dance_atlas.png", 15);
-     *  var sprite = cc.Sprite.create(batch.texture, cc.rect(0, 0, 57, 57));
+     *  var batch = new cc.SpriteBatchNode("Images/grossini_dance_atlas.png", 15);
+     *  var sprite = new cc.Sprite(batch.texture, cc.rect(0, 0, 57, 57));
      *  batch.addChild(sprite);
      *  layer.addChild(batch);
      */

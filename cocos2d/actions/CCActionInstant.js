@@ -525,8 +525,8 @@ cc.FlipY.create = cc.flipY;
  * @param {cc.Point|Number} pos
  * @param {Number} [y]
  * @example
- * var placeAction = new cc.Place.create(cc.p(200, 200));
- * var placeAction = new cc.Place.create(200, 200);
+ * var placeAction = new cc.Place(cc.p(200, 200));
+ * var placeAction = new cc.Place(200, 200);
  */
 cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
     _x: 0,

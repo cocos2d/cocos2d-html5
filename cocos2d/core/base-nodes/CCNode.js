@@ -1822,12 +1822,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *  @param {cc.AffineTransform} additionalTransform  The additional transform
      *  @example
      * // create a batchNode
-     * var batch= cc.SpriteBatchNode.create("Icon-114.png");
+     * var batch = new cc.SpriteBatchNode("Icon-114.png");
      * this.addChild(batch);
      *
      * // create two sprites, spriteA will be added to batchNode, they are using different textures.
-     * var spriteA = cc.Sprite.create(batch->getTexture());
-     * var spriteB = cc.Sprite.create("Icon-72.png");
+     * var spriteA = new cc.Sprite(batch->getTexture());
+     * var spriteB = new cc.Sprite("Icon-72.png");
      *
      * batch.addChild(spriteA);
      *

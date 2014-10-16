@@ -34,6 +34,8 @@ ccs.BatchNode = cc.Node.extend(/** @lends ccs.BatchNode# */{
 
     ctor:function () {
         this._atlas = null;
+
+        ccs.BatchNode.prototype.init.call(this);
     },
 
     init:function () {
@@ -102,10 +104,11 @@ ccs.BatchNode = cc.Node.extend(/** @lends ccs.BatchNode# */{
     }
 });
 
+/**
+ *
+ * @returns {BatchNode}
+ * @deprecated since v3.1, please use new construction instead
+ */
 ccs.BatchNode.create = function () {
-    var batchNode = new ccs.BatchNode();
-    if (batchNode && batchNode.init()) {
-        return batchNode;
-    }
-    return null;
+    return new ccs.BatchNode();
 };

@@ -267,8 +267,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
             vp.content = content;
             // For adopting certain android devices which don't support second viewport
-            if(currentVP)
+            if (currentVP)
                 currentVP.content = content;
+
             document.head.appendChild(vp);
         }
     },

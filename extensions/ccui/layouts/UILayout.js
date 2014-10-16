@@ -607,7 +607,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         switch (this._clippingType) {
             case ccui.Layout.CLIPPING_STENCIL:
                 if (able){
-                    this._clippingStencil = cc.DrawNode.create();
+                    this._clippingStencil = new cc.DrawNode();
                     if(cc._renderType === cc._RENDER_TYPE_CANVAS)
                         this._clippingStencil._rendererCmd.rendering = this.__stencilDraw.bind(this);
                     if (this._running)
@@ -843,12 +843,12 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             case ccui.Layout.LINEAR_VERTICAL:
                 var layoutParameter = locChild.getLayoutParameter(ccui.LayoutParameter.LINEAR);
                 if (!layoutParameter)
-                    locChild.setLayoutParameter(ccui.LinearLayoutParameter.create());
+                    locChild.setLayoutParameter(new ccui.LinearLayoutParameter());
                 break;
             case ccui.Layout.RELATIVE:
                 var layoutParameter = locChild.getLayoutParameter(ccui.LayoutParameter.RELATIVE);
                 if (!layoutParameter)
-                    locChild.setLayoutParameter(ccui.RelativeLayoutParameter.create());
+                    locChild.setLayoutParameter(new ccui.RelativeLayoutParameter());
                 break;
             default:
                 break;
@@ -857,10 +857,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     _addBackGroundImage: function () {
         if (this._backGroundScale9Enabled) {
-            this._backGroundImage = ccui.Scale9Sprite.create();
+            this._backGroundImage = new ccui.Scale9Sprite();
             this._backGroundImage.setPreferredSize(this._contentSize);
         } else
-            this._backGroundImage = cc.Sprite.create();
+            this._backGroundImage = new cc.Sprite();
         this.addProtectedChild(this._backGroundImage, ccui.Layout.BACKGROUND_IMAGE_ZORDER, -1);
         this._backGroundImage.setPosition(this._contentSize.width / 2.0, this._contentSize.height / 2.0);
     },
@@ -1778,7 +1778,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     _createCloneInstance: function () {
-        return ccui.Layout.create();
+        return new ccui.Layout();
     },
 
     _copyClonedWidgetChildren: function (model) {
@@ -1849,9 +1849,6 @@ _p = null;
  * allocates and initializes a UILayout.
  * @deprecated since v3.0, please use new ccui.Layout() instead.
  * @return {ccui.Layout}
- * @example
- * // example
- * var uiLayout = ccui.Layout.create();
  */
 ccui.Layout.create = function () {
     return new ccui.Layout();

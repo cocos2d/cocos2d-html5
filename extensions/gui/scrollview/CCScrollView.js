@@ -170,7 +170,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
             this._container = container;
 
             if (!this._container) {
-                this._container = cc.Layer.create();
+                this._container = new cc.Layer();
                 this._container.ignoreAnchorPointForPosition(false);
                 this._container.setAnchorPoint(pZero);
             }
@@ -235,9 +235,9 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
      * @param {Number} dt animation duration
      */
     setContentOffsetInDuration:function (offset, dt) {
-        var scroll = cc.MoveTo.create(dt, offset);
-        var expire = cc.CallFunc.create(this._stoppedAnimatedScroll, this);
-        this._container.runAction(cc.Sequence.create(scroll, expire));
+        var scroll = cc.moveTo(dt, offset);
+        var expire = cc.callFunc(this._stoppedAnimatedScroll, this);
+        this._container.runAction(cc.sequence(scroll, expire));
         this.schedule(this._performedAnimatedScroll);
     },
 
@@ -290,7 +290,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         if (dt > 0) {
             var locScale = this._container.getScale();
             if (locScale != s) {
-                var scaleAction = cc.ActionTween.create(dt, "zoomScale", locScale, s);
+                var scaleAction = cc.actionTween(dt, "zoomScale", locScale, s);
                 this.runAction(scaleAction);
             }
         } else {

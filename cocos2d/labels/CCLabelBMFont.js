@@ -1120,15 +1120,6 @@ cc.defineGetterSetter(_p, "textAlign", _p._getAlignment, _p.setAlignment);
  * @param {Number} [alignment=cc.TEXT_ALIGNMENT_LEFT]
  * @param {cc.Point} [imageOffset=cc.p(0,0)]
  * @return {cc.LabelBMFont|Null}
- * @example
- * // Example 01
- * var label1 = cc.LabelBMFont.create("Test case", "test.fnt");
- *
- * // Example 02
- * var label2 = cc.LabelBMFont.create("test case", "test.fnt", 200, cc.TEXT_ALIGNMENT_LEFT);
- *
- * // Example 03
- * var label3 = cc.LabelBMFont.create("This is a \n test case", "test.fnt", 200, cc.TEXT_ALIGNMENT_LEFT, cc.p(0,0));
  */
 cc.LabelBMFont.create = function (str, fntFile, width, alignment, imageOffset) {
     return new cc.LabelBMFont(str, fntFile, width, alignment, imageOffset);

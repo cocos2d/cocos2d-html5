@@ -259,7 +259,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
         var rect = cc.rect(0, 0, 0, 0);
         rect.width = texture.width;
         rect.height = texture.height;
-        var frame = cc.SpriteFrame.create(texture, rect);
+        var frame = new cc.SpriteFrame(texture, rect);
         this.addSpriteFrame(frame);
     },
 
@@ -269,7 +269,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
      * @param {cc.Rect} rect
      */
     addSpriteFrameWithTexture:function (texture, rect) {
-        var pFrame = cc.SpriteFrame.create(texture, rect);
+        var pFrame = new cc.SpriteFrame(texture, rect);
         this.addSpriteFrame(pFrame);
     },
 

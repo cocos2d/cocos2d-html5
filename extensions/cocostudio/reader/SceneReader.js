@@ -63,10 +63,10 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
         if (className == "CCNode") {
             var gb = null;
             if (!parenet) {
-                gb = cc.Node.create();
+                gb = new cc.Node();
             }
             else {
-                gb = cc.Node.create();
+                gb = new cc.Node();
                 parenet.addChild(gb);
             }
 
@@ -102,7 +102,7 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
 
                     if (resType == 0) {
                         if (pathExtname != ".png") continue;
-                        sprite = cc.Sprite.create(path);
+                        sprite = new cc.Sprite(path);
                     }
                     else if (resType == 1) {
                         if (pathExtname != ".plist") continue;
@@ -110,7 +110,7 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
                         plistFile = cc.path.join(this._baseBath, plistFile);
                         var pngFile = cc.path.changeExtname(plistFile, ".png");
                         cc.spriteFrameCache.addSpriteFrames(plistFile, pngFile);
-                        sprite = cc.Sprite.create("#" + fileData["path"]);
+                        sprite = new cc.Sprite("#" + fileData["path"]);
                     }
                     else {
                         continue;
@@ -128,7 +128,7 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
                     var tmx = null;
                     if (resType == 0) {
                         if (pathExtname != ".tmx") continue;
-                        tmx = cc.TMXTiledMap.create(path);
+                        tmx = new cc.TMXTiledMap(path);
                     }
                     else {
                         continue;
@@ -146,7 +146,7 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
 
                     var particle = null;
                     if (resType == 0) {
-                        particle = cc.ParticleSystem.create(path);
+                        particle = new cc.ParticleSystem(path);
                     }
                     else {
                         cc.log("unknown resourcetype on CCParticleSystemQuad!");
@@ -173,7 +173,7 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
 
                     ccs.armatureDataManager.addArmatureFileInfo(path);
 
-                    var armature = ccs.Armature.create(name);
+                    var armature = new ccs.Armature(name);
                     var render = ccs.ComRender.create(armature, "CCArmature");
                     if (comName != null) {
                         render.setName(comName);
