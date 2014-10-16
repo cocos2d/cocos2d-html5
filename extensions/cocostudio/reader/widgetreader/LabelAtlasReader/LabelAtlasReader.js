@@ -81,14 +81,14 @@ ccs.LabelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
         var jsonPath = ccs.uiReader.getFilePath();
 
         var labelAtlas = widget;
-        var options = nodeTree.textatlasOptions;
+        var options = nodeTree.textAtlasOptions;
         //        var sv = DICTOOL.checkObjectExist_json(options, P_StringValue);
         //        var cmf = DICTOOL.checkObjectExist_json(options, P_CharMapFile);
         //        var iw = DICTOOL.checkObjectExist_json(options, P_ItemWidth);
         //        var ih = DICTOOL.checkObjectExist_json(options, P_ItemHeight);
         //        var scm = DICTOOL.checkObjectExist_json(options, P_StartCharMap);
 
-        var cmftDic = options.charmapFileData;
+        var cmftDic = options.charMapFileData;
         var cmfType = cmftDic.resourceType;
         switch (cmfType)
         {
@@ -96,7 +96,7 @@ ccs.LabelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
             {
                 var tp_c = jsonPath;
                 var cmfPath = cmftDic.path;
-                var cmf_tp = tp_c.append(cmfPath);
+                var cmf_tp = tp_c += cmfPath;
                 var stringValue = options.stringValue!==null ? options.stringValue : "12345678";
                 var itemWidth = options.itemWidth!==null ? options.itemWidth : 24;
                 var itemHeight = options.has_itemheight ? options.itemHeight : 32;
@@ -104,7 +104,7 @@ ccs.LabelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
                                         cmf_tp,
                                         itemWidth,
                                         itemHeight,
-                                        options.startCharmap);
+                                        options.startCharMap);
                 break;
             }
             case 1:

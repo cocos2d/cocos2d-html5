@@ -102,7 +102,7 @@ ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
     setPropsFromProtocolBuffers: function(widget, nodeTree){
         ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
-        var options = nodeTree.imageviewOptions;
+        var options = nodeTree.imageViewOptions;
         var imageView = widget;
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
@@ -113,7 +113,7 @@ ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
 		{
 			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
 		}
-        var imageFileName = ccs.WidgetReader.getResourcePath(imageFileNameDic.path(), imageFileNameType);
+        var imageFileName = ccs.WidgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
         imageView.loadTexture(imageFileName, imageFileNameType);
 
 

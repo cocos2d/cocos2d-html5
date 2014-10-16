@@ -96,7 +96,7 @@ ccs.CheckBoxReader = /** @lends ccs.CheckBoxReader# */{
         ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         var checkBox = widget;
-        var options = nodeTree.checkboxOptions;
+        var options = nodeTree.checkBoxOptions;
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 

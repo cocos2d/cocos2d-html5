@@ -72,7 +72,7 @@ ccs.LabelBMFontReader = /** @lends ccs.LabelBMFontReader# */{
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-        ccs.WidgetReader.prototype.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.WidgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         var jsonPath = ccs.uiReader.getFilePath();
 
@@ -88,8 +88,8 @@ ccs.LabelBMFontReader = /** @lends ccs.LabelBMFontReader# */{
                 case 0:
                 {
                     var tp_c = jsonPath;
-                    var cmfPath = cmftDic.path();
-                    var cmf_tp = tp_c.append(cmfPath);
+                    var cmfPath = cmftDic.path;
+                    var cmf_tp = tp_c + cmfPath;
                     labelBMFont.setFntFile(cmf_tp);
                     break;
                 }
@@ -106,7 +106,7 @@ ccs.LabelBMFontReader = /** @lends ccs.LabelBMFontReader# */{
 
 
         // other commonly protperties
-        ccs.WidgetReader.prototype.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+        ccs.WidgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     },
 
     setPropsFromXML: function(widget, nodeTree){
