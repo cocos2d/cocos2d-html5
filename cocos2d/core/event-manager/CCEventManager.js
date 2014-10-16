@@ -948,7 +948,7 @@ cc.EventHelper.prototype = {
         if ( listeners[ type ] === undefined )
             listeners[ type ] = [];
 
-        if ( this.hasEventListener(listener, target))
+        if ( !this.hasEventListener(type, listener, target))
             listeners[ type ].push( {callback:listener, eventTarget: target} );
     },
 
@@ -992,10 +992,9 @@ cc.EventHelper.prototype = {
         if(clearAfterDispatch == null)
             clearAfterDispatch = true;
         var listeners = this._listeners;
-        var listenerArray = listeners[ event.type ];
+        var listenerArray = listeners[ event];
 
         if ( listenerArray !== undefined ) {
-            event.target = this;
             var array = [];
             var length = listenerArray.length;
 

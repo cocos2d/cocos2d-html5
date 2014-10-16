@@ -433,9 +433,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     cc.ProgressRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-        var context = ctx || cc._renderContext,
-            node = this._node,
-            locSprite = this._sprite;
+        var context = ctx || cc._renderContext, node = this._node, locSprite = this._sprite;
 
         var locTextureCoord = locSprite._rendererCmd._textureCoord, alpha = locSprite._displayedOpacity / 255;
         if (!locSprite._texture || !locTextureCoord.validRect || alpha === 0)
@@ -507,7 +505,15 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     cc.DrawNodeRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-        var context = ctx || cc._renderContext, _t = this;
+        var context = ctx || cc._renderContext, _t = this, node = _t._node;
+        var alpha = node._displayedOpacity/255;
+        if(alpha === 0)
+            return;
+        context.globalAlpha = alpha;
+
+        var t = node._transformWorld;
+        context.save();
+        ctx.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
         if ((_t._blendFunc && (_t._blendFunc.src == cc.SRC_ALPHA) && (_t._blendFunc.dst == cc.ONE)))
             context.globalCompositeOperation = 'lighter';
         var locBuffer = _t._buffer;
@@ -525,6 +531,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                     break;
             }
         }
+        context.restore();
     };
 
     cc.DrawNodeRenderCmdCanvas.prototype._drawDot = function (ctx, element, scaleX, scaleY) {
@@ -539,10 +546,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     cc.DrawNodeRenderCmdCanvas.prototype._drawSegment = function (ctx, element, scaleX, scaleY) {
         var locColor = element.lineColor;
-        var locFrom = element.verts[0];
-        var locTo = element.verts[1];
-        var locLineWidth = element.lineWidth;
-        var locLineCap = element.lineCap;
+        var locFrom = element.verts[0], locTo = element.verts[1];
+        var locLineWidth = element.lineWidth, locLineCap = element.lineCap;
 
         ctx.strokeStyle = "rgba(" + (0 | locColor.r) + "," + (0 | locColor.g) + "," + (0 | locColor.b) + "," + locColor.a / 255 + ")";
         ctx.lineWidth = locLineWidth * scaleX;
@@ -554,38 +559,23 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     cc.DrawNodeRenderCmdCanvas.prototype._drawPoly = function (ctx, element, scaleX, scaleY) {
-        var _node = this._node;
-        var locVertices = element.verts;
-        var locLineCap = element.lineCap;
-        var locFillColor = element.fillColor;
-        var locLineWidth = element.lineWidth;
-        var locLineColor = element.lineColor;
-        var locIsClosePolygon = element.isClosePolygon;
-        var locIsFill = element.isFill;
-        var locIsStroke = element.isStroke;
+        var locVertices = element.verts, locLineCap = element.lineCap;
+        var locFillColor = element.fillColor, locLineWidth = element.lineWidth;
+        var locLineColor = element.lineColor, locIsClosePolygon = element.isClosePolygon;
+        var locIsFill = element.isFill, locIsStroke = element.isStroke;
         if (locVertices == null)
             return;
 
         var firstPoint = locVertices[0];
-
         ctx.lineCap = locLineCap;
-
-        if (locFillColor) {
+        if (locFillColor)
             ctx.fillStyle = "rgba(" + (0 | locFillColor.r) + "," + (0 | locFillColor.g) + ","
                 + (0 | locFillColor.b) + "," + locFillColor.a / 255 + ")";
-        }
-
-        if (locLineWidth) {
+        if (locLineWidth)
             ctx.lineWidth = locLineWidth * scaleX;
-        }
-        if (locLineColor) {
+        if (locLineColor)
             ctx.strokeStyle = "rgba(" + (0 | locLineColor.r) + "," + (0 | locLineColor.g) + ","
                 + (0 | locLineColor.b) + "," + locLineColor.a / 255 + ")";
-        }
-        var t = _node._transformWorld;
-
-        ctx.save();
-        ctx.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
         ctx.beginPath();
         ctx.moveTo(firstPoint.x * scaleX, -firstPoint.y * scaleY);
@@ -594,12 +584,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         if (locIsClosePolygon)
             ctx.closePath();
-
         if (locIsFill)
             ctx.fill();
         if (locIsStroke)
             ctx.stroke();
-        ctx.restore();
     };
 
     cc.ClippingNodeSaveRenderCmdCanvas = function (node) {
@@ -680,7 +668,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             context.restore();
         }
     };
-
 
     //CHIPMUNK
     cc.PhysicsDebugNodeRenderCmdCanvas = function (node) {
