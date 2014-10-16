@@ -124,7 +124,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         _contentSize: null,
         _isLoaded: false,
         _htmlElementObj: null,
-        _loadedEventListeners: null,
 
         url: null,
 
@@ -204,7 +203,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
          * handle loaded texture
          */
         handleLoadedTexture: function () {
-            var self = this
+            var self = this;
             if (self._isLoaded) return;
             if (!self._htmlElementObj) {
                 var img = cc.loader.getRes(self.url);
@@ -217,7 +216,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             self._contentSize.width = locElement.width;
             self._contentSize.height = locElement.height;
 
-            self._callLoadedEventCallbacks();
+            //dispatch load event to listener.
+            self.dispatchEvent("load");
         },
 
         /**
@@ -368,38 +368,19 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
          * add listener for loaded event
          * @param {Function} callback
          * @param {cc.Node} target
+         * @deprecated since 3.1, please use addEventListener instead
          */
         addLoadedEventListener: function (callback, target) {
-            if (!this._loadedEventListeners)
-                this._loadedEventListeners = [];
-            this._loadedEventListeners.push({eventCallback: callback, eventTarget: target});
+            this.addEventListener("load", callback, target);
         },
 
         /**
-         * remove listner for loaded event
+         * remove listener from listeners by target
          * @param {cc.Node} target
+         * @deprecated since 3.1, please use addEventListener instead
          */
         removeLoadedEventListener: function (target) {
-            if (!this._loadedEventListeners)
-                return;
-            var locListeners = this._loadedEventListeners;
-            for (var i = 0; i < locListeners.length; i++) {
-                var selCallback = locListeners[i];
-                if (selCallback.eventTarget == target) {
-                    locListeners.splice(i, 1);
-                }
-            }
-        },
-
-        _callLoadedEventCallbacks: function () {
-            if (!this._loadedEventListeners)
-                return;
-            var locListeners = this._loadedEventListeners;
-            for (var i = 0, len = locListeners.length; i < len; i++) {
-                var selCallback = locListeners[i];
-                selCallback.eventCallback.call(selCallback.eventTarget, this);
-            }
-            locListeners.length = 0;
+            this.removeEventListener("load", target);
         }
     });
 
@@ -408,6 +389,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     cc._tmp.WebGLTexture2D();
     delete cc._tmp.WebGLTexture2D;
 }
+
+cc.EventHelper.prototype.apply(cc.Texture2D.prototype);
 
 cc.assert(cc.isFunction(cc._tmp.PrototypeTexture2D), cc._LogInfos.MissingFile, "TexturesPropertyDefine.js");
 cc._tmp.PrototypeTexture2D();

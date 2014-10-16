@@ -115,7 +115,7 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
 
     cc.TextureRenderCmdWebGL.prototype.rendering = function(ctx){
         var _t = this._node;
-        if (!_t._textureLoaded)
+        if (!_t._textureLoaded || _t._displayedOpacity === 0)
             return;
 
         var gl = ctx || cc._renderContext, locTexture = _t._texture;

@@ -30,6 +30,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         _isCacheToCanvasOn: false,                          //a switch that whether cache the rendererCmd to cacheToCanvasCmds
         _cacheToCanvasCmds: [],                              // an array saves the renderer commands need for cache to other canvas
+        //contextSession: { globalAlpha:1 },
 
         /**
          * drawing all renderer command to context (default is cc._renderContext)
@@ -112,7 +113,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     cc.TextureRenderCmdCanvas = function (node) {
         this._node = node;
-
         this._textureCoord = {
             renderX: 0,                             //the x of texture coordinate for render, when texture tinted, its value doesn't equal x.
             renderY: 0,                             //the y of texture coordinate for render, when texture tinted, its value doesn't equal y.
@@ -131,8 +131,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var context = ctx || cc._renderContext,
             locTextureCoord = self._textureCoord;
 
-        if (!locTextureCoord.validRect || !node._visible)
+        if (!locTextureCoord.validRect && node._displayedOpacity === 0)
             return;  //draw nothing
+
+        if(node._texture && !node._texture._isLoaded)  //set texture but the texture isn't loaded.
+            return;
 
         var t = node._transformWorld,
             locX = node._offsetPosition.x,
@@ -142,13 +145,17 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             image,
             curColor;
 
-        var blendChange = (node._blendFuncStr !== "source");
+        var blendChange = (node._blendFuncStr !== "source"), alpha = (node._displayedOpacity / 255);
+        /*if(cc.renderer.contextSession.globalAlpha !== alpha){
+            cc.renderer.contextSession.globalAlpha = context.globalAlpha = alpha;                         //TODO
+        }*/
 
         if (t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1 || node._flippedX || node._flippedY) {
             context.save();
+
+            context.globalAlpha = alpha;
             //transform
             context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
-
             if (blendChange)
                 context.globalCompositeOperation = node._blendFuncStr;
 
@@ -158,37 +165,33 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 context.scale(1, -1);
 
             if (node._texture) {
-                if (node._texture._isLoaded) {
-                    context.globalAlpha = (node._displayedOpacity / 255);
-                    image = node._texture._htmlElementObj;
+                image = node._texture._htmlElementObj;
 
-                    if (node._colorized) {
-                        context.drawImage(image,
-                            0,
-                            0,
-                            locTextureCoord.width,
-                            locTextureCoord.height,
+                //TODO should move '* scaleX/scaleY' to transforming
+                if (node._colorized) {
+                    context.drawImage(image,
+                        0,
+                        0,
+                        locTextureCoord.width,
+                        locTextureCoord.height,
                             locX * scaleX,
                             locY * scaleY,
                             locWidth * scaleX,
                             locHeight * scaleY
-                        );
-                    } else {
-                        context.drawImage(image,
-                            locTextureCoord.renderX,
-                            locTextureCoord.renderY,
-                            locTextureCoord.width,
-                            locTextureCoord.height,
+                    );
+                } else {
+                    context.drawImage(image,
+                        locTextureCoord.renderX,
+                        locTextureCoord.renderY,
+                        locTextureCoord.width,
+                        locTextureCoord.height,
                             locX * scaleX,
                             locY * scaleY,
                             locWidth * scaleX,
                             locHeight * scaleY
-                        );
-                    }
-
+                    );
                 }
-
-            } else if (!node._texture) {
+            } else {
                 curColor = node._color;
                 context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + node._displayedOpacity + ")";
                 context.fillRect(locX, locY, locWidth, locHeight);
@@ -200,41 +203,35 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 context.globalCompositeOperation = node._blendFuncStr;
             }
 
+            context.globalAlpha = alpha;
             if (node._texture) {
-                if (node._texture._isLoaded) {
-
-                    context.globalAlpha = (node._displayedOpacity / 255);
-                    image = node._texture.getHtmlElementObj();
-                    if (node._colorized) {
-                        context.drawImage(image,
-                            0,
-                            0,
-                            locTextureCoord.width,
-                            locTextureCoord.height,
+                image = node._texture.getHtmlElementObj();
+                if (node._colorized) {
+                    context.drawImage(image,
+                        0,
+                        0,
+                        locTextureCoord.width,
+                        locTextureCoord.height,
                             (t.tx + locX) * scaleX,
                             (-t.ty + locY) * scaleY,
                             locWidth * scaleX,
                             locHeight * scaleY);
-                    } else {
-                        context.drawImage(
-                            image,
-                            locTextureCoord.renderX,
-                            locTextureCoord.renderY,
-                            locTextureCoord.width,
-                            locTextureCoord.height,
+                } else {
+                    context.drawImage(
+                        image,
+                        locTextureCoord.renderX,
+                        locTextureCoord.renderY,
+                        locTextureCoord.width,
+                        locTextureCoord.height,
                             (t.tx + locX) * scaleX,
                             (-t.ty + locY) * scaleY,
                             locWidth * scaleX,
                             locHeight * scaleY);
-                    }
                 }
-            } else if (!node._texture && node._displayedColor) {
-
-                context.globalAlpha = (node._displayedOpacity / 255);
+            } else {
                 curColor = node._displayedColor;
                 context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + node._displayedOpacity + ")";
                 context.fillRect(t.tx * scaleX + locX, -t.ty * scaleY + locY, locWidth, locHeight);
-
             }
             if (blendChange)
                 context.restore();
@@ -255,16 +252,27 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             locWidth = node._contentSize.width,
             locHeight = node._contentSize.height;
 
-        context.save();
-        if (node._blendFuncStr != "source")
-            context.globalCompositeOperation = node._blendFuncStr;
-        //transform
-        context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
-        context.fillStyle = "rgba(" + (0 | curColor.r) + "," + (0 | curColor.g) + ","
-            + (0 | curColor.b) + "," + opacity + ")";
-        context.fillRect(0, 0, locWidth * scaleX, -locHeight * scaleY);
+        if (opacity === 0)
+            return;
 
-        context.restore();
+        var needTransform = (t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1);         //TODO
+        var needRestore = (node._blendFuncStr !== "source") || needTransform;
+
+        if (needRestore) {
+            context.save();
+            context.globalCompositeOperation = node._blendFuncStr;
+        }
+        context.globalAlpha = opacity;
+        context.fillStyle = "rgba(" + (0 | curColor.r) + "," + (0 | curColor.g) + ","
+            + (0 | curColor.b) + ", 1)";
+        if (needTransform) {
+            context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+            context.fillRect(0, 0, locWidth * scaleX, -locHeight * scaleY);
+        } else {
+            context.fillRect(t.tx * scaleX, -t.ty * scaleY, locWidth * scaleX, -locHeight * scaleY);
+        }
+        if (needRestore)
+            context.restore();
         cc.g_NumberOfDraws++;
     };
 
@@ -278,28 +286,40 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var context = ctx || cc._renderContext,
             self = this,
             node = self._node,
+            opacity = node._displayedOpacity / 255,
             t = node._transformWorld;
-        context.save();
-        if (node._blendFuncStr != "source")
-            context.globalCompositeOperation = node._blendFuncStr;
-        //transform
-        context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
-        var opacity = node._displayedOpacity / 255,
-            locWidth = node._contentSize.width,
+        if(opacity === 0)
+            return;
+
+        var needTransform = (t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1);
+        var needRestore = (node._blendFuncStr !== "source") || needTransform;
+        if(needRestore){
+            context.save();
+            context.globalCompositeOperation = node._blendFuncStr;
+        }
+        context.globalAlpha = opacity;
+        var locWidth = node._contentSize.width,
             locHeight = node._contentSize.height;
-        //TODO need cache gradient object
-        var gradient = context.createLinearGradient(self._startPoint.x, self._startPoint.y, self._endPoint.x, self._endPoint.y);
+
+        var gradient = context.createLinearGradient(self._startPoint.x, self._startPoint.y, self._endPoint.x, self._endPoint.y);      //TODO need cached
         var locStartColor = node._displayedColor,
             locEndColor = node._endColor;
         gradient.addColorStop(0, "rgba(" + Math.round(locStartColor.r) + "," + Math.round(locStartColor.g) + ","
-            + Math.round(locStartColor.b) + "," + (opacity * (locStartColor.a / 255)).toFixed(4) + ")");
+            + Math.round(locStartColor.b) + "," + (locStartColor.a / 255).toFixed(4) + ")");
         gradient.addColorStop(1, "rgba(" + Math.round(locEndColor.r) + "," + Math.round(locEndColor.g) + ","
-            + Math.round(locEndColor.b) + "," + (locEndColor.a!=null?(opacity * (locEndColor.a / 255)).toFixed(4):255) + ")");
+            + Math.round(locEndColor.b) + "," + (locEndColor.a != null ? (locEndColor.a / 255).toFixed(4) : 255) + ")");
         context.fillStyle = gradient;
-        context.fillRect(0, 0, locWidth * scaleX, -locHeight * scaleY);
 
-        context.restore();
+        if(needTransform){
+            context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+            context.fillRect(0, 0, locWidth * scaleX, -locHeight * scaleY);
+        } else {
+            context.fillRect(t.tx * scaleX, -t.ty * scaleY, locWidth * scaleX, -locHeight * scaleY);
+        }
+
+        if(needRestore)
+            context.restore();
         cc.g_NumberOfDraws++;
     };
 
@@ -312,6 +332,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             node = this._node,
             t = node._transformWorld,
             pointRect = node._pointRect;
+
         context.save();
         //transform
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
@@ -320,7 +341,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         else
             context.globalCompositeOperation = 'source-over';
 
-        var i, particle, lpx;
+        var i, particle, lpx, alpha;
         var particleCount = this._node.particleCount, particles = this._node._particles;
         if (cc.ParticleSystem.SHAPE_MODE == cc.ParticleSystem.TEXTURE_MODE) {
             // Delay drawing until the texture is fully loaded by the browser
@@ -339,7 +360,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 particle = particles[i];
                 lpx = (0 | (particle.size * 0.5));
 
-                context.globalAlpha = particle.color.a / 255;
+                alpha =  particle.color.a / 255;
+                if(alpha === 0) continue;
+                context.globalAlpha = alpha;
 
                 context.save();
                 context.translate((0 | particle.drawPos.x), -(0 | particle.drawPos.y));
@@ -375,7 +398,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             for (i = 0; i < particleCount; i++) {
                 particle = particles[i];
                 lpx = (0 | (particle.size * 0.5));
-                context.globalAlpha = particle.color.a / 255;
+                alpha =  particle.color.a / 255;
+                if(alpha === 0) continue;
+                context.globalAlpha = alpha;
 
                 context.save();
                 context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
@@ -408,12 +433,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     cc.ProgressRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-        var context = ctx || cc._renderContext,
-            node = this._node,
-            locSprite = this._sprite;
+        var context = ctx || cc._renderContext, node = this._node, locSprite = this._sprite;
 
-        var locTextureCoord = locSprite._rendererCmd._textureCoord;
-        if (!locSprite._texture || !locTextureCoord.validRect)
+        var locTextureCoord = locSprite._rendererCmd._textureCoord, alpha = locSprite._displayedOpacity / 255;
+        if (!locSprite._texture || !locTextureCoord.validRect || alpha === 0)
             return;
 
         var t = node._transformWorld;
@@ -422,8 +445,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         if (locSprite._blendFuncStr != "source")
             context.globalCompositeOperation = locSprite._blendFuncStr;
-
-        context.globalAlpha = locSprite._displayedOpacity / 255;
+        context.globalAlpha = alpha;
 
         var locRect = locSprite._rect, locOffsetPosition = locSprite._offsetPosition, locDrawSizeCanvas = locSprite._drawSize_Canvas;
         var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height;
@@ -471,7 +493,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             locDrawSizeCanvas.height
         );
 
-
         context.restore();
         cc.g_NumberOfDraws++;
     };
@@ -484,12 +505,20 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     cc.DrawNodeRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-        var context = ctx || cc._renderContext, _t = this;
+        var context = ctx || cc._renderContext, _t = this, node = _t._node;
+        var alpha = node._displayedOpacity/255;
+        if(alpha === 0)
+            return;
+        context.globalAlpha = alpha;
+
+        var t = node._transformWorld;
+        context.save();
+        ctx.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
         if ((_t._blendFunc && (_t._blendFunc.src == cc.SRC_ALPHA) && (_t._blendFunc.dst == cc.ONE)))
             context.globalCompositeOperation = 'lighter';
-
-        for (var i = 0; i < _t._buffer.length; i++) {
-            var element = _t._buffer[i];
+        var locBuffer = _t._buffer;
+        for (var i = 0, len = locBuffer.length; i < len; i++) {
+            var element = locBuffer[i];
             switch (element.type) {
                 case cc.DrawNode.TYPE_DOT:
                     _t._drawDot(context, element, scaleX, scaleY);
@@ -502,6 +531,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                     break;
             }
         }
+        context.restore();
     };
 
     cc.DrawNodeRenderCmdCanvas.prototype._drawDot = function (ctx, element, scaleX, scaleY) {
@@ -516,10 +546,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     cc.DrawNodeRenderCmdCanvas.prototype._drawSegment = function (ctx, element, scaleX, scaleY) {
         var locColor = element.lineColor;
-        var locFrom = element.verts[0];
-        var locTo = element.verts[1];
-        var locLineWidth = element.lineWidth;
-        var locLineCap = element.lineCap;
+        var locFrom = element.verts[0], locTo = element.verts[1];
+        var locLineWidth = element.lineWidth, locLineCap = element.lineCap;
 
         ctx.strokeStyle = "rgba(" + (0 | locColor.r) + "," + (0 | locColor.g) + "," + (0 | locColor.b) + "," + locColor.a / 255 + ")";
         ctx.lineWidth = locLineWidth * scaleX;
@@ -531,38 +559,23 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     cc.DrawNodeRenderCmdCanvas.prototype._drawPoly = function (ctx, element, scaleX, scaleY) {
-        var _node = this._node;
-        var locVertices = element.verts;
-        var locLineCap = element.lineCap;
-        var locFillColor = element.fillColor;
-        var locLineWidth = element.lineWidth;
-        var locLineColor = element.lineColor;
-        var locIsClosePolygon = element.isClosePolygon;
-        var locIsFill = element.isFill;
-        var locIsStroke = element.isStroke;
+        var locVertices = element.verts, locLineCap = element.lineCap;
+        var locFillColor = element.fillColor, locLineWidth = element.lineWidth;
+        var locLineColor = element.lineColor, locIsClosePolygon = element.isClosePolygon;
+        var locIsFill = element.isFill, locIsStroke = element.isStroke;
         if (locVertices == null)
             return;
 
         var firstPoint = locVertices[0];
-
         ctx.lineCap = locLineCap;
-
-        if (locFillColor) {
+        if (locFillColor)
             ctx.fillStyle = "rgba(" + (0 | locFillColor.r) + "," + (0 | locFillColor.g) + ","
                 + (0 | locFillColor.b) + "," + locFillColor.a / 255 + ")";
-        }
-
-        if (locLineWidth) {
+        if (locLineWidth)
             ctx.lineWidth = locLineWidth * scaleX;
-        }
-        if (locLineColor) {
+        if (locLineColor)
             ctx.strokeStyle = "rgba(" + (0 | locLineColor.r) + "," + (0 | locLineColor.g) + ","
                 + (0 | locLineColor.b) + "," + locLineColor.a / 255 + ")";
-        }
-        var t = _node._transformWorld;
-
-        ctx.save();
-        ctx.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
         ctx.beginPath();
         ctx.moveTo(firstPoint.x * scaleX, -firstPoint.y * scaleY);
@@ -571,12 +584,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         if (locIsClosePolygon)
             ctx.closePath();
-
         if (locIsFill)
             ctx.fill();
         if (locIsStroke)
             ctx.stroke();
-        ctx.restore();
     };
 
     cc.ClippingNodeSaveRenderCmdCanvas = function (node) {
@@ -641,7 +652,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     cc.ClippingNodeRestoreRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-
         var node = this._node;
         var locCache = cc.ClippingNode._getSharedCache();
         var context = ctx || cc._renderContext;
@@ -658,7 +668,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             context.restore();
         }
     };
-
 
     //CHIPMUNK
     cc.PhysicsDebugNodeRenderCmdCanvas = function (node) {
@@ -685,8 +694,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     //--- TMXLayer's render command ---
     cc.TMXLayerRenderCmdCanvas = function (tmxLayer) {
         this._node = tmxLayer;
-
-        this._transform = tmxLayer._transformWorld;
         this._childrenRenderCmds = [];
     };
 
@@ -709,7 +716,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             locCacheContext.save();
             locCacheContext.clearRect(0, 0, locCanvas.width, -locCanvas.height);
             //reset the cache context
-            var t = cc.affineTransformInvert(this._transform);
+            var t = cc.affineTransformInvert(locNode._transformWorld);
             locCacheContext.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
             for (var i = 0, len = locCacheCmds.length; i < len; i++) {
@@ -729,7 +736,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var node = this._node;
         //context.globalAlpha = this._opacity / 255;
         var posX = 0 | ( -node._anchorPointInPoints.x), posY = 0 | ( -node._anchorPointInPoints.y);
-        var locCacheCanvas = node._cacheCanvas, t = this._transform;
+        var locCacheCanvas = node._cacheCanvas, t = node._transformWorld;
         //direct draw image by canvas drawImage
         if (locCacheCanvas) {
             context.save();

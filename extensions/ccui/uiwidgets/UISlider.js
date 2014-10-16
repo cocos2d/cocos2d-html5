@@ -118,7 +118,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
 
         var self = this;
         if(!barRenderer.texture || !barRenderer.texture.isLoaded()){
-            barRenderer.addLoadedEventListener(function(){
+            barRenderer.addEventListener("load", function(){
                 self._findLayout();
                 self._updateChildrenDisplayedRGBA();
 
@@ -163,7 +163,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
 
         var self = this;
         if(!progressBarRenderer.texture || !progressBarRenderer.texture.isLoaded()){
-            progressBarRenderer.addLoadedEventListener(function(){
+            progressBarRenderer.addEventListener("load", function(){
                 self._findLayout();
                 self._updateChildrenDisplayedRGBA();
 
@@ -335,7 +335,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
 
         var self = this;
         if(!this._slidBallNormalRenderer.texture || !this._slidBallNormalRenderer.texture.isLoaded()){
-            this._slidBallNormalRenderer.addLoadedEventListener(function(){
+            this._slidBallNormalRenderer.addEventListener("load", function(){
                 self._updateChildrenDisplayedRGBA();
             });
         }
@@ -370,8 +370,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
 
         var self = this;
         if(!this._slidBallPressedRenderer.texture || !this._slidBallPressedRenderer.texture.isLoaded()){
-            this._slidBallPressedRenderer.addLoadedEventListener(function(){
-
+            this._slidBallPressedRenderer.addEventListener("load", function(){
                 self._updateChildrenDisplayedRGBA();
             });
         }
@@ -406,8 +405,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
 
         var self = this;
         if(!this._slidBallDisabledRenderer.texture || !this._slidBallDisabledRenderer.texture.isLoaded()){
-            this._slidBallDisabledRenderer.addLoadedEventListener(function(){
-
+            this._slidBallDisabledRenderer.addEventListener("load", function(){
                 self._updateChildrenDisplayedRGBA();
             });
         }

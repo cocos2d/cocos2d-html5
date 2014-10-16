@@ -55,7 +55,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _clippingRectDirty: true,
     _clippingType: null,
     _clippingStencil: null,
-    _handleScissor: false,
     _scissorRectDirty: false,
     _clippingRect: null,
     _clippingParent: null,
@@ -1223,16 +1222,13 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _onBeforeVisitScissor: function(ctx){
         var clippingRect = this._getClippingRect();
         var gl = ctx || cc._renderContext;
-        if (this._handleScissor) {
-            gl.enable(gl.SCISSOR_TEST);
-        }
+        gl.enable(gl.SCISSOR_TEST);
+
         cc.view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
     },
 
     _onAfterVisitScissor: function(ctx){
-        if (this._handleScissor) {
-            gl.disable(gl.SCISSOR_TEST);
-        }
+        gl.disable(gl.SCISSOR_TEST);
     },
 
     _updateBackGroundImageOpacity: function(){

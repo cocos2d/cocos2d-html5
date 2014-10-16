@@ -117,7 +117,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         }
 
         if(!imageRenderer.texture || !imageRenderer.texture.isLoaded()){
-            imageRenderer.addLoadedEventListener(function(){
+            imageRenderer.addEventListener("load", function(){
                 self._findLayout();
 
                 self._imageTextureSize = imageRenderer.getContentSize();

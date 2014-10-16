@@ -779,7 +779,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         this._updateImagesVisibility();
 
         if (normalImage.textureLoaded && !normalImage.textureLoaded()) {
-            normalImage.addLoadedEventListener(function (sender) {
+            normalImage.addEventListener("load", function (sender) {
                 this.width = sender.width;
                 this.height = sender.height;
             }, this);
@@ -865,7 +865,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
             this.height = locNormalImage.height;
 
             if (locNormalImage.textureLoaded && !locNormalImage.textureLoaded()) {
-                locNormalImage.addLoadedEventListener(function (sender) {
+                locNormalImage.addEventListener("load", function (sender) {
                     this.width = sender.width;
                     this.height = sender.height;
                     this.cascadeColor = true;

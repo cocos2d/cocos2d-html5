@@ -92,6 +92,7 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
             + "uniform vec4 CC_SinTime;         \n"
             + "uniform vec4 CC_CosTime;         \n"
             + "uniform vec4 CC_Random01;        \n"
+            + "uniform sampler2D CC_Texture0;   \n"
             + "//CC INCLUDES END                \n" + source;
 
         this._glContext.shaderSource(shader, source);

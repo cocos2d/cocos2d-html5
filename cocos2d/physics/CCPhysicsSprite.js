@@ -401,6 +401,14 @@
          * @return {cc.AffineTransform}
          */
         getNodeToParentTransform:function () {
+            var _t = this;
+            if(_t._usingNormalizedPosition && _t._parent){        //TODO need refactor
+                var conSize = _t._parent._contentSize;
+                _t._position.x = _t._normalizedPosition.x * conSize.width;
+                _t._position.y = _t._normalizedPosition.y * conSize.height;
+                _t._normalizedPositionDirty = false;
+            }
+
             if(cc._renderType === cc._RENDER_TYPE_CANVAS)
                 return this._nodeToParentTransformForCanvas();
 

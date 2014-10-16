@@ -122,7 +122,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
 
         var self = this;
         if(!barRenderer.texture || !barRenderer.texture.isLoaded()){
-            barRenderer.addLoadedEventListener(function(){
+            barRenderer.addEventListener("load", function(){
 
                 self._findLayout();
 
