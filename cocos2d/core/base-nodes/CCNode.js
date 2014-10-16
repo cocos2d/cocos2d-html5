@@ -162,7 +162,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     userObject: null,
     _transformDirty: true,
     _inverseDirty: true,
-    _cacheDirty: true,
+    _cacheDirty: false,
     // Cached parent serves to construct the cached parent chain
     _cachedParent: null,
     _transformGLDirty: null,
@@ -2665,6 +2665,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             if(this._rendererCmd)
                 cc.renderer.pushRenderCommand(this._rendererCmd);
         }
+        this._cacheDirty = false;
     };
 
     _p._transformForRenderer = function () {
