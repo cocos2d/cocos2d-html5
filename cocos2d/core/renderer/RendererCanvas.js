@@ -280,6 +280,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         this._node = node;
         this._startPoint = cc.p(0, 0);
         this._endPoint = cc.p(0, 0);
+        this._startStopStr = null;
+        this._endStopStr = null;
     };
 
     cc.GradientRectRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
@@ -299,24 +301,18 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             context.globalCompositeOperation = node._blendFuncStr;
         }
         context.globalAlpha = opacity;
-        var locWidth = node._contentSize.width,
-            locHeight = node._contentSize.height;
+        var locWidth = node._contentSize.width, locHeight = node._contentSize.height;
 
-        var gradient = context.createLinearGradient(self._startPoint.x, self._startPoint.y, self._endPoint.x, self._endPoint.y);      //TODO need cached
-        var locStartColor = node._displayedColor,
-            locEndColor = node._endColor;
-        gradient.addColorStop(0, "rgba(" + Math.round(locStartColor.r) + "," + Math.round(locStartColor.g) + ","
-            + Math.round(locStartColor.b) + "," + (locStartColor.a / 255).toFixed(4) + ")");
-        gradient.addColorStop(1, "rgba(" + Math.round(locEndColor.r) + "," + Math.round(locEndColor.g) + ","
-            + Math.round(locEndColor.b) + "," + (locEndColor.a != null ? (locEndColor.a / 255).toFixed(4) : 255) + ")");
+        var gradient = context.createLinearGradient(self._startPoint.x, self._startPoint.y, self._endPoint.x, self._endPoint.y);
+        gradient.addColorStop(0, this._startStopStr);
+        gradient.addColorStop(1, this._endStopStr);
         context.fillStyle = gradient;
 
         if(needTransform){
             context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
             context.fillRect(0, 0, locWidth * scaleX, -locHeight * scaleY);
-        } else {
+        } else
             context.fillRect(t.tx * scaleX, -t.ty * scaleY, locWidth * scaleX, -locHeight * scaleY);
-        }
 
         if(needRestore)
             context.restore();
