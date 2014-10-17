@@ -117,7 +117,7 @@ ccs.actionTimelineCache = {
         if (suffix == "csb"){
             return cache.createActionFromProtocolBuffers(filename);
         }else if (suffix == "json" || suffix == "ExportJson"){
-            return cache.createActionFormJson(filename);
+            return cache.createActionFromJson(filename);
         }
         return null;
     },

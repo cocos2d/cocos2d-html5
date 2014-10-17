@@ -174,11 +174,8 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
                     ccs.armatureDataManager.addArmatureFileInfo(path);
 
                     var armature = new ccs.Armature(name);
-<<<<<<< HEAD
+
                     var render = new ccs.ComRender(armature, "CCArmature");
-=======
-                    var render = ccs.ComRender.create(armature, "CCArmature");
->>>>>>> 4e56aff207179a8182b25bc8178889149c384bce
                     if (comName != null) {
                         render.setName(comName);
                     }
