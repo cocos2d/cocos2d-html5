@@ -58,13 +58,13 @@ cc.ControlPotentiometer = cc.Control.extend(/** @lends cc.ControlPotentiometer# 
         cc.Control.prototype.ctor.call(this);
         if (thumbFile != undefined) {
             // Prepare track for potentiometer
-            var backgroundSprite = cc.Sprite.create(backgroundFile);
+            var backgroundSprite = new cc.Sprite(backgroundFile);
 
             // Prepare thumb for potentiometer
-            var thumbSprite = cc.Sprite.create(thumbFile);
+            var thumbSprite = new cc.Sprite(thumbFile);
 
             // Prepare progress for potentiometer
-            var progressTimer = cc.ProgressTimer.create(cc.Sprite.create(progressFile));
+            var progressTimer = new cc.ProgressTimer(new cc.Sprite(progressFile));
             this.initWithTrackSprite_ProgressTimer_ThumbSprite(backgroundSprite, progressTimer, thumbSprite);
         }
     },

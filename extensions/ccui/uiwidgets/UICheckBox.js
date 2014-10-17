@@ -104,11 +104,11 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     },
 
     _initRenderer: function () {
-        this._backGroundBoxRenderer = cc.Sprite.create();
-        this._backGroundSelectedBoxRenderer = cc.Sprite.create();
-        this._frontCrossRenderer = cc.Sprite.create();
-        this._backGroundBoxDisabledRenderer = cc.Sprite.create();
-        this._frontCrossDisabledRenderer = cc.Sprite.create();
+        this._backGroundBoxRenderer = new cc.Sprite();
+        this._backGroundSelectedBoxRenderer = new cc.Sprite();
+        this._frontCrossRenderer = new cc.Sprite();
+        this._backGroundBoxDisabledRenderer = new cc.Sprite();
+        this._frontCrossDisabledRenderer = new cc.Sprite();
 
         this.addProtectedChild(this._backGroundBoxRenderer, ccui.CheckBox.BOX_RENDERER_ZORDER, -1);
         this.addProtectedChild(this._backGroundSelectedBoxRenderer, ccui.CheckBox.BOX_SELECTED_RENDERER_ZORDER, -1);
@@ -150,8 +150,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
         var self = this;
         if(!bgBoxRenderer.texture || !bgBoxRenderer.texture.isLoaded()){
-            bgBoxRenderer.addLoadedEventListener(function(){
-
+            bgBoxRenderer.addEventListener("load", function(){
                 self._findLayout();
 
                 self._updateFlippedX();
@@ -177,7 +176,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
         if (!bgBoxRenderer.textureLoaded()) {
             this._backGroundBoxRenderer.setContentSize(this._customSize);
-            bgBoxRenderer.addLoadedEventListener(function () {
+            bgBoxRenderer.addEventListener("load", function () {
                 this._updateContentSizeWithTextureSize(this._backGroundBoxRenderer.getContentSize());
             }, this);
         }
@@ -205,8 +204,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
         var self = this;
         if(!this._backGroundSelectedBoxRenderer.texture || !this._backGroundSelectedBoxRenderer.texture.isLoaded()){
-            this._backGroundSelectedBoxRenderer.addLoadedEventListener(function(){
-
+            this._backGroundSelectedBoxRenderer.addEventListener("load", function(){
                 self._findLayout();
 
                 self._updateFlippedX();
@@ -251,7 +249,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
         var self = this;
         if(!this._frontCrossRenderer.texture || !this._frontCrossRenderer.texture.isLoaded()){
-            this._frontCrossRenderer.addLoadedEventListener(function(){
+            this._frontCrossRenderer.addEventListener("load", function(){
                 self._findLayout();
 
                 self._updateFlippedX();
@@ -295,7 +293,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
         var self = this;
         if(!this._backGroundBoxDisabledRenderer.texture || !this._backGroundBoxDisabledRenderer.texture.isLoaded()){
-            this._backGroundBoxDisabledRenderer.addLoadedEventListener(function(){
+            this._backGroundBoxDisabledRenderer.addEventListener("load", function(){
                 self._findLayout();
 
                 self._updateFlippedX();
@@ -339,8 +337,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
         var self = this;
         if(!this._frontCrossDisabledRenderer.texture || !this._frontCrossDisabledRenderer.texture.isLoaded()){
-            this._frontCrossDisabledRenderer.addLoadedEventListener(function(){
-
+            this._frontCrossDisabledRenderer.addEventListener("load", function(){
                 self._findLayout();
 
                 self._updateFlippedX();
@@ -621,7 +618,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     },
 
     _createCloneInstance: function () {
-        return ccui.CheckBox.create();
+        return new ccui.CheckBox();
     },
 
     _copySpecialProperties: function (uiCheckBox) {
@@ -682,7 +679,7 @@ _p = null;
  * @return {ccui.CheckBox}
  * @example
  * // example
- * var uiCheckBox = ccui.CheckBox.create();
+ * var uiCheckBox = new ccui.CheckBox();
  */
 ccui.CheckBox.create = function (backGround, backGroundSeleted, cross, backGroundDisabled, frontCrossDisabled, texType) {
     return new ccui.CheckBox(backGround, backGroundSeleted,cross,backGroundDisabled,frontCrossDisabled,texType);

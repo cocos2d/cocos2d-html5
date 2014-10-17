@@ -89,7 +89,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     _spritesGenerated: false,
     _spriteFrameRotated: false,
     _textureLoaded:false,
-    _loadedEventListeners: null,
     _className:"Scale9Sprite",
 
     /**
@@ -104,19 +103,10 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
      * add texture loaded event listener
      * @param {Function} callback
      * @param {Object} target
+     * @deprecated since 3.1, please use addEventListener instead
      */
     addLoadedEventListener:function(callback, target){
-        this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
-    },
-
-    _callLoadedEventCallbacks:function(){
-        this._textureLoaded = true;
-        var locListeners = this._loadedEventListeners;
-        for(var i = 0, len = locListeners.length;  i < len; i++){
-            var selCallback = locListeners[i];
-            selCallback.eventCallback.call(selCallback.eventTarget, this);
-        }
-        locListeners.length = 0;
+        this.addEventListener("load", callback, target);
     },
 
     _updateCapInset: function () {
@@ -253,7 +243,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         this._originalSize = cc.size(0, 0);
         this._preferredSize = cc.size(0, 0);
         this._capInsets = cc.rect(0, 0, 0, 0);
-        this._loadedEventListeners = [];
 
         //cache
         if(cc._renderType === cc._RENDER_TYPE_CANVAS){
@@ -586,7 +575,7 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         var locLoaded = texture.isLoaded();
         this._textureLoaded = locLoaded;
         if(!locLoaded){
-            texture.addLoadedEventListener(function(sender){
+            texture.addEventListener("load", function(sender){
                 // the texture is rotated on Canvas render mode, so isRotated always is false.
                 var preferredSize = this._preferredSize;
                 preferredSize = cc.size(preferredSize.width, preferredSize.height);
@@ -594,11 +583,11 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
                 this.updateWithBatchNode(this._scale9Image, cc.rect(0,0,size.width,size.height), false, this._capInsets);
                 this.setPreferredSize(preferredSize);
                 this._positionsAreDirty = true;
-                this._callLoadedEventCallbacks();
+                this.dispatchEvent("load");
             }, this);
         }
 
-        return this.initWithBatchNode(cc.SpriteBatchNode.create(file, 9), rect, false, capInsets);
+        return this.initWithBatchNode(new cc.SpriteBatchNode(file, 9), rect, false, capInsets);
     },
 
     /**
@@ -619,17 +608,17 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         var locLoaded = spriteFrame.textureLoaded();
         this._textureLoaded = locLoaded;
         if(!locLoaded){
-            spriteFrame.addLoadedEventListener(function(sender){
+            spriteFrame.addEventListener("load", function(sender){
                 // the texture is rotated on Canvas render mode, so isRotated always is false.
                 var preferredSize = this._preferredSize;
                 preferredSize = cc.size(preferredSize.width, preferredSize.height);
                 this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc._renderType == cc._RENDER_TYPE_WEBGL && sender.isRotated(), this._capInsets);
                 this.setPreferredSize(preferredSize);
                 this._positionsAreDirty = true;
-                this._callLoadedEventCallbacks();
+                this.dispatchEvent("load");
             },this);
         }
-        var batchNode = cc.SpriteBatchNode.create(spriteFrame.getTexture(), 9);
+        var batchNode = new cc.SpriteBatchNode(spriteFrame.getTexture(), 9);
         // the texture is rotated on Canvas render mode, so isRotated always is false.
         return this.initWithBatchNode(batchNode, spriteFrame.getRect(), cc._renderType == cc._RENDER_TYPE_WEBGL && spriteFrame.isRotated(), capInsets);
     },
@@ -723,9 +712,9 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         var locLoaded = tmpTexture.isLoaded();
         this._textureLoaded = locLoaded;
         if(!locLoaded){
-            tmpTexture.addLoadedEventListener(function(sender){
+            tmpTexture.addEventListener("load", function(sender){
                 this._positionsAreDirty = true;
-                this._callLoadedEventCallbacks();
+                this.dispatchEvent("load");
             },this);
             return true;
         }
@@ -1014,19 +1003,19 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
      * @param {cc.SpriteFrame} spriteFrame
      */
     setSpriteFrame: function (spriteFrame) {
-        var batchNode = cc.SpriteBatchNode.create(spriteFrame.getTexture(), 9);
+        var batchNode = new cc.SpriteBatchNode(spriteFrame.getTexture(), 9);
         // the texture is rotated on Canvas render mode, so isRotated always is false.
         var locLoaded = spriteFrame.textureLoaded();
         this._textureLoaded = locLoaded;
         if(!locLoaded){
-            spriteFrame.addLoadedEventListener(function(sender){
+            spriteFrame.addEventListener("load", function(sender){
                 // the texture is rotated on Canvas render mode, so isRotated always is false.
                 var preferredSize = this._preferredSize;
                 preferredSize = cc.size(preferredSize.width, preferredSize.height);
                 this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc._renderType == cc._RENDER_TYPE_WEBGL && sender.isRotated(), this._capInsets);
                 this.setPreferredSize(preferredSize);
                 this._positionsAreDirty = true;
-                this._callLoadedEventCallbacks();
+                this.dispatchEvent("load");
             },this);
         }
         this.updateWithBatchNode(batchNode, spriteFrame.getRect(), cc._renderType == cc._RENDER_TYPE_WEBGL && spriteFrame.isRotated(), cc.rect(0, 0, 0, 0));
@@ -1040,6 +1029,7 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
 });
 
 var _p = ccui.Scale9Sprite.prototype;
+cc.EventHelper.prototype.apply(_p);
 
 // Extended properties
 /** @expose */

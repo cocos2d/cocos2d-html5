@@ -238,7 +238,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         var texture = new cc.Texture2D();
         texture.initWithElement(locCacheCanvas);
         texture.handleLoadedTexture();
-        var locSprite = this.sprite = cc.Sprite.create(texture);
+        var locSprite = this.sprite = new cc.Sprite(texture);
         locSprite.setBlendFunc(cc.ONE, cc.ONE_MINUS_SRC_ALPHA);
         // Disabled by default.
         this.autoDraw = false;
@@ -321,7 +321,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         locTexture.setAliasTexParameters();
 
-        this.sprite = cc.Sprite.create(locTexture);
+        this.sprite = new cc.Sprite(locTexture);
         var locSprite = this.sprite;
         locSprite.scaleY = -1;
         locSprite.setBlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
@@ -935,9 +935,6 @@ cc.defineGetterSetter(_p, "clearColorVal", _p.getClearColor, _p.setClearColor);
  * @param {cc.IMAGE_FORMAT_JPEG|cc.IMAGE_FORMAT_PNG|cc.IMAGE_FORMAT_RAWDATA} format
  * @param {Number} depthStencilFormat
  * @return {cc.RenderTexture}
- * @example
- * // Example
- * var rt = cc.RenderTexture.create()
  */
 cc.RenderTexture.create = function (width, height, format, depthStencilFormat) {
     return new cc.RenderTexture(width, height, format, depthStencilFormat);

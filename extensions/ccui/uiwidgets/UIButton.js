@@ -126,9 +126,9 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     },
 
     _initRenderer: function () {
-        this._buttonNormalRenderer = cc.Sprite.create();
-        this._buttonClickedRenderer = cc.Sprite.create();
-        this._buttonDisableRenderer = cc.Sprite.create();
+        this._buttonNormalRenderer = new cc.Sprite();
+        this._buttonClickedRenderer = new cc.Sprite();
+        this._buttonDisableRenderer = new cc.Sprite();
         this._titleRenderer = new cc.LabelTTF("");
         this._titleRenderer.setAnchorPoint(0.5, 0.5);
 
@@ -158,9 +158,9 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             this._buttonClickedRenderer = new ccui.Scale9Sprite();
             this._buttonDisableRenderer = new ccui.Scale9Sprite();
         } else {
-            this._buttonNormalRenderer = cc.Sprite.create();
-            this._buttonClickedRenderer = cc.Sprite.create();
-            this._buttonDisableRenderer = cc.Sprite.create();
+            this._buttonNormalRenderer = new cc.Sprite();
+            this._buttonClickedRenderer = new cc.Sprite();
+            this._buttonDisableRenderer = new cc.Sprite();
         }
 
         this._buttonClickedRenderer.setVisible(false);
@@ -255,8 +255,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
         var self = this;
         if(!this._buttonNormalRenderer.texture || !this._buttonNormalRenderer.texture.isLoaded()){
-            this._buttonNormalRenderer.addLoadedEventListener(function(){
-
+            this._buttonNormalRenderer.addEventListener("load", function(){
                 self._findLayout();
 
                 self._normalTextureSize = self._buttonNormalRenderer.getContentSize();
@@ -326,8 +325,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
         var self = this;
         if(!this._buttonClickedRenderer.texture || !this._buttonClickedRenderer.texture.isLoaded()){
-            this._buttonClickedRenderer.addLoadedEventListener(function(){
-
+            this._buttonClickedRenderer.addEventListener("load", function(){
                 self._findLayout();
 
                 self._pressedTextureSize = self._buttonClickedRenderer.getContentSize();
@@ -393,8 +391,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
         var self = this;
         if(!this._buttonDisableRenderer.texture || !this._buttonDisableRenderer.texture.isLoaded()){
-            this._buttonDisableRenderer.addLoadedEventListener(function() {
-
+            this._buttonDisableRenderer.addEventListener("load", function() {
                 self._findLayout();
 
                 self._disabledTextureSize = self._buttonDisableRenderer.getContentSize();
@@ -938,7 +935,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     },
 
     _createCloneInstance: function () {
-        return ccui.Button.create();
+        return new ccui.Button();
     },
 
     _copySpecialProperties: function (uiButton) {
@@ -988,9 +985,6 @@ _p = null;
  * @param {string} [disableImage]   disabled state texture name
  * @param {string} [texType]
  * @return {ccui.Button}
- * @example
- * // example
- * var uiButton = ccui.Button.create();
  */
 ccui.Button.create = function (normalImage, selectedImage, disableImage, texType) {
     return new ccui.Button(normalImage, selectedImage, disableImage, texType);

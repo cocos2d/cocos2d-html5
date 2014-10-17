@@ -62,7 +62,6 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
     _texture:null,
     _textureFilename:"",
     _textureLoaded:false,
-    _eventListeners:null,
 
     ctor:function (filename, rect, rotated, offset, originalSize) {
         this._offset = cc.p(0, 0);
@@ -94,22 +93,10 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * Add a event listener for texture loaded event.
      * @param {Function} callback
      * @param {Object} target
+     * @deprecated since 3.1, please use addEventListener instead
      */
     addLoadedEventListener:function(callback, target){
-        if (this._eventListeners == null){
-           this._eventListeners = [];
-        }
-        this._eventListeners.push({eventCallback:callback, eventTarget:target});
-    },
-
-    _callLoadedEventCallbacks:function(){
-        var locListeners = this._eventListeners;
-        if (!locListeners) return;
-        for(var i = 0, len = locListeners.length;  i < len; i++){
-            var selCallback = locListeners[i];
-            selCallback.eventCallback.call(selCallback.eventTarget, this);
-        }
-        locListeners.length = 0;
+        this.addEventListener("load", callback, target);
     },
 
     /**
@@ -254,7 +241,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
             this._textureLoaded = locLoaded;
             this._texture = texture;
             if(!locLoaded){
-                texture.addLoadedEventListener(function(sender){
+                texture.addEventListener("load", function(sender){
                     this._textureLoaded = true;
                     if(this._rotated && cc._renderType === cc._RENDER_TYPE_CANVAS){
                         var tempElement = sender.getHtmlElementObj();
@@ -278,7 +265,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
                         this._originalSize.width =  w;
                         this._originalSize.height =  h;
                     }
-                    this._callLoadedEventCallbacks();
+                    //dispatch 'load' event of cc.SpriteFrame
+                    this.dispatchEvent("load");
                 }, this);
             }
         }
@@ -388,6 +376,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         return true;
     }
 });
+
+cc.EventHelper.prototype.apply(cc.SpriteFrame.prototype);
 
 /**
  * <p>

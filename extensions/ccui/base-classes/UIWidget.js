@@ -28,7 +28,7 @@ var __LAYOUT_COMPONENT_NAME = "__ui_layout";
 /**
  * The base class for ccui controls and layout
  * @sample
- * var uiWidget = ccui.Widget.create();
+ * var uiWidget = new ccui.Widget();
  * this.addChild(uiWidget);
  * @class
  * @extends ccui.ProtectedNode
@@ -1368,7 +1368,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     _createCloneInstance: function () {
-        return ccui.Widget.create();
+        return new ccui.Widget();
     },
 
     _copyClonedWidgetChildren: function (model) {
@@ -1699,9 +1699,6 @@ _p = null;
  * allocates and initializes a UIWidget.
  * @deprecated
  * @return {ccui.Widget}
- * @example
- * // example
- * var uiWidget = ccui.Widget.create();
  */
 ccui.Widget.create = function () {
     return new ccui.Widget();

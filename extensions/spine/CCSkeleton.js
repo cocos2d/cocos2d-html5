@@ -305,7 +305,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
                     continue;
                 rendererObject = attachment.rendererObject;
                 rect = cc.rect(rendererObject.x, rendererObject.y, rendererObject.width,rendererObject.height);
-                var sprite = cc.Sprite.create(rendererObject.page._texture, rect, rendererObject.rotate);
+                var sprite = new cc.Sprite(rendererObject.page._texture, rect, rendererObject.rotate);
                 this.addChild(sprite,-1);
                 slot.currentSprite = sprite;
             }
@@ -367,7 +367,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
                 if(!selSprite){
                     var rendererObject = attachment.rendererObject;
                     var rect = cc.rect(rendererObject.x, rendererObject.y, rendererObject.width,rendererObject.height);
-                    var sprite = cc.Sprite.create(rendererObject.page._texture, rect, rendererObject.rotate);
+                    var sprite = new cc.Sprite(rendererObject.page._texture, rect, rendererObject.rotate);
                     this.addChild(sprite,-1);
                     slot.currentSprite = sprite;
                 }

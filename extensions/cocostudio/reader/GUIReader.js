@@ -398,10 +398,10 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend(/** @lends cc
         var classname = data["classname"];
         var uiOptions = data["options"];
         if (classname == "Button") {
-            widget = ccui.Button.create();
+            widget = new ccui.Button();
             this.setPropsForButtonFromJsonDictionary(widget, uiOptions);
         } else if (classname == "CheckBox") {
-            widget = ccui.CheckBox.create();
+            widget = new ccui.CheckBox();
             this.setPropsForCheckBoxFromJsonDictionary(widget, uiOptions);
         } else if (classname == "Label") {
             widget = new ccui.Text();
@@ -1203,12 +1203,12 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend(/** @lends cc
                 case 0:
                     break;
                 case 1:
-                    parameter = ccui.LinearLayoutParameter.create();
+                    parameter = new ccui.LinearLayoutParameter();
                     var gravity = layoutParameterDic["gravity"];
                     parameter.setGravity(gravity);
                     break;
                 case 2:
-                    parameter = ccui.RelativeLayoutParameter.create();
+                    parameter = new ccui.RelativeLayoutParameter();
                     var relativeName = layoutParameterDic["relativeName"];
                     parameter.setRelativeName(relativeName);
                     var relativeToName = layoutParameterDic["relativeToName"];

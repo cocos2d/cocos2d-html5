@@ -873,9 +873,6 @@ cc.defineGetterSetter(_p, "reverseDir", _p.isReverseDirection, _p.setReverseDire
  * @deprecated since v3.0,please use new cc.ProgressTimer(sprite) instead.
  * @param {cc.Sprite} sprite
  * @return {cc.ProgressTimer}
- * @example
- * // Example
- * var progress = cc.ProgressTimer.create('progress.png')
  */
 cc.ProgressTimer.create = function (sprite) {
     return new cc.ProgressTimer(sprite);

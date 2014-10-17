@@ -127,7 +127,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     _createPage: function () {
-        var newPage = ccui.Layout.create();
+        var newPage = new ccui.Layout();
         newPage.setContentSize(this.getContentSize());
         return newPage;
     },
@@ -594,7 +594,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     _createCloneInstance: function () {
-        return ccui.PageView.create();
+        return new ccui.PageView();
     },
 
     _copyClonedWidgetChildren: function (model) {
@@ -617,9 +617,6 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
  * allocates and initializes a UIPageView.
  * @deprecated since v3.0, please use new ccui.PageView() instead.
  * @return {ccui.PageView}
- * @example
- * // example
- * var uiPageView = ccui.PageView.create();
  */
 ccui.PageView.create = function () {
     return new ccui.PageView();

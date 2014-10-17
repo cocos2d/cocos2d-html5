@@ -753,7 +753,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     _createCloneInstance: function () {
-        return ccui.TextField.create();
+        return new ccui.TextField();
     },
 
     _copySpecialProperties: function (textField) {
@@ -821,9 +821,6 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
  * @param {String} fontName
  * @param {Number} fontSize
  * @returns {ccui.TextField}
- * @example
- * // example
- * var uiTextField = ccui.TextField.create();
  */
 ccui.TextField.create = function(placeholder, fontName, fontSize){
     return new ccui.TextField(placeholder, fontName, fontSize);

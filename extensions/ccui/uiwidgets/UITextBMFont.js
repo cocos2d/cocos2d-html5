@@ -77,7 +77,7 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
 
         var locRenderer = _self._labelBMFontRenderer;
         if(!locRenderer._textureLoaded){
-             locRenderer.addLoadedEventListener(function(){
+             locRenderer.addEventListener("load", function(){
                  _self.updateSizeAndPosition();
              });
         }
@@ -191,7 +191,7 @@ var _p = ccui.TextBMFont.prototype;
 // Extended properties
 /** @expose */
 _p.string;
-cc.defineGetterSetter(_p, "string", _p.getString, _p.setStringValue);
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
 
 _p = null;
 
@@ -199,9 +199,6 @@ _p = null;
  * allocates and initializes a UILabelBMFont.
  * @deprecated since v3.0, please use new ccui.TextBMFont() instead.
  * @return {ccui.TextBMFont}
- * @example
- * // example
- * var uiLabelBMFont = ccui.TextBMFont.create();
  */
 ccui.TextBMFont.create = function (text, filename) {
     return new ccui.TextBMFont(text, filename);

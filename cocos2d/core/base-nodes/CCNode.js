@@ -138,6 +138,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _scaleX: 1.0,
     _scaleY: 1.0,
     _position: null,
+
+    _normalizedPosition:null,
+    _usingNormalizedPosition: false,
+    _normalizedPositionDirty: false,
+
     _skewX: 0.0,
     _skewY: 0.0,
     // children (lazy allocs),
@@ -152,12 +157,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     // "whole screen" objects. like Scenes and Layers, should set _ignoreAnchorPointForPosition to true
     _ignoreAnchorPointForPosition: false,
     tag: cc.NODE_TAG_INVALID,
-    // userData is always inited as nil
+    // userData is always initialized as nil
     userData: null,
     userObject: null,
     _transformDirty: true,
     _inverseDirty: true,
-    _cacheDirty: true,
+    _cacheDirty: false,
     // Cached parent serves to construct the cached parent chain
     _cachedParent: null,
     _transformGLDirty: null,
@@ -192,7 +197,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _realColor: null,
     _cascadeColorEnabled: false,
     _cascadeOpacityEnabled: false,
-    _usingNormalizedPosition: false,
     _hashOfName: 0,
 
     _curLevel: -1,                           //for new renderer
@@ -205,6 +209,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         _t._anchorPointInPoints = cc.p(0, 0);
         _t._contentSize = cc.size(0, 0);
         _t._position = cc.p(0, 0);
+        _t._normalizedPosition = cc.p(0,0);
         _t._children = [];
         _t._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
         _t._transformWorld = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
@@ -675,6 +680,29 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             locPosition.y = yValue;
         }
         this.setNodeDirty();
+        this._usingNormalizedPosition = false;
+    },
+
+    /**
+     * <p>
+     * Sets the position (x,y) using values between 0 and 1.                                                <br/>
+     * The positions in pixels is calculated like the following:                                            <br/>
+     *   _position = _normalizedPosition * parent.getContentSize()
+     * </p>
+     * @param {cc.Point|Number} posOrX
+     * @param {Number} [y]
+     */
+    setNormalizedPosition: function(posOrX, y){
+        var locPosition = this._normalizedPosition;
+        if (y === undefined) {
+            locPosition.x = posOrX.x;
+            locPosition.y = posOrX.y;
+        } else {
+            locPosition.x = posOrX;
+            locPosition.y = y;
+        }
+        this.setNodeDirty();
+        this._normalizedPositionDirty = this._usingNormalizedPosition = true;
     },
 
     /**
@@ -684,6 +712,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getPosition: function () {
         return cc.p(this._position);
+    },
+
+    /**
+     * returns the normalized position
+     * @returns {cc.Point}
+     */
+    getNormalizedPosition: function(){
+        return cc.p(this._normalizedPosition);
     },
 
     /**
@@ -1786,12 +1822,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *  @param {cc.AffineTransform} additionalTransform  The additional transform
      *  @example
      * // create a batchNode
-     * var batch= cc.SpriteBatchNode.create("Icon-114.png");
+     * var batch = new cc.SpriteBatchNode("Icon-114.png");
      * this.addChild(batch);
      *
      * // create two sprites, spriteA will be added to batchNode, they are using different textures.
-     * var spriteA = cc.Sprite.create(batch->getTexture());
-     * var spriteB = cc.Sprite.create("Icon-72.png");
+     * var spriteA = new cc.Sprite(batch->getTexture());
+     * var spriteB = new cc.Sprite("Icon-72.png");
      *
      * batch.addChild(spriteA);
      *
@@ -2259,6 +2295,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _getNodeToParentTransformForWebGL: function () {
         var _t = this;
+        if(_t._usingNormalizedPosition && _t._parent){        //TODO need refactor
+            var conSize = _t._parent._contentSize;
+            _t._position.x = _t._normalizedPosition.x * conSize.width;
+            _t._position.y = _t._normalizedPosition.y * conSize.height;
+            _t._normalizedPositionDirty = false;
+        }
         if (_t._transformDirty) {
             // Translate values
             var x = _t._position.x;
@@ -2539,9 +2581,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Set whether color should be changed with the opacity value,
-     * useless in cc.Node, but this function is overrided in some class to have such behavior.
+     * useless in cc.Node, but this function is override in some class to have such behavior.
      * @function
-     * @param {Boolean} value
+     * @param {Boolean} opacityValue
      */
     setOpacityModifyRGB: function (opacityValue) {
     },
@@ -2574,7 +2616,6 @@ cc.Node.create = function () {
 cc.Node._StateCallbackType = {onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, updateTransform: 5, onExitTransitionDidStart: 6, sortAllChildren: 7};
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-
     //redefine cc.Node
     var _p = cc.Node.prototype;
     _p.ctor = function () {
@@ -2624,6 +2665,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             if(this._rendererCmd)
                 cc.renderer.pushRenderCommand(this._rendererCmd);
         }
+        this._cacheDirty = false;
     };
 
     _p._transformForRenderer = function () {
@@ -2664,7 +2706,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     _p.transform = function (ctx) {
         // transform for canvas
-        var t = this.nodeToParentTransform(),
+        var t = this.getNodeToParentTransform(),
             worldT = this._transformWorld;         //get the world transform
 
         if(this._parent){
@@ -2692,6 +2734,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     _p.getNodeToParentTransform = function () {
         var _t = this;
+        if(_t._usingNormalizedPosition && _t._parent){        //TODO need refactor
+            var conSize = _t._parent._contentSize;
+            _t._position.x = _t._normalizedPosition.x * conSize.width;
+            _t._position.y = _t._normalizedPosition.y * conSize.height;
+            _t._normalizedPositionDirty = false;
+        }
         if (_t._transformDirty) {
             var t = _t._transform;// quick reference
 

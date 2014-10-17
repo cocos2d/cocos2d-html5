@@ -273,7 +273,7 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
             throw "cc.TMXTiledMap.initWithTMXFile(): tmxFile should be non-null or non-empty string.";
 	    this.width = 0;
 	    this.height = 0;
-        var mapInfo = cc.TMXMapInfo.create(tmxFile);
+        var mapInfo = new cc.TMXMapInfo(tmxFile);
         if (!mapInfo)
             return false;
 
@@ -294,7 +294,7 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
         this.width = 0;
 	    this.height = 0;
 
-        var mapInfo = cc.TMXMapInfo.create(tmxString, resourcePath);
+        var mapInfo = new cc.TMXMapInfo(tmxString, resourcePath);
         var locTilesets = mapInfo.getTilesets();
         if(!locTilesets || locTilesets.length === 0)
             cc.log("cc.TMXTiledMap.initWithXML(): Map not found. Please check the filename.");
@@ -411,7 +411,7 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
 
     _parseLayer:function (layerInfo, mapInfo) {
         var tileset = this._tilesetForLayer(layerInfo, mapInfo);
-        var layer = cc.TMXLayer.create(tileset, layerInfo, mapInfo);
+        var layer = new cc.TMXLayer(tileset, layerInfo, mapInfo);
         // tell the layerinfo to release the ownership of the tiles map.
         layerInfo.ownTiles = false;
         layer.setupTiles();
@@ -473,17 +473,6 @@ cc.defineGetterSetter(_p, "tileHeight", _p._getTileHeight, _p._setTileHeight);
  * @param {String} tmxFile tmxFile fileName or content string
  * @param {String} resourcePath   If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
  * @return {cc.TMXTiledMap|undefined}
- * @example
- * //example
- * 1.
- * //create a TMXTiledMap with file name
- * var tmxTiledMap = cc.TMXTiledMap.create("res/orthogonal-test1.tmx");
- * 2.
- * //create a TMXTiledMap with content string and resource path
- * var resources = "res/TileMaps";
- * var filePath = "res/TileMaps/orthogonal-test1.tmx";
- * var xmlStr = cc.loader.getRes(filePath);
- * var tmxTiledMap = cc.TMXTiledMap.create(xmlStr, resources);
  */
 cc.TMXTiledMap.create = function (tmxFile,resourcePath) {
     return new cc.TMXTiledMap(tmxFile,resourcePath);

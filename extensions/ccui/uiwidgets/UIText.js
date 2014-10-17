@@ -402,7 +402,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     },
 
     _createCloneInstance: function () {
-        return ccui.Text.create();
+        return new ccui.Text();
     },
 
     _copySpecialProperties: function (uiLabel) {
@@ -481,9 +481,6 @@ _p = null;
  * allocates and initializes a UILabel.
  * @deprecated since v3.0, please use new ccui.Text() instead.
  * @return {ccui.Text}
- * @example
- * // example
- * var uiLabel = ccui.Text.create();
  */
 ccui.Label = ccui.Text.create = function (textContent, fontName, fontSize) {
     return new ccui.Text(textContent, fontName, fontSize);

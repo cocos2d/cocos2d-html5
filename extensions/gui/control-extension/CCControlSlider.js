@@ -65,13 +65,13 @@ cc.ControlSlider = cc.Control.extend(/** @lends cc.ControlSlider# */{
         cc.Control.prototype.ctor.call(this);
         if (thumbFile != undefined) {
             // Prepare background for slider
-            bgSprite = cc.Sprite.create(bgFile);
+            bgSprite = new cc.Sprite(bgFile);
 
             // Prepare progress for slider
-            progressSprite = cc.Sprite.create(progressFile);
+            progressSprite = new cc.Sprite(progressFile);
 
             // Prepare thumb (menuItem) for slider
-            thumbSprite = cc.Sprite.create(thumbFile);
+            thumbSprite = new cc.Sprite(thumbFile);
 
             this.initWithSprites(bgSprite, progressSprite, thumbSprite);
         }
