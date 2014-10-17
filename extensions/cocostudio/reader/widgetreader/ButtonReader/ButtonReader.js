@@ -138,41 +138,41 @@ ccs.buttonReader = /** @lends ccs.buttonReader# */{
             ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
     
             var button = widget;
-            var options = nodeTree.buttonOptions;
+            var options = nodeTree["buttonOptions"];
     
             var protocolBuffersPath = ccs.uiReader.getFilePath();
     
-            var scale9Enable = options.scale9Enable;
+            var scale9Enable = options["scale9Enable"];
             button.setScale9Enabled(scale9Enable);
     
     
-    		var normalDic = options.normalData;
-            var normalType = normalDic.resourceType;
+    		var normalDic = options["normalData"];
+            var normalType = normalDic["resourceType"];
     		if (normalType == 1)
     		{
-    			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + normalDic.plistFile);
+    			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + normalDic["plistFile"]);
     		}
-            var normalTexturePath = ccs.widgetReader.getResourcePath(normalDic.path, normalType);
+            var normalTexturePath = ccs.widgetReader.getResourcePath(normalDic["path"], normalType);
             button.loadTextureNormal(normalTexturePath, normalType);
     
     
-            var pressedDic = options.pressedData;
-            var pressedType = pressedDic.resourceType;
+            var pressedDic = options["pressedData"];
+            var pressedType = pressedDic["resourceType"];
     		if (pressedType == 1)
     		{
-    			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + pressedDic.plistFile);
+    			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + pressedDic["plistFile"]);
     		}
-            var pressedTexturePath = ccs.widgetReader.getResourcePath(pressedDic.path, pressedType);
+            var pressedTexturePath = ccs.widgetReader.getResourcePath(pressedDic["path"], pressedType);
             button.loadTexturePressed(pressedTexturePath, pressedType);
     
     
-            var disabledDic = options.disabledData;
-            var disabledType = disabledDic.resourceType;
+            var disabledDic = options["disabledData"];
+            var disabledType = disabledDic["resourceType"];
     		if (disabledType == 1)
     		{
-    			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + disabledDic.plistFile);
+    			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + disabledDic["plistFile"]);
     		}
-            var disabledTexturePath = ccs.widgetReader.getResourcePath(disabledDic.path, disabledType);
+            var disabledTexturePath = ccs.widgetReader.getResourcePath(disabledDic["path"], disabledType);
             button.loadTextureDisabled(disabledTexturePath, disabledType);
     
             if (scale9Enable)
@@ -180,54 +180,54 @@ ccs.buttonReader = /** @lends ccs.buttonReader# */{
                 button.setUnifySizeEnabled(false);
                 button.ignoreContentAdaptWithSize(false);
     
-                var cx = options.capInsetsX;
-                var cy = options.capInsetsY;
-                var cw = options.capInsetsWidth;
-                var ch = options.capInsetsHeight;
+                var cx = options["capInsetsX"];
+                var cy = options["capInsetsY"];
+                var cw = options["capInsetsWidth"];
+                var ch = options["capInsetsHeight"];
     
                 button.setCapInsets(cc.rect(cx, cy, cw, ch));
-                var sw = options.scale9Width;
-                var sh = options.scale9Height;
+                var sw = options["scale9Width"];
+                var sh = options["scale9Height"];
                 if (sw && sh)
                 {
                     button.setContentSize(cc.size(sw, sh));
                 }
             }
-            var tt = options.text;
+            var tt = options["text"];
             if (tt)
             {
                 button.setTitleText(tt);
             }
     
     
-            var cri = options.textColorR!==null ? options.textColorR : 255;
-            var cgi = options.textColorG!==null ? options.textColorG : 255;
-            var cbi = options.textColorB!==null ? options.textColorB : 255;
+            var cri = options["textColorR"]!==null ? options["textColorR"] : 255;
+            var cgi = options["textColorG"]!==null ? options["textColorG"] : 255;
+            var cbi = options["textColorB"]!==null ? options["textColorB"] : 255;
             button.setTitleColor(cc.color(cri,cgi,cbi));
     
     
-            var fontSize = options.fontSize!==null ? options.fontSize : 14;
+            var fontSize = options["fontSize"]!==null ? options["fontSize"] : 14;
             button.setTitleFontSize(fontSize);
     
     		var displaystate = true;
-    		if(options.displaystate!==null)
+    		if(options["displaystate"]!==null)
     		{
-    			displaystate = options.displaystate;
+    			displaystate = options["displaystate"];
     		}
     		button.setBright(displaystate);
     
-            var fontName = options.fontName!==null ? options.fontName : "微软雅黑";
+            var fontName = options["fontName"]!==null ? options["fontName"] : "微软雅黑";
             button.setTitleFontName(fontName);
     
-            if (options.fontResource)
+            if (options["fontResource"])
     		{
-    			var resourceData = options.fontResource;
-    		    button.setTitleFontName(protocolBuffersPath + resourceData.path);
+    			var resourceData = options["fontResource"];
+    		    button.setTitleFontName(protocolBuffersPath + resourceData["path"]);
     		}
     
-            var widgetOption = nodeTree.widgetOptions;
-            button.setColor(cc.color(widgetOption.colorR, widgetOption.colorG, widgetOption.colorB));
-            button.setOpacity(widgetOption.Alpha!==null ? widgetOption.Alpha : 255);
+            var widgetOption = nodeTree["widgetOptions"];
+            button.setColor(cc.color(widgetOption["colorR"], widgetOption["colorG"], widgetOption["colorB"]));
+            button.setOpacity(widgetOption["Alpha"]!==null ? widgetOption["Alpha"] : 255);
     
     
             // other commonly protperties
@@ -235,7 +235,7 @@ ccs.buttonReader = /** @lends ccs.buttonReader# */{
     },
 
     setPropsFromXML: function(widget, objectData){
-            ccs.widgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+            ccs.widgetReader.setPropsFromXML.call(this, widget, objectData);
 
             var button = widget;
     
@@ -267,19 +267,19 @@ ccs.buttonReader = /** @lends ccs.buttonReader# */{
                 }
                 else if (name == "Scale9OriginX")
                 {
-                    cx = atof(value());
+                    cx = value;
                 }
                 else if (name == "Scale9OriginY")
                 {
-                    cy = atof(value());
+                    cy = value;
                 }
                 else if (name == "Scale9Width")
                 {
-                    cw = atof(value());
+                    cw = value;
                 }
                 else if (name == "Scale9Height")
                 {
-                    ch = atof(value());
+                    ch = value;
                 }
                 else if (name == "ButtonText")
                 {
@@ -287,7 +287,7 @@ ccs.buttonReader = /** @lends ccs.buttonReader# */{
                 }
                 else if (name == "FontSize")
                 {
-                    fontSize = atoi(value);
+                    fontSize = value;
                 }
                 else if (name == "FontName")
                 {
@@ -295,7 +295,7 @@ ccs.buttonReader = /** @lends ccs.buttonReader# */{
                 }
                 else if (name == "Alpha")
                 {
-                    opacity = atoi(value());
+                    opacity = value;
                 }
                 else if (name == "DisplayState")
                 {
@@ -322,11 +322,11 @@ ccs.buttonReader = /** @lends ccs.buttonReader# */{
     
                         if (name == "X")
                         {
-                            swf = atof(value());
+                            swf = value;
                         }
                         else if (name == "Y")
                         {
-                            shf = atof(value());
+                            shf = value;
                         }
     
                         attribute = attribute.Next();
@@ -342,15 +342,15 @@ ccs.buttonReader = /** @lends ccs.buttonReader# */{
     
                         if (name == "R")
                         {
-                            cri = atoi(value());
+                            cri = value;
                         }
                         else if (name == "G")
                         {
-                            cgi = atoi(value());
+                            cgi = value;
                         }
                         else if (name == "B")
                         {
-                            cbi = atoi(value());
+                            cbi = value;
                         }
     
                         attribute = attribute.Next();
@@ -366,15 +366,15 @@ ccs.buttonReader = /** @lends ccs.buttonReader# */{
     
                         if (name == "R")
                         {
-                            title_color_red = atoi(value());
+                            title_color_red = value;
                         }
                         else if (name == "G")
                         {
-                            title_color_green = atoi(value());
+                            title_color_green = value;
                         }
                         else if (name == "B")
                         {
-                            title_color_blue = atoi(value());
+                            title_color_blue = value;
                         }
     
                         attribute = attribute.Next();
@@ -417,7 +417,7 @@ ccs.buttonReader = /** @lends ccs.buttonReader# */{
     
                         case 1:
                         {
-                            SpriteFrameCache.getInstance().addSpriteFramesWithFile(xmlPath + plistFile);
+                            cc.spriteFrameCache.addSpriteFrames(xmlPath + plistFile);
                             button.loadTextureDisabled(path, ccui.Widget.PLIST_TEXTURE);
                             break;
                         }
@@ -463,7 +463,7 @@ ccs.buttonReader = /** @lends ccs.buttonReader# */{
     
                         case 1:
                         {
-                            cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                            cc.spriteFrameCache.addSpriteFrames(xmlPath + plistFile);
                             button.loadTexturePressed(path, ccui.Widget.PLIST_TEXTURE);
                             break;
                         }
@@ -509,7 +509,7 @@ ccs.buttonReader = /** @lends ccs.buttonReader# */{
     
                         case 1:
                         {
-                            cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                            cc.spriteFrameCache.addSpriteFrames(xmlPath + plistFile);
                             button.loadTextureNormal(path, ccui.Widget.PLIST_TEXTURE);
                             break;
                         }

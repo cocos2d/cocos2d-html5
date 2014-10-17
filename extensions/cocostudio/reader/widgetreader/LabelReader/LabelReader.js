@@ -83,9 +83,9 @@ ccs.labelReader = /** @lends ccs.LabelReader# */{
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
 		var label = widget;
-        var options = nodeTree.textOptions;
+        var options = nodeTree["textOptions"];
 
-		var IsCustomSize = options.IsCustomSize;
+		var IsCustomSize = options["IsCustomSize"];
 		label.ignoreContentAdaptWithSize(!IsCustomSize);
 
         ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
@@ -94,15 +94,15 @@ ccs.labelReader = /** @lends ccs.LabelReader# */{
 
         var protocolBuffersPath = ccs.uiReader.getFilePath();
 
-        var touchScaleChangeAble = options.touchScaleEnable;
+        var touchScaleChangeAble = options["touchScaleEnable"];
         label.setTouchScaleChangeEnabled(touchScaleChangeAble);
-        var text = options.text!==null ? options.text : "Text Label";
+        var text = options["text"]!==null ? options["text"] : "Text Label";
         label.setString(text);
 
-        var fontSize = options.fontSize!==null ? options.fontSize : 20;
+        var fontSize = options["fontSize"]!==null ? options["fontSize"] : 20;
         label.setFontSize(fontSize);
 
-        var fontName = options.fontName!==null ? options.fontName : "微软雅黑";
+        var fontName = options["fontName"]!==null ? options["fontName"] : "微软雅黑";
         label.setFontName(fontName);
 //        var fontFilePath = protocolBuffersPath.append(fontName);
 //		if (FileUtils.getInstance().isFileExist(fontFilePath))
@@ -113,28 +113,28 @@ ccs.labelReader = /** @lends ccs.LabelReader# */{
 //			label.setFontName(fontName);
 //		}
 
-        var aw = options.areaWidth;
-        var ah = options.areaHeight;
+        var aw = options["areaWidth"];
+        var ah = options["areaHeight"];
         if (aw && ah)
         {
             var size = cc.size(aw, ah);
             label.setTextAreaSize(size);
         }
-        var ha = options.hAlignment;
+        var ha = options["hAlignment"];
         if (ha)
         {
             label.setTextHorizontalAlignment(ha);
         }
-        var va = options.vAlignment;
+        var va = options["vAlignment"];
         if (va)
         {
             label.setTextVerticalAlignment(va);
         }
 
-		if (options.fontResource)
+		if (options["fontResource"])
 		{
-			var resourceData = options.fontResource;
-		    label.setFontName(protocolBuffersPath + resourceData.path);
+			var resourceData = options["fontResource"];
+		    label.setFontName(protocolBuffersPath + resourceData["path"]);
 		}
 
         // other commonly protperties
@@ -174,7 +174,7 @@ ccs.labelReader = /** @lends ccs.LabelReader# */{
             }
             else if (name == "FontSize")
             {
-                label.setFontSize(atoi(value.c_str()));
+                label.setFontSize(value);
             }
             else if (name == "FontName")
             {
@@ -182,11 +182,11 @@ ccs.labelReader = /** @lends ccs.LabelReader# */{
             }
             else if (name == "AreaWidth")
             {
-                areaWidth = atoi(value.c_str());
+                areaWidth = value;
             }
             else if (name == "AreaHeight")
             {
-                areaHeight = atoi(value.c_str());
+                areaHeight = value;
             }
             else if (name == "HorizontalAlignmentType")
             {
@@ -220,7 +220,7 @@ ccs.labelReader = /** @lends ccs.LabelReader# */{
             }
             else if (name == "Alpha")
             {
-                opacity = atoi(value);
+                opacity = value;
             }
 
             attribute = attribute.Next();
@@ -244,11 +244,11 @@ ccs.labelReader = /** @lends ccs.LabelReader# */{
 
                     if (name == "X")
                     {
-                        width = atof(value.c_str());
+                        width = value;
                     }
                     else if (name == "Y")
                     {
-                        height = atof(value.c_str());
+                        height = value;
                     }
 
                     attribute = attribute.Next();

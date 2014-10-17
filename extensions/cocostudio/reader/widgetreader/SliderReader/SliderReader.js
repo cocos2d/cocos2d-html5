@@ -170,26 +170,26 @@ ccs.sliderReader = /** @lends ccs.SliderReader# */{
         ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         var slider = widget;
-        var options = nodeTree.sliderOptions;
+        var options = nodeTree["sliderOptions"];
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
-        var barTextureScale9Enable = !!options.scale9Enable;
+        var barTextureScale9Enable = !!options["scale9Enable"];
         slider.setScale9Enabled(barTextureScale9Enable);
 
-        slider.setPercent(options.percent);
+        slider.setPercent(options["percent"]);
 
 
         //        var bt = DICTOOL.checkObjectExist_json(options, P_BarFileName);
-        var barLength = options.length!==null ? options.length : 290;
+        var barLength = options["length"]!==null ? options["length"] : 290;
 
-		var imageFileNameDic = options.barFileNameData;
-        var imageFileNameType = imageFileNameDic.resourceType;
+		var imageFileNameDic = options["barFileNameData"];
+        var imageFileNameType = imageFileNameDic["resourceType"];
 		if (imageFileNameType == 1)
 		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
+			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic["plistFile"]);
 		}
-        var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
+        var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic["path"], imageFileNameType);
         slider.loadBarTexture(imageFileName, imageFileNameType);
 
         if (barTextureScale9Enable)
@@ -198,50 +198,50 @@ ccs.sliderReader = /** @lends ccs.SliderReader# */{
         }
 
         //loading normal slider ball texture
-        var normalDic = options.ballNormalData;
-        var normalType = normalDic.resourceType;
+        var normalDic = options["ballNormalData"];
+        var normalType = normalDic["resourceType"];
 		if (normalType == 1)
 		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + normalDic.plistFile);
+			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + normalDic["plistFile"]);
 		}
-        imageFileName = ccs.widgetReader.getResourcePath(normalDic.path, normalType);
+        imageFileName = ccs.widgetReader.getResourcePath(normalDic["path"], normalType);
         slider.loadSlidBallTextureNormal(imageFileName, normalType);
 
 
         //loading slider ball press texture
-        var pressedDic = options.ballPressedData;
-        var pressedType = pressedDic.resourceType;
+        var pressedDic = options["ballPressedData"];
+        var pressedType = pressedDic["resourceType"];
 		if (pressedType == 1)
 		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + pressedDic.plistFile);
+			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + pressedDic["plistFile"]);
 		}
-        var pressedFileName = ccs.widgetReader.getResourcePath(pressedDic.path, pressedType);
+        var pressedFileName = ccs.widgetReader.getResourcePath(pressedDic["path"], pressedType);
         slider.loadSlidBallTexturePressed(pressedFileName, pressedType);
 
         //loading silder ball disable texture
-        var disabledDic = options.ballDisabledData;
-        var disabledType = disabledDic.resourceType;
+        var disabledDic = options["ballDisabledData"];
+        var disabledType = disabledDic["resourceType"];
 		if (disabledType == 1)
 		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + disabledDic.plistFile);
+			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + disabledDic["plistFile"]);
 		}
-        var disabledFileName = ccs.widgetReader.getResourcePath(disabledDic.path, disabledType);
+        var disabledFileName = ccs.widgetReader.getResourcePath(disabledDic["path"], disabledType);
         slider.loadSlidBallTextureDisabled(disabledFileName, disabledType);
 
         //load slider progress texture
-        var progressBarDic = options.progressBarData;
-        var progressBarType = progressBarDic.resourceType;
+        var progressBarDic = options["progressBarData"];
+        var progressBarType = progressBarDic["resourceType"];
 		if (progressBarType == 1)
 		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + progressBarDic.plistFile);
+			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + progressBarDic["plistFile"]);
 		}
-        var progressBarFileName = ccs.widgetReader.getResourcePath(progressBarDic.path, progressBarType);
+        var progressBarFileName = ccs.widgetReader.getResourcePath(progressBarDic["path"], progressBarType);
         slider.loadProgressBarTexture(progressBarFileName, progressBarType);
 
         var displaystate = true;
-		if(options.displaystate!==null)
+		if(options["displaystate"]!==null)
 		{
-			displaystate = options.displaystate;
+			displaystate = options["displaystate"];
 		}
 		slider.setBright(displaystate);
 
@@ -280,19 +280,19 @@ ccs.sliderReader = /** @lends ccs.SliderReader# */{
             }
             else if (name == "Scale9OriginX")
             {
-                cx = atof(value.c_str());
+                cx = value;
             }
             else if (name == "Scale9OriginY")
             {
-                cy = atof(value.c_str());
+                cy = value;
             }
             else if (name == "Scale9Width")
             {
-                cw = atof(value.c_str());
+                cw = value;
             }
             else if (name == "Scale9Height")
             {
-                ch = atof(value.c_str());
+                ch = value;
             }
             else if (name == "Length")
             {
@@ -300,7 +300,7 @@ ccs.sliderReader = /** @lends ccs.SliderReader# */{
             }
             else if (name == "PercentInfo")
             {
-                percent = atoi(value.c_str());
+                percent = value;
             }
             else if (name == "DisplayState")
             {
@@ -312,7 +312,7 @@ ccs.sliderReader = /** @lends ccs.SliderReader# */{
             }
             else if (name == "Alpha")
             {
-                opacity = atoi(value.c_str());
+                opacity = value;
             }
 
             attribute = attribute.Next();
@@ -361,7 +361,7 @@ ccs.sliderReader = /** @lends ccs.SliderReader# */{
 
                     case 1:
                     {
-                        cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                        cc.spriteFrameCache.addSpriteFrames(xmlPath + plistFile);
                         slider.loadBarTexture(path, ccui.Widget.PLIST_TEXTURE);
                         break;
                     }
@@ -407,7 +407,7 @@ ccs.sliderReader = /** @lends ccs.SliderReader# */{
 
                     case 1:
                     {
-                        cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                        cc.spriteFrameCache.addSpriteFrames(xmlPath + plistFile);
                         slider.loadSlidBallTextureNormal(path, ccui.Widget.PLIST_TEXTURE);
                         break;
                     }
@@ -453,7 +453,7 @@ ccs.sliderReader = /** @lends ccs.SliderReader# */{
 
                     case 1:
                     {
-                        cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                        cc.spriteFrameCache.addSpriteFrames(xmlPath + plistFile);
                         slider.loadSlidBallTexturePressed(path, ccui.Widget.PLIST_TEXTURE);
                         break;
                     }
@@ -499,7 +499,7 @@ ccs.sliderReader = /** @lends ccs.SliderReader# */{
 
                     case 1:
                     {
-                        cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                        cc.spriteFrameCache.addSpriteFrames(xmlPath + plistFile);
                         slider.loadSlidBallTextureDisabled(path, ccui.Widget.PLIST_TEXTURE);
                         break;
                     }

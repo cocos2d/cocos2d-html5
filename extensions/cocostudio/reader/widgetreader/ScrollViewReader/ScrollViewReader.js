@@ -63,13 +63,13 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
 
 
         var scrollView = widget;
-		var options = nodeTree.scrollViewOptions;
+		var options = nodeTree["scrollViewOptions"];
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
-        scrollView.setClippingEnabled(options.clipAble);
+        scrollView.setClippingEnabled(options["clipAble"]);
 
-        var backGroundScale9Enable = options.backGroundScale9Enable;
+        var backGroundScale9Enable = options["backGroundScale9Enable"];
         scrollView.setBackGroundImageScale9Enabled(backGroundScale9Enable);
 
 
@@ -85,33 +85,33 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
 
 
 
-        cr = options.bgColorR!==null ? options.bgColorR : 255;
-        cg = options.bgColorG!==null ? options.bgColorG : 150;
-        cb = options.bgColorB!==null ? options.bgColorB : 100;
+        cr = options["bgColorR"]!==null ? options["bgColorR"] : 255;
+        cg = options["bgColorG"]!==null ? options["bgColorG"] : 150;
+        cb = options["bgColorB"]!==null ? options["bgColorB"] : 100;
 
-        scr = options.bgStartColorR!==null ? options.bgStartColorR : 255;
-        scg = options.bgStartColorG!==null ? options.bgStartColorG : 255;
-        scb = options.bgStartColorB!==null ? options.bgStartColorB : 255;
+        scr = options["bgStartColorR"]!==null ? options["bgStartColorR"] : 255;
+        scg = options["bgStartColorG"]!==null ? options["bgStartColorG"] : 255;
+        scb = options["bgStartColorB"]!==null ? options["bgStartColorB"] : 255;
 
-        ecr = options.bgEndColorR!==null ? options.bgEndColorR : 255;
-        ecg = options.bgEndColorG!==null ? options.bgEndColorG : 150;
-        ecb = options.bgEndColorB!==null ? options.bgEndColorB : 100;
+        ecr = options["bgEndColorR"]!==null ? options["bgEndColorR"] : 255;
+        ecg = options["bgEndColorG"]!==null ? options["bgEndColorG"] : 150;
+        ecb = options["bgEndColorB"]!==null ? options["bgEndColorB"] : 100;
 
 		var bgcv1 = 0;
         var bgcv2 = -0.5;
-		if(options.vectorX)
+		if(options["vectorX"])
 		{
-			bgcv1 = options.vectorX;
+			bgcv1 = options["vectorX"];
 		}
-		if(options.vectorY!==null)
+		if(options["vectorY"]!==null)
 		{
-			bgcv2 = options.vectorY;
+			bgcv2 = options["vectorY"];
 		}
         scrollView.setBackGroundColorVector(cc.p(bgcv1, bgcv2));
 
-        var co = options.bgColorOpacity!==null ? options.bgColorOpacity : 100;
+        var co = options["bgColorOpacity"]!==null ? options["bgColorOpacity"] : 100;
 
-        var colorType = options.colorType ? options.colorType : 1;
+        var colorType = options["colorType"] ? options["colorType"] : 1;
         scrollView.setBackGroundColorType(colorType);
 
         scrollView.setBackGroundColor(cc.color(scr, scg, scb),cc.color(ecr, ecg, ecb));
@@ -119,42 +119,42 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
         scrollView.setBackGroundColorOpacity(co);
 
 
-		var imageFileNameDic = options.backGroundImageData;
+		var imageFileNameDic = options["backGroundImageData"];
         if(imageFileNameDic){
-            var imageFileNameType = imageFileNameDic.resourceType;
+            var imageFileNameType = imageFileNameDic["resourceType"];
             if (imageFileNameType == 1)
             {
-                cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
+                cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic["plistFile"]);
             }
-            var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
+            var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic["path"], imageFileNameType);
             scrollView.setBackGroundImage(imageFileName, imageFileNameType);
         }
 
         if (backGroundScale9Enable)
         {
-            var cx = options.capInsetsX;
-            var cy = options.capInsetsY;
-            var cw = options.capInsetsWidth!==null ? options.capInsetsWidth : 1;
-            var ch = options.capInsetsHeight!==null ? options.capInsetsHeight : 1;
+            var cx = options["capInsetsX"];
+            var cy = options["capInsetsY"];
+            var cw = options["capInsetsWidth"]!==null ? options["capInsetsWidth"] : 1;
+            var ch = options["capInsetsHeight"]!==null ? options["capInsetsHeight"] : 1;
             scrollView.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
-            var sw = options.scale9Width;
-            var sh = options.scale9Height;
+            var sw = options["scale9Width"];
+            var sh = options["scale9Height"];
             if (sw && sh)
             {
                 scrollView.setContentSize(cc.size(sw, sh));
             }
         }
 
-        scrollView.setLayoutType(options.layoutType);
+        scrollView.setLayoutType(options["layoutType"]);
 
-        var widgetOptions = nodeTree.widgetOptions;
+        var widgetOptions = nodeTree["widgetOptions"];
 
-        var red = widgetOptions.colorR!==null ? widgetOptions.colorR : 255;
-        var green = widgetOptions.colorG ? widgetOptions.colorG : 255;
-        var blue = widgetOptions.colorB ? widgetOptions.colorB : 255;
+        var red = widgetOptions["colorR"]!==null ? widgetOptions["colorR"] : 255;
+        var green = widgetOptions["colorG"] ? widgetOptions["colorG"] : 255;
+        var blue = widgetOptions["colorB"] ? widgetOptions["colorB"] : 255;
         scrollView.setColor(cc.color(red, green, blue));
 
-        var opacity = widgetOptions.Alpha!==null ? widgetOptions.Alpha : 255;
+        var opacity = widgetOptions["Alpha"]!==null ? widgetOptions["Alpha"] : 255;
         scrollView.setOpacity(opacity);
 
 //        var bgimgcr = widgetOptions.has_colorr() ? widgetOptions.colorr() : 255;
@@ -168,19 +168,19 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
 
 
 
-        var innerWidth = options.innerWidth!==null ? options.innerWidth : 200;
-        var innerHeight = options.innerHeight!==null ? options.innerHeight : 200;
+        var innerWidth = options["innerWidth"]!==null ? options["innerWidth"] : 200;
+        var innerHeight = options["innerHeight"]!==null ? options["innerHeight"] : 200;
         scrollView.setInnerContainerSize(cc.size(innerWidth, innerHeight));
-        var direction = options.direction!==null ? options.direction : 1;
+        var direction = options["direction"]!==null ? options["direction"] : 1;
         scrollView.setDirection(direction);
-        scrollView.setBounceEnabled(options.bounceenAble);
+        scrollView.setBounceEnabled(options["bounceenAble"]);
 
 
         // other commonly protperties
         ccs.widgetReader.setAnchorPointForWidget(widget, nodeTree);
 
-        var flipX = widgetOptions.flipX;
-        var flipY = widgetOptions.flipY;
+        var flipX = widgetOptions["flipX"];
+        var flipY = widgetOptions["flipY"];
         widget.setFlippedX(flipX);
         widget.setFlippedY(flipY);
     },
@@ -196,7 +196,7 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
         var width = 0, height = 0;
         var cx = 0, cy = 0, cw = 0, ch = 0.0;
 
-        var colorType = ccui.Layout.BackGroundColorType.NONE;
+        var colorType = ccui.Layout.BG_COLOR_NONE;
         var color_opacity = 255, bgimg_opacity = 255, opacity = 255;
         var red = 255, green = 255, blue = 255;
         var bgimg_red = 255, bgimg_green = 255, bgimg_blue = 255;
@@ -223,16 +223,16 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
             }
             else if (name == "ComboBoxIndex")
             {
-                colorType = atoi(value.c_str());
+                colorType = value;
             }
             else if (name == "BackColorAlpha")
             {
-                color_opacity = atoi(value.c_str());
+                color_opacity = value;
             }
             else if (name == "Alpha")
             {
-                opacity = atoi(value.c_str());
-                bgimg_opacity = atoi(value.c_str());
+                opacity = value;
+                bgimg_opacity = value;
             }
             else if (name == "Scale9Enable")
             {
@@ -240,19 +240,19 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
             }
             else if (name == "Scale9OriginX")
             {
-                cx = atof(value.c_str());
+                cx = value;
             }
             else if (name == "Scale9OriginY")
             {
-                cy = atof(value.c_str());
+                cy = value;
             }
             else if (name == "Scale9Width")
             {
-                cw = atof(value.c_str());
+                cw = value;
             }
             else if (name == "Scale9Height")
             {
-                ch = atof(value.c_str());
+                ch = value;
             }
             else if (name == "ScrollDirectionType")
             {
@@ -295,11 +295,11 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
 
                     if (name == "Width")
                     {
-                        width = atof(value.c_str());
+                        width = value;
                     }
                     else if (name == "Height")
                     {
-                        height = atof(value.c_str());
+                        height = value;
                     }
 
                     attribute = attribute.Next();
@@ -318,11 +318,11 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
 
                     if (name == "X")
                     {
-                        width = atof(value.c_str());
+                        width = value;
                     }
                     else if (name == "Y")
                     {
-                        height = atof(value.c_str());
+                        height = value;
                     }
 
                     attribute = attribute.Next();
@@ -339,18 +339,18 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
 
                     if (name == "R")
                     {
-                        red = atoi(value.c_str());
-                        bgimg_red = atoi(value.c_str());
+                        red = value;
+                        bgimg_red = value;
                     }
                     else if (name == "G")
                     {
-                        green = atoi(value.c_str());
-                        bgimg_green = atoi(value.c_str());
+                        green = value;
+                        bgimg_green = value;
                     }
                     else if (name == "B")
                     {
-                        blue = atoi(value.c_str());
-                        bgimg_blue = atoi(value.c_str());
+                        blue = value;
+                        bgimg_blue = value;
                     }
 
                     attribute = attribute.Next();
@@ -366,15 +366,15 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
 
                     if (name == "R")
                     {
-                        singleRed = atoi(value.c_str());
+                        singleRed = value;
                     }
                     else if (name == "G")
                     {
-                        singleGreen = atoi(value.c_str());
+                        singleGreen = value;
                     }
                     else if (name == "B")
                     {
-                        singleBlue = atoi(value.c_str());
+                        singleBlue = value;
                     }
 
                     attribute = attribute.Next();
@@ -390,15 +390,15 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
 
                     if (name == "R")
                     {
-                        end_red = atoi(value.c_str());
+                        end_red = value;
                     }
                     else if (name == "G")
                     {
-                        end_green = atoi(value.c_str());
+                        end_green = value;
                     }
                     else if (name == "B")
                     {
-                        end_blue = atoi(value.c_str());
+                        end_blue = value;
                     }
 
                     attribute = attribute.Next();
@@ -414,15 +414,15 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
 
                     if (name == "R")
                     {
-                        start_red = atoi(value.c_str());
+                        start_red = value;
                     }
                     else if (name == "G")
                     {
-                        start_green = atoi(value.c_str());
+                        start_green = value;
                     }
                     else if (name == "B")
                     {
-                        start_blue = atoi(value.c_str());
+                        start_blue = value;
                     }
 
                     attribute = attribute.Next();
@@ -438,11 +438,11 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
 
                     if (name == "ScaleX")
                     {
-                        vector_color_x = atof(value.c_str());
+                        vector_color_x = value;
                     }
                     else if (name == "ScaleY")
                     {
-                        vector_color_y = atof(value.c_str());
+                        vector_color_y = value;
                     }
 
                     attribute = attribute.Next();
@@ -483,11 +483,11 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
         scrollView.setBackGroundColorType(colorType);
         switch (colorType)
         {
-            case Layout.BackGroundColorType.SOLID:
+            case ccui.Layout.BG_COLOR_SOLID:
                 scrollView.setBackGroundColor(cc.color(singleRed, singleGreen, singleBlue));
                 break;
 
-            case Layout.BackGroundColorType.GRADIENT:
+            case ccui.Layout.BG_COLOR_GRADIENT:
                 scrollView.setBackGroundColor(cc.color(start_red, start_green, start_blue),
                                                cc.color(end_red, end_green, end_blue));
                 scrollView.setBackGroundColorVector(cc.p(vector_color_x, vector_color_y));
@@ -509,7 +509,7 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
 
             case 1:
             {
-                cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                cc.spriteFrameCache.addSpriteFrames(xmlPath + plistFile);
                 scrollView.setBackGroundImage(path, ccui.Widget.PLIST_TEXTURE);
                 break;
             }

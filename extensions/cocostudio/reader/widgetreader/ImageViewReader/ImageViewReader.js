@@ -102,26 +102,26 @@ ccs.imageViewReader = /** @lends ccs.ImageViewReader# */{
     setPropsFromProtocolBuffers: function(widget, nodeTree){
         ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
-        var options = nodeTree.imageViewOptions;
+        var options = nodeTree["imageViewOptions"];
         var imageView = widget;
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
-        var imageFileNameDic = options.fileNameData;
-        var imageFileNameType = imageFileNameDic.resourceType;
+        var imageFileNameDic = options["fileNameData"];
+        var imageFileNameType = imageFileNameDic["resourceType"];
 		if (imageFileNameType == 1)
 		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
+			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic["plistFile"]);
 		}
-        var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
+        var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic["path"], imageFileNameType);
         imageView.loadTexture(imageFileName, imageFileNameType);
 
 
-        var scale9EnableExist = options.scale9Enable!==null;
+        var scale9EnableExist = options["scale9Enable"]!==null;
         var scale9Enable = false;
         if (scale9EnableExist)
         {
-            scale9Enable = options.scale9Enable;
+            scale9Enable = options["scale9Enable"];
         }
         imageView.setScale9Enabled(scale9Enable);
 
@@ -131,15 +131,15 @@ ccs.imageViewReader = /** @lends ccs.ImageViewReader# */{
             imageView.setUnifySizeEnabled(false);
             imageView.ignoreContentAdaptWithSize(false);
 
-            var swf = options.scale9width!==null ? options.scale9Width : 80;
-            var shf = options.scale9height!==null ? options.scale9Height : 80;
+            var swf = options["scale9width"]!==null ? options["scale9Width"] : 80;
+            var shf = options["scale9height"]!==null ? options["scale9Height"] : 80;
             imageView.setContentSize(cc.size(swf, shf));
 
 
-            var cx = options.capInsetsX;
-            var cy = options.capInsetsY;
-            var cw = options.capInsetsWidth!==null ? options.capInsetsWidth : 1.0;
-            var ch = options.capInsetsHeight!==null ? options.capInsetsHeight : 1.0;
+            var cx = options["capInsetsX"];
+            var cy = options["capInsetsY"];
+            var cw = options["capInsetsWidth"]!==null ? options["capInsetsWidth"] : 1.0;
+            var ch = options["capInsetsHeight"]!==null ? options["capInsetsHeight"] : 1.0;
 
             imageView.setCapInsets(cc.rect(cx, cy, cw, ch));
 
@@ -158,7 +158,7 @@ ccs.imageViewReader = /** @lends ccs.ImageViewReader# */{
     },
 
     setPropsFromXML: function(widget, objectData){
-        ccs.widgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+        ccs.widgetReader.setPropsFromXML.call(this, widget, objectData);
 
         var imageView = widget;
 
@@ -186,23 +186,23 @@ ccs.imageViewReader = /** @lends ccs.ImageViewReader# */{
             }
             else if (name == "Scale9OriginX")
             {
-                cx = atof(value);
+                cx = value;
             }
             else if (name == "Scale9OriginY")
             {
-                cy = atof(value);
+                cy = value;
             }
             else if (name == "Scale9Width")
             {
-                cw = atof(value);
+                cw = value;
             }
             else if (name == "Scale9Height")
             {
-                ch = atof(value);
+                ch = value;
             }
             else if (name == "Alpha")
             {
-                opacity = atoi(value);
+                opacity = value;
             }
 
             attribute = attribute.Next();
@@ -225,11 +225,11 @@ ccs.imageViewReader = /** @lends ccs.ImageViewReader# */{
 
                     if (name == "X")
                     {
-                        swf = atof(value);
+                        swf = value;
                     }
                     else if (name == "Y")
                     {
-                        shf = atof(value);
+                        shf = value;
                     }
 
                     attribute = attribute.Next();
@@ -272,7 +272,7 @@ ccs.imageViewReader = /** @lends ccs.ImageViewReader# */{
 
                     case 1:
                     {
-                        cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                        cc.spriteFrameCache.addSpriteFrames(xmlPath + plistFile);
                         imageView.loadTexture(path, ccui.Widget.PLIST_TEXTURE);
                         break;
                     }

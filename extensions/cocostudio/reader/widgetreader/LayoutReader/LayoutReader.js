@@ -132,13 +132,13 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
         ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         var panel = widget;
-		var options = nodeTree.PanelOptions;
+		var options = nodeTree["PanelOptions"];
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
-        panel.setClippingEnabled(options.clipAble);
+        panel.setClippingEnabled(options["clipAble"]);
 
-        var backGroundScale9Enable = options.backGroundScale9Enable;
+        var backGroundScale9Enable = options["backGroundScale9Enable"];
         panel.setBackGroundImageScale9Enabled(backGroundScale9Enable);
 
 
@@ -209,33 +209,33 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
             ecb = 255;
         }
 
-        cr = options.bgColorR!==null ? options.bgColorR : cr;
-        cg = options.bgColorG!==null ? options.bgColorG : cg;
-        cb = options.bgColorB!==null ? options.bgColorB : cb;
+        cr = options["bgColorR"]!==null ? options["bgColorR"] : cr;
+        cg = options["bgColorG"]!==null ? options["bgColorG"] : cg;
+        cb = options["bgColorB"]!==null ? options["bgColorB"] : cb;
 
-        scr = options.bgStartColorR!==null ? options.bgStartColorR : scr;
-        scg = options.bgStartColorG!==null ? options.bgStartColorG : scg;
-        scb = options.bgStartColorB!==null ? options.bgStartColorB : scb;
+        scr = options["bgStartColorR"]!==null ? options["bgStartColorR"] : scr;
+        scg = options["bgStartColorG"]!==null ? options["bgStartColorG"] : scg;
+        scb = options["bgStartColorB"]!==null ? options["bgStartColorB"] : scb;
 
-        ecr = options.bgEndColorR!==null ? options.bgEndColorR : ecr;
-        ecg = options.bgEndColorG!==null ? options.bgEndColorG : ecg;
-        ecb = options.bgEndColorB!==null ? options.bgEndColorB : ecb;
+        ecr = options["bgEndColorR"]!==null ? options["bgEndColorR"] : ecr;
+        ecg = options["bgEndColorG"]!==null ? options["bgEndColorG"] : ecg;
+        ecb = options["bgEndColorB"]!==null ? options["bgEndColorB"] : ecb;
 
         var bgcv1 = 0;
         var bgcv2 = -0.5;
-		if(options.vectorX!==null)
+		if(options["vectorX"]!==null)
 		{
-			bgcv1 = options.vectorX;
+			bgcv1 = options["vectorX"];
 		}
-		if(options.vectorY)
+		if(options["vectorY"])
 		{
-			bgcv2 = options.vectorY;
+			bgcv2 = options["vectorY"];
 		}
         panel.setBackGroundColorVector(cc.p(bgcv1, bgcv2));
 
-        var co = options.bgColorOpacity!==null ? options.bgColorOpacity : 100;
+        var co = options["bgColorOpacity"]!==null ? options["bgColorOpacity"] : 100;
 
-        var colorType = options.colorType!==null ? options.colorType : 1;
+        var colorType = options["colorType"]!==null ? options["colorType"] : 1;
         panel.setBackGroundColorType(colorType);
 
         panel.setBackGroundColor(cc.color(scr, scg, scb),cc.color(ecr, ecg, ecb));
@@ -243,44 +243,44 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
         panel.setBackGroundColorOpacity(co);
 
 
-		var imageFileNameDic = options.backGroundImageData;
+		var imageFileNameDic = options["backGroundImageData"];
         if(imageFileNameDic){
-            var imageFileNameType = imageFileNameDic.resourceType;
+            var imageFileNameType = imageFileNameDic["resourceType"];
             if (imageFileNameType == 1)
             {
-                cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
+                cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic["plistFile"]);
             }
-            var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
+            var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic["path"], imageFileNameType);
             panel.setBackGroundImage(imageFileName, imageFileNameType);
         }
 
 
         if (backGroundScale9Enable)
         {
-            var cx = options.capInsetsX;
-            var cy = options.capInsetsY;
-            var cw = options.capInsetsWidth!==null ? options.capInsetsWidth : 1;
-            var ch = options.capInsetsHeight!==null ? options.capInsetsHeight : 1;
+            var cx = options["capInsetsX"];
+            var cy = options["capInsetsY"];
+            var cw = options["capInsetsWidth"]!==null ? options["capInsetsWidth"] : 1;
+            var ch = options["capInsetsHeight"]!==null ? options["capInsetsHeight"] : 1;
             panel.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
 
-            var sw = options.scale9Width;
-            var sh = options.scale9Height;
+            var sw = options["scale9Width"];
+            var sh = options["scale9Height"];
             if (sw && sh)
             {
                 panel.setContentSize(cc.size(sw, sh));
             }
         }
 
-        panel.setLayoutType(options.layoutType);
+        panel.setLayoutType(options["layoutType"]);
 
-        var widgetOptions = nodeTree.widgetOptions;
+        var widgetOptions = nodeTree["widgetOptions"];
 
-        var red = widgetOptions.colorR!==null ? widgetOptions.colorR : 255;
-        var green = widgetOptions.colorG!==null ? widgetOptions.colorG : 255;
-        var blue = widgetOptions.colorB!==null ? widgetOptions.colorB : 255;
+        var red = widgetOptions["colorR"]!==null ? widgetOptions["colorR"] : 255;
+        var green = widgetOptions["colorG"]!==null ? widgetOptions["colorG"] : 255;
+        var blue = widgetOptions["colorB"]!==null ? widgetOptions["colorB"] : 255;
         panel.setColor(cc.color(red, green, blue));
 
-        var opacity = widgetOptions.Alpha!==null ? widgetOptions.Alpha : 255;
+        var opacity = widgetOptions["Alpha"]!==null ? widgetOptions["Alpha"] : 255;
         panel.setOpacity(opacity);
 
 //        var bgimgcr = widgetOptions.has_colorr() ? widgetOptions.colorr() : 255;
@@ -295,8 +295,8 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
         // other commonly protperties
         ccs.widgetReader._setAnchorPointForWidget(widget, nodeTree);
 
-        var flipX = widgetOptions.flipX;
-        var flipY = widgetOptions.flipY;
+        var flipX = widgetOptions["flipX"];
+        var flipY = widgetOptions["flipY"];
         widget.setFlippedX(flipX);
         widget.setFlippedY(flipY);
     },
@@ -312,7 +312,7 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
         var width = 0, height = 0;
         var cx = 0, cy = 0, cw = 0, ch = 0;
 
-        var colorType = ccui.Layout.BackGroundColorType.NONE;
+        var colorType = ccui.Layout.BG_COLOR_NONE;
         var color_opacity = 255, bgimg_opacity = 255, opacity = 255;
         var red = 255, green = 255, blue = 255;
         var bgimg_red = 255, bgimg_green = 255, bgimg_blue = 255;
@@ -337,16 +337,16 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
             }
             else if (name == "ComboBoxIndex")
             {
-                colorType = atoi(value);
+                colorType = value;
             }
             else if (name == "BackColorAlpha")
             {
-                color_opacity = atoi(value);
+                color_opacity = value;
             }
             else if (name == "Alpha")
             {
-                opacity = atoi(value);
-                bgimg_opacity = atoi(value);
+                opacity = value;
+                bgimg_opacity = value;
             }
             else if (name == "Scale9Enable")
             {
@@ -354,19 +354,19 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
             }
             else if (name == "Scale9OriginX")
             {
-                cx = atof(value);
+                cx = value;
             }
             else if (name == "Scale9OriginY")
             {
-                cy = atof(value);
+                cy = value;
             }
             else if (name == "Scale9Width")
             {
-                cw = atof(value);
+                cw = value;
             }
             else if (name == "Scale9Height")
             {
-                ch = atof(value);
+                ch = value;
             }
 
             attribute = attribute.Next();
@@ -389,11 +389,11 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
 
                     if (name == "X")
                     {
-                        width = atof(value);
+                        width = value;
                     }
                     else if (name == "Y")
                     {
-                        height = atof(value);
+                        height = value;
                     }
 
                     attribute = attribute.Next();
@@ -410,18 +410,18 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
 
                     if (name == "R")
                     {
-                        red = atoi(value);
-                        bgimg_red = atoi(value);
+                        red = value;
+                        bgimg_red = value;
                     }
                     else if (name == "G")
                     {
-                        green = atoi(value);
-                        bgimg_green = atoi(value);
+                        green = value;
+                        bgimg_green = value;
                     }
                     else if (name == "B")
                     {
-                        blue = atoi(value);
-                        bgimg_blue = atoi(value);
+                        blue = value;
+                        bgimg_blue = value;
                     }
 
                     attribute = attribute.Next();
@@ -438,15 +438,15 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
 
                     if (name == "R")
                     {
-                        singleRed = atoi(value);
+                        singleRed = value;
                     }
                     else if (name == "G")
                     {
-                        singleGreen = atoi(value);
+                        singleGreen = value;
                     }
                     else if (name == "B")
                     {
-                        singleBlue = atoi(value);
+                        singleBlue = value;
                     }
 
                     attribute = attribute.Next();
@@ -463,15 +463,15 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
 
                     if (name == "R")
                     {
-                        end_red = atoi(value);
+                        end_red = value;
                     }
                     else if (name == "G")
                     {
-                        end_green = atoi(value);
+                        end_green = value;
                     }
                     else if (name == "B")
                     {
-                        end_blue = atoi(value);
+                        end_blue = value;
                     }
 
                     attribute = attribute.Next();
@@ -487,15 +487,15 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
 
                     if (name == "R")
                     {
-                        start_red = atoi(value);
+                        start_red = value;
                     }
                     else if (name == "G")
                     {
-                        start_green = atoi(value);
+                        start_green = value;
                     }
                     else if (name == "B")
                     {
-                        start_blue = atoi(value);
+                        start_blue = value;
                     }
 
                     attribute = attribute.Next();
@@ -511,11 +511,11 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
 
                     if (name == "ScaleX")
                     {
-                        vector_color_x = atof(value);
+                        vector_color_x = value;
                     }
                     else if (name == "ScaleY")
                     {
-                        vector_color_y = atof(value);
+                        vector_color_y = value;
                     }
 
                     attribute = attribute.Next();
@@ -553,11 +553,11 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
         panel.setBackGroundColorType(colorType);
         switch (colorType)
         {
-            case Layout.BackGroundColorType.SOLID:
+            case ccui.Layout.BG_COLOR_SOLID:
                 panel.setBackGroundColor(cc.color(singleRed, singleGreen, singleBlue));
                 break;
 
-            case Layout.BackGroundColorType.GRADIENT:
+            case ccui.Layout.BG_COLOR_GRADIENT:
                 panel.setBackGroundColor(cc.color(start_red, start_green, start_blue),
                                           cc.color(end_red, end_green, end_blue));
                 panel.setBackGroundColorVector(cc.p(vector_color_x, vector_color_y));
@@ -582,7 +582,7 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
 
             case 1:
             {
-                cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                cc.spriteFrameCache.addSpriteFrames(xmlPath + plistFile);
                 panel.setBackGroundImage(path, ccui.Widget.PLIST_TEXTURE);
                 break;
             }

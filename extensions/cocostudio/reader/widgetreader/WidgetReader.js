@@ -183,73 +183,73 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
     },
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
-        var options = nodeTree.widgetOptions;
+        var options = nodeTree["widgetOptions"];
 
         widget.setCascadeColorEnabled(true);
         widget.setCascadeOpacityEnabled(true);
 
         widget.setUnifySizeEnabled(true);
 
-        var ignoreSizeExsit = options.ignoreSize;
+        var ignoreSizeExsit = options["ignoreSize"];
         if (ignoreSizeExsit)
         {
-            widget.ignoreContentAdaptWithSize(options.ignoreSize);
+            widget.ignoreContentAdaptWithSize(options["ignoreSize"]);
         }
 
-        widget.setSizeType(options.sizeType);
-        widget.setPositionType(options.positionType);
+        widget.setSizeType(options["sizeType"]);
+        widget.setPositionType(options["positionType"]);
 
-        widget.setSizePercent(cc.p(options.sizePercentX, options.sizePercentY));
-        widget.setPositionPercent(cc.p(options.positionPercentX, options.positionPercentY));
+        widget.setSizePercent(cc.p(options["sizePercentX"], options["sizePercentY"]));
+        widget.setPositionPercent(cc.p(options["positionPercentX"], options["positionPercentY"]));
 
-        var w = options.width;
-        var h = options.height;
+        var w = options["width"];
+        var h = options["height"];
         widget.setContentSize(cc.size(w, h));
 
-        widget.setTag(options.tag);
-        widget.setActionTag(options.actionTag);
-        widget.setTouchEnabled(options.touchAble);
+        widget.setTag(options["tag"]);
+        widget.setActionTag(options["actionTag"]);
+        widget.setTouchEnabled(options["touchAble"]);
         var name = options.name;
         var widgetName = name ? name : "default";
         widget.setName(widgetName);
 
-        var x = options.x;
-        var y = options.y;
+        var x = options["x"];
+        var y = options["y"];
         widget.setPosition(cc.p(x, y));
 
-		if(options.Alpha)
+		if(options["Alpha"])
 		{
-			widget.setOpacity(options.Alpha);
+			widget.setOpacity(options["Alpha"]);
 		}
 
-        widget.setScaleX(options.scaleX!==null ? options.scaleX : 1);
+        widget.setScaleX(options["scaleX"]!==null ? options["scaleX"] : 1);
 
 
-        widget.setScaleY(options.scaleY!==null ? options.scaleY : 1);
+        widget.setScaleY(options["scaleY"]!==null ? options["scaleY"] : 1);
 
 
 //        widget.setRotation(options.has_rotation ? options.rotation : 0.0);
 
-		widget.setRotationX(options.rotationSkewX!==null ? options.rotationSkewX : 0.0);
+		widget.setRotationX(options["rotationSkewX"]!==null ? options["rotationSkewX"] : 0.0);
 
-		widget.setRotationY(options.rotationSkewY!==null ? options.rotationSkewY : 0.0);
+		widget.setRotationY(options["rotationSkewY"]!==null ? options["rotationSkewY"] : 0.0);
 
-        var vb = options.visible;
+        var vb = options["visible"];
         if (vb)
         {
-            widget.setVisible(options.visible);
+            widget.setVisible(options["visible"]);
         }
 
-        var z = options.zorder;
+        var z = options["zorder"];
         widget.setLocalZOrder(z);
 
 
-        var layout = options.layoutParameter;
+        var layout = options["layoutParameter"];
         if (layout)
         {
 
-            var layoutParameterDic = options.layoutParameter;
-            var paramType = layoutParameterDic.type;
+            var layoutParameterDic = options["layoutParameter"];
+            var paramType = layoutParameterDic["type"];
 
             var parameter = null;
             switch (paramType)
@@ -259,7 +259,7 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
                 case 1:
                 {
                     parameter = new ccui.LinearLayoutParameter();
-                    var gravity = layoutParameterDic.gravity;
+                    var gravity = layoutParameterDic["gravity"];
                     parameter.setGravity(gravity);
                     break;
                 }
@@ -267,9 +267,9 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
                 {
                     parameter = new ccui.RelativeLayoutParameter();
                     var rParameter = parameter;
-                    var relativeName = layoutParameterDic.relativeName;
+                    var relativeName = layoutParameterDic["relativeName"];
                     rParameter.setRelativeName(relativeName);
-                    var relativeToName = layoutParameterDic.relativeToName;
+                    var relativeToName = layoutParameterDic["relativeToName"];
                     rParameter.setRelativeToWidgetName(relativeToName);
                     var align = layoutParameterDic.align;
                     rParameter.setAlign(align);
@@ -280,10 +280,10 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
             }
             if (parameter)
             {
-                var mgl = layoutParameterDic.marginLeft;
-                var mgt = layoutParameterDic.marginTop;
-                var mgr = layoutParameterDic.marginRight;
-                var mgb = layoutParameterDic.marginDown;
+                var mgl = layoutParameterDic["marginLeft"];
+                var mgt = layoutParameterDic["marginTop"];
+                var mgr = layoutParameterDic["marginRight"];
+                var mgb = layoutParameterDic["marginDown"];
                 parameter.setMargin(new ccui.Margin(mgl, mgt, mgr, mgb));
                 widget.setLayoutParameter(parameter);
             }
@@ -291,16 +291,16 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
     },
 
     setColorPropsFromProtocolBuffers: function(widget, nodeTree){
-        var options = nodeTree.widgetOptions;
+        var options = nodeTree["widgetOptions"];
 
 
-        var isColorRExists = options.colorR!==null;
-        var isColorGExists = options.colorG!==null;
-        var isColorBExists = options.colorB!==null;
+        var isColorRExists = options["colorR"]!==null;
+        var isColorGExists = options["colorG"]!==null;
+        var isColorBExists = options["colorB"]!==null;
 
-        var colorR = options.colorR;
-        var colorG = options.colorG;
-        var colorB = options.colorB;
+        var colorR = options["colorR"];
+        var colorG = options["colorG"];
+        var colorB = options["colorB"];
 
         if (isColorRExists && isColorGExists && isColorBExists)
         {
@@ -309,8 +309,8 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
 
         ccs.widgetReader.setAnchorPointForWidget(widget, nodeTree);
 
-        var flipX = options.flipX;
-        var flipY = options.flipY;
+        var flipX = options["flipX"];
+        var flipY = options["flipY"];
         widget.setFlippedX(flipX);
         widget.setFlippedY(flipY);
     },
@@ -334,21 +334,21 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
 
             if (name == "Name")
             {
-                var widgetName = value.c_str() ? value.c_str() :"default";
+                var widgetName = value ? value :"default";
                 widget.setName(widgetName);
             }
             else if (name == "ActionTag")
             {
                 var actionTag = atoi(value);
-                widget.setUserObject(new ccs.timeline.ActionTimelineData(actionTag));
+                widget.setUserObject(new ccs.Timeline.ActionTimelineData(actionTag));
             }
             else if (name == "RotationSkewX")
             {
-                widget.setRotationSkewX(atof(value));
+                widget.setRotationSkewX(value);
             }
             else if (name == "RotationSkewY")
             {
-                widget.setRotationSkewY(atof(value));
+                widget.setRotationSkewY(value);
             }
             else if (name == "Rotation")
             {
@@ -356,7 +356,7 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
             }
             else if (name == "ZOrder")
             {
-                widget.setLocalZOrder(atoi(value));
+                widget.setLocalZOrder(value);
             }
             else if (name == "Visible")
             {
@@ -368,11 +368,11 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
             }
             else if (name == "Alpha")
             {
-                widget.setOpacity(atoi(value));
+                widget.setOpacity(value);
             }
             else if (name == "Tag")
             {
-                widget.setTag(atoi(value.c_str()));
+                widget.setTag(value);
             }
             else if (name == "FlipX")
             {
@@ -413,11 +413,11 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
 
                     if (name == "X")
                     {
-                        widget.setPositionX(atof(value.c_str()));
+                        widget.setPositionX(value);
                     }
                     else if (name == "Y")
                     {
-                        widget.setPositionY(atof(value.c_str()));
+                        widget.setPositionY(value);
                     }
 
                     attribute = attribute.Next();
@@ -434,11 +434,11 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
 
                     if (name == "ScaleX")
                     {
-                        widget.setScaleX(atof(value.c_str()));
+                        widget.setScaleX(value);
                     }
                     else if (name == "ScaleY")
                     {
-                        widget.setScaleY(atof(value.c_str()));
+                        widget.setScaleY(value);
                     }
 
                     attribute = attribute.Next();
@@ -456,11 +456,11 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
 
                     if (name == "ScaleX")
                     {
-                        anchor_x = atof(value.c_str());
+                        anchor_x = value;
                     }
                     else if (name == "ScaleY")
                     {
-                        anchor_y = atof(value.c_str());
+                        anchor_y = value;
                     }
 
                     attribute = attribute.Next();
@@ -480,25 +480,25 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
 
                     if (name == "A")
                     {
-                        widget.setOpacity(atoi(value.c_str()));
+                        widget.setOpacity(atoi(value));
                     }
                     else if (name == "R")
                     {
-                        red = atoi(value.c_str());
+                        red = value;
                     }
                     else if (name == "G")
                     {
-                        green = atoi(value.c_str());
+                        green = value;
                     }
                     else if (name == "B")
                     {
-                        blue = atoi(value.c_str());
+                        blue = value;
                     }
 
                     attribute = attribute.Next();
                 }
 
-                widget.setColor(Color3B(red, green, blue));
+                widget.setColor(cc.color(red, green, blue));
             }
             else if (name == "Size")
             {
@@ -512,11 +512,11 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
 
                     if (name == "X")
                     {
-                        width = atof(value.c_str());
+                        width = value;
                     }
                     else if (name == "Y")
                     {
-                        height = atof(value.c_str());
+                        height = value;
                     }
 
                     attribute = attribute.Next();

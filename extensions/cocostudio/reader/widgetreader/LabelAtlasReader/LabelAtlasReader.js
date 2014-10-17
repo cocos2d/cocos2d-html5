@@ -81,30 +81,30 @@ ccs.labelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
         var jsonPath = ccs.uiReader.getFilePath();
 
         var labelAtlas = widget;
-        var options = nodeTree.textAtlasOptions;
+        var options = nodeTree["textAtlasOptions"];
         //        var sv = DICTOOL.checkObjectExist_json(options, P_StringValue);
         //        var cmf = DICTOOL.checkObjectExist_json(options, P_CharMapFile);
         //        var iw = DICTOOL.checkObjectExist_json(options, P_ItemWidth);
         //        var ih = DICTOOL.checkObjectExist_json(options, P_ItemHeight);
         //        var scm = DICTOOL.checkObjectExist_json(options, P_StartCharMap);
 
-        var cmftDic = options.charMapFileData;
-        var cmfType = cmftDic.resourceType;
+        var cmftDic = options["charMapFileData"];
+        var cmfType = cmftDic["resourceType"];
         switch (cmfType)
         {
             case 0:
             {
                 var tp_c = jsonPath;
-                var cmfPath = cmftDic.path;
+                var cmfPath = cmftDic["path"];
                 var cmf_tp = tp_c += cmfPath;
-                var stringValue = options.stringValue!==null ? options.stringValue : "12345678";
-                var itemWidth = options.itemWidth!==null ? options.itemWidth : 24;
-                var itemHeight = options.has_itemheight ? options.itemHeight : 32;
+                var stringValue = options["stringValue"]!==null ? options["stringValue"] : "12345678";
+                var itemWidth = options["itemWidth"]!==null ? options["itemWidth"] : 24;
+                var itemHeight = options["itemHeight"]!==null ? options["itemHeight"] : 32;
                 labelAtlas.setProperty(stringValue,
                                         cmf_tp,
                                         itemWidth,
                                         itemHeight,
-                                        options.startCharMap);
+                                        options["startCharMap"]);
                 break;
             }
             case 1:
@@ -147,11 +147,11 @@ ccs.labelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
             }
             else if (name == "CharWidth")
             {
-                itemWidth = atoi(value.c_str());
+                itemWidth = value;
             }
             else if (name == "CharHeight")
             {
-                itemHeight = atoi(value.c_str());
+                itemHeight = value;
             }
             else if (name == "StartChar")
             {
@@ -159,7 +159,7 @@ ccs.labelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
             }
             else if (name == "Alpha")
             {
-                opacity = atoi(value);
+                opacity = value;
             }
 
             attribute = attribute.Next();

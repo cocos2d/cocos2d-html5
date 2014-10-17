@@ -97,44 +97,44 @@ ccs.loadingBarReader = /** @lends ccs.LoadingBarReader# */{
         ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
 
         var loadingBar = widget;
-        var options = nodeTree.loadingBarOptions;
+        var options = nodeTree["loadingBarOptions"];
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
-		var imageFileNameDic = options.textureData;
-        var imageFileNameType = imageFileNameDic.resourceType;
+		var imageFileNameDic = options["textureData"];
+        var imageFileNameType = imageFileNameDic["resourceType"];
 		if (imageFileNameType == 1)
 		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic.plistFile);
+			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic["plistFile"]);
 		}
-        var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic.path, imageFileNameType);
+        var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic["path"], imageFileNameType);
         loadingBar.loadTexture(imageFileName, imageFileNameType);
 
 
         /* gui mark add load bar scale9 parse */
-        var scale9Enable = options.scale9Enable;
+        var scale9Enable = options["scale9Enable"];
         loadingBar.setScale9Enabled(scale9Enable);
 
 
-        var cx = options.capinsetsX;
-        var cy = options.capinsetsY;
-        var cw = options.capinsetsWidth!=null ? options.capinsetsWidth : 1;
-        var ch = options.capinsetsHeight!=null ? options.capinsetsHeight : 1;
+        var cx = options["capinsetsX"];
+        var cy = options["capinsetsY"];
+        var cw = options["capinsetsWidth"]!=null ? options["capinsetsWidth"] : 1;
+        var ch = options["capinsetsHeight"]!=null ? options["capinsetsHeight"] : 1;
 
         if (scale9Enable) {
             loadingBar.setCapInsets(cc.rect(cx, cy, cw, ch));
 
         }
 
-		var widgetOptions = nodeTree.widgetOptions;
-        var width = widgetOptions.width;
-        var height = widgetOptions.height;
+		var widgetOptions = nodeTree["widgetOptions"];
+        var width = widgetOptions["width"];
+        var height = widgetOptions["height"];
         loadingBar.setContentSize(cc.size(width, height));
 
         /**/
 
-        loadingBar.setDirection(options.direction);
-        var percent = options.percent!==null ? options.percent : 100;
+        loadingBar.setDirection(options["direction"]);
+        var percent = options["percent"]!==null ? options["percent"] : 100;
         loadingBar.setPercent(percent);
 
 
@@ -142,8 +142,8 @@ ccs.loadingBarReader = /** @lends ccs.LoadingBarReader# */{
         ccs.widgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     },
 
-    setPropsFromXML: function(){
-        ccs.widgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+    setPropsFromXML: function(widget, objectData){
+        ccs.widgetReader.setPropsFromXML.call(this, widget, objectData);
 
         var loadingBar = widget;
 
@@ -171,7 +171,7 @@ ccs.loadingBarReader = /** @lends ccs.LoadingBarReader# */{
             }
             else if (name == "ProgressInfo")
             {
-                percent = atoi(value());
+                percent = value;
             }
             else if (name == "Scale9Enable")
             {
@@ -182,23 +182,23 @@ ccs.loadingBarReader = /** @lends ccs.LoadingBarReader# */{
             }
             else if (name == "Scale9OriginX")
             {
-                cx = atof(value());
+                cx = value;
             }
             else if (name == "Scale9OriginY")
             {
-                cy = atof(value());
+                cy = value;
             }
             else if (name == "Scale9Width")
             {
-                cw = atof(value());
+                cw = value;
             }
             else if (name == "Scale9Height")
             {
-                ch = atof(value());
+                ch = value;
             }
             else if (name == "Alpha")
             {
-                opacity = atoi(value());
+                opacity = value;
             }
 
             attribute = attribute.Next();
@@ -247,7 +247,7 @@ ccs.loadingBarReader = /** @lends ccs.LoadingBarReader# */{
 
                     case 1:
                     {
-                        cc.SpriteFrameCache.addSpriteFramesWithFile(xmlPath + plistFile);
+                        cc.spriteFrameCache.addSpriteFrames(xmlPath + plistFile);
                         loadingBar.loadTexture(path, ccui.Widget.PLIST_TEXTURE);
                         break;
                     }

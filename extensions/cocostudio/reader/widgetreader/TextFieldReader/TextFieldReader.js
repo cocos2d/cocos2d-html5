@@ -97,17 +97,17 @@ ccs.textFieldReader = /** @lends ccs.TextFieldReader# */{
 
     setPropsFromProtocolBuffers: function(widget, nodeTree){
         var textField = widget;
-        var options = nodeTree.textfieldOptions;
+        var options = nodeTree["textfieldOptions"];
 
         var protocolBuffersPath = ccs.uiReader.getFilePath();
 
-		var IsCustomSize = options.isCustomSize;
+		var IsCustomSize = options["isCustomSize"];
 		widget.ignoreContentAdaptWithSize(!IsCustomSize);
 
         if (IsCustomSize)
         {
-            var widgetOptions = nodeTree.widgetOptions;
-            textField.setContentSize(cc.size(widgetOptions.width, widgetOptions.height));
+            var widgetOptions = nodeTree["widgetOptions"];
+            textField.setContentSize(cc.size(widgetOptions["width"], widgetOptions["height"]));
         }
 
         ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
@@ -115,20 +115,20 @@ ccs.textFieldReader = /** @lends ccs.TextFieldReader# */{
 
         textField.setUnifySizeEnabled(false);
 
-        var ph = options.placeholder;
+        var ph = options["placeholder"];
         if (ph!==null)
         {
-            var placeholder = options.placeholder!==null ? options.placeholder : "inputs words here";
+            var placeholder = options["placeholder"]!==null ? options["placeholder"] : "inputs words here";
             textField.setPlaceHolder(placeholder);
         }
-        var text = options.text!==null ? options.text : "Text Field";
+        var text = options["text"]!==null ? options["text"] : "Text Field";
         textField.setText(text);
 
-        var fontSize = options.fontSize ? options.fontSize : 20;
+        var fontSize = options["fontSize"] ? options["fontSize"] : 20;
         textField.setFontSize(fontSize);
 
 
-        var fontName = options.fontName!==null ? options.fontName : "微软雅黑";
+        var fontName = options["fontName"]!==null ? options["fontName"] : "微软雅黑";
         textField.setFontName(fontName);
 
         //        var tsw = options.has_touchsizewidth();
@@ -144,26 +144,26 @@ ccs.textFieldReader = /** @lends ccs.TextFieldReader# */{
         //        {
         //            //textField.setSize(Size(dw, dh));
         //        }
-        var maxLengthEnable = options.maxlengthEnable;
+        var maxLengthEnable = options["maxlengthEnable"];
         textField.setMaxLengthEnabled(maxLengthEnable);
 
         if (maxLengthEnable)
         {
-            var maxLength = options.maxLength!==null ? options.maxLength : 10;
+            var maxLength = options["maxLength"]!==null ? options["maxLength"] : 10;
             textField.setMaxLength(maxLength);
         }
-        var passwordEnable = options.passwordEnable;
+        var passwordEnable = options["passwordEnable"];
         textField.setPasswordEnabled(passwordEnable);
         if (passwordEnable)
         {
-            var passwordStyleText = options.passwordStyleText!==null ? options.passwordStyleText : "*";
+            var passwordStyleText = options["passwordStyleText"]!==null ? options["passwordStyleText"] : "*";
             textField.setPasswordStyleText(passwordStyleText);
         }
 
-		if (options.fontResource!==null)
+		if (options["fontResource"]!==null)
 		{
-			var resourceData = options.fontresource;
-		    textField.setFontName(protocolBuffersPath + resourceData.path());
+			var resourceData = options["fontresource"];
+		    textField.setFontName(protocolBuffersPath + resourceData["path"]);
 		}
 
         // other commonly protperties
@@ -171,7 +171,7 @@ ccs.textFieldReader = /** @lends ccs.TextFieldReader# */{
     },
 
     setPropsFromXML: function(widget, objectData){
-        ccs.widgetReader.prototype.setPropsFromXML.call(this, widget, objectData);
+        ccs.widgetReader.setPropsFromXML.call(this, widget, objectData);
 
         var textField = widget;
 
@@ -203,7 +203,7 @@ ccs.textFieldReader = /** @lends ccs.TextFieldReader# */{
             }
             else if (name == "FontSize")
             {
-                textField.setFontSize(atoi(value.c_str()));
+                textField.setFontSize(value);
             }
             else if (name == "FontName")
             {
@@ -215,7 +215,7 @@ ccs.textFieldReader = /** @lends ccs.TextFieldReader# */{
             }
             else if (name == "MaxLengthText")
             {
-                textField.setMaxLength(atoi(value.c_str()));
+                textField.setMaxLength(value);
             }
             else if (name == "PasswordEnable")
             {
@@ -223,7 +223,7 @@ ccs.textFieldReader = /** @lends ccs.TextFieldReader# */{
             }
             else if (name == "PasswordStyleText")
             {
-                textField.setPasswordStyleText(value.c_str());
+                textField.setPasswordStyleText(value);
             }
             else if (name == "IsCustomSize")
             {
@@ -241,7 +241,7 @@ ccs.textFieldReader = /** @lends ccs.TextFieldReader# */{
             }
             else if (name == "Alpha")
             {
-                opacity = atoi(value);
+                opacity = value;
             }
 
             attribute = attribute.Next();
@@ -264,11 +264,11 @@ ccs.textFieldReader = /** @lends ccs.TextFieldReader# */{
 
                     if (name == "X")
                     {
-                        width = atof(value.c_str());
+                        width = value;
                     }
                     else if (name == "Y")
                     {
-                        height = atof(value.c_str());
+                        height = value;
                     }
 
                     attribute = attribute.Next();
@@ -320,7 +320,7 @@ ccs.textFieldReader = /** @lends ccs.TextFieldReader# */{
         if (isCustomSize)
         {
             textField.ignoreContentAdaptWithSize(!isCustomSize);
-            textField.setContentSize(Size(width, height));
+            textField.setContentSize(cc.size(width, height));
         }
 
         textField.setOpacity(opacity);

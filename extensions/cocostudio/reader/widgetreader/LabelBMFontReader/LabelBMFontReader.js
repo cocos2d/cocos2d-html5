@@ -77,18 +77,18 @@ ccs.labelBMFontReader = /** @lends ccs.LabelBMFontReader# */{
         var jsonPath = ccs.uiReader.getFilePath();
 
         var labelBMFont = widget;
-        var options = nodeTree.textBMFontOptions;
+        var options = nodeTree["textBMFontOptions"];
 
 
         if(options){
-            var cmftDic = options.fileNameData;
-            var cmfType = cmftDic.resourceType;
+            var cmftDic = options["fileNameData"];
+            var cmfType = cmftDic["resourceType"];
             switch (cmfType)
             {
                 case 0:
                 {
                     var tp_c = jsonPath;
-                    var cmfPath = cmftDic.path;
+                    var cmfPath = cmftDic["path"];
                     var cmf_tp = tp_c + cmfPath;
                     labelBMFont.setFntFile(cmf_tp);
                     break;
@@ -100,7 +100,7 @@ ccs.labelBMFontReader = /** @lends ccs.LabelBMFontReader# */{
                     break;
             }
 
-            var text = options.text!==null ? options.text : "Text Label";
+            var text = options["text"]!==null ? options["text"] : "Text Label";
             labelBMFont.setString(text);
         }
 
@@ -110,7 +110,7 @@ ccs.labelBMFontReader = /** @lends ccs.LabelBMFontReader# */{
     },
 
     setPropsFromXML: function(widget, nodeTree){
-        widgetReader.setPropsFromXML(widget, objectData);
+        ccs.widgetReader.setPropsFromXML(widget, objectData);
 
         var labelBMFont = widget;
 
@@ -133,7 +133,7 @@ ccs.labelBMFontReader = /** @lends ccs.LabelBMFontReader# */{
             }
             else if (name == "Alpha")
             {
-                opacity = atoi(value);
+                opacity = value;
             }
 
             attribute = attribute.Next();
