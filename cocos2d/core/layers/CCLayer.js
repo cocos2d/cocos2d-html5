@@ -585,7 +585,6 @@ delete cc._tmp.PrototypeLayerColor;
  * @property {Number}   compresseInterpolation  - Indicate whether or not the interpolation will be compressed
  */
 cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
-    _startColor: null,
     _endColor: null,
     _startOpacity: 255,
     _endOpacity: 255,
@@ -603,7 +602,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         var _t = this;
         cc.LayerColor.prototype.ctor.call(_t);
 
-        _t._startColor = cc.color(0, 0, 0, 255);
         _t._endColor = cc.color(0, 0, 0, 255);
         _t._alongVector = cc.p(0, -1);
         _t._startOpacity = 255;
@@ -629,10 +627,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         var _t = this;
 
         // Initializes the CCLayer with a gradient between start and end in the direction of v.
-        var locStartColor = _t._startColor, locEndColor = _t._endColor;
-        locStartColor.r = start.r;
-        locStartColor.g = start.g;
-        locStartColor.b = start.b;
+        var locEndColor = _t._endColor;
         _t._startOpacity = start.a;
 
         locEndColor.r = end.r;
@@ -807,6 +802,13 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         locCmd._startPoint.y = tHeight * locAlongVector.y - tHeight;
         locCmd._endPoint.x = tWidth * locAlongVector.x + tWidth;
         locCmd._endPoint.y = tHeight * (-locAlongVector.y) - tHeight;
+
+        var locStartColor = this._displayedColor, locEndColor = this._endColor, opacity = this._displayedOpacity / 255;
+        var startOpacity = this._startOpacity, endOpacity = this._endOpacity;
+        locCmd._startStopStr = "rgba(" + Math.round(locStartColor.r) + "," + Math.round(locStartColor.g) + ","
+            + Math.round(locStartColor.b) + "," + startOpacity.toFixed(4) + ")";
+        locCmd._endStopStr = "rgba(" + Math.round(locEndColor.r) + "," + Math.round(locEndColor.g) + ","
+            + Math.round(locEndColor.b) + "," + endOpacity.toFixed(4) + ")";
     };
     //cc.LayerGradient define end
     _p = null;
