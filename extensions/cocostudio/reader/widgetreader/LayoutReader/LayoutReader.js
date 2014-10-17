@@ -257,11 +257,11 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
 
         if (backGroundScale9Enable)
         {
-            var cx = options["capInsetsX"];
-            var cy = options["capInsetsY"];
-            var cw = options["capInsetsWidth"]!==null ? options["capInsetsWidth"] : 1;
-            var ch = options["capInsetsHeight"]!==null ? options["capInsetsHeight"] : 1;
-            panel.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
+            //var cx = options["capInsetsX"] || 0;
+            //var cy = options["capInsetsY"] || 0;
+            //var cw = options["capInsetsWidth"]!==null ? options["capInsetsWidth"] : 1;
+            //var ch = options["capInsetsHeight"]!==null ? options["capInsetsHeight"] : 1;
+            //panel.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
 
             var sw = options["scale9Width"];
             var sh = options["scale9Height"];
