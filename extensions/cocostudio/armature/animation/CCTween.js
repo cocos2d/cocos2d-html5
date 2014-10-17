@@ -67,7 +67,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         this._tweenData = this._bone.getTweenData();
         this._tweenData.displayIndex = -1;
 
-        this._animation = this._bone != null && this._bone.getArmature() != null ?
+        this._animation = (this._bone != null && this._bone.getArmature() != null) ?
             this._bone.getArmature().getAnimation() :
             null;
         return true;

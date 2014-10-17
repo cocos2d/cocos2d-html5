@@ -99,11 +99,9 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
             this._name = name;
         this._tweenData = new ccs.FrameData();
 
-        this._tween = new ccs.Tween();
-        this._tween.init(this);
+        this._tween = new ccs.Tween(this);
 
-        this._displayManager = new ccs.DisplayManager();
-        this._displayManager.init(this);
+        this._displayManager = new ccs.DisplayManager(this);
 
         this._worldInfo = new ccs.BaseData();
         this._boneData = new ccs.BaseData();
