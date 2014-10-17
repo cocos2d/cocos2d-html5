@@ -127,7 +127,7 @@ ccs.actionTimelineCache = {
      * @param {string} fileName
      * @returns {*}
      */
-    createActionFormJson: function(fileName){
+    createActionFromJson: function(fileName){
 
         var action = this._animationActions[fileName];
         if (action == null) {

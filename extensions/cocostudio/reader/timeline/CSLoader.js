@@ -157,6 +157,10 @@ ccs.CSLoader = {
         else if (suffix == "json" || suffix == "ExportJson")
         {
             return load.createNodeFromJson(filename);
+        }else if(suffix == "xml"){
+
+            cc.log("Does not support");
+            return null;
         }
 
         return null;
@@ -167,7 +171,7 @@ ccs.CSLoader = {
         var suffix = path.substr(pos + 1, path.length);
         cc.log("suffix = %s", suffix);
 
-        var cache = ccs.ActionTimelineCache;
+        var cache = ccs.actionTimelineCache;
 
         if (suffix == "csb")
         {
@@ -196,42 +200,38 @@ ccs.CSLoader = {
 
        return this.loadNodeWithFile(filename);
     },
-    loadNodeWithFile: function(filename){
+    loadNodeWithFile: function(fileName){
         // Read content from file
-        var contentStr = FileUtils.getInstance().getStringFromFile(fileName);
+        var contentStr = cc.loader.getRes(fileName);
 
         var node = this.loadNodeWithContent(contentStr);
 
         // Load animation data from file
-        ccs.ActionTimelineCache.getInstance().loadAnimationActionWithContent(fileName, contentStr);
+        ccs.actionTimelineCache.loadAnimationActionWithContent(fileName, contentStr);
 
         return node;
     },
-    loadNodeWithContent: function(filename){
-        var doc;
-        doc.Parse(content);
-        if (doc.HasParseError())
-        {
-            cc.log("GetParseError %s\n", doc.GetParseError());
-        }
+    loadNodeWithContent: function(data){
 
         // cocos2dx version mono editor is based on
-        this._monoCocos2dxVersion = doc[CSLoaderStatic.MONO_COCOS2D_VERSION] || "";
+        this._monoCocos2dxVersion = data[CSLoaderStatic.MONO_COCOS2D_VERSION] || data["version"];
 
         // decode plist
-        var length = doc[CSLoaderStatic.TEXTURES];
+        var texture = data[CSLoaderStatic.TEXTURES];
+        var texturePng = data[CSLoaderStatic.TEXTURES_PNG];
+        var length = texture.length;
 
         for(var i=0; i<length; i++)
         {
-            var plist = doc[CSLoaderStatic.TEXTURES][i];
-            var png   = doc[CSLoaderStatic.TEXTURES_PNG][i];
+            var plist = texture[i];
+            var png   = texturePng[i];
             plist = this._jsonPath + plist;
             png   = this._jsonPath + png;
-            cc.SpriteFrameCache.addSpriteFramesWithFile(plist, png);
+            cc.spriteFrameCache.addSpriteFrames(plist, png);
         }
 
         // decode node tree
-        var subJson = doc[CSLoaderStatic.NODE];
+        var subJson = data[CSLoaderStatic.NODE];
         return this.loadNode(subJson);
     },
 
@@ -272,19 +272,8 @@ ccs.CSLoader = {
         //    _protocolBuffersPath = path.substr(0, pos + 1);
     
         var binary = cc.loader.getRes(fileName);
-//        var gpbwp;//protobufReader
-        //    protocolbuffers.GUIProtocolBuffersProtobuf gpbwp;
-//        if (!gpbwp.ParseFromArray(content.getBytes(), content.getSize()))
-//        {
-//            return null;
-//        }
+
         var buffer = PBP.CSParseBinary.decode(binary);
-        /*
-         cc.log("dataScale = %d", gpbwp.datascale());
-         cc.log("designHeight = %d", gpbwp.designheight());
-         cc.log("designWidth = %d", gpbwp.designwidth());
-         cc.log("version = %s", gpbwp.version().c_str());
-         */
     
         // decode plist
         var textureSize = buffer.textures.length;
@@ -293,14 +282,14 @@ ccs.CSLoader = {
         {
             var plist = buffer.textures[i];
             cc.log("plist = %s", plist);
-            var png = buffer.texturesPng[i];
+            var png = buffer["texturesPng"][i];
             cc.log("png = %s", png);
             plist = this._protocolBuffersPath + plist;
             png = this._protocolBuffersPath + png;
             cc.spriteFrameCache.addSpriteFrames(plist, png);
         }
-        var fileDesignWidth = buffer.designWidth;
-        var fileDesignHeight = buffer.designHeight;
+        var fileDesignWidth = buffer["designWidth"];
+        var fileDesignHeight = buffer["designHeight"];
         if (fileDesignWidth <= 0 || fileDesignHeight <= 0)
         {
             cc.log("Read design size error!\n");
@@ -312,9 +301,7 @@ ccs.CSLoader = {
             ccs.uiReader.storeFileDesignSize(fileName, cc.size(fileDesignWidth, fileDesignHeight));
         }
 
-        var node = this.nodeFromProtocolBuffers(buffer.nodeTree);
-    
-        return node;
+        return this.nodeFromProtocolBuffers(buffer["nodeTree"]);
     },
     nodeFromProtocolBuffers: function(nodetree){
         var node = null;
@@ -327,7 +314,7 @@ ccs.CSLoader = {
         if (classname == "Node")
         {
             node = new ccs.Node();
-            var options = nodetree.widgetOptions;
+            var options = nodetree["widgetOptions"];
             this.setPropsForNodeFromProtocolBuffers(node, options);
     
             curOptions = options;
@@ -335,7 +322,7 @@ ccs.CSLoader = {
         else if (classname == "SingleNode")
         {
             node = new ccs.Node();
-            var options = nodetree.widgetOptions;
+            var options = nodetree["widgetOptions"];
             this.setPropsForSingleNodeFromProtocolBuffers(node, options);
     
             curOptions = options;
@@ -343,16 +330,16 @@ ccs.CSLoader = {
         else if (classname == "Sprite")
         {
             node = new cc.Sprite();
-            var nodeOptions = nodetree.widgetOptions;
-            var options = nodetree.spriteOptions;
+            var nodeOptions = nodetree["widgetOptions"];
+            var options = nodetree["spriteOptions"];
             this.setPropsForSpriteFromProtocolBuffers(node, options, nodeOptions);
     
             curOptions = nodeOptions;
         }
         else if (classname == "ProjectNode")
         {
-            var nodeOptions = nodetree.widgetOptions;
-            var options = nodetree.projectNodeOptions;
+            var nodeOptions = nodetree["widgetOptions"];
+            var options = nodetree["projectNodeOptions"];
     
             var filePath = options.filename();
             cc.log("filePath = %s", filePath);
@@ -373,16 +360,16 @@ ccs.CSLoader = {
         }
         else if (classname == "Particle")
         {
-            var nodeOptions = nodetree.widgetOptions;
-            var options = nodetree.particleSystemOptions;
+            var nodeOptions = nodetree["widgetOptions"];
+            var options = nodetree["particleSystemOptions"];
     		node = this.createParticleFromProtocolBuffers(options, nodeOptions);
     
             curOptions = nodeOptions;
         }
         else if (classname == "GameMap")
         {
-            var nodeOptions = nodetree.widgetOptions;
-            var options = nodetree.tmxTiledMapOptions;
+            var nodeOptions = nodetree["widgetOptions"];
+            var options = nodetree["tmxTiledMapOptions"];
     		node = this.createTMXTiledMapFromProtocolBuffers(options, nodeOptions);
     
             curOptions = nodeOptions;
@@ -390,12 +377,12 @@ ccs.CSLoader = {
     	else if (classname == "SimpleAudio")
     	{
             node = new cc.Node();
-            var options = nodetree.widgetOptions;
+            var options = nodetree["widgetOptions"];
             this.setPropsForSimpleAudioFromProtocolBuffers(node, options);
     
     		curOptions = options;
     	}
-        else if (isWidget(classname))
+        else if (this.isWidget(classname))
         {
             var guiClassName = this.getGUIClassName(classname);
             var readerName = guiClassName;
@@ -406,9 +393,9 @@ ccs.CSLoader = {
             var reader = ccs.objectFactory.createObject(readerName);
             reader.setPropsFromProtocolBuffers(widget, nodetree);
     
-            var widgetOptions = nodetree.widgetOptions;
-            var actionTag = widgetOptions.actionTag;
-            widget.setUserObject(ccs.ActionTimelineData.create(actionTag));
+            var widgetOptions = nodetree["widgetOptions"];
+            var actionTag = widgetOptions["actionTag"];
+            widget.setUserObject(new ccs.ActionTimelineData(actionTag));
     
             node = widget;
         }
@@ -443,19 +430,19 @@ ccs.CSLoader = {
             }
             //
     
-            var widgetOptions = nodetree.widgetOptions;
-            var actionTag = widgetOptions.actionTag;
-            widget.setUserObject(ccs.ActionTimelineData.create(actionTag));
+            var widgetOptions = nodetree["widgetOptions"];
+            var actionTag = widgetOptions["actionTag"];
+            widget.setUserObject(new ccs.ActionTimelineData(actionTag));
     
             node = widget;
         }
     
         // component
-        var componentSize = curOptions.componentOptions.length;
+        var componentSize = curOptions["componentOptions"].length;
         for (var i = 0; i < componentSize; ++i)
         {
     
-            var componentOptions = curOptions.componentOptions[i];
+            var componentOptions = curOptions["componentOptions"][i];
             var component = this.createComponentFromProtocolBuffers(componentOptions);
     
             if (component)
@@ -464,11 +451,11 @@ ccs.CSLoader = {
             }
         }
     
-        var size = nodetree.children.length;
+        var size = nodetree["children"].length;
         cc.log("size = %d", size);
         for (var i = 0; i < size; ++i)
         {
-            var subNodeTree = nodetree.children[i];
+            var subNodeTree = nodetree["children"][i];
             var child = this.nodeFromProtocolBuffers(subNodeTree);
             cc.log("child = %p", child);
             if (child)
@@ -531,25 +518,16 @@ ccs.CSLoader = {
             this._xmlPath = "";
         }
 
-        var node = this.nodeFromXMLFile(filename);
+        return this.nodeFromXMLFile(filename);
 
-        return node;
     },
     nodeFromXMLFile: function(filename){
         var node = null;
-    
-        // xml read
-        var fullpath = FileUtils.getInstance().fullPathForFilename(fileName)();
-        var size;
-        var content = FileUtils.getInstance().getFileData(fullpath, "r", size);
-    
-        // xml parse
-        var document = new tinyxml2.XMLDocument();
-        document.Parse(content());
-    
-        var rootElement = document.RootElement();// Root
-        cc.log("rootElement name = %s", rootElement.Name());
-    
+
+
+        var content = cc.loader.getRes(filename);
+        ////////////parse//////////
+
     
         var element = rootElement.FirstChildElement();
     
@@ -681,7 +659,7 @@ ccs.CSLoader = {
     
                         if (name == "Path")
                         {
-                            node = createNodeFromXML(_xmlPath + value);
+                            node = this.createNodeFromXML(this._xmlPath + value);
                             this.setPropsForProjectNodeFromXML(node, objectData);
     
                             var action = ccs.actionTimelineCache.createActionFromXML(this._xmlPath + value);
@@ -884,7 +862,7 @@ ccs.CSLoader = {
 
         if(node)
         {
-            var length = json[CHILDREN] || 0;
+            var length = json[CSLoaderStatic.CHILDREN].length || 0;
             for (var i = 0; i<length; i++)
             {
                 var dic = json[CSLoaderStatic.CHILDREN][i];
@@ -919,7 +897,7 @@ ccs.CSLoader = {
                                 && parent instanceof ccui.Widget
                                 && !(parent instanceof ccui.Layout))
                             {
-                                if (widget.getPositionType() == ccui.Widget.PositionType.PERCENT)
+                                if (widget.getPositionType() == ccui.Widget.POSITION_PERCENT)
                                 {
                                     widget.setPositionPercent(cc.p(widget.getPositionPercent().x + parent.getAnchorPoint().x, widget.getPositionPercent().y + parent.getAnchorPoint().y));
                                     widget.setPosition(cc.p(widget.getPositionX() + parent.getAnchorPointInPoints().x, widget.getPositionY() + parent.getAnchorPointInPoints().y));
@@ -951,30 +929,30 @@ ccs.CSLoader = {
     },
 
     initNode: function(node, json){
-        var width         = json[CSLoaderStatic.WIDTH];
-        var height        = json[CSLoaderStatic.HEIGHT];
-        var x             = json[CSLoaderStatic.X];
-        var y             = json[CSLoaderStatic.Y];
+        var width         = json[CSLoaderStatic.WIDTH] || 0;
+        var height        = json[CSLoaderStatic.HEIGHT] || 0;
+        var x             = json[CSLoaderStatic.X] || 0;
+        var y             = json[CSLoaderStatic.Y] || 0;
         var scalex        = json[CSLoaderStatic.SCALE_X] || 1;
         var scaley        = json[CSLoaderStatic.SCALE_Y] || 1;
-        var rotation      = json[CSLoaderStatic.ROTATION]
-        var rotationSkewX = json[CSLoaderStatic.ROTATION_SKEW_X];
-        var rotationSkewY = json[CSLoaderStatic.ROTATION_SKEW_Y];
-        var skewx         = json[CSLoaderStatic.SKEW_X];
-        var skewy         = json[CSLoaderStatic.SKEW_Y];
+        var rotation      = json[CSLoaderStatic.ROTATION] || 0;
+        var rotationSkewX = json[CSLoaderStatic.ROTATION_SKEW_X] || 0;
+        var rotationSkewY = json[CSLoaderStatic.ROTATION_SKEW_Y] || 0;
+        var skewx         = json[CSLoaderStatic.SKEW_X] || 0;
+        var skewy         = json[CSLoaderStatic.SKEW_Y] || 0;
         var anchorx       = json[CSLoaderStatic.ANCHOR_X] || 0.5;
         var anchory       = json[CSLoaderStatic.ANCHOR_Y] || 0.5;
         var alpha       = json[CSLoaderStatic.ALPHA] || 255;
         var red         = json[CSLoaderStatic.RED] || 255;
         var green       = json[CSLoaderStatic.GREEN] || 255;
         var blue        = json[CSLoaderStatic.BLUE] || 255;
-        var zorder		    = json[CSLoaderStatic.ZORDER];
-        var tag             = json[CSLoaderStatic.TAG];
-        var actionTag       = json[CSLoaderStatic.ACTION_TAG];
-        var visible        = json[CSLoaderStatic.VISIBLE];
+        var zorder		    = json[CSLoaderStatic.ZORDER] || 0;
+        var tag             = json[CSLoaderStatic.TAG] || 0;
+        var actionTag       = json[CSLoaderStatic.ACTION_TAG] || 0;
+        var visible        = json[CSLoaderStatic.VISIBLE] || true;
     
         if(x != 0 || y != 0)
-            node.setPosition(Point(x, y));
+            node.setPosition(cc.p(x, y));
         if(scalex != 1)
             node.setScaleX(scalex);
         if(scaley != 1)
@@ -982,15 +960,15 @@ ccs.CSLoader = {
         if (rotation != 0)
             node.setRotation(rotation);
         if(rotationSkewX != 0)
-            node.setRotationSkewX(rotationSkewX);
+            node.setRotationX(rotationSkewX);
         if(rotationSkewY != 0)
-            node.setRotationSkewY(rotationSkewY);
+            node.setRotationY(rotationSkewY);
         if(skewx != 0)
             node.setSkewX(skewx);
         if(skewy != 0)
             node.setSkewY(skewy);
         if(anchorx != 0.5 || anchory != 0.5)
-            node.setAnchorPoint(Point(anchorx, anchory));
+            node.setAnchorPoint(cc.p(anchorx, anchory));
         if(width != 0 || height != 0)
             node.setContentSize(cc.size(width, height));
         if(zorder != 0)
@@ -1009,7 +987,7 @@ ccs.CSLoader = {
     
     
         node.setTag(tag);
-        node.setUserObject(cc.ActionTimelineData.create(actionTag));
+        node.setUserObject(new ccs.ActionTimelineData(actionTag));
     },
 
     // load nodes
@@ -1045,7 +1023,7 @@ ccs.CSLoader = {
         {
             var path = filePath;
 
-            var spriteFrame = cc.SpriteFrameCache.getSpriteFrameByName(path);
+            var spriteFrame = cc.spriteFrameCache.getSpriteFrame(path);
             if(!spriteFrame)
             {
                 path = this._jsonPath + path;
@@ -1083,7 +1061,7 @@ ccs.CSLoader = {
         var filePath = json[CSLoaderStatic.PLIST_FILE];
         var num = json[CSLoaderStatic.PARTICLE_NUM];
     
-        var particle = cc.ParticleSystemQuad.create(filePath);
+        var particle = new cc.ParticleSystemQuad(filePath);
         particle.setTotalParticles(num);
     
         this.initNode(particle, json);
@@ -1146,13 +1124,7 @@ ccs.CSLoader = {
                 widgetPropertiesReader.setPropsForAllWidgetFromJsonDictionary(reader, widget, json);
     
                 // 2nd., custom widget parse with custom reader
-                var customProperty = json["customProperty"];
-                var customJsonDict;
-                customJsonDict.Parse(customProperty);
-                if (customJsonDict.HasParseError())
-                {
-                    cc.log("GetParseError %s\n", customJsonDict.GetParseError());
-                }
+                var customJsonDict = json["customProperty"];
     
                 widgetPropertiesReader.setPropsForAllCustomWidgetFromJsonDictionary(classname, widget, customJsonDict);
             }
@@ -1169,16 +1141,16 @@ ccs.CSLoader = {
             var skewx         = json[CSLoaderStatic.SKEW_X];
             var skewy         = json[CSLoaderStatic.SKEW_Y];
             if(rotationSkewX != 0)
-                widget.setRotationSkewX(rotationSkewX);
+                widget.setRotationX(rotationSkewX);
             if(rotationSkewY != 0)
-                widget.setRotationSkewY(rotationSkewY);
+                widget.setRotationY(rotationSkewY);
             if(skewx != 0)
                 widget.setSkewX(skewx);
             if(skewy != 0)
                 widget.setSkewY(skewy);
     
             var actionTag = json[CSLoaderStatic.ACTION_TAG];
-            widget.setUserObject(ccs.ActionTimelineData.create(actionTag));
+            widget.setUserObject(new ccs.ActionTimelineData(actionTag));
         }
     
         return widget;
@@ -1221,20 +1193,20 @@ ccs.CSLoader = {
     setPropsForNodeFromProtocolBuffers: function(node, nodeOptions){
         var options = nodeOptions;
     
-        var name          = options.name;
-        var x             = options.x;
-        var y             = options.y;
-        var scalex        = options.scaleX;
-        var scaley        = options.scaleY;
-        var rotation      = options.rotation;
-        var rotationSkewX = options.rotationSkewX !==null ? options.rotationSkewX : 0;
-        var rotationSkewY = options.rotationSkewY !==null ? options.rotationSkewY : 0;
-        var anchorx       = options.anchorPointX  !==null ? options.anchorPointX  : 0.5;
-        var anchory       = options.anchorPointY  !==null ? options.anchorPointY  : 0.5;
-        var zorder		  = options.zorder;
-        var tag           = options.tag;
-        var actionTag     = options.actionTag;
-        var visible       = options.visible;
+        var name          = options["name"];
+        var x             = options["x"];
+        var y             = options["y"];
+        var scalex        = options["scaleX"];
+        var scaley        = options["scaleY"];
+        var rotation      = options["rotation"];
+        var rotationSkewX = options["rotationSkewX"] !==null ? options["rotationSkewX"] : 0;
+        var rotationSkewY = options["rotationSkewY"] !==null ? options["rotationSkewY"] : 0;
+        var anchorx       = options["anchorPointX"] !==null ? options["anchorPointX"] : 0.5;
+        var anchory       = options["anchorPointY"] !==null ? options["anchorPointY"] : 0.5;
+        var zorder		  = options["zorder"];
+        var tag           = options["tag"];
+        var actionTag     = options["actionTag"];
+        var visible       = options["visible"];
     
         node.setName(name);
     
@@ -1247,9 +1219,9 @@ ccs.CSLoader = {
         if (rotation != 0)
             node.setRotation(rotation);
         if (rotationSkewX != 0)
-            node.setRotationSkewX(rotationSkewX);
+            node.setRotationX(rotationSkewX);
         if (rotationSkewY != 0)
-            node.setRotationSkewY(rotationSkewY);
+            node.setRotationY(rotationSkewY);
         if(anchorx != 0.5 || anchory != 0.5)
             node.setAnchorPoint(cc.p(anchorx, anchory));
         if(zorder != 0)
@@ -1258,7 +1230,7 @@ ccs.CSLoader = {
             node.setVisible(visible);
     
         node.setTag(tag);
-        node.setUserObject(ccs.ActionTimelineData.create(actionTag));
+        node.setUserObject(new ccs.ActionTimelineData(actionTag));
     
         node.setCascadeColorEnabled(true);
         node.setCascadeOpacityEnabled(true);
@@ -1270,13 +1242,13 @@ ccs.CSLoader = {
         var sprite = node;
         var options = spriteOptions;
     
-        var fileNameData = options.fileNameData;
-        var resourceType = fileNameData.resourceType;
+        var fileNameData = options["fileNameData"];
+        var resourceType = fileNameData["resourceType"];
         switch (resourceType)
         {
             case 0:
             {
-                var path = this._protocolBuffersPath + fileNameData.path();
+                var path = this._protocolBuffersPath + fileNameData["path"];
     			if (path != "")
     			{
     				sprite.setTexture(path);
@@ -1286,8 +1258,8 @@ ccs.CSLoader = {
     
             case 1:
             {
-    			cc.spriteFrameCache.addSpriteFrames(this._protocolBuffersPath + fileNameData.plistFile);
-                var path = fileNameData.path;
+    			cc.spriteFrameCache.addSpriteFrames(this._protocolBuffersPath + fileNameData["plistFile"]);
+                var path = fileNameData["path"];
     			if (path != "")
     			{
     				sprite.setSpriteFrame(path);
@@ -1327,10 +1299,10 @@ ccs.CSLoader = {
     
         this.setPropsForNodeFromProtocolBuffers(sprite, nodeOptions);
     
-        var alpha       = nodeOptions.Alpha !==null ? nodeOptions.Alpha  : 255;
-        var red         = nodeOptions.colorR!==null ? nodeOptions.colorR : 255;
-        var green       = nodeOptions.colorG!==null ? nodeOptions.colorG : 255;
-        var blue        = nodeOptions.colorB!==null ? nodeOptions.colorB : 255;
+        var alpha       = nodeOptions["Alpha"] !==null ? nodeOptions["Alpha"]  : 255;
+        var red         = nodeOptions["colorR"]!==null ? nodeOptions["colorR"] : 255;
+        var green       = nodeOptions["colorG"]!==null ? nodeOptions["colorG"] : 255;
+        var blue        = nodeOptions["colorB"]!==null ? nodeOptions["colorB"] : 255;
 
         if (alpha != 255)
         {
@@ -1341,8 +1313,8 @@ ccs.CSLoader = {
             sprite.setColor(cc.color(red, green, blue));
         }
     
-    	var flipX   = spriteOptions.flippedX;
-        var flipY   = spriteOptions.flippedY;
+    	var flipX   = spriteOptions["flippedX"];
+        var flipY   = spriteOptions["flippedY"];
     
         if(flipX)
             sprite.setFlippedX(flipX);
@@ -1359,14 +1331,14 @@ ccs.CSLoader = {
         var num = options.totalparticles();
          */
     
-        var fileNameData = options.fileNameData;
-        var resourceType = fileNameData.resourceType;
+        var fileNameData = options["fileNameData"];
+        var resourceType = fileNameData["resourceType"];
         switch (resourceType)
         {
             case 0:
             {
     
-                var path = this._protocolBuffersPath + fileNameData.path;
+                var path = this._protocolBuffersPath + fileNameData["path"];
     			if (path != "")
     			{
     				node = new cc.ParticleSystemQuad(path);
@@ -1389,13 +1361,13 @@ ccs.CSLoader = {
     	var node = null;
     	var options = tmxTiledMapOptions;
     
-    	var fileNameData = options.fileNameData;
-        var resourceType = fileNameData.resourceType;
+    	var fileNameData = options["fileNameData"];
+        var resourceType = fileNameData["resourceType"];
         switch (resourceType)
         {
             case 0:
             {
-                var path = this._protocolBuffersPath + fileNameData.path;
+                var path = this._protocolBuffersPath + fileNameData["path"];
                 var tmxFile = path;
     
                 if (tmxFile && "" != tmxFile)
@@ -1427,12 +1399,12 @@ ccs.CSLoader = {
     createComponentFromProtocolBuffers: function(componentOptions){
         var component = null;
     
-        var componentType = componentOptions.type;
+        var componentType = componentOptions["type"];
     
         if (componentType == "ComAudio")
         {
             component = new ccs.ComAudio();
-            var options = componentOptions.comAudioOptions;
+            var options = componentOptions["comAudioOptions"];
             this.setPropsForComAudioFromProtocolBuffers(component, options);
         }
     
@@ -1444,7 +1416,7 @@ ccs.CSLoader = {
         if (componentType == "ComAudio")
         {
             component = new ccs.ComAudio();
-            var options = componentOptions.comAudioOptions;
+            var options = componentOptions["comAudioOptions"];
             this.setPropsForComAudioFromProtocolBuffers(component, options);
         }
     },
@@ -1452,13 +1424,13 @@ ccs.CSLoader = {
         var options = comAudioOptions;
         var audio = component;
     
-        var fileNameData = options.fileNameData;
-        var resourceType = fileNameData.resourceType;
+        var fileNameData = options["fileNameData"];
+        var resourceType = fileNameData["resourceType"];
         switch (resourceType)
         {
             case 0:
             {
-                var path = this._protocolBuffersPath + fileNameData.path;
+                var path = this._protocolBuffersPath + fileNameData["path"];
                 audio.setFile(path);
                 break;
             }
@@ -1467,11 +1439,11 @@ ccs.CSLoader = {
                 break;
         }
     
-        var loop = options.loop;
+        var loop = options["loop"];
         audio.setLoop(loop);
     
-        audio.setName(options.name);
-        audio.setLoop(options.loop);
+        audio.setName(options["name"]);
+        audio.setLoop(options["loop"]);
     },
 
     setPropsForNodeFromXML: function(node, nodeObjectData){
@@ -1501,11 +1473,11 @@ ccs.CSLoader = {
             }
             else if (name == "RotationSkewX")
             {
-                node.setRotationSkewX(atof(value));
+                node.setRotationX(value);
             }
             else if (name == "RotationSkewY")
             {
-                node.setRotationSkewY(atof(value));
+                node.setRotationY(value);
             }
             else if (name == "Rotation")
             {
@@ -1513,7 +1485,7 @@ ccs.CSLoader = {
             }
             else if (name == "ZOrder")
             {
-                node.setZOrder(atoi(value));
+                node.setZOrder(value);
             }
             else if (name == "Visible")
             {
@@ -1525,11 +1497,11 @@ ccs.CSLoader = {
             }
             else if (name == "Alpha")
             {
-                node.setOpacity(atoi(value));
+                node.setOpacity(value);
             }
             else if (name == "Tag")
             {
-                node.setTag(atoi(value));
+                node.setTag(value);
             }
     
             attribute = attribute.Next();
@@ -1554,11 +1526,11 @@ ccs.CSLoader = {
     
                     if (name == "X")
                     {
-                        node.setPositionX(atof(value));
+                        node.setPositionX(value);
                     }
                     else if (name == "Y")
                     {
-                        node.setPositionY(atof(value));
+                        node.setPositionY(value);
                     }
     
                     attribute = attribute.Next();
@@ -1575,11 +1547,11 @@ ccs.CSLoader = {
     
                     if (name == "ScaleX")
                     {
-                        node.setScaleX(atof(value));
+                        node.setScaleX(value);
                     }
                     else if (name == "ScaleY")
                     {
-                        node.setScaleY(atof(value));
+                        node.setScaleY(value);
                     }
     
                     attribute = attribute.Next();
@@ -1599,17 +1571,17 @@ ccs.CSLoader = {
     
                     if (name == "ScaleX")
                     {
-                        anchorX = atof(value);
+                        anchorX = value;
                     }
                     else if (name == "ScaleY")
                     {
-                        anchorY = atof(value);
+                        anchorY = value;
                     }
     
                     attribute = attribute.Next();
                 }
     
-                node.setAnchorPoint(Vec2(anchorX, anchorY));
+                node.setAnchorPoint(cc.p(anchorX, anchorY));
             }
             else if (name == "CColor")
             {
@@ -1623,19 +1595,19 @@ ccs.CSLoader = {
     
                     if (name == "A")
                     {
-                        opacity = atoi(value);
+                        opacity = value;
                     }
                     else if (name == "R")
                     {
-                        red = atoi(value);
+                        red = value;
                     }
                     else if (name == "G")
                     {
-                        green = atoi(value);
+                        green = value;
                     }
                     else if (name == "B")
                     {
-                        blue = atoi(value);
+                        blue = value;
                     }
     
                     attribute = attribute.Next();
@@ -1656,11 +1628,11 @@ ccs.CSLoader = {
     
                     if (name == "X")
                     {
-                        width = atof(value);
+                        width = value;
                     }
                     else if (name == "Y")
                     {
-                        height = atof(value);
+                        height = value;
                     }
     
                     attribute = attribute.Next();
@@ -1690,7 +1662,7 @@ ccs.CSLoader = {
     
             if (name == "Alpha")
             {
-                opacity = atoi(value.c_str());
+                opacity = value;
             }
             else if (name == "FlipX")
             {
@@ -1751,7 +1723,7 @@ ccs.CSLoader = {
     
                     case 1:
                     {
-                        cc.SpriteFrameCache.addSpriteFramesWithFile(this._xmlPath + plistFile);
+                        cc.spriteFrameCache.addSpriteFrames(this._xmlPath + plistFile);
                         if (path != "")
                         {
                             sprite.setSpriteFrame(path);
@@ -2127,6 +2099,5 @@ ccs.CSLoader = {
     std.unordered_map<std.string, ComponentCreateFunc> _componentFuncs;
      */
 
-
-
 };
+ccs.CSLoader.init();
