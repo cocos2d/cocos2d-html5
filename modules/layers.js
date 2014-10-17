@@ -1,6 +1,6 @@
 define([
     "Sprite",
-    "cocos2d/core/layers/CCLayer"
+    "cocos2dPath/core/layers/CCLayer"
 ], function() {
     return cc;
 });

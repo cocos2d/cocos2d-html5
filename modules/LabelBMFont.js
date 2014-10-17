@@ -1,6 +1,6 @@
 define([
     "SpriteBatchNode",
-    "cocos2d/labels/CCLabelBMFont"
+    "cocos2dPath/labels/CCLabelBMFont"
 ], function() {
     return cc.LabelBMFont;
 });

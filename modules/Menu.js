@@ -1,7 +1,7 @@
 define([
     "core",
     "actions",
-    "cocos2d/menus/CCMenu"
+    "cocos2dPath/menus/CCMenu"
 ], function() {
     return cc.Menu;
 });

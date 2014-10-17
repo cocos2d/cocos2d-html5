@@ -1,5 +1,5 @@
 define([
-    "cocos2d/core/scenes/CCLoaderScene"
+    "cocos2dPath/core/scenes/CCLoaderScene"
 ], function() {
     return cc.LoaderScene;
 });

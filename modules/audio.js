@@ -1,6 +1,6 @@
 define([
     "core",
-    "cocos2d/audio/CCAudio"
+    "cocos2dPath/audio/CCAudio"
 ], function(cc) {
     return cc.audioEngine;
 });
