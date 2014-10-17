@@ -1966,7 +1966,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend(/** @lends cc
 
 
         var classname = nodetree.classname;
-        cc.log("classname = %s", classname);
+        //cc.log("classname = %s", classname);
 
         var widget = this._createGUI(classname);
         var readerName = this._getWidgetReaderClassName(classname);
@@ -2007,12 +2007,12 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend(/** @lends cc
         }
 
         var size = nodetree.children.length;
-        cc.log("widget children size = %d", size);
+        //cc.log("widget children size = %d", size);
         for (var i = 0; i < size; ++i)
         {
             var subNodeTree = nodetree.children[i];
             var child = this.widgetFromProtocolBuffers(subNodeTree);
-            cc.log("widget child = %p", child);
+            //cc.log("widget child = %p", child);
             if (child)
             {
                 var pageView = widget;
@@ -2035,7 +2035,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend(/** @lends cc
             }
         }
 
-        cc.log("widget = %p", widget);
+        //cc.log("widget = %p", widget);
 
         return widget;
     },
@@ -2046,7 +2046,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend(/** @lends cc
 
     widgetFromXML: function(objectData, classType){
         var classname = classType.substr(0, classType.find("ObjectData"));
-        cc.log("classname = %s", classname);
+        //cc.log("classname = %s", classname);
 
         var widget = this.createGUI(classname);
         var readerName = this.getWidgetReaderClassName(classname);
@@ -2097,7 +2097,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend(/** @lends cc
 
         while (objectData)
         {
-            cc.log("objectData name = %s", objectData.Name());
+            //cc.log("objectData name = %s", objectData.Name());
 
             if ("Children" !== objectData.Name())
             {
@@ -2111,7 +2111,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend(/** @lends cc
         if (containChildrenElement)
         {
             objectData = objectData.FirstChildElement();
-            cc.log("objectData name = %s", objectData.Name());
+            //cc.log("objectData name = %s", objectData.Name());
 
             while (objectData)
             {
@@ -2124,7 +2124,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend(/** @lends cc
                     if (name == "ctype")
                     {
                         var child = this.widgetFromXML(objectData, value);
-                        cc.log("child = %p", child);
+                        //cc.log("child = %p", child);
                         if (child)
                         {
                             var pageView = widget;
@@ -2190,7 +2190,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend(/** @lends cc
         }
         //
 
-        cc.log("widget = %p", widget);
+        //cc.log("widget = %p", widget);
 
         return widget;
     },

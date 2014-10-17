@@ -146,7 +146,7 @@ ccs.CSLoader = {
         var path = filename;
         var pos = path.lastIndexOf('.');
         var suffix = path.substr(pos + 1, path.length);
-        cc.log("suffix = %s", suffix);
+        //cc.log("suffix = %s", suffix);
 
         var load = ccs.CSLoader;
 
@@ -169,7 +169,7 @@ ccs.CSLoader = {
         var path = filename;
         var pos = path.lastIndexOf('.');
         var suffix = path.substr(pos + 1, path.length);
-        cc.log("suffix = %s", suffix);
+        //cc.log("suffix = %s", suffix);
 
         var cache = ccs.actionTimelineCache;
 
@@ -253,7 +253,7 @@ ccs.CSLoader = {
         if(this._recordProtocolBuffersPath)
         {
             var protocolBuffersPath = filename.substr(0, filename.lastIndexOf('/') + 1);
-            cc.log("protocolBuffersPath = %s", protocolBuffersPath);
+            //cc.log("protocolBuffersPath = %s", protocolBuffersPath);
             ccs.uiReader.setFilePath(protocolBuffersPath);
     
             this._protocolBuffersPath = protocolBuffersPath;
@@ -277,13 +277,13 @@ ccs.CSLoader = {
     
         // decode plist
         var textureSize = buffer.textures.length;
-        cc.log("textureSize = %d", textureSize);
+        //cc.log("textureSize = %d", textureSize);
         for (var i = 0; i < textureSize; ++i)
         {
             var plist = buffer.textures[i];
-            cc.log("plist = %s", plist);
+            //cc.log("plist = %s", plist);
             var png = buffer["texturesPng"][i];
-            cc.log("png = %s", png);
+            //cc.log("png = %s", png);
             plist = this._protocolBuffersPath + plist;
             png = this._protocolBuffersPath + png;
             cc.spriteFrameCache.addSpriteFrames(plist, png);
@@ -307,7 +307,7 @@ ccs.CSLoader = {
         var node = null;
     
         var classname = nodetree.classname;
-        cc.log("classname = %s", classname);
+        //cc.log("classname = %s", classname);
     
         var curOptions;
     
@@ -342,7 +342,7 @@ ccs.CSLoader = {
             var options = nodetree["projectNodeOptions"];
     
             var filePath = options.filename();
-            cc.log("filePath = %s", filePath);
+            //cc.log("filePath = %s", filePath);
     		if(filePath != "")
     		{
                 node = this.createNodeFromProtocolBuffers(this._protocolBuffersPath + filePath);
@@ -452,12 +452,12 @@ ccs.CSLoader = {
         }
     
         var size = nodetree["children"].length;
-        cc.log("size = %d", size);
+        //cc.log("size = %d", size);
         for (var i = 0; i < size; ++i)
         {
             var subNodeTree = nodetree["children"][i];
             var child = this.nodeFromProtocolBuffers(subNodeTree);
-            cc.log("child = %p", child);
+            //cc.log("child = %p", child);
             if (child)
             {
                 var pageView = node;
@@ -507,7 +507,7 @@ ccs.CSLoader = {
         if(this._recordXMLPath)
         {
             var xmlPath = filename.substr(0, filename.lastIndexOf('/') + 1);
-            cc.log("xmlPath = %s", xmlPath);
+            //cc.log("xmlPath = %s", xmlPath);
             ccs.uiReader.setFilePath(xmlPath);
 
             this._xmlPath = xmlPath;
@@ -536,7 +536,7 @@ ccs.CSLoader = {
     
         while (element)
         {
-            cc.log("entity name = %s", element.Name());
+            //cc.log("entity name = %s", element.Name());
     
             if ("Content" != element.Name())
             {
@@ -615,7 +615,7 @@ ccs.CSLoader = {
         var node = null;
     
         var classname = classType.substr(0, classType.indexOf("ObjectData"));
-        cc.log("classname = %s", classname);
+        //cc.log("classname = %s", classname);
     
         if (classname == "Node")
         {
@@ -715,7 +715,7 @@ ccs.CSLoader = {
     
         while (objectData)
         {
-            cc.log("objectData name = %s", objectData.Name());
+            //cc.log("objectData name = %s", objectData.Name());
     
             if ("Children" != objectData.Name())
             {
@@ -729,7 +729,7 @@ ccs.CSLoader = {
         if (containChildrenElement)
         {
             objectData = objectData.FirstChildElement();
-            cc.log("element name = %s", objectData.Name());
+            //cc.log("element name = %s", objectData.Name());
     
             while (objectData)
             {
@@ -745,7 +745,7 @@ ccs.CSLoader = {
                     {
                         bHasType = true;
                         var child = this.nodeFromXML(objectData, value);
-                        cc.log("child = %p", child);
+                        //cc.log("child = %p", child);
                         if (child)
                         {
                             var pageView = node;
@@ -781,7 +781,7 @@ ccs.CSLoader = {
                 if (!bHasType)
                 {
                     var child = this.nodeFromXML(objectData, "NodeObjectData");
-                    cc.log("child = %p", child);
+                    //cc.log("child = %p", child);
                     if (child)
                     {
                         var pageView = node;
@@ -1453,7 +1453,7 @@ ccs.CSLoader = {
         node.setScale(0.0, 0.0);
     
         var name = nodeObjectData.Name();
-        cc.log("entity name = %s", name);
+        //cc.log("entity name = %s", name);
     
         // attributes
         var attribute = nodeObjectData.FirstAttribute();

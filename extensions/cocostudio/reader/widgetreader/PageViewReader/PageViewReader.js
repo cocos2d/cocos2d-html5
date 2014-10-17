@@ -56,7 +56,7 @@ ccs.pageViewReader = /** @lends ccs.PageViewReader# */{
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
-        cc.log("options.clipable() = %d", options["clipAble"]);
+        //cc.log("options.clipable() = %d", options["clipAble"]);
         pageView.setClippingEnabled(options["clipAble"]);
 
         var backGroundScale9Enable = options["backGroundScale9Enable"];

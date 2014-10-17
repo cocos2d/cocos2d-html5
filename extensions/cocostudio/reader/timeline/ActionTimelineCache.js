@@ -111,13 +111,15 @@ ccs.actionTimelineCache = {
         var path = filename;
         var pos = path.lastIndexOf('.');
         var suffix = path.substr(pos + 1, path.length);
-        cc.log("suffix = %s", suffix);
+        //cc.log("suffix = %s", suffix);
 
         var cache = ccs.actionTimelineCache;
         if (suffix == "csb"){
             return cache.createActionFromProtocolBuffers(filename);
         }else if (suffix == "json" || suffix == "ExportJson"){
             return cache.createActionFromJson(filename);
+        }else if(suffix == "xml") {
+            cc.log("Does not support");
         }
         return null;
     },
@@ -211,18 +213,18 @@ ccs.actionTimelineCache = {
         var binary = cc.loader.getRes(fileName);
         var buffer = PBP.CSParseBinary.decode(binary);
 
-        var actionProtobuf = buffer.action;
+        var actionProtobuf = buffer["action"];
         action = new ccs.ActionTimeline();
-        action.setDuration(actionProtobuf.duration);
-        action.setTimeSpeed(actionProtobuf.speed!==null?actionProtobuf.speed:1);
+        action.setDuration(actionProtobuf["duration"]);
+        action.setTimeSpeed(actionProtobuf["speed"]!==null?actionProtobuf["speed"]:1);
 
-        var timelineLength = actionProtobuf.timelines.length;
+        var timelineLength = actionProtobuf["timelines"].length;
         for(var i=0;i<timelineLength;i++){
-            var timelineProtobuf = actionProtobuf.timelines[i];
+            var timelineProtobuf = actionProtobuf["timelines"][i];
             var timeline = this.loadTimelineFromProtocolBuffers(timelineProtobuf);
         }
         for (var i = 0; i < timelineLength; i++){
-            var timelineProtobuf = actionProtobuf.timelines[i];
+            var timelineProtobuf = actionProtobuf["timelines"][i];
             var timeline = this.loadTimelineFromProtocolBuffers(timelineProtobuf);
 
             if(timeline){
@@ -412,50 +414,50 @@ ccs.actionTimelineCache = {
         var timeline = null;
 
         //get frame type
-        var frameType = timelineProtobuf.frameType;
+        var frameType = timelineProtobuf["frameType"];
         if(frameType == null){
             return null;
         }
 
-        cc.log("frameType = %s", frameType);
+        //cc.log("frameType = %s", frameType);
 
         if(frameType){
             timeline = new ccs.Timeline();
-            var actionTag = timelineProtobuf.actionTag;
+            var actionTag = timelineProtobuf["actionTag"];
             timeline.setActionTag(actionTag);
 
-            var length = timelineProtobuf.frames.length;
+            var length = timelineProtobuf["frames"].length;
             for (var i = 0; i < length; i++){
-                var frameProtobuf = timelineProtobuf.frames[i];
+                var frameProtobuf = timelineProtobuf["frames"][i];
 
                 var frame = null;
                 if (actionTimelineCacheStatic.FrameType_VisibleFrame === frameType){
-                    var visibleFrame = frameProtobuf.visibleFrame;
+                    var visibleFrame = frameProtobuf["visibleFrame"];
                     frame = this.loadVisibleFrameFromProtocolBuffers(visibleFrame);
 
                 }else if (actionTimelineCacheStatic.FrameType_PositionFrame === frameType){
-                    var positionFrame = frameProtobuf.positionFrame;
+                    var positionFrame = frameProtobuf["positionFrame"];
                     frame = this.loadPositionFrameFromProtocolBuffers(positionFrame);
                 }else if(actionTimelineCacheStatic.FrameType_ScaleFrame === frameType){
-                    var scaleFrame = frameProtobuf.scaleFrame;
+                    var scaleFrame = frameProtobuf["scaleFrame"];
                     frame = this.loadScaleFrameFromProtocolBuffers(scaleFrame);
                 }else if (actionTimelineCacheStatic.FrameType_RotationSkewFrame === frameType){
-                    var rotationSkewFrame = frameProtobuf.rotationSkewFrame;
+                    var rotationSkewFrame = frameProtobuf["rotationSkewFrame"];
                     frame = this.loadRotationSkewFrameFromProtocolBuffers(rotationSkewFrame);
                 }else if (actionTimelineCacheStatic.FrameType_AnchorFrame === frameType){
-                    var anchorFrame = frameProtobuf.anchorPointFrame;
+                    var anchorFrame = frameProtobuf["anchorPointFrame"];
                     frame = this.loadAnchorPointFrameFromProtocolBuffers(anchorFrame);
                 }else if (actionTimelineCacheStatic.FrameType_ColorFrame === frameType){
-                    var colorFrame = frameProtobuf.colorFrame;
+                    var colorFrame = frameProtobuf["colorFrame"];
                     frame = this.loadColorFrameFromProtocolBuffers(colorFrame);
                 }else if (actionTimelineCacheStatic.FrameType_TextureFrame === frameType){
-                    var textureFrame = frameProtobuf.textureFrame;
+                    var textureFrame = frameProtobuf["textureFrame"];
                     frame = this.loadTextureFrameFromProtocolBuffers(textureFrame);
                 }else if (actionTimelineCacheStatic.FrameType_EventFrame === frameType){
-                    var eventFrame = frameProtobuf.eventFrame;
+                    var eventFrame = frameProtobuf["eventFrame"];
                     frame = this.loadEventFrameFromProtocolBuffers(eventFrame);
                 }else if (actionTimelineCacheStatic.FrameType_ZOrderFrame === frameType){
-                    var zOrderFrame = frameProtobuf.zOrderFrame;
+                    var zOrderFrame = frameProtobuf["zOrderFrame"];
                     frame = this.loadZOrderFrameFromProtocolBuffers(zOrderFrame);
                 }
 
@@ -469,14 +471,14 @@ ccs.actionTimelineCache = {
     loadVisibleFrameFromProtocolBuffers: function(frameProtobuf){
         var frame = new ccs.VisibleFrame();
 
-        var visible = frameProtobuf.value;
+        var visible = frameProtobuf["value"];
         frame.setVisible(visible);
 
-        cc.log("visible = %d", visible);
+        //cc.log("visible = %d", visible);
 
-        var frameIndex = frameProtobuf.frameIndex!==null ? frameProtobuf.frameIndex : 0;
+        var frameIndex = frameProtobuf["frameIndex"]!==null ? frameProtobuf["frameIndex"] : 0;
         frame.setFrameIndex(frameIndex);
-        var tween = (frameProtobuf.tween!==null ? frameProtobuf.tween : false);
+        var tween = (frameProtobuf["tween"]!==null ? frameProtobuf["tween"] : false);
         frame.setTween(tween);
         return frame;
     },
@@ -484,17 +486,17 @@ ccs.actionTimelineCache = {
     loadPositionFrameFromProtocolBuffers: function(frameProtobuf){
         var frame = new ccs.PositionFrame();
 
-        var x = frameProtobuf.x;
-        var y = frameProtobuf.y;
+        var x = frameProtobuf["x"];
+        var y = frameProtobuf["y"];
         frame.setPosition(cc.p(x,y));
 
-        cc.log("x = %f", x);
-        cc.log("y = %f", y);
+        //cc.log("x = %f", x);
+        //cc.log("y = %f", y);
 
-        var frameIndex = frameProtobuf.frameIndex!==null ? frameProtobuf.frameIndex : 0;
+        var frameIndex = frameProtobuf["frameIndex"]!==null ? frameProtobuf["frameIndex"] : 0;
         frame.setFrameIndex(frameIndex);
 
-        var tween = (frameProtobuf.tween!==null ? frameProtobuf.tween : false);
+        var tween = (frameProtobuf["tween"]!==null ? frameProtobuf["tween"] : false);
         frame.setTween(tween);
 
         return frame;
@@ -503,19 +505,19 @@ ccs.actionTimelineCache = {
     loadScaleFrameFromProtocolBuffers: function(frameProtobuf){
         var frame = new ccs.ScaleFrame();
 
-        var scalex = frameProtobuf.x;
-        var scaley = frameProtobuf.y;
+        var scalex = frameProtobuf["x"];
+        var scaley = frameProtobuf["y"];
 
         frame.setScaleX(scalex);
         frame.setScaleY(scaley);
 
-        cc.log("scalex = %f", scalex);
-        cc.log("scaley = %f", scaley);
+        //cc.log("scalex = %f", scalex);
+        //cc.log("scaley = %f", scaley);
 
-        var frameIndex = frameProtobuf.frameIndex!==null ? frameProtobuf.frameIndex : 0;
+        var frameIndex = frameProtobuf["frameIndex"]!==null ? frameProtobuf["frameIndex"] : 0;
         frame.setFrameIndex(frameIndex);
 
-        var tween = (frameProtobuf.tween!==null ? frameProtobuf.tween : false);
+        var tween = (frameProtobuf["tween"]!==null ? frameProtobuf["tween"] : false);
         frame.setTween(tween);
 
         return frame;
@@ -524,16 +526,16 @@ ccs.actionTimelineCache = {
     loadRotationSkewFrameFromProtocolBuffers: function(frameProtobuf){
         var frame = new ccs.RotationSkewFrame();
 
-        var skewx = frameProtobuf.x;
-        var skewy = frameProtobuf.y;
+        var skewx = frameProtobuf["x"];
+        var skewy = frameProtobuf["y"];
 
         frame.setSkewX(skewx);
         frame.setSkewY(skewy);
 
-        var frameIndex = frameProtobuf.frameIndex!==null ? frameProtobuf.frameIndex : 0;
+        var frameIndex = frameProtobuf["frameIndex"]!==null ? frameProtobuf["frameIndex"] : 0;
         frame.setFrameIndex(frameIndex);
 
-        var tween = (frameProtobuf.tween!==null ? frameProtobuf.tween : false);
+        var tween = (frameProtobuf["tween"]!==null ? frameProtobuf["tween"] : false);
         frame.setTween(tween);
 
         return frame;
@@ -542,18 +544,18 @@ ccs.actionTimelineCache = {
     loadAnchorPointFrameFromProtocolBuffers: function(frameProtobuf){
         var frame = new ccs.AnchorPointFrame();
 
-        var anchorx = frameProtobuf.x;
-        var anchory = frameProtobuf.y;
+        var anchorx = frameProtobuf["x"];
+        var anchory = frameProtobuf["y"];
 
         frame.setAnchorPoint(cc.p(anchorx, anchory));
 
-        cc.log("anchorx = %f", anchorx);
-        cc.log("anchory = %f", anchory);
+        //cc.log("anchorx = %f", anchorx);
+        //cc.log("anchory = %f", anchory);
 
-        var frameIndex = frameProtobuf.frameIndex!==null ? frameProtobuf.frameIndex : 0;
+        var frameIndex = frameProtobuf["frameIndex"]!==null ? frameProtobuf["frameIndex"] : 0;
         frame.setFrameIndex(frameIndex);
 
-        var tween = (frameProtobuf.tween!==null ? frameProtobuf.tween : false);
+        var tween = (frameProtobuf["tween"]!==null ? frameProtobuf["tween"] : false);
         frame.setTween(tween);
 
         return frame;
@@ -562,23 +564,23 @@ ccs.actionTimelineCache = {
     loadColorFrameFromProtocolBuffers: function(frameProtobuf){
         var frame = new ccs.ColorFrame();
 
-        var alpha = frameProtobuf.alpha;
-        var red   = frameProtobuf.red;
-        var green = frameProtobuf.green;
-        var blue  = frameProtobuf.blue;
+        var alpha = frameProtobuf["alpha"];
+        var red   = frameProtobuf["red"];
+        var green = frameProtobuf["green"];
+        var blue  = frameProtobuf["blue"];
 
         frame.setAlpha(alpha);
         frame.setColor(cc.color(red, green, blue));
 
-        cc.log("alpha = %d", alpha);
-        cc.log("red = %d", red);
-        cc.log("green = %d", green);
-        cc.log("blue = %d", blue);
+        //cc.log("alpha = %d", alpha);
+        //cc.log("red = %d", red);
+        //cc.log("green = %d", green);
+        //cc.log("blue = %d", blue);
 
-        var frameIndex = frameProtobuf.frameIndex!==null ? frameProtobuf.frameIndex : 0;
+        var frameIndex = frameProtobuf["frameIndex"]!==null ? frameProtobuf["frameIndex"] : 0;
         frame.setFrameIndex(frameIndex);
 
-        var tween = (frameProtobuf.tween!==null ? frameProtobuf.tween : false);
+        var tween = (frameProtobuf["tween"]!==null ? frameProtobuf["tween"] : false);
         frame.setTween(tween);
 
         return frame;
@@ -587,17 +589,17 @@ ccs.actionTimelineCache = {
     loadTextureFrameFromProtocolBuffers: function(frameProtobuf){
         var frame = new ccs.TextureFrame();
 
-        var texture = frameProtobuf.filepath;
+        var texture = frameProtobuf["filepath"];
 
         if (texture != null)
             frame.setTextureName(texture);
 
-        cc.log("texture = %s", texture);
+        //cc.log("texture = %s", texture);
 
-        var frameIndex = frameProtobuf.frameIndex!==null ? frameProtobuf.frameIndex : 0;
+        var frameIndex = frameProtobuf["frameIndex"]!==null ? frameProtobuf["frameIndex"] : 0;
         frame.setFrameIndex(frameIndex);
 
-        var tween = (frameProtobuf.tween!==null ? frameProtobuf.tween : false);
+        var tween = (frameProtobuf["tween"]!==null ? frameProtobuf["tween"] : false);
         frame.setTween(tween);
 
         return frame;
@@ -606,17 +608,17 @@ ccs.actionTimelineCache = {
     loadEventFrameFromProtocolBuffers: function(frameProtobuf){
         var frame = new ccs.EventFrame();
 
-        var evnt = frameProtobuf.value;
+        var evnt = frameProtobuf["value"];
 
         if (evnt != null)
             frame.setEvent(evnt);
 
-        cc.log("evnt = %s", evnt);
+        //cc.log("evnt = %s", evnt);
 
-        var frameIndex = frameProtobuf.frameIndex!==null ? frameProtobuf.frameIndex : 0;
+        var frameIndex = frameProtobuf["frameIndex"]!==null ? frameProtobuf["frameIndex"] : 0;
         frame.setFrameIndex(frameIndex);
 
-        var tween = (frameProtobuf.tween!==null ? frameProtobuf.tween : false);
+        var tween = (frameProtobuf["tween"]!==null ? frameProtobuf["tween"] : false);
         frame.setTween(tween);
 
         return frame;
@@ -625,15 +627,15 @@ ccs.actionTimelineCache = {
     loadZOrderFrameFromProtocolBuffers: function(frameProtobuf){
         var frame = new ccs.ZOrderFrame();
 
-        var zorder = frameProtobuf.value;
+        var zorder = frameProtobuf["value"];
         frame.setZOrder(zorder);
 
-        cc.log("zorder = %d", zorder);
+        //cc.log("zorder = %d", zorder);
 
-        var frameIndex = frameProtobuf.frameIndex!==null ? frameProtobuf.frameIndex : 0;
+        var frameIndex = frameProtobuf["frameIndex"]!==null ? frameProtobuf["frameIndex"] : 0;
         frame.setFrameIndex(frameIndex);
 
-        var tween = (frameProtobuf.tween!==null ? frameProtobuf.tween : false);
+        var tween = (frameProtobuf["tween"]!==null ? frameProtobuf["tween"] : false);
         frame.setTween(tween);
 
         return frame;
@@ -657,17 +659,14 @@ ccs.actionTimelineCache = {
             return action;
     
         // Read content from file
-        // xml read
-        var fullpath = FileUtils.getInstance().fullPathForFilename(fileName);
-        var size;
-        var content = FileUtils.getInstance().getFileData(fullpath, "r", size);
+        var content = cc.loader.getRes(fileName);
 
         // xml parse
         var document = new tinyxml2.XMLDocument();
         document.Parse(content);
     
         var rootElement = document.RootElement();// Root
-        cc.log("rootElement name = %s", rootElement.Name());
+        //cc.log("rootElement name = %s", rootElement.Name());
     
         var element = rootElement.FirstChildElement();
     
@@ -676,7 +675,7 @@ ccs.actionTimelineCache = {
     
         while (element)
         {
-            cc.log("entity name = %s", element.Name());
+            //cc.log("entity name = %s", element.Name());
     
             if (strcmp("Content", element.Name()) == 0)
             {
@@ -730,7 +729,7 @@ ccs.actionTimelineCache = {
     loadActionTimelineFromXML: function(animationElement)
     {
         var action = new ccs.ActionTimeline();
-        cc.log("animationElement name = %s", animationElement.Name());
+        //cc.log("animationElement name = %s", animationElement.Name());
     
         // ActionTimeline
         var attribute = animationElement.FirstAttribute();
