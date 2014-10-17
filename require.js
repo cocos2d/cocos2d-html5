@@ -2081,7 +2081,7 @@ var require_config = {
     paths: {
         root: '../',
         cocos2d: '../cocos2d',
-        game: '../../../src'
+        game: '../../../samples/js-moonwarriors/src'
     },
 
     shim: {
@@ -2097,6 +2097,31 @@ var require_config = {
         "cocos2d/core/event-manager/CCEventListener" : [
             "cocos2d/core/platform/CCClass"
         ],
+        "cocos2d/core/event-manager/CCTouch" : [
+            "cocos2d/core/platform/CCClass"
+        ],
+
+        "cocos2d/core/CCCamera" : [
+            "cocos2d/core/platform/CCClass"
+        ],
+
+        "cocos2d/core/platform/CCEGLView" : [
+            "cocos2d/core/platform/CCClass"
+        ],
+
+        "cocos2d/core/CCDrawingPrimitiveCanvas" : [
+            "cocos2d/core/platform/CCClass"
+        ],
+
+        "cocos2d/core/CCGLProgram" : [
+            "cocos2d/core/platform/CCClass"
+        ],
+
+        "cocos2d/core/event-manager/CCEvent" : [
+            "cocos2d/core/platform/CCClass"
+        ],
+
+
 
         "cocos2d/core/platform/CCConfig" : [
             "cocos2d/core/cocoa/CCGeometry"
@@ -2209,15 +2234,21 @@ var require_config = {
             "cocos2d/core/sprites/CCSprite"
         ],
 
-        "cocos2d/core/actions/CCAction" : [
+        "cocos2d/actions/CCAction" : [
             "core"
         ],
-        "cocos2d/core/actions/CCActionInterval" : [
-            "cocos2d/core/actions/CCAction"
+        "cocos2d/actions/CCActionInterval" : [
+            "cocos2d/actions/CCAction"
         ],
-        "cocos2d/core/actions/CCActionInstant" : [
-            "cocos2d/core/actions/CCAction"
+        "cocos2d/actions/CCActionInstant" : [
+            "cocos2d/actions/CCAction"
         ],
+
+        "cocos2d/labels/CCLabelBMFont" : [
+            "cocos2d/core/sprites/CCSpriteBatchNode"
+        ],
+
+
 
         "core" : {
             deps: [
@@ -2290,6 +2321,16 @@ var require_config = {
             exports: "cc"
         },
 
+        "cocos2d/core/sprites/CCSprite" : {
+            deps: [
+                "Node",
+                "cocos2d/core/sprites/CCSprite"
+            ],
+            init: function() {
+                return cc.Sprite;
+            }
+        },
+
         "cocos2d/core/base-nodes/CCAtlasNode" : {
             deps: [
                 "Node",
@@ -2313,7 +2354,7 @@ var require_config = {
         "cocos2d/core/sprites/CCAnimationCache" : {
             deps: [
                 "Sprite",
-                "Animation",
+                "cocos2d/core/sprites/CCAnimation",
                 "cocos2d/core/sprites/CCAnimationCache"
             ],
             init: function() {
@@ -2333,7 +2374,7 @@ var require_config = {
 
         "cocos2d/core/sprites/CCSpriteFrameCache" : {
             deps: [
-                "SpriteFrame",
+                "cocos2d/core/sprites/CCSpriteFrame",
                 "cocos2d/core/sprites/CCSpriteFrameCache"
             ],
             init: function() {
@@ -2344,32 +2385,40 @@ var require_config = {
         "cocos2d/actions/CCActionCamera" : {
             deps: [
                 "core",
-                "cocos2d/core/actions/CCAction",
-                "cocos2d/core/actions/CCActionInterval"
+                "cocos2d/actions/CCAction",
+                "cocos2d/actions/CCActionInterval"
             ],
             exports: "cc"
         },
         "cocos2d/actions/CCActionEase" : {
             deps: [
                 "core",
-                "cocos2d/core/actions/CCAction",
-                "cocos2d/core/actions/CCActionInterval"
+                "cocos2d/actions/CCAction",
+                "cocos2d/actions/CCActionInterval"
             ],
             exports: "cc"
         },
         "cocos2d/actions/CCActionCatmullRom" : {
             deps: [
                 "core",
-                "cocos2d/core/actions/CCAction",
-                "cocos2d/core/actions/CCActionInterval"
+                "cocos2d/actions/CCAction",
+                "cocos2d/actions/CCActionInterval"
             ],
             exports: "cc"
         },
         "cocos2d/actions/CCActionTween" : {
             deps: [
                 "core",
-                "cocos2d/core/actions/CCAction",
-                "cocos2d/core/actions/CCActionInterval"
+                "cocos2d/actions/CCAction",
+                "cocos2d/actions/CCActionInterval"
+            ],
+            exports: "cc"
+        },
+
+        "cocos2d/audio/CCAudio" : {
+            deps: [
+                "core",
+                "cocos2d/core/event-manager/CCEventManager"
             ],
             exports: "cc"
         }
