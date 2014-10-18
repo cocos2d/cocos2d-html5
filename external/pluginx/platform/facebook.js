@@ -323,14 +323,14 @@ plugin.extend('facebook', {
             });
             return;
         }
-        if (info['dialog'] === 'share_link') {
+        if (info['dialog'] === 'shareLink') {
             if (info['link']) {
                 info['method'] = 'share';
                 info['href'] = info['link'];
             }
         } else {
             // Compatible with feed_dialog
-            if (info['dialog'] == 'feed_dialog') {
+            if (info['dialog'] == 'feedDialog') {
                 info['dialog'] = 'share';
             }
 
@@ -356,7 +356,8 @@ plugin.extend('facebook', {
             info['description'] = info['text'] || info['description'];
             delete info['text'];
 
-            if (info['method'] == 'share_open_graph') {
+            if (info['method'] == 'shareOpenGraph') {
+                info['method'] = "share_open_graph"
                 if (info['url']) {
                     var obj = {};
                     if (info["preview_property_name"])
@@ -400,10 +401,10 @@ plugin.extend('facebook', {
      */
     canPresentDialog: function (info) {
         if (info && info['dialog'] && (
-            info['dialog'] === 'share_link' ||
-            info['dialog'] === 'feed_dialog' ||
-            info['dialog'] === 'share_open_graph' ||
-            info['dialog'] === 'message_link'))
+            info['dialog'] === 'shareLink' ||
+                info['dialog'] === 'feedDialog' ||
+                info['dialog'] === 'shareOpenGraph' ||
+                info['dialog'] === 'messageLink'))
             return true;
         else
             return false;
@@ -455,29 +456,30 @@ plugin.extend('facebook', {
 
     destroyInstance: function () {
     },
-
-    /**
-     * Payment request
-     * @param {Object} info
-     * @param {Function} callback
-     */
-    pay: function (info, callback) {
-        /*
-         * Reference document
-         * https://developers.facebook.com/docs/payments/reference/paydialog
+    canvas:{
+        /**
+         * Payment request
+         * @param {Object} info
+         * @param {Function} callback
          */
-        info['method'] = 'pay';
-        info['action'] = 'purchaseitem';
+        pay: function (info, callback) {
+            /*
+             * Reference document
+             * https://developers.facebook.com/docs/payments/reference/paydialog
+             */
+            info['method'] = 'pay';
+            info['action'] = 'purchaseitem';
 
-        FB.ui(info, function (response) {
-            if (response['error_code']) {
-                callback(response['error_code'] || 1, {
-                    error_message: response['error_message'] || 'Unknown'
-                });
-            } else {
-                callback(0, response);
-            }
-        })
+            FB.ui(info, function (response) {
+                if (response['error_code']) {
+                    callback(response['error_code'] || 1, {
+                        error_message: response['error_message'] || 'Unknown'
+                    });
+                } else {
+                    callback(0, response);
+                }
+            })
+        }
     },
 
     /**
