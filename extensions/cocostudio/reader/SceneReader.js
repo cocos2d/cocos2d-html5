@@ -116,7 +116,7 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
                         continue;
                     }
 
-                    var render = ccs.ComRender.create(sprite, "CCSprite");
+                    var render = new ccs.ComRender(sprite, "CCSprite");
                     if (comName != null) {
                         render.setName(comName);
                     }
@@ -134,7 +134,7 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
                         continue;
                     }
 
-                    var render = ccs.ComRender.create(tmx, "CCTMXTiledMap");
+                    var render = new ccs.ComRender(tmx, "CCTMXTiledMap");
                     if (comName != null) {
                         render.setName(comName);
                     }
@@ -154,7 +154,7 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
                     }
 
                     particle.setPosition(0, 0);
-                    var render = ccs.ComRender.create(particle, "CCParticleSystemQuad");
+                    var render = new ccs.ComRender(particle, "CCParticleSystemQuad");
                     if (comName != null) {
                         render.setName(comName);
                     }
@@ -174,7 +174,8 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
                     ccs.armatureDataManager.addArmatureFileInfo(path);
 
                     var armature = new ccs.Armature(name);
-                    var render = ccs.ComRender.create(armature, "CCArmature");
+
+                    var render = new ccs.ComRender(armature, "CCArmature");
                     if (comName != null) {
                         render.setName(comName);
                     }
@@ -191,7 +192,7 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
                 else if (className == "CCComAudio") {
                     var audio = null;
                     if (resType == 0) {
-                        audio = ccs.ComAudio.create();
+                        audio = new ccs.ComAudio();
                     }
                     else {
                         continue;
@@ -206,7 +207,7 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
                 else if (className == "CCComAttribute") {
                     var attribute = null;
                     if (resType == 0) {
-                        attribute = ccs.ComAttribute.create();
+                        attribute = new ccs.ComAttribute();
                         if (path != "") attribute.parse(path);
                     }
                     else {
@@ -223,7 +224,7 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
                     if(!pathExtname) continue;
                     if(resType!=0) continue;
 
-                    var audio  = ccs.ComAudio.create();
+                    var audio  = new ccs.ComAudio();
                     audio.preloadBackgroundMusic(path);
                     audio.setFile(path);
                     var bLoop = Boolean(subDict["loop"] || 0);
@@ -237,7 +238,7 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
                 }
                 else if (className == "GUIComponent") {
                     var widget = ccs.uiReader.widgetFromJsonFile(path);
-                    var render = ccs.ComRender.create(widget, "GUIComponent");
+                    var render = new ccs.ComRender(widget, "GUIComponent");
                     if (comName != null) {
                         render.setName(comName);
                     }
@@ -254,6 +255,15 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
                 this.createObject(subDict, gb);
                 subDict = null;
             }
+
+            var canvasSizeDict = inputFiles["CanvasSize"];
+            if (canvasSizeDict)
+            {
+                var width = canvasSizeDict["_width"];
+                var height = canvasSizeDict["_height"];
+                gb.setContentSize(cc.size(width, height));
+            }
+
             return gb;
         }
 
@@ -318,6 +328,9 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
 
         var fRotationZ = (cc.isUndefined(dict["rotation"]))?0:dict["rotation"];
         node.setRotation(fRotationZ);
+
+        var sName = dict["name"] || "";
+        node.setName(sName);
     },
 
     /**

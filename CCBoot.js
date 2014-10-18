@@ -703,6 +703,23 @@ cc.loader = /** @lends cc.loader# */{
         }
     },
 
+    loadCsb: function(url, cb){
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.responseType = "arraybuffer";
+
+        xhr.onload = function () {
+            var arrayBuffer = xhr.response; // Note: not oReq.responseText
+            if (arrayBuffer) {
+                window.msg = arrayBuffer;
+            }
+            if(xhr.readyState == 4)
+                xhr.status == 200 ? cb(null, xhr.response) : cb("load " + url + " failed!");
+        };
+
+        xhr.send(null);
+    },
+
     /**
      * Load a single resource as json.
      * @param {string} url

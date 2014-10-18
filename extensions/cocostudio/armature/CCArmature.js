@@ -339,6 +339,10 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         return this._realAnchorPointInPoints;
     },
 
+    getOffsetPoints: function(){
+        return {x: this._offsetPoint.x, y: this._offsetPoint.y};
+    },
+
     /**
      * Sets animation to this Armature
      * @param {ccs.ArmatureAnimation} animation

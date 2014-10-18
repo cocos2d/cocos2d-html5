@@ -26,17 +26,9 @@
 /**
  * The ccui.Widget's properties reader for GUIReader.
  * @class
- * @name ccs.WidgetReader
+ * @name ccs.widgetReader
  **/
-ccs.WidgetReader = /** @lends ccs.WidgetReader# */{
-    /**
-     * Gets the ccs.WidgetReader.
-     * @deprecated since v3.0, please use ccs.WidgetReader directly.
-     * @returns {ccs.WidgetReader}
-     */
-    getInstance: function(){
-        return ccs.WidgetReader;
-    },
+ccs.widgetReader = /** @lends ccs.widgetReader# */{
 
     /**
      * Sets widget's properties from json dictionary
@@ -144,7 +136,7 @@ ccs.WidgetReader = /** @lends ccs.WidgetReader# */{
         var colorB = options["colorB"];
         widget.setColor(cc.color((colorR == null) ? 255 : colorR, (colorG == null) ? 255 : colorG, (colorB == null) ? 255 : colorB));
 
-        ccs.WidgetReader._setAnchorPointForWidget(widget, options);
+        ccs.widgetReader._setAnchorPointForWidget(widget, options);
         widget.setFlippedX(options["flipX"]);
         widget.setFlippedY(options["flipY"]);
     },
@@ -178,6 +170,189 @@ ccs.WidgetReader = /** @lends ccs.WidgetReader# */{
                 imageFileName_tp = imageFileName;
             else
                 cc.assert(0, "invalid TextureResType!!!");
+        }
+        return imageFileName_tp;
+    },
+
+    setPropsFromProtocolBuffers: function(widget, nodeTree){
+        var options = nodeTree["widgetOptions"];
+
+        widget.setCascadeColorEnabled(true);
+        widget.setCascadeOpacityEnabled(true);
+
+        widget.setUnifySizeEnabled(true);
+
+        var ignoreSizeExsit = options["ignoreSize"];
+        if (ignoreSizeExsit)
+        {
+            widget.ignoreContentAdaptWithSize(options["ignoreSize"]);
+        }
+
+        widget.setSizeType(options["sizeType"]);
+        widget.setPositionType(options["positionType"]);
+
+        widget.setSizePercent(cc.p(options["sizePercentX"], options["sizePercentY"]));
+        widget.setPositionPercent(cc.p(options["positionPercentX"], options["positionPercentY"]));
+
+        var w = options["width"];
+        var h = options["height"];
+        widget.setContentSize(cc.size(w, h));
+
+        widget.setTag(options["tag"]);
+        widget.setActionTag(options["actionTag"]);
+        widget.setTouchEnabled(options["touchAble"]);
+        var name = options.name;
+        var widgetName = name ? name : "default";
+        widget.setName(widgetName);
+
+        var x = options["x"];
+        var y = options["y"];
+        widget.setPosition(cc.p(x, y));
+
+		if(options["Alpha"])
+		{
+			widget.setOpacity(options["Alpha"]);
+		}
+
+        widget.setScaleX(options["scaleX"]!==null ? options["scaleX"] : 1);
+
+
+        widget.setScaleY(options["scaleY"]!==null ? options["scaleY"] : 1);
+
+
+//        widget.setRotation(options.has_rotation ? options.rotation : 0.0);
+
+		widget.setRotationX(options["rotationSkewX"]!==null ? options["rotationSkewX"] : 0.0);
+
+		widget.setRotationY(options["rotationSkewY"]!==null ? options["rotationSkewY"] : 0.0);
+
+        var vb = options["visible"];
+        if (vb)
+        {
+            widget.setVisible(options["visible"]);
+        }
+
+        var z = options["zorder"];
+        widget.setLocalZOrder(z);
+
+
+        var layout = options["layoutParameter"];
+        if (layout)
+        {
+
+            var layoutParameterDic = options["layoutParameter"];
+            var paramType = layoutParameterDic["type"];
+
+            var parameter = null;
+            switch (paramType)
+            {
+                case 0:
+                    break;
+                case 1:
+                {
+                    parameter = new ccui.LinearLayoutParameter();
+                    var gravity = layoutParameterDic["gravity"];
+                    parameter.setGravity(gravity);
+                    break;
+                }
+                case 2:
+                {
+                    parameter = new ccui.RelativeLayoutParameter();
+                    var rParameter = parameter;
+                    var relativeName = layoutParameterDic["relativeName"];
+                    rParameter.setRelativeName(relativeName);
+                    var relativeToName = layoutParameterDic["relativeToName"];
+                    rParameter.setRelativeToWidgetName(relativeToName);
+                    var align = layoutParameterDic.align;
+                    rParameter.setAlign(align);
+                    break;
+                }
+                default:
+                    break;
+            }
+            if (parameter)
+            {
+                var mgl = layoutParameterDic["marginLeft"];
+                var mgt = layoutParameterDic["marginTop"];
+                var mgr = layoutParameterDic["marginRight"];
+                var mgb = layoutParameterDic["marginDown"];
+                parameter.setMargin(new ccui.Margin(mgl, mgt, mgr, mgb));
+                widget.setLayoutParameter(parameter);
+            }
+        }
+    },
+
+    setColorPropsFromProtocolBuffers: function(widget, nodeTree){
+        var options = nodeTree["widgetOptions"];
+
+
+        var isColorRExists = options["colorR"]!==null;
+        var isColorGExists = options["colorG"]!==null;
+        var isColorBExists = options["colorB"]!==null;
+
+        var colorR = options["colorR"];
+        var colorG = options["colorG"];
+        var colorB = options["colorB"];
+
+        if (isColorRExists && isColorGExists && isColorBExists)
+        {
+            widget.setColor(cc.color(colorR, colorG, colorB));
+        }
+
+        ccs.widgetReader.setAnchorPointForWidget(widget, nodeTree);
+
+        var flipX = options["flipX"];
+        var flipY = options["flipY"];
+        widget.setFlippedX(flipX);
+        widget.setFlippedY(flipY);
+    },
+
+    setAnchorPointForWidget: function(widget, nodeTree){
+        var options = nodeTree["widgetOptions"];
+
+        var isAnchorPointXExists = options["anchorPointX"];
+        var anchorPointXInFile;
+        if (isAnchorPointXExists)
+        {
+            anchorPointXInFile = options["anchorPointX"];
+        }
+        else
+        {
+            anchorPointXInFile = widget.getAnchorPoint().x;
+        }
+
+        var isAnchorPointYExists = options["anchorPointY"];
+        var anchorPointYInFile;
+        if (isAnchorPointYExists)
+        {
+            anchorPointYInFile = options["anchorPointY"];
+        }
+        else
+        {
+            anchorPointYInFile = widget.getAnchorPoint().y;
+        }
+
+        if (isAnchorPointXExists || isAnchorPointYExists)
+        {
+            widget.setAnchorPoint(cc.p(anchorPointXInFile, anchorPointYInFile));
+        }
+    },
+
+    getResourcePath: function(path, texType){
+        var filePath = ccs.uiReader.getFilePath();
+        var imageFileName = path;
+        var imageFileName_tp;
+        if (null != imageFileName && 0 != "" != imageFileName)
+        {
+            if (texType == ccui.Widget.LOCAL_TEXTURE) {
+                imageFileName_tp = filePath + imageFileName;
+            }
+            else if(texType == ccui.Widget.PLIST_TEXTURE){
+                imageFileName_tp = imageFileName;
+            }
+            else{
+                cc.assert(0, "invalid TextureResType!!!");
+            }
         }
         return imageFileName_tp;
     }

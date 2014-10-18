@@ -50,6 +50,9 @@ cc.ComponentContainer = cc.Class.extend(/** @lends cc.ComponentContainer# */{
         if(!name)
             throw "cc.ComponentContainer.getComponent(): name should be non-null";
         name = name.trim();
+        if(!this._components){
+            this._components = {};
+        }
         return this._components[name];
     },
 

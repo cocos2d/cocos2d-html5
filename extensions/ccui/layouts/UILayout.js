@@ -85,6 +85,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _loopFocus: false,                                                          //whether enable loop focus or not
     __passFocusToChild: false,                                                  //on default, it will pass the focus to the next nearest widget
     _isFocusPassing:false,                                                      //when finding the next focused widget, use this variable to pass focus between layout & widget
+    _isInterceptTouch: false,
 
     //add renderer for webgl
     _beforeVisitCmdStencil: null,
@@ -770,8 +771,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         if (!fileName)
             return;
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
-        if (this._backGroundImage == null)
+        if (this._backGroundImage == null){
             this._addBackGroundImage();
+            this.setBackGroundImageScale9Enabled(this._backGroundScale9Enabled);
+        }
         this._backGroundImageFileName = fileName;
         this._bgImageTexType = texType;
         var locBackgroundImage = this._backGroundImage;
@@ -1723,8 +1726,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                     return true;
                 else
                     return this._isWidgetAncestorSupportLoopFocus(parent, direction);
-            } else
+            } else{
                 cc.assert(0, "invalid layout type");
+                return false;
+            }
         } else
             return this._isWidgetAncestorSupportLoopFocus(parent, direction);
     },
@@ -1801,6 +1806,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this.setClippingType(layout._clippingType);
         this._loopFocus = layout._loopFocus;
         this.__passFocusToChild = layout.__passFocusToChild;
+        this._isInterceptTouch = layout._isInterceptTouch;
     },
 
     _transformForRenderer: function(parentMatrix){

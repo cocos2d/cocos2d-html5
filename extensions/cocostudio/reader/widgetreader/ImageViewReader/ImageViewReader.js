@@ -28,15 +28,7 @@
  * @class
  * @name ccs.ImageViewReader
  **/
-ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
-    /**
-     * Gets the ccs.ImageViewReader.
-     * @deprecated since v3.0, please use ccs.ImageViewReader directly.
-     * @returns {ccs.ImageViewReader}
-     */
-    getInstance: function(){
-        return ccs.ImageViewReader;
-    },
+ccs.imageViewReader = /** @lends ccs.ImageViewReader# */{
 
     /**
      * Sets ccui.ImageView's properties from json dictionary.
@@ -44,7 +36,7 @@ ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
      * @param {Object} options
      */
     setPropsFromJsonDictionary: function(widget, options){
-        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var jsonPath = ccs.uiReader.getFilePath();
     
@@ -63,7 +55,7 @@ ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
                 break;
             case 1:
                 var imageFileName = imageFileNameDic["path"];
-                imageView.loadTexture(imageFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
+                imageView.loadTexture(imageFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
                 break;
             default:
                 break;
@@ -96,6 +88,64 @@ ccs.ImageViewReader = /** @lends ccs.ImageViewReader# */{
             imageView.setCapInsets(cc.rect(cx, cy, cw, ch));
     
         }
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+    },
+
+    setPropsFromProtocolBuffers: function(widget, nodeTree){
+        ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+
+        var options = nodeTree["imageViewOptions"];
+        var imageView = widget;
+
+		var protocolBuffersPath = ccs.uiReader.getFilePath();
+
+        var imageFileNameDic = options["fileNameData"];
+        var imageFileNameType = imageFileNameDic["resourceType"];
+		if (imageFileNameType == 1)
+		{
+			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic["plistFile"]);
+		}
+        var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic["path"], imageFileNameType);
+        imageView.loadTexture(imageFileName, imageFileNameType);
+
+
+        var scale9EnableExist = options["scale9Enable"]!==null;
+        var scale9Enable = false;
+        if (scale9EnableExist)
+        {
+            scale9Enable = options["scale9Enable"];
+        }
+        imageView.setScale9Enabled(scale9Enable);
+
+
+        if (scale9Enable)
+        {
+            imageView.setUnifySizeEnabled(false);
+            imageView.ignoreContentAdaptWithSize(false);
+
+            var swf = options["scale9width"]!==null ? options["scale9Width"] : 80;
+            var shf = options["scale9height"]!==null ? options["scale9Height"] : 80;
+            imageView.setContentSize(cc.size(swf, shf));
+
+
+            var cx = options["capInsetsX"];
+            var cy = options["capInsetsY"];
+            var cw = options["capInsetsWidth"]!==null ? options["capInsetsWidth"] : 1.0;
+            var ch = options["capInsetsHeight"]!==null ? options["capInsetsHeight"] : 1.0;
+
+            imageView.setCapInsets(cc.rect(cx, cy, cw, ch));
+
+        }
+
+        // other commonly protperties
+        ccs.widgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
+
+		var flipX   = options.flippedX;
+		var flipY   = options.flippedY;
+
+		if(flipX != false)
+			imageView.setFlippedX(flipX);
+		if(flipY != false)
+			imageView.setFlippedY(flipY);
     }
 };

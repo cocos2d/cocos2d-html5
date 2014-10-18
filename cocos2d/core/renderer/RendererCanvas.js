@@ -192,7 +192,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                     );
                 }
             } else {
-                curColor = node._color;
+                curColor = node._displayedColor;
                 context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + node._displayedOpacity + ")";
                 context.fillRect(locX, locY, locWidth, locHeight);
             }

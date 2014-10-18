@@ -85,13 +85,13 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         switch (this._direction) {
             case ccui.LoadingBar.TYPE_LEFT:
                 this._barRenderer.setAnchorPoint(0.0, 0.5);
-                this._barRenderer.setPosition(-this._totalLength * 0.5, 0.0);
+                this._barRenderer.setPosition(0, this._contentSize.height*0.5);
                 if (!this._scale9Enabled)
                     this._barRenderer.setFlippedX(false);
                 break;
             case ccui.LoadingBar.TYPE_RIGHT:
                 this._barRenderer.setAnchorPoint(1.0, 0.5);
-                this._barRenderer.setPosition(this._totalLength * 0.5, 0.0);
+                this._barRenderer.setPosition(this._totalLength,this._contentSize.height*0.5);
                 if (!this._scale9Enabled)
                     this._barRenderer.setFlippedX(true);
                 break;
@@ -134,12 +134,12 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
                     case ccui.LoadingBar.TYPE_LEFT:
                         barRenderer.setAnchorPoint(0.0,0.5);
                         if (!self._scale9Enabled)
-                            barRenderer.setFlippedX(false);
+                            barRenderer/*.getSprite()*/.setFlippedX(false);
                         break;
                     case ccui.LoadingBar.TYPE_RIGHT:
                         barRenderer.setAnchorPoint(1.0,0.5);
                         if (!self._scale9Enabled)
-                            barRenderer.setFlippedX(true);
+                            barRenderer/*.getSprite()*/.setFlippedX(true);
                         break;
                 }
                 self._updateChildrenDisplayedRGBA();
@@ -340,7 +340,11 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
 
     _barRendererScaleChangedWithSize: function () {
         var locBarRender = this._barRenderer, locContentSize = this._contentSize;
-        if (this._ignoreSize) {
+        if(this._unifySize){
+            //_barRenderer->setPreferredSize(_contentSize);
+            this._totalLength = this._contentSize.width;
+            this.setPercent(this._percent);
+        }else if (this._ignoreSize) {
             if (!this._scale9Enabled) {
                 this._totalLength = this._barRendererTextureSize.width;
                 locBarRender.setScale(1.0);
