@@ -23,19 +23,19 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var LayoutComponent_ReferencePoint = {
+ccui.LayoutComponent_ReferencePoint = {
     BOTTOM_LEFT: 0,
     TOP_LEFT: 1,
     BOTTOM_RIGHT: 2,
     TOP_RIGHT: 3
 };
-var LayoutComponent_PositionType = {
+ccui.LayoutComponent_PositionType = {
     Position: 0,
     RelativePosition: 1,
     PreRelativePosition: 2,
     PreRelativePositionEnable: 3
 };
-var LayoutComponent_SizeType = {
+ccui.LayoutComponent_SizeType = {
     Size: 0,
     PreSize: 1,
     PreSizeEnable: 2
@@ -46,7 +46,7 @@ ccui.LayoutComponent = cc.Component.extend({
     _percentContentSize: null,
     _usingPercentContentSize: false,
 
-    _referencePoint: LayoutComponent_ReferencePoint.BOTTOM_LEFT,
+    _referencePoint: ccui.LayoutComponent_ReferencePoint.BOTTOM_LEFT,
     _relativePosition: null,
     _percentPosition: null,
     _usingPercentPosition: false,
@@ -74,26 +74,26 @@ ccui.LayoutComponent = cc.Component.extend({
     },
     setUsingPercentPosition: function(flag){
         this._usingPercentPosition = flag;
-        this.RefreshLayoutPosition(LayoutComponent_PositionType.PreRelativePositionEnable, cc.p(0,0));
+        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.PreRelativePositionEnable, cc.p(0,0));
     },
 
     getPercentPosition: function(){
         return this._percentPosition;
     },
     setPercentPosition: function(percent){
-        this.RefreshLayoutPosition(LayoutComponent_PositionType.PreRelativePosition, percent);
+        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.PreRelativePosition, percent);
     },
 
     getRelativePosition: function(){
         return this._relativePosition;
     },
     setRelativePosition: function(position){
-        this.RefreshLayoutPosition(LayoutComponent_PositionType.RelativePosition, position);
+        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.RelativePosition, position);
     },
 
     setReferencePoint: function(point){
         this._referencePoint = point;
-        this.RefreshLayoutPosition(LayoutComponent_PositionType.RelativePosition, this._relativePosition)
+        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.RelativePosition, this._relativePosition)
     },
     getReferencePoint: function(){
         return this._referencePoint;
@@ -103,7 +103,7 @@ ccui.LayoutComponent = cc.Component.extend({
         return this.getOwner().getPosition();
     },
     setOwnerPosition: function(point){
-        this.RefreshLayoutPosition(LayoutComponent_PositionType.Position, point);
+        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.Position, point);
     },
 
     RefreshLayoutPosition: function(pType, point){
@@ -113,12 +113,12 @@ ccui.LayoutComponent = cc.Component.extend({
         {
             var parentSize = parentNode.getContentSize();
 
-            if ( pType == LayoutComponent_PositionType.PreRelativePosition)
+            if ( pType == ccui.LayoutComponent_PositionType.PreRelativePosition)
             {
                 this._percentPosition = point;
                 basePoint = cc.p(this._percentPosition.x * parentSize.width, this._percentPosition.y * parentSize.height);
             }
-            else if(pType == LayoutComponent_PositionType.PreRelativePositionEnable)
+            else if(pType == ccui.LayoutComponent_PositionType.PreRelativePositionEnable)
             {
                 if (this._usingPercentPosition)
                 {
@@ -148,13 +148,13 @@ ccui.LayoutComponent = cc.Component.extend({
             var inversePoint = basePoint;
             switch (this._referencePoint)
             {
-            case LayoutComponent_ReferencePoint.TOP_LEFT:
+            case ccui.LayoutComponent_ReferencePoint.TOP_LEFT:
                 inversePoint.y = parentSize.height - inversePoint.y;
                 break;
-            case LayoutComponent_ReferencePoint.BOTTOM_RIGHT:
+            case ccui.LayoutComponent_ReferencePoint.BOTTOM_RIGHT:
                 inversePoint.x = parentSize.width - inversePoint.x;
                 break;
-            case LayoutComponent_ReferencePoint.TOP_RIGHT:
+            case ccui.LayoutComponent_ReferencePoint.TOP_RIGHT:
                 inversePoint.x = parentSize.width - inversePoint.x;
                 inversePoint.y = parentSize.height - inversePoint.y;
                 break;
@@ -164,7 +164,7 @@ ccui.LayoutComponent = cc.Component.extend({
 
             switch (pType)
             {
-            case LayoutComponent_PositionType.Position:
+            case ccui.LayoutComponent_PositionType.Position:
                 this.getOwner().setPosition(basePoint);
                 this._relativePosition = inversePoint;
                 if (parentSize.width != 0 && parentSize.height != 0)
@@ -176,7 +176,7 @@ ccui.LayoutComponent = cc.Component.extend({
                     this._percentPosition = cc.p(0,0);
                 }
                 break;
-            case LayoutComponent_PositionType.RelativePosition:
+            case ccui.LayoutComponent_PositionType.RelativePosition:
                 this.getOwner().setPosition(inversePoint);
                 this._relativePosition = basePoint;
                 if (parentSize.width != 0 && parentSize.height != 0)
@@ -188,11 +188,11 @@ ccui.LayoutComponent = cc.Component.extend({
                     this._percentPosition = cc.p(0,0);
                 }
                 break;
-            case LayoutComponent_PositionType.PreRelativePosition:
+            case ccui.LayoutComponent_PositionType.PreRelativePosition:
                 this.getOwner().setPosition(inversePoint);
                 this._relativePosition = basePoint;
                 break;
-            case LayoutComponent_PositionType.PreRelativePositionEnable:
+            case ccui.LayoutComponent_PositionType.PreRelativePositionEnable:
                 this.getOwner().setPosition(inversePoint);
                 this._relativePosition = basePoint;
                 break;
@@ -204,17 +204,17 @@ ccui.LayoutComponent = cc.Component.extend({
         {
             switch (pType)
             {
-            case LayoutComponent_PositionType.Position:
+            case ccui.LayoutComponent_PositionType.Position:
                 this.getOwner().setPosition(basePoint);
-                if (this._referencePoint == LayoutComponent_ReferencePoint.BOTTOM_LEFT)
+                if (this._referencePoint == ccui.LayoutComponent_ReferencePoint.BOTTOM_LEFT)
                 {
                     this._relativePosition = basePoint;
                 }
                 break;
-            case LayoutComponent_PositionType.RelativePosition:
+            case ccui.LayoutComponent_PositionType.RelativePosition:
                 this._relativePosition = basePoint;
                 break;
-            case LayoutComponent_PositionType.PreRelativePosition:
+            case ccui.LayoutComponent_PositionType.PreRelativePosition:
                 this._percentPosition = basePoint;
                 break;
             default:
@@ -227,14 +227,14 @@ ccui.LayoutComponent = cc.Component.extend({
         return this.getOwner().getContentSize();
     },
     setOwnerContentSize: function(percent){
-        this.RefreshLayoutSize(LayoutComponent_SizeType.Size, percent);
+        this.RefreshLayoutSize(ccui.LayoutComponent_SizeType.Size, percent);
     },
 
     getPercentContentSize: function(){
         return this._percentContentSize;
     },
     setPercentContentSize: function(percent){
-        this.RefreshLayoutSize(LayoutComponent_SizeType.PreSize, percent);
+        this.RefreshLayoutSize(ccui.LayoutComponent_SizeType.PreSize, percent);
     },
 
     isUsingPercentContentSize: function(){
@@ -242,7 +242,7 @@ ccui.LayoutComponent = cc.Component.extend({
     },
     setUsingPercentContentSize: function(flag){
         this._usingPercentContentSize = flag;
-        this.RefreshLayoutSize(LayoutComponent_SizeType.PreSizeEnable, cc.p(0,0));
+        this.RefreshLayoutSize(ccui.LayoutComponent_SizeType.PreSizeEnable, cc.p(0,0));
     },
 
     RefreshLayoutSize: function(sType, size){
@@ -253,7 +253,7 @@ ccui.LayoutComponent = cc.Component.extend({
 
             switch (sType)
             {
-            case LayoutComponent_SizeType.Size:
+            case ccui.LayoutComponent_SizeType.Size:
                 if (parentSize.width != 0 && parentSize.height != 0)
                 {
                     this._percentContentSize = cc.p(size.x/parentSize.width,size.y/parentSize.height);
@@ -264,14 +264,14 @@ ccui.LayoutComponent = cc.Component.extend({
                 }
                 this.getOwner().setContentSize(cc.size(size.x,size.y));
                 break;
-            case LayoutComponent_SizeType.PreSize:
+            case ccui.LayoutComponent_SizeType.PreSize:
                 cc.p_percentContentSize = size;
                 if (this._usingPercentContentSize)
                 {
                     this.getOwner().setContentSize(cc.size(size.x*parentSize.width,size.y*parentSize.height));
                 }
                 break;
-            case LayoutComponent_SizeType.PreSizeEnable:
+            case ccui.LayoutComponent_SizeType.PreSizeEnable:
                 if (this._usingPercentContentSize)
                 {
                     var baseSize = this.getOwner().getContentSize();
@@ -306,10 +306,10 @@ ccui.LayoutComponent = cc.Component.extend({
         {
             switch (sType)
             {
-            case LayoutComponent_SizeType.Size:
+            case ccui.LayoutComponent_SizeType.Size:
                 this.getOwner().setContentSize(cc.size(size.x,size.y));
                 break;
-            case LayoutComponent_SizeType.PreSize:
+            case ccui.LayoutComponent_SizeType.PreSize:
                 this._percentContentSize = size;
                 break;
             default:
