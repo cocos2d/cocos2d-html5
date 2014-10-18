@@ -23,7 +23,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var __LAYOUT_COMPONENT_NAME = "__ui_layout";
+ccs.__LAYOUT_COMPONENT_NAME = "__ui_layout";
 
 /**
  * The base class for ccui controls and layout
@@ -154,7 +154,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     getOrCreateLayoutComponent: function(){
-        var layoutComponent = this.getComponent(__LAYOUT_COMPONENT_NAME);
+        var layoutComponent = this.getComponent(ccs.__LAYOUT_COMPONENT_NAME);
         if (null == layoutComponent){
             var component = new ccui.LayoutComponent();
             this.addComponent(component);
