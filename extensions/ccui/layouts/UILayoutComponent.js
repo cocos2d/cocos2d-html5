@@ -116,7 +116,7 @@ ccui.LayoutComponent = cc.Component.extend({
             if ( pType == LayoutComponent_PositionType.PreRelativePosition)
             {
                 this._percentPosition = point;
-                basePoint = cc.p(_percentPosition.x*parentSize.width,_percentPosition.y*parentSize.height);
+                basePoint = cc.p(this._percentPosition.x * parentSize.width, this._percentPosition.y * parentSize.height);
             }
             else if(pType == LayoutComponent_PositionType.PreRelativePositionEnable)
             {
@@ -124,25 +124,25 @@ ccui.LayoutComponent = cc.Component.extend({
                 {
                     if (parentSize.width != 0)
                     {
-                        _percentPosition.x = _relativePosition.x/parentSize.width;
+                        this._percentPosition.x = this._relativePosition.x / parentSize.width;
                     }
                     else
                     {
-                        _percentPosition.x = 0;
-                        _relativePosition.x = 0;
+                        this._percentPosition.x = 0;
+                        this._relativePosition.x = 0;
                     }
 
                     if (parentSize.height != 0)
                     {
-                        _percentPosition.y = _relativePosition.y/parentSize.height;
+                        this._percentPosition.y = this._relativePosition.y / parentSize.height;
                     }
                     else
                     {
-                        _percentPosition.y = 0;
-                        _relativePosition.y = 0;
+                        this._percentPosition.y = 0;
+                        this._relativePosition.y = 0;
                     }
                 }
-                basePoint = _relativePosition;
+                basePoint = this._relativePosition;
             }
 
             var inversePoint = basePoint;
@@ -169,7 +169,7 @@ ccui.LayoutComponent = cc.Component.extend({
                 this._relativePosition = inversePoint;
                 if (parentSize.width != 0 && parentSize.height != 0)
                 {
-                    this._percentPosition = cc.p(this._relativePosition.x/parentSize.width,this._relativePosition.y/parentSize.height);
+                    this._percentPosition = cc.p(this._relativePosition.x / parentSize.width, this._relativePosition.y / parentSize.height);
                 }
                 else
                 {
@@ -181,7 +181,7 @@ ccui.LayoutComponent = cc.Component.extend({
                 this._relativePosition = basePoint;
                 if (parentSize.width != 0 && parentSize.height != 0)
                 {
-                    this._percentPosition = cc.p(this._relativePosition.x/parentSize.width,this._relativePosition.y/parentSize.height);
+                    this._percentPosition = cc.p(this._relativePosition.x / parentSize.width, this._relativePosition.y / parentSize.height);
                 }
                 else
                 {

@@ -142,13 +142,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     onEnter: function () {
         this.updateSizeAndPosition();
         cc.ProtectedNode.prototype.onEnter.call(this);
-        //todo dolayout
-//        if (this._positionType == PositionType.PERCENT
-//            || this._sizeType == SizeType.PERCENT) {
-//            if (this._parent) {
-//                ccui.Helper.doLayout(this._parent);
-//            }
-//        }
     },
 
     /**
@@ -194,11 +187,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     _updateContentSizeWithTextureSize: function(size){
-//        if (this._unifySize)
-//        {
-//            this.setContentSize(size);
-//            return;
-//        }
         this.setContentSize(this._ignoreSize ? size : this._customSize);
     },
 
@@ -303,9 +291,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
         this._customSize.width = locWidth;
         this._customSize.height = locHeight;
-//        if (this._unifySize){
-//            //unify Size logic
-//        }else
         if (this._ignoreSize){
             this._contentSize = this.getVirtualRendererSize();
         }
@@ -350,15 +335,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {cc.Point} percent that is widget's percent size, width and height value from 0 to 1.
      */
     setSizePercent: function (percent) {
-
-//        var component = this.getOrCreateLayoutComponent();
-//        component.setUsingPercentContentSize(true);
-//        component.setPercentContentSize(percent);
-
-//        if (null != this._parent)
-//        {
-//            ccui.Helper.prototype.doLayout.call(this, this._parent);
-//        }
 
         this._sizePercent.x = percent.x;
         this._sizePercent.y = percent.y;
@@ -474,16 +450,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      */
     setSizeType: function (type) {
         this._sizeType = type;
-//        var component = this.getOrCreateLayoutComponent();
-//
-//        if (this._sizeType == ccui.Widget.SIZE_PERCENT)
-//        {
-//            component.setUsingPercentContentSize(true);
-//        }
-//        else
-//        {
-//            component.setUsingPercentContentSize(false);
-//        }
     },
 
     /**
@@ -499,10 +465,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {Boolean} ignore true that widget will ignore it's size, use texture size, false otherwise. Default value is true.
      */
     ignoreContentAdaptWithSize: function (ignore) {
-//        if (this._unifySize){
-//            this.setContentSize(this._customSize);
-//            return;
-//        }else
         if(this._ignoreSize == ignore)
             return;
 
@@ -1071,24 +1033,24 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {Number} [posY]
      */
     setPosition: function (pos, posY) {
-//        if (this._running) {
-//            var widgetParent = this.getWidgetParent();
-//            if (widgetParent) {
-//                var pSize = widgetParent.getContentSize();
-//                if (pSize.width <= 0 || pSize.height <= 0) {
-//                    this._positionPercent.x = 0;
-//                    this._positionPercent.y = 0;
-//                } else {
-//                    if (posY == undefined) {
-//                        this._positionPercent.x = pos.x / pSize.width;
-//                        this._positionPercent.y = pos.y / pSize.height;
-//                    } else {
-//                        this._positionPercent.x = pos / pSize.width;
-//                        this._positionPercent.y = posY / pSize.height;
-//                    }
-//                }
-//            }
-//        }
+        if (this._running) {
+            var widgetParent = this.getWidgetParent();
+            if (widgetParent) {
+                var pSize = widgetParent.getContentSize();
+                if (pSize.width <= 0 || pSize.height <= 0) {
+                    this._positionPercent.x = 0;
+                    this._positionPercent.y = 0;
+                } else {
+                    if (posY == undefined) {
+                        this._positionPercent.x = pos.x / pSize.width;
+                        this._positionPercent.y = pos.y / pSize.height;
+                    } else {
+                        this._positionPercent.x = pos / pSize.width;
+                        this._positionPercent.y = posY / pSize.height;
+                    }
+                }
+            }
+        }
 
         cc.Node.prototype.setPosition.call(this, pos, posY);
         this._positionType = ccui.Widget.POSITION_ABSOLUTE;
@@ -1128,8 +1090,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {cc.Point} percent
      */
     setPositionPercent: function (percent) {
-//        this.setNormalizedPosition(percent);
-//        this._positionType = PositionType.PERCENT;
         this._positionPercent = percent;
         if (this._running) {
             var widgetParent = this.getWidgetParent();
@@ -1178,19 +1138,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     setPositionType: function (type) {
         this._positionType = type;
         this.setNodeDirty();
-//        if (type == ccui.Widget.POSITION_ABSOLUTE)
-//        {
-//            var oldPosition = this.getPosition();
-//            this.setPosition(this.getPosition() + cc.p(10,0));
-//            this.setPosition(oldPosition);
-//        }
-//        else
-//        {
-            //todo check here
-//            var oldNormalizedPosition = cc._position;//this.getNormalizedPosition();
-//            this.setNormalizedPosition(oldNormalizedPosition + cc.p(0.2,0.1));
-//            this.setNormalizedPosition(oldNormalizedPosition);
-//        }
     },
 
     /**
