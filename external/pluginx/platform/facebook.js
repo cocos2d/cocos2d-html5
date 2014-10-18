@@ -178,7 +178,7 @@ plugin.extend('facebook', {
                 self._isLoggedIn = false;
                 self._userInfo = {};
                 typeof callback === 'function' && callback(response['error_code'] || 1, {
-                    error_message: "unknown"
+                    error_message: response['error_message'] || "Unknown error"
                 });
             }
         }, {
@@ -215,7 +215,7 @@ plugin.extend('facebook', {
                 typeof callback === 'function' && callback(0, {"isLoggedIn": false});
             } else {
                 typeof callback === 'function' && callback(response['error_code'] || 1, {
-                    error_message: response['error_message'] || "Unknown"
+                    error_message: response['error_message'] || "Unknown error"
                 });
             }
         });
@@ -246,7 +246,7 @@ plugin.extend('facebook', {
                 self._isLoggedIn = false;
                 self._userInfo = {};
                 typeof callback === 'function' && callback(response['error_code'] || 1, {
-                    error_message: response['error_message'] || "Unknown"
+                    error_message: response['error_message'] || "Unknown error"
                 });
             }
         }, {
@@ -294,12 +294,12 @@ plugin.extend('facebook', {
                             post_id: response['post_id']
                         });
                     else
-                        typeof callback === 'function' && callback(response.error_code || 1, {
-                            error_message: "Unknown"
+                        typeof callback === 'function' && callback(response['error_code'] || 1, {
+                            error_message: response['error_message'] || "Unknown error"
                         });
                 } else {
                     typeof callback === 'function' && callback(1, {
-                        error_message: "Unknown"
+                        error_message: "Unknown error"
                     });
                 }
             });
@@ -323,73 +323,76 @@ plugin.extend('facebook', {
             });
             return;
         }
-        if (info['dialog'] === 'shareLink') {
-            if (info['link']) {
-                info['method'] = 'share';
-                info['href'] = info['link'];
-            }
-        } else {
-            // Compatible with feed_dialog
-            if (info['dialog'] == 'feedDialog') {
-                info['dialog'] = 'share';
-            }
 
-            info['method'] = info['dialog'];
-            delete info['dialog'];
+        // Preprocess properties
+        info['name'] = info['name'] || info['site'];
+        delete info['site'];
 
-            info['name'] = info['site'] || info['name'];
-            delete info['site'];
+        info['href'] = info['href'] || info['link'] || info['siteUrl'];
+        delete info['siteUrl'];
+        delete info['link'];
 
-            info['href'] = info['siteUrl'] || info['link'];
-            delete info['siteUrl'];
-            delete info['link'];
+        info['picture'] = info['picture'] || info['image'] || info['photo'] || info['imageUrl'] || info['imagePath'];
+        delete info['imageUrl'];
+        delete info['imagePath'];
+        delete info['photo'];
+        delete info['image'];
 
-            info['image'] = info['imageUrl'] || info['imagePath'] || info['photo'] || info['picture'] || info['image'];
-            delete info['imageUrl'];
-            delete info['imagePath'];
-            delete info['photo'];
+        info['caption'] = info['title'] || info['caption'];
+        delete info['title'];
 
+        info['description'] = info['text'] || info['description'];
+        delete info['text'];
 
-            info['caption'] = info['title'] || info['caption'];
-            delete info['title'];
+        var method = info['dialog'];
+        delete info['dialog'];
 
-            info['description'] = info['text'] || info['description'];
-            delete info['text'];
+        if (method === 'shareLink' || method == 'feedDialog') {
+            info['method'] = 'share';
+        } else if (method == 'messageLink') {
+            info['method'] = 'send';
+            info['link'] = info['href'];
+        } else if (method == 'shareOpenGraph') {
+            info['method'] = 'share_open_graph';
 
-            if (info['method'] == 'shareOpenGraph') {
-                info['method'] = "share_open_graph"
-                if (info['url']) {
-                    var obj = {};
-                    if (info["preview_property_name"])
-                        obj[info["preview_property_name"]] = info["url"];
-                    else
-                        obj["object"] = info["url"];
+            if (info['url']) {
+                var obj = {};
+                if (info["preview_property_name"])
+                    obj[info["preview_property_name"]] = info["url"];
+                else
+                    obj["object"] = info["url"];
 
-                    for (var p in info) {
-                        if (p != "method" && p != "action_type" && p != "action_properties") {
-                            info[p] && (obj[p] = info[p]);
-                            delete info[p];
-                        }
+                for (var p in info) {
+                    if (p != "method" && p != "action_type" && p != "action_properties") {
+                        info[p] && (obj[p] = info[p]);
+                        delete info[p];
                     }
-
-                    info['action_properties'] = JSON.stringify(obj);
                 }
+
+                info['action_properties'] = JSON.stringify(obj);
             }
         }
 
         FB.ui(info,
             function (response) {
-                if (response) {
-                    if (response['post_id'])
-                        typeof callback === 'function' && callback(0, {
+                if (response && typeof callback === 'function') {
+                    if (response['post_id'] || response['success']) {
+                        callback(0, {
                             didComplete: true,
-                            post_id: response['post_id']
+                            post_id: response['post_id'] || ""
                         });
-                    else
-                        typeof callback === 'function' && callback(0, response);
-                } else {
-                    typeof callback === 'function' && callback(1, {
-                        error_message: "Unknow error"
+                    }
+                    else {
+                        if (response['error_code']) {
+                             callback(response['error_code'], {
+                                 error_message : response['error_message'] || 'Unknown error'
+                             });
+                        }
+                        else callback(0, response);
+                    }
+                } else if (response == undefined && typeof callback === 'function') {
+                    callback(1, {
+                        error_message: "Unknown error"
                     });
                 }
             });
@@ -424,7 +427,7 @@ plugin.extend('facebook', {
         FB.api(path, httpmethod, params, function (response) {
             if (response.error) {
                 typeof callback === 'function' && callback(response['error']['code'], {
-                    error_message: response['error']['message'] || 'Unknown'
+                    error_message: response['error']['message'] || 'Unknown error'
                 })
             } else {
                 typeof callback === 'function' && callback(0, response);
@@ -448,7 +451,7 @@ plugin.extend('facebook', {
                 if (!response['error'])
                     response['error'] = {};
                 typeof callback == 'function' && callback(response['error']['code'] || 1, {
-                    error_message: response['error']['message'] || 'Unknown'
+                    error_message: response['error']['message'] || 'Unknown error'
                 });
             }
         })
@@ -473,7 +476,7 @@ plugin.extend('facebook', {
             FB.ui(info, function (response) {
                 if (response['error_code']) {
                     callback(response['error_code'] || 1, {
-                        error_message: response['error_message'] || 'Unknown'
+                        error_message: response['error_message'] || response['error_msg'] || 'Unknown error'
                     });
                 } else {
                     callback(0, response);
@@ -497,37 +500,20 @@ plugin.extend('facebook', {
 
         info['method'] = "apprequests";
 
-        info['name'] = info['site'] || info['name'];
-        delete info['site'];
-
-        info['href'] = info['siteUrl'] || info['link'];
-        delete info['siteUrl'];
-        delete info['link'];
-
-        info['image'] = info['imageUrl'] || info['imagePath'] || info['photo'] || info['picture'] || info['image'];
-        delete info['imageUrl'];
-        delete info['imagePath'];
-        delete info['photo'];
-
-        info['caption'] = info['title'] || info['caption'];
-        delete info['title'];
-
-        info['description'] = info['text'] || info['description'];
-        delete info['text'];
-
         FB.ui(info,
             function (response) {
                 if (response) {
-                    if (response['post_id'])
-                        typeof callback === 'function' && callback(0, {
-                            didComplete: true,
-                            post_id: response['post_id']
+                    if (response['error_code']) {
+                        typeof callback === 'function' && callback(response['error_code'], {
+                            error_message : response['error_message'] || 'Unknown error'
                         });
-                    else
+                    }
+                    else {
                         typeof callback === 'function' && callback(0, response);
+                    }
                 } else {
                     typeof callback === 'function' && callback(1, {
-                        error_message: "Unknow error"
+                        error_message: "Unknown error"
                     });
                 }
             });
