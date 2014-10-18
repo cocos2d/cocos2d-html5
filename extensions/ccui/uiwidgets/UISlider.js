@@ -150,13 +150,6 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._updateContentSizeWithTextureSize(this._barRenderer.getContentSize());
     },
 
-    setContentSize: function(a, b){
-        ccui.Widget.prototype.setContentSize.call(this,a , b);
-        if(this._scale9Enabled){
-            this._barRenderer.setContentSize(a, b);
-        }
-    },
-
     /**
      * Loads dark state texture for slider progress bar.
      * @param {String} fileName
