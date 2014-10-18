@@ -704,8 +704,7 @@ cc.loader = /** @lends cc.loader# */{
     },
 
     loadCsb: function(url, cb){
-        var xhr = new XMLHttpRequest(),
-            errInfo = "load " + url + " failed!";
+        var xhr = new XMLHttpRequest();
         xhr.open("GET", url, true);
         xhr.responseType = "arraybuffer";
 
@@ -715,7 +714,7 @@ cc.loader = /** @lends cc.loader# */{
                 window.msg = arrayBuffer;
             }
             if(xhr.readyState == 4)
-                xhr.status == 200 ? cb(null, xhr.response) : cb(errInfo);
+                xhr.status == 200 ? cb(null, xhr.response) : cb("load " + url + " failed!");
         };
 
         xhr.send(null);
