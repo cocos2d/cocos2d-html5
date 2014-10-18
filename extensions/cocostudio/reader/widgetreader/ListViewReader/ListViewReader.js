@@ -29,14 +29,6 @@
  * @name ccs.ListViewReader
  **/
 ccs.listViewReader = /** @lends ccs.ListViewReader# */{
-    /**
-     * Gets the ccs.ListViewReader.
-     * @deprecated since v3.0, please use ccs.ListViewReader directly.
-     * @returns {ccs.ListViewReader}
-     */
-    getInstance: function(){
-        return ccs.listViewReader;
-    },
 
     /**
      * Sets ccui.ListView's properties from json dictionary.

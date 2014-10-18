@@ -29,14 +29,6 @@
  * @name ccs.CheckBoxReader
  **/
 ccs.checkBoxReader = /** @lends ccs.CheckBoxReader# */{
-    /**
-     * Gets the ccs.CheckBoxReader.
-     * @deprecated since v3.0, please use ccs.CheckBoxReader directly.
-     * @returns {ccs.CheckBoxReader}
-     */
-    getInstance: function(){
-        return ccs.checkBoxReader;
-    },
 
     /**
      * Sets ccui.CheckBox's properties from json dictionary.

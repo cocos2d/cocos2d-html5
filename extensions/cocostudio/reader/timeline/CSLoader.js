@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var CSLoaderStatic = {
+ccui.CSLoaderStatic = {
     ClassName_Node         : "Node",
     ClassName_SubGraph     : "SubGraph",
     ClassName_Sprite       : "Sprite",
@@ -112,31 +112,31 @@ ccs.CSLoader = {
         this._funcs = {};
         this._componentFuncs = {};
 
-        this._funcs[CSLoaderStatic.ClassName_Node] = ccs.CSLoader.loadSimpleNode.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_SubGraph] = ccs.CSLoader.loadSubGraph.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_Sprite] = ccs.CSLoader.loadSprite.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_Particle] = ccs.CSLoader.loadParticle.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_TMXTiledMap] = ccs.CSLoader.loadTMXTiledMap.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_LabelAtlas] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_LabelBMFont] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_Panel] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_Button] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_CheckBox] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_ImageView] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_TextAtlas] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_TextBMFont] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_Text] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_LoadingBar] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_TextField] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_Slider] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_Layout] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_ScrollView] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_ListView] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_PageView] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_Widget] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[CSLoaderStatic.ClassName_Label] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Node] = ccs.CSLoader.loadSimpleNode.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_SubGraph] = ccs.CSLoader.loadSubGraph.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Sprite] = ccs.CSLoader.loadSprite.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Particle] = ccs.CSLoader.loadParticle.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_TMXTiledMap] = ccs.CSLoader.loadTMXTiledMap.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_LabelAtlas] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_LabelBMFont] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Panel] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Button] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_CheckBox] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_ImageView] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_TextAtlas] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_TextBMFont] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Text] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_LoadingBar] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_TextField] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Slider] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Layout] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_ScrollView] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_ListView] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_PageView] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Widget] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Label] = ccs.CSLoader.loadWidget.bind(this);
 
-        this._componentFuncs[CSLoaderStatic.ClassName_ComAudio] =  ccs.CSLoader.loadComAudio.bind(this);
+        this._componentFuncs[ccui.CSLoaderStatic.ClassName_ComAudio] =  ccs.CSLoader.loadComAudio.bind(this);
 
     },
 
@@ -208,11 +208,11 @@ ccs.CSLoader = {
     loadNodeWithContent: function(data){
 
         // cocos2dx version mono editor is based on
-        this._monoCocos2dxVersion = data[CSLoaderStatic.MONO_COCOS2D_VERSION] || data["version"];
+        this._monoCocos2dxVersion = data[ccui.CSLoaderStatic.MONO_COCOS2D_VERSION] || data["version"];
 
         // decode plist
-        var texture = data[CSLoaderStatic.TEXTURES];
-        var texturePng = data[CSLoaderStatic.TEXTURES_PNG];
+        var texture = data[ccui.CSLoaderStatic.TEXTURES];
+        var texturePng = data[ccui.CSLoaderStatic.TEXTURES_PNG];
         var length = texture.length;
 
         for(var i=0; i<length; i++)
@@ -225,7 +225,7 @@ ccs.CSLoader = {
         }
 
         // decode node tree
-        var subJson = data[CSLoaderStatic.NODE];
+        var subJson = data[ccui.CSLoaderStatic.NODE];
         return this.loadNode(subJson);
     },
 
@@ -500,22 +500,22 @@ ccs.CSLoader = {
     //protected
     loadNode: function(json){
         var node = null;
-        var nodeType = json[CSLoaderStatic.CLASSNAME];
+        var nodeType = json[ccui.CSLoaderStatic.CLASSNAME];
 
         var func = this._funcs[nodeType];
         if (func != null)
         {
-            var options = json[CSLoaderStatic.OPTIONS];
+            var options = json[ccui.CSLoaderStatic.OPTIONS];
             node = func(options);
 
             // component
             if (node)
             {
-                var components = options[CSLoaderStatic.COMPONENTS];
-                var componentSize = options[CSLoaderStatic.COMPONENTS] || 0;
+                var components = options[ccui.CSLoaderStatic.COMPONENTS];
+                var componentSize = options[ccui.CSLoaderStatic.COMPONENTS] || 0;
                 for (var i = 0; i < componentSize; ++i)
                 {
-                    var dic = components[CSLoaderStatic.COMPONENTS][i];
+                    var dic = components[ccui.CSLoaderStatic.COMPONENTS][i];
                     var component = this.loadComponent(dic);
                     if (component)
                     {
@@ -527,10 +527,10 @@ ccs.CSLoader = {
 
         if(node)
         {
-            var length = json[CSLoaderStatic.CHILDREN].length || 0;
+            var length = json[ccui.CSLoaderStatic.CHILDREN].length || 0;
             for (var i = 0; i<length; i++)
             {
-                var dic = json[CSLoaderStatic.CHILDREN][i];
+                var dic = json[ccui.CSLoaderStatic.CHILDREN][i];
                 var child = this.loadNode(dic);
                 if (child)
                 {
@@ -594,27 +594,27 @@ ccs.CSLoader = {
     },
 
     initNode: function(node, json){
-        var width         = json[CSLoaderStatic.WIDTH] || 0;
-        var height        = json[CSLoaderStatic.HEIGHT] || 0;
-        var x             = json[CSLoaderStatic.X] || 0;
-        var y             = json[CSLoaderStatic.Y] || 0;
-        var scalex        = json[CSLoaderStatic.SCALE_X] || 1;
-        var scaley        = json[CSLoaderStatic.SCALE_Y] || 1;
-        var rotation      = json[CSLoaderStatic.ROTATION] || 0;
-        var rotationSkewX = json[CSLoaderStatic.ROTATION_SKEW_X] || 0;
-        var rotationSkewY = json[CSLoaderStatic.ROTATION_SKEW_Y] || 0;
-        var skewx         = json[CSLoaderStatic.SKEW_X] || 0;
-        var skewy         = json[CSLoaderStatic.SKEW_Y] || 0;
-        var anchorx       = json[CSLoaderStatic.ANCHOR_X] || 0.5;
-        var anchory       = json[CSLoaderStatic.ANCHOR_Y] || 0.5;
-        var alpha       = json[CSLoaderStatic.ALPHA] || 255;
-        var red         = json[CSLoaderStatic.RED] || 255;
-        var green       = json[CSLoaderStatic.GREEN] || 255;
-        var blue        = json[CSLoaderStatic.BLUE] || 255;
-        var zorder		    = json[CSLoaderStatic.ZORDER] || 0;
-        var tag             = json[CSLoaderStatic.TAG] || 0;
-        var actionTag       = json[CSLoaderStatic.ACTION_TAG] || 0;
-        var visible        = json[CSLoaderStatic.VISIBLE] || true;
+        var width         = json[ccui.CSLoaderStatic.WIDTH] || 0;
+        var height        = json[ccui.CSLoaderStatic.HEIGHT] || 0;
+        var x             = json[ccui.CSLoaderStatic.X] || 0;
+        var y             = json[ccui.CSLoaderStatic.Y] || 0;
+        var scalex        = json[ccui.CSLoaderStatic.SCALE_X] || 1;
+        var scaley        = json[ccui.CSLoaderStatic.SCALE_Y] || 1;
+        var rotation      = json[ccui.CSLoaderStatic.ROTATION] || 0;
+        var rotationSkewX = json[ccui.CSLoaderStatic.ROTATION_SKEW_X] || 0;
+        var rotationSkewY = json[ccui.CSLoaderStatic.ROTATION_SKEW_Y] || 0;
+        var skewx         = json[ccui.CSLoaderStatic.SKEW_X] || 0;
+        var skewy         = json[ccui.CSLoaderStatic.SKEW_Y] || 0;
+        var anchorx       = json[ccui.CSLoaderStatic.ANCHOR_X] || 0.5;
+        var anchory       = json[ccui.CSLoaderStatic.ANCHOR_Y] || 0.5;
+        var alpha       = json[ccui.CSLoaderStatic.ALPHA] || 255;
+        var red         = json[ccui.CSLoaderStatic.RED] || 255;
+        var green       = json[ccui.CSLoaderStatic.GREEN] || 255;
+        var blue        = json[ccui.CSLoaderStatic.BLUE] || 255;
+        var zorder		    = json[ccui.CSLoaderStatic.ZORDER] || 0;
+        var tag             = json[ccui.CSLoaderStatic.TAG] || 0;
+        var actionTag       = json[ccui.CSLoaderStatic.ACTION_TAG] || 0;
+        var visible        = json[ccui.CSLoaderStatic.VISIBLE] || true;
     
         if(x != 0 || y != 0)
             node.setPosition(cc.p(x, y));
@@ -664,7 +664,7 @@ ccs.CSLoader = {
         return node;
     },
     loadSubGraph: function(json){
-        var filePath = json[CSLoaderStatic.FILE_PATH];
+        var filePath = json[ccui.CSLoaderStatic.FILE_PATH];
 
         var node = null;
         if (filePath && "" != filePath)
@@ -681,7 +681,7 @@ ccs.CSLoader = {
         return node;
     },
     loadSprite: function(json){
-        var filePath = json[CSLoaderStatic.FILE_PATH];
+        var filePath = json[ccui.CSLoaderStatic.FILE_PATH];
         var sprite = null;
 
         if(filePath != null)
@@ -712,8 +712,8 @@ ccs.CSLoader = {
 
         this.initNode(sprite, json);
 
-        var flipX          = json[CSLoaderStatic.FLIPX];
-        var flipY          = json[CSLoaderStatic.FLIPY];
+        var flipX          = json[ccui.CSLoaderStatic.FLIPX];
+        var flipY          = json[ccui.CSLoaderStatic.FLIPY];
 
         if(flipX != false)
             sprite.setFlippedX(flipX);
@@ -723,8 +723,8 @@ ccs.CSLoader = {
         return sprite;
     },
     loadParticle: function(json){
-        var filePath = json[CSLoaderStatic.PLIST_FILE];
-        var num = json[CSLoaderStatic.PARTICLE_NUM];
+        var filePath = json[ccui.CSLoaderStatic.PLIST_FILE];
+        var num = json[ccui.CSLoaderStatic.PARTICLE_NUM];
     
         var particle = new cc.ParticleSystemQuad(filePath);
         particle.setTotalParticles(num);
@@ -734,9 +734,9 @@ ccs.CSLoader = {
         return particle;
     },
     loadTMXTiledMap: function(json){
-        var tmxFile = json[CSLoaderStatic.TMX_FILE];
-        var tmxString = json[CSLoaderStatic.TMX_STRING];
-        var resourcePath = json[CSLoaderStatic.RESOURCE_PATH];
+        var tmxFile = json[ccui.CSLoaderStatic.TMX_FILE];
+        var tmxString = json[ccui.CSLoaderStatic.TMX_STRING];
+        var resourcePath = json[ccui.CSLoaderStatic.RESOURCE_PATH];
     
         var tmx = null;
     
@@ -755,7 +755,7 @@ ccs.CSLoader = {
 
     // load gui
     loadWidget: function(json){
-        var str = json[CSLoaderStatic.CLASSNAME];
+        var str = json[ccui.CSLoaderStatic.CLASSNAME];
         if(str == null)
             return null;
     
@@ -801,10 +801,10 @@ ccs.CSLoader = {
     
         if (widget)
         {
-            var rotationSkewX = json[CSLoaderStatic.ROTATION_SKEW_X];
-            var rotationSkewY = json[CSLoaderStatic.ROTATION_SKEW_Y];
-            var skewx         = json[CSLoaderStatic.SKEW_X];
-            var skewy         = json[CSLoaderStatic.SKEW_Y];
+            var rotationSkewX = json[ccui.CSLoaderStatic.ROTATION_SKEW_X];
+            var rotationSkewY = json[ccui.CSLoaderStatic.ROTATION_SKEW_Y];
+            var skewx         = json[ccui.CSLoaderStatic.SKEW_X];
+            var skewy         = json[ccui.CSLoaderStatic.SKEW_Y];
             if(rotationSkewX != 0)
                 widget.setRotationX(rotationSkewX);
             if(rotationSkewY != 0)
@@ -814,7 +814,7 @@ ccs.CSLoader = {
             if(skewy != 0)
                 widget.setSkewY(skewy);
     
-            var actionTag = json[CSLoaderStatic.ACTION_TAG];
+            var actionTag = json[ccui.CSLoaderStatic.ACTION_TAG];
             widget.setUserObject(new ccs.ActionTimelineData(actionTag));
         }
     
@@ -826,7 +826,7 @@ ccs.CSLoader = {
     loadComponent: function(json){
         var component = null;
     
-        var componentType = json[CSLoaderStatic.COMPONENT_TYPE];
+        var componentType = json[ccui.CSLoaderStatic.COMPONENT_TYPE];
     
         var func = this._componentFuncs[componentType];
     
@@ -840,14 +840,14 @@ ccs.CSLoader = {
     loadComAudio: function(json){
         var audio = new ccs.ComAudio();
     
-        var name = json[CSLoaderStatic.COMPONENT_NAME];
-        var enabled = json[CSLoaderStatic.COMPONENT_ENABLED];
+        var name = json[ccui.CSLoaderStatic.COMPONENT_NAME];
+        var enabled = json[ccui.CSLoaderStatic.COMPONENT_ENABLED];
     
         audio.setName(name);
         audio.setEnabled(enabled);
     
-        var filePath = json[CSLoaderStatic.COMPONENT_AUDIO_FILE_PATH];
-        var loop = json[CSLoaderStatic.COMPONENT_LOOP];
+        var filePath = json[ccui.CSLoaderStatic.COMPONENT_AUDIO_FILE_PATH];
+        var loop = json[ccui.CSLoaderStatic.COMPONENT_LOOP];
     
         audio.setFile(filePath);
         audio.setLoop(loop);
@@ -1112,24 +1112,24 @@ ccs.CSLoader = {
     },
 
     isWidget: function(type){
-        return (type == CSLoaderStatic.ClassName_Panel
-                || type == CSLoaderStatic.ClassName_Button
-                || type == CSLoaderStatic.ClassName_CheckBox
-                || type == CSLoaderStatic.ClassName_ImageView
-                || type == CSLoaderStatic.ClassName_TextAtlas
-                || type == CSLoaderStatic.ClassName_LabelAtlas
-                || type == CSLoaderStatic.ClassName_LabelBMFont
-                || type == CSLoaderStatic.ClassName_TextBMFont
-                || type == CSLoaderStatic.ClassName_Text
-                || type == CSLoaderStatic.ClassName_LoadingBar
-                || type == CSLoaderStatic.ClassName_TextField
-                || type == CSLoaderStatic.ClassName_Slider
-                || type == CSLoaderStatic.ClassName_Layout
-                || type == CSLoaderStatic.ClassName_ScrollView
-                || type == CSLoaderStatic.ClassName_ListView
-                || type == CSLoaderStatic.ClassName_PageView
-                || type == CSLoaderStatic.ClassName_Widget
-                || type == CSLoaderStatic.ClassName_Label);
+        return (type == ccui.CSLoaderStatic.ClassName_Panel
+                || type == ccui.CSLoaderStatic.ClassName_Button
+                || type == ccui.CSLoaderStatic.ClassName_CheckBox
+                || type == ccui.CSLoaderStatic.ClassName_ImageView
+                || type == ccui.CSLoaderStatic.ClassName_TextAtlas
+                || type == ccui.CSLoaderStatic.ClassName_LabelAtlas
+                || type == ccui.CSLoaderStatic.ClassName_LabelBMFont
+                || type == ccui.CSLoaderStatic.ClassName_TextBMFont
+                || type == ccui.CSLoaderStatic.ClassName_Text
+                || type == ccui.CSLoaderStatic.ClassName_LoadingBar
+                || type == ccui.CSLoaderStatic.ClassName_TextField
+                || type == ccui.CSLoaderStatic.ClassName_Slider
+                || type == ccui.CSLoaderStatic.ClassName_Layout
+                || type == ccui.CSLoaderStatic.ClassName_ScrollView
+                || type == ccui.CSLoaderStatic.ClassName_ListView
+                || type == ccui.CSLoaderStatic.ClassName_PageView
+                || type == ccui.CSLoaderStatic.ClassName_Widget
+                || type == ccui.CSLoaderStatic.ClassName_Label);
     
     },
     isCustomWidget: function(type){

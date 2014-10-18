@@ -29,14 +29,6 @@
  * @name ccs.LabelBMFontReader
  **/
 ccs.labelBMFontReader = /** @lends ccs.LabelBMFontReader# */{
-    /**
-     * Gets the ccs.LabelBMFontReader.
-     * @deprecated since v3.0, please use ccs.LabelBMFontReader directly.
-     * @returns {ccs.LabelBMFontReader}
-     */
-    getInstance: function(){
-        return ccs.labelBMFontReader;
-    },
 
     /**
      * Sets ccui.TextBMFont's properties from json dictionary.

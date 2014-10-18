@@ -29,14 +29,6 @@
  * @name ccs.SliderReader
  **/
 ccs.sliderReader = /** @lends ccs.SliderReader# */{
-    /**
-     * Gets the ccs.SliderReader.
-     * @deprecated since v3.0, please use ccs.SliderReader directly.
-     * @returns {ccs.SliderReader}
-     */
-    getInstance: function(){
-        return ccs.sliderReader;
-    },
 
     /**
      * Sets ccui.Slider's properties from json dictionary.

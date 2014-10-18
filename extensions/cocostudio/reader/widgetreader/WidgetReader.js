@@ -29,14 +29,6 @@
  * @name ccs.widgetReader
  **/
 ccs.widgetReader = /** @lends ccs.widgetReader# */{
-    /**
-     * Gets the ccs.WidgetReader.
-     * @deprecated since v3.0, please use ccs.WidgetReader directly.
-     * @returns {ccs.WidgetReader}
-     */
-    getInstance: function(){
-        return ccs.widgetReader;
-    },
 
     /**
      * Sets widget's properties from json dictionary

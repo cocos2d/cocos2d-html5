@@ -29,14 +29,6 @@
  * @name ccs.ImageViewReader
  **/
 ccs.imageViewReader = /** @lends ccs.ImageViewReader# */{
-    /**
-     * Gets the ccs.ImageViewReader.
-     * @deprecated since v3.0, please use ccs.ImageViewReader directly.
-     * @returns {ccs.ImageViewReader}
-     */
-    getInstance: function(){
-        return ccs.imageViewReader;
-    },
 
     /**
      * Sets ccui.ImageView's properties from json dictionary.

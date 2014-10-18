@@ -29,14 +29,6 @@
  * @name ccs.TextFieldReader
  **/
 ccs.textFieldReader = /** @lends ccs.TextFieldReader# */{
-    /**
-     * Gets the ccs.TextFieldReader.
-     * @deprecated since v3.0, please use ccs.TextFieldReader directly.
-     * @returns {ccs.TextFieldReader}
-     */
-    getInstance: function(){
-        return ccs.textFieldReader;
-    },
 
     /**
      * Sets ccui.TextField's properties from json dictionary.

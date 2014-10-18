@@ -29,14 +29,6 @@
  * @name ccs.ButtonReader
  **/
 ccs.buttonReader = /** @lends ccs.buttonReader# */{
-    /**
-     * Gets the ccs.ButtonReader.
-     * @deprecated since v3.0, please use ccs.ButtonReader directly.
-     * @returns {ccs.buttonReader}
-     */
-    getInstance: function(){
-        return ccs.buttonReader;
-    },
 
     /**
      * Sets ccui.Button's properties from json dictionary.

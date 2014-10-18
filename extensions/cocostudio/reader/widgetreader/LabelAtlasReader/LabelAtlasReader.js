@@ -29,14 +29,6 @@
  * @name ccs.LabelAtlasReader
  **/
 ccs.labelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
-    /**
-     * Gets the ccs.LabelAtlasReader.
-     * @deprecated since v3.0, please use ccs.LabelAtlasReader directly.
-     * @returns {ccs.LabelAtlasReader}
-     */
-    getInstance: function(){
-        return ccs.labelAtlasReader;
-    },
 
     /**
      * Sets ccui.TextAtlas's properties from json dictionary.

@@ -29,14 +29,6 @@
  * @name ccs.LayoutReader
  **/
 ccs.layoutReader = /** @lends ccs.LayoutReader# */{
-    /**
-     * Gets the ccs.LayoutReader.
-     * @deprecated since v3.0, please use ccs.LayoutReader directly.
-     * @returns {ccs.LayoutReader}
-     */
-    getInstance: function(){
-        return ccs.layoutReader;
-    },
 
     /**
      * Sets ccui.Layout's properties from json dictionary.

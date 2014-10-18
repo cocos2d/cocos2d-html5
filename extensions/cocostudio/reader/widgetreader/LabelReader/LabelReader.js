@@ -29,14 +29,6 @@
  * @name ccs.LabelReader
  **/
 ccs.labelReader = /** @lends ccs.LabelReader# */{
-    /**
-     * Gets the ccs.LabelReader.
-     * @deprecated since v3.0, please use ccs.LabelReader directly.
-     * @returns {ccs.LabelReader}
-     */
-    getInstance: function(){
-        return ccs.labelReader;
-    },
 
     /**
      * Sets ccui.Text's properties from json dictionary.

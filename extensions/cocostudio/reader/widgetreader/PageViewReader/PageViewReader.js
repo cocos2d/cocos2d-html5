@@ -29,14 +29,6 @@
  * @name ccs.PageViewReader
  **/
 ccs.pageViewReader = /** @lends ccs.PageViewReader# */{
-    /**
-     * Gets the ccs.PageViewReader.
-     * @deprecated since v3.0, please use ccs.PageViewReader directly.
-     * @returns {ccs.PageViewReader}
-     */
-    getInstance: function(){
-        return ccs.pageViewReader;
-    },
 
     /**
      * Sets ccui.PageView's properties from json dictionary.

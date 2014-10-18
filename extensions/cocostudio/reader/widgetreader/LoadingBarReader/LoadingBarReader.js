@@ -29,14 +29,6 @@
  * @name ccs.LoadingBarReader
  **/
 ccs.loadingBarReader = /** @lends ccs.LoadingBarReader# */{
-    /**
-     * Gets the ccs.LoadingBarReader.
-     * @deprecated since v3.0, please use ccs.LoadingBarReader directly.
-     * @returns {ccs.LoadingBarReader}
-     */
-    getInstance: function(){
-        return ccs.loadingBarReader;
-    },
 
     /**
      * Sets ccui.LoadingBar's properties from json dictionary.

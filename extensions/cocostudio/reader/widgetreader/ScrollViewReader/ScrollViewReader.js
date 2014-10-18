@@ -29,14 +29,6 @@
  * @name ccs.ScrollViewReader
  **/
 ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
-    /**
-     * Gets the ccs.ScrollViewReader.
-     * @deprecated since v3.0, please use ccs.ScrollViewReader directly.
-     * @returns {ccs.ScrollViewReader}
-     */
-    getInstance: function(){
-        return ccs.scrollViewReader;
-    },
 
     /**
      * Sets ccui.ScrollView's properties from json dictionary.
