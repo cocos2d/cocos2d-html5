@@ -382,7 +382,7 @@ ccs.actionTimelineCache = {
             var spriteFrame = cc.spriteFrameCache.getSpriteFrame(path);
             if(spriteFrame == null)
             {
-                var jsonPath = ccs.CSLoader.getJsonPath();
+                var jsonPath = ccs.csLoader.getJsonPath();
                 path = jsonPath + texture;
             }
 
