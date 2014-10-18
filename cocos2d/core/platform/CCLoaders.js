@@ -126,3 +126,10 @@ cc._binaryLoader = {
         cc.loader.loadBinary(realUrl, cb);
     }
 };
+
+cc._csbLoader = {
+    load: function(realUrl, url, res, cb){
+        cc.loader.loadCsb(realUrl, cb);
+    }
+};
+cc.loader.register(["csb"], cc._csbLoader);

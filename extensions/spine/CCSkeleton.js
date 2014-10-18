@@ -92,6 +92,13 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
             this.initWithArgs(skeletonDataFile, atlasFile, scale);
     },
 
+    _initRendererCmd:function () {
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+            this._rendererCmd = new cc.SkeletonRenderCmdWebGL(this);
+        else
+            this._rendererCmd = new cc.SkeletonRenderCmdCanvas(this);
+    },
+
     /**
      * Initializes a sp.Skeleton. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
      */
@@ -298,7 +305,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
                     continue;
                 rendererObject = attachment.rendererObject;
                 rect = cc.rect(rendererObject.x, rendererObject.y, rendererObject.width,rendererObject.height);
-                var sprite = cc.Sprite.create(rendererObject.page._texture, rect, rendererObject.rotate);
+                var sprite = new cc.Sprite(rendererObject.page._texture, rect, rendererObject.rotate);
                 this.addChild(sprite,-1);
                 slot.currentSprite = sprite;
             }
@@ -360,7 +367,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
                 if(!selSprite){
                     var rendererObject = attachment.rendererObject;
                     var rect = cc.rect(rendererObject.x, rendererObject.y, rendererObject.width,rendererObject.height);
-                    var sprite = cc.Sprite.create(rendererObject.page._texture, rect, rendererObject.rotate);
+                    var sprite = new cc.Sprite(rendererObject.page._texture, rect, rendererObject.rotate);
                     this.addChild(sprite,-1);
                     slot.currentSprite = sprite;
                 }
@@ -375,174 +382,8 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
                 selSprite.setRotation(- (slot.bone.worldRotation + attachment.rotation));
             }
         }
-    },
-
-    /**
-     * Render function using the canvas 2d context or WebGL context, internal usage only, please do not call this function
-     * @function
-     * @param {CanvasRenderingContext2D | WebGLRenderingContext} ctx The render context
-     */
-    draw: null,
-
-    _drawForWebGL: function () {
-        cc.nodeDrawSetup(this);
-//        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-        var color = this.getColor(), locSkeleton = this._skeleton;
-        locSkeleton.r = color.r / 255;
-        locSkeleton.g = color.g / 255;
-        locSkeleton.b = color.b / 255;
-        locSkeleton.a = this.getOpacity() / 255;
-        if (this._premultipliedAlpha) {
-            locSkeleton.r *= locSkeleton.a;
-            locSkeleton.g *= locSkeleton.a;
-            locSkeleton.b *= locSkeleton.a;
-        }
-
-        var additive,textureAtlas,attachment,slot, i, n,
-            quad = new cc.V3F_C4B_T2F_Quad();
-        var locBlendFunc = this._blendFunc;
-
-        for (i = 0, n = locSkeleton.slots.length; i < n; i++) {
-            slot = locSkeleton.drawOrder[i];
-            if (!slot.attachment || slot.attachment.type != sp.ATTACHMENT_TYPE.REGION)
-                continue;
-            attachment = slot.attachment;
-            var regionTextureAtlas = this.getTextureAtlas(attachment);
-
-            if (slot.data.additiveBlending != additive) {
-                if (textureAtlas) {
-                    textureAtlas.drawQuads();
-                    textureAtlas.removeAllQuads();
-                }
-                additive = !additive;
-                cc.glBlendFunc(locBlendFunc.src, additive ? cc.ONE : locBlendFunc.dst);
-            } else if (regionTextureAtlas != textureAtlas && textureAtlas) {
-                textureAtlas.drawQuads();
-                textureAtlas.removeAllQuads();
-            }
-            textureAtlas = regionTextureAtlas;
-
-            var quadCount = textureAtlas.getTotalQuads();
-            if (textureAtlas.getCapacity() == quadCount) {
-                textureAtlas.drawQuads();
-                textureAtlas.removeAllQuads();
-                if (!textureAtlas.resizeCapacity(textureAtlas.getCapacity() * 2))
-                    return;
-            }
-
-            sp._regionAttachment_updateQuad(attachment, slot, quad, this._premultipliedAlpha);
-            textureAtlas.updateQuad(quad, quadCount);
-        }
-
-        if (textureAtlas) {
-            textureAtlas.drawQuads();
-            textureAtlas.removeAllQuads();
-        }
-
-        var drawingUtil = cc._drawingUtil;
-        if (this._debugSlots) {
-            // Slots.
-            drawingUtil.setDrawColor(0, 0, 255, 255);
-            drawingUtil.setLineWidth(1);
-
-            for (i = 0, n = locSkeleton.slots.length; i < n; i++) {
-                slot = locSkeleton.drawOrder[i];
-                if (!slot.attachment || slot.attachment.type != sp.ATTACHMENT_TYPE.REGION)
-                    continue;
-                attachment = slot.attachment;
-                quad = new cc.V3F_C4B_T2F_Quad();
-                sp._regionAttachment_updateQuad(attachment, slot, quad);
-
-                var points = [];
-                points.push(cc.p(quad.bl.vertices.x, quad.bl.vertices.y));
-                points.push(cc.p(quad.br.vertices.x, quad.br.vertices.y));
-                points.push(cc.p(quad.tr.vertices.x, quad.tr.vertices.y));
-                points.push(cc.p(quad.tl.vertices.x, quad.tl.vertices.y));
-                drawingUtil.drawPoly(points, 4, true);
-            }
-        }
-
-        if (this._debugBones) {
-            // Bone lengths.
-            var bone;
-            drawingUtil.setLineWidth(2);
-            drawingUtil.setDrawColor(255, 0, 0, 255);
-
-            for (i = 0, n = locSkeleton.bones.length; i < n; i++) {
-                bone = locSkeleton.bones[i];
-                var x = bone.data.length * bone.m00 + bone.worldX;
-                var y = bone.data.length * bone.m10 + bone.worldY;
-                drawingUtil.drawLine(cc.p(bone.worldX, bone.worldY), cc.p(x, y));
-            }
-
-            // Bone origins.
-            drawingUtil.setPointSize(4);
-            drawingUtil.setDrawColor(0, 0, 255, 255); // Root bone is blue.
-
-            for (i = 0, n = locSkeleton.bones.length; i < n; i++) {
-                bone = locSkeleton.bones[i];
-                drawingUtil.drawPoint(cc.p(bone.worldX, bone.worldY));
-                if (i == 0) {
-                    drawingUtil.setDrawColor(0, 255, 0, 255);
-                }
-            }
-        }
-    },
-
-    _drawForCanvas: function () {
-        if(!this._debugSlots && !this._debugBones){
-            return;
-        }
-        var locSkeleton = this._skeleton;
-        var attachment,slot, i, n, drawingUtil = cc._drawingUtil;
-        if (this._debugSlots) {
-            // Slots.
-            drawingUtil.setDrawColor(0, 0, 255, 255);
-            drawingUtil.setLineWidth(1);
-
-            var points = [];
-            for (i = 0, n = locSkeleton.slots.length; i < n; i++) {
-                slot = locSkeleton.drawOrder[i];
-                if (!slot.attachment || slot.attachment.type != sp.ATTACHMENT_TYPE.REGION)
-                    continue;
-                attachment = slot.attachment;
-                sp._regionAttachment_updateSlotForCanvas(attachment, slot, points);
-                drawingUtil.drawPoly(points, 4, true);
-            }
-        }
-
-        if (this._debugBones) {
-            // Bone lengths.
-            var bone;
-            drawingUtil.setLineWidth(2);
-            drawingUtil.setDrawColor(255, 0, 0, 255);
-
-            for (i = 0, n = locSkeleton.bones.length; i < n; i++) {
-                bone = locSkeleton.bones[i];
-                var x = bone.data.length * bone.m00 + bone.worldX;
-                var y = bone.data.length * bone.m10 + bone.worldY;
-                drawingUtil.drawLine(cc.p(bone.worldX, bone.worldY), cc.p(x, y));
-            }
-
-            // Bone origins.
-            drawingUtil.setPointSize(4);
-            drawingUtil.setDrawColor(0, 0, 255, 255); // Root bone is blue.
-
-            for (i = 0, n = locSkeleton.bones.length; i < n; i++) {
-                bone = locSkeleton.bones[i];
-                drawingUtil.drawPoint(cc.p(bone.worldX, bone.worldY));
-                if (i === 0)
-                    drawingUtil.setDrawColor(0, 255, 0, 255);
-            }
-        }
     }
 });
-
-if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-    sp.Skeleton.prototype.draw = sp.Skeleton.prototype._drawForWebGL;
-}else{
-    sp.Skeleton.prototype.draw = sp.Skeleton.prototype._drawForCanvas;
-}
 
 /**
  * Creates a skeleton object.

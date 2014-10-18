@@ -28,6 +28,11 @@
  * @class
  * @extends ccs.Node
  *
+ * @param {String} [name] The name of the bone
+ * @example
+ *
+ * var bone = new ccs.Bone("head");
+ *
  * @property {ccs.BoneData}         boneData                - The bone data
  * @property {ccs.Armature}         armature                - The armature
  * @property {ccs.Bone}             parentBone              - The parent bone
@@ -60,10 +65,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
     _dataVersion: 0,
     _className: "Bone",
 
-    /**
-     * Construction of ccs.Bone.
-     */
-    ctor: function () {
+    ctor: function (name) {
         cc.Node.prototype.ctor.call(this);
         this._tweenData = null;
         this._parentBone = null;
@@ -82,6 +84,8 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
 
         this._armatureParentBone = null;
         this._dataVersion = 0;
+
+        ccs.Bone.prototype.init.call(this, name);
     },
 
     /**
@@ -95,11 +99,9 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
             this._name = name;
         this._tweenData = new ccs.FrameData();
 
-        this._tween = new ccs.Tween();
-        this._tween.init(this);
+        this._tween = new ccs.Tween(this);
 
-        this._displayManager = new ccs.DisplayManager();
-        this._displayManager.init(this);
+        this._displayManager = new ccs.DisplayManager(this);
 
         this._worldInfo = new ccs.BaseData();
         this._boneData = new ccs.BaseData();
@@ -177,8 +179,8 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
             locWorldInfo.y = locTweenData.y + this._position.y;
             locWorldInfo.scaleX = locTweenData.scaleX * this._scaleX;
             locWorldInfo.scaleY = locTweenData.scaleY * this._scaleY;
-            locWorldInfo.skewX = locTweenData.skewX + this._skewX + this._rotationX;
-            locWorldInfo.skewY = locTweenData.skewY + this._skewY - this._rotationY;
+            locWorldInfo.skewX = locTweenData.skewX + this._skewX + cc.degreesToRadians(this._rotationX);
+            locWorldInfo.skewY = locTweenData.skewY + this._skewY - cc.degreesToRadians(this._rotationY);
 
             if(this._parentBone)
                 this._applyParentTransform(this._parentBone);
@@ -679,13 +681,8 @@ _p = null;
 /**
  * Allocates and initializes a bone.
  * @return {ccs.Bone}
- * @example
- * // example
- * var bone = ccs.Bone.create();
+ * @deprecated since v3.1, please use new construction instead
  */
 ccs.Bone.create = function (name) {
-    var bone = new ccs.Bone();
-    if (bone && bone.init(name))
-        return bone;
-    return null;
+    return new ccs.Bone(name);
 };

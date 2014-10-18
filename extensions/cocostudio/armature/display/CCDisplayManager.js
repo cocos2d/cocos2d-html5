@@ -27,6 +27,8 @@
  * The display manager for CocoStudio Armature bone.
  * @Class ccs.DisplayManager
  * @extend cc.Class
+ *
+ * @param {ccs.Bone} bone The bone for the display manager
  */
 ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
     _decoDisplayList:null,
@@ -38,10 +40,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
     _visible:true,
     _displayType: null,
 
-    /**
-     * Construction of ccs.DisplayManager.
-     */
-    ctor:function () {
+    ctor:function (bone) {
         this._decoDisplayList = [];
         this._currentDecoDisplay = null;
         this._displayRenderNode = null;
@@ -50,6 +49,8 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
         this._bone = null;
         this._visible = true;
         this._displayType = ccs.DISPLAY_TYPE_MAX;
+
+        bone && ccs.DisplayManager.prototype.init.call(this, bone);
     },
 
     /**
@@ -77,7 +78,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
         if( (index >= 0) && (index < locDisplayList.length) )
             decoDisplay = locDisplayList[index];
         else{
-            decoDisplay = ccs.DecorativeDisplay.create();
+            decoDisplay = new ccs.DecorativeDisplay();
             locDisplayList.push(decoDisplay);
         }
 
@@ -300,6 +301,9 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
             this._displayType = this._currentDecoDisplay.getDisplayData().displayType;
         }else
             this._displayType = ccs.DISPLAY_TYPE_MAX;
+
+
+        cc.renderer.childrenOrderDirty = true;
     },
 
     /**
@@ -358,7 +362,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
         var displayList = boneData.displayDataList, decoList = this._decoDisplayList, locBone = this._bone;
         for (var i = 0; i < displayList.length; i++) {
             var displayData = displayList[i];
-            var decoDisplay = ccs.DecorativeDisplay.create();
+            var decoDisplay = new ccs.DecorativeDisplay();
             decoDisplay.setDisplayData(displayData);
             ccs.displayFactory.createDisplay(locBone, decoDisplay);
             decoList.push(decoDisplay);
@@ -454,10 +458,8 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
  * Allocates and initializes a display manager with ccs.Bone.
  * @param {ccs.Bone} bone
  * @returns {ccs.DisplayManager}
+ * @deprecated since v3.1, please use new construction instead
  */
 ccs.DisplayManager.create = function (bone) {
-    var displayManager = new ccs.DisplayManager();
-    if (displayManager && displayManager.init(bone))
-        return displayManager;
-    return null;
+    return new ccs.DisplayManager(bone);
 };

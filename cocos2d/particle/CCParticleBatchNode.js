@@ -417,17 +417,15 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         if (!this._visible)
             return;
 
-        cc.kmGLPushMatrix();
-        if (this.grid && this.grid.isActive()) {
-            this.grid.beforeDraw();
-            this.transformAncestors();
-        }
+        var currentStack = cc.current_stack;
+        currentStack.stack.push(currentStack.top);
+        cc.kmMat4Assign(this._stackMatrix, currentStack.top);
+        currentStack.top = this._stackMatrix;
 
         this.transform(ctx);
-        this.draw(ctx);
-
-        if (this.grid && this.grid.isActive())
-            this.grid.afterDraw(this);
+        //this.draw(ctx);
+        if(this._rendererCmd)
+            cc.renderer.pushRenderCommand(this._rendererCmd);
 
         cc.kmGLPopMatrix();
     },
@@ -557,6 +555,11 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      */
     setTextureAtlas:function (textureAtlas) {
         this.textureAtlas = textureAtlas;
+    },
+
+    _initRendererCmd:function(){
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+            this._rendererCmd = new cc.ParticleBatchNodeRenderCmdWebGL(this);
     }
 });
 
@@ -574,15 +577,6 @@ cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
  * @param {String|cc.Texture2D} fileImage
  * @param {Number} capacity
  * @return {cc.ParticleBatchNode}
- * @example
- * 1.
- * //Create a cc.ParticleBatchNode with image path  and capacity
- * var particleBatchNode = cc.ParticleBatchNode.create("res/grossini_dance.png",30);
- *
- * 2.
- * //Create a cc.ParticleBatchNode with a texture and capacity
- * var texture = cc.TextureCache.getInstance().addImage("res/grossini_dance.png");
- * var particleBatchNode = cc.ParticleBatchNode.create(texture, 30);
  */
 cc.ParticleBatchNode.create = function (fileImage, capacity) {
     return new cc.ParticleBatchNode(fileImage, capacity);

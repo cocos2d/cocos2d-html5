@@ -107,9 +107,6 @@ cc.ParticleFire = cc.ParticleSystem.extend(/** @lends cc.ParticleFire# */{
  * Create a fire particle system
  * @deprecated since v3.0 please use new cc.ParticleFire() instead
  * @return {cc.ParticleFire}
- *
- * @example
- * var emitter = cc.ParticleFire.create();
  */
 cc.ParticleFire.create = function () {
     return new cc.ParticleFire();
@@ -195,9 +192,6 @@ cc.ParticleFireworks = cc.ParticleSystem.extend(/** @lends cc.ParticleFireworks#
  * Create a fireworks particle system
  * @deprecated since v3.0 please use new cc.ParticleFireworks() instead.
  * @return {cc.ParticleFireworks}
- *
- * @example
- * var emitter = cc.ParticleFireworks.create();
  */
 cc.ParticleFireworks.create = function () {
     return new cc.ParticleFireworks();
@@ -285,9 +279,6 @@ cc.ParticleSun = cc.ParticleSystem.extend(/** @lends cc.ParticleSun# */{
  * Create a sun particle system
  * @deprecated since v3.0 please use new cc.ParticleSun() instead.
  * @return {cc.ParticleSun}
- *
- * @example
- * var emitter = cc.ParticleSun.create();
  */
 cc.ParticleSun.create = function () {
     return new cc.ParticleSun();
@@ -378,9 +369,6 @@ cc.ParticleGalaxy = cc.ParticleSystem.extend(/** @lends cc.ParticleGalaxy# */{
  * Create a galaxy particle system
  * @deprecated since v3.0 please use new cc.OarticleGalaxy() instead.
  * @return {cc.ParticleGalaxy}
- *
- * @example
- * var emitter = cc.ParticleGalaxy.create();
  */
 cc.ParticleGalaxy.create = function () {
     return new cc.ParticleGalaxy();
@@ -471,9 +459,6 @@ cc.ParticleFlower = cc.ParticleSystem.extend(/** @lends cc.ParticleFlower# */{
  * Create a flower particle system
  * @deprecated since v3.0 please use new cc.ParticleFlower() instead.
  * @return {cc.ParticleFlower}
- *
- * @example
- * var emitter = cc.ParticleFlower.create();
  */
 cc.ParticleFlower.create = function () {
     return new cc.ParticleFlower();
@@ -565,9 +550,6 @@ cc.ParticleMeteor = cc.ParticleSystem.extend(/** @lends cc.ParticleMeteor# */{
  * Create a meteor particle system
  * @deprecated since v3.0 please use new cc.ParticleMeteor() instead.
  * @return {cc.ParticleMeteor}
- *
- * @example
- * var emitter = cc.ParticleMeteor.create();
  */
 cc.ParticleMeteor.create = function () {
     return new cc.ParticleMeteor();
@@ -659,9 +641,6 @@ cc.ParticleSpiral = cc.ParticleSystem.extend(/** @lends cc.ParticleSpiral# */{
  * Create a spiral particle system
  * @deprecated since v3.0 please use new cc.ParticleSpiral() instead.
  * @return {cc.ParticleSpiral}
- *
- * @example
- * var emitter = cc.ParticleSpiral.create();
  */
 cc.ParticleSpiral.create = function () {
     return new cc.ParticleSpiral();
@@ -751,9 +730,6 @@ cc.ParticleExplosion = cc.ParticleSystem.extend(/** @lends cc.ParticleExplosion#
  * Create an explosion particle system
  * @deprecated since v3.0 please use new cc.ParticleExplosion() instead.
  * @return {cc.ParticleExplosion}
- *
- * @example
- * var emitter = cc.ParticleExplosion.create();
  */
 cc.ParticleExplosion.create = function () {
     return new cc.ParticleExplosion();
@@ -841,9 +817,6 @@ cc.ParticleSmoke = cc.ParticleSystem.extend(/** @lends cc.ParticleSmoke# */{
  * Create a smoke particle system
  * @deprecated since v3.0 please use new cc.ParticleSmoke() instead.
  * @return {cc.ParticleSmoke}
- *
- * @example
- * var emitter = cc.ParticleFireworks.create();
  */
 cc.ParticleSmoke.create = function () {
     return new cc.ParticleSmoke();
@@ -935,9 +908,6 @@ cc.ParticleSnow = cc.ParticleSystem.extend(/** @lends cc.ParticleSnow# */{
  * Create a snow particle system
  * @deprecated since v3.0 please use new cc.ParticleSnow() instead.
  * @return {cc.ParticleSnow}
- *
- * @example
- * var emitter = cc.ParticleSnow.create();
  */
 cc.ParticleSnow.create = function () {
     return new cc.ParticleSnow();
@@ -1030,9 +1000,6 @@ cc.ParticleRain = cc.ParticleSystem.extend(/** @lends cc.ParticleRain# */{
  * Create a rain particle system
  * @deprecated since v3.0 please use cc.ParticleRain() instead.
  * @return {cc.ParticleRain}
- *
- * @example
- * var emitter = cc.ParticleRain.create();
  */
 cc.ParticleRain.create = function () {
     return new cc.ParticleRain();

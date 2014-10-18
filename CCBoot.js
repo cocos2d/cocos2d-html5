@@ -244,7 +244,7 @@ cc.AsyncPool = function(srcObj, limit, iterator, onEnd, target){
                 self._isErr = true;
                 if(self._onEnd)
                     self._onEnd.call(self._onEndTarget, err);
-                return
+                return;
             }
 
             var arr = Array.prototype.slice.call(arguments, 1);
@@ -252,7 +252,7 @@ cc.AsyncPool = function(srcObj, limit, iterator, onEnd, target){
             if(self.finishedSize == self.size) {
                 if(self._onEnd)
                     self._onEnd.call(self._onEndTarget, null, self._results);
-                return
+                return;
             }
             self._handleItem();
         }.bind(item), self);
@@ -419,7 +419,7 @@ cc.path = /** @lends cc.path# */{
             if(idx !== -1)
                return fileName.substring(0,idx);
         }
-        return fileName
+        return fileName;
     },
 
     /**
@@ -703,6 +703,24 @@ cc.loader = /** @lends cc.loader# */{
         }
     },
 
+    loadCsb: function(url, cb){
+        var xhr = new XMLHttpRequest(),
+            errInfo = "load " + url + " failed!";
+        xhr.open("GET", url, true);
+        xhr.responseType = "arraybuffer";
+
+        xhr.onload = function () {
+            var arrayBuffer = xhr.response; // Note: not oReq.responseText
+            if (arrayBuffer) {
+                window.msg = arrayBuffer;
+            }
+            if(xhr.readyState == 4)
+                xhr.status == 200 ? cb(null, xhr.response) : cb(errInfo);
+        };
+
+        xhr.send(null);
+    },
+
     /**
      * Load a single resource as json.
      * @param {string} url
@@ -758,7 +776,6 @@ cc.loader = /** @lends cc.loader# */{
             }else{
                 typeof cb == "function" && cb("load image failed");
             }
-
         };
 
         cc._addEventListener(img, "load", lcb);
@@ -2008,6 +2025,8 @@ cc.game = /** @lends cc.game# */{
         callback = function () {
             if (!self._paused) {
                 director.mainLoop();
+                if(self._intervalId)
+                    window.cancelAnimationFrame(self._intervalId);
                 self._intervalId = window.requestAnimFrame(callback);
             }
         };

@@ -74,7 +74,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
     },
 
     _initRenderer: function () {
-        this._imageRenderer = cc.Sprite.create();
+        this._imageRenderer = new cc.Sprite();
         this.addProtectedChild(this._imageRenderer, ccui.ImageView.RENDERER_ZORDER, -1);
     },
 
@@ -117,7 +117,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         }
 
         if(!imageRenderer.texture || !imageRenderer.texture.isLoaded()){
-            imageRenderer.addLoadedEventListener(function(){
+            imageRenderer.addEventListener("load", function(){
                 self._findLayout();
 
                 self._imageTextureSize = imageRenderer.getContentSize();
@@ -178,7 +178,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         if (this._scale9Enabled) {
             this._imageRenderer = new ccui.Scale9Sprite();
         } else {
-            this._imageRenderer = cc.Sprite.create();
+            this._imageRenderer = new cc.Sprite();
         }
         this.loadTexture(this._textureFile, this._imageTexType);
         this.addProtectedChild(this._imageRenderer, ccui.ImageView.RENDERER_ZORDER, -1);
@@ -296,7 +296,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
     },
 
     _createCloneInstance:function(){
-        return ccui.ImageView.create();
+        return new ccui.ImageView();
     },
 
     _copySpecialProperties: function (imageView) {
@@ -316,9 +316,6 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
  * @param {string} imageFileName
  * @param {Number} texType
  * @return {ccui.ImageView}
- * @example
- * // example
- * var uiImageView = ccui.ImageView.create();
  */
 ccui.ImageView.create = function (imageFileName, texType) {
     return new ccui.ImageView(imageFileName, texType);

@@ -159,7 +159,7 @@ cc.animationCache = /** @lends cc.animationCache# */{
             } else if (frames.length != frameNames.length) {
                 cc.log(cc._LogInfos.animationCache__parseVersion1_4, key);
             }
-            animation = cc.Animation.create(frames, delay, 1);
+            animation = new cc.Animation(frames, delay, 1);
             cc.animationCache.addAnimation(animation, key);
         }
     },

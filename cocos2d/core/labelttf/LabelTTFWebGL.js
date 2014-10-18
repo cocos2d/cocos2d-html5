@@ -30,6 +30,14 @@ cc._tmp.WebGLLabelTTF = function () {
 
     _p.setColor = cc.Sprite.prototype.setColor;
 
+    _p._transformForRenderer = function(){
+        if (this._needUpdateTexture) {
+            this._needUpdateTexture = false;
+            this._updateTexture();
+        }
+        cc.Node.prototype._transformForRenderer.call(this);
+    };
+
     _p._setColorsString = function () {
         this._needUpdateTexture = true;
         var locStrokeColor = this._strokeColor, locFontFillColor = this._textFillColor;
