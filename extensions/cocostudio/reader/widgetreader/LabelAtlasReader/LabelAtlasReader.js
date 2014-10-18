@@ -82,11 +82,6 @@ ccs.labelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
 
         var labelAtlas = widget;
         var options = nodeTree["textAtlasOptions"];
-        //        var sv = DICTOOL.checkObjectExist_json(options, P_StringValue);
-        //        var cmf = DICTOOL.checkObjectExist_json(options, P_CharMapFile);
-        //        var iw = DICTOOL.checkObjectExist_json(options, P_ItemWidth);
-        //        var ih = DICTOOL.checkObjectExist_json(options, P_ItemHeight);
-        //        var scm = DICTOOL.checkObjectExist_json(options, P_StartCharMap);
 
         var cmftDic = options["charMapFileData"];
         var cmfType = cmftDic["resourceType"];
@@ -117,91 +112,5 @@ ccs.labelAtlasReader = /** @lends ccs.LabelAtlasReader# */{
 
         // other commonly protperties
         ccs.widgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
-    },
-
-    setPropsFromXML: function(widget, objectData){
-        ccs.widgetReader.setPropsFromXML.call(this, widget, objectData);
-
-        var labelAtlas = widget;
-
-        var xmlPath = ccs.uiReader.getFilePath();
-
-        var stringValue = "", startChar = "";
-        var itemWidth = 0, itemHeight = 0;
-        var resourceType = 0;
-        var path = "", plistFile = "";
-
-        var opacity = 255;
-
-
-        // attributes
-        var attribute = objectData.FirstAttribute();
-        while (attribute)
-        {
-            var name = attribute.Name();
-            var value = attribute.Value();
-
-            if (name == "LabelText")
-            {
-                stringValue = value;
-            }
-            else if (name == "CharWidth")
-            {
-                itemWidth = value;
-            }
-            else if (name == "CharHeight")
-            {
-                itemHeight = value;
-            }
-            else if (name == "StartChar")
-            {
-                startChar = value;
-            }
-            else if (name == "Alpha")
-            {
-                opacity = value;
-            }
-
-            attribute = attribute.Next();
-        }
-
-        // child elements
-        var child = objectData.FirstChildElement();
-        while (child)
-        {
-            var name = child.Name();
-
-            if (name == "LabelAtlasFileImage_CNB")
-            {
-                var attribute = child.FirstAttribute();
-
-                while (attribute)
-                {
-                    var name = attribute.Name();
-                    var value = attribute.Value();
-
-                    if (name == "Path")
-                    {
-                        path = value;
-                    }
-                    else if (name == "Type")
-                    {
-                        resourceType = (value == "Normal" || value == "Default" || value == "MarkedSubImage") ? 0 : 1;
-                    }
-                    else if (name == "Plist")
-                    {
-                        plistFile = value;
-                    }
-
-                    attribute = attribute.Next();
-                }
-            }
-
-            child = child.NextSiblingElement();
-        }
-
-        labelAtlas.setProperty(stringValue, xmlPath + path, itemWidth, itemHeight, startChar);
-
-        labelAtlas.setOpacity(opacity);
     }
 };

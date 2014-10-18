@@ -315,239 +315,25 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
         widget.setFlippedY(flipY);
     },
 
-    setPropsFromXML: function(widget, objectData){
-        widget.setTouchEnabled(false);
-
-        widget.setCascadeColorEnabled(true);
-        widget.setCascadeOpacityEnabled(true);
-
-        widget.setUnifySizeEnabled(true);
-
-        widget.setScale(0, 0);
-
-        // attributes
-        var attribute = objectData.FirstAttribute();
-        while (attribute)
-        {
-            var name = attribute.Name();
-            var value = attribute.Value();
-
-            if (name == "Name")
-            {
-                var widgetName = value ? value :"default";
-                widget.setName(widgetName);
-            }
-            else if (name == "ActionTag")
-            {
-                var actionTag = atoi(value);
-                widget.setUserObject(new ccs.Timeline.ActionTimelineData(actionTag));
-            }
-            else if (name == "RotationSkewX")
-            {
-                widget.setRotationSkewX(value);
-            }
-            else if (name == "RotationSkewY")
-            {
-                widget.setRotationSkewY(value);
-            }
-            else if (name == "Rotation")
-            {
-//                widget.setRotation(atoi(value));
-            }
-            else if (name == "ZOrder")
-            {
-                widget.setLocalZOrder(value);
-            }
-            else if (name == "Visible")
-            {
-                widget.setVisible((value == "True") ? true : false);
-            }
-            else if (name == "VisibleForFrame")
-            {
-//                widget.setVisible((value == "True") ? true : false);
-            }
-            else if (name == "Alpha")
-            {
-                widget.setOpacity(value);
-            }
-            else if (name == "Tag")
-            {
-                widget.setTag(value);
-            }
-            else if (name == "FlipX")
-            {
-                widget.setFlippedX((value == "True") ? true : false);
-            }
-            else if (name == "FlipY")
-            {
-                widget.setFlippedY((value == "True") ? true : false);
-            }
-            else if (name == "TouchEnable")
-            {
-                widget.setTouchEnabled((value == "True") ? true : false);
-            }
-            else if (name == "ControlSizeType")
-            {
-                widget.ignoreContentAdaptWithSize((value == "Auto") ? true : false);
-            }
-
-            attribute = attribute.Next();
-        }
-
-        var child = objectData.FirstChildElement();
-        while (child)
-        {
-            var name = child.Name();
-            if (name == "Children")
-            {
-                break;
-            }
-            else if (name == "Position")
-            {
-                var attribute = child.FirstAttribute();
-
-                while (attribute)
-                {
-                    var name = attribute.Name();
-                    var value = attribute.Value();
-
-                    if (name == "X")
-                    {
-                        widget.setPositionX(value);
-                    }
-                    else if (name == "Y")
-                    {
-                        widget.setPositionY(value);
-                    }
-
-                    attribute = attribute.Next();
-                }
-            }
-            else if (name == "Scale")
-            {
-                var attribute = child.FirstAttribute();
-
-                while (attribute)
-                {
-                    var name = attribute.Name();
-                    var value = attribute.Value();
-
-                    if (name == "ScaleX")
-                    {
-                        widget.setScaleX(value);
-                    }
-                    else if (name == "ScaleY")
-                    {
-                        widget.setScaleY(value);
-                    }
-
-                    attribute = attribute.Next();
-                }
-            }
-            else if (name == "AnchorPoint")
-            {
-                var attribute = child.FirstAttribute();
-                var anchor_x = 0, anchor_y = 0;
-
-                while (attribute)
-                {
-                    var name = attribute.Name();
-                    var value = attribute.Value();
-
-                    if (name == "ScaleX")
-                    {
-                        anchor_x = value;
-                    }
-                    else if (name == "ScaleY")
-                    {
-                        anchor_y = value;
-                    }
-
-                    attribute = attribute.Next();
-                }
-
-                widget.setAnchorPoint(cc.p(anchor_x, anchor_y));
-            }
-            else if (name == "CColor")
-            {
-                var attribute = child.FirstAttribute();
-                var red = 255, green = 255, blue = 255;
-
-                while (attribute)
-                {
-                    var name = attribute.Name();
-                    var value = attribute.Value();
-
-                    if (name == "A")
-                    {
-                        widget.setOpacity(atoi(value));
-                    }
-                    else if (name == "R")
-                    {
-                        red = value;
-                    }
-                    else if (name == "G")
-                    {
-                        green = value;
-                    }
-                    else if (name == "B")
-                    {
-                        blue = value;
-                    }
-
-                    attribute = attribute.Next();
-                }
-
-                widget.setColor(cc.color(red, green, blue));
-            }
-            else if (name == "Size")
-            {
-                var attribute = child.FirstAttribute();
-                var width = 0, height = 0;
-
-                while (attribute)
-                {
-                    var name = attribute.Name();
-                    var value = attribute.Value();
-
-                    if (name == "X")
-                    {
-                        width = value;
-                    }
-                    else if (name == "Y")
-                    {
-                        height = value;
-                    }
-
-                    attribute = attribute.Next();
-                }
-
-                widget.setContentSize(cc.size(width, height));
-            }
-
-            child = child.NextSiblingElement();
-        }
-    },
-
     setAnchorPointForWidget: function(widget, nodeTree){
-        var options = nodeTree.widgetOptions;
+        var options = nodeTree["widgetOptions"];
 
-        var isAnchorPointXExists = options.anchorPointX;
+        var isAnchorPointXExists = options["anchorPointX"];
         var anchorPointXInFile;
         if (isAnchorPointXExists)
         {
-            anchorPointXInFile = options.anchorPointX;
+            anchorPointXInFile = options["anchorPointX"];
         }
         else
         {
             anchorPointXInFile = widget.getAnchorPoint().x;
         }
 
-        var isAnchorPointYExists = options.anchorPointY;
+        var isAnchorPointYExists = options["anchorPointY"];
         var anchorPointYInFile;
         if (isAnchorPointYExists)
         {
-            anchorPointYInFile = options.anchorPointY;
+            anchorPointYInFile = options["anchorPointY"];
         }
         else
         {
