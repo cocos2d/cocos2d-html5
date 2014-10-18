@@ -133,6 +133,8 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
 
         var panel = widget;
 		var options = nodeTree["PanelOptions"];
+        if(!options)
+            return;
 
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 

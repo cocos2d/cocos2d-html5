@@ -1982,7 +1982,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend(/** @lends cc
         {
             //
             // 1st., custom widget parse properties of parent widget with parent widget reader
-            readerName = this._getWidgetReaderClassName(widget);
+            readerName = this._getWidgetReaderClassNameFromWidget(widget);
             reader =  this._createWidgetReaderProtocol(readerName);
             if (reader && widget)
             {
