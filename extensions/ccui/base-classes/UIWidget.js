@@ -23,10 +23,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+ccui.__LAYOUT_COMPONENT_NAME = "__ui_layout";
+
 /**
  * The base class for ccui controls and layout
  * @sample
- * var uiWidget = ccui.Widget.create();
+ * var uiWidget = new ccui.Widget();
  * this.addChild(uiWidget);
  * @class
  * @extends ccui.ProtectedNode
@@ -77,7 +79,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _sizePercent: null,
     _positionType: null,
     _positionPercent: null,
-    _reorderWidgetChildDirty: false,
     _hit: false,
     _nodes: null,
     _touchListener: null,
@@ -88,6 +89,9 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _highlight: false,
 
     _touchEventCallback: null,
+
+    _propagateTouchEvents: true,
+    _unifySize: false,
 
     /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
@@ -149,6 +153,16 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         cc.ProtectedNode.prototype.onExit.call(this);
     },
 
+    getOrCreateLayoutComponent: function(){
+        var layoutComponent = this.getComponent(ccui.__LAYOUT_COMPONENT_NAME);
+        if (null == layoutComponent){
+            var component = new ccui.LayoutComponent();
+            this.addComponent(component);
+            layoutComponent = component;
+        }
+        return layoutComponent;
+    },
+
     /**
      * Calls _adaptRenderers(its subClass will override it) before calls its parent's visit.
      * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
@@ -184,6 +198,31 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             return false;
 
         return parentWidget._isAncestorsEnabled();
+    },
+
+    setPropagateTouchEvents: function(isPropagate){
+        this._propagateTouchEvents = isPropagate;
+    },
+
+    isPropagateTouchEvents: function(){
+        return this._propagateTouchEvents;
+    },
+
+    setSwallowTouches: function(swallow){
+        if (this._touchListener)
+        {
+            this._touchListener.setSwallowTouches(swallow);
+        }
+    },
+
+    isSwallowTouches: function(){
+        if (this._touchListener)
+        {
+            //todo
+            return true;
+            //return this._touchListener.isSwallowTouches();
+        }
+        return false;
     },
 
     _getAncensterWidget: function(node){
@@ -252,10 +291,9 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
         this._customSize.width = locWidth;
         this._customSize.height = locHeight;
-
-        if (this._ignoreSize)
+        if (this._ignoreSize){
             this._contentSize = this.getVirtualRendererSize();
-
+        }
         if (this._running) {
             var widgetParent = this.getWidgetParent();
             var pSize = widgetParent ? widgetParent.getContentSize() : this._parent.getContentSize();
@@ -297,6 +335,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {cc.Point} percent that is widget's percent size, width and height value from 0 to 1.
      */
     setSizePercent: function (percent) {
+
         this._sizePercent.x = percent.x;
         this._sizePercent.y = percent.y;
         var width = this._customSize.width, height = this._customSize.height;
@@ -463,7 +502,8 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @returns {cc.Point}
      */
     getSizePercent: function () {
-        return cc.p(this._sizePercent);
+        var component = this.getOrCreateLayoutComponent();
+        return component.getPercentContentSize();
     },
     _getWidthPercent: function () {
         return this._sizePercent.x;
@@ -499,6 +539,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * call back function called when size changed.
      */
     _onSizeChanged: function () {
+//        ccui.Helper.prototype.doLayout.call(this, this);
         var locChildren =  this.getChildren();
         for (var i = 0, len = locChildren.length; i < len; i++) {
             var child = locChildren[i];
@@ -755,6 +796,11 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _onPressStateChangedToDisabled: function () {
     },
 
+    _updateChildrenDisplayedRGBA: function(){
+        this.setColor(this.getColor());
+        this.setOpacity(this.getOpacity());
+    },
+
     /**
      * A call back function when widget lost of focus.
      */
@@ -789,11 +835,25 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             return false;
         }
         this.setHighlighted(true);
-        var widgetParent = this.getWidgetParent();
-        if (widgetParent)
-            widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_BEGAN, this, touch);
+
+        /*
+         * Propagate touch events to its parents
+         */
+        if (this._propagateTouchEvents)
+        {
+            this.propagateTouchEvent(ccui.Widget.TOUCH_BEGAN, this, touch);
+        }
+
         this._pushDownEvent();
         return true;
+    },
+
+    propagateTouchEvent: function(event, sender, touch){
+        var widgetParent = this.getWidgetParent();
+        if (widgetParent)
+        {
+            widgetParent.interceptTouchEvent(event, sender, touch);
+        }
     },
 
     /**
@@ -877,6 +937,10 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             this._touchEventCallback(this, ccui.Widget.TOUCH_ENDED);
         if (this._touchEventListener && this._touchEventSelector)
             this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_ENDED);
+
+        if (this._clickEventListener) {
+            this._clickEventListener(this);
+        }
     },
 
     _cancelUpEvent: function () {
@@ -902,6 +966,10 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             this._touchEventSelector = selector;
             this._touchEventListener = target;
         }
+    },
+
+    addClickEventListener: function(callback){
+        this._clickEventListener = callback;
     },
 
     /**
@@ -985,6 +1053,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         }
 
         cc.Node.prototype.setPosition.call(this, pos, posY);
+        this._positionType = ccui.Widget.POSITION_ABSOLUTE;
     },
 
     setPositionX: function (x) {
@@ -1052,7 +1121,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @returns {cc.Point} The percent (x,y) of the widget in OpenGL coordinates
      */
     getPositionPercent: function () {
-        return cc.p(this._positionPercent);
+        return cc.p(this.getNormalizedPosition());
     },
 
     _getXPercent: function () {
@@ -1068,6 +1137,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      */
     setPositionType: function (type) {
         this._positionType = type;
+        this.setNodeDirty();
     },
 
     /**
@@ -1254,7 +1324,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     _createCloneInstance: function () {
-        return ccui.Widget.create();
+        return new ccui.Widget();
     },
 
     _copyClonedWidgetChildren: function (model) {
@@ -1309,8 +1379,10 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         this._touchEventCallback = widget._touchEventCallback;
         this._touchEventListener = widget._touchEventListener;
         this._touchEventSelector = widget._touchEventSelector;
+        this._clickEventListener = widget._clickEventListener;
         this._focused = widget._focused;
         this._focusEnabled = widget._focusEnabled;
+        this._propagateTouchEvents = widget._propagateTouchEvents;
 
         for (var key in widget._layoutParameterDictionary) {
             var parameter = widget._layoutParameterDictionary[key];
@@ -1508,6 +1580,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     _findLayout: function(){
+        cc.renderer.childrenOrderDirty = true;
         var layout = this._parent;
         while(layout){
             if(layout._doLayout){
@@ -1518,9 +1591,12 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         }
     },
 
-    _updateChildrenDisplayedRGBA: function(){
-        this.setColor(this.getColor());
-        this.setOpacity(this.getOpacity());
+    isUnifySizeEnabled: function(){
+        return this._unifySize;
+    },
+
+    setUnifySizeEnabled: function(enable){
+        this._unifySize = enable;
     }
 });
 
@@ -1579,9 +1655,6 @@ _p = null;
  * allocates and initializes a UIWidget.
  * @deprecated
  * @return {ccui.Widget}
- * @example
- * // example
- * var uiWidget = ccui.Widget.create();
  */
 ccui.Widget.create = function () {
     return new ccui.Widget();

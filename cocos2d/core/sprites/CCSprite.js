@@ -321,7 +321,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     // Shared data
     //
     // texture
-    _rect:null, //Retangle of cc.Texture2D
+    _rect:null, //Rectangle of cc.Texture2D
     _rectRotated:false, //Whether the texture is rotated
 
     // Offset Position (used by Zwoptex)
@@ -335,7 +335,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _flippedY:false, //Whether the sprite is flipped vertically or not.
 
     _textureLoaded:false,
-    _loadedEventListeners: null,
     _newTextureWhenChangeColor: null,         //hack property for LabelBMFont
     _className:"Sprite",
 
@@ -354,22 +353,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * Add a event listener for texture loaded event.
      * @param {Function} callback
      * @param {Object} target
+     * @deprecated since 3.1, please use addEventListener instead
      */
     addLoadedEventListener:function(callback, target){
-        if(!this._loadedEventListeners)
-            this._loadedEventListeners = [];
-        this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
-    },
-
-    _callLoadedEventCallbacks:function(){
-        if(!this._loadedEventListeners)
-            return;
-        var locListeners = this._loadedEventListeners;
-        for(var i = 0, len = locListeners.length;  i < len; i++){
-            var selCallback = locListeners[i];
-            selCallback.eventCallback.call(selCallback.eventTarget, this);
-        }
-        locListeners.length = 0;
+        this.addEventListener("load", callback, target);
     },
 
     /**
@@ -418,7 +405,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {cc.Rect}
      */
     getTextureRect:function () {
-        return cc.rect(this._rect.x, this._rect.y, this._rect.width, this._rect.height);
+        return cc.rect(this._rect);
     },
 
     /**
@@ -473,7 +460,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if(!spriteFrame.textureLoaded()){
             //add event listener
             this._textureLoaded = false;
-            spriteFrame.addLoadedEventListener(this._spriteFrameLoadedCallback, this);
+            spriteFrame.addEventListener("load", this._spriteFrameLoadedCallback, this);
         }
 
         var rotated = cc._renderType === cc._RENDER_TYPE_CANVAS ? false : spriteFrame._rotated;
@@ -523,10 +510,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {cc.Rect} rect
      */
     setVertexRect:function (rect) {
-        this._rect.x = rect.x;
-        this._rect.y = rect.y;
-        this._rect.width = rect.width;
-        this._rect.height = rect.height;
+        var locRect = this._rect;
+        locRect.x = rect.x;
+        locRect.y = rect.y;
+        locRect.width = rect.width;
+        locRect.height = rect.height;
     },
 
     /**
@@ -814,7 +802,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _colorized: false,
     _blendFuncStr: "source",
     _originalTexture: null,
-    _textureRect_Canvas: null,
     _drawSize_Canvas: null,
 
     ctor: null,
@@ -1026,11 +1013,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {cc.SpriteFrame}
      */
     displayFrame: function () {
-        return cc.SpriteFrame.create(this._texture,
-            cc.rectPointsToPixels(this._rect),
-            this._rectRotated,
-            cc.pointPointsToPixels(this._unflippedOffsetPositionFromCenter),
-            cc.sizePointsToPixels(this._contentSize));
+        return new cc.SpriteFrame(this._texture,
+                                  cc.rectPointsToPixels(this._rect),
+                                  this._rectRotated,
+                                  cc.pointPointsToPixels(this._unflippedOffsetPositionFromCenter),
+                                  cc.sizePointsToPixels(this._contentSize));
     },
 
     /**
@@ -1038,8 +1025,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @function
      * @param {cc.SpriteBatchNode|null} spriteBatchNode
      * @example
-     *  var batch = cc.SpriteBatchNode.create("Images/grossini_dance_atlas.png", 15);
-     *  var sprite = cc.Sprite.create(batch.texture, cc.rect(0, 0, 57, 57));
+     *  var batch = new cc.SpriteBatchNode("Images/grossini_dance_atlas.png", 15);
+     *  var sprite = new cc.Sprite(batch.texture, cc.rect(0, 0, 57, 57));
      *  batch.addChild(sprite);
      *  layer.addChild(batch);
      */
@@ -1073,7 +1060,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     _changeTextureColor: function () {
-        var locElement, locTexture = this._texture, locRect = this._textureRect_Canvas; //this.getTextureRect();
+        var locElement, locTexture = this._texture, locRect = this._rendererCmd._textureCoord; //this.getTextureRect();
         if (locTexture && locRect.validRect && this._originalTexture) {
             locElement = locTexture.getHtmlElementObj();
             if (!locElement)
@@ -1172,12 +1159,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             locQuad.tr.texCoords.v = top;
         }
         this._quadDirty = true;
-    },
-    /**
-     * draw sprite to canvas
-     * @function
-     */
-    draw: null
+    }
 });
 
 /**
@@ -1232,7 +1214,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
             _t._changeTextureColor();
 
-        _t._callLoadedEventCallbacks();
+        _t.dispatchEvent("load");
     };
 
     _p.setOpacityModifyRGB = function (modify) {
@@ -1258,10 +1240,13 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         self._newTextureWhenChangeColor = false;
         self._textureLoaded = true;
-        self._textureRect_Canvas = {x: 0, y: 0, width: 0, height:0, validRect: false};
         self._drawSize_Canvas = cc.size(0, 0);
 
         self._softInit(fileName, rect, rotated);
+    };
+
+    _p._initRendererCmd = function(){
+        this._rendererCmd = new cc.TextureRenderCmdCanvas(this);
     };
 
     _p.setBlendFunc = function (src, dst) {
@@ -1360,8 +1345,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 _t._rect.height = rect.height;
             }
             if(_t.texture)
-                _t.texture.removeLoadedEventListener(_t);
-            texture.addLoadedEventListener(_t._textureLoadedCallback, _t);
+                _t.texture.removeEventListener("load", _t);
+            texture.addEventListener("load", _t._textureLoadedCallback, _t);
             _t.texture = texture;
             return true;
         }
@@ -1415,7 +1400,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
         _t.batchNode = _t._batchNode;
-        _t._callLoadedEventCallbacks();
+        _t.dispatchEvent("load");
     };
 
     _p.setTextureRect = function (rect, rotated, untrimmedSize) {
@@ -1425,9 +1410,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         _t.setVertexRect(rect);
 
-        var locTextureRect = _t._textureRect_Canvas, scaleFactor = cc.contentScaleFactor();
-        locTextureRect.x = 0 | (rect.x * scaleFactor);
-        locTextureRect.y = 0 | (rect.y * scaleFactor);
+        var locTextureRect = _t._rendererCmd._textureCoord,
+            scaleFactor = cc.contentScaleFactor();
+        locTextureRect.renderX = locTextureRect.x = 0 | (rect.x * scaleFactor);
+        locTextureRect.renderY = locTextureRect.y = 0 | (rect.y * scaleFactor);
         locTextureRect.width = 0 | (rect.width * scaleFactor);
         locTextureRect.height = 0 | (rect.height * scaleFactor);
         locTextureRect.validRect = !(locTextureRect.width === 0 || locTextureRect.height === 0 || locTextureRect.x < 0 || locTextureRect.y < 0);
@@ -1451,7 +1437,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var _t = this;
         //cc.assert(_t._batchNode, "updateTransform is only valid when cc.Sprite is being rendered using an cc.SpriteBatchNode");
 
-        // recaculate matrix only if it is dirty
+        // re-calculate matrix only if it is dirty
         if (_t.dirty) {
             // If it is not visible, or one of its ancestors is not visible, then do nothing:
             var locParent = _t._parent;
@@ -1477,7 +1463,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p.addChild = function (child, localZOrder, tag) {
-
         cc.assert(child, cc._LogInfos.CCSpriteBatchNode_addChild_2);
 
         if (localZOrder == null)
@@ -1536,13 +1521,13 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var locTextureLoaded = newFrame.textureLoaded();
         if (!locTextureLoaded) {
             _t._textureLoaded = false;
-            newFrame.addLoadedEventListener(function (sender) {
+            newFrame.addEventListener("load", function (sender) {
                 _t._textureLoaded = true;
                 var locNewTexture = sender.getTexture();
                 if (locNewTexture != _t._texture)
                     _t.texture = locNewTexture;
                 _t.setTextureRect(sender.getRect(), sender.isRotated(), sender.getOriginalSize());
-                _t._callLoadedEventCallbacks();
+                _t.dispatchEvent("load");
             }, _t);
         }
         // update texture before updating texture rect
@@ -1554,6 +1539,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         _t.setTextureRect(newFrame.getRect(), _t._rectRotated, newFrame.getOriginalSize());
         _t._colorized = false;
+        _t._rendererCmd._textureCoord.renderX = _t._rendererCmd._textureCoord.x;
+        _t._rendererCmd._textureCoord.renderY = _t._rendererCmd._textureCoord.y;
         if (locTextureLoaded) {
             var curColor = _t.color;
             if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
@@ -1594,7 +1581,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             _t.setTextureRect(cc.rect(0,0, size.width, size.height));
             //If image isn't loaded. Listen for the load event.
             if(!texture._isLoaded){
-                texture.addLoadedEventListener(function(){
+                texture.addEventListener("load", function(){
                     var size = texture.getContentSize();
                     _t.setTextureRect(cc.rect(0,0, size.width, size.height));
                 }, this);
@@ -1613,83 +1600,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         }
     };
 
-    _p.draw = function (ctx) {
-        var _t = this;
-        if (!_t._textureLoaded)
-            return;
-
-        var context = ctx || cc._renderContext;
-        if (_t._blendFuncStr != "source")
-            context.globalCompositeOperation = _t._blendFuncStr;
-
-        var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
-
-        context.globalAlpha = _t._displayedOpacity / 255;
-        var locRect = _t._rect, locContentSize = _t._contentSize, locOffsetPosition = _t._offsetPosition, locDrawSizeCanvas = _t._drawSize_Canvas;
-        var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height, locTextureCoord = _t._textureRect_Canvas;
-        locDrawSizeCanvas.width = locRect.width * locEGL_ScaleX;
-        locDrawSizeCanvas.height = locRect.height * locEGL_ScaleY;
-
-        if (_t._flippedX || _t._flippedY) {
-            context.save();
-            if (_t._flippedX) {
-                flipXOffset = -locOffsetPosition.x - locRect.width;
-                context.scale(-1, 1);
-            }
-            if (_t._flippedY) {
-                flipYOffset = locOffsetPosition.y;
-                context.scale(1, -1);
-            }
-        }
-
-        flipXOffset *= locEGL_ScaleX;
-        flipYOffset *= locEGL_ScaleY;
-
-        if (_t._texture && locTextureCoord.validRect) {
-            var image = _t._texture.getHtmlElementObj();
-            if (_t._colorized) {
-                context.drawImage(image,
-                    0, 0, locTextureCoord.width, locTextureCoord.height,
-                    flipXOffset, flipYOffset, locDrawSizeCanvas.width, locDrawSizeCanvas.height);
-            } else {
-                context.drawImage(image,
-                    locTextureCoord.x, locTextureCoord.y, locTextureCoord.width,  locTextureCoord.height,
-                    flipXOffset, flipYOffset, locDrawSizeCanvas.width , locDrawSizeCanvas.height);
-            }
-        } else if (!_t._texture && locTextureCoord.validRect) {
-            var curColor = _t.color;
-            context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
-            context.fillRect(flipXOffset, flipYOffset, locContentSize.width * locEGL_ScaleX, locContentSize.height * locEGL_ScaleY);
-        }
-
-        if (cc.SPRITE_DEBUG_DRAW === 1 || _t._showNode) {
-            // draw bounding box
-            context.strokeStyle = "rgba(0,255,0,1)";
-            flipXOffset /= locEGL_ScaleX;
-            flipYOffset /= locEGL_ScaleY;
-            flipYOffset = -flipYOffset;
-            var vertices1 = [cc.p(flipXOffset, flipYOffset),
-                cc.p(flipXOffset + locRect.width, flipYOffset),
-                cc.p(flipXOffset + locRect.width, flipYOffset - locRect.height),
-                cc.p(flipXOffset, flipYOffset - locRect.height)];
-            cc._drawingUtil.drawPoly(vertices1, 4, true);
-        } else if (cc.SPRITE_DEBUG_DRAW === 2) {
-            // draw texture box
-            context.strokeStyle = "rgba(0,255,0,1)";
-            var drawRect = _t._rect;
-            flipYOffset = -flipYOffset;
-            var vertices2 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + drawRect.width, flipYOffset),
-                cc.p(flipXOffset + drawRect.width, flipYOffset - drawRect.height), cc.p(flipXOffset, flipYOffset - drawRect.height)];
-            cc._drawingUtil.drawPoly(vertices2, 4, true);
-        }
-        if (_t._flippedX || _t._flippedY)
-            context.restore();
-        cc.g_NumberOfDraws++;
-    };
-
     if(!cc.sys._supportCanvasNewBlendModes)
         _p._changeTextureColor =  function () {
-            var locElement, locTexture = this._texture, locRect = this._textureRect_Canvas; //this.getTextureRect();
+            var locElement, locTexture = this._texture, locRect = this._rendererCmd._textureCoord; //this.getTextureRect();
             if (locTexture && locRect.validRect && this._originalTexture) {
                 locElement = locTexture.getHtmlElementObj();
                 if (!locElement)
@@ -1712,12 +1625,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             }
         };
 
-    delete _p;
+    _p = null;
 } else {
     cc.assert(cc.isFunction(cc._tmp.WebGLSprite), cc._LogInfos.MissingFile, "SpritesWebGL.js");
     cc._tmp.WebGLSprite();
     delete cc._tmp.WebGLSprite;
 }
+
+cc.EventHelper.prototype.apply(cc.Sprite.prototype);
 
 cc.assert(cc.isFunction(cc._tmp.PrototypeSprite), cc._LogInfos.MissingFile, "SpritesPropertyDefine.js");
 cc._tmp.PrototypeSprite();

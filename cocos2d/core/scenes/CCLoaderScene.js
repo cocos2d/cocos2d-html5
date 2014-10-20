@@ -63,7 +63,7 @@ cc.LoaderScene = cc.Scene.extend({
             lblHeight = -logoHeight / 2 - 10;
         }
         //loading percent
-        var label = self._label = cc.LabelTTF.create("Loading... 0%", "Arial", fontSize);
+        var label = self._label = new cc.LabelTTF("Loading... 0%", "Arial", fontSize);
         label.setPosition(cc.pAdd(cc.visibleRect.center, cc.p(0, lblHeight)));
         label.setColor(cc.color(180, 180, 180));
         bgLayer.addChild(this._label, 10);
@@ -75,7 +75,7 @@ cc.LoaderScene = cc.Scene.extend({
         var texture2d = self._texture2d = new cc.Texture2D();
         texture2d.initWithElement(img);
         texture2d.handleLoadedTexture();
-        var logo = self._logo = cc.Sprite.create(texture2d);
+        var logo = self._logo = new cc.Sprite(texture2d);
         logo.setScale(cc.contentScaleFactor());
         logo.x = centerPos.x;
         logo.y = centerPos.y;

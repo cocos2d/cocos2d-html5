@@ -68,7 +68,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
     },
 
     _initRenderer: function () {
-        this._barRenderer = cc.Sprite.create();
+        this._barRenderer = new cc.Sprite();
         this.addProtectedChild(this._barRenderer, ccui.LoadingBar.RENDERER_ZORDER, -1);
         this._barRenderer.setAnchorPoint(0.0, 0.5);
     },
@@ -85,13 +85,13 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         switch (this._direction) {
             case ccui.LoadingBar.TYPE_LEFT:
                 this._barRenderer.setAnchorPoint(0.0, 0.5);
-                this._barRenderer.setPosition(-this._totalLength * 0.5, 0.0);
+                this._barRenderer.setPosition(0, this._contentSize.height*0.5);
                 if (!this._scale9Enabled)
                     this._barRenderer.setFlippedX(false);
                 break;
             case ccui.LoadingBar.TYPE_RIGHT:
                 this._barRenderer.setAnchorPoint(1.0, 0.5);
-                this._barRenderer.setPosition(this._totalLength * 0.5, 0.0);
+                this._barRenderer.setPosition(this._totalLength,this._contentSize.height*0.5);
                 if (!this._scale9Enabled)
                     this._barRenderer.setFlippedX(true);
                 break;
@@ -122,7 +122,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
 
         var self = this;
         if(!barRenderer.texture || !barRenderer.texture.isLoaded()){
-            barRenderer.addLoadedEventListener(function(){
+            barRenderer.addEventListener("load", function(){
 
                 self._findLayout();
 
@@ -134,12 +134,12 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
                     case ccui.LoadingBar.TYPE_LEFT:
                         barRenderer.setAnchorPoint(0.0,0.5);
                         if (!self._scale9Enabled)
-                            barRenderer.setFlippedX(false);
+                            barRenderer/*.getSprite()*/.setFlippedX(false);
                         break;
                     case ccui.LoadingBar.TYPE_RIGHT:
                         barRenderer.setAnchorPoint(1.0,0.5);
                         if (!self._scale9Enabled)
-                            barRenderer.setFlippedX(true);
+                            barRenderer/*.getSprite()*/.setFlippedX(true);
                         break;
                 }
                 self._updateChildrenDisplayedRGBA();
@@ -202,7 +202,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         this._scale9Enabled = enabled;
         this.removeProtectedChild(this._barRenderer);
 
-        this._barRenderer = this._scale9Enabled ? new ccui.Scale9Sprite() : cc.Sprite.create();
+        this._barRenderer = this._scale9Enabled ? new ccui.Scale9Sprite() : new cc.Sprite();
 
         this.loadTexture(this._textureFile, this._renderBarTexType);
         this.addProtectedChild(this._barRenderer, ccui.LoadingBar.RENDERER_ZORDER, -1);
@@ -286,7 +286,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
      */
     setContentSize: function(contentSize, height){
         ccui.Widget.prototype.setContentSize.call(this, contentSize, height);
-        this._totalLength = (height === undefined) ? contentSize.width : contentSize;;
+        this._totalLength = (height === undefined) ? contentSize.width : contentSize;
     },
 
     /**
@@ -340,7 +340,11 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
 
     _barRendererScaleChangedWithSize: function () {
         var locBarRender = this._barRenderer, locContentSize = this._contentSize;
-        if (this._ignoreSize) {
+        if(this._unifySize){
+            //_barRenderer->setPreferredSize(_contentSize);
+            this._totalLength = this._contentSize.width;
+            this.setPercent(this._percent);
+        }else if (this._ignoreSize) {
             if (!this._scale9Enabled) {
                 this._totalLength = this._barRendererTextureSize.width;
                 locBarRender.setScale(1.0);
@@ -387,7 +391,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
     },
 
     _createCloneInstance: function () {
-        return ccui.LoadingBar.create();
+        return new ccui.LoadingBar();
     },
 
     _copySpecialProperties: function (loadingBar) {
@@ -420,9 +424,6 @@ _p = null;
  * @param {string} textureName
  * @param {Number} percentage
  * @return {ccui.LoadingBar}
- * @example
- * // example
- * var uiLoadingBar = ccui.LoadingBar.create();
  */
 ccui.LoadingBar.create = function (textureName, percentage) {
     return new ccui.LoadingBar(textureName, percentage);

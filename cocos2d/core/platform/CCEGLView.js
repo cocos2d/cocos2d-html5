@@ -229,7 +229,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             this.setDesignResolutionSize(designWidth, designHeight, this._resolutionPolicy);
     },
 
-    _setViewPortMeta: function (width, height) {
+    _setViewPortMeta: function () {
         if (this._isAdjustViewPort) {
             var vp = document.getElementById("cocosMetaElement");
             if(vp){
@@ -258,27 +258,17 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             content = currentVP ? currentVP.content : "";
             for (var key in viewportMetas) {
                 var pattern = new RegExp(key);
-
                 if (!pattern.test(content)) {
                     content += "," + key + "=" + viewportMetas[key];
                 }
             }
-            if(!elems && content != ""){
+            if(content != "")
                 content = content.substr(1);
-            }
 
-            /*
-             if(width<=320){
-             width = 321;
-             }
-             if(height)
-             content ="height="+height+","+content;
-             if(width)
-             content ="width="+width+","+content;
-             */
             vp.content = content;
             // For adopting certain android devices which don't support second viewport
-            currentVP.content = content;
+            if (currentVP)
+                currentVP.content = content;
 
             document.head.appendChild(vp);
         }
@@ -532,7 +522,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
         // Reinit frame size
         if (cc.sys.isMobile)
-            _t._setViewPortMeta(_t._frameSize.width, _t._frameSize.height);
+            _t._setViewPortMeta();
         _t._initFrameSize();
         _t._designResolutionSize = cc.size(width, height);
         _t._originalDesignResolutionSize = cc.size(width, height);

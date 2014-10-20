@@ -33,13 +33,12 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
     _colliderDetector: null,
     _displayData: null,
 
-    /**
-     * Construction of ccs.DecorativeDisplay
-     */
     ctor:function () {
         this._display = null;
         this._colliderDetector = null;
         this._displayData = null;
+
+        //ccs.DecorativeDisplay.prototype.init.call(this);
     },
 
     /**
@@ -55,6 +54,10 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
      * @param {cc.Node} display
      */
     setDisplay:function (display) {
+        if(display._parent){
+            display._parent.removeChild(display);
+            delete display._parent;
+        }
         this._display = display;
     },
 
@@ -108,13 +111,8 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
 /**
  * Allocates and initializes a decorative display.
  * @return {ccs.DecorativeDisplay}
- * @example
- * // example
- * var display = ccs.DecorativeDisplay.create();
+ * @deprecated since v3.1, please use new construction instead
  */
 ccs.DecorativeDisplay.create = function () {
-    var decorativeDisplay = new ccs.DecorativeDisplay();
-    if (decorativeDisplay && decorativeDisplay.init())
-        return decorativeDisplay;
-    return null;
+    return new ccs.DecorativeDisplay();
 };

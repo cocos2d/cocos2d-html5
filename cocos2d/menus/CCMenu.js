@@ -574,10 +574,6 @@ _p.enabled;
  * @deprecated  since v3.0, please use new cc.Menu(menuitem1, menuitem2, menuitem3) to create a new menu
  * @param {...cc.MenuItem|null} menuItems
  * @return {cc.Menu}
- * @example
- * // Example
- * //there is no limit on how many menu item you can pass in
- * var myMenu = cc.Menu.create(menuitem1, menuitem2, menuitem3);
  */
 cc.Menu.create = function (menuItems) {
     var argc = arguments.length;

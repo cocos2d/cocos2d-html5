@@ -54,6 +54,8 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     _pageViewEventListener: null,
     _pageViewEventSelector: null,
     _className:"PageView",
+    _customScrollThreshold: 0,
+    _usingCustomScrollThreshold: false,
 
     /**
      * Allocates and initializes a UIPageView.
@@ -125,7 +127,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     _createPage: function () {
-        var newPage = ccui.Layout.create();
+        var newPage = new ccui.Layout();
         newPage.setContentSize(this.getContentSize());
         return newPage;
     },
@@ -332,11 +334,12 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      * @param {cc.Event} event
      */
     onTouchMoved: function (touch, event) {
-        this._handleMoveLogic(touch);
-        var widgetParent = this.getWidgetParent();
-        if (widgetParent)
-            widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_MOVED, this, touch);
-        this._moveEvent();
+
+        ccui.Layout.prototype.onTouchMoved.call(this, touch, event);
+        if (!this._isInterceptTouch)
+        {
+            this._handleMoveLogic(touch);
+        }
     },
 
     /**
@@ -347,7 +350,11 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      */
     onTouchEnded: function (touch, event) {
         ccui.Layout.prototype.onTouchEnded.call(this, touch, event);
-        this._handleReleaseLogic(touch);
+        if (!this._isInterceptTouch)
+        {
+            this._handleReleaseLogic(touch);
+        }
+        this._isInterceptTouch = false;
     },
 
     /**
@@ -357,7 +364,11 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      */
     onTouchCancelled: function (touch, event) {
         ccui.Layout.prototype.onTouchCancelled.call(this, touch, event);
-        this._handleReleaseLogic(touch);
+        if (!this._isInterceptTouch)
+        {
+            this.handleReleaseLogic(touch);
+        }
+        this._isInterceptTouch = false;
     },
 
     _doLayout: function(){
@@ -422,6 +433,37 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         this._scrollPages(offset);
     },
 
+    /**
+     * Set CustomScrollThreshold
+     * @param threshold
+     */
+    setCustomScrollThreshold: function(threshold){
+        cc.assert(threshold>0, "Invalid threshold!");
+        this._customScrollThreshold = threshold;
+        this.setUsingCustomScrollThreshold(true);
+    },
+
+    /**
+     * Gets the _customScrollThreshold.
+     */
+    getCustomScrollThreshold: function(){
+        return this._customScrollThreshold;
+    },
+
+    /**
+     * Set the UsingCustomScrollThreshold
+     */
+    setUsingCustomScrollThreshold: function(flag){
+        this._usingCustomScrollThreshold = flag;
+    },
+
+    /**
+     * Gets the UsingCustomScrollThreshold
+     */
+    isUsingCustomScrollThreshold: function(){
+        return this._usingCustomScrollThreshold;
+    },
+
     _handleReleaseLogic: function (touchPoint) {
         if (this._pages.length <= 0)
             return;
@@ -431,14 +473,16 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
             var pageCount = this._pages.length;
             var curPageLocation = curPagePos.x;
             var pageWidth = this.getSize().width;
-            var boundary = pageWidth / 2.0;
+            if (!this._usingCustomScrollThreshold) {
+                this._customScrollThreshold = pageWidth / 2.0;
+            }
+            var boundary = this._customScrollThreshold;
             if (curPageLocation <= -boundary) {
                 if (this._curPageIdx >= pageCount - 1)
                     this._scrollPages(-curPageLocation);
                 else
                     this.scrollToPage(this._curPageIdx + 1);
-            }
-            else if (curPageLocation >= boundary) {
+            } else if (curPageLocation >= boundary) {
                 if (this._curPageIdx <= 0)
                     this._scrollPages(-curPageLocation);
                 else
@@ -460,6 +504,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
             case ccui.Widget.TOUCH_BEGAN:
                 this._touchBeganPosition.x = touchPoint.x;
                 this._touchBeganPosition.y = touchPoint.y;
+                this._isInterceptTouch = true;
                 break;
             case ccui.Widget.TOUCH_MOVED:
                 this._touchMovePosition.x = touchPoint.x;
@@ -476,6 +521,10 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
                 this._touchEndPosition.x = touchPoint.x;
                 this._touchEndPosition.y = touchPoint.y;
                 this._handleReleaseLogic(touch);
+                if (sender.isSwallowTouches())
+                {
+                    this._isInterceptTouch = false;
+                }
                 break;
         }
     },
@@ -545,7 +594,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     _createCloneInstance: function () {
-        return ccui.PageView.create();
+        return new ccui.PageView();
     },
 
     _copyClonedWidgetChildren: function (model) {
@@ -560,15 +609,14 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         ccui.Layout.prototype._copySpecialProperties.call(this, pageView);
         this._pageViewEventListener = pageView._pageViewEventListener;
         this._pageViewEventSelector = pageView._pageViewEventSelector;
+        this._usingCustomScrollThreshold = pageView._usingCustomScrollThreshold;
+        this._customScrollThreshold = pageView._customScrollThreshold;
     }
 });
 /**
  * allocates and initializes a UIPageView.
  * @deprecated since v3.0, please use new ccui.PageView() instead.
  * @return {ccui.PageView}
- * @example
- * // example
- * var uiPageView = ccui.PageView.create();
  */
 ccui.PageView.create = function () {
     return new ccui.PageView();

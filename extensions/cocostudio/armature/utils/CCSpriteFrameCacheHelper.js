@@ -52,7 +52,7 @@ ccs.spriteFrameCacheHelper = /** @lends ccs.spriteFrameCacheHelper# */ {
         var textureName = texture.getName();
         var atlas = this._textureAtlasDic[textureName];
         if (atlas == null) {
-            atlas = cc.TextureAtlas.create(texture, 20);
+            atlas = new cc.TextureAtlas(texture, 20);
             this._textureAtlasDic[textureName] = atlas;
         }
         return atlas;

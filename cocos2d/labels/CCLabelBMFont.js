@@ -121,7 +121,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     _cascadeOpacityEnabled: true,
 
     _textureLoaded: false,
-    _loadedEventListeners: null,
     _className: "LabelBMFont",
 
     _setString: function (newString, needUpdateLabel) {
@@ -179,22 +178,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * Will execute the callback in the loaded.
      * @param {Function} callback
      * @param {Object} target
+     * @deprecated since 3.1, please use addEventListener instead
      */
     addLoadedEventListener: function (callback, target) {
-        if (!this._loadedEventListeners)
-            this._loadedEventListeners = [];
-        this._loadedEventListeners.push({eventCallback: callback, eventTarget: target});
-    },
-
-    _callLoadedEventCallbacks: function () {
-        if (!this._loadedEventListeners)
-            return;
-        var locListeners = this._loadedEventListeners;
-        for (var i = 0, len = locListeners.length; i < len; i++) {
-            var selCallback = locListeners[i];
-            selCallback.eventCallback.call(selCallback.eventTarget, this);
-        }
-        locListeners.length = 0;
+        this.addEventListener("load", callback, target);
     },
 
     /**
@@ -214,7 +201,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         }
     },
 
-    //TODO
     /**
      * tint this label
      * @param {cc.Color} color
@@ -452,13 +438,13 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var locIsLoaded = texture.isLoaded();
             self._textureLoaded = locIsLoaded;
             if (!locIsLoaded) {
-                texture.addLoadedEventListener(function (sender) {
+                texture.addEventListener("load", function (sender) {
                     var self1 = this;
                     self1._textureLoaded = true;
                     //reset the LabelBMFont
                     self1.initWithTexture(sender, self1._initialString.length);
                     self1.setString(self1._initialString, true);
-                    self1._callLoadedEventCallbacks();
+                    self1.dispatchEvent("load");
                 }, self);
             }
         } else {
@@ -933,7 +919,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         this.updateLabel();
     },
 
-    //TODO
     /**
      * set fnt file path. <br />
      * Change the fnt file path.
@@ -959,14 +944,15 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             if (cc._renderType === cc._RENDER_TYPE_CANVAS)
                 self._originalTexture = self.texture;
             if (!locIsLoaded) {
-                texture.addLoadedEventListener(function (sender) {
+                texture.addEventListener("load", function (sender) {
                     var self1 = this;
                     self1._textureLoaded = true;
                     self1.texture = sender;
                     self1.createFontChars();
                     self1._changeTextureColor();
                     self1.updateLabel();
-                    self1._callLoadedEventCallbacks();
+
+                    self1.dispatchEvent("load");
                 }, self);
             } else {
                 self.createFontChars();
@@ -1071,6 +1057,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 });
 
 var _p = cc.LabelBMFont.prototype;
+cc.EventHelper.prototype.apply(_p);
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     if (!cc.sys._supportCanvasNewBlendModes) {
@@ -1133,15 +1120,6 @@ cc.defineGetterSetter(_p, "textAlign", _p._getAlignment, _p.setAlignment);
  * @param {Number} [alignment=cc.TEXT_ALIGNMENT_LEFT]
  * @param {cc.Point} [imageOffset=cc.p(0,0)]
  * @return {cc.LabelBMFont|Null}
- * @example
- * // Example 01
- * var label1 = cc.LabelBMFont.create("Test case", "test.fnt");
- *
- * // Example 02
- * var label2 = cc.LabelBMFont.create("test case", "test.fnt", 200, cc.TEXT_ALIGNMENT_LEFT);
- *
- * // Example 03
- * var label3 = cc.LabelBMFont.create("This is a \n test case", "test.fnt", 200, cc.TEXT_ALIGNMENT_LEFT, cc.p(0,0));
  */
 cc.LabelBMFont.create = function (str, fntFile, width, alignment, imageOffset) {
     return new cc.LabelBMFont(str, fntFile, width, alignment, imageOffset);
