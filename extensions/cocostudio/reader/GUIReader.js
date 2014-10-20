@@ -217,23 +217,6 @@ ccs.uiReader = /** @lends ccs.uiReader# */{
      */
     getParseCallBackMap: function(){
         return this._mapParseSelector;
-    },
-
-    /**
-     * Load ui form protocolBuffers
-     * @param url
-     */
-    widgetFromProtocolBuffers: function(url){
-        var buf = cc.loader.getRes(url);
-        if(!buf){
-            cc.log("File not found: " + url);
-            return;
-        }
-        var jsonPath = url.substr(0, url.lastIndexOf('/') + 1);
-        ccs.uiReader.setFilePath(jsonPath);
-        var pReader = new ccs.WidgetPropertiesReader0300();
-        var buffer = PBP.CSParseBinary.decode(buf);
-        return pReader.widgetFromProtocolBuffers(buffer.nodeTree);
     }
 };
 

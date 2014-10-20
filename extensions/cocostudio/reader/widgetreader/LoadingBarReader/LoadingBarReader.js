@@ -95,10 +95,7 @@ ccs.loadingBarReader = /** @lends ccs.LoadingBarReader# */{
 
 		var imageFileNameDic = options["textureData"];
         var imageFileNameType = imageFileNameDic["resourceType"];
-		if (imageFileNameType == 1)
-		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic["plistFile"]);
-		}
+
         var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic["path"], imageFileNameType);
         loadingBar.loadTexture(imageFileName, imageFileNameType);
 

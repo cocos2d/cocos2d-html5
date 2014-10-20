@@ -103,10 +103,7 @@ ccs.pageViewReader = /** @lends ccs.PageViewReader# */{
         if(imageFileNameDic){
 
             var imageFileNameType = imageFileNameDic["resourceType"];
-            if (imageFileNameType == 1)
-            {
-                cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic["plistFile"]);
-            }
+
             var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic["path"], imageFileNameType);
             pageView.setBackGroundImage(imageFileName, imageFileNameType);
         }

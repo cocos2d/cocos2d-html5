@@ -114,7 +114,7 @@ ccs.textFieldReader = /** @lends ccs.TextFieldReader# */{
             textField.setPlaceHolder(placeholder);
         }
         var text = options["text"]!==null ? options["text"] : "Text Field";
-        textField.setText(text);
+        textField.setString(text);
 
         var fontSize = options["fontSize"] ? options["fontSize"] : 20;
         textField.setFontSize(fontSize);

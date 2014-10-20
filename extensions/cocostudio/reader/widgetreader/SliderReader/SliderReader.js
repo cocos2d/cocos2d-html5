@@ -167,6 +167,8 @@ ccs.sliderReader = /** @lends ccs.SliderReader# */{
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
         var barTextureScale9Enable = !!options["scale9Enable"];
+        if(barTextureScale9Enable)
+            slider.setUnifySizeEnabled(false);
         slider.setScale9Enabled(barTextureScale9Enable);
 
         slider.setPercent(options["percent"]);
@@ -177,10 +179,7 @@ ccs.sliderReader = /** @lends ccs.SliderReader# */{
 
 		var imageFileNameDic = options["barFileNameData"];
         var imageFileNameType = imageFileNameDic["resourceType"];
-		if (imageFileNameType == 1)
-		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic["plistFile"]);
-		}
+
         var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic["path"], imageFileNameType);
         slider.loadBarTexture(imageFileName, imageFileNameType);
 
@@ -192,10 +191,7 @@ ccs.sliderReader = /** @lends ccs.SliderReader# */{
         //loading normal slider ball texture
         var normalDic = options["ballNormalData"];
         var normalType = normalDic["resourceType"];
-		if (normalType == 1)
-		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + normalDic["plistFile"]);
-		}
+
         imageFileName = ccs.widgetReader.getResourcePath(normalDic["path"], normalType);
         slider.loadSlidBallTextureNormal(imageFileName, normalType);
 
@@ -203,30 +199,21 @@ ccs.sliderReader = /** @lends ccs.SliderReader# */{
         //loading slider ball press texture
         var pressedDic = options["ballPressedData"];
         var pressedType = pressedDic["resourceType"];
-		if (pressedType == 1)
-		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + pressedDic["plistFile"]);
-		}
+
         var pressedFileName = ccs.widgetReader.getResourcePath(pressedDic["path"], pressedType);
         slider.loadSlidBallTexturePressed(pressedFileName, pressedType);
 
         //loading silder ball disable texture
         var disabledDic = options["ballDisabledData"];
         var disabledType = disabledDic["resourceType"];
-		if (disabledType == 1)
-		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + disabledDic["plistFile"]);
-		}
+
         var disabledFileName = ccs.widgetReader.getResourcePath(disabledDic["path"], disabledType);
         slider.loadSlidBallTextureDisabled(disabledFileName, disabledType);
 
         //load slider progress texture
         var progressBarDic = options["progressBarData"];
         var progressBarType = progressBarDic["resourceType"];
-		if (progressBarType == 1)
-		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + progressBarDic["plistFile"]);
-		}
+
         var progressBarFileName = ccs.widgetReader.getResourcePath(progressBarDic["path"], progressBarType);
         slider.loadProgressBarTexture(progressBarFileName, progressBarType);
 
