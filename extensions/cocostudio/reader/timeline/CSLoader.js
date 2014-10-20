@@ -300,7 +300,7 @@ ccs.csLoader = {
         //cc.log("classname = %s", classname);
     
         var curOptions;
-    
+
         if (classname == "Node")
         {
             node = new ccs.Node();
@@ -376,9 +376,9 @@ ccs.csLoader = {
         {
             var guiClassName = this.getGUIClassName(classname);
             var readerName = guiClassName;
-            readerName.append("Reader");
+            readerName += "Reader";
     
-            var widget = cc.objectFactory.createObject(guiClassName);
+            var widget = ccs.objectFactory.createObject(guiClassName);
     
             var reader = ccs.objectFactory.createObject(readerName);
             reader.setPropsFromProtocolBuffers(widget, nodetree);
@@ -386,7 +386,7 @@ ccs.csLoader = {
             var widgetOptions = nodetree["widgetOptions"];
             var actionTag = widgetOptions["actionTag"];
             widget.setUserObject(new ccs.ActionTimelineData(actionTag));
-    
+
             node = widget;
         }
         else if (this.isCustomWidget(classname))
@@ -420,18 +420,20 @@ ccs.csLoader = {
     
             node = widget;
         }
-    
-        // component
-        var componentSize = curOptions["componentOptions"].length;
-        for (var i = 0; i < componentSize; ++i)
-        {
-    
-            var componentOptions = curOptions["componentOptions"][i];
-            var component = this.createComponentFromProtocolBuffers(componentOptions);
-    
-            if (component)
+
+        if(curOptions){
+            // component
+            var componentSize = curOptions["componentOptions"].length;
+            for (var i = 0; i < componentSize; ++i)
             {
-                node.addComponent(component);
+
+                var componentOptions = curOptions["componentOptions"][i];
+                var component = this.createComponentFromProtocolBuffers(componentOptions);
+
+                if (component)
+                {
+                    node.addComponent(component);
+                }
             }
         }
     
@@ -757,7 +759,7 @@ ccs.csLoader = {
         if (this.isWidget(classname))
         {
             var readerName = this.getGUIClassName(classname);
-            readerName.append("Reader");
+            readerName += "Reader";
     
             var guiClassName = this.getGUIClassName(classname);
             widget = ccs.objectFactory.createObject(guiClassName);
