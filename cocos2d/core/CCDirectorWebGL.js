@@ -92,6 +92,7 @@ cc._tmp.DirectorWebGL = function () {
         _t._projection = projection;
         cc.eventManager.dispatchEvent(_t._eventProjectionChanged);
         cc.setProjectionMatrixDirty();
+        cc.renderer.childrenOrderDirty = true;
     };
 
     _p.setDepthTest = function (on) {
