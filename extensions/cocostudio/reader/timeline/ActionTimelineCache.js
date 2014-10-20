@@ -29,7 +29,7 @@ ccui.actionTimelineCacheStatic = {
     FrameType_RotationFrame      : "RotationFrame",
     FrameType_SkewFrame          : "SkewFrame",
     FrameType_RotationSkewFrame  : "RotationSkewFrame",
-    FrameType_AnchorFrame        : "AnchorFrame",
+    FrameType_AnchorFrame        : "AnchorPointFrame",
     FrameType_InnerActionFrame   : "InnerActionFrame",
     FrameType_ColorFrame         : "ColorFrame",
     FrameType_TextureFrame       : "TextureFrame",

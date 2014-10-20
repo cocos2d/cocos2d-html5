@@ -104,7 +104,7 @@ ccs.csLoader = {
 
     _recordJsonPath: true,
     _jsonPath: "",
-    _recordProtocolBuffersPath: true,
+    _recordProtocolBuffersPath: false,
     _protocolBuffersPath: "",
     _monoCocos2dxVersion: "",
 

@@ -167,6 +167,8 @@ ccs.sliderReader = /** @lends ccs.SliderReader# */{
 		var protocolBuffersPath = ccs.uiReader.getFilePath();
 
         var barTextureScale9Enable = !!options["scale9Enable"];
+        if(barTextureScale9Enable)
+            slider.setUnifySizeEnabled(false);
         slider.setScale9Enabled(barTextureScale9Enable);
 
         slider.setPercent(options["percent"]);
