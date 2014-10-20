@@ -691,7 +691,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
      * @return {cc.EventListener} the generated event. Needed in order to remove the event from the dispatcher
      */
     addCustomListener: function (eventName, callback) {
-        var listener = cc._EventListenerCustom.create(eventName, callback);
+        var listener = new cc._EventListenerCustom(eventName, callback);
         this.addListener(listener, 1);
         return listener;
     },

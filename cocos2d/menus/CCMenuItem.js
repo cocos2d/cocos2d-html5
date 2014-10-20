@@ -549,7 +549,7 @@ cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
         if (value && value.length > 0) {
             this._fontName = cc._globalFontName;
             this._fontSize = cc._globalFontSize;
-            label = cc.LabelTTF.create(value, this._fontName, this._fontSize);
+            label = new cc.LabelTTF(value, this._fontName, this._fontSize);
         }
         else {
             this._fontSize = 0;
