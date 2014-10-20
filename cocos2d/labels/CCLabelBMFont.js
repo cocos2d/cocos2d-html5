@@ -543,7 +543,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             //var hasSprite = true;
             if (!fontChar) {
                 fontChar = new cc.Sprite();
-                if ((key === 32) && (locContextType === cc._RENDER_TYPE_CANVAS)) rect = cc.rect(0, 0, 0, 0);
+                if ((key === 32) && (locContextType === cc._RENDER_TYPE_CANVAS))
+                    rect = cc.rect(0, 0, 0, 0);
                 fontChar.initWithTexture(locTexture, rect, false);
                 fontChar._newTextureWhenChangeColor = true;
                 self.addChild(fontChar, 0, i);
