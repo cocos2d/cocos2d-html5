@@ -147,7 +147,6 @@ ccs.buttonReader = /** @lends ccs.buttonReader# */{
     
             var pressedDic = options["pressedData"];
             var pressedType = pressedDic["resourceType"];
-    		if (pressedType == 1)
 
             var pressedTexturePath = ccs.widgetReader.getResourcePath(pressedDic["path"], pressedType);
             button.loadTexturePressed(pressedTexturePath, pressedType);
