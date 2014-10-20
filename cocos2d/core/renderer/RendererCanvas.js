@@ -131,6 +131,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var context = ctx || cc._renderContext,
             locTextureCoord = self._textureCoord;
 
+        if(locTextureCoord.width === 0 || locTextureCoord.height === 0)
+            return;
         if (!locTextureCoord.validRect && node._displayedOpacity === 0)
             return;  //draw nothing
 
@@ -169,29 +171,27 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
                 //TODO should move '* scaleX/scaleY' to transforming
                 if (node._colorized) {
-                    if(locTextureCoord.width !== 0 && locTextureCoord.height !== 0)
-                        context.drawImage(image,
-                            0,
-                            0,
-                            locTextureCoord.width,
-                            locTextureCoord.height,
-                                locX * scaleX,
-                                locY * scaleY,
-                                locWidth * scaleX,
-                                locHeight * scaleY
-                        );
+                    context.drawImage(image,
+                        0,
+                        0,
+                        locTextureCoord.width,
+                        locTextureCoord.height,
+                            locX * scaleX,
+                            locY * scaleY,
+                            locWidth * scaleX,
+                            locHeight * scaleY
+                    );
                 } else {
-                    if(locTextureCoord.width !== 0 && locTextureCoord.height !== 0)
-                        context.drawImage(image,
-                            locTextureCoord.renderX,
-                            locTextureCoord.renderY,
-                            locTextureCoord.width,
-                            locTextureCoord.height,
-                                locX * scaleX,
-                                locY * scaleY,
-                                locWidth * scaleX,
-                                locHeight * scaleY
-                        );
+                    context.drawImage(image,
+                        locTextureCoord.renderX,
+                        locTextureCoord.renderY,
+                        locTextureCoord.width,
+                        locTextureCoord.height,
+                            locX * scaleX,
+                            locY * scaleY,
+                            locWidth * scaleX,
+                            locHeight * scaleY
+                    );
                 }
             } else {
                 curColor = node._displayedColor;
@@ -209,28 +209,26 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             if (node._texture) {
                 image = node._texture.getHtmlElementObj();
                 if (node._colorized) {
-                    if(locTextureCoord.width !== 0 && locTextureCoord.height !== 0)
-                        context.drawImage(image,
-                            0,
-                            0,
-                            locTextureCoord.width,
-                            locTextureCoord.height,
-                                (t.tx + locX) * scaleX,
-                                (-t.ty + locY) * scaleY,
-                                locWidth * scaleX,
-                                locHeight * scaleY);
+                    context.drawImage(image,
+                        0,
+                        0,
+                        locTextureCoord.width,
+                        locTextureCoord.height,
+                            (t.tx + locX) * scaleX,
+                            (-t.ty + locY) * scaleY,
+                            locWidth * scaleX,
+                            locHeight * scaleY);
                 } else {
-                    if(locTextureCoord.width !== 0 && locTextureCoord.height !== 0)
-                        context.drawImage(
-                            image,
-                            locTextureCoord.renderX,
-                            locTextureCoord.renderY,
-                            locTextureCoord.width,
-                            locTextureCoord.height,
-                                (t.tx + locX) * scaleX,
-                                (-t.ty + locY) * scaleY,
-                                locWidth * scaleX,
-                                locHeight * scaleY);
+                    context.drawImage(
+                        image,
+                        locTextureCoord.renderX,
+                        locTextureCoord.renderY,
+                        locTextureCoord.width,
+                        locTextureCoord.height,
+                            (t.tx + locX) * scaleX,
+                            (-t.ty + locY) * scaleY,
+                            locWidth * scaleX,
+                            locHeight * scaleY);
                 }
             } else {
                 curColor = node._displayedColor;
@@ -436,6 +434,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var context = ctx || cc._renderContext, node = this._node, locSprite = this._sprite;
 
         var locTextureCoord = locSprite._rendererCmd._textureCoord, alpha = locSprite._displayedOpacity / 255;
+
+        if(locTextureCoord.width === 0 || locTextureCoord.height === 0)
+            return;
         if (!locSprite._texture || !locTextureCoord.validRect || alpha === 0)
             return;
 
@@ -483,16 +484,15 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         //draw sprite
         var image = locSprite._texture.getHtmlElementObj();
-        if(locTextureCoord.width !== 0 && locTextureCoord.height !== 0)
-            context.drawImage(image,
-                locTextureCoord.renderX,
-                locTextureCoord.renderY,
-                locTextureCoord.width,
-                locTextureCoord.height,
-                flipXOffset, flipYOffset,
-                locDrawSizeCanvas.width,
-                locDrawSizeCanvas.height
-            );
+        context.drawImage(image,
+            locTextureCoord.renderX,
+            locTextureCoord.renderY,
+            locTextureCoord.width,
+            locTextureCoord.height,
+            flipXOffset, flipYOffset,
+            locDrawSizeCanvas.width,
+            locDrawSizeCanvas.height
+        );
 
         context.restore();
         cc.g_NumberOfDraws++;
@@ -739,16 +739,15 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var posX = 0 | ( -node._anchorPointInPoints.x), posY = 0 | ( -node._anchorPointInPoints.y);
         var locCacheCanvas = node._cacheCanvas, t = node._transformWorld;
         //direct draw image by canvas drawImage
-        if (locCacheCanvas) {
+        if (locCacheCanvas && locCacheCanvas.width !== 0 && locCacheCanvas.height !== 0) {
             context.save();
             //transform
             context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
             var locCanvasHeight = locCacheCanvas.height * scaleY;
 
-            if(locCacheCanvas.width !== 0 && locCacheCanvas.height !== 0)
-                context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
-                    posX, -(posY + locCanvasHeight), locCacheCanvas.width * scaleX, locCanvasHeight);
+            context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
+                posX, -(posY + locCanvasHeight), locCacheCanvas.width * scaleX, locCanvasHeight);
 
             context.restore();
         }
