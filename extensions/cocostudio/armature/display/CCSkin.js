@@ -285,5 +285,5 @@ ccs.Skin.create = function (fileName, rect) {
  * @deprecated since v3.1, please use new construction instead
  */
 ccs.Skin.createWithSpriteFrameName = function (spriteFrameName) {
-    return new ccs.Skin(spriteFrameName);
+    return new ccs.Skin("#" + spriteFrameName);
 };

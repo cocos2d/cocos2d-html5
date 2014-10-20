@@ -573,6 +573,7 @@ _p.enabled;
  * create a new menu
  * @deprecated  since v3.0, please use new cc.Menu(menuitem1, menuitem2, menuitem3) to create a new menu
  * @param {...cc.MenuItem|null} menuItems
+ * todo: need to use new
  * @return {cc.Menu}
  */
 cc.Menu.create = function (menuItems) {
