@@ -144,8 +144,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             locY = -node._offsetPosition.y - node._rect.height,
             locWidth = node._rect.width,
             locHeight = node._rect.height,
-            image,
-            curColor;
+            image, curColor, contentSize;
 
         var blendChange = (node._blendFuncStr !== "source"), alpha = (node._displayedOpacity / 255);
         /*if(cc.renderer.contextSession.globalAlpha !== alpha){
@@ -194,9 +193,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                     );
                 }
             } else {
-                curColor = node._displayedColor;
-                context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + node._displayedOpacity + ")";
-                context.fillRect(locX, locY, locWidth, locHeight);
+                contentSize = node._contentSize;
+                if(contentSize.width !== 0 && contentSize.height !== 0) {
+                    curColor = node._displayedColor;
+                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + node._displayedOpacity + ")";
+                    context.fillRect(locX * scaleX, locY * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
+                }
             }
             context.restore();
         } else {
@@ -231,9 +233,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                             locHeight * scaleY);
                 }
             } else {
-                curColor = node._displayedColor;
-                context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + node._displayedOpacity + ")";
-                context.fillRect(t.tx * scaleX + locX, -t.ty * scaleY + locY, locWidth, locHeight);
+                contentSize = node._contentSize;
+                if(contentSize.width !== 0 && contentSize.height !== 0) {
+                    curColor = node._displayedColor;
+                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + node._displayedOpacity + ")";
+                    context.fillRect(locX * scaleX, locY * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
+                }
             }
             if (blendChange)
                 context.restore();
