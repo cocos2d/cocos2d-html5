@@ -100,7 +100,7 @@ ccui.CSLoaderStatic = {
     MONO_COCOS2D_VERSION         : "cocos2dVersion"
 };
 
-ccs.CSLoader = {
+ccs.csLoader = {
 
     _recordJsonPath: true,
     _jsonPath: "",
@@ -112,31 +112,31 @@ ccs.CSLoader = {
         this._funcs = {};
         this._componentFuncs = {};
 
-        this._funcs[ccui.CSLoaderStatic.ClassName_Node] = ccs.CSLoader.loadSimpleNode.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_SubGraph] = ccs.CSLoader.loadSubGraph.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_Sprite] = ccs.CSLoader.loadSprite.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_Particle] = ccs.CSLoader.loadParticle.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_TMXTiledMap] = ccs.CSLoader.loadTMXTiledMap.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_LabelAtlas] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_LabelBMFont] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_Panel] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_Button] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_CheckBox] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_ImageView] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_TextAtlas] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_TextBMFont] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_Text] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_LoadingBar] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_TextField] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_Slider] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_Layout] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_ScrollView] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_ListView] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_PageView] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_Widget] = ccs.CSLoader.loadWidget.bind(this);
-        this._funcs[ccui.CSLoaderStatic.ClassName_Label] = ccs.CSLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Node] = ccs.csLoader.loadSimpleNode.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_SubGraph] = ccs.csLoader.loadSubGraph.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Sprite] = ccs.csLoader.loadSprite.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Particle] = ccs.csLoader.loadParticle.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_TMXTiledMap] = ccs.csLoader.loadTMXTiledMap.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_LabelAtlas] = ccs.csLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_LabelBMFont] = ccs.csLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Panel] = ccs.csLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Button] = ccs.csLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_CheckBox] = ccs.csLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_ImageView] = ccs.csLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_TextAtlas] = ccs.csLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_TextBMFont] = ccs.csLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Text] = ccs.csLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_LoadingBar] = ccs.csLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_TextField] = ccs.csLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Slider] = ccs.csLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Layout] = ccs.csLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_ScrollView] = ccs.csLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_ListView] = ccs.csLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_PageView] = ccs.csLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Widget] = ccs.csLoader.loadWidget.bind(this);
+        this._funcs[ccui.CSLoaderStatic.ClassName_Label] = ccs.csLoader.loadWidget.bind(this);
 
-        this._componentFuncs[ccui.CSLoaderStatic.ClassName_ComAudio] =  ccs.CSLoader.loadComAudio.bind(this);
+        this._componentFuncs[ccui.CSLoaderStatic.ClassName_ComAudio] =  ccs.csLoader.loadComAudio.bind(this);
 
     },
 
@@ -146,7 +146,7 @@ ccs.CSLoader = {
         var suffix = path.substr(pos + 1, path.length);
         //cc.log("suffix = %s", suffix);
 
-        var load = ccs.CSLoader;
+        var load = ccs.csLoader;
 
         if (suffix == "csb")
         {
@@ -1250,4 +1250,4 @@ ccs.CSLoader = {
      */
 
 };
-ccs.CSLoader.init();
+ccs.csLoader.init();
