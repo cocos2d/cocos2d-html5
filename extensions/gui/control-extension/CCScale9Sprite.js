@@ -198,12 +198,17 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     _cacheScale9Sprite: function(){
         if(!this._scale9Image)
             return;
-        var size = this._contentSize, locCanvas = this._cacheCanvas;
+
+        var locScaleFactor = cc.contentScaleFactor();
+        var size = this._contentSize;
+        var sizeInPixels = cc.size(size.width * locScaleFactor, size.height * locScaleFactor);
+
+        var locCanvas = this._cacheCanvas;
         var contentSizeChanged = false;
-        if(locCanvas.width != size.width || locCanvas.height != size.height){
-            locCanvas.width = size.width;
-            locCanvas.height = size.height;
-            this._cacheContext.translate(0, size.height);
+        if(locCanvas.width != sizeInPixels.width || locCanvas.height != sizeInPixels.height){
+            locCanvas.width = sizeInPixels.width;
+            locCanvas.height = sizeInPixels.height;
+            this._cacheContext.translate(0, sizeInPixels.height);
             contentSizeChanged = true;
         }
 
@@ -212,7 +217,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         this._scale9Image.visit();
 
         //draw to cache canvas
-        this._cacheContext.clearRect(0, 0, size.width, -size.height);
+        this._cacheContext.clearRect(0, 0, sizeInPixels.width, -sizeInPixels.height);
         cc.renderer._renderingToCacheCanvas(this._cacheContext);
 
         if(contentSizeChanged)

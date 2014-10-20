@@ -104,10 +104,7 @@ ccs.listViewReader = /** @lends ccs.ListViewReader# */{
 
 		var imageFileNameDic = options["backGroundImageData"];
         var imageFileNameType = imageFileNameDic["resourceType"];
-		if (imageFileNameType == 1)
-		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic["plistFile"]);
-		}
+
         var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic["path"], imageFileNameType);
         listView.setBackGroundImage(imageFileName, imageFileNameType);
 

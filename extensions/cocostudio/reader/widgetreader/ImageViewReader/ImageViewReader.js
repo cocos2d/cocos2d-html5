@@ -101,10 +101,7 @@ ccs.imageViewReader = /** @lends ccs.ImageViewReader# */{
 
         var imageFileNameDic = options["fileNameData"];
         var imageFileNameType = imageFileNameDic["resourceType"];
-		if (imageFileNameType == 1)
-		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic["plistFile"]);
-		}
+
         var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic["path"], imageFileNameType);
         imageView.loadTexture(imageFileName, imageFileNameType);
 

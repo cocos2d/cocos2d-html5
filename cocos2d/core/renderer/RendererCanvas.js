@@ -131,6 +131,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var context = ctx || cc._renderContext,
             locTextureCoord = self._textureCoord;
 
+        if(node._texture && (locTextureCoord.width === 0 || locTextureCoord.height === 0))
+            return;
         if (!locTextureCoord.validRect && node._displayedOpacity === 0)
             return;  //draw nothing
 
@@ -432,6 +434,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var context = ctx || cc._renderContext, node = this._node, locSprite = this._sprite;
 
         var locTextureCoord = locSprite._rendererCmd._textureCoord, alpha = locSprite._displayedOpacity / 255;
+
+        if(locTextureCoord.width === 0 || locTextureCoord.height === 0)
+            return;
         if (!locSprite._texture || !locTextureCoord.validRect || alpha === 0)
             return;
 
@@ -734,12 +739,13 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var posX = 0 | ( -node._anchorPointInPoints.x), posY = 0 | ( -node._anchorPointInPoints.y);
         var locCacheCanvas = node._cacheCanvas, t = node._transformWorld;
         //direct draw image by canvas drawImage
-        if (locCacheCanvas) {
+        if (locCacheCanvas && locCacheCanvas.width !== 0 && locCacheCanvas.height !== 0) {
             context.save();
             //transform
             context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
             var locCanvasHeight = locCacheCanvas.height * scaleY;
+
             context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
                 posX, -(posY + locCanvasHeight), locCacheCanvas.width * scaleX, locCanvasHeight);
 

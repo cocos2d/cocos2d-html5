@@ -104,7 +104,7 @@ ccs.csLoader = {
 
     _recordJsonPath: true,
     _jsonPath: "",
-    _recordProtocolBuffersPath: true,
+    _recordProtocolBuffersPath: false,
     _protocolBuffersPath: "",
     _monoCocos2dxVersion: "",
 
@@ -261,10 +261,6 @@ ccs.csLoader = {
         return this.nodeFromProtocolBuffersFile(filename);
     },
     nodeFromProtocolBuffersFile: function(fileName){
-        var path = fileName;
-        var pos = path.lastIndexOf('/');
-        //    _protocolBuffersPath = path.substr(0, pos + 1);
-    
         var binary = cc.loader.getRes(fileName);
 
         var buffer = PBP.CSParseBinary.decode(binary);
@@ -300,11 +296,11 @@ ccs.csLoader = {
     nodeFromProtocolBuffers: function(nodetree){
         var node = null;
     
-        var classname = nodetree.classname;
+        var classname = nodetree["classname"];
         //cc.log("classname = %s", classname);
     
         var curOptions;
-    
+
         if (classname == "Node")
         {
             node = new ccs.Node();
@@ -380,9 +376,9 @@ ccs.csLoader = {
         {
             var guiClassName = this.getGUIClassName(classname);
             var readerName = guiClassName;
-            readerName.append("Reader");
+            readerName += "Reader";
     
-            var widget = cc.objectFactory.createObject(guiClassName);
+            var widget = ccs.objectFactory.createObject(guiClassName);
     
             var reader = ccs.objectFactory.createObject(readerName);
             reader.setPropsFromProtocolBuffers(widget, nodetree);
@@ -390,7 +386,7 @@ ccs.csLoader = {
             var widgetOptions = nodetree["widgetOptions"];
             var actionTag = widgetOptions["actionTag"];
             widget.setUserObject(new ccs.ActionTimelineData(actionTag));
-    
+
             node = widget;
         }
         else if (this.isCustomWidget(classname))
@@ -407,14 +403,8 @@ ccs.csLoader = {
                 widgetPropertiesReader.setPropsForAllWidgetFromProtocolBuffers(reader, widget, nodetree);
     
                 // 2nd., custom widget parse with custom reader
-                var widgetOptions = nodetree.widgetOptions;
-                var customJsonDict = widgetOptions.customProperty;
-//                var customJsonDict;
-//                customJsonDict.ParsecustomProperty;
-//                if (customJsonDict.HasParseError())
-//                {
-//                    cc.log("GetParseError %s\n", customJsonDict.GetParseError());
-//                }
+                var widgetOptions = nodetree["widgetOptions"];
+                var customJsonDict = widgetOptions["customProperty"];
     
                 widgetPropertiesReader.setPropsForAllCustomWidgetFromJsonDictionary(classname, widget, customJsonDict);
             }
@@ -430,18 +420,20 @@ ccs.csLoader = {
     
             node = widget;
         }
-    
-        // component
-        var componentSize = curOptions["componentOptions"].length;
-        for (var i = 0; i < componentSize; ++i)
-        {
-    
-            var componentOptions = curOptions["componentOptions"][i];
-            var component = this.createComponentFromProtocolBuffers(componentOptions);
-    
-            if (component)
+
+        if(curOptions){
+            // component
+            var componentSize = curOptions["componentOptions"].length;
+            for (var i = 0; i < componentSize; ++i)
             {
-                node.addComponent(component);
+
+                var componentOptions = curOptions["componentOptions"][i];
+                var component = this.createComponentFromProtocolBuffers(componentOptions);
+
+                if (component)
+                {
+                    node.addComponent(component);
+                }
             }
         }
     
@@ -767,7 +759,7 @@ ccs.csLoader = {
         if (this.isWidget(classname))
         {
             var readerName = this.getGUIClassName(classname);
-            readerName.append("Reader");
+            readerName += "Reader";
     
             var guiClassName = this.getGUIClassName(classname);
             widget = ccs.objectFactory.createObject(guiClassName);
@@ -1054,7 +1046,6 @@ ccs.csLoader = {
     	return node;
     },
     setPropsForProjectNodeFromProtocolBuffers: function(node, projectNodeOptions, nodeOptions){
-        var options = projectNodeOptions;
         this.setPropsForNodeFromProtocolBuffers(node, nodeOptions);
     },
     setPropsForSimpleAudioFromProtocolBuffers: function(node, nodeOptions){
