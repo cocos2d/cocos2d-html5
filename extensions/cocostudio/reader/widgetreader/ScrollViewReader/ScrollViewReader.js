@@ -114,10 +114,7 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
 		var imageFileNameDic = options["backGroundImageData"];
         if(imageFileNameDic){
             var imageFileNameType = imageFileNameDic["resourceType"];
-            if (imageFileNameType == 1)
-            {
-                cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic["plistFile"]);
-            }
+
             var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic["path"], imageFileNameType);
             scrollView.setBackGroundImage(imageFileName, imageFileNameType);
         }

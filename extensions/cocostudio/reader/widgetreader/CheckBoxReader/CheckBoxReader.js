@@ -79,7 +79,7 @@ ccs.checkBoxReader = /** @lends ccs.CheckBoxReader# */{
         checkBox.loadTextureFrontCrossDisabled(frontCrossDisabledFileName, frontCrossDisabledType);
 
         if (options["selectedState"])
-            checkBox.setSelectedState(options["selectedState"]);
+            checkBox.setSelected(options["selectedState"]);
 
         ccs.widgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
     },
@@ -105,44 +105,32 @@ ccs.checkBoxReader = /** @lends ccs.CheckBoxReader# */{
         //load background selected image
         var  backGroundSelectedDic = options["backGroundBoxSelectedData"];
         var backGroundSelectedType = backGroundSelectedDic["resourceType"];
-		if (backGroundSelectedType == 1)
-		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + backGroundSelectedDic["plistFile"]);
-		}
+
         var backGroundSelectedTexturePath = ccs.widgetReader.getResourcePath(backGroundSelectedDic["path"], backGroundSelectedType);
         checkBox.loadTextureBackGroundSelected(backGroundSelectedTexturePath, backGroundSelectedType);
 
         //load frontCross image
         var  frontCrossDic = options["frontCrossData"];
         var frontCrossType = frontCrossDic["resourceType"];
-		if (frontCrossType == 1)
-		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + frontCrossDic["plistFile"]);
-		}
+
         var frontCrossFileName = ccs.widgetReader.getResourcePath(frontCrossDic["path"], frontCrossType);
         checkBox.loadTextureFrontCross(frontCrossFileName, frontCrossType);
 
         //load backGroundBoxDisabledData
         var  backGroundDisabledDic = options["backGroundBoxDisabledData"];
         var backGroundDisabledType = backGroundDisabledDic["resourceType"];
-		if (backGroundDisabledType == 1)
-		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + backGroundDisabledDic["plistFile"]);
-		}
+
         var backGroundDisabledFileName = ccs.widgetReader.getResourcePath(backGroundDisabledDic["path"], backGroundDisabledType);
         checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName, backGroundDisabledType);
 
         ///load frontCrossDisabledData
         var  frontCrossDisabledDic = options["frontCrossDisabledData"];
         var frontCrossDisabledType = frontCrossDisabledDic["resourceType"];
-		if (frontCrossDisabledType == 1)
-		{
-			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + frontCrossDisabledDic["plistFile"]);
-		}
+
         var frontCrossDisabledFileName = ccs.widgetReader.getResourcePath(frontCrossDisabledDic["path"], frontCrossDisabledType);
         checkBox.loadTextureFrontCrossDisabled(frontCrossDisabledFileName, frontCrossDisabledType);
 
-        checkBox.setSelectedState(options["selectedState"]);
+        checkBox.setSelected(options["selectedState"]);
 
 		var displaystate = true;
 		if(options["displaystate"]!==null)

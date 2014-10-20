@@ -240,10 +240,7 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
 		var imageFileNameDic = options["backGroundImageData"];
         if(imageFileNameDic){
             var imageFileNameType = imageFileNameDic["resourceType"];
-            if (imageFileNameType == 1)
-            {
-                cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + imageFileNameDic["plistFile"]);
-            }
+
             var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic["path"], imageFileNameType);
             panel.setBackGroundImage(imageFileName, imageFileNameType);
         }

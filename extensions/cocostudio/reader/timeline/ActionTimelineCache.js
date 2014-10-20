@@ -200,16 +200,7 @@ ccs.actionTimelineCache = {
         if(action){
             return action;
         }
-        //   int pos = path.find_last_of('/')
-        // _protocolBuffersPath = path.substr(0, pos + 1);
 
-//        var fullPath = FileUtils.getInstance().fullPathForFilename(fileName);
-//        var content = FileUtils.getInstance().getDataFromFile(fullPath);
-//        var gpbwp;//todo protobuf reader
-//        //    protocolbuffers.GUIProtocolBuffersProtobuf gpbwp;
-//        if (!gpbwp.ParseFromArray(content.getBytes(), content.getSize())){
-//            return null;
-//        }
         var binary = cc.loader.getRes(fileName);
         var buffer = PBP.CSParseBinary.decode(binary);
 
@@ -761,9 +752,6 @@ ccs.actionTimelineCache = {
             {
                 action.addTimeline(timeline);
             }
-    
-            //            protocolbuffers.TimeLine* timeLine = nodeAction.add_timelines();
-            //            convertTimelineProtocolBuffers(timeLine, timelineElement);
     
             timelineElement = timelineElement.NextSiblingElement();
         }

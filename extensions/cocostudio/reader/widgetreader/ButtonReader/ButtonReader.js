@@ -140,10 +140,7 @@ ccs.buttonReader = /** @lends ccs.buttonReader# */{
     
     		var normalDic = options["normalData"];
             var normalType = normalDic["resourceType"];
-    		if (normalType == 1)
-    		{
-    			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + normalDic["plistFile"]);
-    		}
+
             var normalTexturePath = ccs.widgetReader.getResourcePath(normalDic["path"], normalType);
             button.loadTextureNormal(normalTexturePath, normalType);
     
@@ -151,19 +148,14 @@ ccs.buttonReader = /** @lends ccs.buttonReader# */{
             var pressedDic = options["pressedData"];
             var pressedType = pressedDic["resourceType"];
     		if (pressedType == 1)
-    		{
-    			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + pressedDic["plistFile"]);
-    		}
+
             var pressedTexturePath = ccs.widgetReader.getResourcePath(pressedDic["path"], pressedType);
             button.loadTexturePressed(pressedTexturePath, pressedType);
     
     
             var disabledDic = options["disabledData"];
             var disabledType = disabledDic["resourceType"];
-    		if (disabledType == 1)
-    		{
-    			cc.spriteFrameCache.addSpriteFrames(protocolBuffersPath + disabledDic["plistFile"]);
-    		}
+
             var disabledTexturePath = ccs.widgetReader.getResourcePath(disabledDic["path"], disabledType);
             button.loadTextureDisabled(disabledTexturePath, disabledType);
     

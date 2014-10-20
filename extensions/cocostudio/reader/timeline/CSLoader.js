@@ -261,10 +261,6 @@ ccs.csLoader = {
         return this.nodeFromProtocolBuffersFile(filename);
     },
     nodeFromProtocolBuffersFile: function(fileName){
-        var path = fileName;
-        var pos = path.lastIndexOf('/');
-        //    _protocolBuffersPath = path.substr(0, pos + 1);
-    
         var binary = cc.loader.getRes(fileName);
 
         var buffer = PBP.CSParseBinary.decode(binary);
@@ -300,7 +296,7 @@ ccs.csLoader = {
     nodeFromProtocolBuffers: function(nodetree){
         var node = null;
     
-        var classname = nodetree.classname;
+        var classname = nodetree["classname"];
         //cc.log("classname = %s", classname);
     
         var curOptions;
@@ -407,14 +403,8 @@ ccs.csLoader = {
                 widgetPropertiesReader.setPropsForAllWidgetFromProtocolBuffers(reader, widget, nodetree);
     
                 // 2nd., custom widget parse with custom reader
-                var widgetOptions = nodetree.widgetOptions;
-                var customJsonDict = widgetOptions.customProperty;
-//                var customJsonDict;
-//                customJsonDict.ParsecustomProperty;
-//                if (customJsonDict.HasParseError())
-//                {
-//                    cc.log("GetParseError %s\n", customJsonDict.GetParseError());
-//                }
+                var widgetOptions = nodetree["widgetOptions"];
+                var customJsonDict = widgetOptions["customProperty"];
     
                 widgetPropertiesReader.setPropsForAllCustomWidgetFromJsonDictionary(classname, widget, customJsonDict);
             }
@@ -1054,7 +1044,6 @@ ccs.csLoader = {
     	return node;
     },
     setPropsForProjectNodeFromProtocolBuffers: function(node, projectNodeOptions, nodeOptions){
-        var options = projectNodeOptions;
         this.setPropsForNodeFromProtocolBuffers(node, nodeOptions);
     },
     setPropsForSimpleAudioFromProtocolBuffers: function(node, nodeOptions){
