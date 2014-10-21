@@ -57,11 +57,16 @@ module.exports = function(projectDir, projectJson, buildOpt){
         if(arr) ccJsList = ccJsList.concat(arr);
     }
 
+    var externalList = [];
     function getFileArrStr(jsList){
         var str = "";
         for(var i = 0, li = jsList.length; i < li; i++){
-            str += '                <file name="' + jsList[i] + '"/>'
-            if(i < li - 1) str += '\r\n';
+            if(/^external/.test(jsList[i]) && !/Plugin/.test(jsList[i])){
+                externalList.push(jsList[i]);
+            }else{
+                str += '                <file name="' + jsList[i] + '"/>';
+                if(i < li - 1) str += '\r\n';
+            }
         }
         return str;
     }
@@ -80,4 +85,5 @@ module.exports = function(projectDir, projectJson, buildOpt){
     buildContent = buildContent.replace(/%userJsList%/gi, getFileArrStr(userJsList));
     fs.writeFileSync(path.join(realPublishDir, "build.xml"), buildContent);
 
+    return externalList;
 };
