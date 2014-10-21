@@ -202,7 +202,7 @@ ccs.actionTimelineCache = {
         }
 
         var binary = cc.loader.getRes(fileName);
-        var buffer = PBP.CSParseBinary.decode(binary);
+        var buffer = PBP["CSParseBinary"]["decode"](binary);
 
         var actionProtobuf = buffer["action"];
         action = new ccs.ActionTimeline();

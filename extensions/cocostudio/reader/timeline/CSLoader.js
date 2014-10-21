@@ -263,14 +263,14 @@ ccs.csLoader = {
     nodeFromProtocolBuffersFile: function(fileName){
         var binary = cc.loader.getRes(fileName);
 
-        var buffer = PBP.CSParseBinary.decode(binary);
+        var buffer = PBP["CSParseBinary"]["decode"](binary);
     
         // decode plist
-        var textureSize = buffer.textures.length;
+        var textureSize = buffer["textures"].length;
         //cc.log("textureSize = %d", textureSize);
         for (var i = 0; i < textureSize; ++i)
         {
-            var plist = buffer.textures[i];
+            var plist = buffer["textures"][i];
             //cc.log("plist = %s", plist);
             var png = buffer["texturesPng"][i];
             //cc.log("png = %s", png);
@@ -586,27 +586,27 @@ ccs.csLoader = {
     },
 
     initNode: function(node, json){
-        var width         = json[ccui.CSLoaderStatic.WIDTH] || 0;
-        var height        = json[ccui.CSLoaderStatic.HEIGHT] || 0;
-        var x             = json[ccui.CSLoaderStatic.X] || 0;
-        var y             = json[ccui.CSLoaderStatic.Y] || 0;
-        var scalex        = json[ccui.CSLoaderStatic.SCALE_X] || 1;
-        var scaley        = json[ccui.CSLoaderStatic.SCALE_Y] || 1;
-        var rotation      = json[ccui.CSLoaderStatic.ROTATION] || 0;
-        var rotationSkewX = json[ccui.CSLoaderStatic.ROTATION_SKEW_X] || 0;
-        var rotationSkewY = json[ccui.CSLoaderStatic.ROTATION_SKEW_Y] || 0;
-        var skewx         = json[ccui.CSLoaderStatic.SKEW_X] || 0;
-        var skewy         = json[ccui.CSLoaderStatic.SKEW_Y] || 0;
-        var anchorx       = json[ccui.CSLoaderStatic.ANCHOR_X] || 0.5;
-        var anchory       = json[ccui.CSLoaderStatic.ANCHOR_Y] || 0.5;
-        var alpha       = json[ccui.CSLoaderStatic.ALPHA] || 255;
-        var red         = json[ccui.CSLoaderStatic.RED] || 255;
-        var green       = json[ccui.CSLoaderStatic.GREEN] || 255;
-        var blue        = json[ccui.CSLoaderStatic.BLUE] || 255;
-        var zorder		    = json[ccui.CSLoaderStatic.ZORDER] || 0;
-        var tag             = json[ccui.CSLoaderStatic.TAG] || 0;
-        var actionTag       = json[ccui.CSLoaderStatic.ACTION_TAG] || 0;
-        var visible        = json[ccui.CSLoaderStatic.VISIBLE] || true;
+        var width         = json[ccui.CSLoaderStatic.WIDTH]          !=null ? json[ccui.CSLoaderStatic.WIDTH] : 0;
+        var height        = json[ccui.CSLoaderStatic.HEIGHT]         !=null ? json[ccui.CSLoaderStatic.HEIGHT] : 0;
+        var x             = json[ccui.CSLoaderStatic.X]              !=null ? json[ccui.CSLoaderStatic.X] : 0;
+        var y             = json[ccui.CSLoaderStatic.Y]              !=null ? json[ccui.CSLoaderStatic.Y] : 0;
+        var scalex        = json[ccui.CSLoaderStatic.SCALE_X]        !=null ? json[ccui.CSLoaderStatic.SCALE_X] : 1;
+        var scaley        = json[ccui.CSLoaderStatic.SCALE_Y]        !=null ? json[ccui.CSLoaderStatic.SCALE_Y] : 1;
+        var rotation      = json[ccui.CSLoaderStatic.ROTATION]       !=null ? json[ccui.CSLoaderStatic.ROTATION] : 0;
+        var rotationSkewX = json[ccui.CSLoaderStatic.ROTATION_SKEW_X]!=null ? json[ccui.CSLoaderStatic.ROTATION_SKEW_X] : 0;
+        var rotationSkewY = json[ccui.CSLoaderStatic.ROTATION_SKEW_Y]!=null ? json[ccui.CSLoaderStatic.ROTATION_SKEW_Y] : 0;
+        var skewx         = json[ccui.CSLoaderStatic.SKEW_X]         !=null ? json[ccui.CSLoaderStatic.SKEW_X] : 0;
+        var skewy         = json[ccui.CSLoaderStatic.SKEW_Y]         !=null ? json[ccui.CSLoaderStatic.SKEW_Y] : 0;
+        var anchorx       = json[ccui.CSLoaderStatic.ANCHOR_X]       !=null ? json[ccui.CSLoaderStatic.ANCHOR_X] : 0.5;
+        var anchory       = json[ccui.CSLoaderStatic.ANCHOR_Y]       !=null ? json[ccui.CSLoaderStatic.ANCHOR_Y] : 0.5;
+        var alpha         = json[ccui.CSLoaderStatic.ALPHA]          !=null ? json[ccui.CSLoaderStatic.ALPHA] : 255;
+        var red           = json[ccui.CSLoaderStatic.RED]            !=null ? json[ccui.CSLoaderStatic.RED] : 255;
+        var green         = json[ccui.CSLoaderStatic.GREEN]          !=null ? json[ccui.CSLoaderStatic.GREEN] : 255;
+        var blue          = json[ccui.CSLoaderStatic.BLUE]           !=null ? json[ccui.CSLoaderStatic.BLUE] : 255;
+        var zorder        = json[ccui.CSLoaderStatic.ZORDER]         !=null ? json[ccui.CSLoaderStatic.ZORDER] : 0;
+        var tag           = json[ccui.CSLoaderStatic.TAG]            !=null ? json[ccui.CSLoaderStatic.TAG] : 0;
+        var actionTag     = json[ccui.CSLoaderStatic.ACTION_TAG]     !=null ? json[ccui.CSLoaderStatic.ACTION_TAG] : 0;
+        var visible       = json[ccui.CSLoaderStatic.VISIBLE]        !=null ? json[ccui.CSLoaderStatic.VISIBLE] : true;
     
         if(x != 0 || y != 0)
             node.setPosition(cc.p(x, y));

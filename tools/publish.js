@@ -21,7 +21,7 @@ var buildOpt = {
 
 if(!fs.existsSync(realPublishDir)) core4cc.mkdirSyncRecursive(realPublishDir);
 
-require("./genBuildXml")(projectDir, projectJson, buildOpt);
+var externalList = require("./genBuildXml")(projectDir, projectJson, buildOpt);
 
 var outputJsPath = path.join(realPublishDir, buildOpt.outputFileName);
 if(fs.existsSync(outputJsPath)) fs.unlinkSync(outputJsPath);
@@ -52,8 +52,21 @@ exec("cd " + realPublishDir + " && ant", function(err, data, info){
     core4cc.copyFiles(path.join(projectDir, "res"), publishResDir);
 
     var indexContent = fs.readFileSync(path.join(projectDir, "index.html")).toString();
-    indexContent = indexContent.replace(/<script\s+src\s*=\s*("|')[^"']*CCBoot\.js("|')\s*><\/script>/g, "");
+    var externalScript = "";
+    externalList.forEach(function(external){
+        externalScript += "<script src=\"" + path.join("../../", engineDir, external) + "\"></script>\n";
+    });
+    indexContent = indexContent.replace(/<script\s+src\s*=\s*("|')[^"']*CCBoot\.js("|')\s*><\/script>/g, externalScript);
     indexContent = indexContent.replace(/"main\.js"\s*/, '"' + buildOpt.outputFileName + '"');
+
+    externalScript = "";
+    [
+        "external/pluginx/platform/facebook_sdk.js",
+        "external/pluginx/platform/facebook.js"
+    ].forEach(function(external){
+        externalScript += "\n<script src=\"" + path.join("../../", engineDir, external) + "\"></script>";
+    });
+    indexContent += externalScript;
     fs.writeFileSync(path.join(realPublishDir, "index.html"), indexContent);
     console.log("Finished!")
 });

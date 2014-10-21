@@ -23,8 +23,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 var PBP;
-if(CSParseBinary && dcodeIO && dcodeIO.ProtoBuf){
-    PBP = dcodeIO.ProtoBuf.loadProto(CSParseBinary).build().protocolbuffers;
+if(CSParseBinary && window["dcodeIO"] && window["dcodeIO"]["ProtoBuf"]){
+    PBP = dcodeIO["ProtoBuf"]["loadProto"](CSParseBinary)["build"]()["protocolbuffers"];
 }else{
     PBP = null;
 }
