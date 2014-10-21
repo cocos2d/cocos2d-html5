@@ -179,6 +179,7 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
 
         widget.setCascadeColorEnabled(true);
         widget.setCascadeOpacityEnabled(true);
+        widget.setAnchorPoint(cc.p(0, 0));
 
         widget.setUnifySizeEnabled(true);
 
@@ -216,11 +217,7 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
 
         widget.setScaleX(options["scaleX"]!==null ? options["scaleX"] : 1);
 
-
         widget.setScaleY(options["scaleY"]!==null ? options["scaleY"] : 1);
-
-
-//        widget.setRotation(options.has_rotation ? options.rotation : 0.0);
 
 		widget.setRotationX(options["rotationSkewX"]!==null ? options["rotationSkewX"] : 0.0);
 
