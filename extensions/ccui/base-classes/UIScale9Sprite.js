@@ -290,16 +290,14 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         return this._preferredSize.height;
     },
     setPreferredSize: function (preferredSize) {
+        this.setContentSize(preferredSize);
+        this._preferredSize = preferredSize;
 
         if (this._positionsAreDirty) {
             this._updatePositions();
             this._positionsAreDirty = false;
             this._scale9Dirty = true;
         }
-
-
-        this.setContentSize(preferredSize);
-        this._preferredSize = preferredSize;
     },
     _setPreferredWidth: function (value) {
         this._setWidth(value);
