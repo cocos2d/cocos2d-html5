@@ -263,14 +263,14 @@ ccs.csLoader = {
     nodeFromProtocolBuffersFile: function(fileName){
         var binary = cc.loader.getRes(fileName);
 
-        var buffer = PBP.CSParseBinary.decode(binary);
+        var buffer = PBP["CSParseBinary"]["decode"](binary);
     
         // decode plist
-        var textureSize = buffer.textures.length;
+        var textureSize = buffer["textures"].length;
         //cc.log("textureSize = %d", textureSize);
         for (var i = 0; i < textureSize; ++i)
         {
-            var plist = buffer.textures[i];
+            var plist = buffer["textures"][i];
             //cc.log("plist = %s", plist);
             var png = buffer["texturesPng"][i];
             //cc.log("png = %s", png);
