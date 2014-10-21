@@ -196,7 +196,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 contentSize = node._contentSize;
                 if(contentSize.width !== 0 && contentSize.height !== 0) {
                     curColor = node._displayedColor;
-                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + node._displayedOpacity + ")";
+                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + (node._displayedOpacity/255).toFixed(4) + ")";
                     context.fillRect(locX * scaleX, locY * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
                 }
             }
@@ -236,8 +236,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 contentSize = node._contentSize;
                 if(contentSize.width !== 0 && contentSize.height !== 0) {
                     curColor = node._displayedColor;
-                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + node._displayedOpacity + ")";
-                    context.fillRect(locX * scaleX, locY * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
+                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + (node._displayedOpacity/255).toFixed(4) + ")";
+                    context.fillRect((t.tx + locX) * scaleX, (-t.ty + locY) * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
                 }
             }
             if (blendChange)
