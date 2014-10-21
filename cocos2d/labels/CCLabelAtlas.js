@@ -376,6 +376,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 
 // Override properties
 cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
+cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
 
 // Extended properties
 /** @expose */
