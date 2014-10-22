@@ -1294,8 +1294,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
      */
     addChild: function (child, localZOrder, tag) {
-        var child = child;
-        var localZOrder = localZOrder === undefined ? child._localZOrder : localZOrder;
+        localZOrder = localZOrder === undefined ? child._localZOrder : localZOrder;
         var name, setTag = false;
         if(cc.isUndefined(tag)){
             tag = undefined;
