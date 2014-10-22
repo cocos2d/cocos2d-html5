@@ -43,7 +43,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
      */
     ctor: function(){
         cc.Node.prototype.ctor.call(this);
-       this._protectedChildren = [];
+        this._protectedChildren = [];
     },
 
     /**

@@ -146,7 +146,7 @@ ccui.RichElementImage = ccui.RichElement.extend(/** @lends ccui.RichElementImage
         this._textureRect = cc.rect(0, 0, 0, 0);
         this._textureType = 0;
 
-        filePath && this.init(tag, color, opacity, filePath);
+        filePath !== undefined && this.init(tag, color, opacity, filePath);
     },
 
     /**
@@ -196,7 +196,7 @@ ccui.RichElementCustomNode = ccui.RichElement.extend(/** @lends ccui.RichElement
         this._type = ccui.RichElement.CUSTOM;
         this._customNode = null;
 
-        customNode && this.init(tag, color, opacity, customNode);
+        customNode !== undefined && this.init(tag, color, opacity, customNode);
     },
 
     /**

@@ -46,7 +46,7 @@ ccui.Margin = ccui.Class.extend(/** @lends ccui.Margin# */{
      * @param {Number} [bottom]
      */
     ctor: function (margin, top, right, bottom) {
-        if (margin && top === undefined) {
+        if (margin !== undefined && top === undefined) {
             this.left = margin.left;
             this.top = margin.top;
             this.right = margin.right;
