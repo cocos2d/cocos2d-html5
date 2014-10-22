@@ -348,7 +348,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         //cc._renderContext = this._cacheContext;
         //cc.view._setScaleXYForRenderTexture();
 
-        cc.renderer._isCacheToCanvasOn = true;
+        cc.renderer._turnToCacheMode(this.__instanceId);
 
         /*// Save the current matrix
          cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
@@ -358,7 +358,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     _beginForWebGL: function () {
-        cc.renderer._isCacheToBufferOn = true;
+        cc.renderer._turnToCacheMode(this.__instanceId);
 
         // Save the current matrix
         cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
@@ -495,7 +495,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         //cc._renderContext = cc._mainRenderContextBackup;
         //cc.view._resetScale();
 
-        cc.renderer._renderingToCacheCanvas(this._cacheContext);
+        cc.renderer._renderingToCacheCanvas(this._cacheContext, this.__instanceId);
 
         //TODO
         /*//restore viewport
@@ -507,7 +507,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     _endForWebGL: function () {
-        cc.renderer._renderingToBuffer();
+        cc.renderer._renderingToBuffer(this.__instanceId);
 
         var gl = cc._renderContext;
         var director = cc.director;

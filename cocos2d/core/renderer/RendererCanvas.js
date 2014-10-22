@@ -29,8 +29,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         _renderCmds: [],                                     //save renderer commands
 
         _isCacheToCanvasOn: false,                          //a switch that whether cache the rendererCmd to cacheToCanvasCmds
-        _cacheToCanvasCmds: [],                              // an array saves the renderer commands need for cache to other canvas
+        _cacheToCanvasCmds: {},                              // an array saves the renderer commands need for cache to other canvas
         //contextSession: { globalAlpha:1 },
+        _cacheInstanceIds:[],
+        _currentID: 0,
 
         /**
          * drawing all renderer command to context (default is cc._renderContext)
@@ -51,16 +53,37 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         /**
          * drawing all renderer command to cache canvas' context
          * @param {CanvasRenderingContext2D} ctx
+         * @param {Number} [instanceID]
          */
-        _renderingToCacheCanvas: function (ctx) {
-            var locCmds = this._cacheToCanvasCmds, i, len;
+        _renderingToCacheCanvas: function (ctx, instanceID) {
             if (!ctx)
                 cc.log("The context of RenderTexture is invalid.");
+
+            instanceID = instanceID || this._currentID;
+            var locCmds = this._cacheToCanvasCmds[instanceID], i, len;
             for (i = 0, len = locCmds.length; i < len; i++) {
                 locCmds[i].rendering(ctx, 1, 1);
             }
-
             locCmds.length = 0;
+            var locIDs = this._cacheInstanceIds;
+            delete this._cacheToCanvasCmds[instanceID];
+            cc.arrayRemoveObject(locIDs, instanceID);
+
+            if (locIDs.length === 0)
+                this._isCacheToCanvasOn = false;
+            else
+                this._currentID = locIDs[locIDs.length - 1];
+        },
+
+        _turnToCacheMode: function(renderTextureID){
+            this._isCacheToCanvasOn = true;
+            renderTextureID = renderTextureID || 0;
+            this._cacheToCanvasCmds[renderTextureID] = [];
+            this._cacheInstanceIds.push(renderTextureID);
+            this._currentID = renderTextureID;
+        },
+
+        _turnToNormalMode: function(){
             this._isCacheToCanvasOn = false;
         },
 
@@ -101,8 +124,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         pushRenderCommand: function (cmd) {
             if (this._isCacheToCanvasOn) {
-                if (this._cacheToCanvasCmds.indexOf(cmd) === -1)
-                    this._cacheToCanvasCmds.push(cmd);
+                var currentId = this._currentID, locCmdBuffer = this._cacheToCanvasCmds;
+                var cmdList = locCmdBuffer[currentId];
+                if (cmdList.indexOf(cmd) === -1)
+                    cmdList.push(cmd);
             } else {
                 if (this._renderCmds.indexOf(cmd) === -1)
                     this._renderCmds.push(cmd);

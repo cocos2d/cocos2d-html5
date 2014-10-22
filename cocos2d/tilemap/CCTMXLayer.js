@@ -208,9 +208,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         this.transform();
 
         if (this._cacheDirty) {
-            var locCacheContext = this._cacheContext, locCanvas = this._cacheCanvas, locView = cc.view;
+            var locCacheContext = this._cacheContext, locCanvas = this._cacheCanvas, locView = cc.view,
+                instanceID = this.__instanceId, renderer = cc.renderer;
             //begin cache
-            cc.renderer._isCacheToCanvasOn = true;
+            renderer._turnToCacheMode(instanceID);
 
             this.sortAllChildren();
             for (i = 0, len =  locChildren.length; i < len; i++) {
@@ -221,7 +222,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             }
 
             //copy cached render cmd array to TMXLayer renderer
-            this._rendererCmd._copyRendererCmds(cc.renderer._cacheToCanvasCmds);
+            this._rendererCmd._copyRendererCmds(renderer._cacheToCanvasCmds[instanceID]);
 
             locCacheContext.save();
             locCacheContext.clearRect(0, 0, locCanvas.width, -locCanvas.height);
@@ -229,7 +230,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             locCacheContext.transform(t.a, t.c, t.b, t.d, t.tx * locView.getScaleX(), -t.ty * locView.getScaleY());
 
             //draw to cache canvas
-            cc.renderer._renderingToCacheCanvas(locCacheContext);
+            renderer._renderingToCacheCanvas(locCacheContext, instanceID);
             locCacheContext.restore();
             this._cacheDirty = false;
         }
