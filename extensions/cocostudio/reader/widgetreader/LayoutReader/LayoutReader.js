@@ -256,7 +256,7 @@ ccs.layoutReader = /** @lends ccs.LayoutReader# */{
 
             var sw = options["scale9Width"];
             var sh = options["scale9Height"];
-            if (sw && sh)
+            if (sw!=null && sh !==null)
             {
                 panel.setContentSize(cc.size(sw, sh));
             }

@@ -70,7 +70,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
         this._textAreaSize = cc.size(0, 0);
         ccui.Widget.prototype.ctor.call(this);
 
-        fontSize && this.init(textContent, fontName, fontSize);
+        fontSize !== undefined && this.init(textContent, fontName, fontSize);
 
     },
 
