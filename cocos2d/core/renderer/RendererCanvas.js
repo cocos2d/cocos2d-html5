@@ -185,10 +185,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             if (blendChange)
                 context.globalCompositeOperation = node._blendFuncStr;
 
-            if (node._flippedX)
+            if (node._flippedX){
+                locX = -locX - locWidth;
                 context.scale(-1, 1);
-            if (node._flippedY)
+            }
+            if (node._flippedY){
+                locY = node._offsetPosition.y;
                 context.scale(1, -1);
+            }
 
             if (node._texture) {
                 image = node._texture._htmlElementObj;
