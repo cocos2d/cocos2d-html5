@@ -736,11 +736,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     cc.TMXLayerRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-        this._renderingChildToCache(scaleX, scaleY);
-
-        var context = ctx || cc._renderContext;
         var node = this._node;
-        //context.globalAlpha = this._opacity / 255;
+        var alpha = node._displayedOpacity/255;
+        if(alpha <= 0)
+            return;
+
+        this._renderingChildToCache(scaleX, scaleY);
+        var context = ctx || cc._renderContext;
+        context.globalAlpha = alpha;
         var posX = 0 | ( -node._anchorPointInPoints.x), posY = 0 | ( -node._anchorPointInPoints.y);
         var locCacheCanvas = node._cacheCanvas, t = node._transformWorld;
         //direct draw image by canvas drawImage
@@ -751,9 +754,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
             var locCanvasHeight = locCacheCanvas.height * scaleY;
 
-            context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
-                posX, -(posY + locCanvasHeight), locCacheCanvas.width * scaleX, locCanvasHeight);
-
+            if(node.layerOrientation === cc.TMX_ORIENTATION_HEX){
+                var halfTileSize = node._mapTileSize.height * 0.5 * scaleY;
+                context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
+                    posX, -(posY + locCanvasHeight) + halfTileSize, locCacheCanvas.width * scaleX, locCanvasHeight);
+            } else {
+                context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
+                    posX, -(posY + locCanvasHeight), locCacheCanvas.width * scaleX, locCanvasHeight);
+            }
             context.restore();
         }
         cc.g_NumberOfDraws++;
