@@ -119,11 +119,9 @@ ccs.listViewReader = /** @lends ccs.ListViewReader# */{
 
             var sw = options["scale9width"];
             var sh = options["scale9height"];
-            if (sw && sh)
+            if (sw!=null && sh!=null)
             {
-                var swf = options["scale9width"];
-                var shf = options["scale9height"];
-                listView.setContentSize(cc.size(swf, shf));
+                listView.setContentSize(cc.size(sw, sh));
             }
         }
 

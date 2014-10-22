@@ -99,7 +99,7 @@ ccs.labelReader = /** @lends ccs.LabelReader# */{
 
         var aw = options["areaWidth"];
         var ah = options["areaHeight"];
-        if (aw && ah)
+        if (aw !== null && ah !== null)
         {
             var size = cc.size(aw, ah);
             label.setTextAreaSize(size);

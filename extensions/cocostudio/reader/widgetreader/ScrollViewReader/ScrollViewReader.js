@@ -39,11 +39,11 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
         ccs.layoutReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var scrollView = widget;
-        var innerWidth = options["innerWidth"] || 200;
-        var innerHeight = options["innerHeight"] || 200;
+        var innerWidth = options["innerWidth"]!=null ? options["innerWidth"] : 200;
+        var innerHeight = options["innerHeight"]!=null ? options["innerHeight"] : 200;
         scrollView.setInnerContainerSize(cc.size(innerWidth, innerHeight));
 
-        var direction = options["direction"] || 1;
+        var direction = options["direction"]!=null ? options["direction"] : 1;
         scrollView.setDirection(direction);
         scrollView.setBounceEnabled(options["bounceEnable"]);
 
@@ -128,7 +128,7 @@ ccs.scrollViewReader = /** @lends ccs.ScrollViewReader# */{
             scrollView.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
             var sw = options["scale9Width"];
             var sh = options["scale9Height"];
-            if (sw && sh)
+            if (sw!=null && sh!=null)
             {
                 scrollView.setContentSize(cc.size(sw, sh));
             }
