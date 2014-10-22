@@ -154,7 +154,7 @@ ccs.ActionTimeline = cc.Action.extend({
         startIndex = num[0];
         endIndex = num[1] || this._duration;
         currentFrameIndex = num[2] || startIndex;
-        loop = bool || true;
+        loop = bool!=null ? bool : true;
 
         this._startFrame = startIndex;
         this._endFrame = endIndex;

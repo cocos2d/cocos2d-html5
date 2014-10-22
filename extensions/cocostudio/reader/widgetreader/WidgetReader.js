@@ -70,10 +70,10 @@ ccs.widgetReader = /** @lends ccs.widgetReader# */{
         var y = options["y"];
         widget.setPosition(x, y);
 
-        var sx = options["scaleX"] || 1;
+        var sx = options["scaleX"]!=null ? options["scaleX"] : 1;
         widget.setScaleX(sx);
 
-        var sy = options["scaleY"] || 1;
+        var sy = options["scaleY"]!=null ? options["scaleY"] : 1;
         widget.setScaleY(sy);
 
         var rt = options["rotation"] || 0;

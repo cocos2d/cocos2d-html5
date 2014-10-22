@@ -51,7 +51,7 @@ ccs.textFieldReader = /** @lends ccs.TextFieldReader# */{
             textField.setFontName(fn);
         var tsw = options["touchSizeWidth"];
         var tsh = options["touchSizeHeight"];
-        if(tsw && tsh)
+        if(tsw!=null && tsh!=null)
             textField.setTouchSize(tsw, tsh);
 
         var dw = options["width"];
@@ -73,7 +73,7 @@ ccs.textFieldReader = /** @lends ccs.TextFieldReader# */{
 
         var aw = options["areaWidth"];
         var ah = options["areaHeight"];
-        if(aw && ah){
+        if(aw!=null && ah!=null){
             var size = cc.size(aw, ah);
             textField.setTextAreaSize(size);
         }
