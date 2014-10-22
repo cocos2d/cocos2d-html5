@@ -1422,7 +1422,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter. <br/>
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
      * @function
-     * @param {Boolean | null } cleanup true if all running actions on all children nodes should be cleanup, false otherwise.
+     * @param {Boolean} [cleanup] true if all running actions on all children nodes should be cleanup, false otherwise.
      */
     removeAllChildren: function (cleanup) {
         // not using detachChild improves speed here
