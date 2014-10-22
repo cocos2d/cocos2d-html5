@@ -78,7 +78,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         ccui.Widget.prototype.ctor.call(this);
         this.setTouchEnabled(true);
 
-        texType && this.init(backGround, backGroundSelected,cross,backGroundDisabled,frontCrossDisabled,texType);
+        texType !== undefined && this.init(backGround, backGroundSelected,cross,backGroundDisabled,frontCrossDisabled,texType);
     },
 
     /**

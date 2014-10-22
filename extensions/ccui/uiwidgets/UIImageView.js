@@ -53,7 +53,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         this._imageTextureSize = cc.size(this._capInsets.width, this._capInsets.height);
         ccui.Widget.prototype.ctor.call(this);
 
-        texType && this.init(imageFileName, texType);
+        texType !== undefined && this.init(imageFileName, texType);
     },
 
     /**

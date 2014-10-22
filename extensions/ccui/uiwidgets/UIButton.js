@@ -104,7 +104,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         ccui.Widget.prototype.ctor.call(this);
         this.setTouchEnabled(true);
 
-        texType && this.init(normalImage, selectedImage, disableImage, texType);
+        texType !== undefined && this.init(normalImage, selectedImage, disableImage, texType);
     },
 
     /**
