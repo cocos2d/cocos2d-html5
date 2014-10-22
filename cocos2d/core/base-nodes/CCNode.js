@@ -2796,10 +2796,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             }
 
             // adjust anchorPoint
-            if(!this._flippedX)                 //TODO modify for new renderer
-                t.tx += Cos * -appX * sx + -Sin * appY * sy;
-            if(!this._flippedY)
-                t.ty -= Sin * -appX * sx + Cos * appY * sy;
+            t.tx += Cos * -appX * sx + -Sin * appY * sy;
+            t.ty -= Sin * -appX * sx + Cos * appY * sy;
 
             // if ignore anchorPoint
             if (_t._ignoreAnchorPointForPosition) {
