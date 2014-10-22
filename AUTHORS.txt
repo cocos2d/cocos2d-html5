@@ -174,6 +174,7 @@ musikov              @musikov       cc.ClippingNode bug fix
                                     Inverted ClippingNode with DrawNode as stencil bug fix under canvas render mode
                                     JumpTo bug with wrong _delta position bug fix
                                     cc.ProgressTimer bug fix
+                                    cc.Scale9Sprite bug fix
 
 Han XiaoLong         @kpkhxlgy0     cc.ParticleSytem bug fix
 
@@ -183,6 +184,7 @@ Xiaodong Liu         @tianxing113   cc.Spawn.create bug fix
                                     ccui.LoadingBar.setPercent crash bug fix
 
 Park Hyun Chen       @sincntx       Touch anywhere of screen to finish input when using cc.EditBox
+                                    ccui.TextBMFont bug fix
 
 Ninja Lau            @mutoo         A typo bug in UILayout fix
                                     One-loop CCArmatureAnimation can't finish when setSpeedScale is less than 1.0 bug fix
