@@ -164,11 +164,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
             //visit for canvas
             _t.sortAllChildren();
-            cc.renderer._isCacheToCanvasOn = true;
+            cc.renderer._turnToCacheMode(this.__instanceId);
             for (var i = 0, len = children.length; i < len; i++) {
                 children[i].visit(bakeContext);
             }
-            cc.renderer._renderingToCacheCanvas(bakeContext);
+            cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
             this._cacheDirty = false;
         }
     };
@@ -471,7 +471,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             bakeContext.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
             var child;
-            cc.renderer._isCacheToCanvasOn = true;
+            cc.renderer._turnToCacheMode(this.__instanceId);
             //visit for canvas
             if (len > 0) {
                 _t.sortAllChildren();
@@ -491,7 +491,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             } else
             if(_t._rendererCmd)
                 cc.renderer.pushRenderCommand(_t._rendererCmd);
-            cc.renderer._renderingToCacheCanvas(bakeContext);
+            cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
             this._cacheDirty = false;
         }
     };

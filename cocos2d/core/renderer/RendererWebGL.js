@@ -29,7 +29,9 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         _renderCmds: [],                                     //save renderer commands
 
         _isCacheToBufferOn: false,                          //a switch that whether cache the rendererCmd to cacheToCanvasCmds
-        _cacheToBufferCmds: [],                              // an array saves the renderer commands need for cache to other canvas
+        _cacheToBufferCmds: {},                              // an array saves the renderer commands need for cache to other canvas
+        _cacheInstanceIds:[],
+        _currentID: 0,
 
         /**
          * drawing all renderer command to context (default is cc._renderContext)
@@ -45,19 +47,37 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
             }
         },
 
+        _turnToCacheMode: function(renderTextureID){
+            this._isCacheToBufferOn = true;
+            renderTextureID = renderTextureID || 0;
+            this._cacheToBufferCmds[renderTextureID] = [];
+            this._cacheInstanceIds.push(renderTextureID);
+            this._currentID = renderTextureID;
+        },
+
+        _turnToNormalMode: function(){
+            this._isCacheToBufferOn = false;
+        },
+
         /**
          * drawing all renderer command to cache canvas' context
-         * @param {CanvasRenderingContext2D} ctx
+         * @param {Number} [renderTextureId]
          */
-        _renderingToBuffer: function (ctx) {
-            var locCmds = this._cacheToBufferCmds, i, len;
-            ctx = ctx || cc._renderContext;
+        _renderingToBuffer: function (renderTextureId) {
+            renderTextureId = renderTextureId || this._currentID;
+            var locCmds = this._cacheToBufferCmds[renderTextureId], i, len;
+            var ctx = cc._renderContext, locIDs = this._cacheInstanceIds;
             for (i = 0, len = locCmds.length; i < len; i++) {
                 locCmds[i].rendering(ctx);
             }
-
             locCmds.length = 0;
-            this._isCacheToBufferOn = false;
+            delete this._cacheToBufferCmds[renderTextureId];
+            cc.arrayRemoveObject(locIDs, renderTextureId);
+
+            if (locIDs.length === 0)
+                this._isCacheToBufferOn = false;
+            else
+                this._currentID = locIDs[locIDs.length - 1];
         },
 
         //reset renderer's flag
@@ -98,8 +118,10 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
 
         pushRenderCommand: function (cmd) {
             if (this._isCacheToBufferOn) {
-                if (this._cacheToBufferCmds.indexOf(cmd) === -1)
-                    this._cacheToBufferCmds.push(cmd);
+                var currentId = this._currentID, locCmdBuffer = this._cacheToBufferCmds;
+                var cmdList = locCmdBuffer[currentId];
+                if (cmdList.indexOf(cmd) === -1)
+                    cmdList.push(cmd);
             } else {
                 if (this._renderCmds.indexOf(cmd) === -1)
                     this._renderCmds.push(cmd);

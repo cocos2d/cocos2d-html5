@@ -213,12 +213,12 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         }
 
         //begin cache
-        cc.renderer._isCacheToCanvasOn = true;
+        cc.renderer._turnToCacheMode(this.__instanceId);
         this._scale9Image.visit();
 
         //draw to cache canvas
         this._cacheContext.clearRect(0, 0, size.width, -size.height);
-        cc.renderer._renderingToCacheCanvas(this._cacheContext);
+        cc.renderer._renderingToCacheCanvas(this._cacheContext, this.__instanceId);
 
         if(contentSizeChanged)
             this._cacheSprite.setTextureRect(cc.rect(0,0, size.width, size.height));
