@@ -158,10 +158,10 @@ plugin.extend('facebook', {
             permissions = [];
         }
         if (permissions.every(function (item) {
-            if (item != 'publish_actions')
+            if (item != 'public_profile')
                 return true;
         })) {
-            permissions.push("publish_actions");
+            permissions.push("public_profile");
         }
         var permissionsStr = permissions.join(',');
         FB.login(function (response) {
