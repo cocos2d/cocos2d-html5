@@ -1345,7 +1345,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
      * If the node orphan, then nothing happens.
      * @function
-     * @param {Boolean} cleanup true if all actions and callbacks on this node should be removed, false otherwise.
+     * @param {Boolean} [cleanup=true] true if all actions and callbacks on this node should be removed, false otherwise.
      * @see cc.Node#removeFromParentAndCleanup
      */
     removeFromParent: function (cleanup) {
@@ -1360,7 +1360,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Removes this node itself from its parent node.  <br/>
      * If the node orphan, then nothing happens.
      * @deprecated since v3.0, please use removeFromParent() instead
-     * @param {Boolean} cleanup true if all actions and callbacks on this node should be removed, false otherwise.
+     * @param {Boolean} [cleanup=true] true if all actions and callbacks on this node should be removed, false otherwise.
      */
     removeFromParentAndCleanup: function (cleanup) {
         cc.log(cc._LogInfos.Node_removeFromParentAndCleanup);
@@ -1374,7 +1374,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * to override this method </p>
      * @function
      * @param {cc.Node} child  The child node which will be removed.
-     * @param {Boolean|null} [cleanup=null]  true if all running actions and callbacks on the child node will be cleanup, false otherwise.
+     * @param {Boolean} [cleanup=true]  true if all running actions and callbacks on the child node will be cleanup, false otherwise.
      */
     removeChild: function (child, cleanup) {
         // explicit nil handling
@@ -1395,7 +1395,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
      * @function
      * @param {Number} tag An integer number that identifies a child node
-     * @param {Boolean} cleanup true if all running actions and callbacks on the child node will be cleanup, false otherwise.
+     * @param {Boolean} [cleanup=true] true if all running actions and callbacks on the child node will be cleanup, false otherwise.
      * @see cc.Node#removeChildByTag
      */
     removeChildByTag: function (tag, cleanup) {
@@ -1411,7 +1411,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter.
-     * @param {Boolean | null } cleanup
+     * @param {Boolean} [cleanup=true]
      */
     removeAllChildrenWithCleanup: function (cleanup) {
         //cc.log(cc._LogInfos.Node_removeAllChildrenWithCleanup);        //TODO It should be discuss in v3.0
@@ -1422,7 +1422,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter. <br/>
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
      * @function
-     * @param {Boolean | null } cleanup true if all running actions on all children nodes should be cleanup, false otherwise.
+     * @param {Boolean} [cleanup=true] true if all running actions on all children nodes should be cleanup, false otherwise.
      */
     removeAllChildren: function (cleanup) {
         // not using detachChild improves speed here

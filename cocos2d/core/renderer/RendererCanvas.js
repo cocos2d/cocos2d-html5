@@ -173,8 +173,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         var blendChange = (node._blendFuncStr !== "source"), alpha = (node._displayedOpacity / 255);
         /*if(cc.renderer.contextSession.globalAlpha !== alpha){
-            cc.renderer.contextSession.globalAlpha = context.globalAlpha = alpha;                         //TODO
-        }*/
+         cc.renderer.contextSession.globalAlpha = context.globalAlpha = alpha;                         //TODO
+         }*/
 
         if (t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1 || node._flippedX || node._flippedY) {
             context.save();
@@ -223,9 +223,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 }
             } else {
                 contentSize = node._contentSize;
-                if(contentSize.width !== 0 && contentSize.height !== 0) {
+                if(locTextureCoord.validRect) {
                     curColor = node._displayedColor;
-                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + (node._displayedOpacity/255).toFixed(4) + ")";
+                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
                     context.fillRect(locX * scaleX, locY * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
                 }
             }
@@ -263,9 +263,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 }
             } else {
                 contentSize = node._contentSize;
-                if(contentSize.width !== 0 && contentSize.height !== 0) {
+                if(locTextureCoord.validRect) {
                     curColor = node._displayedColor;
-                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + (node._displayedOpacity/255).toFixed(4) + ")";
+                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
                     context.fillRect((t.tx + locX) * scaleX, (-t.ty + locY) * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
                 }
             }
