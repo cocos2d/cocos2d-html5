@@ -9,6 +9,11 @@
 /*global window, navigator, document, importScripts, setTimeout, opera */
 
 var requirejs, require, define;
+var requirejsSystemInfo = {};
+if (typeof sys !== "undefined")
+{
+    requirejsSystemInfo = sys;
+}
 (function (global) {
     var req, s, head, baseElement, dataMain, src,
         interactiveScript, currentlyAddingScript, mainScript, subPath,
@@ -23,6 +28,7 @@ var requirejs, require, define;
         ap = Array.prototype,
         apsp = ap.splice,
         isBrowser = !!(typeof window !== 'undefined' && typeof navigator !== 'undefined' && window.document),
+        isNative = requirejsSystemInfo.isNative,
         isWebWorker = !isBrowser && typeof importScripts !== 'undefined',
     //PS3 indicates loaded and complete, but need to wait for complete
     //specifically. Sequence is 'loading', 'loaded', execution,
@@ -362,6 +368,11 @@ var requirejs, require, define;
                         return true;
                     }
                 });
+            }
+
+            if (isNative)
+            {
+                // do something remove
             }
         }
 
@@ -811,8 +822,8 @@ var requirejs, require, define;
                     context.makeRequire(this.map, {
                         enableBuildCallback: true
                     })(this.shim.deps || [], bind(this, function () {
-                            return map.prefix ? this.callPlugin() : this.load();
-                        }));
+                        return map.prefix ? this.callPlugin() : this.load();
+                    }));
                 } else {
                     //Regular dependency.
                     return map.prefix ? this.callPlugin() : this.load();
@@ -1052,7 +1063,7 @@ var requirejs, require, define;
                             req.exec(text);
                         } catch (e) {
                             return onError(makeError('fromtexteval',
-                                'fromText eval for ' + id +
+                                    'fromText eval for ' + id +
                                     ' failed: ' + e,
                                 e,
                                 [id]));
@@ -1453,7 +1464,7 @@ var requirejs, require, define;
                         }
 
                         return context.nameToUrl(normalize(moduleNamePlusExt,
-                            relMap && relMap.id, true), ext,  true);
+                                relMap && relMap.id, true), ext,  true);
                     },
 
                     defined: function (id) {
@@ -1562,7 +1573,7 @@ var requirejs, require, define;
                             return;
                         } else {
                             return onError(makeError('nodefine',
-                                'No define call for ' + moduleName,
+                                    'No define call for ' + moduleName,
                                 null,
                                 [moduleName]));
                         }
@@ -1810,6 +1821,11 @@ var requirejs, require, define;
         }
     }
 
+    if (isNative)
+    {
+        // do something init
+    }
+
     /**
      * Any errors that require explicitly generates will be passed to this
      * function. Intercept/override it if you want custom error handling.
@@ -1919,11 +1935,19 @@ var requirejs, require, define;
                 context.completeLoad(moduleName);
             } catch (e) {
                 context.onError(makeError('importscripts',
-                    'importScripts failed for ' +
+                        'importScripts failed for ' +
                         moduleName + ' at ' + url,
                     e,
                     [moduleName]));
             }
+        }
+        else if (isNative) {
+            if (url.indexOf(require_config.paths.game) != -1)
+            {
+                require(url);
+            }
+            //Account for anonymous modules
+            context.completeLoad(moduleName);
         }
     };
 
@@ -2075,224 +2099,248 @@ var requirejs, require, define;
     req(cfg);
 }(this));
 
-var require_config = {
-    baseUrl: '../../frameworks/cocos2d-html5/modules',
+var require_config = {};
+if (requirejsSystemInfo.isNative)
+{
+    require_config = {
+        baseUrl: '../../samples',
 
-    paths: {
-        root: '../',
-        cocos2dPath: '../cocos2d',
-        game: '../../../samples/js-moonwarriors/src'
-    },
+        paths: {
+            root: '',
+            cocos2dPath: '',
+            game: 'js-moonwarriors/src' // it's the flag to mark the user source
+        },
+        shim: {
+            "actions":{
+                init: function () {
+                    return cc;
+                }
+            },
+            "audio":{
+                init: function () {
+                    return cc.audioEngine;
+                }
+            },
+            "core":{
+                init: function () {
+                    return cc;
+                }
+            },
+            "LabelBMFont":{
+                init: function () {
+                    return cc.LabelBMFont;
+                }
+            },
+            "LabelTTF":{
+                init: function () {
+                    return cc.LabelTTF;
+                }
+            },
+            "layers":{
+                init: function () {
+                    return cc;
+                }
+            },
+            "LoaderScene":{
+                init: function () {
+                    return cc.LoaderScene;
+                }
+            },
+            "Menu":{
+                init: function () {
+                    return cc.Menu
+                }
+            },
+            "menuitems":{
+                init: function () {
+                    return cc;
+                }
+            },
+            "Node":{
+                init: function () {
+                    return cc.Node;
+                }
+            },
+            "Scene":{
+                init: function () {
+                    return cc.Scene;
+                }
+            },
+            "Sprite":{
+                init: function () {
+                    return cc.Sprite;
+                }
+            },
+            "SpriteBatchNode":{
+                init: function () {
+                    return cc.SpriteBatchNode;
+                }
+            },
 
-    shim: {
-        "cocos2dPath/core/platform/CCSAXParser": [
-            "cocos2dPath/core/platform/CCClass"
-        ],
-        "cocos2dPath/core/platform/CCTypes": [
-            "cocos2dPath/core/platform/CCClass"
-        ],
-        "cocos2dPath/core/CCScheduler": [
-            "cocos2dPath/core/platform/CCClass"
-        ],
-        "cocos2dPath/core/event-manager/CCEventListener": [
-            "cocos2dPath/core/platform/CCClass"
-        ],
-        "cocos2dPath/core/event-manager/CCTouch": [
-            "cocos2dPath/core/platform/CCClass"
-        ],
+            "cocos2dPath/transitions/CCTransition": {
+                init: function () {
+                    return cc.TransitionFade;
+                }
+            },
 
-        "cocos2dPath/core/CCCamera": [
-            "cocos2dPath/core/platform/CCClass"
-        ],
+            "cocos2dPath/core/scenes/CCLoaderScene": {
+                init: function () {
+                    return cc.LoaderScene;
+                }
+            },
 
-        "cocos2dPath/core/platform/CCEGLView": [
-            "cocos2dPath/core/platform/CCClass"
-        ],
+            "cocos2dPath/core/sprites/CCSprite": {
+                init: function () {
+                    return cc.Sprite;
+                }
+            },
 
-        "cocos2dPath/core/CCDrawingPrimitiveCanvas": [
-            "cocos2dPath/core/platform/CCClass"
-        ],
+            "cocos2dPath/core/base-nodes/CCAtlasNode": {
+                init: function () {
+                    return cc.NodeAtlas;
+                }
+            },
 
-        "cocos2dPath/core/CCGLProgram": [
-            "core",
-            "cocos2dPath/core/platform/CCClass"
-        ],
+            "cocos2dPath/core/sprites/CCAnimation": {
+                init: function () {
+                    return cc.Animation;
+                }
+            },
 
-        "cocos2dPath/core/event-manager/CCEvent": [
-            "cocos2dPath/core/platform/CCClass"
-        ],
+            "cocos2dPath/core/sprites/CCAnimationCache": {
+                init: function () {
+                    return cc.animationCache;
+                }
+            },
 
-        "cocos2dPath/core/platform/CCConfig": [
-            "cocos2dPath/core/cocoa/CCGeometry"
-        ],
-        "cocos2dPath/core/platform/CCVisibleRect": [
-            "cocos2dPath/core/cocoa/CCGeometry"
-        ],
-        "cocos2dPath/core/platform/CCInputManager": [
-            "cocos2dPath/core/cocoa/CCGeometry"
-        ],
-        "cocos2dPath/core/textures/CCTexture2D": [
-            "cocos2dPath/core/textures/TexturesWebGL",
-            "cocos2dPath/core/textures/TexturesPropertyDefine"
-        ],
-        "cocos2dPath/core/textures/CCTextureAtlas": [
-            "cocos2dPath/core/textures/TexturesWebGL",
-            "cocos2dPath/core/textures/TexturesPropertyDefine"
-        ],
-        "cocos2dPath/core/CCDirectorWebGL": [
+            "cocos2dPath/core/sprites/CCSpriteFrame": {
+                init: function () {
+                    return cc.SpriteFrame;
+                }
+            },
 
-            //"cocos2dPath/core/labelttf/CCLabelTTF" // 循环调用
-        ],
-        "cocos2dPath/core/CCDirector": [
-            "cocos2dPath/core/CCDirectorWebGL"
-        ],
-        "cocos2dPath/core/platform/CCInputExtension": [
-            "cocos2dPath/core/platform/CCInputManager"
-        ],
-        "cocos2dPath/core/textures/CCTexture2D": [
-            "cocos2dPath/core/textures/TexturesWebGL",
-            "cocos2dPath/core/textures/TexturesPropertyDefine"
-        ],
-        "cocos2dPath/core/textures/CCTextureAtlas": [
-            "cocos2dPath/core/textures/TexturesWebGL",
-            "cocos2dPath/core/textures/TexturesPropertyDefine"
-        ],
-        "cocos2dPath/core/textures/CCTextureCache": [
-            "cocos2dPath/core/textures/TexturesWebGL",
-            "cocos2dPath/core/textures/TexturesPropertyDefine"
-        ],
-        "cocos2dPath/core/event-manager/CCEventExtension": [
-            "cocos2dPath/core/event-manager/CCEvent",
-            "cocos2dPath/core/event-manager/CCEventListener"
-        ],
-        "cocos2dPath/core/event-manager/CCEventManager": [
-            "cocos2dPath/core/event-manager/CCEvent",
-            "cocos2dPath/core/event-manager/CCEventListener"
-        ],
-        "cocos2dPath/kazmath/gl/matrix": [
-            "cocos2dPath/kazmath/utility",
-            "cocos2dPath/kazmath/vec2",
-            "cocos2dPath/kazmath/vec3",
-            "cocos2dPath/kazmath/vec4",
-            "cocos2dPath/kazmath/ray2",
-            "cocos2dPath/kazmath/mat3",
-            "cocos2dPath/kazmath/mat4",
-            "cocos2dPath/kazmath/plane",
-            "cocos2dPath/kazmath/quaternion",
-            "cocos2dPath/kazmath/aabb",
-            "cocos2dPath/kazmath/gl/mat4stack"
-        ],
+            "cocos2dPath/core/sprites/CCSpriteFrameCache": {
+                init: function () {
+                    return cc.spriteFrameCache;
+                }
+            },
 
-        "cocos2dPath/core/base-nodes/CCNode": [
-            "core",
-            "cocos2dPath/core/base-nodes/BaseNodesWebGL",
-            "cocos2dPath/core/base-nodes/BaseNodesPropertyDefine"
-        ],
+            "cocos2dPath/actions/CCActionCamera": {
+                exports: "cc"
+            },
+            "cocos2dPath/actions/CCActionEase": {
+                exports: "cc"
+            },
+            "cocos2dPath/actions/CCActionCatmullRom": {
+                exports: "cc"
+            },
+            "cocos2dPath/actions/CCActionTween": {
+                exports: "cc"
+            },
 
-        "cocos2dPath/core/scenes/CCScene": [
-            "core",
-            "cocos2dPath/core/base-nodes/CCNode"
-        ],
+            "cocos2dPath/audio/CCAudio": {
+                exports: "cc"
+            }
+        }
+    }
+}
+else
+{
+    require_config= {
+        baseUrl: '../../frameworks/cocos2d-html5/modules',
 
-        "cocos2dPath/core/sprites/CCBakeSprite": [
-            "Sprite"
-        ],
+        paths: {
+            root: '../',
+            cocos2dPath: '../cocos2d',
+            game: '../../../samples/js-moonwarriors/src'
+        },
 
-        "cocos2dPath/core/layers/CCLayer": [
-            "core",
-            "cocos2dPath/core/sprites/CCBakeSprite",
-            "cocos2dPath/core/layers/CCLayerWebGL",
-            "cocos2dPath/core/layers/CCLayerPropertyDefine"
-        ],
+        shim: {
+            "cocos2dPath/core/platform/CCSAXParser": [
+                "cocos2dPath/core/platform/CCClass"
+            ],
+            "cocos2dPath/core/platform/CCTypes": [
+                "cocos2dPath/core/platform/CCClass"
+            ],
+            "cocos2dPath/core/CCScheduler": [
+                "cocos2dPath/core/platform/CCClass"
+            ],
+            "cocos2dPath/core/event-manager/CCEventListener": [
+                "cocos2dPath/core/platform/CCClass"
+            ],
+            "cocos2dPath/core/event-manager/CCTouch": [
+                "cocos2dPath/core/platform/CCClass"
+            ],
 
-        "cocos2dPath/core/labelttf/CCLabelTTF": [
-            "cocos2dPath/core/sprites/CCSprite",
-            "cocos2dPath/core/labelttf/LabelTTFWebGL",
-            "cocos2dPath/core/labelttf/LabelTTFPropertyDefine"
-        ],
+            "cocos2dPath/core/CCCamera": [
+                "cocos2dPath/core/platform/CCClass"
+            ],
 
+            "cocos2dPath/core/platform/CCEGLView": [
+                "cocos2dPath/core/platform/CCClass"
+            ],
 
+            "cocos2dPath/core/CCDrawingPrimitiveCanvas": [
+                "cocos2dPath/core/platform/CCClass"
+            ],
 
-        "cocos2dPath/menus/CCMenu" : [
-            "cocos2dPath/core/layers/CCLayer"
-        ],
+            "cocos2dPath/core/CCGLProgram": [
+                "core",
+                "cocos2dPath/core/platform/CCClass"
+            ],
 
-        "cocos2dPath/menus/CCMenuItem" : [
-            "cocos2dPath/core/base-nodes/CCNode"
-        ],
+            "cocos2dPath/core/event-manager/CCEvent": [
+                "cocos2dPath/core/platform/CCClass"
+            ],
 
-        "cocos2dPath/core/sprites/CCSpriteBatchNode" : [
-            "cocos2dPath/core/sprites/CCSprite"
-        ],
+            "cocos2dPath/core/platform/CCConfig": [
+                "cocos2dPath/core/cocoa/CCGeometry"
+            ],
+            "cocos2dPath/core/platform/CCVisibleRect": [
+                "cocos2dPath/core/cocoa/CCGeometry"
+            ],
+            "cocos2dPath/core/platform/CCInputManager": [
+                "cocos2dPath/core/cocoa/CCGeometry"
+            ],
+            "cocos2dPath/core/textures/CCTexture2D": [
+                "cocos2dPath/core/textures/TexturesWebGL",
+                "cocos2dPath/core/textures/TexturesPropertyDefine"
+            ],
+            "cocos2dPath/core/textures/CCTextureAtlas": [
+                "cocos2dPath/core/textures/TexturesWebGL",
+                "cocos2dPath/core/textures/TexturesPropertyDefine"
+            ],
+            "cocos2dPath/core/CCDirectorWebGL": [
 
-        "cocos2dPath/actions/CCAction" : [
-            "core"
-        ],
-        "cocos2dPath/actions/CCActionInterval" : [
-            "cocos2dPath/actions/CCAction"
-        ],
-        "cocos2dPath/actions/CCActionInstant" : [
-            "cocos2dPath/actions/CCAction"
-        ],
-
-        "cocos2dPath/labels/CCLabelBMFont" : [
-            "cocos2dPath/core/sprites/CCSpriteBatchNode"
-        ],
-
-
-
-        "core" : {
-            deps: [
-                "root/CCBoot",
-                "root/CCDebugger",
-                "cocos2dPath/core/utils/BinaryLoader",
-                "root/Base64Images",
-                "cocos2dPath/core/platform/CCClass",
-                "cocos2dPath/core/platform/CCCommon",
-                "cocos2dPath/core/cocoa/CCGeometry",
-                "cocos2dPath/core/platform/CCSAXParser",
-                "cocos2dPath/core/platform/CCLoaders",
-                "cocos2dPath/core/platform/CCConfig",
-                "cocos2dPath/core/platform/miniFramework",
-                "cocos2dPath/core/platform/CCMacro",
-                "cocos2dPath/core/platform/CCTypesWebGL",
-                "cocos2dPath/core/platform/CCTypesPropertyDefine",
-                "cocos2dPath/core/platform/CCTypes",
-                "cocos2dPath/core/platform/CCEGLView",
-                "cocos2dPath/core/platform/CCScreen",
-                "cocos2dPath/core/platform/CCVisibleRect",
-
-
-                "cocos2dPath/core/platform/CCInputManager",
-                "cocos2dPath/core/platform/CCInputExtension",
-
-                "cocos2dPath/core/cocoa/CCAffineTransform",
-                "cocos2dPath/core/support/CCPointExtension",
-                "cocos2dPath/core/support/CCVertex",
-                "cocos2dPath/core/support/TransformUtils",
-                "cocos2dPath/core/event-manager/CCTouch",
-
+                //"cocos2dPath/core/labelttf/CCLabelTTF" // 循环调用
+            ],
+            "cocos2dPath/core/CCDirector": [
+                "cocos2dPath/core/CCDirectorWebGL"
+            ],
+            "cocos2dPath/core/platform/CCInputExtension": [
+                "cocos2dPath/core/platform/CCInputManager"
+            ],
+            "cocos2dPath/core/textures/CCTexture2D": [
+                "cocos2dPath/core/textures/TexturesWebGL",
+                "cocos2dPath/core/textures/TexturesPropertyDefine"
+            ],
+            "cocos2dPath/core/textures/CCTextureAtlas": [
+                "cocos2dPath/core/textures/TexturesWebGL",
+                "cocos2dPath/core/textures/TexturesPropertyDefine"
+            ],
+            "cocos2dPath/core/textures/CCTextureCache": [
+                "cocos2dPath/core/textures/TexturesWebGL",
+                "cocos2dPath/core/textures/TexturesPropertyDefine"
+            ],
+            "cocos2dPath/core/event-manager/CCEventExtension": [
                 "cocos2dPath/core/event-manager/CCEvent",
-                "cocos2dPath/core/event-manager/CCEventListener",
-                "cocos2dPath/core/event-manager/CCEventManager",
-                "cocos2dPath/core/event-manager/CCEventExtension",
-
-                "cocos2dPath/core/CCConfiguration",
-
-                "cocos2dPath/core/CCDirector",
-
-                "cocos2dPath/core/CCCamera",
-                "cocos2dPath/core/CCScheduler",
-
-                "cocos2dPath/core/CCActionManager",
-
-                "cocos2dPath/core/CCDrawingPrimitivesCanvas",
-                "cocos2dPath/core/CCDrawingPrimitivesWebGL",
-
-                "cocos2dPath/core/textures/CCTexture2D",
-                "cocos2dPath/core/textures/CCTextureAtlas",
-                "cocos2dPath/core/textures/CCTextureCache",
-
+                "cocos2dPath/core/event-manager/CCEventListener"
+            ],
+            "cocos2dPath/core/event-manager/CCEventManager": [
+                "cocos2dPath/core/event-manager/CCEvent",
+                "cocos2dPath/core/event-manager/CCEventListener"
+            ],
+            "cocos2dPath/kazmath/gl/matrix": [
                 "cocos2dPath/kazmath/utility",
                 "cocos2dPath/kazmath/vec2",
                 "cocos2dPath/kazmath/vec3",
@@ -2303,142 +2351,263 @@ var require_config = {
                 "cocos2dPath/kazmath/plane",
                 "cocos2dPath/kazmath/quaternion",
                 "cocos2dPath/kazmath/aabb",
-                "cocos2dPath/kazmath/gl/mat4stack",
-                "cocos2dPath/kazmath/gl/matrix",
-
-                "cocos2dPath/shaders/CCShaders",
-                "cocos2dPath/shaders/CCShaderCache",
-                "cocos2dPath/shaders/CCGLProgram",
-                "cocos2dPath/shaders/CCGLStateCache"
+                "cocos2dPath/kazmath/gl/mat4stack"
             ],
-            exports: "cc"
-        },
 
-        "cocos2dPath/transitions/CCTransition" : [
+            "cocos2dPath/core/base-nodes/CCNode": [
+                "core",
+                "cocos2dPath/core/base-nodes/BaseNodesWebGL",
+                "cocos2dPath/core/base-nodes/BaseNodesPropertyDefine"
+            ],
 
-            "cocos2dPath/core/scenes/CCScene"
-        ],
+            "cocos2dPath/core/scenes/CCScene": [
+                "core",
+                "cocos2dPath/core/base-nodes/CCNode"
+            ],
 
-        "cocos2dPath/transitions/CCTransition": {
-            deps: [
+            "cocos2dPath/core/sprites/CCBakeSprite": [
+                "Sprite"
+            ],
+
+            "cocos2dPath/core/layers/CCLayer": [
+                "core",
+                "cocos2dPath/core/sprites/CCBakeSprite",
+                "cocos2dPath/core/layers/CCLayerWebGL",
+                "cocos2dPath/core/layers/CCLayerPropertyDefine"
+            ],
+
+            "cocos2dPath/core/labelttf/CCLabelTTF": [
+                "cocos2dPath/core/sprites/CCSprite",
+                "cocos2dPath/core/labelttf/LabelTTFWebGL",
+                "cocos2dPath/core/labelttf/LabelTTFPropertyDefine"
+            ],
+
+
+
+            "cocos2dPath/menus/CCMenu" : [
+                "cocos2dPath/core/layers/CCLayer"
+            ],
+
+            "cocos2dPath/menus/CCMenuItem" : [
+                "cocos2dPath/core/base-nodes/CCNode"
+            ],
+
+            "cocos2dPath/core/sprites/CCSpriteBatchNode" : [
+                "cocos2dPath/core/sprites/CCSprite"
+            ],
+
+            "cocos2dPath/actions/CCAction" : [
+                "core"
+            ],
+            "cocos2dPath/actions/CCActionInterval" : [
+                "cocos2dPath/actions/CCAction"
+            ],
+            "cocos2dPath/actions/CCActionInstant" : [
+                "cocos2dPath/actions/CCAction"
+            ],
+
+            "cocos2dPath/labels/CCLabelBMFont" : [
+                "cocos2dPath/core/sprites/CCSpriteBatchNode"
+            ],
+
+            "core" : {
+                deps: [
+                    "root/CCDebugger",
+                    "cocos2dPath/core/utils/BinaryLoader",
+                    "root/Base64Images",
+                    "cocos2dPath/core/platform/CCClass",
+                    "cocos2dPath/core/platform/CCCommon",
+                    "cocos2dPath/core/cocoa/CCGeometry",
+                    "cocos2dPath/core/platform/CCSAXParser",
+                    "cocos2dPath/core/platform/CCLoaders",
+                    "cocos2dPath/core/platform/CCConfig",
+                    "cocos2dPath/core/platform/miniFramework",
+                    "cocos2dPath/core/platform/CCMacro",
+                    "cocos2dPath/core/platform/CCTypesWebGL",
+                    "cocos2dPath/core/platform/CCTypesPropertyDefine",
+                    "cocos2dPath/core/platform/CCTypes",
+                    "cocos2dPath/core/platform/CCEGLView",
+                    "cocos2dPath/core/platform/CCScreen",
+                    "cocos2dPath/core/platform/CCVisibleRect",
+
+
+                    "cocos2dPath/core/platform/CCInputManager",
+                    "cocos2dPath/core/platform/CCInputExtension",
+
+                    "cocos2dPath/core/cocoa/CCAffineTransform",
+                    "cocos2dPath/core/support/CCPointExtension",
+                    "cocos2dPath/core/support/CCVertex",
+                    "cocos2dPath/core/support/TransformUtils",
+                    "cocos2dPath/core/event-manager/CCTouch",
+
+                    "cocos2dPath/core/event-manager/CCEvent",
+                    "cocos2dPath/core/event-manager/CCEventListener",
+                    "cocos2dPath/core/event-manager/CCEventManager",
+                    "cocos2dPath/core/event-manager/CCEventExtension",
+
+                    "cocos2dPath/core/CCConfiguration",
+
+                    "cocos2dPath/core/CCDirector",
+
+                    "cocos2dPath/core/CCCamera",
+                    "cocos2dPath/core/CCScheduler",
+
+                    "cocos2dPath/core/CCActionManager",
+
+                    "cocos2dPath/core/CCDrawingPrimitivesCanvas",
+                    "cocos2dPath/core/CCDrawingPrimitivesWebGL",
+
+                    "cocos2dPath/core/textures/CCTexture2D",
+                    "cocos2dPath/core/textures/CCTextureAtlas",
+                    "cocos2dPath/core/textures/CCTextureCache",
+
+                    "cocos2dPath/kazmath/utility",
+                    "cocos2dPath/kazmath/vec2",
+                    "cocos2dPath/kazmath/vec3",
+                    "cocos2dPath/kazmath/vec4",
+                    "cocos2dPath/kazmath/ray2",
+                    "cocos2dPath/kazmath/mat3",
+                    "cocos2dPath/kazmath/mat4",
+                    "cocos2dPath/kazmath/plane",
+                    "cocos2dPath/kazmath/quaternion",
+                    "cocos2dPath/kazmath/aabb",
+                    "cocos2dPath/kazmath/gl/mat4stack",
+                    "cocos2dPath/kazmath/gl/matrix",
+
+                    "cocos2dPath/shaders/CCShaders",
+                    "cocos2dPath/shaders/CCShaderCache",
+                    "cocos2dPath/shaders/CCGLProgram",
+                    "cocos2dPath/shaders/CCGLStateCache"
+                ],
+                exports: "cc"
+            },
+
+            "cocos2dPath/transitions/CCTransition" : [
+
                 "cocos2dPath/core/scenes/CCScene"
             ],
 
-            init: function () {
-                return cc.TransitionFade;
+            "cocos2dPath/transitions/CCTransition": {
+                deps: [
+                    "cocos2dPath/core/scenes/CCScene"
+                ],
+
+                init: function () {
+                    return cc.TransitionFade;
+                }
+            },
+
+            "cocos2dPath/core/scenes/CCLoaderScene": {
+                deps: [
+                    "core",
+                    "cocos2dPath/core/layers/CCLayer",
+                    "cocos2dPath/core/labelttf/CCLabelTTF",
+                    "cocos2dPath/core/scenes/CCScene"
+                ],
+
+                init: function () {
+                    return cc.LoaderScene;
+                }
+            },
+
+            "cocos2dPath/core/sprites/CCSprite" : {
+                deps: [
+                    "core",
+                    "Node",
+                    "cocos2dPath/core/sprites/SpritesPropertyDefine",
+                    "cocos2dPath/core/sprites/SpritesWebGL"
+                ],
+                init: function() {
+                    return cc.Sprite;
+                }
+            },
+
+            "cocos2dPath/core/base-nodes/CCAtlasNode" : {
+                deps: [
+                    "Node"
+                ],
+                init: function() {
+                    return cc.NodeAtlas;
+                }
+            },
+
+            "cocos2dPath/core/sprites/CCAnimation" : {
+                deps: [
+                    "Sprite"
+                ],
+                init: function() {
+                    return cc.Animation;
+                }
+            },
+
+            "cocos2dPath/core/sprites/CCAnimationCache" : {
+                deps: [
+                    "Sprite",
+                    "cocos2dPath/core/sprites/CCAnimation"
+                ],
+                init: function() {
+                    return cc.animationCache;
+                }
+            },
+
+            "cocos2dPath/core/sprites/CCSpriteFrame" : {
+                deps: [
+                    "Sprite"
+                ],
+                init: function() {
+                    return cc.SpriteFrame;
+                }
+            },
+
+            "cocos2dPath/core/sprites/CCSpriteFrameCache" : {
+                deps: [
+                    "cocos2dPath/core/sprites/CCSpriteFrame"
+                ],
+                init: function() {
+                    return cc.spriteFrameCache;
+                }
+            },
+
+            "cocos2dPath/actions/CCActionCamera" : {
+                deps: [
+                    "core",
+                    "cocos2dPath/actions/CCAction",
+                    "cocos2dPath/actions/CCActionInterval"
+                ],
+                exports: "cc"
+            },
+            "cocos2dPath/actions/CCActionEase" : {
+                deps: [
+                    "core",
+                    "cocos2dPath/actions/CCAction",
+                    "cocos2dPath/actions/CCActionInterval"
+                ],
+                exports: "cc"
+            },
+            "cocos2dPath/actions/CCActionCatmullRom" : {
+                deps: [
+                    "core",
+                    "cocos2dPath/actions/CCAction",
+                    "cocos2dPath/actions/CCActionInterval"
+                ],
+                exports: "cc"
+            },
+            "cocos2dPath/actions/CCActionTween" : {
+                deps: [
+                    "core",
+                    "cocos2dPath/actions/CCAction",
+                    "cocos2dPath/actions/CCActionInterval"
+                ],
+                exports: "cc"
+            },
+
+            "cocos2dPath/audio/CCAudio" : {
+                deps: [
+                    "core",
+                    "cocos2dPath/core/event-manager/CCEventManager"
+                ],
+                exports: "cc"
             }
-        },
-
-        "cocos2dPath/core/scenes/CCLoaderScene": {
-            deps: [
-                "core",
-                "cocos2dPath/core/layers/CCLayer",
-                "cocos2dPath/core/labelttf/CCLabelTTF",
-                "cocos2dPath/core/scenes/CCScene"
-            ],
-
-            init: function () {
-                return cc.LoaderScene;
-            }
-        },
-
-        "cocos2dPath/core/sprites/CCSprite" : {
-            deps: [
-                "core",
-                "Node",
-                "cocos2dPath/core/sprites/SpritesPropertyDefine",
-                "cocos2dPath/core/sprites/SpritesWebGL"
-            ],
-            init: function() {
-                return cc.Sprite;
-            }
-        },
-
-        "cocos2dPath/core/base-nodes/CCAtlasNode" : {
-            deps: [
-                "Node"
-            ],
-            init: function() {
-                return cc.NodeAtlas;
-            }
-        },
-
-        "cocos2dPath/core/sprites/CCAnimation" : {
-            deps: [
-                "Sprite"
-            ],
-            init: function() {
-                return cc.Animation;
-            }
-        },
-
-        "cocos2dPath/core/sprites/CCAnimationCache" : {
-            deps: [
-                "Sprite",
-                "cocos2dPath/core/sprites/CCAnimation"
-            ],
-            init: function() {
-                return cc.animationCache;
-            }
-        },
-
-        "cocos2dPath/core/sprites/CCSpriteFrame" : {
-            deps: [
-                "Sprite"
-            ],
-            init: function() {
-                return cc.SpriteFrame;
-            }
-        },
-
-        "cocos2dPath/core/sprites/CCSpriteFrameCache" : {
-            deps: [
-                "cocos2dPath/core/sprites/CCSpriteFrame"
-            ],
-            init: function() {
-                return cc.spriteFrameCache;
-            }
-        },
-
-        "cocos2dPath/actions/CCActionCamera" : {
-            deps: [
-                "core",
-                "cocos2dPath/actions/CCAction",
-                "cocos2dPath/actions/CCActionInterval"
-            ],
-            exports: "cc"
-        },
-        "cocos2dPath/actions/CCActionEase" : {
-            deps: [
-                "core",
-                "cocos2dPath/actions/CCAction",
-                "cocos2dPath/actions/CCActionInterval"
-            ],
-            exports: "cc"
-        },
-        "cocos2dPath/actions/CCActionCatmullRom" : {
-            deps: [
-                "core",
-                "cocos2dPath/actions/CCAction",
-                "cocos2dPath/actions/CCActionInterval"
-            ],
-            exports: "cc"
-        },
-        "cocos2dPath/actions/CCActionTween" : {
-            deps: [
-                "core",
-                "cocos2dPath/actions/CCAction",
-                "cocos2dPath/actions/CCActionInterval"
-            ],
-            exports: "cc"
-        },
-
-        "cocos2dPath/audio/CCAudio" : {
-            deps: [
-                "core",
-                "cocos2dPath/core/event-manager/CCEventManager"
-            ],
-            exports: "cc"
         }
-    }
-};
+    };
+}
