@@ -1,3 +1,3 @@
-define(["root/CCBoot"], function() {
+define([], function() {
     return cc;
 });

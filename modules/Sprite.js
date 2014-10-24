@@ -1,6 +1,6 @@
 define([
-    "core",
-    "Node",
+    "cocosModule/core",
+    "cocosModule/Node",
     "cocos2dPath/core/sprites/CCSprite",
     "cocos2dPath/core/sprites/SpritesPropertyDefine",
     "cocos2dPath/core/sprites/SpritesWebGL"

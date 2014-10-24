@@ -14,6 +14,7 @@ if (typeof sys !== "undefined")
 {
     requirejsSystemInfo = sys;
 }
+var cocosEngineDir = cc.game.config[cc.game.CONFIG_KEY.engineDir] || "frameworks/cocos2d-html5"; // use to mark the cocos file
 (function (global) {
     var req, s, head, baseElement, dataMain, src,
         interactiveScript, currentlyAddingScript, mainScript, subPath,
@@ -1942,7 +1943,7 @@ if (typeof sys !== "undefined")
             }
         }
         else if (isNative) {
-            if (url.indexOf(require_config.paths.game) != -1)
+            if (url.indexOf(cocosEngineDir) == -1)
             {
                 require(url);
             }
@@ -2103,75 +2104,75 @@ var require_config = {};
 if (requirejsSystemInfo.isNative)
 {
     require_config = {
-        baseUrl: '../../samples',
-
+        baseUrl: '',
         paths: {
-            root: '',
-            cocos2dPath: '',
-            game: 'js-moonwarriors/src' // it's the flag to mark the user source
+            cocosModule:'../../frameworks/cocos2d-html5/modules',
+            root: '../../frameworks/cocos2d-html5',
+            cocos2dPath: '../../frameworks/cocos2d-html5/cocos2d',
+            game: 'src'
         },
         shim: {
-            "actions":{
+            "cocosModule/actions":{
                 init: function () {
                     return cc;
                 }
             },
-            "audio":{
+            "cocosModule/audio":{
                 init: function () {
                     return cc.audioEngine;
                 }
             },
-            "core":{
+            "cocosModule/core":{
                 init: function () {
                     return cc;
                 }
             },
-            "LabelBMFont":{
+            "cocosModule/LabelBMFont":{
                 init: function () {
                     return cc.LabelBMFont;
                 }
             },
-            "LabelTTF":{
+            "cocosModule/LabelTTF":{
                 init: function () {
                     return cc.LabelTTF;
                 }
             },
-            "layers":{
+            "cocosModule/layers":{
                 init: function () {
                     return cc;
                 }
             },
-            "LoaderScene":{
+            "cocosModule/LoaderScene":{
                 init: function () {
                     return cc.LoaderScene;
                 }
             },
-            "Menu":{
+            "cocosModule/Menu":{
                 init: function () {
                     return cc.Menu
                 }
             },
-            "menuitems":{
+            "cocosModule/menuitems":{
                 init: function () {
                     return cc;
                 }
             },
-            "Node":{
+            "cocosModule/Node":{
                 init: function () {
                     return cc.Node;
                 }
             },
-            "Scene":{
+            "cocosModule/Scene":{
                 init: function () {
                     return cc.Scene;
                 }
             },
-            "Sprite":{
+            "cocosModule/Sprite":{
                 init: function () {
                     return cc.Sprite;
                 }
             },
-            "SpriteBatchNode":{
+            "cocosModule/SpriteBatchNode":{
                 init: function () {
                     return cc.SpriteBatchNode;
                 }
@@ -2225,6 +2226,12 @@ if (requirejsSystemInfo.isNative)
                 }
             },
 
+            "cocos2dPath/core/labelttf/CCLabelTTF": {
+                init: function () {
+                    return cc.LabelTTF;
+                }
+            },
+
             "cocos2dPath/actions/CCActionCamera": {
                 exports: "cc"
             },
@@ -2247,12 +2254,13 @@ if (requirejsSystemInfo.isNative)
 else
 {
     require_config= {
-        baseUrl: '../../frameworks/cocos2d-html5/modules',
+        baseUrl: '',
 
         paths: {
-            root: '../',
-            cocos2dPath: '../cocos2d',
-            game: '../../../samples/js-moonwarriors/src'
+            cocosModule:'../../frameworks/cocos2d-html5/modules',
+            root: '../../frameworks/cocos2d-html5',
+            cocos2dPath: '../../frameworks/cocos2d-html5/cocos2d',
+            game: 'src'
         },
 
         shim: {
@@ -2285,7 +2293,7 @@ else
             ],
 
             "cocos2dPath/core/CCGLProgram": [
-                "core",
+                "cocosModule/core",
                 "cocos2dPath/core/platform/CCClass"
             ],
 
@@ -2355,32 +2363,28 @@ else
             ],
 
             "cocos2dPath/core/base-nodes/CCNode": [
-                "core",
+                "cocosModule/core",
                 "cocos2dPath/core/base-nodes/BaseNodesWebGL",
                 "cocos2dPath/core/base-nodes/BaseNodesPropertyDefine"
             ],
 
             "cocos2dPath/core/scenes/CCScene": [
-                "core",
+                "cocosModule/core",
                 "cocos2dPath/core/base-nodes/CCNode"
             ],
 
             "cocos2dPath/core/sprites/CCBakeSprite": [
-                "Sprite"
+                "cocosModule/Sprite"
             ],
 
             "cocos2dPath/core/layers/CCLayer": [
-                "core",
+                "cocosModule/core",
                 "cocos2dPath/core/sprites/CCBakeSprite",
                 "cocos2dPath/core/layers/CCLayerWebGL",
                 "cocos2dPath/core/layers/CCLayerPropertyDefine"
             ],
 
-            "cocos2dPath/core/labelttf/CCLabelTTF": [
-                "cocos2dPath/core/sprites/CCSprite",
-                "cocos2dPath/core/labelttf/LabelTTFWebGL",
-                "cocos2dPath/core/labelttf/LabelTTFPropertyDefine"
-            ],
+
 
 
 
@@ -2397,7 +2401,7 @@ else
             ],
 
             "cocos2dPath/actions/CCAction" : [
-                "core"
+                "cocosModule/core"
             ],
             "cocos2dPath/actions/CCActionInterval" : [
                 "cocos2dPath/actions/CCAction"
@@ -2410,7 +2414,7 @@ else
                 "cocos2dPath/core/sprites/CCSpriteBatchNode"
             ],
 
-            "core" : {
+            "cocosModule/core" : {
                 deps: [
                     "root/CCDebugger",
                     "cocos2dPath/core/utils/BinaryLoader",
@@ -2487,6 +2491,17 @@ else
                 "cocos2dPath/core/scenes/CCScene"
             ],
 
+            "cocos2dPath/core/labelttf/CCLabelTTF": {
+                deps: [
+                    "cocos2dPath/core/sprites/CCSprite",
+                    "cocos2dPath/core/labelttf/LabelTTFWebGL",
+                    "cocos2dPath/core/labelttf/LabelTTFPropertyDefine"
+                ],
+                init: function () {
+                    return cc.LabelTTF;
+                }
+            },
+
             "cocos2dPath/transitions/CCTransition": {
                 deps: [
                     "cocos2dPath/core/scenes/CCScene"
@@ -2499,7 +2514,7 @@ else
 
             "cocos2dPath/core/scenes/CCLoaderScene": {
                 deps: [
-                    "core",
+                    "cocosModule/core",
                     "cocos2dPath/core/layers/CCLayer",
                     "cocos2dPath/core/labelttf/CCLabelTTF",
                     "cocos2dPath/core/scenes/CCScene"
@@ -2512,8 +2527,8 @@ else
 
             "cocos2dPath/core/sprites/CCSprite" : {
                 deps: [
-                    "core",
-                    "Node",
+                    "cocosModule/core",
+                    "cocosModule/Node",
                     "cocos2dPath/core/sprites/SpritesPropertyDefine",
                     "cocos2dPath/core/sprites/SpritesWebGL"
                 ],
@@ -2524,7 +2539,7 @@ else
 
             "cocos2dPath/core/base-nodes/CCAtlasNode" : {
                 deps: [
-                    "Node"
+                    "cocosModule/Node"
                 ],
                 init: function() {
                     return cc.NodeAtlas;
@@ -2533,7 +2548,7 @@ else
 
             "cocos2dPath/core/sprites/CCAnimation" : {
                 deps: [
-                    "Sprite"
+                    "cocosModule/Sprite"
                 ],
                 init: function() {
                     return cc.Animation;
@@ -2542,7 +2557,7 @@ else
 
             "cocos2dPath/core/sprites/CCAnimationCache" : {
                 deps: [
-                    "Sprite",
+                    "cocosModule/Sprite",
                     "cocos2dPath/core/sprites/CCAnimation"
                 ],
                 init: function() {
@@ -2552,7 +2567,7 @@ else
 
             "cocos2dPath/core/sprites/CCSpriteFrame" : {
                 deps: [
-                    "Sprite"
+                    "cocosModule/Sprite"
                 ],
                 init: function() {
                     return cc.SpriteFrame;
@@ -2570,7 +2585,7 @@ else
 
             "cocos2dPath/actions/CCActionCamera" : {
                 deps: [
-                    "core",
+                    "cocosModule/core",
                     "cocos2dPath/actions/CCAction",
                     "cocos2dPath/actions/CCActionInterval"
                 ],
@@ -2578,7 +2593,7 @@ else
             },
             "cocos2dPath/actions/CCActionEase" : {
                 deps: [
-                    "core",
+                    "cocosModule/core",
                     "cocos2dPath/actions/CCAction",
                     "cocos2dPath/actions/CCActionInterval"
                 ],
@@ -2586,7 +2601,7 @@ else
             },
             "cocos2dPath/actions/CCActionCatmullRom" : {
                 deps: [
-                    "core",
+                    "cocosModule/core",
                     "cocos2dPath/actions/CCAction",
                     "cocos2dPath/actions/CCActionInterval"
                 ],
@@ -2594,7 +2609,7 @@ else
             },
             "cocos2dPath/actions/CCActionTween" : {
                 deps: [
-                    "core",
+                    "cocosModule/core",
                     "cocos2dPath/actions/CCAction",
                     "cocos2dPath/actions/CCActionInterval"
                 ],
@@ -2603,7 +2618,7 @@ else
 
             "cocos2dPath/audio/CCAudio" : {
                 deps: [
-                    "core",
+                    "cocosModule/core",
                     "cocos2dPath/core/event-manager/CCEventManager"
                 ],
                 exports: "cc"
