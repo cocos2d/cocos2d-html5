@@ -511,12 +511,11 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
                 var context = ctx || cc._renderContext;
                 var t = this._node._transformWorld;
                 context.save();
+                context.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
+
                 context.beginPath();
                 for (var i = 0; i < stencil._buffer.length; i++) {
-                    var element = stencil._buffer[i];
-                    var vertices = element.verts;
-
-                    context.transform(t.a, t.b, t.c, t.d, t.tx, -t.ty);
+                    var vertices = stencil._buffer[i].verts;
                     //cc.assert(cc.vertexListIsClockwise(vertices),
                     //    "Only clockwise polygons should be used as stencil");
 
