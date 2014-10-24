@@ -1269,7 +1269,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         cc.Node.prototype.init.call(_t);
         _t.dirty = _t._recursiveDirty = false;
-        _t._opacityModifyRGB = true;
 
         _t._blendFunc.src = cc.BLEND_SRC;
         _t._blendFunc.dst = cc.BLEND_DST;
