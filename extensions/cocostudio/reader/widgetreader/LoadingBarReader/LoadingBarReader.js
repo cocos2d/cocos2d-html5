@@ -28,15 +28,7 @@
  * @class
  * @name ccs.LoadingBarReader
  **/
-ccs.LoadingBarReader = /** @lends ccs.LoadingBarReader# */{
-    /**
-     * Gets the ccs.LoadingBarReader.
-     * @deprecated since v3.0, please use ccs.LoadingBarReader directly.
-     * @returns {ccs.LoadingBarReader}
-     */
-    getInstance: function(){
-        return ccs.LoadingBarReader;
-    },
+ccs.loadingBarReader = /** @lends ccs.LoadingBarReader# */{
 
     /**
      * Sets ccui.LoadingBar's properties from json dictionary.
@@ -44,7 +36,7 @@ ccs.LoadingBarReader = /** @lends ccs.LoadingBarReader# */{
      * @param {Object} options
      */
     setPropsFromJsonDictionary: function(widget, options){
-        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
 
         var jsonPath = ccs.uiReader.getFilePath();
@@ -65,7 +57,7 @@ ccs.LoadingBarReader = /** @lends ccs.LoadingBarReader# */{
                 break;
             case 1:
                 var imageFileName = imageFileNameDic["path"];
-                loadingBar.loadTexture(imageFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
+                loadingBar.loadTexture(imageFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
                 break;
             default:
                 break;
@@ -87,9 +79,55 @@ ccs.LoadingBarReader = /** @lends ccs.LoadingBarReader# */{
             loadingBar.setSize(cc.size(width, height));
         }
 
-        loadingBar.setDirection(options["direction"]/*ui::LoadingBarType(options["direction"])*/);
+        loadingBar.setDirection(options["direction"]/*ui.LoadingBarType(options["direction"])*/);
         loadingBar.setPercent(options["percent"]);
 
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+    },
+
+    setPropsFromProtocolBuffers: function(widget, nodeTree){
+        ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+
+        var loadingBar = widget;
+        var options = nodeTree["loadingBarOptions"];
+
+		var protocolBuffersPath = ccs.uiReader.getFilePath();
+
+		var imageFileNameDic = options["textureData"];
+        var imageFileNameType = imageFileNameDic["resourceType"];
+
+        var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic["path"], imageFileNameType);
+        loadingBar.loadTexture(imageFileName, imageFileNameType);
+
+
+        /* gui mark add load bar scale9 parse */
+        var scale9Enable = options["scale9Enable"];
+        loadingBar.setScale9Enabled(scale9Enable);
+
+
+        var cx = options["capinsetsX"];
+        var cy = options["capinsetsY"];
+        var cw = options["capinsetsWidth"]!=null ? options["capinsetsWidth"] : 1;
+        var ch = options["capinsetsHeight"]!=null ? options["capinsetsHeight"] : 1;
+
+        if (scale9Enable) {
+            loadingBar.setCapInsets(cc.rect(cx, cy, cw, ch));
+
+        }
+
+		var widgetOptions = nodeTree["widgetOptions"];
+        var width = widgetOptions["width"];
+        var height = widgetOptions["height"];
+        loadingBar.setContentSize(cc.size(width, height));
+
+        /**/
+
+        loadingBar.setDirection(options["direction"]);
+        var percent = options["percent"]!==null ? options["percent"] : 100;
+        loadingBar.setPercent(percent);
+
+
+        // other commonly protperties
+        ccs.widgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     }
 };

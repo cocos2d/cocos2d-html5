@@ -100,6 +100,8 @@ ccs.FrameEvent = function () {
  * @class
  * @extends ccs.ProcessBase
  *
+ * @param {ccs.Armature} [armature] The armature
+ *
  * @property {ccs.AnimationData}    animationData       - Animation data
  * @property {Object}               userObject          - User custom object
  * @property {Boolean}              ignoreFrameEvent    - Indicate whether the frame event is ignored
@@ -130,16 +132,16 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     _movementEventListener: null,
     _frameEventListener: null,
 
-    /**
-     * The Construction of ccs.ArmatureAnimation
-     */
-    ctor: function () {
+    ctor: function (armature) {
         ccs.ProcessBase.prototype.ctor.call(this);
 
         this._tweenList = [];
         this._movementList = [];
         this._frameEventQueue = [];
         this._movementEventQueue = [];
+        this._armature = null;
+
+        armature && ccs.ArmatureAnimation.prototype.init.call(this, armature);
     },
 
     /**
@@ -661,13 +663,8 @@ _p = null;
 /**
  * Allocates and initializes a ArmatureAnimation.
  * @return {ccs.ArmatureAnimation}
- * @example
- * // example
- * var animation = ccs.ArmatureAnimation.create();
+ * @deprecated since v3.1, please use new construction instead
  */
-ccs.ArmatureAnimation.create = function (armature) {    //TODO it will be deprecated in v3.1
-    var animation = new ccs.ArmatureAnimation();
-    if (animation && animation.init(armature))
-        return animation;
-    return null;
+ccs.ArmatureAnimation.create = function (armature) {
+    return new ccs.ArmatureAnimation(armature);
 };

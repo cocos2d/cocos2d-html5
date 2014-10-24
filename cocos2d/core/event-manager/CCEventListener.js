@@ -41,7 +41,7 @@ cc.EventListener = cc.Class.extend(/** @lends cc.EventListener# */{
 
     _fixedPriority: 0,                      // The higher the number, the higher the priority, 0 is for scene graph base priority.
     _node: null,                           // scene graph based priority
-    _paused: false,                        // Whether the listener is paused
+    _paused: true,                        // Whether the listener is paused
     _isEnabled: true,                      // Whether the listener is enabled
 
     /**
@@ -432,6 +432,7 @@ cc._EventListenerTouchAllAtOnce.create = function(){
  * @static
  * @param {object} argObj a json object
  * @returns {cc.EventListener}
+ * todo: It should be the direct use new
  * @example
  * cc.EventListener.create({
  *       event: cc.EventListener.TOUCH_ONE_BY_ONE,

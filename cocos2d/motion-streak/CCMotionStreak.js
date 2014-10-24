@@ -117,6 +117,10 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
             this.initWithFade(fade, minSeg, stroke, color, texture);
     },
 
+    _initRendererCmd:function(){
+        this._rendererCmd = new cc.MotionStreakCmdWebGL(this);
+    },
+
     /**
      * Gets the texture.
      * @return {cc.Texture2D}

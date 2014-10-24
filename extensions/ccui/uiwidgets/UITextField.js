@@ -219,7 +219,7 @@ ccui._TextFieldRenderer.create = function (placeholder, fontName, fontSize) {
  * @extends ccui.Widget
  *
  * @property {String}   string              - The content string of the label
- * @property {Number}   placeHolder         - The place holder of the text field
+ * @property {String}   placeHolder         - The place holder of the text field
  * @property {String}   font                - The text field font with a style string: e.g. "18px Verdana"
  * @property {String}   fontName            - The text field font name
  * @property {Number}   fontSize            - The text field font size
@@ -753,7 +753,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     _createCloneInstance: function () {
-        return ccui.TextField.create();
+        return new ccui.TextField();
     },
 
     _copySpecialProperties: function (textField) {
@@ -801,6 +801,16 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
 
     _getFont: function () {
         return this._textFieldRenderer._getFont();
+    },
+
+    _transformForRenderer: function(){
+
+        this._adaptRenderers();
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            cc.Node.prototype.transform.call(this);
+        else
+            cc.ProtectedNode.prototype._transformForRenderer.call(this);
+        this._textFieldRenderer._transformForRenderer();
     }
 });
 
@@ -811,9 +821,6 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
  * @param {String} fontName
  * @param {Number} fontSize
  * @returns {ccui.TextField}
- * @example
- * // example
- * var uiTextField = ccui.TextField.create();
  */
 ccui.TextField.create = function(placeholder, fontName, fontSize){
     return new ccui.TextField(placeholder, fontName, fontSize);

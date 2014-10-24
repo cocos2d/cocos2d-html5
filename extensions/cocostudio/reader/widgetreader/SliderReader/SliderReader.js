@@ -28,15 +28,7 @@
  * @class
  * @name ccs.SliderReader
  **/
-ccs.SliderReader = /** @lends ccs.SliderReader# */{
-    /**
-     * Gets the ccs.SliderReader.
-     * @deprecated since v3.0, please use ccs.SliderReader directly.
-     * @returns {ccs.SliderReader}
-     */
-    getInstance: function(){
-        return ccs.SliderReader;
-    },
+ccs.sliderReader = /** @lends ccs.SliderReader# */{
 
     /**
      * Sets ccui.Slider's properties from json dictionary.
@@ -44,7 +36,7 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
      * @param {Object} options
      */
     setPropsFromJsonDictionary: function(widget, options){
-        ccs.WidgetReader.setPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setPropsFromJsonDictionary.call(this, widget, options);
 
         var jsonPath = ccs.uiReader.getFilePath();
 
@@ -71,7 +63,7 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
                         slider.loadBarTexture(imageFileName_tp);
                         break;
                     case 1:
-                        slider.loadBarTexture(imageFileName, 1 /*ui::UI_TEX_TYPE_PLIST*/);
+                        slider.loadBarTexture(imageFileName, 1 /*ui.UI_TEX_TYPE_PLIST*/);
                         break;
                     default:
                         break;
@@ -87,7 +79,7 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
                         slider.loadBarTexture(imageFileName_tp);
                     break;
                 case 1:
-                    slider.loadBarTexture(imageFileName, 1 /*ui::UI_TEX_TYPE_PLIST*/);
+                    slider.loadBarTexture(imageFileName, 1 /*ui.UI_TEX_TYPE_PLIST*/);
                     break;
                 default:
                     break;
@@ -104,7 +96,7 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
                 slider.loadSlidBallTextureNormal(normalFileName_tp);
                 break;
             case 1:
-                slider.loadSlidBallTextureNormal(normalFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
+                slider.loadSlidBallTextureNormal(normalFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
                 break;
             default:
                 break;
@@ -125,7 +117,7 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
                 slider.loadSlidBallTexturePressed(pressedFileName_tp);
                 break;
             case 1:
-                slider.loadSlidBallTexturePressed(pressedFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
+                slider.loadSlidBallTexturePressed(pressedFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
                 break;
             default:
                 break;
@@ -141,7 +133,7 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
                 slider.loadSlidBallTextureDisabled(disabledFileName_tp);
                 break;
             case 1:
-                slider.loadSlidBallTextureDisabled(disabledFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
+                slider.loadSlidBallTextureDisabled(disabledFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
                 break;
             default:
                 break;
@@ -157,12 +149,82 @@ ccs.SliderReader = /** @lends ccs.SliderReader# */{
                 slider.loadProgressBarTexture(imageProgressFileName_tp);
                 break;
             case 1:
-                slider.loadProgressBarTexture(imageProgressFileName, 1/*ui::UI_TEX_TYPE_PLIST*/);
+                slider.loadProgressBarTexture(imageProgressFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
                 break;
             default:
                 break;
         }
 
-        ccs.WidgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+        ccs.widgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
+    },
+
+    setPropsFromProtocolBuffers: function(widget, nodeTree){
+        ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
+
+        var slider = widget;
+        var options = nodeTree["sliderOptions"];
+
+		var protocolBuffersPath = ccs.uiReader.getFilePath();
+
+        var barTextureScale9Enable = !!options["scale9Enable"];
+        if(barTextureScale9Enable)
+            slider.setUnifySizeEnabled(false);
+        slider.setScale9Enabled(barTextureScale9Enable);
+
+        slider.setPercent(options["percent"]);
+
+
+        //        var bt = DICTOOL.checkObjectExist_json(options, P_BarFileName);
+        var barLength = options["length"]!==null ? options["length"] : 290;
+
+		var imageFileNameDic = options["barFileNameData"];
+        var imageFileNameType = imageFileNameDic["resourceType"];
+
+        var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic["path"], imageFileNameType);
+        slider.loadBarTexture(imageFileName, imageFileNameType);
+
+        if (barTextureScale9Enable)
+        {
+            slider.setContentSize(cc.size(barLength, slider.getContentSize().height));
+        }
+
+        //loading normal slider ball texture
+        var normalDic = options["ballNormalData"];
+        var normalType = normalDic["resourceType"];
+
+        imageFileName = ccs.widgetReader.getResourcePath(normalDic["path"], normalType);
+        slider.loadSlidBallTextureNormal(imageFileName, normalType);
+
+
+        //loading slider ball press texture
+        var pressedDic = options["ballPressedData"];
+        var pressedType = pressedDic["resourceType"];
+
+        var pressedFileName = ccs.widgetReader.getResourcePath(pressedDic["path"], pressedType);
+        slider.loadSlidBallTexturePressed(pressedFileName, pressedType);
+
+        //loading silder ball disable texture
+        var disabledDic = options["ballDisabledData"];
+        var disabledType = disabledDic["resourceType"];
+
+        var disabledFileName = ccs.widgetReader.getResourcePath(disabledDic["path"], disabledType);
+        slider.loadSlidBallTextureDisabled(disabledFileName, disabledType);
+
+        //load slider progress texture
+        var progressBarDic = options["progressBarData"];
+        var progressBarType = progressBarDic["resourceType"];
+
+        var progressBarFileName = ccs.widgetReader.getResourcePath(progressBarDic["path"], progressBarType);
+        slider.loadProgressBarTexture(progressBarFileName, progressBarType);
+
+        var displaystate = true;
+		if(options["displaystate"]!==null)
+		{
+			displaystate = options["displaystate"];
+		}
+		slider.setBright(displaystate);
+
+        // other commonly protperties
+        ccs.widgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     }
 };

@@ -96,7 +96,7 @@ cc.ControlColourPicker = cc.Control.extend(/** @lends cc.ControlColourPicker# */
             cc.spriteFrameCache.addSpriteFrames(res.CCControlColourPickerSpriteSheet_plist);
 
             // Create the sprite batch node
-            var spriteSheet = cc.SpriteBatchNode.create(res.CCControlColourPickerSpriteSheet_png);
+            var spriteSheet = new cc.SpriteBatchNode(res.CCControlColourPickerSpriteSheet_png);
             this.addChild(spriteSheet);
 
           /*// MIPMAP
@@ -119,8 +119,8 @@ cc.ControlColourPicker = cc.Control.extend(/** @lends cc.ControlColourPicker# */
             var hueShift = 8;
             var colourShift = 28;
 
-            this._huePicker = cc.ControlHuePicker.create(spriteSheet, cc.p(backgroundPointZero.x + hueShift, backgroundPointZero.y + hueShift));
-            this._colourPicker = cc.ControlSaturationBrightnessPicker.create(spriteSheet, cc.p(backgroundPointZero.x + colourShift, backgroundPointZero.y + colourShift));
+            this._huePicker = new cc.ControlHuePicker(spriteSheet, cc.p(backgroundPointZero.x + hueShift, backgroundPointZero.y + hueShift));
+            this._colourPicker = new cc.ControlSaturationBrightnessPicker(spriteSheet, cc.p(backgroundPointZero.x + colourShift, backgroundPointZero.y + colourShift));
 
             // Setup events
             this._huePicker.addTargetWithActionForControlEvents(this, this.hueSliderValueChanged, cc.CONTROL_EVENT_VALUECHANGED);

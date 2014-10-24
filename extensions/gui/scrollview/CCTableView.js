@@ -714,5 +714,5 @@ _p = null;
  * @return {cc.TableView} table view
  */
 cc.TableView.create = function (dataSource, size, container) {
-    return cc.TableView(dataSource, size, container);
+    return new cc.TableView(dataSource, size, container);
 };

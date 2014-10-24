@@ -246,13 +246,13 @@ cc.TMXTilesetInfo = cc.Class.extend(/** @lends cc.TMXTilesetInfo# */{
  * @example
  * 1.
  * //create a TMXMapInfo with file name
- * var tmxMapInfo = cc.TMXMapInfo.create("res/orthogonal-test1.tmx");
+ * var tmxMapInfo = new cc.TMXMapInfo("res/orthogonal-test1.tmx");
  * 2.
  * //create a TMXMapInfo with content string and resource path
  * var resources = "res/TileMaps";
  * var filePath = "res/TileMaps/orthogonal-test1.tmx";
  * var xmlStr = cc.loader.getRes(filePath);
- * var tmxMapInfo = cc.TMXMapInfo.create(xmlStr, resources);
+ * var tmxMapInfo = new cc.TMXMapInfo(xmlStr, resources);
  */
 cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
 	properties:null,
@@ -769,6 +769,8 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
 
                         // Correct y position. (Tiled uses Flipped, cocos2d uses Standard)
                         objectProp["y"] = parseInt(this.getMapSize().height * this.getTileSize().height) - y - objectProp["height"];
+						
+                        objectProp["rotation"] = parseInt(selObj.getAttribute('rotation')) || 0;
 
                         var docObjProps = selObj.querySelectorAll("properties > property");
                         if (docObjProps) {
@@ -917,16 +919,6 @@ cc.defineGetterSetter(_p, "tileHeight", _p._getTileHeight, _p._setTileHeight);
  * @param {String} tmxFile fileName or content string
  * @param {String} resourcePath  If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
  * @return {cc.TMXMapInfo}
- * @example
- * 1.
- * //create a TMXMapInfo with file name
- * var tmxMapInfo = cc.TMXMapInfo.create("res/orthogonal-test1.tmx");
- * 2.
- * //create a TMXMapInfo with content string and resource path
- * var resources = "res/TileMaps";
- * var filePath = "res/TileMaps/orthogonal-test1.tmx";
- * var xmlStr = cc.loader.getRes(filePath);
- * var tmxMapInfo = cc.TMXMapInfo.create(xmlStr, resources);
  */
 cc.TMXMapInfo.create = function (tmxFile, resourcePath) {
     return new cc.TMXMapInfo(tmxFile, resourcePath);

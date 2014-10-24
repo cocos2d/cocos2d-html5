@@ -22,24 +22,30 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+var PBP;
+if(CSParseBinary && window["dcodeIO"] && window["dcodeIO"]["ProtoBuf"]){
+    PBP = dcodeIO["ProtoBuf"]["loadProto"](CSParseBinary)["build"]()["protocolbuffers"];
+}else{
+    PBP = null;
+}
 
 (function(){
     var factoryCreate = ccs.objectFactory;
 
-    factoryCreate.registerType({_className:"ButtonReader", _fun: ccs.ButtonReader});
-    factoryCreate.registerType({_className: "CheckBoxReader", _fun: ccs.CheckBoxReader});
-    factoryCreate.registerType({_className: "SliderReader", _fun: ccs.SliderReader});
-    factoryCreate.registerType({_className: "ImageViewReader", _fun: ccs.ImageViewReader});
-    factoryCreate.registerType({_className: "LoadingBarReader", _fun: ccs.LoadingBarReader});
-    factoryCreate.registerType({_className: "TextAtlasReader", _fun: ccs.LabelAtlasReader});
-    factoryCreate.registerType({_className: "TextReader", _fun: ccs.LabelReader});
-    factoryCreate.registerType({_className: "TextBMFontReader", _fun: ccs.LabelBMFontReader});
-    factoryCreate.registerType({_className: "TextFieldReader", _fun: ccs.TextFieldReader});
-    factoryCreate.registerType({_className: "LayoutReader", _fun: ccs.LayoutReader});
-    factoryCreate.registerType({_className: "PageViewReader", _fun: ccs.PageViewReader});
-    factoryCreate.registerType({_className: "ScrollViewReader", _fun: ccs.ScrollViewReader});
-    factoryCreate.registerType({_className: "ListViewReader", _fun: ccs.ListViewReader});
-    factoryCreate.registerType({_className: "WidgetReader", _fun: ccs.WidgetReader});
+    factoryCreate.registerType({_className:"ButtonReader", _fun: ccs.buttonReader});
+    factoryCreate.registerType({_className: "CheckBoxReader", _fun: ccs.checkBoxReader});
+    factoryCreate.registerType({_className: "SliderReader", _fun: ccs.sliderReader});
+    factoryCreate.registerType({_className: "ImageViewReader", _fun: ccs.imageViewReader});
+    factoryCreate.registerType({_className: "LoadingBarReader", _fun: ccs.loadingBarReader});
+    factoryCreate.registerType({_className: "TextAtlasReader", _fun: ccs.labelAtlasReader});
+    factoryCreate.registerType({_className: "TextReader", _fun: ccs.labelReader});
+    factoryCreate.registerType({_className: "TextBMFontReader", _fun: ccs.labelBMFontReader});
+    factoryCreate.registerType({_className: "TextFieldReader", _fun: ccs.textFieldReader});
+    factoryCreate.registerType({_className: "LayoutReader", _fun: ccs.layoutReader});
+    factoryCreate.registerType({_className: "PageViewReader", _fun: ccs.pageViewReader});
+    factoryCreate.registerType({_className: "ScrollViewReader", _fun: ccs.scrollViewReader});
+    factoryCreate.registerType({_className: "ListViewReader", _fun: ccs.listViewReader});
+    factoryCreate.registerType({_className: "WidgetReader", _fun: ccs.widgetReader});
 
     factoryCreate.registerType({_className: "Button", _fun: ccui.Button});
     factoryCreate.registerType({_className: "CheckBox", _fun: ccui.CheckBox});
@@ -193,6 +199,10 @@ ccs.uiReader = /** @lends ccs.uiReader# */{
         return this._filePath;
     },
 
+    setFilePath: function(path){
+        this._filePath = path;
+    },
+
     /**
      * Returns the parsed object map.
      * @returns {Object}
@@ -253,6 +263,8 @@ ccs.WidgetPropertiesReader = ccs.Class.extend(/** @lends ccs.WidgetPropertiesRea
             convertedClassName = "TextAtlas";
         else if (name == "LabelBMFont")
             convertedClassName = "TextBMFont";
+        else if (name == "Node")
+            convertedClassName = "Layout";
         return convertedClassName;
     },
 
@@ -369,46 +381,46 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend(/** @lends cc
         var classname = data["classname"];
         var uiOptions = data["options"];
         if (classname == "Button") {
-            widget = ccui.Button.create();
+            widget = new ccui.Button();
             this.setPropsForButtonFromJsonDictionary(widget, uiOptions);
         } else if (classname == "CheckBox") {
-            widget = ccui.CheckBox.create();
+            widget = new ccui.CheckBox();
             this.setPropsForCheckBoxFromJsonDictionary(widget, uiOptions);
         } else if (classname == "Label") {
-            widget = ccui.Text.create();
+            widget = new ccui.Text();
             this.setPropsForLabelFromJsonDictionary(widget, uiOptions);
         } else if (classname == "LabelAtlas") {
-            widget = ccui.TextAtlas.create();
+            widget = new ccui.TextAtlas();
             this.setPropsForLabelAtlasFromJsonDictionary(widget, uiOptions);
         } else if (classname == "LoadingBar") {
-            widget = ccui.LoadingBar.create();
+            widget = new ccui.LoadingBar();
             this.setPropsForLoadingBarFromJsonDictionary(widget, uiOptions);
         } else if (classname == "ScrollView") {
-            widget = ccui.ScrollView.create();
+            widget = new ccui.ScrollView();
             this.setPropsForScrollViewFromJsonDictionary(widget, uiOptions);
         } else if (classname == "TextArea") {
-            widget = ccui.Text.create();
+            widget = new ccui.Text();
             this.setPropsForLabelFromJsonDictionary(widget, uiOptions);
         } else if (classname == "TextButton") {
-            widget = ccui.Button.create();
+            widget = new ccui.Button();
             this.setPropsForButtonFromJsonDictionary(widget, uiOptions);
         } else if (classname == "TextField") {
-            widget = ccui.TextField.create();
+            widget = new ccui.TextField();
             this.setPropsForTextFieldFromJsonDictionary(widget, uiOptions);
         } else if (classname == "ImageView") {
-            widget = ccui.ImageView.create();
+            widget = new ccui.ImageView();
             this.setPropsForImageViewFromJsonDictionary(widget, uiOptions);
         } else if (classname == "Panel") {
-            widget = ccui.Layout.create();
+            widget = new ccui.Layout();
             this.setPropsForLayoutFromJsonDictionary(widget, uiOptions);
         } else if (classname == "Slider") {
-            widget = ccui.Slider.create();
+            widget = new ccui.Slider();
             this.setPropsForSliderFromJsonDictionary(widget, uiOptions);
         } else if (classname == "LabelBMFont") {
-            widget = ccui.TextBMFont.create();
+            widget = new ccui.TextBMFont();
             this.setPropsForLabelBMFontFromJsonDictionary(widget, uiOptions);
         } else if (classname == "DragPanel") {
-            widget = ccui.ScrollView.create();
+            widget = new ccui.ScrollView();
             this.setPropsForScrollViewFromJsonDictionary(widget, uiOptions);
         }
         var children = data["children"];
@@ -584,7 +596,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend(/** @lends cc
             checkBox.loadTextures(backGroundFileName_tp, backGroundSelectedFileName_tp, frontCrossFileName_tp, backGroundDisabledFileName_tp, frontCrossDisabledFileName_tp);
         }
 
-        checkBox.setSelectedState(options["selectedState"] || false);
+        checkBox.setSelected(options["selectedState"] || false);
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     },
 
@@ -678,15 +690,17 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend(/** @lends cc
     setPropsForLabelAtlasFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var labelAtlas = widget;
-        var sv = (options["stringValue"] !== undefined);
-        var cmf = (options["charMapFile"] !== undefined);
-        var iw = (options["itemWidth"] !== undefined);
-        var ih = (options["itemHeight"] !== undefined);
-        var scm = (options["startCharMap"] !== undefined);
-        if (sv && cmf && iw && ih && scm && options["charMapFile"]) {
-            var cmft = options["charMapFile"];
+
+        var cmft = options["charMapFileData"], svValue = options["stringValue"], iwValue = options["itemWidth"];
+        var ihValue = options["itemHeight"], scmValue = options["startCharMap"];
+        var sv = (svValue !== undefined);
+        var cmf = (cmft !== undefined);
+        var iw = (iwValue !== undefined);
+        var ih = (ihValue !== undefined);
+        var scm = (scmValue !== undefined);
+        if (sv && cmf && iw && ih && scm && cmft) {
             var cmf_tp = this._filePath + cmft;
-            labelAtlas.setProperty(options["stringValue"], cmf_tp, options["itemWidth"], options["itemHeight"], options["startCharMap"]);
+            labelAtlas.setProperty(svValue, cmf_tp, iwValue, ihValue, scmValue);
         }
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     },
@@ -1172,12 +1186,12 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend(/** @lends cc
                 case 0:
                     break;
                 case 1:
-                    parameter = ccui.LinearLayoutParameter.create();
+                    parameter = new ccui.LinearLayoutParameter();
                     var gravity = layoutParameterDic["gravity"];
                     parameter.setGravity(gravity);
                     break;
                 case 2:
-                    parameter = ccui.RelativeLayoutParameter.create();
+                    parameter = new ccui.RelativeLayoutParameter();
                     var relativeName = layoutParameterDic["relativeName"];
                     parameter.setRelativeName(relativeName);
                     var relativeToName = layoutParameterDic["relativeToName"];
@@ -1929,5 +1943,243 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend(/** @lends cc
         labelBMFont.setString(text);
 
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
+    },
+
+    widgetFromProtocolBuffers: function(nodetree){
+
+
+        var classname = nodetree.classname;
+        //cc.log("classname = %s", classname);
+
+        var widget = this._createGUI(classname);
+        var readerName = this._getWidgetReaderClassName(classname);
+
+        var reader = this._createWidgetReaderProtocol(readerName);
+
+        if (reader)
+        {
+            // widget parse with widget reader
+            this.setPropsForAllWidgetFromProtocolBuffers(reader, widget, nodetree);
+        }
+        else
+        {
+            //
+            // 1st., custom widget parse properties of parent widget with parent widget reader
+            readerName = this._getWidgetReaderClassNameFromWidget(widget);
+            reader =  this._createWidgetReaderProtocol(readerName);
+            if (reader && widget)
+            {
+                this.setPropsForAllWidgetFromProtocolBuffers(reader, widget, nodetree);
+
+                // 2nd., custom widget parse with custom reader
+                var widgetOptions = nodetree.widgetOptions;
+                var customJsonDict = widgetOptions.componentOptions;
+//                var customJsonDict;
+//                customJsonDict.Parse(customProperty);
+//                if (customJsonDict.HasParseError())
+//                {
+//                    cc.log("GetParseError %s\n", customJsonDict.GetParseError());
+//                }
+                this.setPropsForAllCustomWidgetFromJsonDictionary(classname, widget, customJsonDict);
+            }
+            else
+            {
+                cc.log("Widget or WidgetReader doesn't exists!!!  Please check your json file.");
+            }
+            //
+        }
+
+        var size = nodetree.children.length;
+        //cc.log("widget children size = %d", size);
+        for (var i = 0; i < size; ++i)
+        {
+            var subNodeTree = nodetree.children[i];
+            var child = this.widgetFromProtocolBuffers(subNodeTree);
+            //cc.log("widget child = %p", child);
+            if (child)
+            {
+                var pageView = widget;
+                if (pageView instanceof ccui.PageView)
+                {
+                    pageView.addPage(child);
+                }
+                else
+                {
+                    var listView = widget;
+                    if (listView instanceof ccui.ListView)
+                    {
+                        listView.pushBackCustomItem(child);
+                    }
+                    else
+                    {
+                        widget.addChild(child);
+                    }
+                }
+            }
+        }
+
+        //cc.log("widget = %p", widget);
+
+        return widget;
+    },
+
+    setPropsForAllWidgetFromProtocolBuffers: function(reader, widget, nodetree){
+        reader.setPropsFromProtocolBuffers(widget, nodetree);
+    },
+
+    widgetFromXML: function(objectData, classType){
+        var classname = classType.substr(0, classType.find("ObjectData"));
+        //cc.log("classname = %s", classname);
+
+        var widget = this.createGUI(classname);
+        var readerName = this.getWidgetReaderClassName(classname);
+
+        var reader = this.createWidgetReaderProtocol(readerName);
+
+        if (reader)
+        {
+            // widget parse with widget reader
+            this.setPropsForAllWidgetFromXML(reader, widget, objectData);
+        }
+        else
+        {
+            //
+            // 1st., custom widget parse properties of parent widget with parent widget reader
+            readerName = this.getWidgetReaderClassName(widget);
+            reader =  this.createWidgetReaderProtocol(readerName);
+            if (reader && widget)
+            {
+                this.setPropsForAllWidgetFromXML(reader, widget, objectData);
+
+                // 2nd., custom widget parse with custom reader
+                //                const protocolbuffers::WidgetOptions& widgetOptions = nodetree.widgetoptions();
+                //                const char* customProperty = widgetOptions.customproperty().c_str();
+                var customProperty = "";
+                var customJsonDict;
+                customJsonDict.Parse(customProperty);
+                if (customJsonDict.HasParseError())
+                {
+                    cc.log("GetParseError %s\n", customJsonDict.GetParseError());
+                }
+                this.setPropsForAllCustomWidgetFromJsonDictionary(classname, widget, customJsonDict);
+            }
+            else
+            {
+                cc.log("Widget or WidgetReader doesn't exists!!!  Please check your json file.");
+            }
+            //
+        }
+
+
+
+
+
+        // children
+        var containChildrenElement = false;
+        objectData = objectData.FirstChildElement();
+
+        while (objectData)
+        {
+            //cc.log("objectData name = %s", objectData.Name());
+
+            if ("Children" !== objectData.Name())
+            {
+                containChildrenElement = true;
+                break;
+            }
+
+            objectData = objectData.NextSiblingElement();
+        }
+
+        if (containChildrenElement)
+        {
+            objectData = objectData.FirstChildElement();
+            //cc.log("objectData name = %s", objectData.Name());
+
+            while (objectData)
+            {
+                var attribute = objectData.FirstAttribute();
+                while (attribute)
+                {
+                    var name = attribute.Name();
+                    var value = attribute.Value();
+
+                    if (name == "ctype")
+                    {
+                        var child = this.widgetFromXML(objectData, value);
+                        //cc.log("child = %p", child);
+                        if (child)
+                        {
+                            var pageView = widget;
+                            var listView = widget;
+                            if (pageView instanceof ccui.PageView)
+                            {
+                                var layout = child;
+                                if (layout instanceof ccui.Layout)
+                                {
+                                    pageView.addPage(layout);
+                                }
+                            }
+                            else if (listView)
+                            {
+                                var widgetChild = child;
+                                if (widgetChild instanceof ccui.Widget)
+                                {
+                                    listView.pushBackCustomItem(widgetChild);
+                                }
+                            }
+                            else
+                            {
+                                widget.addChild(child);
+                            }
+                        }
+
+                        break;
+                    }
+
+                    attribute = attribute.Next();
+                }
+
+                //            Node* child = nodeFromXML(objectData, value);
+                //            CCLOG("child = %p", child);
+                //            if (child)
+                //            {
+                //                PageView* pageView = dynamic_cast<PageView*>(node);
+                //                ListView* listView = dynamic_cast<ListView*>(node);
+                //                if (pageView)
+                //                {
+                //                    Layout* layout = dynamic_cast<Layout*>(child);
+                //                    if (layout)
+                //                    {
+                //                        pageView.addPage(layout);
+                //                    }
+                //                }
+                //                else if (listView)
+                //                {
+                //                    Widget* widget = dynamic_cast<Widget*>(child);
+                //                    if (widget)
+                //                    {
+                //                        listView.pushBackCustomItem(widget);
+                //                    }
+                //                }
+                //                else
+                //                {
+                //                    node.addChild(child);
+                //                }
+                //            }
+
+                objectData = objectData.NextSiblingElement();
+            }
+        }
+        //
+
+        //cc.log("widget = %p", widget);
+
+        return widget;
+    },
+
+    setPropsForAllWidgetFromXML: function(reader, widget, objectData){
+        reader.setPropsFromXML(widget, objectData);
     }
+
 });

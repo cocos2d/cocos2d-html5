@@ -53,7 +53,6 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     _mapStartChar: null,
 
     _textureLoaded: false,
-    _loadedEventListeners: null,
     _className: "LabelAtlas",
 
     /**
@@ -73,6 +72,9 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     ctor: function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
         cc.AtlasNode.prototype.ctor.call(this);
 
+        this._cascadeOpacityEnabled = true;
+        this._cascadeColorEnabled = true;
+
         charMapFile && cc.LabelAtlas.prototype.initWithString.call(this, strText, charMapFile, itemWidth, itemHeight, startCharMap);
     },
 
@@ -88,23 +90,10 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      * Add texture loaded event listener.
      * @param {Function} callback
      * @param {cc.Node} target
+     * @deprecated since 3.1, please use addEventListener instead
      */
     addLoadedEventListener: function (callback, target) {
-        if (!this._loadedEventListeners)
-            this._loadedEventListeners = [];
-        this._loadedEventListeners.push({eventCallback: callback, eventTarget: target});
-    },
-
-    _callLoadedEventCallbacks: function () {
-        if (!this._loadedEventListeners)
-            return;
-        this._textureLoaded = true;
-        var locListeners = this._loadedEventListeners;
-        for (var i = 0, len = locListeners.length; i < len; i++) {
-            var selCallback = locListeners[i];
-            selCallback.eventCallback.call(selCallback.eventTarget, this);
-        }
-        locListeners.length = 0;
+        this.addEventListener("load", callback, target);
     },
 
     /**
@@ -151,10 +140,10 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         var locLoaded = texture.isLoaded();
         this._textureLoaded = locLoaded;
         if (!locLoaded) {
-            texture.addLoadedEventListener(function (sender) {
+            texture.addEventListener("load", function (sender) {
                 this.initWithTexture(texture, width, height, label.length);
                 this.string = label;
-                this._callLoadedEventCallbacks();
+                this.dispatchEvent("load");
             }, this);
         }
         if (this.initWithTexture(texture, width, height, label.length)) {
@@ -238,7 +227,6 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
                     fontChar.initWithTexture(texture, rect);
                     // restore to default in case they were modified
                     fontChar.visible = true;
-                    fontChar.opacity = this._displayedOpacity;
                 }
             }
             fontChar.setPosition(i * locItemWidth + locItemWidth / 2, locItemHeight / 2);
@@ -367,17 +355,6 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      */
     setOpacity: null,
 
-    _setOpacityForCanvas: function (opacity) {
-        if (this._displayedOpacity !== opacity) {
-            cc.AtlasNode.prototype.setOpacity.call(this, opacity);
-            var locChildren = this._children;
-            for (var i = 0, len = locChildren.length; i < len; i++) {
-                if (locChildren[i])
-                    locChildren[i].opacity = opacity;
-            }
-        }
-    },
-
     _setOpacityForWebGL: function (opacity) {
         if (this._opacity !== opacity)
             cc.AtlasNode.prototype.setOpacity.call(this, opacity);
@@ -385,6 +362,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 });
 
 var _p = cc.LabelAtlas.prototype;
+cc.EventHelper.prototype.apply(_p);
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     _p.updateAtlasValues = _p._updateAtlasValuesForWebGL;
     _p.setString = _p._setStringForWebGL;
@@ -398,6 +376,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 
 // Override properties
 cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
+cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
 
 // Extended properties
 /** @expose */
@@ -419,13 +398,6 @@ cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
  * @param {Number} [itemHeight=0]
  * @param {Number} [startCharMap=""]
  * @return {cc.LabelAtlas} returns the LabelAtlas object on success
- * @example
- * //Example
- * //creates the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas
- * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapfile.png', 12, 20, ' ')
- *
- * //creates the cc.LabelAtlas with a string, a fnt file
- * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapFile.plist‘);
  */
 cc.LabelAtlas.create = function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
     return new cc.LabelAtlas(strText, charMapFile, itemWidth, itemHeight, startCharMap);

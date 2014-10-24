@@ -163,6 +163,12 @@ cc.PhysicsDebugNode = cc.DrawNode.extend({
         this._space = space;
     },
 
+    _initRendererCmd:function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            this._rendererCmd = new cc.PhysicsDebugNodeRenderCmdCanvas(this);
+        else
+            this._rendererCmd = new cc.PhysicsDebugNodeRenderCmdWebGL(this);
+    },
     /**
      * get space
      * @returns {cp.Space}

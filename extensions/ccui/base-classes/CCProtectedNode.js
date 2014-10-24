@@ -43,7 +43,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
      */
     ctor: function(){
         cc.Node.prototype.ctor.call(this);
-       this._protectedChildren = [];
+        this._protectedChildren = [];
     },
 
     /**
@@ -246,7 +246,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         var children = _t._children, child;
         var locChildren = _t._children, locProtectedChildren = this._protectedChildren;
         var childLen = locChildren.length, pLen = locProtectedChildren.length;
-        context.save();
+//        context.save();
         _t.transform(context);
 
         _t.sortAllChildren();
@@ -268,7 +268,9 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
                 break;
         }
 
-        _t.draw(context);
+//        _t.draw(context);
+        if(this._rendererCmd)
+            cc.renderer.pushRenderCommand(this._rendererCmd);
 
         for (; i < childLen; i++)
             children[i] && children[i].visit(context);
@@ -276,8 +278,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
             locProtectedChildren[j] && locProtectedChildren[j].visit(context);
 
         this._cacheDirty = false;
-        _t.arrivalOrder = 0;
-        context.restore();
+//        context.restore();
     },
 
     _visitForWebGL: function(){
@@ -316,7 +317,10 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
             else
                 break;
         }
-        _t.draw(context);
+//        _t.draw(context);
+        if(this._rendererCmd)
+            cc.renderer.pushRenderCommand(this._rendererCmd);
+
         // draw children zOrder >= 0
         for (; i < childLen; i++) {
             locChildren[i] && locChildren[i].visit();
@@ -325,7 +329,6 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
             locProtectedChildren[j] && locProtectedChildren[j].visit();
         }
 
-        _t.arrivalOrder = 0;
         if (locGrid && locGrid._active)
             locGrid.afterDraw(_t);
 
@@ -478,8 +481,73 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     cc.ProtectedNode.prototype.visit =  cc.ProtectedNode.prototype._visitForCanvas;
+    cc.ProtectedNode.prototype._transformForRenderer = function () {
+        var t = this.nodeToParentTransform(), worldT = this._transformWorld;
+        if(this._parent){
+            var pt = this._parent._transformWorld;
+            //worldT = cc.AffineTransformConcat(t, pt);
+            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
+            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
+            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
+            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
+            if(this._skewX || this._skewY){
+                var plt = this._parent._transform;
+                var xOffset = -(plt.b + plt.c) * t.ty ;
+                var yOffset = -(plt.b + plt.c) * t.tx;
+                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
+                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
+            }else{
+                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx);          //tx
+                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty);		  //ty
+            }
+        } else {
+            worldT.a = t.a;
+            worldT.b = t.b;
+            worldT.c = t.c;
+            worldT.d = t.d;
+            worldT.tx = t.tx;
+            worldT.ty = t.ty;
+        }
+        this._renderCmdDiry = false;
+        var i, len, locChildren = this._children;
+        for(i = 0, len = locChildren.length; i< len; i++){
+            locChildren[i]._transformForRenderer();
+        }
+        locChildren = this._protectedChildren;
+        for( i = 0, len = locChildren.length; i< len; i++)
+            locChildren[i]._transformForRenderer();
+    };
 }else{
     cc.ProtectedNode.prototype.visit =  cc.ProtectedNode.prototype._visitForWebGL;
+    cc.ProtectedNode.prototype._transformForRenderer = function () {
+        var t4x4 = this._transform4x4, stackMatrix = this._stackMatrix,
+            parentMatrix = this._parent ? this._parent._stackMatrix : cc.current_stack.top;
+
+        // Convert 3x3 into 4x4 matrix
+        var trans = this.nodeToParentTransform();
+        var t4x4Mat = t4x4.mat;
+        t4x4Mat[0] = trans.a;
+        t4x4Mat[4] = trans.c;
+        t4x4Mat[12] = trans.tx;
+        t4x4Mat[1] = trans.b;
+        t4x4Mat[5] = trans.d;
+        t4x4Mat[13] = trans.ty;
+
+        // Update Z vertex manually
+        t4x4Mat[14] = this._vertexZ;
+
+        //optimize performance for Javascript
+        cc.kmMat4Multiply(stackMatrix, parentMatrix, t4x4);
+
+        this._renderCmdDiry = false;
+        var i, len, locChildren = this._children;
+        for(i = 0, len = locChildren.length; i< len; i++){
+            locChildren[i]._transformForRenderer();
+        }
+        locChildren = this._protectedChildren;
+        for( i = 0, len = locChildren.length; i< len; i++)
+            locChildren[i]._transformForRenderer();
+    };
 }
 
 /**
