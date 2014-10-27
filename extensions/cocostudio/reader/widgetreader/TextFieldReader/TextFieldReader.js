@@ -42,7 +42,7 @@ ccs.textFieldReader = /** @lends ccs.TextFieldReader# */{
         var ph = options["placeHolder"];
         if(ph)
             textField.setPlaceHolder(ph);
-        textField.setString(options["text"] || "Text Field");
+        textField.setString(options["text"]||"");
         var fs = options["fontSize1"];
         if(fs)
             textField.setFontSize(fs);
@@ -73,7 +73,7 @@ ccs.textFieldReader = /** @lends ccs.TextFieldReader# */{
 
         var aw = options["areaWidth"];
         var ah = options["areaHeight"];
-        if(aw!=null && ah!=null){
+        if(aw && ah){
             var size = cc.size(aw, ah);
             textField.setTextAreaSize(size);
         }
