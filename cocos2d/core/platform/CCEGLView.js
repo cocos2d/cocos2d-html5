@@ -524,8 +524,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             var vp = _t._viewPortRect = result.viewport, visible = _t._visibleRect;
             visible.width = cc._canvas.width / _t._scaleX;
             visible.height = cc._canvas.height / _t._scaleY;
-            visible.x = -vp.x / _t._scaleX;
-            visible.y = -vp.y / _t._scaleY;
+            visible.x = -vp.x/2 / _t._scaleX;
+            visible.y = -vp.y/2 / _t._scaleY;
         }
 
         // reset director's member variables to fit visible rect
@@ -969,11 +969,13 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
         apply: function (view, designedResolution) {
             var containerW = cc._canvas.width, containerH = cc._canvas.height,
                 designW = designedResolution.width, designH = designedResolution.height,
-                scaleX = containerW / designW, scaleY = containerH / designH, scale;
+                scaleX = containerW / designW, scaleY = containerH / designH, scale,
+                contentW, contentH;
 
-            scaleX < scaleY ? ( scale = scaleY ): ( scale = scaleX );
+            scaleX < scaleY ? (scale = scaleY, contentW = designW * scale, contentH = containerH)
+                : (scale = scaleX, contentW = containerW, contentH = designH * scale);
 
-            return this._buildResult(containerW, containerH, containerW, containerH, scale, scale);
+            return this._buildResult(containerW, containerH, contentW, contentH, scale, scale);
         }
     });
 
