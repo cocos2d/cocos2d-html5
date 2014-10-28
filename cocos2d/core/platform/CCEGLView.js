@@ -250,7 +250,7 @@ cc.EGLView = cc.Class.extend({
         height = height || drs.height;
         resolutionPolicy = resolutionPolicy != null ? resolutionPolicy : this._resolutionPolicy;
         this._resolutionPolicy = resolutionPolicy;
-        //修改设计分辨率
+
         drs.width = width;
         drs.height = height;
 
@@ -287,7 +287,7 @@ cc.EGLView = cc.Class.extend({
         cc.visibleRect && cc.visibleRect.init(vr);
         // Translate the content
         if (cc._renderType == cc._RENDER_TYPE_CANVAS)
-            cc._renderContext.translate(vp.x, vp.height - vp.y);
+            cc._renderContext.translate(-vp.x, vp.height + vp.y);
 
         if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
             // reset director's member variables to fit visible rect
@@ -421,8 +421,8 @@ cc.EGLView = cc.Class.extend({
 
     _convertMouseToLocationInView: function(point, relatedPos){
         var vp = this._viewPortRect, _t = this;
-        point.x = (point.x - relatedPos.left - vp.x) / _t._scaleX;
-        point.y = (relatedPos.top + relatedPos.height - point.y - vp.y) / _t._scaleY;
+        point.x = (point.x - relatedPos.left + vp.x) / _t._scaleX;
+        point.y = (relatedPos.top + relatedPos.height - point.y + vp.y) / _t._scaleY;
     },
 
     _convertTouchesWithScale: function(touches){
@@ -434,10 +434,10 @@ cc.EGLView = cc.Class.extend({
             selTouch = touches[i];
             selPoint = selTouch._point;
             selPrePoint = selTouch._prevPoint;
-            selTouch._setPoint((selPoint.x - vp.x) / locScaleX,
-                    (selPoint.y - vp.y) / locScaleY);
-            selTouch._setPrevPoint((selPrePoint.x - vp.x) / locScaleX,
-                    (selPrePoint.y - vp.y) / locScaleY);
+            selTouch._setPoint((selPoint.x + vp.x) / locScaleX,
+                    (selPoint.y + vp.y) / locScaleY);
+            selTouch._setPrevPoint((selPrePoint.x + vp.x) / locScaleX,
+                    (selPrePoint.y + vp.y) / locScaleY);
         }
     }
 
@@ -534,7 +534,7 @@ cc.__adapter[cc.ResolutionPolicy.NO_BORDER] = function(w, h, aw, ah){
             scaleY: scaleW,
             viewPortHeight: ah,
             viewPortWidth: aw,
-            viewPortY: -(h * scaleW - ah) / 2
+            viewPortY: (h * scaleW - ah) / 2
         }
     }else{
         return {
@@ -544,7 +544,7 @@ cc.__adapter[cc.ResolutionPolicy.NO_BORDER] = function(w, h, aw, ah){
             scaleY: scaleH,
             viewPortHeight: ah,
             viewPortWidth: aw,
-            viewPortX: -(w * scaleH - aw) / 2
+            viewPortX: (w * scaleH - aw) / 2
         }
     }
 };
