@@ -1460,7 +1460,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
 
         // If you don't do cleanup, the child's actions will not get removed and the
-        // its scheduledSelectors_ dict will not get released!
         if (doCleanup)
             child.cleanup();
 
@@ -1614,7 +1613,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Action} An Action pointer
      */
     runAction: function (action) {
-
         cc.assert(action, cc._LogInfos.Node_runAction);
 
         this.actionManager.addAction(action, this, !this._running);
@@ -1726,7 +1724,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         interval = interval || 0;
 
         cc.assert(callback_fn, cc._LogInfos.Node_schedule);
-
         cc.assert(interval >= 0, cc._LogInfos.Node_schedule_2);
 
         repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
@@ -1753,7 +1750,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {function} callback_fn  A function wrapped as a selector
      */
     unschedule: function (callback_fn) {
-        // explicit nil handling
         if (!callback_fn)
             return;
 
@@ -2668,7 +2664,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p._transformForRenderer = function () {
-        var t = this.nodeToParentTransform(), worldT = this._transformWorld;
+        var t = this.getNodeToParentTransform(), worldT = this._transformWorld;
         if(this._parent){
             var pt = this._parent._transformWorld;
             //worldT = cc.AffineTransformConcat(t, pt);

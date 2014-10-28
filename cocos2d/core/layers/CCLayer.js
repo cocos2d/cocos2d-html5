@@ -521,8 +521,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p._getBoundingBoxForBake = function () {
         //default size
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
-        var trans = this.nodeToWorldTransform();
-        rect = cc.rectApplyAffineTransform(rect, this.nodeToWorldTransform());
+        var trans = this.getNodeToWorldTransform();
+        rect = cc.rectApplyAffineTransform(rect, this.getNodeToWorldTransform());
 
         //query child's BoundingBox
         if (!this._children || this._children.length === 0)

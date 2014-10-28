@@ -31,20 +31,11 @@ cc._tmp.PrototypeCCNode = function () {
     cc.defineGetterSetter(_p, "x", _p.getPositionX, _p.setPositionX);
     cc.defineGetterSetter(_p, "y", _p.getPositionY, _p.setPositionY);
     /** @expose */
-    //_p.pos;
-    //cc.defineGetterSetter(_p, "pos", _p.getPosition, _p.setPosition);
-    /** @expose */
     _p.width;
     cc.defineGetterSetter(_p, "width", _p._getWidth, _p._setWidth);
     /** @expose */
     _p.height;
     cc.defineGetterSetter(_p, "height", _p._getHeight, _p._setHeight);
-    /** @expose */
-    //_p.size;
-    //cc.defineGetterSetter(_p, "size", _p.getContentSize, _p.setContentSize);
-    /** @expose */
-    //_p.anchor;
-    //cc.defineGetterSetter(_p, "anchor", _p._getAnchor, _p._setAnchor);
     /** @expose */
     _p.anchorX;
     cc.defineGetterSetter(_p, "anchorX", _p._getAnchorX, _p._setAnchorX);

@@ -197,13 +197,6 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         (_v_).z = (_z_);
     },
 
-    RENDER_IN_SUBPIXEL: function(__ARGS__){
-        if(!cc.SPRITEBATCHNODE_RENDER_SUBPIXEL)
-            return Math.ceil(__ARGS__);
-        else
-            return __ARGS__;
-    },
-
     /**
      * Returns skin's world transform.
      * @returns {cc.AffineTransform}
@@ -217,7 +210,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         this._anchorPointInPoints = cc.pointApplyAffineTransform(this._anchorPointInPoints, displayTransform);
         displayTransform.tx = this._anchorPointInPoints.x;
         displayTransform.ty = this._anchorPointInPoints.y;
-        return cc.affineTransformConcat( displayTransform,this.bone.getArmature().nodeToWorldTransform());
+        return cc.affineTransformConcat( displayTransform,this.bone.getArmature().getNodeToWorldTransform());
     },
 
     /**
@@ -252,7 +245,6 @@ if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
 }else{
     //ccs.Skin.prototype.getNodeToParentTransform = cc.Node.prototype._getNodeToParentTransformForWebGL;
 }
-//ccs.Skin.prototype.nodeToParentTransform = cc.Node.prototype._getNodeToParentTransformForWebGL;
 
 
 var _p = ccs.Skin.prototype;
