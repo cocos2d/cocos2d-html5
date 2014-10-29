@@ -85,7 +85,6 @@ cc.__FireFoxGetter = cc.__NormalGetter.extend({
 
 cc.__UCGetter = cc.__NormalGetter.extend({
     ctor: function(){
-        cc.log("bind");
         window.addEventListener("resize", this._firstResize, false);
     },
     _firstResize: function(){
@@ -93,8 +92,7 @@ cc.__UCGetter = cc.__NormalGetter.extend({
         if(cc.view && !cc.view._resizeSwitch){
             cc.view.setDesignResolutionSize(drs.width, drs.height, cc.view._resolutionPolicy);
         }
-        cc.log("unbind");
-        window.removeEventListener("resize", this._firstResize, false);
+        setTimeout(function(){window.removeEventListener("resize", this._firstResize, false);}, 0);
     }
 });
 
@@ -257,7 +255,6 @@ cc.EGLView = cc.Class.extend({
 
         //Don't remove
         document.body.clientWidth;
-        this._getter.printAllParam();
 
         var drs = this._designResolutionSize,
             vr = this._visibleRect,
