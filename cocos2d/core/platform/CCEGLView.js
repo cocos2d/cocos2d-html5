@@ -83,6 +83,21 @@ cc.__FireFoxGetter = cc.__NormalGetter.extend({
     }
 });
 
+cc.__UCGetter = cc.__NormalGetter.extend({
+    ctor: function(){
+        cc.log("bind");
+        window.addEventListener("resize", this._firstResize, false);
+    },
+    _firstResize: function(){
+        var drs = cc.view._designResolutionSize;
+        if(cc.view && !cc.view._resizeSwitch){
+            cc.view.setDesignResolutionSize(drs.width, drs.height, cc.view._resolutionPolicy);
+        }
+        cc.log("unbind");
+        window.removeEventListener("resize", this._firstResize, false);
+    }
+});
+
 cc.DENSITYDPI_DEVICE = "device-dpi";
 cc.DENSITYDPI_HIGH = "high-dpi";
 cc.DENSITYDPI_MEDIUM = "medium-dpi";
@@ -118,12 +133,13 @@ cc.EGLView = cc.Class.extend({
 
         if(cc.sys.isMobile){
             var ua = window.navigator.userAgent.toLowerCase();
-
             if(
                 cc.sys.browserType === cc.sys.BROWSER_TYPE_FIREFOX ||
                 /sogou/.test(ua)
             ){
                 this._getter = new cc.__FireFoxGetter();
+            }else if(cc.sys.browserType === cc.sys.BROWSER_TYPE_UC){
+                this._getter = new cc.__UCGetter();
             }else{
                 this._getter = new cc.__NormalGetter();
             }
@@ -241,6 +257,7 @@ cc.EGLView = cc.Class.extend({
 
         //Don't remove
         document.body.clientWidth;
+        this._getter.printAllParam();
 
         var drs = this._designResolutionSize,
             vr = this._visibleRect,
@@ -336,6 +353,7 @@ cc.EGLView = cc.Class.extend({
         document.head.appendChild(meta);
     },
 
+    _resizeSwitch: false,
     _resizeTimer: null,
     _resizeFunc: function(){
         clearTimeout(cc.view._resizeTimer);
@@ -345,9 +363,11 @@ cc.EGLView = cc.Class.extend({
     },
     resizeWithBrowserSize: function(bool){
         if(bool){
+            this._resizeSwitch = true;
             cc.view._resizeFunc();
             window.addEventListener("resize", cc.view._resizeFunc, false);
         }else{
+            this._resizeSwitch = false;
             window.removeEventListener("resize", cc.view._resizeFunc, false);
         }
     },
