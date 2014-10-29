@@ -416,7 +416,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
      * @deprecated since v3.1, please use isSelected.
      */
     getSelectedState: function(){
-        this.isSelected();
+        return this.isSelected();
     },
 
     /**
