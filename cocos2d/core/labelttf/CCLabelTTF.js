@@ -596,6 +596,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         }
     },
     _updateString: function () {
+        if ((!this._string || this._string === "") && this._string !== this._originalText)
+            cc.renderer.childrenOrderDirty = true;
+
         this._string = this._originalText;
     },
 
