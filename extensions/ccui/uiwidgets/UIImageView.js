@@ -78,6 +78,10 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         this.addProtectedChild(this._imageRenderer, ccui.ImageView.RENDERER_ZORDER, -1);
     },
 
+    setRotation: function(rotate){
+        this._imageRenderer.setRotation(rotate);
+    },
+
     /**
      * Loads textures for button.
      * @param {String} fileName
@@ -127,6 +131,8 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
                 self._updateChildrenDisplayedRGBA();
 
                 self._updateContentSizeWithTextureSize(self._imageTextureSize);
+                if(self._scale9Enabled)
+                    self.setCapInsets(self._capInsets);
                 self._imageRendererAdaptDirty = true;
             });
         }
