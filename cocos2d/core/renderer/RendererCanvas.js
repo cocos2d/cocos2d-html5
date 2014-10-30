@@ -172,9 +172,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             image, curColor, contentSize;
 
         var blendChange = (node._blendFuncStr !== "source"), alpha = (node._displayedOpacity / 255);
-        /*if(cc.renderer.contextSession.globalAlpha !== alpha){
-         cc.renderer.contextSession.globalAlpha = context.globalAlpha = alpha;                         //TODO
-         }*/
 
         if (t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1 || node._flippedX || node._flippedY) {
             context.save();
@@ -197,29 +194,36 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             if (node._texture) {
                 image = node._texture._htmlElementObj;
 
-                //TODO should move '* scaleX/scaleY' to transforming
-                if (node._colorized) {
-                    context.drawImage(image,
-                        0,
-                        0,
-                        locTextureCoord.width,
-                        locTextureCoord.height,
-                            locX * scaleX,
-                            locY * scaleY,
-                            locWidth * scaleX,
-                            locHeight * scaleY
-                    );
+                if(node._texture._pattern != ""){
+                    context.save();
+                    context.fillStyle = context.createPattern(image, node._texture._pattern);
+                    context.fillRect(locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
+                    context.restore();
                 } else {
-                    context.drawImage(image,
-                        locTextureCoord.renderX,
-                        locTextureCoord.renderY,
-                        locTextureCoord.width,
-                        locTextureCoord.height,
-                            locX * scaleX,
-                            locY * scaleY,
-                            locWidth * scaleX,
-                            locHeight * scaleY
-                    );
+                    //TODO should move '* scaleX/scaleY' to transforming
+                    if (node._colorized) {
+                        context.drawImage(image,
+                            0,
+                            0,
+                            locTextureCoord.width,
+                            locTextureCoord.height,
+                                locX * scaleX,
+                                locY * scaleY,
+                                locWidth * scaleX,
+                                locHeight * scaleY
+                        );
+                    } else {
+                        context.drawImage(image,
+                            locTextureCoord.renderX,
+                            locTextureCoord.renderY,
+                            locTextureCoord.width,
+                            locTextureCoord.height,
+                                locX * scaleX,
+                                locY * scaleY,
+                                locWidth * scaleX,
+                                locHeight * scaleY
+                        );
+                    }
                 }
             } else {
                 contentSize = node._contentSize;
@@ -239,27 +243,35 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             context.globalAlpha = alpha;
             if (node._texture) {
                 image = node._texture.getHtmlElementObj();
-                if (node._colorized) {
-                    context.drawImage(image,
-                        0,
-                        0,
-                        locTextureCoord.width,
-                        locTextureCoord.height,
-                            (t.tx + locX) * scaleX,
-                            (-t.ty + locY) * scaleY,
-                            locWidth * scaleX,
-                            locHeight * scaleY);
+                if(node._texture._pattern != ""){
+                    context.save();
+                    context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+                    context.fillStyle = context.createPattern(image, node._texture._pattern);
+                    context.fillRect(locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
+                    context.restore();
                 } else {
-                    context.drawImage(
-                        image,
-                        locTextureCoord.renderX,
-                        locTextureCoord.renderY,
-                        locTextureCoord.width,
-                        locTextureCoord.height,
-                            (t.tx + locX) * scaleX,
-                            (-t.ty + locY) * scaleY,
-                            locWidth * scaleX,
-                            locHeight * scaleY);
+                    if (node._colorized) {
+                        context.drawImage(image,
+                            0,
+                            0,
+                            locTextureCoord.width,
+                            locTextureCoord.height,
+                                (t.tx + locX) * scaleX,
+                                (-t.ty + locY) * scaleY,
+                                locWidth * scaleX,
+                                locHeight * scaleY);
+                    } else {
+                        context.drawImage(
+                            image,
+                            locTextureCoord.renderX,
+                            locTextureCoord.renderY,
+                            locTextureCoord.width,
+                            locTextureCoord.height,
+                                (t.tx + locX) * scaleX,
+                                (-t.ty + locY) * scaleY,
+                                locWidth * scaleX,
+                                locHeight * scaleY);
+                    }
                 }
             } else {
                 contentSize = node._contentSize;
