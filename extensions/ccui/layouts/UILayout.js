@@ -666,7 +666,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _getClippingRect: function () {
         if (this._clippingRectDirty) {
             var worldPos = this.convertToWorldSpace(cc.p(0, 0));
-            var t = this.nodeToWorldTransform();
+            var t = this.getNodeToWorldTransform();
             var scissorWidth = this._contentSize.width * t.a;
             var scissorHeight = this._contentSize.height * t.d;
             var parentClippingRect;
