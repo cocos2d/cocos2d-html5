@@ -2668,16 +2668,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             worldT.b = t.a * pt.b + t.b * pt.d;                               //b
             worldT.c = t.c * pt.a + t.d * pt.c;                               //c
             worldT.d = t.c * pt.b + t.d * pt.d;                               //d
-            if(!this._skewX || this._skewY){
-                var plt = this._parent._transform;
-                var xOffset = -(plt.b + plt.c) * t.ty ;
-                var yOffset = -(plt.b + plt.c) * t.tx;
-                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
-                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
-            }else{
-                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx);          //tx
-                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty);		  //ty
-            }
+            var plt = this._parent._transform;
+            var xOffset = -(plt.b + plt.c) * t.ty;
+            var yOffset = -(plt.b + plt.c) * t.tx;
+            worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
+            worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
         } else {
             worldT.a = t.a;
             worldT.b = t.b;

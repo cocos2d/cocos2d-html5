@@ -127,10 +127,13 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         url: null,
 
+        _pattern: null,
+
         ctor: function () {
             this._contentSize = cc.size(0, 0);
             this._isLoaded = false;
             this._htmlElementObj = null;
+            this._pattern = "";
         },
 
         /**
@@ -338,8 +341,26 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             return false;
         },
 
-        setTexParameters: function (texParams) {
-            //support only in WebGl rendering mode
+        setTexParameters: function (texParams, magFilter, wrapS, wrapT) {
+            if(magFilter !== undefined)
+                texParams = {minFilter: texParams, magFilter: magFilter, wrapS: wrapS, wrapT: wrapT};
+
+            if(texParams.wrapS === cc.REPEAT && texParams.wrapT === cc.REPEAT){
+                this._pattern = "repeat";
+                return;
+            }
+
+            if(texParams.wrapS === cc.REPEAT ){
+                this._pattern = "repeat-x";
+                return;
+            }
+
+            if(texParams.wrapT === cc.REPEAT){
+                this._pattern = "repeat-y";
+                return;
+            }
+
+            this._pattern = "";
         },
 
         setAntiAliasTexParameters: function () {
