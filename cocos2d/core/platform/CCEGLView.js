@@ -88,11 +88,10 @@ cc.__UCGetter = cc.__NormalGetter.extend({
         window.addEventListener("resize", this._firstResize, false);
     },
     _firstResize: function(){
-        var drs = cc.view._designResolutionSize;
         if(cc.view && !cc.view._resizeSwitch){
-            cc.view.setDesignResolutionSize(drs.width, drs.height, cc.view._resolutionPolicy);
+            cc.view._resizeFunc(false);
         }
-        setTimeout(function(){window.removeEventListener("resize", this._firstResize, false);}, 0);
+        setTimeout(function(){window.removeEventListener("resize", cc.__UCGetter.prototype._firstResize, false);}, 0);
     }
 });
 
@@ -356,7 +355,7 @@ cc.EGLView = cc.Class.extend({
         clearTimeout(cc.view._resizeTimer);
         cc.view._resizeTimer = setTimeout(function(){
             cc.view.setDesignResolutionSize();
-        }, 300);
+        }, 200);
     },
     resizeWithBrowserSize: function(bool){
         if(bool){
