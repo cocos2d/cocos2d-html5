@@ -228,7 +228,7 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
 
 cc._getCompositeOperationByBlendFunc = function(blendFunc){
     if(!blendFunc)
-        return "source";
+        return "source-over";
     else{
         if(( blendFunc.src == cc.SRC_ALPHA && blendFunc.dst == cc.ONE) || (blendFunc.src == cc.ONE && blendFunc.dst == cc.ONE))
             return "lighter";
@@ -237,7 +237,7 @@ cc._getCompositeOperationByBlendFunc = function(blendFunc){
         else if(blendFunc.src == cc.ZERO && blendFunc.dst == cc.ONE_MINUS_SRC_ALPHA)
             return "destination-out";
         else
-            return "source";
+            return "source-over";
     }
 };
 

@@ -387,7 +387,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         var i, particle, lpx, alpha;
         var particleCount = this._node.particleCount, particles = this._node._particles;
-        if (cc.ParticleSystem.SHAPE_MODE == cc.ParticleSystem.TEXTURE_MODE) {
+        if (node.drawMode == cc.ParticleSystem.TEXTURE_MODE) {
             // Delay drawing until the texture is fully loaded by the browser
             if (!node._texture || !node._texture._isLoaded) {
                 context.restore();
@@ -448,7 +448,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
                 context.save();
                 context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
-                if (cc.ParticleSystem.BALL_SHAPE == cc.ParticleSystem.STAR_SHAPE) {
+                if (node.shapeType == cc.ParticleSystem.STAR_SHAPE) {
                     if (particle.rotation)
                         context.rotate(cc.degreesToRadians(particle.rotation));
                     drawTool.drawStar(context, lpx, particle.color);
