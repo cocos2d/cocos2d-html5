@@ -424,7 +424,7 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         //cc.nodeDrawSetup(this);
         node._shaderProgram.use();
         node._shaderProgram._setUniformForMVPMatrixWithMat4(node._stackMatrix);
-        node._arrayMakeObjectsPerformSelector(node._children, cc.Node._StateCallbackType.updateTransform);
+        node._arrayMakeObjectsPerformSelector(node._children, cc.Node._stateCallbackType.updateTransform);
         cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
 
         node.textureAtlas.drawQuads();

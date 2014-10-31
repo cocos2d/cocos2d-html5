@@ -596,6 +596,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         }
     },
     _updateString: function () {
+        if ((!this._string || this._string === "") && this._string !== this._originalText)
+            cc.renderer.childrenOrderDirty = true;
+
         this._string = this._originalText;
     },
 
@@ -844,6 +847,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             }
 
             fuzzyLen -= pushNum;
+            if(fuzzyLen === 0){
+                fuzzyLen = 1;
+                sLine = sLine.substr(1);
+            }
 
             var sText = text.substr(0, fuzzyLen);
 

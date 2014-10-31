@@ -247,7 +247,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             return;
 
         var i, len = array.length, node;
-        var nodeCallbackType = cc.Node._StateCallbackType;
+        var nodeCallbackType = cc.Node._stateCallbackType;
         switch (callbackType) {
             case nodeCallbackType.onEnter:
                 for (i = 0; i < len; i++) {
@@ -1241,7 +1241,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         cc.eventManager.removeListeners(this);
 
         // timers
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.cleanup);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.cleanup);
     },
 
     // composition: GET
@@ -1460,7 +1460,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
 
         // If you don't do cleanup, the child's actions will not get removed and the
-        // its scheduledSelectors_ dict will not get released!
         if (doCleanup)
             child.cleanup();
 
@@ -1561,7 +1560,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     onEnter: function () {
         this._isTransitionFinished = false;
         this._running = true;//should be running before resumeSchedule
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onEnter);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.onEnter);
         this.resume();
     },
 
@@ -1575,7 +1574,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     onEnterTransitionDidFinish: function () {
         this._isTransitionFinished = true;
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onEnterTransitionDidFinish);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.onEnterTransitionDidFinish);
     },
 
     /**
@@ -1585,7 +1584,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      */
     onExitTransitionDidStart: function () {
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onExitTransitionDidStart);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.onExitTransitionDidStart);
     },
 
     /**
@@ -1600,7 +1599,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     onExit: function () {
         this._running = false;
         this.pause();
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onExit);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.onExit);
         this.removeAllComponents();
     },
 
@@ -1614,7 +1613,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Action} An Action pointer
      */
     runAction: function (action) {
-
         cc.assert(action, cc._LogInfos.Node_runAction);
 
         this.actionManager.addAction(action, this, !this._running);
@@ -1726,7 +1724,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         interval = interval || 0;
 
         cc.assert(callback_fn, cc._LogInfos.Node_schedule);
-
         cc.assert(interval >= 0, cc._LogInfos.Node_schedule_2);
 
         repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
@@ -1753,7 +1750,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {function} callback_fn  A function wrapped as a selector
      */
     unschedule: function (callback_fn) {
-        // explicit nil handling
         if (!callback_fn)
             return;
 
@@ -2024,7 +2020,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     updateTransform: function () {
         // Recursively iterate over children
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.updateTransform);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.updateTransform);
     },
 
     /**
@@ -2217,7 +2213,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *     It should be set in initialize phase.
      * </p>
      * @function
-     * @param {cc.GLProgram} newShaderProgram The shader program which fetchs from CCShaderCache.
+     * @param {cc.GLProgram} newShaderProgram The shader program which fetches from CCShaderCache.
      * @example
      * node.setGLProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
      */
@@ -2505,10 +2501,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         else
             parentColor = cc.color.WHITE;
         this.updateDisplayedColor(parentColor);
-
-        /*if (color.a !== undefined && !color.a_undefined) {              //setColor doesn't support changing opacity, please use setOpacity
-            this.setOpacity(color.a);
-        }*/
     },
 
     /**
@@ -2612,7 +2604,7 @@ cc.Node.create = function () {
     return new cc.Node();
 };
 
-cc.Node._StateCallbackType = {onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, updateTransform: 5, onExitTransitionDidStart: 6, sortAllChildren: 7};
+cc.Node._stateCallbackType = {onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, updateTransform: 5, onExitTransitionDidStart: 6, sortAllChildren: 7};
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     //redefine cc.Node
@@ -2668,7 +2660,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p._transformForRenderer = function () {
-        var t = this.nodeToParentTransform(), worldT = this._transformWorld;
+        var t = this.getNodeToParentTransform(), worldT = this._transformWorld;
         if(this._parent){
             var pt = this._parent._transformWorld;
             //worldT = cc.AffineTransformConcat(t, pt);

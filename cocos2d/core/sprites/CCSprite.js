@@ -1446,10 +1446,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 _t._shouldBeHidden = false;
 
                 if (!locParent || locParent == _t._batchNode) {
-                    _t._transformToBatch = _t.nodeToParentTransform();
+                    _t._transformToBatch = _t.getNodeToParentTransform();
                 } else {
                     //cc.assert(_t._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
-                    _t._transformToBatch = cc.affineTransformConcat(_t.nodeToParentTransform(), locParent._transformToBatch);
+                    _t._transformToBatch = cc.affineTransformConcat(_t.getNodeToParentTransform(), locParent._transformToBatch);
                 }
             }
             _t._recursiveDirty = false;

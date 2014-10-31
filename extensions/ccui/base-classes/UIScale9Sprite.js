@@ -274,6 +274,10 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         }
     },
 
+    getSprite: function () {
+        return this._scale9Image;
+    },
+
     /** Original sprite's size. */
     getOriginalSize: function () {
         return cc.size(this._originalSize);

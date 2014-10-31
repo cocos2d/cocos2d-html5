@@ -34,7 +34,7 @@ cc.stencilBits = -1;
 /**
  * <p>
  *     cc.ClippingNode is a subclass of cc.Node.                                                            <br/>
- *     It draws its content (childs) clipped using a stencil.                                               <br/>
+ *     It draws its content (children) clipped using a stencil.                                               <br/>
  *     The stencil is an other cc.Node that will not be drawn.                                               <br/>
  *     The clipping is done using the alpha part of the stencil (adjusted with an alphaThreshold).
  * </p>
@@ -210,7 +210,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         if (cc.ClippingNode._layer + 1 == cc.stencilBits) {
             cc.ClippingNode._visit_once = true;
             if (cc.ClippingNode._visit_once) {
-                cc.log("Nesting more than " + cc.stencilBits + "stencils is not supported. Everything will be drawn without stencil for this node and its childs.");
+                cc.log("Nesting more than " + cc.stencilBits + "stencils is not supported. Everything will be drawn without stencil for this node and its children.");
                 cc.ClippingNode._visit_once = false;
             }
             // draw everything, as if there where no stencil
@@ -232,7 +232,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
         cc.renderer.pushRenderCommand(this._afterDrawStencilCmd);
 
-        // draw (according to the stencil test func) this node and its childs
+        // draw (according to the stencil test func) this node and its children
         var locChildren = this._children;
         if (locChildren && locChildren.length > 0) {
             var childLen = locChildren.length;
@@ -366,7 +366,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         var gl = ctx || cc._renderContext;
         // restore alpha test state
         //if (this.alphaThreshold < 1) {
-        // XXX: we need to find a way to restore the shaders of the stencil node and its childs
+        // XXX: we need to find a way to restore the shaders of the stencil node and its children
         //}
 
         // restore the depth test state

@@ -283,10 +283,10 @@ cc._tmp.WebGLSprite = function () {
                 _t._shouldBeHidden = false;
 
                 if (!locParent || locParent == _t._batchNode) {
-                    _t._transformToBatch = _t.nodeToParentTransform();
+                    _t._transformToBatch = _t.getNodeToParentTransform();
                 } else {
                     //cc.assert(_t._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
-                    _t._transformToBatch = cc.affineTransformConcat(_t.nodeToParentTransform(), locParent._transformToBatch);
+                    _t._transformToBatch = cc.affineTransformConcat(_t.getNodeToParentTransform(), locParent._transformToBatch);
                 }
 
                 //
@@ -341,7 +341,7 @@ cc._tmp.WebGLSprite = function () {
 
         // recursively iterate over children
         if (_t._hasChildren)
-            _t._arrayMakeObjectsPerformSelector(_t._children, cc.Node._StateCallbackType.updateTransform);
+            _t._arrayMakeObjectsPerformSelector(_t._children, cc.Node._stateCallbackType.updateTransform);
 
         if (cc.SPRITE_DEBUG_DRAW) {
             // draw bounding box
