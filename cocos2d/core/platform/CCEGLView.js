@@ -118,6 +118,15 @@ cc.DENSITYDPI_LOW = "low-dpi";
 cc.EGLView = cc.Class.extend({
     _isAdjustViewPort: true,
     _getter: null,
+    _designResolutionSize: null,
+    _orginViewPortMeta: null,
+    _frame: null,
+    _visibleRect: null,
+    _viewPortRect: null,
+    _scaleX: 1,
+    _scaleY: 1,
+    _targetDensityDPI: null,
+    _devicePixelRatio: 1,
 
     /**
      * Constructor of cc.EGLView
@@ -191,12 +200,10 @@ cc.EGLView = cc.Class.extend({
      * @param {Number} height
      */
     setFrameSize: function (width, height) {
-        this._frameSize.width = width;
-        this._frameSize.height = height;
         this._frame.style.width = width + "px";
         this._frame.style.height = height + "px";
         //this.centerWindow();
-        this._resizeEvent();
+        this._resizeFunc();
         cc.director.setProjection(cc.director.getProjection());
     },
 
@@ -383,7 +390,7 @@ cc.EGLView = cc.Class.extend({
      * @return {cc.Rect}
      */
     getViewPortRect: function(){
-        return this._visibleRect;
+        return this._viewPortRect;
     },
 
     /**
@@ -407,7 +414,7 @@ cc.EGLView = cc.Class.extend({
      * @return {Number}
      */
     getDevicePixelRatio: function() {
-        return this._getter.devicePixelRatio();
+        return this._devicePixelRatio;
     },
 
     /**
