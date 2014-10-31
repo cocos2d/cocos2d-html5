@@ -348,6 +348,7 @@ cc.rectPointsToPixels = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
     return p;
 };
 
+//some gl constant variable
 /**
  * @constant
  * @type Number
@@ -425,6 +426,34 @@ cc.ONE_MINUS_CONSTANT_ALPHA	= 0x8004;
  * @type Number
  */
 cc.ONE_MINUS_CONSTANT_COLOR	= 0x8002;
+
+/**
+ * the constant variable equals gl.LINEAR for texture
+ * @constant
+ * @type Number
+ */
+cc.LINEAR	= 0x2601;
+
+/**
+ * the constant variable equals gl.REPEAT for texture
+ * @constant
+ * @type Number
+ */
+cc.REPEAT	= 0x2901;
+
+/**
+ * the constant variable equals gl.CLAMP_TO_EDGE for texture
+ * @constant
+ * @type Number
+ */
+cc.CLAMP_TO_EDGE	= 0x812f;
+
+/**
+ * the constant variable equals gl.MIRRORED_REPEAT for texture
+ * @constant
+ * @type Number
+ */
+cc.MIRRORED_REPEAT   = 0x8370;
 
 /**
  * Check webgl error.Error will be shown in console if exists.
