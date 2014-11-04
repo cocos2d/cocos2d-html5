@@ -61,12 +61,16 @@ cc.visibleRect = {
      * @param {cc.Rect} visibleRect
      */
     init:function(visibleRect){
-        var w = this.width = visibleRect.width;
-        var h = this.height = visibleRect.height;
-        var l = visibleRect.x,
-            b = visibleRect.y,
-            t = b + h,
-            r = l + w;
+        var view = cc.EGLView;
+        var scaleX = view.getScaleX ? view.getScaleX() : 1;
+        var scaleY = view.getScaleY ? view.getScaleY() : 1;
+
+        var w = this.width = visibleRect.width / scaleX;
+        var h = this.height = visibleRect.height / scaleY;
+        var l = visibleRect.x / scaleX,
+            b = visibleRect.y / scaleY,
+            t = (b + h) / scaleY,
+            r = (l + w) / scaleX;
 
         //top
         this.topLeft.x = l;

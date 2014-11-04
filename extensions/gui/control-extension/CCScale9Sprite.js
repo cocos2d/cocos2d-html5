@@ -278,6 +278,9 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     getOriginalSize: function () {
         return cc.size(this._originalSize);
     },
+    getSprite: function () {
+        return this._scale9Image;
+    },
 
     //if the preferredSize component is given as -1, it is ignored
     getPreferredSize: function () {

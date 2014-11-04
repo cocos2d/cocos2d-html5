@@ -113,7 +113,7 @@ cc._tmp.WebGLCCNode = function () {
             parentMatrix = pMatrix || (this._parent ? this._parent._stackMatrix : cc.current_stack.top);
 
         // Convert 3x3 into 4x4 matrix
-        var trans = this.nodeToParentTransform();
+        var trans = this.getNodeToParentTransform();
         var t4x4Mat = t4x4.mat;
         t4x4Mat[0] = trans.a;
         t4x4Mat[4] = trans.c;
@@ -168,7 +168,7 @@ cc._tmp.WebGLCCNode = function () {
         var t4x4 = _t._transform4x4, topMat4 = cc.current_stack.top;
 
         // Convert 3x3 into 4x4 matrix
-        var trans = _t.nodeToParentTransform();
+        var trans = _t.getNodeToParentTransform();
         var t4x4Mat = t4x4.mat;
         t4x4Mat[0] = trans.a;
         t4x4Mat[4] = trans.c;

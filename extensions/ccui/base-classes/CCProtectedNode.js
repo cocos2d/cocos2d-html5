@@ -482,10 +482,9 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     cc.ProtectedNode.prototype.visit =  cc.ProtectedNode.prototype._visitForCanvas;
     cc.ProtectedNode.prototype._transformForRenderer = function () {
-        var t = this.nodeToParentTransform(), worldT = this._transformWorld;
+        var t = this.getNodeToParentTransform(), worldT = this._transformWorld;
         if(this._parent){
             var pt = this._parent._transformWorld;
-            //worldT = cc.AffineTransformConcat(t, pt);
             worldT.a = t.a * pt.a + t.b * pt.c;                               //a
             worldT.b = t.a * pt.b + t.b * pt.d;                               //b
             worldT.c = t.c * pt.a + t.d * pt.c;                               //c
@@ -524,7 +523,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             parentMatrix = this._parent ? this._parent._stackMatrix : cc.current_stack.top;
 
         // Convert 3x3 into 4x4 matrix
-        var trans = this.nodeToParentTransform();
+        var trans = this.getNodeToParentTransform();
         var t4x4Mat = t4x4.mat;
         t4x4Mat[0] = trans.a;
         t4x4Mat[4] = trans.c;

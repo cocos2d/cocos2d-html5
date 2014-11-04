@@ -228,7 +228,7 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
 
 cc._getCompositeOperationByBlendFunc = function(blendFunc){
     if(!blendFunc)
-        return "source";
+        return "source-over";
     else{
         if(( blendFunc.src == cc.SRC_ALPHA && blendFunc.dst == cc.ONE) || (blendFunc.src == cc.ONE && blendFunc.dst == cc.ONE))
             return "lighter";
@@ -237,7 +237,7 @@ cc._getCompositeOperationByBlendFunc = function(blendFunc){
         else if(blendFunc.src == cc.ZERO && blendFunc.dst == cc.ONE_MINUS_SRC_ALPHA)
             return "destination-out";
         else
-            return "source";
+            return "source-over";
     }
 };
 
@@ -1446,10 +1446,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 _t._shouldBeHidden = false;
 
                 if (!locParent || locParent == _t._batchNode) {
-                    _t._transformToBatch = _t.nodeToParentTransform();
+                    _t._transformToBatch = _t.getNodeToParentTransform();
                 } else {
                     //cc.assert(_t._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
-                    _t._transformToBatch = cc.affineTransformConcat(_t.nodeToParentTransform(), locParent._transformToBatch);
+                    _t._transformToBatch = cc.affineTransformConcat(_t.getNodeToParentTransform(), locParent._transformToBatch);
                 }
             }
             _t._recursiveDirty = false;

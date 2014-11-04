@@ -147,8 +147,7 @@ cc.NodeGrid = cc.Node.extend({
         var t4x4 = this._transform4x4, topMat4 = cc.current_stack.top;
 
         // Convert 3x3 into 4x4 matrix
-        //cc.CGAffineToGL(this.nodeToParentTransform(), this._transform4x4.mat);
-        var trans = this.nodeToParentTransform();
+        var trans = this.getNodeToParentTransform();
         var t4x4Mat = t4x4.mat;
         t4x4Mat[0] = trans.a;
         t4x4Mat[4] = trans.c;
