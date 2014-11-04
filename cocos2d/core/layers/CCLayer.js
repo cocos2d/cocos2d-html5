@@ -148,8 +148,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             //compute the bounding box of the bake layer.
             this._transformForRenderer();
             var boundingBox = this._getBoundingBoxForBake();
-            boundingBox.width = Math.ceil(boundingBox.width);
-            boundingBox.height = Math.ceil(boundingBox.height);
+            boundingBox.width = 0|(boundingBox.width+0.5);
+            boundingBox.height = 0|(boundingBox.height+0.5);
             var bakeContext = locBakeSprite.getCacheContext();
             locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
             bakeContext.translate(0 - boundingBox.x, boundingBox.height + boundingBox.y);
