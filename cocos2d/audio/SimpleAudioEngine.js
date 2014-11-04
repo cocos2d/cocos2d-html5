@@ -1374,6 +1374,13 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         sfxCache.sourceNode.connect(sfxCache.volumeNode);
         sfxCache.volumeNode.connect(this._ctx.destination);
 
+        if(!sfxCache.sourceNode["playbackState"]){
+            sfxCache.sourceNode["onended"] = function(){
+                this._stopped = true;
+            };
+        }
+        sfxCache.sourceNode._stopped = false;
+
         /*
          * Safari on iOS 6 only supports noteOn(), noteGrainOn(), and noteOff() now.(iOS 6.1.3)
          * The latest version of chrome has supported start() and stop()
@@ -1425,7 +1432,12 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * @private
      */
     _isSoundPlaying: function(sfxCache) {
-        return sfxCache.sourceNode.playbackState == 2;
+        if(!sfxCache.sourceNode["playbackState"]){
+            return sfxCache.sourceNode._stopped !== true;
+        }else{
+            return sfxCache.sourceNode["playbackState"] == 2;
+        }
+
     },
 
     /**
