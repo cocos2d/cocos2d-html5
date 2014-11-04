@@ -146,17 +146,16 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             var _t = this;
             var children = _t._children, locBakeSprite = this._bakeSprite;
             //compute the bounding box of the bake layer.
+            this._transformForRenderer();
             var boundingBox = this._getBoundingBoxForBake();
-            boundingBox.width = 0 | boundingBox.width;
-            boundingBox.height = 0 | boundingBox.height;
+            boundingBox.width = Math.ceil(boundingBox.width);
+            boundingBox.height = Math.ceil(boundingBox.height);
             var bakeContext = locBakeSprite.getCacheContext();
             locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
             bakeContext.translate(0 - boundingBox.x, boundingBox.height + boundingBox.y);
-
             //  invert
             var t = cc.affineTransformInvert(this._transformWorld);
-            var scaleX = cc.view.getScaleX(), scaleY = cc.view.getScaleY();
-            bakeContext.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+            bakeContext.transform(t.a, t.c, t.b, t.d, t.tx , -t.ty );
 
             //reset the bake sprite's position
             var anchor = locBakeSprite.getAnchorPointInPoints();
@@ -169,6 +168,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 children[i].visit(bakeContext);
             }
             cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
+            locBakeSprite.transform();                   //because bake sprite's position was changed at rendering.
             this._cacheDirty = false;
         }
     };
@@ -230,7 +230,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
  * CCLayerColor is a subclass of CCLayer that implements the CCRGBAProtocol protocol.       <br/>
  *  All features from CCLayer are valid, plus the following new features:                   <br/>
  * - opacity                                                                     <br/>
- * - RGB colors                                                                </p>
+ * - RGB colors                                                                  </p>
  * @class
  * @extends cc.Layer
  *
@@ -467,8 +467,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             }
             //  invert
             var t = cc.affineTransformInvert(this._transformWorld);
-            var scaleX = cc.view.getScaleX(), scaleY = cc.view.getScaleY();
-            bakeContext.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+            bakeContext.transform(t.a, t.c, t.b, t.d, t.tx, -t.ty);
 
             var child;
             cc.renderer._turnToCacheMode(this.__instanceId);
@@ -492,6 +491,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             if(_t._rendererCmd)
                 cc.renderer.pushRenderCommand(_t._rendererCmd);
             cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
+            locBakeSprite.transform();
             this._cacheDirty = false;
         }
     };
