@@ -800,7 +800,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _quadWebBuffer: null,
     _quadDirty: false,
     _colorized: false,
-    _blendFuncStr: "source",
+    _blendFuncStr: "source-over",
     _originalTexture: null,
     _drawSize_Canvas: null,
 

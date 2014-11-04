@@ -171,7 +171,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             locHeight = node._rect.height,
             image, curColor, contentSize;
 
-        var blendChange = (node._blendFuncStr !== "source"), alpha = (node._displayedOpacity / 255);
+        var blendChange = (node._blendFuncStr !== "source-over"), alpha = (node._displayedOpacity / 255);
 
         if (t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1 || node._flippedX || node._flippedY) {
             context.save();
@@ -304,7 +304,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             return;
 
         var needTransform = (t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1);         //TODO
-        var needRestore = (node._blendFuncStr !== "source") || needTransform;
+        var needRestore = (node._blendFuncStr !== "source-over") || needTransform;
 
         if (needRestore) {
             context.save();
@@ -343,7 +343,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             return;
 
         var needTransform = (t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1);
-        var needRestore = (node._blendFuncStr !== "source") || needTransform;
+        var needRestore = (node._blendFuncStr !== "source-over") || needTransform;
         if(needRestore){
             context.save();
             context.globalCompositeOperation = node._blendFuncStr;
@@ -490,7 +490,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         context.save();
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
-        if (locSprite._blendFuncStr != "source")
+        if (locSprite._blendFuncStr != "source-over")
             context.globalCompositeOperation = locSprite._blendFuncStr;
         context.globalAlpha = alpha;
 

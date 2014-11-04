@@ -369,7 +369,7 @@
          * @return {Number}
          */
         getRotation:function () {
-            return this._ignoreBodyRotation ? cc.radiansToDegrees(this._rotationRadiansX) : -cc.radiansToDegrees(this._body.a);
+            return this._ignoreBodyRotation ? this._rotationX : -cc.radiansToDegrees(this._body.a);
         },
 
         /**

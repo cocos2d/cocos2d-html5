@@ -76,6 +76,7 @@
             "cocos2d/core/base-nodes/BaseNodesWebGL.js",
             "cocos2d/core/base-nodes/BaseNodesPropertyDefine.js",
             "cocos2d/core/base-nodes/CCNode.js",
+            "cocos2d/core/base-nodes/CCNodeRenderCmd.js",
             "cocos2d/core/base-nodes/CCAtlasNode.js",
 
             "cocos2d/core/textures/TexturesWebGL.js",
