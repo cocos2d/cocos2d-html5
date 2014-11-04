@@ -1305,7 +1305,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         var engine = this;
         req.onload = function() {
             // when context decodes the array buffer successfully, call onSuccess
-            engine._ctx.decodeAudioData(req.response, onSuccess, onError);
+            engine._ctx["decodeAudioData"](req.response, onSuccess, onError);
         };
         req.onerror = onError;
         req.send();
@@ -1362,17 +1362,24 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
         var locCtx = this._ctx;
         sfxCache.key = key;
-        sfxCache.sourceNode = this._ctx.createBufferSource();
+        sfxCache.sourceNode = this._ctx["createBufferSource"]();
         sfxCache.sourceNode.buffer = this._audioData[key];
         sfxCache.sourceNode.loop = loop;
-        if(locCtx.createGain)
-            sfxCache.volumeNode = this._ctx.createGain();
+        if(locCtx["createGain"])
+            sfxCache.volumeNode = this._ctx["createGain"]();
         else
-            sfxCache.volumeNode = this._ctx.createGainNode();
-        sfxCache.volumeNode.gain.value = volume;
+            sfxCache.volumeNode = this._ctx["createGainNode"]();
+        sfxCache.volumeNode["gain"].value = volume;
 
-        sfxCache.sourceNode.connect(sfxCache.volumeNode);
-        sfxCache.volumeNode.connect(this._ctx.destination);
+        sfxCache.sourceNode["connect"](sfxCache.volumeNode);
+        sfxCache.volumeNode["connect"](this._ctx["destination"]);
+
+        if(!sfxCache.sourceNode["playbackState"]){
+            sfxCache.sourceNode["onended"] = function(){
+                this._stopped = true;
+            };
+        }
+        sfxCache.sourceNode._stopped = false;
 
         /*
          * Safari on iOS 6 only supports noteOn(), noteGrainOn(), and noteOff() now.(iOS 6.1.3)
@@ -1385,7 +1392,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         if (sfxCache.sourceNode.start) {
             // starting from offset means resuming from where it paused last time
             sfxCache.sourceNode.start(0, offset);
-        } else if (sfxCache.sourceNode.noteGrainOn) {
+        } else if (sfxCache.sourceNode["noteGrainOn"]) {
             var duration = sfxCache.sourceNode.buffer.duration;
             if (loop) {
                 /*
@@ -1394,13 +1401,13 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
                  * On latest chrome desktop version, the passed in duration will only be the duration in this cycle.
                  * Now that latest chrome would have start() method, it is prepared for iOS here.
                  */
-                sfxCache.sourceNode.noteGrainOn(0, offset, duration);
+                sfxCache.sourceNode["noteGrainOn"](0, offset, duration);
             } else {
-                sfxCache.sourceNode.noteGrainOn(0, offset, duration - offset);
+                sfxCache.sourceNode["noteGrainOn"](0, offset, duration - offset);
             }
         } else {
             // if only noteOn() is supported, resuming sound will NOT work
-            sfxCache.sourceNode.noteOn(0);
+            sfxCache.sourceNode["noteOn"](0);
         }
 
         // currentTime - offset is necessary for pausing multiple times!
@@ -1425,7 +1432,11 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * @private
      */
     _isSoundPlaying: function(sfxCache) {
-        return sfxCache.sourceNode.playbackState == 2;
+        if(!sfxCache.sourceNode["playbackState"]){
+            return sfxCache.sourceNode._stopped !== true;
+        }else{
+            return sfxCache.sourceNode["playbackState"] == 2;
+        }
     },
 
     /**
@@ -1508,16 +1519,13 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * @private
      */
     _endSound: function(sfxCache) {
-	    if (sfxCache.sourceNode.playbackState && sfxCache.sourceNode.playbackState == 3)
+	    if (sfxCache.sourceNode["playbackState"] && sfxCache.sourceNode["playbackState"] == 3)
 	        return;
         if (sfxCache.sourceNode.stop) {
             sfxCache.sourceNode.stop(0);
         } else {
-            sfxCache.sourceNode.noteOff(0);
+            sfxCache.sourceNode["noteOff"](0);
         }
-        // Do not call disconnect()! Otherwise the sourceNode's playbackState may not be updated correctly
-        // sfxCache.sourceNode.disconnect();
-        // sfxCache.volumeNode.disconnect();
     },
 
     /**
@@ -1634,7 +1642,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * @private
      */
     _setSoundVolume: function(sfxCache, volume) {
-        sfxCache.volumeNode.gain.value = volume;
+        sfxCache.volumeNode["gain"].value = volume;
     },
 
     /**
