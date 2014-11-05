@@ -388,6 +388,13 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._updateColor();
     },
 
+    _createRenderCmd: function(){
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new cc.LayerColor.CanvasRenderCmd(this);
+        else
+            return new cc.LayerColor.WebGLRenderCmd(this);
+    },
+
     draw: null
 });
 
@@ -411,9 +418,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         cc.Layer.prototype.ctor.call(this);
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         cc.LayerColor.prototype.init.call(this, color, width, height);
-    };
-    _p._initRendererCmd = function(){
-        this._rendererCmd = new cc.RectRenderCmdCanvas(this);
     };
     _p._setWidth = function(width){
         cc.Node.prototype._setWidth.call(this, width);
@@ -609,10 +613,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         cc.LayerGradient.prototype.init.call(_t, start, end, v);
     },
 
-    _initRendererCmd: function(){
-        this._rendererCmd = new cc.GradientRectRenderCmdCanvas(this);
-    },
-
     /**
      * Initialization of the layer, please do not call this function by yourself, you should pass the parameters to constructor to initialize a layer
      * @param {cc.Color} start starting color
@@ -770,6 +770,13 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     setCompressedInterpolation: function (compress) {
         this._compressedInterpolation = compress;
         this._updateColor();
+    },
+
+    _createRenderCmd: function(){
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new cc.LayerGradient.CanvasRenderCmd(this);
+        else
+            return new cc.LayerGradient.WebGLRenderCmd(this);
     },
 
     _draw: null,

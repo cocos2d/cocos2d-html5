@@ -91,10 +91,12 @@
             "cocos2d/core/layers/CCLayerWebGL.js",
             "cocos2d/core/layers/CCLayerPropertyDefine.js",
             "cocos2d/core/layers/CCLayer.js",
+            "cocos2d/core/layers/CCLayerRenderCmd.js",
 
             "cocos2d/core/sprites/SpritesWebGL.js",
             "cocos2d/core/sprites/SpritesPropertyDefine.js",
             "cocos2d/core/sprites/CCSprite.js",
+            "cocos2d/core/sprites/CCSpriteRenderCmd.js",
             "cocos2d/core/sprites/CCSpriteBatchNode.js",
             "cocos2d/core/sprites/CCBakeSprite.js",
             "cocos2d/core/sprites/CCAnimation.js",
@@ -172,6 +174,7 @@
             "cocos2d/particle/CCPNGReader.js",
             "cocos2d/particle/CCTIFFReader.js",
             "cocos2d/particle/CCParticleSystem.js",
+            "cocos2d/particle/CCParticleSystemRenderCmd.js",
             "cocos2d/particle/CCParticleExamples.js",
             "cocos2d/particle/CCParticleBatchNode.js"
         ],

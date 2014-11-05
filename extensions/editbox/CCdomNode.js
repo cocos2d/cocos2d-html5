@@ -285,13 +285,8 @@ cc.DOM.methods = /** @lends cc.DOM# */{
     setRotation:function (newRotation) {
         if (this._rotation == newRotation)
             return;
-        //save dirty region when before change
-        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
         this._rotationX = this._rotationY = newRotation;
-        this._rotationRadiansX = this._rotationX * (Math.PI / 180);
-        this._rotationRadiansY = this._rotationY * (Math.PI / 180);
-
         this.setNodeDirty();
         this.dom.rotate(newRotation);
     },

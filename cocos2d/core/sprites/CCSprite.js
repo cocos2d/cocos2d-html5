@@ -1159,6 +1159,13 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             locQuad.tr.texCoords.v = top;
         }
         this._quadDirty = true;
+    },
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new cc.Sprite.CanvasRenderCmd(this);
+        else
+            return new cc.Sprite.WebGLRenderCmd(this);
     }
 });
 
@@ -1246,7 +1253,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p._initRendererCmd = function(){
-        this._rendererCmd = new cc.TextureRenderCmdCanvas(this);
+        this._rendererCmd = cc.renderer.getRenderCmd(this);
     };
 
     _p.setBlendFunc = function (src, dst) {

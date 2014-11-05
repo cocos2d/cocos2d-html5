@@ -185,8 +185,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _componentContainer: null,
     _isTransitionFinished: false,
 
-    _rotationRadiansX: 0,
-    _rotationRadiansY: 0,
     _className: "Node",
     _showNode: false,
     _name: "",                     ///<a string label, an user defined string to identify this node
@@ -531,8 +529,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setRotation: function (newRotation) {
         this._rotationX = this._rotationY = newRotation;
-        this._rotationRadiansX = this._rotationX * 0.017453292519943295; //(Math.PI / 180);
-        this._rotationRadiansY = this._rotationY * 0.017453292519943295; //(Math.PI / 180);
         this.setNodeDirty();
     },
 
@@ -558,7 +554,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setRotationX: function (rotationX) {
         this._rotationX = rotationX;
-        this._rotationRadiansX = this._rotationX * 0.017453292519943295; //(Math.PI / 180);
         this.setNodeDirty();
     },
 
@@ -584,7 +579,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setRotationY: function (rotationY) {
         this._rotationY = rotationY;
-        this._rotationRadiansY = this._rotationY * 0.017453292519943295;  //(Math.PI / 180);
         this.setNodeDirty();
     },
 
@@ -2298,11 +2292,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
         if (_t._transformDirty) {
             // Translate values
-            var x = _t._position.x;
-            var y = _t._position.y;
+            var x = _t._position.x, y = _t._position.y;
             var apx = _t._anchorPointInPoints.x, napx = -apx;
             var apy = _t._anchorPointInPoints.y, napy = -apy;
             var scx = _t._scaleX, scy = _t._scaleY;
+            var rotationRadiansX = _t._rotationX * 0.017453292519943295;  //0.017453292519943295 = (Math.PI / 180);   for performance
+            var rotationRadiansY = _t._rotationY * 0.017453292519943295;
 
             if (_t._ignoreAnchorPointForPosition) {
                 x += apx;
@@ -2314,10 +2309,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             // If we skew with the exact same value for both x and y then we're simply just rotating
             var cx = 1, sx = 0, cy = 1, sy = 0;
             if (_t._rotationX !== 0 || _t._rotationY !== 0) {
-                cx = Math.cos(-_t._rotationRadiansX);
-                sx = Math.sin(-_t._rotationRadiansX);
-                cy = Math.cos(-_t._rotationRadiansY);
-                sy = Math.sin(-_t._rotationRadiansY);
+                cx = Math.cos(-rotationRadiansX);
+                sx = Math.sin(-rotationRadiansX);
+                cy = Math.cos(-rotationRadiansY);
+                sy = Math.sin(-rotationRadiansY);
             }
             var needsSkewMatrix = ( _t._skewX || _t._skewY );
 
@@ -2589,9 +2584,17 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     _initRendererCmd: function(){
+        this._rendererCmd = cc.renderer.getRenderCmd(this);
     },
 
-    _transformForRenderer: null
+    _transformForRenderer: null,
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new cc.Node.CanvasRenderCmd(this);
+        else
+            return new cc.Node.WebGLRenderCmd(this);
+    }
 });
 
 /**
@@ -2735,9 +2738,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
             // rotation Cos and Sin
             var Cos = 1, Sin = 0;
+            var rotationRadiansX = _t._rotationX * 0.017453292519943295;  //0.017453292519943295 = (Math.PI / 180);   for performance
             if (_t._rotationX) {
-                Cos = Math.cos(_t._rotationRadiansX);
-                Sin = Math.sin(_t._rotationRadiansX);
+                Cos = Math.cos(rotationRadiansX);
+                Sin = Math.sin(rotationRadiansX);
             }
 
             // base abcd

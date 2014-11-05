@@ -23,27 +23,26 @@
  ****************************************************************************/
 
 //The cc.Node's render command for Canvas
-cc.NodeCanvasRenderCmd = function(){
+cc.Node.CanvasRenderCmd = function(renderableObject){
+    this._node = renderableObject;
     this._needDraw = false;
     this._anchorPointInPoints = new cc.Point(0,0);
     this._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
     this._transformWorld = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
-
 };
 
-cc.NodeCanvasRenderCmd.prototype = {
-    constructor: cc.NodeCanvasRenderCmd
-
+cc.Node.CanvasRenderCmd.prototype = {
+    constructor: cc.Node.CanvasRenderCmd
 };
-
-//register to renderer
 
 //The cc.Node's render command for WebGL
-cc.NodeWebGLRenderCmd = function(){
+cc.Node.WebGLRenderCmd = function(renderableObject){
+    this._node = renderableObject;
     this._needDraw = false;
+    this._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+    this._transformWorld = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
 };
 
-cc.NodeWebGLRenderCmd.prototype = {
-    constructor: cc.NodeCanvasRenderCmd
-
+cc.Node.WebGLRenderCmd.prototype = {
+    constructor: cc.Node.WebGLRenderCmd
 };
