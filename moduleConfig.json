@@ -206,7 +206,8 @@
         "shape-nodes" : [
             "core",
 
-            "cocos2d/shape-nodes/CCDrawNode.js"
+            "cocos2d/shape-nodes/CCDrawNode.js",
+            "cocos2d/shape-nodes/CCDrawNodeRenderCmd.js"
         ],
         "text-input" : [
             "core",

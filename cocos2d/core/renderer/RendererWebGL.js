@@ -137,17 +137,6 @@ cc.rendererWebGL = {
 if (cc._renderType === cc._RENDER_TYPE_WEBGL)
     cc.renderer = cc.rendererWebGL;
 
-cc.DrawNodeRenderCmdWebGL = function (node) {
-    this._node = node;
-};
-
-cc.DrawNodeRenderCmdWebGL.prototype.rendering = function (ctx) {
-    var _t = this._node;
-    cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
-    _t._shaderProgram.use();
-    _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);
-    _t._render();
-};
 
 cc.MotionStreakCmdWebGL = function (node) {
     this._node = node;

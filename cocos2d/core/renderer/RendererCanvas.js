@@ -226,98 +226,6 @@ cc.ProgressRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) 
     cc.g_NumberOfDraws++;
 };
 
-cc.DrawNodeRenderCmdCanvas = function (node) {
-    this._node = node;
-    this._buffer = null;
-    this._drawColor = null;
-    this._blendFunc = null;
-};
-
-cc.DrawNodeRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-    var context = ctx || cc._renderContext, _t = this, node = _t._node;
-    var alpha = node._displayedOpacity / 255;
-    if (alpha === 0)
-        return;
-    context.globalAlpha = alpha;
-
-    var t = node._transformWorld;
-    context.save();
-    ctx.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
-    if ((_t._blendFunc && (_t._blendFunc.src == cc.SRC_ALPHA) && (_t._blendFunc.dst == cc.ONE)))
-        context.globalCompositeOperation = 'lighter';
-    var locBuffer = _t._buffer;
-    for (var i = 0, len = locBuffer.length; i < len; i++) {
-        var element = locBuffer[i];
-        switch (element.type) {
-            case cc.DrawNode.TYPE_DOT:
-                _t._drawDot(context, element, scaleX, scaleY);
-                break;
-            case cc.DrawNode.TYPE_SEGMENT:
-                _t._drawSegment(context, element, scaleX, scaleY);
-                break;
-            case cc.DrawNode.TYPE_POLY:
-                _t._drawPoly(context, element, scaleX, scaleY);
-                break;
-        }
-    }
-    context.restore();
-};
-
-cc.DrawNodeRenderCmdCanvas.prototype._drawDot = function (ctx, element, scaleX, scaleY) {
-    var locColor = element.fillColor, locPos = element.verts[0], locRadius = element.lineWidth;
-
-    ctx.fillStyle = "rgba(" + (0 | locColor.r) + "," + (0 | locColor.g) + "," + (0 | locColor.b) + "," + locColor.a / 255 + ")";
-    ctx.beginPath();
-    ctx.arc(locPos.x * scaleX, -locPos.y * scaleY, locRadius * scaleX, 0, Math.PI * 2, false);
-    ctx.closePath();
-    ctx.fill();
-};
-
-cc.DrawNodeRenderCmdCanvas.prototype._drawSegment = function (ctx, element, scaleX, scaleY) {
-    var locColor = element.lineColor;
-    var locFrom = element.verts[0], locTo = element.verts[1];
-    var locLineWidth = element.lineWidth, locLineCap = element.lineCap;
-
-    ctx.strokeStyle = "rgba(" + (0 | locColor.r) + "," + (0 | locColor.g) + "," + (0 | locColor.b) + "," + locColor.a / 255 + ")";
-    ctx.lineWidth = locLineWidth * scaleX;
-    ctx.beginPath();
-    ctx.lineCap = locLineCap;
-    ctx.moveTo(locFrom.x * scaleX, -locFrom.y * scaleY);
-    ctx.lineTo(locTo.x * scaleX, -locTo.y * scaleY);
-    ctx.stroke();
-};
-
-cc.DrawNodeRenderCmdCanvas.prototype._drawPoly = function (ctx, element, scaleX, scaleY) {
-    var locVertices = element.verts, locLineCap = element.lineCap;
-    var locFillColor = element.fillColor, locLineWidth = element.lineWidth;
-    var locLineColor = element.lineColor, locIsClosePolygon = element.isClosePolygon;
-    var locIsFill = element.isFill, locIsStroke = element.isStroke;
-    if (locVertices == null)
-        return;
-
-    var firstPoint = locVertices[0];
-    ctx.lineCap = locLineCap;
-    if (locFillColor)
-        ctx.fillStyle = "rgba(" + (0 | locFillColor.r) + "," + (0 | locFillColor.g) + ","
-            + (0 | locFillColor.b) + "," + locFillColor.a / 255 + ")";
-    if (locLineWidth)
-        ctx.lineWidth = locLineWidth * scaleX;
-    if (locLineColor)
-        ctx.strokeStyle = "rgba(" + (0 | locLineColor.r) + "," + (0 | locLineColor.g) + ","
-            + (0 | locLineColor.b) + "," + locLineColor.a / 255 + ")";
-
-    ctx.beginPath();
-    ctx.moveTo(firstPoint.x * scaleX, -firstPoint.y * scaleY);
-    for (var i = 1, len = locVertices.length; i < len; i++)
-        ctx.lineTo(locVertices[i].x * scaleX, -locVertices[i].y * scaleY);
-
-    if (locIsClosePolygon)
-        ctx.closePath();
-    if (locIsFill)
-        ctx.fill();
-    if (locIsStroke)
-        ctx.stroke();
-};
 
 cc.ClippingNodeSaveRenderCmdCanvas = function (node) {
     this._node = node;
@@ -416,9 +324,9 @@ cc.PhysicsDebugNodeRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, 
     _node.clear();
 };
 
-cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawDot = cc.DrawNodeRenderCmdCanvas.prototype._drawDot;
-cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawSegment = cc.DrawNodeRenderCmdCanvas.prototype._drawSegment;
-cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawPoly = cc.DrawNodeRenderCmdCanvas.prototype._drawPoly;
+//cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawDot = cc.DrawNodeRenderCmdCanvas.prototype._drawDot;
+//cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawSegment = cc.DrawNodeRenderCmdCanvas.prototype._drawSegment;
+//cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawPoly = cc.DrawNodeRenderCmdCanvas.prototype._drawPoly;
 
 //--- TMXLayer's render command ---
 cc.TMXLayerRenderCmdCanvas = function (tmxLayer) {
