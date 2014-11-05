@@ -128,6 +128,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         this._stencil = stencil;
         this.alphaThreshold = 1;
         this.inverted = false;
+        return true;
     },
 
     /**
