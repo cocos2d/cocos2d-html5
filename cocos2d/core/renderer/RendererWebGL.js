@@ -324,21 +324,6 @@ cc.TMXLayerRenderCmdWebGL = function (node) {
 
 cc.TMXLayerRenderCmdWebGL.prototype.rendering = cc.SpriteBatchNodeRenderCmdWebGL.prototype.rendering;
 
-cc.PhysicsDebugNodeRenderCmdWebGL = function (node) {
-    this._node = node;
-};
-
-cc.PhysicsDebugNodeRenderCmdWebGL.prototype.rendering = function (ctx) {
-    var node = this._node;
-    if (!node._space)
-        return;
-
-    node._space.eachShape(cc.DrawShape.bind(node));
-    node._space.eachConstraint(cc.DrawConstraint.bind(node));
-    cc.DrawNode.prototype.draw.call(node);
-    node.clear();
-};
-
 cc.SkeletonRenderCmdWebGL = function (node) {
     this._node = node;
 };

@@ -143,28 +143,6 @@ cc.rendererCanvas = {
 if (cc._renderType === cc._RENDER_TYPE_CANVAS)
     cc.renderer = cc.rendererCanvas;
 
-//CHIPMUNK
-cc.PhysicsDebugNodeRenderCmdCanvas = function (node) {
-    this._node = node;
-    this._buffer = node._buffer;
-};
-
-cc.PhysicsDebugNodeRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
-    var _node = this._node;
-
-    if (!_node._space)
-        return;
-
-    _node._space.eachShape(cc.DrawShape.bind(_node));
-    _node._space.eachConstraint(cc.DrawConstraint.bind(_node));
-    cc.DrawNodeRenderCmdCanvas.prototype.rendering.call(this, ctx, scaleX, scaleY);
-    _node.clear();
-};
-
-//cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawDot = cc.DrawNodeRenderCmdCanvas.prototype._drawDot;
-//cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawSegment = cc.DrawNodeRenderCmdCanvas.prototype._drawSegment;
-//cc.PhysicsDebugNodeRenderCmdCanvas.prototype._drawPoly = cc.DrawNodeRenderCmdCanvas.prototype._drawPoly;
-
 //--- TMXLayer's render command ---
 cc.TMXLayerRenderCmdCanvas = function (tmxLayer) {
     this._node = tmxLayer;

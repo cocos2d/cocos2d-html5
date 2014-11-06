@@ -183,7 +183,9 @@
             "core", "shape-nodes",
 
             "cocos2d/physics/CCPhysicsSprite.js",
-            "cocos2d/physics/CCPhysicsDebugNode.js"
+            "cocos2d/physics/CCPhysicsDebugNode.js",
+            "cocos2d/physics/CCPhysicsDebugNodeRenderCmd.js",
+            "cocos2d/physics/CCPhysicsSpriteRenderCmd.js"
         ],
         "progress-timer" : [
             "core", "actions",
