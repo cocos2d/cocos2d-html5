@@ -79,6 +79,7 @@
             "cocos2d/core/base-nodes/CCNode.js",
             "cocos2d/core/base-nodes/CCNodeRenderCmd.js",
             "cocos2d/core/base-nodes/CCAtlasNode.js",
+            "cocos2d/core/base-nodes/CCAtlasNodeRenderCmd.js",
 
             "cocos2d/core/textures/TexturesWebGL.js",
             "cocos2d/core/textures/TexturesPropertyDefine.js",
@@ -147,7 +148,6 @@
             "core",
 
             "cocos2d/labels/CCLabelAtlas.js",
-            "cocos2d/labels/CCAtlasNodeRenderCmd.js",
             "cocos2d/labels/CCLabelBMFont.js"
         ],
         "menus" : [
@@ -333,6 +333,7 @@
             "extensions/cocostudio/armature/animation/CCTween.js",
             "extensions/cocostudio/armature/physics/CCColliderDetector.js",
             "extensions/cocostudio/armature/CCArmature.js",
+            "extensions/cocostudio/armature/CCArmatureRenderCmd.js",
             "extensions/cocostudio/armature/CCBone.js",
 
             "extensions/cocostudio/action/CCActionFrame.js",
