@@ -170,65 +170,6 @@ cc.ParticleRenderCmdWebGL.prototype.rendering = function (ctx) {
     gl.drawElements(gl.TRIANGLES, _t._particleIdx * 6, gl.UNSIGNED_SHORT, 0);
 };
 
-//RenderTexture render command
-cc.RenderTextureRenderCmdWebGL = function (node) {
-    this._node = node;
-};
-
-cc.RenderTextureRenderCmdWebGL.prototype.rendering = function (ctx) {
-    var gl = ctx || cc._renderContext;
-    var node = this._node;
-    if (node.autoDraw) {
-        node.begin();
-
-        var locClearFlags = node.clearFlags;
-        if (locClearFlags) {
-            var oldClearColor = [0.0, 0.0, 0.0, 0.0];
-            var oldDepthClearValue = 0.0;
-            var oldStencilClearValue = 0;
-
-            // backup and set
-            if (locClearFlags & gl.COLOR_BUFFER_BIT) {
-                oldClearColor = gl.getParameter(gl.COLOR_CLEAR_VALUE);
-                gl.clearColor(node._clearColor.r / 255, node._clearColor.g / 255, node._clearColor.b / 255, node._clearColor.a / 255);
-            }
-
-            if (locClearFlags & gl.DEPTH_BUFFER_BIT) {
-                oldDepthClearValue = gl.getParameter(gl.DEPTH_CLEAR_VALUE);
-                gl.clearDepth(node.clearDepthVal);
-            }
-
-            if (locClearFlags & gl.STENCIL_BUFFER_BIT) {
-                oldStencilClearValue = gl.getParameter(gl.STENCIL_CLEAR_VALUE);
-                gl.clearStencil(node.clearStencilVal);
-            }
-
-            // clear
-            gl.clear(locClearFlags);
-
-            // restore
-            if (locClearFlags & gl.COLOR_BUFFER_BIT)
-                gl.clearColor(oldClearColor[0], oldClearColor[1], oldClearColor[2], oldClearColor[3]);
-
-            if (locClearFlags & gl.DEPTH_BUFFER_BIT)
-                gl.clearDepth(oldDepthClearValue);
-
-            if (locClearFlags & gl.STENCIL_BUFFER_BIT)
-                gl.clearStencil(oldStencilClearValue);
-        }
-
-        //! make sure all children are drawn
-        node.sortAllChildren();
-        var locChildren = node._children;
-        for (var i = 0; i < locChildren.length; i++) {
-            var getChild = locChildren[i];
-            if (getChild != node.sprite)
-                getChild.visit();
-        }
-        node.end();
-    }
-};
-
 cc.SpriteBatchNodeRenderCmdWebGL = function (node) {
     this._node = node;
 };

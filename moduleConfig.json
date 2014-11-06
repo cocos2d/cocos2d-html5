@@ -199,7 +199,8 @@
         "render-texture" : [
             "core",
 
-            "cocos2d/render-texture/CCRenderTexture.js"
+            "cocos2d/render-texture/CCRenderTexture.js",
+            "cocos2d/render-texture/CCRenderTextureRenderCmd.js"
         ],
         "shaders" : [
             "core", "kazmath",

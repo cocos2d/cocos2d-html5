@@ -156,13 +156,6 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         }
     },
 
-    _initRendererCmd: function(){
-        //TODO need merge in some code
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this._rendererCmd = new cc.RenderTextureRenderCmdWebGL(this);
-
-    },
-
     _ctorForWebGL: function (width, height, format, depthStencilFormat) {
         cc.Node.prototype.ctor.call(this);
         this._cascadeColorEnabled = true;
@@ -174,6 +167,9 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             depthStencilFormat = depthStencilFormat || 0;
             this.initWithWidthAndHeight(width, height, format, depthStencilFormat);
         }
+
+        //TODO need merge in some code
+        this._rendererCmd = new cc.RenderTexture.WebGLRenderCmd(this);
     },
 
     /**
