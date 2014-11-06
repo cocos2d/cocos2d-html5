@@ -157,7 +157,8 @@
         "motion-streak" : [
             "core", "shaders", "kazmath", "labels",
 
-            "cocos2d/motion-streak/CCMotionStreak.js"
+            "cocos2d/motion-streak/CCMotionStreak.js",
+            "cocos2d/motion-streak/CCMotionStreakRenderCmd.js"
         ],
         "node-grid" : [
             "core",

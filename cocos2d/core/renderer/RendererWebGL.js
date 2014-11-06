@@ -137,45 +137,6 @@ cc.rendererWebGL = {
 if (cc._renderType === cc._RENDER_TYPE_WEBGL)
     cc.renderer = cc.rendererWebGL;
 
-
-cc.MotionStreakCmdWebGL = function (node) {
-    this._node = node;
-};
-
-cc.MotionStreakCmdWebGL.prototype.rendering = function (ctx) {
-    var _t = this._node;
-    if (_t._nuPoints <= 1)
-        return;
-
-    if (_t.texture && _t.texture.isLoaded()) {
-        ctx = ctx || cc._renderContext;
-        _t._shaderProgram.use();
-        _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
-        cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
-
-        cc.glBindTexture2D(_t.texture);
-
-        //position
-        ctx.bindBuffer(ctx.ARRAY_BUFFER, _t._verticesBuffer);
-        ctx.bufferData(ctx.ARRAY_BUFFER, _t._vertices, ctx.DYNAMIC_DRAW);
-        ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, ctx.FLOAT, false, 0, 0);
-
-        //texcoords
-        ctx.bindBuffer(ctx.ARRAY_BUFFER, _t._texCoordsBuffer);
-        ctx.bufferData(ctx.ARRAY_BUFFER, _t._texCoords, ctx.DYNAMIC_DRAW);
-        ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, ctx.FLOAT, false, 0, 0);
-
-        //colors
-        ctx.bindBuffer(ctx.ARRAY_BUFFER, _t._colorPointerBuffer);
-        ctx.bufferData(ctx.ARRAY_BUFFER, _t._colorPointer, ctx.DYNAMIC_DRAW);
-        ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, ctx.UNSIGNED_BYTE, true, 0, 0);
-
-        ctx.drawArrays(ctx.TRIANGLE_STRIP, 0, _t._nuPoints * 2);
-        cc.g_NumberOfDraws++;
-    }
-};
-
 cc.ParticleRenderCmdWebGL = function (node) {
     this._node = node;
 };
