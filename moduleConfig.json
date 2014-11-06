@@ -226,7 +226,8 @@
             "cocos2d/tilemap/CCTMXTiledMap.js",
             "cocos2d/tilemap/CCTMXXMLParser.js",
             "cocos2d/tilemap/CCTMXObjectGroup.js",
-            "cocos2d/tilemap/CCTMXLayer.js"
+            "cocos2d/tilemap/CCTMXLayer.js",
+            "cocos2d/tilemap/CCTMXLayerRenderCmd.js"
         ],
         "transitions" : [
             "core", "actions", "render-texture", "progress-timer",
