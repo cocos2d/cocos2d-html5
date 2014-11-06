@@ -100,4 +100,4 @@ cc.TMXLayer.WebGLRenderCmd = function(renderableObject){
     this._needDraw = true;
 };
 
-cc.TMXLayer.WebGLRenderCmd.prototype.rendering = cc.SpriteBatchNodeRenderCmdWebGL.prototype.rendering;
+cc.TMXLayer.WebGLRenderCmd.prototype.rendering = cc.SpriteBatchNode.WebGLRenderCmd.prototype.rendering;

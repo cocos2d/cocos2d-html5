@@ -412,11 +412,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         } else if (fileImage instanceof cc.Texture2D)
             texture2D = fileImage;
         texture2D && this.initWithTexture(texture2D, capacity);
-    },
 
-    _initRendererCmd: function(){
-         if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this._rendererCmd = new cc.SpriteBatchNodeRenderCmdWebGL(this);
+        this._rendererCmd = new cc.SpriteBatchNode.WebGLRenderCmd(this);
     },
 
     /**

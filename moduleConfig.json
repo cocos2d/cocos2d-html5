@@ -99,6 +99,7 @@
             "cocos2d/core/sprites/CCSprite.js",
             "cocos2d/core/sprites/CCSpriteRenderCmd.js",
             "cocos2d/core/sprites/CCSpriteBatchNode.js",
+            "cocos2d/core/sprites/CCSpriteBatchNodeRenderCmd.js",
             "cocos2d/core/sprites/CCBakeSprite.js",
             "cocos2d/core/sprites/CCAnimation.js",
             "cocos2d/core/sprites/CCAnimationCache.js",
