@@ -147,6 +147,7 @@
             "core",
 
             "cocos2d/labels/CCLabelAtlas.js",
+            "cocos2d/labels/CCAtlasNodeRenderCmd.js",
             "cocos2d/labels/CCLabelBMFont.js"
         ],
         "menus" : [

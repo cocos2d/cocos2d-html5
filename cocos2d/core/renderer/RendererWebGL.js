@@ -170,23 +170,6 @@ cc.ParticleRenderCmdWebGL.prototype.rendering = function (ctx) {
     gl.drawElements(gl.TRIANGLES, _t._particleIdx * 6, gl.UNSIGNED_SHORT, 0);
 };
 
-cc.AtlasNodeRenderCmdWebGL = function (node) {
-    this._node = node;
-};
-
-cc.AtlasNodeRenderCmdWebGL.prototype.rendering = function (ctx) {
-    var context = ctx || cc._renderContext, node = this._node;
-
-    node._shaderProgram.use();
-    node._shaderProgram._setUniformForMVPMatrixWithMat4(node._stackMatrix);
-
-    cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
-    if (node._uniformColor && node._colorF32Array) {
-        context.uniform4fv(node._uniformColor, node._colorF32Array);
-        node.textureAtlas.drawNumberOfQuads(node.quadsToDraw, 0);
-    }
-};
-
 cc.ArmatureRenderCmdWebGL = function (node) {
     this._node = node;
 };
