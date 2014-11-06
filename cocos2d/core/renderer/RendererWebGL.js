@@ -176,50 +176,6 @@ cc.MotionStreakCmdWebGL.prototype.rendering = function (ctx) {
     }
 };
 
-cc.ProgressRenderCmdWebGL = function (node) {
-    this._node = node;
-};
-
-cc.ProgressRenderCmdWebGL.prototype.rendering = function (ctx) {
-    var _t = this._node;
-    var context = ctx || cc._renderContext;
-    if (!_t._vertexData || !_t._sprite)
-        return;
-
-    _t._shaderProgram.use();
-    _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);
-
-    var blendFunc = _t._sprite.getBlendFunc();
-    cc.glBlendFunc(blendFunc.src, blendFunc.dst);
-    cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
-
-    cc.glBindTexture2D(_t._sprite.texture);
-
-    context.bindBuffer(context.ARRAY_BUFFER, _t._vertexWebGLBuffer);
-    if (_t._vertexDataDirty) {
-        context.bufferData(context.ARRAY_BUFFER, _t._vertexArrayBuffer, context.DYNAMIC_DRAW);
-        _t._vertexDataDirty = false;
-    }
-    var locVertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT;
-    context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, locVertexDataLen, 0);
-    context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, locVertexDataLen, 8);
-    context.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, context.FLOAT, false, locVertexDataLen, 12);
-
-    if (_t._type === cc.ProgressTimer.TYPE_RADIAL)
-        context.drawArrays(context.TRIANGLE_FAN, 0, _t._vertexDataCount);
-    else if (_t._type == cc.ProgressTimer.TYPE_BAR) {
-        if (!_t._reverseDirection)
-            context.drawArrays(context.TRIANGLE_STRIP, 0, _t._vertexDataCount);
-        else {
-            context.drawArrays(context.TRIANGLE_STRIP, 0, _t._vertexDataCount / 2);
-            context.drawArrays(context.TRIANGLE_STRIP, 4, _t._vertexDataCount / 2);
-            // 2 draw calls
-            cc.g_NumberOfDraws++;
-        }
-    }
-    cc.g_NumberOfDraws++;
-};
-
 cc.ParticleRenderCmdWebGL = function (node) {
     this._node = node;
 };
