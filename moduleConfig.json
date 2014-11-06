@@ -178,7 +178,8 @@
             "cocos2d/particle/CCParticleSystem.js",
             "cocos2d/particle/CCParticleSystemRenderCmd.js",
             "cocos2d/particle/CCParticleExamples.js",
-            "cocos2d/particle/CCParticleBatchNode.js"
+            "cocos2d/particle/CCParticleBatchNode.js",
+            "cocos2d/particle/CCParticleBatchNodeRenderCmd.js"
         ],
         "physics" : [
             "core", "shape-nodes",

@@ -101,6 +101,8 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         } else if (fileImage instanceof cc.Texture2D) {
             this.initWithTexture(fileImage, capacity);
         }
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+            this._rendererCmd = new cc.ParticleBatchNode.WebGLRenderCmd(this);
     },
 
     /**
@@ -555,11 +557,6 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      */
     setTextureAtlas:function (textureAtlas) {
         this.textureAtlas = textureAtlas;
-    },
-
-    _initRendererCmd:function(){
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this._rendererCmd = new cc.ParticleBatchNodeRenderCmdWebGL(this);
     }
 });
 
