@@ -318,17 +318,6 @@ cc.AtlasNodeRenderCmdWebGL.prototype.rendering = function (ctx) {
     }
 };
 
-cc.CustomRenderCmdWebGL = function (node, func) {
-    this._node = node;
-    this._callback = func;
-};
-
-cc.CustomRenderCmdWebGL.prototype.rendering = function (ctx) {
-    if (!this._callback)
-        return;
-    this._callback.call(this._node, ctx);
-};
-
 cc.TMXLayerRenderCmdWebGL = function (node) {
     this._node = node;
 };

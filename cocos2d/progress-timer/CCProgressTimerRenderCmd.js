@@ -24,6 +24,7 @@
 
 cc.ProgressTimer.CanvasRenderCmd = function(renderableObject){
     cc.Node.CanvasRenderCmd.call(this, renderableObject);
+    this._needDraw = true;
 
     this._PI180 = Math.PI / 180;
     this._sprite = null;

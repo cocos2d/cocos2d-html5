@@ -27,7 +27,8 @@
         "clipping-nodes" : [
             "core", "shape-nodes",
 
-            "cocos2d/clipping-nodes/CCClippingNode.js"
+            "cocos2d/clipping-nodes/CCClippingNode.js",
+            "cocos2d/clipping-nodes/CCClippingNodeRenderCmd.js"
         ],
         "compression" : [
             "core",

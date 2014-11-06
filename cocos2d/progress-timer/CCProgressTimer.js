@@ -187,7 +187,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         this._reverseDirection = false;
 
         this._sprite = null;
-        this._rendererCmd = new cc.ProgressRenderCmdCanvas(this);
+        this._rendererCmd = this._createRenderCmd();
         sprite && this._initWithSpriteForCanvas(sprite);
     },
 
