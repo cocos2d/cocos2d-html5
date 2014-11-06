@@ -108,7 +108,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             //limit: 1. its children's blendfunc are invalid.
             this._isBaked = this._cacheDirty = true;
             if(!this._bakeRenderCmd && this._bakeRendering)
-                this._bakeRenderCmd = new cc.CustomRenderCmdCanvas(this, this._bakeRendering);
+                this._bakeRenderCmd = new cc.Layer.CanvasBakeRenderCmd(this);
+                //this._bakeRenderCmd = new cc.CustomRenderCmdCanvas(this, this._bakeRendering);
 
             this._cachedParent = this;
             var children = this._children;
@@ -139,38 +140,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         cc.Node.prototype.addChild.call(this, child, localZOrder, tag);
         if(child._parent == this && this._isBaked)
             child._setCachedParent(this);
-    };
-
-    p._bakeRendering = function(){
-        if(this._cacheDirty){
-            var _t = this;
-            var children = _t._children, locBakeSprite = this._bakeSprite;
-            //compute the bounding box of the bake layer.
-            this._transformForRenderer();
-            var boundingBox = this._getBoundingBoxForBake();
-            boundingBox.width = 0|(boundingBox.width+0.5);
-            boundingBox.height = 0|(boundingBox.height+0.5);
-            var bakeContext = locBakeSprite.getCacheContext();
-            locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
-            bakeContext.translate(0 - boundingBox.x, boundingBox.height + boundingBox.y);
-            //  invert
-            var t = cc.affineTransformInvert(this._transformWorld);
-            bakeContext.transform(t.a, t.c, t.b, t.d, t.tx , -t.ty );
-
-            //reset the bake sprite's position
-            var anchor = locBakeSprite.getAnchorPointInPoints();
-            locBakeSprite.setPosition(anchor.x + boundingBox.x, anchor.y + boundingBox.y);
-
-            //visit for canvas
-            _t.sortAllChildren();
-            cc.renderer._turnToCacheMode(this.__instanceId);
-            for (var i = 0, len = children.length; i < len; i++) {
-                children[i].visit(bakeContext);
-            }
-            cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
-            locBakeSprite.transform();                   //because bake sprite's position was changed at rendering.
-            this._cacheDirty = false;
-        }
     };
 
     p.visit = function(ctx){

@@ -29,6 +29,45 @@ cc.Layer.CanvasRenderCmd = function(renderable){
 
 cc.Layer.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
 
+cc.Layer.CanvasBakeRenderCmd = function(renderable){
+    cc.Node.CanvasRenderCmd.call(this, renderable);
+    this._needDraw = true;
+};
+
+cc.Layer.CanvasBakeRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
+
+cc.Layer.CanvasBakeRenderCmd.prototype.rendering = function(){
+    if(this._cacheDirty){
+        var _t = this;
+        var children = _t._children, locBakeSprite = this._bakeSprite;
+        //compute the bounding box of the bake layer.
+        this._transformForRenderer();
+        var boundingBox = this._getBoundingBoxForBake();
+        boundingBox.width = 0|(boundingBox.width+0.5);
+        boundingBox.height = 0|(boundingBox.height+0.5);
+        var bakeContext = locBakeSprite.getCacheContext();
+        locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
+        bakeContext.translate(0 - boundingBox.x, boundingBox.height + boundingBox.y);
+        //  invert
+        var t = cc.affineTransformInvert(this._transformWorld);
+        bakeContext.transform(t.a, t.c, t.b, t.d, t.tx , -t.ty );
+
+        //reset the bake sprite's position
+        var anchor = locBakeSprite.getAnchorPointInPoints();
+        locBakeSprite.setPosition(anchor.x + boundingBox.x, anchor.y + boundingBox.y);
+
+        //visit for canvas
+        _t.sortAllChildren();
+        cc.renderer._turnToCacheMode(this.__instanceId);
+        for (var i = 0, len = children.length; i < len; i++) {
+            children[i].visit(bakeContext);
+        }
+        cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
+        locBakeSprite.transform();                   //because bake sprite's position was changed at rendering.
+        this._cacheDirty = false;
+    }
+};
+
 //Layer's WebGL render command
 cc.Layer.WebGLRenderCmd = function(renderable){
     cc.Node.WebGLRenderCmd.call(this, renderable);
