@@ -268,6 +268,7 @@ ccs.csLoader = {
         // decode plist
         var textureSize = buffer["textures"].length;
         //cc.log("textureSize = %d", textureSize);
+        var frameCaches = {};
         for (var i = 0; i < textureSize; ++i)
         {
             var plist = buffer["textures"][i];
@@ -276,7 +277,10 @@ ccs.csLoader = {
             //cc.log("png = %s", png);
             plist = this._protocolBuffersPath + plist;
             png = this._protocolBuffersPath + png;
-            cc.spriteFrameCache.addSpriteFrames(plist, png);
+            frameCaches[plist] = png;
+        }
+        for(var plist in frameCaches){
+            cc.spriteFrameCache.addSpriteFrames(plist,frameCaches[plist]);
         }
         var fileDesignWidth = buffer["designWidth"];
         var fileDesignHeight = buffer["designHeight"];
