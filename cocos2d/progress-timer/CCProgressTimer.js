@@ -823,6 +823,13 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         else if(locType === cc.ProgressTimer.TYPE_BAR)
             this._updateBar();
         this._vertexDataDirty = true;
+    },
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new cc.ProgressTimer.CanvasRenderCmd(this);
+        else
+            return new cc.ProgressTimer.WebGLRenderCmd(this);
     }
 });
 
