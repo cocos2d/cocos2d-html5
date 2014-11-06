@@ -32,21 +32,22 @@ ccs.Armature.CanvasRenderCmd.prototype.constructor = ccs.Armature.CanvasRenderCm
 
 ccs.Armature.CanvasRenderCmd.prototype.rendering = function(ctx, scaleX, scaleY){
     var context = ctx || cc._renderContext;
+    var node = this._node;
     context.save();
-    this.transform(context);
-    var t = this._transformWorld;
+    node.transform(context);
+    var t = node._transformWorld;
     ctx.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
 
-    var locChildren = this._children;
+    var locChildren = node._children;
     for (var i = 0, len = locChildren.length; i< len; i++) {
         var selBone = locChildren[i];
         if (selBone && selBone.getDisplayRenderNode) {
-            var node = selBone.getDisplayRenderNode();
+            var rn = selBone.getDisplayRenderNode();
 
-            if (null == node)
+            if (null == rn)
                 continue;
 
-            node._transformForRenderer();
+            rn._transformForRenderer();
         }
     }
 };
@@ -60,9 +61,8 @@ ccs.Armature.CanvasRestoreRenderCmd.prototype = Object.create(cc.Node.CanvasRend
 ccs.Armature.CanvasRestoreRenderCmd.prototype.constructor = ccs.Armature.CanvasRestoreRenderCmd;
 
 ccs.Armature.CanvasRestoreRenderCmd.prototype.rendering = function(ctx, scaleX, scaleY){
-    var context = ctx || cc._renderContext;
     this._cacheDirty = false;
-    context.restore();
+    ctx.restore();
 };
 
 ccs.Armature.WebGLRenderCmd = function(renderableObject){

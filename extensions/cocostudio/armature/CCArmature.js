@@ -71,9 +71,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this._armatureTransformDirty = true;
         this._realAnchorPointInPoints = cc.p(0, 0);
         name && ccs.Armature.prototype.init.call(this, name, parentBone);
-    },
-
-    _initRendererCmd:function () {
         if(cc._renderType === cc._RENDER_TYPE_CANVAS){
             this._rendererStartCmd = new ccs.Armature.CanvasRenderCmd(this);
             this._rendererEndCmd = new ccs.Armature.CanvasRestoreRenderCmd(this);

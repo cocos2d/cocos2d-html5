@@ -137,6 +137,17 @@ cc.rendererWebGL = {
 if (cc._renderType === cc._RENDER_TYPE_WEBGL)
     cc.renderer = cc.rendererWebGL;
 
+cc.CustomRenderCmdWebGL = function (node, func) {
+    this._node = node;
+    this._callback = func;
+};
+
+cc.CustomRenderCmdWebGL.prototype.rendering = function (ctx) {
+    if (!this._callback)
+        return;
+    this._callback.call(this._node, ctx);
+};
+
 cc.ParticleRenderCmdWebGL = function (node) {
     this._node = node;
 };
