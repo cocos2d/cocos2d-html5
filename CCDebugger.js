@@ -310,10 +310,8 @@ cc._initDebugSetting = function (mode) {
                 locLog(cc.formatStr.apply(cc, arguments));
             };
         }
-    } else {
+    } else if(console && console.log.apply){//console is null when user doesn't open dev tool on IE9
         //log to console
-        if(!console)    //console is null when user doesn't open dev tool on IE9
-            return;
 
         cc.error = function(){
             return console.error.apply(console, arguments);
