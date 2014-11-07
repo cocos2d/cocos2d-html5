@@ -110,10 +110,6 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
 		this.init();
     },
 
-    _initRendererCmd: function(){
-        this._rendererCmd = new cc.DrawNodeRenderCmdCanvas(this);
-    },
-
     // ----common function start ----
     /**
      * Gets the blend func
@@ -574,6 +570,10 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
      */
     clear: function () {
         this._buffer.length = 0;
+    },
+
+    _createRenderCmd: function(){
+        return new cc.DrawNode.CanvasRenderCmd(this);
     }
 });
 
@@ -616,10 +616,6 @@ cc.DrawNodeWebGL = cc.Node.extend({
         this._drawColor = cc.color(255,255,255,255);
 
 	    this.init();
-    },
-    
-    _initRendererCmd: function(){
-        this._rendererCmd = new cc.DrawNodeRenderCmdWebGL(this);
     },
 
     init:function () {
@@ -1011,7 +1007,11 @@ cc.DrawNodeWebGL = cc.Node.extend({
     clear:function () {
         this._buffer.length = 0;
         this._dirty = true;
-    }
+    },
+
+    _createRenderCmd: function(){
+        return new cc.DrawNode.WebGLRenderCmd(this);
+}
 });
 
 cc.DrawNode = cc._renderType == cc._RENDER_TYPE_WEBGL ? cc.DrawNodeWebGL : cc.DrawNodeCanvas;

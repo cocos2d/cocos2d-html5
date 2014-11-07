@@ -71,14 +71,11 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this._armatureTransformDirty = true;
         this._realAnchorPointInPoints = cc.p(0, 0);
         name && ccs.Armature.prototype.init.call(this, name, parentBone);
-    },
-
-    _initRendererCmd:function () {
         if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-            this._rendererStartCmd = new cc.CustomRenderCmdCanvas(this, this._startRendererCmdForCanvas);
-            this._rendererEndCmd = new cc.CustomRenderCmdCanvas(this, this._endRendererCmdForCanvas);
+            this._rendererStartCmd = new ccs.Armature.CanvasRenderCmd(this);
+            this._rendererEndCmd = new ccs.Armature.CanvasRestoreRenderCmd(this);
         }else{
-            this._rendererCmd = new cc.ArmatureRenderCmdWebGL(this);
+            this._rendererCmd = new ccs.Armature.WebGLRenderCmd(this);
         }
     },
 
@@ -478,35 +475,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this.draw(ctx);
         if(this._rendererEndCmd)
             cc.renderer.pushRenderCommand(this._rendererEndCmd);
-
-        this._cacheDirty = false;
-
-        context.restore();
-    },
-
-    _startRendererCmdForCanvas: function(ctx, scaleX, scaleY){
-        var context = ctx || cc._renderContext;
-        context.save();
-        this.transform(context);
-        var t = this._transformWorld;
-        ctx.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
-
-        var locChildren = this._children;
-        for (var i = 0, len = locChildren.length; i< len; i++) {
-            var selBone = locChildren[i];
-            if (selBone && selBone.getDisplayRenderNode) {
-                var node = selBone.getDisplayRenderNode();
-
-                if (null == node)
-                    continue;
-
-                node._transformForRenderer();
-            }
-        }
-    },
-
-    _endRendererCmdForCanvas: function(ctx){
-        var context = ctx || cc._renderContext;
 
         this._cacheDirty = false;
 

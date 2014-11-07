@@ -263,17 +263,9 @@
             }
 
             if(cc._renderType === cc._RENDER_TYPE_CANVAS)
-                this._transformCmd = new cc.CustomRenderCmdCanvas(this, function(){
-                    if (this.transform) {
-                        this.transform();
-                    }
-                });
+                this._transformCmd = new cc.PhysicsSprite.CanvasRenderCmd(this);
             else
-                this._transformCmd = new cc.CustomRenderCmdWebGL(this, function(){
-                    if(this._transformForRenderer){
-                        this._transformForRenderer();
-                    }
-                });
+                this._transformCmd = new cc.PhysicsSprite.WebGLRenderCmd(this);
             cc.renderer.pushRenderCommand(this._transformCmd);
         },
 

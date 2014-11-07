@@ -187,7 +187,6 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         this._reverseDirection = false;
 
         this._sprite = null;
-        this._rendererCmd = new cc.ProgressRenderCmdCanvas(this);
         sprite && this._initWithSpriteForCanvas(sprite);
     },
 
@@ -206,7 +205,6 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         this._vertexData = null;
         this._vertexArrayBuffer = null;
         this._vertexDataDirty = false;
-        this._rendererCmd = new cc.ProgressRenderCmdWebGL(this);
 
         sprite && this._initWithSpriteForWebGL(sprite);
     },
@@ -823,6 +821,13 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         else if(locType === cc.ProgressTimer.TYPE_BAR)
             this._updateBar();
         this._vertexDataDirty = true;
+    },
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new cc.ProgressTimer.CanvasRenderCmd(this);
+        else
+            return new cc.ProgressTimer.WebGLRenderCmd(this);
     }
 });
 

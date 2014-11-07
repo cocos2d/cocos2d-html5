@@ -87,18 +87,6 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         cc.ClippingNode.prototype.init.call(this, stencil);
     },
 
-    _initRendererCmd: function(){
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-            this._rendererSaveCmd = new cc.ClippingNodeSaveRenderCmdCanvas(this);
-            this._rendererClipCmd = new cc.ClippingNodeClipRenderCmdCanvas(this);
-            this._rendererRestoreCmd = new cc.ClippingNodeRestoreRenderCmdCanvas(this);
-        }else{
-            this._beforeVisitCmd = new cc.CustomRenderCmdWebGL(this, this._onBeforeVisit);
-            this._afterDrawStencilCmd  = new cc.CustomRenderCmdWebGL(this, this._onAfterDrawStencil);
-            this._afterVisitCmd = new cc.CustomRenderCmdWebGL(this, this._onAfterVisit);
-        }
-    },
-
     /**
      * Initialization of the node, please do not call this function by yourself, you should pass the parameters to constructor to initialize it .
      * @function
@@ -581,6 +569,18 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         cc.Node.prototype._transformForRenderer.call(this, parentMatrix);
         if(this._stencil)
             this._stencil._transformForRenderer(this._stackMatrix);
+    },
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
+            this._rendererSaveCmd = new cc.ClippingNode.CanvasSaveRenderCmd(this);
+            this._rendererClipCmd = new cc.ClippingNode.CanvasClipRenderCmd(this);
+            this._rendererRestoreCmd = new cc.ClippingNode.CanvasRestoreRenderCmd(this);
+        }else{
+            this._beforeVisitCmd = new cc.ClippingNode.WebGLRenderCmd(this, this._onBeforeVisit);
+            this._afterDrawStencilCmd  = new cc.ClippingNode.WebGLRenderCmd(this, this._onAfterDrawStencil);
+            this._afterVisitCmd = new cc.ClippingNode.WebGLRenderCmd(this, this._onAfterVisit);
+        }
     }
 });
 

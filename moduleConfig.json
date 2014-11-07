@@ -27,7 +27,8 @@
         "clipping-nodes" : [
             "core", "shape-nodes",
 
-            "cocos2d/clipping-nodes/CCClippingNode.js"
+            "cocos2d/clipping-nodes/CCClippingNode.js",
+            "cocos2d/clipping-nodes/CCClippingNodeRenderCmd.js"
         ],
         "compression" : [
             "core",
@@ -78,6 +79,7 @@
             "cocos2d/core/base-nodes/CCNode.js",
             "cocos2d/core/base-nodes/CCNodeRenderCmd.js",
             "cocos2d/core/base-nodes/CCAtlasNode.js",
+            "cocos2d/core/base-nodes/CCAtlasNodeRenderCmd.js",
 
             "cocos2d/core/textures/TexturesWebGL.js",
             "cocos2d/core/textures/TexturesPropertyDefine.js",
@@ -98,6 +100,7 @@
             "cocos2d/core/sprites/CCSprite.js",
             "cocos2d/core/sprites/CCSpriteRenderCmd.js",
             "cocos2d/core/sprites/CCSpriteBatchNode.js",
+            "cocos2d/core/sprites/CCSpriteBatchNodeRenderCmd.js",
             "cocos2d/core/sprites/CCBakeSprite.js",
             "cocos2d/core/sprites/CCAnimation.js",
             "cocos2d/core/sprites/CCAnimationCache.js",
@@ -156,7 +159,8 @@
         "motion-streak" : [
             "core", "shaders", "kazmath", "labels",
 
-            "cocos2d/motion-streak/CCMotionStreak.js"
+            "cocos2d/motion-streak/CCMotionStreak.js",
+            "cocos2d/motion-streak/CCMotionStreakRenderCmd.js"
         ],
         "node-grid" : [
             "core",
@@ -176,24 +180,29 @@
             "cocos2d/particle/CCParticleSystem.js",
             "cocos2d/particle/CCParticleSystemRenderCmd.js",
             "cocos2d/particle/CCParticleExamples.js",
-            "cocos2d/particle/CCParticleBatchNode.js"
+            "cocos2d/particle/CCParticleBatchNode.js",
+            "cocos2d/particle/CCParticleBatchNodeRenderCmd.js"
         ],
         "physics" : [
             "core", "shape-nodes",
 
             "cocos2d/physics/CCPhysicsSprite.js",
-            "cocos2d/physics/CCPhysicsDebugNode.js"
+            "cocos2d/physics/CCPhysicsDebugNode.js",
+            "cocos2d/physics/CCPhysicsDebugNodeRenderCmd.js",
+            "cocos2d/physics/CCPhysicsSpriteRenderCmd.js"
         ],
         "progress-timer" : [
             "core", "actions",
 
             "cocos2d/progress-timer/CCProgressTimer.js",
-            "cocos2d/progress-timer/CCActionProgressTimer.js"
+            "cocos2d/progress-timer/CCActionProgressTimer.js",
+            "cocos2d/progress-timer/CCProgressTimerRenderCmd.js"
         ],
         "render-texture" : [
             "core",
 
-            "cocos2d/render-texture/CCRenderTexture.js"
+            "cocos2d/render-texture/CCRenderTexture.js",
+            "cocos2d/render-texture/CCRenderTextureRenderCmd.js"
         ],
         "shaders" : [
             "core", "kazmath",
@@ -206,7 +215,8 @@
         "shape-nodes" : [
             "core",
 
-            "cocos2d/shape-nodes/CCDrawNode.js"
+            "cocos2d/shape-nodes/CCDrawNode.js",
+            "cocos2d/shape-nodes/CCDrawNodeRenderCmd.js"
         ],
         "text-input" : [
             "core",
@@ -221,7 +231,8 @@
             "cocos2d/tilemap/CCTMXTiledMap.js",
             "cocos2d/tilemap/CCTMXXMLParser.js",
             "cocos2d/tilemap/CCTMXObjectGroup.js",
-            "cocos2d/tilemap/CCTMXLayer.js"
+            "cocos2d/tilemap/CCTMXLayer.js",
+            "cocos2d/tilemap/CCTMXLayerRenderCmd.js"
         ],
         "transitions" : [
             "core", "actions", "render-texture", "progress-timer",
@@ -322,6 +333,7 @@
             "extensions/cocostudio/armature/animation/CCTween.js",
             "extensions/cocostudio/armature/physics/CCColliderDetector.js",
             "extensions/cocostudio/armature/CCArmature.js",
+            "extensions/cocostudio/armature/CCArmatureRenderCmd.js",
             "extensions/cocostudio/armature/CCBone.js",
 
             "extensions/cocostudio/action/CCActionFrame.js",
@@ -401,7 +413,8 @@
 
             "extensions/spine/Spine.js",
             "extensions/spine/CCSkeleton.js",
-            "extensions/spine/CCSkeletonAnimation.js"
+            "extensions/spine/CCSkeletonAnimation.js",
+            "extensions/spine/CCSkeletonRenderCmd.js.js"
         ],
         "extensions" : ["gui", "ccbreader", "editbox", "cocostudio", "spine", "ccpool"],
 

@@ -84,11 +84,9 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
         this._ignoreContentScaleFactor = false;
 
         itemsToRender !== undefined && this.initWithTileFile(tile, tileWidth, tileHeight, itemsToRender);
-    },
 
-    _initRendererCmd: function () {
         if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this._rendererCmd = new cc.AtlasNodeRenderCmdWebGL(this);
+            this._rendererCmd = new cc.AtlasNode.WebGLRenderCmd(this);
     },
 
     /**

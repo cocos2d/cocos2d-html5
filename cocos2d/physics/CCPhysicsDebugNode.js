@@ -163,12 +163,6 @@ cc.PhysicsDebugNode = cc.DrawNode.extend({
         this._space = space;
     },
 
-    _initRendererCmd:function(){
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
-            this._rendererCmd = new cc.PhysicsDebugNodeRenderCmdCanvas(this);
-        else
-            this._rendererCmd = new cc.PhysicsDebugNodeRenderCmdWebGL(this);
-    },
     /**
      * get space
      * @returns {cp.Space}
@@ -197,6 +191,13 @@ cc.PhysicsDebugNode = cc.DrawNode.extend({
         this._space.eachConstraint(cc.DrawConstraint.bind(this));
         cc.DrawNode.prototype.draw.call(this);
         this.clear();
+    },
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new cc.PhysicsDebugNode.CanvasRenderCmd(this);
+        else
+            return new cc.PhysicsDebugNode.WebGLRenderCmd(this);
     }
 });
 

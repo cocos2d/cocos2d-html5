@@ -37,6 +37,7 @@ cc.Sprite.CanvasRenderCmd = function(renderableObject){
 };
 
 cc.Sprite.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
+cc.Sprite.CanvasRenderCmd.prototype.constructor = cc.Sprite.CanvasRenderCmd;
 
 cc.Sprite.CanvasRenderCmd.prototype.rendering = function (ctx, scaleX, scaleY) {
     var self = this,
