@@ -1491,6 +1491,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p.updateDisplayedColor = function (parentColor) {
         var _t = this;
         cc.Node.prototype.updateDisplayedColor.call(_t, parentColor);
+        var oColor = _t._oldDisplayColor;
+        var nColor = _t._displayedColor;
+        if (oColor.r === nColor.r && oColor.g === nColor.g && oColor.b === nColor.b)
+            return;
 
         _t._changeTextureColor();
         _t._setNodeDirtyForCache();
