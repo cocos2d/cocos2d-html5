@@ -59,10 +59,10 @@ cc._tmp.DirectorWebGL = function () {
                 var orthoMatrix = new cc.kmMat4();
                 cc.kmMat4OrthographicProjection(
                     orthoMatrix,
-                    -ox,
-                    size.width - ox,
-                    -oy,
-                    size.height - oy,
+                    ox,
+                    size.width + ox,
+                    oy,
+                    size.height + oy,
                     -1024, 1024);
                 cc.kmGLMultMatrix(orthoMatrix);
                 cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
@@ -81,8 +81,8 @@ cc._tmp.DirectorWebGL = function () {
 
                 cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
                 cc.kmGLLoadIdentity();
-                var eye = cc.kmVec3Fill(null, -ox + size.width / 2, -oy + size.height / 2, zeye);
-                var center = cc.kmVec3Fill(null, -ox + size.width / 2, -oy + size.height / 2, 0.0);
+                var eye = cc.kmVec3Fill(null, ox + size.width / 2, oy + size.height / 2, zeye);
+                var center = cc.kmVec3Fill(null, ox + size.width / 2, oy + size.height / 2, 0.0);
                 var up = cc.kmVec3Fill(null, 0.0, 1.0, 0.0);
                 cc.kmMat4LookAt(matrixLookup, eye, center, up);
                 cc.kmGLMultMatrix(matrixLookup);
