@@ -308,7 +308,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._updateColor();
     },
 
-    _blendFuncStr: "source",
+    _blendFuncStr: "source-over",
 
     /**
      * Constructor of cc.LayerColor
