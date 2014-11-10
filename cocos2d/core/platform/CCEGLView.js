@@ -58,16 +58,34 @@ cc.__BrowserGetter = {
 };
 
 switch(cc.sys.browserType){
+    case cc.sys.BROWSER_TYPE_SAFARI:
+        cc.__BrowserGetter.meta["minimal-ui"] = "true";
+        break;
     case cc.sys.BROWSER_TYPE_CHROME:
-        cc.__BrowserGetter.avaWidth = function(frame){
-                return frame.clientWidth;
-        };
-        cc.__BrowserGetter.avaHeight = function(frame){
-                return frame.clientHeight;
-        };
         cc.__BrowserGetter.__defineGetter__("target-densitydpi", function(){
             return cc.view._targetDensityDPI;
         });
+    case cc.sys.BROWSER_TYPE_UC:
+        cc.__BrowserGetter.avaWidth = function(frame){
+            return frame.clientWidth;
+        };
+        cc.__BrowserGetter.avaHeight = function(frame){
+            return frame.clientHeight;
+        };
+        break;
+    case cc.sys.BROWSER_TYPE_MIUI:
+        cc.__BrowserGetter.init = function(view){
+            if(view.__resizeWithBrowserSize) return;
+            var resize = function(){
+                view.setDesignResolutionSize(
+                    view._designResolutionSize.width,
+                    view._designResolutionSize.height,
+                    view._resolutionPolicy
+                );
+                window.removeEventListener("resize", resize, false);
+            };
+            window.addEventListener("resize", resize, false);
+        };
         break;
 }
 
@@ -138,6 +156,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      */
     ctor: function () {
         var _t = this, d = document, _strategyer = cc.ContainerStrategy, _strategy = cc.ContentStrategy;
+
+        cc.__BrowserGetter.init(this);
+
         _t._frame = (cc.container.parentNode === d.body) ? d.documentElement : cc.container.parentNode;
         _t._frameSize = cc.size(0, 0);
         _t._initFrameSize();
