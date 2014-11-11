@@ -335,7 +335,7 @@ ccs.csLoader = {
             var nodeOptions = nodetree["widgetOptions"];
             var options = nodetree["projectNodeOptions"];
     
-            var filePath = options["filename"];
+            var filePath = options["fileName"];
             //cc.log("filePath = %s", filePath);
     		if(filePath != "")
     		{
