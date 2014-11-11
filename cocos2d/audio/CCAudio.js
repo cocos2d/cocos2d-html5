@@ -346,7 +346,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
         self._soundSupported = cc._audioLoader._supportedAudioTypes.length > 0;
         if (self._effectPauseCb)
             self._effectPauseCb = self._effectPauseCb.bind(self);
-
         if(cc.sys.isMobile){
             self._addTouchStartEvent();
         }
