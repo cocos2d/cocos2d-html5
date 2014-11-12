@@ -546,7 +546,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             }
 
             if (this._batchNode) {
-                this._arrayMakeObjectsPerformSelector(_children, cc.Node._StateCallbackType.sortAllChildren);
+                this._arrayMakeObjectsPerformSelector(_children, cc.Node._stateCallbackType.sortAllChildren);
             }
 
             //don't need to check children recursively, that's done in visit of each child
