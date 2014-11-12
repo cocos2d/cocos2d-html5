@@ -1458,7 +1458,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         // recursively iterate over children
         if (_t._hasChildren)
-            _t._arrayMakeObjectsPerformSelector(_t._children, cc.Node._StateCallbackType.updateTransform);
+            _t._arrayMakeObjectsPerformSelector(_t._children, cc.Node._stateCallbackType.updateTransform);
     };
 
     _p.addChild = function (child, localZOrder, tag) {
