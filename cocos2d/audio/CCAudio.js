@@ -346,6 +346,9 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
         self._soundSupported = cc._audioLoader._supportedAudioTypes.length > 0;
         if (self._effectPauseCb)
             self._effectPauseCb = self._effectPauseCb.bind(self);
+        if(cc.sys.isMobile){
+            self._addTouchStartEvent();
+        }
     },
 
     /**
@@ -769,6 +772,45 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
             self._resumeAudio(playings[i]);
         }
         playings.length = 0;
+    },
+    /**
+     * show music and effect info
+     */
+    dumpAudioInfo: function () {
+        var self = this;
+        cc.log("--------------------------------------");
+        if(self._currMusic){
+            cc.log("Current music: ");
+            self._printAudioInfo(this._currMusic);
+        }
+        if(self._effects){
+            cc.log("Current effect: ");
+            for(var key in self._effects){
+                self._printAudioInfo(self._effects[key]);
+            }
+        }
+        cc.log("--------------------------------------");
+    },
+    _printAudioInfo: function (audio) {
+        cc.log("    url:" + audio.src);
+        cc.log("    played:" + (audio.played).toString());
+        cc.log("    paused:" + audio.paused);
+        cc.log("    ended:" + audio.ended);
+        cc.log("    loop:" + audio.loop);
+        cc.log("    volume:" + audio.volume);
+        cc.log("------------------------------");
+    },
+    /**
+     * add touch event
+     * @private
+     */
+    _addTouchStartEvent: function () {
+        var self = this;
+        cc._addEventListener(document.getElementById(cc.game.config[cc.game.CONFIG_KEY.id]),"touchstart", function (event) {
+            if(self._currMusic && (self._currMusic._sourceNode["playbackState"] == 1 || self._currMusic.played == null)){
+                self._playMusic(self._currMusic);
+            }
+        },false);
     }
 
 });
