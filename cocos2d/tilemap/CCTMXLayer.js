@@ -117,11 +117,11 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             this.initWithTilesetInfo(tilesetInfo, layerInfo, mapInfo);
     },
 
-    _initRendererCmd: function(){
+    _createRendererCmd: function(){
         if(cc._renderType === cc._RENDER_TYPE_CANVAS)
-            this._rendererCmd = new cc.TMXLayer.CanvasRenderCmd(this);
+            return new cc.TMXLayer.CanvasRenderCmd(this);
         else
-            this._rendererCmd = new cc.TMXLayer.WebGLRenderCmd(this);
+            return new cc.TMXLayer.WebGLRenderCmd(this);
     },
 
     /**
@@ -222,7 +222,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             }
 
             //copy cached render cmd array to TMXLayer renderer
-            this._rendererCmd._copyRendererCmds(renderer._cacheToCanvasCmds[instanceID]);
+            this._renderCmd._copyRendererCmds(renderer._cacheToCanvasCmds[instanceID]);
 
             locCacheContext.save();
             locCacheContext.clearRect(0, 0, locCanvas.width, -locCanvas.height);
@@ -234,7 +234,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             locCacheContext.restore();
             this._cacheDirty = false;
         }
-        cc.renderer.pushRenderCommand(this._rendererCmd);
+        cc.renderer.pushRenderCommand(this._renderCmd);
     },
 
     //set the cache dirty flag for canvas

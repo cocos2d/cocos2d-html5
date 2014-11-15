@@ -150,7 +150,7 @@ cc.textureCache = /** @lends cc.textureCache# */{
         }
 
         if (!this._textureColorsCache[key])
-            this._textureColorsCache[key] = cc.generateTextureCacheForColor(texture);
+            this._textureColorsCache[key] = cc.Sprite.CanvasRenderCmd._generateTextureCacheForColor(texture);
         return this._textureColorsCache[key];
     },
 

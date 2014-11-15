@@ -373,10 +373,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var locElement = locTexture.getHtmlElementObj();
             var textureRect = cc.rect(0, 0, element.width, element.height);
             if (locElement instanceof HTMLCanvasElement && !this._rectRotated){
-                cc.generateTintImageWithMultiply(element, this._displayedColor, textureRect, locElement);
+                cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(element, this._displayedColor, textureRect, locElement);
                 this.setTexture(locTexture);
             } else {
-                locElement = cc.generateTintImageWithMultiply(element, this._displayedColor, textureRect);
+                locElement = cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(element, this._displayedColor, textureRect);
                 locTexture = new cc.Texture2D();
                 locTexture.initWithElement(locElement);
                 locTexture.handleLoadedTexture();
@@ -981,11 +981,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         this.updateLabel();
     },
 
-    _setAnchor: function (p) {
-        cc.Node.prototype._setAnchor.call(this, p);
-        this.updateLabel();
-    },
-
     _setAnchorX: function (x) {
         cc.Node.prototype._setAnchorX.call(this, x);
         this.updateLabel();
@@ -1073,10 +1068,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
                 if (cacheTextureForColor) {
                     if (locElement instanceof HTMLCanvasElement && !this._rectRotated) {
-                        cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, null, locElement);
+                        cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, this._displayedColor, null, locElement);
                         this.setTexture(locTexture);
                     } else {
-                        locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor);
+                        locElement = cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, this._displayedColor);
                         locTexture = new cc.Texture2D();
                         locTexture.initWithElement(locElement);
                         locTexture.handleLoadedTexture();

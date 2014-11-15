@@ -147,36 +147,3 @@ cc.CustomRenderCmdWebGL.prototype.rendering = function (ctx) {
         return;
     this._callback.call(this._node, ctx);
 };
-
-cc.ParticleRenderCmdWebGL = function (node) {
-    this._node = node;
-};
-
-cc.ParticleRenderCmdWebGL.prototype.rendering = function (ctx) {
-    var _t = this._node;
-    if (!_t._texture)
-        return;
-
-    var gl = ctx || cc._renderContext;
-
-    _t._shaderProgram.use();
-    _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);//setUniformForModelViewAndProjectionMatrixWithMat4();
-
-    cc.glBindTexture2D(_t._texture);
-    cc.glBlendFuncForParticle(_t._blendFunc.src, _t._blendFunc.dst);
-
-    //cc.assert(this._particleIdx == this.particleCount, "Abnormal error in particle quad");
-
-    //
-    // Using VBO without VAO
-    //
-    cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, _t._buffersVBO[0]);
-    gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);               // vertices
-    gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);          // colors
-    gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);            // tex coords
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _t._buffersVBO[1]);
-    gl.drawElements(gl.TRIANGLES, _t._particleIdx * 6, gl.UNSIGNED_SHORT, 0);
-};

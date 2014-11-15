@@ -233,8 +233,8 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
                 else
                     break;
             }
-            if(this._rendererCmd)
-                cc.renderer.pushRenderCommand(this._rendererCmd);
+            if(this._renderCmd)
+                cc.renderer.pushRenderCommand(this._renderCmd);
             // draw children zOrder >= 0
             for (; i < childLen; i++) {
                 if (locChildren[i]) {
@@ -242,8 +242,8 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
                 }
             }
         } else{
-            if(this._rendererCmd)
-                cc.renderer.pushRenderCommand(this._rendererCmd);
+            if(this._renderCmd)
+                cc.renderer.pushRenderCommand(this._renderCmd);
         }
 
         cc.renderer.pushRenderCommand(this._afterVisitCmd);
@@ -436,14 +436,14 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
                     else
                         break;
                 }
-                if(this._rendererCmd)
-                    cc.renderer.pushRenderCommand(this._rendererCmd);
+                if(this._renderCmd)
+                    cc.renderer.pushRenderCommand(this._renderCmd);
                 for (; i < len; i++) {
                     children[i].visit(context);
                 }
             } else
-            if(this._rendererCmd)
-                cc.renderer.pushRenderCommand(this._rendererCmd);
+            if(this._renderCmd)
+                cc.renderer.pushRenderCommand(this._renderCmd);
             this._cangodhelpme(false);
 
         }
@@ -494,7 +494,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         // For shape stencil, rewrite the draw of stencil ,only init the clip path and draw nothing.
         //else
         if (stencil instanceof cc.DrawNode) {
-            stencil._rendererCmd.rendering = function (ctx, scaleX, scaleY) {
+            stencil._renderCmd.rendering = function (ctx, scaleX, scaleY) {
                 scaleX = scaleX || cc.view.getScaleX();
                 scaleY = scaleY ||cc.view.getScaleY();
                 var context = ctx || cc._renderContext;

@@ -75,7 +75,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             this._rendererStartCmd = new ccs.Armature.CanvasRenderCmd(this);
             this._rendererEndCmd = new ccs.Armature.CanvasRestoreRenderCmd(this);
         }else{
-            this._rendererCmd = new ccs.Armature.WebGLRenderCmd(this);
+            this._renderCmd = new ccs.Armature.WebGLRenderCmd(this);
         }
     },
 
@@ -496,7 +496,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
 
         this.sortAllChildren();
         //this.draw(context);
-        cc.renderer.pushRenderCommand(this._rendererCmd);
+        cc.renderer.pushRenderCommand(this._renderCmd);
 
         currentStack.top = currentStack.stack.pop();
     },

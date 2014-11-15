@@ -33,25 +33,6 @@ cc._tmp.WebGLCCNode = function () {
      */
     var _p = cc.Node.prototype;
 
-    _p._transform4x4 = null;
-    _p._stackMatrix = null;
-    _p._glServerState = null;
-    _p._camera = null;
-
-    _p.ctor = function () {
-        var _t = this;
-        _t._initNode();
-
-        //WebGL
-        var mat4 = new cc.kmMat4();
-        mat4.mat[2] = mat4.mat[3] = mat4.mat[6] = mat4.mat[7] = mat4.mat[8] = mat4.mat[9] = mat4.mat[11] = mat4.mat[14] = 0.0;
-        mat4.mat[10] = mat4.mat[15] = 1.0;
-        _t._transform4x4 = mat4;
-        _t._glServerState = 0;
-        _t._stackMatrix = new cc.kmMat4();
-        this._initRendererCmd();
-    };
-
     _p.setNodeDirty = function () {
         var _t = this;
         if(_t._transformDirty === false){
@@ -59,53 +40,6 @@ cc._tmp.WebGLCCNode = function () {
             _t._renderCmdDiry = _t._transformDirty = _t._inverseDirty = true;
             cc.renderer.pushDirtyNode(this);
         }
-    };
-
-    _p.visit = function () {
-        var _t = this;
-        // quick return if not visible
-        if (!_t._visible)
-            return;
-
-        if( _t._parent)
-            _t._curLevel = _t._parent._curLevel + 1;
-
-        var context = cc._renderContext, i, currentStack = cc.current_stack;
-
-        //optimize performance for javascript
-        currentStack.stack.push(currentStack.top);
-        cc.kmMat4Assign(_t._stackMatrix, currentStack.top);
-        currentStack.top = _t._stackMatrix;
-
-        //_t.toRenderer();
-        _t.transform();
-
-        var locChildren = _t._children;
-        if (locChildren && locChildren.length > 0) {
-            var childLen = locChildren.length;
-            _t.sortAllChildren();
-            // draw children zOrder < 0
-            for (i = 0; i < childLen; i++) {
-                if (locChildren[i] && locChildren[i]._localZOrder < 0)
-                    locChildren[i].visit();
-                else
-                    break;
-            }
-            if(this._rendererCmd)
-                cc.renderer.pushRenderCommand(this._rendererCmd);
-            // draw children zOrder >= 0
-            for (; i < childLen; i++) {
-                if (locChildren[i]) {
-                    locChildren[i].visit();
-                }
-            }
-        } else{
-            if(this._rendererCmd)
-                cc.renderer.pushRenderCommand(this._rendererCmd);
-        }
-
-        //optimize performance for javascript
-        currentStack.top = currentStack.stack.pop();
     };
 
     _p._transformForRenderer = function (pMatrix) {
@@ -158,7 +92,6 @@ cc._tmp.WebGLCCNode = function () {
         var i, len, locChildren = this._children;
         for(i = 0, len = locChildren.length; i< len; i++){
             locChildren[i]._transformForRenderer(stackMatrix);
-            //locChildren[i]._transformForRenderer();
         }
     };
 
@@ -200,6 +133,4 @@ cc._tmp.WebGLCCNode = function () {
             }
         }
     };
-
-    _p.getNodeToParentTransform = _p._getNodeToParentTransformForWebGL;
 };

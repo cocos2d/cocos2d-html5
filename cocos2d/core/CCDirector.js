@@ -237,7 +237,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (this._runningScene) {
             if (renderer.childrenOrderDirty === true) {
                 cc.renderer.clearRenderCommands();
-                this._runningScene._curLevel = 0;                          //level start from 0;
+                this._runningScene._renderCmd._curLevel = 0;                          //level start from 0;
                 this._runningScene.visit();
                 renderer.resetFlag();
             } else if (renderer.transformDirty() === true)

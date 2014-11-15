@@ -150,25 +150,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     // lazy alloc,
     _visible: true,
     _anchorPoint: null,
-    _anchorPointInPoints: null,
     _contentSize: null,
     _running: false,
     _parent: null,
+
     // "whole screen" objects. like Scenes and Layers, should set _ignoreAnchorPointForPosition to true
     _ignoreAnchorPointForPosition: false,
     tag: cc.NODE_TAG_INVALID,
     // userData is always initialized as nil
     userData: null,
     userObject: null,
-    _transformDirty: true,
-    _inverseDirty: true,
-    _cacheDirty: false,
-    // Cached parent serves to construct the cached parent chain
-    _cachedParent: null,
-    _transformGLDirty: null,
-    _transform: null,                            //local transform
-    _transformWorld: null,                       //world transform
-    _inverse: null,
 
     //since 2.0 api
     _reorderChildDirty: false,
@@ -179,7 +170,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _scheduler: null,
     _eventDispatcher: null,
 
-    _initializedNode: false,
     _additionalTransformDirty: false,
     _additionalTransform: null,
     _componentContainer: null,
@@ -189,22 +179,25 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _showNode: false,
     _name: "",                     ///<a string label, an user defined string to identify this node
 
-    _displayedOpacity: 255,
     _realOpacity: 255,
-    _displayedColor: null,
     _realColor: null,
     _cascadeColorEnabled: false,
     _cascadeOpacityEnabled: false,
-    _hashOfName: 0,
 
-    _curLevel: -1,                           //for new renderer
-    _rendererCmd:null,
-    _renderCmdDirty: false,
+    _renderCmd:null,
+
+    /**
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+     * @function
+     */
+    ctor: function(){
+        this._initNode();
+        this._initRendererCmd();
+    },
 
     _initNode: function () {
         var _t = this;
         _t._anchorPoint = cc.p(0, 0);
-        _t._anchorPointInPoints = cc.p(0, 0);
         _t._contentSize = cc.size(0, 0);
         _t._position = cc.p(0, 0);
         _t._normalizedPosition = cc.p(0,0);
@@ -215,15 +208,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var director = cc.director;
         _t._actionManager = director.getActionManager();
         _t._scheduler = director.getScheduler();
-        _t._initializedNode = true;
+
         _t._additionalTransform = cc.affineTransformMakeIdentity();
         if (cc.ComponentContainer) {
             _t._componentContainer = new cc.ComponentContainer(_t);
         }
 
-        this._displayedOpacity = 255;
         this._realOpacity = 255;
-        this._displayedColor = cc.color(255, 255, 255, 255);
         this._realColor = cc.color(255, 255, 255, 255);
         this._cascadeColorEnabled = false;
         this._cascadeOpacityEnabled = false;
@@ -235,8 +226,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @returns {boolean} Whether the initialization was successful.
      */
     init: function () {
-        if (this._initializedNode === false)
-            this._initNode();
+        //this._initNode();   //this has been called in ctor.
         return true;
     },
 
@@ -303,12 +293,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Sets node's dirty flag to true so that it can be updated in visit function of the next frame
-     * @function
-     */
-    setNodeDirty: null,
-
-    /**
      * <p>Properties configuration function </br>
      * All properties in attrs will be set to the node, </br>
      * when the setter of the node is available, </br>
@@ -350,7 +334,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setSkewX: function (newSkewX) {
         this._skewX = newSkewX;
-        this.setNodeDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**
@@ -380,7 +364,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setSkewY: function (newSkewY) {
         this._skewY = newSkewY;
-        this.setNodeDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**
@@ -529,7 +513,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setRotation: function (newRotation) {
         this._rotationX = this._rotationY = newRotation;
-        this.setNodeDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**
@@ -554,7 +538,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setRotationX: function (rotationX) {
         this._rotationX = rotationX;
-        this.setNodeDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**
@@ -579,7 +563,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setRotationY: function (rotationY) {
         this._rotationY = rotationY;
-        this.setNodeDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**
@@ -603,7 +587,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setScale: function (scale, scaleY) {
         this._scaleX = scale;
         this._scaleY = (scaleY || scaleY === 0) ? scaleY : scale;
-        this.setNodeDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**
@@ -618,14 +602,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * <p>
      *     Changes the scale factor on X axis of this node                                   <br/>
-     *     The deafult value is 1.0 if you haven't changed it before
+     *     The default value is 1.0 if you haven't changed it before
      * </p>
      * @function
      * @param {Number} newScaleX The scale factor on X axis.
      */
     setScaleX: function (newScaleX) {
         this._scaleX = newScaleX;
-        this.setNodeDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**
@@ -647,7 +631,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setScaleY: function (newScaleY) {
         this._scaleY = newScaleY;
-        this.setNodeDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**
@@ -673,8 +657,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             locPosition.x = newPosOrxValue;
             locPosition.y = yValue;
         }
-        this.setNodeDirty();
         this._usingNormalizedPosition = false;
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**
@@ -695,8 +679,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             locPosition.x = posOrX;
             locPosition.y = y;
         }
-        this.setNodeDirty();
         this._normalizedPositionDirty = this._usingNormalizedPosition = true;
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**
@@ -732,7 +716,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setPositionX: function (x) {
         this._position.x = x;
-        this.setNodeDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**
@@ -751,7 +735,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setPositionY: function (y) {
         this._position.y = y;
-        this.setNodeDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**
@@ -798,7 +782,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setVisible: function (visible) {
         if(this._visible != visible){
             this._visible = visible;
-            if(visible) this.setNodeDirty();
+            if(visible)
+                this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.visibleDirty);
             cc.renderer.childrenOrderDirty = true;
         }
     },
@@ -844,35 +829,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             locAnchorPoint.x = point;
             locAnchorPoint.y = y;
         }
-        var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
-        locAPP.x = locSize.width * locAnchorPoint.x;
-        locAPP.y = locSize.height * locAnchorPoint.y;
-        this.setNodeDirty();
+        this._renderCmd._updateAnchorPointInPoint();
     },
 
-    _getAnchor: function () {
-        return this._anchorPoint;
-    },
-    _setAnchor: function (p) {
-        var x = p.x, y = p.y;
-        if (this._anchorPoint.x !== x) {
-            this._anchorPoint.x = x;
-            this._anchorPointInPoints.x = this._contentSize.width * x;
-        }
-        if (this._anchorPoint.y !== y) {
-            this._anchorPoint.y = y;
-            this._anchorPointInPoints.y = this._contentSize.height * y;
-        }
-        this.setNodeDirty();
-    },
     _getAnchorX: function () {
         return this._anchorPoint.x;
     },
     _setAnchorX: function (x) {
         if (this._anchorPoint.x === x) return;
         this._anchorPoint.x = x;
-        this._anchorPointInPoints.x = this._contentSize.width * x;
-        this.setNodeDirty();
+        this._renderCmd._updateAnchorPointInPoint();
     },
     _getAnchorY: function () {
         return this._anchorPoint.y;
@@ -880,8 +846,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _setAnchorY: function (y) {
         if (this._anchorPoint.y === y) return;
         this._anchorPoint.y = y;
-        this._anchorPointInPoints.y = this._contentSize.height * y;
-        this.setNodeDirty();
+        this._renderCmd._updateAnchorPointInPoint();
     },
 
     /**
@@ -892,7 +857,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point} The anchor point in absolute pixels.
      */
     getAnchorPointInPoints: function () {
-        return cc.p(this._anchorPointInPoints);
+        return this._renderCmd.getAnchorPointInPoints();
     },
 
     _getWidth: function () {
@@ -900,16 +865,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
     _setWidth: function (width) {
         this._contentSize.width = width;
-        this._anchorPointInPoints.x = width * this._anchorPoint.x;
-        this.setNodeDirty();
+        this._renderCmd._updateAnchorPointInPoint();
     },
     _getHeight: function () {
         return this._contentSize.height;
     },
     _setHeight: function (height) {
         this._contentSize.height = height;
-        this._anchorPointInPoints.y = height * this._anchorPoint.y;
-        this.setNodeDirty();
     },
 
     /**
@@ -947,10 +909,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             locContentSize.width = size;
             locContentSize.height = height;
         }
-        var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
-        locAPP.x = locContentSize.width * locAnchorPoint.x;
-        locAPP.y = locContentSize.height * locAnchorPoint.y;
-        this.setNodeDirty();
+        this._renderCmd._updateAnchorPointInPoint();
     },
 
     /**
@@ -1006,7 +965,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     ignoreAnchorPointForPosition: function (newValue) {
         if (newValue != this._ignoreAnchorPointForPosition) {
             this._ignoreAnchorPointForPosition = newValue;
-            this.setNodeDirty();
+            this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
         }
     },
 
@@ -1114,9 +1073,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {object} newValue A user cocos2d object
      */
     setUserObject: function (newValue) {
-        if (this.userObject != newValue) {
+        if (this.userObject != newValue)
             this.userObject = newValue;
-        }
     },
 
 
@@ -1152,9 +1110,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.ActionManager} A CCActionManager object.
      */
     getActionManager: function () {
-        if (!this._actionManager) {
+        if (!this._actionManager)
             this._actionManager = cc.director.getActionManager();
-        }
         return this._actionManager;
     },
 
@@ -1179,9 +1136,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Scheduler} A CCScheduler object.
      */
     getScheduler: function () {
-        if (!this._scheduler) {
+        if (!this._scheduler)
             this._scheduler = cc.director.getScheduler();
-        }
         return this._scheduler;
     },
 
@@ -1260,7 +1216,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Returns a child from the container given its name
      * @function
-     * @param {Number} name An identifier to find the child node.
+     * @param {String} name A name to find the child node.
      * @return {cc.Node} a CCNode object whose name equals to the input parameter
      */
     getChildByName: function(name){
@@ -1326,11 +1282,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             if (this._isTransitionFinished)
                 child.onEnterTransitionDidFinish();
         }
-
         if (this._cascadeColorEnabled)
-            this._enableCascadeColor();
+            child._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.colorDirty);
         if (this._cascadeOpacityEnabled)
-            this._enableCascadeOpacity();
+            child._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.opacityDirty);
     },
 
     // composition: REMOVE
@@ -1380,7 +1335,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (this._children.indexOf(child) > -1)
             this._detachChild(child, cleanup);
 
-        this.setNodeDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.visibleDirty);
         cc.renderer.childrenOrderDirty = true;
     },
 
@@ -1408,7 +1363,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Boolean} [cleanup=true]
      */
     removeAllChildrenWithCleanup: function (cleanup) {
-        //cc.log(cc._LogInfos.Node_removeAllChildrenWithCleanup);        //TODO It should be discuss in v3.0
         this.removeAllChildren(cleanup);
     },
 
@@ -1459,8 +1413,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
         // set parent nil at the end
         child.parent = null;
-        child._cachedParent = null;
-
+        child._renderCmd.detachFromParent();
         cc.arrayRemoveObject(this._children, child);
     },
 
@@ -1482,7 +1435,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         child.arrivalOrder = cc.s_globalOrderOfArrival;
         cc.s_globalOrderOfArrival++;
         child._setLocalZOrder(zOrder);
-        this.setNodeDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.orderDirty);
     },
 
     /**
@@ -1853,7 +1806,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setAdditionalTransform: function (additionalTransform) {
         this._additionalTransform = additionalTransform;
-        this._transformDirty = true;
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
         this._additionalTransformDirty = true;
     },
 
@@ -1864,11 +1817,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.AffineTransform}
      */
     getParentToNodeTransform: function () {
-        if (this._inverseDirty) {
-            this._inverse = cc.affineTransformInvert(this.getNodeToParentTransform());
-            this._inverseDirty = false;
-        }
-        return this._inverse;
+       this._renderCmd.getParentToNodeTransform();
     },
 
     /**
@@ -1885,6 +1834,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.AffineTransform}
      */
     getNodeToWorldTransform: function () {
+        //TODO renderCmd has a WorldTransform
         var t = this.getNodeToParentTransform();
         for (var p = this._parent; p != null; p = p.parent)
             t = cc.affineTransformConcat(t, p.getNodeToParentTransform());
@@ -1945,7 +1895,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}
      */
     convertToNodeSpaceAR: function (worldPoint) {
-        return cc.pSub(this.convertToNodeSpace(worldPoint), this._anchorPointInPoints);
+        return cc.pSub(this.convertToNodeSpace(worldPoint), this._renderCmd.getAnchorPointInPoints());
     },
 
     /**
@@ -1957,7 +1907,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     convertToWorldSpaceAR: function (nodePoint) {
         nodePoint = nodePoint || cc.p(0,0);
-        var pt = cc.pAdd(nodePoint, this._anchorPointInPoints);
+        var pt = cc.pAdd(nodePoint, this._renderCmd.getAnchorPointInPoints());
         return this.convertToWorldSpace(pt);
     },
 
@@ -1974,19 +1924,17 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     convertTouchToNodeSpace: function (touch) {
         var point = touch.getLocation();
         //TODO This point needn't convert to GL in HTML5
-        //point = cc.director.convertToGL(point);
         return this.convertToNodeSpace(point);
     },
 
     /**
-     * converts a cc.Touch (world coordinates) into a local coordiante. This method is AR (Anchor Relative).
+     * converts a cc.Touch (world coordinates) into a local coordinate. This method is AR (Anchor Relative).
      * @function
      * @param {cc.Touch} touch The touch object
      * @return {cc.Point}
      */
     convertTouchToNodeSpaceAR: function (touch) {
-        var point = touch.getLocation();
-        point = cc.director.convertToGL(point);
+        var point = cc.director.convertToGL(touch.getLocation());
         return this.convertToNodeSpaceAR(point);
     },
 
@@ -2093,24 +2041,22 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     grid: null,
 
     /**
-     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
-     * @function
-     */
-    ctor: null,
-
-    /**
      * Recursive method that visit its children and draw them
      * @function
      * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
      */
-    visit: null,
+    visit: function(){
+        this._renderCmd.visit();
+    },
 
     /**
      * Performs view-matrix transformation based on position, scale, rotation and other attributes.
      * @function
      * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx Render context
      */
-    transform: null,
+    transform: function(){
+        this._renderCmd.transform();
+    },
 
     /**
      * <p>Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.<br/>
@@ -2129,26 +2075,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      * @return {cc.AffineTransform} The affine transform object
      */
-    getNodeToParentTransform: null,
-
-    _setNodeDirtyForCache: function () {
-        if (this._cacheDirty === false) {
-            this._cacheDirty = true;
-
-            var cachedP = this._cachedParent;
-            //var cachedP = this._parent;
-            cachedP && cachedP != this && cachedP._setNodeDirtyForCache();
-        }
-    },
-
-    _setCachedParent: function(cachedParent){
-        if(this._cachedParent ==  cachedParent)
-            return;
-
-        this._cachedParent = cachedParent;
-        var children = this._children;
-        for(var i = 0, len = children.length; i < len; i++)
-            children[i]._setCachedParent(cachedParent);
+    getNodeToParentTransform: function(){
+        this._renderCmd.getNodeToParentTransform();
     },
 
     /**
@@ -2162,9 +2090,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * camera.setCenter(0, 0, 0);
      */
     getCamera: function () {
-        if (!this._camera) {
+        if (!this._camera)
             this._camera = new cc.Camera();
-        }
         return this._camera;
     },
 
@@ -2222,7 +2149,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @deprecated since v3.0, no need anymore
      */
     getGLServerState: function () {
-        return this._glServerState;
+        return 0;
     },
 
     /**
@@ -2232,7 +2159,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @deprecated since v3.0, no need anymore
      */
     setGLServerState: function (state) {
-        this._glServerState = state;
     },
 
     /**
@@ -2243,7 +2169,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     getBoundingBoxToWorld: function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var trans = this.getNodeToWorldTransform();
-        rect = cc.rectApplyAffineTransform(rect, this.getNodeToWorldTransform());
+        rect = cc.rectApplyAffineTransform(rect, trans);
 
         //query child's BoundingBox
         if (!this._children)
@@ -2282,83 +2208,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         return rect;
     },
 
-    _getNodeToParentTransformForWebGL: function () {
-        var _t = this;
-        if(_t._usingNormalizedPosition && _t._parent){        //TODO need refactor
-            var conSize = _t._parent._contentSize;
-            _t._position.x = _t._normalizedPosition.x * conSize.width;
-            _t._position.y = _t._normalizedPosition.y * conSize.height;
-            _t._normalizedPositionDirty = false;
-        }
-        if (_t._transformDirty) {
-            // Translate values
-            var x = _t._position.x, y = _t._position.y;
-            var apx = _t._anchorPointInPoints.x, napx = -apx;
-            var apy = _t._anchorPointInPoints.y, napy = -apy;
-            var scx = _t._scaleX, scy = _t._scaleY;
-            var rotationRadiansX = _t._rotationX * 0.017453292519943295;  //0.017453292519943295 = (Math.PI / 180);   for performance
-            var rotationRadiansY = _t._rotationY * 0.017453292519943295;
-
-            if (_t._ignoreAnchorPointForPosition) {
-                x += apx;
-                y += apy;
-            }
-
-            // Rotation values
-            // Change rotation code to handle X and Y
-            // If we skew with the exact same value for both x and y then we're simply just rotating
-            var cx = 1, sx = 0, cy = 1, sy = 0;
-            if (_t._rotationX !== 0 || _t._rotationY !== 0) {
-                cx = Math.cos(-rotationRadiansX);
-                sx = Math.sin(-rotationRadiansX);
-                cy = Math.cos(-rotationRadiansY);
-                sy = Math.sin(-rotationRadiansY);
-            }
-            var needsSkewMatrix = ( _t._skewX || _t._skewY );
-
-            // optimization:
-            // inline anchor point calculation if skew is not needed
-            // Adjusted transform calculation for rotational skew
-            if (!needsSkewMatrix && (apx !== 0 || apy !== 0)) {
-                x += cy * napx * scx + -sx * napy * scy;
-                y += sy * napx * scx + cx * napy * scy;
-            }
-
-            // Build Transform Matrix
-            // Adjusted transform calculation for rotational skew
-            var t = _t._transform;
-            t.a = cy * scx;
-            t.b = sy * scx;
-            t.c = -sx * scy;
-            t.d = cx * scy;
-            t.tx = x;
-            t.ty = y;
-
-            // XXX: Try to inline skew
-            // If skew is needed, apply skew and then anchor point
-            if (needsSkewMatrix) {
-                t = cc.affineTransformConcat({a: 1.0, b: Math.tan(cc.degreesToRadians(_t._skewY)),
-                    c: Math.tan(cc.degreesToRadians(_t._skewX)), d: 1.0, tx: 0.0, ty: 0.0}, t);
-
-                // adjust anchor point
-                if (apx !== 0 || apy !== 0)
-                    t = cc.affineTransformTranslate(t, napx, napy);
-            }
-
-            if (_t._additionalTransformDirty) {
-                t = cc.affineTransformConcat(t, _t._additionalTransform);
-                _t._additionalTransformDirty = false;
-            }
-            _t._transform = t;
-            _t._transformDirty = false;
-        }
-        return _t._transform;
-    },
-
-    _updateColor: function(){
-        //TODO
-    },
-
     /**
      * Returns the opacity of Node
      * @function
@@ -2375,7 +2224,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @returns {number} displayed opacity
      */
     getDisplayedOpacity: function () {
-        return this._displayedOpacity;
+        return this._renderCmd.getDisplayedOpacity();
     },
 
     /**
@@ -2384,14 +2233,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} opacity
      */
     setOpacity: function (opacity) {
-        this._displayedOpacity = this._realOpacity = opacity;
-
-        var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.cascadeOpacity)
-            parentOpacity = locParent.getDisplayedOpacity();
-        this.updateDisplayedOpacity(parentOpacity);
-
-        this._displayedColor.a = this._realColor.a = opacity;
+        this._realOpacity = opacity;
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.opacityDirty);
     },
 
     /**
@@ -2400,17 +2243,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} parentOpacity
      */
     updateDisplayedOpacity: function (parentOpacity) {
-        this._displayedOpacity = this._realOpacity * parentOpacity / 255.0;
-        if(this._rendererCmd && this._rendererCmd._opacity !== undefined)
-            this._rendererCmd._opacity = this._displayedOpacity / 255;
-        if (this._cascadeOpacityEnabled) {
-            var selChildren = this._children;
-            for (var i = 0; i < selChildren.length; i++) {
-                var item = selChildren[i];
-                if (item)
-                    item.updateDisplayedOpacity(this._displayedOpacity);
-            }
-        }
+        //TODO  this API shouldn't be public.
+        this._renderCmd._updateDisplayOpacity(parentOpacity);
     },
 
     /**
@@ -2430,30 +2264,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setCascadeOpacityEnabled: function (cascadeOpacityEnabled) {
         if (this._cascadeOpacityEnabled === cascadeOpacityEnabled)
             return;
-
         this._cascadeOpacityEnabled = cascadeOpacityEnabled;
-        if (cascadeOpacityEnabled)
-            this._enableCascadeOpacity();
-        else
-            this._disableCascadeOpacity();
-    },
-
-    _enableCascadeOpacity: function () {
-        var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.cascadeOpacity)
-            parentOpacity = locParent.getDisplayedOpacity();
-        this.updateDisplayedOpacity(parentOpacity);
-    },
-
-    _disableCascadeOpacity: function () {
-        this._displayedOpacity = this._realOpacity;
-
-        var selChildren = this._children;
-        for (var i = 0; i < selChildren.length; i++) {
-            var item = selChildren[i];
-            if (item)
-                item.updateDisplayedOpacity(255);
-        }
+        this._renderCmd.setCascadeOpacityEnabledDirty();
     },
 
     /**
@@ -2473,8 +2285,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @returns {cc.Color}
      */
     getDisplayedColor: function () {
-        var tmpColor = this._displayedColor;
-        return cc.color(tmpColor.r, tmpColor.g, tmpColor.b, tmpColor.a);
+        return this._renderCmd.getDisplayedColor();
     },
 
     /**
@@ -2485,17 +2296,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {cc.Color} color The new color given
      */
     setColor: function (color) {
-        var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
-        locDisplayedColor.r = locRealColor.r = color.r;
-        locDisplayedColor.g = locRealColor.g = color.g;
-        locDisplayedColor.b = locRealColor.b = color.b;
-
-        var parentColor, locParent = this._parent;
-        if (locParent && locParent.cascadeColor)
-            parentColor = locParent.getDisplayedColor();
-        else
-            parentColor = cc.color.WHITE;
-        this.updateDisplayedColor(parentColor);
+        var locRealColor = this._realColor;
+        locRealColor.r = color.r;
+        locRealColor.g = color.g;
+        locRealColor.b = color.b;
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.colorDirty);
     },
 
     /**
@@ -2504,19 +2309,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {cc.Color} parentColor
      */
     updateDisplayedColor: function (parentColor) {
-        var locDispColor = this._displayedColor, locRealColor = this._realColor;
-        locDispColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
-        locDispColor.g = 0 | (locRealColor.g * parentColor.g / 255.0);
-        locDispColor.b = 0 | (locRealColor.b * parentColor.b / 255.0);
-
-        if (this._cascadeColorEnabled) {
-            var selChildren = this._children;
-            for (var i = 0; i < selChildren.length; i++) {
-                var item = selChildren[i];
-                if (item)
-                    item.updateDisplayedColor(locDispColor);
-            }
-        }
+        //TODO  this API shouldn't be public.
+        this._renderCmd._updateDisplayColor(parentColor);
     },
 
     /**
@@ -2536,33 +2330,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (this._cascadeColorEnabled === cascadeColorEnabled)
             return;
         this._cascadeColorEnabled = cascadeColorEnabled;
-        if (this._cascadeColorEnabled)
-            this._enableCascadeColor();
-        else
-            this._disableCascadeColor();
-    },
-
-    _enableCascadeColor: function () {
-        var parentColor , locParent = this._parent;
-        if (locParent && locParent.cascadeColor)
-            parentColor = locParent.getDisplayedColor();
-        else
-            parentColor = cc.color.WHITE;
-        this.updateDisplayedColor(parentColor);
-    },
-
-    _disableCascadeColor: function () {
-        var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
-        locDisplayedColor.r = locRealColor.r;
-        locDisplayedColor.g = locRealColor.g;
-        locDisplayedColor.b = locRealColor.b;
-
-        var selChildren = this._children, whiteColor = cc.color.WHITE;
-        for (var i = 0; i < selChildren.length; i++) {
-            var item = selChildren[i];
-            if (item)
-                item.updateDisplayedColor(whiteColor);
-        }
+        this._renderCmd.setCascadeColorEnabledDirty();
     },
 
     /**
@@ -2584,10 +2352,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     _initRendererCmd: function(){
-        this._rendererCmd = cc.renderer.getRenderCmd(this);
+        this._renderCmd = cc.renderer.getRenderCmd(this);
     },
-
-    _transformForRenderer: null,
 
     _createRenderCmd: function(){
         if(cc._renderType === cc._RENDER_TYPE_CANVAS)
@@ -2609,210 +2375,6 @@ cc.Node.create = function () {
 
 cc.Node._stateCallbackType = {onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, updateTransform: 5, onExitTransitionDidStart: 6, sortAllChildren: 7};
 
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-    //redefine cc.Node
-    var _p = cc.Node.prototype;
-    _p.ctor = function () {
-        this._initNode();
-        this._initRendererCmd();
-    };
-
-    _p.setNodeDirty = function () {
-        var _t = this;
-        if(_t._transformDirty === false){
-            _t._setNodeDirtyForCache();
-            _t._renderCmdDiry = _t._transformDirty = _t._inverseDirty = true;
-            cc.renderer.pushDirtyNode(this);
-        }
-    };
-
-    _p.visit = function (ctx) {
-        var _t = this;
-        // quick return if not visible
-        if (!_t._visible)
-            return;
-
-        if( _t._parent)
-            _t._curLevel = _t._parent._curLevel + 1;
-
-        //visit for canvas
-        var i, children = _t._children, child;
-        _t.transform();
-        var len = children.length;
-        if (len > 0) {
-            _t.sortAllChildren();
-            // draw children zOrder < 0
-            for (i = 0; i < len; i++) {
-                child = children[i];
-                if (child._localZOrder < 0)
-                    child.visit();
-                else
-                    break;
-            }
-            //_t.draw(context);
-            if(this._rendererCmd)
-                cc.renderer.pushRenderCommand(this._rendererCmd);
-            for (; i < len; i++) {
-                children[i].visit();
-            }
-        } else{
-            if(this._rendererCmd)
-                cc.renderer.pushRenderCommand(this._rendererCmd);
-        }
-        this._cacheDirty = false;
-    };
-
-    _p._transformForRenderer = function () {
-        var t = this.getNodeToParentTransform(), worldT = this._transformWorld;
-        if(this._parent){
-            var pt = this._parent._transformWorld;
-            //worldT = cc.AffineTransformConcat(t, pt);
-            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
-            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
-            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
-            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
-            var plt = this._parent._transform;
-            var xOffset = -(plt.b + plt.c) * t.ty;
-            var yOffset = -(plt.b + plt.c) * t.tx;
-            worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
-            worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
-        } else {
-            worldT.a = t.a;
-            worldT.b = t.b;
-            worldT.c = t.c;
-            worldT.d = t.d;
-            worldT.tx = t.tx;
-            worldT.ty = t.ty;
-        }
-        this._renderCmdDiry = false;
-        if(!this._children || this._children.length === 0)
-            return;
-        var i, len, locChildren = this._children;
-        for(i = 0, len = locChildren.length; i< len; i++){
-            locChildren[i]._transformForRenderer();
-        }
-    };
-
-    _p.transform = function (ctx) {
-        // transform for canvas
-        var t = this.getNodeToParentTransform(),
-            worldT = this._transformWorld;         //get the world transform
-
-        if(this._parent){
-            var pt = this._parent._transformWorld;
-            // cc.AffineTransformConcat is incorrect at get world transform
-            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
-            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
-            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
-            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
-
-            var plt = this._parent._transform;
-            var xOffset = -(plt.b + plt.c) * t.ty;
-            var yOffset = -(plt.b + plt.c) * t.tx;
-            worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
-            worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
-        } else {
-            worldT.a = t.a;
-            worldT.b = t.b;
-            worldT.c = t.c;
-            worldT.d = t.d;
-            worldT.tx = t.tx;
-            worldT.ty = t.ty;
-        }
-    };
-
-    _p.getNodeToParentTransform = function () {
-        var _t = this;
-        if(_t._usingNormalizedPosition && _t._parent){        //TODO need refactor
-            var conSize = _t._parent._contentSize;
-            _t._position.x = _t._normalizedPosition.x * conSize.width;
-            _t._position.y = _t._normalizedPosition.y * conSize.height;
-            _t._normalizedPositionDirty = false;
-        }
-        if (_t._transformDirty) {
-            var t = _t._transform;// quick reference
-
-            // base position
-            t.tx = _t._position.x;
-            t.ty = _t._position.y;
-
-            // rotation Cos and Sin
-            var Cos = 1, Sin = 0;
-            var rotationRadiansX = _t._rotationX * 0.017453292519943295;  //0.017453292519943295 = (Math.PI / 180);   for performance
-            if (_t._rotationX) {
-                Cos = Math.cos(rotationRadiansX);
-                Sin = Math.sin(rotationRadiansX);
-            }
-
-            // base abcd
-            t.a = t.d = Cos;
-            t.b = -Sin;
-            t.c = Sin;
-
-            var lScaleX = _t._scaleX, lScaleY = _t._scaleY;
-            var appX = _t._anchorPointInPoints.x, appY = _t._anchorPointInPoints.y;
-
-            // Firefox on Vista and XP crashes
-            // GPU thread in case of scale(0.0, 0.0)
-            var sx = (lScaleX < 0.000001 && lScaleX > -0.000001) ? 0.000001 : lScaleX,
-                sy = (lScaleY < 0.000001 && lScaleY > -0.000001) ? 0.000001 : lScaleY;
-
-            // skew
-            if (_t._skewX || _t._skewY) {
-                // offset the anchorpoint
-                var skx = Math.tan(-_t._skewX * Math.PI / 180);
-                var sky = Math.tan(-_t._skewY * Math.PI / 180);
-                if(skx === Infinity){
-                    skx = 99999999;
-                }
-                if(sky === Infinity){
-                    sky = 99999999;
-                }
-                var xx = appY * skx * sx;
-                var yy = appX * sky * sy;
-                t.a = Cos + -Sin * sky;
-                t.b = Cos * skx + -Sin;
-                t.c = Sin + Cos * sky;
-                t.d = Sin * skx + Cos;
-                t.tx += Cos * xx + -Sin * yy;
-                t.ty += Sin * xx + Cos * yy;
-            }
-
-            // scale
-            if (lScaleX !== 1 || lScaleY !== 1) {
-                t.a *= sx;
-                t.c *= sx;
-                t.b *= sy;
-                t.d *= sy;
-            }
-
-            // adjust anchorPoint
-            t.tx += Cos * -appX * sx + -Sin * appY * sy;
-            t.ty -= Sin * -appX * sx + Cos * appY * sy;
-
-            // if ignore anchorPoint
-            if (_t._ignoreAnchorPointForPosition) {
-                t.tx += appX;
-                t.ty += appY;
-            }
-
-            if (_t._additionalTransformDirty) {
-                _t._transform = cc.affineTransformConcat(t, _t._additionalTransform);
-                _t._additionalTransformDirty = false;
-            }
-
-            _t._transformDirty = false;
-        }
-        return _t._transform;
-    };
-
-    _p = null;
-
-} else {
-    cc.assert(cc.isFunction(cc._tmp.WebGLCCNode), cc._LogInfos.MissingFile, "BaseNodesWebGL.js");
-    cc._tmp.WebGLCCNode();
-    delete cc._tmp.WebGLCCNode;
-}
 cc.assert(cc.isFunction(cc._tmp.PrototypeCCNode), cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
 cc._tmp.PrototypeCCNode();
 delete cc._tmp.PrototypeCCNode;

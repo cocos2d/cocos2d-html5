@@ -413,7 +413,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             texture2D = fileImage;
         texture2D && this.initWithTexture(texture2D, capacity);
 
-        this._rendererCmd = new cc.SpriteBatchNode.WebGLRenderCmd(this);
+        this._renderCmd = new cc.SpriteBatchNode.WebGLRenderCmd(this);
     },
 
     /**
@@ -877,8 +877,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         this.sortAllChildren();
         this.transform(gl);
         //this.draw(gl);
-        if(this._rendererCmd)
-            cc.renderer.pushRenderCommand(this._rendererCmd);
+        if(this._renderCmd)
+            cc.renderer.pushRenderCommand(this._renderCmd);
 
 /*        if (locGrid && locGrid.isActive())
             locGrid.afterDraw(this);*/

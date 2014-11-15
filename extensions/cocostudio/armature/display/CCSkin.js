@@ -242,8 +242,6 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
 });
 if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
     ccs.Skin.prototype.updateTransform = ccs.Skin.prototype._updateTransformForWebGL;
-}else{
-    //ccs.Skin.prototype.getNodeToParentTransform = cc.Node.prototype._getNodeToParentTransformForWebGL;
 }
 
 

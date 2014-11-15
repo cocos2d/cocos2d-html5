@@ -102,7 +102,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
             this.initWithTexture(fileImage, capacity);
         }
         if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this._rendererCmd = new cc.ParticleBatchNode.WebGLRenderCmd(this);
+            this._renderCmd = new cc.ParticleBatchNode.WebGLRenderCmd(this);
     },
 
     /**
@@ -426,8 +426,8 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
         this.transform(ctx);
         //this.draw(ctx);
-        if(this._rendererCmd)
-            cc.renderer.pushRenderCommand(this._rendererCmd);
+        if(this._renderCmd)
+            cc.renderer.pushRenderCommand(this._renderCmd);
 
         cc.kmGLPopMatrix();
     },

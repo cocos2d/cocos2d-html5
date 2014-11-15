@@ -103,8 +103,8 @@ cc.rendererCanvas = {
 
         //transform node
         for (var i = 0, len = locPool.length; i < len; i++) {
-            if (locPool[i]._renderCmdDiry)        //TODO need modify name for LabelTTF
-                locPool[i]._transformForRenderer();
+            if (locPool[i]._dirtyFlag !== 0)
+                locPool[i].updateStatus();
         }
         locPool.length = 0;
     },
@@ -118,7 +118,6 @@ cc.rendererCanvas = {
     },
 
     pushDirtyNode: function (node) {
-        //if (this._transformNodePool.indexOf(node) === -1)
         this._transformNodePool.push(node);
     },
 
@@ -140,6 +139,7 @@ cc.rendererCanvas = {
         }
     }
 };
+
 if (cc._renderType === cc._RENDER_TYPE_CANVAS)
     cc.renderer = cc.rendererCanvas;
 

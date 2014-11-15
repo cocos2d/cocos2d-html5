@@ -276,7 +276,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     _setSpriteForCanvas:function (sprite) {
         if (this._sprite != sprite) {
             this._sprite = sprite;
-            this._rendererCmd._sprite = sprite;
+            this._renderCmd._sprite = sprite;
             this.width = this._sprite.width;
 	        this.height = this._sprite.height;
         }
@@ -307,7 +307,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     _setTypeForCanvas:function (type) {
         if (type !== this._type){
             this._type = type;
-            this._rendererCmd._type = type;
+            this._renderCmd._type = type;
         }
     },
 
@@ -731,7 +731,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         var locSprite = this._sprite;
         var sw = locSprite.width, sh = locSprite.height;
         var locMidPoint = this._midPoint;
-        var locCmd = this._rendererCmd;
+        var locCmd = this._renderCmd;
 
         if (this._type == cc.ProgressTimer.TYPE_RADIAL) {
             locCmd._radius = Math.round(Math.sqrt(sw * sw + sh * sh));

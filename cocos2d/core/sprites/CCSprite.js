@@ -25,223 +25,6 @@
  ****************************************************************************/
 
 /**
- * Tint a texture using the "multiply" operation
- * @param {HTMLImageElement} image
- * @param {cc.Color} color
- * @param {cc.Rect} [rect]
- * @param {HTMLCanvasElement} renderCanvas
- * @returns {HTMLCanvasElement}
- */
-cc.generateTintImageWithMultiply = function(image, color, rect, renderCanvas){
-    renderCanvas = renderCanvas || cc.newElement("canvas");
-
-    rect = rect || cc.rect(0,0, image.width, image.height);
-
-    var context = renderCanvas.getContext( "2d" );
-    if(renderCanvas.width != rect.width || renderCanvas.height != rect.height){
-        renderCanvas.width = rect.width;
-        renderCanvas.height = rect.height;
-    }else{
-        context.globalCompositeOperation = "source-over";
-    }
-
-    context.fillStyle = "rgb(" + (0|color.r) + "," + (0|color.g) + "," + (0|color.b) + ")";
-    context.fillRect(0, 0, rect.width, rect.height);
-    context.globalCompositeOperation = "multiply";
-    context.drawImage(image,
-        rect.x,
-        rect.y,
-        rect.width,
-        rect.height,
-        0,
-        0,
-        rect.width,
-        rect.height);
-    context.globalCompositeOperation = "destination-atop";
-    context.drawImage(image,
-        rect.x,
-        rect.y,
-        rect.width,
-        rect.height,
-        0,
-        0,
-        rect.width,
-        rect.height);
-    return renderCanvas;
-};
-
-/**
- * Generate tinted texture with lighter.
- * lighter:    The source and destination colors are added to each other, resulting in brighter colors,
- * moving towards color values of 1 (maximum brightness for that color).
- * @function
- * @param {HTMLImageElement} texture
- * @param {Array} tintedImgCache
- * @param {cc.Color} color
- * @param {cc.Rect} rect
- * @param {HTMLCanvasElement} [renderCanvas]
- * @return {HTMLCanvasElement}
- */
-cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCanvas) {
-    if (!rect)
-        rect = cc.rect(0, 0, texture.width, texture.height);
-
-    var r = color.r / 255;
-    var g = color.g / 255;
-    var b = color.b / 255;
-    var w = Math.min(rect.width, tintedImgCache[0].width);
-    var h = Math.min(rect.height, tintedImgCache[0].height);
-    var buff = renderCanvas;
-    var ctx;
-
-    // Create a new buffer if required
-    if (!buff) {
-        buff = cc.newElement("canvas");
-        buff.width = w;
-        buff.height = h;
-        ctx = buff.getContext("2d");
-    } else {
-        ctx = buff.getContext("2d");
-        ctx.clearRect(0, 0, w, h);
-    }
-
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-
-    // Make sure to keep the renderCanvas alpha in mind in case of overdraw
-    var a = ctx.globalAlpha;
-    if (r > 0) {
-        ctx.globalAlpha = r * a;
-        ctx.drawImage(tintedImgCache[0], rect.x, rect.y, w, h, 0, 0, w, h);
-    }
-    if (g > 0) {
-        ctx.globalAlpha = g * a;
-        ctx.drawImage(tintedImgCache[1], rect.x, rect.y, w, h, 0, 0, w, h);
-    }
-    if (b > 0) {
-        ctx.globalAlpha = b * a;
-        ctx.drawImage(tintedImgCache[2], rect.x, rect.y, w, h, 0, 0, w, h);
-    }
-
-    if (r + g + b < 1) {
-        ctx.globalAlpha = a;
-        ctx.drawImage(tintedImgCache[3], rect.x, rect.y, w, h, 0, 0, w, h);
-    }
-
-    ctx.restore();
-    return buff;
-};
-
-/**
- * Generates texture's cache for texture tint
- * @function
- * @param {HTMLImageElement} texture
- * @return {Array}
- */
-cc.generateTextureCacheForColor = function (texture) {
-    if (texture.channelCache) {
-        return texture.channelCache;
-    }
-
-    var textureCache = [
-        cc.newElement("canvas"),
-        cc.newElement("canvas"),
-        cc.newElement("canvas"),
-        cc.newElement("canvas")
-    ];
-
-    function renderToCache() {
-        var ref = cc.generateTextureCacheForColor;
-
-        var w = texture.width;
-        var h = texture.height;
-
-        textureCache[0].width = w;
-        textureCache[0].height = h;
-        textureCache[1].width = w;
-        textureCache[1].height = h;
-        textureCache[2].width = w;
-        textureCache[2].height = h;
-        textureCache[3].width = w;
-        textureCache[3].height = h;
-
-        ref.canvas.width = w;
-        ref.canvas.height = h;
-
-        var ctx = ref.canvas.getContext("2d");
-        ctx.drawImage(texture, 0, 0);
-
-        ref.tempCanvas.width = w;
-        ref.tempCanvas.height = h;
-
-        var pixels = ctx.getImageData(0, 0, w, h).data;
-
-        for (var rgbI = 0; rgbI < 4; rgbI++) {
-            var cacheCtx = textureCache[rgbI].getContext('2d');
-            cacheCtx.getImageData(0, 0, w, h).data;
-            ref.tempCtx.drawImage(texture, 0, 0);
-
-            var to = ref.tempCtx.getImageData(0, 0, w, h);
-            var toData = to.data;
-
-            for (var i = 0; i < pixels.length; i += 4) {
-                toData[i  ] = (rgbI === 0) ? pixels[i  ] : 0;
-                toData[i + 1] = (rgbI === 1) ? pixels[i + 1] : 0;
-                toData[i + 2] = (rgbI === 2) ? pixels[i + 2] : 0;
-                toData[i + 3] = pixels[i + 3];
-            }
-            cacheCtx.putImageData(to, 0, 0);
-        }
-        texture.onload = null;
-    }
-
-    try {
-        renderToCache();
-    } catch (e) {
-        texture.onload = renderToCache;
-    }
-
-    texture.channelCache = textureCache;
-    return textureCache;
-};
-
-cc.generateTextureCacheForColor.canvas = cc.newElement('canvas');
-cc.generateTextureCacheForColor.tempCanvas = cc.newElement('canvas');
-cc.generateTextureCacheForColor.tempCtx = cc.generateTextureCacheForColor.tempCanvas.getContext('2d');
-
-cc.cutRotateImageToCanvas = function (texture, rect) {
-    if (!texture)
-        return null;
-
-    if (!rect)
-        return texture;
-
-    var nCanvas = cc.newElement("canvas");
-    nCanvas.width = rect.width;
-    nCanvas.height = rect.height;
-    var ctx = nCanvas.getContext("2d");
-    ctx.translate(nCanvas.width / 2, nCanvas.height / 2);
-    ctx.rotate(-1.5707963267948966);
-    ctx.drawImage(texture, rect.x, rect.y, rect.height, rect.width, -rect.height / 2, -rect.width / 2, rect.height, rect.width);
-    return nCanvas;
-};
-
-cc._getCompositeOperationByBlendFunc = function(blendFunc){
-    if(!blendFunc)
-        return "source-over";
-    else{
-        if(( blendFunc.src == cc.SRC_ALPHA && blendFunc.dst == cc.ONE) || (blendFunc.src == cc.ONE && blendFunc.dst == cc.ONE))
-            return "lighter";
-        else if(blendFunc.src == cc.ZERO && blendFunc.dst == cc.SRC_ALPHA)
-            return "destination-in";
-        else if(blendFunc.src == cc.ZERO && blendFunc.dst == cc.ONE_MINUS_SRC_ALPHA)
-            return "destination-out";
-        else
-            return "source-over";
-    }
-};
-
-/**
  * <p>cc.Sprite is a 2d image ( http://en.wikipedia.org/wiki/Sprite_(computer_graphics) )  <br/>
  *
  * cc.Sprite can be created with an image, or with a sub-rectangle of an image.  <br/>
@@ -335,11 +118,26 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _flippedY:false, //Whether the sprite is flipped vertically or not.
 
     _textureLoaded:false,
-    _newTextureWhenChangeColor: null,         //hack property for LabelBMFont
     _className:"Sprite",
 
     //Only for texture update judgment
-    _oldDisplayColor: cc.color.WHITE,
+    _oldDisplayColor: cc.color.WHITE,                                         //TODO move to Canvas render
+
+    _originalTexture: null,               //TODO move to Canvas render cmd
+    _drawSize_Canvas: null,
+
+    ctor: function (fileName, rect, rotated) {
+        var self = this;
+        cc.Node.prototype.ctor.call(self);
+        self._shouldBeHidden = false;
+        self._offsetPosition = cc.p(0, 0);
+        self._unflippedOffsetPositionFromCenter = cc.p(0, 0);
+        self._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
+        self._rect = cc.rect(0, 0, 0, 0);
+
+        self._textureLoaded = true;
+        self._softInit(fileName, rect, rotated);
+    },
 
     /**
      * Returns whether the texture have been loaded
@@ -448,19 +246,18 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * Initializes a sprite with an SpriteFrame. The texture and rect in SpriteFrame will be applied on this sprite.<br/>
+     * Initializes a sprite with a SpriteFrame. The texture and rect in SpriteFrame will be applied on this sprite.<br/>
      * Please pass parameters to the constructor to initialize the sprite, do not call this function yourself,
      * @param {cc.SpriteFrame} spriteFrame A CCSpriteFrame object. It should includes a valid texture and a rect
      * @return {Boolean}  true if the sprite is initialized properly, false otherwise.
      */
     initWithSpriteFrame:function (spriteFrame) {
-
         cc.assert(spriteFrame, cc._LogInfos.Sprite_initWithSpriteFrame);
 
         if(!spriteFrame.textureLoaded()){
             //add event listener
             this._textureLoaded = false;
-            spriteFrame.addEventListener("load", this._spriteFrameLoadedCallback, this);
+            spriteFrame.addEventListener("load", this._renderCmd._spriteFrameLoadedCallback, this);
         }
 
         var rotated = cc._renderType === cc._RENDER_TYPE_CANVAS ? false : spriteFrame._rotated;
@@ -470,14 +267,12 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         return ret;
     },
 
-    _spriteFrameLoadedCallback:null,
-
     /**
      * Initializes a sprite with a sprite frame name. <br/>
      * A cc.SpriteFrame will be fetched from the cc.SpriteFrameCache by name.  <br/>
      * If the cc.SpriteFrame doesn't exist it will raise an exception. <br/>
      * Please pass parameters to the constructor to initialize the sprite, do not call this function yourself.
-     * @param {String} spriteFrameName A key string that can fected a volid cc.SpriteFrame from cc.SpriteFrameCache
+     * @param {String} spriteFrameName A key string that can fected a valid cc.SpriteFrame from cc.SpriteFrameCache
      * @return {Boolean} true if the sprite is initialized properly, false otherwise.
      * @example
      * var sprite = new cc.Sprite();
@@ -546,7 +341,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             }
 
             if (this._batchNode) {
-                this._arrayMakeObjectsPerformSelector(_children, cc.Node._StateCallbackType.sortAllChildren);
+                this._arrayMakeObjectsPerformSelector(_children, cc.Node._stateCallbackType.sortAllChildren);
             }
 
             //don't need to check children recursively, that's done in visit of each child
@@ -796,16 +591,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         return this._texture;
     },
 
-    _quad: null, // vertex coords, texture coords and color info
-    _quadWebBuffer: null,
-    _quadDirty: false,
-    _colorized: false,
-    _blendFuncStr: "source-over",
-    _originalTexture: null,
-    _drawSize_Canvas: null,
-
-    ctor: null,
-
 	_softInit: function (fileName, rect, rotated) {
 		if (fileName === undefined)
 			cc.Sprite.prototype.init.call(this);
@@ -838,10 +623,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
     /**
      * Returns the quad (tex coords, vertex coords and color) information.
-     * @return {cc.V3F_C4B_T2F_Quad}
+     * @return {cc.V3F_C4B_T2F_Quad|null} Returns a cc.V3F_C4B_T2F_Quad object when render mode is WebGL, returns null when render mode is Canvas.
      */
     getQuad:function () {
-        return this._quad;
+        return this._renderCmd.getQuad();
     },
 
     /**
@@ -850,7 +635,17 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {Number|cc.BlendFunc} src
      * @param {Number} dst
      */
-    setBlendFunc: null,
+    setBlendFunc: function (src, dst) {
+        var locBlendFunc = this._blendFunc;
+        if (dst === undefined) {
+            locBlendFunc.src = src.src;
+            locBlendFunc.dst = src.dst;
+        } else {
+            locBlendFunc.src = src;
+            locBlendFunc.dst = dst;
+        }
+        this._renderCmd.updateBlendFunc(locBlendFunc);
+    },
 
     /**
      * Initializes an empty sprite with nothing init.<br/>
@@ -928,39 +723,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     addChild: null,
-
-    /**
-     * Update sprite's color
-     */
-    updateColor:function () {
-        var locDisplayedColor = this._displayedColor, locDisplayedOpacity = this._displayedOpacity;
-        var color4 = {r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: locDisplayedOpacity};
-        // special opacity for premultiplied textures
-        if (this._opacityModifyRGB) {
-            color4.r *= locDisplayedOpacity / 255.0;
-            color4.g *= locDisplayedOpacity / 255.0;
-            color4.b *= locDisplayedOpacity / 255.0;
-        }
-        var locQuad = this._quad;
-        locQuad.bl.colors = color4;
-        locQuad.br.colors = color4;
-        locQuad.tl.colors = color4;
-        locQuad.tr.colors = color4;
-
-        // renders using Sprite Manager
-        if (this._batchNode) {
-            if (this.atlasIndex != cc.Sprite.INDEX_NOT_INITIALIZED) {
-                this.textureAtlas.updateQuad(locQuad, this.atlasIndex)
-            } else {
-                // no need to set it recursively
-                // update dirty_, don't update recursiveDirty_
-                this.dirty = true;
-            }
-        }
-        // self render
-        // do nothing
-        this._quadDirty = true;
-    },
 
     /**
      * Sets opacity of the sprite
@@ -1059,108 +821,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         }
     },
 
-    _changeTextureColor: function () {
-        var locElement, locTexture = this._texture, locRect = this._rendererCmd._textureCoord; //this.getTextureRect();
-        if (locTexture && locRect.validRect && this._originalTexture) {
-            locElement = locTexture.getHtmlElementObj();
-            if (!locElement)
-                return;
-
-            this._colorized = true;
-            if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor
-                && this._originalTexture._htmlElementObj != locElement)
-                cc.generateTintImageWithMultiply(this._originalTexture._htmlElementObj, this._displayedColor, locRect, locElement);
-            else {
-                locElement = cc.generateTintImageWithMultiply(this._originalTexture._htmlElementObj, this._displayedColor, locRect);
-                locTexture = new cc.Texture2D();
-                locTexture.initWithElement(locElement);
-                locTexture.handleLoadedTexture();
-                this.texture = locTexture;
-            }
-        }
-    },
-
-    _setTextureCoords:function (rect) {
-        rect = cc.rectPointsToPixels(rect);
-
-        var tex = this._batchNode ? this.textureAtlas.texture : this._texture;
-        if (!tex)
-            return;
-
-        var atlasWidth = tex.pixelsWidth;
-        var atlasHeight = tex.pixelsHeight;
-
-        var left, right, top, bottom, tempSwap, locQuad = this._quad;
-        if (this._rectRotated) {
-            if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
-                left = (2 * rect.x + 1) / (2 * atlasWidth);
-                right = left + (rect.height * 2 - 2) / (2 * atlasWidth);
-                top = (2 * rect.y + 1) / (2 * atlasHeight);
-                bottom = top + (rect.width * 2 - 2) / (2 * atlasHeight);
-            } else {
-                left = rect.x / atlasWidth;
-                right = (rect.x + rect.height) / atlasWidth;
-                top = rect.y / atlasHeight;
-                bottom = (rect.y + rect.width) / atlasHeight;
-            }// CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
-
-            if (this._flippedX) {
-                tempSwap = top;
-                top = bottom;
-                bottom = tempSwap;
-            }
-
-            if (this._flippedY) {
-                tempSwap = left;
-                left = right;
-                right = tempSwap;
-            }
-
-            locQuad.bl.texCoords.u = left;
-            locQuad.bl.texCoords.v = top;
-            locQuad.br.texCoords.u = left;
-            locQuad.br.texCoords.v = bottom;
-            locQuad.tl.texCoords.u = right;
-            locQuad.tl.texCoords.v = top;
-            locQuad.tr.texCoords.u = right;
-            locQuad.tr.texCoords.v = bottom;
-        } else {
-            if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
-                left = (2 * rect.x + 1) / (2 * atlasWidth);
-                right = left + (rect.width * 2 - 2) / (2 * atlasWidth);
-                top = (2 * rect.y + 1) / (2 * atlasHeight);
-                bottom = top + (rect.height * 2 - 2) / (2 * atlasHeight);
-            } else {
-                left = rect.x / atlasWidth;
-                right = (rect.x + rect.width) / atlasWidth;
-                top = rect.y / atlasHeight;
-                bottom = (rect.y + rect.height) / atlasHeight;
-            } // ! CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
-
-            if (this._flippedX) {
-                tempSwap = left;
-                left = right;
-                right = tempSwap;
-            }
-
-            if (this._flippedY) {
-                tempSwap = top;
-                top = bottom;
-                bottom = tempSwap;
-            }
-
-            locQuad.bl.texCoords.u = left;
-            locQuad.bl.texCoords.v = bottom;
-            locQuad.br.texCoords.u = right;
-            locQuad.br.texCoords.v = bottom;
-            locQuad.tl.texCoords.u = left;
-            locQuad.tl.texCoords.v = top;
-            locQuad.tr.texCoords.u = right;
-            locQuad.tr.texCoords.v = top;
-        }
-        this._quadDirty = true;
-    },
-
     _createRenderCmd: function(){
         if(cc._renderType === cc._RENDER_TYPE_CANVAS)
             return new cc.Sprite.CanvasRenderCmd(this);
@@ -1213,17 +873,6 @@ cc.Sprite.INDEX_NOT_INITIALIZED = -1;
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     var _p = cc.Sprite.prototype;
 
-    _p._spriteFrameLoadedCallback = function(spriteFrame){
-        var _t = this;
-        _t.setNodeDirty(true);
-        _t.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
-        var curColor = _t.color;
-        if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
-            _t._changeTextureColor();
-
-        _t.dispatchEvent("load");
-    };
-
     _p.setOpacityModifyRGB = function (modify) {
         if (this._opacityModifyRGB !== modify) {
             this._opacityModifyRGB = modify;
@@ -1234,39 +883,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p.updateDisplayedOpacity = function (parentOpacity) {
         cc.Node.prototype.updateDisplayedOpacity.call(this, parentOpacity);
         this._setNodeDirtyForCache();
-    };
-
-    _p.ctor = function (fileName, rect, rotated) {
-        var self = this;
-        cc.Node.prototype.ctor.call(self);
-        self._shouldBeHidden = false;
-        self._offsetPosition = cc.p(0, 0);
-        self._unflippedOffsetPositionFromCenter = cc.p(0, 0);
-        self._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
-        self._rect = cc.rect(0, 0, 0, 0);
-
-        self._newTextureWhenChangeColor = false;
-        self._textureLoaded = true;
-        self._drawSize_Canvas = cc.size(0, 0);
-
-        self._softInit(fileName, rect, rotated);
-    };
-
-    _p._initRendererCmd = function(){
-        this._rendererCmd = cc.renderer.getRenderCmd(this);
-    };
-
-    _p.setBlendFunc = function (src, dst) {
-        var _t = this, locBlendFunc = this._blendFunc;
-        if (dst === undefined) {
-            locBlendFunc.src = src.src;
-            locBlendFunc.dst = src.dst;
-        } else {
-            locBlendFunc.src = src;
-            locBlendFunc.dst = dst;
-        }
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
-            _t._blendFuncStr = cc._getCompositeOperationByBlendFunc(locBlendFunc);
     };
 
     _p.init = function () {
@@ -1280,7 +896,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         _t._blendFunc.src = cc.BLEND_SRC;
         _t._blendFunc.dst = cc.BLEND_DST;
 
-        // update texture (calls _updateBlendFunc)
         _t.texture = null;
         _t._textureLoaded = true;
         _t._flippedX = _t._flippedY = false;
@@ -1308,12 +923,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         if (rotated && texture.isLoaded()) {
             var tempElement = texture.getHtmlElementObj();
-            tempElement = cc.cutRotateImageToCanvas(tempElement, rect);
+            tempElement = cc.Sprite.CanvasRenderCmd._cutRotateImageToCanvas(tempElement, rect);
             var tempTexture = new cc.Texture2D();
             tempTexture.initWithElement(tempElement);
             tempTexture.handleLoadedTexture();
             texture = tempTexture;
-
             _t._rect = cc.rect(0, 0, rect.width, rect.height);
         }
 
@@ -1416,7 +1030,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         _t.setVertexRect(rect);
 
-        var locTextureRect = _t._rendererCmd._textureCoord,
+        var locTextureRect = _t._renderCmd._textureCoord,
             scaleFactor = cc.contentScaleFactor();
         locTextureRect.renderX = locTextureRect.x = 0 | (rect.x * scaleFactor);
         locTextureRect.renderY = locTextureRect.y = 0 | (rect.y * scaleFactor);
@@ -1465,7 +1079,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         // recursively iterate over children
         if (_t._hasChildren)
-            _t._arrayMakeObjectsPerformSelector(_t._children, cc.Node._StateCallbackType.updateTransform);
+            _t._arrayMakeObjectsPerformSelector(_t._children, cc.Node._stateCallbackType.updateTransform);
     };
 
     _p.addChild = function (child, localZOrder, tag) {
@@ -1484,15 +1098,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p.setOpacity = function (opacity) {
         cc.Node.prototype.setOpacity.call(this, opacity);
         this._setNodeDirtyForCache();
-    };
-
-    _p.setColor = function (color3) {
-        var _t = this;
-        var curColor = _t.color;
-        this._oldDisplayColor = curColor;
-        if ((curColor.r === color3.r) && (curColor.g === color3.g) && (curColor.b === color3.b))
-            return;
-        cc.Node.prototype.setColor.call(_t, color3);
     };
 
     _p.updateDisplayedColor = function (parentColor) {
@@ -1541,12 +1146,13 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             _t.texture = pNewTexture;
 
         if (_t._rectRotated)
-            _t._originalTexture = pNewTexture;
+            _t._originalTexture = pNewTexture;      //TODO
 
         _t.setTextureRect(newFrame.getRect(), _t._rectRotated, newFrame.getOriginalSize());
-        _t._colorized = false;
-        _t._rendererCmd._textureCoord.renderX = _t._rendererCmd._textureCoord.x;
-        _t._rendererCmd._textureCoord.renderY = _t._rendererCmd._textureCoord.y;
+
+        _t._renderCmd._colorized = false;
+        _t._renderCmd._textureCoord.renderX = _t._renderCmd._textureCoord.x;
+        _t._renderCmd._textureCoord.renderY = _t._renderCmd._textureCoord.y;
         if (locTextureLoaded) {
             var curColor = _t.color;
             if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
@@ -1554,7 +1160,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         }
     };
 
-    _p.isFrameDisplayed = function (frame) {
+    _p.isFrameDisplayed = function (frame) {  //TODO there maybe has a bug
         if (frame.getTexture() != this._texture)
             return false;
         return cc.rectEqualToRect(frame.getRect(), this._rect);
@@ -1605,31 +1211,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             _t._texture = texture;
         }
     };
-
-    if(!cc.sys._supportCanvasNewBlendModes)
-        _p._changeTextureColor =  function () {
-            var locElement, locTexture = this._texture, locRect = this._rendererCmd._textureCoord; //this.getTextureRect();
-            if (locTexture && locRect.validRect && this._originalTexture) {
-                locElement = locTexture.getHtmlElementObj();
-                if (!locElement)
-                    return;
-
-                var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
-                if (cacheTextureForColor) {
-                    this._colorized = true;
-                    //generate color texture cache
-                    if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor)
-                        cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect, locElement);
-                    else {
-                        locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect);
-                        locTexture = new cc.Texture2D();
-                        locTexture.initWithElement(locElement);
-                        locTexture.handleLoadedTexture();
-                        this.texture = locTexture;
-                    }
-                }
-            }
-        };
 
     _p = null;
 } else {

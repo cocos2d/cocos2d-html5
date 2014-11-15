@@ -169,7 +169,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         }
 
         //TODO need merge in some code
-        this._rendererCmd = new cc.RenderTexture.WebGLRenderCmd(this);
+        this._renderCmd = new cc.RenderTexture.WebGLRenderCmd(this);
     },
 
     /**
@@ -645,8 +645,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         this.sprite.visit();
         //this.draw(ctx);
-        if(this._rendererCmd)
-            cc.renderer.pushRenderCommand(this._rendererCmd);
+        if(this._renderCmd)
+            cc.renderer.pushRenderCommand(this._renderCmd);
 
         //TODO GridNode
 /*        if (locGrid && locGrid.isActive())

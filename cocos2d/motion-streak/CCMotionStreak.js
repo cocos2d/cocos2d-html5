@@ -116,7 +116,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         if(texture !== undefined)
             this.initWithFade(fade, minSeg, stroke, color, texture);
 
-        this._rendererCmd = new cc.MotionStreak.WebGLRenderCmd(this);
+        this._renderCmd = new cc.MotionStreak.WebGLRenderCmd(this);
     },
 
     /**

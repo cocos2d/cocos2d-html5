@@ -63,17 +63,6 @@ cc._tmp.WebGLSprite = function () {
         self._softInit(fileName, rect, rotated);
     };
 
-    _p.setBlendFunc = function (src, dst) {
-        var locBlendFunc = this._blendFunc;
-        if (dst === undefined) {
-            locBlendFunc.src = src.src;
-            locBlendFunc.dst = src.dst;
-        } else {
-            locBlendFunc.src = src;
-            locBlendFunc.dst = dst;
-        }
-    };
-
     _p.init = function () {
         var _t = this;
         if (arguments.length > 0)
@@ -502,77 +491,4 @@ cc._tmp.WebGLSprite = function () {
             _t._updateBlendFunc();
         }
     };
-
-    _p.draw = function () {
-        var _t = this;
-        if (!_t._textureLoaded)
-            return;
-
-        var gl = cc._renderContext, locTexture = _t._texture;
-        //cc.assert(!_t._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
-
-        if (locTexture) {
-            if (locTexture._isLoaded) {
-                _t._shaderProgram.use();
-                _t._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
-
-                cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
-                //optimize performance for javascript
-                cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
-                cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
-
-                gl.bindBuffer(gl.ARRAY_BUFFER, _t._quadWebBuffer);
-                if (_t._quadDirty) {
-                    gl.bufferData(gl.ARRAY_BUFFER, _t._quad.arrayBuffer, gl.DYNAMIC_DRAW);
-                    _t._quadDirty = false;
-                }
-                gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);                   //cc.VERTEX_ATTRIB_POSITION
-                gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
-                gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
-
-                gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-            }
-        } else {
-            _t._shaderProgram.use();
-            _t._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
-
-            cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
-            cc.glBindTexture2D(null);
-
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, _t._quadWebBuffer);
-            if (_t._quadDirty) {
-                cc._renderContext.bufferData(cc._renderContext.ARRAY_BUFFER, _t._quad.arrayBuffer, cc._renderContext.STATIC_DRAW);
-                _t._quadDirty = false;
-            }
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-        }
-        cc.g_NumberOfDraws++;
-        if (cc.SPRITE_DEBUG_DRAW === 0 && !_t._showNode)
-            return;
-
-        if (cc.SPRITE_DEBUG_DRAW === 1 || _t._showNode) {
-            // draw bounding box
-            var locQuad = _t._quad;
-            var verticesG1 = [
-                cc.p(locQuad.tl.vertices.x, locQuad.tl.vertices.y),
-                cc.p(locQuad.bl.vertices.x, locQuad.bl.vertices.y),
-                cc.p(locQuad.br.vertices.x, locQuad.br.vertices.y),
-                cc.p(locQuad.tr.vertices.x, locQuad.tr.vertices.y)
-            ];
-            cc._drawingUtil.drawPoly(verticesG1, 4, true);
-        } else if (cc.SPRITE_DEBUG_DRAW === 2) {
-            // draw texture box
-            var drawRectG2 = _t.getTextureRect();
-            var offsetPixG2 = _t.getOffsetPosition();
-            var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y),
-                cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y + drawRectG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawRectG2.height)];
-            cc._drawingUtil.drawPoly(verticesG2, 4, true);
-        } // CC_SPRITE_DEBUG_DRAW
-    };
-
-    delete _p;
-}
+};

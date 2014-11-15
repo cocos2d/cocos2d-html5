@@ -1163,7 +1163,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         this.setContentSize(untrimmedSize);
         this.setVertexRect(rect);
 
-        var locTextureCoordRect = this._rendererCmd._textureCoord;
+        var locTextureCoordRect = this._renderCmd._textureCoord;
         locTextureCoordRect.x = rect.x;
         locTextureCoordRect.y = rect.y;
         locTextureCoordRect.renderX = rect.x;

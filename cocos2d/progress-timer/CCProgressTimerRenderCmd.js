@@ -43,7 +43,7 @@ cc.ProgressTimer.CanvasRenderCmd.prototype.constructor = cc.ProgressTimer.Canvas
 cc.ProgressTimer.CanvasRenderCmd.prototype.rendering = function (ctx, scaleX, scaleY) {
     var context = ctx || cc._renderContext, node = this._node, locSprite = this._sprite;
 
-    var locTextureCoord = locSprite._rendererCmd._textureCoord, alpha = locSprite._displayedOpacity / 255;
+    var locTextureCoord = locSprite._renderCmd._textureCoord, alpha = locSprite._displayedOpacity / 255;
 
     if (locTextureCoord.width === 0 || locTextureCoord.height === 0)
         return;

@@ -88,7 +88,7 @@ cc.ParticleSystem.CanvasRenderCmd.prototype.rendering = function (ctx, scaleX, s
                         cacheTextureForColor.tintCache.width = element.width;
                         cacheTextureForColor.tintCache.height = element.height;
                     }
-                    cc.generateTintImage(element, cacheTextureForColor, particle.color, this._pointRect, cacheTextureForColor.tintCache);
+                    cc.Sprite.CanvasRenderCmd._generateTintImage(element, cacheTextureForColor, particle.color, this._pointRect, cacheTextureForColor.tintCache);
                     drawElement = cacheTextureForColor.tintCache;
                 }
             }

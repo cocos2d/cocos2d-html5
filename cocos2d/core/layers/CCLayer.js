@@ -30,9 +30,6 @@
  * @extends cc.Node
  */
 cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
-    _isBaked: false,
-    _bakeSprite: null,
-    _bakeRenderCmd: null,
     _className: "Layer",
 
     /**
@@ -65,7 +62,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @function
      * @see cc.Layer#unbake
      */
-    bake: null,
+    bake: function(){
+        this._renderCmd.bake();
+    },
 
     /**
      * Cancel the layer to cache all of children to a bake sprite.<br/>
@@ -73,9 +72,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @function
      * @see cc.Layer#bake
      */
-    unbake: null,
-
-    _bakeRendering: null,
+    unbake: function(){
+        this._renderCmd.unbake();
+    },
 
     /**
      * Determines if the layer is baked.
@@ -102,67 +101,10 @@ cc.Layer.create = function () {
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     var p = cc.Layer.prototype;
-    p.bake = function(){
-        if (!this._isBaked) {
-            cc.renderer.childrenOrderDirty = true;
-            //limit: 1. its children's blendfunc are invalid.
-            this._isBaked = this._cacheDirty = true;
-            if(!this._bakeRenderCmd && this._bakeRendering)
-                this._bakeRenderCmd = new cc.Layer.CanvasBakeRenderCmd(this);
-                //this._bakeRenderCmd = new cc.CustomRenderCmdCanvas(this, this._bakeRendering);
-
-            this._cachedParent = this;
-            var children = this._children;
-            for(var i = 0, len = children.length; i < len; i++)
-                children[i]._setCachedParent(this);
-
-            if (!this._bakeSprite){
-                this._bakeSprite = new cc.BakeSprite();
-                this._bakeSprite._parent = this;
-            }
-        }
-    };
-
-    p.unbake = function(){
-        if (this._isBaked) {
-            cc.renderer.childrenOrderDirty = true;
-            this._isBaked = false;
-            this._cacheDirty = true;
-
-            this._cachedParent = null;
-            var children = this._children;
-            for(var i = 0, len = children.length; i < len; i++)
-                children[i]._setCachedParent(null);
-        }
-    };
-
     p.addChild = function(child, localZOrder, tag){
         cc.Node.prototype.addChild.call(this, child, localZOrder, tag);
         if(child._parent == this && this._isBaked)
             child._setCachedParent(this);
-    };
-
-    p.visit = function(ctx){
-        if(!this._isBaked){
-            cc.Node.prototype.visit.call(this, ctx);
-            return;
-        }
-
-        var context = ctx || cc._renderContext;
-        var _t = this;
-        var children = _t._children;
-        var len = children.length;
-        // quick return if not visible
-        if (!_t._visible || len === 0)
-            return;
-
-        _t.transform(context);
-
-        if(_t._bakeRenderCmd)
-            cc.renderer.pushRenderCommand(_t._bakeRenderCmd);
-
-        //the bakeSprite is drawing
-        this._bakeSprite.visit(context);
     };
 
     p._getBoundingBoxForBake = function () {
@@ -211,7 +153,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
  * // Example
  * //Create a yellow color layer as background
  * var yellowBackground = new cc.LayerColor(cc.color(255,255,0,255));
- * //If you didnt pass in width and height, it defaults to the same size as the canvas
+ * //If you didn't pass in width and height, it defaults to the same size as the canvas
  *
  * //create a yellow box, 200 by 200 in size
  * var yellowBox = new cc.LayerColor(cc.color(255,255,0,255), 200, 200);
@@ -304,17 +246,11 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         width = width === undefined ? winSize.width : width;
         height = height === undefined ? winSize.height : height;
 
-        var locDisplayedColor = this._displayedColor;
-        locDisplayedColor.r = color.r;
-        locDisplayedColor.g = color.g;
-        locDisplayedColor.b = color.b;
-
         var locRealColor = this._realColor;
         locRealColor.r = color.r;
         locRealColor.g = color.g;
         locRealColor.b = color.b;
 
-        this._displayedOpacity = color.a;
         this._realOpacity = color.a;
 
         var proto = cc.LayerColor.prototype;
@@ -338,7 +274,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
             locBlendFunc.dst = dst;
         }
         if (cc._renderType === cc._RENDER_TYPE_CANVAS)
-            _t._blendFuncStr = cc._getCompositeOperationByBlendFunc(locBlendFunc);
+            _t._blendFuncStr = cc.Node.CanvasRenderCmd._getCompositeOperationByBlendFunc(locBlendFunc);
     },
 
     _setWidth: null,
@@ -395,7 +331,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         cc.Node.prototype._setHeight.call(this, height);
     };
     _p._updateColor = function () {
-        var locCmd = this._rendererCmd;
+        var locCmd = this._renderCmd;
         if(!locCmd || !locCmd._color)
             return;
         var locColor = this._displayedColor;
@@ -403,16 +339,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         locCmd._color.g = locColor.g;
         locCmd._color.b = locColor.b;
         locCmd._color.a = this._displayedOpacity / 255;
-    };
-
-    _p.draw = function (ctx) {
-        var context = ctx || cc._renderContext, _t = this;
-        var locEGLViewer = cc.view, locDisplayedColor = _t._displayedColor;
-
-        context.fillStyle = "rgba(" + (0 | locDisplayedColor.r) + "," + (0 | locDisplayedColor.g) + ","
-            + (0 | locDisplayedColor.b) + "," + _t._displayedOpacity / 255 + ")";
-        context.fillRect(0, 0, _t.width * locEGLViewer.getScaleX(), -_t.height * locEGLViewer.getScaleY());
-        cc.g_NumberOfDraws++;
     };
 
     _p._bakeRendering = function(){
@@ -455,14 +381,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                     else
                         break;
                 }
-                if(_t._rendererCmd)
-                    cc.renderer.pushRenderCommand(_t._rendererCmd);
+                if(_t._renderCmd)
+                    cc.renderer.pushRenderCommand(_t._renderCmd);
                 for (; i < len; i++) {
                     children[i].visit(bakeContext);
                 }
             } else
-            if(_t._rendererCmd)
-                cc.renderer.pushRenderCommand(_t._rendererCmd);
+            if(_t._renderCmd)
+                cc.renderer.pushRenderCommand(_t._renderCmd);
             cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
             locBakeSprite.transform();
             this._cacheDirty = false;
@@ -773,7 +699,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var _t = this;
         var locAlongVector = _t._alongVector, tWidth = _t.width * 0.5, tHeight = _t.height * 0.5;
 
-        var locCmd = this._rendererCmd;
+        var locCmd = this._renderCmd;
         locCmd._startPoint.x = tWidth * (-locAlongVector.x) + tWidth;
         locCmd._startPoint.y = tHeight * locAlongVector.y - tHeight;
         locCmd._endPoint.x = tWidth * locAlongVector.x + tWidth;

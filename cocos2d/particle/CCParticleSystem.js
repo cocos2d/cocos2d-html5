@@ -551,8 +551,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     setDrawMode:function (drawMode) {
         this.drawMode = drawMode;
-        if(this._rendererCmd)
-            this._rendererCmd._drawMode = drawMode;
+        if(this._renderCmd)
+            this._renderCmd._drawMode = drawMode;
     },
 
     /**
@@ -569,8 +569,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     setShapeType:function (shapeType) {
         this.shapeType = shapeType;
-        if(this._rendererCmd)
-            this._rendererCmd._shapeType = shapeType;
+        if(this._renderCmd)
+            this._renderCmd._shapeType = shapeType;
     },
 
     /**
@@ -2480,7 +2480,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             element.tintCache.width = element.width;
             element.tintCache.height = element.height;
         }
-        return cc.generateTintImageWithMultiply(element, color, rect, element.tintCache);
+        return cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(element, color, rect, element.tintCache);
     },
 
     _drawForWebGL:function (ctx) {
@@ -2620,7 +2620,7 @@ if(cc._renderType === cc._RENDER_TYPE_CANVAS && !cc.sys._supportCanvasNewBlendMo
                 cacheTextureForColor.tintCache.width = element.width;
                 cacheTextureForColor.tintCache.height = element.height;
             }
-            cc.generateTintImage(element, cacheTextureForColor, color, rect, cacheTextureForColor.tintCache);
+            cc.Sprite.CanvasRenderCmd._generateTintImage(element, cacheTextureForColor, color, rect, cacheTextureForColor.tintCache);
             return cacheTextureForColor.tintCache;
         }
         return null

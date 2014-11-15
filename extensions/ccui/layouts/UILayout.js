@@ -447,8 +447,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 break;
         }
         //this.draw();    //draw self
-        if(this._rendererCmd)
-            cc.renderer.pushRenderCommand(this._rendererCmd);
+        if(this._renderCmd)
+            cc.renderer.pushRenderCommand(this._renderCmd);
         for (; i < iLen; i++)
             locChildren[i].visit();
         for (; j < jLen; j++)
@@ -610,7 +610,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 if (able){
                     this._clippingStencil = new cc.DrawNode();
                     if(cc._renderType === cc._RENDER_TYPE_CANVAS)
-                        this._clippingStencil._rendererCmd.rendering = this.__stencilDraw.bind(this);
+                        this._clippingStencil._renderCmd.rendering = this.__stencilDraw.bind(this);
                     if (this._running)
                         this._clippingStencil.onEnter();
                     this._setStencilClippingSize(this._contentSize);

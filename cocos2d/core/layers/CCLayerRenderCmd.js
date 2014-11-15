@@ -25,18 +25,50 @@
 //Layer's canvas render command
 cc.Layer.CanvasRenderCmd = function(renderable){
     cc.Node.CanvasRenderCmd.call(this, renderable);
+    this._isBaked = false;
+    this._bakeSprite = null;
 };
 
 cc.Layer.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
+cc.Layer.CanvasRenderCmd.prototype.constructor = cc.Layer.CanvasRenderCmd;
 
-cc.Layer.CanvasBakeRenderCmd = function(renderable){
-    cc.Node.CanvasRenderCmd.call(this, renderable);
-    this._needDraw = true;
+cc.Layer.CanvasRenderCmd.prototype.bake = function(){
+    if (!this._isBaked) {
+        this._needDraw = true;
+        cc.renderer.childrenOrderDirty = true;
+        //limit: 1. its children's blendfunc are invalid.
+        this._isBaked = this._cacheDirty = true;
+
+        this._cachedParent = this;
+        var children = this._children;
+        for(var i = 0, len = children.length; i < len; i++)
+            children[i]._setCachedParent(this);
+
+        if (!this._bakeSprite){
+            this._bakeSprite = new cc.BakeSprite();
+            this._bakeSprite._parent = this;
+        }
+    }
 };
 
-cc.Layer.CanvasBakeRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
+cc.Layer.CanvasRenderCmd.prototype.unbake = function(){
+    if (this._isBaked) {
+        cc.renderer.childrenOrderDirty = true;
+        this._isBaked = false;
+        this._cacheDirty = true;
 
-cc.Layer.CanvasBakeRenderCmd.prototype.rendering = function(){
+        this._cachedParent = null;
+        var children = this._children;
+        for(var i = 0, len = children.length; i < len; i++)
+            children[i]._setCachedParent(null);
+    }
+};
+
+cc.Layer.CanvasRenderCmd.prototype.isBaked = function(){
+    return this._isBaked;
+};
+
+cc.Layer.CanvasRenderCmd.prototype.rendering = function(){
     if(this._cacheDirty){
         var _t = this;
         var children = _t._children, locBakeSprite = this._bakeSprite;
@@ -68,12 +100,44 @@ cc.Layer.CanvasBakeRenderCmd.prototype.rendering = function(){
     }
 };
 
+cc.Layer.CanvasRenderCmd.prototype.visit = function(parentCmd){
+    if(!this._isBaked){
+        cc.Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
+        return;
+    }
+
+    var context = ctx || cc._renderContext;
+    var _t = this;
+    var children = _t._children;
+    var len = children.length;
+    // quick return if not visible
+    if (!_t._visible || len === 0)
+        return;
+
+    _t.transform(context);
+
+    if(_t._needDraw)
+        cc.renderer.pushRenderCommand(this);
+
+    //the bakeSprite is drawing
+    this._bakeSprite.visit(context);
+};
+
 //Layer's WebGL render command
 cc.Layer.WebGLRenderCmd = function(renderable){
     cc.Node.WebGLRenderCmd.call(this, renderable);
 };
 
 cc.Layer.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
+cc.Layer.WebGLRenderCmd.prototype.constructor = cc.Layer.WebGLRenderCmd;
+
+cc.Layer.WebGLRenderCmd.prototype.bake = function(){};
+
+cc.Layer.WebGLRenderCmd.prototype.unbake = function(){};
+
+cc.Layer.WebGLRenderCmd.prototype.unbake = function(){
+    return false;
+};
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

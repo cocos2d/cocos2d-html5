@@ -636,16 +636,16 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
                 }
 
 //                this.draw(context);             // self draw
-                if(this._rendererCmd)
-                    cc.renderer.pushRenderCommand(this._rendererCmd);
+                if(this._renderCmd)
+                    cc.renderer.pushRenderCommand(this._renderCmd);
 
                 // draw children zOrder >= 0
                 for (; i < childrenLen; i++)
                     locChildren[i].visit(context);
             } else{
 //                this.draw(context);             // self draw
-                if(this._rendererCmd)
-                    cc.renderer.pushRenderCommand(this._rendererCmd);
+                if(this._renderCmd)
+                    cc.renderer.pushRenderCommand(this._renderCmd);
             }
 
 //            this._afterDraw();
@@ -676,16 +676,16 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
 
                 // this draw
                 //this.draw(context);
-                if(this._rendererCmd)
-                    cc.renderer.pushRenderCommand(this._rendererCmd);
+                if(this._renderCmd)
+                    cc.renderer.pushRenderCommand(this._renderCmd);
 
                 // draw children zOrder >= 0
                 for (; i < childrenLen; i++)
                     locChildren[i].visit();
             } else{
                 //this.draw(context);
-                if(this._rendererCmd)
-                    cc.renderer.pushRenderCommand(this._rendererCmd);
+                if(this._renderCmd)
+                    cc.renderer.pushRenderCommand(this._renderCmd);
             }
 
             this._afterDraw(context);

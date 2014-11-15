@@ -86,7 +86,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
         itemsToRender !== undefined && this.initWithTileFile(tile, tileWidth, tileHeight, itemsToRender);
 
         if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this._rendererCmd = new cc.AtlasNode.WebGLRenderCmd(this);
+            this._renderCmd = new cc.AtlasNode.WebGLRenderCmd(this);
     },
 
     /**
@@ -319,9 +319,9 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
             var locElement = locTexture.getHtmlElementObj();
             var textureRect = cc.rect(0, 0, element.width, element.height);
             if (locElement instanceof HTMLCanvasElement)
-                cc.generateTintImageWithMultiply(element, this._colorUnmodified, textureRect, locElement);
+                cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(element, this._colorUnmodified, textureRect, locElement);
             else {
-                locElement = cc.generateTintImageWithMultiply(element, this._colorUnmodified, textureRect);
+                locElement = cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(element, this._colorUnmodified, textureRect);
                 locTexture = new cc.Texture2D();
                 locTexture.initWithElement(locElement);
                 locTexture.handleLoadedTexture();
@@ -470,9 +470,9 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                 if (cacheTextureForColor) {
                     var textureRect = cc.rect(0, 0, element.width, element.height);
                     if (locElement instanceof HTMLCanvasElement)
-                        cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, textureRect, locElement);
+                        cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, this._displayedColor, textureRect, locElement);
                     else {
-                        locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, textureRect);
+                        locElement = cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, this._displayedColor, textureRect);
                         locTexture = new cc.Texture2D();
                         locTexture.initWithElement(locElement);
                         locTexture.handleLoadedTexture();
