@@ -39,13 +39,13 @@ cc.__BrowserGetter = {
     init: function(){
         this.html = document.getElementsByTagName("html")[0];
     },
-    avaWidth: function(frame){
+    availWidth: function(frame){
         if(!frame || frame === this.html)
             return window.innerWidth;
         else
             return frame.clientWidth;
     },
-    avaHeight: function(frame){
+    availHeight: function(frame){
         if(!frame || frame === this.html)
             return window.innerHeight;
         else
@@ -66,10 +66,10 @@ switch(cc.sys.browserType){
             return cc.view._targetDensityDPI;
         });
     case cc.sys.BROWSER_TYPE_UC:
-        cc.__BrowserGetter.avaWidth = function(frame){
+        cc.__BrowserGetter.availWidth = function(frame){
             return frame.clientWidth;
         };
-        cc.__BrowserGetter.avaHeight = function(frame){
+        cc.__BrowserGetter.availHeight = function(frame){
             return frame.clientHeight;
         };
         break;
@@ -262,8 +262,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     _initFrameSize: function () {
         var locFrameSize = this._frameSize;
-        locFrameSize.width = cc.__BrowserGetter.avaWidth(this._frame);
-        locFrameSize.height = cc.__BrowserGetter.avaHeight(this._frame);
+        locFrameSize.width = cc.__BrowserGetter.availWidth(this._frame);
+        locFrameSize.height = cc.__BrowserGetter.availHeight(this._frame);
     },
 
     // hack
