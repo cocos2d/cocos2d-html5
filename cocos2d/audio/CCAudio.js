@@ -24,7 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-if (cc.sys._supportWebAudio) {
+if (cc.sys._supportWebAudio && (!/OS 8_1 /.test(navigator.appVersion) && cc.sys.browserType === cc.sys.BROWSER_TYPE_SAFARI)) {
     var _ctx = cc.webAudioContext = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
     /**
      * A class of Web Audio.
