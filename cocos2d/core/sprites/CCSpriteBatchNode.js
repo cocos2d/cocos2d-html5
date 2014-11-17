@@ -526,7 +526,6 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
 
     _insertQuadFromSpriteForWebGL: function (sprite, index) {
-
         cc.assert(sprite, cc._LogInfos.Sprite_insertQuadFromSprite_2);
 
         if (!(sprite instanceof cc.Sprite)) {

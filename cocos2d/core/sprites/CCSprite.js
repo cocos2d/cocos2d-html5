@@ -120,11 +120,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _textureLoaded:false,
     _className:"Sprite",
 
-    //Only for texture update judgment
-    _oldDisplayColor: cc.color.WHITE,                                         //TODO move to Canvas render
-
     _originalTexture: null,               //TODO move to Canvas render cmd
-    _drawSize_Canvas: null,
 
     ctor: function (fileName, rect, rotated) {
         var self = this;
@@ -522,7 +518,12 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @function
      * @param {Boolean} modify
      */
-    setOpacityModifyRGB:null,
+    setOpacityModifyRGB: function (modify) {
+        if (this._opacityModifyRGB !== modify) {
+            this._opacityModifyRGB = modify;
+            this._renderCmd._updateColor();
+        }
+    },
 
     /**
      * Returns whether opacity modify color or not.
@@ -531,12 +532,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     isOpacityModifyRGB:function () {
         return this._opacityModifyRGB;
     },
-
-    /**
-     * Update the display opacity.
-     * @function
-     */
-    updateDisplayedOpacity: null,
 
     // Animation
 
@@ -653,7 +648,36 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @function
      * @return {Boolean}
      */
-    init:null,
+    init: function () {
+        var _t = this;
+        if (arguments.length > 0)
+            return _t.initWithFile(arguments[0], arguments[1]);
+
+        cc.Node.prototype.init.call(_t);
+        _t.dirty = _t._recursiveDirty = false;
+
+        _t._blendFunc.src = cc.BLEND_SRC;
+        _t._blendFunc.dst = cc.BLEND_DST;
+
+        _t.texture = null;
+        _t._textureLoaded = true;
+        _t._flippedX = _t._flippedY = false;
+
+        // default transform anchor: center
+        _t.anchorX = 0.5;
+        _t.anchorY = 0.5;
+
+        // zwoptex default values
+        _t._offsetPosition.x = 0;
+        _t._offsetPosition.y = 0;
+        _t._hasChildren = false;
+
+        this._renderCmd.init();
+        // updated in "useSelfRender"
+        // Atlas: TexCoords
+        _t.setTextureRect(cc.rect(0, 0, 0, 0), false, cc.size(0, 0));
+        return true;
+    },
 
     /**
      * <p>
@@ -696,8 +720,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      */
     initWithTexture: null,
 
-    _textureLoadedCallback: null,
-
     /**
      * Updates the texture rect of the CCSprite in points.
      * @function
@@ -723,20 +745,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     addChild: null,
-
-    /**
-     * Sets opacity of the sprite
-     * @function
-     * @param {Number} opacity
-     */
-    setOpacity:null,
-
-    /**
-     * Sets color of the sprite
-     * @function
-     * @param {cc.Color} color3
-     */
-    setColor: null,
 
     /**
      * Updates the display color
@@ -768,7 +776,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {cc.SpriteFrame} frame
      * @return {Boolean}
      */
-    isFrameDisplayed: null,
+    isFrameDisplayed: function(frame){
+        return this._renderCmd.isFrameDisplayed(frame);
+    },
 
     /**
      * Returns the current displayed frame.
@@ -800,25 +810,27 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @function
      * @param {cc.Texture2D|String} texture
      */
-    setTexture: null,
-
-    // Texture protocol
-    _updateBlendFunc:function () {
-        if(this._batchNode){
-            cc.log(cc._LogInfos.Sprite__updateBlendFunc);
+    setTexture: function (texture) {
+        var _t = this;
+        if(texture && (cc.isString(texture))){
+            texture = cc.textureCache.addImage(texture);
+            _t.setTexture(texture);
+            //TODO
+            var size = texture.getContentSize();
+            _t.setTextureRect(cc.rect(0,0, size.width, size.height));
+            //If image isn't loaded. Listen for the load event.
+            if(!texture._isLoaded){
+                texture.addEventListener("load", function(){
+                    var size = texture.getContentSize();
+                    _t.setTextureRect(cc.rect(0,0, size.width, size.height));
+                }, this);
+            }
             return;
         }
+        // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
+        cc.assert(!texture || texture instanceof cc.Texture2D, cc._LogInfos.Sprite_setTexture_2);
 
-        // it's possible to have an untextured sprite
-        if (!this._texture || !this._texture.hasPremultipliedAlpha()) {
-            this._blendFunc.src = cc.SRC_ALPHA;
-            this._blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
-            this.opacityModifyRGB = false;
-        } else {
-            this._blendFunc.src = cc.BLEND_SRC;
-            this._blendFunc.dst = cc.BLEND_DST;
-            this.opacityModifyRGB = true;
-        }
+        this._renderCmd._setTexture(texture);
     },
 
     _createRenderCmd: function(){
@@ -873,48 +885,6 @@ cc.Sprite.INDEX_NOT_INITIALIZED = -1;
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     var _p = cc.Sprite.prototype;
 
-    _p.setOpacityModifyRGB = function (modify) {
-        if (this._opacityModifyRGB !== modify) {
-            this._opacityModifyRGB = modify;
-            this.setNodeDirty(true);
-        }
-    };
-
-    _p.updateDisplayedOpacity = function (parentOpacity) {
-        cc.Node.prototype.updateDisplayedOpacity.call(this, parentOpacity);
-        this._setNodeDirtyForCache();
-    };
-
-    _p.init = function () {
-        var _t = this;
-        if (arguments.length > 0)
-            return _t.initWithFile(arguments[0], arguments[1]);
-
-        cc.Node.prototype.init.call(_t);
-        _t.dirty = _t._recursiveDirty = false;
-
-        _t._blendFunc.src = cc.BLEND_SRC;
-        _t._blendFunc.dst = cc.BLEND_DST;
-
-        _t.texture = null;
-        _t._textureLoaded = true;
-        _t._flippedX = _t._flippedY = false;
-
-        // default transform anchor: center
-        _t.anchorX = 0.5;
-        _t.anchorY = 0.5;
-
-        // zwoptex default values
-        _t._offsetPosition.x = 0;
-        _t._offsetPosition.y = 0;
-        _t._hasChildren = false;
-
-        // updated in "useSelfRender"
-        // Atlas: TexCoords
-        _t.setTextureRect(cc.rect(0, 0, 0, 0), false, cc.size(0, 0));
-        return true;
-    };
-
     _p.initWithTexture = function (texture, rect, rotated) {
         var _t = this;
         cc.assert(arguments.length != 0, cc._LogInfos.CCSpriteBatchNode_initWithTexture);
@@ -945,8 +915,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         _t._flippedX = _t._flippedY = false;
 
         // default transform anchor: center
-        _t.anchorX = 0.5;
-        _t.anchorY = 0.5;
+        _t.setAnchorPoint(0.5, 0.5);
 
         // zwoptex default values
         _t._offsetPosition.x = 0;
@@ -966,14 +935,13 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             }
             if(_t.texture)
                 _t.texture.removeEventListener("load", _t);
-            texture.addEventListener("load", _t._textureLoadedCallback, _t);
+            texture.addEventListener("load", _t._renderCmd._textureLoadedCallback, _t);
             _t.texture = texture;
             return true;
         }
 
-        if (!rect) {
+        if (!rect)
             rect = cc.rect(0, 0, texture.width, texture.height);
-        }
 
         if(texture && texture.url) {
             var _x = rect.x + rect.width, _y = rect.y + rect.height;
@@ -992,35 +960,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
         _t.batchNode = null;
         return true;
-    };
-
-    _p._textureLoadedCallback = function (sender) {
-        var _t = this;
-        if(_t._textureLoaded)
-            return;
-
-        _t._textureLoaded = true;
-        var locRect = _t._rect;
-        if (!locRect) {
-            locRect = cc.rect(0, 0, sender.width, sender.height);
-        } else if (cc._rectEqualToZero(locRect)) {
-            locRect.width = sender.width;
-            locRect.height = sender.height;
-        }
-        _t._originalTexture = sender;
-
-        _t.texture = sender;
-        _t.setTextureRect(locRect, _t._rectRotated);
-
-        //set the texture's color after the it loaded
-        var locColor = this._displayedColor;
-        if(locColor.r != 255 || locColor.g != 255 || locColor.b != 255)
-            _t._changeTextureColor();
-
-        // by default use "Self Render".
-        // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
-        _t.batchNode = _t._batchNode;
-        _t.dispatchEvent("load");
     };
 
     _p.setTextureRect = function (rect, rotated, untrimmedSize) {
@@ -1055,7 +994,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     _p.updateTransform = function () {
         var _t = this;
-        //cc.assert(_t._batchNode, "updateTransform is only valid when cc.Sprite is being rendered using an cc.SpriteBatchNode");
 
         // re-calculate matrix only if it is dirty
         if (_t.dirty) {
@@ -1093,23 +1031,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         //cc.Node already sets isReorderChildDirty_ so this needs to be after batchNode check
         cc.Node.prototype.addChild.call(this, child, localZOrder, tag);
         this._hasChildren = true;
-    };
-
-    _p.setOpacity = function (opacity) {
-        cc.Node.prototype.setOpacity.call(this, opacity);
-        this._setNodeDirtyForCache();
-    };
-
-    _p.updateDisplayedColor = function (parentColor) {
-        var _t = this;
-        cc.Node.prototype.updateDisplayedColor.call(_t, parentColor);
-        var oColor = _t._oldDisplayColor;
-        var nColor = _t._displayedColor;
-        if (oColor.r === nColor.r && oColor.g === nColor.g && oColor.b === nColor.b)
-            return;
-
-        _t._changeTextureColor();
-        _t._setNodeDirtyForCache();
     };
 
     _p.setSpriteFrame = function (newFrame) {
@@ -1160,12 +1081,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         }
     };
 
-    _p.isFrameDisplayed = function (frame) {  //TODO there maybe has a bug
-        if (frame.getTexture() != this._texture)
-            return false;
-        return cc.rectEqualToRect(frame.getRect(), this._rect);
-    };
-
     _p.setBatchNode = function (spriteBatchNode) {
         var _t = this;
         _t._batchNode = spriteBatchNode; // weak reference
@@ -1180,35 +1095,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             // using batch
             _t._transformToBatch = cc.affineTransformIdentity();
             _t.textureAtlas = _t._batchNode.textureAtlas; // weak ref
-        }
-    };
-
-    _p.setTexture = function (texture) {
-        var _t = this;
-        if(texture && (cc.isString(texture))){
-            texture = cc.textureCache.addImage(texture);
-            _t.setTexture(texture);
-            //TODO
-            var size = texture.getContentSize();
-            _t.setTextureRect(cc.rect(0,0, size.width, size.height));
-            //If image isn't loaded. Listen for the load event.
-            if(!texture._isLoaded){
-                texture.addEventListener("load", function(){
-                    var size = texture.getContentSize();
-                    _t.setTextureRect(cc.rect(0,0, size.width, size.height));
-                }, this);
-            }
-            return;
-        }
-
-        // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
-        cc.assert(!texture || texture instanceof cc.Texture2D, cc._LogInfos.CCSpriteBatchNode_setTexture);
-
-        if (_t._texture != texture) {
-            if (texture && texture.getHtmlElementObj() instanceof  HTMLImageElement) {
-                _t._originalTexture = texture;
-            }
-            _t._texture = texture;
         }
     };
 

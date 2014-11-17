@@ -44,6 +44,31 @@ cc.Sprite.CanvasRenderCmd = function(renderable){
 cc.Sprite.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
 cc.Sprite.CanvasRenderCmd.prototype.constructor = cc.Sprite.CanvasRenderCmd;
 
+cc.Sprite.CanvasRenderCmd.prototype.init = function(){
+};
+
+cc.Sprite.CanvasRenderCmd.prototype._setTexture = function(texture){
+    var node = this._node;
+    if (node._texture != texture) {
+        if (texture && texture.getHtmlElementObj() instanceof  HTMLImageElement) {
+            this._originalTexture = texture;
+        }
+        node._texture = texture;
+    }
+};
+
+cc.Sprite.CanvasRenderCmd.prototype._updateColor = function(){
+    this.setDirtyFlag(cc.Node._dirtyFlags.colorDirty|cc.Node._dirtyFlags.opacityDirty);
+};
+
+cc.Sprite.CanvasRenderCmd.prototype.isFrameDisplayed = function(frame){
+    //TODO there maybe has a bug
+    var node = this._node;
+    if (frame.getTexture() != node._texture)
+        return false;
+    return cc.rectEqualToRect(frame.getRect(), node._rect);
+};
+
 cc.Sprite.CanvasRenderCmd.prototype.updateBlendFunc = function(blendFunc){
     this._blendFuncStr = cc.Node.CanvasRenderCmd._getCompositeOperationByBlendFunc(blendFunc);
 };
@@ -226,8 +251,13 @@ cc.Sprite.CanvasRenderCmd.prototype._changeTextureColor = function(){
 };
 
 cc.Sprite.CanvasRenderCmd.prototype.getQuad = function(){
-    //throw an error.
+    //throw an error. it doesn't support this function.
     return null;
+};
+
+cc.Sprite.CanvasRenderCmd.prototype._updateDisplayColor = function(parentColor){
+    cc.Node.CanvasRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
+    this._changeTextureColor();
 };
 
 cc.Sprite.CanvasRenderCmd.prototype._spriteFrameLoadedCallback = function(spriteFrame){
@@ -235,10 +265,40 @@ cc.Sprite.CanvasRenderCmd.prototype._spriteFrameLoadedCallback = function(sprite
     _t.setNodeDirty(true);
     _t.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
 
+    //TODO change
     var curColor = _t.getColor();
     if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
         _t._changeTextureColor();
 
+    _t.dispatchEvent("load");
+};
+
+cc.Sprite.CanvasRenderCmd.prototype._textureLoadedCallback = function (sender) {
+    var _t = this;
+    if(_t._textureLoaded)
+        return;
+
+    _t._textureLoaded = true;
+    var locRect = _t._rect, locRenderCmd = this._renderCmd;
+    if (!locRect) {
+        locRect = cc.rect(0, 0, sender.width, sender.height);
+    } else if (cc._rectEqualToZero(locRect)) {
+        locRect.width = sender.width;
+        locRect.height = sender.height;
+    }
+    locRenderCmd._originalTexture = sender;
+
+    _t.texture = sender;
+    _t.setTextureRect(locRect, _t._rectRotated);
+
+    //set the texture's color after the it loaded
+    var locColor = locRenderCmd._displayedColor;
+    if(locColor.r != 255 || locColor.g != 255 || locColor.b != 255)
+        _t._changeTextureColor();
+
+    // by default use "Self Render".
+    // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
+    _t.setBatchNode(_t._batchNode);
     _t.dispatchEvent("load");
 };
 
@@ -430,14 +490,53 @@ cc.Sprite.WebGLRenderCmd.prototype.updateBlendFunc = function(blendFunc){
     //do nothing
 };
 
+cc.Sprite.WebGLRenderCmd.prototype.isFrameDisplayed = function(frame){
+    var node = this._node;
+    return (cc.rectEqualToRect(frame.getRect(), node._rect) && frame.getTexture().getName() == node._texture.getName()
+        && cc.pointEqualToPoint(frame.getOffset(), node._unflippedOffsetPositionFromCenter));
+};
+
+cc.Sprite.WebGLRenderCmd.prototype.init = function(){
+    var tempColor = {r: 255, g: 255, b: 255, a: 255}, quad = this._quad;
+    quad.bl.colors = tempColor;
+    quad.br.colors = tempColor;
+    quad.tl.colors = tempColor;
+    quad.tr.colors = tempColor;
+    this._quadDirty = true;
+};
+
 cc.Sprite.WebGLRenderCmd.prototype.getQuad = function(){
     return this. _quad;
 };
 
-cc.Sprite.WebGLRenderCmd.prototype.getQuad._spriteFrameLoadedCallback = function(spriteFrame){
+cc.Sprite.WebGLRenderCmd.prototype._spriteFrameLoadedCallback = function(spriteFrame){
     this.setNodeDirty(true);
     this.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
     this.dispatchEvent("load");
+};
+
+cc.Sprite.WebGLRenderCmd.prototype._textureLoadedCallback = function (sender) {
+    var _t = this;
+    if(_t._textureLoaded)
+        return;
+
+    _t._textureLoaded = true;
+    var locRect = _t._rect, renderCmd = this._renderCmd;
+    if (!locRect) {
+        locRect = cc.rect(0, 0, sender.width, sender.height);
+    } else if (cc._rectEqualToZero(locRect)) {
+        locRect.width = sender.width;
+        locRect.height = sender.height;
+    }
+
+    _t.texture = sender;
+    _t.setTextureRect(locRect, _t._rectRotated);
+
+    // by default use "Self Render".
+    // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
+    _t.batchNode = _t._batchNode;
+    renderCmd._quadDirty = true;
+    _t.dispatchEvent("load");
 };
 
 cc.Sprite.WebGLRenderCmd.prototype._setTextureCoords = function (rect) {
@@ -522,6 +621,16 @@ cc.Sprite.WebGLRenderCmd.prototype._setTextureCoords = function (rect) {
     this._quadDirty = true;
 };
 
+cc.Sprite.WebGLRenderCmd.prototype._updateDisplayColor = function(parentColor){
+    cc.Node.WebGLRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
+    this._updateColor();
+};
+
+cc.Sprite.WebGLRenderCmd.prototype._updateDisplayOpacity = function(parentOpacity){
+    cc.Node.WebGLRenderCmd.prototype._updateDisplayOpacity.call(this, parentOpacity);
+    this._updateColor();
+};
+
 cc.Sprite.WebGLRenderCmd.prototype._updateColor = function () {
     var locDisplayedColor = this._displayedColor, locDisplayedOpacity = this._displayedOpacity;
     var color4 = {r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: locDisplayedOpacity};
@@ -550,6 +659,43 @@ cc.Sprite.WebGLRenderCmd.prototype._updateColor = function () {
     // self render
     // do nothing
     this._quadDirty = true;
+};
+
+cc.Sprite.WebGLRenderCmd.prototype._updateBlendFunc = function(){
+    if(this._batchNode){
+        cc.log(cc._LogInfos.Sprite__updateBlendFunc);
+        return;
+    }
+
+    // it's possible to have an untextured sprite
+    if (!this._texture || !this._texture.hasPremultipliedAlpha()) {
+        this._blendFunc.src = cc.SRC_ALPHA;
+        this._blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
+        this.opacityModifyRGB = false;
+    } else {
+        this._blendFunc.src = cc.BLEND_SRC;
+        this._blendFunc.dst = cc.BLEND_DST;
+        this.opacityModifyRGB = true;
+    }
+};
+
+cc.Sprite.WebGLRenderCmd.prototype._setTexture = function(texture){
+    var node = this._node;
+    // If batchnode, then texture id should be the same
+    if(node._batchNode && node._batchNode.texture != texture) {
+        cc.log(cc._LogInfos.Sprite_setTexture);
+        return;
+    }
+
+    if (texture)
+        node.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+    else
+        node.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_COLOR);
+
+    if (!node._batchNode && node._texture != texture) {
+        node._texture = texture;
+        this._updateBlendFunc();
+    }
 };
 
 cc.Sprite.WebGLRenderCmd.prototype.rendering = function (ctx) {
