@@ -665,13 +665,13 @@ cc.loader = /** @lends cc.loader# */{
                 xhr.setRequestHeader("Accept-Charset", "utf-8");
                 xhr.onreadystatechange = function () {
                     if(xhr.readyState == 4)
-                        xhr.status == 200 ? cb(null, xhr.responseText) : cb(errInfo);
+                        xhr.status < 400 ? cb(null, xhr.responseText) : cb(errInfo);
                 };
             } else {
                 if (xhr.overrideMimeType) xhr.overrideMimeType("text\/plain; charset=utf-8");
                 xhr.onload = function () {
                     if(xhr.readyState == 4)
-                        xhr.status == 200 ? cb(null, xhr.responseText) : cb(errInfo);
+                        xhr.status < 400 ? cb(null, xhr.responseText) : cb(errInfo);
                 };
             }
             xhr.send(null);
@@ -693,7 +693,7 @@ cc.loader = /** @lends cc.loader# */{
                 if (xhr.overrideMimeType) xhr.overrideMimeType("text\/plain; charset=utf-8");
             }
             xhr.send(null);
-            if (!xhr.readyState == 4 || xhr.status != 200) {
+            if (!xhr.readyState == 4 || xhr.status >= 400) {
                 return null;
             }
             return xhr.responseText;
@@ -714,7 +714,7 @@ cc.loader = /** @lends cc.loader# */{
                 window.msg = arrayBuffer;
             }
             if(xhr.readyState == 4)
-                xhr.status == 200 ? cb(null, xhr.response) : cb("load " + url + " failed!");
+                xhr.status < 400 ? cb(null, xhr.response) : cb("load " + url + " failed!");
         };
 
         xhr.send(null);
