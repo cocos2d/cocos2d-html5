@@ -109,19 +109,19 @@
     }
 
     if(cc.sys.isMobile){
-        cc.__audioSuppor = supportTable[cc.sys.browserType] || supportTable["common"];
+        cc.__audioSupport = supportTable[cc.sys.browserType] || supportTable["common"];
     }else{
         //Desktop support all
-        cc.__audioSuppor = supportTable["common"];
+        cc.__audioSupport = supportTable["common"];
     }
 
     if(DEBUG){
         setTimeout(function(){
             cc.log("browse type: " + sys.browserType);
             cc.log("browse version: " + version);
-            cc.log("multichannel: " + cc.__audioSuppor.multichannel);
-            cc.log("webAudio: " + cc.__audioSuppor.webAudio);
-            cc.log("auto: " + cc.__audioSuppor.auto);
+            cc.log("multichannel: " + cc.__audioSupport.multichannel);
+            cc.log("webAudio: " + cc.__audioSupport.webAudio);
+            cc.log("auto: " + cc.__audioSupport.auto);
         }, 0);
     }
 
@@ -925,4 +925,4 @@ cc.Audio = cc.Class.extend({
     });
 
 
-})(cc.__audioSuppor);
+})(cc.__audioSupport);
