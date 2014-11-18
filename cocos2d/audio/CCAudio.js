@@ -225,7 +225,7 @@ cc.Audio = cc.Class.extend({
             return;
         }
         if(!this._pause && cs){
-            if(this._currentTime + this._context.currentTime - this._startTime < this._currentSource.buffer.duration < 0)
+            if(this._currentTime + this._context.currentTime - this._startTime < this._currentSource.buffer.duration)
                 return;
             else
                 this._stopOfWebAudio();
