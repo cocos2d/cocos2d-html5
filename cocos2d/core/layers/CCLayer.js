@@ -86,7 +86,24 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         return this._isBaked;
     },
 
-    visit: null
+    /**
+     * @function
+     */
+    visit: function(){
+        this._renderCmd.visit();
+    },
+
+    addChild: function(child, localZOrder, tag){
+        cc.Node.prototype.addChild.call(this, child, localZOrder, tag);
+        this._renderCmd._bakeForAddChild(child);
+    },
+
+    _createRenderCmd: function(){
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new cc.Layer.CanvasRenderCmd(this);
+        else
+            return new cc.Layer.WebGLRenderCmd(this);
+    }
 });
 
 /**
@@ -98,43 +115,6 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
 cc.Layer.create = function () {
     return new cc.Layer();
 };
-
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-    var p = cc.Layer.prototype;
-    p.addChild = function(child, localZOrder, tag){
-        cc.Node.prototype.addChild.call(this, child, localZOrder, tag);
-        if(child._parent == this && this._isBaked)
-            child._setCachedParent(this);
-    };
-
-    p._getBoundingBoxForBake = function () {
-        var rect = null;
-
-        //query child's BoundingBox
-        if (!this._children || this._children.length === 0)
-            return cc.rect(0, 0, 10, 10);
-
-        var locChildren = this._children;
-        for (var i = 0; i < locChildren.length; i++) {
-            var child = locChildren[i];
-            if (child && child._visible) {
-                if(rect){
-                    var childRect = child._getBoundingBoxToCurrentNode();
-                    if (childRect)
-                        rect = cc.rectUnion(rect, childRect);
-                }else{
-                    rect = child._getBoundingBoxToCurrentNode();
-                }
-            }
-        }
-        return rect;
-    };
-    p = null;
-}else{
-    cc.assert(cc.isFunction(cc._tmp.LayerDefineForWebGL), cc._LogInfos.MissingFile, "CCLayerWebGL.js");
-    cc._tmp.LayerDefineForWebGL();
-    delete cc._tmp.LayerDefineForWebGL;
-}
 
 /**
  * <p>
@@ -228,7 +208,11 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {Number} [width=]
      * @param {Number} [height=]
      */
-    ctor: null,
+    ctor: function(color, width, height){
+        cc.Layer.prototype.ctor.call(this);
+        this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        cc.LayerColor.prototype.init.call(this, color, width, height);
+    },
 
     /**
      * Initialization of the layer, please do not call this function by yourself, you should pass the parameters to constructor to initialize a layer
@@ -277,11 +261,19 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
             _t._blendFuncStr = cc.Node.CanvasRenderCmd._getCompositeOperationByBlendFunc(locBlendFunc);
     },
 
-    _setWidth: null,
+    _setWidth: function(width){
+        this._renderCmd._updateSquareVerticesWidth(width);
+        cc.Node.prototype._setWidth.call(this, width);
+    },
 
-    _setHeight: null,
+    _setHeight: function(height){
+        this._renderCmd._updateSquareVerticesHeight(height);
+        cc.Node.prototype._setHeight.call(this, height);
+    },
 
-    _updateColor: null,
+    _updateColor: function(){
+        this._renderCmd._updateColor();
+    },
 
     updateDisplayedColor: function (parentColor) {
         cc.Layer.prototype.updateDisplayedColor.call(this, parentColor);
@@ -300,7 +292,14 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
             return new cc.LayerColor.WebGLRenderCmd(this);
     },
 
-    draw: null
+    draw: function(){
+        this._renderCmd.draw();
+    },
+
+    setContentSize: function(size, height){
+        this._renderCmd._updataSquareVertices();
+        cc.Layer.prototype.setContentSize.call(this, size, height);
+    }
 });
 
 /**
@@ -316,139 +315,12 @@ cc.LayerColor.create = function (color, width, height) {
     return new cc.LayerColor(color, width, height);
 };
 
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-    //cc.LayerColor define start
-    var _p = cc.LayerColor.prototype;
-    _p.ctor = function (color, width, height) {
-        cc.Layer.prototype.ctor.call(this);
-        this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-        cc.LayerColor.prototype.init.call(this, color, width, height);
-    };
-    _p._setWidth = function(width){
-        cc.Node.prototype._setWidth.call(this, width);
-    };
-    _p._setHeight = function(height){
-        cc.Node.prototype._setHeight.call(this, height);
-    };
-    _p._updateColor = function () {
-        var locCmd = this._renderCmd;
-        if(!locCmd || !locCmd._color)
-            return;
-        var locColor = this._displayedColor;
-        locCmd._color.r = locColor.r;
-        locCmd._color.g = locColor.g;
-        locCmd._color.b = locColor.b;
-        locCmd._color.a = this._displayedOpacity / 255;
-    };
-
-    _p._bakeRendering = function(){
-        if(this._cacheDirty){
-            var _t = this;
-            var locBakeSprite = _t._bakeSprite, children = this._children;
-            var len = children.length, i;
-
-            //compute the bounding box of the bake layer.
-            var boundingBox = this._getBoundingBoxForBake();
-            boundingBox.width = 0 | boundingBox.width;
-            boundingBox.height = 0 | boundingBox.height;
-            var bakeContext = locBakeSprite.getCacheContext();
-            locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
-            var anchor = locBakeSprite.getAnchorPointInPoints(), locPos = this._position;
-            if(this._ignoreAnchorPointForPosition){
-                bakeContext.translate(0 - boundingBox.x + locPos.x, boundingBox.height + boundingBox.y - locPos.y);
-                //reset the bake sprite's position
-                locBakeSprite.setPosition(anchor.x + boundingBox.x - locPos.x, anchor.y + boundingBox.y - locPos.y);
-            } else {
-                var selfAnchor = this.getAnchorPointInPoints();
-                var selfPos = {x: locPos.x - selfAnchor.x, y: locPos.y - selfAnchor.y};
-                bakeContext.translate(0 - boundingBox.x + selfPos.x, boundingBox.height + boundingBox.y - selfPos.y);
-                locBakeSprite.setPosition(anchor.x + boundingBox.x - selfPos.x, anchor.y + boundingBox.y - selfPos.y);
-            }
-            //  invert
-            var t = cc.affineTransformInvert(this._transformWorld);
-            bakeContext.transform(t.a, t.c, t.b, t.d, t.tx, -t.ty);
-
-            var child;
-            cc.renderer._turnToCacheMode(this.__instanceId);
-            //visit for canvas
-            if (len > 0) {
-                _t.sortAllChildren();
-                // draw children zOrder < 0
-                for (i = 0; i < len; i++) {
-                    child = children[i];
-                    if (child._localZOrder < 0)
-                        child.visit(bakeContext);
-                    else
-                        break;
-                }
-                if(_t._renderCmd)
-                    cc.renderer.pushRenderCommand(_t._renderCmd);
-                for (; i < len; i++) {
-                    children[i].visit(bakeContext);
-                }
-            } else
-            if(_t._renderCmd)
-                cc.renderer.pushRenderCommand(_t._renderCmd);
-            cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
-            locBakeSprite.transform();
-            this._cacheDirty = false;
-        }
-    };
-
-    //for bake
-    _p.visit = function(ctx){
-        if(!this._isBaked){
-            cc.Node.prototype.visit.call(this, ctx);
-            return;
-        }
-
-        var context = ctx || cc._renderContext;
-        var _t = this;
-        // quick return if not visible
-        if (!_t._visible)
-            return;
-
-        _t.transform(context);
-
-        if(_t._bakeRenderCmd)
-            cc.renderer.pushRenderCommand(_t._bakeRenderCmd);
-
-        //the bakeSprite is drawing
-        this._bakeSprite.visit(context);
-    };
-
-    _p._getBoundingBoxForBake = function () {
-        //default size
-        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
-        var trans = this.getNodeToWorldTransform();
-        rect = cc.rectApplyAffineTransform(rect, this.getNodeToWorldTransform());
-
-        //query child's BoundingBox
-        if (!this._children || this._children.length === 0)
-            return rect;
-
-        var locChildren = this._children;
-        for (var i = 0; i < locChildren.length; i++) {
-            var child = locChildren[i];
-            if (child && child._visible) {
-                var childRect = child._getBoundingBoxToCurrentNode(trans);
-                rect = cc.rectUnion(rect, childRect);
-            }
-        }
-        return rect;
-    };
-
-    //cc.LayerColor define end
-    _p = null;
-} else {
-    cc.assert(cc.isFunction(cc._tmp.WebGLLayerColor), cc._LogInfos.MissingFile, "CCLayerWebGL.js");
-    cc._tmp.WebGLLayerColor();
-    delete cc._tmp.WebGLLayerColor;
-}
-
-cc.assert(cc.isFunction(cc._tmp.PrototypeLayerColor), cc._LogInfos.MissingFile, "CCLayerPropertyDefine.js");
-cc._tmp.PrototypeLayerColor();
-delete cc._tmp.PrototypeLayerColor;
+//LayerColor - Getter Setter
+(function(){
+    var proto = cc.LayerColor.prototype;
+    cc.defineGetterSetter(proto, "width", proto._getWidth, proto._setWidth);
+    cc.defineGetterSetter(proto, "height", proto._getHeight, proto._setHeight);
+})();
 
 /**
  * <p>
@@ -674,9 +546,13 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             return new cc.LayerGradient.WebGLRenderCmd(this);
     },
 
-    _draw: null,
+    _draw: function(){
+        cc.LayerColor.prototype.draw.call(this);
+    },
 
-    _updateColor: null
+    _updateColor: function(){
+        this._renderCmd._updateColor();
+    }
 });
 
 /**
@@ -691,38 +567,26 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 cc.LayerGradient.create = function (start, end, v) {
     return new cc.LayerGradient(start, end, v);
 };
-
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-    //cc.LayerGradient define start
-    var _p = cc.LayerGradient.prototype;
-    _p._updateColor = function () {
-        var _t = this;
-        var locAlongVector = _t._alongVector, tWidth = _t.width * 0.5, tHeight = _t.height * 0.5;
-
-        var locCmd = this._renderCmd;
-        locCmd._startPoint.x = tWidth * (-locAlongVector.x) + tWidth;
-        locCmd._startPoint.y = tHeight * locAlongVector.y - tHeight;
-        locCmd._endPoint.x = tWidth * locAlongVector.x + tWidth;
-        locCmd._endPoint.y = tHeight * (-locAlongVector.y) - tHeight;
-
-        var locStartColor = this._displayedColor, locEndColor = this._endColor, opacity = this._displayedOpacity / 255;
-        var startOpacity = this._startOpacity, endOpacity = this._endOpacity;
-        locCmd._startStopStr = "rgba(" + Math.round(locStartColor.r) + "," + Math.round(locStartColor.g) + ","
-            + Math.round(locStartColor.b) + "," + startOpacity.toFixed(4) + ")";
-        locCmd._endStopStr = "rgba(" + Math.round(locEndColor.r) + "," + Math.round(locEndColor.g) + ","
-            + Math.round(locEndColor.b) + "," + endOpacity.toFixed(4) + ")";
-    };
-    //cc.LayerGradient define end
-    _p = null;
-} else {
-    cc.assert(cc.isFunction(cc._tmp.WebGLLayerGradient), cc._LogInfos.MissingFile, "CCLayerWebGL.js");
-    cc._tmp.WebGLLayerGradient();
-    delete cc._tmp.WebGLLayerGradient;
-}
-
-cc.assert(cc.isFunction(cc._tmp.PrototypeLayerGradient), cc._LogInfos.MissingFile, "CCLayerPropertyDefine.js");
-cc._tmp.PrototypeLayerGradient();
-delete cc._tmp.PrototypeLayerGradient;
+//LayerGradient - Getter Setter
+(function(){
+    var proto = cc.LayerGradient.prototype;
+    // Extended properties
+    /** @expose */
+    proto.startColor;
+    cc.defineGetterSetter(proto, "startColor", proto.getStartColor, proto.setStartColor);
+    /** @expose */
+    proto.endColor;
+    cc.defineGetterSetter(proto, "endColor", proto.getEndColor, proto.setEndColor);
+    /** @expose */
+    proto.startOpacity;
+    cc.defineGetterSetter(proto, "startOpacity", proto.getStartOpacity, proto.setStartOpacity);
+    /** @expose */
+    proto.endOpacity;
+    cc.defineGetterSetter(proto, "endOpacity", proto.getEndOpacity, proto.setEndOpacity);
+    /** @expose */
+    proto.vector;
+    cc.defineGetterSetter(proto, "vector", proto.getVector, proto.setVector);
+})();
 
 /**
  * CCMultipleLayer is a CCLayer with the ability to multiplex it's children.<br/>

@@ -182,7 +182,7 @@ cc.Sprite.CanvasRenderCmd.prototype.rendering = function (ctx, scaleX, scaleY) {
         } else {
             contentSize = node._contentSize;
             if (locTextureCoord.validRect) {
-                curColor = node._displayedColor;
+                curColor = this._displayedColor;
                 context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
                 context.fillRect(locX * scaleX, locY * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
             }
@@ -230,7 +230,7 @@ cc.Sprite.CanvasRenderCmd.prototype.rendering = function (ctx, scaleX, scaleY) {
         } else {
             contentSize = node._contentSize;
             if (locTextureCoord.validRect) {
-                curColor = node._displayedColor;
+                curColor = this._displayedColor;
                 context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
                 context.fillRect((t.tx + locX) * scaleX, (-t.ty + locY) * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
             }
