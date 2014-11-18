@@ -488,7 +488,16 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @function
      * @param {cc.Color} fillColor The fill color of the label
      */
-    setFontFillColor: null,
+    setFontFillColor: function (fillColor) {
+        var locTextFillColor = this._textFillColor;
+        if (locTextFillColor.r != fillColor.r || locTextFillColor.g != fillColor.g || locTextFillColor.b != fillColor.b) {
+            locTextFillColor.r = fillColor.r;
+            locTextFillColor.g = fillColor.g;
+            locTextFillColor.b = fillColor.b;
+            this._setColorsString();
+            this._needUpdateTexture = true;
+        }
+    },
 
     _getFillStyle: function () {
         return this._textFillColor;
@@ -757,11 +766,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     var _p = cc.LabelTTF.prototype;
 
-    _p.setColor = function (color3) {
-        cc.Node.prototype.setColor.call(this, color3);
-        this._renderCmd._setColorsString();
-    };
-
     _p._transformForRenderer = function(){
         if (this._needUpdateTexture) {
             this._needUpdateTexture = false;
@@ -778,18 +782,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         this.string = text;
 
         return true;
-    };
-
-    _p.setFontFillColor = function (tintColor) {
-        var locTextFillColor = this._textFillColor;
-        if (locTextFillColor.r != tintColor.r || locTextFillColor.g != tintColor.g || locTextFillColor.b != tintColor.b) {
-            locTextFillColor.r = tintColor.r;
-            locTextFillColor.g = tintColor.g;
-            locTextFillColor.b = tintColor.b;
-
-            this._renderCmd._setColorsString();
-            this._setUpdateTextureDirty();
-        }
     };
 
     _p = null;

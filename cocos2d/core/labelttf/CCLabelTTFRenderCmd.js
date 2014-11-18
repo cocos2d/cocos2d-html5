@@ -372,3 +372,11 @@ cc.LabelTTF.WebGLRenderCmd = function(renderable){
 cc.LabelTTF.WebGLRenderCmd.prototype = Object.create(cc.Sprite.WebGLRenderCmd.prototype);
 cc.LabelTTF.WebGLRenderCmd.prototype.constructor = cc.LabelTTF.WebGLRenderCmd;
 cc.inject(cc.LabelTTF.RenderCmd.prototype, cc.LabelTTF.WebGLRenderCmd.prototype);     //multi-inherit
+
+cc.LabelTTF.WebGLRenderCmd.prototype._setColorsString = function(){
+    this._needUpdateTexture = true;
+    var locStrokeColor = this._strokeColor, locFontFillColor = this._textFillColor;
+    this._shadowColorStr = "rgba(128,128,128," + this._shadowOpacity + ")";
+    this._fillColorStr = "rgba(" + (0 | locFontFillColor.r) + "," + (0 | locFontFillColor.g) + "," + (0 | locFontFillColor.b) + ", 1)";
+    this._strokeColorStr = "rgba(" + (0 | locStrokeColor.r) + "," + (0 | locStrokeColor.g) + "," + (0 | locStrokeColor.b) + ", 1)";
+};

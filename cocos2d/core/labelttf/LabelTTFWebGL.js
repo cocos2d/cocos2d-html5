@@ -27,8 +27,6 @@
 cc._tmp.WebGLLabelTTF = function () {
     var _p = cc.LabelTTF.prototype;
 
-    _p.setColor = cc.Sprite.prototype.setColor;
-
     _p._transformForRenderer = function(){
         if (this._needUpdateTexture) {
             this._needUpdateTexture = false;
@@ -36,20 +34,6 @@ cc._tmp.WebGLLabelTTF = function () {
         }
         cc.Node.prototype._transformForRenderer.call(this);
     };
-
-    _p._setColorsString = function () {
-        this._needUpdateTexture = true;
-        var locStrokeColor = this._strokeColor, locFontFillColor = this._textFillColor;
-        this._shadowColorStr = "rgba(128,128,128," + this._shadowOpacity + ")";
-        this._fillColorStr = "rgba(" + (0 | locFontFillColor.r) + "," + (0 | locFontFillColor.g) + "," + (0 | locFontFillColor.b) + ", 1)";
-        this._strokeColorStr = "rgba(" + (0 | locStrokeColor.r) + "," + (0 | locStrokeColor.g) + "," + (0 | locStrokeColor.b) + ", 1)";
-    };
-
-    _p.updateDisplayedColor = cc.Sprite.prototype.updateDisplayedColor;
-
-    _p.setOpacity = cc.Sprite.prototype.setOpacity;
-
-    _p.updateDisplayedOpacity = cc.Sprite.prototype.updateDisplayedOpacity;
 
     _p.initWithStringAndTextDefinition = function (text, textDefinition) {
         if (!cc.Sprite.prototype.init.call(this))
@@ -65,16 +49,5 @@ cc._tmp.WebGLLabelTTF = function () {
         this.string = text;
 
         return true;
-    };
-
-    _p.setFontFillColor = function (tintColor) {
-        var locTextFillColor = this._textFillColor;
-        if (locTextFillColor.r != tintColor.r || locTextFillColor.g != tintColor.g || locTextFillColor.b != tintColor.b) {
-            locTextFillColor.r = tintColor.r;
-            locTextFillColor.g = tintColor.g;
-            locTextFillColor.b = tintColor.b;
-            this._setColorsString();
-            this._needUpdateTexture = true;
-        }
     };
 };
