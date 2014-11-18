@@ -218,7 +218,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
         //draw to cache canvas
         this._cacheContext.clearRect(0, 0, sizeInPixels.width, -sizeInPixels.height);
-        cc.renderer._renderingToCacheCanvas(this._cacheContext, this.__instanceId);
+        cc.renderer._renderingToCacheCanvas(this._cacheContext, this.__instanceId, locScaleFactor, locScaleFactor);
 
         if(contentSizeChanged)
             this._cacheSprite.setTextureRect(cc.rect(0,0, size.width, size.height));

@@ -491,7 +491,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         //cc._renderContext = cc._mainRenderContextBackup;
         //cc.view._resetScale();
 
-        cc.renderer._renderingToCacheCanvas(this._cacheContext, this.__instanceId);
+        var scale = cc.contentScaleFactor();
+        cc.renderer._renderingToCacheCanvas(this._cacheContext, this.__instanceId, scale, scale);
 
         //TODO
         /*//restore viewport

@@ -25,7 +25,6 @@
  ****************************************************************************/
 
 cc._tmp.WebGLLabelTTF = function () {
-
     var _p = cc.LabelTTF.prototype;
 
     _p.setColor = cc.Sprite.prototype.setColor;
@@ -78,54 +77,4 @@ cc._tmp.WebGLLabelTTF = function () {
             this._needUpdateTexture = true;
         }
     };
-
-    _p.draw = function (ctx) {
-        if (!this._string || this._string == "")
-            return;
-
-        var gl = ctx || cc._renderContext, locTexture = this._texture;
-
-        if (locTexture && locTexture._isLoaded) {
-            this._shaderProgram.use();
-            this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
-
-            cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-            cc.glBindTexture2D(locTexture);
-
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
-            if (this._quadDirty) {
-                gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.STATIC_DRAW);
-                this._quadDirty = false;
-            }
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-        }
-
-        if (cc.SPRITE_DEBUG_DRAW === 1) {
-            // draw bounding box
-            var locQuad = this._quad;
-            var verticesG1 = [
-                cc.p(locQuad.tl.vertices.x, locQuad.tl.vertices.y),
-                cc.p(locQuad.bl.vertices.x, locQuad.bl.vertices.y),
-                cc.p(locQuad.br.vertices.x, locQuad.br.vertices.y),
-                cc.p(locQuad.tr.vertices.x, locQuad.tr.vertices.y)
-            ];
-            cc._drawingUtil.drawPoly(verticesG1, 4, true);
-        } else if (cc.SPRITE_DEBUG_DRAW === 2) {
-            // draw texture box
-            var drawSizeG2 = this.getTextureRect();
-            var offsetPixG2X = this.offsetX, offsetPixG2Y = this.offsetY;
-            var verticesG2 = [cc.p(offsetPixG2X, offsetPixG2Y), cc.p(offsetPixG2X + drawSizeG2.width, offsetPixG2Y),
-                cc.p(offsetPixG2X + drawSizeG2.width, offsetPixG2Y + drawSizeG2.height), cc.p(offsetPixG2X, offsetPixG2Y + drawSizeG2.height)];
-            cc._drawingUtil.drawPoly(verticesG2, 4, true);
-        } // CC_SPRITE_DEBUG_DRAW
-        cc.g_NumberOfDraws++;
-    };
-
-    //TODO: cc.Sprite.prototype._setTextureRectForWebGL
-    _p.setTextureRect = cc.Sprite.prototype.setTextureRect;
 };

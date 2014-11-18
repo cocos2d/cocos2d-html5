@@ -44,8 +44,9 @@ cc.Sprite.CanvasRenderCmd = function(renderable){
 cc.Sprite.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
 cc.Sprite.CanvasRenderCmd.prototype.constructor = cc.Sprite.CanvasRenderCmd;
 
-cc.Sprite.CanvasRenderCmd.prototype.init = function(){
-};
+cc.Sprite.CanvasRenderCmd.prototype._init = function(){};
+
+cc.Sprite.CanvasRenderCmd.prototype._resetForBatchNode = function(){};
 
 cc.Sprite.CanvasRenderCmd.prototype._setTexture = function(texture){
     var node = this._node;
@@ -71,6 +72,36 @@ cc.Sprite.CanvasRenderCmd.prototype.isFrameDisplayed = function(frame){
 
 cc.Sprite.CanvasRenderCmd.prototype.updateBlendFunc = function(blendFunc){
     this._blendFuncStr = cc.Node.CanvasRenderCmd._getCompositeOperationByBlendFunc(blendFunc);
+};
+
+cc.Sprite.CanvasRenderCmd.prototype._setBatchNodeForAddChild = function(child){
+    return true;
+};
+
+cc.Sprite.CanvasRenderCmd.prototype._handleTextureForRotatedTexture = function(texture, rect, rotated){
+    if (rotated && texture.isLoaded()) {
+        var tempElement = texture.getHtmlElementObj();
+        tempElement = cc.Sprite.CanvasRenderCmd._cutRotateImageToCanvas(tempElement, rect);
+        var tempTexture = new cc.Texture2D();
+        tempTexture.initWithElement(tempElement);
+        tempTexture.handleLoadedTexture();
+        texture = tempTexture;
+        this._node._rect = cc.rect(0, 0, rect.width, rect.height);
+    }
+    return texture;
+};
+
+cc.Sprite.CanvasRenderCmd.prototype._checkTextureBoundary = function(texture, rect, rotated){
+    if(texture && texture.url) {
+        var _x = rect.x + rect.width, _y = rect.y + rect.height;
+        if(_x > texture.width){
+            cc.error(cc._LogInfos.RectWidth, texture.url);
+        }
+        if(_y > texture.height){
+            cc.error(cc._LogInfos.RectHeight, texture.url);
+        }
+    }
+    this._node._originalTexture = texture;
 };
 
 cc.Sprite.CanvasRenderCmd.prototype.rendering = function (ctx, scaleX, scaleY) {
@@ -255,6 +286,48 @@ cc.Sprite.CanvasRenderCmd.prototype.getQuad = function(){
     return null;
 };
 
+cc.Sprite.CanvasRenderCmd.prototype._updateForSetSpriteFrame = function(pNewTexture, textureLoaded){
+    var node = this._node;
+    if (node._rectRotated)
+        node._originalTexture = pNewTexture;      //TODO
+    this._colorized = false;
+    this._textureCoord.renderX = this._textureCoord.x;
+    this._textureCoord.renderY = this._textureCoord.y;
+    if (textureLoaded) {
+        var curColor = node.getColor();
+        if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
+            this._changeTextureColor();
+    }
+};
+
+cc.Sprite.CanvasRenderCmd.prototype.updateTransform = function(){
+    var _t = this, node = this._node;
+
+    // re-calculate matrix only if it is dirty
+    if (node.dirty) {
+        // If it is not visible, or one of its ancestors is not visible, then do nothing:
+        var locParent = node._parent;
+        if (!node._visible || ( locParent && locParent != node._batchNode && locParent._shouldBeHidden)) {
+            node._shouldBeHidden = true;
+        } else {
+            node._shouldBeHidden = false;
+
+            if (!locParent || locParent == node._batchNode) {
+                node._transformToBatch = _t.getNodeToParentTransform();
+            } else {
+                //cc.assert(_t._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
+                node._transformToBatch = cc.affineTransformConcat(_t.getNodeToParentTransform(), locParent._transformToBatch);
+            }
+        }
+        node._recursiveDirty = false;
+        node.dirty = false;
+    }
+
+    // recursively iterate over children
+    if (node._hasChildren)
+        node._arrayMakeObjectsPerformSelector(node._children, cc.Node._stateCallbackType.updateTransform);
+};
+
 cc.Sprite.CanvasRenderCmd.prototype._updateDisplayColor = function(parentColor){
     cc.Node.CanvasRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
     this._changeTextureColor();
@@ -300,6 +373,18 @@ cc.Sprite.CanvasRenderCmd.prototype._textureLoadedCallback = function (sender) {
     // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
     _t.setBatchNode(_t._batchNode);
     _t.dispatchEvent("load");
+};
+
+cc.Sprite.CanvasRenderCmd.prototype._setTextureCoords = function(rect, needConvert){
+    if(needConvert === undefined)
+        needConvert = true;
+    var locTextureRect = this._textureCoord,
+        scaleFactor = needConvert ? cc.contentScaleFactor() : 1;
+    locTextureRect.renderX = locTextureRect.x = 0 | (rect.x * scaleFactor);
+    locTextureRect.renderY = locTextureRect.y = 0 | (rect.y * scaleFactor);
+    locTextureRect.width = 0 | (rect.width * scaleFactor);
+    locTextureRect.height = 0 | (rect.height * scaleFactor);
+    locTextureRect.validRect = !(locTextureRect.width === 0 || locTextureRect.height === 0 || locTextureRect.x < 0 || locTextureRect.y < 0);
 };
 
 //TODO need refactor these functions
@@ -490,13 +575,35 @@ cc.Sprite.WebGLRenderCmd.prototype.updateBlendFunc = function(blendFunc){
     //do nothing
 };
 
+cc.Sprite.WebGLRenderCmd.prototype._setBatchNodeForAddChild = function(child){
+    var node = this._node;
+    if (node._batchNode) {
+        if(!(child instanceof cc.Sprite)){
+            cc.log(cc._LogInfos.Sprite_addChild);
+            return false;
+        }
+        if(child.texture._webTextureObj !== node.textureAtlas.texture._webTextureObj)
+            cc.log(cc._LogInfos.Sprite_addChild_2);
+
+        //put it in descendants array of batch node
+        node._batchNode.appendChild(child);
+        if (!node._reorderChildDirty)
+            node._setReorderChildDirtyRecursively();
+    }
+    return true;
+};
+
+cc.Sprite.WebGLRenderCmd.prototype._handleTextureForRotatedTexture = function(){
+     //do nothing.
+};
+
 cc.Sprite.WebGLRenderCmd.prototype.isFrameDisplayed = function(frame){
     var node = this._node;
     return (cc.rectEqualToRect(frame.getRect(), node._rect) && frame.getTexture().getName() == node._texture.getName()
         && cc.pointEqualToPoint(frame.getOffset(), node._unflippedOffsetPositionFromCenter));
 };
 
-cc.Sprite.WebGLRenderCmd.prototype.init = function(){
+cc.Sprite.WebGLRenderCmd.prototype._init = function(){
     var tempColor = {r: 255, g: 255, b: 255, a: 255}, quad = this._quad;
     quad.bl.colors = tempColor;
     quad.br.colors = tempColor;
@@ -505,9 +612,25 @@ cc.Sprite.WebGLRenderCmd.prototype.init = function(){
     this._quadDirty = true;
 };
 
-cc.Sprite.WebGLRenderCmd.prototype.getQuad = function(){
-    return this. _quad;
+cc.Sprite.WebGLRenderCmd.prototype._resetForBatchNode = function(){
+    var node = this._node;
+    var x1 = node._offsetPosition.x;
+    var y1 = node._offsetPosition.y;
+    var x2 = x1 + node._rect.width;
+    var y2 = y1 + node._rect.height;
+    var locQuad = this._quad;
+    locQuad.bl.vertices = {x:x1, y:y1, z:0};
+    locQuad.br.vertices = {x:x2, y:y1, z:0};
+    locQuad.tl.vertices = {x:x1, y:y2, z:0};
+    locQuad.tr.vertices = {x:x2, y:y2, z:0};
+    this._quadDirty = true;
 };
+
+cc.Sprite.WebGLRenderCmd.prototype.getQuad = function(){
+    return this._quad;
+};
+
+cc.Sprite.WebGLRenderCmd.prototype._updateForSetSpriteFrame = function(){};
 
 cc.Sprite.WebGLRenderCmd.prototype._spriteFrameLoadedCallback = function(spriteFrame){
     this.setNodeDirty(true);
@@ -516,12 +639,12 @@ cc.Sprite.WebGLRenderCmd.prototype._spriteFrameLoadedCallback = function(spriteF
 };
 
 cc.Sprite.WebGLRenderCmd.prototype._textureLoadedCallback = function (sender) {
-    var _t = this;
-    if(_t._textureLoaded)
+    var node = this._node;
+    if(node._textureLoaded)
         return;
 
-    _t._textureLoaded = true;
-    var locRect = _t._rect, renderCmd = this._renderCmd;
+    node._textureLoaded = true;
+    var locRect = node._rect;
     if (!locRect) {
         locRect = cc.rect(0, 0, sender.width, sender.height);
     } else if (cc._rectEqualToZero(locRect)) {
@@ -529,18 +652,21 @@ cc.Sprite.WebGLRenderCmd.prototype._textureLoadedCallback = function (sender) {
         locRect.height = sender.height;
     }
 
-    _t.texture = sender;
-    _t.setTextureRect(locRect, _t._rectRotated);
+    node.texture = sender;
+    node.setTextureRect(locRect, node._rectRotated);
 
     // by default use "Self Render".
     // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
-    _t.batchNode = _t._batchNode;
-    renderCmd._quadDirty = true;
-    _t.dispatchEvent("load");
+    node.setBatchNode(node._batchNode);
+    this._quadDirty = true;
+    node.dispatchEvent("load");
 };
 
-cc.Sprite.WebGLRenderCmd.prototype._setTextureCoords = function (rect) {
-    rect = cc.rectPointsToPixels(rect);
+cc.Sprite.WebGLRenderCmd.prototype._setTextureCoords = function (rect, needConvert) {
+    if(needConvert === undefined)
+        needConvert = true;
+    if(needConvert)
+        rect = cc.rectPointsToPixels(rect);
     var node = this._node;
 
     var tex = node._batchNode ? node.textureAtlas.texture : node._texture;
@@ -698,6 +824,111 @@ cc.Sprite.WebGLRenderCmd.prototype._setTexture = function(texture){
     }
 };
 
+cc.Sprite.WebGLRenderCmd.prototype.updateTransform = function () {
+    var _t = this, node = this._node;
+
+    // recalculate matrix only if it is dirty
+    if (node.dirty) {
+        var locQuad = _t._quad, locParent = node._parent;
+        // If it is not visible, or one of its ancestors is not visible, then do nothing:
+        if (!node._visible || ( locParent && locParent != node._batchNode && locParent._shouldBeHidden)) {
+            locQuad.br.vertices = locQuad.tl.vertices = locQuad.tr.vertices = locQuad.bl.vertices = {x: 0, y: 0, z: 0};
+            node._shouldBeHidden = true;
+        } else {
+            node._shouldBeHidden = false;
+
+            if (!locParent || locParent == node._batchNode) {
+                node._transformToBatch = _t.getNodeToParentTransform();
+            } else {
+                //cc.assert(_t._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
+                node._transformToBatch = cc.affineTransformConcat(_t.getNodeToParentTransform(), locParent._transformToBatch);
+            }
+
+            //
+            // calculate the Quad based on the Affine Matrix
+            //
+            var locTransformToBatch = node._transformToBatch;
+            var rect = node._rect;
+            var x1 = node._offsetPosition.x;
+            var y1 = node._offsetPosition.y;
+
+            var x2 = x1 + rect.width;
+            var y2 = y1 + rect.height;
+            var x = locTransformToBatch.tx;
+            var y = locTransformToBatch.ty;
+
+            var cr = locTransformToBatch.a;
+            var sr = locTransformToBatch.b;
+            var cr2 = locTransformToBatch.d;
+            var sr2 = -locTransformToBatch.c;
+            var ax = x1 * cr - y1 * sr2 + x;
+            var ay = x1 * sr + y1 * cr2 + y;
+
+            var bx = x2 * cr - y1 * sr2 + x;
+            var by = x2 * sr + y1 * cr2 + y;
+
+            var cx = x2 * cr - y2 * sr2 + x;
+            var cy = x2 * sr + y2 * cr2 + y;
+
+            var dx = x1 * cr - y2 * sr2 + x;
+            var dy = x1 * sr + y2 * cr2 + y;
+
+            var locVertexZ = _t._vertexZ;
+            if(!cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
+                ax = 0 | ax;
+                ay = 0 | ay;
+                bx = 0 | bx;
+                by = 0 | by;
+                cx = 0 | cx;
+                cy = 0 | cy;
+                dx = 0 | dx;
+                dy = 0 | dy;
+            }
+            locQuad.bl.vertices = {x: ax, y: ay, z: locVertexZ};
+            locQuad.br.vertices = {x: bx, y: by, z: locVertexZ};
+            locQuad.tl.vertices = {x: dx, y: dy, z: locVertexZ};
+            locQuad.tr.vertices = {x: cx, y: cy, z: locVertexZ};
+        }
+        node.textureAtlas.updateQuad(locQuad, _t.atlasIndex);
+        node._recursiveDirty = false;
+        node.dirty = false;
+    }
+
+    // recursively iterate over children
+    if (node._hasChildren)
+        node._arrayMakeObjectsPerformSelector(_t._children, cc.Node._stateCallbackType.updateTransform);
+
+    if (cc.SPRITE_DEBUG_DRAW) {
+        // draw bounding box
+        var vertices = [
+            cc.p(_t._quad.bl.vertices.x, _t._quad.bl.vertices.y),
+            cc.p(_t._quad.br.vertices.x, _t._quad.br.vertices.y),
+            cc.p(_t._quad.tr.vertices.x, _t._quad.tr.vertices.y),
+            cc.p(_t._quad.tl.vertices.x, _t._quad.tl.vertices.y)
+        ];
+        cc._drawingUtil.drawPoly(vertices, 4, true);
+    }
+};
+
+cc.Sprite.WebGLRenderCmd.prototype._checkTextureBoundary = function(texture, rect, rotated){
+    if(texture && texture.url) {
+        var _x, _y;
+        if(rotated){
+            _x = rect.x + rect.height;
+            _y = rect.y + rect.width;
+        }else{
+            _x = rect.x + rect.width;
+            _y = rect.y + rect.height;
+        }
+        if(_x > texture.width){
+            cc.error(cc._LogInfos.RectWidth, texture.url);
+        }
+        if(_y > texture.height){
+            cc.error(cc._LogInfos.RectHeight, texture.url);
+        }
+    }
+};
+
 cc.Sprite.WebGLRenderCmd.prototype.rendering = function (ctx) {
     var _t = this._node;
     if (!_t._textureLoaded || this._displayedOpacity === 0)
@@ -724,7 +955,6 @@ cc.Sprite.WebGLRenderCmd.prototype.rendering = function (ctx) {
             gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);                   //cc.VERTEX_ATTRIB_POSITION
             gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
             gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
-
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         }
     } else {

@@ -22,4 +22,23 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+cc.LabelTTF.CanvasRenderCmd = function(renderable){
+    cc.Sprite.CanvasRenderCmd.call(this, renderable);
+
+    this._fontStyleStr = "";
+    this._shadowColorStr = "rgba(128, 128, 128, 0.5)";
+    this._strokeColorStr = "";
+    this._fillColorStr = "rgba(255,255,255,1)";
+};
+
+cc.LabelTTF.CanvasRenderCmd.prototype = Object.create(cc.Sprite.CanvasRenderCmd.prototype);
+
+// ----------------------------------- LabelTTF WebGL render cmd ----------------------------
+
+cc.LabelTTF.WebGLRenderCmd = function(renderable){
+    cc.Sprite.WebGLRenderCmd.call(this, renderable);
+
+};
+
+cc.LabelTFF.WebGLRenderCmd.prototype = Object.create(cc.Sprite.WebGLRenderCmd.prototype);
 

@@ -95,7 +95,6 @@
             "cocos2d/core/layers/CCLayer.js",
             "cocos2d/core/layers/CCLayerRenderCmd.js",
 
-            "cocos2d/core/sprites/SpritesWebGL.js",
             "cocos2d/core/sprites/SpritesPropertyDefine.js",
             "cocos2d/core/sprites/CCSprite.js",
             "cocos2d/core/sprites/CCSpriteRenderCmd.js",

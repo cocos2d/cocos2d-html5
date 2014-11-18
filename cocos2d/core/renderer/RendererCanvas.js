@@ -58,15 +58,18 @@ cc.rendererCanvas = {
      * drawing all renderer command to cache canvas' context
      * @param {CanvasRenderingContext2D} ctx
      * @param {Number} [instanceID]
+     * @param {Number} [scaleX]
+     * @param {Number} [scaleY]
      */
-    _renderingToCacheCanvas: function (ctx, instanceID) {
+    _renderingToCacheCanvas: function (ctx, instanceID, scaleX, scaleY) {
         if (!ctx)
             cc.log("The context of RenderTexture is invalid.");
-
+        scaleX = cc.isUndefined(scaleX) ? 1 : scaleX;
+        scaleY = cc.isUndefined(scaleY) ? 1 : scaleY;
         instanceID = instanceID || this._currentID;
         var locCmds = this._cacheToCanvasCmds[instanceID], i, len;
         for (i = 0, len = locCmds.length; i < len; i++) {
-            locCmds[i].rendering(ctx, 1, 1);
+            locCmds[i].rendering(ctx, scaleX, scaleY);
         }
         locCmds.length = 0;
         var locIDs = this._cacheInstanceIds;

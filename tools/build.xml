@@ -56,7 +56,6 @@
                 <file name="cocos2d/core/layers/CCLayerWebGL.js"/>
                 <file name="cocos2d/core/layers/CCLayerPropertyDefine.js"/>
                 <file name="cocos2d/core/layers/CCLayer.js"/>
-                <file name="cocos2d/core/sprites/SpritesWebGL.js"/>
                 <file name="cocos2d/core/sprites/SpritesPropertyDefine.js"/>
                 <file name="cocos2d/core/sprites/CCSprite.js"/>
                 <file name="cocos2d/core/sprites/CCBakeSprite.js"/>
