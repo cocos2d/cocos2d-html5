@@ -263,11 +263,6 @@ cc.Node.CanvasRenderCmd.prototype.visit = function(parentCmd){
 };
 
 cc.Node.CanvasRenderCmd.prototype.updateStatus = function(){
-    if(this._dirtyFlag & cc.Node._dirtyFlags.transformDirty){
-        //update the transform
-        this.transform(null, true);
-    }
-
     if(this._dirtyFlag & cc.Node._dirtyFlags.colorDirty){
         //update the color
         this._updateDisplayColor()
@@ -276,6 +271,11 @@ cc.Node.CanvasRenderCmd.prototype.updateStatus = function(){
     if(this._dirtyFlag & cc.Node._dirtyFlags.opacityDirty){
         //update the opacity
         this._updateDisplayOpacity();
+    }
+
+    if(this._dirtyFlag & cc.Node._dirtyFlags.transformDirty){
+        //update the transform
+        this.transform(null, true);
     }
 };
 
