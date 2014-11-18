@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.Node._dirtyFlags = {transformDirty: 1, visibleDirty: 2, colorDirty: 4, opacityDirty: 8, cacheDirty:16, orderDirty:32};
+cc.Node._dirtyFlags = {transformDirty: 1, visibleDirty: 2, colorDirty: 4, opacityDirty: 8, cacheDirty:16, orderDirty:32, textDirty:64};
 
 //-------------------------Base -------------------------
 cc.Node.RenderCmd = function(renderable){

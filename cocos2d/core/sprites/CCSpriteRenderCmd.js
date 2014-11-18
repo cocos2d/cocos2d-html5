@@ -570,6 +570,7 @@ cc.Sprite.WebGLRenderCmd = function(renderable){
 };
 
 cc.Sprite.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd);
+cc.Sprite.WebGLRenderCmd.prototype.constructor = cc.Sprite.WebGLRenderCmd;
 
 cc.Sprite.WebGLRenderCmd.prototype.updateBlendFunc = function(blendFunc){
     //do nothing

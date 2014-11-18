@@ -73,6 +73,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _originalText: null,
     _isMultiLine: false,
     _fontStyleStr: null,                  //TODO move to render cmd
+    _fontClientHeight: 18,
 
     // font shadow
     _shadowEnabled: false,
@@ -536,7 +537,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         var texDef = new cc.FontDefinition();
 
         if (adjustForResolution) {
-            //texDef.fontSize = (cc._renderType === cc._RENDER_TYPE_CANVAS) ? this._fontSize : this._fontSize * cc.contentScaleFactor();
             texDef.fontSize = this._fontSize;
             texDef.boundingWidth = cc.contentScaleFactor() * this._dimensions.width;
             texDef.boundingHeight = cc.contentScaleFactor() * this._dimensions.height;
@@ -575,8 +575,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         texDef.fillStyle = cc.color(locTextFillColor.r, locTextFillColor.g, locTextFillColor.b);
         return texDef;
     },
-
-    _fontClientHeight: 18,
 
     /**
      * Changes the text content of the label
@@ -1008,7 +1006,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 });
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-
     var _p = cc.LabelTTF.prototype;
 
     _p.setColor = function (color3) {
@@ -1052,7 +1049,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         this._setUpdateTextureDirty();
     };
 
-    //TODO: _p._updateDisplayedOpacityForCanvas
     _p.updateDisplayedOpacity = cc.Sprite.prototype.updateDisplayedOpacity;
 
     _p.initWithStringAndTextDefinition = function (text, textDefinition) {
