@@ -512,6 +512,7 @@
             locSquareColors[i].a = locDisplayedOpacity;
         }
         this._bindLayerColorsBufferData();
+        this.setDirtyFlag(cc.Node._dirtyFlags.colorDirty);
     };
 
     proto.draw = function(){

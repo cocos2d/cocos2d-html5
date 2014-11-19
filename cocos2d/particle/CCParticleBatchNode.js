@@ -103,6 +103,8 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         }
         if(cc._renderType === cc._RENDER_TYPE_WEBGL)
             this._renderCmd = new cc.ParticleBatchNode.WebGLRenderCmd(this);
+        else
+            this._renderCmd = new cc.ParticleBatchNode.CanvasRenderCmd(this);
     },
 
     /**
@@ -118,8 +120,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         // no lazy alloc in this node
         this._children.length = 0;
 
-        if (cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+        this._renderCmd._initWithTexture();
         return true;
     },
 
@@ -337,18 +338,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @param {CanvasRenderingContext2D | WebGLRenderingContext} ctx The render context
      */
     draw:function (ctx) {
-        //cc.PROFILER_STOP("CCParticleBatchNode - draw");
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
-            return;
-
-        if (this.textureAtlas.totalQuads == 0)
-            return;
-
-        cc.nodeDrawSetup(this);
-        cc.glBlendFuncForParticle(this._blendFunc.src, this._blendFunc.dst);
-        this.textureAtlas.drawQuads();
-
-        //cc.PROFILER_STOP("CCParticleBatchNode - draw");
+        this._renderCmd.draw();
     },
 
     /**
@@ -406,30 +396,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
      */
     visit:function (ctx) {
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
-            return;
-
-        // CAREFUL:
-        // This visit is almost identical to cc.Node#visit
-        // with the exception that it doesn't call visit on it's children
-        //
-        // The alternative is to have a void cc.Sprite#visit, but
-        // although this is less mantainable, is faster
-        //
-        if (!this._visible)
-            return;
-
-        var currentStack = cc.current_stack;
-        currentStack.stack.push(currentStack.top);
-        cc.kmMat4Assign(this._stackMatrix, currentStack.top);
-        currentStack.top = this._stackMatrix;
-
-        this.transform(ctx);
-        //this.draw(ctx);
-        if(this._renderCmd)
-            cc.renderer.pushRenderCommand(this._renderCmd);
-
-        cc.kmGLPopMatrix();
+        this._renderCmd.visit();
     },
 
     _updateAllAtlasIndexes:function () {
