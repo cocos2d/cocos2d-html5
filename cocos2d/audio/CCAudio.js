@@ -134,12 +134,12 @@ cc.Audio = cc.Class.extend({
     //TODO Maybe loader shift in will be better
     volume: 1,
     loop: false,
+    src: null,
     _touch: false,
 
     _playing: false,
     _AUDIO_TYPE: "AUDIO",
     _pause: false,
-    _src: null,
 
     //Web Audio
     _buffer: null,
@@ -557,8 +557,9 @@ cc.Audio = cc.Class.extend({
          * cc.audioEngine.playMusic(path, false);
          */
         playMusic: function(url, loop){
-            if(this._currMusic && this._currMusic._src !== url){
-                this._currMusic.stop();
+            var bgMusic = this._currMusic;
+            if(bgMusic && bgMusic.src !== url){
+                bgMusic.stop();
             }
             var audio = loader.cache[url];
             if(!audio){
@@ -866,9 +867,10 @@ cc.Audio = cc.Class.extend({
 
         _pauseCache: [],
         _pausePlaying: function(){
-            if(this._currMusic.getPlaying()){
-                this._currMusic.pause();
-                this._pauseCache.push(this._currMusic);
+            var bgMusic = this._currMusic;
+            if(bgMusic && bgMusic.getPlaying()){
+                bgMusic.pause();
+                this._pauseCache.push(bgMusic);
             }
             var ap = this._audioPool;
             for(var p in ap){
