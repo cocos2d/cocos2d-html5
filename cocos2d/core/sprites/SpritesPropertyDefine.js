@@ -43,10 +43,10 @@ cc._tmp.PrototypeSprite = function () {
     cc.addProperty(_p, "flippedY", _p.isFlippedY, _p.setFlippedY);
     /** @expose */
     _p.offsetX;
-    cc.addProperty(_p, "offsetX", _p._getOffsetX);
+    cc.defineGetterSetter(_p, "offsetX", _p._getOffsetX);
     /** @expose */
     _p.offsetY;
-    cc.addProperty(_p, "offsetY", _p._getOffsetY);
+    cc.defineGetterSetter(_p, "offsetY", _p._getOffsetY);
     /** @expose */
     _p.atlasIndex;
     /** @expose */
@@ -54,14 +54,14 @@ cc._tmp.PrototypeSprite = function () {
     cc.addProperty(_p, "texture", _p.getTexture, _p.setTexture);
     /** @expose */
     _p.textureRectRotated;
-    cc.addProperty(_p, "textureRectRotated", _p.isTextureRectRotated);
+    cc.defineGetterSetter(_p, "textureRectRotated", _p.isTextureRectRotated);
     /** @expose */
     _p.textureAtlas;
     /** @expose */
     _p.batchNode;
-    cc.addProperty(_p, "batchNode", _p.getBatchNode, _p.setBatchNode);
+    cc.defineGetterSetter(_p, "batchNode", _p.getBatchNode, _p.setBatchNode);
     /** @expose */
     _p.quad;
-    cc.addProperty(_p, "quad", _p.getQuad);
+    cc.defineGetterSetter(_p, "quad", _p.getQuad);
 
 };

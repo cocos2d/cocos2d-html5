@@ -50,7 +50,7 @@ cc._tmp.PrototypeLabelTTF = function () {
     cc.addProperty(_p, "fontName", _p.getFontName, _p.setFontName);
     /** @expose */
     _p.font;
-    cc.addProperty(_p, "font", _p._getFont, _p._setFont);
+    cc.defineGetterSetter(_p, "font", _p._getFont, _p._setFont);
     /** @expose */
     _p.boundingSize;
     //cc.addProperty(_p, "boundingSize", _p.getDimensions, _p.setDimensions);

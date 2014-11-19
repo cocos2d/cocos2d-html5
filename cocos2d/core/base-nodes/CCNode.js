@@ -786,6 +786,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
+     * Returns an array of all children  <br/>
+     * Composing a "tree" structure is a very important feature of CCNode
+     * @function
+     * @param {Array} children An array of children
+     */
+    setChildren: function (children) {
+
+    },
+
+    /**
      * Returns if the node is visible
      * @function
      * @see cc.Node#setVisible
