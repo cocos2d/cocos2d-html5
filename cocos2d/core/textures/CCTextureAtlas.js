@@ -616,13 +616,13 @@ var _p = cc.TextureAtlas.prototype;
 // Extended properties
 /** @expose */
 _p.totalQuads;
-cc.defineGetterSetter(_p, "totalQuads", _p.getTotalQuads);
+cc.addProperty(_p, "totalQuads", _p.getTotalQuads);
 /** @expose */
 _p.capacity;
-cc.defineGetterSetter(_p, "capacity", _p.getCapacity);
+cc.addProperty(_p, "capacity", _p.getCapacity);
 /** @expose */
 _p.quads;
-cc.defineGetterSetter(_p, "quads", _p.getQuads, _p.setQuads);
+cc.addProperty(_p, "quads", _p.getQuads, _p.setQuads);
 
 /**
  * <p>Creates a TextureAtlas with an filename and with an initial capacity for Quads. <br />

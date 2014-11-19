@@ -181,23 +181,23 @@ cc._tmp.PrototypeTexture2D = function () {
     // Extended properties
     /** @expose */
     _p.name;
-    cc.defineGetterSetter(_p, "name", _p.getName);
+    cc.addProperty(_p, "name", _p.getName);
     /** @expose */
     _p.pixelFormat;
-    cc.defineGetterSetter(_p, "pixelFormat", _p.getPixelFormat);
+    cc.addProperty(_p, "pixelFormat", _p.getPixelFormat);
     /** @expose */
     _p.pixelsWidth;
-    cc.defineGetterSetter(_p, "pixelsWidth", _p.getPixelsWide);
+    cc.addProperty(_p, "pixelsWidth", _p.getPixelsWide);
     /** @expose */
     _p.pixelsHeight;
-    cc.defineGetterSetter(_p, "pixelsHeight", _p.getPixelsHigh);
-    //cc.defineGetterSetter(_p, "size", _p.getContentSize, _p.setContentSize);
+    cc.addProperty(_p, "pixelsHeight", _p.getPixelsHigh);
+    //cc.addProperty(_p, "size", _p.getContentSize, _p.setContentSize);
     /** @expose */
     _p.width;
-    cc.defineGetterSetter(_p, "width", _p._getWidth);
+    cc.addProperty(_p, "width", _p._getWidth);
     /** @expose */
     _p.height;
-    cc.defineGetterSetter(_p, "height", _p._getHeight);
+    cc.addProperty(_p, "height", _p._getHeight);
 
     _c.defaultPixelFormat = _c.PIXEL_FORMAT_DEFAULT;
 };
@@ -209,13 +209,13 @@ cc._tmp.PrototypeTextureAtlas = function () {
     // Extended properties
     /** @expose */
     _p.totalQuads;
-    cc.defineGetterSetter(_p, "totalQuads", _p.getTotalQuads);
+    cc.addProperty(_p, "totalQuads", _p.getTotalQuads);
     /** @expose */
     _p.capacity;
-    cc.defineGetterSetter(_p, "capacity", _p.getCapacity);
+    cc.addProperty(_p, "capacity", _p.getCapacity);
     /** @expose */
     _p.quads;
-    cc.defineGetterSetter(_p, "quads", _p.getQuads, _p.setQuads);
+    cc.addProperty(_p, "quads", _p.getQuads, _p.setQuads);
 
 };
 

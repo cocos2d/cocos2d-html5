@@ -28,40 +28,40 @@ cc._tmp.PrototypeSprite = function () {
     var _p = cc.Sprite.prototype;
 
     // Override properties
-    cc.defineGetterSetter(_p, "opacityModifyRGB", _p.isOpacityModifyRGB, _p.setOpacityModifyRGB);
-    cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
-    cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
+    cc.addProperty(_p, "opacityModifyRGB", _p.isOpacityModifyRGB, _p.setOpacityModifyRGB);
+    cc.addProperty(_p, "opacity", _p.getOpacity, _p.setOpacity);
+    cc.addProperty(_p, "color", _p.getColor, _p.setColor);
 
     // Extended properties
     /** @expose */
     _p.dirty;
     /** @expose */
     _p.flippedX;
-    cc.defineGetterSetter(_p, "flippedX", _p.isFlippedX, _p.setFlippedX);
+    cc.addProperty(_p, "flippedX", _p.isFlippedX, _p.setFlippedX);
     /** @expose */
     _p.flippedY;
-    cc.defineGetterSetter(_p, "flippedY", _p.isFlippedY, _p.setFlippedY);
+    cc.addProperty(_p, "flippedY", _p.isFlippedY, _p.setFlippedY);
     /** @expose */
     _p.offsetX;
-    cc.defineGetterSetter(_p, "offsetX", _p._getOffsetX);
+    cc.addProperty(_p, "offsetX", _p._getOffsetX);
     /** @expose */
     _p.offsetY;
-    cc.defineGetterSetter(_p, "offsetY", _p._getOffsetY);
+    cc.addProperty(_p, "offsetY", _p._getOffsetY);
     /** @expose */
     _p.atlasIndex;
     /** @expose */
     _p.texture;
-    cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
+    cc.addProperty(_p, "texture", _p.getTexture, _p.setTexture);
     /** @expose */
     _p.textureRectRotated;
-    cc.defineGetterSetter(_p, "textureRectRotated", _p.isTextureRectRotated);
+    cc.addProperty(_p, "textureRectRotated", _p.isTextureRectRotated);
     /** @expose */
     _p.textureAtlas;
     /** @expose */
     _p.batchNode;
-    cc.defineGetterSetter(_p, "batchNode", _p.getBatchNode, _p.setBatchNode);
+    cc.addProperty(_p, "batchNode", _p.getBatchNode, _p.setBatchNode);
     /** @expose */
     _p.quad;
-    cc.defineGetterSetter(_p, "quad", _p.getQuad);
+    cc.addProperty(_p, "quad", _p.getQuad);
 
 };

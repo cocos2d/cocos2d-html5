@@ -282,6 +282,15 @@ cc.defineGetterSetter = function (proto, prop, getter, setter, getterName, sette
     }
 };
 
+cc.addProperty = function(proto, prop, getter, setter) {
+    cc.defineGetterSetter(proto, prop, getter, setter);
+
+    if (!proto.__props) {
+        proto.__props = [];
+    }
+    proto.__props.push(prop);
+};
+
 /**
  * Create a new object and copy all properties in an exist object to the new object
  * @function
