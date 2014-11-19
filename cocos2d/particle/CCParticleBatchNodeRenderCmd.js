@@ -23,7 +23,7 @@
  ****************************************************************************/
 
 /**
- * cc.Layer's rendering objects of Canvas
+ * cc.ParticleBatchNode's rendering objects of Canvas
  */
 (function(){
     cc.ParticleBatchNode.CanvasRenderCmd = function(renderableObject){
@@ -41,7 +41,7 @@
 })();
 
 /**
- * cc.Layer's rendering objects of WebGL
+ * cc.ParticleBatchNode's rendering objects of WebGL
  */
 (function(){
 

@@ -22,42 +22,52 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.PhysicsDebugNode.CanvasRenderCmd = function(renderableObject){
-    cc.Node.CanvasRenderCmd.call(this, renderableObject);
-    this._buffer = renderableObject._buffer;
-    this._needDraw = true;
-};
+/**
+ * cc.PhysicsDebugNode's rendering objects of Canvas
+ */
+(function(){
+    cc.PhysicsDebugNode.CanvasRenderCmd = function(renderableObject){
+        cc.Node.CanvasRenderCmd.call(this, renderableObject);
+        this._buffer = renderableObject._buffer;
+        this._needDraw = true;
+    };
 
-cc.PhysicsDebugNode.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
-cc.PhysicsDebugNode.CanvasRenderCmd.prototype.constructor = cc.PhysicsDebugNode.CanvasRenderCmd;
+    var proto = cc.PhysicsDebugNode.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
+    proto.constructor = cc.PhysicsDebugNode.CanvasRenderCmd;
 
-cc.PhysicsDebugNode.CanvasRenderCmd.prototype.rendering = function(ctx, scaleX, scaleY){
-    var node = this._node;
-    if (!node._space)
-        return;
-    node._space.eachShape(cc.DrawShape.bind(node));
-    node._space.eachConstraint(cc.DrawConstraint.bind(node));
-    cc.DrawNode.CanvasRenderCmd.prototype.rendering.call(this, ctx, scaleX, scaleY);
-    node.clear();
-};
+    proto.rendering = function(ctx, scaleX, scaleY){
+        var node = this._node;
+        if (!node._space)
+            return;
+        node._space.eachShape(cc.DrawShape.bind(node));
+        node._space.eachConstraint(cc.DrawConstraint.bind(node));
+        cc.DrawNode.CanvasRenderCmd.prototype.rendering.call(this, ctx, scaleX, scaleY);
+        node.clear();
+    };
 
-cc.PhysicsDebugNode.CanvasRenderCmd.prototype._drawDot = cc.DrawNode.CanvasRenderCmd.prototype._drawDot;
-cc.PhysicsDebugNode.CanvasRenderCmd.prototype._drawSegment = cc.DrawNode.CanvasRenderCmd.prototype._drawSegment;
-cc.PhysicsDebugNode.CanvasRenderCmd.prototype._drawPoly = cc.DrawNode.CanvasRenderCmd.prototype._drawPoly;
+    proto._drawDot = cc.DrawNode.CanvasRenderCmd.prototype._drawDot;
+    proto._drawSegment = cc.DrawNode.CanvasRenderCmd.prototype._drawSegment;
+    proto._drawPoly = cc.DrawNode.CanvasRenderCmd.prototype._drawPoly;
 
+})();
 
-cc.PhysicsDebugNode.WebGLRenderCmd = function (renderableObject) {
-    cc.Node.WebGLRenderCmd.call(this, renderableObject);
-    this._needDraw = true;
-};
+/**
+ * cc.PhysicsDebugNode's rendering objects of WebGL
+ */
+(function(){
+    cc.PhysicsDebugNode.WebGLRenderCmd = function (renderableObject) {
+        cc.Node.WebGLRenderCmd.call(this, renderableObject);
+        this._needDraw = true;
+    };
 
-cc.PhysicsDebugNode.WebGLRenderCmd.prototype.rendering = function (ctx) {
-    var node = this._node;
-    if (!node._space)
-        return;
+    cc.PhysicsDebugNode.WebGLRenderCmd.prototype.rendering = function (ctx) {
+        var node = this._node;
+        if (!node._space)
+            return;
 
-    node._space.eachShape(cc.DrawShape.bind(node));
-    node._space.eachConstraint(cc.DrawConstraint.bind(node));
-    cc.DrawNode.prototype.draw.call(node);
-    node.clear();
-};
+        node._space.eachShape(cc.DrawShape.bind(node));
+        node._space.eachConstraint(cc.DrawConstraint.bind(node));
+        cc.DrawNode.prototype.draw.call(node);
+        node.clear();
+    };
+})();
