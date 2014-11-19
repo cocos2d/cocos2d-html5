@@ -143,7 +143,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     _setUpdateTextureDirty: function(){
         this._renderCmdDiry = this._needUpdateTexture = true;
-        cc.renderer.pushDirtyNode(this);
+        cc.renderer.pushDirtyNode(this._renderCmd);
     },
 
     ctor: function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
@@ -190,19 +190,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     description: function () {
         return "<cc.LabelTTF | FontName =" + this._fontName + " FontSize = " + this._fontSize.toFixed(1) + ">";
-    },
-
-    setColor: null,
-
-    updateDisplayedColor: null,
-
-    setOpacity: null,
-
-    updateDisplayedOpacity: null,
-
-    updateDisplayedOpacityForCanvas: function (parentOpacity) {
-        cc.Node.prototype.updateDisplayedOpacity.call(this, parentOpacity);
-        this._renderCmd._setColorsString();
     },
 
     getLineHiehgt: function(){
@@ -739,7 +726,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return cc.Sprite.prototype._getHeight.call(this);
     },
 
-    visit: function (ctx) {
+    /*visit: function (ctx) {
         if (!this._string || this._string == "")
             return;
         if (this._needUpdateTexture) {
@@ -748,7 +735,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         }
         var context = ctx || cc._renderContext;
         cc.Sprite.prototype.visit.call(this, context);
-    },
+    },*/
 
     setTextureRect: function (rect, rotated, untrimmedSize) {
         //set needConvert to false

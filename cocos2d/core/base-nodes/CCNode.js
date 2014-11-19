@@ -2076,7 +2076,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.AffineTransform} The affine transform object
      */
     getNodeToParentTransform: function(){
-        this._renderCmd.getNodeToParentTransform();
+        return this._renderCmd.getNodeToParentTransform();
     },
 
     /**
