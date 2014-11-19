@@ -217,7 +217,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._setColorsString();
     },
 
-    getLineHiehgt: function(){
+    getLineHeight: function(){
         return this._lineHeight || this._fontClientHeight;
     },
 
@@ -764,7 +764,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         var locContentWidth = this._contentSize.width - locStrokeShadowOffsetX;
 
         //lineHiehgt
-        var lineHeight = this.getLineHiehgt();
+        var lineHeight = this.getLineHeight();
         var transformTop = (lineHeight - this._fontClientHeight) / 2;
 
         if (locHAlignment === cc.TEXT_ALIGNMENT_RIGHT)
@@ -938,9 +938,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         } else {
             if (this._dimensions.height === 0) {
                 if (this._isMultiLine)
-                    locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | ((this.getLineHiehgt() * this._strings.length) + locStrokeShadowOffsetY));
+                    locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | ((this.getLineHeight() * this._strings.length) + locStrokeShadowOffsetY));
                 else
-                    locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | (this.getLineHiehgt() + locStrokeShadowOffsetY));
+                    locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | (this.getLineHeight() + locStrokeShadowOffsetY));
             } else {
                 //dimension is already set, contentSize must be same as dimension
                 locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | (this._dimensions.height + locStrokeShadowOffsetY));
