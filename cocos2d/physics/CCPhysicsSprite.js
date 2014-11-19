@@ -401,37 +401,7 @@
                 _t._normalizedPositionDirty = false;
             }
 
-            if(cc._renderType === cc._RENDER_TYPE_CANVAS)
-                return this._nodeToParentTransformForCanvas();
-
-            var locBody = this._body, locAnchorPIP = this._anchorPointInPoints, locScaleX = this._scaleX, locScaleY = this._scaleY;
-            var x = locBody.p.x;
-            var y = locBody.p.y;
-
-            if (this._ignoreAnchorPointForPosition) {
-                x += locAnchorPIP.x;
-                y += locAnchorPIP.y;
-            }
-
-            // Make matrix
-            var radians = locBody.a;
-            var c = Math.cos(radians);
-            var s = Math.sin(radians);
-
-            // Although scale is not used by physics engines, it is calculated just in case
-            // the sprite is animated (scaled up/down) using actions.
-            // For more info see: http://www.cocos2d-iphone.org/forum/topic/68990
-            if (!cc._rectEqualToZero(locAnchorPIP)) {
-                x += c * -locAnchorPIP.x * locScaleX + -s * -locAnchorPIP.y * locScaleY;
-                y += s * -locAnchorPIP.x * locScaleX + c * -locAnchorPIP.y * locScaleY;
-            }
-
-            // Rot, Translate Matrix
-            this._transform = cc.affineTransformMake(c * locScaleX, s * locScaleX,
-                -s * locScaleY, c * locScaleY,
-                x, y);
-
-            return this._transform;
+            return this._renderCmd._getNodeToParentTransform();
         },
 
         _nodeToParentTransformForCanvas: function () {

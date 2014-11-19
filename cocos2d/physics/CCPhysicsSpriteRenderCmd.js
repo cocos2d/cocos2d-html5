@@ -22,29 +22,74 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.PhysicsSprite.CanvasRenderCmd = function(renderableObject){
-    cc.Node.CanvasRenderCmd.call(this, renderableObject);
-    this._needDraw = true;
-};
+/**
+ * cc.PhysicsSprite's rendering objects of Canvas
+ */
+(function(){
+    cc.PhysicsSprite.CanvasRenderCmd = function(renderableObject){
+        cc.Node.CanvasRenderCmd.call(this, renderableObject);
+        this._needDraw = true;
+    };
 
-cc.PhysicsSprite.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
-cc.PhysicsSprite.CanvasRenderCmd.prototype.constructor = cc.PhysicsSprite.CanvasRenderCmd;
+    var proto = cc.PhysicsSprite.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
+    proto.constructor = cc.PhysicsSprite.CanvasRenderCmd;
 
-cc.PhysicsSprite.CanvasRenderCmd.prototype.rendering = function(){
-    if (this._node.transform)
-        this._node.transform();
-};
+    proto.rendering = function(){
+        if (this._node.transform)
+            this._node.transform();
+    };
 
-cc.PhysicsSprite.WebGLRenderCmd = function(renderableObject){
-    cc.Node.CanvasRenderCmd.call(this, renderableObject);
-    this._needDraw = true;
-};
+    proto._getNodeToParentTransform = function(){
+        return this._node._nodeToParentTransformForCanvas();
+    };
+})();
 
-cc.PhysicsSprite.WebGLRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
-cc.PhysicsSprite.WebGLRenderCmd.prototype.constructor = cc.PhysicsSprite.WebGLRenderCmd;
+/**
+ * cc.PhysicsSprite's rendering objects of WebGL
+ */
+(function(){
+    cc.PhysicsSprite.WebGLRenderCmd = function(renderableObject){
+        cc.Node.CanvasRenderCmd.call(this, renderableObject);
+        this._needDraw = true;
+    };
 
-cc.PhysicsSprite.WebGLRenderCmd.prototype.rendering = function(){
-    if(this._node._transformForRenderer)
-        this._node._transformForRenderer();
-};
+    var proto = cc.PhysicsSprite.WebGLRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
+    proto.constructor = cc.PhysicsSprite.WebGLRenderCmd;
 
+    proto.rendering = function(){
+        if(this._node._transformForRenderer)
+            this._node._transformForRenderer();
+    };
+
+    proto._getNodeToParentTransform = function(){
+        var locBody = this._body, locAnchorPIP = this._anchorPointInPoints, locScaleX = this._scaleX, locScaleY = this._scaleY;
+        var x = locBody.p.x;
+        var y = locBody.p.y;
+
+        if (this._ignoreAnchorPointForPosition) {
+            x += locAnchorPIP.x;
+            y += locAnchorPIP.y;
+        }
+
+        // Make matrix
+        var radians = locBody.a;
+        var c = Math.cos(radians);
+        var s = Math.sin(radians);
+
+        // Although scale is not used by physics engines, it is calculated just in case
+        // the sprite is animated (scaled up/down) using actions.
+        // For more info see: http://www.cocos2d-iphone.org/forum/topic/68990
+        if (!cc._rectEqualToZero(locAnchorPIP)) {
+            x += c * -locAnchorPIP.x * locScaleX + -s * -locAnchorPIP.y * locScaleY;
+            y += s * -locAnchorPIP.x * locScaleX + c * -locAnchorPIP.y * locScaleY;
+        }
+
+        // Rot, Translate Matrix
+        this._transform = cc.affineTransformMake(c * locScaleX, s * locScaleX,
+                -s * locScaleY, c * locScaleY,
+            x, y);
+
+        return this._transform;
+    };
+
+})();
