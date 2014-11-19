@@ -2123,7 +2123,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.GLProgram} The shader program currently used for this node
      */
     getShaderProgram: function () {
-        return this._shaderProgram;
+        return this._renderCmd.getShaderProgram();
     },
 
     /**
@@ -2139,7 +2139,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * node.setGLProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
      */
     setShaderProgram: function (newShaderProgram) {
-        this._shaderProgram = newShaderProgram;
+        this._renderCmd.setShaderProgram(newShaderProgram);
     },
 
     /**

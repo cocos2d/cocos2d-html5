@@ -113,20 +113,20 @@ cc.Sprite.CanvasRenderCmd.prototype.rendering = function (ctx, scaleX, scaleY) {
 
     if (node._texture && (locTextureCoord.width === 0 || locTextureCoord.height === 0))
         return;
-    if (!locTextureCoord.validRect && node._displayedOpacity === 0)
+    if (!locTextureCoord.validRect && this._displayedOpacity === 0)
         return;  //draw nothing
 
     if (node._texture && !node._texture._isLoaded)  //set texture but the texture isn't loaded.
         return;
 
-    var t = node._transformWorld,
+    var t = this._worldTransform,
         locX = node._offsetPosition.x,
         locY = -node._offsetPosition.y - node._rect.height,
         locWidth = node._rect.width,
         locHeight = node._rect.height,
         image, curColor, contentSize;
 
-    var blendChange = (node._blendFuncStr !== "source-over"), alpha = (node._displayedOpacity / 255);
+    var blendChange = (this._blendFuncStr !== "source-over"), alpha = (this._displayedOpacity / 255);
 
     if (t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1 || node._flippedX || node._flippedY) {
         context.save();
@@ -135,7 +135,7 @@ cc.Sprite.CanvasRenderCmd.prototype.rendering = function (ctx, scaleX, scaleY) {
         //transform
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
         if (blendChange)
-            context.globalCompositeOperation = node._blendFuncStr;
+            context.globalCompositeOperation = this._blendFuncStr;
 
         if (node._flippedX) {
             locX = -locX - locWidth;
@@ -155,7 +155,7 @@ cc.Sprite.CanvasRenderCmd.prototype.rendering = function (ctx, scaleX, scaleY) {
                 context.fillRect(locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
                 context.restore();
             } else {
-                if (node._colorized) {
+                if (this._colorized) {
                     context.drawImage(image,
                         0,
                         0,
@@ -191,7 +191,7 @@ cc.Sprite.CanvasRenderCmd.prototype.rendering = function (ctx, scaleX, scaleY) {
     } else {
         if (blendChange) {
             context.save();
-            context.globalCompositeOperation = node._blendFuncStr;
+            context.globalCompositeOperation = this._blendFuncStr;
         }
 
         context.globalAlpha = alpha;
@@ -204,7 +204,7 @@ cc.Sprite.CanvasRenderCmd.prototype.rendering = function (ctx, scaleX, scaleY) {
                 context.fillRect(locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
                 context.restore();
             } else {
-                if (node._colorized) {
+                if (this._colorized) {
                     context.drawImage(image,
                         0,
                         0,

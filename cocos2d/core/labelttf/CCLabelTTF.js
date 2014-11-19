@@ -141,8 +141,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return true;
     },
 
-    _setUpdateTextureDirty: function(){
+    _setUpdateTextureDirty: function () {
         this._renderCmdDiry = this._needUpdateTexture = true;
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.textDirty);
         cc.renderer.pushDirtyNode(this._renderCmd);
     },
 
@@ -192,11 +193,11 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return "<cc.LabelTTF | FontName =" + this._fontName + " FontSize = " + this._fontSize.toFixed(1) + ">";
     },
 
-    getLineHiehgt: function(){
+    getLineHiehgt: function () {
         return this._lineHeight || this._fontClientHeight;
     },
 
-    setLineHeight: function(lineHeight){
+    setLineHeight: function (lineHeight) {
         this._lineHeight = lineHeight;
     },
 
@@ -255,7 +256,15 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @param {cc.FontDefinition} textDefinition
      * @return {Boolean}
      */
-    initWithStringAndTextDefinition: null,
+    initWithStringAndTextDefinition: function (text, textDefinition) {
+        // shader program
+        this.setShaderProgram(cc.shaderCache.programForKey(cc.LabelTTF._SHADER_PROGRAM));
+        // prepare everything needed to render the label
+        this._updateWithTextDefinition(textDefinition, false);
+        // set the string
+        this.string = text;
+        return true;
+    },
 
     /**
      * Sets the text definition used by this label
@@ -287,14 +296,14 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      *     labelttf.enableShadow(shadowColor, offset, blurRadius);
      */
     enableShadow: function (a, b, c, d) {
-        if(a.r != null && a.g != null && a.b != null && a.a != null){
+        if (a.r != null && a.g != null && a.b != null && a.a != null) {
             this._enableShadow(a, b, c);
-        }else{
+        } else {
             this._enableShadowNoneColor(a, b, c, d)
         }
     },
 
-    _enableShadowNoneColor: function(shadowOffsetX, shadowOffsetY, shadowOpacity, shadowBlur){
+    _enableShadowNoneColor: function (shadowOffsetX, shadowOffsetY, shadowOpacity, shadowBlur) {
         shadowOpacity = shadowOpacity || 0.5;
         if (false === this._shadowEnabled)
             this._shadowEnabled = true;
@@ -315,8 +324,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._setUpdateTextureDirty();
     },
 
-    _enableShadow: function(shadowColor, offset, blurRadius){
-        if(!this._shadowColor){
+    _enableShadow: function (shadowColor, offset, blurRadius) {
+        if (!this._shadowColor) {
             this._shadowColor = cc.color(255, 255, 255, 128);
         }
         this._shadowColor.r = shadowColor.r;
@@ -623,10 +632,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      */
     setDimensions: function (dim, height) {
         var width;
-        if(height === undefined){
+        if (height === undefined) {
             width = dim.width;
             height = dim.height;
-        }else
+        } else
             width = dim;
 
         if (width != this._dimensions.width || height != this._dimensions.height) {
@@ -726,75 +735,22 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return cc.Sprite.prototype._getHeight.call(this);
     },
 
-    /*visit: function (ctx) {
-        if (!this._string || this._string == "")
-            return;
-        if (this._needUpdateTexture) {
-            this._needUpdateTexture = false;
-            this._renderCmd._updateTexture();
-        }
-        var context = ctx || cc._renderContext;
-        cc.Sprite.prototype.visit.call(this, context);
-    },*/
-
     setTextureRect: function (rect, rotated, untrimmedSize) {
         //set needConvert to false
         cc.Sprite.prototype.setTextureRect.call(this, rect, rotated, untrimmedSize, false);
     },
 
-    _createRenderCmd: function(){
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+    _createRenderCmd: function () {
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
             return new cc.LabelTTF.CanvasRenderCmd(this);
         else
             return new cc.LabelTTF.WebGLRenderCmd(this);
     }
 });
 
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-    var _p = cc.LabelTTF.prototype;
-
-    _p._transformForRenderer = function(){
-        if (this._needUpdateTexture) {
-            this._needUpdateTexture = false;
-            this._renderCmd._updateTexture();
-        }
-        cc.Node.prototype._transformForRenderer.call(this);
-    };
-
-    _p.initWithStringAndTextDefinition = function (text, textDefinition) {
-        // prepare everything needed to render the label
-        this._updateWithTextDefinition(textDefinition, false);
-
-        // set the string
-        this.string = text;
-
-        return true;
-    };
-
-    _p = null;
-} else {
-    cc.assert(cc.isFunction(cc._tmp.WebGLLabelTTF), cc._LogInfos.MissingFile, "LabelTTFWebGL.js");
-    cc._tmp.WebGLLabelTTF();
-    delete cc._tmp.WebGLLabelTTF;
-}
-
 cc.assert(cc.isFunction(cc._tmp.PrototypeLabelTTF), cc._LogInfos.MissingFile, "LabelTTFPropertyDefine.js");
 cc._tmp.PrototypeLabelTTF();
 delete cc._tmp.PrototypeLabelTTF;
-
-cc.LabelTTF._textAlign = ["left", "center", "right"];
-cc.LabelTTF._textBaseline = ["top", "middle", "bottom"];
-
-//check the first character
-cc.LabelTTF.wrapInspection = true;
-
-//Support: English French German
-//Other as Oriental Language
-cc.LabelTTF._wordRex = /([a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+|\S)/;
-cc.LabelTTF._symbolRex = /^[!,.:;}\]%\?>、‘“》？。，！]/;
-cc.LabelTTF._lastWordRex = /([a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+|\S)$/;
-cc.LabelTTF._lastEnglish = /[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+$/;
-cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
 // Only support style in this format: "18px Verdana" or "18px 'Helvetica Neue'"
 cc.LabelTTF._fontStyleRE = /^(\d+)px\s+['"]?([\w\s\d]+)['"]?$/;

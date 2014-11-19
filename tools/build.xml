@@ -72,7 +72,6 @@
                 <file name="cocos2d/core/CCDrawingPrimitivesCanvas.js"/>
                 <file name="cocos2d/core/CCDrawingPrimitivesWebGL.js"/>
                 <file name="cocos2d/core/labelttf/LabelTTFPropertyDefine.js"/>
-                <file name="cocos2d/core/labelttf/LabelTTFWebGL.js"/>
                 <file name="cocos2d/core/labelttf/CCLabelTTF.js"/>
                 <file name="cocos2d/core/CCActionManager.js"/>
                 <file name="cocos2d/kazmath/utility.js"/>

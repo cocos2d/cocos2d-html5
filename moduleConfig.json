@@ -113,7 +113,6 @@
             "cocos2d/core/CCDrawingPrimitivesCanvas.js",
             "cocos2d/core/CCDrawingPrimitivesWebGL.js",
 
-            "cocos2d/core/labelttf/LabelTTFWebGL.js",
             "cocos2d/core/labelttf/LabelTTFPropertyDefine.js",
             "cocos2d/core/labelttf/CCLabelTTF.js",
             "cocos2d/core/labelttf/CCLabelTTFRenderCmd.js",

@@ -319,7 +319,7 @@ cc.Node.CanvasRenderCmd.prototype._updateDisplayColor = function(parentColor){
 };
 
 cc.Node.CanvasRenderCmd.prototype._updateDisplayOpacity = function(parentOpacity){
-    this._dirtyFlag = this._dirtyFlag ^ cc.Node._dirtyFlags.opacityDirty;
+    this._dirtyFlag ^= cc.Node._dirtyFlags.opacityDirty;
 
     var node = this._node;
     var i, len, selChildren, item;
@@ -386,6 +386,14 @@ cc.Node.CanvasRenderCmd.prototype.detachFromParent = function(){
     }
 };
 
+cc.Node.CanvasRenderCmd.prototype.setShaderProgram = function(shaderProgram){
+    //do nothing.
+};
+
+cc.Node.CanvasRenderCmd.prototype.getShaderProgram = function(){
+    //do nothing.
+};
+
 //util functions
 cc.Node.CanvasRenderCmd._getCompositeOperationByBlendFunc = function(blendFunc){
     if(!blendFunc)
@@ -411,6 +419,7 @@ cc.Node.WebGLRenderCmd = function(renderable){
     mat4.mat[10] = mat4.mat[15] = 1.0;
     this._transform4x4 = mat4;
     this._stackMatrix = new cc.kmMat4();
+    this._shaderProgram = null;
 
     this._camera = null;
 };
@@ -540,4 +549,12 @@ cc.Node.WebGLRenderCmd.prototype.visit = function(){
 //TODO
 cc.Node.WebGLRenderCmd.prototype.transform = function() {
 
+};
+
+cc.Node.WebGLRenderCmd.prototype.setShaderProgram = function(shaderProgram){
+    this._shaderProgram = shaderProgram;
+};
+
+cc.Node.WebGLRenderCmd.prototype.getShaderProgram = function(){
+    return this._shaderProgram;
 };

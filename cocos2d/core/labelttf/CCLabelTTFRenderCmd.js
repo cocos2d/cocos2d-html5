@@ -22,6 +22,20 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+cc.LabelTTF._textAlign = ["left", "center", "right"];
+cc.LabelTTF._textBaseline = ["top", "middle", "bottom"];
+
+//check the first character
+cc.LabelTTF.wrapInspection = true;
+
+//Support: English French German
+//Other as Oriental Language
+cc.LabelTTF._wordRex = /([a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+|\S)/;
+cc.LabelTTF._symbolRex = /^[!,.:;}\]%\?>、‘“》？。，！]/;
+cc.LabelTTF._lastWordRex = /([a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+|\S)$/;
+cc.LabelTTF._lastEnglish = /[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]+$/;
+cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
+
 cc.LabelTTF.RenderCmd = function(){
     this._fontClientHeight = 18;
     this._fontStyleStr = "";
@@ -42,11 +56,12 @@ cc.LabelTTF.RenderCmd.prototype._getLabelContext = function () {
     if (this._labelContext)
         return this._labelContext;
 
+    var node = this._node;
     if (!this._labelCanvas) {
         var locCanvas = cc.newElement("canvas");
         var labelTexture = new cc.Texture2D();
         labelTexture.initWithElement(locCanvas);
-        this.texture = labelTexture;
+        node.setTexture(labelTexture);
         this._labelCanvas = locCanvas;
     }
     this._labelContext = this._labelCanvas.getContext("2d");
@@ -80,6 +95,7 @@ cc.LabelTTF.RenderCmd.prototype._updateTexture = function () {
     node._texture && node._texture.handleLoadedTexture();
 
     node.setTextureRect(cc.rect(0, 0, width, height));
+    this._dirtyFlag ^= cc.Node._dirtyFlags.textDirty;
     return true;
 };
 
@@ -129,9 +145,9 @@ cc.LabelTTF.RenderCmd.prototype._updateTTF = function(){
     if (locDimensionsWidth === 0) {
         if (this._isMultiLine)
             locSize = cc.size(0 | (Math.max.apply(Math, locLineWidth) + locStrokeShadowOffsetX),
-                    0 | ((this._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY));
+                    0 | ((node._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY));
         else
-            locSize = cc.size(0 | (this._measure(this._string) + locStrokeShadowOffsetX), 0 | (this._fontClientHeight + locStrokeShadowOffsetY));
+            locSize = cc.size(0 | (this._measure(node._string) + locStrokeShadowOffsetX), 0 | (node._fontClientHeight + locStrokeShadowOffsetY));
     } else {
         if (node._dimensions.height === 0) {
             if (this._isMultiLine)
@@ -159,27 +175,27 @@ cc.LabelTTF.RenderCmd.prototype._drawTTFInCanvas = function (context) {
     var node = this._node;
     var locStrokeShadowOffsetX = node._strokeShadowOffsetX, locStrokeShadowOffsetY = node._strokeShadowOffsetY;
     var locContentSizeHeight = node._contentSize.height - locStrokeShadowOffsetY, locVAlignment = node._vAlignment, locHAlignment = node._hAlignment,
-        locFontHeight = this._fontClientHeight, locStrokeSize = node._strokeSize;
+        locFontHeight = node._fontClientHeight, locStrokeSize = node._strokeSize;
 
     context.setTransform(1, 0, 0, 1, 0 + locStrokeShadowOffsetX * 0.5, locContentSizeHeight + locStrokeShadowOffsetY * 0.5);
 
     //this is fillText for canvas
-    if (context.font != this._fontStyleStr)
-        context.font = this._fontStyleStr;
-    context.fillStyle = this._fillColorStr;
+    if (context.font != node._fontStyleStr)
+        context.font = node._fontStyleStr;
+    context.fillStyle = node._fillColorStr;
 
     var xOffset = 0, yOffset = 0;
     //stroke style setup
     var locStrokeEnabled = node._strokeEnabled;
     if (locStrokeEnabled) {
         context.lineWidth = locStrokeSize * 2;
-        context.strokeStyle = this._strokeColorStr;
+        context.strokeStyle = node._strokeColorStr;
     }
 
     //shadow style setup
     if (node._shadowEnabled) {
         var locShadowOffset = node._shadowOffset;
-        context.shadowColor = this._shadowColorStr;
+        context.shadowColor = node._shadowColorStr;
         context.shadowOffsetX = locShadowOffset.x;
         context.shadowOffsetY = -locShadowOffset.y;
         context.shadowBlur = node._shadowBlur;
@@ -192,7 +208,7 @@ cc.LabelTTF.RenderCmd.prototype._drawTTFInCanvas = function (context) {
 
     //lineHiehgt
     var lineHeight = node.getLineHiehgt();
-    var transformTop = (lineHeight - this._fontClientHeight) / 2;
+    var transformTop = (lineHeight - node._fontClientHeight) / 2;
 
     if (locHAlignment === cc.TEXT_ALIGNMENT_RIGHT)
         xOffset += locContentWidth;
@@ -216,20 +232,15 @@ cc.LabelTTF.RenderCmd.prototype._drawTTFInCanvas = function (context) {
         }
     } else {
         if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM) {
-            if (locStrokeEnabled)
-                context.strokeText(this._string, xOffset, yOffset);
-            context.fillText(this._string, xOffset, yOffset);
+            //do nothing
         } else if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_TOP) {
             yOffset -= locContentSizeHeight;
-            if (locStrokeEnabled)
-                context.strokeText(this._string, xOffset, yOffset);
-            context.fillText(this._string, xOffset, yOffset);
         } else {
             yOffset -= locContentSizeHeight * 0.5;
-            if (locStrokeEnabled)
-                context.strokeText(this._string, xOffset, yOffset);
-            context.fillText(this._string, xOffset, yOffset);
         }
+        if (locStrokeEnabled)
+            context.strokeText(node._string, xOffset, yOffset);
+        context.fillText(node._string, xOffset, yOffset);
     }
 };
 
@@ -354,6 +365,7 @@ cc.LabelTTF.CanvasRenderCmd.prototype.updateStatus = function(){
 
     if(this._dirtyFlag & cc.Node._dirtyFlags.textDirty){
         //update texture for labelTTF
+        this._updateTexture();
     }
 
     if(this._dirtyFlag & cc.Node._dirtyFlags.transformDirty){
