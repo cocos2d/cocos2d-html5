@@ -192,11 +192,13 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     setColor: function (color) {
         cc.Layer.prototype.setColor.call(this, color);
         this._updateColor();
+        this.setDirtyFlag(cc.Node._dirtyFlags.colorDirty);
     },
 
     setOpacity: function (opacity) {
         cc.Layer.prototype.setOpacity.call(this, opacity);
         this._updateColor();
+        this.setDirtyFlag(cc.Node._dirtyFlags.opacityDirty);
     },
 
     _blendFuncStr: "source-over",
@@ -272,17 +274,24 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     },
 
     _updateColor: function(){
-        this._renderCmd._updateColor();
+        var renderCmd = this._renderCmd,
+            relColor = this._realColor,
+            disColor = renderCmd._displayedColor;
+        disColor.r = relColor.r;
+        disColor.g = relColor.g;
+        disColor.b = relColor.b;
+        disColor.a = relColor.a;
+        renderCmd._updateColor();
     },
 
     updateDisplayedColor: function (parentColor) {
         cc.Layer.prototype.updateDisplayedColor.call(this, parentColor);
-        this._updateColor();
+        this._renderCmd._updateColor();
     },
 
     updateDisplayedOpacity: function (parentOpacity) {
         cc.Layer.prototype.updateDisplayedOpacity.call(this, parentOpacity);
-        this._updateColor();
+        this._renderCmd._updateColor();
     },
 
     _createRenderCmd: function(){
