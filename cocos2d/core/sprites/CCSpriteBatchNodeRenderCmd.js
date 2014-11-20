@@ -22,6 +22,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+cc.SpriteBatchNode.CanvasRenderCmd = function(renderable){
+    cc.Node.CanvasRenderCmd.call(this, renderable);
+
+    this._texture = null;
+};
+
 cc.SpriteBatchNode.WebGLRenderCmd = function(renderableObject){
     cc.Node.WebGLRenderCmd.call(this, renderableObject);
     this._needDraw = true;
@@ -30,14 +36,14 @@ cc.SpriteBatchNode.WebGLRenderCmd = function(renderableObject){
 cc.SpriteBatchNode.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
 cc.SpriteBatchNode.WebGLRenderCmd.prototype.constructor = cc.SpriteBatchNode.WebGLRenderCmd;
 
-cc.SpriteBatchNode.WebGLRenderCmd.prototype.rendering = function (ctx) {
+cc.SpriteBatchNode.WebGLRenderCmd.prototype.rendering = function () {
     var node = this._node;
     if (node.textureAtlas.totalQuads === 0)
         return;
 
     //cc.nodeDrawSetup(this);
-    node._shaderProgram.use();
-    node._shaderProgram._setUniformForMVPMatrixWithMat4(node._stackMatrix);
+    this._shaderProgram.use();
+    this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
     node._arrayMakeObjectsPerformSelector(node._children, cc.Node._stateCallbackType.updateTransform);
     cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
 

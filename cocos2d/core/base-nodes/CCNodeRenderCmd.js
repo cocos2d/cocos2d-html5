@@ -77,7 +77,6 @@ cc.Node.RenderCmd.prototype = {
     },
 
     detachFromParent: function(){
-
     },
 
     _updateAnchorPointInPoint: function() {
@@ -143,20 +142,21 @@ cc.Node.CanvasRenderCmd.prototype.transform = function(parentCmd, recursive){
             return;
         var i, len;
         for(i = 0, len = locChildren.length; i< len; i++){
-            locChildren[i].transform(this, recursive);
+            locChildren[i]._renderCmd.transform(this, recursive);
         }
     }
 };
 
 cc.Node.CanvasRenderCmd.prototype.getNodeToParentTransform = function(){
-    var node = this._node;
+    var node = this._node, normalizeDirty = false;
     if(node._usingNormalizedPosition && node._parent){        //TODO need refactor
         var conSize = node._parent._contentSize;
         node._position.x = node._normalizedPosition.x * conSize.width;
         node._position.y = node._normalizedPosition.y * conSize.height;
         node._normalizedPositionDirty = false;
+        normalizeDirty = true;
     }
-    if (this._dirtyFlag & cc.Node._dirtyFlags.transformDirty) {
+    if (normalizeDirty || (this._dirtyFlag & cc.Node._dirtyFlags.transformDirty)) {
         var t = this._transform;// quick reference
 
         // base position
@@ -242,7 +242,7 @@ cc.Node.CanvasRenderCmd.prototype.visit = function(parentCmd){
 
     //visit for canvas
     var i, children = node._children, child;
-    _t.transform(parentCmd);
+    _t._syncStatus(parentCmd);
     var len = children.length;
     if (len > 0) {
         node.sortAllChildren();
@@ -275,14 +275,57 @@ cc.Node.CanvasRenderCmd.prototype.updateStatus = function(){
 
     if(this._dirtyFlag & cc.Node._dirtyFlags.transformDirty){
         //update the transform
-        this.transform(null, true);
+        this.transform(this.getParentRenderCmd(), true);
     }
 };
 
-cc.Node.CanvasRenderCmd.prototype._updateDisplayColor = function(parentColor){
-    this._dirtyFlag = this._dirtyFlag ^ cc.Node._dirtyFlags.colorDirty;
+cc.Node.CanvasRenderCmd.prototype._syncStatus = function(parentCmd){
+    if(this._dirtyFlag & cc.Node._dirtyFlags.colorDirty){
+        //update the color
+        this._syncDisplayColor()
+    }
 
-    var locDispColor = this._displayedColor, locRealColor = this._realColor, node = this._node;
+    if(this._dirtyFlag & cc.Node._dirtyFlags.opacityDirty){
+        //update the opacity
+        this._syncDisplayOpacity();
+    }
+
+    if(this._dirtyFlag & cc.Node._dirtyFlags.transformDirty){
+        //update the transform
+        this.transform(parentCmd);
+    }
+};
+
+cc.Node.CanvasRenderCmd.prototype._syncDisplayColor = function(parentColor){
+    var node = this._node, locDispColor = this._displayedColor, locRealColor = node._realColor;
+    if(parentColor === undefined){
+        var locParent = node._parent;
+        if (locParent && locParent._cascadeColorEnabled)
+            parentColor = locParent.getDisplayedColor();
+        else
+            parentColor = cc.color.WHITE;
+    }
+    locDispColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
+    locDispColor.g = 0 | (locRealColor.g * parentColor.g / 255.0);
+    locDispColor.b = 0 | (locRealColor.b * parentColor.b / 255.0);
+    this._dirtyFlag ^= cc.Node._dirtyFlags.colorDirty;
+};
+
+cc.Node.CanvasRenderCmd.prototype._syncDisplayOpacity = function(parentOpacity){
+    var node = this._node;
+    if(parentOpacity === undefined){
+        var locParent = node._parent;
+        parentOpacity = 255;
+        if (locParent && locParent._cascadeOpacityEnabled)
+            parentOpacity = locParent.getDisplayedOpacity();
+    }
+    this._displayedOpacity = node._realOpacity * parentOpacity / 255.0;
+    this._dirtyFlag ^= cc.Node._dirtyFlags.opacityDirty;
+};
+
+cc.Node.CanvasRenderCmd.prototype._updateDisplayColor = function(parentColor){
+    var node = this._node;
+    var locDispColor = this._displayedColor, locRealColor = node._realColor;
     var i, len, selChildren, item;
     if(this._cascadeColorEnabledDirty && !node._cascadeColorEnabled){
         locDispColor.r = locRealColor.r;
@@ -316,11 +359,10 @@ cc.Node.CanvasRenderCmd.prototype._updateDisplayColor = function(parentColor){
         }
     }
     this._cascadeColorEnabledDirty = false;
+    this._dirtyFlag ^= cc.Node._dirtyFlags.colorDirty;
 };
 
 cc.Node.CanvasRenderCmd.prototype._updateDisplayOpacity = function(parentOpacity){
-    this._dirtyFlag ^= cc.Node._dirtyFlags.opacityDirty;
-
     var node = this._node;
     var i, len, selChildren, item;
     if(this._cascadeOpacityEnabledDirty && !node._cascadeOpacityEnabled){
@@ -349,6 +391,7 @@ cc.Node.CanvasRenderCmd.prototype._updateDisplayOpacity = function(parentOpacity
         }
     }
     this._cascadeOpacityEnabledDirty = false;
+    this._dirtyFlag ^= cc.Node._dirtyFlags.opacityDirty;
 };
 
 cc.Node.CanvasRenderCmd.prototype.setDirtyFlag = function(dirtyFlag){

@@ -72,26 +72,20 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _string: "",
     _originalText: null,
 
-    _fontStyleStr: null,                  //TODO move to render cmd
-    _fontClientHeight: 18,
-
     // font shadow
     _shadowEnabled: false,
     _shadowOffset: null,
     _shadowOpacity: 0,
     _shadowBlur: 0,
-    _shadowColorStr: null,                //TODO move to render cmd
     _shadowColor: null,
 
     // font stroke
     _strokeEnabled: false,
     _strokeColor: null,
     _strokeSize: 0,
-    _strokeColorStr: null,               // TODO move to render cmd
 
     // font tint
     _textFillColor: null,
-    _fillColorStr: null,                 // TODO move to render cmd
 
     _strokeShadowOffsetX: 0,
     _strokeShadowOffsetY: 0,
@@ -132,8 +126,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._vAlignment = vAlignment;
 
         this._fontSize = fontSize;
-        this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
-        this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName, this._fontSize);
+        this._renderCmd._setFontStyle(this._fontName, fontSize);
         this.string = strInfo;
         this._renderCmd._setColorsString();
         this._renderCmd._updateTexture();
@@ -154,28 +147,23 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._hAlignment = cc.TEXT_ALIGNMENT_LEFT;
         this._vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
         this._opacityModifyRGB = false;
-        this._fontStyleStr = "";
         this._fontName = "Arial";
 
         this._shadowEnabled = false;
         this._shadowOffset = cc.p(0, 0);
         this._shadowOpacity = 0;
         this._shadowBlur = 0;
-        this._shadowColorStr = "rgba(128, 128, 128, 0.5)";
 
         this._strokeEnabled = false;
         this._strokeColor = cc.color(255, 255, 255, 255);
         this._strokeSize = 0;
-        this._strokeColorStr = "";
 
         this._textFillColor = cc.color(255, 255, 255, 255);
-        this._fillColorStr = "rgba(255,255,255,1)";
         this._strokeShadowOffsetX = 0;
         this._strokeShadowOffsetY = 0;
         this._needUpdateTexture = false;
 
         this._lineWidths = [];
-
         this._renderCmd._setColorsString();
 
         if (fontName && fontName instanceof cc.FontDefinition) {
@@ -193,8 +181,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return "<cc.LabelTTF | FontName =" + this._fontName + " FontSize = " + this._fontSize.toFixed(1) + ">";
     },
 
-    getLineHiehgt: function () {
-        return this._lineHeight || this._fontClientHeight;
+    getLineHeight: function () {
+        return this._lineHeight || this._renderCmd._getFontClientHeight();
     },
 
     setLineHeight: function (lineHeight) {
@@ -258,7 +246,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      */
     initWithStringAndTextDefinition: function (text, textDefinition) {
         // shader program
-        this.setShaderProgram(cc.shaderCache.programForKey(cc.LabelTTF._SHADER_PROGRAM));
+        this.setShaderProgram(cc.shaderCache.programForKey(cc.LabelTTF._SHADER_PROGRAM));       //TODO
         // prepare everything needed to render the label
         this._updateWithTextDefinition(textDefinition, false);
         // set the string
@@ -514,8 +502,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         this._fontName = textDefinition.fontName;
         this._fontSize = textDefinition.fontSize || 12;
-        this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
-        this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName, this._fontSize);
+        this._renderCmd._setFontStyle(this._fontName, this._fontSize)
 
         // shadow
         if (textDefinition.shadowEnabled)
@@ -678,8 +665,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     setFontSize: function (fontSize) {
         if (this._fontSize !== fontSize) {
             this._fontSize = fontSize;
-            this._fontStyleStr = fontSize + "px '" + this._fontName + "'";
-            this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName, fontSize);
+            this._renderCmd._setFontStyle(this._fontName, this._fontSize);
             // Force update
             this._setUpdateTextureDirty();
         }
@@ -692,23 +678,22 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     setFontName: function (fontName) {
         if (this._fontName && this._fontName != fontName) {
             this._fontName = fontName;
-            this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
-            this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName, this._fontSize);
+            this._renderCmd._setFontStyle(this._fontName, this._fontSize);
             // Force update
             this._setUpdateTextureDirty();
         }
     },
 
     _getFont: function () {
-        return this._fontStyleStr;
+        return this._renderCmd._getFontStyle();
     },
     _setFont: function (fontStyle) {
         var res = cc.LabelTTF._fontStyleRE.exec(fontStyle);
         if (res) {
             this._fontSize = parseInt(res[1]);
             this._fontName = res[2];
-            this._fontStyleStr = fontStyle;
-            this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName, this._fontSize);
+            this._renderCmd._setFontStyle(this._fontName, this._fontSize);
+
             // Force update
             this._setUpdateTextureDirty();
         }
