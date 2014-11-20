@@ -301,8 +301,10 @@ cc._getCompositeOperationByBlendFunc = function(blendFunc){
  * @property {cc.V3F_C4B_T2F_Quad}  quad                - <@readonly> The quad (tex coords, vertex coords and color) information.
  */
 cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
+    __type:"cc.Sprite",
+
 	dirty:false,
-	atlasIndex:0,
+	atlasIndex:-1,
     textureAtlas:null,
 
     _batchNode:null,
@@ -727,7 +729,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @function
      * @param {Boolean} modify
      */
-    setOpacityModifyRGB:null,
+    //setOpacityModifyRGB:null,
 
     /**
      * Returns whether opacity modify color or not.
@@ -741,7 +743,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * Update the display opacity.
      * @function
      */
-    updateDisplayedOpacity: null,
+    //updateDisplayedOpacity: null,
 
     // Animation
 
@@ -804,7 +806,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _originalTexture: null,
     _drawSize_Canvas: null,
 
-    ctor: null,
+    //ctor: null,
 
 	_softInit: function (fileName, rect, rotated) {
 		if (fileName === undefined)
@@ -850,7 +852,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {Number|cc.BlendFunc} src
      * @param {Number} dst
      */
-    setBlendFunc: null,
+    //setBlendFunc: null,
 
     /**
      * Initializes an empty sprite with nothing init.<br/>
@@ -858,7 +860,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @function
      * @return {Boolean}
      */
-    init:null,
+    //init:null,
 
     /**
      * <p>
@@ -899,7 +901,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {Boolean} [rotated] Whether or not the texture rectangle is rotated.
      * @return {Boolean} true if the sprite is initialized properly, false otherwise.
      */
-    initWithTexture: null,
+    //initWithTexture: null,
 
     _textureLoadedCallback: null,
 
@@ -910,14 +912,14 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {Boolean} [rotated] Whether or not the texture is rotated
      * @param {cc.Size} [untrimmedSize] The original pixels size of the texture
      */
-    setTextureRect:null,
+    //setTextureRect:null,
 
     // BatchNode methods
     /**
      * Updates the quad according the the rotation, position, scale values.
      * @function
      */
-    updateTransform: null,
+    //updateTransform: null,
 
     /**
      * Add child to sprite (override cc.Node)
@@ -927,7 +929,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {String} tag child's tag
      * @override
      */
-    addChild: null,
+    //addChild: null,
 
     /**
      * Update sprite's color
@@ -967,20 +969,20 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @function
      * @param {Number} opacity
      */
-    setOpacity:null,
+    //setOpacity:null,
 
     /**
      * Sets color of the sprite
      * @function
      * @param {cc.Color} color3
      */
-    setColor: null,
+    //setColor: null,
 
     /**
      * Updates the display color
      * @function
      */
-    updateDisplayedColor: null,
+    //updateDisplayedColor: null,
 
     // Frames
     /**
@@ -988,7 +990,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @function
      * @param {cc.SpriteFrame|String} newFrame
      */
-    setSpriteFrame: null,
+    //setSpriteFrame: null,
 
     /**
      * Sets a new display frame to the sprite.
@@ -1006,7 +1008,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {cc.SpriteFrame} frame
      * @return {Boolean}
      */
-    isFrameDisplayed: null,
+    //isFrameDisplayed: null,
 
     /**
      * Returns the current displayed frame.
@@ -1030,7 +1032,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      *  batch.addChild(sprite);
      *  layer.addChild(batch);
      */
-    setBatchNode:null,
+    //setBatchNode:null,
 
     // CCTextureProtocol
     /**
@@ -1038,7 +1040,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @function
      * @param {cc.Texture2D|String} texture
      */
-    setTexture: null,
+    //setTexture: null,
 
     // Texture protocol
     _updateBlendFunc:function () {
