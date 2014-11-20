@@ -56,15 +56,10 @@
  * @property {Array}            descendants     - <@readonly> Descendants of sprite batch node
  */
 cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
-    textureAtlas: null,
-
     _blendFunc: null,
     // all descendants: chlidren, gran children, etc...
     _descendants: null,
     _className: "SpriteBatchNode",
-
-    _textureForCanvas: null,
-    _originalTexture: null,
 
     ctor: function (fileImage, capacity) {
         cc.Node.prototype.ctor.call(this);
@@ -129,7 +124,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {cc.TextureAtlas}
      */
     getTextureAtlas: function () {
-        return this.textureAtlas;
+        return this._renderCmd.getTexture();
     },
 
     /**
@@ -137,9 +132,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {cc.TextureAtlas} textureAtlas
      */
     setTextureAtlas: function (textureAtlas) {
-        if (textureAtlas != this.textureAtlas) {
-            this.textureAtlas = textureAtlas;
-        }
+        this._renderCmd.setTexture(textureAtlas);
     },
 
     /**
@@ -194,17 +187,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * Increase Atlas Capacity
      */
     increaseAtlasCapacity: function () {
-        // if we're going beyond the current TextureAtlas's capacity,
-        // all the previously initialized sprites will need to redo their texture coords
-        // this is likely computationally expensive
-        var locCapacity = this.textureAtlas.capacity;
-        var quantity = Math.floor((locCapacity + 1) * 4 / 3);
-        cc.log(cc._LogInfos.SpriteBatchNode_increaseAtlasCapacity, locCapacity, quantity);
-
-        if (!this.textureAtlas.resizeCapacity(quantity)) {
-            // serious problems
-            cc.log(cc._LogInfos.SpriteBatchNode_increaseAtlasCapacity_2);
-        }
+        this._renderCmd.increaseAtlasCapacity();
     },
 
     /**
@@ -443,13 +426,6 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         this._children.splice(index, 0, sprite);
     },
 
-    _updateBlendFunc: function () {
-        if (!this.textureAtlas.texture.hasPremultipliedAlpha()) {
-            this._blendFunc.src = cc.SRC_ALPHA;
-            this._blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
-        }
-    },
-
     /**
      * <p>
      *    Initializes a cc.SpriteBatchNode with a texture2d and capacity of children.<br/>
@@ -481,7 +457,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         sprite.atlasIndex = index;
         sprite.dirty = true;
 
-        var locTextureAtlas = this.textureAtlas;
+        var locTextureAtlas = this.getTextureAtlas();
         if (locTextureAtlas.totalQuads >= locTextureAtlas.capacity)
             this.increaseAtlasCapacity();
 

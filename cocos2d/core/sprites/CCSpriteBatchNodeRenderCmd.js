@@ -43,6 +43,8 @@
 
     proto.insertQuad = function(){};
 
+    proto.increaseAtlasCapacity = function(){};
+
     proto.removeQuadAtIndex = function(){};
 
     proto.removeAllQuads = function(){};
@@ -58,7 +60,11 @@
             locChildren[i].setTexture(texture);
     };
 
-    proto.updateChildrenAtlasIndex = function(){ }
+    proto.updateChildrenAtlasIndex = function(){ };
+
+    proto.getTextureAtlas = function(){};
+
+    proto.setTextureAtlas = function(textureAtlas){};
 })();
 
 (function(){
@@ -113,8 +119,8 @@
     proto.initWithTexture = function(texture, capacity){
         this._textureAtlas = new cc.TextureAtlas();
         this._textureAtlas.initWithTexture(texture, capacity);
-        this._node._updateBlendFunc();
-        this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+        this._updateBlendFunc();
+        this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
     };
 
     proto.insertQuad = function(sprite, index){
@@ -218,5 +224,22 @@
         // and at the same time reorder descedants and the quads to the right index
         for (var i = 0; i < children.length; i++)
             index = this._updateAtlasIndex(children[i], index);
-    }
+    };
+
+    proto._updateBlendFunc = function () {
+        if (!this._textureAtlas.texture.hasPremultipliedAlpha()) {
+            this._blendFunc.src = cc.SRC_ALPHA;
+            this._blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
+        }
+    };
+
+    proto.getTextureAtlas = function(){
+        return this._textureAtlas;
+    };
+
+    proto.setTextureAtlas = function(textureAtlas){
+        if (textureAtlas != this._textureAtlas) {
+            this._textureAtlas = textureAtlas;
+        }
+    };
 })();
