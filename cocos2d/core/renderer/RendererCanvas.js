@@ -160,7 +160,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var context = ctx || cc._renderContext,
             locTextureCoord = self._textureCoord;
 
-        if(node._texture && (locTextureCoord.width === 0 || locTextureCoord.height === 0))
+        if(!node._texture || (locTextureCoord.width === 0 || locTextureCoord.height === 0))
             return;
         if (!locTextureCoord.validRect && node._displayedOpacity === 0)
             return;  //draw nothing
@@ -276,13 +276,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                                 locWidth * scaleX,
                                 locHeight * scaleY);
                     }
-                }
-            } else {
-                contentSize = node._contentSize;
-                if(locTextureCoord.validRect) {
-                    curColor = node._displayedColor;
-                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
-                    context.fillRect((t.tx + locX) * scaleX, (-t.ty + locY) * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
                 }
             }
             if (blendChange)
