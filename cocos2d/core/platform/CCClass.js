@@ -103,20 +103,21 @@ ClassManager.compileSuper.ClassManager = ClassManager;
      * @return {function}
      */
     cc.Class.extend = function (props) {
-        var _super = this.prototype;
-
+        var _super = this.prototype,
         // Instantiate a base Class (but only create the instance,
         // don't run the init constructor)
-        var prototype = Object.create(_super);
-
-        var classId = ClassManager.getNewID();
-        ClassManager[classId] = _super;
+            prototype = Object.create(_super),
+            classId = ClassManager.getNewID(),
         // Copy the properties over onto the new prototype. We make function
         // properties non-eumerable as this makes typeof === 'function' check
         // unneccessary in the for...in loop used 1) for generating Class()
         // 2) for cc.clone and perhaps more. It is also required to make
         // these function properties cacheable in Carakan.
-        var desc = { writable: true, enumerable: false, configurable: true };
+            desc = { writable: true, enumerable: false, configurable: true },
+            i, idx, li, prop, name, isFunc, override, hasSuperCall, supportProp,
+            getter, setter, propertyName;
+
+        ClassManager[classId] = _super;
 
 	    prototype.__instanceId = null;
 
@@ -145,17 +146,18 @@ ClassManager.compileSuper.ClassManager = ClassManager;
 	    this.__getters__ && (Class.__getters__ = cc.clone(this.__getters__));
 	    this.__setters__ && (Class.__setters__ = cc.clone(this.__setters__));
 
-        for(var idx = 0, li = arguments.length; idx < li; ++idx) {
-            var prop = arguments[idx];
-            for (var name in prop) {
-                var isFunc = (typeof prop[name] === "function");
-                var override = (typeof _super[name] === "function");
-                var hasSuperCall = fnTest.test(prop[name]);
+        supportProp = props.__type ? true : false;
+        if (supportProp)
+            cc.addProperty(prototype, "__type");
 
-                if (releaseMode && isFunc && override && hasSuperCall) {
-                    desc.value = ClassManager.compileSuper(prop[name], name, classId);
-                    Object.defineProperty(prototype, name, desc);
-                } else if (isFunc && override && hasSuperCall) {
+        for(idx = 0, li = arguments.length; idx < li; ++idx) {
+            prop = arguments[idx];
+            for (name in prop) {
+                isFunc = (typeof prop[name] === "function");
+                override = (typeof _super[name] === "function");
+                hasSuperCall = fnTest.test(prop[name]);
+
+                if (isFunc && override && hasSuperCall) {
                     desc.value = (function (name, fn) {
                         return function () {
                             var tmp = this._super;
@@ -182,10 +184,9 @@ ClassManager.compileSuper.ClassManager = ClassManager;
 
                 if (isFunc) {
                     // Override registered getter/setter
-                    var getter, setter, propertyName;
                     if (this.__getters__ && this.__getters__[name]) {
                         propertyName = this.__getters__[name];
-                        for (var i in this.__setters__) {
+                        for (i in this.__setters__) {
                             if (this.__setters__[i] == propertyName) {
                                 setter = i;
                                 break;
@@ -195,7 +196,7 @@ ClassManager.compileSuper.ClassManager = ClassManager;
                     }
                     if (this.__setters__ && this.__setters__[name]) {
                         propertyName = this.__setters__[name];
-                        for (var i in this.__getters__) {
+                        for (i in this.__getters__) {
                             if (this.__getters__[i] == propertyName) {
                                 getter = i;
                                 break;
@@ -212,7 +213,7 @@ ClassManager.compileSuper.ClassManager = ClassManager;
 
         //add implementation method
         Class.implement = function (prop) {
-            for (var name in prop) {
+            for (name in prop) {
                 prototype[name] = prop[name];
             }
         };
