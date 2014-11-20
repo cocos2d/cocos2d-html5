@@ -129,6 +129,8 @@ cc.s_globalOrderOfArrival = 1;
  * @property {Number}               glServerState       - The state of OpenGL server side
  */
 cc.Node = cc.Class.extend(/** @lends cc.Node# */{
+    __type: "cc.Node",
+
     _localZOrder: 0,                                     ///< Local order (relative to its siblings) used to sort the node
     _globalZOrder: 0,                                    ///< Global order used to sort the node
     _vertexZ: 0.0,
@@ -308,7 +310,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Sets node's dirty flag to true so that it can be updated in visit function of the next frame
      * @function
      */
-    setNodeDirty: null,
+    //setNodeDirty: null,
 
     /**
      * <p>Properties configuration function </br>
@@ -786,13 +788,18 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Returns an array of all children  <br/>
+     * Add an array of node as children of this node <br/>
      * Composing a "tree" structure is a very important feature of CCNode
      * @function
      * @param {Array} children An array of children
      */
     setChildren: function (children) {
-
+        var i, l, child;
+        for (i = 0, l = children.length; i < l; i++) {
+            child = children[i];
+            if (child instanceof cc.Node)
+                this.addChild(child);
+        }
     },
 
     /**
@@ -2110,27 +2117,27 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             this._componentContainer.removeAll();
     },
 
-    grid: null,
+    //grid: null,
 
     /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @function
      */
-    ctor: null,
+    //ctor: null,
 
     /**
      * Recursive method that visit its children and draw them
      * @function
      * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
      */
-    visit: null,
+    //visit: null,
 
     /**
      * Performs view-matrix transformation based on position, scale, rotation and other attributes.
      * @function
      * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx Render context
      */
-    transform: null,
+    //transform: null,
 
     /**
      * <p>Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.<br/>
@@ -2149,7 +2156,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      * @return {cc.AffineTransform} The affine transform object
      */
-    getNodeToParentTransform: null,
+    //getNodeToParentTransform: null,
 
     _setNodeDirtyForCache: function () {
         if (this._cacheDirty === false) {

@@ -28,17 +28,17 @@ cc._tmp.PrototypeCCNode = function () {
 
     var _p = cc.Node.prototype;
 
-    cc.addProperty(_p, "x", _p.getPositionX, _p.setPositionX);
-    cc.addProperty(_p, "y", _p.getPositionY, _p.setPositionY);
+    cc.addProperty(_p, "x", 0, _p.getPositionX, _p.setPositionX);
+    cc.addProperty(_p, "y", 0, _p.getPositionY, _p.setPositionY);
     /** @expose */
     //_p.pos;
     //cc.addProperty(_p, "pos", _p.getPosition, _p.setPosition);
     /** @expose */
     _p.width;
-    cc.addProperty(_p, "width", _p._getWidth, _p._setWidth);
+    cc.addProperty(_p, "width", 0, _p._getWidth, _p._setWidth);
     /** @expose */
     _p.height;
-    cc.addProperty(_p, "height", _p._getHeight, _p._setHeight);
+    cc.addProperty(_p, "height", 0, _p._getHeight, _p._setHeight);
     /** @expose */
     //_p.size;
     //cc.addProperty(_p, "size", _p.getContentSize, _p.setContentSize);
@@ -47,25 +47,25 @@ cc._tmp.PrototypeCCNode = function () {
     //cc.addProperty(_p, "anchor", _p._getAnchor, _p._setAnchor);
     /** @expose */
     _p.anchorX;
-    cc.addProperty(_p, "anchorX", _p._getAnchorX, _p._setAnchorX);
+    cc.addProperty(_p, "anchorX", 0, _p._getAnchorX, _p._setAnchorX);
     /** @expose */
     _p.anchorY;
-    cc.addProperty(_p, "anchorY", _p._getAnchorY, _p._setAnchorY);
+    cc.addProperty(_p, "anchorY", 0, _p._getAnchorY, _p._setAnchorY);
     /** @expose */
     _p.skewX;
-    cc.addProperty(_p, "skewX", _p.getSkewX, _p.setSkewX);
+    cc.addProperty(_p, "skewX", 0, _p.getSkewX, _p.setSkewX);
     /** @expose */
     _p.skewY;
-    cc.addProperty(_p, "skewY", _p.getSkewY, _p.setSkewY);
+    cc.addProperty(_p, "skewY", 0, _p.getSkewY, _p.setSkewY);
     /** @expose */
     _p.zIndex;
-    cc.addProperty(_p, "zIndex", _p.getLocalZOrder, _p.setLocalZOrder);
+    cc.addProperty(_p, "zIndex", 0, _p.getLocalZOrder, _p.setLocalZOrder);
     /** @expose */
     _p.vertexZ;
     cc.defineGetterSetter(_p, "vertexZ", _p.getVertexZ, _p.setVertexZ);
     /** @expose */
     _p.rotation;
-    cc.addProperty(_p, "rotation", _p.getRotation, _p.setRotation);
+    cc.addProperty(_p, "rotation", 0, _p.getRotation, _p.setRotation);
     /** @expose */
     _p.rotationX;
     cc.defineGetterSetter(_p, "rotationX", _p.getRotationX, _p.setRotationX);
@@ -77,10 +77,10 @@ cc._tmp.PrototypeCCNode = function () {
     cc.defineGetterSetter(_p, "scale", _p.getScale, _p.setScale);
     /** @expose */
     _p.scaleX;
-    cc.addProperty(_p, "scaleX", _p.getScaleX, _p.setScaleX);
+    cc.addProperty(_p, "scaleX", 1, _p.getScaleX, _p.setScaleX);
     /** @expose */
     _p.scaleY;
-    cc.addProperty(_p, "scaleY", _p.getScaleY, _p.setScaleY);
+    cc.addProperty(_p, "scaleY", 1, _p.getScaleY, _p.setScaleY);
     /** @expose */
     _p.children;
     cc.addProperty(_p, "children", _p.getChildren, _p.setChildren);
@@ -89,22 +89,20 @@ cc._tmp.PrototypeCCNode = function () {
     cc.defineGetterSetter(_p, "childrenCount", _p.getChildrenCount);
     /** @expose */
     _p.parent;
-    cc.addProperty(_p, "parent", _p.getParent, _p.setParent);
+    cc.defineGetterSetter(_p, "parent", _p.getParent, _p.setParent);
     /** @expose */
     _p.visible;
-    cc.addProperty(_p, "visible", _p.isVisible, _p.setVisible);
+    cc.addProperty(_p, "visible", true, _p.isVisible, _p.setVisible);
     /** @expose */
     _p.running;
     cc.defineGetterSetter(_p, "running", _p.isRunning);
     /** @expose */
     _p.ignoreAnchor;
-    cc.addProperty(_p, "ignoreAnchor", _p.isIgnoreAnchorPointForPosition, _p.ignoreAnchorPointForPosition);
+    cc.addProperty(_p, "ignoreAnchor", false, _p.isIgnoreAnchorPointForPosition, _p.ignoreAnchorPointForPosition);
     /** @expose */
     _p.tag;
-    cc.addProperty(_p, "tag");
     /** @expose */
     _p.userData;
-    cc.addProperty(_p, "userData");
     /** @expose */
     _p.userObject;
     /** @expose */
@@ -117,21 +115,45 @@ cc._tmp.PrototypeCCNode = function () {
     cc.defineGetterSetter(_p, "scheduler", _p.getScheduler, _p.setScheduler);
     /** @expose */
     _p.shaderProgram;
-    cc.addProperty(_p, "shaderProgram", _p.getShaderProgram, _p.setShaderProgram);
+    cc.defineGetterSetter(_p, "shaderProgram", _p.getShaderProgram, _p.setShaderProgram);
 
     /** @expose */
     _p.opacity;
-    cc.addProperty(_p, "opacity", _p.getOpacity, _p.setOpacity);
+    cc.addProperty(_p, "opacity", 255, _p.getOpacity, _p.setOpacity);
     /** @expose */
     _p.opacityModifyRGB;
-    cc.addProperty(_p, "opacityModifyRGB", _p.isOpacityModifyRGB, _p.setOpacityModifyRGB);
+    cc.addProperty(_p, "opacityModifyRGB", false, _p.isOpacityModifyRGB, _p.setOpacityModifyRGB);
     /** @expose */
     _p.cascadeOpacity;
-    cc.addProperty(_p, "cascadeOpacity", _p.isCascadeOpacityEnabled, _p.setCascadeOpacityEnabled);
+    cc.addProperty(_p, "cascadeOpacity", false, _p.isCascadeOpacityEnabled, _p.setCascadeOpacityEnabled);
     /** @expose */
     _p.color;
-    cc.addProperty(_p, "color", _p.getColor, _p.setColor);
+    cc.addProperty(_p, "color", null, _p.getColor, _p.setColor);
     /** @expose */
     _p.cascadeColor;
-    cc.addProperty(_p, "cascadeColor", _p.isCascadeColorEnabled, _p.setCascadeColorEnabled);
+    cc.addProperty(_p, "cascadeColor", false, _p.isCascadeColorEnabled, _p.setCascadeColorEnabled);
+
+    _p.__delegators = {
+        color : cc.__delegators.color,
+        children : {
+            parser : function(json) {
+                var children = [];
+                for (var i in json) {
+                    // Generate one child
+                    children.push( cc.deserialize(json[i]) );
+                }
+                return children;
+            },
+            stringifier : function(children) {
+                var json = [];
+                for (var i in children) {
+                    // Generate one child
+                    json.push( cc.serialize(children[i]) );
+                }
+                return JSON.stringify(json);
+            }
+        }
+    }
+
 };
+
