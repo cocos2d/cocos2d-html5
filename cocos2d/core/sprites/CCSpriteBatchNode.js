@@ -32,10 +32,6 @@ cc.DEFAULT_SPRITE_BATCH_CAPACITY = 29;
 
 /**
  * <p>
- *     In Canvas render mode ,cc.SpriteBatchNodeCanvas is like a normal node: if it contains children.             <br/>
- *     If its _useCache is set to true, it can cache the result that all children of SpriteBatchNode to a canvas <br/>
- *     (often known as "batch draw").<br/>
- *     <br/>
  *     A cc.SpriteBatchNode can reference one and only one texture (one image file, one texture atlas).<br/>
  *     Only the cc.Sprites that are contained in that texture can be added to the cc.SpriteBatchNode.<br/>
  *     All cc.Sprites added to a cc.SpriteBatchNode are drawn in one WebGL draw call. <br/>
@@ -71,6 +67,9 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     // all descendants: chlidren, gran children, etc...
     _descendants: null,
     _className: "SpriteBatchNode",
+
+    _textureForCanvas: null,
+    _originalTexture: null,
 
     /**
      * <p>
@@ -378,13 +377,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         cc.Node.prototype.removeChild.call(this, child, cleanup);
     },
 
-    _textureForCanvas: null,
-    _useCache: false,
-    _originalTexture: null,
-
-    ctor: null,
-
-    _ctorForCanvas: function (fileImage, capacity) {
+    ctor: function (fileImage, capacity) {
         cc.Node.prototype.ctor.call(this);
 
         var texture2D;
@@ -393,27 +386,10 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             texture2D = cc.textureCache.getTextureForKey(fileImage);
             if (!texture2D)
                 texture2D = cc.textureCache.addImage(fileImage);
-        }
-        else if (fileImage instanceof cc.Texture2D)
+        }else if (fileImage instanceof cc.Texture2D)
             texture2D = fileImage;
 
         texture2D && this.initWithTexture(texture2D, capacity);
-    },
-
-    _ctorForWebGL: function (fileImage, capacity) {
-        cc.Node.prototype.ctor.call(this);
-
-        var texture2D;
-        capacity = capacity || cc.DEFAULT_SPRITE_BATCH_CAPACITY;
-        if (cc.isString(fileImage)) {
-            texture2D = cc.textureCache.getTextureForKey(fileImage);
-            if (!texture2D)
-                texture2D = cc.textureCache.addImage(fileImage);
-        } else if (fileImage instanceof cc.Texture2D)
-            texture2D = fileImage;
-        texture2D && this.initWithTexture(texture2D, capacity);
-
-        this._renderCmd = new cc.SpriteBatchNode.WebGLRenderCmd(this);
     },
 
     /**
@@ -632,7 +608,6 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         this._descendants = [];
 
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-
         this._originalTexture = tex;
         this._textureForCanvas = tex;
         return true;
@@ -676,7 +651,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         }
 
         // add children recursively
-        var locChildren = sprite.children, child;
+        var locChildren = sprite.children, child, l;
         if (locChildren) {
             for (i = 0, l = locChildren.length || 0; i < l; i++) {
                 child = locChildren[i];
@@ -897,7 +872,6 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     addChild: null,
 
     _addChildForCanvas: function (child, zOrder, tag) {
-
         cc.assert(child != null, cc._LogInfos.CCSpriteBatchNode_addChild_3);
 
         if (!(child instanceof cc.Sprite)) {
@@ -914,8 +888,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
 
     _addChildForWebGL: function (child, zOrder, tag) {
-
-        cc.assert(child != null, cc._LogInfos.Sprite_addChild_6);
+        cc.assert(child != null, cc._LogInfos.CCSpriteBatchNode_addChild_3);
 
         if (!(child instanceof cc.Sprite)) {
             cc.log(cc._LogInfos.Sprite_addChild_4);
@@ -977,6 +950,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      */
     sortAllChildren: null,
 
+    //TODO need refactor
     _sortAllChildrenForCanvas: function () {
         if (this._reorderChildDirty) {
             var i, j = 0, locChildren = this._children;

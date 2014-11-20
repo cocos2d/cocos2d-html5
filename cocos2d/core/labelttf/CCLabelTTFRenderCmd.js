@@ -68,6 +68,19 @@ cc.LabelTTF.RenderCmd.prototype._getLabelContext = function () {
     return this._labelContext;
 };
 
+cc.LabelTTF.RenderCmd.prototype._setFontStyle = function(fontName, fontSize){
+    this._fontStyleStr = fontSize + "px '" + fontName + "'";
+    this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName, fontSize);
+};
+
+cc.LabelTTF.RenderCmd.prototype._getFontStyle = function () {
+    return this._fontStyleStr;
+};
+
+cc.LabelTTF.RenderCmd.prototype._getFontClientHeight = function(){
+    return this._fontClientHeight;
+};
+
 cc.LabelTTF.RenderCmd.prototype._updateTexture = function () {
     var node = this._node;
     var locContext = this._getLabelContext(), locLabelCanvas = this._labelCanvas;
@@ -82,7 +95,7 @@ cc.LabelTTF.RenderCmd.prototype._updateTexture = function () {
     }
 
     //set size for labelCanvas
-    locContext.font = node._fontStyleStr;
+    locContext.font = this._fontStyleStr;
     this._updateTTF();
     var width = locContentSize.width, height = locContentSize.height;
     var flag = locLabelCanvas.width == width && locLabelCanvas.height == height;
@@ -145,15 +158,15 @@ cc.LabelTTF.RenderCmd.prototype._updateTTF = function(){
     if (locDimensionsWidth === 0) {
         if (this._isMultiLine)
             locSize = cc.size(0 | (Math.max.apply(Math, locLineWidth) + locStrokeShadowOffsetX),
-                    0 | ((node._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY));
+                    0 | ((this._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY));
         else
-            locSize = cc.size(0 | (this._measure(node._string) + locStrokeShadowOffsetX), 0 | (node._fontClientHeight + locStrokeShadowOffsetY));
+            locSize = cc.size(0 | (this._measure(node._string) + locStrokeShadowOffsetX), 0 | (this._fontClientHeight + locStrokeShadowOffsetY));
     } else {
         if (node._dimensions.height === 0) {
             if (this._isMultiLine)
-                locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | ((node.getLineHiehgt() * this._strings.length) + locStrokeShadowOffsetY));
+                locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | ((node.getLineHeight() * this._strings.length) + locStrokeShadowOffsetY));
             else
-                locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | (node.getLineHiehgt() + locStrokeShadowOffsetY));
+                locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | (node.getLineHeight() + locStrokeShadowOffsetY));
         } else {
             //dimension is already set, contentSize must be same as dimension
             locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | (node._dimensions.height + locStrokeShadowOffsetY));
@@ -174,28 +187,28 @@ cc.LabelTTF.RenderCmd.prototype._drawTTFInCanvas = function (context) {
         return;
     var node = this._node;
     var locStrokeShadowOffsetX = node._strokeShadowOffsetX, locStrokeShadowOffsetY = node._strokeShadowOffsetY;
-    var locContentSizeHeight = node._contentSize.height - locStrokeShadowOffsetY, locVAlignment = node._vAlignment, locHAlignment = node._hAlignment,
-        locFontHeight = node._fontClientHeight, locStrokeSize = node._strokeSize;
+    var locContentSizeHeight = node._contentSize.height - locStrokeShadowOffsetY, locVAlignment = node._vAlignment,
+        locHAlignment = node._hAlignment, locStrokeSize = node._strokeSize;
 
     context.setTransform(1, 0, 0, 1, 0 + locStrokeShadowOffsetX * 0.5, locContentSizeHeight + locStrokeShadowOffsetY * 0.5);
 
     //this is fillText for canvas
-    if (context.font != node._fontStyleStr)
-        context.font = node._fontStyleStr;
-    context.fillStyle = node._fillColorStr;
+    if (context.font != this._fontStyleStr)
+        context.font = this._fontStyleStr;
+    context.fillStyle = this._fillColorStr;
 
     var xOffset = 0, yOffset = 0;
     //stroke style setup
     var locStrokeEnabled = node._strokeEnabled;
     if (locStrokeEnabled) {
         context.lineWidth = locStrokeSize * 2;
-        context.strokeStyle = node._strokeColorStr;
+        context.strokeStyle = this._strokeColorStr;
     }
 
     //shadow style setup
     if (node._shadowEnabled) {
         var locShadowOffset = node._shadowOffset;
-        context.shadowColor = node._shadowColorStr;
+        context.shadowColor = this._shadowColorStr;
         context.shadowOffsetX = locShadowOffset.x;
         context.shadowOffsetY = -locShadowOffset.y;
         context.shadowBlur = node._shadowBlur;
@@ -206,9 +219,9 @@ cc.LabelTTF.RenderCmd.prototype._drawTTFInCanvas = function (context) {
 
     var locContentWidth = node._contentSize.width - locStrokeShadowOffsetX;
 
-    //lineHiehgt
-    var lineHeight = node.getLineHiehgt();
-    var transformTop = (lineHeight - node._fontClientHeight) / 2;
+    //lineHeight
+    var lineHeight = node.getLineHeight();
+    var transformTop = (lineHeight - this._fontClientHeight) / 2;
 
     if (locHAlignment === cc.TEXT_ALIGNMENT_RIGHT)
         xOffset += locContentWidth;

@@ -155,7 +155,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
 
     /**
      * initializes a cc.Menu with a Array of cc.MenuItem objects
-     * @param {Array} array Of cc.MenuItem Items
+     * @param {Array} arrayOfItems array Of cc.MenuItem Items
      * @return {Boolean}
      */
     initWithArray: function (arrayOfItems) {

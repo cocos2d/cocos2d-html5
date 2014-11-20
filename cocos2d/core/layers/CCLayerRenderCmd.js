@@ -32,7 +32,6 @@
  * cc.Layer's rendering objects of Canvas
  */
 (function(){
-
     //Layer's canvas render command
     cc.Layer.CanvasRenderCmd = function(renderable){
         cc.Node.CanvasRenderCmd.call(this, renderable);
@@ -125,7 +124,7 @@
         if (!_t._visible || len === 0)
             return;
 
-        _t.transform(context);
+        _t._syncStatus(parentCmd);
 
         if(_t._needDraw)
             cc.renderer.pushRenderCommand(this);
@@ -161,18 +160,17 @@
         }
         return rect;
     };
-
 })();
 
 /**
  * cc.LayerColor's rendering objects of Canvas
  */
 (function(){
-
     //LayerColor's canvas render command
     cc.LayerColor.CanvasRenderCmd = function(renderable){
         cc.Layer.CanvasRenderCmd.call(this, renderable);
         this._needDraw = true;
+        this._blendFuncStr = "source-over";
     };
     var proto = cc.LayerColor.CanvasRenderCmd.prototype = Object.create(cc.Layer.CanvasRenderCmd.prototype);
     proto.constructor = cc.LayerColor.CanvasRenderCmd;
@@ -190,11 +188,11 @@
             return;
 
         var needTransform = (t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1);
-        var needRestore = (node._blendFuncStr !== "source-over") || needTransform;
+        var needRestore = (this._blendFuncStr !== "source-over") || needTransform;
 
         if (needRestore) {
             context.save();
-            context.globalCompositeOperation = node._blendFuncStr;
+            context.globalCompositeOperation = this._blendFuncStr;
         }
         context.globalAlpha = opacity;
         context.fillStyle = "rgba(" + (0 | curColor.r) + "," + (0 | curColor.g) + ","
@@ -210,20 +208,13 @@
         cc.g_NumberOfDraws++;
     };
 
-    proto._updataSquareVertices =
+    proto.updateBlendFunc = function(blendFunc){
+        this._blendFuncStr = cc.Node.CanvasRenderCmd._getCompositeOperationByBlendFunc(blendFunc);
+    };
+
+    proto._updateSquareVertices =
     proto._updateSquareVerticesWidth =
     proto._updateSquareVerticesHeight = function(){};
-
-    proto._updateColor = function(){
-        var locCmd = this._renderCmd;
-        if(!locCmd || !locCmd._color)
-            return;
-        var locColor = this._displayedColor;
-        locCmd._color.r = locColor.r;
-        locCmd._color.g = locColor.g;
-        locCmd._color.b = locColor.b;
-        locCmd._color.a = this._displayedOpacity / 255;
-    };
 
     proto._bakeRendering = function(){
         if(this._cacheDirty){
@@ -320,16 +311,12 @@
         }
         return rect;
     };
-
-    proto.draw = function(){};
-
 })();
 
 /**
  * cc.LayerGradient's rendering objects of Canvas
  */
 (function(){
-
     cc.LayerGradient.CanvasRenderCmd = function(renderable){
         cc.LayerColor.CanvasRenderCmd.call(this, renderable);
         this._needDraw = true;
@@ -337,25 +324,30 @@
         this._endPoint = cc.p(0, 0);
         this._startStopStr = null;
         this._endStopStr = null;
+        this._gradientDirty = false;
     };
     var proto = cc.LayerGradient.CanvasRenderCmd.prototype = Object.create(cc.LayerColor.CanvasRenderCmd.prototype);
     proto.constructor = cc.LayerGradient.CanvasRenderCmd;
+
+    proto.setGradientDirty = function(){
+        this._gradientDirty = true;
+    };
 
     proto.rendering = function (ctx, scaleX, scaleY) {
         var context = ctx || cc._renderContext,
             self = this,
             node = self._node,
-            opacity = node._displayedOpacity / 255,
-            t = node._transformWorld;
+            opacity = this._displayedOpacity / 255,
+            t = this._worldTransform;
 
         if (opacity === 0)
             return;
 
         var needTransform = (t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1);
-        var needRestore = (node._blendFuncStr !== "source-over") || needTransform;
+        var needRestore = (this._blendFuncStr !== "source-over") || needTransform;
         if (needRestore) {
             context.save();
-            context.globalCompositeOperation = node._blendFuncStr;
+            context.globalCompositeOperation = this._blendFuncStr;
         }
         context.globalAlpha = opacity;
         var locWidth = node._contentSize.width, locHeight = node._contentSize.height;
@@ -376,26 +368,78 @@
         cc.g_NumberOfDraws++;
     };
 
-    proto._updateColor = function(){
-        var _t = this;
-        var locAlongVector = _t._alongVector, tWidth = _t.width * 0.5, tHeight = _t.height * 0.5;
+    proto.updateStatus = function(){
+        var colorDirty = this._dirtyFlag & cc.Node._dirtyFlags.colorDirty,
+            opacityDirty = this._dirtyFlag & cc.Node._dirtyFlags.opacityDirty;
+        if(colorDirty){
+            //update the color
+            this._updateDisplayColor()
+        }
 
-        var locCmd = this._renderCmd;
-        locCmd._startPoint.x = tWidth * (-locAlongVector.x) + tWidth;
-        locCmd._startPoint.y = tHeight * locAlongVector.y - tHeight;
-        locCmd._endPoint.x = tWidth * locAlongVector.x + tWidth;
-        locCmd._endPoint.y = tHeight * (-locAlongVector.y) - tHeight;
+        if(opacityDirty){
+            //update the opacity
+            this._updateDisplayOpacity();
+        }
 
-        var locStartColor = this._displayedColor, locEndColor = this._endColor, opacity = this._displayedOpacity / 255;
-        var startOpacity = this._startOpacity, endOpacity = this._endOpacity;
-        locCmd._startStopStr = "rgba(" + Math.round(locStartColor.r) + "," + Math.round(locStartColor.g) + ","
-            + Math.round(locStartColor.b) + "," + startOpacity.toFixed(4) + ")";
-        locCmd._endStopStr = "rgba(" + Math.round(locEndColor.r) + "," + Math.round(locEndColor.g) + ","
-            + Math.round(locEndColor.b) + "," + endOpacity.toFixed(4) + ")";
+        if(this._dirtyFlag & cc.Node._dirtyFlags.transformDirty){
+            //update the transform
+            this.transform(null, true);
+        }
+
+        if(colorDirty || opacityDirty || this._gradientDirty)
+            this._updateColor();
     };
 
-})();
+    proto._updateDisplayColor = function(parentColor){
+        cc.Node.CanvasRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
+        this._updateColor();
+    };
 
+    proto._updateDisplayOpacity = function(parentOpacity){
+        cc.Node.CanvasRenderCmd.prototype._updateDisplayOpacity.call(this, parentOpacity);
+        this._updateColor();
+    };
+
+    proto._syncStatus = function(parentCmd){
+        var colorDirty = this._dirtyFlag & cc.Node._dirtyFlags.colorDirty,
+            opacityDirty = this._dirtyFlag & cc.Node._dirtyFlags.opacityDirty;
+        if(colorDirty){
+            //update the color
+            this._syncDisplayColor()
+        }
+
+        if(opacityDirty){
+            //update the opacity
+            this._syncDisplayOpacity();
+        }
+
+        if(this._dirtyFlag & cc.Node._dirtyFlags.transformDirty){
+            //update the transform
+            this.transform(parentCmd);
+        }
+
+        if(colorDirty || opacityDirty)
+            this._updateColor();
+    };
+
+    proto._updateColor = function(){
+        var node = this._node;
+        var contentSize = node._contentSize;
+        var locAlongVector = node._alongVector, tWidth = contentSize.width * 0.5, tHeight = contentSize.height * 0.5;
+
+        this._startPoint.x = tWidth * (-locAlongVector.x) + tWidth;
+        this._startPoint.y = tHeight * locAlongVector.y - tHeight;
+        this._endPoint.x = tWidth * locAlongVector.x + tWidth;
+        this._endPoint.y = tHeight * (-locAlongVector.y) - tHeight;
+
+        var locStartColor = this._displayedColor, locEndColor = node._endColor;
+        var startOpacity = node._startOpacity/255, endOpacity = node._endOpacity/255;
+        this._startStopStr = "rgba(" + Math.round(locStartColor.r) + "," + Math.round(locStartColor.g) + ","
+            + Math.round(locStartColor.b) + "," + startOpacity.toFixed(4) + ")";
+        this._endStopStr = "rgba(" + Math.round(locEndColor.r) + "," + Math.round(locEndColor.g) + ","
+            + Math.round(locEndColor.b) + "," + endOpacity.toFixed(4) + ")";
+    };
+})();
 
 /**
  * cc.Layer's rendering objects of WebGL
@@ -412,12 +456,6 @@
 
     proto.unbake = function(){};
 
-    proto.unbake = function(){
-        return false;
-    };
-
-    proto.visit = cc.Node.prototype.visit;
-
     proto._bakeForAddChild = function(){};
 })();
 
@@ -425,7 +463,6 @@
  * cc.LayerColor's rendering objects of WebGL
  */
 (function(){
-
     cc.LayerColor.WebGLRenderCmd = function(renderable){
         cc.Layer.WebGLRenderCmd.call(this, renderable);
         this._needDraw = true;
@@ -455,24 +492,24 @@
         var context = ctx || cc._renderContext;
         var node = this._node;
 
-        node._shaderProgram.use();
-        node._shaderProgram._setUniformForMVPMatrixWithMat4(node._stackMatrix);
+        this._shaderProgram.use();
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
+        cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
 
         //
         // Attributes
         //
-        context.bindBuffer(context.ARRAY_BUFFER, node._verticesFloat32Buffer);
+        context.bindBuffer(context.ARRAY_BUFFER, this._verticesFloat32Buffer);
         context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, 0, 0);
 
-        context.bindBuffer(context.ARRAY_BUFFER, node._colorsUint8Buffer);
+        context.bindBuffer(context.ARRAY_BUFFER, this._colorsUint8Buffer);
         context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, 0, 0);
 
-        cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
         context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
     };
 
-    proto._updataSquareVertices = function(size, height){
+    proto._updateSquareVertices = function(size, height){
         var locSquareVertices = this._squareVertices;
         if (height === undefined) {
             locSquareVertices[1].x = size.width;
@@ -515,25 +552,6 @@
         this.setDirtyFlag(cc.Node._dirtyFlags.colorDirty);
     };
 
-    proto.draw = function(){
-        var context = ctx || cc._renderContext;
-
-        cc.nodeDrawSetup(this);
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
-
-        //
-        // Attributes
-        //
-        context.bindBuffer(context.ARRAY_BUFFER, this._verticesFloat32Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, 0, 0);
-
-        context.bindBuffer(context.ARRAY_BUFFER, this._colorsUint8Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, 0, 0);
-
-        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-        context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
-    };
-
     proto._bindLayerVerticesBufferData = function(){
         var glContext = cc._renderContext;
         glContext.bindBuffer(glContext.ARRAY_BUFFER, this._verticesFloat32Buffer);
@@ -546,6 +564,8 @@
         glContext.bufferData(glContext.ARRAY_BUFFER, this._squareColorsAB, glContext.STATIC_DRAW);
     };
 
+    proto.updateBlendFunc = function(blendFunc){
+    };
 })();
 
 /**
@@ -574,10 +594,10 @@
             u = cc.pMult(u, h2 * c);
         }
 
-        var opacityf = _t._displayedOpacity / 255.0;
-        var locDisplayedColor = _t._displayedColor, locEndColor = _t._endColor;
-        var S = { r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: _t._startOpacity * opacityf};
-        var E = {r: locEndColor.r, g: locEndColor.g, b: locEndColor.b, a: _t._endOpacity * opacityf};
+        var opacityf = _t._displayedOpacity / 255.0, node = this._node;
+        var locDisplayedColor = _t._displayedColor, locEndColor = node._endColor;
+        var S = { r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: node._startOpacity * opacityf};
+        var E = {r: locEndColor.r, g: locEndColor.g, b: locEndColor.b, a: node._endOpacity * opacityf};
 
         // (-1, -1)
         var locSquareColors = _t._squareColors;

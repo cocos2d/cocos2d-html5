@@ -51,8 +51,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         _t._ignoreAnchorPointForPosition = true;
         _t.setAnchorPoint(0.5, 0.5);
         _t.setContentSize(cc.winSize);
-        _t.cascadeOpacity = false;
-        _t.cascadeColor = false;
+        _t._cascadeColorEnabled = false;
+        _t._cascadeOpacityEnabled = false;
         return true;
     },
 
@@ -84,13 +84,6 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      */
     isBaked: function(){
         return this._isBaked;
-    },
-
-    /**
-     * @function
-     */
-    visit: function(){
-        this._renderCmd.visit();
     },
 
     addChild: function(child, localZOrder, tag){
@@ -189,20 +182,6 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         return false;
     },
 
-    setColor: function (color) {
-        cc.Layer.prototype.setColor.call(this, color);
-        this._updateColor();
-        this.setDirtyFlag(cc.Node._dirtyFlags.colorDirty);
-    },
-
-    setOpacity: function (opacity) {
-        cc.Layer.prototype.setOpacity.call(this, opacity);
-        this._updateColor();
-        this.setDirtyFlag(cc.Node._dirtyFlags.opacityDirty);
-    },
-
-    _blendFuncStr: "source-over",
-
     /**
      * Constructor of cc.LayerColor
      * @function
@@ -236,12 +215,10 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         locRealColor.r = color.r;
         locRealColor.g = color.g;
         locRealColor.b = color.b;
-
         this._realOpacity = color.a;
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.colorDirty|cc.Node._dirtyFlags.opacityDirty);
 
-        var proto = cc.LayerColor.prototype;
-        proto.setContentSize.call(this, width, height);
-        proto._updateColor.call(this);
+        cc.LayerColor.prototype.setContentSize.call(this, width, height);
         return true;
     },
 
@@ -251,7 +228,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {Number} [dst]
      */
     setBlendFunc: function (src, dst) {
-        var _t = this, locBlendFunc = this._blendFunc;
+        var locBlendFunc = this._blendFunc;
         if (dst === undefined) {
             locBlendFunc.src = src.src;
             locBlendFunc.dst = src.dst;
@@ -259,8 +236,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
             locBlendFunc.src = src;
             locBlendFunc.dst = dst;
         }
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
-            _t._blendFuncStr = cc.Node.CanvasRenderCmd._getCompositeOperationByBlendFunc(locBlendFunc);
+        this._renderCmd.updateBlendFunc(locBlendFunc);
     },
 
     _setWidth: function(width){
@@ -273,25 +249,9 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         cc.Node.prototype._setHeight.call(this, height);
     },
 
-    _updateColor: function(){
-        var renderCmd = this._renderCmd,
-            relColor = this._realColor,
-            disColor = renderCmd._displayedColor;
-        disColor.r = relColor.r;
-        disColor.g = relColor.g;
-        disColor.b = relColor.b;
-        disColor.a = relColor.a;
-        renderCmd._updateColor();
-    },
-
-    updateDisplayedColor: function (parentColor) {
-        cc.Layer.prototype.updateDisplayedColor.call(this, parentColor);
-        this._renderCmd._updateColor();
-    },
-
-    updateDisplayedOpacity: function (parentOpacity) {
-        cc.Layer.prototype.updateDisplayedOpacity.call(this, parentOpacity);
-        this._renderCmd._updateColor();
+    setContentSize: function(size, height){
+        cc.Layer.prototype.setContentSize.call(this, size, height);
+        this._renderCmd._updateSquareVertices(size, height);
     },
 
     _createRenderCmd: function(){
@@ -299,15 +259,6 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
             return new cc.LayerColor.CanvasRenderCmd(this);
         else
             return new cc.LayerColor.WebGLRenderCmd(this);
-    },
-
-    draw: function(){
-        this._renderCmd.draw();
-    },
-
-    setContentSize: function(size, height){
-        this._renderCmd._updataSquareVertices();
-        cc.Layer.prototype.setContentSize.call(this, size, height);
     }
 });
 
@@ -381,7 +332,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     ctor: function (start, end, v) {
         var _t = this;
         cc.LayerColor.prototype.ctor.call(_t);
-
         _t._endColor = cc.color(0, 0, 0, 255);
         _t._alongVector = cc.p(0, -1);
         _t._startOpacity = 255;
@@ -415,7 +365,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         _t._compressedInterpolation = true;
 
         cc.LayerColor.prototype.init.call(_t, cc.color(start.r, start.g, start.b, 255));
-        cc.LayerGradient.prototype._updateColor.call(_t);
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.colorDirty|cc.Node._dirtyFlags.opacityDirty);
         return true;
     },
 
@@ -426,16 +376,16 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      */
     setContentSize: function (size, height) {
         cc.LayerColor.prototype.setContentSize.call(this, size, height);
-        this._updateColor();
+        this._renderCmd.setGradientDirty();
     },
 
     _setWidth: function (width) {
         cc.LayerColor.prototype._setWidth.call(this, width);
-        this._updateColor();
+        this._renderCmd.setGradientDirty();
     },
     _setHeight: function (height) {
         cc.LayerColor.prototype._setHeight.call(this, height);
-        this._updateColor();
+        this._renderCmd.setGradientDirty();
     },
 
     /**
@@ -468,7 +418,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      */
     setEndColor: function (color) {
         this._endColor = color;
-        this._updateColor();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.colorDirty);
     },
 
     /**
@@ -485,7 +435,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      */
     setStartOpacity: function (o) {
         this._startOpacity = o;
-        this._updateColor();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.opacityDirty);
     },
 
     /**
@@ -502,7 +452,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      */
     setEndOpacity: function (o) {
         this._endOpacity = o;
-        this._updateColor();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.opacityDirty);
     },
 
     /**
@@ -520,7 +470,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     setVector: function (Var) {
         this._alongVector.x = Var.x;
         this._alongVector.y = Var.y;
-        this._updateColor();
+        this._renderCmd.setGradientDirty();
     },
 
     /**
@@ -545,7 +495,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      */
     setCompressedInterpolation: function (compress) {
         this._compressedInterpolation = compress;
-        this._updateColor();
+        this._renderCmd.setGradientDirty();
     },
 
     _createRenderCmd: function(){
@@ -553,14 +503,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             return new cc.LayerGradient.CanvasRenderCmd(this);
         else
             return new cc.LayerGradient.WebGLRenderCmd(this);
-    },
-
-    _draw: function(){
-        cc.LayerColor.prototype.draw.call(this);
-    },
-
-    _updateColor: function(){
-        this._renderCmd._updateColor();
     }
 });
 

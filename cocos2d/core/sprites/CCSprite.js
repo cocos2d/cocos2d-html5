@@ -713,7 +713,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * Please pass parameters to the constructor to initialize the sprite, do not call this function yourself.
      * @function
      * @param {cc.Texture2D|HTMLImageElement|HTMLCanvasElement} texture A pointer to an existing CCTexture2D object. You can use a CCTexture2D object for many sprites.
-     * @param {cc.Rect} rect Only the contents inside rect of this texture will be applied for this sprite.
+     * @param {cc.Rect} [rect] Only the contents inside rect of this texture will be applied for this sprite.
      * @param {Boolean} [rotated] Whether or not the texture rectangle is rotated.
      * @return {Boolean} true if the sprite is initialized properly, false otherwise.
      */

@@ -215,12 +215,12 @@ cc.MenuItem.create = function (callback, target) {
  *
  * @property {String}   string          - Content string of label item
  * @property {cc.Node}  label           - Label of label item
- * @property {cc.Color} disabledColor   - Color of label when it's diabled
+ * @property {cc.Color} disabledColor   - Color of label when it's disabled
  */
 cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     _disabledColor: null,
     _label: null,
-    _orginalScale: 0,
+    _originalScale: 0,
     _colorBackup: null,
 
     /**
@@ -233,7 +233,6 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
         cc.MenuItem.prototype.ctor.call(this, selector, target);
         this._disabledColor = null;
         this._label = null;
-        this._orginalScale = 0;
         this._colorBackup = null;
 
         if (label) {
