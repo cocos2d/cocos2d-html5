@@ -179,6 +179,11 @@ ClassManager.compileSuper.ClassManager = ClassManager;
                     desc.value = prop[name];
                     Object.defineProperty(prototype, name, desc);
                 } else {
+                    // Add property
+                    if (supportProp && name[0] != "_") {
+                        cc.addProperty(prototype, name, prop[name]);
+                    }
+
                     prototype[name] = prop[name];
                 }
 
@@ -236,7 +241,7 @@ cc.defineGetterSetter = function (proto, prop, getter, setter, getterName, sette
         getter && proto.__defineGetter__(prop, getter);
         setter && proto.__defineSetter__(prop, setter);
     } else if (Object.defineProperty) {
-        var desc = { enumerable: false, configurable: true };
+        var desc = { enumerable: true, configurable: true };
         getter && (desc.get = getter);
         setter && (desc.set = setter);
         Object.defineProperty(proto, prop, desc);
@@ -291,14 +296,34 @@ cc.defineGetterSetter = function (proto, prop, getter, setter, getterName, sette
  * @param {function} getter     Getter function for the property
  * @param {function} setter     Setter function for the property
  */
-cc.addProperty = function(proto, prop, getter, setter) {
-    if (getter || setter)
-        cc.defineGetterSetter(proto, prop, getter, setter);
-
-    if (!proto.__props) {
-        proto.__props = [];
+cc.addProperty = function(proto, prop, value, getter, setter) {
+    if (typeof value == "function") {
+        setter = getter;
+        getter = value;
+        value = undefined;
     }
-    proto.__props.push(prop);
+
+    var props;
+    if (proto.hasOwnProperty("__props")) {
+        props = proto.__props;
+    }
+    else {
+        props = proto.__props = {};
+    }
+
+    if (getter || setter) {
+        cc.defineGetterSetter(proto, prop, getter, setter);
+        if (!props[prop])
+            props[prop] = value;
+    }
+    else {
+        if (value !== undefined)
+            props[prop] = value;
+        else if (proto[prop] !== undefined)
+            props[prop] = proto[prop];
+        else
+            props[prop] = null;
+    }
 };
 
 /**
@@ -346,29 +371,41 @@ cc.clone = function (obj) {
 };
 
 (function(cc) {
+
+    cc.__delegators = {
+        color : {
+            parser : function(json) {
+                return cc.color(json[0], json[1], json[2], json[3]);
+            },
+            stringifier : function(color) {
+                return [color.r, color.g, color.b, color.a];
+            }
+        }
+    };
+
     function unitSerialize (node, key) {
         var value = node[key];
         // Found stringifier
-        if ( node.delegators && node.delegators[key] && node.delegators[key].stringifier ) {
-            return node.delegators[key].stringifier(value);
+        if ( node.__delegators && node.__delegators[key] && node.__delegators[key].stringifier ) {
+            return JSON.stringify(node.__delegators[key].stringifier(value));
         }
         // Found type
-        else if ( value.type ) {
-            return serialization(value);
+        else if ( value && value.__type ) {
+            return cc.serialize(value);
         }
-        else {
-            return JSON.stringifier(value);
+        else if (typeof value != "object" || (value && Object.getPrototypeOf(value) == Object.prototype)) {
+            return JSON.stringify(value);
         }
     }
 
     function unitDeserialize (key, value, obj) {
         // Found parser
-        if ( obj.delegators && obj.delegators[key] && obj.delegators[key].parser ) {
-            return obj.delegators[key].parser(value);
+        if ( obj.__delegators && obj.__delegators[key] && obj.__delegators[key].parser ) {
+            return obj.__delegators[key].parser(JSON.parse(value));
         }
         // Found type
-        else if (value.type) {
-            return deserialization(value);
+        else if (value.__type) {
+            return cc.deserialize(value);
         }
         else {
             return JSON.parse(value);
@@ -376,30 +413,31 @@ cc.clone = function (obj) {
     }
 
     cc.serialize = function (node) {
-        var res = {},
+        var res = {}, key, defaultVal,
             proto = node.constructor.prototype;
         // Iterate until the top of prototype chain
-        while (proto != proto.constructor.prototype) {
+        while (proto != Object.prototype) {
             // Check all properties
-            for (var i in proto.__props) {
+            for (key in proto.__props) {
+                defaultVal = proto.__props[key];
                 // Serialize only when i is not defined yet and different from the value in prototype
-                if ( !res[i] && node[i] != proto[i] ) {
-                    res[i] = unitSerialize(node, i);
+                if ( res[key] === undefined && node[key] !== defaultVal ) {
+                    res[key] = unitSerialize(node, key);
                 }
             }
-            proto = proto.constructor.prototype;
+            proto = Object.getPrototypeOf(proto);
         }
 
         return JSON.stringify(res);
     }
 
     cc.deserialize = function (json) {
-        var obj, type = null, varsArr;
+        var obj, type = null, varsArr, json = JSON.parse(json);
 
         // Create object with type
-        if (json.type) {
+        if (json.__type) {
             type = window;
-            varsArr = json.type.split(".");
+            varsArr = JSON.parse(json.__type).split(".");
             for (var i in varsArr) {
                 if (type) {
                     type = type[varsArr[i]];
