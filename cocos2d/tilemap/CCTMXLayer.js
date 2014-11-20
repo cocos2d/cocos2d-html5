@@ -117,7 +117,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      */
     setContentSize:function (size, height) {
 	    cc.Node.prototype.setContentSize.call(this, size, height);
-        this._renderCmd.setContentSize(size, height);
+        this._renderCmd._updateCacheContext(size, height);
     },
 
     /**

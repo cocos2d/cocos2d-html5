@@ -109,11 +109,11 @@
         cc.g_NumberOfDraws++;
     };
 
-    proto.setContentSize = function(size, height){
-        var node = this._node;
-        var locContentSize = node._contentSize;
-        var locCanvas = this._cacheCanvas;
-        var scaleFactor = cc.contentScaleFactor();
+    proto._updateCacheContext = function(size, height){
+        var node = this._node,
+            locContentSize = node._contentSize,
+            locCanvas = this._cacheCanvas,
+            scaleFactor = cc.contentScaleFactor();
         locCanvas.width = 0 | (locContentSize.width * 1.5 * scaleFactor);
         locCanvas.height = 0 | (locContentSize.height * 1.5 * scaleFactor);
 
@@ -248,7 +248,7 @@
     var proto = cc.TMXLayer.WebGLRenderCmd.prototype.rendering = cc.SpriteBatchNode.WebGLRenderCmd.prototype.rendering;
     proto.constructor = cc.TMXLayer.WebGLRenderCmd;
 
-    proto.setContentSize = function(){};
+    proto._updateCacheContext = function(){};
 
     proto.getTexture = cc.SpriteBatchNode.prototype.getTexture;
 
