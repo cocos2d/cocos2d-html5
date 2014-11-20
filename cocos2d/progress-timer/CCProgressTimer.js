@@ -164,20 +164,13 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         return cc.p(0,0);
     },
 
-    _vertexDataCount:0,
-    _vertexData:null,
-    _vertexArrayBuffer:null,
-    _vertexWebGLBuffer:null,
-    _vertexDataDirty:false,
-
     /**
      * constructor of cc.cc.ProgressTimer
      * @function
      * @param {cc.Sprite} sprite
      */
-    ctor: null,
-
-    _ctorForCanvas: function (sprite) {
+    ctor: function(){
+        cc.Node.prototype.ctor.call(this);
         cc.Node.prototype.ctor.call(this);
 
         this._type = cc.ProgressTimer.TYPE_RADIAL;
@@ -187,26 +180,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         this._reverseDirection = false;
 
         this._sprite = null;
-        sprite && this._initWithSpriteForCanvas(sprite);
-    },
+        this.sprite && this._renderCmd.initWithSprite(this.sprite);
 
-    _ctorForWebGL: function (sprite) {
-        cc.Node.prototype.ctor.call(this);
-        this._type = cc.ProgressTimer.TYPE_RADIAL;
-        this._percentage = 0.0;
-        this._midPoint = cc.p(0, 0);
-        this._barChangeRate = cc.p(0, 0);
-        this._reverseDirection = false;
-
-        this._sprite = null;
-
-        this._vertexWebGLBuffer = cc._renderContext.createBuffer();
-        this._vertexDataCount = 0;
-        this._vertexData = null;
-        this._vertexArrayBuffer = null;
-        this._vertexDataDirty = false;
-
-        sprite && this._initWithSpriteForWebGL(sprite);
     },
 
     /**
@@ -248,22 +223,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @function
      * @param {Boolean} reverse
      */
-    setReverseProgress:null,
-
-    _setReverseProgressForCanvas:function (reverse) {
-        if (this._reverseDirection !== reverse)
-            this._reverseDirection = reverse;
-    },
-
-    _setReverseProgressForWebGL:function (reverse) {
-        if (this._reverseDirection !== reverse) {
-            this._reverseDirection = reverse;
-
-            //    release all previous information
-            this._vertexData = null;
-            this._vertexArrayBuffer = null;
-            this._vertexDataCount = 0;
-        }
+    setReverseProgress: function(reverse){
+        this._renderCmd.setReverseProgress(reverse);
     },
 
     /**
@@ -271,30 +232,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @function
      * @param {cc.Sprite} sprite
      */
-    setSprite:null,
-
-    _setSpriteForCanvas:function (sprite) {
-        if (this._sprite != sprite) {
-            this._sprite = sprite;
-            this._renderCmd._sprite = sprite;
-            this.width = this._sprite.width;
-	        this.height = this._sprite.height;
-        }
-    },
-
-    _setSpriteForWebGL:function (sprite) {
-        if (sprite && this._sprite != sprite) {
-            this._sprite = sprite;
-            this.width = sprite.width;
-	        this.height = sprite.height;
-
-            //	Everytime we set a new sprite, we free the current vertex data
-            if (this._vertexData) {
-                this._vertexData = null;
-                this._vertexArrayBuffer = null;
-                this._vertexDataCount = 0;
-            }
-        }
+    setSprite: function(sprite){
+        this._renderCmd.setSprite(sprite);
     },
 
     /**
@@ -302,25 +241,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @function
      * @param {cc.ProgressTimer.TYPE_RADIAL|cc.ProgressTimer.TYPE_BAR} type
      */
-    setType:null,
-
-    _setTypeForCanvas:function (type) {
-        if (type !== this._type){
-            this._type = type;
-            this._renderCmd._type = type;
-        }
-    },
-
-    _setTypeForWebGL:function (type) {
-        if (type !== this._type) {
-            //	release all previous information
-            if (this._vertexData) {
-                this._vertexData = null;
-                this._vertexArrayBuffer = null;
-                this._vertexDataCount = 0;
-            }
-            this._type = type;
-        }
+    setType: function(type){
+        this._renderCmd.setType(type);
     },
 
     /**
@@ -328,21 +250,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @function
      * @param {Boolean} reverse
      */
-    setReverseDirection: null,
-
-    _setReverseDirectionForCanvas: function (reverse) {
-        if (this._reverseDirection !== reverse)
-            this._reverseDirection = reverse;
-    },
-
-    _setReverseDirectionForWebGL: function (reverse) {
-        if (this._reverseDirection !== reverse) {
-            this._reverseDirection = reverse;
-            //release all previous information
-            this._vertexData = null;
-            this._vertexArrayBuffer = null;
-            this._vertexDataCount = 0;
-        }
+    setReverseDirection: function(reverse){
+        this._renderCmd.setReverseDirection(reverse);
     },
 
     /**
@@ -384,39 +293,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @param {cc.Sprite} sprite
      * @return {Boolean}
      */
-    initWithSprite:null,
-
-    _initWithSpriteForCanvas:function (sprite) {
-        this.percentage = 0;
-        this.anchorX = 0.5;
-	    this.anchorY = 0.5;
-
-        this._type = cc.ProgressTimer.TYPE_RADIAL;
-        this._reverseDirection = false;
-	    this.midPoint = cc.p(0.5, 0.5);
-	    this.barChangeRate = cc.p(1, 1);
-	    this.sprite = sprite;
-
-        return true;
-    },
-
-    _initWithSpriteForWebGL:function (sprite) {
-        this.percentage = 0;
-        this._vertexData = null;
-        this._vertexArrayBuffer = null;
-        this._vertexDataCount = 0;
-        this.anchorX = 0.5;
-	    this.anchorY = 0.5;
-
-        this._type = cc.ProgressTimer.TYPE_RADIAL;
-        this._reverseDirection = false;
-        this.midPoint = cc.p(0.5, 0.5);
-        this.barChangeRate = cc.p(1, 1);
-        this.sprite = sprite;
-
-        //shader program
-        this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
-        return true;
+    initWithSprite: function(sprite){
+        this._renderCmd.initWithSprite(sprite);
     },
 
     /**
@@ -424,44 +302,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @function
      * @param {CanvasRenderingContext2D} ctx
      */
-    draw:null,
-
-    _drawForWebGL:function (ctx) {
-        var context = ctx || cc._renderContext;
-        if (!this._vertexData || !this._sprite)
-            return;
-
-        cc.nodeDrawSetup(this);
-
-        var blendFunc = this._sprite.getBlendFunc();
-        cc.glBlendFunc(blendFunc.src, blendFunc.dst);
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
-
-        cc.glBindTexture2D(this._sprite.texture);
-
-        context.bindBuffer(context.ARRAY_BUFFER, this._vertexWebGLBuffer);
-        if(this._vertexDataDirty){
-            context.bufferData(context.ARRAY_BUFFER, this._vertexArrayBuffer, context.DYNAMIC_DRAW);
-            this._vertexDataDirty = false;
-        }
-        var locVertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT;
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, locVertexDataLen, 0);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, locVertexDataLen, 8);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, context.FLOAT, false, locVertexDataLen, 12);
-
-        if (this._type === cc.ProgressTimer.TYPE_RADIAL)
-            context.drawArrays(context.TRIANGLE_FAN, 0, this._vertexDataCount);
-        else if (this._type == cc.ProgressTimer.TYPE_BAR) {
-            if (!this._reverseDirection)
-                context.drawArrays(context.TRIANGLE_STRIP, 0, this._vertexDataCount);
-            else {
-                context.drawArrays(context.TRIANGLE_STRIP, 0, this._vertexDataCount / 2);
-                context.drawArrays(context.TRIANGLE_STRIP, 4, this._vertexDataCount / 2);
-                // 2 draw calls
-                cc.g_NumberOfDraws++;
-            }
-        }
-        cc.g_NumberOfDraws++;
+    draw: function(ctx){
+        this._renderCmd.draw(ctx);
     },
 
     /**
@@ -552,30 +394,30 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         //    The size of the vertex data is the index from the hitpoint
         //    the 3 is for the m_tMidpoint, 12 o'clock point and hitpoint position.
         var sameIndexCount = true;
-        if (this._vertexDataCount != index + 3) {
+        if (this._renderCmd._vertexDataCount != index + 3) {
             sameIndexCount = false;
-            this._vertexData = null;
-            this._vertexArrayBuffer = null;
-            this._vertexDataCount = 0;
+            this._renderCmd._vertexData = null;
+            this._renderCmd._vertexArrayBuffer = null;
+            this._renderCmd._vertexDataCount = 0;
         }
 
-        if (!this._vertexData) {
-            this._vertexDataCount = index + 3;
-            var locCount = this._vertexDataCount, vertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT;
-            this._vertexArrayBuffer = new ArrayBuffer(locCount * vertexDataLen);
+        if (!this._renderCmd._vertexData) {
+            this._renderCmd._vertexDataCount = index + 3;
+            var locCount = this._renderCmd._vertexDataCount, vertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT;
+            this._renderCmd._vertexArrayBuffer = new ArrayBuffer(locCount * vertexDataLen);
             var locData = [];
             for (i = 0; i < locCount; i++)
-                locData[i] = new cc.V2F_C4B_T2F(null, null, null, this._vertexArrayBuffer, i * vertexDataLen);
+                locData[i] = new cc.V2F_C4B_T2F(null, null, null, this._renderCmd._vertexArrayBuffer, i * vertexDataLen);
 
-            this._vertexData = locData;
-            if(!this._vertexData){
+            this._renderCmd._vertexData = locData;
+            if(!this._renderCmd._vertexData){
                 cc.log( "cc.ProgressTimer._updateRadial() : Not enough memory");
                 return;
             }
         }
         this._updateColor();
 
-        var locVertexData = this._vertexData;
+        var locVertexData = this._renderCmd._vertexData;
         if (!sameIndexCount) {
             //    First we populate the array with the m_tMidpoint, then all
             //    vertices/texcoords/colors of the 12 'o clock start and edges and the hitpoint
@@ -593,234 +435,12 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         }
 
         //    hitpoint will go last
-        locVertexData[this._vertexDataCount - 1].texCoords = this._textureCoordFromAlphaPoint(hit);
-        locVertexData[this._vertexDataCount - 1].vertices = this._vertexFromAlphaPoint(hit);
+        locVertexData[this._renderCmd._vertexDataCount - 1].texCoords = this._textureCoordFromAlphaPoint(hit);
+        locVertexData[this._renderCmd._vertexDataCount - 1].vertices = this._vertexFromAlphaPoint(hit);
     },
 
-    /**
-     * <p>
-     *    Update does the work of mapping the texture onto the triangles for the bar                            <br/>
-     *    It now doesn't occur the cost of free/alloc data every update cycle.                                  <br/>
-     *    It also only changes the percentage point but no other points if they have not been modified.         <br/>
-     *                                                                                                          <br/>
-     *    It now deals with flipped texture. If you run into this problem, just use the                         <br/>
-     *    sprite property and enable the methods flipX, flipY.                                                  <br/>
-     * </p>
-     * @private
-     */
-    _updateBar:function () {
-        if (!this._sprite)
-            return;
-
-        var i;
-        var alpha = this._percentage / 100.0;
-        var locBarChangeRate = this._barChangeRate;
-        var alphaOffset = cc.pMult(cc.p((1.0 - locBarChangeRate.x) + alpha * locBarChangeRate.x,
-            (1.0 - locBarChangeRate.y) + alpha * locBarChangeRate.y), 0.5);
-        var min = cc.pSub(this._midPoint, alphaOffset);
-        var max = cc.pAdd(this._midPoint, alphaOffset);
-
-        if (min.x < 0) {
-            max.x += -min.x;
-            min.x = 0;
-        }
-
-        if (max.x > 1) {
-            min.x -= max.x - 1;
-            max.x = 1;
-        }
-
-        if (min.y < 0) {
-            max.y += -min.y;
-            min.y = 0;
-        }
-
-        if (max.y > 1) {
-            min.y -= max.y - 1;
-            max.y = 1;
-        }
-
-        var locVertexData;
-        if (!this._reverseDirection) {
-            if (!this._vertexData) {
-                this._vertexDataCount = 4;
-                var vertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT, locCount = 4;
-                this._vertexArrayBuffer = new ArrayBuffer(locCount * vertexDataLen);
-                this._vertexData = [];
-                for (i = 0; i < locCount; i++)
-                    this._vertexData[i] = new cc.V2F_C4B_T2F(null, null, null, this._vertexArrayBuffer, i * vertexDataLen);
-            }
-
-            locVertexData = this._vertexData;
-            //    TOPLEFT
-            locVertexData[0].texCoords = this._textureCoordFromAlphaPoint(cc.p(min.x, max.y));
-            locVertexData[0].vertices = this._vertexFromAlphaPoint(cc.p(min.x, max.y));
-
-            //    BOTLEFT
-            locVertexData[1].texCoords = this._textureCoordFromAlphaPoint(cc.p(min.x, min.y));
-            locVertexData[1].vertices = this._vertexFromAlphaPoint(cc.p(min.x, min.y));
-
-            //    TOPRIGHT
-            locVertexData[2].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, max.y));
-            locVertexData[2].vertices = this._vertexFromAlphaPoint(cc.p(max.x, max.y));
-
-            //    BOTRIGHT
-            locVertexData[3].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, min.y));
-            locVertexData[3].vertices = this._vertexFromAlphaPoint(cc.p(max.x, min.y));
-        } else {
-            if (!this._vertexData) {
-                this._vertexDataCount = 8;
-                var rVertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT, rLocCount = 8;
-                this._vertexArrayBuffer = new ArrayBuffer(rLocCount * rVertexDataLen);
-                var rTempData = [];
-                for (i = 0; i < rLocCount; i++)
-                    rTempData[i] = new cc.V2F_C4B_T2F(null, null, null, this._vertexArrayBuffer, i * rVertexDataLen);
-                //    TOPLEFT 1
-                rTempData[0].texCoords = this._textureCoordFromAlphaPoint(cc.p(0, 1));
-                rTempData[0].vertices = this._vertexFromAlphaPoint(cc.p(0, 1));
-
-                //    BOTLEFT 1
-                rTempData[1].texCoords = this._textureCoordFromAlphaPoint(cc.p(0, 0));
-                rTempData[1].vertices = this._vertexFromAlphaPoint(cc.p(0, 0));
-
-                //    TOPRIGHT 2
-                rTempData[6].texCoords = this._textureCoordFromAlphaPoint(cc.p(1, 1));
-                rTempData[6].vertices = this._vertexFromAlphaPoint(cc.p(1, 1));
-
-                //    BOTRIGHT 2
-                rTempData[7].texCoords = this._textureCoordFromAlphaPoint(cc.p(1, 0));
-                rTempData[7].vertices = this._vertexFromAlphaPoint(cc.p(1, 0));
-
-                this._vertexData = rTempData;
-            }
-
-            locVertexData = this._vertexData;
-            //    TOPRIGHT 1
-            locVertexData[2].texCoords = this._textureCoordFromAlphaPoint(cc.p(min.x, max.y));
-            locVertexData[2].vertices = this._vertexFromAlphaPoint(cc.p(min.x, max.y));
-
-            //    BOTRIGHT 1
-            locVertexData[3].texCoords = this._textureCoordFromAlphaPoint(cc.p(min.x, min.y));
-            locVertexData[3].vertices = this._vertexFromAlphaPoint(cc.p(min.x, min.y));
-
-            //    TOPLEFT 2
-            locVertexData[4].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, max.y));
-            locVertexData[4].vertices = this._vertexFromAlphaPoint(cc.p(max.x, max.y));
-
-            //    BOTLEFT 2
-            locVertexData[5].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, min.y));
-            locVertexData[5].vertices = this._vertexFromAlphaPoint(cc.p(max.x, min.y));
-        }
-        this._updateColor();
-    },
-
-    _updateColor:function () {
-        if (!this._sprite || !this._vertexData)
-            return;
-
-        var sc = this._sprite.quad.tl.colors;
-        var locVertexData = this._vertexData;
-        for (var i = 0, len = this._vertexDataCount; i < len; ++i)
-            locVertexData[i].colors = sc;
-        this._vertexDataDirty = true;
-    },
-
-    _updateProgress:null,
-
-    _updateProgressForCanvas:function () {
-        var locSprite = this._sprite;
-        var sw = locSprite.width, sh = locSprite.height;
-        var locMidPoint = this._midPoint;
-        var locCmd = this._renderCmd;
-
-        if (this._type == cc.ProgressTimer.TYPE_RADIAL) {
-            locCmd._radius = Math.round(Math.sqrt(sw * sw + sh * sh));
-            var locStartAngle, locEndAngle, locCounterClockWise = false, locOrigin = locCmd._origin;
-            locOrigin.x = sw * locMidPoint.x;
-            locOrigin.y = -sh * locMidPoint.y;
-
-            if (this._reverseDirection) {
-                locEndAngle = 270;
-                locStartAngle = 270 - 3.6 * this._percentage;
-            } else {
-                locStartAngle = -90;
-                locEndAngle = -90 + 3.6 * this._percentage;
-            }
-
-            if (locSprite._flippedX) {
-                locOrigin.x -= sw * (this._midPoint.x * 2);
-                locStartAngle= -locStartAngle;
-                locEndAngle= -locEndAngle;
-                locStartAngle -= 180;
-                locEndAngle -= 180;
-                locCounterClockWise = !locCounterClockWise;
-            }
-            if (locSprite._flippedY) {
-                locOrigin.y+=sh*(this._midPoint.y*2);
-                locCounterClockWise = !locCounterClockWise;
-                locStartAngle= -locStartAngle;
-                locEndAngle= -locEndAngle;
-            }
-
-            locCmd._startAngle = locStartAngle;
-            locCmd._endAngle = locEndAngle;
-            locCmd._counterClockWise = locCounterClockWise;
-        } else {
-            var locBarChangeRate = this._barChangeRate;
-            var percentageF = this._percentage / 100;
-            var locBarRect = locCmd._barRect;
-
-            var drawedSize = cc.size((sw * (1 - locBarChangeRate.x)), (sh * (1 - locBarChangeRate.y)));
-            var drawingSize = cc.size((sw - drawedSize.width) * percentageF, (sh - drawedSize.height) * percentageF);
-            var currentDrawSize = cc.size(drawedSize.width + drawingSize.width, drawedSize.height + drawingSize.height);
-
-            var startPoint = cc.p(sw * locMidPoint.x, sh * locMidPoint.y);
-
-            var needToLeft = startPoint.x - currentDrawSize.width / 2;
-            if ((locMidPoint.x > 0.5) && (currentDrawSize.width / 2 >= sw - startPoint.x)) {
-                needToLeft = sw - currentDrawSize.width;
-            }
-
-            var needToTop = startPoint.y - currentDrawSize.height / 2;
-            if ((locMidPoint.y > 0.5) && (currentDrawSize.height / 2 >= sh - startPoint.y)) {
-                needToTop = sh - currentDrawSize.height;
-            }
-
-            //left pos
-            locBarRect.x = 0;
-            var flipXNeed = 1;
-            if (locSprite._flippedX) {
-                locBarRect.x -= currentDrawSize.width;
-                flipXNeed = -1;
-            }
-
-            if (needToLeft > 0)
-                locBarRect.x += needToLeft * flipXNeed;
-
-            //right pos
-            locBarRect.y = 0;
-            var flipYNeed = 1;
-            if (locSprite._flippedY) {
-                locBarRect.y += currentDrawSize.height;
-                flipYNeed = -1;
-            }
-
-            if (needToTop > 0)
-                locBarRect.y -= needToTop * flipYNeed;
-
-            //clip width and clip height
-            locBarRect.width = currentDrawSize.width;
-            locBarRect.height = -currentDrawSize.height;
-        }
-    },
-
-    _updateProgressForWebGL:function () {
-        var locType = this._type;
-        if(locType === cc.ProgressTimer.TYPE_RADIAL)
-            this._updateRadial();
-        else if(locType === cc.ProgressTimer.TYPE_BAR)
-            this._updateBar();
-        this._vertexDataDirty = true;
+    _updateProgress: function(){
+        this._renderCmd._updateProgress();
     },
 
     _createRenderCmd: function(){
@@ -830,27 +450,6 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             return new cc.ProgressTimer.WebGLRenderCmd(this);
     }
 });
-
-var _p = cc.ProgressTimer.prototype;
-if(cc._renderType == cc._RENDER_TYPE_WEBGL){
-    _p.ctor = _p._ctorForWebGL;
-    _p.setReverseProgress = _p._setReverseProgressForWebGL;
-    _p.setSprite = _p._setSpriteForWebGL;
-    _p.setType = _p._setTypeForWebGL;
-    _p.setReverseDirection = _p._setReverseDirectionForWebGL;
-    _p.initWithSprite = _p._initWithSpriteForWebGL;
-    _p.draw = _p._drawForWebGL;
-    _p._updateProgress = _p._updateProgressForWebGL;
-} else {
-    _p.ctor = _p._ctorForCanvas;
-    _p.setReverseProgress = _p._setReverseProgressForCanvas;
-    _p.setSprite = _p._setSpriteForCanvas;
-    _p.setType = _p._setTypeForCanvas;
-    _p.setReverseDirection = _p._setReverseDirectionForCanvas;
-    _p.initWithSprite = _p._initWithSpriteForCanvas;
-    _p.draw = _p._drawForCanvas;
-    _p._updateProgress = cc.ProgressTimer.prototype._updateProgressForCanvas;
-}
 
 // Extended properties
 /** @expose */
