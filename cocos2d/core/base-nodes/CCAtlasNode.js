@@ -262,7 +262,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
      * @return {cc.Texture2D}
      */
     getTexture: function(){
-        this._renderCmd.getTexture();
+        return this._renderCmd.getTexture();
     },
 
     /**
