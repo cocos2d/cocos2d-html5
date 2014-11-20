@@ -85,10 +85,13 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
 
         itemsToRender !== undefined && this.initWithTileFile(tile, tileWidth, tileHeight, itemsToRender);
 
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this._renderCmd = new cc.AtlasNode.WebGLRenderCmd(this);
-        else
+    },
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
             this._renderCmd = new cc.AtlasNode.CanvasRenderCmd(this);
+        else
+            this._renderCmd = new cc.AtlasNode.WebGLRenderCmd(this);
     },
 
     /**
@@ -259,7 +262,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
      * @return {cc.Texture2D}
      */
     getTexture: function(){
-        this._renderCmd.getTexture();
+        return this._renderCmd.getTexture();
     },
 
     /**
@@ -291,6 +294,8 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     }
 });
 
+
+var _p = cc.AtlasNode.prototype;
 // Override properties
 cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
 cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);

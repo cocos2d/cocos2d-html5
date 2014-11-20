@@ -146,7 +146,7 @@
 })();
 
 /**
- * cc.AtlasNode's rendering objects of Canvas
+ * cc.AtlasNode's rendering objects of WebGL
  */
 (function(){
     cc.AtlasNode.WebGLRenderCmd = function(renderableObject){
