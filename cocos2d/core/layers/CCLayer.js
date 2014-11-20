@@ -30,6 +30,7 @@
  * @extends cc.Node
  */
 cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
+    __type: "cc.Layer",
     _isBaked: false,
     _bakeSprite: null,
     _bakeRenderCmd: null,
@@ -65,7 +66,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @function
      * @see cc.Layer#unbake
      */
-    bake: null,
+    //bake: null,
 
     /**
      * Cancel the layer to cache all of children to a bake sprite.<br/>
@@ -73,7 +74,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @function
      * @see cc.Layer#bake
      */
-    unbake: null,
+    //unbake: null,
 
     _bakeRendering: null,
 
@@ -85,9 +86,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      */
     isBaked: function(){
         return this._isBaked;
-    },
+    }
 
-    visit: null
+    //visit: null
 });
 
 /**
@@ -248,6 +249,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
  * var yellowBox = new cc.LayerColor(cc.color(255,255,0,255), 200, 200);
  */
 cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
+    __type: "cc.LayerColor",
     _blendFunc: null,
     _className: "LayerColor",
 
@@ -317,7 +319,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {Number} [width=]
      * @param {Number} [height=]
      */
-    ctor: null,
+    //ctor: null,
 
     /**
      * Initialization of the layer, please do not call this function by yourself, you should pass the parameters to constructor to initialize a layer
@@ -388,7 +390,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._updateColor();
     },
 
-    draw: null
+    //draw: null
 });
 
 /**
@@ -585,6 +587,7 @@ delete cc._tmp.PrototypeLayerColor;
  * @property {Number}   compresseInterpolation  - Indicate whether or not the interpolation will be compressed
  */
 cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
+    __type: "cc.LayerGradient",
     _endColor: null,
     _startOpacity: 255,
     _endOpacity: 255,
@@ -835,6 +838,7 @@ delete cc._tmp.PrototypeLayerGradient;
  * var multiLayer = new cc.LayerMultiple(layer1, layer2, layer3);//any number of layers
  */
 cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
+    __type: "cc.LayerMultiplex",
     _enabledLayer: 0,
     _layers: null,
     _className: "LayerMultiplex",

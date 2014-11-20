@@ -27,8 +27,8 @@
 cc._tmp.PrototypeLayerColor = function () {
     var _p = cc.LayerColor.prototype;
     // Override properties
-    cc.addProperty(_p, "width", _p._getWidth, _p._setWidth);
-    cc.addProperty(_p, "height", _p._getHeight, _p._setHeight);
+    cc.defineGetterSetter(_p, "width", _p._getWidth, _p._setWidth);
+    cc.defineGetterSetter(_p, "height", _p._getHeight, _p._setHeight);
 };
 
 cc._tmp.PrototypeLayerGradient = function () {
@@ -42,11 +42,16 @@ cc._tmp.PrototypeLayerGradient = function () {
     cc.addProperty(_p, "endColor", _p.getEndColor, _p.setEndColor);
     /** @expose */
     _p.startOpacity;
-    cc.addProperty(_p, "startOpacity", _p.getStartOpacity, _p.setStartOpacity);
+    cc.addProperty(_p, "startOpacity", 255, _p.getStartOpacity, _p.setStartOpacity);
     /** @expose */
     _p.endOpacity;
-    cc.addProperty(_p, "endOpacity", _p.getEndOpacity, _p.setEndOpacity);
+    cc.addProperty(_p, "endOpacity", 255, _p.getEndOpacity, _p.setEndOpacity);
     /** @expose */
     _p.vector;
     cc.addProperty(_p, "vector", _p.getVector, _p.setVector);
+
+    _p.__delegators = {
+        startColor : cc.__delegators.color,
+        endColor :  cc.__delegators.color
+    }
 };
