@@ -29,25 +29,25 @@ cc._tmp.PrototypeLabelTTF = function () {
     var _p = cc.LabelTTF.prototype;
 
     // Override properties
-    cc.addProperty(_p, "color", _p.getColor, _p.setColor);
-    cc.addProperty(_p, "opacity", _p.getOpacity, _p.setOpacity);
+    cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
+    cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
 
     // Extended properties
     /** @expose */
     _p.string;
-    cc.addProperty(_p, "string", _p.getString, _p.setString);
+    cc.addProperty(_p, "string", "", _p.getString, _p.setString);
     /** @expose */
     _p.textAlign;
-    cc.addProperty(_p, "textAlign", _p.getHorizontalAlignment, _p.setHorizontalAlignment);
+    cc.addProperty(_p, "textAlign", 1, _p.getHorizontalAlignment, _p.setHorizontalAlignment);
     /** @expose */
     _p.verticalAlign;
-    cc.addProperty(_p, "verticalAlign", _p.getVerticalAlignment, _p.setVerticalAlignment);
+    cc.addProperty(_p, "verticalAlign", 0, _p.getVerticalAlignment, _p.setVerticalAlignment);
     /** @expose */
     _p.fontSize;
-    cc.addProperty(_p, "fontSize", _p.getFontSize, _p.setFontSize);
+    cc.addProperty(_p, "fontSize", 0, _p.getFontSize, _p.setFontSize);
     /** @expose */
     _p.fontName;
-    cc.addProperty(_p, "fontName", _p.getFontName, _p.setFontName);
+    cc.addProperty(_p, "fontName", "Arial", _p.getFontName, _p.setFontName);
     /** @expose */
     _p.font;
     cc.defineGetterSetter(_p, "font", _p._getFont, _p._setFont);
@@ -56,33 +56,32 @@ cc._tmp.PrototypeLabelTTF = function () {
     //cc.addProperty(_p, "boundingSize", _p.getDimensions, _p.setDimensions);
     /** @expose */
     _p.boundingWidth;
-    cc.addProperty(_p, "boundingWidth", _p._getBoundingWidth, _p._setBoundingWidth);
+    cc.addProperty(_p, "boundingWidth", 0, _p._getBoundingWidth, _p._setBoundingWidth);
     /** @expose */
     _p.boundingHeight;
-    cc.addProperty(_p, "boundingHeight", _p._getBoundingHeight, _p._setBoundingHeight);
+    cc.addProperty(_p, "boundingHeight", 0, _p._getBoundingHeight, _p._setBoundingHeight);
     /** @expose */
     _p.fillStyle;
-    cc.addProperty(_p, "fillStyle", _p._getFillStyle, _p.setFontFillColor);
+    cc.addProperty(_p, "fillStyle",  _p._getFillStyle, _p.setFontFillColor);
     /** @expose */
     _p.strokeStyle;
     cc.addProperty(_p, "strokeStyle", _p._getStrokeStyle, _p._setStrokeStyle);
     /** @expose */
     _p.lineWidth;
-    cc.addProperty(_p, "lineWidth", _p._getLineWidth, _p._setLineWidth);
+    cc.addProperty(_p, "lineWidth", 0, _p._getLineWidth, _p._setLineWidth);
     /** @expose */
     _p.shadowOffset;
     //cc.addProperty(_p, "shadowOffset", _p._getShadowOffset, _p._setShadowOffset);
     /** @expose */
     _p.shadowOffsetX;
-    cc.addProperty(_p, "shadowOffsetX", _p._getShadowOffsetX, _p._setShadowOffsetX);
+    cc.addProperty(_p, "shadowOffsetX", 0, _p._getShadowOffsetX, _p._setShadowOffsetX);
     /** @expose */
     _p.shadowOffsetY;
-    cc.addProperty(_p, "shadowOffsetY", _p._getShadowOffsetY, _p._setShadowOffsetY);
+    cc.addProperty(_p, "shadowOffsetY", 0, _p._getShadowOffsetY, _p._setShadowOffsetY);
     /** @expose */
     _p.shadowOpacity;
-    cc.addProperty(_p, "shadowOpacity", _p._getShadowOpacity, _p._setShadowOpacity);
+    cc.addProperty(_p, "shadowOpacity", 0, _p._getShadowOpacity, _p._setShadowOpacity);
     /** @expose */
     _p.shadowBlur;
-    cc.addProperty(_p, "shadowBlur", _p._getShadowBlur, _p._setShadowBlur);
-
+    cc.addProperty(_p, "shadowBlur", 0, _p._getShadowBlur, _p._setShadowBlur);
 };

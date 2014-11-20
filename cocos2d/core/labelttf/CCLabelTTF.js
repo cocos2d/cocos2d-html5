@@ -64,6 +64,7 @@
  * @property {Number}       shadowBlur      - The blur size of shadow
  */
 cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
+    __type: "cc.LabelTTF",
     _dimensions: null,
     _hAlignment: cc.TEXT_ALIGNMENT_CENTER,
     _vAlignment: cc.VERTICAL_TEXT_ALIGNMENT_TOP,
@@ -200,15 +201,15 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return "<cc.LabelTTF | FontName =" + this._fontName + " FontSize = " + this._fontSize.toFixed(1) + ">";
     },
 
-    setColor: null,
+    //setColor: null,
 
     _setColorsString: null,
 
-    updateDisplayedColor: null,
+    //updateDisplayedColor: null,
 
-    setOpacity: null,
+    //setOpacity: null,
 
-    updateDisplayedOpacity: null,
+    //updateDisplayedOpacity: null,
 
     updateDisplayedOpacityForCanvas: function (parentOpacity) {
         cc.Node.prototype.updateDisplayedOpacity.call(this, parentOpacity);
@@ -270,7 +271,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @param {cc.FontDefinition} textDefinition
      * @return {Boolean}
      */
-    initWithStringAndTextDefinition: null,
+    //initWithStringAndTextDefinition: null,
 
     /**
      * Sets the text definition used by this label
@@ -491,7 +492,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @function
      * @param {cc.Color} fillColor The fill color of the label
      */
-    setFontFillColor: null,
+    //setFontFillColor: null,
 
     _getFillStyle: function () {
         return this._textFillColor;
@@ -995,7 +996,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         cc.Sprite.prototype.visit.call(this, context);
     },
 
-    draw: null,
+    //draw: null,
 
     _setTextureCoords: function (rect) {
         var tex = this._batchNode ? this.textureAtlas.texture : this._texture;
