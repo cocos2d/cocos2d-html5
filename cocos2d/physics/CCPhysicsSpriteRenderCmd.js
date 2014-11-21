@@ -86,8 +86,7 @@
 
         // Rot, Translate Matrix
         this._transform = cc.affineTransformMake(c * locScaleX, s * locScaleX,
-                -s * locScaleY, c * locScaleY,
-            x, y);
+                -s * locScaleY, c * locScaleY, x, y);
 
         return this._transform;
     };

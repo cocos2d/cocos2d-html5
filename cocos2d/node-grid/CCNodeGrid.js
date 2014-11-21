@@ -41,8 +41,8 @@ cc.NodeGrid = cc.Node.extend({
     ctor: function(){
         cc.Node.prototype.ctor.call(this);
         if(cc._renderType === cc._RENDER_TYPE_WEBGL){
-            this._gridBeginCommand = new cc.CustomRenderCmdWebGL(this, this.onGridBeginDraw);
-            this._gridEndCommand = new cc.CustomRenderCmdWebGL(this, this.onGridEndDraw);
+            this._gridBeginCommand = new cc.CustomRenderCmd(this, this.onGridBeginDraw);
+            this._gridEndCommand = new cc.CustomRenderCmd(this, this.onGridEndDraw);
         }
     },
 

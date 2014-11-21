@@ -40,7 +40,7 @@ cc.DrawNode.CanvasRenderCmd.prototype.rendering = function (ctx, scaleX, scaleY)
         return;
     context.globalAlpha = alpha;
 
-    var t = node._transformWorld;
+    var t = this._worldTransform;
     context.save();
     ctx.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
     if ((_t._blendFunc && (_t._blendFunc.src == cc.SRC_ALPHA) && (_t._blendFunc.dst == cc.ONE)))

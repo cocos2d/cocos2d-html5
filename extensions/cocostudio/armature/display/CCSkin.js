@@ -130,7 +130,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     /**
      * Updates armature skin's transform with skin transform and bone's transform.
      */
-    updateArmatureTransform: function () {
+    updateArmatureTransform: function () {      //TODO refactor
         this._transform = cc.affineTransformConcat(
             this._skinTransform,
             this.bone.getNodeToArmatureTransform()
@@ -205,7 +205,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         return cc.affineTransformConcat(this._transform,this.bone.getArmature().getNodeToWorldTransform());
     },
 
-    getNodeToWorldTransformAR: function(){
+    getNodeToWorldTransformAR: function(){      //TODO refactoring
         var displayTransform = this._transform;
         this._anchorPointInPoints = cc.pointApplyAffineTransform(this._anchorPointInPoints, displayTransform);
         displayTransform.tx = this._anchorPointInPoints.x;

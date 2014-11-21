@@ -202,8 +202,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         _t._position = cc.p(0, 0);
         _t._normalizedPosition = cc.p(0,0);
         _t._children = [];
-        _t._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
-        _t._transformWorld = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
 
         var director = cc.director;
         _t._actionManager = director.getActionManager();
@@ -2054,8 +2052,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx Render context
      */
-    transform: function(){
-        this._renderCmd.transform();
+    transform: function(parentCmd, recursive){
+        this._renderCmd.transform(parentCmd, recursive);
     },
 
     /**

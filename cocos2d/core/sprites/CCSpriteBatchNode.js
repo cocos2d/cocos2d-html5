@@ -344,7 +344,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
         //set the z-order and sort later
         cc.Node.prototype.reorderChild.call(this, child, zOrder);
-        this.setNodeDirty();
+        //this.setNodeDirty();
     },
 
     /**
@@ -578,7 +578,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         tag = (tag == null) ? child.tag : tag;
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
         this.appendChild(child);
-        this.setNodeDirty();
+        //this.setNodeDirty();
     },
 
     /**
@@ -635,6 +635,13 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             }
             this._reorderChildDirty = false;
         }
+    },
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new cc.SpriteBatchNode.CanvasRenderCmd(this);
+        else
+            return new cc.SpriteBatchNode.WebGLRenderCmd(this);
     }
 });
 

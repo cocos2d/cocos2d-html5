@@ -41,7 +41,7 @@
     proto.rendering = function (ctx, scaleX, scaleY) {
         var context = ctx || cc._renderContext,
             node = this._node,
-            t = node._transformWorld,
+            t = this._worldTransform,
             pointRect = this._pointRect;
 
         context.save();

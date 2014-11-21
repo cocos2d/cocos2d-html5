@@ -123,17 +123,17 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._backGroundImageColor = cc.color(255, 255, 255, 255);
 
         if(cc._renderType == cc._RENDER_TYPE_CANVAS){
-            this._rendererSaveCmd = new cc.CustomRenderCmdCanvas(this, this._onRenderSaveCmd);
-            this._rendererSaveCmdSprite = new cc.CustomRenderCmdCanvas(this, this._onRenderSaveSpriteCmd);
-            this._rendererClipCmd = new cc.CustomRenderCmdCanvas(this, this._onRenderClipCmd);
-            this._rendererRestoreCmd = new cc.CustomRenderCmdCanvas(this, this._onRenderRestoreCmd);
+            this._rendererSaveCmd = new cc.CustomRenderCmd(this, this._onRenderSaveCmd);
+            this._rendererSaveCmdSprite = new cc.CustomRenderCmd(this, this._onRenderSaveSpriteCmd);
+            this._rendererClipCmd = new cc.CustomRenderCmd(this, this._onRenderClipCmd);
+            this._rendererRestoreCmd = new cc.CustomRenderCmd(this, this._onRenderRestoreCmd);
 
         }else{
-            this._beforeVisitCmdStencil = new cc.CustomRenderCmdWebGL(this, this._onBeforeVisitStencil);
-            this._afterDrawStencilCmd = new cc.CustomRenderCmdWebGL(this, this._onAfterDrawStencil);
-            this._afterVisitCmdStencil = new cc.CustomRenderCmdWebGL(this, this._onAfterVisitStencil);
-            this._beforeVisitCmdScissor = new cc.CustomRenderCmdWebGL(this, this._onBeforeVisitScissor);
-            this._afterVisitCmdScissor = new cc.CustomRenderCmdWebGL(this, this._onAfterVisitScissor);
+            this._beforeVisitCmdStencil = new cc.CustomRenderCmd(this, this._onBeforeVisitStencil);
+            this._afterDrawStencilCmd = new cc.CustomRenderCmd(this, this._onAfterDrawStencil);
+            this._afterVisitCmdStencil = new cc.CustomRenderCmd(this, this._onAfterVisitStencil);
+            this._beforeVisitCmdScissor = new cc.CustomRenderCmd(this, this._onBeforeVisitScissor);
+            this._afterVisitCmdScissor = new cc.CustomRenderCmd(this, this._onAfterVisitScissor);
         }
     },
 
@@ -459,7 +459,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         //optimize performance for javascript
         currentStack.top = currentStack.stack.pop();
     },
-
+    //TODO
     _stencilClippingVisitForCanvas: function (ctx) {
         if (!this._clippingStencil || !this._clippingStencil.isVisible()) {
             return;
@@ -561,7 +561,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         }else{}
     },
     _onRenderClipCmd: function(ctx){
-
         var context = ctx || cc._renderContext;
 
         if (this._clipElemType) {
@@ -572,7 +571,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         }
     },
     _onRenderRestoreCmd: function(ctx){
-
         var context = ctx || cc._renderContext;
 
         if (this._clipElemType) {
