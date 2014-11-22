@@ -426,24 +426,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 		}
 	},
 
-	/**
-	 * Make the node dirty
-	 * @param {Boolean} norecursive When true children will not be set dirty recursively, by default, they will be.
-	 * @override
-	 */
-	setNodeDirty: function(norecursive) {
-		cc.Node.prototype.setNodeDirty.call(this);
-		// Lazy set dirty
-		if (!norecursive && this._batchNode && !this._recursiveDirty) {
-			if (this._hasChildren)
-				this.setDirtyRecursively(true);
-			else {
-				this._recursiveDirty = true;
-				this.dirty = true;
-			}
-		}
-	},
-
     /**
      * Sets whether ignore anchor point for positioning
      * @param {Boolean} relative
@@ -465,7 +447,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if (this._flippedX != flippedX) {
             this._flippedX = flippedX;
             this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
-            this.setNodeDirty(true);
+            //TODO
         }
     },
 
@@ -477,7 +459,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if (this._flippedY != flippedY) {
             this._flippedY = flippedY;
             this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
-            this.setNodeDirty(true);
+            //TODO
         }
     },
 
@@ -859,7 +841,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             cc.assert(newFrame, cc._LogInfos.Sprite_setSpriteFrame)
         }
 
-        _t.setNodeDirty(true);
+        //TODO set dirty flag
 
         var frameOffset = newFrame.getOffset();
         _t._unflippedOffsetPositionFromCenter.x = frameOffset.x;

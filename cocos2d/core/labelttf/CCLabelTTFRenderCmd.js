@@ -52,6 +52,52 @@ cc.LabelTTF.RenderCmd = function(){
 
 cc.LabelTTF.RenderCmd.prototype.constructor = cc.LabelTTF.RenderCmd;
 
+cc.LabelTTF.RenderCmd.prototype.updateStatus = function(){
+    var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+    if(locFlag & flags.colorDirty){
+        //update the color
+        this._updateDisplayColor()
+    }
+
+    if(locFlag & flags.opacityDirty){
+        //update the opacity
+        this._updateDisplayOpacity();
+    }
+
+    if(locFlag & flags.textDirty){
+        //update texture for labelTTF
+        this._updateTexture();
+    }
+
+    if(locFlag & flags.transformDirty){
+        //update the transform
+        this.transform(null, true);
+    }
+};
+
+cc.LabelTTF.RenderCmd.prototype._syncStatus = function(parentCmd){
+    var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+    if(locFlag & flags.colorDirty){
+        //update the color
+        this._syncDisplayColor()
+    }
+
+    if(locFlag & flags.opacityDirty){
+        //update the opacity
+        this._syncDisplayOpacity();
+    }
+
+    if(locFlag & flags.textDirty){
+        //update texture for labelTTF
+        this._updateTexture();
+    }
+
+    if(locFlag & flags.transformDirty){
+        //update the transform
+        this.transform(parentCmd);
+    }
+};
+
 cc.LabelTTF.RenderCmd.prototype._getLabelContext = function () {
     if (this._labelContext)
         return this._labelContext;
@@ -82,6 +128,7 @@ cc.LabelTTF.RenderCmd.prototype._getFontClientHeight = function(){
 };
 
 cc.LabelTTF.RenderCmd.prototype._updateTexture = function () {
+    this._dirtyFlag ^= cc.Node._dirtyFlags.textDirty;
     var node = this._node;
     var locContext = this._getLabelContext(), locLabelCanvas = this._labelCanvas;
     var locContentSize = node._contentSize;
@@ -108,7 +155,6 @@ cc.LabelTTF.RenderCmd.prototype._updateTexture = function () {
     node._texture && node._texture.handleLoadedTexture();
 
     node.setTextureRect(cc.rect(0, 0, width, height));
-    this._dirtyFlag ^= cc.Node._dirtyFlags.textDirty;
     return true;
 };
 
@@ -337,8 +383,8 @@ cc.LabelTTF.CanvasRenderCmd = function(renderable){
 };
 
 cc.LabelTTF.CanvasRenderCmd.prototype = Object.create(cc.Sprite.CanvasRenderCmd.prototype);
-cc.LabelTTF.CanvasRenderCmd.prototype.constructor = cc.LabelTTF.CanvasRenderCmd;
 cc.inject(cc.LabelTTF.RenderCmd.prototype, cc.LabelTTF.CanvasRenderCmd.prototype);
+cc.LabelTTF.CanvasRenderCmd.prototype.constructor = cc.LabelTTF.CanvasRenderCmd;
 
 cc.LabelTTF.CanvasRenderCmd.prototype._updateDisplayedOpacity = function(parentOpacity){
     cc.Sprite.CanvasRenderCmd.prototype._updateDisplayedOpacity.call(this, parentOpacity);
@@ -365,28 +411,6 @@ cc.LabelTTF.CanvasRenderCmd.prototype._setColorsString = function(){
         + (0 | (locDisplayColor.b / 255 * locStrokeColor.b)) + ", " + locDisplayedOpacity / 255 + ")";
 };
 
-cc.LabelTTF.CanvasRenderCmd.prototype.updateStatus = function(){
-    if(this._dirtyFlag & cc.Node._dirtyFlags.colorDirty){
-        //update the color
-        this._updateDisplayColor()
-    }
-
-    if(this._dirtyFlag & cc.Node._dirtyFlags.opacityDirty){
-        //update the opacity
-        this._updateDisplayOpacity();
-    }
-
-    if(this._dirtyFlag & cc.Node._dirtyFlags.textDirty){
-        //update texture for labelTTF
-        this._updateTexture();
-    }
-
-    if(this._dirtyFlag & cc.Node._dirtyFlags.transformDirty){
-        //update the transform
-        this.transform(null, true);
-    }
-};
-
 // ----------------------------------- LabelTTF WebGL render cmd ----------------------------
 
 cc.LabelTTF.WebGLRenderCmd = function(renderable){
@@ -395,12 +419,13 @@ cc.LabelTTF.WebGLRenderCmd = function(renderable){
 };
 
 cc.LabelTTF.WebGLRenderCmd.prototype = Object.create(cc.Sprite.WebGLRenderCmd.prototype);
-cc.LabelTTF.WebGLRenderCmd.prototype.constructor = cc.LabelTTF.WebGLRenderCmd;
 cc.inject(cc.LabelTTF.RenderCmd.prototype, cc.LabelTTF.WebGLRenderCmd.prototype);     //multi-inherit
+cc.LabelTTF.WebGLRenderCmd.prototype.constructor = cc.LabelTTF.WebGLRenderCmd;
 
 cc.LabelTTF.WebGLRenderCmd.prototype._setColorsString = function(){
-    this._needUpdateTexture = true;
-    var locStrokeColor = this._strokeColor, locFontFillColor = this._textFillColor;
+    this.setDirtyFlag(cc.Node._dirtyFlags.textDirty);
+    var node = this._node;
+    var locStrokeColor = node._strokeColor, locFontFillColor = node._textFillColor;
     this._shadowColorStr = "rgba(128,128,128," + this._shadowOpacity + ")";
     this._fillColorStr = "rgba(" + (0 | locFontFillColor.r) + "," + (0 | locFontFillColor.g) + "," + (0 | locFontFillColor.b) + ", 1)";
     this._strokeColorStr = "rgba(" + (0 | locStrokeColor.r) + "," + (0 | locStrokeColor.g) + "," + (0 | locStrokeColor.b) + ", 1)";
