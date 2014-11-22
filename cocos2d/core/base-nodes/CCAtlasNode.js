@@ -60,8 +60,6 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     //! height of each char
     _itemHeight: 0,
 
-    _colorUnmodified: null,
-
     // protocol variables
     _opacityModifyRGB: false,
     _blendFunc: null,
@@ -79,7 +77,6 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
      */
     ctor: function (tile, tileWidth, tileHeight, itemsToRender) {
         cc.Node.prototype.ctor.call(this);
-        this._colorUnmodified = cc.color.WHITE;
         this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
         this._ignoreContentScaleFactor = false;
 
@@ -110,7 +107,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
      */
     getColor: function () {
         if (this._opacityModifyRGB)
-            return this._colorUnmodified;
+            return this._renderCmd._colorUnmodified;
         return cc.Node.prototype.getColor.call(this);
     },
 
@@ -226,7 +223,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
      * @return {Boolean}
      */
     initWithTexture: function(texture, tileWidth, tileHeight, itemsToRender){
-        this._renderCmd.initWithTexture(texture, tileWidth, tileHeight, itemsToRender);
+        return this._renderCmd.initWithTexture(texture, tileWidth, tileHeight, itemsToRender);
     },
 
     /**
