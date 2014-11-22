@@ -25,12 +25,17 @@
 (function(){
 
     cc.LabelAtlas.CanvasRenderCmd = function(renderableObject){
-        cc.Node.CanvasRenderCmd.call(this, renderableObject);
-        this._needDraw = true;
+        cc.AtlasNode.CanvasRenderCmd.call(this, renderableObject);
+        this._needDraw = false;
     };
 
     var proto = cc.LabelAtlas.CanvasRenderCmd.prototype = Object.create(cc.AtlasNode.CanvasRenderCmd.prototype);
     proto.constructor = cc.LabelAtlas.CanvasRenderCmd;
+
+    proto.rendering = function(){
+        var node = this._node;
+        node.draw();
+    };
 
     proto.updateAtlasValues = function(){
         var node = this._node;
@@ -75,10 +80,10 @@
         var node = this._node;
         label = String(label);
         var len = label.length;
-        this._string = label;
+        node._string = label;
         this.width = len * node._itemWidth;
         this.height = node._itemHeight;
-        if (this._children) {
+        if (node._children) {
             var locChildren = node._children;
             len = locChildren.length;
             for (var i = 0; i < len; i++) {
@@ -100,12 +105,13 @@
 (function(){
 
     cc.LabelAtlas.WebGLRenderCmd = function(renderableObject){
-        cc.Node.WebGLRenderCmd.call(this, renderableObject);
-        this._needDraw = true;
+        cc.AtlasNode.WebGLRenderCmd.call(this, renderableObject);
+        this._needDraw = false;
     };
 
     var proto = cc.LabelAtlas.WebGLRenderCmd.prototype = Object.create(cc.AtlasNode.WebGLRenderCmd.prototype);
     proto.constructor = cc.LabelAtlas.WebGLRenderCmd;
+    proto.rendering = function(){};
 
     proto.updateAtlasValues = function(){
         var node = this._node;
@@ -125,7 +131,7 @@
         if (n > locTextureAtlas.getCapacity())
             cc.log("cc.LabelAtlas._updateAtlasValues(): Invalid String length");
         var quads = locTextureAtlas.quads;
-        var locDisplayedColor = node._displayedColor;
+        var locDisplayedColor = this._displayedColor;
         var curColor = {r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: node._displayedOpacity};
         var locItemWidth = node._itemWidth;
         for (var i = 0; i < n; i++) {

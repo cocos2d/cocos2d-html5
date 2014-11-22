@@ -29,6 +29,8 @@
     cc.AtlasNode.CanvasRenderCmd = function(renderableObject){
         cc.Node.WebGLRenderCmd.call(this, renderableObject);
         this._needDraw = true;
+        this._colorUnmodified = cc.color.WHITE;
+
     };
 
     var proto = cc.AtlasNode.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
@@ -55,7 +57,7 @@
     proto.draw = cc.Node.prototype.draw;
 
     proto.setColor = function(color3){
-        var node = this;
+        var node = this._node;
         var locRealColor = node._realColor;
         if ((locRealColor.r == color3.r) && (locRealColor.g == color3.g) && (locRealColor.b == color3.b))
             return;
@@ -63,12 +65,12 @@
         this._colorUnmodified = color3;
 
         if (node._opacityModifyRGB) {
-            var locDisplayedOpacity = node._displayedOpacity;
+            var locDisplayedOpacity = this._displayedOpacity;
             temp.r = temp.r * locDisplayedOpacity / 255;
             temp.g = temp.g * locDisplayedOpacity / 255;
             temp.b = temp.b * locDisplayedOpacity / 255;
         }
-//        cc.Node.prototype.setColor.call(this, color3);
+//        cc.Node.prototype.setColor.call(node, color3);
         this._changeTextureColor();
     };
 
@@ -83,9 +85,9 @@
                 var locElement = locTexture.getHtmlElementObj();
                 var textureRect = cc.rect(0, 0, element.width, element.height);
                 if (locElement instanceof HTMLCanvasElement)
-                    cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(element, node._colorUnmodified, textureRect, locElement);
+                    cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(element, this._colorUnmodified, textureRect, locElement);
                 else {
-                    locElement = cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(element, node._colorUnmodified, textureRect);
+                    locElement = cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(element, this._colorUnmodified, textureRect);
                     locTexture = new cc.Texture2D();
                     locTexture.initWithElement(locElement);
                     locTexture.handleLoadedTexture();
@@ -106,9 +108,9 @@
                 if (cacheTextureForColor) {
                     var textureRect = cc.rect(0, 0, element.width, element.height);
                     if (locElement instanceof HTMLCanvasElement)
-                        cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, node._displayedColor, textureRect, locElement);
+                        cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, this._displayedColor, textureRect, locElement);
                     else {
-                        locElement = cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, node._displayedColor, textureRect);
+                        locElement = cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, this._displayedColor, textureRect);
                         locTexture = new cc.Texture2D();
                         locTexture.initWithElement(locElement);
                         locTexture.handleLoadedTexture();
@@ -123,7 +125,7 @@
         cc.Node.prototype.setOpacity.call(node, opacity);
         // special opacity for premultiplied textures
         if (node._opacityModifyRGB) {
-            node.color = node._colorUnmodified;
+            node.color = this._colorUnmodified;
         }
     };
 
@@ -152,6 +154,7 @@
     cc.AtlasNode.WebGLRenderCmd = function(renderableObject){
         cc.Node.WebGLRenderCmd.call(this, renderableObject);
         this._needDraw = true;
+        this._colorUnmodified = cc.color.WHITE;
     };
 
     var proto = cc.AtlasNode.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
@@ -174,7 +177,7 @@
         var node = this._node;
         node._itemWidth = tileWidth;
         node._itemHeight = tileHeight;
-        node._colorUnmodified = cc.color.WHITE;
+        this._colorUnmodified = cc.color.WHITE;
         node._opacityModifyRGB = true;
 
         node._blendFunc.src = cc.BLEND_SRC;
@@ -231,9 +234,9 @@
         cc.Node.prototype.setOpacity.call(node, opacity);
         // special opacity for premultiplied textures
         if (node._opacityModifyRGB) {
-            node.color = node._colorUnmodified;
+            node.color = this._colorUnmodified;
         } else {
-            var locDisplayedColor = node._displayedColor;
+            var locDisplayedColor = this._displayedColor;
             node._colorF32Array = new Float32Array([locDisplayedColor.r / 255.0, locDisplayedColor.g / 255.0,
                     locDisplayedColor.b / 255.0, node._displayedOpacity / 255.0]);
         }
