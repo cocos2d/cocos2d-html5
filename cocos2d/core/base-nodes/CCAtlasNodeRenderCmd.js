@@ -55,7 +55,7 @@
     proto.draw = cc.Node.prototype.draw;
 
     proto.setColor = function(color3){
-        var node = this;
+        var node = this._node;
         var locRealColor = node._realColor;
         if ((locRealColor.r == color3.r) && (locRealColor.g == color3.g) && (locRealColor.b == color3.b))
             return;

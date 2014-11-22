@@ -76,12 +76,15 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         this._cascadeColorEnabled = true;
 
 
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this._renderCmd = new cc.LabelAtlas.WebGLRenderCmd(this);
-        else
-            this._renderCmd = new cc.LabelAtlas.CanvasRenderCmd(this);
-
         charMapFile && cc.LabelAtlas.prototype.initWithString.call(this, strText, charMapFile, itemWidth, itemHeight, startCharMap);
+    },
+
+    _createRenderCmd: function(){
+
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+            return new cc.LabelAtlas.WebGLRenderCmd(this);
+        else
+            return new cc.LabelAtlas.CanvasRenderCmd(this);
     },
 
     /**

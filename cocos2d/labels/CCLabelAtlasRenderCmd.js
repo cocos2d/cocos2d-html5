@@ -32,6 +32,12 @@
     var proto = cc.LabelAtlas.CanvasRenderCmd.prototype = Object.create(cc.AtlasNode.CanvasRenderCmd.prototype);
     proto.constructor = cc.LabelAtlas.CanvasRenderCmd;
 
+    proto.rendering = function(){
+        var node = this._node;
+        node.draw();
+        node._textureForCanvas._renderCmd
+    };
+
     proto.updateAtlasValues = function(){
         var node = this._node;
         var locString = node._string || "";
@@ -106,6 +112,7 @@
 
     var proto = cc.LabelAtlas.WebGLRenderCmd.prototype = Object.create(cc.AtlasNode.WebGLRenderCmd.prototype);
     proto.constructor = cc.LabelAtlas.WebGLRenderCmd;
+    proto.rendering = function(){};
 
     proto.updateAtlasValues = function(){
         var node = this._node;
