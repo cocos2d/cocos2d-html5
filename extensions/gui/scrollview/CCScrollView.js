@@ -124,17 +124,17 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         this._tmpViewRect = new cc.Rect(0,0,0,0);
 
         if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-            this.startCmd = new cc.CustomRenderCmdCanvas(this, function(ctx, scaleX, scaleY){
-                ctx = ctx || cc.context;
+            this.startCmd = new cc.CustomRenderCmd(this, function(ctx, scaleX, scaleY){
+                ctx = ctx || cc._renderContext;
                 ctx.save();
                 ctx.save();
                 this.transform();
-                var t = this._transformWorld;
+                var t = this._worldTransform;
                 ctx.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
                 cc.ScrollView.prototype._beforeDraw.call(this);
             });
-            this.endCmd = new cc.CustomRenderCmdCanvas(this, function(ctx){
-                ctx = ctx || cc.context;
+            this.endCmd = new cc.CustomRenderCmd(this, function(ctx){
+                ctx = ctx || cc._renderContext;
                 cc.ScrollView.prototype._afterDraw.call(this);
                 ctx.restore();
             });
@@ -149,8 +149,8 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
 
     _initRendererCmd:function () {
         if(cc._renderType === cc._RENDER_TYPE_WEBGL){
-            this._beforeDrawCmd = new cc.CustomRenderCmdWebGL(this, this._onBeforeDraw);
-            this._afterDrawCmd = new cc.CustomRenderCmdWebGL(this, this._onAfterDraw);
+            this._beforeDrawCmd = new cc.CustomRenderCmd(this, this._onBeforeDraw);
+            this._afterDrawCmd = new cc.CustomRenderCmd(this, this._onAfterDraw);
         }
     },
 

@@ -53,7 +53,7 @@
         if (!locSprite._texture || !locTextureCoord.validRect || alpha === 0)
             return;
 
-        var t = node._transformWorld;
+        var t = this._worldTransform;
         context.save();
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 

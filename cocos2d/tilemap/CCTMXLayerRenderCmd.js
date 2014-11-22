@@ -64,7 +64,7 @@
             locCacheContext.save();
             locCacheContext.clearRect(0, 0, locCanvas.width, -locCanvas.height);
             //reset the cache context
-            var t = cc.affineTransformInvert(locNode._transformWorld);
+            var t = cc.affineTransformInvert(this._worldTransform);
             locCacheContext.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
             for (var i = 0, len = locCacheCmds.length; i < len; i++) {
@@ -86,8 +86,8 @@
         this._renderingChildToCache(scaleX, scaleY);
         var context = ctx || cc._renderContext;
         context.globalAlpha = alpha;
-        var posX = 0 | ( -node._anchorPointInPoints.x), posY = 0 | ( -node._anchorPointInPoints.y);
-        var locCacheCanvas = this._cacheCanvas, t = node._transformWorld;
+        var posX = 0 | ( -this._anchorPointInPoints.x), posY = 0 | ( -this._anchorPointInPoints.y);
+        var locCacheCanvas = this._cacheCanvas, t = this._worldTransform;
         //direct draw image by canvas drawImage
         if (locCacheCanvas && locCacheCanvas.width !== 0 && locCacheCanvas.height !== 0) {
             context.save();
@@ -188,7 +188,7 @@
 
             locCacheContext.save();
             locCacheContext.clearRect(0, 0, locCanvas.width, -locCanvas.height);
-            var t = cc.affineTransformInvert(node._transformWorld);
+            var t = cc.affineTransformInvert(this._worldTransform);
             locCacheContext.transform(t.a, t.c, t.b, t.d, t.tx * locView.getScaleX(), -t.ty * locView.getScaleY());
 
             //draw to cache canvas

@@ -50,7 +50,7 @@
             this._isBaked = this._cacheDirty = true;
 
             this._cachedParent = this;
-            var children = this._children;
+            var children = this._node._children;
             for(var i = 0, len = children.length; i < len; i++)
                 children[i]._setCachedParent(this);
 
@@ -68,7 +68,7 @@
             this._cacheDirty = true;
 
             this._cachedParent = null;
-            var children = this._children;
+            var children = this._node._children;
             for(var i = 0, len = children.length; i < len; i++)
                 children[i]._setCachedParent(null);
         }
@@ -80,8 +80,8 @@
 
     proto.rendering = function(){
         if(this._cacheDirty){
-            var _t = this;
-            var children = _t._children, locBakeSprite = this._bakeSprite;
+            var _t = this, node = this._node;
+            var children = node._children, locBakeSprite = this._bakeSprite;
             //compute the bounding box of the bake layer.
             this._transformForRenderer();
             var boundingBox = this._renderCmd._getBoundingBoxForBake();
@@ -91,7 +91,7 @@
             locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
             bakeContext.translate(0 - boundingBox.x, boundingBox.height + boundingBox.y);
             //  invert
-            var t = cc.affineTransformInvert(this._transformWorld);
+            var t = cc.affineTransformInvert(this._worldTransform);
             bakeContext.transform(t.a, t.c, t.b, t.d, t.tx , -t.ty );
 
             //reset the bake sprite's position
@@ -117,8 +117,8 @@
         }
 
         var context = ctx || cc._renderContext;
-        var _t = this;
-        var children = _t._children;
+        var _t = this, node = this._node;
+        var children = node._children;
         var len = children.length;
         // quick return if not visible
         if (!_t._visible || len === 0)
@@ -139,13 +139,13 @@
     };
 
     proto._getBoundingBoxForBake = function(){
-        var rect = null;
+        var rect = null, node = this._node;
 
         //query child's BoundingBox
-        if (!this._children || this._children.length === 0)
+        if (!node._children || node._children.length === 0)
             return cc.rect(0, 0, 10, 10);
 
-        var locChildren = this._children;
+        var locChildren = node._children;
         for (var i = 0; i < locChildren.length; i++) {
             var child = locChildren[i];
             if (child && child._visible) {
@@ -240,7 +240,7 @@
                 locBakeSprite.setPosition(anchor.x + boundingBox.x - selfPos.x, anchor.y + boundingBox.y - selfPos.y);
             }
             //  invert
-            var t = cc.affineTransformInvert(this._transformWorld);
+            var t = cc.affineTransformInvert(this._worldTransform);
             bakeContext.transform(t.a, t.c, t.b, t.d, t.tx, -t.ty);
 
             var child;

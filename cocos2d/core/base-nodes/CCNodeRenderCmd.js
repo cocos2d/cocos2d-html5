@@ -22,6 +22,20 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+//---------------------- Customer render cmd --------------------
+cc.CustomRenderCmd = function (target, func) {
+    this._needDraw = true;
+    this._target = target;
+    this._callback = func;
+};
+
+cc.CustomRenderCmd.prototype.rendering = function (ctx, scaleX, scaleY) {
+    if (!this._callback)
+        return;
+    this._callback.call(this._target, ctx, scaleX, scaleY);
+};
+
+
 cc.Node._dirtyFlags = {transformDirty: 1, visibleDirty: 2, colorDirty: 4, opacityDirty: 8, cacheDirty:16, orderDirty:32, textDirty:64};
 
 //-------------------------Base -------------------------
@@ -250,13 +264,13 @@ cc.Node.CanvasRenderCmd.prototype.visit = function(parentCmd){
         for (i = 0; i < len; i++) {
             child = children[i];
             if (child._localZOrder < 0)
-                child.visit(this);
+                child._renderCmd.visit(this);
             else
                 break;
         }
         cc.renderer.pushRenderCommand(this);
         for (; i < len; i++)
-            children[i].visit();
+            children[i]._renderCmd.visit(this);
     } else{
         cc.renderer.pushRenderCommand(this);
     }

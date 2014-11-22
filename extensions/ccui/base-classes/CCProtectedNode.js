@@ -479,7 +479,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
     }
 });
 
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
+if (cc._renderType === cc._RENDER_TYPE_CANVAS) {         //TODO  refactoring
     cc.ProtectedNode.prototype.visit =  cc.ProtectedNode.prototype._visitForCanvas;
     cc.ProtectedNode.prototype._transformForRenderer = function () {
         var t = this.getNodeToParentTransform(), worldT = this._transformWorld;

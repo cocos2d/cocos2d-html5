@@ -37,7 +37,7 @@ sp.Skeleton.CanvasRenderCmd.prototype.rendering = function (ctx, scaleX, scaleY)
     if (!node._debugSlots && !node._debugBones) {
         return;
     }
-    var t = node._transformWorld;
+    var t = this._worldTransform;
     ctx.save();
     ctx.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
     var locSkeleton = node._skeleton;
