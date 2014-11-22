@@ -110,6 +110,33 @@ cc.Node.RenderCmd.prototype = {
         if(this._node && this._node._parent && this._node._parent._renderCmd)
             return this._node._parent._renderCmd;
         return null;
+    },
+
+    _syncDisplayColor : function (parentColor) {
+        var node = this._node, locDispColor = this._displayedColor, locRealColor = node._realColor;
+        if (parentColor === undefined) {
+            var locParent = node._parent;
+            if (locParent && locParent._cascadeColorEnabled)
+                parentColor = locParent.getDisplayedColor();
+            else
+                parentColor = cc.color.WHITE;
+        }
+        locDispColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
+        locDispColor.g = 0 | (locRealColor.g * parentColor.g / 255.0);
+        locDispColor.b = 0 | (locRealColor.b * parentColor.b / 255.0);
+        this._dirtyFlag ^= cc.Node._dirtyFlags.colorDirty;
+    },
+
+    _syncDisplayOpacity : function (parentOpacity) {
+        var node = this._node;
+        if (parentOpacity === undefined) {
+            var locParent = node._parent;
+            parentOpacity = 255;
+            if (locParent && locParent._cascadeOpacityEnabled)
+                parentOpacity = locParent.getDisplayedOpacity();
+        }
+        this._displayedOpacity = node._realOpacity * parentOpacity / 255.0;
+        this._dirtyFlag ^= cc.Node._dirtyFlags.opacityDirty;
     }
 };
 
@@ -564,11 +591,46 @@ cc.Node.RenderCmd.prototype = {
         return this._transform;
     };
 
-//TODO
+    proto.updateStatus = function () {
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        if (locFlag & flags.colorDirty) {
+            //update the color
+            this._updateDisplayColor()
+        }
+
+        if (locFlag & flags.opacityDirty) {
+            //update the opacity
+            this._updateDisplayOpacity();
+        }
+
+        if (locFlag & flags.transformDirty) {
+            //update the transform
+            this.transform(this.getParentRenderCmd(), true);
+        }
+    };
+
+    proto._syncStatus = function (parentCmd) {
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        if (locFlag & flags.colorDirty) {
+            //update the color
+            this._syncDisplayColor()
+        }
+
+        if (locFlag & flags.opacityDirty) {
+            //update the opacity
+            this._syncDisplayOpacity();
+        }
+
+        if (locFlag & flags.transformDirty) {
+            //update the transform
+            this.transform(parentCmd);
+        }
+    };
+
     proto.visit = function (parentCmd) {
         var _t = this, node = this._node;
         // quick return if not visible
-        if (!_t._visible)
+        if (!node._visible)
             return;
 
         if (node._parent && node._parent._renderCmd)
@@ -582,10 +644,10 @@ cc.Node.RenderCmd.prototype = {
         currentStack.top = _t._stackMatrix;
 
         _t._syncStatus(parentCmd);
-        var locChildren = _t._children;
+        var locChildren = node._children;
         if (locChildren && locChildren.length > 0) {
             var childLen = locChildren.length;
-            _t.sortAllChildren();
+            node.sortAllChildren();
             // draw children zOrder < 0
             for (i = 0; i < childLen; i++) {
                 if (locChildren[i] && locChildren[i]._localZOrder < 0)
@@ -607,8 +669,57 @@ cc.Node.RenderCmd.prototype = {
         currentStack.top = currentStack.stack.pop();
     };
 
-    proto.transform = function () {
+    proto.transform = function (parentCmd, recursive) {
+        var t4x4 = this._transform4x4, stackMatrix = this._stackMatrix, node = this._node;
+        parentCmd = parentCmd || this.getParentRenderCmd();
+        var parentMatrix = (parentCmd ? parentCmd._stackMatrix : cc.current_stack.top);
 
+        // Convert 3x3 into 4x4 matrix
+        var trans = this.getNodeToParentTransform();
+        var t4x4Mat = t4x4.mat;
+        t4x4Mat[0] = trans.a;
+        t4x4Mat[4] = trans.c;
+        t4x4Mat[12] = trans.tx;
+        t4x4Mat[1] = trans.b;
+        t4x4Mat[5] = trans.d;
+        t4x4Mat[13] = trans.ty;
+
+        // Update Z vertex manually
+        t4x4Mat[14] = node._vertexZ;
+
+        //optimize performance for Javascript
+        cc.kmMat4Multiply(stackMatrix, parentMatrix, t4x4);
+
+        // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
+        if (node._camera != null && !(node.grid != null && node.grid.isActive())) {
+            var apx = this._anchorPointInPoints.x, apy = this._anchorPointInPoints.y;
+            var translate = (apx !== 0.0 || apy !== 0.0);
+            if (translate){
+                if(!cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
+                    apx = 0 | apx;
+                    apy = 0 | apy;
+                }
+                //cc.kmGLTranslatef(apx, apy, 0);
+                var translation = new cc.kmMat4();
+                cc.kmMat4Translation(translation, apx, apy, 0);
+                cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
+
+                node._camera._locateForRenderer(stackMatrix);
+
+                //cc.kmGLTranslatef(-apx, -apy, 0);
+                cc.kmMat4Translation(translation, -apx, -apy, 0);
+                cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
+            } else {
+                node._camera._locateForRenderer(stackMatrix);
+            }
+        }
+        this._renderCmdDiry = false;
+        if(!recursive || !node._children || node._children.length === 0)
+            return;
+        var i, len, locChildren = node._children;
+        for(i = 0, len = locChildren.length; i< len; i++){
+            locChildren[i]._renderCmd.transform(this, recursive);
+        }
     };
 
     proto.setShaderProgram = function (shaderProgram) {

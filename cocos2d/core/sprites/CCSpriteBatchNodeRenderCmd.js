@@ -38,7 +38,7 @@
 
     proto.initWithTexture = function(texture, capacity){
         this._originalTexture = texture;
-        this._textureForCanvas = texture;
+        this._texture = texture;
     };
 
     proto.insertQuad = function(){};

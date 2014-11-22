@@ -539,9 +539,29 @@
         this._bindLayerVerticesBufferData();
     };
 
+    proto._updateDisplayColor = function(parentColor){
+        cc.Node.WebGLRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
+        this._updateColor();
+    };
+
+    proto._updateDisplayOpacity= function(parentOpacity){
+        cc.Node.WebGLRenderCmd.prototype._updateDisplayOpacity.call(this, parentOpacity);
+        this._updateColor();
+    };
+
+    proto._syncDisplayColor = function(parentColor){
+        cc.Node.WebGLRenderCmd.prototype._syncDisplayColor.call(this, parentColor);
+        this._updateColor();
+    };
+
+    proto._syncDisplayOpacity = function(parentOpacity){
+        cc.Node.WebGLRenderCmd.prototype._syncDisplayOpacity.call(this, parentOpacity);
+        this._updateColor();
+    };
+
     proto._updateColor = function(){
-        var locDisplayedColor = this._displayedColor;
-        var locDisplayedOpacity = this._displayedOpacity, locSquareColors = this._squareColors;
+        var locDisplayedColor = this._displayedColor, locDisplayedOpacity = this._displayedOpacity,
+            locSquareColors = this._squareColors;
         for (var i = 0; i < 4; i++) {
             locSquareColors[i].r = locDisplayedColor.r;
             locSquareColors[i].g = locDisplayedColor.g;
@@ -564,8 +584,7 @@
         glContext.bufferData(glContext.ARRAY_BUFFER, this._squareColorsAB, glContext.STATIC_DRAW);
     };
 
-    proto.updateBlendFunc = function(blendFunc){
-    };
+    proto.updateBlendFunc = function(blendFunc){};
 })();
 
 /**
@@ -580,8 +599,8 @@
     proto.constructor = cc.LayerGradient.WebGLRenderCmd;
 
     proto._updateColor = function(){
-        var _t = this;
-        var locAlongVector = _t._alongVector;
+        var _t = this, node = this._node;
+        var locAlongVector = node._alongVector;
         var h = cc.pLength(locAlongVector);
         if (h === 0)
             return;
@@ -589,12 +608,12 @@
         var c = Math.sqrt(2.0), u = cc.p(locAlongVector.x / h, locAlongVector.y / h);
 
         // Compressed Interpolation mode
-        if (_t._compressedInterpolation) {
+        if (node._compressedInterpolation) {
             var h2 = 1 / ( Math.abs(u.x) + Math.abs(u.y) );
             u = cc.pMult(u, h2 * c);
         }
 
-        var opacityf = _t._displayedOpacity / 255.0, node = this._node;
+        var opacityf = _t._displayedOpacity / 255.0;
         var locDisplayedColor = _t._displayedColor, locEndColor = node._endColor;
         var S = { r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: node._startOpacity * opacityf};
         var E = {r: locEndColor.r, g: locEndColor.g, b: locEndColor.b, a: node._endOpacity * opacityf};

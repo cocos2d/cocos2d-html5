@@ -634,7 +634,6 @@
     proto._updateForSetSpriteFrame = function () {};
 
     proto._spriteFrameLoadedCallback = function (spriteFrame) {
-        this.setNodeDirty(true);
         this.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
         this.dispatchEvent("load");
     };
@@ -941,15 +940,15 @@
 
         if (locTexture) {
             if (locTexture._isLoaded) {
-                _t._shaderProgram.use();
-                _t._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+                this._shaderProgram.use();
+                this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 
                 cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
                 //optimize performance for javascript
                 cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
                 cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
-                gl.bindBuffer(gl.ARRAY_BUFFER, _t._quadWebBuffer);
+                gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
                 if (this._quadDirty) {
                     gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.DYNAMIC_DRAW);
                     this._quadDirty = false;
@@ -960,7 +959,7 @@
                 gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
             }
         } else {
-            _t._shaderProgram.use();
+            this._shaderProgram.use();
             _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);
 
             cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
@@ -968,10 +967,10 @@
 
             cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
 
-            gl.bindBuffer(gl.ARRAY_BUFFER, _t._quadWebBuffer);
-            if (_t._quadDirty) {
-                gl.bufferData(gl.ARRAY_BUFFER, _t._quad.arrayBuffer, gl.STATIC_DRAW);
-                _t._quadDirty = false;
+            gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
+            if (this._quadDirty) {
+                gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.STATIC_DRAW);
+                this._quadDirty = false;
             }
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
