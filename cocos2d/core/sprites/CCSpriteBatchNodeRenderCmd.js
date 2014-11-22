@@ -54,7 +54,7 @@
     };
 
     proto.setTexture = function(texture){
-        this._textureForCanvas = texture;
+        this._texture = texture;
         var locChildren = this._node._children;
         for (var i = 0; i < locChildren.length; i++)
             locChildren[i].setTexture(texture);
