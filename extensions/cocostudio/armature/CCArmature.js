@@ -71,12 +71,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this._armatureTransformDirty = true;
         this._realAnchorPointInPoints = cc.p(0, 0);
         name && ccs.Armature.prototype.init.call(this, name, parentBone);
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-            this._rendererStartCmd = new ccs.Armature.CanvasRenderCmd(this);
-            this._rendererEndCmd = new ccs.Armature.CanvasRestoreRenderCmd(this);
-        }else{
-            this._renderCmd = new ccs.Armature.WebGLRenderCmd(this);
-        }
     },
 
     /**
@@ -150,8 +144,8 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
 
             this.animation.setAnimationData(animationData);
         }
-        if (cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+
+        this._renderCmd.initShaderCache();
 
         this.setCascadeOpacityEnabled(true);
         this.setCascadeColorEnabled(true);
@@ -289,6 +283,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
      * @param {Number} [y] y of point
      */
     setAnchorPoint: function(point, y){
+        var cmd = this._renderCmd;
         var ax, ay;
         if(y !== undefined){
             ax = point;
@@ -302,29 +297,33 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             var contentSize = this._contentSize ;
             locAnchorPoint.x = ax;
             locAnchorPoint.y = ay;
-            this._anchorPointInPoints.x = contentSize.width * locAnchorPoint.x - this._offsetPoint.x;
-            this._anchorPointInPoints.y = contentSize.height * locAnchorPoint.y - this._offsetPoint.y;
+            cmd._anchorPointInPoints.x = contentSize.width * locAnchorPoint.x - this._offsetPoint.x;
+            cmd._anchorPointInPoints.y = contentSize.height * locAnchorPoint.y - this._offsetPoint.y;
 
             this._realAnchorPointInPoints.x = contentSize.width * locAnchorPoint.x;
             this._realAnchorPointInPoints.y = contentSize.height * locAnchorPoint.y;
-            this.setNodeDirty();
+            cmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
         }
     },
 
     _setAnchorX: function (x) {
+        var cmd = this._renderCmd,
+            anchorPointInPoint = cmd._anchorPointInPoints;
         if (this._anchorPoint.x === x) return;
         this._anchorPoint.x = x;
-        this._anchorPointInPoints.x = this._contentSize.width * x - this._offsetPoint.x;
+        anchorPointInPoint.x = this._contentSize.width * x - this._offsetPoint.x;
         this._realAnchorPointInPoints.x = this._contentSize.width * x;
-        this.setNodeDirty();
+        cmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     _setAnchorY: function (y) {
+        var cmd = this._renderCmd,
+            anchorPointInPoint = cmd._anchorPointInPoints;
         if (this._anchorPoint.y === y) return;
         this._anchorPoint.y = y;
-        this._anchorPointInPoints.y = this._contentSize.height * y - this._offsetPoint.y;
+        anchorPointInPoint.y = this._contentSize.height * y - this._offsetPoint.y;
         this._realAnchorPointInPoints.y = this._contentSize.height * y;
-        this.setNodeDirty();
+        cmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**
@@ -398,30 +397,12 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
                 if (null == node)
                     continue;
 
-                if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-                    node.setShaderProgram(this._shaderProgram);
+                this._renderCmd.setShaderProgram(node);
 
                 switch (selBone.getDisplayRenderNodeType()) {
                     case ccs.DISPLAY_TYPE_SPRITE:
-                        if(node instanceof ccs.Skin){
-                            if(cc._renderType === cc._RENDER_TYPE_WEBGL){
-                                node.updateTransform();
-
-                                var func = selBone.getBlendFunc();
-                                if (func.src != alphaPremultiplied.src || func.dst != alphaPremultiplied.dst)
-                                    node.setBlendFunc(selBone.getBlendFunc());
-                                else {
-                                    if ((this._blendFunc.src == alphaPremultiplied.src && this._blendFunc.dst == alphaPremultiplied.dst)
-                                        && !node.getTexture().hasPremultipliedAlpha())
-                                        node.setBlendFunc(alphaNonPremultipled);
-                                    else
-                                        node.setBlendFunc(this._blendFunc);
-                                }
-                                node.draw(ctx);
-                            } else{
-                                node.visit(ctx);
-                            }
-                        }
+                        if(node instanceof ccs.Skin)
+                            this._renderCmd.updateChildPosition(ctx, node, selBone, alphaPremultiplied, alphaNonPremultipled);
                         break;
                     case ccs.DISPLAY_TYPE_ARMATURE:
                         node.draw(ctx);
@@ -431,8 +412,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
                         break;
                 }
             } else if(selBone instanceof cc.Node) {
-                if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-                    selBone.setShaderProgram(this._shaderProgram);
+                this._renderCmd.setShaderProgram(selBone);
                 selBone.visit(ctx);
                 //            CC_NODE_DRAW_SETUP();
             }
@@ -457,48 +437,8 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this.unscheduleUpdate();
     },
 
-    visit: null,
-
-    _visitForCanvas: function(ctx){
-        var context = ctx || cc._renderContext;
-        // quick return if not visible. children won't be drawn.
-        if (!this._visible)
-            return;
-
-        context.save();
-        this.transform(context);
-
-        this.sortAllChildren();
-
-        if(this._rendererStartCmd)
-            cc.renderer.pushRenderCommand(this._rendererStartCmd);
-        this.draw(ctx);
-        if(this._rendererEndCmd)
-            cc.renderer.pushRenderCommand(this._rendererEndCmd);
-
-        this._cacheDirty = false;
-
-        context.restore();
-    },
-
-    _visitForWebGL: function(){
-        // quick return if not visible. children won't be drawn.
-        if (!this._visible)
-            return;
-
-        var context = cc._renderContext, currentStack = cc.current_stack;
-
-        currentStack.stack.push(currentStack.top);
-        cc.kmMat4Assign(this._stackMatrix, currentStack.top);
-        currentStack.top = this._stackMatrix;
-
-        this.transform();
-
-        this.sortAllChildren();
-        //this.draw(context);
-        cc.renderer.pushRenderCommand(this._renderCmd);
-
-        currentStack.top = currentStack.stack.pop();
+    visit: function(){
+        this._renderCmd.visit();
     },
 
     /**
@@ -714,14 +654,15 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
                 node._transformForRenderer();
             }
         }
+    },
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new ccs.Armature.CanvasRenderCmd(this);
+        else
+            return new ccs.Armature.WebGLRenderCmd(this);
     }
 });
-
-if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
-    ccs.Armature.prototype.visit = ccs.Armature.prototype._visitForWebGL;
-} else {
-    ccs.Armature.prototype.visit = ccs.Armature.prototype._visitForCanvas;
-}
 
 var _p = ccs.Armature.prototype;
 
