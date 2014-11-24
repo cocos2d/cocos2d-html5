@@ -513,7 +513,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
             var fontChar = self.getChildByTag(i);
 
-            fontChar = this._renderCmd._updateTexture(fontChar, locTexture, rect);
+            fontChar = this._renderCmd._updateTexture(fontChar, locTexture, rect, i, key);
 
             var yOffset = locCfg.commonHeight - fontDef.yOffset;
             var fontPos = cc.p(nextFontPositionX + fontDef.xOffset + fontDef.rect.width * 0.5 + kerningAmount,

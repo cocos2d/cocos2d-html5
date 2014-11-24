@@ -39,7 +39,7 @@
     var proto = cc.LabelBMFont.CanvasRenderCmd.prototype = Object.create(cc.SpriteBatchNode.CanvasRenderCmd.prototype);
     proto.constructor = cc.LabelBMFont.CanvasRenderCmd;
 
-    proto._updateTexture = function(fontChar, locTexture, rect){
+    proto._updateTexture = function(fontChar, locTexture, rect, i, key){
         var node = this._node;
         //var hasSprite = true;
         if (!fontChar) {
@@ -49,7 +49,14 @@
             fontChar._newTextureWhenChangeColor = true;
             node.addChild(fontChar, 0, i);
         } else {
-            fontChar.setTextureRect(rect, false, cc.size(0, 0));
+            if (key === 32) {
+                fontChar.setTextureRect(rect, false, cc.size(0, 0));
+            } else {
+                // updating previous sprite
+                fontChar.setTextureRect(rect, false);
+                // restore to default in case they were modified
+                fontChar.visible = true;
+            }
         }
 
         // Apply label properties
@@ -151,14 +158,14 @@
     var proto = cc.LabelBMFont.WebGLRenderCmd.prototype = Object.create(cc.SpriteBatchNode.WebGLRenderCmd.prototype);
     proto.constructor = cc.LabelBMFont.WebGLRenderCmd;
 
-    proto._updateTexture = function(fontChar, locTexture, rect){
+    proto._updateTexture = function(fontChar, locTexture, rect, i){
         var node = this._node;
         //var hasSprite = true;
         if (!fontChar) {
             fontChar = new cc.Sprite();
             fontChar.initWithTexture(locTexture, rect, false);
             fontChar._newTextureWhenChangeColor = true;
-            self.addChild(fontChar, 0, i);
+            node.addChild(fontChar, 0, i);
         } else {
             // updating previous sprite
             fontChar.setTextureRect(rect, false);
