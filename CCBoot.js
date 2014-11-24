@@ -1512,7 +1512,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.language = currLanguage;
 
     var browserType = sys.BROWSER_TYPE_UNKNOWN;
-    var browserTypes = ua.match(/micromessenger|qqbrowser|mqqbrowser|ucbrowser|360browser|baiduboxapp|baidubrowser|maxthon|trident|oupeng|opera|miuibrowser|firefox/i)
+    var browserTypes = ua.match(/micromessenger|qqbrowser|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|trident|oupeng|opera|miuibrowser|firefox/i)
         || ua.match(/chrome|safari/i);
     if (browserTypes && browserTypes.length > 0) {
         browserType = browserTypes[0].toLowerCase();
@@ -1521,6 +1521,7 @@ cc._initSys = function (config, CONFIG_KEY) {
         } else if (browserType === "safari" && (ua.match(/android.*applewebkit/)))
             browserType = sys.BROWSER_TYPE_ANDROID;
         else if (browserType == "trident") browserType = sys.BROWSER_TYPE_IE;
+        else if (browserType == "360 aphone") browserType = sys.BROWSER_TYPE_360;
     }
     /**
      * Indicate the running browser type
@@ -1607,7 +1608,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     // check if browser supports Web Audio
     // check Web Audio's context
     try {
-        sys._supportWebAudio = !!(new (win.AudioContext || win.webkitAudioContext || win.mozAudioContext)());
+        sys._supportWebAudio = !!(win.AudioContext || win.webkitAudioContext || win.mozAudioContext);
     } catch (e) {
         sys._supportWebAudio = false;
     }

@@ -54,15 +54,19 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
          * drawing all renderer command to cache canvas' context
          * @param {CanvasRenderingContext2D} ctx
          * @param {Number} [instanceID]
+         * @param {Number} [scaleX]
+         * @param {Number} [scaleY]
          */
-        _renderingToCacheCanvas: function (ctx, instanceID) {
+        _renderingToCacheCanvas: function (ctx, instanceID, scaleX, scaleY) {
             if (!ctx)
                 cc.log("The context of RenderTexture is invalid.");
 
+            scaleX = cc.isUndefined(scaleX) ? 1 : scaleX;
+            scaleY = cc.isUndefined(scaleY) ? 1 : scaleY;
             instanceID = instanceID || this._currentID;
             var locCmds = this._cacheToCanvasCmds[instanceID], i, len;
             for (i = 0, len = locCmds.length; i < len; i++) {
-                locCmds[i].rendering(ctx, 1, 1);
+                locCmds[i].rendering(ctx, scaleX, scaleY);
             }
             locCmds.length = 0;
             var locIDs = this._cacheInstanceIds;
@@ -530,15 +534,27 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         //draw sprite
         var image = locSprite._texture.getHtmlElementObj();
-        context.drawImage(image,
-            locTextureCoord.renderX,
-            locTextureCoord.renderY,
-            locTextureCoord.width,
-            locTextureCoord.height,
-            flipXOffset, flipYOffset,
-            locDrawSizeCanvas.width,
-            locDrawSizeCanvas.height
-        );
+        if (locSprite._colorized) {
+            context.drawImage(image,
+                0,
+                0,
+                locTextureCoord.width,
+                locTextureCoord.height,
+                flipXOffset, flipYOffset,
+                locDrawSizeCanvas.width,
+                locDrawSizeCanvas.height
+            );
+        } else {
+            context.drawImage(image,
+                locTextureCoord.renderX,
+                locTextureCoord.renderY,
+                locTextureCoord.width,
+                locTextureCoord.height,
+                flipXOffset, flipYOffset,
+                locDrawSizeCanvas.width,
+                locDrawSizeCanvas.height
+            );
+        }
 
         context.restore();
         cc.g_NumberOfDraws++;

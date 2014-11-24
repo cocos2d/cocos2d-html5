@@ -47,7 +47,6 @@ cc.LoaderScene = cc.Scene.extend({
 
         // bg
         var bgLayer = self._bgLayer = new cc.LayerColor(cc.color(32, 32, 32, 255));
-        bgLayer.setPosition(cc.visibleRect.bottomLeft);
         self.addChild(bgLayer, 0);
 
         //image move to CCSceneFile.js
