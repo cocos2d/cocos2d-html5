@@ -129,8 +129,6 @@ cc.s_globalOrderOfArrival = 1;
  * @property {Number}               glServerState       - The state of OpenGL server side
  */
 cc.Node = cc.Class.extend(/** @lends cc.Node# */{
-    __type: "cc.Node",
-
     _localZOrder: 0,                                     ///< Local order (relative to its siblings) used to sort the node
     _globalZOrder: 0,                                    ///< Global order used to sort the node
     _vertexZ: 0.0,
@@ -249,7 +247,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             return;
 
         var i, len = array.length, node;
-        var nodeCallbackType = cc.Node._StateCallbackType;
+        var nodeCallbackType = cc.Node._stateCallbackType;
         switch (callbackType) {
             case nodeCallbackType.onEnter:
                 for (i = 0; i < len; i++) {
@@ -310,7 +308,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Sets node's dirty flag to true so that it can be updated in visit function of the next frame
      * @function
      */
-    //setNodeDirty: null,
+    setNodeDirty: null,
 
     /**
      * <p>Properties configuration function </br>
@@ -788,21 +786,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Add an array of node as children of this node <br/>
-     * Composing a "tree" structure is a very important feature of CCNode
-     * @function
-     * @param {Array} children An array of children
-     */
-    setChildren: function (children) {
-        var i, l, child;
-        for (i = 0, l = children.length; i < l; i++) {
-            child = children[i];
-            if (child instanceof cc.Node)
-                this.addChild(child);
-        }
-    },
-
-    /**
      * Returns if the node is visible
      * @function
      * @see cc.Node#setVisible
@@ -1080,7 +1063,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {String} name
      */
     setName: function(name){
-         this._name = name;
+        this._name = name;
     },
 
     /**
@@ -1258,7 +1241,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         cc.eventManager.removeListeners(this);
 
         // timers
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.cleanup);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.cleanup);
     },
 
     // composition: GET
@@ -1294,8 +1277,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
         var locChildren = this._children;
         for(var i = 0, len = locChildren.length; i < len; i++){
-           if(locChildren[i]._name == name)
-            return locChildren[i];
+            if(locChildren[i]._name == name)
+                return locChildren[i];
         }
         return null;
     },
@@ -1362,7 +1345,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
      * If the node orphan, then nothing happens.
      * @function
-     * @param {Boolean} cleanup true if all actions and callbacks on this node should be removed, false otherwise.
+     * @param {Boolean} [cleanup=true] true if all actions and callbacks on this node should be removed, false otherwise.
      * @see cc.Node#removeFromParentAndCleanup
      */
     removeFromParent: function (cleanup) {
@@ -1377,7 +1360,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Removes this node itself from its parent node.  <br/>
      * If the node orphan, then nothing happens.
      * @deprecated since v3.0, please use removeFromParent() instead
-     * @param {Boolean} cleanup true if all actions and callbacks on this node should be removed, false otherwise.
+     * @param {Boolean} [cleanup=true] true if all actions and callbacks on this node should be removed, false otherwise.
      */
     removeFromParentAndCleanup: function (cleanup) {
         cc.log(cc._LogInfos.Node_removeFromParentAndCleanup);
@@ -1391,7 +1374,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * to override this method </p>
      * @function
      * @param {cc.Node} child  The child node which will be removed.
-     * @param {Boolean|null} [cleanup=null]  true if all running actions and callbacks on the child node will be cleanup, false otherwise.
+     * @param {Boolean} [cleanup=true]  true if all running actions and callbacks on the child node will be cleanup, false otherwise.
      */
     removeChild: function (child, cleanup) {
         // explicit nil handling
@@ -1412,7 +1395,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
      * @function
      * @param {Number} tag An integer number that identifies a child node
-     * @param {Boolean} cleanup true if all running actions and callbacks on the child node will be cleanup, false otherwise.
+     * @param {Boolean} [cleanup=true] true if all running actions and callbacks on the child node will be cleanup, false otherwise.
      * @see cc.Node#removeChildByTag
      */
     removeChildByTag: function (tag, cleanup) {
@@ -1428,7 +1411,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter.
-     * @param {Boolean | null } cleanup
+     * @param {Boolean} [cleanup=true]
      */
     removeAllChildrenWithCleanup: function (cleanup) {
         //cc.log(cc._LogInfos.Node_removeAllChildrenWithCleanup);        //TODO It should be discuss in v3.0
@@ -1439,7 +1422,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter. <br/>
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
      * @function
-     * @param {Boolean | null } cleanup true if all running actions on all children nodes should be cleanup, false otherwise.
+     * @param {Boolean} [cleanup=true] true if all running actions on all children nodes should be cleanup, false otherwise.
      */
     removeAllChildren: function (cleanup) {
         // not using detachChild improves speed here
@@ -1477,7 +1460,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
 
         // If you don't do cleanup, the child's actions will not get removed and the
-        // its scheduledSelectors_ dict will not get released!
         if (doCleanup)
             child.cleanup();
 
@@ -1578,7 +1560,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     onEnter: function () {
         this._isTransitionFinished = false;
         this._running = true;//should be running before resumeSchedule
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onEnter);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.onEnter);
         this.resume();
     },
 
@@ -1592,7 +1574,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     onEnterTransitionDidFinish: function () {
         this._isTransitionFinished = true;
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onEnterTransitionDidFinish);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.onEnterTransitionDidFinish);
     },
 
     /**
@@ -1602,7 +1584,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      */
     onExitTransitionDidStart: function () {
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onExitTransitionDidStart);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.onExitTransitionDidStart);
     },
 
     /**
@@ -1617,7 +1599,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     onExit: function () {
         this._running = false;
         this.pause();
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.onExit);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.onExit);
         this.removeAllComponents();
     },
 
@@ -1631,7 +1613,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Action} An Action pointer
      */
     runAction: function (action) {
-
         cc.assert(action, cc._LogInfos.Node_runAction);
 
         this.actionManager.addAction(action, this, !this._running);
@@ -1743,7 +1724,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         interval = interval || 0;
 
         cc.assert(callback_fn, cc._LogInfos.Node_schedule);
-
         cc.assert(interval >= 0, cc._LogInfos.Node_schedule_2);
 
         repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
@@ -1770,7 +1750,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {function} callback_fn  A function wrapped as a selector
      */
     unschedule: function (callback_fn) {
-        // explicit nil handling
         if (!callback_fn)
             return;
 
@@ -2041,7 +2020,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     updateTransform: function () {
         // Recursively iterate over children
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.updateTransform);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.updateTransform);
     },
 
     /**
@@ -2117,27 +2096,27 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             this._componentContainer.removeAll();
     },
 
-    //grid: null,
+    grid: null,
 
     /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @function
      */
-    //ctor: null,
+    ctor: null,
 
     /**
      * Recursive method that visit its children and draw them
      * @function
      * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
      */
-    //visit: null,
+    visit: null,
 
     /**
      * Performs view-matrix transformation based on position, scale, rotation and other attributes.
      * @function
      * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx Render context
      */
-    //transform: null,
+    transform: null,
 
     /**
      * <p>Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.<br/>
@@ -2156,7 +2135,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      * @return {cc.AffineTransform} The affine transform object
      */
-    //getNodeToParentTransform: null,
+    getNodeToParentTransform: null,
 
     _setNodeDirtyForCache: function () {
         if (this._cacheDirty === false) {
@@ -2234,7 +2213,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *     It should be set in initialize phase.
      * </p>
      * @function
-     * @param {cc.GLProgram} newShaderProgram The shader program which fetchs from CCShaderCache.
+     * @param {cc.GLProgram} newShaderProgram The shader program which fetches from CCShaderCache.
      * @example
      * node.setGLProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
      */
@@ -2522,10 +2501,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         else
             parentColor = cc.color.WHITE;
         this.updateDisplayedColor(parentColor);
-
-        /*if (color.a !== undefined && !color.a_undefined) {              //setColor doesn't support changing opacity, please use setOpacity
-            this.setOpacity(color.a);
-        }*/
     },
 
     /**
@@ -2629,7 +2604,7 @@ cc.Node.create = function () {
     return new cc.Node();
 };
 
-cc.Node._StateCallbackType = {onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, updateTransform: 5, onExitTransitionDidStart: 6, sortAllChildren: 7};
+cc.Node._stateCallbackType = {onEnter: 1, onExit: 2, cleanup: 3, onEnterTransitionDidFinish: 4, updateTransform: 5, onExitTransitionDidStart: 6, sortAllChildren: 7};
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     //redefine cc.Node
@@ -2685,7 +2660,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p._transformForRenderer = function () {
-        var t = this.nodeToParentTransform(), worldT = this._transformWorld;
+        var t = this.getNodeToParentTransform(), worldT = this._transformWorld;
         if(this._parent){
             var pt = this._parent._transformWorld;
             //worldT = cc.AffineTransformConcat(t, pt);
@@ -2693,16 +2668,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             worldT.b = t.a * pt.b + t.b * pt.d;                               //b
             worldT.c = t.c * pt.a + t.d * pt.c;                               //c
             worldT.d = t.c * pt.b + t.d * pt.d;                               //d
-            if(!this._skewX || this._skewY){
-                var plt = this._parent._transform;
-                var xOffset = -(plt.b + plt.c) * t.ty ;
-                var yOffset = -(plt.b + plt.c) * t.tx;
-                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
-                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
-            }else{
-                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx);          //tx
-                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty);		  //ty
-            }
+            var plt = this._parent._transform;
+            var xOffset = -(plt.b + plt.c) * t.ty;
+            var yOffset = -(plt.b + plt.c) * t.tx;
+            worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
+            worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
         } else {
             worldT.a = t.a;
             worldT.b = t.b;
