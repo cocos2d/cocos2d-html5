@@ -260,7 +260,7 @@
 
     proto._calculateMaxItems = function(){
         var node = this._node;
-        var selTexture = this._texture;
+        var selTexture = this._textureAtlas.texture;
         var size = selTexture.getContentSize();
         if (node._ignoreContentScaleFactor)
             size = selTexture.getContentSizeInPixels();

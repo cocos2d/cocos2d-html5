@@ -62,8 +62,7 @@
         this.setDirtyFlag(cc.Node._dirtyFlags.colorDirty | cc.Node._dirtyFlags.opacityDirty);
     };
 
-    proto.isFrameDisplayed = function (frame) {
-        //TODO there maybe has a bug
+    proto.isFrameDisplayed = function (frame) {      //TODO there maybe has a bug
         var node = this._node;
         if (frame.getTexture() != node._texture)
             return false;
@@ -242,40 +241,39 @@
     };
 
     proto._changeTextureColor = function () {
-        if (!cc.sys._supportCanvasNewBlendModes) {
-            var locElement, locTexture = this._texture, locRect = this._renderCmd._textureCoord;
-            if (locTexture && locRect.validRect && this._originalTexture) {
-                locElement = locTexture.getHtmlElementObj();
-                if (!locElement)
-                    return;
+        var node = this._node;
+        var locElement, locTexture = node._texture, locRect = this._textureCoord;
+        if (locTexture && locRect.validRect && this._originalTexture) {
+            locElement = locTexture.getHtmlElementObj();
+            if (!locElement)
+                return;
 
-                if (!cc.sys._supportCanvasNewBlendModes) {
-                    var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
-                    if (cacheTextureForColor) {
-                        this._colorized = true;
-                        //generate color texture cache
-                        if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor)
-                            cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect, locElement);
-                        else {
-                            locElement = cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect);
-                            locTexture = new cc.Texture2D();
-                            locTexture.initWithElement(locElement);
-                            locTexture.handleLoadedTexture();
-                            this.texture = locTexture;
-                        }
-                    }
-                } else {
+            if (!cc.sys._supportCanvasNewBlendModes) {
+                var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
+                if (cacheTextureForColor) {
                     this._colorized = true;
-                    if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor
-                        && this._originalTexture._htmlElementObj != locElement)
-                        cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(this._originalTexture._htmlElementObj, this._displayedColor, locRect, locElement);
+                    //generate color texture cache
+                    if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor)
+                        cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect, locElement);
                     else {
-                        locElement = cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(this._originalTexture._htmlElementObj, this._displayedColor, locRect);
+                        locElement = cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect);
                         locTexture = new cc.Texture2D();
                         locTexture.initWithElement(locElement);
                         locTexture.handleLoadedTexture();
-                        this.texture = locTexture;
+                        node.texture = locTexture;
                     }
+                }
+            } else {
+                this._colorized = true;
+                if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor
+                    && this._originalTexture._htmlElementObj != locElement)
+                    cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(this._originalTexture._htmlElementObj, this._displayedColor, locRect, locElement);
+                else {
+                    locElement = cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(this._originalTexture._htmlElementObj, this._displayedColor, locRect);
+                    locTexture = new cc.Texture2D();
+                    locTexture.initWithElement(locElement);
+                    locTexture.handleLoadedTexture();
+                    node.texture = locTexture;
                 }
             }
         }
@@ -333,9 +331,13 @@
         this._changeTextureColor();
     };
 
+    proto._syncDisplayColor = function(parentColor){
+        cc.Node.CanvasRenderCmd.prototype._syncDisplayColor.call(this, parentColor);
+        this._changeTextureColor();
+    };
+
     proto._spriteFrameLoadedCallback = function (spriteFrame) {
         var _t = this;
-        _t.setNodeDirty(true);
         _t.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
 
         //TODO change

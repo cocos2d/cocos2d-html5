@@ -78,8 +78,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     //used for retina display
     _contentScaleFactor: null,
 
-    _cacheContext:null,
-    _cacheTexture:null,
     _className:"TMXLayer",
 
     /**
