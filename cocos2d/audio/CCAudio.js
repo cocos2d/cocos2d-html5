@@ -271,15 +271,6 @@ cc.Audio = cc.Class.extend({
         };
     },
 
-    _recklessPlay: function(offset){
-        if(!this._buffer) return;
-        var audio = this._context["createBufferSource"]();
-        audio.buffer = this._buffer;
-        audio["connect"](this._volume);
-        audio.loop = this.loop;
-        audio.start(0, offset || 0);
-    },
-
     _playOfAudio: function(){
         var audio = this._element;
         if(audio){
@@ -673,7 +664,7 @@ cc.Audio = cc.Class.extend({
         },
 
         _audioPool: {},
-        _maxAudioInstance: SWA ? 20 : 5,
+        _maxAudioInstance: 5,
         _effectVolume: 1,
         /**
          * Play sound effect.
@@ -689,14 +680,7 @@ cc.Audio = cc.Class.extend({
             if(!SWB){
                 //Must be forced to shut down
                 //Because playing multichannel audio will be stuck in chrome 28 (android)
-                return;
-            }else if(SWA){
-                var audio = loader.cache[url];
-                if(!audio){
-                    cc.loader.load(url);
-                    audio = loader.cache[url];
-                }
-                return audio._recklessPlay();
+                return null;
             }
 
             var effectList = this._audioPool[url];
@@ -713,9 +697,10 @@ cc.Audio = cc.Class.extend({
             }
 
             if(effectList[i]){
-                effectList[i].setVolume(this._effectVolume);
-                effectList[i].play(0, loop);
-            }else if(i > this._maxAudioInstance){
+                audio = effectList[i];
+                audio.setVolume(this._effectVolume);
+                audio.play(0, loop);
+            }else if(SWA && i > this._maxAudioInstance){
                 cc.log("Error: %s greater than %d", url, this._maxAudioInstance);
             }else{
                 var audio = loader.cache[url];
@@ -728,7 +713,6 @@ cc.Audio = cc.Class.extend({
                 audio.play();
                 effectList.push(audio);
             }
-            console.log(effectList.length)
 
             return audio;
         },
@@ -763,7 +747,9 @@ cc.Audio = cc.Class.extend({
          * cc.audioEngine.pauseEffect(audioID);
          */
         pauseEffect: function(audio){
-            audio.pause();
+            if(audio){
+                audio.pause();
+            }
         },
 
         /**
@@ -792,7 +778,8 @@ cc.Audio = cc.Class.extend({
          * cc.audioEngine.resumeEffect(audioID);
          */
         resumeEffect: function(audio){
-            audio.resume();
+            if(audio)
+                audio.resume();
         },
 
         /**
@@ -819,7 +806,8 @@ cc.Audio = cc.Class.extend({
          * cc.audioEngine.stopEffect(audioID);
          */
         stopEffect: function(audio){
-            audio.stop();
+            if(audio)
+                audio.stop();
         },
 
         /**
