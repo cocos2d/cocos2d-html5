@@ -250,11 +250,5 @@
 
     proto._updateCacheContext = function(){};
 
-    proto.getTexture = cc.SpriteBatchNode.prototype.getTexture;
-
-    proto.visit = cc.SpriteBatchNode.prototype.visit;
-
-    proto.draw = cc.SpriteBatchNode.prototype.draw;
-
     proto._initContentSize = function(){};
 })();
