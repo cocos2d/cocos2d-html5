@@ -390,7 +390,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         // Disable event dispatching
         if (cc.eventManager)
-            cc.eventManager.setEnabled(false);
+            cc.eventManager.removeAllListeners();
 
         // don't release the event handlers
         // They are needed in case the director is run again
@@ -408,7 +408,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         // runScene might be executed after 'end'.
         this._scenesStack.length = 0;
 
-        this.stopAnimation();
+        //this.stopAnimation();
 
         // Clear all caches
         this.purgeCachedData();

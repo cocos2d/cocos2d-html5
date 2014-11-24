@@ -2002,6 +2002,14 @@ cc.game = /** @lends cc.game# */{
      */
     onStop: null,
 
+    _frameCallback: function () {
+        var game = cc.game;
+        cc.director.mainLoop();
+        if(game._intervalId)
+            window.cancelAnimationFrame(game._intervalId);
+        game._intervalId = window.requestAnimFrame(game._frameCallback);
+    },
+
     /**
      * Set frameRate of game.
      * @param frameRate
@@ -2011,27 +2019,13 @@ cc.game = /** @lends cc.game# */{
         config[CONFIG_KEY.frameRate] = frameRate;
         if (self._intervalId)
             window.cancelAnimationFrame(self._intervalId);
-        self._paused = true;
         self._runMainLoop();
     },
     //Run game.
     _runMainLoop: function () {
-        var self = this, callback, config = self.config, CONFIG_KEY = self.CONFIG_KEY,
-            director = cc.director;
+        cc.director.setDisplayStats(this.config[this.CONFIG_KEY.showFPS]);
 
-        director.setDisplayStats(config[CONFIG_KEY.showFPS]);
-
-        callback = function () {
-            if (!self._paused) {
-                director.mainLoop();
-                if(self._intervalId)
-                    window.cancelAnimationFrame(self._intervalId);
-                self._intervalId = window.requestAnimFrame(callback);
-            }
-        };
-
-        window.requestAnimFrame(callback);
-        self._paused = false;
+        window.requestAnimFrame(this._frameCallback);
     },
 
     /**
@@ -2069,6 +2063,20 @@ cc.game = /** @lends cc.game# */{
                 this.removeEventListener('load', arguments.callee, false);
                 _run();
             }, false);
+    },
+
+    pause: function () {
+        window.cancelAnimationFrame(this._intervalId);
+        this._intervalId = null;
+    },
+
+    resume: function () {
+        if(!this._intervalId)
+            this._intervalId = window.requestAnimFrame(this._frameCallback);
+    },
+
+    restart: function () {
+        cc.director.popToSceneStackLevel(0);
     },
 
     _initConfig: function () {
@@ -2205,4 +2213,24 @@ Function.prototype.bind = Function.prototype.bind || function (oThis) {
     fBound.prototype = new fNOP();
 
     return fBound;
+};
+
+
+//+++++++++++++++++++++++++Additional for cocos.js+++++++++++++++++++++++++++++
+
+cc.game.loadScene = function (resource, scene, callback) {
+    if (resource && scene) {
+        cc.LoaderScene.preload(resource, function() {
+            cc.director.runScene(scene);
+            cc.director.drawScene(scene);
+            cc.game.pause();
+            callback && callback();
+        });
+    }
+    else if (resource instanceof cc.Scene) {
+        cc.director.runScene(resource);
+        cc.director.drawScene(resource);
+        cc.game.pause();
+        callback && callback();
+    }
 };
