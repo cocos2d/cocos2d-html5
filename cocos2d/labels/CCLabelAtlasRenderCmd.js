@@ -23,7 +23,6 @@
  ****************************************************************************/
 
 (function(){
-
     cc.LabelAtlas.CanvasRenderCmd = function(renderableObject){
         cc.AtlasNode.CanvasRenderCmd.call(this, renderableObject);
         this._needDraw = false;
@@ -32,16 +31,11 @@
     var proto = cc.LabelAtlas.CanvasRenderCmd.prototype = Object.create(cc.AtlasNode.CanvasRenderCmd.prototype);
     proto.constructor = cc.LabelAtlas.CanvasRenderCmd;
 
-    proto.rendering = function(){
-        var node = this._node;
-        node.draw();
-    };
-
     proto.updateAtlasValues = function(){
         var node = this._node;
         var locString = node._string || "";
         var n = locString.length;
-        var texture = node.texture;
+        var texture = this._texture;
         var locItemWidth = node._itemWidth , locItemHeight = node._itemHeight;     //needn't multiply cc.contentScaleFactor(), because sprite's draw will do this
 
         for (var i = 0; i < n; i++) {
@@ -78,23 +72,15 @@
 
     proto.setString = function(label){
         var node = this._node;
-        label = String(label);
-        var len = label.length;
-        node._string = label;
-        this.width = len * node._itemWidth;
-        this.height = node._itemHeight;
         if (node._children) {
             var locChildren = node._children;
-            len = locChildren.length;
+            var len = locChildren.length;
             for (var i = 0; i < len; i++) {
                 var child = locChildren[i];
                 if (child && !child._lateChild)
                     child.visible = false;
             }
         }
-
-        this.updateAtlasValues();
-        this.quadsToDraw = len;
     };
 
     proto._addChild = function(){
@@ -103,15 +89,23 @@
 })();
 
 (function(){
-
-    cc.LabelAtlas.WebGLRenderCmd = function(renderableObject){
-        cc.AtlasNode.WebGLRenderCmd.call(this, renderableObject);
+    cc.LabelAtlas.WebGLRenderCmd = function(renderable){
+        cc.AtlasNode.WebGLRenderCmd.call(this, renderable);
         this._needDraw = false;
     };
 
     var proto = cc.LabelAtlas.WebGLRenderCmd.prototype = Object.create(cc.AtlasNode.WebGLRenderCmd.prototype);
     proto.constructor = cc.LabelAtlas.WebGLRenderCmd;
-    proto.rendering = function(){};
+
+    proto.rendering = function(){
+        cc.AtlasNode.WebGLRenderCmd.prototype.rendering.call(this, ctx);
+        if (cc.LABELATLAS_DEBUG_DRAW) {
+            var s = this.size;
+            var vertices = [cc.p(0, 0), cc.p(s.width, 0),
+                cc.p(s.width, s.height), cc.p(0, s.height)];
+            cc._drawingUtil.drawPoly(vertices, 4, true);
+        }
+    };
 
     proto.updateAtlasValues = function(){
         var node = this._node;
@@ -189,21 +183,12 @@
     };
 
     proto.setString = function(label){
-        var node = this._node;
-        label = String(label);
-        var len = label.length;
+        var len = label.length, node = this._node;
         if (len > node.textureAtlas.totalQuads)
             node.textureAtlas.resizeCapacity(len);
-
-        node._string = label;
-        node.width = len * node._itemWidth;
-        node.height = node._itemHeight;
-
-        node.updateAtlasValues();
-        node.quadsToDraw = len;
     };
 
-    proto.setOpacity = function(){
+    proto.setOpacity = function(opacity){
         if (this._opacity !== opacity)
             cc.AtlasNode.prototype.setOpacity.call(this, opacity);
     };
