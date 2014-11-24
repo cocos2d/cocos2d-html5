@@ -72,8 +72,6 @@ cc.PARTICLE_DEFAULT_CAPACITY = 500;
  */
 cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 	textureAtlas:null,
-
-    TextureProtocol:true,
     //the blend function used for drawing the quads
     _blendFunc:null,
     _className:"ParticleBatchNode",
@@ -101,10 +99,13 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         } else if (fileImage instanceof cc.Texture2D) {
             this.initWithTexture(fileImage, capacity);
         }
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this._renderCmd = new cc.ParticleBatchNode.WebGLRenderCmd(this);
+    },
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new cc.ParticleBatchNode.CanvasRenderCmd(this);
         else
-            this._renderCmd = new cc.ParticleBatchNode.CanvasRenderCmd(this);
+            return new cc.ParticleBatchNode.WebGLRenderCmd(this);
     },
 
     /**
@@ -142,7 +143,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @return {Boolean}
      */
     init:function (fileImage, capacity) {
-        var tex = cc.TextureCache.getInstance().addImage(fileImage);
+        var tex = cc.textureCache.addImage(fileImage);
         return this.initWithTexture(tex, capacity);
     },
 
@@ -333,17 +334,8 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     },
 
     /**
-     * Render function using the canvas 2d context or WebGL context, internal usage only, please do not call this function
-     * @function
-     * @param {CanvasRenderingContext2D | WebGLRenderingContext} ctx The render context
-     */
-    draw:function (ctx) {
-        this._renderCmd.draw();
-    },
-
-    /**
      * returns the used texture
-     * @return {cc.Texture2D|HTMLImageElement|HTMLCanvasElement}
+     * @return {cc.Texture2D}
      */
     getTexture:function () {
         return this.textureAtlas.texture;
@@ -351,7 +343,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
     /**
      * sets a new texture. it will be retained
-     * @param {cc.Texture2D|HTMLImageElement|HTMLCanvasElement} texture
+     * @param {cc.Texture2D} texture
      */
     setTexture:function (texture) {
         this.textureAtlas.texture = texture;
@@ -377,7 +369,6 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
             this._blendFunc.src = src;
             this._blendFunc.src = dst;
         }
-
     },
 
     /**
@@ -385,18 +376,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @return {cc.BlendFunc}
      */
     getBlendFunc:function () {
-        return {src:this._blendFunc.src, dst:this._blendFunc.dst};
-    },
-
-    // override visit.
-    // Don't call visit on it's children
-    /**
-     * Recursive method that visit its children and draw them
-     * @function
-     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
-     */
-    visit:function (ctx) {
-        this._renderCmd.visit();
+        return new cc.BlendFunc(this._blendFunc.src, this._blendFunc.dst);
     },
 
     _updateAllAtlasIndexes:function () {

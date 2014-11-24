@@ -58,6 +58,24 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     _className:"ProgressTimer",
 
     /**
+     * constructor of cc.cc.ProgressTimer
+     * @function
+     * @param {cc.Sprite} sprite
+     */
+    ctor: function(sprite){
+        cc.Node.prototype.ctor.call(this);
+
+        this._type = cc.ProgressTimer.TYPE_RADIAL;
+        this._percentage = 0.0;
+        this._midPoint = cc.p(0, 0);
+        this._barChangeRate = cc.p(0, 0);
+        this._reverseDirection = false;
+        this._sprite = null;
+
+        sprite && this.initWithSprite(sprite);
+    },
+
+    /**
      *    Midpoint is used to modify the progress start position.
      *    If you're using radials type then the midpoint changes the center point
      *    If you're using bar type the the midpoint changes the bar growth
@@ -153,36 +171,6 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         return this._reverseDirection;
     },
 
-    _boundaryTexCoord:function (index) {
-        if (index < cc.ProgressTimer.TEXTURE_COORDS_COUNT) {
-            var locProTextCoords = cc.ProgressTimer.TEXTURE_COORDS;
-            if (this._reverseDirection)
-                return cc.p((locProTextCoords >> (7 - (index << 1))) & 1, (locProTextCoords >> (7 - ((index << 1) + 1))) & 1);
-            else
-                return cc.p((locProTextCoords >> ((index << 1) + 1)) & 1, (locProTextCoords >> (index << 1)) & 1);
-        }
-        return cc.p(0,0);
-    },
-
-    /**
-     * constructor of cc.cc.ProgressTimer
-     * @function
-     * @param {cc.Sprite} sprite
-     */
-    ctor: function(){
-        cc.Node.prototype.ctor.call(this);
-        cc.Node.prototype.ctor.call(this);
-
-        this._type = cc.ProgressTimer.TYPE_RADIAL;
-        this._percentage = 0.0;
-        this._midPoint = cc.p(0, 0);
-        this._barChangeRate = cc.p(0, 0);
-        this._reverseDirection = false;
-
-        this._sprite = null;
-        this.sprite && this._renderCmd.initWithSprite(this.sprite);
-    },
-
     /**
      * set color of sprite
      * @param {cc.Color} color
@@ -223,7 +211,10 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @param {Boolean} reverse
      */
     setReverseProgress: function(reverse){
-        this._renderCmd.setReverseProgress(reverse);
+        if (this._reverseDirection !== reverse){
+            this._reverseDirection = reverse;
+            this._renderCmd.releaseData();
+        }
     },
 
     /**
@@ -232,7 +223,14 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @param {cc.Sprite} sprite
      */
     setSprite: function(sprite){
-        this._renderCmd.setSprite(sprite);
+        if (this._sprite != sprite) {
+            this._sprite = sprite;
+            if(sprite)
+                this.setContentSize(sprite.width,sprite.height);
+            else
+                this.setContentSize(0,0);
+            this._renderCmd.releaseData();
+        }
     },
 
     /**
@@ -241,7 +239,11 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @param {cc.ProgressTimer.TYPE_RADIAL|cc.ProgressTimer.TYPE_BAR} type
      */
     setType: function(type){
-        this._renderCmd.setType(type);
+        var node = this._node;
+        if (type !== this._type){
+            node._type = type;
+            this._renderCmd.releaseData();
+        }
     },
 
     /**
@@ -250,40 +252,10 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @param {Boolean} reverse
      */
     setReverseDirection: function(reverse){
-        this._renderCmd.setReverseDirection(reverse);
-    },
-
-    /**
-     * @param {cc.Point} alpha
-     * @return {cc.Vertex2F | Object} the vertex position from the texture coordinate
-     * @private
-     */
-    _textureCoordFromAlphaPoint:function (alpha) {
-        var locSprite = this._sprite;
-        if (!locSprite) {
-            return {u:0, v:0}; //new cc.Tex2F(0, 0);
+        if (this._reverseDirection !== reverse){
+            this._reverseDirection = reverse;
+            this._renderCmd.releaseData();
         }
-        var quad = locSprite.quad;
-        var min = cc.p(quad.bl.texCoords.u, quad.bl.texCoords.v);
-        var max = cc.p(quad.tr.texCoords.u, quad.tr.texCoords.v);
-
-        //  Fix bug #1303 so that progress timer handles sprite frame texture rotation
-        if (locSprite.textureRectRotated) {
-            var temp = alpha.x;
-            alpha.x = alpha.y;
-            alpha.y = temp;
-        }
-        return {u: min.x * (1 - alpha.x) + max.x * alpha.x, v: min.y * (1 - alpha.y) + max.y * alpha.y};
-    },
-
-    _vertexFromAlphaPoint:function (alpha) {
-        if (!this._sprite) {
-            return {x: 0, y: 0};
-        }
-        var quad = this._sprite.quad;
-        var min = cc.p(quad.bl.vertices.x, quad.bl.vertices.y);
-        var max = cc.p(quad.tr.vertices.x, quad.tr.vertices.y);
-        return {x: min.x * (1 - alpha.x) + max.x * alpha.x, y: min.y * (1 - alpha.y) + max.y * alpha.y};
     },
 
     /**
@@ -293,140 +265,16 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @return {Boolean}
      */
     initWithSprite: function(sprite){
-        this._renderCmd.initWithSprite(sprite);
-    },
+        this.percentage = 0;
+        this.setAnchorPoint(0.5,0.5);
 
-    /**
-     * <p>
-     *    Update does the work of mapping the texture onto the triangles            <br/>
-     *    It now doesn't occur the cost of free/alloc data every update cycle.      <br/>
-     *    It also only changes the percentage point but no other points if they have not been modified.       <br/>
-     *                                                                              <br/>
-     *    It now deals with flipped texture. If you run into this problem, just use the                       <br/>
-     *    sprite property and enable the methods flipX, flipY.                      <br/>
-     * </p>
-     * @private
-     */
-    _updateRadial:function () {
-        if (!this._sprite)
-            return;
-
-        var i, locMidPoint = this._midPoint;
-        var alpha = this._percentage / 100;
-        var angle = 2 * (cc.PI) * ( this._reverseDirection ? alpha : 1.0 - alpha);
-
-        //    We find the vector to do a hit detection based on the percentage
-        //    We know the first vector is the one @ 12 o'clock (top,mid) so we rotate
-        //    from that by the progress angle around the m_tMidpoint pivot
-        var topMid = cc.p(locMidPoint.x, 1);
-        var percentagePt = cc.pRotateByAngle(topMid, locMidPoint, angle);
-
-        var index = 0;
-        var hit;
-
-        if (alpha == 0) {
-            //    More efficient since we don't always need to check intersection
-            //    If the alpha is zero then the hit point is top mid and the index is 0.
-            hit = topMid;
-            index = 0;
-        } else if (alpha == 1) {
-            //    More efficient since we don't always need to check intersection
-            //    If the alpha is one then the hit point is top mid and the index is 4.
-            hit = topMid;
-            index = 4;
-        } else {
-            //    We run a for loop checking the edges of the texture to find the
-            //    intersection point
-            //    We loop through five points since the top is split in half
-
-            var min_t = cc.FLT_MAX;
-            var locProTextCoordsCount = cc.ProgressTimer.TEXTURE_COORDS_COUNT;
-            for (i = 0; i <= locProTextCoordsCount; ++i) {
-                var pIndex = (i + (locProTextCoordsCount - 1)) % locProTextCoordsCount;
-
-                var edgePtA = this._boundaryTexCoord(i % locProTextCoordsCount);
-                var edgePtB = this._boundaryTexCoord(pIndex);
-
-                //    Remember that the top edge is split in half for the 12 o'clock position
-                //    Let's deal with that here by finding the correct endpoints
-                if (i == 0)
-                    edgePtB = cc.pLerp(edgePtA, edgePtB, 1 - locMidPoint.x);
-                else if (i == 4)
-                    edgePtA = cc.pLerp(edgePtA, edgePtB, 1 - locMidPoint.x);
-
-                // retPoint are returned by ccpLineIntersect
-                var retPoint = cc.p(0, 0);
-                if (cc.pLineIntersect(edgePtA, edgePtB, locMidPoint, percentagePt, retPoint)) {
-                    //    Since our hit test is on rays we have to deal with the top edge
-                    //    being in split in half so we have to test as a segment
-                    if ((i == 0 || i == 4)) {
-                        //    s represents the point between edgePtA--edgePtB
-                        if (!(0 <= retPoint.x && retPoint.x <= 1))
-                            continue;
-                    }
-                    //    As long as our t isn't negative we are at least finding a
-                    //    correct hitpoint from m_tMidpoint to percentagePt.
-                    if (retPoint.y >= 0) {
-                        //    Because the percentage line and all the texture edges are
-                        //    rays we should only account for the shortest intersection
-                        if (retPoint.y < min_t) {
-                            min_t = retPoint.y;
-                            index = i;
-                        }
-                    }
-                }
-            }
-
-            //    Now that we have the minimum magnitude we can use that to find our intersection
-            hit = cc.pAdd(locMidPoint, cc.pMult(cc.pSub(percentagePt, locMidPoint), min_t));
-        }
-
-        //    The size of the vertex data is the index from the hitpoint
-        //    the 3 is for the m_tMidpoint, 12 o'clock point and hitpoint position.
-        var sameIndexCount = true;
-        if (this._renderCmd._vertexDataCount != index + 3) {
-            sameIndexCount = false;
-            this._renderCmd._vertexData = null;
-            this._renderCmd._vertexArrayBuffer = null;
-            this._renderCmd._vertexDataCount = 0;
-        }
-
-        if (!this._renderCmd._vertexData) {
-            this._renderCmd._vertexDataCount = index + 3;
-            var locCount = this._renderCmd._vertexDataCount, vertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT;
-            this._renderCmd._vertexArrayBuffer = new ArrayBuffer(locCount * vertexDataLen);
-            var locData = [];
-            for (i = 0; i < locCount; i++)
-                locData[i] = new cc.V2F_C4B_T2F(null, null, null, this._renderCmd._vertexArrayBuffer, i * vertexDataLen);
-
-            this._renderCmd._vertexData = locData;
-            if(!this._renderCmd._vertexData){
-                cc.log( "cc.ProgressTimer._updateRadial() : Not enough memory");
-                return;
-            }
-        }
-        this._updateColor();
-
-        var locVertexData = this._renderCmd._vertexData;
-        if (!sameIndexCount) {
-            //    First we populate the array with the m_tMidpoint, then all
-            //    vertices/texcoords/colors of the 12 'o clock start and edges and the hitpoint
-            locVertexData[0].texCoords = this._textureCoordFromAlphaPoint(locMidPoint);
-            locVertexData[0].vertices = this._vertexFromAlphaPoint(locMidPoint);
-
-            locVertexData[1].texCoords = this._textureCoordFromAlphaPoint(topMid);
-            locVertexData[1].vertices = this._vertexFromAlphaPoint(topMid);
-
-            for (i = 0; i < index; i++) {
-                var alphaPoint = this._boundaryTexCoord(i);
-                locVertexData[i + 2].texCoords = this._textureCoordFromAlphaPoint(alphaPoint);
-                locVertexData[i + 2].vertices = this._vertexFromAlphaPoint(alphaPoint);
-            }
-        }
-
-        //    hitpoint will go last
-        locVertexData[this._renderCmd._vertexDataCount - 1].texCoords = this._textureCoordFromAlphaPoint(hit);
-        locVertexData[this._renderCmd._vertexDataCount - 1].vertices = this._vertexFromAlphaPoint(hit);
+        this._type = cc.ProgressTimer.TYPE_RADIAL;
+        this._reverseDirection = false;
+        this.midPoint = cc.p(0.5, 0.5);
+        this.barChangeRate = cc.p(1, 1);
+        this.sprite = sprite;
+        this._renderCmd.initCmd();
+        return true;
     },
 
     _updateProgress: function(){

@@ -194,13 +194,10 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      * @param {String} label
      */
     setString: function(label){
-        var node = this._node;
         label = String(label);
         var len = label.length;
-        node._string = label;
-        this.width = len * node._itemWidth;
-        this.height = node._itemHeight;
-
+        this._string = label;
+        this.setContentSize(len * this._itemWidth, this._itemHeight);
         this._renderCmd.setString(label);
 
         this.updateAtlasValues();

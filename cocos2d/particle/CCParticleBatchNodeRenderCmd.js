@@ -22,31 +22,27 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * cc.ParticleBatchNode's rendering objects of Canvas
- */
 (function(){
-    cc.ParticleBatchNode.CanvasRenderCmd = function(renderableObject){
-        cc.Node.CanvasRenderCmd.call(this, renderableObject);
-        this._needDraw = true;
+    /**
+     * cc.ParticleBatchNode's rendering objects of Canvas
+     */
+    cc.ParticleBatchNode.CanvasRenderCmd = function(renderable){
+        cc.Node.CanvasRenderCmd.call(this, renderable);
+        this._needDraw = false;
     };
 
     var proto = cc.ParticleBatchNode.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.ParticleBatchNode.CanvasRenderCmd;
 
-    proto.rendering =
-    proto._initWithTexture =
-    proto.draw =
-    proto.visit = function(){};
+    proto._initWithTexture = function(){};
 })();
 
-/**
- * cc.ParticleBatchNode's rendering objects of WebGL
- */
 (function(){
-
-    cc.ParticleBatchNode.WebGLRenderCmd = function(renderableObject){
-        cc.Node.WebGLRenderCmd.call(this, renderableObject);
+    /**
+     * cc.ParticleBatchNode's rendering objects of WebGL
+     */
+    cc.ParticleBatchNode.WebGLRenderCmd = function(renderable){
+        cc.Node.WebGLRenderCmd.call(this, renderable);
         this._needDraw = true;
     };
 
@@ -58,27 +54,14 @@
         if (_t.textureAtlas.totalQuads == 0)
             return;
 
-        _t._shaderProgram.use();
-        _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);
+        this._shaderProgram.use();
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
         cc.glBlendFuncForParticle(_t._blendFunc.src, _t._blendFunc.dst);
         _t.textureAtlas.drawQuads();
     };
 
     proto._initWithTexture = function(){
-        this._node.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
-    };
-
-    proto.draw = function(){
-        var ndoe = this._node;
-        //cc.PROFILER_STOP("CCParticleBatchNode - draw");
-        if (ndoe.textureAtlas.totalQuads == 0)
-            return;
-
-        cc.nodeDrawSetup(ndoe);
-        cc.glBlendFuncForParticle(ndoe._blendFunc.src, ndoe._blendFunc.dst);
-        ndoe.textureAtlas.drawQuads();
-
-        //cc.PROFILER_STOP("CCParticleBatchNode - draw");
+        this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
     };
 
     proto.visit = function(){
@@ -98,7 +81,7 @@
         cc.kmMat4Assign(node._stackMatrix, currentStack.top);
         currentStack.top = node._stackMatrix;
 
-        node.transform(ctx);
+        node._syncStatus(ctx);
         //this.draw(ctx);
         cc.renderer.pushRenderCommand(this);
 
