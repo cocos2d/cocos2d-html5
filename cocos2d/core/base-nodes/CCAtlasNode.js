@@ -68,6 +68,8 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     _ignoreContentScaleFactor: false,
     _className: "AtlasNode",
 
+    _textureForCanvas: null,
+
     /**
      * <p>Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      * @param {String} tile
@@ -79,9 +81,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
         cc.Node.prototype.ctor.call(this);
         this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
         this._ignoreContentScaleFactor = false;
-
         itemsToRender !== undefined && this.initWithTileFile(tile, tileWidth, tileHeight, itemsToRender);
-
     },
 
     _createRenderCmd: function(){
@@ -120,7 +120,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     setOpacityModifyRGB: function (value) {
         var oldColor = this.color;
         this._opacityModifyRGB = value;
-        this.color = oldColor;
+        this.setColor(oldColor);
     },
 
     /**
@@ -190,12 +190,6 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     setQuadsToDraw: function (quadsToDraw) {
         this.quadsToDraw = quadsToDraw;
     },
-
-    _textureForCanvas: null,
-    _originalTexture: null,
-
-    _uniformColor: null,
-    _colorF32Array: null,
 
     /**
      * Initializes an cc.AtlasNode object with an atlas texture file name, the width, the height of each tile and the quantity of tiles to render
@@ -269,21 +263,6 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
      */
     setTexture: function(texture){
         this._renderCmd.setTexture(texture);
-    },
-
-    _calculateMaxItems: function(){
-        this._renderCmd._calculateMaxItems();
-    },
-
-    _updateBlendFunc: function () {
-        if (!this.textureAtlas.texture.hasPremultipliedAlpha()) {
-            this._blendFunc.src = cc.SRC_ALPHA;
-            this._blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
-        }
-    },
-
-    _updateOpacityModifyRGB: function () {
-        this._opacityModifyRGB = this.textureAtlas.texture.hasPremultipliedAlpha();
     },
 
     _setIgnoreContentScaleFactor: function (ignoreContentScaleFactor) {

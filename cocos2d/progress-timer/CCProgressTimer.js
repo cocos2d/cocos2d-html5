@@ -181,7 +181,6 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
 
         this._sprite = null;
         this.sprite && this._renderCmd.initWithSprite(this.sprite);
-
     },
 
     /**
@@ -295,15 +294,6 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      */
     initWithSprite: function(sprite){
         this._renderCmd.initWithSprite(sprite);
-    },
-
-    /**
-     * Stuff gets drawn here
-     * @function
-     * @param {CanvasRenderingContext2D} ctx
-     */
-    draw: function(ctx){
-        this._renderCmd.draw(ctx);
     },
 
     /**

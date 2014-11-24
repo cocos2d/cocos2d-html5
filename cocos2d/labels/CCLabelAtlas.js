@@ -44,9 +44,7 @@
  * var myLabel = new cc.LabelAtlas('Text to display', 'CharMapFile.plist‘);
  */
 cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
-
     //property String is Getter and Setter
-
     // string to render
     _string: null,
     // the first char in the charmap
@@ -74,13 +72,10 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 
         this._cascadeOpacityEnabled = true;
         this._cascadeColorEnabled = true;
-
-
         charMapFile && cc.LabelAtlas.prototype.initWithString.call(this, strText, charMapFile, itemWidth, itemHeight, startCharMap);
     },
 
     _createRenderCmd: function(){
-
         if(cc._renderType === cc._RENDER_TYPE_WEBGL)
             return new cc.LabelAtlas.WebGLRenderCmd(this);
         else
@@ -180,19 +175,6 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         return this._string;
     },
 
-    /**
-     * draw the label
-     */
-    draw: function (ctx) {
-        cc.AtlasNode.prototype.draw.call(this, ctx);
-        if (cc.LABELATLAS_DEBUG_DRAW) {
-            var s = this.size;
-            var vertices = [cc.p(0, 0), cc.p(s.width, 0),
-                cc.p(s.width, s.height), cc.p(0, s.height)];
-            cc._drawingUtil.drawPoly(vertices, 4, true);
-        }
-    },
-
     addChild: function(child, localZOrder, tag){
         this._renderCmd._addChild(child);
         cc.Node.prototype.addChild.call(this, child, localZOrder, tag);
@@ -212,7 +194,17 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      * @param {String} label
      */
     setString: function(label){
+        var node = this._node;
+        label = String(label);
+        var len = label.length;
+        node._string = label;
+        this.width = len * node._itemWidth;
+        this.height = node._itemHeight;
+
         this._renderCmd.setString(label);
+
+        this.updateAtlasValues();
+        this.quadsToDraw = len;
     },
 
     /**

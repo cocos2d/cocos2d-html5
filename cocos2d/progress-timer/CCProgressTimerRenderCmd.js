@@ -26,7 +26,6 @@
  * cc.ProgressTimer's rendering objects of Canvas
  */
 (function(){
-
     cc.ProgressTimer.CanvasRenderCmd = function(renderableObject){
         cc.Node.CanvasRenderCmd.call(this, renderableObject);
         this._needDraw = true;
@@ -166,8 +165,6 @@
 
         return true;
     };
-
-    proto.draw = function(){};
 
     proto._updateProgress = function(){
         var node = this._node;
