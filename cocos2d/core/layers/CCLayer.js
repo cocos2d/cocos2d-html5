@@ -30,7 +30,6 @@
  * @extends cc.Node
  */
 cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
-    __type: "cc.Layer",
     _isBaked: false,
     _bakeSprite: null,
     _bakeRenderCmd: null,
@@ -66,7 +65,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @function
      * @see cc.Layer#unbake
      */
-    //bake: null,
+    bake: null,
 
     /**
      * Cancel the layer to cache all of children to a bake sprite.<br/>
@@ -74,7 +73,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @function
      * @see cc.Layer#bake
      */
-    //unbake: null,
+    unbake: null,
 
     _bakeRendering: null,
 
@@ -86,9 +85,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      */
     isBaked: function(){
         return this._isBaked;
-    }
+    },
 
-    //visit: null
+    visit: null
 });
 
 /**
@@ -147,17 +146,16 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             var _t = this;
             var children = _t._children, locBakeSprite = this._bakeSprite;
             //compute the bounding box of the bake layer.
+            this._transformForRenderer();
             var boundingBox = this._getBoundingBoxForBake();
-            boundingBox.width = 0 | boundingBox.width;
-            boundingBox.height = 0 | boundingBox.height;
+            boundingBox.width = 0|(boundingBox.width+0.5);
+            boundingBox.height = 0|(boundingBox.height+0.5);
             var bakeContext = locBakeSprite.getCacheContext();
             locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
             bakeContext.translate(0 - boundingBox.x, boundingBox.height + boundingBox.y);
-
             //  invert
             var t = cc.affineTransformInvert(this._transformWorld);
-            var scaleX = cc.view.getScaleX(), scaleY = cc.view.getScaleY();
-            bakeContext.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+            bakeContext.transform(t.a, t.c, t.b, t.d, t.tx , -t.ty );
 
             //reset the bake sprite's position
             var anchor = locBakeSprite.getAnchorPointInPoints();
@@ -170,6 +168,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 children[i].visit(bakeContext);
             }
             cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
+            locBakeSprite.transform();                   //because bake sprite's position was changed at rendering.
             this._cacheDirty = false;
         }
     };
@@ -231,7 +230,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
  * CCLayerColor is a subclass of CCLayer that implements the CCRGBAProtocol protocol.       <br/>
  *  All features from CCLayer are valid, plus the following new features:                   <br/>
  * - opacity                                                                     <br/>
- * - RGB colors                                                                </p>
+ * - RGB colors                                                                  </p>
  * @class
  * @extends cc.Layer
  *
@@ -249,7 +248,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
  * var yellowBox = new cc.LayerColor(cc.color(255,255,0,255), 200, 200);
  */
 cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
-    __type: "cc.LayerColor",
     _blendFunc: null,
     _className: "LayerColor",
 
@@ -310,7 +308,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._updateColor();
     },
 
-    _blendFuncStr: "source",
+    _blendFuncStr: "source-over",
 
     /**
      * Constructor of cc.LayerColor
@@ -319,7 +317,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {Number} [width=]
      * @param {Number} [height=]
      */
-    //ctor: null,
+    ctor: null,
 
     /**
      * Initialization of the layer, please do not call this function by yourself, you should pass the parameters to constructor to initialize a layer
@@ -390,7 +388,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._updateColor();
     },
 
-    //draw: null
+    draw: null
 });
 
 /**
@@ -469,8 +467,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             }
             //  invert
             var t = cc.affineTransformInvert(this._transformWorld);
-            var scaleX = cc.view.getScaleX(), scaleY = cc.view.getScaleY();
-            bakeContext.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+            bakeContext.transform(t.a, t.c, t.b, t.d, t.tx, -t.ty);
 
             var child;
             cc.renderer._turnToCacheMode(this.__instanceId);
@@ -494,6 +491,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             if(_t._rendererCmd)
                 cc.renderer.pushRenderCommand(_t._rendererCmd);
             cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
+            locBakeSprite.transform();
             this._cacheDirty = false;
         }
     };
@@ -523,8 +521,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p._getBoundingBoxForBake = function () {
         //default size
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
-        var trans = this.nodeToWorldTransform();
-        rect = cc.rectApplyAffineTransform(rect, this.nodeToWorldTransform());
+        var trans = this.getNodeToWorldTransform();
+        rect = cc.rectApplyAffineTransform(rect, this.getNodeToWorldTransform());
 
         //query child's BoundingBox
         if (!this._children || this._children.length === 0)
@@ -587,7 +585,6 @@ delete cc._tmp.PrototypeLayerColor;
  * @property {Number}   compresseInterpolation  - Indicate whether or not the interpolation will be compressed
  */
 cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
-    __type: "cc.LayerGradient",
     _endColor: null,
     _startOpacity: 255,
     _endOpacity: 255,
@@ -838,7 +835,6 @@ delete cc._tmp.PrototypeLayerGradient;
  * var multiLayer = new cc.LayerMultiple(layer1, layer2, layer3);//any number of layers
  */
 cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
-    __type: "cc.LayerMultiplex",
     _enabledLayer: 0,
     _layers: null,
     _className: "LayerMultiplex",

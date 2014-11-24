@@ -64,7 +64,6 @@
  * @property {Number}       shadowBlur      - The blur size of shadow
  */
 cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
-    __type: "cc.LabelTTF",
     _dimensions: null,
     _hAlignment: cc.TEXT_ALIGNMENT_CENTER,
     _vAlignment: cc.VERTICAL_TEXT_ALIGNMENT_TOP,
@@ -101,6 +100,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _labelContext: null,
     _lineWidths: null,
     _className: "LabelTTF",
+
+    _lineHeight: 0,
 
     /**
      * Initializes the cc.LabelTTF with a font name, alignment, dimension and font size, do not call it by yourself,
@@ -201,19 +202,27 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return "<cc.LabelTTF | FontName =" + this._fontName + " FontSize = " + this._fontSize.toFixed(1) + ">";
     },
 
-    //setColor: null,
+    setColor: null,
 
     _setColorsString: null,
 
-    //updateDisplayedColor: null,
+    updateDisplayedColor: null,
 
-    //setOpacity: null,
+    setOpacity: null,
 
-    //updateDisplayedOpacity: null,
+    updateDisplayedOpacity: null,
 
     updateDisplayedOpacityForCanvas: function (parentOpacity) {
         cc.Node.prototype.updateDisplayedOpacity.call(this, parentOpacity);
         this._setColorsString();
+    },
+
+    getLineHeight: function(){
+        return this._lineHeight || this._fontClientHeight;
+    },
+
+    setLineHeight: function(lineHeight){
+        this._lineHeight = lineHeight;
     },
 
     /**
@@ -271,7 +280,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @param {cc.FontDefinition} textDefinition
      * @return {Boolean}
      */
-    //initWithStringAndTextDefinition: null,
+    initWithStringAndTextDefinition: null,
 
     /**
      * Sets the text definition used by this label
@@ -492,7 +501,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @function
      * @param {cc.Color} fillColor The fill color of the label
      */
-    //setFontFillColor: null,
+    setFontFillColor: null,
 
     _getFillStyle: function () {
         return this._textFillColor;
@@ -597,6 +606,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         }
     },
     _updateString: function () {
+        if ((!this._string || this._string === "") && this._string !== this._originalText)
+            cc.renderer.childrenOrderDirty = true;
+
         this._string = this._originalText;
     },
 
@@ -750,6 +762,11 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         context.textAlign = cc.LabelTTF._textAlign[locHAlignment];
 
         var locContentWidth = this._contentSize.width - locStrokeShadowOffsetX;
+
+        //lineHiehgt
+        var lineHeight = this.getLineHeight();
+        var transformTop = (lineHeight - this._fontClientHeight) / 2;
+
         if (locHAlignment === cc.TEXT_ALIGNMENT_RIGHT)
             xOffset += locContentWidth;
         else if (locHAlignment === cc.TEXT_ALIGNMENT_CENTER)
@@ -759,13 +776,13 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (this._isMultiLine) {
             var locStrLen = this._strings.length;
             if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
-                yOffset = locFontHeight + locContentSizeHeight - locFontHeight * locStrLen;
+                yOffset = lineHeight - transformTop * 2 + locContentSizeHeight - lineHeight * locStrLen;
             else if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_CENTER)
-                yOffset = locFontHeight / 2 + (locContentSizeHeight - locFontHeight * locStrLen) / 2;
+                yOffset = (lineHeight - transformTop * 2) / 2 + (locContentSizeHeight - lineHeight * locStrLen) / 2;
 
             for (var i = 0; i < locStrLen; i++) {
                 var line = this._strings[i];
-                var tmpOffsetY = -locContentSizeHeight + (locFontHeight * i) + yOffset;
+                var tmpOffsetY = -locContentSizeHeight + (lineHeight * i + transformTop) + yOffset;
                 if (locStrokeEnabled)
                     context.strokeText(line, xOffset, tmpOffsetY);
                 context.fillText(line, xOffset, tmpOffsetY);
@@ -845,6 +862,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             }
 
             fuzzyLen -= pushNum;
+            if(fuzzyLen === 0){
+                fuzzyLen = 1;
+                sLine = sLine.substr(1);
+            }
 
             var sText = text.substr(0, fuzzyLen);
 
@@ -917,9 +938,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         } else {
             if (this._dimensions.height === 0) {
                 if (this._isMultiLine)
-                    locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | ((this._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY));
+                    locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | ((this.getLineHeight() * this._strings.length) + locStrokeShadowOffsetY));
                 else
-                    locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | (this._fontClientHeight + locStrokeShadowOffsetY));
+                    locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | (this.getLineHeight() + locStrokeShadowOffsetY));
             } else {
                 //dimension is already set, contentSize must be same as dimension
                 locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | (this._dimensions.height + locStrokeShadowOffsetY));
@@ -996,7 +1017,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         cc.Sprite.prototype.visit.call(this, context);
     },
 
-    //draw: null,
+    draw: null,
 
     _setTextureCoords: function (rect) {
         var tex = this._batchNode ? this.textureAtlas.texture : this._texture;

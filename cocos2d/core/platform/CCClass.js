@@ -146,10 +146,6 @@ ClassManager.compileSuper.ClassManager = ClassManager;
 	    this.__getters__ && (Class.__getters__ = cc.clone(this.__getters__));
 	    this.__setters__ && (Class.__setters__ = cc.clone(this.__setters__));
 
-        supportProp = props.__type ? true : false;
-        if (supportProp)
-            cc.addProperty(prototype, "__type");
-
         for(idx = 0, li = arguments.length; idx < li; ++idx) {
             prop = arguments[idx];
             for (name in prop) {
@@ -179,11 +175,6 @@ ClassManager.compileSuper.ClassManager = ClassManager;
                     desc.value = prop[name];
                     Object.defineProperty(prototype, name, desc);
                 } else {
-                    // Add property
-                    if (supportProp && name[0] != "_") {
-                        cc.addProperty(prototype, name, prop[name]);
-                    }
-
                     prototype[name] = prop[name];
                 }
 
@@ -289,44 +280,6 @@ cc.defineGetterSetter = function (proto, prop, getter, setter, getterName, sette
 };
 
 /**
- * Add a serializable property to a prototype
- * @function
- * @param {Object}   proto      A class prototype or an object to config<br/>
- * @param {String}   prop       Property name
- * @param {function} getter     Getter function for the property
- * @param {function} setter     Setter function for the property
- */
-cc.addProperty = function(proto, prop, value, getter, setter) {
-    if (typeof value == "function") {
-        setter = getter;
-        getter = value;
-        value = undefined;
-    }
-
-    var props;
-    if (proto.hasOwnProperty("__props")) {
-        props = proto.__props;
-    }
-    else {
-        props = proto.__props = {};
-    }
-
-    if (getter || setter) {
-        cc.defineGetterSetter(proto, prop, getter, setter);
-        if (!props[prop])
-            props[prop] = value;
-    }
-    else {
-        if (value !== undefined)
-            props[prop] = value;
-        else if (proto[prop] !== undefined)
-            props[prop] = proto[prop];
-        else
-            props[prop] = null;
-    }
-};
-
-/**
  * Create a new object and copy all properties in an exist object to the new object
  * @function
  * @param {object|Array} obj The source object
@@ -369,99 +322,3 @@ cc.clone = function (obj) {
     }
     return newObj;
 };
-
-(function(cc) {
-
-    cc.__delegators = {
-        color : {
-            parser : function(json) {
-                return cc.color(json[0], json[1], json[2], json[3]);
-            },
-            stringifier : function(color) {
-                return [color.r, color.g, color.b, color.a];
-            }
-        }
-    };
-
-    function unitSerialize (node, key) {
-        var value = node[key];
-        // Found stringifier
-        if ( node.__delegators && node.__delegators[key] && node.__delegators[key].stringifier ) {
-            return JSON.stringify(node.__delegators[key].stringifier(value));
-        }
-        // Found type
-        else if ( value && value.__type ) {
-            return cc.serialize(value);
-        }
-        else if (typeof value != "object" || (value && Object.getPrototypeOf(value) == Object.prototype)) {
-            return JSON.stringify(value);
-        }
-    }
-
-    function unitDeserialize (key, value, obj) {
-        // Found parser
-        if ( obj.__delegators && obj.__delegators[key] && obj.__delegators[key].parser ) {
-            return obj.__delegators[key].parser(JSON.parse(value));
-        }
-        // Found type
-        else if (value.__type) {
-            return cc.deserialize(value);
-        }
-        else {
-            return JSON.parse(value);
-        }
-    }
-
-    cc.serialize = function (node) {
-        var res = {}, key, defaultVal,
-            proto = node.constructor.prototype;
-        // Iterate until the top of prototype chain
-        while (proto != Object.prototype) {
-            // Check all properties
-            for (key in proto.__props) {
-                defaultVal = proto.__props[key];
-                // Serialize only when i is not defined yet and different from the value in prototype
-                if ( res[key] === undefined && node[key] !== defaultVal ) {
-                    res[key] = unitSerialize(node, key);
-                }
-            }
-            proto = Object.getPrototypeOf(proto);
-        }
-
-        return JSON.stringify(res);
-    }
-
-    cc.deserialize = function (json) {
-        var obj, type = null, varsArr, json = JSON.parse(json);
-
-        // Create object with type
-        if (json.__type) {
-            type = window;
-            varsArr = JSON.parse(json.__type).split(".");
-            for (var i in varsArr) {
-                if (type) {
-                    type = type[varsArr[i]];
-                }
-                else {
-                    type = null;
-                    break;
-                }
-            }
-        }
-        if (type) {
-            obj = new type();
-        }
-        // Fail to initialize with type
-        else {
-            obj = {};
-        }
-
-        // Iterate all serialized properties
-        for (var i in json) {
-            obj[i] = unitDeserialize(i, json[i], obj);
-        }
-
-        return obj;
-    }
-})(cc);
-

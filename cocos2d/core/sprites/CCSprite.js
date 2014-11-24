@@ -228,7 +228,7 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
 
 cc._getCompositeOperationByBlendFunc = function(blendFunc){
     if(!blendFunc)
-        return "source";
+        return "source-over";
     else{
         if(( blendFunc.src == cc.SRC_ALPHA && blendFunc.dst == cc.ONE) || (blendFunc.src == cc.ONE && blendFunc.dst == cc.ONE))
             return "lighter";
@@ -237,7 +237,7 @@ cc._getCompositeOperationByBlendFunc = function(blendFunc){
         else if(blendFunc.src == cc.ZERO && blendFunc.dst == cc.ONE_MINUS_SRC_ALPHA)
             return "destination-out";
         else
-            return "source";
+            return "source-over";
     }
 };
 
@@ -301,10 +301,8 @@ cc._getCompositeOperationByBlendFunc = function(blendFunc){
  * @property {cc.V3F_C4B_T2F_Quad}  quad                - <@readonly> The quad (tex coords, vertex coords and color) information.
  */
 cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
-    __type:"cc.Sprite",
-
-	dirty:false,
-	atlasIndex:-1,
+    dirty:false,
+    atlasIndex:0,
     textureAtlas:null,
 
     _batchNode:null,
@@ -434,12 +432,12 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         return cc.p(this._offsetPosition);
     },
 
-	_getOffsetX: function () {
-		return this._offsetPosition.x;
-	},
-	_getOffsetY: function () {
-		return this._offsetPosition.y;
-	},
+    _getOffsetX: function () {
+        return this._offsetPosition.x;
+    },
+    _getOffsetY: function () {
+        return this._offsetPosition.y;
+    },
 
     /**
      * Returns the blend function
@@ -548,7 +546,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             }
 
             if (this._batchNode) {
-                this._arrayMakeObjectsPerformSelector(_children, cc.Node._StateCallbackType.sortAllChildren);
+                this._arrayMakeObjectsPerformSelector(_children, cc.Node._stateCallbackType.sortAllChildren);
             }
 
             //don't need to check children recursively, that's done in visit of each child
@@ -622,39 +620,39 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     // cc.Node property overloads
     //
 
-	/**
-	 * Sets recursively the dirty flag.
-	 * Used only when parent is cc.SpriteBatchNode
-	 * @param {Boolean} value
-	 */
-	setDirtyRecursively:function (value) {
-		this._recursiveDirty = value;
-		this.dirty = value;
-		// recursively set dirty
-		var locChildren = this._children, child, l = locChildren ? locChildren.length : 0;
-		for (var i = 0; i < l; i++) {
-			child = locChildren[i];
-			(child instanceof cc.Sprite) && child.setDirtyRecursively(true);
-		}
-	},
+    /**
+     * Sets recursively the dirty flag.
+     * Used only when parent is cc.SpriteBatchNode
+     * @param {Boolean} value
+     */
+    setDirtyRecursively:function (value) {
+        this._recursiveDirty = value;
+        this.dirty = value;
+        // recursively set dirty
+        var locChildren = this._children, child, l = locChildren ? locChildren.length : 0;
+        for (var i = 0; i < l; i++) {
+            child = locChildren[i];
+            (child instanceof cc.Sprite) && child.setDirtyRecursively(true);
+        }
+    },
 
-	/**
-	 * Make the node dirty
-	 * @param {Boolean} norecursive When true children will not be set dirty recursively, by default, they will be.
-	 * @override
-	 */
-	setNodeDirty: function(norecursive) {
-		cc.Node.prototype.setNodeDirty.call(this);
-		// Lazy set dirty
-		if (!norecursive && this._batchNode && !this._recursiveDirty) {
-			if (this._hasChildren)
-				this.setDirtyRecursively(true);
-			else {
-				this._recursiveDirty = true;
-				this.dirty = true;
-			}
-		}
-	},
+    /**
+     * Make the node dirty
+     * @param {Boolean} norecursive When true children will not be set dirty recursively, by default, they will be.
+     * @override
+     */
+    setNodeDirty: function(norecursive) {
+        cc.Node.prototype.setNodeDirty.call(this);
+        // Lazy set dirty
+        if (!norecursive && this._batchNode && !this._recursiveDirty) {
+            if (this._hasChildren)
+                this.setDirtyRecursively(true);
+            else {
+                this._recursiveDirty = true;
+                this.dirty = true;
+            }
+        }
+    },
 
     /**
      * Sets whether ignore anchor point for positioning
@@ -729,7 +727,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @function
      * @param {Boolean} modify
      */
-    //setOpacityModifyRGB:null,
+    setOpacityModifyRGB:null,
 
     /**
      * Returns whether opacity modify color or not.
@@ -743,7 +741,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * Update the display opacity.
      * @function
      */
-    //updateDisplayedOpacity: null,
+    updateDisplayedOpacity: null,
 
     // Animation
 
@@ -802,41 +800,41 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _quadWebBuffer: null,
     _quadDirty: false,
     _colorized: false,
-    _blendFuncStr: "source",
+    _blendFuncStr: "source-over",
     _originalTexture: null,
     _drawSize_Canvas: null,
 
-    //ctor: null,
+    ctor: null,
 
-	_softInit: function (fileName, rect, rotated) {
-		if (fileName === undefined)
-			cc.Sprite.prototype.init.call(this);
-		else if (cc.isString(fileName)) {
-			if (fileName[0] === "#") {
-				// Init with a sprite frame name
-				var frameName = fileName.substr(1, fileName.length - 1);
-				var spriteFrame = cc.spriteFrameCache.getSpriteFrame(frameName);
-				this.initWithSpriteFrame(spriteFrame);
-			} else {
-				// Init  with filename and rect
-				cc.Sprite.prototype.init.call(this, fileName, rect);
-			}
-		} else if (cc.isObject(fileName)) {
-			if (fileName instanceof cc.Texture2D) {
-				// Init  with texture and rect
-				this.initWithTexture(fileName, rect, rotated);
-			} else if (fileName instanceof cc.SpriteFrame) {
-				// Init with a sprite frame
-				this.initWithSpriteFrame(fileName);
-			} else if ((fileName instanceof HTMLImageElement) || (fileName instanceof HTMLCanvasElement)) {
-				// Init with a canvas or image element
-				var texture2d = new cc.Texture2D();
-				texture2d.initWithElement(fileName);
-				texture2d.handleLoadedTexture();
-				this.initWithTexture(texture2d);
-			}
-		}
-	},
+    _softInit: function (fileName, rect, rotated) {
+        if (fileName === undefined)
+            cc.Sprite.prototype.init.call(this);
+        else if (cc.isString(fileName)) {
+            if (fileName[0] === "#") {
+                // Init with a sprite frame name
+                var frameName = fileName.substr(1, fileName.length - 1);
+                var spriteFrame = cc.spriteFrameCache.getSpriteFrame(frameName);
+                this.initWithSpriteFrame(spriteFrame);
+            } else {
+                // Init  with filename and rect
+                cc.Sprite.prototype.init.call(this, fileName, rect);
+            }
+        } else if (cc.isObject(fileName)) {
+            if (fileName instanceof cc.Texture2D) {
+                // Init  with texture and rect
+                this.initWithTexture(fileName, rect, rotated);
+            } else if (fileName instanceof cc.SpriteFrame) {
+                // Init with a sprite frame
+                this.initWithSpriteFrame(fileName);
+            } else if ((fileName instanceof HTMLImageElement) || (fileName instanceof HTMLCanvasElement)) {
+                // Init with a canvas or image element
+                var texture2d = new cc.Texture2D();
+                texture2d.initWithElement(fileName);
+                texture2d.handleLoadedTexture();
+                this.initWithTexture(texture2d);
+            }
+        }
+    },
 
     /**
      * Returns the quad (tex coords, vertex coords and color) information.
@@ -852,7 +850,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {Number|cc.BlendFunc} src
      * @param {Number} dst
      */
-    //setBlendFunc: null,
+    setBlendFunc: null,
 
     /**
      * Initializes an empty sprite with nothing init.<br/>
@@ -860,7 +858,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @function
      * @return {Boolean}
      */
-    //init:null,
+    init:null,
 
     /**
      * <p>
@@ -901,7 +899,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {Boolean} [rotated] Whether or not the texture rectangle is rotated.
      * @return {Boolean} true if the sprite is initialized properly, false otherwise.
      */
-    //initWithTexture: null,
+    initWithTexture: null,
 
     _textureLoadedCallback: null,
 
@@ -912,14 +910,14 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {Boolean} [rotated] Whether or not the texture is rotated
      * @param {cc.Size} [untrimmedSize] The original pixels size of the texture
      */
-    //setTextureRect:null,
+    setTextureRect:null,
 
     // BatchNode methods
     /**
      * Updates the quad according the the rotation, position, scale values.
      * @function
      */
-    //updateTransform: null,
+    updateTransform: null,
 
     /**
      * Add child to sprite (override cc.Node)
@@ -929,7 +927,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {String} tag child's tag
      * @override
      */
-    //addChild: null,
+    addChild: null,
 
     /**
      * Update sprite's color
@@ -969,20 +967,20 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @function
      * @param {Number} opacity
      */
-    //setOpacity:null,
+    setOpacity:null,
 
     /**
      * Sets color of the sprite
      * @function
      * @param {cc.Color} color3
      */
-    //setColor: null,
+    setColor: null,
 
     /**
      * Updates the display color
      * @function
      */
-    //updateDisplayedColor: null,
+    updateDisplayedColor: null,
 
     // Frames
     /**
@@ -990,7 +988,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @function
      * @param {cc.SpriteFrame|String} newFrame
      */
-    //setSpriteFrame: null,
+    setSpriteFrame: null,
 
     /**
      * Sets a new display frame to the sprite.
@@ -1008,7 +1006,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {cc.SpriteFrame} frame
      * @return {Boolean}
      */
-    //isFrameDisplayed: null,
+    isFrameDisplayed: null,
 
     /**
      * Returns the current displayed frame.
@@ -1016,10 +1014,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      */
     displayFrame: function () {
         return new cc.SpriteFrame(this._texture,
-                                  cc.rectPointsToPixels(this._rect),
-                                  this._rectRotated,
-                                  cc.pointPointsToPixels(this._unflippedOffsetPositionFromCenter),
-                                  cc.sizePointsToPixels(this._contentSize));
+            cc.rectPointsToPixels(this._rect),
+            this._rectRotated,
+            cc.pointPointsToPixels(this._unflippedOffsetPositionFromCenter),
+            cc.sizePointsToPixels(this._contentSize));
     },
 
     /**
@@ -1032,7 +1030,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      *  batch.addChild(sprite);
      *  layer.addChild(batch);
      */
-    //setBatchNode:null,
+    setBatchNode:null,
 
     // CCTextureProtocol
     /**
@@ -1040,7 +1038,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @function
      * @param {cc.Texture2D|String} texture
      */
-    //setTexture: null,
+    setTexture: null,
 
     // Texture protocol
     _updateBlendFunc:function () {
@@ -1271,7 +1269,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         cc.Node.prototype.init.call(_t);
         _t.dirty = _t._recursiveDirty = false;
-        _t._opacityModifyRGB = true;
 
         _t._blendFunc.src = cc.BLEND_SRC;
         _t._blendFunc.dst = cc.BLEND_DST;
@@ -1449,10 +1446,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 _t._shouldBeHidden = false;
 
                 if (!locParent || locParent == _t._batchNode) {
-                    _t._transformToBatch = _t.nodeToParentTransform();
+                    _t._transformToBatch = _t.getNodeToParentTransform();
                 } else {
                     //cc.assert(_t._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
-                    _t._transformToBatch = cc.affineTransformConcat(_t.nodeToParentTransform(), locParent._transformToBatch);
+                    _t._transformToBatch = cc.affineTransformConcat(_t.getNodeToParentTransform(), locParent._transformToBatch);
                 }
             }
             _t._recursiveDirty = false;
@@ -1461,7 +1458,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         // recursively iterate over children
         if (_t._hasChildren)
-            _t._arrayMakeObjectsPerformSelector(_t._children, cc.Node._StateCallbackType.updateTransform);
+            _t._arrayMakeObjectsPerformSelector(_t._children, cc.Node._stateCallbackType.updateTransform);
     };
 
     _p.addChild = function (child, localZOrder, tag) {
