@@ -28,7 +28,8 @@
             "core", "shape-nodes",
 
             "cocos2d/clipping-nodes/CCClippingNode.js",
-            "cocos2d/clipping-nodes/CCClippingNodeRenderCmd.js"
+            "cocos2d/clipping-nodes/CCClippingNodeCanvasRenderCmd.js",
+            "cocos2d/clipping-nodes/CCClippingNodeWebGLRenderCmd.js"
         ],
         "compression" : [
             "core",
@@ -76,9 +77,11 @@
 
             "cocos2d/core/base-nodes/BaseNodesPropertyDefine.js",
             "cocos2d/core/base-nodes/CCNode.js",
-            "cocos2d/core/base-nodes/CCNodeRenderCmd.js",
+            "cocos2d/core/base-nodes/CCNodeCanvasRenderCmd.js",
+            "cocos2d/core/base-nodes/CCNodeWebGLRenderCmd.js",
             "cocos2d/core/base-nodes/CCAtlasNode.js",
-            "cocos2d/core/base-nodes/CCAtlasNodeRenderCmd.js",
+            "cocos2d/core/base-nodes/CCAtlasNodeCanvasRenderCmd.js",
+            "cocos2d/core/base-nodes/CCAtlasNodeWebGLRenderCmd.js",
 
             "cocos2d/core/textures/TexturesWebGL.js",
             "cocos2d/core/textures/TexturesPropertyDefine.js",
@@ -90,13 +93,16 @@
             "cocos2d/core/scenes/CCLoaderScene.js",
 
             "cocos2d/core/layers/CCLayer.js",
-            "cocos2d/core/layers/CCLayerRenderCmd.js",
+            "cocos2d/core/layers/CCLayerCanvasRenderCmd.js",
+            "cocos2d/core/layers/CCLayerWebGLRenderCmd.js",
 
             "cocos2d/core/sprites/SpritesPropertyDefine.js",
             "cocos2d/core/sprites/CCSprite.js",
-            "cocos2d/core/sprites/CCSpriteRenderCmd.js",
+            "cocos2d/core/sprites/CCSpriteCanvasRenderCmd.js",
+            "cocos2d/core/sprites/CCSpriteWebGLRenderCmd.js",
             "cocos2d/core/sprites/CCSpriteBatchNode.js",
-            "cocos2d/core/sprites/CCSpriteBatchNodeRenderCmd.js",
+            "cocos2d/core/sprites/CCSpriteBatchNodeCanvasRenderCmd.js",
+            "cocos2d/core/sprites/CCSpriteBatchNodeWebGLRenderCmd.js",
             "cocos2d/core/sprites/CCBakeSprite.js",
             "cocos2d/core/sprites/CCAnimation.js",
             "cocos2d/core/sprites/CCAnimationCache.js",
@@ -114,7 +120,8 @@
 
             "cocos2d/core/labelttf/LabelTTFPropertyDefine.js",
             "cocos2d/core/labelttf/CCLabelTTF.js",
-            "cocos2d/core/labelttf/CCLabelTTFRenderCmd.js",
+            "cocos2d/core/labelttf/CCLabelTTFCanvasRenderCmd.js",
+            "cocos2d/core/labelttf/CCLabelTTFWebGLRenderCmd.js",
 
             "cocos2d/core/CCActionManager.js"
         ],
@@ -144,9 +151,11 @@
             "core",
 
             "cocos2d/labels/CCLabelAtlas.js",
-            "cocos2d/labels/CCLabelAtlasRenderCmd.js",
+            "cocos2d/labels/CCLabelAtlasCanvasRenderCmd.js",
+            "cocos2d/labels/CCLabelAtlasWebGLRenderCmd.js",
             "cocos2d/labels/CCLabelBMFont.js",
-            "cocos2d/labels/CCLabelBMFontRenderCmd.js"
+            "cocos2d/labels/CCLabelBMFontCanvasRenderCmd.js",
+            "cocos2d/labels/CCLabelBMFontWebGLRenderCmd.js"
         ],
         "menus" : [
             "core", "actions",
@@ -158,7 +167,7 @@
             "core", "shaders", "kazmath", "labels",
 
             "cocos2d/motion-streak/CCMotionStreak.js",
-            "cocos2d/motion-streak/CCMotionStreakRenderCmd.js"
+            "cocos2d/motion-streak/CCMotionStreakWebGLRenderCmd.js"
         ],
         "node-grid" : [
             "core",
@@ -176,18 +185,22 @@
             "cocos2d/particle/CCPNGReader.js",
             "cocos2d/particle/CCTIFFReader.js",
             "cocos2d/particle/CCParticleSystem.js",
-            "cocos2d/particle/CCParticleSystemRenderCmd.js",
+            "cocos2d/particle/CCParticleSystemCanvasRenderCmd.js",
+            "cocos2d/particle/CCParticleSystemWebGLRenderCmd.js",
             "cocos2d/particle/CCParticleExamples.js",
             "cocos2d/particle/CCParticleBatchNode.js",
-            "cocos2d/particle/CCParticleBatchNodeRenderCmd.js"
+            "cocos2d/particle/CCParticleBatchNodeCanvasRenderCmd.js",
+            "cocos2d/particle/CCParticleBatchNodeWebGLRenderCmd.js"
         ],
         "physics" : [
             "core", "shape-nodes",
 
             "cocos2d/physics/CCPhysicsSprite.js",
             "cocos2d/physics/CCPhysicsDebugNode.js",
-            "cocos2d/physics/CCPhysicsDebugNodeRenderCmd.js",
-            "cocos2d/physics/CCPhysicsSpriteRenderCmd.js"
+            "cocos2d/physics/CCPhysicsDebugNodeCanvasRenderCmd.js",
+            "cocos2d/physics/CCPhysicsDebugNodeWebGLRenderCmd.js",
+            "cocos2d/physics/CCPhysicsSpriteCanvasRenderCmd.js",
+            "cocos2d/physics/CCPhysicsSpriteWebGLRenderCmd.js"
         ],
         "progress-timer" : [
             "core", "actions",
@@ -200,7 +213,8 @@
             "core",
 
             "cocos2d/render-texture/CCRenderTexture.js",
-            "cocos2d/render-texture/CCRenderTextureRenderCmd.js"
+            "cocos2d/render-texture/CCRenderTextureCanvasRenderCmd.js",
+            "cocos2d/render-texture/CCRenderTextureWebGLRenderCmd.js"
         ],
         "shaders" : [
             "core", "kazmath",
@@ -214,7 +228,8 @@
             "core",
 
             "cocos2d/shape-nodes/CCDrawNode.js",
-            "cocos2d/shape-nodes/CCDrawNodeRenderCmd.js"
+            "cocos2d/shape-nodes/CCDrawNodeCanvasRenderCmd.js",
+            "cocos2d/shape-nodes/CCDrawNodeWebGLRenderCmd.js"
         ],
         "text-input" : [
             "core",
@@ -230,7 +245,8 @@
             "cocos2d/tilemap/CCTMXXMLParser.js",
             "cocos2d/tilemap/CCTMXObjectGroup.js",
             "cocos2d/tilemap/CCTMXLayer.js",
-            "cocos2d/tilemap/CCTMXLayerRenderCmd.js"
+            "cocos2d/tilemap/CCTMXLayerCanvasRenderCmd.js",
+            "cocos2d/tilemap/CCTMXLayerWebGLRenderCmd.js"
         ],
         "transitions" : [
             "core", "actions", "render-texture", "progress-timer",
@@ -331,7 +347,8 @@
             "extensions/cocostudio/armature/animation/CCTween.js",
             "extensions/cocostudio/armature/physics/CCColliderDetector.js",
             "extensions/cocostudio/armature/CCArmature.js",
-            "extensions/cocostudio/armature/CCArmatureRenderCmd.js",
+            "extensions/cocostudio/armature/CCArmatureCanvasRenderCmd.js",
+            "extensions/cocostudio/armature/CCArmatureWebGLRenderCmd.js",
             "extensions/cocostudio/armature/CCBone.js",
 
             "extensions/cocostudio/action/CCActionFrame.js",

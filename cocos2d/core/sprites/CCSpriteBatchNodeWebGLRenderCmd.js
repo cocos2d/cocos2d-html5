@@ -23,51 +23,6 @@
  ****************************************************************************/
 
 (function(){
-    //SpriteBatchNode's canvas render command
-    cc.SpriteBatchNode.CanvasRenderCmd = function(renderable){
-        cc.Node.CanvasRenderCmd.call(this, renderable);
-
-        this._texture = null;
-        this._originalTexture = null;
-    };
-
-    var proto = cc.SpriteBatchNode.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
-    proto.constructor = cc.SpriteBatchNode.CanvasRenderCmd;
-
-    proto.checkAtlasCapacity = function(){};
-
-    proto.initWithTexture = function(texture, capacity){
-        this._originalTexture = texture;
-        this._texture = texture;
-    };
-
-    proto.insertQuad = function(){};
-
-    proto.increaseAtlasCapacity = function(){};
-
-    proto.removeQuadAtIndex = function(){};
-
-    proto.removeAllQuads = function(){};
-
-    proto.getTexture = function(){
-        return this._texture;
-    };
-
-    proto.setTexture = function(texture){
-        this._texture = texture;
-        var locChildren = this._node._children;
-        for (var i = 0; i < locChildren.length; i++)
-            locChildren[i].setTexture(texture);
-    };
-
-    proto.updateChildrenAtlasIndex = function(){ };
-
-    proto.getTextureAtlas = function(){};
-
-    proto.setTextureAtlas = function(textureAtlas){};
-})();
-
-(function(){
     //SpriteBatchNode's WebGL render command
     cc.SpriteBatchNode.WebGLRenderCmd = function(renderable){
         cc.Node.WebGLRenderCmd.call(this, renderable);
