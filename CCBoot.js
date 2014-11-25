@@ -1675,6 +1675,17 @@ cc._initSys = function (config, CONFIG_KEY) {
     };
 
     /**
+     * cleanScript the singal JS file
+     * @memberof cc.sys
+     * @name cleanScript
+     * @param {String} jsfile
+     * @function
+     */
+    sys.cleanScript = function (jsfile) {
+        // N/A in cocos2d-html5
+    };
+
+    /**
      * Dump system informations
      * @memberof cc.sys
      * @name dump
@@ -2033,6 +2044,13 @@ cc.game = /** @lends cc.game# */{
 
         window.requestAnimFrame(callback);
         self._paused = false;
+    },
+
+    /**
+     * Run game.
+     */
+    restart: function () {
+        //window.location.href = window.location.href;
     },
 
     /**
