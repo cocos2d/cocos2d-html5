@@ -29,6 +29,9 @@
         this._needDraw = true;
 
         this._clearColor = cc.color(0, 0, 0, 0);
+        this._fBO = null;
+        this._oldFBO = null;
+        this._depthRenderBuffer = null;
     };
 
     var proto = cc.RenderTexture.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
@@ -94,9 +97,9 @@
         node._textureCopy = null;
 
         var gl = cc._renderContext;
-        gl.deleteFramebuffer(node._fBO);
-        if (node._depthRenderBuffer)
-            gl.deleteRenderbuffer(node._depthRenderBuffer);
+        gl.deleteFramebuffer(this._fBO);
+        if (this._depthRenderBuffer)
+            gl.deleteRenderbuffer(this._depthRenderBuffer);
         node._uITextureImage = null;
         //if (node._texture)
         //    node._texture.releaseTexture();
@@ -112,7 +115,7 @@
         width = 0 | (width * locScaleFactor);
         height = 0 | (height * locScaleFactor);
 
-        node._oldFBO = gl.getParameter(gl.FRAMEBUFFER_BINDING);
+        this._oldFBO = gl.getParameter(gl.FRAMEBUFFER_BINDING);
 
         // textures must be power of two squared
         var powW , powH;
@@ -152,23 +155,23 @@
         }
 
         // generate FBO
-        node._fBO = gl.createFramebuffer();
-        gl.bindFramebuffer(gl.FRAMEBUFFER, node._fBO);
+        this._fBO = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this._fBO);
 
         // associate texture with FBO
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, locTexture._webTextureObj, 0);
 
         if (depthStencilFormat != 0) {
             //create and attach depth buffer
-            node._depthRenderBuffer = gl.createRenderbuffer();
-            gl.bindRenderbuffer(gl.RENDERBUFFER, node._depthRenderBuffer);
+            this._depthRenderBuffer = gl.createRenderbuffer();
+            gl.bindRenderbuffer(gl.RENDERBUFFER, this._depthRenderBuffer);
             gl.renderbufferStorage(gl.RENDERBUFFER, depthStencilFormat, powW, powH);
-            if(depthStencilFormat == gl.DEPTH_STENCIL)
-                gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.RENDERBUFFER, node._depthRenderBuffer);
-            else if(depthStencilFormat == gl.STENCIL_INDEX || depthStencilFormat == gl.STENCIL_INDEX8)
-                gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.RENDERBUFFER, node._depthRenderBuffer);
-            else if(depthStencilFormat == gl.DEPTH_COMPONENT16)
-                gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, node._depthRenderBuffer);
+            if(depthStencilFormat === gl.DEPTH_STENCIL)
+                gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
+            else if(depthStencilFormat === gl.STENCIL_INDEX || depthStencilFormat === gl.STENCIL_INDEX8)
+                gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
+            else if(depthStencilFormat === gl.DEPTH_COMPONENT16)
+                gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
         }
 
         // check if it worked (probably worth doing :) )
@@ -183,7 +186,7 @@
         locSprite.setBlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
         gl.bindRenderbuffer(gl.RENDERBUFFER, oldRBO);
-        gl.bindFramebuffer(gl.FRAMEBUFFER, node._oldFBO);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this._oldFBO);
 
         // Disabled by default.
         node.autoDraw = false;
@@ -221,8 +224,8 @@
                 -1.0 / heightRatio, 1.0 / heightRatio, -1, 1);
         cc.kmGLMultMatrix(orthoMatrix);
 
-        node._oldFBO = gl.getParameter(gl.FRAMEBUFFER_BINDING);
-        gl.bindFramebuffer(gl.FRAMEBUFFER, node._fBO);//Will direct drawing to the frame buffer created above
+        this._oldFBO = gl.getParameter(gl.FRAMEBUFFER_BINDING);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this._fBO);//Will direct drawing to the frame buffer created above
 
         /*  Certain Qualcomm Andreno gpu's will retain data in memory after a frame buffer switch which corrupts the render to the texture.
          *   The solution is to clear the frame buffer before rendering to the texture. However, calling glClear has the unintended result of clearing the current texture.
@@ -288,7 +291,7 @@
 
         var gl = cc._renderContext;
         var director = cc.director;
-        gl.bindFramebuffer(gl.FRAMEBUFFER, node._oldFBO);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this._oldFBO);
 
         //restore viewport
         director.setViewport();
@@ -405,5 +408,4 @@
 
         this.end();
     };
-
 })();

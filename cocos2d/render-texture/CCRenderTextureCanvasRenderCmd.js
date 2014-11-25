@@ -36,10 +36,6 @@
         // @type HTMLCanvasElement
         //
         this._cacheCanvas = cc.newElement('canvas');
-        /**
-         * stores a reference to the canvas context object
-         * @type CanvasRenderingContext2D
-         */
         this._cacheContext = this._cacheCanvas.getContext('2d');
     };
 
@@ -47,7 +43,6 @@
     proto.constructor = cc.RenderTexture.CanvasRenderCmd;
 
     proto.cleanup = function(){
-        var node = this._node;
         this._cacheContext = null;
         this._cacheCanvas = null;
     };
@@ -92,7 +87,6 @@
     };
 
     proto.end = function(){
-
         var node = this._node;
 
         //old code
@@ -103,12 +97,7 @@
         cc.renderer._renderingToCacheCanvas(this._cacheContext, node.__instanceId, scale, scale);
 
         //TODO
-        /*//restore viewport
-         director.setViewport();
-         cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
-         cc.kmGLPopMatrix();
-         cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-         cc.kmGLPopMatrix();*/
+        //restore viewport
     };
 
     proto.clearRect = function(x, y, width, height){

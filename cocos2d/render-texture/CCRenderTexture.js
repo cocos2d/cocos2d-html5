@@ -90,10 +90,6 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 	clearDepthVal:0,
 	autoDraw:false,
 
-
-    _fBO:0,
-    _depthRenderBuffer:0,
-    _oldFBO:0,
     _texture:null,
     _textureCopy:null,
     _uITextureImage:null,
@@ -101,6 +97,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     _pixelFormat:cc.Texture2D.PIXEL_FORMAT_RGBA8888,
 
     clearStencilVal:0,
+    _clearColor:null,
 
     _className:"RenderTexture",
 
@@ -133,8 +130,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             depthStencilFormat = depthStencilFormat || 0;
             this.initWithWidthAndHeight(width, height, format, depthStencilFormat);
         }
-        this.anchorX = 0;
-        this.anchorY = 0;
+        this.setAnchorPoint(0,0);
     },
 
     _createRenderCmd: function(){
@@ -278,45 +274,12 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     /**
-     * Recursive method that visit its children and draw them
-     * @function
-     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
-     */
-    visit: function(){
-
-        // override visit.
-        // Don't call visit on its children
-        if (!this._visible)
-            return;
-        this._renderCmd.visit();
-    },
-
-    /**
-     * Render function using the canvas 2d context or WebGL context, internal usage only, please do not call this function
-     * @function
-     * @param {CanvasRenderingContext2D | WebGLRenderingContext} ctx The render context
-     */
-    draw: function(ctx){
-        ctx = ctx || cc._renderContext;
-        if (this.autoDraw) {
-            this.begin();
-            this._renderCmd.draw(ctx);
-        }
-    },
-
-    /**
      * creates a new CCImage from with the texture's data. Caller is responsible for releasing it by calling delete.
      * @return {*}
      */
     newCCImage:function(flipImage){
         cc.log("saveToFile isn't supported on cocos2d-html5");
         return null;
-    },
-
-    _memcpy:function (destArr, destIndex, srcArr, srcIndex, size) {
-        for (var i = 0; i < size; i++) {
-            destArr[destIndex + i] = srcArr[srcIndex + i];
-        }
     },
 
     /**
