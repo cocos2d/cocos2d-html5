@@ -333,10 +333,10 @@ cc.Node.RenderCmd.prototype = {
 
         //  There is a possibility:
         //    The parent element changed color, child element not change
-        //    This will cause the parent element changed color,
-        //    but while the child element does not enter the circulation
-        //    Here will be reset state in last,
-        //    in order to let the child elements to obtain the parent state
+        //    This will cause the parent element changed color
+        //    But while the child element does not enter the circulation
+        //    Here will be reset state in last
+        //    In order the child elements get the parent state
         if(parentNode && parentNode._cascadeColorEnabled && (parentCmd._dirtyFlag & flags.colorDirty))
             locFlag |= flags.colorDirty;
 
