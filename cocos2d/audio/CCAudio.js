@@ -710,6 +710,7 @@ cc.Audio = cc.Class.extend({
                 }
                 audio = audio.cloneNode();
                 audio.setVolume(this._effectVolume);
+                audio.loop = loop || false;
                 audio.play();
                 effectList.push(audio);
             }
