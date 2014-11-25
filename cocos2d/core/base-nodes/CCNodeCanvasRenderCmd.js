@@ -304,6 +304,7 @@ cc.Node.RenderCmd.prototype = {
         } else {
             cc.renderer.pushRenderCommand(this);
         }
+        _t._dirtyFlag = 0;
     };
 
     proto.updateStatus = function () {
@@ -325,7 +326,23 @@ cc.Node.RenderCmd.prototype = {
     };
 
     proto._syncStatus = function (parentCmd) {
+        //  In the visit logic does not restore the _dirtyFlag
+        //  Because child elements need parent's _dirtyFlag to change himself
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var parentNode = parentCmd ? parentCmd._node : null;
+
+        //  There is a possibility:
+        //    The parent element changed color, child element not change
+        //    This will cause the parent element changed color,
+        //    but while the child element does not enter the circulation
+        //    Here will be reset state in last,
+        //    in order to let the child elements to obtain the parent state
+        if(parentNode && parentNode._cascadeColorEnabled && (parentCmd._dirtyFlag & flags.colorDirty))
+            locFlag |= flags.colorDirty;
+
+        if(parentNode && parentNode._cascadeOpacityEnabled && (parentCmd._dirtyFlag & flags.opacityDirty))
+            locFlag |= flags.opacityDirty;
+
         if (locFlag & flags.colorDirty) {
             //update the color
             this._syncDisplayColor()
@@ -354,7 +371,7 @@ cc.Node.RenderCmd.prototype = {
         locDispColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
         locDispColor.g = 0 | (locRealColor.g * parentColor.g / 255.0);
         locDispColor.b = 0 | (locRealColor.b * parentColor.b / 255.0);
-        this._dirtyFlag ^= cc.Node._dirtyFlags.colorDirty;
+        //this._dirtyFlag ^= cc.Node._dirtyFlags.colorDirty;
     };
 
     proto._syncDisplayOpacity = function (parentOpacity) {
@@ -366,7 +383,7 @@ cc.Node.RenderCmd.prototype = {
                 parentOpacity = locParent.getDisplayedOpacity();
         }
         this._displayedOpacity = node._realOpacity * parentOpacity / 255.0;
-        this._dirtyFlag ^= cc.Node._dirtyFlags.opacityDirty;
+        //this._dirtyFlag ^= cc.Node._dirtyFlags.opacityDirty;
     };
 
     proto._updateDisplayColor = function (parentColor) {

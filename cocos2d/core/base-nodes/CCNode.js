@@ -780,8 +780,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setVisible: function (visible) {
         if(this._visible != visible){
             this._visible = visible;
-            if(visible)
-                this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.visibleDirty);
+            //if(visible)
+            //    this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.visibleDirty);
             cc.renderer.childrenOrderDirty = true;
         }
     },
@@ -1333,7 +1333,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (this._children.indexOf(child) > -1)
             this._detachChild(child, cleanup);
 
-        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.visibleDirty);
+        //this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.visibleDirty);
         cc.renderer.childrenOrderDirty = true;
     },
 

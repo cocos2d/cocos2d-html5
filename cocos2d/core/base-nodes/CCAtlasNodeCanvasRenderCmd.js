@@ -114,9 +114,9 @@
         var node = this._node;
         cc.Node.prototype.setOpacity.call(node, opacity);
         // special opacity for premultiplied textures
-        if (node._opacityModifyRGB) {
-            node.color = this._colorUnmodified;
-        }
+        //if (node._opacityModifyRGB) {
+        //    node.color = this._colorUnmodified;
+        //}
     };
 
     proto.getTexture = function(){

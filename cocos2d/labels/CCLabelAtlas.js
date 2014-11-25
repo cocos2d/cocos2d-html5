@@ -71,7 +71,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         cc.AtlasNode.prototype.ctor.call(this);
 
         this._cascadeOpacityEnabled = true;
-        this._cascadeColorEnabled = true;
+        this._cascadeColorEnabled = false;
         charMapFile && cc.LabelAtlas.prototype.initWithString.call(this, strText, charMapFile, itemWidth, itemHeight, startCharMap);
     },
 
