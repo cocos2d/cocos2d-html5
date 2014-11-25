@@ -238,17 +238,3 @@
         this._node.height = locCanvas.height;
     };
 })();
-
-(function(){
-    cc.TMXLayer.WebGLRenderCmd = function(renderableObject){
-        cc.Node.WebGLRenderCmd.call(this, renderableObject);
-        this._needDraw = true;
-    };
-
-    var proto = cc.TMXLayer.WebGLRenderCmd.prototype.rendering = cc.SpriteBatchNode.WebGLRenderCmd.prototype.rendering;
-    proto.constructor = cc.TMXLayer.WebGLRenderCmd;
-
-    proto._updateCacheContext = function(){};
-
-    proto._initContentSize = function(){};
-})();
