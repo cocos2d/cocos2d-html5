@@ -60,22 +60,20 @@
             context.globalCompositeOperation = locSprite._blendFuncStr;
         context.globalAlpha = alpha;
 
-        var locRect = locSprite._rect, locOffsetPosition = locSprite._offsetPosition, locDrawSizeCanvas = locSprite._drawSize_Canvas;
-        var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height;
-        locDrawSizeCanvas.width = locRect.width * scaleX;
-        locDrawSizeCanvas.height = locRect.height * scaleY;
+        var locRect = locSprite._rect, locOffsetPosition = locSprite._offsetPosition;
+        var locX = locOffsetPosition.x,
+            locY = -locOffsetPosition.y - locRect.height,
+            locWidth = locRect.width,
+            locHeight = locRect.height;
 
         if (locSprite._flippedX) {
-            flipXOffset = -locOffsetPosition.x - locRect.width;
+            locX = -locX - locWidth;
             context.scale(-1, 1);
         }
         if (locSprite._flippedY) {
-            flipYOffset = locOffsetPosition.y;
+            locY = locOffsetPosition.y;
             context.scale(1, -1);
         }
-
-        flipXOffset *= scaleX;
-        flipYOffset *= scaleY;
 
         //clip
         if (node._type == cc.ProgressTimer.TYPE_BAR) {
@@ -102,9 +100,10 @@
                 0,
                 locTextureCoord.width,
                 locTextureCoord.height,
-                flipXOffset, flipYOffset,
-                locDrawSizeCanvas.width,
-                locDrawSizeCanvas.height
+                locX * scaleX,
+                locY * scaleY,
+                locWidth * scaleX,
+                locHeight * scaleY
             );
         } else {
             context.drawImage(image,
@@ -112,9 +111,10 @@
                 locTextureCoord.renderY,
                 locTextureCoord.width,
                 locTextureCoord.height,
-                flipXOffset, flipYOffset,
-                locDrawSizeCanvas.width,
-                locDrawSizeCanvas.height
+                locX * scaleX,
+                locY * scaleY,
+                locWidth * scaleX,
+                locHeight * scaleY
             );
         }
 
@@ -124,7 +124,7 @@
 
     proto.releaseData = function(){};
 
-    proto.initCmd = function(){ };
+    proto.initCmd = function(){};
 
     proto._updateProgress = function(){
         var node = this._node;
@@ -210,6 +210,8 @@
             locBarRect.height = -currentDrawSize.height;
         }
     };
+
+    proto._updateColor = function(){};
 })();
 
 

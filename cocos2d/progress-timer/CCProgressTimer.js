@@ -177,7 +177,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      */
     setColor:function (color) {
         this._sprite.color = color;
-        this._updateColor();
+        this._renderCmd._updateColor();
     },
 
     /**
@@ -186,7 +186,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      */
     setOpacity:function (opacity) {
         this._sprite.opacity = opacity;
-        this._updateColor();
+        this._renderCmd._updateColor();
     },
 
     /**
@@ -239,9 +239,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @param {cc.ProgressTimer.TYPE_RADIAL|cc.ProgressTimer.TYPE_BAR} type
      */
     setType: function(type){
-        var node = this._node;
         if (type !== this._type){
-            node._type = type;
+            this._type = type;
             this._renderCmd.releaseData();
         }
     },
@@ -272,7 +271,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         this._reverseDirection = false;
         this.midPoint = cc.p(0.5, 0.5);
         this.barChangeRate = cc.p(1, 1);
-        this.sprite = sprite;
+        this._sprite = sprite;
         this._renderCmd.initCmd();
         return true;
     },
@@ -290,6 +289,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
 });
 
 // Extended properties
+var _p = cc.ProgressTimer.prototype;
+
 /** @expose */
 _p.midPoint;
 cc.defineGetterSetter(_p, "midPoint", _p.getMidpoint, _p.setMidpoint);
