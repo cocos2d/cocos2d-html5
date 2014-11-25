@@ -23,28 +23,6 @@
  ****************************************************************************/
 
 /**
- * cc.PhysicsSprite's rendering objects of Canvas
- */
-(function(){
-    cc.PhysicsSprite.CanvasRenderCmd = function(renderableObject){
-        cc.Node.CanvasRenderCmd.call(this, renderableObject);
-        this._needDraw = true;
-    };
-
-    var proto = cc.PhysicsSprite.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
-    proto.constructor = cc.PhysicsSprite.CanvasRenderCmd;
-
-    proto.rendering = function(){
-        if (this._node.transform)
-            this._node.transform();
-    };
-
-    proto._getNodeToParentTransform = function(){
-        return this._node._nodeToParentTransformForCanvas();
-    };
-})();
-
-/**
  * cc.PhysicsSprite's rendering objects of WebGL
  */
 (function(){
