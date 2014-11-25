@@ -207,7 +207,8 @@
 
             "cocos2d/progress-timer/CCProgressTimer.js",
             "cocos2d/progress-timer/CCActionProgressTimer.js",
-            "cocos2d/progress-timer/CCProgressTimerRenderCmd.js"
+            "cocos2d/progress-timer/CCProgressTimerCanvasRenderCmd.js",
+            "cocos2d/progress-timer/CCProgressTimerWebGLRenderCmd.js"
         ],
         "render-texture" : [
             "core",
