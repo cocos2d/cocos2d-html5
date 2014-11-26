@@ -38,7 +38,6 @@
     var proto = cc.AtlasNode.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.AtlasNode.WebGLRenderCmd;
 
-
     proto._updateBlendFunc = function () {
         var node = this._node;
         if (!this._textureAtlas.texture.hasPremultipliedAlpha()) {

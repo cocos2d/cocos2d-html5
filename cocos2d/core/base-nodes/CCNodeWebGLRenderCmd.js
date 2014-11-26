@@ -154,6 +154,7 @@
         if (!node._visible)
             return;
 
+        parentCmd = parentCmd || this.getParentRenderCmd();
         if (node._parent && node._parent._renderCmd)
             this._curLevel = node._parent._renderCmd._curLevel + 1;
 
@@ -161,10 +162,10 @@
 
         //optimize performance for javascript
         currentStack.stack.push(currentStack.top);
-        cc.kmMat4Assign(_t._stackMatrix, currentStack.top);
+        //cc.kmMat4Assign(_t._stackMatrix, currentStack.top);
+        _t._syncStatus(parentCmd);
         currentStack.top = _t._stackMatrix;
 
-        _t._syncStatus(parentCmd);
         var locChildren = node._children;
         if (locChildren && locChildren.length > 0) {
             var childLen = locChildren.length;

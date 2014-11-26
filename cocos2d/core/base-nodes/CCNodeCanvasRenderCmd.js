@@ -267,7 +267,7 @@ cc.Node.RenderCmd.prototype = {
                 this._transform = cc.affineTransformConcat(t, node._additionalTransform);
                 node._additionalTransformDirty = false;
             }
-            this._dirtyFlag = this._dirtyFlag ^ cc.Node._dirtyFlags.transformDirty;
+            this._dirtyFlag ^= cc.Node._dirtyFlags.transformDirty;
         }
         return this._transform;
     };
