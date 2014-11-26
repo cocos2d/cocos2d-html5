@@ -33,39 +33,33 @@
 (function(){
     cc.LabelBMFont.CanvasRenderCmd = function(renderableObject){
         cc.SpriteBatchNode.CanvasRenderCmd.call(this, renderableObject);
-        this._needDraw = false;
+        this._needDraw = true;
     };
 
     var proto = cc.LabelBMFont.CanvasRenderCmd.prototype = Object.create(cc.SpriteBatchNode.CanvasRenderCmd.prototype);
     proto.constructor = cc.LabelBMFont.CanvasRenderCmd;
 
-    proto._updateTexture = function(fontChar, locTexture, rect, i, key){
-        var node = this._node;
-        //var hasSprite = true;
-        if (!fontChar) {
-            fontChar = new cc.Sprite();
+    proto.rendering = function(){
+        void 0;
+    };
 
-            fontChar.initWithTexture(locTexture, rect, false);
-            fontChar._newTextureWhenChangeColor = true;
-            node.addChild(fontChar, 0, i);
+    proto._updateCharTexture = function(fontChar, rect, key){
+        if (key === 32) {
+            fontChar.setTextureRect(rect, false, cc.size(0, 0));
         } else {
-            if (key === 32) {
-                fontChar.setTextureRect(rect, false, cc.size(0, 0));
-            } else {
-                // updating previous sprite
-                fontChar.setTextureRect(rect, false);
-                // restore to default in case they were modified
-                fontChar.visible = true;
-            }
+            // updating previous sprite
+            fontChar.setTextureRect(rect, false);
+            // restore to default in case they were modified
+            fontChar.visible = true;
         }
+    };
 
-        // Apply label properties
-        fontChar.opacityModifyRGB = node._opacityModifyRGB;
+    proto._updateCharColorAndOpacity = function(fontChar){
         // Color MUST be set before opacity, since opacity might change color if OpacityModifyRGB is on
-        cc.Node.prototype.updateDisplayedColor.call(fontChar, this._displayedColor);
-        cc.Node.prototype.updateDisplayedOpacity.call(fontChar, this._displayedOpacity);
-
-        return fontChar;
+//        cc.Node.prototype.updateDisplayedColor.call(fontChar, this._displayedColor);
+//        cc.Node.prototype.updateDisplayedOpacity.call(fontChar, this._displayedOpacity);
+        fontChar.updateDisplayedColor(this._displayedColor);
+        fontChar.updateDisplayedOpacity(this._displayedOpacity);
     };
 
     proto._updateFntFileTexture = function(){
@@ -137,7 +131,6 @@
 
     proto._updateChildrenDisplayedOpacity = function(locChild){
         cc.Node.prototype.updateDisplayedOpacity.call(locChild, this._displayedOpacity);
-
     };
 
     proto._updateChildrenDisplayedColor = function(locChild){

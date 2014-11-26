@@ -163,7 +163,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      */
     setColor: function (color3) {
         cc.AtlasNode.prototype.setColor.call(this, color3);
-        this.updateAtlasValues();
+        this._renderCmd.updateAtlasValues();
     },
 
     /**
@@ -199,7 +199,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         this.setContentSize(len * this._itemWidth, this._itemHeight);
         this._renderCmd.setString(label);
 
-        this.updateAtlasValues();
+        this._renderCmd.updateAtlasValues();
         this.quadsToDraw = len;
     },
 
