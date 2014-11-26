@@ -31,6 +31,12 @@
     var proto = cc.LabelAtlas.CanvasRenderCmd.prototype = Object.create(cc.AtlasNode.CanvasRenderCmd.prototype);
     proto.constructor = cc.LabelAtlas.CanvasRenderCmd;
 
+    proto.setCascade = function(){
+        var node = this._node;
+        node._cascadeOpacityEnabled = false;
+        node._cascadeColorEnabled = false;
+    };
+
     proto.updateAtlasValues = function(){
         var node = this._node;
         var locString = node._string || "";
