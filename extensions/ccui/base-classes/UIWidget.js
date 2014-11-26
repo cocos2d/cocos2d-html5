@@ -1137,7 +1137,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      */
     setPositionType: function (type) {
         this._positionType = type;
-        this.setNodeDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**

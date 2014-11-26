@@ -294,6 +294,8 @@
         "ccui" : [
             "core", "actions", "labels", "text-input","clipping-nodes",
             "extensions/ccui/base-classes/CCProtectedNode.js",
+            "extensions/ccui/base-classes/CCProtectedNodeCanvasRenderCmd.js",
+            "extensions/ccui/base-classes/CCProtectedNodeWebGLRenderCmd.js",
             "extensions/ccui/system/CocosGUI.js",
             "extensions/ccui/base-classes/UIWidget.js",
             "extensions/ccui/base-classes/UIScale9Sprite.js",
