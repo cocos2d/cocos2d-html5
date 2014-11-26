@@ -33,7 +33,7 @@
 
     proto.setCascade = function(){
         var node = this._node;
-        node._cascadeOpacityEnabled = false;
+        node._cascadeOpacityEnabled = true;
         node._cascadeColorEnabled = false;
     };
 
