@@ -70,8 +70,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     ctor: function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
         cc.AtlasNode.prototype.ctor.call(this);
 
-        this._cascadeOpacityEnabled = true;
-        this._cascadeColorEnabled = true;
+        this._renderCmd.setCascade();
         charMapFile && cc.LabelAtlas.prototype.initWithString.call(this, strText, charMapFile, itemWidth, itemHeight, startCharMap);
     },
 
@@ -214,14 +213,17 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     }
 });
 
-// Override properties
-cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
-cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
+(function(){
+    var proto = cc.LabelAtlas.prototype;
+    // Override properties
+    cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
+    cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
 
-// Extended properties
-/** @expose */
-_p.string;
-cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
+    // Extended properties
+    /** @expose */
+    proto.string;
+    cc.defineGetterSetter(proto, "string", proto.getString, proto.setString);
+})();
 
 /**
  * <p>

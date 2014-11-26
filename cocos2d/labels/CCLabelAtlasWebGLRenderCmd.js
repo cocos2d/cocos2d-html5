@@ -31,6 +31,12 @@
     var proto = cc.LabelAtlas.WebGLRenderCmd.prototype = Object.create(cc.AtlasNode.WebGLRenderCmd.prototype);
     proto.constructor = cc.LabelAtlas.WebGLRenderCmd;
 
+    proto.setCascade = function(){
+        var node = this._node;
+        node._cascadeOpacityEnabled = true;
+        node._cascadeColorEnabled = true;
+    };
+
     proto.rendering = function(){
         cc.AtlasNode.WebGLRenderCmd.prototype.rendering.call(this, ctx);
         if (cc.LABELATLAS_DEBUG_DRAW) {
