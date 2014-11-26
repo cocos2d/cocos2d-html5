@@ -142,7 +142,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         this._cacheDirty  = true;
         if(cc.renderer._transformNodePool.indexOf(this) === -1)
             cc.renderer.pushDirtyNode(this);
-        this._renderCmdDiry = true;
     },
 
     /**

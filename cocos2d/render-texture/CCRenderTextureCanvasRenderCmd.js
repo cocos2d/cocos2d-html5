@@ -23,18 +23,11 @@
  ****************************************************************************/
 
 (function(){
-
     cc.RenderTexture.CanvasRenderCmd = function(renderableObject){
         cc.Node.CanvasRenderCmd.call(this, renderableObject);
         this._needDraw = true;
-
-        this._clearColor = cc.color(255, 255, 255, 255);
         this._clearColorStr = "rgba(255,255,255,1)";
 
-        //
-        // the off-screen canvas for rendering and storing the texture
-        // @type HTMLCanvasElement
-        //
         this._cacheCanvas = cc.newElement('canvas');
         this._cacheContext = this._cacheCanvas.getContext('2d');
     };
@@ -47,15 +40,23 @@
         this._cacheCanvas = null;
     };
 
+    proto.clearStencil = function (stencilValue) { };
+
+    proto.updateClearColor = function(clearColor){
+        this._clearColorStr = "rgba(" + (0 | clearColor.r) + "," + (0 | clearColor.g) + "," + (0 | clearColor.b) + "," + clearColor.a / 255 + ")";
+    };
+
     proto.initWithWidthAndHeight = function(width, height, format, depthStencilFormat){
         var node = this._node;
         var locCacheCanvas = this._cacheCanvas, locScaleFactor = cc.contentScaleFactor();
         locCacheCanvas.width = 0 | (width * locScaleFactor);
         locCacheCanvas.height = 0 | (height * locScaleFactor);
         this._cacheContext.translate(0, locCacheCanvas.height);
+
         var texture = new cc.Texture2D();
         texture.initWithElement(locCacheCanvas);
         texture.handleLoadedTexture();
+
         var locSprite = node.sprite = new cc.Sprite(texture);
         locSprite.setBlendFunc(cc.ONE, cc.ONE_MINUS_SRC_ALPHA);
         // Disabled by default.
@@ -68,9 +69,6 @@
     proto.begin = function(){};
 
     proto._beginWithClear = function(r, g, b, a, depthValue, stencilValue, flags){
-        var node = this._node;
-        node.begin();
-
         r = r || 0;
         g = g || 0;
         b = b || 0;
@@ -96,7 +94,6 @@
         var scale = cc.contentScaleFactor();
         cc.renderer._renderingToCacheCanvas(this._cacheContext, node.__instanceId, scale, scale);
 
-        //TODO
         //restore viewport
     };
 
@@ -108,11 +105,10 @@
         cc.log("clearDepth isn't supported on Cocos2d-Html5");
     };
 
-    proto.visit = function(ctx){
+    proto.visit = function(parentCmd){
         var node = this._node;
-        ctx = ctx || cc._renderContext;
-        node.transform(ctx);
-        node.sprite.visit(ctx);
+        this._syncStatus(parentCmd);
+        node.sprite.visit(parentCmd);
     };
 
     proto.draw = function(){

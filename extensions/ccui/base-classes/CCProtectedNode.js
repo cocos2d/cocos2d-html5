@@ -507,7 +507,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {         //TODO  refactoring
             worldT.tx = t.tx;
             worldT.ty = t.ty;
         }
-        this._renderCmdDiry = false;
         var i, len, locChildren = this._children;
         for(i = 0, len = locChildren.length; i< len; i++){
             locChildren[i]._transformForRenderer();
@@ -538,7 +537,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {         //TODO  refactoring
         //optimize performance for Javascript
         cc.kmMat4Multiply(stackMatrix, parentMatrix, t4x4);
 
-        this._renderCmdDiry = false;
         var i, len, locChildren = this._children;
         for(i = 0, len = locChildren.length; i< len; i++){
             locChildren[i]._transformForRenderer();

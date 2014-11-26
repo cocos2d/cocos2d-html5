@@ -97,8 +97,7 @@ cc.rendererWebGL = {
         locPool.sort(this._sortNodeByLevelAsc);
         //transform node
         for (var i = 0, len = locPool.length; i < len; i++) {
-            if (locPool[i]._renderCmdDiry)
-                locPool[i]._transformForRenderer();
+             locPool[i].transform();
         }
         locPool.length = 0;
     },

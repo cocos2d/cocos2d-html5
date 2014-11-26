@@ -90,8 +90,7 @@ cc.Node.RenderCmd.prototype = {
         return this._inverse;
     },
 
-    detachFromParent: function(){
-    },
+    detachFromParent: function(){},
 
     _updateAnchorPointInPoint: function() {
         var locAPP = this._anchorPointInPoints, locSize = this._node._contentSize, locAnchorPoint = this._node._anchorPoint;
@@ -179,7 +178,6 @@ cc.Node.RenderCmd.prototype = {
             worldT.tx = t.tx;
             worldT.ty = t.ty;
         }
-        this._renderCmdDiry = false;
         if (recursive) {
             var locChildren = this._node._children;
             if (!locChildren || locChildren.length === 0)
@@ -458,7 +456,7 @@ cc.Node.RenderCmd.prototype = {
             return;
 
         this._cachedParent = cachedParent;
-        var children = this._children;
+        var children = this._node._children;
         for (var i = 0, len = children.length; i < len; i++)
             children[i]._renderCmd._setCachedParent(cachedParent);
     };

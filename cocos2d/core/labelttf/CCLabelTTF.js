@@ -135,7 +135,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     _setUpdateTextureDirty: function () {
-        this._renderCmdDiry = this._needUpdateTexture = true;
+        this._needUpdateTexture = true;
         this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.textDirty);
         cc.renderer.pushDirtyNode(this._renderCmd);
     },

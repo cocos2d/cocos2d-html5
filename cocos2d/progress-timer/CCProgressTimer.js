@@ -271,7 +271,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         this._reverseDirection = false;
         this.midPoint = cc.p(0.5, 0.5);
         this.barChangeRate = cc.p(1, 1);
-        this._sprite = sprite;
+        this.setSprite(sprite);
         this._renderCmd.initCmd();
         return true;
     },

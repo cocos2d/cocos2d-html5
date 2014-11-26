@@ -234,7 +234,6 @@
                 node._camera._locateForRenderer(stackMatrix);
             }
         }
-        this._renderCmdDiry = false;
         if(!recursive || !node._children || node._children.length === 0)
             return;
         var i, len, locChildren = node._children;

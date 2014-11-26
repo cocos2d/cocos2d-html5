@@ -91,22 +91,12 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 	autoDraw:false,
 
     _texture:null,
-    _textureCopy:null,
-    _uITextureImage:null,
-
     _pixelFormat:cc.Texture2D.PIXEL_FORMAT_RGBA8888,
 
     clearStencilVal:0,
     _clearColor:null,
 
     _className:"RenderTexture",
-
-     //for WebGL
-    _beginWithClearCommand: null,
-    _clearDepthCommand: null,
-    _clearCommand: null,
-    _beginCommand: null,
-    _endCommand: null,
 
     /**
      * creates a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid
@@ -255,58 +245,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @function
      * @param {Number} stencilValue
      */
-    clearStencil:null,
-
-    _clearStencilForCanvas:function (stencilValue) {
-        cc.log("clearDepth isn't supported on Cocos2d-Html5");
-    },
-
-    _clearStencilForWebGL:function (stencilValue) {
-        var gl = cc._renderContext;
-        // save old stencil value
-        var stencilClearValue = gl.getParameter(gl.STENCIL_CLEAR_VALUE);
-
-        gl.clearStencil(stencilValue);
-        gl.clear(gl.STENCIL_BUFFER_BIT);
-
-        // restore clear color
-        gl.clearStencil(stencilClearValue);
-    },
-
-    /**
-     * creates a new CCImage from with the texture's data. Caller is responsible for releasing it by calling delete.
-     * @return {*}
-     */
-    newCCImage:function(flipImage){
-        cc.log("saveToFile isn't supported on cocos2d-html5");
-        return null;
-    },
-
-    /**
-     * saves the texture into a file using JPEG format. The file will be saved in the Documents folder.
-     * Returns YES if the operation is successful.
-     * (doesn't support in HTML5)
-     * @param {Number} filePath
-     * @param {Number} format
-     */
-    saveToFile:function (filePath, format) {
-        cc.log("saveToFile isn't supported on Cocos2d-Html5");
-    },
-
-    /**
-     * Listen "come to background" message, and save render texture. It only has effect on Android.
-     * @param {cc.Class} obj
-     */
-    listenToBackground:function (obj) {
-        cc.log("listenToBackground isn't supported on Cocos2d-Html5");
-    },
-
-    /**
-     * Listen "come to foreground" message and restore the frame buffer object. It only has effect on Android.
-     * @param {cc.Class} obj
-     */
-    listenToForeground:function (obj) {
-        cc.log("listenToForeground isn't supported on Cocos2d-Html5");
+    clearStencil: function(stencilValue) {
+        this._renderCmd.clearStencil(stencilValue);
     },
 
     /**
@@ -331,7 +271,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @return {cc.Color}
      */
     getClearColor:function () {
-        return this._renderCmd._clearColor;
+        return this._clearColor;
     },
 
 	/**
@@ -340,17 +280,12 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 	 * @param {cc.Color} clearColor The clear color
 	 */
     setClearColor: function(clearColor){
-        var cmd = this._renderCmd;
-
-        var locClearColor = cmd._clearColor;
+        var locClearColor = this._clearColor;
         locClearColor.r = clearColor.r;
         locClearColor.g = clearColor.g;
         locClearColor.b = clearColor.b;
         locClearColor.a = clearColor.a;
-
-        //Only canvas!!
-        cmd._clearColorStr = "rgba(" + (0 | clearColor.r) + "," + (0 | clearColor.g) + "," + (0 | clearColor.b) + "," + clearColor.a / 255 + ")";
-
+        this._renderCmd.updateClearColor(clearColor);
     },
 
     /**
@@ -401,7 +336,40 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      */
     setAutoDraw:function (autoDraw) {
         this.autoDraw = autoDraw;
-    }
+    },
+
+    //---- some stub functions for jsb
+    /**
+     * saves the texture into a file using JPEG format. The file will be saved in the Documents folder.
+     * Returns YES if the operation is successful.
+     * (doesn't support in HTML5)
+     * @param {Number} filePath
+     * @param {Number} format
+     */
+    saveToFile:function (filePath, format) {
+        cc.log("saveToFile isn't supported on Cocos2d-Html5");
+    },
+
+    /**
+     * creates a new CCImage from with the texture's data. Caller is responsible for releasing it by calling delete.
+     * @return {*}
+     */
+    newCCImage:function(flipImage){
+        cc.log("saveToFile isn't supported on cocos2d-html5");
+        return null;
+    },
+
+    /**
+     * Listen "come to background" message, and save render texture. It only has effect on Android.
+     * @param {cc.Class} obj
+     */
+    listenToBackground:function (obj) { },
+
+    /**
+     * Listen "come to foreground" message and restore the frame buffer object. It only has effect on Android.
+     * @param {cc.Class} obj
+     */
+    listenToForeground:function (obj) { }
 });
 
 // Extended

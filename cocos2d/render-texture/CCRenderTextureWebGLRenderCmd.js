@@ -23,7 +23,6 @@
  ****************************************************************************/
 
 (function(){
-
     cc.RenderTexture.WebGLRenderCmd = function(renderableObject){
         cc.Node.WebGLRenderCmd.call(this, renderableObject);
         this._needDraw = true;
@@ -31,6 +30,7 @@
         this._clearColor = cc.color(0, 0, 0, 0);
         this._fBO = null;
         this._oldFBO = null;
+        this._textureCopy = null;
         this._depthRenderBuffer = null;
     };
 
@@ -85,25 +85,36 @@
             for (var i = 0; i < locChildren.length; i++) {
                 var getChild = locChildren[i];
                 if (getChild != node.sprite)
-                    getChild.visit();
+                    getChild._renderCmd.visit(this);
             }
             node.end();
         }
     };
 
+    proto.clearStencil = function(stencilValue) {
+        var gl = cc._renderContext;
+        // save old stencil value
+        var stencilClearValue = gl.getParameter(gl.STENCIL_CLEAR_VALUE);
+
+        gl.clearStencil(stencilValue);
+        gl.clear(gl.STENCIL_BUFFER_BIT);
+
+        // restore clear color
+        gl.clearStencil(stencilClearValue);
+    };
+
     proto.cleanup = function(){
         var node = this._node;
         //node.sprite = null;
-        node._textureCopy = null;
+        this._textureCopy = null;
 
         var gl = cc._renderContext;
         gl.deleteFramebuffer(this._fBO);
         if (this._depthRenderBuffer)
             gl.deleteRenderbuffer(this._depthRenderBuffer);
-        node._uITextureImage = null;
-        //if (node._texture)
-        //    node._texture.releaseTexture();
     };
+
+    proto.updateClearColor = function(clearColor){};
 
     proto.initWithWidthAndHeight = function(width, height, format, depthStencilFormat){
         var node = this._node;
@@ -148,8 +159,8 @@
         var oldRBO = gl.getParameter(gl.RENDERBUFFER_BINDING);
 
         if (cc.configuration.checkForGLExtension("GL_QCOM")) {
-            node._textureCopy = new cc.Texture2D();
-            if (!node._textureCopy)
+            this._textureCopy = new cc.Texture2D();
+            if (!this._textureCopy)
                 return false;
             this._textureCopy.initWithData(data, node._pixelFormat, powW, powH, cc.size(width, height));
         }
@@ -180,8 +191,7 @@
 
         locTexture.setAliasTexParameters();
 
-        node.sprite = new cc.Sprite(locTexture);
-        var locSprite = node.sprite;
+        var locSprite = node.sprite = new cc.Sprite(locTexture);
         locSprite.scaleY = -1;
         locSprite.setBlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
@@ -234,7 +244,7 @@
          */
         if (cc.configuration.checkForGLExtension("GL_QCOM")) {
             // -- bind a temporary texture so we can clear the render buffer without losing our texture
-            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, node._textureCopy._webTextureObj, 0);
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._textureCopy._webTextureObj, 0);
             //cc.checkGLErrorDebug();
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
             gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, node._texture._webTextureObj, 0);
@@ -242,13 +252,10 @@
     };
 
     proto._beginWithClear = function(r, g, b, a, depthValue, stencilValue, flags){
-        var node = this._node;
         r = r / 255;
         g = g / 255;
         b = b / 255;
         a = a / 255;
-
-        node.begin();
 
         var gl = cc._renderContext;
 
@@ -356,56 +363,5 @@
          locGrid.afterDraw(this);*/
 
         cc.kmGLPopMatrix();
-    };
-
-    proto.draw = function(ctx){
-        var node = this._node;
-        var gl = cc._renderContext;
-        var locClearFlags = node.clearFlags;
-        if (locClearFlags) {
-            var oldClearColor = [0.0, 0.0, 0.0, 0.0];
-            var oldDepthClearValue = 0.0;
-            var oldStencilClearValue = 0;
-
-            // backup and set
-            if (locClearFlags & gl.COLOR_BUFFER_BIT) {
-                oldClearColor = gl.getParameter(gl.COLOR_CLEAR_VALUE);
-                gl.clearColor(this._clearColor.r/255, this._clearColor.g/255, this._clearColor.b/255, this._clearColor.a/255);
-            }
-
-            if (locClearFlags & gl.DEPTH_BUFFER_BIT) {
-                oldDepthClearValue = gl.getParameter(gl.DEPTH_CLEAR_VALUE);
-                gl.clearDepth(node.clearDepthVal);
-            }
-
-            if (locClearFlags & gl.STENCIL_BUFFER_BIT) {
-                oldStencilClearValue = gl.getParameter(gl.STENCIL_CLEAR_VALUE);
-                gl.clearStencil(node.clearStencilVal);
-            }
-
-            // clear
-            gl.clear(locClearFlags);
-
-            // restore
-            if (locClearFlags & gl.COLOR_BUFFER_BIT)
-                gl.clearColor(oldClearColor[0], oldClearColor[1], oldClearColor[2], oldClearColor[3]);
-
-            if (locClearFlags & gl.DEPTH_BUFFER_BIT)
-                gl.clearDepth(oldDepthClearValue);
-
-            if (locClearFlags & gl.STENCIL_BUFFER_BIT)
-                gl.clearStencil(oldStencilClearValue);
-        }
-
-        //! make sure all children are drawn
-        this.sortAllChildren();
-        var locChildren = node._children;
-        for (var i = 0; i < locChildren.length; i++) {
-            var getChild = locChildren[i];
-            if (getChild != node.sprite)
-                getChild.visit();
-        }
-
-        this.end();
     };
 })();

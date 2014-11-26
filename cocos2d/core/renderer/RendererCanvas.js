@@ -86,7 +86,8 @@ cc.rendererCanvas = {
         this._isCacheToCanvasOn = true;
         renderTextureID = renderTextureID || 0;
         this._cacheToCanvasCmds[renderTextureID] = [];
-        this._cacheInstanceIds.push(renderTextureID);
+        if(this._cacheInstanceIds.indexOf(renderTextureID) === -1)
+            this._cacheInstanceIds.push(renderTextureID);
         this._currentID = renderTextureID;
     },
 
