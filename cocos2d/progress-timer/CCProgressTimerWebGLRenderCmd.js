@@ -98,52 +98,13 @@
         this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
     };
 
-    proto.draw = function(ctx){
-        var node = this._node;
-        var context = ctx || cc._renderContext;
-        if (!this._vertexData || !node._sprite)
-            return;
-
-        cc.nodeDrawSetup(node);
-
-        var blendFunc = node._sprite.getBlendFunc();
-        cc.glBlendFunc(blendFunc.src, blendFunc.dst);
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
-
-        cc.glBindTexture2D(node._sprite.texture);
-
-        context.bindBuffer(context.ARRAY_BUFFER, this._vertexWebGLBuffer);
-        if(this._vertexDataDirty){
-            context.bufferData(context.ARRAY_BUFFER, this._vertexArrayBuffer, context.DYNAMIC_DRAW);
-            this._vertexDataDirty = false;
-        }
-        var locVertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT;
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, locVertexDataLen, 0);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, locVertexDataLen, 8);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, context.FLOAT, false, locVertexDataLen, 12);
-
-        if (node._type === cc.ProgressTimer.TYPE_RADIAL)
-            context.drawArrays(context.TRIANGLE_FAN, 0, this._vertexDataCount);
-        else if (node._type == cc.ProgressTimer.TYPE_BAR) {
-            if (!node._reverseDirection)
-                context.drawArrays(context.TRIANGLE_STRIP, 0, this._vertexDataCount);
-            else {
-                context.drawArrays(context.TRIANGLE_STRIP, 0, this._vertexDataCount / 2);
-                context.drawArrays(context.TRIANGLE_STRIP, 4, this._vertexDataCount / 2);
-                // 2 draw calls
-                cc.g_NumberOfDraws++;
-            }
-        }
-        cc.g_NumberOfDraws++;
-    };
-
     proto._updateProgress = function(){
         var node = this._node;
         var locType = node._type;
         if(locType === cc.ProgressTimer.TYPE_RADIAL)
-            node._updateRadial();
+            this._updateRadial();
         else if(locType === cc.ProgressTimer.TYPE_BAR)
-            node._updateBar();
+            this._updateBar();
         this._vertexDataDirty = true;
     };
 
@@ -393,8 +354,8 @@
         }
 
         //    hitpoint will go last
-        locVertexData[this._renderCmd._vertexDataCount - 1].texCoords = this._textureCoordFromAlphaPoint(hit);
-        locVertexData[this._renderCmd._vertexDataCount - 1].vertices = this._vertexFromAlphaPoint(hit);
+        locVertexData[this._vertexDataCount - 1].texCoords = this._textureCoordFromAlphaPoint(hit);
+        locVertexData[this._vertexDataCount - 1].vertices = this._vertexFromAlphaPoint(hit);
     };
 
     proto._boundaryTexCoord = function (index) {

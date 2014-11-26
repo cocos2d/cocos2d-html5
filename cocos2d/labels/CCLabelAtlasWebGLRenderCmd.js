@@ -25,7 +25,7 @@
 (function(){
     cc.LabelAtlas.WebGLRenderCmd = function(renderable){
         cc.AtlasNode.WebGLRenderCmd.call(this, renderable);
-        this._needDraw = false;
+        this._needDraw = true;
     };
 
     var proto = cc.LabelAtlas.WebGLRenderCmd.prototype = Object.create(cc.AtlasNode.WebGLRenderCmd.prototype);
@@ -40,7 +40,7 @@
     proto.rendering = function(){
         cc.AtlasNode.WebGLRenderCmd.prototype.rendering.call(this, ctx);
         if (cc.LABELATLAS_DEBUG_DRAW) {
-            var s = this.size;
+            var s = this._node.getContentSize();
             var vertices = [cc.p(0, 0), cc.p(s.width, 0),
                 cc.p(s.width, s.height), cc.p(0, s.height)];
             cc._drawingUtil.drawPoly(vertices, 4, true);
@@ -51,7 +51,7 @@
         var node = this._node;
         var locString = node._string;
         var n = locString.length;
-        var locTextureAtlas = node.textureAtlas;
+        var locTextureAtlas = this._textureAtlas;
 
         var texture = locTextureAtlas.texture;
         var textureWide = texture.pixelsWidth;
@@ -123,9 +123,9 @@
     };
 
     proto.setString = function(label){
-        var len = label.length, node = this._node;
-        if (len > node.textureAtlas.totalQuads)
-            node.textureAtlas.resizeCapacity(len);
+        var len = label.length;
+        if (len > this._textureAtlas.totalQuads)
+            this._textureAtlas.resizeCapacity(len);
     };
 
     proto.setOpacity = function(opacity){

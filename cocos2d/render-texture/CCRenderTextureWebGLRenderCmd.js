@@ -148,11 +148,10 @@
 
         this._pixelFormat = format;
 
-        this._texture = new cc.Texture2D();
+        var locTexture = node._texture = new cc.Texture2D();
         if (!node._texture)
             return false;
 
-        var locTexture = node._texture;
         locTexture.initWithData(data, node._pixelFormat, powW, powH, cc.size(width, height));
         //free( data );
 
@@ -207,7 +206,7 @@
     };
 
     proto.begin = function(){
-        var node = this;
+        var node = this._node;
         // Save the current matrix
         cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
         cc.kmGLPushMatrix();
@@ -293,7 +292,7 @@
     };
 
     proto.end = function(){
-        var node = this.node
+        var node = this._node;
         cc.renderer._renderingToBuffer(node.__instanceId);
 
         var gl = cc._renderContext;

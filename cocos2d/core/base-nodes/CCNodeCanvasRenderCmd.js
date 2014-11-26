@@ -102,7 +102,7 @@ cc.Node.RenderCmd.prototype = {
     setDirtyFlag: function(dirtyFlag){
         if (this._dirtyFlag === 0 && dirtyFlag !== 0)
             cc.renderer.pushDirtyNode(this);
-        this._dirtyFlag = this._dirtyFlag | dirtyFlag;
+        this._dirtyFlag |= dirtyFlag;
     },
 
     getParentRenderCmd: function(){
