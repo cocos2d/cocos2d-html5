@@ -33,6 +33,10 @@
     proto.constructor = cc.ProtectedNode.CanvasRenderCmd;
 
     proto.visit = function(){
+        this._node.visit();
+    };
+
+    proto._visit = function(){
         var node = this._node;
         // quick return if not visible
         if (!node._visible)
@@ -68,9 +72,9 @@
         cc.renderer.pushRenderCommand(this);
 
         for (; i < childLen; i++)
-            children[i] && children[i].visit(this);
+            children[i] && children[i]._renderCmd.visit(this);
         for (; j < pLen; j++)
-            locProtectedChildren[j] && locProtectedChildren[j].visit(this);
+            locProtectedChildren[j] && locProtectedChildren[j]._renderCmd.visit(this);
 
         this._cacheDirty = false;
     };

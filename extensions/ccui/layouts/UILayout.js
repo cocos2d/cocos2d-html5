@@ -544,7 +544,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             context.save();
         }else{
             this.transform();
-            var t = this._transformWorld;
+            var t = this._renderCmd._worldTransform;
             context.save();
             context.save();
             context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
