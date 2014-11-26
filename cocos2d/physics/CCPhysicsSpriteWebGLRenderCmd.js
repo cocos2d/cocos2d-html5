@@ -27,20 +27,26 @@
  */
 (function(){
     cc.PhysicsSprite.WebGLRenderCmd = function(renderableObject){
-        cc.Node.CanvasRenderCmd.call(this, renderableObject);
+        cc.Sprite.CanvasRenderCmd.call(this, renderableObject);
         this._needDraw = true;
     };
 
-    var proto = cc.PhysicsSprite.WebGLRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
+    var proto = cc.PhysicsSprite.WebGLRenderCmd.prototype = Object.create(cc.Sprite.CanvasRenderCmd.prototype);
     proto.constructor = cc.PhysicsSprite.WebGLRenderCmd;
 
-    proto.rendering = function(){
+    proto.rendering = function(ctx, scaleX, scaleY){
+        //  This is a special class
+        //  Sprite can not obtain sign
+        //  So here must to calculate of each frame
+        //  TODO _transformForRenderer has been deleted.
         if(this._node._transformForRenderer)
             this._node._transformForRenderer();
+        cc.Sprite.CanvasRenderCmd.prototype.rendering.call(this, ctx, scaleX, scaleY);
     };
 
-    proto._getNodeToParentTransform = function(){
-        var locBody = this._body, locAnchorPIP = this._anchorPointInPoints, locScaleX = this._scaleX, locScaleY = this._scaleY;
+    proto.getNodeToParentTransform = function(){
+        var node = this._node;
+        var locBody = node._body, locAnchorPIP = this._anchorPointInPoints, locScaleX = node._scaleX, locScaleY = node._scaleY;
         var x = locBody.p.x;
         var y = locBody.p.y;
 
