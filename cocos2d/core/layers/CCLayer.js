@@ -240,13 +240,13 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     },
 
     _setWidth: function(width){
-        this._renderCmd._updateSquareVerticesWidth(width);
         cc.Node.prototype._setWidth.call(this, width);
+        this._renderCmd._updateSquareVerticesWidth(width);
     },
 
     _setHeight: function(height){
-        this._renderCmd._updateSquareVerticesHeight(height);
         cc.Node.prototype._setHeight.call(this, height);
+        this._renderCmd._updateSquareVerticesHeight(height);
     },
 
     setContentSize: function(size, height){

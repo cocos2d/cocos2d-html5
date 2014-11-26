@@ -112,40 +112,16 @@
         return this._transform;
     };
 
-    proto.updateStatus = function () {
-        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        if (locFlag & flags.colorDirty) {
-            //update the color
-            this._updateDisplayColor()
-        }
-
-        if (locFlag & flags.opacityDirty) {
-            //update the opacity
-            this._updateDisplayOpacity();
-        }
-
-        if (locFlag & flags.transformDirty) {
-            //update the transform
-            this.transform(this.getParentRenderCmd(), true);
-        }
-    };
-
     proto._syncStatus = function (parentCmd) {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        if (locFlag & flags.colorDirty) {
-            //update the color
+        if (locFlag & flags.colorDirty)
             this._syncDisplayColor()
-        }
 
-        if (locFlag & flags.opacityDirty) {
-            //update the opacity
+        if (locFlag & flags.opacityDirty)
             this._syncDisplayOpacity();
-        }
 
-        if (locFlag & flags.transformDirty) {
-            //update the transform
+        if (locFlag & flags.transformDirty)
             this.transform(parentCmd);
-        }
     };
 
     proto.visit = function (parentCmd) {
