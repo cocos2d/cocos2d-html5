@@ -39,29 +39,17 @@
     var proto = cc.LabelBMFont.WebGLRenderCmd.prototype = Object.create(cc.SpriteBatchNode.WebGLRenderCmd.prototype);
     proto.constructor = cc.LabelBMFont.WebGLRenderCmd;
 
-    proto._updateTexture = function(fontChar, locTexture, rect, i){
-        var node = this._node;
-        //var hasSprite = true;
-        if (!fontChar) {
-            fontChar = new cc.Sprite();
-            fontChar.initWithTexture(locTexture, rect, false);
-            fontChar._newTextureWhenChangeColor = true;
-            node.addChild(fontChar, 0, i);
-        } else {
-            // updating previous sprite
-            fontChar.setTextureRect(rect, false);
-            // restore to default in case they were modified
-            fontChar.visible = true;
-        }
+    proto._updateCharTexture = function(fontChar, rect, key){
+        // updating previous sprite
+        fontChar.setTextureRect(rect, false);
+        // restore to default in case they were modified
+        fontChar.visible = true;
+    };
 
-
-        // Apply label properties
-        fontChar.opacityModifyRGB = node._opacityModifyRGB;
+    proto._updateCharColorAndOpacity = function(fontChar){
         // Color MUST be set before opacity, since opacity might change color if OpacityModifyRGB is on
         fontChar.updateDisplayedColor(this._displayedColor);
         fontChar.updateDisplayedOpacity(this._displayedOpacity);
-
-        return fontChar;
     };
 
     proto._updateFntFileTexture = function(){};
