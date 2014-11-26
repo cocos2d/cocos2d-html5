@@ -294,12 +294,12 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      */
     updateDisplayedOpacity: function (parentOpacity) {
         var cmd = this._renderCmd;
-        this._displayedOpacity = this._realOpacity * parentOpacity / 255.0;
-        var locChildren = this._children;
-        for (var i = 0; i < locChildren.length; i++) {
-            cmd._updateChildrenDisplayedOpacity(locChildren[i]);
-        }
-        this._changeTextureColor();
+        cmd._displayedOpacity = this._realOpacity * parentOpacity / 255.0;
+//        var locChildren = this._children;
+//        for (var i = 0; i < locChildren.length; i++) {
+//            cmd._updateChildrenDisplayedOpacity(locChildren[i]);
+//        }
+//        this._changeTextureColor();
     },
 
     /**
@@ -345,17 +345,17 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      */
     updateDisplayedColor: function (parentColor) {
         var cmd = this._renderCmd;
-        var locDispColor = this._displayedColor;
+        var locDispColor = cmd._displayedColor;
         var locRealColor = this._realColor;
         locDispColor.r = locRealColor.r * parentColor.r / 255.0;
         locDispColor.g = locRealColor.g * parentColor.g / 255.0;
         locDispColor.b = locRealColor.b * parentColor.b / 255.0;
 
-        var locChildren = this._children;
-        for (var i = 0; i < locChildren.length; i++) {
-            cmd._updateChildrenDisplayedColor(locChildren[i]);
-        }
-        this._changeTextureColor();
+//        var locChildren = this._children;
+//        for (var i = 0; i < locChildren.length; i++) {
+//            cmd._updateChildrenDisplayedColor(locChildren[i]);
+//        }
+//        this._changeTextureColor();
     },
 
     _changeTextureColor: function () {
@@ -440,8 +440,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             cmd._displayedOpacity = self._realOpacity = 255;
             cmd._displayedColor = cc.color(255, 255, 255, 255);
             self._realColor = cc.color(255, 255, 255, 255);
-            self._cascadeOpacityEnabled = true;
-            self._cascadeColorEnabled = true;
+            this._cascadeColorEnabled = true;
+            this._cascadeOpacityEnabled = true;
 
             self._contentSize.width = 0;
             self._contentSize.height = 0;
@@ -513,7 +513,18 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
             var fontChar = self.getChildByTag(i);
 
-            fontChar = this._renderCmd._updateTexture(fontChar, locTexture, rect, i, key);
+            if(!fontChar){
+                fontChar = new cc.Sprite();
+                fontChar.initWithTexture(locTexture, rect, false);
+                fontChar._newTextureWhenChangeColor = true;
+                this.addChild(fontChar, 0, i);
+            }else{
+                this._renderCmd._updateCharTexture(fontChar, rect, key);
+            }
+
+            // Apply label properties
+            fontChar.opacityModifyRGB = this._opacityModifyRGB;
+            this._renderCmd._updateCharColorAndOpacity(fontChar);
 
             var yOffset = locCfg.commonHeight - fontDef.yOffset;
             var fontPos = cc.p(nextFontPositionX + fontDef.xOffset + fontDef.rect.width * 0.5 + kerningAmount,
@@ -1000,18 +1011,20 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     }
 });
 
-var _p = cc.LabelBMFont.prototype;
-cc.EventHelper.prototype.apply(_p);
+(function(){
+    var p = cc.LabelBMFont.prototype;
+    cc.EventHelper.prototype.apply(p);
 
-/** @expose */
-_p.string;
-cc.defineGetterSetter(_p, "string", _p.getString, _p._setStringForSetter);
-/** @expose */
-_p.boundingWidth;
-cc.defineGetterSetter(_p, "boundingWidth", _p._getBoundingWidth, _p.setBoundingWidth);
-/** @expose */
-_p.textAlign;
-cc.defineGetterSetter(_p, "textAlign", _p._getAlignment, _p.setAlignment);
+    /** @expose */
+    p.string;
+    cc.defineGetterSetter(p, "string", p.getString, p._setStringForSetter);
+    /** @expose */
+    p.boundingWidth;
+    cc.defineGetterSetter(p, "boundingWidth", p._getBoundingWidth, p.setBoundingWidth);
+    /** @expose */
+    p.textAlign;
+    cc.defineGetterSetter(p, "textAlign", p._getAlignment, p.setAlignment);
+})();
 
 /**
  * creates a bitmap font atlas with an initial string and the FNT file
