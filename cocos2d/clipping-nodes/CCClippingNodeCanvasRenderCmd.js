@@ -26,7 +26,7 @@
 (function(){
     cc.ClippingNode.CanvasRenderCmd = function(renderable){
         cc.Node.CanvasRenderCmd.call(this, renderable);
-        this._needDraw = true;
+        this._needDraw = false;
         this._godhelpme = false;
         this._clipElemType = null;
 
@@ -86,7 +86,7 @@
         var context = ctx || cc._renderContext;
 
         if (this._clipElemType) {
-            var locCache = cc.ClippingNode._getSharedCache();
+            var locCache = cc.ClippingNode.CanvasRenderCmd._getSharedCache();
             var canvas = context.canvas;
             locCache.width = canvas.width;
             locCache.height = canvas.height;
@@ -160,6 +160,7 @@
     };
 
     proto.visit = function(parentCmd){
+        cc.renderer.pushRenderCommand(this);
         var node = this._node;
         // quick return if not visible
         if (!node._visible)
@@ -170,10 +171,10 @@
             this._curLevel = parentCmd._curLevel + 1;
 
         // Composition mode, costy but support texture stencil
-        this._clipElemType = (this._cangodhelpme() || this._stencil instanceof cc.Sprite);
+        this._clipElemType = (this._cangodhelpme() || node._stencil instanceof cc.Sprite);
 
         var i, children = node._children;
-        if (!this._stencil || !this._stencil.visible) {
+        if (!node._stencil || !node._stencil.visible) {
             if (this.inverted)
                 cc.Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);   // draw everything
             return;
@@ -184,7 +185,7 @@
             // Draw everything first using node visit function
             cc.Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
         }else{
-            this._stencil.visit(this);
+            node._stencil.visit(this);
         }
 
         cc.renderer.pushRenderCommand(this._rendererClipCmd);
@@ -192,14 +193,14 @@
         this._syncStatus(parentCmd);
 
         if(this._clipElemType){
-            this._stencil.visit(this);
+            node._stencil.visit(this);
         }else{
             // Clip mode doesn't support recusive stencil, so once we used a clip stencil,
             // so if it has ClippingNode as a child, the child must uses composition stencil.
             this._cangodhelpme(true);
             var len = children.length;
             if (len > 0) {
-                this.sortAllChildren();
+                node.sortAllChildren();
                 for (i = 0; i < len; i++)
                     children[i]._renderCmd.visit(this);
             }
