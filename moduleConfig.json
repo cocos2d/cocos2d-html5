@@ -430,7 +430,8 @@
             "extensions/spine/Spine.js",
             "extensions/spine/CCSkeleton.js",
             "extensions/spine/CCSkeletonAnimation.js",
-            "extensions/spine/CCSkeletonRenderCmd.js.js"
+            "extensions/spine/CCSkeletonCanvasRenderCmd.js",
+            "extensions/spine/CCSkeletonWebGLRenderCmd.js"
         ],
         "extensions" : ["gui", "ccbreader", "editbox", "cocostudio", "spine", "ccpool"],
 
