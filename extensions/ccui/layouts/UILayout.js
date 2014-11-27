@@ -543,7 +543,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
             context.save();
         }else{
-            this.transform();
+            var parentCmd = this._parent ? this._parent._renderCmd : null;
+            this.transform(parentCmd);
             var t = this._renderCmd._worldTransform;
             context.save();
             context.save();
@@ -557,7 +558,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         if (this._clipElemType) {
             context.globalCompositeOperation = "destination-in";
 
-            this.transform(context);
+            var parentCmd = this._parent ? this._parent._renderCmd : null;
+            this.transform(parentCmd);
         }else{}
     },
     _onRenderClipCmd: function(ctx){
@@ -1807,15 +1809,22 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._isInterceptTouch = layout._isInterceptTouch;
     },
 
-    _transformForRenderer: function(parentMatrix){
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL){
-            ccui.Widget.prototype._transformForRenderer.call(this, parentMatrix);
-            if(this._clippingStencil)
-                this._clippingStencil._transformForRenderer(this._stackMatrix);
-        }else{
-            ccui.ProtectedNode.prototype._transformForRenderer.call(this);
+    _changePosition: function(){
+        if (this._backGroundImage){
+//            this._backGroundImage.transform(this._renderCmd);
+//            this._backGroundImage._renderCmd._dirtyFlag ^= cc.Node._dirtyFlags.transformDirty;
         }
     }
+
+//    _transformForRenderer: function(parentMatrix){
+//        if(cc._renderType === cc._RENDER_TYPE_WEBGL){
+//            ccui.Widget.prototype._transformForRenderer.call(this, parentMatrix);
+//            if(this._clippingStencil)
+//                this._clippingStencil._transformForRenderer(this._stackMatrix);
+//        }else{
+//            ccui.ProtectedNode.prototype._transformForRenderer.call(this);
+//        }
+//    }
 });
 ccui.Layout._init_once = null;
 ccui.Layout._visit_once = null;

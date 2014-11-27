@@ -110,10 +110,10 @@
 
         var i, len, locChildren = node._children;
         for(i = 0, len = locChildren.length; i< len; i++){
-            locChildren[i]._renderCmd.transform();
+            locChildren[i]._renderCmd.transform(this);
         }
         locChildren = node._protectedChildren;
         for( i = 0, len = locChildren.length; i< len; i++)
-            locChildren[i]._renderCmd.transform();
+            locChildren[i]._renderCmd.transform(this);
     };
 })();

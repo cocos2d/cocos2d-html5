@@ -237,6 +237,8 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         this._renderCmd._visit();
     },
 
+    _changePosition: function(){},
+
     /**
      * Stops itself and its children and protected children's all running actions and schedulers
      * @override

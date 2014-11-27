@@ -57,14 +57,14 @@
         for (i = 0; i < childLen; i++) {
             child = children[i];
             if (child._localZOrder < 0)
-                child._renderCmd.visit(this);
+                child.visit(this);
             else
                 break;
         }
         for (j = 0; j < pLen; j++) {
             child = locProtectedChildren[j];
             if (child._localZOrder < 0)
-                child._renderCmd.visit(this);
+                child.visit(this);
             else
                 break;
         }
@@ -81,6 +81,10 @@
 
     proto.transform = function(parentCmd, recursive){
         var node = this._node;
+
+        if(node._changePosition)
+            node._changePosition();
+
         var t = node.getNodeToParentTransform(), worldT = this._worldTransform;
         if(parentCmd){
             var pt = parentCmd._worldTransform;
@@ -113,6 +117,7 @@
         locChildren = node._protectedChildren;
         for( i = 0, len = locChildren.length; i< len; i++)
             locChildren[i]._renderCmd.transform(this);
+
     }
 
 })();

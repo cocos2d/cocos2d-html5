@@ -539,7 +539,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * call back function called when size changed.
      */
     _onSizeChanged: function () {
-//        ccui.Helper.prototype.doLayout.call(this, this);
         var locChildren =  this.getChildren();
         for (var i = 0, len = locChildren.length; i < len; i++) {
             var child = locChildren[i];
