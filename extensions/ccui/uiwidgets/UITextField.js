@@ -803,14 +803,8 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         return this._textFieldRenderer._getFont();
     },
 
-    _transformForRenderer: function(){
-
+    _changePosition: function(){
         this._adaptRenderers();
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
-            cc.Node.prototype.transform.call(this);
-        else
-            cc.ProtectedNode.prototype._transformForRenderer.call(this);
-        this._textFieldRenderer._transformForRenderer();
     }
 });
 

@@ -434,13 +434,9 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
         return this._textAreaSize.height;
     },
 
-    _transformForRenderer: function(){
+    _changePosition: function(){
         this._adaptRenderers();
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
-            cc.Node.prototype.transform.call(this);
-        else
-            cc.ProtectedNode.prototype._transformForRenderer.call(this);
-        this._labelRenderer._transformForRenderer();
+        //this._labelRenderer.transform(this._renderCmd);
     }
 });
 
