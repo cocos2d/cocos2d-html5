@@ -365,7 +365,7 @@
                 var dx = x1 * cr - y2 * sr2 + x;
                 var dy = x1 * sr + y2 * cr2 + y;
 
-                var locVertexZ = _t._vertexZ;
+                var locVertexZ = node._vertexZ;
                 if (!cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
                     ax = 0 | ax;
                     ay = 0 | ay;
@@ -381,7 +381,7 @@
                 locQuad.tl.vertices = {x: dx, y: dy, z: locVertexZ};
                 locQuad.tr.vertices = {x: cx, y: cy, z: locVertexZ};
             }
-            node.textureAtlas.updateQuad(locQuad, _t.atlasIndex);
+            node.textureAtlas.updateQuad(locQuad, node.atlasIndex);
             node._recursiveDirty = false;
             node.dirty = false;
         }

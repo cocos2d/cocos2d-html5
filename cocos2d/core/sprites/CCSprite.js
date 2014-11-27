@@ -72,8 +72,8 @@
  * var sprite2 = new cc.Sprite(texture, cc.rect(0,0,480,320));
  *
  * @property {Boolean}              dirty               - Indicates whether the sprite needs to be updated.
- * @property {Boolean}              flippedX            - Indicates whether or not the spirte is flipped on x axis.
- * @property {Boolean}              flippedY            - Indicates whether or not the spirte is flipped on y axis.
+ * @property {Boolean}              flippedX            - Indicates whether or not the sprite is flipped on x axis.
+ * @property {Boolean}              flippedY            - Indicates whether or not the sprite is flipped on y axis.
  * @property {Number}               offsetX             - <@readonly> The offset position on x axis of the sprite in texture. Calculated automatically by editors like Zwoptex.
  * @property {Number}               offsetY             - <@readonly> The offset position on x axis of the sprite in texture. Calculated automatically by editors like Zwoptex.
  * @property {Number}               atlasIndex          - The index used on the TextureAtlas.
@@ -285,7 +285,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {cc.SpriteBatchNode} batchNode
      */
     useBatchNode:function (batchNode) {
-        this.textureAtlas = batchNode.textureAtlas; // weak ref
+        this.textureAtlas = batchNode.getTextureAtlas(); // weak ref
         this._batchNode = batchNode;
     },
 
@@ -929,7 +929,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         } else {
             // using batch
             _t._transformToBatch = cc.affineTransformIdentity();
-            _t.textureAtlas = _t._batchNode.textureAtlas; // weak ref
+            _t.textureAtlas = _t._batchNode.getTextureAtlas(); // weak ref
         }
     },
 

@@ -183,8 +183,9 @@
 
     proto._updateBlendFunc = function () {
         if (!this._textureAtlas.texture.hasPremultipliedAlpha()) {
-            this._blendFunc.src = cc.SRC_ALPHA;
-            this._blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
+            var blendFunc = this._node._blendFunc;
+            blendFunc.src = cc.SRC_ALPHA;
+            blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
         }
     };
 

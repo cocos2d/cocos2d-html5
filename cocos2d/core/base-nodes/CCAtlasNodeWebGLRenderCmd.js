@@ -94,16 +94,6 @@
         return true;
     };
 
-    proto.draw = function(ctx){
-        var context = ctx || cc._renderContext;
-        cc.nodeDrawSetup(this);
-        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-        if(this._uniformColor && this._colorF32Array){
-            context.uniform4fv(this._uniformColor, this._colorF32Array);
-            this.textureAtlas.drawNumberOfQuads(this.quadsToDraw, 0);
-        }
-    };
-
     proto.setColor = function(color3){
         var temp = cc.color(color3.r, color3.g, color3.b);
         this._colorUnmodified = color3;

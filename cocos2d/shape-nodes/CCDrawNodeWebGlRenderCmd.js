@@ -23,7 +23,6 @@
  ****************************************************************************/
 
 (function(){
-
     cc.DrawNode.WebGLRenderCmd = function (renderableObject) {
         cc.Node.WebGLRenderCmd.call(this, renderableObject);
         this._needDraw = true;
