@@ -800,13 +800,6 @@ cc.DrawNodeWebGL = cc.Node.extend({
         }
     },
 
-    draw:function () {
-        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-        this._shaderProgram.use();
-        this._shaderProgram.setUniformsForBuiltins();
-        this._render();
-    },
-
     drawDot:function (pos, radius, color) {
         color = color || this.getDrawColor();
         if (color.a == null)
@@ -1009,9 +1002,9 @@ cc.DrawNodeWebGL = cc.Node.extend({
         this._dirty = true;
     },
 
-    _createRenderCmd: function(){
+    _createRenderCmd: function () {
         return new cc.DrawNode.WebGLRenderCmd(this);
-}
+    }
 });
 
 cc.DrawNode = cc._renderType == cc._RENDER_TYPE_WEBGL ? cc.DrawNodeWebGL : cc.DrawNodeCanvas;

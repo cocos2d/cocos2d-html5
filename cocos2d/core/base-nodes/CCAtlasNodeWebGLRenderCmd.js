@@ -38,7 +38,6 @@
     var proto = cc.AtlasNode.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.AtlasNode.WebGLRenderCmd;
 
-
     proto._updateBlendFunc = function () {
         var node = this._node;
         if (!this._textureAtlas.texture.hasPremultipliedAlpha()) {
@@ -93,16 +92,6 @@
         this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR);
         this._uniformColor = cc._renderContext.getUniformLocation(node.shaderProgram.getProgram(), "u_color");
         return true;
-    };
-
-    proto.draw = function(ctx){
-        var context = ctx || cc._renderContext;
-        cc.nodeDrawSetup(this);
-        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-        if(this._uniformColor && this._colorF32Array){
-            context.uniform4fv(this._uniformColor, this._colorF32Array);
-            this.textureAtlas.drawNumberOfQuads(this.quadsToDraw, 0);
-        }
     };
 
     proto.setColor = function(color3){

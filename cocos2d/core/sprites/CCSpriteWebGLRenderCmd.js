@@ -101,12 +101,12 @@
     };
 
     proto._textureLoadedCallback = function (sender) {
-        var node = this._node;
-        if (node._textureLoaded)
+        var renderCmd = this._renderCmd;
+        if (this._textureLoaded)
             return;
 
-        node._textureLoaded = true;
-        var locRect = node._rect;
+        this._textureLoaded = true;
+        var locRect = this._rect;
         if (!locRect) {
             locRect = cc.rect(0, 0, sender.width, sender.height);
         } else if (cc._rectEqualToZero(locRect)) {
@@ -114,14 +114,14 @@
             locRect.height = sender.height;
         }
 
-        node.texture = sender;
-        node.setTextureRect(locRect, node._rectRotated);
+        this.texture = sender;
+        this.setTextureRect(locRect, this._rectRotated);
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
-        node.setBatchNode(node._batchNode);
-        this._quadDirty = true;
-        node.dispatchEvent("load");
+        this.setBatchNode(this._batchNode);
+        renderCmd._quadDirty = true;
+        this.dispatchEvent("load");
     };
 
     proto._setTextureCoords = function (rect, needConvert) {
@@ -209,14 +209,43 @@
         this._quadDirty = true;
     };
 
-    proto._updateDisplayColor = function (parentColor) {
-        cc.Node.WebGLRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
-        this._updateColor();
+    proto._syncStatus = function (parentCmd) {
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
+
+        if (colorDirty)
+            this._syncDisplayColor();
+
+        if (opacityDirty)
+            this._syncDisplayOpacity();
+
+        if(colorDirty || opacityDirty)
+            this._updateColor();
+
+        if (locFlag & flags.transformDirty) {
+            //update the transform
+            this.transform(parentCmd);
+        }
     };
 
-    proto._updateDisplayOpacity = function (parentOpacity) {
-        cc.Node.WebGLRenderCmd.prototype._updateDisplayOpacity.call(this, parentOpacity);
-        this._updateColor();
+    proto.updateStatus = function(){
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
+        if(colorDirty)
+            this._updateDisplayColor();
+
+        if(opacityDirty)
+            this._updateDisplayOpacity();
+
+        if(colorDirty || opacityDirty)
+            this._updateColor();
+
+        if(this._dirtyFlag & flags.transformDirty){
+            //update the transform
+            this.transform(null, true);
+        }
     };
 
     proto._updateColor = function () {
@@ -336,7 +365,7 @@
                 var dx = x1 * cr - y2 * sr2 + x;
                 var dy = x1 * sr + y2 * cr2 + y;
 
-                var locVertexZ = _t._vertexZ;
+                var locVertexZ = node._vertexZ;
                 if (!cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
                     ax = 0 | ax;
                     ay = 0 | ay;
@@ -352,7 +381,7 @@
                 locQuad.tl.vertices = {x: dx, y: dy, z: locVertexZ};
                 locQuad.tr.vertices = {x: cx, y: cy, z: locVertexZ};
             }
-            node.textureAtlas.updateQuad(locQuad, _t.atlasIndex);
+            node.textureAtlas.updateQuad(locQuad, node.atlasIndex);
             node._recursiveDirty = false;
             node.dirty = false;
         }

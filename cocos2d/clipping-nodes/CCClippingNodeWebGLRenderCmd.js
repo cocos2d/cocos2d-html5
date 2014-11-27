@@ -63,15 +63,16 @@
     };
 
     proto.transform = function(parentCmd, recursive){
+        var node = this._node;
         cc.Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
-        if(this._stencil)
-            this._stencil._renderCmd.transform(parentCmd, recursive);
+        if(node._stencil)
+            node._stencil._renderCmd.transform(this, recursive);
     };
 
     proto.visit = function(parentCmd){
-        var _t = this, node = this._node;
+        var node = this._node;
         // quick return if not visible
-        if (!_t._visible)
+        if (!node._visible)
             return;
 
         if( node._parent && node._parent._renderCmd)
@@ -84,8 +85,8 @@
             return;
         }
 
-        if (!this._stencil || !this._stencil.visible) {
-            if (this.inverted)
+        if (!node._stencil || !node._stencil.visible) {
+            if (node.inverted)
                 cc.Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);   // draw everything
             return;
         }
@@ -106,38 +107,23 @@
         //optimize performance for javascript
         var currentStack = cc.current_stack;
         currentStack.stack.push(currentStack.top);
-        cc.kmMat4Assign(this._stackMatrix, currentStack.top);
+        this._syncStatus(parentCmd);
         currentStack.top = this._stackMatrix;
 
-        this._syncStatus(parentCmd);
         //this._stencil._stackMatrix = this._stackMatrix;
-        this._stencil.visit(parentCmd);
+        node._stencil._renderCmd.visit(this);
 
         cc.renderer.pushRenderCommand(this._afterDrawStencilCmd);
 
         // draw (according to the stencil test func) this node and its children
-        var locChildren = this._children;
+        var locChildren = node._children;
         if (locChildren && locChildren.length > 0) {
             var childLen = locChildren.length;
-            this.sortAllChildren();
+            node.sortAllChildren();
             // draw children zOrder < 0
             for (var i = 0; i < childLen; i++) {
-                if (locChildren[i] && locChildren[i]._localZOrder < 0)
-                    locChildren[i].visit();
-                else
-                    break;
+                locChildren[i]._renderCmd.visit(this);
             }
-            if(this._renderCmd)
-                cc.renderer.pushRenderCommand(this._renderCmd);
-            // draw children zOrder >= 0
-            for (; i < childLen; i++) {
-                if (locChildren[i]) {
-                    locChildren[i].visit();
-                }
-            }
-        } else{
-            if(this._renderCmd)
-                cc.renderer.pushRenderCommand(this._renderCmd);
         }
 
         cc.renderer.pushRenderCommand(this._afterVisitCmd);
@@ -152,7 +138,7 @@
             node._stencil._parent = null;
         node._stencil = stencil;
         if(node._stencil)
-            node._stencil._parent = this;
+            node._stencil._parent = node;
     };
 
     proto._drawFullScreenQuadClearStencil = function () {
@@ -171,7 +157,7 @@
     };
 
     proto._onBeforeVisit = function(ctx){
-        var gl = ctx || cc._renderContext;
+        var gl = ctx || cc._renderContext, node = this._node;
         cc.ClippingNode.WebGLRenderCmd._layer++;
 
         // mask of the current layer (ie: for layer 3: 00000100)
@@ -199,20 +185,20 @@
         gl.depthMask(false);
 
         gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
-        gl.stencilOp(!this.inverted ? gl.ZERO : gl.REPLACE, gl.KEEP, gl.KEEP);
+        gl.stencilOp(!node.inverted ? gl.ZERO : gl.REPLACE, gl.KEEP, gl.KEEP);
 
         this._drawFullScreenQuadClearStencil();
 
         gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
-        gl.stencilOp(!this.inverted ? gl.REPLACE : gl.ZERO, gl.KEEP, gl.KEEP);
+        gl.stencilOp(!node.inverted ? gl.REPLACE : gl.ZERO, gl.KEEP, gl.KEEP);
 
-        if (this.alphaThreshold < 1) {            //TODO desktop
+        if (node.alphaThreshold < 1) {            //TODO desktop
             var program = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
             var alphaValueLocation = gl.getUniformLocation(program.getProgram(), cc.UNIFORM_ALPHA_TEST_VALUE_S);
             // set our alphaThreshold
             cc.glUseProgram(program.getProgram());
-            program.setUniformLocationWith1f(alphaValueLocation, this.alphaThreshold);
-            cc.setProgram(this._stencil, program);
+            program.setUniformLocationWith1f(alphaValueLocation, node.alphaThreshold);
+            cc.setProgram(node._stencil, program);
         }
     };
 

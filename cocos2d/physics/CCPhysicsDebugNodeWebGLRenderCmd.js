@@ -31,6 +31,9 @@
         this._needDraw = true;
     };
 
+    cc.PhysicsDebugNode.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
+    cc.PhysicsDebugNode.WebGLRenderCmd.prototype.constructor = cc.PhysicsDebugNode.WebGLRenderCmd;
+
     cc.PhysicsDebugNode.WebGLRenderCmd.prototype.rendering = function (ctx) {
         var node = this._node;
         if (!node._space)

@@ -112,40 +112,20 @@
         return this._transform;
     };
 
-    proto.updateStatus = function () {
-        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        if (locFlag & flags.colorDirty) {
-            //update the color
-            this._updateDisplayColor()
-        }
-
-        if (locFlag & flags.opacityDirty) {
-            //update the opacity
-            this._updateDisplayOpacity();
-        }
-
-        if (locFlag & flags.transformDirty) {
-            //update the transform
-            this.transform(this.getParentRenderCmd(), true);
-        }
-    };
-
     proto._syncStatus = function (parentCmd) {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        if (locFlag & flags.colorDirty) {
-            //update the color
+
+        if(parentCmd && (parentCmd._dirtyFlag & flags.transformDirty))
+            locFlag |= flags.transformDirty;
+
+        if (locFlag & flags.colorDirty)
             this._syncDisplayColor()
-        }
 
-        if (locFlag & flags.opacityDirty) {
-            //update the opacity
+        if (locFlag & flags.opacityDirty)
             this._syncDisplayOpacity();
-        }
 
-        if (locFlag & flags.transformDirty) {
-            //update the transform
+        if (locFlag & flags.transformDirty)
             this.transform(parentCmd);
-        }
     };
 
     proto.visit = function (parentCmd) {
@@ -154,6 +134,7 @@
         if (!node._visible)
             return;
 
+        parentCmd = parentCmd || this.getParentRenderCmd();
         if (node._parent && node._parent._renderCmd)
             this._curLevel = node._parent._renderCmd._curLevel + 1;
 
@@ -161,10 +142,10 @@
 
         //optimize performance for javascript
         currentStack.stack.push(currentStack.top);
-        cc.kmMat4Assign(_t._stackMatrix, currentStack.top);
+        //cc.kmMat4Assign(_t._stackMatrix, currentStack.top);
+        _t._syncStatus(parentCmd);
         currentStack.top = _t._stackMatrix;
 
-        _t._syncStatus(parentCmd);
         var locChildren = node._children;
         if (locChildren && locChildren.length > 0) {
             var childLen = locChildren.length;

@@ -369,7 +369,7 @@
         //set the texture's color after the it loaded
         var locColor = locRenderCmd._displayedColor;
         if (locColor.r != 255 || locColor.g != 255 || locColor.b != 255)
-            _t._changeTextureColor();
+            locRenderCmd._changeTextureColor();
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"

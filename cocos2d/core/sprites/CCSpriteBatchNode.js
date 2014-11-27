@@ -124,7 +124,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {cc.TextureAtlas}
      */
     getTextureAtlas: function () {
-        return this._renderCmd.getTexture();
+        return this._renderCmd.getTextureAtlas();
     },
 
     /**
@@ -132,7 +132,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {cc.TextureAtlas} textureAtlas
      */
     setTextureAtlas: function (textureAtlas) {
-        this._renderCmd.setTexture(textureAtlas);
+        this._renderCmd.getTextureAtlas(textureAtlas);
     },
 
     /**
