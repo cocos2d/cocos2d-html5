@@ -2043,8 +2043,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
      */
-    visit: function(){
-        this._renderCmd.visit();
+    visit: function(parentCmd){
+        this._renderCmd.visit(parentCmd);
     },
 
     /**

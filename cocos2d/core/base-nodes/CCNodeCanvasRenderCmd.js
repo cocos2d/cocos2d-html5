@@ -40,7 +40,7 @@ cc.Node._dirtyFlags = {transformDirty: 1, visibleDirty: 2, colorDirty: 4, opacit
 
 //-------------------------Base -------------------------
 cc.Node.RenderCmd = function(renderable){
-    this._dirtyFlag = 0;
+    this._dirtyFlag = 1;                           //need update the transform at first.
 
     this._node = renderable;
     this._needDraw = false;
@@ -411,6 +411,9 @@ cc.Node.RenderCmd.prototype = {
 
         if(parentNode && parentNode._cascadeOpacityEnabled && (parentCmd._dirtyFlag & flags.opacityDirty))
             locFlag |= flags.opacityDirty;
+
+        if(parentCmd && (parentCmd._dirtyFlag & flags.transformDirty))
+            locFlag |= flags.transformDirty;
 
         if (locFlag & flags.colorDirty) {
             //update the color
