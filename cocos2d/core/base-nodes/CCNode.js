@@ -870,6 +870,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
     _setHeight: function (height) {
         this._contentSize.height = height;
+        this._renderCmd._updateAnchorPointInPoint();
     },
 
     /**
