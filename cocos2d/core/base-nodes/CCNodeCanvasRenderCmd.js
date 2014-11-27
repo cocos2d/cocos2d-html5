@@ -111,6 +111,77 @@ cc.Node.RenderCmd.prototype = {
         return null;
     },
 
+    _updateDisplayColor: function (parentColor) {
+       var node = this._node;
+       var locDispColor = this._displayedColor, locRealColor = node._realColor;
+       var i, len, selChildren, item;
+       if (this._cascadeColorEnabledDirty && !node._cascadeColorEnabled) {
+           locDispColor.r = locRealColor.r;
+           locDispColor.g = locRealColor.g;
+           locDispColor.b = locRealColor.b;
+           var whiteColor = new cc.Color(255, 255, 255, 255);
+           selChildren = node._children;
+           for (i = 0, len = selChildren.length; i < len; i++) {
+               item = selChildren[i];
+               if (item && item._renderCmd)
+                   item._renderCmd._updateDisplayColor(whiteColor);
+           }
+       } else {
+           if (parentColor === undefined) {
+               var locParent = node._parent;
+               if (locParent && locParent._cascadeColorEnabled)
+                   parentColor = locParent.getDisplayedColor();
+               else
+                   parentColor = cc.color.WHITE;
+           }
+           locDispColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
+           locDispColor.g = 0 | (locRealColor.g * parentColor.g / 255.0);
+           locDispColor.b = 0 | (locRealColor.b * parentColor.b / 255.0);
+           if (node._cascadeColorEnabled) {
+               selChildren = node._children;
+               for (i = 0, len = selChildren.length; i < len; i++) {
+                   item = selChildren[i];
+                   if (item && item._renderCmd)
+                       item._renderCmd._updateDisplayColor(locDispColor);
+               }
+           }
+       }
+       this._cascadeColorEnabledDirty = false;
+        this._dirtyFlag ^= cc.Node._dirtyFlags.colorDirty;
+   },
+
+    _updateDisplayOpacity: function (parentOpacity) {
+        var node = this._node;
+        var i, len, selChildren, item;
+        if (this._cascadeOpacityEnabledDirty && !node._cascadeOpacityEnabled) {
+            this._displayedOpacity = node._realOpacity;
+            selChildren = this._children;
+            for (i = 0, len = selChildren.length; i < len; i++) {
+                item = selChildren[i];
+                if (item && item._renderCmd)
+                    item._renderCmd._updateDisplayOpacity(255);
+            }
+        } else {
+            if (parentOpacity === undefined) {
+                var locParent = node._parent;
+                parentOpacity = 255;
+                if (locParent && locParent._cascadeOpacityEnabled)
+                    parentOpacity = locParent.getDisplayedOpacity();
+            }
+            this._displayedOpacity = node._realOpacity * parentOpacity / 255.0;
+            if (this._cascadeOpacityEnabled) {
+                selChildren = this._children;
+                for (i = 0, len = selChildren.length; i < len; i++) {
+                    item = selChildren[i];
+                    if (item && item._renderCmd)
+                        item._renderCmd._updateDisplayOpacity(this._displayedOpacity);
+                }
+            }
+        }
+        this._cascadeOpacityEnabledDirty = false;
+        this._dirtyFlag ^= cc.Node._dirtyFlags.opacityDirty;
+    },
+
     _syncDisplayColor : function (parentColor) {
         var node = this._node, locDispColor = this._displayedColor, locRealColor = node._realColor;
         if (parentColor === undefined) {
@@ -136,6 +207,24 @@ cc.Node.RenderCmd.prototype = {
         }
         this._displayedOpacity = node._realOpacity * parentOpacity / 255.0;
         this._dirtyFlag ^= cc.Node._dirtyFlags.opacityDirty;
+    },
+
+    updateStatus: function () {
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        if (locFlag & flags.colorDirty) {
+            //update the color
+            this._updateDisplayColor()
+        }
+
+        if (locFlag & flags.opacityDirty) {
+            //update the opacity
+            this._updateDisplayOpacity();
+        }
+
+        if (locFlag & flags.transformDirty) {
+            //update the transform
+            this.transform(this.getParentRenderCmd(), true);
+        }
     }
 };
 
@@ -267,7 +356,7 @@ cc.Node.RenderCmd.prototype = {
                 this._transform = cc.affineTransformConcat(t, node._additionalTransform);
                 node._additionalTransformDirty = false;
             }
-            this._dirtyFlag = this._dirtyFlag ^ cc.Node._dirtyFlags.transformDirty;
+            this._dirtyFlag ^= cc.Node._dirtyFlags.transformDirty;
         }
         return this._transform;
     };
@@ -303,24 +392,6 @@ cc.Node.RenderCmd.prototype = {
             cc.renderer.pushRenderCommand(this);
         }
         _t._dirtyFlag = 0;
-    };
-
-    proto.updateStatus = function () {
-        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        if (locFlag & flags.colorDirty) {
-            //update the color
-            this._updateDisplayColor()
-        }
-
-        if (locFlag & flags.opacityDirty) {
-            //update the opacity
-            this._updateDisplayOpacity();
-        }
-
-        if (locFlag & flags.transformDirty) {
-            //update the transform
-            this.transform(this.getParentRenderCmd(), true);
-        }
     };
 
     proto._syncStatus = function (parentCmd) {
@@ -384,77 +455,6 @@ cc.Node.RenderCmd.prototype = {
         //this._dirtyFlag ^= cc.Node._dirtyFlags.opacityDirty;
     };
 
-    proto._updateDisplayColor = function (parentColor) {
-        var node = this._node;
-        var locDispColor = this._displayedColor, locRealColor = node._realColor;
-        var i, len, selChildren, item;
-        if (this._cascadeColorEnabledDirty && !node._cascadeColorEnabled) {
-            locDispColor.r = locRealColor.r;
-            locDispColor.g = locRealColor.g;
-            locDispColor.b = locRealColor.b;
-            var whiteColor = new cc.Color(255, 255, 255, 255);
-            selChildren = node._children;
-            for (i = 0, len = selChildren.length; i < len; i++) {
-                item = selChildren[i];
-                if (item && item._renderCmd)
-                    item._renderCmd._updateDisplayColor(whiteColor);
-            }
-        } else {
-            if (parentColor === undefined) {
-                var locParent = node._parent;
-                if (locParent && locParent._cascadeColorEnabled)
-                    parentColor = locParent.getDisplayedColor();
-                else
-                    parentColor = cc.color.WHITE;
-            }
-            locDispColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
-            locDispColor.g = 0 | (locRealColor.g * parentColor.g / 255.0);
-            locDispColor.b = 0 | (locRealColor.b * parentColor.b / 255.0);
-            if (node._cascadeColorEnabled) {
-                selChildren = node._children;
-                for (i = 0, len = selChildren.length; i < len; i++) {
-                    item = selChildren[i];
-                    if (item && item._renderCmd)
-                        item._renderCmd._updateDisplayColor(locDispColor);
-                }
-            }
-        }
-        this._cascadeColorEnabledDirty = false;
-        this._dirtyFlag ^= cc.Node._dirtyFlags.colorDirty;
-    };
-
-    proto._updateDisplayOpacity = function (parentOpacity) {
-        var node = this._node;
-        var i, len, selChildren, item;
-        if (this._cascadeOpacityEnabledDirty && !node._cascadeOpacityEnabled) {
-            this._displayedOpacity = node._realOpacity;
-            selChildren = this._children;
-            for (i = 0, len = selChildren.length; i < len; i++) {
-                item = selChildren[i];
-                if (item && item._renderCmd)
-                    item._renderCmd._updateDisplayOpacity(255);
-            }
-        } else {
-            if (parentOpacity === undefined) {
-                var locParent = node._parent;
-                parentOpacity = 255;
-                if (locParent && locParent._cascadeOpacityEnabled)
-                    parentOpacity = locParent.getDisplayedOpacity();
-            }
-            this._displayedOpacity = node._realOpacity * parentOpacity / 255.0;
-            if (this._cascadeOpacityEnabled) {
-                selChildren = this._children;
-                for (i = 0, len = selChildren.length; i < len; i++) {
-                    item = selChildren[i];
-                    if (item && item._renderCmd)
-                        item._renderCmd._updateDisplayOpacity(this._displayedOpacity);
-                }
-            }
-        }
-        this._cascadeOpacityEnabledDirty = false;
-        this._dirtyFlag ^= cc.Node._dirtyFlags.opacityDirty;
-    };
-
     proto.setDirtyFlag = function (dirtyFlag) {
         cc.Node.RenderCmd.prototype.setDirtyFlag.call(this, dirtyFlag);
         this._setCacheDirty();
@@ -496,7 +496,7 @@ cc.Node.RenderCmd.prototype = {
         return null;
     };
 
-//util functions
+    //util functions
     cc.Node.CanvasRenderCmd._getCompositeOperationByBlendFunc = function (blendFunc) {
         if (!blendFunc)
             return "source-over";

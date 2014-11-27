@@ -126,24 +126,43 @@
         this._bindLayerVerticesBufferData();
     };
 
-    proto._updateDisplayColor = function(parentColor){
-        cc.Node.WebGLRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
-        this._updateColor();
+    proto._syncStatus = function (parentCmd) {
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
+
+        if (colorDirty)
+            this._syncDisplayColor();
+
+        if (opacityDirty)
+            this._syncDisplayOpacity();
+
+        if(colorDirty || opacityDirty)
+            this._updateColor();
+
+        if (locFlag & flags.transformDirty) {
+            //update the transform
+            this.transform(parentCmd);
+        }
     };
 
-    proto._updateDisplayOpacity= function(parentOpacity){
-        cc.Node.WebGLRenderCmd.prototype._updateDisplayOpacity.call(this, parentOpacity);
-        this._updateColor();
-    };
+    proto.updateStatus = function(){
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
+        if(colorDirty)
+            this._updateDisplayColor();
 
-    proto._syncDisplayColor = function(parentColor){
-        cc.Node.WebGLRenderCmd.prototype._syncDisplayColor.call(this, parentColor);
-        this._updateColor();
-    };
+        if(opacityDirty)
+            this._updateDisplayOpacity();
 
-    proto._syncDisplayOpacity = function(parentOpacity){
-        cc.Node.WebGLRenderCmd.prototype._syncDisplayOpacity.call(this, parentOpacity);
-        this._updateColor();
+        if(colorDirty || opacityDirty)
+            this._updateColor();
+
+        if(this._dirtyFlag & flags.transformDirty){
+            //update the transform
+            this.transform(null, true);
+        }
     };
 
     proto._updateColor = function(){
@@ -156,7 +175,6 @@
             locSquareColors[i].a = locDisplayedOpacity;
         }
         this._bindLayerColorsBufferData();
-        this.setDirtyFlag(cc.Node._dirtyFlags.colorDirty);
     };
 
     proto._bindLayerVerticesBufferData = function(){

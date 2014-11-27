@@ -262,15 +262,11 @@
                 }
             }
 
-            if(cc._renderType === cc._RENDER_TYPE_CANVAS)
-                this._transformCmd = new cc.PhysicsSprite.CanvasRenderCmd(this);
-            else
-                this._transformCmd = new cc.PhysicsSprite.WebGLRenderCmd(this);
-            cc.renderer.pushRenderCommand(this._transformCmd);
+            cc.renderer.pushRenderCommand(this._renderCmd);
         },
 
         visit: function(){
-            cc.renderer.pushRenderCommand(this._transformCmd);
+            cc.renderer.pushRenderCommand(this._renderCmd);
             cc.Sprite.prototype.visit.call(this);
         },
 
@@ -393,58 +389,7 @@
          * @return {cc.AffineTransform}
          */
         getNodeToParentTransform:function () {
-            var _t = this;
-            if(_t._usingNormalizedPosition && _t._parent){        //TODO need refactor
-                var conSize = _t._parent._contentSize;
-                _t._position.x = _t._normalizedPosition.x * conSize.width;
-                _t._position.y = _t._normalizedPosition.y * conSize.height;
-                _t._normalizedPositionDirty = false;
-            }
-
-            return this._renderCmd._getNodeToParentTransform();
-        },
-
-        _nodeToParentTransformForCanvas: function () {
-            if (this.dirty) {
-                var t = this._transform;// quick reference
-                // base position
-                var locBody = this._body, locScaleX = this._scaleX, locScaleY = this._scaleY, locAnchorPIP = this._anchorPointInPoints;
-                t.tx = locBody.p.x;
-                t.ty = locBody.p.y;
-
-                // rotation Cos and Sin
-                var radians = -locBody.a;
-                var Cos = 1, Sin = 0;
-                if (radians) {
-                    Cos = Math.cos(radians);
-                    Sin = Math.sin(radians);
-                }
-
-                // base abcd
-                t.a = t.d = Cos;
-                t.b = -Sin;
-                t.c = Sin;
-
-                // scale
-                if (locScaleX !== 1 || locScaleY !== 1) {
-                    t.a *= locScaleX;
-                    t.c *= locScaleX;
-                    t.b *= locScaleY;
-                    t.d *= locScaleY;
-                }
-
-                // adjust anchorPoint
-                t.tx += Cos * -locAnchorPIP.x * locScaleX + -Sin * locAnchorPIP.y * locScaleY;
-                t.ty -= Sin * -locAnchorPIP.x * locScaleX + Cos * locAnchorPIP.y * locScaleY;
-
-                // if ignore anchorPoint
-                if (this._ignoreAnchorPointForPosition) {
-                    t.tx += locAnchorPIP.x;
-                    t.ty += locAnchorPIP.y;
-                }
-                this._transformDirty = false;
-            }
-            return this._transform;
+            return this._renderCmd.getNodeToParentTransform();
         },
 
         /**
@@ -462,6 +407,13 @@
          */
         setIgnoreBodyRotation: function(b) {
             this._ignoreBodyRotation = b;
+        },
+
+        _createRenderCmd: function(){
+            if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+                return new cc.PhysicsSprite.CanvasRenderCmd(this);
+            else
+                return new cc.PhysicsSprite.WebGLRenderCmd(this);
         }
     };
     cc.PhysicsSprite = cc.Sprite.extend(chipmunkAPI);
