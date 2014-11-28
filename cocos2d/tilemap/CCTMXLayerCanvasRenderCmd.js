@@ -24,7 +24,7 @@
 
 (function(){
     cc.TMXLayer.CanvasRenderCmd = function(renderableObject){
-        cc.Node.CanvasRenderCmd.call(this, renderableObject);
+        cc.SpriteBatchNode.CanvasRenderCmd.call(this, renderableObject);
         this._childrenRenderCmds = [];
         this._needDraw = true;
 
@@ -40,9 +40,10 @@
         this._cacheTexture = tempTexture;
         // This class uses cache, so its default cachedParent should be himself
         this._cachedParent = this;
+        this._cacheDirty = false;
     };
 
-    var proto = cc.TMXLayer.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
+    var proto = cc.TMXLayer.CanvasRenderCmd.prototype = Object.create(cc.SpriteBatchNode.CanvasRenderCmd.prototype);
     proto.constructor = cc.TMXLayer.CanvasRenderCmd;
 
     proto._copyRendererCmds = function (rendererCmds) {
@@ -57,29 +58,43 @@
     };
 
     proto._renderingChildToCache = function (scaleX, scaleY) {
-        var locNode = this._node;
-        if (locNode._cacheDirty) {
-            var locCacheCmds = this._childrenRenderCmds, locCacheContext = this._cacheContext, locCanvas = this._cacheCanvas;
+        if (this._cacheDirty) {
+//            var locCacheCmds = this._childrenRenderCmds, locCacheContext = this._cacheContext, locCanvas = this._cacheCanvas;
+//
+//            locCacheContext.save();
+//            locCacheContext.clearRect(0, 0, locCanvas.width, -locCanvas.height);
+//            //reset the cache context
+//            var t = cc.affineTransformInvert(this._worldTransform);
+//            locCacheContext.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+//
+//            for (var i = 0, len = locCacheCmds.length; i < len; i++) {
+//                locCacheCmds[i].rendering(locCacheContext, scaleX, scaleY);
+//                if (locCacheCmds[i])
+//                    locCacheCmds[i]._cacheDirty = false;
+//            }
+//            locCacheContext.restore();
+//            this._cacheDirty = false;
 
-            locCacheContext.save();
-            locCacheContext.clearRect(0, 0, locCanvas.width, -locCanvas.height);
-            //reset the cache context
-            var t = cc.affineTransformInvert(this._worldTransform);
-            locCacheContext.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
-
-            for (var i = 0, len = locCacheCmds.length; i < len; i++) {
-                locCacheCmds[i].rendering(locCacheContext, scaleX, scaleY);
-                if (locCacheCmds[i]._node)
-                    locCacheCmds[i]._node._cacheDirty = false;
+            var renderer = cc.renderer;
+            var node = this._node;
+            var instanceID = node.__instanceId;
+            var locChildren = node._children;
+            node.sortAllChildren();
+            for (var i = 0, len =  locChildren.length; i < len; i++) {
+                if (locChildren[i]){
+                    locChildren[i].visit();
+                }
             }
-            locCacheContext.restore();
-            locNode._cacheDirty = false;
+
+            //copy cached render cmd array to TMXLayer renderer
+            node._renderCmd._copyRendererCmds(renderer._cacheToCanvasCmds[instanceID]);
+            this._cacheDirty = false;
         }
     };
 
     proto.rendering = function (ctx, scaleX, scaleY) {
         var node = this._node;
-        var alpha = node._displayedOpacity / 255;
+        var alpha = this._displayedOpacity / 255;
         if (alpha <= 0)
             return;
 
@@ -156,7 +171,7 @@
         return this._cacheTexture;
     };
 
-    proto.visit = function(ctx){
+    proto.visit = function(parentCmd){
         var node = this._node;
         //TODO it will implement dynamic compute child cutting automation.
         var i, len, locChildren = node._children;
@@ -167,35 +182,35 @@
         if( node._parent)
             node._curLevel = node._parent._curLevel + 1;
 
-        node.transform();
+        node.transform(node._parent && node._parent._renderCmd);
 
-        if (node._cacheDirty) {
-            var locCacheContext = this._cacheContext, locCanvas = this._cacheCanvas, locView = cc.view,
-                instanceID = node.__instanceId, renderer = cc.renderer;
+//        if (this._cacheDirty) {
+//            var locCacheContext = this._cacheContext, locCanvas = this._cacheCanvas, locView = cc.view,
+//                instanceID = node.__instanceId, renderer = cc.renderer;
             //begin cache
-            renderer._turnToCacheMode(instanceID);
-
-            node.sortAllChildren();
-            for (i = 0, len =  locChildren.length; i < len; i++) {
-                if (locChildren[i]){
-                    locChildren[i].visit();
-                    locChildren[i]._cacheDirty = false;
-                }
-            }
+//            renderer._turnToCacheMode(instanceID);
+//
+//            node.sortAllChildren();
+//            for (i = 0, len =  locChildren.length; i < len; i++) {
+//                if (locChildren[i]){
+//                    locChildren[i].visit(this);
+//                }
+//            }
 
             //copy cached render cmd array to TMXLayer renderer
-            node._renderCmd._copyRendererCmds(renderer._cacheToCanvasCmds[instanceID]);
+//            node._renderCmd._copyRendererCmds(renderer._cacheToCanvasCmds[instanceID]);
 
-            locCacheContext.save();
-            locCacheContext.clearRect(0, 0, locCanvas.width, -locCanvas.height);
-            var t = cc.affineTransformInvert(this._worldTransform);
-            locCacheContext.transform(t.a, t.c, t.b, t.d, t.tx * locView.getScaleX(), -t.ty * locView.getScaleY());
+//            locCacheContext.save();
+//            locCacheContext.clearRect(0, 0, locCanvas.width, -locCanvas.height);
+//            var t = cc.affineTransformInvert(this._worldTransform);
+//            locCacheContext.transform(t.a, t.c, t.b, t.d, t.tx * locView.getScaleX(), -t.ty * locView.getScaleY());
 
             //draw to cache canvas
-            renderer._renderingToCacheCanvas(locCacheContext, instanceID);
-            locCacheContext.restore();
-            node._cacheDirty = false;
-        }
+//            renderer._renderingToCacheCanvas(locCacheContext, instanceID);
+//            locCacheContext.restore();
+//            this._cacheDirty = false
+//        }
+        proto._renderingChildToCache();
         cc.renderer.pushRenderCommand(node._renderCmd);
     };
 
@@ -237,4 +252,9 @@
         this._node.width = locCanvas.width;
         this._node.height = locCanvas.height;
     };
+
+    proto.initImageSize = function(){
+        var node = this._node;
+        node.tileset.imageSize = this._originalTexture.getContentSizeInPixels();
+    }
 })();
