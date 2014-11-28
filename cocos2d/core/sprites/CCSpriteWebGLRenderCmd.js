@@ -68,6 +68,7 @@
 
             //put it in descendants array of batch node
             node._batchNode.appendChild(child);
+            child._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
             if (!node._reorderChildDirty)
                 node._setReorderChildDirtyRecursively();
         }
