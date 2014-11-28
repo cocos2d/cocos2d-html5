@@ -104,10 +104,10 @@
         var quad = null, node = this._node;
         if (node._batchNode) {
             var batchQuads = node._batchNode.textureAtlas.quads;
-            quad = batchQuads[this.atlasIndex + particle.atlasIndex];
+            quad = batchQuads[node.atlasIndex + particle.atlasIndex];
             node._batchNode.textureAtlas.dirty = true;
         } else
-            quad = this._quads[this._particleIdx];
+            quad = this._quads[node._particleIdx];
 
         var r, g, b, a;
         if (node._opacityModifyRGB) {
@@ -181,17 +181,17 @@
     };
 
     proto.rendering = function (ctx) {
-        var _t = this._node;
-        if (!_t._texture)
+        var node = this._node;
+        if (!node._texture)
             return;
 
         var gl = ctx || cc._renderContext;
 
-        _t._shaderProgram.use();
-        _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);//setUniformForModelViewAndProjectionMatrixWithMat4();
+        this._shaderProgram.use();
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);     //setUniformForModelViewAndProjectionMatrixWithMat4();
 
-        cc.glBindTexture2D(_t._texture);
-        cc.glBlendFuncForParticle(_t._blendFunc.src, _t._blendFunc.dst);
+        cc.glBindTexture2D(node._texture);
+        cc.glBlendFuncForParticle(node._blendFunc.src, node._blendFunc.dst);
 
         //
         // Using VBO without VAO
@@ -204,7 +204,7 @@
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);            // tex coords
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
-        gl.drawElements(gl.TRIANGLES, _t._particleIdx * 6, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.TRIANGLES, node._particleIdx * 6, gl.UNSIGNED_SHORT, 0);
     };
 
     proto.initTexCoordsWithRect = function(pointRect){
@@ -340,7 +340,7 @@
     };
 
     proto._allocMemory = function(){
-        var node  = this;
+        var node  = this._node;
         //cc.assert((!this._quads && !this._indices), "Memory already allocated");
         if(node._batchNode){
             cc.log("cc.ParticleSystem._allocMemory(): Memory should not be allocated when not using batchNode");

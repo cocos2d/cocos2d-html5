@@ -1776,7 +1776,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                         cc.pIn(tmp, selParticle.modeA.dir);
                         cc.pMultIn(tmp, dt);
                         cc.pAddIn(selParticle.pos, tmp);
-
                     } else {
                         // Mode B: radius movement
                         var selModeB = selParticle.modeB;

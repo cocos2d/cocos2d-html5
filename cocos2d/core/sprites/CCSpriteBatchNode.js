@@ -422,6 +422,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         // XXX: so, it should be AFTER the insertQuad
         sprite.dirty = true;
         sprite.updateTransform();
+
         sprite._renderCmd._setCachedParent(this);
         this._children.splice(index, 0, sprite);
     },
@@ -629,9 +630,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             if (childrenArr.length > 0) {
                 //first sort all children recursively based on zOrder
                 this._arrayMakeObjectsPerformSelector(childrenArr, cc.Node._stateCallbackType.sortAllChildren);
-
                 this._renderCmd.updateChildrenAtlasIndex(childrenArr);
-
             }
             this._reorderChildDirty = false;
         }

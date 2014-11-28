@@ -142,7 +142,6 @@
 
         //optimize performance for javascript
         currentStack.stack.push(currentStack.top);
-        //cc.kmMat4Assign(_t._stackMatrix, currentStack.top);
         _t._syncStatus(parentCmd);
         currentStack.top = _t._stackMatrix;
 

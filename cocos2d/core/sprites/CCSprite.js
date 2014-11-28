@@ -387,7 +387,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      */
     setVisible:function (visible) {
         cc.Node.prototype.setVisible.call(this, visible);
-        this.setDirtyRecursively(true);
+        this._renderCmd.setDirtyRecursively(true);
     },
 
     /**
@@ -409,22 +409,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     //
     // cc.Node property overloads
     //
-
-	/**
-	 * Sets recursively the dirty flag.
-	 * Used only when parent is cc.SpriteBatchNode
-	 * @param {Boolean} value
-	 */
-	setDirtyRecursively:function (value) {
-		this._recursiveDirty = value;
-		this.dirty = value;
-		// recursively set dirty
-		var locChildren = this._children, child, l = locChildren ? locChildren.length : 0;
-		for (var i = 0; i < l; i++) {
-			child = locChildren[i];
-			(child instanceof cc.Sprite) && child.setDirtyRecursively(true);
-		}
-	},
 
     /**
      * Sets whether ignore anchor point for positioning

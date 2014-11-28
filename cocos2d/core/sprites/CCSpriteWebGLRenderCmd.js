@@ -31,12 +31,30 @@
         this._quad = new cc.V3F_C4B_T2F_Quad();
         this._quadWebBuffer = cc._renderContext.createBuffer();
         this._quadDirty = true;
+        this._dirty = false;
+        this._recursiveDirty = false;
     };
 
     var proto = cc.Sprite.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.Sprite.WebGLRenderCmd;
 
     proto.updateBlendFunc = function (blendFunc) {};
+
+    proto.setDirtyFlag = function(dirtyFlag){
+        cc.Node.WebGLRenderCmd.prototype.setDirtyFlag.call(this, dirtyFlag);
+        this._dirty = true;
+    };
+
+    proto.setDirtyRecursively = function (value) {
+        this._recursiveDirty = value;
+        this._dirty = value;
+        // recursively set dirty
+        var locChildren = this._node._children, child, l = locChildren ? locChildren.length : 0;
+        for (var i = 0; i < l; i++) {
+            child = locChildren[i];
+            (child instanceof cc.Sprite) && child.setDirtyRecursively(value);
+        }
+    };
 
     proto._setBatchNodeForAddChild = function (child) {
         var node = this._node;
@@ -270,7 +288,7 @@
             } else {
                 // no need to set it recursively
                 // update dirty_, don't update recursiveDirty_
-                node.dirty = true;
+                this._dirty = true;
             }
         }
         // self render
@@ -316,11 +334,11 @@
         }
     };
 
-    proto.updateTransform = function () {
+    proto.updateTransform = function () {                                    //called only at batching.
         var _t = this, node = this._node;
 
         // recalculate matrix only if it is dirty
-        if (node.dirty) {
+        if (this._dirty) {
             var locQuad = _t._quad, locParent = node._parent;
             // If it is not visible, or one of its ancestors is not visible, then do nothing:
             if (!node._visible || ( locParent && locParent != node._batchNode && locParent._shouldBeHidden)) {
@@ -328,11 +346,14 @@
                 node._shouldBeHidden = true;
             } else {
                 node._shouldBeHidden = false;
+                if(this._dirtyFlag !== 0){    //because changing color and opacity uses dirty flag at visit, but visit doesn't call at batching.
+                    this.updateStatus();
+                    this._dirtyFlag = 0;
+                }
 
                 if (!locParent || locParent == node._batchNode) {
                     node._transformToBatch = _t.getNodeToParentTransform();
                 } else {
-                    //cc.assert(_t._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
                     node._transformToBatch = cc.affineTransformConcat(_t.getNodeToParentTransform(), locParent._transformToBatch);
                 }
 
@@ -383,12 +404,12 @@
             }
             node.textureAtlas.updateQuad(locQuad, node.atlasIndex);
             node._recursiveDirty = false;
-            node.dirty = false;
+            this._dirty = false;
         }
 
         // recursively iterate over children
         if (node._hasChildren)
-            node._arrayMakeObjectsPerformSelector(_t._children, cc.Node._stateCallbackType.updateTransform);
+            node._arrayMakeObjectsPerformSelector(node._children, cc.Node._stateCallbackType.updateTransform);
 
         if (cc.SPRITE_DEBUG_DRAW) {
             // draw bounding box

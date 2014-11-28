@@ -35,8 +35,8 @@ cc.CustomRenderCmd = function (target, func) {
     }
 };
 
-
-cc.Node._dirtyFlags = {transformDirty: 1, visibleDirty: 2, colorDirty: 4, opacityDirty: 8, cacheDirty:16, orderDirty:32, textDirty:64};
+cc.Node._dirtyFlags = {transformDirty: 1 << 0, visibleDirty: 1 << 1, colorDirty: 1 << 2, opacityDirty: 1 << 3, cacheDirty: 1 << 4,
+    orderDirty: 1 << 5, textDirty: 1 << 6, all: (1 << 7) - 1};
 
 //-------------------------Base -------------------------
 cc.Node.RenderCmd = function(renderable){

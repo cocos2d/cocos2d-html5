@@ -778,10 +778,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Boolean} visible Pass true to make the node visible, false to hide the node.
      */
     setVisible: function (visible) {
-        if(this._visible != visible){
+        if(this._visible !== visible){
             this._visible = visible;
             //if(visible)
-            //    this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.visibleDirty);
+            this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
             cc.renderer.childrenOrderDirty = true;
         }
     },
@@ -1420,6 +1420,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         cc.renderer.childrenOrderDirty = this._reorderChildDirty = true;
         this._children.push(child);
         child._setLocalZOrder(z);
+    },
+
+    setNodeDirty: function(){
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /** Reorders a child according to a new z value. <br/>
