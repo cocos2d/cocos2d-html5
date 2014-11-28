@@ -54,6 +54,9 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
     proto.constructor = cc.LabelTTF.RenderCmd;
     proto.updateStatus = function () {
+        if(this._node._string === "MotionStreak Test"){
+            void 0;
+        }
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
         if (locFlag & flags.colorDirty) {
             //update the color
@@ -80,7 +83,8 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
         if (locFlag & flags.colorDirty) {
             //update the color
-            this._syncDisplayColor()
+            this._syncDisplayColor();
+            this._setColorsString();
         }
 
         if (locFlag & flags.opacityDirty) {
@@ -389,16 +393,6 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
     var proto = cc.LabelTTF.CanvasRenderCmd.prototype;
     proto.constructor = cc.LabelTTF.CanvasRenderCmd;
-
-    proto._updateDisplayedOpacity = function (parentOpacity) {
-        cc.Sprite.CanvasRenderCmd.prototype._updateDisplayedOpacity.call(this, parentOpacity);
-        this._setColorsString();
-    };
-
-    proto._updateDisplayedColor = function (parentColor) {
-        cc.Sprite.CanvasRenderCmd.prototype._updateDisplayedColor.call(this, parentColor);
-        this._setColorsString();
-    };
 
     proto._setColorsString = function () {
         this.setDirtyFlag(cc.Node._dirtyFlags.textDirty);
