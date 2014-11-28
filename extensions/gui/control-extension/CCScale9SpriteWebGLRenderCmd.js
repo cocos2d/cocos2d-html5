@@ -22,32 +22,27 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * cc.PhysicsDebugNode's rendering objects of WebGL
- */
-(function(){
-    cc.PhysicsDebugNode.WebGLRenderCmd = function (renderableObject) {
-        cc.Node.WebGLRenderCmd.call(this, renderableObject);
-        this._needDraw = true;
+(function() {
+    cc.Scale9Sprite.WebGLRenderCmd = function (renderable) {
+        cc.Node.WebGLRenderCmd.call(this, renderable);
+        this._cachedParent = null;
+        this._cacheDirty = false;
     };
 
-    cc.PhysicsDebugNode.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
-    cc.PhysicsDebugNode.WebGLRenderCmd.prototype.constructor = cc.PhysicsDebugNode.WebGLRenderCmd;
+    var proto = cc.Scale9Sprite.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
+    proto.constructor = cc.Scale9Sprite.WebGLRenderCmd;
 
-    cc.PhysicsDebugNode.WebGLRenderCmd.prototype.rendering = function (ctx) {
-        var node = this._node;
-        if (!node._space)
+    proto.visit = function(){
+        if(!this._visible){
             return;
+        }
 
-        node._space.eachShape(cc.DrawShape.bind(node));
-        node._space.eachConstraint(cc.DrawConstraint.bind(node));
-
-        //cc.DrawNode.prototype.draw.call(node);
-        cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
-        this._shaderProgram.use();
-        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
-        node._render();
-
-        node.clear();
+        if (this._positionsAreDirty) {
+            this._updatePositions();
+            this._positionsAreDirty = false;
+            this._scale9Dirty = true;
+        }
+        cc.Node.prototype.visit.call(this, ctx);
     };
+
 })();

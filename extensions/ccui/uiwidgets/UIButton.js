@@ -834,10 +834,11 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
      */
     setTitleText: function (text) {
         this._titleRenderer.setString(text);
-        if (this._ignoreSize)
-        {
+        if (this._ignoreSize){
             var s = this.getVirtualRendererSize();
             this.setContentSize(s);
+        }else{
+            this._titleRenderer._renderCmd._updateTTF();
         }
     },
 

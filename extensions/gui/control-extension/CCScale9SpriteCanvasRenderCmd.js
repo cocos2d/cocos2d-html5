@@ -22,32 +22,42 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * cc.PhysicsDebugNode's rendering objects of WebGL
- */
-(function(){
-    cc.PhysicsDebugNode.WebGLRenderCmd = function (renderableObject) {
-        cc.Node.WebGLRenderCmd.call(this, renderableObject);
-        this._needDraw = true;
+(function() {
+    cc.Scale9Sprite.CanvasRenderCmd = function (renderable) {
+        cc.Node.CanvasRenderCmd.call(this, renderable);
+        this._cachedParent = null;
+        this._cacheDirty = false;
     };
 
-    cc.PhysicsDebugNode.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
-    cc.PhysicsDebugNode.WebGLRenderCmd.prototype.constructor = cc.PhysicsDebugNode.WebGLRenderCmd;
+    var proto = cc.Scale9Sprite.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
+    proto.constructor = cc.Scale9Sprite.CanvasRenderCmd;
 
-    cc.PhysicsDebugNode.WebGLRenderCmd.prototype.rendering = function (ctx) {
+    proto.visit = function(){
         var node = this._node;
-        if (!node._space)
+        if(!node._visible){
             return;
+        }
 
-        node._space.eachShape(cc.DrawShape.bind(node));
-        node._space.eachConstraint(cc.DrawConstraint.bind(node));
+        if (node._positionsAreDirty) {
+            node._updatePositions();
+            node._positionsAreDirty = false;
+            node._scale9Dirty = true;
+        }
+        node._scale9Dirty = false;
+        node._cacheScale9Sprite();
 
-        //cc.DrawNode.prototype.draw.call(node);
-        cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
-        this._shaderProgram.use();
-        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
-        node._render();
-
-        node.clear();
+        cc.Node.CanvasRenderCmd.prototype.visit.call(this, ctx);
     };
+
+    proto.transform = function(parentCmd){
+        var node = this._node;
+        node._cacheScale9Sprite();
+        cc.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd);
+
+        var children = node._children;
+        for(var i=0; i<children.length; i++){
+            children[i]._renderCmd.transform(this);
+        }
+    };
+
 })();
