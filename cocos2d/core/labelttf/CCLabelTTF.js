@@ -134,6 +134,11 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return true;
     },
 
+    setColor: function(color){
+        cc.Sprite.prototype.setColor.call(this, color);
+        this._renderCmd._setColorsString();
+    },
+
     _setUpdateTextureDirty: function () {
         this._needUpdateTexture = true;
         this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.textDirty);
