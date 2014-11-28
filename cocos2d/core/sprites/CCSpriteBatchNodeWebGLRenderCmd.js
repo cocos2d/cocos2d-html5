@@ -39,13 +39,37 @@
         if (this._textureAtlas.totalQuads === 0)
             return;
 
-        //cc.nodeDrawSetup(this);
         this._shaderProgram.use();
         this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
         node._arrayMakeObjectsPerformSelector(node._children, cc.Node._stateCallbackType.updateTransform);
         cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
 
         this._textureAtlas.drawQuads();
+    };
+
+    proto.visit = function(parentCmd){
+        var _t = this, node = this._node;
+        // quick return if not visible
+        if (!node._visible)
+            return;
+
+        parentCmd = parentCmd || this.getParentRenderCmd();
+        if (node._parent && node._parent._renderCmd)
+            this._curLevel = node._parent._renderCmd._curLevel + 1;
+
+        var currentStack = cc.current_stack;
+
+        //optimize performance for javascript
+        currentStack.stack.push(currentStack.top);
+        _t._syncStatus(parentCmd);
+        currentStack.top = _t._stackMatrix;
+
+        node.sortAllChildren();
+
+        cc.renderer.pushRenderCommand(this);
+
+        //optimize performance for javascript
+        currentStack.top = currentStack.stack.pop();
     };
 
     proto.checkAtlasCapacity = function(index){

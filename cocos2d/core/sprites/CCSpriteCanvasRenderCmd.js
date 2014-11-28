@@ -37,6 +37,7 @@
         };
         this._blendFuncStr = "source-over";
         this._colorized = false;
+        this._needSetBlend = false;
 
         this._originalTexture = null;
     };
@@ -45,6 +46,8 @@
     proto.constructor = cc.Sprite.CanvasRenderCmd;
 
     proto._init = function () {};
+
+    proto.setDirtyRecursively = function (value) {};
 
     proto._resetForBatchNode = function () {};
 
@@ -71,6 +74,7 @@
 
     proto.updateBlendFunc = function (blendFunc) {
         this._blendFuncStr = cc.Node.CanvasRenderCmd._getCompositeOperationByBlendFunc(blendFunc);
+        this._needSetBlend = (this._blendFuncStr !== "source-over");
     };
 
     proto._setBatchNodeForAddChild = function (child) {
@@ -108,14 +112,10 @@
             node = self._node;
 
         var context = ctx || cc._renderContext,
-            locTextureCoord = self._textureCoord;
+            locTextureCoord = self._textureCoord, alpha = (this._displayedOpacity / 255);
 
-        if (node._texture && (locTextureCoord.width === 0 || locTextureCoord.height === 0))
-            return;
-        if (!locTextureCoord.validRect && this._displayedOpacity === 0)
-            return;  //draw nothing
-
-        if (node._texture && !node._texture._isLoaded)  //set texture but the texture isn't loaded.
+        if ((node._texture && ((locTextureCoord.width === 0 || locTextureCoord.height === 0)            //set texture but the texture isn't loaded.
+                || !node._texture._isLoaded)) || alpha === 0)
             return;
 
         var t = this._worldTransform,
@@ -125,15 +125,15 @@
             locHeight = node._rect.height,
             image, curColor, contentSize;
 
-        var blendChange = (this._blendFuncStr !== "source-over"), alpha = (this._displayedOpacity / 255);
+
 
         if (t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1 || node._flippedX || node._flippedY) {
             context.save();
 
-            context.globalAlpha = alpha;
+            context.globalAlpha = alpha;         //cache
             //transform
-            context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
-            if (blendChange)
+            context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, (cc.view._visibleRect.height-t.ty) * scaleY);
+            if (this._needSetBlend)
                 context.globalCompositeOperation = this._blendFuncStr;
 
             if (node._flippedX) {
@@ -147,7 +147,6 @@
 
             if (node._texture) {
                 image = node._texture._htmlElementObj;
-
                 if (node._texture._pattern != "") {
                     context.save();
                     context.fillStyle = context.createPattern(image, node._texture._pattern);
@@ -188,7 +187,7 @@
             }
             context.restore();
         } else {
-            if (blendChange) {
+            if (this._needSetBlend) {
                 context.save();
                 context.globalCompositeOperation = this._blendFuncStr;
             }
@@ -234,7 +233,7 @@
                     context.fillRect((t.tx + locX) * scaleX, (-t.ty + locY) * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
                 }
             }
-            if (blendChange)
+            if (this._needSetBlend)
                 context.restore();
         }
         cc.g_NumberOfDraws++;
@@ -298,7 +297,7 @@
         }
     };
 
-    proto.updateTransform = function () {
+    proto.updateTransform = function () {      //TODO need delete, because Canvas needn't
         var _t = this, node = this._node;
 
         // re-calculate matrix only if it is dirty
