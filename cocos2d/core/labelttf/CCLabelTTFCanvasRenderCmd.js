@@ -54,9 +54,6 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
     proto.constructor = cc.LabelTTF.RenderCmd;
     proto.updateStatus = function () {
-        if(this._node._string === "MotionStreak Test"){
-            void 0;
-        }
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
         if (locFlag & flags.colorDirty) {
             //update the color

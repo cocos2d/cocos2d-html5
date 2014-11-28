@@ -134,11 +134,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return true;
     },
 
-    setColor: function(a, b, c, d){
-        if(this._string === "MotionStreak Test"){
-            void 0;
-        }
-        cc.Sprite.prototype.setColor.call(this, a, b, c, d);
+    setColor: function(color){
+        cc.Sprite.prototype.setColor.call(this, color);
         this._renderCmd._setColorsString();
     },
 
