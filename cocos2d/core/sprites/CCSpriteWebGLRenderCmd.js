@@ -68,7 +68,6 @@
 
             //put it in descendants array of batch node
             node._batchNode.appendChild(child);
-            child._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
             if (!node._reorderChildDirty)
                 node._setReorderChildDirtyRecursively();
         }
@@ -410,7 +409,7 @@
 
         // recursively iterate over children
         if (node._hasChildren)
-            node._arrayMakeObjectsPerformSelector(_t._children, cc.Node._stateCallbackType.updateTransform);
+            node._arrayMakeObjectsPerformSelector(node._children, cc.Node._stateCallbackType.updateTransform);
 
         if (cc.SPRITE_DEBUG_DRAW) {
             // draw bounding box

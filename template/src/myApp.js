@@ -38,17 +38,12 @@ var MyLayer = cc.Layer.extend({
         // add the label as a child to this layer
         this.addChild(this.helloLabel, 5);
 
-        var batchNode = new cc.SpriteBatchNode(s_HelloWorld, 5);
-        this.addChild(batchNode, 1);
-
         // add "Helloworld" splash screen"
         this.sprite = new cc.Sprite(s_HelloWorld);
         this.sprite.setAnchorPoint(0.5, 0.5);
-        this.sprite.setColor(cc.color.RED);
         this.sprite.setPosition(size.width / 2, size.height / 2);
         this.sprite.setScale(size.height / this.sprite.getContentSize().height);
-        batchNode.addChild(this.sprite, 0);
-        window.sprite = this.sprite;
+        this.addChild(this.sprite, 0);
     }
 });
 

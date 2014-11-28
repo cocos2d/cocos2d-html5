@@ -1422,6 +1422,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         child._setLocalZOrder(z);
     },
 
+    setNodeDirty: function(){
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
+    },
+
     /** Reorders a child according to a new z value. <br/>
      * The child MUST be already added.
      * @function
