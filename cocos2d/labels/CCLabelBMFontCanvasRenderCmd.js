@@ -54,14 +54,6 @@
         }
     };
 
-    proto._updateCharColorAndOpacity = function(fontChar){
-        // Color MUST be set before opacity, since opacity might change color if OpacityModifyRGB is on
-//        cc.Node.prototype.updateDisplayedColor.call(fontChar, this._displayedColor);
-//        cc.Node.prototype.updateDisplayedOpacity.call(fontChar, this._displayedOpacity);
-        fontChar.updateDisplayedColor(this._displayedColor);
-        fontChar.updateDisplayedOpacity(this._displayedOpacity);
-    };
-
     proto._updateFntFileTexture = function(){
         var node = this._node;
         node._originalTexture = node.texture;

@@ -461,7 +461,7 @@
 
         if (cc.SPRITE_DEBUG_DRAW === 1 || node._showNode) {
             // draw bounding box
-            var locQuad = node._quad;
+            var locQuad = this._quad;
             var verticesG1 = [
                 cc.p(locQuad.tl.vertices.x, locQuad.tl.vertices.y),
                 cc.p(locQuad.bl.vertices.x, locQuad.bl.vertices.y),

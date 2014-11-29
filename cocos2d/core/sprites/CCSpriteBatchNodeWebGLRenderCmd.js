@@ -47,13 +47,16 @@
         this._textureAtlas.drawQuads();
     };
 
+    proto.updateStatus = function(){
+        cc.Node.WebGLRenderCmd.prototype.updateStatus.call(this);
+    };
+
     proto.visit = function(parentCmd){
         var _t = this, node = this._node;
         // quick return if not visible
         if (!node._visible)
             return;
 
-        parentCmd = parentCmd || this.getParentRenderCmd();
         if (node._parent && node._parent._renderCmd)
             this._curLevel = node._parent._renderCmd._curLevel + 1;
 
@@ -61,7 +64,7 @@
 
         //optimize performance for javascript
         currentStack.stack.push(currentStack.top);
-        _t._syncStatus(parentCmd);
+        _t.updateStatus();                       //because batchNode doesn't visit its children.
         currentStack.top = _t._stackMatrix;
 
         node.sortAllChildren();
