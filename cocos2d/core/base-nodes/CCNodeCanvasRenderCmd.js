@@ -418,20 +418,25 @@ cc.Node.RenderCmd.prototype = {
         if(parentCmd && (parentCmd._dirtyFlag & flags.transformDirty))
             locFlag |= flags.transformDirty;
 
-        if (locFlag & flags.colorDirty) {
-            //update the color
-            this._syncDisplayColor()
-        }
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty,
+            transformDirty = locFlag & flags.transformDirty;
 
-        if (locFlag & flags.opacityDirty) {
+        if (colorDirty)
+            //update the color
+            this._syncDisplayColor();
+
+        if (opacityDirty)
             //update the opacity
             this._syncDisplayOpacity();
-        }
 
-        if (locFlag & flags.transformDirty) {
+        if(colorDirty)
+            this._updateColor();
+
+        if (transformDirty)
             //update the transform
             this.transform(parentCmd);
-        }
+
     };
 
     proto._syncDisplayColor = function (parentColor) {
