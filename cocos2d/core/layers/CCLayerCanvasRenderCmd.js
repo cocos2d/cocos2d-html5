@@ -49,7 +49,6 @@
             //limit: 1. its children's blendfunc are invalid.
             this._isBaked = this._cacheDirty = true;
 
-            this._cachedParent = this;
             var children = this._node._children;
             for(var i = 0, len = children.length; i < len; i++)
                 children[i]._renderCmd._setCachedParent(this);
@@ -68,7 +67,6 @@
             this._isBaked = false;
             this._cacheDirty = true;
 
-            this._cachedParent = null;
             var children = this._node._children;
             for(var i = 0, len = children.length; i < len; i++)
                 children[i]._renderCmd._setCachedParent(null);

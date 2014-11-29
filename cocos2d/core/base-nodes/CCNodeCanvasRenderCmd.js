@@ -469,6 +469,8 @@ cc.Node.RenderCmd.prototype = {
     proto.setDirtyFlag = function (dirtyFlag) {
         cc.Node.RenderCmd.prototype.setDirtyFlag.call(this, dirtyFlag);
         this._setCacheDirty();
+        if(this._cachedParent)
+            this._cachedParent.setDirtyFlag(dirtyFlag);
     };
 
     proto._setCacheDirty = function () {
