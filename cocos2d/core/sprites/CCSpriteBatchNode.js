@@ -648,6 +648,7 @@ var _p = cc.SpriteBatchNode.prototype;
 
 // Override properties
 cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
+cc.defineGetterSetter(_p, "textureAtlas", _p.getTextureAtlas, _p.setTextureAtlas);
 
 // Extended properties
 /** @expose */

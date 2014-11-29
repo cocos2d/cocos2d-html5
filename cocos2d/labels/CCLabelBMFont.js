@@ -86,11 +86,9 @@ cc.LABEL_AUTOMATIC_WIDTH = -1;
  * var label3 = new cc.LabelBMFont("This is a \n test case", "test.fnt", 200, cc.TEXT_ALIGNMENT_LEFT, cc.p(0,0));
  */
 cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
-
     //property string is Getter and Setter.
     //property textAlign is Getter and Setter.
     //property boundingWidth is Getter and Setter.
-
     _opacityModifyRGB: false,
 
     _string: "",
@@ -112,16 +110,15 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
     _reusedChar: null,
 
-    //texture RGBA
-    _displayedOpacity: 255,
-    _realOpacity: 255,
-    _displayedColor: null,
-    _realColor: null,
-    _cascadeColorEnabled: true,
-    _cascadeOpacityEnabled: true,
-
     _textureLoaded: false,
     _className: "LabelBMFont",
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+            return new cc.LabelBMFont.WebGLRenderCmd(this);
+        else
+            return new cc.LabelBMFont.CanvasRenderCmd(this);
+    },
 
     _setString: function (newString, needUpdateLabel) {
         if (!needUpdateLabel) {
@@ -139,17 +136,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         }
         if (this._textureLoaded) {
             this.createFontChars();
-
             if (needUpdateLabel)
                 this.updateLabel();
         }
-    },
-
-    _createRenderCmd: function(){
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-            return new cc.LabelBMFont.WebGLRenderCmd(this);
-        else
-            return new cc.LabelBMFont.CanvasRenderCmd(this);
     },
 
     /**
@@ -162,13 +151,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * @param {cc.Point} [imageOffset=cc.p(0,0)]
      */
     ctor: function (str, fntFile, width, alignment, imageOffset) {
-        var self = this;
-        cc.SpriteBatchNode.prototype.ctor.call(self);
-        self._imageOffset = cc.p(0, 0);
-        self._displayedColor = cc.color(255, 255, 255, 255);
-        self._realColor = cc.color(255, 255, 255, 255);
-        self._reusedChar = [];
-
+        cc.SpriteBatchNode.prototype.ctor.call(this);
+        this._imageOffset = cc.p(0, 0);
+        this._reusedChar = [];
+        this._cascadeColorEnabled = true;
+        this._cascadeOpacityEnabled = true;
         this.initWithString(str, fntFile, width, alignment, imageOffset);
     },
 
@@ -189,46 +176,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      */
     addLoadedEventListener: function (callback, target) {
         this.addEventListener("load", callback, target);
-    },
-
-    /**
-     * Draw this font.
-     * @param {CanvasRenderingContext2D} ctx
-     */
-    draw: function (ctx) {
-        cc.SpriteBatchNode.prototype.draw.call(this, ctx);
-
-        //LabelBMFont - Debug draw
-        if (cc.LABELBMFONT_DEBUG_DRAW) {
-            var size = this.getContentSize();
-            var pos = cc.p(0 | ( -this._anchorPointInPoints.x), 0 | ( -this._anchorPointInPoints.y));
-            var vertices = [cc.p(pos.x, pos.y), cc.p(pos.x + size.width, pos.y), cc.p(pos.x + size.width, pos.y + size.height), cc.p(pos.x, pos.y + size.height)];
-            cc._drawingUtil.setDrawColor(0, 255, 0, 255);
-            cc._drawingUtil.drawPoly(vertices, 4, true);
-        }
-    },
-
-    /**
-     * tint this label
-     * @param {cc.Color} color
-     */
-    setColor: function (color) {
-        var locDisplayed = this._displayedColor, locRealColor = this._realColor;
-        if ((locRealColor.r == color.r) && (locRealColor.g == color.g) && (locRealColor.b == color.b) && (locRealColor.a == color.a))
-            return;
-        locDisplayed.r = locRealColor.r = color.r;
-        locDisplayed.g = locRealColor.g = color.g;
-        locDisplayed.b = locRealColor.b = color.b;
-
-        if (this._textureLoaded) {
-            if (this._cascadeColorEnabled) {
-                var parentColor = cc.color.WHITE;
-                var locParent = this._parent;
-                if (locParent && locParent.cascadeColor)
-                    parentColor = locParent.getDisplayedColor();
-                this.updateDisplayedColor(parentColor);
-            }
-        }
     },
 
     /**
@@ -255,127 +202,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         }
     },
 
-    /**
-     * Gets the real opacity.
-     * @returns {number}
-     */
-    getOpacity: function () {
-        return this._realOpacity;
-    },
-
-    /**
-     * Gets the display opacity.
-     * @returns {number}
-     */
-    getDisplayedOpacity: function () {
-        return this._displayedOpacity;
-    },
-
-    /**
-     * Override synthesized setOpacity to recurse items
-     * @param {Number} opacity
-     */
-    setOpacity: function (opacity) {
-        this._displayedOpacity = this._realOpacity = opacity;
-        if (this._cascadeOpacityEnabled) {
-            var parentOpacity = 255;
-            var locParent = this._parent;
-            if (locParent && locParent.cascadeOpacity)
-                parentOpacity = locParent.getDisplayedOpacity();
-            this.updateDisplayedOpacity(parentOpacity);
-        }
-
-        this._displayedColor.a = this._realColor.a = opacity;
-    },
-
-    /**
-     * Override synthesized update pacity to recurse items
-     * @param parentOpacity
-     */
-    updateDisplayedOpacity: function (parentOpacity) {
-        var cmd = this._renderCmd;
-        cmd._displayedOpacity = this._realOpacity * parentOpacity / 255.0;
-//        var locChildren = this._children;
-//        for (var i = 0; i < locChildren.length; i++) {
-//            cmd._updateChildrenDisplayedOpacity(locChildren[i]);
-//        }
-//        this._changeTextureColor();
-    },
-
-    /**
-     * Checking cascade opacity enabled
-     * @returns {boolean}
-     */
-    isCascadeOpacityEnabled: function () {
-        return false;
-    },
-
-    /**
-     * Set cascade opacity enabled
-     * @param {Boolean} cascadeOpacityEnabled
-     */
-    setCascadeOpacityEnabled: function (cascadeOpacityEnabled) {
-        this._cascadeOpacityEnabled = cascadeOpacityEnabled;
-    },
-
-    /**
-     * Gets the real color. <br />
-     * Create a new cc.Color clone in this real color.
-     * @returns {cc.Color}
-     */
-    getColor: function () {
-        var locRealColor = this._realColor;
-        return cc.color(locRealColor.r, locRealColor.g, locRealColor.b, locRealColor.a);
-    },
-
-    /**
-     * Gets the display color. <br />
-     * Create a new cc.Color clone in this display color.
-     * @returns {cc.Color}
-     */
-    getDisplayedColor: function () {
-        var dc = this._displayedColor;
-        return cc.color(dc.r, dc.g, dc.b, dc.a);
-    },
-
-    /**
-     * Update the display color. <br />
-     * Only update this label display color.
-     * @returns {cc.Color}
-     */
-    updateDisplayedColor: function (parentColor) {
-        var cmd = this._renderCmd;
-        var locDispColor = cmd._displayedColor;
-        var locRealColor = this._realColor;
-        locDispColor.r = locRealColor.r * parentColor.r / 255.0;
-        locDispColor.g = locRealColor.g * parentColor.g / 255.0;
-        locDispColor.b = locRealColor.b * parentColor.b / 255.0;
-
-//        var locChildren = this._children;
-//        for (var i = 0; i < locChildren.length; i++) {
-//            cmd._updateChildrenDisplayedColor(locChildren[i]);
-//        }
-//        this._changeTextureColor();
-    },
-
     _changeTextureColor: function () {
         this._renderCmd._changeTextureColor();
-    },
-
-    /**
-     * Checking cascade color enabled
-     * @returns {boolean}
-     */
-    isCascadeColorEnabled: function () {
-        return false;
-    },
-
-    /**
-     * Override synthesized setOpacity to recurse items
-     * @param {Boolean} cascadeColorEnabled
-     */
-    setCascadeColorEnabled: function (cascadeColorEnabled) {
-        this._cascadeColorEnabled = cascadeColorEnabled;
     },
 
     /**
@@ -400,7 +228,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         if (self._config)
             cc.log("cc.LabelBMFont.initWithString(): re-init is no longer supported");
-
 
         var texture;
         if (fntFile) {
@@ -437,11 +264,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             self._imageOffset = imageOffset || cc.p(0, 0);
             self._width = (width == null) ? -1 : width;
 
-            cmd._displayedOpacity = self._realOpacity = 255;
-            cmd._displayedColor = cc.color(255, 255, 255, 255);
+            self._realOpacity = 255;
             self._realColor = cc.color(255, 255, 255, 255);
-            this._cascadeColorEnabled = true;
-            this._cascadeOpacityEnabled = true;
 
             self._contentSize.width = 0;
             self._contentSize.height = 0;

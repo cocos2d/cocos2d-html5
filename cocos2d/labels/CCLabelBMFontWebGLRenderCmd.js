@@ -33,7 +33,7 @@
 (function(){
     cc.LabelBMFont.WebGLRenderCmd = function(renderableObject){
         cc.SpriteBatchNode.WebGLRenderCmd.call(this, renderableObject);
-        this._needDraw = false;
+        this._needDraw = true;
     };
 
     var proto = cc.LabelBMFont.WebGLRenderCmd.prototype = Object.create(cc.SpriteBatchNode.WebGLRenderCmd.prototype);
@@ -62,7 +62,7 @@
         locChild.updateDisplayedOpacity(this._displayedOpacity);
     };
 
-    proto._updateChildrenDisplayedOpacity = function(locChild){
+    proto._updateChildrenDisplayedColor = function(locChild){
         locChild.updateDisplayedColor(this._displayedColor);
     };
 
@@ -76,4 +76,17 @@
         reusedChar.batchNode = node;
     };
 
+    proto.rendering = function(ctx){
+        cc.SpriteBatchNode.WebGLRenderCmd.prototype.rendering.call(this, ctx);
+
+        var node = this._node;
+        //LabelBMFont - Debug draw
+        if (cc.LABELBMFONT_DEBUG_DRAW) {
+            var size = node.getContentSize();
+            var pos = cc.p(0 | ( -this._anchorPointInPoints.x), 0 | ( -this._anchorPointInPoints.y));
+            var vertices = [cc.p(pos.x, pos.y), cc.p(pos.x + size.width, pos.y), cc.p(pos.x + size.width, pos.y + size.height), cc.p(pos.x, pos.y + size.height)];
+            cc._drawingUtil.setDrawColor(0, 255, 0, 255);
+            cc._drawingUtil.drawPoly(vertices, 4, true);
+        }
+    };
 })();
