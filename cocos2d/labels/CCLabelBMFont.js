@@ -348,7 +348,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
             // Apply label properties
             fontChar.opacityModifyRGB = this._opacityModifyRGB;
-            this._renderCmd._updateCharColorAndOpacity(fontChar);
 
             var yOffset = locCfg.commonHeight - fontDef.yOffset;
             var fontPos = cc.p(nextFontPositionX + fontDef.xOffset + fontDef.rect.width * 0.5 + kerningAmount,

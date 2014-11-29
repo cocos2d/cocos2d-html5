@@ -141,8 +141,10 @@ cc.Node.RenderCmd.prototype = {
                selChildren = node._children;
                for (i = 0, len = selChildren.length; i < len; i++) {
                    item = selChildren[i];
-                   if (item && item._renderCmd)
+                   if (item && item._renderCmd){
                        item._renderCmd._updateDisplayColor(locDispColor);
+                       item._renderCmd._updateColor();
+                   }
                }
            }
        }
@@ -169,12 +171,14 @@ cc.Node.RenderCmd.prototype = {
                     parentOpacity = locParent.getDisplayedOpacity();
             }
             this._displayedOpacity = node._realOpacity * parentOpacity / 255.0;
-            if (this._cascadeOpacityEnabled) {
-                selChildren = this._children;
+            if (node._cascadeOpacityEnabled) {
+                selChildren = node._children;
                 for (i = 0, len = selChildren.length; i < len; i++) {
                     item = selChildren[i];
-                    if (item && item._renderCmd)
+                    if (item && item._renderCmd){
                         item._renderCmd._updateDisplayOpacity(this._displayedOpacity);
+                        item._renderCmd._updateColor();
+                    }
                 }
             }
         }

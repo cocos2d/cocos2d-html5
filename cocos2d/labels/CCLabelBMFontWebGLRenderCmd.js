@@ -46,15 +46,8 @@
         fontChar.visible = true;
     };
 
-    proto._updateCharColorAndOpacity = function(fontChar){
-        // Color MUST be set before opacity, since opacity might change color if OpacityModifyRGB is on
-        fontChar.updateDisplayedColor(this._displayedColor);
-        fontChar.updateDisplayedOpacity(this._displayedOpacity);
-    };
 
     proto._updateFntFileTexture = function(){};
-
-    proto.setTexture = cc.SpriteBatchNode.prototype.setTexture;
 
     proto._changeTextureColor = function(){};
 
