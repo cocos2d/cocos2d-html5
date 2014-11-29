@@ -485,10 +485,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             if(this._rendererSaveCmdSprite)
                 cc.renderer.pushRenderCommand(this._rendererSaveCmdSprite);
 
-            this._clippingStencil.visit();
+            this._clippingStencil.visit(this._renderCmd);
 
         }else{
-            this._clippingStencil.visit(context);
+            this._clippingStencil.visit(this._renderCmd);
         }
 
         if(this._rendererClipCmd)
@@ -508,22 +508,22 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             for (i = 0; i < iLen; i++) {
                 locChild = children[i];
                 if (locChild && locChild._localZOrder < 0)
-                    locChild.visit(context);
+                    locChild.visit(this._renderCmd);
                 else
                     break;
             }
             for (j = 0; j < jLen; j++) {
                 locChild = locProtectChildren[j];
                 if (locChild && locChild._localZOrder < 0)
-                    locChild.visit(context);
+                    locChild.visit(this._renderCmd);
                 else
                     break;
             }
             //this.draw(context);
             for (; i < iLen; i++)
-                children[i].visit(context);
+                children[i].visit(this._renderCmd);
             for (; j < jLen; j++)
-                locProtectChildren[j].visit(context);
+                locProtectChildren[j].visit(this._renderCmd);
 
             if(this._rendererRestoreCmd)
                 cc.renderer.pushRenderCommand(this._rendererRestoreCmd);

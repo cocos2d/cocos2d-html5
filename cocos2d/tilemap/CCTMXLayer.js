@@ -133,15 +133,14 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @override
      * @param {CanvasRenderingContext2D} ctx
      */
-    visit: function(ctx){
+    visit: function(){
         this._renderCmd.visit();
     },
 
     //set the cache dirty flag for canvas
     _setNodeDirtyForCache: function () {
-        this._cacheDirty  = true;
-        if(cc.renderer._transformNodePool.indexOf(this) === -1)
-            cc.renderer.pushDirtyNode(this);
+        this._renderCmd._cacheDirty  = true;
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**
@@ -599,18 +598,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      */
     setupTiles:function () {
         // Optimization: quick hack that sets the image size on the tileset
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-            this.tileset.imageSize = this._originalTexture.getContentSizeInPixels();
-        } else {
-            this.tileset.imageSize = this.textureAtlas.texture.getContentSizeInPixels();
-
-            // By default all the tiles are aliased
-            // pros:
-            //  - easier to render
-            // cons:
-            //  - difficult to scale / rotate / etc.
-            this.textureAtlas.texture.setAliasTexParameters();
-        }
+        this._renderCmd.initImageSize();
 
         // Parse cocos2d properties
         this._parseInternalProperties();
@@ -889,7 +877,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             }
         } else {
             this._reusedTile = new cc.Sprite();
-            this._reusedTile.initWithTexture(this._textureForCanvas, rect, false);
+            this._reusedTile.initWithTexture(this._renderCmd._texture, rect, false);
             this._reusedTile.batchNode = this;
             this._reusedTile.parent = this;
             this._reusedTile._cachedParent = this;

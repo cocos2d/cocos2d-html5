@@ -437,6 +437,11 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     _changePosition: function(){
         this._adaptRenderers();
         //this._labelRenderer.transform(this._renderCmd);
+    },
+
+    setColor: function(color){
+        cc.ProtectedNode.prototype.setColor.call(this, color);
+        this._labelRenderer.setColor(color);
     }
 });
 

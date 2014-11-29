@@ -954,6 +954,11 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this.setTitleColor(uiButton.getTitleColor());
         this.setPressedActionEnabled(uiButton.pressedActionEnabled);
         this.setZoomScale(uiButton._zoomScale);
+    },
+
+    setColor: function(color){
+        cc.ProtectedNode.prototype.setColor.call(this, color);
+        this._updateTexturesRGBA();
     }
 });
 

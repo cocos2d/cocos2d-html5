@@ -118,6 +118,5 @@
         for( i = 0, len = locChildren.length; i< len; i++)
             locChildren[i]._renderCmd.transform(this);
 
-    }
-
+    };
 })();
