@@ -95,18 +95,15 @@
     };
 
     proto.setColor = function(color3){
-        var temp = cc.color(color3.r, color3.g, color3.b);
+        var temp = cc.color(color3.r, color3.g, color3.b), node = this._node;
         this._colorUnmodified = color3;
         var locDisplayedOpacity = this._displayedOpacity;
-        if (this._opacityModifyRGB) {
+        if (node._opacityModifyRGB) {
             temp.r = temp.r * locDisplayedOpacity / 255;
             temp.g = temp.g * locDisplayedOpacity / 255;
             temp.b = temp.b * locDisplayedOpacity / 255;
         }
-        cc.Node.prototype.setColor.call(this, color3);
-        var locDisplayedColor = this._displayedColor;
-        this._colorF32Array = new Float32Array([locDisplayedColor.r / 255.0, locDisplayedColor.g / 255.0,
-                locDisplayedColor.b / 255.0, locDisplayedOpacity / 255.0]);
+        cc.Node.prototype.setColor.call(node, temp);
     };
 
     proto.setOpacity = function(opacity){
@@ -115,11 +112,13 @@
         // special opacity for premultiplied textures
         if (node._opacityModifyRGB) {
             node.color = this._colorUnmodified;
-        } else {
-            var locDisplayedColor = this._displayedColor;
-            node._colorF32Array = new Float32Array([locDisplayedColor.r / 255.0, locDisplayedColor.g / 255.0,
-                    locDisplayedColor.b / 255.0, node._displayedOpacity / 255.0]);
         }
+    };
+
+    proto._updateColor = function(){
+        var locDisplayedColor = this._displayedColor;
+        this._colorF32Array = new Float32Array([locDisplayedColor.r / 255.0, locDisplayedColor.g / 255.0,
+                locDisplayedColor.b / 255.0, this._displayedOpacity / 255.0]);
     };
 
     proto.getTexture = function(){

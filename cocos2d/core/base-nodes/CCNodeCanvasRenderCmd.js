@@ -209,19 +209,22 @@ cc.Node.RenderCmd.prototype = {
         this._dirtyFlag ^= cc.Node._dirtyFlags.opacityDirty;
     },
 
+    _updateColor: function(){},
+
     updateStatus: function () {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        if (locFlag & flags.colorDirty) {
-            //update the color
-            this._updateDisplayColor()
-        }
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
+        if(colorDirty)
+            this._updateDisplayColor();
 
-        if (locFlag & flags.opacityDirty) {
-            //update the opacity
+        if(opacityDirty)
             this._updateDisplayOpacity();
-        }
 
-        if (locFlag & flags.transformDirty) {
+        if(colorDirty || opacityDirty)
+            this._updateColor();
+
+        if(this._dirtyFlag & flags.transformDirty){
             //update the transform
             this.transform(this.getParentRenderCmd(), true);
         }

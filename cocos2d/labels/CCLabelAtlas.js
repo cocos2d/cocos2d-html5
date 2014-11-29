@@ -201,15 +201,6 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 
         this._renderCmd.updateAtlasValues();
         this.quadsToDraw = len;
-    },
-
-    /**
-     * set the opacity
-     * @function
-     * @param {Number} opacity
-     */
-    setOpacity: function(opacity){
-        this._renderCmd.setOpacity(opacity);
     }
 });
 

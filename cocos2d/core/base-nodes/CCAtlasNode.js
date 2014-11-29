@@ -221,15 +221,6 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     },
 
     /**
-     * Render function using the canvas 2d context or WebGL context, internal usage only, please do not call this function
-     * @function
-     * @param {CanvasRenderingContext2D | WebGLRenderingContext} ctx The render context
-     */
-    draw: function(ctx){
-        this._renderCmd.draw(ctx);
-    },
-
-    /**
      * Set node's color
      * @function
      * @param {cc.Color} color Color object created with cc.color(r, g, b).

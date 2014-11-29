@@ -126,45 +126,6 @@
         this._bindLayerVerticesBufferData();
     };
 
-    proto._syncStatus = function (parentCmd) {
-        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        var colorDirty = locFlag & flags.colorDirty,
-            opacityDirty = locFlag & flags.opacityDirty;
-
-        if (colorDirty)
-            this._syncDisplayColor();
-
-        if (opacityDirty)
-            this._syncDisplayOpacity();
-
-        if(colorDirty || opacityDirty)
-            this._updateColor();
-
-        if (locFlag & flags.transformDirty) {
-            //update the transform
-            this.transform(parentCmd);
-        }
-    };
-
-    proto.updateStatus = function(){
-        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        var colorDirty = locFlag & flags.colorDirty,
-            opacityDirty = locFlag & flags.opacityDirty;
-        if(colorDirty)
-            this._updateDisplayColor();
-
-        if(opacityDirty)
-            this._updateDisplayOpacity();
-
-        if(colorDirty || opacityDirty)
-            this._updateColor();
-
-        if(this._dirtyFlag & flags.transformDirty){
-            //update the transform
-            this.transform(null, true);
-        }
-    };
-
     proto._updateColor = function(){
         var locDisplayedColor = this._displayedColor, locDisplayedOpacity = this._displayedOpacity,
             locSquareColors = this._squareColors;

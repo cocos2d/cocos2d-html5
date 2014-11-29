@@ -394,38 +394,6 @@
             this._updateColor();
     };
 
-    proto._updateDisplayColor = function(parentColor){
-        cc.Node.CanvasRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
-        this._updateColor();
-    };
-
-    proto._updateDisplayOpacity = function(parentOpacity){
-        cc.Node.CanvasRenderCmd.prototype._updateDisplayOpacity.call(this, parentOpacity);
-        this._updateColor();
-    };
-
-    proto._syncStatus = function(parentCmd){
-        var colorDirty = this._dirtyFlag & cc.Node._dirtyFlags.colorDirty,
-            opacityDirty = this._dirtyFlag & cc.Node._dirtyFlags.opacityDirty;
-        if(colorDirty){
-            //update the color
-            this._syncDisplayColor()
-        }
-
-        if(opacityDirty){
-            //update the opacity
-            this._syncDisplayOpacity();
-        }
-
-        if(this._dirtyFlag & cc.Node._dirtyFlags.transformDirty){
-            //update the transform
-            this.transform(parentCmd);
-        }
-
-        if(colorDirty || opacityDirty)
-            this._updateColor();
-    };
-
     proto._updateColor = function(){
         var node = this._node;
         var contentSize = node._contentSize;

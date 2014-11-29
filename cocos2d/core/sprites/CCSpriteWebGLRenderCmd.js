@@ -52,7 +52,7 @@
         var locChildren = this._node._children, child, l = locChildren ? locChildren.length : 0;
         for (var i = 0; i < l; i++) {
             child = locChildren[i];
-            (child instanceof cc.Sprite) && child.setDirtyRecursively(value);
+            (child instanceof cc.Sprite) && child._renderCmd.setDirtyRecursively(value);
         }
     };
 
@@ -227,55 +227,21 @@
         this._quadDirty = true;
     };
 
-    proto._syncStatus = function (parentCmd) {
-        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        var colorDirty = locFlag & flags.colorDirty,
-            opacityDirty = locFlag & flags.opacityDirty;
-
-        if (colorDirty)
-            this._syncDisplayColor();
-
-        if (opacityDirty)
-            this._syncDisplayOpacity();
-
-        if(colorDirty || opacityDirty)
-            this._updateColor();
-
-        if (locFlag & flags.transformDirty) {
-            //update the transform
-            this.transform(parentCmd);
-        }
-    };
-
-    proto.updateStatus = function(){
-        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        var colorDirty = locFlag & flags.colorDirty,
-            opacityDirty = locFlag & flags.opacityDirty;
-        if(colorDirty)
-            this._updateDisplayColor();
-
-        if(opacityDirty)
-            this._updateDisplayOpacity();
-
-        if(colorDirty || opacityDirty)
-            this._updateColor();
-
-        if(this._dirtyFlag & flags.transformDirty){
-            //update the transform
-            this.transform(null, true);
-        }
+    proto.transform = function(parentCmd, recursive){
+        cc.Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+        this._dirty = true;     //use for batching
     };
 
     proto._updateColor = function () {
-        var locDisplayedColor = this._displayedColor, locDisplayedOpacity = this._displayedOpacity;
+        var locDisplayedColor = this._displayedColor, locDisplayedOpacity = this._displayedOpacity, node = this._node;
         var color4 = {r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: locDisplayedOpacity};
         // special opacity for premultiplied textures
-        if (this._opacityModifyRGB) {
+        if (node._opacityModifyRGB) {
             color4.r *= locDisplayedOpacity / 255.0;
             color4.g *= locDisplayedOpacity / 255.0;
             color4.b *= locDisplayedOpacity / 255.0;
         }
-        var locQuad = this._quad, node = this._node;
+        var locQuad = this._quad;
         locQuad.bl.colors = color4;
         locQuad.br.colors = color4;
         locQuad.tl.colors = color4;
@@ -443,11 +409,11 @@
     };
 
     proto.rendering = function (ctx) {
-        var _t = this._node;
-        if (!_t._textureLoaded || this._displayedOpacity === 0)
+        var node = this._node;
+        if (!node._textureLoaded || this._displayedOpacity === 0)
             return;
 
-        var gl = ctx || cc._renderContext, locTexture = _t._texture;
+        var gl = ctx || cc._renderContext, locTexture = node._texture;
         //cc.assert(!_t._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
         if (locTexture) {
@@ -455,7 +421,7 @@
                 this._shaderProgram.use();
                 this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 
-                cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
+                cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
                 //optimize performance for javascript
                 cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
                 cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
@@ -472,9 +438,9 @@
             }
         } else {
             this._shaderProgram.use();
-            _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);
+            this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 
-            cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
+            cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
             cc.glBindTexture2D(null);
 
             cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
@@ -490,12 +456,12 @@
         }
         cc.g_NumberOfDraws++;
 
-        if (cc.SPRITE_DEBUG_DRAW === 0 && !_t._showNode)
+        if (cc.SPRITE_DEBUG_DRAW === 0 && !node._showNode)
             return;
 
-        if (cc.SPRITE_DEBUG_DRAW === 1 || _t._showNode) {
+        if (cc.SPRITE_DEBUG_DRAW === 1 || node._showNode) {
             // draw bounding box
-            var locQuad = _t._quad;
+            var locQuad = node._quad;
             var verticesG1 = [
                 cc.p(locQuad.tl.vertices.x, locQuad.tl.vertices.y),
                 cc.p(locQuad.bl.vertices.x, locQuad.bl.vertices.y),
@@ -505,8 +471,8 @@
             cc._drawingUtil.drawPoly(verticesG1, 4, true);
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
-            var drawRectG2 = _t.getTextureRect();
-            var offsetPixG2 = _t.getOffsetPosition();
+            var drawRectG2 = node.getTextureRect();
+            var offsetPixG2 = node.getOffsetPosition();
             var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y),
                 cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y + drawRectG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawRectG2.height)];
             cc._drawingUtil.drawPoly(verticesG2, 4, true);

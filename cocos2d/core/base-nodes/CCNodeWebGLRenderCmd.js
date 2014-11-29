@@ -114,19 +114,25 @@
 
     proto._syncStatus = function (parentCmd) {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
 
-        if(parentCmd && (parentCmd._dirtyFlag & flags.transformDirty))
-            locFlag |= flags.transformDirty;
+        if (colorDirty)
+            this._syncDisplayColor();
 
-        if (locFlag & flags.colorDirty)
-            this._syncDisplayColor()
-
-        if (locFlag & flags.opacityDirty)
+        if (opacityDirty)
             this._syncDisplayOpacity();
 
-        if (locFlag & flags.transformDirty)
+        if(colorDirty || opacityDirty)
+            this._updateColor();
+
+        if (locFlag & flags.transformDirty) {
+            //update the transform
             this.transform(parentCmd);
+        }
     };
+
+    proto._updateColor = function(){};
 
     proto.visit = function (parentCmd) {
         var _t = this, node = this._node;

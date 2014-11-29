@@ -128,10 +128,5 @@
             this._textureAtlas.resizeCapacity(len);
     };
 
-    proto.setOpacity = function(opacity){
-        if (this._opacity !== opacity)
-            cc.AtlasNode.prototype.setOpacity.call(this, opacity);
-    };
-
     proto._addChild = function(){};
 })();
