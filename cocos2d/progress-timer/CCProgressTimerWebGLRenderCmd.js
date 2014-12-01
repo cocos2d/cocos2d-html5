@@ -80,6 +80,70 @@
         cc.g_NumberOfDraws++;
     };
 
+    proto._syncStatus = function (parentCmd) {
+        var node = this._node;
+        if(!node._sprite)
+            return;
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var spriteCmd = node._sprite._renderCmd;
+        var spriteFlag = spriteCmd._dirtyFlag;
+
+        var colorDirty = spriteFlag & flags.colorDirty,
+            opacityDirty = spriteFlag & flags.opacityDirty;
+
+        if (colorDirty){
+            spriteCmd._syncDisplayColor();
+            this._dirtyFlag ^= flags.colorDirty;
+        }
+
+        if (opacityDirty){
+            spriteCmd._syncDisplayOpacity();
+            this._dirtyFlag ^= flags.opacityDirty;
+        }
+
+        if(colorDirty || opacityDirty){
+            spriteCmd._updateColor();
+            this._updateColor();
+        }
+
+        if (locFlag & flags.transformDirty) {
+            //update the transform
+            this.transform(parentCmd);
+        }
+    };
+
+    proto.updateStatus = function () {
+        var node = this._node;
+        if(!node._sprite)
+            return;
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var spriteCmd = node._sprite._renderCmd;
+        var spriteFlag = spriteCmd._dirtyFlag;
+
+        var colorDirty = spriteFlag & flags.colorDirty,
+            opacityDirty = spriteFlag & flags.opacityDirty;
+
+        if(colorDirty){
+            spriteCmd._updateDisplayColor();
+            this._dirtyFlag ^= flags.colorDirty;
+        }
+
+        if(opacityDirty){
+            spriteCmd._updateDisplayOpacity();
+            this._dirtyFlag ^= flags.opacityDirty;
+        }
+
+        if(colorDirty || opacityDirty){
+            spriteCmd._updateColor();
+            this._updateColor();
+        }
+
+        if(locFlag & flags.transformDirty){
+            //update the transform
+            this.transform(this.getParentRenderCmd(), true);
+        }
+    };
+
     proto.releaseData = function(){
         if (this._vertexData) {
             //release all previous information

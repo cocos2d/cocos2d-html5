@@ -147,7 +147,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     setPercentage:function (percentage) {
         if (this._percentage != percentage) {
             this._percentage = cc.clampf(percentage, 0, 100);
-            this._updateProgress();
+            this._renderCmd._updateProgress();
         }
     },
     /**
@@ -177,7 +177,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      */
     setColor:function (color) {
         this._sprite.color = color;
-        //this._renderCmd._updateColor();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.colorDirty);
     },
 
     /**
@@ -187,6 +187,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     setOpacity:function (opacity) {
         this._sprite.opacity = opacity;
         //this._renderCmd._updateColor();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.opacityDirty);
     },
 
     /**
@@ -274,10 +275,6 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         this.setSprite(sprite);
         this._renderCmd.initCmd();
         return true;
-    },
-
-    _updateProgress: function(){
-        this._renderCmd._updateProgress();
     },
 
     _createRenderCmd: function(){

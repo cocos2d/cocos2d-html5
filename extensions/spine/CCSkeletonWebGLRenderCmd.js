@@ -33,8 +33,8 @@
 
     proto.rendering = function (ctx) {
         var node = this._node;
-        node._shaderProgram.use();
-        node._shaderProgram._setUniformForMVPMatrixWithMat4(node._stackMatrix);
+        this._shaderProgram.use();
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 //        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
         var color = node.getColor(), locSkeleton = node._skeleton;
         locSkeleton.r = color.r / 255;
