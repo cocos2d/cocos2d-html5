@@ -128,6 +128,7 @@
         if (locFlag & flags.transformDirty) {
             //update the transform
             this.transform(parentCmd);
+            this._dirtyFlag ^= cc.Node._dirtyFlags.transformDirty;
         }
     };
 
