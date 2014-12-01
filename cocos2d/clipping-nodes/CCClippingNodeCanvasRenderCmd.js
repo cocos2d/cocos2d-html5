@@ -162,6 +162,7 @@
     proto.visit = function(parentCmd){
         cc.renderer.pushRenderCommand(this);
         var node = this._node;
+        var transformRenderCmd = (node._stencil instanceof cc.Sprite) ? this : null;
         // quick return if not visible
         if (!node._visible)
             return;
@@ -185,7 +186,7 @@
             // Draw everything first using node visit function
             cc.Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
         }else{
-            node._stencil.visit(this);
+            node._stencil.visit(transformRenderCmd);
         }
 
         cc.renderer.pushRenderCommand(this._rendererClipCmd);
@@ -193,7 +194,7 @@
         this._syncStatus(parentCmd);
 
         if(this._clipElemType){
-            node._stencil.visit(this);
+            node._stencil.visit(transformRenderCmd);
         }else{
             // Clip mode doesn't support recusive stencil, so once we used a clip stencil,
             // so if it has ClippingNode as a child, the child must uses composition stencil.

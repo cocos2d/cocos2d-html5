@@ -423,7 +423,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         sprite.dirty = true;
         sprite.updateTransform();
 
-        //sprite._renderCmd._setCachedParent(this);    //TODO need move to renderCmd
+        //sprite._renderCmd._setCachedParent(this._renderCmd);    //TODO need move to renderCmd
         this._children.splice(index, 0, sprite);
     },
 
