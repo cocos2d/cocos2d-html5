@@ -134,7 +134,7 @@
     proto._updateColor = function(){};
 
     proto.visit = function (parentCmd) {
-        var _t = this, node = this._node;
+        var node = this._node;
         // quick return if not visible
         if (!node._visible)
             return;
@@ -147,8 +147,8 @@
 
         //optimize performance for javascript
         currentStack.stack.push(currentStack.top);
-        _t._syncStatus(parentCmd);
-        currentStack.top = _t._stackMatrix;
+        this._syncStatus(parentCmd);
+        currentStack.top = this._stackMatrix;
 
         var locChildren = node._children;
         if (locChildren && locChildren.length > 0) {
