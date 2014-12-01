@@ -132,7 +132,7 @@
 
             context.globalAlpha = alpha;         //cache
             //transform
-            context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, (cc.view._visibleRect.height-t.ty) * scaleY);
+            context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
             if (this._needSetBlend)
                 context.globalCompositeOperation = this._blendFuncStr;
 

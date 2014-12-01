@@ -82,4 +82,6 @@
             cc._drawingUtil.drawPoly(vertices, 4, true);
         }
     };
+
+    proto._updateCharColorAndOpacity = function(){};
 })();

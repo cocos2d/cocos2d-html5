@@ -176,7 +176,7 @@
         this._pointRect = pointRect;
     };
 
-    proto.setTotalParticles = function(){
+    proto.setTotalParticles = function(tp){
         //cc.assert(tp <= this._allocatedParticles, "Particle: resizing particle array only supported for quads");
         this._node._totalParticles = (tp < 200) ? tp : 200;
     };
