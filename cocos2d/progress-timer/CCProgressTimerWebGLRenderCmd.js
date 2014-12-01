@@ -106,10 +106,10 @@
             this._updateColor();
         }
 
-        if (locFlag & flags.transformDirty) {
+        //if (locFlag & flags.transformDirty) {
             //update the transform
             this.transform(parentCmd);
-        }
+        //}
     };
 
     proto.updateStatus = function () {

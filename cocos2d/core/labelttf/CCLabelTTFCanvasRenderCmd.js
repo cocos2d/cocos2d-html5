@@ -74,26 +74,6 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             this.transform(this.getParentRenderCmd(), true);
     };
 
-    proto._syncStatus = function (parentCmd) {
-        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        var colorDirty = locFlag & flags.colorDirty,
-            opacityDirty = locFlag & flags.opacityDirty;
-        if (colorDirty)
-            this._syncDisplayColor();
-        if (opacityDirty)
-            this._syncDisplayOpacity();
-
-        if(colorDirty || opacityDirty){
-            this._setColorsString();
-            this._updateColor();
-            this._updateTexture();
-        }else if(locFlag & flags.textDirty)
-            this._updateTexture();
-
-        if (locFlag & flags.transformDirty)                 //update the transform
-            this.transform(parentCmd);
-    };
-
     proto._getLabelContext = function () {
         if (this._labelContext)
             return this._labelContext;
@@ -382,6 +362,26 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
     var proto = cc.LabelTTF.CanvasRenderCmd.prototype;
     proto.constructor = cc.LabelTTF.CanvasRenderCmd;
+
+    proto._syncStatus = function (parentCmd) {
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
+        if (colorDirty)
+            this._syncDisplayColor();
+        if (opacityDirty)
+            this._syncDisplayOpacity();
+
+        if(colorDirty || opacityDirty){
+            this._setColorsString();
+            this._updateColor();
+            this._updateTexture();
+        }else if(locFlag & flags.textDirty)
+            this._updateTexture();
+
+        if (locFlag & flags.transformDirty)                 //update the transform
+            this.transform(parentCmd);
+    };
 
     proto._setColorsString = function () {
         this.setDirtyFlag(cc.Node._dirtyFlags.textDirty);

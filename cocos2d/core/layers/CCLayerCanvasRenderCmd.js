@@ -335,27 +335,6 @@
             if (colorDirty || opacityDirty || (locFlag & flags.gradientDirty)){
                 this._updateColor();
             }
-        },
-
-        _syncStatus: function (parentCmd) {
-            var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-            var colorDirty = locFlag & flags.colorDirty,
-                opacityDirty = locFlag & flags.opacityDirty;
-
-            if (colorDirty)
-                this._syncDisplayColor();
-
-            if (opacityDirty)
-                this._syncDisplayOpacity();
-
-            if (locFlag & flags.transformDirty) {
-                //update the transform
-                this.transform(parentCmd);
-            }
-
-            if (colorDirty || opacityDirty || (locFlag & flags.gradientDirty)){
-                this._updateColor();
-            }
         }
     };
 })();
@@ -409,6 +388,27 @@
         if (needRestore)
             context.restore();
         cc.g_NumberOfDraws++;
+    };
+
+    proto._syncStatus = function (parentCmd) {
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
+
+        if (colorDirty)
+            this._syncDisplayColor();
+
+        if (opacityDirty)
+            this._syncDisplayOpacity();
+
+        if (locFlag & flags.transformDirty) {
+            //update the transform
+            this.transform(parentCmd);
+        }
+
+        if (colorDirty || opacityDirty || (locFlag & flags.gradientDirty)){
+            this._updateColor();
+        }
     };
 
     proto._updateColor = function(){

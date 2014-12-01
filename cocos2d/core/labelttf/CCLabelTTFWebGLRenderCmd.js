@@ -30,16 +30,35 @@
         this.setShaderProgram(cc.shaderCache.programForKey(cc.LabelTTF._SHADER_PROGRAM));
     };
 
-    cc.LabelTTF.WebGLRenderCmd.prototype = Object.create(cc.Sprite.WebGLRenderCmd.prototype);
-    cc.inject(cc.LabelTTF.RenderCmd.prototype, cc.LabelTTF.WebGLRenderCmd.prototype);     //multi-inherit
-    cc.LabelTTF.WebGLRenderCmd.prototype.constructor = cc.LabelTTF.WebGLRenderCmd;
+    var proto = cc.LabelTTF.WebGLRenderCmd.prototype = Object.create(cc.Sprite.WebGLRenderCmd.prototype);
+    cc.inject(cc.LabelTTF.RenderCmd.prototype, proto);     //multi-inherit
+    proto.constructor = cc.LabelTTF.WebGLRenderCmd;
 
-    cc.LabelTTF.WebGLRenderCmd.prototype._setColorsString = function () {
+    proto._setColorsString = function () {
         this.setDirtyFlag(cc.Node._dirtyFlags.textDirty);
         var node = this._node;
         var locStrokeColor = node._strokeColor, locFontFillColor = node._textFillColor;
         this._shadowColorStr = "rgba(128,128,128," + node._shadowOpacity + ")";
         this._fillColorStr = "rgba(" + (0 | locFontFillColor.r) + "," + (0 | locFontFillColor.g) + "," + (0 | locFontFillColor.b) + ", 1)";
         this._strokeColorStr = "rgba(" + (0 | locStrokeColor.r) + "," + (0 | locStrokeColor.g) + "," + (0 | locStrokeColor.b) + ", 1)";
+    };
+
+    proto._syncStatus = function (parentCmd) {
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
+        if (colorDirty)
+            this._syncDisplayColor();
+        if (opacityDirty)
+            this._syncDisplayOpacity();
+
+        if(colorDirty || opacityDirty){
+            this._setColorsString();
+            this._updateColor();
+            this._updateTexture();
+        }else if(locFlag & flags.textDirty)
+            this._updateTexture();
+
+        this.transform(parentCmd);
     };
 })();
