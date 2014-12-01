@@ -77,8 +77,8 @@
 
     proto.checkAtlasCapacity = function(index){
         // make needed room
-        var locCapacity = this._textureAtlas.capacity;
-        while (index >= locCapacity || locCapacity == this._textureAtlas.totalQuads) {
+        var locAtlas = this._textureAtlas;
+        while (index >= locAtlas.capacity || locAtlas.capacity == locAtlas.totalQuads) {
             this.increaseAtlasCapacity();
         }
     };

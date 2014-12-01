@@ -377,7 +377,8 @@
         if (node._hasChildren)
             node._arrayMakeObjectsPerformSelector(node._children, cc.Node._stateCallbackType.updateTransform);
 
-        if (cc.SPRITE_DEBUG_DRAW) {
+        //TODO
+        /*if (cc.SPRITE_DEBUG_DRAW) {
             // draw bounding box
             var vertices = [
                 cc.p(_t._quad.bl.vertices.x, _t._quad.bl.vertices.y),
@@ -386,7 +387,7 @@
                 cc.p(_t._quad.tl.vertices.x, _t._quad.tl.vertices.y)
             ];
             cc._drawingUtil.drawPoly(vertices, 4, true);
-        }
+        }*/
     };
 
     proto._checkTextureBoundary = function (texture, rect, rotated) {
@@ -456,7 +457,8 @@
         }
         cc.g_NumberOfDraws++;
 
-        if (cc.SPRITE_DEBUG_DRAW === 0 && !node._showNode)
+        //TODO
+        /*if (cc.SPRITE_DEBUG_DRAW === 0 && !node._showNode)
             return;
 
         if (cc.SPRITE_DEBUG_DRAW === 1 || node._showNode) {
@@ -476,6 +478,6 @@
             var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y),
                 cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y + drawRectG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawRectG2.height)];
             cc._drawingUtil.drawPoly(verticesG2, 4, true);
-        } // CC_SPRITE_DEBUG_DRAW
+        } */// CC_SPRITE_DEBUG_DRAW
     };
 })();

@@ -207,22 +207,18 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
         cc.Node.prototype.removeAllChildren.call(this, cleanup);
     },
 
-    /**
-     * Recursive method that visit its children and draw them
-     */
-    visit:function () {
+    _updateParallaxPosition: function(){
         var pos = this._absolutePosition();
         if (!cc.pointEqualToPoint(pos, this._lastPosition)) {
             var locParallaxArray = this.parallaxArray;
             for (var i = 0, len = locParallaxArray.length; i < len; i++) {
                 var point = locParallaxArray[i];
-	            var child = point.getChild();
-	            child.setPosition(-pos.x + pos.x * point.getRatio().x + point.getOffset().x,
-	                               -pos.y + pos.y * point.getRatio().y + point.getOffset().y);
+                var child = point.getChild();
+                child.setPosition(-pos.x + pos.x * point.getRatio().x + point.getOffset().x,
+                        -pos.y + pos.y * point.getRatio().y + point.getOffset().y);
             }
             this._lastPosition = pos;
         }
-        cc.Node.prototype.visit.call(this);
     },
 
     _absolutePosition:function () {
@@ -235,19 +231,11 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
         return ret;
     },
 
-    _transformForRenderer:function () {
-        var pos = this._absolutePosition();
-        if (!cc.pointEqualToPoint(pos, this._lastPosition)) {
-            var locParallaxArray = this.parallaxArray;
-            for (var i = 0, len = locParallaxArray.length; i < len; i++) {
-                var point = locParallaxArray[i];
-                var child = point.getChild();
-                child.setPosition(-pos.x + pos.x * point.getRatio().x + point.getOffset().x,
-                    -pos.y + pos.y * point.getRatio().y + point.getOffset().y);
-            }
-            this._lastPosition = pos;
-        }
-        cc.Node.prototype._transformForRenderer.call(this);
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new cc.ParallaxNode.CanvasRenderCmd(this);
+        else
+            return new cc.ParallaxNode.WebGLRenderCmd(this);
     }
 });
 

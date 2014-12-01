@@ -32,17 +32,41 @@
     var proto = cc.Scale9Sprite.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.Scale9Sprite.WebGLRenderCmd;
 
-    proto.visit = function(){
-        if(!this._visible){
+    proto.addBatchNodeToChildren = function(batchNode){
+        this._node.addChild(batchNode);
+    };
+
+    proto._computeSpriteScale = function (sizableWidth, sizableHeight, centerWidth, centerHeight) {
+        var horizontalScale = sizableWidth / centerWidth, verticalScale = sizableHeight / centerHeight;
+        var rescaledWidth = centerWidth * horizontalScale, rescaledHeight = centerHeight * verticalScale;
+
+        var roundedRescaledWidth = Math.round(rescaledWidth);
+        if (rescaledWidth !== roundedRescaledWidth) {
+            rescaledWidth = roundedRescaledWidth;
+            horizontalScale = rescaledWidth / centerWidth;
+        }
+        var roundedRescaledHeight = Math.round(rescaledHeight);
+        if (rescaledHeight !== roundedRescaledHeight) {
+            rescaledHeight = roundedRescaledHeight;
+            verticalScale = rescaledHeight / centerHeight;
+        }
+
+        return {horizontalScale: horizontalScale, verticalScale: verticalScale,
+            rescaledWidth: rescaledWidth, rescaledHeight: rescaledHeight}
+    };
+
+    proto.visit = function(parentCmd){
+        var node = this._node;
+        if(!node._visible){
             return;
         }
 
-        if (this._positionsAreDirty) {
-            this._updatePositions();
-            this._positionsAreDirty = false;
-            this._scale9Dirty = true;
+        if (node._positionsAreDirty) {
+            node._updatePositions();
+            node._positionsAreDirty = false;
+            node._scale9Dirty = true;
         }
-        cc.Node.prototype.visit.call(this, ctx);
+        cc.Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
     };
 
 })();

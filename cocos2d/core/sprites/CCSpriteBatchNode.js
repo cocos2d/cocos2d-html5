@@ -410,7 +410,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             cc.log(cc._LogInfos.CCSpriteBatchNode_insertQuadFromSprite);
             return;
         }
-        this._renderCmd.checkAtlasCapacity();
+        this._renderCmd.checkAtlasCapacity(index);
 
         //
         // update the quad directly. Don't add the sprite to the scene graph
@@ -423,7 +423,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         sprite.dirty = true;
         sprite.updateTransform();
 
-        sprite._renderCmd._setCachedParent(this._renderCmd);
+        //sprite._renderCmd._setCachedParent(this._renderCmd);    //TODO need move to renderCmd
         this._children.splice(index, 0, sprite);
     },
 

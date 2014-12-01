@@ -44,6 +44,16 @@
     var proto = cc.Scale9Sprite.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.Scale9Sprite.CanvasRenderCmd;
 
+    proto.addBatchNodeToChildren = function(batchNode){
+        //needn't add to children on canvas mode.
+    };
+
+    proto._computeSpriteScale = function(sizableWidth, sizableHeight, centerWidth, centerHeight){
+        var horizontalScale = sizableWidth / centerWidth, verticalScale = sizableHeight / centerHeight;
+        return {horizontalScale: horizontalScale, verticalScale: verticalScale,
+            rescaledWidth: centerWidth * horizontalScale, rescaledHeight: centerHeight * verticalScale}
+    };
+
     proto.visit = function(){
         var node = this._node;
         if(!node._visible){

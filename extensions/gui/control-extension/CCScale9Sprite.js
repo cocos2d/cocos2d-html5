@@ -62,18 +62,13 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     _bottom: null,
     _bottomRight: null,
 
-    //cache in canvas on Canvas mode
-    _cacheSprite: null,
-    _cacheContext: null,
-    _cacheTexture: null,
     _scale9Dirty: true,
 
     _opacityModifyRGB: false,
 
     _originalSize: null,
     _preferredSize: null,
-    _opacity: 0,
-    _color: null,
+
     _capInsets: null,
     _insetLeft: 0,
     _insetTop: 0,
@@ -136,31 +131,13 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         var sizableWidth = size.width - locTopLeftContentSize.width - locTopRight.getContentSize().width;
         var sizableHeight = size.height - locTopLeftContentSize.height - locBottomRight.getContentSize().height;
 
-        var horizontalScale = sizableWidth / locCenterContentSize.width;
-        var verticalScale = sizableHeight / locCenterContentSize.height;
+        var scaleResult = this._renderCmd._computeSpriteScale(sizableWidth, sizableHeight, locCenterContentSize.width, locCenterContentSize.height);
 
-        var rescaledWidth = locCenterContentSize.width * horizontalScale;
-        var rescaledHeight = locCenterContentSize.height * verticalScale;
+        locCenter.setScaleX(scaleResult.horizontalScale);
+        locCenter.setScaleY(scaleResult.verticalScale);
 
         var leftWidth = locBottomLeftContentSize.width;
         var bottomHeight = locBottomLeftContentSize.height;
-
-        if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
-            //browser is in canvas mode, need to manually control rounding to prevent overlapping pixels
-            var roundedRescaledWidth = Math.round(rescaledWidth);
-            if (rescaledWidth != roundedRescaledWidth) {
-                rescaledWidth = roundedRescaledWidth;
-                horizontalScale = rescaledWidth / locCenterContentSize.width;
-            }
-            var roundedRescaledHeight = Math.round(rescaledHeight);
-            if (rescaledHeight != roundedRescaledHeight) {
-                rescaledHeight = roundedRescaledHeight;
-                verticalScale = rescaledHeight / locCenterContentSize.height;
-            }
-        }
-
-        locCenter.setScaleX(horizontalScale);
-        locCenter.setScaleY(verticalScale);
 
         var locLeft = this._left, locRight = this._right, locTop = this._top, locBottom = this._bottom;
         var tempAP = cc.p(0, 0);
@@ -176,19 +153,19 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
         // Position corners
         locBottomLeft.setPosition(0, 0);
-        locBottomRight.setPosition(leftWidth + rescaledWidth, 0);
-        locTopLeft.setPosition(0, bottomHeight + rescaledHeight);
-        locTopRight.setPosition(leftWidth + rescaledWidth, bottomHeight + rescaledHeight);
+        locBottomRight.setPosition(leftWidth + scaleResult.rescaledWidth, 0);
+        locTopLeft.setPosition(0, bottomHeight + scaleResult.rescaledHeight);
+        locTopRight.setPosition(leftWidth + scaleResult.rescaledWidth, bottomHeight + scaleResult.rescaledHeight);
 
         // Scale and position borders
         locLeft.setPosition(0, bottomHeight);
-        locLeft.setScaleY(verticalScale);
-        locRight.setPosition(leftWidth + rescaledWidth, bottomHeight);
-        locRight.setScaleY(verticalScale);
+        locLeft.setScaleY(scaleResult.verticalScale);
+        locRight.setPosition(leftWidth + scaleResult.rescaledWidth, bottomHeight);
+        locRight.setScaleY(scaleResult.verticalScale);
         locBottom.setPosition(leftWidth, 0);
-        locBottom.setScaleX(horizontalScale);
-        locTop.setPosition(leftWidth, bottomHeight + rescaledHeight);
-        locTop.setScaleX(horizontalScale);
+        locBottom.setScaleX(scaleResult.horizontalScale);
+        locTop.setPosition(leftWidth, bottomHeight + scaleResult.rescaledHeight);
+        locTop.setScaleX(scaleResult.horizontalScale);
 
         // Position centre
         locCenter.setPosition(leftWidth, bottomHeight);
@@ -277,20 +254,6 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         this._scale9Dirty = true;
     },
 
-    updateDisplayedOpacity: function(parentOpacity){
-        if(!this._scale9Image)
-            return;
-
-        cc.Node.prototype.updateDisplayedOpacity.call(this, parentOpacity);
-        var scaleChildren = this._scale9Image.getChildren();
-        for (var i = 0; i < scaleChildren.length; i++) {
-            var selChild = scaleChildren[i];
-            if (selChild)
-                selChild.updateDisplayedOpacity(parentOpacity);
-        }
-        this._scale9Dirty = true;
-    },
-
     /** Color: conforms to CCRGBAProtocol protocol */
     setColor: function (color) {
         if(!this._scale9Image)
@@ -302,33 +265,6 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             var selChild = scaleChildren[i];
             if (selChild)
                 selChild.setColor(color);
-        }
-        this._scale9Dirty = true;
-    },
-
-    updateDisplayedColor: function(parentColor){
-        if(!this._scale9Image)
-            return;
-
-        cc.Node.prototype.updateDisplayedColor.call(this, parentColor);
-        var scaleChildren = this._scale9Image.getChildren();
-        for (var i = 0; i < scaleChildren.length; i++) {
-            var selChild = scaleChildren[i];
-            if (selChild){
-                if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-                    cc.Node.prototype.updateDisplayedColor.call(selChild, parentColor);
-                    if(
-                        parentColor.r !== 255 ||
-                        parentColor.g !== 255 ||
-                        parentColor.b !== 255
-                        ){
-                        selChild._changeTextureColor();
-                        selChild._setNodeDirtyForCache();
-                    }
-                }else{
-                    selChild.updateDisplayedColor(parentColor);
-                }
-            }
         }
         this._scale9Dirty = true;
     },
@@ -664,7 +600,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         }
 
         // Set the given rect's size as original size
-        this._spriteRect = rect;
+        //this._spriteRect = rect;
         var locSpriteRect = this._spriteRect;
         locSpriteRect.x = rect.x;
         locSpriteRect.y = rect.y;
@@ -911,8 +847,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         }
 
         this.setContentSize(rect.width, rect.height);
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this.addChild(locScale9Image);
+        this._renderCmd.addBatchNodeToChildren(locScale9Image);
 
         if (this._spritesGenerated) {
             // Restore color and opacity
@@ -1002,7 +937,7 @@ cc.Scale9Sprite.create = function (file, rect, capInsets) {
  * @deprecated
  * @param spriteFrame
  * @param capInsets
- * @returns {Scale9Sprite}
+ * @returns {cc.Scale9Sprite}
  */
 cc.Scale9Sprite.createWithSpriteFrame = function (spriteFrame, capInsets) {
     return new cc.Scale9Sprite(spriteFrame, capInsets);
@@ -1012,7 +947,7 @@ cc.Scale9Sprite.createWithSpriteFrame = function (spriteFrame, capInsets) {
  * @deprecated
  * @param spriteFrameName
  * @param capInsets
- * @returns {Scale9Sprite}
+ * @returns {cc.Scale9Sprite}
  */
 cc.Scale9Sprite.createWithSpriteFrameName = function (spriteFrameName, capInsets) {
     return new cc.Scale9Sprite(spriteFrameName, capInsets);

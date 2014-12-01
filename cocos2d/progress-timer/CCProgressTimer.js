@@ -177,7 +177,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      */
     setColor:function (color) {
         this._sprite.color = color;
-        this._renderCmd._updateColor();
+        //this._renderCmd._updateColor();
     },
 
     /**
@@ -186,7 +186,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      */
     setOpacity:function (opacity) {
         this._sprite.opacity = opacity;
-        this._renderCmd._updateColor();
+        //this._renderCmd._updateColor();
     },
 
     /**
