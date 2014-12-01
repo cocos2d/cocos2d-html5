@@ -417,6 +417,8 @@
             "extensions/gui/control-extension/CCControlStepper.js",
             "extensions/gui/control-extension/CCControlPotentiometer.js",
             "extensions/gui/scrollview/CCScrollView.js",
+            "extensions/gui/scrollview/CCScrollViewCanvasRenderCmd.js",
+            "extensions/gui/scrollview/CCScrollViewWebGLRenderCmd.js",
             "extensions/gui/scrollview/CCSorting.js",
             "extensions/gui/scrollview/CCTableView.js"
         ],

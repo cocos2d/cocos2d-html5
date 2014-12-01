@@ -253,7 +253,6 @@ cc.Node.RenderCmd.prototype = {
         var t = this.getNodeToParentTransform(),
             worldT = this._worldTransform;         //get the world transform
 
-        this._dirtyFlag ^= cc.Node._dirtyFlags.transformDirty;
         if (parentCmd) {
             var pt = parentCmd._worldTransform;
             // cc.AffineTransformConcat is incorrect at get world transform
@@ -438,9 +437,11 @@ cc.Node.RenderCmd.prototype = {
         if(colorDirty)
             this._updateColor();
 
-        if (transformDirty)
+        if (transformDirty){
             //update the transform
             this.transform(parentCmd);
+            this._dirtyFlag ^= cc.Node._dirtyFlags.transformDirty;
+        }
 
     };
 
