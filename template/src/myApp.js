@@ -44,7 +44,8 @@ var MyLayer = cc.Layer.extend({
         this.sprite.setPosition(size.width / 2, size.height / 2);
         this.sprite.setScale(size.height / this.sprite.getContentSize().height);
         this.addChild(this.sprite, 0);
-
+        this.helloLabel.setColor(cc.color.RED);
+        window.label = this.helloLabel;
     }
 });
 

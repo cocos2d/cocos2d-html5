@@ -365,7 +365,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         _t._compressedInterpolation = true;
 
         cc.LayerColor.prototype.init.call(_t, cc.color(start.r, start.g, start.b, 255));
-        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.colorDirty|cc.Node._dirtyFlags.opacityDirty);
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.colorDirty|cc.Node._dirtyFlags.opacityDirty|cc.Node._dirtyFlags.gradientDirty);
         return true;
     },
 
@@ -376,16 +376,16 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      */
     setContentSize: function (size, height) {
         cc.LayerColor.prototype.setContentSize.call(this, size, height);
-        this._renderCmd.setGradientDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.gradientDirty);
     },
 
     _setWidth: function (width) {
         cc.LayerColor.prototype._setWidth.call(this, width);
-        this._renderCmd.setGradientDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.gradientDirty);
     },
     _setHeight: function (height) {
         cc.LayerColor.prototype._setHeight.call(this, height);
-        this._renderCmd.setGradientDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.gradientDirty);
     },
 
     /**
@@ -470,7 +470,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     setVector: function (Var) {
         this._alongVector.x = Var.x;
         this._alongVector.y = Var.y;
-        this._renderCmd.setGradientDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.gradientDirty);
     },
 
     /**
@@ -495,7 +495,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      */
     setCompressedInterpolation: function (compress) {
         this._compressedInterpolation = compress;
-        this._renderCmd.setGradientDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.gradientDirty);
     },
 
     _createRenderCmd: function(){

@@ -55,49 +55,43 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     proto.constructor = cc.LabelTTF.RenderCmd;
     proto.updateStatus = function () {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        if (locFlag & flags.colorDirty) {
-            //update the color
-            this._updateDisplayColor()
-        }
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
 
-        if (locFlag & flags.opacityDirty) {
-            //update the opacity
+        if (colorDirty)
+            this._updateDisplayColor();
+        if (opacityDirty)
             this._updateDisplayOpacity();
-        }
 
-        if (locFlag & flags.textDirty) {
-            //update texture for labelTTF
+        if(colorDirty || opacityDirty){
+            this._setColorsString();
+            this._updateColor();
             this._updateTexture();
-        }
+        }else if(locFlag & flags.textDirty)
+            this._updateTexture();
 
-        if (locFlag & flags.transformDirty) {
-            //update the transform
-            this.transform(null, true);
-        }
+        if (locFlag & flags.transformDirty)
+            this.transform(this.getParentRenderCmd(), true);
     };
 
     proto._syncStatus = function (parentCmd) {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        if (locFlag & flags.colorDirty) {
-            //update the color
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
+        if (colorDirty)
             this._syncDisplayColor();
-            this._setColorsString();
-        }
-
-        if (locFlag & flags.opacityDirty) {
-            //update the opacity
+        if (opacityDirty)
             this._syncDisplayOpacity();
-        }
 
-        if (locFlag & flags.textDirty) {
-            //update texture for labelTTF
+        if(colorDirty || opacityDirty){
+            this._setColorsString();
+            this._updateColor();
             this._updateTexture();
-        }
+        }else if(locFlag & flags.textDirty)
+            this._updateTexture();
 
-        if (locFlag & flags.transformDirty) {
-            //update the transform
+        if (locFlag & flags.transformDirty)                 //update the transform
             this.transform(parentCmd);
-        }
     };
 
     proto._getLabelContext = function () {
@@ -338,9 +332,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
                 }
 
                 fuzzyLen = fuzzyLen + pushNum;
-
                 tmpText = text.substr(fuzzyLen);
-
                 width = allWidth - this._measure(tmpText);
             }
 
@@ -393,7 +385,6 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
     proto._setColorsString = function () {
         this.setDirtyFlag(cc.Node._dirtyFlags.textDirty);
-
         var locDisplayColor = this._displayedColor, node = this._node,
             locDisplayedOpacity = this._displayedOpacity,
             locShadowColor = node._shadowColor || this._displayedColor;

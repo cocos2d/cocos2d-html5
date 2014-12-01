@@ -28,7 +28,7 @@
         this._needDraw = true;
     };
 
-    var proto = cc.TMXLayer.WebGLRenderCmd.prototype.rendering = cc.SpriteBatchNode.WebGLRenderCmd.prototype.rendering;
+    var proto = cc.TMXLayer.WebGLRenderCmd.prototype = Object.create(cc.SpriteBatchNode.WebGLRenderCmd.prototype);
     proto.constructor = cc.TMXLayer.WebGLRenderCmd;
 
     proto._updateCacheContext = function(){};
@@ -37,13 +37,13 @@
 
     proto.initImageSize = function(){
         var node = this._node;
-        node.tileset.imageSize = this.textureAtlas.texture.getContentSizeInPixels();
+        node.tileset.imageSize = this._textureAtlas.texture.getContentSizeInPixels();
 
         // By default all the tiles are aliased
         // pros:
         //  - easier to render
         // cons:
         //  - difficult to scale / rotate / etc.
-        node.textureAtlas.texture.setAliasTexParameters();
+        this._textureAtlas.texture.setAliasTexParameters();
     }
 })();

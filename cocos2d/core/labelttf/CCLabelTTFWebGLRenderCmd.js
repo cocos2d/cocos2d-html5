@@ -27,6 +27,7 @@
     cc.LabelTTF.WebGLRenderCmd = function (renderable) {
         cc.Sprite.WebGLRenderCmd.call(this, renderable);
         cc.LabelTTF.RenderCmd.call(this);
+        this.setShaderProgram(cc.shaderCache.programForKey(cc.LabelTTF._SHADER_PROGRAM));
     };
 
     cc.LabelTTF.WebGLRenderCmd.prototype = Object.create(cc.Sprite.WebGLRenderCmd.prototype);
@@ -37,7 +38,7 @@
         this.setDirtyFlag(cc.Node._dirtyFlags.textDirty);
         var node = this._node;
         var locStrokeColor = node._strokeColor, locFontFillColor = node._textFillColor;
-        this._shadowColorStr = "rgba(128,128,128," + this._shadowOpacity + ")";
+        this._shadowColorStr = "rgba(128,128,128," + node._shadowOpacity + ")";
         this._fillColorStr = "rgba(" + (0 | locFontFillColor.r) + "," + (0 | locFontFillColor.g) + "," + (0 | locFontFillColor.b) + ", 1)";
         this._strokeColorStr = "rgba(" + (0 | locStrokeColor.r) + "," + (0 | locStrokeColor.g) + "," + (0 | locStrokeColor.b) + ", 1)";
     };

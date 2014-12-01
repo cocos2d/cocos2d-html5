@@ -134,15 +134,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return true;
     },
 
-    setColor: function(color){
-        cc.Sprite.prototype.setColor.call(this, color);
-        this._renderCmd._setColorsString();
-    },
-
     _setUpdateTextureDirty: function () {
         this._needUpdateTexture = true;
         this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.textDirty);
-        cc.renderer.pushDirtyNode(this._renderCmd);
     },
 
     ctor: function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
@@ -250,8 +244,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @return {Boolean}
      */
     initWithStringAndTextDefinition: function (text, textDefinition) {
-        // shader program
-        this.setShaderProgram(cc.shaderCache.programForKey(cc.LabelTTF._SHADER_PROGRAM));       //TODO
         // prepare everything needed to render the label
         this._updateWithTextDefinition(textDefinition, false);
         // set the string
@@ -525,6 +517,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         if (mustUpdateTexture)
             this._renderCmd._updateTexture();
+        var flags = cc.Node._dirtyFlags;
+        this._renderCmd.setDirtyFlag(flags.colorDirty|flags.opacityDirty|flags.textDirty);
     },
 
     _prepareTextDefinition: function (adjustForResolution) {

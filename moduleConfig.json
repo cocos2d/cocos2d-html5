@@ -177,7 +177,8 @@
         "parallax" : [
             "core",
 
-            "cocos2d/parallax/CCParallaxNode.js"
+            "cocos2d/parallax/CCParallaxNode.js",
+            "cocos2d/parallax/CCParallaxNodeRenderCmd.js"
         ],
         "particle" : [
             "core", "compression",

@@ -124,32 +124,13 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @return {cc.Texture2D}
      */
 	getTexture: function(){
-        this._renderCmd.getTexture();
-    },
-
-    /**
-     * don't call visit on it's children ( override visit of cc.Node )
-     * @function
-     * @override
-     * @param {CanvasRenderingContext2D} ctx
-     */
-    visit: function(){
-        this._renderCmd.visit();
+        return this._renderCmd.getTexture();
     },
 
     //set the cache dirty flag for canvas
     _setNodeDirtyForCache: function () {
         this._renderCmd._cacheDirty  = true;
         this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
-    },
-
-    /**
-     * draw cc.SpriteBatchNode (override draw of cc.Node)
-     * @function
-     * @param {CanvasRenderingContext2D} ctx
-     */
-    draw: function(ctx){
-        this._renderCmd.draw(ctx);
     },
 
     /**

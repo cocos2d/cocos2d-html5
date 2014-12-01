@@ -162,9 +162,11 @@
         this._needDraw = true;
     };
     var proto = cc.LayerGradient.WebGLRenderCmd.prototype = Object.create(cc.LayerColor.WebGLRenderCmd.prototype);
+    cc.inject(cc.LayerGradient.RenderCmd, proto);
     proto.constructor = cc.LayerGradient.WebGLRenderCmd;
 
     proto._updateColor = function(){
+        this._dirtyFlag ^= cc.Node._dirtyFlags.gradientDirty;
         var _t = this, node = this._node;
         var locAlongVector = node._alongVector;
         var h = cc.pLength(locAlongVector);

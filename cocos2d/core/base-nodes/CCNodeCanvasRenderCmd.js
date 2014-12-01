@@ -36,7 +36,7 @@ cc.CustomRenderCmd = function (target, func) {
 };
 
 cc.Node._dirtyFlags = {transformDirty: 1 << 0, visibleDirty: 1 << 1, colorDirty: 1 << 2, opacityDirty: 1 << 3, cacheDirty: 1 << 4,
-    orderDirty: 1 << 5, textDirty: 1 << 6, all: (1 << 7) - 1};
+    orderDirty: 1 << 5, textDirty: 1 << 6, gradientDirty:1 << 7, all: (1 << 8) - 1};
 
 //-------------------------Base -------------------------
 cc.Node.RenderCmd = function(renderable){
@@ -228,7 +228,7 @@ cc.Node.RenderCmd.prototype = {
         if(colorDirty || opacityDirty)
             this._updateColor();
 
-        if(this._dirtyFlag & flags.transformDirty){
+        if(locFlag & flags.transformDirty){
             //update the transform
             this.transform(this.getParentRenderCmd(), true);
         }

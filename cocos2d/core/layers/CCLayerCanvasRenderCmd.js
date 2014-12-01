@@ -317,6 +317,51 @@
     };
 })();
 
+(function () {
+    cc.LayerGradient.RenderCmd = {
+        updateStatus: function () {
+            var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+            var colorDirty = locFlag & flags.colorDirty,
+                opacityDirty = locFlag & flags.opacityDirty;
+            if (colorDirty)
+                this._updateDisplayColor()
+
+            if (opacityDirty)
+                this._updateDisplayOpacity();
+
+            if (locFlag & flags.transformDirty) {
+                //update the transform
+                this.transform(null, true);
+            }
+
+            if (colorDirty || opacityDirty || (locFlag & flags.gradientDirty)){
+                this._updateColor();
+            }
+        },
+
+        _syncStatus: function (parentCmd) {
+            var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+            var colorDirty = locFlag & flags.colorDirty,
+                opacityDirty = locFlag & flags.opacityDirty;
+
+            if (colorDirty)
+                this._syncDisplayColor();
+
+            if (opacityDirty)
+                this._syncDisplayOpacity();
+
+            if (locFlag & flags.transformDirty) {
+                //update the transform
+                this.transform(parentCmd);
+            }
+
+            if (colorDirty || opacityDirty || (locFlag & flags.gradientDirty)){
+                this._updateColor();
+            }
+        }
+    };
+})();
+
 /**
  * cc.LayerGradient's rendering objects of Canvas
  */
@@ -328,14 +373,10 @@
         this._endPoint = cc.p(0, 0);
         this._startStopStr = null;
         this._endStopStr = null;
-        this._gradientDirty = false;
     };
     var proto = cc.LayerGradient.CanvasRenderCmd.prototype = Object.create(cc.LayerColor.CanvasRenderCmd.prototype);
+    cc.inject(cc.LayerGradient.RenderCmd, proto);
     proto.constructor = cc.LayerGradient.CanvasRenderCmd;
-
-    proto.setGradientDirty = function(){
-        this._gradientDirty = true;
-    };
 
     proto.rendering = function (ctx, scaleX, scaleY) {
         var context = ctx || cc._renderContext,
@@ -372,32 +413,11 @@
         cc.g_NumberOfDraws++;
     };
 
-    proto.updateStatus = function(){
-        var colorDirty = this._dirtyFlag & cc.Node._dirtyFlags.colorDirty,
-            opacityDirty = this._dirtyFlag & cc.Node._dirtyFlags.opacityDirty;
-        if(colorDirty){
-            //update the color
-            this._updateDisplayColor()
-        }
-
-        if(opacityDirty){
-            //update the opacity
-            this._updateDisplayOpacity();
-        }
-
-        if(this._dirtyFlag & cc.Node._dirtyFlags.transformDirty){
-            //update the transform
-            this.transform(null, true);
-        }
-
-        if(colorDirty || opacityDirty || this._gradientDirty)
-            this._updateColor();
-    };
-
     proto._updateColor = function(){
         var node = this._node;
         var contentSize = node._contentSize;
         var locAlongVector = node._alongVector, tWidth = contentSize.width * 0.5, tHeight = contentSize.height * 0.5;
+        this._dirtyFlag ^= cc.Node._dirtyFlags.gradientDirty;
 
         this._startPoint.x = tWidth * (-locAlongVector.x) + tWidth;
         this._startPoint.y = tHeight * locAlongVector.y - tHeight;

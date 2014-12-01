@@ -364,7 +364,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         //If the last character processed has an xAdvance which is less that the width of the characters image, then we need
         // to adjust the width of the string to take this into account, or the character will overlap the end of the bounding box
-        //TODO sync to -x
         if(fontDef && fontDef.xAdvance < fontDef.rect.width)
             tmpSize.width = longestLine - fontDef.xAdvance + fontDef.rect.width;
         else
