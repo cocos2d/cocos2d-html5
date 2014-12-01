@@ -63,10 +63,8 @@
 
         var currentStack = cc.current_stack;
         currentStack.stack.push(currentStack.top);
-        cc.kmMat4Assign(node._stackMatrix, currentStack.top);
-        currentStack.top = node._stackMatrix;
-
-        node._syncStatus(ctx);
+        this._syncStatus(ctx);
+        currentStack.top = this._stackMatrix;
         //this.draw(ctx);
         cc.renderer.pushRenderCommand(this);
 

@@ -149,7 +149,7 @@ cc.Node.RenderCmd.prototype = {
            }
        }
        this._cascadeColorEnabledDirty = false;
-        this._dirtyFlag ^= cc.Node._dirtyFlags.colorDirty;
+       this._dirtyFlag ^= cc.Node._dirtyFlags.colorDirty;
    },
 
     _updateDisplayOpacity: function (parentOpacity) {
@@ -253,6 +253,7 @@ cc.Node.RenderCmd.prototype = {
         var t = this.getNodeToParentTransform(),
             worldT = this._worldTransform;         //get the world transform
 
+        this._dirtyFlag ^= cc.Node._dirtyFlags.transformDirty;
         if (parentCmd) {
             var pt = parentCmd._worldTransform;
             // cc.AffineTransformConcat is incorrect at get world transform

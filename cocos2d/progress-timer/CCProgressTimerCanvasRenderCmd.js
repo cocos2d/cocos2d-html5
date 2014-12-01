@@ -45,7 +45,7 @@
     proto.rendering = function (ctx, scaleX, scaleY) {
         var context = ctx || cc._renderContext, node = this._node, locSprite = node._sprite;
 
-        var locTextureCoord = locSprite._renderCmd._textureCoord, alpha = locSprite._displayedOpacity / 255;
+        var locTextureCoord = locSprite._renderCmd._textureCoord, alpha = locSprite._renderCmd._displayedOpacity / 255;
 
         if (locTextureCoord.width === 0 || locTextureCoord.height === 0)
             return;
@@ -212,4 +212,65 @@
     };
 
     proto._updateColor = function(){};
+
+    proto._syncStatus = function (parentCmd) {
+        var node = this._node;
+        if(!node._sprite)
+            return;
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var spriteCmd = node._sprite._renderCmd;
+        var spriteFlag = spriteCmd._dirtyFlag;
+
+        var colorDirty = spriteFlag & flags.colorDirty,
+            opacityDirty = spriteFlag & flags.opacityDirty;
+
+        if (colorDirty){
+            spriteCmd._syncDisplayColor();
+        }
+
+        if (opacityDirty){
+            spriteCmd._syncDisplayOpacity();
+        }
+
+/*        if(colorDirty || opacityDirty){
+            spriteCmd._updateColor();
+            this._updateColor();
+        }*/
+
+        if (locFlag & flags.transformDirty) {
+            //update the transform
+            this.transform(parentCmd);
+        }
+    };
+
+    proto.updateStatus = function () {
+        var node = this._node;
+        if(!node._sprite)
+            return;
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var spriteCmd = node._sprite._renderCmd;
+        var spriteFlag = spriteCmd._dirtyFlag;
+
+        var colorDirty = spriteFlag & flags.colorDirty,
+            opacityDirty = spriteFlag & flags.opacityDirty;
+
+        if(colorDirty){
+            spriteCmd._updateDisplayColor();
+        }
+
+        if(opacityDirty){
+            spriteCmd._updateDisplayOpacity();
+        }
+
+/*        if(colorDirty || opacityDirty){
+            spriteCmd._updateColor();
+            this._updateColor();
+        }*/
+
+        if(locFlag & flags.transformDirty){
+            //update the transform
+            this.transform(this.getParentRenderCmd(), true);
+        }
+        this._dirtyFlag = 0;
+    };
 })();

@@ -208,7 +208,7 @@
     };
 
     proto.initTexCoordsWithRect = function(pointRect){
-        var node = this;
+        var node = this._node;
         var texture = node.texture;
         var scaleFactor = cc.contentScaleFactor();
         // convert to pixels coords
@@ -310,7 +310,7 @@
 
             //set the texture coord
             if(node._texture){
-                node.initTexCoordsWithRect(cc.rect(0, 0, node._texture.width, node._texture.height));
+                this.initTexCoordsWithRect(cc.rect(0, 0, node._texture.width, node._texture.height));
             }
         } else
             node._totalParticles = tp;

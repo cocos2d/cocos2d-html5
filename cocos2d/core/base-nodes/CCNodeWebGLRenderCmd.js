@@ -48,7 +48,6 @@
             node._normalizedPositionDirty = false;
         }
         if (this._dirtyFlag & cc.Node._dirtyFlags.transformDirty) {
-            this._dirtyFlag ^= cc.Node._dirtyFlags.transformDirty;
             // Translate values
             var x = node._position.x, y = node._position.y;
             var apx = this._anchorPointInPoints.x, napx = -apx;
@@ -183,6 +182,7 @@
 
         // Convert 3x3 into 4x4 matrix
         var trans = this.getNodeToParentTransform();
+        this._dirtyFlag ^= cc.Node._dirtyFlags.transformDirty;
         var t4x4Mat = t4x4.mat;
         t4x4Mat[0] = trans.a;
         t4x4Mat[4] = trans.c;
