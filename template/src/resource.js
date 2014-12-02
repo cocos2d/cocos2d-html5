@@ -6,6 +6,9 @@ var g_resources = [
     //image
     s_HelloWorld,
     s_CloseNormal,
+    "cyborg.png",
+    "cyborg.plist",
+    "cyborg.xml",
     s_CloseSelected
 
     //plist

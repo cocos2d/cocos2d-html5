@@ -76,6 +76,9 @@
 
         context.save();
         //transform
+        var parent = node._parent;
+        var parentCmd = parent ? parent._renderCmd : null;
+        this.transform(parentCmd);
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
         if (node.isBlendAdditive())
             context.globalCompositeOperation = 'lighter';

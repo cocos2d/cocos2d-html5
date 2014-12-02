@@ -44,8 +44,15 @@ var MyLayer = cc.Layer.extend({
         this.sprite.setPosition(size.width / 2, size.height / 2);
         this.sprite.setScale(size.height / this.sprite.getContentSize().height);
         this.addChild(this.sprite, 0);
-        this.helloLabel.setColor(cc.color.RED);
-        window.label = this.helloLabel;
+
+        ccs.armatureDataManager.addArmatureFileInfo("cyborg.png", "cyborg.plist", "cyborg.xml");
+        this.armature = ccs.Armature.create("cyborg");
+        this.armature.getAnimation().playWithIndex(1);
+        this.armature.x = size.width / 2;
+        this.armature.y = size.height / 2;
+        this.armature.scale = 1.2;
+        this.armature.getAnimation().setSpeedScale(0.4);
+        this.addChild(this.armature);
     }
 });
 
