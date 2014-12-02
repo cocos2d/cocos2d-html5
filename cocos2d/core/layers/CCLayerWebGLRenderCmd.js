@@ -165,6 +165,27 @@
     cc.inject(cc.LayerGradient.RenderCmd, proto);
     proto.constructor = cc.LayerGradient.WebGLRenderCmd;
 
+    proto._syncStatus = function (parentCmd) {
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
+
+        if (colorDirty)
+            this._syncDisplayColor();
+
+        if (opacityDirty)
+            this._syncDisplayOpacity();
+
+        //if (locFlag & flags.transformDirty) {
+            //update the transform
+        this.transform(parentCmd);
+        //}
+
+        if (colorDirty || opacityDirty || (locFlag & flags.gradientDirty)){
+            this._updateColor();
+        }
+    };
+
     proto._updateColor = function(){
         this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.gradientDirty ^ this._dirtyFlag;
         var _t = this, node = this._node;

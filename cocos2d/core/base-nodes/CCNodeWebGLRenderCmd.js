@@ -125,17 +125,17 @@
         if(colorDirty || opacityDirty)
             this._updateColor();
 
-        if (locFlag & flags.transformDirty) {
+        //if (locFlag & flags.transformDirty) {      //need update the stackMatrix every calling visit, because when projection changed, need update all scene graph element.
             //update the transform
             this.transform(parentCmd);
             this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
-        }
+        //}
     };
 
     proto._updateColor = function(){};
 
     proto.visit = function (parentCmd) {
-        var _t = this, node = this._node;
+        var node = this._node;
         // quick return if not visible
         if (!node._visible)
             return;
@@ -148,8 +148,8 @@
 
         //optimize performance for javascript
         currentStack.stack.push(currentStack.top);
-        _t._syncStatus(parentCmd);
-        currentStack.top = _t._stackMatrix;
+        this._syncStatus(parentCmd);
+        currentStack.top = this._stackMatrix;
 
         var locChildren = node._children;
         if (locChildren && locChildren.length > 0) {
@@ -183,7 +183,11 @@
 
         // Convert 3x3 into 4x4 matrix
         var trans = this.getNodeToParentTransform();
-        this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
+
+
+        if(cc.Node._dirtyFlags.transformDirty & this._dirtyFlag)
+            this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
+
         var t4x4Mat = t4x4.mat;
         t4x4Mat[0] = trans.a;
         t4x4Mat[4] = trans.c;

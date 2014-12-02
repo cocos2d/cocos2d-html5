@@ -172,7 +172,8 @@
         "node-grid" : [
             "core",
 
-            "cocos2d/node-grid/CCNodeGrid.js"
+            "cocos2d/node-grid/CCNodeGrid.js",
+            "cocos2d/node-grid/CCNodeGridWebGLRenderCmd.js"
         ],
         "parallax" : [
             "core",
