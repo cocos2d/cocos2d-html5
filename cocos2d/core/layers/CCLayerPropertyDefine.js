@@ -36,22 +36,17 @@ cc._tmp.PrototypeLayerGradient = function () {
     // Extended properties
     /** @expose */
     _p.startColor;
-    cc.addProperty(_p, "startColor", _p.getStartColor, _p.setStartColor);
+    cc.defineGetterSetter(_p, "startColor", _p.getStartColor, _p.setStartColor);
     /** @expose */
     _p.endColor;
-    cc.addProperty(_p, "endColor", _p.getEndColor, _p.setEndColor);
+    cc.defineGetterSetter(_p, "endColor", _p.getEndColor, _p.setEndColor);
     /** @expose */
     _p.startOpacity;
-    cc.addProperty(_p, "startOpacity", 255, _p.getStartOpacity, _p.setStartOpacity);
+    cc.defineGetterSetter(_p, "startOpacity", _p.getStartOpacity, _p.setStartOpacity);
     /** @expose */
     _p.endOpacity;
-    cc.addProperty(_p, "endOpacity", 255, _p.getEndOpacity, _p.setEndOpacity);
+    cc.defineGetterSetter(_p, "endOpacity", _p.getEndOpacity, _p.setEndOpacity);
     /** @expose */
     _p.vector;
-    cc.addProperty(_p, "vector", _p.getVector, _p.setVector);
-
-    _p.__delegators = {
-        startColor : cc.__delegators.color,
-        endColor :  cc.__delegators.color
-    }
+    cc.defineGetterSetter(_p, "vector", _p.getVector, _p.setVector);
 };
