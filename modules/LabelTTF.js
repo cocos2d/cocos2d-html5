@@ -1,6 +1,6 @@
 define([
-    "Sprite",
-    "cocos2d/core/labelttf/CCLabelTTF"
+    "cocosModule/Sprite",
+    "cocos2dPath/core/labelttf/CCLabelTTF"
 ], function() {
     return cc.LabelTTF;
 });

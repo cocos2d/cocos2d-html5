@@ -1954,7 +1954,8 @@ cc.game = /** @lends cc.game# */{
         id: "id",
         renderMode: "renderMode",
         jsList: "jsList",
-        classReleaseMode: "classReleaseMode"
+        classReleaseMode: "classReleaseMode",
+        useRequireJS:"useRequireJS"
     },
 
     _prepareCalled: false,//whether the prepare function has been called
@@ -2128,13 +2129,19 @@ cc.game = /** @lends cc.game# */{
 
         var jsList = config[CONFIG_KEY.jsList] || [];
         if (cc.Class) {//is single file
-            //load user's jsList only
-//            loader.loadJsWithImg("", jsList, function (err) {
-//                if (err) throw err;
-//                self._prepared = true;
-//                if (cb) cb();
-//            });
-            cb();
+            if  (config[CONFIG_KEY.useRequireJS])
+            {
+                if (cb) cb();
+            }
+            else
+            {
+                //load user's jsList only
+                loader.loadJsWithImg("", jsList, function (err) {
+                    if (err) throw err;
+                    self._prepared = true;
+                    if (cb) cb();
+                });
+            }
         } else {
             //load cc's jsList first
             var ccModulesPath = cc.path.join(engineDir, "moduleConfig.json");
@@ -2150,12 +2157,18 @@ cc.game = /** @lends cc.game# */{
                     if (arr) newJsList = newJsList.concat(arr);
                 }
                 newJsList = newJsList.concat(jsList);
-//                cc.loader.loadJsWithImg(newJsList, function (err) {
-//                    if (err) throw err;
-//                    self._prepared = true;
-//                    if (cb) cb();
-//                });
-                cb();
+                if  (config[CONFIG_KEY.useRequireJS])
+                {
+                    if (cb) cb();
+                }
+                else {
+                    cc.loader.loadJsWithImg(newJsList, function (err) {
+                        if (err) throw err;
+                        self._prepared = true;
+                        if (cb) cb();
+                    });
+                }
+
             });
         }
     }
