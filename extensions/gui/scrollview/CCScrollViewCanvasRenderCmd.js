@@ -35,6 +35,7 @@
     proto.constructor = cc.ScrollView.CanvasRenderCmd;
 
     proto._startCmd = function(ctx, scaleX, scaleY){
+        var node = this._node;
         ctx = ctx || cc._renderContext;
         ctx.save();
         ctx.save();
@@ -43,16 +44,16 @@
         ctx.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
 
 
-        if (this._clippingToBounds) {
+        if (this._node._clippingToBounds) {
             this._scissorRestored = false;
 
-            var locScaleX = this.getScaleX();
-            var locScaleY = this.getScaleY();
+            var locScaleX = node.getScaleX();
+            var locScaleY = node.getScaleY();
 
             ctx = ctx || cc._renderContext;
 
-            var getWidth = (this._viewSize.width * locScaleX) * scaleX;
-            var getHeight = (this._viewSize.height * locScaleY) * scaleY;
+            var getWidth = (node._viewSize.width * locScaleX) * scaleX;
+            var getHeight = (node._viewSize.height * locScaleY) * scaleY;
             var startX = 0;
             var startY = 0;
 
