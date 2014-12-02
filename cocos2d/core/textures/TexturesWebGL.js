@@ -763,6 +763,12 @@ cc._tmp.WebGLTexture2D = function () {
             this.removeEventListener("load", target);
         }
     });
+    
+    cc.EventHelper.prototype.apply(cc.Texture2D.prototype);
+
+    cc.assert(cc.isFunction(cc._tmp.PrototypeTexture2D), cc._LogInfos.MissingFile, "TexturesPropertyDefine.js");
+    cc._tmp.PrototypeTexture2D();
+    delete cc._tmp.PrototypeTexture2D;
 };
 
 cc._tmp.WebGLTextureAtlas = function () {

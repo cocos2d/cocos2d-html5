@@ -65,7 +65,7 @@ cc._addEventListener = function (element, type, listener, useCapture) {
 };
 
 //is nodejs ? Used to support node-webkit.
-cc._isNodeJs = typeof require !== 'undefined' && require("fs");
+//cc._isNodeJs = typeof require !== 'undefined' && require("fs");
 
 /**
  * Iterate over an object or an array, executing a function for each matched element.
@@ -1975,7 +1975,8 @@ cc.game = /** @lends cc.game# */{
         id: "id",
         renderMode: "renderMode",
         jsList: "jsList",
-        classReleaseMode: "classReleaseMode"
+        classReleaseMode: "classReleaseMode",
+        useRequireJS:"useRequireJS"
     },
 
     _prepareCalled: false,//whether the prepare function has been called
@@ -2159,12 +2160,19 @@ cc.game = /** @lends cc.game# */{
 
         var jsList = config[CONFIG_KEY.jsList] || [];
         if (cc.Class) {//is single file
-            //load user's jsList only
-            loader.loadJsWithImg("", jsList, function (err) {
-                if (err) throw err;
-                self._prepared = true;
+            if  (config[CONFIG_KEY.useRequireJS])
+            {
                 if (cb) cb();
-            });
+            }
+            else
+            {
+                //load user's jsList only
+                loader.loadJsWithImg("", jsList, function (err) {
+                    if (err) throw err;
+                    self._prepared = true;
+                    if (cb) cb();
+                });
+            }
         } else {
             //load cc's jsList first
             var ccModulesPath = cc.path.join(engineDir, "moduleConfig.json");
@@ -2180,11 +2188,18 @@ cc.game = /** @lends cc.game# */{
                     if (arr) newJsList = newJsList.concat(arr);
                 }
                 newJsList = newJsList.concat(jsList);
-                cc.loader.loadJsWithImg(newJsList, function (err) {
-                    if (err) throw err;
-                    self._prepared = true;
+                if  (config[CONFIG_KEY.useRequireJS])
+                {
                     if (cb) cb();
-                });
+                }
+                else {
+                    cc.loader.loadJsWithImg(newJsList, function (err) {
+                        if (err) throw err;
+                        self._prepared = true;
+                        if (cb) cb();
+                    });
+                }
+
             });
         }
     }
