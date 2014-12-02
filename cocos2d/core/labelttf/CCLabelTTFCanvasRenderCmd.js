@@ -384,7 +384,6 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     proto.constructor = cc.LabelTTF.CanvasRenderCmd;
 
     proto._setColorsString = function () {
-        this.setDirtyFlag(cc.Node._dirtyFlags.textDirty);
         var locDisplayColor = this._displayedColor, node = this._node,
             locDisplayedOpacity = this._displayedOpacity,
             locShadowColor = node._shadowColor || this._displayedColor;
@@ -396,4 +395,6 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         this._strokeColorStr = "rgba(" + (0 | (locDisplayColor.r / 255 * locStrokeColor.r)) + "," + (0 | (locDisplayColor.g / 255 * locStrokeColor.g)) + ","
             + (0 | (locDisplayColor.b / 255 * locStrokeColor.b)) + ", " + locDisplayedOpacity / 255 + ")";
     };
+
+    proto._updateColor = function(){};
 })();
