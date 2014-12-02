@@ -128,7 +128,7 @@
         if (locFlag & flags.transformDirty) {
             //update the transform
             this.transform(parentCmd);
-            this._dirtyFlag ^= cc.Node._dirtyFlags.transformDirty;
+            this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
         }
     };
 
@@ -183,7 +183,7 @@
 
         // Convert 3x3 into 4x4 matrix
         var trans = this.getNodeToParentTransform();
-        this._dirtyFlag ^= cc.Node._dirtyFlags.transformDirty;
+        this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
         var t4x4Mat = t4x4.mat;
         t4x4Mat[0] = trans.a;
         t4x4Mat[4] = trans.c;

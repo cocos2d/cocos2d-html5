@@ -166,7 +166,7 @@
     proto.constructor = cc.LayerGradient.WebGLRenderCmd;
 
     proto._updateColor = function(){
-        this._dirtyFlag ^= cc.Node._dirtyFlags.gradientDirty;
+        this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.gradientDirty ^ this._dirtyFlag;
         var _t = this, node = this._node;
         var locAlongVector = node._alongVector;
         var h = cc.pLength(locAlongVector);

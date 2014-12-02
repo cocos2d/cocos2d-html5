@@ -415,7 +415,7 @@
         var node = this._node;
         var contentSize = node._contentSize;
         var locAlongVector = node._alongVector, tWidth = contentSize.width * 0.5, tHeight = contentSize.height * 0.5;
-        this._dirtyFlag ^= cc.Node._dirtyFlags.gradientDirty;
+        this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.gradientDirty ^ this._dirtyFlag;
 
         this._startPoint.x = tWidth * (-locAlongVector.x) + tWidth;
         this._startPoint.y = tHeight * locAlongVector.y - tHeight;

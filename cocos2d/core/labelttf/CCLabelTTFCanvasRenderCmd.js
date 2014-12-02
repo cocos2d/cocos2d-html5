@@ -124,7 +124,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     };
 
     proto._updateTexture = function () {
-        this._dirtyFlag ^= cc.Node._dirtyFlags.textDirty;
+        this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.textDirty ^ this._dirtyFlag;
         var node = this._node;
         var locContext = this._getLabelContext(), locLabelCanvas = this._labelCanvas;
         var locContentSize = node._contentSize;
