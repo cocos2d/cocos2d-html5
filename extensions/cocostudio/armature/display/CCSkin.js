@@ -240,10 +240,6 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         return this._displayName;
     }
 });
-if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
-    ccs.Skin.prototype.updateTransform = ccs.Skin.prototype._updateTransformForWebGL;
-}
-
 
 var _p = ccs.Skin.prototype;
 

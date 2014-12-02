@@ -52,7 +52,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     _body: null,
     _blendFunc: null,
     _className: "Armature",
-    _realAnchorPointInPoints: null,
 
     /**
      * Create a armature node.
@@ -69,7 +68,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this._armatureIndexDic = {};
         this._offsetPoint = cc.p(0, 0);
         this._armatureTransformDirty = true;
-        this._realAnchorPointInPoints = cc.p(0, 0);
+        this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
         name && ccs.Armature.prototype.init.call(this, name, parentBone);
     },
 
@@ -90,7 +89,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this._boneDic = {};
         this._topBoneList.length = 0;
 
-        this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
+
         this._name = name || "";
         var armatureDataManager = ccs.armatureDataManager;
 
@@ -276,65 +275,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             this.setAnchorPoint(locOffsetPoint.x / rect.width, locOffsetPoint.y / rect.height);
     },
 
-    /**
-     * Sets armature's anchor point, because it need to consider offset point, so here is the override function.
-     * @override
-     * @param {cc.Point|Number} point point or x of point
-     * @param {Number} [y] y of point
-     */
-    setAnchorPoint: function(point, y){
-        var cmd = this._renderCmd;
-        var ax, ay;
-        if(y !== undefined){
-            ax = point;
-            ay = y;
-        }else{
-            ax = point.x;
-            ay = point.y;
-        }
-        var locAnchorPoint = this._anchorPoint;
-        if(ax != locAnchorPoint.x || ay != locAnchorPoint.y){
-            var contentSize = this._contentSize ;
-            locAnchorPoint.x = ax;
-            locAnchorPoint.y = ay;
-            cmd._anchorPointInPoints.x = contentSize.width * locAnchorPoint.x - this._offsetPoint.x;
-            cmd._anchorPointInPoints.y = contentSize.height * locAnchorPoint.y - this._offsetPoint.y;
-
-            this._realAnchorPointInPoints.x = contentSize.width * locAnchorPoint.x;
-            this._realAnchorPointInPoints.y = contentSize.height * locAnchorPoint.y;
-            cmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
-        }
-    },
-
-    _setAnchorX: function (x) {
-        var cmd = this._renderCmd,
-            anchorPointInPoint = cmd._anchorPointInPoints;
-        if (this._anchorPoint.x === x) return;
-        this._anchorPoint.x = x;
-        anchorPointInPoint.x = this._contentSize.width * x - this._offsetPoint.x;
-        this._realAnchorPointInPoints.x = this._contentSize.width * x;
-        cmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
-    },
-
-    _setAnchorY: function (y) {
-        var cmd = this._renderCmd,
-            anchorPointInPoint = cmd._anchorPointInPoints;
-        if (this._anchorPoint.y === y) return;
-        this._anchorPoint.y = y;
-        anchorPointInPoint.y = this._contentSize.height * y - this._offsetPoint.y;
-        this._realAnchorPointInPoints.y = this._contentSize.height * y;
-        cmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
-    },
-
-    /**
-     * Returns the anchor point in points of ccs.Armature.
-     * @override
-     * @returns {cc.Point}
-     */
-    getAnchorPointInPoints: function(){
-        return this._realAnchorPointInPoints;
-    },
-
     getOffsetPoints: function(){
         return {x: this._offsetPoint.x, y: this._offsetPoint.y};
     },
@@ -374,49 +314,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         for (var i = 0; i < locTopBoneList.length; i++)
             locTopBoneList[i].update(dt);
         this._armatureTransformDirty = false;
-    },
-
-    /**
-     * Draws armature's display render node.
-     * @override
-     * @param  {CanvasRenderingContext2D | WebGLRenderingContext} ctx The render context
-     */
-    draw: function(ctx){
-        //TODO REMOVE THIS FUNCTION
-        if (this._parentBone == null && this._batchNode == null) {
-            //        CC_NODE_DRAW_SETUP();
-        }
-
-        var locChildren = this._children;
-        var alphaPremultiplied = cc.BlendFunc.ALPHA_PREMULTIPLIED, alphaNonPremultipled = cc.BlendFunc.ALPHA_NON_PREMULTIPLIED;
-        for (var i = 0, len = locChildren.length; i< len; i++) {
-            var selBone = locChildren[i];
-            if (selBone && selBone.getDisplayRenderNode) {
-                var node = selBone.getDisplayRenderNode();
-
-                if (null == node)
-                    continue;
-
-                this._renderCmd.setShaderProgram(node);
-
-                switch (selBone.getDisplayRenderNodeType()) {
-                    case ccs.DISPLAY_TYPE_SPRITE:
-                        if(node instanceof ccs.Skin)
-                            this._renderCmd.updateChildPosition(ctx, node, selBone, alphaPremultiplied, alphaNonPremultipled);
-                        break;
-                    case ccs.DISPLAY_TYPE_ARMATURE:
-                        node.draw(ctx);
-                        break;
-                    default:
-                        node.visit(ctx);
-                        break;
-                }
-            } else if(selBone instanceof cc.Node) {
-                this._renderCmd.setShaderProgram(selBone);
-                selBone.visit(ctx);
-                //            CC_NODE_DRAW_SETUP();
-            }
-        }
     },
 
     /**
@@ -539,7 +436,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             }
         }
     },
-
 
     setBody: function (body) {
         if (this._body == body)

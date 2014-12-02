@@ -27,62 +27,65 @@
     ccs.Armature.WebGLRenderCmd = function(renderableObject){
         cc.Node.WebGLRenderCmd.call(this, renderableObject);
         this._needDraw = true;
+
+        this._realAnchorPointInPoints = new cc.Point(0,0);
     };
 
     var proto = ccs.Armature.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
+    cc.inject(ccs.Armature.RenderCmd, proto);
     proto.constructor = ccs.Armature.WebGLRenderCmd;
 
     proto.rendering = function (ctx) {
-        var _t = this._node;
+        var node = this._node;
 
         cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
         cc.kmGLPushMatrix();
-        cc.kmGLLoadMatrix(_t._stackMatrix);
+        cc.kmGLLoadMatrix(this._stackMatrix);
 
         //TODO REMOVE THIS FUNCTION
-        if (_t._parentBone == null && _t._batchNode == null) {
+        if (node._parentBone == null && node._batchNode == null) {
             //        CC_NODE_DRAW_SETUP();
         }
 
-        var locChildren = _t._children;
+        var locChildren = node._children;
         var alphaPremultiplied = cc.BlendFunc.ALPHA_PREMULTIPLIED, alphaNonPremultipled = cc.BlendFunc.ALPHA_NON_PREMULTIPLIED;
         for (var i = 0, len = locChildren.length; i < len; i++) {
             var selBone = locChildren[i];
             if (selBone && selBone.getDisplayRenderNode) {
-                var node = selBone.getDisplayRenderNode();
+                var selNode = selBone.getDisplayRenderNode();
 
-                if (null == node)
+                if (null == selNode)
                     continue;
 
-                node.setShaderProgram(_t._shaderProgram);
+                selNode.setShaderProgram(this._shaderProgram);
 
                 switch (selBone.getDisplayRenderNodeType()) {
                     case ccs.DISPLAY_TYPE_SPRITE:
-                        if (node instanceof ccs.Skin) {
-                            node.updateTransform();
+                        if (selNode instanceof ccs.Skin) {
+                            selNode.updateTransform();
 
                             var func = selBone.getBlendFunc();
                             if (func.src != alphaPremultiplied.src || func.dst != alphaPremultiplied.dst)
-                                node.setBlendFunc(selBone.getBlendFunc());
+                                selNode.setBlendFunc(selBone.getBlendFunc());
                             else {
-                                if ((_t._blendFunc.src == alphaPremultiplied.src && _t._blendFunc.dst == alphaPremultiplied.dst)
-                                    && !node.getTexture().hasPremultipliedAlpha())
-                                    node.setBlendFunc(alphaNonPremultipled);
+                                if ((node._blendFunc.src == alphaPremultiplied.src && node._blendFunc.dst == alphaPremultiplied.dst)
+                                    && !selNode.getTexture().hasPremultipliedAlpha())
+                                    selNode.setBlendFunc(alphaNonPremultipled);
                                 else
-                                    node.setBlendFunc(_t._blendFunc);
+                                    selNode.setBlendFunc(node._blendFunc);
                             }
-                            node.draw(ctx);
+                            selNode.draw(ctx);
                         }
                         break;
                     case ccs.DISPLAY_TYPE_ARMATURE:
-                        node.draw(ctx);
+                        selNode.draw(ctx);
                         break;
                     default:
-                        node.visit(ctx);                           //TODO need fix soon
+                        selNode.visit(ctx);                           //TODO need fix soon
                         break;
                 }
             } else if (selBone instanceof cc.Node) {
-                selBone.setShaderProgram(_t._shaderProgram);       //TODO need fix soon
+                selBone.setShaderProgram(this._shaderProgram);       //TODO need fix soon
                 selBone.visit(ctx);
                 //            CC_NODE_DRAW_SETUP();
             }
@@ -92,13 +95,11 @@
     };
 
     proto.initShaderCache = function(){
-        var node = this._node;
-        node.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+        this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
     };
 
     proto.setShaderProgram = function(child){
-        var node = this._node;
-        child.setShaderProgram(node._shaderProgram);
+        child.setShaderProgram(this._shaderProgram);
     };
 
     proto.updateChildPosition = function(ctx, dis, selBone, alphaPremultiplied, alphaNonPremultipled){
@@ -118,19 +119,17 @@
         dis.draw(ctx);
     };
 
-    proto.visit = function(){
+    proto.visit = function(parentCmd){
         var node = this._node;
         // quick return if not visible. children won't be drawn.
         if (!node._visible)
             return;
 
-        var /*context = cc._renderContext, */currentStack = cc.current_stack;
+        var currentStack = cc.current_stack;
 
         currentStack.stack.push(currentStack.top);
-        cc.kmMat4Assign(node._stackMatrix, currentStack.top);
-        currentStack.top = node._stackMatrix;
-
-        node.transform();
+        this._syncStatus(parentCmd);
+        currentStack.top = this._stackMatrix;
 
         node.sortAllChildren();
         //this.draw(context);

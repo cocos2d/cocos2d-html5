@@ -373,15 +373,9 @@
             }
         },
         _syncRotation:function () {
-            if (this._rotationRadiansX != -this._body.a) {
+            if (this._rotationX != -cc.radiansToDegrees(this._body.a)) {
                 cc.Sprite.prototype.setRotation.call(this, -cc.radiansToDegrees(this._body.a));
             }
-        },
-        /**
-         * @deprecated since v3.0, please use getNodeToParentTransform instead
-         */
-        nodeToParentTransform: function(){
-            return this.getNodeToParentTransform();
         },
 
         /**

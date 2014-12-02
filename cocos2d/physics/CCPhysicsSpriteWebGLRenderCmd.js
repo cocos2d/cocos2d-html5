@@ -79,4 +79,8 @@
         return this._transform;
     };
 
+    proto.updateTransform = function(){
+        this._dirty = this._node.isDirty();
+        cc.Sprite.WebGLRenderCmd.prototype.updateTransform.call(this);
+    };
 })();

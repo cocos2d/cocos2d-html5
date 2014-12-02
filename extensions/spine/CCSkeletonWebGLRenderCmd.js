@@ -93,7 +93,7 @@
             cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
             //cc.kmGLPushMatrixWitMat4(node._stackMatrix);
             cc.current_stack.stack.push(cc.current_stack.top);
-            cc.current_stack.top = node._stackMatrix;
+            cc.current_stack.top = this._stackMatrix;
 
             var drawingUtil = cc._drawingUtil;
 

@@ -363,7 +363,6 @@ cc.Node.RenderCmd.prototype = {
                 this._transform = cc.affineTransformConcat(t, node._additionalTransform);
                 node._additionalTransformDirty = false;
             }
-            this._dirtyFlag ^= cc.Node._dirtyFlags.transformDirty;
         }
         return this._transform;
     };
@@ -442,7 +441,6 @@ cc.Node.RenderCmd.prototype = {
             this.transform(parentCmd);
             this._dirtyFlag ^= cc.Node._dirtyFlags.transformDirty;
         }
-
     };
 
     proto._syncDisplayColor = function (parentColor) {

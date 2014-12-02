@@ -290,9 +290,9 @@
         }
 
         if (texture)
-            node.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+            this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         else
-            node.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_COLOR);
+            this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_COLOR);
 
         if (!node._batchNode && node._texture != texture) {
             node._texture = texture;
@@ -377,8 +377,7 @@
         if (node._hasChildren)
             node._arrayMakeObjectsPerformSelector(node._children, cc.Node._stateCallbackType.updateTransform);
 
-        //TODO
-        /*if (cc.SPRITE_DEBUG_DRAW) {
+        /*if (cc.SPRITE_DEBUG_DRAW) {               //TODO
             // draw bounding box
             var vertices = [
                 cc.p(_t._quad.bl.vertices.x, _t._quad.bl.vertices.y),
@@ -457,9 +456,13 @@
         }
         cc.g_NumberOfDraws++;
 
-        //TODO
-        /*if (cc.SPRITE_DEBUG_DRAW === 0 && !node._showNode)
+        if (cc.SPRITE_DEBUG_DRAW === 0 && !node._showNode)
             return;
+
+        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+        //cc.kmGLPushMatrixWitMat4(node._stackMatrix);
+        cc.current_stack.stack.push(cc.current_stack.top);
+        cc.current_stack.top = this._stackMatrix;
 
         if (cc.SPRITE_DEBUG_DRAW === 1 || node._showNode) {
             // draw bounding box
@@ -478,6 +481,7 @@
             var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y),
                 cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y + drawRectG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawRectG2.height)];
             cc._drawingUtil.drawPoly(verticesG2, 4, true);
-        } */// CC_SPRITE_DEBUG_DRAW
+        } // CC_SPRITE_DEBUG_DRAW
+        cc.current_stack.top = cc.current_stack.stack.pop();
     };
 })();
