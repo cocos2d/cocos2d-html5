@@ -93,12 +93,12 @@
 
         if (colorDirty){
             spriteCmd._syncDisplayColor();
-            this._dirtyFlag ^= flags.colorDirty;
+            this._dirtyFlag = this._dirtyFlag & flags.colorDirty ^ this._dirtyFlag;
         }
 
         if (opacityDirty){
             spriteCmd._syncDisplayOpacity();
-            this._dirtyFlag ^= flags.opacityDirty;
+            this._dirtyFlag = this._dirtyFlag & flags.opacityDirty ^ this._dirtyFlag;
         }
 
         if(colorDirty || opacityDirty){
@@ -125,12 +125,12 @@
 
         if(colorDirty){
             spriteCmd._updateDisplayColor();
-            this._dirtyFlag ^= flags.colorDirty;
+            this._dirtyFlag = this._dirtyFlag & flags.colorDirty ^ this._dirtyFlag;
         }
 
         if(opacityDirty){
             spriteCmd._updateDisplayOpacity();
-            this._dirtyFlag ^= flags.opacityDirty;
+            this._dirtyFlag = this._dirtyFlag & flags.opacityDirty ^ this._dirtyFlag;
         }
 
         if(colorDirty || opacityDirty){

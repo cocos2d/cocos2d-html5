@@ -39,7 +39,6 @@
         tempTexture.handleLoadedTexture();
         this._cacheTexture = tempTexture;
         // This class uses cache, so its default cachedParent should be himself
-        this._cachedParent = this;
         this._cacheDirty = false;
     };
 
