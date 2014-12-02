@@ -1,7 +1,7 @@
 define([
-    "cocosModule/core",
-    "cocosModule/actions",
-    "cocosModule/Menu",
+    "cocos/core",
+    "cocos/actions",
+    "cocos/Menu",
     "cocos2dPath/menus/CCMenuItem"
 ], function() {
     return cc;

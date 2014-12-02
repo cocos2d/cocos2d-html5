@@ -37,10 +37,10 @@ cc._tmp.PrototypeSprite = function () {
     _p.dirty;
     /** @expose */
     _p.flippedX;
-    cc.addProperty(_p, "flippedX", false, _p.isFlippedX, _p.setFlippedX);
+    cc.defineGetterSetter(_p, "flippedX", _p.isFlippedX, _p.setFlippedX);
     /** @expose */
     _p.flippedY;
-    cc.addProperty(_p, "flippedY", false, _p.isFlippedY, _p.setFlippedY);
+    cc.defineGetterSetter(_p, "flippedY", _p.isFlippedY, _p.setFlippedY);
     /** @expose */
     _p.offsetX;
     cc.defineGetterSetter(_p, "offsetX", _p._getOffsetX);
@@ -51,7 +51,7 @@ cc._tmp.PrototypeSprite = function () {
     _p.atlasIndex;
     /** @expose */
     _p.texture;
-    cc.addProperty(_p, "texture", null, _p.getTexture, _p.setTexture);
+    cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
     /** @expose */
     _p.textureRectRotated;
     cc.defineGetterSetter(_p, "textureRectRotated", _p.isTextureRectRotated);
@@ -63,18 +63,5 @@ cc._tmp.PrototypeSprite = function () {
     /** @expose */
     _p.quad;
     cc.defineGetterSetter(_p, "quad", _p.getQuad);
-
-    _p.__type = "cc.Sprite";
-
-    _p.__delegators = {
-        "texture" : {
-            parser : function(json) {
-                return cc.textureCache.addImage(json);
-            },
-            stringifier : function(texture) {
-                return cc.textureCache.getKeyByTexture(texture);
-            }
-        }
-    }
 
 };

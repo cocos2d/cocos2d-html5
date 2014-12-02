@@ -1,5 +1,5 @@
 define([
-    "cocosModule/core",
+    "cocos/core",
     "cocos2dPath/core/base-nodes/CCNode",
     "cocos2dPath/core/base-nodes/BaseNodesPropertyDefine",
     "cocos2dPath/core/base-nodes/BaseNodesWebGL"
