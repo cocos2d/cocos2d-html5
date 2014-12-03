@@ -486,7 +486,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     setOpacityModifyRGB: function (modify) {
         if (this._opacityModifyRGB !== modify) {
             this._opacityModifyRGB = modify;
-            this._renderCmd._updateColor();
+            this._renderCmd._setColorDirty();
         }
     },
 
