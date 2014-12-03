@@ -62,7 +62,7 @@ cc._tmp.PrototypeLabelTTF = function () {
     cc.defineGetterSetter(_p, "boundingHeight", _p._getBoundingHeight, _p._setBoundingHeight);
     /** @expose */
     _p.fillStyle;
-    cc.defineGetterSetter(_p, "fillStyle", _p._getFillStyle, _p.setFontFillColor);
+    cc.defineGetterSetter(_p, "fillStyle",  _p._getFillStyle, _p.setFontFillColor);
     /** @expose */
     _p.strokeStyle;
     cc.defineGetterSetter(_p, "strokeStyle", _p._getStrokeStyle, _p._setStrokeStyle);
@@ -84,5 +84,4 @@ cc._tmp.PrototypeLabelTTF = function () {
     /** @expose */
     _p.shadowBlur;
     cc.defineGetterSetter(_p, "shadowBlur", _p._getShadowBlur, _p._setShadowBlur);
-
 };

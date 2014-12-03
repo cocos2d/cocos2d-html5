@@ -83,7 +83,7 @@ cc._tmp.PrototypeCCNode = function () {
     cc.defineGetterSetter(_p, "scaleY", _p.getScaleY, _p.setScaleY);
     /** @expose */
     _p.children;
-    cc.defineGetterSetter(_p, "children", _p.getChildren);
+    cc.defineGetterSetter(_p, "children", _p.getChildren, _p.setChildren);
     /** @expose */
     _p.childrenCount;
     cc.defineGetterSetter(_p, "childrenCount", _p.getChildrenCount);
@@ -113,7 +113,6 @@ cc._tmp.PrototypeCCNode = function () {
     /** @expose */
     _p.scheduler;
     cc.defineGetterSetter(_p, "scheduler", _p.getScheduler, _p.setScheduler);
-    //cc.defineGetterSetter(_p, "boundingBox", _p.getBoundingBox);
     /** @expose */
     _p.shaderProgram;
     cc.defineGetterSetter(_p, "shaderProgram", _p.getShaderProgram, _p.setShaderProgram);
@@ -123,7 +122,7 @@ cc._tmp.PrototypeCCNode = function () {
     cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
     /** @expose */
     _p.opacityModifyRGB;
-    cc.defineGetterSetter(_p, "opacityModifyRGB", _p.isOpacityModifyRGB);
+    cc.defineGetterSetter(_p, "opacityModifyRGB", _p.isOpacityModifyRGB, _p.setOpacityModifyRGB);
     /** @expose */
     _p.cascadeOpacity;
     cc.defineGetterSetter(_p, "cascadeOpacity", _p.isCascadeOpacityEnabled, _p.setCascadeOpacityEnabled);
@@ -133,4 +132,6 @@ cc._tmp.PrototypeCCNode = function () {
     /** @expose */
     _p.cascadeColor;
     cc.defineGetterSetter(_p, "cascadeColor", _p.isCascadeColorEnabled, _p.setCascadeColorEnabled);
+
 };
+

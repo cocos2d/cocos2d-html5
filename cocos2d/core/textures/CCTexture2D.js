@@ -383,15 +383,15 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             this.removeEventListener("load", target);
         }
     });
+    
+    cc.EventHelper.prototype.apply(cc.Texture2D.prototype);
+
+    cc.assert(cc.isFunction(cc._tmp.PrototypeTexture2D), cc._LogInfos.MissingFile, "TexturesPropertyDefine.js");
+    cc._tmp.PrototypeTexture2D();
+    delete cc._tmp.PrototypeTexture2D;
 
 } else {
     cc.assert(cc.isFunction(cc._tmp.WebGLTexture2D), cc._LogInfos.MissingFile, "TexturesWebGL.js");
     cc._tmp.WebGLTexture2D();
     delete cc._tmp.WebGLTexture2D;
 }
-
-cc.EventHelper.prototype.apply(cc.Texture2D.prototype);
-
-cc.assert(cc.isFunction(cc._tmp.PrototypeTexture2D), cc._LogInfos.MissingFile, "TexturesPropertyDefine.js");
-cc._tmp.PrototypeTexture2D();
-delete cc._tmp.PrototypeTexture2D;
