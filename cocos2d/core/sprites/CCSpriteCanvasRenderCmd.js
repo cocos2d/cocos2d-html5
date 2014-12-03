@@ -61,7 +61,7 @@
         }
     };
 
-    proto._updateColor = function () {
+    proto._setColorDirty = function () {
         this.setDirtyFlag(cc.Node._dirtyFlags.colorDirty | cc.Node._dirtyFlags.opacityDirty);
     };
 

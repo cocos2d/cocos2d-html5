@@ -231,6 +231,7 @@ cc.Node.RenderCmd.prototype = {
         if(locFlag & flags.transformDirty){
             //update the transform
             this.transform(this.getParentRenderCmd(), true);
+            this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
         }
     }
 };
@@ -439,6 +440,7 @@ cc.Node.RenderCmd.prototype = {
         if (transformDirty){
             //update the transform
             this.transform(parentCmd);
+            this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
         }
     };
 

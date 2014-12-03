@@ -70,8 +70,10 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         }else if(locFlag & flags.textDirty)
             this._updateTexture();
 
-        if (locFlag & flags.transformDirty)
+        if (this._dirtyFlag & flags.transformDirty){
             this.transform(this.getParentRenderCmd(), true);
+            this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
+        }
     };
 
     proto._getLabelContext = function () {

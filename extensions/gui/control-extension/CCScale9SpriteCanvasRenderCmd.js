@@ -54,7 +54,7 @@
             rescaledWidth: centerWidth * horizontalScale, rescaledHeight: centerHeight * verticalScale}
     };
 
-    proto.visit = function(){
+    proto.visit = function(parentCmd){
         var node = this._node;
         if(!node._visible){
             return;
@@ -68,7 +68,7 @@
         node._scale9Dirty = false;
         this._cacheScale9Sprite();
 
-        cc.Node.CanvasRenderCmd.prototype.visit.call(this, ctx);
+        cc.Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
     };
 
     proto.transform = function(parentCmd){
