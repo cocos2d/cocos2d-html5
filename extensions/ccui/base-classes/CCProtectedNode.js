@@ -75,9 +75,9 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
                 child.onEnterTransitionDidFinish();
         }
         if(this._cascadeColorEnabled)
-            this._enableCascadeColor();
+            this._renderCmd.setCascadeColorEnabledDirty();
         if (this._cascadeOpacityEnabled)
-            this._enableCascadeOpacity();
+            this._renderCmd.setCascadeOpacityEnabledDirty();
     },
 
     /**
