@@ -209,7 +209,7 @@ cc.ControlSlider = cc.Control.extend(/** @lends cc.ControlSlider# */{
 
     sliderBegan:function (location) {
         this.setSelected(true);
-        this.getThumbSprite().setColor(cc.color.GRAY);
+        this._thumbSprite.setColor(cc.color.GRAY);
         this.setValue(this.valueForLocation(location));
     },
     sliderMoved:function (location) {

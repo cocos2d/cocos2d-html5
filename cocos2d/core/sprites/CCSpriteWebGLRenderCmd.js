@@ -232,7 +232,7 @@
         this._dirty = true;     //use for batching
     };
 
-    proto._updateColor = function () {
+    proto._setColorDirty = function () {
         var locDisplayedColor = this._displayedColor, locDisplayedOpacity = this._displayedOpacity, node = this._node;
         var color4 = {r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: locDisplayedOpacity};
         // special opacity for premultiplied textures
