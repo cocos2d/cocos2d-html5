@@ -567,7 +567,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      * @return {cc.BlendFunc}
      */
     getBlendFunc: function () {
-        return this._blendFunc;
+        return new cc.BlendFunc(this._blendFunc.src, this._blendFunc.dst);
     },
 
     /**

@@ -334,10 +334,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this.unscheduleUpdate();
     },
 
-    visit: function(){
-        this._renderCmd.visit();
-    },
-
     /**
      * This boundingBox will calculate all bones' boundingBox every time
      * @returns {cc.Rect}
@@ -470,10 +466,17 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
 
     /**
      * Sets the blendFunc to ccs.Armature
-     * @param {cc.BlendFunc} blendFunc
+     * @param {cc.BlendFunc|Number} blendFunc
+     * @param {Number} [dst]
      */
-    setBlendFunc: function (blendFunc) {
-        this._blendFunc = blendFunc;
+    setBlendFunc: function (blendFunc, dst) {
+        if(dst === undefined){
+            this._blendFunc.src = blendFunc.src;
+            this._blendFunc.dst = blendFunc.dst;
+        } else {
+            this._blendFunc.src = blendFunc;
+            this._blendFunc.dst = dst;
+        }
     },
 
     /**
@@ -481,7 +484,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
      * @returns {cc.BlendFunc}
      */
     getBlendFunc: function () {
-        return this._blendFunc;
+        return new cc.BlendFunc(this._blendFunc.src, this._blendFunc.dst);
     },
 
     /**
@@ -535,7 +538,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     },
 
     _transformForRenderer: function(){
-
         ccs.Node.prototype._transformForRenderer.call(this);
 
         var locChildren = this._children;
@@ -543,7 +545,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             var selBone = locChildren[i];
             if (selBone && selBone.getDisplayRenderNode) {
                 var node = selBone.getDisplayRenderNode();
-
                 if (null == node)
                     continue;
 

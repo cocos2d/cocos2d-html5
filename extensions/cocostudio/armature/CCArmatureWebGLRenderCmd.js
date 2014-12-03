@@ -35,16 +35,13 @@
     cc.inject(ccs.Armature.RenderCmd, proto);
     proto.constructor = ccs.Armature.WebGLRenderCmd;
 
-    proto.rendering = function (ctx) {
+    proto.rendering = function (ctx, dontChangeMatrix) {
         var node = this._node;
 
-        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-        cc.kmGLPushMatrix();
-        cc.kmGLLoadMatrix(this._stackMatrix);
-
-        //TODO REMOVE THIS FUNCTION
-        if (node._parentBone == null && node._batchNode == null) {
-            //        CC_NODE_DRAW_SETUP();
+        if(!dontChangeMatrix){
+            cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+            cc.kmGLPushMatrix();
+            cc.kmGLLoadMatrix(this._stackMatrix);
         }
 
         var locChildren = node._children;
@@ -74,32 +71,32 @@
                                 else
                                     selNode.setBlendFunc(node._blendFunc);
                             }
-                            selNode.draw(ctx);
+                            selNode._renderCmd.rendering(ctx);
                         }
                         break;
                     case ccs.DISPLAY_TYPE_ARMATURE:
-                        selNode.draw(ctx);
+                        selNode._renderCmd.rendering(ctx, true);
                         break;
                     default:
-                        selNode.visit(ctx);                           //TODO need fix soon
+                        selNode._renderCmd.transform();
+                        selNode._renderCmd.rendering(ctx);
                         break;
                 }
             } else if (selBone instanceof cc.Node) {
                 selBone.setShaderProgram(this._shaderProgram);       //TODO need fix soon
                 selBone.visit(ctx);
-                //            CC_NODE_DRAW_SETUP();
             }
         }
-
-        cc.kmGLPopMatrix();
+        if(!dontChangeMatrix)
+            cc.kmGLPopMatrix();
     };
 
     proto.initShaderCache = function(){
         this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
     };
 
-    proto.setShaderProgram = function(child){
-        child.setShaderProgram(this._shaderProgram);
+    proto.setShaderProgram = function(shaderProgram){
+        this._shaderProgram = shaderProgram;
     };
 
     proto.updateChildPosition = function(ctx, dis, selBone, alphaPremultiplied, alphaNonPremultipled){

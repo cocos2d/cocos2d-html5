@@ -72,7 +72,22 @@
                 if (null == rn)
                     continue;
 
-//                rn._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
+                rn._renderCmd.transform();
+            }
+        }
+    };
+
+    proto.transform = function(parentCmd, recursive){
+        ccs.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+
+        var node = this._node;
+        var locChildren = node._children;
+        for (var i = 0, len = locChildren.length; i< len; i++) {
+            var selBone = locChildren[i];
+            if (selBone && selBone.getDisplayRenderNode) {
+                var selNode = selBone.getDisplayRenderNode();
+                if (selNode)
+                    selNode.transform();
             }
         }
     };
@@ -89,38 +104,31 @@
     };
 
     proto.rendering = function(ctx, scaleX, scaleY){
-        if (this._parentBone == null && this._batchNode == null) {
-            //        CC_NODE_DRAW_SETUP();
-        }
-
-        var locChildren = this._children;
+        var node = this._node;
+        var locChildren = node._children;
         var alphaPremultiplied = cc.BlendFunc.ALPHA_PREMULTIPLIED, alphaNonPremultipled = cc.BlendFunc.ALPHA_NON_PREMULTIPLIED;
         for (var i = 0, len = locChildren.length; i< len; i++) {
             var selBone = locChildren[i];
             if (selBone && selBone.getDisplayRenderNode) {
-                var node = selBone.getDisplayRenderNode();
+                var selNode = selBone.getDisplayRenderNode();
 
-                if (null == node)
+                if (null == selNode)
                     continue;
-
-                this._renderCmd.setShaderProgram(node);
 
                 switch (selBone.getDisplayRenderNodeType()) {
                     case ccs.DISPLAY_TYPE_SPRITE:
-                        if(node instanceof ccs.Skin)
-                            this._renderCmd.updateChildPosition(ctx, node, selBone, alphaPremultiplied, alphaNonPremultipled);
+                        if(selNode instanceof ccs.Skin)
+                            this.updateChildPosition(ctx, selNode, selBone, alphaPremultiplied, alphaNonPremultipled);
                         break;
                     case ccs.DISPLAY_TYPE_ARMATURE:
-                        node.draw(ctx);
+                        selNode._renderCmd.rendering(ctx);
                         break;
                     default:
-                        node.visit(ctx);
+                        selNode.visit(ctx);
                         break;
                 }
             } else if(selBone instanceof cc.Node) {
-                this._renderCmd.setShaderProgram(selBone);
                 selBone.visit(ctx);
-                //            CC_NODE_DRAW_SETUP();
             }
         }
     };
@@ -133,12 +141,12 @@
             return;
 
         context.save();
-//        this.transform();
+        this.transform();
 
         node.sortAllChildren();
 
         cc.renderer.pushRenderCommand(this._startRenderCmd);
-        //node.draw(ctx);
+        this.rendering();
         cc.renderer.pushRenderCommand(this._RestoreRenderCmd);
 
         this._cacheDirty = false;

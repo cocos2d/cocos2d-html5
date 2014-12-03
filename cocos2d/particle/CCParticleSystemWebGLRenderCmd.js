@@ -188,7 +188,7 @@
         var gl = ctx || cc._renderContext;
 
         this._shaderProgram.use();
-        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);     //setUniformForModelViewAndProjectionMatrixWithMat4();
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);     //;
 
         cc.glBindTexture2D(node._texture);
         cc.glBlendFuncForParticle(node._blendFunc.src, node._blendFunc.dst);
