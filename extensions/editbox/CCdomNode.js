@@ -289,8 +289,8 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
         this._rotationX = this._rotationY = newRotation;
-        this._rotationRadiansX = this._rotationX * (Math.PI / 180);
-        this._rotationRadiansY = this._rotationY * (Math.PI / 180);
+        this.__rotationRadiansX = this._rotationX * (Math.PI / 180);
+        this.__rotationRadiansY = this._rotationY * (Math.PI / 180);
 
         this.setNodeDirty();
         this.dom.rotate(newRotation);
@@ -338,7 +338,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * @param {cc.Node} p
      */
     setParent:function (p) {
-        this._parent = p;
+        this.__parent = p;
 
         if (p !== null) {
             p.setAnchorPoint(p.getAnchorPoint());

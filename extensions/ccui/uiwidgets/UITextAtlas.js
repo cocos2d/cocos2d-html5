@@ -37,7 +37,7 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
     _itemWidth: 0,
     _itemHeight: 0,
     _startCharMap: "",
-    _className: "TextAtlas",
+    __className: "TextAtlas",
     _labelAtlasRendererAdaptDirty: null,
 
     /**

@@ -114,7 +114,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     clearStencilVal:0,
 
     _clearColorStr:null,
-    _className:"RenderTexture",
+    __className:"RenderTexture",
 
      //for WebGL
     _beginWithClearCommand: null,
@@ -159,7 +159,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     _initRendererCmd: function(){
         //TODO need merge in some code
         if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this._rendererCmd = new cc.RenderTextureRenderCmdWebGL(this);
+            this.__rendererCmd = new cc.RenderTextureRenderCmdWebGL(this);
 
     },
 
@@ -649,8 +649,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         this.sprite.visit();
         //this.draw(ctx);
-        if(this._rendererCmd)
-            cc.renderer.pushRenderCommand(this._rendererCmd);
+        if(this.__rendererCmd)
+            cc.renderer.pushRenderCommand(this.__rendererCmd);
 
         //TODO GridNode
 /*        if (locGrid && locGrid.isActive())

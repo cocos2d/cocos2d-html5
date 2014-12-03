@@ -99,7 +99,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
             //transform node
             for (var i = 0, len = locPool.length; i < len; i++) {
-                if (locPool[i]._renderCmdDiry)        //TODO need modify name for LabelTTF
+                if (locPool[i].__renderCmdDirty)        //TODO need modify name for LabelTTF
                     locPool[i]._transformForRenderer();
             }
             locPool.length = 0;
@@ -110,7 +110,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         },
 
         _sortNodeByLevelAsc: function (n1, n2) {
-            return n1._curLevel - n2._curLevel;
+            return n1.__curLevel - n2.__curLevel;
         },
 
         pushDirtyNode: function (node) {
@@ -158,20 +158,20 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         if(node._texture && (locTextureCoord.width === 0 || locTextureCoord.height === 0))
             return;
-        if (!locTextureCoord.validRect && node._displayedOpacity === 0)
+        if (!locTextureCoord.validRect && node.__displayedOpacity === 0)
             return;  //draw nothing
 
         if(node._texture && !node._texture._isLoaded)  //set texture but the texture isn't loaded.
             return;
 
-        var t = node._transformWorld,
+        var t = node.__transformWorld,
             locX = node._offsetPosition.x,
             locY = -node._offsetPosition.y - node._rect.height,
             locWidth = node._rect.width,
             locHeight = node._rect.height,
             image, curColor, contentSize;
 
-        var blendChange = (node._blendFuncStr !== "source"), alpha = (node._displayedOpacity / 255);
+        var blendChange = (node._blendFuncStr !== "source"), alpha = (node.__displayedOpacity / 255);
         /*if(cc.renderer.contextSession.globalAlpha !== alpha){
             cc.renderer.contextSession.globalAlpha = context.globalAlpha = alpha;                         //TODO
         }*/
@@ -224,8 +224,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             } else {
                 contentSize = node._contentSize;
                 if(contentSize.width !== 0 && contentSize.height !== 0) {
-                    curColor = node._displayedColor;
-                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + (node._displayedOpacity/255).toFixed(4) + ")";
+                    curColor = node.__displayedColor;
+                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + (node.__displayedOpacity/255).toFixed(4) + ")";
                     context.fillRect(locX * scaleX, locY * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
                 }
             }
@@ -264,8 +264,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             } else {
                 contentSize = node._contentSize;
                 if(contentSize.width !== 0 && contentSize.height !== 0) {
-                    curColor = node._displayedColor;
-                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + (node._displayedOpacity/255).toFixed(4) + ")";
+                    curColor = node.__displayedColor;
+                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + "," + (node.__displayedOpacity/255).toFixed(4) + ")";
                     context.fillRect((t.tx + locX) * scaleX, (-t.ty + locY) * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
                 }
             }
@@ -282,9 +282,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     cc.RectRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
         var context = ctx || cc._renderContext,
             node = this._node,
-            t = node._transformWorld,
-            curColor = node._displayedColor,
-            opacity = node._displayedOpacity / 255,
+            t = node.__transformWorld,
+            curColor = node.__displayedColor,
+            opacity = node.__displayedOpacity / 255,
             locWidth = node._contentSize.width,
             locHeight = node._contentSize.height;
 
@@ -324,8 +324,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var context = ctx || cc._renderContext,
             self = this,
             node = self._node,
-            opacity = node._displayedOpacity / 255,
-            t = node._transformWorld;
+            opacity = node.__displayedOpacity / 255,
+            t = node.__transformWorld;
 
         if(opacity === 0)
             return;
@@ -362,7 +362,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     cc.ParticleRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
         var context = ctx || cc._renderContext,
             node = this._node,
-            t = node._transformWorld,
+            t = node.__transformWorld,
             pointRect = node._pointRect;
 
         context.save();
@@ -467,14 +467,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     cc.ProgressRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
         var context = ctx || cc._renderContext, node = this._node, locSprite = this._sprite;
 
-        var locTextureCoord = locSprite._rendererCmd._textureCoord, alpha = locSprite._displayedOpacity / 255;
+        var locTextureCoord = locSprite.__rendererCmd._textureCoord, alpha = locSprite.__displayedOpacity / 255;
 
         if(locTextureCoord.width === 0 || locTextureCoord.height === 0)
             return;
         if (!locSprite._texture || !locTextureCoord.validRect || alpha === 0)
             return;
 
-        var t = node._transformWorld;
+        var t = node.__transformWorld;
         context.save();
         context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
@@ -541,12 +541,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     cc.DrawNodeRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
         var context = ctx || cc._renderContext, _t = this, node = _t._node;
-        var alpha = node._displayedOpacity/255;
+        var alpha = node.__displayedOpacity/255;
         if(alpha === 0)
             return;
         context.globalAlpha = alpha;
 
-        var t = node._transformWorld;
+        var t = node.__transformWorld;
         context.save();
         ctx.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
         if ((_t._blendFunc && (_t._blendFunc.src == cc.SRC_ALPHA) && (_t._blendFunc.dst == cc.ONE)))
@@ -643,7 +643,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             context.save();
         } else {
             node.transform();
-            var t = node._transformWorld;
+            var t = node.__transformWorld;
             context.save();
             context.save();
             context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
@@ -660,7 +660,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         if (node._clipElemType) {
             context.globalCompositeOperation = node.inverted ? "destination-out" : "destination-in";
-            var t = node._transformWorld;
+            var t = node.__transformWorld;
             context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
         } else {
             context.restore();
@@ -745,28 +745,28 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     cc.TMXLayerRenderCmdCanvas.prototype._renderingChildToCache = function (scaleX, scaleY) {
         var locNode = this._node;
-        if (locNode._cacheDirty) {
+        if (locNode.__cacheDirty) {
             var locCacheCmds = this._childrenRenderCmds, locCacheContext = locNode._cacheContext, locCanvas = locNode._cacheCanvas;
 
             locCacheContext.save();
             locCacheContext.clearRect(0, 0, locCanvas.width, -locCanvas.height);
             //reset the cache context
-            var t = cc.affineTransformInvert(locNode._transformWorld);
+            var t = cc.affineTransformInvert(locNode.__transformWorld);
             locCacheContext.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
             for (var i = 0, len = locCacheCmds.length; i < len; i++) {
                 locCacheCmds[i].rendering(locCacheContext, scaleX, scaleY);
                 if (locCacheCmds[i]._node)
-                    locCacheCmds[i]._node._cacheDirty = false;
+                    locCacheCmds[i]._node.__cacheDirty = false;
             }
             locCacheContext.restore();
-            locNode._cacheDirty = false;
+            locNode.__cacheDirty = false;
         }
     };
 
     cc.TMXLayerRenderCmdCanvas.prototype.rendering = function (ctx, scaleX, scaleY) {
         var node = this._node;
-        var alpha = node._displayedOpacity/255;
+        var alpha = node.__displayedOpacity/255;
         if(alpha <= 0)
             return;
 
@@ -774,7 +774,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var context = ctx || cc._renderContext;
         context.globalAlpha = alpha;
         var posX = 0 | ( -node._anchorPointInPoints.x), posY = 0 | ( -node._anchorPointInPoints.y);
-        var locCacheCanvas = node._cacheCanvas, t = node._transformWorld;
+        var locCacheCanvas = node._cacheCanvas, t = node.__transformWorld;
         //direct draw image by canvas drawImage
         if (locCacheCanvas && locCacheCanvas.width !== 0 && locCacheCanvas.height !== 0) {
             context.save();
@@ -818,7 +818,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         if(!node._debugSlots && !node._debugBones){
             return;
         }
-        var t = node._transformWorld;
+        var t = node.__transformWorld;
         ctx.save();
         ctx.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
         var locSkeleton = node._skeleton;

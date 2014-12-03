@@ -33,7 +33,7 @@
 cc.LoaderScene = cc.Scene.extend({
     _interval : null,
     _label : null,
-    _className:"LoaderScene",
+    __className:"LoaderScene",
     /**
      * Contructor of cc.LoaderScene
      * @returns {boolean}

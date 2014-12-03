@@ -58,7 +58,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _scissorRectDirty: false,
     _clippingRect: null,
     _clippingParent: null,
-    _className: "Layout",
+    __className: "Layout",
     _backGroundImageColor: null,
     _finalPositionX: 0,
     _finalPositionY: 0,
@@ -416,8 +416,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         //optimize performance for javascript
         var currentStack = cc.current_stack;
         currentStack.stack.push(currentStack.top);
-        cc.kmMat4Assign(this._stackMatrix, currentStack.top);
-        currentStack.top = this._stackMatrix;
+        cc.kmMat4Assign(this.__stackMatrix, currentStack.top);
+        currentStack.top = this.__stackMatrix;
 
         this.transform();
         this._clippingStencil.visit();
@@ -447,8 +447,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 break;
         }
         //this.draw();    //draw self
-        if(this._rendererCmd)
-            cc.renderer.pushRenderCommand(this._rendererCmd);
+        if(this.__rendererCmd)
+            cc.renderer.pushRenderCommand(this.__rendererCmd);
         for (; i < iLen; i++)
             locChildren[i].visit();
         for (; j < jLen; j++)
@@ -544,7 +544,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             context.save();
         }else{
             this.transform();
-            var t = this._transformWorld;
+            var t = this.__transformWorld;
             context.save();
             context.save();
             context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
@@ -610,12 +610,12 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 if (able){
                     this._clippingStencil = new cc.DrawNode();
                     if(cc._renderType === cc._RENDER_TYPE_CANVAS)
-                        this._clippingStencil._rendererCmd.rendering = this.__stencilDraw.bind(this);
-                    if (this._running)
+                        this._clippingStencil.__rendererCmd.rendering = this.__stencilDraw.bind(this);
+                    if (this.__running)
                         this._clippingStencil.onEnter();
                     this._setStencilClippingSize(this._contentSize);
                 } else {
-                    if (this._running && this._clippingStencil)
+                    if (this.__running && this._clippingStencil)
                         this._clippingStencil.onExit();
                     this._clippingStencil = null;
                 }
@@ -1813,7 +1813,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         if(cc._renderType === cc._RENDER_TYPE_WEBGL){
             ccui.Widget.prototype._transformForRenderer.call(this, parentMatrix);
             if(this._clippingStencil)
-                this._clippingStencil._transformForRenderer(this._stackMatrix);
+                this._clippingStencil._transformForRenderer(this.__stackMatrix);
         }else{
             ccui.ProtectedNode.prototype._transformForRenderer.call(this);
         }

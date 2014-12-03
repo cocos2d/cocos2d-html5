@@ -61,7 +61,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     _selectedItem: null,
     _state: -1,
     _touchListener: null,
-    _className: "Menu",
+    __className: "Menu",
 
     /**
      * Constructor of cc.Menu override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.

@@ -43,7 +43,7 @@ cc.ControlColourPicker = cc.Control.extend(/** @lends cc.ControlColourPicker# */
     _huePicker:null,
 
     _background:null,
-    _className:"ControlColourPicker",
+    __className:"ControlColourPicker",
     ctor:function () {
         cc.Control.prototype.ctor.call(this);
         this.init();

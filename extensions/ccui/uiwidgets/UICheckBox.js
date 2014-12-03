@@ -53,7 +53,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     _frontCrossFileName: "",
     _backGroundDisabledFileName: "",
     _frontCrossDisabledFileName: "",
-    _className: "CheckBox",
+    __className: "CheckBox",
 
     _backGroundBoxRendererAdaptDirty:true,
     _backGroundSelectedBoxRendererAdaptDirty:true,

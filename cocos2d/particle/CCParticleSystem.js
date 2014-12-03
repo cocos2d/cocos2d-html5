@@ -59,11 +59,11 @@
  * @param {Number} [rotation=0]
  * @param {Number} [deltaRotation=0]
  * @param {Number} [timeToLive=0]
- * @param {Number} [atlasIndex=0]
+ * @param {Number} [__atlasIndex=0]
  * @param {cc.Particle.ModeA} [modeA=]
  * @param {cc.Particle.ModeA} [modeB=]
  */
-cc.Particle = function (pos, startPos, color, deltaColor, size, deltaSize, rotation, deltaRotation, timeToLive, atlasIndex, modeA, modeB) {
+cc.Particle = function (pos, startPos, color, deltaColor, size, deltaSize, rotation, deltaRotation, timeToLive, __atlasIndex, modeA, modeB) {
     this.pos = pos ? pos : cc.p(0,0);
     this.startPos = startPos ? startPos : cc.p(0,0);
     this.color = color ? color : {r:0, g: 0, b:0, a:255};
@@ -73,7 +73,7 @@ cc.Particle = function (pos, startPos, color, deltaColor, size, deltaSize, rotat
     this.rotation = rotation || 0;
     this.deltaRotation = deltaRotation || 0;
     this.timeToLive = timeToLive || 0;
-    this.atlasIndex = atlasIndex || 0;
+    this.__atlasIndex = __atlasIndex || 0;
     this.modeA = modeA ? modeA : new cc.Particle.ModeA();
     this.modeB = modeB ? modeB : new cc.Particle.ModeB();
     this.isChangeColor = false;
@@ -164,7 +164,7 @@ cc.Particle.TemporaryPoints = [
  * @property {cc.SpriteBatchNode}   batchNode           - Weak reference to the sprite batch node.
  * @property {Boolean}              active              - <@readonly> Indicate whether the particle system is activated.
  * @property {Number}               shapeType           - ShapeType of ParticleSystem : cc.ParticleSystem.BALL_SHAPE | cc.ParticleSystem.STAR_SHAPE.
- * @property {Number}               atlasIndex          - Index of system in batch node array.
+ * @property {Number}               __atlasIndex          - Index of system in batch node array.
  * @property {Number}               particleCount       - Current quantity of particles that are being simulated.
  * @property {Number}               duration            - How many seconds the emitter wil run. -1 means 'forever'
  * @property {cc.Point}             sourcePos           - Source position of the emitter.
@@ -223,7 +223,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     modeA: null,
     //! Mode B: circular movement (gravity, radial accel and tangential accel don't are not used in this mode)
     modeB: null,
-    _className:"ParticleSystem",
+    __className:"ParticleSystem",
 
     //private POINTZERO for ParticleSystem
     _pointZeroForParticle: cc.p(0, 0),
@@ -240,7 +240,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     _particleIdx: 0,
 
     _batchNode: null,
-    atlasIndex: 0,
+    __atlasIndex: 0,
 
     //true if scaled or rotated
     _transformSystemDirty: false,
@@ -291,7 +291,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     _buffersVBO:null,
     _pointRect:null,
 
-    _textureLoaded: null,
+    __textureLoaded: null,
     _quadsArrayBuffer:null,
 
     /**
@@ -325,7 +325,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._emitCounter = 0;
         this._particleIdx = 0;
         this._batchNode = null;
-        this.atlasIndex = 0;
+        this.__atlasIndex = 0;
 
         this._transformSystemDirty = false;
         this._allocatedParticles = 0;
@@ -358,7 +358,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._quads = [];
         this._indices = [];
         this._pointRect = cc.rect(0, 0, 0, 0);
-        this._textureLoaded = true;
+        this.__textureLoaded = true;
 
         if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             this._quadsArrayBuffer = null;
@@ -375,9 +375,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     _initRendererCmd: function(){
         if(cc._renderType === cc._RENDER_TYPE_CANVAS)
-            this._rendererCmd = new cc.ParticleRenderCmdCanvas(this);
+            this.__rendererCmd = new cc.ParticleRenderCmdCanvas(this);
         else
-            this._rendererCmd = new cc.ParticleRenderCmdWebGL(this);
+            this.__rendererCmd = new cc.ParticleRenderCmdWebGL(this);
     },
 
     /**
@@ -445,9 +445,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         var quads;
         var start = 0, end = 0;
         if (this._batchNode) {
-            quads = this._batchNode.textureAtlas.quads;
-            start = this.atlasIndex;
-            end = this.atlasIndex + this._totalParticles;
+            quads = this._batchNode.__textureAtlas.quads;
+            start = this.__atlasIndex;
+            end = this.__atlasIndex + this._totalParticles;
         } else {
             quads = this._quads;
             start = 0;
@@ -495,7 +495,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             if (batchNode) {
                 var locParticles = this._particles;
                 for (var i = 0; i < this._totalParticles; i++)
-                    locParticles[i].atlasIndex = i;
+                    locParticles[i].__atlasIndex = i;
             }
 
             // NEW: is self render ?
@@ -510,7 +510,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             } else if (!oldBatch) {
                 // OLD: was it self render cleanup  ?
                 // copy current state to batch
-                this._batchNode.textureAtlas._copyQuadsToTextureAtlas(this._quads, this.atlasIndex);
+                this._batchNode.__textureAtlas._copyQuadsToTextureAtlas(this._quads, this.__atlasIndex);
 
                 //delete buffer
                 cc._renderContext.deleteBuffer(this._buffersVBO[1]);     //where is re-bindBuffer code?
@@ -526,15 +526,15 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @return {Number}
      */
     getAtlasIndex:function () {
-        return this.atlasIndex;
+        return this.__atlasIndex;
     },
 
     /**
      * set index of system in batch node array
-     * @param {Number} atlasIndex
+     * @param {Number} __atlasIndex
      */
-    setAtlasIndex:function (atlasIndex) {
-        this.atlasIndex = atlasIndex;
+    setAtlasIndex:function (__atlasIndex) {
+        this.__atlasIndex = __atlasIndex;
     },
 
     /**
@@ -551,8 +551,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     setDrawMode:function (drawMode) {
         this.drawMode = drawMode;
-        if(this._rendererCmd)
-            this._rendererCmd._drawMode = drawMode;
+        if(this.__rendererCmd)
+            this.__rendererCmd._drawMode = drawMode;
     },
 
     /**
@@ -569,8 +569,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     setShapeType:function (shapeType) {
         this.shapeType = shapeType;
-        if(this._rendererCmd)
-            this._rendererCmd._shapeType = shapeType;
+        if(this.__rendererCmd)
+            this.__rendererCmd._shapeType = shapeType;
     },
 
     /**
@@ -1264,7 +1264,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             // Init particles
             if (this._batchNode) {
                 for (var i = 0; i < tp; i++)
-                    locParticles[i].atlasIndex = i;
+                    locParticles[i].__atlasIndex = i;
             }
 
             this._quadsArrayBuffer = locQuadsArrayBuffer;
@@ -1300,9 +1300,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         if(texture.isLoaded()){
             this.setTextureWithRect(texture, cc.rect(0, 0, texture.width, texture.height));
         } else {
-            this._textureLoaded = false;
+            this.__textureLoaded = false;
             texture.addEventListener("load", function(sender){
-                this._textureLoaded = true;
+                this.__textureLoaded = true;
                 this.setTextureWithRect(sender, cc.rect(0, 0, sender.width, sender.height));
             }, this);
         }
@@ -1683,7 +1683,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
         if (this._batchNode)
             for (i = 0; i < this._totalParticles; i++)
-                locParticles[i].atlasIndex = i;
+                locParticles[i].__atlasIndex = i;
 
         // default, active
         this._isActive = true;
@@ -1913,9 +1913,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     updateQuadWithParticle:function (particle, newPosition) {
         var quad = null;
         if (this._batchNode) {
-            var batchQuads = this._batchNode.textureAtlas.quads;
-            quad = batchQuads[this.atlasIndex + particle.atlasIndex];
-            this._batchNode.textureAtlas.dirty = true;
+            var batchQuads = this._batchNode.__textureAtlas.quads;
+            quad = batchQuads[this.__atlasIndex + particle.__atlasIndex];
+            this._batchNode.__textureAtlas.__dirty = true;
         } else
             quad = this._quads[this._particleIdx];
 
@@ -2186,7 +2186,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     ++this._particleIdx;
                 } else {
                     // life < 0
-                    var currentIndex = selParticle.atlasIndex;
+                    var currentIndex = selParticle.__atlasIndex;
                     if(this._particleIdx !== this.particleCount -1){
                          var deadParticle = locParticles[this._particleIdx];
                         locParticles[this._particleIdx] = locParticles[this.particleCount -1];
@@ -2194,16 +2194,16 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     }
                     if (this._batchNode) {
                         //disable the switched particle
-                        this._batchNode.disableParticle(this.atlasIndex + currentIndex);
+                        this._batchNode.disableParticle(this.__atlasIndex + currentIndex);
 
                         //switch indexes
-                        locParticles[this.particleCount - 1].atlasIndex = currentIndex;
+                        locParticles[this.particleCount - 1].__atlasIndex = currentIndex;
                     }
 
                     --this.particleCount;
                     if (this.particleCount == 0 && this.autoRemoveOnFinish) {
                         this.unscheduleUpdate();
-                        this._parent.removeChild(this, true);
+                        this.__parent.removeChild(this, true);
                         return;
                     }
                 }
@@ -2405,7 +2405,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @override
      */
     draw:function (ctx) {
-        if(!this._textureLoaded || this._batchNode)     // draw should not be called when added to a particleBatchNode
+        if(!this.__textureLoaded || this._batchNode)     // draw should not be called when added to a particleBatchNode
             return;
 
         if (cc._renderType === cc._RENDER_TYPE_CANVAS)

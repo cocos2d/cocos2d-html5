@@ -94,9 +94,9 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
 
     _initRendererCmd:function () {
         if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this._rendererCmd = new cc.SkeletonRenderCmdWebGL(this);
+            this.__rendererCmd = new cc.SkeletonRenderCmdWebGL(this);
         else
-            this._rendererCmd = new cc.SkeletonRenderCmdCanvas(this);
+            this.__rendererCmd = new cc.SkeletonRenderCmdCanvas(this);
     },
 
     /**

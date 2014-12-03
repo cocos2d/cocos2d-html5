@@ -66,7 +66,7 @@ cc.Control = cc.Layer.extend(/** @lends cc.Control# */{
     _isOpacityModifyRGB: false,
     _hasVisibleParents: false,
     _touchListener: null,
-    _className: "Control",
+    __className: "Control",
 
     isOpacityModifyRGB: function () {
         return this._isOpacityModifyRGB;

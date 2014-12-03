@@ -30,7 +30,7 @@
  */
 ccs.BatchNode = cc.Node.extend(/** @lends ccs.BatchNode# */{
     _atlas:null,
-    _className:"BatchNode",
+    __className:"BatchNode",
 
     ctor:function () {
         this._atlas = null;
@@ -70,7 +70,7 @@ ccs.BatchNode = cc.Node.extend(/** @lends ccs.BatchNode# */{
         // IMPORTANT:
         // To ease the migration to v3.0, we still support the kmGL stack,
         // but it is deprecated and your code should not rely on it
-        cc.kmGLPushMatrixWitMat4(this._stackMatrix);
+        cc.kmGLPushMatrixWitMat4(this.__stackMatrix);
 
         if (this.grid && this.grid.isActive())
             this.grid.beforeDraw();

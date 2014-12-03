@@ -93,7 +93,7 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
             locPool.sort(this._sortNodeByLevelAsc);
             //transform node
             for (var i = 0, len = locPool.length; i < len; i++) {
-                if (locPool[i]._renderCmdDiry)
+                if (locPool[i].__renderCmdDirty)
                     locPool[i]._transformForRenderer();
             }
             locPool.length = 0;
@@ -104,7 +104,7 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         },
 
         _sortNodeByLevelAsc: function (n1, n2) {
-            return n1._curLevel - n2._curLevel;
+            return n1.__curLevel - n2.__curLevel;
         },
 
         pushDirtyNode: function (node) {
@@ -136,8 +136,14 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
     };
 
     cc.TextureRenderCmdWebGL.prototype.rendering = function(ctx){
+
+
         var _t = this._node;
-        if (!_t._textureLoaded || _t._displayedOpacity === 0)
+        if(_t._id == true)
+        {
+            console.log(1);
+        }
+        if (!_t.__textureLoaded || _t.__displayedOpacity === 0)
             return;
 
         var gl = ctx || cc._renderContext, locTexture = _t._texture;
@@ -146,17 +152,17 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         if (locTexture) {
             if (locTexture._isLoaded) {
                 _t._shaderProgram.use();
-                _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);
+                _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t.__stackMatrix);
 
                 cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
                 //optimize performance for javascript
                 cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
                 cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
-                gl.bindBuffer(gl.ARRAY_BUFFER, _t._quadWebBuffer);
-                if (_t._quadDirty) {
-                    gl.bufferData(gl.ARRAY_BUFFER, _t._quad.arrayBuffer, gl.DYNAMIC_DRAW);
-                    _t._quadDirty = false;
+                gl.bindBuffer(gl.ARRAY_BUFFER, _t.__quadWebBuffer);
+                if (_t.__quadDirty) {
+                    gl.bufferData(gl.ARRAY_BUFFER, _t.__quad.arrayBuffer, gl.DYNAMIC_DRAW);
+                    _t.__quadDirty = false;
                 }
                 gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);                   //cc.VERTEX_ATTRIB_POSITION
                 gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
@@ -166,17 +172,17 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
             }
         } else {
             _t._shaderProgram.use();
-            _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);
+            _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t.__stackMatrix);
 
             cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
             cc.glBindTexture2D(null);
 
             cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
 
-            gl.bindBuffer(gl.ARRAY_BUFFER, _t._quadWebBuffer);
-            if (_t._quadDirty) {
-                gl.bufferData(gl.ARRAY_BUFFER, _t._quad.arrayBuffer, gl.STATIC_DRAW);
-                _t._quadDirty = false;
+            gl.bindBuffer(gl.ARRAY_BUFFER, _t.__quadWebBuffer);
+            if (_t.__quadDirty) {
+                gl.bufferData(gl.ARRAY_BUFFER, _t.__quad.arrayBuffer, gl.STATIC_DRAW);
+                _t.__quadDirty = false;
             }
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
@@ -195,7 +201,7 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         var node = this._node;
 
         node._shaderProgram.use();
-        node._shaderProgram._setUniformForMVPMatrixWithMat4(node._stackMatrix);
+        node._shaderProgram._setUniformForMVPMatrixWithMat4(node.__stackMatrix);
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
 
         //
@@ -219,7 +225,7 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         var _t = this._node;
         cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
         _t._shaderProgram.use();
-        _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);
+        _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t.__stackMatrix);
         _t._render();
     };
 
@@ -235,7 +241,7 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         if(_t.texture && _t.texture.isLoaded()){
             ctx = ctx || cc._renderContext;
             _t._shaderProgram.use();
-            _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);
+            _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t.__stackMatrix);
             cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
             cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
 
@@ -272,7 +278,7 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
             return;
 
         _t._shaderProgram.use();
-        _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);
+        _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t.__stackMatrix);
 
         var blendFunc = _t._sprite.getBlendFunc();
         cc.glBlendFunc(blendFunc.src, blendFunc.dst);
@@ -317,7 +323,7 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         var gl = ctx || cc._renderContext;
 
         _t._shaderProgram.use();
-        _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);//setUniformForModelViewAndProjectionMatrixWithMat4();
+        _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t.__stackMatrix);//setUniformForModelViewAndProjectionMatrixWithMat4();
 
         cc.glBindTexture2D(_t._texture);
         cc.glBlendFuncForParticle(_t._blendFunc.src, _t._blendFunc.dst);
@@ -344,13 +350,13 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
 
     cc.ParticleBatchNodeRenderCmdWebGL.prototype.rendering = function(ctx){
         var _t = this._node;
-        if (_t.textureAtlas.totalQuads == 0)
+        if (_t.__textureAtlas.totalQuads == 0)
             return;
 
         _t._shaderProgram.use();
-        _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t._stackMatrix);
+        _t._shaderProgram._setUniformForMVPMatrixWithMat4(_t.__stackMatrix);
         cc.glBlendFuncForParticle(_t._blendFunc.src, _t._blendFunc.dst);
-        _t.textureAtlas.drawQuads();
+        _t.__textureAtlas.drawQuads();
     };
 
     //RenderTexture render command
@@ -418,16 +424,16 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
 
     cc.SpriteBatchNodeRenderCmdWebGL.prototype.rendering = function(ctx){
         var node = this._node;
-        if (node.textureAtlas.totalQuads === 0)
+        if (node.__textureAtlas.totalQuads === 0)
             return;
 
         //cc.nodeDrawSetup(this);
         node._shaderProgram.use();
-        node._shaderProgram._setUniformForMVPMatrixWithMat4(node._stackMatrix);
+        node._shaderProgram._setUniformForMVPMatrixWithMat4(node.__stackMatrix);
         node._arrayMakeObjectsPerformSelector(node._children, cc.Node._StateCallbackType.updateTransform);
         cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
 
-        node.textureAtlas.drawQuads();
+        node.__textureAtlas.drawQuads();
     };
 
     cc.AtlasNodeRenderCmdWebGL = function(node){
@@ -438,12 +444,12 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
         var context = ctx || cc._renderContext, node = this._node;
 
         node._shaderProgram.use();
-        node._shaderProgram._setUniformForMVPMatrixWithMat4(node._stackMatrix);
+        node._shaderProgram._setUniformForMVPMatrixWithMat4(node.__stackMatrix);
 
         cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
         if(node._uniformColor && node._colorF32Array){
             context.uniform4fv(node._uniformColor, node._colorF32Array);
-            node.textureAtlas.drawNumberOfQuads(node.quadsToDraw, 0);
+            node.__textureAtlas.drawNumberOfQuads(node.quadsToDraw, 0);
         }
     };
 
@@ -486,7 +492,7 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
     cc.SkeletonRenderCmdWebGL.prototype.rendering = function(ctx){
         var node = this._node;
         node._shaderProgram.use();
-        node._shaderProgram._setUniformForMVPMatrixWithMat4(node._stackMatrix);
+        node._shaderProgram._setUniformForMVPMatrixWithMat4(node.__stackMatrix);
 //        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
         var color = node.getColor(), locSkeleton = node._skeleton;
         locSkeleton.r = color.r / 255;
@@ -499,7 +505,7 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
             locSkeleton.b *= locSkeleton.a;
         }
 
-        var additive,textureAtlas,attachment,slot, i, n,
+        var additive,__textureAtlas,attachment,slot, i, n,
             quad = new cc.V3F_C4B_T2F_Quad();
         var locBlendFunc = node._blendFunc;
 
@@ -511,41 +517,41 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
             var regionTextureAtlas = node.getTextureAtlas(attachment);
 
             if (slot.data.additiveBlending != additive) {
-                if (textureAtlas) {
-                    textureAtlas.drawQuads();
-                    textureAtlas.removeAllQuads();
+                if (__textureAtlas) {
+                    __textureAtlas.drawQuads();
+                    __textureAtlas.removeAllQuads();
                 }
                 additive = !additive;
                 cc.glBlendFunc(locBlendFunc.src, additive ? cc.ONE : locBlendFunc.dst);
-            } else if (regionTextureAtlas != textureAtlas && textureAtlas) {
-                textureAtlas.drawQuads();
-                textureAtlas.removeAllQuads();
+            } else if (regionTextureAtlas != __textureAtlas && __textureAtlas) {
+                __textureAtlas.drawQuads();
+                __textureAtlas.removeAllQuads();
             }
-            textureAtlas = regionTextureAtlas;
+            __textureAtlas = regionTextureAtlas;
 
-            var quadCount = textureAtlas.getTotalQuads();
-            if (textureAtlas.getCapacity() == quadCount) {
-                textureAtlas.drawQuads();
-                textureAtlas.removeAllQuads();
-                if (!textureAtlas.resizeCapacity(textureAtlas.getCapacity() * 2))
+            var quadCount = __textureAtlas.getTotalQuads();
+            if (__textureAtlas.getCapacity() == quadCount) {
+                __textureAtlas.drawQuads();
+                __textureAtlas.removeAllQuads();
+                if (!__textureAtlas.resizeCapacity(__textureAtlas.getCapacity() * 2))
                     return;
             }
 
             sp._regionAttachment_updateQuad(attachment, slot, quad, node._premultipliedAlpha);
-            textureAtlas.updateQuad(quad, quadCount);
+            __textureAtlas.updateQuad(quad, quadCount);
         }
 
-        if (textureAtlas) {
-            textureAtlas.drawQuads();
-            textureAtlas.removeAllQuads();
+        if (__textureAtlas) {
+            __textureAtlas.drawQuads();
+            __textureAtlas.removeAllQuads();
         }
 
         if(node._debugBones || node._debugSlots){
 
             cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-            //cc.kmGLPushMatrixWitMat4(node._stackMatrix);
+            //cc.kmGLPushMatrixWitMat4(node.__stackMatrix);
             cc.current_stack.stack.push(cc.current_stack.top);
-            cc.current_stack.top = node._stackMatrix;
+            cc.current_stack.top = node.__stackMatrix;
 
             var drawingUtil = cc._drawingUtil;
 
@@ -611,7 +617,7 @@ if(cc._renderType === cc._RENDER_TYPE_WEBGL){
 
         cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
         cc.kmGLPushMatrix();
-        cc.kmGLLoadMatrix(_t._stackMatrix);
+        cc.kmGLLoadMatrix(_t.__stackMatrix);
 
         //TODO REMOVE THIS FUNCTION
         if (_t._parentBone == null && _t._batchNode == null) {

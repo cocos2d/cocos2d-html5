@@ -52,7 +52,7 @@ cc.ControlPotentiometer = cc.Control.extend(/** @lends cc.ControlPotentiometer# 
     /** Contains the maximum value of the receiver.
      * The default value of this property is 1.0. */
     _maximumValue:1,
-    _className:"ControlPotentiometer",
+    __className:"ControlPotentiometer",
 
     ctor:function (backgroundFile, progressFile, thumbFile) {
         cc.Control.prototype.ctor.call(this);

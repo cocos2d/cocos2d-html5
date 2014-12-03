@@ -35,7 +35,7 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
     _fntFileHasInit: false,
     _fntFileName: "",
     _stringValue: "",
-    _className: "TextBMFont",
+    __className: "TextBMFont",
     _labelBMFontRendererAdaptDirty: true,
 
     /**
@@ -76,7 +76,7 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
         _self._labelBMFontRenderer.initWithString(this._stringValue, fileName);
 
         var locRenderer = _self._labelBMFontRenderer;
-        if(!locRenderer._textureLoaded){
+        if(!locRenderer.__textureLoaded){
              locRenderer.addEventListener("load", function(){
                  _self.updateSizeAndPosition();
              });

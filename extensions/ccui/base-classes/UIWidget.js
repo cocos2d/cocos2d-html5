@@ -82,7 +82,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _hit: false,
     _nodes: null,
     _touchListener: null,
-    _className: "Widget",
+    __className: "Widget",
     _flippedX: false,
     _flippedY: false,
     _opacity: 255,
@@ -252,7 +252,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
     _cleanupWidget: function(){
         //clean up _touchListener
-        this._eventDispatcher.removeEventListener(this._touchListener);
+        this.__eventDispatcher.removeEventListener(this._touchListener);
 
         //cleanup focused widget and focus navigation controller
         if (ccui.Widget._focusedWidget == this)
@@ -294,9 +294,9 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         if (this._ignoreSize){
             this._contentSize = this.getVirtualRendererSize();
         }
-        if (this._running) {
+        if (this.__running) {
             var widgetParent = this.getWidgetParent();
-            var pSize = widgetParent ? widgetParent.getContentSize() : this._parent.getContentSize();
+            var pSize = widgetParent ? widgetParent.getContentSize() : this.__parent.getContentSize();
             this._sizePercent.x = (pSize.width > 0.0) ? locWidth / pSize.width : 0.0;
             this._sizePercent.y = (pSize.height > 0.0) ? locHeight / pSize.height : 0.0;
         }
@@ -309,9 +309,9 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         if(this._ignoreSize)
             this._contentSize = this.getVirtualRendererSize();
 
-        if (this._running) {
+        if (this.__running) {
             var widgetParent = this.getWidgetParent();
-            var locWidth = widgetParent ? widgetParent.width : this._parent.width;
+            var locWidth = widgetParent ? widgetParent.width : this.__parent.width;
             this._sizePercent.x = locWidth > 0 ? this._customSize.width / locWidth : 0;
         }
         this._onSizeChanged();
@@ -322,9 +322,9 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         if(this._ignoreSize)
             this._contentSize = this.getVirtualRendererSize();
 
-        if (this._running) {
+        if (this.__running) {
             var widgetParent = this.getWidgetParent();
-            var locH = widgetParent ? widgetParent.height : this._parent.height;
+            var locH = widgetParent ? widgetParent.height : this.__parent.height;
             this._sizePercent.y = locH > 0 ? this._customSize.height / locH : 0;
         }
         this._onSizeChanged();
@@ -339,14 +339,14 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         this._sizePercent.x = percent.x;
         this._sizePercent.y = percent.y;
         var width = this._customSize.width, height = this._customSize.height;
-        if (this._running) {
+        if (this.__running) {
             var widgetParent = this.getWidgetParent();
             if (widgetParent) {
                 width = widgetParent.width * percent.x;
                 height = widgetParent.height * percent.y;
             } else {
-                width = this._parent.width * percent.x;
-                height = this._parent.height * percent.y;
+                width = this.__parent.width * percent.x;
+                height = this.__parent.height * percent.y;
             }
         }
         if (this._ignoreSize)
@@ -361,9 +361,9 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _setWidthPercent: function (percent) {
         this._sizePercent.x = percent;
         var width = this._customSize.width;
-        if (this._running) {
+        if (this.__running) {
             var widgetParent = this.getWidgetParent();
-            width = (widgetParent ? widgetParent.width : this._parent.width) * percent;
+            width = (widgetParent ? widgetParent.width : this.__parent.width) * percent;
         }
         if (this._ignoreSize)
             this._setWidth(this.getVirtualRendererSize().width);
@@ -374,9 +374,9 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _setHeightPercent: function (percent) {
         this._sizePercent.y = percent;
         var height = this._customSize.height;
-        if (this._running) {
+        if (this.__running) {
             var widgetParent = this.getWidgetParent();
-            height = (widgetParent ? widgetParent.height : this._parent.height) * percent;
+            height = (widgetParent ? widgetParent.height : this.__parent.height) * percent;
         }
         if (this._ignoreSize)
             this._setHeight(this.getVirtualRendererSize().height);
@@ -395,7 +395,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             if(widgetParent)
                 parentSize = widgetParent.getLayoutSize();
             else
-                parentSize = this._parent.getContentSize();
+                parentSize = this.__parent.getContentSize();
         }
 
         switch (this._sizeType) {
@@ -436,9 +436,9 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             default:
                 break;
         }
-        if(this._parent instanceof ccui.ImageView){
-            var renderer = this._parent._imageRenderer;
-            if(renderer && !renderer._textureLoaded)
+        if(this.__parent instanceof ccui.ImageView){
+            var renderer = this.__parent._imageRenderer;
+            if(renderer && !renderer.__textureLoaded)
                 return;
         }
         this.setPosition(absPos);
@@ -1033,7 +1033,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {Number} [posY]
      */
     setPosition: function (pos, posY) {
-        if (this._running) {
+        if (this.__running) {
             var widgetParent = this.getWidgetParent();
             if (widgetParent) {
                 var pSize = widgetParent.getContentSize();
@@ -1057,7 +1057,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     setPositionX: function (x) {
-        if (this._running) {
+        if (this.__running) {
             var widgetParent = this.getWidgetParent();
             if (widgetParent) {
                 var pw = widgetParent.width;
@@ -1071,7 +1071,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         cc.Node.prototype.setPositionX.call(this, x);
     },
     setPositionY: function (y) {
-        if (this._running) {
+        if (this.__running) {
             var widgetParent = this.getWidgetParent();
             if (widgetParent) {
                 var ph = widgetParent.height;
@@ -1091,7 +1091,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      */
     setPositionPercent: function (percent) {
         this._positionPercent = percent;
-        if (this._running) {
+        if (this.__running) {
             var widgetParent = this.getWidgetParent();
             if (widgetParent) {
                 var parentSize = widgetParent.getSize();
@@ -1101,7 +1101,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
     _setXPercent: function (percent) {
         this._positionPercent.x = percent;
-        if (this._running) {
+        if (this.__running) {
             var widgetParent = this.getWidgetParent();
             if (widgetParent)
                 this.setPositionX(widgetParent.width * percent);
@@ -1109,7 +1109,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
     _setYPercent: function (percent) {
         this._positionPercent.y = percent;
-        if (this._running) {
+        if (this.__running) {
             var widgetParent = this.getWidgetParent();
             if (widgetParent)
                 this.setPositionY(widgetParent.height * percent);
@@ -1581,13 +1581,13 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
     _findLayout: function(){
         cc.renderer.childrenOrderDirty = true;
-        var layout = this._parent;
+        var layout = this.__parent;
         while(layout){
             if(layout._doLayout){
                 layout._doLayoutDirty = true;
                 break;
             }else
-                layout = layout._parent;
+                layout = layout.__parent;
         }
     },
 

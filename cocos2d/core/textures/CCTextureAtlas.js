@@ -36,14 +36,14 @@
  * @class
  * @extends cc.Class
  *
- * @property {Boolean}  dirty           - Indicates whether or not the array buffer of the VBO needs to be updated.
+ * @property {Boolean}  __dirty           - Indicates whether or not the array buffer of the VBO needs to be updated.
  * @property {Image}    texture         - Image texture for cc.TextureAtlas.
  * @property {Number}   capacity        - <@readonly> Quantity of quads that can be stored with the current texture atlas size.
  * @property {Number}   totalQuads      - <@readonly> Quantity of quads that are going to be drawn.
  * @property {Array}    quads           - <@readonly> Quads that are going to be rendered
  */
 cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
-    dirty: false,
+    __dirty: false,
     texture: null,
 
     _indices: null,
@@ -65,11 +65,11 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @example
      * 1.
      * //creates a TextureAtlas with  filename
-     * var textureAtlas = new cc.TextureAtlas("res/hello.png", 3);
+     * var __textureAtlas = new cc.TextureAtlas("res/hello.png", 3);
      * 2.
      * //creates a TextureAtlas with texture
      * var texture = cc.textureCache.addImage("hello.png");
-     * var textureAtlas = new cc.TextureAtlas(texture, 3);
+     * var __textureAtlas = new cc.TextureAtlas(texture, 3);
      */
     ctor: function (fileName, capacity) {
         this._buffersVBO = [];
@@ -115,10 +115,10 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 
     /**
      * specify if the array buffer of the VBO needs to be updated
-     * @param {Boolean} dirty
+     * @param {Boolean} __dirty
      */
-    setDirty: function (dirty) {
-        this.dirty = dirty;
+    setDirty: function (__dirty) {
+        this.__dirty = __dirty;
     },
 
     /**
@@ -126,7 +126,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @returns {boolean}
      */
     isDirty: function () {
-        return this.dirty;
+        return this.__dirty;
     },
 
     /**
@@ -227,8 +227,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @return {Boolean}
      * @example
      * //example
-     * var textureAtlas = new cc.TextureAtlas();
-     * textureAtlas.initWithTexture("hello.png", 3);
+     * var __textureAtlas = new cc.TextureAtlas();
+     * __textureAtlas.initWithTexture("hello.png", 3);
      */
     initWithFile: function (file, capacity) {
         // retained in property
@@ -252,8 +252,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @example
      * //example
      * var texture = cc.textureCache.addImage("hello.png");
-     * var textureAtlas = new cc.TextureAtlas();
-     * textureAtlas.initWithTexture(texture, 3);
+     * var __textureAtlas = new cc.TextureAtlas();
+     * __textureAtlas.initWithTexture(texture, 3);
      */
     initWithTexture: function (texture, capacity) {
         cc.assert(texture, cc._LogInfos.TextureAtlas_initWithTexture);
@@ -281,7 +281,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 
         this._setupIndices();
         this._setupVBO();
-        this.dirty = true;
+        this.__dirty = true;
         return true;
     },
 
@@ -297,7 +297,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 
         this._totalQuads = Math.max(index + 1, this._totalQuads);
         this._setQuadToArray(quad, index);
-        this.dirty = true;
+        this.__dirty = true;
     },
 
     /**
@@ -323,7 +323,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength), startOffset + quadSize);
 
         this._setQuadToArray(quad, index);
-        this.dirty = true;
+        this.__dirty = true;
     },
 
     /**
@@ -361,7 +361,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         for (i = 0; i < amount; i++)
             this._setQuadToArray(quads[i], index + i);
 
-        this.dirty = true;
+        this.__dirty = true;
     },
 
     /**
@@ -393,7 +393,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
             locQuadsReader.set(locQuadsReader.subarray(startOffset, startOffset + moveLength), startOffset - quadSize);
             locQuadsReader.set(sourceArr, newIndex * quadSize);
         }
-        this.dirty = true;
+        this.__dirty = true;
     },
 
     /**
@@ -413,7 +413,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
             var moveLength = (this._totalQuads - index) * quadSize;
             this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength), startOffset - quadSize);
         }
-        this.dirty = true;
+        this.__dirty = true;
     },
 
     /**
@@ -434,7 +434,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
             var dstOffset = index * quadSize;
             this._quadsReader.set(this._quadsReader.subarray(srcOffset, srcOffset + moveLength), dstOffset);
         }
-        this.dirty = true;
+        this.__dirty = true;
     },
 
     /**
@@ -447,8 +447,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         this._totalQuads = 0;
     },
 
-    _setDirty: function (dirty) {
-        this.dirty = dirty;
+    _setDirty: function (__dirty) {
+        this.__dirty = __dirty;
     },
 
     /**
@@ -520,7 +520,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 
         this._setupIndices();
         this._mapBuffers();
-        this.dirty = true;
+        this.__dirty = true;
         return true;
     },
 
@@ -573,7 +573,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
             locQuadsReader.set(locQuadsReader.subarray(moveStart, moveStart + moveLength), srcOffset);
         }
         locQuadsReader.set(sourceArr, dstOffset);
-        this.dirty = true;
+        this.__dirty = true;
     },
 
     /**
@@ -616,13 +616,13 @@ var _p = cc.TextureAtlas.prototype;
 // Extended properties
 /** @expose */
 _p.totalQuads;
-cc.addProperty(_p, "totalQuads", _p.getTotalQuads);
+cc.defineGetterSetter(_p, "totalQuads", _p.getTotalQuads);
 /** @expose */
 _p.capacity;
-cc.addProperty(_p, "capacity", _p.getCapacity);
+cc.defineGetterSetter(_p, "capacity", _p.getCapacity);
 /** @expose */
 _p.quads;
-cc.addProperty(_p, "quads", _p.getQuads, _p.setQuads);
+cc.defineGetterSetter(_p, "quads", _p.getQuads, _p.setQuads);
 
 /**
  * <p>Creates a TextureAtlas with an filename and with an initial capacity for Quads. <br />

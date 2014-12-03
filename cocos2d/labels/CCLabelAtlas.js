@@ -52,8 +52,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     // the first char in the charmap
     _mapStartChar: null,
 
-    _textureLoaded: false,
-    _className: "LabelAtlas",
+    __textureLoaded: false,
+    __className: "LabelAtlas",
 
     /**
      * <p>
@@ -83,7 +83,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      * @returns {boolean}
      */
     textureLoaded: function () {
-        return this._textureLoaded;
+        return this.__textureLoaded;
     },
 
     /**
@@ -138,7 +138,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         else
             texture = cc.textureCache.addImage(textureFilename);
         var locLoaded = texture.isLoaded();
-        this._textureLoaded = locLoaded;
+        this.__textureLoaded = locLoaded;
         if (!locLoaded) {
             texture.addEventListener("load", function (sender) {
                 this.initWithTexture(texture, width, height, label.length);
@@ -236,7 +236,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     _updateAtlasValuesForWebGL: function () {
         var locString = this._string;
         var n = locString.length;
-        var locTextureAtlas = this.textureAtlas;
+        var locTextureAtlas = this.__textureAtlas;
 
         var texture = locTextureAtlas.texture;
         var textureWide = texture.pixelsWidth;
@@ -250,8 +250,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         if (n > locTextureAtlas.getCapacity())
             cc.log("cc.LabelAtlas._updateAtlasValues(): Invalid String length");
         var quads = locTextureAtlas.quads;
-        var locDisplayedColor = this._displayedColor;
-        var curColor = {r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: this._displayedOpacity};
+        var locDisplayedColor = this.__displayedColor;
+        var curColor = {r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: this.__displayedOpacity};
         var locItemWidth = this._itemWidth;
         for (var i = 0; i < n; i++) {
             var a = locString.charCodeAt(i) - this._mapStartChar.charCodeAt(0);
@@ -300,7 +300,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             locQuadBR.colors = curColor;
         }
         if (n > 0) {
-            locTextureAtlas.dirty = true;
+            locTextureAtlas.__dirty = true;
             var totalQuads = locTextureAtlas.totalQuads;
             if (n > totalQuads)
                 locTextureAtlas.increaseTotalQuadsWith(n - totalQuads);
@@ -337,8 +337,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     _setStringForWebGL: function (label) {
         label = String(label);
         var len = label.length;
-        if (len > this.textureAtlas.totalQuads)
-            this.textureAtlas.resizeCapacity(len);
+        if (len > this.__textureAtlas.totalQuads)
+            this.__textureAtlas.resizeCapacity(len);
 
         this._string = label;
         this.width = len * this._itemWidth;

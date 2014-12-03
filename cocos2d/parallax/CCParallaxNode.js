@@ -124,7 +124,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
 	parallaxArray:null,
 
     _lastPosition:null,
-    _className:"ParallaxNode",
+    __className:"ParallaxNode",
 
     /**
      * Gets the parallax array.

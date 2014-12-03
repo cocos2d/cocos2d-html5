@@ -76,7 +76,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     _scrollViewEventListener: null,
     _scrollViewEventSelector: null,
-    _className: "ScrollView",
+    __className: "ScrollView",
 
     /**
      * Allocates and initializes a UIScrollView.
@@ -1744,7 +1744,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     _transformForRenderer: function(parentMatrix){
         ccui.Layout.prototype._transformForRenderer.call(this, parentMatrix);
         if(this._innerContainer && cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this._innerContainer._transformForRenderer(this._stackMatrix);
+            this._innerContainer._transformForRenderer(this.__stackMatrix);
     }
 });
 

@@ -73,7 +73,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     _pressedTextureLoaded: false,
     _disabledTextureLoaded: false,
 
-    _className: "Button",
+    __className: "Button",
     _normalTextureAdaptDirty: true,
     _pressedTextureAdaptDirty: true,
     _disabledTextureAdaptDirty: true,

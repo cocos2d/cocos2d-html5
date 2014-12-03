@@ -24,6 +24,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+
+
+
 var cc = cc || {};
 
 /**
@@ -321,4 +324,122 @@ cc.clone = function (obj) {
         }
     }
     return newObj;
+};
+cc.Serializer = {
+    specialCases:[],
+    specialCasesMethods:[],
+    compact:false,
+    getMethods:function(key){
+        var idx = cc.Serializer.specialCases.indexOf(key);
+        if(idx !== -1)
+        {
+            return cc.Serializer.specialCasesMethods[idx];
+        }
+    },
+    /**
+     * add special case methods for serialization,
+     * @function
+     * @param {String} key
+     * @param {Function} getFunc This function will be called during serialization of an object that matches the key,
+     *                           This function will be called from the actual key owner,
+     *                           for example, the key is "_position", and the object is a cc.Node instance, then function "this" refers to that cc.Node instance
+     *                           parameter : the value of the key will be passed to the function as the only parameter
+     *                           return    : function should return a formatted object ready to be serialized
+     *
+     *                           example   : format color to "stringify friendly" object
+     *                                       function(val){return {r:val.r, g:val.g, b:val.b, a:val.a}}
+     *
+     *                           example   : return the children array, or do nothing if its empty
+     *                                       function(){ return this._children.length? this._children : undefined; }
+     *
+     * @param {Function} setFunc This function will be called during re-creation of an object that matches the key,
+     *                           This function will be called from the actual key owner,
+     *                           This function is to process serialized object that require more than a value copy, such as children needs to be passed through .addChild()
+     *                           for example, the key is "_position", and the object is a cc.Node instance, then function "this" refers to that cc.Node instance
+     *                           parameter : the value of the key will be passed to the function as the only parameter
+     *                           return    : void, this function
+     *
+     *                           example   : add Children through Node.addChild()
+     *                                      function(val){
+     *                                          for(var i = 0; i < val.length; i++){
+     *                                              this.addChild(val[i]);
+     *                                          }
+     *                                      }
+     */
+    addMethods: function(key, getFunc, setFunc){
+        cc.Serializer.specialCases.push(key);
+        cc.Serializer.specialCasesMethods.push({g:getFunc,s:setFunc});
+    },
+    serialize:function(node){
+
+
+
+
+        return JSON.stringify(node, function(key, val){
+            if(val === null || key[1] == '_')
+                return undefined;
+
+            //debug - remove these when finished
+            if(val instanceof HTMLElement)
+            {
+                console.log("html",this,  key, val);
+                return undefined;
+            }
+            //end debug
+
+            var special = cc.Serializer.getMethods(key);
+            if(special && special.g)
+            {
+                return special.g.call(this,val);
+            }
+            else if(typeof val === "object" && val._type_)
+            {
+                //copy the object type to local, so it gets serialized
+                val._type_ = val._type_;
+            }
+            return val;
+        },this.compact?0:4);
+    },
+    unSerialize:function(json)
+    {
+        var specialList = [];
+        var ret = JSON.parse(json, function(key, val){
+            var special = cc.Serializer.getMethods(key);
+            if(special && special.s)
+            {
+                specialList.push({func:special.s, that:this, val:val});
+                return undefined;
+            }
+            //if we defined a type for this object then
+            if(typeof val === "object" && val._type_)
+            {
+                var cls = cc.Serializer._getClass(val._type_);
+                var ret = new cls;
+                var keys = Object.keys(val);
+                for(var i = 0; i < keys.length; i++)
+                {
+                    ret[keys[i]] = val[keys[i]];
+                }
+                return ret;
+            }
+            return val;
+        });
+        for(var i = 0; i < specialList.length; i++)
+        {
+            var o = specialList[i];
+            o.func.call(o.that, o.val, this);
+        }
+        return ret;
+    },
+    _getClass:function(str){
+        //not using eval to prevent code injection
+        var scopes = str.split(".");
+        var ret = window[scopes[0]];
+        for(var i = 1; i < scopes.length; i++)
+        {
+            if(!ret[scopes[i]]) throw "Error recreating " + str +" object, maybe it doesn't exists?";
+            ret = ret[scopes[i]];
+        }
+        return ret;
+    }
 };

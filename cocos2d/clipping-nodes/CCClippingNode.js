@@ -106,7 +106,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      */
     init: null,
 
-    _className: "ClippingNode",
+    __className: "ClippingNode",
 
     _initForWebGL: function (stencil) {
         this._stencil = stencil;
@@ -223,11 +223,11 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         //optimize performance for javascript
         var currentStack = cc.current_stack;
         currentStack.stack.push(currentStack.top);
-        cc.kmMat4Assign(this._stackMatrix, currentStack.top);
-        currentStack.top = this._stackMatrix;
+        cc.kmMat4Assign(this.__stackMatrix, currentStack.top);
+        currentStack.top = this.__stackMatrix;
 
         this.transform();
-        //this._stencil._stackMatrix = this._stackMatrix;
+        //this._stencil.__stackMatrix = this.__stackMatrix;
         this._stencil.visit();
 
         cc.renderer.pushRenderCommand(this._afterDrawStencilCmd);
@@ -244,8 +244,8 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
                 else
                     break;
             }
-            if(this._rendererCmd)
-                cc.renderer.pushRenderCommand(this._rendererCmd);
+            if(this.__rendererCmd)
+                cc.renderer.pushRenderCommand(this.__rendererCmd);
             // draw children zOrder >= 0
             for (; i < childLen; i++) {
                 if (locChildren[i]) {
@@ -253,8 +253,8 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
                 }
             }
         } else{
-            if(this._rendererCmd)
-                cc.renderer.pushRenderCommand(this._rendererCmd);
+            if(this.__rendererCmd)
+                cc.renderer.pushRenderCommand(this.__rendererCmd);
         }
 
         cc.renderer.pushRenderCommand(this._afterVisitCmd);
@@ -447,14 +447,14 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
                     else
                         break;
                 }
-                if(this._rendererCmd)
-                    cc.renderer.pushRenderCommand(this._rendererCmd);
+                if(this.__rendererCmd)
+                    cc.renderer.pushRenderCommand(this.__rendererCmd);
                 for (; i < len; i++) {
                     children[i].visit(context);
                 }
             } else
-            if(this._rendererCmd)
-                cc.renderer.pushRenderCommand(this._rendererCmd);
+            if(this.__rendererCmd)
+                cc.renderer.pushRenderCommand(this.__rendererCmd);
             this._cangodhelpme(false);
 
         }
@@ -483,10 +483,10 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         if(this._stencil == stencil)
             return;
         if(this._stencil)
-            this._stencil._parent = null;
+            this._stencil.__parent = null;
         this._stencil = stencil;
         if(this._stencil)
-            this._stencil._parent = this;
+            this._stencil.__parent = this;
     },
 
     _setStencilForCanvas: function (stencil) {
@@ -505,11 +505,11 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         // For shape stencil, rewrite the draw of stencil ,only init the clip path and draw nothing.
         //else
         if (stencil instanceof cc.DrawNode) {
-            stencil._rendererCmd.rendering = function (ctx, scaleX, scaleY) {
+            stencil.__rendererCmd.rendering = function (ctx, scaleX, scaleY) {
                 scaleX = scaleX || cc.view.getScaleX();
                 scaleY = scaleY ||cc.view.getScaleY();
                 var context = ctx || cc._renderContext;
-                var t = this._node._transformWorld;
+                var t = this._node.__transformWorld;
                 context.save();
                 context.beginPath();
                 for (var i = 0; i < stencil._buffer.length; i++) {
@@ -580,7 +580,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     _transformForRenderer: function(parentMatrix){
         cc.Node.prototype._transformForRenderer.call(this, parentMatrix);
         if(this._stencil)
-            this._stencil._transformForRenderer(this._stackMatrix);
+            this._stencil._transformForRenderer(this.__stackMatrix);
     }
 });
 

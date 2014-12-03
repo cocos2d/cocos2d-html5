@@ -42,7 +42,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     _skinTransform: null,
     _displayName: "",
     _armature: null,
-    _className: "Skin",
+    __className: "Skin",
 
     ctor: function (fileName, rect) {
         cc.Sprite.prototype.ctor.call(this);
@@ -131,14 +131,14 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
      * Updates armature skin's transform with skin transform and bone's transform.
      */
     updateArmatureTransform: function () {
-        this._transform = cc.affineTransformConcat(
+        this.__transform = cc.affineTransformConcat(
             this._skinTransform,
             this.bone.getNodeToArmatureTransform()
         );
     },
 
     _updateTransformForWebGL: function(){
-        var locQuad = this._quad;
+        var locQuad = this.__quad;
         // If it is not visible, or one of its ancestors is not visible, then do nothing:
         if( !this._visible)
             locQuad.br.vertices = locQuad.tl.vertices = locQuad.tr.vertices = locQuad.bl.vertices = {x: 0, y:0, z:0};
@@ -188,7 +188,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         // MARMALADE CHANGE: ADDED CHECK FOR nullptr, TO PERMIT SPRITES WITH NO BATCH NODE / TEXTURE ATLAS
         if (this._textureAtlas)
             this._textureAtlas.updateQuad(locQuad, this._textureAtlas.getTotalQuads());
-        this._quadDirty = true;
+        this.__quadDirty = true;
     },
 
     SET_VERTEX3F: function(_v_, _x_, _y_, _z_){
@@ -209,11 +209,11 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
      * @returns {cc.AffineTransform}
      */
     getNodeToWorldTransform: function(){
-        return cc.affineTransformConcat(this._transform,this.bone.getArmature().getNodeToWorldTransform());
+        return cc.affineTransformConcat(this.__transform,this.bone.getArmature().getNodeToWorldTransform());
     },
 
     getNodeToWorldTransformAR: function(){
-        var displayTransform = this._transform;
+        var displayTransform = this.__transform;
         this._anchorPointInPoints = cc.pointApplyAffineTransform(this._anchorPointInPoints, displayTransform);
         displayTransform.tx = this._anchorPointInPoints.x;
         displayTransform.ty = this._anchorPointInPoints.y;

@@ -68,10 +68,10 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         child.setOrderOfArrival(cc.s_globalOrderOfArrival);
 
         //TODO USE PHYSICS
-        if(this._running){
+        if(this.__running){
             child.onEnter();
             // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
-            if(this._isTransitionFinished)
+            if(this.__isTransitionFinished)
                 child.onEnterTransitionDidFinish();
         }
         if(this._cascadeColorEnabled)
@@ -107,7 +107,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
             return;
         var idx = locChildren.indexOf(child);
         if(idx > -1){
-             if(this._running){
+             if(this.__running){
                  child.onExitTransitionDidStart();
                  child.onExit();
              }
@@ -166,7 +166,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
             // IMPORTANT:
             //  -1st do onExit
             //  -2nd cleanup
-            if(this._running){
+            if(this.__running){
                 child.onExitTransitionDidStart();
                 child.onExit();
             }
@@ -269,15 +269,15 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         }
 
 //        _t.draw(context);
-        if(this._rendererCmd)
-            cc.renderer.pushRenderCommand(this._rendererCmd);
+        if(this.__rendererCmd)
+            cc.renderer.pushRenderCommand(this.__rendererCmd);
 
         for (; i < childLen; i++)
             children[i] && children[i].visit(context);
         for (; j < pLen; j++)
             locProtectedChildren[j] && locProtectedChildren[j].visit(context);
 
-        this._cacheDirty = false;
+        this.__cacheDirty = false;
 //        context.restore();
     },
 
@@ -290,8 +290,8 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
 
         //optimize performance for javascript
         currentStack.stack.push(currentStack.top);
-        cc.kmMat4Assign(_t._stackMatrix, currentStack.top);
-        currentStack.top = _t._stackMatrix;
+        cc.kmMat4Assign(_t.__stackMatrix, currentStack.top);
+        currentStack.top = _t.__stackMatrix;
 
         var locGrid = _t.grid;
         if (locGrid && locGrid._active)
@@ -318,8 +318,8 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
                 break;
         }
 //        _t.draw(context);
-        if(this._rendererCmd)
-            cc.renderer.pushRenderCommand(this._rendererCmd);
+        if(this.__rendererCmd)
+            cc.renderer.pushRenderCommand(this.__rendererCmd);
 
         // draw children zOrder >= 0
         for (; i < childLen; i++) {
@@ -403,10 +403,10 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
      * @override
      */
     updateDisplayedOpacity: function(parentOpacity){
-        this._displayedOpacity = this._realOpacity * parentOpacity/255.0;
+        this.__displayedOpacity = this._realOpacity * parentOpacity/255.0;
         this._updateColor();
 
-        var i,len, locChildren, _opacity = this._displayedOpacity;
+        var i,len, locChildren, _opacity = this.__displayedOpacity;
         if (this._cascadeOpacityEnabled){
             locChildren = this._children;
             for(i = 0, len = locChildren.length;i < len; i++){
@@ -427,7 +427,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
      * @override
      */
     updateDisplayedColor: function(parentColor){
-        var displayedColor = this._displayedColor, realColor = this._realColor;
+        var displayedColor = this.__displayedColor, realColor = this._realColor;
         displayedColor.r = realColor.r * parentColor.r/255.0;
         displayedColor.g = realColor.g * parentColor.g/255.0;
         displayedColor.b = realColor.b * parentColor.b/255.0;
@@ -450,7 +450,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
     },
 
     _disableCascadeOpacity: function () {
-        this._displayedOpacity = this._realOpacity;
+        this.__displayedOpacity = this._realOpacity;
 
         var selChildren = this._children, i, item;
         for (i = 0; i < selChildren.length; i++) {
@@ -482,16 +482,16 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     cc.ProtectedNode.prototype.visit =  cc.ProtectedNode.prototype._visitForCanvas;
     cc.ProtectedNode.prototype._transformForRenderer = function () {
-        var t = this.nodeToParentTransform(), worldT = this._transformWorld;
-        if(this._parent){
-            var pt = this._parent._transformWorld;
+        var t = this.nodeToParentTransform(), worldT = this.__transformWorld;
+        if(this.__parent){
+            var pt = this.__parent.__transformWorld;
             //worldT = cc.AffineTransformConcat(t, pt);
             worldT.a = t.a * pt.a + t.b * pt.c;                               //a
             worldT.b = t.a * pt.b + t.b * pt.d;                               //b
             worldT.c = t.c * pt.a + t.d * pt.c;                               //c
             worldT.d = t.c * pt.b + t.d * pt.d;                               //d
             if(this._skewX || this._skewY){
-                var plt = this._parent._transform;
+                var plt = this.__parent.__transform;
                 var xOffset = -(plt.b + plt.c) * t.ty ;
                 var yOffset = -(plt.b + plt.c) * t.tx;
                 worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
@@ -508,7 +508,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             worldT.tx = t.tx;
             worldT.ty = t.ty;
         }
-        this._renderCmdDiry = false;
+        this.__renderCmdDirty = false;
         var i, len, locChildren = this._children;
         for(i = 0, len = locChildren.length; i< len; i++){
             locChildren[i]._transformForRenderer();
@@ -520,8 +520,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 }else{
     cc.ProtectedNode.prototype.visit =  cc.ProtectedNode.prototype._visitForWebGL;
     cc.ProtectedNode.prototype._transformForRenderer = function () {
-        var t4x4 = this._transform4x4, stackMatrix = this._stackMatrix,
-            parentMatrix = this._parent ? this._parent._stackMatrix : cc.current_stack.top;
+        var t4x4 = this._transform4x4, stackMatrix = this.__stackMatrix,
+            parentMatrix = this.__parent ? this.__parent.__stackMatrix : cc.current_stack.top;
 
         // Convert 3x3 into 4x4 matrix
         var trans = this.nodeToParentTransform();
@@ -539,7 +539,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         //optimize performance for Javascript
         cc.kmMat4Multiply(stackMatrix, parentMatrix, t4x4);
 
-        this._renderCmdDiry = false;
+        this.__renderCmdDirty = false;
         var i, len, locChildren = this._children;
         for(i = 0, len = locChildren.length; i< len; i++){
             locChildren[i]._transformForRenderer();

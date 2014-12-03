@@ -49,7 +49,7 @@ cc.ControlHuePicker = cc.Control.extend(/** @lends cc.ControlHuePicker# */{
     _background:null,
     _slider:null,
     _startPos:null,
-    _className:"ControlHuePicker",
+    __className:"ControlHuePicker",
 
     /**
      * The constructor of cc.ControlHuePicker

@@ -54,7 +54,7 @@ cc.MenuPassive = cc.Layer.extend(/** @lends cc.MenuPassive# */{
 
     _color:null,
     _opacity:0,
-    _className:"MenuPassive",
+    __className:"MenuPassive",
 
     ctor:function () {
     },

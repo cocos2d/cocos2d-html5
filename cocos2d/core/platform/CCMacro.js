@@ -186,7 +186,7 @@ cc.BLEND_DST = 0x0303;
  * @function
  */
 cc.nodeDrawSetup = function (node) {
-    //cc.glEnable(node._glServerState);
+    //cc.glEnable(node.__glServerState);
     if (node._shaderProgram) {
         //cc._renderContext.useProgram(node._shaderProgram._programObj);
         node._shaderProgram.use();

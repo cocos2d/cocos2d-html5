@@ -288,26 +288,27 @@ cc._getCompositeOperationByBlendFunc = function(blendFunc){
  * var sprite1 = new cc.Sprite(texture);
  * var sprite2 = new cc.Sprite(texture, cc.rect(0,0,480,320));
  *
- * @property {Boolean}              dirty               - Indicates whether the sprite needs to be updated.
+ * @property {Boolean}              __dirty               - Indicates whether the sprite needs to be updated.
  * @property {Boolean}              flippedX            - Indicates whether or not the spirte is flipped on x axis.
  * @property {Boolean}              flippedY            - Indicates whether or not the spirte is flipped on y axis.
  * @property {Number}               offsetX             - <@readonly> The offset position on x axis of the sprite in texture. Calculated automatically by editors like Zwoptex.
  * @property {Number}               offsetY             - <@readonly> The offset position on x axis of the sprite in texture. Calculated automatically by editors like Zwoptex.
- * @property {Number}               atlasIndex          - The index used on the TextureAtlas.
+ * @property {Number}               __atlasIndex          - The index used on the TextureAtlas.
  * @property {cc.Texture2D}         texture             - Texture used to render the sprite.
  * @property {Boolean}              textureRectRotated  - <@readonly> Indicate whether the texture rectangle is rotated.
- * @property {cc.TextureAtlas}      textureAtlas        - The weak reference of the cc.TextureAtlas when the sprite is rendered using via cc.SpriteBatchNode.
+ * @property {cc.TextureAtlas}      __textureAtlas        - The weak reference of the cc.TextureAtlas when the sprite is rendered using via cc.SpriteBatchNode.
  * @property {cc.SpriteBatchNode}   batchNode           - The batch node object if this sprite is rendered by cc.SpriteBatchNode.
  * @property {cc.V3F_C4B_T2F_Quad}  quad                - <@readonly> The quad (tex coords, vertex coords and color) information.
  */
 cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
-    dirty:false,
-    atlasIndex:0,
-    textureAtlas:null,
+    _type_:"cc.Sprite",
+    __dirty:false,
+    __atlasIndex:0,
+    __textureAtlas:null,
 
     _batchNode:null,
-    _recursiveDirty:null, //Whether all of the sprite's children needs to be updated
-    _hasChildren:null, //Whether the sprite contains children
+    __recursiveDirty:null, //Whether all of the sprite's children needs to be updated
+    __hasChildren:null, //Whether the sprite contains children
     _shouldBeHidden:false, //should not be drawn because one of the ancestors is not visible
     _transformToBatch:null,
 
@@ -334,9 +335,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _flippedX:false, //Whether the sprite is flipped horizontally or not.
     _flippedY:false, //Whether the sprite is flipped vertically or not.
 
-    _textureLoaded:false,
+    __textureLoaded:false,
     _newTextureWhenChangeColor: null,         //hack property for LabelBMFont
-    _className:"Sprite",
+    __className:"Sprite",
 
     //Only for texture update judgment
     _oldDisplayColor: cc.color.WHITE,
@@ -346,7 +347,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @returns {boolean}
      */
     textureLoaded:function(){
-        return this._textureLoaded;
+        return this.__textureLoaded;
     },
 
     /**
@@ -364,7 +365,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {Boolean} True if the sprite needs to be updated in the Atlas, false otherwise.
      */
     isDirty:function () {
-        return this.dirty;
+        return this.__dirty;
     },
 
     /**
@@ -372,7 +373,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {Boolean} bDirty
      */
     setDirty:function (bDirty) {
-        this.dirty = bDirty;
+        this.__dirty = bDirty;
     },
 
     /**
@@ -388,16 +389,16 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {Number}
      */
     getAtlasIndex:function () {
-        return this.atlasIndex;
+        return this.__atlasIndex;
     },
 
     /**
      * Sets the index used on the TextureAtlas.
      * @warning Don't modify this value unless you know what you are doing
-     * @param {Number} atlasIndex
+     * @param {Number} __atlasIndex
      */
-    setAtlasIndex:function (atlasIndex) {
-        this.atlasIndex = atlasIndex;
+    setAtlasIndex:function (__atlasIndex) {
+        this.__atlasIndex = __atlasIndex;
     },
 
     /**
@@ -413,15 +414,15 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {cc.TextureAtlas}
      */
     getTextureAtlas:function () {
-        return this.textureAtlas;
+        return this.__textureAtlas;
     },
 
     /**
      * Sets the weak reference of the cc.TextureAtlas when the sprite is rendered using via cc.SpriteBatchNode
-     * @param {cc.TextureAtlas} textureAtlas
+     * @param {cc.TextureAtlas} __textureAtlas
      */
-    setTextureAtlas:function (textureAtlas) {
-        this.textureAtlas = textureAtlas;
+    setTextureAtlas:function (__textureAtlas) {
+        this.__textureAtlas = __textureAtlas;
     },
 
     /**
@@ -459,7 +460,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         if(!spriteFrame.textureLoaded()){
             //add event listener
-            this._textureLoaded = false;
+            this.__textureLoaded = false;
             spriteFrame.addEventListener("load", this._spriteFrameLoadedCallback, this);
         }
 
@@ -495,7 +496,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {cc.SpriteBatchNode} batchNode
      */
     useBatchNode:function (batchNode) {
-        this.textureAtlas = batchNode.textureAtlas; // weak ref
+        this.__textureAtlas = batchNode.__textureAtlas; // weak ref
         this._batchNode = batchNode;
     },
 
@@ -522,7 +523,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     sortAllChildren:function () {
-        if (this._reorderChildDirty) {
+        if (this.__reorderChildDirty) {
             var _children = this._children;
 
             // insertion sort
@@ -550,7 +551,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             }
 
             //don't need to check children recursively, that's done in visit of each child
-            this._reorderChildDirty = false;
+            this.__reorderChildDirty = false;
         }
 
     },
@@ -571,7 +572,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if (zOrder === child.zIndex)
             return;
 
-        if (this._batchNode && !this._reorderChildDirty) {
+        if (this._batchNode && !this.__reorderChildDirty) {
             this._setReorderChildDirtyRecursively();
             this._batchNode.reorderBatch(true);
         }
@@ -613,7 +614,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         }
 
         cc.Node.prototype.removeAllChildren.call(this, cleanup);
-        this._hasChildren = false;
+        this.__hasChildren = false;
     },
 
     //
@@ -626,8 +627,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {Boolean} value
      */
     setDirtyRecursively:function (value) {
-        this._recursiveDirty = value;
-        this.dirty = value;
+        this.__recursiveDirty = value;
+        this.__dirty = value;
         // recursively set dirty
         var locChildren = this._children, child, l = locChildren ? locChildren.length : 0;
         for (var i = 0; i < l; i++) {
@@ -638,18 +639,18 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
     /**
      * Make the node dirty
-     * @param {Boolean} norecursive When true children will not be set dirty recursively, by default, they will be.
+     * @param {Boolean} norecursive When true children will not be set __dirty recursively, by default, they will be.
      * @override
      */
     setNodeDirty: function(norecursive) {
         cc.Node.prototype.setNodeDirty.call(this);
         // Lazy set dirty
-        if (!norecursive && this._batchNode && !this._recursiveDirty) {
-            if (this._hasChildren)
+        if (!norecursive && this._batchNode && !this.__recursiveDirty) {
+            if (this.__hasChildren)
                 this.setDirtyRecursively(true);
             else {
-                this._recursiveDirty = true;
-                this.dirty = true;
+                this.__recursiveDirty = true;
+                this.__dirty = true;
             }
         }
     },
@@ -777,9 +778,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
     _setReorderChildDirtyRecursively:function () {
         //only set parents flag the first time
-        if (!this._reorderChildDirty) {
-            this._reorderChildDirty = true;
-            var pNode = this._parent;
+        if (!this.__reorderChildDirty) {
+            this.__reorderChildDirty = true;
+            var pNode = this.__parent;
             while (pNode && pNode != this._batchNode) {
                 pNode._setReorderChildDirtyRecursively();
                 pNode = pNode.parent;
@@ -796,9 +797,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         return this._texture;
     },
 
-    _quad: null, // vertex coords, texture coords and color info
-    _quadWebBuffer: null,
-    _quadDirty: false,
+    __quad: null, // vertex coords, texture coords and color info
+    __quadWebBuffer: null,
+    __quadDirty: false,
     _colorized: false,
     _blendFuncStr: "source-over",
     _originalTexture: null,
@@ -841,7 +842,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {cc.V3F_C4B_T2F_Quad}
      */
     getQuad:function () {
-        return this._quad;
+        return this.__quad;
     },
 
     /**
@@ -933,7 +934,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * Update sprite's color
      */
     updateColor:function () {
-        var locDisplayedColor = this._displayedColor, locDisplayedOpacity = this._displayedOpacity;
+        var locDisplayedColor = this.__displayedColor, locDisplayedOpacity = this.__displayedOpacity;
         var color4 = {r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: locDisplayedOpacity};
         // special opacity for premultiplied textures
         if (this._opacityModifyRGB) {
@@ -941,7 +942,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             color4.g *= locDisplayedOpacity / 255.0;
             color4.b *= locDisplayedOpacity / 255.0;
         }
-        var locQuad = this._quad;
+        var locQuad = this.__quad;
         locQuad.bl.colors = color4;
         locQuad.br.colors = color4;
         locQuad.tl.colors = color4;
@@ -949,17 +950,17 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         // renders using Sprite Manager
         if (this._batchNode) {
-            if (this.atlasIndex != cc.Sprite.INDEX_NOT_INITIALIZED) {
-                this.textureAtlas.updateQuad(locQuad, this.atlasIndex)
+            if (this.__atlasIndex != cc.Sprite.INDEX_NOT_INITIALIZED) {
+                this.__textureAtlas.updateQuad(locQuad, this.__atlasIndex)
             } else {
                 // no need to set it recursively
                 // update dirty_, don't update recursiveDirty_
-                this.dirty = true;
+                this.__dirty = true;
             }
         }
         // self render
         // do nothing
-        this._quadDirty = true;
+        this.__quadDirty = true;
     },
 
     /**
@@ -1060,7 +1061,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     _changeTextureColor: function () {
-        var locElement, locTexture = this._texture, locRect = this._rendererCmd._textureCoord; //this.getTextureRect();
+        var locElement, locTexture = this._texture, locRect = this.__rendererCmd._textureCoord; //this.getTextureRect();
         if (locTexture && locRect.validRect && this._originalTexture) {
             locElement = locTexture.getHtmlElementObj();
             if (!locElement)
@@ -1069,9 +1070,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             this._colorized = true;
             if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor
                 && this._originalTexture._htmlElementObj != locElement)
-                cc.generateTintImageWithMultiply(this._originalTexture._htmlElementObj, this._displayedColor, locRect, locElement);
+                cc.generateTintImageWithMultiply(this._originalTexture._htmlElementObj, this.__displayedColor, locRect, locElement);
             else {
-                locElement = cc.generateTintImageWithMultiply(this._originalTexture._htmlElementObj, this._displayedColor, locRect);
+                locElement = cc.generateTintImageWithMultiply(this._originalTexture._htmlElementObj, this.__displayedColor, locRect);
                 locTexture = new cc.Texture2D();
                 locTexture.initWithElement(locElement);
                 locTexture.handleLoadedTexture();
@@ -1083,14 +1084,14 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _setTextureCoords:function (rect) {
         rect = cc.rectPointsToPixels(rect);
 
-        var tex = this._batchNode ? this.textureAtlas.texture : this._texture;
+        var tex = this._batchNode ? this.__textureAtlas.texture : this._texture;
         if (!tex)
             return;
 
         var atlasWidth = tex.pixelsWidth;
         var atlasHeight = tex.pixelsHeight;
 
-        var left, right, top, bottom, tempSwap, locQuad = this._quad;
+        var left, right, top, bottom, tempSwap, locQuad = this.__quad;
         if (this._rectRotated) {
             if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
                 left = (2 * rect.x + 1) / (2 * atlasWidth);
@@ -1158,7 +1159,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             locQuad.tr.texCoords.u = right;
             locQuad.tr.texCoords.v = top;
         }
-        this._quadDirty = true;
+        this.__quadDirty = true;
     }
 });
 
@@ -1239,14 +1240,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         self._rect = cc.rect(0, 0, 0, 0);
 
         self._newTextureWhenChangeColor = false;
-        self._textureLoaded = true;
+        self.__textureLoaded = true;
         self._drawSize_Canvas = cc.size(0, 0);
 
         self._softInit(fileName, rect, rotated);
     };
 
     _p._initRendererCmd = function(){
-        this._rendererCmd = new cc.TextureRenderCmdCanvas(this);
+        this.__rendererCmd = new cc.TextureRenderCmdCanvas(this);
     };
 
     _p.setBlendFunc = function (src, dst) {
@@ -1268,14 +1269,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             return _t.initWithFile(arguments[0], arguments[1]);
 
         cc.Node.prototype.init.call(_t);
-        _t.dirty = _t._recursiveDirty = false;
+        _t.__dirty = _t.__recursiveDirty = false;
 
         _t._blendFunc.src = cc.BLEND_SRC;
         _t._blendFunc.dst = cc.BLEND_DST;
 
         // update texture (calls _updateBlendFunc)
         _t.texture = null;
-        _t._textureLoaded = true;
+        _t.__textureLoaded = true;
         _t._flippedX = _t._flippedY = false;
 
         // default transform anchor: center
@@ -1285,7 +1286,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         // zwoptex default values
         _t._offsetPosition.x = 0;
         _t._offsetPosition.y = 0;
-        _t._hasChildren = false;
+        _t.__hasChildren = false;
 
         // updated in "useSelfRender"
         // Atlas: TexCoords
@@ -1314,8 +1315,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             return false;
 
         _t._batchNode = null;
-        _t._recursiveDirty = false;
-        _t.dirty = false;
+        _t.__recursiveDirty = false;
+        _t.__dirty = false;
         _t._opacityModifyRGB = true;
 
         _t._blendFunc.src = cc.BLEND_SRC;
@@ -1330,10 +1331,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         // zwoptex default values
         _t._offsetPosition.x = 0;
         _t._offsetPosition.y = 0;
-        _t._hasChildren = false;
+        _t.__hasChildren = false;
 
         var locTextureLoaded = texture.isLoaded();
-        _t._textureLoaded = locTextureLoaded;
+        _t.__textureLoaded = locTextureLoaded;
 
         if (!locTextureLoaded) {
             _t._rectRotated = rotated;
@@ -1375,10 +1376,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     _p._textureLoadedCallback = function (sender) {
         var _t = this;
-        if(_t._textureLoaded)
+        if(_t.__textureLoaded)
             return;
 
-        _t._textureLoaded = true;
+        _t.__textureLoaded = true;
         var locRect = _t._rect;
         if (!locRect) {
             locRect = cc.rect(0, 0, sender.width, sender.height);
@@ -1392,7 +1393,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         _t.setTextureRect(locRect, _t._rectRotated);
 
         //set the texture's color after the it loaded
-        var locColor = this._displayedColor;
+        var locColor = this.__displayedColor;
         if(locColor.r != 255 || locColor.g != 255 || locColor.b != 255)
             _t._changeTextureColor();
 
@@ -1409,7 +1410,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         _t.setVertexRect(rect);
 
-        var locTextureRect = _t._rendererCmd._textureCoord,
+        var locTextureRect = _t.__rendererCmd._textureCoord,
             scaleFactor = cc.contentScaleFactor();
         locTextureRect.renderX = locTextureRect.x = 0 | (rect.x * scaleFactor);
         locTextureRect.renderY = locTextureRect.y = 0 | (rect.y * scaleFactor);
@@ -1427,8 +1428,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         // rendering using batch node
         if (_t._batchNode) {
-            // update dirty, don't update _recursiveDirty
-            _t.dirty = true;
+            // update dirty, don't update __recursiveDirty
+            _t.__dirty = true;
         }
     };
 
@@ -1437,9 +1438,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         //cc.assert(_t._batchNode, "updateTransform is only valid when cc.Sprite is being rendered using an cc.SpriteBatchNode");
 
         // re-calculate matrix only if it is dirty
-        if (_t.dirty) {
+        if (_t.__dirty) {
             // If it is not visible, or one of its ancestors is not visible, then do nothing:
-            var locParent = _t._parent;
+            var locParent = _t.__parent;
             if (!_t._visible || ( locParent && locParent != _t._batchNode && locParent._shouldBeHidden)) {
                 _t._shouldBeHidden = true;
             } else {
@@ -1448,16 +1449,16 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 if (!locParent || locParent == _t._batchNode) {
                     _t._transformToBatch = _t.getNodeToParentTransform();
                 } else {
-                    //cc.assert(_t._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
+                    //cc.assert(_t.__parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
                     _t._transformToBatch = cc.affineTransformConcat(_t.getNodeToParentTransform(), locParent._transformToBatch);
                 }
             }
-            _t._recursiveDirty = false;
-            _t.dirty = false;
+            _t.__recursiveDirty = false;
+            _t.__dirty = false;
         }
 
         // recursively iterate over children
-        if (_t._hasChildren)
+        if (_t.__hasChildren)
             _t._arrayMakeObjectsPerformSelector(_t._children, cc.Node._stateCallbackType.updateTransform);
     };
 
@@ -1471,7 +1472,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         //cc.Node already sets isReorderChildDirty_ so this needs to be after batchNode check
         cc.Node.prototype.addChild.call(this, child, localZOrder, tag);
-        this._hasChildren = true;
+        this.__hasChildren = true;
     };
 
     _p.setOpacity = function (opacity) {
@@ -1492,7 +1493,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var _t = this;
         cc.Node.prototype.updateDisplayedColor.call(_t, parentColor);
         var oColor = _t._oldDisplayColor;
-        var nColor = _t._displayedColor;
+        var nColor = _t.__displayedColor;
         if (oColor.r === nColor.r && oColor.g === nColor.g && oColor.b === nColor.b)
             return;
 
@@ -1519,9 +1520,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var pNewTexture = newFrame.getTexture();
         var locTextureLoaded = newFrame.textureLoaded();
         if (!locTextureLoaded) {
-            _t._textureLoaded = false;
+            _t.__textureLoaded = false;
             newFrame.addEventListener("load", function (sender) {
-                _t._textureLoaded = true;
+                _t.__textureLoaded = true;
                 var locNewTexture = sender.getTexture();
                 if (locNewTexture != _t._texture)
                     _t.texture = locNewTexture;
@@ -1538,8 +1539,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         _t.setTextureRect(newFrame.getRect(), _t._rectRotated, newFrame.getOriginalSize());
         _t._colorized = false;
-        _t._rendererCmd._textureCoord.renderX = _t._rendererCmd._textureCoord.x;
-        _t._rendererCmd._textureCoord.renderY = _t._rendererCmd._textureCoord.y;
+        _t.__rendererCmd._textureCoord.renderX = _t.__rendererCmd._textureCoord.x;
+        _t.__rendererCmd._textureCoord.renderY = _t.__rendererCmd._textureCoord.y;
         if (locTextureLoaded) {
             var curColor = _t.color;
             if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
@@ -1559,14 +1560,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         // self render
         if (!_t._batchNode) {
-            _t.atlasIndex = cc.Sprite.INDEX_NOT_INITIALIZED;
-            _t.textureAtlas = null;
-            _t._recursiveDirty = false;
-            _t.dirty = false;
+            _t.__atlasIndex = cc.Sprite.INDEX_NOT_INITIALIZED;
+            _t.__textureAtlas = null;
+            _t.__recursiveDirty = false;
+            _t.__dirty = false;
         } else {
             // using batch
             _t._transformToBatch = cc.affineTransformIdentity();
-            _t.textureAtlas = _t._batchNode.textureAtlas; // weak ref
+            _t.__textureAtlas = _t._batchNode.__textureAtlas; // weak ref
         }
     };
 
@@ -1601,7 +1602,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     if(!cc.sys._supportCanvasNewBlendModes)
         _p._changeTextureColor =  function () {
-            var locElement, locTexture = this._texture, locRect = this._rendererCmd._textureCoord; //this.getTextureRect();
+            var locElement, locTexture = this._texture, locRect = this.__rendererCmd._textureCoord; //this.getTextureRect();
             if (locTexture && locRect.validRect && this._originalTexture) {
                 locElement = locTexture.getHtmlElementObj();
                 if (!locElement)
@@ -1612,9 +1613,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                     this._colorized = true;
                     //generate color texture cache
                     if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor)
-                        cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect, locElement);
+                        cc.generateTintImage(locElement, cacheTextureForColor, this.__displayedColor, locRect, locElement);
                     else {
-                        locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect);
+                        locElement = cc.generateTintImage(locElement, cacheTextureForColor, this.__displayedColor, locRect);
                         locTexture = new cc.Texture2D();
                         locTexture.initWithElement(locElement);
                         locTexture.handleLoadedTexture();
