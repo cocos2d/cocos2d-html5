@@ -739,9 +739,9 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
             } else if (four !== undefined && cc.isFunction(three)) {
                 target = four;
                 callback = three;
-                disabledImage = new cc.Sprite(selectedSprite);
+                disabledImage = new cc.Sprite(selectedSprite.getTexture(), selectedSprite.getTextureRect());
             } else if (three === undefined) {
-                disabledImage = new cc.Sprite(selectedSprite);
+                disabledImage = new cc.Sprite(selectedSprite.getTexture(), selectedSprite.getTextureRect());
             }
             this.initWithNormalSprite(normalSprite, selectedSprite, disabledImage, callback, target);
         }
