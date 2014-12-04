@@ -127,7 +127,7 @@
         var i, locChild;
         node._clipElemType = node._stencil instanceof cc.Sprite;
 
-        this.transform();
+        this._syncStatus(parentCmd);
 
         cc.renderer.pushRenderCommand(this._rendererSaveCmd);
 

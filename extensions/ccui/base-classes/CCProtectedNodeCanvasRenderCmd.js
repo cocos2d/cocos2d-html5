@@ -126,11 +126,11 @@
     cc.inject(cc.ProtectedNode.RenderCmd, proto);
     proto.constructor = cc.ProtectedNode.CanvasRenderCmd;
 
-    proto.visit = function(){
-        this._node.visit();
+    proto.visit = function(parentCmd){
+        this._node.visit(parentCmd);
     };
 
-    proto._visit = function(){
+    proto._visit = function(parentCmd){
         var node = this._node;
         // quick return if not visible
         if (!node._visible)
@@ -142,7 +142,7 @@
         var locChildren = node._children, locProtectedChildren = node._protectedChildren;
         var childLen = locChildren.length, pLen = locProtectedChildren.length;
 
-        node.transform(node._parent && node._parent._renderCmd);
+        this._syncStatus(parentCmd);
 
         node.sortAllChildren();
         node.sortAllProtectedChildren();

@@ -1466,13 +1466,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._isInterceptTouch = layout._isInterceptTouch;
     },
 
-    _changePosition: function(){
-        if (this._backGroundImage){
-//            this._backGroundImage.transform(this._renderCmd);
-//            this._backGroundImage._renderCmd._dirtyFlag ^= cc.Node._dirtyFlags.transformDirty;
-        }
-    },
-
     _createRenderCmd: function(){
         if(cc._renderType === cc._RENDER_TYPE_WEBGL)
             return new ccui.Layout.WebGLRenderCmd(this);
