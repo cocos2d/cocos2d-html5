@@ -1645,7 +1645,7 @@ cc._initSys = function (config, CONFIG_KEY) {
         capabilities["accelerometer"] = true;
 
     /**
-     * Forces the garbage collection
+     * Forces the garbage collection, only available in JSB
      * @memberof cc.sys
      * @name garbageCollect
      * @function
@@ -1655,7 +1655,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     };
 
     /**
-     * Dumps rooted objects
+     * Dumps rooted objects, only available in JSB
      * @memberof cc.sys
      * @name dumpRoot
      * @function
@@ -1665,7 +1665,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     };
 
     /**
-     * Restart the JS VM
+     * Restart the JS VM, only available in JSB
      * @memberof cc.sys
      * @name restartVM
      * @function
@@ -1675,7 +1675,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     };
 
     /**
-     * cleanScript the singal JS file
+     * Clean a script in the JS VM, only available in JSB
      * @memberof cc.sys
      * @name cleanScript
      * @param {String} jsfile
@@ -2047,10 +2047,14 @@ cc.game = /** @lends cc.game# */{
     },
 
     /**
-     * Run game.
+     * Restart game.
      */
     restart: function () {
-        //window.location.href = window.location.href;
+        cc.director.popToSceneStackLevel(0);
+        // Clean up audio
+        cc.audioEngine.end();
+
+        cc.game.onStart();
     },
 
     /**
