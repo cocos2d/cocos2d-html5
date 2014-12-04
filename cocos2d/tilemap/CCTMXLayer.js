@@ -455,9 +455,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             return;
         }
 
-        console.log("textureAtlas capacity:" + this.textureAtlas.capacity + "   textureAtlas totalQuads:" + this.textureAtlas.totalQuads);
-        console.log("x:" + pos.x + "   y:" + pos.y);
-
         flags = flags || 0;
         this._setNodeDirtyForCache();
         var currentFlags = this.getTileFlagsAt(pos);
