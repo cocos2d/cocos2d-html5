@@ -480,8 +480,8 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         }
         if (target._selectedItem) {
             target._selectedItem.unselected();
-            target._selectedItem.activate();
             target._selectedItem.setNodeDirty();
+            target._selectedItem.activate();
         }
         target._state = cc.MENU_STATE_WAITING;
     },
