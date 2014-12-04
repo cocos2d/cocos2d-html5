@@ -410,7 +410,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             cc.log(cc._LogInfos.CCSpriteBatchNode_insertQuadFromSprite);
             return;
         }
-        this._renderCmd.checkAtlasCapacity(index);
+        this._renderCmd.insertQuad(sprite, index);
 
         //
         // update the quad directly. Don't add the sprite to the scene graph
@@ -422,9 +422,6 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         // XXX: so, it should be AFTER the insertQuad
         sprite.dirty = true;
         sprite.updateTransform();
-
-        //sprite._renderCmd._setCachedParent(this._renderCmd);    //TODO need move to renderCmd
-        this._children.splice(index, 0, sprite);
     },
 
     /**
@@ -458,11 +455,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         sprite.atlasIndex = index;
         sprite.dirty = true;
 
-        var locTextureAtlas = this.getTextureAtlas();
-        if (locTextureAtlas.totalQuads >= locTextureAtlas.capacity)
-            this.increaseAtlasCapacity();
-
-        locTextureAtlas.insertQuad(sprite.quad, index);
+        this._renderCmd.insertQuad(sprite, index);
         this._descendants.splice(index, 0, sprite);
 
         // update indices
@@ -497,6 +490,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
         this._descendants.push(sprite);
         var index = this._descendants.length - 1;
+
         sprite.atlasIndex = index;
         this._renderCmd.insertQuad(sprite, index);
 

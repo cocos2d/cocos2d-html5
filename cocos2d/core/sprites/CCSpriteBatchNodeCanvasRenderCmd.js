@@ -41,7 +41,11 @@
         this._texture = texture;
     };
 
-    proto.insertQuad = function(){};
+    proto.insertQuad = function(sprite, index){
+        var node = this._node;
+        node._children.splice(index, 0, sprite);
+        //sprite._renderCmd._setCachedParent(this._renderCmd);    //TODO need move to renderCmd
+    };
 
     proto.increaseAtlasCapacity = function(){};
 
