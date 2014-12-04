@@ -149,7 +149,7 @@
                 ccui.Layout.WebGLRenderCmd._visit_once = false;
             }
             // draw everything, as if there where no stencil
-            cc.Node.prototype.visit.call(this, parentCmd);
+            cc.Node.prototype.visit.call(node, parentCmd);
             return;
         }
 
@@ -161,7 +161,7 @@
         this._syncStatus(parentCmd);
         currentStack.top = this._stackMatrix;
 
-        this._clippingStencil.visit(parentCmd);
+        node._clippingStencil.visit(this);
 
         cc.renderer.pushRenderCommand(this._afterDrawStencilCmd);
 
@@ -176,22 +176,22 @@
         for( ; i < iLen; i++ ){
             child = locChildren[i];
             if ( child && child.getLocalZOrder() < 0 )
-                child.visit(parentCmd);
+                child.visit(this);
             else
                 break;
         }
         for( ; j < jLen; j++ ) {
             child = locProtectChildren[j];
             if ( child && child.getLocalZOrder() < 0 )
-                child.visit(parentCmd);
+                child.visit(this);
             else
                 break;
         }
 
         for (; i < iLen; i++)
-            locChildren[i].visit(parentCmd);
+            locChildren[i].visit(this);
         for (; j < jLen; j++)
-            locProtectChildren[j].visit(parentCmd);
+            locProtectChildren[j].visit(this);
 
         cc.renderer.pushRenderCommand(this._afterVisitCmdStencil);
 
@@ -201,7 +201,7 @@
 
     proto.scissorClippingVisit = function(parentCmd){
         cc.renderer.pushRenderCommand(this._beforeVisitCmdScissor);
-        cc.ProtectedNode.prototype.visit.call(this, parentCmd);
+        cc.ProtectedNode.prototype.visit.call(this._node, parentCmd);
         cc.renderer.pushRenderCommand(this._afterVisitCmdScissor);
     };
 
