@@ -230,8 +230,8 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
      * @function
      * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx context of renderer
      */
-    visit: function(){
-        this._renderCmd._visit();
+    visit: function(parentCmd){
+        this._renderCmd._visit(parentCmd);
     },
 
     _changePosition: function(){},

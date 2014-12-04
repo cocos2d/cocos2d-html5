@@ -137,7 +137,7 @@
             return;
 
         //visit for canvas
-        var context = ctx || cc._renderContext, i, j;
+        var i, j;
         var children = node._children, child;
         var locChildren = node._children, locProtectedChildren = node._protectedChildren;
         var childLen = locChildren.length, pLen = locProtectedChildren.length;
@@ -205,11 +205,16 @@
             worldT.ty = t.ty;
         }
         var i, len, locChildren = node._children;
-        for(i = 0, len = locChildren.length; i< len; i++){
-            locChildren[i]._renderCmd.transform(this);
+        if(recursive && locChildren && locChildren.length !== 0){
+            for(i = 0, len = locChildren.length; i< len; i++){
+                locChildren[i]._renderCmd.transform(this, recursive);
+            }
         }
         locChildren = node._protectedChildren;
-        for( i = 0, len = locChildren.length; i< len; i++)
-            locChildren[i]._renderCmd.transform(this);
+        if(recursive && locChildren && locChildren.length !== 0){
+            for(i = 0, len = locChildren.length; i< len; i++){
+                locChildren[i]._renderCmd.transform(this, recursive);
+            }
+        }
     };
 })();

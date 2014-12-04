@@ -33,8 +33,8 @@
     cc.inject(cc.ProtectedNode.RenderCmd, proto);
     proto.constructor = cc.ProtectedNode.WebGLRenderCmd;
 
-    proto.visit = function(){
-         this._node.visit();        //todo refactor late
+    proto.visit = function(parentCmd){
+         this._node.visit(parentCmd);        //todo refactor late
     };
 
     proto._visit = function(parentCmd){
@@ -42,18 +42,18 @@
         // quick return if not visible
         if (!node._visible)
             return;
-        var context = cc._renderContext, i, currentStack = cc.current_stack, j;
+        var  i, j, currentStack = cc.current_stack;
 
         //optimize performance for javascript
         currentStack.stack.push(currentStack.top);
-        cc.kmMat4Assign(this._stackMatrix, currentStack.top);
+        this._syncStatus(parentCmd);
         currentStack.top = this._stackMatrix;
 
         var locGrid = node.grid;
         if (locGrid && locGrid._active)
             locGrid.beforeDraw();
 
-        node.transform(node._parent && node._parent._renderCmd);
+        //node.transform(node._parent && node._parent._renderCmd);
 
         var locChildren = node._children, locProtectedChildren = node._protectedChildren;
         var childLen = locChildren.length, pLen = locProtectedChildren.length;
@@ -91,13 +91,16 @@
         currentStack.top = currentStack.stack.pop();
     };
 
-    proto.transform = function(parentCmd){
+    proto.transform = function(parentCmd, recursive){
         var node = this._node;
         var t4x4 = this._transform4x4, stackMatrix = this._stackMatrix,
             parentMatrix = parentCmd ? parentCmd._stackMatrix : cc.current_stack.top;
 
         // Convert 3x3 into 4x4 matrix
         var trans = node.getNodeToParentTransform();
+
+        this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
+
         var t4x4Mat = t4x4.mat;
         t4x4Mat[0] = trans.a;
         t4x4Mat[4] = trans.c;
@@ -112,13 +115,41 @@
         //optimize performance for Javascript
         cc.kmMat4Multiply(stackMatrix, parentMatrix, t4x4);
 
+        // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
+        if (node._camera != null && !(node.grid != null && node.grid.isActive())) {
+            var apx = this._anchorPointInPoints.x, apy = this._anchorPointInPoints.y;
+            var translate = (apx !== 0.0 || apy !== 0.0);
+            if (translate){
+                if(!cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
+                    apx = 0 | apx;
+                    apy = 0 | apy;
+                }
+                //cc.kmGLTranslatef(apx, apy, 0);
+                var translation = new cc.kmMat4();
+                cc.kmMat4Translation(translation, apx, apy, 0);
+                cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
+
+                node._camera._locateForRenderer(stackMatrix);
+
+                //cc.kmGLTranslatef(-apx, -apy, 0);
+                cc.kmMat4Translation(translation, -apx, -apy, 0);
+                cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
+            } else {
+                node._camera._locateForRenderer(stackMatrix);
+            }
+        }
+
         var i, len, locChildren = node._children;
-        for(i = 0, len = locChildren.length; i< len; i++){
-            locChildren[i]._renderCmd.transform(this);
+        if(recursive && locChildren && locChildren.length !== 0){
+            for(i = 0, len = locChildren.length; i< len; i++){
+                locChildren[i]._renderCmd.transform(this, recursive);
+            }
         }
         locChildren = node._protectedChildren;
-        for( i = 0, len = locChildren.length; i< len; i++)
-            locChildren[i]._renderCmd.transform(this);
+        if(recursive && locChildren && locChildren.length !== 0){
+            for(i = 0, len = locChildren.length; i< len; i++){
+                locChildren[i]._renderCmd.transform(this, recursive);
+            }
+        }
     };
-
 })();

@@ -36,7 +36,7 @@
         this._rendererRestoreCmd = new cc.CustomRenderCmd(this, this._onRenderRestoreCmd);
     };
 
-    var proto = ccui.Layout.CanvasRenderCmd.prototype = Object.create(ccui.ProtectedNode.WebGLRenderCmd.prototype);
+    var proto = ccui.Layout.CanvasRenderCmd.prototype = Object.create(ccui.ProtectedNode.CanvasRenderCmd.prototype);
     proto.constructor = ccui.Layout.CanvasRenderCmd;
 
     proto._onRenderSaveCmd = function(ctx, scaleX, scaleY){
@@ -120,72 +120,55 @@
     };
 
     proto.stencilClippingVisit = proto.scissorClippingVisit = function(parentCmd){
-        if (!this._clippingStencil || !this._clippingStencil.isVisible()) {
+        var node = this._node;
+        if (!node._clippingStencil || !node._clippingStencil.isVisible())
             return;
-        }
 
         var i, locChild;
-        if (this._stencil instanceof cc.Sprite) {
-            this._clipElemType = true;
-        }else{
-            this._clipElemType = false;
-        }
-
-        var context = ctx || cc._renderContext;
+        node._clipElemType = node._stencil instanceof cc.Sprite;
 
         this.transform();
 
-        if(this._rendererSaveCmd)
-            cc.renderer.pushRenderCommand(this._rendererSaveCmd);
+        cc.renderer.pushRenderCommand(this._rendererSaveCmd);
 
-        if (this._clipElemType) {
-            cc.ProtectedNode.prototype.visit.call(this, context);
-
-            if(this._rendererSaveCmdSprite)
-                cc.renderer.pushRenderCommand(this._rendererSaveCmdSprite);
-
-            this._clippingStencil.visit(this._renderCmd);
-
-        }else{
-            this._clippingStencil.visit(this._renderCmd);
+        if (node._clipElemType) {
+            cc.ProtectedNode.prototype.visit.call(node, parentCmd);
+            cc.renderer.pushRenderCommand(this._rendererSaveCmdSprite);
         }
+        node._clippingStencil.visit(this);
 
-        if(this._rendererClipCmd)
-            cc.renderer.pushRenderCommand(this._rendererClipCmd);
+        cc.renderer.pushRenderCommand(this._rendererClipCmd);
 
-        if (this._clipElemType) {
+        if (!node._clipElemType) {
+            node.sortAllChildren();
+            node.sortAllProtectedChildren();
 
-        }else{
-            this.sortAllChildren();
-            this.sortAllProtectedChildren();
-
-            var children = this._children;
-            var j, locProtectChildren = this._protectedChildren;
+            var children = node._children;
+            var j, locProtectChildren = node._protectedChildren;
             var iLen = children.length, jLen = locProtectChildren.length;
 
             // draw children zOrder < 0
             for (i = 0; i < iLen; i++) {
                 locChild = children[i];
                 if (locChild && locChild._localZOrder < 0)
-                    locChild.visit(this._renderCmd);
+                    locChild.visit(this);
                 else
                     break;
             }
             for (j = 0; j < jLen; j++) {
                 locChild = locProtectChildren[j];
                 if (locChild && locChild._localZOrder < 0)
-                    locChild.visit(this._renderCmd);
+                    locChild.visit(this);
                 else
                     break;
             }
             //this.draw(context);
             for (; i < iLen; i++)
-                children[i].visit(this._renderCmd);
+                children[i].visit(this);
             for (; j < jLen; j++)
-                locProtectChildren[j].visit(this._renderCmd);
+                locProtectChildren[j].visit(this);
 
-            if(this._rendererRestoreCmd)
-                cc.renderer.pushRenderCommand(this._rendererRestoreCmd);
+            cc.renderer.pushRenderCommand(this._rendererRestoreCmd);
         }
     };
 
