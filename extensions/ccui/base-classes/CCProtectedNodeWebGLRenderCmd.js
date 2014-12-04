@@ -99,6 +99,9 @@
         // Convert 3x3 into 4x4 matrix
         var trans = node.getNodeToParentTransform();
 
+        if(node._changePosition)
+            node._changePosition();
+        
         this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
 
         var t4x4Mat = t4x4.mat;
