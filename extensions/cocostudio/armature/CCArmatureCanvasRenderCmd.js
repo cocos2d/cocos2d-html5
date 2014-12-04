@@ -59,7 +59,8 @@
         var context = ctx || cc._renderContext;
         var node = this._node;
         context.save();
-        node.transform();
+        var parent = node._parent;
+        node.transform(parent ? parent._renderCmd : null);
         var t = this._worldTransform;
         ctx.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
 
@@ -133,7 +134,7 @@
         }
     };
 
-    proto.visit = function(){
+    proto.visit = function(parentCmd){
         var node = this._node;
         var context = cc._renderContext;
         // quick return if not visible. children won't be drawn.
@@ -141,7 +142,7 @@
             return;
 
         context.save();
-        this.transform();
+        this.transform(parentCmd);
 
         node.sortAllChildren();
 
