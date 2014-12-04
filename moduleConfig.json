@@ -304,6 +304,8 @@
             "extensions/ccui/base-classes/UIScale9SpriteCanvasRenderCmd.js",
             "extensions/ccui/base-classes/UIScale9SpriteWebGLRenderCmd.js",
             "extensions/ccui/layouts/UILayout.js",
+            "extensions/ccui/layouts/UILayoutCanvasRenderCmd.js",
+            "extensions/ccui/layouts/UILayoutWebGLRenderCmd.js",
             "extensions/ccui/layouts/UILayoutParameter.js",
             "extensions/ccui/layouts/UILayoutManager.js",
             "extensions/ccui/layouts/UIHBox.js",

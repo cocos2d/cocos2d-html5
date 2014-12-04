@@ -23,6 +23,99 @@
  ****************************************************************************/
 
 (function(){
+    cc.ProtectedNode.RenderCmd = {
+        _updateDisplayColor: function (parentColor) {
+            var node = this._node;
+            var locDispColor = this._displayedColor, locRealColor = node._realColor;
+            var i, len, selChildren, item;
+            if (this._cascadeColorEnabledDirty && !node._cascadeColorEnabled) {
+                locDispColor.r = locRealColor.r;
+                locDispColor.g = locRealColor.g;
+                locDispColor.b = locRealColor.b;
+                var whiteColor = new cc.Color(255, 255, 255, 255);
+                selChildren = node._children;
+                for (i = 0, len = selChildren.length; i < len; i++) {
+                    item = selChildren[i];
+                    if (item && item._renderCmd)
+                        item._renderCmd._updateDisplayColor(whiteColor);
+                }
+            } else {
+                if (parentColor === undefined) {
+                    var locParent = node._parent;
+                    if (locParent && locParent._cascadeColorEnabled)
+                        parentColor = locParent.getDisplayedColor();
+                    else
+                        parentColor = cc.color.WHITE;
+                }
+                locDispColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
+                locDispColor.g = 0 | (locRealColor.g * parentColor.g / 255.0);
+                locDispColor.b = 0 | (locRealColor.b * parentColor.b / 255.0);
+                if (node._cascadeColorEnabled) {
+                    selChildren = node._children;
+                    for (i = 0, len = selChildren.length; i < len; i++) {
+                        item = selChildren[i];
+                        if (item && item._renderCmd){
+                            item._renderCmd._updateDisplayColor(locDispColor);
+                            item._renderCmd._updateColor();
+                        }
+                    }
+                }
+                selChildren = node._protectedChildren;
+                for(i = 0, len = selChildren.length;i < len; i++){
+                    item = selChildren[i];
+                    if(item && item._renderCmd){
+                        item._renderCmd._updateDisplayColor(locDispColor);
+                        item._renderCmd._updateColor();
+                    }
+                }
+            }
+            this._cascadeColorEnabledDirty = false;
+            this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.colorDirty ^ this._dirtyFlag;
+        },
+
+        _updateDisplayOpacity: function (parentOpacity) {
+            var node = this._node;
+            var i, len, selChildren, item;
+            if (this._cascadeOpacityEnabledDirty && !node._cascadeOpacityEnabled) {
+                this._displayedOpacity = node._realOpacity;
+                selChildren = this._children;
+                for (i = 0, len = selChildren.length; i < len; i++) {
+                    item = selChildren[i];
+                    if (item && item._renderCmd)
+                        item._renderCmd._updateDisplayOpacity(255);
+                }
+            } else {
+                if (parentOpacity === undefined) {
+                    var locParent = node._parent;
+                    parentOpacity = 255;
+                    if (locParent && locParent._cascadeOpacityEnabled)
+                        parentOpacity = locParent.getDisplayedOpacity();
+                }
+                this._displayedOpacity = node._realOpacity * parentOpacity / 255.0;
+                if (node._cascadeOpacityEnabled) {
+                    selChildren = node._children;
+                    for (i = 0, len = selChildren.length; i < len; i++) {
+                        item = selChildren[i];
+                        if (item && item._renderCmd){
+                            item._renderCmd._updateDisplayOpacity(this._displayedOpacity);
+                            item._renderCmd._updateColor();
+                        }
+                    }
+                }
+                selChildren = node._protectedChildren;
+                for(i = 0, len = selChildren.length;i < len; i++){
+                    item = selChildren[i];
+                    if(item && item._renderCmd){
+                        item._renderCmd._updateDisplayOpacity(this._displayedOpacity);
+                        item._renderCmd._updateColor();
+                    }
+                }
+            }
+            this._cascadeOpacityEnabledDirty = false;
+            this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.opacityDirty ^ this._dirtyFlag;
+        }
+    };
+
     cc.ProtectedNode.CanvasRenderCmd = function (renderable) {
         cc.Node.CanvasRenderCmd.call(this, renderable);
         this._cachedParent = null;
@@ -30,6 +123,7 @@
     };
 
     var proto = cc.ProtectedNode.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
+    cc.inject(cc.ProtectedNode.RenderCmd, proto);
     proto.constructor = cc.ProtectedNode.CanvasRenderCmd;
 
     proto.visit = function(){
@@ -117,6 +211,5 @@
         locChildren = node._protectedChildren;
         for( i = 0, len = locChildren.length; i< len; i++)
             locChildren[i]._renderCmd.transform(this);
-
     };
 })();

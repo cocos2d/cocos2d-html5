@@ -216,8 +216,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     isSwallowTouches: function(){
-        if (this._touchListener)
-        {
+        if (this._touchListener){
             //todo
             return true;
             //return this._touchListener.isSwallowTouches();

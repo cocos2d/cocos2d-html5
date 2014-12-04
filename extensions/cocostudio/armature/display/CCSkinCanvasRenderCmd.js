@@ -57,5 +57,4 @@
     cc.inject(ccs.Skin.RenderCmd, proto);
     proto.constructor = ccs.Skin.CanvasRenderCmd;
 
-
 })();

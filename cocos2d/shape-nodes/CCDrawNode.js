@@ -88,7 +88,7 @@ cc.__t = function (v) {
  * @name cc.DrawNode
  * @extends cc.Node
  */
-cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
+cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{                  //TODO need refactor
     _buffer: null,
     _blendFunc: null,
     _lineWidth: 1,

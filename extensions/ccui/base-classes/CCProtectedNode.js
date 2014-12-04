@@ -67,7 +67,6 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         child.setParent(this);
         child.setOrderOfArrival(cc.s_globalOrderOfArrival);
 
-        //TODO USE PHYSICS
         if(this._running){
             child.onEnter();
             // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
@@ -75,9 +74,9 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
                 child.onEnterTransitionDidFinish();
         }
         if(this._cascadeColorEnabled)
-            this._enableCascadeColor();
+            child._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.colorDirty);
         if (this._cascadeOpacityEnabled)
-            this._enableCascadeOpacity();
+            child._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.opacityDirty);
     },
 
     /**
@@ -111,7 +110,6 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
                  child.onExitTransitionDidStart();
                  child.onExit();
              }
-            //TODO  USE PHYSICS
 
             // If you don't do cleanup, the child's actions will not get removed and the
             // its scheduledSelectors_ dict will not get released!
@@ -171,7 +169,6 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
                 child.onExit();
             }
 
-            //TODO USE PHYSICS
             if (cleanup)
                 child.cleanup();
             // set parent nil at the end
@@ -300,6 +297,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
             locChildren[i].onExitTransitionDidStart();
     },
 
+    // todo ---- start need delete -----
     /**
      * Updates itself and its protected children displayed opacity, if opacity cascade is enable, its children also update.
      * @param {Number} parentOpacity
@@ -380,6 +378,8 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         for(i =0, len = locChildren.length; i < len; i++)
             locChildren[i].setColor(white);
     },
+
+    //todo ---- end ------
 
     _createRenderCmd: function(){
         if(cc._renderType === cc._RENDER_TYPE_CANVAS)

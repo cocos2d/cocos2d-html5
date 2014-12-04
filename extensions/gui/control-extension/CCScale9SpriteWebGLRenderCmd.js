@@ -68,5 +68,4 @@
         }
         cc.Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
     };
-
 })();

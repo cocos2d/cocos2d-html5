@@ -135,5 +135,4 @@
             selSprite.setRotation(- (slot.bone.worldRotation + attachment.rotation));
         }
     };
-
 })();

@@ -101,7 +101,7 @@
             node.sortAllChildren();
             cc.renderer._turnToCacheMode(this.__instanceId);
             for (var i = 0, len = children.length; i < len; i++) {
-                children[i].visit(bakeContext);
+                children[i].visit(this);
             }
             cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
             locBakeSprite.transform();                   //because bake sprite's position was changed at rendering.
@@ -123,7 +123,6 @@
             return;
 
         _t._syncStatus(parentCmd);
-
         cc.renderer.pushRenderCommand(this);
 
         //the bakeSprite is drawing
@@ -257,13 +256,13 @@
                 for (i = 0; i < len; i++) {
                     child = children[i];
                     if (child._localZOrder < 0)
-                        child._renderCmd.visit(bakeContext);
+                        child._renderCmd.visit(this);
                     else
                         break;
                 }
                 cc.renderer.pushRenderCommand(this);
                 for (; i < len; i++) {
-                    children[i]._renderCmd.visit(bakeContext);
+                    children[i]._renderCmd.visit(this);
                 }
             } else
                 cc.renderer.pushRenderCommand(this);

@@ -23,7 +23,6 @@
  ****************************************************************************/
 
 (function(){
-
     cc.ProtectedNode.WebGLRenderCmd = function (renderable) {
         cc.Node.WebGLRenderCmd.call(this, renderable);
         this._cachedParent = null;
@@ -31,9 +30,14 @@
     };
 
     var proto = cc.ProtectedNode.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
+    cc.inject(cc.ProtectedNode.RenderCmd, proto);
     proto.constructor = cc.ProtectedNode.WebGLRenderCmd;
 
     proto.visit = function(){
+         this._node.visit();        //todo refactor late
+    };
+
+    proto._visit = function(parentCmd){
         var node = this._node;
         // quick return if not visible
         if (!node._visible)
@@ -59,13 +63,13 @@
         // draw children zOrder < 0
         for (i = 0; i < childLen; i++) {
             if (locChildren[i] && locChildren[i]._localZOrder < 0)
-                locChildren[i].visit();
+                locChildren[i].visit(this);
             else
                 break;
         }
         for(j = 0; j < pLen; j++){
             if (locProtectedChildren[j] && locProtectedChildren[j]._localZOrder < 0)
-                locProtectedChildren[j].visit();
+                locProtectedChildren[j].visit(this);
             else
                 break;
         }
@@ -74,10 +78,10 @@
 
         // draw children zOrder >= 0
         for (; i < childLen; i++) {
-            locChildren[i] && locChildren[i].visit();
+            locChildren[i] && locChildren[i].visit(this);
         }
         for (; j < pLen; j++) {
-            locProtectedChildren[j] && locProtectedChildren[j].visit();
+            locProtectedChildren[j] && locProtectedChildren[j].visit(this);
         }
 
         if (locGrid && locGrid._active)
@@ -103,7 +107,7 @@
         t4x4Mat[13] = trans.ty;
 
         // Update Z vertex manually
-        t4x4Mat[14] = this._vertexZ;
+        t4x4Mat[14] = node._vertexZ;
 
         //optimize performance for Javascript
         cc.kmMat4Multiply(stackMatrix, parentMatrix, t4x4);
@@ -116,4 +120,5 @@
         for( i = 0, len = locChildren.length; i< len; i++)
             locChildren[i]._renderCmd.transform(this);
     };
+
 })();

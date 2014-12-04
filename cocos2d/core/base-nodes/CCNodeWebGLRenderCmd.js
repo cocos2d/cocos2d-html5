@@ -103,7 +103,7 @@
             }
 
             if (node._additionalTransformDirty) {
-                t = cc.affineTransformConcat(t, this._additionalTransform);
+                t = cc.affineTransformConcat(t, node._additionalTransform);
                 node._additionalTransformDirty = false;
             }
             this._transform = t;

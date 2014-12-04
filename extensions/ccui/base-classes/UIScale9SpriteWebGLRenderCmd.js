@@ -32,17 +32,18 @@
     var proto = ccui.Scale9Sprite.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = ccui.Scale9Sprite.WebGLRenderCmd;
 
-    proto.visit = function(){
-        if(!this._visible){
+    proto.visit = function(parentCmd){
+        var node = this._node;
+        if(!node._visible){
             return;
         }
 
-        if (this._positionsAreDirty) {
-            this._updatePositions();
-            this._positionsAreDirty = false;
-            this._scale9Dirty = true;
+        if (node._positionsAreDirty) {
+            node._updatePositions();
+            node._positionsAreDirty = false;
+            node._scale9Dirty = true;
         }
-        cc.Node.prototype.visit.call(this, ctx);
+        cc.Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
     };
 
 })();
