@@ -55,7 +55,7 @@
 
             if (!this._bakeSprite){
                 this._bakeSprite = new cc.BakeSprite();
-                this._bakeSprite._parent = this;
+                this._bakeSprite._parent = this._node;
             }
         }
     };
@@ -130,8 +130,8 @@
     };
 
     proto._bakeForAddChild = function(child){
-        if(child._parent == this && this._isBaked)
-            child._setCachedParent(this);
+        if(child._parent == this._node && this._isBaked)
+            child._renderCmd._setCachedParent(this);
     };
 
     proto._getBoundingBoxForBake = function(){
@@ -288,6 +288,7 @@
         cc.renderer.pushRenderCommand(this._bakeRenderCmd);
 
         //the bakeSprite is drawing
+        this._bakeSprite._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
         this._bakeSprite.visit(this);
     };
 
