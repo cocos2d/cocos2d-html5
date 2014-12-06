@@ -885,9 +885,6 @@ cc._tmp.WebGLTextureCache = function () {
 		
         if (!cc.loader.getRes(url)) {
             if (cc.loader._checkIsImageURL(url)) {
-				
-				//cc.log("loading image url");
-                
 				cc.loader.load(url, function (err,img) {
 					cc.loader.cache[url] = img;
                     cc.textureCache.handleLoadedTexture(url);
