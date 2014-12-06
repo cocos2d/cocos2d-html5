@@ -881,11 +881,20 @@ cc._tmp.WebGLTextureCache = function () {
             cb && cb.call(target, tex);
             return tex;
         }
-
+		
+		
         if (!cc.loader.getRes(url)) {
             if (cc.loader._checkIsImageURL(url)) {
-                cc.loader.load(url, function (err) {
-                    cb && cb.call(target);
+				
+				//cc.log("loading image url");
+                
+				cc.loader.load(url, function (err,img) {
+					cc.loader.cache[url] = img;
+                    cc.textureCache.handleLoadedTexture(url);
+					
+					var texResult = locTexs[url];
+					
+                    cb && cb.call(target,texResult);
                 });
             } else {
                 cc.loader.loadImg(url, function (err, img) {
@@ -893,13 +902,14 @@ cc._tmp.WebGLTextureCache = function () {
                         return cb ? cb(err) : err;
                     cc.loader.cache[url] = img;
                     cc.textureCache.handleLoadedTexture(url);
-                    cb && cb.call(target, tex);
+					
+					var texResult = locTexs[url];
+					
+                    cb && cb.call(target, texResult);
                 });
             }
         }
-
-        tex = locTexs[url] = new cc.Texture2D();
-        tex.url = url;
+		
         return tex;
     };
      _p = null;

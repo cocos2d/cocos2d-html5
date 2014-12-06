@@ -351,16 +351,28 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         tex.url = url;
         if (!cc.loader.getRes(url)) {
             if (cc.loader._checkIsImageURL(url)) {
-                cc.loader.load(url, function (err) {
-                    cb && cb.call(target);
+                cc.loader.load(url, function (err, img) {
+					if (err)
+                        return cb ? cb(err) : err;
+						
+					cc.loader.cache[url] = img;
+                    cc.textureCache.handleLoadedTexture(url);
+					
+					var texResult = locTexs[url];
+					
+                    cb && cb.call(target,texResult);
                 });
             } else {
                 cc.loader.loadImg(url, function (err, img) {
                     if (err)
                         return cb ? cb(err) : err;
+						
                     cc.loader.cache[url] = img;
                     cc.textureCache.handleLoadedTexture(url);
-                    cb && cb.call(target, tex);
+					
+					var texResult = locTexs[url];
+					
+                    cb && cb.call(target, texResult);
                 });
             }
         }
