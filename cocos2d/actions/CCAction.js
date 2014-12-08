@@ -625,6 +625,9 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
         tempPosX = this._halfScreenSize.x - tempPosX;
         tempPosY = this._halfScreenSize.y - tempPosY;
 
+        //TODO Temporary treatment - The dirtyFlag symbol error
+        this.target._renderCmd._dirtyFlag = 0;
+
         if (this._boundarySet) {
             // whole map fits inside a single screen, no need to modify the position - unless map boundaries are increased
             if (this._boundaryFullyCovered)
