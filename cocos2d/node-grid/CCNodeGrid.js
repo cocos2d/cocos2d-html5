@@ -104,7 +104,7 @@ cc.NodeGrid = cc.Node.extend({
         if (cc._renderType === cc._RENDER_TYPE_WEBGL)
             return new cc.NodeGrid.WebGLRenderCmd(this);
         else
-            return null;            // cc.NodeGrid doesn't support Canvas mode.
+            return new cc.Node.CanvasRenderCmd(this);            // cc.NodeGrid doesn't support Canvas mode.
     }
 });
 
