@@ -47,6 +47,7 @@
         //optimize performance for javascript
         currentStack.stack.push(currentStack.top);
         this._syncStatus(parentCmd);
+        this._dirtyFlag = 0;
         currentStack.top = this._stackMatrix;
 
         var locGrid = node.grid;

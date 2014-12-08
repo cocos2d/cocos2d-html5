@@ -239,8 +239,20 @@
         cc.g_NumberOfDraws++;
     };
 
-    proto._changeTextureColor = function () {
+    proto._updateColor = function () {
         var node = this._node;
+        var displayedColor = this._displayedColor;
+
+        if(this._colorized){
+            if(displayedColor.r === 255 && displayedColor.g === 255 && displayedColor.b === 255){
+                this._colorized = false;
+                node.texture = this._originalTexture;
+                return;
+            }
+        }else
+            if(displayedColor.r === 255 && displayedColor.g === 255 && displayedColor.b === 255)
+                return;
+
         var locElement, locTexture = node._texture, locRect = this._textureCoord;
         if (locTexture && locRect.validRect && this._originalTexture) {
             locElement = locTexture.getHtmlElementObj();
@@ -253,9 +265,9 @@
                     this._colorized = true;
                     //generate color texture cache
                     if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor)
-                        cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect, locElement);
+                        cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, displayedColor, locRect, locElement);
                     else {
-                        locElement = cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect);
+                        locElement = cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, displayedColor, locRect);
                         locTexture = new cc.Texture2D();
                         locTexture.initWithElement(locElement);
                         locTexture.handleLoadedTexture();
@@ -266,9 +278,9 @@
                 this._colorized = true;
                 if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor
                     && this._originalTexture._htmlElementObj != locElement)
-                    cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(this._originalTexture._htmlElementObj, this._displayedColor, locRect, locElement);
+                    cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(this._originalTexture._htmlElementObj, displayedColor, locRect, locElement);
                 else {
-                    locElement = cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(this._originalTexture._htmlElementObj, this._displayedColor, locRect);
+                    locElement = cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(this._originalTexture._htmlElementObj, displayedColor, locRect);
                     locTexture = new cc.Texture2D();
                     locTexture.initWithElement(locElement);
                     locTexture.handleLoadedTexture();
@@ -293,7 +305,7 @@
         if (textureLoaded) {
             var curColor = node.getColor();
             if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
-                this._changeTextureColor();
+                this._updateColor();
         }
     };
 
@@ -327,12 +339,7 @@
 
     proto._updateDisplayColor = function (parentColor) {
         cc.Node.CanvasRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
-        this._changeTextureColor();
-    };
-
-    proto._syncDisplayColor = function(parentColor){
-        cc.Node.CanvasRenderCmd.prototype._syncDisplayColor.call(this, parentColor);
-        this._changeTextureColor();
+        this._updateColor();
     };
 
     proto._spriteFrameLoadedCallback = function (spriteFrame) {
@@ -342,7 +349,7 @@
         //TODO change
         var curColor = _t.getColor();
         if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
-            _t._changeTextureColor();
+            _t._updateColor();
 
         _t.dispatchEvent("load");
     };
@@ -368,7 +375,7 @@
         //set the texture's color after the it loaded
         var locColor = locRenderCmd._displayedColor;
         if (locColor.r != 255 || locColor.g != 255 || locColor.b != 255)
-            locRenderCmd._changeTextureColor();
+            locRenderCmd._updateColor();
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
