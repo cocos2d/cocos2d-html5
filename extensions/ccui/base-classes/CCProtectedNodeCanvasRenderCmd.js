@@ -143,6 +143,7 @@
         var childLen = locChildren.length, pLen = locProtectedChildren.length;
 
         this._syncStatus(parentCmd);
+        this._dirtyFlag = 0;
 
         node.sortAllChildren();
         node.sortAllProtectedChildren();

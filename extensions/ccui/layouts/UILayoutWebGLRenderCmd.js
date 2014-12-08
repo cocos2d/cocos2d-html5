@@ -159,6 +159,7 @@
         var currentStack = cc.current_stack;
         currentStack.stack.push(currentStack.top);
         this._syncStatus(parentCmd);
+        this._dirtyFlag = 0;
         currentStack.top = this._stackMatrix;
 
         node._clippingStencil.visit(this);

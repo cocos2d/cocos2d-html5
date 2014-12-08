@@ -128,6 +128,7 @@
         node._clipElemType = node._stencil instanceof cc.Sprite;
 
         this._syncStatus(parentCmd);
+        this._dirtyFlag = 0;
 
         cc.renderer.pushRenderCommand(this._rendererSaveCmd);
 
