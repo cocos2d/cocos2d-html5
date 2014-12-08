@@ -96,8 +96,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
         if(mapInfo !== undefined)
             this.initWithTilesetInfo(tilesetInfo, layerInfo, mapInfo);
-
-        this._renderCmd._initContentSize();
     },
 
     _createRenderCmd: function(){

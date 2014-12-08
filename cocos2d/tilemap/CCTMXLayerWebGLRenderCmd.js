@@ -33,8 +33,6 @@
 
     proto._updateCacheContext = function(){};
 
-    proto._initContentSize = function(){};
-
     proto.initImageSize = function(){
         var node = this._node;
         node.tileset.imageSize = this._textureAtlas.texture.getContentSizeInPixels();
