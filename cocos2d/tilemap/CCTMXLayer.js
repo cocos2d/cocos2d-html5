@@ -125,12 +125,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         return this._renderCmd.getTexture();
     },
 
-    //set the cache dirty flag for canvas
-    _setNodeDirtyForCache: function () {
-        this._renderCmd._cacheDirty  = true;
-        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
-    },
-
     /**
      * Gets layer size.
      * @return {cc.Size}
@@ -360,6 +354,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             tile.anchorX = 0;
 	        tile.anchorY = 0;
             tile.opacity = this._opacity;
+            tile._renderCmd._cachedParent = this._renderCmd;
 
             var indexForZ = this._atlasIndexForExistantZ(z);
             this.addSpriteWithoutQuad(tile, indexForZ, z);
@@ -859,7 +854,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             this._reusedTile.initWithTexture(this._renderCmd._texture, rect, false);
             this._reusedTile.batchNode = this;
             this._reusedTile.parent = this;
-            this._reusedTile._cachedParent = this._renderCmd;
+            this._reusedTile._renderCmd._cachedParent = this._renderCmd;
         }
         return this._reusedTile;
     },

@@ -142,6 +142,7 @@
             context.globalCompositeOperation = "destination-over";
             context.drawImage(locCache, 0, 0);
             context.restore();
+            this._dirtyFlag = 0;
         } else {
             context.restore();
         }
@@ -209,6 +210,7 @@
         }
 
         cc.renderer.pushRenderCommand(this._rendererRestoreCmd);
+        this._dirtyFlag = 0;
     };
 
     cc.ClippingNode.CanvasRenderCmd._sharedCache = null;

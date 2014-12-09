@@ -56,6 +56,11 @@
         }
     };
 
+    //set the cache dirty flag for canvas
+    proto._setNodeDirtyForCache = function () {
+        this._cacheDirty  = true;
+    };
+
     proto._renderingChildToCache = function (scaleX, scaleY) {
         if (this._cacheDirty) {
             var locCacheCmds = this._childrenRenderCmds, locCacheContext = this._cacheContext, locCanvas = this._cacheCanvas;
@@ -174,6 +179,7 @@
             this._cacheDirty = false
         }
         cc.renderer.pushRenderCommand(this);
+        this._dirtyFlag = 0;
     };
 
     proto.initImageSize = function(){

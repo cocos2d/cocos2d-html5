@@ -127,6 +127,7 @@
 
         //the bakeSprite is drawing
         this._bakeSprite.visit(this);
+        this._dirtyFlag = 0;
     };
 
     proto._bakeForAddChild = function(child){
@@ -290,6 +291,7 @@
         //the bakeSprite is drawing
         this._bakeSprite._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
         this._bakeSprite.visit(this);
+        this._dirtyFlag = 0;
     };
 
     proto._getBoundingBoxForBake = function(){
