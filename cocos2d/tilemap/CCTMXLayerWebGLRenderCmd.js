@@ -43,5 +43,25 @@
         // cons:
         //  - difficult to scale / rotate / etc.
         this._textureAtlas.texture.setAliasTexParameters();
-    }
+    };
+
+    proto._reusedTileWithRect = function(rect){
+        var node = this._node;
+        if (!node._reusedTile) {
+            node._reusedTile = new cc.Sprite();
+            node._reusedTile.initWithTexture(node.texture, rect, false);
+            node._reusedTile.batchNode = node;
+        } else {
+            // XXX HACK: Needed because if "batch node" is nil,
+            // then the Sprite'squad will be reset
+            node._reusedTile.batchNode = null;
+
+            // Re-init the sprite
+            node._reusedTile.setTextureRect(rect, false);
+
+            // restore the batch node
+            node._reusedTile.batchNode = node;
+        }
+        return node._reusedTile;
+    };
 })();
