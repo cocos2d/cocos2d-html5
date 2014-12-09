@@ -354,7 +354,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             tile.anchorX = 0;
 	        tile.anchorY = 0;
             tile.opacity = this._opacity;
-            tile._renderCmd._cachedParent = this._renderCmd;
+            if(cc._renderType === cc._RENDER_TYPE_CANVAS)     //todo need refactor
+                tile._renderCmd._cachedParent = this._renderCmd;
 
             var indexForZ = this._atlasIndexForExistantZ(z);
             this.addSpriteWithoutQuad(tile, indexForZ, z);
