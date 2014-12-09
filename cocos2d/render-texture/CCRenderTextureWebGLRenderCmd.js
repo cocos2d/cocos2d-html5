@@ -27,7 +27,6 @@
         cc.Node.WebGLRenderCmd.call(this, renderableObject);
         this._needDraw = true;
 
-        this._clearColor = cc.color(0, 0, 0, 0);
         this._fBO = null;
         this._oldFBO = null;
         this._textureCopy = null;
@@ -52,7 +51,7 @@
                 // backup and set
                 if (locClearFlags & gl.COLOR_BUFFER_BIT) {
                     oldClearColor = gl.getParameter(gl.COLOR_CLEAR_VALUE);
-                    gl.clearColor(this._clearColor.r / 255, this._clearColor.g / 255, this._clearColor.b / 255, this._clearColor.a / 255);
+                    gl.clearColor(node._clearColor.r / 255, node._clearColor.g / 255, node._clearColor.b / 255, node._clearColor.a / 255);
                 }
 
                 if (locClearFlags & gl.DEPTH_BUFFER_BIT) {
@@ -84,8 +83,9 @@
             var locChildren = node._children;
             for (var i = 0; i < locChildren.length; i++) {
                 var getChild = locChildren[i];
-                if (getChild != node.sprite)
-                    getChild._renderCmd.visit(this);
+                if (getChild != node.sprite){
+                    getChild._renderCmd.visit(node.sprite._renderCmd);    //TODO it's very Strange
+                }
             }
             node.end();
         }
@@ -114,7 +114,7 @@
             gl.deleteRenderbuffer(this._depthRenderBuffer);
     };
 
-    proto.updateClearColor = function(clearColor){};
+    proto.updateClearColor = function(clearColor){ };
 
     proto.initWithWidthAndHeight = function(width, height, format, depthStencilFormat){
         var node = this._node;
@@ -339,23 +339,23 @@
         node.end();
     };
 
-    proto.visit = function(ctx){
+    proto.visit = function(parentCmd){
         var node = this._node;
+        if (!node._visible)
+            return;
         cc.kmGLPushMatrix();
 
+        //TODO using GridNode
         /*        var locGrid = this.grid;
          if (locGrid && locGrid.isActive()) {
          locGrid.beforeDraw();
          this.transformAncestors();
          }*/
 
-        node.transform(ctx);
+        this._syncStatus(parentCmd);
         //this.toRenderer();
-
-        node.sprite.visit();
-        //this.draw(ctx);
-
         cc.renderer.pushRenderCommand(this);
+        node.sprite.visit(this);
 
         //TODO GridNode
         /*        if (locGrid && locGrid.isActive())
