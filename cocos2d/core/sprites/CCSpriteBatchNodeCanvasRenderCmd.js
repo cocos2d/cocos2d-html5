@@ -41,11 +41,7 @@
         this._texture = texture;
     };
 
-    proto.insertQuad = function(sprite, index){
-        var node = this._node;
-        node._children.splice(index, 0, sprite);
-        //sprite._renderCmd._setCachedParent(this._renderCmd);    //TODO need move to renderCmd
-    };
+    proto.insertQuad = function(sprite, index){};
 
     proto.increaseAtlasCapacity = function(){};
 
@@ -69,4 +65,10 @@
     proto.getTextureAtlas = function(){};
 
     proto.setTextureAtlas = function(textureAtlas){};
+
+    proto.cutting = function(sprite, index){
+        var node = this._node;
+        //sprite._renderCmd._setCachedParent(this._renderCmd);    //TODO need move to renderCmd
+        node._children.splice(index, 0, sprite);
+    }
 })();

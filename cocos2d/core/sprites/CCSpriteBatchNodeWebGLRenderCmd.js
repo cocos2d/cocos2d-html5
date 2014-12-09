@@ -225,4 +225,6 @@
             this._textureAtlas = textureAtlas;
         }
     };
+
+    proto.cutting = function(){};
 })();
