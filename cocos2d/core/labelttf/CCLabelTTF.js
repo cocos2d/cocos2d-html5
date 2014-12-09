@@ -578,6 +578,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
             // Force update
             this._setUpdateTextureDirty();
+            this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
         }
     },
     _updateString: function () {
