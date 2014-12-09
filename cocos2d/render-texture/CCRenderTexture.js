@@ -114,6 +114,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         cc.Node.prototype.ctor.call(this);
         this._cascadeColorEnabled = true;
         this._cascadeOpacityEnabled = true;
+        this._clearColor = new cc.Color(0,0,0,255);
 
         if(width !== undefined && height !== undefined) {
             format = format || cc.Texture2D.PIXEL_FORMAT_RGBA8888;
@@ -372,6 +373,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     listenToForeground:function (obj) { }
 });
 
+var _p = cc.RenderTexture.prototype;
 // Extended
 /** @expose */
 _p.clearColorVal;
