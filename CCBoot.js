@@ -2078,6 +2078,10 @@ cc.game = /** @lends cc.game# */{
 
     restart: function () {
         cc.director.popToSceneStackLevel(0);
+        // Clean up audio
+        cc.audioEngine && cc.audioEngine.end();
+        
+        cc.game.onStart();
     },
 
     _initConfig: function () {
