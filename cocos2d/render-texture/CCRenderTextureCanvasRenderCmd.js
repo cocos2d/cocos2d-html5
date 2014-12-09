@@ -109,6 +109,7 @@
         var node = this._node;
         this._syncStatus(parentCmd);
         node.sprite.visit(parentCmd);
+        this._dirtyFlag = 0;
     };
 
     proto.draw = function(){
