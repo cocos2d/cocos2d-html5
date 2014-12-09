@@ -108,7 +108,7 @@
     proto.visit = function(parentCmd){
         var node = this._node;
         this._syncStatus(parentCmd);
-        node.sprite.visit(parentCmd);
+        node.sprite.visit(this);
         this._dirtyFlag = 0;
     };
 
@@ -131,7 +131,7 @@
         for (var i = 0; i < childrenLen; i++) {
             var getChild = locChildren[i];
             if (getChild != selfSprite)
-                getChild.visit();
+                getChild.visit(this);
         }
         node.end();
     };
