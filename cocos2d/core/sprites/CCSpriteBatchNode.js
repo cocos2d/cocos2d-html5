@@ -422,6 +422,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         // XXX: so, it should be AFTER the insertQuad
         sprite.dirty = true;
         sprite.updateTransform();
+        this._renderCmd.cutting(sprite, index);
     },
 
     /**
