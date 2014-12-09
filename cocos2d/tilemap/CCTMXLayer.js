@@ -354,8 +354,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             tile.anchorX = 0;
 	        tile.anchorY = 0;
             tile.opacity = this._opacity;
-            if(cc._renderType === cc._RENDER_TYPE_CANVAS)     //todo need refactor
-                tile._renderCmd._cachedParent = this._renderCmd;
 
             var indexForZ = this._atlasIndexForExistantZ(z);
             this.addSpriteWithoutQuad(tile, indexForZ, z);
@@ -692,7 +690,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         rect = cc.rectPixelsToPoints(rect);
 
         var z = 0 | (pos.x + pos.y * this._layerSize.width);
-        var tile = this._reusedTileWithRect(rect);
+        var tile = this._renderCmd._reusedTileWithRect(rect);
         this._setupTileSprite(tile, pos, gid);
 
         // optimization:
@@ -713,7 +711,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         rect = cc.rectPixelsToPoints(rect);
 
         var z = 0 | (pos.x + pos.y * this._layerSize.width);
-        var tile = this._reusedTileWithRect(rect);
+        var tile = this._renderCmd._reusedTileWithRect(rect);
         this._setupTileSprite(tile, pos, gid);
 
         // get atlas index
@@ -747,7 +745,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             rect.width / locScaleFactor, rect.height / locScaleFactor);
         var z = pos.x + pos.y * this._layerSize.width;
 
-        var tile = this._reusedTileWithRect(rect);
+        var tile = this._renderCmd._reusedTileWithRect(rect);
         this._setupTileSprite(tile, pos, gid);
 
         // get atlas index
@@ -831,33 +829,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 sprite.setFlippedY(true);
             }
         }
-    },
-
-    _reusedTileWithRect:function (rect) {
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL){
-            if (!this._reusedTile) {
-                this._reusedTile = new cc.Sprite();
-                this._reusedTile.initWithTexture(this.texture, rect, false);
-                this._reusedTile.batchNode = this;
-            } else {
-                // XXX HACK: Needed because if "batch node" is nil,
-                // then the Sprite'squad will be reset
-                this._reusedTile.batchNode = null;
-
-                // Re-init the sprite
-                this._reusedTile.setTextureRect(rect, false);
-
-                // restore the batch node
-                this._reusedTile.batchNode = this;
-            }
-        } else {
-            this._reusedTile = new cc.Sprite();
-            this._reusedTile.initWithTexture(this._renderCmd._texture, rect, false);
-            this._reusedTile.batchNode = this;
-            this._reusedTile.parent = this;
-            this._reusedTile._renderCmd._cachedParent = this._renderCmd;
-        }
-        return this._reusedTile;
     },
 
     _vertexZForPos:function (pos) {
