@@ -71,57 +71,5 @@ ccs.labelReader = /** @lends ccs.LabelReader# */{
             label.setTextVerticalAlignment(options["vAlignment"]);
         }
         ccs.widgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
-    },
-
-    setPropsFromProtocolBuffers: function(widget, nodeTree){
-		var label = widget;
-        var options = nodeTree["textOptions"];
-
-		var IsCustomSize = options["IsCustomSize"];
-		label.ignoreContentAdaptWithSize(!IsCustomSize);
-
-        ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
-
-        label.setUnifySizeEnabled(false);
-
-        var protocolBuffersPath = ccs.uiReader.getFilePath();
-
-        var touchScaleChangeAble = options["touchScaleEnable"];
-        label.setTouchScaleChangeEnabled(touchScaleChangeAble);
-        var text = options["text"]!==null ? options["text"] : "Text Label";
-        label.setString(text);
-
-        var fontSize = options["fontSize"]!==null ? options["fontSize"] : 20;
-        label.setFontSize(fontSize);
-
-        var fontName = options["fontName"]!==null ? options["fontName"] : "微软雅黑";
-        label.setFontName(fontName);
-
-        var aw = options["areaWidth"];
-        var ah = options["areaHeight"];
-        if (aw !== null && ah !== null)
-        {
-            var size = cc.size(aw, ah);
-            label.setTextAreaSize(size);
-        }
-        var ha = options["hAlignment"];
-        if (ha)
-        {
-            label.setTextHorizontalAlignment(ha);
-        }
-        var va = options["vAlignment"];
-        if (va)
-        {
-            label.setTextVerticalAlignment(va);
-        }
-
-		if (options["fontResource"])
-		{
-			var resourceData = options["fontResource"];
-		    label.setFontName(protocolBuffersPath + resourceData["path"]);
-		}
-
-        // other commonly protperties
-        ccs.widgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     }
 };

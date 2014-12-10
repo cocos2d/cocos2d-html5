@@ -83,51 +83,5 @@ ccs.loadingBarReader = /** @lends ccs.LoadingBarReader# */{
         loadingBar.setPercent(options["percent"]);
 
         ccs.widgetReader.setColorPropsFromJsonDictionary.call(this, widget, options);
-    },
-
-    setPropsFromProtocolBuffers: function(widget, nodeTree){
-        ccs.widgetReader.setPropsFromProtocolBuffers.call(this, widget, nodeTree);
-
-        var loadingBar = widget;
-        var options = nodeTree["loadingBarOptions"];
-
-		var protocolBuffersPath = ccs.uiReader.getFilePath();
-
-		var imageFileNameDic = options["textureData"];
-        var imageFileNameType = imageFileNameDic["resourceType"];
-
-        var imageFileName = ccs.widgetReader.getResourcePath(imageFileNameDic["path"], imageFileNameType);
-        loadingBar.loadTexture(imageFileName, imageFileNameType);
-
-
-        /* gui mark add load bar scale9 parse */
-        var scale9Enable = options["scale9Enable"];
-        loadingBar.setScale9Enabled(scale9Enable);
-
-
-        var cx = options["capinsetsX"];
-        var cy = options["capinsetsY"];
-        var cw = options["capinsetsWidth"]!=null ? options["capinsetsWidth"] : 1;
-        var ch = options["capinsetsHeight"]!=null ? options["capinsetsHeight"] : 1;
-
-        if (scale9Enable) {
-            loadingBar.setCapInsets(cc.rect(cx, cy, cw, ch));
-
-        }
-
-		var widgetOptions = nodeTree["widgetOptions"];
-        var width = widgetOptions["width"];
-        var height = widgetOptions["height"];
-        loadingBar.setContentSize(cc.size(width, height));
-
-        /**/
-
-        loadingBar.setDirection(options["direction"]);
-        var percent = options["percent"]!==null ? options["percent"] : 100;
-        loadingBar.setPercent(percent);
-
-
-        // other commonly protperties
-        ccs.widgetReader.setColorPropsFromProtocolBuffers.call(this, widget, nodeTree);
     }
 };
