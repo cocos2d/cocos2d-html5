@@ -1797,9 +1797,17 @@ cc._setup = function (el, width, height) {
     // Avoid setup to be called twice.
     if (cc._setupCalled) return;
     else cc._setupCalled = true;
-    var win = window;
-    var lastTime = new Date();
-    var frameTime = 1000 / cc.game.config[cc.game.CONFIG_KEY.frameRate];
+    var win = window,
+        lastTime = new Date(),
+        frameRate = cc.game.config[cc.game.CONFIG_KEY.frameRate],
+        frameTime = 1000 / frameRate,
+        modulo_60 = 60 % frameRate,
+        requestAnimFunc = win.requestAnimationFrame ||
+            win.webkitRequestAnimationFrame ||
+            win.mozRequestAnimationFrame ||
+            win.oRequestAnimationFrame ||
+            win.msRequestAnimationFrame || null,
+        skipFrame = false;
 
     var stTime = function(callback){
         var currTime = new Date().getTime();
@@ -1817,27 +1825,41 @@ cc._setup = function (el, width, height) {
     if(cc.sys.os === cc.sys.OS_IOS && cc.sys.browserType === cc.sys.BROWSER_TYPE_WECHAT){
         win.requestAnimFrame = stTime;
         win.cancelAnimationFrame = ctTime;
-    }else if(cc.game.config[cc.game.CONFIG_KEY.frameRate] != 60){
+    }else if(modulo_60 != 0 || !requestAnimFunc){
         win.requestAnimFrame = stTime;
         win.cancelAnimationFrame = ctTime;
     }else{
-        win.requestAnimFrame = win.requestAnimationFrame ||
-            win.webkitRequestAnimationFrame ||
-            win.mozRequestAnimationFrame ||
-            win.oRequestAnimationFrame ||
-            win.msRequestAnimationFrame ||
-            stTime;
-        win.cancelAnimationFrame = window.cancelAnimationFrame ||
-            window.cancelRequestAnimationFrame ||
-            window.msCancelRequestAnimationFrame ||
-            window.mozCancelRequestAnimationFrame ||
-            window.oCancelRequestAnimationFrame ||
-            window.webkitCancelRequestAnimationFrame ||
-            window.msCancelAnimationFrame ||
-            window.mozCancelAnimationFrame ||
-            window.webkitCancelAnimationFrame ||
-            window.oCancelAnimationFrame ||
-            ctTime;
+        skipFrame = frameRate == 60 ? false : true;
+
+        win.cancelAnimationFrame = win.cancelAnimationFrame ||
+            win.cancelRequestAnimationFrame ||
+            win.msCancelRequestAnimationFrame ||
+            win.mozCancelRequestAnimationFrame ||
+            win.oCancelRequestAnimationFrame ||
+            win.webkitCancelRequestAnimationFrame ||
+            win.msCancelAnimationFrame ||
+            win.mozCancelAnimationFrame ||
+            win.webkitCancelAnimationFrame ||
+            win.oCancelAnimationFrame;
+
+        win.requestAnimFrame = skipFrame ? function(callback) {
+            // To cover the deviation
+            var minFrameTime = 1000 / 50,
+                lastTime;
+
+            function step(timestamp) {
+                if (!lastTime) lastTime = timestamp;
+                var timeToCall = frameTime - (timestamp - lastTime);
+
+                if (timeToCall < minFrameTime) {
+                    lastTime = timestamp;
+                    callback();
+                }
+                else requestAnimFunc(step);
+            }
+
+            requestAnimFunc(step);
+        } : requestAnimFunc;
     }
 
     var element = cc.$(el) || cc.$('#' + el);
