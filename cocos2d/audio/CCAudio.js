@@ -700,7 +700,7 @@ cc.Audio = cc.Class.extend({
                 audio = effectList[i];
                 audio.setVolume(this._effectVolume);
                 audio.play(0, loop);
-            }else if(SWA && i > this._maxAudioInstance){
+            }else if(!SWA && i > this._maxAudioInstance){
                 cc.log("Error: %s greater than %d", url, this._maxAudioInstance);
             }else{
                 var audio = loader.cache[url];
