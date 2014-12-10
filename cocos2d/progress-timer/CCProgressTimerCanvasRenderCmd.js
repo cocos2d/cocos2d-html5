@@ -218,6 +218,17 @@
         if(!node._sprite)
             return;
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var parentNode = parentCmd ? parentCmd._node : null;
+
+        if(parentNode && parentNode._cascadeColorEnabled && (parentCmd._dirtyFlag & flags.colorDirty))
+            locFlag |= flags.colorDirty;
+
+        if(parentNode && parentNode._cascadeOpacityEnabled && (parentCmd._dirtyFlag & flags.opacityDirty))
+            locFlag |= flags.opacityDirty;
+
+        if(parentCmd && (parentCmd._dirtyFlag & flags.transformDirty))
+            locFlag |= flags.transformDirty;
+
         var spriteCmd = node._sprite._renderCmd;
         var spriteFlag = spriteCmd._dirtyFlag;
 
