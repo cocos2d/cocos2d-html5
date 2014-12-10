@@ -378,6 +378,8 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         if(parentCmd && (parentCmd._dirtyFlag & flags.transformDirty))
             locFlag |= flags.transformDirty;
 
+        this._dirtyFlag = locFlag;
+
         var colorDirty = locFlag & flags.colorDirty,
             opacityDirty = locFlag & flags.opacityDirty;
         if (colorDirty)

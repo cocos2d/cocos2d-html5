@@ -409,6 +409,8 @@
         var colorDirty = locFlag & flags.colorDirty,
             opacityDirty = locFlag & flags.opacityDirty;
 
+        this._dirtyFlag = locFlag;
+
         if (colorDirty)
             this._syncDisplayColor();
 

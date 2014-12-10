@@ -229,6 +229,8 @@
         if(parentCmd && (parentCmd._dirtyFlag & flags.transformDirty))
             locFlag |= flags.transformDirty;
 
+        this._dirtyFlag = locFlag;
+
         var spriteCmd = node._sprite._renderCmd;
         var spriteFlag = spriteCmd._dirtyFlag;
 

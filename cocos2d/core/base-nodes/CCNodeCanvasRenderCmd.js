@@ -426,6 +426,8 @@ cc.Node.RenderCmd.prototype = {
             opacityDirty = locFlag & flags.opacityDirty,
             transformDirty = locFlag & flags.transformDirty;
 
+        this._dirtyFlag = locFlag;
+
         if (colorDirty)
             //update the color
             this._syncDisplayColor();
