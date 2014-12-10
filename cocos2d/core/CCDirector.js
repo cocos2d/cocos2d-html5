@@ -983,14 +983,16 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         else
             fontSize = 0 | (_t._winSizeInPoints.width / 320 * 24);
 
-        _t._FPSLabel = new cc.LabelTTF("000.0", "Arial", fontSize);
-        _t._SPFLabel = new cc.LabelTTF("0.000", "Arial", fontSize);
-        _t._drawsLabel = new cc.LabelTTF("0000", "Arial", fontSize);
+        if (cc.LabelTTF) {
+            _t._FPSLabel = new cc.LabelTTF("000.0", "Arial", fontSize);
+            _t._SPFLabel = new cc.LabelTTF("0.000", "Arial", fontSize);
+            _t._drawsLabel = new cc.LabelTTF("0000", "Arial", fontSize);
 
-        var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        _t._drawsLabel.setPosition(_t._drawsLabel.width / 2 + locStatsPosition.x, _t._drawsLabel.height * 5 / 2 + locStatsPosition.y);
-        _t._SPFLabel.setPosition(_t._SPFLabel.width / 2 + locStatsPosition.x, _t._SPFLabel.height * 3 / 2 + locStatsPosition.y);
-        _t._FPSLabel.setPosition(_t._FPSLabel.width / 2 + locStatsPosition.x, _t._FPSLabel.height / 2 + locStatsPosition.y);
+            var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
+            _t._drawsLabel.setPosition(_t._drawsLabel.width / 2 + locStatsPosition.x, _t._drawsLabel.height * 5 / 2 + locStatsPosition.y);
+            _t._SPFLabel.setPosition(_t._SPFLabel.width / 2 + locStatsPosition.x, _t._SPFLabel.height * 3 / 2 + locStatsPosition.y);
+            _t._FPSLabel.setPosition(_t._FPSLabel.width / 2 + locStatsPosition.x, _t._FPSLabel.height / 2 + locStatsPosition.y);
+        }
     };
 
     _p.getVisibleSize = function () {
