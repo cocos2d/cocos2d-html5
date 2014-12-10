@@ -2236,7 +2236,7 @@ Function.prototype.bind = Function.prototype.bind || function (oThis) {
 cc.game.loadScene = function (resource, scene, callback) {
     if (resource && scene) {
         cc.LoaderScene.preload(resource, function() {
-            cc.director.runScene(scene);
+            cc.director.runScene(cc.Serializer.unSerialize(cc.loader.getRes(scene)));
             cc.director.drawScene(scene);
             cc.game.pause();
             callback && callback();

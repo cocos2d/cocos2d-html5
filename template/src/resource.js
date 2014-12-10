@@ -1,5 +1,5 @@
-var s_HelloWorld = "HelloWorld.jpg";
-var s_CloseNormal = "CloseNormal.png";
+var s_HelloWorld = "res/HelloWorld.jpg";
+var s_CloseNormal = "res/CloseNormal.png";
 var s_CloseSelected = "CloseSelected.png";
 
 var g_resources = [

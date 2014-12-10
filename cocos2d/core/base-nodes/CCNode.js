@@ -150,6 +150,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _children: null,
     // lazy alloc,
     _visible: true,
+    uid:null,
     _anchorPoint: null,
     _anchorPointInPoints: null,
     _contentSize: null,
@@ -206,6 +207,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _initNode: function () {
         var _t = this;
+        _t.uid = Date.now()+Math.random();
         _t._anchorPoint = cc.p(0, 0);
         _t._anchorPointInPoints = cc.p(0, 0);
         _t._contentSize = cc.size(0, 0);
@@ -2815,28 +2817,24 @@ cc._tmp.PrototypeCCNode();
 delete cc._tmp.PrototypeCCNode;
 
 cc.Serializer.addMethods("_realColor", function(val){return {r:val.r, g:val.g, b:val.b, a:val.a}}, cc.Node.prototype.setColor);
-//cc.Serializer.addMethods("_children", cc.Node.prototype.getChildren, function(val){
-//    for(var i = 0; i < val.length; i++)
-//    {
-//        this.addChild(val[i]);
-//    }
-//});
+cc.Serializer.addMethods("_children", cc.Node.prototype.getChildren, function(val, nodesList){
+    for(var i = 0; i < val.length; i++)
+    {
+        //this.addChild(nodesList[val[i].ref]);
+        this.addChild(val[i]);
+    }
+});
 cc.Serializer.addMethods("_texture",
 function(val){
     return {url:val.url, pixelFormat:val.pixelFormat};
 },
-function(val, that){
-    console.log(this, that);
+function(val, nodesList, unSerializedMirror){
     var tex = cc.textureCache.getTextureForKey(val.url);
     if(!tex){
         tex = cc.textureCache.addImage(val.url);
     }
-
-    var tempTexture = new cc.Texture2D();
-    tempTexture.initWithElement(tex.getHtmlElementObj());
-    tempTexture.handleLoadedTexture();
-    that.setTexture(tempTexture);
-    that.setTextureRect(that._rect);
+    this.setTexture(tex);
+    this.setTextureRect(unSerializedMirror._rect);
 });
 
 //ignore some that are not supported

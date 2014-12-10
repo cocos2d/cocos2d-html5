@@ -370,66 +370,220 @@ cc.Serializer = {
         cc.Serializer.specialCases.push(key);
         cc.Serializer.specialCasesMethods.push({g:getFunc,s:setFunc});
     },
-    serialize:function(node){
-
-
-
-
-        return JSON.stringify(node, function(key, val){
-            if(val === null || key[1] == '_')
-                return undefined;
-
-            //debug - remove these when finished
-            if(val instanceof HTMLElement)
+    _addToStructure:function(struct, node){
+        if(typeof node === "object" && node !== null){
+            if(node.uid)//object is a node
             {
-                console.log("html",this,  key, val);
-                return undefined;
+                if(struct.nodes[node.uid])//if already exists in struct
+                {
+                    if(struct.nodes[node.uid] !== node)
+                    throw "duplicate node uid encountered";
+                }
+                else if(!struct.nodes[node.uid])//else if doesnt exists in struct, add to it
+                {
+                    struct.nodes[node.uid] = node;
+                    var keys = Object.keys(node);
+                    for(var i = 0; i < keys.length; i++)
+                    {
+                        var o = node[keys[i]];
+                        this._addToStructure(struct, o);
+                    }
+                }
             }
-            //end debug
+            else if(node.length)//object is an non-empty array, then go into it
+            {
+                for(var i = 0; i < node.length; i++)
+                {
+                    var o = node[i];
+                    this._addToStructure(struct, o);
+                }
+            }
+        }
+    },
+    serialize:function(node){
+        var structure = {
+            SerializerVersion:"1.0",
+            root:node.uid,
+            nodes:{}
+        };
+        // find all nodes and add them to structure.nodes
+        this._addToStructure(structure, node);
+        //node is the base, build the tree based on it
 
+//        for(var k in structure.nodes)
+//        {
+//            var n = structure.nodes[k];
+//            structure.tree[n.uid] = [];
+////            for(var j = 0; j< n._children.length; j++)
+////            {
+////                structure.tree[n.uid].push(n._children[j].uid);
+////            }
+//        }
+
+
+        return JSON.stringify(structure, function(key, val){
+            if(val === null || key[1] === "_"){
+                return;
+            }
             var special = cc.Serializer.getMethods(key);
             if(special && special.g)
             {
                 return special.g.call(this,val);
             }
-            else if(typeof val === "object" && val._type_)
+            if(typeof val === "object")
             {
-                //copy the object type to local, so it gets serialized
-                val._type_ = val._type_;
+                //if its object
+                if(val.uid)
+                {
+                    //this is a node
+                    if(this === structure.nodes)
+                    {
+                        // we are in the nodes, proceed to stringify
+                        //copy type to local
+                        val._type_ = val._type_;
+                        return val;
+                    }
+                    else{
+                        // we should not stringify this, but leave uid
+                        return {ref:val.uid};
+                    }
+                }
+                else if(val instanceof HTMLElement)
+                {
+                    //we don't want anything to do with htmlelement
+                    return;
+                }
+                else if(val.toJSON)
+                {
+                    //this object has tojson method, so we should let it pass
+                    return val;
+                }
+                else{
+                    return val;
+                }
             }
-            return val;
+            else{
+                //not an object is always a good value
+                return val;
+            }
         },this.compact?0:4);
+
+//        return JSON.stringify(node, function(key, val){
+//            if(val === null || key[1] == '_')
+//                return undefined;
+//
+//            //debug - remove these when finished
+//            if(val instanceof HTMLElement)
+//            {
+//                console.log("html",this,  key, val);
+//                return undefined;
+//            }
+//            //end debug
+//
+//            var special = cc.Serializer.getMethods(key);
+//            if(special && special.g)
+//            {
+//                return special.g.call(this,val);
+//            }
+//            else if(typeof val === "object" && val._type_)
+//            {
+//                //copy the object type to local, so it gets serialized
+//                val._type_ = val._type_;
+//            }
+//            return val;
+//        },this.compact?0:4);
+    },
+    _fixlinks:function(unserializedMirror, revivedNodes){
+        for(var key in unserializedMirror)
+        {
+            var uns = unserializedMirror[key];
+            if(typeof uns === "object")
+            {
+                if(uns.ref)
+                {
+                    //this is a node, make this a link to the revived Nodes
+                    unserializedMirror[key] = revivedNodes[uns.ref];
+                }
+                else{
+                    this._fixlinks(uns, revivedNodes);
+                }
+            }
+        }
     },
     unSerialize:function(json)
     {
-        var specialList = [];
-        var ret = JSON.parse(json, function(key, val){
-            var special = cc.Serializer.getMethods(key);
-            if(special && special.s)
-            {
-                specialList.push({func:special.s, that:this, val:val});
-                return undefined;
-            }
-            //if we defined a type for this object then
-            if(typeof val === "object" && val._type_)
-            {
-                var cls = cc.Serializer._getClass(val._type_);
-                var ret = new cls;
-                var keys = Object.keys(val);
-                for(var i = 0; i < keys.length; i++)
-                {
-                    ret[keys[i]] = val[keys[i]];
-                }
-                return ret;
-            }
-            return val;
-        });
-        for(var i = 0; i < specialList.length; i++)
+        var unSerializedObj = JSON.parse(json);
+        //start reviving nodes
+        var revivedNodes = {};
+        //first revive all nodes and add them to the nodes list
+        for(var uid in unSerializedObj.nodes)
         {
-            var o = specialList[i];
-            o.func.call(o.that, o.val, this);
+            var unSerializedNode = unSerializedObj.nodes[uid];
+            var cls = cc.Serializer._getClass(unSerializedNode._type_);
+            var revivedObj = new cls;
+            revivedNodes[uid] = revivedObj;
         }
-        return ret;
+        //fix all linking issue by scanning everything recursively
+        for(var uid in unSerializedObj.nodes)
+        {
+            this._fixlinks(unSerializedObj.nodes[uid], revivedNodes);
+        }
+
+        //try to revive the values for each node
+        for(uid in revivedNodes)
+        {
+            var revivedObj = revivedNodes[uid];
+            var keys = Object.keys(unSerializedObj.nodes[uid]);
+            for(var i = 0; i < keys.length; i ++)
+            {
+
+                var key = keys[i];
+                var value = unSerializedObj.nodes[uid][key];
+                if(value.ref)
+                {
+                    value = revivedNodes[value.ref];
+                }
+                var reviver = this.getMethods(key);
+                if(reviver){
+                    reviver.s.call(revivedObj, value, revivedNodes,unSerializedObj.nodes[uid]);
+                }
+                else{
+                    revivedObj[key] = unSerializedObj.nodes[uid][key];
+                }
+            }
+        }
+
+        return revivedNodes[unSerializedObj.root];
+
+
+//        var specialList = [];
+//        var ret = JSON.parse(json, function(key, val){
+//            var special = cc.Serializer.getMethods(key);
+//            if(special && special.s)
+//            {
+//                specialList.push({func:special.s, that:this, val:val});
+//                return undefined;
+//            }
+//            //if we defined a type for this object then
+//            if(typeof val === "object" && val._type_)
+//            {
+//                var cls = cc.Serializer._getClass(val._type_);
+//                var ret = new cls;
+//                var keys = Object.keys(val);
+//                for(var i = 0; i < keys.length; i++)
+//                {
+//                    ret[keys[i]] = val[keys[i]];
+//                }
+//                return ret;
+//            }
+//            return val;
+//        });
+//        for(var i = 0; i < specialList.length; i++)
+//        {
+//            var o = specialList[i];
+//            o.func.call(o.that, o.val, this);
+//        }
+//        return ret;
     },
     _getClass:function(str){
         //not using eval to prevent code injection
