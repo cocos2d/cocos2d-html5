@@ -755,13 +755,21 @@ cc.loader = /** @lends cc.loader# */{
         else if (option !== undefined)
             cb = option;
 
-        var img = new Image();
+        var img = this.getRes(url);
+        if (img) {
+            cb && cb(null, img);
+            return img;
+        }
+
+        img = new Image();
         if (opt.isCrossOrigin && location.origin != "file://")
             img.crossOrigin = "Anonymous";
 
         var lcb = function () {
             this.removeEventListener('load', lcb, false);
             this.removeEventListener('error', ecb, false);
+
+            cc.loader.cache[url] = img;
             if (cb)
                 cb(null, img);
         };
@@ -802,7 +810,7 @@ cc.loader = /** @lends cc.loader# */{
             type = cc.path.extname(url);
         }
 
-        var obj = self.cache[url];
+        var obj = self.getRes(url);
         if (obj)
             return cb(null, obj);
         var loader = null;
