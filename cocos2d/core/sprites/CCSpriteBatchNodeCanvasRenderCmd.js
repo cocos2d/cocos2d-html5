@@ -36,6 +36,14 @@
 
     proto.checkAtlasCapacity = function(){};
 
+    proto.isValidChild = function(child){
+        if (!(child instanceof cc.Sprite)) {
+            cc.log(cc._LogInfos.Sprite_addChild_4);
+            return false;
+        }
+        return true;
+    };
+
     proto.initWithTexture = function(texture, capacity){
         this._originalTexture = texture;
         this._texture = texture;

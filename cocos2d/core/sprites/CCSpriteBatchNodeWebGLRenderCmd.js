@@ -34,6 +34,18 @@
     var proto = cc.SpriteBatchNode.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.SpriteBatchNode.WebGLRenderCmd;
 
+    proto.isValidChild = function(child){
+        if (!(child instanceof cc.Sprite)) {
+            cc.log(cc._LogInfos.Sprite_addChild_4);
+            return false;
+        }
+        if (child.texture != this.getTexture()) {
+            cc.log(cc._LogInfos.Sprite_addChild_5);
+            return false;
+        }
+        return true;
+    };
+
     proto.rendering = function () {
         var node = this._node;
         if (this._textureAtlas.totalQuads === 0)

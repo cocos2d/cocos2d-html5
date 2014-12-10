@@ -561,14 +561,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     addChild: function (child, zOrder, tag) {
         cc.assert(child != null, cc._LogInfos.CCSpriteBatchNode_addChild_3);
 
-        if (!(child instanceof cc.Sprite)) {
-            cc.log(cc._LogInfos.Sprite_addChild_4);
+        if(!this._renderCmd.isValidChild(child))
             return;
-        }
-        if (child.texture != this._renderCmd.getTexture()) {
-            cc.log(cc._LogInfos.Sprite_addChild_5);
-            return;
-        }
 
         zOrder = (zOrder == null) ? child.zIndex : zOrder;
         tag = (tag == null) ? child.tag : tag;
