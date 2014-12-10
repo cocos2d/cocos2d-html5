@@ -324,7 +324,7 @@
             var colorDirty = locFlag & flags.colorDirty,
                 opacityDirty = locFlag & flags.opacityDirty;
             if (colorDirty)
-                this._updateDisplayColor()
+                this._updateDisplayColor();
 
             if (opacityDirty)
                 this._updateDisplayOpacity();
@@ -337,6 +337,7 @@
             if (colorDirty || opacityDirty || (locFlag & flags.gradientDirty)){
                 this._updateColor();
             }
+            this._dirtyFlag = 0;
         }
     };
 })();
@@ -394,8 +395,21 @@
 
     proto._syncStatus = function (parentCmd) {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var parentNode = parentCmd ? parentCmd._node : null;
+
+        if(parentNode && parentNode._cascadeColorEnabled && (parentCmd._dirtyFlag & flags.colorDirty))
+            locFlag |= flags.colorDirty;
+
+        if(parentNode && parentNode._cascadeOpacityEnabled && (parentCmd._dirtyFlag & flags.opacityDirty))
+            locFlag |= flags.opacityDirty;
+
+        if(parentCmd && (parentCmd._dirtyFlag & flags.transformDirty))
+            locFlag |= flags.transformDirty;
+
         var colorDirty = locFlag & flags.colorDirty,
             opacityDirty = locFlag & flags.opacityDirty;
+
+        this._dirtyFlag = locFlag;
 
         if (colorDirty)
             this._syncDisplayColor();
