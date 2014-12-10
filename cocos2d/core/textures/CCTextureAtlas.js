@@ -42,7 +42,7 @@
  * @property {Number}   totalQuads      - <@readonly> Quantity of quads that are going to be drawn.
  * @property {Array}    quads           - <@readonly> Quads that are going to be rendered
  */
-cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
+cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{  //WebGL only
     dirty: false,
     texture: null,
 
@@ -141,8 +141,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Array} quads
      */
     setQuads: function (quads) {
-        this._quads = quads;
         //TODO need re-binding
+        this._quads = quads;
     },
 
     _copyQuadsToTextureAtlas: function (quads, index) {

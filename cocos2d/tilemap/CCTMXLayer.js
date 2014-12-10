@@ -78,9 +78,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     //used for retina display
     _contentScaleFactor: null,
 
-    _cacheCanvas:null,
-    _cacheContext:null,
-    _cacheTexture:null,
     _className:"TMXLayer",
 
     /**
@@ -97,31 +94,15 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         this._layerSize = cc.size(0, 0);
         this._mapTileSize = cc.size(0, 0);
 
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-            var locCanvas = cc._canvas;
-            var tmpCanvas = cc.newElement('canvas');
-            tmpCanvas.width = locCanvas.width;
-            tmpCanvas.height = locCanvas.height;
-            this._cacheCanvas = tmpCanvas;
-            this._cacheContext = this._cacheCanvas.getContext('2d');
-            var tempTexture = new cc.Texture2D();
-            tempTexture.initWithElement(tmpCanvas);
-            tempTexture.handleLoadedTexture();
-            this._cacheTexture = tempTexture;
-            this.width = locCanvas.width;
-	        this.height = locCanvas.height;
-	        // This class uses cache, so its default cachedParent should be himself
-	        this._cachedParent = this;
-        }
         if(mapInfo !== undefined)
             this.initWithTilesetInfo(tilesetInfo, layerInfo, mapInfo);
     },
 
-    _initRendererCmd: function(){
+    _createRenderCmd: function(){
         if(cc._renderType === cc._RENDER_TYPE_CANVAS)
-            this._rendererCmd = new cc.TMXLayerRenderCmdCanvas(this);
+            return new cc.TMXLayer.CanvasRenderCmd(this);
         else
-            this._rendererCmd = new cc.TMXLayerRenderCmdWebGL(this);
+            return new cc.TMXLayer.WebGLRenderCmd(this);
     },
 
     /**
@@ -131,49 +112,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @param {Number} [height] The untransformed size's height of the TMXLayer.
      */
     setContentSize:function (size, height) {
-        var locContentSize = this._contentSize;
 	    cc.Node.prototype.setContentSize.call(this, size, height);
-
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-            var locCanvas = this._cacheCanvas;
-            var scaleFactor = cc.contentScaleFactor();
-            locCanvas.width = 0 | (locContentSize.width * 1.5 * scaleFactor);
-            locCanvas.height = 0 | (locContentSize.height * 1.5 * scaleFactor);
-
-            if(this.layerOrientation === cc.TMX_ORIENTATION_HEX)
-                this._cacheContext.translate(0, locCanvas.height - (this._mapTileSize.height * 0.5));                  //translate for hexagonal
-            else
-                this._cacheContext.translate(0, locCanvas.height);
-            var locTexContentSize = this._cacheTexture._contentSize;
-            locTexContentSize.width = locCanvas.width;
-            locTexContentSize.height = locCanvas.height;
-
-            // Init sub caches if needed
-            var totalPixel = locCanvas.width * locCanvas.height;
-            if(totalPixel > this._maxCachePixel) {
-                if(!this._subCacheCanvas) this._subCacheCanvas = [];
-                if(!this._subCacheContext) this._subCacheContext = [];
-
-                this._subCacheCount = Math.ceil( totalPixel / this._maxCachePixel );
-                var locSubCacheCanvas = this._subCacheCanvas, i;
-                for(i = 0; i < this._subCacheCount; i++) {
-                    if(!locSubCacheCanvas[i]) {
-                        locSubCacheCanvas[i] = document.createElement('canvas');
-                        this._subCacheContext[i] = locSubCacheCanvas[i].getContext('2d');
-                    }
-                    var tmpCanvas = locSubCacheCanvas[i];
-                    tmpCanvas.width = this._subCacheWidth = Math.round( locCanvas.width / this._subCacheCount );
-                    tmpCanvas.height = locCanvas.height;
-                }
-                // Clear wasted cache to release memory
-                for(i = this._subCacheCount; i < locSubCacheCanvas.length; i++) {
-                    tmpCanvas.width = 0;
-                    tmpCanvas.height = 0;
-                }
-            }
-            // Otherwise use count as a flag to disable sub caches
-            else this._subCacheCount = 0;
-        }
+        this._renderCmd._updateCacheContext(size, height);
     },
 
     /**
@@ -181,107 +121,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @function
      * @return {cc.Texture2D}
      */
-	getTexture: null,
-
-    _getTextureForCanvas:function () {
-        return this._cacheTexture;
-    },
-
-    /**
-     * don't call visit on it's children ( override visit of cc.Node )
-     * @function
-     * @override
-     * @param {CanvasRenderingContext2D} ctx
-     */
-    visit: null,
-
-    _visitForCanvas: function (ctx) {
-        //TODO it will implement dynamic compute child cutting automation.
-        var i, len, locChildren = this._children;
-        // quick return if not visible
-        if (!this._visible || !locChildren || locChildren.length === 0)
-            return;
-
-        if( this._parent)
-            this._curLevel = this._parent._curLevel + 1;
-
-        this.transform();
-
-        if (this._cacheDirty) {
-            var locCacheContext = this._cacheContext, locCanvas = this._cacheCanvas, locView = cc.view,
-                instanceID = this.__instanceId, renderer = cc.renderer;
-            //begin cache
-            renderer._turnToCacheMode(instanceID);
-
-            this.sortAllChildren();
-            for (i = 0, len =  locChildren.length; i < len; i++) {
-                if (locChildren[i]){
-                    locChildren[i].visit();
-                    locChildren[i]._cacheDirty = false;
-                }
-            }
-
-            //copy cached render cmd array to TMXLayer renderer
-            this._rendererCmd._copyRendererCmds(renderer._cacheToCanvasCmds[instanceID]);
-
-            locCacheContext.save();
-            locCacheContext.clearRect(0, 0, locCanvas.width, -locCanvas.height);
-            var t = cc.affineTransformInvert(this._transformWorld);
-            locCacheContext.transform(t.a, t.c, t.b, t.d, t.tx * locView.getScaleX(), -t.ty * locView.getScaleY());
-
-            //draw to cache canvas
-            renderer._renderingToCacheCanvas(locCacheContext, instanceID);
-            locCacheContext.restore();
-            this._cacheDirty = false;
-        }
-        cc.renderer.pushRenderCommand(this._rendererCmd);
-    },
-
-    //set the cache dirty flag for canvas
-    _setNodeDirtyForCache: function () {
-        this._cacheDirty  = true;
-        if(cc.renderer._transformNodePool.indexOf(this) === -1)
-            cc.renderer.pushDirtyNode(this);
-        this._renderCmdDiry = true;
-    },
-
-    /**
-     * draw cc.SpriteBatchNode (override draw of cc.Node)
-     * @function
-     * @param {CanvasRenderingContext2D} ctx
-     */
-    draw:null,
-
-    _drawForCanvas:function (ctx) {
-        var context = ctx || cc._renderContext;
-        //context.globalAlpha = this._opacity / 255;
-        var posX = 0 | ( -this._anchorPointInPoints.x), posY = 0 | ( -this._anchorPointInPoints.y);
-        var eglViewer = cc.view;
-        var locCacheCanvas = this._cacheCanvas;
-        //direct draw image by canvas drawImage
-        if (locCacheCanvas) {
-            var locSubCacheCount = this._subCacheCount, locCanvasHeight = locCacheCanvas.height * eglViewer._scaleY;
-            var halfTileSize = this._mapTileSize.height * 0.5 * eglViewer._scaleY;
-            if(locSubCacheCount > 0) {
-                var locSubCacheCanvasArr = this._subCacheCanvas;
-                for(var i = 0; i < locSubCacheCount; i++){
-                    var selSubCanvas = locSubCacheCanvasArr[i];
-                    if (this.layerOrientation === cc.TMX_ORIENTATION_HEX)
-                        context.drawImage(locSubCacheCanvasArr[i], 0, 0, selSubCanvas.width, selSubCanvas.height,
-                                posX + i * this._subCacheWidth * eglViewer._scaleX, -(posY + locCanvasHeight) + halfTileSize, selSubCanvas.width * eglViewer._scaleX, locCanvasHeight);
-                    else
-                        context.drawImage(locSubCacheCanvasArr[i], 0, 0, selSubCanvas.width, selSubCanvas.height,
-                                posX + i * this._subCacheWidth * eglViewer._scaleX, -(posY + locCanvasHeight), selSubCanvas.width * eglViewer._scaleX, locCanvasHeight);
-                }
-            } else{
-                if (this.layerOrientation === cc.TMX_ORIENTATION_HEX)
-                    context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
-                        posX, -(posY + locCanvasHeight) + halfTileSize, locCacheCanvas.width * eglViewer._scaleX, locCanvasHeight);
-                else
-                    context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
-                        posX, -(posY + locCanvasHeight), locCacheCanvas.width * eglViewer._scaleX, locCanvasHeight);
-            }
-        }
+	getTexture: function(){
+        return this._renderCmd.getTexture();
     },
 
     /**
@@ -730,18 +571,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      */
     setupTiles:function () {
         // Optimization: quick hack that sets the image size on the tileset
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-            this.tileset.imageSize = this._originalTexture.getContentSizeInPixels();
-        } else {
-            this.tileset.imageSize = this.textureAtlas.texture.getContentSizeInPixels();
-
-            // By default all the tiles are aliased
-            // pros:
-            //  - easier to render
-            // cons:
-            //  - difficult to scale / rotate / etc.
-            this.textureAtlas.texture.setAliasTexParameters();
-        }
+        this._renderCmd.initImageSize();
 
         // Parse cocos2d properties
         this._parseInternalProperties();
@@ -860,7 +690,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         rect = cc.rectPixelsToPoints(rect);
 
         var z = 0 | (pos.x + pos.y * this._layerSize.width);
-        var tile = this._reusedTileWithRect(rect);
+        var tile = this._renderCmd._reusedTileWithRect(rect);
         this._setupTileSprite(tile, pos, gid);
 
         // optimization:
@@ -881,7 +711,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         rect = cc.rectPixelsToPoints(rect);
 
         var z = 0 | (pos.x + pos.y * this._layerSize.width);
-        var tile = this._reusedTileWithRect(rect);
+        var tile = this._renderCmd._reusedTileWithRect(rect);
         this._setupTileSprite(tile, pos, gid);
 
         // get atlas index
@@ -915,7 +745,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             rect.width / locScaleFactor, rect.height / locScaleFactor);
         var z = pos.x + pos.y * this._layerSize.width;
 
-        var tile = this._reusedTileWithRect(rect);
+        var tile = this._renderCmd._reusedTileWithRect(rect);
         this._setupTileSprite(tile, pos, gid);
 
         // get atlas index
@@ -1001,33 +831,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         }
     },
 
-    _reusedTileWithRect:function (rect) {
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL){
-            if (!this._reusedTile) {
-                this._reusedTile = new cc.Sprite();
-                this._reusedTile.initWithTexture(this.texture, rect, false);
-                this._reusedTile.batchNode = this;
-            } else {
-                // XXX HACK: Needed because if "batch node" is nil,
-                // then the Sprite'squad will be reset
-                this._reusedTile.batchNode = null;
-
-                // Re-init the sprite
-                this._reusedTile.setTextureRect(rect, false);
-
-                // restore the batch node
-                this._reusedTile.batchNode = this;
-            }
-        } else {
-            this._reusedTile = new cc.Sprite();
-            this._reusedTile.initWithTexture(this._textureForCanvas, rect, false);
-            this._reusedTile.batchNode = this;
-            this._reusedTile.parent = this;
-            this._reusedTile._cachedParent = this;
-        }
-        return this._reusedTile;
-    },
-
     _vertexZForPos:function (pos) {
         var ret = 0;
         var maxVal = 0;
@@ -1079,16 +882,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 });
 
 var _p = cc.TMXLayer.prototype;
-
-if(cc._renderType == cc._RENDER_TYPE_WEBGL){
-	_p.draw = cc.SpriteBatchNode.prototype.draw;
-    _p.visit = cc.SpriteBatchNode.prototype.visit;
-	_p.getTexture = cc.SpriteBatchNode.prototype.getTexture;
-}else{
-    _p.draw = _p._drawForCanvas;
-    _p.visit = _p._visitForCanvas;
-	_p.getTexture = _p._getTextureForCanvas;
-}
 
 /** @expose */
 cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);

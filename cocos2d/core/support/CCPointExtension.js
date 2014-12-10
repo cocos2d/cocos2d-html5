@@ -487,7 +487,7 @@ cc.pMultIn = function(point, floatVar) {
 /**
  * subtracts one point from another (inplace)
  * @param {cc.Point} v1
- * @param {cc.Point{ v2
+ * @param {cc.Point} v2
  */
 cc.pSubIn = function(v1, v2) {
     v1.x -= v2.x;

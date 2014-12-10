@@ -490,34 +490,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         this._positionsAreDirty = true;
     },
 
-    visit: function (ctx) {
-        if(!this._visible){
-            return;
-        }
-
-        if (this._positionsAreDirty) {
-            this._updatePositions();
-            this._positionsAreDirty = false;
-            this._scale9Dirty = true;
-        }
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-            this._scale9Dirty = false;
-            this._cacheScale9Sprite();
-
-            cc.Node.prototype.visit.call(this, ctx);
-        }else{
-            cc.Node.prototype.visit.call(this, ctx);
-        }
-    },
-
-    _transformForRenderer: function(){
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-            this._cacheScale9Sprite();
-            this.transform();
-        }
-        cc.Node.prototype._transformForRenderer.call(this);
-    },
-
     /**
      * Initializes a ccui.Scale9Sprite. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
      * @returns {boolean}
@@ -1032,6 +1004,13 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         this._insetTop = 0;
         this._insetRight = 0;
         this._insetBottom = 0;
+    },
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new ccui.Scale9Sprite.CanvasRenderCmd(this);
+        else
+            return new ccui.Scale9Sprite.WebGLRenderCmd(this);
     }
 });
 

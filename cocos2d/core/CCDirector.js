@@ -237,7 +237,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (this._runningScene) {
             if (renderer.childrenOrderDirty === true) {
                 cc.renderer.clearRenderCommands();
-                this._runningScene._curLevel = 0;                          //level start from 0;
+                this._runningScene._renderCmd._curLevel = 0;                          //level start from 0;
                 this._runningScene.visit();
                 renderer.resetFlag();
             } else if (renderer.transformDirty() === true)
@@ -581,7 +581,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
     /**
      * Sets an OpenGL projection.<br/>
-     * Implementation can be found in CCDiretorCanvas.js/CCDiretorWebGL.js.
+     * Implementation can be found in CCDirectorCanvas.js/CCDirectorWebGL.js.
      * @function
      * @param {Number} projection
      */
@@ -589,14 +589,14 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
     /**
      * Update the view port.<br/>
-     * Implementation can be found in CCDiretorCanvas.js/CCDiretorWebGL.js.
+     * Implementation can be found in CCDirectorCanvas.js/CCDirectorWebGL.js.
      * @function
      */
     setViewport: null,
 
     /**
      * Get the CCEGLView, where everything is rendered.<br/>
-     * Implementation can be found in CCDiretorCanvas.js/CCDiretorWebGL.js.
+     * Implementation can be found in CCDirectorCanvas.js/CCDirectorWebGL.js.
      * @function
      * @return {cc.view}
      */
@@ -604,7 +604,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
     /**
      * Sets an OpenGL projection.<br/>
-     * Implementation can be found in CCDiretorCanvas.js/CCDiretorWebGL.js.
+     * Implementation can be found in CCDirectorCanvas.js/CCDirectorWebGL.js.
      * @function
      * @return {Number}
      */
@@ -612,7 +612,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
     /**
      * Enables/disables OpenGL alpha blending.<br/>
-     * Implementation can be found in CCDiretorCanvas.js/CCDiretorWebGL.js.
+     * Implementation can be found in CCDirectorCanvas.js/CCDirectorWebGL.js.
      * @function
      * @param {Boolean} on
      */
