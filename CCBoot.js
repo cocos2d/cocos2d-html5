@@ -727,10 +727,18 @@ cc.loader = /** @lends cc.loader# */{
      */
     loadJson: function (url, cb) {
         this.loadTxt(url, function (err, txt) {
-            try {
-                err ? cb(err) : cb(null, JSON.parse(txt));
-            } catch (e) {
-                throw "load json [" + url + "] failed : " + e;
+            if (err) {
+                cb(err);
+            }
+            else {
+                try {
+                    var result = JSON.parse(txt);
+                }
+                catch (e) {
+                    throw "parse json [" + url + "] failed : " + e;
+                    return;
+                }
+                cb(null, result);
             }
         });
     },
