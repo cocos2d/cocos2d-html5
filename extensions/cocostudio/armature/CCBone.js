@@ -63,7 +63,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
     _worldInfo: null,
     _armatureParentBone: null,
     _dataVersion: 0,
-    _className: "Bone",
+    __className: "Bone",
 
     ctor: function (name) {
         cc.Node.prototype.ctor.call(this);
@@ -266,10 +266,10 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
         if (display != null) {
             display.setColor(
                 cc.color(
-                        this._displayedColor.r * this._tweenData.r / 255,
-                        this._displayedColor.g * this._tweenData.g / 255,
-                        this._displayedColor.b * this._tweenData.b / 255));
-            display.setOpacity(this._displayedOpacity * this._tweenData.a / 255);
+                        this.__displayedColor.r * this._tweenData.r / 255,
+                        this.__displayedColor.g * this._tweenData.g / 255,
+                        this.__displayedColor.b * this._tweenData.b / 255));
+            display.setOpacity(this.__displayedOpacity * this._tweenData.a / 255);
         }
     },
 
@@ -331,7 +331,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
 
     /**
      * Sets parent bone to ccs.Bone.
-     * If _parent is NUll, then also remove this bone from armature.
+     * If __parent is NUll, then also remove this bone from armature.
      * It will not set the ccs.Armature, if you want to add the bone to a ccs.Armature, you should use ccs.Armature.addBone(bone, parentName).
      * @param {ccs.Bone}  parent  the parent bone.
      */

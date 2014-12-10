@@ -112,7 +112,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     _inputText:"",
     _placeHolder:"",
     _charCount:0,
-    _className:"TextFieldTTF",
+    __className:"TextFieldTTF",
 
     /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />

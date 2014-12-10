@@ -70,7 +70,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     _verticesBuffer:null,
     _colorPointerBuffer:null,
     _texCoordsBuffer:null,
-    _className:"MotionStreak",
+    __className:"MotionStreak",
 
     /**
      * creates and initializes a motion streak with fade in seconds, minimum segments, stroke's width, color, texture filename or texture   <br/>
@@ -118,7 +118,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     },
 
     _initRendererCmd:function(){
-        this._rendererCmd = new cc.MotionStreakCmdWebGL(this);
+        this.__rendererCmd = new cc.MotionStreakCmdWebGL(this);
     },
 
     /**
@@ -509,7 +509,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
             // Color assignment
             var offset = locNuPoints * 8;
 
-            var locDisplayedColor = this._displayedColor;
+            var locDisplayedColor = this.__displayedColor;
             locColorPointer[offset] = locDisplayedColor.r;
             locColorPointer[offset + 1] = locDisplayedColor.g;
             locColorPointer[offset + 2] = locDisplayedColor.b;

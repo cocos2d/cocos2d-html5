@@ -44,7 +44,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
     _to:0,
     _from:0,
     _sceneToBeModified:null,
-    _className:"TransitionProgress",
+    __className:"TransitionProgress",
 
     /**
      * @param {Number} t time

@@ -51,7 +51,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     _textAreaSize: null,
     _textVerticalAlignment: 0,
     _textHorizontalAlignment: 0,
-    _className: "Text",
+    __className: "Text",
     _type: null,
     _labelRendererAdaptDirty: true,
 

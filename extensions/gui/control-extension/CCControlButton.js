@@ -60,7 +60,7 @@ cc.ControlButton = cc.Control.extend(/** @lends cc.ControlButton# */{
 
     _marginV: 0,
     _marginH: 0,
-    _className: "ControlButton",
+    __className: "ControlButton",
 
     ctor: function (label, backgroundSprite, fontSize) {
         cc.Control.prototype.ctor.call(this);
@@ -88,7 +88,7 @@ cc.ControlButton = cc.Control.extend(/** @lends cc.ControlButton# */{
     },
 
     needsLayout: function () {
-        if (!this._parentInited) {
+        if (!this.__parentInited) {
             return;
         }
         // Hide the background and the label
@@ -172,7 +172,7 @@ cc.ControlButton = cc.Control.extend(/** @lends cc.ControlButton# */{
         if (!backgroundSprite)
             throw "cc.ControlButton.initWithLabelAndBackgroundSprite(): backgroundSprite should be non-null";
         if (cc.Control.prototype.init.call(this, true)) {
-            this._parentInited = true;
+            this.__parentInited = true;
 
             // Initialize the button state tables
             this._titleDispatchTable = {};

@@ -44,11 +44,11 @@
  * var node = new cc.AtlasNode("pathOfTile", 16, 16, 1);
  *
  * @property {cc.Texture2D}     texture         - Current used texture
- * @property {cc.TextureAtlas}  textureAtlas    - Texture atlas for cc.AtlasNode
+ * @property {cc.TextureAtlas}  __textureAtlas    - Texture atlas for cc.AtlasNode
  * @property {Number}           quadsToDraw     - Number of quads to draw
  */
 cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
-    textureAtlas: null,
+    __textureAtlas: null,
     quadsToDraw: 0,
 
     //! chars per row
@@ -68,7 +68,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
 
     // This variable is only used for CCLabelAtlas FPS display. So plz don't modify its value.
     _ignoreContentScaleFactor: false,
-    _className: "AtlasNode",
+    __className: "AtlasNode",
 
     /**
      * <p>Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.</p>
@@ -88,7 +88,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
 
     _initRendererCmd: function () {
         if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this._rendererCmd = new cc.AtlasNodeRenderCmdWebGL(this);
+            this.__rendererCmd = new cc.AtlasNodeRenderCmdWebGL(this);
     },
 
     /**
@@ -161,7 +161,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
      * @param {cc.TextureAtlas} value The texture
      */
     setTextureAtlas: function (value) {
-        this.textureAtlas = value;
+        this.__textureAtlas = value;
     },
 
     /**
@@ -170,7 +170,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
      * @return {cc.TextureAtlas}
      */
     getTextureAtlas: function () {
-        return this.textureAtlas;
+        return this.__textureAtlas;
     },
 
     /**
@@ -252,10 +252,10 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
 
         var locRealColor = this._realColor;
         this._colorF32Array = new Float32Array([locRealColor.r / 255.0, locRealColor.g / 255.0, locRealColor.b / 255.0, this._realOpacity / 255.0]);
-        this.textureAtlas = new cc.TextureAtlas();
-        this.textureAtlas.initWithTexture(texture, itemsToRender);
+        this.__textureAtlas = new cc.TextureAtlas();
+        this.__textureAtlas.initWithTexture(texture, itemsToRender);
 
-        if (!this.textureAtlas) {
+        if (!this.__textureAtlas) {
             cc.log(cc._LogInfos.AtlasNode__initWithTexture);
             return false;
         }
@@ -284,7 +284,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
         if(this._uniformColor && this._colorF32Array){
             context.uniform4fv(this._uniformColor, this._colorF32Array);
-            this.textureAtlas.drawNumberOfQuads(this.quadsToDraw, 0);
+            this.__textureAtlas.drawNumberOfQuads(this.quadsToDraw, 0);
         }
     },
 
@@ -303,7 +303,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
         this._colorUnmodified = color3;
 
         if (this._opacityModifyRGB) {
-            var locDisplayedOpacity = this._displayedOpacity;
+            var locDisplayedOpacity = this.__displayedOpacity;
             temp.r = temp.r * locDisplayedOpacity / 255;
             temp.g = temp.g * locDisplayedOpacity / 255;
             temp.b = temp.b * locDisplayedOpacity / 255;
@@ -335,14 +335,14 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     _setColorForWebGL: function (color3) {
         var temp = cc.color(color3.r, color3.g, color3.b);
         this._colorUnmodified = color3;
-        var locDisplayedOpacity = this._displayedOpacity;
+        var locDisplayedOpacity = this.__displayedOpacity;
         if (this._opacityModifyRGB) {
             temp.r = temp.r * locDisplayedOpacity / 255;
             temp.g = temp.g * locDisplayedOpacity / 255;
             temp.b = temp.b * locDisplayedOpacity / 255;
         }
         cc.Node.prototype.setColor.call(this, color3);
-        var locDisplayedColor = this._displayedColor;
+        var locDisplayedColor = this.__displayedColor;
         this._colorF32Array = new Float32Array([locDisplayedColor.r / 255.0, locDisplayedColor.g / 255.0,
             locDisplayedColor.b / 255.0, locDisplayedOpacity / 255.0]);
     },
@@ -369,9 +369,9 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
         if (this._opacityModifyRGB) {
             this.color = this._colorUnmodified;
         } else {
-            var locDisplayedColor = this._displayedColor;
+            var locDisplayedColor = this.__displayedColor;
             this._colorF32Array = new Float32Array([locDisplayedColor.r / 255.0, locDisplayedColor.g / 255.0,
-                locDisplayedColor.b / 255.0, this._displayedOpacity / 255.0]);
+                locDisplayedColor.b / 255.0, this.__displayedOpacity / 255.0]);
         }
     },
 
@@ -387,7 +387,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     },
 
     _getTextureForWebGL: function () {
-        return  this.textureAtlas.texture;
+        return  this.__textureAtlas.texture;
     },
 
     /**
@@ -402,7 +402,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     },
 
     _setTextureForWebGL: function (texture) {
-        this.textureAtlas.texture = texture;
+        this.__textureAtlas.texture = texture;
         this._updateBlendFunc();
         this._updateOpacityModifyRGB();
     },
@@ -428,14 +428,14 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     },
 
     _updateBlendFunc: function () {
-        if (!this.textureAtlas.texture.hasPremultipliedAlpha()) {
+        if (!this.__textureAtlas.texture.hasPremultipliedAlpha()) {
             this._blendFunc.src = cc.SRC_ALPHA;
             this._blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
         }
     },
 
     _updateOpacityModifyRGB: function () {
-        this._opacityModifyRGB = this.textureAtlas.texture.hasPremultipliedAlpha();
+        this._opacityModifyRGB = this.__textureAtlas.texture.hasPremultipliedAlpha();
     },
 
     _setIgnoreContentScaleFactor: function (ignoreContentScaleFactor) {
@@ -472,9 +472,9 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                 if (cacheTextureForColor) {
                     var textureRect = cc.rect(0, 0, element.width, element.height);
                     if (locElement instanceof HTMLCanvasElement)
-                        cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, textureRect, locElement);
+                        cc.generateTintImage(locElement, cacheTextureForColor, this.__displayedColor, textureRect, locElement);
                     else {
-                        locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, textureRect);
+                        locElement = cc.generateTintImage(locElement, cacheTextureForColor, this.__displayedColor, textureRect);
                         locTexture = new cc.Texture2D();
                         locTexture.initWithElement(locElement);
                         locTexture.handleLoadedTexture();
@@ -494,7 +494,7 @@ cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
 _p.texture;
 cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
 /** @expose */
-_p.textureAtlas;
+_p.__textureAtlas;
 /** @expose */
 _p.quadsToDraw;
 

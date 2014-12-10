@@ -57,7 +57,7 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend(/** @lends cc.ControlSa
 
     _boxPos:0,
     _boxSize:0,
-    _className:"ControlSaturationBrightnessPicker",
+    __className:"ControlSaturationBrightnessPicker",
 
     /**
      * The constructor of cc.ControlSaturationBrightnessPicker

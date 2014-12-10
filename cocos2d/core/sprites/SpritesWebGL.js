@@ -54,17 +54,17 @@ cc._tmp.WebGLSprite = function () {
         self._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
         self._rect = cc.rect(0,0,0,0);
 
-        self._quad = new cc.V3F_C4B_T2F_Quad();
-        self._quadWebBuffer = cc._renderContext.createBuffer();
-        self._quadDirty = true;
+        self.__quad = new cc.V3F_C4B_T2F_Quad();
+        self.__quadWebBuffer = cc._renderContext.createBuffer();
+        self.__quadDirty = true;
 
-        self._textureLoaded = true;
+        self.__textureLoaded = true;
 
         self._softInit(fileName, rect, rotated);
     };
 
     _p._initRendererCmd = function(){
-        this._rendererCmd = new cc.TextureRenderCmdWebGL(this);
+        this.__rendererCmd = new cc.TextureRenderCmdWebGL(this);
     };
 
     _p.setBlendFunc = function (src, dst) {
@@ -84,7 +84,7 @@ cc._tmp.WebGLSprite = function () {
             return _t.initWithFile(arguments[0], arguments[1]);
 
         cc.Node.prototype.init.call(_t);
-        _t.dirty = _t._recursiveDirty = false;
+        _t.__dirty = _t.__recursiveDirty = false;
         _t._opacityModifyRGB = true;
 
         _t._blendFunc.src = cc.BLEND_SRC;
@@ -92,7 +92,7 @@ cc._tmp.WebGLSprite = function () {
 
         // update texture (calls _updateBlendFunc)
         _t.texture = null;
-        _t._textureLoaded = true;
+        _t.__textureLoaded = true;
         _t._flippedX = _t._flippedY = false;
 
         // default transform anchor: center
@@ -103,15 +103,15 @@ cc._tmp.WebGLSprite = function () {
         _t._offsetPosition.x = 0;
         _t._offsetPosition.y = 0;
 
-        _t._hasChildren = false;
+        _t.__hasChildren = false;
 
         // Atlas: Color
         var tempColor = {r: 255, g: 255, b: 255, a: 255};
-        _t._quad.bl.colors = tempColor;
-        _t._quad.br.colors = tempColor;
-        _t._quad.tl.colors = tempColor;
-        _t._quad.tr.colors = tempColor;
-        _t._quadDirty = true;
+        _t.__quad.bl.colors = tempColor;
+        _t.__quad.br.colors = tempColor;
+        _t.__quad.tl.colors = tempColor;
+        _t.__quad.tr.colors = tempColor;
+        _t.__quadDirty = true;
 
         // updated in "useSelfRender"
         // Atlas: TexCoords
@@ -131,8 +131,8 @@ cc._tmp.WebGLSprite = function () {
             return false;
 
         _t._batchNode = null;
-        _t._recursiveDirty = false;
-        _t.dirty = false;
+        _t.__recursiveDirty = false;
+        _t.__dirty = false;
         _t._opacityModifyRGB = true;
 
         _t._blendFunc.src = cc.BLEND_SRC;
@@ -147,18 +147,18 @@ cc._tmp.WebGLSprite = function () {
         // zwoptex default values
         _t._offsetPosition.x = 0;
         _t._offsetPosition.y = 0;
-        _t._hasChildren = false;
+        _t.__hasChildren = false;
 
         // Atlas: Color
         var tmpColor = cc.color(255, 255, 255, 255);
-        var locQuad = _t._quad;
+        var locQuad = _t.__quad;
         locQuad.bl.colors = tmpColor;
         locQuad.br.colors = tmpColor;
         locQuad.tl.colors = tmpColor;
         locQuad.tr.colors = tmpColor;
 
         var locTextureLoaded = texture.isLoaded();
-        _t._textureLoaded = locTextureLoaded;
+        _t.__textureLoaded = locTextureLoaded;
 
         if (!locTextureLoaded) {
             _t._rectRotated = rotated || false;
@@ -200,16 +200,16 @@ cc._tmp.WebGLSprite = function () {
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
         _t.batchNode = null;
-        _t._quadDirty = true;
+        _t.__quadDirty = true;
         return true;
     };
 
     _p._textureLoadedCallback = function (sender) {
         var _t = this;
-        if(_t._textureLoaded)
+        if(_t.__textureLoaded)
             return;
 
-        _t._textureLoaded = true;
+        _t.__textureLoaded = true;
         var locRect = _t._rect;
         if (!locRect) {
             locRect = cc.rect(0, 0, sender.width, sender.height);
@@ -224,7 +224,7 @@ cc._tmp.WebGLSprite = function () {
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
         _t.batchNode = _t._batchNode;
-        _t._quadDirty = true;
+        _t.__quadDirty = true;
         _t.dispatchEvent("load");
     };
 
@@ -248,8 +248,8 @@ cc._tmp.WebGLSprite = function () {
 
         // rendering using batch node
         if (_t._batchNode) {
-            // update dirty, don't update _recursiveDirty
-            _t.dirty = true;
+            // update dirty, don't update __recursiveDirty
+            _t.__dirty = true;
         } else {
             // self rendering
             // Atlas: Vertex
@@ -259,13 +259,13 @@ cc._tmp.WebGLSprite = function () {
             var y2 = y1 + locRect.height;
 
             // Don't update Z.
-            var locQuad = _t._quad;
+            var locQuad = _t.__quad;
             locQuad.bl.vertices = {x:x1, y:y1, z:0};
             locQuad.br.vertices = {x:x2, y:y1, z:0};
             locQuad.tl.vertices = {x:x1, y:y2, z:0};
             locQuad.tr.vertices = {x:x2, y:y2, z:0};
 
-            _t._quadDirty = true;
+            _t.__quadDirty = true;
         }
     };
 
@@ -274,8 +274,8 @@ cc._tmp.WebGLSprite = function () {
         //cc.assert(_t._batchNode, "updateTransform is only valid when cc.Sprite is being rendered using an cc.SpriteBatchNode");
 
         // recaculate matrix only if it is dirty
-        if (_t.dirty) {
-            var locQuad = _t._quad, locParent = _t._parent;
+        if (_t.__dirty) {
+            var locQuad = _t.__quad, locParent = _t.__parent;
             // If it is not visible, or one of its ancestors is not visible, then do nothing:
             if (!_t._visible || ( locParent && locParent != _t._batchNode && locParent._shouldBeHidden)) {
                 locQuad.br.vertices = locQuad.tl.vertices = locQuad.tr.vertices = locQuad.bl.vertices = {x: 0, y: 0, z: 0};
@@ -286,7 +286,7 @@ cc._tmp.WebGLSprite = function () {
                 if (!locParent || locParent == _t._batchNode) {
                     _t._transformToBatch = _t.nodeToParentTransform();
                 } else {
-                    //cc.assert(_t._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
+                    //cc.assert(_t.__parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
                     _t._transformToBatch = cc.affineTransformConcat(_t.nodeToParentTransform(), locParent._transformToBatch);
                 }
 
@@ -335,22 +335,22 @@ cc._tmp.WebGLSprite = function () {
                 locQuad.tl.vertices = {x: dx, y: dy, z: locVertexZ};
                 locQuad.tr.vertices = {x: cx, y: cy, z: locVertexZ};
             }
-            _t.textureAtlas.updateQuad(locQuad, _t.atlasIndex);
-            _t._recursiveDirty = false;
-            _t.dirty = false;
+            _t.__textureAtlas.updateQuad(locQuad, _t.__atlasIndex);
+            _t.__recursiveDirty = false;
+            _t.__dirty = false;
         }
 
         // recursively iterate over children
-        if (_t._hasChildren)
+        if (_t.__hasChildren)
             _t._arrayMakeObjectsPerformSelector(_t._children, cc.Node._StateCallbackType.updateTransform);
 
         if (cc.SPRITE_DEBUG_DRAW) {
             // draw bounding box
             var vertices = [
-                cc.p(_t._quad.bl.vertices.x, _t._quad.bl.vertices.y),
-                cc.p(_t._quad.br.vertices.x, _t._quad.br.vertices.y),
-                cc.p(_t._quad.tr.vertices.x, _t._quad.tr.vertices.y),
-                cc.p(_t._quad.tl.vertices.x, _t._quad.tl.vertices.y)
+                cc.p(_t.__quad.bl.vertices.x, _t.__quad.bl.vertices.y),
+                cc.p(_t.__quad.br.vertices.x, _t.__quad.br.vertices.y),
+                cc.p(_t.__quad.tr.vertices.x, _t.__quad.tr.vertices.y),
+                cc.p(_t.__quad.tl.vertices.x, _t.__quad.tl.vertices.y)
             ];
             cc._drawingUtil.drawPoly(vertices, 4, true);
         }
@@ -371,18 +371,18 @@ cc._tmp.WebGLSprite = function () {
                 cc.log(cc._LogInfos.Sprite_addChild);
                 return;
             }
-            if(child.texture._webTextureObj !== _t.textureAtlas.texture._webTextureObj)
+            if(child.texture._webTextureObj !== _t.__textureAtlas.texture._webTextureObj)
                 cc.log(cc._LogInfos.Sprite_addChild_2);
 
             //put it in descendants array of batch node
             _t._batchNode.appendChild(child);
-            if (!_t._reorderChildDirty)
+            if (!_t.__reorderChildDirty)
                 _t._setReorderChildDirtyRecursively();
         }
 
         //cc.Node already sets isReorderChildDirty_ so _t needs to be after batchNode check
         cc.Node.prototype.addChild.call(_t, child, localZOrder, tag);
-        _t._hasChildren = true;
+        _t.__hasChildren = true;
     };
 
     _p.setOpacity = function (opacity) {
@@ -415,9 +415,9 @@ cc._tmp.WebGLSprite = function () {
         var pNewTexture = newFrame.getTexture();
         var locTextureLoaded = newFrame.textureLoaded();
         if (!locTextureLoaded) {
-            _t._textureLoaded = false;
+            _t.__textureLoaded = false;
             newFrame.addEventListener("load", function (sender) {
-                _t._textureLoaded = true;
+                _t.__textureLoaded = true;
                 var locNewTexture = sender.getTexture();
                 if (locNewTexture != _t._texture)
                     _t.texture = locNewTexture;
@@ -446,26 +446,26 @@ cc._tmp.WebGLSprite = function () {
 
         // self render
         if (!_t._batchNode) {
-            _t.atlasIndex = cc.Sprite.INDEX_NOT_INITIALIZED;
-            _t.textureAtlas = null;
-            _t._recursiveDirty = false;
-            _t.dirty = false;
+            _t.__atlasIndex = cc.Sprite.INDEX_NOT_INITIALIZED;
+            _t.__textureAtlas = null;
+            _t.__recursiveDirty = false;
+            _t.__dirty = false;
 
             var x1 = _t._offsetPosition.x;
             var y1 = _t._offsetPosition.y;
             var x2 = x1 + _t._rect.width;
             var y2 = y1 + _t._rect.height;
-            var locQuad = _t._quad;
+            var locQuad = _t.__quad;
             locQuad.bl.vertices = {x:x1, y:y1, z:0};
             locQuad.br.vertices = {x:x2, y:y1, z:0};
             locQuad.tl.vertices = {x:x1, y:y2, z:0};
             locQuad.tr.vertices = {x:x2, y:y2, z:0};
 
-            _t._quadDirty = true;
+            _t.__quadDirty = true;
         } else {
             // using batch
             _t._transformToBatch = cc.affineTransformIdentity();
-            _t.textureAtlas = _t._batchNode.textureAtlas; // weak ref
+            _t.__textureAtlas = _t._batchNode.__textureAtlas; // weak ref
         }
     };
 
@@ -510,7 +510,7 @@ cc._tmp.WebGLSprite = function () {
 
     _p.draw = function () {
         var _t = this;
-        if (!_t._textureLoaded)
+        if (!_t.__textureLoaded)
             return;
 
         var gl = cc._renderContext, locTexture = _t._texture;
@@ -526,10 +526,10 @@ cc._tmp.WebGLSprite = function () {
                 cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
                 cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
-                gl.bindBuffer(gl.ARRAY_BUFFER, _t._quadWebBuffer);
-                if (_t._quadDirty) {
-                    gl.bufferData(gl.ARRAY_BUFFER, _t._quad.arrayBuffer, gl.DYNAMIC_DRAW);
-                    _t._quadDirty = false;
+                gl.bindBuffer(gl.ARRAY_BUFFER, _t.__quadWebBuffer);
+                if (_t.__quadDirty) {
+                    gl.bufferData(gl.ARRAY_BUFFER, _t.__quad.arrayBuffer, gl.DYNAMIC_DRAW);
+                    _t.__quadDirty = false;
                 }
                 gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);                   //cc.VERTEX_ATTRIB_POSITION
                 gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
@@ -546,10 +546,10 @@ cc._tmp.WebGLSprite = function () {
 
             cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
 
-            gl.bindBuffer(gl.ARRAY_BUFFER, _t._quadWebBuffer);
-            if (_t._quadDirty) {
-                cc._renderContext.bufferData(cc._renderContext.ARRAY_BUFFER, _t._quad.arrayBuffer, cc._renderContext.STATIC_DRAW);
-                _t._quadDirty = false;
+            gl.bindBuffer(gl.ARRAY_BUFFER, _t.__quadWebBuffer);
+            if (_t.__quadDirty) {
+                cc._renderContext.bufferData(cc._renderContext.ARRAY_BUFFER, _t.__quad.arrayBuffer, cc._renderContext.STATIC_DRAW);
+                _t.__quadDirty = false;
             }
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
@@ -561,7 +561,7 @@ cc._tmp.WebGLSprite = function () {
 
         if (cc.SPRITE_DEBUG_DRAW === 1 || _t._showNode) {
             // draw bounding box
-            var locQuad = _t._quad;
+            var locQuad = _t.__quad;
             var verticesG1 = [
                 cc.p(locQuad.tl.vertices.x, locQuad.tl.vertices.y),
                 cc.p(locQuad.bl.vertices.x, locQuad.bl.vertices.y),

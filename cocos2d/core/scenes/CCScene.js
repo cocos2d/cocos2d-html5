@@ -43,7 +43,8 @@ cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
     /**
      * Constructor of cc.Scene
      */
-    _className:"Scene",
+    __className:"Scene",
+    _type_:"cc.Scene",
     ctor:function () {
         cc.Node.prototype.ctor.call(this);
         this._ignoreAnchorPointForPosition = true;

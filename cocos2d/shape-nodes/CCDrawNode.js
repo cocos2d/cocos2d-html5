@@ -93,7 +93,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     _blendFunc: null,
     _lineWidth: 1,
     _drawColor: null,
-    _className:"DrawNodeCanvas",
+    __className:"DrawNodeCanvas",
 
     /**
      * <p>The cc.DrawNodeCanvas's constructor. <br/>
@@ -102,7 +102,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
      */
     ctor: function () {
         cc.Node.prototype.ctor.call(this);
-        var locCmd = this._rendererCmd;
+        var locCmd = this.__rendererCmd;
         locCmd._buffer = this._buffer = [];
         locCmd._drawColor = this._drawColor = cc.color(255, 255, 255, 255);
         locCmd._blendFunc = this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
@@ -111,7 +111,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     },
 
     _initRendererCmd: function(){
-        this._rendererCmd = new cc.DrawNodeRenderCmdCanvas(this);
+        this.__rendererCmd = new cc.DrawNodeRenderCmdCanvas(this);
     },
 
     // ----common function start ----
@@ -591,7 +591,7 @@ cc.DrawNodeWebGL = cc.Node.extend({
 
     _blendFunc:null,
     _dirty:false,
-    _className:"DrawNodeWebGL",
+    __className:"DrawNodeWebGL",
 
     // ----common function start ----
     getBlendFunc:function () {
@@ -619,7 +619,7 @@ cc.DrawNodeWebGL = cc.Node.extend({
     },
     
     _initRendererCmd: function(){
-        this._rendererCmd = new cc.DrawNodeRenderCmdWebGL(this);
+        this.__rendererCmd = new cc.DrawNodeRenderCmdWebGL(this);
     },
 
     init:function () {

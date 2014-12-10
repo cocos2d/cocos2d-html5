@@ -160,6 +160,7 @@ cc._tmp.PrototypeColor = function () {
     /** @expose */
     cc.BlendFunc.ADDITIVE;
     cc.defineGetterSetter(cc.BlendFunc, "ADDITIVE", cc.BlendFunc._additive);
+
 };
 
 

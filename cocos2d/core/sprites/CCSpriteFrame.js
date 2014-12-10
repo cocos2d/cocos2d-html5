@@ -61,7 +61,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
     _originalSizeInPixels:null,
     _texture:null,
     _textureFilename:"",
-    _textureLoaded:false,
+    __textureLoaded:false,
 
     ctor:function (filename, rect, rotated, offset, originalSize) {
         this._offset = cc.p(0, 0);
@@ -71,7 +71,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         this._originalSizeInPixels = cc.size(0, 0);
         this._textureFilename = "";
         this._texture = null;
-        this._textureLoaded = false;
+        this.__textureLoaded = false;
 
         if(filename !== undefined && rect !== undefined ){
             if(rotated === undefined || offset === undefined || originalSize === undefined)
@@ -86,7 +86,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @returns {boolean}
      */
     textureLoaded:function(){
-        return this._textureLoaded;
+        return this.__textureLoaded;
     },
 
     /**
@@ -225,7 +225,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         if (this._textureFilename !== "") {
             var locTexture = cc.textureCache.addImage(this._textureFilename);
             if (locTexture)
-                this._textureLoaded = locTexture.isLoaded();
+                this.__textureLoaded = locTexture.isLoaded();
             return locTexture;
         }
         return null;
@@ -238,11 +238,11 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
     setTexture:function (texture) {
         if (this._texture != texture) {
             var locLoaded = texture.isLoaded();
-            this._textureLoaded = locLoaded;
+            this.__textureLoaded = locLoaded;
             this._texture = texture;
             if(!locLoaded){
                 texture.addEventListener("load", function(sender){
-                    this._textureLoaded = true;
+                    this.__textureLoaded = true;
                     if(this._rotated && cc._renderType === cc._RENDER_TYPE_CANVAS){
                         var tempElement = sender.getHtmlElementObj();
                         tempElement = cc.cutRotateImageToCanvas(tempElement, this.getRect());

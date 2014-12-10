@@ -57,7 +57,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     _ballPTexType: ccui.Widget.LOCAL_TEXTURE,
     _ballDTexType: ccui.Widget.LOCAL_TEXTURE,
     _isTextureLoaded: false,
-    _className: "Slider",
+    __className: "Slider",
     _barRendererAdaptDirty: true,
     _progressBarRendererDirty: true,
 

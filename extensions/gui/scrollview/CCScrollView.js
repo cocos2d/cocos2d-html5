@@ -100,7 +100,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
     // cache object
     _tmpViewRect:null,
     _touchListener: null,
-    _className:"ScrollView",
+    __className:"ScrollView",
 
     _beforeDrawCmd:null,
     _afterDrawCmd:null,
@@ -129,7 +129,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
                 ctx.save();
                 ctx.save();
                 this.transform();
-                var t = this._transformWorld;
+                var t = this.__transformWorld;
                 ctx.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
                 cc.ScrollView.prototype._beforeDraw.call(this);
             });
@@ -636,16 +636,16 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
                 }
 
 //                this.draw(context);             // self draw
-                if(this._rendererCmd)
-                    cc.renderer.pushRenderCommand(this._rendererCmd);
+                if(this.__rendererCmd)
+                    cc.renderer.pushRenderCommand(this.__rendererCmd);
 
                 // draw children zOrder >= 0
                 for (; i < childrenLen; i++)
                     locChildren[i].visit(context);
             } else{
 //                this.draw(context);             // self draw
-                if(this._rendererCmd)
-                    cc.renderer.pushRenderCommand(this._rendererCmd);
+                if(this.__rendererCmd)
+                    cc.renderer.pushRenderCommand(this.__rendererCmd);
             }
 
 //            this._afterDraw();
@@ -676,16 +676,16 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
 
                 // this draw
                 //this.draw(context);
-                if(this._rendererCmd)
-                    cc.renderer.pushRenderCommand(this._rendererCmd);
+                if(this.__rendererCmd)
+                    cc.renderer.pushRenderCommand(this.__rendererCmd);
 
                 // draw children zOrder >= 0
                 for (; i < childrenLen; i++)
                     locChildren[i].visit();
             } else{
                 //this.draw(context);
-                if(this._rendererCmd)
-                    cc.renderer.pushRenderCommand(this._rendererCmd);
+                if(this.__rendererCmd)
+                    cc.renderer.pushRenderCommand(this.__rendererCmd);
             }
 
             this._afterDraw(context);
@@ -926,7 +926,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         var scaleX = this.getScaleX();
         var scaleY = this.getScaleY();
 
-        for (var p = this._parent; p != null; p = p.getParent()) {
+        for (var p = this.__parent; p != null; p = p.getParent()) {
             scaleX *= p.getScaleX();
             scaleY *= p.getScaleY();
         }

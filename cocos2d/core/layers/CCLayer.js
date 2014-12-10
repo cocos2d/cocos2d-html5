@@ -30,10 +30,11 @@
  * @extends cc.Node
  */
 cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
+    _type_:"cc.Layer",
     _isBaked: false,
     _bakeSprite: null,
     _bakeRenderCmd: null,
-    _className: "Layer",
+    __className: "Layer",
 
     /**
      * <p>Constructor of cc.Layer, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.</p>
@@ -106,18 +107,18 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         if (!this._isBaked) {
             cc.renderer.childrenOrderDirty = true;
             //limit: 1. its children's blendfunc are invalid.
-            this._isBaked = this._cacheDirty = true;
+            this._isBaked = this.__cacheDirty = true;
             if(!this._bakeRenderCmd && this._bakeRendering)
                 this._bakeRenderCmd = new cc.CustomRenderCmdCanvas(this, this._bakeRendering);
 
-            this._cachedParent = this;
+            this.__cachedParent = this;
             var children = this._children;
             for(var i = 0, len = children.length; i < len; i++)
                 children[i]._setCachedParent(this);
 
             if (!this._bakeSprite){
                 this._bakeSprite = new cc.BakeSprite();
-                this._bakeSprite._parent = this;
+                this._bakeSprite.__parent = this;
             }
         }
     };
@@ -126,9 +127,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         if (this._isBaked) {
             cc.renderer.childrenOrderDirty = true;
             this._isBaked = false;
-            this._cacheDirty = true;
+            this.__cacheDirty = true;
 
-            this._cachedParent = null;
+            this.__cachedParent = null;
             var children = this._children;
             for(var i = 0, len = children.length; i < len; i++)
                 children[i]._setCachedParent(null);
@@ -137,12 +138,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     p.addChild = function(child, localZOrder, tag){
         cc.Node.prototype.addChild.call(this, child, localZOrder, tag);
-        if(child._parent == this && this._isBaked)
+        if(child.__parent == this && this._isBaked)
             child._setCachedParent(this);
     };
 
     p._bakeRendering = function(){
-        if(this._cacheDirty){
+        if(this.__cacheDirty){
             var _t = this;
             var children = _t._children, locBakeSprite = this._bakeSprite;
             //compute the bounding box of the bake layer.
@@ -154,7 +155,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
             bakeContext.translate(0 - boundingBox.x, boundingBox.height + boundingBox.y);
             //  invert
-            var t = cc.affineTransformInvert(this._transformWorld);
+            var t = cc.affineTransformInvert(this.__transformWorld);
             bakeContext.transform(t.a, t.c, t.b, t.d, t.tx , -t.ty );
 
             //reset the bake sprite's position
@@ -169,7 +170,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             }
             cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
             locBakeSprite.transform();                   //because bake sprite's position was changed at rendering.
-            this._cacheDirty = false;
+            this.__cacheDirty = false;
         }
     };
 
@@ -249,7 +250,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
  */
 cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     _blendFunc: null,
-    _className: "LayerColor",
+    __className: "LayerColor",
 
     /**
      * Returns the blend function
@@ -335,7 +336,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         width = width === undefined ? winSize.width : width;
         height = height === undefined ? winSize.height : height;
 
-        var locDisplayedColor = this._displayedColor;
+        var locDisplayedColor = this.__displayedColor;
         locDisplayedColor.r = color.r;
         locDisplayedColor.g = color.g;
         locDisplayedColor.b = color.b;
@@ -345,7 +346,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         locRealColor.g = color.g;
         locRealColor.b = color.b;
 
-        this._displayedOpacity = color.a;
+        this.__displayedOpacity = color.a;
         this._realOpacity = color.a;
 
         var proto = cc.LayerColor.prototype;
@@ -413,7 +414,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         cc.LayerColor.prototype.init.call(this, color, width, height);
     };
     _p._initRendererCmd = function(){
-        this._rendererCmd = new cc.RectRenderCmdCanvas(this);
+        this.__rendererCmd = new cc.RectRenderCmdCanvas(this);
     };
     _p._setWidth = function(width){
         cc.Node.prototype._setWidth.call(this, width);
@@ -422,28 +423,28 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         cc.Node.prototype._setHeight.call(this, height);
     };
     _p._updateColor = function () {
-        var locCmd = this._rendererCmd;
+        var locCmd = this.__rendererCmd;
         if(!locCmd || !locCmd._color)
             return;
-        var locColor = this._displayedColor;
+        var locColor = this.__displayedColor;
         locCmd._color.r = locColor.r;
         locCmd._color.g = locColor.g;
         locCmd._color.b = locColor.b;
-        locCmd._color.a = this._displayedOpacity / 255;
+        locCmd._color.a = this.__displayedOpacity / 255;
     };
 
     _p.draw = function (ctx) {
         var context = ctx || cc._renderContext, _t = this;
-        var locEGLViewer = cc.view, locDisplayedColor = _t._displayedColor;
+        var locEGLViewer = cc.view, locDisplayedColor = _t.__displayedColor;
 
         context.fillStyle = "rgba(" + (0 | locDisplayedColor.r) + "," + (0 | locDisplayedColor.g) + ","
-            + (0 | locDisplayedColor.b) + "," + _t._displayedOpacity / 255 + ")";
+            + (0 | locDisplayedColor.b) + "," + _t.__displayedOpacity / 255 + ")";
         context.fillRect(0, 0, _t.width * locEGLViewer.getScaleX(), -_t.height * locEGLViewer.getScaleY());
         cc.g_NumberOfDraws++;
     };
 
     _p._bakeRendering = function(){
-        if(this._cacheDirty){
+        if(this.__cacheDirty){
             var _t = this;
             var locBakeSprite = _t._bakeSprite, children = this._children;
             var len = children.length, i;
@@ -466,7 +467,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 locBakeSprite.setPosition(anchor.x + boundingBox.x - selfPos.x, anchor.y + boundingBox.y - selfPos.y);
             }
             //  invert
-            var t = cc.affineTransformInvert(this._transformWorld);
+            var t = cc.affineTransformInvert(this.__transformWorld);
             bakeContext.transform(t.a, t.c, t.b, t.d, t.tx, -t.ty);
 
             var child;
@@ -482,17 +483,17 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                     else
                         break;
                 }
-                if(_t._rendererCmd)
-                    cc.renderer.pushRenderCommand(_t._rendererCmd);
+                if(_t.__rendererCmd)
+                    cc.renderer.pushRenderCommand(_t.__rendererCmd);
                 for (; i < len; i++) {
                     children[i].visit(bakeContext);
                 }
             } else
-            if(_t._rendererCmd)
-                cc.renderer.pushRenderCommand(_t._rendererCmd);
+            if(_t.__rendererCmd)
+                cc.renderer.pushRenderCommand(_t.__rendererCmd);
             cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
             locBakeSprite.transform();
-            this._cacheDirty = false;
+            this.__cacheDirty = false;
         }
     };
 
@@ -590,7 +591,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _endOpacity: 255,
     _alongVector: null,
     _compressedInterpolation: false,
-    _className: "LayerGradient",
+    __className: "LayerGradient",
 
     /**
      * Constructor of cc.LayerGradient
@@ -610,7 +611,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     _initRendererCmd: function(){
-        this._rendererCmd = new cc.GradientRectRenderCmdCanvas(this);
+        this.__rendererCmd = new cc.GradientRectRenderCmdCanvas(this);
     },
 
     /**
@@ -797,13 +798,13 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var _t = this;
         var locAlongVector = _t._alongVector, tWidth = _t.width * 0.5, tHeight = _t.height * 0.5;
 
-        var locCmd = this._rendererCmd;
+        var locCmd = this.__rendererCmd;
         locCmd._startPoint.x = tWidth * (-locAlongVector.x) + tWidth;
         locCmd._startPoint.y = tHeight * locAlongVector.y - tHeight;
         locCmd._endPoint.x = tWidth * locAlongVector.x + tWidth;
         locCmd._endPoint.y = tHeight * (-locAlongVector.y) - tHeight;
 
-        var locStartColor = this._displayedColor, locEndColor = this._endColor, opacity = this._displayedOpacity / 255;
+        var locStartColor = this.__displayedColor, locEndColor = this._endColor, opacity = this.__displayedOpacity / 255;
         var startOpacity = this._startOpacity, endOpacity = this._endOpacity;
         locCmd._startStopStr = "rgba(" + Math.round(locStartColor.r) + "," + Math.round(locStartColor.g) + ","
             + Math.round(locStartColor.b) + "," + startOpacity.toFixed(4) + ")";
@@ -837,7 +838,7 @@ delete cc._tmp.PrototypeLayerGradient;
 cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
     _enabledLayer: 0,
     _layers: null,
-    _className: "LayerMultiplex",
+    __className: "LayerMultiplex",
 
     /**
      * Constructor of cc.LayerMultiplex

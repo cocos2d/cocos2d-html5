@@ -95,8 +95,8 @@ cc.NodeGrid = cc.Node.extend({
         if(isWebGL){
             var currentStack = cc.current_stack;
             currentStack.stack.push(currentStack.top);
-            cc.kmMat4Assign(this._stackMatrix, currentStack.top);
-            currentStack.top = this._stackMatrix;
+            cc.kmMat4Assign(this.__stackMatrix, currentStack.top);
+            currentStack.top = this.__stackMatrix;
         }
 
         self.transform();
@@ -106,12 +106,12 @@ cc.NodeGrid = cc.Node.extend({
             var beforeProjectionType = cc.director.PROJECTION_DEFAULT;
             if (locGrid && locGrid._active){
                 //var backMatrix = new cc.kmMat4();
-                //cc.kmMat4Assign(backMatrix, this._stackMatrix);
+                //cc.kmMat4Assign(backMatrix, this.__stackMatrix);
 
                 beforeProjectionType = cc.director.getProjection();
                 //locGrid.set2DProjection();
 
-                //reset this._stackMatrix to current_stack.top
+                //reset this.__stackMatrix to current_stack.top
                 //cc.kmMat4Assign(currentStack.top, backMatrix);
             }
             if(this._gridBeginCommand)
@@ -144,10 +144,10 @@ cc.NodeGrid = cc.Node.extend({
 
     _transformForWebGL: function () {
         //optimize performance for javascript
-        var t4x4 = this._transform4x4, topMat4 = cc.current_stack.top;
+        var t4x4 = this.__transform4x4, topMat4 = cc.current_stack.top;
 
         // Convert 3x3 into 4x4 matrix
-        //cc.CGAffineToGL(this.nodeToParentTransform(), this._transform4x4.mat);
+        //cc.CGAffineToGL(this.nodeToParentTransform(), this.__transform4x4.mat);
         var trans = this.nodeToParentTransform();
         var t4x4Mat = t4x4.mat;
         t4x4Mat[0] = trans.a;
@@ -158,11 +158,11 @@ cc.NodeGrid = cc.Node.extend({
         t4x4Mat[13] = trans.ty;
 
         // Update Z vertex manually
-        //this._transform4x4.mat[14] = this._vertexZ;
+        //this.__transform4x4.mat[14] = this._vertexZ;
         t4x4Mat[14] = this._vertexZ;
 
         //optimize performance for Javascript
-        cc.kmMat4Multiply(topMat4, topMat4, t4x4); // = cc.kmGLMultMatrix(this._transform4x4);
+        cc.kmMat4Multiply(topMat4, topMat4, t4x4); // = cc.kmGLMultMatrix(this.__transform4x4);
 
         // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
         if (this._camera != null && !(this.grid && this.grid.isActive())) {

@@ -152,7 +152,7 @@ cc.CONSTRAINT_COLOR = cc.color(0, 255, 0, 128);
  */
 cc.PhysicsDebugNode = cc.DrawNode.extend({
     _space:null,
-    _className:"PhysicsDebugNode",
+    __className:"PhysicsDebugNode",
 
     /**
      * constructor of cc.PhysicsDebugNode
@@ -165,9 +165,9 @@ cc.PhysicsDebugNode = cc.DrawNode.extend({
 
     _initRendererCmd:function(){
         if(cc._renderType === cc._RENDER_TYPE_CANVAS)
-            this._rendererCmd = new cc.PhysicsDebugNodeRenderCmdCanvas(this);
+            this.__rendererCmd = new cc.PhysicsDebugNodeRenderCmdCanvas(this);
         else
-            this._rendererCmd = new cc.PhysicsDebugNodeRenderCmdWebGL(this);
+            this.__rendererCmd = new cc.PhysicsDebugNodeRenderCmdWebGL(this);
     },
     /**
      * get space

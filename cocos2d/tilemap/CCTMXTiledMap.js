@@ -131,7 +131,7 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
     _tileSize: null,
     //tile properties
     _tileProperties: null,
-    _className: "TMXTiledMap",
+    __className: "TMXTiledMap",
 
     /**
      * Creates a TMX Tiled Map with a TMX file  or content string. <br/>

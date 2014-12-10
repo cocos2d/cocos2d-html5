@@ -43,7 +43,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
     _capInsets: null,
     _textureFile: "",
     _isTextureLoaded: false,
-    _className: "LoadingBar",
+    __className: "LoadingBar",
     _barRendererAdaptDirty: true,
 
     /**

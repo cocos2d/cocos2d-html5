@@ -81,7 +81,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     _cacheCanvas:null,
     _cacheContext:null,
     _cacheTexture:null,
-    _className:"TMXLayer",
+    __className:"TMXLayer",
 
     /**
      * Creates a cc.TMXLayer with an tile set info, a layer info and a map info   <br/>
@@ -111,7 +111,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             this.width = locCanvas.width;
 	        this.height = locCanvas.height;
 	        // This class uses cache, so its default cachedParent should be himself
-	        this._cachedParent = this;
+	        this.__cachedParent = this;
         }
         if(mapInfo !== undefined)
             this.initWithTilesetInfo(tilesetInfo, layerInfo, mapInfo);
@@ -119,9 +119,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
     _initRendererCmd: function(){
         if(cc._renderType === cc._RENDER_TYPE_CANVAS)
-            this._rendererCmd = new cc.TMXLayerRenderCmdCanvas(this);
+            this.__rendererCmd = new cc.TMXLayerRenderCmdCanvas(this);
         else
-            this._rendererCmd = new cc.TMXLayerRenderCmdWebGL(this);
+            this.__rendererCmd = new cc.TMXLayerRenderCmdWebGL(this);
     },
 
     /**
@@ -202,12 +202,12 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         if (!this._visible || !locChildren || locChildren.length === 0)
             return;
 
-        if( this._parent)
-            this._curLevel = this._parent._curLevel + 1;
+        if( this.__parent)
+            this.__curLevel = this.__parent.__curLevel + 1;
 
         this.transform();
 
-        if (this._cacheDirty) {
+        if (this.__cacheDirty) {
             var locCacheContext = this._cacheContext, locCanvas = this._cacheCanvas, locView = cc.view,
                 instanceID = this.__instanceId, renderer = cc.renderer;
             //begin cache
@@ -217,32 +217,32 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             for (i = 0, len =  locChildren.length; i < len; i++) {
                 if (locChildren[i]){
                     locChildren[i].visit();
-                    locChildren[i]._cacheDirty = false;
+                    locChildren[i].__cacheDirty = false;
                 }
             }
 
             //copy cached render cmd array to TMXLayer renderer
-            this._rendererCmd._copyRendererCmds(renderer._cacheToCanvasCmds[instanceID]);
+            this.__rendererCmd._copyRendererCmds(renderer._cacheToCanvasCmds[instanceID]);
 
             locCacheContext.save();
             locCacheContext.clearRect(0, 0, locCanvas.width, -locCanvas.height);
-            var t = cc.affineTransformInvert(this._transformWorld);
+            var t = cc.affineTransformInvert(this.__transformWorld);
             locCacheContext.transform(t.a, t.c, t.b, t.d, t.tx * locView.getScaleX(), -t.ty * locView.getScaleY());
 
             //draw to cache canvas
             renderer._renderingToCacheCanvas(locCacheContext, instanceID);
             locCacheContext.restore();
-            this._cacheDirty = false;
+            this.__cacheDirty = false;
         }
-        cc.renderer.pushRenderCommand(this._rendererCmd);
+        cc.renderer.pushRenderCommand(this.__rendererCmd);
     },
 
-    //set the cache dirty flag for canvas
+    //set the cache __dirty flag for canvas
     _setNodeDirtyForCache: function () {
-        this._cacheDirty  = true;
+        this.__cacheDirty  = true;
         if(cc.renderer._transformNodePool.indexOf(this) === -1)
             cc.renderer.pushDirtyNode(this);
-        this._renderCmdDiry = true;
+        this.__renderCmdDirty = true;
     },
 
     /**
@@ -658,12 +658,12 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             if (cc._renderType === cc._RENDER_TYPE_CANVAS)
                 this._setNodeDirtyForCache();
             var z = 0 | (pos.x + pos.y * this._layerSize.width);
-            var atlasIndex = this._atlasIndexForExistantZ(z);
+            var __atlasIndex = this._atlasIndexForExistantZ(z);
             // remove tile from GID map
             this.tiles[z] = 0;
 
             // remove tile from atlas position array
-            this._atlasIndexArray.splice(atlasIndex, 1);
+            this._atlasIndexArray.splice(__atlasIndex, 1);
 
             // remove it from sprites and/or texture atlas
             var sprite = this.getChildByTag(z);
@@ -672,7 +672,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 cc.SpriteBatchNode.prototype.removeChild.call(this, sprite, true);           //this.removeChild(sprite, true);
             else {
                 if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-                    this.textureAtlas.removeQuadAtIndex(atlasIndex);
+                    this.__textureAtlas.removeQuadAtIndex(__atlasIndex);
 
                 // update possible children
                 if (this._children) {
@@ -680,9 +680,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                     for (var i = 0, len = locChildren.length; i < len; i++) {
                         var child = locChildren[i];
                         if (child) {
-                            var ai = child.atlasIndex;
-                            if (ai >= atlasIndex)
-                                child.atlasIndex = ai - 1;
+                            var ai = child.__atlasIndex;
+                            if (ai >= __atlasIndex)
+                                child.__atlasIndex = ai - 1;
                         }
                     }
                 }
@@ -733,14 +733,14 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             this.tileset.imageSize = this._originalTexture.getContentSizeInPixels();
         } else {
-            this.tileset.imageSize = this.textureAtlas.texture.getContentSizeInPixels();
+            this.tileset.imageSize = this.__textureAtlas.texture.getContentSizeInPixels();
 
             // By default all the tiles are aliased
             // pros:
             //  - easier to render
             // cons:
             //  - difficult to scale / rotate / etc.
-            this.textureAtlas.texture.setAliasTexParameters();
+            this.__textureAtlas.texture.setAliasTexParameters();
         }
 
         // Parse cocos2d properties
@@ -797,10 +797,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
         if (cc._renderType === cc._RENDER_TYPE_CANVAS)
             this._setNodeDirtyForCache();
-        var atlasIndex = sprite.atlasIndex;
-        var zz = this._atlasIndexArray[atlasIndex];
+        var __atlasIndex = sprite.__atlasIndex;
+        var zz = this._atlasIndexArray[__atlasIndex];
         this.tiles[zz] = 0;
-        this._atlasIndexArray.splice(atlasIndex, 1);
+        this._atlasIndexArray.splice(__atlasIndex, 1);
         cc.SpriteBatchNode.prototype.removeChild.call(this, sprite, cleanup);
         cc.renderer.childrenOrderDirty = true;
     },
@@ -898,9 +898,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             for (var i = 0, len = locChildren.length; i < len; i++) {
                 var child = locChildren[i];
                 if (child) {
-                    var ai = child.atlasIndex;
+                    var ai = child.__atlasIndex;
                     if (ai >= indexForZ)
-                        child.atlasIndex = ai + 1;
+                        child.__atlasIndex = ai + 1;
                 }
             }
         }
@@ -919,8 +919,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         this._setupTileSprite(tile, pos, gid);
 
         // get atlas index
-        tile.atlasIndex = this._atlasIndexForExistantZ(z);
-        tile.dirty = true;
+        tile.__atlasIndex = this._atlasIndexForExistantZ(z);
+        tile.__dirty = true;
         tile.updateTransform();
         this.tiles[z] = gid;
 
@@ -1023,7 +1023,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             this._reusedTile.initWithTexture(this._textureForCanvas, rect, false);
             this._reusedTile.batchNode = this;
             this._reusedTile.parent = this;
-            this._reusedTile._cachedParent = this;
+            this._reusedTile.__cachedParent = this;
         }
         return this._reusedTile;
     },

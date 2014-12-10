@@ -32,34 +32,34 @@ if(CSParseBinary && window["dcodeIO"] && window["dcodeIO"]["ProtoBuf"]){
 (function(){
     var factoryCreate = ccs.objectFactory;
 
-    factoryCreate.registerType({_className:"ButtonReader", _fun: ccs.buttonReader});
-    factoryCreate.registerType({_className: "CheckBoxReader", _fun: ccs.checkBoxReader});
-    factoryCreate.registerType({_className: "SliderReader", _fun: ccs.sliderReader});
-    factoryCreate.registerType({_className: "ImageViewReader", _fun: ccs.imageViewReader});
-    factoryCreate.registerType({_className: "LoadingBarReader", _fun: ccs.loadingBarReader});
-    factoryCreate.registerType({_className: "TextAtlasReader", _fun: ccs.labelAtlasReader});
-    factoryCreate.registerType({_className: "TextReader", _fun: ccs.labelReader});
-    factoryCreate.registerType({_className: "TextBMFontReader", _fun: ccs.labelBMFontReader});
-    factoryCreate.registerType({_className: "TextFieldReader", _fun: ccs.textFieldReader});
-    factoryCreate.registerType({_className: "LayoutReader", _fun: ccs.layoutReader});
-    factoryCreate.registerType({_className: "PageViewReader", _fun: ccs.pageViewReader});
-    factoryCreate.registerType({_className: "ScrollViewReader", _fun: ccs.scrollViewReader});
-    factoryCreate.registerType({_className: "ListViewReader", _fun: ccs.listViewReader});
-    factoryCreate.registerType({_className: "WidgetReader", _fun: ccs.widgetReader});
+    factoryCreate.registerType({__className:"ButtonReader", _fun: ccs.buttonReader});
+    factoryCreate.registerType({__className: "CheckBoxReader", _fun: ccs.checkBoxReader});
+    factoryCreate.registerType({__className: "SliderReader", _fun: ccs.sliderReader});
+    factoryCreate.registerType({__className: "ImageViewReader", _fun: ccs.imageViewReader});
+    factoryCreate.registerType({__className: "LoadingBarReader", _fun: ccs.loadingBarReader});
+    factoryCreate.registerType({__className: "TextAtlasReader", _fun: ccs.labelAtlasReader});
+    factoryCreate.registerType({__className: "TextReader", _fun: ccs.labelReader});
+    factoryCreate.registerType({__className: "TextBMFontReader", _fun: ccs.labelBMFontReader});
+    factoryCreate.registerType({__className: "TextFieldReader", _fun: ccs.textFieldReader});
+    factoryCreate.registerType({__className: "LayoutReader", _fun: ccs.layoutReader});
+    factoryCreate.registerType({__className: "PageViewReader", _fun: ccs.pageViewReader});
+    factoryCreate.registerType({__className: "ScrollViewReader", _fun: ccs.scrollViewReader});
+    factoryCreate.registerType({__className: "ListViewReader", _fun: ccs.listViewReader});
+    factoryCreate.registerType({__className: "WidgetReader", _fun: ccs.widgetReader});
 
-    factoryCreate.registerType({_className: "Button", _fun: ccui.Button});
-    factoryCreate.registerType({_className: "CheckBox", _fun: ccui.CheckBox});
-    factoryCreate.registerType({_className: "ImageView", _fun: ccui.ImageView});
-    factoryCreate.registerType({_className: "Text", _fun: ccui.Text});
-    factoryCreate.registerType({_className: "TextAtlas", _fun: ccui.TextAtlas});
-    factoryCreate.registerType({_className: "TextBMFont", _fun: ccui.TextBMFont});
-    factoryCreate.registerType({_className: "LoadingBar", _fun: ccui.LoadingBar});
-    factoryCreate.registerType({_className: "Slider", _fun: ccui.Slider});
-    factoryCreate.registerType({_className: "TextField", _fun: ccui.TextField});
-    factoryCreate.registerType({_className: "Layout", _fun: ccui.Layout});
-    factoryCreate.registerType({_className: "ListView", _fun: ccui.ListView});
-    factoryCreate.registerType({_className: "PageView", _fun: ccui.PageView});
-    factoryCreate.registerType({_className: "ScrollView", _fun: ccui.ScrollView});
+    factoryCreate.registerType({__className: "Button", _fun: ccui.Button});
+    factoryCreate.registerType({__className: "CheckBox", _fun: ccui.CheckBox});
+    factoryCreate.registerType({__className: "ImageView", _fun: ccui.ImageView});
+    factoryCreate.registerType({__className: "Text", _fun: ccui.Text});
+    factoryCreate.registerType({__className: "TextAtlas", _fun: ccui.TextAtlas});
+    factoryCreate.registerType({__className: "TextBMFont", _fun: ccui.TextBMFont});
+    factoryCreate.registerType({__className: "LoadingBar", _fun: ccui.LoadingBar});
+    factoryCreate.registerType({__className: "Slider", _fun: ccui.Slider});
+    factoryCreate.registerType({__className: "TextField", _fun: ccui.TextField});
+    factoryCreate.registerType({__className: "Layout", _fun: ccui.Layout});
+    factoryCreate.registerType({__className: "ListView", _fun: ccui.ListView});
+    factoryCreate.registerType({__className: "PageView", _fun: ccui.PageView});
+    factoryCreate.registerType({__className: "ScrollView", _fun: ccui.ScrollView});
 
 })();
 

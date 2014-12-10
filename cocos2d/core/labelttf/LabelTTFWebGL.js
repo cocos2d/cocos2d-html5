@@ -94,10 +94,10 @@ cc._tmp.WebGLLabelTTF = function () {
 
             cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
-            gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
-            if (this._quadDirty) {
-                gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.STATIC_DRAW);
-                this._quadDirty = false;
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.__quadWebBuffer);
+            if (this.__quadDirty) {
+                gl.bufferData(gl.ARRAY_BUFFER, this.__quad.arrayBuffer, gl.STATIC_DRAW);
+                this.__quadDirty = false;
             }
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);
@@ -107,7 +107,7 @@ cc._tmp.WebGLLabelTTF = function () {
 
         if (cc.SPRITE_DEBUG_DRAW === 1) {
             // draw bounding box
-            var locQuad = this._quad;
+            var locQuad = this.__quad;
             var verticesG1 = [
                 cc.p(locQuad.tl.vertices.x, locQuad.tl.vertices.y),
                 cc.p(locQuad.bl.vertices.x, locQuad.bl.vertices.y),

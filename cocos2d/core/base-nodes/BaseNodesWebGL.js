@@ -33,9 +33,9 @@ cc._tmp.WebGLCCNode = function () {
      */
     var _p = cc.Node.prototype;
 
-    _p._transform4x4 = null;
-    _p._stackMatrix = null;
-    _p._glServerState = null;
+    _p.__transform4x4 = null;
+    _p.__stackMatrix = null;
+    _p.__glServerState = null;
     _p._camera = null;
 
     _p.ctor = function () {
@@ -46,17 +46,17 @@ cc._tmp.WebGLCCNode = function () {
         var mat4 = new cc.kmMat4();
         mat4.mat[2] = mat4.mat[3] = mat4.mat[6] = mat4.mat[7] = mat4.mat[8] = mat4.mat[9] = mat4.mat[11] = mat4.mat[14] = 0.0;
         mat4.mat[10] = mat4.mat[15] = 1.0;
-        _t._transform4x4 = mat4;
-        _t._glServerState = 0;
-        _t._stackMatrix = new cc.kmMat4();
+        _t.__transform4x4 = mat4;
+        _t.__glServerState = 0;
+        _t.__stackMatrix = new cc.kmMat4();
         this._initRendererCmd();
     };
 
     _p.setNodeDirty = function () {
         var _t = this;
-        if(_t._transformDirty === false){
+        if(_t.__transformDirty === false){
             _t._setNodeDirtyForCache();
-            _t._renderCmdDiry = _t._transformDirty = _t._inverseDirty = true;
+            _t.__renderCmdDirty = _t.__transformDirty = _t.__inverseDirty = true;
             cc.renderer.pushDirtyNode(this);
         }
     };
@@ -67,15 +67,15 @@ cc._tmp.WebGLCCNode = function () {
         if (!_t._visible)
             return;
 
-        if( _t._parent)
-            _t._curLevel = _t._parent._curLevel + 1;
+        if( _t.__parent)
+            _t.__curLevel = _t.__parent.__curLevel + 1;
 
         var context = cc._renderContext, i, currentStack = cc.current_stack;
 
         //optimize performance for javascript
         currentStack.stack.push(currentStack.top);
-        cc.kmMat4Assign(_t._stackMatrix, currentStack.top);
-        currentStack.top = _t._stackMatrix;
+        cc.kmMat4Assign(_t.__stackMatrix, currentStack.top);
+        currentStack.top = _t.__stackMatrix;
 
         //_t.toRenderer();
         _t.transform();
@@ -91,8 +91,8 @@ cc._tmp.WebGLCCNode = function () {
                 else
                     break;
             }
-            if(this._rendererCmd)
-                cc.renderer.pushRenderCommand(this._rendererCmd);
+            if(this.__rendererCmd)
+                cc.renderer.pushRenderCommand(this.__rendererCmd);
             // draw children zOrder >= 0
             for (; i < childLen; i++) {
                 if (locChildren[i]) {
@@ -100,8 +100,8 @@ cc._tmp.WebGLCCNode = function () {
                 }
             }
         } else{
-            if(this._rendererCmd)
-                cc.renderer.pushRenderCommand(this._rendererCmd);
+            if(this.__rendererCmd)
+                cc.renderer.pushRenderCommand(this.__rendererCmd);
         }
 
         //optimize performance for javascript
@@ -109,8 +109,8 @@ cc._tmp.WebGLCCNode = function () {
     };
 
     _p._transformForRenderer = function (pMatrix) {
-        var t4x4 = this._transform4x4, stackMatrix = this._stackMatrix,
-            parentMatrix = pMatrix || (this._parent ? this._parent._stackMatrix : cc.current_stack.top);
+        var t4x4 = this.__transform4x4, stackMatrix = this.__stackMatrix,
+            parentMatrix = pMatrix || (this.__parent ? this.__parent.__stackMatrix : cc.current_stack.top);
 
         // Convert 3x3 into 4x4 matrix
         var trans = this.nodeToParentTransform();
@@ -152,7 +152,7 @@ cc._tmp.WebGLCCNode = function () {
             }
         }
 
-        this._renderCmdDiry = false;
+        this.__renderCmdDirty = false;
         if(!this._children || this._children.length === 0)
             return;
         var i, len, locChildren = this._children;
@@ -165,7 +165,7 @@ cc._tmp.WebGLCCNode = function () {
     _p.transform = function () {
         var _t = this;
         //optimize performance for javascript
-        var t4x4 = _t._transform4x4, topMat4 = cc.current_stack.top;
+        var t4x4 = _t.__transform4x4, topMat4 = cc.current_stack.top;
 
         // Convert 3x3 into 4x4 matrix
         var trans = _t.nodeToParentTransform();

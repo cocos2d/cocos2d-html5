@@ -51,7 +51,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     _armatureTransformDirty: true,
     _body: null,
     _blendFunc: null,
-    _className: "Armature",
+    __className: "Armature",
     _realAnchorPointInPoints: null,
 
     /**
@@ -78,7 +78,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             this._rendererStartCmd = new cc.CustomRenderCmdCanvas(this, this._startRendererCmdForCanvas);
             this._rendererEndCmd = new cc.CustomRenderCmdCanvas(this, this._endRendererCmdForCanvas);
         }else{
-            this._rendererCmd = new cc.ArmatureRenderCmdWebGL(this);
+            this.__rendererCmd = new cc.ArmatureRenderCmdWebGL(this);
         }
     },
 
@@ -479,7 +479,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         if(this._rendererEndCmd)
             cc.renderer.pushRenderCommand(this._rendererEndCmd);
 
-        this._cacheDirty = false;
+        this.__cacheDirty = false;
 
         context.restore();
     },
@@ -488,7 +488,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         var context = ctx || cc._renderContext;
         context.save();
         this.transform(context);
-        var t = this._transformWorld;
+        var t = this.__transformWorld;
         ctx.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
 
         var locChildren = this._children;
@@ -508,7 +508,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     _endRendererCmdForCanvas: function(ctx){
         var context = ctx || cc._renderContext;
 
-        this._cacheDirty = false;
+        this.__cacheDirty = false;
 
         context.restore();
     },
@@ -521,14 +521,14 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         var context = cc._renderContext, currentStack = cc.current_stack;
 
         currentStack.stack.push(currentStack.top);
-        cc.kmMat4Assign(this._stackMatrix, currentStack.top);
-        currentStack.top = this._stackMatrix;
+        cc.kmMat4Assign(this.__stackMatrix, currentStack.top);
+        currentStack.top = this.__stackMatrix;
 
         this.transform();
 
         this.sortAllChildren();
         //this.draw(context);
-        cc.renderer.pushRenderCommand(this._rendererCmd);
+        cc.renderer.pushRenderCommand(this.__rendererCmd);
 
         currentStack.top = currentStack.stack.pop();
     },

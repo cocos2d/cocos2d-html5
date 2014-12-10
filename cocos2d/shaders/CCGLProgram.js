@@ -578,12 +578,12 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
         var matrixMVP = new cc.kmMat4();
 
         cc.kmGLGetMatrix(cc.KM_GL_PROJECTION, matrixP);
-        //cc.kmGLGetMatrix(cc.KM_GL_MODELVIEW, node._stackMatrix);
+        //cc.kmGLGetMatrix(cc.KM_GL_MODELVIEW, node.__stackMatrix);
 
-        cc.kmMat4Multiply(matrixMVP, matrixP, node._stackMatrix);
+        cc.kmMat4Multiply(matrixMVP, matrixP, node.__stackMatrix);
 
         this.setUniformLocationWithMatrix4fv(this._uniforms[cc.UNIFORM_PMATRIX], matrixP.mat, 1);
-        this.setUniformLocationWithMatrix4fv(this._uniforms[cc.UNIFORM_MVMATRIX], node._stackMatrix.mat, 1);
+        this.setUniformLocationWithMatrix4fv(this._uniforms[cc.UNIFORM_MVMATRIX], node.__stackMatrix.mat, 1);
         this.setUniformLocationWithMatrix4fv(this._uniforms[cc.UNIFORM_MVPMATRIX], matrixMVP.mat, 1);
 
         if (this._usesTime) {

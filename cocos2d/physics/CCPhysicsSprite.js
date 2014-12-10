@@ -369,7 +369,7 @@
          * @return {Number}
          */
         getRotation:function () {
-            return this._ignoreBodyRotation ? cc.radiansToDegrees(this._rotationRadiansX) : -cc.radiansToDegrees(this._body.a);
+            return this._ignoreBodyRotation ? cc.radiansToDegrees(this.__rotationRadiansX) : -cc.radiansToDegrees(this._body.a);
         },
 
         /**
@@ -385,7 +385,7 @@
             }
         },
         _syncRotation:function () {
-            if (this._rotationRadiansX != -this._body.a) {
+            if (this.__rotationRadiansX != -this._body.a) {
                 cc.Sprite.prototype.setRotation.call(this, -cc.radiansToDegrees(this._body.a));
             }
         },
@@ -402,11 +402,11 @@
          */
         getNodeToParentTransform:function () {
             var _t = this;
-            if(_t._usingNormalizedPosition && _t._parent){        //TODO need refactor
-                var conSize = _t._parent._contentSize;
+            if(_t._usingNormalizedPosition && _t.__parent){        //TODO need refactor
+                var conSize = _t.__parent._contentSize;
                 _t._position.x = _t._normalizedPosition.x * conSize.width;
                 _t._position.y = _t._normalizedPosition.y * conSize.height;
-                _t._normalizedPositionDirty = false;
+                _t.__normalizedPositionDirty = false;
             }
 
             if(cc._renderType === cc._RENDER_TYPE_CANVAS)
@@ -435,16 +435,16 @@
             }
 
             // Rot, Translate Matrix
-            this._transform = cc.affineTransformMake(c * locScaleX, s * locScaleX,
+            this.__transform = cc.affineTransformMake(c * locScaleX, s * locScaleX,
                 -s * locScaleY, c * locScaleY,
                 x, y);
 
-            return this._transform;
+            return this.__transform;
         },
 
         _nodeToParentTransformForCanvas: function () {
-            if (this.dirty) {
-                var t = this._transform;// quick reference
+            if (this.__dirty) {
+                var t = this.__transform;// quick reference
                 // base position
                 var locBody = this._body, locScaleX = this._scaleX, locScaleY = this._scaleY, locAnchorPIP = this._anchorPointInPoints;
                 t.tx = locBody.p.x;
@@ -480,9 +480,9 @@
                     t.tx += locAnchorPIP.x;
                     t.ty += locAnchorPIP.y;
                 }
-                this._transformDirty = false;
+                this.__transformDirty = false;
             }
-            return this._transform;
+            return this.__transform;
         },
 
         /**
@@ -503,15 +503,15 @@
         }
     };
     cc.PhysicsSprite = cc.Sprite.extend(chipmunkAPI);
-    cc.PhysicsSprite._className = "PhysicsSprite";
+    cc.PhysicsSprite.__className = "PhysicsSprite";
     var _p = cc.PhysicsSprite.prototype;
     // Extended properties
     /** @expose */
     _p.body;
     cc.defineGetterSetter(_p, "body", _p.getBody, _p.setBody);
     /** @expose */
-    _p.dirty;
-    cc.defineGetterSetter(_p, "dirty", _p.isDirty, _p.setDirty);
+    _p.__dirty;
+    cc.defineGetterSetter(_p, "__dirty", _p.isDirty, _p.setDirty);
 
 
     /**

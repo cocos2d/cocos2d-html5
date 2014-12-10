@@ -55,7 +55,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     _midPoint:null,
     _barChangeRate:null,
     _reverseDirection:false,
-    _className:"ProgressTimer",
+    __className:"ProgressTimer",
 
     /**
      *    Midpoint is used to modify the progress start position.
@@ -187,7 +187,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         this._reverseDirection = false;
 
         this._sprite = null;
-        this._rendererCmd = new cc.ProgressRenderCmdCanvas(this);
+        this.__rendererCmd = new cc.ProgressRenderCmdCanvas(this);
         sprite && this._initWithSpriteForCanvas(sprite);
     },
 
@@ -206,7 +206,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         this._vertexData = null;
         this._vertexArrayBuffer = null;
         this._vertexDataDirty = false;
-        this._rendererCmd = new cc.ProgressRenderCmdWebGL(this);
+        this.__rendererCmd = new cc.ProgressRenderCmdWebGL(this);
 
         sprite && this._initWithSpriteForWebGL(sprite);
     },
@@ -278,7 +278,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     _setSpriteForCanvas:function (sprite) {
         if (this._sprite != sprite) {
             this._sprite = sprite;
-            this._rendererCmd._sprite = sprite;
+            this.__rendererCmd._sprite = sprite;
             this.width = this._sprite.width;
 	        this.height = this._sprite.height;
         }
@@ -309,7 +309,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     _setTypeForCanvas:function (type) {
         if (type !== this._type){
             this._type = type;
-            this._rendererCmd._type = type;
+            this.__rendererCmd._type = type;
         }
     },
 
@@ -733,7 +733,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         var locSprite = this._sprite;
         var sw = locSprite.width, sh = locSprite.height;
         var locMidPoint = this._midPoint;
-        var locCmd = this._rendererCmd;
+        var locCmd = this.__rendererCmd;
 
         if (this._type == cc.ProgressTimer.TYPE_RADIAL) {
             locCmd._radius = Math.round(Math.sqrt(sw * sw + sh * sh));

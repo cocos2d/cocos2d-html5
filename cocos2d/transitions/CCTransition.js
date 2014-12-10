@@ -69,7 +69,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
     _duration:null,
     _isInSceneOnTop:false,
     _isSendCleanupToScene:false,
-    _className:"TransitionScene",
+    __className:"TransitionScene",
 
     /**
      * creates a base transition with duration and incoming scene

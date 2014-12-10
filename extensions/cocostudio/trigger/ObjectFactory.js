@@ -53,7 +53,7 @@ ccs.objectFactory = /** @lends ccs.objectFactory# */{
      * @param {ccs.TInfo} t
      */
     registerType: function (t) {
-        this._typeMap[t._className] = t;
+        this._typeMap[t.__className] = t;
     },
 
     /**
@@ -83,15 +83,15 @@ ccs.objectFactory = /** @lends ccs.objectFactory# */{
 };
 
 ccs.TInfo = ccs.Class.extend({
-    _className: "",
+    __className: "",
     _fun: null,
 
     ctor: function (c, f) {
         if (f) {
-            this._className = c;
+            this.__className = c;
             this._fun = f;
         } else {
-            this._className = c._className;
+            this.__className = c.__className;
             this._fun = c._fun;
         }
         ccs.objectFactory.registerType(this);

@@ -49,7 +49,7 @@ cc.TABLEVIEW_FILL_BOTTOMUP = 1;
  */
 cc.TableViewCell = cc.Node.extend(/** @lends cc.TableViewCell# */{
     _idx:0,
-    _className:"TableViewCell",
+    __className:"TableViewCell",
 
     /**
      * The index used internally by SWTableView and its subclasses
@@ -627,7 +627,7 @@ cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
         if (this._touchedCell){
             var bb = this.getBoundingBox();
             var tmpOrigin = cc.p(bb.x, bb.y);
-            tmpOrigin = this._parent.convertToWorldSpace(tmpOrigin);
+            tmpOrigin = this.__parent.convertToWorldSpace(tmpOrigin);
             bb.x = tmpOrigin.x;
             bb.y = tmpOrigin.y;
             var locTableViewDelegate = this._tableViewDelegate;

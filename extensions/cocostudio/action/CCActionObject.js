@@ -36,7 +36,7 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
     _playing: false,
     _unitTime: 0,
     _currentTime: 0,
-    _scheduler:null,
+    __scheduler:null,
     _callback: null,
     _fTotalTime: 0,
 
@@ -52,7 +52,7 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
         this._unitTime = 0.1;
         this._currentTime = 0;
         this._fTotalTime = 0;
-        this._scheduler = cc.director.getScheduler();
+        this.__scheduler = cc.director.getScheduler();
     },
 
     /**
@@ -200,7 +200,7 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
             locActionNodeList[i].playAction(fun);
         }
         if (this._loop)
-            this._scheduler.scheduleCallbackForTarget(this, this.simulationActionUpdate, 0, cc.REPEAT_FOREVER, 0, false);
+            this.__scheduler.scheduleCallbackForTarget(this, this.simulationActionUpdate, 0, cc.REPEAT_FOREVER, 0, false);
         if(fun !== undefined)
             this._callback = fun;
     },
@@ -220,7 +220,7 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
         var locActionNodeList = this._actionNodeList;
         for (var i = 0; i < locActionNodeList.length; i++)
             locActionNodeList[i].stopAction();
-        this._scheduler.unscheduleCallbackForTarget(this, this.simulationActionUpdate);
+        this.__scheduler.unscheduleCallbackForTarget(this, this.simulationActionUpdate);
         this._pause = false;
         this._playing = false;
     },
@@ -256,7 +256,7 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
                 this.play();
             else{
                 this._playing = false;
-                this._scheduler.unschedule(this.simulationActionUpdate, this);
+                this.__scheduler.unschedule(this.simulationActionUpdate, this);
             }
         }
     }

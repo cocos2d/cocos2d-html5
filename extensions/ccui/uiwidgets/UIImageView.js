@@ -36,7 +36,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
     _textureFile: "",
     _imageTexType: ccui.Widget.LOCAL_TEXTURE,
     _imageTextureSize: null,
-    _className:"ImageView",
+    __className:"ImageView",
     _imageRendererAdaptDirty: true,
 
     /**

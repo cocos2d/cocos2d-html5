@@ -83,15 +83,15 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
     _spritesGenerated: false,
     _spriteFrameRotated: false,
-    _textureLoaded:false,
-    _className:"Scale9Sprite",
+    __textureLoaded:false,
+    __className:"Scale9Sprite",
 
     /**
      * return  texture is loaded
      * @returns {boolean}
      */
     textureLoaded:function(){
-        return this._textureLoaded;
+        return this.__textureLoaded;
     },
 
     /**
@@ -571,7 +571,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         }
 
         var locLoaded = texture.isLoaded();
-        this._textureLoaded = locLoaded;
+        this.__textureLoaded = locLoaded;
         if(!locLoaded){
             texture.addEventListener("load", function(sender){
                 // the texture is rotated on Canvas render mode, so isRotated always is false.
@@ -604,7 +604,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
         capInsets = capInsets || cc.rect(0, 0, 0, 0);
         var locLoaded = spriteFrame.textureLoaded();
-        this._textureLoaded = locLoaded;
+        this.__textureLoaded = locLoaded;
         if(!locLoaded){
             spriteFrame.addEventListener("load", function(sender){
                 // the texture is rotated on Canvas render mode, so isRotated always is false.
@@ -708,7 +708,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
         var tmpTexture = batchNode.getTexture();
         var locLoaded = tmpTexture.isLoaded();
-        this._textureLoaded = locLoaded;
+        this.__textureLoaded = locLoaded;
         if(!locLoaded){
             tmpTexture.addEventListener("load", function(sender){
                 this._positionsAreDirty = true;
@@ -1004,7 +1004,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         var batchNode = new cc.SpriteBatchNode(spriteFrame.getTexture(), 9);
         // the texture is rotated on Canvas render mode, so isRotated always is false.
         var locLoaded = spriteFrame.textureLoaded();
-        this._textureLoaded = locLoaded;
+        this.__textureLoaded = locLoaded;
         if(!locLoaded){
             spriteFrame.addEventListener("load", function(sender){
                 // the texture is rotated on Canvas render mode, so isRotated always is false.

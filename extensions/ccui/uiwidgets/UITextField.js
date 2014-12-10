@@ -36,7 +36,7 @@ ccui._TextFieldRenderer = cc.TextFieldTTF.extend({
     _detachWithIME: false,
     _insertText: false,
     _deleteBackward: false,
-    _className: "_TextFieldRenderer",
+    __className: "_TextFieldRenderer",
     _textFieldRendererAdaptDirty: true,
 
     ctor: function () {

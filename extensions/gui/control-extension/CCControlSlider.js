@@ -59,7 +59,7 @@ cc.ControlSlider = cc.Control.extend(/** @lends cc.ControlSlider# */{
     _thumbSprite:null,
     _progressSprite:null,
     _backgroundSprite:null,
-    _className:"ControlSlider",
+    __className:"ControlSlider",
 
     ctor:function (bgFile, progressFile, thumbFile) {
         cc.Control.prototype.ctor.call(this);

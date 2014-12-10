@@ -52,7 +52,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
     _itemsToRender:0,
     //x,y to altas dictionary
     _posToAtlasIndex:null,
-    _className:"TileMapAtlas",
+    __className:"TileMapAtlas",
 
     /**
      * <p>Creates a cc.TileMap with a tile file (atlas) with a map file and the width and height of each tile in points.<br />
@@ -199,7 +199,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
      * @private
      */
     _updateAtlasValueAt:function (pos, value, index) {
-        var locTextureAtlas = this.textureAtlas;
+        var locTextureAtlas = this.__textureAtlas;
         if(index < 0 && index >= locTextureAtlas.getCapacity())
             throw "cc.TileMapAtlas._updateAtlasValueAt(): Invalid index";
         var quad = locTextureAtlas.quads[index];
@@ -251,14 +251,14 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         quad.tr.vertices.y = (y * locItemHeight + locItemHeight);
         quad.tr.vertices.z = 0.0;
 
-        var locColor = this._displayedColor;
-        var color = {r: locColor.r, g: locColor.g, b: locColor.b, a: this._displayedOpacity};
+        var locColor = this.__displayedColor;
+        var color = {r: locColor.r, g: locColor.g, b: locColor.b, a: this.__displayedOpacity};
         quad.tr.colors = color;
         quad.tl.colors = color;
         quad.br.colors = color;
         quad.bl.colors = color;
 
-        locTextureAtlas.dirty = true;
+        locTextureAtlas.__dirty = true;
         var totalQuads = locTextureAtlas.totalQuads;
         if (index + 1 > totalQuads)
             locTextureAtlas.increaseTotalQuadsWith(index + 1 - totalQuads);

@@ -40,7 +40,7 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
     _target: null,
     _callback: null,
     _isSelected: false,
-    _className: "MenuItem",
+    __className: "MenuItem",
 
     /**
      * Constructor of cc.MenuItem

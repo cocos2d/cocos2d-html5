@@ -54,9 +54,9 @@ ccs.DecorativeDisplay = ccs.Class.extend(/** @lends ccs.DecorativeDisplay# */{
      * @param {cc.Node} display
      */
     setDisplay:function (display) {
-        if(display._parent){
-            display._parent.removeChild(display);
-            delete display._parent;
+        if(display.__parent){
+            display.__parent.removeChild(display);
+            delete display.__parent;
         }
         this._display = display;
     },

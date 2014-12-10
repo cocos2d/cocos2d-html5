@@ -65,7 +65,7 @@ cc._tmp.WebGLLayerColor = function () {
         cc.LayerColor.prototype.init.call(_t, color, width, height);
     };
     _p._initRendererCmd = function(){
-        this._rendererCmd = new cc.RectRenderCmdWebGL(this);
+        this.__rendererCmd = new cc.RectRenderCmdWebGL(this);
     };
     _p.setContentSize = function (size, height) {
         var locSquareVertices = this._squareVertices;
@@ -98,8 +98,8 @@ cc._tmp.WebGLLayerColor = function () {
         cc.Layer.prototype._setHeight.call(this, height);
     };
     _p._updateColor = function () {
-        var locDisplayedColor = this._displayedColor;
-        var locDisplayedOpacity = this._displayedOpacity, locSquareColors = this._squareColors;
+        var locDisplayedColor = this.__displayedColor;
+        var locDisplayedOpacity = this.__displayedOpacity, locSquareColors = this._squareColors;
         for (var i = 0; i < 4; i++) {
             locSquareColors[i].r = locDisplayedColor.r;
             locSquareColors[i].g = locDisplayedColor.g;
@@ -144,7 +144,7 @@ cc._tmp.WebGLLayerGradient = function () {
     //cc.LayerGradient define start
     var _p = cc.LayerGradient.prototype;
     _p._initRendererCmd = function(){
-        this._rendererCmd = new cc.RectRenderCmdWebGL(this);
+        this.__rendererCmd = new cc.RectRenderCmdWebGL(this);
     };
     _p.draw = cc.LayerColor.prototype.draw;
     _p._updateColor = function () {
@@ -162,8 +162,8 @@ cc._tmp.WebGLLayerGradient = function () {
             u = cc.pMult(u, h2 * c);
         }
 
-        var opacityf = _t._displayedOpacity / 255.0;
-        var locDisplayedColor = _t._displayedColor, locEndColor = _t._endColor;
+        var opacityf = _t.__displayedOpacity / 255.0;
+        var locDisplayedColor = _t.__displayedColor, locEndColor = _t._endColor;
         var S = { r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: _t._startOpacity * opacityf};
         var E = {r: locEndColor.r, g: locEndColor.g, b: locEndColor.b, a: _t._endOpacity * opacityf};
 

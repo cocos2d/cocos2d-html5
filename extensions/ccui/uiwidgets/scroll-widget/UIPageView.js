@@ -53,7 +53,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     _childFocusCancelOffset: 0,
     _pageViewEventListener: null,
     _pageViewEventSelector: null,
-    _className:"PageView",
+    __className:"PageView",
     _customScrollThreshold: 0,
     _usingCustomScrollThreshold: false,
 

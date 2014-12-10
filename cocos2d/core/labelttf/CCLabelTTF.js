@@ -64,6 +64,7 @@
  * @property {Number}       shadowBlur      - The blur size of shadow
  */
 cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
+    _type_:"cc.LabelTTF",
     _dimensions: null,
     _hAlignment: cc.TEXT_ALIGNMENT_CENTER,
     _vAlignment: cc.VERTICAL_TEXT_ALIGNMENT_TOP,
@@ -99,7 +100,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _labelCanvas: null,
     _labelContext: null,
     _lineWidths: null,
-    _className: "LabelTTF",
+    __className: "LabelTTF",
 
     _lineHeight: 0,
 
@@ -144,7 +145,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     _setUpdateTextureDirty: function(){
-        this._renderCmdDiry = this._needUpdateTexture = true;
+        this.__renderCmdDirty = this._needUpdateTexture = true;
         cc.renderer.pushDirtyNode(this);
     },
 
@@ -1020,14 +1021,14 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     draw: null,
 
     _setTextureCoords: function (rect) {
-        var tex = this._batchNode ? this.textureAtlas.texture : this._texture;
+        var tex = this._batchNode ? this.__textureAtlas.texture : this._texture;
         if (!tex)
             return;
 
         var atlasWidth = tex.pixelsWidth;
         var atlasHeight = tex.pixelsHeight;
 
-        var left, right, top, bottom, tempSwap, locQuad = this._quad;
+        var left, right, top, bottom, tempSwap, locQuad = this.__quad;
         if (this._rectRotated) {
             if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
                 left = (2 * rect.x + 1) / (2 * atlasWidth);
@@ -1095,7 +1096,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             locQuad.tr.texCoords.u = right;
             locQuad.tr.texCoords.v = top;
         }
-        this._quadDirty = true;
+        this.__quadDirty = true;
     }
 });
 
@@ -1119,9 +1120,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p._setColorsString = function () {
         this._setUpdateTextureDirty();
 
-        var locDisplayColor = this._displayedColor,
-            locDisplayedOpacity = this._displayedOpacity,
-            locShadowColor = this._shadowColor || this._displayedColor;
+        var locDisplayColor = this.__displayedColor,
+            locDisplayedOpacity = this.__displayedOpacity,
+            locShadowColor = this._shadowColor || this.__displayedColor;
         var locStrokeColor = this._strokeColor, locFontFillColor = this._textFillColor;
 
         this._shadowColorStr = "rgba(" + (0 | (locShadowColor.r * 0.5)) + "," + (0 | (locShadowColor.g * 0.5)) + "," + (0 | (locShadowColor.b * 0.5)) + "," + this._shadowOpacity + ")";
@@ -1178,7 +1179,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         this.setContentSize(untrimmedSize);
         this.setVertexRect(rect);
 
-        var locTextureCoordRect = this._rendererCmd._textureCoord;
+        var locTextureCoordRect = this.__rendererCmd._textureCoord;
         locTextureCoordRect.x = rect.x;
         locTextureCoordRect.y = rect.y;
         locTextureCoordRect.renderX = rect.x;
@@ -1198,7 +1199,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         // rendering using batch node
         if (this._batchNode) {
-            this.dirty = true;
+            this.__dirty = true;
         }
     };
     _p = null;

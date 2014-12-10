@@ -58,7 +58,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
      */
     _back:true,
     _gridProxy: null,
-    _className:"TransitionPageTurn",
+    __className:"TransitionPageTurn",
 
     /**
      * Creates a base transition with duration and incoming scene.<br/>
