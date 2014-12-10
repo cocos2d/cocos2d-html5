@@ -483,7 +483,7 @@ cc.Node.RenderCmd.prototype = {
         if (this._cacheDirty === false) {
             this._cacheDirty = true;
             var cachedP = this._cachedParent;
-            cachedP && cachedP != this && cachedP._setNodeDirtyForCache();
+            cachedP && cachedP != this && cachedP._setNodeDirtyForCache && cachedP._setNodeDirtyForCache();
         }
     };
 
