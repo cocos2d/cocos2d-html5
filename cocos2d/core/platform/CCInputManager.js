@@ -416,8 +416,8 @@ cc.inputManager = /** @lends cc.inputManager# */{
                 var pos = selfPointer.getHTMLElementPosition(element);
                 var location = selfPointer.getPointByEvent(event, pos);
                 if (!cc.rectContainsPoint(new cc.Rect(pos.left, pos.top, pos.width, pos.height), location)){
-                    // if(!supportTouches)
-                    selfPointer.handleTouchesEnd([selfPointer.getTouchByXY(location.x, location.y, pos)]);
+                    if(!supportTouches)
+                        selfPointer.handleTouchesEnd([selfPointer.getTouchByXY(location.x, location.y, pos)]);
 
                     var mouseEvent = selfPointer.getMouseEvent(location,pos,cc.EventMouse.UP);
                     mouseEvent.setButton(event.button);
@@ -432,8 +432,8 @@ cc.inputManager = /** @lends cc.inputManager# */{
                 var pos = selfPointer.getHTMLElementPosition(element);
                 var location = selfPointer.getPointByEvent(event, pos);
 
-                // if(!supportTouches)
-                selfPointer.handleTouchesBegin([selfPointer.getTouchByXY(location.x, location.y, pos)]);
+                if(!supportTouches)
+                    selfPointer.handleTouchesBegin([selfPointer.getTouchByXY(location.x, location.y, pos)]);
 
                 var mouseEvent = selfPointer.getMouseEvent(location,pos,cc.EventMouse.DOWN);
                 mouseEvent.setButton(event.button);
@@ -450,8 +450,8 @@ cc.inputManager = /** @lends cc.inputManager# */{
                 var pos = selfPointer.getHTMLElementPosition(element);
                 var location = selfPointer.getPointByEvent(event, pos);
 
-                // if(!supportTouches)
-                selfPointer.handleTouchesEnd([selfPointer.getTouchByXY(location.x, location.y, pos)]);
+                if(!supportTouches)
+                    selfPointer.handleTouchesEnd([selfPointer.getTouchByXY(location.x, location.y, pos)]);
 
                 var mouseEvent = selfPointer.getMouseEvent(location,pos,cc.EventMouse.UP);
                 mouseEvent.setButton(event.button);
@@ -468,8 +468,8 @@ cc.inputManager = /** @lends cc.inputManager# */{
                 var pos = selfPointer.getHTMLElementPosition(element);
                 var location = selfPointer.getPointByEvent(event, pos);
 
-                // if(!supportTouches)
-                selfPointer.handleTouchesMove([selfPointer.getTouchByXY(location.x, location.y, pos)]);
+                if(!supportTouches)
+                    selfPointer.handleTouchesMove([selfPointer.getTouchByXY(location.x, location.y, pos)]);
 
                 var mouseEvent = selfPointer.getMouseEvent(location,pos,cc.EventMouse.MOVE);
                 if(selfPointer._mousePressed)
