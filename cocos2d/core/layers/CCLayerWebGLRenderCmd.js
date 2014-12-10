@@ -1,6 +1,4 @@
 /****************************************************************************
- Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011-2012 cocos2d-x.org
  Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
@@ -24,24 +22,39 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc._tmp.LayerDefineForWebGL = function(){
-    var _p = cc.Layer.prototype;
-    //Layer doesn't support bake function in WebGL
-    _p.bake = function(){};
-    _p.unbake = function(){};
-    _p.visit = cc.Node.prototype.visit;
-};
+//-----------------------//
+//  1. cc.Layer          //
+//  2. cc.LayerColor     //
+//  3. cc.LayerGradient  //
+//-----------------------//
 
-cc._tmp.WebGLLayerColor = function () {
-    //cc.LayerColor define start
-    var _p = cc.LayerColor.prototype;
-    _p._squareVertices = null;
-    _p._squareColors = null;
-    _p._verticesFloat32Buffer = null;
-    _p._colorsUint8Buffer = null;
-    _p._squareVerticesAB = null;
-    _p._squareColorsAB = null;
-    _p.ctor = function (color, width, height) {
+/**
+ * cc.Layer's rendering objects of WebGL
+ */
+(function(){
+    cc.Layer.WebGLRenderCmd = function(renderable){
+        cc.Node.WebGLRenderCmd.call(this, renderable);
+    };
+
+    var proto = cc.Layer.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
+    proto.constructor = cc.Layer.WebGLRenderCmd;
+
+    proto.bake = function(){};
+
+    proto.unbake = function(){};
+
+    proto._bakeForAddChild = function(){};
+})();
+
+/**
+ * cc.LayerColor's rendering objects of WebGL
+ */
+(function(){
+    cc.LayerColor.WebGLRenderCmd = function(renderable){
+        cc.Layer.WebGLRenderCmd.call(this, renderable);
+        this._needDraw = true;
+
+        //
         var _t = this;
         _t._squareVerticesAB = new ArrayBuffer(32);
         _t._squareColorsAB = new ArrayBuffer(16);
@@ -58,16 +71,32 @@ cc._tmp.WebGLLayerColor = function () {
             cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * 3)];
         _t._verticesFloat32Buffer = cc._renderContext.createBuffer();
         _t._colorsUint8Buffer = cc._renderContext.createBuffer();
-
-        cc.Layer.prototype.ctor.call(_t);
-        _t._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-
-        cc.LayerColor.prototype.init.call(_t, color, width, height);
     };
-    _p._initRendererCmd = function(){
-        this._rendererCmd = new cc.RectRenderCmdWebGL(this);
+    var proto = cc.LayerColor.WebGLRenderCmd.prototype = Object.create(cc.Layer.WebGLRenderCmd.prototype);
+    proto.constructor = cc.LayerColor.WebGLRenderCmd;
+
+    cc.LayerColor.WebGLRenderCmd.prototype.rendering = function (ctx) {
+        var context = ctx || cc._renderContext;
+        var node = this._node;
+
+        this._shaderProgram.use();
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
+        cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
+
+        //
+        // Attributes
+        //
+        context.bindBuffer(context.ARRAY_BUFFER, this._verticesFloat32Buffer);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, 0, 0);
+
+        context.bindBuffer(context.ARRAY_BUFFER, this._colorsUint8Buffer);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, 0, 0);
+
+        context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
     };
-    _p.setContentSize = function (size, height) {
+
+    proto._updateSquareVertices = function(size, height){
         var locSquareVertices = this._squareVertices;
         if (height === undefined) {
             locSquareVertices[1].x = size.width;
@@ -81,25 +110,25 @@ cc._tmp.WebGLLayerColor = function () {
             locSquareVertices[3].y = height;
         }
         this._bindLayerVerticesBufferData();
-        cc.Layer.prototype.setContentSize.call(this, size, height);
     };
-    _p._setWidth = function (width) {
+
+    proto._updateSquareVerticesWidth = function(width){
         var locSquareVertices = this._squareVertices;
         locSquareVertices[1].x = width;
         locSquareVertices[3].x = width;
         this._bindLayerVerticesBufferData();
-        cc.Layer.prototype._setWidth.call(this, width);
     };
-    _p._setHeight = function (height) {
+
+    proto._updateSquareVerticesHeight = function(height){
         var locSquareVertices = this._squareVertices;
         locSquareVertices[2].y = height;
         locSquareVertices[3].y = height;
         this._bindLayerVerticesBufferData();
-        cc.Layer.prototype._setHeight.call(this, height);
     };
-    _p._updateColor = function () {
-        var locDisplayedColor = this._displayedColor;
-        var locDisplayedOpacity = this._displayedOpacity, locSquareColors = this._squareColors;
+
+    proto._updateColor = function(){
+        var locDisplayedColor = this._displayedColor, locDisplayedOpacity = this._displayedOpacity,
+            locSquareColors = this._squareColors;
         for (var i = 0; i < 4; i++) {
             locSquareColors[i].r = locDisplayedColor.r;
             locSquareColors[i].g = locDisplayedColor.g;
@@ -108,48 +137,59 @@ cc._tmp.WebGLLayerColor = function () {
         }
         this._bindLayerColorsBufferData();
     };
-    _p.draw = function (ctx) {
-        var context = ctx || cc._renderContext;
 
-        cc.nodeDrawSetup(this);
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
-
-        //
-        // Attributes
-        //
-        context.bindBuffer(context.ARRAY_BUFFER, this._verticesFloat32Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, 0, 0);
-
-        context.bindBuffer(context.ARRAY_BUFFER, this._colorsUint8Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, 0, 0);
-
-        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-        context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
-    };
-    _p._bindLayerVerticesBufferData = function () {
+    proto._bindLayerVerticesBufferData = function(){
         var glContext = cc._renderContext;
         glContext.bindBuffer(glContext.ARRAY_BUFFER, this._verticesFloat32Buffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, this._squareVerticesAB, glContext.STATIC_DRAW);
     };
 
-    _p._bindLayerColorsBufferData = function () {
+    proto._bindLayerColorsBufferData = function(){
         var glContext = cc._renderContext;
         glContext.bindBuffer(glContext.ARRAY_BUFFER, this._colorsUint8Buffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, this._squareColorsAB, glContext.STATIC_DRAW);
     };
-    //cc.LayerColor define end
-};
 
-cc._tmp.WebGLLayerGradient = function () {
-    //cc.LayerGradient define start
-    var _p = cc.LayerGradient.prototype;
-    _p._initRendererCmd = function(){
-        this._rendererCmd = new cc.RectRenderCmdWebGL(this);
+    proto.updateBlendFunc = function(blendFunc){};
+})();
+
+/**
+ * cc.LayerGradient's rendering objects of WebGL
+ */
+(function(){
+    cc.LayerGradient.WebGLRenderCmd = function(renderable){
+        cc.LayerColor.WebGLRenderCmd.call(this, renderable);
+        this._needDraw = true;
     };
-    _p.draw = cc.LayerColor.prototype.draw;
-    _p._updateColor = function () {
-        var _t = this;
-        var locAlongVector = _t._alongVector;
+    var proto = cc.LayerGradient.WebGLRenderCmd.prototype = Object.create(cc.LayerColor.WebGLRenderCmd.prototype);
+    cc.inject(cc.LayerGradient.RenderCmd, proto);
+    proto.constructor = cc.LayerGradient.WebGLRenderCmd;
+
+    proto._syncStatus = function (parentCmd) {
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
+
+        if (colorDirty)
+            this._syncDisplayColor();
+
+        if (opacityDirty)
+            this._syncDisplayOpacity();
+
+        //if (locFlag & flags.transformDirty) {
+            //update the transform
+        this.transform(parentCmd);
+        //}
+
+        if (colorDirty || opacityDirty || (locFlag & flags.gradientDirty)){
+            this._updateColor();
+        }
+    };
+
+    proto._updateColor = function(){
+        this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.gradientDirty ^ this._dirtyFlag;
+        var _t = this, node = this._node;
+        var locAlongVector = node._alongVector;
         var h = cc.pLength(locAlongVector);
         if (h === 0)
             return;
@@ -157,15 +197,15 @@ cc._tmp.WebGLLayerGradient = function () {
         var c = Math.sqrt(2.0), u = cc.p(locAlongVector.x / h, locAlongVector.y / h);
 
         // Compressed Interpolation mode
-        if (_t._compressedInterpolation) {
+        if (node._compressedInterpolation) {
             var h2 = 1 / ( Math.abs(u.x) + Math.abs(u.y) );
             u = cc.pMult(u, h2 * c);
         }
 
         var opacityf = _t._displayedOpacity / 255.0;
-        var locDisplayedColor = _t._displayedColor, locEndColor = _t._endColor;
-        var S = { r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: _t._startOpacity * opacityf};
-        var E = {r: locEndColor.r, g: locEndColor.g, b: locEndColor.b, a: _t._endOpacity * opacityf};
+        var locDisplayedColor = _t._displayedColor, locEndColor = node._endColor;
+        var S = { r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: node._startOpacity * opacityf};
+        var E = {r: locEndColor.r, g: locEndColor.g, b: locEndColor.b, a: node._endOpacity * opacityf};
 
         // (-1, -1)
         var locSquareColors = _t._squareColors;
@@ -192,5 +232,4 @@ cc._tmp.WebGLLayerGradient = function () {
 
         _t._bindLayerColorsBufferData();
     };
-    //cc.LayerGradient define end
-};
+})();

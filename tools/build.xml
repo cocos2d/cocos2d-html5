@@ -37,7 +37,6 @@
                 <file name="cocos2d/core/event-manager/CCEventListener.js"/>
                 <file name="cocos2d/core/event-manager/CCEventManager.js"/>
                 <file name="cocos2d/core/event-manager/CCEventExtension.js"/>
-                <file name="cocos2d/core/base-nodes/BaseNodesWebGL.js"/>
                 <file name="cocos2d/core/base-nodes/BaseNodesPropertyDefine.js"/>
 
                 <file name="cocos2d/core/renderer/RendererCanvas.js"/>
@@ -56,7 +55,6 @@
                 <file name="cocos2d/core/layers/CCLayerWebGL.js"/>
                 <file name="cocos2d/core/layers/CCLayerPropertyDefine.js"/>
                 <file name="cocos2d/core/layers/CCLayer.js"/>
-                <file name="cocos2d/core/sprites/SpritesWebGL.js"/>
                 <file name="cocos2d/core/sprites/SpritesPropertyDefine.js"/>
                 <file name="cocos2d/core/sprites/CCSprite.js"/>
                 <file name="cocos2d/core/sprites/CCBakeSprite.js"/>
@@ -73,7 +71,6 @@
                 <file name="cocos2d/core/CCDrawingPrimitivesCanvas.js"/>
                 <file name="cocos2d/core/CCDrawingPrimitivesWebGL.js"/>
                 <file name="cocos2d/core/labelttf/LabelTTFPropertyDefine.js"/>
-                <file name="cocos2d/core/labelttf/LabelTTFWebGL.js"/>
                 <file name="cocos2d/core/labelttf/CCLabelTTF.js"/>
                 <file name="cocos2d/core/CCActionManager.js"/>
                 <file name="cocos2d/kazmath/utility.js"/>

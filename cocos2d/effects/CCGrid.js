@@ -223,16 +223,26 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         if (target && target.getCamera().isDirty()) {
             var offset = target.getAnchorPointInPoints();
 
+            //TODO hack
+            var stackMatrix = target._renderCmd._stackMatrix;
             //
             // XXX: Camera should be applied in the AnchorPoint
             //
-            cc.kmGLTranslatef(offset.x, offset.y, 0);
-            target.getCamera().locate();
-            cc.kmGLTranslatef(-offset.x, -offset.y, 0);
+            //cc.kmGLTranslatef(offset.x, offset.y, 0);
+            var translation = new cc.kmMat4();
+            cc.kmMat4Translation(translation, offset.x, offset.y, 0);
+            cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
+
+            //target.getCamera().locate();
+            target._camera._locateForRenderer(stackMatrix);
+
+            //cc.kmGLTranslatef(-offset.x, -offset.y, 0);
+            cc.kmMat4Translation(translation, -offset.x, -offset.y, 0);
+            cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
         }
 
         cc.glBindTexture2D(this._texture);
-        this.blit();
+        this.blit(target);
     },
 
     blit:function () {
@@ -360,8 +370,8 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         var n = this._gridSize.width * this._gridSize.height;
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
         this._shaderProgram.use();
-        this._shaderProgram.setUniformsForBuiltins();
-        //this._shaderProgram._setUniformsForBuiltinsForRenderer(target);
+        //this._shaderProgram.setUniformsForBuiltins();
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(target._renderCmd._stackMatrix);
 
         var gl = cc._renderContext, locDirty = this._dirty;
         //
@@ -589,8 +599,8 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         var n = this._gridSize.width * this._gridSize.height;
 
         this._shaderProgram.use();
-        this._shaderProgram.setUniformsForBuiltins();
-        //this._shaderProgram._setUniformsForBuiltinsForRenderer(target);
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(target._renderCmd._stackMatrix);
+        //this._shaderProgram.setUniformsForBuiltins();
 
         //
         // Attributes

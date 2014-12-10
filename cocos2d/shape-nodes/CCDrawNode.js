@@ -88,7 +88,7 @@ cc.__t = function (v) {
  * @name cc.DrawNode
  * @extends cc.Node
  */
-cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
+cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{                  //TODO need refactor
     _buffer: null,
     _blendFunc: null,
     _lineWidth: 1,
@@ -102,16 +102,12 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
      */
     ctor: function () {
         cc.Node.prototype.ctor.call(this);
-        var locCmd = this._rendererCmd;
+        var locCmd = this._renderCmd;
         locCmd._buffer = this._buffer = [];
         locCmd._drawColor = this._drawColor = cc.color(255, 255, 255, 255);
         locCmd._blendFunc = this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
 
 		this.init();
-    },
-
-    _initRendererCmd: function(){
-        this._rendererCmd = new cc.DrawNodeRenderCmdCanvas(this);
     },
 
     // ----common function start ----
@@ -574,6 +570,10 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
      */
     clear: function () {
         this._buffer.length = 0;
+    },
+
+    _createRenderCmd: function(){
+        return new cc.DrawNode.CanvasRenderCmd(this);
     }
 });
 
@@ -616,10 +616,6 @@ cc.DrawNodeWebGL = cc.Node.extend({
         this._drawColor = cc.color(255,255,255,255);
 
 	    this.init();
-    },
-    
-    _initRendererCmd: function(){
-        this._rendererCmd = new cc.DrawNodeRenderCmdWebGL(this);
     },
 
     init:function () {
@@ -802,13 +798,6 @@ cc.DrawNodeWebGL = cc.Node.extend({
                 _t._buffer = newTriangles;
             }
         }
-    },
-
-    draw:function () {
-        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-        this._shaderProgram.use();
-        this._shaderProgram.setUniformsForBuiltins();
-        this._render();
     },
 
     drawDot:function (pos, radius, color) {
@@ -1011,6 +1000,10 @@ cc.DrawNodeWebGL = cc.Node.extend({
     clear:function () {
         this._buffer.length = 0;
         this._dirty = true;
+    },
+
+    _createRenderCmd: function () {
+        return new cc.DrawNode.WebGLRenderCmd(this);
     }
 });
 

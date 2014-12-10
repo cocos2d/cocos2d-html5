@@ -324,4 +324,4 @@ cc._tmp.DirectorWebGL = function () {
         // set other opengl default values
         cc._renderContext.clearColor(0.0, 0.0, 0.0, 1.0);
     };
-}
+};

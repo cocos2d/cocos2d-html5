@@ -216,8 +216,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     isSwallowTouches: function(){
-        if (this._touchListener)
-        {
+        if (this._touchListener){
             //todo
             return true;
             //return this._touchListener.isSwallowTouches();
@@ -539,7 +538,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * call back function called when size changed.
      */
     _onSizeChanged: function () {
-//        ccui.Helper.prototype.doLayout.call(this, this);
         var locChildren =  this.getChildren();
         for (var i = 0, len = locChildren.length; i < len; i++) {
             var child = locChildren[i];
@@ -1137,7 +1135,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      */
     setPositionType: function (type) {
         this._positionType = type;
-        this.setNodeDirty();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**
