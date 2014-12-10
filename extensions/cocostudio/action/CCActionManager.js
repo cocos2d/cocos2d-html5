@@ -81,6 +81,17 @@ ccs.actionManager = /** @lends ccs.actionManager# */{
         if (action)
             action.play(fun);
     },
+    
+     /**
+     * Stop an Action with a name.
+     * @param {String} jsonName
+     * @param {String} actionName
+     */
+    stopActionByName: function (jsonName, actionName) {
+        var action = this.getActionByName(jsonName, actionName);
+        if (action)
+            action.stop();
+    },
 
     /**
      * Release all actions.
