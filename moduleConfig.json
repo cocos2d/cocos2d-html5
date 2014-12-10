@@ -329,11 +329,6 @@
         "cocostudio" : [
             "core",  "tilemap", "particle", "shape-nodes", "ccui",
 
-            "external/protobuf/ByteBuffer.min.js",
-            "external/protobuf/Long.min.js",
-            "external/protobuf/ProtoBuf.min.js",
-            "extensions/cocostudio/reader/CSParseBinary.js",
-
             "extensions/cocostudio/components/CCComponent.js",
             "extensions/cocostudio/components/CCComponentContainer.js",
             "extensions/ccui/layouts/UILayoutComponent.js",

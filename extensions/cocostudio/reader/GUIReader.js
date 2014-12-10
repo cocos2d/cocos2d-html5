@@ -22,12 +22,6 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var PBP;
-if(CSParseBinary && window["dcodeIO"] && window["dcodeIO"]["ProtoBuf"]){
-    PBP = dcodeIO["ProtoBuf"]["loadProto"](CSParseBinary)["build"]()["protocolbuffers"];
-}else{
-    PBP = null;
-}
 
 (function(){
     var factoryCreate = ccs.objectFactory;
@@ -1943,88 +1937,6 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend(/** @lends cc
         labelBMFont.setString(text);
 
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
-    },
-
-    widgetFromProtocolBuffers: function(nodetree){
-
-
-        var classname = nodetree.classname;
-        //cc.log("classname = %s", classname);
-
-        var widget = this._createGUI(classname);
-        var readerName = this._getWidgetReaderClassName(classname);
-
-        var reader = this._createWidgetReaderProtocol(readerName);
-
-        if (reader)
-        {
-            // widget parse with widget reader
-            this.setPropsForAllWidgetFromProtocolBuffers(reader, widget, nodetree);
-        }
-        else
-        {
-            //
-            // 1st., custom widget parse properties of parent widget with parent widget reader
-            readerName = this._getWidgetReaderClassNameFromWidget(widget);
-            reader =  this._createWidgetReaderProtocol(readerName);
-            if (reader && widget)
-            {
-                this.setPropsForAllWidgetFromProtocolBuffers(reader, widget, nodetree);
-
-                // 2nd., custom widget parse with custom reader
-                var widgetOptions = nodetree.widgetOptions;
-                var customJsonDict = widgetOptions.componentOptions;
-//                var customJsonDict;
-//                customJsonDict.Parse(customProperty);
-//                if (customJsonDict.HasParseError())
-//                {
-//                    cc.log("GetParseError %s\n", customJsonDict.GetParseError());
-//                }
-                this.setPropsForAllCustomWidgetFromJsonDictionary(classname, widget, customJsonDict);
-            }
-            else
-            {
-                cc.log("Widget or WidgetReader doesn't exists!!!  Please check your json file.");
-            }
-            //
-        }
-
-        var size = nodetree.children.length;
-        //cc.log("widget children size = %d", size);
-        for (var i = 0; i < size; ++i)
-        {
-            var subNodeTree = nodetree.children[i];
-            var child = this.widgetFromProtocolBuffers(subNodeTree);
-            //cc.log("widget child = %p", child);
-            if (child)
-            {
-                var pageView = widget;
-                if (pageView instanceof ccui.PageView)
-                {
-                    pageView.addPage(child);
-                }
-                else
-                {
-                    var listView = widget;
-                    if (listView instanceof ccui.ListView)
-                    {
-                        listView.pushBackCustomItem(child);
-                    }
-                    else
-                    {
-                        widget.addChild(child);
-                    }
-                }
-            }
-        }
-
-        //cc.log("widget = %p", widget);
-
-        return widget;
-    },
-
-    setPropsForAllWidgetFromProtocolBuffers: function(reader, widget, nodetree){
-        reader.setPropsFromProtocolBuffers(widget, nodetree);
     },
 
     widgetFromXML: function(objectData, classType){
