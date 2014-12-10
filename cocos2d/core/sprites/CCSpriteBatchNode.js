@@ -162,7 +162,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
 
     _setNodeDirtyForCache: function () {
-        this._cacheDirty = true;
+        if(this._renderCmd && this._renderCmd._setNodeDirtyForCache)
+            this._renderCmd._setNodeDirtyForCache();
     },
 
     /**
