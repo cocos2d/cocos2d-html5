@@ -132,6 +132,7 @@
         //this.draw(context);
         cc.renderer.pushRenderCommand(this);
 
+        this._dirtyFlag = 0;
         currentStack.top = currentStack.stack.pop();
     };
 })();
