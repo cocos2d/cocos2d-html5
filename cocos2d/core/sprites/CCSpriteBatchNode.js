@@ -100,12 +100,12 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         child.atlasIndex = z;
 
         // XXX: optimize with a binary search
-        var i = 0, locDescendants = this._descendants;
+        var i = 0, len, locDescendants = this._descendants;
         if (locDescendants && locDescendants.length > 0) {
-            for (var index = 0; index < locDescendants.length; index++) {
-                var obj = locDescendants[index];
+            for (i = 0, len = locDescendants.length; i < len; i++) {
+                var obj = locDescendants[i];
                 if (obj && (obj.atlasIndex >= z))
-                    ++i;
+                    break;
             }
         }
         locDescendants.splice(i, 0, child);
