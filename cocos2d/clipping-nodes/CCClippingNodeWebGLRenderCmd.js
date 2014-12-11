@@ -128,6 +128,7 @@
 
         cc.renderer.pushRenderCommand(this._afterVisitCmd);
 
+        this._dirtyFlag = 0;
         //optimize performance for javascript
         currentStack.top = currentStack.stack.pop();
     };

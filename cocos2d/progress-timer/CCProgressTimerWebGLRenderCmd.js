@@ -85,6 +85,16 @@
         if(!node._sprite)
             return;
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var parentNode = parentCmd ? parentCmd._node : null;
+
+        if(parentNode && parentNode._cascadeColorEnabled && (parentCmd._dirtyFlag & flags.colorDirty))
+            locFlag |= flags.colorDirty;
+        if(parentNode && parentNode._cascadeOpacityEnabled && (parentCmd._dirtyFlag & flags.opacityDirty))
+            locFlag |= flags.opacityDirty;
+        if(parentCmd && (parentCmd._dirtyFlag & flags.transformDirty))
+            locFlag |= flags.transformDirty;
+        this._dirtyFlag = locFlag;
+
         var spriteCmd = node._sprite._renderCmd;
         var spriteFlag = spriteCmd._dirtyFlag;
 
@@ -93,12 +103,10 @@
 
         if (colorDirty){
             spriteCmd._syncDisplayColor();
-            this._dirtyFlag = this._dirtyFlag & flags.colorDirty ^ this._dirtyFlag;
         }
 
         if (opacityDirty){
             spriteCmd._syncDisplayOpacity();
-            this._dirtyFlag = this._dirtyFlag & flags.opacityDirty ^ this._dirtyFlag;
         }
 
         if(colorDirty || opacityDirty){
@@ -108,8 +116,10 @@
 
         //if (locFlag & flags.transformDirty) {
             //update the transform
-            this.transform(parentCmd);
+        this.transform(parentCmd);
         //}
+
+        spriteCmd._dirtyFlag = 0;
     };
 
     proto.updateStatus = function () {

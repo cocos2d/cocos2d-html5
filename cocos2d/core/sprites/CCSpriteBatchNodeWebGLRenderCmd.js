@@ -83,6 +83,7 @@
 
         cc.renderer.pushRenderCommand(this);
 
+        this._dirtyFlag = 0;
         //optimize performance for javascript
         currentStack.top = currentStack.stack.pop();
     };

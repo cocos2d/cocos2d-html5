@@ -198,7 +198,6 @@ cc.Node.RenderCmd.prototype = {
         locDispColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
         locDispColor.g = 0 | (locRealColor.g * parentColor.g / 255.0);
         locDispColor.b = 0 | (locRealColor.b * parentColor.b / 255.0);
-        this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.colorDirty ^ this._dirtyFlag;
     },
 
     _syncDisplayOpacity : function (parentOpacity) {
@@ -210,7 +209,6 @@ cc.Node.RenderCmd.prototype = {
                 parentOpacity = locParent.getDisplayedOpacity();
         }
         this._displayedOpacity = node._realOpacity * parentOpacity / 255.0;
-        this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.opacityDirty ^ this._dirtyFlag;
     },
 
     _updateColor: function(){},
@@ -443,33 +441,6 @@ cc.Node.RenderCmd.prototype = {
             //update the transform
             this.transform(parentCmd);
         }
-    };
-
-    proto._syncDisplayColor = function (parentColor) {
-        var node = this._node, locDispColor = this._displayedColor, locRealColor = node._realColor;
-        if (parentColor === undefined) {
-            var locParent = node._parent;
-            if (locParent && locParent._cascadeColorEnabled)
-                parentColor = locParent.getDisplayedColor();
-            else
-                parentColor = cc.color.WHITE;
-        }
-        locDispColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
-        locDispColor.g = 0 | (locRealColor.g * parentColor.g / 255.0);
-        locDispColor.b = 0 | (locRealColor.b * parentColor.b / 255.0);
-        //this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.colorDirty ^ this._dirtyFlag;
-    };
-
-    proto._syncDisplayOpacity = function (parentOpacity) {
-        var node = this._node;
-        if (parentOpacity === undefined) {
-            var locParent = node._parent;
-            parentOpacity = 255;
-            if (locParent && locParent._cascadeOpacityEnabled)
-                parentOpacity = locParent.getDisplayedOpacity();
-        }
-        this._displayedOpacity = node._realOpacity * parentOpacity / 255.0;
-        //this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.opacityDirty ^ this._dirtyFlag;
     };
 
     proto.setDirtyFlag = function (dirtyFlag) {
