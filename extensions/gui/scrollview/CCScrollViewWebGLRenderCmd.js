@@ -102,6 +102,7 @@
             cc.renderer.pushRenderCommand(this.endCmd);
         }
 
+        this._dirtyFlag = 0;
         cc.kmGLPopMatrix();
     };
 })();

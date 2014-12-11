@@ -361,6 +361,7 @@
         /*        if (locGrid && locGrid.isActive())
          locGrid.afterDraw(this);*/
 
+        this._dirtyFlag = 0;
         cc.kmGLPopMatrix();
     };
 })();

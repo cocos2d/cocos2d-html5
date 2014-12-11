@@ -113,8 +113,21 @@
 
     proto._syncStatus = function (parentCmd) {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var parentNode = parentCmd ? parentCmd._node : null;
+
+        if(parentNode && parentNode._cascadeColorEnabled && (parentCmd._dirtyFlag & flags.colorDirty))
+            locFlag |= flags.colorDirty;
+
+        if(parentNode && parentNode._cascadeOpacityEnabled && (parentCmd._dirtyFlag & flags.opacityDirty))
+            locFlag |= flags.opacityDirty;
+
+        if(parentCmd && (parentCmd._dirtyFlag & flags.transformDirty))
+            locFlag |= flags.transformDirty;
+
         var colorDirty = locFlag & flags.colorDirty,
             opacityDirty = locFlag & flags.opacityDirty;
+
+        this._dirtyFlag = locFlag;
 
         if (colorDirty)
             this._syncDisplayColor();
@@ -127,8 +140,7 @@
 
         //if (locFlag & flags.transformDirty) {      //need update the stackMatrix every calling visit, because when projection changed, need update all scene graph element.
             //update the transform
-            this.transform(parentCmd);
-            this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
+        this.transform(parentCmd);
         //}
     };
 
@@ -172,6 +184,7 @@
         } else
             cc.renderer.pushRenderCommand(this);
 
+        this._dirtyFlag = 0;
         //optimize performance for javascript
         currentStack.top = currentStack.stack.pop();
     };

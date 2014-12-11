@@ -79,6 +79,8 @@
             //cc.director.setProjection(beforeProjectionType);
         //}
         cc.renderer.pushRenderCommand(this._gridEndCommand);
+
+        this._dirtyFlag = 0;
         currentStack.top = currentStack.stack.pop();
     };
 

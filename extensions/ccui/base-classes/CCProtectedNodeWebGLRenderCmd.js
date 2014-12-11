@@ -88,6 +88,7 @@
         if (locGrid && locGrid._active)
             locGrid.afterDraw(node);
 
+        this._dirtyFlag = 0;
         //optimize performance for javascript
         currentStack.top = currentStack.stack.pop();
     };
