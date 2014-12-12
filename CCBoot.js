@@ -1780,9 +1780,9 @@ cc._setup = function (el, width, height) {
     else cc._setupCalled = true;
     var win = window;
     var lastTime = new Date();
-    var frameTime = 1000 / cc.game.config[cc.game.CONFIG_KEY.frameRate];
 
     var stTime = function(callback){
+        var frameTime = 1000 / cc.game.config[cc.game.CONFIG_KEY.frameRate];
         var currTime = new Date().getTime();
         var timeToCall = Math.max(0, frameTime - (currTime - lastTime));
         var id = window.setTimeout(function() { callback(); },
