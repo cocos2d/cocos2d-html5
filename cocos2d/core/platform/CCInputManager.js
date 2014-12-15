@@ -407,10 +407,10 @@ cc.inputManager = /** @lends cc.inputManager# */{
         //  liebiao
         //  miui
         var prohibition = false;
-        if(
+        if( cc.sys.isMobile && (
             cc.sys.browserType === cc.sys.BROWSER_TYPE_LIEBAO ||
             cc.sys.browserType === cc.sys.BROWSER_TYPE_MIUI
-            )
+        ))
             prohibition = true;
 
         //register touch event
