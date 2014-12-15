@@ -1479,6 +1479,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.BROWSER_TYPE_FIREFOX = "firefox";
     sys.BROWSER_TYPE_SAFARI = "safari";
     sys.BROWSER_TYPE_CHROME = "chrome";
+    sys.BROWSER_TYPE_LIEBAO = "liebao";
     sys.BROWSER_TYPE_UNKNOWN = "unknown";
 
     /**
@@ -1528,7 +1529,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.language = currLanguage;
 
     var browserType = sys.BROWSER_TYPE_UNKNOWN;
-    var browserTypes = ua.match(/micromessenger|qqbrowser|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|trident|oupeng|opera|miuibrowser|firefox/i)
+    var browserTypes = ua.match(/liebao|micromessenger|qqbrowser|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|trident|oupeng|opera|miuibrowser|firefox/i)
         || ua.match(/chrome|safari/i);
     if (browserTypes && browserTypes.length > 0) {
         browserType = browserTypes[0].toLowerCase();
