@@ -727,10 +727,18 @@ cc.loader = /** @lends cc.loader# */{
      */
     loadJson: function (url, cb) {
         this.loadTxt(url, function (err, txt) {
-            try {
-                err ? cb(err) : cb(null, JSON.parse(txt));
-            } catch (e) {
-                throw "load json [" + url + "] failed : " + e;
+            if (err) {
+                cb(err);
+            }
+            else {
+                try {
+                    var result = JSON.parse(txt);
+                }
+                catch (e) {
+                    throw "parse json [" + url + "] failed : " + e;
+                    return;
+                }
+                cb(null, result);
             }
         });
     },
@@ -755,13 +763,21 @@ cc.loader = /** @lends cc.loader# */{
         else if (option !== undefined)
             cb = option;
 
-        var img = new Image();
+        var img = this.getRes(url);
+        if (img) {
+            cb && cb(null, img);
+            return img;
+        }
+
+        img = new Image();
         if (opt.isCrossOrigin && location.origin != "file://")
             img.crossOrigin = "Anonymous";
 
         var lcb = function () {
             this.removeEventListener('load', lcb, false);
             this.removeEventListener('error', ecb, false);
+
+            cc.loader.cache[url] = img;
             if (cb)
                 cb(null, img);
         };
@@ -802,7 +818,7 @@ cc.loader = /** @lends cc.loader# */{
             type = cc.path.extname(url);
         }
 
-        var obj = self.cache[url];
+        var obj = self.getRes(url);
         if (obj)
             return cb(null, obj);
         var loader = null;
@@ -885,7 +901,6 @@ cc.loader = /** @lends cc.loader# */{
 
         if(!(resources instanceof Array))
             resources = [resources];
-
         var asyncPool = new cc.AsyncPool(resources, 0, function(value, index, cb1, aPool){
             self._loadResIterator(value, index, function(err){
                 if(err)
@@ -1464,6 +1479,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.BROWSER_TYPE_FIREFOX = "firefox";
     sys.BROWSER_TYPE_SAFARI = "safari";
     sys.BROWSER_TYPE_CHROME = "chrome";
+    sys.BROWSER_TYPE_LIEBAO = "liebao";
     sys.BROWSER_TYPE_UNKNOWN = "unknown";
 
     /**
@@ -1513,7 +1529,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.language = currLanguage;
 
     var browserType = sys.BROWSER_TYPE_UNKNOWN;
-    var browserTypes = ua.match(/micromessenger|qqbrowser|mqqbrowser|ucbrowser|360browser|baiduboxapp|baidubrowser|maxthon|trident|oupeng|opera|miuibrowser|firefox/i)
+    var browserTypes = ua.match(/liebao|micromessenger|qqbrowser|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|trident|oupeng|opera|miuibrowser|firefox/i)
         || ua.match(/chrome|safari/i);
     if (browserTypes && browserTypes.length > 0) {
         browserType = browserTypes[0].toLowerCase();
@@ -1522,6 +1538,7 @@ cc._initSys = function (config, CONFIG_KEY) {
         } else if (browserType === "safari" && (ua.match(/android.*applewebkit/)))
             browserType = sys.BROWSER_TYPE_ANDROID;
         else if (browserType == "trident") browserType = sys.BROWSER_TYPE_IE;
+        else if (browserType == "360 aphone") browserType = sys.BROWSER_TYPE_360;
     }
     /**
      * Indicate the running browser type
@@ -1608,7 +1625,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     // check if browser supports Web Audio
     // check Web Audio's context
     try {
-        sys._supportWebAudio = !!(new (win.AudioContext || win.webkitAudioContext || win.mozAudioContext)());
+        sys._supportWebAudio = !!(win.AudioContext || win.webkitAudioContext || win.mozAudioContext);
     } catch (e) {
         sys._supportWebAudio = false;
     }
@@ -1645,7 +1662,7 @@ cc._initSys = function (config, CONFIG_KEY) {
         capabilities["accelerometer"] = true;
 
     /**
-     * Forces the garbage collection
+     * Forces the garbage collection, only available in JSB
      * @memberof cc.sys
      * @name garbageCollect
      * @function
@@ -1655,7 +1672,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     };
 
     /**
-     * Dumps rooted objects
+     * Dumps rooted objects, only available in JSB
      * @memberof cc.sys
      * @name dumpRoot
      * @function
@@ -1665,12 +1682,23 @@ cc._initSys = function (config, CONFIG_KEY) {
     };
 
     /**
-     * Restart the JS VM
+     * Restart the JS VM, only available in JSB
      * @memberof cc.sys
      * @name restartVM
      * @function
      */
     sys.restartVM = function () {
+        // N/A in cocos2d-html5
+    };
+
+    /**
+     * Clean a script in the JS VM, only available in JSB
+     * @memberof cc.sys
+     * @name cleanScript
+     * @param {String} jsfile
+     * @function
+     */
+    sys.cleanScript = function (jsfile) {
         // N/A in cocos2d-html5
     };
 
@@ -1775,12 +1803,10 @@ cc._rendererInitialized = false;
  */
 cc._setupCalled = false;
 cc._setup = function (el, width, height) {
-    var win = window;
-
     // Avoid setup to be called twice.
     if (cc._setupCalled) return;
     else cc._setupCalled = true;
-
+    var win = window;
     cc.game._setAnimFrame();
 
     var element = cc.$(el) || cc.$('#' + el);
