@@ -156,7 +156,8 @@ cc.Control = cc.Layer.extend(/** @lends cc.Control# */{
             this._highlighted = false;
 
             var listener = cc.EventListener.create({
-                event: cc.EventListener.TOUCH_ONE_BY_ONE
+                event: cc.EventListener.TOUCH_ONE_BY_ONE,
+                swallowTouches: true
             });
             if (this.onTouchBegan)
                 listener.onTouchBegan = this.onTouchBegan.bind(this);
