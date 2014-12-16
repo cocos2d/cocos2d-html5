@@ -2626,3 +2626,5 @@ else
         }
     };
 }
+
+require.config(require_config);

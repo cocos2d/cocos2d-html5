@@ -727,10 +727,18 @@ cc.loader = /** @lends cc.loader# */{
      */
     loadJson: function (url, cb) {
         this.loadTxt(url, function (err, txt) {
-            try {
-                err ? cb(err) : cb(null, JSON.parse(txt));
-            } catch (e) {
-                throw "load json [" + url + "] failed : " + e;
+            if (err) {
+                cb(err);
+            }
+            else {
+                try {
+                    var result = JSON.parse(txt);
+                }
+                catch (e) {
+                    throw "parse json [" + url + "] failed : " + e;
+                    return;
+                }
+                cb(null, result);
             }
         });
     },
@@ -2213,7 +2221,7 @@ cc.game._initConfig();
 
 Function.prototype.bind = Function.prototype.bind || function (oThis) {
     if (!cc.isFunction(this)) {
-        // closest thing possible to the ECMAScript 5
+        // closest thing possible to =the ECMAScript 5
         // internal IsCallable function
         throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
     }
@@ -2252,4 +2260,11 @@ cc.game.loadScene = function (resource, scene, callback) {
         cc.game.pause();
         callback && callback();
     }
+};
+
+cc.game.createNode = function (ccd_file, callback) {
+    cc.loader.loadTxt(ccd_file, function(err, jsonStr) {
+        var node = cc.Serializer.unSerialize(jsonStr);
+        callback.call(cc.game, node);
+    });
 };
