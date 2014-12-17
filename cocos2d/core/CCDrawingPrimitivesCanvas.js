@@ -108,6 +108,7 @@ cc.DrawingPrimitiveCanvas = cc.Class.extend(/** @lends cc.DrawingPrimitiveCanvas
      * @param {cc.Point} destination
      */
     drawRect:function (origin, destination) {
+        //todo need optimize for performance
         this.drawLine(cc.p(origin.x, origin.y), cc.p(destination.x, origin.y));
         this.drawLine(cc.p(destination.x, origin.y), cc.p(destination.x, destination.y));
         this.drawLine(cc.p(destination.x, destination.y), cc.p(origin.x, destination.y));

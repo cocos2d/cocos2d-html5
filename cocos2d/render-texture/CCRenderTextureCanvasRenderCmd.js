@@ -77,11 +77,10 @@
         //var context = cc._renderContext;
         var context = this._cacheContext;
         var locCanvas = this._cacheCanvas;
-        context.save();
+        //TODO need test
         context.fillStyle = "rgba(" + (0 | r) + "," + (0 | g) + "," + (0 | b) + "," + a / 255 + ")";
         context.clearRect(0, 0, locCanvas.width, -locCanvas.height);
         context.fillRect(0, 0, locCanvas.width, -locCanvas.height);
-        context.restore();
     };
 
     proto.end = function(){
@@ -111,29 +110,4 @@
         node.sprite.visit(this);
         this._dirtyFlag = 0;
     };
-
-    proto.draw = function(){
-        var node = this._node;
-        if (node.clearFlags) {
-            var locCanvas = this._cacheCanvas;
-            ctx.save();
-            ctx.fillStyle = this._clearColorStr;
-            ctx.clearRect(0, 0, locCanvas.width, -locCanvas.height);
-            ctx.fillRect(0, 0, locCanvas.width, -locCanvas.height);
-            ctx.restore();
-        }
-
-        //! make sure all children are drawn
-        node.sortAllChildren();
-        var locChildren = node._children;
-        var childrenLen = locChildren.length;
-        var selfSprite = node.sprite;
-        for (var i = 0; i < childrenLen; i++) {
-            var getChild = locChildren[i];
-            if (getChild != selfSprite)
-                getChild.visit(this);
-        }
-        node.end();
-    };
-
 })();

@@ -115,7 +115,7 @@
             locTextureCoord = self._textureCoord, alpha = (this._displayedOpacity / 255);
 
         if ((node._texture && ((locTextureCoord.width === 0 || locTextureCoord.height === 0)            //set texture but the texture isn't loaded.
-                || !node._texture._isLoaded)) || alpha === 0)
+            || !node._texture._isLoaded)) || alpha === 0)
             return;
 
         var t = this._worldTransform,
@@ -126,120 +126,53 @@
             image, curColor, contentSize;
 
 
+        //context.save();
+        context.globalCompositeOperation = this._blendFuncStr;
+        context.globalAlpha = alpha;         //cache
+        //transform
+        //context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+        context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, context.canvas.height - (t.ty * scaleY));
 
-        if (t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1 || node._flippedX || node._flippedY) {
-            context.save();
-
-            context.globalAlpha = alpha;         //cache
-            //transform
-            context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
-            if (this._needSetBlend)
-                context.globalCompositeOperation = this._blendFuncStr;
-
-            if (node._flippedX) {
-                locX = -locX - locWidth;
-                context.scale(-1, 1);
-            }
-            if (node._flippedY) {
-                locY = node._offsetPosition.y;
-                context.scale(1, -1);
-            }
-
-            if (node._texture) {
-                image = node._texture._htmlElementObj;
-                if (node._texture._pattern != "") {
-                    context.save();
-                    context.fillStyle = context.createPattern(image, node._texture._pattern);
-                    context.fillRect(locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
-                    context.restore();
-                } else {
-                    if (this._colorized) {
-                        context.drawImage(image,
-                            0,
-                            0,
-                            locTextureCoord.width,
-                            locTextureCoord.height,
-                                locX * scaleX,
-                                locY * scaleY,
-                                locWidth * scaleX,
-                                locHeight * scaleY
-                        );
-                    } else {
-                        context.drawImage(image,
-                            locTextureCoord.renderX,
-                            locTextureCoord.renderY,
-                            locTextureCoord.width,
-                            locTextureCoord.height,
-                                locX * scaleX,
-                                locY * scaleY,
-                                locWidth * scaleX,
-                                locHeight * scaleY
-                        );
-                    }
-                }
-            } else {
-                contentSize = node._contentSize;
-                if (locTextureCoord.validRect) {
-                    curColor = this._displayedColor;
-                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
-                    context.fillRect(locX * scaleX, locY * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
-                }
-            }
-            context.restore();
-        } else {
-            if (this._needSetBlend) {
-                context.save();
-                context.globalCompositeOperation = this._blendFuncStr;
-            }
-
-            context.globalAlpha = alpha;
-            if (node._texture) {
-                image = node._texture.getHtmlElementObj();
-                if (node._texture._pattern != "") {
-                    context.save();
-                    context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
-                    context.fillStyle = context.createPattern(image, node._texture._pattern);
-                    context.fillRect(locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
-                    context.restore();
-                } else {
-                    if (this._colorized) {
-                        context.drawImage(image,
-                            0,
-                            0,
-                            locTextureCoord.width,
-                            locTextureCoord.height,
-                                (t.tx + locX) * scaleX,
-                                (-t.ty + locY) * scaleY,
-                                locWidth * scaleX,
-                                locHeight * scaleY);
-                    } else {
-                        context.drawImage(
-                            image,
-                            locTextureCoord.renderX,
-                            locTextureCoord.renderY,
-                            locTextureCoord.width,
-                            locTextureCoord.height,
-                                (t.tx + locX) * scaleX,
-                                (-t.ty + locY) * scaleY,
-                                locWidth * scaleX,
-                                locHeight * scaleY);
-                    }
-                }
-            } else {
-                contentSize = node._contentSize;
-                if (locTextureCoord.validRect) {
-                    curColor = this._displayedColor;
-                    context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
-                    context.fillRect((t.tx + locX) * scaleX, (-t.ty + locY) * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
-                }
-            }
-            if (this._needSetBlend)
-                context.restore();
+        //TODO: need think
+        if (node._flippedX) {
+            locX = -locX - locWidth;
+            context.scale(-1, 1);
         }
+        if (node._flippedY) {
+            locY = node._offsetPosition.y;
+            context.scale(1, -1);
+        }
+
+        if (node._texture) {
+            image = node._texture._htmlElementObj;
+            if (node._texture._pattern != "") {
+                context.fillStyle = context.createPattern(image, node._texture._pattern);
+                context.fillRect(locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
+            } else {
+                if (this._colorized) {
+                    context.drawImage(image,
+                        0, 0, locTextureCoord.width,locTextureCoord.height,
+                        locX * scaleX,locY * scaleY, locWidth * scaleX, locHeight * scaleY);
+                } else {
+                    context.drawImage(image,
+                        locTextureCoord.renderX, locTextureCoord.renderY, locTextureCoord.width, locTextureCoord.height,
+                        locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
+                }
+            }
+        } else {
+            contentSize = node._contentSize;
+            if (locTextureCoord.validRect) {
+                curColor = this._displayedColor;
+                context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
+                context.fillRect(locX * scaleX, locY * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
+            }
+        }
+        //context.restore();                  //todo need test
         cc.g_NumberOfDraws++;
     };
 
     proto._updateColor = function () {
+        //TODO need refactor
         var node = this._node;
         var displayedColor = this._displayedColor;
 
@@ -454,7 +387,6 @@
             ctx.clearRect(0, 0, w, h);
         }
 
-        ctx.save();
         ctx.globalCompositeOperation = 'lighter';
         // Make sure to keep the renderCanvas alpha in mind in case of overdraw
         var a = ctx.globalAlpha;
@@ -474,7 +406,6 @@
             ctx.globalAlpha = a;
             ctx.drawImage(tintedImgCache[3], rect.x, rect.y, w, h, 0, 0, w, h);
         }
-        ctx.restore();
         return buff;
     };
 

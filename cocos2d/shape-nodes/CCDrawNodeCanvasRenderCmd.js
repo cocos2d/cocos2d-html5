@@ -62,7 +62,7 @@
                     break;
             }
         }
-        context.restore();
+        context.restore();            //todo It can be reserve
     };
 
     cc.DrawNode.CanvasRenderCmd.prototype._drawDot = function (ctx, element, scaleX, scaleY) {

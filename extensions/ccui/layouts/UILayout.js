@@ -70,8 +70,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _isFocusPassing:false,                                                      //when finding the next focused widget, use this variable to pass focus between layout & widget
     _isInterceptTouch: false,
 
-    _clipElemType: false,
-
     /**
      * Allocates and initializes an UILayout.
      * Constructor of ccui.Layout

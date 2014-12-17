@@ -75,7 +75,7 @@
                 locCacheCmds[i].rendering(locCacheContext, scaleX, scaleY);
                 locCacheCmds[i]._cacheDirty = false;
             }
-            locCacheContext.restore();
+            locCacheContext.restore();             //todo: it can be reserve.
             this._cacheDirty = false;
         }
     };
@@ -93,9 +93,10 @@
         var locCacheCanvas = this._cacheCanvas, t = this._worldTransform;
         //direct draw image by canvas drawImage
         if (locCacheCanvas && locCacheCanvas.width !== 0 && locCacheCanvas.height !== 0) {
-            context.save();
+            //context.save();
             //transform
-            context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+            //context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+            context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, context.canvas.height - (t.ty * scaleY));
 
             var locCanvasHeight = locCacheCanvas.height * scaleY;
 
@@ -107,7 +108,7 @@
                 context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
                     posX, -(posY + locCanvasHeight), locCacheCanvas.width * scaleX, locCanvasHeight);
             }
-            context.restore();
+            //context.restore();                      //todo need test
         }
         cc.g_NumberOfDraws++;
     };
@@ -175,7 +176,7 @@
 
             //draw to cache canvas
             renderer._renderingToCacheCanvas(locCacheContext, instanceID);
-            locCacheContext.restore();
+            locCacheContext.restore();                           //todo: it can be reserve.
             this._cacheDirty = false
         }
         cc.renderer.pushRenderCommand(this);

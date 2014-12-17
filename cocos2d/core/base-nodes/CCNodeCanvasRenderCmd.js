@@ -324,7 +324,7 @@ cc.Node.RenderCmd.prototype = {
             // skew
             if (node._skewX || node._skewY) {
                 // offset the anchorpoint
-                var skx = Math.tan(-node._skewX * Math.PI / 180);                            //TODO
+                var skx = Math.tan(-node._skewX * Math.PI / 180);
                 var sky = Math.tan(-node._skewY * Math.PI / 180);
                 if (skx === Infinity)
                     skx = 99999999;

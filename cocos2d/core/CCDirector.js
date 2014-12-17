@@ -731,7 +731,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {Number} level
      */
     popToSceneStackLevel: function (level) {
-
         cc.assert(this._runningScene, cc._LogInfos.Director_popToSceneStackLevel_2);
 
         var locScenesStack = this._scenesStack;
@@ -971,7 +970,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     _p._clear = function () {
         var viewport = this._openGLView.getViewPortRect();
-        cc._renderContext.clearRect(-viewport.x, viewport.y, viewport.width, -viewport.height);
+        cc._renderContext.setTransform(1,0,0,1, 0, 0);
+        cc._renderContext.clearRect(-viewport.x, viewport.y, viewport.width, viewport.height);
     };
 
 

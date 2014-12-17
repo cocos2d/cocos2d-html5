@@ -190,24 +190,18 @@
         if (opacity === 0)
             return;
 
-        var needTransform = (t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1);
-        var needRestore = (this._blendFuncStr !== "source-over") || needTransform;
-
-        if (needRestore) {
-            context.save();
-            context.globalCompositeOperation = this._blendFuncStr;
-        }
+        //context.save();
+        //TODO need add a wrapper for cache
+        context.globalCompositeOperation = this._blendFuncStr;
         context.globalAlpha = opacity;
         context.fillStyle = "rgba(" + (0 | curColor.r) + "," + (0 | curColor.g) + ","
             + (0 | curColor.b) + ", 1)";
-        if (needTransform) {
-            context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
-            context.fillRect(0, 0, locWidth * scaleX, -locHeight * scaleY);
-        } else {
-            context.fillRect(t.tx * scaleX, -t.ty * scaleY, locWidth * scaleX, -locHeight * scaleY);
-        }
-        if (needRestore)
-            context.restore();
+
+        //context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+        context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, context.canvas.height - (t.ty * scaleY));
+        context.fillRect(0, 0, locWidth * scaleX, -locHeight * scaleY);
+
+        //context.restore();                //Todo: need test
         cc.g_NumberOfDraws++;
     };
 
@@ -368,28 +362,20 @@
         if (opacity === 0)
             return;
 
-        var needTransform = (t.a !== 1 || t.b !== 0 || t.c !== 0 || t.d !== 1);
-        var needRestore = (this._blendFuncStr !== "source-over") || needTransform;
-        if (needRestore) {
-            context.save();
-            context.globalCompositeOperation = this._blendFuncStr;
-        }
-        context.globalAlpha = opacity;
         var locWidth = node._contentSize.width, locHeight = node._contentSize.height;
-
+        //todo: it can be cache.
+        //context.save();
+        context.globalCompositeOperation = this._blendFuncStr;
+        context.globalAlpha = opacity;
         var gradient = context.createLinearGradient(self._startPoint.x, self._startPoint.y, self._endPoint.x, self._endPoint.y);
         gradient.addColorStop(0, this._startStopStr);
         gradient.addColorStop(1, this._endStopStr);
         context.fillStyle = gradient;
 
-        if (needTransform) {
-            context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
-            context.fillRect(0, 0, locWidth * scaleX, -locHeight * scaleY);
-        } else
-            context.fillRect(t.tx * scaleX, -t.ty * scaleY, locWidth * scaleX, -locHeight * scaleY);
-
-        if (needRestore)
-            context.restore();
+        //context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+        context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, context.canvas.height - (t.ty * scaleY));
+        context.fillRect(0, 0, locWidth * scaleX, -locHeight * scaleY);
+        //context.restore();                 //todo: need test
         cc.g_NumberOfDraws++;
     };
 

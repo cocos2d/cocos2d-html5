@@ -95,7 +95,7 @@
 
     proto._RestoreCmdCallback = function(ctx, scaleX, scaleY){
         this._cacheDirty = false;
-        ctx.restore();
+        ctx.restore();                                //TODO need think
     };
 
     proto.initShaderCache = function(){};
@@ -152,6 +152,6 @@
 
         this._cacheDirty = false;
 
-        context.restore();
+        context.restore();                        //TODO need think
     };
 })();

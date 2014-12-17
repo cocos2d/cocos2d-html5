@@ -74,7 +74,7 @@
             t = this._worldTransform,
             pointRect = this._pointRect;
 
-        context.save();
+        context.save();                               //todo need refactor
         //transform
         var parent = node._parent;
         var parentCmd = parent ? parent._renderCmd : null;
@@ -108,7 +108,7 @@
                 if (alpha === 0) continue;
                 context.globalAlpha = alpha;
 
-                context.save();
+                context.save();                                   //TODO refactor for performance
                 context.translate((0 | particle.drawPos.x), -(0 | particle.drawPos.y));
 
                 var size = Math.floor(particle.size / 4) * 4;

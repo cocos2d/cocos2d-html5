@@ -1925,7 +1925,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     convertTouchToNodeSpace: function (touch) {
         var point = touch.getLocation();
-        //TODO This point needn't convert to GL in HTML5
         return this.convertToNodeSpace(point);
     },
 

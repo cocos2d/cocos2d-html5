@@ -37,67 +37,49 @@
     proto._startCmd = function(ctx, scaleX, scaleY){
         var node = this._node;
         ctx = ctx || cc._renderContext;
-        ctx.save();
-        ctx.save();
-        this.transform();
-        var t = this._worldTransform;
-        ctx.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
+        ctx.save();                                    //todo can reserve, it use for clip
+        //this.transform();
 
-
-        if (this._node._clippingToBounds) {
+        if (node._clippingToBounds) {
             this._scissorRestored = false;
+            var t = this._worldTransform;
+            //ctx.save();                            //todo can replace, it use for transform, because its children use world transform
+            //ctx.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
+            ctx.setTransform(t.a, t.b, t.c, t.d, t.tx * scaleX, ctx.canvas.height - (t.ty * scaleY));
 
             var locScaleX = node.getScaleX();
             var locScaleY = node.getScaleY();
 
-            ctx = ctx || cc._renderContext;
-
             var getWidth = (node._viewSize.width * locScaleX) * scaleX;
             var getHeight = (node._viewSize.height * locScaleY) * scaleY;
-            var startX = 0;
-            var startY = 0;
 
             ctx.beginPath();
-            ctx.rect(startX, startY, getWidth, -getHeight);
-            ctx.restore();
+            ctx.rect(0, 0, getWidth, -getHeight);
+            //ctx.restore();                       //todo can replace, it also can be reserve
             ctx.clip();
             ctx.closePath();
-
         }
     };
 
     proto._endCmd = function(ctx){
         ctx = ctx || cc._renderContext;
-        ctx.restore();
+        ctx.restore();                             //todo need think
     };
 
     proto.visit = function(parentCmd){
         var node = this._node;
-        var i, locChildren = node._children, selChild, childrenLen;
+        var i, locChildren = node._children, childrenLen;
 
         this.transform(parentCmd);
-
         cc.renderer.pushRenderCommand(this.startCmd);
 
         if (locChildren && locChildren.length > 0) {
             childrenLen = locChildren.length;
             node.sortAllChildren();
-            // draw children zOrder < 0
             for (i = 0; i < childrenLen; i++) {
-                selChild = locChildren[i];
-                if (selChild && selChild._localZOrder < 0)
-                    selChild._renderCmd.visit();
-                else
-                    break;
+                locChildren[i]._renderCmd.visit(this);
             }
-
-            // draw children zOrder >= 0
-            for (; i < childrenLen; i++)
-                locChildren[i]._renderCmd.visit();
         }
-
         cc.renderer.pushRenderCommand(this.endCmd);
-
     };
-
 })();

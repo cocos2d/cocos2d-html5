@@ -33,11 +33,12 @@
 
     proto.rendering = function (ctx, scaleX, scaleY) {
         var node = this._node;
-        ctx = ctx || cc._renderContext;
 
         if (!node._debugSlots && !node._debugBones) {
             return;
         }
+
+        ctx = ctx || cc._renderContext;
         var t = this._worldTransform;
         ctx.save();
         ctx.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
@@ -85,7 +86,7 @@
                     drawingUtil.setDrawColor(0, 255, 0, 255);
             }
         }
-        ctx.restore();
+        ctx.restore();                                  //todo need think  (I think this restore can be reserve)
     };
 
     proto._createChildFormSkeletonData = function(){
