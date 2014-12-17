@@ -106,7 +106,8 @@
         node._scale9Image.visit();
 
         //draw to cache canvas
-        this._cacheContext.clearRect(0, 0, sizeInPixels.width, -sizeInPixels.height);
+        this._cacheContext.setTransform(1, 0, 0, 1, 0, 0);
+        this._cacheContext.clearRect(0, 0, sizeInPixels.width, sizeInPixels.height);
         cc.renderer._renderingToCacheCanvas(this._cacheContext, node.__instanceId, locScaleFactor, locScaleFactor);
 
         if(contentSizeChanged)
