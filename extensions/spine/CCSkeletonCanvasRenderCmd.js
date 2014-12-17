@@ -34,14 +34,13 @@
     proto.rendering = function (ctx, scaleX, scaleY) {
         var node = this._node;
 
-        if (!node._debugSlots && !node._debugBones) {
+        if (!node._debugSlots && !node._debugBones)
             return;
-        }
 
         ctx = ctx || cc._renderContext;
         var t = this._worldTransform;
-        ctx.save();
-        ctx.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+
+        ctx.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, ctx.canvas.height - (t.ty * scaleY));
         var locSkeleton = node._skeleton;
         var attachment, slot, i, n, drawingUtil = cc._drawingUtil;
         if (node._debugSlots) {
@@ -86,7 +85,6 @@
                     drawingUtil.setDrawColor(0, 255, 0, 255);
             }
         }
-        ctx.restore();                                  //todo need think  (I think this restore can be reserve)
     };
 
     proto._createChildFormSkeletonData = function(){

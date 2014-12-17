@@ -43,8 +43,9 @@
         context.globalAlpha = alpha;
 
         var t = this._worldTransform;
+        ctx.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, context.canvas.height - (t.ty * scaleY));
+
         context.save();
-        ctx.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
         if ((_t._blendFunc && (_t._blendFunc.src == cc.SRC_ALPHA) && (_t._blendFunc.dst == cc.ONE)))
             context.globalCompositeOperation = 'lighter';
         var locBuffer = _t._buffer;

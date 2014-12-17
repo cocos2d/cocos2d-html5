@@ -75,7 +75,7 @@
                 locCacheCmds[i].rendering(locCacheContext, scaleX, scaleY);
                 locCacheCmds[i]._cacheDirty = false;
             }
-            locCacheContext.restore();             //todo: it can be reserve.
+            locCacheContext.restore();             //todo: need change the algorithm.
             this._cacheDirty = false;
         }
     };

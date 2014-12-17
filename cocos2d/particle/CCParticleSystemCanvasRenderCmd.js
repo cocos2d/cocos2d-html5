@@ -74,12 +74,9 @@
             t = this._worldTransform,
             pointRect = this._pointRect;
 
-        context.save();                               //todo need refactor
-        //transform
-        var parent = node._parent;
-        var parentCmd = parent ? parent._renderCmd : null;
-        this.transform(parentCmd);
-        context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+        context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, context.canvas.height - (t.ty * scaleY));
+
+        context.save();
         if (node.isBlendAdditive())
             context.globalCompositeOperation = 'lighter';
         else
@@ -116,7 +113,6 @@
                 var h = pointRect.height;
 
                 context.scale(Math.max((1 / w) * size, 0.000001), Math.max((1 / h) * size, 0.000001));
-
                 if (particle.rotation)
                     context.rotate(cc.degreesToRadians(particle.rotation));
 

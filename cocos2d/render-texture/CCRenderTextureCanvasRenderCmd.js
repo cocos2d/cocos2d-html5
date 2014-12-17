@@ -77,10 +77,10 @@
         //var context = cc._renderContext;
         var context = this._cacheContext;
         var locCanvas = this._cacheCanvas;
-        //TODO need test
+        context.setTransform(1,0,0,1,0,0);
         context.fillStyle = "rgba(" + (0 | r) + "," + (0 | g) + "," + (0 | b) + "," + a / 255 + ")";
-        context.clearRect(0, 0, locCanvas.width, -locCanvas.height);
-        context.fillRect(0, 0, locCanvas.width, -locCanvas.height);
+        context.clearRect(0, 0, locCanvas.width, locCanvas.height);
+        context.fillRect(0, 0, locCanvas.width, locCanvas.height);
     };
 
     proto.end = function(){
