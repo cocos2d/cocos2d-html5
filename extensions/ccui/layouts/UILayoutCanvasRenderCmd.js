@@ -54,7 +54,7 @@
             var t = this._worldTransform;
             context.save();
             context.save();
-            context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+            context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, context.canvas.height - (t.ty * scaleY));
         }
     };
 

@@ -96,7 +96,7 @@
             context.save();
             context.save();                                                               //todo: they should be reserve
             //Because drawNode's content size is zero
-            context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+            context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, context.canvas.height - (t.ty * scaleY));
         }
     };
 
@@ -107,7 +107,7 @@
         if (this._clipElemType) {
             context.globalCompositeOperation = node.inverted ? "destination-out" : "destination-in";
             var t = this._worldTransform;
-            context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+            context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, context.canvas.height - (t.ty * scaleY));
         } else {
             context.restore();                                 //todo: is it need?   use for line:99
             if (node.inverted) {
@@ -149,7 +149,7 @@
     proto.transform = function(parentCmd, recursive){
         cc.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd, recursive);
         var node = this._node;
-        if(node._stencil)
+        if(node._stencil && node._stencil._renderCmd)
             node._stencil._renderCmd.transform(this, recursive);
     };
 
@@ -186,7 +186,6 @@
         }else{
             node._stencil.visit(this);
         }
-
         cc.renderer.pushRenderCommand(this._rendererClipCmd);
 
         if(this._clipElemType){
