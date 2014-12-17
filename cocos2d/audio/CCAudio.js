@@ -472,8 +472,15 @@ cc.Audio = cc.Class.extend({
 
         loadAudioFromExtList: function(realUrl, typeList, audio, cb){
 
-            if(typeList.length === 0)
-                cb("can not found the resource of audio! Last match url is : " + realUrl);
+            if(typeList.length === 0){
+                var ERRSTR = "can not found the resource of audio! Last match url is : ";
+                ERRSTR += realUrl.replace(/\.(.*)?$/, "(");
+                support.forEach(function(ext){
+                    ERRSTR += ext + "|";
+                });
+                ERRSTR = ERRSTR.replace(/\|$/, ")");
+                return cb(ERRSTR);
+            }
 
             realUrl = cc.path.changeExtname(realUrl, typeList.splice(0, 1));
 
