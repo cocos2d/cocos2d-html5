@@ -1807,50 +1807,11 @@ cc._setup = function (el, width, height) {
     if (cc._setupCalled) return;
     else cc._setupCalled = true;
     var win = window;
-    var lastTime = new Date();
-    var frameTime = 1000 / cc.game.config[cc.game.CONFIG_KEY.frameRate];
-
-    var stTime = function(callback){
-        var currTime = new Date().getTime();
-        var timeToCall = Math.max(0, frameTime - (currTime - lastTime));
-        var id = window.setTimeout(function() { callback(); },
-            timeToCall);
-        lastTime = currTime + timeToCall;
-        return id;
-    };
-
-    var ctTime = function(id){
-        clearTimeout(id);
-    };
-
-    if(cc.sys.os === cc.sys.OS_IOS && cc.sys.browserType === cc.sys.BROWSER_TYPE_WECHAT){
-        win.requestAnimFrame = stTime;
-        win.cancelAnimationFrame = ctTime;
-    }else if(cc.game.config[cc.game.CONFIG_KEY.frameRate] != 60){
-        win.requestAnimFrame = stTime;
-        win.cancelAnimationFrame = ctTime;
-    }else{
-        win.requestAnimFrame = win.requestAnimationFrame ||
-            win.webkitRequestAnimationFrame ||
-            win.mozRequestAnimationFrame ||
-            win.oRequestAnimationFrame ||
-            win.msRequestAnimationFrame ||
-            stTime;
-        win.cancelAnimationFrame = window.cancelAnimationFrame ||
-            window.cancelRequestAnimationFrame ||
-            window.msCancelRequestAnimationFrame ||
-            window.mozCancelRequestAnimationFrame ||
-            window.oCancelRequestAnimationFrame ||
-            window.webkitCancelRequestAnimationFrame ||
-            window.msCancelAnimationFrame ||
-            window.mozCancelAnimationFrame ||
-            window.webkitCancelAnimationFrame ||
-            window.oCancelAnimationFrame ||
-            ctTime;
-    }
-
     var element = cc.$(el) || cc.$('#' + el);
     var localCanvas, localContainer, localConStyle;
+
+    cc.game._setAnimFrame();
+
     if (element.tagName == "CANVAS") {
         width = width || element.width;
         height = height || element.height;
@@ -2012,6 +1973,9 @@ cc.game = /** @lends cc.game# */{
     _paused: true,//whether the game is paused
 
     _intervalId: null,//interval target of main
+    
+    _lastTime: null,
+    _frameTime: null,
 
     /**
      * Config of game
@@ -2041,7 +2005,46 @@ cc.game = /** @lends cc.game# */{
         if (self._intervalId)
             window.cancelAnimationFrame(self._intervalId);
         self._paused = true;
+        self._setAnimFrame();
         self._runMainLoop();
+    },
+    _setAnimFrame: function () {
+        this._lastTime = new Date();
+        this._frameTime = 1000 / cc.game.config[cc.game.CONFIG_KEY.frameRate];
+        if((cc.sys.os === cc.sys.OS_IOS && cc.sys.browserType === cc.sys.BROWSER_TYPE_WECHAT) || cc.game.config[cc.game.CONFIG_KEY.frameRate] != 60) {
+            window.requestAnimFrame = this._stTime;
+            window.cancelAnimationFrame = this._ctTime;
+        }
+        else {
+            window.requestAnimFrame = window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.oRequestAnimationFrame ||
+            window.msRequestAnimationFrame ||
+            this._stTime;
+            window.cancelAnimationFrame = window.cancelAnimationFrame ||
+            window.cancelRequestAnimationFrame ||
+            window.msCancelRequestAnimationFrame ||
+            window.mozCancelRequestAnimationFrame ||
+            window.oCancelRequestAnimationFrame ||
+            window.webkitCancelRequestAnimationFrame ||
+            window.msCancelAnimationFrame ||
+            window.mozCancelAnimationFrame ||
+            window.webkitCancelAnimationFrame ||
+            window.oCancelAnimationFrame ||
+            this._ctTime;
+        }
+    },
+    _stTime: function(callback){
+        var currTime = new Date().getTime();
+        var timeToCall = Math.max(0, cc.game._frameTime - (currTime - cc.game._lastTime));
+        var id = window.setTimeout(function() { callback(); },
+            timeToCall);
+        cc.game._lastTime = currTime + timeToCall;
+        return id;
+    },
+    _ctTime: function(id){
+        window.clearTimeout(id);
     },
     //Run game.
     _runMainLoop: function () {
