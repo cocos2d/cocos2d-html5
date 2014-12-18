@@ -1787,7 +1787,13 @@ cc._setup = function (el, width, height) {
     else cc._setupCalled = true;
     var win = window;
     var lastTime = new Date();
-    var frameTime = 1000 / cc.game.config[cc.game.CONFIG_KEY.frameRate];
+    var cfg = cc.game.config,
+        cfgKey = cc.game.CONFIG_KEY,
+        frameTime = 1000 / cfg[cfgKey.frameRate],
+        resolution = cfg[cfgKey.designResolution],
+        policy = cfg[cfgKey.resolutionPolicy],
+        adjustVP = cfg[cfgKey.adjustViewport],
+        autoResize = cfg[cfgKey.resizeWithBrowser];
 
     var stTime = function(callback){
         var currTime = new Date().getTime();
@@ -1930,6 +1936,14 @@ cc._setup = function (el, width, height) {
      * A Plist Parser
      */
     cc.plistParser = new cc.PlistParser();
+    
+    // Set design resolution policy
+    if (adjustVP !== undefined)
+        cc.view.adjustViewPort(adjustVP);
+    if (autoResize !== undefined)
+        cc.view.resizeWithBrowserSize(autoResize);
+    if (policy !== undefined && resolution) 
+        cc.view.setDesignResolutionSize(resolution[0], resolution[1], policy);
 };
 
 cc._checkWebGLRenderMode = function () {
@@ -1984,6 +1998,10 @@ cc.game = /** @lends cc.game# */{
         renderMode: "renderMode",
         jsList: "jsList",
         classReleaseMode: "classReleaseMode",
+        designResolution: "designResolution",
+        resolutionPolicy: "resolutionPolicy",
+        adjustViewport: "adjustViewport",
+        resizeWithBrowser: "resizeWithBrowser",
         useRequireJS:"useRequireJS"
     },
 
