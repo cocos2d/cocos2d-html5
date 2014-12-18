@@ -856,7 +856,13 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
      */
     var EqualToFrame = cc.ContainerStrategy.extend({
         apply: function (view) {
+            var containerStyle = cc.container.style;
             this._setupContainer(view, view._frameSize.width, view._frameSize.height);
+            // Setup container's margin
+            containerStyle.marginLeft = "0px";
+            containerStyle.marginRight = "0px";
+            containerStyle.marginTop = "0px";
+            containerStyle.marginBottom = "0px";
         }
     });
 
