@@ -505,31 +505,32 @@ cc.Audio = cc.Class.extend({
             }else{//DOM
 
                 var element = document.createElement("audio");
-                element.src = realUrl;
 
                 var success = function(){
-                    audio.setElement(element);
-                    cb(null, audio);
                     element.removeEventListener("onload", success, false);
                     element.removeEventListener("error", failure, false);
                     element.removeEventListener("emptied", failure, false);
+                    audio.setElement(element);
+                    cb(null, audio);
                 };
 
                 var failure = function(){
-                    loader.loadAudioFromExtList(realUrl, typeList, audio, cb);
                     element.removeEventListener("onload", success, false);
                     element.removeEventListener("error", failure, false);
                     element.removeEventListener("emptied", failure, false);
+                    loader.loadAudioFromExtList(realUrl, typeList, audio, cb);
                 };
 
                 cc._addEventListener(element, "canplaythrough", success, false);
                 cc._addEventListener(element, "error", failure, false);
                 cc._addEventListener(element, "emptied", failure, false);
+
+                element.src = realUrl;
+                element.load();
             }
 
         }
     };
-
     cc.loader.register(["mp3", "ogg", "wav", "mp4", "m4a"], loader);
 
     /**
