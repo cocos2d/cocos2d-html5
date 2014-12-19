@@ -40,8 +40,7 @@
     proto.constructor = ccui.Layout.CanvasRenderCmd;
 
     proto._onRenderSaveCmd = function(ctx, scaleX, scaleY){
-        var context = ctx || cc._renderContext;
-        //var node = this._node;
+        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         if (this._clipElemType) {
             var canvas = context.canvas;
             this._locCache = ccui.Layout.CanvasRenderCmd._getSharedCache();
@@ -49,44 +48,42 @@
             this._locCache.height = canvas.height;
             var locCacheCtx = this._locCache.getContext("2d");
             locCacheCtx.drawImage(canvas, 0, 0);
-            context.save();
         } else {
             var t = this._worldTransform;
-            context.save();
-            context.save();
-            context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, context.canvas.height - (t.ty * scaleY));
+            wrapper.save();
+            wrapper.save();
+            context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, wrapper.height - (t.ty * scaleY));
         }
     };
 
     proto._onRenderSaveSpriteCmd = function(ctx){
-        var context = ctx || cc._renderContext;
-        var node = this._node;
+        var wrapper = ctx || cc._renderContext;
+        //var node = this._node;
         if (this._clipElemType) {
-            context.globalCompositeOperation = "destination-in";
-            var parentCmd = node._parent ? node._parent._renderCmd : null;
-            this.transform(parentCmd);                           //todo: why?
+            wrapper.setCompositeOperation("destination-in");
+            //var parentCmd = node._parent ? node._parent._renderCmd : null;
+            //this.transform(parentCmd);                           //todo: why?
         }
     };
 
     proto._onRenderClipCmd = function(ctx){
-        var context = ctx || cc._renderContext;
+        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         if (!this._clipElemType) {
-            context.closePath();
-            context.restore();                              //todo: it can be reserve
+            wrapper.restore();
             context.clip();
         }
     };
 
     proto._onRenderRestoreCmd = function(ctx){
-        var context = ctx || cc._renderContext;
-        context.restore();                                  //todo: it can be reserve
+        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
+
         if (this._clipElemType) {
             // Redraw the cached canvas, so that the cliped area shows the background etc.
-            context.save();
             context.setTransform(1, 0, 0, 1, 0, 0);
-            context.globalCompositeOperation = "destination-over";
+            wrapper.setCompositeOperation("destination-over");
             context.drawImage(this._locCache, 0, 0);
-            context.restore();                              //todo: it can be reserve
+        }else{
+            wrapper.restore();                                  //use for restore clip operation
         }
     };
 
@@ -95,8 +92,8 @@
     };
 
     proto.__stencilDraw = function(ctx,scaleX, scaleY){          //Only for Canvas
-        var locContext = ctx || cc._renderContext;
-        var buffer = this._buffer;
+        var wrapper = ctx || cc._renderContext, locContext = wrapper.getContext(), buffer = this._buffer;
+
         for (var i = 0, bufLen = buffer.length; i < bufLen; i++) {
             var element = buffer[i], vertices = element.verts;
             var firstPoint = vertices[0];
@@ -104,6 +101,7 @@
             locContext.moveTo(firstPoint.x * scaleX, -firstPoint.y * scaleY);
             for (var j = 1, len = vertices.length; j < len; j++)
                 locContext.lineTo(vertices[j].x * scaleX, -vertices[j].y * scaleY);
+            locContext.closePath();
         }
     };
 

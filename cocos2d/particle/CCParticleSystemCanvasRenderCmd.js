@@ -69,14 +69,12 @@
     };
 
     proto.rendering = function (ctx, scaleX, scaleY) {
-        var context = ctx || cc._renderContext,
-            node = this._node,
-            t = this._worldTransform,
-            pointRect = this._pointRect;
+        //TODO: need refactor rendering for performance
+        var wrapper = ctx || cc._renderContext, context = wrapper.getContext(),
+            node = this._node, t = this._worldTransform, pointRect = this._pointRect;
 
-        context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, context.canvas.height - (t.ty * scaleY));
-
-        context.save();
+        context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, wrapper.height - (t.ty * scaleY));
+        wrapper.save();
         if (node.isBlendAdditive())
             context.globalCompositeOperation = 'lighter';
         else
@@ -87,12 +85,12 @@
         if (node.drawMode == cc.ParticleSystem.TEXTURE_MODE) {
             // Delay drawing until the texture is fully loaded by the browser
             if (!node._texture || !node._texture._isLoaded) {
-                context.restore();
+                wrapper.restore();
                 return;
             }
             var element = node._texture.getHtmlElementObj();
             if (!element.width || !element.height) {
-                context.restore();
+                wrapper.restore();
                 return;
             }
 
@@ -105,7 +103,7 @@
                 if (alpha === 0) continue;
                 context.globalAlpha = alpha;
 
-                context.save();                                   //TODO refactor for performance
+                context.save();
                 context.translate((0 | particle.drawPos.x), -(0 | particle.drawPos.y));
 
                 var size = Math.floor(particle.size / 4) * 4;
@@ -140,7 +138,7 @@
                 context.restore();
             }
         }
-        context.restore();
+        wrapper.restore();
         cc.g_NumberOfDraws++;
     };
 

@@ -37,7 +37,6 @@
         };
         this._blendFuncStr = "source-over";
         this._colorized = false;
-        this._needSetBlend = false;
 
         this._originalTexture = null;
     };
@@ -46,6 +45,11 @@
     proto.constructor = cc.Sprite.CanvasRenderCmd;
 
     proto._init = function () {};
+
+    proto._setBlendFuncStr = function(compositeOperation){
+        //a hack function for clippingNode
+         this._blendFuncStr = compositeOperation;
+    };
 
     proto.setDirtyRecursively = function (value) {};
 
@@ -74,7 +78,6 @@
 
     proto.updateBlendFunc = function (blendFunc) {
         this._blendFuncStr = cc.Node.CanvasRenderCmd._getCompositeOperationByBlendFunc(blendFunc);
-        this._needSetBlend = (this._blendFuncStr !== "source-over");
     };
 
     proto._setBatchNodeForAddChild = function (child) {
@@ -111,13 +114,13 @@
         var self = this,
             node = self._node;
 
-        var context = ctx || cc._renderContext,
-            locTextureCoord = self._textureCoord, alpha = (this._displayedOpacity / 255);
+        var locTextureCoord = self._textureCoord, alpha = (this._displayedOpacity / 255);
 
         if ((node._texture && ((locTextureCoord.width === 0 || locTextureCoord.height === 0)            //set texture but the texture isn't loaded.
             || !node._texture._isLoaded)) || alpha === 0)
             return;
 
+        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         var t = this._worldTransform,
             locX = node._offsetPosition.x,
             locY = -node._offsetPosition.y - node._rect.height,
@@ -125,15 +128,13 @@
             locHeight = node._rect.height,
             image, curColor, contentSize;
 
+        wrapper.setCompositeOperation(this._blendFuncStr);
+        wrapper.setGlobalAlpha(alpha);
 
-        //context.save();
-        context.globalCompositeOperation = this._blendFuncStr;
-        context.globalAlpha = alpha;         //cache
-        //transform
-        //context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
-        context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, context.canvas.height - (t.ty * scaleY));
+        context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, wrapper.height - (t.ty * scaleY));
 
-        //TODO: need think
+        if(node._flippedX || node._flippedY)
+            wrapper.save();
         if (node._flippedX) {
             locX = -locX - locWidth;
             context.scale(-1, 1);
@@ -146,7 +147,7 @@
         if (node._texture) {
             image = node._texture._htmlElementObj;
             if (node._texture._pattern != "") {
-                context.fillStyle = context.createPattern(image, node._texture._pattern);
+                wrapper.setFillStyle(context.createPattern(image, node._texture._pattern));
                 context.fillRect(locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
             } else {
                 if (this._colorized) {
@@ -163,11 +164,12 @@
             contentSize = node._contentSize;
             if (locTextureCoord.validRect) {
                 curColor = this._displayedColor;
-                context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
+                wrapper.setFillStyle("rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)");
                 context.fillRect(locX * scaleX, locY * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
             }
         }
-        //context.restore();                  //todo need test
+        if(node._flippedX || node._flippedY)
+            wrapper.restore();
         cc.g_NumberOfDraws++;
     };
 

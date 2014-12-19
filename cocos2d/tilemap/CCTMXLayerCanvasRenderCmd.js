@@ -33,7 +33,7 @@
         tmpCanvas.width = locCanvas.width;
         tmpCanvas.height = locCanvas.height;
         this._cacheCanvas = tmpCanvas;
-        this._cacheContext = this._cacheCanvas.getContext('2d');
+        this._cacheContext = new cc.CanvasContextWrapper(this._cacheCanvas.getContext('2d'));
         var tempTexture = new cc.Texture2D();
         tempTexture.initWithElement(tmpCanvas);
         tempTexture.handleLoadedTexture();
@@ -75,31 +75,27 @@
                 locCacheCmds[i].rendering(locCacheContext, scaleX, scaleY);
                 locCacheCmds[i]._cacheDirty = false;
             }
-            locCacheContext.restore();             //todo: need change the algorithm.
+            locCacheContext.restore();
             this._cacheDirty = false;
         }
     };
 
     proto.rendering = function (ctx, scaleX, scaleY) {
-        var node = this._node;
         var alpha = this._displayedOpacity / 255;
         if (alpha <= 0)
             return;
 
+        var node = this._node;
         this._renderingChildToCache(scaleX, scaleY);
-        var context = ctx || cc._renderContext;
-        context.globalAlpha = alpha;
+        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
+        wrapper.setGlobalAlpha(alpha);
+
         var posX = 0 | ( -this._anchorPointInPoints.x), posY = 0 | ( -this._anchorPointInPoints.y);
         var locCacheCanvas = this._cacheCanvas, t = this._worldTransform;
         //direct draw image by canvas drawImage
         if (locCacheCanvas && locCacheCanvas.width !== 0 && locCacheCanvas.height !== 0) {
-            //context.save();
-            //transform
-            //context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
-            context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, context.canvas.height - (t.ty * scaleY));
-
+            context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, wrapper.height - (t.ty * scaleY));
             var locCanvasHeight = locCacheCanvas.height * scaleY;
-
             if (node.layerOrientation === cc.TMX_ORIENTATION_HEX) {
                 var halfTileSize = node._mapTileSize.height * 0.5 * scaleY;
                 context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
@@ -108,7 +104,6 @@
                 context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
                     posX, -(posY + locCanvasHeight), locCacheCanvas.width * scaleX, locCanvasHeight);
             }
-            //context.restore();                      //todo need test
         }
         cc.g_NumberOfDraws++;
     };
@@ -116,11 +111,12 @@
     proto._updateCacheContext = function(size, height){
         var node = this._node,
             locContentSize = node._contentSize,
-            locCanvas = this._cacheCanvas,
+            locCanvas = this._cacheCanvas, locWrapper = this._cacheContext,
             scaleFactor = cc.contentScaleFactor();
-        locCanvas.width = 0 | (locContentSize.width * 1.5 * scaleFactor);
-        locCanvas.height = 0 | (locContentSize.height * 1.5 * scaleFactor);
+        locWrapper.width = locCanvas.width = 0 | (locContentSize.width * 1.5 * scaleFactor);
+        locWrapper.height = locCanvas.height = 0 | (locContentSize.height * 1.5 * scaleFactor);
 
+        //todo: need change the wrapper's height
         if(node.layerOrientation === cc.TMX_ORIENTATION_HEX)
             this._cacheContext.translate(0, locCanvas.height - (node._mapTileSize.height * 0.5));                  //translate for hexagonal
         else
@@ -136,7 +132,7 @@
 
     proto.visit = function(parentCmd){
         var node = this._node;
-        //TODO it will implement dynamic compute child cutting automation.
+        //TODO: it will implement dynamic compute child cutting automation.
         var i, len, locChildren = node._children;
         // quick return if not visible
         if (!node._visible || !locChildren || locChildren.length === 0)
@@ -146,7 +142,6 @@
         if (parentCmd)
             this._curLevel = parentCmd._curLevel + 1;
 
-        //node.transform(node._parent && node._parent._renderCmd);
         this._syncStatus(parentCmd);
 
         if (this._cacheDirty) {

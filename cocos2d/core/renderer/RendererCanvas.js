@@ -40,7 +40,7 @@ cc.rendererCanvas = {
 
     /**
      * drawing all renderer command to context (default is cc._renderContext)
-     * @param {CanvasRenderingContext2D} [ctx=cc._renderContext]
+     * @param {cc.CanvasContextWrapper} [ctx=cc._renderContext]
      */
     rendering: function (ctx) {
         var locCmds = this._renderCmds,
@@ -146,3 +146,79 @@ cc.rendererCanvas = {
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS)
     cc.renderer = cc.rendererCanvas;
+
+(function () {
+    cc.CanvasContextWrapper = function (context) {
+        this._context = context;
+
+        this._saveCount = 0;
+        this._currentAlpha = context.globalAlpha;
+        this._currentCompositeOperation = context.globalCompositeOperation;
+        this._currentFillStyle = context.fillStyle;
+        this._currentStrokeStyle = context.strokeStyle;
+
+        this.width = context.canvas.width;
+        this.height = context.canvas.height;
+    };
+
+    var proto = cc.CanvasContextWrapper.prototype;
+
+    proto.getContext = function(){
+        return this._context;
+    };
+
+    proto.save = function () {
+        this._context.save();
+        this._saveCount++;
+    };
+
+    proto.restore = function () {
+        this._context.restore();
+        this._saveCount--;
+    };
+
+    proto.setGlobalAlpha = function (alpha) {
+        if (this._saveCount > 0) {
+            this._context.globalAlpha = alpha;
+        } else {
+            if (this._currentAlpha !== alpha) {
+                this._currentAlpha = alpha;
+                this._context.globalAlpha = alpha;
+            }
+        }
+    };
+
+    proto.setCompositeOperation = function(compositionOperation){
+        if (this._saveCount > 0) {
+            this._context._currentCompositeOperation = compositionOperation;
+        } else {
+            if (this._currentCompositeOperation !== compositionOperation) {
+                this._currentCompositeOperation = compositionOperation;
+                this._context.globalCompositeOperation = compositionOperation;
+            }
+        }
+    };
+
+    proto.setFillStyle = function(fillStyle){
+        if (this._saveCount > 0) {
+            this._context.fillStyle = fillStyle;
+        } else {
+            if (this._currentFillStyle !== fillStyle) {
+                this._currentFillStyle = fillStyle;
+                this._context.fillStyle = fillStyle;
+            }
+        }
+    };
+
+    proto.setStrokeStyle = function(strokeStyle){
+        if (this._saveCount > 0) {
+            this._context.strokeStyle = strokeStyle;
+        } else {
+            if (this._currentStrokeStyle !== strokeStyle) {
+                this._currentStrokeStyle = strokeStyle;
+                this._context.strokeStyle = strokeStyle;
+            }
+        }
+    };
+})();
+

@@ -36,7 +36,7 @@ cc.BakeSprite = cc.Sprite.extend(/** @lends cc.BakeSprite# */{
         var canvasElement = document.createElement("canvas");
         canvasElement.width = canvasElement.height = 10;
         this._cacheCanvas = canvasElement;
-        this._cacheContext = canvasElement.getContext("2d");
+        this._cacheContext = new cc.CanvasContextWrapper(canvasElement.getContext("2d"));
 
         var texture = new cc.Texture2D();
         texture.initWithElement(canvasElement);
@@ -62,9 +62,9 @@ cc.BakeSprite = cc.Sprite.extend(/** @lends cc.BakeSprite# */{
             height = sizeOrWidth.height;
             sizeOrWidth = sizeOrWidth.width;
         }
-        var locCanvas = this._cacheCanvas;
-        locCanvas.width = sizeOrWidth;
-        locCanvas.height = height;   //TODO note baidu browser      reset the context after set width or height
+        var locCanvas = this._cacheCanvas, locContext = this._cacheContext;
+        locContext.width = locCanvas.width = sizeOrWidth;
+        locContext.height = locCanvas.height = height;   //TODO note baidu browser      reset the context after set width or height
         this.getTexture().handleLoadedTexture();
         this.setTextureRect(cc.rect(0,0, sizeOrWidth, height), false);
     }

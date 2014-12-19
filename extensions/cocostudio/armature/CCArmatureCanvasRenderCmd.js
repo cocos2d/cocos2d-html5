@@ -56,6 +56,7 @@
     proto.constructor = ccs.Armature.CanvasRenderCmd;
 
     proto._startCmdCallback = function(ctx, scaleX, scaleY){
+        //TODO: need refactor for setTransform
         var context = ctx || cc._renderContext;
         var node = this._node;
         context.save();
@@ -152,6 +153,6 @@
 
         this._cacheDirty = false;
 
-        context.restore();                        //TODO need think
+        context.restore();                        //TODO: need think
     };
 })();

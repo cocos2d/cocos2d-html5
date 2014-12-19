@@ -43,7 +43,7 @@
     proto.constructor = cc.ProgressTimer.CanvasRenderCmd;
 
     proto.rendering = function (ctx, scaleX, scaleY) {
-        var context = ctx || cc._renderContext, node = this._node, locSprite = node._sprite;
+        var wrapper = ctx || cc._renderContext,context = wrapper.getContext(), node = this._node, locSprite = node._sprite;
         var locTextureCoord = locSprite._renderCmd._textureCoord, alpha = locSprite._renderCmd._displayedOpacity / 255;
 
         if (locTextureCoord.width === 0 || locTextureCoord.height === 0)
@@ -52,12 +52,10 @@
             return;
 
         var t = this._worldTransform;
+        context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, wrapper.height - (t.ty * scaleY));
 
-        //context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
-        context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, context.canvas.height - (t.ty * scaleY));
-
-        context.globalCompositeOperation = locSprite._blendFuncStr;
-        context.globalAlpha = alpha;
+        wrapper.setCompositeOperation(locSprite._blendFuncStr);
+        wrapper.setGlobalAlpha(alpha);
 
         var locRect = locSprite._rect, locOffsetPosition = locSprite._offsetPosition;
         var locX = locOffsetPosition.x,
@@ -65,7 +63,7 @@
             locWidth = locRect.width,
             locHeight = locRect.height;
 
-        context.save();
+        wrapper.save();
         if (locSprite._flippedX) {
             locX = -locX - locWidth;
             context.scale(-1, 1);
@@ -103,7 +101,7 @@
                 locTextureCoord.renderX, locTextureCoord.renderY, locTextureCoord.width, locTextureCoord.height,
                 locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
         }
-        context.restore();                                        //todo: it can be reserve, need test
+        wrapper.restore();
         cc.g_NumberOfDraws++;
     };
 

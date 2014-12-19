@@ -36,34 +36,29 @@
 
     proto._startCmd = function(ctx, scaleX, scaleY){
         var node = this._node;
-        ctx = ctx || cc._renderContext;
-        ctx.save();                                    //todo can reserve, it use for clip
-        //this.transform();
+        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
+        wrapper.save();
 
         if (node._clippingToBounds) {
             this._scissorRestored = false;
             var t = this._worldTransform;
-            //ctx.save();                            //todo can replace, it use for transform, because its children use world transform
-            //ctx.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
-            ctx.setTransform(t.a, t.b, t.c, t.d, t.tx * scaleX, ctx.canvas.height - (t.ty * scaleY));
+            context.setTransform(t.a, t.b, t.c, t.d, t.tx * scaleX, wrapper.height - (t.ty * scaleY));
 
-            var locScaleX = node.getScaleX();
-            var locScaleY = node.getScaleY();
+            var locScaleX = node.getScaleX(), locScaleY = node.getScaleY();
 
             var getWidth = (node._viewSize.width * locScaleX) * scaleX;
             var getHeight = (node._viewSize.height * locScaleY) * scaleY;
 
-            ctx.beginPath();
-            ctx.rect(0, 0, getWidth, -getHeight);
-            //ctx.restore();                       //todo can replace, it also can be reserve
-            ctx.clip();
-            ctx.closePath();
+            context.beginPath();
+            context.rect(0, 0, getWidth, -getHeight);
+            context.closePath();
+            context.clip();
         }
     };
 
-    proto._endCmd = function(ctx){
-        ctx = ctx || cc._renderContext;
-        ctx.restore();                             //todo need think
+    proto._endCmd = function(wrapper){
+        wrapper = wrapper || cc._renderContext;
+        wrapper.restore();
     };
 
     proto.visit = function(parentCmd){

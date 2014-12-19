@@ -59,14 +59,14 @@
             stencil._renderCmd.rendering = function (ctx, scaleX, scaleY) {
                 scaleX = scaleX || cc.view.getScaleX();
                 scaleY = scaleY ||cc.view.getScaleY();
-                var context = ctx || cc._renderContext;
-                var t = this._transform;
-                context.save();
+                var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
+                var t = this._transform;                                              //note: use local transform
+                wrapper.save();
                 context.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
                 context.beginPath();
                 for (var i = 0; i < stencil._buffer.length; i++) {
                     var vertices = stencil._buffer[i].verts;
-                    //TODO need support circle etc
+                    //TODO: need support circle etc
                     //cc.assert(cc.vertexListIsClockwise(vertices),
                     //    "Only clockwise polygons should be used as stencil");
 
@@ -75,13 +75,15 @@
                     for (var j = 1, len = vertices.length; j < len; j++)
                         context.lineTo(vertices[j].x * scaleX, -vertices[j].y * scaleY);
                 }
-                context.restore();                                  //todo it can be reserve.
+                wrapper.restore();
             };
+        }else{
+            stencil._parent = this._node;
         }
     };
 
     proto._saveCmdCallback  = function(ctx, scaleX, scaleY) {
-        var context = ctx || cc._renderContext;
+        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
 
         if (this._clipElemType) {
             var locCache = cc.ClippingNode.CanvasRenderCmd._getSharedCache();
@@ -90,29 +92,42 @@
             locCache.height = canvas.height;                     //note: on some browser, it can't clear the canvas, e.g. baidu
             var locCacheCtx = locCache.getContext("2d");
             locCacheCtx.drawImage(canvas, 0, 0);                //save the result to shareCache canvas
-            context.save();
         } else {
             var t = this._worldTransform;
-            context.save();
-            context.save();                                                               //todo: they should be reserve
+            wrapper.save();
+            wrapper.save();                                                               //save for clip
             //Because drawNode's content size is zero
-            context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, context.canvas.height - (t.ty * scaleY));
+            context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, wrapper.height - (t.ty * scaleY));
+        }
+    };
+
+    proto._setStencilCompositionOperation = function(stencil){
+         if(!stencil)
+            return;
+        var node = this._node;
+        if(stencil._renderCmd && stencil._renderCmd._setBlendFuncStr)
+            stencil._renderCmd._setBlendFuncStr(node.inverted ? "destination-out" : "destination-in");
+
+        if(!stencil._children)
+            return;
+        var children = stencil._children;
+        for(var i = 0, len = children.length; i < len; i++){
+             this._setStencilCompositionOperation(children[i]);
         }
     };
 
     proto._clipCmdCallback = function(ctx, scaleX, scaleY) {
         var node = this._node;
-        var context = ctx || cc._renderContext;
+        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
 
         if (this._clipElemType) {
-            context.globalCompositeOperation = node.inverted ? "destination-out" : "destination-in";
-            var t = this._worldTransform;
-            context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, context.canvas.height - (t.ty * scaleY));
+            //hack
+            this._setStencilCompositionOperation(node._stencil);
         } else {
-            context.restore();                                 //todo: is it need?   use for line:99
+            wrapper.restore();                                 //it use for
             if (node.inverted) {
                 var canvas = context.canvas;
-                context.save();
+                wrapper.save();
                 context.setTransform(1, 0, 0, 1, 0, 0);
 
                 context.moveTo(0, 0);
@@ -121,7 +136,7 @@
                 context.lineTo(canvas.width, 0);
                 context.lineTo(0, 0);
 
-                context.restore();                          //todo It can be reserve.
+                wrapper.restore();
             }
             context.closePath();
             context.clip();
@@ -130,19 +145,15 @@
 
     proto._restoreCmdCallback = function (ctx) {
         var locCache = cc.ClippingNode.CanvasRenderCmd._getSharedCache();
-        var context = ctx || cc._renderContext;
+        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         if (this._clipElemType) {
-            context.restore();                                //todo: use for line: 93
-
-            // Redraw the cached canvas, so that the cliped area shows the background etc.
-            context.save();
+            // Redraw the cached canvas, so that the clipped area shows the background etc.
             context.setTransform(1, 0, 0, 1, 0, 0);
-            context.globalCompositeOperation = "destination-over";
+            wrapper.setCompositeOperation("destination-over");
             context.drawImage(locCache, 0, 0);
-            context.restore();                              //todo It can be reserve
             this._dirtyFlag = 0;
         } else {
-            context.restore();                             //todo: It can be reserve
+            wrapper.restore();                             //use for restore clip operation
         }
     };
 
