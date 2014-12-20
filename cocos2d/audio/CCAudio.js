@@ -105,11 +105,15 @@
                 if(parseInt(version) < 30){
                     supportTable[sys.BROWSER_TYPE_CHROME]  = {multichannel: false , webAudio: true , auto: false};
                 }
+                break;
         }
     }
 
     if(cc.sys.isMobile){
-        cc.__audioSupport = supportTable[cc.sys.browserType] || supportTable["common"];
+        if(cc.sys.os != cc.sys.OS_IOS)
+            cc.__audioSupport = supportTable[cc.sys.browserType] || supportTable["common"];
+        else
+            cc.__audioSupport = supportTable[sys.BROWSER_TYPE_SAFARI];
     }else{
         //Desktop support all
         cc.__audioSupport = supportTable["common"];
@@ -186,7 +190,7 @@ cc.Audio = cc.Class.extend({
 
     play: function(offset, loop){
         this._playing = true;
-        this.loop = loop === undefined ? this.loop : (loop || false);
+        this.loop = loop === undefined ? this.loop : loop;
         if(this._AUDIO_TYPE === "AUDIO"){
             this._playOfAudio(offset);
         }else{
@@ -215,7 +219,7 @@ cc.Audio = cc.Class.extend({
             if(sourceNode["playbackState"] == null)
                 return this._playing;
             else
-                return sourceNode["playbackState"] == 3;
+                return this._currentTime + this._context.currentTime - this._startTime < this._currentSource.buffer.duration;
         }
     },
 
