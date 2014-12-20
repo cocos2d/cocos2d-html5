@@ -49,7 +49,7 @@
         this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
     };
 
-    proto.visit = function(){
+    proto.visit = function(parentCmd){
         var node = this._node;
         // CAREFUL:
         // This visit is almost identical to cc.Node#visit
@@ -63,7 +63,7 @@
 
         var currentStack = cc.current_stack;
         currentStack.stack.push(currentStack.top);
-        this._syncStatus(ctx);
+        this._syncStatus(parentCmd);
         currentStack.top = this._stackMatrix;
         //this.draw(ctx);
         cc.renderer.pushRenderCommand(this);

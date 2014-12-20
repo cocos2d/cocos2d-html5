@@ -93,11 +93,10 @@
             var locCacheCtx = locCache.getContext("2d");
             locCacheCtx.drawImage(canvas, 0, 0);                //save the result to shareCache canvas
         } else {
-            var t = this._worldTransform;
             wrapper.save();
             wrapper.save();                                                               //save for clip
             //Because drawNode's content size is zero
-            context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, wrapper.height - (t.ty * scaleY));
+            wrapper.setTransform(this._worldTransform, scaleX, scaleY);
         }
     };
 
@@ -116,7 +115,7 @@
         }
     };
 
-    proto._clipCmdCallback = function(ctx, scaleX, scaleY) {
+    proto._clipCmdCallback = function(ctx) {
         var node = this._node;
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
 

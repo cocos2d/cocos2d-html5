@@ -49,10 +49,9 @@
             var locCacheCtx = this._locCache.getContext("2d");
             locCacheCtx.drawImage(canvas, 0, 0);
         } else {
-            var t = this._worldTransform;
             wrapper.save();
             wrapper.save();
-            context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, wrapper.height - (t.ty * scaleY));
+            wrapper.setTransform(this._worldTransform, scaleX, scaleY);
         }
     };
 

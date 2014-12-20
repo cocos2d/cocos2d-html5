@@ -49,6 +49,7 @@ cc.rendererCanvas = {
             scaleX = cc.view.getScaleX(),
             scaleY = cc.view.getScaleY();
         var context = ctx || cc._renderContext;
+        context.computeRealOffsetY();
         for (i = 0, len = locCmds.length; i < len; i++) {
             locCmds[i].rendering(context, scaleX, scaleY);
         }
@@ -56,7 +57,7 @@ cc.rendererCanvas = {
 
     /**
      * drawing all renderer command to cache canvas' context
-     * @param {CanvasRenderingContext2D} ctx
+     * @param {cc.CanvasContextWrapper} ctx
      * @param {Number} [instanceID]
      * @param {Number} [scaleX]
      * @param {Number} [scaleY]
@@ -68,6 +69,7 @@ cc.rendererCanvas = {
         scaleY = cc.isUndefined(scaleY) ? 1 : scaleY;
         instanceID = instanceID || this._currentID;
         var locCmds = this._cacheToCanvasCmds[instanceID], i, len;
+        ctx.computeRealOffsetY();
         for (i = 0, len = locCmds.length; i < len; i++) {
             locCmds[i].rendering(ctx, scaleX, scaleY);
         }
@@ -157,11 +159,29 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS)
         this._currentFillStyle = context.fillStyle;
         this._currentStrokeStyle = context.strokeStyle;
 
-        this.width = context.canvas.width;
-        this.height = context.canvas.height;
+        this._offsetX = 0;
+        this._offsetY = 0;
+        this._realOffsetY = this.height;
+        this._armatureMode = 0;
     };
 
     var proto = cc.CanvasContextWrapper.prototype;
+
+    proto.setOffset = function(x, y){
+        this._offsetX = x;
+        this._offsetY = y;
+        this._realOffsetY = this._context.canvas.height + this._offsetY;
+    };
+
+    proto.computeRealOffsetY = function(){
+        this._realOffsetY = this._context.canvas.height + this._offsetY;
+    };
+
+    proto.setViewScale = function(scaleX, scaleY){
+        //call it at cc.renderCanvas.rendering
+        this._scaleX = scaleX;
+        this._scaleY = scaleY;
+    };
 
     proto.getContext = function(){
         return this._context;
@@ -190,7 +210,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS)
 
     proto.setCompositeOperation = function(compositionOperation){
         if (this._saveCount > 0) {
-            this._context._currentCompositeOperation = compositionOperation;
+            this._context.globalCompositeOperation = compositionOperation;
         } else {
             if (this._currentCompositeOperation !== compositionOperation) {
                 this._currentCompositeOperation = compositionOperation;
@@ -218,6 +238,28 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS)
                 this._currentStrokeStyle = strokeStyle;
                 this._context.strokeStyle = strokeStyle;
             }
+        }
+    };
+
+    proto.setTransform = function(t, scaleX, scaleY){
+        if (this._armatureMode > 0) {
+            //ugly for armature
+            this.restore();
+            this.save();
+            this._context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -(t.ty * scaleY));
+        } else {
+            this._context.setTransform(t.a, t.c, t.b, t.d, this._offsetX + t.tx * scaleX, this._realOffsetY - (t.ty * scaleY));
+        }
+    };
+
+    proto._switchToArmatureMode = function(enable, t, scaleX, scaleY){
+        if(enable){
+            this._armatureMode++;
+            this._context.setTransform(t.a, t.c, t.b, t.d, this._offsetX + t.tx * scaleX, this._realOffsetY - (t.ty * scaleY));
+            this.save();
+        }else{
+            this._armatureMode--;
+            this.restore();
         }
     };
 })();

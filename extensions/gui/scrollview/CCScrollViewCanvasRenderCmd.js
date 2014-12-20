@@ -41,8 +41,7 @@
 
         if (node._clippingToBounds) {
             this._scissorRestored = false;
-            var t = this._worldTransform;
-            context.setTransform(t.a, t.b, t.c, t.d, t.tx * scaleX, wrapper.height - (t.ty * scaleY));
+            wrapper.setTransform(this._worldTransform, scaleX, scaleY);
 
             var locScaleX = node.getScaleX(), locScaleY = node.getScaleY();
 

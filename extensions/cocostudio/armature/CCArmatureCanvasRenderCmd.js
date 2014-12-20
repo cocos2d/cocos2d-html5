@@ -56,47 +56,38 @@
     proto.constructor = ccs.Armature.CanvasRenderCmd;
 
     proto._startCmdCallback = function(ctx, scaleX, scaleY){
-        //TODO: need refactor for setTransform
-        var context = ctx || cc._renderContext;
-        var node = this._node;
-        context.save();
-        var parent = node._parent;
-        node.transform(parent ? parent._renderCmd : null);
-        var t = this._worldTransform;
-        ctx.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
+        var node = this._node, parent = node._parent;
+        this.transform(parent ? parent._renderCmd : null);
 
-        var locChildren = node._children;
-        for (var i = 0, len = locChildren.length; i< len; i++) {
-            var selBone = locChildren[i];
-            if (selBone && selBone.getDisplayRenderNode) {
-                var rn = selBone.getDisplayRenderNode();
+        var wrapper = ctx || cc._renderContext;
+        wrapper.save();
 
-                if (null == rn)
-                    continue;
-
-                rn._renderCmd.transform();
-            }
-        }
+        //set to armature mode
+        wrapper._switchToArmatureMode(true, this._worldTransform, scaleX, scaleY);
     };
 
     proto.transform = function(parentCmd, recursive){
         ccs.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd, recursive);
 
-        var node = this._node;
-        var locChildren = node._children;
+        var locChildren = this._node._children;
+        window.allBones = locChildren;
         for (var i = 0, len = locChildren.length; i< len; i++) {
             var selBone = locChildren[i];
+
             if (selBone && selBone.getDisplayRenderNode) {
                 var selNode = selBone.getDisplayRenderNode();
-                if (selNode)
-                    selNode.transform();
+                if (selNode && selNode._renderCmd){
+                    selNode._renderCmd.transform(null);   //must be null, use transform in armature mode
+                }
             }
         }
     };
 
-    proto._RestoreCmdCallback = function(ctx, scaleX, scaleY){
+    proto._RestoreCmdCallback = function(wrapper){
         this._cacheDirty = false;
-        ctx.restore();                                //TODO need think
+        //wrapper.restore();
+        wrapper._switchToArmatureMode(false);
+        wrapper.restore();
     };
 
     proto.initShaderCache = function(){};
@@ -123,28 +114,25 @@
                             this.updateChildPosition(ctx, selNode, selBone, alphaPremultiplied, alphaNonPremultipled);
                         break;
                     case ccs.DISPLAY_TYPE_ARMATURE:
-                        selNode._renderCmd.rendering(ctx);
+                        selNode._renderCmd.rendering(ctx, scaleX, scaleY);
                         break;
                     default:
-                        selNode.visit(ctx);
+                        selNode.visit(this);
                         break;
                 }
             } else if(selBone instanceof cc.Node) {
-                selBone.visit(ctx);
+                selBone.visit(this);
             }
         }
     };
 
     proto.visit = function(parentCmd){
         var node = this._node;
-        var context = cc._renderContext;
         // quick return if not visible. children won't be drawn.
         if (!node._visible)
             return;
 
-        context.save();
         this.transform(parentCmd);
-
         node.sortAllChildren();
 
         cc.renderer.pushRenderCommand(this._startRenderCmd);
@@ -152,7 +140,5 @@
         cc.renderer.pushRenderCommand(this._RestoreRenderCmd);
 
         this._cacheDirty = false;
-
-        context.restore();                        //TODO: need think
     };
 })();

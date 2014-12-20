@@ -51,9 +51,7 @@
         if (!locSprite._texture || !locTextureCoord.validRect || alpha === 0)
             return;
 
-        var t = this._worldTransform;
-        context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, wrapper.height - (t.ty * scaleY));
-
+        wrapper.setTransform(this._worldTransform, scaleX, scaleY);
         wrapper.setCompositeOperation(locSprite._blendFuncStr);
         wrapper.setGlobalAlpha(alpha);
 

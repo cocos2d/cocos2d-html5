@@ -389,8 +389,8 @@ cc.DrawingPrimitiveCanvas = cc.Class.extend(/** @lends cc.DrawingPrimitiveCanvas
         g1.addColorStop(0.3, colorStr + ", 0.8)");
         g1.addColorStop(0.6, colorStr + ", 0.4)");
         g1.addColorStop(1.0, colorStr + ", 0.0)");
+        wrapper.setFillStyle(g1);
         //context.fillStyle = g1;
-        wrapper.setFillStyle(gl);
         context.beginPath();
         var startAngle_1 = 0;
         var endAngle_1 = cc.PI2;

@@ -794,7 +794,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @function
      * @param {cc.Sprite} child
      * @param {Number} localZOrder  child's zOrder
-     * @param {String} tag child's tag
+     * @param {String} [tag] child's tag
      * @override
      */
     addChild: function (child, localZOrder, tag) {

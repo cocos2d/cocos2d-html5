@@ -90,9 +90,8 @@
             boundingBox.height = 0|(boundingBox.height+0.5);
             var bakeContext = locBakeSprite.getCacheContext();
             locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
-            //bakeContext.translate(0 - boundingBox.x, boundingBox.height + boundingBox.y);
-            bakeContext.width -= boundingBox.x;
-            bakeContext.height += boundingBox.y;
+            var ctx = bakeContext.getContext();
+            bakeContext.setOffset(0 - boundingBox.x, ctx.canvas.height - boundingBox.height + boundingBox.y);
 
             //reset the bake sprite's position
             var anchor = locBakeSprite.getAnchorPointInPoints();
@@ -182,7 +181,6 @@
     proto.rendering = function (ctx, scaleX, scaleY) {
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext(),
             node = this._node,
-            t = this._worldTransform,
             curColor = this._displayedColor,
             opacity = this._displayedOpacity / 255,
             locWidth = node._contentSize.width,
@@ -196,7 +194,7 @@
         wrapper.setFillStyle("rgba(" + (0 | curColor.r) + "," + (0 | curColor.g) + ","
             + (0 | curColor.b) + ", 1)");  //TODO: need cache the color string
 
-        context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, wrapper.height - (t.ty * scaleY));
+        wrapper.setTransform(this._worldTransform, scaleX, scaleY);
         context.fillRect(0, 0, locWidth * scaleX, -locHeight * scaleY);
 
         cc.g_NumberOfDraws++;
@@ -224,18 +222,19 @@
             boundingBox.height = 0 | boundingBox.height;
 
             var bakeContext = locBakeSprite.getCacheContext();
+            var ctx = bakeContext.getContext();
             locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
             var anchor = locBakeSprite.getAnchorPointInPoints(), locPos = node._position;
             if(node._ignoreAnchorPointForPosition){
                 //bakeContext.translate(0 - boundingBox.x + locPos.x, boundingBox.height + boundingBox.y - locPos.y);
-                bakeContext.height += boundingBox.y - locPos.y;
+                bakeContext.setOffset(0 - boundingBox.x, ctx.canvas.height - boundingBox.height + boundingBox.y );
                 //reset the bake sprite's position
                 locBakeSprite.setPosition(anchor.x + boundingBox.x - locPos.x, anchor.y + boundingBox.y - locPos.y);
             } else {
                 var selfAnchor = this.getAnchorPointInPoints();
                 var selfPos = {x: locPos.x - selfAnchor.x, y: locPos.y - selfAnchor.y};
                 //bakeContext.translate(0 - boundingBox.x + selfPos.x, boundingBox.height + boundingBox.y - selfPos.y);
-                bakeContext.height += boundingBox.y - selfPos.y;
+                bakeContext.setOffset(0 - boundingBox.x, ctx.canvas.height - boundingBox.height + boundingBox.y);
                 locBakeSprite.setPosition(anchor.x + boundingBox.x - selfPos.x, anchor.y + boundingBox.y - selfPos.y);
             }
 
@@ -352,8 +351,7 @@
     proto.rendering = function (ctx, scaleX, scaleY) {
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext(),
             node = this._node,
-            opacity = this._displayedOpacity / 255,
-            t = this._worldTransform;
+            opacity = this._displayedOpacity / 255;
 
         if (opacity === 0)
             return;
@@ -366,7 +364,7 @@
         gradient.addColorStop(1, this._endStopStr);
         wrapper.setFillStyle(gradient);
 
-        context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, wrapper.height - (t.ty * scaleY));
+        wrapper.setTransform(this._worldTransform, scaleX, scaleY);
         context.fillRect(0, 0, locWidth * scaleX, -locHeight * scaleY);
         cc.g_NumberOfDraws++;
     };

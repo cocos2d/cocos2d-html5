@@ -49,8 +49,8 @@
     proto.initWithWidthAndHeight = function(width, height, format, depthStencilFormat){
         var node = this._node;
         var locCacheCanvas = this._cacheCanvas, locScaleFactor = cc.contentScaleFactor();
-        this._cacheContext.width = locCacheCanvas.width = 0 | (width * locScaleFactor);
-        this._cacheContext.height = locCacheCanvas.height = 0 | (height * locScaleFactor);
+        locCacheCanvas.width = 0 | (width * locScaleFactor);
+        locCacheCanvas.height = 0 | (height * locScaleFactor);
 
         var texture = new cc.Texture2D();
         texture.initWithElement(locCacheCanvas);

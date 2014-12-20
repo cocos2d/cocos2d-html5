@@ -85,8 +85,8 @@
 
         var contentSizeChanged = false;
         if(locCanvas.width != sizeInPixels.width || locCanvas.height != sizeInPixels.height){
-            wrapper.width = locCanvas.width = sizeInPixels.width;
-            wrapper.height = locCanvas.height = sizeInPixels.height;
+            locCanvas.width = sizeInPixels.width;
+            locCanvas.height = sizeInPixels.height;
             contentSizeChanged = true;
         }
 

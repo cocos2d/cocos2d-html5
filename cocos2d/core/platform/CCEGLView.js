@@ -877,7 +877,7 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
         // Translate the content
         if (cc._renderType == cc._RENDER_TYPE_CANVAS){
             //TODO: modify something for setTransform
-            cc._renderContext.translate(viewport.x, viewport.y + contentH);
+            //cc._renderContext.translate(viewport.x, viewport.y + contentH);
         }
 
         this._result.scale = [scaleX, scaleY];

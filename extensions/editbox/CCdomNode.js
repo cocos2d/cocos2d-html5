@@ -532,10 +532,6 @@ cc.DOM._createEGLViewDiv = function(p){
  */
 cc.DOM.setTransform = function (x) {
     if (x.ctx) {
-        /*        x.ctx.save();
-         x.ctx.setTransform(1,0,0,1,0,0);
-         x.ctx.clearRect(0,0,x.canvas.width, x.canvas.height);
-         x.ctx.restore();*/
         x.ctx.translate(x.getAnchorPointInPoints().x, x.getAnchorPointInPoints().y);
         if (x.isSprite) {
             var tmp = x._children;

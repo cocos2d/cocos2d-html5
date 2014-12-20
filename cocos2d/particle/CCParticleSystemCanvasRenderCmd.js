@@ -71,9 +71,9 @@
     proto.rendering = function (ctx, scaleX, scaleY) {
         //TODO: need refactor rendering for performance
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext(),
-            node = this._node, t = this._worldTransform, pointRect = this._pointRect;
+            node = this._node, pointRect = this._pointRect;
 
-        context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, wrapper.height - (t.ty * scaleY));
+        wrapper.setTransform(this._worldTransform, scaleX, scaleY);
         wrapper.save();
         if (node.isBlendAdditive())
             context.globalCompositeOperation = 'lighter';
@@ -132,9 +132,9 @@
                 if (node.shapeType == cc.ParticleSystem.STAR_SHAPE) {
                     if (particle.rotation)
                         context.rotate(cc.degreesToRadians(particle.rotation));
-                    drawTool.drawStar(context, lpx, particle.color);
+                    drawTool.drawStar(wrapper, lpx, particle.color);
                 } else
-                    drawTool.drawColorBall(context, lpx, particle.color);
+                    drawTool.drawColorBall(wrapper, lpx, particle.color);
                 context.restore();
             }
         }

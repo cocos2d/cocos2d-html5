@@ -121,17 +121,16 @@
             return;
 
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
-        var t = this._worldTransform,
-            locX = node._offsetPosition.x,
+        var locX = node._offsetPosition.x,
             locY = -node._offsetPosition.y - node._rect.height,
             locWidth = node._rect.width,
-            locHeight = node._rect.height,
+            locHeight = node._rect.height, t = this._worldTransform,
             image, curColor, contentSize;
 
         wrapper.setCompositeOperation(this._blendFuncStr);
         wrapper.setGlobalAlpha(alpha);
 
-        context.setTransform(t.a, t.c, t.b, t.d, t.tx * scaleX, wrapper.height - (t.ty * scaleY));
+        wrapper.setTransform(t, scaleX, scaleY);
 
         if(node._flippedX || node._flippedY)
             wrapper.save();
