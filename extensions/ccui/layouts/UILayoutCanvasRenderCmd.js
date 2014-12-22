@@ -78,9 +78,11 @@
 
         if (this._clipElemType) {
             // Redraw the cached canvas, so that the cliped area shows the background etc.
+            context.save();
             context.setTransform(1, 0, 0, 1, 0, 0);
-            wrapper.setCompositeOperation("destination-over");
+            context.setCompositeOperation("destination-over");
             context.drawImage(this._locCache, 0, 0);
+            context.restore();
         }else{
             wrapper.restore();                                  //use for restore clip operation
         }
