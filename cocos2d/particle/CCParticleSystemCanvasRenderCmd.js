@@ -69,17 +69,12 @@
     };
 
     proto.rendering = function (ctx, scaleX, scaleY) {
-        var context = ctx || cc._renderContext,
-            node = this._node,
-            t = this._worldTransform,
-            pointRect = this._pointRect;
+        //TODO: need refactor rendering for performance
+        var wrapper = ctx || cc._renderContext, context = wrapper.getContext(),
+            node = this._node, pointRect = this._pointRect;
 
-        context.save();
-        //transform
-        var parent = node._parent;
-        var parentCmd = parent ? parent._renderCmd : null;
-        this.transform(parentCmd);
-        context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+        wrapper.setTransform(this._worldTransform, scaleX, scaleY);
+        wrapper.save();
         if (node.isBlendAdditive())
             context.globalCompositeOperation = 'lighter';
         else
@@ -90,12 +85,12 @@
         if (node.drawMode == cc.ParticleSystem.TEXTURE_MODE) {
             // Delay drawing until the texture is fully loaded by the browser
             if (!node._texture || !node._texture._isLoaded) {
-                context.restore();
+                wrapper.restore();
                 return;
             }
             var element = node._texture.getHtmlElementObj();
             if (!element.width || !element.height) {
-                context.restore();
+                wrapper.restore();
                 return;
             }
 
@@ -116,7 +111,6 @@
                 var h = pointRect.height;
 
                 context.scale(Math.max((1 / w) * size, 0.000001), Math.max((1 / h) * size, 0.000001));
-
                 if (particle.rotation)
                     context.rotate(cc.degreesToRadians(particle.rotation));
 
@@ -138,13 +132,13 @@
                 if (node.shapeType == cc.ParticleSystem.STAR_SHAPE) {
                     if (particle.rotation)
                         context.rotate(cc.degreesToRadians(particle.rotation));
-                    drawTool.drawStar(context, lpx, particle.color);
+                    drawTool.drawStar(wrapper, lpx, particle.color);
                 } else
-                    drawTool.drawColorBall(context, lpx, particle.color);
+                    drawTool.drawColorBall(wrapper, lpx, particle.color);
                 context.restore();
             }
         }
-        context.restore();
+        wrapper.restore();
         cc.g_NumberOfDraws++;
     };
 

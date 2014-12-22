@@ -1925,7 +1925,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     convertTouchToNodeSpace: function (touch) {
         var point = touch.getLocation();
-        //TODO This point needn't convert to GL in HTML5
         return this.convertToNodeSpace(point);
     },
 
@@ -2045,7 +2044,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Recursive method that visit its children and draw them
      * @function
-     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
+     * @param {cc.Node.RenderCmd} parentCmd
      */
     visit: function(parentCmd){
         this._renderCmd.visit(parentCmd);
@@ -2054,7 +2053,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Performs view-matrix transformation based on position, scale, rotation and other attributes.
      * @function
-     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx Render context
+     * @param {cc.Node.RenderCmd} parentCmd parent's render command
+     * @param {boolean} recursive whether call its children's transform
      */
     transform: function(parentCmd, recursive){
         this._renderCmd.transform(parentCmd, recursive);

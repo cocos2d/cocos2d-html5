@@ -35,8 +35,7 @@
         },
 
         getNodeToWorldTransform: function () {
-            var node = this._node;
-            return cc.affineTransformConcat(this._transform, node.bone.getArmature().getNodeToWorldTransform());
+            return cc.affineTransformConcat(this._transform, this._node.bone.getArmature().getNodeToWorldTransform());
         },
 
         getNodeToWorldTransformAR: function () {
@@ -56,5 +55,4 @@
     var proto = ccs.Skin.CanvasRenderCmd.prototype = Object.create(cc.Sprite.CanvasRenderCmd.prototype);
     cc.inject(ccs.Skin.RenderCmd, proto);
     proto.constructor = ccs.Skin.CanvasRenderCmd;
-
 })();

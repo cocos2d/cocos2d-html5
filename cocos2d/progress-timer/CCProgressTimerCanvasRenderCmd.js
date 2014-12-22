@@ -43,8 +43,7 @@
     proto.constructor = cc.ProgressTimer.CanvasRenderCmd;
 
     proto.rendering = function (ctx, scaleX, scaleY) {
-        var context = ctx || cc._renderContext, node = this._node, locSprite = node._sprite;
-
+        var wrapper = ctx || cc._renderContext,context = wrapper.getContext(), node = this._node, locSprite = node._sprite;
         var locTextureCoord = locSprite._renderCmd._textureCoord, alpha = locSprite._renderCmd._displayedOpacity / 255;
 
         if (locTextureCoord.width === 0 || locTextureCoord.height === 0)
@@ -52,13 +51,9 @@
         if (!locSprite._texture || !locTextureCoord.validRect || alpha === 0)
             return;
 
-        var t = this._worldTransform;
-        context.save();
-        context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
-
-        if (locSprite._blendFuncStr != "source-over")
-            context.globalCompositeOperation = locSprite._blendFuncStr;
-        context.globalAlpha = alpha;
+        wrapper.setTransform(this._worldTransform, scaleX, scaleY);
+        wrapper.setCompositeOperation(locSprite._blendFuncStr);
+        wrapper.setGlobalAlpha(alpha);
 
         var locRect = locSprite._rect, locOffsetPosition = locSprite._offsetPosition;
         var locX = locOffsetPosition.x,
@@ -66,6 +61,7 @@
             locWidth = locRect.width,
             locHeight = locRect.height;
 
+        wrapper.save();
         if (locSprite._flippedX) {
             locX = -locX - locWidth;
             context.scale(-1, 1);
@@ -96,29 +92,14 @@
         var image = locSprite._texture.getHtmlElementObj();
         if (locSprite._colorized) {
             context.drawImage(image,
-                0,
-                0,
-                locTextureCoord.width,
-                locTextureCoord.height,
-                locX * scaleX,
-                locY * scaleY,
-                locWidth * scaleX,
-                locHeight * scaleY
-            );
+                0, 0, locTextureCoord.width, locTextureCoord.height,
+                locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
         } else {
             context.drawImage(image,
-                locTextureCoord.renderX,
-                locTextureCoord.renderY,
-                locTextureCoord.width,
-                locTextureCoord.height,
-                locX * scaleX,
-                locY * scaleY,
-                locWidth * scaleX,
-                locHeight * scaleY
-            );
+                locTextureCoord.renderX, locTextureCoord.renderY, locTextureCoord.width, locTextureCoord.height,
+                locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
         }
-
-        context.restore();
+        wrapper.restore();
         cc.g_NumberOfDraws++;
     };
 
@@ -148,17 +129,17 @@
 
             if (locSprite._flippedX) {
                 locOrigin.x -= sw * (node._midPoint.x * 2);
-                locStartAngle= -locStartAngle;
-                locEndAngle= -locEndAngle;
+                locStartAngle = -locStartAngle;
+                locEndAngle = -locEndAngle;
                 locStartAngle -= 180;
                 locEndAngle -= 180;
                 locCounterClockWise = !locCounterClockWise;
             }
             if (locSprite._flippedY) {
-                locOrigin.y+=sh*(node._midPoint.y*2);
+                locOrigin.y += sh * (node._midPoint.y * 2);
                 locCounterClockWise = !locCounterClockWise;
-                locStartAngle= -locStartAngle;
-                locEndAngle= -locEndAngle;
+                locStartAngle = -locStartAngle;
+                locEndAngle = -locEndAngle;
             }
 
             this._startAngle = locStartAngle;

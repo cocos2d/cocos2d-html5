@@ -227,35 +227,36 @@ cc.AsyncPool = function(srcObj, limit, iterator, onEnd, target){
 
     self._handleItem = function(){
         var self = this;
-        if(self._pool.length == 0)
-            return;                                                         //return directly if the array's length = 0
-        if(self._workingSize >= self._limit)
-            return;                                                         //return directly if the working size great equal limit number
+        if(self._pool.length == 0 || self._workingSize >= self._limit)
+            return;                                                         //return directly if the array's length = 0 or the working size great equal limit number
+
         var item = self._pool.shift();
         var value = item.value, index = item.index;
         self._workingSize++;
-        self._iterator.call(self._iteratorTarget, value, index, function(err){
-            if(self._isErr)
-                return;
+        self._iterator.call(self._iteratorTarget, value, index,
+            function(err) {
+                if (self._isErr)
+                    return;
 
-            self.finishedSize++;
-            self._workingSize--;
-            if(err) {
-                self._isErr = true;
-                if(self._onEnd)
-                    self._onEnd.call(self._onEndTarget, err);
-                return;
-            }
+                self.finishedSize++;
+                self._workingSize--;
+                if (err) {
+                    self._isErr = true;
+                    if (self._onEnd)
+                        self._onEnd.call(self._onEndTarget, err);
+                    return;
+                }
 
-            var arr = Array.prototype.slice.call(arguments, 1);
-            self._results[this.index] = arr[0];
-            if(self.finishedSize == self.size) {
-                if(self._onEnd)
-                    self._onEnd.call(self._onEndTarget, null, self._results);
-                return;
-            }
-            self._handleItem();
-        }.bind(item), self);
+                var arr = Array.prototype.slice.call(arguments, 1);
+                self._results[this.index] = arr[0];
+                if (self.finishedSize == self.size) {
+                    if (self._onEnd)
+                        self._onEnd.call(self._onEndTarget, null, self._results);
+                    return;
+                }
+                self._handleItem();
+            }.bind(item),
+            self);
     };
 
     self.flow = function(){
@@ -337,18 +338,18 @@ cc.async = /** @lends cc.async# */{
      * Do tasks by iterator.
      * @param {Array|Object} tasks
      * @param {function|Object} iterator
-     * @param {function} cb callback
+     * @param {function} [callback]
      * @param {Object} [target]
      * @return {cc.AsyncPool}
      */
-    map : function(tasks, iterator, cb, target){
+    map : function(tasks, iterator, callback, target){
         var locIterator = iterator;
         if(typeof(iterator) == "object"){
-            cb = iterator.cb;
+            callback = iterator.cb;
             target = iterator.iteratorTarget;
             locIterator = iterator.iterator;
         }
-        var asyncPool = new cc.AsyncPool(tasks, 0, locIterator, cb, target);
+        var asyncPool = new cc.AsyncPool(tasks, 0, locIterator, callback, target);
         asyncPool.flow();
         return asyncPool;
     },
@@ -751,21 +752,21 @@ cc.loader = /** @lends cc.loader# */{
      * Load a single image.
      * @param {!string} url
      * @param {object} [option]
-     * @param {function} cb
+     * @param {function} callback
      * @returns {Image}
      */
-    loadImg: function (url, option, cb) {
+    loadImg: function (url, option, callback) {
         var opt = {
             isCrossOrigin: true
         };
-        if (cb !== undefined)
+        if (callback !== undefined)
             opt.isCrossOrigin = option.isCrossOrigin == null ? opt.isCrossOrigin : option.isCrossOrigin;
         else if (option !== undefined)
-            cb = option;
+            callback = option;
 
         var img = this.getRes(url);
         if (img) {
-            cb && cb(null, img);
+            callback && callback(null, img);
             return img;
         }
 
@@ -773,28 +774,28 @@ cc.loader = /** @lends cc.loader# */{
         if (opt.isCrossOrigin && location.origin != "file://")
             img.crossOrigin = "Anonymous";
 
-        var lcb = function () {
-            this.removeEventListener('load', lcb, false);
-            this.removeEventListener('error', ecb, false);
+        var loadCallback = function () {
+            this.removeEventListener('load', loadCallback, false);
+            this.removeEventListener('error', errorCallback, false);
 
             cc.loader.cache[url] = img;
-            if (cb)
-                cb(null, img);
+            if (callback)
+                callback(null, img);
         };
 
-        var ecb = function () {
-            this.removeEventListener('error', ecb, false);
+        var errorCallback = function () {
+            this.removeEventListener('error', errorCallback, false);
 
             if(img.crossOrigin && img.crossOrigin.toLowerCase() == "anonymous"){
                 opt.isCrossOrigin = false;
-                cc.loader.loadImg(url, opt, cb);
+                cc.loader.loadImg(url, opt, callback);
             }else{
-                typeof cb == "function" && cb("load image failed");
+                typeof callback == "function" && callback("load image failed");
             }
         };
 
-        cc._addEventListener(img, "load", lcb);
-        cc._addEventListener(img, "error", ecb);
+        cc._addEventListener(img, "load", loadCallback);
+        cc._addEventListener(img, "error", errorCallback);
         img.src = url;
         return img;
     },
@@ -876,10 +877,10 @@ cc.loader = /** @lends cc.loader# */{
      * Load resources then call the callback.
      * @param {string} resources
      * @param {function} [option] callback or trigger
-     * @param {function|Object} [cb]
+     * @param {function|Object} [loadCallback]
      * @return {cc.AsyncPool}
      */
-    load : function(resources, option, cb){
+    load : function(resources, option, loadCallback){
         var self = this;
         var len = arguments.length;
         if(len == 0)
@@ -887,10 +888,10 @@ cc.loader = /** @lends cc.loader# */{
 
         if(len == 3){
             if(typeof option == "function"){
-                if(typeof cb == "function")
-                    option = {trigger : option, cb : cb };
+                if(typeof loadCallback == "function")
+                    option = {trigger : option, cb : loadCallback };
                 else
-                    option = { cb : option, cbTarget : cb};
+                    option = { cb : option, cbTarget : loadCallback};
             }
         }else if(len == 2){
             if(typeof option == "function")
@@ -901,16 +902,19 @@ cc.loader = /** @lends cc.loader# */{
 
         if(!(resources instanceof Array))
             resources = [resources];
-        var asyncPool = new cc.AsyncPool(resources, 0, function(value, index, cb1, aPool){
-            self._loadResIterator(value, index, function(err){
-                if(err)
-                    return cb1(err);
-                var arr = Array.prototype.slice.call(arguments, 1);
-                if(option.trigger)
-                    option.trigger.call(option.triggerTarget, arr[0], aPool.size, aPool.finishedSize); //call trigger
-                cb1(null, arr[0]);
-            });
-        }, option.cb, option.cbTarget);
+        var asyncPool = new cc.AsyncPool(
+            resources, 0,
+            function (value, index, AsyncPoolCallback, aPool) {
+                self._loadResIterator(value, index, function (err) {
+                    if (err)
+                        return AsyncPoolCallback(err);
+                    var arr = Array.prototype.slice.call(arguments, 1);
+                    if (option.trigger)
+                        option.trigger.call(option.triggerTarget, arr[0], aPool.size, aPool.finishedSize);   //call trigger
+                    AsyncPoolCallback(null, arr[0]);
+                });
+            },
+            option.cb, option.cbTarget);
         asyncPool.flow();
         return asyncPool;
     },
@@ -953,16 +957,16 @@ cc.loader = /** @lends cc.loader# */{
      *              </plist>                                                                                           <br/>
      * </p>
      * @param {String} url  The plist file name.
-     * @param {Function} [cb]     callback
+     * @param {Function} [callback]
      */
-    loadAliases: function (url, cb) {
+    loadAliases: function (url, callback) {
         var self = this, dict = self.getRes(url);
         if (!dict) {
             self.load(url, function (err, results) {
-                self._handleAliases(results[0]["filenames"], cb);
+                self._handleAliases(results[0]["filenames"], callback);
             });
         } else
-            self._handleAliases(dict["filenames"], cb);
+            self._handleAliases(dict["filenames"], callback);
     },
 
     /**
@@ -1861,9 +1865,7 @@ cc._setup = function (el, width, height) {
         cc.textureCache._initializingRenderer();
         cc.shaderCache._init();
     } else {
-        cc._renderContext = localCanvas.getContext("2d");
-        cc._mainRenderContextBackup = cc._renderContext;
-        cc._renderContext.translate(0, localCanvas.height);
+        cc._renderContext = new cc.CanvasContextWrapper(localCanvas.getContext("2d"));
         cc._drawingUtil = cc.DrawingPrimitiveCanvas ? new cc.DrawingPrimitiveCanvas(cc._renderContext) : null;
     }
 

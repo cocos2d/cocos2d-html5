@@ -56,7 +56,7 @@ cc.Camera = cc.Class.extend({
     _upY:null,
     _upZ:null,
 
-    _dirty:null,
+    _dirty:false,
     _lookupMatrix:null,
     /**
      * constructor of cc.Camera

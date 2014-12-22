@@ -188,6 +188,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {Number} [stencilValue=]
      */
     beginWithClear:function (r, g, b, a, depthValue, stencilValue) {
+        //todo: only for WebGL?
         var gl = cc._renderContext;
         depthValue = depthValue || gl.COLOR_BUFFER_BIT;
         stencilValue = stencilValue || (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

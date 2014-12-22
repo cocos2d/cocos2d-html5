@@ -200,38 +200,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         locCenter.setPosition(leftWidth, bottomHeight);
     },
 
-    _cacheScale9Sprite: function(){
-        if(!this._scale9Image)
-            return;
-
-        var locScaleFactor = cc.contentScaleFactor();
-        var size = this._contentSize;
-        var sizeInPixels = cc.size(size.width * locScaleFactor, size.height * locScaleFactor);
-
-        var locCanvas = this._cacheCanvas;
-        var contentSizeChanged = false;
-        if(locCanvas.width != sizeInPixels.width || locCanvas.height != sizeInPixels.height){
-            locCanvas.width = sizeInPixels.width;
-            locCanvas.height = sizeInPixels.height;
-            this._cacheContext.translate(0, sizeInPixels.height);
-            contentSizeChanged = true;
-        }
-
-        //begin cache
-        cc.renderer._turnToCacheMode(this.__instanceId);
-        this._scale9Image.visit();
-
-        //draw to cache canvas
-        this._cacheContext.clearRect(0, 0, sizeInPixels.width, -sizeInPixels.height);
-        cc.renderer._renderingToCacheCanvas(this._cacheContext, this.__instanceId, locScaleFactor, locScaleFactor);
-
-        if(contentSizeChanged)
-            this._cacheSprite.setTextureRect(cc.rect(0,0, size.width, size.height));
-
-        if(!this._cacheSprite.getParent())
-            this.addChild(this._cacheSprite);
-    },
-
     /**
      * Constructor function. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @function
@@ -248,21 +216,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         this._originalSize = cc.size(0, 0);
         this._preferredSize = cc.size(0, 0);
         this._capInsets = cc.rect(0, 0, 0, 0);
-
-        //cache
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-
-            var locCacheCanvas = this._cacheCanvas = cc.newElement('canvas');
-            locCacheCanvas.width = 1;
-            locCacheCanvas.height = 1;
-            this._cacheContext = locCacheCanvas.getContext("2d");
-            var locTexture = this._cacheTexture = new cc.Texture2D();
-            locTexture.initWithElement(locCacheCanvas);
-            locTexture.handleLoadedTexture();
-            this._cacheSprite = new cc.Sprite(locTexture);
-            this._cacheSprite.setAnchorPoint(0,0);
-            this.addChild(this._cacheSprite);
-        }
 
         if(file != undefined){
             if(file instanceof cc.SpriteFrame)

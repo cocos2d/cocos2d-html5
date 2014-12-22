@@ -31,16 +31,15 @@
     var proto = sp.Skeleton.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = sp.Skeleton.CanvasRenderCmd;
 
-    proto.rendering = function (ctx, scaleX, scaleY) {
+    proto.rendering = function (wrapper, scaleX, scaleY) {
         var node = this._node;
-        ctx = ctx || cc._renderContext;
-
-        if (!node._debugSlots && !node._debugBones) {
+        if (!node._debugSlots && !node._debugBones)
             return;
-        }
-        var t = this._worldTransform;
-        ctx.save();
-        ctx.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+
+        wrapper = wrapper || cc._renderContext;
+        var ctx = wrapper.getContext();
+
+        ctx.setTransform(this._worldTransform, scaleX, scaleY);
         var locSkeleton = node._skeleton;
         var attachment, slot, i, n, drawingUtil = cc._drawingUtil;
         if (node._debugSlots) {
@@ -85,7 +84,6 @@
                     drawingUtil.setDrawColor(0, 255, 0, 255);
             }
         }
-        ctx.restore();
     };
 
     proto._createChildFormSkeletonData = function(){

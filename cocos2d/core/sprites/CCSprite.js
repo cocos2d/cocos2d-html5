@@ -13,7 +13,7 @@
  furnished to do so, subject to the following conditions:
 
  The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.                                                        node
+ all copies or substantial portions of the Software.
 
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -794,7 +794,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @function
      * @param {cc.Sprite} child
      * @param {Number} localZOrder  child's zOrder
-     * @param {String} tag child's tag
+     * @param {String} [tag] child's tag
      * @override
      */
     addChild: function (child, localZOrder, tag) {

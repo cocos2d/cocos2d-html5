@@ -28,8 +28,8 @@
         ccui.ProtectedNode.CanvasRenderCmd.call(this, renderable);
         this._needDraw = false;
 
+        this._clipElemType = false;
         this._locCache = null;
-
         this._rendererSaveCmd = new cc.CustomRenderCmd(this, this._onRenderSaveCmd);
         this._rendererSaveCmdSprite = new cc.CustomRenderCmd(this, this._onRenderSaveSpriteCmd);
         this._rendererClipCmd = new cc.CustomRenderCmd(this, this._onRenderClipCmd);
@@ -40,65 +40,49 @@
     proto.constructor = ccui.Layout.CanvasRenderCmd;
 
     proto._onRenderSaveCmd = function(ctx, scaleX, scaleY){
-        var context = ctx || cc._renderContext;
-
-        var node = this._node;
-        if (node._clipElemType) {
+        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
+        if (this._clipElemType) {
             var canvas = context.canvas;
             this._locCache = ccui.Layout.CanvasRenderCmd._getSharedCache();
             this._locCache.width = canvas.width;
             this._locCache.height = canvas.height;
             var locCacheCtx = this._locCache.getContext("2d");
             locCacheCtx.drawImage(canvas, 0, 0);
-            context.save();
-        }else{
-            var parentCmd = node._parent ? node._parent._renderCmd : null;
-            this.transform(parentCmd);
-            var t = this._worldTransform;
-            context.save();
-            context.save();
-            context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
+        } else {
+            wrapper.save();
+            wrapper.save();
+            wrapper.setTransform(this._worldTransform, scaleX, scaleY);
         }
     };
 
     proto._onRenderSaveSpriteCmd = function(ctx){
-        var context = ctx || cc._renderContext;
-
-        var node = this._node;
-        if (node._clipElemType) {
-            context.globalCompositeOperation = "destination-in";
-
-            var parentCmd = node._parent ? node._parent._renderCmd : null;
-            this.transform(parentCmd);
-        }else{
+        var wrapper = ctx || cc._renderContext;
+        //var node = this._node;
+        if (this._clipElemType) {
+            wrapper.setCompositeOperation("destination-in");
+            //var parentCmd = node._parent ? node._parent._renderCmd : null;
+            //this.transform(parentCmd);                           //todo: why?
         }
     };
 
     proto._onRenderClipCmd = function(ctx){
-        var context = ctx || cc._renderContext;
-
-        if (this._node._clipElemType) {
-        }else{
-            context.restore();
+        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
+        if (!this._clipElemType) {
+            wrapper.restore();
             context.clip();
         }
     };
 
     proto._onRenderRestoreCmd = function(ctx){
-        var context = ctx || cc._renderContext;
+        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
 
-        var node = this._node;
-        if (node._clipElemType) {
-            context.restore();
-
+        if (this._clipElemType) {
             // Redraw the cached canvas, so that the cliped area shows the background etc.
-            context.save();
             context.setTransform(1, 0, 0, 1, 0, 0);
-            context.globalCompositeOperation = "destination-over";
+            wrapper.setCompositeOperation("destination-over");
             context.drawImage(this._locCache, 0, 0);
-            context.restore();
         }else{
-            context.restore();
+            wrapper.restore();                                  //use for restore clip operation
         }
     };
 
@@ -107,8 +91,8 @@
     };
 
     proto.__stencilDraw = function(ctx,scaleX, scaleY){          //Only for Canvas
-        var locContext = ctx || cc._renderContext;
-        var buffer = this._buffer;
+        var wrapper = ctx || cc._renderContext, locContext = wrapper.getContext(), buffer = this._buffer;
+
         for (var i = 0, bufLen = buffer.length; i < bufLen; i++) {
             var element = buffer[i], vertices = element.verts;
             var firstPoint = vertices[0];
@@ -116,6 +100,7 @@
             locContext.moveTo(firstPoint.x * scaleX, -firstPoint.y * scaleY);
             for (var j = 1, len = vertices.length; j < len; j++)
                 locContext.lineTo(vertices[j].x * scaleX, -vertices[j].y * scaleY);
+            locContext.closePath();
         }
     };
 
@@ -124,51 +109,37 @@
         if (!node._clippingStencil || !node._clippingStencil.isVisible())
             return;
 
-        var i, locChild;
-        node._clipElemType = node._stencil instanceof cc.Sprite;
-
+        this._clipElemType = node._stencil instanceof cc.Sprite;
         this._syncStatus(parentCmd);
         this._dirtyFlag = 0;
 
         cc.renderer.pushRenderCommand(this._rendererSaveCmd);
-
-        if (node._clipElemType) {
+        if (this._clipElemType) {
             cc.ProtectedNode.prototype.visit.call(node, parentCmd);
             cc.renderer.pushRenderCommand(this._rendererSaveCmdSprite);
         }
         node._clippingStencil.visit(this);
 
         cc.renderer.pushRenderCommand(this._rendererClipCmd);
-
-        if (!node._clipElemType) {
+        if (!this._clipElemType) {
             node.sortAllChildren();
             node.sortAllProtectedChildren();
 
             var children = node._children;
-            var j, locProtectChildren = node._protectedChildren;
+            var j, locProtectChildren = node._protectedChildren, i, locChild;
             var iLen = children.length, jLen = locProtectChildren.length;
 
             // draw children zOrder < 0
             for (i = 0; i < iLen; i++) {
                 locChild = children[i];
-                if (locChild && locChild._localZOrder < 0)
+                if (locChild)
                     locChild.visit(this);
-                else
-                    break;
             }
             for (j = 0; j < jLen; j++) {
                 locChild = locProtectChildren[j];
-                if (locChild && locChild._localZOrder < 0)
+                if (locChild)
                     locChild.visit(this);
-                else
-                    break;
             }
-            //this.draw(context);
-            for (; i < iLen; i++)
-                children[i].visit(this);
-            for (; j < jLen; j++)
-                locProtectChildren[j].visit(this);
-
             cc.renderer.pushRenderCommand(this._rendererRestoreCmd);
         }
     };

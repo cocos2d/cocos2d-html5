@@ -26,6 +26,7 @@
     cc.TMXLayer.CanvasRenderCmd = function(renderable){
         cc.SpriteBatchNode.CanvasRenderCmd.call(this, renderable);
         this._needDraw = true;
+        this._realWorldTransform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
         this._childrenRenderCmds = [];
 
         var locCanvas = cc._canvas;
@@ -33,7 +34,7 @@
         tmpCanvas.width = locCanvas.width;
         tmpCanvas.height = locCanvas.height;
         this._cacheCanvas = tmpCanvas;
-        this._cacheContext = this._cacheCanvas.getContext('2d');
+        this._cacheContext = new cc.CanvasContextWrapper(this._cacheCanvas.getContext('2d'));
         var tempTexture = new cc.Texture2D();
         tempTexture.initWithElement(tmpCanvas);
         tempTexture.handleLoadedTexture();
@@ -63,42 +64,39 @@
 
     proto._renderingChildToCache = function (scaleX, scaleY) {
         if (this._cacheDirty) {
-            var locCacheCmds = this._childrenRenderCmds, locCacheContext = this._cacheContext, locCanvas = this._cacheCanvas;
+            var locCacheCmds = this._childrenRenderCmds, wrapper = this._cacheContext,
+                context = wrapper.getContext(), locCanvas = this._cacheCanvas;
 
-            locCacheContext.save();
-            locCacheContext.clearRect(0, 0, locCanvas.width, -locCanvas.height);
+            //wrapper.save();
+            context.setTransform(1, 0, 0, 1, 0, 0);
+            context.clearRect(0, 0, locCanvas.width, locCanvas.height);
             //reset the cache context
-            var t = cc.affineTransformInvert(this._worldTransform);
-            locCacheContext.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
 
             for (var i = 0, len = locCacheCmds.length; i < len; i++) {
-                locCacheCmds[i].rendering(locCacheContext, scaleX, scaleY);
+                locCacheCmds[i].rendering(wrapper, scaleX, scaleY);
                 locCacheCmds[i]._cacheDirty = false;
             }
-            locCacheContext.restore();
+            //wrapper.restore();
             this._cacheDirty = false;
         }
     };
 
     proto.rendering = function (ctx, scaleX, scaleY) {
-        var node = this._node;
         var alpha = this._displayedOpacity / 255;
         if (alpha <= 0)
             return;
 
+        var node = this._node;
         this._renderingChildToCache(scaleX, scaleY);
-        var context = ctx || cc._renderContext;
-        context.globalAlpha = alpha;
+        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
+        wrapper.setGlobalAlpha(alpha);
+
         var posX = 0 | ( -this._anchorPointInPoints.x), posY = 0 | ( -this._anchorPointInPoints.y);
-        var locCacheCanvas = this._cacheCanvas, t = this._worldTransform;
+        var locCacheCanvas = this._cacheCanvas;
         //direct draw image by canvas drawImage
         if (locCacheCanvas && locCacheCanvas.width !== 0 && locCacheCanvas.height !== 0) {
-            context.save();
-            //transform
-            context.transform(t.a, t.c, t.b, t.d, t.tx * scaleX, -t.ty * scaleY);
-
+            wrapper.setTransform(this._realWorldTransform, scaleX, scaleY);
             var locCanvasHeight = locCacheCanvas.height * scaleY;
-
             if (node.layerOrientation === cc.TMX_ORIENTATION_HEX) {
                 var halfTileSize = node._mapTileSize.height * 0.5 * scaleY;
                 context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
@@ -107,7 +105,6 @@
                 context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
                     posX, -(posY + locCanvasHeight), locCacheCanvas.width * scaleX, locCanvasHeight);
             }
-            context.restore();
         }
         cc.g_NumberOfDraws++;
     };
@@ -120,10 +117,11 @@
         locCanvas.width = 0 | (locContentSize.width * 1.5 * scaleFactor);
         locCanvas.height = 0 | (locContentSize.height * 1.5 * scaleFactor);
 
+        //todo: need change the wrapper's height
         if(node.layerOrientation === cc.TMX_ORIENTATION_HEX)
-            this._cacheContext.translate(0, locCanvas.height - (node._mapTileSize.height * 0.5));                  //translate for hexagonal
+            this._cacheContext.setOffset(0, -node._mapTileSize.height * 0.5);                  //translate for hexagonal
         else
-            this._cacheContext.translate(0, locCanvas.height);
+            this._cacheContext.setOffset(0, 0);
         var locTexContentSize = this._cacheTexture._contentSize;
         locTexContentSize.width = locCanvas.width;
         locTexContentSize.height = locCanvas.height;
@@ -135,7 +133,7 @@
 
     proto.visit = function(parentCmd){
         var node = this._node;
-        //TODO it will implement dynamic compute child cutting automation.
+        //TODO: it will implement dynamic compute child cutting automation.
         var i, len, locChildren = node._children;
         // quick return if not visible
         if (!node._visible || !locChildren || locChildren.length === 0)
@@ -145,11 +143,9 @@
         if (parentCmd)
             this._curLevel = parentCmd._curLevel + 1;
 
-        //node.transform(node._parent && node._parent._renderCmd);
         this._syncStatus(parentCmd);
-
         if (this._cacheDirty) {
-            var locCacheContext = this._cacheContext, locCanvas = this._cacheCanvas, locView = cc.view,
+            var wrapper = this._cacheContext, locCanvas = this._cacheCanvas, context = wrapper.getContext(),
                 instanceID = node.__instanceId, renderer = cc.renderer;
             //begin cache
             renderer._turnToCacheMode(instanceID);
@@ -168,18 +164,55 @@
             //copy cached render cmd array to TMXLayer renderer
             this._copyRendererCmds(renderer._cacheToCanvasCmds[instanceID]);
 
-            locCacheContext.save();
-            locCacheContext.clearRect(0, 0, locCanvas.width, -locCanvas.height);
-            var t = cc.affineTransformInvert(this._worldTransform);
-            locCacheContext.transform(t.a, t.c, t.b, t.d, t.tx * locView.getScaleX(), -t.ty * locView.getScaleY());
+            //wrapper.save();
+            context.setTransform(1, 0, 0, 1, 0, 0);
+            context.clearRect(0, 0, locCanvas.width, locCanvas.height);
+            //set the wrapper's offset
 
             //draw to cache canvas
-            renderer._renderingToCacheCanvas(locCacheContext, instanceID);
-            locCacheContext.restore();
+            renderer._renderingToCacheCanvas(wrapper, instanceID);
+            //wrapper.restore();                           //todo: it can be reserve.
             this._cacheDirty = false
         }
         cc.renderer.pushRenderCommand(this);
         this._dirtyFlag = 0;
+    };
+
+    proto.transform = function (parentCmd, recursive) {
+        // transform for canvas
+        var t = this.getNodeToParentTransform(),
+            worldT = this._realWorldTransform;         //get the world transform
+
+        if (parentCmd) {
+            var pt = parentCmd._worldTransform;
+            // cc.AffineTransformConcat is incorrect at get world transform
+            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
+            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
+            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
+            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
+
+            var plt = parentCmd._transform;
+            var xOffset = -(plt.b + plt.c) * t.ty;
+            var yOffset = -(plt.b + plt.c) * t.tx;
+            worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
+            worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
+        } else {
+            worldT.a = t.a;
+            worldT.b = t.b;
+            worldT.c = t.c;
+            worldT.d = t.d;
+            worldT.tx = t.tx;
+            worldT.ty = t.ty;
+        }
+        if (recursive) {
+            var locChildren = this._node._children;
+            if (!locChildren || locChildren.length === 0)
+                return;
+            var i, len;
+            for (i = 0, len = locChildren.length; i < len; i++) {
+                locChildren[i]._renderCmd.transform(this, recursive);
+            }
+        }
     };
 
     proto.initImageSize = function(){

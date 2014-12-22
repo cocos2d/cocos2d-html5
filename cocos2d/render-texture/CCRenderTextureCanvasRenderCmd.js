@@ -29,7 +29,7 @@
         this._clearColorStr = "rgba(255,255,255,1)";
 
         this._cacheCanvas = cc.newElement('canvas');
-        this._cacheContext = this._cacheCanvas.getContext('2d');
+        this._cacheContext = new cc.CanvasContextWrapper(this._cacheCanvas.getContext('2d'));
     };
 
     var proto = cc.RenderTexture.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
@@ -51,7 +51,6 @@
         var locCacheCanvas = this._cacheCanvas, locScaleFactor = cc.contentScaleFactor();
         locCacheCanvas.width = 0 | (width * locScaleFactor);
         locCacheCanvas.height = 0 | (height * locScaleFactor);
-        this._cacheContext.translate(0, locCacheCanvas.height);
 
         var texture = new cc.Texture2D();
         texture.initWithElement(locCacheCanvas);
@@ -74,27 +73,19 @@
         b = b || 0;
         a = isNaN(a) ? 1 : a;
 
-        //var context = cc._renderContext;
-        var context = this._cacheContext;
+        var context = this._cacheContext.getContext();
         var locCanvas = this._cacheCanvas;
-        context.save();
-        context.fillStyle = "rgba(" + (0 | r) + "," + (0 | g) + "," + (0 | b) + "," + a / 255 + ")";
-        context.clearRect(0, 0, locCanvas.width, -locCanvas.height);
-        context.fillRect(0, 0, locCanvas.width, -locCanvas.height);
-        context.restore();
+        context.setTransform(1,0,0,1,0,0);
+        this._cacheContext.setFillStyle("rgba(" + (0 | r) + "," + (0 | g) + "," + (0 | b) + "," + a / 255 + ")");
+        context.clearRect(0, 0, locCanvas.width, locCanvas.height);
+        context.fillRect(0, 0, locCanvas.width, locCanvas.height);
     };
 
     proto.end = function(){
         var node = this._node;
 
-        //old code
-        //cc._renderContext = cc._mainRenderContextBackup;
-        //cc.view._resetScale();
-
         var scale = cc.contentScaleFactor();
         cc.renderer._renderingToCacheCanvas(this._cacheContext, node.__instanceId, scale, scale);
-
-        //restore viewport
     };
 
     proto.clearRect = function(x, y, width, height){
@@ -111,29 +102,4 @@
         node.sprite.visit(this);
         this._dirtyFlag = 0;
     };
-
-    proto.draw = function(){
-        var node = this._node;
-        if (node.clearFlags) {
-            var locCanvas = this._cacheCanvas;
-            ctx.save();
-            ctx.fillStyle = this._clearColorStr;
-            ctx.clearRect(0, 0, locCanvas.width, -locCanvas.height);
-            ctx.fillRect(0, 0, locCanvas.width, -locCanvas.height);
-            ctx.restore();
-        }
-
-        //! make sure all children are drawn
-        node.sortAllChildren();
-        var locChildren = node._children;
-        var childrenLen = locChildren.length;
-        var selfSprite = node.sprite;
-        for (var i = 0; i < childrenLen; i++) {
-            var getChild = locChildren[i];
-            if (getChild != selfSprite)
-                getChild.visit(this);
-        }
-        node.end();
-    };
-
 })();
