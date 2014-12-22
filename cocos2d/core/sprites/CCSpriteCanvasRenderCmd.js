@@ -111,26 +111,19 @@
     };
 
     proto.rendering = function (ctx, scaleX, scaleY) {
-        var self = this,
-            node = self._node;
-
-        var locTextureCoord = self._textureCoord, alpha = (this._displayedOpacity / 255);
-
+        var node = this._node;
+        var locTextureCoord = this._textureCoord, alpha = (this._displayedOpacity / 255);
         if ((node._texture && ((locTextureCoord.width === 0 || locTextureCoord.height === 0)            //set texture but the texture isn't loaded.
             || !node._texture._isLoaded)) || alpha === 0)
             return;
 
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
-        var locX = node._offsetPosition.x,
-            locY = -node._offsetPosition.y - node._rect.height,
-            locWidth = node._rect.width,
-            locHeight = node._rect.height, t = this._worldTransform,
-            image, curColor, contentSize;
+        var locX = node._offsetPosition.x, locHeight = node._rect.height, locWidth = node._rect.width,
+            locY = -node._offsetPosition.y - locHeight, image;
 
         wrapper.setCompositeOperation(this._blendFuncStr);
         wrapper.setGlobalAlpha(alpha);
-
-        wrapper.setTransform(t, scaleX, scaleY);
+        wrapper.setTransform(this._worldTransform, scaleX, scaleY);
 
         if(node._flippedX || node._flippedY)
             wrapper.save();
@@ -160,9 +153,9 @@
                 }
             }
         } else {
-            contentSize = node._contentSize;
+            var contentSize = node._contentSize;
             if (locTextureCoord.validRect) {
-                curColor = this._displayedColor;
+                var curColor = this._displayedColor;
                 wrapper.setFillStyle("rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)");
                 context.fillRect(locX * scaleX, locY * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
             }

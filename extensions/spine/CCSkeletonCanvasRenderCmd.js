@@ -37,9 +37,7 @@
             return;
 
         wrapper = wrapper || cc._renderContext;
-        var ctx = wrapper.getContext();
-
-        ctx.setTransform(this._worldTransform, scaleX, scaleY);
+        wrapper.setTransform(this._worldTransform, scaleX, scaleY);
         var locSkeleton = node._skeleton;
         var attachment, slot, i, n, drawingUtil = cc._drawingUtil;
         if (node._debugSlots) {

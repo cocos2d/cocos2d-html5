@@ -43,9 +43,7 @@ cc.rendererCanvas = {
      * @param {cc.CanvasContextWrapper} [ctx=cc._renderContext]
      */
     rendering: function (ctx) {
-        var locCmds = this._renderCmds,
-            i,
-            len,
+        var locCmds = this._renderCmds, i, len,
             scaleX = cc.view.getScaleX(),
             scaleY = cc.view.getScaleY();
         var context = ctx || cc._renderContext;
