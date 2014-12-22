@@ -647,6 +647,11 @@ cc.Audio = cc.Class.extend({
          * cc.audioEngine.setMusicVolume(0.5);
          */
         setMusicVolume: function(volume){
+            volume = volume - 0;
+            if(isNaN(volume)) volume = 1;
+            if(volume > 1) volume = 1;
+            if(volume < 0) volume = 0;
+
             this._musicVolume = volume;
             var audio = this._currMusic;
             if(audio){
@@ -738,7 +743,20 @@ cc.Audio = cc.Class.extend({
          * cc.audioEngine.setEffectsVolume(0.5);
          */
         setEffectsVolume: function(volume){
+            volume = volume - 0;
+            if(isNaN(volume)) volume = 1;
+            if(volume > 1) volume = 1;
+            if(volume < 0) volume = 0;
+
             this._effectVolume = volume;
+            var audioPool = this._audioPool;
+            for(var p in audioPool){
+                var audioList = audioPool[p];
+                if(Array.isArray(audioList))
+                    for(var i=0; i<audioList.length; i++){
+                        audioList[i].setVolume(volume)
+                    }
+            }
         },
 
         /**
