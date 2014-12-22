@@ -147,9 +147,11 @@
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         if (this._clipElemType) {
             // Redraw the cached canvas, so that the clipped area shows the background etc.
+            context.save();
             context.setTransform(1, 0, 0, 1, 0, 0);
-            wrapper.setCompositeOperation("destination-over");
+            context.globalCompositeOperation = "destination-over";
             context.drawImage(locCache, 0, 0);
+            context.restore();
             this._dirtyFlag = 0;
         } else {
             wrapper.restore();                             //use for restore clip operation
