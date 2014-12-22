@@ -149,7 +149,7 @@
             // Redraw the cached canvas, so that the clipped area shows the background etc.
             context.save();
             context.setTransform(1, 0, 0, 1, 0, 0);
-            context.setCompositeOperation("destination-over");
+            context.globalCompositeOperation = "destination-over";
             context.drawImage(locCache, 0, 0);
             context.restore();
             this._dirtyFlag = 0;
