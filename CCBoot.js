@@ -2282,7 +2282,12 @@ cc.game.loadScene = function (resource, scene, callback) {
 
 cc.game.createNode = function (ccd_file, callback) {
     cc.loader.loadTxt(ccd_file, function(err, jsonStr) {
-        var node = cc.Serializer.unSerialize(jsonStr);
-        callback.call(cc.game, node);
+        if (!err) {
+            var node = cc.Serializer.unSerialize(jsonStr);
+            callback.call(cc.game, err, node);
+        }
+        else {
+            callback.call(cc.game, err);
+        }
     });
 };
