@@ -128,20 +128,27 @@
             node.sortAllProtectedChildren();
 
             var children = node._children;
-            var j, locProtectChildren = node._protectedChildren, i, locChild;
+            var j=0, locProtectChildren = node._protectedChildren, i = 0, locChild;
             var iLen = children.length, jLen = locProtectChildren.length;
 
-            // draw children zOrder < 0
-            for (i = 0; i < iLen; i++) {
+            for( ; i < iLen; i++ ){
                 locChild = children[i];
-                if (locChild)
+                if ( locChild && locChild.getLocalZOrder() < 0 )
                     locChild.visit(this);
+                else
+                    break;
             }
-            for (j = 0; j < jLen; j++) {
+            for( ; j < jLen; j++ ) {
                 locChild = locProtectChildren[j];
-                if (locChild)
+                if ( locChild && locChild.getLocalZOrder() < 0 )
                     locChild.visit(this);
+                else
+                    break;
             }
+            for (; i < iLen; i++)
+                children[i].visit(this);
+            for (; j < jLen; j++)
+                locProtectChildren[j].visit(this);
             cc.renderer.pushRenderCommand(this._rendererRestoreCmd);
         }
     };
