@@ -816,6 +816,7 @@ cc.ContainerStrategy = cc.Class.extend(/** @lends cc.ContainerStrategy# */{
         // Setup canvas
         locCanvasElement.width = w * devicePixelRatio;
         locCanvasElement.height = h * devicePixelRatio;
+        cc._renderContext.resetCache();
 
         var body = document.body, style;
         if (body && (style = body.style)) {

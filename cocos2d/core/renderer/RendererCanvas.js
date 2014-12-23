@@ -165,6 +165,16 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS)
 
     var proto = cc.CanvasContextWrapper.prototype;
 
+    proto.resetCache = function(){
+        var context = this._context;
+        //call it after resize cc._canvas, because context will reset.
+        this._currentAlpha = context.globalAlpha;
+        this._currentCompositeOperation = context.globalCompositeOperation;
+        this._currentFillStyle = context.fillStyle;
+        this._currentStrokeStyle = context.strokeStyle;
+        this._realOffsetY = this._context.canvas.height + this._offsetY;
+    };
+
     proto.setOffset = function(x, y){
         this._offsetX = x;
         this._offsetY = y;
