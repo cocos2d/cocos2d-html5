@@ -6,7 +6,7 @@
     "renderMode" : 0,
     "engineDir":"../",
 
-    "modules" : ["cocos2d", "extensions"],
+    "modules" : ["cocos2d"],
 
     "jsList" : [
         "src/resource.js",
