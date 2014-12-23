@@ -284,20 +284,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         this._scale9Dirty = true;
     },
 
-    updateDisplayedOpacity: function(parentOpacity){
-        if(!this._scale9Image)
-            return;
-
-        cc.Node.prototype.updateDisplayedOpacity.call(this, parentOpacity);
-        var scaleChildren = this._scale9Image.getChildren();
-        for (var i = 0; i < scaleChildren.length; i++) {
-            var selChild = scaleChildren[i];
-            if (selChild)
-                selChild.updateDisplayedOpacity(parentOpacity);
-        }
-        this._scale9Dirty = true;
-    },
-
     /** Color: conforms to CCRGBAProtocol protocol */
     setColor: function (color) {
         if(!this._scale9Image)
@@ -309,33 +295,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
             var selChild = scaleChildren[i];
             if (selChild)
                 selChild.setColor(color);
-        }
-        this._scale9Dirty = true;
-    },
-
-    updateDisplayedColor: function(parentColor){
-        if(!this._scale9Image)
-            return;
-
-        cc.Node.prototype.updateDisplayedColor.call(this, parentColor);
-        var scaleChildren = this._scale9Image.getChildren();
-        for (var i = 0; i < scaleChildren.length; i++) {
-            var selChild = scaleChildren[i];
-            if (selChild){
-                if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-                    cc.Node.prototype.updateDisplayedColor.call(selChild, parentColor);
-                    if(
-                        parentColor.r !== 255 ||
-                        parentColor.g !== 255 ||
-                        parentColor.b !== 255
-                    ){
-                        selChild._changeTextureColor();
-                        selChild._setNodeDirtyForCache();
-                    }
-                }else{
-                    selChild.updateDisplayedColor(parentColor);
-                }
-            }
         }
         this._scale9Dirty = true;
     },
