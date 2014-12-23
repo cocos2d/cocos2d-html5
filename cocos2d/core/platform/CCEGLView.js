@@ -590,6 +590,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             vb.y = -vp.y / this._scaleY;
             vb.width = cc._canvas.width / this._scaleX;
             vb.height = cc._canvas.height / this._scaleY;
+            cc._renderContext.setOffset(vp.x, -vp.y)
         }
 
         // reset director's member variables to fit visible rect
