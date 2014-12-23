@@ -855,10 +855,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
      * @param {cc.Color} color
      */
     setTitleColor: function (color) {
-        this._titleColor.r = color.r;
-        this._titleColor.g = color.g;
-        this._titleColor.b = color.b;
-        this._titleRenderer.updateDisplayedColor(color);
+        this._titleRenderer.setColor(color);
     },
 
     /**
