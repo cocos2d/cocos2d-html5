@@ -406,11 +406,9 @@ cc.inputManager = /** @lends cc.inputManager# */{
         //The known browser:
         //  liebiao
         //  miui
+        //  WECHAT
         var prohibition = false;
-        if( cc.sys.isMobile && (
-            cc.sys.browserType === cc.sys.BROWSER_TYPE_LIEBAO ||
-            cc.sys.browserType === cc.sys.BROWSER_TYPE_MIUI
-        ))
+        if( cc.sys.isMobile)
             prohibition = true;
 
         //register touch event
