@@ -157,8 +157,10 @@
         }
         for (j = 0; j < pLen; j++) {
             child = locProtectedChildren[j];
-            if (child._localZOrder < 0)
+            if (child._localZOrder < 0){
+                child._renderCmd._updateDisplayColor(this._displayedColor);
                 child.visit(this);
+            }
             else
                 break;
         }
