@@ -947,7 +947,8 @@ cc.Audio = cc.Class.extend({
             if(
                 bg &&
                 bg._touch === false &&
-                bg._playing
+                bg._playing &&
+                bg.getPlaying()
             ){
                 bg._touch = true;
                 bg.play(0, bg.loop);
