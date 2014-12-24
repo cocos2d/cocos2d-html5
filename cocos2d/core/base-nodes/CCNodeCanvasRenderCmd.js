@@ -126,6 +126,7 @@ cc.Node.RenderCmd.prototype = {
                if (item && item._renderCmd)
                    item._renderCmd._updateDisplayColor(whiteColor);
            }
+           this._cascadeColorEnabledDirty = false;
        } else {
            if (parentColor === undefined) {
                var locParent = node._parent;
@@ -148,7 +149,6 @@ cc.Node.RenderCmd.prototype = {
                }
            }
        }
-       this._cascadeColorEnabledDirty = false;
        this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.colorDirty ^ this._dirtyFlag;
    },
 
@@ -163,6 +163,7 @@ cc.Node.RenderCmd.prototype = {
                 if (item && item._renderCmd)
                     item._renderCmd._updateDisplayOpacity(255);
             }
+            this._cascadeOpacityEnabledDirty = false;
         } else {
             if (parentOpacity === undefined) {
                 var locParent = node._parent;
@@ -182,7 +183,6 @@ cc.Node.RenderCmd.prototype = {
                 }
             }
         }
-        this._cascadeOpacityEnabledDirty = false;
         this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.opacityDirty ^ this._dirtyFlag;
     },
 
