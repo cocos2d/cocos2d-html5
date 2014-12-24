@@ -83,8 +83,9 @@
                         break;
                 }
             } else if (selBone instanceof cc.Node) {
-                selBone.setShaderProgram(this._shaderProgram);       //TODO need fix soon
-                selBone.visit(ctx);
+                selBone.setShaderProgram(this._shaderProgram);
+                selBone._renderCmd.transform();
+                selBone._renderCmd.rendering(ctx);
             }
         }
         if(!dontChangeMatrix)
