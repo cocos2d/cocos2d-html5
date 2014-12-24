@@ -47,7 +47,6 @@
         //optimize performance for javascript
         currentStack.stack.push(currentStack.top);
         this._syncStatus(parentCmd);
-        this._dirtyFlag = 0;
         currentStack.top = this._stackMatrix;
 
         var locGrid = node.grid;
@@ -61,6 +60,8 @@
         node.sortAllChildren();
         node.sortAllProtectedChildren();
 
+
+        var pChild;
         // draw children zOrder < 0
         for (i = 0; i < childLen; i++) {
             if (locChildren[i] && locChildren[i]._localZOrder < 0)
@@ -69,9 +70,11 @@
                 break;
         }
         for(j = 0; j < pLen; j++){
-            if (locProtectedChildren[j] && locProtectedChildren[j]._localZOrder < 0)
-                locProtectedChildren[j].visit(this);
-            else
+            pChild = locProtectedChildren[j];
+            if (pChild && pChild._localZOrder < 0){
+                this._changeProtectedChild(pChild);
+                pChild.visit(this);
+            }else
                 break;
         }
 
@@ -82,7 +85,10 @@
             locChildren[i] && locChildren[i].visit(this);
         }
         for (; j < pLen; j++) {
-            locProtectedChildren[j] && locProtectedChildren[j].visit(this);
+            pChild = locProtectedChildren[j];
+            if(!pChild) continue;
+            this._changeProtectedChild(pChild);
+            pChild.visit(this);
         }
 
         if (locGrid && locGrid._active)
@@ -91,6 +97,28 @@
         this._dirtyFlag = 0;
         //optimize performance for javascript
         currentStack.top = currentStack.stack.pop();
+    };
+
+    proto._changeProtectedChild = function(child){
+        var cmd = child._renderCmd,
+            dirty = cmd._dirtyFlag,
+            flags = cc.Node._dirtyFlags;
+
+        if(this._dirtyFlag & flags.colorDirty)
+            dirty |= flags.colorDirty;
+
+        if(this._dirtyFlag & flags.opacityDirty)
+            dirty |= flags.opacityDirty;
+
+        var colorDirty = dirty & flags.colorDirty,
+            opacityDirty = dirty & flags.opacityDirty;
+
+        if(colorDirty)
+            cmd._updateDisplayColor(this._displayedColor);
+        if(opacityDirty)
+            cmd._updateDisplayOpacity(this._displayedOpacity);
+        if(colorDirty || opacityDirty)
+            cmd._updateColor();
     };
 
     proto.transform = function(parentCmd, recursive){

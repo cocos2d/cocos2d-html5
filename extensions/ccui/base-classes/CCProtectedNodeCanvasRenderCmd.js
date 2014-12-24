@@ -147,6 +147,8 @@
         node.sortAllChildren();
         node.sortAllProtectedChildren();
 
+
+        var pChild;
         // draw children zOrder < 0
         for (i = 0; i < childLen; i++) {
             child = children[i];
@@ -156,10 +158,10 @@
                 break;
         }
         for (j = 0; j < pLen; j++) {
-            child = locProtectedChildren[j];
-            if (child._localZOrder < 0){
-                child._renderCmd._updateDisplayColor(this._displayedColor);
-                child.visit(this);
+            pChild = locProtectedChildren[j];
+            if (pChild && pChild._localZOrder < 0){
+                this._changeProtectedChild(pChild);
+                pChild.visit(this);
             }
             else
                 break;
@@ -168,12 +170,38 @@
         cc.renderer.pushRenderCommand(this);
 
         for (; i < childLen; i++)
-            children[i] && children[i]._renderCmd.visit(this);
-        for (; j < pLen; j++)
-            locProtectedChildren[j] && locProtectedChildren[j]._renderCmd.visit(this);
+            children[i] && children[i].visit(this);
+        for (; j < pLen; j++){
+            pChild = locProtectedChildren[j];
+            if(!pChild) continue;
+            this._changeProtectedChild(pChild);
+            pChild.visit(this);
+        }
 
         this._dirtyFlag = 0;
         this._cacheDirty = false;
+    };
+
+    proto._changeProtectedChild = function(child){
+        var cmd = child._renderCmd,
+            dirty = cmd._dirtyFlag,
+            flags = cc.Node._dirtyFlags;
+
+        if(this._dirtyFlag & flags.colorDirty)
+            dirty |= flags.colorDirty;
+
+        if(this._dirtyFlag & flags.opacityDirty)
+            dirty |= flags.opacityDirty;
+
+        var colorDirty = dirty & flags.colorDirty,
+            opacityDirty = dirty & flags.opacityDirty;
+
+        if(colorDirty)
+            cmd._updateDisplayColor(this._displayedColor);
+        if(opacityDirty)
+            cmd._updateDisplayOpacity(this._displayedOpacity);
+        if(colorDirty || opacityDirty)
+            cmd._updateColor();
     };
 
     proto.transform = function(parentCmd, recursive){
