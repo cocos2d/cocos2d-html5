@@ -71,6 +71,22 @@
         cc.Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
     };
 
+    proto._updateDisplayColor = function(parentColor){
+        cc.Node.CanvasRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
+
+        var scale9Image = this._node._scale9Image;
+        if(scale9Image){
+            var scaleChildren = scale9Image.getChildren();
+            for (var i = 0; i < scaleChildren.length; i++) {
+                var selChild = scaleChildren[i];
+                if (selChild)
+                    selChild._renderCmd._updateDisplayColor(parentColor);
+            }
+            this._cacheScale9Sprite();
+        }
+
+    };
+
     proto.transform = function(parentCmd){
         var node = this._node;
         this._cacheScale9Sprite();
