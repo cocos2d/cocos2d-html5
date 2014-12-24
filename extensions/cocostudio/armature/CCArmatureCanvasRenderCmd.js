@@ -93,7 +93,8 @@
     proto.initShaderCache = function(){};
     proto.setShaderProgram = function(){};
     proto.updateChildPosition = function(ctx, dis){
-        dis.visit(ctx);
+        //dis.visit(ctx);
+        cc.renderer.pushRenderCommand(dis._renderCmd);
     };
 
     proto.rendering = function(ctx, scaleX, scaleY){

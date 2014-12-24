@@ -699,7 +699,7 @@ ccs.Bone.RenderCmd = {
         var display = node._displayManager.getDisplayRenderNode();
         if (display != null) {
             var displayCmd = display._renderCmd;
-            display.setColor(cc.color( node._tweenData.r, node._tweenData.g,this._displayedColor.b ));
+            display.setColor(cc.color( node._tweenData.r, node._tweenData.g, node._tweenData.g));
             display.setOpacity(node._tweenData.a);
             displayCmd._syncDisplayColor(this._displayedColor);
             displayCmd._syncDisplayOpacity(this._displayedOpacity);
