@@ -367,7 +367,7 @@ cc.Node.RenderCmd.prototype = {
     };
 
     proto.visit = function (parentCmd) {
-        var _t = this, node = this._node;
+        var node = this._node;
         // quick return if not visible
         if (!node._visible)
             return;
@@ -378,7 +378,7 @@ cc.Node.RenderCmd.prototype = {
 
         //visit for canvas
         var i, children = node._children, child;
-        _t._syncStatus(parentCmd);
+        this._syncStatus(parentCmd);
         var len = children.length;
         if (len > 0) {
             node.sortAllChildren();
@@ -396,7 +396,7 @@ cc.Node.RenderCmd.prototype = {
         } else {
             cc.renderer.pushRenderCommand(this);
         }
-        _t._dirtyFlag = 0;
+        this._dirtyFlag = 0;
     };
 
     proto._syncStatus = function (parentCmd) {

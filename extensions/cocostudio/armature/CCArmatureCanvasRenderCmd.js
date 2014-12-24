@@ -105,7 +105,6 @@
             var selBone = locChildren[i];
             if (selBone && selBone.getDisplayRenderNode) {
                 var selNode = selBone.getDisplayRenderNode();
-
                 if (null == selNode)
                     continue;
 
@@ -122,9 +121,46 @@
                         break;
                 }
             } else if(selBone instanceof cc.Node) {
-                selBone.visit(this);
+                this._visitNormalChild(selBone);
+                //selBone.visit(this);
             }
         }
+    };
+
+    proto._visitNormalChild = function(childNode){
+        if(childNode == null)
+            return;
+
+        var cmd = childNode._renderCmd;
+        // quick return if not visible
+        if (!childNode._visible)
+            return;
+        cmd._curLevel = this._curLevel + 1;
+
+        //visit for canvas
+        var i, children = childNode._children, child;
+        cmd._syncStatus(this);
+        //because armature use transform, not setTransform
+        cmd.transform(null);
+
+        var len = children.length;
+        if (len > 0) {
+            childNode.sortAllChildren();
+            // draw children zOrder < 0
+            for (i = 0; i < len; i++) {
+                child = children[i];
+                if (child._localZOrder < 0)
+                    child._renderCmd.visit(cmd);
+                else
+                    break;
+            }
+            cc.renderer.pushRenderCommand(cmd);
+            for (; i < len; i++)
+                children[i]._renderCmd.visit(cmd);
+        } else {
+            cc.renderer.pushRenderCommand(cmd);
+        }
+        this._dirtyFlag = 0;
     };
 
     proto.visit = function(parentCmd){
