@@ -959,7 +959,7 @@ cc.Audio = cc.Class.extend({
             if(cc._canvas){
                 cc._canvas.addEventListener("touchstart", reBGM, false);
             }
-        }, 0);
+        }, 150);
     }
 
     cc.eventManager.addCustomListener(cc.game.EVENT_HIDE, function () {
