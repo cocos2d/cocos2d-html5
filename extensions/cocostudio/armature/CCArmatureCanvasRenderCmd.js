@@ -132,7 +132,7 @@
         if (!node._visible)
             return;
 
-        this.transform(parentCmd);
+        this.updateStatus(parentCmd);
         node.sortAllChildren();
 
         cc.renderer.pushRenderCommand(this._startRenderCmd);
