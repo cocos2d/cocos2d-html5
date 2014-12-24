@@ -46,4 +46,38 @@
         cc.Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
     };
 
+    proto._updateDisplayColor = function(parentColor){
+        cc.Node.WebGLRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
+
+        var scale9Image = this._node._scale9Image;
+        if(scale9Image){
+            var scaleChildren = scale9Image.getChildren();
+            for (var i = 0; i < scaleChildren.length; i++) {
+                var selChild = scaleChildren[i];
+                if (selChild){
+                    selChild._renderCmd._updateDisplayColor(parentColor);
+                    selChild._renderCmd._updateColor();
+                }
+            }
+        }
+
+    };
+
+    proto._updateDisplayOpacity = function(parentColor){
+        cc.Node.WebGLRenderCmd.prototype._updateDisplayOpacity.call(this, parentColor);
+
+        var scale9Image = this._node._scale9Image;
+        if(scale9Image){
+            var scaleChildren = scale9Image.getChildren();
+            for (var i = 0; i < scaleChildren.length; i++) {
+                var selChild = scaleChildren[i];
+                if (selChild){
+                    selChild._renderCmd._updateDisplayOpacity(parentColor);
+                    selChild._renderCmd._updateColor();
+                }
+            }
+        }
+
+    };
+
 })();
