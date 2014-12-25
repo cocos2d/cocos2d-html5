@@ -244,7 +244,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         } else {
             //disable
             if (this.__resizeWithBrowserSize) {
-                this.__resizeWithBrowserSize = true;
+                this.__resizeWithBrowserSize = false;
                 window.removeEventListener('resize', this._resizeEvent, false);
             }
         }
