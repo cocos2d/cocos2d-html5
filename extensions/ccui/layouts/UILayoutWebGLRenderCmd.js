@@ -135,6 +135,13 @@
 
     proto.rebindStencilRendering = function(stencil){};
 
+    proto.transform = function(parentCmd, recursive){
+        var node = this._node;
+        ccui.ProtectedNode.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+        if(node._clippingStencil)
+            node._clippingStencil._renderCmd.transform(this, recursive);
+    };
+
     proto.stencilClippingVisit = function (parentCmd) {
         var node = this._node;
         if (!node._clippingStencil || !node._clippingStencil.isVisible())
