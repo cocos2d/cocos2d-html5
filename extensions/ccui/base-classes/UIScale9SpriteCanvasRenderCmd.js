@@ -44,11 +44,10 @@
     var proto = ccui.Scale9Sprite.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = ccui.Scale9Sprite.CanvasRenderCmd;
 
-    proto.visit = function(){
+    proto.visit = function(parentCmd){
         var node = this._node;
-        if(!node._visible){
+        if(!node._visible)
             return;
-        }
 
         if (node._positionsAreDirty) {
             node._updatePositions();
@@ -58,7 +57,7 @@
         node._scale9Dirty = false;
         this._cacheScale9Sprite();
 
-        cc.Node.CanvasRenderCmd.prototype.visit.call(this, ctx);
+        cc.Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
     };
 
     proto.transform = function(parentCmd){
