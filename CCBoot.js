@@ -1657,7 +1657,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     var capabilities = sys.capabilities = {"canvas": true};
     if (cc._renderType == cc._RENDER_TYPE_WEBGL)
         capabilities["opengl"] = true;
-    if (docEle['ontouchstart'] !== undefined || nav.msPointerEnabled)
+    if (docEle['ontouchstart'] !== undefined || doc['ontouchstart'] !== undefined || nav.msPointerEnabled)
         capabilities["touches"] = true;
     if (docEle['onmouseup'] !== undefined)
         capabilities["mouse"] = true;
