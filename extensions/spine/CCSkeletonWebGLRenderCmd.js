@@ -26,6 +26,7 @@
     sp.Skeleton.WebGLRenderCmd = function (renderableObject) {
         cc.Node.WebGLRenderCmd.call(this, renderableObject);
         this._needDraw = true;
+        this.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
     };
 
     var proto = sp.Skeleton.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
