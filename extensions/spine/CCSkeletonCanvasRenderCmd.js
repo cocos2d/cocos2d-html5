@@ -112,7 +112,6 @@
             rendererObject = attachment.rendererObject;
             rect = cc.rect(rendererObject.x, rendererObject.y, rendererObject.width,rendererObject.height);
             var sprite = new cc.Sprite(rendererObject.page._texture, rect, rendererObject.rotate);
-            //node.addChild(sprite,-1);
             this._skeletonSprites.push(sprite);
             slot.currentSprite = sprite;
         }
@@ -135,7 +134,6 @@
                 var rendererObject = attachment.rendererObject;
                 var rect = cc.rect(rendererObject.x, rendererObject.y, rendererObject.width,rendererObject.height);
                 var sprite = new cc.Sprite(rendererObject.page._texture, rect, rendererObject.rotate);
-                //node.addChild(sprite,-1);
                 this._skeletonSprites.push(sprite);
                 slot.currentSprite = sprite;
             }
