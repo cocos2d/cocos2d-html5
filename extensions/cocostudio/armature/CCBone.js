@@ -278,8 +278,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      */
     updateZOrder: function () {
         if (this._armature.getArmatureData().dataVersion >= ccs.CONST_VERSION_COMBINED) {
-            var zorder = this._tweenData.zOrder + this._boneData.zOrder;
-            this.setLocalZOrder(zorder);
+            this.setLocalZOrder(this._tweenData.zOrder + this._boneData.zOrder);
         } else {
             this.setLocalZOrder(this._tweenData.zOrder);
         }
@@ -648,6 +647,13 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      */
     getIgnoreMovementBoneData: function () {
         return this.isIgnoreMovementBoneData();
+    },
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new ccs.Bone.CanvasRenderCmd(this);
+        else
+            return new ccs.Bone.WebGLRenderCmd(this);
     }
 });
 
@@ -686,3 +692,40 @@ _p = null;
 ccs.Bone.create = function (name) {
     return new ccs.Bone(name);
 };
+
+ccs.Bone.RenderCmd = {
+    _updateColor: function(){
+        var node = this._node;
+        var display = node._displayManager.getDisplayRenderNode();
+        if (display != null) {
+            var displayCmd = display._renderCmd;
+            display.setColor(cc.color( node._tweenData.r, node._tweenData.g, node._tweenData.g));
+            display.setOpacity(node._tweenData.a);
+            displayCmd._syncDisplayColor(this._displayedColor);
+            displayCmd._syncDisplayOpacity(this._displayedOpacity);
+            displayCmd._updateColor();
+        }
+    }
+};
+
+(function(){
+    ccs.Bone.CanvasRenderCmd  = function(renderable){
+        cc.Node.CanvasRenderCmd.call(this, renderable);
+        this._needDraw = false;
+    };
+
+    var proto = ccs.Bone.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
+    cc.inject(ccs.Bone.RenderCmd, proto);
+    proto.constructor = ccs.Bone.CanvasRenderCmd;
+})();
+
+(function(){
+    ccs.Bone.WebGLRenderCmd = function(renderable){
+        cc.Node.WebGLRenderCmd.call(this, renderable);
+        this._needDraw = false;
+    };
+
+    var proto = ccs.Bone.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
+    cc.inject(ccs.Bone.RenderCmd, proto);
+    proto.constructor = ccs.Bone.WebGLRenderCmd;
+})();

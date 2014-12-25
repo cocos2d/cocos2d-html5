@@ -175,7 +175,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
      * Returns the bounding box of sp.Skeleton.
      * @returns {cc.Rect}
      */
-    boundingBox: function () {
+    getBoundingBox: function () {
         var minX = cc.FLT_MAX, minY = cc.FLT_MAX, maxX = cc.FLT_MIN, maxY = cc.FLT_MIN;
         var scaleX = this.getScaleX(), scaleY = this.getScaleY(), vertices = [],
             slots = this._skeleton.slots, VERTEX = sp.VERTEX_INDEX;
