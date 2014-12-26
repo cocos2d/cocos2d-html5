@@ -132,14 +132,20 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     // Resize helper functions
     _resizeEvent: function () {
-        var width = this._originalDesignResolutionSize.width;
-        var height = this._originalDesignResolutionSize.height;
-        if (this._resizeCallback) {
-            this._initFrameSize();
-            this._resizeCallback.call();
+        var view;
+        if(this.setDesignResolutionSize){
+            view = this;
+        }else{
+            view = cc.view;
         }
+        if (view._resizeCallback) {
+            view._initFrameSize();
+            view._resizeCallback.call();
+        }
+        var width = view._originalDesignResolutionSize.width;
+        var height = view._originalDesignResolutionSize.height;
         if (width > 0)
-            this.setDesignResolutionSize(width, height, this._resolutionPolicy);
+            view.setDesignResolutionSize(width, height, view._resolutionPolicy);
     },
 
     /**
@@ -172,20 +178,17 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * @param {Boolean} enabled Whether enable automatic resize with browser's resize event
      */
     resizeWithBrowserSize: function (enabled) {
-        var adjustSize, _t = this;
         if (enabled) {
             //enable
-            if (!_t.__resizeWithBrowserSize) {
-                _t.__resizeWithBrowserSize = true;
-                adjustSize = _t._resizeEvent.bind(_t);
-                cc._addEventListener(window, 'resize', adjustSize, false);
+            if (!this.__resizeWithBrowserSize) {
+                this.__resizeWithBrowserSize = true;
+                cc._addEventListener(window, 'resize', this._resizeEvent, false);
             }
         } else {
             //disable
-            if (_t.__resizeWithBrowserSize) {
-                _t.__resizeWithBrowserSize = true;
-                adjustSize = _t._resizeEvent.bind(_t);
-                window.removeEventListener('resize', adjustSize, false);
+            if (this.__resizeWithBrowserSize) {
+                this.__resizeWithBrowserSize = false;
+                window.removeEventListener('resize', this._resizeEvent, false);
             }
         }
     },
