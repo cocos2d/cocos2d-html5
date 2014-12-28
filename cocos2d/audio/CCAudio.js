@@ -459,9 +459,13 @@ cc.Audio = cc.Class.extend({
             if (m4a && m4a !== "") support.push(".m4a");
         }
     })();
-
-    if(SWA){
-        var context = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
+    try{
+        if(SWA){
+            var context = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
+        }
+    }catch(error){
+        SWA = false;
+        cc.log("browser don't support webAudio");
     }
 
     var loader = {
@@ -550,7 +554,7 @@ cc.Audio = cc.Class.extend({
                         termination = true;
                         cb("audio load timeout : " + realUrl, audio);
                     }
-                }, 4000);
+                }, 10000);
 
                 var success = function(){
                     if(!cbCheck){
