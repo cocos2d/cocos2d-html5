@@ -540,6 +540,13 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
         return cc.Node.prototype._getHeight.call(this);
     },
 
+    setContentSize: function(contentSize, height){
+        var locWidth = (height === undefined) ? contentSize.width : contentSize;
+        var locHeight = (height === undefined) ? contentSize.height : height;
+        ccui.Widget.prototype.setContentSize.call(this, locWidth, locHeight);
+        this._formatTextDirty = true;
+    },
+
     /**
      * Returns the class name of ccui.RichText.
      * @returns {string}

@@ -107,7 +107,6 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
         this.setOpacityModifyRGB(true);
         this._blendFunc.src = cc.ONE;
         this._blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
-        this._renderCmd.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
         this.scheduleUpdate();
     },
 
@@ -337,38 +336,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
      */
     update: function (dt) {
         this._skeleton.update(dt);
-
         this._renderCmd._updateChild();
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-            var locSkeleton = this._skeleton;
-            locSkeleton.updateWorldTransform();
-            var drawOrder = this._skeleton.drawOrder;
-            for (var i = 0, n = drawOrder.length; i < n; i++) {
-                var slot = drawOrder[i];
-                var attachment = slot.attachment, selSprite = slot.currentSprite;
-                if (!(attachment instanceof spine.RegionAttachment)) {
-                    if(selSprite)
-                        selSprite.setVisible(false);
-                    continue;
-                }
-                if(!selSprite){
-                    var rendererObject = attachment.rendererObject;
-                    var rect = cc.rect(rendererObject.x, rendererObject.y, rendererObject.width,rendererObject.height);
-                    var sprite = new cc.Sprite(rendererObject.page._texture, rect, rendererObject.rotate);
-                    this.addChild(sprite,-1);
-                    slot.currentSprite = sprite;
-                }
-                selSprite.setVisible(true);
-                //update color and blendFunc
-                selSprite.setBlendFunc(cc.BLEND_SRC, slot.data.additiveBlending ? cc.ONE : cc.BLEND_DST);
-
-                var bone = slot.bone;
-                selSprite.setPosition(bone.worldX + attachment.x * bone.m00 + attachment.y * bone.m01,
-                        bone.worldY + attachment.x * bone.m10 + attachment.y * bone.m11);
-                selSprite.setScale(bone.worldScaleX, bone.worldScaleY);
-                selSprite.setRotation(- (slot.bone.worldRotation + attachment.rotation));
-            }
-        }
     }
 });
 

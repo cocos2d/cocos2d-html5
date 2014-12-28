@@ -59,12 +59,8 @@
         this._textureAtlas.drawQuads();
     };
 
-    proto.updateStatus = function(){
-        cc.Node.WebGLRenderCmd.prototype.updateStatus.call(this);
-    };
-
     proto.visit = function(parentCmd){
-        var _t = this, node = this._node;
+        var node = this._node;
         // quick return if not visible
         if (!node._visible)
             return;
@@ -76,8 +72,11 @@
 
         //optimize performance for javascript
         currentStack.stack.push(currentStack.top);
-        _t.updateStatus();                       //because batchNode doesn't visit its children.
-        currentStack.top = _t._stackMatrix;
+
+        if(!(this._dirtyFlag & cc.Node._dirtyFlags.transformDirty))  //batchNode's transform must update in visit
+            this.transform(parentCmd);
+        this.updateStatus(parentCmd);                       //because batchNode doesn't visit its children.
+        currentStack.top = this._stackMatrix;
 
         node.sortAllChildren();
 

@@ -88,14 +88,24 @@
             var boundingBox = this._getBoundingBoxForBake();
             boundingBox.width = 0|(boundingBox.width+0.5);
             boundingBox.height = 0|(boundingBox.height+0.5);
-            var bakeContext = locBakeSprite.getCacheContext();
-            locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
-            var ctx = bakeContext.getContext();
-            bakeContext.setOffset(0 - boundingBox.x, ctx.canvas.height - boundingBox.height + boundingBox.y);
 
-            //reset the bake sprite's position
-            var anchor = locBakeSprite.getAnchorPointInPoints();
-            locBakeSprite.setPosition(anchor.x + boundingBox.x, anchor.y + boundingBox.y);
+            var bakeContext = locBakeSprite.getCacheContext();
+            var ctx = bakeContext.getContext();
+            locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
+
+            var anchor = locBakeSprite.getAnchorPointInPoints(), locPos = node._position;
+            if(node._ignoreAnchorPointForPosition){
+                //bakeContext.translate(0 - boundingBox.x + locPos.x, boundingBox.height + boundingBox.y - locPos.y);
+                bakeContext.setOffset(0 - boundingBox.x, ctx.canvas.height - boundingBox.height + boundingBox.y );
+                //reset the bake sprite's position
+                locBakeSprite.setPosition(anchor.x + boundingBox.x - locPos.x, anchor.y + boundingBox.y - locPos.y);
+            } else {
+                var selfAnchor = this.getAnchorPointInPoints();
+                var selfPos = {x: locPos.x - selfAnchor.x, y: locPos.y - selfAnchor.y};
+                //bakeContext.translate(0 - boundingBox.x + selfPos.x, boundingBox.height + boundingBox.y - selfPos.y);
+                bakeContext.setOffset(0 - boundingBox.x, ctx.canvas.height - boundingBox.height + boundingBox.y);
+                locBakeSprite.setPosition(anchor.x + boundingBox.x - selfPos.x, anchor.y + boundingBox.y - selfPos.y);
+            }
 
             //visit for canvas
             node.sortAllChildren();
@@ -104,7 +114,7 @@
                 children[i].visit(this);
             }
             cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
-            locBakeSprite.transform();                   //because bake sprite's position was changed at rendering.
+            locBakeSprite.transform(this);                   //because bake sprite's position was changed at rendering.
             this._cacheDirty = false;
         }
     };
@@ -141,17 +151,18 @@
         //query child's BoundingBox
         if (!node._children || node._children.length === 0)
             return cc.rect(0, 0, 10, 10);
+        var trans = node.getNodeToWorldTransform();
 
         var locChildren = node._children;
-        for (var i = 0; i < locChildren.length; i++) {
+        for (var i = 0, len = locChildren.length; i < len; i++) {
             var child = locChildren[i];
             if (child && child._visible) {
                 if(rect){
-                    var childRect = child._getBoundingBoxToCurrentNode();
+                    var childRect = child._getBoundingBoxToCurrentNode(trans);
                     if (childRect)
                         rect = cc.rectUnion(rect, childRect);
                 }else{
-                    rect = child._getBoundingBoxToCurrentNode();
+                    rect = child._getBoundingBoxToCurrentNode(trans);
                 }
             }
         }
@@ -218,8 +229,8 @@
             this.transform(this.getParentRenderCmd(), true);
             //compute the bounding box of the bake layer.
             var boundingBox = this._getBoundingBoxForBake();
-            boundingBox.width = 0 | boundingBox.width;
-            boundingBox.height = 0 | boundingBox.height;
+            boundingBox.width = 0|(boundingBox.width+0.5);
+            boundingBox.height = 0|(boundingBox.height+0.5);
 
             var bakeContext = locBakeSprite.getCacheContext();
             var ctx = bakeContext.getContext();
