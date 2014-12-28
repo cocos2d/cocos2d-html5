@@ -64,9 +64,9 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             this._updateDisplayOpacity();
 
         if(colorDirty || opacityDirty){
-            this._setColorsString();
+            //this._setColorsString();
             this._updateColor();
-            this._updateTexture();
+            //this._updateTexture();
         }else if(locFlag & flags.textDirty)
             this._updateTexture();
 
@@ -387,10 +387,10 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         if (opacityDirty)
             this._syncDisplayOpacity();
 
-        if(colorDirty || opacityDirty){
-            this._setColorsString();
+        if(colorDirty){
+            //this._setColorsString();
             this._updateColor();
-            this._updateTexture();
+            //this._updateTexture();
         }else if(locFlag & flags.textDirty)
             this._updateTexture();
 
@@ -400,16 +400,18 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
     proto._setColorsString = function () {
         var locDisplayColor = this._displayedColor, node = this._node,
-            locDisplayedOpacity = this._displayedOpacity,
             locShadowColor = node._shadowColor || this._displayedColor;
         var locStrokeColor = node._strokeColor, locFontFillColor = node._textFillColor;
 
         this._shadowColorStr = "rgba(" + (0 | (locShadowColor.r * 0.5)) + "," + (0 | (locShadowColor.g * 0.5)) + "," + (0 | (locShadowColor.b * 0.5)) + "," + node._shadowOpacity + ")";
         this._fillColorStr = "rgba(" + (0 | (locDisplayColor.r / 255 * locFontFillColor.r)) + "," + (0 | (locDisplayColor.g / 255 * locFontFillColor.g)) + ","
-            + (0 | (locDisplayColor.b / 255 * locFontFillColor.b)) + ", " + locDisplayedOpacity / 255 + ")";
+            + (0 | (locDisplayColor.b / 255 * locFontFillColor.b)) + ", 1)";  //use globalOpacity  + locDisplayedOpacity / 255 + ")";
         this._strokeColorStr = "rgba(" + (0 | (locDisplayColor.r / 255 * locStrokeColor.r)) + "," + (0 | (locDisplayColor.g / 255 * locStrokeColor.g)) + ","
-            + (0 | (locDisplayColor.b / 255 * locStrokeColor.b)) + ", " + locDisplayedOpacity / 255 + ")";
+            + (0 | (locDisplayColor.b / 255 * locStrokeColor.b)) + ", 1)";   //use globalOpacity  + locDisplayedOpacity / 255 + ")";
     };
 
-    proto._updateColor = function(){};
+    proto._updateColor = function(){
+        this._setColorsString();
+        this._updateTexture();
+    };
 })();
