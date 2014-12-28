@@ -195,12 +195,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         }else{
             view = cc.view;
         }
-        var width = view._originalDesignResolutionSize.width;
-        var height = view._originalDesignResolutionSize.height;
         if (view._resizeCallback) {
             view._initFrameSize();
             view._resizeCallback.call();
         }
+        var width = view._originalDesignResolutionSize.width;
+        var height = view._originalDesignResolutionSize.height;
         if (width > 0)
             view.setDesignResolutionSize(width, height, view._resolutionPolicy);
     },
