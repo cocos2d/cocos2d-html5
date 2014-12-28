@@ -53,28 +53,6 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     var proto = cc.LabelTTF.RenderCmd.prototype;
 
     proto.constructor = cc.LabelTTF.RenderCmd;
-    proto.updateStatus = function () {
-        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        var colorDirty = locFlag & flags.colorDirty,
-            opacityDirty = locFlag & flags.opacityDirty;
-
-        if (colorDirty)
-            this._updateDisplayColor();
-        if (opacityDirty)
-            this._updateDisplayOpacity();
-
-        if(colorDirty || opacityDirty){
-            //this._setColorsString();
-            this._updateColor();
-            //this._updateTexture();
-        }else if(locFlag & flags.textDirty)
-            this._updateTexture();
-
-        if (this._dirtyFlag & flags.transformDirty){
-            this.transform(this.getParentRenderCmd(), true);
-            this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
-        }
-    };
 
     proto._getLabelContext = function () {
         if (this._labelContext)
@@ -365,6 +343,27 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     var proto = cc.LabelTTF.CanvasRenderCmd.prototype;
     proto.constructor = cc.LabelTTF.CanvasRenderCmd;
 
+    proto.updateStatus = function () {
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
+
+        if (colorDirty)
+            this._updateDisplayColor();
+        if (opacityDirty)
+            this._updateDisplayOpacity();
+
+        if(colorDirty){
+            this._updateColor();
+        }else if(locFlag & flags.textDirty)
+            this._updateTexture();
+
+        if (this._dirtyFlag & flags.transformDirty){
+            this.transform(this.getParentRenderCmd(), true);
+            this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
+        }
+    };
+
     proto._syncStatus = function (parentCmd) {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
         var parentNode = parentCmd ? parentCmd._node : null;
@@ -378,19 +377,18 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         if(parentCmd && (parentCmd._dirtyFlag & flags.transformDirty))
             locFlag |= flags.transformDirty;
 
-        this._dirtyFlag = locFlag;
-
         var colorDirty = locFlag & flags.colorDirty,
             opacityDirty = locFlag & flags.opacityDirty;
+
+        this._dirtyFlag = locFlag;
+
         if (colorDirty)
             this._syncDisplayColor();
         if (opacityDirty)
             this._syncDisplayOpacity();
 
         if(colorDirty){
-            //this._setColorsString();
             this._updateColor();
-            //this._updateTexture();
         }else if(locFlag & flags.textDirty)
             this._updateTexture();
 
