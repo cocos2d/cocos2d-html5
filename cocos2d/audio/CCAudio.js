@@ -30,6 +30,7 @@
  * multichannel : Multiple audio while playing - If it doesn't, you can only play background music
  * webAudio     : Support for WebAudio - Support W3C WebAudio standards, all of the audio can be played
  * auto         : Supports auto-play audio - if Don‘t support it, On a touch detecting background music canvas, and then replay
+ * replay       : The first music will fail, must be replay after touchstart
  *
  * May be modifications for a few browser version
  */
@@ -42,23 +43,25 @@
     var supportTable = {
         "common" : {multichannel: true , webAudio: cc.sys._supportWebAudio , auto: true }
     };
-
     //  ANDROID  //
-    supportTable[sys.BROWSER_TYPE_ANDROID] = {multichannel: false, webAudio: false, auto: false};
-    supportTable[sys.BROWSER_TYPE_CHROME]  = {multichannel: true , webAudio: true , auto: false};
-    supportTable[sys.BROWSER_TYPE_FIREFOX] = {multichannel: true , webAudio: true , auto: true };
-    supportTable[sys.BROWSER_TYPE_UC]      = {multichannel: true , webAudio: false, auto: false };
-    supportTable[sys.BROWSER_TYPE_QQ]      = {multichannel: false, webAudio: false, auto: true };
-    supportTable[sys.BROWSER_TYPE_OUPENG]  = {multichannel: false, webAudio: false, auto: false};
-    supportTable[sys.BROWSER_TYPE_WECHAT]  = {multichannel: false, webAudio: false, auto: false};
-    supportTable[sys.BROWSER_TYPE_360]     = {multichannel: false, webAudio: false, auto: true };
-    supportTable[sys.BROWSER_TYPE_MIUI]    = {multichannel: false, webAudio: false, auto: true };
-    //liebao|baidu browser support auto play, But the first play maybe fail, so set the auto to false
-    supportTable[sys.BROWSER_TYPE_LIEBAO]  = {multichannel: false, webAudio: false, auto: false};
-    supportTable[sys.BROWSER_TYPE_BAIDU]   = {multichannel: false, webAudio: false, auto: false};
+    supportTable[sys.BROWSER_TYPE_ANDROID]  = {multichannel: false, webAudio: false, auto: false};
+    supportTable[sys.BROWSER_TYPE_CHROME]   = {multichannel: true , webAudio: true , auto: false};
+    supportTable[sys.BROWSER_TYPE_FIREFOX]  = {multichannel: true , webAudio: true , auto: true };
+    supportTable[sys.BROWSER_TYPE_UC]       = {multichannel: true , webAudio: false, auto: false};
+    supportTable[sys.BROWSER_TYPE_QQ]       = {multichannel: false, webAudio: false, auto: true};
+    supportTable[sys.BROWSER_TYPE_OUPENG]   = {multichannel: false, webAudio: false, auto: false, replay: true };
+    supportTable[sys.BROWSER_TYPE_WECHAT]   = {multichannel: false, webAudio: false, auto: false, replay: true };
+    supportTable[sys.BROWSER_TYPE_360]      = {multichannel: false, webAudio: false, auto: true };
+    supportTable[sys.BROWSER_TYPE_MIUI]     = {multichannel: false, webAudio: false, auto: true };
+    supportTable[sys.BROWSER_TYPE_BAIDU]    = {multichannel: false, webAudio: false, auto: true };
+    supportTable[sys.BROWSER_TYPE_BAIDU_APP]= {multichannel: false, webAudio: false, auto: true };
+    supportTable[sys.BROWSER_TYPE_LIEBAO]   = {multichannel: false, webAudio: false, auto: false, replay: true };
+    supportTable[sys.BROWSER_TYPE_SOUGOU]   = {multichannel: false, webAudio: false, auto: false, replay: true };
 
     //  APPLE  //
-    supportTable[sys.BROWSER_TYPE_SAFARI]  = {multichannel: true , webAudio: true , auto: false};
+    supportTable[sys.BROWSER_TYPE_SAFARI]  = {multichannel: true , webAudio: true , auto: false, webAudioCallback: function(realUrl){
+        document.createElement("audio").src = realUrl;
+    }};
 
     /* Determine the browser version number */
     var version, tmp;
@@ -92,6 +95,9 @@
             case sys.BROWSER_TYPE_SAFARI:
                 tmp = ua.match(/safari\/([\d.]+)/);
                 break;
+            case sys.BROWSER_TYPE_MIUI:
+                tmp = ua.match(/miuibrowser\/([\d.]+)/);
+                break;
         }
         version = tmp ? tmp[1] : "";
     }catch(e){
@@ -106,6 +112,12 @@
             case sys.BROWSER_TYPE_CHROME:
                 if(parseInt(version) < 30){
                     supportTable[sys.BROWSER_TYPE_CHROME]  = {multichannel: false , webAudio: true , auto: false};
+                }
+                break;
+            case sys.BROWSER_TYPE_MIUI:
+                version = version.match(/\d+/g);
+                if(version[0] < 2 || (version[0] == 2 && version[1] == 0 && version[2] <= 1)){
+                    supportTable[sys.BROWSER_TYPE_MIUI].auto = false;
                 }
                 break;
         }
@@ -243,10 +255,10 @@ cc.Audio = cc.Class.extend({
             return;
         }
         if(!this._pause && cs){
-            if(this._currentTime + this._context.currentTime - this._startTime < this._currentSource.buffer.duration)
-                return;
-            else
+            if(this._context.currentTime === 0 || this._currentTime + this._context.currentTime - this._startTime > this._currentSource.buffer.duration)
                 this._stopOfWebAudio();
+            else
+                return;
         }
         var audio = this._context["createBufferSource"]();
         audio.buffer = this._buffer;
@@ -507,7 +519,8 @@ cc.Audio = cc.Class.extend({
             realUrl = cc.path.changeExtname(realUrl, typeList.splice(0, 1));
 
             if(SWA){//Buffer
-
+                if(polyfill.webAudioCallback)
+                    polyfill.webAudioCallback(realUrl);
                 var request = new XMLHttpRequest();
                 request.open("GET", realUrl, true);
                 request.responseType = "arraybuffer";
@@ -528,30 +541,48 @@ cc.Audio = cc.Class.extend({
 
                 var element = document.createElement("audio");
                 var cbCheck = false;
+                var termination = false;
+
+                var timer = setTimeout(function(){
+                    if(element.readyState == 0){
+                        failure();
+                    }else{
+                        termination = true;
+                        cb("audio load timeout : " + realUrl, audio);
+                    }
+                }, 4000);
 
                 var success = function(){
-                    audio.setElement(element);
-                    if(cbCheck){
-                        //element.removeEventListener("canplaythrough", success, false);
+                    if(!cbCheck){
+                        audio.setElement(element);
+                        element.removeEventListener("canplaythrough", success, false);
                         element.removeEventListener("error", failure, false);
-                        element.removeEventListener("emptied", failure, false);
-                        cb(null, audio);
+                        element.removeEventListener("emptied", emptied, false);
+                        !termination && cb(null, audio);
                         cbCheck = true;
+                        clearTimeout(timer);
                     }
                 };
 
                 var failure = function(){
-                    if(cbCheck) return;
-                    //element.removeEventListener("canplaythrough", success, false);
+                    if(!cbCheck) return;
+                    element.removeEventListener("canplaythrough", success, false);
                     element.removeEventListener("error", failure, false);
-                    element.removeEventListener("emptied", failure, false);
-                    loader.loadAudioFromExtList(realUrl, typeList, audio, cb);
+                    element.removeEventListener("emptied", emptied, false);
+                    !termination && loader.loadAudioFromExtList(realUrl, typeList, audio, cb);
                     cbCheck = true;
+                    clearTimeout(timer);
+                };
+
+                var emptied = function(){
+                    termination = true;
+                    failure();
                 };
 
                 cc._addEventListener(element, "canplaythrough", success, false);
                 cc._addEventListener(element, "error", failure, false);
-                cc._addEventListener(element, "emptied", failure, false);
+                if(element.onerror !== null)
+                    cc._addEventListener(element, "emptied", emptied, false);
 
                 element.src = realUrl;
                 element.load();
@@ -952,6 +983,7 @@ cc.Audio = cc.Class.extend({
             ){
                 bg._touch = true;
                 bg.play(0, bg.loop);
+                !polyfill.replay && cc._canvas.removeEventListener("touchstart", reBGM);
             }
 
         };
