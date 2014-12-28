@@ -64,9 +64,9 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             this._updateDisplayOpacity();
 
         if(colorDirty || opacityDirty){
-            this._setColorsString();
+            //this._setColorsString();
             this._updateColor();
-            this._updateTexture();
+            //this._updateTexture();
         }else if(locFlag & flags.textDirty)
             this._updateTexture();
 
@@ -388,9 +388,9 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             this._syncDisplayOpacity();
 
         if(colorDirty || opacityDirty){
-            this._setColorsString();
+            //this._setColorsString();
             this._updateColor();
-            this._updateTexture();
+            //this._updateTexture();
         }else if(locFlag & flags.textDirty)
             this._updateTexture();
 
@@ -411,5 +411,8 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             + (0 | (locDisplayColor.b / 255 * locStrokeColor.b)) + ", " + locDisplayedOpacity / 255 + ")";
     };
 
-    proto._updateColor = function(){};
+    proto._updateColor = function(){
+        this._setColorsString();
+        this._updateTexture();
+    };
 })();
