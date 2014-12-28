@@ -43,6 +43,29 @@
         this._strokeColorStr = "rgba(" + (0 | locStrokeColor.r) + "," + (0 | locStrokeColor.g) + "," + (0 | locStrokeColor.b) + ", 1)";
     };
 
+    proto.updateStatus = function () {
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
+
+        if (colorDirty)
+            this._updateDisplayColor();
+        if (opacityDirty)
+            this._updateDisplayOpacity();
+
+        if(colorDirty || opacityDirty){
+            this._setColorsString();
+            this._updateColor();
+            this._updateTexture();
+        }else if(locFlag & flags.textDirty)
+            this._updateTexture();
+
+        if (this._dirtyFlag & flags.transformDirty){
+            this.transform(this.getParentRenderCmd(), true);
+            this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
+        }
+    };
+
     proto._syncStatus = function (parentCmd) {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
         var parentNode = parentCmd ? parentCmd._node : null;
