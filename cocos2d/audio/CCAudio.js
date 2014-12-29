@@ -44,6 +44,7 @@
     var supportTable = {
         "common" : {multichannel: true , webAudio: cc.sys._supportWebAudio , auto: true }
     };
+    supportTable[sys.BROWSER_TYPE_IE]  = {multichannel: true , webAudio: cc.sys._supportWebAudio , auto: true, emptied: true};
     //  ANDROID  //
     supportTable[sys.BROWSER_TYPE_ANDROID]  = {multichannel: false, webAudio: false, auto: false};
     supportTable[sys.BROWSER_TYPE_CHROME]   = {multichannel: true , webAudio: true , auto: false};
@@ -131,7 +132,10 @@
             cc.__audioSupport = supportTable[sys.BROWSER_TYPE_SAFARI];
     }else{
         //Desktop support all
-        cc.__audioSupport = supportTable["common"];
+        if(cc.sys.browserType != cc.sys.BROWSER_TYPE_IE)
+            cc.__audioSupport = supportTable["common"];
+        else
+            cc.__audioSupport = supportTable[sys.BROWSER_TYPE_IE];
     }
 
     if(DEBUG){
