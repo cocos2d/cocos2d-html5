@@ -68,7 +68,27 @@
             locChildren[i].setTexture(texture);
     };
 
-    proto.updateChildrenAtlasIndex = function(){ };
+    proto.updateChildrenAtlasIndex = function(children){
+        this._node._descendants.length = 0;
+        //update _descendants after sortAllChildren
+        for (var i = 0, len = children.length; i < len; i++)
+            this._updateAtlasIndex(children[i]);
+    };
+
+    proto._updateAtlasIndex = function (sprite) {
+        var locDescendants = this._node._descendants;
+        var pArray = sprite.children, i, len = pArray.length;
+        for (i = 0; i < len; i++) {
+            if (pArray[i]._localZOrder < 0) {
+                locDescendants.push(pArray[i]);
+            } else
+                break
+        }
+        locDescendants.push(sprite);
+        for (; i < len; i++) {
+            locDescendants.push(pArray[i]);
+        }
+    };
 
     proto.getTextureAtlas = function(){};
 
@@ -76,7 +96,6 @@
 
     proto.cutting = function(sprite, index){
         var node = this._node;
-        //sprite._renderCmd._setCachedParent(this._renderCmd);    //TODO need move to renderCmd
         node._children.splice(index, 0, sprite);
     }
 })();
