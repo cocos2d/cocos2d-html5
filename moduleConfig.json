@@ -396,7 +396,14 @@
             "extensions/cocostudio/reader/timeline/ActionTimelineCache.js",
             "extensions/cocostudio/reader/timeline/Frame.js",
             "extensions/cocostudio/reader/timeline/Timeline.js",
-            "extensions/cocostudio/reader/timeline/CSLoader.js"
+            "extensions/cocostudio/reader/timeline/CSLoader.js",
+
+            "extensions/cocostudio/reader/loader/load.js",
+            "extensions/cocostudio/reader/loader/parsers/uiParser-1.x.js",
+            "extensions/cocostudio/reader/loader/parsers/timelineParser-1.x.js",
+            "extensions/cocostudio/reader/loader/parsers/timelineParser-2.x.js"
+
+
         ],
         "gui" : [
             "core", "clipping-nodes", "render-texture", "actions", "progress-timer",
