@@ -380,7 +380,7 @@
             ctx = buff.getContext("2d");
             ctx.clearRect(0, 0, w, h);
         }
-
+        ctx.save();
         ctx.globalCompositeOperation = 'lighter';
         // Make sure to keep the renderCanvas alpha in mind in case of overdraw
         var a = ctx.globalAlpha;
@@ -400,6 +400,7 @@
             ctx.globalAlpha = a;
             ctx.drawImage(tintedImgCache[3], rect.x, rect.y, w, h, 0, 0, w, h);
         }
+        ctx.restore();
         return buff;
     };
 
