@@ -31,6 +31,7 @@
  * webAudio     : Support for WebAudio - Support W3C WebAudio standards, all of the audio can be played
  * auto         : Supports auto-play audio - if Don‘t support it, On a touch detecting background music canvas, and then replay
  * replay       : The first music will fail, must be replay after touchstart
+ * emptied      : Whether to use the emptied event to replace load callback
  *
  * May be modifications for a few browser version
  */
@@ -48,15 +49,15 @@
     supportTable[sys.BROWSER_TYPE_CHROME]   = {multichannel: true , webAudio: true , auto: false};
     supportTable[sys.BROWSER_TYPE_FIREFOX]  = {multichannel: true , webAudio: true , auto: true };
     supportTable[sys.BROWSER_TYPE_UC]       = {multichannel: true , webAudio: false, auto: false};
-    supportTable[sys.BROWSER_TYPE_QQ]       = {multichannel: false, webAudio: false, auto: true};
-    supportTable[sys.BROWSER_TYPE_OUPENG]   = {multichannel: false, webAudio: false, auto: false, replay: true };
-    supportTable[sys.BROWSER_TYPE_WECHAT]   = {multichannel: false, webAudio: false, auto: false, replay: true };
+    supportTable[sys.BROWSER_TYPE_QQ]       = {multichannel: false, webAudio: false, auto: true };
+    supportTable[sys.BROWSER_TYPE_OUPENG]   = {multichannel: false, webAudio: false, auto: false, replay: true , emptied: true };
+    supportTable[sys.BROWSER_TYPE_WECHAT]   = {multichannel: false, webAudio: false, auto: false, replay: true , emptied: true };
     supportTable[sys.BROWSER_TYPE_360]      = {multichannel: false, webAudio: false, auto: true };
     supportTable[sys.BROWSER_TYPE_MIUI]     = {multichannel: false, webAudio: false, auto: true };
-    supportTable[sys.BROWSER_TYPE_BAIDU]    = {multichannel: false, webAudio: false, auto: true };
-    supportTable[sys.BROWSER_TYPE_BAIDU_APP]= {multichannel: false, webAudio: false, auto: true };
-    supportTable[sys.BROWSER_TYPE_LIEBAO]   = {multichannel: false, webAudio: false, auto: false, replay: true };
-    supportTable[sys.BROWSER_TYPE_SOUGOU]   = {multichannel: false, webAudio: false, auto: false, replay: true };
+    supportTable[sys.BROWSER_TYPE_BAIDU]    = {multichannel: false, webAudio: false, auto: true , emptied: true };
+    supportTable[sys.BROWSER_TYPE_BAIDU_APP]= {multichannel: false, webAudio: false, auto: true , emptied: true };
+    supportTable[sys.BROWSER_TYPE_LIEBAO]   = {multichannel: false, webAudio: false, auto: false, replay: true , emptied: true };
+    supportTable[sys.BROWSER_TYPE_SOUGOU]   = {multichannel: false, webAudio: false, auto: false, replay: true , emptied: true };
 
     //  APPLE  //
     supportTable[sys.BROWSER_TYPE_SAFARI]  = {multichannel: true , webAudio: true , auto: false, webAudioCallback: function(realUrl){
@@ -549,7 +550,7 @@ cc.Audio = cc.Class.extend({
 
                 var timer = setTimeout(function(){
                     if(element.readyState == 0){
-                        failure();
+                        emptied();
                     }else{
                         termination = true;
                         cb("audio load timeout : " + realUrl, audio);
@@ -580,12 +581,13 @@ cc.Audio = cc.Class.extend({
 
                 var emptied = function(){
                     termination = true;
-                    failure();
+                    success();
+                    cb(null, audio);
                 };
 
                 cc._addEventListener(element, "canplaythrough", success, false);
                 cc._addEventListener(element, "error", failure, false);
-                if(element.onerror !== null)
+                if(polyfill.emptied)
                     cc._addEventListener(element, "emptied", emptied, false);
 
                 element.src = realUrl;
