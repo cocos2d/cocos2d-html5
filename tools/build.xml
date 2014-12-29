@@ -5,7 +5,7 @@
              classpath="./compiler/compiler.jar"/>
     <target name="compile">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="./../lib/cocos2d-js-v3.2-RC0-min.js">
+                debug="false" output="./../lib/cocos2d-js-v3.2-min.js">
             <!--sourceMapOutputFile="./../lib/cocos2d-html5-v3.0-rc0-sourcemap" sourceMapFormat="V3" -->
             <sources dir="./../">
                 <file name="Base64Images.js"/>
@@ -307,7 +307,7 @@
 
     <target name="compile_core">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="./../lib/cocos2d-js-v3.2-RC0-core-min.js">
+                debug="false" output="./../lib/cocos2d-js-v3.2-core-min.js">
             <!--sourceMapOutputFile="./../lib/cocos2d-html5-v3.0-rc0-core-sourcemap" sourceMapFormat="V3" -->
             <sources dir="./../">
                 <file name="CCBoot.js"/>
