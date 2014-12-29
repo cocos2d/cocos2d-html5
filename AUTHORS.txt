@@ -186,6 +186,7 @@ Xiaodong Liu         @tianxing113   cc.Spawn.create bug fix
 
 Park Hyun Chen       @sincntx       Touch anywhere of screen to finish input when using cc.EditBox
                                     ccui.TextBMFont bug fix
+                                    cc.game bug fix
 
 Ninja Lau            @mutoo         A typo bug in UILayout fix
                                     One-loop CCArmatureAnimation can't finish when setSpeedScale is less than 1.0 bug fix
