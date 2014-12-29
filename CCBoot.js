@@ -1485,6 +1485,7 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.BROWSER_TYPE_CHROME = "chrome";
     sys.BROWSER_TYPE_LIEBAO = "liebao";
     sys.BROWSER_TYPE_QZONE = "qzone";
+    sys.BROWSER_TYPE_SOUGOU = "sogou";
     sys.BROWSER_TYPE_UNKNOWN = "unknown";
 
     /**
@@ -1534,10 +1535,10 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.language = currLanguage;
 
     var browserType = sys.BROWSER_TYPE_UNKNOWN;
-    var browserTypes = ua.match(/qzone|liebao|micromessenger|qqbrowser|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|trident|oupeng|opera|miuibrowser|firefox/i)
+    var browserTypes = ua.match(/sogou|qzone|liebao|micromessenger|qqbrowser|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|trident|oupeng|opera|miuibrowser|firefox/i)
         || ua.match(/chrome|safari/i);
     if (browserTypes && browserTypes.length > 0) {
-        browserType = browserTypes[0].toLowerCase();
+        browserType = browserTypes[0];
         if (browserType == 'micromessenger') {
             browserType = sys.BROWSER_TYPE_WECHAT;
         } else if (browserType === "safari" && (ua.match(/android.*applewebkit/)))
