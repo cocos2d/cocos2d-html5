@@ -1,5 +1,31 @@
 ChangeLog:
 
+Cocos2d-JS v3.2 RC0 @ Dec.11, 2014
+
+* Refactoration of web engine by separating the render logic, the arthictecture level refactoration is now completed and brounght great performance improvement.
+* Refactoration of web engine's resolution adaptation and audio engine with polyfilled adaptation logics for different devices and browsers. This ensures better compatibility and better extensibility for future needs.
+* Added `setRotation` method to `ccui.ImageView`.
+* Added a function that fill sprite with repeated texture in Canvas mode.
+* Added `setLineHeight` method to `cc.LabelTTF`.
+* Added `dumpAudioInfo` to `cc.audioEngine` for debugging purpose on mobile browser.
+* Removed Cocos Studio's Protobuffer support from the framework.
+* Added an outline shader sample.
+
+* Bug fixes:
+	1. Fixed an issue of `cc.Sprite` that its rendering is incorrect without texture.
+	2. Fixed an issue of `cc.ClippingNode` that its stencil drawing is incorrect on Canvas Mode.
+	3. Fixed an issue of `TextFieldReader` that it will throw an error when 'areaWidth' and 'areaHeight' equal to zero.
+	4. Fixed an issue of `ccui.CheckBox` that its getSelectedState doesn't return its state.
+	5. Fixed an issue of `cc.LabelTTF` that it doesn't update the string when its string become to empty string.
+	6. Fixed an issue of `cc.ParticleSystem` that it can't change its texture mode and shape type in Canvas mode.
+	7. Fixed an issue of `cc.Layer`'s bake function that its position is incorrect when cc.view's scale isn't 1.
+	8. Fixed an issue of `ccs.ArmatureAnimation`'s `setMovementEventCallFunc` and `setFrameEventCallFunc`.
+	9. Fixed an issue of `console.log` that it isn't a funtion on IE9.
+	10. Fixed an issue of `CSLoader` that it will add duplicate resources to sprite frame cache.
+	11. Fixed an issue of `cc.ProgressTimer` that its setColor is not taking effect.
+	12. Fixed an issue of `cc.loader` that it will throw an error when loading a remote texture.
+    13. Upgrade html5 version chipmunk to the latest release.
+
 Cocos2d-JS-v3.1 @ Oct.22, 2014
 
 * Released Facebook Integration for Cocos2d-JS v1.0, all APIs have been significantly polished and stabilized. Improved test cases for Facebook with more features demonstrated.
