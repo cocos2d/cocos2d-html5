@@ -419,7 +419,7 @@
         //cc.assert(!_t._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
         if (locTexture) {
-            if (locTexture._isLoaded) {
+            if (locTexture._textureLoaded) {
                 this._shaderProgram.use();
                 this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 

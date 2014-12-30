@@ -64,7 +64,7 @@ cc._tmp.WebGLTexture2D = function () {
 
         shaderProgram: null,
 
-        _isLoaded: false,
+        _textureLoaded: false,
         _htmlElementObj: null,
         _webTextureObj: null,
 
@@ -308,7 +308,7 @@ cc._tmp.WebGLTexture2D = function () {
             self._hasMipmaps = false;
             self.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE);
 
-            self._isLoaded = true;
+            self._textureLoaded = true;
 
             return true;
         },
@@ -406,7 +406,7 @@ cc._tmp.WebGLTexture2D = function () {
                 cc.log(cc._LogInfos.Texture2D_initWithImage_2, imageWidth, imageHeight, maxTextureSize, maxTextureSize);
                 return false;
             }
-            this._isLoaded = true;
+            this._textureLoaded = true;
 
             // always load premultiplied images
             return this._initPremultipliedATextureWithImage(uiImage, imageWidth, imageHeight);
@@ -436,7 +436,7 @@ cc._tmp.WebGLTexture2D = function () {
          * @return {Boolean}
          */
         isLoaded: function () {
-            return this._isLoaded;
+            return this._textureLoaded;
         },
 
         /**
@@ -454,7 +454,7 @@ cc._tmp.WebGLTexture2D = function () {
             }
             if (!self._htmlElementObj.width || !self._htmlElementObj.height)
                 return;
-            self._isLoaded = true;
+            self._textureLoaded = true;
             //upload image to buffer
             var gl = cc._renderContext;
 
@@ -757,7 +757,6 @@ cc._tmp.WebGLTexture2D = function () {
         /**
          * remove listener from listeners by target
          * @param {cc.Node} target
-         * @deprecated since 3.1, please use addEventListener instead
          */
         removeLoadedEventListener: function (target) {
             this.removeEventListener("load", target);
