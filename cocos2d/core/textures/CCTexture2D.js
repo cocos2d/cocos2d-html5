@@ -122,16 +122,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
      */
     cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
         _contentSize: null,
-        _isLoaded: false,
+        _textureLoaded: false,
         _htmlElementObj: null,
-
         url: null,
-
         _pattern: null,
 
         ctor: function () {
             this._contentSize = cc.size(0, 0);
-            this._isLoaded = false;
+            this._textureLoaded = false;
             this._htmlElementObj = null;
             this._pattern = "";
         },
@@ -199,7 +197,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
          * @returns {boolean}
          */
         isLoaded: function () {
-            return this._isLoaded;
+            return this._textureLoaded;
         },
 
         /**
@@ -207,14 +205,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
          */
         handleLoadedTexture: function () {
             var self = this;
-            if (self._isLoaded) return;
+            if (self._textureLoaded) return;
             if (!self._htmlElementObj) {
                 var img = cc.loader.getRes(self.url);
                 if (!img) return;
                 self.initWithElement(img);
             }
 
-            self._isLoaded = true;
+            self._textureLoaded = true;
             var locElement = self._htmlElementObj;
             self._contentSize.width = locElement.width;
             self._contentSize.height = locElement.height;
@@ -398,7 +396,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         /**
          * remove listener from listeners by target
          * @param {cc.Node} target
-         * @deprecated since 3.1, please use addEventListener instead
          */
         removeLoadedEventListener: function (target) {
             this.removeEventListener("load", target);
