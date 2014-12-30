@@ -942,6 +942,12 @@ cc.EventHelper.prototype = {
     },
 
     addEventListener: function ( type, listener, target ) {
+        //check 'type' status, if the status is ready, dispatch event next frame
+        if(type === "load" && this._textureLoaded){            //only load event checked.
+            setTimeout(listener.call(target), 0);
+            return;
+        }
+
         if ( this._listeners === undefined )
             this._listeners = {};
 

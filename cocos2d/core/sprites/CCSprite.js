@@ -932,7 +932,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             var size = texture.getContentSize();
             _t.setTextureRect(cc.rect(0,0, size.width, size.height));
             //If image isn't loaded. Listen for the load event.
-            if(!texture._isLoaded){
+            if(!texture._textureLoaded){
                 texture.addEventListener("load", function(){
                     var size = texture.getContentSize();
                     _t.setTextureRect(cc.rect(0,0, size.width, size.height));
