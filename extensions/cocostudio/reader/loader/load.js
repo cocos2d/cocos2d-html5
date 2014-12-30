@@ -1,6 +1,12 @@
 ccs.loadNode = (function(){
 
-    var load = function(file){
+    /**
+     * load file
+     * @param file
+     * @param type - ui|timeline|action
+     * @returns {*}
+     */
+    var load = function(file, type){
 
         var json = cc.loader.getRes(file);
 
@@ -36,7 +42,8 @@ ccs.loadNode = (function(){
 
     var parser = {
         "ccui": {},
-        "timeline": {}
+        "timeline": {},
+        "action": {}
     };
 
     load.registerParser = function(name, version, target){
