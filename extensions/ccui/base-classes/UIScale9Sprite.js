@@ -200,33 +200,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         locCenter.setPosition(leftWidth, bottomHeight);
     },
 
-    _cacheScale9Sprite: function(){
-        if(!this._scale9Image)
-            return;
-        var size = this._contentSize, locCanvas = this._cacheCanvas;
-        var contentSizeChanged = false;
-        if(locCanvas.width != size.width || locCanvas.height != size.height){
-            locCanvas.width = size.width;
-            locCanvas.height = size.height;
-            this._cacheContext.translate(0, size.height);
-            contentSizeChanged = true;
-        }
-
-        //begin cache
-        cc.renderer._turnToCacheMode(this.__instanceId);
-        this._scale9Image.visit();
-
-        //draw to cache canvas
-        this._cacheContext.clearRect(0, 0, size.width, -size.height);
-        cc.renderer._renderingToCacheCanvas(this._cacheContext, this.__instanceId);
-
-        if(contentSizeChanged)
-            this._cacheSprite.setTextureRect(cc.rect(0,0, size.width, size.height));
-
-        if(!this._cacheSprite.getParent())
-            this.addChild(this._cacheSprite);
-    },
-
     /**
      * Constructor function. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @function
@@ -244,21 +217,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         this._preferredSize = cc.size(0, 0);
         this._capInsets = cc.rect(0, 0, 0, 0);
 
-        //cache
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-
-            var locCacheCanvas = this._cacheCanvas = cc.newElement('canvas');
-            locCacheCanvas.width = 1;
-            locCacheCanvas.height = 1;
-            this._cacheContext = locCacheCanvas.getContext("2d");
-            var locTexture = this._cacheTexture = new cc.Texture2D();
-            locTexture.initWithElement(locCacheCanvas);
-            locTexture.handleLoadedTexture();
-            this._cacheSprite = new cc.Sprite(locTexture);
-            this._cacheSprite.setAnchorPoint(0,0);
-            this.addChild(this._cacheSprite);
-        }
-
         if(file != undefined){
             if(file instanceof cc.SpriteFrame)
                 this.initWithSpriteFrame(file, rect);
@@ -272,6 +230,10 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         }else{
             this.init();
         }
+    },
+
+    getSprite: function () {
+        return this._scale9Image;
     },
 
     /** Original sprite's size. */
@@ -322,20 +284,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         this._scale9Dirty = true;
     },
 
-    updateDisplayedOpacity: function(parentOpacity){
-        if(!this._scale9Image)
-            return;
-
-        cc.Node.prototype.updateDisplayedOpacity.call(this, parentOpacity);
-        var scaleChildren = this._scale9Image.getChildren();
-        for (var i = 0; i < scaleChildren.length; i++) {
-            var selChild = scaleChildren[i];
-            if (selChild)
-                selChild.updateDisplayedOpacity(parentOpacity);
-        }
-        this._scale9Dirty = true;
-    },
-
     /** Color: conforms to CCRGBAProtocol protocol */
     setColor: function (color) {
         if(!this._scale9Image)
@@ -347,33 +295,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
             var selChild = scaleChildren[i];
             if (selChild)
                 selChild.setColor(color);
-        }
-        this._scale9Dirty = true;
-    },
-
-    updateDisplayedColor: function(parentColor){
-        if(!this._scale9Image)
-            return;
-
-        cc.Node.prototype.updateDisplayedColor.call(this, parentColor);
-        var scaleChildren = this._scale9Image.getChildren();
-        for (var i = 0; i < scaleChildren.length; i++) {
-            var selChild = scaleChildren[i];
-            if (selChild){
-                if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-                    cc.Node.prototype.updateDisplayedColor.call(selChild, parentColor);
-                    if(
-                        parentColor.r !== 255 ||
-                        parentColor.g !== 255 ||
-                        parentColor.b !== 255
-                    ){
-                        selChild._changeTextureColor();
-                        selChild._setNodeDirtyForCache();
-                    }
-                }else{
-                    selChild.updateDisplayedColor(parentColor);
-                }
-            }
         }
         this._scale9Dirty = true;
     },
@@ -479,34 +400,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     _setHeight: function (value) {
         cc.Node.prototype._setHeight.call(this, value);
         this._positionsAreDirty = true;
-    },
-
-    visit: function (ctx) {
-        if(!this._visible){
-            return;
-        }
-
-        if (this._positionsAreDirty) {
-            this._updatePositions();
-            this._positionsAreDirty = false;
-            this._scale9Dirty = true;
-        }
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-            this._scale9Dirty = false;
-            this._cacheScale9Sprite();
-
-            cc.Node.prototype.visit.call(this, ctx);
-        }else{
-            cc.Node.prototype.visit.call(this, ctx);
-        }
-    },
-
-    _transformForRenderer: function(){
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
-            this._cacheScale9Sprite();
-            this.transform();
-        }
-        cc.Node.prototype._transformForRenderer.call(this);
     },
 
     /**
@@ -1023,6 +916,13 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         this._insetTop = 0;
         this._insetRight = 0;
         this._insetBottom = 0;
+    },
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new ccui.Scale9Sprite.CanvasRenderCmd(this);
+        else
+            return new ccui.Scale9Sprite.WebGLRenderCmd(this);
     }
 });
 

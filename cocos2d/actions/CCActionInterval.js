@@ -423,9 +423,10 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      * @param {Number}  dt
      */
     update:function (dt) {
-        dt = this._computeEaseTime(dt);
         var new_t, found = 0;
-        var locSplit = this._split, locActions = this._actions, locLast = this._last;
+        var locSplit = this._split, locActions = this._actions, locLast = this._last, actionFound;
+
+        dt = this._computeEaseTime(dt);
         if (dt < locSplit) {
             // action[0]
             new_t = (locSplit !== 0) ? dt / locSplit : 1;
@@ -456,15 +457,17 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
             }
         }
 
+        actionFound = locActions[found];
         // Last action found and it is done.
-        if (locLast === found && locActions[found].isDone())
+        if (locLast === found && actionFound.isDone())
             return;
 
         // Last action found and it is done
         if (locLast !== found)
-            locActions[found].startWithTarget(this.target);
+            actionFound.startWithTarget(this.target);
 
-        locActions[found].update(new_t);
+        new_t = new_t * actionFound._times;
+        actionFound.update(new_t > 1 ? new_t % 1 : new_t);
         this._last = found;
     },
 

@@ -155,7 +155,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
 
     /**
      * initializes a cc.Menu with a Array of cc.MenuItem objects
-     * @param {Array} array Of cc.MenuItem Items
+     * @param {Array} arrayOfItems array Of cc.MenuItem Items
      * @return {Boolean}
      */
     initWithArray: function (arrayOfItems) {
@@ -466,6 +466,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         if (target._selectedItem) {
             target._state = cc.MENU_STATE_TRACKING_TOUCH;
             target._selectedItem.selected();
+            target._selectedItem.setNodeDirty();
             return true;
         }
         return false;
@@ -479,6 +480,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         }
         if (target._selectedItem) {
             target._selectedItem.unselected();
+            target._selectedItem.setNodeDirty();
             target._selectedItem.activate();
         }
         target._state = cc.MENU_STATE_WAITING;
@@ -490,8 +492,10 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
             cc.log("cc.Menu.onTouchCancelled(): invalid state");
             return;
         }
-        if (this._selectedItem)
+        if (this._selectedItem) {
             target._selectedItem.unselected();
+            target._selectedItem.setNodeDirty();
+        }
         target._state = cc.MENU_STATE_WAITING;
     },
 
@@ -503,11 +507,15 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         }
         var currentItem = target._itemForTouch(touch);
         if (currentItem != target._selectedItem) {
-            if (target._selectedItem)
+            if (target._selectedItem) {
                 target._selectedItem.unselected();
+                target._selectedItem.setNodeDirty();
+            }
             target._selectedItem = currentItem;
-            if (target._selectedItem)
+            if (target._selectedItem) {
                 target._selectedItem.selected();
+                target._selectedItem.setNodeDirty();
+            }
         }
     },
 

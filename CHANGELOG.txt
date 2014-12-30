@@ -1,5 +1,56 @@
 ChangeLog:
 
+Cocos2d-JS v3.2 @ Dec.29, 2014
+
+* Replaced `transform` function with `setTransform` function under canvas render mode for better performance.
+* Added a timer in `cc.audioEngine` to check audio element loading event, prevent the loading process being stucked when load audio file failed.
+* Added some new browser types to `cc.sys`.
+* Added some audio resource loading codes to ensure compatibility with Wechat browser.
+* Added check for WebAudio support to ensure compatibility.
+
+* Bug fixes:
+    1. Fixed an issue that `cc.InputManager` doesn't trigger touch event on chrome mobile emulator.
+	2. Fixed an issue that `cc.game.setFrameRate` doesn't work.
+	3. Fixed an issue that `cc.view` can't remove resize event listener.
+	4. Fixed an issue that `cc.EventManager` didn't set register flag to false when a listener is removed.
+	5. Fixed an issue that `cc.audioEngine` doesn't play some audios on some iOS devices.
+	6. Fixed an issue of ccui controls that their `setColor` doesn't work when cascade color is enabled.
+	7. Fixed an issue that `ccs.Armature`'s `setColor` doesn't work in canvas render mode.
+	8. Fixed an issue that `ccs.Armature` crashes when adding a child to it.
+	9. Fixed an issue that `cc.SpriteBatchNode`'s status is incorrect in WebGL render mode.
+	10. Fixed an issue of `cc.Layer` that its position is incorrect under bake mode.
+	11. Fixed an issue of `ccui.RichText` that its `setContentSize` doesn't work.
+	12. Fixed an issue of `cc.LabelTTF` that its `setColor` doesn't work when cascade color is enabled.
+	13. Fixed an issue of spine that its skeletons position is incorrect when scaleX equals to -1 and scaleY equals to 1.
+    14. Fixed `sp.Skeleton`'s API inconsistence by renaming `boundingBox` to `getBoundingBox`.
+    15. Removed all usages of deprecated create functions in the test cases.
+
+Cocos2d-JS v3.2 RC0 @ Dec.11, 2014
+
+* Refactoration of web engine by separating the render logic, the arthictecture level refactoration is now completed and brounght great performance improvement.
+* Refactoration of web engine's resolution adaptation and audio engine with polyfilled adaptation logics for different devices and browsers. This ensures better compatibility and better extensibility for future needs.
+* Added `setRotation` method to `ccui.ImageView`.
+* Added a function that fill sprite with repeated texture in Canvas mode.
+* Added `setLineHeight` method to `cc.LabelTTF`.
+* Added `dumpAudioInfo` to `cc.audioEngine` for debugging purpose on mobile browser.
+* Removed Cocos Studio's Protobuffer support from the framework.
+* Added an outline shader sample.
+
+* Bug fixes:
+	1. Fixed an issue of `cc.Sprite` that its rendering is incorrect without texture.
+	2. Fixed an issue of `cc.ClippingNode` that its stencil drawing is incorrect on Canvas Mode.
+	3. Fixed an issue of `TextFieldReader` that it will throw an error when 'areaWidth' and 'areaHeight' equal to zero.
+	4. Fixed an issue of `ccui.CheckBox` that its getSelectedState doesn't return its state.
+	5. Fixed an issue of `cc.LabelTTF` that it doesn't update the string when its string become to empty string.
+	6. Fixed an issue of `cc.ParticleSystem` that it can't change its texture mode and shape type in Canvas mode.
+	7. Fixed an issue of `cc.Layer`'s bake function that its position is incorrect when cc.view's scale isn't 1.
+	8. Fixed an issue of `ccs.ArmatureAnimation`'s `setMovementEventCallFunc` and `setFrameEventCallFunc`.
+	9. Fixed an issue of `console.log` that it isn't a funtion on IE9.
+	10. Fixed an issue of `CSLoader` that it will add duplicate resources to sprite frame cache.
+	11. Fixed an issue of `cc.ProgressTimer` that its setColor is not taking effect.
+	12. Fixed an issue of `cc.loader` that it will throw an error when loading a remote texture.
+    13. Upgrade html5 version chipmunk to the latest release.
+
 Cocos2d-JS-v3.1 @ Oct.22, 2014
 
 * Released Facebook Integration for Cocos2d-JS v1.0, all APIs have been significantly polished and stabilized. Improved test cases for Facebook with more features demonstrated.

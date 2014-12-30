@@ -26,7 +26,8 @@
 
 /**
  * <p>NodeGrid class is a class serves as a decorator of cc.Node,<br/>
- * Grid node can run grid actions over all its children</p>
+ * Grid node can run grid actions over all its children   (WebGL only)
+ * </p>
  * @type {Class}
  *
  * @property {cc.GridBase}  grid    - Grid object that is used when applying effects
@@ -35,16 +36,6 @@
 cc.NodeGrid = cc.Node.extend({
     grid: null,
     _target: null,
-    _gridBeginCommand:null,
-    _gridEndCommand:null,
-
-    ctor: function(){
-        cc.Node.prototype.ctor.call(this);
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL){
-            this._gridBeginCommand = new cc.CustomRenderCmdWebGL(this, this.onGridBeginDraw);
-            this._gridEndCommand = new cc.CustomRenderCmdWebGL(this, this.onGridEndDraw);
-        }
-    },
 
     /**
      * Gets the grid object.
@@ -70,85 +61,12 @@ cc.NodeGrid = cc.Node.extend({
         this._target = target;
     },
 
-    onGridBeginDraw: function(){
-        var isWebGL = cc._renderType == cc._RENDER_TYPE_WEBGL, locGrid = this.grid;
-        if (isWebGL && locGrid && locGrid._active)
-            locGrid.beforeDraw();
-    },
-
-    onGridEndDraw: function(){
-        var isWebGL = cc._renderType == cc._RENDER_TYPE_WEBGL, locGrid = this.grid;
-        if (isWebGL && locGrid && locGrid._active)
-            locGrid.afterDraw(this._target);
-    },
-
-    /**
-     * Recursive method that visit its children and draw them
-     */
-    visit: function () {
-        var self = this;
-        // quick return if not visible
-        if (!self._visible)
-            return;
-
-        var isWebGL = cc._renderType == cc._RENDER_TYPE_WEBGL, locGrid = this.grid;
-        if(isWebGL){
-            var currentStack = cc.current_stack;
-            currentStack.stack.push(currentStack.top);
-            cc.kmMat4Assign(this._stackMatrix, currentStack.top);
-            currentStack.top = this._stackMatrix;
-        }
-
-        self.transform();
-
-        if(isWebGL){
-
-            var beforeProjectionType = cc.director.PROJECTION_DEFAULT;
-            if (locGrid && locGrid._active){
-                //var backMatrix = new cc.kmMat4();
-                //cc.kmMat4Assign(backMatrix, this._stackMatrix);
-
-                beforeProjectionType = cc.director.getProjection();
-                //locGrid.set2DProjection();
-
-                //reset this._stackMatrix to current_stack.top
-                //cc.kmMat4Assign(currentStack.top, backMatrix);
-            }
-            if(this._gridBeginCommand)
-                cc.renderer.pushRenderCommand(this._gridBeginCommand);
-
-            if(this._target)
-                this._target.visit();
-        }
-
-        var locChildren = this._children;
-        if (locChildren && locChildren.length > 0) {
-            var childLen = locChildren.length;
-            this.sortAllChildren();
-            // draw children
-            for (var i = 0; i < childLen; i++) {
-                var child = locChildren[i];
-                child && child.visit();
-            }
-        }
-
-        if(isWebGL){
-            if(locGrid && locGrid._active){
-                //cc.director.setProjection(beforeProjectionType);
-            }
-            if(this._gridEndCommand)
-                cc.renderer.pushRenderCommand(this._gridEndCommand);
-            currentStack.top = currentStack.stack.pop();
-        }
-    },
-
     _transformForWebGL: function () {
         //optimize performance for javascript
         var t4x4 = this._transform4x4, topMat4 = cc.current_stack.top;
 
         // Convert 3x3 into 4x4 matrix
-        //cc.CGAffineToGL(this.nodeToParentTransform(), this._transform4x4.mat);
-        var trans = this.nodeToParentTransform();
+        var trans = this.getNodeToParentTransform();
         var t4x4Mat = t4x4.mat;
         t4x4Mat[0] = trans.a;
         t4x4Mat[4] = trans.c;
@@ -180,14 +98,17 @@ cc.NodeGrid = cc.Node.extend({
                 this._camera.locate();
             }
         }
+    },
+
+    _createRenderCmd: function(){
+        if (cc._renderType === cc._RENDER_TYPE_WEBGL)
+            return new cc.NodeGrid.WebGLRenderCmd(this);
+        else
+            return new cc.Node.CanvasRenderCmd(this);            // cc.NodeGrid doesn't support Canvas mode.
     }
 });
 
 var _p = cc.NodeGrid.prototype;
-if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-    _p.transform = _p._transformForWebGL;
-    //The parent class method directly from canvas model
-}
 // Extended property
 /** @expose */
 _p.grid;

@@ -734,6 +734,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
                 var selListener = locToAddedListeners[i];
                 if (selListener == listener) {
                     cc.arrayRemoveObject(locToAddedListeners, selListener);
+                    selListener._setRegistered(false);
                     break;
                 }
             }

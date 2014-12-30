@@ -137,6 +137,8 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * @param {Number} [y] The anchor point.y of node.
      */
     setAnchorPoint:function (point, y) {
+        var cmd = this._renderCmd;
+
         var locAnchorPoint = this._anchorPoint;
         if (y === undefined) {
 	        locAnchorPoint.x = point.x;
@@ -145,7 +147,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 	        locAnchorPoint.x = point;
 	        locAnchorPoint.y = y;
         }
-        var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
+        var locAPP = cmd._anchorPointInPoints, locSize = this._contentSize;
         locAPP.x = locSize.width * locAnchorPoint.x;
         locAPP.y = locSize.height * locAnchorPoint.y;
 
@@ -214,6 +216,8 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * @param {Number} [height] The untransformed size's height of the node.
      */
     setContentSize:function (size, height) {
+        var cmd = this._renderCmd;
+
         var locContentSize = this._contentSize;
         if (height === undefined) {
 	        locContentSize.width = size.width;
@@ -222,7 +226,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 	        locContentSize.width = size;
 	        locContentSize.height = height;
         }
-        var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
+        var locAPP = cmd._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
         locAPP.x = locContentSize.width * locAnchorPoint.x;
         locAPP.y = locContentSize.height * locAnchorPoint.y;
         this.dom.width = locContentSize.width;
@@ -285,13 +289,8 @@ cc.DOM.methods = /** @lends cc.DOM# */{
     setRotation:function (newRotation) {
         if (this._rotation == newRotation)
             return;
-        //save dirty region when before change
-        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
         this._rotationX = this._rotationY = newRotation;
-        this._rotationRadiansX = this._rotationX * (Math.PI / 180);
-        this._rotationRadiansY = this._rotationY * (Math.PI / 180);
-
         this.setNodeDirty();
         this.dom.rotate(newRotation);
     },
@@ -391,7 +390,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         this.unscheduleAllCallbacks();
 
         // timers
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._StateCallbackType.cleanup);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.cleanup);
         if (this.dom) {
             this.dom.remove();
         }
@@ -533,19 +532,15 @@ cc.DOM._createEGLViewDiv = function(p){
  */
 cc.DOM.setTransform = function (x) {
     if (x.ctx) {
-        /*        x.ctx.save();
-         x.ctx.setTransform(1,0,0,1,0,0);
-         x.ctx.clearRect(0,0,x.canvas.width, x.canvas.height);
-         x.ctx.restore();*/
         x.ctx.translate(x.getAnchorPointInPoints().x, x.getAnchorPointInPoints().y);
         if (x.isSprite) {
             var tmp = x._children;
             x._children = [];
-            cc.Sprite.prototype.visit.call(x, x.ctx);
+            cc.Sprite.prototype.visit.call(x);
             x._children = tmp;
         }
         else {
-            cc.Sprite.prototype.visit.call(x, x.ctx);
+            cc.Sprite.prototype.visit.call(x);
         }
     }
     if (x.dom) {

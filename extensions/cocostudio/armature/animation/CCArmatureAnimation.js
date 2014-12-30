@@ -527,7 +527,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
      */
     setMovementEventCallFunc: function (callFunc, target) {
         if(arguments.length == 1){
-            this._frameEventListener = target;
+            this._frameEventListener = callFunc;
         }else if(arguments.length == 2){
             this._movementEventTarget = target;
             this._movementEventCallFunc = callFunc;
@@ -541,7 +541,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
      */
     setFrameEventCallFunc: function (callFunc, target) {
         if(arguments.length == 1){
-            this._frameEventListener = target;
+            this._frameEventListener = callFunc;
         }else if(arguments.length == 2){
             this._frameEventTarget = target;
             this._frameEventCallFunc = callFunc;

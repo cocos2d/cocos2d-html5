@@ -466,12 +466,12 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
     /**
      * Calls formatText before calls parent class' visit.
      * @override
-     * @param ctx
+     * @param parentCmd
      */
-    visit: function (ctx) {
+    visit: function (parentCmd) {
         if (this._enabled) {
             this.formatText();
-            ccui.Widget.prototype.visit.call(this, ctx);
+            ccui.Widget.prototype.visit.call(this, parentCmd);
         }
     },
 
@@ -538,6 +538,13 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
     _getHeight: function() {
         this.formatText();
         return cc.Node.prototype._getHeight.call(this);
+    },
+
+    setContentSize: function(contentSize, height){
+        var locWidth = (height === undefined) ? contentSize.width : contentSize;
+        var locHeight = (height === undefined) ? contentSize.height : height;
+        ccui.Widget.prototype.setContentSize.call(this, locWidth, locHeight);
+        this._formatTextDirty = true;
     },
 
     /**

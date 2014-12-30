@@ -1,6 +1,4 @@
 /****************************************************************************
- Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011-2012 cocos2d-x.org
  Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
@@ -24,29 +22,20 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc._tmp.PrototypeLayerColor = function () {
-    var _p = cc.LayerColor.prototype;
-    // Override properties
-    cc.defineGetterSetter(_p, "width", _p._getWidth, _p._setWidth);
-    cc.defineGetterSetter(_p, "height", _p._getHeight, _p._setHeight);
-};
+(function(){
+    cc.DrawNode.WebGLRenderCmd = function (renderableObject) {
+        cc.Node.WebGLRenderCmd.call(this, renderableObject);
+        this._needDraw = true;
+    };
 
-cc._tmp.PrototypeLayerGradient = function () {
-    var _p = cc.LayerGradient.prototype;
-    // Extended properties
-    /** @expose */
-    _p.startColor;
-    cc.defineGetterSetter(_p, "startColor", _p.getStartColor, _p.setStartColor);
-    /** @expose */
-    _p.endColor;
-    cc.defineGetterSetter(_p, "endColor", _p.getEndColor, _p.setEndColor);
-    /** @expose */
-    _p.startOpacity;
-    cc.defineGetterSetter(_p, "startOpacity", _p.getStartOpacity, _p.setStartOpacity);
-    /** @expose */
-    _p.endOpacity;
-    cc.defineGetterSetter(_p, "endOpacity", _p.getEndOpacity, _p.setEndOpacity);
-    /** @expose */
-    _p.vector;
-    cc.defineGetterSetter(_p, "vector", _p.getVector, _p.setVector);
-};
+    cc.DrawNode.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
+    cc.DrawNode.WebGLRenderCmd.prototype.constructor = cc.DrawNode.WebGLRenderCmd;
+
+    cc.DrawNode.WebGLRenderCmd.prototype.rendering = function (ctx) {
+        var node = this._node;
+        cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
+        this._shaderProgram.use();
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+        node._render();
+    };
+})();

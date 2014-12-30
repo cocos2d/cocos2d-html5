@@ -61,6 +61,7 @@ cc.visibleRect = {
      * @param {cc.Rect} visibleRect
      */
     init:function(visibleRect){
+
         var w = this.width = visibleRect.width;
         var h = this.height = visibleRect.height;
         var l = visibleRect.x,

@@ -366,7 +366,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         ccui.Layout.prototype.onTouchCancelled.call(this, touch, event);
         if (!this._isInterceptTouch)
         {
-            this.handleReleaseLogic(touch);
+            this._handleReleaseLogic(touch);
         }
         this._isInterceptTouch = false;
     },

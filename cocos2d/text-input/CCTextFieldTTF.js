@@ -245,7 +245,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
             this.setColor(this._colorText);
         }
         if(cc._renderType === cc._RENDER_TYPE_CANVAS)
-            this._updateTexture();
+            this._renderCmd._updateTexture();
         this._charCount = this._inputText.length;
     },
 

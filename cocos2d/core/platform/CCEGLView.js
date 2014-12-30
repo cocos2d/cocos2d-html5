@@ -35,6 +35,60 @@ cc.DENSITYDPI_HIGH = "high-dpi";
 cc.DENSITYDPI_MEDIUM = "medium-dpi";
 cc.DENSITYDPI_LOW = "low-dpi";
 
+cc.__BrowserGetter = {
+    init: function(){
+        this.html = document.getElementsByTagName("html")[0];
+    },
+    availWidth: function(frame){
+        if(!frame || frame === this.html)
+            return window.innerWidth;
+        else
+            return frame.clientWidth;
+    },
+    availHeight: function(frame){
+        if(!frame || frame === this.html)
+            return window.innerHeight;
+        else
+            return frame.clientHeight;
+    },
+    meta: {
+        "width": "device-width",
+        "user-scalable": "no"
+    }
+};
+
+switch(cc.sys.browserType){
+    case cc.sys.BROWSER_TYPE_SAFARI:
+        cc.__BrowserGetter.meta["minimal-ui"] = "true";
+        break;
+    case cc.sys.BROWSER_TYPE_CHROME:
+        cc.__BrowserGetter.__defineGetter__("target-densitydpi", function(){
+            return cc.view._targetDensityDPI;
+        });
+    case cc.sys.BROWSER_TYPE_UC:
+        cc.__BrowserGetter.availWidth = function(frame){
+            return frame.clientWidth;
+        };
+        cc.__BrowserGetter.availHeight = function(frame){
+            return frame.clientHeight;
+        };
+        break;
+    case cc.sys.BROWSER_TYPE_MIUI:
+        cc.__BrowserGetter.init = function(view){
+            if(view.__resizeWithBrowserSize) return;
+            var resize = function(){
+                view.setDesignResolutionSize(
+                    view._designResolutionSize.width,
+                    view._designResolutionSize.height,
+                    view._resolutionPolicy
+                );
+                window.removeEventListener("resize", resize, false);
+            };
+            window.addEventListener("resize", resize, false);
+        };
+        break;
+}
+
 /**
  * cc.view is the singleton object which represents the game window.<br/>
  * It's main task include: <br/>
@@ -102,6 +156,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      */
     ctor: function () {
         var _t = this, d = document, _strategyer = cc.ContainerStrategy, _strategy = cc.ContentStrategy;
+
+        cc.__BrowserGetter.init(this);
+
         _t._frame = (cc.container.parentNode === d.body) ? d.documentElement : cc.container.parentNode;
         _t._frameSize = cc.size(0, 0);
         _t._initFrameSize();
@@ -132,14 +189,20 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     // Resize helper functions
     _resizeEvent: function () {
-        var width = this._originalDesignResolutionSize.width;
-        var height = this._originalDesignResolutionSize.height;
-        if (this._resizeCallback) {
-            this._initFrameSize();
-            this._resizeCallback.call();
+        var view;
+        if(this.setDesignResolutionSize){
+            view = this;
+        }else{
+            view = cc.view;
         }
+        if (view._resizeCallback) {
+            view._initFrameSize();
+            view._resizeCallback.call();
+        }
+        var width = view._originalDesignResolutionSize.width;
+        var height = view._originalDesignResolutionSize.height;
         if (width > 0)
-            this.setDesignResolutionSize(width, height, this._resolutionPolicy);
+            view.setDesignResolutionSize(width, height, view._resolutionPolicy);
     },
 
     /**
@@ -172,20 +235,17 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * @param {Boolean} enabled Whether enable automatic resize with browser's resize event
      */
     resizeWithBrowserSize: function (enabled) {
-        var adjustSize, _t = this;
         if (enabled) {
             //enable
-            if (!_t.__resizeWithBrowserSize) {
-                _t.__resizeWithBrowserSize = true;
-                adjustSize = _t._resizeEvent.bind(_t);
-                cc._addEventListener(window, 'resize', adjustSize, false);
+            if (!this.__resizeWithBrowserSize) {
+                this.__resizeWithBrowserSize = true;
+                cc._addEventListener(window, 'resize', this._resizeEvent, false);
             }
         } else {
             //disable
-            if (_t.__resizeWithBrowserSize) {
-                _t.__resizeWithBrowserSize = true;
-                adjustSize = _t._resizeEvent.bind(_t);
-                window.removeEventListener('resize', adjustSize, false);
+            if (this.__resizeWithBrowserSize) {
+                this.__resizeWithBrowserSize = false;
+                window.removeEventListener('resize', this._resizeEvent, false);
             }
         }
     },
@@ -205,8 +265,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     _initFrameSize: function () {
         var locFrameSize = this._frameSize;
-        locFrameSize.width = this._frame.clientWidth;
-        locFrameSize.height = this._frame.clientHeight;
+        locFrameSize.width = cc.__BrowserGetter.availWidth(this._frame);
+        locFrameSize.height = cc.__BrowserGetter.availHeight(this._frame);
     },
 
     // hack
@@ -234,14 +294,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             vp.name = "viewport";
             vp.content = "";
 
-            // For avoiding Android Firefox issue, to remove once firefox fixes its issue.
-            if (cc.sys.isMobile && cc.sys.browserType == cc.sys.BROWSER_TYPE_FIREFOX) {
-                viewportMetas = {"width": "device-width", "initial-scale": "1.0"};
-            }else{
-                viewportMetas = {"width": "device-width", "user-scalable": "no", "maximum-scale": "1.0", "initial-scale": "1.0"};
-            }
-            if(cc.sys.isMobile)
-                viewportMetas["target-densitydpi"] = this._targetDensityDPI;
+            viewportMetas = cc.__BrowserGetter.meta;
 
             content = currentVP ? currentVP.content : "";
             for (var key in viewportMetas) {
@@ -250,7 +303,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
                     content += "," + key + "=" + viewportMetas[key];
                 }
             }
-            if(content != "")
+            if(/^,/.test(content))
                 content = content.substr(1);
 
             vp.content = content;
@@ -494,46 +547,57 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      */
     setDesignResolutionSize: function (width, height, resolutionPolicy) {
         // Defensive code
-        if (isNaN(width) || width == 0 || isNaN(height) || height == 0) {
+        if( !(width > 0 || height > 0) ){
             cc.log(cc._LogInfos.EGLView_setDesignResolutionSize);
             return;
         }
-        var _t = this;
-        _t.setResolutionPolicy(resolutionPolicy);
-        var policy = _t._resolutionPolicy;
-        if (policy)
-            policy.preApply(_t);
-        else {
+
+        this.setResolutionPolicy(resolutionPolicy);
+        var policy = this._resolutionPolicy;
+        if (!policy){
             cc.log(cc._LogInfos.EGLView_setDesignResolutionSize_2);
             return;
         }
+        policy.preApply(this);
 
         // Reinit frame size
-        if (cc.sys.isMobile)
-            _t._setViewPortMeta();
-        _t._initFrameSize();
-        _t._designResolutionSize = cc.size(width, height);
-        _t._originalDesignResolutionSize = cc.size(width, height);
+        if(cc.sys.isMobile)
+            this._setViewPortMeta();
 
-        var result = policy.apply(_t, _t._designResolutionSize);
-        if (result.scale && result.scale.length == 2) {
-            _t._scaleX = result.scale[0];
-            _t._scaleY = result.scale[1];
+        this._initFrameSize();
+
+        this._originalDesignResolutionSize.width = this._designResolutionSize.width = width;
+        this._originalDesignResolutionSize.height = this._designResolutionSize.height = height;
+
+        var result = policy.apply(this, this._designResolutionSize);
+
+        if(result.scale && result.scale.length == 2){
+            this._scaleX = result.scale[0];
+            this._scaleY = result.scale[1];
         }
-        if (result.viewport) {
-            var vp = _t._viewPortRect = result.viewport, visible = _t._visibleRect;
-            visible.width = cc._canvas.width / _t._scaleX;
-            visible.height = cc._canvas.height / _t._scaleY;
-            visible.x = -vp.x / _t._scaleX;
-            visible.y = -vp.y / _t._scaleY;
+
+        if(result.viewport){
+            var vp = this._viewPortRect,
+                vb = this._visibleRect,
+                rv = result.viewport;
+
+            vp.x = rv.x;
+            vp.y = rv.y;
+            vp.width = rv.width;
+            vp.height = rv.height;
+
+            vb.x = -vp.x / this._scaleX;
+            vb.y = -vp.y / this._scaleY;
+            vb.width = cc._canvas.width / this._scaleX;
+            vb.height = cc._canvas.height / this._scaleY;
+            cc._renderContext.setOffset && cc._renderContext.setOffset(vp.x, -vp.y)
         }
 
         // reset director's member variables to fit visible rect
         var director = cc.director;
-        director._winSizeInPoints.width = _t._designResolutionSize.width;
-        director._winSizeInPoints.height = _t._designResolutionSize.height;
-
-        policy.postApply(_t);
+        director._winSizeInPoints.width = this._designResolutionSize.width;
+        director._winSizeInPoints.height = this._designResolutionSize.height;
+        policy.postApply(this);
         cc.winSize.width = director._winSizeInPoints.width;
         cc.winSize.height = director._winSizeInPoints.height;
 
@@ -543,12 +607,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             director.setGLDefaultValues();
         }
 
-        _t._originalScaleX = _t._scaleX;
-        _t._originalScaleY = _t._scaleY;
+        this._originalScaleX = this._scaleX;
+        this._originalScaleY = this._scaleY;
         // For editbox
         if (cc.DOM)
             cc.DOM._resetEGLViewDiv();
-        cc.visibleRect && cc.visibleRect.init(_t._visibleRect);
+        cc.visibleRect && cc.visibleRect.init(this._visibleRect);
     },
 
     /**
@@ -753,6 +817,7 @@ cc.ContainerStrategy = cc.Class.extend(/** @lends cc.ContainerStrategy# */{
         // Setup canvas
         locCanvasElement.width = w * devicePixelRatio;
         locCanvasElement.height = h * devicePixelRatio;
+        cc._renderContext.resetCache && cc._renderContext.resetCache();
 
         var body = document.body, style;
         if (body && (style = body.style)) {
@@ -812,8 +877,10 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
                                contentW, contentH);
 
         // Translate the content
-        if (cc._renderType == cc._RENDER_TYPE_CANVAS)
-            cc._renderContext.translate(viewport.x, viewport.y + contentH);
+        if (cc._renderType == cc._RENDER_TYPE_CANVAS){
+            //TODO: modify something for setTransform
+            //cc._renderContext.translate(viewport.x, viewport.y + contentH);
+        }
 
         this._result.scale = [scaleX, scaleY];
         this._result.viewport = viewport;
@@ -969,11 +1036,13 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
         apply: function (view, designedResolution) {
             var containerW = cc._canvas.width, containerH = cc._canvas.height,
                 designW = designedResolution.width, designH = designedResolution.height,
-                scaleX = containerW / designW, scaleY = containerH / designH, scale;
+                scaleX = containerW / designW, scaleY = containerH / designH, scale,
+                contentW, contentH;
 
-            scaleX < scaleY ? ( scale = scaleY ): ( scale = scaleX );
+            scaleX < scaleY ? (scale = scaleY, contentW = designW * scale, contentH = containerH)
+                : (scale = scaleX, contentW = containerW, contentH = designH * scale);
 
-            return this._buildResult(containerW, containerH, containerW, containerH, scale, scale);
+            return this._buildResult(containerW, containerH, contentW, contentH, scale, scale);
         }
     });
 

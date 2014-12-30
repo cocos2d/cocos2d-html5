@@ -36,7 +36,7 @@ cc.BakeSprite = cc.Sprite.extend(/** @lends cc.BakeSprite# */{
         var canvasElement = document.createElement("canvas");
         canvasElement.width = canvasElement.height = 10;
         this._cacheCanvas = canvasElement;
-        this._cacheContext = canvasElement.getContext("2d");
+        this._cacheContext = new cc.CanvasContextWrapper(canvasElement.getContext("2d"));
 
         var texture = new cc.Texture2D();
         texture.initWithElement(canvasElement);

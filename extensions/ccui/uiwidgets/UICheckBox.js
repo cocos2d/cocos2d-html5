@@ -96,8 +96,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         if (ccui.Widget.prototype.init.call(this)) {
             this._isSelected = true;
             this.setSelected(false);
-            if(backGround === undefined)
-                this.loadTextures(backGround, backGroundSelected, cross, backGroundDisabled, frontCrossDisabled, texType);
+            this.loadTextures(backGround, backGroundSelected, cross, backGroundDisabled, frontCrossDisabled, texType);
             return true;
         }
         return false;
@@ -416,7 +415,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
      * @deprecated since v3.1, please use isSelected.
      */
     getSelectedState: function(){
-        this.isSelected();
+        return this.isSelected();
     },
 
     /**
