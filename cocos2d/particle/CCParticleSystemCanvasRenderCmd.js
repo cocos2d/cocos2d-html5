@@ -84,7 +84,7 @@
         var particleCount = this._node.particleCount, particles = this._node._particles;
         if (node.drawMode == cc.ParticleSystem.TEXTURE_MODE) {
             // Delay drawing until the texture is fully loaded by the browser
-            if (!node._texture || !node._texture._isLoaded) {
+            if (!node._texture || !node._texture._textureLoaded) {
                 wrapper.restore();
                 return;
             }

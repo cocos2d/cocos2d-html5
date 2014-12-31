@@ -114,7 +114,7 @@
         var node = this._node;
         var locTextureCoord = this._textureCoord, alpha = (this._displayedOpacity / 255);
         if ((node._texture && ((locTextureCoord.width === 0 || locTextureCoord.height === 0)            //set texture but the texture isn't loaded.
-            || !node._texture._isLoaded)) || alpha === 0)
+            || !node._texture._textureLoaded)) || alpha === 0)
             return;
 
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
