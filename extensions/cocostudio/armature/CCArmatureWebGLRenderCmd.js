@@ -117,6 +117,23 @@
         dis.rendering(ctx);
     };
 
+    proto.updateStatus = function () {
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
+        if(colorDirty)
+            this._updateDisplayColor();
+
+        if(opacityDirty)
+            this._updateDisplayOpacity();
+
+        if(colorDirty || opacityDirty)
+            this._updateColor();
+
+        //update the transform every visit, needn't dirty flag,
+        this.transform(this.getParentRenderCmd(), true);
+    };
+
     proto.visit = function(parentCmd){
         var node = this._node;
         // quick return if not visible. children won't be drawn.
