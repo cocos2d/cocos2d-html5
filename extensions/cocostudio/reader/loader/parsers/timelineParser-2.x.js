@@ -174,7 +174,7 @@
         var fileData = json["FileData"];
         var node;
         if(fileData){
-            node = new cc.ParticleSystemQuad();
+            node = new cc.ParticleSystem();
             this.generalAttributes(node, json);
         }
         return node;
@@ -608,11 +608,11 @@
 
         if(json["FirstColor"] && json["EndColor"]){
             var bgStartColor, bgEndColor;
-            bgStartColor = setColor(json["FirstColor"]);
-            bgEndColor = setColor(json["EndColor"]);
+            bgStartColor = getColor(json["FirstColor"]);
+            bgEndColor = getColor(json["EndColor"]);
             widget.setBackGroundColor(bgStartColor, bgEndColor);
         }else{
-            widget.setBackGroundColor(setColor(json["SingleColor"]));
+            widget.setBackGroundColor(getColor(json["SingleColor"]));
         }
 
 
@@ -673,7 +673,6 @@
                 scale9Height || 0
             ));
         }
-
 
         var scale9Size = json["Size"];
         if(scale9Size)
@@ -760,16 +759,146 @@
      */
     parser.initPageView = function(json, resourcePath){
 
-        var widget = ccui.PageView();
+        var widget = new ccui.PageView();
 
         this.widgetAttributes(widget, json);
 
-        var percent = json["PercentInfo"];
+        var clipEnabled = json["ClipAble"];
+        if(clipEnabled)
+            widget.setClippingEnabled(true);
 
-        var displaystate = json["DisplayState"];
+        var backGroundScale9Enabled = json["Scale9Enable"];
+        if(backGroundScale9Enabled){
+            widget.setBackGroundImageScale9Enabled(true);
+
+            var scale9OriginX = json["Scale9OriginX"];
+            var scale9OriginY = json["Scale9OriginY"];
+            var scale9Width = json["Scale9Width"];
+            var scale9Height = json["Scale9Height"];
+            widget.setBackGroundImageCapInsets(cc.rect(
+                    scale9OriginX || 0,
+                    scale9OriginY || 0,
+                    scale9Width || 0,
+                    scale9Height || 0
+            ));
+        }
+
+        var colorType = json["ComboBoxIndex"];
+        if(colorType != null)
+            widget.setBackGroundColorType(colorType);
+
+        var bgColorOpacity = json["BackColorAlpha"];
+        var bgColor = getColor(json["SingleColor"]);
+        var bgEndColor = getColor(json["EndColor"]);
+        var bgStartColor = getColor(json["FirstColor"]);
+        if(bgEndColor && bgStartColor)
+            widget.setBackGroundColor(bgStartColor, bgEndColor);
+        else
+            widget.setBackGroundColor(bgColor);
+
+        var colorVector = json["ColorVector"];
+        if(colorVector != null && colorVector["ScaleX"] != null && colorVector["ScaleY"] != null)
+            widget.setBackGroundColorVector(colorVector["ScaleX"], colorVector["ScaleY"]);
+        widget.setBackGroundColorOpacity(bgColorOpacity);
+
+        loadTexture(json["FileData"], resourcePath, function(path, type){
+            widget.setBackGroundImage(path, type);
+        });
+
+        var size = json["Size"];
+        if(size != null)
+            widget.setContentSize(size["X"], size["Y"]);
 
         return widget;
 
+    };
+
+    parser.initListView = function(json, resourcePath){
+
+        var widget = new ccui.ListView();
+
+        var clipEnabled = json["ClipAble"];
+        if(clipEnabled)
+            widget.setClippingEnabled(true);
+
+        var colorType = json["ComboBoxIndex"];
+        if(colorType != null)
+            widget.setBackGroundColorType(colorType);
+
+        var bgColorOpacity = json["BackColorAlpha"];
+        var backGroundScale9Enabled = json["Scale9Enable"];
+        if(backGroundScale9Enabled){
+            widget.setBackGroundImageScale9Enabled(true);
+
+            var scale9OriginX = json["Scale9OriginX"];
+            var scale9OriginY = json["Scale9OriginY"];
+            var scale9Width = json["Scale9Width"];
+            var scale9Height = json["Scale9Height"];
+            widget.setBackGroundImageCapInsets(cc.rect(
+                    scale9OriginX || 0,
+                    scale9OriginY || 0,
+                    scale9Width || 0,
+                    scale9Height || 0
+            ));
+        }
+
+        var directionType = json["DirectionType"];
+        var verticalType = json["VerticalType"];
+        var horizontalType = json["HorizontalType"];
+        if(!directionType){
+            widget.setDirection(ccui.ListView.DIR_HORIZONTAL);
+            if(verticalType == "Align_Bottom")
+                widget.setGravity(ccui.ListView.GRAVITY_BOTTOM);
+            else if(verticalType == "Align_VerticalCenter")
+                widget.setGravity(ccui.ListView.GRAVITY_CENTER_VERTICAL);
+            else
+                widget.setGravity(ccui.ListView.GRAVITY_TOP);
+        }else if(directionType == "Vertical"){
+            widget.setDirection(ccui.ListView.DIR_VERTICAL);
+            if (horizontalType == "")
+                widget.setGravity(ccui.ListView.GRAVITY_LEFT);
+            else if (horizontalType == "Align_Right")
+                widget.setGravity(ccui.ListView.GRAVITY_RIGHT);
+            else if (horizontalType == "Align_HorizontalCenter")
+                widget.setGravity(ccui.ListView.GRAVITY_CENTER_VERTICAL);
+        }
+
+
+        var bounceEnabled = json["IsBounceEnabled"];
+        if(bounceEnabled)
+            widget.setBounceEnabled(true);
+        var itemMargin = json["ItemMargin"];
+        if(itemMargin != null){
+            widget.setItemsMargin(itemMargin);
+        }
+
+        var innerSize = json["InnerNodeSize"];
+        //Width
+        if(innerSize != null)
+            widget.setInnerContainerSize(cc.size(innerSize["Widget"]||0, innerSize["Height"]||0));
+
+        var bgColor = getColor(json["SingleColor"]);
+        var bgEndColor = getColor(json["EndColor"]);
+        var bgStartColor = getColor(json["FirstColor"]);
+        if(bgEndColor && bgStartColor)
+            widget.setBackGroundColor(bgStartColor, bgEndColor);
+        else
+            widget.setBackGroundColor(bgColor);
+        var colorVector = json["ColorVector"];
+        if(colorVector != null && colorVector["ScaleX"] != null && colorVector["ScaleY"] != null)
+            widget.setBackGroundColorVector(colorVector["ScaleX"], colorVector["ScaleY"]);
+        widget.setBackGroundColorOpacity(bgColorOpacity);
+
+
+        loadTexture(json["FileData"], resourcePath, function(path, type){
+            widget.setBackGroundImage(path, type);
+        });
+
+        var size = json["Size"];
+        if(size != null)
+            widget.setContentSize(size["X"]||0, size["Y"]||0);
+
+        return widget;
     };
 
     var loadTexture = function(json, resourcePath, cb){
@@ -790,7 +919,7 @@
         }
     };
 
-    var setColor = function(json){
+    var getColor = function(json){
         if(!json) return;
         var r = json["R"] != null ? json["R"] : 255;
         var g = json["G"] != null ? json["G"] : 255;
@@ -812,7 +941,8 @@
         {name: "ImageViewObjectData", handle: parser.initImageView},
         {name: "LoadingBarObjectData", handle: parser.initLoadingBar},
         {name: "SliderObjectData", handle: parser.initSlider},
-        {name: "PageViewObjectData", handle: parser.initPageView}
+        {name: "PageViewObjectData", handle: parser.initPageView},
+        {name: "ListViewObjectData", handle: parser.initListView}
     ];
 
     register.forEach(function(item){
