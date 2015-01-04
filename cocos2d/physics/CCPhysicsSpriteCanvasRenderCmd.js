@@ -38,20 +38,17 @@
         //  This is a special class
         //  Sprite can not obtain sign
         //  So here must to calculate of each frame
-        if (this._node.transform)
-            this._node.transform();
+        var node  = this._node;
+        node._syncPosition();
+        if(!node._ignoreBodyRotation)
+            node._syncRotation();
+        this.transform(this.getParentRenderCmd());
+
         cc.Sprite.CanvasRenderCmd.prototype.rendering.call(this, ctx, scaleX, scaleY);
     };
 
     proto.getNodeToParentTransform = function(){
         var node = this._node;
-        if(node._usingNormalizedPosition && node._parent){        //TODO need refactor
-            var conSize = node._parent._contentSize;
-            node._position.x = node._normalizedPosition.x * conSize.width;
-            node._position.y = node._normalizedPosition.y * conSize.height;
-            node._normalizedPositionDirty = false;
-        }
-
 
         var t = this._transform;// quick reference
         // base position
