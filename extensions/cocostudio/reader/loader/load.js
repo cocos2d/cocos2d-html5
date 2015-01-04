@@ -3,7 +3,7 @@ ccs.loadNode = (function(){
     /**
      * load file
      * @param file
-     * @param type - ui|timeline|action
+     * @param type - ccui|node|action
      * @returns {*}
      */
     var load = function(file, type){
@@ -19,12 +19,16 @@ ccs.loadNode = (function(){
         //  Judging the parser (uiParse or timelineParse, Temporarily blank)
         //  The judgment condition is unknown
         var parse;
-        if(json["widgetTree"])
-            parse = parser["ccui"];
-        else if(json["nodeTree"])
-            parse = parser["timeline"];
-        else if(json["Content"])
-            parse = parser["timeline"];
+        if(!type){
+            if(json["widgetTree"])
+                parse = parser["ccui"];
+            else if(json["nodeTree"])
+                parse = parser["timeline"];
+            else if(json["Content"])
+                parse = parser["timeline"];
+        }else{
+            parse = parser[type];
+        }
 
         if(!parse){
             cc.log("Can't find the parser : %s", file);

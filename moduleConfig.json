@@ -400,6 +400,7 @@
 
             "extensions/cocostudio/reader/loader/load.js",
             "extensions/cocostudio/reader/loader/parsers/uiParser-1.x.js",
+            "extensions/cocostudio/reader/loader/parsers/action-2.x.js",
             "extensions/cocostudio/reader/loader/parsers/timelineParser-1.x.js",
             "extensions/cocostudio/reader/loader/parsers/timelineParser-2.x.js"
 
