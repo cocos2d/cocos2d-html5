@@ -100,12 +100,10 @@
     proto._checkTextureBoundary = function (texture, rect, rotated) {
         if (texture && texture.url) {
             var _x = rect.x + rect.width, _y = rect.y + rect.height;
-            if (_x > texture.width) {
+            if (_x > texture.width)
                 cc.error(cc._LogInfos.RectWidth, texture.url);
-            }
-            if (_y > texture.height) {
+            if (_y > texture.height)
                 cc.error(cc._LogInfos.RectHeight, texture.url);
-            }
         }
         this._node._originalTexture = texture;
     };
@@ -165,28 +163,24 @@
         cc.g_NumberOfDraws++;
     };
 
-    proto._updateColor = function () {
-        //TODO need refactor
-        var node = this._node;
-        var displayedColor = this._displayedColor;
+    if(!cc.sys._supportCanvasNewBlendModes){
+        proto._updateColor = function () {
+            var node = this._node, displayedColor = this._displayedColor;
 
-        if(this._colorized){
-            if(displayedColor.r === 255 && displayedColor.g === 255 && displayedColor.b === 255){
-                this._colorized = false;
-                node.texture = this._originalTexture;
+            if (displayedColor.r === 255 && displayedColor.g === 255 && displayedColor.b === 255){
+                if(this._colorized){
+                    this._colorized = false;
+                    node.texture = this._originalTexture;
+                }
                 return;
             }
-        }else
-            if(displayedColor.r === 255 && displayedColor.g === 255 && displayedColor.b === 255)
-                return;
 
-        var locElement, locTexture = node._texture, locRect = this._textureCoord;
-        if (locTexture && locRect.validRect && this._originalTexture) {
-            locElement = locTexture.getHtmlElementObj();
-            if (!locElement)
-                return;
+            var locElement, locTexture = node._texture, locRect = this._textureCoord;
+            if (locTexture && locRect.validRect && this._originalTexture) {
+                locElement = locTexture.getHtmlElementObj();
+                if (!locElement)
+                    return;
 
-            if (!cc.sys._supportCanvasNewBlendModes) {
                 var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
                 if (cacheTextureForColor) {
                     this._colorized = true;
@@ -201,7 +195,25 @@
                         node.texture = locTexture;
                     }
                 }
-            } else {
+            }
+        };
+    } else {
+        proto._updateColor = function () {
+            var node = this._node, displayedColor = this._displayedColor;
+            if (displayedColor.r === 255 && displayedColor.g === 255 && displayedColor.b === 255) {
+                if (this._colorized) {
+                    this._colorized = false;
+                    node.texture = this._originalTexture;
+                }
+                return;
+            }
+
+            var locElement, locTexture = node._texture, locRect = this._textureCoord;
+            if (locTexture && locRect.validRect && this._originalTexture) {
+                locElement = locTexture.getHtmlElementObj();
+                if (!locElement)
+                    return;
+
                 this._colorized = true;
                 if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor
                     && this._originalTexture._htmlElementObj != locElement)
@@ -214,8 +226,8 @@
                     node.texture = locTexture;
                 }
             }
-        }
-    };
+        };
+    }
 
     proto.getQuad = function () {
         //throw an error. it doesn't support this function.
@@ -270,24 +282,20 @@
     };
 
     proto._spriteFrameLoadedCallback = function (spriteFrame) {
-        var _t = this;
-        _t.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
+        var node = this;
+        node.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
 
-        //TODO change
-        var curColor = _t.getColor();
-        if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
-            _t._updateColor();
-
-        _t.dispatchEvent("load");
+        node._renderCmd._updateColor();
+        node.dispatchEvent("load");
     };
 
     proto._textureLoadedCallback = function (sender) {
-        var _t = this;
-        if (_t._textureLoaded)
+        var node = this;
+        if (node._textureLoaded)
             return;
 
-        _t._textureLoaded = true;
-        var locRect = _t._rect, locRenderCmd = this._renderCmd;
+        node._textureLoaded = true;
+        var locRect = node._rect, locRenderCmd = this._renderCmd;
         if (!locRect) {
             locRect = cc.rect(0, 0, sender.width, sender.height);
         } else if (cc._rectEqualToZero(locRect)) {
@@ -296,8 +304,8 @@
         }
         locRenderCmd._originalTexture = sender;
 
-        _t.texture = sender;
-        _t.setTextureRect(locRect, _t._rectRotated);
+        node.texture = sender;
+        node.setTextureRect(locRect, node._rectRotated);
 
         //set the texture's color after the it loaded
         var locColor = locRenderCmd._displayedColor;
@@ -306,8 +314,8 @@
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
-        _t.setBatchNode(_t._batchNode);
-        _t.dispatchEvent("load");
+        node.setBatchNode(node._batchNode);
+        node.dispatchEvent("load");
     };
 
     proto._setTextureCoords = function (rect, needConvert) {
@@ -320,6 +328,12 @@
         locTextureRect.width = 0 | (rect.width * scaleFactor);
         locTextureRect.height = 0 | (rect.height * scaleFactor);
         locTextureRect.validRect = !(locTextureRect.width === 0 || locTextureRect.height === 0 || locTextureRect.x < 0 || locTextureRect.y < 0);
+
+        if(this._colorized){
+            this._node._texture = this._originalTexture;
+            this._colorized = false;
+            this._updateColor();
+        }
     };
 
     //TODO need refactor these functions

@@ -825,7 +825,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             cc.assert(newFrame, cc._LogInfos.Sprite_setSpriteFrame)
         }
 
-        this.setNodeDirty(true)
+        this.setNodeDirty(true);
 
         var frameOffset = newFrame.getOffset();
         _t._unflippedOffsetPositionFromCenter.x = frameOffset.x;
