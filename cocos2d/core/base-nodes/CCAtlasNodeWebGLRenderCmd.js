@@ -52,7 +52,8 @@
 
     proto.rendering = function (ctx) {
         var context = ctx || cc._renderContext, node = this._node;
-
+        if(!this._shaderProgram)
+            return;
         this._shaderProgram.use();
         this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 
