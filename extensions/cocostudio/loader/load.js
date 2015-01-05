@@ -1,4 +1,4 @@
-ccs.loadNode = (function(){
+ccs._load = (function(){
 
     /**
      * load file
@@ -24,7 +24,7 @@ ccs.loadNode = (function(){
                 parse = parser["ccui"];
             else if(json["nodeTree"])
                 parse = parser["timeline"];
-            else if(json["Content"])
+            else if(json["Content"] && json["Content"]["Content"])
                 parse = parser["timeline"];
         }else{
             parse = parser[type];
@@ -41,7 +41,7 @@ ccs.loadNode = (function(){
             return new cc.Node();
         }
 
-        return currentParser.parse(file, json) || new cc.Node();
+        return currentParser.parse(file, json) || null;
     };
 
     var parser = {
@@ -88,6 +88,16 @@ ccs.loadNode = (function(){
 
 })();
 
+//cc.loader.register(["json", "ExportJson"], {
+//    load: function(realUrl, url, res, cb){
+//        var cloader = cc.loader;
+//        if(cloader.cache[url]){
+//            console.log(url)
+//        }else{
+//            return cc.loader.loadJson(realUrl, cb);
+//        }
+//    }
+//});
 
 ccs._parser = cc.Class.extend({
 

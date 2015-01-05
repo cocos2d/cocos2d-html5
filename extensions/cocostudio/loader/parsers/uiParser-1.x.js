@@ -797,4 +797,4 @@
     load.registerParser("ccui", "1.*", parser);
 
 
-})(ccs.loadNode, ccs._parser);
+})(ccs._load, ccs._parser);

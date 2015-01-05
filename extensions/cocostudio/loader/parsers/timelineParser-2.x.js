@@ -6,7 +6,7 @@
 
         parse: function(file, json){
             var resourcePath = this._dirname(file);
-            this.pretreatment(json, resourcePath);
+            this.pretreatment(json, resourcePath, file);
             var node = this.parseNode(this.getNodeJson(json), resourcePath);
             this.deferred(json, resourcePath, node, file);
             return node;
@@ -32,7 +32,7 @@
 
         pretreatment: function(json, resourcePath, file){
             this.addSpriteFrame(json["textures"], json["texturesPng"], resourcePath);
-            ccs.actionTimelineCache.loadAnimationActionWithContent(file, json);
+//            ccs.actionTimelineCache.loadAnimationActionWithContent(file, json);
         }
 
     });
@@ -62,16 +62,21 @@
         var rotationSkewX = json["RotationSkewX"];
         if (rotationSkewX != null)
             node.setRotationX(rotationSkewX);
-        //rotationSkewX
+
         var rotationSkewY = json["RotationSkewY"];
         if (json["RotationSkewY"] != null)
             node.setRotationY(rotationSkewY);
-        //rotationSkewY
 
-        //todo check it
+
         var anchor = json["AnchorPoint"];
-        if(anchor && (anchor["ScaleX"] || anchor["ScaleY"]))
-            node.setAnchorPoint(cc.p(anchor["ScaleX"]||0.5, anchor["ScaleY"]||0.5));
+        if(anchor != null){
+            if(anchor["ScaleX"] == null)
+                anchor["ScaleX"] = 0;
+            if(anchor["ScaleY"] == null)
+                anchor["ScaleY"] = 0;
+            if(anchor["ScaleX"] != 0.5 || anchor["ScaleY"] != 0.5)
+                node.setAnchorPoint(cc.p(anchor["ScaleX"], anchor["ScaleY"]));
+        }
 
         if (json["ZOrder"] != null)
             node.setLocalZOrder(json["ZOrder"]);
@@ -87,9 +92,6 @@
 
         if (json["Alpha"] != null)
             node.setOpacity(json["Alpha"]);
-        var color = json["CColor"];
-        if(color != null && (color["R"] != null || color["G"] != null || color["B"] != null))
-            node.setColor(cc.color(color["R"]||255, color["G"]||255, color["B"]||255));
 
         if (json["Tag"] != null)
             node.setTag(json["Tag"]);
@@ -151,10 +153,14 @@
     parser.initSprite = function(json, resourcePath){
         var node =  new cc.Sprite();
 
-        this.generalAttributes(node, json);
-
         loadTexture(json["FileData"], resourcePath, function(path, type){
-            node.setTexture(path);
+            if(type == 0)
+                node.setTexture(path);
+            else if(type == 1){
+                var spriteFrame = cc.spriteFrameCache.getSpriteFrame(path);
+                node.setSpriteFrame(spriteFrame);
+            }
+
         });
 
         if(json["FlipX"])
@@ -162,21 +168,29 @@
         if(json["FlipY"])
             node.setFlippedY(true);
 
+        this.generalAttributes(node, json);
+        var color = json["CColor"];
+        if(color != null)
+            node.setColor(getColor(color));
+
         return node;
     };
 
     /**
      * Particle
      * @param json
+     * @param resourcePath
      * @returns {*}
      */
-    parser.initParticle = function(json){
-        var fileData = json["FileData"];
-        var node;
-        if(fileData){
-            node = new cc.ParticleSystem();
-            this.generalAttributes(node, json);
-        }
+    parser.initParticle = function(json, resourcePath){
+        var node,
+            self = this;
+        loadTexture(json["FileData"], resourcePath, function(path, type){
+            if(!cc.loader.getRes(path))
+                cc.log("%s need to pre load", path);
+            node = new cc.ParticleSystem(path);
+            self.generalAttributes(node, json);
+        });
         return node;
     };
 
@@ -202,7 +216,7 @@
 
         var rotationSkewY = json["RotationSkewY"];
         if(rotationSkewY)
-            widget.setRotationX(rotationSkewY);
+            widget.setRotationY(rotationSkewY);
 
         //var rotation = json["Rotation"];
 
@@ -232,9 +246,9 @@
         if(tag != null)
             widget.setTag(tag);
 
-        var touchEnabled = json["TouchEnabled"];
-        if(touchEnabled != null)
-            widget.setTouchEnabled(touchEnabled);
+        var touchEnabled = json["TouchEnable"];
+        if(touchEnabled)
+            widget.setTouchEnabled(true);
 
         // -- var frameEvent = json["FrameEvent"];
 
@@ -261,12 +275,12 @@
             widget.setAnchorPoint(anchorPoint["ScaleX"] || 0.5, anchorPoint["ScaleY"] || 0.5);
 
         var color = json["CColor"];
-        if(color != null && color["R"] != null &&color["G"] != null &&color["B"] != null)
-            widget.setColor(color["R"], color["G"], color["B"]);
-//
-//        var size = json["Size"];
-//        if(size != null)
-//            widget.setContentSize(size["X"]||0, size["Y"]||0);
+        if(color != null)
+            widget.setColor(getColor(color));
+
+        var size = json["Size"];
+        if(size != null)
+            widget.setContentSize(size["X"]||0, size["Y"]||0);
 
         if(widget instanceof ccui.Layout){
             //todo update UILayoutComponent.bindLayoutComponent
@@ -329,19 +343,11 @@
         var bgStartColor = json["FirstColor"];
         var bgEndColor = json["EndColor"];
         if(bgStartColor != null && bgEndColor != null){
-            bgStartColor["R"] == undefined && (bgStartColor["R"] = 255);
-            bgStartColor["G"] == undefined && (bgStartColor["G"] = 255);
-            bgStartColor["B"] == undefined && (bgStartColor["B"] = 255);
-            bgEndColor["R"] == undefined && (bgEndColor["R"] = 255);
-            bgEndColor["G"] == undefined && (bgEndColor["G"] = 255);
-            bgEndColor["B"] == undefined && (bgEndColor["B"] = 255);
             widget.setBackGroundColor(
-                cc.color(bgStartColor["R"], bgStartColor["G"], bgStartColor["B"]),
-                cc.color(bgEndColor["R"], bgEndColor["G"], bgEndColor["B"])
+                getColor(bgStartColor),
+                getColor(bgEndColor)
             );
         }
-
-
 
         var colorVector = json["ColorVector"];
         if(colorVector != null)
@@ -412,14 +418,19 @@
 
         //todo check it
         var isCustomSize = json["IsCustomSize"];
-        widget.ignoreContentAdaptWithSize(!isCustomSize);
+        if(isCustomSize != null)
+            widget.ignoreContentAdaptWithSize(!isCustomSize);
 
-        var path, resoutceType, plistFile;
+        //todo check it
         var fontResource = json["FontResource"];
         if(fontResource != null){
-            path = fontResource["Path"];
-            resoutceType = fontResource["Type"];
-            plistFile = fontResource["Plist"];
+            var path = fontResource["Path"];
+            //resoutceType = fontResource["Type"];
+            if(path != null){
+                fontName = path.match(/([^\/]+)\.ttf/);
+                fontName = fontName ? fontName[1] : "";
+                widget.setFontName(fontName);
+            }
         }
 
         widget.setUnifySizeEnabled(false);
@@ -486,27 +497,18 @@
         }
 
         var textColor = json["TextColor"];
-        if(textColor != null){
-            textColor["R"] = textColor["R"] != null ? textColor["R"] : 255;
-            textColor["G"] = textColor["G"] != null ? textColor["G"] : 255;
-            textColor["B"] = textColor["B"] != null ? textColor["B"] : 255;
-            widget.setTitleColor(cc.color(textColor["R"], textColor["G"], textColor["B"]));
-        }
+        if(textColor != null)
+            widget.setTitleColor(getColor(textColor));
 
-        var dataList = [
-            {json: json["DisabledFileData"], handle: function(path, type){
-                widget.loadTextureDisabled(path, type);
-            }},
-            {json: json["PressedFileData"], handle: function(path, type){
-                widget.loadTexturePressed(path, type);
-            }},
-            {json: json["NormalFileData"], handle: function(path, type){
-                widget.loadTextureNormal(path, type);
-            }}
-        ];
 
-        dataList.forEach(function(item){
-            loadTexture(item.json, resourcePath, item.handle);
+        loadTexture(json["NormalFileData"], resourcePath, function(path, type){
+            widget.loadTextureNormal(path, type);
+        });
+        loadTexture(json["PressedFileData"], resourcePath, function(path, type){
+            widget.loadTexturePressed(path, type);
+        });
+        loadTexture(json["DisabledFileData"], resourcePath, function(path, type){
+            widget.loadTextureDisabled(path, type);
         });
 
         //var fontResourcePath, fontResourceResourceType, fontResourcePlistFile;
@@ -681,6 +683,9 @@
         loadTexture(json["FileData"], resourcePath, function(path, type){
             widget.loadTexture(path, type);
         });
+        loadTexture(json["ImageFileData"], resourcePath, function(path, type){
+            widget.loadTexture(path, type);
+        });
 
         return widget;
     };
@@ -697,15 +702,16 @@
 
         this.widgetAttributes(widget, json);
 
-        var direction = json["ProgressType"] == "Left_To_Right" ? 0 : 1;
-        widget.setDirection(direction);
-
-        var percent = json["ProgressInfo"] != null ? json["ProgressInfo"] : 0;
-        widget.setPercent(percent);
-
         loadTexture(json["ImageFileData"], resourcePath, function(path, type){
             widget.loadTexture(path, type);
         });
+
+        var direction = json["ProgressType"];
+        widget.setDirection((direction != "Left_To_Right") | 0);
+
+        var percent = json["ProgressInfo"];
+        if(percent != null)
+            widget.setPercent(percent);
 
         return widget;
 
@@ -719,8 +725,36 @@
     parser.initSlider = function(json, resourcePath){
 
         var widget = new ccui.Slider();
+        var loader = cc.loader,
+            cache = cc.spriteFrameCache;
 
         this.widgetAttributes(widget, json);
+
+        loadTexture(json["BackGroundData"], resourcePath, function(path, type){
+            if(type == 0 && !loader.getRes(path))
+                cc.log("%s need to pre load", path);
+            widget.loadBarTexture(path, type);
+        });
+        loadTexture(json["BallNormalData"], resourcePath, function(path, type){
+            if(type == 0 && !loader.getRes(path))
+                cc.log("%s need to pre load", path);
+            widget.loadSlidBallTextureNormal(path, type);
+        });
+        loadTexture(json["BallPressedData"], resourcePath, function(path, type){
+            if(type == 0 && !loader.getRes(path))
+                cc.log("%s need to pre load", path);
+            widget.loadSlidBallTexturePressed(path, type);
+        });
+        loadTexture(json["BallDisabledData"], resourcePath, function(path, type){
+            if(type == 0 && !loader.getRes(path))
+                cc.log("%s need to pre load", path);
+            widget.loadSlidBallTextureDisabled(path, type);
+        });
+        loadTexture(json["ProgressBarData"], resourcePath, function(path, type){
+            if(type == 0 && !loader.getRes(path))
+                cc.log("%s need to pre load", path);
+            widget.loadProgressBarTexture(path, type);
+        });
 
         var percent = json["PercentInfo"];
         if(percent != null)
@@ -731,23 +765,6 @@
             widget.setBright(displaystate);
             widget.setEnabled(displaystate);
         }
-
-        loadTexture(json["BackGroundData"], resourcePath, function(path, type){
-            widget.loadBarTexture(path, type);
-        });
-        loadTexture(json["BallNormalData"], resourcePath, function(path, type){
-            widget.loadSlidBallTextureNormal(path, type);
-        });
-        loadTexture(json["BallPressedData"], resourcePath, function(path, type){
-            widget.loadSlidBallTexturePressed(path, type);
-        });
-        loadTexture(json["BallDisabledData"], resourcePath, function(path, type){
-            widget.loadSlidBallTextureDisabled(path, type);
-        });
-        loadTexture(json["ProgressBarData"], resourcePath, function(path, type){
-            widget.loadProgressBarTexture(path, type);
-        });
-
 
         return widget;
     };
@@ -901,6 +918,103 @@
         return widget;
     };
 
+    parser.initTextAtlas = function(json, resourcePath){
+
+        var widget = new ccui.TextAtlas();
+
+        var stringValue = json["LabelText"];
+        var itemWidth = json["CharWidth"];
+        var itemHeight = json["CharHeight"];
+
+        var startCharMap = json["StartChar"];
+
+        loadTexture(json["LabelAtlasFileImage_CNB"], resourcePath, function(path, type){
+            if(!cc.loader.getRes(path))
+                cc.log("%s need to pre load", path);
+            if(type == 0){
+                widget.setProperty(stringValue, path, itemWidth, itemHeight, startCharMap);
+            }
+        });
+        this.widgetAttributes(widget, json);
+
+        return widget;
+    };
+
+    parser.initTextBMFont = function(json, resourcePath){
+
+        var widget = new ccui.TextBMFont();
+        this.widgetAttributes(widget, json);
+
+        var text = json["LabelText"];
+        widget.setString(text);
+
+        loadTexture(json["LabelBMFontFile_CNB"], resourcePath, function(path, type){
+            widget.setFntFile(path);
+        });
+        return widget;
+    };
+
+    parser.initTextField = function(json, resourcePath){
+        var widget = new ccui.TextField();
+
+        var passwordEnabled = json["PasswordEnable"];
+        if(passwordEnabled){
+            widget.setPasswordEnabled(true);
+            var passwordStyleText = json["PasswordStyleText"];
+            if(passwordStyleText != null)
+                widget.setPasswordStyleText(passwordStyleText);
+        }
+
+        var placeHolder = json["PlaceHolderText"];
+        if(placeHolder != null)
+            widget.setPlaceHolder(placeHolder);
+
+        var fontSize = json["FontSize"];
+        if(fontSize != null)
+            widget.setFontSize(fontSize);
+
+        var fontName = json["FontName"];
+        if(fontName != null)
+            widget.setFontName(fontName);
+
+        var maxLengthEnabled = json["MaxLengthEnable"];
+        if(maxLengthEnabled){
+            widget.setMaxLengthEnabled(true);
+            var maxLength = json["MaxLengthText"];
+            if(maxLength != null)
+                widget.setMaxLength(maxLength);
+        }
+
+        //var isCustomSize = json["IsCustomSize"];
+        this.widgetAttributes(widget, json);
+
+        var text = json["LabelText"];
+        if(text != null)
+            widget.setString(text);
+
+        loadTexture(json["FontResource"], resourcePath, function(path, type){
+            widget.setFontName(path);
+        });
+
+        widget.setUnifySizeEnabled(false);
+        widget.ignoreContentAdaptWithSize(false);
+
+        var color = json["CColor"];
+        if(color != null)
+            widget.setTextColor(getColor(color));
+
+        if (!widget.isIgnoreContentAdaptWithSize())
+        {
+            //widget.getVirtualRenderer().setLineBreakWithoutSpace(true);
+            var size = json["Size"];
+            if(size)
+                widget.setContentSize(cc.size(size["X"] || 0, size["Y"] || 0));
+        }
+        return widget;
+
+    };
+
+    var loadedPlist = {};
     var loadTexture = function(json, resourcePath, cb){
         if(json != null){
             var path = json["Path"];
@@ -910,8 +1024,15 @@
             else
                 type = 1;
             var plist = json["Plist"];
-            if(plist)
-                cc.spriteFrameCache.addSpriteFrames(resourcePath + plist);
+            if(plist){
+                if(cc.loader.getRes(resourcePath + plist)){
+                    loadedPlist[resourcePath + plist] = true;
+                    cc.spriteFrameCache.addSpriteFrames(resourcePath + plist);
+                }else{
+                    if(!loadedPlist[resourcePath + plist])
+                        cc.log("%s need to pre load", resourcePath + plist);
+                }
+            }
             if(type !== 0)
                 cb(path, type);
             else
@@ -924,10 +1045,8 @@
         var r = json["R"] != null ? json["R"] : 255;
         var g = json["G"] != null ? json["G"] : 255;
         var b = json["B"] != null ? json["B"] : 255;
-        return cc.size(r, g, b);
+        return cc.color(r, g, b);
     };
-
-
 
     var register = [
         {name: "SingleNodeObjectData", handle: parser.initSingleNode},
@@ -942,7 +1061,10 @@
         {name: "LoadingBarObjectData", handle: parser.initLoadingBar},
         {name: "SliderObjectData", handle: parser.initSlider},
         {name: "PageViewObjectData", handle: parser.initPageView},
-        {name: "ListViewObjectData", handle: parser.initListView}
+        {name: "ListViewObjectData", handle: parser.initListView},
+        {name: "TextAtlasObjectData", handle: parser.initTextAtlas},
+        {name: "TextBMFontObjectData", handle: parser.initTextBMFont},
+        {name: "TextFieldObjectData", handle: parser.initTextField}
     ];
 
     register.forEach(function(item){
@@ -958,4 +1080,4 @@
     load.registerParser("timeline", "2.*", parser);
 
 
-})(ccs.loadNode, ccs._parser);
+})(ccs._load, ccs._parser);

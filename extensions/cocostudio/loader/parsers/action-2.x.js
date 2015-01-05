@@ -26,4 +26,4 @@
 
     load.registerParser("action", "2.*", parser);
 
-})(ccs.loadNode, ccs._parser);
+})(ccs._load, ccs._parser);

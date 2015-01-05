@@ -253,4 +253,4 @@
     load.registerParser("timeline", "1.*", parser);
 
 
-})(ccs.loadNode, ccs._parser);
+})(ccs._load, ccs._parser);

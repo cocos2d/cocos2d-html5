@@ -398,11 +398,11 @@
             "extensions/cocostudio/reader/timeline/Timeline.js",
             "extensions/cocostudio/reader/timeline/CSLoader.js",
 
-            "extensions/cocostudio/reader/loader/load.js",
-            "extensions/cocostudio/reader/loader/parsers/uiParser-1.x.js",
-            "extensions/cocostudio/reader/loader/parsers/action-2.x.js",
-            "extensions/cocostudio/reader/loader/parsers/timelineParser-1.x.js",
-            "extensions/cocostudio/reader/loader/parsers/timelineParser-2.x.js"
+            "extensions/cocostudio/loader/load.js",
+            "extensions/cocostudio/loader/parsers/uiParser-1.x.js",
+            "extensions/cocostudio/loader/parsers/action-2.x.js",
+            "extensions/cocostudio/loader/parsers/timelineParser-1.x.js",
+            "extensions/cocostudio/loader/parsers/timelineParser-2.x.js"
 
 
         ],
