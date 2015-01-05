@@ -1,6 +1,6 @@
 (function(load, baseParser){
 
-    var DEBUG = true;
+    var DEBUG = false;
 
     var Parser = baseParser.extend({
 
@@ -18,21 +18,6 @@
 
         getClass: function(json){
             return json["ctype"];
-        },
-
-        addSpriteFrame: function(textures, plists, resourcePath){
-            if(!textures) return;
-            for (var i = 0; i < textures.length; i++) {
-                cc.spriteFrameCache.addSpriteFrames(
-                        resourcePath + textures[i],
-                        resourcePath + plists[i]
-                );
-            }
-        },
-
-        pretreatment: function(json, resourcePath, file){
-            this.addSpriteFrame(json["textures"], json["texturesPng"], resourcePath);
-//            ccs.actionTimelineCache.loadAnimationActionWithContent(file, json);
         }
 
     });
@@ -85,10 +70,7 @@
         if (visible != null)
             node.setVisible(visible == "True");
 
-
-        var contentSize = json["Size"];
-        if(contentSize != null && (contentSize["X"] != null || contentSize["Y"] != null))
-            node.setContentSize(cc.size(contentSize["X"]||0, contentSize["Y"]||0));
+        setContentSize(node, json["Size"]);
 
         if (json["Alpha"] != null)
             node.setOpacity(json["Alpha"]);
@@ -148,6 +130,7 @@
     /**
      * Sprite
      * @param json
+     * @param resourcePath
      * @returns {cc.Sprite}
      */
     parser.initSprite = function(json, resourcePath){
@@ -278,9 +261,7 @@
         if(color != null)
             widget.setColor(getColor(color));
 
-        var size = json["Size"];
-        if(size != null)
-            widget.setContentSize(size["X"]||0, size["Y"]||0);
+        setContentSize(widget, json["Size"]);
 
         if(widget instanceof ccui.Layout){
             //todo update UILayoutComponent.bindLayoutComponent
@@ -342,12 +323,8 @@
 
         var bgStartColor = json["FirstColor"];
         var bgEndColor = json["EndColor"];
-        if(bgStartColor != null && bgEndColor != null){
-            widget.setBackGroundColor(
-                getColor(bgStartColor),
-                getColor(bgEndColor)
-            );
-        }
+        if(bgStartColor != null && bgEndColor != null)
+            widget.setBackGroundColor( getColor(bgStartColor), getColor(bgEndColor) );
 
         var colorVector = json["ColorVector"];
         if(colorVector != null)
@@ -435,11 +412,8 @@
 
         widget.setUnifySizeEnabled(false);
 
-        if(widget.isIgnoreContentAdaptWithSize()){
-            var size = json["Size"];
-            if(size != null)
-                widget.setContentSize(cc.size(size["X"]||0, size["Y"]||0));
-        }
+        if(widget.isIgnoreContentAdaptWithSize())
+            setContentSize(widget, json["Size"]);
 
         return widget;
 
@@ -473,10 +447,7 @@
 
         }
 
-        var size = json["Size"];
-        if(size != null){
-            widget.setContentSize(size["X"] || 0, size["Y"] || 0);
-        }
+        setContentSize(widget, json["Size"]);
 
         var text = json["ButtonText"];
         if(text != null)
@@ -511,13 +482,14 @@
             widget.loadTextureDisabled(path, type);
         });
 
-        //var fontResourcePath, fontResourceResourceType, fontResourcePlistFile;
-        //var fontResource = json["FontResource"];
-        //if(fontResource != null){
+        var fontResourcePath, fontResourceResourceType, fontResourcePlistFile;
+        var fontResource = json["FontResource"];
+        if(fontResource != null){
+            console.log(fontResource["Path"])
         //    fontResourcePath = fontResource["Path"];
         //    fontResourceResourceType = fontResource["Type"] == "Default" ? 0 : 1;
         //    fontResourcePlistFile = fontResource["Plist"];
-        //}
+        }
 
         return widget;
 
@@ -545,25 +517,17 @@
         }
 
         var dataList = [
-            {json: json["NormalBackFileData"], handle: function(path, type){
-                widget.loadTextureBackGround(path, type);
-            }},
-            {json: json["PressedBackFileData"], handle: function(path, type){
-                widget.loadTextureBackGroundSelected(path, type);
-            }},
-            {json: json["NodeNormalFileData"], handle: function(path, type){
-                widget.loadTextureFrontCross(path, type);
-            }},
-            {json: json["DisableBackFileData"], handle: function(path, type){
-                widget.loadTextureBackGroundDisabled(path, type);
-            }},
-            {json: json["NodeDisableFileData"], handle: function(path, type){
-                widget.loadTextureFrontCrossDisabled(path, type);
-            }}
+            {name: "NormalBackFileData", handle: widget.loadTextureBackGround},
+            {name: "PressedBackFileData", handle: widget.loadTextureBackGroundSelected},
+            {name: "NodeNormalFileData", handle: widget.loadTextureFrontCross},
+            {name: "DisableBackFileData", handle: widget.loadTextureBackGroundDisabled},
+            {name: "NodeDisableFileData", handle: widget.loadTextureFrontCrossDisabled}
         ];
 
         dataList.forEach(function(item){
-            loadTexture(item.json, resourcePath, item.handle);
+            loadTexture(json[item.name], resourcePath, function(path, type){
+                item.handle.call(widget, path, type);
+            });
         });
 
         return widget;
@@ -602,11 +566,8 @@
         var scale9Width = json["Scale9Width"];
         var scale9Height = json["Scale9Height"];
 
-        var scale9Size = json["Size"];
-        if(scale9Size){
-            scale9Size = cc.size(scale9Size["X"] || 0, scale9Size["Y"] || 0);
-        }
-
+        //todo please check it
+        setContentSize(widget, json["Size"]);
 
         if(json["FirstColor"] && json["EndColor"]){
             var bgStartColor, bgEndColor;
@@ -676,9 +637,7 @@
             ));
         }
 
-        var scale9Size = json["Size"];
-        if(scale9Size)
-            widget.setContentSize(cc.size(scale9Size["X"] || 0, scale9Size["Y"] || 0));
+        setContentSize(widget, json["Size"]);
 
         loadTexture(json["FileData"], resourcePath, function(path, type){
             widget.loadTexture(path, type);
@@ -691,7 +650,7 @@
     };
 
     /**
-     *
+     * LoadingBar
      * @param json
      * @param resourcePath
      * @returns {ccui.LoadingBar}
@@ -718,42 +677,30 @@
     };
 
     /**
-     *
+     * Slider
      * @param json
      * @param resourcePath
      */
     parser.initSlider = function(json, resourcePath){
 
         var widget = new ccui.Slider();
-        var loader = cc.loader,
-            cache = cc.spriteFrameCache;
+        var loader = cc.loader;
 
         this.widgetAttributes(widget, json);
 
-        loadTexture(json["BackGroundData"], resourcePath, function(path, type){
-            if(type == 0 && !loader.getRes(path))
-                cc.log("%s need to pre load", path);
-            widget.loadBarTexture(path, type);
-        });
-        loadTexture(json["BallNormalData"], resourcePath, function(path, type){
-            if(type == 0 && !loader.getRes(path))
-                cc.log("%s need to pre load", path);
-            widget.loadSlidBallTextureNormal(path, type);
-        });
-        loadTexture(json["BallPressedData"], resourcePath, function(path, type){
-            if(type == 0 && !loader.getRes(path))
-                cc.log("%s need to pre load", path);
-            widget.loadSlidBallTexturePressed(path, type);
-        });
-        loadTexture(json["BallDisabledData"], resourcePath, function(path, type){
-            if(type == 0 && !loader.getRes(path))
-                cc.log("%s need to pre load", path);
-            widget.loadSlidBallTextureDisabled(path, type);
-        });
-        loadTexture(json["ProgressBarData"], resourcePath, function(path, type){
-            if(type == 0 && !loader.getRes(path))
-                cc.log("%s need to pre load", path);
-            widget.loadProgressBarTexture(path, type);
+        var textureList = [
+            {name: "BackGroundData", handle: widget.loadBarTexture},
+            {name: "BallNormalData", handle: widget.loadSlidBallTextureNormal},
+            {name: "BallPressedData", handle: widget.loadSlidBallTexturePressed},
+            {name: "BallDisabledData", handle: widget.loadSlidBallTextureDisabled},
+            {name: "ProgressBarData", handle: widget.loadProgressBarTexture}
+        ];
+        textureList.forEach(function(item){
+            loadTexture(json[item.name], resourcePath, function(path, type){
+                if(type == 0 && !loader.getRes(path))
+                    cc.log("%s need to pre load", path);
+                item.handle.call(widget, path, type);
+            });
         });
 
         var percent = json["PercentInfo"];
@@ -770,7 +717,7 @@
     };
 
     /**
-     *
+     * PageView
      * @param json
      * @param resourcePath
      */
@@ -822,14 +769,18 @@
             widget.setBackGroundImage(path, type);
         });
 
-        var size = json["Size"];
-        if(size != null)
-            widget.setContentSize(size["X"], size["Y"]);
+        setContentSize(widget, json["Size"]);
 
         return widget;
 
     };
 
+    /**
+     * ListView
+     * @param json
+     * @param resourcePath
+     * @returns {ccui.ListView}
+     */
     parser.initListView = function(json, resourcePath){
 
         var widget = new ccui.ListView();
@@ -911,13 +862,17 @@
             widget.setBackGroundImage(path, type);
         });
 
-        var size = json["Size"];
-        if(size != null)
-            widget.setContentSize(size["X"]||0, size["Y"]||0);
+        setContentSize(widget, json["Size"]);
 
         return widget;
     };
 
+    /**
+     * TextAtlas
+     * @param json
+     * @param resourcePath
+     * @returns {ccui.TextAtlas}
+     */
     parser.initTextAtlas = function(json, resourcePath){
 
         var widget = new ccui.TextAtlas();
@@ -940,6 +895,12 @@
         return widget;
     };
 
+    /**
+     * TextBMFont
+     * @param json
+     * @param resourcePath
+     * @returns {ccui.TextBMFont}
+     */
     parser.initTextBMFont = function(json, resourcePath){
 
         var widget = new ccui.TextBMFont();
@@ -954,6 +915,12 @@
         return widget;
     };
 
+    /**
+     * TextField
+     * @param json
+     * @param resourcePath
+     * @returns {ccui.TextField}
+     */
     parser.initTextField = function(json, resourcePath){
         var widget = new ccui.TextField();
 
@@ -1004,16 +971,18 @@
             widget.setTextColor(getColor(color));
 
         if (!widget.isIgnoreContentAdaptWithSize())
-        {
+            setContentSize(widget, json["Size"]);
             //widget.getVirtualRenderer().setLineBreakWithoutSpace(true);
-            var size = json["Size"];
-            if(size)
-                widget.setContentSize(cc.size(size["X"] || 0, size["Y"] || 0));
-        }
+
         return widget;
 
     };
 
+    /**
+     * SimpleAudio
+     * @param json
+     * @param resourcePath
+     */
     parser.initSimpleAudio = function(json, resourcePath){
 
         var loop = json["Loop"];
@@ -1030,6 +999,12 @@
 
     };
 
+    /**
+     * GameMap
+     * @param json
+     * @param resourcePath
+     * @returns {*}
+     */
     parser.initGameMap = function(json, resourcePath){
 
         var node = null;
@@ -1042,10 +1017,28 @@
         return node;
     };
 
+    /**
+     * ProjectNode
+     * @param json
+     * @param resourcePath
+     * @returns {*}
+     */
     parser.initProjectNode = function(json, resourcePath){
-        return ccs._load(json);
+        var projectFile = json["FileData"];
+        if(projectFile != null && projectFile["Path"]){
+            var file = resourcePath + projectFile["Path"];
+            if(cc.loader.getRes(file))
+                return ccs._load(file);
+            else
+                cc.log("%s need to pre load", file);
+        }
     };
 
+    /**
+     * Armature
+     * @param json
+     * @param resourcePath
+     */
     parser.initArmature = function(json, resourcePath){
 
         var node = new ccs.Armature();
@@ -1094,6 +1087,13 @@
         var g = json["G"] != null ? json["G"] : 255;
         var b = json["B"] != null ? json["B"] : 255;
         return cc.color(r, g, b);
+    };
+
+    var setContentSize = function(node, size){
+        var x = size["X"] || 0;
+        var y = size["Y"] || 0;
+        if(size)
+            node.setContentSize(cc.size(x, y));
     };
 
     var register = [
