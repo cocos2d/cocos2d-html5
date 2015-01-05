@@ -104,7 +104,7 @@
     };
 
     parser.parseChild = function(node, children, resourcePath){
-        if(!children) return;
+        if(!node || !children) return;
         for (var i = 0; i < children.length; i++) {
             var child = this.parseNode(children[i], resourcePath);
             if(child){
@@ -1014,6 +1014,54 @@
 
     };
 
+    parser.initSimpleAudio = function(json, resourcePath){
+
+        var loop = json["Loop"];
+        var volume = json["Volume"];
+        if(volume != null)
+            cc.audioEngine.setMusicVolume(volume);
+        //var name = json["Name"];
+        var resPath = (cc.loader.resPath + "/").replace(/\/\/$/, "/");
+        loadTexture(json["FileData"], resourcePath, function(path, type){
+            cc.loader.load(path, function(){
+                cc.audioEngine.playMusic(resPath + path, loop);
+            });
+        });
+
+    };
+
+    parser.initGameMap = function(json, resourcePath){
+
+        var node = null;
+
+        loadTexture(json["FileData"], resourcePath, function(path, type){
+            if(type == 0)
+                node = new cc.TMXTiledMap(path);
+        });
+
+        return node;
+    };
+
+    parser.initProjectNode = function(json, resourcePath){
+        return ccs._load(json);
+    };
+
+    parser.initArmature = function(json, resourcePath){
+
+        var node = new ccs.Armature();
+
+        var isLoop = json["isLoop"];
+
+        var isAutoPlay = json["IsAutoPlay"];
+
+        var currentAnimationName = json["CurrentAnimationName"];
+
+        loadTexture(json["FileData"], resourcePath, function(path, type){
+            ccs.ArmatureDataManager.addArmatureFileInfo(path);
+        });
+        node.init();
+    };
+
     var loadedPlist = {};
     var loadTexture = function(json, resourcePath, cb){
         if(json != null){
@@ -1064,14 +1112,18 @@
         {name: "ListViewObjectData", handle: parser.initListView},
         {name: "TextAtlasObjectData", handle: parser.initTextAtlas},
         {name: "TextBMFontObjectData", handle: parser.initTextBMFont},
-        {name: "TextFieldObjectData", handle: parser.initTextField}
+        {name: "TextFieldObjectData", handle: parser.initTextField},
+        {name: "SimpleAudioObjectData", handle: parser.initSimpleAudio},
+        {name: "GameMapObjectData", handle: parser.initGameMap},
+        {name: "ProjectNodeObjectData", handle: parser.initProjectNode},
+        {name: "ArmatureNodeObjectData", handle: parser.initArmature}
     ];
 
     register.forEach(function(item){
         parser.registerParser(item.name, function(options, parse, resourcePath){
             var node = item.handle.call(this, options, resourcePath);
             this.parseChild(node, options["Children"], resourcePath);
-            DEBUG && (node.__parserName = item.name);
+            DEBUG && node && (node.__parserName = item.name);
             return node;
         });
     });
