@@ -113,6 +113,28 @@
                 }
             }
             this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.opacityDirty ^ this._dirtyFlag;
+        },
+
+        _changeProtectedChild: function (child) {
+            var cmd = child._renderCmd,
+                dirty = cmd._dirtyFlag,
+                flags = cc.Node._dirtyFlags;
+
+            if (this._dirtyFlag & flags.colorDirty)
+                dirty |= flags.colorDirty;
+
+            if (this._dirtyFlag & flags.opacityDirty)
+                dirty |= flags.opacityDirty;
+
+            var colorDirty = dirty & flags.colorDirty,
+                opacityDirty = dirty & flags.opacityDirty;
+
+            if (colorDirty)
+                cmd._updateDisplayColor(this._displayedColor);
+            if (opacityDirty)
+                cmd._updateDisplayOpacity(this._displayedOpacity);
+            if (colorDirty || opacityDirty)
+                cmd._updateColor();
         }
     };
 
@@ -127,10 +149,6 @@
     proto.constructor = cc.ProtectedNode.CanvasRenderCmd;
 
     proto.visit = function(parentCmd){
-        this._node.visit(parentCmd);
-    };
-
-    proto._visit = function(parentCmd){
         var node = this._node;
         // quick return if not visible
         if (!node._visible)
@@ -146,7 +164,6 @@
 
         node.sortAllChildren();
         node.sortAllProtectedChildren();
-
 
         var pChild;
         // draw children zOrder < 0
@@ -182,28 +199,6 @@
         this._cacheDirty = false;
     };
 
-    proto._changeProtectedChild = function(child){
-        var cmd = child._renderCmd,
-            dirty = cmd._dirtyFlag,
-            flags = cc.Node._dirtyFlags;
-
-        if(this._dirtyFlag & flags.colorDirty)
-            dirty |= flags.colorDirty;
-
-        if(this._dirtyFlag & flags.opacityDirty)
-            dirty |= flags.opacityDirty;
-
-        var colorDirty = dirty & flags.colorDirty,
-            opacityDirty = dirty & flags.opacityDirty;
-
-        if(colorDirty)
-            cmd._updateDisplayColor(this._displayedColor);
-        if(opacityDirty)
-            cmd._updateDisplayOpacity(this._displayedOpacity);
-        if(colorDirty || opacityDirty)
-            cmd._updateColor();
-    };
-
     proto.transform = function(parentCmd, recursive){
         var node = this._node;
 
@@ -224,8 +219,8 @@
                 worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
                 worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
             }else{
-                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx);          //tx
-                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty);		  //ty
+                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx);                  //tx
+                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty);		          //ty
             }
         } else {
             worldT.a = t.a;

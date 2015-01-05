@@ -156,23 +156,10 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     getOrCreateLayoutComponent: function(){
         var layoutComponent = this.getComponent(ccui.__LAYOUT_COMPONENT_NAME);
         if (null == layoutComponent){
-            var component = new ccui.LayoutComponent();
+            layoutComponent = new ccui.LayoutComponent();
             this.addComponent(component);
-            layoutComponent = component;
         }
         return layoutComponent;
-    },
-
-    /**
-     * Calls _adaptRenderers(its subClass will override it) before calls its parent's visit.
-     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
-     * @override
-     */
-    visit: function (ctx) {
-        if (this._visible) {
-            this._adaptRenderers();
-            cc.ProtectedNode.prototype.visit.call(this, ctx);
-        }
     },
 
     /**
@@ -273,8 +260,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     /**
      * initializes renderer of widget.
      */
-    _initRenderer: function () {
-    },
+    _initRenderer: function () {},
 
     /**
      * Sets _customSize of ccui.Widget, if ignoreSize is true, the content size is its renderer's contentSize, otherwise the content size is parameter.
@@ -690,8 +676,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @note it doesn't implemented on Web
      * @param {Boolean} enable set true to enable dpad focus navigation, otherwise disable dpad focus navigation
      */
-    enableDpadNavigation: function(enable){
-    },
+    enableDpadNavigation: function(enable){},
 
     /**
      * <p>
@@ -785,14 +770,11 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         }
     },
 
-    _onPressStateChangedToNormal: function () {
-    },
+    _onPressStateChangedToNormal: function () {},
 
-    _onPressStateChangedToPressed: function () {
-    },
+    _onPressStateChangedToPressed: function () {},
 
-    _onPressStateChangedToDisabled: function () {
-    },
+    _onPressStateChangedToDisabled: function () {},
 
     _updateChildrenDisplayedRGBA: function(){
         this.setColor(this.getColor());
@@ -802,8 +784,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     /**
      * A call back function when widget lost of focus.
      */
-    didNotSelectSelf: function () {
-    },
+    didNotSelectSelf: function () {},
 
     /**
      * <p>
@@ -848,8 +829,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
     propagateTouchEvent: function(event, sender, touch){
         var widgetParent = this.getWidgetParent();
-        if (widgetParent)
-        {
+        if (widgetParent){
             widgetParent.interceptTouchEvent(event, sender, touch);
         }
     },
@@ -1192,14 +1172,11 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         return this._flippedY;
     },
 
-    _updateFlippedX: function () {
-    },
+    _updateFlippedX: function () {},
 
-    _updateFlippedY: function () {
-    },
+    _updateFlippedY: function () {},
 
-    _adaptRenderers: function(){
-    },
+    _adaptRenderers: function(){},
 
     /**
      * Determines if the widget is bright
@@ -1334,8 +1311,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         }
     },
 
-    _copySpecialProperties: function (model) {
-    },
+    _copySpecialProperties: function (model) {},
 
     _copyProperties: function (widget) {
         this.setEnabled(widget.isEnabled());
@@ -1558,11 +1534,11 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {Boolean} [cleanup]
      */
     removeNodeByTag: function (tag, cleanup) {
-        var node = this.getNodeByTag(tag);
+        var node = this.getChildByTag(tag);
         if (!node)
             cc.log("cocos2d: removeNodeByTag(tag = %d): child not found!", tag);
         else
-            this.removeNode(node);
+            this.removeChild(node, cleanup);
     },
 
     /**
@@ -1595,6 +1571,13 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
     setUnifySizeEnabled: function(enable){
         this._unifySize = enable;
+    },
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+            return new ccui.Widget.WebGLRenderCmd(this);
+        else
+            return new ccui.Widget.CanvasRenderCmd(this);
     }
 });
 

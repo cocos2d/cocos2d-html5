@@ -312,9 +312,9 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      *     If clippingEnabled is true, it will clip/scissor area.
      * </p>
      * @override
-     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
+     * @param {cc.Node.RenderCmd} [parentCmd]
      */
-    visit: function (ctx) {
+    visit: function (parentCmd) {
         if (!this._visible)
             return;
         this._adaptRenderers();
@@ -323,16 +323,16 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         if (this._clippingEnabled) {
             switch (this._clippingType) {
                 case ccui.Layout.CLIPPING_STENCIL:
-                    this._renderCmd.stencilClippingVisit(ctx);
+                    this._renderCmd.stencilClippingVisit(parentCmd);
                     break;
                 case ccui.Layout.CLIPPING_SCISSOR:
-                    this._renderCmd.scissorClippingVisit(ctx);
+                    this._renderCmd.scissorClippingVisit(parentCmd);
                     break;
                 default:
                     break;
             }
         } else
-            ccui.Widget.prototype.visit.call(this, ctx);
+            ccui.Widget.prototype.visit.call(this, parentCmd);
     },
 
     /**

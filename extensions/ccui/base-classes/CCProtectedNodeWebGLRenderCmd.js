@@ -25,8 +25,6 @@
 (function(){
     cc.ProtectedNode.WebGLRenderCmd = function (renderable) {
         cc.Node.WebGLRenderCmd.call(this, renderable);
-        this._cachedParent = null;
-        this._cacheDirty = false;
     };
 
     var proto = cc.ProtectedNode.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
@@ -34,10 +32,6 @@
     proto.constructor = cc.ProtectedNode.WebGLRenderCmd;
 
     proto.visit = function(parentCmd){
-         this._node.visit(parentCmd);        //todo refactor late
-    };
-
-    proto._visit = function(parentCmd){
         var node = this._node;
         // quick return if not visible
         if (!node._visible)
@@ -59,7 +53,6 @@
         var childLen = locChildren.length, pLen = locProtectedChildren.length;
         node.sortAllChildren();
         node.sortAllProtectedChildren();
-
 
         var pChild;
         // draw children zOrder < 0
@@ -97,28 +90,6 @@
         this._dirtyFlag = 0;
         //optimize performance for javascript
         currentStack.top = currentStack.stack.pop();
-    };
-
-    proto._changeProtectedChild = function(child){
-        var cmd = child._renderCmd,
-            dirty = cmd._dirtyFlag,
-            flags = cc.Node._dirtyFlags;
-
-        if(this._dirtyFlag & flags.colorDirty)
-            dirty |= flags.colorDirty;
-
-        if(this._dirtyFlag & flags.opacityDirty)
-            dirty |= flags.opacityDirty;
-
-        var colorDirty = dirty & flags.colorDirty,
-            opacityDirty = dirty & flags.opacityDirty;
-
-        if(colorDirty)
-            cmd._updateDisplayColor(this._displayedColor);
-        if(opacityDirty)
-            cmd._updateDisplayOpacity(this._displayedOpacity);
-        if(colorDirty || opacityDirty)
-            cmd._updateColor();
     };
 
     proto.transform = function(parentCmd, recursive){

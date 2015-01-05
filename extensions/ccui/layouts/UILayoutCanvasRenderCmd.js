@@ -39,6 +39,28 @@
     var proto = ccui.Layout.CanvasRenderCmd.prototype = Object.create(ccui.ProtectedNode.CanvasRenderCmd.prototype);
     proto.constructor = ccui.Layout.CanvasRenderCmd;
 
+    proto.visit = function(parentCmd){
+        var node = this._node;
+        if (!node._visible)
+            return;
+        node._adaptRenderers();
+        node._doLayout();
+
+        if (node._clippingEnabled) {
+            switch (node._clippingType) {
+                case ccui.Layout.CLIPPING_STENCIL:
+                    this.stencilClippingVisit(parentCmd);
+                    break;
+                case ccui.Layout.CLIPPING_SCISSOR:
+                    this.scissorClippingVisit(parentCmd);
+                    break;
+                default:
+                    break;
+            }
+        } else
+            ccui.Widget.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
+    };
+
     proto._onRenderSaveCmd = function(ctx, scaleX, scaleY){
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         if (this._clipElemType) {
@@ -60,8 +82,6 @@
         //var node = this._node;
         if (this._clipElemType) {
             wrapper.setCompositeOperation("destination-in");
-            //var parentCmd = node._parent ? node._parent._renderCmd : null;
-            //this.transform(parentCmd);                           //todo: why?
         }
     };
 

@@ -224,16 +224,6 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         }
     },
 
-    /**
-     * transforms and draws itself, and visit its children and protected children.
-     * @override
-     * @function
-     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx context of renderer
-     */
-    visit: function(parentCmd){
-        this._renderCmd._visit(parentCmd);
-    },
-
     _changePosition: function(){},
 
     /**
