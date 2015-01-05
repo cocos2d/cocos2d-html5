@@ -215,7 +215,8 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
     },
 
     initWithMaskSprite:function (maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel) {
-        if (cc.Sprite.prototype.initWithTexture.call(this, maskSprite.getTexture())) {
+        if (cc.Sprite.prototype.init.call(this)) {
+            this.setSpriteFrame(maskSprite.displayFrame());
             // Sets the default values
             this._onPosition = 0;
             this._offPosition = -onSprite.getContentSize().width + thumbSprite.getContentSize().width / 2;
@@ -307,8 +308,8 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
     },
 
     updateTweenAction:function (value, key) {
-        cc.log("key = " + key + ", value = " + value);
-        this.setSliderXPosition(value);
+        if (key === "sliderXPosition")
+            this.setSliderXPosition(value);
     },
 
     setOnPosition:function (onPosition) {

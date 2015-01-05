@@ -92,11 +92,11 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
             this.initWithArgs(skeletonDataFile, atlasFile, scale);
     },
 
-    _initRendererCmd:function () {
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this._rendererCmd = new cc.SkeletonRenderCmdWebGL(this);
+    _createRenderCmd:function () {
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new sp.Skeleton.CanvasRenderCmd(this);
         else
-            this._rendererCmd = new cc.SkeletonRenderCmdCanvas(this);
+            return new sp.Skeleton.WebGLRenderCmd(this);
     },
 
     /**
@@ -107,8 +107,6 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
         this.setOpacityModifyRGB(true);
         this._blendFunc.src = cc.ONE;
         this._blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
-        if (cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
         this.scheduleUpdate();
     },
 
@@ -176,7 +174,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
      * Returns the bounding box of sp.Skeleton.
      * @returns {cc.Rect}
      */
-    boundingBox: function () {
+    getBoundingBox: function () {
         var minX = cc.FLT_MAX, minY = cc.FLT_MAX, maxX = cc.FLT_MIN, maxY = cc.FLT_MIN;
         var scaleX = this.getScaleX(), scaleY = this.getScaleY(), vertices = [],
             slots = this._skeleton.slots, VERTEX = sp.VERTEX_INDEX;
@@ -296,20 +294,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
         this._rootBone = this._skeleton.getRootBone();
         this._ownsSkeletonData = ownsSkeletonData;
 
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-            var locSkeleton = this._skeleton, rendererObject, rect;
-            for (var i = 0, n = locSkeleton.drawOrder.length; i < n; i++) {
-                var slot = locSkeleton.drawOrder[i];
-                var attachment = slot.attachment;
-                if (!(attachment instanceof spine.RegionAttachment))
-                    continue;
-                rendererObject = attachment.rendererObject;
-                rect = cc.rect(rendererObject.x, rendererObject.y, rendererObject.width,rendererObject.height);
-                var sprite = new cc.Sprite(rendererObject.page._texture, rect, rendererObject.rotate);
-                this.addChild(sprite,-1);
-                slot.currentSprite = sprite;
-            }
-        }
+        this._renderCmd._createChildFormSkeletonData();
     },
 
     /**
@@ -351,37 +336,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
      */
     update: function (dt) {
         this._skeleton.update(dt);
-
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-            var locSkeleton = this._skeleton;
-            locSkeleton.updateWorldTransform();
-            var drawOrder = this._skeleton.drawOrder;
-            for (var i = 0, n = drawOrder.length; i < n; i++) {
-                var slot = drawOrder[i];
-                var attachment = slot.attachment, selSprite = slot.currentSprite;
-                if (!(attachment instanceof spine.RegionAttachment)) {
-                    if(selSprite)
-                        selSprite.setVisible(false);
-                    continue;
-                }
-                if(!selSprite){
-                    var rendererObject = attachment.rendererObject;
-                    var rect = cc.rect(rendererObject.x, rendererObject.y, rendererObject.width,rendererObject.height);
-                    var sprite = new cc.Sprite(rendererObject.page._texture, rect, rendererObject.rotate);
-                    this.addChild(sprite,-1);
-                    slot.currentSprite = sprite;
-                }
-                selSprite.setVisible(true);
-                //update color and blendFunc
-                selSprite.setBlendFunc(cc.BLEND_SRC, slot.data.additiveBlending ? cc.ONE : cc.BLEND_DST);
-
-                var bone = slot.bone;
-                selSprite.setPosition(bone.worldX + attachment.x * bone.m00 + attachment.y * bone.m01,
-                    bone.worldY + attachment.x * bone.m10 + attachment.y * bone.m11);
-                selSprite.setScale(bone.worldScaleX, bone.worldScaleY);
-                selSprite.setRotation(- (slot.bone.worldRotation + attachment.rotation));
-            }
-        }
+        this._renderCmd._updateChild();
     }
 });
 

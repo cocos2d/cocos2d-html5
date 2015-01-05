@@ -150,7 +150,7 @@ cc.textureCache = /** @lends cc.textureCache# */{
         }
 
         if (!this._textureColorsCache[key])
-            this._textureColorsCache[key] = cc.generateTextureCacheForColor(texture);
+            this._textureColorsCache[key] = cc.Sprite.CanvasRenderCmd._generateTextureCacheForColor(texture);
         return this._textureColorsCache[key];
     },
 
@@ -349,24 +349,15 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         tex = locTexs[url] = new cc.Texture2D();
         tex.url = url;
-        if (!cc.loader.getRes(url)) {
-            if (cc.loader._checkIsImageURL(url)) {
-                cc.loader.load(url, function (err) {
-                    cb && cb.call(target);
-                });
-            } else {
-                cc.loader.loadImg(url, function (err, img) {
-                    if (err)
-                        return cb ? cb(err) : err;
-                    cc.loader.cache[url] = img;
-                    cc.textureCache.handleLoadedTexture(url);
-                    cb && cb.call(target, tex);
-                });
-            }
-        }
-        else {
-            tex.handleLoadedTexture();
-        }
+        var loadFunc = cc.loader._checkIsImageURL(url) ? cc.loader.load : cc.loader.loadImg;
+        loadFunc.call(cc.loader, url, function (err, img) {
+            if (err)
+                return cb && cb.call(target, err);
+            cc.textureCache.handleLoadedTexture(url);
+
+            var texResult = locTexs[url];
+            cb && cb.call(target, texResult);
+        });
 
         return tex;
     };

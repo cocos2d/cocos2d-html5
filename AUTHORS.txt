@@ -169,12 +169,13 @@ Asano                @LaercioAsano  cc.Node bug fix
 
 Bruno Assarisse      @bassarisse    cc.LabelBMFont bug fix
 
-musikov              @musikov       cc.ClippingNode bug fix
+Mykyta Usikov        @musikov       cc.ClippingNode bug fix
                                     cc.fontLoader bug fix
                                     Inverted ClippingNode with DrawNode as stencil bug fix under canvas render mode
                                     JumpTo bug with wrong _delta position bug fix
-                                    cc.ProgressTimer bug fix
-                                    cc.Scale9Sprite bug fix
+                                    cc.ProgressTimer bugs fix
+                                    cc.Scale9Sprite bugs fix
+                                    cc.RenderTexture bug fix
 
 Han XiaoLong         @kpkhxlgy0     cc.ParticleSytem bug fix
 
@@ -185,6 +186,7 @@ Xiaodong Liu         @tianxing113   cc.Spawn.create bug fix
 
 Park Hyun Chen       @sincntx       Touch anywhere of screen to finish input when using cc.EditBox
                                     ccui.TextBMFont bug fix
+                                    cc.game bug fix
 
 Ninja Lau            @mutoo         A typo bug in UILayout fix
                                     One-loop CCArmatureAnimation can't finish when setSpeedScale is less than 1.0 bug fix
@@ -215,6 +217,12 @@ nopakos              @nopakos       cc.Texture2D bug fix
 
 Robert Rouhani       @Robmaister    cc.TMXMapInfo bug fix
                                     cc.TMXLayer bug fix
+
+Igor Mats            @IgorMats      cc.Scale9Sprite bug fix
+
+Tim                  @duhaibo0404   ccs.csLoader bug fix
+
+Hermanto             @man2          cc.loader bug fix
 
 Retired Core Developers:
       Shengxiang Chen (Nero Chan)

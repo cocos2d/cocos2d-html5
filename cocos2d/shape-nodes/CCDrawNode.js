@@ -88,7 +88,7 @@ cc.__t = function (v) {
  * @name cc.DrawNode
  * @extends cc.Node
  */
-cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
+cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{                  //TODO need refactor
     _buffer: null,
     _blendFunc: null,
     _lineWidth: 1,
@@ -102,16 +102,12 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
      */
     ctor: function () {
         cc.Node.prototype.ctor.call(this);
-        var locCmd = this._rendererCmd;
+        var locCmd = this._renderCmd;
         locCmd._buffer = this._buffer = [];
         locCmd._drawColor = this._drawColor = cc.color(255, 255, 255, 255);
         locCmd._blendFunc = this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
 
 		this.init();
-    },
-
-    _initRendererCmd: function(){
-        this._rendererCmd = new cc.DrawNodeRenderCmdCanvas(this);
     },
 
     // ----common function start ----
@@ -474,106 +470,14 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     },
 
     /**
-     * Render function using the canvas 2d context or WebGL context, internal usage only, please do not call this function
-     * @param {CanvasRenderingContext2D | WebGLRenderingContext} ctx The render context
-     */
-    draw: function (ctx) {
-        var context = ctx || cc._renderContext, _t = this;
-        if ((_t._blendFunc && (_t._blendFunc.src == cc.SRC_ALPHA) && (_t._blendFunc.dst == cc.ONE)))
-            context.globalCompositeOperation = 'lighter';
-
-        for (var i = 0; i < _t._buffer.length; i++) {
-            var element = _t._buffer[i];
-            switch (element.type) {
-                case cc.DrawNode.TYPE_DOT:
-                    _t._drawDot(context, element);
-                    break;
-                case cc.DrawNode.TYPE_SEGMENT:
-                    _t._drawSegment(context, element);
-                    break;
-                case cc.DrawNode.TYPE_POLY:
-                    _t._drawPoly(context, element);
-                    break;
-            }
-        }
-    },
-
-    _drawDot: function (ctx, element) {
-        var locColor = element.fillColor, locPos = element.verts[0], locRadius = element.lineWidth;
-        var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
-
-        ctx.fillStyle = "rgba(" + (0 | locColor.r) + "," + (0 | locColor.g) + "," + (0 | locColor.b) + "," + locColor.a / 255 + ")";
-        ctx.beginPath();
-        ctx.arc(locPos.x * locScaleX, -locPos.y * locScaleY, locRadius * locScaleX, 0, Math.PI * 2, false);
-        ctx.closePath();
-        ctx.fill();
-    },
-
-    _drawSegment: function (ctx, element) {
-        var locColor = element.lineColor;
-        var locFrom = element.verts[0];
-        var locTo = element.verts[1];
-        var locLineWidth = element.lineWidth;
-        var locLineCap = element.lineCap;
-        var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
-
-        ctx.strokeStyle = "rgba(" + (0 | locColor.r) + "," + (0 | locColor.g) + "," + (0 | locColor.b) + "," + locColor.a / 255 + ")";
-        ctx.lineWidth = locLineWidth * locScaleX;
-        ctx.beginPath();
-        ctx.lineCap = locLineCap;
-        ctx.moveTo(locFrom.x * locScaleX, -locFrom.y * locScaleY);
-        ctx.lineTo(locTo.x * locScaleX, -locTo.y * locScaleY);
-        ctx.stroke();
-    },
-
-    _drawPoly: function (ctx, element) {
-        var locVertices = element.verts;
-        var locLineCap = element.lineCap;
-        var locFillColor = element.fillColor;
-        var locLineWidth = element.lineWidth;
-        var locLineColor = element.lineColor;
-        var locIsClosePolygon = element.isClosePolygon;
-        var locIsFill = element.isFill;
-        var locIsStroke = element.isStroke;
-        if (locVertices == null)
-            return;
-
-        var firstPoint = locVertices[0];
-        var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
-
-        ctx.lineCap = locLineCap;
-
-        if (locFillColor) {
-            ctx.fillStyle = "rgba(" + (0 | locFillColor.r) + "," + (0 | locFillColor.g) + ","
-                + (0 | locFillColor.b) + "," + locFillColor.a / 255 + ")";
-        }
-
-        if (locLineWidth) {
-            ctx.lineWidth = locLineWidth * locScaleX;
-        }
-        if (locLineColor) {
-            ctx.strokeStyle = "rgba(" + (0 | locLineColor.r) + "," + (0 | locLineColor.g) + ","
-                + (0 | locLineColor.b) + "," + locLineColor.a / 255 + ")";
-        }
-        ctx.beginPath();
-        ctx.moveTo(firstPoint.x * locScaleX, -firstPoint.y * locScaleY);
-        for (var i = 1, len = locVertices.length; i < len; i++)
-            ctx.lineTo(locVertices[i].x * locScaleX, -locVertices[i].y * locScaleY);
-
-        if (locIsClosePolygon)
-            ctx.closePath();
-
-        if (locIsFill)
-            ctx.fill();
-        if (locIsStroke)
-            ctx.stroke();
-    },
-
-    /**
      * Clear the geometry in the node's buffer.
      */
     clear: function () {
         this._buffer.length = 0;
+    },
+
+    _createRenderCmd: function(){
+        return new cc.DrawNode.CanvasRenderCmd(this);
     }
 });
 
@@ -616,10 +520,6 @@ cc.DrawNodeWebGL = cc.Node.extend({
         this._drawColor = cc.color(255,255,255,255);
 
 	    this.init();
-    },
-    
-    _initRendererCmd: function(){
-        this._rendererCmd = new cc.DrawNodeRenderCmdWebGL(this);
     },
 
     init:function () {
@@ -802,13 +702,6 @@ cc.DrawNodeWebGL = cc.Node.extend({
                 _t._buffer = newTriangles;
             }
         }
-    },
-
-    draw:function () {
-        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-        this._shaderProgram.use();
-        this._shaderProgram.setUniformsForBuiltins();
-        this._render();
     },
 
     drawDot:function (pos, radius, color) {
@@ -1011,6 +904,10 @@ cc.DrawNodeWebGL = cc.Node.extend({
     clear:function () {
         this._buffer.length = 0;
         this._dirty = true;
+    },
+
+    _createRenderCmd: function () {
+        return new cc.DrawNode.WebGLRenderCmd(this);
     }
 });
 

@@ -64,7 +64,7 @@ cc._tmp.WebGLTexture2D = function () {
 
         shaderProgram: null,
 
-        _isLoaded: false,
+        _textureLoaded: false,
         _htmlElementObj: null,
         _webTextureObj: null,
 
@@ -308,7 +308,7 @@ cc._tmp.WebGLTexture2D = function () {
             self._hasMipmaps = false;
             self.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE);
 
-            self._isLoaded = true;
+            self._textureLoaded = true;
 
             return true;
         },
@@ -406,7 +406,7 @@ cc._tmp.WebGLTexture2D = function () {
                 cc.log(cc._LogInfos.Texture2D_initWithImage_2, imageWidth, imageHeight, maxTextureSize, maxTextureSize);
                 return false;
             }
-            this._isLoaded = true;
+            this._textureLoaded = true;
 
             // always load premultiplied images
             return this._initPremultipliedATextureWithImage(uiImage, imageWidth, imageHeight);
@@ -436,7 +436,7 @@ cc._tmp.WebGLTexture2D = function () {
          * @return {Boolean}
          */
         isLoaded: function () {
-            return this._isLoaded;
+            return this._textureLoaded;
         },
 
         /**
@@ -454,7 +454,7 @@ cc._tmp.WebGLTexture2D = function () {
             }
             if (!self._htmlElementObj.width || !self._htmlElementObj.height)
                 return;
-            self._isLoaded = true;
+            self._textureLoaded = true;
             //upload image to buffer
             var gl = cc._renderContext;
 
@@ -757,7 +757,6 @@ cc._tmp.WebGLTexture2D = function () {
         /**
          * remove listener from listeners by target
          * @param {cc.Node} target
-         * @deprecated since 3.1, please use addEventListener instead
          */
         removeLoadedEventListener: function (target) {
             this.removeEventListener("load", target);
@@ -815,15 +814,14 @@ cc._tmp.WebGLTextureAtlas = function () {
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, _t._quadsWebBuffer);
-        if (_t.dirty)
+        if (_t.dirty){
             gl.bufferData(gl.ARRAY_BUFFER, _t._quadsArrayBuffer, gl.DYNAMIC_DRAW);
+            _t.dirty = false;
+        }
 
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);               // vertices
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);          // colors
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);            // tex coords
-
-        if (_t.dirty)
-            _t.dirty = false;
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _t._buffersVBO[1]);
 
@@ -882,24 +880,18 @@ cc._tmp.WebGLTextureCache = function () {
             return tex;
         }
 
-        if (!cc.loader.getRes(url)) {
-            if (cc.loader._checkIsImageURL(url)) {
-                cc.loader.load(url, function (err) {
-                    cb && cb.call(target);
-                });
-            } else {
-                cc.loader.loadImg(url, function (err, img) {
-                    if (err)
-                        return cb ? cb(err) : err;
-                    cc.loader.cache[url] = img;
-                    cc.textureCache.handleLoadedTexture(url);
-                    cb && cb.call(target, tex);
-                });
-            }
-        }
-
         tex = locTexs[url] = new cc.Texture2D();
         tex.url = url;
+        var loadFunc = cc.loader._checkIsImageURL(url) ? cc.loader.load : cc.loader.loadImg;
+        loadFunc.call(cc.loader, url, function (err, img) {
+            if (err)
+                return cb && cb.call(target, err);
+            cc.textureCache.handleLoadedTexture(url);
+
+            var texResult = locTexs[url];
+            cb && cb.call(target, texResult);
+        });
+
         return tex;
     };
      _p = null;
