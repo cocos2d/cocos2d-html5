@@ -1030,8 +1030,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend(/** @lends cc
         var widget = this.widgetFromJsonDictionary(widgetTree);
 
         var size = widget.getContentSize();
-        if (size.width == 0 && size.height == 0)
-            widget.setSize(cc.size(fileDesignWidth, fileDesignHeight));
+        widget.setSize(cc.size(fileDesignWidth, fileDesignHeight));
 
         var actions = jsonDict["animation"];
         ccs.actionManager.initWithDictionary(fileName, actions, widget);
