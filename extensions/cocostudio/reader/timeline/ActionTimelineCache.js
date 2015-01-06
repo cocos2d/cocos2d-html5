@@ -291,7 +291,7 @@ ccs.actionTimelineCache = {
         var anchorx = json[ccui.actionTimelineCacheStatic.X];
         var anchory = json[ccui.actionTimelineCacheStatic.Y];
 
-        frame.setAnchorPoint(Point(anchorx, anchory));
+        frame.setAnchorPoint(cc.p(anchorx, anchory));
 
         return frame;
     },

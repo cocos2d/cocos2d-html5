@@ -16,8 +16,6 @@ ccs._load = (function(){
         if(ext !== "json" && ext !== "exportjson")
             return cc.log("%s load error, must be json file", file);
 
-        //  Judging the parser (uiParse or timelineParse, Temporarily blank)
-        //  The judgment condition is unknown
         var parse;
         if(!type){
             if(json["widgetTree"])
@@ -88,17 +86,6 @@ ccs._load = (function(){
 
 })();
 
-//cc.loader.register(["json", "ExportJson"], {
-//    load: function(realUrl, url, res, cb){
-//        var cloader = cc.loader;
-//        if(cloader.cache[url]){
-//            console.log(url)
-//        }else{
-//            return cc.loader.loadJson(realUrl, cb);
-//        }
-//    }
-//});
-
 ccs._parser = cc.Class.extend({
 
     ctor: function(){
@@ -135,7 +122,7 @@ ccs._parser = cc.Class.extend({
         var parser = this.parsers[this.getClass(json)];
         var widget = null;
         if(parser)
-            widget = parser.call(this, json, this.parseNode, resourcePath);
+            widget = parser.call(this, json, resourcePath);
         else
             cc.log("Can't find the parser : %s", this.getClass(json));
 
@@ -146,3 +133,23 @@ ccs._parser = cc.Class.extend({
         this.parsers[widget] = parse;
     }
 });
+
+/**
+ * Analysis of studio JSON file
+ * The incoming file name, parse out the corresponding object
+ * Temporary support file list:
+ *   ui 1.*
+ *   node 1.* - 2.*
+ *   action 1.* - 2.*
+ * @param {String} file
+ * @returns {{node: cc.Node, action: cc.Action}}
+ */
+ccs.load = function(file){
+    var object = {
+        node: null,
+        action: null
+    };
+    object.node = ccs._load(file);
+    object.action = ccs._load(file, "action");
+    return object;
+};
