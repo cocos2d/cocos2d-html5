@@ -782,7 +782,7 @@
     ];
 
     register.forEach(function(item){
-        parser.registerParser(item.name, function(options, parse, resourcePath){
+        parser.registerParser(item.name, function(options, resourcePath){
             var widget = new item.object;
             var uiOptions = options["options"];
             parser.generalAttributes(widget, uiOptions);

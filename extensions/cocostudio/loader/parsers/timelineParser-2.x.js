@@ -485,7 +485,7 @@
         var fontResourcePath, fontResourceResourceType, fontResourcePlistFile;
         var fontResource = json["FontResource"];
         if(fontResource != null){
-            console.log(fontResource["Path"])
+            //console.log(fontResource["Path"]);
         //    fontResourcePath = fontResource["Path"];
         //    fontResourceResourceType = fontResource["Type"] == "Default" ? 0 : 1;
         //    fontResourcePlistFile = fontResource["Plist"];

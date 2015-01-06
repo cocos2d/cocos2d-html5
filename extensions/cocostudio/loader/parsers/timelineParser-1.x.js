@@ -1,24 +1,31 @@
 (function(load, baseParser){
 
+    var loadedPlist = {};
+
     var Parser = baseParser.extend({
 
         getNodeJson: function(json){
             return json["nodeTree"];
         },
 
-        addSpriteFrame: function(textures, plists, resourcePath){
-            if(!textures) return;
-            for (var i = 0; i < textures.length; i++) {
+        addSpriteFrame: function(plists, pngs, resourcePath){
+            if(!plists || !pngs || plists.length != pngs.length)
+                return;
+            for (var i = 0; i < plists.length; i++) {
+                var plist = resourcePath + plists[i];
+                if(!cc.loader.getRes(plist) && !loadedPlist[plist])
+                    cc.log("%s need to pre load", plist);
+                else
+                    loadedPlist[plist] = true;
                 cc.spriteFrameCache.addSpriteFrames(
-                        resourcePath + textures[i],
-                        resourcePath + plists[i]
+                    plist,
+                    resourcePath + pngs[i]
                 );
             }
         },
 
         pretreatment: function(json, resourcePath, file){
             this.addSpriteFrame(json["textures"], json["texturesPng"], resourcePath);
-            ccs.actionTimelineCache.loadAnimationActionWithContent(file, json);
         }
 
     });
@@ -196,7 +203,13 @@
     };
     var uiParser = load.getParser("ccui")["1.*"];
     parser.initWidget = function(options, resourcePath){
-        var node = uiParser.parseNode.call(this, options, resourcePath);
+        var type = options["classname"];
+
+        var parser = uiParser.parsers[type];
+        if(!parser)
+            return cc.log("%s parser is not found", type);
+
+        var node = parser.call(uiParser, options, resourcePath);
         if(node){
             var rotationSkewX = options["rotationSkewX"];
             var rotationSkewY = options["rotationSkewY"];
@@ -249,8 +262,6 @@
         });
     });
 
-
     load.registerParser("timeline", "1.*", parser);
-
 
 })(ccs._load, ccs._parser);
