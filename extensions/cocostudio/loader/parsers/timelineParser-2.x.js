@@ -1120,7 +1120,7 @@
     ];
 
     register.forEach(function(item){
-        parser.registerParser(item.name, function(options, parse, resourcePath){
+        parser.registerParser(item.name, function(options, resourcePath){
             var node = item.handle.call(this, options, resourcePath);
             this.parseChild(node, options["Children"], resourcePath);
             DEBUG && node && (node.__parserName = item.name);

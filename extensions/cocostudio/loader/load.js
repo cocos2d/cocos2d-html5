@@ -110,7 +110,7 @@ ccs._parser = cc.Class.extend({
         var resourcePath = this._dirname(file);
         this.pretreatment(json, resourcePath);
         var node = this.parseNode(this.getNodeJson(json), resourcePath);
-        this.deferred(json, resourcePath, node, file);
+        node && this.deferred(json, resourcePath, node, file);
         return node;
     },
 
@@ -149,7 +149,11 @@ ccs.load = function(file){
         node: null,
         action: null
     };
-    object.node = ccs._load(file);
-    object.action = ccs._load(file, "action");
+    try{
+        object.node = ccs._load(file);
+        object.action = ccs._load(file, "action");
+    }catch(error){
+        cc.log("ccs.load has encountered some problems");
+    }
     return object;
 };

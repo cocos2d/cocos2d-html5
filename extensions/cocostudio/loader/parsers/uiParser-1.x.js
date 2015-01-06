@@ -143,7 +143,7 @@
             widget.setAnchorPoint(cc.p(anchorPointXInFile, anchorPointYInFile));
     };
 
-    parser.parseChild = function(parse, widget, options, resourcePath){
+    parser.parseChild = function(widget, options, resourcePath){
         var children = options["children"];
         for (var i = 0; i < children.length; i++) {
             var child = this.parseNode(children[i], resourcePath);
@@ -167,6 +167,15 @@
                     }
                 }
             }
+        }
+    };
+
+    var getPath = function(res, type, path, cb){
+        if(path){
+            if(type == 0)
+                cb(res + path, type);
+            else
+                cb(path, type);
         }
     };
 
@@ -217,33 +226,12 @@
 
         var imageFileNameDic = options["backGroundImageData"];
         if(imageFileNameDic){
-            var imageFileName,
-                imageFileNameType = imageFileNameDic["resourceType"];
-            switch (imageFileNameType)
-            {
-                case 0:
-                {
-                    var tp_b = resourcePath;
-                    imageFileName = imageFileNameDic["path"];
-                    var imageFileName_tp = (imageFileName && (imageFileName !== "")) ?
-                        tp_b + imageFileName :
-                        null;
-                    widget.setBackGroundImage(imageFileName_tp);
-                    break;
-                }
-                case 1:
-                {
-                    imageFileName = imageFileNameDic["path"];
-                    widget.setBackGroundImage(imageFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
-                    break;
-                }
-                default:
-                    break;
-            }
+            getPath(resourcePath, imageFileNameDic["resourceType"], imageFileNameDic["path"], function(path, type){
+                widget.setBackGroundImage(path, type);
+            });
         }
 
-        if (backGroundScale9Enable)
-        {
+        if (backGroundScale9Enable){
             var cx = options["capInsetsX"];
             var cy = options["capInsetsY"];
             var cw = options["capInsetsWidth"];
@@ -260,60 +248,18 @@
         var scale9Enable = options["scale9Enable"];
         button.setScale9Enabled(scale9Enable);
 
-        var normalFileName,
-            normalDic = options["normalData"],
-            normalType = normalDic["resourceType"];
-        switch (normalType) {
-            case 0:
-                var tp_n = resourcePath;
-                normalFileName = normalDic["path"];
-                var normalFileName_tp = (normalFileName && normalFileName !== "") ?
-                    tp_n + normalFileName : null;
-                button.loadTextureNormal(normalFileName_tp);
-                break;
-            case 1:
-                normalFileName = normalDic["path"];
-                button.loadTextureNormal(normalFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
-                break;
-            default:
-                break;
-        }
-        var pressedFileName,
-            pressedDic = options["pressedData"],
-            pressedType = pressedDic["resourceType"];
-        switch (pressedType) {
-            case 0:
-                var tp_p = resourcePath;
-                pressedFileName = pressedDic["path"];
-                var pressedFileName_tp = (pressedFileName && pressedFileName !== "") ?
-                    tp_p + pressedFileName : null;
-                button.loadTexturePressed(pressedFileName_tp);
-                break;
-            case 1:
-                pressedFileName = pressedDic["path"];
-                button.loadTexturePressed(pressedFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
-                break;
-            default:
-                break;
-        }
-        var disabledFileName,
-            disabledDic = options["disabledData"],
-            disabledType = disabledDic["resourceType"];
-        switch (disabledType){
-            case 0:
-                var tp_d = resourcePath;
-                disabledFileName = disabledDic["path"];
-                var disabledFileName_tp = (disabledFileName && disabledFileName !== "") ?
-                    tp_d + disabledFileName : null;
-                button.loadTextureDisabled(disabledFileName_tp);
-                break;
-            case 1:
-                disabledFileName = disabledDic["path"];
-                button.loadTextureDisabled(disabledFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
-                break;
-            default:
-                break;
-        }
+        var normalDic = options["normalData"];
+        getPath(resourcePath, normalDic["resourceType"], normalDic["path"], function(path, type){
+            button.loadTextureNormal(path, type);
+        });
+        var pressedDic = options["pressedData"];
+        getPath(resourcePath, pressedDic["resourceType"], pressedDic["path"], function(path, type){
+            button.loadTexturePressed(path, type);
+        });
+        var disabledDic = options["disabledData"];
+        getPath(resourcePath, disabledDic["resourceType"], disabledDic["path"], function(path, type){
+            button.loadTextureDisabled(path, type);
+        });
         if (scale9Enable) {
             var cx = options["capInsetsX"];
             var cy = options["capInsetsY"];
@@ -351,41 +297,41 @@
     parser.CheckBoxAttributes = function(widget, options, resourcePath){
         //load background image
         var backGroundDic = options["backGroundBoxData"];
-        var backGroundType = backGroundDic["resourceType"];
-        var backGroundTexturePath = resourcePath + backGroundDic["path"];
-        widget.loadTextureBackGround(backGroundTexturePath, backGroundType);
+        getPath(resourcePath, backGroundDic["resourceType"], backGroundDic["path"], function(path, type){
+            widget.loadTextureBackGround(path, type);
+        });
 
         //load background selected image
         var backGroundSelectedDic = options["backGroundBoxSelectedData"];
-        var backGroundSelectedType = backGroundSelectedDic["resourceType"];
-        var backGroundSelectedTexturePath = resourcePath + backGroundSelectedDic["path"];
-        if(!backGroundSelectedTexturePath){
-            backGroundSelectedType = backGroundType;
-            backGroundSelectedTexturePath = backGroundTexturePath;
-        }
-        widget.loadTextureBackGroundSelected(backGroundSelectedTexturePath, backGroundSelectedType);
+        getPath(
+            resourcePath,
+            backGroundSelectedDic["resourceType"] || backGroundDic["resourceType"],
+            backGroundSelectedDic["path"] || backGroundDic["path"],
+            function(path, type){
+            widget.loadTextureBackGroundSelected(path, type);
+        });
 
         //load frontCross image
         var frontCrossDic = options["frontCrossData"];
-        var frontCrossType = frontCrossDic["resourceType"];
-        var frontCrossFileName = resourcePath + frontCrossDic["path"];
-        widget.loadTextureFrontCross(frontCrossFileName, frontCrossType);
+        getPath(resourcePath, frontCrossDic["resourceType"], frontCrossDic["path"], function(path, type){
+            widget.loadTextureFrontCross(path, type);
+        });
 
         //load backGroundBoxDisabledData
         var backGroundDisabledDic = options["backGroundBoxDisabledData"];
-        var backGroundDisabledType = backGroundDisabledDic["resourceType"];
-        var backGroundDisabledFileName = resourcePath + backGroundDisabledDic["path"];
-        if(!backGroundDisabledFileName){
-            backGroundDisabledType = frontCrossType;
-            backGroundDisabledFileName = frontCrossFileName;
-        }
-        widget.loadTextureBackGroundDisabled(backGroundDisabledFileName, backGroundDisabledType);
+        getPath(
+            resourcePath,
+            backGroundDisabledDic["resourceType"] || frontCrossDic["resourceType"],
+            backGroundDisabledDic["path"] || frontCrossDic["path"],
+            function(path, type){
+            widget.loadTextureBackGroundDisabled(path, type);
+        });
 
         ///load frontCrossDisabledData
         var frontCrossDisabledDic = options["frontCrossDisabledData"];
-        var frontCrossDisabledType = frontCrossDisabledDic["resourceType"];
-        var frontCrossDisabledFileName = resourcePath + frontCrossDisabledDic["path"];
-        widget.loadTextureFrontCrossDisabled(frontCrossDisabledFileName, frontCrossDisabledType);
+        getPath(resourcePath, frontCrossDisabledDic["resourceType"], frontCrossDisabledDic["path"], function(path, type){
+            widget.loadTextureFrontCrossDisabled(path, type);
+        });
 
         if (options["selectedState"])
             widget.setSelected(options["selectedState"]);
@@ -537,27 +483,11 @@
     /**
      * LoadingBar parser (UILoadingBar)
      */
-    parser.LoadingBarAttributes = function(widget, options, resoutcePath){
-        var imageFileName,
-            imageFileNameDic = options["textureData"],
-            imageFileNameType = imageFileNameDic["resourceType"];
-        switch (imageFileNameType){
-            case 0:
-                var tp_i = resoutcePath;
-                imageFileName = imageFileNameDic["path"];
-                var imageFileName_tp = null;
-                if (imageFileName && (imageFileName !== "")){
-                    imageFileName_tp = tp_i + imageFileName;
-                    widget.loadTexture(imageFileName_tp);
-                }
-                break;
-            case 1:
-                imageFileName = imageFileNameDic["path"];
-                widget.loadTexture(imageFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
-                break;
-            default:
-                break;
-        }
+    parser.LoadingBarAttributes = function(widget, options, resourcePath){
+        var imageFileNameDic = options["textureData"];
+        getPath(resourcePath, imageFileNameDic["resourceType"], imageFileNameDic["path"], function(path, type){
+            widget.loadTexture(path, type);
+        });
 
         var scale9Enable = options["scale9Enable"];
         widget.setScale9Enabled(scale9Enable);
@@ -598,10 +528,9 @@
     /**
      * Slider parser (UISlider)
      */
-    parser.SliderAttributes = function(widget, options, resoutcePath){
+    parser.SliderAttributes = function(widget, options, resourcePath){
 
         var slider = widget;
-        var tp = resoutcePath;
 
         var barTextureScale9Enable = options["scale9Enable"];
         slider.setScale9Enabled(barTextureScale9Enable);
@@ -611,109 +540,43 @@
         var imageFileNameDic = options["barFileNameData"];
         var imageFileType = imageFileNameDic["resourceType"];
         var imageFileName = imageFileNameDic["path"];
-        var imageFileName_tp;
 
         if(bt != null){
             if(barTextureScale9Enable){
-                switch(imageFileType){
-                    case 0:
-                        imageFileName_tp = imageFileName ?
-                            ( tp + imageFileName ) :
-                            null;
-                        slider.loadBarTexture(imageFileName_tp);
-                        break;
-                    case 1:
-                        slider.loadBarTexture(imageFileName, 1 /*ui.UI_TEX_TYPE_PLIST*/);
-                        break;
-                    default:
-                        break;
-                }
+                getPath(resourcePath, imageFileType, imageFileName, function(path, type){
+                    slider.loadBarTexture(path, type);
+                });
                 slider.setSize(cc.size(barLength, slider.getContentSize().height));
             }
         }else{
-            switch(imageFileType){
-                case 0:
-                    imageFileName_tp = imageFileName ?
-                        tp + imageFileName :
-                        null;
-                    slider.loadBarTexture(imageFileName_tp);
-                    break;
-                case 1:
-                    slider.loadBarTexture(imageFileName, 1 /*ui.UI_TEX_TYPE_PLIST*/);
-                    break;
-                default:
-                    break;
-            }
-        }
-        var normalDic = options["ballNormalData"];
-        var normalType = normalDic["resourceType"];
-        var normalFileName = normalDic["path"];
-        switch(normalType){
-            case 0:
-                var normalFileName_tp = normalFileName ?
-                    tp + normalFileName :
-                    null;
-                slider.loadSlidBallTextureNormal(normalFileName_tp);
-                break;
-            case 1:
-                slider.loadSlidBallTextureNormal(normalFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
-                break;
-            default:
-                break;
+            getPath(resourcePath, imageFileType, imageFileName, function(path, type){
+                slider.loadBarTexture(path, type);
+            });
         }
 
+        var normalDic = options["ballNormalData"];
+        getPath(resourcePath, normalDic["resourceType"], normalDic["path"], function(path, type){
+            slider.loadSlidBallTextureNormal(path, type);
+        });
+
         var pressedDic = options["ballPressedData"];
-        var pressedType = pressedDic["resourceType"];
-        var pressedFileName = pressedDic["path"];
-        if(pressedFileName === null){
-            pressedType = normalType;
-            pressedFileName = normalFileName;
-        }
-        switch(pressedType){
-            case 0:
-                var pressedFileName_tp = pressedFileName ?
-                    tp + pressedFileName :
-                    null;
-                slider.loadSlidBallTexturePressed(pressedFileName_tp);
-                break;
-            case 1:
-                slider.loadSlidBallTexturePressed(pressedFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
-                break;
-            default:
-                break;
-        }
+        getPath(
+            resourcePath,
+            pressedDic["resourceType"] || normalDic["resourceType"],
+            pressedDic["path"] || normalDic["path"],
+            function(path, type){
+                slider.loadSlidBallTexturePressed(path, type);
+        });
+
         var disabledDic = options["ballDisabledData"];
-        var disabledType = disabledDic["resourceType"];
-        var disabledFileName = disabledDic["path"];
-        switch(disabledType){
-            case 0:
-                var disabledFileName_tp = disabledFileName ?
-                    tp + disabledFileName :
-                    null;
-                slider.loadSlidBallTextureDisabled(disabledFileName_tp);
-                break;
-            case 1:
-                slider.loadSlidBallTextureDisabled(disabledFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
-                break;
-            default:
-                break;
-        }
+        getPath(resourcePath, disabledDic["resourceType"], disabledDic["path"], function(path, type){
+            slider.loadSlidBallTextureDisabled(path, type);
+        });
+
         var progressBarDic = options["progressBarData"];
-        var progressBarType = progressBarDic["resourceType"];
-        var imageProgressFileName = progressBarDic["path"];
-        switch (progressBarType){
-            case 0:
-                var imageProgressFileName_tp = imageProgressFileName ?
-                    (tp + imageProgressFileName) :
-                    null;
-                slider.loadProgressBarTexture(imageProgressFileName_tp);
-                break;
-            case 1:
-                slider.loadProgressBarTexture(imageProgressFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
-                break;
-            default:
-                break;
-        }
+        getPath(resourcePath, progressBarDic["resourceType"], progressBarDic["path"], function(path, type){
+            slider.loadProgressBarTexture(path, type);
+        });
     };
     /**
      * TextField parser (UITextField)
@@ -789,7 +652,7 @@
             item.handle(widget, uiOptions, resourcePath);
             parser.colorAttributes(widget, uiOptions);
             parser.anchorPointAttributes(widget, uiOptions);
-            parser.parseChild.call(this, parse, widget, options, resourcePath);
+            parser.parseChild.call(this, widget, options, resourcePath);
             return widget;
         });
     });

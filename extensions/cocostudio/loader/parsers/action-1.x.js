@@ -9,6 +9,8 @@
         },
 
         parseNode: function(json, resourcePath, file){
+            if(!json)
+                return null;
             if(cache[file])
                 return cache[file].clone();
 
