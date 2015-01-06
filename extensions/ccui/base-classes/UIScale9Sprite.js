@@ -68,10 +68,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     _bottomRight: null,
 
     //cache in canvas on Canvas mode
-    _cacheSprite: null,
-    _cacheCanvas: null,
-    _cacheContext: null,
-    _cacheTexture: null,
     _scale9Dirty: true,
 
     _opacityModifyRGB: false,
@@ -90,6 +86,21 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     _spriteFrameRotated: false,
     _textureLoaded:false,
     _className:"Scale9Sprite",
+
+    //v3.3
+    _scale9Enabled: false,
+    _topLeftSize: null,
+    _centerSize: null,
+    _bottomRightSize: null,
+    _centerOffset: null,
+
+    _offset: null,
+
+    _protectedChildren: null,
+    _reorderProtectedChildDirty: false,
+
+    _flippedX: false,
+    _flippedY: false,
 
     /**
      * return  texture is loaded
@@ -521,8 +532,8 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
      * to resize the sprite will all it's 9-slice goodness interact.
      * It respects the anchorPoint too.
      *
-     * @param spriteFrameName The sprite frame name.
-     * @param capInsets The values to use for the cap insets.
+     * @param {String} spriteFrameName The sprite frame name.
+     * @param {cc.Rect} capInsets The values to use for the cap insets.
      */
     initWithSpriteFrameName: function (spriteFrameName, capInsets) {
         if(!spriteFrameName)
@@ -539,11 +550,12 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     },
 
     /**
-     * Creates and returns a new sprite object with the specified cap insets.
-     * You use this method to add cap insets to a sprite or to change the existing
-     * cap insets of a sprite. In both cases, you get back a new image and the
+     * <p>
+     * Creates and returns a new sprite object with the specified cap insets.            <br/>
+     * You use this method to add cap insets to a sprite or to change the existing       <br/>
+     * cap insets of a sprite. In both cases, you get back a new image and the           <br/>
      * original sprite remains untouched.
-     *
+     * </p>
      * @param {cc.Rect} capInsets The values to use for the cap insets.
      */
     resizableSpriteWithCapInsets: function (capInsets) {
@@ -917,6 +929,111 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         this._insetRight = 0;
         this._insetBottom = 0;
     },
+
+    //todo: v3.3
+    updateWithSprite: function(sprite, rect, rotated, offset, orginalSize, capInsets){
+        //virtual bool updateWithSprite(Sprite* sprite, const Rect& rect, bool rotated, const Rect& capInsets);
+        //virtual bool updateWithSprite(Sprite* sprite, const Rect& rect, bool rotated, const Vec2 &offset, const Size &originalSize, const Rect& capInsets);
+    },
+
+    //virtual void setAnchorPoint(const Vec2& anchorPoint) override;
+
+    /**
+     * set the state of ccui.Scale9Sprite
+     * @param {Number} state
+     */
+    setState: function(state){
+
+    },
+
+    cleanup: function(){},
+
+    onEnter: function(){},
+
+    onEnterTransitionDidFinish: function(){},
+
+    onExit: function(){},
+
+    onExitTransitionDidStart: function(){},
+
+    /**
+     * Sets whether the widget should be flipped horizontally or not.
+     * @param {Boolean} flippedX true if the widget should be flipped horizontally, false otherwise.
+     */
+    setFlippedX: function(flippedX){},
+
+    /**
+     * <p>
+     *      Returns the flag which indicates whether the widget is flipped horizontally or not.          <br/>
+     *                                                                                                   <br/>
+     *      It only flips the texture of the widget, and not the texture of the widget's children.       <br/>
+     *      Also, flipping the texture doesn't alter the anchorPoint.                                    <br/>
+     *      If you want to flip the anchorPoint too, and/or to flip the children too use:                <br/>
+     *      widget.setScaleX(sprite.getScaleX() * -1);                                                 <br/>
+     * </p>
+     * @return true if the widget is flipped horizontally, false otherwise.
+     */
+    isFlippedX: function(){},
+
+    /**
+     * Sets whether the widget should be flipped vertically or not.
+     * @param {Boolean} flippedY true if the widget should be flipped vertically, false otherwise.
+     */
+    setFlippedY: function(flippedY){},
+
+    /**
+     * <p>
+     *    Return the flag which indicates whether the widget is flipped vertically or not.                 <br/>
+     *                                                                                                     <br/>
+     *    It only flips the texture of the widget, and not the texture of the widget's children.           <br/>
+     *    Also, flipping the texture doesn't alter the anchorPoint.                                        <br/>
+     *    If you want to flip the anchorPoint too, and/or to flip the children too use:                    <br/>
+     *    widget.setScaleY(widget.getScaleY() * -1);                                                     <br/>
+     * </p>
+     * @return true if the widget is flipped vertically, false otherwise.
+     */
+    isFlippedY: function(){},
+
+    setScaleX: function(scaleX){},
+
+    setScaleY: function(scaleY){},
+
+    setScale: function(scaleX, scaleY){},
+
+    getScaleX: function(){},
+
+    getScaleY: function(){},
+
+    getScale: function(){},
+
+    _createSlicedSprites: function(){},
+
+    _cleanupSlicedSprites: function(){
+        if (this._topLeft && this._topLeft.isRunning())
+            this._topLeft.onExit();
+        if (this._top && this._top.isRunning())
+            this._top.onExit();
+        if (this._topRight && this._topRight.isRunning())
+            this._topRight.onExit();
+        if (this._left && this._left.isRunning())
+            this._left.onExit();
+        if (this._centre && this._centre.isRunning())
+            this._centre.onExit();
+        if (this._right && this._right.isRunning())
+            this._right.onExit();
+        if (this._bottomLeft && this._bottomLeft.isRunning())
+            this._bottomLeft.onExit();
+        if (this._bottomRight && this._bottomRight.isRunning())
+            this._bottomRight.onExit();
+        if (this._bottom && this._bottom.isRunning())
+            this._bottom.onExit();
+    },
+
+    _adjustScale9ImagePosition: function(){},
+
+    _sortAllProtectedChildren: function(){},
+
+    _addProtectedChild: function(){},
 
     _createRenderCmd: function(){
         if(cc._renderType === cc._RENDER_TYPE_CANVAS)
