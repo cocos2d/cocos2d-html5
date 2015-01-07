@@ -79,15 +79,14 @@
                     cmd.transform(null);   //must be null, use transform in armature mode
 
                     //update displayNode's color and opacity, because skin didn't call visit()
+                    var parentColor = selBone._renderCmd._displayedColor, parentOpacity = selBone._renderCmd._displayedOpacity;
                     var flags = cc.Node._dirtyFlags, locFlag = cmd._dirtyFlag;
                     var colorDirty = locFlag & flags.colorDirty,
                         opacityDirty = locFlag & flags.opacityDirty;
                     if(colorDirty)
-                        cmd._updateDisplayColor();
+                        cmd._updateDisplayColor(parentColor);
                     if(opacityDirty)
-                        cmd._updateDisplayOpacity();
-                    if(colorDirty || opacityDirty)
-                        cmd._updateColor();
+                        cmd._updateDisplayOpacity(parentOpacity);
                 }
             }
         }
