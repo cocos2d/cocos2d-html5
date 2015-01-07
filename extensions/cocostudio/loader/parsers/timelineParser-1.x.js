@@ -1,3 +1,27 @@
+/****************************************************************************
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
+
+ http://www.cocos2d-x.org
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ ****************************************************************************/
+
 (function(load, baseParser){
 
     var loadedPlist = {};
@@ -32,27 +56,27 @@
     var parser = new Parser();
 
     parser.generalAttributes = function(node, options){
-        var width         = options[ccui.CSLoaderStatic.WIDTH]          !=null ? options[ccui.CSLoaderStatic.WIDTH] : 0;
-        var height        = options[ccui.CSLoaderStatic.HEIGHT]         !=null ? options[ccui.CSLoaderStatic.HEIGHT] : 0;
-        var x             = options[ccui.CSLoaderStatic.X]              !=null ? options[ccui.CSLoaderStatic.X] : 0;
-        var y             = options[ccui.CSLoaderStatic.Y]              !=null ? options[ccui.CSLoaderStatic.Y] : 0;
-        var scalex        = options[ccui.CSLoaderStatic.SCALE_X]        !=null ? options[ccui.CSLoaderStatic.SCALE_X] : 1;
-        var scaley        = options[ccui.CSLoaderStatic.SCALE_Y]        !=null ? options[ccui.CSLoaderStatic.SCALE_Y] : 1;
-        var rotation      = options[ccui.CSLoaderStatic.ROTATION]       !=null ? options[ccui.CSLoaderStatic.ROTATION] : 0;
-        var rotationSkewX = options[ccui.CSLoaderStatic.ROTATION_SKEW_X]!=null ? options[ccui.CSLoaderStatic.ROTATION_SKEW_X] : 0;
-        var rotationSkewY = options[ccui.CSLoaderStatic.ROTATION_SKEW_Y]!=null ? options[ccui.CSLoaderStatic.ROTATION_SKEW_Y] : 0;
-        var skewx         = options[ccui.CSLoaderStatic.SKEW_X]         !=null ? options[ccui.CSLoaderStatic.SKEW_X] : 0;
-        var skewy         = options[ccui.CSLoaderStatic.SKEW_Y]         !=null ? options[ccui.CSLoaderStatic.SKEW_Y] : 0;
-        var anchorx       = options[ccui.CSLoaderStatic.ANCHOR_X]       !=null ? options[ccui.CSLoaderStatic.ANCHOR_X] : 0.5;
-        var anchory       = options[ccui.CSLoaderStatic.ANCHOR_Y]       !=null ? options[ccui.CSLoaderStatic.ANCHOR_Y] : 0.5;
-        var alpha         = options[ccui.CSLoaderStatic.ALPHA]          !=null ? options[ccui.CSLoaderStatic.ALPHA] : 255;
-        var red           = options[ccui.CSLoaderStatic.RED]            !=null ? options[ccui.CSLoaderStatic.RED] : 255;
-        var green         = options[ccui.CSLoaderStatic.GREEN]          !=null ? options[ccui.CSLoaderStatic.GREEN] : 255;
-        var blue          = options[ccui.CSLoaderStatic.BLUE]           !=null ? options[ccui.CSLoaderStatic.BLUE] : 255;
-        var zorder        = options[ccui.CSLoaderStatic.ZORDER]         !=null ? options[ccui.CSLoaderStatic.ZORDER] : 0;
-        var tag           = options[ccui.CSLoaderStatic.TAG]            !=null ? options[ccui.CSLoaderStatic.TAG] : 0;
-        var actionTag     = options[ccui.CSLoaderStatic.ACTION_TAG]     !=null ? options[ccui.CSLoaderStatic.ACTION_TAG] : 0;
-        var visible       = options[ccui.CSLoaderStatic.VISIBLE]        !=null ? options[ccui.CSLoaderStatic.VISIBLE] : true;
+        var width         = options["width"]        !=null ? options["width"] : 0;
+        var height        = options["height"]       !=null ? options["height"] : 0;
+        var x             = options["x"]            !=null ? options["x"] : 0;
+        var y             = options["y"]            !=null ? options["y"] : 0;
+        var scalex        = options["scaleX"]       !=null ? options["scaleX"] : 1;
+        var scaley        = options["scaleY"]       !=null ? options["scaleY"] : 1;
+        var rotation      = options["rotation"]     !=null ? options["rotation"] : 0;
+        var rotationSkewX = options["rotationSkewX"]!=null ? options["rotationSkewX"] : 0;
+        var rotationSkewY = options["rotationSkewY"]!=null ? options["rotationSkewY"] : 0;
+        var skewx         = options["skewX"]        !=null ? options["skewX"] : 0;
+        var skewy         = options["skewY"]        !=null ? options["skewY"] : 0;
+        var anchorx       = options["anchorPointX"] !=null ? options["anchorPointX"] : 0.5;
+        var anchory       = options["anchorPointY"] !=null ? options["anchorPointY"] : 0.5;
+        var alpha         = options["opacity"]      !=null ? options["opacity"] : 255;
+        var red           = options["colorR"]       !=null ? options["colorR"] : 255;
+        var green         = options["colorG"]       !=null ? options["colorG"] : 255;
+        var blue          = options["colorB"]       !=null ? options["colorB"] : 255;
+        var zorder        = options["colorR"]       !=null ? options["colorR"] : 0;
+        var tag           = options["tag"]          !=null ? options["tag"] : 0;
+        var actionTag     = options["actionTag"]    !=null ? options["actionTag"] : 0;
+        var visible       = options["visible"]      !=null ? options["visible"] : true;
 
         if(x != 0 || y != 0)
             node.setPosition(cc.p(x, y));
@@ -188,10 +212,10 @@
         return particle;
     };
     parser.initTMXTiledMap = function(options, resourcePath){
-        var tmxFile = options[ccui.CSLoaderStatic.TMX_FILE];
-        var tmxString = options[ccui.CSLoaderStatic.TMX_STRING];
+        var tmxFile = options["tmxFile"];
+        var tmxString = options["tmxString"];
         //todo check path and resourcePath
-        var path = options[ccui.CSLoaderStatic.RESOURCE_PATH];
+        var path = options["resourcePath"];
 
         var tmx = null;
         if (tmxFile && "" != tmxFile){
@@ -224,7 +248,7 @@
             if(skewy != 0)
                 node.setSkewY(skewy);
 
-            var actionTag = options[ccui.CSLoaderStatic.ACTION_TAG];
+            var actionTag = options["actionTag"];
             node.setUserObject(new ccs.ActionTimelineData(actionTag));
         }
         return node;
@@ -262,6 +286,6 @@
         });
     });
 
-    load.registerParser("timeline", "1.*", parser);
+    load.registerParser("timeline", "*", parser);
 
 })(ccs._load, ccs._parser);

@@ -1,3 +1,27 @@
+/****************************************************************************
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
+
+ http://www.cocos2d-x.org
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ ****************************************************************************/
+
 (function(load, baseParser){
 
     var Parser = baseParser.extend({
@@ -340,26 +364,10 @@
      * ImageView parser (UIImageView)
      */
     parser.ImageViewAttributes = function(widget, options, resourcePath){
-        var imageFileName,
-            imageFileNameDic = options["fileNameData"],
-            imageFileNameType = imageFileNameDic["resourceType"];
-        switch (imageFileNameType){
-            case 0:
-                var tp_i = resourcePath;
-                imageFileName = imageFileNameDic["path"];
-                var imageFileName_tp = null;
-                if (imageFileName && imageFileName !== "") {
-                    imageFileName_tp = tp_i + imageFileName;
-                    widget.loadTexture(imageFileName_tp);
-                }
-                break;
-            case 1:
-                imageFileName = imageFileNameDic["path"];
-                widget.loadTexture(imageFileName, 1/*ui.UI_TEX_TYPE_PLIST*/);
-                break;
-            default:
-                break;
-        }
+        var imageFileNameDic = options["fileNameData"]
+        getPath(resourcePath, imageFileNameDic["resourceType"], imageFileNameDic["path"], function(path, type){
+            widget.loadTexture(path, type);
+        });
 
         var scale9EnableExist = options["scale9Enable"];
         var scale9Enable = false;
@@ -657,7 +665,6 @@
         });
     });
 
-    load.registerParser("ccui", "1.*", parser);
-
+    load.registerParser("ccui", "*", parser);
 
 })(ccs._load, ccs._parser);
