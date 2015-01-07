@@ -70,14 +70,23 @@
         ccs.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd, recursive);
 
         var locChildren = this._node._children;
-        window.allBones = locChildren;
         for (var i = 0, len = locChildren.length; i< len; i++) {
             var selBone = locChildren[i];
-
             if (selBone && selBone.getDisplayRenderNode) {
                 var selNode = selBone.getDisplayRenderNode();
                 if (selNode && selNode._renderCmd){
-                    selNode._renderCmd.transform(null);   //must be null, use transform in armature mode
+                    var cmd = selNode._renderCmd;
+                    cmd.transform(null);   //must be null, use transform in armature mode
+
+                    //update displayNode's color and opacity, because skin didn't call visit()
+                    var parentColor = selBone._renderCmd._displayedColor, parentOpacity = selBone._renderCmd._displayedOpacity;
+                    var flags = cc.Node._dirtyFlags, locFlag = cmd._dirtyFlag;
+                    var colorDirty = locFlag & flags.colorDirty,
+                        opacityDirty = locFlag & flags.opacityDirty;
+                    if(colorDirty)
+                        cmd._updateDisplayColor(parentColor);
+                    if(opacityDirty)
+                        cmd._updateDisplayOpacity(parentOpacity);
                 }
             }
         }
