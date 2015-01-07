@@ -48,7 +48,7 @@ ccs._load = (function(){
                 parse = parser["timeline"];
             else if(json["Content"] && json["Content"]["Content"])
                 parse = parser["timeline"];
-            else if(json["gameobjects"] && json["Triggers"])
+            else if(json["gameobjects"])
                 parse = parser["scene"];
         }else{
             parse = parser[type];
