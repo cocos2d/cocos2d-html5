@@ -103,6 +103,46 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     _flippedY: false,
 
     /**
+     * Constructor function. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+     * @function
+     * @param {string|cc.SpriteFrame} file file name of texture or a SpriteFrame
+     * @param {cc.Rect} rect
+     * @param {cc.Rect} capInsets
+     * @returns {Scale9Sprite}
+     */
+    ctor: function (file, rect, capInsets) {
+        cc.Node.prototype.ctor.call(this);
+        this._spriteRect = cc.rect(0, 0, 0, 0);
+        this._capInsetsInternal = cc.rect(0, 0, 0, 0);
+
+        this._originalSize = cc.size(0, 0);
+        this._preferredSize = cc.size(0, 0);
+        this._capInsets = cc.rect(0, 0, 0, 0);
+
+        this._topLeftSize = new cc.Size(0,0);
+        this._centerSize = new cc.Size(0,0);
+        this._bottomRightSize = new cc.Size(0,0);
+        this._centerOffset = new cc.Point(0,0);
+
+        this._offset = new cc.Point(0,0);
+        this._protectedChildren = [];
+
+        if(file != undefined){
+            if(file instanceof cc.SpriteFrame)
+                this.initWithSpriteFrame(file, rect);
+            else{
+                var frame = cc.spriteFrameCache.getSpriteFrame(file);
+                if(frame != null)
+                    this.initWithSpriteFrame(frame, rect);
+                else
+                    this.initWithFile(file, rect, capInsets);
+            }
+        }else{
+            this.init();
+        }
+    },
+
+    /**
      * return  texture is loaded
      * @returns {boolean}
      */
@@ -209,38 +249,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
 
         // Position centre
         locCenter.setPosition(leftWidth, bottomHeight);
-    },
-
-    /**
-     * Constructor function. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
-     * @function
-     * @param {string|cc.SpriteFrame} file file name of texture or a SpriteFrame
-     * @param {cc.Rect} rect
-     * @param {cc.Rect} capInsets
-     * @returns {Scale9Sprite}
-     */
-    ctor: function (file, rect, capInsets) {
-        cc.Node.prototype.ctor.call(this);
-        this._spriteRect = cc.rect(0, 0, 0, 0);
-        this._capInsetsInternal = cc.rect(0, 0, 0, 0);
-
-        this._originalSize = cc.size(0, 0);
-        this._preferredSize = cc.size(0, 0);
-        this._capInsets = cc.rect(0, 0, 0, 0);
-
-        if(file != undefined){
-            if(file instanceof cc.SpriteFrame)
-                this.initWithSpriteFrame(file, rect);
-            else{
-                var frame = cc.spriteFrameCache.getSpriteFrame(file);
-                if(frame != null)
-                    this.initWithSpriteFrame(frame, rect);
-                else
-                    this.initWithFile(file, rect, capInsets);
-            }
-        }else{
-            this.init();
-        }
     },
 
     getSprite: function () {
@@ -418,7 +426,7 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
      * @returns {boolean}
      */
     init: function () {
-        return this.initWithBatchNode(null, cc.rect(0, 0, 0, 0), false, cc.rect(0, 0, 0, 0));
+        return this.initWithBatchNode(null, cc.rect(0, 0, 0, 0), false, cc.rect(0, 0, 0, 0));      //TODO
     },
 
     /**
@@ -429,7 +437,7 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
      * @param {cc.Rect} [capInsets]
      * @returns {boolean}
      */
-    initWithBatchNode: function (batchNode, rect, rotated, capInsets) {
+    initWithBatchNode: function (batchNode, rect, rotated, capInsets) {               //TODO
         if (capInsets === undefined) {
             capInsets = rotated;
             rotated = false;
@@ -642,7 +650,7 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         }
 
         // Set the given rect's size as original size
-        this._spriteRect = rect;
+        //this._spriteRect = rect;
         var locSpriteRect = this._spriteRect;
         locSpriteRect.x = rect.x;
         locSpriteRect.y = rect.y;
@@ -931,9 +939,98 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     },
 
     //todo: v3.3
-    updateWithSprite: function(sprite, rect, rotated, offset, orginalSize, capInsets){
+    updateWithSprite: function(sprite, rect, rotated, offset, originalSize, capInsets){
         //virtual bool updateWithSprite(Sprite* sprite, const Rect& rect, bool rotated, const Rect& capInsets);
         //virtual bool updateWithSprite(Sprite* sprite, const Rect& rect, bool rotated, const Vec2 &offset, const Size &originalSize, const Rect& capInsets);
+        if(originalSize === undefined){
+            capInsets = offset;
+            offset = new cc.Point(0,0);
+            originalSize = new cc.Size(rect.width, rect.height);
+        }
+
+        var opacity = this.getOpacity();
+        var color = this.getColor();
+
+        // Release old sprites
+        this._cleanupSlicedSprites();
+        this._protectedChildren.length = 0;
+
+        if(this._scale9Image != sprite)
+            this._scale9Image = sprite;
+        if (!this._scale9Image)
+            return false;
+
+/*        var tmpTexture = batchNode.getTexture();
+        var locLoaded = tmpTexture.isLoaded();
+        this._textureLoaded = locLoaded;
+        if(!locLoaded){
+            tmpTexture.addEventListener("load", function(sender){
+                this._positionsAreDirty = true;
+                this.dispatchEvent("load");
+            },this);
+            return true;
+        }*/
+
+        var locScale9Image = this._scale9Image;
+        var spriteFrame = locScale9Image.getSpriteFrame();
+        if (!spriteFrame)
+            return false;
+
+        var locCapInsets = this._capInsets;
+        if(capInsets) {
+            locCapInsets.x = capInsets.x;
+            locCapInsets.y = capInsets.y;
+            locCapInsets.width = capInsets.width;
+            locCapInsets.height = capInsets.height;
+        }
+        this._spriteFrameRotated = rotated;
+
+        // If there is no given rect
+        if (cc._rectEqualToZero(rect)) {
+            // Get the texture size as original
+            var textureSize = locScale9Image.getTexture().getContentSize();
+            rect = cc.rect(0, 0, textureSize.width, textureSize.height);
+        }
+        if(originalSize.width === 0 && originalSize.height === 0){
+            originalSize.width = rect.width;
+            originalSize.height = rect.height;
+        }
+
+        // Set the given rect's size as original size
+        var locSpriteRect = this._spriteRect;
+        locSpriteRect.x = rect.x;
+        locSpriteRect.y = rect.y;
+        locSpriteRect.width = rect.width;
+        locSpriteRect.height = rect.height;
+
+        this._offset.x = offset.x;
+        this._offset.y = offset.y;
+
+        this._originalSize.width = originalSize.width;
+        this._originalSize.height = originalSize.height;
+
+        this._preferredSize.width = originalSize.width;
+        this._preferredSize.height = originalSize.height;
+
+        var locCapInsetsInternal = this._capInsetsInternal;
+        if(capInsets){
+            locCapInsetsInternal.x = capInsets.x;
+            locCapInsetsInternal.y = capInsets.y;
+            locCapInsetsInternal.width = capInsets.width;
+            locCapInsetsInternal.height = capInsets.height;
+        }
+
+        if (this._scale9Enabled)
+            this._createSlicedSprites();
+        this.setContentSize(originalSize);
+
+        if (this._spritesGenerated){
+            // Restore color and opacity
+            this.setOpacity(opacity);
+            this.setColor(color);
+        }
+        this._spritesGenerated = true;
+        return true;
     },
 
     //virtual void setAnchorPoint(const Vec2& anchorPoint) override;
@@ -1006,7 +1103,263 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
 
     getScale: function(){},
 
-    _createSlicedSprites: function(){},
+    _intersectRect:function(first, second){
+        var ret = cc.rect(Math.max(first.x,second.x), Math.max(first.y,second.y), 0,0);
+        var rightRealPoint = Math.min(first.x + first.width, second.x + second.width);
+        var bottomRealPoint = Math.min(first.y + first.height, second.y + second.height);
+        ret.width = Math.max(rightRealPoint - ret.x, 0.0);
+        ret.height = Math.max(bottomRealPoint - ret.y, 0.0);
+        return ret;
+    },
+
+    _createSlicedSprites: function(){
+        var w = this._originalSize.width;
+        var h = this._originalSize.height;
+
+        var offsetPosition = new cc.Point(
+            Math.ceil(this._offset.x + (this._originalSize.width - this._spriteRect.size.width) / 2),
+            Math.ceil(this._offset.y + (this._originalSize.height - this._spriteRect.size.height) / 2));
+
+        var locCapInsetsInternal = this._capInsetsInternal;
+        // If there is no specified center region
+        if ( cc._rectEqualToZero(locCapInsetsInternal)){
+            // cc.log("... cap insets not specified : using default cap insets ...");
+            locCapInsetsInternal.x = w / 3;
+            locCapInsetsInternal.y = h / 3;
+            locCapInsetsInternal.width = w / 3;
+            locCapInsetsInternal.height = h / 3;
+        }
+
+        var originalRect;
+        if(this._spriteFrameRotated)
+            originalRect = cc.rect(this._spriteRect.x - offsetPosition.y, this._spriteRect.y - offsetPosition.x, this._originalSize.width, this._originalSize.height);
+        else
+            originalRect = cc.rect(this._spriteRect.x - offsetPosition.x, this._spriteRect.y - offsetPosition.y, this._originalSize.width, this._originalSize.height);
+
+        var left_w = locCapInsetsInternal.x;
+        var center_w = locCapInsetsInternal.width;
+        var right_w = locCapInsetsInternal.width - (left_w + center_w);
+
+        var top_h = locCapInsetsInternal.y;
+        var center_h = locCapInsetsInternal.height;
+        var bottom_h = originalRect.height - (top_h + center_h);
+
+        // calculate rects
+        // ... top row
+        var x = 0.0;
+        var y = 0.0;
+
+        var pixelRect = cc.rect(offsetPosition.x, offsetPosition.y, this._spriteRect.width, this._spriteRect.height);
+
+        // top left
+        var lefttopboundsorig = cc.rect(x + 0.5 | 0, y + 0.5 | 0, left_w + 0.5 | 0, top_h + 0.5 | 0);
+        var lefttopbounds = lefttopboundsorig;
+
+        // top center
+        x += left_w;
+        var centertopbounds = cc.rect(x + 0.5 | 0, y + 0.5 | 0, center_w + 0.5 | 0, top_h + 0.5 | 0);
+
+        // top right
+        x += center_w;
+        var righttopbounds = cc.rect(x + 0.5 | 0, y + 0.5 | 0, right_w + 0.5 | 0, top_h + 0.5 | 0);
+
+        // ... center row
+        x = 0.0;
+        y = 0.0;
+        y += top_h;
+
+        // center left
+        var leftcenterbounds = cc.rect(x + 0.5 | 0, y + 0.5 | 0, left_w + 0.5 | 0, center_h + 0.5 | 0);
+
+        // center center
+        x += left_w;
+        var centerboundsorig = cc.rect(x + 0.5 | 0, y + 0.5 | 0, center_w + 0.5 | 0, center_h + 0.5 | 0);
+        var centerbounds = centerboundsorig;
+
+        // center right
+        x += center_w;
+        var rightcenterbounds = cc.rect(x + 0.5 | 0, y + 0.5 | 0, right_w + 0.5 | 0, center_h + 0.5 | 0);
+
+        // ... bottom row
+        x = 0.0;
+        y = 0.0;
+        y += top_h;
+        y += center_h;
+
+        // bottom left
+        var leftbottombounds = cc.rect(x + 0.5 | 0, y + 0.5 | 0, left_w + 0.5 | 0, bottom_h + 0.5 | 0);
+
+        // bottom center
+        x += left_w;
+        var centerbottombounds = cc.rect(x + 0.5 | 0, y + 0.5 | 0, center_w + 0.5 | 0, bottom_h + 0.5 | 0);
+
+        // bottom right
+        x += center_w;
+        var rightbottomboundsorig = cc.rect(x + 0.5 | 0, y + 0.5 | 0, right_w + 0.5 | 0, bottom_h + 0.5 | 0);
+        var rightbottombounds = rightbottomboundsorig;
+
+        if((locCapInsetsInternal.x + locCapInsetsInternal.width) <= this._originalSize.width
+            || (locCapInsetsInternal.y + locCapInsetsInternal.height) <= this._originalSize.height) {
+            //in general case it is error but for legacy support we will check it
+            lefttopbounds = this._intersectRect(lefttopbounds, pixelRect);
+            centertopbounds = this._intersectRect(centertopbounds, pixelRect);
+            righttopbounds = this._intersectRect(righttopbounds, pixelRect);
+            leftcenterbounds = this._intersectRect(leftcenterbounds, pixelRect);
+            centerbounds = this._intersectRect(centerbounds, pixelRect);
+            rightcenterbounds = this._intersectRect(rightcenterbounds, pixelRect);
+            leftbottombounds = this._intersectRect(leftbottombounds, pixelRect);
+            centerbottombounds = this._intersectRect(centerbottombounds, pixelRect);
+            rightbottombounds = this._intersectRect(rightbottombounds, pixelRect);
+        } else
+            cc.log("Scale9Sprite capInsetsInternal > originalSize");                  //it is error but for legacy turn off clip system
+
+        var rotatedlefttopboundsorig = lefttopboundsorig;
+        var rotatedcenterboundsorig = centerboundsorig;
+        var rotatedrightbottomboundsorig = rightbottomboundsorig;
+
+        var rotatedcenterbounds = centerbounds;
+        var rotatedrightbottombounds = rightbottombounds;
+        var rotatedleftbottombounds = leftbottombounds;
+        var rotatedrighttopbounds = righttopbounds;
+        var rotatedlefttopbounds = lefttopbounds;
+        var rotatedrightcenterbounds = rightcenterbounds;
+        var rotatedleftcenterbounds = leftcenterbounds;
+        var rotatedcenterbottombounds = centerbottombounds;
+        var rotatedcentertopbounds = centertopbounds;
+
+        var t = cc.affineTransformMakeIdentity();
+        if (!this._spriteFrameRotated) {
+            //TODO
+            t = cc.affineTransformTranslate(t, originalRect.x, originalRect.y);
+
+            rotatedlefttopboundsorig = RectApplyAffineTransform(rotatedlefttopboundsorig, t);
+            rotatedcenterboundsorig = RectApplyAffineTransform(rotatedcenterboundsorig, t);
+            rotatedrightbottomboundsorig = RectApplyAffineTransform(rotatedrightbottomboundsorig, t);
+
+            rotatedcenterbounds = RectApplyAffineTransform(rotatedcenterbounds, t);
+            rotatedrightbottombounds = RectApplyAffineTransform(rotatedrightbottombounds, t);
+            rotatedleftbottombounds = RectApplyAffineTransform(rotatedleftbottombounds, t);
+            rotatedrighttopbounds = RectApplyAffineTransform(rotatedrighttopbounds, t);
+            rotatedlefttopbounds = RectApplyAffineTransform(rotatedlefttopbounds, t);
+            rotatedrightcenterbounds = RectApplyAffineTransform(rotatedrightcenterbounds, t);
+            rotatedleftcenterbounds = RectApplyAffineTransform(rotatedleftcenterbounds, t);
+            rotatedcenterbottombounds = RectApplyAffineTransform(rotatedcenterbottombounds, t);
+            rotatedcentertopbounds = RectApplyAffineTransform(rotatedcentertopbounds, t);
+        } else {
+            // set up transformation of coordinates
+            // to handle the case where the sprite is stored rotated
+            // in the spritesheet
+            // log("rotated");
+            t = cc.affineTransformTranslate(t, originalRect.height+originalRect.x, originalRect.y);
+            t = cc.affineTransformRotate(t, 1.57079633);
+
+            lefttopboundsorig = RectApplyAffineTransform(lefttopboundsorig, t);
+            centerboundsorig = RectApplyAffineTransform(centerboundsorig, t);
+            rightbottomboundsorig = RectApplyAffineTransform(rightbottomboundsorig, t);
+
+            centerbounds = RectApplyAffineTransform(centerbounds, t);
+            rightbottombounds = RectApplyAffineTransform(rightbottombounds, t);
+            leftbottombounds = RectApplyAffineTransform(leftbottombounds, t);
+            righttopbounds = RectApplyAffineTransform(righttopbounds, t);
+            lefttopbounds = RectApplyAffineTransform(lefttopbounds, t);
+            rightcenterbounds = RectApplyAffineTransform(rightcenterbounds, t);
+            leftcenterbounds = RectApplyAffineTransform(leftcenterbounds, t);
+            centerbottombounds = RectApplyAffineTransform(centerbottombounds, t);
+            centertopbounds = RectApplyAffineTransform(centertopbounds, t);
+
+            rotatedlefttopboundsorig.origin = lefttopboundsorig.origin;
+            rotatedcenterboundsorig.origin = centerboundsorig.origin;
+            rotatedrightbottomboundsorig.origin = rightbottomboundsorig.origin;
+
+            rotatedcenterbounds.origin = centerbounds.origin;
+            rotatedrightbottombounds.origin = rightbottombounds.origin;
+            rotatedleftbottombounds.origin = leftbottombounds.origin;
+            rotatedrighttopbounds.origin = righttopbounds.origin;
+            rotatedlefttopbounds.origin = lefttopbounds.origin;
+            rotatedrightcenterbounds.origin = rightcenterbounds.origin;
+            rotatedleftcenterbounds.origin = leftcenterbounds.origin;
+            rotatedcenterbottombounds.origin = centerbottombounds.origin;
+            rotatedcentertopbounds.origin = centertopbounds.origin;
+        }
+
+        this._topLeftSize.width = rotatedlefttopboundsorig.width;
+        this._topLeftSize.height = rotatedlefttopboundsorig.height;
+        this._centerSize.width = rotatedcenterboundsorig.width;
+        this._centerSize.height = rotatedcenterboundsorig.height;
+        this._bottomRightSize.width = rotatedrightbottomboundsorig.width;
+        this._bottomRightSize.height = rotatedrightbottomboundsorig.height;
+
+        if(this._spriteFrameRotated){
+            this._centerOffset.x = -(rotatedcenterboundsorig.y + rotatedcenterboundsorig.width/2)- (rotatedcenterbounds.y + rotatedcenterbounds.width/2);
+            this._centerOffset.y = (rotatedcenterbounds.x + rotatedcenterbounds.height/2) - (rotatedcenterboundsorig.x + rotatedcenterboundsorig.height/2);
+        } else {
+            this._centerOffset.x = (rotatedcenterbounds.x + rotatedcenterbounds.width/2) - (rotatedcenterboundsorig.x + rotatedcenterboundsorig.width/2);
+            this._centerOffset.y = (rotatedcenterboundsorig.y + rotatedcenterboundsorig.height/2)- (rotatedcenterbounds.y + rotatedcenterbounds.height/2);
+        }
+
+        // Centre
+        if(rotatedcenterbounds.width > 0 && rotatedcenterbounds.height > 0 ) {
+            this._centre = new cc.Sprite();
+            this._centre.initWithTexture(this._scale9Image.getTexture(), rotatedcenterbounds, this._spriteFrameRotated);
+            this.addProtectedChild(this._centre);
+        }
+
+        // Top
+        if(rotatedcentertopbounds.width > 0 && rotatedcentertopbounds.height > 0 ) {
+            this._top = new cc.Sprite();
+            this._top.initWithTexture(this._scale9Image.getTexture(), rotatedcentertopbounds, this._spriteFrameRotated);
+            this.addProtectedChild(this._top);
+        }
+
+        // Bottom
+        if(rotatedcenterbottombounds.width > 0 && rotatedcenterbottombounds.height > 0 ) {
+            this._bottom = new cc.Sprite();
+            this._bottom.initWithTexture(this._scale9Image.getTexture(), rotatedcenterbottombounds, this._spriteFrameRotated);
+            this.addProtectedChild(this._bottom);
+        }
+
+        // Left
+        if(rotatedleftcenterbounds.width > 0 && rotatedleftcenterbounds.height > 0 ) {
+            this._left = new cc.Sprite();
+            this._left.initWithTexture(this._scale9Image.getTexture(), rotatedleftcenterbounds, this._spriteFrameRotated);
+            this.addProtectedChild(this._left);
+        }
+
+        // Right
+        if(rotatedrightcenterbounds.width > 0 && rotatedrightcenterbounds.height > 0 ) {
+            this._right = new cc.Sprite();
+            this._right.initWithTexture(this._scale9Image.getTexture(), rotatedrightcenterbounds, this._spriteFrameRotated);
+            this.addProtectedChild(this._right);
+        }
+
+        // Top left
+        if(rotatedlefttopbounds.width > 0 && rotatedlefttopbounds.height > 0 ) {
+            this._topLeft = new cc.Sprite();
+            this._topLeft.initWithTexture(this._scale9Image.getTexture(), rotatedlefttopbounds, this._spriteFrameRotated);
+            this.addProtectedChild(this._topLeft);
+        }
+
+        // Top right
+        if(rotatedrighttopbounds.width > 0 && rotatedrighttopbounds.height > 0 ) {
+            this._topRight = new cc.Sprite();
+            this._topRight.initWithTexture(this._scale9Image.getTexture(), rotatedrighttopbounds, this._spriteFrameRotated);
+            this.addProtectedChild(this._topRight);
+        }
+
+        // Bottom left
+        if(rotatedleftbottombounds.width > 0 && rotatedleftbottombounds.height > 0 ) {
+            this._bottomLeft = new cc.Sprite();
+            this._bottomLeft.initWithTexture(this._scale9Image.getTexture(), rotatedleftbottombounds, this._spriteFrameRotated);
+            this.addProtectedChild(this._bottomLeft);
+        }
+
+        // Bottom right
+        if(rotatedrightbottombounds.width > 0 && rotatedrightbottombounds.height > 0 ) {
+            this._bottomRight = new cc.Sprite();
+            this._bottomRight.initWithTexture(this._scale9Image.getTexture(), rotatedrightbottombounds, this._spriteFrameRotated);
+            this.addProtectedChild(this._bottomRight);
+        }
+    },
 
     _cleanupSlicedSprites: function(){
         if (this._topLeft && this._topLeft.isRunning())
