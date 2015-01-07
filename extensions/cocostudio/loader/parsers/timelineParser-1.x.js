@@ -225,7 +225,7 @@
         }
         return tmx;
     };
-    var uiParser = load.getParser("ccui")["1.*"];
+    var uiParser = load.getParser("ccui")["*"];
     parser.initWidget = function(options, resourcePath){
         var type = options["classname"];
 
