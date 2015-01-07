@@ -50,15 +50,13 @@
             var selBone = locChildren[i];
             if (selBone && selBone.getDisplayRenderNode) {
                 var selNode = selBone.getDisplayRenderNode();
-
                 if (null == selNode)
                     continue;
-
                 selNode.setShaderProgram(this._shaderProgram);
-
                 switch (selBone.getDisplayRenderNodeType()) {
                     case ccs.DISPLAY_TYPE_SPRITE:
                         if (selNode instanceof ccs.Skin) {
+                            this._updateColorAndOpacity(selNode._renderCmd);   //because skin didn't call visit()
                             selNode.updateTransform();
 
                             var func = selBone.getBlendFunc();
@@ -98,6 +96,19 @@
 
     proto.setShaderProgram = function(shaderProgram){
         this._shaderProgram = shaderProgram;
+    };
+
+    proto._updateColorAndOpacity = function(skinRenderCmd){
+        //update displayNode's color and opacity
+        var flags = cc.Node._dirtyFlags, locFlag = skinRenderCmd._dirtyFlag;
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
+        if(colorDirty)
+            skinRenderCmd._updateDisplayColor();
+        if(opacityDirty)
+            skinRenderCmd._updateDisplayOpacity();
+        if(colorDirty || opacityDirty)
+            skinRenderCmd._updateColor();
     };
 
     proto.updateChildPosition = function(ctx, dis, selBone, alphaPremultiplied, alphaNonPremultipled){
