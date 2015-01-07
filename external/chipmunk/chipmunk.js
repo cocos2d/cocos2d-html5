@@ -1575,6 +1575,7 @@ var createStaticBody = function()
 
 	return body;
 };
+    cp.StaticBody = createStaticBody;
 
 if (typeof DEBUG !== 'undefined' && DEBUG) {
 	var v_assert_nan = function(v, message){assert(v.x == v.x && v.y == v.y, message); };

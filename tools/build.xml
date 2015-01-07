@@ -74,8 +74,8 @@
                 <file name="cocos2d/core/sprites/CCSpriteBatchNodeCanvasRenderCmd.js"/>
                 <file name="cocos2d/core/sprites/CCSpriteBatchNodeWebGLRenderCmd.js"/>
                 <file name="cocos2d/core/CCConfiguration.js"/>
-                <file name="cocos2d/core/CCDirectorWebGL.js"/>
                 <file name="cocos2d/core/CCDirector.js"/>
+                <file name="cocos2d/core/CCDirectorWebGL.js"/>
                 <file name="cocos2d/core/CCCamera.js"/>
                 <file name="cocos2d/core/CCScheduler.js"/>
                 <file name="cocos2d/core/CCDrawingPrimitivesCanvas.js"/>
