@@ -33,6 +33,10 @@
         this._colorUnmodified = cc.color.WHITE;
         this._colorF32Array = null;
         this._uniformColor = null;
+
+        //shader stuff
+        this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR);
+        this._uniformColor = cc._renderContext.getUniformLocation(this._shaderProgram.getProgram(), "u_color");
     };
 
     var proto = cc.AtlasNode.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
@@ -88,9 +92,6 @@
         this._calculateMaxItems();
         node.quadsToDraw = itemsToRender;
 
-        //shader stuff
-        this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR);
-        this._uniformColor = cc._renderContext.getUniformLocation(node.shaderProgram.getProgram(), "u_color");
         return true;
     };
 
