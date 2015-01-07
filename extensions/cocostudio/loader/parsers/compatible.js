@@ -25,6 +25,7 @@
 
 /*
  This file is for compatibility compatibility with older versions of GUIReader and SceneReader
+ todo: deprecated all
  */
 
 (function(){
