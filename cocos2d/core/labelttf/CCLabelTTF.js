@@ -164,6 +164,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         this._lineWidths = [];
         this._renderCmd._setColorsString();
+        this._textureLoaded = true;
 
         if (fontName && fontName instanceof cc.FontDefinition) {
             this.initWithStringAndTextDefinition(text, fontName);
