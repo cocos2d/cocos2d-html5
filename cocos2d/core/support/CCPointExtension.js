@@ -204,7 +204,8 @@ cc.pDistance = function (v1, v2) {
  * @return {cc.Point}
  */
 cc.pNormalize = function (v) {
-    return cc.pMult(v, 1.0 / cc.pLength(v));
+    var n = cc.pLength(v);
+    return n === 0 ? cc.p(v) : cc.pMult(v, 1.0 / n);
 };
 
 /**
