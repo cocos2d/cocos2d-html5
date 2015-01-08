@@ -168,6 +168,7 @@ ccs._parser = cc.Class.extend({
  *   ui 1.*
  *   node 1.* - 2.*
  *   action 1.* - 2.*
+ *   scene 0.* - 1.*
  * @param {String} file
  * @returns {{node: cc.Node, action: cc.Action}}
  */
@@ -176,13 +177,9 @@ ccs.load = function(file){
         node: null,
         action: null
     };
-    try{
-        object.node = ccs._load(file);
-        object.action = ccs._load(file, "action");
-    }catch(error){
-        cc.log("ccs.load has encountered some problems");
-        cc.log(error);
-    }
+
+    object.node = ccs._load(file);
+    object.action = ccs._load(file, "action");
     return object;
 };
 
