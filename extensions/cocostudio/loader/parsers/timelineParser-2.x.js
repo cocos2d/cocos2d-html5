@@ -1058,6 +1058,15 @@
         }
     };
 
+    var getFileName = function(name){
+        if(!name) return "";
+        var arr = name.match(/([^\/]+)\.[^\/]+$/);
+        if(arr && arr[1])
+            return arr[1];
+        else
+            return "";
+    };
+
     /**
      * Armature
      * @param json
@@ -1067,16 +1076,32 @@
 
         var node = new ccs.Armature();
 
-        var isLoop = json["isLoop"];
+        var isLoop = json["IsLoop"];
 
         var isAutoPlay = json["IsAutoPlay"];
 
         var currentAnimationName = json["CurrentAnimationName"];
 
         loadTexture(json["FileData"], resourcePath, function(path, type){
-            ccs.ArmatureDataManager.addArmatureFileInfo(path);
+            var plists, pngs;
+            var armJson = cc.loader.getRes(path);
+            if(!armJson)
+                cc.log("%s need to pre load", path);
+            else{
+                plists = armJson["config_file_path"];
+                pngs = armJson["config_png_path"];
+                plists.forEach(function(plist, index){
+                    if(pngs[index])
+                        cc.spriteFrameCache.addSpriteFrame(plist, pngs[index]);
+                });
+            }
+            ccs.armatureDataManager.addArmatureFileInfo(path);
+            node.init(getFileName(path));
+            if(isAutoPlay)
+                node.getAnimation().play(currentAnimationName, -1, isLoop);
+
         });
-        node.init();
+        return node;
     };
 
     var loadedPlist = {};

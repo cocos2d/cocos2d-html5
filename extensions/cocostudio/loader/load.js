@@ -181,6 +181,7 @@ ccs.load = function(file){
         object.action = ccs._load(file, "action");
     }catch(error){
         cc.log("ccs.load has encountered some problems");
+        cc.log(error);
     }
     return object;
 };
