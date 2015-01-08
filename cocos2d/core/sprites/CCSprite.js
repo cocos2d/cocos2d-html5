@@ -843,13 +843,15 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                     _t.texture = locNewTexture;
                 _t.setTextureRect(sender.getRect(), sender.isRotated(), sender.getOriginalSize());
                 _t.dispatchEvent("load");
+                _t.setColor(_t.color);
             }, _t);
-        }
-        // update texture before updating texture rect
-        if (pNewTexture != _t._texture)
-            _t.texture = pNewTexture;
+        }else{
+            // update texture before updating texture rect
+            if (pNewTexture != _t._texture)
+                _t.texture = pNewTexture;
 
-        _t.setTextureRect(newFrame.getRect(), _t._rectRotated, newFrame.getOriginalSize());
+            _t.setTextureRect(newFrame.getRect(), _t._rectRotated, newFrame.getOriginalSize());
+        }
 
         this._renderCmd._updateForSetSpriteFrame(pNewTexture);
     },
