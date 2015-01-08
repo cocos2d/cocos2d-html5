@@ -91,6 +91,10 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     _textureLoaded:false,
     _className:"Scale9Sprite",
 
+    //v3.3
+    _flippedX: false,
+    _flippedY: false,
+
     /**
      * return  texture is loaded
      * @returns {boolean}
@@ -916,6 +920,105 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         this._insetTop = 0;
         this._insetRight = 0;
         this._insetBottom = 0;
+    },
+
+    //v3.3
+    setState: function(state){
+        //
+    },
+
+    //setScale9Enabled implement late
+
+    /**
+     * Sets whether the widget should be flipped horizontally or not.
+     * @since v3.3
+     * @param flippedX true if the widget should be flipped horizontally, false otherwise.
+     */
+    setFlippedX: function(flippedX){
+        var realScale = this.getScaleX();
+        this._flippedX = flippedX;
+        this.setScaleX(realScale);
+    },
+
+    /**
+     * <p>
+     * Returns the flag which indicates whether the widget is flipped horizontally or not.                         <br/>
+     *                                                                                                             <br/>
+     * It only flips the texture of the widget, and not the texture of the widget's children.                      <br/>
+     * Also, flipping the texture doesn't alter the anchorPoint.                                                   <br/>
+     * If you want to flip the anchorPoint too, and/or to flip the children too use:                               <br/>
+     * widget->setScaleX(sprite->getScaleX() * -1);                                                                <br/>
+     * </p>
+     * @since v3.3
+     * @return {Boolean} true if the widget is flipped horizontally, false otherwise.
+     */
+    isFlippedX: function(){
+        return this._flippedX;
+    },
+
+    /**
+     * Sets whether the widget should be flipped vertically or not.
+     * @since v3.3
+     * @param flippedY true if the widget should be flipped vertically, false otherwise.
+     */
+    setFlippedY:function(flippedY){
+        var realScale = this.getScaleY();
+        this._flippedY = flippedY;
+        this.setScaleY(realScale);
+    },
+
+    /**
+     * <p>
+     * Return the flag which indicates whether the widget is flipped vertically or not.                             <br/>
+     *                                                                                                              <br/>
+     * It only flips the texture of the widget, and not the texture of the widget's children.                       <br/>
+     * Also, flipping the texture doesn't alter the anchorPoint.                                                    <br/>
+     * If you want to flip the anchorPoint too, and/or to flip the children too use:                                <br/>
+     * widget->setScaleY(widget->getScaleY() * -1);                                                                 <br/>
+     * </p>
+     * @since v3.3
+     * @return {Boolean} true if the widget is flipped vertically, false otherwise.
+     */
+    isFlippedY:function(){
+        return this._flippedY;
+    },
+
+    setScaleX: function (scaleX) {
+        if (this._flippedX)
+            scaleX = scaleX * -1;
+        cc.Node.prototype.setScaleX.call(this, scaleX);
+    },
+
+    setScaleY: function (scaleY) {
+        if (this._flippedY)
+            scaleY = scaleY * -1;
+        cc.Node.prototype.setScaleY.call(this, scaleY);
+    },
+
+    setScale: function (scaleX, scaleY) {
+        if(scaleY === undefined)
+            scaleY = scaleX;
+        this.setScaleX(scaleX);
+        this.setScaleY(scaleY);
+    },
+
+    getScaleX: function () {
+        var originalScale = cc.Node.prototype.getScaleX.call(this);
+        if (this._flippedX)
+            originalScale = originalScale * -1.0;
+        return originalScale;
+    },
+
+    getScaleY: function () {
+        var originalScale = cc.Node.prototype.getScaleY.call(this);
+        if (this._flippedY)
+            originalScale = originalScale * -1.0;
+        return originalScale;
+    },
+
+    getScale: function () {
+        cc.log(this.getScaleX() == this.getScaleY(), "Scale9Sprite#scale. ScaleX != ScaleY. Don't know which one to return");
+        return this.getScaleX();
     },
 
     _createRenderCmd: function(){

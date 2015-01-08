@@ -278,7 +278,7 @@
 
     proto._updateDisplayColor = function (parentColor) {
         cc.Node.CanvasRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
-        this._updateColor();
+        //this._updateColor();
     };
 
     proto._spriteFrameLoadedCallback = function (spriteFrame) {
