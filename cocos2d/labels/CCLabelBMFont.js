@@ -548,7 +548,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var oldArrLength = 0;
             for (i = 0; i < stringArr.length; i++) {
                 oldArrLength = stringArr.length;
-                this._checkWarp(stringArr, i, self._width, newWrapNum);
+                this._checkWarp(stringArr, i, self._width * this._scaleX, newWrapNum);
                 if (oldArrLength < stringArr.length)
                 {
                     newWrapNum++;
