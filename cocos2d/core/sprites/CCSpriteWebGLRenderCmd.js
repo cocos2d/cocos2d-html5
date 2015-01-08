@@ -297,6 +297,7 @@
             this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_COLOR);
 
         if (!node._batchNode && node._texture != texture) {
+            node._textureLoaded = texture._textureLoaded;
             node._texture = texture;
             this._updateBlendFunc();
         }

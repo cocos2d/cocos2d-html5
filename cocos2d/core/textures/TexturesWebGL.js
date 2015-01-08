@@ -421,6 +421,7 @@ cc._tmp.WebGLTexture2D = function () {
                 return;
             this._webTextureObj = cc._renderContext.createTexture();
             this._htmlElementObj = element;
+            this._textureLoaded = true;
         },
 
         /**
@@ -454,7 +455,7 @@ cc._tmp.WebGLTexture2D = function () {
             }
             if (!self._htmlElementObj.width || !self._htmlElementObj.height)
                 return;
-            self._textureLoaded = true;
+
             //upload image to buffer
             var gl = cc._renderContext;
 
