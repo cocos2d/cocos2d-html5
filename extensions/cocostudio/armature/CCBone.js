@@ -239,37 +239,17 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
 
     /**
      * Updates display color
-     * @override
-     * @param {cc.Color} color
-     */
-    updateDisplayedColor: function (color) {
-        this._realColor = cc.color(255, 255, 255);
-        cc.Node.prototype.updateDisplayedColor.call(this, color);
-        this.updateColor();
-    },
-
-    /**
-     * Updates display opacity
-     * @param {Number} opacity
-     */
-    updateDisplayedOpacity: function (opacity) {
-        this._realOpacity = 255;
-        cc.Node.prototype.updateDisplayedOpacity.call(this, opacity);
-        this.updateColor();
-    },
-
-    /**
-     * Updates display color
      */
     updateColor: function () {
         var display = this._displayManager.getDisplayRenderNode();
         if (display != null) {
+            var cmd = this._renderCmd;
             display.setColor(
                 cc.color(
-                        this._displayedColor.r * this._tweenData.r / 255,
-                        this._displayedColor.g * this._tweenData.g / 255,
-                        this._displayedColor.b * this._tweenData.b / 255));
-            display.setOpacity(this._displayedOpacity * this._tweenData.a / 255);
+                        cmd._displayedColor.r * this._tweenData.r / 255,
+                        cmd._displayedColor.g * this._tweenData.g / 255,
+                        cmd._displayedColor.b * this._tweenData.b / 255));
+            display.setOpacity(cmd._displayedOpacity * this._tweenData.a / 255);
         }
     },
 

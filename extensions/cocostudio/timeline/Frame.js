@@ -239,8 +239,7 @@ ccs.TextureFrame = ccs.Frame.extend({
      */
     onEnter: function(nextFrame){
         if(this._sprite){
-            var spriteFrame = cc.spriteFrameCache.getSpriteFrame(this._textureName);
-
+            var spriteFrame = cc.spriteFrameCache._spriteFrames[this._textureName];
             if(spriteFrame != null)
                 this._sprite.setSpriteFrame(spriteFrame);
             else
@@ -952,22 +951,16 @@ ccs.ColorFrame = ccs.Frame.extend({
 
     ctor: function(){
         ccs.Frame.prototype.ctor.call(this);
-
-        this._alpha = 255;
-        this.color = cc.color(255, 255, 255);
+        this._color = cc.color(255, 255, 255);
     },
 
     /**
      * the execution of the callback
-     * @param {ccs.Frame} nextFrame
+     * @param {ccs.ColorFrame} nextFrame
      */
     onEnter: function(nextFrame){
-        this._node.setOpacity(this._alpha);
         this._node.setColor(this._color);
-
         if(this._tween){
-            this._betweenAlpha = nextFrame._alpha - this._alpha;
-
             var color = nextFrame._color;
             this._betweenRed   = color.r - this._color.r;
             this._betweenGreen = color.g - this._color.g;
@@ -1001,28 +994,9 @@ ccs.ColorFrame = ccs.Frame.extend({
      */
     clone: function(){
         var frame = new ccs.ColorFrame();
-        frame.setAlpha(this._alpha);
         frame.setColor(this._color);
-
         frame._cloneProperty(this);
-
         return frame;
-    },
-
-    /**
-     * Set the alpha
-     * @param {Number} alpha
-     */
-    setAlpha: function(alpha){
-        this._alpha = alpha;
-    },
-
-    /**
-     * Gets the alpha
-     * @returns {Number}
-     */
-    getAlpha: function(){
-        return this._alpha;
     },
 
     /**
@@ -1052,6 +1026,59 @@ ccs.ColorFrame = ccs.Frame.extend({
 ccs.ColorFrame.create = function(){
     return new ccs.ColorFrame();
 };
+
+/**
+ * Alpha frame
+ * @class
+ * @extend ccs.Frame
+ */
+ccs.AlphaFrame = ccs.Frame.extend({
+
+    _alpha: null,
+    _betweenAlpha: null,
+
+    ctor: function(){
+        ccs.Frame.prototype.ctor.call(this);
+        this._alpha = 255;
+    },
+
+    onEnter: function(nextFrame){
+        this._node.setOpacity(this._alpha);
+        if(this._tween){
+            this._betweenAlpha = nextFrame._alpha - this._alpha;
+        }
+    },
+
+    apply: function(percent){
+        if (this._tween){
+            var alpha = this._alpha + this._betweenAlpha * percent;
+            this._node.setOpacity(alpha);
+        }
+    },
+
+    /**
+     * Set the alpha
+     * @param {Number} alpha
+     */
+    setAlpha: function(alpha){
+        this._alpha = alpha;
+    },
+
+    /**
+     * Gets the alpha
+     * @returns {Number}
+     */
+    getAlpha: function(){
+        return this._alpha;
+    },
+
+    clone: function(){
+        var frame = new ccs.AlphaFrame();
+        frame.setAlpha(this._alpha);
+        frame._cloneProperty(this);
+        return frame;
+    }
+});
 
 /**
  * Event frame
