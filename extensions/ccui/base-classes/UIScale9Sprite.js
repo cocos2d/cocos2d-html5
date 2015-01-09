@@ -67,11 +67,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     _bottom: null,
     _bottomRight: null,
 
-    //cache in canvas on Canvas mode
-    _cacheSprite: null,
-    _cacheCanvas: null,
-    _cacheContext: null,
-    _cacheTexture: null,
     _scale9Dirty: true,
 
     _opacityModifyRGB: false,
@@ -923,8 +918,13 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     },
 
     //v3.3
+    /**
+     * Sets ccui.Scale9Sprite's state
+     * @since v3.3
+     * @param {Number} state
+     */
     setState: function(state){
-        //
+        this._renderCmd.setState(state);
     },
 
     //setScale9Enabled implement late
@@ -1100,3 +1100,5 @@ ccui.Scale9Sprite.POSITIONS_BOTTOM = 4;
 ccui.Scale9Sprite.POSITIONS_TOPRIGHT = 5;
 ccui.Scale9Sprite.POSITIONS_TOPLEFT = 6;
 ccui.Scale9Sprite.POSITIONS_BOTTOMRIGHT = 7;
+
+ccui.Scale9Sprite.state = {NORMAL: 0, GRAY: 1};

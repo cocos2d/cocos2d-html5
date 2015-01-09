@@ -120,4 +120,17 @@
         if(!this._cacheSprite.getParent())
             node.addChild(this._cacheSprite, -1);
     };
+
+    proto.setState = function(state){
+        var locScale9Image = this._node._scale9Image;
+        if(!locScale9Image)
+            return;
+        var selTexture = locScale9Image.getTexture();
+        if(state === ccui.Scale9Sprite.state.NORMAL){
+            selTexture._switchToGray(false);
+        } else if( state === ccui.Scale9Sprite.state.GRAY){
+            selTexture._switchToGray(true);
+        }
+        this._cacheScale9Sprite();
+    };
 })();
