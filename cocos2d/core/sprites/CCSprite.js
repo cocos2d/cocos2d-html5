@@ -936,7 +936,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 texture.addEventListener("load", function(){
                     var size = texture.getContentSize();
                     _t.setTextureRect(cc.rect(0,0, size.width, size.height));
+                    _t._textureLoaded = true;
                 }, this);
+            }else{
+                _t._textureLoaded = true;
             }
             return;
         }
