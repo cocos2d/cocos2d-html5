@@ -129,7 +129,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         self._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
         self._rect = cc.rect(0, 0, 0, 0);
 
-        self._textureLoaded = true;
         self._softInit(fileName, rect, rotated);
     },
 
@@ -625,7 +624,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         _t._blendFunc.dst = cc.BLEND_DST;
 
         _t.texture = null;
-        _t._textureLoaded = true;
         _t._flippedX = _t._flippedY = false;
 
         // default transform anchor: center
@@ -845,13 +843,15 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                     _t.texture = locNewTexture;
                 _t.setTextureRect(sender.getRect(), sender.isRotated(), sender.getOriginalSize());
                 _t.dispatchEvent("load");
+                _t.setColor(_t.color);
             }, _t);
-        }
-        // update texture before updating texture rect
-        if (pNewTexture != _t._texture)
-            _t.texture = pNewTexture;
+        }else{
+            // update texture before updating texture rect
+            if (pNewTexture != _t._texture)
+                _t.texture = pNewTexture;
 
-        _t.setTextureRect(newFrame.getRect(), _t._rectRotated, newFrame.getOriginalSize());
+            _t.setTextureRect(newFrame.getRect(), _t._rectRotated, newFrame.getOriginalSize());
+        }
 
         this._renderCmd._updateForSetSpriteFrame(pNewTexture);
     },
