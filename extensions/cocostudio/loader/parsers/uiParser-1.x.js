@@ -262,7 +262,9 @@
             var ch = options["capInsetsHeight"];
             widget.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
         }
-        widget.setLayoutType(options["layoutType"]);
+        var layoutType = options["layoutType"];
+        if(layoutType != null)
+            widget.setLayoutType(layoutType);
     };
     /**
      * Button parser (UIButton)
