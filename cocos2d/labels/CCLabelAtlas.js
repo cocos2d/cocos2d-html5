@@ -146,6 +146,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             texture.addEventListener("load", function (sender) {
                 this.initWithTexture(texture, width, height, label.length);
                 this.string = label;
+                this.setColor(this._renderCmd._displayedColor);
                 this.dispatchEvent("load");
             }, this);
         }
