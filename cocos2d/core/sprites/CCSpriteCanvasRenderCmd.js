@@ -61,6 +61,7 @@
             if (texture && texture.getHtmlElementObj() instanceof  HTMLImageElement) {
                 this._originalTexture = texture;
             }
+            node._textureLoaded = texture._textureLoaded;
             node._texture = texture;
         }
     };

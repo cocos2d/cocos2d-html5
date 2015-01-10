@@ -339,7 +339,8 @@ cc.ActionManager = cc.Class.extend(/** @lends cc.ActionManager# */{
             //this._currentTargetSalvaged = false;
             if (!locCurrTarget.paused) {
                 // The 'actions' CCMutableArray may change while inside this loop.
-                for (locCurrTarget.actionIndex = 0; locCurrTarget.actionIndex < locCurrTarget.actions.length;
+                for (locCurrTarget.actionIndex = 0;
+                     locCurrTarget.actionIndex < (locCurrTarget.actions ? locCurrTarget.actions.length : 0);
                      locCurrTarget.actionIndex++) {
                     locCurrTarget.currentAction = locCurrTarget.actions[locCurrTarget.actionIndex];
                     if (!locCurrTarget.currentAction)

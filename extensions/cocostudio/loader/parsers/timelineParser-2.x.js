@@ -197,6 +197,7 @@
                 cc.log("%s need to pre load", path);
             node = new cc.ParticleSystem(path);
             self.generalAttributes(node, json);
+            node.setDrawMode(cc.ParticleSystem.TEXTURE_MODE);
         });
         return node;
     };

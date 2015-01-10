@@ -182,6 +182,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             if (!element)
                 return;
             this._htmlElementObj = element;
+            this._contentSize.width = element.width;
+            this._contentSize.height = element.height;
+            this._textureLoaded = true;
         },
 
         /**
@@ -212,7 +215,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 self.initWithElement(img);
             }
 
-            self._textureLoaded = true;
             var locElement = self._htmlElementObj;
             self._contentSize.width = locElement.width;
             self._contentSize.height = locElement.height;
