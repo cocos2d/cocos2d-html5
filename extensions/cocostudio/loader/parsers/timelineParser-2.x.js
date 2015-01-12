@@ -935,6 +935,8 @@
         widget.setString(text);
 
         loadTexture(json["LabelBMFontFile_CNB"], resourcePath, function(path, type){
+            if(!cc.loader.getRes(path))
+                cc.log("%s need to pre load", path);
             widget.setFntFile(path);
         });
         return widget;
@@ -1015,7 +1017,10 @@
         if(volume != null)
             cc.audioEngine.setMusicVolume(volume);
         //var name = json["Name"];
-        var resPath = (cc.loader.resPath + "/").replace(/\/\/$/, "/");
+        var resPath = "";
+        if(cc.loader.resPath)
+            resPath = (cc.loader.resPath + "/").replace(/\/\/$/, "/");
+
         loadTexture(json["FileData"], resourcePath, function(path, type){
             cc.loader.load(path, function(){
                 cc.audioEngine.playMusic(resPath + path, loop);
