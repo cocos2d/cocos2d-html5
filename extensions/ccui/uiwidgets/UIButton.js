@@ -258,8 +258,6 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
                 self._findLayout();
 
                 self._normalTextureSize = self._buttonNormalRenderer.getContentSize();
-                self._updateFlippedX();
-                self._updateFlippedY();
                 self._updateChildrenDisplayedRGBA();
 
                 self._buttonNormalRenderer.setColor(self.getColor());
@@ -293,8 +291,6 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             this._updateContentSizeWithTextureSize(this._normalTextureSize);
 
         this._normalTextureSize = this._buttonNormalRenderer.getContentSize();
-        this._updateFlippedX();
-        this._updateFlippedY();
 
         this._updateChildrenDisplayedRGBA();
 
@@ -320,8 +316,6 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
                 self._findLayout();
 
                 self._pressedTextureSize = self._buttonClickedRenderer.getContentSize();
-                self._updateFlippedX();
-                self._updateFlippedY();
                 self._updateChildrenDisplayedRGBA();
 
                 self._pressedTextureLoaded = true;
@@ -347,8 +341,6 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             clickedRenderer.setCapInsets(this._capInsetsPressed);
 
         this._pressedTextureSize = this._buttonClickedRenderer.getContentSize();
-        this._updateFlippedX();
-        this._updateFlippedY();
 
         this._updateChildrenDisplayedRGBA();
 
@@ -375,8 +367,6 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
                 self._findLayout();
 
                 self._disabledTextureSize = self._buttonDisableRenderer.getContentSize();
-                self._updateFlippedX();
-                self._updateFlippedY();
                 self._updateChildrenDisplayedRGBA();
 
                 self._disabledTextureLoaded = true;
@@ -402,8 +392,6 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             disabledRenderer.setCapInsets(this._capInsetsDisabled);
 
         this._disabledTextureSize = this._buttonDisableRenderer.getContentSize();
-        this._updateFlippedX();
-        this._updateFlippedY();
 
         this._updateChildrenDisplayedRGBA();
 
@@ -664,34 +652,6 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
         if (this._ignoreSize)
             this.setContentSize(this.getVirtualRendererSize());
-    },
-
-    _updateFlippedX: function () {
-        var flip = this._flippedX ? -1.0 : 1.0;
-        this._titleRenderer.setScaleX(flip);
-        if (this._scale9Enabled) {
-            this._buttonNormalRenderer.setScaleX(flip);
-            this._buttonClickedRenderer.setScaleX(flip);
-            this._buttonDisableRenderer.setScaleX(flip);
-        } else {
-            this._buttonNormalRenderer.setFlippedX(this._flippedX);
-            this._buttonClickedRenderer.setFlippedX(this._flippedX);
-            this._buttonDisableRenderer.setFlippedX(this._flippedX);
-        }
-    },
-
-    _updateFlippedY: function () {
-        var flip = this._flippedY ? -1.0 : 1.0;
-        this._titleRenderer.setScaleY(flip);
-        if (this._scale9Enabled) {
-            this._buttonNormalRenderer.setScaleY(flip);
-            this._buttonClickedRenderer.setScaleY(flip);
-            this._buttonDisableRenderer.setScaleY(flip);
-        } else {
-            this._buttonNormalRenderer.setFlippedY(this._flippedY);
-            this._buttonClickedRenderer.setFlippedY(this._flippedY);
-            this._buttonDisableRenderer.setFlippedY(this._flippedY);
-        }
     },
 
     _updateTexturesRGBA: function(){
