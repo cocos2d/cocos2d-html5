@@ -136,7 +136,7 @@ ccs._parser = cc.Class.extend({
     parse: function(file, json){
         var resourcePath = this._dirname(file);
         this.pretreatment(json, resourcePath);
-        var node = this.parseNode(this.getNodeJson(json), resourcePath);
+        var node = this.parseNode(this.getNodeJson(json), resourcePath, file);
         node && this.deferred(json, resourcePath, node, file);
         return node;
     },

@@ -53,8 +53,15 @@
         if(ignoreSizeExsit != null)
             widget.ignoreContentAdaptWithSize(ignoreSizeExsit);
 
-        widget.setSizeType(options["sizeType"]);
-        widget.setPositionType(options["positionType"]);
+        if (options["sizeType"])
+        {
+            widget.setSizeType(options["sizeType"]);
+        }
+
+        if (options["positionType"])
+        {
+            widget.setPositionType(options["positionType"]);
+        }
 
         widget.setSizePercent(cc.p(options["sizePercentX"], options["sizePercentY"]));
         widget.setPositionPercent(cc.p(options["positionPercentX"], options["positionPercentY"]));
@@ -262,9 +269,10 @@
             var ch = options["capInsetsHeight"];
             widget.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
         }
-        var layoutType = options["layoutType"];
-        if(layoutType != null)
-            widget.setLayoutType(layoutType);
+        if (options["layoutType"])
+        {
+            widget.setLayoutType(options["layoutType"]);
+        }
     };
     /**
      * Button parser (UIButton)
