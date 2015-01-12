@@ -182,6 +182,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             if (!element)
                 return;
             this._htmlElementObj = element;
+            this._contentSize.width = element.width;
+            this._contentSize.height = element.height;
             this._textureLoaded = true;
         },
 
