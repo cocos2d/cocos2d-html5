@@ -94,6 +94,10 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _propagateTouchEvents: true,
     _unifySize: false,
 
+    _callbackName: null,
+    _callbackType: null,
+    _usingLayoutComponent: false,
+
     /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @function
@@ -141,7 +145,8 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @override
      */
     onEnter: function () {
-        this.updateSizeAndPosition();
+        if(!this._usingLayoutComponent)
+            this.updateSizeAndPosition();
         cc.ProtectedNode.prototype.onEnter.call(this);
     },
 
@@ -154,11 +159,11 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         cc.ProtectedNode.prototype.onExit.call(this);
     },
 
-    getOrCreateLayoutComponent: function(){
+    _getOrCreateLayoutComponent: function(){
         var layoutComponent = this.getComponent(ccui.__LAYOUT_COMPONENT_NAME);
         if (null == layoutComponent){
             layoutComponent = new ccui.LayoutComponent();
-            this.addComponent(component);
+            this.addComponent(layoutComponent);
         }
         return layoutComponent;
     },
@@ -175,6 +180,10 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     _updateContentSizeWithTextureSize: function(size){
+        if(this._unifySize){
+            this.setContentSize(size);
+            return;
+        }
         this.setContentSize(this._ignoreSize ? size : this._customSize);
     },
 
@@ -213,9 +222,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      */
     setSwallowTouches: function(swallow){
         if (this._touchListener)
-        {
             this._touchListener.setSwallowTouches(swallow);
-        }
     },
 
     /**
@@ -225,9 +232,8 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      */
     isSwallowTouches: function(){
         if (this._touchListener){
-            //todo
-            return true;
-            //return this._touchListener.isSwallowTouches();
+            //return true;                           //todo need test
+            return this._touchListener.isSwallowTouches();
         }
         return false;
     },
@@ -297,10 +303,12 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
         this._customSize.width = locWidth;
         this._customSize.height = locHeight;
-        if (this._ignoreSize){
+        if(this._unifySize){
+            //unify size logic
+        } else if (this._ignoreSize){
             this._contentSize = this.getVirtualRendererSize();
         }
-        if (this._running) {
+        if (!this._usingLayoutComponent && this._running) {
             var widgetParent = this.getWidgetParent();
             var pSize = widgetParent ? widgetParent.getContentSize() : this._parent.getContentSize();
             this._sizePercent.x = (pSize.width > 0.0) ? locWidth / pSize.width : 0.0;
@@ -312,10 +320,13 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _setWidth: function (w) {
         cc.Node.prototype._setWidth.call(this, w);
         this._customSize.width = w;
-        if(this._ignoreSize)
+        if(this._unifySize){
+            //unify size logic
+        } else if (this._ignoreSize){
             this._contentSize = this.getVirtualRendererSize();
+        }
 
-        if (this._running) {
+        if (!this._usingLayoutComponent && this._running) {
             var widgetParent = this.getWidgetParent();
             var locWidth = widgetParent ? widgetParent.width : this._parent.width;
             this._sizePercent.x = locWidth > 0 ? this._customSize.width / locWidth : 0;
@@ -325,10 +336,13 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _setHeight: function (h) {
         cc.Node.prototype._setHeight.call(this, h);
         this._customSize.height = h;
-        if(this._ignoreSize)
+        if(this._unifySize){
+            //unify size logic
+        } else if (this._ignoreSize){
             this._contentSize = this.getVirtualRendererSize();
+        }
 
-        if (this._running) {
+        if (!this._usingLayoutComponent && this._running) {
             var widgetParent = this.getWidgetParent();
             var locH = widgetParent ? widgetParent.height : this._parent.height;
             this._sizePercent.y = locH > 0 ? this._customSize.height / locH : 0;
@@ -341,6 +355,13 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {cc.Point} percent that is widget's percent size, width and height value from 0 to 1.
      */
     setSizePercent: function (percent) {
+        if(this._usingLayoutComponent){
+            var component = this._getOrCreateLayoutComponent();
+            component.setUsingPercentContentSize(true);
+            component.setPercentContentSize(percent);
+            component.refreshLayout();            
+            return;
+        }
 
         this._sizePercent.x = percent.x;
         this._sizePercent.y = percent.y;
@@ -456,6 +477,10 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      */
     setSizeType: function (type) {
         this._sizeType = type;
+        if (this._usingLayoutComponent) {
+            var component = this._getOrCreateLayoutComponent();
+            component.setUsingPercentContentSize(this._sizeType == ccui.SIZE_PERCENT);
+        }
     },
 
     /**
@@ -471,12 +496,17 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {Boolean} ignore true that widget will ignore it's size, use texture size, false otherwise. Default value is true.
      */
     ignoreContentAdaptWithSize: function (ignore) {
+        if(this._unifySize){
+            this.setContentSize(this._customSize);
+            return;
+        }
+
         if(this._ignoreSize == ignore)
             return;
 
         this._ignoreSize = ignore;
         this.setContentSize( ignore ? this.getVirtualRendererSize() : this._customSize );
-        this._onSizeChanged();
+        //this._onSizeChanged();
     },
 
     /**
@@ -508,8 +538,11 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @returns {cc.Point}
      */
     getSizePercent: function () {
-        var component = this.getOrCreateLayoutComponent();
-        return component.getPercentContentSize();
+        if(this._usingLayoutComponent){
+            var component = this._getOrCreateLayoutComponent();
+            this._sizePercent = component.getPercentContentSize();
+        }
+        return this._sizePercent;
     },
     _getWidthPercent: function () {
         return this._sizePercent.x;
@@ -545,11 +578,13 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * call back function called when size changed.
      */
     _onSizeChanged: function () {
-        var locChildren =  this.getChildren();
-        for (var i = 0, len = locChildren.length; i < len; i++) {
-            var child = locChildren[i];
-            if(child instanceof ccui.Widget)
-                child.updateSizeAndPosition();
+        if(!this._usingLayoutComponent){
+            var locChildren =  this.getChildren();
+            for (var i = 0, len = locChildren.length; i < len; i++) {
+                var child = locChildren[i];
+                if(child instanceof ccui.Widget)
+                    child.updateSizeAndPosition();
+            }
         }
     },
 
@@ -839,8 +874,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         /*
          * Propagate touch events to its parents
          */
-        if (this._propagateTouchEvents)
-        {
+        if (this._propagateTouchEvents) {
             this.propagateTouchEvent(ccui.Widget.TOUCH_BEGAN, this, touch);
         }
 
@@ -868,9 +902,11 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         this._touchMovePosition.x = touchPoint.x;
         this._touchMovePosition.y = touchPoint.y;
         this.setHighlighted(this.hitTest(touchPoint));
-        var widgetParent = this.getWidgetParent();
-        if (widgetParent)
-            widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_MOVED, this, touch);
+        /*
+         * Propagate touch events to its parents
+         */
+        if (this._propagateTouchEvents)
+            this.propagateTouchEvent(ccui.Widget.TOUCH_MOVED, this, touch);
         this._moveEvent();
     },
 
@@ -888,9 +924,12 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         var touchPoint = touch.getLocation();
         this._touchEndPosition.x = touchPoint.x;
         this._touchEndPosition.y = touchPoint.y;
-        var widgetParent = this.getWidgetParent();
-        if (widgetParent)
-            widgetParent.interceptTouchEvent(ccui.Widget.TOUCH_ENDED, this, touch);
+        /*
+         * Propagate touch events to its parents
+         */
+        if (this._propagateTouchEvents)
+            this.propagateTouchEvent(ccui.Widget.TOUCH_ENDED, this, touch);
+
         var highlight = this._highlight;
         this.setHighlighted(false);
         if (highlight)
@@ -936,10 +975,8 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             this._touchEventCallback(this, ccui.Widget.TOUCH_ENDED);
         if (this._touchEventListener && this._touchEventSelector)
             this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_ENDED);
-
-        if (this._clickEventListener) {
+        if (this._clickEventListener)
             this._clickEventListener(this);
-        }
     },
 
     _cancelUpEvent: function () {
@@ -1032,7 +1069,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {Number} [posY]
      */
     setPosition: function (pos, posY) {
-        if (this._running) {
+        if (!this._usingLayoutComponent && this._running) {
             var widgetParent = this.getWidgetParent();
             if (widgetParent) {
                 var pSize = widgetParent.getContentSize();
@@ -1089,6 +1126,14 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {cc.Point} percent
      */
     setPositionPercent: function (percent) {
+        if (this._usingLayoutComponent)
+        {
+            var component = this._getOrCreateLayoutComponent();
+            component.setPositionPercentX(percent.x);
+            component.setPositionPercentY(percent.y);
+            component.refreshLayout();
+            return;
+        }
         this._positionPercent = percent;
         if (this._running) {
             var widgetParent = this.getWidgetParent();
@@ -1099,6 +1144,13 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         }
     },
     _setXPercent: function (percent) {
+        if (this._usingLayoutComponent)
+        {
+            var component = this._getOrCreateLayoutComponent();
+            component.setPositionPercentX(percent.x);
+            component.refreshLayout();
+            return;
+        }
         this._positionPercent.x = percent;
         if (this._running) {
             var widgetParent = this.getWidgetParent();
@@ -1107,6 +1159,13 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         }
     },
     _setYPercent: function (percent) {
+        if (this._usingLayoutComponent)
+        {
+            var component = this._getOrCreateLayoutComponent();
+            component.setPositionPercentY(percent.x);
+            component.refreshLayout();
+            return;
+        }
         this._positionPercent.y = percent;
         if (this._running) {
             var widgetParent = this.getWidgetParent();
@@ -1120,13 +1179,28 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @returns {cc.Point} The percent (x,y) of the widget in OpenGL coordinates
      */
     getPositionPercent: function () {
+        if (this._usingLayoutComponent) {
+            var component = this._getOrCreateLayoutComponent();
+            this._positionPercent.x = component.getPositionPercentX();
+            this._positionPercent.y = component.getPositionPercentY();
+        }
         return cc.p(this.getNormalizedPosition());
     },
 
     _getXPercent: function () {
+        if (this._usingLayoutComponent) {
+            var component = this._getOrCreateLayoutComponent();
+            this._positionPercent.x = component.getPositionPercentX();
+            this._positionPercent.y = component.getPositionPercentY();
+        }
         return this._positionPercent.x;
     },
     _getYPercent: function () {
+        if (this._usingLayoutComponent) {
+            var component = this._getOrCreateLayoutComponent();
+            this._positionPercent.x = component.getPositionPercentX();
+            this._positionPercent.y = component.getPositionPercentY();
+        }
         return this._positionPercent.y;
     },
 
@@ -1136,6 +1210,16 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      */
     setPositionType: function (type) {
         this._positionType = type;
+        if(this._usingLayoutComponent){
+            var component = this._getOrCreateLayoutComponent();
+            if (type == ccui.POSITION_ABSOLUTE){
+                component.setPositionPercentXEnabled(false);
+                component.setPositionPercentYEnabled(false);
+            } else {
+                component.setPositionPercentXEnabled(true);
+                component.setPositionPercentYEnabled(true);
+            }
+        }
         this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
@@ -1152,8 +1236,9 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {Boolean} flipX true if the widget should be flipped horizontally, false otherwise.
      */
     setFlippedX: function (flipX) {
+        var realScale = this.getScaleX();
         this._flippedX = flipX;
-        this._updateFlippedX();
+        this.setScaleX(realScale);
     },
 
     /**
@@ -1175,8 +1260,9 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {Boolean} flipY  true if the widget should be flipped vertically, false otherwise.
      */
     setFlippedY: function (flipY) {
+        var realScale = this.getScaleY();
         this._flippedY = flipY;
-        this._updateFlippedY();
+        this.setScaleY(realScale);
     },
 
     /**
@@ -1192,10 +1278,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     isFlippedY: function () {
         return this._flippedY;
     },
-
-    _updateFlippedX: function () {},
-
-    _updateFlippedY: function () {},
 
     _adaptRenderers: function(){},
 
@@ -1586,31 +1668,120 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         }
     },
 
+    /**
+     * @since v3.2
+     * @returns {boolean} true represent the widget use Unify Size, false represent the widget couldn't use Unify Size
+     */
     isUnifySizeEnabled: function(){
         return this._unifySize;
     },
 
+    /**
+     * @since v3.2
+     * @param {Boolean} enable enable Unify Size of a widget
+     */
     setUnifySizeEnabled: function(enable){
         this._unifySize = enable;
     },
 
     //v3.3
+    _ccEventCallback: null,
     /**
      * Set a event handler to the widget in order to use cocostudio editor and framework
      * @since v3.3
      * @param {function} callback
      */
-    addCCSEventListener: function(callback){},
+    addCCSEventListener: function(callback){
+        this._ccEventCallback = callback;
+    },
 
     //override the scale functions.
-    setScaleX: function(scaleX){},
-    setScaleY: function(scaleY){},
-    setScale: function(scaleX, scaleY){},
+    setScaleX: function(scaleX){
+        if (this._flippedX)
+            scaleX = scaleX * -1;
+        cc.Node.prototype.setScaleX.call(this, scaleX);
+    },
+    setScaleY: function(scaleY){
+        if (this._flippedY)
+            scaleY = scaleY * -1;
+        cc.Node.prototype.setScaleY.call(this, scaleY);
+    },
+    setScale: function(scaleX, scaleY){
+        if(scaleY === undefined)
+            scaleY = scaleX;
+        this.setScaleX(scaleX);
+        this.setScaleY(scaleY);
+    },
 
-    getScaleX: function(){},
-    getScaleY: function(){},
-    getScale: function(){},
+    getScaleX: function(){
+        var originalScale = cc.Node.prototype.getScaleX.call(this);
+        if (this._flippedX)
+            originalScale = originalScale * -1.0;
+        return originalScale;
+    },
+    getScaleY: function(){
+        var originalScale = cc.Node.prototype.getScaleY.call(this);
+        if (this._flippedY)
+            originalScale = originalScale * -1.0;
+        return originalScale;
+    },
+    getScale: function(){
+        cc.log(this.getScaleX() == this.getScaleY(), "Widget#scale. ScaleX != ScaleY. Don't know which one to return");
+        return this.getScaleX();
+    },
 
+    /**
+     * Sets callback name to widget.
+     * @since v3.3
+     * @param {String} callbackName
+     */
+    setCallbackName: function(callbackName){
+        this._callbackName = callbackName;
+    },
+
+    /**
+     * Gets callback name of widget
+     * @since v3.3
+     * @returns {String|Null}
+     */
+    getCallbackName: function(){
+        return this._callbackName;
+    },
+
+    /**
+     * Sets callback type to widget
+     * @since v3.3
+     * @param {String} callbackType
+     */
+    setCallbackType: function(callbackType){
+        this._callbackType = callbackType;
+    },
+
+    /**
+     * Gets callback type of widget
+     * @since v3.3
+     * @returns {String|null}
+     */
+    getCallbackType: function(){
+        return this._callbackType;
+    },
+
+    /**
+     * Whether enable layout component of a widget
+     * @since v3.3
+     * @param {Boolean} enable enable layout Component of a widget
+     */
+    setLayoutComponentEnabled: function(enable){
+        this._usingLayoutComponent = enable;
+    },
+
+    /**
+     * Returns whether enable layout component of a widget
+     * @return {Boolean} true represent the widget use Layout Component, false represent the widget couldn't use Layout Component.
+     */
+    isLayoutComponentEnabled: function(){
+        return this._usingLayoutComponent;
+    },
 
 
     _createRenderCmd: function(){
