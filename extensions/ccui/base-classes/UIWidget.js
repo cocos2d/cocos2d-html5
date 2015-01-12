@@ -89,6 +89,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _highlight: false,
 
     _touchEventCallback: null,
+    _clickEventListener: null,
 
     _propagateTouchEvents: true,
     _unifySize: false,
@@ -187,14 +188,29 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         return parentWidget._isAncestorsEnabled();
     },
 
+    /**
+     * Allow widget touch events to propagate to its parents. Set false will disable propagation
+     * @since v3.2
+     * @param {Boolean} isPropagate
+     */
     setPropagateTouchEvents: function(isPropagate){
         this._propagateTouchEvents = isPropagate;
     },
 
+    /**
+     * Return whether the widget is propagate touch events to its parents or not
+     * @since v3.2
+     * @returns {boolean}
+     */
     isPropagateTouchEvents: function(){
         return this._propagateTouchEvents;
     },
 
+    /**
+     * Specify widget to swallow touches or not
+     * @since v3.2
+     * @param {Boolean} swallow
+     */
     setSwallowTouches: function(swallow){
         if (this._touchListener)
         {
@@ -202,6 +218,11 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         }
     },
 
+    /**
+     * Return whether the widget is swallowing touch or not
+     * @since v3.2
+     * @returns {boolean}
+     */
     isSwallowTouches: function(){
         if (this._touchListener){
             //todo
@@ -1572,6 +1593,25 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     setUnifySizeEnabled: function(enable){
         this._unifySize = enable;
     },
+
+    //v3.3
+    /**
+     * Set a event handler to the widget in order to use cocostudio editor and framework
+     * @since v3.3
+     * @param {function} callback
+     */
+    addCCSEventListener: function(callback){},
+
+    //override the scale functions.
+    setScaleX: function(scaleX){},
+    setScaleY: function(scaleY){},
+    setScale: function(scaleX, scaleY){},
+
+    getScaleX: function(){},
+    getScaleY: function(){},
+    getScale: function(){},
+
+
 
     _createRenderCmd: function(){
         if(cc._renderType === cc._RENDER_TYPE_WEBGL)
