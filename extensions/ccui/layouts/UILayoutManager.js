@@ -60,7 +60,7 @@ ccui.linearVerticalLayoutManager = /** @lends ccui.linearVerticalLayoutManager# 
                     var ap = child.getAnchorPoint();
                     var cs = child.getContentSize();
                     var finalPosX = ap.x * cs.width;
-                    var finalPosY = topBoundary - ((1.0-ap.y) * cs.height);
+                    var finalPosY = topBoundary - ((1.0 - ap.y) * cs.height);
                     switch (childGravity){
                         case ccui.LinearLayoutParameter.NONE:
                         case ccui.LinearLayoutParameter.LEFT:
@@ -69,7 +69,7 @@ ccui.linearVerticalLayoutManager = /** @lends ccui.linearVerticalLayoutManager# 
                             finalPosX = layoutSize.width - ((1.0 - ap.x) * cs.width);
                             break;
                         case ccui.LinearLayoutParameter.CENTER_HORIZONTAL:
-                            finalPosX = layoutSize.width / 2.0 - cs.width * (0.5-ap.x);
+                            finalPosX = layoutSize.width / 2.0 - cs.width * (0.5 - ap.x);
                             break;
                         default:
                             break;
@@ -78,7 +78,7 @@ ccui.linearVerticalLayoutManager = /** @lends ccui.linearVerticalLayoutManager# 
                     finalPosX += mg.left;
                     finalPosY -= mg.top;
                     child.setPosition(finalPosX, finalPosY);
-                    topBoundary = child.getPositionY() - child.getAnchorPoint().y * child.getContentSize().height - mg.bottom;
+                    topBoundary = child.getPositionY() - ap.y * cs.height - mg.bottom;
                 }
             }
         }
@@ -102,7 +102,7 @@ ccui.linearHorizontalLayoutManager = /** @lends ccui.linearHorizontalLayoutManag
                 if (layoutParameter){
                     var childGravity = layoutParameter.getGravity();
                     var ap = child.getAnchorPoint();
-                    var cs = child.getSize();
+                    var cs = child.getContentSize();
                     var finalPosX = leftBoundary + (ap.x * cs.width);
                     var finalPosY = layoutSize.height - (1.0 - ap.y) * cs.height;
                     switch (childGravity){
