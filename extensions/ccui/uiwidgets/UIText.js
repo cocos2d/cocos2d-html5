@@ -114,6 +114,8 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
      * @param {String} text
      */
     setString: function (text) {
+        if(text == this._labelRenderer.getString())
+            return;
         this._labelRenderer.setString(text);
         this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
         this._labelRendererAdaptDirty = true;
@@ -210,6 +212,9 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
      */
     setTextAreaSize: function (size) {
         this._labelRenderer.setDimensions(size);
+        if (!this._ignoreSize){
+            this._customSize = size;
+        }
         this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
         this._labelRendererAdaptDirty = true;
     },
@@ -289,20 +294,6 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     },
 
     _onPressStateChangedToDisabled: function () {
-    },
-
-    _updateFlippedX: function () {
-        if (this._flippedX)
-            this._labelRenderer.setScaleX(-1.0);
-        else
-            this._labelRenderer.setScaleX(1.0);
-    },
-
-    _updateFlippedY: function () {
-        if (this._flippedY)
-            this._labelRenderer.setScaleY(-1.0);
-        else
-            this._labelRenderer.setScaleY(1.0);
     },
 
     _onSizeChanged: function () {
@@ -414,6 +405,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
             this.setTextAreaSize(uiLabel._textAreaSize);
             this.setTextHorizontalAlignment(uiLabel._labelRenderer.getHorizontalAlignment());
             this.setTextVerticalAlignment(uiLabel._labelRenderer.getVerticalAlignment());
+            this.setContentSize(uiLabel.getContentSize());
         }
     },
 
@@ -442,6 +434,14 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
         cc.ProtectedNode.prototype.setColor.call(this, color);
         this._labelRenderer.setColor(color);
     }
+    //todo label add setTextColor
+//    setTextColor: function(color){
+//        this._labelRenderer.setTextColor(color);
+//    },
+//
+//    getTextColor: function(){
+//        return this._labelRenderer.getTextColor();
+//    }
 });
 
 var _p = ccui.Text.prototype;
