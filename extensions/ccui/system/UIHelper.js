@@ -117,5 +117,19 @@ ccui.helper = {
 	            return res;
 	    }
 	    return null;
-	}
+	} ,
+
+    _activeLayout: false,
+    doLayout: function(rootNode){
+        if(!this._activeLayout)
+            return;
+        var children = rootNode.getChildren(), node;
+        for(var i = 0, len = children.length;i < len; i++) {
+            node = children[i];
+            var com = node.getComponent(ccui.LayoutComponent.NAME);
+            var parent = node.getParent();
+            if (null != com && null != parent && com.refreshLayout)
+                com.refreshLayout();
+        }
+    }
 };
