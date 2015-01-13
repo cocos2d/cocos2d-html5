@@ -701,7 +701,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         var icBottomPos, icLeftPos, icRightPos, icTopPos;
         var locContainer = this._innerContainer, locDestination = this._autoScrollDestination;
         switch (this.direction) {
-            case ccui.ScrollView.DIR_VERTICAL: // vertical
+            case ccui.ScrollView.DIR_VERTICAL:
                 if (this._autoScrollDir.y > 0) {
                     icBottomPos = locContainer.getBottomBoundary();
                     if (icBottomPos + touchOffsetY >= locDestination.y) {
@@ -716,7 +716,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
                     }
                 }
                 break;
-            case ccui.ScrollView.DIR_HORIZONTAL: // horizontal
+            case ccui.ScrollView.DIR_HORIZONTAL:
                 if (this._autoScrollDir.x > 0) {
                     icLeftPos = locContainer.getLeftBoundary();
                     if (icLeftPos + touchOffsetX >= locDestination.x) {
@@ -1321,19 +1321,20 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         if (!this._checkNeedBounce() && this.inertiaScrollEnabled) {
             if (this._slidTime <= 0.016)
                 return;
-            var totalDis = 0;
-            var dir;
+            var totalDis = 0, dir;
+            var touchEndPositionInNodeSpace = this.convertToNodeSpace(this._touchEndPosition);
+            var touchBeganPositionInNodeSpace = this.convertToNodeSpace(this._touchBeganPosition);
             switch (this.direction) {
                 case ccui.ScrollView.DIR_VERTICAL :
-                    totalDis = this._touchEndPosition.y - this._touchBeganPosition.y;
+                    totalDis = touchEndPositionInNodeSpace.y - touchBeganPositionInNodeSpace.y;
                     dir = (totalDis < 0) ? ccui.ScrollView.SCROLLDIR_DOWN : ccui.ScrollView.SCROLLDIR_UP;
                     break;
                 case ccui.ScrollView.DIR_HORIZONTAL:
-                    totalDis = this._touchEndPosition.x - this._touchBeganPosition.x;
+                    totalDis = touchEndPositionInNodeSpace.x - touchBeganPositionInNodeSpace.x;
                     dir = totalDis < 0 ? ccui.ScrollView.SCROLLDIR_LEFT : ccui.ScrollView.SCROLLDIR_RIGHT;
                     break;
                 case ccui.ScrollView.DIR_BOTH :
-                    var subVector = cc.pSub(this._touchEndPosition, this._touchBeganPosition);
+                    var subVector = cc.pSub(touchEndPositionInNodeSpace, touchBeganPositionInNodeSpace);
                     totalDis = cc.pLength(subVector);
                     dir = cc.pNormalize(subVector);
                     break;
@@ -1352,7 +1353,9 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     _handleMoveLogic: function (touch) {
-        var delta = cc.pSub(touch.getLocation(), touch.getPreviousLocation());
+        var touchPositionInNodeSpace = this.convertToNodeSpace(touch.getLocation()),
+            previousTouchPositionInNodeSpace = this.convertToNodeSpace(touch.getPreviousLocation());
+        var delta = cc.pSub(touchPositionInNodeSpace, previousTouchPositionInNodeSpace);
         switch (this.direction) {
             case ccui.ScrollView.DIR_VERTICAL: // vertical
                 this._scrollChildren(0.0, delta.y);
@@ -1458,10 +1461,10 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
                 break;
             case ccui.Widget.TOUCH_MOVED:
                 var offset = cc.pLength(cc.pSub(sender.getTouchBeganPosition(), touchPoint));
+                this._touchMovePosition.x = touchPoint.x;
+                this._touchMovePosition.y = touchPoint.y;
                 if (offset > this._childFocusCancelOffset) {
                     sender.setHighlighted(false);
-                    this._touchMovePosition.x = touchPoint.x;
-                    this._touchMovePosition.y = touchPoint.y;
                     this._handleMoveLogic(touch);
                 }
                 break;
@@ -1470,9 +1473,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
                 this._touchEndPosition.x = touchPoint.x;
                 this._touchEndPosition.y = touchPoint.y;
                 this._handleReleaseLogic(touch);
-                if (sender.isSwallowTouches()){
+                if (sender.isSwallowTouches())
                     this._isInterceptTouch = false;
-                }
                 break;
         }
     },
@@ -1484,6 +1486,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             else
                 this._scrollViewEventSelector(this, ccui.ScrollView.EVENT_SCROLL_TO_TOP);
         }
+        if(this._ccEventCallback)
+            this._ccEventCallback(this, ccui.ScrollView.EVENT_SCROLL_TO_TOP);
     },
 
     _scrollToBottomEvent: function () {
@@ -1493,6 +1497,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             else
                 this._scrollViewEventSelector(this, ccui.ScrollView.EVENT_SCROLL_TO_BOTTOM);
         }
+        if(this._ccEventCallback)
+            this._ccEventCallback(this, ccui.ScrollView.EVENT_SCROLL_TO_BOTTOM);
     },
 
     _scrollToLeftEvent: function () {
@@ -1502,6 +1508,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             else
                 this._scrollViewEventSelector(this, ccui.ScrollView.EVENT_SCROLL_TO_LEFT);
         }
+        if(this._ccEventCallback)
+            this._ccEventCallback(this, ccui.ScrollView.EVENT_SCROLL_TO_LEFT);
     },
 
     _scrollToRightEvent: function () {
@@ -1511,6 +1519,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             else
                 this._scrollViewEventSelector(this, ccui.ScrollView.EVENT_SCROLL_TO_RIGHT);
         }
+        if(this._ccEventCallback)
+            this._ccEventCallback(this, ccui.ScrollView.EVENT_SCROLL_TO_RIGHT);
     },
 
     _scrollingEvent: function () {
@@ -1520,6 +1530,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             else
                 this._scrollViewEventSelector(this, ccui.ScrollView.EVENT_SCROLLING);
         }
+        if(this._ccEventCallback)
+            this._ccEventCallback(this, ccui.ScrollView.EVENT_SCROLLING);
     },
 
     _bounceTopEvent: function () {
@@ -1529,6 +1541,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             else
                 this._scrollViewEventSelector(this, ccui.ScrollView.EVENT_BOUNCE_TOP);
         }
+        if(this._ccEventCallback)
+            this._ccEventCallback(this, ccui.ScrollView.EVENT_BOUNCE_TOP);
     },
 
     _bounceBottomEvent: function () {
@@ -1538,6 +1552,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             else
                 this._scrollViewEventSelector(this, ccui.ScrollView.EVENT_BOUNCE_BOTTOM);
         }
+        if(this._ccEventCallback)
+            this._ccEventCallback(this, ccui.ScrollView.EVENT_BOUNCE_BOTTOM);
     },
 
     _bounceLeftEvent: function () {
@@ -1547,6 +1563,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             else
                 this._scrollViewEventSelector(this, ccui.ScrollView.EVENT_BOUNCE_LEFT);
         }
+        if(this._ccEventCallback)
+            this._ccEventCallback(this, ccui.ScrollView.EVENT_BOUNCE_LEFT);
     },
 
     _bounceRightEvent: function () {
@@ -1556,6 +1574,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             else
                 this._scrollViewEventSelector(this, ccui.ScrollView.EVENT_BOUNCE_RIGHT);
         }
+        if(this._ccEventCallback)
+            this._ccEventCallback(this, ccui.ScrollView.EVENT_BOUNCE_RIGHT);
     },
 
     /**
@@ -1682,6 +1702,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             this.setInertiaScrollEnabled(scrollView.inertiaScrollEnabled);
             this._scrollViewEventListener = scrollView._scrollViewEventListener;
             this._scrollViewEventSelector = scrollView._scrollViewEventSelector;
+            this._ccEventCallback = scrollView._ccEventCallback;
         }
     },
 

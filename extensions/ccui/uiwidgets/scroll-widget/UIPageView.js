@@ -54,6 +54,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     _pageViewEventListener: null,
     _pageViewEventSelector: null,
     _className:"PageView",
+    //v3.2
     _customScrollThreshold: 0,
     _usingCustomScrollThreshold: false,
 
@@ -334,12 +335,9 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      * @param {cc.Event} event
      */
     onTouchMoved: function (touch, event) {
-
         ccui.Layout.prototype.onTouchMoved.call(this, touch, event);
         if (!this._isInterceptTouch)
-        {
             this._handleMoveLogic(touch);
-        }
     },
 
     /**
@@ -351,9 +349,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     onTouchEnded: function (touch, event) {
         ccui.Layout.prototype.onTouchEnded.call(this, touch, event);
         if (!this._isInterceptTouch)
-        {
             this._handleReleaseLogic(touch);
-        }
         this._isInterceptTouch = false;
     },
 
@@ -365,9 +361,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     onTouchCancelled: function (touch, event) {
         ccui.Layout.prototype.onTouchCancelled.call(this, touch, event);
         if (!this._isInterceptTouch)
-        {
             this._handleReleaseLogic(touch);
-        }
         this._isInterceptTouch = false;
     },
 
@@ -434,7 +428,8 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     /**
-     * Set CustomScrollThreshold
+     * Set custom scroll threshold to page view. If you don't specify the value, the pageView will scroll when half page view width reached.
+     * @since v3.2
      * @param threshold
      */
     setCustomScrollThreshold: function(threshold){
@@ -444,21 +439,23 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     /**
-     * Gets the _customScrollThreshold.
+     * Returns user defined scroll page threshold.
+     * @since v3.2
      */
     getCustomScrollThreshold: function(){
         return this._customScrollThreshold;
     },
 
     /**
-     * Set the UsingCustomScrollThreshold
+     * Set using user defined scroll page threshold or not. If you set it to false, then the default scroll threshold is pageView.width / 2.
+     * @since v3.2
      */
     setUsingCustomScrollThreshold: function(flag){
         this._usingCustomScrollThreshold = flag;
     },
 
     /**
-     * Gets the UsingCustomScrollThreshold
+     * Queries whether we are using user defined scroll page threshold or not
      */
     isUsingCustomScrollThreshold: function(){
         return this._usingCustomScrollThreshold;
@@ -473,9 +470,8 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
             var pageCount = this._pages.length;
             var curPageLocation = curPagePos.x;
             var pageWidth = this.getSize().width;
-            if (!this._usingCustomScrollThreshold) {
+            if (!this._usingCustomScrollThreshold)
                 this._customScrollThreshold = pageWidth / 2.0;
-            }
             var boundary = this._customScrollThreshold;
             if (curPageLocation <= -boundary) {
                 if (this._curPageIdx >= pageCount - 1)
@@ -522,9 +518,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
                 this._touchEndPosition.y = touchPoint.y;
                 this._handleReleaseLogic(touch);
                 if (sender.isSwallowTouches())
-                {
                     this._isInterceptTouch = false;
-                }
                 break;
         }
     },
@@ -536,6 +530,8 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
             else
                 this._pageViewEventSelector(this, ccui.PageView.EVENT_TURNING);
         }
+        if(this._ccEventCallback)
+            this._ccEventCallback(this, ccui.PageView.EVENT_TURNING);
     },
 
     /**
@@ -607,6 +603,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 
     _copySpecialProperties: function (pageView) {
         ccui.Layout.prototype._copySpecialProperties.call(this, pageView);
+        this._ccEventCallback = pageView._ccEventCallback;
         this._pageViewEventListener = pageView._pageViewEventListener;
         this._pageViewEventSelector = pageView._pageViewEventSelector;
         this._usingCustomScrollThreshold = pageView._usingCustomScrollThreshold;
