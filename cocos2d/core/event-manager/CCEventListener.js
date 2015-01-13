@@ -366,6 +366,10 @@ cc._EventListenerTouchOneByOne = cc.EventListener.extend({
         this.swallowTouches = needSwallow;
     },
 
+    isSwallowTouches: function(){
+        return this.swallowTouches;
+    },
+
     clone: function () {
         var eventListener = new cc._EventListenerTouchOneByOne();
         eventListener.onTouchBegan = this.onTouchBegan;
