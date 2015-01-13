@@ -281,17 +281,16 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             default:
                 break;
         }
-        if (this._unifySize)
+
+        this._normalTextureSize = this._buttonNormalRenderer.getContentSize();
+        this._updateChildrenDisplayedRGBA();
+        if (this._unifySize){
             if (this._scale9Enabled){
                 normalRenderer.setCapInsets(this._capInsetsNormal);
                 this._updateContentSizeWithTextureSize(this.getNormalSize());
             }
-        else
+        }else
             this._updateContentSizeWithTextureSize(this._normalTextureSize);
-
-        this._normalTextureSize = this._buttonNormalRenderer.getContentSize();
-
-        this._updateChildrenDisplayedRGBA();
 
         this._normalTextureLoaded = true;
         this._normalTextureAdaptDirty = true;
@@ -340,7 +339,6 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             clickedRenderer.setCapInsets(this._capInsetsPressed);
 
         this._pressedTextureSize = this._buttonClickedRenderer.getContentSize();
-
         this._updateChildrenDisplayedRGBA();
 
         this._pressedTextureLoaded = true;
@@ -391,7 +389,6 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             disabledRenderer.setCapInsets(this._capInsetsDisabled);
 
         this._disabledTextureSize = this._buttonDisableRenderer.getContentSize();
-
         this._updateChildrenDisplayedRGBA();
 
         this._disabledTextureLoaded = true;
@@ -415,22 +412,17 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     setCapInsetsNormalRenderer: function (capInsets) {
         if(!capInsets)
             return;
-        var x = capInsets.x;
-        var y = capInsets.y;
-        var width = capInsets.width;
-        var height = capInsets.height;
 
-        if (this._normalTextureSize.width < width)
-        {
+        var x = capInsets.x, y = capInsets.y;
+        var width = capInsets.width, height = capInsets.height;
+        if (this._normalTextureSize.width < width){
             x = 0;
             width = 0;
         }
-        if (this._normalTextureSize.height < height)
-        {
+        if (this._normalTextureSize.height < height){
             y = 0;
             height = 0;
         }
-        var rect = cc.rect(x, y, width, height);
 
         var locInsets = this._capInsetsNormal;
         locInsets.x = x;
@@ -440,7 +432,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
         if (!this._scale9Enabled)
             return;
-        this._buttonNormalRenderer.setCapInsets(rect);
+        this._buttonNormalRenderer.setCapInsets(locInsets);
     },
 
     /**
@@ -459,22 +451,17 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         if(!capInsets || !this._scale9Enabled)
             return;
 
-        var x = capInsets.x;
-        var y = capInsets.y;
-        var width = capInsets.width;
-        var height = capInsets.height;
+        var x = capInsets.x, y = capInsets.y;
+        var width = capInsets.width, height = capInsets.height;
 
-        if (this._normalTextureSize.width < width)
-        {
+        if (this._normalTextureSize.width < width) {
             x = 0;
             width = 0;
         }
-        if (this._normalTextureSize.height < height)
-        {
+        if (this._normalTextureSize.height < height) {
             y = 0;
             height = 0;
         }
-        var rect = cc.rect(x, y, width, height);
 
         var locInsets = this._capInsetsPressed;
         locInsets.x = x;
@@ -482,7 +469,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         locInsets.width = width;
         locInsets.height = height;
 
-        this._buttonClickedRenderer.setCapInsets(rect);
+        this._buttonClickedRenderer.setCapInsets(locInsets);
     },
 
     /**
@@ -501,22 +488,17 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         if(!capInsets || !this._scale9Enabled)
             return;
 
-        var x = capInsets.x;
-        var y = capInsets.y;
-        var width = capInsets.width;
-        var height = capInsets.height;
+        var x = capInsets.x, y = capInsets.y;
+        var width = capInsets.width, height = capInsets.height;
 
-        if (this._normalTextureSize.width < width)
-        {
+        if (this._normalTextureSize.width < width) {
             x = 0;
             width = 0;
         }
-        if (this._normalTextureSize.height < height)
-        {
+        if (this._normalTextureSize.height < height) {
             y = 0;
             height = 0;
         }
-        var rect = cc.rect(x, y, width, height);
 
         var locInsets = this._capInsetsDisabled;
         locInsets.x = x;
@@ -524,7 +506,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         locInsets.width = width;
         locInsets.height = height;
 
-        this._buttonDisableRenderer.setCapInsets(rect);
+        this._buttonDisableRenderer.setCapInsets(locInsets);
     },
 
     /**
