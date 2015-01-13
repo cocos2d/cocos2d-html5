@@ -220,9 +220,8 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         if (this._unifySize)
             return this.getNormalSize();
 
-        var titleSize = this._titleRenderer.getContentSize();
         if (!this._normalTextureLoaded && this._titleRenderer.getString().length > 0) {
-            return cc.size(titleSize);
+            return this._titleRenderer.getContentSize();
         }
         return cc.size(this._normalTextureSize);
     },
