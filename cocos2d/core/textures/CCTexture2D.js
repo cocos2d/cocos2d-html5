@@ -401,8 +401,46 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
          */
         removeLoadedEventListener: function (target) {
             this.removeEventListener("load", target);
+        },
+
+        //hack for gray effect
+        _grayElementObj: null,
+        _backupElement: null,
+        _isGray: false,
+        _switchToGray: function(toGray){
+            if(!this._textureLoaded || this._isGray == toGray)
+                return;
+            this._isGray = toGray;
+            if(this._isGray){
+                this._backupElement = this._htmlElementObj;
+                if(!this._grayElementObj)
+                     this._grayElementObj = cc.Texture2D._generateGrayTexture(this._htmlElementObj);
+                this._htmlElementObj = this._grayElementObj;
+            } else {
+                if(this._backupElement != null)
+                    this._htmlElementObj = this._backupElement;
+            }
         }
     });
+
+    cc.Texture2D._generateGrayTexture = function(texture, rect, renderCanvas){
+        if (texture === null)
+            return null;
+        renderCanvas = renderCanvas || cc.newElement("canvas");
+        rect = rect || cc.rect(0, 0, texture.width, texture.height);
+        renderCanvas.width = rect.width;
+        renderCanvas.height = rect.height;
+
+        var context = renderCanvas.getContext("2d");
+        context.drawImage(texture, rect.x, rect.y, rect.width, rect.height, 0, 0, rect.width, rect.height);
+        var imgData = context.getImageData(0, 0, rect.width, rect.height);
+        var data = imgData.data;
+        for (var i = 0, len = data.length; i < len; i += 4) {
+            data[i] = data[i + 1] = data[i + 2] = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+        }
+        context.putImageData(imgData, 0, 0);
+        return renderCanvas;
+    };
 
 } else {
     cc.assert(cc.isFunction(cc._tmp.WebGLTexture2D), cc._LogInfos.MissingFile, "TexturesWebGL.js");

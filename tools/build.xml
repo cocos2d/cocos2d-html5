@@ -202,6 +202,7 @@
                 <file name="extensions/editbox/CCEditBox.js"/>
                 <file name="extensions/ccui/system/CocosGUI.js"/>
                 <file name="extensions/ccui/base-classes/UIWidget.js"/>
+                <file name="extensions/ccui/base-classes/UIWidgetRenderCmd.js"/>
                 <file name="extensions/ccui/base-classes/UIScale9Sprite.js"/>
                 <file name="extensions/ccui/base-classes/UIScale9SpriteCanvasRenderCmd.js"/>
                 <file name="extensions/ccui/base-classes/UIScale9SpriteWebGLRenderCmd.js"/>

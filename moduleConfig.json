@@ -300,6 +300,7 @@
             "extensions/ccui/base-classes/CCProtectedNodeWebGLRenderCmd.js",
             "extensions/ccui/system/CocosGUI.js",
             "extensions/ccui/base-classes/UIWidget.js",
+            "extensions/ccui/base-classes/UIWidgetRenderCmd.js",
             "extensions/ccui/base-classes/UIScale9Sprite.js",
             "extensions/ccui/base-classes/UIScale9SpriteCanvasRenderCmd.js",
             "extensions/ccui/base-classes/UIScale9SpriteWebGLRenderCmd.js",

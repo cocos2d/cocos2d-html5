@@ -312,9 +312,9 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      *     If clippingEnabled is true, it will clip/scissor area.
      * </p>
      * @override
-     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
+     * @param {cc.Node.RenderCmd} [parentCmd]
      */
-    visit: function (ctx) {
+    visit: function (parentCmd) {
         if (!this._visible)
             return;
         this._adaptRenderers();
@@ -323,16 +323,16 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         if (this._clippingEnabled) {
             switch (this._clippingType) {
                 case ccui.Layout.CLIPPING_STENCIL:
-                    this._renderCmd.stencilClippingVisit(ctx);
+                    this._renderCmd.stencilClippingVisit(parentCmd);
                     break;
                 case ccui.Layout.CLIPPING_SCISSOR:
-                    this._renderCmd.scissorClippingVisit(ctx);
+                    this._renderCmd.scissorClippingVisit(parentCmd);
                     break;
                 default:
                     break;
             }
         } else
-            ccui.Widget.prototype.visit.call(this, ctx);
+            ccui.Widget.prototype.visit.call(this, parentCmd);
     },
 
     /**
@@ -516,34 +516,19 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._backGroundImageFileName = fileName;
         this._bgImageTexType = texType;
         var locBackgroundImage = this._backGroundImage;
-        if (this._backGroundScale9Enabled) {
-            var bgiScale9 = locBackgroundImage;
-            switch (this._bgImageTexType) {
-                case ccui.Widget.LOCAL_TEXTURE:
-                    bgiScale9.initWithFile(fileName);
-                    break;
-                case ccui.Widget.PLIST_TEXTURE:
-                    bgiScale9.initWithSpriteFrameName(fileName);
-                    break;
-                default:
-                    break;
-            }
-            bgiScale9.setPreferredSize(this._contentSize);
-        } else {
-            var sprite = locBackgroundImage;
-            switch (this._bgImageTexType){
-                case ccui.Widget.LOCAL_TEXTURE:
-                    //SetTexture cannot load resource
-                    sprite.initWithFile(fileName);
-                    break;
-                case ccui.Widget.PLIST_TEXTURE:
-                    //SetTexture cannot load resource
-                    sprite.initWithSpriteFrameName(fileName);
-                    break;
-                default:
-                    break;
-            }
+        switch (this._bgImageTexType) {
+            case ccui.Widget.LOCAL_TEXTURE:
+                locBackgroundImage.initWithFile(fileName);
+                break;
+            case ccui.Widget.PLIST_TEXTURE:
+                locBackgroundImage.initWithSpriteFrameName(fileName);
+                break;
+            default:
+                break;
         }
+        if (this._backGroundScale9Enabled)
+            locBackgroundImage.setPreferredSize(this._contentSize);
+
         this._backGroundImageTextureSize = locBackgroundImage.getContentSize();
         locBackgroundImage.setPosition(this._contentSize.width * 0.5, this._contentSize.height * 0.5);
         this._updateBackGroundImageColor();
@@ -597,13 +582,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     _addBackGroundImage: function () {
+        var contentSize = this._contentSize;
         if (this._backGroundScale9Enabled) {
             this._backGroundImage = new ccui.Scale9Sprite();
-            this._backGroundImage.setPreferredSize(this._contentSize);
+            this._backGroundImage.setPreferredSize(contentSize);
         } else
             this._backGroundImage = new cc.Sprite();
         this.addProtectedChild(this._backGroundImage, ccui.Layout.BACKGROUND_IMAGE_ZORDER, -1);
-        this._backGroundImage.setPosition(this._contentSize.width / 2.0, this._contentSize.height / 2.0);
+        this._backGroundImage.setPosition(contentSize.width * 0.5, contentSize.height * 0.5);
     },
 
     /**
@@ -863,7 +849,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     /**
-     * request do layout, it will do layout at visit calls
+     * request to refresh widget layout, it will do layout at visit calls
      */
     requestDoLayout: function () {
         this._doLayoutDirty = true;
@@ -1203,22 +1189,15 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                         }
                     } else
                         return this._getNextFocusedWidget(direction, nextWidget);
-                } else {
-                    if (current instanceof ccui.Layout)
-                        return current;
-                    else
-                        return this._focusedWidget;
-                }
+                } else
+                    return (current instanceof ccui.Layout) ? current : this._focusedWidget;
             } else{
                 if (this._isLastWidgetInContainer(current, direction)){
                     if (this._isWidgetAncestorSupportLoopFocus(this, direction))
-                        return this.findNextFocusedWidget(direction, this);
-                    if (current instanceof ccui.Layout)
-                        return current;
-                    else
-                        return this._focusedWidget;
+                        return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
+                    return (current instanceof ccui.Layout) ? current : this._focusedWidget;
                 } else
-                    return this.findNextFocusedWidget(direction, this);
+                    return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
             }
         }
     },
@@ -1265,10 +1244,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             } else {
                 if (this._isLastWidgetInContainer(current, direction)) {
                     if (this._isWidgetAncestorSupportLoopFocus(this, direction))
-                        return this.findNextFocusedWidget(direction, this);
+                        return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
                     return (current instanceof ccui.Layout) ? current : this._focusedWidget;
                 } else
-                    return this.findNextFocusedWidget(direction, this);
+                    return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
             }
         }
     },
@@ -1462,6 +1441,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._loopFocus = layout._loopFocus;
         this.__passFocusToChild = layout.__passFocusToChild;
         this._isInterceptTouch = layout._isInterceptTouch;
+    },
+
+    /**
+     * force refresh widget layout
+     */
+    forceDoLayout: function(){
+        this.requestDoLayout();
+        this._doLayout();
     },
 
     _createRenderCmd: function(){

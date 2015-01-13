@@ -125,14 +125,13 @@
             return;
         }
 
-        var _t = this, node = this._node;
-        var children = node._children;
+        var node = this._node, children = node._children;
         var len = children.length;
         // quick return if not visible
         if (!node._visible || len === 0)
             return;
 
-        _t._syncStatus(parentCmd);
+        this._syncStatus(parentCmd);
         cc.renderer.pushRenderCommand(this);
 
         //the bakeSprite is drawing

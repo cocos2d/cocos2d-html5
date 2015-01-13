@@ -34,9 +34,8 @@
 
     proto.visit = function(parentCmd){
         var node = this._node;
-        if(!node._visible){
+        if(!node._visible)
             return;
-        }
 
         if (node._positionsAreDirty) {
             node._updatePositions();
@@ -60,7 +59,6 @@
                 }
             }
         }
-
     };
 
     proto._updateDisplayOpacity = function(parentColor){
@@ -77,7 +75,45 @@
                 }
             }
         }
-
     };
 
+    proto.setState = function (state) {
+        var scale9Image = this._node._scale9Image;
+        if(scale9Image == null)
+            return;
+        if (state === ccui.Scale9Sprite.state.NORMAL) {
+            scale9Image.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+        } else if (state === ccui.Scale9Sprite.state.GRAY) {
+            scale9Image.setShaderProgram(ccui.Scale9Sprite.WebGLRenderCmd._getGrayShaderProgram());
+        }
+    };
+
+    ccui.Scale9Sprite.WebGLRenderCmd._grayShaderProgram = null;
+    ccui.Scale9Sprite.WebGLRenderCmd._getGrayShaderProgram = function(){
+        var grayShader = ccui.Scale9Sprite.WebGLRenderCmd._grayShaderProgram;
+        if(grayShader)
+            return grayShader;
+
+        grayShader = new cc.GLProgram();
+        grayShader.initWithVertexShaderByteArray(cc.SHADER_POSITION_TEXTURE_COLOR_VERT, ccui.Scale9Sprite.WebGLRenderCmd._grayShaderFragment);
+        grayShader.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
+        grayShader.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
+        grayShader.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
+        grayShader.link();
+        grayShader.updateUniforms();
+
+        ccui.Scale9Sprite.WebGLRenderCmd._grayShaderProgram = grayShader;
+        return grayShader;
+    };
+
+    ccui.Scale9Sprite.WebGLRenderCmd._grayShaderFragment =
+        "precision lowp float;\n"
+        + "varying vec4 v_fragmentColor; \n"
+        + "varying vec2 v_texCoord; \n"
+        + "void main() \n"
+        + "{ \n"
+        + "    vec4 c = texture2D(CC_Texture0, v_texCoord); \n"
+        + "    gl_FragColor.xyz = vec3(0.2126*c.r + 0.7152*c.g + 0.0722*c.b); \n"
+        +"     gl_FragColor.w = c.w ; \n"
+        + "}";
 })();

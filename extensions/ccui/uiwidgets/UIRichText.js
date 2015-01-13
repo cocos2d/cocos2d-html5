@@ -463,16 +463,8 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
         this._elementRenders[this._elementRenders.length - 1].push(renderer);
     },
 
-    /**
-     * Calls formatText before calls parent class' visit.
-     * @override
-     * @param parentCmd
-     */
-    visit: function (parentCmd) {
-        if (this._enabled) {
-            this.formatText();
-            ccui.Widget.prototype.visit.call(this, parentCmd);
-        }
+    _adaptRenderers: function(){
+        this.formatText();
     },
 
     /**

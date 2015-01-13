@@ -117,5 +117,48 @@ ccui.helper = {
 	            return res;
 	    }
 	    return null;
-	}
+	} ,
+
+    _activeLayout: true,
+    /**
+     * Refresh object and it's children layout state
+     * @param {cc.Node} rootNode
+     */
+    doLayout: function(rootNode){
+        if(!this._activeLayout)
+            return;
+        var children = rootNode.getChildren(), node;
+        for(var i = 0, len = children.length;i < len; i++) {
+            node = children[i];
+            var com = node.getComponent(ccui.LayoutComponent.NAME);
+            var parent = node.getParent();
+            if (null != com && null != parent && com.refreshLayout)
+                com.refreshLayout();
+        }
+    },
+
+    changeLayoutSystemActiveState: function(active){
+        this._activeLayout = active;
+    },
+
+    /**
+     * restrict capInsetSize, when the capInsets' width is larger than the textureSize, it will restrict to 0,   <br/>
+     * the height goes the same way as width.
+     * @param {cc.Rect} capInsets
+     * @param {cc.Size} textureSize
+     */
+    restrictCapInsetRect: function (capInsets, textureSize) {
+        var x = capInsets.x, y = capInsets.y;
+        var width = capInsets.width, height = capInsets.height;
+
+        if (textureSize.width < width) {
+            x = 0.0;
+            width = 0.0;
+        }
+        if (textureSize.height < height) {
+            y = 0.0;
+            height = 0.0;
+        }
+        return cc.rect(x, y, width, height);
+    }
 };
