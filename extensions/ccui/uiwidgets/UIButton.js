@@ -829,7 +829,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
     /**
      * Returns title fontSize of ccui.Button.
-     * @returns {cc.Size}
+     * @returns {Number}
      */
     getTitleFontSize: function () {
         return this._titleRenderer.getFontSize();
