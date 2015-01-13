@@ -74,6 +74,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
     },
 
     _initRenderer: function () {
+        //todo create Scale9Sprite and setScale9Enabled(false)
         this._imageRenderer = new cc.Sprite();
         this.addProtectedChild(this._imageRenderer, ccui.ImageView.RENDERER_ZORDER, -1);
     },
@@ -88,6 +89,8 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTexture: function (fileName, texType) {
+        //todo use this code when _initRenderer use Scale9Sprite
+        //if (!fileName || (this._textureFile == fileName && this._imageTexType == texType)) {
         if (!fileName) {
             return;
         }
@@ -96,6 +99,21 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         this._textureFile = fileName;
         this._imageTexType = texType;
         var imageRenderer = self._imageRenderer;
+
+        if(!imageRenderer.texture || !imageRenderer.texture.isLoaded()){
+            imageRenderer.addEventListener("load", function(){
+                self._findLayout();
+
+                self._imageTextureSize = imageRenderer.getContentSize();
+
+                self._updateChildrenDisplayedRGBA();
+
+                self._updateContentSizeWithTextureSize(self._imageTextureSize);
+                if(self._scale9Enabled)
+                    self.setCapInsets(self._capInsets);
+                self._imageRendererAdaptDirty = true;
+            });
+        }
 
         switch (self._imageTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
@@ -120,26 +138,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
                 break;
         }
 
-        if(!imageRenderer.texture || !imageRenderer.texture.isLoaded()){
-            imageRenderer.addEventListener("load", function(){
-                self._findLayout();
-
-                self._imageTextureSize = imageRenderer.getContentSize();
-                self._updateFlippedX();
-                self._updateFlippedY();
-
-                self._updateChildrenDisplayedRGBA();
-
-                self._updateContentSizeWithTextureSize(self._imageTextureSize);
-                if(self._scale9Enabled)
-                    self.setCapInsets(self._capInsets);
-                self._imageRendererAdaptDirty = true;
-            });
-        }
-
         self._imageTextureSize = imageRenderer.getContentSize();
-        self._updateFlippedX();
-        self._updateFlippedY();
 
         this._updateChildrenDisplayedRGBA();
 
@@ -156,25 +155,12 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
             this._imageRenderer.setTextureRect(rect);
     },
 
-    _updateFlippedX: function () {
-        if (this._scale9Enabled)
-            this._imageRenderer.setScaleX(this._flippedX ? -1 : 1);
-        else
-            this._imageRenderer.setFlippedX(this._flippedX);
-    },
-
-    _updateFlippedY: function () {
-        if (this._scale9Enabled)
-            this._imageRenderer.setScaleY(this._flippedY ? -1 : 1);
-        else
-            this._imageRenderer.setFlippedY(this._flippedY);
-    },
-
     /**
      * Sets if button is using scale9 renderer.
      * @param {Boolean} able
      */
     setScale9Enabled: function (able) {
+        //todo setScale9Enabled
         if (this._scale9Enabled == able)
             return;
 
