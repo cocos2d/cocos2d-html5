@@ -471,6 +471,8 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
             else
                 this._listViewEventSelector(this, eventEnum);
         }
+        if(this._ccEventCallback)
+            this._ccEventCallback(this, eventEnum);
     },
 
     /**
@@ -538,6 +540,15 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
             this._listViewEventListener = listView._listViewEventListener;
             this._listViewEventSelector = listView._listViewEventSelector;
         }
+    },
+
+    //v3.3
+    forceDoLayout: function(){
+        if (this._refreshViewDirty) {
+            this.refreshView();
+            this._refreshViewDirty = false;
+        }
+        this._innerContainer.forceDoLayout();
     }
 });
 
