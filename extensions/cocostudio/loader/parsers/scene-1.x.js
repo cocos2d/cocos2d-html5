@@ -41,6 +41,12 @@
             return node;
         },
 
+        deferred: function(json, resourcePath, node, file){
+            ccs.triggerManager.parse(json["Triggers"]||[]);
+            if(ccs.sceneReader)
+                ccs.sceneReader._node = node;
+        },
+
         setPropertyFromJsonDict: function(node, json){
             var x = (cc.isUndefined(json["x"]))?0:json["x"];
             var y = (cc.isUndefined(json["y"]))?0:json["y"];
