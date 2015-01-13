@@ -44,7 +44,13 @@
             var json = cc.loader.getRes(file);
             if(json)
                 this._fileDesignSizes[file] = cc.size(json["designWidth"]||0, json["designHeight"]||0);
-            return ccs._load(file, "ccui");
+            try{
+                return ccs._load(file, "ccui");
+            }catch(err){
+                cc.warn("Not supported file types, Please try use the ccs.load");
+                cc.log(err);
+                return null;
+            }
         },
 
         //@deprecated This function will be deprecated sooner or later please use parser.registerParser
