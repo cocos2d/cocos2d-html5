@@ -63,7 +63,7 @@
             });
 
             cache[file] = action;
-
+            cache[file].retain();
             return action.clone();
         }
 
