@@ -1017,7 +1017,8 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     },
 
     getScale: function () {
-        cc.log(this.getScaleX() == this.getScaleY(), "Scale9Sprite#scale. ScaleX != ScaleY. Don't know which one to return");
+        if(this.getScaleX() !== this.getScaleY())
+            cc.log("Scale9Sprite#scale. ScaleX != ScaleY. Don't know which one to return");
         return this.getScaleX();
     },
 

@@ -522,7 +522,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this._buttonClickedRenderer.setVisible(false);
         this._buttonDisableRenderer.setVisible(false);
         if (this._scale9Enabled)
-            this._buttonNormalRenderer.setState(0/*Scale9Sprite::State::NORMAL*/);
+            this._buttonNormalRenderer.setState( ccui.Scale9Sprite.state.NORMAL);
         if (this._pressedTextureLoaded) {
             if (this.pressedActionEnabled){
                 this._buttonNormalRenderer.stopAllActions();
@@ -533,7 +533,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
                 this._titleRenderer.stopAllActions();
                 if (this._unifySize){
-                    var zoomTitleAction = cc.scaleTo(0.05/*ZOOM_ACTION_TIME_STEP*/, 1, 1);
+                    var zoomTitleAction = cc.scaleTo(ccui.Button.ZOOM_ACTION_TIME_STEP, 1, 1);
                     this._titleRenderer.runAction(zoomTitleAction);
                 }else
                     this._titleRenderer.runAction(zoomAction.clone());
@@ -560,7 +560,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     _onPressStateChangedToPressed: function () {
         var locNormalRenderer = this._buttonNormalRenderer;
         if (this._scale9Enabled)
-            locNormalRenderer.setState(0/*Scale9Sprite::State::NORMAL*/);
+            locNormalRenderer.setState(ccui.Scale9Sprite.state.NORMAL);
 
         if (this._pressedTextureLoaded) {
             locNormalRenderer.setVisible(false);
@@ -962,29 +962,36 @@ ccui.Button.create = function (normalImage, selectedImage, disableImage, texType
 
 // Constants
 /**
- * The normal renderer's zOrder value.
+ * The normal renderer's zOrder value of ccui.Button.
  * @constant
  * @type {number}
  */
 ccui.Button.NORMAL_RENDERER_ZORDER = -2;
 /**
- * The pressed renderer's zOrder value.
+ * The pressed renderer's zOrder value ccui.Button.
  * @constant
  * @type {number}
  */
 ccui.Button.PRESSED_RENDERER_ZORDER = -2;
 /**
- * The disabled renderer's zOrder value.
+ * The disabled renderer's zOrder value of ccui.Button.
  * @constant
  * @type {number}
  */
 ccui.Button.DISABLED_RENDERER_ZORDER = -2;
 /**
- * The title renderer's zOrder value.
+ * The title renderer's zOrder value of ccui.Button.
  * @constant
  * @type {number}
  */
 ccui.Button.TITLE_RENDERER_ZORDER = -1;
+
+/**
+ * the zoom action time step of ccui.Button
+ * @constant
+ * @type {number}
+ */
+ccui.Button.ZOOM_ACTION_TIME_STEP = 0.05;
 
 /**
  * @ignore

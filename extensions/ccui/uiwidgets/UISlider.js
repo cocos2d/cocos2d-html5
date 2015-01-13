@@ -64,7 +64,6 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
 
     _sliderBallNormalTextureScaleX: 1,
     _sliderBallNormalTextureScaleY: 1,
-    _eventCallback: null,
 
     /**
      * allocates and initializes a UISlider.
@@ -527,7 +526,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      * @param {Object} [target=]
      */
     addEventListener: function(selector, target){
-        this._sliderEventSelector = selector;
+        this._sliderEventSelector = selector;      //when target is undefined, _sliderEventSelector = _eventCallback
         this._sliderEventListener = target;
     },
 
@@ -536,15 +535,10 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
             if (this._sliderEventListener)
                 this._sliderEventSelector.call(this._sliderEventListener, this, ccui.Slider.EVENT_PERCENT_CHANGED);
             else
-                this._sliderEventSelector(this, ccui.Slider.EVENT_PERCENT_CHANGED);
+                this._sliderEventSelector(this, ccui.Slider.EVENT_PERCENT_CHANGED);  // _eventCallback
         }
-        //todo check here
-        if (this._eventCallback){
-            this._eventCallback(this, 0/*EventType::ON_PERCENTAGE_CHANGED*/);
-        }
-        if (this._ccEventCallback){
-            this._ccEventCallback(this, 0/*static_cast<int>(EventType::ON_PERCENTAGE_CHANGED)*/);
-        }
+        if (this._ccEventCallback)
+            this._ccEventCallback(this, ccui.Slider.EVENT_PERCENT_CHANGED);
     },
 
     /**
@@ -710,7 +704,6 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._sliderEventListener = slider._sliderEventListener;
         this._sliderEventSelector = slider._sliderEventSelector;
         this._zoomScale = slider._zoomScale;
-        this._eventCallback = slider._eventCallback;
         this._ccEventCallback = slider._ccEventCallback;
 
     }
