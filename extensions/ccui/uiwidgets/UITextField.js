@@ -38,6 +38,8 @@ ccui._TextFieldRenderer = cc.TextFieldTTF.extend({
     _deleteBackward: false,
     _className: "_TextFieldRenderer",
     _textFieldRendererAdaptDirty: true,
+    _ccEventCallback: null,
+    _eventCallback: null,
 
     ctor: function () {
         cc.TextFieldTTF.prototype.ctor.call(this);
@@ -653,6 +655,9 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
             else
                 this._textFieldEventSelector(this, ccui.TextField.EVENT_ATTACH_WITH_IME);
         }
+        if (this._ccEventCallback){
+            this._ccEventCallback(this, 0/*static_cast<int>(EventType::ATTACH_WITH_IME)*/);
+        }
     },
 
     _detachWithIMEEvent: function () {
@@ -661,6 +666,12 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
                 this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_DETACH_WITH_IME);
             else
                 this._textFieldEventSelector(this, ccui.TextField.EVENT_DETACH_WITH_IME);
+        }
+        if (this._eventCallback){
+            this._eventCallback(this, 0/*EventType::DETACH_WITH_IME*/);
+        }
+        if (this._ccEventCallback){
+            this._ccEventCallback(this, 0/*static_cast<int>(EventType::DETACH_WITH_IME)*/);
         }
     },
 
@@ -671,6 +682,12 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
             else
                 this._textFieldEventSelector(this, ccui.TextField.EVENT_INSERT_TEXT);
         }
+        if (this._eventCallback){
+            this._eventCallback(this, 0/*EventType::INSERT_TEXT*/);
+        }
+        if (this._ccEventCallback){
+            this._ccEventCallback(this, 0/*static_cast<int>(EventType::INSERT_TEXT)*/);
+        }
     },
 
     _deleteBackwardEvent: function () {
@@ -679,6 +696,13 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
                 this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_DELETE_BACKWARD);
             else
                 this._textFieldEventSelector(this, ccui.TextField.EVENT_DELETE_BACKWARD);
+        }
+        if (this._eventCallback){
+            this._eventCallback(this, 0/*EventType::DELETE_BACKWARD*/);
+        }
+        if (this._ccEventCallback)
+        {
+            this._ccEventCallback(this, 0/*static_cast<int>(EventType::DELETE_BACKWARD)*/);
         }
     },
 
@@ -769,6 +793,10 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         this.setDetachWithIME(textField.getDetachWithIME());
         this.setInsertText(textField.getInsertText());
         this.setDeleteBackward(textField.getDeleteBackward());
+        this._eventCallback = textField._eventCallback;
+        this._ccEventCallback = textField._ccEventCallback;
+        this._textFieldEventListener = textField._textFieldEventListener;
+        this._textFieldEventSelector = textField._textFieldEventSelector;
     },
 
     /**
