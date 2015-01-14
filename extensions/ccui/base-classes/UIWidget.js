@@ -145,6 +145,9 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @override
      */
     onEnter: function () {
+        var locListener = this._touchListener;
+        if (locListener && !locListener._isRegistered() && this._touchEnabled)
+            cc.eventManager.addListener(locListener, this);
         if(!this._usingLayoutComponent)
             this.updateSizeAndPosition();
         cc.ProtectedNode.prototype.onEnter.call(this);
