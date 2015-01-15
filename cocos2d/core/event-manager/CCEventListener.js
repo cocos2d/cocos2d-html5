@@ -269,6 +269,13 @@ cc.EventListener.ACCELERATION = 5;
  */
 cc.EventListener.CUSTOM = 6;
 
+/**
+ * The type code of Focus change event listener.
+ * @constant
+ * @type {number}
+ */
+cc.EventListener.FOCUS = 7;
+
 cc._EventListenerCustom = cc.EventListener.extend({
     _onCustomEvent: null,
     ctor: function (listenerId, callback) {
@@ -470,7 +477,8 @@ cc.EventListener.create = function(argObj){
     else if(listenerType === cc.EventListener.ACCELERATION){
         listener = new cc._EventListenerAcceleration(argObj.callback);
         delete argObj.callback;
-    }
+    } else if(listenerType === cc.EventListener.FOCUS)
+        listener = new cc._EventListenerFocus();
 
     for(var key in argObj) {
         listener[key] = argObj[key];
@@ -478,3 +486,28 @@ cc.EventListener.create = function(argObj){
 
     return listener;
 };
+
+cc._EventListenerFocus = cc.EventListener.extend({
+    clone: function(){
+        var listener = new cc._EventListenerFocus();
+        listener.onFocusChanged = this.onFocusChanged;
+        return listener;
+    },
+    checkAvailable: function(){
+        if(!this.onFocusChanged){
+            cc.log("Invalid EventListenerFocus!");
+            return false;
+        }
+        return true;
+    },
+    onFocusChanged: null,
+    ctor: function(){
+        var listener = function(event){
+            if(this.onFocusChanged)
+                this.onFocusChanged(event._widgetLoseFocus, event._widgetGetFocus);
+        };
+        cc.EventListener.prototype.ctor.call(this, cc.EventListener.FOCUS, cc._EventListenerFocus.LISTENER_ID, listener);
+    }
+});
+
+cc._EventListenerFocus.LISTENER_ID = "";
