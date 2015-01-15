@@ -62,13 +62,13 @@
 
     proto.transform = function(parentCmd){
         var node = this._node;
+        cc.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd);
         if (node._positionsAreDirty) {
             node._updatePositions();
             node._positionsAreDirty = false;
             node._scale9Dirty = true;
         }
         this._cacheScale9Sprite();
-        cc.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd);
 
         var children = node._children;
         for(var i=0; i<children.length; i++){
