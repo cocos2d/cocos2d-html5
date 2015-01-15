@@ -421,3 +421,17 @@ cc.EventTouch = cc.Event.extend(/** @lends cc.EventTouch# */{
 cc.EventTouch.MAX_TOUCHES = 5;
 
 cc.EventTouch.EventCode = {BEGAN: 0, MOVED: 1, ENDED: 2, CANCELLED: 3};
+
+/**
+ * Focus change event for UI widget
+ * @class
+ * @extends cc.Event
+ */
+cc.EventFocus = cc.Event.extend(/** @lends cc.EventTouch# */{
+    _widgetGetFocus: null,
+    _widgetLoseFocus: null,
+    ctor: function(widgetLoseFocus, widgetGetFocus){
+        this._widgetGetFocus = widgetGetFocus;
+        this._widgetLoseFocus = widgetLoseFocus;
+    }
+});
