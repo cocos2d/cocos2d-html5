@@ -45,9 +45,9 @@
         cc.Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
     };
 
-    proto.transform = function(){
+    proto.transform = function(parentCmd, recursive){
         var node = this._node;
-        cc.Node.WebGLRenderCmd.prototype.transform.call(this);
+        cc.Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
         if (node._positionsAreDirty) {
             node._updatePositions();
             node._positionsAreDirty = false;
