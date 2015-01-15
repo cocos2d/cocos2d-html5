@@ -430,6 +430,11 @@ cc.EventTouch.EventCode = {BEGAN: 0, MOVED: 1, ENDED: 2, CANCELLED: 3};
 cc.EventFocus = cc.Event.extend(/** @lends cc.EventTouch# */{
     _widgetGetFocus: null,
     _widgetLoseFocus: null,
+    /**
+     * Constructor function.
+     * @param {ccui.Widget} widgetLoseFocus
+     * @param {ccui.Widget} widgetGetFocus
+     */
     ctor: function(widgetLoseFocus, widgetGetFocus){
         this._widgetGetFocus = widgetGetFocus;
         this._widgetLoseFocus = widgetLoseFocus;
