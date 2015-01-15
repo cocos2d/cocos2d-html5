@@ -45,6 +45,16 @@
         cc.Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
     };
 
+    proto.transform = function(){
+        var node = this._node;
+        cc.Node.WebGLRenderCmd.prototype.transform.call(this);
+        if (node._positionsAreDirty) {
+            node._updatePositions();
+            node._positionsAreDirty = false;
+            node._scale9Dirty = true;
+        }
+    };
+
     proto._updateDisplayColor = function(parentColor){
         cc.Node.WebGLRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
 

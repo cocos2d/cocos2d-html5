@@ -1265,7 +1265,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             this._positionPercent.x = component.getPositionPercentX();
             this._positionPercent.y = component.getPositionPercentY();
         }
-        return cc.p(this.getNormalizedPosition());
+        return cc.p(this._positionPercent);
     },
 
     _getXPercent: function () {
