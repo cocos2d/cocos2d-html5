@@ -80,7 +80,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             var node = this._node;
             if (node._visible) {
                 node._adaptRenderers();
-                cc.ProtectedNode.CanvasRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+
+                var widgetParent = node.getWidgetParent();
+                if (widgetParent) {
+                    var parentSize = widgetParent.getSize();
+                    node._position.x = parentSize.width * node._positionPercent.x;
+                    node._position.y = parentSize.height * node._positionPercent.y;
+                }
+                cc.ProtectedNode.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
             }
         };
     })();
