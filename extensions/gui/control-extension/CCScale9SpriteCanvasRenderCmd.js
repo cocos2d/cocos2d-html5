@@ -89,6 +89,11 @@
 
     proto.transform = function(parentCmd){
         var node = this._node;
+        if (node._positionsAreDirty) {
+            node._updatePositions();
+            node._positionsAreDirty = false;
+            node._scale9Dirty = true;
+        }
         this._cacheScale9Sprite();
         cc.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd);
 

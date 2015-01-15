@@ -52,8 +52,8 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         this._capInsets = cc.rect(0,0,0,0);
         this._imageTextureSize = cc.size(this._capInsets.width, this._capInsets.height);
         ccui.Widget.prototype.ctor.call(this);
-
-        texType !== undefined && this.init(imageFileName, texType);
+        texType = texType === undefined ? 0 : texType;
+        this.init(imageFileName, texType);
     },
 
     /**
@@ -298,6 +298,19 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
             this.loadTexture(imageView._textureFile, imageView._imageTexType);
             this.setCapInsets(imageView._capInsets);
         }
+    },
+    /**
+     * Sets _customSize of ccui.Widget, if ignoreSize is true, the content size is its renderer's contentSize, otherwise the content size is parameter.
+     * and updates size percent by parent content size. At last, updates its children's size and position.
+     * @param {cc.Size|Number} contentSize content size or width of content size
+     * @param {Number} [height]
+     * @override
+     */
+    setContentSize: function(contentSize, height){
+        if(height)
+            contentSize = cc.size(contentSize, height);
+        ccui.Widget.prototype.setContentSize.call(this, contentSize);
+        this._imageRenderer.setContentSize(contentSize);
     }
 
 });
