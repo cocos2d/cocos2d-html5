@@ -1369,12 +1369,21 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
     },
 
     /**
-     * returns the selected item
+     * returns the selected item   (deprecated in -x, please use getSelectedItem instead.)
      * @return {cc.MenuItem}
      */
     selectedItem: function () {
         return this.subItems[this._selectedIndex];
     },
+
+    /**
+     * returns the selected item.
+     * @return {cc.MenuItem}
+     */
+    getSelectedItem: function() {
+        return this.subItems[this._selectedIndex];
+    },
+
     /**
      * * <p>
      *     Event callback that is invoked every time when cc.MenuItemToggle enters the 'stage'.                                   <br/>
