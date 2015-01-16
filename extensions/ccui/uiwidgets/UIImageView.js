@@ -135,6 +135,8 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
 
         self._updateContentSizeWithTextureSize(self._imageTextureSize);
         self._imageRendererAdaptDirty = true;
+        self._findLayout();
+
     },
 
     /**

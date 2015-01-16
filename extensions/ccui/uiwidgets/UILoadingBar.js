@@ -162,6 +162,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         this._barRendererScaleChangedWithSize();
         this._updateContentSizeWithTextureSize(this._barRendererTextureSize);
         this._barRendererAdaptDirty = true;
+        this._findLayout();
     },
 
     /**

@@ -284,6 +284,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
         this._normalTextureLoaded = true;
         this._normalTextureAdaptDirty = true;
+        this._findLayout();
     },
 
     /**
@@ -327,6 +328,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
         this._pressedTextureLoaded = true;
         this._pressedTextureAdaptDirty = true;
+        this._findLayout();
     },
 
     /**
@@ -371,6 +373,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
         this._disabledTextureLoaded = true;
         this._disabledTextureAdaptDirty = true;
+        this._findLayout();
     },
 
     /**

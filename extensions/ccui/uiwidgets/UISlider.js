@@ -154,6 +154,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._barRendererAdaptDirty = true;
         this._progressBarRendererDirty = true;
         this._updateContentSizeWithTextureSize(this._barRenderer.getContentSize());
+        this._findLayout();
     },
 
     /**
@@ -195,6 +196,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         var tz = this._progressBarRenderer.getContentSize();
         this._progressBarTextureSize = {width: tz.width, height: tz.height};
         this._progressBarRendererDirty = true;
+        this._findLayout();
     },
 
     /**
@@ -357,6 +359,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
                 break;
         }
         this._updateChildrenDisplayedRGBA();
+        this._findLayout();
     },
 
     /**
@@ -392,6 +395,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
                 break;
         }
         this._updateChildrenDisplayedRGBA();
+        this._findLayout();
     },
 
     /**
@@ -427,6 +431,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
                 break;
         }
         this._updateChildrenDisplayedRGBA();
+        this._findLayout();
     },
 
     /**
