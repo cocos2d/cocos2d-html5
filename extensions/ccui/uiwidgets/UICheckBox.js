@@ -175,6 +175,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
         this._updateContentSizeWithTextureSize(this._backGroundBoxRenderer.getContentSize());
         this._backGroundBoxRendererAdaptDirty = true;
+        this._findLayout();
     },
 
     /**
@@ -214,6 +215,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this._updateChildrenDisplayedRGBA();
 
         this._backGroundSelectedBoxRendererAdaptDirty = true;
+        this._findLayout();
     },
 
     /**
@@ -251,6 +253,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this._updateChildrenDisplayedRGBA();
 
         this._frontCrossRendererAdaptDirty = true;
+        this._findLayout();
     },
 
     /**
@@ -288,6 +291,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this._updateChildrenDisplayedRGBA();
 
         this._backGroundBoxDisabledRendererAdaptDirty = true;
+        this._findLayout();
     },
 
     /**
@@ -325,6 +329,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this._updateChildrenDisplayedRGBA();
 
         this._frontCrossDisabledRendererAdaptDirty = true;
+        this._findLayout();
     },
 
     _onPressStateChangedToNormal: function () {
