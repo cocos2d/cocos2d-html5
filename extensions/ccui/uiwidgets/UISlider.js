@@ -61,6 +61,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     _barRendererAdaptDirty: true,
     _progressBarRendererDirty: true,
     _unifySize: false,
+    _zoomScale: 0.1,
 
     _sliderBallNormalTextureScaleX: 1,
     _sliderBallNormalTextureScaleY: 1,
@@ -72,11 +73,16 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      * // example
      * var uiSlider = new ccui.Slider();
      */
-    ctor: function () {
+    ctor: function (barTextureName, normalBallTextureName, resType) {
         this._progressBarTextureSize = cc.size(0, 0);
         this._capInsetsBarRenderer = cc.rect(0, 0, 0, 0);
         this._capInsetsProgressBarRenderer = cc.rect(0, 0, 0, 0);
         ccui.Widget.prototype.ctor.call(this);
+
+        resType = resType == null ? 0 : resType;
+        this.setTouchEnabled(true);
+        barTextureName && this.loadBarTexture(barTextureName, resType);
+        normalBallTextureName && this.loadSlidBallTextures(normalBallTextureName, resType);
     },
 
     /**
@@ -127,12 +133,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         var self = this;
         if(!barRenderer.texture || !barRenderer.texture.isLoaded()){
             barRenderer.addEventListener("load", function(){
-                self._findLayout();
-                self._updateChildrenDisplayedRGBA();
-
-                self._barRendererAdaptDirty = true;
-                self._progressBarRendererDirty = true;
-                self._updateContentSizeWithTextureSize(self._barRenderer.getContentSize());
+                self.loadBarTexture(fileName, texType);
             });
         }
 
@@ -172,13 +173,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         var self = this;
         if(!progressBarRenderer.texture || !progressBarRenderer.texture.isLoaded()){
             progressBarRenderer.addEventListener("load", function(){
-                self._findLayout();
-                self._updateChildrenDisplayedRGBA();
-
-                self._progressBarRenderer.setAnchorPoint(cc.p(0, 0.5));
-                var tz = self._progressBarRenderer.getContentSize();
-                self._progressBarTextureSize = {width: tz.width, height: tz.height};
-                self._progressBarRendererDirty = true;
+                self.loadProgressBarTexture(fileName, texType);
             });
         }
 
@@ -345,7 +340,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         var self = this;
         if(!this._slidBallNormalRenderer.texture || !this._slidBallNormalRenderer.texture.isLoaded()){
             this._slidBallNormalRenderer.addEventListener("load", function(){
-                self._updateChildrenDisplayedRGBA();
+                self.loadSlidBallTextureNormal(normal, texType);
             });
         }
 
@@ -380,7 +375,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         var self = this;
         if(!this._slidBallPressedRenderer.texture || !this._slidBallPressedRenderer.texture.isLoaded()){
             this._slidBallPressedRenderer.addEventListener("load", function(){
-                self._updateChildrenDisplayedRGBA();
+                self.loadSlidBallTexturePressed(pressed, texType);
             });
         }
 
@@ -415,7 +410,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         var self = this;
         if(!this._slidBallDisabledRenderer.texture || !this._slidBallDisabledRenderer.texture.isLoaded()){
             this._slidBallDisabledRenderer.addEventListener("load", function(){
-                self._updateChildrenDisplayedRGBA();
+                self.loadSlidBallTextureDisabled(disabled, texType);
             });
         }
 
@@ -723,8 +718,8 @@ _p = null;
  * @deprecated since v3.0, please use new ccui.Slider() instead.
  * @return {ccui.Slider}
  */
-ccui.Slider.create = function () {
-    return new ccui.Slider();
+ccui.Slider.create = function (barTextureName, normalBallTextureName, resType) {
+    return new ccui.Slider(barTextureName, normalBallTextureName, resType);
 };
 
 // Constant

@@ -254,17 +254,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         var self = this;
         if(!this._buttonNormalRenderer.texture || !this._buttonNormalRenderer.texture.isLoaded()){
             this._buttonNormalRenderer.addEventListener("load", function(){
-                self._findLayout();
-
-                self._normalTextureSize = self._buttonNormalRenderer.getContentSize();
-                self._updateChildrenDisplayedRGBA();
-
-                self._buttonNormalRenderer.setColor(self.getColor());
-                self._buttonNormalRenderer.setOpacity(self.getOpacity());
-
-                self._updateContentSizeWithTextureSize(self._normalTextureSize);
-                self._normalTextureLoaded = true;
-                self._normalTextureAdaptDirty = true;
+                self.loadTextureNormal(normal, texType);
             });
         }
 
@@ -311,13 +301,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         var self = this;
         if(!this._buttonClickedRenderer.texture || !this._buttonClickedRenderer.texture.isLoaded()){
             this._buttonClickedRenderer.addEventListener("load", function(){
-                self._findLayout();
-
-                self._pressedTextureSize = self._buttonClickedRenderer.getContentSize();
-                self._updateChildrenDisplayedRGBA();
-
-                self._pressedTextureLoaded = true;
-                self._pressedTextureAdaptDirty = true;
+                self.loadTexturePressed(selected, texType);
             });
         }
 
@@ -361,13 +345,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         var self = this;
         if(!this._buttonDisableRenderer.texture || !this._buttonDisableRenderer.texture.isLoaded()){
             this._buttonDisableRenderer.addEventListener("load", function() {
-                self._findLayout();
-
-                self._disabledTextureSize = self._buttonDisableRenderer.getContentSize();
-                self._updateChildrenDisplayedRGBA();
-
-                self._disabledTextureLoaded = true;
-                self._disabledTextureAdaptDirty = true;
+                self.loadTextureDisabled(disabled, texType);
             });
         }
 

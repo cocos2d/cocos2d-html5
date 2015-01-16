@@ -154,11 +154,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         var self = this;
         if(!bgBoxRenderer.texture || !bgBoxRenderer.texture.isLoaded()){
             bgBoxRenderer.addEventListener("load", function(){
-                self._findLayout();
-
-                self._updateChildrenDisplayedRGBA();
-                self._updateContentSizeWithTextureSize(self._backGroundBoxRenderer.getContentSize());
-                self._backGroundBoxRendererAdaptDirty = true;
+                self.loadTextureBackGround(backGround, texType);
             });
         }
 
@@ -173,13 +169,6 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
                 break;
             default:
                 break;
-        }
-
-        if (!bgBoxRenderer.textureLoaded()) {
-            this._backGroundBoxRenderer.setContentSize(this._customSize);
-            bgBoxRenderer.addEventListener("load", function () {
-                this._updateContentSizeWithTextureSize(this._backGroundBoxRenderer.getContentSize());
-            }, this);
         }
 
         this._updateChildrenDisplayedRGBA();
@@ -204,10 +193,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         var self = this;
         if(!this._backGroundSelectedBoxRenderer.texture || !this._backGroundSelectedBoxRenderer.texture.isLoaded()){
             this._backGroundSelectedBoxRenderer.addEventListener("load", function(){
-                self._findLayout();
-
-                self._updateChildrenDisplayedRGBA();
-                self._backGroundSelectedBoxRendererAdaptDirty = true;
+                self.loadTextureBackGroundSelected(backGroundSelected, texType);
             });
         }
 
@@ -245,10 +231,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         var self = this;
         if(!this._frontCrossRenderer.texture || !this._frontCrossRenderer.texture.isLoaded()){
             this._frontCrossRenderer.addEventListener("load", function(){
-                self._findLayout();
-
-                self._updateChildrenDisplayedRGBA();
-                self._frontCrossRendererAdaptDirty = true;
+                self.loadTextureFrontCross(cross, texType);
             });
         }
 
@@ -285,10 +268,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         var self = this;
         if(!this._backGroundBoxDisabledRenderer.texture || !this._backGroundBoxDisabledRenderer.texture.isLoaded()){
             this._backGroundBoxDisabledRenderer.addEventListener("load", function(){
-                self._findLayout();
-
-                self._updateChildrenDisplayedRGBA();
-                self._backGroundBoxDisabledRendererAdaptDirty = true;
+                self.loadTextureBackGroundDisabled(backGroundDisabled, texType);
             });
         }
 
@@ -325,10 +305,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         var self = this;
         if(!this._frontCrossDisabledRenderer.texture || !this._frontCrossDisabledRenderer.texture.isLoaded()){
             this._frontCrossDisabledRenderer.addEventListener("load", function(){
-                self._findLayout();
-
-                self._updateChildrenDisplayedRGBA();
-                self._frontCrossDisabledRendererAdaptDirty = true;
+                self.loadTextureFrontCrossDisabled(frontCrossDisabled, texType);
             });
         }
 
