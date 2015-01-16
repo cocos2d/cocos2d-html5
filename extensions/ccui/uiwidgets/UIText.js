@@ -433,15 +433,15 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     setColor: function(color){
         cc.ProtectedNode.prototype.setColor.call(this, color);
         this._labelRenderer.setColor(color);
+    },
+
+    setTextColor: function(color){
+        this._labelRenderer.setFontFillColor(color);
+    },
+
+    getTextColor: function(){
+        return this._labelRenderer._getFillStyle();
     }
-    //todo label add setTextColor
-//    setTextColor: function(color){
-//        this._labelRenderer.setTextColor(color);
-//    },
-//
-//    getTextColor: function(){
-//        return this._labelRenderer.getTextColor();
-//    }
 });
 
 var _p = ccui.Text.prototype;

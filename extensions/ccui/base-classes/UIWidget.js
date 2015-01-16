@@ -1170,7 +1170,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         }
 
         cc.Node.prototype.setPosition.call(this, pos, posY);
-        this._positionType = ccui.Widget.POSITION_ABSOLUTE;
+        //this._positionType = ccui.Widget.POSITION_ABSOLUTE;
     },
 
     setPositionX: function (x) {
@@ -1207,52 +1207,35 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {cc.Point} percent
      */
     setPositionPercent: function (percent) {
-        if (this._usingLayoutComponent)
-        {
+        if (this._usingLayoutComponent){
             var component = this._getOrCreateLayoutComponent();
             component.setPositionPercentX(percent.x);
             component.setPositionPercentY(percent.y);
             component.refreshLayout();
             return;
+        }else{
+            this._setXPercent(percent.x);
+            this._setYPercent(percent.y);
         }
-        this._positionPercent = percent;
-        if (this._running) {
-            var widgetParent = this.getWidgetParent();
-            if (widgetParent) {
-                var parentSize = widgetParent.getSize();
-                this.setPosition(parentSize.width * this._positionPercent.x, parentSize.height * this._positionPercent.y);
-            }
-        }
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
     _setXPercent: function (percent) {
-        if (this._usingLayoutComponent)
-        {
+        if (this._usingLayoutComponent){
             var component = this._getOrCreateLayoutComponent();
             component.setPositionPercentX(percent.x);
             component.refreshLayout();
             return;
         }
         this._positionPercent.x = percent;
-        if (this._running) {
-            var widgetParent = this.getWidgetParent();
-            if (widgetParent)
-                this.setPositionX(widgetParent.width * percent);
-        }
     },
     _setYPercent: function (percent) {
-        if (this._usingLayoutComponent)
-        {
+        if (this._usingLayoutComponent){
             var component = this._getOrCreateLayoutComponent();
             component.setPositionPercentY(percent.x);
             component.refreshLayout();
             return;
         }
         this._positionPercent.y = percent;
-        if (this._running) {
-            var widgetParent = this.getWidgetParent();
-            if (widgetParent)
-                this.setPositionY(widgetParent.height * percent);
-        }
     },
 
     /**

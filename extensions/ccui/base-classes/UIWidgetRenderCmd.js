@@ -39,6 +39,24 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 cc.ProtectedNode.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
             }
         };
+
+        proto.transform = function(parentCmd, recursive){
+            var node = this._node;
+
+            if (node._visible) {
+                node._adaptRenderers();
+
+                var widgetParent = node.getWidgetParent();
+                if (widgetParent) {
+                    var parentSize = widgetParent.getSize();
+                    node._position.x = parentSize.width * node._positionPercent.x;
+                    node._position.y = parentSize.height * node._positionPercent.y;
+                }
+
+                cc.ProtectedNode.CanvasRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+            }
+
+        };
     })();
 } else {
     (function () {
@@ -55,6 +73,21 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             if (node._visible) {
                 node._adaptRenderers();
                 cc.ProtectedNode.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
+            }
+        };
+
+        proto.transform = function(parentCmd, recursive){
+            var node = this._node;
+            if (node._visible) {
+                node._adaptRenderers();
+
+                var widgetParent = node.getWidgetParent();
+                if (widgetParent) {
+                    var parentSize = widgetParent.getSize();
+                    node._position.x = parentSize.width * node._positionPercent.x;
+                    node._position.y = parentSize.height * node._positionPercent.y;
+                }
+                cc.ProtectedNode.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
             }
         };
     })();
