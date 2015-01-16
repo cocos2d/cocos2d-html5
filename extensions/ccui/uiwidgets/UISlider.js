@@ -61,6 +61,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     _barRendererAdaptDirty: true,
     _progressBarRendererDirty: true,
     _unifySize: false,
+    _zoomScale: 0.1,
 
     _sliderBallNormalTextureScaleX: 1,
     _sliderBallNormalTextureScaleY: 1,
@@ -72,11 +73,16 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      * // example
      * var uiSlider = new ccui.Slider();
      */
-    ctor: function () {
+    ctor: function (barTextureName, normalBallTextureName, resType) {
         this._progressBarTextureSize = cc.size(0, 0);
         this._capInsetsBarRenderer = cc.rect(0, 0, 0, 0);
         this._capInsetsProgressBarRenderer = cc.rect(0, 0, 0, 0);
         ccui.Widget.prototype.ctor.call(this);
+
+        resType = resType == null ? 0 : resType;
+        this.setTouchEnabled(true);
+        barTextureName && this.loadBarTexture(barTextureName, resType);
+        normalBallTextureName && this.loadSlidBallTextures(normalBallTextureName, resType);
     },
 
     /**
@@ -712,8 +718,8 @@ _p = null;
  * @deprecated since v3.0, please use new ccui.Slider() instead.
  * @return {ccui.Slider}
  */
-ccui.Slider.create = function () {
-    return new ccui.Slider();
+ccui.Slider.create = function (barTextureName, normalBallTextureName, resType) {
+    return new ccui.Slider(barTextureName, normalBallTextureName, resType);
 };
 
 // Constant
