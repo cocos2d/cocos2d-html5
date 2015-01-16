@@ -794,28 +794,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     /**
-     * call this method with parameter true to enable the Android Dpad focus navigation feature
-     * @note it doesn't implemented on Web
-     * @param {Boolean} enable set true to enable dpad focus navigation, otherwise disable dpad focus navigation
-     */
-    enableDpadNavigation: function(enable){
-        if (enable){
-            if (null == ccui.Widget._focusNavigationController) {
-                ccui.Widget._focusNavigationController = new ccui._FocusNavigationController();
-                if (ccui.Widget._focusedWidget) {
-                    ccui.Widget._focusNavigationController._setFirstFocsuedWidget(ccui.Widget._focusedWidget);
-                }
-            }
-            ccui.Widget._focusNavigationController.enableFocusNavigation(true);
-        } else {
-            if(ccui.Widget._focusNavigationController){
-                ccui.Widget._focusNavigationController.enableFocusNavigation(false);
-                ccui.Widget._focusNavigationController = null;
-            }
-        }
-    },
-
-    /**
      * <p>
      *    When a widget lose/get focus, this method will be called. Be Caution when you provide your own version,       <br/>
      *    you must call widget.setFocused(true/false) to change the focus state of the current focused widget;
@@ -1919,6 +1897,28 @@ ccui.Widget.create = function () {
 
 ccui.Widget._focusedWidget = null;                        //both layout & widget will be stored in this variable
 ccui.Widget._focusNavigationController = null;
+
+/**
+ * call this method with parameter true to enable the Android Dpad focus navigation feature
+ * @note it doesn't implemented on Web
+ * @param {Boolean} enable set true to enable dpad focus navigation, otherwise disable dpad focus navigation
+ */
+ccui.Widget.enableDpadNavigation = function(enable){
+    if (enable){
+        if (null == ccui.Widget._focusNavigationController) {
+            ccui.Widget._focusNavigationController = new ccui._FocusNavigationController();
+            if (ccui.Widget._focusedWidget) {
+                ccui.Widget._focusNavigationController._setFirstFocsuedWidget(ccui.Widget._focusedWidget);
+            }
+        }
+        ccui.Widget._focusNavigationController.enableFocusNavigation(true);
+    } else {
+        if(ccui.Widget._focusNavigationController){
+            ccui.Widget._focusNavigationController.enableFocusNavigation(false);
+            ccui.Widget._focusNavigationController = null;
+        }
+    }
+};
 
 /**
  * Gets the focused widget of current stage.
