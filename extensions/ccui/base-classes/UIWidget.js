@@ -23,6 +23,62 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+ccui._FocusNavigationController = cc.Class.extend({
+    _keyboardListener: null,
+    _firstFocusedWidget: null,
+    _enableFocusNavigation: false,
+    _keyboardEventPriority: 1,
+
+    enableFocusNavigation: function(flag){
+        if (this._enableFocusNavigation == flag)
+            return;
+
+        this._enableFocusNavigation = flag;
+        if (flag)
+            this._addKeyboardEventListener();
+        else
+            this._removeKeyboardEventListener();
+    },
+
+    _setFirstFocsuedWidget: function(widget){
+        this._firstFocusedWidget = widget;
+    },
+
+    _onKeyPressed: function(keyCode, event){
+        if (this._enableFocusNavigation && this._firstFocusedWidget) {
+            if (keyCode == cc.KEY.down) {
+                this._firstFocusedWidget = this._firstFocusedWidget.findNextFocusedWidget(ccui.Widget.DOWN, this._firstFocusedWidget);
+            }
+            if (keyCode == cc.KEY.up){
+                this._firstFocusedWidget = this._firstFocusedWidget.findNextFocusedWidget(ccui.Widget.UP, this._firstFocusedWidget);
+            }
+            if (keyCode == cc.KEY.left) {
+                this._firstFocusedWidget = this._firstFocusedWidget.findNextFocusedWidget(ccui.Widget.LEFT, this._firstFocusedWidget);
+            }
+            if (keyCode == cc.KEY.right) {
+                this._firstFocusedWidget = this._firstFocusedWidget.findNextFocusedWidget(ccui.Widget.RIGHT, this._firstFocusedWidget);
+            }
+        }
+    },
+
+    _addKeyboardEventListener: function(){
+        if (!this._keyboardListener) {
+            this._keyboardListener = cc.EventListener.create({
+                event: cc.EventListener.KEYBOARD,
+                onKeyReleased: this._onKeyPressed.bind(this)
+            });
+            cc.eventManager.addListener(this._keyboardListener, this._keyboardEventPriority);
+        }
+    },
+
+    _removeKeyboardEventListener: function(){
+        if (this._keyboardListener) {
+            cc.eventManager.removeEventListener(this._keyboardListener);
+            this._keyboardListener = null;
+        }
+    }
+});
+
 ccui.__LAYOUT_COMPONENT_NAME = "__ui_layout";
 
 /**
@@ -269,10 +325,14 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _cleanupWidget: function(){
         //clean up _touchListener
         this._eventDispatcher.removeEventListener(this._touchListener);
+        this._touchEnabled = false;
+        this._touchListener = null;
 
         //cleanup focused widget and focus navigation controller
-        if (ccui.Widget._focusedWidget == this)
+        if (ccui.Widget._focusedWidget == this){
             ccui.Widget._focusedWidget = null;
+            ccui.Widget._focusNavigationController = null;
+        }
     },
 
     /**
@@ -664,8 +724,11 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     setFocused: function (focus) {
         this._focused = focus;
         //make sure there is only one focusedWidget
-        if (focus)
+        if (focus){
             ccui.Widget._focusedWidget = this;
+            if(ccui.Widget._focusNavigationController)
+                ccui.Widget._focusNavigationController._setFirstFocsuedWidget(this);
+        }
     },
 
     /**
@@ -698,7 +761,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             var isLayout = current instanceof ccui.Layout;
             if (this.isFocused() || isLayout) {
                 var layout = this.getParent();
-                if (null == layout){
+                if (null == layout || !(layout instanceof ccui.Layout)){
                     //the outer layout's default behaviour is : loop focus
                     if (isLayout)
                         return current.findNextFocusedWidget(direction, current);
@@ -735,7 +798,22 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @note it doesn't implemented on Web
      * @param {Boolean} enable set true to enable dpad focus navigation, otherwise disable dpad focus navigation
      */
-    enableDpadNavigation: function(enable){},
+    enableDpadNavigation: function(enable){
+        if (enable){
+            if (null == ccui.Widget._focusNavigationController) {
+                ccui.Widget._focusNavigationController = new ccui._FocusNavigationController();
+                if (ccui.Widget._focusedWidget) {
+                    ccui.Widget._focusNavigationController._setFirstFocsuedWidget(ccui.Widget._focusedWidget);
+                }
+            }
+            ccui.Widget._focusNavigationController.enableFocusNavigation(true);
+        } else {
+            if(ccui.Widget._focusNavigationController){
+                ccui.Widget._focusNavigationController.enableFocusNavigation(false);
+                ccui.Widget._focusNavigationController = null;
+            }
+        }
+    },
 
     /**
      * <p>
@@ -1840,6 +1918,7 @@ ccui.Widget.create = function () {
 };
 
 ccui.Widget._focusedWidget = null;                        //both layout & widget will be stored in this variable
+ccui.Widget._focusNavigationController = null;
 
 /**
  * Gets the focused widget of current stage.
@@ -1903,13 +1982,13 @@ ccui.Widget.RIGHT = 1;
  * @constant
  * @type {number}
  */
-ccui.Widget.UP = 0;
+ccui.Widget.UP = 2;
 /**
  * The down of Focus direction for ccui.Widget
  * @constant
  * @type {number}
  */
-ccui.Widget.DOWN = 1;
+ccui.Widget.DOWN = 3;
 
 //texture resource type
 /**
@@ -1978,22 +2057,3 @@ ccui.Widget.POSITION_ABSOLUTE = 0;
  * @type {number}
  */
 ccui.Widget.POSITION_PERCENT = 1;
-
-/**
- * The widget focus event.
- * @class
- * @extends cc.Event
- */
-cc.EventFocus = cc.Event.extend(/** @lends cc.EventFocus# */{
-    _widgetGetFocus: null,
-    _widgetLoseFocus: null,
-    /**
-     * Constructor function.
-     * @param {ccui.Widget} widgetLoseFocus
-     * @param {ccui.Widget} widgetGetFocus
-     */
-    ctor: function(widgetLoseFocus, widgetGetFocus){
-        this._widgetGetFocus = widgetGetFocus;
-        this._widgetLoseFocus = widgetLoseFocus;
-    }
-});
