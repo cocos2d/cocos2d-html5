@@ -217,7 +217,7 @@
                     cc.spriteFrameCache.addSpriteFrames(resourcePath + plist);
                 }else{
                     if(!loadedPlist[resourcePath + plist])
-                        cc.log("%s need to be pre loaded", resourcePath + plist);
+                        cc.log("%s need to be preloaded", resourcePath + plist);
                 }
             }
             if(type !== 0)
