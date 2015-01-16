@@ -40,22 +40,23 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             }
         };
 
-        proto.transform = function(parentCmd, recursive){
+        proto.transform = function (parentCmd, recursive) {
             var node = this._node;
 
             if (node._visible) {
                 node._adaptRenderers();
-
-                var widgetParent = node.getWidgetParent();
-                if (widgetParent) {
-                    var parentSize = widgetParent.getSize();
-                    node._position.x = parentSize.width * node._positionPercent.x;
-                    node._position.y = parentSize.height * node._positionPercent.y;
+                if(!this._usingLayoutComponent){
+                    var widgetParent = node.getWidgetParent();
+                    if (widgetParent) {
+                        var parentSize = widgetParent.getContentSize();
+                        if (parentSize.width !== 0 && parentSize.height !== 0) {
+                            node._position.x = parentSize.width * node._positionPercent.x;
+                            node._position.y = parentSize.height * node._positionPercent.y;
+                        }
+                    }
                 }
-
                 cc.ProtectedNode.CanvasRenderCmd.prototype.transform.call(this, parentCmd, recursive);
             }
-
         };
     })();
 } else {
@@ -81,11 +82,15 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             if (node._visible) {
                 node._adaptRenderers();
 
-                var widgetParent = node.getWidgetParent();
-                if (widgetParent) {
-                    var parentSize = widgetParent.getSize();
-                    node._position.x = parentSize.width * node._positionPercent.x;
-                    node._position.y = parentSize.height * node._positionPercent.y;
+                if(!this._usingLayoutComponent) {
+                    var widgetParent = node.getWidgetParent();
+                    if (widgetParent) {
+                        var parentSize = widgetParent.getContentSize();
+                        if (parentSize.width !== 0 && parentSize.height !== 0) {
+                            node._position.x = parentSize.width * node._positionPercent.x;
+                            node._position.y = parentSize.height * node._positionPercent.y;
+                        }
+                    }
                 }
                 cc.ProtectedNode.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
             }
