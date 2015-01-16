@@ -102,16 +102,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
 
         if(!imageRenderer.texture || !imageRenderer.texture.isLoaded()){
             imageRenderer.addEventListener("load", function(){
-                self._findLayout();
-
-                self._imageTextureSize = imageRenderer.getContentSize();
-
-                self._updateChildrenDisplayedRGBA();
-
-                self._updateContentSizeWithTextureSize(self._imageTextureSize);
-                if(self._scale9Enabled)
-                    self.setCapInsets(self._capInsets);
-                self._imageRendererAdaptDirty = true;
+                self.loadTexture(fileName, texType);
             });
         }
 
