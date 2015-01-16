@@ -66,7 +66,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _backGroundImageOpacity:0,
 
     _loopFocus: false,                                                          //whether enable loop focus or not
-    __passFocusToChild: false,                                                  //on default, it will pass the focus to the next nearest widget
+    __passFocusToChild: true,                                                  //on default, it will pass the focus to the next nearest widget
     _isFocusPassing:false,                                                      //when finding the next focused widget, use this variable to pass focus between layout & widget
     _isInterceptTouch: false,
 
@@ -162,7 +162,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         if (this._isFocusPassing || this.isFocused()) {
             var parent = this.getParent();
             this._isFocusPassing = false;
-
             if (this.__passFocusToChild) {
                 var w = this._passFocusToChild(direction, current);
                 if (w instanceof ccui.Layout && parent) {
@@ -172,7 +171,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 return w;
             }
 
-            if (null == parent)
+            if (null == parent || !(parent instanceof ccui.Layout))
                 return this;
             parent._isFocusPassing = true;
             return parent.findNextFocusedWidget(direction, this);
@@ -189,10 +188,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                     case ccui.Widget.UP:
                         if (this._isLastWidgetInContainer(this, direction)){
                             if (this._isWidgetAncestorSupportLoopFocus(current, direction))
-                                return this.findNextFocusedWidget(direction, this);
+                                return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
                             return current;
                         } else {
-                            return this.findNextFocusedWidget(direction, this);
+                            return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
                         }
                     break;
                     default:
@@ -205,11 +204,11 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                     case ccui.Widget.RIGHT:
                         if (this._isLastWidgetInContainer(this, direction)) {
                             if (this._isWidgetAncestorSupportLoopFocus(current, direction))
-                                return this.findNextFocusedWidget(direction, this);
+                                return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
                             return current;
                         }
                         else
-                            return this.findNextFocusedWidget(direction, this);
+                            return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
                      break;
                     case ccui.Widget.DOWN:
                         return this._getNextFocusedWidget(direction, current);
@@ -1094,7 +1093,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 if(widget)
                     return widget;
             } else{
-                if (child instanceof cc.Widget)
+                if (child instanceof ccui.Widget)
                     return child;
             }
         }
@@ -1190,12 +1189,12 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                     } else
                         return this._getNextFocusedWidget(direction, nextWidget);
                 } else
-                    return (current instanceof ccui.Layout) ? current : this._focusedWidget;
+                    return (current instanceof ccui.Layout) ? current : ccui.Widget._focusedWidget;
             } else{
                 if (this._isLastWidgetInContainer(current, direction)){
                     if (this._isWidgetAncestorSupportLoopFocus(this, direction))
                         return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
-                    return (current instanceof ccui.Layout) ? current : this._focusedWidget;
+                    return (current instanceof ccui.Layout) ? current : ccui.Widget._focusedWidget;
                 } else
                     return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
             }
@@ -1240,12 +1239,12 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                     } else
                         return this._getPreviousFocusedWidget(direction, nextWidget);
                 } else
-                    return (current instanceof ccui.Layout) ? current : this._focusedWidget;
+                    return (current instanceof ccui.Layout) ? current : ccui.Widget._focusedWidget;
             } else {
                 if (this._isLastWidgetInContainer(current, direction)) {
                     if (this._isWidgetAncestorSupportLoopFocus(this, direction))
                         return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
-                    return (current instanceof ccui.Layout) ? current : this._focusedWidget;
+                    return (current instanceof ccui.Layout) ? current : ccui.Widget._focusedWidget;
                 } else
                     return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
             }
@@ -1289,7 +1288,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      */
     _isLastWidgetInContainer:function(widget, direction){
         var parent = widget.getParent();
-        if (parent instanceof ccui.Layout)
+        if (parent == null || !(parent instanceof ccui.Layout))
             return true;
 
         var container = parent.getChildren();
@@ -1345,7 +1344,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      */
     _isWidgetAncestorSupportLoopFocus: function(widget, direction){
         var parent = widget.getParent();
-        if (parent == null)
+        if (parent == null || !(parent instanceof ccui.Layout))
             return false;
         if (parent.isLoopFocus()) {
             var layoutType = parent.getLayoutType();

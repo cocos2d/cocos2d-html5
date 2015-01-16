@@ -64,7 +64,7 @@ ccui._FocusNavigationController = cc.Class.extend({
     _addKeyboardEventListener: function(){
         if (!this._keyboardListener) {
             this._keyboardListener = cc.EventListener.create({
-                event: cc.EventListener.FOCUS,
+                event: cc.EventListener.KEYBOARD,
                 onKeyReleased: this._onKeyPressed.bind(this)
             });
             cc.eventManager.addListener(this._keyboardListener, this._keyboardEventPriority);
@@ -761,7 +761,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             var isLayout = current instanceof ccui.Layout;
             if (this.isFocused() || isLayout) {
                 var layout = this.getParent();
-                if (null == layout){
+                if (null == layout || !(layout instanceof ccui.Layout)){
                     //the outer layout's default behaviour is : loop focus
                     if (isLayout)
                         return current.findNextFocusedWidget(direction, current);
@@ -802,7 +802,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         if (enable){
             if (null == ccui.Widget._focusNavigationController) {
                 ccui.Widget._focusNavigationController = new ccui._FocusNavigationController();
-                if (this._focusedWidget) {
+                if (ccui.Widget._focusedWidget) {
                     ccui.Widget._focusNavigationController._setFirstFocsuedWidget(ccui.Widget._focusedWidget);
                 }
             }
@@ -1999,13 +1999,13 @@ ccui.Widget.RIGHT = 1;
  * @constant
  * @type {number}
  */
-ccui.Widget.UP = 0;
+ccui.Widget.UP = 2;
 /**
  * The down of Focus direction for ccui.Widget
  * @constant
  * @type {number}
  */
-ccui.Widget.DOWN = 1;
+ccui.Widget.DOWN = 3;
 
 //texture resource type
 /**
