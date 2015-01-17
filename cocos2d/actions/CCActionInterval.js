@@ -466,8 +466,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
         if (locLast !== found)
             actionFound.startWithTarget(this.target);
 
-        new_t = new_t * actionFound._times;
-        actionFound.update(new_t > 1 ? new_t % 1 : new_t);
+        actionFound.update(new_t);
         this._last = found;
     },
 
