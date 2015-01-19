@@ -81,6 +81,26 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     ctor: function (backGround, backGroundSelected,cross,backGroundDisabled,frontCrossDisabled,texType) {
         ccui.Widget.prototype.ctor.call(this);
         this.setTouchEnabled(true);
+        var strNum = 0;
+        for(var i=0; i<arguments.length; i++){
+            var type = typeof arguments[i];
+            if(type == "string"){
+                if(isNaN(arguments[i] - 0))
+                    strNum++;
+                else{
+                    texType = arguments[i];
+                    arguments[i] = undefined;
+                }
+
+            }else if(type == "number")
+                strNum++;
+        }
+        switch(strNum){
+            case 2:
+                texType = cross;
+                cross = backGroundSelected;
+                backGroundSelected = undefined;
+        }
         texType = texType === undefined ? 0 : texType;
         this.init(backGround, backGroundSelected,cross,backGroundDisabled,frontCrossDisabled,texType);
     },
@@ -130,11 +150,11 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTextures: function (backGround, backGroundSelected, cross, backGroundDisabled, frontCrossDisabled, texType) {
-        this.loadTextureBackGround(backGround, texType);
-        this.loadTextureBackGroundSelected(backGroundSelected, texType);
-        this.loadTextureFrontCross(cross, texType);
-        this.loadTextureBackGroundDisabled(backGroundDisabled, texType);
-        this.loadTextureFrontCrossDisabled(frontCrossDisabled, texType);
+        backGround && this.loadTextureBackGround(backGround, texType);
+        backGroundSelected && this.loadTextureBackGroundSelected(backGroundSelected, texType);
+        cross && this.loadTextureFrontCross(cross, texType);
+        backGroundDisabled && this.loadTextureBackGroundDisabled(backGroundDisabled, texType);
+        frontCrossDisabled && this.loadTextureFrontCrossDisabled(frontCrossDisabled, texType);
     },
 
     /**
