@@ -27,6 +27,7 @@
         cc.Node.CanvasRenderCmd.call(this, renderable);
         this._cachedParent = null;
         this._cacheDirty = false;
+        this._state = ccui.Scale9Sprite.state.NORMAL;
 
         var node = this._node;
         var locCacheCanvas = this._cacheCanvas = cc.newElement('canvas');
@@ -115,9 +116,14 @@
         node._scale9Image.visit();
 
         //draw to cache canvas
+        var selTexture = node._scale9Image.getTexture();
+        if(selTexture && this._state === ccui.Scale9Sprite.state.NORMAL)
+            selTexture._switchToGray(true);
         locContext.setTransform(1, 0, 0, 1, 0, 0);
         locContext.clearRect(0, 0, sizeInPixels.width, sizeInPixels.height);
         cc.renderer._renderingToCacheCanvas(wrapper, node.__instanceId, locScaleFactor, locScaleFactor);
+        if(selTexture && this._state === ccui.Scale9Sprite.state.NORMAL)
+            selTexture._switchToGray(false);
 
         if(contentSizeChanged)
             this._cacheSprite.setTextureRect(cc.rect(0,0, size.width, size.height));
@@ -130,12 +136,7 @@
         var locScale9Image = this._node._scale9Image;
         if(!locScale9Image)
             return;
-        var selTexture = locScale9Image.getTexture();
-        if(state === ccui.Scale9Sprite.state.NORMAL){
-            selTexture._switchToGray(false);
-        } else if( state === ccui.Scale9Sprite.state.GRAY){
-            selTexture._switchToGray(true);
-        }
+        this._state = state;
         this._cacheScale9Sprite();
     };
 })();

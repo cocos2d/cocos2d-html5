@@ -649,9 +649,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setPosition: function (newPosOrxValue, yValue) {
         var locPosition = this._position;
         if (yValue === undefined) {
+            if(locPosition.x === newPosOrxValue.x && locPosition.y === newPosOrxValue.y)
+                return;
             locPosition.x = newPosOrxValue.x;
             locPosition.y = newPosOrxValue.y;
         } else {
+            if(locPosition.x === newPosOrxValue.x && locPosition.y === yValue)
+                return;
             locPosition.x = newPosOrxValue;
             locPosition.y = yValue;
         }

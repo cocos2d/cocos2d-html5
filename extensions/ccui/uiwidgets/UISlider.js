@@ -77,6 +77,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._capInsetsBarRenderer = cc.rect(0, 0, 0, 0);
         this._capInsetsProgressBarRenderer = cc.rect(0, 0, 0, 0);
         ccui.Widget.prototype.ctor.call(this);
+        this.setTouchEnabled(true);
     },
 
     /**
