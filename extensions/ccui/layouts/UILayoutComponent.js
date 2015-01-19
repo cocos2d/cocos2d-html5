@@ -207,7 +207,7 @@ ccui.LayoutComponent = cc.Component.extend({
     },
     setHorizontalEdge: function (hEdge) {
         this._horizontalEdge = hEdge;
-        if (this._horizontalEdge != cc.LayoutComponent.horizontalEdge.NONE)
+        if (this._horizontalEdge != ccui.LayoutComponent.horizontalEdge.NONE)
             this._usingPositionPercentX = false;
 
         var parent = this._getOwnerParent();

@@ -300,10 +300,17 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
      * @override
      */
     setContentSize: function(contentSize, height){
-        if(height)
+        if(height != null)
             contentSize = cc.size(contentSize, height);
         ccui.Widget.prototype.setContentSize.call(this, contentSize);
-        this._imageRenderer.setContentSize(contentSize);
+        if(!this._scale9Enabled){
+            var iContentSize = this._imageRenderer.getContentSize();
+            this._imageRenderer.setScaleX(contentSize.width / iContentSize.width);
+            this._imageRenderer.setScaleY(contentSize.height / iContentSize.height);
+        }else{
+            this._imageRenderer.setContentSize(contentSize);
+        }
+
     }
 
 });
