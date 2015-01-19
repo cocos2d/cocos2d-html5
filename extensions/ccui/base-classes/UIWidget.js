@@ -744,7 +744,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {Boolean} enable true represent the widget could accept focus, false represent the widget couldn't accept focus
      */
     setFocusEnabled: function(enable){
-        this._focused = enable;
+        this._focusEnabled = enable;
     },
 
     /**
