@@ -57,7 +57,7 @@
             });
 
             cache[file] = action;
-
+            cache[file].retain();
             return action.clone();
         }
 
@@ -176,7 +176,7 @@
                 var texture = options["TextureFile"];
                 if(texture != null) {
                     var path = texture["Path"];
-                    var spriteFrame = cc.spriteFrameCache._spriteFrames[path];
+                    var spriteFrame = cc.spriteFrameCache.getSpriteFrame(path);
                     if(spriteFrame == null){
                         path = resourcePath + path;
                     }

@@ -38,7 +38,7 @@
             for (var i = 0; i < plists.length; i++) {
                 var plist = resourcePath + plists[i];
                 if(!cc.loader.getRes(plist) && !loadedPlist[plist])
-                    cc.log("%s need to be pre loaded", plist);
+                    cc.log("%s need to be preloaded", plist);
                 else
                     loadedPlist[plist] = true;
                 cc.spriteFrameCache.addSpriteFrames(

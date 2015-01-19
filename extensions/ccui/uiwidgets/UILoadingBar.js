@@ -124,29 +124,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         var self = this;
         if(!barRenderer.texture || !barRenderer.texture.isLoaded()){
             barRenderer.addEventListener("load", function(){
-
-                self._findLayout();
-
-                var bz = barRenderer.getContentSize();
-                self._barRendererTextureSize.width = bz.width;
-                self._barRendererTextureSize.height = bz.height;
-
-                switch (self._direction) {
-                    case ccui.LoadingBar.TYPE_LEFT:
-                        barRenderer.setAnchorPoint(0.0,0.5);
-                        if (!self._scale9Enabled)
-                            barRenderer/*.getSprite()*/.setFlippedX(false);
-                        break;
-                    case ccui.LoadingBar.TYPE_RIGHT:
-                        barRenderer.setAnchorPoint(1.0,0.5);
-                        if (!self._scale9Enabled)
-                            barRenderer/*.getSprite()*/.setFlippedX(true);
-                        break;
-                }
-                self._updateChildrenDisplayedRGBA();
-                self._barRendererScaleChangedWithSize();
-                self._updateContentSizeWithTextureSize(self._barRendererTextureSize);
-                self._barRendererAdaptDirty = true;
+                self.loadTexture(texture, texType);
             });
         }
 
@@ -184,6 +162,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         this._barRendererScaleChangedWithSize();
         this._updateContentSizeWithTextureSize(this._barRendererTextureSize);
         this._barRendererAdaptDirty = true;
+        this._findLayout();
     },
 
     /**
