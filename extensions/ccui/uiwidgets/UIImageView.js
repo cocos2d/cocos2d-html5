@@ -300,7 +300,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
      * @override
      */
     setContentSize: function(contentSize, height){
-        if(height)
+        if(height != null)
             contentSize = cc.size(contentSize, height);
         ccui.Widget.prototype.setContentSize.call(this, contentSize);
         var iContentSize = this._imageRenderer.getContentSize();
