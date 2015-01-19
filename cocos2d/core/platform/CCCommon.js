@@ -52,15 +52,25 @@ cc.associateWithNative = function (jsObj, superclass) {
     }, this);
  */
 cc.KEY = {
+    none:0,
+
+    // android
+    back:6,
+    menu:18,
+
     backspace:8,
     tab:9,
+
     enter:13,
+
     shift:16, //should use shiftkey instead
     ctrl:17, //should use ctrlkey
     alt:18, //should use altkey
     pause:19,
     capslock:20,
+
     escape:27,
+    space:32,
     pageup:33,
     pagedown:34,
     end:35,
@@ -69,6 +79,8 @@ cc.KEY = {
     up:38,
     right:39,
     down:40,
+    select:41,
+
     insert:45,
     Delete:46,
     0:48,
@@ -107,6 +119,7 @@ cc.KEY = {
     x:88,
     y:89,
     z:90,
+
     num0:96,
     num1:97,
     num2:98,
@@ -134,8 +147,10 @@ cc.KEY = {
     f10:121,
     f11:122,
     f12:123,
+
     numlock:144,
     scrolllock:145,
+
     semicolon:186,
     ',':186,
     equal:187,
@@ -149,11 +164,10 @@ cc.KEY = {
     grave:192,
     '[':219,
     openbracket:219,
+    backslash:220,
     ']':221,
     closebracket:221,
-    backslash:220,
-    quote:222,
-    space:32
+    quote:222
 };
 
 /**
