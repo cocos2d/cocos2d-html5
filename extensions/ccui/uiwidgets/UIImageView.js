@@ -303,7 +303,10 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         if(height)
             contentSize = cc.size(contentSize, height);
         ccui.Widget.prototype.setContentSize.call(this, contentSize);
-        this._imageRenderer.setContentSize(contentSize);
+        var iContentSize = this._imageRenderer.getContentSize();
+        this._imageRenderer.setScaleX(contentSize.width / iContentSize.width);
+        this._imageRenderer.setScaleY(contentSize.height / iContentSize.height);
+
     }
 
 });
