@@ -330,7 +330,6 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
                 if(!frame) delete self._spriteFramesAliases[name];
             }
         }
-        if (!frame) cc.log(cc._LogInfos.spriteFrameCache_getSpriteFrame, name);
         return frame;
     },
 

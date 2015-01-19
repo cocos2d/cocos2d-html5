@@ -194,10 +194,10 @@
             self = this;
         loadTexture(json["FileData"], resourcePath, function(path, type){
             if(!cc.loader.getRes(path))
-                cc.log("%s need to be pre loaded", path);
+                cc.log("%s need to be preloaded", path);
             node = new cc.ParticleSystem(path);
             self.generalAttributes(node, json);
-            node.setDrawMode(cc.ParticleSystem.TEXTURE_MODE);
+            !cc.sys.isNative && node.setDrawMode(cc.ParticleSystem.TEXTURE_MODE);
         });
         return node;
     };
@@ -767,7 +767,7 @@
         textureList.forEach(function(item){
             loadTexture(json[item.name], resourcePath, function(path, type){
                 if(type == 0 && !loader.getRes(path))
-                    cc.log("%s need to be pre loaded", path);
+                    cc.log("%s need to be preloaded", path);
                 item.handle.call(widget, path, type);
             });
         });
@@ -954,7 +954,7 @@
 
         loadTexture(json["LabelAtlasFileImage_CNB"], resourcePath, function(path, type){
             if(!cc.loader.getRes(path))
-                cc.log("%s need to be pre loaded", path);
+                cc.log("%s need to be preloaded", path);
             if(type == 0){
                 widget.setProperty(stringValue, path, itemWidth, itemHeight, startCharMap);
             }
@@ -1104,7 +1104,7 @@
             if(cc.loader.getRes(file))
                 return ccs._load(file);
             else
-                cc.log("%s need to be pre loaded", file);
+                cc.log("%s need to be preloaded", file);
         }
     };
 
@@ -1136,13 +1136,13 @@
             var plists, pngs;
             var armJson = cc.loader.getRes(path);
             if(!armJson)
-                cc.log("%s need to be pre loaded", path);
+                cc.log("%s need to be preloaded", path);
             else{
                 plists = armJson["config_file_path"];
                 pngs = armJson["config_png_path"];
                 plists.forEach(function(plist, index){
                     if(pngs[index])
-                        cc.spriteFrameCache.addSpriteFrame(plist, pngs[index]);
+                        cc.spriteFrameCache.addSpriteFrames(plist, pngs[index]);
                 });
             }
             ccs.armatureDataManager.addArmatureFileInfo(path);
@@ -1170,7 +1170,7 @@
                     cc.spriteFrameCache.addSpriteFrames(resourcePath + plist);
                 }else{
                     if(!loadedPlist[resourcePath + plist])
-                        cc.log("%s need to be pre loaded", resourcePath + plist);
+                        cc.log("%s need to be preloaded", resourcePath + plist);
                 }
             }
             if(type !== 0)
