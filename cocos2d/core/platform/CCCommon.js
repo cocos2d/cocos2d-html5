@@ -151,11 +151,11 @@ cc.KEY = {
     numlock:144,
     scrolllock:145,
 
+    ';':186,
     semicolon:186,
-    ',':186,
     equal:187,
     '=':187,
-    ';':188,
+    ',':188,
     comma:188,
     dash:189,
     '.':190,
