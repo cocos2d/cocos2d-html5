@@ -117,12 +117,12 @@
 
         //draw to cache canvas
         var selTexture = node._scale9Image.getTexture();
-        if(selTexture && this._state === ccui.Scale9Sprite.state.NORMAL)
+        if(selTexture && this._state === ccui.Scale9Sprite.state.GRAY)
             selTexture._switchToGray(true);
         locContext.setTransform(1, 0, 0, 1, 0, 0);
         locContext.clearRect(0, 0, sizeInPixels.width, sizeInPixels.height);
         cc.renderer._renderingToCacheCanvas(wrapper, node.__instanceId, locScaleFactor, locScaleFactor);
-        if(selTexture && this._state === ccui.Scale9Sprite.state.NORMAL)
+        if(selTexture && this._state === ccui.Scale9Sprite.state.GRAY)
             selTexture._switchToGray(false);
 
         if(contentSizeChanged)

@@ -172,7 +172,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         var bgBoxRenderer = this._backGroundBoxRenderer;
 
         var self = this;
-        if(!bgBoxRenderer.texture || !bgBoxRenderer.texture.isLoaded()){
+        if(!bgBoxRenderer._textureLoaded){
             bgBoxRenderer.addEventListener("load", function(){
                 self.loadTextureBackGround(backGround, texType);
             });
@@ -212,7 +212,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this._backGroundSelectedTexType = texType;
 
         var self = this;
-        if(!this._backGroundSelectedBoxRenderer.texture || !this._backGroundSelectedBoxRenderer.texture.isLoaded()){
+        if(!this._backGroundSelectedBoxRenderer._textureLoaded){
             this._backGroundSelectedBoxRenderer.addEventListener("load", function(){
                 self.loadTextureBackGroundSelected(backGroundSelected, texType);
             });
@@ -251,7 +251,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this._frontCrossTexType = texType;
 
         var self = this;
-        if(!this._frontCrossRenderer.texture || !this._frontCrossRenderer.texture.isLoaded()){
+        if(!this._frontCrossRenderer._textureLoaded){
             this._frontCrossRenderer.addEventListener("load", function(){
                 self.loadTextureFrontCross(cross, texType);
             });
@@ -289,7 +289,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this._backGroundDisabledTexType = texType;
 
         var self = this;
-        if(!this._backGroundBoxDisabledRenderer.texture || !this._backGroundBoxDisabledRenderer.texture.isLoaded()){
+        if(!this._backGroundBoxDisabledRenderer._textureLoaded){
             this._backGroundBoxDisabledRenderer.addEventListener("load", function(){
                 self.loadTextureBackGroundDisabled(backGroundDisabled, texType);
             });
@@ -327,7 +327,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this._frontCrossDisabledTexType = texType;
 
         var self = this;
-        if(!this._frontCrossDisabledRenderer.texture || !this._frontCrossDisabledRenderer.texture.isLoaded()){
+        if(!this._frontCrossDisabledRenderer._textureLoaded){
             this._frontCrossDisabledRenderer.addEventListener("load", function(){
                 self.loadTextureFrontCrossDisabled(frontCrossDisabled, texType);
             });

@@ -100,7 +100,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         this._imageTexType = texType;
         var imageRenderer = self._imageRenderer;
 
-        if(!imageRenderer.texture || !imageRenderer.texture.isLoaded()){
+        if(!imageRenderer._textureLoaded){
             imageRenderer.addEventListener("load", function(){
                 self.loadTexture(fileName, texType);
             });
