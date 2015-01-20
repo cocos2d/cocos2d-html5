@@ -131,7 +131,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         var barRenderer = this._barRenderer;
 
         var self = this;
-        if(!barRenderer.texture || !barRenderer.texture.isLoaded()){
+        if(!barRenderer._textureLoaded){
             barRenderer.addEventListener("load", function(){
                 self.loadBarTexture(fileName, texType);
             });
@@ -172,7 +172,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         var progressBarRenderer = this._progressBarRenderer;
 
         var self = this;
-        if(!progressBarRenderer.texture || !progressBarRenderer.texture.isLoaded()){
+        if(!progressBarRenderer._textureLoaded){
             progressBarRenderer.addEventListener("load", function(){
                 self.loadProgressBarTexture(fileName, texType);
             });
@@ -340,7 +340,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._ballNTexType = texType;
 
         var self = this;
-        if(!this._slidBallNormalRenderer.texture || !this._slidBallNormalRenderer.texture.isLoaded()){
+        if(!this._slidBallNormalRenderer._textureLoaded){
             this._slidBallNormalRenderer.addEventListener("load", function(){
                 self.loadSlidBallTextureNormal(normal, texType);
             });
@@ -376,7 +376,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._ballPTexType = texType;
 
         var self = this;
-        if(!this._slidBallPressedRenderer.texture || !this._slidBallPressedRenderer.texture.isLoaded()){
+        if(!this._slidBallPressedRenderer._textureLoaded){
             this._slidBallPressedRenderer.addEventListener("load", function(){
                 self.loadSlidBallTexturePressed(pressed, texType);
             });
@@ -412,7 +412,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._ballDTexType = texType;
 
         var self = this;
-        if(!this._slidBallDisabledRenderer.texture || !this._slidBallDisabledRenderer.texture.isLoaded()){
+        if(!this._slidBallDisabledRenderer._textureLoaded){
             this._slidBallDisabledRenderer.addEventListener("load", function(){
                 self.loadSlidBallTextureDisabled(disabled, texType);
             });
