@@ -68,7 +68,8 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
     _originalSize: null,
     _preferredSize: null,
-
+    _opacity: 0,
+    _color: null,
     _capInsets: null,
     _insetLeft: 0,
     _insetTop: 0,
@@ -79,6 +80,10 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     _spriteFrameRotated: false,
     _textureLoaded:false,
     _className:"Scale9Sprite",
+
+    //v3.3
+    _flippedX: false,
+    _flippedY: false,
 
     /**
      * return  texture is loaded
@@ -131,13 +136,31 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         var sizableWidth = size.width - locTopLeftContentSize.width - locTopRight.getContentSize().width;
         var sizableHeight = size.height - locTopLeftContentSize.height - locBottomRight.getContentSize().height;
 
-        var scaleResult = this._renderCmd._computeSpriteScale(sizableWidth, sizableHeight, locCenterContentSize.width, locCenterContentSize.height);
+        var horizontalScale = sizableWidth / locCenterContentSize.width;
+        var verticalScale = sizableHeight / locCenterContentSize.height;
 
-        locCenter.setScaleX(scaleResult.horizontalScale);
-        locCenter.setScaleY(scaleResult.verticalScale);
+        var rescaledWidth = locCenterContentSize.width * horizontalScale;
+        var rescaledHeight = locCenterContentSize.height * verticalScale;
 
         var leftWidth = locBottomLeftContentSize.width;
         var bottomHeight = locBottomLeftContentSize.height;
+
+        if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
+            //browser is in canvas mode, need to manually control rounding to prevent overlapping pixels
+            var roundedRescaledWidth = Math.round(rescaledWidth);
+            if (rescaledWidth != roundedRescaledWidth) {
+                rescaledWidth = roundedRescaledWidth;
+                horizontalScale = rescaledWidth / locCenterContentSize.width;
+            }
+            var roundedRescaledHeight = Math.round(rescaledHeight);
+            if (rescaledHeight != roundedRescaledHeight) {
+                rescaledHeight = roundedRescaledHeight;
+                verticalScale = rescaledHeight / locCenterContentSize.height;
+            }
+        }
+
+        locCenter.setScaleX(horizontalScale);
+        locCenter.setScaleY(verticalScale);
 
         var locLeft = this._left, locRight = this._right, locTop = this._top, locBottom = this._bottom;
         var tempAP = cc.p(0, 0);
@@ -153,19 +176,19 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
         // Position corners
         locBottomLeft.setPosition(0, 0);
-        locBottomRight.setPosition(leftWidth + scaleResult.rescaledWidth, 0);
-        locTopLeft.setPosition(0, bottomHeight + scaleResult.rescaledHeight);
-        locTopRight.setPosition(leftWidth + scaleResult.rescaledWidth, bottomHeight + scaleResult.rescaledHeight);
+        locBottomRight.setPosition(leftWidth + rescaledWidth, 0);
+        locTopLeft.setPosition(0, bottomHeight + rescaledHeight);
+        locTopRight.setPosition(leftWidth + rescaledWidth, bottomHeight + rescaledHeight);
 
         // Scale and position borders
         locLeft.setPosition(0, bottomHeight);
-        locLeft.setScaleY(scaleResult.verticalScale);
-        locRight.setPosition(leftWidth + scaleResult.rescaledWidth, bottomHeight);
-        locRight.setScaleY(scaleResult.verticalScale);
+        locLeft.setScaleY(verticalScale);
+        locRight.setPosition(leftWidth + rescaledWidth, bottomHeight);
+        locRight.setScaleY(verticalScale);
         locBottom.setPosition(leftWidth, 0);
-        locBottom.setScaleX(scaleResult.horizontalScale);
-        locTop.setPosition(leftWidth, bottomHeight + scaleResult.rescaledHeight);
-        locTop.setScaleX(scaleResult.horizontalScale);
+        locBottom.setScaleX(horizontalScale);
+        locTop.setPosition(leftWidth, bottomHeight + rescaledHeight);
+        locTop.setScaleX(horizontalScale);
 
         // Position centre
         locCenter.setPosition(leftWidth, bottomHeight);
@@ -203,12 +226,13 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         }
     },
 
+    getSprite: function () {
+        return this._scale9Image;
+    },
+
     /** Original sprite's size. */
     getOriginalSize: function () {
         return cc.size(this._originalSize);
-    },
-    getSprite: function () {
-        return this._scale9Image;
     },
 
     //if the preferredSize component is given as -1, it is ignored
@@ -600,7 +624,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         }
 
         // Set the given rect's size as original size
-        //this._spriteRect = rect;
+        this._spriteRect = rect;
         var locSpriteRect = this._spriteRect;
         locSpriteRect.x = rect.x;
         locSpriteRect.y = rect.y;
@@ -847,7 +871,8 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         }
 
         this.setContentSize(rect.width, rect.height);
-        this._renderCmd.addBatchNodeToChildren(locScale9Image);
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+            this.addChild(locScale9Image);
 
         if (this._spritesGenerated) {
             // Restore color and opacity
@@ -885,6 +910,111 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         this._insetTop = 0;
         this._insetRight = 0;
         this._insetBottom = 0;
+    },
+
+    //v3.3
+    /**
+     * Sets cc.Scale9Sprite's state
+     * @since v3.3
+     * @param {Number} state
+     */
+    setState: function(state){
+        this._renderCmd.setState(state);
+    },
+
+    //setScale9Enabled implement late
+
+    /**
+     * Sets whether the widget should be flipped horizontally or not.
+     * @since v3.3
+     * @param flippedX true if the widget should be flipped horizontally, false otherwise.
+     */
+    setFlippedX: function(flippedX){
+        var realScale = this.getScaleX();
+        this._flippedX = flippedX;
+        this.setScaleX(realScale);
+    },
+
+    /**
+     * <p>
+     * Returns the flag which indicates whether the widget is flipped horizontally or not.                         <br/>
+     *                                                                                                             <br/>
+     * It only flips the texture of the widget, and not the texture of the widget's children.                      <br/>
+     * Also, flipping the texture doesn't alter the anchorPoint.                                                   <br/>
+     * If you want to flip the anchorPoint too, and/or to flip the children too use:                               <br/>
+     * widget->setScaleX(sprite->getScaleX() * -1);                                                                <br/>
+     * </p>
+     * @since v3.3
+     * @return {Boolean} true if the widget is flipped horizontally, false otherwise.
+     */
+    isFlippedX: function(){
+        return this._flippedX;
+    },
+
+    /**
+     * Sets whether the widget should be flipped vertically or not.
+     * @since v3.3
+     * @param flippedY true if the widget should be flipped vertically, false otherwise.
+     */
+    setFlippedY:function(flippedY){
+        var realScale = this.getScaleY();
+        this._flippedY = flippedY;
+        this.setScaleY(realScale);
+    },
+
+    /**
+     * <p>
+     * Return the flag which indicates whether the widget is flipped vertically or not.                             <br/>
+     *                                                                                                              <br/>
+     * It only flips the texture of the widget, and not the texture of the widget's children.                       <br/>
+     * Also, flipping the texture doesn't alter the anchorPoint.                                                    <br/>
+     * If you want to flip the anchorPoint too, and/or to flip the children too use:                                <br/>
+     * widget->setScaleY(widget->getScaleY() * -1);                                                                 <br/>
+     * </p>
+     * @since v3.3
+     * @return {Boolean} true if the widget is flipped vertically, false otherwise.
+     */
+    isFlippedY:function(){
+        return this._flippedY;
+    },
+
+    setScaleX: function (scaleX) {
+        if (this._flippedX)
+            scaleX = scaleX * -1;
+        cc.Node.prototype.setScaleX.call(this, scaleX);
+    },
+
+    setScaleY: function (scaleY) {
+        if (this._flippedY)
+            scaleY = scaleY * -1;
+        cc.Node.prototype.setScaleY.call(this, scaleY);
+    },
+
+    setScale: function (scaleX, scaleY) {
+        if(scaleY === undefined)
+            scaleY = scaleX;
+        this.setScaleX(scaleX);
+        this.setScaleY(scaleY);
+    },
+
+    getScaleX: function () {
+        var originalScale = cc.Node.prototype.getScaleX.call(this);
+        if (this._flippedX)
+            originalScale = originalScale * -1.0;
+        return originalScale;
+    },
+
+    getScaleY: function () {
+        var originalScale = cc.Node.prototype.getScaleY.call(this);
+        if (this._flippedY)
+            originalScale = originalScale * -1.0;
+        return originalScale;
+    },
+
+    getScale: function () {
+        if(this.getScaleX() !== this.getScaleY())
+            cc.log("Scale9Sprite#scale. ScaleX != ScaleY. Don't know which one to return");
+        return this.getScaleX();
     },
 
     _createRenderCmd: function(){
@@ -964,3 +1094,6 @@ cc.Scale9Sprite.POSITIONS_BOTTOM = 4;
 cc.Scale9Sprite.POSITIONS_TOPRIGHT = 5;
 cc.Scale9Sprite.POSITIONS_TOPLEFT = 6;
 cc.Scale9Sprite.POSITIONS_BOTTOMRIGHT = 7;
+
+cc.Scale9Sprite.state = {NORMAL: 0, GRAY: 1};
+
