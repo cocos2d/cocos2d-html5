@@ -47,7 +47,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     _elapsed:0,
     _firstTick:false,
     _easeList: null,
-    _times:1,
+    _timesForRepeat:1,
     _repeatForever: false,
     _repeatMethod: false,//Compatible with repeat class, Discard after can be deleted
     _speed: 1,
@@ -59,7 +59,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
 	 */
     ctor:function (d) {
         this._speed = 1;
-        this._times = 1;
+        this._timesForRepeat = 1;
         this._repeatForever = false;
         this.MAX_VALUE = 2;
         this._repeatMethod = false;//Compatible with repeat class, Discard after can be deleted
@@ -107,7 +107,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     _cloneDecoration: function(action){
         action._repeatForever = this._repeatForever;
         action._speed = this._speed;
-        action._times = this._times;
+        action._timesForRepeat = this._timesForRepeat;
         action._easeList = this._easeList;
         action._speedMethod = this._speedMethod;
         action._repeatMethod = this._repeatMethod;
@@ -180,9 +180,9 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
         this.update(t > 0 ? t : 0);
 
         //Compatible with repeat class, Discard after can be deleted (this._repeatMethod)
-        if(this._repeatMethod && this._times > 1 && this.isDone()){
+        if(this._repeatMethod && this._timesForRepeat > 1 && this.isDone()){
             if(!this._repeatForever){
-                this._times--;
+                this._timesForRepeat--;
             }
             //var diff = locInnerAction.getElapsed() - locInnerAction._duration;
             this.startWithTarget(this.target);
@@ -286,7 +286,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
             return this;
         }
         this._repeatMethod = true;//Compatible with repeat class, Discard after can be deleted
-        this._times *= times;
+        this._timesForRepeat *= times;
         return this;
     },
 
@@ -297,7 +297,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      */
     repeatForever: function(){
         this._repeatMethod = true;//Compatible with repeat class, Discard after can be deleted
-        this._times = this.MAX_VALUE;
+        this._timesForRepeat = this.MAX_VALUE;
         this._repeatForever = true;
         return this;
     }
@@ -466,7 +466,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
         if (locLast !== found)
             actionFound.startWithTarget(this.target);
 
-        new_t = new_t * actionFound._times;
+        new_t = new_t * actionFound._timesForRepeat;
         actionFound.update(new_t > 1 ? new_t % 1 : new_t);
         this._last = found;
     },

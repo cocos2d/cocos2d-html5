@@ -122,7 +122,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         var barRenderer = this._barRenderer;
 
         var self = this;
-        if(!barRenderer.texture || !barRenderer.texture.isLoaded()){
+        if(!barRenderer._textureLoaded){
             barRenderer.addEventListener("load", function(){
                 self.loadTexture(texture, texType);
             });
