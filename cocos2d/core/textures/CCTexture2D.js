@@ -247,7 +247,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         },
 
         releaseTexture: function () {
-            //support only in WebGl rendering mode
+            cc.loader.release(this.url);
         },
 
         getName: function () {
