@@ -181,6 +181,8 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         this.colorSpaceHolder.g = value.g;
         this.colorSpaceHolder.b = value.b;
         this.colorSpaceHolder.a = cc.isUndefined(value.a) ? 255 : value.a;
+        if(!this._inputText.length)
+            this.setColor(this.colorSpaceHolder);
     },
 
     /**
@@ -192,6 +194,8 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         this._colorText.g = textColor.g;
         this._colorText.b = textColor.b;
         this._colorText.a = cc.isUndefined(textColor.a) ? 255 : textColor.a;
+        if(this._inputText.length)
+            this.setColor(this._colorText);
     },
 
     /**
@@ -450,7 +454,6 @@ cc.defineGetterSetter(_p, "charCount", _p.getCharCount);
 /** @expose */
 _p.placeHolder;
 cc.defineGetterSetter(_p, "placeHolder", _p.getPlaceHolder, _p.setPlaceHolder);
-
 
 /**
  * Please use new TextFieldTTF instead. <br />
