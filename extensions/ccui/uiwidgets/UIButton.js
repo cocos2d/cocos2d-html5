@@ -251,13 +251,12 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this._normalTexType = texType;
 
         var self = this;
-        if(!this._textureLoaded){
-            this._buttonNormalRenderer.addEventListener("load", function(){
+        var normalRenderer = this._buttonNormalRenderer;
+        if(!normalRenderer._textureLoaded){
+            normalRenderer.addEventListener("load", function(){
                 self.loadTextureNormal(normal, texType);
             });
         }
-
-        var normalRenderer = this._buttonNormalRenderer;
         switch (this._normalTexType){
             case ccui.Widget.LOCAL_TEXTURE:
                 //SetTexture cannot load resource
@@ -299,13 +298,13 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this._pressedTexType = texType;
 
         var self = this;
-        if(!this._textureLoaded){
-            this._buttonClickedRenderer.addEventListener("load", function(){
+        var clickedRenderer = this._buttonClickedRenderer;
+        if(!clickedRenderer._textureLoaded){
+            clickedRenderer.addEventListener("load", function(){
                 self.loadTexturePressed(selected, texType);
             });
         }
 
-        var clickedRenderer = this._buttonClickedRenderer;
         switch (this._pressedTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
                 //SetTexture cannot load resource
@@ -344,13 +343,13 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this._disabledTexType = texType;
 
         var self = this;
-        if(!this._textureLoaded){
-            this._buttonDisableRenderer.addEventListener("load", function() {
+        var disabledRenderer = this._buttonDisableRenderer;
+        if(!disabledRenderer._textureLoaded){
+            disabledRenderer.addEventListener("load", function() {
                 self.loadTextureDisabled(disabled, texType);
             });
         }
 
-        var disabledRenderer = this._buttonDisableRenderer;
         switch (this._disabledTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
                 //SetTexture cannot load resource
