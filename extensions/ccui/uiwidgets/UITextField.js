@@ -488,6 +488,10 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
             setTimeout(function(){
                 self._textFieldRenderer.attachWithIME();
             }, 0);
+        }else{
+            setTimeout(function(){
+                self._textFieldRenderer.detachWithIME();
+            }, 0);
         }
         return pass;
     },
