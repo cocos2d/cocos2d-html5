@@ -415,11 +415,11 @@
     };
 
     proto.rendering = function (ctx) {
-        var node = this._node;
-        if (!node._textureLoaded || this._displayedOpacity === 0)
+        var node = this._node, locTexture = node._texture;
+        if ((locTexture &&!locTexture._textureLoaded) || this._displayedOpacity === 0)
             return;
 
-        var gl = ctx || cc._renderContext, locTexture = node._texture;
+        var gl = ctx || cc._renderContext ;
         //cc.assert(!_t._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
         if (locTexture) {
