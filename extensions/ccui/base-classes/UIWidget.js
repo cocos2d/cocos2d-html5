@@ -46,16 +46,16 @@ ccui._FocusNavigationController = cc.Class.extend({
 
     _onKeyPressed: function(keyCode, event){
         if (this._enableFocusNavigation && this._firstFocusedWidget) {
-            if (keyCode == cc.KEY.down) {
+            if (keyCode == cc.KEY.dpadDown) {
                 this._firstFocusedWidget = this._firstFocusedWidget.findNextFocusedWidget(ccui.Widget.DOWN, this._firstFocusedWidget);
             }
-            if (keyCode == cc.KEY.up){
+            if (keyCode == cc.KEY.dpadUp){
                 this._firstFocusedWidget = this._firstFocusedWidget.findNextFocusedWidget(ccui.Widget.UP, this._firstFocusedWidget);
             }
-            if (keyCode == cc.KEY.left) {
+            if (keyCode == cc.KEY.dpadLeft) {
                 this._firstFocusedWidget = this._firstFocusedWidget.findNextFocusedWidget(ccui.Widget.LEFT, this._firstFocusedWidget);
             }
-            if (keyCode == cc.KEY.right) {
+            if (keyCode == cc.KEY.dpadRight) {
                 this._firstFocusedWidget = this._firstFocusedWidget.findNextFocusedWidget(ccui.Widget.RIGHT, this._firstFocusedWidget);
             }
         }
