@@ -321,6 +321,14 @@ cc.Node.RenderCmd.prototype = {
             var sx = (lScaleX < 0.000001 && lScaleX > -0.000001) ? 0.000001 : lScaleX,
                 sy = (lScaleY < 0.000001 && lScaleY > -0.000001) ? 0.000001 : lScaleY;
 
+            // scale
+            if (lScaleX !== 1 || lScaleY !== 1) {
+                t.a *= sx;
+                t.c *= sx;
+                t.b *= sy;
+                t.d *= sy;
+            }
+
             // skew
             if (node._skewX || node._skewY) {
                 // offset the anchorpoint
@@ -338,14 +346,6 @@ cc.Node.RenderCmd.prototype = {
                 t.d = Sin * skx + Cos;
                 t.tx += Cos * xx + -Sin * yy;
                 t.ty += Sin * xx + Cos * yy;
-            }
-
-            // scale
-            if (lScaleX !== 1 || lScaleY !== 1) {
-                t.a *= sx;
-                t.c *= sx;
-                t.b *= sy;
-                t.d *= sy;
             }
 
             // adjust anchorPoint
