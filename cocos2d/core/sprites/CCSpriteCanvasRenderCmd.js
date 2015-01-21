@@ -58,10 +58,13 @@
     proto._setTexture = function (texture) {
         var node = this._node;
         if (node._texture != texture) {
-            if (texture && texture.getHtmlElementObj() instanceof  HTMLImageElement) {
-                this._originalTexture = texture;
+            if (texture) {
+                if(texture.getHtmlElementObj() instanceof  HTMLImageElement)
+                    this._originalTexture = texture;
+                node._textureLoaded = texture._textureLoaded;
+            }else{
+                node._textureLoaded = false;
             }
-            node._textureLoaded = texture._textureLoaded;
             node._texture = texture;
         }
     };

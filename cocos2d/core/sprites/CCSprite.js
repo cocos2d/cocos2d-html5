@@ -924,29 +924,42 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {cc.Texture2D|String} texture
      */
     setTexture: function (texture) {
-        var _t = this;
-        if(texture && (cc.isString(texture))){
+        if(!texture)
+            return this._renderCmd._setTexture(null);
+
+        if(cc.isString(texture)){
             texture = cc.textureCache.addImage(texture);
-            _t.setTexture(texture);
-            //TODO
-            var size = texture.getContentSize();
-            _t.setTextureRect(cc.rect(0,0, size.width, size.height));
-            //If image isn't loaded. Listen for the load event.
+
             if(!texture._textureLoaded){
                 texture.addEventListener("load", function(){
-                    var size = texture.getContentSize();
-                    _t.setTextureRect(cc.rect(0,0, size.width, size.height));
-                    _t._textureLoaded = true;
+                    this._renderCmd._setTexture(texture);
+                    this._changeRectWithTexture(texture.getContentSize());
+                    this.setColor(this._realColor);
+                    this._textureLoaded = true;
                 }, this);
             }else{
-                _t._textureLoaded = true;
+                this._renderCmd._setTexture(texture);
+                this._changeRectWithTexture(texture.getContentSize());
+                this.setColor(this._realColor);
+                this._textureLoaded = true;
             }
-            return;
+        }else{
+            // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
+            cc.assert(texture instanceof cc.Texture2D, cc._LogInfos.Sprite_setTexture_2);
+            this._changeRectWithTexture(texture.getContentSize());
+            this._renderCmd._setTexture(texture);
         }
-        // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
-        cc.assert(!texture || texture instanceof cc.Texture2D, cc._LogInfos.Sprite_setTexture_2);
+    },
 
-        this._renderCmd._setTexture(texture);
+    _changeRectWithTexture: function(rect){
+        if(!rect || (!rect.width && !rect.height)) return;
+        var textureRect = this.getTextureRect();
+        if(textureRect.height || textureRect.width) return;
+        rect.x = rect.x || 0;
+        rect.y = rect.y || 0;
+        rect.width = rect.width || 0;
+        rect.height = rect.height || 0;
+        this.setTextureRect(rect);
     },
 
     _createRenderCmd: function(){
