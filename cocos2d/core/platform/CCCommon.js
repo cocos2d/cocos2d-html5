@@ -167,7 +167,14 @@ cc.KEY = {
     backslash:220,
     ']':221,
     closebracket:221,
-    quote:222
+    quote:222,
+
+    // gamepad controll
+    dpadLeft:1000,
+    dpadRight:1001,
+    dpadUp:1003,
+    dpadDown:1004,
+    dpadCenter:1005
 };
 
 /**
