@@ -693,34 +693,34 @@
 
         var widget = new ccui.ImageView();
 
-        this.widgetAttributes(widget, json);
-
-        var scale9Enabled = json["Scale9Enable"];
-        if(scale9Enabled){
-            widget.setScale9Enabled(true);
-            widget.setUnifySizeEnabled(false);
-            widget.ignoreContentAdaptWithSize(false);
-
-            var scale9OriginX = json["Scale9OriginX"];
-            var scale9OriginY = json["Scale9OriginY"];
-            var scale9Width = json["Scale9Width"];
-            var scale9Height = json["Scale9Height"];
-            widget.setCapInsets(cc.rect(
-                scale9OriginX || 0,
-                scale9OriginY || 0,
-                scale9Width || 0,
-                scale9Height || 0
-            ));
-        }
-
-        setContentSize(widget, json["Size"]);
-
         loadTexture(json["FileData"], resourcePath, function(path, type){
             widget.loadTexture(path, type);
         });
         loadTexture(json["ImageFileData"], resourcePath, function(path, type){
             widget.loadTexture(path, type);
         });
+
+        var scale9Enabled = json["Scale9Enable"];
+        if(scale9Enabled){
+            widget.setScale9Enabled(true);
+            widget.setUnifySizeEnabled(false);
+
+            var scale9OriginX = json["Scale9OriginX"];
+            var scale9OriginY = json["Scale9OriginY"];
+            var scale9Width = json["Scale9Width"];
+            var scale9Height = json["Scale9Height"];
+            widget.setCapInsets(cc.rect(
+                    scale9OriginX || 0,
+                    scale9OriginY || 0,
+                    scale9Width || 0,
+                    scale9Height || 0
+            ));
+        } else
+            setContentSize(widget, json["Size"]);
+
+        widget.ignoreContentAdaptWithSize(false);
+
+        this.widgetAttributes(widget, json);
 
         return widget;
     };
