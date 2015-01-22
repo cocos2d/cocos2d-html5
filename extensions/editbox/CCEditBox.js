@@ -243,8 +243,7 @@ cc.EditBox = cc.ControlButton.extend({
         this._placeholderColor = cc.color.GRAY;
         this.setContentSize(size);
         var tmpDOMSprite = this._domInputSprite = new cc.Sprite();
-        tmpDOMSprite.draw = function () {
-        };                           //redefine draw function
+        tmpDOMSprite.draw = function () {};  //redefine draw function
         this.addChild(tmpDOMSprite);
         var selfPointer = this;
         var tmpEdTxt = this._edTxt = cc.newElement("input");
@@ -259,9 +258,7 @@ cc.EditBox = cc.ControlButton.extend({
         tmpEdTxt.style.active = 0;
         tmpEdTxt.style.outline = "medium";
         tmpEdTxt.style.padding = "0";
-        var onCanvasClick = function() {
-            tmpEdTxt.blur();
-        };
+        var onCanvasClick = function() { tmpEdTxt.blur();};
         
         // TODO the event listener will be remove when EditBox removes from parent.
         cc._addEventListener(tmpEdTxt, "input", function () {
@@ -317,7 +314,6 @@ cc.EditBox = cc.ControlButton.extend({
         if (this.initWithSizeAndBackgroundSprite(size, normal9SpriteBg)) {
             if (press9SpriteBg)
                 this.setBackgroundSpriteForState(press9SpriteBg, cc.CONTROL_STATE_HIGHLIGHTED);
-
             if (disabled9SpriteBg)
                 this.setBackgroundSpriteForState(disabled9SpriteBg, cc.CONTROL_STATE_DISABLED);
         }
@@ -391,9 +387,14 @@ cc.EditBox = cc.ControlButton.extend({
             if (text == "") {
                 this._edTxt.value = this._placeholderText;
                 this._edTxt.style.color = cc.colorToHex(this._placeholderColor);
+                this._edTxt.type = "text";
             } else {
                 this._edTxt.value = text;
                 this._edTxt.style.color = cc.colorToHex(this._textColor);
+                if (this._editBoxInputFlag == cc.EDITBOX_INPUT_FLAG_PASSWORD)
+                    this._edTxt.type = "password";
+                else
+                    this._edTxt.type = "text";
             }
         }
     },
