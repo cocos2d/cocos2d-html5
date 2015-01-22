@@ -134,7 +134,8 @@
 
     proto.setTexture = function(texture){
         this._textureAtlas.setTexture(texture);
-        this._updateBlendFunc();
+        if(texture)
+            this._updateBlendFunc();
     };
 
     proto.removeAllQuads = function(){
