@@ -783,11 +783,13 @@ cc.loader = /** @lends cc.loader# */{
                 callback(null, img);
         };
 
+        var self = this;
         var errorCallback = function () {
             this.removeEventListener('error', errorCallback, false);
 
             if(img.crossOrigin && img.crossOrigin.toLowerCase() == "anonymous"){
                 opt.isCrossOrigin = false;
+                self.release(url);
                 cc.loader.loadImg(url, opt, callback);
             }else{
                 typeof callback == "function" && callback("load image failed");
