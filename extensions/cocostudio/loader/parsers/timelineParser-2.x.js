@@ -208,6 +208,14 @@
     ////////////
 
     parser.widgetAttributes = function(widget, json){
+        widget.setCascadeColorEnabled(true);
+        widget.setCascadeOpacityEnabled(true);
+
+        widget.setUnifySizeEnabled(false);
+        widget.setLayoutComponentEnabled(true);
+        widget.ignoreContentAdaptWithSize(false);
+        setContentSize(widget, json["Size"]);
+
         var name = json["Name"];
         if(name)
             widget.setName(name);
@@ -285,8 +293,6 @@
         var color = json["CColor"];
         if(color != null)
             widget.setColor(getColor(color));
-
-        setContentSize(widget, json["Size"]);
 
         if(widget instanceof ccui.Layout){
             var layoutComponent = ccui.LayoutComponent.bindLayoutComponent(widget);
@@ -704,6 +710,7 @@
         if(scale9Enabled){
             widget.setScale9Enabled(true);
             widget.setUnifySizeEnabled(false);
+            widget.ignoreContentAdaptWithSize(false);
 
             var scale9OriginX = json["Scale9OriginX"];
             var scale9OriginY = json["Scale9OriginY"];
@@ -717,8 +724,6 @@
             ));
         } else
             setContentSize(widget, json["Size"]);
-
-        widget.ignoreContentAdaptWithSize(false);
 
         this.widgetAttributes(widget, json);
 
