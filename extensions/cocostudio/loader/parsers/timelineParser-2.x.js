@@ -392,12 +392,19 @@
 
         var bgStartColor = json["FirstColor"];
         var bgEndColor = json["EndColor"];
-        if(bgStartColor != null && bgEndColor != null)
-            widget.setBackGroundColor( getColor(bgStartColor), getColor(bgEndColor) );
+        if(bgStartColor != null && bgEndColor != null){
+            var startC = getColor(bgStartColor);
+            var endC;
+            if(bgEndColor["R"] == null && bgEndColor["G"] == null && bgEndColor["B"] == null)
+                endC = null;
+            else
+                endC = getColor(bgEndColor);
+            widget.setBackGroundColor( startC, endC );
+        }
 
         var colorVector = json["ColorVector"];
         if(colorVector != null)
-            colorVector["ScaleX"];
+            widget.setBackGroundColorVector(cc.p(colorVector["ScaleX"], colorVector["ScaleY"]));
 
         loadTexture(json["FileData"], resourcePath, function(path, type){
             widget.setBackGroundImage(path, type);
