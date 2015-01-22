@@ -59,7 +59,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     ctor: function () {
         ccui.ScrollView.prototype.ctor.call(this);
         this._items = [];
-        this._gravity = ccui.ListView.GRAVITY_CENTER_HORIZONTAL;
+        this._gravity = ccui.ListView.GRAVITY_CENTER_VERTICAL;
         this.setTouchEnabled(true);
 
         this.init();
