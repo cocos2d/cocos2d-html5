@@ -402,10 +402,9 @@
             var startC = getColor(bgStartColor);
             var endC;
             if(bgEndColor["R"] == null && bgEndColor["G"] == null && bgEndColor["B"] == null)
-                endC = null;
+                widget.setBackGroundColor( startC );
             else
-                endC = getColor(bgEndColor);
-            widget.setBackGroundColor( startC, endC );
+                widget.setBackGroundColor( startC, getColor(bgEndColor) );
         }
 
         var colorVector = json["ColorVector"];
