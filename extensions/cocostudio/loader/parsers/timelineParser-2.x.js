@@ -890,7 +890,7 @@
         var verticalType = json["VerticalType"];
         var horizontalType = json["HorizontalType"];
         if(!directionType){
-            widget.setDirection(ccui.ListView.DIR_HORIZONTAL);
+            widget.setDirection(ccui.ScrollView.DIR_HORIZONTAL);
             if(verticalType == "Align_Bottom")
                 widget.setGravity(ccui.ListView.GRAVITY_BOTTOM);
             else if(verticalType == "Align_VerticalCenter")
@@ -898,7 +898,7 @@
             else
                 widget.setGravity(ccui.ListView.GRAVITY_TOP);
         }else if(directionType == "Vertical"){
-            widget.setDirection(ccui.ListView.DIR_VERTICAL);
+            widget.setDirection(ccui.ScrollView.DIR_VERTICAL);
             if (horizontalType == "")
                 widget.setGravity(ccui.ListView.GRAVITY_LEFT);
             else if (horizontalType == "Align_Right")
