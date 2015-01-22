@@ -280,6 +280,10 @@ cc.EditBox = cc.ControlButton.extend({
                 this.value = "";
                 this.style.fontSize = selfPointer._edFontSize + "px";
                 this.style.color = cc.colorToHex(selfPointer._textColor);
+                if (selfPointer._editBoxInputFlag == cc.EDITBOX_INPUT_FLAG_PASSWORD)
+                    selfPointer._edTxt.type = "password";
+                else
+                    selfPointer._edTxt.type = "text";
             }
             if (selfPointer._delegate && selfPointer._delegate.editBoxEditingDidBegin)
                 selfPointer._delegate.editBoxEditingDidBegin(selfPointer);
@@ -290,6 +294,7 @@ cc.EditBox = cc.ControlButton.extend({
                 this.value = selfPointer._placeholderText;
                 this.style.fontSize = selfPointer._placeholderFontSize + "px";
                 this.style.color = cc.colorToHex(selfPointer._placeholderColor);
+                selfPointer._edTxt.type = "text";
             }
             if (selfPointer._delegate && selfPointer._delegate.editBoxEditingDidEnd)
                 selfPointer._delegate.editBoxEditingDidEnd(selfPointer);
@@ -360,6 +365,10 @@ cc.EditBox = cc.ControlButton.extend({
         if (this._edTxt.value != this._placeholderText) {
             this._edTxt.style.fontFamily = this._edFontName;
             this._edTxt.style.fontSize = this._edFontSize + "px";
+            if (this._editBoxInputFlag == cc.EDITBOX_INPUT_FLAG_PASSWORD)
+                this._edTxt.type = "password";
+            else
+                this._edTxt.type = "text";
         }
     },
 
@@ -370,15 +379,7 @@ cc.EditBox = cc.ControlButton.extend({
      */
     setText: function (text) {
         cc.log("Please use the setString");
-        if (text != null) {
-            if (text == "") {
-                this._edTxt.value = this._placeholderText;
-                this._edTxt.style.color = cc.colorToHex(this._placeholderColor);
-            } else {
-                this._edTxt.value = text;
-                this._edTxt.style.color = cc.colorToHex(this._textColor);
-            }
-        }
+        this.setString(text);
     },
 
     /**
@@ -487,6 +488,7 @@ cc.EditBox = cc.ControlButton.extend({
         if (this._edTxt.value == this._placeholderText) {
             this._edTxt.style.fontFamily = this._placeholderFontName;
             this._edTxt.style.fontSize = this._placeholderFontSize + "px";
+            this._edTxt.type = "text";
         }
     },
 
@@ -508,7 +510,7 @@ cc.EditBox = cc.ControlButton.extend({
      */
     setInputFlag: function (inputFlag) {
         this._editBoxInputFlag = inputFlag;
-        if (inputFlag == cc.EDITBOX_INPUT_FLAG_PASSWORD)
+        if ((this._edTxt.value !== this._placeholderText) && (inputFlag == cc.EDITBOX_INPUT_FLAG_PASSWORD))
             this._edTxt.type = "password";
         else
             this._edTxt.type = "text";
@@ -529,6 +531,8 @@ cc.EditBox = cc.ControlButton.extend({
      * @return {string}
      */
     getString: function () {
+        if(this._edTxt.value === this._placeholderText)
+            return "";
         return this._edTxt.value;
     },
 

@@ -61,6 +61,8 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         var node = this._node;
         if (!this._labelCanvas) {
             var locCanvas = cc.newElement("canvas");
+            locCanvas.width = 1;
+            locCanvas.height = 1;
             var labelTexture = new cc.Texture2D();
             labelTexture.initWithElement(locCanvas);
             node.setTexture(labelTexture);
