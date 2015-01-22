@@ -288,7 +288,7 @@
 
         var anchorPoint = json["AnchorPoint"];
         if(anchorPoint != null)
-            widget.setAnchorPoint(anchorPoint["ScaleX"] || 0.5, anchorPoint["ScaleY"] || 0.5);
+            widget.setAnchorPoint(anchorPoint["ScaleX"] || 0, anchorPoint["ScaleY"] || 0);
 
         var color = json["CColor"];
         if(color != null)
