@@ -212,7 +212,7 @@
         widget.setCascadeOpacityEnabled(true);
 
         widget.setUnifySizeEnabled(false);
-        widget.setLayoutComponentEnabled(true);
+        //widget.setLayoutComponentEnabled(true);
         widget.ignoreContentAdaptWithSize(false);
         setContentSize(widget, json["Size"]);
 
