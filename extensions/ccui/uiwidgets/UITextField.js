@@ -574,16 +574,18 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
             this.setDetachWithIME(false);
         }
         if (this.getInsertText()) {
+            this._textFieldRendererAdaptDirty = true;
+            this._updateContentSizeWithTextureSize(this._textFieldRenderer.getContentSize());
+
             this._insertTextEvent();
             this.setInsertText(false);
-            this._textFieldRendererAdaptDirty = true;
-            this._updateContentSizeWithTextureSize(this._textFieldRenderer.getContentSize());
         }
         if (this.getDeleteBackward()) {
-            this._deleteBackwardEvent();
-            this.setDeleteBackward(false);
             this._textFieldRendererAdaptDirty = true;
             this._updateContentSizeWithTextureSize(this._textFieldRenderer.getContentSize());
+
+            this._deleteBackwardEvent();
+            this.setDeleteBackward(false);
         }
     },
 
