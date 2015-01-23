@@ -224,6 +224,15 @@ Tim                  @duhaibo0404   ccs.csLoader bug fix
 
 Hermanto             @man2          cc.loader bug fix
 
+Long Jiang           @jianglong0156 cc.LabelBMFont bug fix
+                                    KeyCode bug fix
+                                    ccui.ListView bug fix
+
+Joe Lafiosca         @lafiosca      Added Javascript file loader
+
+galapagosit          @galapagosit   ccs.actionManager bug fix
+
+
 Retired Core Developers:
       Shengxiang Chen (Nero Chan)
       Xingsen Ma
