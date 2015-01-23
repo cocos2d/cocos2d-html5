@@ -270,6 +270,7 @@
                 <file name="extensions/cocostudio/timeline/ActionTimeline.js"/>
                 <file name="extensions/cocostudio/timeline/Frame.js"/>
                 <file name="extensions/cocostudio/timeline/Timeline.js"/>
+                <file name="extensions/cocostudio/loader/load.js"/>
                 <file name="extensions/cocostudio/loader/parsers/action-1.x.js"/>
                 <file name="extensions/cocostudio/loader/parsers/action-2.x.js"/>
                 <file name="extensions/cocostudio/loader/parsers/scene-1.x.js"/>
