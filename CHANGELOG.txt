@@ -1,5 +1,36 @@
 ChangeLog:
 
+Cocos2d-JS v3.3 Beta @ Jan.24, 2015
+
+* Added Cocos Studio v2.x parser and refactored 1.x parser.
+* Upgraded new flow layout UI system in web engine.
+* Refactored `load` events of texture2d, sprite and so on to be more intuitive.
+* Added JavaScript file loader.
+* Allowed set texture to null in `cc.Sprite`.
+* Added full test cases for Cocos Studio v2.x parser and the new flow layout UI system.
+* Upgraded MoonWarriors sample's UI and graphic design.
+
+* Bug fixes:
+    1. Fixed a bug of Cocos2d UI, their focus event has been supported.
+    2. Fixed a buf of `ccui.Widget` that its percent position doesn't work.
+    3. Fixed a bug of `ccs.Armature` that its position doesn't update in visit on WebGL render mode.
+    4. Fixed a bug of `cc.Sprite` that its `setTextureRect` function doesn't work when `setColor` invoked.
+    5. Fixed a bug of `cc.PhysicsSprite` that its position is incorrect.
+    6. Fixed a bug of `ccs.Bone` that its `setOpacity` and `setColor` doesn't work.
+    7. Fixed a bug of `cc.LabelBMFont` that its word wrap doesn't work.
+    8. Fixed a bug of `cc.sys` that it gets the incorrect OS type when system is Linux.
+    9. Fixed a bug of `cc.audioEngine` that its loading path is incorrect.
+    10. Fixed a bug of `ccui.Widget` that it can't touch when it's reused.
+    11. Fixed a bug of UI system that the `setNormalizedPosition` doesn't work.
+    12. Fixed a bug of `cc.ActionInterval` that its `_times` conflict with `cc.Blink`.  
+    13. Fixed release texture issue in canvas mode.
+    14. Fixed a bug of `ccs.actionManager` that its `getActionByName` doesn't work.
+    15. Fixed a bug of `cc.Sprite` that it can't draw without texture on WebGL mode.
+    16. Fixed a bug of `cc.audioEngine` that it doesn't work on baidu browser.
+    17. Fixed a bug of `cc.EditBox` that its position is incorrect on Canvas Mode and its string value is wrong when PlaceHolder is showing.
+    18. Fixed a bug of `cc.loader` that its `loadImg` function doesn't work when image is accessed cross origin.
+    19. Fixed a bug of `ccui.TextField` that its `contentSize` is incorrect in text field event.
+
 Cocos2d-JS v3.2 @ Dec.29, 2014
 
 * Replaced `transform` function with `setTransform` function under canvas render mode for better performance.
