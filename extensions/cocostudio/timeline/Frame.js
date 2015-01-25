@@ -975,15 +975,18 @@ ccs.ColorFrame = ccs.Frame.extend({
      */
     apply: function(percent){
         if (this._tween && (this._betweenAlpha !=0 || this._betweenRed != 0 || this._betweenGreen != 0 || this._betweenBlue != 0)){
-            var alpha = this._alpha + this._betweenAlpha * percent;
 
             var color = cc.color(255, 255, 255);
             color.r = this._color.r + this._betweenRed   * percent;
             color.g = this._color.g + this._betweenGreen * percent;
             color.b = this._color.b + this._betweenBlue  * percent;
 
-            this._node.setOpacity(alpha);
             this._node.setColor(color);
+            if(this._alpha != null){
+                var alpha = this._alpha + this._betweenAlpha * percent;
+                this._node.setOpacity(alpha);
+            }
+
         }
     },
 
