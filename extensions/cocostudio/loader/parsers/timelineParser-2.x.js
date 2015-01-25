@@ -854,6 +854,8 @@
 
         var widget = new ccui.ListView();
 
+        this.widgetAttributes(widget, json);
+
         var clipEnabled = json["ClipAble"];
         if(clipEnabled)
             widget.setClippingEnabled(true);
