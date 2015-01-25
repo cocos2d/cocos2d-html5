@@ -481,8 +481,12 @@
             var path = fontResource["Path"];
             //resoutceType = fontResource["Type"];
             if(path != null){
-                fontName = path.match(/([^\/]+)\.ttf/);
-                fontName = fontName ? fontName[1] : "";
+                if (cc.sys.isNative && cc.sys.os == cc.sys.OS_ANDROID) {
+                    fontName = cc.path.join(cc.loader.resPath, resourcePath, path);
+                } else {
+                    fontName = path.match(/([^\/]+)\.ttf/);
+                    fontName = fontName ? fontName[1] : "";
+                }
                 widget.setFontName(fontName);
             }
         }
@@ -556,13 +560,18 @@
             widget.loadTextureDisabled(path, type);
         });
 
-        var fontResourcePath, fontResourceResourceType, fontResourcePlistFile;
-        var fontResource = json["FontResource"];
         if(fontResource != null){
-            //console.log(fontResource["Path"]);
-        //    fontResourcePath = fontResource["Path"];
-        //    fontResourceResourceType = fontResource["Type"] == "Default" ? 0 : 1;
-        //    fontResourcePlistFile = fontResource["Plist"];
+            var path = fontResource["Path"];
+            //resoutceType = fontResource["Type"];
+            if(path != null){
+                if (cc.sys.isNative && cc.sys.os == cc.sys.OS_ANDROID) {
+                    fontName = cc.path.join(cc.loader.resPath, resourcePath, path);
+                } else {
+                    fontName = path.match(/([^\/]+)\.ttf/);
+                    fontName = fontName ? fontName[1] : "";
+                }
+                widget._labelRenderer.setFontName(fontName);
+            }
         }
 
         return widget;
@@ -1031,9 +1040,20 @@
         if(text != null)
             widget.setString(text);
 
-        loadTexture(json["FontResource"], resourcePath, function(path, type){
-            widget.setFontName(path);
-        });
+        var fontResource = json["FontResource"];
+        if(fontResource != null){
+            var path = fontResource["Path"];
+            //resoutceType = fontResource["Type"];
+            if(path != null){
+                if (cc.sys.isNative && cc.sys.os == cc.sys.OS_ANDROID) {
+                    fontName = cc.path.join(cc.loader.resPath, resourcePath, path);
+                } else {
+                    fontName = path.match(/([^\/]+)\.ttf/);
+                    fontName = fontName ? fontName[1] : "";
+                }
+                widget.setFontName(fontName);
+            }
+        }
 
         widget.setUnifySizeEnabled(false);
         widget.ignoreContentAdaptWithSize(false);
