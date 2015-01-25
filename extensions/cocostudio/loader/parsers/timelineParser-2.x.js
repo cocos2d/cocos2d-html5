@@ -639,11 +639,13 @@
         //todo please check it
         setContentSize(widget, json["Size"]);
 
-        if(json["FirstColor"] && json["EndColor"]){
-            var bgStartColor, bgEndColor;
-            bgStartColor = getColor(json["FirstColor"]);
-            bgEndColor = getColor(json["EndColor"]);
-            widget.setBackGroundColor(bgStartColor, bgEndColor);
+        var firstColor = json["FirstColor"];
+        var endColor = json["EndColor"];
+        if(firstColor && endColor){
+            if(endColor["R"] != null && endColor["G"] != null && endColor["B"] != null)
+                widget.setBackGroundColor(getColor(firstColor), getColor(endColor));
+            else
+                widget.setBackGroundColor(getColor(firstColor));
         }else{
             widget.setBackGroundColor(getColor(json["SingleColor"]));
         }
@@ -816,13 +818,16 @@
         widget.setBackGroundColorType(colorType);
 
         var bgColorOpacity = json["BackColorAlpha"];
-        var bgColor = getColor(json["SingleColor"]);
-        var bgEndColor = getColor(json["EndColor"]);
-        var bgStartColor = getColor(json["FirstColor"]);
-        if(bgEndColor && bgStartColor)
-            widget.setBackGroundColor(bgStartColor, bgEndColor);
-        else
-            widget.setBackGroundColor(bgColor);
+        var firstColor = json["FirstColor"];
+        var endColor = json["EndColor"];
+        if(firstColor && endColor){
+            if(endColor["R"] != null && endColor["G"] != null && endColor["B"] != null)
+                widget.setBackGroundColor(getColor(firstColor), getColor(endColor));
+            else
+                widget.setBackGroundColor(getColor(firstColor));
+        }else{
+            widget.setBackGroundColor(getColor(json["SingleColor"]));
+        }
 
         var colorVector = json["ColorVector"];
         if(colorVector != null && colorVector["ScaleX"] != null && colorVector["ScaleY"] != null)
@@ -906,13 +911,17 @@
         if(innerSize != null)
             widget.setInnerContainerSize(cc.size(innerSize["Widget"]||0, innerSize["Height"]||0));
 
-        var bgColor = getColor(json["SingleColor"]);
-        var bgEndColor = getColor(json["EndColor"]);
-        var bgStartColor = getColor(json["FirstColor"]);
-        if(bgEndColor && bgStartColor)
-            widget.setBackGroundColor(bgStartColor, bgEndColor);
-        else
-            widget.setBackGroundColor(bgColor);
+        var firstColor = json["FirstColor"];
+        var endColor = json["EndColor"];
+        if(firstColor && endColor){
+            if(endColor["R"] != null && endColor["G"] != null && endColor["B"] != null)
+                widget.setBackGroundColor(getColor(firstColor), getColor(endColor));
+            else
+                widget.setBackGroundColor(getColor(firstColor));
+        }else{
+            widget.setBackGroundColor(getColor(json["SingleColor"]));
+        }
+
         var colorVector = json["ColorVector"];
         if(colorVector != null && colorVector["ScaleX"] != null && colorVector["ScaleY"] != null)
             widget.setBackGroundColorVector(colorVector["ScaleX"], colorVector["ScaleY"]);
