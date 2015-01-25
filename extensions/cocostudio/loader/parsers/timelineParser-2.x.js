@@ -380,7 +380,8 @@
         widget.setBackGroundColorType(colorType);
 
         var bgColorOpacity = getParam(json["BackColorAlpha"], 255);
-        widget.setBackGroundColorOpacity(bgColorOpacity);
+        if(bgColorOpacity != null)
+            widget.setBackGroundColorOpacity(bgColorOpacity);
 
         var backGroundScale9Enabled = json["Scale9Enable"];
         if(backGroundScale9Enabled != null)
@@ -490,7 +491,6 @@
         if(isCustomSize != null)
             widget.ignoreContentAdaptWithSize(!isCustomSize);
 
-        //todo check it
         var fontResource = json["FontResource"];
         if(fontResource != null){
             var path = fontResource["Path"];
@@ -647,22 +647,25 @@
         widget.setBackGroundColorType(colorType);
 
         var bgColorOpacity = json["BackColorAlpha"];
-        if(bgColorOpacity)
+        if(bgColorOpacity != null)
             widget.setBackGroundColorOpacity(bgColorOpacity);
 
         var backGroundScale9Enabled = json["Scale9Enable"];
         if(backGroundScale9Enabled){
             widget.setBackGroundImageScale9Enabled(true);
+
+
+            var scale9OriginX = json["Scale9OriginX"] || 0;
+            var scale9OriginY = json["Scale9OriginY"] || 0;
+            var scale9Width = json["Scale9Width"] || 0;
+            var scale9Height = json["Scale9Height"] || 0;
+            widget.setBackGroundImageCapInsets(cc.rect(
+                scale9OriginX, scale9OriginY, scale9Width, scale9Height
+            ));
+            setContentSize(widget, json["Size"]);
+        }else if(!widget.isIgnoreContentAdaptWithSize()){
+            setContentSize(widget, json["Size"]);
         }
-
-        var scale9OriginX = json["Scale9OriginX"] || 0;
-        var scale9OriginY = json["Scale9OriginY"] || 0;
-
-        var scale9Width = json["Scale9Width"] || 0;
-        var scale9Height = json["Scale9Height"] || 0;
-
-        //todo please check it
-        setContentSize(widget, json["Size"]);
 
         var firstColor = json["FirstColor"];
         var endColor = json["EndColor"];
@@ -857,7 +860,8 @@
         var colorVector = json["ColorVector"];
         if(colorVector != null && colorVector["ScaleX"] != null && colorVector["ScaleY"] != null)
             widget.setBackGroundColorVector(colorVector["ScaleX"], colorVector["ScaleY"]);
-        widget.setBackGroundColorOpacity(bgColorOpacity);
+        if(bgColorOpacity != null)
+            widget.setBackGroundColorOpacity(bgColorOpacity);
 
         loadTexture(json["FileData"], resourcePath, function(path, type){
             widget.setBackGroundImage(path, type);
@@ -952,7 +956,8 @@
         var colorVector = json["ColorVector"];
         if(colorVector != null && colorVector["ScaleX"] != null && colorVector["ScaleY"] != null)
             widget.setBackGroundColorVector(colorVector["ScaleX"], colorVector["ScaleY"]);
-        widget.setBackGroundColorOpacity(bgColorOpacity);
+        if(bgColorOpacity != null)
+            widget.setBackGroundColorOpacity(bgColorOpacity);
 
 
         loadTexture(json["FileData"], resourcePath, function(path, type){
@@ -1078,11 +1083,12 @@
         if(color != null)
             widget.setTextColor(getColor(color));
 
-        if (!widget.isIgnoreContentAdaptWithSize())
+        if (!widget.isIgnoreContentAdaptWithSize()){
             setContentSize(widget, json["Size"]);
+            if (cc.sys.isNative)
+                widget.getVirtualRenderer().setLineBreakWithoutSpace(true);
+        }
 
-        if (cc.sys.isNative)
-            widget.getVirtualRenderer().setLineBreakWithoutSpace(true);
 
         return widget;
 
