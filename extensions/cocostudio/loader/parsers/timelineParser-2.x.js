@@ -261,9 +261,8 @@
 
         widget.setTag(json["Tag"] || 0);
 
-        var touchEnabled = json["TouchEnable"];
-        if(touchEnabled)
-            widget.setTouchEnabled(true);
+        var touchEnabled = json["TouchEnable"] || false;
+        widget.setTouchEnabled(touchEnabled);
 
         // -- var frameEvent = json["FrameEvent"];
 
@@ -387,11 +386,31 @@
         if(backGroundScale9Enabled != null)
             widget.setBackGroundImageScale9Enabled(backGroundScale9Enabled);
 
-        var scale9OriginX = json["Scale9OriginX"] || 0;
-        var scale9OriginY = json["Scale9OriginY"] || 0;
+        var opacity = json["Alpha"] || 255;
+        widget.setOpacity(opacity);
 
-        var scale9Width = json["Scale9Width"] || 0;
-        var scale9Height = json["Scale9Height"] || 0;
+        loadTexture(json["FileData"], resourcePath, function(path, type){
+            widget.setBackGroundImage(path, type);
+        });
+
+        if(backGroundScale9Enabled){
+            var scale9OriginX = json["Scale9OriginX"] || 0;
+            var scale9OriginY = json["Scale9OriginY"] || 0;
+
+            var scale9Width = json["Scale9Width"] || 0;
+            var scale9Height = json["Scale9Height"] || 0;
+
+            widget.setBackGroundImageCapInsets(cc.rect(
+                scale9OriginX, scale9OriginY, scale9Width, scale9Height
+            ));
+
+            setContentSize(widget, json["Size"]);
+        }else{
+            if (!widget.isIgnoreContentAdaptWithSize()){
+                setContentSize(widget, json["Size"]);
+            }
+
+        }
 
         var bgStartColor = json["FirstColor"];
         var bgEndColor = json["EndColor"];
@@ -406,10 +425,6 @@
         var colorVector = json["ColorVector"];
         if(colorVector != null)
             widget.setBackGroundColorVector(cc.p(colorVector["ScaleX"], colorVector["ScaleY"]));
-
-        loadTexture(json["FileData"], resourcePath, function(path, type){
-            widget.setBackGroundImage(path, type);
-        });
 
         return widget;
     };
@@ -481,7 +496,7 @@
             var path = fontResource["Path"];
             //resoutceType = fontResource["Type"];
             if(path != null){
-                if (cc.sys.isNative && cc.sys.os == cc.sys.OS_ANDROID) {
+                if (cc.sys.isNative) {
                     fontName = cc.path.join(cc.loader.resPath, resourcePath, path);
                 } else {
                     fontName = path.match(/([^\/]+)\.ttf/);
@@ -542,10 +557,6 @@
         if(fontName != null)
             widget.setTitleFontName(fontName);
 
-        var displaystate = getParam(json["DisplayState"], true);
-        widget.setBright(displaystate);
-        widget.setEnabled(displaystate);
-
         var textColor = json["TextColor"];
         if(textColor != null)
             widget.setTitleColor(getColor(textColor));
@@ -560,17 +571,22 @@
             widget.loadTextureDisabled(path, type);
         });
 
+        var displaystate = getParam(json["DisplayState"], true);
+        widget.setBright(displaystate);
+        widget.setEnabled(displaystate);
+
+        var fontResource = json["FontResource"];
         if(fontResource != null){
             var path = fontResource["Path"];
             //resoutceType = fontResource["Type"];
             if(path != null){
-                if (cc.sys.isNative && cc.sys.os == cc.sys.OS_ANDROID) {
+                if (cc.sys.isNative) {
                     fontName = cc.path.join(cc.loader.resPath, resourcePath, path);
                 } else {
                     fontName = path.match(/([^\/]+)\.ttf/);
                     fontName = fontName ? fontName[1] : "";
                 }
-                widget._labelRenderer.setFontName(fontName);
+                widget.setTitleFontName(fontName);
             }
         }
 
@@ -1045,7 +1061,7 @@
             var path = fontResource["Path"];
             //resoutceType = fontResource["Type"];
             if(path != null){
-                if (cc.sys.isNative && cc.sys.os == cc.sys.OS_ANDROID) {
+                if (cc.sys.isNative) {
                     fontName = cc.path.join(cc.loader.resPath, resourcePath, path);
                 } else {
                     fontName = path.match(/([^\/]+)\.ttf/);
@@ -1064,7 +1080,9 @@
 
         if (!widget.isIgnoreContentAdaptWithSize())
             setContentSize(widget, json["Size"]);
-            //widget.getVirtualRenderer().setLineBreakWithoutSpace(true);
+
+        if (cc.sys.isNative)
+            widget.getVirtualRenderer().setLineBreakWithoutSpace(true);
 
         return widget;
 
