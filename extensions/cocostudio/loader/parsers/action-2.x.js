@@ -216,7 +216,8 @@
                 frames.forEach(function(frameData){
                     var frame = item.handle(frameData, resourcePath);
                     frame.setFrameIndex(frameData["FrameIndex"]);
-                    frame.setTween(frameData["Tween"]);
+                    var tween = frameData["Tween"] != null ? frameData["Tween"] : true;
+                    frame.setTween(tween);
                     timeline.addFrame(frame);
                 });
             }
