@@ -215,7 +215,7 @@
 
                 var singleFrameIndex = options["SingleFrameIndex"];
 
-                frame.setInnerActionType(innerActionType);
+                frame.setInnerActionType(ccs.InnerActionType[innerActionType]);
                 frame.setSingleFrameIndex(singleFrameIndex);
 
                 frame.setEnterWithName(true);
