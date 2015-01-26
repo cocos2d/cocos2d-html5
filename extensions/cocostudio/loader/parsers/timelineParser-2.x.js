@@ -607,13 +607,6 @@
 
         this.widgetAttributes(widget, json);
 
-        var selectedState = getParam(json["CheckedState"], false);
-        widget.setSelected(selectedState);
-
-        var displaystate = getParam(json["DisplayState"], true);
-        widget.setBright(displaystate);
-        widget.setEnabled(displaystate);
-
         var dataList = [
             {name: "NormalBackFileData", handle: widget.loadTextureBackGround},
             {name: "PressedBackFileData", handle: widget.loadTextureBackGroundSelected},
@@ -627,6 +620,13 @@
                 item.handle.call(widget, path, type);
             });
         });
+
+        var selectedState = getParam(json["CheckedState"], false);
+        widget.setSelected(selectedState);
+
+        var displaystate = getParam(json["DisplayState"], true);
+        widget.setBright(displaystate);
+        widget.setEnabled(displaystate);
 
         return widget;
     };
