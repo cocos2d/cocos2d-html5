@@ -1145,9 +1145,16 @@
         var projectFile = json["FileData"];
         if(projectFile != null && projectFile["Path"]){
             var file = resourcePath + projectFile["Path"];
-            if(cc.loader.getRes(file))
-                return ccs._load(file);
-            else
+            if(cc.loader.getRes(file)){
+                var obj = ccs.load(file);
+                parser.generalAttributes(obj.node, json);
+                if(obj.action){
+                    obj.action.tag = obj.node.tag;
+                    obj.node.runAction(obj.action);
+                    obj.action.gotoFrameAndPause(0);
+                }
+                return obj.node;
+            } else
                 cc.log("%s need to be preloaded", file);
         }
     };

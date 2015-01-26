@@ -203,6 +203,26 @@
                 frame.setZOrder(zorder);
                 return frame;
             }
+        },
+        {
+            name: "ActionValue",
+            handle: function(options){
+
+                var frame = new ccs.InnerActionFrame();
+                var innerActionType = options["InnerActionType"];
+
+                var currentAnimationFrame = options["CurrentAniamtionName"];
+
+                var singleFrameIndex = options["SingleFrameIndex"];
+
+                frame.setInnerActionType(innerActionType);
+                frame.setSingleFrameIndex(singleFrameIndex);
+
+                frame.setEnterWithName(true);
+                frame.setAnimationName(currentAnimationFrame);
+
+                return frame;
+            }
         }
     ];
 
