@@ -242,6 +242,11 @@ cc.Node.RenderCmd.prototype = {
         cc.Node.RenderCmd.call(this, renderable);
         this._cachedParent = null;
         this._cacheDirty = false;
+
+        this._orginalPoint = {
+            x: 0,
+            y: 0
+        };
     };
 
     var proto = cc.Node.CanvasRenderCmd.prototype = Object.create(cc.Node.RenderCmd.prototype);
@@ -255,16 +260,13 @@ cc.Node.RenderCmd.prototype = {
         if (parentCmd) {
             var pt = parentCmd._worldTransform;
             // cc.AffineTransformConcat is incorrect at get world transform
-            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
-            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
-            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
-            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
+            worldT.a = pt.a * t.a + pt.b * t.c;                               //a
+            worldT.b = pt.a * t.b + pt.b * t.d;                               //b
+            worldT.c = pt.c * t.a + pt.d * t.c;                               //c
+            worldT.d = pt.c * t.b + pt.d * t.d;                               //d
 
-            var plt = parentCmd._transform;
-            var xOffset = -(plt.b + plt.c) * t.ty;
-            var yOffset = -(plt.b + plt.c) * t.tx;
-            worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
-            worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
+            worldT.tx = pt.a * t.tx + pt.b * t.ty + pt.tx ;
+            worldT.ty = pt.c * t.tx + pt.d * t.ty + pt.ty;
         } else {
             worldT.a = t.a;
             worldT.b = t.b;
@@ -301,17 +303,23 @@ cc.Node.RenderCmd.prototype = {
             t.ty = node._position.y;
 
             // rotation Cos and Sin
-            var Cos = 1, Sin = 0;
+            var A = 1, B = 0,
+                C = 0, D = 1;
             if (node._rotationX) {
                 var rotationRadiansX = node._rotationX * 0.017453292519943295;  //0.017453292519943295 = (Math.PI / 180);   for performance
-                Cos = Math.cos(rotationRadiansX);
-                Sin = Math.sin(rotationRadiansX);
+                B = -Math.sin(rotationRadiansX);
+                D = Math.cos(rotationRadiansX);
             }
 
-            // base abcd
-            t.a = t.d = Cos;
-            t.b = -Sin;
-            t.c = Sin;
+            if (node._rotationY) {
+                var rotationRadiansY = node._rotationY * 0.017453292519943295;  //0.017453292519943295 = (Math.PI / 180);   for performance
+                A = Math.cos(rotationRadiansY);
+                C = Math.sin(rotationRadiansY);
+            }
+            t.a = A;
+            t.b = B;
+            t.c = C;
+            t.d = D;
 
             var lScaleX = node._scaleX, lScaleY = node._scaleY;
             var appX = this._anchorPointInPoints.x, appY = this._anchorPointInPoints.y;
@@ -320,6 +328,14 @@ cc.Node.RenderCmd.prototype = {
             // GPU thread in case of scale(0.0, 0.0)
             var sx = (lScaleX < 0.000001 && lScaleX > -0.000001) ? 0.000001 : lScaleX,
                 sy = (lScaleY < 0.000001 && lScaleY > -0.000001) ? 0.000001 : lScaleY;
+
+            // scale
+            if (lScaleX !== 1 || lScaleY !== 1) {
+                t.a *= sx;
+                t.c *= sx;
+                t.b *= sy;
+                t.d *= sy;
+            }
 
             // skew
             if (node._skewX || node._skewY) {
@@ -332,31 +348,24 @@ cc.Node.RenderCmd.prototype = {
                     sky = 99999999;
                 var xx = appY * skx * sx;
                 var yy = appX * sky * sy;
-                t.a = Cos + -Sin * sky;
-                t.b = Cos * skx + -Sin;
-                t.c = Sin + Cos * sky;
-                t.d = Sin * skx + Cos;
-                t.tx += Cos * xx + -Sin * yy;
-                t.ty += Sin * xx + Cos * yy;
+                t.a = A + B * sky;
+                t.b = A * skx + B;
+                t.c = C + D * sky;
+                t.d = C * skx + D;
+                t.tx += A * xx + B * yy;
+                t.ty += C * xx + D * yy;
             }
 
-            // scale
-            if (lScaleX !== 1 || lScaleY !== 1) {
-                t.a *= sx;
-                t.c *= sx;
-                t.b *= sy;
-                t.d *= sy;
-            }
-
-            // adjust anchorPoint
-            t.tx += Cos * -appX * sx + -Sin * appY * sy;
-            t.ty -= Sin * -appX * sx + Cos * appY * sy;
-
-            // if ignore anchorPoint
-            if (node._ignoreAnchorPointForPosition) {
-                t.tx += appX;
-                t.ty += appY;
-            }
+//            var appX = this._anchorPointInPoints.x, appY = this._anchorPointInPoints.y;
+//            // adjust anchorPoint
+//            t.tx += A * -appX * sx + B * appY * sy;
+//            t.ty -= C * -appX * sx + D * appY * sy;
+//
+//            // if ignore anchorPoint
+//            if (node._ignoreAnchorPointForPosition) {
+//                t.tx += appX;
+//                t.ty += appY;
+//            }
 
             if (node._additionalTransformDirty) {
                 this._transform = cc.affineTransformConcat(t, node._additionalTransform);
