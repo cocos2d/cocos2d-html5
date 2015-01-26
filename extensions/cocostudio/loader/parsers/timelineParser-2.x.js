@@ -526,26 +526,20 @@
 
         var widget = new ccui.Button();
 
-        this.widgetAttributes(widget, json);
+        loadTexture(json["NormalFileData"], resourcePath, function(path, type){
+            widget.loadTextureNormal(path, type);
+        });
+        loadTexture(json["PressedFileData"], resourcePath, function(path, type){
+            widget.loadTexturePressed(path, type);
+        });
+        loadTexture(json["DisabledFileData"], resourcePath, function(path, type){
+            widget.loadTextureDisabled(path, type);
+        });
 
         var scale9Enabled = getParam(json["Scale9Enable"], false);
-        if(scale9Enabled){
+        if(scale9Enabled) {
             widget.setScale9Enabled(scale9Enabled);
-            widget.setUnifySizeEnabled(false);
-            widget.ignoreContentAdaptWithSize(false);
-
-            var capInsets = cc.rect(
-                    json["Scale9OriginX"] || 0,
-                    json["Scale9OriginY"] || 0,
-                    json["Scale9Width"] || 0,
-                    json["Scale9Height"] || 0
-            );
-
-            widget.setCapInsets(capInsets);
-
         }
-
-        setContentSize(widget, json["Size"]);
 
         var text = json["ButtonText"];
         if(text != null)
@@ -562,16 +556,6 @@
         var textColor = json["TextColor"];
         if(textColor != null)
             widget.setTitleColor(getColor(textColor));
-
-        loadTexture(json["NormalFileData"], resourcePath, function(path, type){
-            widget.loadTextureNormal(path, type);
-        });
-        loadTexture(json["PressedFileData"], resourcePath, function(path, type){
-            widget.loadTexturePressed(path, type);
-        });
-        loadTexture(json["DisabledFileData"], resourcePath, function(path, type){
-            widget.loadTextureDisabled(path, type);
-        });
 
         var displaystate = getParam(json["DisplayState"], true);
         widget.setBright(displaystate);
@@ -591,6 +575,22 @@
                 widget.setTitleFontName(fontName);
             }
         }
+        this.widgetAttributes(widget, json);
+
+        if(scale9Enabled) {
+            widget.setUnifySizeEnabled(false);
+            widget.ignoreContentAdaptWithSize(false);
+            var capInsets = cc.rect(
+                    json["Scale9OriginX"] || 0,
+                    json["Scale9OriginY"] || 0,
+                    json["Scale9Width"] || 0,
+                    json["Scale9Height"] || 0
+            );
+            widget.setCapInsets(capInsets);
+
+        }
+
+        setContentSize(widget, json["Size"]);
 
         return widget;
 
