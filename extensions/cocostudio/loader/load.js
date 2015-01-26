@@ -180,7 +180,7 @@ ccs.load = function(file){
 
     object.node = ccs._load(file);
     object.action = ccs._load(file, "action");
-    if(object.action && object.action.tag === -1)
+    if(object.action && object.action.tag === -1 && object.node)
         object.action.tag = object.node.tag;
     return object;
 };

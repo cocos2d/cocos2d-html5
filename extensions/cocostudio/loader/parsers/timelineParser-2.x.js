@@ -1131,6 +1131,8 @@
         loadTexture(json["FileData"], resourcePath, function(path, type){
             if(type == 0)
                 node = new cc.TMXTiledMap(path);
+
+            parser.generalAttributes(node, json);
         });
 
         return node;
@@ -1149,7 +1151,7 @@
             if(cc.loader.getRes(file)){
                 var obj = ccs.load(file);
                 parser.generalAttributes(obj.node, json);
-                if(obj.action){
+                if(obj.action && obj.node){
                     obj.action.tag = obj.node.tag;
                     obj.node.runAction(obj.action);
                     obj.action.gotoFrameAndPause(0);
@@ -1183,6 +1185,8 @@
         var isAutoPlay = json["IsAutoPlay"];
 
         var currentAnimationName = json["CurrentAnimationName"];
+
+        parser.generalAttributes(node, json);
 
         loadTexture(json["FileData"], resourcePath, function(path, type){
             var plists, pngs;
@@ -1249,6 +1253,7 @@
 
     var register = [
         {name: "SingleNodeObjectData", handle: parser.initSingleNode},
+        {name: "LayerObjectData", handle: parser.initSingleNode},
         {name: "SpriteObjectData", handle: parser.initSprite},
         {name: "ParticleObjectData", handle: parser.initParticle},
         {name: "PanelObjectData", handle: parser.initPanel},
