@@ -134,12 +134,10 @@ ccs.Timeline = ccs.Class.extend({
      * @param {cc.Node} node
      */
     setNode: function(node){
-        for (var i=0; i<this._frames.length; i++)
-        {
+        for (var i=0; i<this._frames.length; i++){
             var frame = this._frames[i];
             frame.setNode(node);
         }
-
     },
 
     /**
