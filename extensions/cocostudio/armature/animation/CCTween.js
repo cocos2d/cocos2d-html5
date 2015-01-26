@@ -156,7 +156,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
      * update will call this handler, you can handle your logic here
      */
     updateHandler:function () {
-        var locCurrentPercent = this._currentPercent || 1;
+        var locCurrentPercent = this._currentPercent == null ? 1 : this._currentPercent;
         var locLoopType = this._loopType;
         if (locCurrentPercent >= 1) {
             switch (locLoopType) {
