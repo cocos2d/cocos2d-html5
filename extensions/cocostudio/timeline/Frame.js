@@ -859,6 +859,11 @@ ccs.InnerActionFrame = ccs.Frame.extend({
     _innerActionType: null,
     _startFrameIndex: null,
 
+    _endFrameIndex:0,
+    _singleFrameIndex: 0,
+    _enterWithName: false,
+    _animationName: "",
+
     ctor: function(){
         ccs.Frame.prototype.ctor.call(this);
 
@@ -871,7 +876,62 @@ ccs.InnerActionFrame = ccs.Frame.extend({
      * @param {ccs.Frame} nextFrame
      */
     onEnter: function(nextFrame){
-        //override
+        var innerActiontimeline = this._node.getActionByTag(this._node.getTag());
+        if (/*ccs.InnerActionType.SingleFrame*/"SingleFrame" == this._innerActionType){
+            innerActiontimeline.gotoFrameAndPause(this._singleFrameIndex);
+            return;
+        }
+
+        var innerStart = this._startFrameIndex;
+        var innerEnd = this._endFrameIndex;
+        if (this._enterWithName){
+            if (this._animationName == "-- ALL --"){
+                innerStart = 0;
+                innerEnd = innerActiontimeline.getDuration();
+            } else if(innerActiontimeline.IsAnimationInfoExists(this._animationName)) {
+                var info = innerActiontimeline.getAnimationInfo(this._animationName);
+                innerStart = info.startIndex;
+                innerEnd = info.endIndex;
+            }else{
+                cc.log("Animation %s not exists!", this._animationName);
+            }
+        }
+
+        var duration = this._timeline.getActionTimeline().getDuration();
+        var odddiff = duration - this._frameIndex - innerEnd + innerStart;
+        if (odddiff < 0){
+            innerEnd += odddiff;
+        }
+
+        if (ccs.InnerActionType.NoLoopAction == this._innerActionType){
+            innerActiontimeline.gotoFrameAndPlay(innerStart, innerEnd, false);
+        }else if (ccs.InnerActionType.LoopAction == this._innerActionType){
+            innerActiontimeline.gotoFrameAndPlay(innerStart, innerEnd, true);
+        }
+    },
+
+    setAnimationName: function(animationName){
+        if(!this._enterWithName){
+            cc.log(" cannot set aniamtioname when enter frame with index. setEnterWithName true firstly!");
+        }else{
+            this._animationName = animationName;
+        }
+    },
+
+    setSingleFrameIndex: function(frameIndex){
+        this._singleFrameIndex = frameIndex;
+    },
+
+    getSingleFrameIndex: function(){
+        return this._startFrameIndex;
+    },
+
+    setEnterWithName: function(isEnterWithName){
+        this._enterWithName = isEnterWithName;
+    },
+
+    getEnterWithName: function(){
+        return this._enterWithName;
     },
 
     /**

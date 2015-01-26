@@ -280,8 +280,10 @@
 
         var scale = json["Scale"];
         if(scale != null){
-            widget.setScaleX(scale["ScaleX"] || 1);
-            widget.setScaleY(scale["ScaleY"] || 1);
+            var scaleX = getParam(scale["ScaleX"], 1);
+            var scaleY = getParam(scale["ScaleY"], 1);
+            widget.setScaleX(scaleX);
+            widget.setScaleY(scaleY);
         }
 
         var anchorPoint = json["AnchorPoint"];
@@ -372,7 +374,7 @@
 
         this.widgetAttributes(widget, json);
 
-        var clipEnabled = json["ClipAple"];
+        var clipEnabled = json["ClipAble"];
         if(clipEnabled != null)
             widget.setClippingEnabled(clipEnabled);
 
@@ -387,7 +389,7 @@
         if(backGroundScale9Enabled != null)
             widget.setBackGroundImageScale9Enabled(backGroundScale9Enabled);
 
-        var opacity = json["Alpha"] || 255;
+        var opacity = getParam(json["Alpha"], 255);
         widget.setOpacity(opacity);
 
         loadTexture(json["FileData"], resourcePath, function(path, type){
@@ -640,8 +642,7 @@
         this.widgetAttributes(widget, json);
 
         var clipEnabled = json["ClipAble"];
-        if(clipEnabled)
-            widget.setClippingEnabled(true);
+        widget.setClippingEnabled(clipEnabled);
 
         var colorType = getParam(json["ComboBoxIndex"], 0);
         widget.setBackGroundColorType(colorType);
@@ -681,7 +682,9 @@
 
         var colorVector = json["ColorVector"];
         if(colorVector){
-            widget.setBackGroundColorVector(cc.p(colorVector["ScaleX"] || 1, colorVector["ScaleY"] || 1));
+            var colorVectorX = getParam(colorVector["ScaleX"], 1);
+            var colorVectorY = getParam(colorVector["ScaleY"], 1);
+            widget.setBackGroundColorVector(cc.p(colorVectorX, colorVectorY));
         }
 
         loadTexture(json["FileData"], resourcePath, function(path, type){
@@ -690,8 +693,8 @@
 
         var innerNodeSize = json["InnerNodeSize"];
         var innerSize = cc.size(
-            innerNodeSize["width"] || 0,
-            innerNodeSize["height"] || 0
+            innerNodeSize["Width"] || 0,
+            innerNodeSize["Height"] || 0
         );
         widget.setInnerContainerSize(innerSize);
 
@@ -822,9 +825,8 @@
 
         this.widgetAttributes(widget, json);
 
-        var clipEnabled = json["ClipAble"];
-        if(clipEnabled)
-            widget.setClippingEnabled(true);
+        var clipEnabled = json["ClipAble"] || false;
+        widget.setClippingEnabled(clipEnabled);
 
         var backGroundScale9Enabled = json["Scale9Enable"];
         if(backGroundScale9Enabled){
@@ -859,7 +861,7 @@
 
         var colorVector = json["ColorVector"];
         if(colorVector != null && colorVector["ScaleX"] != null && colorVector["ScaleY"] != null)
-            widget.setBackGroundColorVector(colorVector["ScaleX"], colorVector["ScaleY"]);
+            widget.setBackGroundColorVector(cc.p(colorVector["ScaleX"], colorVector["ScaleY"]));
         if(bgColorOpacity != null)
             widget.setBackGroundColorOpacity(bgColorOpacity);
 
@@ -885,9 +887,8 @@
 
         this.widgetAttributes(widget, json);
 
-        var clipEnabled = json["ClipAble"];
-        if(clipEnabled)
-            widget.setClippingEnabled(true);
+        var clipEnabled = json["ClipAble"] || false;
+        widget.setClippingEnabled(clipEnabled);
 
         var colorType = getParam(json["ComboBoxIndex"], 0);
         widget.setBackGroundColorType(colorType);
@@ -927,7 +928,7 @@
             else if (horizontalType == "Align_Right")
                 widget.setGravity(ccui.ListView.GRAVITY_RIGHT);
             else if (horizontalType == "Align_HorizontalCenter")
-                widget.setGravity(ccui.ListView.GRAVITY_CENTER_VERTICAL);
+                widget.setGravity(ccui.ListView.GRAVITY_CENTER_HORIZONTAL);
         }
 
 
@@ -955,7 +956,7 @@
 
         var colorVector = json["ColorVector"];
         if(colorVector != null && colorVector["ScaleX"] != null && colorVector["ScaleY"] != null)
-            widget.setBackGroundColorVector(colorVector["ScaleX"], colorVector["ScaleY"]);
+            widget.setBackGroundColorVector(cc.p(colorVector["ScaleX"], colorVector["ScaleY"]));
         if(bgColorOpacity != null)
             widget.setBackGroundColorOpacity(bgColorOpacity);
 
@@ -1130,6 +1131,8 @@
         loadTexture(json["FileData"], resourcePath, function(path, type){
             if(type == 0)
                 node = new cc.TMXTiledMap(path);
+
+            parser.generalAttributes(node, json);
         });
 
         return node;
@@ -1145,9 +1148,16 @@
         var projectFile = json["FileData"];
         if(projectFile != null && projectFile["Path"]){
             var file = resourcePath + projectFile["Path"];
-            if(cc.loader.getRes(file))
-                return ccs._load(file);
-            else
+            if(cc.loader.getRes(file)){
+                var obj = ccs.load(file);
+                parser.generalAttributes(obj.node, json);
+                if(obj.action && obj.node){
+                    obj.action.tag = obj.node.tag;
+                    obj.node.runAction(obj.action);
+                    obj.action.gotoFrameAndPause(0);
+                }
+                return obj.node;
+            } else
                 cc.log("%s need to be preloaded", file);
         }
     };
@@ -1175,6 +1185,8 @@
         var isAutoPlay = json["IsAutoPlay"];
 
         var currentAnimationName = json["CurrentAnimationName"];
+
+        parser.generalAttributes(node, json);
 
         loadTexture(json["FileData"], resourcePath, function(path, type){
             var plists, pngs;
@@ -1241,6 +1253,7 @@
 
     var register = [
         {name: "SingleNodeObjectData", handle: parser.initSingleNode},
+        {name: "LayerObjectData", handle: parser.initSingleNode},
         {name: "SpriteObjectData", handle: parser.initSprite},
         {name: "ParticleObjectData", handle: parser.initParticle},
         {name: "PanelObjectData", handle: parser.initPanel},
