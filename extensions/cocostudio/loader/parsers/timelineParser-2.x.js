@@ -859,7 +859,7 @@
 
         var colorVector = json["ColorVector"];
         if(colorVector != null && colorVector["ScaleX"] != null && colorVector["ScaleY"] != null)
-            widget.setBackGroundColorVector(colorVector["ScaleX"], colorVector["ScaleY"]);
+            widget.setBackGroundColorVector(cc.p(colorVector["ScaleX"], colorVector["ScaleY"]));
         if(bgColorOpacity != null)
             widget.setBackGroundColorOpacity(bgColorOpacity);
 
@@ -955,7 +955,7 @@
 
         var colorVector = json["ColorVector"];
         if(colorVector != null && colorVector["ScaleX"] != null && colorVector["ScaleY"] != null)
-            widget.setBackGroundColorVector(colorVector["ScaleX"], colorVector["ScaleY"]);
+            widget.setBackGroundColorVector(cc.p(colorVector["ScaleX"], colorVector["ScaleY"]));
         if(bgColorOpacity != null)
             widget.setBackGroundColorOpacity(bgColorOpacity);
 
