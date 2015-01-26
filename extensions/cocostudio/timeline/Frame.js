@@ -903,9 +903,9 @@ ccs.InnerActionFrame = ccs.Frame.extend({
             innerEnd += odddiff;
         }
 
-        if (/*ccs.InnerActionType.NoLoopAction*/"NoLoopAction" == this._innerActionType){
+        if (ccs.InnerActionType.NoLoopAction == this._innerActionType){
             innerActiontimeline.gotoFrameAndPlay(innerStart, innerEnd, false);
-        }else if (/*ccs.InnerActionType.LoopAction*/"LoopAction" == this._innerActionType){
+        }else if (ccs.InnerActionType.LoopAction == this._innerActionType){
             innerActiontimeline.gotoFrameAndPlay(innerStart, innerEnd, true);
         }
     },

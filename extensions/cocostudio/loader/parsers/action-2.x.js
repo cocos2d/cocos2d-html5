@@ -43,6 +43,7 @@
 
             action.setDuration(json["Duration"]);
             action.setTimeSpeed(json["Speed"] || 1);
+
             //The process of analysis
             var timelines = json["Timelines"];
             timelines.forEach(function(timeline){
@@ -59,6 +60,21 @@
             cache[file] = action;
             cache[file].retain();
             return action.clone();
+        },
+
+        deferred: function(json, resourcePath, action, file){
+            if(cc.sys.isNative) {
+                var animationlist = json["Content"]["Content"]["AnimationList"];
+                var length = animationlist ? animationlist.length : 0;
+                for (var i = 0; i < length; i++) {
+                    var animationdata = animationlist[i];
+                    var info = { name: null, startIndex: null, endIndex: null };
+                    info.name = animationdata["Name"];
+                    info.startIndex = animationdata["StartIndex"];
+                    info.endIndex = animationdata["EndIndex"];
+                    action.addAnimationInfo(info);
+                }
+            }
         }
 
     });
