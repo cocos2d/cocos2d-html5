@@ -639,9 +639,8 @@
 
         this.widgetAttributes(widget, json);
 
-        var clipEnabled = json["ClipAble"];
-        if(clipEnabled)
-            widget.setClippingEnabled(true);
+        var clipEnabled = json["ClipAble"] || false;
+        widget.setClippingEnabled(clipEnabled);
 
         var colorType = getParam(json["ComboBoxIndex"], 0);
         widget.setBackGroundColorType(colorType);
@@ -822,9 +821,8 @@
 
         this.widgetAttributes(widget, json);
 
-        var clipEnabled = json["ClipAble"];
-        if(clipEnabled)
-            widget.setClippingEnabled(true);
+        var clipEnabled = json["ClipAble"] || false;
+        widget.setClippingEnabled(clipEnabled);
 
         var backGroundScale9Enabled = json["Scale9Enable"];
         if(backGroundScale9Enabled){
@@ -885,9 +883,8 @@
 
         this.widgetAttributes(widget, json);
 
-        var clipEnabled = json["ClipAble"];
-        if(clipEnabled)
-            widget.setClippingEnabled(true);
+        var clipEnabled = json["ClipAble"] || false;
+        widget.setClippingEnabled(clipEnabled);
 
         var colorType = getParam(json["ComboBoxIndex"], 0);
         widget.setBackGroundColorType(colorType);
