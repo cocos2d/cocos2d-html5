@@ -374,7 +374,7 @@
 
         this.widgetAttributes(widget, json);
 
-        var clipEnabled = json["ClipAple"];
+        var clipEnabled = json["ClipAble"];
         if(clipEnabled != null)
             widget.setClippingEnabled(clipEnabled);
 
@@ -693,8 +693,8 @@
 
         var innerNodeSize = json["InnerNodeSize"];
         var innerSize = cc.size(
-            innerNodeSize["width"] || 0,
-            innerNodeSize["height"] || 0
+            innerNodeSize["Width"] || 0,
+            innerNodeSize["Height"] || 0
         );
         widget.setInnerContainerSize(innerSize);
 
