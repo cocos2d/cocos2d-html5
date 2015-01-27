@@ -243,7 +243,7 @@ cc.Node.RenderCmd.prototype = {
         this._cachedParent = null;
         this._cacheDirty = false;
 
-        this._orginalPoint = {
+        this.__point = {
             x: 0,
             y: 0
         };
@@ -258,15 +258,34 @@ cc.Node.RenderCmd.prototype = {
             worldT = this._worldTransform;         //get the world transform
 
         if (parentCmd) {
-            var pt = parentCmd._worldTransform;
+            var pt = parentCmd._worldTransform,
+                pn = parentCmd._node;
+            var pAnchor = parentCmd._anchorPointInPoints;
+
+            var tx, ty;
+            if (pn && !pn._ignoreAnchorPointForPosition) {
+                tx = pt.tx - pAnchor.x;
+                ty = pt.ty - pAnchor.y;
+
+            }else{
+                tx = pt.tx;
+                ty = pt.ty;
+            }
+
             // cc.AffineTransformConcat is incorrect at get world transform
             worldT.a = pt.a * t.a + pt.b * t.c;                               //a
             worldT.b = pt.a * t.b + pt.b * t.d;                               //b
             worldT.c = pt.c * t.a + pt.d * t.c;                               //c
             worldT.d = pt.c * t.b + pt.d * t.d;                               //d
 
-            worldT.tx = pt.a * t.tx + pt.b * t.ty + pt.tx ;
-            worldT.ty = pt.c * t.tx + pt.d * t.ty + pt.ty;
+            worldT.tx = pt.a * (t.tx - pAnchor.x) + pt.b * (t.ty - pAnchor.y) + pt.tx;
+            worldT.ty = pt.c * (t.tx - pAnchor.x) + pt.d * (t.ty - pAnchor.y) + pt.ty;
+            if(pn && !pn._ignoreAnchorPointForPosition){
+            }else{
+                worldT.tx += pAnchor.x;
+                worldT.ty += pAnchor.y;
+            }
+
         } else {
             worldT.a = t.a;
             worldT.b = t.b;
@@ -360,6 +379,9 @@ cc.Node.RenderCmd.prototype = {
 //            // adjust anchorPoint
 //            t.tx += A * -appX * sx + B * appY * sy;
 //            t.ty -= C * -appX * sx + D * appY * sy;
+
+            this.__point.x = A * -appX * sx + B * appY * sy;
+            this.__point.y = C * -appX * sx + D * appY * sy;
 //
 //            // if ignore anchorPoint
 //            if (node._ignoreAnchorPointForPosition) {
