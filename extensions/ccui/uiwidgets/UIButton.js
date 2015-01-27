@@ -565,9 +565,6 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             locNormalRenderer.stopAllActions();
             locNormalRenderer.setScale(this._normalTextureScaleXInSize + this._zoomScale, this._normalTextureScaleYInSize + this._zoomScale);
 
-            if (this._scale9Enabled)
-                locNormalRenderer.setState(ccui.Scale9Sprite.state.GRAY);
-
             this._titleRenderer.stopAllActions();
             this._titleRenderer.setScaleX(1 + this._zoomScale);
             this._titleRenderer.setScaleY(1 + this._zoomScale);
