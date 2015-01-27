@@ -766,8 +766,8 @@
             widget.loadTexture(path, type);
         });
 
-        var direction = json["ProgressType"];
-        widget.setDirection((direction != "Left_To_Right") | 0);
+        var direction = json["ProgressType"] === "Right_To_Left" ? 1 : 0;
+        widget.setDirection(direction);
 
         var percent = getParam(json["ProgressInfo"], 80);
         if(percent != null)
