@@ -174,6 +174,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         } else
             this.ignoreContentAdaptWithSize(this._prevIgnoreSize);
         this.setCapInsets(this._capInsets);
+        this._imageRendererAdaptDirty = true;
     },
 
     /**
@@ -256,10 +257,11 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
             if (!this._scale9Enabled)
                 this._imageRenderer.setScale(1.0);
         } else {
-            if (this._scale9Enabled)
+            if (this._scale9Enabled){
                 this._imageRenderer.setPreferredSize(this._contentSize);
-            else {
-                var textureSize = this._imageRenderer.getContentSize();
+                this._imageRenderer.setScale(1);
+            } else {
+                var textureSize = this._imageTextureSize;
                 if (textureSize.width <= 0.0 || textureSize.height <= 0.0) {
                     this._imageRenderer.setScale(1.0);
                     return;

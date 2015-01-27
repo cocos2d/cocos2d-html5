@@ -23,7 +23,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
 /**
  * The text control of Cocos UI.
  * @class
@@ -85,9 +84,9 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     init: function (textContent, fontName, fontSize) {
         if (ccui.Widget.prototype.init.call(this)) {
             if(arguments.length > 0){
-                this.setString(textContent);
                 this.setFontName(fontName);
                 this.setFontSize(fontSize);
+                this.setString(textContent);
             }
             return true;
         }
@@ -323,6 +322,17 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
      */
     getVirtualRenderer: function () {
         return this._labelRenderer;
+    },
+
+    //@since v3.3
+    getAutoRenderSize: function(){
+        var virtualSize = this._labelRenderer.getContentSize();
+        if (!this._ignoreSize) {
+            this._labelRenderer.setDimensions(0, 0);
+            virtualSize = this._labelRenderer.getContentSize();
+            this._labelRenderer.setDimensions(this._contentSize.width, this._contentSize.height);
+        }
+        return virtualSize;
     },
 
     _labelScaleChangedWithSize: function () {

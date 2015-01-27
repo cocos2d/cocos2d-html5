@@ -188,6 +188,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
             this.ignoreContentAdaptWithSize(this._prevIgnoreSize);
         this.setCapInsets(this._capInsets);
         this.setPercent(this._percent);
+        this._barRendererAdaptDirty = true;
     },
 
     /**
@@ -328,9 +329,10 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
             }
         } else {
             this._totalLength = locContentSize.width;
-            if (this._scale9Enabled)
+            if (this._scale9Enabled){
                 this._setScale9Scale();
-            else {
+                locBarRender.setScale(1.0);
+            } else {
                 var textureSize = this._barRendererTextureSize;
                 if (textureSize.width <= 0.0 || textureSize.height <= 0.0) {
                     locBarRender.setScale(1.0);
