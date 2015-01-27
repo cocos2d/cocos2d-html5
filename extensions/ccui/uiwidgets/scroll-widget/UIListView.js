@@ -125,11 +125,11 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
             isLayoutParameterExists = false;
         }
         var itemIndex = this.getIndex(item);
-        switch (this._direction) {
-            case ccui.ListView.DIR_VERTICAL:
+        switch (this.direction) {
+            case ccui.ScrollView.DIR_VERTICAL:
                 this._remedyVerticalLayoutParameter(linearLayoutParameter, itemIndex);
                 break;
-            case ccui.ListView.DIR_HORIZONTAL:
+            case ccui.ScrollView.DIR_HORIZONTAL:
                 this._remedyHorizontalLayoutParameter(linearLayoutParameter, itemIndex);
                 break;
             default:
