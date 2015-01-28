@@ -262,28 +262,18 @@ cc.Node.RenderCmd.prototype = {
                 pn = parentCmd._node;
             var pAnchor = parentCmd._anchorPointInPoints;
 
-            var tx, ty;
-            if (pn && !pn._ignoreAnchorPointForPosition) {
-                tx = pt.tx - pAnchor.x;
-                ty = pt.ty - pAnchor.y;
-
-            }else{
-                tx = pt.tx;
-                ty = pt.ty;
-            }
-
             // cc.AffineTransformConcat is incorrect at get world transform
             worldT.a = pt.a * t.a + pt.b * t.c;                               //a
             worldT.b = pt.a * t.b + pt.b * t.d;                               //b
             worldT.c = pt.c * t.a + pt.d * t.c;                               //c
             worldT.d = pt.c * t.b + pt.d * t.d;                               //d
 
-            worldT.tx = pt.a * (t.tx - pAnchor.x) + pt.b * (t.ty - pAnchor.y) + pt.tx;
-            worldT.ty = pt.c * (t.tx - pAnchor.x) + pt.d * (t.ty - pAnchor.y) + pt.ty;
             if(pn && !pn._ignoreAnchorPointForPosition){
+                worldT.tx = pt.a * (t.tx - pAnchor.x) - pt.b * (t.ty - pAnchor.y) + pt.tx;
+                worldT.ty = -pt.c * (t.tx - pAnchor.x) + pt.d * (t.ty - pAnchor.y) + pt.ty;
             }else{
-                worldT.tx += pAnchor.x;
-                worldT.ty += pAnchor.y;
+                worldT.tx = pt.a * t.tx - pt.b * t.ty + pt.tx;
+                worldT.ty = -pt.c * t.tx + pt.d * t.ty + pt.ty;
             }
 
         } else {
