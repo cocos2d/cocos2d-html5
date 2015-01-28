@@ -526,7 +526,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
      */
     setMovementEventCallFunc: function (callFunc, target) {
         if(arguments.length == 1){
-            this._frameEventListener = callFunc;
+            this._movementEventListener = callFunc;
         }else if(arguments.length == 2){
             this._movementEventTarget = target;
             this._movementEventCallFunc = callFunc;
