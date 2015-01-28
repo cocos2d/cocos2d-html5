@@ -1129,10 +1129,67 @@
         var node = null;
 
         loadTexture(json["FileData"], resourcePath, function(path, type){
-            if(type == 0)
-                node = new cc.TMXTiledMap(path);
+            if(type == 0){
+                /* Whether tileset is valid. */
+                var mapInfo = new cc.TMXMapInfo(path);
+                var layers = mapInfo.getLayers();
+                var valid = false;
+                var layerName = "";
+                for(var i=0; i<layers.length; i++){
+                    var layerInfo = layers[i];
+                    valid = false;
 
-            parser.generalAttributes(node, json);
+                    if (layerInfo.visible){
+                        var size = layerInfo._layerSize;
+                        var tilesets = mapInfo.getTilesets();
+                        if (tilesets && tilesets.length>0){
+                            var tileset = null;
+                            for (var j=0; j<tilesets.length; j++){
+                                tileset = tilesets[j];
+                                if (tileset){
+                                    for( var y=0; y < size.height; y++ ){
+                                        for( var x=0; x < size.width; x++ ){
+                                            var pos = x + size.width * y;
+                                            var gid = layerInfo._tiles[ pos ];
+
+                                            if( gid != 0 ){
+                                                if( (gid & cc.TMX_TILE_FLIPPED_MASK) >= tileset.firstGid ){
+                                                    valid = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        if (valid){
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (!valid){
+                            layerName = layerInfo.name;
+                            break;
+                        }
+                    }else{
+                        valid = true;
+                    }
+                }
+
+                if (!valid){
+                    node = new cc.Node();
+                    var label = new cc.LabelTTF();
+                    label.setString("Some error of gid are in TMX Layer '%s'", layerName);
+                    node.setScale(1);
+                    node.addChild(label);
+                }else{
+                    node = new cc.TMXTiledMap(path);
+                }
+
+                parser.generalAttributes(node, json);
+            }
+
         });
 
         return node;
