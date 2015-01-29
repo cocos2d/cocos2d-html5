@@ -119,8 +119,6 @@
             || !node._texture._textureLoaded)) || alpha === 0)
             return;
 
-        var anchor = this._anchorPointInPoints;
-
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         var locX = node._offsetPosition.x, locHeight = node._rect.height, locWidth = node._rect.width,
             locY = -node._offsetPosition.y - locHeight, image;
@@ -144,16 +142,16 @@
             image = node._texture._htmlElementObj;
             if (node._texture._pattern != "") {
                 wrapper.setFillStyle(context.createPattern(image, node._texture._pattern));
-                context.fillRect((locX - anchor.x) * scaleX, (locY + anchor.y) * scaleY, locWidth * scaleX, locHeight * scaleY);
+                context.fillRect(locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
             } else {
                 if (this._colorized) {
                     context.drawImage(image,
                         0, 0, locTextureCoord.width,locTextureCoord.height,
-                        (locX-anchor.x) * scaleX, (locY+anchor.y) * scaleY, locWidth * scaleX, locHeight * scaleY);
+                        locX * scaleX,locY * scaleY, locWidth * scaleX, locHeight * scaleY);
                 } else {
                     context.drawImage(image,
                         locTextureCoord.renderX, locTextureCoord.renderY, locTextureCoord.width, locTextureCoord.height,
-                        (locX-anchor.x) * scaleX, (locY+anchor.y) * scaleY, locWidth * scaleX, locHeight * scaleY);
+                        locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
                 }
             }
         } else {
@@ -161,7 +159,7 @@
             if (locTextureCoord.validRect) {
                 var curColor = this._displayedColor;
                 wrapper.setFillStyle("rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)");
-                context.fillRect((locX-anchor.x) * scaleX, (locY + anchor.y) * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
+                context.fillRect(locX * scaleX, locY * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
             }
         }
         if(node._flippedX || node._flippedY)
