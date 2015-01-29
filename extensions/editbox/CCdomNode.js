@@ -426,13 +426,13 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 };
 
 cc.DOM._resetEGLViewDiv = function(){
-    var eglViewDiv = cc.$("#EGLViewDiv");
-    if(eglViewDiv){
-        var eglViewer = cc.view;
-        var designSize = eglViewer.getDesignResolutionSize();
-        var viewPortRect = eglViewer.getViewPortRect();
-        var screenSize = eglViewer.getFrameSize();
-	    var pixelRatio = eglViewer.getDevicePixelRatio();
+    var div = cc.$("#EGLViewDiv");
+    if(div){
+        var view = cc.view;
+        var designSize = view.getDesignResolutionSize();
+        var viewPortRect = view.getViewPortRect();
+        var screenSize = view.getFrameSize();
+	    var pixelRatio = view.getDevicePixelRatio();
         var designSizeWidth = designSize.width, designSizeHeight = designSize.height;
         if((designSize.width === 0) && (designSize.height === 0)){
             designSizeWidth = screenSize.width;
@@ -444,15 +444,21 @@ cc.DOM._resetEGLViewDiv = function(){
             viewPortWidth = screenSize.width;
         }
 
-        eglViewDiv.style.position = 'absolute';
+        div.style.position = 'absolute';
         //x.dom.style.display='block';
-        eglViewDiv.style.width = designSizeWidth + "px";
-        eglViewDiv.style.maxHeight = designSizeHeight + "px";
-        eglViewDiv.style.margin = 0;
+        div.style.width = designSizeWidth + "px";
+        div.style.maxHeight = designSizeHeight + "px";
+        div.style.margin = 0;
 
-        eglViewDiv.resize(eglViewer.getScaleX()/pixelRatio, eglViewer.getScaleY()/pixelRatio);
-        eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
-        eglViewDiv.style.bottom = "0px";
+        div.resize(view.getScaleX()/pixelRatio, view.getScaleY()/pixelRatio);
+        if (view.getResolutionPolicy() == view._rpNoBorder) {
+            div.style.left = (view.getFrameSize().width - designSizeWidth)/2 + "px";
+            div.style.bottom = (view.getFrameSize().height - designSizeHeight*view.getScaleY()/pixelRatio)/2 + "px";
+        }
+        else {
+            div.style.left = (designSizeWidth*view.getScaleX()/pixelRatio - designSizeWidth) / 2 + "px";
+            div.style.bottom = "0px";
+        }
     }
 };
 
@@ -493,17 +499,17 @@ cc.DOM.parentDOM = function (x) {
 };
 
 cc.DOM._createEGLViewDiv = function(p){
-    var eglViewDiv = cc.$("#EGLViewDiv");
-    if(!eglViewDiv){
-        eglViewDiv = cc.$new("div");
-        eglViewDiv.id = "EGLViewDiv";
+    var div = cc.$("#EGLViewDiv");
+    if(!div){
+        div = cc.$new("div");
+        div.id = "EGLViewDiv";
     }
 
-    var eglViewer = cc.view;
-    var designSize = eglViewer.getDesignResolutionSize();
-    var viewPortRect = eglViewer.getViewPortRect();
-    var screenSize = eglViewer.getFrameSize();
-    var pixelRatio = eglViewer.getDevicePixelRatio();
+    var view = cc.view;
+    var designSize = view.getDesignResolutionSize();
+    var viewPortRect = view.getViewPortRect();
+    var screenSize = view.getFrameSize();
+    var pixelRatio = view.getDevicePixelRatio();
     var designSizeWidth = designSize.width, designSizeHeight = designSize.height;
     if ((designSize.width === 0) && (designSize.height === 0)) {
         designSizeWidth = screenSize.width;
@@ -515,18 +521,24 @@ cc.DOM._createEGLViewDiv = function(p){
         viewPortWidth = screenSize.width;
     }
 
-    eglViewDiv.style.position = 'absolute';
+    div.style.position = 'absolute';
     //x.dom.style.display='block';
-    eglViewDiv.style.width = designSizeWidth + "px";
-    eglViewDiv.style.maxHeight = designSizeHeight + "px";
-    eglViewDiv.style.margin = 0;
+    div.style.width = designSizeWidth + "px";
+    div.style.maxHeight = designSizeHeight + "px";
+    div.style.margin = 0;
 
-    eglViewDiv.resize(eglViewer.getScaleX()/pixelRatio, eglViewer.getScaleY()/pixelRatio);
-    eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
-    eglViewDiv.style.bottom = "0px";
+    div.resize(view.getScaleX()/pixelRatio, view.getScaleY()/pixelRatio);
+    if (view.getResolutionPolicy() == view._rpNoBorder) {
+        div.style.left = (screenSize.width - designSizeWidth)/2 + "px";
+        div.style.bottom = (screenSize.height - designSizeHeight*view.getScaleY()/pixelRatio)/2 + "px";
+    }
+    else {
+        div.style.left = (designSizeWidth*view.getScaleX()/pixelRatio - designSizeWidth) / 2 + "px";
+        div.style.bottom = "0px";
+    }
 
-    p.dom.appendTo(eglViewDiv);
-    eglViewDiv.appendTo(cc.container);
+    p.dom.appendTo(div);
+    div.appendTo(cc.container);
 };
 
 /**
