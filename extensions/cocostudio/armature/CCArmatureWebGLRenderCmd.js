@@ -83,7 +83,8 @@
             } else if (selBone instanceof cc.Node) {
                 selBone.setShaderProgram(this._shaderProgram);
                 selBone._renderCmd.transform();
-                selBone._renderCmd.rendering(ctx);
+                if(selBone._renderCmd.rendering)
+                    selBone._renderCmd.rendering(ctx);
             }
         }
         if(!dontChangeMatrix)
