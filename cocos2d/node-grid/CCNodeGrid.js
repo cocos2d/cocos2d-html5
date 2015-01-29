@@ -84,8 +84,9 @@ cc.NodeGrid = cc.Node.extend({
 
         // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
         if (this._camera != null && !(this.grid && this.grid.isActive())) {
-            var apx = this._anchorPointInPoints.x, apy = this._anchorPointInPoints.y;
-            var translate = (apx !== 0.0 || apy !== 0.0);
+            var app = this._renderCmd._anchorPointInPoints,
+                apx = app.x, apy = app.y,
+                translate = (apx !== 0.0 || apy !== 0.0);
             if (translate) {
                 if(!cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
                     apx = 0 | apx;

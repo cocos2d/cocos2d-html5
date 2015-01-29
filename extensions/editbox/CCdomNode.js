@@ -168,12 +168,13 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 	 */
 	_setAnchorX:function (x) {
 		var locAnchorPoint = this._anchorPoint;
+        var cmd = this._renderCmd;
 
 		if (x === locAnchorPoint.x)
 			return;
 		locAnchorPoint.x = x;
 
-		var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
+		var locAPP = cmd._anchorPointInPoints, locSize = this._contentSize;
 		locAPP.x = locSize.width * locAnchorPoint.x;
 
 		this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + locAPP.x + 'px ' + -locAPP.y + 'px';
@@ -192,12 +193,13 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 	 */
 	_setAnchorY:function (y) {
 		var locAnchorPoint = this._anchorPoint;
+        var cmd = this._renderCmd;
 
 		if (y === locAnchorPoint.y)
 			return;
 		locAnchorPoint.y = y;
 
-		var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
+		var locAPP = cmd._anchorPointInPoints, locSize = this._contentSize;
 		locAPP.y = locSize.height * locAnchorPoint.y;
 
 		this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + locAPP.x + 'px ' + -locAPP.y + 'px';
@@ -246,11 +248,12 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 	 */
 	_setWidth:function (width) {
 		var locContentSize = this._contentSize;
+        var cmd = this._renderCmd;
 		if (width === locContentSize.width)
 			return;
 		locContentSize.width = width;
 
-		var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
+		var locAPP = cmd._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
 		locAPP.x = locContentSize.width * locAnchorPoint.x;
 		this.dom.width = locContentSize.width;
 		this.anchorX = locAnchorPoint.x;
@@ -267,11 +270,12 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 	 */
 	_setHeight:function (height) {
 		var locContentSize = this._contentSize;
+        var cmd = this._renderCmd;
 		if (height === locContentSize.height)
 			return;
 		locContentSize.height = height;
 
-		var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
+		var locAPP = cmd._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
 		locAPP.y = locContentSize.height * locAnchorPoint.y;
 		this.dom.height = locContentSize.height;
 		this.anchorY = locAnchorPoint.y;
