@@ -83,8 +83,8 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
         if (!source || !shader)
             return false;
 
-        //var preStr = (type == this._glContext.VERTEX_SHADER) ? "precision highp float;\n" : "precision mediump float;\n";
-        source = "precision highp float;        \n"
+        var preStr = cc.GLProgram._isHighpSupported() ? "precision highp float;\n" : "precision mediump float;\n";
+        source = preStr
             + "uniform mat4 CC_PMatrix;         \n"
             + "uniform mat4 CC_MVMatrix;        \n"
             + "uniform mat4 CC_MVPMatrix;       \n"
@@ -729,6 +729,17 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
  */
 cc.GLProgram.create = function (vShaderFileName, fShaderFileName) {
     return new cc.GLProgram(vShaderFileName, fShaderFileName);
+};
+
+cc.GLProgram._highpSupported = null;
+
+cc.GLProgram._isHighpSupported = function(){
+    if(cc.GLProgram._highpSupported == null){
+        var ctx = cc._renderContext;
+        var highp = ctx.getShaderPrecisionFormat(ctx.FRAGMENT_SHADER, ctx.HIGH_FLOAT);
+        cc.GLProgram._highpSupported = highp.precision != 0;
+    }
+    return cc.GLProgram._highpSupported;
 };
 
 /**
