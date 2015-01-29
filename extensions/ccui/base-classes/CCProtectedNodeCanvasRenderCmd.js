@@ -206,21 +206,33 @@
             node._changePosition();
 
         var t = node.getNodeToParentTransform(), worldT = this._worldTransform;
-        if(parentCmd){
+        if (parentCmd) {
             var pt = parentCmd._worldTransform;
-            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
-            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
-            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
-            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
-            if(node._skewX || node._skewY){
-                var plt = parentCmd._transform;
-                var xOffset = -(plt.b + plt.c) * t.ty ;
-                var yOffset = -(plt.b + plt.c) * t.tx;
-                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
-                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
-            }else{
-                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx);                  //tx
-                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty);		          //ty
+            // cc.AffineTransformConcat is incorrect at get world transform
+            worldT.a = pt.a * t.a + pt.b * t.c;                               //a
+            worldT.b = pt.a * t.b + pt.b * t.d;                               //b
+            worldT.c = pt.c * t.a + pt.d * t.c;                               //c
+            worldT.d = pt.c * t.b + pt.d * t.d;                               //d
+
+            worldT.tx = pt.a * t.tx - pt.b * t.ty + pt.tx ;
+            worldT.ty = -pt.c * t.tx + pt.d * t.ty + pt.ty;
+
+            var lScaleX = node._scaleX, lScaleY = node._scaleY;
+            // Firefox on Vista and XP crashes
+            // GPU thread in case of scale(0.0, 0.0)
+            var sx = (lScaleX < 0.000001 && lScaleX > -0.000001) ? 0.000001 : lScaleX,
+                sy = (lScaleY < 0.000001 && lScaleY > -0.000001) ? 0.000001 : lScaleY;
+            var appX = this._anchorPointInPoints.x / lScaleX,
+                appY = this._anchorPointInPoints.y / lScaleY;
+
+            // adjust anchorPoint
+            worldT.tx += worldT.a * -appX * sx + worldT.b * appY * sy;
+            worldT.ty -= worldT.c * -appX * sx + worldT.d * appY * sy;
+
+            // if ignore anchorPoint
+            if (this._node._ignoreAnchorPointForPosition) {
+                worldT.tx += appX;
+                worldT.ty += appY;
             }
         } else {
             worldT.a = t.a;
