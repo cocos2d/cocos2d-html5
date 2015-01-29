@@ -374,7 +374,7 @@ ccs.ActionTimeline = cc.Action.extend({
         }
 
         this._time += delta * this._timeSpeed;
-        this._currentFrame = this._time / this._frameInternal;
+        this._currentFrame = this._time / this._frameInternal | 0;
 
         this._stepToFrame(this._currentFrame);
 

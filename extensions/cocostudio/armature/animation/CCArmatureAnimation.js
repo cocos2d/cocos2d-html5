@@ -234,7 +234,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
      * play animation by animation name.
      * @param {String} animationName The animation name you want to play
      * @param {Number} [durationTo=-1]
-     *         he frames between two animation changing-over.It's meaning is changing to this animation need how many frames
+     *         the frames between two animation changing-over.It's meaning is changing to this animation need how many frames
      *         -1 : use the value from CCMovementData get from flash design panel
      * @param {Number} [loop=-1]
      *          Whether the animation is loop.
@@ -278,10 +278,9 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
             this._durationTween = durationTween;
         }
 
-        var movementBoneData;
-        this._tweenList = [];
+        this._tweenList.length = 0;
 
-        var map = this._armature.getBoneDic();
+        var movementBoneData, map = this._armature.getBoneDic();
         for(var element in map) {
             var bone = map[element];
             movementBoneData = this._movementData.movBoneDataDic[bone.getName()];
@@ -527,7 +526,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
      */
     setMovementEventCallFunc: function (callFunc, target) {
         if(arguments.length == 1){
-            this._frameEventListener = callFunc;
+            this._movementEventListener = callFunc;
         }else if(arguments.length == 2){
             this._movementEventTarget = target;
             this._movementEventCallFunc = callFunc;
