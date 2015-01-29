@@ -151,6 +151,14 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         return true;
     },
 
+    addChild: function (child, localZOrder, tag) {
+        if(child instanceof ccui.Widget){
+            cc.log("Armature doesn't support to add Widget as its child, it will be fix soon.");
+            return;
+        }
+        cc.Node.prototype.addChild.call(this, child, localZOrder, tag);
+    },
+
     /**
      * create a bone with name
      * @param {String} boneName
