@@ -501,12 +501,25 @@ cc.sequence = function (/*Multiple Arguments*/tempArray) {
     if ((paramArray.length > 0) && (paramArray[paramArray.length - 1] == null))
         cc.log("parameters should not be ending with null in Javascript");
 
-    var prev = paramArray[0];
-    for (var i = 1; i < paramArray.length; i++) {
-        if (paramArray[i])
-            prev = cc.Sequence._actionOneTwo(prev, paramArray[i]);
+    var result, current, i, repeat;
+    while(paramArray && paramArray.length > 0){
+        current = Array.prototype.shift.call(paramArray);
+        repeat = current._timesForRepeat || 1;
+        current._repeatMethod = false;
+        current._timesForRepeat = 1;
+
+        i = 0;
+        if(!result){
+            result = current;
+            i = 1;
+        }
+
+        for(i; i<repeat; i++){
+            result = cc.Sequence._actionOneTwo(result, current);
+        }
     }
-    return prev;
+
+    return result;
 };
 
 /**
