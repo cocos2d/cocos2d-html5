@@ -78,7 +78,7 @@
             var i, len, selChildren, item;
             if (this._cascadeOpacityEnabledDirty && !node._cascadeOpacityEnabled) {
                 this._displayedOpacity = node._realOpacity;
-                selChildren = this._children;
+                selChildren = node._children;
                 for (i = 0, len = selChildren.length; i < len; i++) {
                     item = selChildren[i];
                     if (item && item._renderCmd)
