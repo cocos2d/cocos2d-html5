@@ -252,15 +252,15 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             //enable
             if (!this.__resizeWithBrowserSize) {
                 this.__resizeWithBrowserSize = true;
-                cc._addEventListener(window, 'resize', this._resizeEvent, false);
-                cc._addEventListener(window, 'orientationchange', this._resizeEvent, false);
+                cc._addEventListener(window, 'resize', this._resizeEvent);
+                cc._addEventListener(window, 'orientationchange', this._resizeEvent);
             }
         } else {
             //disable
             if (this.__resizeWithBrowserSize) {
-                this.__resizeWithBrowserSize = true;
-                window.removeEventListener('resize', this._resizeEvent, false);
-                window.removeEventListener('orientationchange', this._resizeEvent, false);
+                this.__resizeWithBrowserSize = false;
+                window.removeEventListener('resize', this._resizeEvent);
+                window.removeEventListener('orientationchange', this._resizeEvent);
             }
         }
     },
