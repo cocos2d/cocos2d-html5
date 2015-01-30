@@ -174,6 +174,8 @@ cc.Audio = cc.Class.extend({
     _context: null,
     _volume: null,
 
+    _ignoreEnded: false,
+
     //DOM Audio
     _element: null,
 
@@ -262,9 +264,10 @@ cc.Audio = cc.Class.extend({
             return;
         }
         if(!this._pause && cs){
-            if(this._context.currentTime === 0 || this._currentTime + this._context.currentTime - this._startTime > this._currentSource.buffer.duration)
+            if(this._context.currentTime === 0 || this._currentTime + this._context.currentTime - this._startTime > this._currentSource.buffer.duration){
+                this._ignoreEnded = true;
                 this._stopOfWebAudio();
-            else
+            }else
                 return;
         }
         var audio = this._context["createBufferSource"]();
@@ -302,6 +305,14 @@ cc.Audio = cc.Class.extend({
             audio["noteOn"](0);
         }
         this._currentSource = audio;
+        var self = this;
+        audio["onended"] = function(){
+            if(self._ignoreEnded){
+                self._ignoreEnded = false;
+            }else{
+                self._playing = false;
+            }
+        };
     },
 
     _playOfAudio: function(){
@@ -1009,6 +1020,5 @@ cc.Audio = cc.Class.extend({
     cc.eventManager.addCustomListener(cc.game.EVENT_SHOW, function () {
         cc.audioEngine._resumePlaying();
     });
-
 
 })(cc.__audioSupport);
