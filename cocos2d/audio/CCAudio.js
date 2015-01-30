@@ -264,10 +264,9 @@ cc.Audio = cc.Class.extend({
             return;
         }
         if(!this._pause && cs){
-            if(this._context.currentTime === 0 || this._currentTime + this._context.currentTime - this._startTime > this._currentSource.buffer.duration){
-                this._ignoreEnded = true;
+            if(this._context.currentTime === 0 || this._currentTime + this._context.currentTime - this._startTime > this._currentSource.buffer.duration)
                 this._stopOfWebAudio();
-            }else
+            else
                 return;
         }
         var audio = this._context["createBufferSource"]();
@@ -334,6 +333,7 @@ cc.Audio = cc.Class.extend({
 
     _stopOfWebAudio: function(){
         var audio = this._currentSource;
+        this._ignoreEnded = true;
         if(audio){
             audio.stop(0);
             this._currentSource = null;
