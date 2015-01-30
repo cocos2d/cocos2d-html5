@@ -302,10 +302,6 @@ cc.Audio = cc.Class.extend({
             audio["noteOn"](0);
         }
         this._currentSource = audio;
-        var self = this;
-        audio["onended"] = function(){
-            self._playing = false;
-        };
     },
 
     _playOfAudio: function(){
