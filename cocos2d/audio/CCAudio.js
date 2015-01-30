@@ -174,6 +174,8 @@ cc.Audio = cc.Class.extend({
     _context: null,
     _volume: null,
 
+    _ignoreEnded: false,
+
     //DOM Audio
     _element: null,
 
@@ -304,7 +306,11 @@ cc.Audio = cc.Class.extend({
         this._currentSource = audio;
         var self = this;
         audio["onended"] = function(){
-            self._playing = false;
+            if(self._ignoreEnded){
+                self._ignoreEnded = false;
+            }else{
+                self._playing = false;
+            }
         };
     },
 
@@ -327,6 +333,7 @@ cc.Audio = cc.Class.extend({
 
     _stopOfWebAudio: function(){
         var audio = this._currentSource;
+        this._ignoreEnded = true;
         if(audio){
             audio.stop(0);
             this._currentSource = null;
@@ -1013,6 +1020,5 @@ cc.Audio = cc.Class.extend({
     cc.eventManager.addCustomListener(cc.game.EVENT_SHOW, function () {
         cc.audioEngine._resumePlaying();
     });
-
 
 })(cc.__audioSupport);
