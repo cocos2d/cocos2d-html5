@@ -48,14 +48,15 @@ sp.VERTEX_INDEX = {
 };
 
 /**
- * The attachment type of spine.  It contains three type: REGION(0), BOUNDING_BOX(1) and REGION_SEQUENCE(2).
+ * The attachment type of spine.  It contains three type: REGION(0), BOUNDING_BOX(1), REGION_SEQUENCE(2) and MESH(2).
  * @constant
- * @type {{REGION: number, BOUNDING_BOX: number, REGION_SEQUENCE: number}}
+ * @type {{REGION: number, BOUNDING_BOX: number, REGION_SEQUENCE: number, MESH: number}}
  */
 sp.ATTACHMENT_TYPE = {
     REGION: 0,
     BOUNDING_BOX: 1,
-    REGION_SEQUENCE: 2
+    REGION_SEQUENCE: 2,
+    MESH: 2
 };
 
 /**
