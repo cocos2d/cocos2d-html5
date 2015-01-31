@@ -291,6 +291,8 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
      * @param {spine.SkeletonData} ownsSkeletonData
      */
     setSkeletonData: function (skeletonData, ownsSkeletonData) {
+        this.setContentSize(skeletonData.width / cc.director.getContentScaleFactor(), skeletonData.height / cc.director.getContentScaleFactor());
+
         this._skeleton = new spine.Skeleton(skeletonData);
         this._rootBone = this._skeleton.getRootBone();
         this._ownsSkeletonData = ownsSkeletonData;
