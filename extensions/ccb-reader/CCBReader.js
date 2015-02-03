@@ -1080,6 +1080,9 @@ cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
         }
     }
 
+    //auto play animations
+    animationManager.runAnimations(animationManager.getAutoPlaySequenceId(), 0);
+
     return node;
 };
 

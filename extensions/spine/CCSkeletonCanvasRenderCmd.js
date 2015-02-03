@@ -43,7 +43,7 @@
         wrapper._switchToArmatureMode(true, this._worldTransform, scaleX, scaleY);
         for(i = 0, n = sprites.length; i < n; i++){
             selSpriteCmd = sprites[i]._renderCmd;
-            if(selSpriteCmd && selSpriteCmd.rendering){
+            if(sprites[i]._visible && selSpriteCmd && selSpriteCmd.rendering){
                 selSpriteCmd.rendering(wrapper, scaleX, scaleY);
                 selSpriteCmd._dirtyFlag = 0;
             }
@@ -111,7 +111,12 @@
                 continue;
             rendererObject = attachment.rendererObject;
             rect = cc.rect(rendererObject.x, rendererObject.y, rendererObject.width,rendererObject.height);
-            var sprite = new cc.Sprite(rendererObject.page._texture, rect, rendererObject.rotate);
+            var sprite = new cc.Sprite();
+            sprite.initWithTexture(rendererObject.page._texture, rect, rendererObject.rotate, false);
+            sprite._rect.width = attachment.width;
+            sprite._rect.height = attachment.height;
+            sprite.setContentSize(attachment.width, attachment.height);
+            sprite.setRotation(-(slot.bone.worldRotation + attachment.rotation));
             this._skeletonSprites.push(sprite);
             slot.currentSprite = sprite;
         }
@@ -133,9 +138,13 @@
             if(!selSprite){
                 var rendererObject = attachment.rendererObject;
                 var rect = cc.rect(rendererObject.x, rendererObject.y, rendererObject.width,rendererObject.height);
-                var sprite = new cc.Sprite(rendererObject.page._texture, rect, rendererObject.rotate);
+                var sprite = new cc.Sprite();
+                sprite.initWithTexture(rendererObject.page._texture, rect, rendererObject.rotate, false);
+                sprite._rect.width = attachment.width;
+                sprite._rect.height = attachment.height;
+                sprite.setContentSize(attachment.width, attachment.height);
                 this._skeletonSprites.push(sprite);
-                slot.currentSprite = sprite;
+                selSprite = slot.currentSprite = sprite;
             }
             selSprite.setVisible(true);
             //update color and blendFunc
@@ -145,7 +154,12 @@
             selSprite.setPosition(bone.worldX + attachment.x * bone.m00 + attachment.y * bone.m01,
                     bone.worldY + attachment.x * bone.m10 + attachment.y * bone.m11);
             selSprite.setScale(bone.worldScaleX, bone.worldScaleY);
-            selSprite.setRotation(- (slot.bone.worldRotation + attachment.rotation));
+            selSprite.setRotation(-(slot.bone.worldRotation + attachment.rotation));
+            selSprite.setOpacity(0 | (slot.skeleton.a * slot.a * 255));
+            var r = 0 | (slot.skeleton.r * slot.r * 255);
+            var g = 0 | (slot.skeleton.g * slot.g * 255);
+            var b = 0 | (slot.skeleton.b * slot.b * 255);
+            selSprite.setColor(cc.color(r,g,b));
         }
     };
 })();

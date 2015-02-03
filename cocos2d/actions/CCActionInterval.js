@@ -2654,7 +2654,6 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
         time = this._computeEaseTime(time);
         var fromOpacity = this._fromOpacity !== undefined ? this._fromOpacity : 255;
         this.target.opacity = fromOpacity + (this._toOpacity - fromOpacity) * time;
-
     },
 
     /**
@@ -2706,7 +2705,9 @@ cc.FadeIn = cc.FadeTo.extend(/** @lends cc.FadeIn# */{
      */
     ctor:function (duration) {
         cc.FadeTo.prototype.ctor.call(this);
-        duration && this.initWithDuration(duration, 255);
+        if (duration == null)
+            duration = 0;
+        this.initWithDuration(duration, 255);
     },
 
     /**
@@ -2780,7 +2781,9 @@ cc.FadeOut = cc.FadeTo.extend(/** @lends cc.FadeOut# */{
      */
     ctor:function (duration) {
         cc.FadeTo.prototype.ctor.call(this);
-        duration && this.initWithDuration(duration, 0);
+        if (duration == null)
+            duration = 0;
+        this.initWithDuration(duration, 0);
     },
 
     /**
