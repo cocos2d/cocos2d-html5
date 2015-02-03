@@ -504,8 +504,8 @@ cc.Audio = cc.Class.extend({
 
             var audio;
 
-            if(loader.cache[realUrl])
-                return cb(null, loader.cache[realUrl]);
+            if(loader.cache[url])
+                return cb(null, loader.cache[url]);
 
             if(SWA){
                 var volume = context["createGain"]();
@@ -518,7 +518,7 @@ cc.Audio = cc.Class.extend({
 
             this.loadAudioFromExtList(realUrl, typeList, audio, cb);
 
-            loader.cache[realUrl] = audio;
+            loader.cache[url] = audio;
 
         },
 
