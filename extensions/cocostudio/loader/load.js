@@ -62,7 +62,7 @@ ccs._load = (function(){
         if(!version && json["armature_data"]){
             cc.warn("%s is armature. please use:", file);
             cc.warn("    ccs.armatureDataManager.addArmatureFileInfoAsync(%s);", file);
-            cc.warn("    var armature = new new ccs.Armature('name');");
+            cc.warn("    var armature = new ccs.Armature('name');");
             return new cc.Node();
         }
         var currentParser = getParser(parse, version);
