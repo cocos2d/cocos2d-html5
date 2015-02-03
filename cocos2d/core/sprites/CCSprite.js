@@ -831,8 +831,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         _t._unflippedOffsetPositionFromCenter.y = frameOffset.y;
 
         // update rect
-        _t._rectRotated = newFrame.isRotated();
-
         var pNewTexture = newFrame.getTexture();
         var locTextureLoaded = newFrame.textureLoaded();
         if (!locTextureLoaded) {
@@ -850,10 +848,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             // update texture before updating texture rect
             if (pNewTexture != _t._texture)
                 _t.texture = pNewTexture;
-
-            _t.setTextureRect(newFrame.getRect(), _t._rectRotated, newFrame.getOriginalSize());
+            _t.setTextureRect(newFrame.getRect(), newFrame.isRotated(), newFrame.getOriginalSize());
         }
-
         this._renderCmd._updateForSetSpriteFrame(pNewTexture);
     },
 
