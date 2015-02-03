@@ -171,7 +171,6 @@
                 var spriteFrame = cc.spriteFrameCache.getSpriteFrame(path);
                 node.setSpriteFrame(spriteFrame);
             }
-
         });
 
         if(json["FlipX"])
