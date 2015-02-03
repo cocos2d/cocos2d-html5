@@ -88,14 +88,15 @@
         return true;
     };
 
-    proto._handleTextureForRotatedTexture = function (texture, rect, rotated) {
+    proto._handleTextureForRotatedTexture = function (texture, rect, rotated, counterclockwise) {
         if (rotated && texture.isLoaded()) {
             var tempElement = texture.getHtmlElementObj();
-            tempElement = cc.Sprite.CanvasRenderCmd._cutRotateImageToCanvas(tempElement, rect);
+            tempElement = cc.Sprite.CanvasRenderCmd._cutRotateImageToCanvas(tempElement, rect, counterclockwise);
             var tempTexture = new cc.Texture2D();
             tempTexture.initWithElement(tempElement);
             tempTexture.handleLoadedTexture();
             texture = tempTexture;
+            rect.x = rect.y = 0;
             this._node._rect = cc.rect(0, 0, rect.width, rect.height);
         }
         return texture;
@@ -123,9 +124,9 @@
         var locX = node._offsetPosition.x, locHeight = node._rect.height, locWidth = node._rect.width,
             locY = -node._offsetPosition.y - locHeight, image;
 
+        wrapper.setTransform(this._worldTransform, scaleX, scaleY);
         wrapper.setCompositeOperation(this._blendFuncStr);
         wrapper.setGlobalAlpha(alpha);
-        wrapper.setTransform(this._worldTransform, scaleX, scaleY);
 
         if(node._flippedX || node._flippedY)
             wrapper.save();
@@ -493,19 +494,24 @@
     cc.Sprite.CanvasRenderCmd._generateTextureCacheForColor.tempCanvas = cc.newElement('canvas');
     cc.Sprite.CanvasRenderCmd._generateTextureCacheForColor.tempCtx = cc.Sprite.CanvasRenderCmd._generateTextureCacheForColor.tempCanvas.getContext('2d');
 
-    cc.Sprite.CanvasRenderCmd._cutRotateImageToCanvas = function (texture, rect) {
+    cc.Sprite.CanvasRenderCmd._cutRotateImageToCanvas = function (texture, rect, counterclockwise) {
         if (!texture)
             return null;
 
         if (!rect)
             return texture;
 
+        counterclockwise = counterclockwise == null? true: counterclockwise;   // texture package is counterclockwise, spine is clockwise
+
         var nCanvas = cc.newElement("canvas");
         nCanvas.width = rect.width;
         nCanvas.height = rect.height;
         var ctx = nCanvas.getContext("2d");
         ctx.translate(nCanvas.width / 2, nCanvas.height / 2);
-        ctx.rotate(-1.5707963267948966);
+        if(counterclockwise)
+            ctx.rotate(-1.5707963267948966);
+        else
+            ctx.rotate(1.5707963267948966);
         ctx.drawImage(texture, rect.x, rect.y, rect.height, rect.width, -rect.height / 2, -rect.width / 2, rect.height, rect.width);
         return nCanvas;
     };

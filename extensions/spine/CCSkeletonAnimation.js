@@ -79,7 +79,7 @@ sp._regionAttachment_computeWorldVertices = function(self, x, y, bone, vertices)
 
 sp._regionAttachment_updateQuad = function(self, slot, quad, premultipliedAlpha) {
     var vertices = {};
-    self.computeVertices(slot.skeleton.x, slot.skeleton.y, slot.bone, vertices);
+    self.computeVertices(slot.skeleton.x, slot.skeleton.y, slot, vertices);
     var r = slot.skeleton.r * slot.r * 255;
     var g = slot.skeleton.g * slot.g * 255;
     var b = slot.skeleton.b * slot.b * 255;
@@ -160,7 +160,7 @@ sp._regionAttachment_updateSlotForCanvas = function(self, slot, points) {
         return;
 
     var vertices = {};
-    self.computeVertices(slot.skeleton.x, slot.skeleton.y, slot.bone, vertices);
+    self.computeVertices(slot.skeleton.x, slot.skeleton.y, slot, vertices);
     var VERTEX = sp.VERTEX_INDEX;
     points.length = 0;
     points.push(cc.p(vertices[VERTEX.X1], vertices[VERTEX.Y1]));
