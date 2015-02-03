@@ -604,8 +604,15 @@ cc.loader = /** @lends cc.loader# */{
     _createScript: function (jsPath, isAsync, cb) {
         var d = document, self = this, s = cc.newElement('script');
         s.async = isAsync;
-        s.src = jsPath;
         self._jsCache[jsPath] = true;
+        if(cc.game.config["noCache"] && typeof jsPath === "string"){
+            if(self._noCacheRex.test(jsPath))
+                s.src = jsPath + "&_t=" + (new Date() - 0);
+            else
+                s.src = jsPath + "?_t=" + (new Date() - 0);
+        }else{
+            s.src = jsPath;
+        }
         cc._addEventListener(s, 'load', function () {
             s.parentNode.removeChild(s);
             this.removeEventListener('load', arguments.callee, false);
@@ -834,6 +841,12 @@ cc.loader = /** @lends cc.loader# */{
         }
         var basePath = loader.getBasePath ? loader.getBasePath() : self.resPath;
         var realUrl = self.getUrl(basePath, url);
+        if(cc.game.config["noCache"] && typeof realUrl === "string"){
+            if(self._noCacheRex.test(realUrl))
+                realUrl += "&_t=" + (new Date() - 0);
+            else
+                realUrl += "?_t=" + (new Date() - 0);
+        }
         loader.load(realUrl, url, item, function (err, data) {
             if (err) {
                 cc.log(err);
@@ -846,6 +859,7 @@ cc.loader = /** @lends cc.loader# */{
             }
         });
     },
+    _noCacheRex: /\?/,
 
     /**
      * Get url with basePath.
