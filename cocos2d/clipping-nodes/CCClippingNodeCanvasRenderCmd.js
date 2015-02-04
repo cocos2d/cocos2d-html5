@@ -180,10 +180,10 @@
         parentCmd = parentCmd || this.getParentRenderCmd();
         if( parentCmd)
             this._curLevel = parentCmd._curLevel + 1;
-        var transformRenderCmd = (node._stencil instanceof cc.Sprite) ? this : null;
+        var transformRenderCmd = this;
 
         // Composition mode, costy but support texture stencil
-        this._clipElemType = (this._cangodhelpme() || node._stencil instanceof cc.Sprite);
+        this._clipElemType = !(!this._cangodhelpme() && node._stencil instanceof cc.DrawNode);
         if (!node._stencil || !node._stencil.visible) {
             if (this.inverted)
                 cc.Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);   // draw everything
