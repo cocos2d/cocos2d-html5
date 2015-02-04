@@ -48,14 +48,15 @@ sp.VERTEX_INDEX = {
 };
 
 /**
- * The attachment type of spine.  It contains three type: REGION(0), BOUNDING_BOX(1) and REGION_SEQUENCE(2).
+ * The attachment type of spine.  It contains three type: REGION(0), BOUNDING_BOX(1), REGION_SEQUENCE(2) and MESH(2).
  * @constant
- * @type {{REGION: number, BOUNDING_BOX: number, REGION_SEQUENCE: number}}
+ * @type {{REGION: number, BOUNDING_BOX: number, REGION_SEQUENCE: number, MESH: number}}
  */
 sp.ATTACHMENT_TYPE = {
     REGION: 0,
     BOUNDING_BOX: 1,
-    REGION_SEQUENCE: 2
+    REGION_SEQUENCE: 2,
+    MESH: 2
 };
 
 /**
@@ -290,6 +291,9 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
      * @param {spine.SkeletonData} ownsSkeletonData
      */
     setSkeletonData: function (skeletonData, ownsSkeletonData) {
+        if(skeletonData.width != null && skeletonData.height != null)
+            this.setContentSize(skeletonData.width / cc.director.getContentScaleFactor(), skeletonData.height / cc.director.getContentScaleFactor());
+
         this._skeleton = new spine.Skeleton(skeletonData);
         this._rootBone = this._skeleton.getRootBone();
         this._ownsSkeletonData = ownsSkeletonData;

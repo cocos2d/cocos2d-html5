@@ -54,7 +54,7 @@
 
         for (i = 0, n = locSkeleton.slots.length; i < n; i++) {
             slot = locSkeleton.drawOrder[i];
-            if (!slot.attachment || slot.attachment.type != sp.ATTACHMENT_TYPE.REGION)
+            if (!slot.attachment)
                 continue;
             attachment = slot.attachment;
             var regionTextureAtlas = node.getTextureAtlas(attachment);
@@ -80,7 +80,15 @@
                     return;
             }
 
-            sp._regionAttachment_updateQuad(attachment, slot, quad, node._premultipliedAlpha);
+            switch(slot.attachment.type) {
+                case sp.ATTACHMENT_TYPE.REGION:
+                sp._regionAttachment_updateQuad(attachment, slot, quad, node._premultipliedAlpha);
+                break;
+                case sp.ATTACHMENT_TYPE.MESH:
+                sp._meshAttachment_updateQuad(attachment, slot, quad, node._premultipliedAlpha);
+                break;
+            }
+
             textureAtlas.updateQuad(quad, quadCount);
         }
 

@@ -132,8 +132,6 @@
                                 var anchor = node.getAnchorPoint();
                                 child.setPositionPercent(cc.p(position.x + anchor.x, position.y + anchor.y));
                             }
-                            var AnchorPointIn = node.getAnchorPointInPoints();
-                            child.setPosition(cc.p(child.getPositionX() + AnchorPointIn.x, child.getPositionY() + AnchorPointIn.y));
                         }
                         node.addChild(child);
                     }
@@ -171,7 +169,6 @@
                 var spriteFrame = cc.spriteFrameCache.getSpriteFrame(path);
                 node.setSpriteFrame(spriteFrame);
             }
-
         });
 
         if(json["FlipX"])

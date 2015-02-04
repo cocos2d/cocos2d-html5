@@ -679,14 +679,15 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {cc.Texture2D|HTMLImageElement|HTMLCanvasElement} texture A pointer to an existing CCTexture2D object. You can use a CCTexture2D object for many sprites.
      * @param {cc.Rect} [rect] Only the contents inside rect of this texture will be applied for this sprite.
      * @param {Boolean} [rotated] Whether or not the texture rectangle is rotated.
+     * @param {Boolean} [counterclockwise=true] Whether or not the texture rectangle rotation is counterclockwise (texture package is counterclockwise, spine is clockwise).
      * @return {Boolean} true if the sprite is initialized properly, false otherwise.
      */
-    initWithTexture: function (texture, rect, rotated) {
+    initWithTexture: function (texture, rect, rotated, counterclockwise) {
         var _t = this;
         cc.assert(arguments.length != 0, cc._LogInfos.CCSpriteBatchNode_initWithTexture);
 
         rotated = rotated || false;
-        texture = this._renderCmd._handleTextureForRotatedTexture(texture, rect, rotated);
+        texture = this._renderCmd._handleTextureForRotatedTexture(texture, rect, rotated, counterclockwise);
 
         if (!cc.Node.prototype.init.call(_t))
             return false;
@@ -830,8 +831,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         _t._unflippedOffsetPositionFromCenter.y = frameOffset.y;
 
         // update rect
-        _t._rectRotated = newFrame.isRotated();
-
         var pNewTexture = newFrame.getTexture();
         var locTextureLoaded = newFrame.textureLoaded();
         if (!locTextureLoaded) {
@@ -849,10 +848,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             // update texture before updating texture rect
             if (pNewTexture != _t._texture)
                 _t.texture = pNewTexture;
-
-            _t.setTextureRect(newFrame.getRect(), _t._rectRotated, newFrame.getOriginalSize());
+            _t.setTextureRect(newFrame.getRect(), newFrame.isRotated(), newFrame.getOriginalSize());
         }
-
         this._renderCmd._updateForSetSpriteFrame(pNewTexture);
     },
 
