@@ -299,23 +299,23 @@ cc.Node.RenderCmd.prototype = {
             t.ty = node._position.y;
 
             // rotation Cos and Sin
-            var A = 1, B = 0,
-                C = 0, D = 1;
+            var a = 1, b = 0,
+                c = 0, d = 1;
             if (node._rotationX) {
                 var rotationRadiansX = node._rotationX * 0.017453292519943295;  //0.017453292519943295 = (Math.PI / 180);   for performance
-                B = -Math.sin(rotationRadiansX);
-                D = Math.cos(rotationRadiansX);
+                b = -Math.sin(rotationRadiansX);
+                d = Math.cos(rotationRadiansX);
             }
 
             if (node._rotationY) {
                 var rotationRadiansY = node._rotationY * 0.017453292519943295;  //0.017453292519943295 = (Math.PI / 180);   for performance
-                A = Math.cos(rotationRadiansY);
-                C = Math.sin(rotationRadiansY);
+                a = Math.cos(rotationRadiansY);
+                c = Math.sin(rotationRadiansY);
             }
-            t.a = A;
-            t.b = B;
-            t.c = C;
-            t.d = D;
+            t.a = a;
+            t.b = b;
+            t.c = c;
+            t.d = d;
 
             var lScaleX = node._scaleX, lScaleY = node._scaleY;
             var appX = this._anchorPointInPoints.x, appY = this._anchorPointInPoints.y;
@@ -336,12 +336,12 @@ cc.Node.RenderCmd.prototype = {
                     sky = 99999999;
                 var xx = appY * skx * sx;
                 var yy = appX * sky * sy;
-                t.a = A + B * sky;
-                t.b = A * skx + B;
-                t.c = C + D * sky;
-                t.d = C * skx + D;
-                t.tx += A * xx + B * yy;
-                t.ty += C * xx + D * yy;
+                t.a = a + b * sky;
+                t.b = a * skx + b;
+                t.c = c + d * sky;
+                t.d = c * skx + d;
+                t.tx += a * xx + b * yy;
+                t.ty += c * xx + d * yy;
             }
 
             // scale
@@ -353,8 +353,8 @@ cc.Node.RenderCmd.prototype = {
             }
 
             // adjust anchorPoint
-            t.tx += A * -appX * sx + B * appY * sy;
-            t.ty -= C * -appX * sx + D * appY * sy;
+            t.tx += a * -appX * sx + b * appY * sy;
+            t.ty -= c * -appX * sx + d * appY * sy;
 
             // if ignore anchorPoint
             if (node._ignoreAnchorPointForPosition) {
