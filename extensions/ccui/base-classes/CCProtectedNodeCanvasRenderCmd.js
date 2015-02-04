@@ -214,26 +214,8 @@
             worldT.c = pt.c * t.a + pt.d * t.c;                               //c
             worldT.d = pt.c * t.b + pt.d * t.d;                               //d
 
-            worldT.tx = pt.a * t.tx - pt.b * t.ty + pt.tx ;
-            worldT.ty = -pt.c * t.tx + pt.d * t.ty + pt.ty;
-
-            var lScaleX = node._scaleX, lScaleY = node._scaleY;
-            // Firefox on Vista and XP crashes
-            // GPU thread in case of scale(0.0, 0.0)
-            var sx = (lScaleX < 0.000001 && lScaleX > -0.000001) ? 0.000001 : lScaleX,
-                sy = (lScaleY < 0.000001 && lScaleY > -0.000001) ? 0.000001 : lScaleY;
-            var appX = this._anchorPointInPoints.x / lScaleX,
-                appY = this._anchorPointInPoints.y / lScaleY;
-
-            // adjust anchorPoint
-            worldT.tx += worldT.a * -appX * sx + worldT.b * appY * sy;
-            worldT.ty -= worldT.c * -appX * sx + worldT.d * appY * sy;
-
-            // if ignore anchorPoint
-            if (this._node._ignoreAnchorPointForPosition) {
-                worldT.tx += appX;
-                worldT.ty += appY;
-            }
+            worldT.tx = pt.a * t.tx - pt.b * t.ty + pt.tx;
+            worldT.ty = pt.d * t.ty + pt.ty - pt.c * t.tx;
         } else {
             worldT.a = t.a;
             worldT.b = t.b;
