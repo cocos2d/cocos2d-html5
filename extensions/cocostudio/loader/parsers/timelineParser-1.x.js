@@ -147,6 +147,7 @@
                                 var anchor = widget.getAnchorPoint();
                                 child.setPositionPercent(cc.p(position.x + anchor.x, position.y + anchor.y));
                             }
+                            //To make up for the studio positioning error problem
                             var AnchorPointIn = widget.getAnchorPointInPoints();
                             child.setPosition(cc.p(child.getPositionX() + AnchorPointIn.x, child.getPositionY() + AnchorPointIn.y));
                         }
