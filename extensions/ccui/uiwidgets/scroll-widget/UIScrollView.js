@@ -1321,7 +1321,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         if (!this._checkNeedBounce() && this.inertiaScrollEnabled) {
             if (this._slidTime <= 0.016)
                 return;
-            var totalDis = 0, dir = cc.p(0,0);
+            var totalDis = 0, dir;
             var touchEndPositionInNodeSpace = this.convertToNodeSpace(this._touchEndPosition);
             var touchBeganPositionInNodeSpace = this.convertToNodeSpace(this._touchBeganPosition);
             switch (this.direction) {
@@ -1339,6 +1339,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
                     dir = cc.pNormalize(subVector);
                     break;
                 default:
+                    dir = cc.p(0,0);
                     break;
             }
             var orSpeed = Math.min(Math.abs(totalDis) / (this._slidTime), ccui.ScrollView.AUTO_SCROLL_MAX_SPEED);
