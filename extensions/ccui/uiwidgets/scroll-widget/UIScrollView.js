@@ -1339,6 +1339,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
                     dir = cc.pNormalize(subVector);
                     break;
                 default:
+                    dir = cc.p(0,0);
                     break;
             }
             var orSpeed = Math.min(Math.abs(totalDis) / (this._slidTime), ccui.ScrollView.AUTO_SCROLL_MAX_SPEED);
