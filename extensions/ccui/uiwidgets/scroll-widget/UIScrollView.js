@@ -1321,7 +1321,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         if (!this._checkNeedBounce() && this.inertiaScrollEnabled) {
             if (this._slidTime <= 0.016)
                 return;
-            var totalDis = 0, dir;
+            var totalDis = 0, dir = cc.p(0,0);
             var touchEndPositionInNodeSpace = this.convertToNodeSpace(this._touchEndPosition);
             var touchBeganPositionInNodeSpace = this.convertToNodeSpace(this._touchBeganPosition);
             switch (this.direction) {
