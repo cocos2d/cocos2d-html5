@@ -59,7 +59,7 @@
         // rotation Cos and Sin
         var radians = -locBody.a;
         var Cos = 1, Sin = 0;
-        if (radians) {
+        if (radians && !node._ignoreBodyRotation) {
             Cos = Math.cos(radians);
             Sin = Math.sin(radians);
         }
