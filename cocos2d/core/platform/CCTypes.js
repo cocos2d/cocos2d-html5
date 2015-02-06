@@ -371,6 +371,9 @@ cc.FontDefinition = function (properties) {
     _t.strokeEnabled = false;
     _t.strokeStyle = cc.color(255, 255, 255, 255);
     _t.lineWidth = 1;
+    _t.lineHeight = _t.fontSize;
+    _t.fontStyle = "normal";
+    _t.fontWeight = "normal";
 
     _t.shadowEnabled = false;
     _t.shadowOffsetX = 0;
@@ -384,7 +387,13 @@ cc.FontDefinition = function (properties) {
              _t[key] = properties[key];
          }
     }
-
+};
+/**
+ *
+ * Web ONLY
+ * */
+cc.FontDefinition.prototype.getCanvasFontStr = function(){
+    return this.fontStyle + " " + this.fontWeight + " " + this.fontSize + "px/" + this.lineHeight+"px '" + this.fontName + "'";
 };
 
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
