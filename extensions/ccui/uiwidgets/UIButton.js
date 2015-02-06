@@ -295,7 +295,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTexturePressed: function (selected, texType) {
-        if (!selected || (this._clickedFileName == selected && this._pressedTexType == texType))
+        if (!selected)
             return;
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._clickedFileName = selected;
