@@ -545,6 +545,14 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      */
     getDescription: function(){
         return "RichText";
+    },
+    /**
+     * Allow child renderer to be affected by ccui.RichText's opacity
+     * @param {boolean} value
+     */
+    setCascadeOpacityEnabled: function(value) {
+        this._super(value);
+        this._elementRenderersContainer.setCascadeOpacityEnabled(value);
     }
 });
 
