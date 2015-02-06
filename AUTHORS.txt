@@ -220,6 +220,7 @@ Robert Rouhani       @Robmaister    cc.TMXMapInfo bug fix
                                     cc.TMXLayer bug fix
 
 Igor Mats            @IgorMats      cc.Scale9Sprite bug fix
+                                    Spine runtime update
 
 Tim                  @duhaibo0404   ccs.csLoader bug fix
 
