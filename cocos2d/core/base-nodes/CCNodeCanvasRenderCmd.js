@@ -363,7 +363,20 @@ cc.Node.RenderCmd.prototype = {
             }
 
             if (node._additionalTransformDirty) {
-                this._transform = cc.affineTransformConcat(t, node._additionalTransform);
+                var additionalTransform = node._additionalTransform;
+                lScaleX = additionalTransform.a;
+                lScaleY = additionalTransform.d;
+                additionalTransform.a = 1;
+                additionalTransform.d = 1;
+                this._transform = cc.affineTransformConcat(t, additionalTransform);
+
+                this._transform.a *= lScaleX;
+                this._transform.d *= lScaleY;
+                if((lScaleX < 0 && lScaleY > 0) || (lScaleX > 0 && lScaleY < 0)){
+                    this._transform.b *= -1;
+                    this._transform.c *= -1;
+                }
+
                 node._additionalTransformDirty = false;
             }
         }
