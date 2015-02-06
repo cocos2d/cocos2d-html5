@@ -338,10 +338,27 @@ cc._Dictionary = cc.Class.extend({
 });
 
 /**
+ * Common usage:
+ *
+ * var fontDef = new cc.FontDefinition();
+ * fontDef.fontName = "Arial";
+ * fontDef.fontSize = 12;
+ * ...
+ *
+ * OR using inline definition usefull for constructor injection
+ *
+ * var fontDef = new cc.FontDefinition({
+ *  fontName: "Arial",
+ *  fontSize: 12
+ * });
+ *
+ *
+ *
  * @class cc.FontDefinition
+ * @param {Object} properties - (OPTIONAL) Allow inline FontDefinition
  * @constructor
  */
-cc.FontDefinition = function () {
+cc.FontDefinition = function (properties) {
     var _t = this;
     _t.fontName = "Arial";
     _t.fontSize = 12;
@@ -360,6 +377,14 @@ cc.FontDefinition = function () {
     _t.shadowOffsetY = 0;
     _t.shadowBlur = 0;
     _t.shadowOpacity = 1.0;
+
+    //properties mapping:
+    if(properties && properties instanceof Object){
+         for(var key in properties){
+             _t[key] = properties[key];
+         }
+    }
+
 };
 
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
