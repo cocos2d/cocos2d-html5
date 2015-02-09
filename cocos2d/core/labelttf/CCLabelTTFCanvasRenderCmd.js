@@ -204,9 +204,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         var locContentSizeHeight = node._contentSize.height - locStrokeShadowOffsetY, locVAlignment = node._vAlignment,
             locHAlignment = node._hAlignment, locStrokeSize = node._strokeSize;
 
-
-         //locContentSizeHeight *1.03 resolve the clipping of the text
-        context.setTransform(1, 0, 0, 1, 0 + locStrokeShadowOffsetX * 0.5, locContentSizeHeight *1.03 + locStrokeShadowOffsetY * 0.5);
+        context.setTransform(1, 0, 0, 1, 0 + locStrokeShadowOffsetX * 0.5, locContentSizeHeight + locStrokeShadowOffsetY * 0.5);
 
         //this is fillText for canvas
         if (context.font != this._fontStyleStr)
