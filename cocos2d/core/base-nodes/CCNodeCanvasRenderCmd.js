@@ -369,6 +369,8 @@ cc.Node.RenderCmd.prototype = {
                 additionalTransform.a = 1;
                 additionalTransform.d = 1;
                 this._transform = cc.affineTransformConcat(t, additionalTransform);
+                additionalTransform.a = lScaleX;
+                additionalTransform.d = lScaleY;
 
                 this._transform.a *= lScaleX;
                 this._transform.d *= lScaleY;
