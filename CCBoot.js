@@ -690,26 +690,6 @@ cc.loader = /** @lends cc.loader# */{
             });
         }
     },
-    _loadTxtSync: function (url) {
-        if (!cc._isNodeJs) {
-            var xhr = this.getXMLHttpRequest();
-            xhr.open("GET", url, false);
-            if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
-                // IE-specific logic here
-                xhr.setRequestHeader("Accept-Charset", "utf-8");
-            } else {
-                if (xhr.overrideMimeType) xhr.overrideMimeType("text\/plain; charset=utf-8");
-            }
-            xhr.send(null);
-            if (!xhr.readyState == 4 || xhr.status != 200) {
-                return null;
-            }
-            return xhr.responseText;
-        } else {
-            var fs = require("fs");
-            return fs.readFileSync(url).toString();
-        }
-    },
 
     loadCsb: function(url, cb){
         var xhr = new XMLHttpRequest();
@@ -1964,6 +1944,7 @@ cc.game = /** @lends cc.game# */{
     DEBUG_MODE_INFO_FOR_WEB_PAGE: 4,
     DEBUG_MODE_WARN_FOR_WEB_PAGE: 5,
     DEBUG_MODE_ERROR_FOR_WEB_PAGE: 6,
+    _ready: false,
 
     EVENT_HIDE: "game_on_hide",
     EVENT_SHOW: "game_on_show",
@@ -2101,6 +2082,12 @@ cc.game = /** @lends cc.game# */{
      * Run game.
      */
     run: function (id) {
+        if(this._ready === false){
+            this._ready = id === undefined ? true : id;
+            return;
+        }else if(typeof this._ready !== "boolean"){
+            id = this._ready;
+        }
         var self = this;
         var _run = function () {
             if (id) {
@@ -2143,7 +2130,13 @@ cc.game = /** @lends cc.game# */{
             cfg[CONFIG_KEY.frameRate] = cfg[CONFIG_KEY.frameRate] || 60;
             if(cfg[CONFIG_KEY.renderMode] == null)
                 cfg[CONFIG_KEY.renderMode] = 1;
-            return cfg;
+            //init debug move to CCDebugger
+            cc._initSys(cfg, CONFIG_KEY);
+            self.config = cfg;
+            if(cc.game._ready !== false){
+                self._ready = true;
+                cc.game.run();
+            }
         };
         if (document["ccConfig"]) {
             self.config = _init(document["ccConfig"]);
@@ -2154,7 +2147,7 @@ cc.game = /** @lends cc.game# */{
                     var _t = cocos_script[i].getAttribute('cocos');
                     if(_t == '' || _t){break;}
                 }
-                var _src, txt, _resPath;
+                var _src, _resPath;
                 if(i < cocos_script.length){
                     _src = cocos_script[i].src;
                     if(_src){
@@ -2162,20 +2155,23 @@ cc.game = /** @lends cc.game# */{
                         cc.loader.resPath = _resPath;
                         _src = cc.path.join(_resPath, 'project.json');
                     }
-                    txt = cc.loader._loadTxtSync(_src);
+                    cc.loader.loadTxt(_src, function(err, txt){
+                        if(err)
+                            return cc.error(err);
+                        _init(JSON.parse(txt) || {});
+                    });
+                }else{
+                    cc.loader.loadTxt("project.json", function(err, txt){
+                        if(err)
+                            return cc.error(err);
+                        _init(JSON.parse(txt) || {});
+                    });
                 }
-                if(!txt){
-                    txt = cc.loader._loadTxtSync("project.json");
-                }
-                var data = JSON.parse(txt);
-                self.config = _init(data || {});
             } catch (e) {
                 cc.log("Failed to read or parse project.json");
-                self.config = _init({});
+               _init({});
             }
         }
-        //init debug move to CCDebugger
-        cc._initSys(self.config, CONFIG_KEY);
     },
 
     //cache for js and module that has added into jsList to be loaded.
