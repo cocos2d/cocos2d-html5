@@ -268,6 +268,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
     _verticalSpace: 0,
     _elementRenderersContainer: null,
     _lineBreakOnSpace: false,
+    _textHorizontalAlignment: null,
 
     /**
      * create a rich text
@@ -282,6 +283,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
         this._elementRenders = [];
         this._leftSpaceWidth = 0;
         this._verticalSpace = 0;
+        this._textHorizontalAlignment = cc.TEXT_ALIGNMENT_LEFT;
     },
 
     _initRenderer: function () {
@@ -476,6 +478,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
             var newContentSizeWidth = 0;
             row = locElementRenders[0];
             nextPosX = 0;
+
             for (j = 0; j < row.length; j++) {
                 l = row[j];
                 l.setAnchorPoint(cc.p(0, 0));
@@ -487,6 +490,18 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                 newContentSizeHeight = Math.max(Math.min(newContentSizeHeight, lineHeight), iSize.height);
                 nextPosX += iSize.width;
             }
+
+            //Text flow alignment:
+            if(this._textHorizontalAlignment != cc.TEXT_ALIGNMENT_LEFT) {
+                var offsetX = 0;
+                if (this._textHorizontalAlignment == cc.TEXT_ALIGNMENT_RIGHT)
+                    offsetX = this._contentSize.width - nextPosX;
+                else if (this._textHorizontalAlignment == cc.TEXT_ALIGNMENT_CENTER)
+                    offsetX = (this._contentSize.width - nextPosX) / 2;
+                for (j = 0; j < row.length; j++)
+                    row[j].x += offsetX;
+            }
+
             locRenderersContainer.setContentSize(newContentSizeWidth, newContentSizeHeight);
         } else {
             var maxHeights = [];
@@ -515,6 +530,17 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                     locRenderersContainer.addChild(l, 1);
                     nextPosX += l.getContentSize().width;
                 }
+                //Text flow alignment: (duplicate code) refactor?
+                if(this._textHorizontalAlignment != cc.TEXT_ALIGNMENT_LEFT) {
+                    var offsetX = 0;
+                    if (this._textHorizontalAlignment == cc.TEXT_ALIGNMENT_RIGHT)
+                        offsetX = this._contentSize.width - nextPosX;
+                    else if (this._textHorizontalAlignment == cc.TEXT_ALIGNMENT_CENTER)
+                        offsetX = (this._contentSize.width - nextPosX) / 2;
+                    for (j = 0; j < row.length; j++)
+                        row[j].x += offsetX;
+                }
+
             }
             locRenderersContainer.setContentSize(this._contentSize);
         }
@@ -639,6 +665,18 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
         this._lineBreakOnSpace = value;
         this._formatTextDirty = true;
         this.formatText();
+    },
+    /**
+     * Set the renderer horizontal flow alignment for the Control
+     * although it is named TextHorizontalAlignment, it should work with all type of renderer too.
+     * NOTE: we should rename this to setHorizontalAlignment directly
+     * @param {Number} value - example cc.TEXT_ALIGNMENT_LEFT
+     */
+    setTextHorizontalAlignment: function(value){
+        if(value != this._textHorizontalAlignment) {
+            this._textHorizontalAlignment = value;
+            this.formatText();
+        }
     }
 });
 
