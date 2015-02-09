@@ -481,9 +481,10 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                 l.setAnchorPoint(cc.p(0, 0));
                 l.setPosition(nextPosX, 0);
                 locRenderersContainer.addChild(l, 1, j);
+                var lineHeight = l.getLineHeight ? l.getLineHeight() : newContentSizeHeight;
                 var iSize = l.getContentSize();
                 newContentSizeWidth += iSize.width;
-                newContentSizeHeight = Math.max(Math.min(newContentSizeHeight, l.getLineHeight()), iSize.height);
+                newContentSizeHeight = Math.max(Math.min(newContentSizeHeight, lineHeight), iSize.height);
                 nextPosX += iSize.width;
             }
             locRenderersContainer.setContentSize(newContentSizeWidth, newContentSizeHeight);
@@ -494,7 +495,8 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                 var maxHeight = 0;
                 for (j = 0; j < row.length; j++) {
                     l = row[j];
-                    maxHeight = Math.max(Math.min(l.getContentSize().height, l.getLineHeight()), maxHeight);
+                    var lineHeight = l.getLineHeight ? l.getLineHeight() : l.getContentSize().height;
+                    maxHeight = Math.max(Math.min(l.getContentSize().height, lineHeight), maxHeight);
                 }
                 maxHeights[i] = maxHeight;
                 newContentSizeHeight += maxHeights[i];
