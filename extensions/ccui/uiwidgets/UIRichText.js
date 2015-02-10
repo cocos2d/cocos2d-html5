@@ -684,7 +684,12 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      * Set the renderer horizontal flow alignment for the Control
      * although it is named TextHorizontalAlignment, it should work with all type of renderer too.
      * NOTE: we should rename this to setHorizontalAlignment directly
-     * @param {Number} value - example cc.TEXT_ALIGNMENT_LEFT
+     *
+     * @example
+     * var richText = new ccui.RichText();
+     * richText.setTextHorizontalAlignment(cc.Text_ALIGNMENT_RIGHT);
+     *
+     * @param {Number} value - example cc.TEXT_ALIGNMENT_RIGHT
      */
     setTextHorizontalAlignment: function(value){
         if(value != this._textHorizontalAlignment) {
@@ -694,9 +699,13 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
     },
     /**
      * Set the renderer vertical flow alignment for the Control
-     * although it is named TextHorizontalAlignment, it should work with all type of renderer too.
-     * NOTE: we should rename this to setVerticalAlignment directly
-     * @param {Number} value - example cc.VERTICAL_TEXT_ALIGNMENT_TOP
+     * although it is named TextVerticalAlignment, it should work with all type of renderer too.
+     *
+     * @example
+     * var richText = new ccui.RichText();
+     * richText.setTextVerticalAlignment(cc.VERTICAL_TEXT_ALIGNMENT_CENTER);
+     *
+     * @param {Number} value - example cc.VERTICAL_TEXT_ALIGNMENT_CENTER
      */
     setTextVerticalAlignment: function(value){
         if(value != this._textVerticalAlignment) {
