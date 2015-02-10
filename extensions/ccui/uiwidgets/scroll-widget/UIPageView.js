@@ -576,7 +576,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      * @returns {ccui.Layout}
      */
     getPage: function(index){
-        if (index < 0 || index >= this.getPages().size())
+        if (index < 0 || index >= this._pages.length)
             return null;
         return this._pages[index];
     },
