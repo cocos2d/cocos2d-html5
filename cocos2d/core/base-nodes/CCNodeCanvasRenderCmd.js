@@ -364,20 +364,12 @@ cc.Node.RenderCmd.prototype = {
 
             if (node._additionalTransformDirty) {
                 var additionalTransform = node._additionalTransform;
-                lScaleX = additionalTransform.a;
-                lScaleY = additionalTransform.d;
-                additionalTransform.a = 1;
-                additionalTransform.d = 1;
-                this._transform = cc.affineTransformConcat(t, additionalTransform);
-                additionalTransform.a = lScaleX;
-                additionalTransform.d = lScaleY;
-
-                this._transform.a *= lScaleX;
-                this._transform.d *= lScaleY;
-                if((lScaleX < 0 && lScaleY > 0) || (lScaleX > 0 && lScaleY < 0)){
-                    this._transform.b *= -1;
-                    this._transform.c *= -1;
-                }
+                this._transform = cc.affineTransformConcat(t, {
+                    a: 1 , b: -additionalTransform.c, tx: additionalTransform.tx,
+                    c: -additionalTransform.b , d: 1, ty: additionalTransform.ty
+                });
+                this._transform.a *= additionalTransform.a;
+                this._transform.d *= additionalTransform.d;
 
                 node._additionalTransformDirty = false;
             }
