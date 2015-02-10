@@ -88,7 +88,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
                 this.setFontSize(fontSize);
                 this.setString(textContent);
             }else{
-                this.setFontName("Thonburi");
+                this.setFontName(this._fontName);
             }
             return true;
         }
