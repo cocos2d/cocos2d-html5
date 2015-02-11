@@ -364,13 +364,13 @@ cc.Node.RenderCmd.prototype = {
 
             if (node._additionalTransformDirty) {
                 var additionalTransform = node._additionalTransform;
-                this._transform = cc.affineTransformConcat(t, {
-                    a: 1 , b: -additionalTransform.c, tx: additionalTransform.tx,
-                    c: -additionalTransform.b , d: 1, ty: additionalTransform.ty
-                });
-                this._transform.a *= additionalTransform.a;
-                this._transform.d *= additionalTransform.d;
-
+                var tb = this._transform.b;
+                this._transform.b = -this._transform.c;
+                this._transform.c = -tb;
+                this._transform = cc.affineTransformConcat(t, additionalTransform);
+                tb = this._transform.b;
+                this._transform.b = -this._transform.c;
+                this._transform.c = -tb;
                 node._additionalTransformDirty = false;
             }
         }
