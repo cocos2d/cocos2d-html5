@@ -261,8 +261,8 @@ cc.Node.RenderCmd.prototype = {
             worldT.c = pt.c * t.a + pt.d * t.c;                               //c
             worldT.d = pt.c * t.b + pt.d * t.d;                               //d
 
-            worldT.tx = pt.a * t.tx - pt.b * t.ty + pt.tx;
-            worldT.ty = pt.d * t.ty + pt.ty - pt.c * t.tx;
+            worldT.tx = pt.a * t.tx + pt.c * t.ty + pt.tx;
+            worldT.ty = pt.d * t.ty + pt.ty + pt.b * t.tx;
         } else {
             worldT.a = t.a;
             worldT.b = t.b;
@@ -303,14 +303,14 @@ cc.Node.RenderCmd.prototype = {
                 c = 0, d = 1;
             if (node._rotationX) {
                 var rotationRadiansX = node._rotationX * 0.017453292519943295;  //0.017453292519943295 = (Math.PI / 180);   for performance
-                b = -Math.sin(rotationRadiansX);
+                c = Math.sin(rotationRadiansX);
                 d = Math.cos(rotationRadiansX);
             }
 
             if (node._rotationY) {
                 var rotationRadiansY = node._rotationY * 0.017453292519943295;  //0.017453292519943295 = (Math.PI / 180);   for performance
                 a = Math.cos(rotationRadiansY);
-                c = Math.sin(rotationRadiansY);
+                b = -Math.sin(rotationRadiansY);
             }
             t.a = a;
             t.b = b;
@@ -325,6 +325,14 @@ cc.Node.RenderCmd.prototype = {
             var sx = (lScaleX < 0.000001 && lScaleX > -0.000001) ? 0.000001 : lScaleX,
                 sy = (lScaleY < 0.000001 && lScaleY > -0.000001) ? 0.000001 : lScaleY;
 
+            // scale
+            if (lScaleX !== 1 || lScaleY !== 1) {
+                a = t.a *= sx;
+                b = t.b *= sx;
+                c = t.c *= sy;
+                d = t.d *= sy;
+            }
+
             // skew
             if (node._skewX || node._skewY) {
                 // offset the anchorpoint
@@ -334,27 +342,19 @@ cc.Node.RenderCmd.prototype = {
                     skx = 99999999;
                 if (sky === Infinity)
                     sky = 99999999;
-                var xx = appY * skx * sx;
-                var yy = appX * sky * sy;
-                t.a = a + b * sky;
-                t.b = a * skx + b;
-                t.c = c + d * sky;
-                t.d = c * skx + d;
-                t.tx += a * xx + b * yy;
-                t.ty += c * xx + d * yy;
-            }
-
-            // scale
-            if (lScaleX !== 1 || lScaleY !== 1) {
-                t.a *= sx;
-                t.c *= sx;
-                t.b *= sy;
-                t.d *= sy;
+                var xx = appY * skx;
+                var yy = appX * sky;
+                t.a = a - c * sky;
+                t.b = b - d * sky;
+                t.c = c - a * skx;
+                t.d = d - b * skx;
+                t.tx += a * xx + c * yy;
+                t.ty += b * xx + d * yy;
             }
 
             // adjust anchorPoint
-            t.tx += a * -appX * sx + b * appY * sy;
-            t.ty -= c * -appX * sx + d * appY * sy;
+            t.tx -= a * appX + c * appY;
+            t.ty -= b * appX + d * appY;
 
             // if ignore anchorPoint
             if (node._ignoreAnchorPointForPosition) {
@@ -362,17 +362,8 @@ cc.Node.RenderCmd.prototype = {
                 t.ty += appY;
             }
 
-            if (node._additionalTransformDirty) {
-                var additionalTransform = node._additionalTransform;
-                var tb = this._transform.b;
-                this._transform.b = -this._transform.c;
-                this._transform.c = -tb;
-                this._transform = cc.affineTransformConcat(t, additionalTransform);
-                tb = this._transform.b;
-                this._transform.b = -this._transform.c;
-                this._transform.c = -tb;
-                node._additionalTransformDirty = false;
-            }
+            if (node._additionalTransformDirty)
+                this._transform = cc.affineTransformConcat(t, node._additionalTransform);
         }
         return this._transform;
     };
