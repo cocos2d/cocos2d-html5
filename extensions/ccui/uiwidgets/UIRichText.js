@@ -81,11 +81,7 @@ ccui.RichElementText = ccui.RichElement.extend(/** @lends ccui.RichElementText# 
      *                              fontSize: 12,
      *                              fontWeight: "bold",
      *                              fontStyle: "normal",
-     *                              lineHeight: 12,
-     *                              marginTop: 0,
-     *                              marginBottom: 0,
-     *                              marginRight: 0,
-     *                              marginLeft: 0
+     *                              lineHeight: 14
      *                          }), 255, "Some Text");
      *
      * Constructor of ccui.RichElementText
@@ -486,14 +482,16 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                 l.setAnchorPoint(cc.p(0, 0));
                 l.setPosition(nextPosX, 0);
                 locRenderersContainer.addChild(l, 1, j);
+
                 var lineHeight = l.getLineHeight ? l.getLineHeight() : newContentSizeHeight;
+
                 var iSize = l.getContentSize();
                 newContentSizeWidth += iSize.width;
                 newContentSizeHeight = Math.max(Math.min(newContentSizeHeight, lineHeight), iSize.height);
                 nextPosX += iSize.width;
             }
 
-            //Text flow alignment:
+            //Text flow horizontal alignment:
             if(this._textHorizontalAlignment != cc.TEXT_ALIGNMENT_LEFT) {
                 var offsetX = 0;
                 if (this._textHorizontalAlignment == cc.TEXT_ALIGNMENT_RIGHT)
@@ -514,6 +512,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                 for (j = 0; j < row.length; j++) {
                     l = row[j];
                     var lineHeight = l.getLineHeight ? l.getLineHeight() : l.getContentSize().height;
+                    cc.log(lineHeight);
                     maxHeight = Math.max(Math.min(l.getContentSize().height, lineHeight), maxHeight);
                 }
                 maxHeights[i] = maxHeight;
@@ -534,7 +533,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                     locRenderersContainer.addChild(l, 1);
                     nextPosX += l.getContentSize().width;
                 }
-                //Text flow Horizontal alignment
+                //Text flow alignment(s)
                 if( this._textHorizontalAlignment != cc.TEXT_ALIGNMENT_LEFT || this._textVerticalAlignment != cc.VERTICAL_TEXT_ALIGNMENT_TOP) {
                     var offsetX = 0;
                     if (this._textHorizontalAlignment == cc.TEXT_ALIGNMENT_RIGHT)
@@ -567,8 +566,6 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
 
         this.setContentSize(this._ignoreSize?this.getVirtualRendererSize():this._customSize);
         this._updateContentSizeWithTextureSize(this._contentSize);
-
-        //locRenderersContainer.setPosition(this._contentSize.width * 0.5, this._contentSize.height * 0.5);
 
         locRenderersContainer.setPosition(this._contentSize.width * 0.5, this._contentSize.height * 0.5);
     },

@@ -75,7 +75,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     proto._setFontStyle = function (fontNameOrFontDef, fontSize, fontStyle, fontWeight) {
 
         if(fontNameOrFontDef instanceof cc.FontDefinition){
-            this._fontStyleStr = fontNameOrFontDef.getCanvasFontStr();
+            this._fontStyleStr = fontNameOrFontDef._getCanvasFontStr();
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontNameOrFontDef);
 
         }else {
