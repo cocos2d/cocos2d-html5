@@ -72,9 +72,16 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         return this._labelContext;
     };
 
-    proto._setFontStyle = function (fontName, fontSize, fontStyle, fontWeight) {
-        this._fontStyleStr = fontStyle + " " + fontWeight + " " + fontSize + "px '" + fontName + "'";
-        this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName, fontSize);
+    proto._setFontStyle = function (fontNameOrFontDef, fontSize, fontStyle, fontWeight) {
+
+        if(fontNameOrFontDef instanceof cc.FontDefinition){
+            this._fontStyleStr = fontNameOrFontDef._getCanvasFontStr();
+            this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontNameOrFontDef);
+
+        }else {
+            this._fontStyleStr = fontStyle + " " + fontWeight + " " + fontSize + "px '" + fontNameOrFontDef + "'";
+            this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontNameOrFontDef, fontSize);
+        }
     };
 
     proto._getFontStyle = function () {
