@@ -31,10 +31,22 @@
         this._oldFBO = null;
         this._textureCopy = null;
         this._depthRenderBuffer = null;
+
+        this._rtTextureRect = new cc.Rect();
+        this._fullRect = new cc.Rect();
+        this._fullViewport = new cc.Rect();
     };
 
     var proto = cc.RenderTexture.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.RenderTexture.WebGLRenderCmd;
+
+    proto.setVirtualViewport = function(rtBegin, fullRect, fullViewport) {
+        this._rtTextureRect.x = rtBegin.x;
+        this._rtTextureRect.y = rtBegin.y;
+
+        this._fullRect = fullRect;
+        this._fullViewport = fullViewport;
+    };
 
     proto.rendering = function (ctx) {
         var gl = ctx || cc._renderContext;
@@ -122,6 +134,8 @@
             cc.log( "cc.RenderTexture._initWithWidthAndHeightForWebGL() : only RGB and RGBA formats are valid for a render texture;");
 
         var gl = cc._renderContext, locScaleFactor = cc.contentScaleFactor();
+        this._fullRect = new cc.Rect(0,0, width, height);
+        this._fullViewport = new cc.Rect(0,0, width, height);
 
         width = 0 | (width * locScaleFactor);
         height = 0 | (height * locScaleFactor);
@@ -213,6 +227,8 @@
         cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
         cc.kmGLPushMatrix();
 
+        var gl = cc._renderContext;
+
         var director = cc.director;
         director.setProjection(director.getProjection());
 
@@ -223,15 +239,20 @@
         var widthRatio = size.width / texSize.width;
         var heightRatio = size.height / texSize.height;
 
-        var gl = cc._renderContext;
-
-        // Adjust the orthographic projection and viewport
-        gl.viewport(0, 0, texSize.width, texSize.height);
-
         var orthoMatrix = new cc.kmMat4();
         cc.kmMat4OrthographicProjection(orthoMatrix, -1.0 / widthRatio, 1.0 / widthRatio,
                 -1.0 / heightRatio, 1.0 / heightRatio, -1, 1);
         cc.kmGLMultMatrix(orthoMatrix);
+
+        //calculate viewport
+        var viewport = new cc.Rect(0, 0, 0, 0);
+        viewport.width = this._fullViewport.width;
+        viewport.height = this._fullViewport.height;
+        var viewPortRectWidthRatio = viewport.width / this._fullRect.width;
+        var viewPortRectHeightRatio = viewport.height / this._fullRect.height;
+        viewport.x = (this._fullRect.x - this._rtTextureRect.x) * viewPortRectWidthRatio;
+        viewport.y = (this._fullRect.y - this._rtTextureRect.y) * viewPortRectHeightRatio;
+        gl.viewport(viewport.x, viewport.y, viewport.width, viewport.height);
 
         this._oldFBO = gl.getParameter(gl.FRAMEBUFFER_BINDING);
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._fBO);//Will direct drawing to the frame buffer created above

@@ -157,6 +157,16 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     /**
+     * Used for grab part of screen to a texture.
+     * @param {cc.Point} rtBegin
+     * @param {cc.Rect} fullRect
+     * @param {cc.Rect} fullViewport
+     */
+    setVirtualViewport: function(rtBegin, fullRect, fullViewport){
+         this._renderCmd.setVirtualViewport(rtBegin, fullRect, fullViewport);
+    },
+
+    /**
      * Initializes the instance of cc.RenderTexture
      * @function
      * @param {Number} width

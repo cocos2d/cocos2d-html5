@@ -42,6 +42,8 @@
 
     proto.clearStencil = function (stencilValue) { };
 
+    proto.setVirtualViewport = function(rtBegin, fullRect, fullViewport) {};
+
     proto.updateClearColor = function(clearColor){
         this._clearColorStr = "rgba(" + (0 | clearColor.r) + "," + (0 | clearColor.g) + "," + (0 | clearColor.b) + "," + clearColor.a / 255 + ")";
     };
