@@ -256,10 +256,10 @@ cc.Node.RenderCmd.prototype = {
         if (parentCmd) {
             var pt = parentCmd._worldTransform;
             // cc.AffineTransformConcat is incorrect at get world transform
-            worldT.a = pt.a * t.a + pt.b * t.c;                               //a
-            worldT.b = pt.a * t.b + pt.b * t.d;                               //b
-            worldT.c = pt.c * t.a + pt.d * t.c;                               //c
-            worldT.d = pt.c * t.b + pt.d * t.d;                               //d
+            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
+            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
+            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
+            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
 
             worldT.tx = pt.a * t.tx + pt.c * t.ty + pt.tx;
             worldT.ty = pt.d * t.ty + pt.ty + pt.b * t.tx;
