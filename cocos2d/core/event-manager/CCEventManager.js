@@ -381,14 +381,15 @@ cc.eventManager = /** @lends cc.eventManager# */{
     _updateListeners: function (event) {
         var locInDispatch = this._inDispatch;
         cc.assert(locInDispatch > 0, cc._LogInfos.EventManager__updateListeners);
+
+        if(locInDispatch > 1)
+            return;
+
         if (event.getType() == cc.Event.TOUCH) {
             this._onUpdateListeners(cc._EventListenerTouchOneByOne.LISTENER_ID);
             this._onUpdateListeners(cc._EventListenerTouchAllAtOnce.LISTENER_ID);
         } else
             this._onUpdateListeners(cc.__getListenerID(event));
-
-        if(locInDispatch > 1)
-            return;
 
         cc.assert(locInDispatch == 1, cc._LogInfos.EventManager__updateListeners_2);
         var locListenersMap = this._listenersMap, locPriorityDirtyFlagMap = this._priorityDirtyFlagMap;
