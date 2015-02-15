@@ -258,7 +258,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         var normalRenderer = this._buttonNormalRenderer;
         if(!normalRenderer._textureLoaded){
             normalRenderer.addEventListener("load", function(){
-                self.loadTextureNormal(normal, texType);
+                self.loadTextureNormal(self._normalFileName, self._normalTexType);
             });
         }
         switch (this._normalTexType){
@@ -305,7 +305,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         var clickedRenderer = this._buttonClickedRenderer;
         if(!clickedRenderer._textureLoaded){
             clickedRenderer.addEventListener("load", function(){
-                self.loadTexturePressed(selected, texType);
+                self.loadTexturePressed(self._clickedFileName, self._pressedTexType);
             });
         }
 
@@ -350,7 +350,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         var disabledRenderer = this._buttonDisableRenderer;
         if(!disabledRenderer._textureLoaded){
             disabledRenderer.addEventListener("load", function() {
-                self.loadTextureDisabled(disabled, texType);
+                self.loadTextureDisabled(self._disabledFileName, self._disabledTexType);
             });
         }
 
