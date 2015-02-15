@@ -59,6 +59,15 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend(/** @lends cc.ControlSa
     _boxSize:0,
     _className:"ControlSaturationBrightnessPicker",
 
+    /**
+     * The constructor of cc.ControlSaturationBrightnessPicker
+     * @param {cc.Node} target
+     * @param {cc.Point} pos position
+     */
+    ctor:function (target, pos) {
+        cc.Control.prototype.ctor.call(this);
+        pos && this.initWithTargetAndPos(target, pos);
+    },
     getSaturation:function () {
         return this._saturation;
     },
@@ -237,8 +246,12 @@ cc.defineGetterSetter(_p, "startPos", _p.getStartPos);
 
 _p = null;
 
+/**
+ * Creates a cc.ControlSaturationBrightnessPicker
+ * @param {cc.Node} target
+ * @param {cc.Point} pos position
+ * @returns {ControlSaturationBrightnessPicker}
+ */
 cc.ControlSaturationBrightnessPicker.create = function (target, pos) {
-    var pRet = new cc.ControlSaturationBrightnessPicker();
-    pRet.initWithTargetAndPos(target, pos);
-    return pRet;
+    return new cc.ControlSaturationBrightnessPicker(target, pos);
 };

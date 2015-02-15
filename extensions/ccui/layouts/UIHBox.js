@@ -24,11 +24,29 @@
  ****************************************************************************/
 
 /**
- * The horizontal box of Cocos UI.
+ * The horizontal box of Cocos UI. Its layout type is ccui.Layout.LINEAR_HORIZONTAL.
  * @class
  * @extends ccui.Layout
  */
 ccui.HBox = ccui.Layout.extend(/** @lends ccui.HBox# */{
+    /**
+     * The constructor of ccui.HBox
+     * @function
+     * @param {cc.Size} [size]
+     */
+    ctor: function(size){
+        ccui.Layout.prototype.ctor.call(this, size);
+        if(size !== undefined)
+            this.initWithSize(size);
+        else
+           this.init();
+    },
+
+    /**
+     * Initialize a HBox. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
+     * @override
+     * @returns {boolean}
+     */
     init: function(){
         if(ccui.Layout.prototype.init.call(this)){
             this.setLayoutType(ccui.Layout.LINEAR_HORIZONTAL);
@@ -37,6 +55,11 @@ ccui.HBox = ccui.Layout.extend(/** @lends ccui.HBox# */{
         return false;
     },
 
+    /**
+     * Initializes a HBox with size.
+     * @param size
+     * @returns {boolean}
+     */
     initWithSize: function(size){
         if(this.init()){
             this.setContentSize(size);
@@ -46,14 +69,12 @@ ccui.HBox = ccui.Layout.extend(/** @lends ccui.HBox# */{
     }
 });
 
+/**
+ * Creates a HBox object
+ * @deprecated since v3.0, please use new ccui.HBox(size) instead.
+ * @param {cc.Size} size
+ * @returns {ccui.HBox}
+ */
 ccui.HBox.create = function(size){
-    var widget = new ccui.HBox();
-    if(size){
-        if(widget.initWithSize(size))
-            return widget;
-    }else {
-        if(widget.init())
-            return widget;
-    }
-    return null;
+    return new ccui.HBox(size);
 };

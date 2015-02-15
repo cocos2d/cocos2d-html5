@@ -30,10 +30,85 @@
 cc.Touches = [];
 cc.TouchesIntergerDict = {};
 
+cc.DENSITYDPI_DEVICE = "device-dpi";
+cc.DENSITYDPI_HIGH = "high-dpi";
+cc.DENSITYDPI_MEDIUM = "medium-dpi";
+cc.DENSITYDPI_LOW = "low-dpi";
+
+cc.__BrowserGetter = {
+    init: function(){
+        this.html = document.getElementsByTagName("html")[0];
+    },
+    availWidth: function(frame){
+        if(!frame || frame === this.html)
+            return window.innerWidth;
+        else
+            return frame.clientWidth;
+    },
+    availHeight: function(frame){
+        if(!frame || frame === this.html)
+            return window.innerHeight;
+        else
+            return frame.clientHeight;
+    },
+    meta: {
+        "width": "device-width",
+        "user-scalable": "no"
+    }
+};
+
+switch(cc.sys.browserType){
+    case cc.sys.BROWSER_TYPE_SAFARI:
+        cc.__BrowserGetter.meta["minimal-ui"] = "true";
+        cc.__BrowserGetter.availWidth = function(frame){
+            return frame.clientWidth;
+        };
+        cc.__BrowserGetter.availHeight = function(frame){
+            return frame.clientHeight;
+        };
+        break;
+    case cc.sys.BROWSER_TYPE_CHROME:
+        cc.__BrowserGetter.__defineGetter__("target-densitydpi", function(){
+            return cc.view._targetDensityDPI;
+        });
+    case cc.sys.BROWSER_TYPE_UC:
+        cc.__BrowserGetter.availWidth = function(frame){
+            return frame.clientWidth;
+        };
+        cc.__BrowserGetter.availHeight = function(frame){
+            return frame.clientHeight;
+        };
+        break;
+    case cc.sys.BROWSER_TYPE_MIUI:
+        cc.__BrowserGetter.init = function(view){
+            if(view.__resizeWithBrowserSize) return;
+            var resize = function(){
+                view.setDesignResolutionSize(
+                    view._designResolutionSize.width,
+                    view._designResolutionSize.height,
+                    view._resolutionPolicy
+                );
+                window.removeEventListener("resize", resize, false);
+            };
+            window.addEventListener("resize", resize, false);
+        };
+        break;
+}
+
 /**
- * cc.view is the shared view object.
- * @namespace
+ * cc.view is the singleton object which represents the game window.<br/>
+ * It's main task include: <br/>
+ *  - Apply the design resolution policy<br/>
+ *  - Provide interaction with the window, like resize event on web, retina display support, etc...<br/>
+ *  - Manage the game view port which can be different with the window<br/>
+ *  - Manage the content scale and translation<br/>
+ * <br/>
+ * Since the cc.view is a singleton, you don't need to call any constructor or create functions,<br/>
+ * the standard way to use it is by calling:<br/>
+ *  - cc.view.methodName(); <br/>
+ * @class
  * @name cc.view
+ * @extend cc.Class
  */
 cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     _delegate: null,
@@ -80,9 +155,16 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     _frameZoomFactor: 1.0,
     __resizeWithBrowserSize: false,
     _isAdjustViewPort: true,
+    _targetDensityDPI: null,
 
+    /**
+     * Constructor of cc.EGLView
+     */
     ctor: function () {
         var _t = this, d = document, _strategyer = cc.ContainerStrategy, _strategy = cc.ContentStrategy;
+
+        cc.__BrowserGetter.init(this);
+
         _t._frame = (cc.container.parentNode === d.body) ? d.documentElement : cc.container.parentNode;
         _t._frameSize = cc.size(0, 0);
         _t._initFrameSize();
@@ -108,49 +190,98 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
         _t._hDC = cc._canvas;
         _t._hRC = cc._renderContext;
+        _t._targetDensityDPI = cc.DENSITYDPI_HIGH;
     },
 
     // Resize helper functions
     _resizeEvent: function () {
-        var width = this._originalDesignResolutionSize.width;
-        var height = this._originalDesignResolutionSize.height;
-        if (this._resizeCallback) {
-            this._initFrameSize();
-            this._resizeCallback.call();
+        var view;
+        if(this.setDesignResolutionSize){
+            view = this;
+        }else{
+            view = cc.view;
         }
+
+        // Check frame size changed or not
+        var prevFrameW = view._frameSize.width, prevFrameH = view._frameSize.height;
+        view._initFrameSize();
+        if (view._frameSize.width == prevFrameW && view._frameSize.height == prevFrameH)
+            return;
+
+        // Frame size changed, do resize works
+        if (view._resizeCallback) {
+            view._resizeCallback.call();
+        }
+        var width = view._originalDesignResolutionSize.width;
+        var height = view._originalDesignResolutionSize.height;
         if (width > 0)
-            this.setDesignResolutionSize(width, height, this._resolutionPolicy);
+            view.setDesignResolutionSize(width, height, view._resolutionPolicy);
     },
 
+    /**
+     * <p>
+     * Sets view's target-densitydpi for android mobile browser. it can be set to:           <br/>
+     *   1. cc.DENSITYDPI_DEVICE, value is "device-dpi"                                      <br/>
+     *   2. cc.DENSITYDPI_HIGH, value is "high-dpi"  (default value)                         <br/>
+     *   3. cc.DENSITYDPI_MEDIUM, value is "medium-dpi" (browser's default value)            <br/>
+     *   4. cc.DENSITYDPI_LOW, value is "low-dpi"                                            <br/>
+     *   5. Custom value, e.g: "480"                                                         <br/>
+     * </p>
+     * @param {String} densityDPI
+     */
+    setTargetDensityDPI: function(densityDPI){
+        this._targetDensityDPI = densityDPI;
+        this._setViewPortMeta();
+    },
+
+    /**
+     * Returns the current target-densitydpi value of cc.view.
+     * @returns {String}
+     */
+    getTargetDensityDPI: function(){
+        return this._targetDensityDPI;
+    },
+
+    /**
+     * Sets whether resize canvas automatically when browser's size changed.<br/>
+     * Useful only on web.
+     * @param {Boolean} enabled Whether enable automatic resize with browser's resize event
+     */
     resizeWithBrowserSize: function (enabled) {
-        var adjustSize, _t = this;
         if (enabled) {
             //enable
-            if (!_t.__resizeWithBrowserSize) {
-                _t.__resizeWithBrowserSize = true;
-                adjustSize = _t._resizeEvent.bind(_t);
-                cc._addEventListener(window, 'resize', adjustSize, false);
+            if (!this.__resizeWithBrowserSize) {
+                this.__resizeWithBrowserSize = true;
+                cc._addEventListener(window, 'resize', this._resizeEvent);
+                cc._addEventListener(window, 'orientationchange', this._resizeEvent);
             }
         } else {
             //disable
-            if (_t.__resizeWithBrowserSize) {
-                _t.__resizeWithBrowserSize = true;
-                adjustSize = _t._resizeEvent.bind(_t);
-                window.removeEventListener('resize', adjustSize, false);
+            if (this.__resizeWithBrowserSize) {
+                this.__resizeWithBrowserSize = false;
+                window.removeEventListener('resize', this._resizeEvent);
+                window.removeEventListener('orientationchange', this._resizeEvent);
             }
         }
     },
 
+    /**
+     * Sets the callback function for cc.view's resize action,<br/>
+     * this callback will be invoked before applying resolution policy, <br/>
+     * so you can do any additional modifications within the callback.<br/>
+     * Useful only on web.
+     * @param {Function|null} callback The callback function
+     */
     setResizeCallback: function (callback) {
-        if (typeof callback == "function" || callback == null) {
+        if (cc.isFunction(callback) || callback == null) {
             this._resizeCallback = callback;
         }
     },
 
     _initFrameSize: function () {
         var locFrameSize = this._frameSize;
-        locFrameSize.width = this._frame.clientWidth;
-        locFrameSize.height = this._frame.clientHeight;
+        locFrameSize.width = cc.__BrowserGetter.availWidth(this._frame);
+        locFrameSize.height = cc.__BrowserGetter.availHeight(this._frame);
     },
 
     // hack
@@ -161,40 +292,41 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             this.setDesignResolutionSize(designWidth, designHeight, this._resolutionPolicy);
     },
 
-    _setViewPortMeta: function (width, height) {
+    _setViewPortMeta: function () {
         if (this._isAdjustViewPort) {
-	        var viewportMetas = {"user-scalable": "no", "maximum-scale": "1.0", "initial-scale": "1.0"}, elems = document.getElementsByName("viewport"), vp, content;
-            if (elems.length == 0) {
-                vp = cc.newElement("meta");
-                vp.name = "viewport";
-                vp.content = "";
-                document.head.appendChild(vp);
+            var vp = document.getElementById("cocosMetaElement");
+            if(vp){
+                document.head.removeChild(vp);
             }
-            else vp = elems[0];
 
-	        // For avoiding Android Firefox issue, to remove once firefox fixes its issue.
-	        if (cc.sys.isMobile && cc.sys.browserType == cc.sys.BROWSER_TYPE_FIREFOX) {
-		        vp.content = "initial-scale:1";
-		        return;
-	        }
+            var viewportMetas,
+                elems = document.getElementsByName("viewport"),
+                currentVP = elems ? elems[0] : null,
+                content;
 
-            content = vp.content;
+            vp = cc.newElement("meta");
+            vp.id = "cocosMetaElement";
+            vp.name = "viewport";
+            vp.content = "";
+
+            viewportMetas = cc.__BrowserGetter.meta;
+
+            content = currentVP ? currentVP.content : "";
             for (var key in viewportMetas) {
                 var pattern = new RegExp(key);
                 if (!pattern.test(content)) {
-                    content += (content == "" ? "" : ",") + key + "=" + viewportMetas[key];
+                    content += "," + key + "=" + viewportMetas[key];
                 }
             }
-            /*
-            if(width<=320){
-                width = 321;
-            }
-            if(height)
-                content ="height="+height+","+content;
-            if(width)
-                content ="width="+width+","+content;
-            */
+            if(/^,/.test(content))
+                content = content.substr(1);
+
             vp.content = content;
+            // For adopting certain android devices which don't support second viewport
+            if (currentVP)
+                currentVP.content = content;
+
+            document.head.appendChild(vp);
         }
     },
 
@@ -216,20 +348,25 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     _adjustSizeToBrowser: function () {
     },
 
-    /**
-     * init
-     */
     initialize: function () {
         this._initialized = true;
     },
 
+    /**
+     * Sets whether the engine modify the "viewport" meta in your web page.<br/>
+     * It's enabled by default, we strongly suggest you not to disable it.<br/>
+     * And even when it's enabled, you can still set your own "viewport" meta, it won't be overridden<br/>
+     * Only useful on web
+     * @param {Boolean} enabled Enable automatic modification to "viewport" meta
+     */
     adjustViewPort: function (enabled) {
         this._isAdjustViewPort = enabled;
     },
 
 	/**
-	 * Retina support is enabled by default for Apple device but disabled for other devices,
-	 * it takes effect only when you called setDesignResolutionPolicy
+	 * Retina support is enabled by default for Apple device but disabled for other devices,<br/>
+	 * it takes effect only when you called setDesignResolutionPolicy<br/>
+     * Only useful on web
 	 * @param {Boolean} enabled  Enable or disable retina display
 	 */
 	enableRetina: function(enabled) {
@@ -237,7 +374,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 	},
 
 	/**
-	 * Check whether retina display is enabled.
+	 * Check whether retina display is enabled.<br/>
+     * Only useful on web
 	 * @return {Boolean}
 	 */
 	isRetinaEnabled: function() {
@@ -245,8 +383,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 	},
 
     /**
-     * If enabled, the application will try automatically to enter full screen mode on mobile devices
-     * You can pass true as parameter to enable it and disable it by passing false
+     * If enabled, the application will try automatically to enter full screen mode on mobile devices<br/>
+     * You can pass true as parameter to enable it and disable it by passing false.<br/>
+     * Only useful on web
      * @param {Boolean} enabled  Enable or disable auto full screen on mobile devices
      */
     enableAutoFullScreen: function(enabled) {
@@ -254,8 +393,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Check whether auto full screen is enabled.
-     * @return {Boolean}
+     * Check whether auto full screen is enabled.<br/>
+     * Only useful on web
+     * @return {Boolean} Auto full screen enabled or not
      */
     isAutoFullScreenEnabled: function() {
         return this._autoFullScreen;
@@ -268,7 +408,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Get whether render system is ready(no matter opengl or canvas),
+     * Get whether render system is ready(no matter opengl or canvas),<br/>
      * this name is for the compatibility with cocos2d-x, subclass must implement this method.
      * @return {Boolean}
      */
@@ -294,14 +434,13 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     /**
      * Open or close IME keyboard , subclass must implement this method.
+     * @param {Boolean} isOpen
      */
     setIMEKeyboardState: function (isOpen) {
     },
 
     /**
-     * <p>
-     *   The resolution translate on EGLView
-     * </p>
+     * Sets the resolution translate on EGLView
      * @param {Number} offsetLeft
      * @param {Number} offsetTop
      */
@@ -310,9 +449,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * <p>
-     *   get the resolution translate on EGLView
-     * </p>
+     * Returns the resolution translate on EGLView
      * @return {cc.Size|Object}
      */
     getContentTranslateLeftTop: function () {
@@ -320,8 +457,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Get the frame size of EGL view.
-     * In general, it returns the screen size since the EGL view is a fullscreen view.
+     * Returns the frame size of the view.<br/>
+     * On native platforms, it returns the screen size since the view is a fullscreen view.<br/>
+     * On web, it returns the size of the canvas's outer DOM element.
      * @return {cc.Size}
      */
     getFrameSize: function () {
@@ -329,7 +467,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Set the frame size of EGL view.
+     * On native, it sets the frame size of view.<br/>
+     * On web, it sets the size of the canvas's outer DOM element.
      * @param {Number} width
      * @param {Number} height
      */
@@ -343,11 +482,14 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         cc.director.setProjection(cc.director.getProjection());
     },
 
+    /**
+     * Empty function
+     */
     centerWindow: function () {
     },
 
     /**
-     * Get the visible area size of OpenGL view port.
+     * Returns the visible area size of the view port.
      * @return {cc.Size}
      */
     getVisibleSize: function () {
@@ -355,19 +497,24 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Get the visible origin of OpenGL view port.
+     * Returns the visible origin of the view port.
      * @return {cc.Point}
      */
     getVisibleOrigin: function () {
         return cc.p(this._visibleRect.x,this._visibleRect.y);
     },
 
+    /**
+     * Returns whether developer can set content's scale factor.
+     * @return {Boolean}
+     */
     canSetContentScaleFactor: function () {
         return true;
     },
 
     /**
-     * Get the current resolution policy
+     * Returns the current resolution policy
+     * @see cc.ResolutionPolicy
      * @return {cc.ResolutionPolicy}
      */
     getResolutionPolicy: function () {
@@ -375,7 +522,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Set the current resolution policy
+     * Sets the current resolution policy
+     * @see cc.ResolutionPolicy
      * @param {cc.ResolutionPolicy|Number} resolutionPolicy
      */
     setResolutionPolicy: function (resolutionPolicy) {
@@ -400,65 +548,73 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Set the design resolution size.
+     * Sets the resolution policy with designed view size in points.<br/>
+     * The resolution policy include: <br/>
+     * [1] ResolutionExactFit       Fill screen by stretch-to-fit: if the design resolution ratio of width to height is different from the screen resolution ratio, your game view will be stretched.<br/>
+     * [2] ResolutionNoBorder       Full screen without black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two areas of your game view will be cut.<br/>
+     * [3] ResolutionShowAll        Full screen with black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two black borders will be shown.<br/>
+     * [4] ResolutionFixedHeight    Scale the content's height to screen's height and proportionally scale its width<br/>
+     * [5] ResolutionFixedWidth     Scale the content's width to screen's width and proportionally scale its height<br/>
+     * [cc.ResolutionPolicy]        [Web only feature] Custom resolution policy, constructed by cc.ResolutionPolicy<br/>
      * @param {Number} width Design resolution width.
      * @param {Number} height Design resolution height.
-     * @param {cc.ResolutionPolicy|Number} resolutionPolicy The resolution policy desired, you may choose:
-     * [1] ResolutionExactFit       Fill screen by stretch-to-fit: if the design resolution ratio of width to height is different from the screen resolution ratio, your game view will be stretched.
-     * [2] ResolutionNoBorder       Full screen without black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two areas of your game view will be cut.
-     * [3] ResolutionShowAll        Full screen with black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two black borders will be shown.
-     * [4] ResolutionFixedHeight    Scale the content's height to screen's height and proportionally scale its width
-     * [5] ResolutionFixedWidth     Scale the content's width to screen's width and proportionally scale its height
-     * [cc.ResolutionPolicy]        Custom resolution policy, constructed by cc.ResolutionPolicy
+     * @param {cc.ResolutionPolicy|Number} resolutionPolicy The resolution policy desired
      */
     setDesignResolutionSize: function (width, height, resolutionPolicy) {
         // Defensive code
-        if (isNaN(width) || width == 0 || isNaN(height) || height == 0) {
+        if( !(width > 0 || height > 0) ){
             cc.log(cc._LogInfos.EGLView_setDesignResolutionSize);
             return;
         }
-        var _t = this;
-        _t.setResolutionPolicy(resolutionPolicy);
-        var policy = _t._resolutionPolicy;
-        if (policy)
-            policy.preApply(_t);
-        else {
+
+        this.setResolutionPolicy(resolutionPolicy);
+        var policy = this._resolutionPolicy;
+        if (!policy){
             cc.log(cc._LogInfos.EGLView_setDesignResolutionSize_2);
             return;
         }
+        policy.preApply(this);
 
         // Reinit frame size
-        var frameW = _t._frameSize.width, frameH = _t._frameSize.height;
-        if (cc.sys.isMobile)
-            _t._setViewPortMeta(_t._frameSize.width, _t._frameSize.height);
-        _t._initFrameSize();
-        // No change
-        if (resolutionPolicy == _t._resolutionPolicy
-            && width == _t._originalDesignResolutionSize.width && height == _t._originalDesignResolutionSize.height
-            && frameW == _t._frameSize.width && frameH == _t._frameSize.height)
-            return;
-        _t._designResolutionSize = cc.size(width, height);
-        _t._originalDesignResolutionSize = cc.size(width, height);
+        if(cc.sys.isMobile)
+            this._setViewPortMeta();
 
-        var result = policy.apply(_t, _t._designResolutionSize);
-        if (result.scale && result.scale.length == 2) {
-            _t._scaleX = result.scale[0];
-            _t._scaleY = result.scale[1];
+        this._initFrameSize();
+
+        this._originalDesignResolutionSize.width = this._designResolutionSize.width = width;
+        this._originalDesignResolutionSize.height = this._designResolutionSize.height = height;
+
+        var result = policy.apply(this, this._designResolutionSize);
+
+        if(result.scale && result.scale.length == 2){
+            this._scaleX = result.scale[0];
+            this._scaleY = result.scale[1];
         }
-        if (result.viewport) {
-            var vp = _t._viewPortRect = result.viewport, visible = _t._visibleRect;
-            visible.width = cc._canvas.width / _t._scaleX;
-            visible.height = cc._canvas.height / _t._scaleY;
-            visible.x = -vp.x / _t._scaleX;
-            visible.y = -vp.y / _t._scaleY;
+
+        if(result.viewport){
+            var vp = this._viewPortRect,
+                vb = this._visibleRect,
+                rv = result.viewport;
+
+            vp.x = rv.x;
+            vp.y = rv.y;
+            vp.width = rv.width;
+            vp.height = rv.height;
+
+            vb.x = -vp.x / this._scaleX;
+            vb.y = -vp.y / this._scaleY;
+            vb.width = cc._canvas.width / this._scaleX;
+            vb.height = cc._canvas.height / this._scaleY;
+            cc._renderContext.setOffset && cc._renderContext.setOffset(vp.x, -vp.y)
         }
 
         // reset director's member variables to fit visible rect
         var director = cc.director;
-        cc.winSize.width = director._winSizeInPoints.width = _t._visibleRect.width;
-        cc.winSize.height = director._winSizeInPoints.height = _t._visibleRect.height;
-
-        policy.postApply(_t);
+        director._winSizeInPoints.width = this._designResolutionSize.width;
+        director._winSizeInPoints.height = this._designResolutionSize.height;
+        policy.postApply(this);
+        cc.winSize.width = director._winSizeInPoints.width;
+        cc.winSize.height = director._winSizeInPoints.height;
 
         if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
             // reset director's member variables to fit visible rect
@@ -466,16 +622,16 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             director.setGLDefaultValues();
         }
 
-        _t._originalScaleX = _t._scaleX;
-        _t._originalScaleY = _t._scaleY;
+        this._originalScaleX = this._scaleX;
+        this._originalScaleY = this._scaleY;
         // For editbox
         if (cc.DOM)
             cc.DOM._resetEGLViewDiv();
-        cc.visibleRect && cc.visibleRect.init(_t._visibleRect);
+        cc.visibleRect && cc.visibleRect.init(this._visibleRect);
     },
 
     /**
-     * Get design resolution size.
+     * Returns the designed size for the view.
      * Default resolution size is the same as 'getFrameSize'.
      * @return {cc.Size}
      */
@@ -484,7 +640,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Set opengl view port rectangle with points.
+     * Sets view port rectangle with points.
      * @param {Number} x
      * @param {Number} y
      * @param {Number} w width
@@ -499,7 +655,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Set Scissor rectangle with points.
+     * Sets Scissor rectangle with points.
      * @param {Number} x
      * @param {Number} y
      * @param {Number} w
@@ -514,7 +670,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Get whether GL_SCISSOR_TEST is enable
+     * Returns whether GL_SCISSOR_TEST is enable
+     * @return {Boolean}
      */
     isScissorEnabled: function () {
         var gl = cc._renderContext;
@@ -522,7 +679,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Get the current scissor rectangle
+     * Returns the current scissor rectangle
      * @return {cc.Rect}
      */
     getScissorRect: function () {
@@ -533,6 +690,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
+     * Sets the name of the view
      * @param {String} viewName
      */
     setViewName: function (viewName) {
@@ -542,7 +700,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * get view name
+     * Returns the name of the view
      * @return {String}
      */
     getViewName: function () {
@@ -550,35 +708,43 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
-     * Get the opengl view port rectangle.
+     * Returns the view port rectangle.
+     * @return {cc.Rect}
      */
     getViewPortRect: function () {
         return this._viewPortRect;
     },
 
     /**
-     * Get scale factor of the horizontal direction.
+     * Returns scale factor of the horizontal direction (X axis).
+     * @return {Number}
      */
     getScaleX: function () {
         return this._scaleX;
     },
 
     /**
-     * Get scale factor of the vertical direction.
+     * Returns scale factor of the vertical direction (Y axis).
+     * @return {Number}
      */
     getScaleY: function () {
         return this._scaleY;
     },
 
     /**
-     * Get device pixel ratio for retina display.
+     * Returns device pixel ratio for retina display.
+     * @return {Number}
      */
     getDevicePixelRatio: function() {
         return this._devicePixelRatio;
     },
 
     /**
-     * Get the real location in view
+     * Returns the real location in view for a translation based on a related position
+     * @param {Number} tx The X axis translation
+     * @param {Number} ty The Y axis translation
+     * @param {Object} relatedPos The related position object including "left", "top", "width", "height" informations
+     * @return {cc.Point}
      */
     convertToLocationInView: function (tx, ty, relatedPos) {
         return {x: this._devicePixelRatio * (tx - relatedPos.left), y: this._devicePixelRatio * (relatedPos.top + relatedPos.height - ty)};
@@ -604,6 +770,11 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     }
 });
 
+/**
+ * @function
+ * @return {cc.EGLView}
+ * @private
+ */
 cc.EGLView._getInstance = function () {
     if (!this._instance) {
         this._instance = this._instance || new cc.EGLView();
@@ -661,6 +832,7 @@ cc.ContainerStrategy = cc.Class.extend(/** @lends cc.ContainerStrategy# */{
         // Setup canvas
         locCanvasElement.width = w * devicePixelRatio;
         locCanvasElement.height = h * devicePixelRatio;
+        cc._renderContext.resetCache && cc._renderContext.resetCache();
 
         var body = document.body, style;
         if (body && (style = body.style)) {
@@ -720,8 +892,10 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
                                contentW, contentH);
 
         // Translate the content
-        if (cc._renderType == cc._RENDER_TYPE_CANVAS)
-            cc._renderContext.translate(viewport.x, viewport.y + contentH);
+        if (cc._renderType == cc._RENDER_TYPE_CANVAS){
+            //TODO: modify something for setTransform
+            //cc._renderContext.translate(viewport.x, viewport.y + contentH);
+        }
 
         this._result.scale = [scaleX, scaleY];
         this._result.viewport = viewport;
@@ -758,12 +932,20 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
 (function () {
 
 // Container scale strategys
+    /**
+     * @class
+     * @extends cc.ContainerStrategy
+     */
     var EqualToFrame = cc.ContainerStrategy.extend({
         apply: function (view) {
             this._setupContainer(view, view._frameSize.width, view._frameSize.height);
         }
     });
 
+    /**
+     * @class
+     * @extends cc.ContainerStrategy
+     */
     var ProportionalToFrame = cc.ContainerStrategy.extend({
         apply: function (view, designedResolution) {
             var frameW = view._frameSize.width, frameH = view._frameSize.height, containerStyle = cc.container.style,
@@ -788,6 +970,10 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
         }
     });
 
+    /**
+     * @class
+     * @extends EqualToFrame
+     */
     var EqualToWindow = EqualToFrame.extend({
         preApply: function (view) {
 	        this._super(view);
@@ -800,6 +986,10 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
         }
     });
 
+    /**
+     * @class
+     * @extends ProportionalToFrame
+     */
     var ProportionalToWindow = ProportionalToFrame.extend({
         preApply: function (view) {
 	        this._super(view);
@@ -812,6 +1002,10 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
         }
     });
 
+    /**
+     * @class
+     * @extends cc.ContainerStrategy
+     */
     var OriginalContainer = cc.ContainerStrategy.extend({
         apply: function (view) {
             this._setupContainer(view, cc._canvas.width, cc._canvas.height);
@@ -914,11 +1108,18 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
  *
  * @class
  * @extends cc.Class
+ * @param {cc.ContainerStrategy} containerStg The container strategy
+ * @param {cc.ContentStrategy} contentStg The content strategy
  */
 cc.ResolutionPolicy = cc.Class.extend(/** @lends cc.ResolutionPolicy# */{
 	_containerStrategy: null,
     _contentStrategy: null,
 
+    /**
+     * Constructor of cc.ResolutionPolicy
+     * @param {cc.ContainerStrategy} containerStg
+     * @param {cc.ContentStrategy} contentStg
+     */
     ctor: function (containerStg, contentStg) {
         this.setContainerStrategy(containerStg);
         this.setContentStrategy(contentStg);
@@ -974,40 +1175,44 @@ cc.ResolutionPolicy = cc.Class.extend(/** @lends cc.ResolutionPolicy# */{
     }
 });
 
-/*
+/**
  * @memberOf cc.ResolutionPolicy#
  * @name EXACT_FIT
- * @const
+ * @constant
+ * @type Number
  * @static
  * The entire application is visible in the specified area without trying to preserve the original aspect ratio.<br/>
  * Distortion can occur, and the application may appear stretched or compressed.
  */
 cc.ResolutionPolicy.EXACT_FIT = 0;
 
-/*
+/**
  * @memberOf cc.ResolutionPolicy#
  * @name NO_BORDER
- * @const
+ * @constant
+ * @type Number
  * @static
  * The entire application fills the specified area, without distortion but possibly with some cropping,<br/>
  * while maintaining the original aspect ratio of the application.
  */
 cc.ResolutionPolicy.NO_BORDER = 1;
 
-/*
+/**
  * @memberOf cc.ResolutionPolicy#
  * @name SHOW_ALL
- * @const
+ * @constant
+ * @type Number
  * @static
  * The entire application is visible in the specified area without distortion while maintaining the original<br/>
  * aspect ratio of the application. Borders can appear on two sides of the application.
  */
 cc.ResolutionPolicy.SHOW_ALL = 2;
 
-/*
+/**
  * @memberOf cc.ResolutionPolicy#
  * @name FIXED_HEIGHT
- * @const
+ * @constant
+ * @type Number
  * @static
  * The application takes the height of the design resolution size and modifies the width of the internal<br/>
  * canvas so that it fits the aspect ratio of the device<br/>
@@ -1016,10 +1221,11 @@ cc.ResolutionPolicy.SHOW_ALL = 2;
  */
 cc.ResolutionPolicy.FIXED_HEIGHT = 3;
 
-/*
+/**
  * @memberOf cc.ResolutionPolicy#
  * @name FIXED_WIDTH
- * @const
+ * @constant
+ * @type Number
  * @static
  * The application takes the width of the design resolution size and modifies the height of the internal<br/>
  * canvas so that it fits the aspect ratio of the device<br/>
@@ -1028,10 +1234,11 @@ cc.ResolutionPolicy.FIXED_HEIGHT = 3;
  */
 cc.ResolutionPolicy.FIXED_WIDTH = 4;
 
-/*
+/**
  * @memberOf cc.ResolutionPolicy#
  * @name UNKNOWN
- * @const
+ * @constant
+ * @type Number
  * @static
  * Unknow policy
  */

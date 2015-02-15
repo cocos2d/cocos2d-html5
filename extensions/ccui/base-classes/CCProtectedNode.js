@@ -37,14 +37,20 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         child._setLocalZOrder(z);
     },
 
+    /**
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+     * @function
+     */
     ctor: function(){
         cc.Node.prototype.ctor.call(this);
-       this._protectedChildren = [];
+        this._protectedChildren = [];
     },
 
     /**
-     *  Adds a child to the container with z order and tag
-     *  If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.
+     * <p>
+     *  Adds a child to the container with z order and tag                                                                         <br/>
+     *  If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.     <br/>
+     *  </p>
      * @param {cc.Node} child  A child node
      * @param {Number} [localZOrder]  Z order for drawing priority. Please refer to `setLocalZOrder(int)`
      * @param {Number} [tag]  An integer to identify the node easily. Please refer to `setTag(int)`
@@ -61,7 +67,6 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         child.setParent(this);
         child.setOrderOfArrival(cc.s_globalOrderOfArrival);
 
-        //TODO USE PHYSICS
         if(this._running){
             child.onEnter();
             // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
@@ -69,9 +74,9 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
                 child.onEnterTransitionDidFinish();
         }
         if(this._cascadeColorEnabled)
-            this._enableCascadeColor();
+            this._renderCmd.setCascadeColorEnabledDirty();
         if (this._cascadeOpacityEnabled)
-            this._enableCascadeOpacity();
+            this._renderCmd.setCascadeOpacityEnabledDirty();
     },
 
     /**
@@ -105,7 +110,6 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
                  child.onExitTransitionDidStart();
                  child.onExit();
              }
-            //TODO  USE PHYSICS
 
             // If you don't do cleanup, the child's actions will not get removed and the
             // its scheduledSelectors_ dict will not get released!
@@ -119,7 +123,8 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
     },
 
     /**
-     * Removes a child from the container by tag value. It will also cleanup all running actions depending on the cleanup parameter
+     * Removes a child from the container by tag value.                                    <br/>
+     * It will also cleanup all running actions depending on the cleanup parameter
      * @param {Number} tag
      * @param {Boolean} [cleanup=true]
      */
@@ -139,7 +144,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
 
     /**
      * Removes all children from the container with a cleanup.
-     *  @see `removeAllChildrenWithCleanup(bool)`
+     * @see cc.ProtectedNode#removeAllProtectedChildrenWithCleanup
      */
     removeAllProtectedChildren: function(){
         this.removeAllProtectedChildrenWithCleanup(true);
@@ -164,7 +169,6 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
                 child.onExit();
             }
 
-            //TODO USE PHYSICS
             if (cleanup)
                 child.cleanup();
             // set parent nil at the end
@@ -208,9 +212,8 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
                         _children[j+1] = _children[j];
                     }else if(tmp._localZOrder === _children[j]._localZOrder && tmp.arrivalOrder < _children[j].arrivalOrder){
                         _children[j+1] = _children[j];
-                    }else{
+                    }else
                         break;
-                    }
                     j--;
                 }
                 _children[j+1] = tmp;
@@ -221,108 +224,12 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
         }
     },
 
-    visit: null,
+    _changePosition: function(){},
 
-    _visitForCanvas: function(ctx){
-        var _t = this;
-        // quick return if not visible
-        if (!_t._visible)
-            return;
-
-        //visit for canvas
-        var context = ctx || cc._renderContext, i, j;
-        var children = _t._children, child;
-        var locChildren = _t._children, locProtectedChildren = this._protectedChildren;
-        var childLen = locChildren.length, pLen = locProtectedChildren.length;
-        context.save();
-        _t.transform(context);
-
-        _t.sortAllChildren();
-        _t.sortAllProtectedChildren();
-
-        // draw children zOrder < 0
-        for (i = 0; i < childLen; i++) {
-            child = children[i];
-            if (child._localZOrder < 0)
-                child.visit(context);
-            else
-                break;
-        }
-        for (j = 0; j < pLen; j++) {
-            child = locProtectedChildren[j];
-            if (child._localZOrder < 0)
-                child.visit(context);
-            else
-                break;
-        }
-
-        _t.draw(context);
-
-        for (; i < childLen; i++) {
-            children[i] && children[i].visit(context);
-        }
-        for (; j < pLen; j++) {
-            locProtectedChildren[i] && locProtectedChildren[i].visit(context);
-        }
-
-        this._cacheDirty = false;
-        _t.arrivalOrder = 0;
-        context.restore();
-    },
-
-    _visitForWebGL: function(){
-        var _t = this;
-        // quick return if not visible
-        if (!_t._visible)
-            return;
-        var context = cc._renderContext, i, currentStack = cc.current_stack, j;
-
-        //optimize performance for javascript
-        currentStack.stack.push(currentStack.top);
-        cc.kmMat4Assign(_t._stackMatrix, currentStack.top);
-        currentStack.top = _t._stackMatrix;
-
-        var locGrid = _t.grid;
-        if (locGrid && locGrid._active)
-            locGrid.beforeDraw();
-
-        _t.transform();
-
-        var locChildren = _t._children, locProtectedChildren = this._protectedChildren;
-        var childLen = locChildren.length, pLen = locProtectedChildren.length;
-        _t.sortAllChildren();
-        _t.sortAllProtectedChildren();
-
-        // draw children zOrder < 0
-        for (i = 0; i < childLen; i++) {
-            if (locChildren[i] && locChildren[i]._localZOrder < 0)
-                locChildren[i].visit();
-            else
-                break;
-        }
-        for(j = 0; j < pLen; j++){
-            if (locProtectedChildren[j] && locProtectedChildren[j]._localZOrder < 0)
-                locProtectedChildren[j].visit();
-            else
-                break;
-        }
-        _t.draw(context);
-        // draw children zOrder >= 0
-        for (; i < childLen; i++) {
-            locChildren[i] && locChildren[i].visit();
-        }
-        for (; j < pLen; j++) {
-            locProtectedChildren[j] && locProtectedChildren[j].visit();
-        }
-
-        _t.arrivalOrder = 0;
-        if (locGrid && locGrid._active)
-            locGrid.afterDraw(_t);
-
-        //optimize performance for javascript
-        currentStack.top = currentStack.stack.pop();
-    },
-
+    /**
+     * Stops itself and its children and protected children's all running actions and schedulers
+     * @override
+     */
     cleanup: function(){
        cc.Node.prototype.cleanup.call(this);
        var locChildren = this._protectedChildren;
@@ -330,6 +237,10 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
             locChildren[i].cleanup();
     },
 
+    /**
+     * Calls its parent's onEnter and calls its protected children's onEnter
+     * @override
+     */
     onEnter: function(){
         cc.Node.prototype.onEnter.call(this);
         var locChildren = this._protectedChildren;
@@ -343,6 +254,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
      *     If the Node enters the 'stage' with a transition, this event is called when the transition finishes.         <br/>
      *     If you override onEnterTransitionDidFinish, you shall call its parent's one, e.g. Node::onEnterTransitionDidFinish()
      *  </p>
+     *  @override
      */
     onEnterTransitionDidFinish: function(){
         cc.Node.prototype.onEnterTransitionDidFinish.call(this);
@@ -351,6 +263,10 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
             locChildren[i].onEnterTransitionDidFinish();
     },
 
+    /**
+     * Calls its parent's onExit and calls its protected children's onExit
+     * @override
+     */
     onExit:function(){
         cc.Node.prototype.onExit.call(this);
         var locChildren = this._protectedChildren;
@@ -371,67 +287,18 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
             locChildren[i].onExitTransitionDidStart();
     },
 
-    updateDisplayedOpacity: function(parentOpacity){
-        this._displayedOpacity = this._realOpacity * parentOpacity/255.0;
-        this._updateColor();
-
-        if (this._cascadeOpacityEnabled){
-            var i,len, locChildren = this._children, _opacity = this._displayedOpacity;
-            for(i = 0, len = locChildren.length;i < len; i++){
-                if(locChildren[i].updateDisplayedOpacity)
-                    locChildren[i].updateDisplayedOpacity(_opacity);
-            }
-
-            locChildren = this._protectedChildren;
-            for(i = 0, len = locChildren.length;i < len; i++){
-                if(locChildren[i].updateDisplayedOpacity)
-                    locChildren[i].updateDisplayedOpacity(_opacity);
-            }
-        }
-    },
-
-    updateDisplayedColor: function(parentColor){
-        var displayedColor = this._displayedColor, realColor = this._realColor;
-        displayedColor.r = realColor.r * parentColor.r/255.0;
-        displayedColor.g = realColor.g * parentColor.g/255.0;
-        displayedColor.b = realColor.b * parentColor.b/255.0;
-        this._updateColor();
-
-        if (this._cascadeColorEnabled){
-            var i, len, locChildren = this._children;
-            for(i = 0, len = locChildren.length; i < len; i++){
-                if(locChildren[i].updateDisplayedColor)
-                    locChildren[i].updateDisplayedColor(displayedColor);
-            }
-
-            locChildren = this._protectedChildren;
-            for(i =0, len = locChildren.length; i < len; i++) {
-                if (locChildren[i].updateDisplayedColor)
-                    locChildren[i].updateDisplayedColor(displayedColor);
-            }
-        }
-    },
-
-    disableCascadeColor: function(){
-        var white = cc.color.WHITE;
-        var i, len, locChildren = this._children;
-        for(i = 0, len = locChildren.length; i < len; i++)
-            locChildren[i].updateDisplayedColor(white);
-
-        locChildren = this._protectedChildren;
-        for(i =0, len = locChildren.length; i < len; i++)
-            locChildren[i].updateDisplayedColor(white);
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new cc.ProtectedNode.CanvasRenderCmd(this);
+        else
+            return new cc.ProtectedNode.WebGLRenderCmd(this);
     }
 });
 
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-    cc.ProtectedNode.prototype.visit =  cc.ProtectedNode.prototype._visitForCanvas;
-}else{
-    cc.ProtectedNode.prototype.visit =  cc.ProtectedNode.prototype._visitForWebGL;
-}
-
 /**
  * create a cc.ProtectedNode object;
+ * @deprecated since v3.0, please use new cc.ProtectedNode() instead.
+ * @return cc.ProtectedNode
  */
 cc.ProtectedNode.create = function(){
     return new cc.ProtectedNode();

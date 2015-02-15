@@ -133,6 +133,7 @@ cc.TMXLayerInfo = cc.Class.extend(/** @lends cc.TMXLayerInfo# */{
     },
 
     /**
+     * Gets the Properties.
      * @return {Array}
      */
     getProperties:function () {
@@ -140,6 +141,7 @@ cc.TMXLayerInfo = cc.Class.extend(/** @lends cc.TMXLayerInfo# */{
     },
 
     /**
+     * Set the Properties.
      * @param {object} value
      */
     setProperties:function (value) {
@@ -159,38 +161,33 @@ cc.TMXLayerInfo = cc.Class.extend(/** @lends cc.TMXLayerInfo# */{
  * This information is obtained from the TMX file. </p>
  * @class
  * @extends cc.Class
+ *
+ * @property {string} name - Tileset name
+ * @property {number} firstGid - First grid
+ * @property {number} spacing - Spacing
+ * @property {number} margin - Margin
+ * @property {string} sourceImage - Filename containing the tiles (should be sprite sheet / texture atlas)
+ * @property {cc.Size|null} imageSize - Size in pixels of the image
  */
 cc.TMXTilesetInfo = cc.Class.extend(/** @lends cc.TMXTilesetInfo# */{
 
-    /**
-     * Tileset name
-     */
+    //Tileset name
     name:"",
 
-    /**
-     * First grid
-     */
+    //First grid
     firstGid:0,
     _tileSize:null,
 
-    /**
-     * Spacing
-     */
+    //Spacing
     spacing:0,
 
-    /**
-     *  Margin
-     */
+    //Margin
     margin:0,
 
-    /**
-     * Filename containing the tiles (should be sprite sheet / texture atlas)
-     */
+    //Filename containing the tiles (should be sprite sheet / texture atlas)
     sourceImage:"",
 
-    /**
-     * Size in pixels of the image
-     */
+    //Size in pixels of the image
     imageSize:null,
 
     ctor:function () {
@@ -199,6 +196,7 @@ cc.TMXTilesetInfo = cc.Class.extend(/** @lends cc.TMXTilesetInfo# */{
     },
 
     /**
+     * Return rect
      * @param {Number} gid
      * @return {cc.Rect}
      */
@@ -242,6 +240,19 @@ cc.TMXTilesetInfo = cc.Class.extend(/** @lends cc.TMXTilesetInfo# */{
  * @property {Number}   mapHeight           - Height of the map
  * @property {Number}   tileWidth           - Width of a tile
  * @property {Number}   tileHeight          - Height of a tile
+ *
+ * @param {String} tmxFile fileName or content string
+ * @param {String} resourcePath  If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
+ * @example
+ * 1.
+ * //create a TMXMapInfo with file name
+ * var tmxMapInfo = new cc.TMXMapInfo("res/orthogonal-test1.tmx");
+ * 2.
+ * //create a TMXMapInfo with content string and resource path
+ * var resources = "res/TileMaps";
+ * var filePath = "res/TileMaps/orthogonal-test1.tmx";
+ * var xmlStr = cc.loader.getRes(filePath);
+ * var tmxMapInfo = new cc.TMXMapInfo(xmlStr, resources);
  */
 cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
 	properties:null,
@@ -268,16 +279,6 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
      * Constructor of cc.TMXMapInfo
      * @param {String} tmxFile fileName or content string
      * @param {String} resourcePath  If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
-     * @example
-     * 1.
-     * //create a TMXMapInfo with file name
-     * var tmxMapInfo = cc.TMXMapInfo.create("res/orthogonal-test1.tmx");
-     * 2.
-     * //create a TMXMapInfo with content string and resource path
-     * var resources = "res/TileMaps";
-     * var filePath = "res/TileMaps/orthogonal-test1.tmx";
-     * var xmlStr = cc.loader.getRes(filePath);
-     * var tmxMapInfo = cc.TMXMapInfo.create(xmlStr, resources);
      */
     ctor:function (tmxFile, resourcePath) {
         cc.SAXParser.prototype.ctor.apply(this);
@@ -298,6 +299,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         }
     },
     /**
+     * Gets Map orientation.
      * @return {Number}
      */
     getOrientation:function () {
@@ -305,6 +307,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
+     * Set the Map orientation.
      * @param {Number} value
      */
     setOrientation:function (value) {
@@ -320,6 +323,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
+     * Map width & height
      * @param {cc.Size} value
      */
     setMapSize:function (value) {
@@ -349,6 +353,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
+     * Tiles width & height
      * @param {cc.Size} value
      */
     setTileSize:function (value) {
@@ -378,6 +383,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
+     * Layers
      * @param {cc.TMXLayerInfo} value
      */
     setLayers:function (value) {
@@ -393,6 +399,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
+     * tilesets
      * @param {cc.TMXTilesetInfo} value
      */
     setTilesets:function (value) {
@@ -408,6 +415,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
+     * ObjectGroups
      * @param {cc.TMXObjectGroup} value
      */
     setObjectGroups:function (value) {
@@ -423,6 +431,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
+     * parent element
      * @param {Object} value
      */
     setParentElement:function (value) {
@@ -438,6 +447,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
+     * parent GID
      * @param {Number} value
      */
     setParentGID:function (value) {
@@ -453,6 +463,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
+     * Layer attribute
      * @param {Object} value
      */
     setLayerAttribs:function (value) {
@@ -468,6 +479,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
+     * Is reading storing characters stream
      * @param {Boolean} value
      */
     setStoringCharacters:function (value) {
@@ -483,6 +495,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
+     * Properties
      * @param {object} value
      */
     setProperties:function (value) {
@@ -756,6 +769,8 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
 
                         // Correct y position. (Tiled uses Flipped, cocos2d uses Standard)
                         objectProp["y"] = parseInt(this.getMapSize().height * this.getTileSize().height) - y - objectProp["height"];
+						
+                        objectProp["rotation"] = parseInt(selObj.getAttribute('rotation')) || 0;
 
                         var docObjProps = selObj.querySelectorAll("properties > property");
                         if (docObjProps) {
@@ -813,6 +828,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
+     * Gets the tile properties.
      * @return {object}
      */
     getTileProperties:function () {
@@ -820,6 +836,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
+     * Set the tile properties.
      * @param {object} tileProperties
      */
     setTileProperties:function (tileProperties) {
@@ -827,6 +844,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
+     * Gets the currentString
      * @return {String}
      */
     getCurrentString:function () {
@@ -834,6 +852,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
+     * Set the currentString
      * @param {String} currentString
      */
     setCurrentString:function (currentString) {
@@ -841,6 +860,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
+     * Gets the tmxFileName
      * @return {String}
      */
     getTMXFileName:function () {
@@ -848,6 +868,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
+     * Set the tmxFileName
      * @param {String} fileName
      */
     setTMXFileName:function (fileName) {
@@ -894,19 +915,10 @@ cc.defineGetterSetter(_p, "tileHeight", _p._getTileHeight, _p._setTileHeight);
 
 /**
  * Creates a TMX Format with a tmx file or content string
+ * @deprecated since v3.0 please use new cc.TMXMapInfo(tmxFile, resourcePath) instead.
  * @param {String} tmxFile fileName or content string
  * @param {String} resourcePath  If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
  * @return {cc.TMXMapInfo}
- * @example
- * 1.
- * //create a TMXMapInfo with file name
- * var tmxMapInfo = cc.TMXMapInfo.create("res/orthogonal-test1.tmx");
- * 2.
- * //create a TMXMapInfo with content string and resource path
- * var resources = "res/TileMaps";
- * var filePath = "res/TileMaps/orthogonal-test1.tmx";
- * var xmlStr = cc.loader.getRes(filePath);
- * var tmxMapInfo = cc.TMXMapInfo.create(xmlStr, resources);
  */
 cc.TMXMapInfo.create = function (tmxFile, resourcePath) {
     return new cc.TMXMapInfo(tmxFile, resourcePath);

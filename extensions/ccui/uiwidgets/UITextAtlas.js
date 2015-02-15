@@ -24,7 +24,7 @@
  ****************************************************************************/
 
 /**
- * Base class for ccui.TextAtlas
+ * The text atlas control of Cocos UI.
  * @class
  * @extends ccui.Widget
  *
@@ -41,19 +41,24 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
     _labelAtlasRendererAdaptDirty: null,
 
     /**
-     * allocates and initializes a UILabelAtlas.
-     * Constructor of ccui.TextAtlas
+     * Allocates and initializes a UILabelAtlas.                  <br/>
+     * Constructor of ccui.TextAtlas, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+     * @param {String} stringValue
+     * @param {String} charMapFile
+     * @param {number} itemWidth
+     * @param {number} itemHeight
+     * @param {String} startCharMap
      * @example
      * // example
      * var uiLabelAtlas = new ccui.TextAtlas();
      */
-    ctor: function () {
+    ctor: function (stringValue, charMapFile, itemWidth, itemHeight, startCharMap) {
         ccui.Widget.prototype.ctor.call(this);
+        startCharMap !== undefined && this.setProperty(stringValue, charMapFile, itemWidth, itemHeight, startCharMap);
     },
 
     _initRenderer: function () {
         this._labelAtlasRenderer = new cc.LabelAtlas();
-        //cc.Node.prototype.addChild.call(this, this._labelAtlasRenderer, ccui.TextAtlas.RENDERER_ZORDER, -1);
         this._labelAtlasRenderer.setAnchorPoint(cc.p(0.5, 0.5));
         this.addProtectedChild(this._labelAtlasRenderer, ccui.TextAtlas.RENDERER_ZORDER, -1);
     },
@@ -72,10 +77,7 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
         this._itemWidth = itemWidth;
         this._itemHeight = itemHeight;
         this._startCharMap = startCharMap;
-//        this._labelAtlasRenderer.initWithString(stringValue, this._charMapFileName, this._itemWidth, this._itemHeight, this._startCharMap[0]);
 
-//        this._labelAtlasRenderer.setCharMap(this._charMapFileName, this._itemWidth, this._itemHeight, this._startCharMap[0]);
-//        this._labelAtlasRenderer.setString(stringValue);
         this._labelAtlasRenderer.initWithString(
             stringValue,
             this._charMapFileName,
@@ -86,24 +88,24 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
 
         this._updateContentSizeWithTextureSize(this._labelAtlasRenderer.getContentSize());
         this._labelAtlasRendererAdaptDirty = true;
-
     },
 
     /**
-     * set string value for ui text atlas.
+     * Sets string value for ui text atlas.
      * @param {String} value
      */
     setString: function (value) {
+        if(value == this._labelAtlasRenderer.getString())
+            return;
         this._stringValue = value;
         this._labelAtlasRenderer.setString(value);
-//        this._labelAtlasScaleChangedWithSize();
         this._updateContentSizeWithTextureSize(this._labelAtlasRenderer.getContentSize());
         this._labelAtlasRendererAdaptDirty = true;
     },
 
     /**
-     * set string value for labelatlas.
-     * @deprecated
+     * Sets string value for text atlas.
+     * @deprecated since v3.0, please use setString instead.
      * @param {String} value
      */
     setStringValue: function (value) {
@@ -112,8 +114,8 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
     },
 
     /**
-     * get string value for labelatlas.
-     * @deprecated
+     * get string value for text atlas.
+     * @deprecated since v3.0, please use getString instead.
      * @returns {String}
      */
     getStringValue: function () {
@@ -129,31 +131,37 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
         return this._labelAtlasRenderer.getString();
     },
 
+    /**
+     * Returns the length of string.
+     * @returns {*|Number|long|int}
+     */
     getStringLength: function(){
         return this._labelAtlasRenderer.getStringLength();
     },
 
     _onSizeChanged: function () {
         ccui.Widget.prototype._onSizeChanged.call(this);
-//        this._labelAtlasScaleChangedWithSize();
         this._labelAtlasRendererAdaptDirty = true;
     },
 
     _adaptRenderers: function(){
-        if (this._labelAtlasRendererAdaptDirty)
-        {
+        if (this._labelAtlasRendererAdaptDirty){
             this._labelAtlasScaleChangedWithSize();
             this._labelAtlasRendererAdaptDirty = false;
         }
-
     },
 
+    /**
+     * Returns the renderer's content size
+     * @overrider
+     * @returns {cc.Size}
+     */
     getVirtualRendererSize: function(){
         return this._labelAtlasRenderer.getContentSize();
     },
 
     /**
-     * override "getVirtualRenderer" method of widget.
+     * Returns the renderer of ccui.TextAtlas.
      * @returns {cc.Node}
      */
     getVirtualRenderer: function () {
@@ -177,15 +185,11 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
     },
 
     /**
-     * Returns the "class name" of widget.
+     * Returns the "class name" of ccui.TextAtlas.
      * @returns {string}
      */
     getDescription: function () {
         return "LabelAtlas";
-    },
-
-    _updateTextureColor: function () {
-        this.updateColorToRenderer(this._labelAtlasRenderer);
     },
 
     _copySpecialProperties: function (labelAtlas) {
@@ -194,16 +198,8 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
         }
     },
 
-    _updateTextureOpacity: function () {
-        this.updateOpacityToRenderer(this._labelAtlasRenderer);
-    },
-
-    _updateTextureRGBA: function(){
-        this.updateRGBAToRenderer(this._labelAtlasRenderer);
-    },
-
     _createCloneInstance: function () {
-        return ccui.TextAtlas.create();
+        return new ccui.TextAtlas();
     }
 });
 
@@ -218,22 +214,16 @@ _p = null;
 
 /**
  * allocates and initializes a UILabelAtlas.
- * @constructs
+ * @deprecated since v3.0, please use new ccui.TextAtlas() instead.
  * @return {ccui.TextAtlas}
- * @example
- * // example
- * var uiLabelAtlas = ccui.TextAtlas.create();
  */
 ccui.TextAtlas.create = function (stringValue, charMapFile, itemWidth, itemHeight, startCharMap) {
-    var widget = new ccui.TextAtlas();
-    if(widget && widget.init()){
-        if(arguments.length > 0){
-            widget.setProperty(stringValue, charMapFile, itemWidth, itemHeight, startCharMap);
-        }
-        return widget;
-    }
-    return null;
+    return new ccui.TextAtlas(stringValue, charMapFile, itemWidth, itemHeight, startCharMap);
 };
 
 // Constants
+/**
+ * The zOrder value of ccui.TextAtlas's renderer.
+ * @type {number}
+ */
 ccui.TextAtlas.RENDERER_ZORDER = -1;

@@ -24,26 +24,36 @@
  ****************************************************************************/
 
 /**
- * Base class for ccs.ComAttribute
+ * The attribute component for Cocostudio.
  * @class
  * @extends ccs.Component
  */
 ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
     _jsonDict: null,
     _filePath: "",
+
+    /**
+     * Construction of ccs.ComAttribute
+     */
     ctor: function () {
         cc.Component.prototype.ctor.call(this);
         this._jsonDict = {};
         this._filePath = "";
         this._name = "CCComAttribute";
+        ccs.ComAttribute.prototype.init.call(this);
     },
+
+    /**
+     * Initializes a ccs.ComAttribute
+     * @returns {boolean}
+     */
     init: function () {
         this._jsonDict = {};
         return true;
     },
 
     /**
-     * Set int attribute
+     * Sets int attribute
      * @param {String} key
      * @param {number} value
      */
@@ -56,7 +66,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
     },
 
     /**
-     * Set double attribute
+     * Sets double attribute
      * @param {String} key
      * @param {number} value
      */
@@ -69,7 +79,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
     },
 
     /**
-     * Set float attribute
+     * Sets float attribute
      * @param {String} key
      * @param {number} value
      */
@@ -82,7 +92,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
     },
 
     /**
-     * Set boolean attribute
+     * Sets boolean attribute
      * @param {String} key
      * @param {Boolean} value
      */
@@ -95,7 +105,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
     },
 
     /**
-     * Set string attribute
+     * Sets string attribute
      * @param {String} key
      * @param {Boolean} value
      */
@@ -108,7 +118,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
     },
 
     /**
-     * Set object attribute
+     * Sets object attribute
      * @param {String} key
      * @param {Object} value
      */
@@ -121,7 +131,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
     },
 
     /**
-     * Get int value from attribute
+     * Returns int value from attribute
      * @param {String} key
      * @returns {Number}
      */
@@ -131,7 +141,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
     },
 
     /**
-     * Get double value from attribute
+     * Returns double value from attribute
      * @param {String} key
      * @returns {Number}
      */
@@ -141,7 +151,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
     },
 
     /**
-     * Get float value from attribute
+     * Returns float value from attribute
      * @param {String} key
      * @returns {Number}
      */
@@ -151,7 +161,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
     },
 
     /**
-     * Get boolean value from attribute
+     * Returns boolean value from attribute
      * @param {String} key
      * @returns {Boolean}
      */
@@ -161,7 +171,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
     },
 
     /**
-     * Get string value from attribute
+     * Returns string value from attribute
      * @param {String} key
      * @returns {String}
      */
@@ -171,7 +181,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
     },
 
     /**
-     * Get object value from attribute
+     * Returns object value from attribute
      * @param {String} key
      * @returns {Object}
      */
@@ -180,25 +190,21 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
     },
 
     /**
-     *
-     * @param path
+     * Parses json file.
+     * @param  filename
      */
-    parse:function(path){
-        this._jsonDict = cc.loader.getRes(path);
+    parse:function(filename){
+        this._jsonDict = cc.loader.getRes(filename);
     }
 });
 /**
  * allocates and initializes a ComAttribute.
- * @constructs
+ * @deprecated since v3.0, please use new construction instead.
  * @return {ccs.ComAttribute}
  * @example
  * // example
  * var com = ccs.ComAttribute.create();
  */
 ccs.ComAttribute.create = function () {
-    var com = new ccs.ComAttribute();
-    if (com && com.init()) {
-        return com;
-    }
-    return null;
+    return new ccs.ComAttribute();
 };

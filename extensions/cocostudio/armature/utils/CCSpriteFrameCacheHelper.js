@@ -24,30 +24,43 @@
  ****************************************************************************/
 
 /**
- * The sprite frame cache helper
- * @namespace
+ * ccs.spriteFrameCacheHelper is a singleton object, it's a sprite frame cache helper
+ * @class
  * @name ccs.spriteFrameCacheHelper
  */
 ccs.spriteFrameCacheHelper = /** @lends ccs.spriteFrameCacheHelper# */ {
     _textureAtlasDic:{},
     _imagePaths:[],
 
+    /**
+     * Adds sprite frame from file
+     * @param plistPath
+     * @param imagePath
+     */
     addSpriteFrameFromFile:function (plistPath, imagePath) {
         cc.spriteFrameCache.addSpriteFrames(plistPath, imagePath);
     },
 
-    getTexureAtlasWithTexture:function (texture) {
+    /**
+     * Returns texture atlas with texture.
+     * @param texture
+     * @returns {*}
+     */
+    getTextureAtlasWithTexture:function (texture) {
         //todo
         return null;
         var textureName = texture.getName();
         var atlas = this._textureAtlasDic[textureName];
         if (atlas == null) {
-            atlas = cc.TextureAtlas.create(texture, 20);
+            atlas = new cc.TextureAtlas(texture, 20);
             this._textureAtlasDic[textureName] = atlas;
         }
         return atlas;
     },
 
+    /**
+     * Clear the sprite frame cache's data.
+     */
 	clear: function () {
 		this._textureAtlasDic = {};
 		this._imagePaths = [];

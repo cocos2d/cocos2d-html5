@@ -125,7 +125,6 @@ cc.SHADER_POSITION_COLOR_LENGTH_TEXTURE_VERT =
 cc.SHADER_POSITION_TEXTURE_FRAG =
         "precision lowp float;   \n"
         + "varying vec2 v_texCoord;  \n"
-        + "uniform sampler2D CC_Texture0; \n"
         + "void main() \n"
         + "{  \n"
         + "    gl_FragColor =  texture2D(CC_Texture0, v_texCoord);   \n"
@@ -155,7 +154,6 @@ cc.SHADER_POSITION_TEXTURE_UCOLOR_FRAG =
         "precision lowp float;  \n"
         + "uniform vec4 u_color; \n"
         + "varying vec2 v_texCoord; \n"
-        + "uniform sampler2D CC_Texture0;  \n"
         + "void main() \n"
         + "{  \n"
         + "    gl_FragColor =  texture2D(CC_Texture0, v_texCoord) * u_color;    \n"
@@ -185,7 +183,6 @@ cc.SHADER_POSITION_TEXTURE_A8COLOR_FRAG =
         "precision lowp float;  \n"
         + "varying vec4 v_fragmentColor; \n"
         + "varying vec2 v_texCoord; \n"
-        + "uniform sampler2D CC_Texture0; \n"
         + "void main() \n"
         + "{ \n"
         + "    gl_FragColor = vec4( v_fragmentColor.rgb,         \n"                            // RGB from uniform
@@ -220,7 +217,6 @@ cc.SHADER_POSITION_TEXTURE_COLOR_FRAG =
         "precision lowp float;\n"
         + "varying vec4 v_fragmentColor; \n"
         + "varying vec2 v_texCoord; \n"
-        + "uniform sampler2D CC_Texture0; \n"
         + "void main() \n"
         + "{ \n"
         + "    gl_FragColor = v_fragmentColor * texture2D(CC_Texture0, v_texCoord); \n"
@@ -253,13 +249,12 @@ cc.SHADER_POSITION_TEXTURE_COLOR_ALPHATEST_FRAG =
         "precision lowp float;   \n"
         + "varying vec4 v_fragmentColor; \n"
         + "varying vec2 v_texCoord;   \n"
-        + "uniform sampler2D CC_Texture0; \n"
         + "uniform float CC_alpha_value; \n"
         + "void main() \n"
         + "{  \n"
         + "    vec4 texColor = texture2D(CC_Texture0, v_texCoord);  \n"
-        + "    // mimic: glAlphaFunc(GL_GREATER)           \n"
-        + "    //pass if ( incoming_pixel >= CC_alpha_value ) => fail if incoming_pixel < CC_alpha_value   \n"
+        // mimic: glAlphaFunc(GL_GREATER)
+        //pass if ( incoming_pixel >= CC_alpha_value ) => fail if incoming_pixel < CC_alpha_value
         + "    if ( texColor.a <= CC_alpha_value )          \n"
         + "        discard; \n"
         + "    gl_FragColor = texColor * v_fragmentColor;  \n"

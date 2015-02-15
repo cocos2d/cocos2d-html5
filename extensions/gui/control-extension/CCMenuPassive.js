@@ -48,7 +48,7 @@ cc.Spacer.horizontalSpacer = function (space) {
 /**
  * MenuPassive: The menu passive ui component
  * @class
- * @extend cc.Layer
+ * @extends cc.Layer
  */
 cc.MenuPassive = cc.Layer.extend(/** @lends cc.MenuPassive# */{
 

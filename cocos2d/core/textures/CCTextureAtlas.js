@@ -42,7 +42,7 @@
  * @property {Number}   totalQuads      - <@readonly> Quantity of quads that are going to be drawn.
  * @property {Array}    quads           - <@readonly> Quads that are going to be rendered
  */
-cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
+cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{  //WebGL only
     dirty: false,
     texture: null,
 
@@ -74,10 +74,9 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     ctor: function (fileName, capacity) {
         this._buffersVBO = [];
 
-        if (typeof(fileName) == "string") {
+        if (cc.isString(fileName)) {
             this.initWithFile(fileName, capacity);
-        }
-        else if (fileName instanceof cc.Texture2D) {
+        } else if (fileName instanceof cc.Texture2D) {
             this.initWithTexture(fileName, capacity);
         }
     },
@@ -142,8 +141,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Array} quads
      */
     setQuads: function (quads) {
-        this._quads = quads;
         //TODO need re-binding
+        this._quads = quads;
     },
 
     _copyQuadsToTextureAtlas: function (quads, index) {
@@ -257,7 +256,6 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * textureAtlas.initWithTexture(texture, 3);
      */
     initWithTexture: function (texture, capacity) {
-
         cc.assert(texture, cc._LogInfos.TextureAtlas_initWithTexture);
 
         capacity = 0 | (capacity);
@@ -294,9 +292,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} index
      */
     updateQuad: function (quad, index) {
-
         cc.assert(quad, cc._LogInfos.TextureAtlas_updateQuad);
-
         cc.assert(index >= 0 && index < this._capacity, cc._LogInfos.TextureAtlas_updateQuad_2);
 
         this._totalQuads = Math.max(index + 1, this._totalQuads);
@@ -311,7 +307,6 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} index
      */
     insertQuad: function (quad, index) {
-
         cc.assert(index < this._capacity, cc._LogInfos.TextureAtlas_insertQuad_2);
 
         this._totalQuads++;
@@ -407,7 +402,6 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} index
      */
     removeQuadAtIndex: function (index) {
-
         cc.assert(index < this._totalQuads, cc._LogInfos.TextureAtlas_removeQuadAtIndex);
 
         var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
@@ -422,8 +416,12 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         this.dirty = true;
     },
 
+    /**
+     * Removes a given number of quads at a given index
+     * @param {Number} index
+     * @param {Number} amount
+     */
     removeQuadsAtIndex: function (index, amount) {
-
         cc.assert(index + amount <= this._totalQuads, cc._LogInfos.TextureAtlas_removeQuadsAtIndex);
 
         this._totalQuads -= amount;
@@ -551,9 +549,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
             if (amount === 0)
                 return;
         } else {
-
             cc.assert((newIndex + amount) <= this._totalQuads, cc._LogInfos.TextureAtlas_moveQuadsFromIndex_2);
-
             cc.assert(oldIndex < this._totalQuads, cc._LogInfos.TextureAtlas_moveQuadsFromIndex_3);
 
             if (oldIndex == newIndex)
@@ -631,28 +627,27 @@ cc.defineGetterSetter(_p, "quads", _p.getQuads, _p.setQuads);
 /**
  * <p>Creates a TextureAtlas with an filename and with an initial capacity for Quads. <br />
  * The TextureAtlas capacity can be increased in runtime. </p>
+ * @deprecated since v3.0, please use new cc.TextureAtlas(fileName, capacity) instead
  * @param {String|cc.Texture2D} fileName
  * @param {Number} capacity
  * @return {cc.TextureAtlas|Null}
- * @example
- * 1.
- * //creates a TextureAtlas with  filename
- * var textureAtlas = cc.TextureAtlas.create("res/hello.png", 3);
- * 2.
- * //creates a TextureAtlas with texture
- * var texture = cc.textureCache.addImage("hello.png");
- * var textureAtlas = cc.TextureAtlas.create(texture, 3);
  */
 cc.TextureAtlas.create = function (fileName, capacity) {
     return new cc.TextureAtlas(fileName, capacity);
 };
 
+/**
+ * @deprecated  since v3.0, please use new cc.TextureAtlas(texture) instead
+ * @function
+ */
+cc.TextureAtlas.createWithTexture = cc.TextureAtlas.create;
+
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-    cc.assert(typeof cc._tmp.WebGLTextureAtlas === "function", cc._LogInfos.MissingFile, "TexturesWebGL.js");
+    cc.assert(cc.isFunction(cc._tmp.WebGLTextureAtlas), cc._LogInfos.MissingFile, "TexturesWebGL.js");
     cc._tmp.WebGLTextureAtlas();
     delete cc._tmp.WebGLTextureAtlas;
 }
 
-cc.assert(typeof cc._tmp.PrototypeTextureAtlas === "function", cc._LogInfos.MissingFile, "TexturesPropertyDefine.js");
+cc.assert(cc.isFunction(cc._tmp.PrototypeTextureAtlas), cc._LogInfos.MissingFile, "TexturesPropertyDefine.js");
 cc._tmp.PrototypeTextureAtlas();
 delete cc._tmp.PrototypeTextureAtlas;

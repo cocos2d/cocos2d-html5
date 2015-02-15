@@ -39,6 +39,9 @@
  * @property {cc.Texture2D} texture                         - Texture used for the motion streak.
  * @property {Boolean}      fastMode                        - Indicate whether use fast mode.
  * @property {Boolean}      startingPositionInitialized     - Indicate whether starting position initialized.
+ * @example
+ * //example
+ * new cc.MotionStreak(2, 3, 32, cc.color.GREEN, s_streak);
  */
 cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     texture:null,
@@ -55,7 +58,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     _nuPoints:0,
     _previousNuPoints:0,
 
-    /** Pointers */
+    /* Pointers */
     _pointVertexes:null,
     _pointState:null,
 
@@ -82,7 +85,6 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         cc.Node.prototype.ctor.call(this);
         this._positionR = cc.p(0, 0);
         this._blendFunc = new cc.BlendFunc(cc.SRC_ALPHA, cc.ONE_MINUS_SRC_ALPHA);
-        this._vertexWebGLBuffer = cc._renderContext.createBuffer();
 
         this.fastMode = false;
         this.startingPositionInitialized = false;
@@ -115,6 +117,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     },
 
     /**
+     * Gets the texture.
      * @return {cc.Texture2D}
      */
     getTexture:function () {
@@ -122,6 +125,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     },
 
     /**
+     * Set the texture.
      * @param {cc.Texture2D} texture
      */
     setTexture:function (texture) {
@@ -130,6 +134,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     },
 
     /**
+     * Gets the blend func.
      * @return {cc.BlendFunc}
      */
     getBlendFunc:function () {
@@ -137,6 +142,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     },
 
     /**
+     * Set the blend func.
      * @param {Number} src
      * @param {Number} dst
      */
@@ -149,32 +155,45 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         }
     },
 
+    /**
+     * Gets opacity.
+     * @warning cc.MotionStreak.getOpacity has not been supported.
+     * @returns {number}
+     */
     getOpacity:function () {
         cc.log("cc.MotionStreak.getOpacity has not been supported.");
         return 0;
     },
 
+    /**
+     * Set opacity.
+     * @warning cc.MotionStreak.setOpacity has not been supported.
+     * @param opacity
+     */
     setOpacity:function (opacity) {
         cc.log("cc.MotionStreak.setOpacity has not been supported.");
     },
 
+    /**
+     * set opacity modify RGB.
+     * @warning cc.MotionStreak.setOpacityModifyRGB has not been supported.
+     * @param value
+     */
     setOpacityModifyRGB:function (value) {
     },
 
+    /**
+     * Checking OpacityModifyRGB.
+     * @returns {boolean}
+     */
     isOpacityModifyRGB:function () {
         return false;
     },
 
-    onExit:function(){
-        cc.Node.prototype.onExit.call(this);
-        if(this._verticesBuffer)
-            cc._renderContext.deleteBuffer(this._verticesBuffer);
-        if(this._texCoordsBuffer)
-            cc._renderContext.deleteBuffer(this._texCoordsBuffer);
-        if(this._colorPointerBuffer)
-            cc._renderContext.deleteBuffer(this._colorPointerBuffer);
-    },
-
+    /**
+     * Checking fast mode.
+     * @returns {boolean}
+     */
     isFastMode:function () {
         return this.fastMode;
     },
@@ -187,10 +206,18 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         this.fastMode = fastMode;
     },
 
+    /**
+     * Checking starting position initialized.
+     * @returns {boolean}
+     */
     isStartingPositionInitialized:function () {
         return this.startingPositionInitialized;
     },
 
+    /**
+     * Set Starting Position Initialized.
+     * @param {Boolean} startingPositionInitialized
+     */
     setStartingPositionInitialized:function (startingPositionInitialized) {
         this.startingPositionInitialized = startingPositionInitialized;
     },
@@ -208,7 +235,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         if(!texture)
             throw "cc.MotionStreak.initWithFade(): Invalid filename or texture";
 
-        if (typeof(texture) === "string")
+        if (cc.isString(texture))
             texture = cc.textureCache.addImage(texture);
 
         cc.Node.prototype.setPosition.call(this, cc.p(0,0));
@@ -218,13 +245,14 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         this.startingPositionInitialized = false;
 
         this.fastMode = true;
-        this._minSeg = (minSeg == -1.0) ? (stroke / 5.0) : minSeg;
+        this._minSeg = (minSeg === -1.0) ? (stroke / 5.0) : minSeg;
         this._minSeg *= this._minSeg;
 
         this._stroke = stroke;
         this._fadeDelta = 1.0 / fade;
 
         var locMaxPoints = (0 | (fade * 60)) + 2;
+        this._maxPoints = locMaxPoints;
         this._nuPoints = 0;
         this._pointState = new Float32Array(locMaxPoints);
         this._pointVertexes = new Float32Array(locMaxPoints * 2);
@@ -232,9 +260,6 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         this._vertices = new Float32Array(locMaxPoints * 4);
         this._texCoords = new Float32Array(locMaxPoints * 4);
         this._colorPointer = new Uint8Array(locMaxPoints * 8);
-        this._maxPoints = locMaxPoints;
-
-        var gl = cc._renderContext;
 
         this._verticesBuffer = gl.createBuffer();
         this._texCoordsBuffer = gl.createBuffer();
@@ -243,9 +268,6 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         // Set blend mode
         this._blendFunc.src = gl.SRC_ALPHA;
         this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
-
-        // shader program
-        this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
 
         this.texture = texture;
         this.color = color;
@@ -286,8 +308,10 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     },
 
     /**
-     * @override
-     * @param {cc.Point} position
+     * Set the position. <br />
+     *
+     * @param {cc.Point|Number} position
+     * @param {Number} [yValue=undefined] If not exists, the first parameter must be cc.Point.
      */
     setPosition:function (position, yValue) {
         this.startingPositionInitialized = true;
@@ -301,6 +325,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     },
 
     /**
+     * Gets the position.x
      * @return {Number}
      */
     getPositionX:function () {
@@ -308,6 +333,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     },
 
     /**
+     * Set the position.x
      * @param {Number} x
      */
     setPositionX:function (x) {
@@ -317,6 +343,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     },
 
     /**
+     * Gets the position.y
      * @return {Number}
      */
     getPositionY:function () {
@@ -324,6 +351,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     },
 
     /**
+     * Set the position.y
      * @param {Number} y
      */
     setPositionY:function (y) {
@@ -333,48 +361,18 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     },
 
     /**
-     * @override
-     * @param {WebGLRenderingContext} ctx
-     */
-    draw:function (ctx) {
-        if (this._nuPoints <= 1)
-            return;
-
-        if(this.texture && this.texture.isLoaded()){
-            ctx = ctx || cc._renderContext;
-            cc.nodeDrawSetup(this);
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
-            cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-
-            cc.glBindTexture2D(this.texture);
-
-            //position
-            ctx.bindBuffer(ctx.ARRAY_BUFFER, this._verticesBuffer);
-            ctx.bufferData(ctx.ARRAY_BUFFER, this._vertices, ctx.DYNAMIC_DRAW);
-            ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, ctx.FLOAT, false, 0, 0);
-
-            //texcoords
-            ctx.bindBuffer(ctx.ARRAY_BUFFER, this._texCoordsBuffer);
-            ctx.bufferData(ctx.ARRAY_BUFFER, this._texCoords, ctx.DYNAMIC_DRAW);
-            ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, ctx.FLOAT, false, 0, 0);
-
-            //colors
-            ctx.bindBuffer(ctx.ARRAY_BUFFER, this._colorPointerBuffer);
-            ctx.bufferData(ctx.ARRAY_BUFFER, this._colorPointer, ctx.DYNAMIC_DRAW);
-            ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, ctx.UNSIGNED_BYTE, true, 0, 0);
-
-            ctx.drawArrays(ctx.TRIANGLE_STRIP, 0, this._nuPoints * 2);
-            cc.g_NumberOfDraws ++;
-        }
-    },
-
-    /**
-     * @override
+     * <p>schedules the "update" method.                                                                           <br/>
+     * It will use the order number 0. This method will be called every frame.                                  <br/>
+     * Scheduled methods with a lower order value will be called before the ones that have a higher order value.<br/>
+     * Only one "update" method could be scheduled per node.</p>
      * @param {Number} delta
      */
     update:function (delta) {
         if (!this.startingPositionInitialized)
             return;
+
+        //TODO update the color    (need move to render cmd)
+        this._renderCmd._updateDisplayColor();
 
         delta *= this._fadeDelta;
 
@@ -448,7 +446,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
             // Color assignment
             var offset = locNuPoints * 8;
 
-            var locDisplayedColor = this._displayedColor;
+            var locDisplayedColor = this.getDisplayedColor();
             locColorPointer[offset] = locDisplayedColor.r;
             locColorPointer[offset + 1] = locDisplayedColor.g;
             locColorPointer[offset + 2] = locDisplayedColor.b;
@@ -490,17 +488,29 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         }
 
         this._nuPoints = locNuPoints;
+    },
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+            return new cc.MotionStreak.WebGLRenderCmd(this);
+        else
+            return null;  //MotionStreak doesn't support Canvas mode
     }
 });
 
 /**
- * creates and initializes a motion streak with fade in seconds, minimum segments, stroke's width, color, texture filename or texture
+ * Please use new cc.MotionStreak instead. <br />
+ * Creates and initializes a motion streak with fade in seconds, minimum segments, stroke's width, color, texture filename or texture
+ * @deprecated since v3.0 please use new cc.MotionStreak instead.
  * @param {Number} fade time to fade
  * @param {Number} minSeg minimum segment size
  * @param {Number} stroke stroke's width
  * @param {Number} color
  * @param {string|cc.Texture2D} texture texture filename or texture
  * @return {cc.MotionStreak}
+ * @example
+ * //example
+ * new cc.MotionStreak(2, 3, 32, cc.color.GREEN, s_streak);
  */
 cc.MotionStreak.create = function (fade, minSeg, stroke, color, texture) {
     return new cc.MotionStreak(fade, minSeg, stroke, color, texture);

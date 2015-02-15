@@ -37,35 +37,40 @@ cc.associateWithNative = function (jsObj, superclass) {
 };
 
 /**
- * keymap
- * @example
- * //Example
- * //to mark a keydown
- * cc.keyDown[65] = true;
- * //or
- * cc.keyMap[cc.KEY.a]
+ * Key map for keyboard event
  *
- * //to mark a keyup
- * do cc.keyDown[65] = false;
- *
- * //to find out if a key is down, check
- * if(cc.keyDown[65])
- * //or
- * if,(cc.keyDown[cc.KEY.space])
- * //if its undefined or false or null, its not pressed
  * @constant
- * @type object
+ * @type {Object}
+ * @example
+    cc.eventManager.addListener({
+        event: cc.EventListener.KEYBOARD,
+        onKeyPressed:  function(keyCode, event){
+            if (cc.KEY["a"] == keyCode) {
+                cc.log("A is pressed");
+            }
+        }
+    }, this);
  */
 cc.KEY = {
+    none:0,
+
+    // android
+    back:6,
+    menu:18,
+
     backspace:8,
     tab:9,
+
     enter:13,
+
     shift:16, //should use shiftkey instead
     ctrl:17, //should use ctrlkey
     alt:18, //should use altkey
     pause:19,
     capslock:20,
+
     escape:27,
+    space:32,
     pageup:33,
     pagedown:34,
     end:35,
@@ -74,6 +79,8 @@ cc.KEY = {
     up:38,
     right:39,
     down:40,
+    select:41,
+
     insert:45,
     Delete:46,
     0:48,
@@ -112,6 +119,7 @@ cc.KEY = {
     x:88,
     y:89,
     z:90,
+
     num0:96,
     num1:97,
     num2:98,
@@ -139,13 +147,15 @@ cc.KEY = {
     f10:121,
     f11:122,
     f12:123,
+
     numlock:144,
     scrolllock:145,
+
+    ';':186,
     semicolon:186,
-    ',':186,
     equal:187,
     '=':187,
-    ';':188,
+    ',':188,
     comma:188,
     dash:189,
     '.':190,
@@ -154,55 +164,67 @@ cc.KEY = {
     grave:192,
     '[':219,
     openbracket:219,
+    backslash:220,
     ']':221,
     closebracket:221,
-    backslash:220,
     quote:222,
-    space:32
+
+    // gamepad controll
+    dpadLeft:1000,
+    dpadRight:1001,
+    dpadUp:1003,
+    dpadDown:1004,
+    dpadCenter:1005
 };
 
 /**
  * Image Format:JPG
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.FMT_JPG = 0;
 
 /**
  * Image Format:PNG
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.FMT_PNG = 1;
 
 /**
  * Image Format:TIFF
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.FMT_TIFF = 2;
 
 /**
  * Image Format:RAWDATA
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.FMT_RAWDATA = 3;
 
 /**
  * Image Format:WEBP
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.FMT_WEBP = 4;
 
 /**
  * Image Format:UNKNOWN
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.FMT_UNKNOWN = 5;
 
+/**
+ * get image format by image data
+ * @function
+ * @param {Array} imgData
+ * @returns {Number}
+ */
 cc.getImageFormatByData = function (imgData) {
 	// if it is a png file buffer.
     if (imgData.length > 8 && imgData[0] == 0x89
@@ -225,10 +247,13 @@ cc.getImageFormatByData = function (imgData) {
 	return cc.FMT_UNKNOWN;
 };
 
-//
-// Another way to subclass: Using Google Closure.
-// The following code was copied + pasted from goog.base / goog.inherits
-//
+/**
+ * Another way to subclass: Using Google Closure.
+ * The following code was copied + pasted from goog.base / goog.inherits
+ * @function
+ * @param {Function} childCtor
+ * @param {Function} parentCtor
+ */
 cc.inherits = function (childCtor, parentCtor) {
     function tempCtor() {}
     tempCtor.prototype = parentCtor.prototype;
@@ -242,6 +267,10 @@ cc.inherits = function (childCtor, parentCtor) {
 // }
 };
 
+/**
+ * @deprecated since v3.0, please use cc.Class.extend and _super
+ * @cc.Class.extend
+ */
 cc.base = function(me, opt_methodName, var_args) {
     var caller = arguments.callee.caller;
     if (caller.superClass_) {

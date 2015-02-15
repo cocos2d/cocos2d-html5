@@ -27,6 +27,8 @@
 /**
  * @class
  * @extends cc.Class
+ * @example
+ * var element = new cc.HashElement();
  */
 cc.HashElement = cc.Class.extend(/** @lends cc.HashElement# */{
     actions:null,
@@ -60,8 +62,10 @@ cc.HashElement = cc.Class.extend(/** @lends cc.HashElement# */{
  * - When you want to pause / resume the actions<br/>
  * @class
  * @extends cc.Class
+ * @example
+ * var mng = new cc.ActionManager();
  */
-cc.ActionManager = cc.Class.extend({
+cc.ActionManager = cc.Class.extend(/** @lends cc.ActionManager# */{
     _hashTargets:null,
     _arrayTargets:null,
     _currentTarget:null,
@@ -75,9 +79,6 @@ cc.ActionManager = cc.Class.extend({
         return null;
     },
 
-    /**
-     * Constructor
-     */
     ctor:function () {
         this._hashTargets = {};
         this._arrayTargets = [];
@@ -338,7 +339,8 @@ cc.ActionManager = cc.Class.extend({
             //this._currentTargetSalvaged = false;
             if (!locCurrTarget.paused) {
                 // The 'actions' CCMutableArray may change while inside this loop.
-                for (locCurrTarget.actionIndex = 0; locCurrTarget.actionIndex < locCurrTarget.actions.length;
+                for (locCurrTarget.actionIndex = 0;
+                     locCurrTarget.actionIndex < (locCurrTarget.actions ? locCurrTarget.actions.length : 0);
                      locCurrTarget.actionIndex++) {
                     locCurrTarget.currentAction = locCurrTarget.actions[locCurrTarget.actionIndex];
                     if (!locCurrTarget.currentAction)

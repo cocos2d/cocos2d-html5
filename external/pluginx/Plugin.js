@@ -1,152 +1,151 @@
-(function(w){
+/****************************************************************************
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
+
+ http://www.cocos2d-x.org
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ ****************************************************************************/
+
+/**
+ * plugin manager
+ * @class
+ *
+ */
+(function(){
 
     if(cc === undefined){
         return;
     }
 
     var config = cc.game.config.plugin || {};
-    var SDK = {
-        user: null,
-        share: null,
-        social: null
-    };
 
-    var Plugin = {
-        getSDK: function(){
-            return SDK;
+    //Native plugin usage
+    var PluginManager = function(){};
+
+    PluginManager.prototype = {
+        constructor: PluginManager,
+
+        /**
+         * @returns {PluginManager}
+         * @expose
+         */
+        getInstance: function(){
+            return this;
         },
-        isSupportFunction: function(name){
-            if(typeof this[name] === 'function'){
-                return true;
-            }else{
-                return false;
-            }
-        },
-        getUserPlugin: function(){
-            return {
-                callStringFuncWithParam: function(){
-                    return this.callFuncWithParam.apply(this, arguments);
-                },
-                callFuncWithParam: function(name, opt){
-                    if(config['common'] && config['common']['user'] && pluginList[config['common']['user']]){
-                        var _plugin = pluginList[config['common']['user']];
-                        if(typeof _plugin.user[name] == 'function'){
-                            return _plugin.user[name](opt);
-                        }else if(typeof _plugin[name] == 'function'){
-                            return _plugin[name](opt);
-                        }
-                    }
-                }
-            };
-        },
-        getSharePlugin: function(){
-            return {
-                callStringFuncWithParam: function(){
-                    return this.callFuncWithParam.apply(this, arguments);
-                },
-                callFuncWithParam: function(name, opt){
-                    if(config['common'] && config['common']['share'] && pluginList[config['common']['share']]){
-                        var _plugin = pluginList[config['common']['share']];
-                        if(typeof _plugin.share[name] == 'function'){
-                            return _plugin.share[name](opt);
-                        }else if(typeof _plugin[name] == 'function'){
-                            return _plugin[name](opt);
-                        }
-                    }
-                }
-            };
-        }
-    };
 
-    var pluginList = {};
-
-    Plugin.extend = function(name, method){
-        var use = false;
-        for(var p in config['common']){
-            if(config['common'][p] == name){
-                for(var o in method[p]){
-                    Plugin[o] = method[p][o];
-                }
-                use = true;
-                SDK[p] = name;
-            }
-        }
-        if(use){
-            method.init(config[name]);
-        }
-        pluginList[name] = method;
-    };
-
-    var pluginManager = {
+        /**
+         * @param {String} pluginName
+         * @expose
+         */
         loadPlugin: function(pluginName){
-            if(!pluginName){
-                cc.log("PliginManager - PluginName error");
-                return null;
-            }
-            var info = pluginName.match(/[A-Z][a-z]+/g);
 
-            if(info.length !== 2){
-                cc.log("PliginManager - PluginName error");
-                return null;
-            }
+        },
 
-            var pluginObj = {
-                setDebugMode: function(){},
-                startSession: function(){},
-                setCaptureUncaughtException: function(){},
-                callFuncWithParam: function(funName){
-                    if(!pluginList[pluginN]){
-                        return;
-                    }
-                    var _fun = pluginList[pluginN]['common'][funName];
-                    if(_fun){
-                        var _arg = Array.prototype.slice.call(arguments, 1);
-                        return _fun.apply(_fun, _arg);
-                    }
-                    return;
-                },
-                getPluginName: function(){
-                    return pluginN;
-                },
-                getPluginVersion: function(){
-                    return "1.0";
-                },
-                callStringFuncWithParam: function(){
-                    return pluginObj.callFuncWithParam.apply(pluginObj, arguments);
-                }
-            };
-            var moduleN = info[0].toLowerCase();
-            var pluginN = info[1].toLowerCase();
-            if(!pluginList[pluginN]){
-                cc.log("Plugin does not exist");
-                return pluginObj;
-            }
-            pluginList[pluginN].init();
-            for(var p in pluginList[pluginN][moduleN]){
-                pluginObj[p] = pluginList[pluginN][moduleN][p];
-            }
-            return pluginObj;
+        /**
+         *
+         * @param pluginName
+         * @expose
+         */
+        unloadPlugin: function(pluginName){
 
         }
     };
 
-    w['plugin'] = {
-        extend: Plugin.extend,
-        agentManager: Plugin,
-        AgentManager: {
-            getInstance: function(){
-                return plugin.agentManager;
+    var PluginAssembly = function(){};
+
+    PluginAssembly.prototype = {
+        constructor: PluginAssembly,
+
+        /**
+         * @param {Boolean} debug
+         * @expose
+         */
+        setDebugMode: function(debug){},
+
+        /**
+         * @param {String} appKey
+         * @expose
+         */
+        startSession: function(appKey){},
+
+        /**
+         * @param {Boolean} Capture
+         * @expose
+         */
+        setCaptureUncaughtException: function(Capture){},
+
+        /**
+         * @param {String} funName
+         * @param {All} Params
+         * @expose
+         */
+        callFuncWithParam: function(funName){
+            if(typeof this[funName] === 'function'){
+                return this[funName].apply(this, Array.prototype.splice.call(arguments, 1));
+            }else{
+                cc.log("function is not define");
             }
         },
-        PluginManager: {
-            getInstance: function(){
-                return pluginManager;
-            }
+
+        /**
+         * @param {String} funName
+         * @param {All} Params
+         * @expose
+         */
+        callStringFuncWithParam: function(funName){
+            this.callFuncWithParam.apply(arguments);
+        },
+
+        /**
+         * @returns {String}
+         * @expose
+         */
+        getPluginName: function(){
+            return this._name;
+        },
+
+        /**
+         * @returns {String}
+         * @expose
+         */
+        getPluginVersion: function(){
+            return this._version;
         }
     };
 
+    /** @expose */
+    PluginAssembly.extend = function(name, porp){
+        var p, prototype = {};
+        for(p in PluginAssembly.prototype){
+            prototype[p] = PluginAssembly.prototype[p];
+        }
+        for(p in porp){
+            prototype[p] = porp[p];
+        }
+        var tmp = eval("(function " + name + "Plugin(){})");
+        prototype.constructor = tmp;
+        tmp.prototype = prototype;
+        return tmp;
+    };
 
-    plugin.PluginParam = function(type, value){
+    //Param
+    var Param = function(type, value){
         var paramType = plugin.PluginParam.ParamType,tmpValue;
         switch(type){
             case paramType.TypeInt:
@@ -170,36 +169,86 @@
         return tmpValue
     };
 
-    plugin.PluginParam.ParamType = {
+    /** @expose */
+    Param.ParamType = {
+        /** @expose */
         TypeInt:1,
+        /** @expose */
         TypeFloat:2,
+        /** @expose */
         TypeBool:3,
+        /** @expose */
         TypeString:4,
+        /** @expose */
         TypeStringMap:5
     };
 
-    plugin.PluginParam.AdsResultCode = {
+    /** @expose */
+    Param.AdsResultCode = {
+        /** @expose */
         AdsReceived:0,
+        /** @expose */
         FullScreenViewShown:1,
+        /** @expose */
         FullScreenViewDismissed:2,
+        /** @expose */
         PointsSpendSucceed:3,
+        /** @expose */
         PointsSpendFailed:4,
+        /** @expose */
         NetworkError:5,
+        /** @expose */
         UnknownError:6
     };
 
-    plugin.PluginParam.PayResultCode = {
+    /** @expose */
+    Param.PayResultCode = {
+        /** @expose */
         PaySuccess:0,
+        /** @expose */
         PayFail:1,
+        /** @expose */
         PayCancel:2,
+        /** @expose */
         PayTimeOut:3
     };
 
-    plugin.PluginParam.ShareResultCode = {
+    /** @expose */
+    Param.ShareResultCode = {
+        /** @expose */
         ShareSuccess:0,
+        /** @expose */
         ShareFail:1,
+        /** @expose */
         ShareCancel:2,
+        /** @expose */
         ShareTimeOut:3
     };
 
-})(window);
+    /** @expose */
+    var PluginList = {};
+
+    /** @expose */
+    var Plugin = {
+
+        /** @expose */
+        extend: function(name, extend){
+            PluginList[name] = new (PluginAssembly.extend(name, extend));
+            typeof PluginList[name].ctor === "function" && PluginList[name].ctor(config[name]);
+        },
+
+        /** @expose */
+        PluginList: PluginList,
+
+        /** @expose */
+        PluginParam: Param,
+
+        /** @expose */
+        PluginManager: new PluginManager()
+
+    };
+
+    /** @expose */
+    window.plugin = Plugin;
+
+})();

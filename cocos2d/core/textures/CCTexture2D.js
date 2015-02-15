@@ -120,29 +120,40 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
      * @property {Number}           maxS            - Texture max S
      * @property {Number}           maxT            - Texture max T
      */
-
-    cc.Texture2D = cc.Class.extend({
+    cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
         _contentSize: null,
-        _isLoaded: false,
+        _textureLoaded: false,
         _htmlElementObj: null,
-        _loadedEventListeners: null,
-
         url: null,
+        _pattern: null,
 
         ctor: function () {
             this._contentSize = cc.size(0, 0);
-            this._isLoaded = false;
+            this._textureLoaded = false;
             this._htmlElementObj = null;
+            this._pattern = "";
         },
 
+        /**
+         * get width in pixels
+         * @return {Number}
+         */
         getPixelsWide: function () {
             return this._contentSize.width;
         },
 
+        /**
+         * get height of in pixels
+         * @return {Number}
+         */
         getPixelsHigh: function () {
             return this._contentSize.height;
         },
 
+        /**
+         * get content size
+         * @returns {cc.Size}
+         */
         getContentSize: function () {
             var locScaleFactor = cc.contentScaleFactor();
             return cc.size(this._contentSize.width / locScaleFactor, this._contentSize.height / locScaleFactor);
@@ -155,45 +166,67 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             return this._contentSize.height / cc.contentScaleFactor();
         },
 
+        /**
+         * get content size in pixels
+         * @returns {cc.Size}
+         */
         getContentSizeInPixels: function () {
             return this._contentSize;
         },
 
+        /**
+         * init with HTML element
+         * @param {HTMLImageElement|HTMLCanvasElement} element
+         */
         initWithElement: function (element) {
             if (!element)
                 return;
             this._htmlElementObj = element;
+            this._contentSize.width = element.width;
+            this._contentSize.height = element.height;
+            this._textureLoaded = true;
         },
 
         /**
          * HTMLElement Object getter
-         * @return {HTMLElement}
+         * @return {HTMLImageElement|HTMLCanvasElement}
          */
         getHtmlElementObj: function () {
             return this._htmlElementObj;
         },
 
+        /**
+         * check whether texture is loaded
+         * @returns {boolean}
+         */
         isLoaded: function () {
-            return this._isLoaded;
+            return this._textureLoaded;
         },
 
+        /**
+         * handle loaded texture
+         */
         handleLoadedTexture: function () {
-            var self = this
-            if (self._isLoaded) return;
+            var self = this;
+            if (self._textureLoaded) return;
             if (!self._htmlElementObj) {
                 var img = cc.loader.getRes(self.url);
                 if (!img) return;
                 self.initWithElement(img);
             }
 
-            self._isLoaded = true;
             var locElement = self._htmlElementObj;
             self._contentSize.width = locElement.width;
             self._contentSize.height = locElement.height;
 
-            self._callLoadedEventCallbacks();
+            //dispatch load event to listener.
+            self.dispatchEvent("load");
         },
 
+        /**
+         * description of cc.Texture2D
+         * @returns {string}
+         */
         description: function () {
             return "<cc.Texture2D | width = " + this._contentSize.width + " height " + this._contentSize.height + ">";
         },
@@ -214,7 +247,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         },
 
         releaseTexture: function () {
-            //support only in WebGl rendering mode
+            cc.loader.release(this.url);
         },
 
         getName: function () {
@@ -281,23 +314,53 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             //support only in WebGl rendering mode
         },
 
+        /**
+         * init with ETC file
+         * @warning does not support on HTML5
+         */
         initWithETCFile: function (file) {
             cc.log(cc._LogInfos.Texture2D_initWithETCFile);
             return false;
         },
 
+        /**
+         * init with PVR file
+         * @warning does not support on HTML5
+         */
         initWithPVRFile: function (file) {
             cc.log(cc._LogInfos.Texture2D_initWithPVRFile);
             return false;
         },
 
+        /**
+         * init with PVRTC data
+         * @warning does not support on HTML5
+         */
         initWithPVRTCData: function (data, level, bpp, hasAlpha, length, pixelFormat) {
             cc.log(cc._LogInfos.Texture2D_initWithPVRTCData);
             return false;
         },
 
-        setTexParameters: function (texParams) {
-            //support only in WebGl rendering mode
+        setTexParameters: function (texParams, magFilter, wrapS, wrapT) {
+            if(magFilter !== undefined)
+                texParams = {minFilter: texParams, magFilter: magFilter, wrapS: wrapS, wrapT: wrapT};
+
+            if(texParams.wrapS === cc.REPEAT && texParams.wrapT === cc.REPEAT){
+                this._pattern = "repeat";
+                return;
+            }
+
+            if(texParams.wrapS === cc.REPEAT ){
+                this._pattern = "repeat-x";
+                return;
+            }
+
+            if(texParams.wrapT === cc.REPEAT){
+                this._pattern = "repeat-y";
+                return;
+            }
+
+            this._pattern = "";
         },
 
         setAntiAliasTexParameters: function () {
@@ -322,42 +385,71 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             return -1;
         },
 
+        /**
+         * add listener for loaded event
+         * @param {Function} callback
+         * @param {cc.Node} target
+         * @deprecated since 3.1, please use addEventListener instead
+         */
         addLoadedEventListener: function (callback, target) {
-            if (!this._loadedEventListeners)
-                this._loadedEventListeners = [];
-            this._loadedEventListeners.push({eventCallback: callback, eventTarget: target});
+            this.addEventListener("load", callback, target);
         },
 
+        /**
+         * remove listener from listeners by target
+         * @param {cc.Node} target
+         */
         removeLoadedEventListener: function (target) {
-            if (!this._loadedEventListeners)
-                return;
-            var locListeners = this._loadedEventListeners;
-            for (var i = 0; i < locListeners.length; i++) {
-                var selCallback = locListeners[i];
-                if (selCallback.eventTarget == target) {
-                    locListeners.splice(i, 1);
-                }
-            }
+            this.removeEventListener("load", target);
         },
 
-        _callLoadedEventCallbacks: function () {
-            if (!this._loadedEventListeners)
+        //hack for gray effect
+        _grayElementObj: null,
+        _backupElement: null,
+        _isGray: false,
+        _switchToGray: function(toGray){
+            if(!this._textureLoaded || this._isGray == toGray)
                 return;
-            var locListeners = this._loadedEventListeners;
-            for (var i = 0, len = locListeners.length; i < len; i++) {
-                var selCallback = locListeners[i];
-                selCallback.eventCallback.call(selCallback.eventTarget, this);
+            this._isGray = toGray;
+            if(this._isGray){
+                this._backupElement = this._htmlElementObj;
+                if(!this._grayElementObj)
+                     this._grayElementObj = cc.Texture2D._generateGrayTexture(this._htmlElementObj);
+                this._htmlElementObj = this._grayElementObj;
+            } else {
+                if(this._backupElement != null)
+                    this._htmlElementObj = this._backupElement;
             }
-            locListeners.length = 0;
         }
     });
 
+    cc.Texture2D._generateGrayTexture = function(texture, rect, renderCanvas){
+        if (texture === null)
+            return null;
+        renderCanvas = renderCanvas || cc.newElement("canvas");
+        rect = rect || cc.rect(0, 0, texture.width, texture.height);
+        renderCanvas.width = rect.width;
+        renderCanvas.height = rect.height;
+
+        var context = renderCanvas.getContext("2d");
+        context.drawImage(texture, rect.x, rect.y, rect.width, rect.height, 0, 0, rect.width, rect.height);
+        var imgData = context.getImageData(0, 0, rect.width, rect.height);
+        var data = imgData.data;
+        for (var i = 0, len = data.length; i < len; i += 4) {
+            data[i] = data[i + 1] = data[i + 2] = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+        }
+        context.putImageData(imgData, 0, 0);
+        return renderCanvas;
+    };
+
 } else {
-    cc.assert(typeof cc._tmp.WebGLTexture2D === "function", cc._LogInfos.MissingFile, "TexturesWebGL.js");
+    cc.assert(cc.isFunction(cc._tmp.WebGLTexture2D), cc._LogInfos.MissingFile, "TexturesWebGL.js");
     cc._tmp.WebGLTexture2D();
     delete cc._tmp.WebGLTexture2D;
 }
 
-cc.assert(typeof cc._tmp.PrototypeTexture2D === "function", cc._LogInfos.MissingFile, "TexturesPropertyDefine.js");
+cc.EventHelper.prototype.apply(cc.Texture2D.prototype);
+
+cc.assert(cc.isFunction(cc._tmp.PrototypeTexture2D), cc._LogInfos.MissingFile, "TexturesPropertyDefine.js");
 cc._tmp.PrototypeTexture2D();
 delete cc._tmp.PrototypeTexture2D;

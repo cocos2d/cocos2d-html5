@@ -35,6 +35,10 @@ cc.SCENE_RADIAL = 0xc001;
  * cc.TransitionProgress transition.
  * @class
  * @extends cc.TransitionScene
+ * @param {Number} t time
+ * @param {cc.Scene} scene
+ * @example
+ * var trans = new cc.TransitionProgress(time,scene);
  */
 cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgress# */{
     _to:0,
@@ -43,7 +47,6 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
     _className:"TransitionProgress",
 
     /**
-     * @constructor
      * @param {Number} t time
      * @param {cc.Scene} scene
      */
@@ -63,6 +66,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
 
     /**
      * @override
+     * custom on enter
      */
     onEnter:function () {
         cc.TransitionScene.prototype.onEnter.call(this);
@@ -73,7 +77,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
         var winSize = cc.director.getWinSize();
 
         // create the second render texture for outScene
-        var texture = cc.RenderTexture.create(winSize.width, winSize.height);
+        var texture = new cc.RenderTexture(winSize.width, winSize.height);
         texture.sprite.anchorX = 0.5;
 	    texture.sprite.anchorY = 0.5;
         this._setAttrs(texture, winSize.width / 2, winSize.height / 2);
@@ -92,9 +96,9 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
         var pNode = this._progressTimerNodeWithRenderTexture(texture);
 
         // create the blend action
-        var layerAction = cc.Sequence.create(
-            cc.ProgressFromTo.create(this._duration, this._from, this._to),
-            cc.CallFunc.create(this.finish, this));
+        var layerAction = cc.sequence(
+            cc.progressFromTo(this._duration, this._from, this._to),
+            cc.callFunc(this.finish, this));
         // run the blend action
         pNode.runAction(layerAction);
 
@@ -104,6 +108,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
 
     /**
      * @override
+     * custom on exit
      */
     onExit:function () {
         // remove our layer and release all containing objects
@@ -129,6 +134,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
 
 /**
  * create a cc.TransitionProgress object
+ * @deprecated since v3.0,please use new cc.TransitionProgress(t, scene) instead.
  * @function
  * @param {Number} t time
  * @param {cc.Scene} scene
@@ -143,11 +149,14 @@ cc.TransitionProgress.create = function (t, scene) {
  *  A counter clock-wise radial transition to the next scene
  * @class
  * @extends cc.TransitionProgress
+ * @param {Number} t time
+ * @param {cc.Scene} scene
+ * @example
+ * var trans = new cc.TransitionProgressRadialCCW(t, scene);
  */
 cc.TransitionProgressRadialCCW = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressRadialCCW# */{
 
     /**
-     * @constructor
      * @param {Number} t time
      * @param {cc.Scene} scene
      */
@@ -159,7 +168,7 @@ cc.TransitionProgressRadialCCW = cc.TransitionProgress.extend(/** @lends cc.Tran
     _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.director.getWinSize();
 
-        var pNode = cc.ProgressTimer.create(texture.sprite);
+        var pNode = new cc.ProgressTimer(texture.sprite);
 
         // but it is flipped upside down so we flip the sprite
         if (cc._renderType === cc._RENDER_TYPE_WEBGL)
@@ -177,10 +186,12 @@ cc.TransitionProgressRadialCCW = cc.TransitionProgress.extend(/** @lends cc.Tran
 
 /**
  * create a cc.TransitionProgressRadialCCW object
- * @function
+ * @deprecated since v3.0,please use new cc.TransitionProgressRadialCCW(t, scene) instead.
  * @param {Number} t time
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgressRadialCCW}
+ * @example
+ * var trans = new cc.TransitionProgressRadialCCW(time,scene);
  */
 cc.TransitionProgressRadialCCW.create = function (t, scene) {
     return new cc.TransitionProgressRadialCCW(t, scene);
@@ -191,10 +202,13 @@ cc.TransitionProgressRadialCCW.create = function (t, scene) {
  * A counter colock-wise radial transition to the next scene
  * @class
  * @extends cc.TransitionProgress
+ * @param {Number} t time
+ * @param {cc.Scene} scene
+ * @example
+ * var trans = new cc.TransitionProgressRadialCW(t, scene);
  */
 cc.TransitionProgressRadialCW = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressRadialCW# */{
     /**
-     * @constructor
      * @param {Number} t time
      * @param {cc.Scene} scene
      */
@@ -206,7 +220,7 @@ cc.TransitionProgressRadialCW = cc.TransitionProgress.extend(/** @lends cc.Trans
     _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.director.getWinSize();
 
-        var pNode = cc.ProgressTimer.create(texture.sprite);
+        var pNode = new cc.ProgressTimer(texture.sprite);
 
         // but it is flipped upside down so we flip the sprite
         if (cc._renderType === cc._RENDER_TYPE_WEBGL)
@@ -224,7 +238,7 @@ cc.TransitionProgressRadialCW = cc.TransitionProgress.extend(/** @lends cc.Trans
 
 /**
  * create a cc.TransitionProgressRadialCW object
- * @function
+ * @deprecated since v3.0,please use cc.TransitionProgressRadialCW(t, scene) instead.
  * @param {Number} t time
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgressRadialCW}
@@ -242,10 +256,13 @@ cc.TransitionProgressRadialCW.create = function (t, scene) {
  * A  colock-wise radial transition to the next scene
  * @class
  * @extends cc.TransitionProgress
+ * @param {Number} t time
+ * @param {cc.Scene} scene
+ * @example
+ * var trans = new cc.TransitionProgressHorizontal(t, scene);
  */
 cc.TransitionProgressHorizontal = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressHorizontal# */{
     /**
-     * @constructor
      * @param {Number} t time
      * @param {cc.Scene} scene
      */
@@ -257,7 +274,7 @@ cc.TransitionProgressHorizontal = cc.TransitionProgress.extend(/** @lends cc.Tra
     _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.director.getWinSize();
 
-        var pNode = cc.ProgressTimer.create(texture.sprite);
+        var pNode = new cc.ProgressTimer(texture.sprite);
 
         // but it is flipped upside down so we flip the sprite
         if (cc._renderType === cc._RENDER_TYPE_WEBGL)
@@ -276,7 +293,7 @@ cc.TransitionProgressHorizontal = cc.TransitionProgress.extend(/** @lends cc.Tra
 
 /**
  * create a cc.TransitionProgressHorizontal object
- * @function
+ * @deprecated since v3.0,please use new cc.TransitionProgressHorizontal(t, scene) instead.
  * @param {Number} t time
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgressHorizontal}
@@ -289,11 +306,14 @@ cc.TransitionProgressHorizontal.create = function (t, scene) {
  * cc.TransitionProgressVertical transition.
  * @class
  * @extends cc.TransitionProgress
+ * @param {Number} t time
+ * @param {cc.Scene} scene
+ * @example
+ * var trans = new cc.TransitionProgressVertical(t, scene);
  */
 cc.TransitionProgressVertical = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressVertical# */{
 
     /**
-     * @constructor
      * @param {Number} t time
      * @param {cc.Scene} scene
      */
@@ -305,7 +325,7 @@ cc.TransitionProgressVertical = cc.TransitionProgress.extend(/** @lends cc.Trans
     _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.director.getWinSize();
 
-        var pNode = cc.ProgressTimer.create(texture.sprite);
+        var pNode = new cc.ProgressTimer(texture.sprite);
 
         // but it is flipped upside down so we flip the sprite
         if (cc._renderType === cc._RENDER_TYPE_WEBGL)
@@ -324,7 +344,7 @@ cc.TransitionProgressVertical = cc.TransitionProgress.extend(/** @lends cc.Trans
 
 /**
  * create a cc.TransitionProgressVertical object
- * @function
+ * @deprecated since v3.0,please use new cc.TransitionProgressVertical(t, scene) instead.
  * @param {Number} t time
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgressVertical}
@@ -341,7 +361,7 @@ cc.TransitionProgressVertical.create = function (t, scene) {
 cc.TransitionProgressInOut = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressInOut# */{
 
     /**
-     * @constructor
+     * The constructor of cc.TransitionProgressInOut. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @param {Number} t time
      * @param {cc.Scene} scene
      */
@@ -352,7 +372,7 @@ cc.TransitionProgressInOut = cc.TransitionProgress.extend(/** @lends cc.Transiti
 
     _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.director.getWinSize();
-        var pNode = cc.ProgressTimer.create(texture.sprite);
+        var pNode = new cc.ProgressTimer(texture.sprite);
 
         // but it is flipped upside down so we flip the sprite
         if (cc._renderType === cc._RENDER_TYPE_WEBGL)
@@ -380,6 +400,7 @@ cc.TransitionProgressInOut = cc.TransitionProgress.extend(/** @lends cc.Transiti
 /**
  * create a cc.TransitionProgressInOut object
  * @function
+ * @deprecated
  * @param {Number} t time
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgressInOut}
@@ -396,7 +417,7 @@ cc.TransitionProgressInOut.create = function (t, scene) {
 cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressOutIn# */{
 
     /**
-     * @constructor
+     * The constructor of cc.TransitionProgressOutIn. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @param {Number} t time
      * @param {cc.Scene} scene
      */
@@ -407,7 +428,7 @@ cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.Transiti
     
     _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.director.getWinSize();
-        var pNode = cc.ProgressTimer.create(texture.sprite);
+        var pNode = new cc.ProgressTimer(texture.sprite);
 
         // but it is flipped upside down so we flip the sprite
         if (cc._renderType === cc._RENDER_TYPE_WEBGL)
@@ -427,6 +448,7 @@ cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.Transiti
 /**
  * create a cc.TransitionProgressOutIn object
  * @function
+ * @deprecated
  * @param {Number} t time
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgressOutIn}

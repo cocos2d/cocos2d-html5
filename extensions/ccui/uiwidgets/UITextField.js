@@ -24,15 +24,10 @@
  ****************************************************************************/
 
 /**
- * Base class for ccui.UICCTextField
- * @class
- * @extends cc.TextFieldTTF
- *
- * @property {Boolean}  maxLengthEnabled    - Indicate whether max length limit is enabled
- * @property {Number}   maxLength           - The max length of the text field
- * @property {Boolean}  passwordEnabled     - Indicate whether the text field is for entering password
+ * @ignore
  */
-ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
+//it's a private class, it's a renderer of ccui.TextField.
+ccui._TextFieldRenderer = cc.TextFieldTTF.extend({
     _maxLengthEnabled: false,
     _maxLength: 0,
     _passwordEnabled: false,
@@ -41,8 +36,7 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
     _detachWithIME: false,
     _insertText: false,
     _deleteBackward: false,
-    _className: "UICCTextField",
-    _textFieldRendererAdaptDirty: true,
+    _className: "_TextFieldRenderer",
 
     ctor: function () {
         cc.TextFieldTTF.prototype.ctor.call(this);
@@ -61,7 +55,6 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
         cc.TextFieldTTF.prototype.setDelegate.call(this, this);
     },
 
-    //CCTextFieldDelegate
     onTextFieldAttachWithIME: function (sender) {
         this.setAttachWithIME(true);
         return false;
@@ -204,21 +197,13 @@ ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
         return this._deleteBackward;
     },
 
-    init: function () {
-        if (ccui.Widget.prototype.init.call(this)) {
-            this.setTouchEnabled(true);
-            return true;
-        }
-        return false;
-    },
-
     onDraw: function (sender) {
         return false;
     }
 });
 
-ccui.UICCTextField.create = function (placeholder, fontName, fontSize) {
-    var ret = new ccui.UICCTextField();
+ccui._TextFieldRenderer.create = function (placeholder, fontName, fontSize) {
+    var ret = new ccui._TextFieldRenderer();
     if (ret && ret.initWithString("", fontName, fontSize)) {
         if (placeholder)
             ret.setPlaceHolder(placeholder);
@@ -228,12 +213,12 @@ ccui.UICCTextField.create = function (placeholder, fontName, fontSize) {
 };
 
 /**
- * Base class for ccui.TextField
+ *
  * @class
  * @extends ccui.Widget
  *
  * @property {String}   string              - The content string of the label
- * @property {Number}   placeHolder         - The place holder of the text field
+ * @property {String}   placeHolder         - The place holder of the text field
  * @property {String}   font                - The text field font with a style string: e.g. "18px Verdana"
  * @property {String}   fontName            - The text field font name
  * @property {Number}   fontSize            - The text field font size
@@ -253,17 +238,33 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     _fontName: "",
     _fontSize: 12,
 
+    _ccEventCallback: null,
+
     /**
      * allocates and initializes a UITextField.
-     * Constructor of ccui.TextField
+     * Constructor of ccui.TextField. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+     * @param {string} placeholder
+     * @param {string} fontName
+     * @param {Number} fontSize
      * @example
      * // example
      * var uiTextField = new ccui.TextField();
      */
-    ctor: function () {
+    ctor: function (placeholder, fontName, fontSize) {
         ccui.Widget.prototype.ctor.call(this);
+        if (fontName)
+            this.setFontName(fontName);
+        if (fontSize)
+            this.setFontSize(fontSize);
+        if (placeholder)
+            this.setPlaceHolder(placeholder);
     },
 
+    /**
+     * Initializes a ccui.TextField. Please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
+     * @returns {boolean}
+     * @override
+     */
     init: function(){
         if(ccui.Widget.prototype.init.call(this)){
             this.setTouchEnabled(true);
@@ -272,18 +273,22 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         return false;
     },
 
+    /**
+     * Calls parent class' onEnter and schedules update function.
+     * @override
+     */
     onEnter: function () {
         ccui.Widget.prototype.onEnter.call(this);
         this.scheduleUpdate();
     },
 
     _initRenderer: function () {
-        this._textFieldRenderer = ccui.UICCTextField.create("input words here", "Thonburi", 20);
+        this._textFieldRenderer = ccui._TextFieldRenderer.create("input words here", "Thonburi", 20);
         this.addProtectedChild(this._textFieldRenderer, ccui.TextField.RENDERER_ZORDER, -1);
     },
 
     /**
-     * Set touch size
+     * Sets touch size of ccui.TextField.
      * @param {cc.Size} size
      */
     setTouchSize: function (size) {
@@ -291,10 +296,19 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         this._touchHeight = size.height;
     },
 
+    /**
+     * Sets whether use touch area.
+     * @param enable
+     */
     setTouchAreaEnabled: function(enable){
         this._useTouchArea = enable;
     },
 
+    /**
+     * Checks a point if is in ccui.TextField's space
+     * @param {cc.Point} pt
+     * @returns {boolean}
+     */
     hitTest: function(pt){
         if (this._useTouchArea) {
             var nsp = this.convertToNodeSpace(pt);
@@ -311,7 +325,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
-     * Get touch size.
+     * Returns touch size of ccui.TextField.
      * @returns {cc.Size}
      */
     getTouchSize: function () {
@@ -320,7 +334,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
 
     /**
      *  Changes the string value of textField.
-     * @deprecated
+     * @deprecated since v3.0, please use setString instead.
      * @param {String} text
      */
     setText: function (text) {
@@ -333,25 +347,25 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
      * @param {String} text
      */
     setString: function (text) {
-        if (!text) {
+        if (text == null)
             return;
-        }
+
         text = String(text);
-        if (this.isMaxLengthEnabled()) {
+        if (this.isMaxLengthEnabled())
             text = text.substr(0, this.getMaxLength());
-        }
         if (this.isPasswordEnabled()) {
             this._textFieldRenderer.setPasswordText(text);
             this._textFieldRenderer.setString("");
             this._textFieldRenderer.insertText(text, text.length);
-        } else {
+        } else
             this._textFieldRenderer.setString(text);
-        }
         this._textFieldRendererAdaptDirty = true;
         this._updateContentSizeWithTextureSize(this._textFieldRenderer.getContentSize());
     },
 
     /**
+     * Sets the placeholder string. <br />
+     * display this string if string equal "".
      * @param {String} value
      */
     setPlaceHolder: function (value) {
@@ -361,6 +375,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
+     * Returns the placeholder string.
      * @returns {String}
      */
     getPlaceHolder: function () {
@@ -368,7 +383,31 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
-     * Set font size for text field content
+     * Returns the color of ccui.TextField's place holder.
+     * @returns {cc.Color}
+     */
+    getPlaceHolderColor: function(){
+        return this._textFieldRenderer.getPlaceHolderColor();
+    },
+
+    /**
+     * Sets the place holder color to ccui.TextField.
+     * @param color
+     */
+    setPlaceHolderColor: function(color){
+        this._textFieldRenderer.setColorSpaceHolder(color);
+    },
+
+    /**
+     * Sets the text color to ccui.TextField
+     * @param textColor
+     */
+    setTextColor: function(textColor){
+        this._textFieldRenderer.setTextColor(textColor);
+    },
+
+    /**
+     * Sets font size for ccui.TextField.
      * @param {Number} size
      */
     setFontSize: function (size) {
@@ -379,7 +418,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
-     * Get font size for text field content
+     * Gets font size of ccui.TextField.
      * @return {Number} size
      */
     getFontSize: function () {
@@ -387,7 +426,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
-     * Set font name for text field content
+     * Sets font name for ccui.TextField
      * @param {String} name
      */
     setFontName: function (name) {
@@ -398,7 +437,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
-     * Get font name for text field content
+     * Returns font name of ccui.TextField.
      * @return {String} font name
      */
     getFontName: function () {
@@ -413,8 +452,8 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
-     * get textField string value
-     * @deprecated
+     * Returns textField string value
+     * @deprecated since v3.0, please use getString instead.
      * @returns {String}
      */
     getStringValue: function () {
@@ -423,19 +462,23 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
-     * get textField string value
+     * Returns string value of ccui.TextField.
      * @returns {String}
      */
     getString: function () {
         return this._textFieldRenderer.getString();
     },
 
+    /**
+     * Returns the length of ccui.TextField.
+     * @returns {Number}
+     */
     getStringLength: function(){
         return this._textFieldRenderer.getStringLength();
     },
 
     /**
-     * touch began
+     * The touch began event callback handler.
      * @param {cc.Point} touchPoint
      */
     onTouchBegan: function (touchPoint, unusedEvent) {
@@ -445,11 +488,16 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
             setTimeout(function(){
                 self._textFieldRenderer.attachWithIME();
             }, 0);
+        }else{
+            setTimeout(function(){
+                self._textFieldRenderer.detachWithIME();
+            }, 0);
         }
         return pass;
     },
 
     /**
+     * Sets Whether to open string length limit for ccui.TextField.
      * @param {Boolean} enable
      */
     setMaxLengthEnabled: function (enable) {
@@ -457,6 +505,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
+     * Returns Whether to open string length limit.
      * @returns {Boolean}
      */
     isMaxLengthEnabled: function () {
@@ -464,6 +513,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
+     * Sets the max length of ccui.TextField. Only when you turn on the string length limit, it is valid.
      * @param {number} length
      */
     setMaxLength: function (length) {
@@ -472,6 +522,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
+     * Returns the max length of ccui.TextField.
      * @returns {number} length
      */
     getMaxLength: function () {
@@ -479,6 +530,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
+     * Sets whether to open setting string as password character.
      * @param {Boolean} enable
      */
     setPasswordEnabled: function (enable) {
@@ -486,12 +538,17 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
+     * Returns whether to open setting string as password character.
      * @returns {Boolean}
      */
     isPasswordEnabled: function () {
         return this._textFieldRenderer.isPasswordEnabled();
     },
 
+    /**
+     * Sets the password style character, Only when you turn on setting string as password character, it is valid.
+     * @param styleText
+     */
     setPasswordStyleText: function(styleText){
         this._textFieldRenderer.setPasswordStyleText(styleText);
         this._passwordStyleText = styleText;
@@ -500,6 +557,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
+     * Returns the password style character.
      * @returns {String}
      */
     getPasswordStyleText: function () {
@@ -507,32 +565,32 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     update: function (dt) {
-        if (this.getAttachWithIME()) {
-            this._attachWithIMEEvent();
-            this.setAttachWithIME(false);
-        }
         if (this.getDetachWithIME()) {
             this._detachWithIMEEvent();
             this.setDetachWithIME(false);
         }
+        if (this.getAttachWithIME()) {
+            this._attachWithIMEEvent();
+            this.setAttachWithIME(false);
+        }
         if (this.getInsertText()) {
+            this._textFieldRendererAdaptDirty = true;
+            this._updateContentSizeWithTextureSize(this._textFieldRenderer.getContentSize());
+
             this._insertTextEvent();
             this.setInsertText(false);
-
-            this._textFieldRendererAdaptDirty = true;
-            this._updateContentSizeWithTextureSize(this._textFieldRenderer.getContentSize());
         }
         if (this.getDeleteBackward()) {
-            this._deleteBackwardEvent();
-            this.setDeleteBackward(false);
-
             this._textFieldRendererAdaptDirty = true;
             this._updateContentSizeWithTextureSize(this._textFieldRenderer.getContentSize());
+
+            this._deleteBackwardEvent();
+            this.setDeleteBackward(false);
         }
     },
 
     /**
-     * get whether attach with IME.
+     * Returns whether attach with IME.
      * @returns {Boolean}
      */
     getAttachWithIME: function () {
@@ -540,7 +598,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
-     * set attach with IME.
+     * Sets attach with IME.
      * @param {Boolean} attach
      */
     setAttachWithIME: function (attach) {
@@ -548,7 +606,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
-     * get whether eetach with IME.
+     * Returns whether detach with IME.
      * @returns {Boolean}
      */
     getDetachWithIME: function () {
@@ -556,7 +614,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
-     * set detach with IME.
+     * Sets detach with IME.
      * @param {Boolean} detach
      */
     setDetachWithIME: function (detach) {
@@ -564,7 +622,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
-     * get insertText
+     * Returns insertText string of ccui.TextField.
      * @returns {String}
      */
     getInsertText: function () {
@@ -572,7 +630,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
-     * set insertText
+     * Sets insertText string to ccui.TextField.
      * @param {String} insertText
      */
     setInsertText: function (insertText) {
@@ -580,6 +638,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
+     * Returns the delete backward of ccui.TextField.
      * @returns {Boolean}
      */
     getDeleteBackward: function () {
@@ -587,6 +646,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
+     * Sets the delete backward of ccui.TextField.
      * @param {Boolean} deleteBackward
      */
     setDeleteBackward: function (deleteBackward) {
@@ -594,46 +654,68 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     _attachWithIMEEvent: function () {
-        if (this._textFieldEventListener && this._textFieldEventSelector)
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_ATTACH_WITH_IME);
-        if (this._eventCallback)
-            this._eventCallback(this, ccui.TextField.EVENT_ATTACH_WITH_IME);
+        if(this._textFieldEventSelector){
+            if (this._textFieldEventListener)
+                this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_ATTACH_WITH_IME);
+            else
+                this._textFieldEventSelector(this, ccui.TextField.EVENT_ATTACH_WITH_IME);
+        }
+        if (this._ccEventCallback){
+            this._ccEventCallback(this, ccui.TextField.EVENT_ATTACH_WITH_IME);
+        }
     },
 
     _detachWithIMEEvent: function () {
-        if (this._textFieldEventListener && this._textFieldEventSelector)
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_DETACH_WITH_IME);
-        if (this._eventCallback)
-            this._eventCallback(this, ccui.TextField.EVENT_DETACH_WITH_IME);
+        if(this._textFieldEventSelector){
+            if (this._textFieldEventListener)
+                this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_DETACH_WITH_IME);
+            else
+                this._textFieldEventSelector(this, ccui.TextField.EVENT_DETACH_WITH_IME);
+        }
+        if (this._ccEventCallback)
+            this._ccEventCallback(this, ccui.TextField.EVENT_DETACH_WITH_IME);
     },
 
     _insertTextEvent: function () {
-        if (this._textFieldEventListener && this._textFieldEventSelector)
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_INSERT_TEXT);
-        if (this._eventCallback)
-            this._eventCallback(this, ccui.TextField.EVENT_INSERT_TEXT);
+        if(this._textFieldEventSelector){
+            if (this._textFieldEventListener)
+                this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_INSERT_TEXT);
+            else
+                this._textFieldEventSelector(this, ccui.TextField.EVENT_INSERT_TEXT);          //eventCallback
+        }
+        if (this._ccEventCallback)
+            this._ccEventCallback(this, ccui.TextField.EVENT_INSERT_TEXT);
     },
 
     _deleteBackwardEvent: function () {
-        if (this._textFieldEventListener && this._textFieldEventSelector)
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_DELETE_BACKWARD);
-        if (this._eventCallback)
-            this._eventCallback(this, ccui.TextField.EVENT_DELETE_BACKWARD);
+        if(this._textFieldEventSelector){
+            if (this._textFieldEventListener)
+                this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_DELETE_BACKWARD);
+            else
+                this._textFieldEventSelector(this, ccui.TextField.EVENT_DELETE_BACKWARD);         //eventCallback
+        }
+        if (this._ccEventCallback)
+            this._ccEventCallback(this, ccui.TextField.EVENT_DELETE_BACKWARD);
     },
 
     /**
-     * add event listener
-     * @param {Object} target
+     * Adds event listener to cuci.TextField.
+     * @param {Object} [target=]
      * @param {Function} selector
-     * @deprecated
+     * @deprecated since v3.0, please use addEventListener instead.
      */
-    addEventListenerTextField: function (target, selector) {
-        this._textFieldEventSelector = selector;
-        this._textFieldEventListener = target;
+    addEventListenerTextField: function (selector, target) {
+        this.addEventListener(selector, target);
     },
 
-    addEventListener: function(callback){
-        this._eventCallback = callback;
+    /**
+     * Adds event listener callback.
+     * @param {Object} [target=]
+     * @param {Function} selector
+     */
+    addEventListener: function(selector, target){
+        this._textFieldEventSelector = selector;        //when target is undefined, _textFieldEventSelector is ccEventCallback.
+        this._textFieldEventListener = target;
     },
 
     _onSizeChanged: function () {
@@ -654,12 +736,27 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         this._textFieldRenderer.setPosition(this._contentSize.width / 2, this._contentSize.height / 2);
     },
 
+    //@since v3.3
+    getAutoRenderSize: function(){
+        var virtualSize = this._textFieldRenderer.getContentSize();
+        if (!this._ignoreSize) {
+            this._textFieldRenderer.setDimensions(0, 0);
+            virtualSize = this._textFieldRenderer.getContentSize();
+            this._textFieldRenderer.setDimensions(this._contentSize.width, this._contentSize.height);
+        }
+        return virtualSize;
+    },
+
+    /**
+     * Returns the ccui.TextField's content size.
+     * @returns {cc.Size}
+     */
     getVirtualRendererSize: function(){
         return this._textFieldRenderer.getContentSize();
     },
 
     /**
-     * override "getContentSize" method of widget.
+     * Returns the renderer of ccui.TextField.
      * @returns {cc.Node}
      */
     getVirtualRenderer: function () {
@@ -667,19 +764,23 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     /**
-     * Returns the "class name" of widget.
+     * Returns the "class name" of ccui.TextField.
      * @returns {string}
      */
     getDescription: function () {
         return "TextField";
     },
 
+    /**
+     * Open keyboard and receive input text.
+     * @return {Boolean}
+     */
     attachWithIME: function () {
         this._textFieldRenderer.attachWithIME();
     },
 
     _createCloneInstance: function () {
-        return ccui.TextField.create();
+        return new ccui.TextField();
     },
 
     _copySpecialProperties: function (textField) {
@@ -695,41 +796,58 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         this.setDetachWithIME(textField.getDetachWithIME());
         this.setInsertText(textField.getInsertText());
         this.setDeleteBackward(textField.getDeleteBackward());
+        this._ccEventCallback = textField._ccEventCallback;
+        this._textFieldEventListener = textField._textFieldEventListener;
+        this._textFieldEventSelector = textField._textFieldEventSelector;
     },
 
+    /**
+     * Sets the text area size to ccui.TextField.
+     * @param {cc.Size} size
+     */
     setTextAreaSize: function(size){
         this.setContentSize(size);
     },
 
+    /**
+     * Sets the text horizontal alignment of ccui.TextField.
+     * @param alignment
+     */
     setTextHorizontalAlignment: function(alignment){
         this._textFieldRenderer.setHorizontalAlignment(alignment);
     },
 
+    /**
+     * Sets the text vertical alignment of ccui.TextField.
+     * @param alignment
+     */
     setTextVerticalAlignment: function(alignment){
         this._textFieldRenderer.setVerticalAlignment(alignment);
     },
     _setFont: function (font) {
-        this._textFieldRender._setFont(font);
+        this._textFieldRenderer._setFont(font);
         this._textFieldRendererAdaptDirty = true;
     },
 
     _getFont: function () {
-        return this._textFieldRender._getFont();
+        return this._textFieldRenderer._getFont();
+    },
+
+    _changePosition: function(){
+        this._adaptRenderers();
     }
 });
 
+/**
+ * Creates a ccui.TextField.
+ * @deprecated since v3.0, please use new ccui.TextField() instead.
+ * @param {String} placeholder
+ * @param {String} fontName
+ * @param {Number} fontSize
+ * @returns {ccui.TextField}
+ */
 ccui.TextField.create = function(placeholder, fontName, fontSize){
-    var widget = new ccui.TextField();
-    if (widget && widget.init()) {
-        if(placeholder && fontName && fontSize){
-            widget.setPlaceHolder(placeholder);
-            widget.setFontName(fontName);
-            widget.setFontSize(fontSize);
-        }
-        return widget;
-    }
-    return null;
-
+    return new ccui.TextField(placeholder, fontName, fontSize);
 };
 
 var _p = ccui.TextField.prototype;
@@ -762,23 +880,36 @@ cc.defineGetterSetter(_p, "passwordEnabled", _p.isPasswordEnabled, _p.setPasswor
 
 _p = null;
 
-/**
- * allocates and initializes a UITextField.
- * @constructs
- * @return {ccui.TextField}
- * @example
- * // example
- * var uiTextField = ccui.TextField.create();
- */
-ccui.TextField.create = function () {
-    return new ccui.TextField();
-};
-
 // Constants
 //TextField event
+/**
+ * The attach with IME event flag of ccui.TextField
+ * @constant
+ * @type {number}
+ */
 ccui.TextField.EVENT_ATTACH_WITH_IME = 0;
+/**
+ * The detach with IME event flag of ccui.TextField
+ * @constant
+ * @type {number}
+ */
 ccui.TextField.EVENT_DETACH_WITH_IME = 1;
+/**
+ * The insert text event flag of ccui.TextField
+ * @constant
+ * @type {number}
+ */
 ccui.TextField.EVENT_INSERT_TEXT = 2;
+/**
+ * The delete backward event flag of ccui.TextField
+ * @constant
+ * @type {number}
+ */
 ccui.TextField.EVENT_DELETE_BACKWARD = 3;
 
+/**
+ * The zOrder value of ccui.TextField's renderer.
+ * @constant
+ * @type {number}
+ */
 ccui.TextField.RENDERER_ZORDER = -1;

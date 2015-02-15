@@ -40,6 +40,9 @@ cc.ActionCamera = cc.ActionInterval.extend(/** @lends cc.ActionCamera# */{
     _upYOrig:0,
     _upZOrig:0,
 
+    /**
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+     */
     ctor:function(){
         var _t = this;
         cc.ActionInterval.prototype.ctor.call(_t);
@@ -55,7 +58,11 @@ cc.ActionCamera = cc.ActionInterval.extend(/** @lends cc.ActionCamera# */{
         _t._upZOrig=0;
     },
 
-
+    /**
+     * called before the action start. It will also set the target.
+     *
+     * @param {cc.Node} target
+     */
     startWithTarget:function (target) {
         var _t = this;
         cc.ActionInterval.prototype.startWithTarget.call(_t, target);
@@ -78,20 +85,39 @@ cc.ActionCamera = cc.ActionInterval.extend(/** @lends cc.ActionCamera# */{
     },
 
     /**
+     * to copy object with deep copy.
      * returns a new clone of the action
+     *
      * @returns {cc.ActionCamera}
      */
     clone:function(){
        return new cc.ActionCamera();
     },
 
+    /**
+     * returns a reversed action. <br />
+     * For example: <br />
+     * - The action will be x coordinates of 0 move to 100. <br />
+     * - The reversed action will be x of 100 move to 0.
+     * - Will be rewritten
+     *
+     */
     reverse:function () {
-        return cc.ReverseTime.create(this);
+        return new cc.ReverseTime(this);
     }
 });
 
 /**
- * Orbits the camera around the center of the screen using spherical coordinates
+ * Orbits the camera around the center of the screen using spherical coordinates.
+ *
+ * @param {Number} t time
+ * @param {Number} radius
+ * @param {Number} deltaRadius
+ * @param {Number} angleZ
+ * @param {Number} deltaAngleZ
+ * @param {Number} angleX
+ * @param {Number} deltaAngleX
+ *
  * @class
  * @extends cc.ActionCamera
  */
@@ -108,8 +134,8 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
     _radDeltaX: 0.0,
 
 	/**
-	 * creates a cc.OrbitCamera action with radius, delta-radius,  z, deltaZ, x, deltaX
-	 * Constructor of cc.OrbitCamera
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
+	 * creates a cc.OrbitCamera action with radius, delta-radius,  z, deltaZ, x, deltaX.
 	 * @param {Number} t time
 	 * @param {Number} radius
 	 * @param {Number} deltaRadius
@@ -180,6 +206,11 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
         return {newRadius:newRadius, zenith:zenith, azimuth:azimuth};
     },
 
+    /**
+     * called before the action start. It will also set the target.
+     *
+     * @param {cc.Node} target
+     */
     startWithTarget:function (target) {
         var _t = this;
         cc.ActionInterval.prototype.startWithTarget.call(_t, target);
@@ -197,12 +228,23 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
         _t._radX = cc.degreesToRadians(_t._angleX);
     },
 
+    /**
+     * to copy object with deep copy.
+     * returns a new clone of the action
+     *
+     * @returns {cc.ActionCamera}
+     */
     clone:function(){
         var a = new cc.OrbitCamera(), _t = this;
         a.initWithDuration(_t._duration, _t._radius, _t._deltaRadius, _t._angleZ, _t._deltaAngleZ, _t._angleX, _t._deltaAngleX);
         return a;
     },
 
+    /**
+     * Called once per frame. Time is the number of seconds of a frame interval.
+     *
+     * @param {Number}  dt
+     */
     update:function (dt) {
         dt = this._computeEaseTime(dt);
         var r = (this._radius + this._deltaRadius * dt) * cc.Camera.getZEye();
@@ -214,11 +256,13 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
         var k = Math.cos(za) * r + this._centerZOrig;
 
         this.target.getCamera().setEye(i, j, k);
+        this.target.setNodeDirty();
     }
 });
 
 /**
  * creates a cc.OrbitCamera action with radius, delta-radius,  z, deltaZ, x, deltaX
+ * @function
  * @param {Number} t time
  * @param {Number} radius
  * @param {Number} deltaRadius
@@ -228,6 +272,22 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
  * @param {Number} deltaAngleX
  * @return {cc.OrbitCamera}
  */
-cc.OrbitCamera.create = function (t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX) {
+cc.orbitCamera = function (t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX) {
     return new cc.OrbitCamera(t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX);
 };
+
+/**
+ * Please use cc.orbitCamera instead
+ * creates a cc.OrbitCamera action with radius, delta-radius,  z, deltaZ, x, deltaX
+ * @param {Number} t time
+ * @param {Number} radius
+ * @param {Number} deltaRadius
+ * @param {Number} angleZ
+ * @param {Number} deltaAngleZ
+ * @param {Number} angleX
+ * @param {Number} deltaAngleX
+ * @return {cc.OrbitCamera}
+ * @static
+ * @deprecated since v3.0 please use cc.orbitCamera() instead.
+ */
+cc.OrbitCamera.create = cc.orbitCamera;

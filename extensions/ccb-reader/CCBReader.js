@@ -305,7 +305,7 @@ cc.BuilderReader = cc.Class.extend({
 
     createSceneWithNodeGraphFromFile:function (ccbFileName, owner, parentSize, animationManager) {
         var node = this.readNodeGraphFromFile(ccbFileName, owner, parentSize, animationManager);
-        var scene = cc.Scene.create();
+        var scene = new cc.Scene();
         scene.addChild(node);
         return scene;
     },
@@ -691,7 +691,7 @@ cc.BuilderReader = cc.Class.extend({
                 var texture = cc.textureCache.addImage(spriteFile);
                 var locContentSize = texture.getContentSize();
                 var bounds = cc.rect(0, 0, locContentSize.width, locContentSize.height);
-                value = cc.SpriteFrame.create(texture, bounds);
+                value = new cc.SpriteFrame(texture, bounds);
             } else {
                 spriteSheet = this._ccbRootPath + spriteSheet;
                 var frameCache = cc.spriteFrameCache;
@@ -967,7 +967,7 @@ cc.BuilderReader.loadAsScene = function (ccbFilePath, owner, parentSize, ccbRoot
 
     var getNode = cc.BuilderReader.load(ccbFilePath, owner, parentSize, ccbRootPath);
 
-    var scene = cc.Scene.create();
+    var scene = new cc.Scene();
     scene.addChild(getNode);
     return scene;
 };
@@ -1062,7 +1062,7 @@ cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
             controller[outletName] = outletNode;
         }
 
-        if (controller.onDidLoadFromCCB && typeof(controller.onDidLoadFromCCB) == "function")
+        if (controller.onDidLoadFromCCB && cc.isFunction(controller.onDidLoadFromCCB))
             controller.onDidLoadFromCCB();
 
         // Setup timeline callbacks
@@ -1073,12 +1073,15 @@ cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
             var kfCallbackName = callbackSplit[1];
 
             if (callbackType == 1){ // Document callback
-                animationManager.setCallFunc(cc.CallFunc.create(controller[kfCallbackName], controller), keyframeCallbacks[j]);
+                animationManager.setCallFunc(cc.callFunc(controller[kfCallbackName], controller), keyframeCallbacks[j]);
             } else if (callbackType == 2 && owner) {// Owner callback
-                animationManager.setCallFunc(cc.CallFunc.create(owner[kfCallbackName], owner), keyframeCallbacks[j]);
+                animationManager.setCallFunc(cc.callFunc(owner[kfCallbackName], owner), keyframeCallbacks[j]);
             }
         }
     }
+
+    //auto play animations
+    animationManager.runAnimations(animationManager.getAutoPlaySequenceId(), 0);
 
     return node;
 };

@@ -138,7 +138,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
     },
 
     /**
-     * get wheter or not the texture is flipped
+     * get whether or not the texture is flipped
      * @return {Boolean}
      */
     isTextureFlipped:function () {
@@ -146,7 +146,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
     },
 
     /**
-     * set wheter or not the texture is flipped
+     * set whether or not the texture is flipped
      * @param {Boolean} flipped
      */
     setTextureFlipped:function (flipped) {
@@ -210,9 +210,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         // save projection
         this._directorProjection = cc.director.getProjection();
 
-        // 2d projection
-        //    [director setProjection:kCCDirectorProjection2D];
-        this.set2DProjection();
+        //this.set2DProjection();    //TODO why?
         this._grabber.beforeRender(this._texture);
     },
 
@@ -220,25 +218,31 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         this._grabber.afterRender(this._texture);
 
         // restore projection
-        cc.director.setProjection(this._directorProjection);
+        //cc.director.setProjection(this._directorProjection);
 
-        if (target.getCamera().isDirty()) {
+        if (target && target.getCamera().isDirty()) {
             var offset = target.getAnchorPointInPoints();
 
+            //TODO hack
+            var stackMatrix = target._renderCmd._stackMatrix;
             //
             // XXX: Camera should be applied in the AnchorPoint
             //
-            cc.kmGLTranslatef(offset.x, offset.y, 0);
-            target.getCamera().locate();
-            cc.kmGLTranslatef(-offset.x, -offset.y, 0);
+            //cc.kmGLTranslatef(offset.x, offset.y, 0);
+            var translation = new cc.kmMat4();
+            cc.kmMat4Translation(translation, offset.x, offset.y, 0);
+            cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
+
+            //target.getCamera().locate();
+            target._camera._locateForRenderer(stackMatrix);
+
+            //cc.kmGLTranslatef(-offset.x, -offset.y, 0);
+            cc.kmMat4Translation(translation, -offset.x, -offset.y, 0);
+            cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
         }
 
         cc.glBindTexture2D(this._texture);
-
-        // restore projection for default FBO .fixed bug #543 #544
-        //TODO:         CCDirector::sharedDirector().setProjection(CCDirector::sharedDirector().getProjection());
-        //TODO:         CCDirector::sharedDirector().applyOrientation();
-        this.blit();
+        this.blit(target);
     },
 
     blit:function () {
@@ -273,6 +277,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
 
 /**
  * create one cc.GridBase Object
+ * @deprecated
  * @param {cc.Size} gridSize
  * @param {cc.Texture2D} [texture=]
  * @param {Boolean} [flipped=]
@@ -361,11 +366,12 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         this._dirty = true;
     },
 
-    blit:function () {
+    blit:function (target) {
         var n = this._gridSize.width * this._gridSize.height;
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
         this._shaderProgram.use();
-        this._shaderProgram.setUniformsForBuiltins();
+        //this._shaderProgram.setUniformsForBuiltins();
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(target._renderCmd._stackMatrix);
 
         var gl = cc._renderContext, locDirty = this._dirty;
         //
@@ -481,6 +487,7 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
 
 /**
  * create one Grid3D object
+ * @deprecated
  * @param {cc.Size} gridSize
  * @param {cc.Texture2D} [texture=]
  * @param {Boolean} [flipped=]
@@ -588,11 +595,12 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         this._dirty = true;
     },
 
-    blit:function () {
+    blit:function (target) {
         var n = this._gridSize.width * this._gridSize.height;
 
         this._shaderProgram.use();
-        this._shaderProgram.setUniformsForBuiltins();
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(target._renderCmd._stackMatrix);
+        //this._shaderProgram.setUniformsForBuiltins();
 
         //
         // Attributes
@@ -718,6 +726,7 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
 
 /**
  * create one TiledGrid3D object
+ * @deprecated since v3.0, please use new cc.TiledGrid3D(gridSize, texture, flipped) instead
  * @param {cc.Size} gridSize
  * @param {cc.Texture2D} [texture=]
  * @param {Boolean} [flipped=]

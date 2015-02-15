@@ -21,6 +21,7 @@
         <jsdoctoolkit jsdochome="${jsdoc.dir}/" template="WouterBos-Codeview-a091d81" outputdir="${out.dir}" includeprivate="false">
             <fileset dir="${src.dir}">
                 <include name="./../CCBoot.js"/>
+                <include name="./../jsb_apis.js"/>
                 <include name="core/platform/CCClass.js"/>
                 <include name="core/platform/CCCommon.js"/>
                 <include name="core/cocoa/CCGeometry.js"/>
@@ -139,6 +140,7 @@
                 <include name="ccui/system/CocosGUI.js"/>
                 <include name="ccui/base-classes/CCProtectedNode.js"/>
                 <include name="ccui/base-classes/UIWidget.js"/>
+                <include name="ccui/base-classes/UIScale9Sprite.js"/>
                 <include name="ccui/layouts/UILayout.js"/>
                 <include name="ccui/layouts/UILayoutParameter.js"/>
                 <include name="ccui/layouts/UILayoutManager.js"/>
@@ -191,6 +193,14 @@
                 <include name="cocostudio/components/CCComRender.js"/>
                 <include name="cocostudio/reader/GUIReader.js"/>
                 <include name="cocostudio/reader/SceneReader.js"/>
+                <include name="cocostudio/reader/timeline/ActionTimeline.js"/>
+                <include name="cocostudio/reader/timeline/ActionTimelineCache.js"/>
+                <include name="cocostudio/reader/timeline/Frame.js"/>
+                <include name="cocostudio/reader/timeline/NodeReader.js"/>
+                <include name="cocostudio/reader/timeline/Timeline.js"/>
+                <include name="spine/CCSkeleton.js"/>
+                <include name="spine/CCSkeletonAnimation.js"/>
+
             </fileset>
         </jsdoctoolkit>
     </target>

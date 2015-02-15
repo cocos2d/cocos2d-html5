@@ -24,9 +24,11 @@
  ****************************************************************************/
 
 /**
- * Base class for ccs.Tween objects.
+ * The tween class for Armature.
  * @class
  * @extends ccs.ProcessBase
+ *
+ * @param {ccs.Bone} The bone to be animated
  *
  * @property {ccs.ArmatureAnimation}    animation   - The animation
  */
@@ -42,25 +44,18 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
     _totalDuration:0,
     _toIndex:0,
     _fromIndex:0,
-    animation:null,
+    _animation:null,
     _passLastFrame:false,
-    ctor:function () {
+
+    ctor:function (bone) {
         ccs.ProcessBase.prototype.ctor.call(this);
-        this._tweenData = null;
-        this._to = null;
-        this._from = null;
-        this._between = null;
-        this._bone = null;
-        this._movementBoneData = null;
         this._frameTweenEasing = ccs.TweenType.linear;
-        this._toIndex = 0;
-        this._fromIndex = 0;
-        this.animation = null;
-        this._passLastFrame = false;
+
+        ccs.Tween.prototype.init.call(this, bone);
     },
 
     /**
-     * init with a CCBone
+     * initializes a ccs.Tween with a CCBone
      * @param {ccs.Bone} bone
      * @return {Boolean}
      */
@@ -71,13 +66,15 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         this._bone = bone;
         this._tweenData = this._bone.getTweenData();
         this._tweenData.displayIndex = -1;
-         var armature = bone.getArmature();
-        if (armature) this.animation = armature.getAnimation();
+
+        this._animation = (this._bone != null && this._bone.getArmature() != null) ?
+            this._bone.getArmature().getAnimation() :
+            null;
         return true;
     },
 
     /**
-     * Start the Process
+     * Plays the tween.
      * @param {ccs.MovementBoneData} movementBoneData
      * @param {Number} durationTo
      * @param {Number} durationTween
@@ -85,21 +82,18 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
      * @param {ccs.TweenType} tweenEasing
      */
     play:function (movementBoneData, durationTo, durationTween, loop, tweenEasing) {
-        ccs.ProcessBase.prototype.play.call(this, durationTo, tweenEasing);
-
-        if(loop){
-            this._loopType = ccs.ANIMATION_TYPE_TO_LOOP_FRONT;
-        }else{
-            this._loopType = ccs.ANIMATION_TYPE_NO_LOOP;
-        }
+        ccs.ProcessBase.prototype.play.call(this, durationTo, durationTween, loop, tweenEasing);
+        this._loopType = (loop)?ccs.ANIMATION_TYPE_TO_LOOP_FRONT:ccs.ANIMATION_TYPE_NO_LOOP;
 
         this._totalDuration = 0;
         this._betweenDuration = 0;
         this._fromIndex = this._toIndex = 0;
 
         var difMovement = movementBoneData != this._movementBoneData;
-        this._movementBoneData = movementBoneData;
+
+        this.setMovementBoneData(movementBoneData);
         this._rawDuration = this._movementBoneData.duration;
+
         var nextKeyFrame = this._movementBoneData.getFrameData(0);
         this._tweenData.displayIndex = nextKeyFrame.displayIndex;
 
@@ -109,20 +103,18 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
             this._tweenData.scaleY += 1;
         }
 
-        if (this._rawDuration == 0 || this._movementBoneData.frameList.length == 1) {
+        if (this._rawDuration == 0) {
             this._loopType = ccs.ANIMATION_TYPE_SINGLE_FRAME;
-            if (durationTo == 0) {
+            if (durationTo == 0)
                 this.setBetween(nextKeyFrame, nextKeyFrame);
-            } else {
+            else
                 this.setBetween(this._tweenData, nextKeyFrame);
-            }
             this._frameTweenEasing = ccs.TweenType.linear;
         }
         else if (this._movementBoneData.frameList.length > 1) {
             this._durationTween = durationTween * this._movementBoneData.scale;
-            if (loop && this._movementBoneData.delay != 0) {
+            if (loop && this._movementBoneData.delay != 0)
                 this.setBetween(this._tweenData, this.tweenNodeTo(this.updateFrameData(1 - this._movementBoneData.delay), this._between));
-            }
             else {
                 if (!difMovement || durationTo == 0)
                     this.setBetween(nextKeyFrame, nextKeyFrame);
@@ -133,17 +125,28 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         this.tweenNodeTo(0);
     },
 
+    /**
+     * Goes to specified frame and plays frame.
+     * @param {Number} frameIndex
+     */
     gotoAndPlay: function (frameIndex) {
         ccs.ProcessBase.prototype.gotoFrame.call(this, frameIndex);
+
         this._totalDuration = 0;
         this._betweenDuration = 0;
         this._fromIndex = this._toIndex = 0;
+
         this._isPlaying = true;
         this._isComplete = this._isPause = false;
+
         this._currentPercent = this._curFrameIndex / (this._rawDuration-1);
         this._currentFrame = this._nextFrameIndex * this._currentPercent;
     },
 
+    /**
+     * Goes to specified frame and pauses frame.
+     * @param {Number} frameIndex
+     */
     gotoAndPause: function (frameIndex) {
         this.gotoAndPlay(frameIndex);
         this.pause();
@@ -153,7 +156,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
      * update will call this handler, you can handle your logic here
      */
     updateHandler:function () {
-        var locCurrentPercent = this._currentPercent;
+        var locCurrentPercent = this._currentPercent == null ? 1 : this._currentPercent;
         var locLoopType = this._loopType;
         if (locCurrentPercent >= 1) {
             switch (locLoopType) {
@@ -164,19 +167,16 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
                     break;
                 case ccs.ANIMATION_TYPE_NO_LOOP:
                     locLoopType = ccs.ANIMATION_TYPE_MAX;
-                    if (this._durationTween <= 0) {
+                    if (this._durationTween <= 0)
                         locCurrentPercent = 1;
-                    }
-                    else {
+                    else
                         locCurrentPercent = (locCurrentPercent - 1) * this._nextFrameIndex / this._durationTween;
-                    }
                     if (locCurrentPercent >= 1) {
                         locCurrentPercent = 1;
                         this._isComplete = true;
                         this._isPlaying = false;
                         break;
-                    }
-                    else {
+                    } else {
                         this._nextFrameIndex = this._durationTween;
                         this._currentFrame = locCurrentPercent * this._nextFrameIndex;
                         this._totalDuration = 0;
@@ -187,10 +187,10 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
                 case ccs.ANIMATION_TYPE_TO_LOOP_FRONT:
                     locLoopType = ccs.ANIMATION_TYPE_LOOP_FRONT;
                     this._nextFrameIndex = this._durationTween > 0 ? this._durationTween : 1;
+
                     if (this._movementBoneData.delay != 0) {
                         this._currentFrame = (1 - this._movementBoneData.delay) * this._nextFrameIndex;
                         locCurrentPercent = this._currentFrame / this._nextFrameIndex;
-
                     } else {
                         locCurrentPercent = 0;
                         this._currentFrame = 0;
@@ -207,39 +207,32 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
                     break;
                 default:
                     this._currentFrame = ccs.fmodf(this._currentFrame, this._nextFrameIndex);
-                    this._totalDuration = 0;
-                    this._betweenDuration = 0;
                     break;
             }
         }
 
-        if (locCurrentPercent < 1 && locLoopType < ccs.ANIMATION_TYPE_TO_LOOP_BACK) {
+        if (locCurrentPercent < 1 && locLoopType < ccs.ANIMATION_TYPE_TO_LOOP_BACK)
             locCurrentPercent = Math.sin(locCurrentPercent * cc.PI / 2);
-        }
 
         this._currentPercent = locCurrentPercent;
         this._loopType = locLoopType;
 
-        if (locLoopType > ccs.ANIMATION_TYPE_TO_LOOP_BACK) {
+        if (locLoopType > ccs.ANIMATION_TYPE_TO_LOOP_BACK)
             locCurrentPercent = this.updateFrameData(locCurrentPercent);
-        }
-        if (this._frameTweenEasing != ccs.TweenType.tweenEasingMax) {
+        if (this._frameTweenEasing != ccs.TweenType.tweenEasingMax)
             this.tweenNodeTo(locCurrentPercent);
-        }
     },
 
     /**
      * Calculate the between value of _from and _to, and give it to between frame data
      * @param {ccs.FrameData} from
      * @param {ccs.FrameData} to
-     * @param {Boolean} limit
+     * @param {Boolean} [limit=true]
      */
-    setBetween:function (from, to, limit) {
-        if (typeof limit == "undefined") {
+    setBetween:function (from, to, limit) {   //TODO set tweenColorTo to protected in v3.1
+        if(limit === undefined)
             limit = true;
-        }
-        do
-        {
+        do {
             if (from.displayIndex < 0 && to.displayIndex >= 0) {
                 this._from.copy(to);
                 this._between.subtract(to, to, limit);
@@ -264,24 +257,28 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
      * Update display index and process the key frame event when arrived a key frame
      * @param {ccs.FrameData} keyFrameData
      */
-    arriveKeyFrame:function (keyFrameData) {
+    arriveKeyFrame:function (keyFrameData) {                         //TODO set tweenColorTo to protected in v3.1
         if (keyFrameData) {
             var locBone = this._bone;
-            var displayIndex = keyFrameData.displayIndex;
             var displayManager = locBone.getDisplayManager();
-            if (!displayManager.getForceChangeDisplay()) {
+
+            //! Change bone's display
+            var displayIndex = keyFrameData.displayIndex;
+
+            if (!displayManager.getForceChangeDisplay())
                 displayManager.changeDisplayWithIndex(displayIndex, false);
-                var locRenderNode = displayManager.getDisplayRenderNode();
-                if(locRenderNode)
-                    locRenderNode.setBlendFunc(keyFrameData.blendFunc);
-            }
+
+            //! Update bone zorder, bone's zorder is determined by frame zorder and bone zorder
             this._tweenData.zOrder = keyFrameData.zOrder;
             locBone.updateZOrder();
+
+            //! Update blend type
+            this._bone.setBlendFunc(keyFrameData.blendFunc);
+
             var childAramture = locBone.getChildArmature();
             if (childAramture) {
-                if (keyFrameData.movement != "") {
+                if (keyFrameData.movement != "")
                     childAramture.getAnimation().play(keyFrameData.movement);
-                }
             }
         }
     },
@@ -289,18 +286,17 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
     /**
      * According to the percent to calculate current CCFrameData with tween effect
      * @param {Number} percent
-     * @param {ccs.FrameData} node
+     * @param {ccs.FrameData} [node]
      * @return {ccs.FrameData}
      */
-    tweenNodeTo:function (percent, node) {
-        if (!node) {
+    tweenNodeTo:function (percent, node) {         //TODO set tweenColorTo to protected in v3.1
+        if (!node)
             node = this._tweenData;
-        }
+
         var locFrom = this._from;
         var locBetween = this._between;
-        if (!locFrom.isTween){
+        if (!locFrom.isTween)
             percent = 0;
-        }
         node.x = locFrom.x + percent * locBetween.x;
         node.y = locFrom.y + percent * locBetween.y;
         node.scaleX = locFrom.scaleX + percent * locBetween.scaleX;
@@ -315,7 +311,12 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         return node;
     },
 
-    tweenColorTo:function(percent,node){
+    /**
+     * According to the percent to calculate current color with tween effect
+     * @param {Number} percent
+     * @param {ccs.FrameData} node
+     */
+    tweenColorTo:function(percent,node){    //TODO set tweenColorTo to protected in v3.1
         var locFrom = this._from;
         var locBetween = this._between;
         node.a = locFrom.a + percent * locBetween.a;
@@ -330,11 +331,12 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
      * @param {Number} currentPercent
      * @return {Number}
      */
-    updateFrameData:function (currentPercent) {
-        if (currentPercent > 1 && this._movementBoneData.delay != 0) {
+    updateFrameData:function (currentPercent) {                             //TODO set tweenColorTo to protected in v3.1
+        if (currentPercent > 1 && this._movementBoneData.delay != 0)
             currentPercent = ccs.fmodf(currentPercent,1);
-        }
+
         var playedTime = (this._rawDuration-1) * currentPercent;
+
         var from, to;
         var locTotalDuration = this._totalDuration,locBetweenDuration = this._betweenDuration, locToIndex = this._toIndex;
         // if play to current frame's front or back, then find current frame again
@@ -343,100 +345,104 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
              *  get frame length, if this._toIndex >= _length, then set this._toIndex to 0, start anew.
              *  this._toIndex is next index will play
              */
-            var length = this._movementBoneData.frameList.length;
             var frames = this._movementBoneData.frameList;
+            var length = frames.length;
+
             if (playedTime < frames[0].frameID){
                 from = to = frames[0];
                 this.setBetween(from, to);
-                return currentPercent;
+                return this._currentPercent;
             }
-            else if (playedTime >= frames[length - 1].frameID) {
+
+            if (playedTime >= frames[length - 1].frameID) {
+                // If _passLastFrame is true and playedTime >= frames[length - 1]->frameID, then do not need to go on.
                 if (this._passLastFrame) {
                     from = to = frames[length - 1];
                     this.setBetween(from, to);
-                    return currentPercent;
+                    return this._currentPercent;
                 }
                 this._passLastFrame = true;
-            } else {
+            } else
                 this._passLastFrame = false;
-            }
 
             do {
                 this._fromIndex = locToIndex;
                 from = frames[this._fromIndex];
                 locTotalDuration = from.frameID;
+
                 locToIndex = this._fromIndex + 1;
-                if (locToIndex >= length) {
+                if (locToIndex >= length)
                     locToIndex = 0;
-                }
                 to = frames[locToIndex];
 
                 //! Guaranteed to trigger frame event
-                if(from.event&& !this.animation.isIgnoreFrameEvent()){
-                    this.animation.frameEvent(this._bone, from.event,from.frameID, playedTime);
-                }
+                if(from.strEvent && !this._animation.isIgnoreFrameEvent())
+                    this._animation.frameEvent(this._bone, from.strEvent,from.frameID, playedTime);
 
-                if (playedTime == from.frameID|| (this._passLastFrame && this._fromIndex == length-1)){
+                if (playedTime == from.frameID|| (this._passLastFrame && this._fromIndex == length-1))
                     break;
-                }
-            }
-            while  (playedTime < from.frameID || playedTime >= to.frameID);
+            } while  (playedTime < from.frameID || playedTime >= to.frameID);
 
             locBetweenDuration = to.frameID - from.frameID;
             this._frameTweenEasing = from.tweenEasing;
             this.setBetween(from, to, false);
+
             this._totalDuration = locTotalDuration;
             this._betweenDuration = locBetweenDuration;
             this._toIndex = locToIndex;
         }
-
-        currentPercent = locBetweenDuration == 0 ? 0 : (playedTime - locTotalDuration) / locBetweenDuration;
+        currentPercent = locBetweenDuration == 0 ? 0 : (playedTime - this._totalDuration) / this._betweenDuration;
 
         /*
          *  if frame tween easing equal to TWEEN_EASING_MAX, then it will not do tween.
          */
         var tweenType = (this._frameTweenEasing != ccs.TweenType.linear) ? this._frameTweenEasing : this._tweenEasing;
-        if (tweenType != ccs.TweenType.tweenEasingMax&&tweenType != ccs.TweenType.linear&& !this._passLastFrame) {
+        if (tweenType != ccs.TweenType.tweenEasingMax && tweenType != ccs.TweenType.linear && !this._passLastFrame) {
             currentPercent = ccs.TweenFunction.tweenTo(currentPercent, tweenType, this._from.easingParams);
         }
         return currentPercent;
     },
 
     /**
-     * animation setter
+     * Sets Armature animation to ccs.Tween.
      * @param {ccs.ArmatureAnimation} animation
      */
     setAnimation:function (animation) {
-        this.animation = animation;
+        this._animation = animation;
     },
 
     /**
-     * animation getter
+     * Returns Armature animation of ccs.Tween.
      * @return {ccs.ArmatureAnimation}
      */
     getAnimation:function () {
-        return this.animation;
+        return this._animation;
     },
 
-    release:function () {
-        this._from = null;
-        this._between = null;
+    /**
+     * Sets movement bone data to ccs.Tween.
+     * @param data
+     */
+    setMovementBoneData: function(data){
+        this._movementBoneData = data;
     }
 });
 
+var _p = ccs.Tween.prototype;
+
+// Extended properties
+/** @expose */
+_p.animation;
+cc.defineGetterSetter(_p, "animation", _p.getAnimation, _p.setAnimation);
+
+_p = null;
+
 /**
- * allocates and initializes a ArmatureAnimation.
- * @constructs
+ * Allocates and initializes a ArmatureAnimation.
  * @param {ccs.Bone} bone
- * @return {ccs.ArmatureAnimation}
- * @example
- * // example
- * var animation = ccs.ArmatureAnimation.create();
+ * @return {ccs.Tween}
+ * @deprecated since v3.1, please use new construction instead
  */
 ccs.Tween.create = function (bone) {
-    var tween = new ccs.Tween();
-    if (tween && tween.init(bone)) {
-        return tween;
-    }
-    return null;
+    return new ccs.Tween(bone);
 };

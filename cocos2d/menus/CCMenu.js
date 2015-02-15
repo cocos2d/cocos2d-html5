@@ -46,34 +46,26 @@ cc.MENU_HANDLER_PRIORITY = -128;
 cc.DEFAULT_PADDING = 5;
 
 /**
- * <p> Features and Limitation:<br/>
+ *<p> Features and Limitation:<br/>
  *  - You can add MenuItem objects in runtime using addChild:<br/>
  *  - But the only accepted children are MenuItem objects</p>
  * @class
  * @extends cc.Layer
- *
- * @property {Boolean}  enabled - Indicates whether or not the menu is enabled
+ * @param {...cc.MenuItem|null} menuItems}
+ * @example
+ * var layer = new cc.Menu(menuitem1, menuitem2, menuitem3);
  */
 cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     enabled: false,
 
-    _color: null,
-    _opacity: 0,
     _selectedItem: null,
     _state: -1,
     _touchListener: null,
     _className: "Menu",
 
     /**
-     * Constructor of cc.Menu
-     * @function
+     * Constructor of cc.Menu override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @param {...cc.MenuItem|null} menuItems
-     *
-     * @example
-     * // Example
-     * //there is no limit on how many menu item you can pass in
-     * var myMenu1 = cc.Menu.create(menuitem1, menuitem2, menuitem3);
-     * var myMenu2 = cc.Menu.create([menuitem1, menuitem2, menuitem3]);
      */
     ctor: function (menuItems) {
         cc.Layer.prototype.ctor.call(this);
@@ -113,61 +105,19 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         }
         this.initWithArray(items);
     },
-
+    /**
+     * <p>
+     *     Event callback that is invoked every time when CCMenu enters the 'stage'.                                   <br/>
+     *     If the CCMenu enters the 'stage' with a transition, this event is called when the transition starts.        <br/>
+     *     During onEnter you can't access a "sister/brother" node.                                                    <br/>
+     *     If you override onEnter, you must call its parent's onEnter function with this._super().
+     * </p>
+     */
     onEnter: function () {
         var locListener = this._touchListener;
         if (!locListener._isRegistered())
             cc.eventManager.addListener(locListener, this);
         cc.Node.prototype.onEnter.call(this);
-    },
-
-    /**
-     * @return {cc.Color}
-     */
-    getColor: function () {
-        var locColor = this._color;
-        return cc.color(locColor.r, locColor.g, locColor.b, locColor.a);
-    },
-
-    /**
-     * @param {cc.Color} color
-     */
-    setColor: function (color) {
-        var locColor = this._color;
-        locColor.r = color.r;
-        locColor.g = color.g;
-        locColor.b = color.b;
-
-        var locChildren = this._children;
-        if (locChildren && locChildren.length > 0) {
-            for (var i = 0; i < locChildren.length; i++) {
-                locChildren[i].setColor(color);
-            }
-        }
-
-        if (color.a !== undefined && !color.a_undefined) {
-            this.setOpacity(color.a);
-        }
-    },
-
-    /**
-     * @return {Number}
-     */
-    getOpacity: function () {
-        return this._opacity;
-    },
-
-    /**
-     * @param {Number} opa
-     */
-    setOpacity: function (opa) {
-        this._opacity = opa;
-        var locChildren = this._children;
-        if (locChildren && locChildren.length > 0) {
-            for (var i = 0; i < locChildren.length; i++)
-                locChildren[i].setOpacity(opa);
-        }
-        this._color.a = opa;
     },
 
     /**
@@ -205,7 +155,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
 
     /**
      * initializes a cc.Menu with a Array of cc.MenuItem objects
-     * @param {Array} arrayOfItems
+     * @param {Array} arrayOfItems array Of cc.MenuItem Items
      * @return {Boolean}
      */
     initWithArray: function (arrayOfItems) {
@@ -237,9 +187,10 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     },
 
     /**
+     * add a child for  cc.Menu
      * @param {cc.Node} child
-     * @param {Number|Null} [zOrder=]
-     * @param {Number|Null} [tag=]
+     * @param {Number|Null} [zOrder=] zOrder for the child
+     * @param {Number|Null} [tag=] tag for the child
      */
     addChild: function (child, zOrder, tag) {
         if (!(child instanceof cc.MenuItem))
@@ -389,6 +340,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     },
     /**
      * align menu items in rows
+     * @param {Number}
      * @example
      * // Example
      * menu.alignItemsInRows(5,3)//this will align items to 2 rows, first row with 5 items, second row with 3
@@ -483,8 +435,9 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     },
 
     /**
-     * @param {cc.Node} child
-     * @param {boolean} cleanup
+     * remove a child from cc.Menu
+     * @param {cc.Node} child the child you want to remove
+     * @param {boolean} cleanup whether to cleanup
      */
     removeChild: function (child, cleanup) {
         if (child == null)
@@ -513,6 +466,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         if (target._selectedItem) {
             target._state = cc.MENU_STATE_TRACKING_TOUCH;
             target._selectedItem.selected();
+            target._selectedItem.setNodeDirty();
             return true;
         }
         return false;
@@ -526,6 +480,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         }
         if (target._selectedItem) {
             target._selectedItem.unselected();
+            target._selectedItem.setNodeDirty();
             target._selectedItem.activate();
         }
         target._state = cc.MENU_STATE_WAITING;
@@ -537,8 +492,10 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
             cc.log("cc.Menu.onTouchCancelled(): invalid state");
             return;
         }
-        if (this._selectedItem)
+        if (this._selectedItem) {
             target._selectedItem.unselected();
+            target._selectedItem.setNodeDirty();
+        }
         target._state = cc.MENU_STATE_WAITING;
     },
 
@@ -550,16 +507,25 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         }
         var currentItem = target._itemForTouch(touch);
         if (currentItem != target._selectedItem) {
-            if (target._selectedItem)
+            if (target._selectedItem) {
                 target._selectedItem.unselected();
+                target._selectedItem.setNodeDirty();
+            }
             target._selectedItem = currentItem;
-            if (target._selectedItem)
+            if (target._selectedItem) {
                 target._selectedItem.selected();
+                target._selectedItem.setNodeDirty();
+            }
         }
     },
 
     /**
-     * custom on exit
+     * <p>
+     * callback that is called every time the cc.Menu leaves the 'stage'.                                         <br/>
+     * If the cc.Menu leaves the 'stage' with a transition, this callback is called when the transition finishes. <br/>
+     * During onExit you can't access a sibling node.                                                             <br/>
+     * If you override onExit, you shall call its parent's onExit with this._super().
+     * </p>
      */
     onExit: function () {
         if (this._state == cc.MENU_STATE_TRACKING_TOUCH) {
@@ -571,10 +537,16 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         }
         cc.Node.prototype.onExit.call(this);
     },
-
+    /**
+     * only use for jsbinding
+     * @param value
+     */
     setOpacityModifyRGB: function (value) {
     },
-
+    /**
+     * only use for jsbinding
+      * @returns {boolean}
+     */
     isOpacityModifyRGB: function () {
         return false;
     },
@@ -583,7 +555,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         var touchLocation = touch.getLocation();
         var itemChildren = this._children, locItemChild;
         if (itemChildren && itemChildren.length > 0) {
-            for (var i = 0; i < itemChildren.length; i++) {
+            for (var i = itemChildren.length - 1; i >= 0; i--) {
                 locItemChild = itemChildren[i];
                 if (locItemChild.isVisible() && locItemChild.isEnabled()) {
                     var local = locItemChild.convertToNodeSpace(touchLocation);
@@ -607,12 +579,10 @@ _p.enabled;
 
 /**
  * create a new menu
+ * @deprecated  since v3.0, please use new cc.Menu(menuitem1, menuitem2, menuitem3) to create a new menu
  * @param {...cc.MenuItem|null} menuItems
+ * todo: need to use new
  * @return {cc.Menu}
- * @example
- * // Example
- * //there is no limit on how many menu item you can pass in
- * var myMenu = cc.Menu.create(menuitem1, menuitem2, menuitem3);
  */
 cc.Menu.create = function (menuItems) {
     var argc = arguments.length;

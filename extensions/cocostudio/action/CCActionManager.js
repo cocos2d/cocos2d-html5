@@ -24,8 +24,8 @@
  ****************************************************************************/
 
 /**
- * Base singleton object for ccs.ActionManager
- * @namespace
+ * Base singleton object for ccs.ActionManager.
+ * @class
  * @name ccs.actionManager
  */
 ccs.actionManager = /** @lends ccs.actionManager# */{
@@ -59,15 +59,16 @@ ccs.actionManager = /** @lends ccs.actionManager# */{
      * @returns {ccs.ActionObject}
      */
     getActionByName: function (jsonName, actionName) {
-        var actionList = this._actionDic[jsonName];
-        if (!actionList) {
+        var path = jsonName;
+        var pos = path.lastIndexOf("/");
+        var fileName = path.substr(pos + 1, path.length);
+        var actionList = this._actionDic[fileName];
+        if (!actionList)
             return null;
-        }
         for (var i = 0; i < actionList.length; i++) {
             var locAction = actionList[i];
-            if (actionName == locAction.getName()) {
+            if (actionName == locAction.getName())
                 return locAction;
-            }
         }
         return null;
     },
@@ -80,9 +81,19 @@ ccs.actionManager = /** @lends ccs.actionManager# */{
      */
     playActionByName: function (jsonName, actionName, fun) {
         var action = this.getActionByName(jsonName, actionName);
-        if (action) {
+        if (action)
             action.play(fun);
-        }
+    },
+    
+     /**
+     * Stop an Action with a name.
+     * @param {String} jsonName
+     * @param {String} actionName
+     */
+    stopActionByName: function (jsonName, actionName) {
+        var action = this.getActionByName(jsonName, actionName);
+        if (action)
+            action.stop();
     },
 
     /**
@@ -90,7 +101,6 @@ ccs.actionManager = /** @lends ccs.actionManager# */{
      */
     releaseActions: function () {
         this._actionDic = {};
-
     },
 
 	/**

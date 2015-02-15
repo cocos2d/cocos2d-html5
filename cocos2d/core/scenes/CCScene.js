@@ -36,10 +36,12 @@
  * <p>It is a good practice to use and cc.Scene as the parent of all your nodes.</p>
  * @class
  * @extends cc.Node
+ * @example
+ * var scene = new cc.Scene();
  */
 cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
     /**
-     * Constructor
+     * Constructor of cc.Scene
      */
     _className:"Scene",
     ctor:function () {
@@ -52,12 +54,8 @@ cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
 
 /**
  * creates a scene
+ * @deprecated since v3.0,please use new cc.Scene() instead.
  * @return {cc.Scene}
- * @example
- * // Example
- * var aScene = cc.Scene.create();
- * //OR
- * var aScene = new cc.Scene();
  */
 cc.Scene.create = function () {
     return new cc.Scene();

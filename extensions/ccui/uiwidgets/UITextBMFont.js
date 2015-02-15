@@ -24,7 +24,7 @@
  ****************************************************************************/
 
 /**
- * Base class for ccui.TextBMFont
+ * The TextBMFont control of Cocos UI, it rendered by LabelBMFont.
  * @class
  * @extends ccui.Widget
  *
@@ -39,39 +39,54 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
     _labelBMFontRendererAdaptDirty: true,
 
     /**
-     * allocates and initializes a UILabelBMFont.
-     * Constructor of ccui.TextBMFont
+     * Allocates and initializes a TextBMFont.                <br/>
+     * Constructor of ccui.TextBMFont. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+     * @param {String} text
+     * @param {String} filename
      * @example
      * // example
      * var uiLabelBMFont = new ccui.TextBMFont();
      */
-    ctor: function () {
+    ctor: function (text, filename) {
         ccui.Widget.prototype.ctor.call(this);
+
+        if(filename != undefined){
+            this.setFntFile(filename);
+            this.setString(text);
+        }
     },
+
     _initRenderer: function () {
-        this._labelBMFontRenderer = cc.LabelBMFont.create();
+        this._labelBMFontRenderer = new cc.LabelBMFont();
         this.addProtectedChild(this._labelBMFontRenderer, ccui.TextBMFont.RENDERER_ZORDER, -1);
     },
 
     /**
-     * init a bitmap font atlas with an initial string and the FNT file
+     * Initializes a bitmap font atlas with an initial string and the FNT file
      * @param {String} fileName
      */
     setFntFile: function (fileName) {
-        if (!fileName) {
+        if (!fileName)
             return;
-        }
         this._fntFileName = fileName;
-//        this._labelBMFontRenderer.setBMFontFilePath(fileName);
 
         this._fntFileHasInit = true;
-//        this.setString(this._stringValue);
         this._labelBMFontRenderer.initWithString(this._stringValue, fileName);
+        this._updateContentSizeWithTextureSize(this._labelBMFontRenderer.getContentSize());
+        this._labelBMFontRendererAdaptDirty = true;
+
+        var _self = this;
+        var locRenderer = _self._labelBMFontRenderer;
+        if(!locRenderer._textureLoaded){
+             locRenderer.addEventListener("load", function(){
+                 _self.setFntFile(fileName);
+             });
+        }
     },
 
     /**
-     * set string value for labelbmfont
-     * @deprecated
+     * Sets string value for TextBMFont
+     * @deprecated since v3.0, please use setString instead.
      * @param {String} value
      */
     setText: function (value) {
@@ -80,35 +95,38 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
     },
 
     /**
-     * set string value for labelbmfont
+     * Sets string value for TextBMFont
      * @param {String} value
      */
     setString: function (value) {
-        this._stringValue = value;
-        if (!this._fntFileHasInit)
-        {
+        if(value == this._labelBMFontRenderer.getString())
             return;
-        }
+        this._stringValue = value;
         this._labelBMFontRenderer.setString(value);
+        if (!this._fntFileHasInit)
+            return;
         this._updateContentSizeWithTextureSize(this._labelBMFontRenderer.getContentSize());
         this._labelBMFontRendererAdaptDirty = true;
     },
 
     /**
-     * get string value for labelbmfont.
+     * Returns string value for TextBMFont.
      * @returns {String}
      */
     getString: function () {
         return this._stringValue;
     },
 
+    /**
+     * Returns the length of TextBMFont's string.
+     * @returns {Number}
+     */
     getStringLength: function(){
         return this._labelBMFontRenderer.getStringLength();
     },
 
     _onSizeChanged: function () {
         ccui.Widget.prototype._onSizeChanged.call(this);
-//        this._labelBMFontScaleChangedWithSize();
         this._labelBMFontRendererAdaptDirty = true;
     },
 
@@ -117,15 +135,20 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
             this._labelBMFontScaleChangedWithSize();
             this._labelBMFontRendererAdaptDirty = false;
         }
-
     },
 
+    /**
+     * Returns TextBMFont's content size
+     * @override
+     * @returns {cc.Size}
+     */
     getVirtualRendererSize: function(){
         return this._labelBMFontRenderer.getContentSize();
     },
 
     /**
-     * override "getVirtualRenderer" method of widget.
+     * Returns the renderer of TextBMFont
+     * @override
      * @returns {cc.Node}
      */
     getVirtualRenderer: function () {
@@ -134,9 +157,9 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
 
     _labelBMFontScaleChangedWithSize: function () {
         var locRenderer = this._labelBMFontRenderer;
-        if (this._ignoreSize) {
+        if (this._ignoreSize)
             locRenderer.setScale(1.0);
-        } else {
+        else {
             var textureSize = locRenderer.getContentSize();
             if (textureSize.width <= 0.0 || textureSize.height <= 0.0) {
                 locRenderer.setScale(1.0);
@@ -148,33 +171,21 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
         locRenderer.setPosition(this._contentSize.width / 2.0, this._contentSize.height / 2.0);
     },
 
-    _updateTextureColor: function () {
-        this.updateColorToRenderer(this._labelBMFontRenderer);
-    },
-
-    _updateTextureOpacity: function () {
-        this.updateOpacityToRenderer(this._labelBMFontRenderer);
-    },
-
-    _updateTextureRGBA: function(){
-        this.updateRGBAToRenderer(this._labelBMFontRenderer);
-    },
-
     /**
-     * Returns the "class name" of widget.
+     * Returns the "class name" of ccui.TextBMFont.
      * @returns {string}
      */
     getDescription: function () {
-        return "LabelBMFont";
+        return "TextBMFont";
     },
 
-    createCloneInstance: function () {
-        return ccui.TextBMFont.create();
+    _createCloneInstance: function () {
+        return new ccui.TextBMFont();
     },
 
-    copySpecialProperties: function (labelBMFont) {
+    _copySpecialProperties: function (labelBMFont) {
         this.setFntFile(labelBMFont._fntFileName);
-        this.setText(labelBMFont._stringValue);
+        this.setString(labelBMFont._stringValue);
     }
 });
 
@@ -183,30 +194,23 @@ var _p = ccui.TextBMFont.prototype;
 // Extended properties
 /** @expose */
 _p.string;
-cc.defineGetterSetter(_p, "string", _p.getString, _p.setStringValue);
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
 
 _p = null;
 
 /**
  * allocates and initializes a UILabelBMFont.
- * @constructs
+ * @deprecated since v3.0, please use new ccui.TextBMFont() instead.
  * @return {ccui.TextBMFont}
- * @example
- * // example
- * var uiLabelBMFont = ccui.TextBMFont.create();
  */
 ccui.TextBMFont.create = function (text, filename) {
-    var widget = new ccui.TextBMFont();
-    if(widget && widget.init()){
-        if(filename && text){
-            widget.setFntFile(filename);
-            widget.setString(text);
-        }
-        return widget;
-
-    }
-    return null;
+    return new ccui.TextBMFont(text, filename);
 };
 
 // Constants
+/**
+ * The zOrder value of TextBMFont's renderer.
+ * @constant
+ * @type {number}
+ */
 ccui.TextBMFont.RENDERER_ZORDER = -1;

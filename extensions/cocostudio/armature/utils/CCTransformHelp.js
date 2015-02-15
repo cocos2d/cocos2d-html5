@@ -24,6 +24,7 @@
  ****************************************************************************/
 
 /**
+ *  use to calculate the matrix of node from parent node
  * @class ccs.TransformHelp
  * @extend ccs.Class
  */
@@ -33,22 +34,66 @@ ccs.TransformHelp.helpMatrix1 = cc.affineTransformMake(1, 0, 0, 1, 0, 0);
 ccs.TransformHelp.helpMatrix2 = cc.affineTransformMake(1, 0, 0, 1, 0, 0);
 ccs.TransformHelp.helpPoint1 = cc.p(0, 0);
 ccs.TransformHelp.helpPoint2 = cc.p(0, 0);
+ccs.TransformHelp.helpParentNode = {};
 
 /**
+ * Calculate a BaseData's transform matrix from parent node.
  * @function
  * @static
  * @param {ccs.BaseData} bone
- * @return {cc.AffineTransform}
  * Constructor
  */
-ccs.TransformHelp.transformFromParent = function (bone, parentBone) {
+ccs.TransformHelp.transformFromParent = function (bone, parentNode) {
     this.nodeToMatrix(bone, this.helpMatrix1);
-    this.nodeToMatrix(parentBone, this.helpMatrix2);
+    this.nodeToMatrix(parentNode, this.helpMatrix2);
 
     this.helpMatrix2 = cc.affineTransformInvert(this.helpMatrix2);
     this.helpMatrix1 = cc.affineTransformConcat(this.helpMatrix1, this.helpMatrix2);
 
     this.matrixToNode(this.helpMatrix1, bone);
+};
+
+ccs.TransformHelp.transformToParent = function(node, parentNode){
+    this.nodeToMatrix(node, this.helpMatrix1);
+    this.nodeToMatrix(parentNode, this.helpMatrix2);
+
+    this.helpMatrix1 = cc.affineTransformConcat(this.helpMatrix1, this.helpMatrix2);
+
+    this.matrixToNode(this.helpMatrix1, node);
+};
+
+ccs.TransformHelp.transformFromParentWithoutScale = function(node, parentNode){
+//    this.helpParentNode.copy(&parentNode);
+
+    for(var p in parentNode){
+        this.helpParentNode[p] = parentNode[p];
+    }
+    this.helpParentNode.scaleX = 1;
+    this.helpParentNode.scaleY = 1;
+
+    this.nodeToMatrix(node, this.helpMatrix1);
+    this.nodeToMatrix(this.helpParentNode, this.helpMatrix2);
+
+    this.helpMatrix2 = cc.affineTransformInvert(this.helpMatrix2);
+    this.helpMatrix1 = cc.affineTransformConcat(this.helpMatrix1, this.helpMatrix2);
+
+    this.matrixToNode(this.helpMatrix1, node);
+};
+
+ccs.TransformHelp.transformToParentWithoutScale = function(node, parentNode){
+    for(var p in parentNode){
+        this.helpParentNode[p] = parentNode[p];
+    }
+    this.helpParentNode.scaleX = 1;
+    this.helpParentNode.scaleY = 1;
+
+    this.nodeToMatrix(node, this.helpMatrix1);
+    this.nodeToMatrix(this.helpParentNode, this.helpMatrix2);
+
+    this.helpMatrix1 = cc.affineTransformConcat(this.helpMatrix1, this.helpMatrix2);
+
+    this.matrixToNode(this.helpMatrix1, node);
+
 };
 
 /**

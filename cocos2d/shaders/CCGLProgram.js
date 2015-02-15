@@ -33,11 +33,11 @@ cc.HashUniformEntry = function (value, location, hh) {
 };
 
 /**
- * Class that implements a glProgram
+ * Class that implements a WebGL program
  * @class
  * @extends cc.Class
  */
-cc.GLProgram = cc.Class.extend({
+cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
     _glContext: null,
     _programObj: null,
     _vertShader: null,
@@ -83,8 +83,8 @@ cc.GLProgram = cc.Class.extend({
         if (!source || !shader)
             return false;
 
-        //var preStr = (type == this._glContext.VERTEX_SHADER) ? "precision highp float;\n" : "precision mediump float;\n";
-        source = "precision highp float;        \n"
+        var preStr = cc.GLProgram._isHighpSupported() ? "precision highp float;\n" : "precision mediump float;\n";
+        source = preStr
             + "uniform mat4 CC_PMatrix;         \n"
             + "uniform mat4 CC_MVMatrix;        \n"
             + "uniform mat4 CC_MVPMatrix;       \n"
@@ -92,6 +92,7 @@ cc.GLProgram = cc.Class.extend({
             + "uniform vec4 CC_SinTime;         \n"
             + "uniform vec4 CC_CosTime;         \n"
             + "uniform vec4 CC_Random01;        \n"
+            + "uniform sampler2D CC_Texture0;   \n"
             + "//CC INCLUDES END                \n" + source;
 
         this._glContext.shaderSource(shader, source);
@@ -122,6 +123,9 @@ cc.GLProgram = cc.Class.extend({
 		vShaderFileName && fShaderFileName && this.init(vShaderFileName, fShaderFileName);
     },
 
+    /**
+     * destroy program
+     */
     destroyProgram: function () {
         this._vertShader = null;
         this._fragShader = null;
@@ -294,10 +298,18 @@ cc.GLProgram = cc.Class.extend({
         return this._glContext.getUniformLocation(this._programObj, name);
     },
 
+    /**
+     * get uniform MVP matrix
+     * @returns {WebGLUniformLocation}
+     */
     getUniformMVPMatrix: function () {
         return this._uniforms[cc.UNIFORM_MVPMATRIX];
     },
 
+    /**
+     * get uniform sampler
+     * @returns {WebGLUniformLocation}
+     */
     getUniformSampler: function () {
         return this._uniforms[cc.UNIFORM_SAMPLER];
     },
@@ -560,6 +572,39 @@ cc.GLProgram = cc.Class.extend({
             this.setUniformLocationWith4f(this._uniforms[cc.UNIFORM_RANDOM01], Math.random(), Math.random(), Math.random(), Math.random());
     },
 
+    _setUniformsForBuiltinsForRenderer: function (node) {
+        if(!node || !node._renderCmd)
+            return;
+
+        var matrixP = new cc.kmMat4();
+        //var matrixMV = new cc.kmMat4();
+        var matrixMVP = new cc.kmMat4();
+
+        cc.kmGLGetMatrix(cc.KM_GL_PROJECTION, matrixP);
+        //cc.kmGLGetMatrix(cc.KM_GL_MODELVIEW, node._stackMatrix);
+
+        cc.kmMat4Multiply(matrixMVP, matrixP, node._renderCmd._stackMatrix);
+
+        this.setUniformLocationWithMatrix4fv(this._uniforms[cc.UNIFORM_PMATRIX], matrixP.mat, 1);
+        this.setUniformLocationWithMatrix4fv(this._uniforms[cc.UNIFORM_MVMATRIX], node._renderCmd._stackMatrix.mat, 1);
+        this.setUniformLocationWithMatrix4fv(this._uniforms[cc.UNIFORM_MVPMATRIX], matrixMVP.mat, 1);
+
+        if (this._usesTime) {
+            var director = cc.director;
+            // This doesn't give the most accurate global time value.
+            // Cocos2D doesn't store a high precision time value, so this will have to do.
+            // Getting Mach time per frame per shader using time could be extremely expensive.
+            var time = director.getTotalFrames() * director.getAnimationInterval();
+
+            this.setUniformLocationWith4f(this._uniforms[cc.UNIFORM_TIME], time / 10.0, time, time * 2, time * 4);
+            this.setUniformLocationWith4f(this._uniforms[cc.UNIFORM_SINTIME], time / 8.0, time / 4.0, time / 2.0, Math.sin(time));
+            this.setUniformLocationWith4f(this._uniforms[cc.UNIFORM_COSTIME], time / 8.0, time / 4.0, time / 2.0, Math.cos(time));
+        }
+
+        if (this._uniforms[cc.UNIFORM_RANDOM01] != -1)
+            this.setUniformLocationWith4f(this._uniforms[cc.UNIFORM_RANDOM01], Math.random(), Math.random(), Math.random(), Math.random());
+    },
+
     /**
      * will update the MVP matrix on the MVP uniform if it is different than the previous call for this same shader program.
      */
@@ -578,6 +623,12 @@ cc.GLProgram = cc.Class.extend({
         this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_PMATRIX], false, cc.projection_matrix_stack.top.mat);
     },
 
+    _setUniformForMVPMatrixWithMat4: function(modelViewMatrix){
+        if(!modelViewMatrix)
+            throw "modelView matrix is undefined.";
+        this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_MVMATRIX], false, modelViewMatrix.mat);
+        this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_PMATRIX], false, cc.projection_matrix_stack.top.mat);
+    },
 
     /**
      * returns the vertexShader error log
@@ -671,10 +722,46 @@ cc.GLProgram = cc.Class.extend({
 
 /**
  * Create a cc.GLProgram object
+ * @deprecated since v3.0, please use new cc.GLProgram(vShaderFileName, fShaderFileName) instead
  * @param {String} vShaderFileName
  * @param {String} fShaderFileName
  * @returns {cc.GLProgram}
  */
 cc.GLProgram.create = function (vShaderFileName, fShaderFileName) {
     return new cc.GLProgram(vShaderFileName, fShaderFileName);
+};
+
+cc.GLProgram._highpSupported = null;
+
+cc.GLProgram._isHighpSupported = function(){
+    if(cc.GLProgram._highpSupported == null){
+        var ctx = cc._renderContext;
+        var highp = ctx.getShaderPrecisionFormat(ctx.FRAGMENT_SHADER, ctx.HIGH_FLOAT);
+        cc.GLProgram._highpSupported = highp.precision != 0;
+    }
+    return cc.GLProgram._highpSupported;
+};
+
+/**
+ * <p>
+ *     Sets the shader program for this node
+ *
+ *     Since v2.0, each rendering node must set its shader program.
+ *     It should be set in initialize phase.
+ * </p>
+ * @function
+ * @param {cc.Node} node
+ * @param {cc.GLProgram} program The shader program which fetches from CCShaderCache.
+ * @example
+ * cc.setGLProgram(node, cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+ */
+cc.setProgram = function (node, program) {
+    node.shaderProgram = program;
+
+    var children = node.children;
+    if (!children)
+        return;
+
+    for (var i = 0; i < children.length; i++)
+        cc.setProgram(children[i], program);
 };

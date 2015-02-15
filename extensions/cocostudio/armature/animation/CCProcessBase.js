@@ -23,53 +23,52 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
 //animation type
 /**
- * the animation just have one frame
+ * The animation just have one frame
  * @constant
  * @type {number}
  */
 ccs.ANIMATION_TYPE_SINGLE_FRAME = -4;
 /**
- * the animation isn't loop
+ * The animation isn't loop
  * @constant
  * @type {number}
  */
 ccs.ANIMATION_TYPE_NO_LOOP = -3;
 /**
- * the animation to loop from front
+ * The animation to loop from front
  * @constant
  * @type {number}
  */
 ccs.ANIMATION_TYPE_TO_LOOP_FRONT = -2;
 /**
- * the animation to loop from back
+ * The animation to loop from back
  * @constant
  * @type {number}
  */
 ccs.ANIMATION_TYPE_TO_LOOP_BACK = -1;
 /**
- * the animation loop from front
+ * The animation loop from front
  * @constant
  * @type {number}
  */
 ccs.ANIMATION_TYPE_LOOP_FRONT = 0;
 /**
- * the animation loop from back
+ * The animation loop from back
  * @constant
  * @type {number}
  */
 ccs.ANIMATION_TYPE_LOOP_BACK = 1;
 /**
- * the animation max
+ * The animation max
  * @constant
  * @type {number}
  */
 ccs.ANIMATION_TYPE_MAX = 2;
 
 /**
- * Base class for ccs.ProcessBase objects.
+ * The Base Process class for Cocostudio.
  * @class
  * @extends ccs.Class
  *
@@ -99,6 +98,10 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     _nextFrameIndex: 0,
     _curFrameIndex: null,
     _isLoopBack: false,
+
+    /**
+     * Constructor of ccs.ProcessBase
+     */
     ctor: function () {
         this._processScale = 1;
         this._isComplete = true;
@@ -117,7 +120,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     },
 
     /**
-     * Pause the Process
+     * Pauses the Process
      */
     pause: function () {
         this._isPause = true;
@@ -125,7 +128,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     },
 
     /**
-     * Resume the Process
+     * Resumes the Process
      */
     resume: function () {
         this._isPause = false;
@@ -133,7 +136,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     },
 
     /**
-     * Stop the Process
+     * Stops the Process
      */
     stop: function () {
         this._isComplete = true;
@@ -141,27 +144,53 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     },
 
     /**
-     * Play the Process
-     * @param {Number} durationTo
-     * @param {ccs.TweenType} tweenEasing
+     * Plays animation by animation name.
+     * @param {Number} durationTo The frames between two animation changing-over.
+     *         It's meaning is changing to this animation need how many frames
+     *         -1 : use the value from MovementData get from flash design panel
+     * @param {Number} durationTween  The frame count you want to play in the game.
+     *         if  _durationTween is 80, then the animation will played 80 frames in a loop
+     *         -1 : use the value from MovementData get from flash design panel
+     * @param {Number} loop Whether the animation is loop
+     *         loop < 0 : use the value from MovementData get from flash design panel
+     *         loop = 0 : this animation is not loop
+     *         loop > 0 : this animation is loop
+     * @param {Number} tweenEasing  Tween easing is used for calculate easing effect
+     *          TWEEN_EASING_MAX : use the value from MovementData get from flash design panel
+     *          -1 : fade out
+     *          0  : line
+     *          1  : fade in
+     *          2  : fade in and out
      */
-    play: function (durationTo, tweenEasing) {
+    play: function (durationTo, durationTween, loop, tweenEasing) {
         this._isComplete = false;
         this._isPause = false;
         this._isPlaying = true;
         this._currentFrame = 0;
+        /*
+         *  Set m_iTotalFrames to durationTo, it is used for change tween between two animation.
+         *  When changing end, m_iTotalFrames will be set to _durationTween
+         */
         this._nextFrameIndex = durationTo;
         this._tweenEasing = tweenEasing;
     },
 
+    /**
+     * Update process' state.
+     * @param {Number} dt
+     */
     update: function (dt) {
-        if (this._isComplete || this._isPause) {
-            return false;
-        }
-        if (this._rawDuration <= 0) {
-            return false;
-        }
-        var locNextFrameIndex = this._nextFrameIndex;
+        if (this._isComplete || this._isPause)
+            return;
+
+        /*
+         *  Fileter the m_iDuration <=0 and dt >1
+         *  If dt>1, generally speaking  the reason is the device is stuck.
+         */
+        if (this._rawDuration <= 0 || dt > 1)
+            return;
+
+        var locNextFrameIndex = this._nextFrameIndex === undefined ? 0 : this._nextFrameIndex;
         var locCurrentFrame = this._currentFrame;
         if (locNextFrameIndex <= 0) {
             this._currentPercent = 1;
@@ -173,7 +202,6 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
              *  animation speed slower or quicker.
              */
             locCurrentFrame += this._processScale * (dt / this.animationInternal);
-
             this._currentPercent = locCurrentFrame / locNextFrameIndex;
 
             /*
@@ -182,37 +210,27 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
              */
             locCurrentFrame = ccs.fmodf(locCurrentFrame, locNextFrameIndex);
         }
-        this._currentFrame = locCurrentFrame
+        this._currentFrame = locCurrentFrame;
         this.updateHandler();
-        return true;
     },
 
     /**
-     * update will call this handler, you can handle your logic here
-     */
-    updateHandler: function () {
-        //override
-    },
-
-    /**
-     * goto frame
+     * Goes to specified frame by frameIndex.
      * @param {Number} frameIndex
      */
     gotoFrame: function (frameIndex) {
         var locLoopType = this._loopType;
-        if (locLoopType == ccs.ANIMATION_TYPE_NO_LOOP) {
+        if (locLoopType == ccs.ANIMATION_TYPE_NO_LOOP)
             locLoopType = ccs.ANIMATION_TYPE_MAX;
-        }
-        else if (locLoopType == ccs.ANIMATION_TYPE_TO_LOOP_FRONT) {
+        else if (locLoopType == ccs.ANIMATION_TYPE_TO_LOOP_FRONT)
             locLoopType = ccs.ANIMATION_TYPE_LOOP_FRONT;
-        }
         this._loopType = locLoopType;
         this._curFrameIndex = frameIndex;
         this._nextFrameIndex = this._durationTween;
     },
 
     /**
-     * get currentFrameIndex
+     * Returns the index of current frame.
      * @return {Number}
      */
     getCurrentFrameIndex: function () {
@@ -221,7 +239,14 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     },
 
     /**
-     * whether the animation is pause
+     * Updates will call this handler, you can handle your logic here
+     */
+    updateHandler: function () {
+        //override
+    },
+
+    /**
+     * Returns whether the animation is pause
      * @returns {boolean}
      */
     isPause: function () {
@@ -229,7 +254,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     },
 
     /**
-     * whether the animation is complete
+     * Returns whether the animation is complete
      * @returns {boolean}
      */
     isComplete: function () {
@@ -237,7 +262,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     },
 
     /**
-     * current percent getter
+     * Returns current percent of ccs.ProcessBase
      * @returns {number}
      */
     getCurrentPercent: function () {
@@ -245,7 +270,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     },
 
     /**
-     * rawDuration getter
+     * Returns the raw duration of ccs.ProcessBase
      * @returns {number}
      */
     getRawDuration: function () {
@@ -253,7 +278,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     },
 
     /**
-     *  loop type getter
+     * Returns loop type of ccs.ProcessBase
      * @returns {number}
      */
     getLoop: function () {
@@ -261,7 +286,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     },
 
     /**
-     * tween easing getter
+     * Returns tween easing of ccs.ProcessBase
      * @returns {number}
      */
     getTweenEasing: function () {
@@ -269,15 +294,15 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     },
 
     /**
-     * animationInternal getter
+     * Returns animation interval of ccs.ProcessBase
      * @returns {number}
      */
-    getAnimationInternal: function () {
+    getAnimationInternal: function () {            //TODO rename getAnimationInternal to getAnimationInterval in v3.1
         return this.animationInternal;
     },
 
     /**
-     * animationInternal setter
+     * Sets animation interval to ccs.ProcessBase.
      * @param animationInternal
      */
     setAnimationInternal: function (animationInternal) {
@@ -285,7 +310,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     },
 
     /**
-     * process scale getter
+     * Returns process scale
      * @returns {number}
      */
     getProcessScale: function () {
@@ -293,7 +318,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     },
 
     /**
-     * process scale setter
+     * Sets process scale
      * @param processScale
      */
     setProcessScale: function (processScale) {
@@ -301,7 +326,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     },
 
     /**
-     * whether the animation is playing
+     * Returns whether the animation is playing
      * @returns {boolean}
      */
     isPlaying: function () {

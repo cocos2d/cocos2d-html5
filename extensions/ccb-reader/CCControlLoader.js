@@ -89,7 +89,7 @@ var PROPERTY_BACKGROUNDSPRITEFRAME_DISABLED = "backgroundSpriteFrame|3";
 
 cc.ControlButtonLoader = cc.ControlLoader.extend({
     _createCCNode:function (parent, ccbReader) {
-        return cc.ControlButton.create();
+        return new cc.ControlButton();
     },
 
     onHandlePropTypeCheck:function (node, parent, propertyName, check, ccbReader) {
@@ -188,7 +188,7 @@ var PROPERTY_SCALE = "scale";
 
 cc.ScrollViewLoader = cc.NodeLoader.extend({
     _createCCNode:function (parent, ccbReader) {
-        return cc.ScrollView.create();
+        return new cc.ScrollView();
     },
 
     onHandlePropTypeSize:function(node,parent,propertyName,size,ccbReader){
@@ -248,7 +248,7 @@ var PROPERTY_INSETBOTTOM = "insetBottom";
 
 cc.Scale9SpriteLoader = cc.NodeLoader.extend({
     _createCCNode:function(parent,ccbReader){
-        var sprite = cc.Scale9Sprite.create();
+        var sprite = new cc.Scale9Sprite();
 
         sprite.setAnchorPoint(0, 0);
 

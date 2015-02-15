@@ -65,13 +65,13 @@ cc.ControlSlider = cc.Control.extend(/** @lends cc.ControlSlider# */{
         cc.Control.prototype.ctor.call(this);
         if (thumbFile != undefined) {
             // Prepare background for slider
-            bgSprite = cc.Sprite.create(bgFile);
+            var bgSprite = new cc.Sprite(bgFile);
 
             // Prepare progress for slider
-            progressSprite = cc.Sprite.create(progressFile);
+            var progressSprite = new cc.Sprite(progressFile);
 
             // Prepare thumb (menuItem) for slider
-            thumbSprite = cc.Sprite.create(thumbFile);
+            var thumbSprite = new cc.Sprite(thumbFile);
 
             this.initWithSprites(bgSprite, progressSprite, thumbSprite);
         }
@@ -209,7 +209,7 @@ cc.ControlSlider = cc.Control.extend(/** @lends cc.ControlSlider# */{
 
     sliderBegan:function (location) {
         this.setSelected(true);
-        this.getThumbSprite().setColor(cc.color.GRAY);
+        this._thumbSprite.setColor(cc.color.GRAY);
         this.setValue(this.valueForLocation(location));
     },
     sliderMoved:function (location) {
@@ -258,6 +258,7 @@ cc.ControlSlider = cc.Control.extend(/** @lends cc.ControlSlider# */{
         var textureRect = this._progressSprite.getTextureRect();
         textureRect = cc.rect(textureRect.x, textureRect.y, this._thumbSprite.getPositionX(), textureRect.height);
         this._progressSprite.setTextureRect(textureRect, this._progressSprite.isTextureRectRotated());
+        this._thumbSprite._renderCmd.transform(this._renderCmd);
     },
     /** Returns the value for the given location. */
     valueForLocation:function (location) {
@@ -299,8 +300,8 @@ _p = null;
 /**
  * Creates a slider with a given background sprite and a progress bar and a
  * thumb item.
- *
- * @see initWithBackgroundSprite:progressSprite:thumbMenuItem:
+ * @deprecated
+ * @see cc.ControlSlider
  */
 cc.ControlSlider.create = function (bgFile, progressFile, thumbFile) {
     return new cc.ControlSlider(bgFile, progressFile, thumbFile);

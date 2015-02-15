@@ -25,6 +25,8 @@
  ****************************************************************************/
 
 /**
+ * Parallax Object. <br />
+ * Parallax required attributes are stored.
  * @class
  * @extends cc.Class
  */
@@ -33,14 +35,20 @@ cc.PointObject = cc.Class.extend(/** @lends cc.PointObject# */{
     _offset:null,
     _child:null,
 
+    ctor: function(ratio, offset){
+        this.initWithCCPoint(ratio, offset);
+    },
+
     /**
-     * @return  {cc.Point}
+     * Gets the ratio.
+     * @return  {cc.Point} Not point, this is ratio.
      */
     getRatio:function () {
         return this._ratio;
     },
 
     /**
+     * Set the ratio.
      * @param  {cc.Point} value
      */
     setRatio:function (value) {
@@ -48,6 +56,7 @@ cc.PointObject = cc.Class.extend(/** @lends cc.PointObject# */{
     },
 
     /**
+     * Gets the offset.
      * @return  {cc.Point}
      */
     getOffset:function () {
@@ -55,6 +64,7 @@ cc.PointObject = cc.Class.extend(/** @lends cc.PointObject# */{
     },
 
     /**
+     * Set the offset.
      * @param {cc.Point} value
      */
     setOffset:function (value) {
@@ -62,6 +72,7 @@ cc.PointObject = cc.Class.extend(/** @lends cc.PointObject# */{
     },
 
     /**
+     * Gets the child.
      * @return {cc.Node}
      */
     getChild:function () {
@@ -69,6 +80,7 @@ cc.PointObject = cc.Class.extend(/** @lends cc.PointObject# */{
     },
 
     /**
+     * Set the child.
      * @param  {cc.Node} value
      */
     setChild:function (value) {
@@ -76,7 +88,8 @@ cc.PointObject = cc.Class.extend(/** @lends cc.PointObject# */{
     },
 
     /**
-     * @param  {cc.Point} ratio
+     * initializes cc.PointObject
+     * @param  {cc.Point} ratio Not point, this is a ratio.
      * @param  {cc.Point} offset
      * @return {Boolean}
      */
@@ -89,14 +102,14 @@ cc.PointObject = cc.Class.extend(/** @lends cc.PointObject# */{
 });
 
 /**
+ * Create a object to stored parallax data.
  * @param {cc.Point} ratio
  * @param {cc.Point} offset
  * @return {cc.PointObject}
+ * @deprecated since v3.0 please use new cc.PointObject() instead.
  */
 cc.PointObject.create = function (ratio, offset) {
-    var ret = new cc.PointObject();
-    ret.initWithCCPoint(ratio, offset);
-    return ret;
+    return new cc.PointObject(ratio, offset);
 };
 
 /**
@@ -114,6 +127,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
     _className:"ParallaxNode",
 
     /**
+     * Gets the parallax array.
      * @return {Array}
      */
     getParallaxArray:function () {
@@ -121,6 +135,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
     },
 
     /**
+     * Set parallax array.
      * @param {Array} value
      */
     setParallaxArray:function (value) {
@@ -128,7 +143,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
     },
 
     /**
-     * Constructor
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      */
     ctor:function () {
         cc.Node.prototype.ctor.call(this);
@@ -149,12 +164,12 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
      */
     addChild:function (child, z, ratio, offset) {
         if (arguments.length === 3) {
-            cc.log("ParallaxNode: use addChild(child, z, ratio, offset) instead")
+            cc.log("ParallaxNode: use addChild(child, z, ratio, offset) instead");
             return;
         }
         if(!child)
             throw "cc.ParallaxNode.addChild(): child should be non-null";
-        var obj = cc.PointObject.create(ratio, offset);
+        var obj = new cc.PointObject(ratio, offset);
         obj.setChild(child);
         this.parallaxArray.push(obj);
 
@@ -192,22 +207,18 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
         cc.Node.prototype.removeAllChildren.call(this, cleanup);
     },
 
-    /**
-     * Visit
-     */
-    visit:function () {
+    _updateParallaxPosition: function(){
         var pos = this._absolutePosition();
         if (!cc.pointEqualToPoint(pos, this._lastPosition)) {
             var locParallaxArray = this.parallaxArray;
             for (var i = 0, len = locParallaxArray.length; i < len; i++) {
                 var point = locParallaxArray[i];
-	            var child = point.getChild();
-	            child.setPosition(-pos.x + pos.x * point.getRatio().x + point.getOffset().x,
-	                               -pos.y + pos.y * point.getRatio().y + point.getOffset().y);
+                var child = point.getChild();
+                child.setPosition(-pos.x + pos.x * point.getRatio().x + point.getOffset().x,
+                        -pos.y + pos.y * point.getRatio().y + point.getOffset().y);
             }
             this._lastPosition = pos;
         }
-        cc.Node.prototype.visit.call(this);
     },
 
     _absolutePosition:function () {
@@ -218,14 +229,23 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
             ret = cc.pAdd(ret, cn.getPosition());
         }
         return ret;
+    },
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new cc.ParallaxNode.CanvasRenderCmd(this);
+        else
+            return new cc.ParallaxNode.WebGLRenderCmd(this);
     }
 });
 
 /**
+ * Create new parallax node.
+ * @deprecated since v3.0 please use new cc.ParallaxNode() instead.
  * @return {cc.ParallaxNode}
  * @example
  * //example
- * var voidNode = cc.ParallaxNode.create();
+ * var voidNode = new cc.ParallaxNode();
  */
 cc.ParallaxNode.create = function () {
     return new cc.ParallaxNode();

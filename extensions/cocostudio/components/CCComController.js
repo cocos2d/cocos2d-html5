@@ -24,36 +24,31 @@
  ****************************************************************************/
 
 /**
- * Base class for ccs.ComController
+ * The controller component for Cocostudio.
  * @class
  * @extends ccs.Component
  */
 ccs.ComController = ccs.Component.extend(/** @lends ccs.ComController# */{
+    /**
+     * Construction of ccs.ComController.
+     */
     ctor: function () {
         cc.Component.prototype.ctor.call(this);
         this._name = "ComController";
-    },
-    init: function () {
-        return true;
-    },
-
-    onEnter: function () {
-        if (this._owner != null)
-        {
-            this._owner.scheduleUpdate();
-        }
-
-    },
-
-    onExit: function () {
-
-    },
-
-    update: function (dt) {
+        ccs.ComController.prototype.init.call(this);
     },
 
     /**
-     * Enabled getter
+     * The callback calls when controller component enter stage.
+     * @override
+     */
+    onEnter: function () {
+        if (this._owner != null)
+            this._owner.scheduleUpdate();
+    },
+
+    /**
+     * Returns controller component whether is enabled
      * @returns {Boolean}
      */
     isEnabled: function () {
@@ -61,25 +56,21 @@ ccs.ComController = ccs.Component.extend(/** @lends ccs.ComController# */{
     },
 
     /**
-     * Enabled setter
+     * Sets controller component whether is enabled
      * @param {Boolean} bool
      */
     setEnabled: function (bool) {
-        this._enabled = b;
+        this._enabled = bool;
     }
 });
 /**
- * allocates and initializes a ComController.
- * @constructs
+ * Allocates and initializes a ComController.
+ * @deprecated since v3.0, please use new construction instead.
  * @return {ccs.ComController}
  * @example
  * // example
  * var com = ccs.ComController.create();
  */
 ccs.ComController.create = function () {
-    var com = new ccs.ComController();
-    if (com && com.init()) {
-        return com;
-    }
-    return null;
+    return new ccs.ComController();
 };

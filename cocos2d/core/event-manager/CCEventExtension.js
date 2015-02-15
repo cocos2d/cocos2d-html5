@@ -44,7 +44,6 @@ cc.EventAcceleration = cc.Event.extend(/** @lends cc.EventAcceleration# */{
 cc.EventKeyboard = cc.Event.extend(/** @lends cc.EventKeyboard# */{
     _keyCode: 0,
     _isPressed: false,
-
     ctor: function (keyCode, isPressed) {
         cc.Event.prototype.ctor.call(this, cc.Event.KEYBOARD);
         this._keyCode = keyCode;
@@ -53,11 +52,10 @@ cc.EventKeyboard = cc.Event.extend(/** @lends cc.EventKeyboard# */{
 });
 
 
-
-
 //Acceleration
 cc._EventListenerAcceleration = cc.EventListener.extend({
     _onAccelerationEvent: null,
+
     ctor: function (callback) {
         this._onAccelerationEvent = callback;
         var selfPointer = this;

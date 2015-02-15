@@ -24,8 +24,8 @@
  ****************************************************************************/
 /**
  * the DOM object
- * @class
- * @type {Object}
+ * @namespace
+ * @name cc.DOM
  */
 cc.DOM = {};
 
@@ -137,6 +137,8 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * @param {Number} [y] The anchor point.y of node.
      */
     setAnchorPoint:function (point, y) {
+        var cmd = this._renderCmd;
+
         var locAnchorPoint = this._anchorPoint;
         if (y === undefined) {
 	        locAnchorPoint.x = point.x;
@@ -145,7 +147,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 	        locAnchorPoint.x = point;
 	        locAnchorPoint.y = y;
         }
-        var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
+        var locAPP = cmd._anchorPointInPoints, locSize = this._contentSize;
         locAPP.x = locSize.width * locAnchorPoint.x;
         locAPP.y = locSize.height * locAnchorPoint.y;
 
@@ -166,12 +168,13 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 	 */
 	_setAnchorX:function (x) {
 		var locAnchorPoint = this._anchorPoint;
+        var cmd = this._renderCmd;
 
 		if (x === locAnchorPoint.x)
 			return;
 		locAnchorPoint.x = x;
 
-		var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
+		var locAPP = cmd._anchorPointInPoints, locSize = this._contentSize;
 		locAPP.x = locSize.width * locAnchorPoint.x;
 
 		this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + locAPP.x + 'px ' + -locAPP.y + 'px';
@@ -190,12 +193,13 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 	 */
 	_setAnchorY:function (y) {
 		var locAnchorPoint = this._anchorPoint;
+        var cmd = this._renderCmd;
 
 		if (y === locAnchorPoint.y)
 			return;
 		locAnchorPoint.y = y;
 
-		var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
+		var locAPP = cmd._anchorPointInPoints, locSize = this._contentSize;
 		locAPP.y = locSize.height * locAnchorPoint.y;
 
 		this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + locAPP.x + 'px ' + -locAPP.y + 'px';
@@ -214,6 +218,8 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * @param {Number} [height] The untransformed size's height of the node.
      */
     setContentSize:function (size, height) {
+        var cmd = this._renderCmd;
+
         var locContentSize = this._contentSize;
         if (height === undefined) {
 	        locContentSize.width = size.width;
@@ -222,7 +228,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 	        locContentSize.width = size;
 	        locContentSize.height = height;
         }
-        var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
+        var locAPP = cmd._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
         locAPP.x = locContentSize.width * locAnchorPoint.x;
         locAPP.y = locContentSize.height * locAnchorPoint.y;
         this.dom.width = locContentSize.width;
@@ -242,11 +248,12 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 	 */
 	_setWidth:function (width) {
 		var locContentSize = this._contentSize;
+        var cmd = this._renderCmd;
 		if (width === locContentSize.width)
 			return;
 		locContentSize.width = width;
 
-		var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
+		var locAPP = cmd._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
 		locAPP.x = locContentSize.width * locAnchorPoint.x;
 		this.dom.width = locContentSize.width;
 		this.anchorX = locAnchorPoint.x;
@@ -263,11 +270,12 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 	 */
 	_setHeight:function (height) {
 		var locContentSize = this._contentSize;
+        var cmd = this._renderCmd;
 		if (height === locContentSize.height)
 			return;
 		locContentSize.height = height;
 
-		var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
+		var locAPP = cmd._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
 		locAPP.y = locContentSize.height * locAnchorPoint.y;
 		this.dom.height = locContentSize.height;
 		this.anchorY = locAnchorPoint.y;
@@ -285,13 +293,8 @@ cc.DOM.methods = /** @lends cc.DOM# */{
     setRotation:function (newRotation) {
         if (this._rotation == newRotation)
             return;
-        //save dirty region when before change
-        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
         this._rotationX = this._rotationY = newRotation;
-        this._rotationRadiansX = this._rotationX * (Math.PI / 180);
-        this._rotationRadiansY = this._rotationY * (Math.PI / 180);
-
         this.setNodeDirty();
         this.dom.rotate(newRotation);
     },
@@ -357,7 +360,11 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         //if dom does not have parent, but node has no parent and its running
         if (this.dom && !this.dom.parentNode) {
             if (!this.getParent()) {
-                this.dom.appendTo(cc.container);
+                if(this.dom.id == ""){
+                    cc.DOM._createEGLViewDiv(this);
+                }else{
+                    this.dom.appendTo(cc.container);
+                }
             } else {
                 cc.DOM.parentDOM(this);
             }
@@ -387,7 +394,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         this.unscheduleAllCallbacks();
 
         // timers
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.cleanup);
         if (this.dom) {
             this.dom.remove();
         }
@@ -419,13 +426,13 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 };
 
 cc.DOM._resetEGLViewDiv = function(){
-    var eglViewDiv = cc.$("#EGLViewDiv");
-    if(eglViewDiv){
-        var eglViewer = cc.view;
-        var designSize = eglViewer.getDesignResolutionSize();
-        var viewPortRect = eglViewer.getViewPortRect();
-        var screenSize = eglViewer.getFrameSize();
-	    var pixelRatio = eglViewer.getDevicePixelRatio();
+    var div = cc.$("#EGLViewDiv");
+    if(div){
+        var view = cc.view;
+        var designSize = view.getDesignResolutionSize();
+        var viewPortRect = view.getViewPortRect();
+        var screenSize = view.getFrameSize();
+	    var pixelRatio = view.getDevicePixelRatio();
         var designSizeWidth = designSize.width, designSizeHeight = designSize.height;
         if((designSize.width === 0) && (designSize.height === 0)){
             designSizeWidth = screenSize.width;
@@ -437,15 +444,21 @@ cc.DOM._resetEGLViewDiv = function(){
             viewPortWidth = screenSize.width;
         }
 
-        eglViewDiv.style.position = 'absolute';
+        div.style.position = 'absolute';
         //x.dom.style.display='block';
-        eglViewDiv.style.width = designSizeWidth + "px";
-        eglViewDiv.style.maxHeight = designSizeHeight + "px";
-        eglViewDiv.style.margin = 0;
+        div.style.width = designSizeWidth + "px";
+        div.style.maxHeight = designSizeHeight + "px";
+        div.style.margin = 0;
 
-        eglViewDiv.resize(eglViewer.getScaleX()/pixelRatio, eglViewer.getScaleY()/pixelRatio);
-        eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
-        eglViewDiv.style.bottom = "0px";
+        div.resize(view.getScaleX()/pixelRatio, view.getScaleY()/pixelRatio);
+        if (view.getResolutionPolicy() == view._rpNoBorder) {
+            div.style.left = (view.getFrameSize().width - designSizeWidth)/2 + "px";
+            div.style.bottom = (view.getFrameSize().height - designSizeHeight*view.getScaleY()/pixelRatio)/2 + "px";
+        }
+        else {
+            div.style.left = (designSizeWidth*view.getScaleX()/pixelRatio - designSizeWidth) / 2 + "px";
+            div.style.bottom = "0px";
+        }
     }
 };
 
@@ -478,41 +491,54 @@ cc.DOM.parentDOM = function (x) {
             if (eglViewDiv) {
                 p.dom.appendTo(eglViewDiv);
             } else {
-                eglViewDiv = cc.$new("div");
-                eglViewDiv.id = "EGLViewDiv";
-
-                var eglViewer = cc.view;
-                var designSize = eglViewer.getDesignResolutionSize();
-                var viewPortRect = eglViewer.getViewPortRect();
-                var screenSize = eglViewer.getFrameSize();
-	            var pixelRatio = eglViewer.getDevicePixelRatio();
-                var designSizeWidth = designSize.width, designSizeHeight = designSize.height;
-                if ((designSize.width === 0) && (designSize.height === 0)) {
-                    designSizeWidth = screenSize.width;
-                    designSizeHeight = screenSize.height;
-                }
-
-                var viewPortWidth = viewPortRect.width/pixelRatio;
-                if ((viewPortRect.width === 0) && (viewPortRect.height === 0)) {
-                    viewPortWidth = screenSize.width;
-                }
-
-                eglViewDiv.style.position = 'absolute';
-                //x.dom.style.display='block';
-                eglViewDiv.style.width = designSizeWidth + "px";
-                eglViewDiv.style.maxHeight = designSizeHeight + "px";
-                eglViewDiv.style.margin = 0;
-
-                eglViewDiv.resize(eglViewer.getScaleX()/pixelRatio, eglViewer.getScaleY()/pixelRatio);
-                eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
-                eglViewDiv.style.bottom = "0px";
-
-                p.dom.appendTo(eglViewDiv);
-                eglViewDiv.appendTo(cc.container);
+                cc.DOM._createEGLViewDiv(p);
             }
         }
     }
     return true;
+};
+
+cc.DOM._createEGLViewDiv = function(p){
+    var div = cc.$("#EGLViewDiv");
+    if(!div){
+        div = cc.$new("div");
+        div.id = "EGLViewDiv";
+    }
+
+    var view = cc.view;
+    var designSize = view.getDesignResolutionSize();
+    var viewPortRect = view.getViewPortRect();
+    var screenSize = view.getFrameSize();
+    var pixelRatio = view.getDevicePixelRatio();
+    var designSizeWidth = designSize.width, designSizeHeight = designSize.height;
+    if ((designSize.width === 0) && (designSize.height === 0)) {
+        designSizeWidth = screenSize.width;
+        designSizeHeight = screenSize.height;
+    }
+
+    var viewPortWidth = viewPortRect.width/pixelRatio;
+    if ((viewPortRect.width === 0) && (viewPortRect.height === 0)) {
+        viewPortWidth = screenSize.width;
+    }
+
+    div.style.position = 'absolute';
+    //x.dom.style.display='block';
+    div.style.width = designSizeWidth + "px";
+    div.style.maxHeight = designSizeHeight + "px";
+    div.style.margin = 0;
+
+    div.resize(view.getScaleX()/pixelRatio, view.getScaleY()/pixelRatio);
+    if (view.getResolutionPolicy() == view._rpNoBorder) {
+        div.style.left = (screenSize.width - designSizeWidth)/2 + "px";
+        div.style.bottom = (screenSize.height - designSizeHeight*view.getScaleY()/pixelRatio)/2 + "px";
+    }
+    else {
+        div.style.left = (designSizeWidth*view.getScaleX()/pixelRatio - designSizeWidth) / 2 + "px";
+        div.style.bottom = "0px";
+    }
+
+    p.dom.appendTo(div);
+    div.appendTo(cc.container);
 };
 
 /**
@@ -522,19 +548,15 @@ cc.DOM.parentDOM = function (x) {
  */
 cc.DOM.setTransform = function (x) {
     if (x.ctx) {
-        /*        x.ctx.save();
-         x.ctx.setTransform(1,0,0,1,0,0);
-         x.ctx.clearRect(0,0,x.canvas.width, x.canvas.height);
-         x.ctx.restore();*/
         x.ctx.translate(x.getAnchorPointInPoints().x, x.getAnchorPointInPoints().y);
         if (x.isSprite) {
             var tmp = x._children;
             x._children = [];
-            cc.Sprite.prototype.visit.call(x, x.ctx);
+            cc.Sprite.prototype.visit.call(x);
             x._children = tmp;
         }
         else {
-            cc.Sprite.prototype.visit.call(x, x.ctx);
+            cc.Sprite.prototype.visit.call(x);
         }
     }
     if (x.dom) {
@@ -598,7 +620,7 @@ cc.DOM.placeHolder = function (x) {
  * It currently only supports cc.Sprite and cc.MenuItem
  * @function
  * @param {cc.Sprite|cc.MenuItem|Array} nodeObject
-    * * @example
+ * @example
  * // example
  * cc.DOM.convert(Sprite1, Sprite2, Menuitem);
  *

@@ -43,7 +43,7 @@ cc.IMEKeyboardNotificationInfo = function (begin, end, duration) {
  */
 cc.IMEDelegate = cc.Class.extend(/** @lends cc.IMEDelegate# */{
     /**
-     * Constructor
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      */
     ctor:function () {
         cc.imeDispatcher.addDelegate(this);
@@ -132,8 +132,8 @@ cc.IMEDelegate = cc.Class.extend(/** @lends cc.IMEDelegate# */{
 });
 
 /**
- * Input Method Edit Message Dispatcher.
- * @namespace
+ * cc.imeDispatcher is a singleton object which manage input message dispatching.
+ * @class
  * @name cc.imeDispatcher
  */
 cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
@@ -142,7 +142,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
     _currentInputString:"",
     _lastClickPosition:null,
     /**
-     * Constructor
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      */
     ctor:function () {
         this.impl = new cc.IMEDispatcher.Impl();
@@ -487,6 +487,8 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
 });
 
 /**
+ * Create the cc.IMEDispatcher.Imp Object. <br />
+ * This is the inner class...
  * @class
  * @extends cc.Class
  * @name cc.IMEDispatcher.Impl
@@ -495,7 +497,7 @@ cc.IMEDispatcher.Impl = cc.Class.extend(/** @lends cc.IMEDispatcher.Impl# */{
     _delegateWithIme:null,
     _delegateList:null,
     /**
-     * Constructor
+     * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      */
     ctor:function () {
         this._delegateList = [];

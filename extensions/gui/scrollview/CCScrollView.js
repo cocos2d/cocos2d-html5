@@ -60,7 +60,7 @@ cc.ScrollViewDelegate = cc.Class.extend({
  * ScrollView support for cocos2d -x.
  * It provides scroll view functionalities to cocos2d projects natively.
  * @class
- * @extend cc.Layer
+ * @extends cc.Layer
  *
  * @property {cc.Point}                 minOffset   - <@readonly> The current container's minimum offset
  * @property {cc.Point}                 maxOffset   - <@readonly> The current container's maximum offset
@@ -102,7 +102,13 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
     _touchListener: null,
     _className:"ScrollView",
 
-    ctor:function () {
+    /**
+     * @contructor
+     * @param size
+     * @param container
+     * @returns {ScrollView}
+     */
+    ctor:function (size, container) {
         cc.Layer.prototype.ctor.call(this);
         this._contentOffset = cc.p(0,0);
         this._maxInset = cc.p(0, 0);
@@ -113,6 +119,12 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         this._viewSize = cc.size(0, 0);
         this._parentScissorRect = new cc.Rect(0,0,0,0);
         this._tmpViewRect = new cc.Rect(0,0,0,0);
+
+        if(container != undefined)
+            this.initWithViewSize(size, container);
+        else
+            this.initWithViewSize(cc.size(200, 200), null);
+
     },
 
     init:function () {
@@ -131,7 +143,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
             this._container = container;
 
             if (!this._container) {
-                this._container = cc.Layer.create();
+                this._container = new cc.Layer();
                 this._container.ignoreAnchorPointForPosition(false);
                 this._container.setAnchorPoint(pZero);
             }
@@ -196,9 +208,9 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
      * @param {Number} dt animation duration
      */
     setContentOffsetInDuration:function (offset, dt) {
-        var scroll = cc.MoveTo.create(dt, offset);
-        var expire = cc.CallFunc.create(this._stoppedAnimatedScroll, this);
-        this._container.runAction(cc.Sequence.create(scroll, expire));
+        var scroll = cc.moveTo(dt, offset);
+        var expire = cc.callFunc(this._stoppedAnimatedScroll, this);
+        this._container.runAction(cc.sequence(scroll, expire));
         this.schedule(this._performedAnimatedScroll);
     },
 
@@ -251,7 +263,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         if (dt > 0) {
             var locScale = this._container.getScale();
             if (locScale != s) {
-                var scaleAction = cc.ActionTween.create(dt, "zoomScale", locScale, s);
+                var scaleAction = cc.actionTween(dt, "zoomScale", locScale, s);
                 this.runAction(scaleAction);
             }
         } else {
@@ -423,6 +435,8 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         if (!this.isVisible())
             return;
 
+        this.setNodeDirty();
+
         if (this._touches.length === 1 && this._dragging) { // scrolling
             this._touchMoved = true;
             //var frameOriginal = this.getParent().convertToWorldSpace(this.getPosition());
@@ -568,79 +582,12 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         this._clippingToBounds = clippingToBounds;
     },
 
-    visit:function (ctx) {
+    visit:function (parentCmd) {
         // quick return if not visible
         if (!this.isVisible())
             return;
 
-        var context = ctx || cc._renderContext;
-        var i, locChildren = this._children, selChild, childrenLen;
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-            context.save();
-            this.transform(context);
-            this._beforeDraw(context);
-
-            if (locChildren && locChildren.length > 0) {
-                childrenLen = locChildren.length;
-                this.sortAllChildren();
-                // draw children zOrder < 0
-                for (i = 0; i < childrenLen; i++) {
-                    selChild = locChildren[i];
-                    if (selChild && selChild._localZOrder < 0)
-                        selChild.visit(context);
-                    else
-                        break;
-                }
-
-                this.draw(context);             // self draw
-
-                // draw children zOrder >= 0
-                for (; i < childrenLen; i++)
-                    locChildren[i].visit(context);
-            } else{
-                this.draw(context);             // self draw
-            }
-
-            this._afterDraw();
-
-            context.restore();
-        } else {
-            cc.kmGLPushMatrix();
-            var locGrid = this.grid;
-            if (locGrid && locGrid.isActive()) {
-                locGrid.beforeDraw();
-                this.transformAncestors();
-            }
-
-            this.transform(context);
-            this._beforeDraw(context);
-            if (locChildren && locChildren.length > 0) {
-                childrenLen = locChildren.length;
-                // draw children zOrder < 0
-                for (i = 0; i < childrenLen; i++) {
-                    selChild = locChildren[i];
-                    if (selChild && selChild._localZOrder < 0)
-                        selChild.visit();
-                    else
-                        break;
-                }
-
-                // this draw
-                this.draw(context);
-
-                // draw children zOrder >= 0
-                for (; i < childrenLen; i++)
-                    locChildren[i].visit();
-            } else{
-                this.draw(context);
-            }
-
-            this._afterDraw(context);
-            if (locGrid && locGrid.isActive())
-                locGrid.afterDraw(this);
-
-            cc.kmGLPopMatrix();
-        }
+        this._renderCmd.visit(parentCmd);
     },
 
     addChild:function (child, zOrder, tag) {
@@ -792,65 +739,6 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
     },
 
     /**
-     * clip this view so that outside of the visible bounds can be hidden.
-     */
-    _beforeDraw:function (context) {
-        if (this._clippingToBounds) {
-            this._scissorRestored = false;
-            var frame = this._getViewRect(), locEGLViewer = cc.view;
-
-            var scaleX = this.getScaleX();
-            var scaleY = this.getScaleY();
-
-            var ctx = context || cc._renderContext;
-            if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-                var getWidth = (this._viewSize.width * scaleX) * locEGLViewer.getScaleX();
-                var getHeight = (this._viewSize.height * scaleY) * locEGLViewer.getScaleY();
-                var startX = 0;
-                var startY = 0;
-
-                ctx.beginPath();
-                ctx.rect(startX, startY, getWidth, -getHeight);
-                ctx.clip();
-                ctx.closePath();
-            } else {
-                var EGLViewer = cc.view;
-                if(EGLViewer.isScissorEnabled()){
-                    this._scissorRestored = true;
-                    this._parentScissorRect = EGLViewer.getScissorRect();
-                    //set the intersection of m_tParentScissorRect and frame as the new scissor rect
-                    if (cc.rectIntersection(frame, this._parentScissorRect)) {
-                        var locPSRect = this._parentScissorRect;
-                        var x = Math.max(frame.x, locPSRect.x);
-                        var y = Math.max(frame.y, locPSRect.y);
-                        var xx = Math.min(frame.x + frame.width, locPSRect.x + locPSRect.width);
-                        var yy = Math.min(frame.y + frame.height, locPSRect.y + locPSRect.height);
-                        EGLViewer.setScissorInPoints(x, y, xx - x, yy - y);
-                    }
-                }else{
-                    ctx.enable(ctx.SCISSOR_TEST);
-                    //clip
-                    EGLViewer.setScissorInPoints(frame.x, frame.y, frame.width, frame.height);
-                }
-            }
-        }
-    },
-    /**
-     * retract what's done in beforeDraw so that there's no side effect to
-     * other nodes.
-     */
-    _afterDraw:function (context) {
-        if (this._clippingToBounds && cc._renderType === cc._RENDER_TYPE_WEBGL) {
-            if (this._scissorRestored) {  //restore the parent's scissor rect
-                var rect = this._parentScissorRect;
-                cc.view.setScissorInPoints(rect.x, rect.y, rect.width, rect.height)
-            }else{
-                var ctx = context || cc._renderContext;
-                ctx.disable(ctx.SCISSOR_TEST);
-            }
-        }
-    },
-    /**
      * Zoom handling
      */
     _handleZoom:function () {
@@ -886,6 +774,14 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         locViewRect.width = locViewSize.width * scaleX;
         locViewRect.height = locViewSize.height * scaleY;
         return locViewRect;
+    },
+
+    _createRenderCmd: function(){
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
+            return new cc.ScrollView.CanvasRenderCmd(this);
+        } else {
+            return new cc.ScrollView.WebGLRenderCmd(this);
+        }
     }
 });
 
@@ -921,19 +817,11 @@ _p = null;
 
 /**
  * Returns an autoreleased scroll view object.
- *
+ * @deprecated
  * @param {cc.Size} size view size
  * @param {cc.Node} container parent object
  * @return {cc.ScrollView} scroll view object
  */
 cc.ScrollView.create = function (size, container) {
-    var pRet = new cc.ScrollView();
-    if (arguments.length == 2) {
-        if (pRet && pRet.initWithViewSize(size, container))
-            return pRet;
-    } else {
-        if (pRet && pRet.init())
-            return pRet;
-    }
-    return null;
+    return new cc.ScrollView(size, container);
 };

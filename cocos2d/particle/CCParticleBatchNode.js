@@ -54,14 +54,24 @@ cc.PARTICLE_DEFAULT_CAPACITY = 500;
  * </p>
  * @class
  * @extends cc.ParticleSystem
+ * @param {String|cc.Texture2D} fileImage
+ * @param {Number} capacity
  *
  * @property {cc.Texture2D|HTMLImageElement|HTMLCanvasElement}  texture         - The used texture
  * @property {cc.TextureAtlas}                                  textureAtlas    - The texture atlas used for drawing the quads
+ *
+ * @example
+ * 1.
+ * //Create a cc.ParticleBatchNode with image path  and capacity
+ * var particleBatchNode = new cc.ParticleBatchNode("res/grossini_dance.png",30);
+ *
+ * 2.
+ * //Create a cc.ParticleBatchNode with a texture and capacity
+ * var texture = cc.TextureCache.getInstance().addImage("res/grossini_dance.png");
+ * var particleBatchNode = new cc.ParticleBatchNode(texture, 30);
  */
 cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 	textureAtlas:null,
-
-    TextureProtocol:true,
     //the blend function used for drawing the quads
     _blendFunc:null,
     _className:"ParticleBatchNode",
@@ -84,11 +94,18 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     ctor:function (fileImage, capacity) {
         cc.Node.prototype.ctor.call(this);
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
-        if (typeof(fileImage) == "string") {
+        if (cc.isString(fileImage)) {
             this.init(fileImage, capacity);
         } else if (fileImage instanceof cc.Texture2D) {
             this.initWithTexture(fileImage, capacity);
         }
+    },
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new cc.ParticleBatchNode.CanvasRenderCmd(this);
+        else
+            return new cc.ParticleBatchNode.WebGLRenderCmd(this);
     },
 
     /**
@@ -104,8 +121,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         // no lazy alloc in this node
         this._children.length = 0;
 
-        if (cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+        this._renderCmd._initWithTexture();
         return true;
     },
 
@@ -127,7 +143,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @return {Boolean}
      */
     init:function (fileImage, capacity) {
-        var tex = cc.TextureCache.getInstance().addImage(fileImage);
+        var tex = cc.textureCache.addImage(fileImage);
         return this.initWithTexture(tex, capacity);
     },
 
@@ -318,27 +334,8 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     },
 
     /**
-     * @override
-     * @param {CanvasContext} ctx
-     */
-    draw:function (ctx) {
-        //cc.PROFILER_STOP("CCParticleBatchNode - draw");
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
-            return;
-
-        if (this.textureAtlas.totalQuads == 0)
-            return;
-
-        cc.nodeDrawSetup(this);
-        cc.glBlendFuncForParticle(this._blendFunc.src, this._blendFunc.dst);
-        this.textureAtlas.drawQuads();
-
-        //cc.PROFILER_STOP("CCParticleBatchNode - draw");
-    },
-
-    /**
      * returns the used texture
-     * @return {cc.Texture2D|HTMLImageElement|HTMLCanvasElement}
+     * @return {cc.Texture2D}
      */
     getTexture:function () {
         return this.textureAtlas.texture;
@@ -346,7 +343,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
     /**
      * sets a new texture. it will be retained
-     * @param {cc.Texture2D|HTMLImageElement|HTMLCanvasElement} texture
+     * @param {cc.Texture2D} texture
      */
     setTexture:function (texture) {
         this.textureAtlas.texture = texture;
@@ -361,7 +358,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
     /**
      * set the blending function used for the texture
-     * @param {Number|cc.BlencFunc} src
+     * @param {Number|Object} src
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
@@ -372,7 +369,6 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
             this._blendFunc.src = src;
             this._blendFunc.src = dst;
         }
-
     },
 
     /**
@@ -380,38 +376,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @return {cc.BlendFunc}
      */
     getBlendFunc:function () {
-        return {src:this._blendFunc.src, dst:this._blendFunc.dst};
-    },
-
-    // override visit.
-    // Don't call visit on it's children
-    visit:function (ctx) {
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
-            return;
-
-        // CAREFUL:
-        // This visit is almost identical to cc.Node#visit
-        // with the exception that it doesn't call visit on it's children
-        //
-        // The alternative is to have a void cc.Sprite#visit, but
-        // although this is less mantainable, is faster
-        //
-        if (!this._visible)
-            return;
-
-        cc.kmGLPushMatrix();
-        if (this.grid && this.grid.isActive()) {
-            this.grid.beforeDraw();
-            this.transformAncestors();
-        }
-
-        this.transform(ctx);
-        this.draw(ctx);
-
-        if (this.grid && this.grid.isActive())
-            this.grid.afterDraw(this);
-
-        cc.kmGLPopMatrix();
+        return new cc.BlendFunc(this._blendFunc.src, this._blendFunc.dst);
     },
 
     _updateAllAtlasIndexes:function () {
@@ -479,19 +444,19 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         return {newIndex:newIndex, oldIndex:oldIndex};
     },
 
-    /**
-     * <p>
-     *     don't use lazy sorting, reordering the particle systems quads afterwards would be too complex                                    <br/>
-     *     XXX research whether lazy sorting + freeing current quads and calloc a new block with size of capacity would be faster           <br/>
-     *     XXX or possibly using vertexZ for reordering, that would be fastest                                                              <br/>
-     *     this helper is almost equivalent to CCNode's addChild, but doesn't make use of the lazy sorting                                  <br/>
-     * </p>
-     * @param {cc.ParticleSystem} child
-     * @param {Number} z
-     * @param {Number} aTag
-     * @return {Number}
-     * @private
-     */
+    //
+    // <p>
+    //     don't use lazy sorting, reordering the particle systems quads afterwards would be too complex                                    <br/>
+    //     XXX research whether lazy sorting + freeing current quads and calloc a new block with size of capacity would be faster           <br/>
+    //     XXX or possibly using vertexZ for reordering, that would be fastest                                                              <br/>
+    //     this helper is almost equivalent to CCNode's addChild, but doesn't make use of the lazy sorting                                  <br/>
+    // </p>
+    // @param {cc.ParticleSystem} child
+    // @param {Number} z
+    // @param {Number} aTag
+    // @return {Number}
+    // @private
+    //
     _addChildHelper:function (child, z, aTag) {
         if(!child)
             throw "cc.ParticleBatchNode._addChildHelper(): child should be non-null";
@@ -552,18 +517,10 @@ cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
 
 /**
  * initializes the particle system with the name of a file on disk (for a list of supported formats look at the cc.Texture2D class), a capacity of particles
+ * @deprecated since v3.0 please use new cc.ParticleBatchNode(filename, capacity) instead.
  * @param {String|cc.Texture2D} fileImage
  * @param {Number} capacity
  * @return {cc.ParticleBatchNode}
- * @example
- * 1.
- * //Create a cc.ParticleBatchNode with image path  and capacity
- * var particleBatchNode = cc.ParticleBatchNode.create("res/grossini_dance.png",30);
- *
- * 2.
- * //Create a cc.ParticleBatchNode with a texture and capacity
- * var texture = cc.TextureCache.getInstance().addImage("res/grossini_dance.png");
- * var particleBatchNode = cc.ParticleBatchNode.create(texture, 30);
  */
 cc.ParticleBatchNode.create = function (fileImage, capacity) {
     return new cc.ParticleBatchNode(fileImage, capacity);

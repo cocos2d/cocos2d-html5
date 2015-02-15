@@ -34,7 +34,12 @@
  as the private API may change with little or no warning.
  */
 
-// Helper. Converts an array of numbers into an array of vectors(x,y)
+/**
+ *  Converts an array of numbers into an array of vectors(x,y)
+ *  @function
+ *  @param {Array} verts
+ *  @return {Array}
+ */
 cc.__convertVerts = function (verts) {
     var ret = [];
     for (var i = 0; i < verts.length / 2; i++) {
@@ -43,6 +48,12 @@ cc.__convertVerts = function (verts) {
     return ret;
 };
 
+/**
+ * color for body
+ * @function
+ * @param {cp.Body} body
+ * @return {cc.color}
+ */
 cc.ColorForBody = function (body) {
     if (body.isRogue() || body.isSleeping()) {
         return cc.color(128, 128, 128, 128);
@@ -53,6 +64,11 @@ cc.ColorForBody = function (body) {
     }
 };
 
+/**
+ * draw shape
+ * @param {cp.Shape} shape
+ * @param renderer
+ */
 cc.DrawShape = function (shape, renderer) {
     var body = shape.body;
     var color = cc.ColorForBody(body);
@@ -74,6 +90,11 @@ cc.DrawShape = function (shape, renderer) {
     }
 };
 
+/**
+ * draw constraint
+ * @param {cp.Constraint} constraint
+ * @param renderer
+ */
 cc.DrawConstraint = function (constraint, renderer) {
     var body_a = constraint.a;
     var body_b = constraint.b;
@@ -111,7 +132,12 @@ cc.DrawConstraint = function (constraint, renderer) {
     }
 };
 
+/**
+ * @constant
+ * @type {cc.color}
+ */
 cc.CONSTRAINT_COLOR = cc.color(0, 255, 0, 128);
+
 
 /**
  * <p>A Node that draws the components of a physics engine.<br/>
@@ -125,50 +151,62 @@ cc.CONSTRAINT_COLOR = cc.color(0, 255, 0, 128);
  * @property {cp.Space} space     Physic world space
  */
 cc.PhysicsDebugNode = cc.DrawNode.extend({
-	space:null,
-
-    _spaceObj:null,
+    _space:null,
     _className:"PhysicsDebugNode",
 
+    /**
+     * constructor of cc.PhysicsDebugNode
+     * @param {cp.Space} space
+     */
+    ctor: function (space) {
+        cc.DrawNode.prototype.ctor.call(this);
+        this._space = space;
+    },
+
+    /**
+     * get space
+     * @returns {cp.Space}
+     */
     getSpace:function () {
-        return this.space;
+        return this._space;
     },
 
+    /**
+     * set space
+     * @param {cp.Space} space
+     */
     setSpace:function (space) {
-        this.space = space;
+        this._space = space;
     },
 
+    /**
+     * draw
+     * @param {object} context
+     */
     draw:function (context) {
-        if (!this.space)
+        if (!this._space)
             return;
 
-        this.space.eachShape(cc.DrawShape.bind(this));
-        this.space.eachConstraint(cc.DrawConstraint.bind(this));
+        this._space.eachShape(cc.DrawShape.bind(this));
+        this._space.eachConstraint(cc.DrawConstraint.bind(this));
         cc.DrawNode.prototype.draw.call(this);
         this.clear();
+    },
+
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new cc.PhysicsDebugNode.CanvasRenderCmd(this);
+        else
+            return new cc.PhysicsDebugNode.WebGLRenderCmd(this);
     }
 });
 
-/** Create a debug node for an Objective-Chipmunk space. */
-cc.PhysicsDebugNode.debugNodeForChipmunkSpace = function (space) {
-    var node = new cc.PhysicsDebugNode();
-    if (node.init()) {
-        node._spaceObj = space;
-        node.space = space.space;
-        return node;
-    }
-    return null;
+/**
+ * Create a debug node for a regular Chipmunk space.
+ * @deprecated since v3.0, please use new cc.PhysicsDebugNode(space)
+ * @param {cp.Space} space
+ * @return {cc.PhysicsDebugNode}
+ */
+cc.PhysicsDebugNode.create = function (space) {
+    return new cc.PhysicsDebugNode(space);
 };
-
-/** Create a debug node for a regular Chipmunk space. */
-cc.PhysicsDebugNode.debugNodeForCPSpace = function (space) {
-    var node = new cc.PhysicsDebugNode();
-    if (node.init()) {
-        node.space = space;
-        return node;
-    }
-    return null;
-};
-
-cc.PhysicsDebugNode.create = cc.PhysicsDebugNode.debugNodeForCPSpace;
-

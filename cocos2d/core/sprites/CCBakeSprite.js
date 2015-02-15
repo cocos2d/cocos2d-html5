@@ -22,7 +22,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.BakeSprite = cc.Sprite.extend({
+/**
+ * cc.BakeSprite is a type of sprite that will be cached.
+ * @class
+ * @extend cc.Sprite
+ */
+cc.BakeSprite = cc.Sprite.extend(/** @lends cc.BakeSprite# */{
     _cacheCanvas: null,
     _cacheContext: null,
 
@@ -31,7 +36,7 @@ cc.BakeSprite = cc.Sprite.extend({
         var canvasElement = document.createElement("canvas");
         canvasElement.width = canvasElement.height = 10;
         this._cacheCanvas = canvasElement;
-        this._cacheContext = canvasElement.getContext("2d");
+        this._cacheContext = new cc.CanvasContextWrapper(canvasElement.getContext("2d"));
 
         var texture = new cc.Texture2D();
         texture.initWithElement(canvasElement);

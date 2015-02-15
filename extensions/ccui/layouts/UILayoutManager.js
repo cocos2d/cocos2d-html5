@@ -22,6 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * Gets the layout manager by ccui.Layout's layout type.
+ * @param {Number} type
+ * @returns {ccui.linearVerticalLayoutManager|ccui.linearHorizontalLayoutManager|ccui.relativeLayoutManager|null}
+ */
 ccui.getLayoutManager = function (type) {
     switch (type) {
         case ccui.Layout.LINEAR_VERTICAL:
@@ -34,7 +39,12 @@ ccui.getLayoutManager = function (type) {
     return null;
 };
 
-ccui.linearVerticalLayoutManager = {
+/**
+ * ccui.linearVerticalLayoutManager is a singleton object which is the linear vertical layout manager for ccui.Layout.
+ * @class
+ * @name ccui.linearVerticalLayoutManager
+ */
+ccui.linearVerticalLayoutManager = /** @lends ccui.linearVerticalLayoutManager# */{
     _doLayout: function(layout){
         var layoutSize = layout._getLayoutContentSize();
         var container = layout._getLayoutElements();
@@ -50,7 +60,7 @@ ccui.linearVerticalLayoutManager = {
                     var ap = child.getAnchorPoint();
                     var cs = child.getContentSize();
                     var finalPosX = ap.x * cs.width;
-                    var finalPosY = topBoundary - ((1.0-ap.y) * cs.height);
+                    var finalPosY = topBoundary - ((1.0 - ap.y) * cs.height);
                     switch (childGravity){
                         case ccui.LinearLayoutParameter.NONE:
                         case ccui.LinearLayoutParameter.LEFT:
@@ -59,7 +69,7 @@ ccui.linearVerticalLayoutManager = {
                             finalPosX = layoutSize.width - ((1.0 - ap.x) * cs.width);
                             break;
                         case ccui.LinearLayoutParameter.CENTER_HORIZONTAL:
-                            finalPosX = layoutSize.width / 2.0 - cs.width * (0.5-ap.x);
+                            finalPosX = layoutSize.width / 2.0 - cs.width * (0.5 - ap.x);
                             break;
                         default:
                             break;
@@ -68,14 +78,19 @@ ccui.linearVerticalLayoutManager = {
                     finalPosX += mg.left;
                     finalPosY -= mg.top;
                     child.setPosition(finalPosX, finalPosY);
-                    topBoundary = child.getPositionY() - child.getAnchorPoint().y * child.getContentSize().height - mg.bottom;
+                    topBoundary = child.getPositionY() - ap.y * cs.height - mg.bottom;
                 }
             }
         }
     }
 };
 
-ccui.linearHorizontalLayoutManager = {
+/**
+ * ccui.linearHorizontalLayoutManager is a singleton object which is the linear horizontal layout manager for ccui.Layout
+ * @class
+ * @name ccui.linearHorizontalLayoutManager
+ */
+ccui.linearHorizontalLayoutManager = /** @lends ccui.linearHorizontalLayoutManager# */{
     _doLayout: function(layout){
         var layoutSize = layout._getLayoutContentSize();
         var container = layout._getLayoutElements();
@@ -87,7 +102,7 @@ ccui.linearHorizontalLayoutManager = {
                 if (layoutParameter){
                     var childGravity = layoutParameter.getGravity();
                     var ap = child.getAnchorPoint();
-                    var cs = child.getSize();
+                    var cs = child.getContentSize();
                     var finalPosX = leftBoundary + (ap.x * cs.width);
                     var finalPosY = layoutSize.height - (1.0 - ap.y) * cs.height;
                     switch (childGravity){
@@ -114,7 +129,12 @@ ccui.linearHorizontalLayoutManager = {
     }
 };
 
-ccui.relativeLayoutManager = {
+/**
+ * ccui.relativeLayoutManager is the singleton object which is the relative layout manager for ccui.Layout, it has a _doLayout function to do layout.
+ * @class
+ * @name ccui.relativeLayoutManager
+ */
+ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
     _unlayoutChildCount: 0,
     _widgetChildren: [],
     _widget: null,

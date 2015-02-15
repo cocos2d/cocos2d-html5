@@ -25,19 +25,15 @@
  ****************************************************************************/
 
 /** cc.Layer is a subclass of cc.Node that implements the TouchEventsDelegate protocol.<br/>
- * All features from cc.Node are valid, plus the following new features:<br/>
- * It can receive iPhone Touches<br/>
- * It can receive Accelerometer input
+ * All features from cc.Node are valid, plus the bake feature: Baked layer can cache a static layer to improve performance
  * @class
  * @extends cc.Node
  */
 cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
-    _isBaked: false,
-    _bakeSprite: null,
     _className: "Layer",
 
     /**
-     * Constructor of cc.Layer
+     * <p>Constructor of cc.Layer, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
     ctor: function () {
         var nodep = cc.Node.prototype;
@@ -47,175 +43,100 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         nodep.setContentSize.call(this, cc.winSize);
     },
 
+    /**
+     * Initialization of the layer, please do not call this function by yourself, you should pass the parameters to constructor to initialize a layer
+     */
     init: function(){
         var _t = this;
         _t._ignoreAnchorPointForPosition = true;
         _t.setAnchorPoint(0.5, 0.5);
         _t.setContentSize(cc.winSize);
-        _t.cascadeOpacity = false;
-        _t.cascadeColor = false;
+        _t._cascadeColorEnabled = false;
+        _t._cascadeOpacityEnabled = false;
         return true;
     },
 
     /**
-     * set the layer to cache all of children to a bake sprite, and draw itself by bake sprite. recommend using it in UI.
+     * Sets the layer to cache all of children to a bake sprite, and draw itself by bake sprite. recommend using it in UI.<br/>
+     * This is useful only in html5 engine
      * @function
+     * @see cc.Layer#unbake
      */
-    bake: null,
+    bake: function(){
+        this._renderCmd.bake();
+    },
 
     /**
-     * cancel the layer to cache all of children to a bake sprite.
+     * Cancel the layer to cache all of children to a bake sprite.<br/>
+     * This is useful only in html5 engine
      * @function
+     * @see cc.Layer#bake
      */
-    unbake: null,
+    unbake: function(){
+        this._renderCmd.unbake();
+    },
 
     /**
      * Determines if the layer is baked.
      * @function
      * @returns {boolean}
+     * @see cc.Layer#bake and cc.Layer#unbake
      */
     isBaked: function(){
         return this._isBaked;
     },
 
-    visit: null
+    addChild: function(child, localZOrder, tag){
+        cc.Node.prototype.addChild.call(this, child, localZOrder, tag);
+        this._renderCmd._bakeForAddChild(child);
+    },
+
+    _createRenderCmd: function(){
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new cc.Layer.CanvasRenderCmd(this);
+        else
+            return new cc.Layer.WebGLRenderCmd(this);
+    }
 });
 
 /**
- * creates a layer
- * @example
- * // Example
- * var myLayer = cc.Layer.create();
- * //Yes! it's that simple
+ * Creates a layer
+ * @deprecated since v3.0, please use the new construction instead
+ * @see cc.Layer
  * @return {cc.Layer|Null}
  */
 cc.Layer.create = function () {
     return new cc.Layer();
 };
 
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-    var p = cc.Layer.prototype;
-    p.bake = function(){
-        if (!this._isBaked) {
-            //limit: 1. its children's blendfunc are invalid.
-            this._isBaked = this._cacheDirty = true;
-
-            this._cachedParent = this;
-            var children = this._children;
-            for(var i = 0, len = children.length; i < len; i++)
-                children[i]._setCachedParent(this);
-
-            if (!this._bakeSprite)
-                this._bakeSprite = new cc.BakeSprite();
-        }
-    };
-
-    p.unbake = function(){
-        if (this._isBaked) {
-            this._isBaked = false;
-            this._cacheDirty = true;
-
-            this._cachedParent = null;
-            var children = this._children;
-            for(var i = 0, len = children.length; i < len; i++)
-                children[i]._setCachedParent(null);
-        }
-    };
-
-    p.visit = function(ctx){
-        if(!this._isBaked){
-            cc.Node.prototype.visit.call(this, ctx);
-            return;
-        }
-
-        var context = ctx || cc._renderContext, i;
-        var _t = this;
-        var children = _t._children;
-        var len = children.length;
-        // quick return if not visible
-        if (!_t._visible || len === 0)
-            return;
-
-        var locBakeSprite = this._bakeSprite;
-
-        context.save();
-        _t.transform(context);
-
-        if(this._cacheDirty){
-            //compute the bounding box of the bake layer.
-            var boundingBox = this._getBoundingBoxForBake();
-            boundingBox.width = 0 | boundingBox.width;
-            boundingBox.height = 0 | boundingBox.height;
-            var bakeContext = locBakeSprite.getCacheContext();
-            locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
-            bakeContext.translate(0 - boundingBox.x, boundingBox.height + boundingBox.y);
-
-            //reset the bake sprite's position
-            var anchor = locBakeSprite.getAnchorPointInPoints();
-            locBakeSprite.setPosition(anchor.x + boundingBox.x, anchor.y + boundingBox.y);
-
-            //visit for canvas
-            _t.sortAllChildren();
-            cc.view._setScaleXYForRenderTexture();
-            for (i = 0; i < len; i++) {
-                children[i].visit(bakeContext);
-            }
-            cc.view._resetScale();
-            this._cacheDirty = false;
-        }
-
-        //the bakeSprite is drawing
-        locBakeSprite.visit(context);
-
-        _t.arrivalOrder = 0;
-        context.restore();
-    };
-
-    p._getBoundingBoxForBake = function () {
-        var rect = null;
-
-        //query child's BoundingBox
-        if (!this._children || this._children.length === 0)
-            return cc.rect(0, 0, 10, 10);
-
-        var locChildren = this._children;
-        for (var i = 0; i < locChildren.length; i++) {
-            var child = locChildren[i];
-            if (child && child._visible) {
-                if(rect){
-                    var childRect = child._getBoundingBoxToCurrentNode();
-                    if (childRect)
-                        rect = cc.rectUnion(rect, childRect);
-                }else{
-                    rect = child._getBoundingBoxToCurrentNode();
-                }
-            }
-        }
-        return rect;
-    };
-    p = null;
-}else{
-    cc.assert(typeof cc._tmp.LayerDefineForWebGL === "function", cc._LogInfos.MissingFile, "CCLayerWebGL.js");
-    cc._tmp.LayerDefineForWebGL();
-    delete cc._tmp.LayerDefineForWebGL;
-}
-
 /**
  * <p>
  * CCLayerColor is a subclass of CCLayer that implements the CCRGBAProtocol protocol.       <br/>
  *  All features from CCLayer are valid, plus the following new features:                   <br/>
- * <ul><li>opacity</li>                                                                     <br/>
- * <li>RGB colors</li></ul>                                                                 <br/>
- * </p>
+ * - opacity                                                                     <br/>
+ * - RGB colors                                                                  </p>
  * @class
  * @extends cc.Layer
+ *
+ * @param {cc.Color} [color=] The color of the layer
+ * @param {Number} [width=] The width of the layer
+ * @param {Number} [height=] The height of the layer
+ *
+ * @example
+ * // Example
+ * //Create a yellow color layer as background
+ * var yellowBackground = new cc.LayerColor(cc.color(255,255,0,255));
+ * //If you didn't pass in width and height, it defaults to the same size as the canvas
+ *
+ * //create a yellow box, 200 by 200 in size
+ * var yellowBox = new cc.LayerColor(cc.color(255,255,0,255), 200, 200);
  */
 cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     _blendFunc: null,
     _className: "LayerColor",
 
     /**
-     * blendFunc getter
+     * Returns the blend function
      * @return {cc.BlendFunc}
      */
     getBlendFunc: function () {
@@ -223,8 +144,9 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     },
 
     /**
-     * change width and height in Points
-     * @deprecated
+     * Changes width and height
+     * @deprecated since v3.0 please use setContentSize instead
+     * @see cc.Node#setContentSize
      * @param {Number} w width
      * @param {Number} h height
      */
@@ -234,8 +156,9 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     },
 
     /**
-     * change width in Points
-     * @deprecated
+     * Changes width in Points
+     * @deprecated since v3.0 please use setContentSize instead
+     * @see cc.Node#setContentSize
      * @param {Number} w width
      */
     changeWidth: function (w) {
@@ -244,39 +167,21 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
     /**
      * change height in Points
-     * @deprecated
+     * @deprecated since v3.0 please use setContentSize instead
+     * @see cc.Node#setContentSize
      * @param {Number} h height
      */
     changeHeight: function (h) {
         this.height = h;
     },
 
-    /**
-     * set OpacityModifyRGB of cc.LayerColor
-     * @param {Boolean}  value
-     */
     setOpacityModifyRGB: function (value) {
     },
 
-    /**
-     * is OpacityModifyRGB
-     * @return {Boolean}
-     */
     isOpacityModifyRGB: function () {
         return false;
     },
 
-    setColor: function (color) {
-        cc.Layer.prototype.setColor.call(this, color);
-        this._updateColor();
-    },
-
-    setOpacity: function (opacity) {
-        cc.Layer.prototype.setOpacity.call(this, opacity);
-        this._updateColor();
-    },
-
-    _isLighterMode: false,
     /**
      * Constructor of cc.LayerColor
      * @function
@@ -284,9 +189,14 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {Number} [width=]
      * @param {Number} [height=]
      */
-    ctor: null,
+    ctor: function(color, width, height){
+        cc.Layer.prototype.ctor.call(this);
+        this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        cc.LayerColor.prototype.init.call(this, color, width, height);
+    },
 
     /**
+     * Initialization of the layer, please do not call this function by yourself, you should pass the parameters to constructor to initialize a layer
      * @param {cc.Color} [color=]
      * @param {Number} [width=]
      * @param {Number} [height=]
@@ -301,206 +211,76 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         width = width === undefined ? winSize.width : width;
         height = height === undefined ? winSize.height : height;
 
-        var locDisplayedColor = this._displayedColor;
-        locDisplayedColor.r = color.r;
-        locDisplayedColor.g = color.g;
-        locDisplayedColor.b = color.b;
-
         var locRealColor = this._realColor;
         locRealColor.r = color.r;
         locRealColor.g = color.g;
         locRealColor.b = color.b;
-
-        this._displayedOpacity = color.a;
         this._realOpacity = color.a;
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.colorDirty|cc.Node._dirtyFlags.opacityDirty);
 
-        var proto = cc.LayerColor.prototype;
-        proto.setContentSize.call(this, width, height);
-        proto._updateColor.call(this);
+        cc.LayerColor.prototype.setContentSize.call(this, width, height);
         return true;
     },
 
     /**
-     * blendFunc setter
-     * @param {Number} src
-     * @param {Number} dst
+     * Sets the blend func, you can pass either a cc.BlendFunc object or source and destination value separately
+     * @param {Number|cc.BlendFunc} src
+     * @param {Number} [dst]
      */
     setBlendFunc: function (src, dst) {
-        var _t = this;
-        if (dst === undefined)
-            _t._blendFunc = src;
-        else
-            _t._blendFunc = {src: src, dst: dst};
+        var locBlendFunc = this._blendFunc;
+        if (dst === undefined) {
+            locBlendFunc.src = src.src;
+            locBlendFunc.dst = src.dst;
+        } else {
+            locBlendFunc.src = src;
+            locBlendFunc.dst = dst;
+        }
+        this._renderCmd.updateBlendFunc(locBlendFunc);
+    },
+
+    _setWidth: function(width){
+        cc.Node.prototype._setWidth.call(this, width);
+        this._renderCmd._updateSquareVerticesWidth(width);
+    },
+
+    _setHeight: function(height){
+        cc.Node.prototype._setHeight.call(this, height);
+        this._renderCmd._updateSquareVerticesHeight(height);
+    },
+
+    setContentSize: function(size, height){
+        cc.Layer.prototype.setContentSize.call(this, size, height);
+        this._renderCmd._updateSquareVertices(size, height);
+    },
+
+    _createRenderCmd: function(){
         if (cc._renderType === cc._RENDER_TYPE_CANVAS)
-            _t._isLighterMode = (_t._blendFunc && (_t._blendFunc.src == 1) && (_t._blendFunc.dst == 771));
-    },
-
-    _setWidth: null,
-
-    _setHeight: null,
-
-    _updateColor: null,
-
-    updateDisplayedColor: function (parentColor) {
-        cc.Layer.prototype.updateDisplayedColor.call(this, parentColor);
-        this._updateColor();
-    },
-
-    updateDisplayedOpacity: function (parentOpacity) {
-        cc.Layer.prototype.updateDisplayedOpacity.call(this, parentOpacity);
-        this._updateColor();
-    },
-
-    /**
-     * Renders the layer
-     * @function
-     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
-     */
-    draw: null
+            return new cc.LayerColor.CanvasRenderCmd(this);
+        else
+            return new cc.LayerColor.WebGLRenderCmd(this);
+    }
 });
 
 /**
- * creates a cc.Layer with color, width and height in Points
+ * Creates a cc.Layer with color, width and height in Points
+ * @deprecated since v3.0 please use the new construction instead
+ * @see cc.LayerColor
  * @param {cc.Color} color
  * @param {Number|Null} [width=]
  * @param {Number|Null} [height=]
  * @return {cc.LayerColor}
- * @example
- * // Example
- * //Create a yellow color layer as background
- * var yellowBackground = cc.LayerColor.create(cc.color(255,255,0,255));
- * //If you didnt pass in width and height, it defaults to the same size as the canvas
- *
- * //create a yellow box, 200 by 200 in size
- * var yellowBox = cc.LayerColor.create(cc.color(255,255,0,255), 200, 200);
  */
 cc.LayerColor.create = function (color, width, height) {
     return new cc.LayerColor(color, width, height);
 };
 
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-    //cc.LayerColor define start
-    var _p = cc.LayerColor.prototype;
-    _p.ctor = function (color, width, height) {
-        cc.Layer.prototype.ctor.call(this);
-        this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-        cc.LayerColor.prototype.init.call(this, color, width, height);
-    };
-    _p._setWidth = cc.Layer.prototype._setWidth;
-    _p._setHeight = cc.Layer.prototype._setHeight;
-    _p._updateColor = function () {
-    };
-    _p.draw = function (ctx) {
-        var context = ctx || cc._renderContext, _t = this;
-        var locEGLViewer = cc.view, locDisplayedColor = _t._displayedColor;
-
-        context.fillStyle = "rgba(" + (0 | locDisplayedColor.r) + "," + (0 | locDisplayedColor.g) + ","
-            + (0 | locDisplayedColor.b) + "," + _t._displayedOpacity / 255 + ")";
-        context.fillRect(0, 0, _t.width * locEGLViewer.getScaleX(), -_t.height * locEGLViewer.getScaleY());
-        cc.g_NumberOfDraws++;
-    };
-
-    //for bake
-    _p.visit = function(ctx){
-        if(!this._isBaked){
-            cc.Node.prototype.visit.call(this, ctx);
-            return;
-        }
-
-        var context = ctx || cc._renderContext, i;
-        var _t = this;
-        var children = _t._children;
-        var len = children.length;
-        // quick return if not visible
-        if (!_t._visible)
-            return;
-
-        var locBakeSprite = this._bakeSprite;
-
-        context.save();
-        _t.transform(context);
-
-        if(this._cacheDirty){
-            //compute the bounding box of the bake layer.
-            var boundingBox = this._getBoundingBoxForBake();
-            boundingBox.width = 0 | boundingBox.width;
-            boundingBox.height = 0 | boundingBox.height;
-            var bakeContext = locBakeSprite.getCacheContext();
-            locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
-            var anchor = locBakeSprite.getAnchorPointInPoints(), locPos = this._position;
-            if(this._ignoreAnchorPointForPosition){
-                bakeContext.translate(0 - boundingBox.x + locPos.x, boundingBox.height + boundingBox.y - locPos.y);
-                //reset the bake sprite's position
-                locBakeSprite.setPosition(anchor.x + boundingBox.x - locPos.x, anchor.y + boundingBox.y - locPos.y);
-            } else {
-                var selfAnchor = this.getAnchorPointInPoints();
-                var selfPos = {x: locPos.x - selfAnchor.x, y: locPos.y - selfAnchor.y};
-                bakeContext.translate(0 - boundingBox.x + selfPos.x, boundingBox.height + boundingBox.y - selfPos.y);
-                locBakeSprite.setPosition(anchor.x + boundingBox.x - selfPos.x, anchor.y + boundingBox.y - selfPos.y);
-            }
-
-            var child;
-            cc.view._setScaleXYForRenderTexture();
-            //visit for canvas
-            if (len > 0) {
-                _t.sortAllChildren();
-                // draw children zOrder < 0
-                for (i = 0; i < len; i++) {
-                    child = children[i];
-                    if (child._localZOrder < 0)
-                        child.visit(bakeContext);
-                    else
-                        break;
-                }
-                _t.draw(bakeContext);
-                for (; i < len; i++) {
-                    children[i].visit(bakeContext);
-                }
-            } else
-                _t.draw(bakeContext);
-            cc.view._resetScale();
-            this._cacheDirty = false;
-        }
-
-        //the bakeSprite is drawing
-        locBakeSprite.visit(context);
-
-        _t.arrivalOrder = 0;
-        context.restore();
-    };
-
-    _p._getBoundingBoxForBake = function () {
-        //default size
-        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
-        var trans = this.nodeToWorldTransform();
-        rect = cc.rectApplyAffineTransform(rect, this.nodeToWorldTransform());
-
-        //query child's BoundingBox
-        if (!this._children || this._children.length === 0)
-            return rect;
-
-        var locChildren = this._children;
-        for (var i = 0; i < locChildren.length; i++) {
-            var child = locChildren[i];
-            if (child && child._visible) {
-                var childRect = child._getBoundingBoxToCurrentNode(trans);
-                rect = cc.rectUnion(rect, childRect);
-            }
-        }
-        return rect;
-    };
-
-    //cc.LayerColor define end
-    _p = null;
-} else {
-    cc.assert(typeof cc._tmp.WebGLLayerColor === "function", cc._LogInfos.MissingFile, "CCLayerWebGL.js");
-    cc._tmp.WebGLLayerColor();
-    delete cc._tmp.WebGLLayerColor;
-}
-
-cc.assert(typeof cc._tmp.PrototypeLayerColor === "function", cc._LogInfos.MissingFile, "CCLayerPropertyDefine.js");
-cc._tmp.PrototypeLayerColor();
-delete cc._tmp.PrototypeLayerColor;
+//LayerColor - Getter Setter
+(function(){
+    var proto = cc.LayerColor.prototype;
+    cc.defineGetterSetter(proto, "width", proto._getWidth, proto._setWidth);
+    cc.defineGetterSetter(proto, "height", proto._getHeight, proto._setHeight);
+})();
 
 /**
  * <p>
@@ -524,6 +304,10 @@ delete cc._tmp.PrototypeLayerColor;
  * @class
  * @extends cc.LayerColor
  *
+ * @param {cc.Color} start Starting color
+ * @param {cc.Color} end Ending color
+ * @param {cc.Point} [v=cc.p(0, -1)] A vector defines the gradient direction, default direction is from top to bottom
+ *
  * @property {cc.Color} startColor              - Start color of the color gradient
  * @property {cc.Color} endColor                - End color of the color gradient
  * @property {Number}   startOpacity            - Start opacity of the color gradient
@@ -532,37 +316,31 @@ delete cc._tmp.PrototypeLayerColor;
  * @property {Number}   compresseInterpolation  - Indicate whether or not the interpolation will be compressed
  */
 cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
-    _startColor: null,
     _endColor: null,
     _startOpacity: 255,
     _endOpacity: 255,
     _alongVector: null,
     _compressedInterpolation: false,
-    _gradientStartPoint: null,
-    _gradientEndPoint: null,
     _className: "LayerGradient",
 
     /**
      * Constructor of cc.LayerGradient
-     * @param {cc.Color} start starting color
+     * @param {cc.Color} start
      * @param {cc.Color} end
-     * @param {cc.Point|Null} v
+     * @param {cc.Point} [v=cc.p(0, -1)]
      */
     ctor: function (start, end, v) {
         var _t = this;
         cc.LayerColor.prototype.ctor.call(_t);
-
-        _t._startColor = cc.color(0, 0, 0, 255);
         _t._endColor = cc.color(0, 0, 0, 255);
         _t._alongVector = cc.p(0, -1);
         _t._startOpacity = 255;
         _t._endOpacity = 255;
-        _t._gradientStartPoint = cc.p(0, 0);
-        _t._gradientEndPoint = cc.p(0, 0);
         cc.LayerGradient.prototype.init.call(_t, start, end, v);
     },
 
     /**
+     * Initialization of the layer, please do not call this function by yourself, you should pass the parameters to constructor to initialize a layer
      * @param {cc.Color} start starting color
      * @param {cc.Color} end
      * @param {cc.Point|Null} v
@@ -575,10 +353,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         var _t = this;
 
         // Initializes the CCLayer with a gradient between start and end in the direction of v.
-        var locStartColor = _t._startColor, locEndColor = _t._endColor;
-        locStartColor.r = start.r;
-        locStartColor.g = start.g;
-        locStartColor.b = start.b;
+        var locEndColor = _t._endColor;
         _t._startOpacity = start.a;
 
         locEndColor.r = end.r;
@@ -588,36 +363,33 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
         _t._alongVector = v;
         _t._compressedInterpolation = true;
-        _t._gradientStartPoint = cc.p(0, 0);
-        _t._gradientEndPoint = cc.p(0, 0);
 
         cc.LayerColor.prototype.init.call(_t, cc.color(start.r, start.g, start.b, 255));
-        cc.LayerGradient.prototype._updateColor.call(_t);
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.colorDirty|cc.Node._dirtyFlags.opacityDirty|cc.Node._dirtyFlags.gradientDirty);
         return true;
     },
 
     /**
      * Sets the untransformed size of the LayerGradient.
-     * @override
      * @param {cc.Size|Number} size The untransformed size of the LayerGradient or The untransformed size's width of the LayerGradient.
      * @param {Number} [height] The untransformed size's height of the LayerGradient.
      */
     setContentSize: function (size, height) {
         cc.LayerColor.prototype.setContentSize.call(this, size, height);
-        this._updateColor();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.gradientDirty);
     },
 
     _setWidth: function (width) {
         cc.LayerColor.prototype._setWidth.call(this, width);
-        this._updateColor();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.gradientDirty);
     },
     _setHeight: function (height) {
         cc.LayerColor.prototype._setHeight.call(this, height);
-        this._updateColor();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.gradientDirty);
     },
 
     /**
-     * get the starting color
+     * Returns the starting color
      * @return {cc.Color}
      */
     getStartColor: function () {
@@ -625,7 +397,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
-     * set the starting color
+     * Sets the starting color
      * @param {cc.Color} color
      * @example
      * // Example
@@ -637,7 +409,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
-     * set the end gradient color
+     * Sets the end gradient color
      * @param {cc.Color} color
      * @example
      * // Example
@@ -646,11 +418,11 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      */
     setEndColor: function (color) {
         this._endColor = color;
-        this._updateColor();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.colorDirty);
     },
 
     /**
-     * get the end color
+     * Returns the end color
      * @return {cc.Color}
      */
     getEndColor: function () {
@@ -658,16 +430,16 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
-     * set starting gradient opacity
+     * Sets starting gradient opacity
      * @param {Number} o from 0 to 255, 0 is transparent
      */
     setStartOpacity: function (o) {
         this._startOpacity = o;
-        this._updateColor();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.opacityDirty);
     },
 
     /**
-     * get the starting gradient opacity
+     * Returns the starting gradient opacity
      * @return {Number}
      */
     getStartOpacity: function () {
@@ -675,16 +447,16 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
-     * set the end gradient opacity
+     * Sets the end gradient opacity
      * @param {Number} o
      */
     setEndOpacity: function (o) {
         this._endOpacity = o;
-        this._updateColor();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.opacityDirty);
     },
 
     /**
-     * get the end gradient opacity
+     * Returns the end gradient opacity
      * @return {Number}
      */
     getEndOpacity: function () {
@@ -692,23 +464,25 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
-     * set vector
+     * Sets the direction vector of the gradient
      * @param {cc.Point} Var
      */
     setVector: function (Var) {
         this._alongVector.x = Var.x;
         this._alongVector.y = Var.y;
-        this._updateColor();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.gradientDirty);
     },
 
     /**
+     * Returns the direction vector of the gradient
      * @return {cc.Point}
      */
     getVector: function () {
         return cc.p(this._alongVector.x, this._alongVector.y);
     },
 
-    /** is Compressed Interpolation
+    /**
+     * Returns whether compressed interpolation is enabled
      * @return {Boolean}
      */
     isCompressedInterpolation: function () {
@@ -716,20 +490,26 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
+     * Sets whether compressed interpolation is enabled
      * @param {Boolean} compress
      */
     setCompressedInterpolation: function (compress) {
         this._compressedInterpolation = compress;
-        this._updateColor();
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.gradientDirty);
     },
 
-    _draw: null,
-
-    _updateColor: null
+    _createRenderCmd: function(){
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
+            return new cc.LayerGradient.CanvasRenderCmd(this);
+        else
+            return new cc.LayerGradient.WebGLRenderCmd(this);
+    }
 });
 
 /**
- * creates a gradient layer
+ * Creates a gradient layer
+ * @deprecated since v3.0, please use the new construction instead
+ * @see cc.layerGradient
  * @param {cc.Color} start starting color
  * @param {cc.Color} end ending color
  * @param {cc.Point|Null} v
@@ -738,63 +518,38 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 cc.LayerGradient.create = function (start, end, v) {
     return new cc.LayerGradient(start, end, v);
 };
-
-
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-    //cc.LayerGradient define start
-    var _p = cc.LayerGradient.prototype;
-    _p.draw = function (ctx) {
-        var context = ctx || cc._renderContext, _t = this;
-        if (_t._isLighterMode)
-            context.globalCompositeOperation = 'lighter';
-
-        context.save();
-        var opacityf = _t._displayedOpacity / 255.0;
-        var scaleX = cc.view.getScaleX(), scaleY = cc.view.getScaleY();
-        var tWidth = _t.width * scaleX, tHeight = _t.height * scaleY;
-        var tGradient = context.createLinearGradient(_t._gradientStartPoint.x * scaleX, _t._gradientStartPoint.y * scaleY,
-            _t._gradientEndPoint.x * scaleX, _t._gradientEndPoint.y * scaleY);
-        var locDisplayedColor = _t._displayedColor, locEndColor = _t._endColor;
-        tGradient.addColorStop(0, "rgba(" + Math.round(locDisplayedColor.r) + "," + Math.round(locDisplayedColor.g) + ","
-            + Math.round(locDisplayedColor.b) + "," + (opacityf * (_t._startOpacity / 255)).toFixed(4) + ")");
-        tGradient.addColorStop(1, "rgba(" + Math.round(locEndColor.r) + "," + Math.round(locEndColor.g) + ","
-            + Math.round(locEndColor.b) + "," + (opacityf * (_t._endOpacity / 255)).toFixed(4) + ")");
-        context.fillStyle = tGradient;
-        context.fillRect(0, 0, tWidth, -tHeight);
-
-        if (_t._rotation != 0)
-            context.rotate(_t._rotationRadians);
-        context.restore();
-        cc.g_NumberOfDraws++;
-    };
-    _p._updateColor = function () {
-        var _t = this;
-        var locAlongVector = _t._alongVector, tWidth = _t.width * 0.5, tHeight = _t.height * 0.5;
-
-        _t._gradientStartPoint.x = tWidth * (-locAlongVector.x) + tWidth;
-        _t._gradientStartPoint.y = tHeight * locAlongVector.y - tHeight;
-        _t._gradientEndPoint.x = tWidth * locAlongVector.x + tWidth;
-        _t._gradientEndPoint.y = tHeight * (-locAlongVector.y) - tHeight;
-    };
-    //cc.LayerGradient define end
-    _p = null;
-} else {
-    cc.assert(typeof cc._tmp.WebGLLayerGradient === "function", cc._LogInfos.MissingFile, "CCLayerWebGL.js");
-    cc._tmp.WebGLLayerGradient();
-    delete cc._tmp.WebGLLayerGradient;
-}
-
-cc.assert(typeof cc._tmp.PrototypeLayerGradient === "function", cc._LogInfos.MissingFile, "CCLayerPropertyDefine.js");
-cc._tmp.PrototypeLayerGradient();
-delete cc._tmp.PrototypeLayerGradient;
+//LayerGradient - Getter Setter
+(function(){
+    var proto = cc.LayerGradient.prototype;
+    // Extended properties
+    /** @expose */
+    proto.startColor;
+    cc.defineGetterSetter(proto, "startColor", proto.getStartColor, proto.setStartColor);
+    /** @expose */
+    proto.endColor;
+    cc.defineGetterSetter(proto, "endColor", proto.getEndColor, proto.setEndColor);
+    /** @expose */
+    proto.startOpacity;
+    cc.defineGetterSetter(proto, "startOpacity", proto.getStartOpacity, proto.setStartOpacity);
+    /** @expose */
+    proto.endOpacity;
+    cc.defineGetterSetter(proto, "endOpacity", proto.getEndOpacity, proto.setEndOpacity);
+    /** @expose */
+    proto.vector;
+    cc.defineGetterSetter(proto, "vector", proto.getVector, proto.setVector);
+})();
 
 /**
  * CCMultipleLayer is a CCLayer with the ability to multiplex it's children.<br/>
  * Features:<br/>
  *  <ul><li>- It supports one or more children</li>
  *  <li>- Only one children will be active a time</li></ul>
- *  @class
- *  @extends cc.Layer
+ * @class
+ * @extends cc.Layer
+ * @param {Array} layers an array of cc.Layer
+ * @example
+ * // Example
+ * var multiLayer = new cc.LayerMultiple(layer1, layer2, layer3);//any number of layers
  */
 cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
     _enabledLayer: 0,
@@ -814,6 +569,7 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
     },
 
     /**
+     * Initialization of the layer multiplex, please do not call this function by yourself, you should pass the parameters to constructor to initialize a layer multiplex
      * @param {Array} layers an array of cc.Layer
      * @return {Boolean}
      */
@@ -828,7 +584,7 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
     },
 
     /**
-     * switches to a certain layer indexed by n.<br/>
+     * Switches to a certain layer indexed by n.<br/>
      * The current (old) layer will be removed from it's parent with 'cleanup:YES'.
      * @param {Number} n the layer index to switch to
      */
@@ -843,7 +599,8 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
         this.addChild(this._layers[n]);
     },
 
-    /** release the current layer and switches to another layer indexed by n.<br/>
+    /**
+     * Release the current layer and switches to another layer indexed by n.<br/>
      * The current (old) layer will be removed from it's parent with 'cleanup:YES'.
      * @param {Number} n the layer index to switch to
      */
@@ -862,6 +619,7 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
     },
 
     /**
+     * Add a layer to the multiplex layers list
      * @param {cc.Layer} layer
      */
     addLayer: function (layer) {
@@ -874,13 +632,11 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
 });
 
 /**
- * creates a cc.LayerMultiplex with one or more layers using a variable argument list.
+ * Creates a cc.LayerMultiplex with one or more layers using a variable argument list.
+ * @deprecated since v3.0, please use new construction instead
+ * @see cc.LayerMultiplex
  * @return {cc.LayerMultiplex|Null}
- * @example
- * // Example
- * var multiLayer = cc.LayerMultiple.create(layer1, layer2, layer3);//any number of layers
  */
 cc.LayerMultiplex.create = function (/*Multiple Arguments*/) {
     return new cc.LayerMultiplex(Array.prototype.slice.call(arguments));
 };
-

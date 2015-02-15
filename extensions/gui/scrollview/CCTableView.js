@@ -43,7 +43,7 @@ cc.TABLEVIEW_FILL_BOTTOMUP = 1;
  * Abstract class for SWTableView cell node
  * @class
  * @abstract
- * @extend cc.Node
+ * @extends cc.Node
  *
  * @property {Number}   objectId    - The index used internally by SWTableView and its subclasses
  */
@@ -178,7 +178,7 @@ cc.TableViewDataSource = cc.Class.extend(/** @lends cc.TableViewDataSource# */{
  * this is a very basic, minimal implementation to bring UITableView-like component into cocos2d world.
  *
  * @class
- * @extend cc.ScrollView
+ * @extends cc.ScrollView
  *
  * @property {cc.TableViewDataSource}   dataSource          - The data source of the table view
  * @property {cc.TableViewDelegate}     delegate            - The event delegate of the table view
@@ -195,10 +195,21 @@ cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
     _cellsPositions:null,                       //vector with all cell positions
     _touchedCell:null,
 
-    ctor:function () {
+    /**
+     * The
+     * @param dataSource
+     * @param size
+     * @param container
+     */
+    ctor:function (dataSource, size, container) {
         cc.ScrollView.prototype.ctor.call(this);
         this._oldDirection = cc.SCROLLVIEW_DIRECTION_NONE;
         this._cellsPositions = [];
+
+        this.initWithViewSize(size, container);
+        this.setDataSource(dataSource);
+        this._updateCellPositions();
+        this._updateContentSize();
     },
 
     __indexFromOffset:function (offset) {
@@ -696,17 +707,12 @@ _p = null;
 
 /**
  * An initialized table view object
- *
+ * @deprecated
  * @param {cc.TableViewDataSource} dataSource data source;
  * @param {cc.Size} size view size
  * @param {cc.Node} [container] parent object for cells
  * @return {cc.TableView} table view
  */
 cc.TableView.create = function (dataSource, size, container) {
-    var table = new cc.TableView();
-    table.initWithViewSize(size, container);
-    table.setDataSource(dataSource);
-    table._updateCellPositions();
-    table._updateContentSize();
-    return table;
+    return new cc.TableView(dataSource, size, container);
 };

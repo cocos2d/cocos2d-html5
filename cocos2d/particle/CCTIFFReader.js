@@ -28,8 +28,8 @@
  ****************************************************************************/
 
 /**
- * A tiff file reader, it can parse byte array to draw into a canvas
- * @namespace
+ * cc.tiffReader is a singleton object, it's a tiff file reader, it can parse byte array to draw into a canvas
+ * @class
  * @name cc.tiffReader
  */
 cc.tiffReader = /** @lends cc.tiffReader# */{

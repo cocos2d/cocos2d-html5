@@ -29,7 +29,7 @@
 /**
  * CCControlSwitch: Switch control ui component
  * @class
- * @extend cc.Control
+ * @extends cc.Control
  */
 cc.ControlSwitch = cc.Control.extend(/** @lends cc.ControlSwitch# */{
     /** Sprite which represents the view. */
@@ -77,7 +77,7 @@ cc.ControlSwitch = cc.Control.extend(/** @lends cc.ControlSwitch# */{
         this._on = isOn;
         var xPosition = (this._on) ? this._switchSprite.getOnPosition() : this._switchSprite.getOffPosition();
         if(animated){
-            this._switchSprite.runAction(cc.ActionTween.create(0.2, "sliderXPosition", this._switchSprite.getSliderXPosition(),xPosition));
+            this._switchSprite.runAction(new cc.ActionTween(0.2, "sliderXPosition", this._switchSprite.getSliderXPosition(),xPosition));
         }else{
             this._switchSprite.setSliderXPosition(xPosition);
         }
@@ -156,7 +156,9 @@ cc.ControlSwitch = cc.Control.extend(/** @lends cc.ControlSwitch# */{
     }
 });
 
-/** Creates a switch with a mask sprite, on/off sprites for on/off states and a thumb sprite. */
+/** Creates a switch with a mask sprite, on/off sprites for on/off states and a thumb sprite.
+ *  @deprecated
+ */
 cc.ControlSwitch.create = function (maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel) {
     return new cc.ControlSwitch(maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel);
 };
@@ -164,7 +166,7 @@ cc.ControlSwitch.create = function (maskSprite, onSprite, offSprite, thumbSprite
 /**
  * ControlSwitchSprite: Sprite switch control ui component
  * @class
- * @extend cc.Sprite
+ * @extends cc.Sprite
  *
  * @property {Number}           sliderX         - Slider's x position
  * @property {cc.Point}         onPos           - The position of slider when switch is on
@@ -213,7 +215,8 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
     },
 
     initWithMaskSprite:function (maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel) {
-        if (cc.Sprite.prototype.initWithTexture.call(this, maskSprite.getTexture())) {
+        if (cc.Sprite.prototype.init.call(this)) {
+            this.setSpriteFrame(maskSprite.displayFrame());
             // Sets the default values
             this._onPosition = 0;
             this._offPosition = -onSprite.getContentSize().width + thumbSprite.getContentSize().width / 2;
@@ -231,7 +234,7 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
             this._stencil.setPosition(0, 0);
 
             // Init clipper for mask
-            this._clipper = cc.ClippingNode.create();
+            this._clipper = new cc.ClippingNode();
             this._clipper.setAnchorPoint(0.5, 0.5);
             this._clipper.setPosition(maskSize.width / 2, maskSize.height / 2);
             this._clipper.setStencil(this._stencil);
@@ -305,8 +308,8 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
     },
 
     updateTweenAction:function (value, key) {
-        cc.log("key = " + key + ", value = " + value);
-        this.setSliderXPosition(value);
+        if (key === "sliderXPosition")
+            this.setSliderXPosition(value);
     },
 
     setOnPosition:function (onPosition) {

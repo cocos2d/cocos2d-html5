@@ -23,20 +23,24 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.triggerManager = {
+/**
+ * The trigger manager of Cocostudio
+ * @class
+ * @name ccs.triggerManager
+ */
+ccs.triggerManager = /** @lends ccs.triggerManager# */{
     _eventTriggers: {},
     _triggerObjs: {},
     _movementDispatches: [],
 
-    destroyInstance: function () {
-        this.removeAll();
-        this._instance = null;
-    },
-
+    /**
+     * Parses the triggers.
+     * @param {Array} triggers
+     */
     parse: function (triggers) {
         for (var i = 0; i < triggers.length; ++i) {
             var subDict = triggers[i];
-            var triggerObj = ccs.TriggerObj.create();
+            var triggerObj = new ccs.TriggerObj();
             triggerObj.serialize(subDict);
             var events = triggerObj.getEvents();
             for (var j = 0; j < events.length; j++) {
@@ -47,25 +51,42 @@ ccs.triggerManager = {
         }
     },
 
+    /**
+     * Returns the event triggers by event id.
+     * @param {Number} event
+     * @returns {Array}
+     */
     get: function (event) {
         return this._eventTriggers[event];
     },
 
+    /**
+     * Returns the trigger object by id
+     * @param {Number} id
+     * @returns {ccs.TriggerObj}
+     */
     getTriggerObj: function (id) {
         return this._triggerObjs[id];
     },
 
+    /**
+     * Adds event and trigger object to trigger manager.
+     * @param event
+     * @param triggerObj
+     */
     add: function (event, triggerObj) {
         var eventTriggers = this._eventTriggers[event];
-        if (!eventTriggers) {
+        if (!eventTriggers)
             eventTriggers = [];
-        }
         if (eventTriggers.indexOf(triggerObj) == -1) {
             eventTriggers.push(triggerObj);
             this._eventTriggers[event] = eventTriggers;
         }
     },
 
+    /**
+     * Removes all event triggers from manager.
+     */
     removeAll: function () {
         for (var key in this._eventTriggers) {
             var triObjArr = this._eventTriggers[key];
@@ -77,20 +98,25 @@ ccs.triggerManager = {
         this._eventTriggers = {};
     },
 
+    /**
+     * Removes event object from trigger manager.
+     * @param {*} event
+     * @param {*} Obj
+     * @returns {Boolean}
+     */
     remove: function (event, Obj) {
-        if (Obj) {
+        if (Obj)
             return this._removeObj(event, Obj);
-        }
+
         var bRet = false;
-        do
-        {
+        do {
             var triObjects = this._eventTriggers[event];
-            if (!triObjects) break;
+            if (!triObjects)
+                break;
             for (var i = 0; i < triObjects.length; i++) {
                 var triObject = triObjects[i];
-                if (triObject) {
+                if (triObject)
                     triObject.removeAll();
-                }
             }
             delete this._eventTriggers[event];
             bRet = true;
@@ -117,11 +143,15 @@ ccs.triggerManager = {
         return bRet;
     },
 
+    /**
+     * Removes trigger object from manager
+     * @param {Number} id
+     * @returns {boolean}
+     */
     removeTriggerObj: function (id) {
         var obj = this.getTriggerObj(id);
-        if (!obj) {
+        if (!obj)
             return false;
-        }
         var events = obj.getEvents();
         for (var i = 0; i < events.length; i++) {
             var event = events[i];
@@ -129,14 +159,24 @@ ccs.triggerManager = {
         }
         return true;
     },
+
+    /**
+     * Returns the event triggers whether is empty.
+     * @returns {boolean}
+     */
     isEmpty: function () {
         return !this._eventTriggers || this._eventTriggers.length <= 0;
     },
 
+    /**
+     * Adds an armature movement callback to manager.
+     * @param {ccs.Armature} armature
+     * @param {function} callFunc
+     * @param {Object} target
+     */
     addArmatureMovementCallBack: function (armature, callFunc, target) {
-        if (armature == null || target == null || callFunc == null) {
+        if (armature == null || target == null || callFunc == null)
             return;
-        }
         var locAmd, hasADD = false;
         for (var i = 0; i < this._movementDispatches.length; i++) {
             locAmd = this._movementDispatches[i];
@@ -153,23 +193,30 @@ ccs.triggerManager = {
         }
     },
 
+    /**
+     * Removes armature movement callback from manager.
+     * @param {ccs.Armature} armature
+     * @param {Object} target
+     * @param {function} callFunc
+     */
     removeArmatureMovementCallBack: function (armature, target, callFunc) {
-        if (armature == null || target == null || callFunc == null) {
+        if (armature == null || target == null || callFunc == null)
             return;
-        }
         var locAmd;
         for (var i = 0; i < this._movementDispatches.length; i++) {
             locAmd = this._movementDispatches[i];
-            if (locAmd && locAmd[0] == armature) {
+            if (locAmd && locAmd[0] == armature)
                 locAmd.removeAnimationEventCallBack(callFunc, target);
-            }
         }
     },
 
+    /**
+     * Removes an armature's all movement callbacks.
+     * @param {ccs.Armature} armature
+     */
     removeArmatureAllMovementCallBack: function (armature) {
-        if (armature == null) {
+        if (armature == null)
             return;
-        }
         var locAmd;
         for (var i = 0; i < this._movementDispatches.length; i++) {
             locAmd = this._movementDispatches[i];
@@ -180,21 +227,43 @@ ccs.triggerManager = {
         }
     },
 
+    /**
+     * Removes all armature movement callbacks from ccs.triggerManager.
+     */
     removeAllArmatureMovementCallBack: function () {
-        this._movementDispatches = [];
+        this._movementDispatches.length = 0;
     },
 
+    /**
+     * Returns the version of ccs.triggerManager
+     * @returns {string}
+     */
 	version: function () {
 		return "1.2.0.0";
 	}
 };
 
-ccs.ArmatureMovementDispatcher = ccs.Class.extend({
+/**
+ * The armature movement dispatcher for trigger manager.
+ * @class
+ * @extends ccs.Class
+ */
+ccs.ArmatureMovementDispatcher = ccs.Class.extend(/** @lends ccs.ArmatureMovementDispatcher# */{
     _mapEventAnimation: null,
+
+    /**
+     * Constructor of ArmatureMovementDispatcher.
+     */
     ctor: function () {
         this._mapEventAnimation = [];
     },
 
+    /**
+     * Calls armature movement events.
+     * @param {ccs.Armature} armature
+     * @param {Number} movementType
+     * @param {String} movementID
+     */
     animationEvent: function (armature, movementType, movementID) {
         var locEventAni, locTarget, locFunc;
         for (var i = 0; i < this._mapEventAnimation.length; i++) {
@@ -206,10 +275,20 @@ ccs.ArmatureMovementDispatcher = ccs.Class.extend({
         }
     },
 
+    /**
+     * Adds animation event callback to event animation list
+     * @param {function} callFunc
+     * @param {Object|null} [target]
+     */
     addAnimationEventCallBack: function (callFunc, target) {
         this._mapEventAnimation.push([target, callFunc]);
     },
 
+    /**
+     * Removes animation event callback from trigger manager.
+     * @param {function} callFunc
+     * @param {Object|null} [target]
+     */
     removeAnimationEventCallBack: function (callFunc, target) {
         var locEventAni;
         for (var i = 0; i < this._mapEventAnimation.length; i++) {

@@ -37,6 +37,13 @@ cc._jsonLoader = {
 };
 cc.loader.register(["json", "ExportJson"], cc._jsonLoader);
 
+cc._jsLoader = {
+    load : function(realUrl, url, res, cb){
+        cc.loader.loadJs(realUrl, cb);
+    }
+};
+cc.loader.register(["js"], cc._jsLoader);
+
 cc._imgLoader = {
     load : function(realUrl, url, res, cb){
         cc.loader.cache[url] =  cc.loader.loadImg(realUrl, function(err, img){
@@ -109,7 +116,7 @@ cc._fontLoader = {
     load : function(realUrl, url, res, cb){
         var self = this;
         var type = res.type, name = res.name, srcs = res.srcs;
-        if(typeof res == "string"){
+        if(cc.isString(res)){
             type = cc.path.extname(res);
             name = cc.path.basename(res, type);
             self._loadFont(name, res, type);
@@ -126,3 +133,10 @@ cc._binaryLoader = {
         cc.loader.loadBinary(realUrl, cb);
     }
 };
+
+cc._csbLoader = {
+    load: function(realUrl, url, res, cb){
+        cc.loader.loadCsb(realUrl, cb);
+    }
+};
+cc.loader.register(["csb"], cc._csbLoader);
