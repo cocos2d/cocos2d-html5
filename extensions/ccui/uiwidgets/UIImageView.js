@@ -100,12 +100,6 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         this._imageTexType = texType;
         var imageRenderer = self._imageRenderer;
 
-        if(!imageRenderer._textureLoaded){
-            imageRenderer.addEventListener("load", function(){
-                self.loadTexture(fileName, texType);
-            });
-        }
-
         switch (self._imageTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
                 if(self._scale9Enabled){
@@ -129,6 +123,12 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
                 break;
         }
 
+        if(!imageRenderer._textureLoaded){
+            imageRenderer.addEventListener("load", function(){
+                self.loadTexture(fileName, texType);
+            });
+        }
+        
         self._imageTextureSize = imageRenderer.getContentSize();
 
         this._updateChildrenDisplayedRGBA();
