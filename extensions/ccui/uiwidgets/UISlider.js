@@ -135,7 +135,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         var self = this;
         if(!barRenderer._textureLoaded){
             barRenderer.addEventListener("load", function(){
-                self.loadBarTexture(fileName, texType);
+                self.loadBarTexture(self._textureFile, self._barTexType);
             });
         }
 
@@ -177,7 +177,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         var self = this;
         if(!progressBarRenderer._textureLoaded){
             progressBarRenderer.addEventListener("load", function(){
-                self.loadProgressBarTexture(fileName, texType);
+                self.loadProgressBarTexture(self._progressBarTextureFile, self._progressBarTexType);
             });
         }
 
@@ -347,7 +347,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         var self = this;
         if(!this._slidBallNormalRenderer._textureLoaded){
             this._slidBallNormalRenderer.addEventListener("load", function(){
-                self.loadSlidBallTextureNormal(normal, texType);
+                self.loadSlidBallTextureNormal(self._slidBallNormalTextureFile, self._ballNTexType);
             });
         }
 
@@ -383,7 +383,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         var self = this;
         if(!this._slidBallPressedRenderer._textureLoaded){
             this._slidBallPressedRenderer.addEventListener("load", function(){
-                self.loadSlidBallTexturePressed(pressed, texType);
+                self.loadSlidBallTexturePressed(self._slidBallPressedTextureFile, self._ballPTexType);
             });
         }
 
@@ -419,7 +419,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         var self = this;
         if(!this._slidBallDisabledRenderer._textureLoaded){
             this._slidBallDisabledRenderer.addEventListener("load", function(){
-                self.loadSlidBallTextureDisabled(disabled, texType);
+                self.loadSlidBallTextureDisabled(self._slidBallDisabledTextureFile, self._ballDTexType);
             });
         }
 
