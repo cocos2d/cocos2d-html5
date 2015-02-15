@@ -252,7 +252,7 @@ cc.Node.RenderCmd.prototype = {
         // transform for canvas
         var t = this.getNodeToParentTransform(),
             worldT = this._worldTransform;         //get the world transform
-
+        this._cacheDirty = true;
         if (parentCmd) {
             var pt = parentCmd._worldTransform;
             // cc.AffineTransformConcat is incorrect at get world transform
@@ -447,7 +447,7 @@ cc.Node.RenderCmd.prototype = {
 
     proto.setDirtyFlag = function (dirtyFlag) {
         cc.Node.RenderCmd.prototype.setDirtyFlag.call(this, dirtyFlag);
-        this._setCacheDirty();
+        this._setCacheDirty();                  //TODO it should remove from here.
         if(this._cachedParent)
             this._cachedParent.setDirtyFlag(dirtyFlag);
     };
