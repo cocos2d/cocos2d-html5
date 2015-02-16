@@ -55,7 +55,7 @@
 
             if (!this._bakeSprite){
                 this._bakeSprite = new cc.BakeSprite();
-                this._bakeSprite._parent = this._node;
+                this._bakeSprite.setAnchorPoint(0,0);
             }
         }
     };
@@ -93,19 +93,8 @@
             var ctx = bakeContext.getContext();
             locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
 
-            var anchor = locBakeSprite.getAnchorPointInPoints(), locPos = node._position;
-            if(node._ignoreAnchorPointForPosition){
-                //bakeContext.translate(0 - boundingBox.x + locPos.x, boundingBox.height + boundingBox.y - locPos.y);
-                bakeContext.setOffset(0 - boundingBox.x, ctx.canvas.height - boundingBox.height + boundingBox.y );
-                //reset the bake sprite's position
-                locBakeSprite.setPosition(anchor.x + boundingBox.x - locPos.x, anchor.y + boundingBox.y - locPos.y);
-            } else {
-                var selfAnchor = this.getAnchorPointInPoints();
-                var selfPos = {x: locPos.x - selfAnchor.x, y: locPos.y - selfAnchor.y};
-                //bakeContext.translate(0 - boundingBox.x + selfPos.x, boundingBox.height + boundingBox.y - selfPos.y);
-                bakeContext.setOffset(0 - boundingBox.x, ctx.canvas.height - boundingBox.height + boundingBox.y);
-                locBakeSprite.setPosition(anchor.x + boundingBox.x - selfPos.x, anchor.y + boundingBox.y - selfPos.y);
-            }
+            bakeContext.setOffset(0 - boundingBox.x, ctx.canvas.height - boundingBox.height + boundingBox.y );
+            locBakeSprite.setPosition(boundingBox.x, boundingBox.y);
 
             //visit for canvas
             node.sortAllChildren();
@@ -114,7 +103,7 @@
                 children[i].visit(this);
             }
             cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
-            locBakeSprite.transform(this);                   //because bake sprite's position was changed at rendering.
+            locBakeSprite.transform();                   //because bake sprite's position was changed at rendering.
             this._cacheDirty = false;
         }
     };
@@ -234,19 +223,9 @@
             var bakeContext = locBakeSprite.getCacheContext();
             var ctx = bakeContext.getContext();
             locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
-            var anchor = locBakeSprite.getAnchorPointInPoints(), locPos = node._position;
-            if(node._ignoreAnchorPointForPosition){
-                //bakeContext.translate(0 - boundingBox.x + locPos.x, boundingBox.height + boundingBox.y - locPos.y);
-                bakeContext.setOffset(0 - boundingBox.x, ctx.canvas.height - boundingBox.height + boundingBox.y );
-                //reset the bake sprite's position
-                locBakeSprite.setPosition(anchor.x + boundingBox.x - locPos.x, anchor.y + boundingBox.y - locPos.y);
-            } else {
-                var selfAnchor = this.getAnchorPointInPoints();
-                var selfPos = {x: locPos.x - selfAnchor.x, y: locPos.y - selfAnchor.y};
-                //bakeContext.translate(0 - boundingBox.x + selfPos.x, boundingBox.height + boundingBox.y - selfPos.y);
-                bakeContext.setOffset(0 - boundingBox.x, ctx.canvas.height - boundingBox.height + boundingBox.y);
-                locBakeSprite.setPosition(anchor.x + boundingBox.x - selfPos.x, anchor.y + boundingBox.y - selfPos.y);
-            }
+
+            bakeContext.setOffset(0 - boundingBox.x, ctx.canvas.height - boundingBox.height + boundingBox.y );
+            locBakeSprite.setPosition(boundingBox.x, boundingBox.y);
 
             var child;
             cc.renderer._turnToCacheMode(this.__instanceId);
@@ -268,7 +247,7 @@
             } else
                 cc.renderer.pushRenderCommand(this);
             cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
-            locBakeSprite.transform(this);
+            locBakeSprite.transform();
             this._cacheDirty = false;
         }
     };
