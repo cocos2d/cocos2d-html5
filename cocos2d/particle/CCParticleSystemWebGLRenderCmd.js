@@ -36,7 +36,7 @@
         this._quadsArrayBuffer = null;
     };
     var proto = cc.ParticleSystem.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
-    proto.constructor = cc.ParticleSystem.CanvasRenderCmd;
+    proto.constructor = cc.ParticleSystem.WebGLRenderCmd;
 
     proto.getDrawMode = function(){};
     proto.setDrawMode = function(drawMode){};

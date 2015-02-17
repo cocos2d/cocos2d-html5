@@ -44,7 +44,7 @@
         this._mask_layer_le = null;
     };
 
-    var proto = cc.ClippingNode.WebGLRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
+    var proto = cc.ClippingNode.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.ClippingNode.WebGLRenderCmd;
 
     cc.ClippingNode.WebGLRenderCmd._init_once = null;
