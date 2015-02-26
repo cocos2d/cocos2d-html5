@@ -642,7 +642,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._dimensions.width = width;
             this._dimensions.height = height;
             this._updateString();
-            // Force udpate
+            // Force update
             this._setUpdateTextureDirty();
         }
     },
@@ -654,7 +654,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (width != this._dimensions.width) {
             this._dimensions.width = width;
             this._updateString();
-            // Force udpate
+            // Force update
             this._setUpdateTextureDirty();
         }
     },
@@ -666,7 +666,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (height != this._dimensions.height) {
             this._dimensions.height = height;
             this._updateString();
-            // Force udpate
+            // Force update
             this._setUpdateTextureDirty();
         }
     },
