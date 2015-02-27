@@ -1155,7 +1155,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setScheduler: function (scheduler) {
         if (this._scheduler != scheduler) {
-            this.unscheduleAllCallbacks();
+            this.unscheduleAllWithMinPriority();
             this._scheduler = scheduler;
         }
     },
@@ -1755,7 +1755,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (!callback_fn)
             return;
 
-        this.scheduler.unschedule(this.__instanceId, callback_fn);
+        this.scheduler.unschedule(this.__instanceId, this, callback_fn);
     },
 
     /**
