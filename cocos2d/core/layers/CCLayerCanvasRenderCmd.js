@@ -348,9 +348,18 @@
         var locWidth = node._contentSize.width, locHeight = node._contentSize.height;
         wrapper.setCompositeOperation(this._blendFuncStr);
         wrapper.setGlobalAlpha(opacity);
-        var gradient = context.createLinearGradient(this._startPoint.x, this._startPoint.y, this._endPoint.x, this._endPoint.y);
-        gradient.addColorStop(0, this._startStopStr);
-        gradient.addColorStop(1, this._endStopStr);
+        var gradient = context.createLinearGradient(this._startPoint.x*scaleX, this._startPoint.y*scaleY, this._endPoint.x*scaleX, this._endPoint.y*scaleY);
+
+        if(node._colorStops){  //Should always fall here now
+             for(var i=0; i < node._colorStops.length; i++) {
+                 var stop = node._colorStops[i];
+                 gradient.addColorStop(stop.p, this._colorStopsStr[i]);
+             }
+        }else{
+            gradient.addColorStop(0, this._startStopStr);
+            gradient.addColorStop(1, this._endStopStr);
+        }
+
         wrapper.setFillStyle(gradient);
 
         wrapper.setTransform(this._worldTransform, scaleX, scaleY);
@@ -409,5 +418,19 @@
             + Math.round(locStartColor.b) + "," + startOpacity.toFixed(4) + ")";
         this._endStopStr = "rgba(" + Math.round(locEndColor.r) + "," + Math.round(locEndColor.g) + ","
             + Math.round(locEndColor.b) + "," + endOpacity.toFixed(4) + ")";
+
+        if( node._colorStops){
+            this._startOpacity = 0;
+            this._endOpacity = 0;
+
+            this._colorStopsStr = [];
+            for(var i =0; i < node._colorStops.length; i++){
+                var stopColor = node._colorStops[i].color;
+                var stopOpacity = stopColor.a/255;
+                this._colorStopsStr.push("rgba(" + Math.round(stopColor.r) + "," + Math.round(stopColor.g) + ","
+                    + Math.round(stopColor.b) + "," + stopOpacity.toFixed(4) + ")");
+            }
+        }
+
     };
 })();
