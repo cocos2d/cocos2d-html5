@@ -92,7 +92,7 @@ cc.screen = /** @lends cc.screen# */{
 		    }
 	    }
 
-		this._supportsFullScreen = (this._fn.requestFullscreen != undefined);
+	this._supportsFullScreen = (this._fn.requestFullscreen != undefined);
         this._touchEvent = ('ontouchstart' in window) ? 'touchstart' : 'mousedown';
     },
 
@@ -101,7 +101,7 @@ cc.screen = /** @lends cc.screen# */{
      * @returns {Boolean}
      */
     fullScreen: function() {
-	    return this._supportsFullScreen && document[ this._fn.fullscreenEnabled ];
+	    return this._supportsFullScreen && document[this._fn.fullscreenElement];
     },
 
     /**
