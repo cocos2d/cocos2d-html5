@@ -44,6 +44,17 @@ var MyLayer = cc.Layer.extend({
         this.sprite.setPosition(size.width / 2, size.height / 2);
         this.sprite.setScale(size.height / this.sprite.getContentSize().height);
         this.addChild(this.sprite, 0);
+
+        var root = new cc.Node();
+        var body = new cc.Sprite("cut_the_hope1.png", cc.rect(827, 775, 143, 134));
+        var leg = new cc.Sprite("cut_the_hope1.png", cc.rect(934, 248, 46, 51));
+        //leg.setBlendFunc(cc.BlendFunc.ALPHA_PREMULTIPLIED);
+
+        root.addChild(body);
+        root.addChild(leg);
+        this.addChild(root);
+        root.setScale(3);
+        root.setPosition(size.width/2, size.height/2);
     }
 });
 

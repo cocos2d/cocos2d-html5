@@ -561,7 +561,7 @@ cc._tmp.WebGLColor = function () {
     //redefine cc.V2F_C4B_T2F
     /**
      * @class cc.V2F_C4B_T2F
-     * @param {new cc.Vertex2F} vertices
+     * @param {cc.Vertex2F} vertices
      * @param {cc.color} colors
      * @param {cc.Tex2F} texCoords
      * @param {Array} arrayBuffer

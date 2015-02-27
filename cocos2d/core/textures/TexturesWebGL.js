@@ -462,6 +462,7 @@ cc._tmp.WebGLTexture2D = function () {
             cc.glBindTexture2D(self);
 
             gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
+            gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
 
             // Specify OpenGL texture image
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, self._htmlElementObj);
