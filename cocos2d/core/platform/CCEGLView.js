@@ -57,7 +57,8 @@ cc.__BrowserGetter = {
     },
     adaptationType: cc.sys.browserType
 };
-if(window.navigator.userAgent.indexOf("OS 8_1_2") > -1)
+
+if(window.navigator.userAgent.indexOf("OS 8_1_2") > -1) //this mistake like MIUI, so use of MIUI treatment method
     cc.__BrowserGetter.adaptationType = cc.sys.BROWSER_TYPE_MIUI;
 
 switch(cc.__BrowserGetter.adaptationType){
