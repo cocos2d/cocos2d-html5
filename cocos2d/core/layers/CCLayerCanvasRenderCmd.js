@@ -426,7 +426,7 @@
             this._colorStopsStr = [];
             for(var i =0; i < node._colorStops.length; i++){
                 var stopColor = node._colorStops[i].color;
-                var stopOpacity = stopColor.a/255;
+                var stopOpacity = stopColor.a == null ? 1 : stopColor.a / 255;
                 this._colorStopsStr.push("rgba(" + Math.round(stopColor.r) + "," + Math.round(stopColor.g) + ","
                     + Math.round(stopColor.b) + "," + stopOpacity.toFixed(4) + ")");
             }

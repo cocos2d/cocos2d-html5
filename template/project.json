@@ -1,10 +1,10 @@
 {
     "debugMode" : 1,
-    "noCache": true,
+    "noCache": false,
     "showFPS" : true,
     "frameRate" : 60,
     "id" : "gameCanvas",
-    "renderMode" : 0,
+    "renderMode" : 1,
     "engineDir":"../",
 
     "modules" : ["cocos2d"],
