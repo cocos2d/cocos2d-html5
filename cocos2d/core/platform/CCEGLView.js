@@ -54,10 +54,13 @@ cc.__BrowserGetter = {
     meta: {
         "width": "device-width",
         "user-scalable": "no"
-    }
+    },
+    adaptationType: cc.sys.browserType
 };
+if(window.navigator.userAgent.indexOf("OS 8_1_2") > -1)
+    cc.__BrowserGetter.adaptationType = cc.sys.BROWSER_TYPE_MIUI;
 
-switch(cc.sys.browserType){
+switch(cc.__BrowserGetter.adaptationType){
     case cc.sys.BROWSER_TYPE_SAFARI:
         cc.__BrowserGetter.meta["minimal-ui"] = "true";
         cc.__BrowserGetter.availWidth = function(frame){
