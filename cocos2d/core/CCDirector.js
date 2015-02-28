@@ -386,7 +386,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     purgeDirector: function () {
         //cleanup scheduler
-        this.getScheduler().unscheduleAllCallbacks();
+        this.getScheduler().unscheduleAll();
 
         // Disable event dispatching
         if (cc.eventManager)

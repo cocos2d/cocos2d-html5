@@ -1740,6 +1740,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     scheduleOnce: function (callback, delay, key) {
         //selector, delay
         //callback, delay, key
+        if(key == undefined)
+            key = this.__instanceId;
         this.schedule(callback, 0, 0, delay, key);
     },
 
