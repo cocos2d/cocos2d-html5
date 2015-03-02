@@ -112,6 +112,7 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
     /**
      * <p>Return the dictionary for the specific object name. <br />
      * It will return the 1st object found on the array for the given name.</p>
+     * @deprecated since v3.4 please use .getObject
      * @param {String} objectName
      * @return {object|Null}
      */
