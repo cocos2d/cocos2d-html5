@@ -39,10 +39,10 @@ _p.setAccelerometerEnabled = function(isEnable){
     var scheduler = cc.director.getScheduler();
     if(_t._accelEnabled){
         _t._accelCurTime = 0;
-        scheduler.scheduleUpdateForTarget(_t);
+        scheduler.scheduleUpdate(_t);
     } else {
         _t._accelCurTime = 0;
-        scheduler.unscheduleUpdateForTarget(_t);
+        scheduler.scheduleUpdate(_t);
     }
 };
 

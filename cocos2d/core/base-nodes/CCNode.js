@@ -1155,7 +1155,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setScheduler: function (scheduler) {
         if (this._scheduler != scheduler) {
-            this.unscheduleAllCallbacks();
+            this.unscheduleAll();
             this._scheduler = scheduler;
         }
     },
@@ -1652,7 +1652,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} priority
      */
     scheduleUpdateWithPriority: function (priority) {
-        this.scheduler.scheduleUpdateForTarget(this, priority, !this._running);
+        this.scheduler.scheduleUpdate(this, priority, !this._running);
     },
 
     /**
@@ -1661,39 +1661,88 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @see cc.Node#scheduleUpdate
      */
     unscheduleUpdate: function () {
-        this.scheduler.unscheduleUpdateForTarget(this);
+        this.scheduler.unscheduleUpdate(this);
     },
 
     /**
      * <p>Schedules a custom selector.         <br/>
      * If the selector is already scheduled, then the interval parameter will be updated without scheduling it again.</p>
      * @function
-     * @param {function} callback_fn A function wrapped as a selector
+     * @param {function} callback A function wrapped as a selector
      * @param {Number} interval  Tick interval in seconds. 0 means tick every frame. If interval = 0, it's recommended to use scheduleUpdate() instead.
      * @param {Number} repeat    The selector will be executed (repeat + 1) times, you can use kCCRepeatForever for tick infinitely.
      * @param {Number} delay     The amount of time that the first tick will wait before execution.
+     * @param {String} key The only string identifying the callback
      */
-    schedule: function (callback_fn, interval, repeat, delay) {
-        interval = interval || 0;
+    schedule: function (callback, interval, repeat, delay, key) {
+        var len = arguments.length;
+        if(typeof callback === "function"){
+            //callback, interval, repeat, delay, key
+            if(len == 1){
+                //callback
+                interval = 0;
+                repeat = cc.REPEAT_FOREVER;
+                delay = 0;
+                key = this.__instanceId;
+            }else if(len == 2){
+                if(typeof interval === "number"){
+                    //callback, interval
+                    repeat = cc.REPEAT_FOREVER;
+                    delay = 0;
+                    key = this.__instanceId;
+                }else{
+                    //callback, key
+                    key = interval;
+                    interval = 0;
+                    repeat = cc.REPEAT_FOREVER;
+                    delay = 0;
+                }
+            }else if(len === 3){
+                //callback, interval, key
+                key = repeat;
+                repeat = cc.REPEAT_FOREVER;
+                delay = 0;
+            }else if(len === 4){
+                key = this.__instanceId;
+            }
+        }else{
+            //selector
+            //selector, interval
+            //selector, interval, repeat, delay
+            if(len == 1){
+                interval = 0;
+                repeat = cc.REPEAT_FOREVER;
+                delay = 0;
+            }else if(len == 2){
+                repeat = cc.REPEAT_FOREVER;
+                delay = 0;
+            }
+        }
 
-        cc.assert(callback_fn, cc._LogInfos.Node_schedule);
+        cc.assert(callback, cc._LogInfos.Node_schedule);
         cc.assert(interval >= 0, cc._LogInfos.Node_schedule_2);
 
+        interval = interval || 0;
         repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
         delay = delay || 0;
 
-        this.scheduler.scheduleCallbackForTarget(this, callback_fn, interval, repeat, delay, !this._running);
+        this.scheduler.schedule(callback, this, interval, repeat, delay, !this._running, key);
     },
 
     /**
      * Schedules a callback function that runs only once, with a delay of 0 or larger
      * @function
      * @see cc.Node#schedule
-     * @param {function} callback_fn  A function wrapped as a selector
+     * @param {function} callback  A function wrapped as a selector
      * @param {Number} delay  The amount of time that the first tick will wait before execution.
+     * @param {String} key The only string identifying the callback
      */
-    scheduleOnce: function (callback_fn, delay) {
-        this.schedule(callback_fn, 0.0, 0, delay);
+    scheduleOnce: function (callback, delay, key) {
+        //selector, delay
+        //callback, delay, key
+        if(key == undefined)
+            key = this.__instanceId;
+        this.schedule(callback, 0, 0, delay, key);
     },
 
     /**
@@ -1703,10 +1752,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {function} callback_fn  A function wrapped as a selector
      */
     unschedule: function (callback_fn) {
+        //key
+        //selector
         if (!callback_fn)
             return;
 
-        this.scheduler.unscheduleCallbackForTarget(this, callback_fn);
+        this.scheduler.unschedule(this.__instanceId, this, callback_fn);
     },
 
     /**
@@ -1715,7 +1766,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      */
     unscheduleAllCallbacks: function () {
-        this.scheduler.unscheduleAllCallbacksForTarget(this);
+        this.scheduler.unscheduleAllForTarget(this);
     },
 
     /**
