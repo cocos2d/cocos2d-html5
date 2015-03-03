@@ -32,6 +32,7 @@
  * auto         : Supports auto-play audio - if Don‘t support it, On a touch detecting background music canvas, and then replay
  * replay       : The first music will fail, must be replay after touchstart
  * emptied      : Whether to use the emptied event to replace load callback
+ * delay        : delay created the context object - only webAudio
  *
  * May be modifications for a few browser version
  */
@@ -48,7 +49,7 @@
     //  ANDROID  //
     supportTable[sys.BROWSER_TYPE_ANDROID]  = {multichannel: false, webAudio: false, auto: false};
     supportTable[sys.BROWSER_TYPE_CHROME]   = {multichannel: true , webAudio: true , auto: false};
-    supportTable[sys.BROWSER_TYPE_FIREFOX]  = {multichannel: true , webAudio: true , auto: true };
+    supportTable[sys.BROWSER_TYPE_FIREFOX]  = {multichannel: true , webAudio: true , auto: true , delay: true};
     supportTable[sys.BROWSER_TYPE_UC]       = {multichannel: true , webAudio: false, auto: false};
     supportTable[sys.BROWSER_TYPE_QQ]       = {multichannel: false, webAudio: false, auto: true };
     supportTable[sys.BROWSER_TYPE_OUPENG]   = {multichannel: false, webAudio: false, auto: false, replay: true , emptied: true };
@@ -476,6 +477,8 @@ cc.Audio = cc.Class.extend({
     try{
         if(SWA){
             var context = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
+            if(polyfill.delay)
+                setTimeout(function(){ context = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)(); }, 0);
         }
     }catch(error){
         SWA = false;
