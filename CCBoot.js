@@ -142,7 +142,7 @@ cc.isString = function(obj) {
  */
 cc.isArray = function(obj) {
     return Array.isArray(obj) ||
-        (typeof obj === 'object' && objectToString(obj) === '[object Array]');
+        (typeof obj === 'object' && Object.prototype.toString.call(obj) === '[object Array]');
 };
 
 /**

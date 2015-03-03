@@ -759,14 +759,14 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         _t.setVertexRect(rect);
         _t._renderCmd._setTextureCoords(rect, needConvert);
 
-        var relativeOffset = _t._unflippedOffsetPositionFromCenter;
+        var relativeOffsetX = _t._unflippedOffsetPositionFromCenter.x, relativeOffsetY = _t._unflippedOffsetPositionFromCenter.y;
         if (_t._flippedX)
-            relativeOffset.x = -relativeOffset.x;
+            relativeOffsetX = -relativeOffsetX;
         if (_t._flippedY)
-            relativeOffset.y = -relativeOffset.y;
+            relativeOffsetY = -relativeOffsetY;
         var locRect = _t._rect;
-        _t._offsetPosition.x = relativeOffset.x + (_t._contentSize.width - locRect.width) / 2;
-        _t._offsetPosition.y = relativeOffset.y + (_t._contentSize.height - locRect.height) / 2;
+        _t._offsetPosition.x = relativeOffsetX + (_t._contentSize.width - locRect.width) / 2;
+        _t._offsetPosition.y = relativeOffsetY + (_t._contentSize.height - locRect.height) / 2;
 
         // rendering using batch node
         if (_t._batchNode) {
@@ -875,14 +875,23 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
     /**
      * Returns the current displayed frame.
+     * @deprecated since 3.4, please use getSpriteFrame instead
      * @return {cc.SpriteFrame}
      */
     displayFrame: function () {
+        return this.getSpriteFrame();
+    },
+
+    /**
+     * Returns the current displayed frame.
+     * @return {cc.SpriteFrame}
+     */
+    getSpriteFrame: function () {
         return new cc.SpriteFrame(this._texture,
-                                  cc.rectPointsToPixels(this._rect),
-                                  this._rectRotated,
-                                  cc.pointPointsToPixels(this._unflippedOffsetPositionFromCenter),
-                                  cc.sizePointsToPixels(this._contentSize));
+            cc.rectPointsToPixels(this._rect),
+            this._rectRotated,
+            cc.pointPointsToPixels(this._unflippedOffsetPositionFromCenter),
+            cc.sizePointsToPixels(this._contentSize));
     },
 
     /**
