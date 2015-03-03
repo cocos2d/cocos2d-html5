@@ -543,7 +543,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * cc.director.getScheduler().scheduleCallbackForTarget(this, function, interval, repeat, delay, !this._isRunning );
      */
     scheduleCallbackForTarget: function(target, callback_fn, interval, repeat, delay, paused){
-        cc.log("scheduleCallbackForTarget is deprecated. Please use schedule.");
+        //cc.log("scheduleCallbackForTarget is deprecated. Please use schedule.");
         this.schedule(callback_fn, target, interval, repeat, delay, paused, target.__instanceId + "");
     },
 
@@ -958,7 +958,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * cc.director.getScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning );
      */
     scheduleUpdateForTarget: function(target, priority, paused){
-        cc.log("scheduleUpdateForTarget is deprecated. Please use scheduleUpdate.");
+        //cc.log("scheduleUpdateForTarget is deprecated. Please use scheduleUpdate.");
         this.scheduleUpdate(target, priority, paused);
     },
 
@@ -975,7 +975,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * cc.director.getScheduler().unscheduleCallbackForTarget(function, this);
      */
     unscheduleCallbackForTarget:function (target, callback) {
-        cc.log("unscheduleCallbackForTarget is deprecated. Please use unschedule.");
+        //cc.log("unscheduleCallbackForTarget is deprecated. Please use unschedule.");
         this.unschedule(callback, target);
     },
 
@@ -988,7 +988,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * cc.director.getScheduler().unscheduleUpdateForTarget(this);
      */
     unscheduleUpdateForTarget:function (target) {
-        cc.log("unscheduleUpdateForTarget is deprecated. Please use unschedule.");
+        //cc.log("unscheduleUpdateForTarget is deprecated. Please use unschedule.");
         this.unscheduleUpdate(target);
     },
 
@@ -998,7 +998,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {cc.Class} target
      */
     unscheduleAllCallbacksForTarget: function(target){
-        cc.log("unscheduleAllCallbacksForTarget is deprecated. Please use unscheduleAll.");
+        //cc.log("unscheduleAllCallbacksForTarget is deprecated. Please use unscheduleAll.");
         this.unschedule(target.__instanceId + "", target);
     },
 
@@ -1010,7 +1010,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @deprecated since v3.4 please use .unscheduleAllWithMinPriority
      */
     unscheduleAllCallbacks: function(){
-        cc.log("unscheduleAllCallbacks is deprecated. Please use unscheduleAll.");
+        //cc.log("unscheduleAllCallbacks is deprecated. Please use unscheduleAll.");
         this.unscheduleAllWithMinPriority(cc.Scheduler.PRIORITY_SYSTEM);
     },
 
@@ -1023,7 +1023,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {Number} minPriority
      */
     unscheduleAllCallbacksWithMinPriority:function (minPriority) {
-        cc.log("unscheduleAllCallbacksWithMinPriority is deprecated. Please use unscheduleAllWithMinPriority.");
+        //cc.log("unscheduleAllCallbacksWithMinPriority is deprecated. Please use unscheduleAllWithMinPriority.");
         this.unscheduleAllWithMinPriority(minPriority);
     }
 });
