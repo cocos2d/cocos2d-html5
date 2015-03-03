@@ -348,9 +348,18 @@
         var locWidth = node._contentSize.width, locHeight = node._contentSize.height;
         wrapper.setCompositeOperation(this._blendFuncStr);
         wrapper.setGlobalAlpha(opacity);
-        var gradient = context.createLinearGradient(this._startPoint.x, this._startPoint.y, this._endPoint.x, this._endPoint.y);
-        gradient.addColorStop(0, this._startStopStr);
-        gradient.addColorStop(1, this._endStopStr);
+        var gradient = context.createLinearGradient(this._startPoint.x*scaleX, this._startPoint.y*scaleY, this._endPoint.x*scaleX, this._endPoint.y*scaleY);
+
+        if(node._colorStops){  //Should always fall here now
+             for(var i=0; i < node._colorStops.length; i++) {
+                 var stop = node._colorStops[i];
+                 gradient.addColorStop(stop.p, this._colorStopsStr[i]);
+             }
+        }else{
+            gradient.addColorStop(0, this._startStopStr);
+            gradient.addColorStop(1, this._endStopStr);
+        }
+
         wrapper.setFillStyle(gradient);
 
         wrapper.setTransform(this._worldTransform, scaleX, scaleY);
@@ -395,13 +404,18 @@
     proto._updateColor = function(){
         var node = this._node;
         var contentSize = node._contentSize;
-        var locAlongVector = node._alongVector, tWidth = contentSize.width * 0.5, tHeight = contentSize.height * 0.5;
+        var tWidth = contentSize.width * 0.5, tHeight = contentSize.height * 0.5;
         this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.gradientDirty ^ this._dirtyFlag;
 
-        this._startPoint.x = tWidth * (-locAlongVector.x) + tWidth;
-        this._startPoint.y = tHeight * locAlongVector.y - tHeight;
-        this._endPoint.x = tWidth * locAlongVector.x + tWidth;
-        this._endPoint.y = tHeight * (-locAlongVector.y) - tHeight;
+        //fix the bug of gradient layer
+        var angle = cc.pAngleSigned(cc.p(0, -1), node._alongVector);
+        var p1 = cc.pRotateByAngle(cc.p(0, -1), cc.p(0,0), angle);
+        var factor = Math.min(Math.abs(1 / p1.x), Math.abs(1/ p1.y));
+
+        this._startPoint.x = tWidth * (-p1.x * factor) + tWidth;
+        this._startPoint.y = tHeight * (p1.y * factor) - tHeight;
+        this._endPoint.x = tWidth * (p1.x * factor) + tWidth;
+        this._endPoint.y = tHeight * (-p1.y * factor) - tHeight;
 
         var locStartColor = this._displayedColor, locEndColor = node._endColor;
         var startOpacity = node._startOpacity/255, endOpacity = node._endOpacity/255;
@@ -409,5 +423,18 @@
             + Math.round(locStartColor.b) + "," + startOpacity.toFixed(4) + ")";
         this._endStopStr = "rgba(" + Math.round(locEndColor.r) + "," + Math.round(locEndColor.g) + ","
             + Math.round(locEndColor.b) + "," + endOpacity.toFixed(4) + ")";
+
+        if( node._colorStops){
+            this._startOpacity = 0;
+            this._endOpacity = 0;
+
+            this._colorStopsStr = [];
+            for(var i =0; i < node._colorStops.length; i++){
+                var stopColor = node._colorStops[i].color;
+                var stopOpacity = stopColor.a == null ? 1 : stopColor.a / 255;
+                this._colorStopsStr.push("rgba(" + Math.round(stopColor.r) + "," + Math.round(stopColor.g) + ","
+                    + Math.round(stopColor.b) + "," + stopOpacity.toFixed(4) + ")");
+            }
+        }
     };
 })();
