@@ -115,7 +115,6 @@ cc.screen = /** @lends cc.screen# */{
         }
 
         element = element || document.documentElement;
-        element[this._fn.requestFullscreen]();
 
         if (onFullScreenChange) {
             var eventName = this._fn.fullscreenchange;
