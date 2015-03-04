@@ -442,8 +442,10 @@ cc._tmp.WebGLTexture2D = function () {
 
         /**
          * handler of texture loaded event
+         * @param {Boolean} [premultipled=false]
          */
-        handleLoadedTexture: function () {
+        handleLoadedTexture: function (premultipled) {
+            premultipled = (premultipled === undefined)?false: premultipled;
             var self = this;
             // Not sure about this ! Some texture need to be updated even after loaded
             if (!cc._rendererInitialized)
@@ -462,6 +464,8 @@ cc._tmp.WebGLTexture2D = function () {
             cc.glBindTexture2D(self);
 
             gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
+            if(premultipled)
+                gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 1);
 
             // Specify OpenGL texture image
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, self._htmlElementObj);
@@ -473,6 +477,8 @@ cc._tmp.WebGLTexture2D = function () {
 
             self.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE);
             cc.glBindTexture2D(null);
+            if(premultipled)
+                gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
 
             var pixelsWide = self._htmlElementObj.width;
             var pixelsHigh = self._htmlElementObj.height;
@@ -483,7 +489,7 @@ cc._tmp.WebGLTexture2D = function () {
             self.maxS = 1;
             self.maxT = 1;
 
-            self._hasPremultipliedAlpha = false;
+            self._hasPremultipliedAlpha = premultipled;
             self._hasMipmaps = false;
 
             //dispatch load event to listener.
