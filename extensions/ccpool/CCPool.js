@@ -52,7 +52,7 @@ cc.pool = /** @lends cc.pool# */{
 
     _autoRelease: function (obj) {
         var running = obj._running === undefined ? false : !obj._running;
-        cc.director.getScheduler().scheduleCallbackForTarget(obj, this._releaseCB, 0, 0, 0, running)
+        cc.director.getScheduler().schedule(this._releaseCB, obj, 0, 0, 0, running)
     },
 
     /**

@@ -233,7 +233,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             self._asyncRefCount--;
             self._asyncCallBack(selector,target, (self._asyncRefTotalCount - self._asyncRefCount) / self._asyncRefTotalCount);
         };
-        cc.director.getScheduler().scheduleCallbackForTarget(this, fun, 0.1, false);
+        cc.director.getScheduler().schedule(fun, this, 0.1, false, 0, false, "armatrueDataHelper");
     },
 
     /**

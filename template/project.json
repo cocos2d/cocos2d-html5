@@ -1,7 +1,7 @@
 {
     "debugMode" : 1,
     "noCache": false,
-    "showFPS" : false,
+    "showFPS" : true,
     "frameRate" : 60,
     "id" : "gameCanvas",
     "renderMode" : 0,

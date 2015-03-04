@@ -875,14 +875,23 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
     /**
      * Returns the current displayed frame.
+     * @deprecated since 3.4, please use getSpriteFrame instead
      * @return {cc.SpriteFrame}
      */
     displayFrame: function () {
+        return this.getSpriteFrame();
+    },
+
+    /**
+     * Returns the current displayed frame.
+     * @return {cc.SpriteFrame}
+     */
+    getSpriteFrame: function () {
         return new cc.SpriteFrame(this._texture,
-                                  cc.rectPointsToPixels(this._rect),
-                                  this._rectRotated,
-                                  cc.pointPointsToPixels(this._unflippedOffsetPositionFromCenter),
-                                  cc.sizePointsToPixels(this._contentSize));
+            cc.rectPointsToPixels(this._rect),
+            this._rectRotated,
+            cc.pointPointsToPixels(this._unflippedOffsetPositionFromCenter),
+            cc.sizePointsToPixels(this._contentSize));
     },
 
     /**

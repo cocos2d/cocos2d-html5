@@ -287,7 +287,7 @@ cc.ActionManager = cc.Class.extend(/** @lends cc.ActionManager# */{
      * because it uses this, so it can not be static
      */
     purgeSharedManager:function () {
-        cc.director.getScheduler().unscheduleUpdateForTarget(this);
+        cc.director.getScheduler().unscheduleUpdate(this);
     },
 
     //protected

@@ -507,7 +507,7 @@ cc.pAddIn = function(v1, v2) {
 
 /**
  * normalizes the point (inplace)
- * @param {cc.Point{ v
+ * @param {cc.Point} v
  */
 cc.pNormalizeIn = function(v) {
     cc.pMultIn(v, 1.0 / Math.sqrt(v.x * v.x + v.y * v.y));
