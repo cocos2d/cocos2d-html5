@@ -93,3 +93,49 @@ cc.uint8ArrayToUint32Array = function(uint8Arr){
     }
     return retArr;
 };
+
+/**
+ * <p>
+ *    cc.Codec.Base64.encode(input) -> String (http://en.wikipedia.org/wiki/Base64).
+ * </p>
+ * @function
+ * @param {String} input The string to decode
+ * @return {String} The base64 encoded String
+ * @example
+ * //encode string
+ * cc.Codec.Base64.encode("Some String"); // => "U29tZSBTdHJpbmc="
+ */
+cc.Codec.Base64.encode = function(input) {
+    var output = [],
+    chr1, chr2, chr3, enc1, enc2, enc3, enc4,
+    i = 0;
+
+    while (i < input.length) {
+
+        chr1 = input.charCodeAt(i++);
+        chr2 = input.charCodeAt(i++);
+        chr3 = input.charCodeAt(i++);
+
+        enc1 = chr1 >> 2;
+        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+        enc4 = chr3 & 63;
+
+        if (isNaN(chr2)) {
+            enc3 = enc4 = 64;
+        } else if (isNaN(chr3)) {
+            enc4 = 64;
+        }
+
+        output.push(this._keyStr.charAt(enc1));
+        output.push(this._keyStr.charAt(enc2));
+        output.push(this._keyStr.charAt(enc3));
+        output.push(this._keyStr.charAt(enc4));
+
+    }
+
+    output = output.join('');
+
+    return output;
+
+};
