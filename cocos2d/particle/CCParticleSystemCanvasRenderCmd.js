@@ -206,7 +206,7 @@
 
     proto._initWithTotalParticles = function(totalParticles){};
     proto._updateDeltaColor = function(selParticle, dt){
-        if (!this._dontTint) {
+        if (!this._node._dontTint) {
             selParticle.color.r += selParticle.deltaColor.r * dt;
             selParticle.color.g += selParticle.deltaColor.g * dt;
             selParticle.color.b += selParticle.deltaColor.b * dt;
