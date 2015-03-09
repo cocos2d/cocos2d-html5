@@ -1560,6 +1560,8 @@ cc._initSys = function (config, CONFIG_KEY) {
             browserType = sys.BROWSER_TYPE_ANDROID;
         else if (browserType == "trident") browserType = sys.BROWSER_TYPE_IE;
         else if (browserType == "360 aphone") browserType = sys.BROWSER_TYPE_360;
+    }else if(ua.indexOf("iphone") && ua.indexOf("mobile")){
+        browserType = "safari";
     }
     /**
      * Indicate the running browser type
