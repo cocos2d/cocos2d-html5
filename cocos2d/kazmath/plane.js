@@ -84,7 +84,7 @@ cc.kmPlaneFromPointNormal = function(pOut, pPoint, pNormal){
     pOut.a = pNormal.x;
     pOut.b = pNormal.y;
     pOut.c = pNormal.z;
-    pOut.d = -cc.kmVec3Dot(pNormal, pPoint);
+    pOut.d = - pNormal.dot(pPoint);
 
     return pOut;
 };
@@ -103,58 +103,33 @@ cc.kmPlaneFromPoints = function(pOut, p1, p2, p3){
      Outd = −n⋅A
      */
 
-    var n = new cc.kmVec3(), v1 = new cc.kmVec3(), v2 = new cc.kmVec3();
-    cc.kmVec3Subtract(v1, p2, p1); //Create the vectors for the 2 sides of the triangle
-    cc.kmVec3Subtract(v2, p3, p1);
-    cc.kmVec3Cross(n, v1, v2); //Use the cross product to get the normal
-
-    cc.kmVec3Normalize(n, n); //Normalize it and assign to pOut.m_N
+    var  v1 = new cc.math.Vec3(p2), v2 = new cc.math.Vec3(p3);
+    v1.subtract(p1);  //Create the vectors for the 2 sides of the triangle
+    v2.subtract(p1);
+    var n = new cc.math.Vec3(v1);
+    n.cross(v2); //  Use the cross product to get the normal
+    n.normalize(); //Normalize it and assign to pOut.m_N
 
     pOut.a = n.x;
     pOut.b = n.y;
     pOut.c = n.z;
-    pOut.d = cc.kmVec3Dot(cc.kmVec3Scale(n, n, -1.0), p1);
-
+    pOut.d = n.scale(-1.0).dot(p1);
     return pOut;
 };
 
-cc.kmPlaneIntersectLine = function(pOut, pP, pV1, pV2){
-    throw "cc.kmPlaneIntersectLine() hasn't been implemented.";
-    /*
-     n = (Planea, Planeb, Planec)
-     d = V − U
-     Out = U − d⋅(Pd + n⋅U)⁄(d⋅n) [iff d⋅n ≠ 0]
-     */
-    //var d = new cc.kmVec3();
-
-    //cc.kmVec3Subtract(d, pV2, pV1); //Get the direction vector
-
-    //TODO: Continue here!
-    /*if (fabs(kmVec3Dot(&pP.m_N, &d)) > kmEpsilon)
-     {
-     //If we get here then the plane and line are parallel (i.e. no intersection)
-     pOut = nullptr; //Set to nullptr
-
-     return pOut;
-     } */
-
-    //return null;
-};
-
 cc.kmPlaneNormalize = function(pOut, pP){
-    var n = new cc.kmVec3();
+    var n = new cc.math.Vec3();
 
     n.x = pP.a;
     n.y = pP.b;
     n.z = pP.c;
 
-    var l = 1.0 / cc.kmVec3Length(n); //Get 1/length
-    cc.kmVec3Normalize(n, n); //Normalize the vector and assign to pOut
+    var l = 1.0 / n.length(); //Get 1/length
+    n.normalize();  //Normalize the vector and assign to pOut
 
     pOut.a = n.x;
     pOut.b = n.y;
     pOut.c = n.z;
-
     pOut.d = pP.d * l; //Scale the D value and assign to pOut
 
     return pOut;

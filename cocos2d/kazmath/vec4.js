@@ -59,11 +59,11 @@ cc.kmVec4Dot = function( vec1, vec2){
 };
 
 cc.kmVec4Length = function(inVec){
-    return Math.sqrt(cc.kmSQR(inVec.x) + cc.kmSQR(inVec.y) + cc.kmSQR(inVec.z) + cc.kmSQR(inVec.w));
+    return Math.sqrt(cc.math.square(inVec.x) + cc.math.square(inVec.y) + cc.math.square(inVec.z) + cc.math.square(inVec.w));
 };
 
 cc.kmVec4LengthSq = function(inVec){
-    return cc.kmSQR(inVec.x) + cc.kmSQR(inVec.y) + cc.kmSQR(inVec.z) + cc.kmSQR(inVec.w);
+    return cc.math.square(inVec.x) + cc.math.square(inVec.y) + cc.math.square(inVec.z) + cc.math.square(inVec.w);
 };
 
 cc.kmVec4Lerp = function(outVec, pV1, pV2, t){
@@ -123,10 +123,10 @@ cc.kmVec4TransformArray = function(outVec,outStride,vecObj,stride,mat4Obj,count)
 
 cc.kmVec4AreEqual = function(vec1,vec2){
     return (
-        (vec1.x < vec2.x + cc.kmEpsilon && vec1.x > vec2.x - cc.kmEpsilon) &&
-            (vec1.y < vec2.y + cc.kmEpsilon && vec1.y > vec2.y - cc.kmEpsilon) &&
-            (vec1.z < vec2.z + cc.kmEpsilon && vec1.z > vec2.z - cc.kmEpsilon) &&
-            (vec1.w < vec2.w + cc.kmEpsilon && vec1.w > vec2.w - cc.kmEpsilon)
+        (vec1.x < vec2.x + cc.math.EPSILON && vec1.x > vec2.x - cc.math.EPSILON) &&
+            (vec1.y < vec2.y + cc.math.EPSILON && vec1.y > vec2.y - cc.math.EPSILON) &&
+            (vec1.z < vec2.z + cc.math.EPSILON && vec1.z > vec2.z - cc.math.EPSILON) &&
+            (vec1.w < vec2.w + cc.math.EPSILON && vec1.w > vec2.w - cc.math.EPSILON)
         );
 };
 

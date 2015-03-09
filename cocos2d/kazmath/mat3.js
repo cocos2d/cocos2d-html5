@@ -179,8 +179,8 @@ cc.kmMat3AreEqual = function (pMat1, pMat2) {
         return true;
 
     for (var i = 0; i < 9; ++i) {
-        if (!(pMat1.mat[i] + cc.kmEpsilon > pMat2.mat[i] &&
-            pMat1.mat[i] - cc.kmEpsilon < pMat2.mat[i])) {
+        if (!(pMat1.mat[i] + cc.math.EPSILON > pMat2.mat[i] &&
+            pMat1.mat[i] - cc.math.EPSILON < pMat2.mat[i])) {
             return false;
         }
     }

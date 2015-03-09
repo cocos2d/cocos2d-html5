@@ -122,7 +122,7 @@ cc.kmMat4._gaussj = function (a, b) {
         indxr[i] = irow;
         indxc[i] = icol;
         if (cc.kmMat4._get(a, icol, icol) == 0.0)
-            return cc.KM_FALSE;
+            return false;
 
         pivinv = 1.0 / cc.kmMat4._get(a, icol, icol);
         cc.kmMat4._set(a, icol, icol, 1.0);
@@ -153,7 +153,7 @@ cc.kmMat4._gaussj = function (a, b) {
                 cc.kmMat4._swap(a, k, indxr[l], k, indxc[l]);
         }
     }
-    return cc.KM_TRUE;
+    return true;
 };
 
 cc.kmMat4._identity =
@@ -174,7 +174,7 @@ cc.kmMat4Inverse = function (pOut, pM) {
     cc.kmMat4Assign(inv, pM);
     cc.kmMat4Identity(tmp);
 
-    if (cc.kmMat4._gaussj(inv, tmp) == cc.KM_FALSE)
+    if (cc.kmMat4._gaussj(inv, tmp) == false)
         return null;
 
     cc.kmMat4Assign(pOut, inv);
@@ -338,8 +338,8 @@ cc.kmMat4AreEqual = function (pMat1, pMat2) {
     }
 
     for (var i = 0; i < 16; i++) {
-        if (!(pMat1.mat[i] + cc.kmEpsilon > pMat2.mat[i] &&
-            pMat1.mat[i] - cc.kmEpsilon < pMat2.mat[i])) {
+        if (!(pMat1.mat[i] + cc.math.EPSILON > pMat2.mat[i] &&
+            pMat1.mat[i] - cc.math.EPSILON < pMat2.mat[i])) {
             return false;
         }
     }
@@ -573,35 +573,32 @@ cc.kmMat4Translation = function (pOut, x, y, z) {
  * wish to extract the vector from. pOut is a pointer to the
  * kmVec3 structure that should hold the resulting vector
  */
-cc.kmMat4GetUpVec3 = function (pOut, pIn) {
-    pOut.x = pIn.mat[4];
-    pOut.y = pIn.mat[5];
-    pOut.z = pIn.mat[6];
-    cc.kmVec3Normalize(pOut, pOut);
-    return pOut;
+cc.kmMat4GetUpVec3 = function (vec3, mat4) {
+    vec3.x = mat4.mat[4];
+    vec3.y = mat4.mat[5];
+    vec3.z = mat4.mat[6];
+    return vec3.normalize();
 };
 
 /** Extract the right vector from a 4x4 matrix. The result is
  * stored in pOut. Returns pOut.
  */
-cc.kmMat4GetRightVec3 = function (pOut, pIn) {
-    pOut.x = pIn.mat[0];
-    pOut.y = pIn.mat[1];
-    pOut.z = pIn.mat[2];
-    cc.kmVec3Normalize(pOut, pOut);
-    return pOut;
+cc.kmMat4GetRightVec3 = function (vec3, mat4) {
+    vec3.x = mat4.mat[0];
+    vec3.y = mat4.mat[1];
+    vec3.z = mat4.mat[2];
+    return vec3.normalize();
 };
 
 /**
  * Extract the forward vector from a 4x4 matrix. The result is
  * stored in pOut. Returns pOut.
  */
-cc.kmMat4GetForwardVec3 = function (pOut, pIn) {
-    pOut.x = pIn.mat[8];
-    pOut.y = pIn.mat[9];
-    pOut.z = pIn.mat[10];
-    cc.kmVec3Normalize(pOut, pOut);
-    return pOut;
+cc.kmMat4GetForwardVec3 = function (vec3, mat4) {
+    vec3.x = mat4.mat[8];
+    vec3.y = mat4.mat[9];
+    vec3.z = mat4.mat[10];
+    return vec3.normalize();
 };
 
 /**
@@ -609,7 +606,7 @@ cc.kmMat4GetForwardVec3 = function (pOut, pIn) {
  * same way as gluPerspective
  */
 cc.kmMat4PerspectiveProjection = function (pOut, fovY, aspect, zNear, zFar) {
-    var r = cc.kmDegreesToRadians(fovY / 2);
+    var r = cc.degreesToRadians(fovY / 2);
     var deltaZ = zFar - zNear;
     var s = Math.sin(r);
 
@@ -647,20 +644,21 @@ cc.kmMat4OrthographicProjection = function (pOut, left, right, bottom, top, near
  * the resulting matrix is stored in pOut. pOut is returned.
  */
 cc.kmMat4LookAt = function (pOut, pEye, pCenter, pUp) {
-    var f = new cc.kmVec3(), up = new cc.kmVec3(), s = new cc.kmVec3(), u = new cc.kmVec3();
+    var f = new cc.math.Vec3(pCenter), up = new cc.math.Vec3(pUp);
     var translate = new cc.kmMat4();
 
-    cc.kmVec3Subtract(f, pCenter, pEye);
-    cc.kmVec3Normalize(f, f);
+    f.subtract(pEye);
+    f.normalize();
 
-    cc.kmVec3Assign(up, pUp);
-    cc.kmVec3Normalize(up, up);
+    up.normalize();
 
-    cc.kmVec3Cross(s, f, up);
-    cc.kmVec3Normalize(s, s);
+    var s = new cc.math.Vec3(f);
+    s.cross(up);
+    s.normalize();
 
-    cc.kmVec3Cross(u, s, f);
-    cc.kmVec3Normalize(s, s);
+    var u = new cc.math.Vec3(s);
+    u.cross(f);
+    s.normalize();
 
     cc.kmMat4Identity(pOut);
 
@@ -690,8 +688,8 @@ cc.kmMat4RotationAxisAngle = function (pOut, axis, radians) {
     var rcos = Math.cos(radians);
     var rsin = Math.sin(radians);
 
-    var normalizedAxis = new cc.kmVec3();
-    cc.kmVec3Normalize(normalizedAxis, axis);
+    var normalizedAxis = new cc.math.Vec3(axis);
+    normalizedAxis.normalize();
 
     pOut.mat[0] = rcos + normalizedAxis.x * normalizedAxis.x * (1 - rcos);
     pOut.mat[1] = normalizedAxis.z * rsin + normalizedAxis.y * normalizedAxis.x * (1 - rcos);

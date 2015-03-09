@@ -82,7 +82,7 @@ cc.kmQuaternionInverse = function (pOut, pIn) {
     var l = cc.kmQuaternionLength(pIn);
     var tmp = new cc.kmQuaternion();
 
-    if (Math.abs(l) > cc.kmEpsilon) {
+    if (Math.abs(l) > cc.math.EPSILON) {
         pOut.x = 0.0;
         pOut.y = 0.0;
         pOut.z = 0.0;
@@ -139,7 +139,7 @@ cc.kmQuaternionMultiply = function (pOut, q1, q2) {
 ///< Normalizes a quaternion
 cc.kmQuaternionNormalize = function (pOut, pIn) {
     var length = cc.kmQuaternionLength(pIn);
-    if(Math.abs(length) <= cc.kmEpsilon)
+    if(Math.abs(length) <= cc.math.EPSILON)
         throw "cc.kmQuaternionNormalize(): pIn is an invalid value";
     cc.kmQuaternionScale(pOut, pIn, 1.0 / length);
 
@@ -217,7 +217,7 @@ cc.kmQuaternionRotationMatrix = function (pOut, pIn) {
 
     diagonal = pMatrix[0] + pMatrix[5] + pMatrix[10] + 1;
 
-    if (diagonal > cc.kmEpsilon) {
+    if (diagonal > cc.math.EPSILON) {
         // Calculate the scale of the diagonal
         scale = Math.sqrt(diagonal) * 2;
 
@@ -275,9 +275,9 @@ cc.kmQuaternionRotationYawPitchRoll = function (pOut, yaw, pitch, roll) {
     var ex, ey, ez;        // temp half euler angles
     var cr, cp, cy, sr, sp, sy, cpcy, spsy;        // temp vars in roll,pitch yaw
 
-    ex = cc.kmDegreesToRadians(pitch) / 2.0;    // convert to rads and half them
-    ey = cc.kmDegreesToRadians(yaw) / 2.0;
-    ez = cc.kmDegreesToRadians(roll) / 2.0;
+    ex = cc.degreesToRadians(pitch) / 2.0;    // convert to rads and half them
+    ey = cc.degreesToRadians(yaw) / 2.0;
+    ez = cc.degreesToRadians(roll) / 2.0;
 
     cr = Math.cos(ex);
     cp = Math.cos(ey);
@@ -330,7 +330,7 @@ cc.kmQuaternionSlerp = function (pOut, q1, q2, t) {
 
     var ct = cc.kmQuaternionDot(q1, q2);
     var theta = Math.acos(ct);
-    var st = Math.sqrt(1.0 - cc.kmSQR(ct));
+    var st = Math.sqrt(1.0 - cc.math.square(ct));
 
     var stt = Math.sin(t * theta) / st;
     var somt = Math.sin((1.0 - t) * theta) / st;
@@ -349,10 +349,10 @@ cc.kmQuaternionToAxisAngle = function (pIn, pAxis, pAngle) {
     var scale;            // temp vars
 
     tempAngle = Math.acos(pIn.w);
-    scale = Math.sqrt(cc.kmSQR(pIn.x) + cc.kmSQR(pIn.y) + cc.kmSQR(pIn.z));
+    scale = Math.sqrt(cc.math.square(pIn.x) + cc.math.square(pIn.y) + cc.math.square(pIn.z));
 
-    if (((scale > -cc.kmEpsilon) && scale < cc.kmEpsilon)
-        || (scale < 2 * cc.kmPI + cc.kmEpsilon && scale > 2 * cc.kmPI - cc.kmEpsilon)) {       // angle is 0 or 360 so just simply set axis to 0,0,1 with angle 0
+    if (((scale > -cc.math.EPSILON) && scale < cc.math.EPSILON)
+        || (scale < 2 * Math.PI + cc.math.EPSILON && scale > 2 * Math.PI - cc.math.EPSILON)) {       // angle is 0 or 360 so just simply set axis to 0,0,1 with angle 0
         pAngle = 0.0;
 
         pAxis.x = 0.0;
@@ -364,7 +364,7 @@ cc.kmQuaternionToAxisAngle = function (pIn, pAxis, pAngle) {
         pAxis.x = pIn.x / scale;
         pAxis.y = pIn.y / scale;
         pAxis.z = pIn.z / scale;
-        cc.kmVec3Normalize(pAxis, pAxis);
+        pAxis.normalize();
     }
 };
 
@@ -407,16 +407,10 @@ cc.kmQuaternionAdd = function (pOut, pQ1, pQ2) {
  ANY axis of rotation is valid.
  */
 cc.kmQuaternionRotationBetweenVec3 = function (pOut, vec1, vec2, fallback) {
-    var v1 = new cc.kmVec3(), v2 = new cc.kmVec3();
-    var a;
-
-    cc.kmVec3Assign(v1, vec1);
-    cc.kmVec3Assign(v2, vec2);
-
-    cc.kmVec3Normalize(v1, v1);
-    cc.kmVec3Normalize(v2, v2);
-
-    a = cc.kmVec3Dot(v1, v2);
+    var v1 = new cc.math.Vec3(vec1), v2 = new cc.math.Vec3(vec2);
+    v1.normalize();
+    v2.normalize();
+    var a = v1.dot(v2);
 
     if (a >= 1.0) {
         cc.kmQuaternionIdentity(pOut);
@@ -424,40 +418,28 @@ cc.kmQuaternionRotationBetweenVec3 = function (pOut, vec1, vec2, fallback) {
     }
 
     if (a < (1e-6 - 1.0)) {
-        if (Math.abs(cc.kmVec3LengthSq(fallback)) < cc.kmEpsilon) {
-            cc.kmQuaternionRotationAxis(pOut, fallback, cc.kmPI);
+        if (Math.abs(fallback.lengthSq()) < cc.math.EPSILON) {
+            cc.kmQuaternionRotationAxis(pOut, fallback, Math.PI);
         } else {
-            var axis = new cc.kmVec3();
-            var X = new cc.kmVec3();
-            X.x = 1.0;
-            X.y = 0.0;
-            X.z = 0.0;
-
-            cc.kmVec3Cross(axis, X, vec1);
+            var X = new cc.math.Vec3(1.0, 0.0, 0.0);
+            var axis = new cc.math.Vec3(X);
+            axis.cross(vec1);
 
             //If axis is zero
-            if (Math.abs(cc.kmVec3LengthSq(axis)) < cc.kmEpsilon) {
-                var Y = new cc.kmVec3();
-                Y.x = 0.0;
-                Y.y = 1.0;
-                Y.z = 0.0;
-
-                cc.kmVec3Cross(axis, Y, vec1);
+            if (Math.abs(axis.lengthSq()) < cc.math.EPSILON) {
+                axis.fill(0.0, 1.0, 0.0);
+                axis.cross(vec1);
             }
-
-            cc.kmVec3Normalize(axis, axis);
-            cc.kmQuaternionRotationAxis(pOut, axis, cc.kmPI);
+            axis.normalize();
+            cc.kmQuaternionRotationAxis(pOut, axis, Math.PI);
         }
     } else {
-        var s = Math.sqrt((1 + a) * 2);
-        var invs = 1 / s;
+        var s = Math.sqrt((1 + a) * 2), invs = 1 / s;
+        v1.cross(v2);
 
-        var c = new cc.kmVec3();
-        cc.kmVec3Cross(c, v1, v2);
-
-        pOut.x = c.x * invs;
-        pOut.y = c.y * invs;
-        pOut.z = c.z * invs;
+        pOut.x = v1.x * invs;
+        pOut.y = v1.y * invs;
+        pOut.z = v1.z * invs;
         pOut.w = s * 0.5;
 
         cc.kmQuaternionNormalize(pOut, pOut);
@@ -466,21 +448,16 @@ cc.kmQuaternionRotationBetweenVec3 = function (pOut, vec1, vec2, fallback) {
 };
 
 cc.kmQuaternionMultiplyVec3 = function (pOut, q, v) {
-    var uv = new cc.kmVec3(), uuv = new cc.kmVec3(), qvec = new cc.kmVec3();
+    var uv = new cc.math.Vec3(q), uuv = new cc.math.Vec3(q);
+    uv.cross(v);
+    uuv.cross(uv);
 
-    qvec.x = q.x;
-    qvec.y = q.y;
-    qvec.z = q.z;
+    uv.scale((2.0 * q.w));
+    uuv.scale(2.0);
 
-    cc.kmVec3Cross(uv, qvec, v);
-    cc.kmVec3Cross(uuv, qvec, uv);
-
-    cc.kmVec3Scale(uv, uv, (2.0 * q.w));
-    cc.kmVec3Scale(uuv, uuv, 2.0);
-
-    cc.kmVec3Add(pOut, v, uv);
-    cc.kmVec3Add(pOut, pOut, uuv);
-
+    pOut.fill(v);
+    pOut.add(uv);
+    pOut.add(uuv);
     return pOut;
 };
 

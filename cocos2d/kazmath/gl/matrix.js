@@ -133,11 +133,11 @@ cc.kmGLTranslatef = function (x, y, z) {
 };
 
 cc.kmGLRotatef = function (angle, x, y, z) {
-    var axis = new cc.kmVec3(x, y, z);
+    var axis = new cc.math.Vec3(x, y, z);
     var rotation = new cc.kmMat4();
 
     //Create a rotation matrix using the axis and the angle
-    cc.kmMat4RotationAxisAngle(rotation, axis, cc.kmDegreesToRadians(angle));
+    cc.kmMat4RotationAxisAngle(rotation, axis, cc.degreesToRadians(angle));
 
     //Multiply the rotation matrix by the current matrix
     cc.kmMat4Multiply(cc.current_stack.top, cc.current_stack.top, rotation);
