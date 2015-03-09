@@ -134,11 +134,16 @@
         else
             cc.__audioSupport = supportTable[sys.BROWSER_TYPE_SAFARI];
     }else{
-        //Desktop support all
-        if(cc.sys.browserType != cc.sys.BROWSER_TYPE_IE)
-            cc.__audioSupport = supportTable["common"];
-        else
-            cc.__audioSupport = supportTable[sys.BROWSER_TYPE_IE];
+      switch(sys.browserType){
+          case sys.BROWSER_TYPE_IE:
+              cc.__audioSupport = supportTable[sys.BROWSER_TYPE_IE];
+              break;
+          case sys.BROWSER_TYPE_FIREFOX:
+              cc.__audioSupport = supportTable[sys.BROWSER_TYPE_FIREFOX];
+              break;
+          default:
+              cc.__audioSupport = supportTable["common"];
+      }
     }
 
     if(DEBUG){
