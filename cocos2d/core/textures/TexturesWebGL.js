@@ -901,5 +901,7 @@ cc._tmp.WebGLTextureCache = function () {
 
         return tex;
     };
-     _p = null;
+
+    _p.addImageAsync = _p.addImage;
+    _p = null;
 };
