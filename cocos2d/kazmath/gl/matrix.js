@@ -151,7 +151,6 @@ cc.kmGLScalef = function (x, y, z) {
 
 cc.kmGLGetMatrix = function (mode, pOut) {
     //cc.lazyInitialize();
-
     switch (mode) {
         case cc.KM_GL_MODELVIEW:
             cc.kmMat4Assign(pOut, cc.modelview_matrix_stack.top);

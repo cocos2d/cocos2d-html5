@@ -730,43 +730,42 @@ cc.kmMat4ExtractRotation = function (pOut, pIn) {
     pOut.mat[6] = pIn.mat[8];
     pOut.mat[7] = pIn.mat[9];
     pOut.mat[8] = pIn.mat[10];
-
     return pOut;
 };
 
 cc.kmMat4ExtractPlane = function (pOut, pIn, plane) {
     switch (plane) {
-        case cc.KM_PLANE_RIGHT:
+        case cc.math.Plane.RIGHT:
             pOut.a = pIn.mat[3] - pIn.mat[0];
             pOut.b = pIn.mat[7] - pIn.mat[4];
             pOut.c = pIn.mat[11] - pIn.mat[8];
             pOut.d = pIn.mat[15] - pIn.mat[12];
             break;
-        case cc.KM_PLANE_LEFT:
+        case cc.math.Plane.LEFT:
             pOut.a = pIn.mat[3] + pIn.mat[0];
             pOut.b = pIn.mat[7] + pIn.mat[4];
             pOut.c = pIn.mat[11] + pIn.mat[8];
             pOut.d = pIn.mat[15] + pIn.mat[12];
             break;
-        case cc.KM_PLANE_BOTTOM:
+        case cc.math.Plane.BOTTOM:
             pOut.a = pIn.mat[3] + pIn.mat[1];
             pOut.b = pIn.mat[7] + pIn.mat[5];
             pOut.c = pIn.mat[11] + pIn.mat[9];
             pOut.d = pIn.mat[15] + pIn.mat[13];
             break;
-        case cc.KM_PLANE_TOP:
+        case cc.math.Plane.TOP:
             pOut.a = pIn.mat[3] - pIn.mat[1];
             pOut.b = pIn.mat[7] - pIn.mat[5];
             pOut.c = pIn.mat[11] - pIn.mat[9];
             pOut.d = pIn.mat[15] - pIn.mat[13];
             break;
-        case cc.KM_PLANE_FAR:
+        case cc.math.Plane.FAR:
             pOut.a = pIn.mat[3] - pIn.mat[2];
             pOut.b = pIn.mat[7] - pIn.mat[6];
             pOut.c = pIn.mat[11] - pIn.mat[10];
             pOut.d = pIn.mat[15] - pIn.mat[14];
             break;
-        case cc.KM_PLANE_NEAR:
+        case cc.math.Plane.NEAR:
             pOut.a = pIn.mat[3] + pIn.mat[2];
             pOut.b = pIn.mat[7] + pIn.mat[6];
             pOut.c = pIn.mat[11] + pIn.mat[10];
@@ -794,12 +793,10 @@ cc.kmMat4ExtractPlane = function (pOut, pIn, plane) {
  */
 cc.kmMat4RotationToAxisAngle = function (pAxis, radians, pIn) {
     /*Surely not this easy?*/
-    var temp = new cc.kmQuaternion();
-    var rotation = new cc.kmMat3();
+    var rotation = new cc.math.Matrix3();
     cc.kmMat4ExtractRotation(rotation, pIn);
-    cc.kmQuaternionRotationMatrix(temp, rotation);
-    cc.kmQuaternionToAxisAngle(temp, pAxis, radians);
-    return pAxis;
+    var temp = cc.math.Quaternion.rotationMatrix(rotation);
+    return temp.toAxisAndAngle();
 };
 
 

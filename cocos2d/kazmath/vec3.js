@@ -28,7 +28,7 @@
 
 (function(cc) {
     cc.kmVec3 = cc.math.Vec3 = function (x, y, z) {
-        if(y === undefined){
+        if(x && y === undefined){
             this.x = x.x;
             this.y = x.y;
             this.z = x.z;
@@ -42,7 +42,7 @@
     var proto = cc.math.Vec3.prototype;
 
     proto.fill = function (x, y, z) {    // =cc.kmVec3Fill
-        if (y === undefined) {
+        if (x && y === undefined) {
             this.x = x.x;
             this.y = x.y;
             this.z = x.z;
@@ -124,10 +124,8 @@
          b = (a×M)T
          Out = 1⁄bw(bx, by, bz)
          */
-        var v = new cc.kmVec4();
-        var inV = new cc.kmVec4();
-        cc.kmVec4Fill(inV, this.x, this.y, this.z, 1.0);
-        cc.kmVec4Transform(v, inV, mat4);
+        var v = new cc.math.Vec4(this.x, this.y, this.z, 1.0);
+        v.transform(mat4);
         this.x = v.x / v.w;
         this.y = v.y / v.w;
         this.z = v.z / v.w;
@@ -179,13 +177,11 @@
         return vec;
     };
 
-    cc.mat.Vec3.toTypeArray = function(vec){           //cc.kmVec3ToTypeArray
-        if(!vec)
-            return null;
+    proto.toTypeArray = function(){           //cc.kmVec3ToTypeArray
         var tyArr = new Float32Array(3);
-        tyArr[0] = vec.x;
-        tyArr[1] = vec.y;
-        tyArr[2] = vec.z;
+        tyArr[0] = this.x;
+        tyArr[1] = this.y;
+        tyArr[2] = this.z;
         return tyArr;
     };
 })(cc);
