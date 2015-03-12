@@ -370,7 +370,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @return {Number}
      */
     getTileGIDAt:function (pos, y) {
-        if(!pos)
+        if(pos == null)
             throw "cc.TMXLayer.getTileGIDAt(): pos should be non-null";
         if(y !== undefined)
             pos = cc.p(pos, y);
