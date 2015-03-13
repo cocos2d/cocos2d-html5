@@ -50,7 +50,7 @@
         this._cacheDirty  = true;
     };
 
-    proto._renderingChildToCache = function (scaleX, scaleY) {
+    proto._renderingChildToCache = function () {
         if (this._cacheDirty) {
             var wrapper = this._cacheContext,
                 context = wrapper.getContext(), locCanvas = this._cacheCanvas;
@@ -65,7 +65,7 @@
                 if (locChildren[i]){
                     var selCmd = locChildren[i]._renderCmd;
                     if(selCmd){
-                        selCmd.rendering(wrapper, scaleX, scaleY);
+                        selCmd.rendering(wrapper, 1, 1);
                         selCmd._cacheDirty = false;
                     }
                 }
@@ -82,7 +82,7 @@
             return;
 
         var node = this._node;
-        this._renderingChildToCache(scaleX, scaleY);
+        this._renderingChildToCache();
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         wrapper.setGlobalAlpha(alpha);
 
@@ -145,16 +145,16 @@
             //begin cache
             renderer._turnToCacheMode(instanceID);
 
-           node.sortAllChildren();
+            node.sortAllChildren();
             for (i = 0, len =  locChildren.length; i < len; i++) {
-               if (locChildren[i]){
-                  var selCmd = locChildren[i]._renderCmd;
+                if (locChildren[i]){
+                    var selCmd = locChildren[i]._renderCmd;
                     if(selCmd){
                         selCmd.visit(this);
                         selCmd._cacheDirty = false;
                     }
                 }
-           }
+            }
 
             //wrapper.save();
             context.setTransform(1, 0, 0, 1, 0, 0);
