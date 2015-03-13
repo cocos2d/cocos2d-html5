@@ -147,10 +147,10 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
 
         var frameConfig = this._frameConfigCache[url] || this._getFrameConfigByJsonObject(url, jsonObject);
         //this._checkConflict(frameConfig);                             //TODO
-        this._createSpriteFrames(frameConfig, texture);
+        this._createSpriteFrames(url, frameConfig, texture);
     },
 
-    _createSpriteFrames: function(frameConfig, texture) {
+    _createSpriteFrames: function(url, frameConfig, texture) {
         var frames = frameConfig.frames, meta = frameConfig.meta;
         if(!texture){
             var texturePath = cc.path.changeBasename(url, meta.image || ".png");
@@ -223,7 +223,7 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
 
         var frameConfig = this._frameConfigCache[url] || this._getFrameConfig(url);
         //this._checkConflict(frameConfig);                             //TODO
-        this._createSpriteFrames(frameConfig, texture);
+        this._createSpriteFrames(url, frameConfig, texture);
     },
 
     // Function to check if frames to add exists already, if so there may be name conflit that must be solved

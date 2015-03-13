@@ -229,7 +229,7 @@
                 node._camera._locateForRenderer(stackMatrix);
 
                 //cc.kmGLTranslatef(-apx, -apy, 0);    optimize at here : kmGLTranslatef
-                translation = cc.math.Matrix4.createByTranslation(apx, apy, 0, translation);
+                translation = cc.math.Matrix4.createByTranslation(-apx, -apy, 0, translation);
                 stackMatrix.multiply(translation);
                 t4x4.identity(); //reset t4x4;
             } else {

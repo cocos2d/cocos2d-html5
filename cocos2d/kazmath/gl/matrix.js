@@ -43,9 +43,9 @@
             var identity = new cc.math.Matrix4(); //Temporary identity matrix
 
             //Initialize all 3 stacks
-            cc.modelview_matrix_stack.initialized();
-            cc.projection_matrix_stack.initialized();
-            cc.texture_matrix_stack.initialized();
+            cc.modelview_matrix_stack.initialize();
+            cc.projection_matrix_stack.initialize();
+            cc.texture_matrix_stack.initialize();
 
             cc.current_stack = cc.modelview_matrix_stack;
             cc.initialized = true;
@@ -132,7 +132,7 @@
         cc.current_stack.top.multiply(translation);
     };
 
-    var tempVector3 = new cc.math.Vec3(x, y, z);
+    var tempVector3 = new cc.math.Vec3();
     cc.kmGLRotatef = function (angle, x, y, z) {
         tempVector3.fill(x, y, z);
         //Create a rotation matrix using the axis and the angle
