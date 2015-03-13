@@ -349,10 +349,10 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
         if(stops && stops instanceof Array){
             this._colorStops = stops;
-            stops.splice(0, 0, {p:0, color: start});
-            stops.push({p:1, color: end});
+            stops.splice(0, 0, {p:0, color: start || cc.color.BLACK});
+            stops.push({p:1, color: end || cc.color.BLACK});
         } else
-            this._colorStops = [{p:0, color: start}, {p:1, color: end}];
+            this._colorStops = [{p:0, color: start || cc.color.BLACK}, {p:1, color: end || cc.color.BLACK}];
 
         cc.LayerGradient.prototype.init.call(this, start, end, v, stops);
     },
