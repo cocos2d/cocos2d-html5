@@ -82,7 +82,7 @@
             return;
 
         var node = this._node;
-        this._renderingChildToCache(scaleX, scaleY);
+        this._renderingChildToCache(node._scaleX, node._scaleY);
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         wrapper.setGlobalAlpha(alpha);
 
@@ -145,16 +145,16 @@
             //begin cache
             renderer._turnToCacheMode(instanceID);
 
-           node.sortAllChildren();
+            node.sortAllChildren();
             for (i = 0, len =  locChildren.length; i < len; i++) {
-               if (locChildren[i]){
-                  var selCmd = locChildren[i]._renderCmd;
+                if (locChildren[i]){
+                    var selCmd = locChildren[i]._renderCmd;
                     if(selCmd){
                         selCmd.visit(this);
                         selCmd._cacheDirty = false;
                     }
                 }
-           }
+            }
 
             //wrapper.save();
             context.setTransform(1, 0, 0, 1, 0, 0);
