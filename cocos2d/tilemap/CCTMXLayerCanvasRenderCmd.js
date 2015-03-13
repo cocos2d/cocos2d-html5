@@ -60,7 +60,6 @@
             context.clearRect(0, 0, locCanvas.width, locCanvas.height);
             //reset the cache context
 
-            this._node.sortAllChildren();
             var locChildren = this._node._children;
             for (var i = 0, len =  locChildren.length; i < len; i++) {
                 if (locChildren[i]){
