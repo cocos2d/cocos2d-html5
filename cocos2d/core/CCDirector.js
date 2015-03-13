@@ -27,13 +27,14 @@
 cc.g_NumberOfDraws = 0;
 
 cc.GLToClipTransform = function (transformOut) {
-    var projection = new cc.kmMat4();
-    cc.kmGLGetMatrix(cc.KM_GL_PROJECTION, projection);
+    //var projection = new cc.math.Matrix4();
+    //cc.kmGLGetMatrix(cc.KM_GL_PROJECTION, projection);
+    cc.kmGLGetMatrix(cc.KM_GL_PROJECTION, transformOut);
 
-    var modelview = new cc.kmMat4();
+    var modelview = new cc.math.Matrix4();
     cc.kmGLGetMatrix(cc.KM_GL_MODELVIEW, modelview);
 
-    cc.kmMat4Multiply(transformOut, projection, modelview);
+    transformOut.multiply(modelview);
 };
 //----------------------------------------------------------------------------------------------------------------------
 

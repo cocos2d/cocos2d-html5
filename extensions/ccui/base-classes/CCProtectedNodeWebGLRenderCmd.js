@@ -129,15 +129,15 @@
                     apy = 0 | apy;
                 }
                 //cc.kmGLTranslatef(apx, apy, 0);
-                var translation = new cc.kmMat4();
-                cc.kmMat4Translation(translation, apx, apy, 0);
-                cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
+                var translation = cc.math.Matrix4.createByTranslation(apx, apy, 0, t4x4);       //t4x4 as a temp matrix
+                stackMatrix.multiply(translate);
 
                 node._camera._locateForRenderer(stackMatrix);
 
                 //cc.kmGLTranslatef(-apx, -apy, 0);
-                cc.kmMat4Translation(translation, -apx, -apy, 0);
-                cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
+                translation = cc.math.Matrix4.createByTranslation(-apx, -apy, 0, translation);
+                stackMatrix.multiply(translation);
+                t4x4.identity();    //reset t4x4;
             } else {
                 node._camera._locateForRenderer(stackMatrix);
             }
