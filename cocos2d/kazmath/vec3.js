@@ -163,7 +163,7 @@
         return this;
     };
 
-    proto.assign = function(vec){
+    proto.assignFrom = function(vec){
         if(!vec)
             return this;
         this.x = vec.x;

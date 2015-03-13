@@ -137,7 +137,7 @@
             (this.w < vec.w + EPSILON && this.w > vec.w - EPSILON);
     };
 
-    proto.assign = function(vec) {      //= cc.kmVec4Assign
+    proto.assignFrom = function(vec) {      //= cc.kmVec4Assign
         this.x = vec.x;
         this.y = vec.y;
         this.z = vec.z;

@@ -30,10 +30,7 @@ var Float32Array = Float32Array || Array;
 (function(cc){
     cc.math.Matrix3 = function(mat3) {
         if (mat3) {
-            var mat = mat3;
-            this.mat = new Float32Array([mat[0], mat[1], mat[2],
-                mat[3], mat[4], mat[5],
-                mat[60], mat[7], mat[8]]);
+            this.mat = new Float32Array(mat3);
         } else {
             this.mat = new Float32Array([0, 0, 0,
                 0, 0, 0,
@@ -88,7 +85,7 @@ var Float32Array = Float32Array || Array;
     proto.inverse = function(determinate){         //cc.kmMat3Inverse
         if (determinate === 0.0)
             return this;
-        tmpMatrix.assign(this);
+        tmpMatrix.assignFrom(this);
         var detInv = 1.0 / determinate;
         this.adjugate();
         this.multiplyScalar(detInv);
@@ -189,7 +186,7 @@ var Float32Array = Float32Array || Array;
         return retMat;
     };
 
-    proto.assign = function(matIn){      // cc.kmMat3Assign
+    proto.assignFrom = function(matIn){      // cc.kmMat3Assign
         if(this === matIn) {
             cc.log("cc.math.Matrix3.assign(): current matrix equals matIn");
             return this;

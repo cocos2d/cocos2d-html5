@@ -39,7 +39,7 @@ cc.math.AABB = function (min, max) {
 
 /**
  * Returns true if point is in the specified AABB, returns false otherwise.
- * @param {cc.kmVec3} point
+ * @param {cc.math.Vec3} point
  * @returns {boolean}
  */
 cc.math.AABB.prototype.containsPoint = function (point) {
@@ -62,17 +62,17 @@ cc.math.AABB.containsPoint = function (pPoint, pBox) {
  * Assigns aabb to current AABB object
  * @param {cc.math.AABB} aabb
  */
-cc.math.AABB.prototype.assign = function(aabb){
-    this.min.assign(aabb.min);
-    this.max.assign(aabb.max);
+cc.math.AABB.prototype.assignFrom = function(aabb){
+    this.min.assignFrom(aabb.min);
+    this.max.assignFrom(aabb.max);
 };
 
 /**
  * Assigns pIn to pOut, returns pOut.
  */
 cc.math.AABB.assign = function (pOut, pIn) {              //cc.kmAABBAssign
-    pOut.min.assign(pIn.min);
-    pOut.max.assign(pIn.max);
+    pOut.min.assignFrom(pIn.min);
+    pOut.max.assignFrom(pIn.max);
     return pOut;
 };
 

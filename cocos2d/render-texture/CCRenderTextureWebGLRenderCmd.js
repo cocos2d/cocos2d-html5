@@ -239,9 +239,8 @@
         var widthRatio = size.width / texSize.width;
         var heightRatio = size.height / texSize.height;
 
-        var orthoMatrix = new cc.kmMat4();
-        cc.kmMat4OrthographicProjection(orthoMatrix, -1.0 / widthRatio, 1.0 / widthRatio,
-                -1.0 / heightRatio, 1.0 / heightRatio, -1, 1);
+        var orthoMatrix = cc.math.Matrix4.createOrthographicProjection(-1.0 / widthRatio, 1.0 / widthRatio,
+            -1.0 / heightRatio, 1.0 / heightRatio, -1, 1);
         cc.kmGLMultMatrix(orthoMatrix);
 
         //calculate viewport

@@ -353,7 +353,7 @@
      * @param {cc.math.Quaternion} quaternion
      * @returns {cc.math.Quaternion}  current quaternion
      */
-    proto.assign = function(quaternion){     //=cc.kmQuaternionAssign
+    proto.assignFrom = function(quaternion){     //=cc.kmQuaternionAssign
         this.x = quaternion.x;
         this.y = quaternion.y;
         this.z = quaternion.z;
