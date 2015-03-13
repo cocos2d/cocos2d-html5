@@ -50,7 +50,7 @@
         this._cacheDirty  = true;
     };
 
-    proto._renderingChildToCache = function (scaleX, scaleY) {
+    proto._renderingChildToCache = function () {
         if (this._cacheDirty) {
             var wrapper = this._cacheContext,
                 context = wrapper.getContext(), locCanvas = this._cacheCanvas;
@@ -65,7 +65,7 @@
                 if (locChildren[i]){
                     var selCmd = locChildren[i]._renderCmd;
                     if(selCmd){
-                        selCmd.rendering(wrapper, scaleX, scaleY);
+                        selCmd.rendering(wrapper, 1, 1);
                         selCmd._cacheDirty = false;
                     }
                 }
@@ -82,7 +82,7 @@
             return;
 
         var node = this._node;
-        this._renderingChildToCache(node._scaleX, node._scaleY);
+        this._renderingChildToCache();
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         wrapper.setGlobalAlpha(alpha);
 
