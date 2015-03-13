@@ -163,7 +163,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTextureBackGround: function (backGround, texType) {
-        if (!backGround || (this._backGroundFileName == backGround && this._backGroundTexType == texType))
+        if (!backGround)
             return;
 
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
@@ -206,7 +206,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTextureBackGroundSelected: function (backGroundSelected, texType) {
-        if (!backGroundSelected || (this._backGroundSelectedFileName == backGroundSelected && this._backGroundSelectedTexType == texType))
+        if (!backGroundSelected)
             return;
 
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
@@ -246,7 +246,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTextureFrontCross: function (cross, texType) {
-        if (!cross || (this._frontCrossFileName == cross && this._frontCrossTexType == texType))
+        if (!cross)
             return;
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._frontCrossFileName = cross;
@@ -285,7 +285,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTextureBackGroundDisabled: function (backGroundDisabled, texType) {
-        if (!backGroundDisabled || (this._backGroundDisabledFileName == backGroundDisabled && this._backGroundDisabledTexType == texType))
+        if (!backGroundDisabled)
             return;
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._backGroundDisabledFileName = backGroundDisabled;
@@ -324,7 +324,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTextureFrontCrossDisabled: function (frontCrossDisabled, texType) {
-        if (!frontCrossDisabled || (this._frontCrossDisabledFileName == frontCrossDisabled && this._frontCrossDisabledTexType == texType))
+        if (!frontCrossDisabled)
             return;
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._frontCrossDisabledFileName = frontCrossDisabled;

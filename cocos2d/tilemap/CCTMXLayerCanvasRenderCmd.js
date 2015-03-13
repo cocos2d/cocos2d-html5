@@ -27,7 +27,6 @@
         cc.SpriteBatchNode.CanvasRenderCmd.call(this, renderable);
         this._needDraw = true;
         this._realWorldTransform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
-        this._childrenRenderCmds = [];
 
         var locCanvas = cc._canvas;
         var tmpCanvas = cc.newElement('canvas');
@@ -46,17 +45,6 @@
     var proto = cc.TMXLayer.CanvasRenderCmd.prototype = Object.create(cc.SpriteBatchNode.CanvasRenderCmd.prototype);
     proto.constructor = cc.TMXLayer.CanvasRenderCmd;
 
-    proto._copyRendererCmds = function (rendererCmds) {
-        if (!rendererCmds)
-            return;
-
-        var locCacheCmds = this._childrenRenderCmds;
-        locCacheCmds.length = 0;
-        for (var i = 0, len = rendererCmds.length; i < len; i++) {
-            locCacheCmds[i] = rendererCmds[i];
-        }
-    };
-
     //set the cache dirty flag for canvas
     proto._setNodeDirtyForCache = function () {
         this._cacheDirty  = true;
@@ -64,7 +52,7 @@
 
     proto._renderingChildToCache = function (scaleX, scaleY) {
         if (this._cacheDirty) {
-            var locCacheCmds = this._childrenRenderCmds, wrapper = this._cacheContext,
+            var wrapper = this._cacheContext,
                 context = wrapper.getContext(), locCanvas = this._cacheCanvas;
 
             //wrapper.save();
@@ -72,10 +60,17 @@
             context.clearRect(0, 0, locCanvas.width, locCanvas.height);
             //reset the cache context
 
-            for (var i = 0, len = locCacheCmds.length; i < len; i++) {
-                locCacheCmds[i].rendering(wrapper, scaleX, scaleY);
-                locCacheCmds[i]._cacheDirty = false;
+            var locChildren = this._node._children;
+            for (var i = 0, len =  locChildren.length; i < len; i++) {
+                if (locChildren[i]){
+                    var selCmd = locChildren[i]._renderCmd;
+                    if(selCmd){
+                        selCmd.rendering(wrapper, scaleX, scaleY);
+                        selCmd._cacheDirty = false;
+                    }
+                }
             }
+
             //wrapper.restore();
             this._cacheDirty = false;
         }
@@ -160,9 +155,6 @@
                     }
                 }
            }
-
-            //copy cached render cmd array to TMXLayer renderer
-            this._copyRendererCmds(renderer._cacheToCanvasCmds[instanceID]);
 
             //wrapper.save();
             context.setTransform(1, 0, 0, 1, 0, 0);
