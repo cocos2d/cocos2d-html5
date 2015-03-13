@@ -87,8 +87,46 @@
             return;
 
         var node = this._node;
+        //TODO: it will implement dynamic compute child cutting automation.
+        var i, len, locChildren = node._children;
+        // quick return if not visible
+        if (!node._visible || !locChildren || locChildren.length === 0)
+            return;
+
+        var wrapper, context;
+
+        if (this._cacheDirty) {
+            var locCanvas = this._cacheCanvas, instanceID = node.__instanceId, renderer = cc.renderer;
+            wrapper = this._cacheContext, context = wrapper.getContext(),
+            //begin cache
+            renderer._turnToCacheMode(instanceID);
+
+            node.sortAllChildren();
+            for (i = 0, len =  locChildren.length; i < len; i++) {
+                if (locChildren[i]){
+                    var selCmd = locChildren[i]._renderCmd;
+                    if(selCmd){
+                        selCmd.visit(this);
+                        selCmd._cacheDirty = false;
+                    }
+                }
+            }
+
+            //copy cached render cmd array to TMXLayer renderer
+            this._copyRendererCmds(renderer._cacheToCanvasCmds[instanceID]);
+
+            //wrapper.save();
+            context.setTransform(1, 0, 0, 1, 0, 0);
+            context.clearRect(0, 0, locCanvas.width, locCanvas.height);
+            //set the wrapper's offset
+
+            //draw to cache canvas
+            renderer._renderingToCacheCanvas(wrapper, instanceID);
+        }
+
         this._renderingChildToCache(scaleX, scaleY);
-        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
+        wrapper = ctx || cc._renderContext;
+        context = wrapper.getContext();
         wrapper.setGlobalAlpha(alpha);
 
         var posX = 0 | ( -this._anchorPointInPoints.x), posY = 0 | ( -this._anchorPointInPoints.y);
