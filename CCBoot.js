@@ -1598,10 +1598,13 @@ cc._initSys = function (config, CONFIG_KEY) {
     var renderType = cc._RENDER_TYPE_WEBGL;
     var tempCanvas = cc.newElement("Canvas");
     cc._supportRender = true;
-    var notSupportGL = !window.WebGLRenderingContext || browserSupportWebGL.indexOf(sys.browserType) == -1 || osSupportWebGL.indexOf(sys.os) == -1;
-    if (userRenderMode === 1 || (userRenderMode === 0 && notSupportGL) || (location.origin == "file://")) {
+    var notSupportGL = true;
+    if(iOS)
+        notSupportGL = !window.WebGLRenderingContext || osSupportWebGL.indexOf(sys.os) == -1;
+    else
+        notSupportGL = !window.WebGLRenderingContext || browserSupportWebGL.indexOf(sys.browserType) == -1 || osSupportWebGL.indexOf(sys.os) == -1;
+    if (userRenderMode === 1 || (userRenderMode === 0 && notSupportGL) || (location.origin == "file://"))
         renderType = cc._RENDER_TYPE_CANVAS;
-    }
 
     sys._canUseCanvasNewBlendModes = function(){
         var canvas = document.createElement('canvas');
