@@ -39,6 +39,10 @@
         }
     };
 
+    cc.math.vec3 = function(x, y, z){
+        return new cc.math.Vec3(x, y, z);
+    };
+
     var proto = cc.math.Vec3.prototype;
 
     proto.fill = function (x, y, z) {    // =cc.kmVec3Fill
