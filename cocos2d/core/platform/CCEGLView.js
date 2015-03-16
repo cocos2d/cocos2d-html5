@@ -75,6 +75,7 @@ switch(cc.__BrowserGetter.adaptationType){
         cc.__BrowserGetter.__defineGetter__("target-densitydpi", function(){
             return cc.view._targetDensityDPI;
         });
+    case cc.sys.BROWSER_TYPE_SOUGOU:
     case cc.sys.BROWSER_TYPE_UC:
         cc.__BrowserGetter.availWidth = function(frame){
             return frame.clientWidth;
