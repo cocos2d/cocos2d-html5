@@ -391,7 +391,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
     cleanup:function () {
         // actions
         this.stopAllActions();
-        this.unscheduleAll();
+        this.unscheduleAllCallbacks();
 
         // timers
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.cleanup);
