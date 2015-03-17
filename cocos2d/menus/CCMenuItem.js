@@ -295,7 +295,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
      * @param {Boolean} enabled
      */
     setEnabled: function (enabled) {
-        if (this._enabled != enabled) {
+        if (this._enabled !== enabled) {
             var locLabel = this._label;
             if (!enabled) {
                 this._colorBackup = locLabel.color;
@@ -492,7 +492,7 @@ cc.MenuItemAtlasFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemAtlasFont# 
      * @return {Boolean}
      */
     initWithString: function (value, charMapFile, itemWidth, itemHeight, startCharMap, callback, target) {
-        if (!value || value.length == 0)
+        if (!value || value.length === 0)
             throw "cc.MenuItemAtlasFont.initWithString(): value should be non-null and its length should be greater than 0";
 
         var label = new cc.LabelAtlas();
@@ -566,7 +566,7 @@ cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
      * @return {Boolean}
      */
     initWithString: function (value, callback, target) {
-        if (!value || value.length == 0)
+        if (!value || value.length === 0)
             throw "Value should be non-null and its length should be greater than 0";
 
         this._fontName = cc._globalFontName;
@@ -760,7 +760,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
      * @param {cc.Sprite} normalImage
      */
     setNormalImage: function (normalImage) {
-        if (this._normalImage == normalImage) {
+        if (this._normalImage === normalImage) {
             return;
         }
         if (normalImage) {
@@ -798,7 +798,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
      * @param {cc.Sprite} selectedImage
      */
     setSelectedImage: function (selectedImage) {
-        if (this._selectedImage == selectedImage)
+        if (this._selectedImage === selectedImage)
             return;
 
         if (selectedImage) {
@@ -828,7 +828,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
      * @param {cc.Sprite} disabledImage
      */
     setDisabledImage: function (disabledImage) {
-        if (this._disabledImage == disabledImage)
+        if (this._disabledImage === disabledImage)
             return;
 
         if (disabledImage) {
@@ -959,7 +959,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
      * @param {Boolean} bEnabled
      */
     setEnabled: function (bEnabled) {
-        if (this._enabled != bEnabled) {
+        if (this._enabled !== bEnabled) {
             cc.MenuItem.prototype.setEnabled.call(this, bEnabled);
             this._updateImagesVisibility();
         }
@@ -1251,7 +1251,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
      * @param {Number} SelectedIndex
      */
     setSelectedIndex: function (SelectedIndex) {
-        if (SelectedIndex != this._selectedIndex) {
+        if (SelectedIndex !== this._selectedIndex) {
             this._selectedIndex = SelectedIndex;
             var currItem = this.getChildByTag(cc.CURRENT_ITEM);
             if (currItem)
@@ -1358,7 +1358,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
      * @param {Boolean} enabled
      */
     setEnabled: function (enabled) {
-        if (this._enabled != enabled) {
+        if (this._enabled !== enabled) {
             cc.MenuItem.prototype.setEnabled.call(this, enabled);
             var locItems = this.subItems;
             if (locItems && locItems.length > 0) {

@@ -651,7 +651,7 @@ cc.EaseExponentialOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialOut# *
      * @param {Number} dt
      */
     update:function (dt) {
-        this._inner.update(dt == 1 ? 1 : (-(Math.pow(2, -10 * dt)) + 1));
+        this._inner.update(dt === 1 ? 1 : (-(Math.pow(2, -10 * dt)) + 1));
     },
 
     /**
@@ -696,7 +696,7 @@ cc.EaseExponentialOut.create = function (action) {
 
 cc._easeExponentialOutObj = {
     easing: function(dt){
-        return dt == 1 ? 1 : (-(Math.pow(2, -10 * dt)) + 1);
+        return dt === 1 ? 1 : (-(Math.pow(2, -10 * dt)) + 1);
     },
     reverse: function(){
         return cc._easeExponentialInObj;
@@ -740,7 +740,7 @@ cc.EaseExponentialInOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialInOu
      * @param {Number} dt
      */
     update:function (dt) {
-        if( dt != 1 && dt !== 0) {
+        if( dt !== 1 && dt !== 0) {
             dt *= 2;
             if (dt < 1)
                 dt = 0.5 * Math.pow(2, 10 * (dt - 1));
@@ -976,7 +976,7 @@ cc.EaseSineOut.create = function (action) {
 
 cc._easeSineOutObj = {
     easing: function(dt){
-        return (dt===0 || dt==1) ? dt : Math.sin(dt * Math.PI / 2);
+        return (dt===0 || dt===1) ? dt : Math.sin(dt * Math.PI / 2);
     },
     reverse: function(){
         return cc._easeSineInObj;
@@ -1313,7 +1313,7 @@ cc.EaseElasticOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticOut# */{
      */
     update:function (dt) {
         var newT = 0;
-        if (dt === 0 || dt == 1) {
+        if (dt === 0 || dt === 1) {
             newT = dt;
         } else {
             var s = this._period / 4;
@@ -1423,7 +1423,7 @@ cc.EaseElasticInOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticInOut# */{
     update:function (dt) {
         var newT = 0;
         var locPeriod = this._period;
-        if (dt === 0 || dt == 1) {
+        if (dt === 0 || dt === 1) {
             newT = dt;
         } else {
             dt = dt * 2;
@@ -1891,7 +1891,7 @@ cc.EaseBackIn = cc.ActionEase.extend(/** @lends cc.EaseBackIn# */{
      */
     update:function (dt) {
         var overshoot = 1.70158;
-        dt = dt===0 || dt==1 ? dt : dt * dt * ((overshoot + 1) * dt - overshoot);
+        dt = dt===0 || dt===1 ? dt : dt * dt * ((overshoot + 1) * dt - overshoot);
         this._inner.update(dt);
     },
 

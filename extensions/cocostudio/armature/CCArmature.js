@@ -94,7 +94,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         var armatureDataManager = ccs.armatureDataManager;
 
         var animationData;
-        if (name != "") {
+        if (name !== "") {
             //animationData
             animationData = armatureDataManager.getAnimationData(name);
             cc.assert(animationData, "AnimationData not exist!");
@@ -279,7 +279,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         var locOffsetPoint = this._offsetPoint;
         locOffsetPoint.x = -rect.x;
         locOffsetPoint.y = -rect.y;
-        if (rect.width != 0 && rect.height != 0)
+        if (rect.width !== 0 && rect.height !== 0)
             this.setAnchorPoint(locOffsetPoint.x / rect.width, locOffsetPoint.y / rect.height);
     },
 
@@ -357,7 +357,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             var bone = locChildren[i];
             if (bone) {
                 var r = bone.getDisplayManager().getBoundingBox();
-                if (r.x == 0 && r.y == 0 && r.width == 0 && r.height == 0)
+                if (r.x === 0 && r.y === 0 && r.width === 0 && r.height === 0)
                     continue;
 
                 if(first) {
@@ -442,7 +442,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     },
 
     setBody: function (body) {
-        if (this._body == body)
+        if (this._body === body)
             return;
 
         this._body = body;

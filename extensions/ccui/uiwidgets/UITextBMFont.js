@@ -99,7 +99,7 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
      * @param {String} value
      */
     setString: function (value) {
-        if(value == this._labelBMFontRenderer.getString())
+        if(value === this._labelBMFontRenderer.getString())
             return;
         this._stringValue = value;
         this._labelBMFontRenderer.setString(value);

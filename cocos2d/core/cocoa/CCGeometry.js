@@ -55,9 +55,9 @@ cc.p = function (x, y) {
     // but this one will instead flood the heap with newly allocated hash maps
     // giving little room for optimization by the JIT,
     // note: we have tested this item on Chrome and firefox, it is faster than cc.p(x, y)
-    if (x == undefined)
+    if (x === undefined)
         return {x: 0, y: 0};
-    if (y == undefined)
+    if (y === undefined)
         return {x: x.x, y: x.y};
     return {x: x, y: y};
 };
@@ -120,7 +120,7 @@ cc.size = function (w, h) {
  * @return {Boolean}
  */
 cc.sizeEqualToSize = function (size1, size2) {
-    return (size1 && size2 && (size1.width == size2.width) && (size1.height == size2.height));
+    return (size1 && size2 && (size1.width === size2.width) && (size1.height === size2.height));
 };
 
 

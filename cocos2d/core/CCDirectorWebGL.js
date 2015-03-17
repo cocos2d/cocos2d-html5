@@ -167,7 +167,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                 return
             }
 
-            if ((cc.Director._fpsImageLoaded == null) || (cc.Director._fpsImageLoaded == false))
+            if ((cc.Director._fpsImageLoaded == null) || (cc.Director._fpsImageLoaded === false))
                 return;
 
             var texture = new cc.Texture2D();

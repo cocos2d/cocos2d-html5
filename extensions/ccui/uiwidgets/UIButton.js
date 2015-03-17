@@ -144,7 +144,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
      */
     setScale9Enabled: function (able) {
         //todo create Scale9Sprite
-        if (this._scale9Enabled == able)
+        if (this._scale9Enabled === able)
             return;
 
         this._brightStyle = ccui.Widget.BRIGHT_STYLE_NONE;
@@ -750,7 +750,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
      * @param {String} text
      */
     setTitleText: function (text) {
-        if(text == this.getTitleText())
+        if(text === this.getTitleText())
             return;
         this._titleRenderer.setString(text);
         if (this._ignoreSize){
@@ -900,11 +900,11 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
     _getNormalSize: function(){
         var titleSize;
-        if (this._titleRenderer != null)
+        if (this._titleRenderer !== null)
             titleSize = this._titleRenderer.getContentSize();
 
         var imageSize;
-        if (this._buttonNormalRenderer != null)
+        if (this._buttonNormalRenderer !== null)
             imageSize = this._buttonNormalRenderer.getContentSize();
         var width = titleSize.width > imageSize.width ? titleSize.width : imageSize.width;
         var height = titleSize.height > imageSize.height ? titleSize.height : imageSize.height;

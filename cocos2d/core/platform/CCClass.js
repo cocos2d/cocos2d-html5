@@ -49,7 +49,7 @@ var ClassManager = {
 
         //now we have the content of the function, replace this._super
         //find this._super
-        while(str.indexOf('this._super')!= -1)
+        while(str.indexOf('this._super') !== -1)
         {
             var sp = str.indexOf('this._super');
             //find the first '(' from this._super)
@@ -186,7 +186,7 @@ ClassManager.compileSuper.ClassManager = ClassManager;
                     if (this.__getters__ && this.__getters__[name]) {
                         propertyName = this.__getters__[name];
                         for (var i in this.__setters__) {
-                            if (this.__setters__[i] == propertyName) {
+                            if (this.__setters__[i] === propertyName) {
                                 setter = i;
                                 break;
                             }
@@ -196,7 +196,7 @@ ClassManager.compileSuper.ClassManager = ClassManager;
                     if (this.__setters__ && this.__setters__[name]) {
                         propertyName = this.__setters__[name];
                         for (var i in this.__getters__) {
-                            if (this.__getters__[i] == propertyName) {
+                            if (this.__getters__[i] === propertyName) {
                                 getter = i;
                                 break;
                             }
@@ -316,7 +316,7 @@ cc.clone = function (obj) {
     for (var key in obj) {
         var copy = obj[key];
         // Beware that typeof null == "object" !
-        if (((typeof copy) == "object") && copy &&
+        if (((typeof copy) === "object") && copy &&
             !(copy instanceof cc.Node) && !(copy instanceof HTMLElement)) {
             newObj[key] = cc.clone(copy);
         } else {

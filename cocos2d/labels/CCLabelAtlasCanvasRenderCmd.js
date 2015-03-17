@@ -54,7 +54,7 @@
             var fontChar = node.getChildByTag(i);
             if (!fontChar) {
                 fontChar = new cc.Sprite();
-                if (c == 32) {
+                if (c === 32) {
                     fontChar.init();
                     fontChar.setTextureRect(cc.rect(0, 0, 10, 10), false, cc.size(0, 0));
                 } else
@@ -62,7 +62,7 @@
 
                 cc.Node.prototype.addChild.call(node, fontChar, 0, i);
             } else {
-                if (c == 32) {
+                if (c === 32) {
                     fontChar.init();
                     fontChar.setTextureRect(cc.rect(0, 0, 10, 10), false, cc.size(0, 0));
                 } else {

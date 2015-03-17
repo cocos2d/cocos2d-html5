@@ -156,7 +156,7 @@ cc.animationCache = /** @lends cc.animationCache# */{
             if (frames.length === 0) {
                 cc.log(cc._LogInfos.animationCache__parseVersion1_3, key);
                 continue;
-            } else if (frames.length != frameNames.length) {
+            } else if (frames.length !== frameNames.length) {
                 cc.log(cc._LogInfos.animationCache__parseVersion1_4, key);
             }
             animation = new cc.Animation(frames, delay, 1);

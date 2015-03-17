@@ -145,7 +145,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @param {Number} percentage
      */
     setPercentage:function (percentage) {
-        if (this._percentage != percentage) {
+        if (this._percentage !== percentage) {
             this._percentage = cc.clampf(percentage, 0, 100);
             this._renderCmd._updateProgress();
         }
@@ -224,7 +224,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @param {cc.Sprite} sprite
      */
     setSprite: function(sprite){
-        if (this._sprite != sprite) {
+        if (this._sprite !== sprite) {
             this._sprite = sprite;
             if(sprite)
                 this.setContentSize(sprite.width,sprite.height);

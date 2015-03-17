@@ -95,7 +95,7 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
      * @param {String} value
      */
     setString: function (value) {
-        if(value == this._labelAtlasRenderer.getString())
+        if(value === this._labelAtlasRenderer.getString())
             return;
         this._stringValue = value;
         this._labelAtlasRenderer.setString(value);

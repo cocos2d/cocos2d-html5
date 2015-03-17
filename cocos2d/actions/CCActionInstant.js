@@ -701,7 +701,7 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
      * @param {object} sel
      */
     setTargetCallback:function (sel) {
-        if (sel != this._selectorTarget) {
+        if (sel !== this._selectorTarget) {
             if (this._selectorTarget)
                 this._selectorTarget = null;
             this._selectorTarget = sel;

@@ -116,7 +116,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
     setBoneData: function (boneData) {
         cc.assert(boneData, "_boneData must not be null");
 
-        if(this._boneData != boneData)
+        if(this._boneData !== boneData)
             this._boneData = boneData;
 
         this.setName(this._boneData.name);
@@ -230,7 +230,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
             srcValue = blendFunc;
             dstValue = dst;
         }
-        if (locBlendFunc.src != srcValue || locBlendFunc.dst != dstValue) {
+        if (locBlendFunc.src !== srcValue || locBlendFunc.dst !== dstValue) {
             locBlendFunc.src = srcValue;
             locBlendFunc.dst = dstValue;
             this.blendDirty = true;
@@ -242,7 +242,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      */
     updateColor: function () {
         var display = this._displayManager.getDisplayRenderNode();
-        if (display != null) {
+        if (display !== null) {
             var cmd = this._renderCmd;
             display.setColor(
                 cc.color(
@@ -284,7 +284,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      * @param {Boolean} recursion
      */
     removeChildBone: function (bone, recursion) {
-        if (this._children.length > 0 && this._children.getIndex(bone) != -1 ) {
+        if (this._children.length > 0 && this._children.getIndex(bone) !== -1 ) {
             if(recursion) {
                 var ccbones = bone._children;
                 for(var i=0; i<ccbones.length; i++){
@@ -331,7 +331,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      * @param {ccs.Armature} armature
      */
     setChildArmature: function (armature) {
-        if (this._childArmature != armature) {
+        if (this._childArmature !== armature) {
             if (armature == null && this._childArmature)
                 this._childArmature.setParentBone(null);
             this._childArmature = armature;
@@ -359,7 +359,7 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
      * @param {Number} zOrder
      */
     setLocalZOrder: function (zOrder) {
-        if (this._localZOrder != zOrder)
+        if (this._localZOrder !== zOrder)
             cc.Node.prototype.setLocalZOrder.call(this, zOrder);
     },
 
@@ -677,7 +677,7 @@ ccs.Bone.RenderCmd = {
     _updateColor: function(){
         var node = this._node;
         var display = node._displayManager.getDisplayRenderNode();
-        if (display != null) {
+        if (display !== null) {
             var displayCmd = display._renderCmd;
             display.setColor(cc.color( node._tweenData.r, node._tweenData.g, node._tweenData.g));
             display.setOpacity(node._tweenData.a);

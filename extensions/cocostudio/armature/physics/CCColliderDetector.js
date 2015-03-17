@@ -221,7 +221,7 @@ ccs.ColliderDetector = ccs.Class.extend(/** @lends ccs.ColliderDetector# */{
         var eraseList = [], i, locBodyList = this._colliderBodyList;
         for (i = 0; i < locBodyList.length; i++) {
             var body = locBodyList[i];
-            if (body && body.getContourData() == contourData)
+            if (body && body.getContourData() === contourData)
                 eraseList.push(body);
         }
 
@@ -237,7 +237,7 @@ ccs.ColliderDetector = ccs.Class.extend(/** @lends ccs.ColliderDetector# */{
     },
 
     setActive: function (active) {
-        if (this._active == active)
+        if (this._active === active)
             return;
         this._active = active;
 

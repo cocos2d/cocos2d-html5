@@ -446,7 +446,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} globalZOrder
      */
     setGlobalZOrder: function (globalZOrder) {
-        if (this._globalZOrder != globalZOrder) {
+        if (this._globalZOrder !== globalZOrder) {
             this._globalZOrder = globalZOrder;
             cc.eventManager._setDirtyForNode(this);
         }
@@ -966,7 +966,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Boolean} newValue true if anchor point will be ignored when you position this node
      */
     ignoreAnchorPointForPosition: function (newValue) {
-        if (newValue != this._ignoreAnchorPointForPosition) {
+        if (newValue !== this._ignoreAnchorPointForPosition) {
             this._ignoreAnchorPointForPosition = newValue;
             this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
         }
@@ -1076,7 +1076,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {object} newValue A user cocos2d object
      */
     setUserObject: function (newValue) {
-        if (this.userObject != newValue)
+        if (this.userObject !== newValue)
             this.userObject = newValue;
     },
 
@@ -1125,7 +1125,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {cc.ActionManager} actionManager A CCActionManager object that is used by all actions.
      */
     setActionManager: function (actionManager) {
-        if (this._actionManager != actionManager) {
+        if (this._actionManager !== actionManager) {
             this.stopAllActions();
             this._actionManager = actionManager;
         }
@@ -1154,7 +1154,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param scheduler A cc.Scheduler object that is used to schedule all "update" and timers.
      */
     setScheduler: function (scheduler) {
-        if (this._scheduler != scheduler) {
+        if (this._scheduler !== scheduler) {
             this.unscheduleAllCallbacks();
             this._scheduler = scheduler;
         }
@@ -1206,10 +1206,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getChildByTag: function (aTag) {
         var __children = this._children;
-        if (__children != null) {
+        if (__children !== null) {
             for (var i = 0; i < __children.length; i++) {
                 var node = __children[i];
-                if (node && node.tag == aTag)
+                if (node && node.tag === aTag)
                     return node;
             }
         }
@@ -1230,7 +1230,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
         var locChildren = this._children;
         for(var i = 0, len = locChildren.length; i < len; i++){
-           if(locChildren[i]._name == name)
+           if(locChildren[i]._name === name)
             return locChildren[i];
         }
         return null;
@@ -1378,7 +1378,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     removeAllChildren: function (cleanup) {
         // not using detachChild improves speed here
         var __children = this._children;
-        if (__children != null) {
+        if (__children !== null) {
             if (cleanup == null)
                 cleanup = true;
             for (var i = 0; i < __children.length; i++) {
@@ -1494,7 +1494,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     // Internal use only, do not call it by yourself,
     transformAncestors: function () {
-        if (this._parent != null) {
+        if (this._parent !== null) {
             this._parent.transformAncestors();
             this._parent.transform();
         }
@@ -1678,13 +1678,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var len = arguments.length;
         if(typeof callback === "function"){
             //callback, interval, repeat, delay, key
-            if(len == 1){
+            if(len === 1){
                 //callback
                 interval = 0;
                 repeat = cc.REPEAT_FOREVER;
                 delay = 0;
                 key = this.__instanceId;
-            }else if(len == 2){
+            }else if(len === 2){
                 if(typeof interval === "number"){
                     //callback, interval
                     repeat = cc.REPEAT_FOREVER;
@@ -1709,11 +1709,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             //selector
             //selector, interval
             //selector, interval, repeat, delay
-            if(len == 1){
+            if(len === 1){
                 interval = 0;
                 repeat = cc.REPEAT_FOREVER;
                 delay = 0;
-            }else if(len == 2){
+            }else if(len === 2){
                 repeat = cc.REPEAT_FOREVER;
                 delay = 0;
             }
@@ -1740,7 +1740,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     scheduleOnce: function (callback, delay, key) {
         //selector, delay
         //callback, delay, key
-        if(key == undefined)
+        if(key === undefined)
             key = this.__instanceId;
         this.schedule(callback, 0, 0, delay, key);
     },
@@ -1895,7 +1895,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     getNodeToWorldTransform: function () {
         //TODO renderCmd has a WorldTransform
         var t = this.getNodeToParentTransform();
-        for (var p = this._parent; p != null; p = p.parent)
+        for (var p = this._parent; p !== null; p = p.parent)
             t = cc.affineTransformConcat(t, p.getNodeToParentTransform());
         return t;
     },

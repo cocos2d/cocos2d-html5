@@ -133,7 +133,7 @@
                 }
             }
             ++(ipiv[icol]);
-            if (irow != icol) {
+            if (irow !== icol) {
                 for (l = 0; l < n; l++)
                     a.swap(irow, l, icol, l);
                 for (l = 0; l < m; l++)
@@ -153,7 +153,7 @@
                 b.set(icol, l, b.get(icol, l) * pivinv);
 
             for (ll = 0; ll < n; ll++) {
-                if (ll != icol) {
+                if (ll !== icol) {
                     dum = a.get(ll, icol);
                     a.set(ll, icol, 0.0);
                     for (l = 0; l < n; l++)
@@ -168,7 +168,7 @@
         //    ble the solution in view of the column interchanges. We do this by interchanging pairs of
         //    columns in the reverse order that the permutation was built up.
         for (l = n - 1; l >= 0; l--) {
-            if (indxr[l] != indxc[l]) {
+            if (indxr[l] !== indxc[l]) {
                 for (k = 0; k < n; k++)
                     a.swap(k, indxr[l], k, indxc[l]);
             }
@@ -378,7 +378,7 @@
      * @returns {cc.math.Matrix4}
      */
     proto.assignFrom = function(mat4) {
-        if (this == mat4) {
+        if (this === mat4) {
             cc.log("cc.mat.Matrix4.assignFrom(): mat4 equals current matrix");
             return this;
         }
@@ -711,7 +711,7 @@
         var deltaZ = zFar - zNear;
         var s = Math.sin(r);
 
-        if (deltaZ == 0 || s == 0 || aspect == 0)
+        if (deltaZ === 0 || s === 0 || aspect === 0)
             return null;
 
         //cos(r) / sin(r) = cot(r)
@@ -739,7 +739,7 @@
         var r = cc.degreesToRadians(fovY / 2), deltaZ = zFar - zNear;
         var s = Math.sin(r);
 
-        if (deltaZ == 0 || s == 0 || aspect == 0)
+        if (deltaZ === 0 || s === 0 || aspect === 0)
             return null;
 
         //cos(r) / sin(r) = cot(r)

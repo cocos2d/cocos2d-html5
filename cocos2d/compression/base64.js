@@ -42,10 +42,10 @@ cc.Codec.Base64.decode = function Jacob__Codec__Base64__decode(input) {
 
         output.push(String.fromCharCode(chr1));
 
-        if (enc3 != 64) {
+        if (enc3 !== 64) {
             output.push(String.fromCharCode(chr2));
         }
-        if (enc4 != 64) {
+        if (enc4 !== 64) {
             output.push(String.fromCharCode(chr3));
         }
     }
@@ -82,7 +82,7 @@ cc.Codec.Base64.decodeAsArray = function Jacob__Codec__Base64___decodeAsArray(in
 };
 
 cc.uint8ArrayToUint32Array = function(uint8Arr){
-    if(uint8Arr.length % 4 != 0)
+    if(uint8Arr.length % 4 !== 0)
         return null;
 
     var arrLen = uint8Arr.length /4;
