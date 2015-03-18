@@ -1155,7 +1155,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setScheduler: function (scheduler) {
         if (this._scheduler != scheduler) {
-            this.unscheduleAll();
+            this.unscheduleAllCallbacks();
             this._scheduler = scheduler;
         }
     },
