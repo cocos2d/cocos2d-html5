@@ -186,6 +186,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _renderCmd:null,
 
+    _camera: null,
+
     /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @function

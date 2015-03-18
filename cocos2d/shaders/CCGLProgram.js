@@ -106,7 +106,7 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
             else
                 cc.log("cocos2d: \n" + this.fragmentShaderLog());
         }
-        return ( status === 1 );
+        return ( status === true );
     },
 
 	/**
