@@ -51,7 +51,7 @@
                 if(parser)
                     frame = parser.call(self, timeline, resourcePath);
                 else
-                    cc.log("parser is not exists : %s", timeline["frameType"]);
+                    cc.log("parser does not exist : %s", timeline["frameType"]);
                 if(frame)
                     action.addTimeline(frame);
 
