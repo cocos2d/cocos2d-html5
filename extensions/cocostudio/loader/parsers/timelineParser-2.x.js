@@ -208,7 +208,7 @@
     // WIDGET //
     ////////////
 
-    parser.widgetAttributes = function(widget, json){
+    parser.widgetAttributes = function(widget, json) {
         widget.setCascadeColorEnabled(true);
         widget.setCascadeOpacityEnabled(true);
 
@@ -218,7 +218,7 @@
         setContentSize(widget, json["Size"]);
 
         var name = json["Name"];
-        if(name)
+        if (name)
             widget.setName(name);
 
         var actionTag = json["ActionTag"] || 0;
@@ -226,25 +226,25 @@
         widget.setUserObject(new ccs.ActionTimelineData(actionTag));
 
         var rotationSkewX = json["RotationSkewX"];
-        if(rotationSkewX)
+        if (rotationSkewX)
             widget.setRotationX(rotationSkewX);
 
         var rotationSkewY = json["RotationSkewY"];
-        if(rotationSkewY)
+        if (rotationSkewY)
             widget.setRotationY(rotationSkewY);
 
         //var rotation = json["Rotation"];
 
         var flipX = json["FlipX"];
-        if(flipX)
+        if (flipX)
             widget.setFlippedX(true);
 
         var flipY = json["FlipY"];
-        if(flipY)
+        if (flipY)
             widget.setFlippedY(true);
 
         var zOrder = json["zOrder"];
-        if(zOrder != null)
+        if (zOrder != null)
             widget.setLocalZOrder(zOrder);
 
         //var visible = json["Visible"];
@@ -253,7 +253,7 @@
         widget.setVisible(visible);
 
         var alpha = json["Alpha"];
-        if(alpha != null)
+        if (alpha != null)
             widget.setOpacity(alpha);
 
         widget.setTag(json["Tag"] || 0);
@@ -264,19 +264,19 @@
         // -- var frameEvent = json["FrameEvent"];
 
         var callBackType = json["CallBackType"];
-        if(callBackType != null)
+        if (callBackType != null)
             widget.setCallbackType(callBackType);
 
         var callBackName = json["CallBackName"];
-        if(callBackName)
+        if (callBackName)
             widget.setCallbackName(callBackName);
 
         var position = json["Position"];
-        if(position != null)
+        if (position != null)
             widget.setPosition(position["X"] || 0, position["Y"] || 0);
 
         var scale = json["Scale"];
-        if(scale != null){
+        if (scale != null) {
             var scaleX = getParam(scale["ScaleX"], 1);
             var scaleY = getParam(scale["ScaleY"], 1);
             widget.setScaleX(scaleX);
@@ -284,80 +284,77 @@
         }
 
         var anchorPoint = json["AnchorPoint"];
-        if(anchorPoint != null)
+        if (anchorPoint != null)
             widget.setAnchorPoint(anchorPoint["ScaleX"] || 0, anchorPoint["ScaleY"] || 0);
 
         var color = json["CColor"];
-        if(color != null)
+        if (color != null)
             widget.setColor(getColor(color));
 
-        if(widget instanceof ccui.Layout){
-            var layoutComponent = ccui.LayoutComponent.bindLayoutComponent(widget);
+        var layoutComponent = ccui.LayoutComponent.bindLayoutComponent(widget);
 
-            var positionXPercentEnabled = json["PositionPercentXEnable"] || false;
-            var positionYPercentEnabled = json["PositionPercentYEnable"] || false;
-            var positionXPercent = 0,
-                positionYPercent = 0,
-                PrePosition = json["PrePosition"];
-            if(PrePosition != null){
-                positionXPercent = PrePosition["X"] || 0;
-                positionYPercent = PrePosition["Y"] || 0;
-            }
-            var sizeXPercentEnable = json["PercentWidthEnable"] || false;
-            var sizeYPercentEnable = json["PercentHeightEnable"] || false;
-            var sizeXPercent = 0,
-                sizeYPercent = 0,
-                PreSize = json["PreSize"];
-            if(PrePosition != null){
-                sizeXPercent = PreSize["X"] || 0;
-                sizeYPercent = PreSize["Y"] || 0;
-            }
-            var stretchHorizontalEnabled = json["StretchWidthEnable"] || false;
-            var stretchVerticalEnabled = json["StretchHeightEnable"] || false;
-            var horizontalEdge = json["HorizontalEdge"];// = ccui.LayoutComponent.horizontalEdge.LEFT;
-            var verticalEdge = json["VerticalEdge"]; // = ccui.LayoutComponent.verticalEdge.TOP;
-            var leftMargin = json["LeftMargin"] || 0;
-            var rightMargin = json["RightMargin"] || 0;
-            var topMargin = json["TopMargin"] || 0;
-            var bottomMargin = json["BottomMargin"] || 0;
-
-            layoutComponent.setPositionPercentXEnabled(positionXPercentEnabled);
-            layoutComponent.setPositionPercentYEnabled(positionYPercentEnabled);
-            layoutComponent.setPositionPercentX(positionXPercent);
-            layoutComponent.setPositionPercentY(positionYPercent);
-            layoutComponent.setPercentWidthEnabled(sizeXPercentEnable);
-            layoutComponent.setPercentHeightEnabled(sizeYPercentEnable);
-            layoutComponent.setPercentWidth(sizeXPercent);
-            layoutComponent.setPercentHeight(sizeYPercent);
-            layoutComponent.setStretchWidthEnabled(stretchHorizontalEnabled);
-            layoutComponent.setStretchHeightEnabled(stretchVerticalEnabled);
-
-            var horizontalEdgeType = ccui.LayoutComponent.horizontalEdge.NONE;
-            if (horizontalEdge == "LeftEdge"){
-                horizontalEdgeType = ccui.LayoutComponent.horizontalEdge.LEFT;
-            }else if (horizontalEdge == "RightEdge"){
-                horizontalEdgeType = ccui.LayoutComponent.horizontalEdge.RIGHT;
-            }else if (horizontalEdge == "BothEdge"){
-                horizontalEdgeType = ccui.LayoutComponent.horizontalEdge.CENTER;
-            }
-            layoutComponent.setHorizontalEdge(horizontalEdgeType);
-
-            var verticalEdgeType = ccui.LayoutComponent.verticalEdge.NONE;
-            if (verticalEdge == "TopEdge"){
-                verticalEdgeType = ccui.LayoutComponent.verticalEdge.TOP;
-            }else if (verticalEdge == "BottomEdge"){
-                verticalEdgeType = ccui.LayoutComponent.verticalEdge.BOTTOM;
-            }else if (verticalEdge == "BothEdge"){
-                verticalEdgeType = ccui.LayoutComponent.verticalEdge.CENTER;
-            }
-            layoutComponent.setVerticalEdge(verticalEdgeType);
-
-            layoutComponent.setTopMargin(topMargin);
-            layoutComponent.setBottomMargin(bottomMargin);
-            layoutComponent.setLeftMargin(leftMargin);
-            layoutComponent.setRightMargin(rightMargin);
+        var positionXPercentEnabled = json["PositionPercentXEnable"] || false;
+        var positionYPercentEnabled = json["PositionPercentYEnable"] || false;
+        var positionXPercent = 0,
+            positionYPercent = 0,
+            PrePosition = json["PrePosition"];
+        if (PrePosition != null) {
+            positionXPercent = PrePosition["X"] || 0;
+            positionYPercent = PrePosition["Y"] || 0;
         }
+        var sizeXPercentEnable = json["PercentWidthEnable"] || false;
+        var sizeYPercentEnable = json["PercentHeightEnable"] || false;
+        var sizeXPercent = 0,
+            sizeYPercent = 0,
+            PreSize = json["PreSize"];
+        if (PrePosition != null) {
+            sizeXPercent = PreSize["X"] || 0;
+            sizeYPercent = PreSize["Y"] || 0;
+        }
+        var stretchHorizontalEnabled = json["StretchWidthEnable"] || false;
+        var stretchVerticalEnabled = json["StretchHeightEnable"] || false;
+        var horizontalEdge = json["HorizontalEdge"];// = ccui.LayoutComponent.horizontalEdge.LEFT;
+        var verticalEdge = json["VerticalEdge"]; // = ccui.LayoutComponent.verticalEdge.TOP;
+        var leftMargin = json["LeftMargin"] || 0;
+        var rightMargin = json["RightMargin"] || 0;
+        var topMargin = json["TopMargin"] || 0;
+        var bottomMargin = json["BottomMargin"] || 0;
 
+        layoutComponent.setPositionPercentXEnabled(positionXPercentEnabled);
+        layoutComponent.setPositionPercentYEnabled(positionYPercentEnabled);
+        layoutComponent.setPositionPercentX(positionXPercent);
+        layoutComponent.setPositionPercentY(positionYPercent);
+        layoutComponent.setPercentWidthEnabled(sizeXPercentEnable);
+        layoutComponent.setPercentHeightEnabled(sizeYPercentEnable);
+        layoutComponent.setPercentWidth(sizeXPercent);
+        layoutComponent.setPercentHeight(sizeYPercent);
+        layoutComponent.setStretchWidthEnabled(stretchHorizontalEnabled);
+        layoutComponent.setStretchHeightEnabled(stretchVerticalEnabled);
+
+        var horizontalEdgeType = ccui.LayoutComponent.horizontalEdge.NONE;
+        if (horizontalEdge == "LeftEdge") {
+            horizontalEdgeType = ccui.LayoutComponent.horizontalEdge.LEFT;
+        } else if (horizontalEdge == "RightEdge") {
+            horizontalEdgeType = ccui.LayoutComponent.horizontalEdge.RIGHT;
+        } else if (horizontalEdge == "BothEdge") {
+            horizontalEdgeType = ccui.LayoutComponent.horizontalEdge.CENTER;
+        }
+        layoutComponent.setHorizontalEdge(horizontalEdgeType);
+
+        var verticalEdgeType = ccui.LayoutComponent.verticalEdge.NONE;
+        if (verticalEdge == "TopEdge") {
+            verticalEdgeType = ccui.LayoutComponent.verticalEdge.TOP;
+        } else if (verticalEdge == "BottomEdge") {
+            verticalEdgeType = ccui.LayoutComponent.verticalEdge.BOTTOM;
+        } else if (verticalEdge == "BothEdge") {
+            verticalEdgeType = ccui.LayoutComponent.verticalEdge.CENTER;
+        }
+        layoutComponent.setVerticalEdge(verticalEdgeType);
+
+        layoutComponent.setTopMargin(topMargin);
+        layoutComponent.setBottomMargin(bottomMargin);
+        layoutComponent.setLeftMargin(leftMargin);
+        layoutComponent.setRightMargin(rightMargin);
     };
 
     /**
@@ -1250,6 +1247,7 @@
 
     var register = [
         {name: "SingleNodeObjectData", handle: parser.initSingleNode},
+        {name: "NodeObjectData", handle: parser.initSingleNode},
         {name: "LayerObjectData", handle: parser.initSingleNode},
         {name: "SpriteObjectData", handle: parser.initSprite},
         {name: "ParticleObjectData", handle: parser.initParticle},

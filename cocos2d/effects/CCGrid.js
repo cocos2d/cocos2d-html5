@@ -229,16 +229,15 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
             // XXX: Camera should be applied in the AnchorPoint
             //
             //cc.kmGLTranslatef(offset.x, offset.y, 0);
-            var translation = new cc.kmMat4();
-            cc.kmMat4Translation(translation, offset.x, offset.y, 0);
-            cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
+            var translation = cc.math.Matrix4.createByTranslation(offset.x, offset.y, 0);
+            stackMatrix.multiply(translation);
 
             //target.getCamera().locate();
             target._camera._locateForRenderer(stackMatrix);
 
             //cc.kmGLTranslatef(-offset.x, -offset.y, 0);
-            cc.kmMat4Translation(translation, -offset.x, -offset.y, 0);
-            cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
+            translation = cc.math.Matrix4.createByTranslation(-offset.x, -offset.y, 0, translation);
+            stackMatrix.multiply(translation);
         }
 
         cc.glBindTexture2D(this._texture);
@@ -265,8 +264,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
         cc.kmGLLoadIdentity();
 
-        var orthoMatrix = new cc.kmMat4();
-        cc.kmMat4OrthographicProjection(orthoMatrix, 0, winSize.width, 0, winSize.height, -1, 1);
+        var orthoMatrix = cc.math.Matrix4.createOrthographicProjection(0, winSize.width, 0, winSize.height, -1, 1);
         cc.kmGLMultMatrix(orthoMatrix);
 
         cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);

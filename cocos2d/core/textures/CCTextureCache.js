@@ -362,6 +362,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         return tex;
     };
 
+    _p.addImageAsync = _p.addImage;
     _p = null;
 
 } else {

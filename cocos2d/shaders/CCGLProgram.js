@@ -543,9 +543,9 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
      * will update the builtin uniforms if they are different than the previous call for this same shader program.
      */
     setUniformsForBuiltins: function () {
-        var matrixP = new cc.kmMat4();
-        var matrixMV = new cc.kmMat4();
-        var matrixMVP = new cc.kmMat4();
+        var matrixP = new cc.math.Matrix4();
+        var matrixMV = new cc.math.Matrix4();
+        var matrixMVP = new cc.math.Matrix4();
 
         cc.kmGLGetMatrix(cc.KM_GL_PROJECTION, matrixP);
         cc.kmGLGetMatrix(cc.KM_GL_MODELVIEW, matrixMV);
@@ -576,9 +576,9 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
         if(!node || !node._renderCmd)
             return;
 
-        var matrixP = new cc.kmMat4();
+        var matrixP = new cc.math.Matrix4();
         //var matrixMV = new cc.kmMat4();
-        var matrixMVP = new cc.kmMat4();
+        var matrixMVP = new cc.math.Matrix4();
 
         cc.kmGLGetMatrix(cc.KM_GL_PROJECTION, matrixP);
         //cc.kmGLGetMatrix(cc.KM_GL_MODELVIEW, node._stackMatrix);

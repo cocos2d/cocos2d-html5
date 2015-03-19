@@ -73,7 +73,7 @@
         r = r || 0;
         g = g || 0;
         b = b || 0;
-        a = isNaN(a) ? 1 : a;
+        a = isNaN(a) ? 255 : a;
 
         var context = this._cacheContext.getContext();
         var locCanvas = this._cacheCanvas;

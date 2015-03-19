@@ -1560,6 +1560,8 @@ cc._initSys = function (config, CONFIG_KEY) {
             browserType = sys.BROWSER_TYPE_ANDROID;
         else if (browserType == "trident") browserType = sys.BROWSER_TYPE_IE;
         else if (browserType == "360 aphone") browserType = sys.BROWSER_TYPE_360;
+    }else if(ua.indexOf("iphone") && ua.indexOf("mobile")){
+        browserType = "safari";
     }
     /**
      * Indicate the running browser type
@@ -1596,10 +1598,13 @@ cc._initSys = function (config, CONFIG_KEY) {
     var renderType = cc._RENDER_TYPE_WEBGL;
     var tempCanvas = cc.newElement("Canvas");
     cc._supportRender = true;
-    var notSupportGL = !window.WebGLRenderingContext || browserSupportWebGL.indexOf(sys.browserType) == -1 || osSupportWebGL.indexOf(sys.os) == -1;
-    if (userRenderMode === 1 || (userRenderMode === 0 && notSupportGL) || (location.origin == "file://")) {
+    var notSupportGL = true;
+    if(iOS)
+        notSupportGL = !window.WebGLRenderingContext || osSupportWebGL.indexOf(sys.os) == -1;
+    else
+        notSupportGL = !window.WebGLRenderingContext || browserSupportWebGL.indexOf(sys.browserType) == -1 || osSupportWebGL.indexOf(sys.os) == -1;
+    if (userRenderMode === 1 || (userRenderMode === 0 && notSupportGL) || (location.origin == "file://"))
         renderType = cc._RENDER_TYPE_CANVAS;
-    }
 
     sys._canUseCanvasNewBlendModes = function(){
         var canvas = document.createElement('canvas');
