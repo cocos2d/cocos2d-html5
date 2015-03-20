@@ -28,8 +28,12 @@
 
     var Parser = baseParser.extend({
 
-        parse: function(file, json){
-            var resourcePath = this._dirname(file);
+        parse: function(file, json, path){
+            var resourcePath;
+            if(path !== undefined)
+                resourcePath = path;
+            else
+                resourcePath = this._dirname(file);
             this.pretreatment(json, resourcePath, file);
             var node = this.parseNode(this.getNodeJson(json), resourcePath);
             this.deferred(json, resourcePath, node, file);
@@ -734,10 +738,10 @@
             var scale9Width = json["Scale9Width"] || 0;
             var scale9Height = json["Scale9Height"] || 0;
             widget.setCapInsets(cc.rect(
-                    scale9OriginX ,
-                    scale9OriginY,
-                    scale9Width,
-                    scale9Height
+                scale9OriginX ,
+                scale9OriginY,
+                scale9Width,
+                scale9Height
             ));
         } else
             setContentSize(widget, json["Size"]);
@@ -834,10 +838,10 @@
             var scale9Width = json["Scale9Width"] || 0;
             var scale9Height = json["Scale9Height"] || 0;
             widget.setBackGroundImageCapInsets(cc.rect(
-                    scale9OriginX,
-                    scale9OriginY,
-                    scale9Width,
-                    scale9Height
+                scale9OriginX,
+                scale9OriginY,
+                scale9Width,
+                scale9Height
             ));
         }
 
@@ -900,10 +904,10 @@
             var scale9Width = json["Scale9Width"] || 0;
             var scale9Height = json["Scale9Height"] || 0;
             widget.setBackGroundImageCapInsets(cc.rect(
-                    scale9OriginX,
-                    scale9OriginY,
-                    scale9Width,
-                    scale9Height
+                scale9OriginX,
+                scale9OriginY,
+                scale9Width,
+                scale9Height
             ));
         }
 
@@ -1146,7 +1150,7 @@
         if(projectFile != null && projectFile["Path"]){
             var file = resourcePath + projectFile["Path"];
             if(cc.loader.getRes(file)){
-                var obj = ccs.load(file);
+                var obj = ccs.load(file, resourcePath);
                 parser.generalAttributes(obj.node, json);
                 if(obj.action && obj.node){
                     obj.action.tag = obj.node.tag;
