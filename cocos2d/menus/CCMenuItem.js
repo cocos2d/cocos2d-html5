@@ -725,8 +725,8 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         this._disabledImage = null;
 
         if (selectedSprite !== undefined) {
-            normalSprite = normalSprite;
-            selectedSprite = selectedSprite;
+            //normalSprite = normalSprite;
+            //selectedSprite = selectedSprite;
             var disabledImage, target, callback;
             //when you send 4 arguments, five is undefined
             if (five !== undefined) {
@@ -739,9 +739,9 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
             } else if (four !== undefined && cc.isFunction(three)) {
                 target = four;
                 callback = three;
-                disabledImage = new cc.Sprite(selectedSprite.getTexture(), selectedSprite.getTextureRect());
+                disabledImage = null;
             } else if (three === undefined) {
-                disabledImage = new cc.Sprite(selectedSprite.getTexture(), selectedSprite.getTextureRect());
+                disabledImage = null;
             }
             this.initWithNormalSprite(normalSprite, selectedSprite, disabledImage, callback, target);
         }
