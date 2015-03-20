@@ -539,6 +539,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     updateLabel: function () {
         var self = this;
         self.string = self._initialString;
+        var i, j, characterSprite;
         // process string
         // Step 1: Make multiline
         if (self._width > 0) {
@@ -549,8 +550,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             for (i = 0; i < stringArr.length; i++) {
                 oldArrLength = stringArr.length;
                 this._checkWarp(stringArr, i, self._width * this._scaleX, newWrapNum);
-                if (oldArrLength < stringArr.length)
-                {
+                if (oldArrLength < stringArr.length) {
                     newWrapNum++;
                 }
                 if (i > 0)
