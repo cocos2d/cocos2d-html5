@@ -79,11 +79,12 @@ sp._regionAttachment_computeWorldVertices = function(self, x, y, bone, vertices)
 
 sp._regionAttachment_updateQuad = function(self, slot, quad, premultipliedAlpha) {
     var vertices = {};
-    self.computeVertices(slot.skeleton.x, slot.skeleton.y, slot, vertices);
-    var r = slot.skeleton.r * slot.r * 255;
-    var g = slot.skeleton.g * slot.g * 255;
-    var b = slot.skeleton.b * slot.b * 255;
-    var normalizedAlpha = slot.skeleton.a * slot.a;
+    self.computeVertices(slot.bone.skeleton.x, slot.bone.skeleton.y, slot.bone, vertices);
+    var r = slot.bone.skeleton.r * slot.r * 255;
+    var g = slot.bone.skeleton.g * slot.g * 255;
+    var b = slot.bone.skeleton.b * slot.b * 255;
+    var normalizedAlpha = slot.bone.skeleton.a * slot.a;
+    
     if (premultipliedAlpha) {
         r *= normalizedAlpha;
         g *= normalizedAlpha;
@@ -118,11 +119,11 @@ sp._regionAttachment_updateQuad = function(self, slot, quad, premultipliedAlpha)
 
 sp._meshAttachment_updateQuad = function(self, slot, quad, premultipliedAlpha) {
     var vertices = {};
-    self.computeVertices(slot.skeleton.x, slot.skeleton.y, slot, vertices);
-    var r = slot.skeleton.r * slot.r * 255;
-    var g = slot.skeleton.g * slot.g * 255;
-    var b = slot.skeleton.b * slot.b * 255;
-    var normalizedAlpha = slot.skeleton.a * slot.a;
+    self.computeVertices(slot.bone.x, slot.bone.y, slot.bone, vertices);
+    var r = slot.bone.skeleton.r * slot.r * 255;
+    var g = slot.bone.skeleton.g * slot.g * 255;
+    var b = slot.bone.skeleton.b * slot.b * 255;
+    var normalizedAlpha = slot.bone.skeleton.a * slot.a;
     if (premultipliedAlpha) {
         r *= normalizedAlpha;
         g *= normalizedAlpha;
@@ -160,7 +161,7 @@ sp._regionAttachment_updateSlotForCanvas = function(self, slot, points) {
         return;
 
     var vertices = {};
-    self.computeVertices(slot.skeleton.x, slot.skeleton.y, slot, vertices);
+    self.computeVertices(slot.bone.x, slot.bone.y, slot.bone, vertices);
     var VERTEX = sp.VERTEX_INDEX;
     points.length = 0;
     points.push(cc.p(vertices[VERTEX.X1], vertices[VERTEX.Y1]));
