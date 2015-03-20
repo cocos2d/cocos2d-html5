@@ -26,11 +26,12 @@ ccs._load = (function(){
 
     /**
      * load file
-     * @param file
-     * @param type - ccui|node|action
+     * @param {String} file
+     * @param {String} [type=] - ccui|node|action
+     * @param {String} [path=] - Resource search path
      * @returns {*}
      */
-    var load = function(file, type){
+    var load = function(file, type, path){
 
         var json = cc.loader.getRes(file);
 
@@ -71,7 +72,7 @@ ccs._load = (function(){
             return new cc.Node();
         }
 
-        return currentParser.parse(file, json) || null;
+        return currentParser.parse(file, json, path) || null;
     };
 
     var parser = {
@@ -176,16 +177,17 @@ ccs._parser = cc.Class.extend({
  *   action 1.* - 2.*
  *   scene 0.* - 1.*
  * @param {String} file
+ * @param {String} [path=] Resource path
  * @returns {{node: cc.Node, action: cc.Action}}
  */
-ccs.load = function(file){
+ccs.load = function(file, path){
     var object = {
         node: null,
         action: null
     };
 
-    object.node = ccs._load(file);
-    object.action = ccs._load(file, "action");
+    object.node = ccs._load(file, null, path);
+    object.action = ccs._load(file, "action", path);
     if(object.action && object.action.tag === -1 && object.node)
         object.action.tag = object.node.tag;
     return object;
