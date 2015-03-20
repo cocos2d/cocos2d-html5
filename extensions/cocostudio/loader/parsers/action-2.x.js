@@ -52,7 +52,7 @@
                 if(parser)
                     frame = parser.call(self, timeline, resourcePath);
                 else
-                    cc.log("parser is not exists : %s", timeline["Property"]);
+                    cc.log("parser does not exist : %s", timeline["Property"]);
                 if(frame)
                     action.addTimeline(frame);
             });
