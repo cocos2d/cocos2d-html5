@@ -16,7 +16,15 @@ Documentation
    * Website: [www.cocos2d-x.org][3]
    * API References: [http://www.cocos2d-x.org/wiki/Reference] [4]
 
-Running the tests
+
+Installing from [bower.io][5] (version >=3.4)
+------------------
+
+```shell
+$ bower install cocos2d-html5
+
+
+Running the tests (version <3)
 ------------------
 
 ```shell
@@ -30,9 +38,9 @@ $ python -m SimpleHTTPServer
 
 Contact us
 ------------------
-   * Forum: [http://forum.cocos2d-x.org][5]
-   * Twitter: [http://www.twitter.com/cocos2dhtml5][6]
-   * Sina Microblog: [http://t.sina.com.cn/cocos2dhtml5][7]
+   * Forum: [http://forum.cocos2d-x.org][6]
+   * Twitter: [http://www.twitter.com/cocos2dhtml5][7]
+   * Sina Microblog: [http://t.sina.com.cn/cocos2dhtml5][8]
    
 [1]: http://www.cocos2d-x.org "Cocos2d-html5"
 [2]: http://www.cocos2d-x.org "Cocos2d-X"
