@@ -26,9 +26,9 @@ ccs._load = (function(){
 
     /**
      * load file
-     * @param file
-     * @param type - ccui|node|action
-     * @param path - Resource search path
+     * @param {String} file
+     * @param {String} [type=] - ccui|node|action
+     * @param {String} [path=] - Resource search path
      * @returns {*}
      */
     var load = function(file, type, path){
@@ -177,7 +177,7 @@ ccs._parser = cc.Class.extend({
  *   action 1.* - 2.*
  *   scene 0.* - 1.*
  * @param {String} file
- * @param {String} path Resource path
+ * @param {String} [path=] Resource path
  * @returns {{node: cc.Node, action: cc.Action}}
  */
 ccs.load = function(file, path){
