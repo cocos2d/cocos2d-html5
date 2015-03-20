@@ -313,7 +313,7 @@ cc.LayerColor.create = function (color, width, height) {
  * @property {Number}   startOpacity            - Start opacity of the color gradient
  * @property {Number}   endOpacity              - End opacity of the color gradient
  * @property {Number}   vector                  - Direction vector of the color gradient
- * @property {Number}   compresseInterpolation  - Indicate whether or not the interpolation will be compressed
+ * @property {Number}   compressedInterpolation  - Indicate whether or not the interpolation will be compressed
  */
 cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _endColor: null,
