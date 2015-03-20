@@ -371,7 +371,7 @@ cc.pRotateByAngle = function (v, pivot, angle) {
  * @return {Boolean}
  */
 cc.pLineIntersect = function (A, B, C, D, retP) {
-    if ((A.x == B.x && A.y == B.y) || (C.x == D.x && C.y == D.y)) {
+    if ((A.x === B.x && A.y === B.y) || (C.x === D.x && C.y === D.y)) {
         return false;
     }
     var BAx = B.x - A.x;
@@ -386,8 +386,8 @@ cc.pLineIntersect = function (A, B, C, D, retP) {
     retP.x = DCx * ACy - DCy * ACx;
     retP.y = BAx * ACy - BAy * ACx;
 
-    if (denom == 0) {
-        if (retP.x == 0 || retP.y == 0) {
+    if (denom === 0) {
+        if (retP.x === 0 || retP.y === 0) {
             // Lines incident
             return true;
         }
@@ -447,7 +447,7 @@ cc.pIntersectPoint = function (A, B, C, D) {
  */
 cc.pSameAs = function (A, B) {
     if ((A != null) && (B != null)) {
-        return (A.x == B.x && A.y == B.y);
+        return (A.x === B.x && A.y === B.y);
     }
     return false;
 };

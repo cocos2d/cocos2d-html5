@@ -115,7 +115,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
      * @param {String} text
      */
     setString: function (text) {
-        if(text == this._labelRenderer.getString())
+        if(text === this._labelRenderer.getString())
             return;
         this._labelRenderer.setString(text);
         this._updateContentSizeWithTextureSize(this._labelRenderer.getContentSize());
@@ -392,7 +392,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
      * @param glowColor
      */
     enableGlow: function(glowColor){
-        if (this._type == ccui.Text.Type.TTF)
+        if (this._type === ccui.Text.Type.TTF)
             this._labelRenderer.enableGlow(glowColor);
     },
 

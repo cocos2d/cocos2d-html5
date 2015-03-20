@@ -291,7 +291,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * @param {Number} newRotation
      */
     setRotation:function (newRotation) {
-        if (this._rotation == newRotation)
+        if (this._rotation === newRotation)
             return;
 
         this._rotationX = this._rotationY = newRotation;
@@ -360,7 +360,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         //if dom does not have parent, but node has no parent and its running
         if (this.dom && !this.dom.parentNode) {
             if (!this.getParent()) {
-                if(this.dom.id == ""){
+                if(this.dom.id === ""){
                     cc.DOM._createEGLViewDiv(this);
                 }else{
                     this.dom.appendTo(cc.container);
@@ -451,7 +451,7 @@ cc.DOM._resetEGLViewDiv = function(){
         div.style.margin = 0;
 
         div.resize(view.getScaleX()/pixelRatio, view.getScaleY()/pixelRatio);
-        if (view.getResolutionPolicy() == view._rpNoBorder) {
+        if (view.getResolutionPolicy() === view._rpNoBorder) {
             div.style.left = (view.getFrameSize().width - designSizeWidth)/2 + "px";
             div.style.bottom = (view.getFrameSize().height - designSizeHeight*view.getScaleY()/pixelRatio)/2 + "px";
         }
@@ -528,7 +528,7 @@ cc.DOM._createEGLViewDiv = function(p){
     div.style.margin = 0;
 
     div.resize(view.getScaleX()/pixelRatio, view.getScaleY()/pixelRatio);
-    if (view.getResolutionPolicy() == view._rpNoBorder) {
+    if (view.getResolutionPolicy() === view._rpNoBorder) {
         div.style.left = (screenSize.width - designSizeWidth)/2 + "px";
         div.style.bottom = (screenSize.height - designSizeHeight*view.getScaleY()/pixelRatio)/2 + "px";
     }
@@ -632,7 +632,7 @@ cc.DOM.convert = function (nodeObject) {
     if (arguments.length > 1) {
         cc.DOM.convert(arguments);
         return;
-    } else if (arguments.length == 1 && !arguments[0].length) {
+    } else if (arguments.length === 1 && !arguments[0].length) {
         cc.DOM.convert([arguments[0]]);
         return;
     }

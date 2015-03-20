@@ -33,7 +33,7 @@
         },
 
         addSpriteFrame: function(plists, pngs, resourcePath){
-            if(!plists || !pngs || plists.length != pngs.length)
+            if(!plists || !pngs || plists.length !== pngs.length)
                 return;
             for (var i = 0; i < plists.length; i++) {
                 var plist = resourcePath + plists[i];
@@ -142,7 +142,7 @@
                             widget.pushBackCustomItem(child);
                     } else {
                         if(!(widget instanceof ccui.Layout) && child instanceof ccui.Widget) {
-                            if(child.getPositionType() == ccui.Widget.POSITION_PERCENT) {
+                            if(child.getPositionType() === ccui.Widget.POSITION_PERCENT) {
                                 var position = child.getPositionPercent();
                                 var anchor = widget.getAnchorPoint();
                                 child.setPositionPercent(cc.p(position.x + anchor.x, position.y + anchor.y));
@@ -167,7 +167,7 @@
         var filePath = options["fileName"];
 
         var node;
-        if (filePath && "" != filePath){
+        if (filePath && "" !== filePath){
             node = this.createNode(filePath);
         }else{
             node = new ccs.Node();
@@ -219,9 +219,9 @@
         var path = options["resourcePath"];
 
         var tmx = null;
-        if (tmxFile && "" != tmxFile){
+        if (tmxFile && "" !== tmxFile){
             tmx = new cc.TMXTiledMap(tmxFile);
-        }else if (tmxString && "" != tmxString && path && "" != path){
+        }else if (tmxString && "" !== tmxString && path && "" !== path){
             tmx = new cc.TMXTiledMap(tmxString, path);
         }
         return tmx;

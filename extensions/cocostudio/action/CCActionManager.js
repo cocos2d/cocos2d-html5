@@ -67,7 +67,7 @@ ccs.actionManager = /** @lends ccs.actionManager# */{
             return null;
         for (var i = 0; i < actionList.length; i++) {
             var locAction = actionList[i];
-            if (actionName == locAction.getName())
+            if (actionName === locAction.getName())
                 return locAction;
         }
         return null;

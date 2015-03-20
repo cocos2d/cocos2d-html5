@@ -347,7 +347,7 @@
 
         _syncPosition:function () {
             var locPosition = this._position, locBody = this._body;
-            if (locPosition.x != locBody.p.x || locPosition.y != locBody.p.y) {
+            if (locPosition.x !== locBody.p.x || locPosition.y !== locBody.p.y) {
                 cc.Sprite.prototype.setPosition.call(this, locBody.p.x, locBody.p.y);
             }
         },
@@ -373,7 +373,7 @@
             }
         },
         _syncRotation:function () {
-            if (this._rotationX != -cc.radiansToDegrees(this._body.a)) {
+            if (this._rotationX !== -cc.radiansToDegrees(this._body.a)) {
                 cc.Sprite.prototype.setRotation.call(this, -cc.radiansToDegrees(this._body.a));
             }
         },

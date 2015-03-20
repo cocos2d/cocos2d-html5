@@ -80,7 +80,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
      * @param {ccui.LoadingBar.TYPE_LEFT | ccui.LoadingBar.TYPE_RIGHT} dir
      */
     setDirection: function (dir) {
-        if (this._direction == dir)
+        if (this._direction === dir)
             return;
         this._direction = dir;
         switch (this._direction) {
@@ -171,7 +171,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
      */
     setScale9Enabled: function (enabled) {
         //todo use setScale9Enabled
-        if (this._scale9Enabled == enabled)
+        if (this._scale9Enabled === enabled)
             return;
         this._scale9Enabled = enabled;
         this.removeProtectedChild(this._barRenderer);
@@ -233,7 +233,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
             percent = 100;
         if(percent < 0)
             percent = 0;
-        if (percent == this._percent)
+        if (percent === this._percent)
             return;
         this._percent = percent;
         if (this._totalLength <= 0)

@@ -298,10 +298,10 @@ ccs.TweenFunction.quintEaseInOut = function (time) {
 
 // Expo Ease
 ccs.TweenFunction.expoEaseIn = function (time) {
-    return time == 0 ? 0 : Math.pow(2, 10 * (time - 1)) - 0.001;
+    return time === 0 ? 0 : Math.pow(2, 10 * (time - 1)) - 0.001;
 };
 ccs.TweenFunction.expoEaseOut = function (time) {
-    return time == 1 ? 1 : (-Math.pow(2, -10 * time) + 1);
+    return time === 1 ? 1 : (-Math.pow(2, -10 * time) + 1);
 };
 ccs.TweenFunction.expoEaseInOut = function (time) {
     time /= 0.5;
@@ -342,7 +342,7 @@ ccs.TweenFunction.elasticEaseIn = function (time, easingParam) {
     }
 
     var newT = 0;
-    if (time == 0 || time == 1) {
+    if (time === 0 || time === 1) {
         newT = time;
     }
     else {
@@ -361,7 +361,7 @@ ccs.TweenFunction.elasticEaseOut = function (time, easingParam) {
     }
 
     var newT = 0;
-    if (time == 0 || time == 1) {
+    if (time === 0 || time === 1) {
         newT = time;
     }
     else {
@@ -379,7 +379,7 @@ ccs.TweenFunction.elasticEaseInOut = function (time, easingParam) {
     }
 
     var newT = 0;
-    if (time == 0 || time == 1) {
+    if (time === 0 || time === 1) {
         newT = time;
     }
     else {

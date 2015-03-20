@@ -227,11 +227,11 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         }
 
         var locContainer = this._container;
-        if (locContainer.getScale() != scale) {
+        if (locContainer.getScale() !== scale) {
             var oldCenter, newCenter;
             var center;
 
-            if (this._touchLength == 0.0) {
+            if (this._touchLength === 0.0) {
                 var locViewSize = this._viewSize;
                 center = cc.p(locViewSize.width * 0.5, locViewSize.height * 0.5);
                 center = this.convertToWorldSpace(center);
@@ -262,7 +262,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
     setZoomScaleInDuration:function (s, dt) {
         if (dt > 0) {
             var locScale = this._container.getScale();
-            if (locScale != s) {
+            if (locScale !== s) {
                 var scaleAction = cc.actionTween(dt, "zoomScale", locScale, s);
                 this.runAction(scaleAction);
             }
@@ -421,7 +421,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
             this._scrollDistance.x = 0;
             this._scrollDistance.y = 0;
             this._touchLength = 0.0;
-        } else if (locTouches.length == 2) {
+        } else if (locTouches.length === 2) {
             this._touchPoint = cc.pMidpoint(this.convertTouchToNodeSpace(locTouches[0]),
                 this.convertTouchToNodeSpace(locTouches[1]));
             this._touchLength = cc.pDistance(locContainer.convertTouchToNodeSpace(locTouches[0]),
@@ -514,7 +514,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         if (!this.isVisible())
             return;
 
-        if (this._touches.length == 1 && this._touchMoved)
+        if (this._touches.length === 1 && this._touchMoved)
             this.schedule(this._deaccelerateScrolling);
 
         this._touches.length = 0;
@@ -532,7 +532,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
     },
 
     setContentSize: function (size, height) {
-        if (this.getContainer() != null) {
+        if (this.getContainer() !== null) {
             if(height === undefined)
                 this.getContainer().setContentSize(size);
             else
@@ -542,14 +542,14 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
     },
 	_setWidth: function (value) {
 		var container = this.getContainer();
-		if (container != null) {
+		if (container !== null) {
 			container._setWidth(value);
 			this.updateInset();
 		}
 	},
 	_setHeight: function (value) {
 		var container = this.getContainer();
-		if (container != null) {
+		if (container !== null) {
 			container._setHeight(value);
 			this.updateInset();
 		}
@@ -560,7 +560,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
     },
 
     updateInset:function () {
-        if (this.getContainer() != null) {
+        if (this.getContainer() !== null) {
             var locViewSize = this._viewSize;
             var tempOffset = this.maxContainerOffset();
             this._maxInset.x = tempOffset.x + locViewSize.width * INSET_RATIO;
@@ -599,7 +599,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
 
         //child.ignoreAnchorPointForPosition(false);
         //child.setAnchorPoint(0, 0);
-        if (this._container != child) {
+        if (this._container !== child) {
             this._container.addChild(child, zOrder, tag);
         } else {
             cc.Layer.prototype.addChild.call(this, child, zOrder, tag);
@@ -607,7 +607,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
     },
 
     isTouchEnabled: function(){
-        return this._touchListener != null;
+        return this._touchListener !== null;
     },
 
     setTouchEnabled:function (e) {
@@ -663,12 +663,12 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
             newX = Math.min(newX, max.x);
         }
 
-        if (locDirection == cc.SCROLLVIEW_DIRECTION_BOTH || locDirection == cc.SCROLLVIEW_DIRECTION_VERTICAL) {
+        if (locDirection === cc.SCROLLVIEW_DIRECTION_BOTH || locDirection === cc.SCROLLVIEW_DIRECTION_VERTICAL) {
             newY = Math.min(newY, max.y);
             newY = Math.max(newY, min.y);
         }
 
-        if (newY != oldPoint.y || newX != oldPoint.x) {
+        if (newY !== oldPoint.y || newX !== oldPoint.x) {
             this.setContentOffset(cc.p(newX, newY), animated);
         }
     },
@@ -709,8 +709,8 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
             Math.abs(locScrollDistance.y) <= SCROLL_DEACCEL_DIST) ||
             newY > maxInset.y || newY < minInset.y ||
             newX > maxInset.x || newX < minInset.x ||
-            newX == maxInset.x || newX == minInset.x ||
-            newY == maxInset.y || newY == minInset.y) {
+            newX === maxInset.x || newX === minInset.x ||
+            newY === maxInset.y || newY === minInset.y) {
             this.unschedule(this._deaccelerateScrolling);
             this._relocateContainer(true);
         }

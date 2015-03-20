@@ -240,7 +240,7 @@ cc.glBindTexture2D = function (textureId) {
  * @param {cc.Texture2D} textureId
  */
 cc.glBindTexture2DN = function (textureUnit, textureId) {
-    if (cc._currentBoundTexture[textureUnit] == textureId)
+    if (cc._currentBoundTexture[textureUnit] === textureId)
         return;
     cc._currentBoundTexture[textureUnit] = textureId;
 
@@ -281,7 +281,7 @@ cc.glDeleteTexture = function (textureId) {
  */
 cc.glDeleteTextureN = function (textureUnit, textureId) {
     if (cc.ENABLE_GL_STATE_CACHE) {
-        if (textureId == cc._currentBoundTexture[ textureUnit ])
+        if (textureId === cc._currentBoundTexture[ textureUnit ])
             cc._currentBoundTexture[ textureUnit ] = -1;
     }
     cc._renderContext.deleteTexture(textureId);
@@ -298,7 +298,7 @@ cc.glBindVAO = function (vaoId) {
         return;
 
     if (cc.ENABLE_GL_STATE_CACHE) {
-        if (cc._uVAO != vaoId) {
+        if (cc._uVAO !== vaoId) {
             cc._uVAO = vaoId;
             //TODO need fixed
             //glBindVertexArray(vaoId);

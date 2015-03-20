@@ -120,7 +120,7 @@
         cc.kmMat4Multiply(stackMatrix, parentMatrix, t4x4);
 
         // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
-        if (node._camera != null && !(node.grid != null && node.grid.isActive())) {
+        if (node._camera !== null && !(node.grid !== null && node.grid.isActive())) {
             var apx = this._anchorPointInPoints.x, apy = this._anchorPointInPoints.y;
             var translate = (apx !== 0.0 || apy !== 0.0);
             if (translate){

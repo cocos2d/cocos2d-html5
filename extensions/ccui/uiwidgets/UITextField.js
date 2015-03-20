@@ -61,7 +61,7 @@ ccui._TextFieldRenderer = cc.TextFieldTTF.extend({
     },
 
     onTextFieldInsertText: function (sender, text, len) {
-        if (len == 1 && text == "\n")
+        if (len === 1 && text === "\n")
             return false;
 
         this.setInsertText(true);
@@ -81,7 +81,7 @@ ccui._TextFieldRenderer = cc.TextFieldTTF.extend({
     insertText: function (text, len) {
         var input_text = text;
 
-        if (text != "\n"){
+        if (text !== "\n"){
             if (this._maxLengthEnabled){
                 var text_count = this.getString().length;
                 if (text_count >= this._maxLength){

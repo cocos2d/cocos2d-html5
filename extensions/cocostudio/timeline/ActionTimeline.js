@@ -368,7 +368,7 @@ ccs.ActionTimeline = cc.Action.extend({
      * @param {number} delta
      */
     step: function(delta){
-        if (!this._playing || this._timelineMap.length == 0 || this._duration == 0)
+        if (!this._playing || this._timelineMap.length === 0 || this._duration === 0)
         {
             return;
         }

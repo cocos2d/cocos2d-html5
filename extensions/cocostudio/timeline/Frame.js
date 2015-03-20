@@ -320,7 +320,7 @@ ccs.RotationFrame = ccs.Frame.extend({
      * @param {number} percent
      */
     apply: function(percent){
-        if (this._tween && this._betwennRotation != 0){
+        if (this._tween && this._betwennRotation !== 0){
             var rotation = this._rotation + percent * this._betwennRotation;
             this._node.setRotation(rotation);
         }
@@ -406,7 +406,7 @@ ccs.SkewFrame = ccs.Frame.extend({
      * @param {number} percent
      */
     apply: function(percent){
-        if (this._tween && (this._betweenSkewX != 0 || this._betweenSkewY != 0))
+        if (this._tween && (this._betweenSkewX !== 0 || this._betweenSkewY !== 0))
         {
             var skewx = this._skewX + percent * this._betweenSkewX;
             var skewy = this._skewY + percent * this._betweenSkewY;
@@ -504,7 +504,7 @@ ccs.RotationSkewFrame = ccs.SkewFrame.extend({
      * @param {number} percent
      */
     apply: function(percent){
-        if (this._tween && (this._betweenSkewX != 0 || this._betweenSkewY != 0)){
+        if (this._tween && (this._betweenSkewX !== 0 || this._betweenSkewY !== 0)){
             var skewx = this._skewX + percent * this._betweenSkewX;
             var skewy = this._skewY + percent * this._betweenSkewY;
 
@@ -576,7 +576,7 @@ ccs.PositionFrame = ccs.Frame.extend({
      * @param {number} percent
      */
     apply: function(percent){
-        if (this._tween && (this._betweenX != 0 || this._betweenY != 0)){
+        if (this._tween && (this._betweenX !== 0 || this._betweenY !== 0)){
             var p = cc.p(0, 0);
             p.x = this._position.x + this._betweenX * percent;
             p.y = this._position.y + this._betweenY * percent;
@@ -697,7 +697,7 @@ ccs.ScaleFrame = ccs.Frame.extend({
      * @param {number} percent
      */
     apply: function(percent){
-        if (this._tween && (this._betweenScaleX != 0 || this._betweenScaleY != 0)){
+        if (this._tween && (this._betweenScaleX !== 0 || this._betweenScaleY !== 0)){
             var scaleX = this._scaleX + this._betweenScaleX * percent;
             var scaleY = this._scaleY + this._betweenScaleY * percent;
 
@@ -877,7 +877,7 @@ ccs.InnerActionFrame = ccs.Frame.extend({
      */
     onEnter: function(nextFrame){
         var innerActiontimeline = this._node.getActionByTag(this._node.getTag());
-        if (/*ccs.InnerActionType.SingleFrame*/"SingleFrame" == this._innerActionType){
+        if (/*ccs.InnerActionType.SingleFrame*/"SingleFrame" === this._innerActionType){
             innerActiontimeline.gotoFrameAndPause(this._singleFrameIndex);
             return;
         }
@@ -885,7 +885,7 @@ ccs.InnerActionFrame = ccs.Frame.extend({
         var innerStart = this._startFrameIndex;
         var innerEnd = this._endFrameIndex;
         if (this._enterWithName){
-            if (this._animationName == "-- ALL --"){
+            if (this._animationName === "-- ALL --"){
                 innerStart = 0;
                 innerEnd = innerActiontimeline.getDuration();
             } else if(innerActiontimeline.IsAnimationInfoExists(this._animationName)) {
@@ -903,9 +903,9 @@ ccs.InnerActionFrame = ccs.Frame.extend({
             innerEnd += odddiff;
         }
 
-        if (ccs.InnerActionType.NoLoopAction == this._innerActionType){
+        if (ccs.InnerActionType.NoLoopAction === this._innerActionType){
             innerActiontimeline.gotoFrameAndPlay(innerStart, innerEnd, false);
-        }else if (ccs.InnerActionType.LoopAction == this._innerActionType){
+        }else if (ccs.InnerActionType.LoopAction === this._innerActionType){
             innerActiontimeline.gotoFrameAndPlay(innerStart, innerEnd, true);
         }
     },
@@ -1034,7 +1034,7 @@ ccs.ColorFrame = ccs.Frame.extend({
      * @param {number} percent
      */
     apply: function(percent){
-        if (this._tween && (this._betweenAlpha !=0 || this._betweenRed != 0 || this._betweenGreen != 0 || this._betweenBlue != 0)){
+        if (this._tween && (this._betweenAlpha !== 0 || this._betweenRed !== 0 || this._betweenGreen !== 0 || this._betweenBlue !== 0)){
 
             var color = cc.color(255, 255, 255);
             color.r = this._color.r + this._betweenRed   * percent;
@@ -1042,7 +1042,7 @@ ccs.ColorFrame = ccs.Frame.extend({
             color.b = this._color.b + this._betweenBlue  * percent;
 
             this._node.setColor(color);
-            if(this._alpha != null){
+            if(this._alpha !== null){
                 var alpha = this._alpha + this._betweenAlpha * percent;
                 this._node.setOpacity(alpha);
             }

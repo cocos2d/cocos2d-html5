@@ -162,7 +162,7 @@ cc.EventListener = cc.Class.extend(/** @lends cc.EventListener# */{
      * @returns {boolean}
      */
     checkAvailable: function () {
-        return this._onEvent != null;
+        return this._onEvent !== null;
     },
 
     /**
@@ -288,7 +288,7 @@ cc._EventListenerCustom = cc.EventListener.extend({
         this._onCustomEvent = callback;
         var selfPointer = this;
         var listener = function (event) {
-            if (selfPointer._onCustomEvent != null)
+            if (selfPointer._onCustomEvent !== null)
                 selfPointer._onCustomEvent(event);
         };
 
@@ -296,7 +296,7 @@ cc._EventListenerCustom = cc.EventListener.extend({
     },
 
     checkAvailable: function () {
-        return (cc.EventListener.prototype.checkAvailable.call(this) && this._onCustomEvent != null);
+        return (cc.EventListener.prototype.checkAvailable.call(this) && this._onCustomEvent !== null);
     },
 
     clone: function () {
@@ -428,8 +428,8 @@ cc._EventListenerTouchAllAtOnce = cc.EventListener.extend({
     },
 
     checkAvailable: function(){
-        if (this.onTouchesBegan == null && this.onTouchesMoved == null
-            && this.onTouchesEnded == null && this.onTouchesCancelled == null) {
+        if (this.onTouchesBegan === null && this.onTouchesMoved === null
+            && this.onTouchesEnded === null && this.onTouchesCancelled === null) {
             cc.log(cc._LogInfos._EventListenerTouchAllAtOnce_checkAvailable);
             return false;
         }

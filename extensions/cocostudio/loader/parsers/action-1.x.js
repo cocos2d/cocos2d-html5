@@ -55,7 +55,7 @@
                 if(frame)
                     action.addTimeline(frame);
 
-                if(timeline["frameType"] == "ColorFrame"){
+                if(timeline["frameType"] === "ColorFrame"){
                     action.addTimeline(
                         self.parsers["AlphaFrame"].call(self, timeline, resourcePath)
                     );

@@ -57,7 +57,7 @@
 
     proto._setTexture = function (texture) {
         var node = this._node;
-        if (node._texture != texture) {
+        if (node._texture !== texture) {
             if (texture) {
                 if(texture.getHtmlElementObj() instanceof  HTMLImageElement)
                     this._originalTexture = texture;
@@ -75,7 +75,7 @@
 
     proto.isFrameDisplayed = function (frame) {      //TODO there maybe has a bug
         var node = this._node;
-        if (frame.getTexture() != node._texture)
+        if (frame.getTexture() !== node._texture)
             return false;
         return cc.rectEqualToRect(frame.getRect(), node._rect);
     };
@@ -141,7 +141,7 @@
 
         if (node._texture) {
             image = node._texture._htmlElementObj;
-            if (node._texture._pattern != "") {
+            if (node._texture._pattern !== "") {
                 wrapper.setFillStyle(context.createPattern(image, node._texture._pattern));
                 context.fillRect(locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
             } else {
@@ -221,7 +221,7 @@
 
                 this._colorized = true;
                 if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor
-                    && this._originalTexture._htmlElementObj != locElement)
+                    && this._originalTexture._htmlElementObj !== locElement)
                     cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(this._originalTexture._htmlElementObj, displayedColor, locRect, locElement);
                 else {
                     locElement = cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(this._originalTexture._htmlElementObj, displayedColor, locRect);
@@ -260,12 +260,12 @@
         if (node.dirty) {
             // If it is not visible, or one of its ancestors is not visible, then do nothing:
             var locParent = node._parent;
-            if (!node._visible || ( locParent && locParent != node._batchNode && locParent._shouldBeHidden)) {
+            if (!node._visible || ( locParent && locParent !== node._batchNode && locParent._shouldBeHidden)) {
                 node._shouldBeHidden = true;
             } else {
                 node._shouldBeHidden = false;
 
-                if (!locParent || locParent == node._batchNode) {
+                if (!locParent || locParent === node._batchNode) {
                     node._transformToBatch = _t.getNodeToParentTransform();
                 } else {
                     //cc.assert(_t._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
@@ -314,7 +314,7 @@
 
         //set the texture's color after the it loaded
         var locColor = locRenderCmd._displayedColor;
-        if (locColor.r != 255 || locColor.g != 255 || locColor.b != 255)
+        if (locColor.r !== 255 || locColor.g !== 255 || locColor.b !== 255)
             locRenderCmd._updateColor();
 
         // by default use "Self Render".
@@ -348,7 +348,7 @@
         renderCanvas = renderCanvas || cc.newElement("canvas");
         rect = rect || cc.rect(0, 0, image.width, image.height);
         var context = renderCanvas.getContext("2d");
-        if (renderCanvas.width != rect.width || renderCanvas.height != rect.height) {
+        if (renderCanvas.width !== rect.width || renderCanvas.height !== rect.height) {
             renderCanvas.width = rect.width;
             renderCanvas.height = rect.height;
         } else {

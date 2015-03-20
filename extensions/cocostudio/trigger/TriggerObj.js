@@ -140,7 +140,7 @@ ccs.TriggerObj = ccs.Class.extend(/** @lends ccs.TriggerObj# */{
      * @returns {boolean}
      */
     detect: function () {
-        if (!this._enable || this._cons.length == 0) {
+        if (!this._enable || this._cons.length === 0) {
             return true;
         }
         var ret = true;
@@ -157,7 +157,7 @@ ccs.TriggerObj = ccs.Class.extend(/** @lends ccs.TriggerObj# */{
      * Sets trigger's actions to done.
      */
     done: function () {
-        if (!this._enable || this._acts.length == 0)
+        if (!this._enable || this._acts.length === 0)
             return;
         var obj;
         for (var i = 0; i < this._acts.length; i++) {

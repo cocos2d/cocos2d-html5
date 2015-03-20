@@ -176,7 +176,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         /*
          * Check if file is already added to ArmatureDataManager, if then return.
          */
-        if (this._configFileList.indexOf(filePath) != -1)
+        if (this._configFileList.indexOf(filePath) !== -1)
             return;
         this._configFileList.push(filePath);
 
@@ -191,11 +191,11 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         var dataInfo = new ccs.DataInfo();
         dataInfo.filename = filePath;
         dataInfo.basefilePath = basefilePath;
-        if (str == ".xml")
+        if (str === ".xml")
             ccs.dataReaderHelper.addDataFromXML(filePath, dataInfo);
-        else if (str == ".json" || str == ".exportjson")
+        else if (str === ".json" || str === ".exportjson")
             ccs.dataReaderHelper.addDataFromJson(filePath, dataInfo);
-        else if(str == ".csb")
+        else if(str === ".csb")
             ccs.dataReaderHelper.addDataFromBinaryCache(filePath, dataInfo);
     },
 
@@ -211,9 +211,9 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         /*
          * Check if file is already added to ArmatureDataManager, if then return.
          */
-        if (this._configFileList.indexOf(filePath) != -1) {
+        if (this._configFileList.indexOf(filePath) !== -1) {
             if (target && selector) {
-                if (this._asyncRefTotalCount == 0 && this._asyncRefCount == 0)
+                if (this._asyncRefTotalCount === 0 && this._asyncRefCount === 0)
                     this._asyncCallBack(selector,target, 1);
                 else
                     this._asyncCallBack(selector, target, (this._asyncRefTotalCount - this._asyncRefCount) / this._asyncRefTotalCount);
@@ -246,11 +246,11 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         var len = locFileList.length;
         var it = locFileList[len];
         for (var i = 0;i<len; i++){
-            if (locFileList[i] == configFile)
+            if (locFileList[i] === configFile)
                 it = i;
         }
 
-        if (it != locFileList[len])
+        if (it !== locFileList[len])
             cc.arrayRemoveObject(locFileList, configFile);
     },
 
@@ -411,7 +411,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         var isArmature = parseFloat(displayXML.getAttribute(ccs.CONST_A_IS_ARMATURE)) || 0;
         var displayData = null;
 
-        if (isArmature == 1) {
+        if (isArmature === 1) {
             displayData = new ccs.ArmatureDisplayData();
             displayData.displayType = ccs.DISPLAY_TYPE_ARMATURE;
         } else {
@@ -559,7 +559,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         if (easing) {
             if (easing != ccs.CONST_FL_NAN) {
                 tweenEasing = easing == null ? 0 : parseFloat(easing);
-                movementData.tweenEasing = tweenEasing == 2 ? ccs.TweenType.sineEaseInOut : tweenEasing;
+                movementData.tweenEasing = tweenEasing === 2 ? ccs.TweenType.sineEaseInOut : tweenEasing;
             } else
                 movementData.tweenEasing = ccs.TweenType.linear;
         }
@@ -577,10 +577,10 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             var parentName = boneData.parentName;
 
             var parentXML = null;
-            if (parentName != "") {
+            if (parentName !== "") {
                 for (var j = 0; j < movBonesXml.length; j++) {
                     parentXML = movBonesXml[j];
-                    if (parentName == parentXML.getAttribute(ccs.CONST_A_NAME))
+                    if (parentName === parentXML.getAttribute(ccs.CONST_A_NAME))
                         break;
                 }
             }
@@ -790,7 +790,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         frameData.soundEffect = frameData.strSoundEffect;
 
         var isTween = frameXML.getAttribute(ccs.CONST_A_TWEEN_FRAME);
-        frameData.isTween = !(isTween != undefined && isTween == "false");
+        frameData.isTween = !(isTween != undefined && isTween === "false");
 
         if (dataInfo.flashToolVersion >= ccs.CONST_VERSION_2_0) {
             x = frameXML.getAttribute(ccs.CONST_A_COCOS2DX_X);
@@ -898,7 +898,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             if(_easing != ccs.CONST_FL_NAN){
                 tweenEasing = frameXML.getAttribute(ccs.CONST_A_TWEEN_EASING);
                 if( tweenEasing )
-                    frameData.tweenEasing = (tweenEasing == 2) ? ccs.TweenType.sineEaseInOut : tweenEasing;
+                    frameData.tweenEasing = (tweenEasing === 2) ? ccs.TweenType.sineEaseInOut : tweenEasing;
             } else
                 frameData.tweenEasing = ccs.TweenType.linear;
         }

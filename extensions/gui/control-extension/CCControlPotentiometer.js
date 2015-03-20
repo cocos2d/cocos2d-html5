@@ -99,7 +99,7 @@ cc.ControlPotentiometer = cc.Control.extend(/** @lends cc.ControlPotentiometer# 
 
     setEnabled:function (enabled) {
         this.setEnabled(enabled);
-        if (this._thumbSprite != NULL) {
+        if (this._thumbSprite !== null) {
             this._thumbSprite.setOpacity((enabled) ? 255 : 128);
         }
     },

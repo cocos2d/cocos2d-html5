@@ -250,7 +250,7 @@ ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
         }
 
         if (isEnd){
-            if (this._callback != null)
+            if (this._callback !== null)
                 this._callback.execute();
             if (this._loop)
                 this.play();

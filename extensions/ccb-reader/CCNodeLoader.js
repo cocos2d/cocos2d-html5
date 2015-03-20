@@ -89,9 +89,9 @@ cc.NodeLoader = cc.Class.extend({
                     node = node.getCCBFileNode();
                     //skip properties that doesn't have a value to override
                     var getExtraPropsNames = node.userObject;
-                    setProp = getExtraPropsNames.indexOf(propertyName) != -1;
+                    setProp = getExtraPropsNames.indexOf(propertyName) !== -1;
                 }
-            } else if(isExtraProp && node == ccbReader.getAnimationManager().getRootNode()){
+            } else if(isExtraProp && node === ccbReader.getAnimationManager().getRootNode()){
                 var extraPropsNames = node.userObject;
                 if(!extraPropsNames){
                     extraPropsNames = [];
@@ -418,7 +418,7 @@ cc.NodeLoader = cc.Class.extend({
             ccbReader.getAnimationManager().setBaseValue([x,y,type],node,propertyName);
         }
 
-        if (type == CCB_SCALETYPE_MULTIPLY_RESOLUTION) {
+        if (type === CCB_SCALETYPE_MULTIPLY_RESOLUTION) {
             x *= cc.BuilderReader.getResolutionScale();
             y *= cc.BuilderReader.getResolutionScale();
         }
@@ -443,7 +443,7 @@ cc.NodeLoader = cc.Class.extend({
 
         var type = ccbReader.readInt(false);
 
-        if (type == CCB_SCALETYPE_MULTIPLY_RESOLUTION) {
+        if (type === CCB_SCALETYPE_MULTIPLY_RESOLUTION) {
             f *= cc.BuilderReader.getResolutionScale();
         }
 
@@ -477,8 +477,8 @@ cc.NodeLoader = cc.Class.extend({
         var spriteFile =  ccbReader.readCachedString();
 
         var spriteFrame;
-        if(spriteFile != null && spriteFile.length != 0){
-            if(spriteSheet.length == 0){
+        if(spriteFile != null && spriteFile.length !== 0){
+            if(spriteSheet.length === 0){
                 spriteFile = ccbReader.getCCBRootPath() + spriteFile;
                 var texture = cc.textureCache.addImage(spriteFile);
 
@@ -489,7 +489,7 @@ cc.NodeLoader = cc.Class.extend({
                 var frameCache = cc.spriteFrameCache;
                 spriteSheet = ccbReader.getCCBRootPath() + spriteSheet;
                 //load the sprite sheet only if it is not loaded
-                if(ccbReader.getLoadedSpriteSheet().indexOf(spriteSheet) == -1){
+                if(ccbReader.getLoadedSpriteSheet().indexOf(spriteSheet) === -1){
                     frameCache.addSpriteFrames(spriteSheet);
                     ccbReader.getLoadedSpriteSheet().push(spriteSheet);
                 }
@@ -517,7 +517,7 @@ cc.NodeLoader = cc.Class.extend({
         animation = cc.BuilderReader.lastPathComponent(animation);
         animationFile = cc.BuilderReader.lastPathComponent(animationFile);
 
-        if (animation != null && animation != "") {
+        if (animation != null && animation !== "") {
             var animationCache = cc.animationCache;
             animationCache.addAnimations(animationFile);
 
@@ -529,7 +529,7 @@ cc.NodeLoader = cc.Class.extend({
     parsePropTypeTexture:function (node, parent, ccbReader) {
         var spriteFile = ccbReader.getCCBRootPath() + ccbReader.readCachedString();
 
-        if(spriteFile != "")
+        if(spriteFile !== "")
             return cc.textureCache.addImage(spriteFile);
         return null;
     },
@@ -624,21 +624,21 @@ cc.NodeLoader = cc.Class.extend({
                     target = ccbReader.getOwner();
                 }
 
-                if (target != null) {
+                if (target !== null) {
                     if (selectorName.length > 0) {
                         var selMenuHandler = 0;
 
                         //var targetAsCCBSelectorResolver = target;
-                        if (target != null && target.onResolveCCBCCMenuItemSelector)
+                        if (target.onResolveCCBCCMenuItemSelector)
                             selMenuHandler = target.onResolveCCBCCMenuItemSelector(target, selectorName);
 
-                        if (selMenuHandler == 0) {
+                        if (selMenuHandler === 0) {
                             var ccbSelectorResolver = ccbReader.getCCBSelectorResolver();
                             if (ccbSelectorResolver != null)
                                 selMenuHandler = ccbSelectorResolver.onResolveCCBCCMenuItemSelector(target, selectorName);
                         }
 
-                        if (selMenuHandler == 0) {
+                        if (selMenuHandler === 0) {
                             cc.log("Skipping selector '" +selectorName+ "' since no CCBSelectorResolver is present.");
                         } else {
                             return new BlockData(selMenuHandler,target);
@@ -672,27 +672,27 @@ cc.NodeLoader = cc.Class.extend({
         if (selectorTarget !== CCB_TARGETTYPE_NONE) {
             if(!ccbReader.isJSControlled()){
                 var target = null;
-                if (selectorTarget == CCB_TARGETTYPE_DOCUMENTROOT) {
+                if (selectorTarget === CCB_TARGETTYPE_DOCUMENTROOT) {
                     target = ccbReader.getAnimationManager().getRootNode();
-                } else if (selectorTarget == CCB_TARGETTYPE_OWNER) {
+                } else if (selectorTarget === CCB_TARGETTYPE_OWNER) {
                     target = ccbReader.getOwner();
                 }
 
-                if (target != null) {
+                if (target !== null) {
                     if (selectorName.length > 0) {
                         var selCCControlHandler = 0;
 
-                        if (target != null && target.onResolveCCBCCControlSelector) {
+                        if (target.onResolveCCBCCControlSelector) {
                             selCCControlHandler = target.onResolveCCBCCControlSelector(target, selectorName);
                         }
-                        if (selCCControlHandler == 0) {
+                        if (selCCControlHandler === 0) {
                             var ccbSelectorResolver = ccbReader.getCCBSelectorResolver();
                             if (ccbSelectorResolver != null) {
                                 selCCControlHandler = ccbSelectorResolver.onResolveCCBCCControlSelector(target, selectorName);
                             }
                         }
 
-                        if (selCCControlHandler == 0) {
+                        if (selCCControlHandler === 0) {
                             cc.log("Skipping selector '" + selectorName + "' since no CCBSelectorResolver is present.");
                         } else {
                             return new BlockCCControlData(selCCControlHandler,target,controlEvents);
@@ -704,7 +704,7 @@ cc.NodeLoader = cc.Class.extend({
                     cc.log("Unexpected NULL target for selector.");
                 }
             } else {
-                if(selectorTarget == CCB_TARGETTYPE_DOCUMENTROOT){
+                if(selectorTarget === CCB_TARGETTYPE_DOCUMENTROOT){
                     ccbReader.addDocumentCallbackNode(node);
                     ccbReader.addDocumentCallbackName(selectorName);
                     ccbReader.addDocumentCallbackControlEvents(controlEvents);
@@ -740,10 +740,9 @@ cc.NodeLoader = cc.Class.extend({
 
         myCCBReader.getAnimationManager().setOwner(ccbReader.getOwner());
         var ccbFileNode = myCCBReader.readFileWithCleanUp(false);
-
         ccbReader.setAnimationManagers(myCCBReader.getAnimationManagers());
 
-        if(ccbFileNode && myCCBReader.getAnimationManager().getAutoPlaySequenceId() != -1)
+        if(ccbFileNode && myCCBReader.getAnimationManager().getAutoPlaySequenceId() !== -1)
             myCCBReader.getAnimationManager().runAnimations(myCCBReader.getAnimationManager().getAutoPlaySequenceId(),0);
 
         return ccbFileNode;
