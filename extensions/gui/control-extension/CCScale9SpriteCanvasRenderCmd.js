@@ -85,8 +85,10 @@
             var scaleChildren = scale9Image.getChildren();
             for (var i = 0; i < scaleChildren.length; i++) {
                 var selChild = scaleChildren[i];
-                if (selChild)
+                if (selChild){
                     selChild._renderCmd._updateDisplayColor(parentColor);
+                    selChild._renderCmd._updateColor();
+                }
             }
             this._cacheScale9Sprite();
         }
