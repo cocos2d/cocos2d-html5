@@ -669,7 +669,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
      * @return {Boolean}
      */
     isDone:function () {
-        return this._total == this._times;
+        return this._total === this._times;
     },
 
     /**
@@ -688,7 +688,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
      * @param {cc.FiniteTimeAction} action
      */
     setInnerAction:function (action) {
-        if (this._innerAction != action) {
+        if (this._innerAction !== action) {
             this._innerAction = action;
         }
     },
@@ -826,7 +826,7 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
      * @param {cc.ActionInterval} action
      */
     setInnerAction:function (action) {
-        if (this._innerAction != action) {
+        if (this._innerAction !== action) {
             this._innerAction = action;
         }
     },
@@ -3166,7 +3166,7 @@ cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
     initWithAction:function (action) {
         if(!action)
             throw "cc.ReverseTime.initWithAction(): action must be non null";
-        if(action == this._other)
+        if(action === this._other)
             throw "cc.ReverseTime.initWithAction(): the action was already passed in.";
 
         if (cc.ActionInterval.prototype.initWithDuration.call(this, action._duration)) {
@@ -3527,7 +3527,7 @@ cc.TargetedAction = cc.ActionInterval.extend(/** @lends cc.TargetedAction# */{
      * @param {cc.Node} forcedTarget
      */
     setForcedTarget:function (forcedTarget) {
-        if (this._forcedTarget != forcedTarget)
+        if (this._forcedTarget !== forcedTarget)
             this._forcedTarget = forcedTarget;
     }
 });

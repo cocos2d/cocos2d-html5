@@ -170,7 +170,7 @@
             return;
 
         // all the _stencilBits are in use?
-        if (ccui.Layout.WebGLRenderCmd._layer + 1 == cc.stencilBits) {
+        if (ccui.Layout.WebGLRenderCmd._layer + 1 === cc.stencilBits) {
             // warn once
             ccui.Layout.WebGLRenderCmd._visit_once = true;
             if (ccui.Layout.WebGLRenderCmd._visit_once) {

@@ -91,7 +91,7 @@
             return;
         }
 
-        if (cc.ClippingNode.WebGLRenderCmd._layer + 1 == cc.stencilBits) {
+        if (cc.ClippingNode.WebGLRenderCmd._layer + 1 === cc.stencilBits) {
             cc.ClippingNode.WebGLRenderCmd._visit_once = true;
             if (cc.ClippingNode.WebGLRenderCmd._visit_once) {
                 cc.log("Nesting more than " + cc.stencilBits + "stencils is not supported. Everything will be drawn without stencil for this node and its children.");

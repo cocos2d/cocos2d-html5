@@ -67,7 +67,7 @@
 
         if (node._type === cc.ProgressTimer.TYPE_RADIAL)
             context.drawArrays(context.TRIANGLE_FAN, 0, this._vertexDataCount);
-        else if (node._type == cc.ProgressTimer.TYPE_BAR) {
+        else if (node._type === cc.ProgressTimer.TYPE_BAR) {
             if (!node._reverseDirection)
                 context.drawArrays(context.TRIANGLE_STRIP, 0, this._vertexDataCount);
             else {
@@ -327,12 +327,12 @@
         var index = 0;
         var hit;
 
-        if (alpha == 0) {
+        if (alpha === 0) {
             //    More efficient since we don't always need to check intersection
             //    If the alpha is zero then the hit point is top mid and the index is 0.
             hit = topMid;
             index = 0;
-        } else if (alpha == 1) {
+        } else if (alpha === 1) {
             //    More efficient since we don't always need to check intersection
             //    If the alpha is one then the hit point is top mid and the index is 4.
             hit = topMid;
@@ -352,9 +352,9 @@
 
                 //    Remember that the top edge is split in half for the 12 o'clock position
                 //    Let's deal with that here by finding the correct endpoints
-                if (i == 0)
+                if (i === 0)
                     edgePtB = cc.pLerp(edgePtA, edgePtB, 1 - locMidPoint.x);
-                else if (i == 4)
+                else if (i === 4)
                     edgePtA = cc.pLerp(edgePtA, edgePtB, 1 - locMidPoint.x);
 
                 // retPoint are returned by ccpLineIntersect
@@ -362,7 +362,7 @@
                 if (cc.pLineIntersect(edgePtA, edgePtB, locMidPoint, percentagePt, retPoint)) {
                     //    Since our hit test is on rays we have to deal with the top edge
                     //    being in split in half so we have to test as a segment
-                    if ((i == 0 || i == 4)) {
+                    if ((i === 0 || i === 4)) {
                         //    s represents the point between edgePtA--edgePtB
                         if (!(0 <= retPoint.x && retPoint.x <= 1))
                             continue;
@@ -387,7 +387,7 @@
         //    The size of the vertex data is the index from the hitpoint
         //    the 3 is for the m_tMidpoint, 12 o'clock point and hitpoint position.
         var sameIndexCount = true;
-        if (this._vertexDataCount != index + 3) {
+        if (this._vertexDataCount !== index + 3) {
             sameIndexCount = false;
             this._vertexData = null;
             this._vertexArrayBuffer = null;

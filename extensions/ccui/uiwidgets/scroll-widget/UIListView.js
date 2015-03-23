@@ -156,7 +156,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
             default:
                 break;
         }
-        if (0 == itemIndex)
+        if (0 === itemIndex)
             layoutParameter.setMargin(ccui.MarginZero());
         else
             layoutParameter.setMargin(new ccui.Margin(0.0, this._itemsMargin, 0.0, 0.0));
@@ -179,7 +179,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
             default:
                 break;
         }
-        if (0 == itemIndex)
+        if (0 === itemIndex)
             layoutParameter.setMargin(ccui.MarginZero());
         else
             layoutParameter.setMargin(new ccui.Margin(this._itemsMargin, 0.0, 0.0, 0.0));
@@ -343,7 +343,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
      * @param {ccui.ListView.GRAVITY_LEFT|ccui.ListView.GRAVITY_RIGHT|ccui.ListView.GRAVITY_CENTER_HORIZONTAL|ccui.ListView.GRAVITY_BOTTOM|ccui.ListView.GRAVITY_CENTER_VERTICAL} gravity
      */
     setGravity: function (gravity) {
-        if (this._gravity == gravity)
+        if (this._gravity === gravity)
             return;
         this._gravity = gravity;
         this._refreshViewDirty = true;
@@ -354,7 +354,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
      * @param {Number} margin
      */
     setItemsMargin: function (margin) {
-        if (this._itemsMargin == margin)
+        if (this._itemsMargin === margin)
             return;
         this._itemsMargin = margin;
         this._refreshViewDirty = true;
@@ -445,7 +445,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     },
 
     _selectedItemEvent: function (event) {
-        var eventEnum = (event == ccui.Widget.TOUCH_BEGAN) ? ccui.ListView.ON_SELECTED_ITEM_START : ccui.ListView.ON_SELECTED_ITEM_END;
+        var eventEnum = (event === ccui.Widget.TOUCH_BEGAN) ? ccui.ListView.ON_SELECTED_ITEM_START : ccui.ListView.ON_SELECTED_ITEM_END;
         if(this._listViewEventSelector){
             if (this._listViewEventListener)
                 this._listViewEventSelector.call(this._listViewEventListener, this, eventEnum);
@@ -464,10 +464,10 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
      */
     interceptTouchEvent: function (eventType, sender, touch) {
         ccui.ScrollView.prototype.interceptTouchEvent.call(this, eventType, sender, touch);
-        if (eventType != ccui.Widget.TOUCH_MOVED) {
+        if (eventType !== ccui.Widget.TOUCH_MOVED) {
             var parent = sender;
             while (parent) {
-                if (parent && parent.getParent() == this._innerContainer) {
+                if (parent && parent.getParent() === this._innerContainer) {
                     this._curSelectedIndex = this.getIndex(parent);
                     break;
                 }

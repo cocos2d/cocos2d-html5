@@ -457,7 +457,7 @@ cc.FadeOutTRTiles = cc.TiledGrid3DAction.extend(/** @lends cc.FadeOutTRTiles# */
     testFunc:function (pos, time) {
         var locX = this._gridSize.width * time;
         var locY = this._gridSize.height * time;
-        if ((locX + locY) == 0.0)
+        if ((locX + locY) === 0.0)
             return 1.0;
         return Math.pow((pos.width + pos.height) / (locX + locY), 6);
     },
@@ -516,7 +516,7 @@ cc.FadeOutTRTiles = cc.TiledGrid3DAction.extend(/** @lends cc.FadeOutTRTiles# */
                 locSize.width = i;
                 locSize.height = j;
                 distance = this.testFunc(locSize, dt);
-                if (distance == 0)
+                if (distance === 0)
                     this.turnOffTile(locPos);
                 else if (distance < 1)
                     this.transformTile(locPos, distance);
@@ -566,7 +566,7 @@ cc.FadeOutBLTiles = cc.FadeOutTRTiles.extend(/** @lends cc.FadeOutBLTiles# */{
     testFunc:function (pos, time) {
         var locX = this._gridSize.width * (1.0 - time);
         var locY = this._gridSize.height * (1.0 - time);
-        if ((pos.width + pos.height) == 0)
+        if ((pos.width + pos.height) === 0)
             return 1.0;
 
         return Math.pow((locX + locY) / (pos.width + pos.height), 6);
@@ -606,7 +606,7 @@ cc.FadeOutBLTiles.create = cc.fadeOutBLTiles;
 cc.FadeOutUpTiles = cc.FadeOutTRTiles.extend(/** @lends cc.FadeOutUpTiles# */{
     testFunc:function (pos, time) {
         var locY = this._gridSize.height * time;
-        if (locY == 0.0)
+        if (locY === 0.0)
             return 1.0;
         return Math.pow(pos.height / locY, 6);
     },
@@ -657,7 +657,7 @@ cc.FadeOutUpTiles.create = cc.fadeOutUpTiles;
 cc.FadeOutDownTiles = cc.FadeOutUpTiles.extend(/** @lends cc.FadeOutDownTiles# */{
     testFunc:function (pos, time) {
         var locY = this._gridSize.height * (1.0 - time);
-        if (pos.height == 0)
+        if (pos.height === 0)
             return 1.0;
         return Math.pow(locY / pos.height, 6);
     }
@@ -1057,7 +1057,7 @@ cc.JumpTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.JumpTiles3D# */{
                 //var coords = this.originalTile(cc.p(i, j));
                 coords = locGrid.originalTile(locPos);
 
-                if (((i + j) % 2) == 0) {
+                if (((i + j) % 2) === 0) {
                     coords.bl.z += sinz;
                     coords.br.z += sinz;
                     coords.tl.z += sinz;
@@ -1150,7 +1150,7 @@ cc.SplitRows = cc.TiledGrid3DAction.extend(/** @lends cc.SplitRows# */{
             coords = this.originalTile(locPos);
             direction = 1;
 
-            if ((j % 2 ) == 0)
+            if ((j % 2 ) === 0)
                 direction = -1;
 
             coords.bl.x += direction * locWinSizeWidth * dt;
@@ -1241,7 +1241,7 @@ cc.SplitCols = cc.TiledGrid3DAction.extend(/** @lends cc.SplitCols# */{
             coords = this.originalTile(locPos);
             direction = 1;
 
-            if ((i % 2 ) == 0)
+            if ((i % 2 ) === 0)
                 direction = -1;
 
             coords.bl.y += direction * locWinSizeHeight * dt;

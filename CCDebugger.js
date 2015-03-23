@@ -282,7 +282,7 @@ cc._formatString = function (arg) {
  */
 cc._initDebugSetting = function (mode) {
     var ccGame = cc.game;
-    if(mode == ccGame.DEBUG_MODE_NONE)
+    if(mode === ccGame.DEBUG_MODE_NONE)
         return;
 
     var locLog;
@@ -299,12 +299,12 @@ cc._initDebugSetting = function (mode) {
                 locLog("Assert: " + msg);
             }
         };
-        if(mode != ccGame.DEBUG_MODE_ERROR_FOR_WEB_PAGE){
+        if(mode !== ccGame.DEBUG_MODE_ERROR_FOR_WEB_PAGE){
             cc.warn = function(){
                 locLog("WARN :  " + cc.formatStr.apply(cc, arguments));
             };
         }
-        if(mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE){
+        if(mode === ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE){
             cc.log = function(){
                 locLog(cc.formatStr.apply(cc, arguments));
             };
@@ -322,11 +322,11 @@ cc._initDebugSetting = function (mode) {
                 throw msg;
             }
         };
-        if(mode != ccGame.DEBUG_MODE_ERROR)
+        if(mode !== ccGame.DEBUG_MODE_ERROR)
             cc.warn = function(){
                 return console.warn.apply(console, arguments);
             };
-        if(mode == ccGame.DEBUG_MODE_INFO)
+        if(mode === ccGame.DEBUG_MODE_INFO)
             cc.log = function(){
                 return console.log.apply(console, arguments);
             };

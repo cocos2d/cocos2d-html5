@@ -256,7 +256,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
     },
 
     _refreshActionProperty: function () {
-        if (this._object == null)
+        if (this._object === null)
             return null;
         var locSpawnArray = [];
         for (var i = 0; i < this._frameArrayNum; i++) {
@@ -266,7 +266,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
             var locSequenceArray = [];
             for (var j = 0; j < locArray.length; j++) {
                 var locFrame = locArray[j];
-                if (j != 0) {
+                if (j !== 0) {
                     var locSrcFrame = locArray[j - 1];
                     var locDuration = (locFrame.frameIndex - locSrcFrame.frameIndex) * this.getUnitTime();
                     var locAction = locFrame.getAction(locDuration);
@@ -276,7 +276,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
             }
             if(locSequenceArray){
                 var locSequence = cc.sequence(locSequenceArray);
-                if (locSequence != null)
+                if (locSequence !== null)
                     locSpawnArray.push(locSequence);
             }
         }
@@ -291,7 +291,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
      * @param {cc.CallFunc} fun
      */
     playAction: function (fun) {
-        if (this._object == null || this._actionSpawn == null)
+        if (this._object === null || this._actionSpawn === null)
             return;
         if(fun)
             this._action = cc.sequence(this._actionSpawn, fun);
@@ -302,7 +302,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
 
     _runAction: function () {
         var node = this.getActionNode();
-        if (node != null && this._action != null)
+        if (node !== null && this._action !== null)
             node.runAction(this._action);
     },
 
@@ -311,7 +311,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
      */
     stopAction: function () {
         var node = this.getActionNode();
-        if (node != null && this._action != null) {
+        if (node !== null && this._action !== null) {
             if(!this._action.isDone())
                 node.stopAction(this._action);
         }
@@ -368,17 +368,17 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
         var locUnitTime = this.getUnitTime();
         for (var i = 0; i < this._frameArrayNum; i++) {
             var locArray = this._frameArray[i];
-            if (locArray == null)
+            if (locArray === null)
                 continue;
 
             for (var j = 0; j < locArray.length; j++) {
                 var locFrame = locArray[j];
-                if (locFrame.frameIndex * locUnitTime == time) {
+                if (locFrame.frameIndex * locUnitTime === time) {
                     this._easingToFrame(1.0, 1.0, locFrame);
                     locIsFindFrame = true;
                     break;
                 } else if (locFrame.frameIndex * locUnitTime > time) {
-                    if (j == 0) {
+                    if (j === 0) {
                         this._easingToFrame(1.0, 1.0, locFrame);
                         locIsFindFrame = false;
                     } else {
@@ -410,7 +410,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
      * @returns {Boolean} that if the action is done once time
      */
     isActionDoneOnce: function () {
-        if (this._action == null)
+        if (this._action === null)
             return true;
         return this._action.isDone();
     }

@@ -52,7 +52,7 @@
                 if(parser)
                     frame = parser.call(self, timeline, resourcePath);
                 else
-                    cc.log("parser is not exists : %s", timeline["Property"]);
+                    cc.log("parser does not exist : %s", timeline["Property"]);
                 if(frame)
                     action.addTimeline(frame);
             });
@@ -63,17 +63,15 @@
         },
 
         deferred: function(json, resourcePath, action, file){
-            if(cc.sys.isNative) {
-                var animationlist = json["Content"]["Content"]["AnimationList"];
-                var length = animationlist ? animationlist.length : 0;
-                for (var i = 0; i < length; i++) {
-                    var animationdata = animationlist[i];
-                    var info = { name: null, startIndex: null, endIndex: null };
-                    info.name = animationdata["Name"];
-                    info.startIndex = animationdata["StartIndex"];
-                    info.endIndex = animationdata["EndIndex"];
-                    action.addAnimationInfo(info);
-                }
+            var animationlist = json["Content"]["Content"]["AnimationList"];
+            var length = animationlist ? animationlist.length : 0;
+            for (var i = 0; i < length; i++) {
+                var animationdata = animationlist[i];
+                var info = { name: null, startIndex: null, endIndex: null };
+                info.name = animationdata["Name"];
+                info.startIndex = animationdata["StartIndex"];
+                info.endIndex = animationdata["EndIndex"];
+                action.addAnimationInfo(info);
             }
         }
 

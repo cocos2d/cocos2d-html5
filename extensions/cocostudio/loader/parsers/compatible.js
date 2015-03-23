@@ -91,9 +91,9 @@
          * @returns {Number}
          */
         getVersionInteger: function(version){
-            if(!version || typeof version != "string") return 0;
+            if(!version || typeof version !== "string") return 0;
             var arr = version.split(".");
-            if (arr.length != 4)
+            if (arr.length !== 4)
                 return 0;
             var num = 0;
             arr.forEach(function(n, i){
@@ -199,7 +199,7 @@
         getNodeByTag: function(tag){
             if (this._node == null)
                 return null;
-            if (this._node.getTag() == tag)
+            if (this._node.getTag() === tag)
                 return this._node;
             return this._nodeByTag(this._node, tag);
         },
@@ -211,7 +211,7 @@
             var children = parent.getChildren();
             for (var i = 0; i < children.length; i++) {
                 var child = children[i];
-                if (child && child.getTag() == tag) {
+                if (child && child.getTag() === tag) {
                     retNode = child;
                     break;
                 } else {

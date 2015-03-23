@@ -195,7 +195,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
                 this._outScene.init();
             }
 
-            if(this._inScene == this._outScene)
+            if(this._inScene === this._outScene)
                 throw "cc.TransitionScene.initWithDuration(): Incoming scene must be different from the outgoing scene";
 
             this._sceneOrder();
@@ -1019,7 +1019,7 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
 
         var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
 
-        if (this._orientation == cc.TRANSITION_ORIENTATION_UP_OVER) {
+        if (this._orientation === cc.TRANSITION_ORIENTATION_UP_OVER) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -1494,9 +1494,6 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
 
         // create the first render texture for inScene
         var inTexture = new cc.RenderTexture(winSize.width, winSize.height);
-
-        if (null == inTexture)
-            return;
 
         inTexture.sprite.anchorX = 0.5;
 	    inTexture.sprite.anchorY = 0.5;

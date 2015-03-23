@@ -36,7 +36,7 @@
 
     proto.rendering = function (ctx) {
         var _t = this._node;
-        if (_t.textureAtlas.totalQuads == 0)
+        if (_t.textureAtlas.totalQuads === 0)
             return;
 
         this._shaderProgram.use();

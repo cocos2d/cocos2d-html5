@@ -346,7 +346,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{                  
         for (var i = 0; i < segments + 1; i++) {
             var dt = i / segments;
             // border
-            if (dt == 1) {
+            if (dt === 1) {
                 p = config.length - 1;
                 lt = 1;
             } else {
@@ -632,7 +632,7 @@ cc.DrawNodeWebGL = cc.Node.extend({
             var dt = i / segments;
 
             // border
-            if (dt == 1) {
+            if (dt === 1) {
                 p = config.length - 1;
                 lt = 1;
             } else {
@@ -722,7 +722,7 @@ cc.DrawNodeWebGL = cc.Node.extend({
     },
 
     drawDots: function(points, radius,color) {
-        if(!points || points.length == 0)
+        if(!points || points.length === 0)
             return;
         color = color || this.getDrawColor();
         if (color.a == null)
@@ -911,7 +911,7 @@ cc.DrawNodeWebGL = cc.Node.extend({
     }
 });
 
-cc.DrawNode = cc._renderType == cc._RENDER_TYPE_WEBGL ? cc.DrawNodeWebGL : cc.DrawNodeCanvas;
+cc.DrawNode = cc._renderType === cc._RENDER_TYPE_WEBGL ? cc.DrawNodeWebGL : cc.DrawNodeCanvas;
 
 /**
  * Creates a DrawNode

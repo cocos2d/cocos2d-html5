@@ -52,10 +52,10 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         this._skinTransform = cc.affineTransformIdentity();
         this._armature = null;
 
-        if (fileName == null || fileName == "") {
+        if (fileName == null || fileName === "") {
             ccs.Skin.prototype.init.call(this);
         } else {
-            if(fileName[0] == "#"){
+            if(fileName[0] === "#"){
                 ccs.Skin.prototype.initWithSpriteFrameName.call(this, fileName.substr(1));
             } else {
                 ccs.Skin.prototype.initWithFile.call(this, fileName, rect);
@@ -69,7 +69,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
      * @returns {Boolean}
      */
     initWithSpriteFrameName: function (spriteFrameName) {
-        if(spriteFrameName == "")
+        if(spriteFrameName === "")
             return false;
         var pFrame = cc.spriteFrameCache.getSpriteFrame(spriteFrameName);
         var ret = true;

@@ -137,7 +137,7 @@ ccui.LayoutComponent = cc.Component.extend({
                 x = position;
             var parentSize = parent.getContentSize();
 
-            if (parentSize.width != 0)
+            if (parentSize.width !== 0)
                 this._positionPercentX = x / parentSize.width;
             else {
                 this._positionPercentX = 0;
@@ -145,7 +145,7 @@ ccui.LayoutComponent = cc.Component.extend({
                     x = 0;
             }
 
-            if (parentSize.height != 0)
+            if (parentSize.height !== 0)
                 this._positionPercentY = y / parentSize.height;
             else {
                 this._positionPercentY = 0;
@@ -176,7 +176,7 @@ ccui.LayoutComponent = cc.Component.extend({
         this._positionPercentX = percentMargin;
 
         var parent = this._getOwnerParent();
-        if (parent != null) {
+        if (parent !== null) {
             this._owner.setPositionX(parent.width * this._positionPercentX);
             this._refreshHorizontalMargin();
         }
@@ -198,7 +198,7 @@ ccui.LayoutComponent = cc.Component.extend({
         this._positionPercentY = percentMargin;
 
         var parent = this._getOwnerParent();
-        if (parent != null) {
+        if (parent !== null) {
             this._owner.setPositionY(parent.height * this._positionPercentY);
             this._refreshVerticalMargin();
         }
@@ -209,14 +209,14 @@ ccui.LayoutComponent = cc.Component.extend({
     },
     setHorizontalEdge: function (hEdge) {
         this._horizontalEdge = hEdge;
-        if (this._horizontalEdge != ccui.LayoutComponent.horizontalEdge.NONE)
+        if (this._horizontalEdge !== ccui.LayoutComponent.horizontalEdge.NONE)
             this._usingPositionPercentX = false;
 
         var parent = this._getOwnerParent();
-        if (parent != null) {
+        if (parent !== null) {
             var ownerPoint = this._owner.getPosition();
             var parentSize = parent.getContentSize();
-            if (parentSize.width != 0)
+            if (parentSize.width !== 0)
                 this._positionPercentX = ownerPoint.x / parentSize.width;
             else {
                 this._positionPercentX = 0;
@@ -233,14 +233,14 @@ ccui.LayoutComponent = cc.Component.extend({
     },
     setVerticalEdge: function (vEdge) {
         this._verticalEdge = vEdge;
-        if (this._verticalEdge != ccui.LayoutComponent.verticalEdge.NONE)
+        if (this._verticalEdge !== ccui.LayoutComponent.verticalEdge.NONE)
             this._usingPositionPercentY = false;
 
         var parent = this._getOwnerParent();
-        if (parent != null) {
+        if (parent !== null) {
             var ownerPoint = this._owner.getPosition();
             var parentSize = parent.getContentSize();
-            if (parentSize.height != 0)
+            if (parentSize.height !== 0)
                 this._positionPercentY = ownerPoint.y / parentSize.height;
             else {
                 this._positionPercentY = 0;
@@ -286,10 +286,10 @@ ccui.LayoutComponent = cc.Component.extend({
     },
     setSize: function (size) {
         var parent = this._getOwnerParent();
-        if (parent != null) {
+        if (parent !== null) {
             var ownerSize = size, parentSize = parent.getContentSize();
 
-            if (parentSize.width != 0)
+            if (parentSize.width !== 0)
                 this._percentWidth = ownerSize.width / parentSize.width;
             else {
                 this._percentWidth = 0;
@@ -297,7 +297,7 @@ ccui.LayoutComponent = cc.Component.extend({
                     ownerSize.width = 0;
             }
 
-            if (parentSize.height != 0)
+            if (parentSize.height !== 0)
                 this._percentHeight = ownerSize.height / parentSize.height;
             else {
                 this._percentHeight = 0;
@@ -331,9 +331,9 @@ ccui.LayoutComponent = cc.Component.extend({
         ownerSize.width = width;
 
         var parent = this._getOwnerParent();
-        if (parent != null) {
+        if (parent !== null) {
             var parentSize = parent.getContentSize();
-            if (parentSize.width != 0)
+            if (parentSize.width !== 0)
                 this._percentWidth = ownerSize.width / parentSize.width;
             else {
                 this._percentWidth = 0;
@@ -353,7 +353,7 @@ ccui.LayoutComponent = cc.Component.extend({
         this._percentWidth = percentWidth;
 
         var parent = this._getOwnerParent();
-        if (parent != null) {
+        if (parent !== null) {
             var ownerSize = this._owner.getContentSize();
             ownerSize.width = parent.width * this._percentWidth;
             this._owner.setContentSize(ownerSize);
@@ -378,9 +378,9 @@ ccui.LayoutComponent = cc.Component.extend({
         ownerSize.height = height;
 
         var parent = this._getOwnerParent();
-        if (parent != null) {
+        if (parent !== null) {
             var parentSize = parent.getContentSize();
-            if (parentSize.height != 0)
+            if (parentSize.height !== 0)
                 this._percentHeight = ownerSize.height / parentSize.height;
             else {
                 this._percentHeight = 0;
@@ -401,7 +401,7 @@ ccui.LayoutComponent = cc.Component.extend({
         this._percentHeight = percentHeight;
 
         var parent = this._getOwnerParent();
-        if (parent != null) {
+        if (parent !== null) {
             var ownerSize = this._owner.getContentSize();
             ownerSize.height = parent.height * this._percentHeight;
             this._owner.setContentSize(ownerSize);
@@ -439,7 +439,7 @@ ccui.LayoutComponent = cc.Component.extend({
             return;
 
         var parent = this._getOwnerParent();
-        if (parent == null)
+        if (parent === null)
             return;
 
         var parentSize = parent.getContentSize(), locOwner = this._owner;
@@ -545,7 +545,7 @@ ccui.LayoutComponent = cc.Component.extend({
     },
     _refreshHorizontalMargin: function () {
         var parent = this._getOwnerParent();
-        if (parent == null)
+        if (parent === null)
             return;
 
         var ownerPoint = this._owner.getPosition(), ownerAnchor = this._owner.getAnchorPoint();
@@ -556,7 +556,7 @@ ccui.LayoutComponent = cc.Component.extend({
     },
     _refreshVerticalMargin: function () {
         var parent = this._getOwnerParent();
-        if (parent == null)
+        if (parent === null)
             return;
 
         var ownerPoint = this._owner.getPosition(), ownerAnchor = this._owner.getAnchorPoint();
@@ -573,7 +573,7 @@ ccui.LayoutComponent.verticalEdge = {NONE: 0, BOTTOM: 1, TOP: 2, CENTER: 3};
 ccui.LayoutComponent.NAME = "__ui_layout";
 ccui.LayoutComponent.bindLayoutComponent = function (node) {
     var layout = node.getComponent(ccui.LayoutComponent.NAME);
-    if (layout != null)
+    if (layout !== null)
         return layout;
 
     layout = new ccui.LayoutComponent();

@@ -131,7 +131,7 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
             var locObjects = this._objects;
             for (var i = 0, len = locObjects.length; i < len; i++) {
                 var name = locObjects[i]["name"];
-                if (name && name == objectName)
+                if (name && name === objectName)
                     return locObjects[i];
             }
         }

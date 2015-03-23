@@ -300,17 +300,17 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._shadowEnabled = true;
 
         var locShadowOffset = this._shadowOffset;
-        if (locShadowOffset && (locShadowOffset.x != shadowOffsetX) || (locShadowOffset._y != shadowOffsetY)) {
+        if (locShadowOffset && (locShadowOffset.x !== shadowOffsetX) || (locShadowOffset._y !== shadowOffsetY)) {
             locShadowOffset.x = shadowOffsetX;
             locShadowOffset.y = shadowOffsetY;
         }
 
-        if (this._shadowOpacity != shadowOpacity) {
+        if (this._shadowOpacity !== shadowOpacity) {
             this._shadowOpacity = shadowOpacity;
         }
         this._renderCmd._setColorsString();
 
-        if (this._shadowBlur != shadowBlur)
+        if (this._shadowBlur !== shadowBlur)
             this._shadowBlur = shadowBlur;
         this._setUpdateTextureDirty();
     },
@@ -339,7 +339,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (false === this._shadowEnabled)
             this._shadowEnabled = true;
 
-        if (this._shadowOffset.x != x) {
+        if (this._shadowOffset.x !== x) {
             this._shadowOffset.x = x;
             this._setUpdateTextureDirty();
         }
@@ -352,7 +352,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (false === this._shadowEnabled)
             this._shadowEnabled = true;
 
-        if (this._shadowOffset._y != y) {
+        if (this._shadowOffset._y !== y) {
             this._shadowOffset._y = y;
             this._setUpdateTextureDirty();
         }
@@ -365,7 +365,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (false === this._shadowEnabled)
             this._shadowEnabled = true;
 
-        if (this._shadowOffset.x != offset.x || this._shadowOffset.y != offset.y) {
+        if (this._shadowOffset.x !== offset.x || this._shadowOffset.y !== offset.y) {
             this._shadowOffset.x = offset.x;
             this._shadowOffset.y = offset.y;
             this._setUpdateTextureDirty();
@@ -379,7 +379,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (false === this._shadowEnabled)
             this._shadowEnabled = true;
 
-        if (this._shadowOpacity != shadowOpacity) {
+        if (this._shadowOpacity !== shadowOpacity) {
             this._shadowOpacity = shadowOpacity;
             this._renderCmd._setColorsString();
             this._setUpdateTextureDirty();
@@ -393,7 +393,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (false === this._shadowEnabled)
             this._shadowEnabled = true;
 
-        if (this._shadowBlur != shadowBlur) {
+        if (this._shadowBlur !== shadowBlur) {
             this._shadowBlur = shadowBlur;
             this._setUpdateTextureDirty();
         }
@@ -477,7 +477,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      */
     setFontFillColor: function (fillColor) {
         var locTextFillColor = this._textFillColor;
-        if (locTextFillColor.r != fillColor.r || locTextFillColor.g != fillColor.g || locTextFillColor.b != fillColor.b) {
+        if (locTextFillColor.r !== fillColor.r || locTextFillColor.g !== fillColor.g || locTextFillColor.b !== fillColor.b) {
             locTextFillColor.r = fillColor.r;
             locTextFillColor.g = fillColor.g;
             locTextFillColor.b = fillColor.b;
@@ -584,7 +584,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      */
     setString: function (text) {
         text = String(text);
-        if (this._originalText != text) {
+        if (this._originalText !== text) {
             this._originalText = text + "";
 
             this._updateString();
@@ -617,7 +617,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @param {cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM} verticalAlignment
      */
     setVerticalAlignment: function (verticalAlignment) {
-        if (verticalAlignment != this._vAlignment) {
+        if (verticalAlignment !== this._vAlignment) {
             this._vAlignment = verticalAlignment;
 
             // Force update
@@ -638,7 +638,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         } else
             width = dim;
 
-        if (width != this._dimensions.width || height != this._dimensions.height) {
+        if (width !== this._dimensions.width || height !== this._dimensions.height) {
             this._dimensions.width = width;
             this._dimensions.height = height;
             this._updateString();
@@ -651,7 +651,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return this._dimensions.width;
     },
     _setBoundingWidth: function (width) {
-        if (width != this._dimensions.width) {
+        if (width !== this._dimensions.width) {
             this._dimensions.width = width;
             this._updateString();
             // Force update
@@ -663,7 +663,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return this._dimensions.height;
     },
     _setBoundingHeight: function (height) {
-        if (height != this._dimensions.height) {
+        if (height !== this._dimensions.height) {
             this._dimensions.height = height;
             this._updateString();
             // Force update
@@ -689,7 +689,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @param {String} fontName
      */
     setFontName: function (fontName) {
-        if (this._fontName && this._fontName != fontName) {
+        if (this._fontName && this._fontName !== fontName) {
             this._fontName = fontName;
             this._renderCmd._setFontStyle(this._fontName, this._fontSize, this._fontStyle, this._fontWeight);
             // Force update
@@ -747,7 +747,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     //For web only
     _setFontStyle: function(fontStyle){
-        if (this._fontStyle != fontStyle) {
+        if (this._fontStyle !== fontStyle) {
             this._fontStyle = fontStyle;
             this._renderCmd._setFontStyle(this._fontName, this._fontSize, this._fontStyle, this._fontWeight);
             this._setUpdateTextureDirty();
@@ -759,7 +759,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     _setFontWeight: function(fontWeight){
-        if (this._fontWeight != fontWeight) {
+        if (this._fontWeight !== fontWeight) {
             this._fontWeight = fontWeight;
             this._renderCmd._setFontStyle(this._fontName, this._fontSize, this._fontStyle, this._fontWeight);
             this._setUpdateTextureDirty();

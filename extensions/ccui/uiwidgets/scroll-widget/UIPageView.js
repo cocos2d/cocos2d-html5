@@ -138,7 +138,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      * @param {ccui.Layout} page
      */
     addPage: function (page) {
-        if (!page || this._pages.indexOf(page) != -1)
+        if (!page || this._pages.indexOf(page) !== -1)
             return;
 
         this.addChild(page);
@@ -152,7 +152,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      * @param {Number} idx index
      */
     insertPage: function (page, idx) {
-        if (idx < 0 || !page || this._pages.indexOf(page) != -1)
+        if (idx < 0 || !page || this._pages.indexOf(page) !== -1)
             return;
 
         var pageCount = this._getPageCount();

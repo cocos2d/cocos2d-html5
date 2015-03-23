@@ -78,7 +78,7 @@ ccui.Margin = ccui.Class.extend(/** @lends ccui.Margin# */{
      * @returns {boolean}
      */
     equals: function (target) {
-        return (this.left == target.left && this.top == target.top && this.right == target.right && this.bottom == target.bottom);
+        return (this.left === target.left && this.top === target.top && this.right === target.right && this.bottom === target.bottom);
     }
 });
 

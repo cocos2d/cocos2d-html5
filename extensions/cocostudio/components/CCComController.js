@@ -43,7 +43,7 @@ ccs.ComController = ccs.Component.extend(/** @lends ccs.ComController# */{
      * @override
      */
     onEnter: function () {
-        if (this._owner != null)
+        if (this._owner !== null)
             this._owner.scheduleUpdate();
     },
 

@@ -72,13 +72,13 @@
         }
 
         //clip
-        if (node._type == cc.ProgressTimer.TYPE_BAR) {
+        if (node._type === cc.ProgressTimer.TYPE_BAR) {
             var locBarRect = this._barRect;
             context.beginPath();
             context.rect(locBarRect.x * scaleX, locBarRect.y * scaleY, locBarRect.width * scaleX, locBarRect.height * scaleY);
             context.clip();
             context.closePath();
-        } else if (node._type == cc.ProgressTimer.TYPE_RADIAL) {
+        } else if (node._type === cc.ProgressTimer.TYPE_RADIAL) {
             var locOriginX = this._origin.x * scaleX;
             var locOriginY = this._origin.y * scaleY;
             context.beginPath();
@@ -113,7 +113,7 @@
         var sw = locSprite.width, sh = locSprite.height;
         var locMidPoint = node._midPoint;
 
-        if (node._type == cc.ProgressTimer.TYPE_RADIAL) {
+        if (node._type === cc.ProgressTimer.TYPE_RADIAL) {
             this._radius = Math.round(Math.sqrt(sw * sw + sh * sh));
             var locStartAngle, locEndAngle, locCounterClockWise = false, locOrigin = this._origin;
             locOrigin.x = sw * locMidPoint.x;
