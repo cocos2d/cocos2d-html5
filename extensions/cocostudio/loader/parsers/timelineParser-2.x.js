@@ -422,15 +422,12 @@
 
         }
 
-        var bgStartColor = json["FirstColor"];
-        var bgEndColor = json["EndColor"];
-        if(bgStartColor != null && bgEndColor != null){
-            var startC = getColor(bgStartColor);
-            if(bgEndColor["R"] == null && bgEndColor["G"] == null && bgEndColor["B"] == null)
-                widget.setBackGroundColor( startC );
-            else
-                widget.setBackGroundColor( startC, getColor(bgEndColor) );
-        }
+        var firstColor = json["FirstColor"];
+        var endColor = json["EndColor"];
+        if(endColor["R"] != null && endColor["G"] != null && endColor["B"] != null)
+            widget.setBackGroundColor(getColor(firstColor), getColor(endColor));
+        else
+            widget.setBackGroundColor(getColor(json["SingleColor"]));
 
         var colorVector = json["ColorVector"];
         if(colorVector != null)
