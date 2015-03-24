@@ -29,12 +29,10 @@
 var Float32Array = Float32Array || Array;
 (function(cc){
     cc.math.Matrix3 = function(mat3) {
-        if (mat3) {
-            this.mat = new Float32Array(mat3);
+        if (mat3 && mat3.mat) {
+            this.mat = new Float32Array(mat3.mat);
         } else {
-            this.mat = new Float32Array([0, 0, 0,
-                0, 0, 0,
-                0, 0, 0]);
+            this.mat = new Float32Array(9);
         }
     };
     cc.kmMat3 = cc.math.Matrix3;
