@@ -152,7 +152,7 @@ cc.ComponentContainer = cc.Class.extend(/** @lends cc.ComponentContainer# */{
     isEmpty: function () {
         if (!this._components)
             return true;
-        return this._components.length == 0;
+        return this._components.length === 0;
     }
 });
 

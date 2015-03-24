@@ -96,7 +96,7 @@ cc._fontLoader = {
                 var src = srcs[i];
                 type = path.extname(src).toLowerCase();
                 fontStr += "url('" + srcs[i] + "') format('" + TYPE[type] + "')";
-                fontStr += (i == li - 1) ? ";" : ",";
+                fontStr += (i === li - 1) ? ";" : ",";
             }
         }else{
             fontStr += "url('" + srcs + "') format('" + TYPE[type] + "');";

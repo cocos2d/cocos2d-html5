@@ -217,7 +217,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             }
         }
         // ignore self (batch node)
-        if (!pobParent == this) {
+        if (!pobParent === this) {
             pobParent.atlasIndex = index;
             index++;
         }
@@ -239,7 +239,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     highestAtlasIndexInChild: function (sprite) {
         var children = sprite.children;
 
-        if (!children || children.length == 0)
+        if (!children || children.length === 0)
             return sprite.atlasIndex;
         else
             return this.highestAtlasIndexInChild(children[children.length - 1]);
@@ -252,7 +252,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      */
     lowestAtlasIndexInChild: function (sprite) {
         var children = sprite.children;
-        if (!children || children.length == 0)
+        if (!children || children.length === 0)
             return sprite.atlasIndex;
         else
             return this.lowestAtlasIndexInChild(children[children.length - 1]);
@@ -270,21 +270,21 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         var childIndex = brothers.indexOf(sprite);
 
         // ignore parent Z if parent is spriteSheet
-        var ignoreParent = selParent == this;
+        var ignoreParent = selParent === this;
         var previous = null;
         if (childIndex > 0 && childIndex < cc.UINT_MAX)
             previous = brothers[childIndex - 1];
 
         // first child of the sprite sheet
         if (ignoreParent) {
-            if (childIndex == 0)
+            if (childIndex === 0)
                 return 0;
             return this.highestAtlasIndexInChild(previous) + 1;
         }
 
         // parent is a cc.Sprite, so, it must be taken into account
         // first child of an cc.Sprite ?
-        if (childIndex == 0) {
+        if (childIndex === 0) {
             // less than parent and brothers
             if (nZ < 0)
                 return selParent.atlasIndex;
@@ -514,7 +514,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         sprite.batchNode = null;
         var locDescendants = this._descendants;
         var index = locDescendants.indexOf(sprite);
-        if (index != -1) {
+        if (index !== -1) {
             locDescendants.splice(index, 1);
 
             // update all sprites beyond this one
@@ -608,7 +608,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
                 while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
-                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem.arrivalOrder < tempChild.arrivalOrder ))) {
+                    ( tempItem._localZOrder === tempChild._localZOrder && tempItem.arrivalOrder < tempChild.arrivalOrder ))) {
                     childrenArr[j + 1] = tempChild;
                     j = j - 1;
                     tempChild = childrenArr[j];

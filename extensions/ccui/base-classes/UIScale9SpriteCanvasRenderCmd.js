@@ -85,8 +85,10 @@
             var scaleChildren = scale9Image.getChildren();
             for (var i = 0; i < scaleChildren.length; i++) {
                 var selChild = scaleChildren[i];
-                if (selChild)
+                if (selChild){
                     selChild._renderCmd._updateDisplayColor(parentColor);
+                    selChild._renderCmd._updateColor();
+                }
             }
             this._cacheScale9Sprite();
         }
@@ -105,7 +107,7 @@
         var locCanvas = this._cacheCanvas, wrapper = this._cacheContext, locContext = wrapper.getContext();
 
         var contentSizeChanged = false;
-        if(locCanvas.width != sizeInPixels.width || locCanvas.height != sizeInPixels.height){
+        if(locCanvas.width !== sizeInPixels.width || locCanvas.height !== sizeInPixels.height){
             locCanvas.width = sizeInPixels.width;
             locCanvas.height = sizeInPixels.height;
             contentSizeChanged = true;

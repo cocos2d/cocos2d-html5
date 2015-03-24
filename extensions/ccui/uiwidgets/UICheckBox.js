@@ -84,7 +84,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         var strNum = 0;
         for(var i=0; i<arguments.length; i++){
             var type = typeof arguments[i];
-            if(type == "string"){
+            if(type === "string"){
                 if(isNaN(arguments[i] - 0))
                     strNum++;
                 else{
@@ -92,7 +92,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
                     arguments[i] = undefined;
                 }
 
-            }else if(type == "number")
+            }else if(type === "number")
                 strNum++;
         }
         switch(strNum){
@@ -418,7 +418,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
      * @param {Boolean} selected
      */
     setSelected: function (selected) {
-        if (selected == this._isSelected)
+        if (selected === this._isSelected)
             return;
         this._isSelected = selected;
         this._frontCrossRenderer.setVisible(this._isSelected);

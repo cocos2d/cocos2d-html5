@@ -157,7 +157,7 @@ cc.Codec.GZip.prototype.readBit = function () {
     this.bits++;
     carry = (this.bb & 1);
     this.bb >>= 1;
-    if (this.bb == 0) {
+    if (this.bb === 0) {
         this.bb = this.readByte();
         carry = (this.bb & 1);
         this.bb = (this.bb >> 1) | 0x80;
@@ -182,13 +182,13 @@ cc.Codec.GZip.prototype.flushBuffer = function () {
 cc.Codec.GZip.prototype.addBuffer = function (a) {
     this.buf32k[this.bIdx++] = a;
     this.outputArr.push(String.fromCharCode(a));
-    if (this.bIdx == 0x8000) this.bIdx = 0;
+    if (this.bIdx === 0x8000) this.bIdx = 0;
 };
 
 cc.Codec.GZip.prototype.IsPat = function () {
     while (1) {
         if (this.fpos[this.len] >= this.fmax)       return -1;
-        if (this.flens[this.fpos[this.len]] == this.len) return this.fpos[this.len]++;
+        if (this.flens[this.fpos[this.len]] === this.len) return this.fpos[this.len]++;
         this.fpos[this.len]++;
     }
 };
@@ -197,7 +197,7 @@ cc.Codec.GZip.prototype.Rec = function () {
     var curplace = this.Places[this.treepos];
     var tmp;
     //if (this.debug) document.write("<br>len:"+this.len+" treepos:"+this.treepos);
-    if (this.len == 17) { //war 17
+    if (this.len === 17) { //war 17
         return -1;
     }
     this.treepos++;
@@ -304,7 +304,7 @@ cc.Codec.GZip.prototype.DeflateLoop = function () {
         last = this.readBit();
         type = this.readBits(2);
 
-        if (type == 0) {
+        if (type === 0) {
             var blockLen, cSum;
 
             // Stored
@@ -322,7 +322,7 @@ cc.Codec.GZip.prototype.DeflateLoop = function () {
                 c = this.readByte();
                 this.addBuffer(c);
             }
-        } else if (type == 1) {
+        } else if (type === 1) {
             var j;
 
             /* Fixed Huffman tables -- fixed decode routine */
@@ -368,7 +368,7 @@ cc.Codec.GZip.prototype.DeflateLoop = function () {
                 }
                 if (j < 256) {
                     this.addBuffer(j);
-                } else if (j == 256) {
+                } else if (j === 256) {
                     /* EOF */
                     break; // FIXME: make this the loop-condition
                 } else {
@@ -394,7 +394,7 @@ cc.Codec.GZip.prototype.DeflateLoop = function () {
                 }
             } // while
 
-        } else if (type == 2) {
+        } else if (type === 2) {
             var j, n, literalCodes, distCodes, lenCodes;
             var ll = new Array(288 + 32);    // "static" just to preserve stack
 
@@ -436,7 +436,7 @@ cc.Codec.GZip.prototype.DeflateLoop = function () {
                 // if (this.debug) document.write("<br>"+z+" i:"+i+" decode: "+j+"    bits "+this.bits+"<br>");
                 if (j < 16) {    // length of code in bits (0..15)
                     ll[i++] = j;
-                } else if (j == 16) {    // repeat last length 3 to 6 times
+                } else if (j === 16) {    // repeat last length 3 to 6 times
                     var l;
                     j = 3 + this.readBits(2);
                     if (i + j > n) {
@@ -448,7 +448,7 @@ cc.Codec.GZip.prototype.DeflateLoop = function () {
                         ll[i++] = l;
                     }
                 } else {
-                    if (j == 17) {        // 3 to 10 zero length codes
+                    if (j === 17) {        // 3 to 10 zero length codes
                         j = 3 + this.readBits(3);
                     } else {        // j == 18: 11 to 138 zero length codes
                         j = 11 + this.readBits(7);
@@ -485,7 +485,7 @@ cc.Codec.GZip.prototype.DeflateLoop = function () {
                 if (j >= 256) {        // In C64: if carry set
                     var len, dist;
                     j -= 256;
-                    if (j == 0) {
+                    if (j === 0) {
                         // EOF
                         break;
                     }
@@ -520,7 +520,7 @@ cc.Codec.GZip.prototype.unzipFile = function (name) {
     var i;
     this.gunzip();
     for (i = 0; i < this.unzipped.length; i++) {
-        if (this.unzipped[i][1] == name) {
+        if (this.unzipped[i][1] === name) {
             return this.unzipped[i][0];
         }
     }
@@ -537,25 +537,25 @@ cc.Codec.GZip.prototype.nextFile = function () {
     tmp[1] = this.readByte();
     // if (this.debug) alert("type: "+tmp[0]+" "+tmp[1]);
 
-    if (tmp[0] == 0x78 && tmp[1] == 0xda) { //GZIP
+    if (tmp[0] === 0x78 && tmp[1] === 0xda) { //GZIP
         // if (this.debug) alert("GEONExT-GZIP");
         this.DeflateLoop();
         // if (this.debug) alert(this.outputArr.join(''));
         this.unzipped[this.files] = [this.outputArr.join(''), "geonext.gxt"];
         this.files++;
     }
-    if (tmp[0] == 0x1f && tmp[1] == 0x8b) { //GZIP
+    if (tmp[0] === 0x1f && tmp[1] === 0x8b) { //GZIP
         // if (this.debug) alert("GZIP");
         this.skipdir();
         // if (this.debug) alert(this.outputArr.join(''));
         this.unzipped[this.files] = [this.outputArr.join(''), "file"];
         this.files++;
     }
-    if (tmp[0] == 0x50 && tmp[1] == 0x4b) { //ZIP
+    if (tmp[0] === 0x50 && tmp[1] === 0x4b) { //ZIP
         this.modeZIP = true;
         tmp[2] = this.readByte();
         tmp[3] = this.readByte();
-        if (tmp[2] == 0x03 && tmp[3] == 0x04) {
+        if (tmp[2] === 0x03 && tmp[3] === 0x04) {
             //MODE_ZIP
             tmp[0] = this.readByte();
             tmp[1] = this.readByte();
@@ -602,7 +602,7 @@ cc.Codec.GZip.prototype.nextFile = function () {
             this.nameBuf = [];
             while (filelen--) {
                 var c = this.readByte();
-                if (c == "/" | c == ":") {
+                if (c === "/" | c === ":") {
                     i = 0;
                 } else if (i < cc.Codec.GZip.NAMEMAX - 1) {
                     this.nameBuf[i++] = String.fromCharCode(c);
@@ -622,7 +622,7 @@ cc.Codec.GZip.prototype.nextFile = function () {
             //   //skipdir
             //   // if (this.debug) alert("skipdir");
             // }
-            if (method == 8) {
+            if (method === 8) {
                 this.DeflateLoop();
                 // if (this.debug) alert(this.outputArr.join(''));
                 this.unzipped[this.files] = [this.outputArr.join(''), this.nameBuf.join('')];
@@ -666,7 +666,7 @@ cc.Codec.GZip.prototype.skipdir = function () {
     if (this.modeZIP) this.nextFile();
 
     tmp[0] = this.readByte();
-    if (tmp[0] != 8) {
+    if (tmp[0] !== 8) {
         // if (this.debug) alert("Unknown compression method!");
         return 0;
     }
@@ -695,7 +695,7 @@ cc.Codec.GZip.prototype.skipdir = function () {
         i = 0;
         this.nameBuf = [];
         while (c = this.readByte()) {
-            if (c == "7" || c == ":")
+            if (c === "7" || c === ":")
                 i = 0;
             if (i < cc.Codec.GZip.NAMEMAX - 1)
                 this.nameBuf[i++] = c;

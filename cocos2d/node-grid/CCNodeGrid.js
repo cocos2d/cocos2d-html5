@@ -83,7 +83,7 @@ cc.NodeGrid = cc.Node.extend({
         topMat4.multiply(t4x4) ; // = cc.kmGLMultMatrix(this._transform4x4);
 
         // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
-        if (this._camera != null && !(this.grid && this.grid.isActive())) {
+        if (this._camera !== null && !(this.grid && this.grid.isActive())) {
             var app = this._renderCmd._anchorPointInPoints,
                 apx = app.x, apy = app.y,
                 translate = (apx !== 0.0 || apy !== 0.0);

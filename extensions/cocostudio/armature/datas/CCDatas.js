@@ -319,7 +319,7 @@ ccs.DisplayData = ccs.Class.extend(/** @lends ccs.DisplayData# */{
         var textureName = displayName;
         var startPos = textureName.lastIndexOf(".");
 
-        if (startPos != -1)
+        if (startPos !== -1)
             textureName = textureName.substring(0, startPos);
         return textureName;
     },
@@ -580,7 +580,7 @@ ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
 //            this.sound = frameData.sound;
 //            this.soundEffect = frameData.soundEffect;
 //            this.easingParams.length = 0;
-            if (this.easingParamNumber != 0){
+            if (this.easingParamNumber !== 0){
                 this.easingParams.length = 0;
                 for (var i = 0; i<this.easingParamNumber; i++){
                     this.easingParams[i] = frameData.easingParams[i];

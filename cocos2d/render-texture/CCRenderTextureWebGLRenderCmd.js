@@ -95,7 +95,7 @@
             var locChildren = node._children;
             for (var i = 0; i < locChildren.length; i++) {
                 var getChild = locChildren[i];
-                if (getChild != node.sprite){
+                if (getChild !== node.sprite){
                     getChild._renderCmd.visit(node.sprite._renderCmd);    //TODO it's very Strange
                 }
             }
@@ -130,7 +130,7 @@
 
     proto.initWithWidthAndHeight = function(width, height, format, depthStencilFormat){
         var node = this._node;
-        if(format == cc.Texture2D.PIXEL_FORMAT_A8)
+        if(format === cc.Texture2D.PIXEL_FORMAT_A8)
             cc.log( "cc.RenderTexture._initWithWidthAndHeightForWebGL() : only RGB and RGBA formats are valid for a render texture;");
 
         var gl = cc._renderContext, locScaleFactor = cc.contentScaleFactor();
@@ -185,7 +185,7 @@
         // associate texture with FBO
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, locTexture._webTextureObj, 0);
 
-        if (depthStencilFormat != 0) {
+        if (depthStencilFormat !== 0) {
             //create and attach depth buffer
             this._depthRenderBuffer = gl.createRenderbuffer();
             gl.bindRenderbuffer(gl.RENDERBUFFER, this._depthRenderBuffer);

@@ -84,7 +84,7 @@ cc.pool = /** @lends cc.pool# */{
     hasObject: function (objClass) {
         var pid = objClass.prototype.__pid;
         var list = this._pool[pid];
-        if (!list || list.length == 0) {
+        if (!list || list.length === 0) {
             return false;
         }
         return true;

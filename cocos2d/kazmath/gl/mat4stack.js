@@ -36,6 +36,7 @@
     cc.math.Matrix4Stack = function(top, stack) {
         this.top = top;
         this.stack = stack || [];
+        //this._matrixPool = [];            // use pool in next version
     };
     cc.km_mat4_stack = cc.math.Matrix4Stack;
     var proto = cc.math.Matrix4Stack.prototype;
@@ -61,17 +62,34 @@
     };
 
     proto.push = function(item) {
+        item = item || this.top;
         this.stack.push(this.top);
         this.top = new cc.math.Matrix4(item);
+        //this.top = this._getFromPool(item);
     };
 
     proto.pop = function() {
+        //this._putInPool(this.top);
         this.top = this.stack.pop();
     };
 
     proto.release = function(){
         this.stack = null;
         this.top = null;
+        this._matrixPool = null;
+    };
+
+    proto._getFromPool = function (item) {
+        var pool = this._matrixPool;
+        if (pool.length === 0)
+            return new cc.math.Matrix4(item);
+        var ret = pool.pop();
+        ret.assignFrom(item);
+        return ret;
+    };
+
+    proto._putInPool = function(matrix){
+        this._matrixPool.push(matrix);
     };
 })(cc);
 

@@ -356,7 +356,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
      */
     deleteBackward:function () {
         var strLen = this._inputText.length;
-        if (strLen == 0)
+        if (strLen === 0)
             return;
 
         // get the delete byte number
@@ -413,7 +413,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
             this.string = sText;
         }
 
-        if (pos == -1)
+        if (pos === -1)
             return;
 
         // '\n' has inserted,  let delegate process first

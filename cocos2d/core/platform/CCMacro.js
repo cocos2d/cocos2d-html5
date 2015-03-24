@@ -460,7 +460,7 @@ cc.MIRRORED_REPEAT   = 0x8370;
  * @function
  */
 cc.checkGLErrorDebug = function () {
-    if (cc.renderMode == cc._RENDER_TYPE_WEBGL) {
+    if (cc.renderMode === cc._RENDER_TYPE_WEBGL) {
         var _error = cc._renderContext.getError();
         if (_error) {
             cc.log(cc._LogInfos.checkGLErrorDebug, _error);
@@ -785,7 +785,7 @@ cc.arrayVerifyType = function (arr, type) {
  */
 cc.arrayRemoveObject = function (arr, delObj) {
     for (var i = 0, l = arr.length; i < l; i++) {
-        if (arr[i] == delObj) {
+        if (arr[i] === delObj) {
             arr.splice(i, 1);
             break;
         }

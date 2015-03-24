@@ -150,7 +150,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
      * @param {Boolean} flipped
      */
     setTextureFlipped:function (flipped) {
-        if (this._isTextureFlipped != flipped) {
+        if (this._isTextureFlipped !== flipped) {
             this._isTextureFlipped = flipped;
             this.calculateVertexPoints();
         }

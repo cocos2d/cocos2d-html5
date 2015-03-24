@@ -97,11 +97,13 @@ ccs.ActionTimeline = cc.Action.extend({
     _endFrame: 0,
     _loop: null,
     _frameEventListener: null,
+    _animationInfos: null,
 
     ctor: function(){
         cc.Action.prototype.ctor.call(this);
         this._timelineMap = {};
         this._timelineList = [];
+        this._animationInfos = {};
         this.init();
     },
 
@@ -368,7 +370,7 @@ ccs.ActionTimeline = cc.Action.extend({
      * @param {number} delta
      */
     step: function(delta){
-        if (!this._playing || this._timelineMap.length == 0 || this._duration == 0)
+        if (!this._playing || this._timelineMap.length === 0 || this._duration === 0)
         {
             return;
         }
@@ -431,6 +433,34 @@ ccs.ActionTimeline = cc.Action.extend({
      */
     isDone: function(){
         return false;
+    },
+
+    /**
+     * @param {String} name
+     * @param {Boolean} loop
+     */
+    play: function(name, loop){
+        var info = this._animationInfos[name];
+        if (!info)
+            return cc.log("Can't find animation info for %s", name);
+
+        this.gotoFrameAndPlay(info.startIndex, info.endIndex, loop);
+    },
+
+    /**
+     * Add animationInfo
+     * @param {Object} info
+     */
+    addAnimationInfo: function(info){
+        this._animationInfos[info.name] = info;
+    },
+
+    /**
+     * Remove animationInfo
+     * @param {String} name
+     */
+    removeAnimationInfo: function(name){
+        delete this._animationInfos[name];
     }
 });
 
