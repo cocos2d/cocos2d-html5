@@ -247,10 +247,10 @@
         transMat = cc.affineTransformScale(transMat, tx, ty);
         for (i = 0; i < stopsLen; i++) {
             var stop = stops[i], y = stop.p * contentSize.height ;
-            var p0 = cc._pointApplyAffineTransform(- locAnchor.x , y - locAnchor.y, transMat);
+            var p0 = cc.pointApplyAffineTransform(- locAnchor.x , y - locAnchor.y, transMat);
             locVertices[i * 2].x = p0.x;
             locVertices[i * 2].y = p0.y;
-            var p1 = cc._pointApplyAffineTransform(contentSize.width - locAnchor.x, y - locAnchor.y, transMat);
+            var p1 = cc.pointApplyAffineTransform(contentSize.width - locAnchor.x, y - locAnchor.y, transMat);
             locVertices[i * 2 + 1].x = p1.x;
             locVertices[i * 2 + 1].y = p1.y;
         }

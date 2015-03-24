@@ -285,7 +285,7 @@ cc.TimerTargetCallback = cc.Timer.extend({
  *
  * @example
  * //register a schedule to scheduler
- * cc.director.getScheduler().scheduleSelector(callback, this, interval, !this._isRunning);
+ * cc.director.getScheduler().schedule(callback, this, interval, !this._isRunning);
  */
 cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     _timeScale:1.0,

@@ -40,13 +40,10 @@
      * @param {cc.math.Matrix4} [mat4]
      */
     cc.math.Matrix4 = function (mat4) {
-        if(mat4){
+        if(mat4 && mat4.mat){
             this.mat = new Float32Array(mat4.mat);
         } else {
-            this.mat = new Float32Array([0, 0, 0, 0,
-                0, 0, 0, 0,
-                0, 0, 0, 0,
-                0, 0, 0, 0]);
+            this.mat = new Float32Array(16);
         }
     };
     cc.kmMat4 = cc.math.Matrix4;
