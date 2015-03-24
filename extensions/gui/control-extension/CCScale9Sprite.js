@@ -461,10 +461,6 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         this._textureLoaded = locLoaded;
         if(!locLoaded){
             texture.addEventListener("load", function(sender){
-                if(this._capInsets.width === 0 && this._capInsets.height === 0){
-                    this._capInsets.width = sender._contentSize.width;
-                    this._capInsets.height = sender._contentSize.height;
-                }
                 // the texture is rotated on Canvas render mode, so isRotated always is false.
                 var preferredSize = this._preferredSize;
                 preferredSize = cc.size(preferredSize.width, preferredSize.height);
@@ -474,11 +470,6 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
                 this._positionsAreDirty = true;
                 this.dispatchEvent("load");
             }, this);
-        }else{
-            if(this._capInsets.width === 0 && this._capInsets.height === 0){
-                capInsets.width = texture._contentSize.width;
-                capInsets.height = texture._contentSize.height;
-            }
         }
 
         return this.initWithBatchNode(new cc.SpriteBatchNode(file, 9), rect, false, capInsets);
