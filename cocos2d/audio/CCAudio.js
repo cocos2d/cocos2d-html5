@@ -516,10 +516,16 @@ cc.Audio = cc.Class.extend({
                 return cb(null, loader.cache[url]);
 
             if(SWA){
-                var volume = context["createGain"]();
-                volume["gain"].value = 1;
-                volume["connect"](context["destination"]);
-                audio = new cc.Audio(context, volume, realUrl);
+                try{
+                    var volume = context["createGain"]();
+                    volume["gain"].value = 1;
+                    volume["connect"](context["destination"]);
+                    audio = new cc.Audio(context, volume, realUrl);
+                }catch(err){
+                    SWA = false;
+                    cc.log("browser don't support webAudio");
+                    audio = new cc.Audio(null, null, realUrl);
+                }
             }else{
                 audio = new cc.Audio(null, null, realUrl);
             }
