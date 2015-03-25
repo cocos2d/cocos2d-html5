@@ -104,7 +104,7 @@
          if(!stencil)
             return;
         var node = this._node;
-        if(stencil._renderCmd && stencil._renderCmd._blendFuncStr)
+        if(stencil._renderCmd && stencil._renderCmd._blendFuncStr)          //it is a hack way.
             stencil._renderCmd._blendFuncStr = (node.inverted ? "destination-out" : "destination-in");
 
         if(!stencil._children)
