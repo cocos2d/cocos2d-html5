@@ -46,11 +46,6 @@
 
     proto._init = function () {};
 
-    proto._setBlendFuncStr = function(compositeOperation){
-        //a hack function for clippingNode
-         this._blendFuncStr = compositeOperation;
-    };
-
     proto.setDirtyRecursively = function (value) {};
 
     proto._resetForBatchNode = function () {};
