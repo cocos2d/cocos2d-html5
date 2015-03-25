@@ -59,7 +59,7 @@ cc.ListEntry = function (prev, next, callback, target, priority, paused, markedF
  * A update entry list
  * @Class
  * @name cc.HashUpdateEntry
- * @param {cc.ListEntry} list Which list does it belong to ?
+ * @param {Array} list Which list does it belong to ?
  * @param {cc.ListEntry} entry entry in the list
  * @param {cc.Class} target hash key (retained)
  * @param {function} callback
@@ -193,7 +193,6 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
 });
 
 cc.TimerTargetSelector = cc.Timer.extend({
-
     _target: null,
     _selector: null,
 
@@ -326,9 +325,9 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
     _schedulePerFrame: function(callback, target, priority, paused){
         var hashElement = this._hashForUpdates[target.__instanceId];
-        if (hashElement){
+        if (hashElement && hashElement.entry){
             // check if priority has changed
-            if (hashElement.list.priority !== priority){
+            if (hashElement.entry.priority !== priority){
                 if (this._updateHashLocked){
                     cc.log("warning: you CANNOT change update priority in scheduled function");
                     hashElement.entry.markedForDeletion = false;
