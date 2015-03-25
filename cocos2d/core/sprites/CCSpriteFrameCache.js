@@ -300,7 +300,7 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
             if (spriteFrames[key]) {
                 delete(spriteFrames[key]);
                 for (var alias in aliases) {//remove alias
-                    if(aliases[alias] == key) delete aliases[alias];
+                    if(aliases[alias] === key) delete aliases[alias];
                 }
             }
         }
@@ -317,10 +317,10 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
         var self = this, spriteFrames = self._spriteFrames, aliases = self._spriteFramesAliases;
         for (var key in spriteFrames) {
             var frame = spriteFrames[key];
-            if (frame && (frame.getTexture() == texture)) {
+            if (frame && (frame.getTexture() === texture)) {
                 delete(spriteFrames[key]);
                 for (var alias in aliases) {//remove alias
-                    if(aliases[alias] == key) delete aliases[alias];
+                    if(aliases[alias] === key) delete aliases[alias];
                 }
             }
         }

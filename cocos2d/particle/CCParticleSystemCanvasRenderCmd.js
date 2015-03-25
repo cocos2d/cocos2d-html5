@@ -55,7 +55,7 @@
     };
 
     proto.setBatchNode = function(batchNode){
-        if (this._batchNode != batchNode) {
+        if (this._batchNode !== batchNode) {
             this._node._batchNode = batchNode;
         }
     };
@@ -129,7 +129,7 @@
 
                 context.save();
                 context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
-                if (node.shapeType == cc.ParticleSystem.STAR_SHAPE) {
+                if (node.shapeType === cc.ParticleSystem.STAR_SHAPE) {
                     if (particle.rotation)
                         context.rotate(cc.degreesToRadians(particle.rotation));
                     drawTool.drawStar(wrapper, lpx, particle.color);

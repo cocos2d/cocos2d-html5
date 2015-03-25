@@ -73,7 +73,7 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
         var targetGrid = t.grid;
         if (targetGrid && targetGrid.getReuseGrid() > 0) {
             var locGridSize = targetGrid.getGridSize();
-            if (targetGrid.isActive() && (locGridSize.width == this._gridSize.width) && (locGridSize.height == this._gridSize.height))
+            if (targetGrid.isActive() && (locGridSize.width === this._gridSize.width) && (locGridSize.height === this._gridSize.height))
                 targetGrid.reuse();
         } else {
             if (targetGrid && targetGrid.isActive())

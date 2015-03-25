@@ -427,7 +427,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {Boolean} flippedX true if the sprite should be flipped horizontally, false otherwise.
      */
     setFlippedX:function (flippedX) {
-        if (this._flippedX != flippedX) {
+        if (this._flippedX !== flippedX) {
             this._flippedX = flippedX;
             this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
             this.setNodeDirty(true);
@@ -439,7 +439,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {Boolean} flippedY true if the sprite should be flipped vertically, false otherwise.
      */
     setFlippedY:function (flippedY) {
-        if (this._flippedY != flippedY) {
+        if (this._flippedY !== flippedY) {
             this._flippedY = flippedY;
             this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
             this.setNodeDirty(true);
@@ -534,7 +534,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if (!this._reorderChildDirty) {
             this._reorderChildDirty = true;
             var pNode = this._parent;
-            while (pNode && pNode != this._batchNode) {
+            while (pNode && pNode !== this._batchNode) {
                 pNode._setReorderChildDirtyRecursively();
                 pNode = pNode.parent;
             }
@@ -684,7 +684,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      */
     initWithTexture: function (texture, rect, rotated, counterclockwise) {
         var _t = this;
-        cc.assert(arguments.length != 0, cc._LogInfos.CCSpriteBatchNode_initWithTexture);
+        cc.assert(arguments.length !== 0, cc._LogInfos.CCSpriteBatchNode_initWithTexture);
 
         rotated = rotated || false;
         texture = this._renderCmd._handleTextureForRotatedTexture(texture, rect, rotated, counterclockwise);
@@ -838,7 +838,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             newFrame.addEventListener("load", function (sender) {
                 _t._textureLoaded = true;
                 var locNewTexture = sender.getTexture();
-                if (locNewTexture != _t._texture)
+                if (locNewTexture !== _t._texture)
                     _t.texture = locNewTexture;
                 _t.setTextureRect(sender.getRect(), sender.isRotated(), sender.getOriginalSize());
                 _t.dispatchEvent("load");
@@ -846,7 +846,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             }, _t);
         }else{
             // update texture before updating texture rect
-            if (pNewTexture != _t._texture)
+            if (pNewTexture !== _t._texture)
                 _t.texture = pNewTexture;
             _t.setTextureRect(newFrame.getRect(), newFrame.isRotated(), newFrame.getOriginalSize());
         }

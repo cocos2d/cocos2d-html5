@@ -82,11 +82,13 @@
 
             switch(slot.attachment.type) {
                 case sp.ATTACHMENT_TYPE.REGION:
-                sp._regionAttachment_updateQuad(attachment, slot, quad, node._premultipliedAlpha);
-                break;
+                    sp._regionAttachment_updateQuad(attachment, slot, quad, node._premultipliedAlpha);
+                    break;
                 case sp.ATTACHMENT_TYPE.MESH:
-                sp._meshAttachment_updateQuad(attachment, slot, quad, node._premultipliedAlpha);
-                break;
+                    sp._meshAttachment_updateQuad(attachment, slot, quad, node._premultipliedAlpha);
+                    break;
+                case sp.ATTACHMENT_TYPE.SKINNED_MESH:
+                    break;
             }
 
             textureAtlas.updateQuad(quad, quadCount);
@@ -98,9 +100,8 @@
         }
 
         if (node._debugBones || node._debugSlots) {
-
             cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-            //cc.kmGLPushMatrixWitMat4(node._stackMatrix);
+            //cc.kmGLPushMatrixWitMat4(this._stackMatrix);
             cc.current_stack.stack.push(cc.current_stack.top);
             cc.current_stack.top = this._stackMatrix;
 

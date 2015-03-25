@@ -461,7 +461,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{  //WebGL only
      * @return {Boolean}
      */
     resizeCapacity: function (newCapacity) {
-        if (newCapacity == this._capacity)
+        if (newCapacity === this._capacity)
             return true;
 
         var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
@@ -471,7 +471,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{  //WebGL only
         this._capacity = 0 | newCapacity;
         var i, capacity = this._capacity, locTotalQuads = this._totalQuads;
 
-        if (this._quads == null) {
+        if (this._quads === null) {
             this._quads = [];
             this._quadsArrayBuffer = new ArrayBuffer(quadSize * capacity);
             this._quadsReader = new Uint8Array(this._quadsArrayBuffer);
@@ -506,7 +506,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{  //WebGL only
             }
         }
 
-        if (this._indices == null) {
+        if (this._indices === null) {
             this._indices = new Uint16Array(capacity * 6);
         } else {
             if (capacity > oldCapacity) {
@@ -552,7 +552,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{  //WebGL only
             cc.assert((newIndex + amount) <= this._totalQuads, cc._LogInfos.TextureAtlas_moveQuadsFromIndex_2);
             cc.assert(oldIndex < this._totalQuads, cc._LogInfos.TextureAtlas_moveQuadsFromIndex_3);
 
-            if (oldIndex == newIndex)
+            if (oldIndex === newIndex)
                 return;
         }
 

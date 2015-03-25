@@ -126,7 +126,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
         this._delay = delay;
         this._useDelay = (this._delay > 0);
         this._repeat = repeat;
-        this._runForever = (this._repeat == cc.REPEAT_FOREVER);
+        this._runForever = (this._repeat === cc.REPEAT_FOREVER);
     },
 
     trigger: function(){
@@ -157,7 +157,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
      * @param {Number} dt delta time
      */
     update:function (dt) {
-        if (this._elapsed == -1) {
+        if (this._elapsed === -1) {
             this._elapsed = 0;
             this._timesExecuted = 0;
         } else {
@@ -285,7 +285,7 @@ cc.TimerTargetCallback = cc.Timer.extend({
  *
  * @example
  * //register a schedule to scheduler
- * cc.director.getScheduler().scheduleSelector(callback, this, interval, !this._isRunning);
+ * cc.director.getScheduler().schedule(callback, this, interval, !this._isRunning);
  */
 cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     _timeScale:1.0,
@@ -328,7 +328,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         var hashElement = this._hashForUpdates[target.__instanceId];
         if (hashElement){
             // check if priority has changed
-            if (hashElement.list.priority != priority){
+            if (hashElement.list.priority !== priority){
                 if (this._updateHashLocked){
                     cc.log("warning: you CANNOT change update priority in scheduled function");
                     hashElement.entry.markedForDeletion = false;
@@ -347,7 +347,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
         // most of the updates are going to be 0, that's way there
         // is an special list for updates with priority 0
-        if (priority == 0){
+        if (priority === 0){
             this._appendIn(this._updates0List, callback, target, paused);
         }else if (priority < 0){
             this._priorityIn(this._updatesNegList, callback, target, priority, paused);
@@ -442,7 +442,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      */
     update:function (dt) {
         this._updateHashLocked = true;
-        if(this._timeScale != 1)
+        if(this._timeScale !== 1)
             dt *= this._timeScale;
 
         var i, list, len, entry;
@@ -488,7 +488,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             //elt = elt.hh.next;
 
             // only delete currentTarget if no actions were scheduled during the cycle (issue #481)
-            if (this._currentTargetSalvaged && this._currentTarget.timers.length == 0)
+            if (this._currentTargetSalvaged && this._currentTarget.timers.length === 0)
                 this._removeHashElement(this._currentTarget);
         }
 
@@ -549,7 +549,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
     schedule: function(callback, target, interval, repeat, delay, paused, key){
         var isSelector = false;
-        if(typeof callback != "function"){
+        if(typeof callback !== "function"){
             var selector = callback;
             isSelector = true;
         }
@@ -566,7 +566,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         }else{
             //selector, target, interval, repeat, delay, paused
             //selector, target, interval, paused
-            if(arguments.length == 4){
+            if(arguments.length === 4){
                 paused = repeat;
                 repeat = cc.REPEAT_FOREVER;
                 delay = 0;
@@ -585,7 +585,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             this._arrayForTimers.push(element);
             this._hashForTimers[target.__instanceId] = element;
         }else{
-            cc.assert(element.paused == paused, "");
+            cc.assert(element.paused === paused, "");
         }
 
         var timer, i;
@@ -594,7 +594,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         } else if(isSelector === false) {
             for (i = 0; i < element.timers.length; i++) {
                 timer = element.timers[i];
-                if (callback == timer._callback) {
+                if (callback === timer._callback) {
                     cc.log(cc._LogInfos.Scheduler_scheduleCallbackForTarget, timer.getInterval().toFixed(4), interval.toFixed(4));
                     timer._interval = interval;
                     return;
@@ -603,7 +603,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         }else{
             for (i = 0; i < element.timers.length; ++i){
                 timer =element.timers[i];
-                if (timer && selector == timer.getSelector()){
+                if (timer && selector === timer.getSelector()){
                     cc.log("CCScheduler#scheduleSelector. Selector already scheduled. Updating interval from: %.4f to %.4f", timer.getInterval(), interval);
                     timer.setInterval(interval);
                     return;
@@ -634,11 +634,11 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         switch (typeof key){
             case "number":
             case "string":
-                return key == timer.getKey();
+                return key === timer.getKey();
             case "function":
-                return key == timer._callback;
+                return key === timer._callback;
             default:
-                return key == timer.getSelector();
+                return key === timer.getSelector();
         }
     },
     unschedule: function(key, target){
@@ -656,7 +656,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             for(var i = 0, li = timers.length; i < li; i++){
                 var timer = timers[i];
                 if (this._getUnscheduleMark(key, timer)) {
-                    if ((timer == element.currentTimer) && (!element.currentTimerSalvaged)) {
+                    if ((timer === element.currentTimer) && (!element.currentTimerSalvaged)) {
                         element.currentTimerSalvaged = true;
                     }
                     timers.splice(i, 1);
@@ -665,8 +665,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
                         element.timerIndex--;
                     }
 
-                    if (timers.length == 0) {
-                        if (self._currentTarget == element) {
+                    if (timers.length === 0) {
+                        if (self._currentTarget === element) {
                             self._currentTargetSalvaged = true;
                         } else {
                             self._removeHashElement(element);
@@ -710,7 +710,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             //        ccArrayRemoveAllObjects(element.timers);
             element.timers.length = 0;
 
-            if (this._currentTarget == element){
+            if (this._currentTarget === element){
                 this._currentTargetSalvaged = true;
             }else{
                 this._removeHashElement(element);
@@ -785,7 +785,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             for (var i = 0; i < timers.length; ++i){
                 var timer =  timers[i];
 
-                if (key == timer.getKey()){
+                if (key === timer.getKey()){
                     return true;
                 }
             }

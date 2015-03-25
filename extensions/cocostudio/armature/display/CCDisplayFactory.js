@@ -118,18 +118,15 @@ ccs.displayFactory = {
         //! remove .xxx
         var textureName = displayData.displayName;
         var startPos = textureName.lastIndexOf(".");
-        if (startPos != -1)
+        if (startPos !== -1)
             textureName = textureName.substring(0, startPos);
         //! create display
-        if (textureName == "")
+        if (textureName === "")
             skin = new ccs.Skin();
         else
             skin = new ccs.Skin("#" + textureName + ".png");
 
         decoDisplay.setDisplay(skin);
-
-        if(skin == null)
-            return;
 
         skin.setBone(bone);
         this.initSpriteDisplay(bone, decoDisplay, displayData.displayName, skin);
@@ -148,7 +145,7 @@ ccs.displayFactory = {
         var textureName = displayName;
         var startPos = textureName.lastIndexOf(".");
 
-        if (startPos != -1)
+        if (startPos !== -1)
             textureName = textureName.substring(0, startPos);
 
         var textureData = ccs.armatureDataManager.getTextureData(textureName);

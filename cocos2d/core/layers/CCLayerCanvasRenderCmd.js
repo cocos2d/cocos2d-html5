@@ -129,7 +129,7 @@
     };
 
     proto._bakeForAddChild = function(child){
-        if(child._parent == this._node && this._isBaked)
+        if(child._parent === this._node && this._isBaked)
             child._renderCmd._setCachedParent(this);
     };
 

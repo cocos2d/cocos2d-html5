@@ -154,7 +154,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
      */
     setScale9Enabled: function (able) {
         //todo setScale9Enabled
-        if (this._scale9Enabled == able)
+        if (this._scale9Enabled === able)
             return;
 
         this._scale9Enabled = able;

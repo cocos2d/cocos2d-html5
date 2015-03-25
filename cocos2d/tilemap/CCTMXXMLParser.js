@@ -542,15 +542,15 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         var version = map.getAttribute('version');
         var orientationStr = map.getAttribute('orientation');
 
-        if (map.nodeName == "map") {
-            if (version != "1.0" && version !== null)
+        if (map.nodeName === "map") {
+            if (version !== "1.0" && version !== null)
                 cc.log("cocos2d: TMXFormat: Unsupported TMX version:" + version);
 
-            if (orientationStr == "orthogonal")
+            if (orientationStr === "orthogonal")
                 this.orientation = cc.TMX_ORIENTATION_ORTHO;
-            else if (orientationStr == "isometric")
+            else if (orientationStr === "isometric")
                 this.orientation = cc.TMX_ORIENTATION_ISO;
-            else if (orientationStr == "hexagonal")
+            else if (orientationStr === "hexagonal")
                 this.orientation = cc.TMX_ORIENTATION_HEX;
             else if (orientationStr !== null)
                 cc.log("cocos2d: TMXFomat: Unsupported orientation:" + orientationStr);
@@ -693,7 +693,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                     case null:
                     case '':
                         // Uncompressed
-                        if (encoding == "base64")
+                        if (encoding === "base64")
                             layer._tiles = cc.Codec.Base64.decodeAsArray(nodeValue, 4);
                         else if (encoding === "csv") {
                             layer._tiles = [];
@@ -709,7 +709,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                         }
                         break;
                     default:
-                        if(this.layerAttrs == cc.TMXLayerInfo.ATTRIB_NONE)
+                        if(this.layerAttrs === cc.TMXLayerInfo.ATTRIB_NONE)
                             cc.log("cc.TMXMapInfo.parseXMLFile(): Only base64 and/or gzip/zlib maps are supported");
                         break;
                 }

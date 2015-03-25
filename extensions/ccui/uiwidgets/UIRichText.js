@@ -389,11 +389,10 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      * @private
      */
     _handleTextRenderer: function (text, fontNameOrFontDef, fontSize, color) {
-
-        if(text == "")
+        if(text === "")
             return;
 
-        if(text == "\n"){ //Force Line Breaking
+        if(text === "\n"){ //Force Line Breaking
             this._addNewLine();
             return;
         }
@@ -412,9 +411,9 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
 
             if(this._lineBreakOnSpace){
                 var lastSpaceIndex = leftWords.lastIndexOf(' ');
-                leftLength = lastSpaceIndex == -1 ? leftLength : lastSpaceIndex+1 ;
+                leftLength = lastSpaceIndex === -1 ? leftLength : lastSpaceIndex+1 ;
                 cutWords = curText.substr(leftLength, curText.length - 1);
-                validLeftLength = leftLength > 0 && cutWords != " ";
+                validLeftLength = leftLength > 0 && cutWords !== " ";
             }
 
             if (validLeftLength) {
@@ -492,11 +491,11 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
             }
 
             //Text flow horizontal alignment:
-            if(this._textHorizontalAlignment != cc.TEXT_ALIGNMENT_LEFT) {
+            if(this._textHorizontalAlignment !== cc.TEXT_ALIGNMENT_LEFT) {
                 var offsetX = 0;
-                if (this._textHorizontalAlignment == cc.TEXT_ALIGNMENT_RIGHT)
+                if (this._textHorizontalAlignment === cc.TEXT_ALIGNMENT_RIGHT)
                     offsetX = this._contentSize.width - nextPosX;
-                else if (this._textHorizontalAlignment == cc.TEXT_ALIGNMENT_CENTER)
+                else if (this._textHorizontalAlignment === cc.TEXT_ALIGNMENT_CENTER)
                     offsetX = (this._contentSize.width - nextPosX) / 2;
 
                 for (j = 0; j < row.length; j++)
@@ -534,17 +533,17 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                     nextPosX += l.getContentSize().width;
                 }
                 //Text flow alignment(s)
-                if( this._textHorizontalAlignment != cc.TEXT_ALIGNMENT_LEFT || this._textVerticalAlignment != cc.VERTICAL_TEXT_ALIGNMENT_TOP) {
+                if( this._textHorizontalAlignment !== cc.TEXT_ALIGNMENT_LEFT || this._textVerticalAlignment !== cc.VERTICAL_TEXT_ALIGNMENT_TOP) {
                     var offsetX = 0;
-                    if (this._textHorizontalAlignment == cc.TEXT_ALIGNMENT_RIGHT)
+                    if (this._textHorizontalAlignment === cc.TEXT_ALIGNMENT_RIGHT)
                         offsetX = this._contentSize.width - nextPosX;
-                    else if (this._textHorizontalAlignment == cc.TEXT_ALIGNMENT_CENTER)
+                    else if (this._textHorizontalAlignment === cc.TEXT_ALIGNMENT_CENTER)
                         offsetX = (this._contentSize.width - nextPosX) / 2;
 
                     var offsetY = 0;
-                    if (this._textVerticalAlignment == cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
+                    if (this._textVerticalAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
                         offsetY = this._customSize.height - newContentSizeHeight;
-                    else if (this._textVerticalAlignment == cc.VERTICAL_TEXT_ALIGNMENT_CENTER)
+                    else if (this._textVerticalAlignment === cc.VERTICAL_TEXT_ALIGNMENT_CENTER)
                         offsetY = (this._customSize.height - newContentSizeHeight) / 2;
 
                     for (j = 0; j < row.length; j++) {
@@ -621,7 +620,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      * @override
      */
     ignoreContentAdaptWithSize: function (ignore) {
-        if (this._ignoreSize != ignore) {
+        if (this._ignoreSize !== ignore) {
             this._formatTextDirty = true;
             ccui.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
         }
@@ -689,7 +688,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      * @param {Number} value - example cc.TEXT_ALIGNMENT_RIGHT
      */
     setTextHorizontalAlignment: function(value){
-        if(value != this._textHorizontalAlignment) {
+        if(value !== this._textHorizontalAlignment) {
             this._textHorizontalAlignment = value;
             this.formatText();
         }
@@ -705,7 +704,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      * @param {Number} value - example cc.VERTICAL_TEXT_ALIGNMENT_CENTER
      */
     setTextVerticalAlignment: function(value){
-        if(value != this._textVerticalAlignment) {
+        if(value !== this._textVerticalAlignment) {
             this._textVerticalAlignment = value;
             this.formatText();
         }

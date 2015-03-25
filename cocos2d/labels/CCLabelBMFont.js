@@ -305,7 +305,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         var i, locCfg = self._config, locKerningDict = locCfg.kerningDict,
             locCommonH = locCfg.commonHeight, locFontDict = locCfg.fontDefDictionary;
         for (i = 0; i < stringLen - 1; i++) {
-            if (locStr.charCodeAt(i) == 10) quantityOfLines++;
+            if (locStr.charCodeAt(i) === 10) quantityOfLines++;
         }
 
         var totalHeight = locCommonH * quantityOfLines;
@@ -314,7 +314,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         var prev = -1;
         for (i = 0; i < stringLen; i++) {
             var key = locStr.charCodeAt(i);
-            if (key == 0) continue;
+            if (key === 0) continue;
 
             if (key === 10) {
                 //new line
@@ -539,6 +539,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     updateLabel: function () {
         var self = this;
         self.string = self._initialString;
+        var i, j, characterSprite;
         // process string
         // Step 1: Make multiline
         if (self._width > 0) {
@@ -549,8 +550,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             for (i = 0; i < stringArr.length; i++) {
                 oldArrLength = stringArr.length;
                 this._checkWarp(stringArr, i, self._width * this._scaleX, newWrapNum);
-                if (oldArrLength < stringArr.length)
-                {
+                if (oldArrLength < stringArr.length) {
                     newWrapNum++;
                 }
                 if (i > 0)
@@ -564,7 +564,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         }
 
         // Step 2: Make alignment
-        if (self._alignment != cc.TEXT_ALIGNMENT_LEFT) {
+        if (self._alignment !== cc.TEXT_ALIGNMENT_LEFT) {
             i = 0;
 
             var lineNumber = 0;
@@ -572,11 +572,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var last_line = [];
 
             for (var ctr = 0; ctr < strlen; ctr++) {
-                if (self._string[ctr].charCodeAt(0) == 10 || self._string[ctr].charCodeAt(0) == 0) {
+                if (self._string[ctr].charCodeAt(0) === 10 || self._string[ctr].charCodeAt(0) === 0) {
                     var lineWidth = 0;
                     var line_length = last_line.length;
                     // if last line is empty we must just increase lineNumber and work with next line
-                    if (line_length == 0) {
+                    if (line_length === 0) {
                         lineNumber++;
                         continue;
                     }
@@ -600,7 +600,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                             break;
                     }
 
-                    if (shift != 0) {
+                    if (shift !== 0) {
                         for (j = 0; j < line_length; j++) {
                             index = i + j + lineNumber;
                             if (index < 0) continue;
@@ -698,7 +698,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      */
     setFntFile: function (fntFile) {
         var self = this;
-        if (fntFile != null && fntFile != self._fntFile) {
+        if (fntFile != null && fntFile !== self._fntFile) {
             var newConf = cc.loader.getRes(fntFile);
 
             if (!newConf) {
@@ -789,9 +789,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     //Checking whether the character is a whitespace
     _isspace_unicode: function(ch){
         ch = ch.charCodeAt(0);
-        return  ((ch >= 9 && ch <= 13) || ch == 32 || ch == 133 || ch == 160 || ch == 5760
-            || (ch >= 8192 && ch <= 8202) || ch == 8232 || ch == 8233 || ch == 8239
-            || ch == 8287 || ch == 12288)
+        return  ((ch >= 9 && ch <= 13) || ch === 32 || ch === 133 || ch === 160 || ch === 5760
+            || (ch >= 8192 && ch <= 8202) || ch === 8232 || ch === 8233 || ch === 8239
+            || ch === 8287 || ch === 12288)
     },
 
     _utf8_trim_ws: function(str){
@@ -874,7 +874,7 @@ cc._fntLoader = {
                 var key = tempStr.substring(0, index);
                 var value = tempStr.substring(index + 1);
                 if (value.match(this.INT_EXP)) value = parseInt(value);
-                else if (value[0] == '"') value = value.substring(1, value.length - 1);
+                else if (value[0] === '"') value = value.substring(1, value.length - 1);
                 obj[key] = value;
             }
         }

@@ -456,12 +456,12 @@ cc.Node.RenderCmd.prototype = {
         if (this._cacheDirty === false) {
             this._cacheDirty = true;
             var cachedP = this._cachedParent;
-            cachedP && cachedP != this && cachedP._setNodeDirtyForCache && cachedP._setNodeDirtyForCache();
+            cachedP && cachedP !== this && cachedP._setNodeDirtyForCache && cachedP._setNodeDirtyForCache();
         }
     };
 
     proto._setCachedParent = function (cachedParent) {
-        if (this._cachedParent == cachedParent)
+        if (this._cachedParent === cachedParent)
             return;
 
         this._cachedParent = cachedParent;
@@ -493,11 +493,11 @@ cc.Node.RenderCmd.prototype = {
         if (!blendFunc)
             return "source-over";
         else {
-            if (( blendFunc.src == cc.SRC_ALPHA && blendFunc.dst == cc.ONE) || (blendFunc.src == cc.ONE && blendFunc.dst == cc.ONE))
+            if (( blendFunc.src === cc.SRC_ALPHA && blendFunc.dst === cc.ONE) || (blendFunc.src === cc.ONE && blendFunc.dst === cc.ONE))
                 return "lighter";
-            else if (blendFunc.src == cc.ZERO && blendFunc.dst == cc.SRC_ALPHA)
+            else if (blendFunc.src === cc.ZERO && blendFunc.dst === cc.SRC_ALPHA)
                 return "destination-in";
-            else if (blendFunc.src == cc.ZERO && blendFunc.dst == cc.ONE_MINUS_SRC_ALPHA)
+            else if (blendFunc.src === cc.ZERO && blendFunc.dst === cc.ONE_MINUS_SRC_ALPHA)
                 return "destination-out";
             else
                 return "source-over";

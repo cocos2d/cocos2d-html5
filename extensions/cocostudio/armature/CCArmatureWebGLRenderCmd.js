@@ -50,7 +50,7 @@
             var selBone = locChildren[i];
             if (selBone && selBone.getDisplayRenderNode) {
                 var selNode = selBone.getDisplayRenderNode();
-                if (null == selNode)
+                if (null === selNode)
                     continue;
                 selNode.setShaderProgram(this._shaderProgram);
                 switch (selBone.getDisplayRenderNodeType()) {
@@ -60,10 +60,10 @@
                             selNode.updateTransform();
 
                             var func = selBone.getBlendFunc();
-                            if (func.src != alphaPremultiplied.src || func.dst != alphaPremultiplied.dst)
+                            if (func.src !== alphaPremultiplied.src || func.dst !== alphaPremultiplied.dst)
                                 selNode.setBlendFunc(selBone.getBlendFunc());
                             else {
-                                if ((node._blendFunc.src == alphaPremultiplied.src && node._blendFunc.dst == alphaPremultiplied.dst)
+                                if ((node._blendFunc.src === alphaPremultiplied.src && node._blendFunc.dst === alphaPremultiplied.dst)
                                     && !selNode.getTexture().hasPremultipliedAlpha())
                                     selNode.setBlendFunc(alphaNonPremultipled);
                                 else
@@ -118,10 +118,10 @@
         dis.updateTransform();
 
         var func = selBone.getBlendFunc();
-        if (func.src != alphaPremultiplied.src || func.dst != alphaPremultiplied.dst)
+        if (func.src !== alphaPremultiplied.src || func.dst !== alphaPremultiplied.dst)
             dis.setBlendFunc(selBone.getBlendFunc());
         else {
-            if ((node._blendFunc.src == alphaPremultiplied.src && node_blendFunc.dst == alphaPremultiplied.dst)
+            if ((node._blendFunc.src === alphaPremultiplied.src && node_blendFunc.dst === alphaPremultiplied.dst)
                 && !dis.getTexture().hasPremultipliedAlpha())
                 dis.setBlendFunc(alphaNonPremultipled);
             else

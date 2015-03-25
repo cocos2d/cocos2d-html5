@@ -183,7 +183,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         _t._viewName = "Cocos2dHTML5";
 
 	    var sys = cc.sys;
-        _t.enableRetina(sys.os == sys.OS_IOS || sys.os == sys.OS_OSX);
+        _t.enableRetina(sys.os === sys.OS_IOS || sys.os === sys.OS_OSX);
         cc.visibleRect && cc.visibleRect.init(_t._visibleRect);
 
         // Setup system default resolution policies
@@ -210,7 +210,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         // Check frame size changed or not
         var prevFrameW = view._frameSize.width, prevFrameH = view._frameSize.height;
         view._initFrameSize();
-        if (view._frameSize.width == prevFrameW && view._frameSize.height == prevFrameH)
+        if (view._frameSize.width === prevFrameW && view._frameSize.height === prevFrameH)
             return;
 
         // Frame size changed, do resize works
@@ -418,7 +418,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * @return {Boolean}
      */
     isOpenGLReady: function () {
-        return (this._hDC != null && this._hRC != null);
+        return (this._hDC !== null && this._hRC !== null);
     },
 
     /*
@@ -591,7 +591,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
         var result = policy.apply(this, this._designResolutionSize);
 
-        if(result.scale && result.scale.length == 2){
+        if(result.scale && result.scale.length === 2){
             this._scaleX = result.scale[0];
             this._scaleY = result.scale[1];
         }
@@ -621,7 +621,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         cc.winSize.width = director._winSizeInPoints.width;
         cc.winSize.height = director._winSizeInPoints.height;
 
-        if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
+        if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             // reset director's member variables to fit visible rect
             director._createStatsLabel();
             director.setGLDefaultValues();
@@ -821,7 +821,7 @@ cc.ContainerStrategy = cc.Class.extend(/** @lends cc.ContainerStrategy# */{
 
     _setupContainer: function (view, w, h) {
         var frame = view._frame;
-        if (cc.view._autoFullScreen && cc.sys.isMobile && frame == document.documentElement) {
+        if (cc.view._autoFullScreen && cc.sys.isMobile && frame === document.documentElement) {
             // Automatically full screen when user touches on mobile version
             cc.screen.autoFullScreen(frame);
         }
@@ -897,7 +897,7 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
                                contentW, contentH);
 
         // Translate the content
-        if (cc._renderType == cc._RENDER_TYPE_CANVAS){
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS){
             //TODO: modify something for setTransform
             //cc._renderContext.translate(viewport.x, viewport.y + contentH);
         }

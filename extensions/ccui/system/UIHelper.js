@@ -41,7 +41,7 @@ ccui.helper = {
 	seekWidgetByTag: function (root, tag) {
 	    if (!root)
 	        return null;
-	    if (root.getTag() == tag)
+	    if (root.getTag() === tag)
 	        return root;
 
 	    var arrayRootChildren = root.getChildren();
@@ -49,7 +49,7 @@ ccui.helper = {
 	    for (var i = 0; i < length; i++) {
 	        var child = arrayRootChildren[i];
 	        var res = ccui.helper.seekWidgetByTag(child, tag);
-	        if (res != null)
+	        if (res !== null)
 	            return res;
 	    }
 	    return null;
@@ -64,14 +64,14 @@ ccui.helper = {
 	seekWidgetByName: function (root, name) {
 	    if (!root)
 	        return null;
-	    if (root.getName() == name)
+	    if (root.getName() === name)
 	        return root;
 	    var arrayRootChildren = root.getChildren();
 	    var length = arrayRootChildren.length;
 	    for (var i = 0; i < length; i++) {
 	        var child = arrayRootChildren[i];
 	        var res = ccui.helper.seekWidgetByName(child, name);
-	        if (res != null)
+	        if (res !== null)
 	            return res;
 	    }
 	    return null;
@@ -92,7 +92,7 @@ ccui.helper = {
 	    for (var i = 0; i < length; i++) {
 	        var child = arrayRootChildren[i];
 	        var layoutParameter = child.getLayoutParameter(ccui.LayoutParameter.RELATIVE);
-	        if (layoutParameter && layoutParameter.getRelativeName() == name)
+	        if (layoutParameter && layoutParameter.getRelativeName() === name)
 	            return child;
 	    }
 	    return null;
@@ -107,13 +107,13 @@ ccui.helper = {
 	seekActionWidgetByActionTag: function (root, tag) {
 	    if (!root)
 	        return null;
-	    if (root.getActionTag() == tag)
+	    if (root.getActionTag() === tag)
 	        return root;
 	    var arrayRootChildren = root.getChildren();
 	    for (var i = 0; i < arrayRootChildren.length; i++) {
 	        var child = arrayRootChildren[i];
 	        var res = ccui.helper.seekActionWidgetByActionTag(child, tag);
-	        if (res != null)
+	        if (res !== null)
 	            return res;
 	    }
 	    return null;
@@ -132,7 +132,7 @@ ccui.helper = {
             node = children[i];
             var com = node.getComponent(ccui.LayoutComponent.NAME);
             var parent = node.getParent();
-            if (null != com && null != parent && com.refreshLayout)
+            if (null != com && null !== parent && com.refreshLayout)
                 com.refreshLayout();
         }
     },

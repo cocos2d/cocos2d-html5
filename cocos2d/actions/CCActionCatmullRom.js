@@ -174,7 +174,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
      * @return {Boolean}
      */
     initWithDuration:function (duration, points, tension) {
-        if(!points || points.length == 0)
+        if(!points || points.length === 0)
             throw "Invalid configuration. It must at least have one control point";
 
         if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
@@ -222,7 +222,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
         // p..p..p..p..p..p..p
         // 1..2..3..4..5..6..7
         // want p to be 1, 2, 3, 4, 5, 6
-        if (dt == 1) {
+        if (dt === 1) {
             p = ps.length - 1;
             lt = 1;
         } else {
@@ -242,7 +242,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
             var tempX, tempY;
             tempX = this.target.getPositionX() - this._previousPosition.x;
             tempY = this.target.getPositionY() - this._previousPosition.y;
-            if (tempX != 0 || tempY != 0) {
+            if (tempX !== 0 || tempY !== 0) {
                 var locAccDiff = this._accumulatedDiff;
                 tempX = locAccDiff.x + tempX;
                 tempY = locAccDiff.y + tempY;

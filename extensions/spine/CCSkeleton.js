@@ -48,15 +48,15 @@ sp.VERTEX_INDEX = {
 };
 
 /**
- * The attachment type of spine.  It contains three type: REGION(0), BOUNDING_BOX(1), REGION_SEQUENCE(2) and MESH(2).
+ * The attachment type of spine.  It contains three type: REGION(0), BOUNDING_BOX(1), MESH(2) and SKINNED_MESH.
  * @constant
  * @type {{REGION: number, BOUNDING_BOX: number, REGION_SEQUENCE: number, MESH: number}}
  */
 sp.ATTACHMENT_TYPE = {
     REGION: 0,
     BOUNDING_BOX: 1,
-    REGION_SEQUENCE: 2,
-    MESH: 2
+    MESH: 2,
+    SKINNED_MESH:3
 };
 
 /**
@@ -112,7 +112,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
     },
 
     /**
-     * Sets whether open debug solots.
+     * Sets whether open debug slots.
      * @param {boolean} enable true to open, false to close.
      */
     setDebugSolots:function(enable){
@@ -128,11 +128,47 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
     },
 
     /**
-     * Sets the time scale of sp.Skeleton.
-     * @param {Number} v
+     * Sets whether open debug slots.
+     * @param {boolean} enabled true to open, false to close.
      */
-    setTimeScale:function(v){
-        this._timeScale = v;
+    setDebugSlotsEnabled: function(enabled) {
+        this._debugSlots = enabled;
+    },
+
+    /**
+     * Gets whether open debug slots.
+     * @returns {boolean} true to open, false to close.
+     */
+    getDebugSlotsEnabled: function() {
+        return this._debugSlots;
+    },
+
+    /**
+     * Sets whether open debug bones.
+     * @param {boolean} enabled
+     */
+    setDebugBonesEnabled: function(enabled) {
+        this._debugBones = enabled;
+    },
+
+    /**
+     * Gets whether open debug bones.
+     * @returns {boolean} true to open, false to close.
+     */
+    getDebugBonesEnabled: function() {
+        return this._debugBones;
+    },
+
+    /**
+     * Sets the time scale of sp.Skeleton.
+     * @param {Number} scale
+     */
+    setTimeScale:function(scale){
+        this._timeScale = scale;
+    },
+
+    getTimeScale: function(){
+        return this._timeScale;
     },
 
     /**
@@ -185,7 +221,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
             if (!slot.attachment || slot.attachment.type != sp.ATTACHMENT_TYPE.REGION)
                 continue;
             var attachment = slot.attachment;
-            sp._regionAttachment_computeWorldVertices(attachment, slot.skeleton.x, slot.skeleton.y, slot.bone, vertices);
+            sp._regionAttachment_computeWorldVertices(attachment, slot.bone.skeleton.x, slot.bone.skeleton.y, slot.bone, vertices);
             minX = Math.min(minX, vertices[VERTEX.X1] * scaleX, vertices[VERTEX.X4] * scaleX, vertices[VERTEX.X2] * scaleX, vertices[VERTEX.X3] * scaleX);
             minY = Math.min(minY, vertices[VERTEX.Y1] * scaleY, vertices[VERTEX.Y4] * scaleY, vertices[VERTEX.Y2] * scaleY, vertices[VERTEX.Y3] * scaleY);
             maxX = Math.max(maxX, vertices[VERTEX.X1] * scaleX, vertices[VERTEX.X4] * scaleX, vertices[VERTEX.X2] * scaleX, vertices[VERTEX.X3] * scaleX);

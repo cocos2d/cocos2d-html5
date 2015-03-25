@@ -212,10 +212,10 @@ cc.tgaLoadRLEImageData = function (buffer, bufSize, psInfo) {
 
     for (i = 0; i < total; i++) {
         // if we have a run length pending, run it
-        if (runlength != 0) {
+        if (runlength !== 0) {
             // we do, update the run length count
             runlength--;
-            skip = (flag != 0);
+            skip = (flag !== 0);
         } else {
             // otherwise, read in the run length token
             if (step + 1 > bufSize)
@@ -352,7 +352,7 @@ cc.BinaryStreamReader = cc.Class.extend({
 
         this._offset += size;
 
-        return exponent == (bias << 1) + 1 ? significand ? NaN : signal ? -Infinity : +Infinity
+        return exponent === (bias << 1) + 1 ? significand ? NaN : signal ? -Infinity : +Infinity
             : (1 + signal * -2) * (exponent || significand ? !exponent ? Math.pow(2, -bias + 1) * significand
             : Math.pow(2, exponent - bias) * (1 + significand) : 0);
     },
@@ -370,7 +370,7 @@ cc.BinaryStreamReader = cc.Class.extend({
     },
 
     _shl:function (a, b) {
-        for (++b; --b; a = ((a %= 0x7fffffff + 1) & 0x40000000) == 0x40000000 ? a * 2 : (a - 0x40000000) * 2 + 0x7fffffff + 1){};
+        for (++b; --b; a = ((a %= 0x7fffffff + 1) & 0x40000000) === 0x40000000 ? a * 2 : (a - 0x40000000) * 2 + 0x7fffffff + 1){};
         return a;
     },
 

@@ -78,7 +78,7 @@ ccs.triggerManager = /** @lends ccs.triggerManager# */{
         var eventTriggers = this._eventTriggers[event];
         if (!eventTriggers)
             eventTriggers = [];
-        if (eventTriggers.indexOf(triggerObj) == -1) {
+        if (eventTriggers.indexOf(triggerObj) === -1) {
             eventTriggers.push(triggerObj);
             this._eventTriggers[event] = eventTriggers;
         }
@@ -180,7 +180,7 @@ ccs.triggerManager = /** @lends ccs.triggerManager# */{
         var locAmd, hasADD = false;
         for (var i = 0; i < this._movementDispatches.length; i++) {
             locAmd = this._movementDispatches[i];
-            if (locAmd && locAmd[0] == armature) {
+            if (locAmd && locAmd[0] === armature) {
                 locAmd.addAnimationEventCallBack(callFunc, target);
                 hasADD = true;
             }
@@ -205,7 +205,7 @@ ccs.triggerManager = /** @lends ccs.triggerManager# */{
         var locAmd;
         for (var i = 0; i < this._movementDispatches.length; i++) {
             locAmd = this._movementDispatches[i];
-            if (locAmd && locAmd[0] == armature)
+            if (locAmd && locAmd[0] === armature)
                 locAmd.removeAnimationEventCallBack(callFunc, target);
         }
     },
@@ -220,7 +220,7 @@ ccs.triggerManager = /** @lends ccs.triggerManager# */{
         var locAmd;
         for (var i = 0; i < this._movementDispatches.length; i++) {
             locAmd = this._movementDispatches[i];
-            if (locAmd && locAmd[0] == armature) {
+            if (locAmd && locAmd[0] === armature) {
                 this._movementDispatches.splice(i, 1);
                 break;
             }
@@ -293,7 +293,7 @@ ccs.ArmatureMovementDispatcher = ccs.Class.extend(/** @lends ccs.ArmatureMovemen
         var locEventAni;
         for (var i = 0; i < this._mapEventAnimation.length; i++) {
             locEventAni = this._mapEventAnimation[i];
-            if (locEventAni[0] == target) {
+            if (locEventAni[0] === target) {
                 this._mapEventAnimation.splice(i, 1);
             }
         }
