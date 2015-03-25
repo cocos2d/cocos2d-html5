@@ -31,7 +31,9 @@
 var spine = {
     radDeg: 180 / Math.PI,
     degRad: Math.PI / 180,
-    temp: []
+    temp: [],
+    Float32Array: (typeof(Float32Array) === 'undefined') ? Array : Float32Array,
+    Uint16Array: (typeof(Uint16Array) === 'undefined') ? Array : Uint16Array
 };
 
 spine.BoneData = function (name, parent) {
@@ -147,8 +149,8 @@ spine.Bone.prototype = {
             m11 = -m11;
         }
         var invDet = 1 / (m00 * m11 - m01 * m10);
-        world[0] = (dx * m00 * invDet - dy * m01 * invDet);
-        world[1] = (dy * m11 * invDet - dx * m10 * invDet);
+        world[0] = dx * m00 * invDet - dy * m01 * invDet;
+        world[1] = dy * m11 * invDet - dx * m10 * invDet;
     },
     localToWorld: function (local) {
         var localX = local[0], localY = local[1];
@@ -224,7 +226,9 @@ spine.IkConstraint.prototype = {
 spine.IkConstraint.apply1 = function (bone, targetX, targetY, alpha) {
     var parentRotation = (!bone.data.inheritRotation || !bone.parent) ? 0 : bone.parent.worldRotation;
     var rotation = bone.rotation;
-    var rotationIK = Math.atan2(targetY - bone.worldY, targetX - bone.worldX) * spine.radDeg - parentRotation;
+    var rotationIK = Math.atan2(targetY - bone.worldY, targetX - bone.worldX) * spine.radDeg;
+    if (bone.worldFlipX != (bone.worldFlipY != spine.Bone.yDown)) rotationIK = -rotationIK;
+    rotationIK -= parentRotation;
     bone.rotationIK = rotation + (rotationIK - rotation) * alpha;
 };
 /** Adjusts the parent and child bone rotations so the tip of the child is as close to the target position as possible. The
@@ -770,14 +774,11 @@ spine.FfdTimeline.prototype = {
         this.frameVertices[frameIndex] = vertices;
     },
     apply: function (skeleton, lastTime, time, firedEvents, alpha) {
-        var slot = skeleton.slots[slotIndex];
-        if (slot.attachment != attachment) return;
+        var slot = skeleton.slots[this.slotIndex];
+        if (slot.attachment != this.attachment) return;
 
         var frames = this.frames;
-        if (time < frames[0]) {
-            slot.attachmentVertices.length = 0;
-            return; // Time is before first frame.
-        }
+        if (time < frames[0]) return; // Time is before first frame.
 
         var frameVertices = this.frameVertices;
         var vertexCount = frameVertices[0].length;
@@ -1142,9 +1143,9 @@ spine.Skeleton.prototype = {
         if (!skin) throw "Skin not found: " + skinName;
         this.setSkin(skin);
     },
-    /** Sets the skin used to look up attachments not found in the {@link SkeletonData#getDefaultSkin() default skin}. Attachments
-     * from the new skin are attached if the corresponding attachment from the old skin was attached. If there was no old skin,
-     * each slot's setup mode attachment is attached from the new skin.
+    /** Sets the skin used to look up attachments before looking in the {@link SkeletonData#getDefaultSkin() default skin}.
+     * Attachments from the new skin are attached if the corresponding attachment from the old skin was attached. If there was
+     * no old skin, each slot's setup mode attachment is attached from the new skin.
      * @param newSkin May be null. */
     setSkin: function (newSkin) {
         if (newSkin) {
@@ -1336,21 +1337,20 @@ spine.MeshAttachment.prototype = {
     edges: null,
     width: 0, height: 0,
     updateUVs: function () {
-        var width = regionU2 - regionU, height = regionV2 - regionV;
-        var n = regionUVs.length;
-        if (!uvs || uvs.length != n) {
-            uvs = [];
-            uvs.length = n;
+        var width = this.regionU2 - this.regionU, height = this.regionV2 - this.regionV;
+        var n = this.regionUVs.length;
+        if (!this.uvs || this.uvs.length != n) {
+            this.uvs = new spine.Float32Array(n);
         }
-        if (regionRotate) {
+        if (this.regionRotate) {
             for (var i = 0; i < n; i += 2) {
-                uvs[i] = regionU + regionUVs[i + 1] * width;
-                uvs[i + 1] = regionV + height - regionUVs[i] * height;
+                this.uvs[i] = this.regionU + this.regionUVs[i + 1] * width;
+                this.uvs[i + 1] = this.regionV + height - this.regionUVs[i] * height;
             }
         } else {
             for (var i = 0; i < n; i += 2) {
-                uvs[i] = regionU + regionUVs[i] * width;
-                uvs[i + 1] = regionV + regionUVs[i + 1] * height;
+                this.uvs[i] = this.regionU + this.regionUVs[i] * width;
+                this.uvs[i + 1] = this.regionV + this.regionUVs[i + 1] * height;
             }
         }
     },
@@ -1392,21 +1392,20 @@ spine.SkinnedMeshAttachment.prototype = {
     edges: null,
     width: 0, height: 0,
     updateUVs: function (u, v, u2, v2, rotate) {
-        var width = regionU2 - regionU, height = regionV2 - regionV;
-        var n = regionUVs.length;
-        if (!uvs || uvs.length != n) {
-            uvs = [];
-            uvs.length = n;
+        var width = this.regionU2 - this.regionU, height = this.regionV2 - this.regionV;
+        var n = this.regionUVs.length;
+        if (!this.uvs || this.uvs.length != n) {
+            this.uvs = new spine.Float32Array(n);
         }
-        if (regionRotate) {
+        if (this.regionRotate) {
             for (var i = 0; i < n; i += 2) {
-                uvs[i] = regionU + regionUVs[i + 1] * width;
-                uvs[i + 1] = regionV + height - regionUVs[i] * height;
+                this.uvs[i] = this.regionU + this.regionUVs[i + 1] * width;
+                this.uvs[i + 1] = this.regionV + height - this.regionUVs[i] * height;
             }
         } else {
             for (var i = 0; i < n; i += 2) {
-                uvs[i] = regionU + regionUVs[i] * width;
-                uvs[i + 1] = regionV + regionUVs[i + 1] * height;
+                this.uvs[i] = this.regionU + this.regionUVs[i] * width;
+                this.uvs[i + 1] = this.regionV + this.regionUVs[i + 1] * height;
             }
         }
     },
@@ -1824,8 +1823,8 @@ spine.SkeletonJson.prototype = {
             var region = this.attachmentLoader.newRegionAttachment(skin, name, path);
             if (!region) return null;
             region.path = path;
-            region.x = (map["x"] || 0) * this.scale;
-            region.y = (map["y"] || 0) * this.scale;
+            region.x = (map["x"] || 0) * scale;
+            region.y = (map["y"] || 0) * scale;
             region.scaleX = map.hasOwnProperty("scaleX") ? map["scaleX"] : 1;
             region.scaleY = map.hasOwnProperty("scaleY") ? map["scaleY"] : 1;
             region.rotation = map["rotation"] || 0;
@@ -1870,7 +1869,7 @@ spine.SkeletonJson.prototype = {
             mesh.path = path;
 
             var uvs = this.getFloatArray(map, "uvs", 1);
-            vertices = this.getFloatArray(map, "vertices", 1);
+            var vertices = this.getFloatArray(map, "vertices", 1);
             var weights = [];
             var bones = [];
             for (var i = 0, n = vertices.length; i < n; ) {
@@ -1907,7 +1906,7 @@ spine.SkeletonJson.prototype = {
             var attachment = this.attachmentLoader.newBoundingBoxAttachment(skin, name);
             var vertices = map["vertices"];
             for (var i = 0, n = vertices.length; i < n; i++)
-                attachment.vertices.push(vertices[i] * this.scale);
+                attachment.vertices.push(vertices[i] * scale);
             return attachment;
         }
         throw "Unknown attachment type: " + type;
@@ -2086,16 +2085,16 @@ spine.SkeletonJson.prototype = {
                             vertices.length = vertexCount;
                             var start = valueMap["offset"] || 0;
                             var nn = verticesValue.length;
-                            if (scale == 1) {
+                            if (this.scale == 1) {
                                 for (var ii = 0; ii < nn; ii++)
                                     vertices[ii + start] = verticesValue[ii];
                             } else {
                                 for (var ii = 0; ii < nn; ii++)
-                                    vertices[ii + start] = verticesValue[ii] * scale;
+                                    vertices[ii + start] = verticesValue[ii] * this.scale;
                             }
                             if (isMesh) {
                                 var meshVertices = attachment.vertices;
-                                for (var ii = 0, nn = vertices.length; ii < nn; i++)
+                                for (var ii = 0, nn = vertices.length; ii < nn; ii++)
                                     vertices[ii] += meshVertices[ii];
                             }
                         }
@@ -2186,8 +2185,7 @@ spine.SkeletonJson.prototype = {
     },
     getFloatArray: function (map, name, scale) {
         var list = map[name];
-        var values = [];
-        values = list.length;
+        var values = new spine.Float32Array(list.length);
         var i = 0, n = list.length;
         if (scale == 1) {
             for (; i < n; i++)
@@ -2200,8 +2198,7 @@ spine.SkeletonJson.prototype = {
     },
     getIntArray: function (map, name) {
         var list = map[name];
-        var values = [];
-        values = list.length;
+        var values = new spine.Uint16Array(list.length);
         for (var i = 0, n = list.length; i < n; i++)
             values[i] = list[i] | 0;
         return values;
@@ -2428,7 +2425,7 @@ spine.AtlasAttachmentLoader = function (atlas) {
 };
 spine.AtlasAttachmentLoader.prototype = {
     newRegionAttachment: function (skin, name, path) {
-        var region = this.atlas.findRegion(name);
+        var region = this.atlas.findRegion(path);
         if (!region) throw "Region not found in atlas: " + path + " (region attachment: " + name + ")";
         var attachment = new spine.RegionAttachment(name);
         attachment.rendererObject = region;
@@ -2442,7 +2439,7 @@ spine.AtlasAttachmentLoader.prototype = {
         return attachment;
     },
     newMeshAttachment: function (skin, name, path) {
-        var region = this.atlas.findRegion(name);
+        var region = this.atlas.findRegion(path);
         if (!region) throw "Region not found in atlas: " + path + " (mesh attachment: " + name + ")";
         var attachment = new spine.MeshAttachment(name);
         attachment.rendererObject = region;
@@ -2460,7 +2457,7 @@ spine.AtlasAttachmentLoader.prototype = {
         return attachment;
     },
     newSkinnedMeshAttachment: function (skin, name, path) {
-        var region = this.atlas.findRegion(name);
+        var region = this.atlas.findRegion(path);
         if (!region) throw "Region not found in atlas: " + path + " (skinned mesh attachment: " + name + ")";
         var attachment = new spine.SkinnedMeshAttachment(name);
         attachment.rendererObject = region;
