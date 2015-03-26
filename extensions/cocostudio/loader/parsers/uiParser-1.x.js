@@ -458,6 +458,7 @@
     /**
      * Text parser (UIText)
      */
+    var regTTF = /\.ttf$/;
     parser.TextAttributes = function(widget, options, resourcePath){
         var touchScaleChangeAble = options["touchScaleEnable"];
         widget.setTouchScaleChangeEnabled(touchScaleChangeAble);
@@ -469,7 +470,15 @@
         }
         var fn = options["fontName"];
         if (fn != null){
-            widget.setFontName(options["fontName"]);
+            if(cc.sys.isNative){
+                if(regTTF.test(fn)){
+                    widget.setFontName(cc.path.join(cc.loader.resPath, resourcePath, fn));
+                }else{
+                    widget.setFontName(fn);
+                }
+            }else{
+                widget.setFontName(fn.replace(regTTF, ''));
+            }
         }
         var aw = options["areaWidth"];
         var ah = options["areaHeight"];
@@ -599,7 +608,7 @@
     /**
      * TextField parser (UITextField)
      */
-    parser.TextFieldAttributes = function(widget, options, resoutcePath){
+    parser.TextFieldAttributes = function(widget, options, resourcePath){
         var ph = options["placeHolder"];
         if(ph)
             widget.setPlaceHolder(ph);
@@ -608,8 +617,17 @@
         if(fs)
             widget.setFontSize(fs);
         var fn = options["fontName"];
-        if(fn)
-            widget.setFontName(fn);
+        if (fn != null){
+            if(cc.sys.isNative){
+                if(regTTF.test(fn)){
+                    widget.setFontName(cc.path.join(cc.loader.resPath, resourcePath, fn));
+                }else{
+                    widget.setFontName(fn);
+                }
+            }else{
+                widget.setFontName(fn.replace(regTTF, ''));
+            }
+        }
         var tsw = options["touchSizeWidth"];
         var tsh = options["touchSizeHeight"];
         if(tsw!=null && tsh!=null)
