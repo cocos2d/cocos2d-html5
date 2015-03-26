@@ -341,8 +341,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             var ton = plistFile || 100;
             this.setDrawMode(cc.ParticleSystem.TEXTURE_MODE);
             this.initWithTotalParticles(ton);
-        } else if (plistFile) {
+        } else if (cc.isString(plistFile)) {
             this.initWithFile(plistFile);
+        } else if (cc.isObject(plistFile)) {
+            this.initWithDictionary(plistFile, "");
         }
     },
 
