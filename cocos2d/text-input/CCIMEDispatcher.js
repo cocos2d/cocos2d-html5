@@ -387,7 +387,9 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
             delegate.didAttachWithIME();
             //prompt
             this._currentInputString = delegate.string || "";
-            var userInput = prompt("please enter your word:", this._currentInputString);
+
+            var tipMessage = delegate.getTipMessage ? delegate.getTipMessage() : "please enter your word:";
+            var userInput = prompt(tipMessage, this._currentInputString);
             if(userInput != null)
                 this._processDomInputString(userInput);
             this.dispatchInsertText("\n", 1);

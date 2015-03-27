@@ -387,6 +387,25 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         cc.imeDispatcher.removeDelegate(this);
     },
 
+    _tipMessage: "please enter your word:",
+    /**
+     * Sets the input tip message to show on mobile browser.  (mobile Web only)
+     * @param {string} tipMessage
+     */
+    setTipMessage: function (tipMessage) {
+        if (tipMessage == null)
+            return;
+        this._tipMessage = tipMessage;
+    },
+
+    /**
+     * Gets the input tip message to show on mobile browser.   (mobile Web only)
+     * @returns {string}
+     */
+    getTipMessage: function () {
+        return this._tipMessage;
+    },
+
     /**
      * Append the text. <br />
      * Input the character.
