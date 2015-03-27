@@ -36,6 +36,18 @@
  * @extends cc.Grid3DAction
  */
 cc.PageTurn3D = cc.Grid3DAction.extend(/** @lends cc.PageTurn3D# */{
+    getGrid: function(){
+        var result = new cc.Grid3D(this._gridSize);
+        result.setNeedDepthTestForBlit(true);
+        return result;
+    },
+
+    clone: function(){
+       var ret = new cc.PageTurn3D();
+        ret.initWithDuration(this._duration, this._gridSize);
+        return ret;
+    },
+
     /**
      * Update each tick                                         <br/>
      * Time is the percentage of the way through the duration
@@ -58,7 +70,7 @@ cc.PageTurn3D = cc.Grid3DAction.extend(/** @lends cc.PageTurn3D# */{
                 locVer.x = i;
                 locVer.y = j;
                 // Get original vertex
-                var p = this.originalVertex(locVer);
+                var p = this.getOriginalVertex(locVer);
 
                 var R = Math.sqrt((p.x * p.x) + ((p.y - ay) * (p.y - ay)));
                 var r = R * sinTheta;
