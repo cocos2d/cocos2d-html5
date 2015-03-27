@@ -89,8 +89,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
         this._boneDic = {};
         this._topBoneList.length = 0;
 
-
-        this._name = name || "";
+        //this._name = name || "";
         var armatureDataManager = ccs.armatureDataManager;
 
         var animationData;
@@ -131,15 +130,15 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
             this.update(0);
             this.updateOffsetPoint();
         } else {
-            this._name = "new_armature";
+            name = "new_armature";
             this.armatureData = new ccs.ArmatureData();
-            this.armatureData.name = this._name;
+            this.armatureData.name = name;
 
             animationData = new ccs.AnimationData();
-            animationData.name = this._name;
+            animationData.name = name;
 
-            armatureDataManager.addArmatureData(this._name, this.armatureData);
-            armatureDataManager.addAnimationData(this._name, animationData);
+            armatureDataManager.addArmatureData(name, this.armatureData);
+            armatureDataManager.addAnimationData(name, animationData);
 
             this.animation.setAnimationData(animationData);
         }
