@@ -573,7 +573,7 @@ ccui.LayoutComponent.verticalEdge = {NONE: 0, BOTTOM: 1, TOP: 2, CENTER: 3};
 ccui.LayoutComponent.NAME = "__ui_layout";
 ccui.LayoutComponent.bindLayoutComponent = function (node) {
     var layout = node.getComponent(ccui.LayoutComponent.NAME);
-    if (layout !== null)
+    if (layout !== undefined)
         return layout;
 
     layout = new ccui.LayoutComponent();
