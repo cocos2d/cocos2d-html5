@@ -508,7 +508,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
                 var offset = 0;
                 offset = Math.abs(sender.getTouchBeganPosition().x - touchPoint.x);
                 if (offset > this._childFocusCancelOffset) {
-                    sender.setFocused(false);
+                    sender.setHighlighted(false);
                     this._handleMoveLogic(touch);
                 }
                 break;
