@@ -155,10 +155,10 @@
                     bone.worldY + attachment.x * bone.m10 + attachment.y * bone.m11);
             selSprite.setScale(bone.worldScaleX, bone.worldScaleY);
             selSprite.setRotation(-(slot.bone.worldRotation + attachment.rotation));
-            selSprite.setOpacity(0 | (slot.skeleton.a * slot.a * 255));
-            var r = 0 | (slot.skeleton.r * slot.r * 255);
-            var g = 0 | (slot.skeleton.g * slot.g * 255);
-            var b = 0 | (slot.skeleton.b * slot.b * 255);
+            selSprite.setOpacity(0 | (node._skeleton.a * slot.a * 255));
+            var r = 0 | (node._skeleton.r * slot.r * 255);
+            var g = 0 | (node._skeleton.g * slot.g * 255);
+            var b = 0 | (node._skeleton.b * slot.b * 255);
             selSprite.setColor(cc.color(r,g,b));
         }
     };
