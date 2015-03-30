@@ -255,7 +255,7 @@ cc.Audio = cc.Class.extend({
                 return true;
         }else{
             var sourceNode = this._currentSource;
-            if(!this._playing || !sourceNode)
+            if(!sourceNode)
                 return true;
             if(sourceNode["playbackState"] == null)
                 return this._playing;
