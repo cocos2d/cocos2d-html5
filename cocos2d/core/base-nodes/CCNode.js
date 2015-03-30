@@ -1700,9 +1700,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                     delay = 0;
                 }
             }else if(len === 3){
-                //callback, interval, key
-                key = repeat;
-                repeat = cc.REPEAT_FOREVER;
+                if(typeof repeat === "string"){
+                    //callback, interval, key
+                    key = repeat;
+                    repeat = cc.REPEAT_FOREVER;
+                }else{
+                    //callback, interval, repeat
+                    key = this.__instanceId;
+                }
                 delay = 0;
             }else if(len === 4){
                 key = this.__instanceId;
