@@ -1797,6 +1797,16 @@ cc._initSys = function (config, CONFIG_KEY) {
         str += "platform : " + self.platform + "\r\n";
         cc.log(str);
     }
+
+    /**
+     * Open a url in browser
+     * @memberof cc.sys
+     * @name openURL
+     * @param {String} url
+     */
+    sys.openURL = function(url){
+        window.open(url);
+    }
 };
 
 //+++++++++++++++++++++++++something about sys end+++++++++++++++++++++++++++++
