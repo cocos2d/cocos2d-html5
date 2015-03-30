@@ -1764,7 +1764,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (!callback_fn)
             return;
 
-        this.scheduler.unschedule(this.__instanceId, this, callback_fn);
+        this.scheduler.unschedule(callback_fn, this);
     },
 
     /**
