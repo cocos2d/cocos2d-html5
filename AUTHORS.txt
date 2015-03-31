@@ -240,10 +240,17 @@ Dany Ellement        @DEllement     cc.FontDefinition & ccui.RichText improvemen
 
 IShm                 @IShm          cc.Screen bug fix
                                     cc.ParticleSystem bug fix
+                                    ccui.PageView bug fix
 
 Thomas Jablonski     @thomas-jablonski  cc.audioEngine bug fix
+                                        Cocostudio typo fix
 
 WingGao              @WingGao       cc.TMXLayer bug fix
+
+Skliar Ihor          @igogo5yo      Add Bower support
+
+feijing566           @feijing566    cc.Audio bug fix
+
 
 Retired Core Developers:
       Shengxiang Chen (Nero Chan)
