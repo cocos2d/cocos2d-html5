@@ -154,8 +154,12 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         //scheduler
         this._scheduler = new cc.Scheduler();
         //action manager
-        this._actionManager = cc.ActionManager ? new cc.ActionManager() : null;
-        this._scheduler.scheduleUpdate(this._actionManager, cc.Scheduler.PRIORITY_SYSTEM, false);
+        if(cc.ActionManager){
+            this._actionManager = new cc.ActionManager();
+            this._scheduler.scheduleUpdate(this._actionManager, cc.Scheduler.PRIORITY_SYSTEM, false);
+        }else{
+            this._actionManager = null;
+        }
 
         this._eventAfterDraw = new cc.EventCustom(cc.Director.EVENT_AFTER_DRAW);
         this._eventAfterDraw.setUserData(this);
