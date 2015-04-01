@@ -124,7 +124,8 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         var self = this;
         if(!barRenderer._textureLoaded){
             barRenderer.addEventListener("load", function(){
-                self.loadTexture(self._renderBarTexType, self._textureFile);
+                self.loadTexture(self._textureFile, self._renderBarTexType);
+                self._setPercent(self._percent);
             });
         }
 
@@ -236,6 +237,10 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         if (percent === this._percent)
             return;
         this._percent = percent;
+        this._setPercent(percent);
+    },
+
+    _setPercent: function(percent){
         if (this._totalLength <= 0)
             return;
         var res = this._percent / 100.0;
