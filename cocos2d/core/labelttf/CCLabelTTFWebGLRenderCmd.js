@@ -37,8 +37,9 @@
     proto._setColorsString = function () {
         this.setDirtyFlag(cc.Node._dirtyFlags.textDirty);
         var node = this._node;
-        var locStrokeColor = node._strokeColor, locFontFillColor = node._textFillColor;
-        this._shadowColorStr = "rgba(128,128,128," + node._shadowOpacity + ")";
+        var locStrokeColor = node._strokeColor, locFontFillColor = node._textFillColor,
+            locShadowColor = node._shadowColor || this._displayedColor;
+        this._shadowColorStr = "rgba(" + (0 | locShadowColor.r) + "," + (0 | locShadowColor.g) + "," + (0 | locShadowColor.b) + "," + node._shadowOpacity + ")";
         this._fillColorStr = "rgba(" + (0 | locFontFillColor.r) + "," + (0 | locFontFillColor.g) + "," + (0 | locFontFillColor.b) + ", 1)";
         this._strokeColorStr = "rgba(" + (0 | locStrokeColor.r) + "," + (0 | locStrokeColor.g) + "," + (0 | locStrokeColor.b) + ", 1)";
     };
