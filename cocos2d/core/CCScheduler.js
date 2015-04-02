@@ -263,7 +263,7 @@ cc.TimerTargetCallback = cc.Timer.extend({
 
     cancel: function(){
         //override
-        this._scheduler.unschedule(this._key, this._target);
+        this._scheduler.unschedule(this._callback, this._target);
     }
 
 });
