@@ -862,10 +862,10 @@ cc.BuilderReader = cc.Class.extend({
                     target = this._owner;
                 }
 
-                if (target !== null) {
+                if (!target) {
                     var assigned = false;
 
-                    if (!target && (target.onAssignCCBMemberVariable))
+                    if (target.onAssignCCBMemberVariable)
                         assigned = target.onAssignCCBMemberVariable(target, memberVarAssignmentName, node);
 
                     locMemberAssigner = this._ccbMemberVariableAssigner;
