@@ -86,7 +86,6 @@
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         wrapper.setGlobalAlpha(alpha);
 
-        var posX = 0 | ( -this._anchorPointInPoints.x), posY = 0 | ( -this._anchorPointInPoints.y);
         var locCacheCanvas = this._cacheCanvas;
         //direct draw image by canvas drawImage
         if (locCacheCanvas && locCacheCanvas.width !== 0 && locCacheCanvas.height !== 0) {
@@ -95,10 +94,10 @@
             if (node.layerOrientation === cc.TMX_ORIENTATION_HEX) {
                 var halfTileSize = node._mapTileSize.height * 0.5 * scaleY;
                 context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
-                    posX, -(posY + locCanvasHeight) + halfTileSize, locCacheCanvas.width * scaleX, locCanvasHeight);
+                    0, -locCanvasHeight + halfTileSize, locCacheCanvas.width * scaleX, locCanvasHeight);
             } else {
                 context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
-                    posX, -(posY + locCanvasHeight), locCacheCanvas.width * scaleX, locCanvasHeight);
+                    0, -locCanvasHeight, locCacheCanvas.width * scaleX, locCanvasHeight);
             }
         }
         cc.g_NumberOfDraws++;
