@@ -827,8 +827,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
                 entry = this._updatesNegList[i];
                 if (entry) {
                     if(entry.priority >= minPriority){
-                        element.paused = true;
-                        idsWithSelectors.push(element.target);
+						entry.paused = true;
+                        idsWithSelectors.push(entry.target);
                     }
                 }
             }
@@ -838,8 +838,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             for(i=0; i<this._updates0List.length; i++){
                 entry = this._updates0List[i];
                 if (entry) {
-                    element.paused = true;
-                    idsWithSelectors.push(element.target);
+					entry.paused = true;
+                    idsWithSelectors.push(entry.target);
                 }
             }
         }
@@ -848,8 +848,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             entry = this._updatesPosList[i];
             if (entry) {
                 if(entry.priority >= minPriority){
-                    element.paused = true;
-                    idsWithSelectors.push(element.target);
+					entry.paused = true;
+                    idsWithSelectors.push(entry.target);
                 }
             }
         }
