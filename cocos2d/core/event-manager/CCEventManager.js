@@ -304,7 +304,13 @@ cc.eventManager = /** @lends cc.eventManager# */{
         this._nodePriorityIndex = 0;
         this._nodePriorityMap = {};
 
-        this._visitTarget(rootNode, true);
+        var notificationNode = cc.director.getNotificationNode();
+        if(notificationNode) {
+            this._visitTarget(notificationNode, true);
+            this._visitTarget(rootNode, false);
+        } else {
+            this._visitTarget(rootNode, true);
+        }
 
         // After sort: priority < 0, > 0
         listeners.getSceneGraphPriorityListeners().sort(this._sortEventListenersOfSceneGraphPriorityDes);
