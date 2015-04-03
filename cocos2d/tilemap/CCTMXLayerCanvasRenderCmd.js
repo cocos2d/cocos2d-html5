@@ -182,11 +182,8 @@
             worldT.c = t.c * pt.a + t.d * pt.c;                               //c
             worldT.d = t.c * pt.b + t.d * pt.d;                               //d
 
-            var plt = parentCmd._transform;
-            var xOffset = -(plt.b + plt.c) * t.ty;
-            var yOffset = -(plt.b + plt.c) * t.tx;
-            worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
-            worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
+            worldT.tx = pt.a * t.tx + pt.c * t.ty + pt.tx;
+            worldT.ty = pt.d * t.ty + pt.ty + pt.b * t.tx;
         } else {
             worldT.a = t.a;
             worldT.b = t.b;
