@@ -748,6 +748,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                 }
 
                 var objects = selGroup.querySelectorAll('object');
+                var getContentScaleFactor = cc.director.getContentScaleFactor();
                 if (objects) {
                     for (j = 0; j < objects.length; j++) {
                         var selObj = objects[j];
@@ -761,15 +762,14 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                         // Assign all the attributes as key/name pairs in the properties dictionary
                         objectProp["type"] = selObj.getAttribute('type') || "";
 
-                        objectProp["x"] = parseInt(selObj.getAttribute('x') || 0) + objectGroup.getPositionOffset().x;
-                        var y = parseInt(selObj.getAttribute('y') || 0) + objectGroup.getPositionOffset().y;
-
                         objectProp["width"] = parseInt(selObj.getAttribute('width')) || 0;
                         objectProp["height"] = parseInt(selObj.getAttribute('height')) || 0;
 
+                        objectProp["x"] = (((selObj.getAttribute('x') || 0) | 0) + objectGroup.getPositionOffset().x) / getContentScaleFactor;
+                        var y = ((selObj.getAttribute('y') || 0) | 0) + objectGroup.getPositionOffset().y / getContentScaleFactor;
                         // Correct y position. (Tiled uses Flipped, cocos2d uses Standard)
-                        objectProp["y"] = parseInt(this.getMapSize().height * this.getTileSize().height) - y - objectProp["height"];
-						
+                        objectProp["y"] = (parseInt(this.getMapSize().height * this.getTileSize().height) - y - objectProp["height"]) / cc.director.getContentScaleFactor();
+
                         objectProp["rotation"] = parseInt(selObj.getAttribute('rotation')) || 0;
 
                         var docObjProps = selObj.querySelectorAll("properties > property");

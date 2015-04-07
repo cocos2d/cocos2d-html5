@@ -734,34 +734,36 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
         // Updates selectors
         var entry;
+        var temp_length = 0;
         if(minPriority < 0){
-            for(i=0; i<this._updatesNegList.length; i++){
+            for(i=0; i<this._updatesNegList.length; ){
+                temp_length = this._updatesNegList.length;
                 entry = this._updatesNegList[i];
-                if (entry) {
-                    if(entry.priority >= minPriority){
-                        this.unscheduleUpdate(entry.target);
-                    }
-                }
+                if(entry && entry.priority >= minPriority)
+                    this.unscheduleUpdate(entry.target);
+                if (temp_length == this._updatesNegList.length)
+                    i++;
             }
         }
 
         if(minPriority <= 0){
-            for(i=0; i<this._updates0List.length; i++){
+            for(i=0; i<this._updates0List.length; ){
+                temp_length = this._updates0List.length;
                 entry = this._updates0List[i];
-                if (entry) {
+                if (entry)
                     this.unscheduleUpdate(entry.target);
-                }
+                if (temp_length == this._updates0List.length)
+                    i++;
             }
         }
 
-        for(i=0; i<this._updatesPosList.length; i++){
+        for(i=0; i<this._updatesPosList.length; ){
+            temp_length = this._updatesPosList.length;
             entry = this._updatesPosList[i];
-            if (entry) {
-                if(entry.priority >= minPriority)
-                {
-                    this.unscheduleUpdate(entry.target);
-                }
-            }
+            if(entry && entry.priority >= minPriority)
+                this.unscheduleUpdate(entry.target);
+            if (temp_length == this._updatesPosList.length)
+                i++;
         }
     },
 
@@ -827,8 +829,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
                 entry = this._updatesNegList[i];
                 if (entry) {
                     if(entry.priority >= minPriority){
-                        element.paused = true;
-                        idsWithSelectors.push(element.target);
+						entry.paused = true;
+                        idsWithSelectors.push(entry.target);
                     }
                 }
             }
@@ -838,8 +840,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             for(i=0; i<this._updates0List.length; i++){
                 entry = this._updates0List[i];
                 if (entry) {
-                    element.paused = true;
-                    idsWithSelectors.push(element.target);
+					entry.paused = true;
+                    idsWithSelectors.push(entry.target);
                 }
             }
         }
@@ -848,8 +850,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             entry = this._updatesPosList[i];
             if (entry) {
                 if(entry.priority >= minPriority){
-                    element.paused = true;
-                    idsWithSelectors.push(element.target);
+					entry.paused = true;
+                    idsWithSelectors.push(entry.target);
                 }
             }
         }
