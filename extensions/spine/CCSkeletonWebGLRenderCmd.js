@@ -27,13 +27,14 @@
         cc.Node.WebGLRenderCmd.call(this, renderableObject);
         this._needDraw = true;
         this.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+        this._tmpQuad = new cc.V3F_C4B_T2F_Quad();
     };
 
     var proto = sp.Skeleton.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = sp.Skeleton.WebGLRenderCmd;
 
     proto.rendering = function (ctx) {
-        var node = this._node;
+        var node = this._node, tmpQuad = this._tmpQuad;
         this._shaderProgram.use();
         this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 //        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
@@ -48,11 +49,11 @@
             locSkeleton.b *= locSkeleton.a;
         }
 
-        var additive, textureAtlas, attachment, slot, i, n,
-            quad = new cc.V3F_C4B_T2F_Quad();
+        var additive, textureAtlas, attachment, slot, i, n;
         var locBlendFunc = node._blendFunc;
 
-        for (i = 0, n = locSkeleton.slots.length; i < n; i++) {
+        //for (i = 0, n = locSkeleton.slots.length; i < n; i++) {
+        for (i = 0, n = locSkeleton.drawOrder.length; i < n; i++) {
             slot = locSkeleton.drawOrder[i];
             if (!slot.attachment)
                 continue;
@@ -82,16 +83,16 @@
 
             switch(slot.attachment.type) {
                 case sp.ATTACHMENT_TYPE.REGION:
-                    sp._regionAttachment_updateQuad(attachment, slot, quad, node._premultipliedAlpha);
+                    sp._regionAttachment_updateQuad(attachment, slot, tmpQuad, node._premultipliedAlpha);
                     break;
                 case sp.ATTACHMENT_TYPE.MESH:
-                    sp._meshAttachment_updateQuad(attachment, slot, quad, node._premultipliedAlpha);
+                    sp._meshAttachment_updateQuad(attachment, slot, tmpQuad, node._premultipliedAlpha);
                     break;
                 case sp.ATTACHMENT_TYPE.SKINNED_MESH:
                     break;
             }
 
-            textureAtlas.updateQuad(quad, quadCount);
+            textureAtlas.updateQuad(tmpQuad, quadCount);
         }
 
         if (textureAtlas) {
@@ -104,7 +105,6 @@
             //cc.kmGLPushMatrixWitMat4(this._stackMatrix);
             cc.current_stack.stack.push(cc.current_stack.top);
             cc.current_stack.top = this._stackMatrix;
-
             var drawingUtil = cc._drawingUtil;
 
             if (node._debugSlots) {
@@ -117,14 +117,13 @@
                     if (!slot.attachment || slot.attachment.type != sp.ATTACHMENT_TYPE.REGION)
                         continue;
                     attachment = slot.attachment;
-                    quad = new cc.V3F_C4B_T2F_Quad();
-                    sp._regionAttachment_updateQuad(attachment, slot, quad);
+                    sp._regionAttachment_updateQuad(attachment, slot, tmpQuad);
 
                     var points = [];
-                    points.push(cc.p(quad.bl.vertices.x, quad.bl.vertices.y));
-                    points.push(cc.p(quad.br.vertices.x, quad.br.vertices.y));
-                    points.push(cc.p(quad.tr.vertices.x, quad.tr.vertices.y));
-                    points.push(cc.p(quad.tl.vertices.x, quad.tl.vertices.y));
+                    points.push(cc.p(tmpQuad.bl.vertices.x, tmpQuad.bl.vertices.y));
+                    points.push(cc.p(tmpQuad.br.vertices.x, tmpQuad.br.vertices.y));
+                    points.push(cc.p(tmpQuad.tr.vertices.x, tmpQuad.tr.vertices.y));
+                    points.push(cc.p(tmpQuad.tl.vertices.x, tmpQuad.tl.vertices.y));
 
                     drawingUtil.drawPoly(points, 4, true);
                 }
@@ -155,7 +154,6 @@
                     }
                 }
             }
-
             cc.kmGLPopMatrix();
         }
     };

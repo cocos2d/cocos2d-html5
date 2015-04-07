@@ -33,11 +33,29 @@
     var proto = sp.Skeleton.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = sp.Skeleton.CanvasRenderCmd;
 
+    proto._drawSkeleton = function(){
+
+    };
+
     proto.rendering = function (wrapper, scaleX, scaleY) {
-        var node = this._node, i, n, sprites = this._skeletonSprites, selSpriteCmd;
+        var node = this._node, i, n;
         wrapper = wrapper || cc._renderContext;
 
-        //draw skeleton sprite by it self
+        var locSkeleton = node._skeleton,color = node.getColor();
+        locSkeleton.r = color.r / 255;
+        locSkeleton.g = color.g / 255;
+        locSkeleton.b = color.b / 255;
+        locSkeleton.a = this.getDisplayedOpacity() / 255;
+        if (node._premultipliedAlpha) {
+            locSkeleton.r *= locSkeleton.a;
+            locSkeleton.g *= locSkeleton.a;
+            locSkeleton.b *= locSkeleton.a;
+        }
+
+        wrapper.setTransform(this._worldTransform, scaleX, scaleY);
+        wrapper.save();
+
+/*        //draw skeleton sprite by it self
         wrapper.save();
         //set to armature mode (spine need same way to draw)
         wrapper._switchToArmatureMode(true, this._worldTransform, scaleX, scaleY);
@@ -49,14 +67,24 @@
             }
         }
         wrapper._switchToArmatureMode(false);
+        wrapper.restore();*/
+
+        //draw skeleton by itself.
+        var slot, attachment;
+        for (i = 0, n = locSkeleton.drawOrder.length; i < n; i++) {
+            slot = locSkeleton.drawOrder[i];
+            if (!slot.attachment)
+                continue;
+
+            attachment = slot.attachment;
+            var regionTextureAtlas = node.getTextureAtlas(attachment);
+        }
         wrapper.restore();
 
         if (!node._debugSlots && !node._debugBones)
             return;
 
-        wrapper.setTransform(this._worldTransform, scaleX, scaleY);
-        var locSkeleton = node._skeleton;
-        var attachment, slot, drawingUtil = cc._drawingUtil;
+        var drawingUtil = cc._drawingUtil;
         if (node._debugSlots) {
             // Slots.
             drawingUtil.setDrawColor(0, 0, 255, 255);
@@ -124,8 +152,9 @@
 
     proto._updateChild = function(){
         var node = this._node;
-        var locSkeleton = node._skeleton;
+        var locSkeleton = node._skeleton, locSkeletonSprites = this._skeletonSprites;
         locSkeleton.updateWorldTransform();
+        locSkeletonSprites.length = 0;
         var drawOrder = node._skeleton.drawOrder;
         for (var i = 0, n = drawOrder.length; i < n; i++) {
             var slot = drawOrder[i];
@@ -135,17 +164,19 @@
                     selSprite.setVisible(false);
                 continue;
             }
+            var rendererObject = attachment.rendererObject;
+            var rect = cc.rect(rendererObject.x, rendererObject.y, rendererObject.width,rendererObject.height);
             if(!selSprite){
-                var rendererObject = attachment.rendererObject;
-                var rect = cc.rect(rendererObject.x, rendererObject.y, rendererObject.width,rendererObject.height);
                 var sprite = new cc.Sprite();
-                sprite.initWithTexture(rendererObject.page._texture, rect, rendererObject.rotate, false);
-                sprite._rect.width = attachment.width;
-                sprite._rect.height = attachment.height;
-                sprite.setContentSize(attachment.width, attachment.height);
-                this._skeletonSprites.push(sprite);
+                locSkeletonSprites.push(sprite);
                 selSprite = slot.currentSprite = sprite;
-            }
+            }else
+                locSkeletonSprites.push(selSprite);
+            selSprite.initWithTexture(rendererObject.page._texture, rect, rendererObject.rotate, false);
+            selSprite.setContentSize(attachment.width, attachment.height);
+            selSprite._rect.width = attachment.width;
+            selSprite._rect.height = attachment.height;
+
             selSprite.setVisible(true);
             //update color and blendFunc
             selSprite.setBlendFunc(cc.BLEND_SRC, slot.data.additiveBlending ? cc.ONE : cc.BLEND_DST);

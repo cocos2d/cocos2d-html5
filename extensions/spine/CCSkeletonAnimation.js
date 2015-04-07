@@ -161,7 +161,7 @@ sp._regionAttachment_updateSlotForCanvas = function(self, slot, points) {
         return;
 
     var vertices = {};
-    self.computeVertices(slot.bone.x, slot.bone.y, slot.bone, vertices);
+    self.computeVertices(slot.bone.skeleton.x, slot.bone.skeleton.y, slot.bone, vertices);
     var VERTEX = sp.VERTEX_INDEX;
     points.length = 0;
     points.push(cc.p(vertices[VERTEX.X1], vertices[VERTEX.Y1]));
