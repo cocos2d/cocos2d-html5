@@ -739,16 +739,10 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             for(i=0; i<this._updatesNegList.length; ){
                 temp_length = this._updatesNegList.length;
                 entry = this._updatesNegList[i];
-                if (entry) {
-                    if(entry.priority >= minPriority){
-                        this.unscheduleUpdate(entry.target);
-                    }
-                }
-
+                if(entry && entry.priority >= minPriority)
+                    this.unscheduleUpdate(entry.target);
                 if (temp_length == this._updatesNegList.length)
-                {
                     i++;
-                }
             }
         }
 
@@ -756,31 +750,20 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             for(i=0; i<this._updates0List.length; ){
                 temp_length = this._updates0List.length;
                 entry = this._updates0List[i];
-                if (entry) {
+                if (entry)
                     this.unscheduleUpdate(entry.target);
-                }
-
                 if (temp_length == this._updates0List.length)
-                {
                     i++;
-                }
             }
         }
 
         for(i=0; i<this._updatesPosList.length; ){
             temp_length = this._updatesPosList.length;
             entry = this._updatesPosList[i];
-            if (entry) {
-                if(entry.priority >= minPriority)
-                {
-                    this.unscheduleUpdate(entry.target);
-                }
-            }
-
+            if(entry && entry.priority >= minPriority)
+                this.unscheduleUpdate(entry.target);
             if (temp_length == this._updatesPosList.length)
-            {
                 i++;
-            }
         }
     },
 
