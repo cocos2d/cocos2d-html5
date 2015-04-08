@@ -160,7 +160,7 @@ cc.isUndefined = function(obj) {
  * @returns {boolean}
  */
 cc.isObject = function(obj) {
-    return typeof obj === "object" && Object.prototype.toString.call(obj) === '[object Object]';
+    return typeof obj === "object";
 };
 
 /**
