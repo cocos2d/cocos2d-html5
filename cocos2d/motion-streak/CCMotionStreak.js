@@ -223,6 +223,14 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     },
 
     /**
+     * Get stroke.
+     * @returns {Number} stroke
+     */
+    getStroke:function () {
+        return this._stroke;
+    },
+
+    /**
      * Set stroke.
      * @param {Number} stroke
      */
