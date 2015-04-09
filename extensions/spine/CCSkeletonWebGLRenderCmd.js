@@ -83,10 +83,10 @@
 
             switch(slot.attachment.type) {
                 case sp.ATTACHMENT_TYPE.REGION:
-                    sp._regionAttachment_updateQuad(attachment, slot, tmpQuad, node._premultipliedAlpha);
+                    this._updateRegionAttachmentQuad(attachment, slot, tmpQuad, node._premultipliedAlpha);
                     break;
                 case sp.ATTACHMENT_TYPE.MESH:
-                    sp._meshAttachment_updateQuad(attachment, slot, tmpQuad, node._premultipliedAlpha);
+                    this._updateMeshAttachmentQuad(attachment, slot, tmpQuad, node._premultipliedAlpha);
                     break;
                 case sp.ATTACHMENT_TYPE.SKINNED_MESH:
                     break;
@@ -117,7 +117,7 @@
                     if (!slot.attachment || slot.attachment.type != sp.ATTACHMENT_TYPE.REGION)
                         continue;
                     attachment = slot.attachment;
-                    sp._regionAttachment_updateQuad(attachment, slot, tmpQuad);
+                    this._updateRegionAttachmentQuad(attachment, slot, tmpQuad);
 
                     var points = [];
                     points.push(cc.p(tmpQuad.bl.vertices.x, tmpQuad.bl.vertices.y));
@@ -161,4 +161,83 @@
     proto._createChildFormSkeletonData = function(){};
 
     proto._updateChild = function(){};
+
+    proto._updateRegionAttachmentQuad = function(self, slot, quad, premultipliedAlpha) {
+        var vertices = {};
+        self.computeVertices(slot.bone.skeleton.x, slot.bone.skeleton.y, slot.bone, vertices);
+        var r = slot.bone.skeleton.r * slot.r * 255;
+        var g = slot.bone.skeleton.g * slot.g * 255;
+        var b = slot.bone.skeleton.b * slot.b * 255;
+        var normalizedAlpha = slot.bone.skeleton.a * slot.a;
+
+        if (premultipliedAlpha) {
+            r *= normalizedAlpha;
+            g *= normalizedAlpha;
+            b *= normalizedAlpha;
+        }
+        var a = normalizedAlpha * 255;
+
+        quad.bl.colors.r = quad.tl.colors.r = quad.tr.colors.r = quad.br.colors.r = r;
+        quad.bl.colors.g = quad.tl.colors.g = quad.tr.colors.g = quad.br.colors.g = g;
+        quad.bl.colors.b = quad.tl.colors.b = quad.tr.colors.b = quad.br.colors.b = b;
+        quad.bl.colors.a = quad.tl.colors.a = quad.tr.colors.a = quad.br.colors.a = a;
+
+        var VERTEX = sp.VERTEX_INDEX;
+        quad.bl.vertices.x = vertices[VERTEX.X1];
+        quad.bl.vertices.y = vertices[VERTEX.Y1];
+        quad.tl.vertices.x = vertices[VERTEX.X2];
+        quad.tl.vertices.y = vertices[VERTEX.Y2];
+        quad.tr.vertices.x = vertices[VERTEX.X3];
+        quad.tr.vertices.y = vertices[VERTEX.Y3];
+        quad.br.vertices.x = vertices[VERTEX.X4];
+        quad.br.vertices.y = vertices[VERTEX.Y4];
+
+        quad.bl.texCoords.u = self.uvs[VERTEX.X1];
+        quad.bl.texCoords.v = self.uvs[VERTEX.Y1];
+        quad.tl.texCoords.u = self.uvs[VERTEX.X2];
+        quad.tl.texCoords.v = self.uvs[VERTEX.Y2];
+        quad.tr.texCoords.u = self.uvs[VERTEX.X3];
+        quad.tr.texCoords.v = self.uvs[VERTEX.Y3];
+        quad.br.texCoords.u = self.uvs[VERTEX.X4];
+        quad.br.texCoords.v = self.uvs[VERTEX.Y4];
+    };
+
+    proto._updateMeshAttachmentQuad = function(self, slot, quad, premultipliedAlpha) {
+        var vertices = {};
+        self.computeWorldVertices(slot.bone.x, slot.bone.y, slot, vertices);
+        var r = slot.bone.skeleton.r * slot.r * 255;
+        var g = slot.bone.skeleton.g * slot.g * 255;
+        var b = slot.bone.skeleton.b * slot.b * 255;
+        var normalizedAlpha = slot.bone.skeleton.a * slot.a;
+        if (premultipliedAlpha) {
+            r *= normalizedAlpha;
+            g *= normalizedAlpha;
+            b *= normalizedAlpha;
+        }
+        var a = normalizedAlpha * 255;
+
+        quad.bl.colors.r = quad.tl.colors.r = quad.tr.colors.r = quad.br.colors.r = r;
+        quad.bl.colors.g = quad.tl.colors.g = quad.tr.colors.g = quad.br.colors.g = g;
+        quad.bl.colors.b = quad.tl.colors.b = quad.tr.colors.b = quad.br.colors.b = b;
+        quad.bl.colors.a = quad.tl.colors.a = quad.tr.colors.a = quad.br.colors.a = a;
+
+        var VERTEX = sp.VERTEX_INDEX;
+        quad.bl.vertices.x = vertices[VERTEX.X1];
+        quad.bl.vertices.y = vertices[VERTEX.Y1];
+        quad.tl.vertices.x = vertices[VERTEX.X2];
+        quad.tl.vertices.y = vertices[VERTEX.Y2];
+        quad.tr.vertices.x = vertices[VERTEX.X3];
+        quad.tr.vertices.y = vertices[VERTEX.Y3];
+        quad.br.vertices.x = vertices[VERTEX.X4];
+        quad.br.vertices.y = vertices[VERTEX.Y4];
+
+        quad.bl.texCoords.u = self.uvs[VERTEX.X1];
+        quad.bl.texCoords.v = self.uvs[VERTEX.Y1];
+        quad.tl.texCoords.u = self.uvs[VERTEX.X2];
+        quad.tl.texCoords.v = self.uvs[VERTEX.Y2];
+        quad.tr.texCoords.u = self.uvs[VERTEX.X3];
+        quad.tr.texCoords.v = self.uvs[VERTEX.Y3];
+        quad.br.texCoords.u = self.uvs[VERTEX.X4];
+        quad.br.texCoords.v = self.uvs[VERTEX.Y4];
+    };
 })();

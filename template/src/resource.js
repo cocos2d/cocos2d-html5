@@ -6,7 +6,7 @@ var g_resources = [
     //image
     s_HelloWorld,
     s_CloseNormal,
-    "skeleton-1.png",
+    "skeleton.png",
     "skeleton.atlas",
     "skeleton.json",
     s_CloseSelected

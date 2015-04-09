@@ -48,7 +48,7 @@ var MyLayer = cc.Layer.extend({
         var spineBoy = new sp.SkeletonAnimation('skeleton.json', 'skeleton.atlas');
         spineBoy.setPosition(cc.p(size.width / 2, size.height / 2 - 150));
         this.addChild(spineBoy, 10);
-        spineBoy.setAnimation(0, 'attack1', true);
+        spineBoy.setAnimation(0, 'attack5', true);
         spineBoy.setTimeScale(0.1);
         //spineBoy.setDebugBonesEnabled(true);
         spineBoy.setDebugSlotsEnabled(true);
