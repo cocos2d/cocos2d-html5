@@ -356,6 +356,8 @@ cc.Audio = cc.Class.extend({
     },
 
     pause: function(){
+        if(this.getPlaying() === false)
+            return;
         this._playing = false;
         this._pause = true;
         if(this._AUDIO_TYPE === "AUDIO"){
