@@ -1304,7 +1304,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     removeFromParent: function (cleanup) {
         if (this._parent) {
-            if (cleanup == null)
+            if (cleanup === undefined)
                 cleanup = true;
             this._parent.removeChild(this, cleanup);
         }
@@ -1335,7 +1335,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (this._children.length === 0)
             return;
 
-        if (cleanup == null)
+        if (cleanup === undefined)
             cleanup = true;
         if (this._children.indexOf(child) > -1)
             this._detachChild(child, cleanup);
@@ -1357,7 +1357,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             cc.log(cc._LogInfos.Node_removeChildByTag);
 
         var child = this.getChildByTag(tag);
-        if (child == null)
+        if (!child)
             cc.log(cc._LogInfos.Node_removeChildByTag_2, tag);
         else
             this.removeChild(child, cleanup);
@@ -1381,7 +1381,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         // not using detachChild improves speed here
         var __children = this._children;
         if (__children !== null) {
-            if (cleanup == null)
+            if (cleanup === undefined)
                 cleanup = true;
             for (var i = 0; i < __children.length; i++) {
                 var node = __children[i];
@@ -1869,7 +1869,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * spriteB.setAdditionalTransform(t);
      */
     setAdditionalTransform: function (additionalTransform) {
-        if(additionalTransform == null)
+        if(additionalTransform === undefined)
             return this._additionalTransformDirty = false;
         this._additionalTransform = additionalTransform;
         this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
@@ -2255,7 +2255,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _getBoundingBoxToCurrentNode: function (parentTransform) {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
-        var trans = (parentTransform == null) ? this.getNodeToParentTransform() : cc.affineTransformConcat(this.getNodeToParentTransform(), parentTransform);
+        var trans = (parentTransform === undefined) ? this.getNodeToParentTransform() : cc.affineTransformConcat(this.getNodeToParentTransform(), parentTransform);
         rect = cc.rectApplyAffineTransform(rect, trans);
 
         //query child's BoundingBox
