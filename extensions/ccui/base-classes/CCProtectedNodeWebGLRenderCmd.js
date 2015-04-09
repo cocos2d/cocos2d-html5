@@ -23,6 +23,8 @@
  ****************************************************************************/
 
 (function(){
+    if(!cc.Node.WebGLRenderCmd)
+        return;
     cc.ProtectedNode.WebGLRenderCmd = function (renderable) {
         cc.Node.WebGLRenderCmd.call(this, renderable);
     };

@@ -700,6 +700,8 @@ ccs.Bone.RenderCmd = {
 })();
 
 (function(){
+    if(!cc.Node.WebGLRenderCmd)
+        return;
     ccs.Bone.WebGLRenderCmd = function(renderable){
         cc.Node.WebGLRenderCmd.call(this, renderable);
         this._needDraw = false;
