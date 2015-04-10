@@ -48,7 +48,7 @@ cc.DOM._addMethods = function (node) {
 	cc.defineGetterSetter(node, "anchorY", node._getAnchorY, node._setAnchorY);
 	cc.defineGetterSetter(node, "scale", node.getScale, node.setScale);
 	cc.defineGetterSetter(node, "scaleX", node.getScaleX, node.setScaleX);
-	cc.defineGetterSetter(node, "scaleY", node.getScaleY, node.getScaleY);
+	cc.defineGetterSetter(node, "scaleY", node.getScaleY, node.setScaleY);
 	cc.defineGetterSetter(node, "rotation", node.getRotation, node.setRotation);
  	cc.defineGetterSetter(node, "skewX", node.getSkewX, node.setSkewX);
 	cc.defineGetterSetter(node, "skewY", node.getSkewY, node.setSkewY);
