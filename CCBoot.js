@@ -1563,13 +1563,6 @@ cc._initSys = function (config, CONFIG_KEY) {
      */
     sys.isNative = false;
 
-    var browserSupportWebGL = [sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_SAFARI];
-    var osSupportWebGL = [sys.OS_IOS, sys.OS_WINDOWS, sys.OS_OSX, sys.OS_LINUX];
-    var multipleAudioWhiteList = [
-        sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_BAIDU_APP,
-        sys.BROWSER_TYPE_SAFARI, sys.BROWSER_TYPE_UC, sys.BROWSER_TYPE_QQ, sys.BROWSER_TYPE_MOBILE_QQ, sys.BROWSER_TYPE_IE
-    ];
-
     var win = window, nav = win.navigator, doc = document, docEle = doc.documentElement;
     var ua = nav.userAgent.toLowerCase();
 
@@ -1642,21 +1635,47 @@ cc._initSys = function (config, CONFIG_KEY) {
      */
     sys.os = osName;
 
+    var multipleAudioWhiteList = [
+        sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_BAIDU_APP,
+        sys.BROWSER_TYPE_SAFARI, sys.BROWSER_TYPE_UC, sys.BROWSER_TYPE_QQ, sys.BROWSER_TYPE_MOBILE_QQ, sys.BROWSER_TYPE_IE
+    ];
+
     sys._supportMultipleAudio = multipleAudioWhiteList.indexOf(sys.browserType) > -1;
 
 
     //++++++++++++++++++something about cc._renderTYpe and cc._supportRender begin++++++++++++++++++++++++++++
-    var userRenderMode = parseInt(config[CONFIG_KEY.renderMode]);
-    var renderType = cc._RENDER_TYPE_WEBGL;
-    var tempCanvas = cc.newElement("Canvas");
-    cc._supportRender = true;
-    var notSupportGL = true;
-    if(iOS)
-        notSupportGL = !window.WebGLRenderingContext || osSupportWebGL.indexOf(sys.os) === -1;
-    else
-        notSupportGL = !window.WebGLRenderingContext || browserSupportWebGL.indexOf(sys.browserType) === -1 || osSupportWebGL.indexOf(sys.os) === -1;
-    if (userRenderMode === 1 || (userRenderMode === 0 && notSupportGL) || (location.origin === "file://"))
-        renderType = cc._RENDER_TYPE_CANVAS;
+
+    (function(sys, config){
+        var userRenderMode = config[CONFIG_KEY.renderMode] - 0;
+        if(isNaN(userRenderMode) || userRenderMode > 2 || userRenderMode < 0)
+            userRenderMode = 0;
+        var shieldOs = [sys.OS_ANDROID];
+        var shieldBrowser = [];
+        var tmpCanvas = cc.newElement("canvas");
+        cc._renderType = cc._RENDER_TYPE_CANVAS;
+        cc._supportRender = true;
+
+        var supportWebGL = win.WebGLRenderingContext;
+
+        if(userRenderMode === 2 || (userRenderMode === 0 && supportWebGL && shieldOs.indexOf(sys.os) === -1 && shieldBrowser.indexOf(sys.browserType) === -1))
+            try{
+                var context = cc.create3DContext(tmpCanvas, {'stencil': true, 'preserveDrawingBuffer': true });
+                if(context)
+                    cc._renderType = cc._RENDER_TYPE_WEBGL;
+                else
+                    cc._supportRender = false;
+            }catch(e){
+                cc._supportRender = false;
+            }
+
+        if(userRenderMode === 1 || (userRenderMode === 0 && cc._supportRender === false))
+            try {
+                tmpCanvas.getContext("2d");
+                cc._renderType = cc._RENDER_TYPE_CANVAS;
+            } catch (e) {
+                cc._supportRender = false;
+            }
+    })(sys, config);
 
     sys._canUseCanvasNewBlendModes = function(){
         var canvas = document.createElement('canvas');
@@ -1682,22 +1701,6 @@ cc._initSys = function (config, CONFIG_KEY) {
     //Whether or not the Canvas BlendModes are supported.
     sys._supportCanvasNewBlendModes = sys._canUseCanvasNewBlendModes();
 
-    if (renderType === cc._RENDER_TYPE_WEBGL) {
-        if (!win.WebGLRenderingContext
-            || !cc.create3DContext(tempCanvas, {'stencil': true, 'preserveDrawingBuffer': true })) {
-            if (userRenderMode === 0) renderType = cc._RENDER_TYPE_CANVAS;
-            else cc._supportRender = false;
-        }
-    }
-
-    if (renderType === cc._RENDER_TYPE_CANVAS) {
-        try {
-            tempCanvas.getContext("2d");
-        } catch (e) {
-            cc._supportRender = false;
-        }
-    }
-    cc._renderType = renderType;
     //++++++++++++++++++something about cc._renderType and cc._supportRender end++++++++++++++++++++++++++++++
 
     // check if browser supports Web Audio
