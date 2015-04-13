@@ -463,6 +463,8 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
      * @param {cc.Touch} touch
      */
     interceptTouchEvent: function (eventType, sender, touch) {
+        if (!this.isTouchEnabled()) return;
+
         ccui.ScrollView.prototype.interceptTouchEvent.call(this, eventType, sender, touch);
         if (eventType !== ccui.Widget.TOUCH_MOVED) {
             var parent = sender;
