@@ -1665,8 +1665,13 @@ cc._initSys = function (config, CONFIG_KEY) {
 
         if(userRenderMode === 2)
             try{
-                cc.create3DContext(tmpCanvas, {'stencil': true, 'preserveDrawingBuffer': true });
-                cc._renderType = cc._RENDER_TYPE_WEBGL;
+                var context = cc.create3DContext(tmpCanvas, {'stencil': true, 'preserveDrawingBuffer': true });
+                if(context){
+                    cc._renderType = cc._RENDER_TYPE_WEBGL;
+                }else{
+                    cc.log("Browsers doesn‘t support WebGL");
+                    userRenderMode = 1;
+                }
             }catch(e){
                 cc.log("Browsers doesn‘t support WebGL");
                 userRenderMode = 1;
