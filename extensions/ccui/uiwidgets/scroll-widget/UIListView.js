@@ -118,7 +118,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     _remedyLayoutParameter: function (item) {
         cc.assert(null != item, "ListView Item can't be nil!");
 
-        var linearLayoutParameter = item.getLayoutParameter();
+        var linearLayoutParameter = item.getLayoutParameter(ccui.LayoutParameter.LINEAR);
         var isLayoutParameterExists = true;
         if (!linearLayoutParameter) {
             linearLayoutParameter = new ccui.LinearLayoutParameter();
