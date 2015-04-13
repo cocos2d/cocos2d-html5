@@ -63,6 +63,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
      */
     initWithDictionary: function (dic, root) {
         this.setActionTag(dic["ActionTag"]);
+        this._initActionNodeFromRoot(root);
         var actionFrameList = dic["actionframelist"];
         for (var i = 0; i < actionFrameList.length; i++) {
             var actionFrameDic = actionFrameList[i];
@@ -86,7 +87,19 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
                 actionFrame.frameIndex = frameIndex;
                 actionFrame.setEasingType(frameTweenType);
                 actionFrame.setEasingParameter(frameTweenParameter);
-                actionFrame.setPosition(positionX, positionY);
+
+                var actionNode = this.getActionNode();
+                if (actionNode && actionNode.getParent()) {
+                    var actionNodeParentAnchorInPoints = actionNode.getParent().getAnchorPointInPoints();
+                    actionFrame.setPosition(
+                            positionX + actionNodeParentAnchorInPoints.x,
+                            positionY + actionNodeParentAnchorInPoints.y
+                    );
+                }
+                else {
+                    actionFrame.setPosition(positionX, positionY);
+                }
+
                 actionArray = this._frameArray[ccs.FRAME_TYPE_MOVE];
                 actionArray.push(actionFrame);
             }
@@ -140,7 +153,6 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
             }
             actionFrameDic = null;
         }
-        this._initActionNodeFromRoot(root);
     },
 
     _initActionNodeFromRoot: function (root) {
