@@ -1657,7 +1657,7 @@ cc._initSys = function (config, CONFIG_KEY) {
 
         var supportWebGL = win.WebGLRenderingContext;
         if(userRenderMode === 0){
-            if(supportWebGL && shieldOs.indexOf(sys.os) === -1 && shieldBrowser.indexOf(sys.browserType))
+            if(supportWebGL && shieldOs.indexOf(sys.os) === -1 && shieldBrowser.indexOf(sys.browserType) === -1)
                 userRenderMode = 2;
             else
                 userRenderMode = 1;
