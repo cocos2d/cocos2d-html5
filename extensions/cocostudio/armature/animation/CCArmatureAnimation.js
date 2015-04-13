@@ -292,8 +292,11 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
                 tween.play(movementBoneData, durationTo, durationTween, loop, tweenEasing);
                 tween.setProcessScale(this._processScale);
 
-                if (bone.getChildArmature())
+                if (bone.getChildArmature()) {
                     bone.getChildArmature().getAnimation().setSpeedScale(this._processScale);
+                    if (!bone.getChildArmature().getAnimation().isPlaying())
+                        bone.getChildArmature().getAnimation().playWithIndex(0);
+                }
             } else {
                 if(!bone.isIgnoreMovementBoneData()){
                     //! this bone is not include in this movement, so hide it
