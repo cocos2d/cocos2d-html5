@@ -176,7 +176,7 @@ ccui.relativeLayoutManager = /** @lends ccui.relativeLayoutManager# */{
         locWidgetChildren.length = 0;
         for (var i = 0, len = container.length; i < len; i++){
             var child = container[i];
-            if (child) {
+            if (child && child instanceof ccui.Widget) {
                 var layoutParameter = child.getLayoutParameter();
                 layoutParameter._put = false;
                 this._unlayoutChildCount++;
