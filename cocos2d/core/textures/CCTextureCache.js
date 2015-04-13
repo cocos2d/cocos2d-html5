@@ -345,15 +345,9 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             throw "cc.TextureCache.addImageAsync(): path should be non-null";
         path = cc.FileUtils.getInstance().fullPathForFilename(path);
         var texture = this._textures[path];
-        var image,that;
-        if (texture) {
-            if(texture.isLoaded()){
-                this._addImageAsyncCallBack(target, selector);
-            }else{
-                image = texture.getHtmlElementObj();
-                image.__loadListener = this._clientLoadHandler.bind(image, texture, this, selector, target);
-                image.addEventListener("load", image.__loadListener);
-            }
+        var image;
+        if (texture && texture.isLoaded()) {
+            this._addImageAsyncCallBack(target, selector);
         } else {
             image = new Image();
             if(location.origin != "file://")
