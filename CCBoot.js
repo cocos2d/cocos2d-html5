@@ -1656,28 +1656,19 @@ cc._initSys = function (config, CONFIG_KEY) {
         cc._supportRender = true;
 
         var supportWebGL = win.WebGLRenderingContext;
-        if(userRenderMode === 0){
-            if(supportWebGL && shieldOs.indexOf(sys.os) === -1 && shieldBrowser.indexOf(sys.browserType) === -1)
-                userRenderMode = 2;
-            else
-                userRenderMode = 1;
-        }
 
-        if(userRenderMode === 2)
+        if(userRenderMode === 2 || (userRenderMode === 0 && supportWebGL && shieldOs.indexOf(sys.os) === -1 && shieldBrowser.indexOf(sys.browserType) === -1))
             try{
                 var context = cc.create3DContext(tmpCanvas, {'stencil': true, 'preserveDrawingBuffer': true });
-                if(context){
+                if(context)
                     cc._renderType = cc._RENDER_TYPE_WEBGL;
-                }else{
-                    cc.log("Browsers doesn‘t support WebGL");
-                    userRenderMode = 1;
-                }
+                else
+                    cc._supportRender = false;
             }catch(e){
-                cc.log("Browsers doesn‘t support WebGL");
-                userRenderMode = 1;
+                cc._supportRender = false;
             }
 
-        if(userRenderMode === 1)
+        if(userRenderMode === 1 || (userRenderMode === 0 && cc._supportRender === false))
             try {
                 tmpCanvas.getContext("2d");
                 cc._renderType = cc._RENDER_TYPE_CANVAS;
