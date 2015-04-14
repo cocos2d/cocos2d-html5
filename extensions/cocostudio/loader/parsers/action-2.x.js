@@ -65,14 +65,14 @@
         deferred: function(json, resourcePath, action, file){
             var animationlist = json["Content"]["Content"]["AnimationList"];
             var length = animationlist ? animationlist.length : 0;
-                for (var i = 0; i < length; i++){
-                    var animationdata = animationlist[i];
-                    var info = { name: null, startIndex: null, endIndex: null };
-                    info.name = animationdata["Name"];
-                    info.startIndex = animationdata["StartIndex"];
-                    info.endIndex = animationdata["EndIndex"];
-                    action.addAnimationInfo(info);
-                }
+            for (var i = 0; i < length; i++){
+                var animationdata = animationlist[i];
+                var info = { name: null, startIndex: null, endIndex: null };
+                info.name = animationdata["Name"];
+                info.startIndex = animationdata["StartIndex"];
+                info.endIndex = animationdata["EndIndex"];
+                action.addAnimationInfo(info);
+            }
         }
 
     });
