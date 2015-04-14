@@ -4,7 +4,7 @@
     "showFPS" : true,
     "frameRate" : 60,
     "id" : "gameCanvas",
-    "renderMode" : 1,
+    "renderMode" : 0,
     "engineDir":"../",
 
     "modules" : ["cocos2d", "extensions"],

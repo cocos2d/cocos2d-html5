@@ -105,7 +105,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
      */
     init: function () {
         cc.Node.prototype.init.call(this);
-        this.setOpacityModifyRGB(true);
+        //this.setOpacityModifyRGB(true);
         this._blendFunc.src = cc.ONE;
         this._blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
         this.scheduleUpdate();
@@ -345,6 +345,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
             this.setContentSize(skeletonData.width / cc.director.getContentScaleFactor(), skeletonData.height / cc.director.getContentScaleFactor());
 
         this._skeleton = new spine.Skeleton(skeletonData);
+        this._skeleton.updateWorldTransform();
         this._rootBone = this._skeleton.getRootBone();
         this._ownsSkeletonData = ownsSkeletonData;
 
@@ -390,7 +391,6 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
      */
     update: function (dt) {
         this._skeleton.update(dt);
-        this._renderCmd._updateChild();
     }
 });
 

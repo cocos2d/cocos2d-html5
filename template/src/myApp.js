@@ -44,15 +44,6 @@ var MyLayer = cc.Layer.extend({
         this.sprite.setPosition(size.width / 2, size.height / 2);
         this.sprite.setScale(size.height / this.sprite.getContentSize().height);
         this.addChild(this.sprite, 0);
-
-        var spineBoy = new sp.SkeletonAnimation('skeleton.json', 'skeleton.atlas');
-        spineBoy.setPosition(cc.p(size.width / 2, size.height / 2 - 150));
-        this.addChild(spineBoy, 10);
-        spineBoy.setAnimation(0, 'attack5', true);
-        spineBoy.setTimeScale(0.1);
-        //spineBoy.setDebugBonesEnabled(true);
-        spineBoy.setDebugSlotsEnabled(true);
-        window.spineBoy = spineBoy;
     }
 });
 
