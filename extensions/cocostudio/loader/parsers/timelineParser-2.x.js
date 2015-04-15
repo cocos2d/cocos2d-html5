@@ -188,7 +188,7 @@
                 blendFunc.src = blendData["Src"];
             if (blendData["Dst"] !== undefined)
                 blendFunc.dst = blendData["Dst"];
-            node.setBlendFunc(new cc.BlendFunc());
+            node.setBlendFunc(blendFunc);
         }
 
         if(json["FlipX"])

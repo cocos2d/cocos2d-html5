@@ -66,10 +66,6 @@ ccs.ObjectExtensionData = ccs.Class.extend({
     _timelineData: null,
 
     ctor: function(){
-        this._init();
-    },
-
-    _init: function(){
         this._timelineData = new ccs.ActionTimelineData(0);
         return true;
     },
@@ -84,8 +80,7 @@ ccs.ObjectExtensionData = ccs.Class.extend({
 });
 
 ccs.ObjectExtensionData.create = function(){
-    var ret = new ccs.ObjectExtensionData();
-    return ret;
+    return new ccs.ObjectExtensionData();
 };
 
 /**
