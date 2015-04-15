@@ -61,6 +61,9 @@ cc.__BrowserGetter = {
 if(window.navigator.userAgent.indexOf("OS 8_1_") > -1) //this mistake like MIUI, so use of MIUI treatment method
     cc.__BrowserGetter.adaptationType = cc.sys.BROWSER_TYPE_MIUI;
 
+if(cc.sys.os === cc.sys.OS_IOS) // All browsers are WebView
+    cc.__BrowserGetter.adaptationType = cc.sys.BROWSER_TYPE_SAFARI;
+
 switch(cc.__BrowserGetter.adaptationType){
     case cc.sys.BROWSER_TYPE_SAFARI:
         cc.__BrowserGetter.meta["minimal-ui"] = "true";

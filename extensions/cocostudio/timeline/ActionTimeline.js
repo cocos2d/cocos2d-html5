@@ -60,6 +60,29 @@ ccs.ActionTimelineData = ccs.Class.extend({
 
 });
 
+ccs.ObjectExtensionData = ccs.Class.extend({
+
+    _customProperty: null,
+    _timelineData: null,
+
+    ctor: function(){
+        this._timelineData = new ccs.ActionTimelineData(0);
+        return true;
+    },
+
+    setActionTag: function(actionTag){
+        this._timelineData.setActionTag(actionTag);
+    },
+
+    getActionTag: function(){
+        return this._timelineData.getActionTag();
+    }
+});
+
+ccs.ObjectExtensionData.create = function(){
+    return new ccs.ObjectExtensionData();
+};
+
 /**
  * Create new ActionTimelineData.
  *

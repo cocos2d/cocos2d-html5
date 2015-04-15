@@ -356,6 +356,8 @@ cc.Audio = cc.Class.extend({
     },
 
     pause: function(){
+        if(this.getPlaying() === false)
+            return;
         this._playing = false;
         this._pause = true;
         if(this._AUDIO_TYPE === "AUDIO"){
@@ -580,12 +582,18 @@ cc.Audio = cc.Class.extend({
                         emptied();
                     }else{
                         termination = true;
+                    	element.pause();
+                    	document.body.removeChild(element);
                         cb("audio load timeout : " + realUrl, audio);
                     }
                 }, 10000);
 
                 var success = function(){
                     if(!cbCheck){
+                    	element.pause();
+                    	try { element.currentTime = 0;
+                    	element.volume = 1; } catch (e) {}
+                    	document.body.removeChild(element);
                         audio.setElement(element);
                         element.removeEventListener("canplaythrough", success, false);
                         element.removeEventListener("error", failure, false);
@@ -598,6 +606,8 @@ cc.Audio = cc.Class.extend({
 
                 var failure = function(){
                     if(!cbCheck) return;
+                	element.pause();
+                	document.body.removeChild(element);
                     element.removeEventListener("canplaythrough", success, false);
                     element.removeEventListener("error", failure, false);
                     element.removeEventListener("emptied", emptied, false);
@@ -618,7 +628,9 @@ cc.Audio = cc.Class.extend({
                     cc._addEventListener(element, "emptied", emptied, false);
 
                 element.src = realUrl;
-                element.load();
+                document.body.appendChild(element);
+                element.volume = 0;
+                element.play();
             }
 
         }

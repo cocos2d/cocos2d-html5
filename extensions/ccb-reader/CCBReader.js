@@ -709,9 +709,8 @@ cc.BuilderReader = cc.Class.extend({
 
     _readHeader:function () {
         /* If no bytes loaded, don't crash about it. */
-        if (this._data === null) {
+        if (!this._data)
             return false;
-        }
 
         /* Read magic bytes */
         var magicBytes = this._readStringFromBytes(this._currentByte, 4, true);
@@ -863,12 +862,12 @@ cc.BuilderReader = cc.Class.extend({
                     target = this._owner;
                 }
 
-                if (target !== null) {
+                if (!target) {
                     var assigned = false;
 
-                    if (target.onAssignCCBMemberVariable) {
+                    if (target.onAssignCCBMemberVariable)
                         assigned = target.onAssignCCBMemberVariable(target, memberVarAssignmentName, node);
-                    }
+
                     locMemberAssigner = this._ccbMemberVariableAssigner;
                     if (!assigned && locMemberAssigner != null && locMemberAssigner.onAssignCCBMemberVariable) {
                         locMemberAssigner.onAssignCCBMemberVariable(target, memberVarAssignmentName, node);
@@ -1070,9 +1069,9 @@ cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
             var callbackType = callbackSplit[0];
             var kfCallbackName = callbackSplit[1];
 
-            if (callbackType === 1){ // Document callback
+            if (callbackType == 1){ // Document callback
                 animationManager.setCallFunc(cc.callFunc(controller[kfCallbackName], controller), keyframeCallbacks[j]);
-            } else if (callbackType === 2 && owner) {// Owner callback
+            } else if (callbackType == 2 && owner) {// Owner callback
                 animationManager.setCallFunc(cc.callFunc(owner[kfCallbackName], owner), keyframeCallbacks[j]);
             }
         }

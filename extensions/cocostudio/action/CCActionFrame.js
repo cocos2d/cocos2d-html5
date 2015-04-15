@@ -99,9 +99,9 @@ ccs.FrameEaseType = {
     Circ_EaseOut : 20,
     Circ_EaseInOut : 21,
 
-    Elastic_EaesIn : 22,
-    Elastic_EaesOut : 23,
-    Elastic_EaesInOut : 24,
+    Elastic_EaseIn : 22,
+    Elastic_EaseOut : 23,
+    Elastic_EaseInOut : 24,
 
     Back_EaseIn : 25,
     Back_EaseOut : 26,
@@ -109,7 +109,9 @@ ccs.FrameEaseType = {
 
     Bounce_EaseIn : 28,
     Bounce_EaseOut : 29,
-    Bounce_EaseInOut : 30
+    Bounce_EaseInOut : 30,
+
+    TWEEN_EASING_MAX: 1000
 };
 
 
@@ -227,13 +229,13 @@ ccs.ActionFrame = ccs.Class.extend(/** @lends ccs.ActionFrame# */{
             case ccs.FrameEaseType.Circ_EaseInOut:
                 resultAction = action.easing(cc.easeCircleActionInOut());
                 break;
-            case ccs.FrameEaseType.Elastic_EaesIn:
+            case ccs.FrameEaseType.Elastic_EaseIn:
                 resultAction = action.easing(cc.easeElasticIn());
                 break;
-            case ccs.FrameEaseType.Elastic_EaesOut:
+            case ccs.FrameEaseType.Elastic_EaseOut:
                 resultAction = action.easing(cc.easeElasticOut());
                 break;
-            case ccs.FrameEaseType.Elastic_EaesInOut:
+            case ccs.FrameEaseType.Elastic_EaseInOut:
                 resultAction = action.easing(cc.easeElasticInOut());
                 break;
             case ccs.FrameEaseType.Back_EaseIn:

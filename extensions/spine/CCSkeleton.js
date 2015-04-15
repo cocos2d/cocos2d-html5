@@ -105,7 +105,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
      */
     init: function () {
         cc.Node.prototype.init.call(this);
-        this.setOpacityModifyRGB(true);
+        //this.setOpacityModifyRGB(true);
         this._blendFunc.src = cc.ONE;
         this._blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
         this.scheduleUpdate();
@@ -221,7 +221,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
             if (!slot.attachment || slot.attachment.type != sp.ATTACHMENT_TYPE.REGION)
                 continue;
             var attachment = slot.attachment;
-            sp._regionAttachment_computeWorldVertices(attachment, slot.bone.skeleton.x, slot.bone.skeleton.y, slot.bone, vertices);
+            this._computeRegionAttachmentWorldVertices(attachment, slot.bone.skeleton.x, slot.bone.skeleton.y, slot.bone, vertices);
             minX = Math.min(minX, vertices[VERTEX.X1] * scaleX, vertices[VERTEX.X4] * scaleX, vertices[VERTEX.X2] * scaleX, vertices[VERTEX.X3] * scaleX);
             minY = Math.min(minY, vertices[VERTEX.Y1] * scaleY, vertices[VERTEX.Y4] * scaleY, vertices[VERTEX.Y2] * scaleY, vertices[VERTEX.Y3] * scaleY);
             maxX = Math.max(maxX, vertices[VERTEX.X1] * scaleX, vertices[VERTEX.X4] * scaleX, vertices[VERTEX.X2] * scaleX, vertices[VERTEX.X3] * scaleX);
@@ -229,6 +229,20 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
         }
         var position = this.getPosition();
         return cc.rect(position.x + minX, position.y + minY, maxX - minX, maxY - minY);
+    },
+
+    _computeRegionAttachmentWorldVertices : function(self, x, y, bone, vertices){
+        var offset = self.offset, vertexIndex = sp.VERTEX_INDEX;
+        x += bone.worldX;
+        y += bone.worldY;
+        vertices[vertexIndex.X1] = offset[vertexIndex.X1] * bone.m00 + offset[vertexIndex.Y1] * bone.m01 + x;
+        vertices[vertexIndex.Y1] = offset[vertexIndex.X1] * bone.m10 + offset[vertexIndex.Y1] * bone.m11 + y;
+        vertices[vertexIndex.X2] = offset[vertexIndex.X2] * bone.m00 + offset[vertexIndex.Y2] * bone.m01 + x;
+        vertices[vertexIndex.Y2] = offset[vertexIndex.X2] * bone.m10 + offset[vertexIndex.Y2] * bone.m11 + y;
+        vertices[vertexIndex.X3] = offset[vertexIndex.X3] * bone.m00 + offset[vertexIndex.Y3] * bone.m01 + x;
+        vertices[vertexIndex.Y3] = offset[vertexIndex.X3] * bone.m10 + offset[vertexIndex.Y3] * bone.m11 + y;
+        vertices[vertexIndex.X4] = offset[vertexIndex.X4] * bone.m00 + offset[vertexIndex.Y4] * bone.m01 + x;
+        vertices[vertexIndex.Y4] = offset[vertexIndex.X4] * bone.m10 + offset[vertexIndex.Y4] * bone.m11 + y;
     },
 
     /**
@@ -331,6 +345,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
             this.setContentSize(skeletonData.width / cc.director.getContentScaleFactor(), skeletonData.height / cc.director.getContentScaleFactor());
 
         this._skeleton = new spine.Skeleton(skeletonData);
+        this._skeleton.updateWorldTransform();
         this._rootBone = this._skeleton.getRootBone();
         this._ownsSkeletonData = ownsSkeletonData;
 
@@ -376,7 +391,6 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
      */
     update: function (dt) {
         this._skeleton.update(dt);
-        this._renderCmd._updateChild();
     }
 });
 

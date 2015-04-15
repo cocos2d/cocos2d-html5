@@ -558,12 +558,15 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 				// Init with a sprite frame name
 				var frameName = fileName.substr(1, fileName.length - 1);
 				var spriteFrame = cc.spriteFrameCache.getSpriteFrame(frameName);
-				this.initWithSpriteFrame(spriteFrame);
+				if (spriteFrame)
+					this.initWithSpriteFrame(spriteFrame);
+				else
+					cc.log("%s does not exist", fileName);
 			} else {
 				// Init  with filename and rect
 				cc.Sprite.prototype.init.call(this, fileName, rect);
 			}
-		} else if (cc.isObject(fileName)) {
+		} else if (typeof fileName === "object") {
 			if (fileName instanceof cc.Texture2D) {
 				// Init  with texture and rect
 				this.initWithTexture(fileName, rect, rotated);

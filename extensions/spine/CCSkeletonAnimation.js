@@ -58,118 +58,6 @@ sp._atlasLoader = {
     }
 };
 
-sp._regionAttachment_computeWorldVertices = function(self, x, y, bone, vertices){
-    var offset = self.offset;
-    x += bone.worldX;
-    y += bone.worldY;
-    var vertexIndex = sp.VERTEX_INDEX;
-    vertices[vertexIndex.X1] = offset[vertexIndex.X1] * bone.m00 + offset[vertexIndex.Y1] * bone.m01 + x;
-    vertices[vertexIndex.Y1] = offset[vertexIndex.X1] * bone.m10 + offset[vertexIndex.Y1] * bone.m11 + y;
-    vertices[vertexIndex.X2] = offset[vertexIndex.X2] * bone.m00 + offset[vertexIndex.Y2] * bone.m01 + x;
-    vertices[vertexIndex.Y2] = offset[vertexIndex.X2] * bone.m10 + offset[vertexIndex.Y2] * bone.m11 + y;
-    vertices[vertexIndex.X3] = offset[vertexIndex.X3] * bone.m00 + offset[vertexIndex.Y3] * bone.m01 + x;
-    vertices[vertexIndex.Y3] = offset[vertexIndex.X3] * bone.m10 + offset[vertexIndex.Y3] * bone.m11 + y;
-    vertices[vertexIndex.X4] = offset[vertexIndex.X4] * bone.m00 + offset[vertexIndex.Y4] * bone.m01 + x;
-    vertices[vertexIndex.Y4] = offset[vertexIndex.X4] * bone.m10 + offset[vertexIndex.Y4] * bone.m11 + y;
-};
-
-/*cc._spCallback = function(state, trackIndex, type,event, loopCount){
- state.context.onAnimationStateEvent(trackIndex, type, event, loopCount);
- };*/
-
-sp._regionAttachment_updateQuad = function(self, slot, quad, premultipliedAlpha) {
-    var vertices = {};
-    self.computeVertices(slot.bone.skeleton.x, slot.bone.skeleton.y, slot.bone, vertices);
-    var r = slot.bone.skeleton.r * slot.r * 255;
-    var g = slot.bone.skeleton.g * slot.g * 255;
-    var b = slot.bone.skeleton.b * slot.b * 255;
-    var normalizedAlpha = slot.bone.skeleton.a * slot.a;
-    
-    if (premultipliedAlpha) {
-        r *= normalizedAlpha;
-        g *= normalizedAlpha;
-        b *= normalizedAlpha;
-    }
-    var a = normalizedAlpha * 255;
-
-    quad.bl.colors.r = quad.tl.colors.r = quad.tr.colors.r = quad.br.colors.r = r;
-    quad.bl.colors.g = quad.tl.colors.g = quad.tr.colors.g = quad.br.colors.g = g;
-    quad.bl.colors.b = quad.tl.colors.b = quad.tr.colors.b = quad.br.colors.b = b;
-    quad.bl.colors.a = quad.tl.colors.a = quad.tr.colors.a = quad.br.colors.a = a;
-
-    var VERTEX = sp.VERTEX_INDEX;
-    quad.bl.vertices.x = vertices[VERTEX.X1];
-    quad.bl.vertices.y = vertices[VERTEX.Y1];
-    quad.tl.vertices.x = vertices[VERTEX.X2];
-    quad.tl.vertices.y = vertices[VERTEX.Y2];
-    quad.tr.vertices.x = vertices[VERTEX.X3];
-    quad.tr.vertices.y = vertices[VERTEX.Y3];
-    quad.br.vertices.x = vertices[VERTEX.X4];
-    quad.br.vertices.y = vertices[VERTEX.Y4];
-
-    quad.bl.texCoords.u = self.uvs[VERTEX.X1];
-    quad.bl.texCoords.v = self.uvs[VERTEX.Y1];
-    quad.tl.texCoords.u = self.uvs[VERTEX.X2];
-    quad.tl.texCoords.v = self.uvs[VERTEX.Y2];
-    quad.tr.texCoords.u = self.uvs[VERTEX.X3];
-    quad.tr.texCoords.v = self.uvs[VERTEX.Y3];
-    quad.br.texCoords.u = self.uvs[VERTEX.X4];
-    quad.br.texCoords.v = self.uvs[VERTEX.Y4];
-};
-
-sp._meshAttachment_updateQuad = function(self, slot, quad, premultipliedAlpha) {
-    var vertices = {};
-    self.computeWorldVertices(slot.bone.x, slot.bone.y, slot, vertices);
-    var r = slot.bone.skeleton.r * slot.r * 255;
-    var g = slot.bone.skeleton.g * slot.g * 255;
-    var b = slot.bone.skeleton.b * slot.b * 255;
-    var normalizedAlpha = slot.bone.skeleton.a * slot.a;
-    if (premultipliedAlpha) {
-        r *= normalizedAlpha;
-        g *= normalizedAlpha;
-        b *= normalizedAlpha;
-    }
-    var a = normalizedAlpha * 255;
-
-    quad.bl.colors.r = quad.tl.colors.r = quad.tr.colors.r = quad.br.colors.r = r;
-    quad.bl.colors.g = quad.tl.colors.g = quad.tr.colors.g = quad.br.colors.g = g;
-    quad.bl.colors.b = quad.tl.colors.b = quad.tr.colors.b = quad.br.colors.b = b;
-    quad.bl.colors.a = quad.tl.colors.a = quad.tr.colors.a = quad.br.colors.a = a;
-
-    var VERTEX = sp.VERTEX_INDEX;
-    quad.bl.vertices.x = vertices[VERTEX.X1];
-    quad.bl.vertices.y = vertices[VERTEX.Y1];
-    quad.tl.vertices.x = vertices[VERTEX.X2];
-    quad.tl.vertices.y = vertices[VERTEX.Y2];
-    quad.tr.vertices.x = vertices[VERTEX.X3];
-    quad.tr.vertices.y = vertices[VERTEX.Y3];
-    quad.br.vertices.x = vertices[VERTEX.X4];
-    quad.br.vertices.y = vertices[VERTEX.Y4];
-
-    quad.bl.texCoords.u = self.uvs[VERTEX.X1];
-    quad.bl.texCoords.v = self.uvs[VERTEX.Y1];
-    quad.tl.texCoords.u = self.uvs[VERTEX.X2];
-    quad.tl.texCoords.v = self.uvs[VERTEX.Y2];
-    quad.tr.texCoords.u = self.uvs[VERTEX.X3];
-    quad.tr.texCoords.v = self.uvs[VERTEX.Y3];
-    quad.br.texCoords.u = self.uvs[VERTEX.X4];
-    quad.br.texCoords.v = self.uvs[VERTEX.Y4];
-};
-
-sp._regionAttachment_updateSlotForCanvas = function(self, slot, points) {
-    if(!points)
-        return;
-
-    var vertices = {};
-    self.computeVertices(slot.bone.x, slot.bone.y, slot.bone, vertices);
-    var VERTEX = sp.VERTEX_INDEX;
-    points.length = 0;
-    points.push(cc.p(vertices[VERTEX.X1], vertices[VERTEX.Y1]));
-    points.push(cc.p(vertices[VERTEX.X4], vertices[VERTEX.Y4]));
-    points.push(cc.p(vertices[VERTEX.X3], vertices[VERTEX.Y3]));
-    points.push(cc.p(vertices[VERTEX.X2], vertices[VERTEX.Y2]));
-};
-
 /**
  * The event type of spine skeleton animation. It contains event types: START(0), END(1), COMPLETE(2), EVENT(3).
  * @constant
@@ -334,6 +222,7 @@ sp.SkeletonAnimation = sp.Skeleton.extend(/** @lends sp.SkeletonAnimation# */{
         this._state.update(dt);
         this._state.apply(this._skeleton);
         this._skeleton.updateWorldTransform();
+        this._renderCmd._updateChild();
     },
 
     /**
