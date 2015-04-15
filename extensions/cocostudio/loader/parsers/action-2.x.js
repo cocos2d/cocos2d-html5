@@ -249,6 +249,9 @@
         frame.setTweenType(type);
         var points = options["Points"];
         if(points){
+            points = points.map(function(p){
+                return cc.p(p["X"], p["Y"]);
+            });
             frame.setEasingParams(points);
         }
     };
@@ -266,7 +269,7 @@
                     var tween = frameData["Tween"] != null ? frameData["Tween"] : true;
                     frame.setTween(tween);
                     //https://github.com/cocos2d/cocos2d-x/pull/11388/files
-                    var easingData = options["EasingData"];
+                    var easingData = frameData["EasingData"];
                     if(easingData)
                         loadEasingDataWithFlatBuffers(frame, easingData);
                     timeline.addFrame(frame);
