@@ -2429,8 +2429,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     enumerateChildren: function(name, callback){
-        cc.assert(name.length != 0, "Invalid name");
-        cc.assert(name.length != null, "Invalid callback function");
+        cc.assert(name && name.length != 0, "Invalid name");
+        cc.assert(callback != null, "Invalid callback function");
 
         var length = name.length;
         var subStrStartPos = 0;
