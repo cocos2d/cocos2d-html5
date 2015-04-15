@@ -2426,6 +2426,93 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             return new cc.Node.CanvasRenderCmd(this);
         else
             return new cc.Node.WebGLRenderCmd(this);
+    },
+
+    enumerateChildren: function(name, callback){
+        cc.assert(name.length != 0, "Invalid name");
+        cc.assert(name.length != null, "Invalid callback function");
+
+        var length = name.length;
+        var subStrStartPos = 0;
+        var subStrlength = length;
+
+        // Starts with '//'?
+        var searchRecursively = false;
+        if(length > 2 && name[0] === "/" && name[1] === "/"){
+            searchRecursively = true;
+            subStrStartPos = 2;
+            subStrlength -= 2;
+        }
+
+        var searchFromParent = false;
+        if(length > 3 && name[length-3] === "/" && name[length-2] === "." && name[length-1] === "."){
+            searchFromParent = true;
+            subStrlength -= 3;
+        }
+
+        var newName = name.substr(subStrStartPos, subStrlength);
+
+        if(searchFromParent)
+            newName = "[[:alnum:]]+/" + newName;
+
+        if(searchRecursively)
+            this.doEnumerateRecursive(this, newName, callback);
+        else
+            this.doEnumerate(newName, callback);
+    },
+
+    doEnumerateRecursive: function(node, name, callback){
+        var ret = false;
+        if(node.doEnumerate(name,callback)){
+            ret = true;
+        }else{
+            var child,
+                children = node.getChildren(),
+                length = children.length;
+            // search its children
+            for (var i=0; i<length; i++) {
+                child = children[i];
+                if (this.doEnumerateRecursive(child, name, callback)) {
+                    ret = true;
+                    break;
+                }
+            }
+        }
+    },
+
+    doEnumerate: function(name, callback){
+        // name may be xxx/yyy, should find its parent
+        var pos = name.indexOf('/');
+        var searchName = name;
+        var needRecursive = false;
+        if (pos !== -1){
+            searchName = name.substr(0, pos);
+            //name.erase(0, pos+1);
+            needRecursive = true;
+        }
+
+        var ret = false;
+        var child,
+            children = this._children,
+            length = children.length;
+        for (var i=0; i<length; i++){
+            child = children[i];
+            if (child._name.indexOf(searchName) !== -1){
+                if (!needRecursive){
+                    // terminate enumeration if callback return true
+                    if (callback(child)){
+                        ret = true;
+                        break;
+                    }
+                }else{
+                    ret = child.doEnumerate(name, callback);
+                    if (ret)
+                        break;
+                }
+            }
+        }
+
+        return ret;
     }
 });
 
