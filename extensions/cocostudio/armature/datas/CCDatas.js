@@ -549,7 +549,7 @@ ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
         ctor:function () {
             ccs.BaseData.prototype.ctor.call(this);
             this.duration = 1;
-            this.tweenEasing = ccs.TweenType.linear;
+            this.tweenEasing = ccs.TweenType.LINEAR;
             this.easingParamNumber = 0;
             this.easingParams = [];
             this.displayIndex = 0;
@@ -675,7 +675,7 @@ ccs.MovementData = function(){
      * Which tween easing effect the movement use
      * TWEEN_EASING_MAX : use the value from MovementData get from flash design panel
      */
-    this.tweenEasing = ccs.TweenType.linear;
+    this.tweenEasing = ccs.TweenType.LINEAR;
     this.movBoneDataDic = {};
 };
 
