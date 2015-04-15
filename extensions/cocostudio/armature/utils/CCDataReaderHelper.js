@@ -559,9 +559,9 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         if (easing) {
             if (easing != ccs.CONST_FL_NAN) {
                 tweenEasing = easing == null ? 0 : parseFloat(easing);
-                movementData.tweenEasing = tweenEasing === 2 ? ccs.TweenType.sineEaseInOut : tweenEasing;
+                movementData.tweenEasing = tweenEasing === 2 ? ccs.TweenType.SINE_EASEINOUT : tweenEasing;
             } else
-                movementData.tweenEasing = ccs.TweenType.linear;
+                movementData.tweenEasing = ccs.TweenType.LINEAR;
         }
 
         var movBonesXml = movementXML.querySelectorAll(ccs.CONST_MOVEMENT + " > " + ccs.CONST_BONE);
@@ -610,7 +610,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             movementData.scale = json[ccs.CONST_A_MOVEMENT_SCALE] == null ? 1 : json[ccs.CONST_A_MOVEMENT_SCALE];
         }
 
-        movementData.tweenEasing = json[ccs.CONST_A_TWEEN_EASING] == null ? ccs.TweenType.linear : json[ccs.CONST_A_TWEEN_EASING];
+        movementData.tweenEasing = json[ccs.CONST_A_TWEEN_EASING] == null ? ccs.TweenType.LINEAR : json[ccs.CONST_A_TWEEN_EASING];
         var name = json[ccs.CONST_A_NAME];
         if(name)
             movementData.name = name;
@@ -898,9 +898,9 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             if(_easing != ccs.CONST_FL_NAN){
                 tweenEasing = frameXML.getAttribute(ccs.CONST_A_TWEEN_EASING);
                 if( tweenEasing )
-                    frameData.tweenEasing = (tweenEasing === 2) ? ccs.TweenType.sineEaseInOut : tweenEasing;
+                    frameData.tweenEasing = (tweenEasing === 2) ? ccs.TweenType.SINE_EASEINOUT : tweenEasing;
             } else
-                frameData.tweenEasing = ccs.TweenType.linear;
+                frameData.tweenEasing = ccs.TweenType.LINEAR;
         }
 
         if (parentFrameXml) {
@@ -935,7 +935,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
 
         this.decodeNodeFromJson(frameData, json, dataInfo);
 
-        frameData.tweenEasing = json[ccs.CONST_A_TWEEN_EASING] || ccs.TweenType.linear;
+        frameData.tweenEasing = json[ccs.CONST_A_TWEEN_EASING] || ccs.TweenType.LINEAR;
         frameData.displayIndex = json[ccs.CONST_A_DISPLAY_INDEX];
         var bd_src = json[ccs.CONST_A_BLEND_SRC] == null ? cc.BLEND_SRC : json[ccs.CONST_A_BLEND_SRC];
         var bd_dst = json[ccs.CONST_A_BLEND_DST] == null ? cc.BLEND_DST : json[ccs.CONST_A_BLEND_DST];

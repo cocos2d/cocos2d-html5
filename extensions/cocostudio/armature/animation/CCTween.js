@@ -49,7 +49,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
 
     ctor:function (bone) {
         ccs.ProcessBase.prototype.ctor.call(this);
-        this._frameTweenEasing = ccs.TweenType.linear;
+        this._frameTweenEasing = ccs.TweenType.LINEAR;
 
         ccs.Tween.prototype.init.call(this, bone);
     },
@@ -109,7 +109,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
                 this.setBetween(nextKeyFrame, nextKeyFrame);
             else
                 this.setBetween(this._tweenData, nextKeyFrame);
-            this._frameTweenEasing = ccs.TweenType.linear;
+            this._frameTweenEasing = ccs.TweenType.LINEAR;
         }
         else if (this._movementBoneData.frameList.length > 1) {
             this._durationTween = durationTween * this._movementBoneData.scale;
@@ -219,7 +219,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
 
         if (locLoopType > ccs.ANIMATION_TYPE_TO_LOOP_BACK)
             locCurrentPercent = this.updateFrameData(locCurrentPercent);
-        if (this._frameTweenEasing !== ccs.TweenType.tweenEasingMax)
+        if (this._frameTweenEasing !== ccs.TweenType.TWEEN_EASING_MAX)
             this.tweenNodeTo(locCurrentPercent);
     },
 
@@ -396,8 +396,8 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         /*
          *  if frame tween easing equal to TWEEN_EASING_MAX, then it will not do tween.
          */
-        var tweenType = (this._frameTweenEasing !== ccs.TweenType.linear) ? this._frameTweenEasing : this._tweenEasing;
-        if (tweenType !== ccs.TweenType.tweenEasingMax && tweenType !== ccs.TweenType.linear && !this._passLastFrame) {
+        var tweenType = (this._frameTweenEasing !== ccs.TweenType.LINEAR) ? this._frameTweenEasing : this._tweenEasing;
+        if (tweenType !== ccs.TweenType.TWEEN_EASING_MAX && tweenType !== ccs.TweenType.LINEAR && !this._passLastFrame) {
             currentPercent = ccs.TweenFunction.tweenTo(currentPercent, tweenType, this._from.easingParams);
         }
         return currentPercent;
