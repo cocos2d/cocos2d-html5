@@ -157,7 +157,11 @@ ccs.Frame = ccs.Class.extend({
     },
 
     tweenPercent: function(percent){
-        return this._tweenTo(percent, this._tweenType, this._easingParam);
+        var func = ccs.Frame.tweenToMap[this._tweenType];
+        if(func)
+            return func(percent, this._easingParam);
+        else
+            return percent;
     },
 
     setEasingParams: function(easingParams){
@@ -182,114 +186,62 @@ ccs.Frame = ccs.Class.extend({
 
     isEnterWhenPassed: function(){
         return this._enterWhenPassed;
-    },
-
-    _tweenTo: function(time, type, easingParam){
-        var period = 0.3;
-        switch (type) {
-            case ccs.FrameEaseType.Custom:
-            case ccs.FrameEaseType.Linear:
-                break;
-            case ccs.FrameEaseType.Sine_EaseIn:
-                time = cc._easeSineInObj.easing(time);
-                break;
-            case ccs.FrameEaseType.Sine_EaseOut:
-                time = cc._easeSineOutObj.easing(time);
-                break;
-            case ccs.FrameEaseType.Sine_EaseInOut:
-                time = cc._easeSineInOutObj.easing(time);
-                break;
-            case ccs.FrameEaseType.Quad_EaseIn:
-                time = cc._easeQuadraticActionIn.easing(time);
-                break;
-            case ccs.FrameEaseType.Quad_EaseOut:
-                time = cc._easeQuadraticActionOut.easing(time);
-                break;
-            case ccs.FrameEaseType.Quad_EaseInOut:
-                time = cc._easeQuadraticActionInOut.easing(time);
-                break;
-            case ccs.FrameEaseType.Cubic_EaseIn:
-                time = cc._easeCubicActionIn.easing(time);
-                break;
-            case ccs.FrameEaseType.Cubic_EaseOut:
-                time = cc._easeCubicActionOut.easing(time);
-                break;
-            case ccs.FrameEaseType.Cubic_EaseInOut:
-                time = cc._easeCubicActionInOut.easing(time);
-                break;
-            case ccs.FrameEaseType.Quart_EaseIn:
-                time = cc._easeQuarticActionIn.easing(time);
-                break;
-            case ccs.FrameEaseType.Quart_EaseOut:
-                time = cc._easeQuarticActionOut.easing(time);
-                break;
-            case ccs.FrameEaseType.Quart_EaseInOut:
-                time = cc._easeQuarticActionInOut.easing(time);
-                break;
-            case ccs.FrameEaseType.Quint_EaseIn:
-                time = cc._easeQuinticActionIn.easing(time);
-                break;
-            case ccs.FrameEaseType.Quint_EaseOut:
-                time = cc._easeQuinticActionOut.easing(time);
-                break;
-            case ccs.FrameEaseType.Quint_EaseInOut:
-                time = cc._easeQuinticActionInOut.easing(time);
-                break;
-            case ccs.FrameEaseType.Expo_EaseIn:
-                time = cc._easeExponentialInObj.easing(time);
-                break;
-            case ccs.FrameEaseType.Expo_EaseOut:
-                time = cc._easeExponentialOutObj.easing(time);
-                break;
-            case ccs.FrameEaseType.Expo_EaseInOut:
-                time = cc._easeExponentialInOutObj.easing(time);
-                break;
-            case ccs.FrameEaseType.Circ_EaseIn:
-                time = cc._easeCircleActionIn.easing(time);
-                break;
-            case ccs.FrameEaseType.Circ_EaseOut:
-                time = cc._easeCircleActionOut.easing(time);
-                break;
-            case ccs.FrameEaseType.Circ_EaseInOut:
-                time = cc._easeCircleActionInOut.easing(time);
-                break;
-            case ccs.FrameEaseType.Elastic_EaseIn:
-                if(easingParam)
-                    period = easingParam[0];
-                time = cc.easeElasticIn(period).easing(time);
-                break;
-            case ccs.FrameEaseType.Elastic_EaseOut:
-                if(easingParam)
-                    period = easingParam[0];
-                time = cc.easeElasticOut(period).easing(time);
-                break;
-            case ccs.FrameEaseType.Elastic_EaseInOut:
-                if(easingParam)
-                    period = easingParam[0];
-                time = cc.easeElasticInOut(period).easing(time);
-                break;
-            case ccs.FrameEaseType.Back_EaseIn:
-                time = cc._easeBackInObj.easing(time);
-                break;
-            case ccs.FrameEaseType.Back_EaseOut:
-                time = cc._easeBackOutObj.easing(time);
-                break;
-            case ccs.FrameEaseType.Back_EaseInOut:
-                time = cc._easeBackInOutObj.easing(time);
-                break;
-            case ccs.FrameEaseType.Bounce_EaseIn:
-                time = cc._easeBounceInObj.easing(time);
-                break;
-            case ccs.FrameEaseType.Bounce_EaseOut:
-                time = cc._easeBounceOutObj.easing(time);
-                break;
-            case ccs.FrameEaseType.Bounce_EaseInOut:
-                time = cc._easeBounceInOutObj.easing(time);
-                break;
-        }
-        return time;
     }
 });
+
+ccs.Frame.tweenToMap = {
+    1: cc._easeSineInObj.easing,//Sine_EaseIn
+    2: cc._easeSineOutObj.easing,//Sine_EaseOut
+    3: cc._easeSineInOutObj.easing,//Sine_EaseInOut
+
+    4: cc._easeQuadraticActionIn.easing,//Quad_EaseIn
+    5: cc._easeQuadraticActionOut.easing,//Quad_EaseOut
+    6: cc._easeQuadraticActionInOut.easing,//Quad_EaseInOut
+
+    7: cc._easeCubicActionIn.easing, //Cubic_EaseIn
+    8: cc._easeCubicActionOut.easing,//Cubic_EaseOut
+    9: cc._easeCubicActionInOut.easing,//Cubic_EaseInOut
+
+    10: cc._easeCubicActionIn.easing,//Cubic_EaseIn
+    11: cc._easeCubicActionOut.easing,//Cubic_EaseOut
+    12: cc._easeCubicActionInOut.easing,//Cubic_EaseInOut
+
+    13: cc._easeQuinticActionIn.easing,//Quint_EaseIn
+    14: cc._easeQuinticActionOut.easing,//Quint_EaseOut
+    15: cc._easeQuinticActionInOut.easing,//Quint_EaseInOut
+
+    16: cc._easeExponentialInObj.easing,//Expo_EaseIn
+    17: cc._easeExponentialOutObj.easing,//Expo_EaseOut
+    18: cc._easeExponentialInOutObj.easing,//Expo_EaseInOut
+
+    19: cc._easeCircleActionIn.easing,//Circ_EaseIn
+    20: cc._easeCircleActionOut.easing,//Circ_EaseOut
+    21: cc._easeCircleActionInOut.easing,//Circ_EaseInOut
+
+    22: function(time, easingParam){
+        var period = 0.3;
+        easingParam != null && ( period = easingParam[0] );
+        return cc.easeElasticIn(period).easing(time);
+    },//Elastic_EaesIn
+    23: function(time, easingParam){
+        var period = 0.3;
+        easingParam != null && ( period = easingParam[0] );
+        return cc.easeElasticOut(period).easing(time);
+    },//Elastic_EaesOut
+    24: function(time, easingParam){
+        var period = 0.3;
+        easingParam != null && ( period = easingParam[0] );
+        return cc.easeElasticInOut(period).easing(time);
+    },//Elastic_EaesInOut
+
+    25: cc._easeBackInObj.easing, //Back_EaseIn
+    26: cc._easeBackOutObj.easing, //Back_EaseOut
+    27: cc._easeBackInOutObj.easing, //Back_EaseInOut
+
+    28: cc._easeBounceInObj.easing, //Bounce_EaseIn
+    29: cc._easeBounceOutObj.easing, //Bounce_EaseOut
+    30: cc._easeBounceInOutObj.easing //Bounce_EaseInOut
+};
 
 /**
  * Visible frame
