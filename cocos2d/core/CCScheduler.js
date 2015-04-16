@@ -165,7 +165,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
             if (this._runForever && !this._useDelay) {//standard timer usage
                 if (this._elapsed >= this._interval) {
                     this.trigger();
-                    this._elapsed = 0;
+                    this._elapsed = (this._interval <= 0) ? 0 : this._elapsed - this._interval;
                 }
             } else {//advanced usage
                 if (this._useDelay) {
@@ -180,7 +180,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
                     if (this._elapsed >= this._interval) {
                         this.trigger();
 
-                        this._elapsed = 0;
+                        this._elapsed = (this._interval <= 0) ? 0 : this._elapsed - this._interval;
                         this._timesExecuted += 1;
                     }
                 }
