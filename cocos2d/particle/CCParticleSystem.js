@@ -1938,6 +1938,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             retParticle.setPosition(cc.p(this.x, this.y));
             retParticle.setPosVar(cc.p(this.getPosVar().x,this.getPosVar().y));
 
+            retParticle.setPositionType(this.getPositionType());
+
             // Spinning
             retParticle.setStartSpin(this.getStartSpin()||0);
             retParticle.setStartSpinVar(this.getStartSpinVar()||0);
