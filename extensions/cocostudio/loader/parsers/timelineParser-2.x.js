@@ -533,7 +533,6 @@
                 json["ShadowBlurRadius"] || 0
             );
 
-        //todo check it
         var isCustomSize = json["IsCustomSize"];
         if(isCustomSize != null)
             widget.ignoreContentAdaptWithSize(!isCustomSize);

@@ -58,6 +58,20 @@
             if (!slot.attachment)
                 continue;
             attachment = slot.attachment;
+
+            switch(slot.attachment.type) {
+                case sp.ATTACHMENT_TYPE.REGION:
+                    sp._regionAttachment_updateQuad(attachment, slot, quad, node._premultipliedAlpha);
+                    break;
+                case sp.ATTACHMENT_TYPE.MESH:
+                    sp._meshAttachment_updateQuad(attachment, slot, quad, node._premultipliedAlpha);
+                    break;
+                case sp.ATTACHMENT_TYPE.SKINNED_MESH:
+                    break;
+                default:
+                    continue;
+            }
+
             var regionTextureAtlas = node.getTextureAtlas(attachment);
 
             if (slot.data.additiveBlending != additive) {
