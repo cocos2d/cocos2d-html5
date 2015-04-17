@@ -48,7 +48,6 @@
 
         this._realAnchorPointInPoints = new cc.Point(0,0);
         this._startRenderCmd = new cc.CustomRenderCmd(this, this._startCmdCallback);
-        this._RestoreRenderCmd = new cc.CustomRenderCmd(this, this._RestoreCmdCallback);
     };
 
     var proto = ccs.Armature.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
@@ -56,14 +55,9 @@
     proto.constructor = ccs.Armature.CanvasRenderCmd;
 
     proto._startCmdCallback = function(ctx, scaleX, scaleY){
-        var node = this._node, parent = node._parent;
+        var node = this._node,
+            parent = node._parent;
         this.transform(parent ? parent._renderCmd : null);
-
-        var wrapper = ctx || cc._renderContext;
-        wrapper.save();
-
-        //set to armature mode
-        wrapper._switchToArmatureMode(true, this._worldTransform, scaleX, scaleY);
     };
 
     proto.transform = function(parentCmd, recursive){
@@ -76,7 +70,7 @@
                 var selNode = selBone.getDisplayRenderNode();
                 if (selNode && selNode._renderCmd){
                     var cmd = selNode._renderCmd;
-                    cmd.transform(null);   //must be null, use transform in armature mode
+                    cmd.transform(this);   //must be null, use transform in armature mode
 
                     //update displayNode's color and opacity, because skin didn't call visit()
                     var parentColor = selBone._renderCmd._displayedColor, parentOpacity = selBone._renderCmd._displayedOpacity;
@@ -90,13 +84,6 @@
                 }
             }
         }
-    };
-
-    proto._RestoreCmdCallback = function(wrapper){
-        this._cacheDirty = false;
-        //wrapper.restore();
-        wrapper._switchToArmatureMode(false);
-        wrapper.restore();
     };
 
     proto.initShaderCache = function(){};
@@ -183,7 +170,6 @@
 
         cc.renderer.pushRenderCommand(this._startRenderCmd);
         this.rendering();
-        cc.renderer.pushRenderCommand(this._RestoreRenderCmd);
 
         this._cacheDirty = false;
     };
