@@ -523,10 +523,10 @@
         }
         widget.setTextVerticalAlignment(v_alignment);
 
-        if(json["OutlineEnabled"] && json["OutlineColor"])
+        if(json["OutlineEnabled"] && json["OutlineColor"] && widget.enableOutline)
             widget.enableOutline(getColor(json["OutlineColor"]), json["OutlineSize"] || 0);
 
-        if(json["ShadowEnabled"] && json["ShadowColor"])
+        if(json["ShadowEnabled"] && json["ShadowColor"] && widget.enableShadow)
             widget.enableShadow(
                 getColor(json["ShadowColor"]),
                 cc.size(getParam(json["ShadowOffsetX"], 2), getParam(json["ShadowOffsetY"], -2)),
@@ -602,14 +602,14 @@
             widget.setTitleColor(getColor(textColor));
 
         var label = widget.getTitleRenderer();
-        if(label && json["ShadowEnabled"] && json["ShadowColor"]){
+        if(label && json["ShadowEnabled"] && json["ShadowColor"] && label.enableShadow){
             label.enableShadow(
                 getColor(json["ShadowColor"]),
                 cc.size(getParam(json["ShadowOffsetX"], 2), getParam(json["ShadowOffsetY"], -2)),
                 json["ShadowBlurRadius"] || 0
             );
         }
-        if(label && json["OutlineEnabled"] && json["OutlineColor"])
+        if(label && json["OutlineEnabled"] && json["OutlineColor"] && label.enableOutline)
             label.enableOutline(getColor(json["OutlineColor"]), json["OutlineSize"] || 0);
 
         var displaystate = getParam(json["DisplayState"], true);
