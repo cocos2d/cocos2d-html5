@@ -1781,6 +1781,21 @@ cc._initSys = function (config, CONFIG_KEY) {
     };
 
     /**
+     * Check whether an object is valid,
+     * In web engine, it will return true if the object exist
+     * In native engine, it will return true if the JS object and the correspond native object are both valid
+     * @memberof cc.sys
+     * @name isObjectValid
+     * @param {Object} obj
+     * @return {boolean} Validity of the object
+     * @function
+     */
+    sys.isObjectValid = function (obj) {
+        if (obj) return true;
+        else return false;
+    };
+
+    /**
      * Dump system informations
      * @memberof cc.sys
      * @name dump
