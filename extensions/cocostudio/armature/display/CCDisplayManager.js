@@ -83,7 +83,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
         }
 
         if(display instanceof ccs.DisplayData){
-            cc.displayFactory.addDisplay(this._bone, decoDisplay, display);
+            ccs.displayFactory.addDisplay(this._bone, decoDisplay, display);
             //! if changed display index is current display index, then change current display to the new display
             if(index === this._displayIndex) {
                 this._displayIndex = -1;
