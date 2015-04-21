@@ -610,7 +610,7 @@
             );
         }
         if(label && json["OutlineEnabled"] && json["OutlineColor"] && label.enableOutline)
-            label.enableOutline(getColor(json["OutlineColor"]), json["OutlineSize"] || 0);
+            label.enableOutline(getColor(json["OutlineColor"]), json["OutlineSize"] || 1);
 
         var displaystate = getParam(json["DisplayState"], true);
         widget.setBright(displaystate);
