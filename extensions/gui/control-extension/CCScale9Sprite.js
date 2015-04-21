@@ -596,6 +596,14 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         var tmpTexture = batchNode.getTexture();
         var locLoaded = tmpTexture.isLoaded();
         this._textureLoaded = locLoaded;
+
+        //this._capInsets = capInsets;
+        var locCapInsets = this._capInsets;
+        locCapInsets.x = capInsets.x;
+        locCapInsets.y = capInsets.y;
+        locCapInsets.width = capInsets.width;
+        locCapInsets.height = capInsets.height;
+
         if(!locLoaded){
             tmpTexture.addEventListener("load", function(sender){
                 this._positionsAreDirty = true;
@@ -606,12 +614,6 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         var locScale9Image = this._scale9Image;
         locScale9Image.removeAllChildren(true);
 
-        //this._capInsets = capInsets;
-        var locCapInsets = this._capInsets;
-        locCapInsets.x = capInsets.x;
-        locCapInsets.y = capInsets.y;
-        locCapInsets.width = capInsets.width;
-        locCapInsets.height = capInsets.height;
         this._spriteFrameRotated = rotated;
 
         var selTexture = locScale9Image.getTexture();
