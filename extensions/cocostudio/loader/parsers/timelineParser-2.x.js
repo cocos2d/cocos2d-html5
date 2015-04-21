@@ -524,7 +524,7 @@
         widget.setTextVerticalAlignment(v_alignment);
 
         if(json["OutlineEnabled"] && json["OutlineColor"] && widget.enableOutline)
-            widget.enableOutline(getColor(json["OutlineColor"]), json["OutlineSize"] || 0);
+            widget.enableOutline(getColor(json["OutlineColor"]), getParam(json["OutlineSize"], 1));
 
         if(json["ShadowEnabled"] && json["ShadowColor"] && widget.enableShadow)
             widget.enableShadow(
