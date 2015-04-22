@@ -278,7 +278,7 @@ ccs.ActionTimeline = cc.Action.extend({
      * Set current frame index, this will cause action plays to this frame.
      */
     setCurrentFrame: function(frameIndex){
-        if (frameIndex >= this._startFrame && frameIndex >= this._endFrame){
+        if (frameIndex >= this._startFrame && frameIndex <= this._endFrame){
             this._currentFrame = frameIndex;
             this._time = this._currentFrame * this._frameInternal;
         }else{
