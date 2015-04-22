@@ -679,6 +679,12 @@ cc.FileUtils = cc.Class.extend({
      * @param {String} searchPath
      * @return {String} The full path of the file. It will return an empty string if the full path of the file doesn't exist.
      * @private
+     * this function should be changed.
+     * 
+     * it doesnot check file exist,then it will use the fist RootPath Directory file
+     *  
+     * 
+     * 
      */
     _getPathForFilename:function (filename, resourceDirectory, searchPath) {
         var ret;
