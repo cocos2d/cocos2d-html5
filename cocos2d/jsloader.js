@@ -245,7 +245,10 @@
             //spine
             '../extensions/Spine/Spine.js',
             '../extensions/Spine/CCSkeleton.js',
-            '../extensions/Spine/CCSkeletonAnimation.js'
+            '../extensions/Spine/CCSkeletonAnimation.js',
+
+            //runtime
+            '../extensions/Runtime/CCLoaderLayer.js',
         ]);
     }
 

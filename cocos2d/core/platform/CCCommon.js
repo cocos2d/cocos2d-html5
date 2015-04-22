@@ -573,3 +573,20 @@ cc.doCallback = function (selector, target, data) {
         selector(data);
     }
 };
+/**
+ * Check the obj whether is string or not
+ * @param {*} obj
+ * @returns {boolean}
+ */
+cc.isString = function(obj) {
+    return typeof obj == 'string' || Object.prototype.toString.call(obj) == '[object String]';
+};
+
+/**
+ * Check the obj whether is array or not
+ * @param {*} obj
+ * @returns {boolean}
+ */
+cc.isArray = function(obj) {
+    return Object.prototype.toString.call(obj) == '[object Array]';
+};

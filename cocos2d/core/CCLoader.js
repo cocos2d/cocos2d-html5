@@ -46,10 +46,10 @@ cc.RESOURCE_TYPE = {
  * @param target
  * @constructor
  */
-cc.ResData = function (resList, selector, target) {
+cc.ResData = function (resList, stepCb, finishCb) {
     this.resList = resList || [];
-    this.selector = selector;
-    this.target = target;
+    this.selector = finishCb;
+    this.stepCb = stepCb;
     this.curNumber = 0;
     this.loadedNumber = 0;
     this.totalNumber = this.resList.length;
@@ -82,13 +82,13 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
      * @param {Function|String} selector
      * @param {Object} target
      */
-    initWithResources: function (resources, selector, target) {
+    initWithResources: function (resources, stepCb, successCb) {
         if (!resources) {
             cc.log("cocos2d:resources should not null");
             return;
         }
         var res = resources.concat([]);
-        var data = new cc.ResData(res, selector, target);
+        var data = new cc.ResData(res, stepCb, successCb);
         this._resQueue.push(data);
 
         if (!this._running) {
@@ -106,11 +106,15 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
      * Callback when a resource file loaded.
      */
     onResLoaded: function (err) {
-        if(err != null){
+        if (err != null) {
             cc.log("cocos2d:Failed loading resource: " + err);
         }
-
         this._curData.loadedNumber++;
+        var self = this;
+        var stepCallback = function () {
+            self._curData.stepCb(true, self._curData.totalNumber, self._curData.loadedNumber);
+        }
+        stepCallback();
     },
 
     /**
@@ -192,13 +196,13 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
         }
 
         var percent = this.getPercentage();
-        if(percent >= 100){
+        if (percent >= 100) {
             this._complete();
             if (this._resQueue.length > 0) {
                 this._running = true;
                 this._curData = this._resQueue.shift();
             }
-            else{
+            else {
                 this._running = false;
                 this._scheduler.unscheduleUpdateForTarget(this);
             }
@@ -268,7 +272,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
         cc.doCallback(this._curData.selector,this._curData.target);
     },
 
-    _registerFaceFont: function (fontRes,seletor,target) {
+    _registerFaceFont: function (fontRes, seletor, target) {
         var srcArr = fontRes.src;
         var fileUtils = cc.FileUtils.getInstance();
         if (srcArr && srcArr.length > 0) {
@@ -293,7 +297,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
             preloadDiv.style.top = "-100px";
             document.body.appendChild(preloadDiv);
         }
-        cc.doCallback(seletor,target);
+        cc.doCallback(seletor, target);
     },
 
     _unregisterFaceFont: function (fontRes) {
@@ -331,11 +335,11 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
  * //load multi lists of resources
  * cc.Loader.preload([g_mainmenu,g_level], this.startGame, this);
  */
-cc.Loader.preload = function (resources, selector, target) {
+cc.Loader.preload = function (resources, stepCb, successCb) {
     if (!this._instance) {
         this._instance = new cc.Loader();
     }
-    this._instance.initWithResources(resources, selector, target);
+    this._instance.initWithResources(resources, stepCb, successCb);
     return this._instance;
 };
 
@@ -465,8 +469,14 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
 
     _startLoading: function () {
         this.unschedule(this._startLoading);
-        cc.Loader.preload(this.resources, this.selector, this.target);
-        this.schedule(this._updatePercent);
+        var self = this;
+        cc.Loader.preload(this.resources, function (result, count, loadedCount) {
+            var percent = cc.Loader.getInstance().getPercentage();
+            var tmpStr = "Loading... " + percent + "%";
+            self._label.setString(tmpStr);
+        }, function () {
+            self.selector.call(self.target);
+        });
     },
 
     _updatePercent: function () {
