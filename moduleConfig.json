@@ -444,6 +444,10 @@
 
             "external/chipmunk/chipmunk.js"
         ],
+        "runtime":[
+            "core",
+            "extensions/runtime/CCLoaderLayer.js"
+        ],
         "socketio" : [
             "external/socketio/socket.io.min.js"
         ],
