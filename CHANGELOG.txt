@@ -1,5 +1,41 @@
 ChangeLog:
 
+Cocos2d-JS v3.6 Beta @ April 22 2015
+
+* Improved TMX transform to support RotationX and RotationY.
+* Refactored Spine skeleton render command.
+* Added checks to prevent issues when `cc.Node.WebGLRenderCmd` is not exist.
+* Improved iOS browsers detection.
+* Added getter setter function for `cc.MotionStreak`'s stroke property.
+* Improved the detection of render mode.
+* Upgraded Action Timeline and parser for the latest version of Cocos editor.
+* Added `enumerateChildren` function for `cc.Node`.
+* Make `cc.Scale9Sprite` support unpreloaded texture.
+* Added `cc.sys.isObjectValid` to detect whether an object is still valid (in web and native engine).
+
+* Bug fixes:
+    1. Fixed a bug that `cc.Scheduler`'s `scheduleOnce` runs multiply times.
+    2. Fixed a bug of `cc.Scheduler`'s `pauseAllTargetsWithMinPriority`.
+    3. Fixed a bug of `cc.eventManager` that its event listeners' order is incorrect when some nodes haven't been added to the scene graph or have been removed from parent without cleanup.
+    4. Fixed a bug of `cc.LabelTTF` that `enableShadow` doesn't work.
+    5. Fixed a bug of `cc.LabelTTF` that `setColor` doesn't set shadow color under Canvas render mode.
+    6. Fixed a bug that stopped audios can be resume after invoking pause on them.
+    7. Fixed a bug that `ccui.LoadingBar`'s texture renders incorrectly without preload.
+    8. Fixed a bug that cocos builder's callback doesn't get invoked.
+    9. Fixed a bug that TMX objects' position is incorrect when content scale factor is modified.
+    10. Fixed a mistaken usage of `cc.isObject` in `cc.Sprite` implementation.
+    11. Fixed a bug that position type haven't been copied in `cc.ParticleSystem`'s `clone` function.
+    12. Fixed some undefined parameter check issues in `cc.Node`.
+    13. Fixed a bug that setter for `scaleY` of `cc.EditBox` is incorrect.
+    14. Fixed a bug of `cc.SkeletonAnimation` that its canvas render command doesn't work correctly.
+    15. Fixed a parsing issue for the width of `cc.LabelBMFont`.
+    16. Fixed `ccs.TweenType`'s constants naming issue.
+    17. Fixed a bug that the spine skeleton may be rendered under the unsupported mode.
+    18. Fixed a bug when setting `cc.ParticleSystem`'s blend function in the ActionTimeline parser.
+    19. Added check to prevent issues that functions may not exist in the ActionTimeline parser.
+    20. Fixed a typo of `ccs.displayFactory`.
+    21. Fixed a bug of `cc.Node.setPosition` that parameter check is incorrect.
+
 Cocos2d-JS v3.5 @ April 1 2015
 
 * Upgraded Cocos Studio parser to support Cocos Studio v2.2.

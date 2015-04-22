@@ -12,11 +12,11 @@ Core Developers:
 
     Ricardo Quesada
 
-    Huabin LING (pandamicro)
+    Huabin LING (@pandamicro)
 
-    Sijie Wang
+    Sijie Wang (@VisualSJ)
 
-    Jialong Zhai
+    Jialong Zhai (@JoshuaAstray)
 
 Contributors:
 Name                GithubID    Main contribution
@@ -86,8 +86,9 @@ Kang-Hao Lu(Opera/Oupeng) @kennyluck    Optimize John Resig's inheritance patter
 Mark Henderson       @MarkEHenderson    Code review, LabelTTF and Scale9Sprite bug fix
 
 Jing Wang             @06wj         CCScheduler improvements
-                                   Js file loading image add
-                                   cc.RectApplyAffineTransform improvements
+                                    Js file loading image add
+                                    cc.RectApplyAffineTransform improvements
+                                    Fixed a bug of cc.Node.setPosition that parameter check is incorrect
 
 Ze Wang               @WanderWang   Fix crash when BrowserTypes match nothing from navigator.userAgent
                                     LabelTTF improvements
@@ -222,6 +223,7 @@ Robert Rouhani       @Robmaister    cc.TMXMapInfo bug fix
 
 Igor Mats            @IgorMats      cc.Scale9Sprite bug fix
                                     Spine runtime update
+                                    Add getStroke and setStroke method to cc.MotionStreak
 
 Tim                  @duhaibo0404   ccs.csLoader bug fix
 
@@ -250,6 +252,9 @@ WingGao              @WingGao       cc.TMXLayer bug fix
 Skliar Ihor          @igogo5yo      Add Bower support
 
 feijing566           @feijing566    cc.Audio bug fix
+
+RackovychV           @RackovychV    Fixed a bug of `cc.Scheduler`'s `pauseAllTargetsWithMinPriority`
+
 
 
 Retired Core Developers:
