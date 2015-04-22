@@ -656,7 +656,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             locPosition.x = newPosOrxValue.x;
             locPosition.y = newPosOrxValue.y;
         } else {
-            if(locPosition.x === newPosOrxValue.x && locPosition.y === yValue)
+            if(locPosition.x === newPosOrxValue && locPosition.y === yValue)
                 return;
             locPosition.x = newPosOrxValue;
             locPosition.y = yValue;
