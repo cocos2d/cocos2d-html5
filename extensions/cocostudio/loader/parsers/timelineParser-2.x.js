@@ -523,20 +523,6 @@
         }
         widget.setTextVerticalAlignment(v_alignment);
 
-        if(json["OutlineEnabled"] && json["OutlineColor"] && widget.enableOutline)
-            widget.enableOutline(getColor(json["OutlineColor"]), getParam(json["OutlineSize"], 1));
-
-        if(json["ShadowEnabled"] && json["ShadowColor"] && widget.enableShadow)
-            widget.enableShadow(
-                getColor(json["ShadowColor"]),
-                cc.size(getParam(json["ShadowOffsetX"], 2), getParam(json["ShadowOffsetY"], -2)),
-                json["ShadowBlurRadius"] || 0
-            );
-
-        var isCustomSize = json["IsCustomSize"];
-        if(isCustomSize != null)
-            widget.ignoreContentAdaptWithSize(!isCustomSize);
-
         var fontResource = json["FontResource"];
         if(fontResource != null){
             var path = fontResource["Path"];
@@ -551,6 +537,20 @@
                 widget.setFontName(fontName);
             }
         }
+
+        if(json["OutlineEnabled"] && json["OutlineColor"] && widget.enableOutline)
+            widget.enableOutline(getColor(json["OutlineColor"]), getParam(json["OutlineSize"], 1));
+
+        if(json["ShadowEnabled"] && json["ShadowColor"] && widget.enableShadow)
+            widget.enableShadow(
+                getColor(json["ShadowColor"]),
+                cc.size(getParam(json["ShadowOffsetX"], 2), getParam(json["ShadowOffsetY"], -2)),
+                json["ShadowBlurRadius"] || 0
+            );
+
+        var isCustomSize = json["IsCustomSize"];
+        if(isCustomSize != null)
+            widget.ignoreContentAdaptWithSize(!isCustomSize);
 
         widget.setUnifySizeEnabled(false);
 
@@ -601,17 +601,6 @@
         if(textColor != null)
             widget.setTitleColor(getColor(textColor));
 
-        var label = widget.getTitleRenderer();
-        if(label && json["ShadowEnabled"] && json["ShadowColor"] && label.enableShadow){
-            label.enableShadow(
-                getColor(json["ShadowColor"]),
-                cc.size(getParam(json["ShadowOffsetX"], 2), getParam(json["ShadowOffsetY"], -2)),
-                json["ShadowBlurRadius"] || 0
-            );
-        }
-        if(label && json["OutlineEnabled"] && json["OutlineColor"] && label.enableOutline)
-            label.enableOutline(getColor(json["OutlineColor"]), getParam(json["OutlineSize"], 1));
-
         var displaystate = getParam(json["DisplayState"], true);
         widget.setBright(displaystate);
         widget.setEnabled(displaystate);
@@ -630,6 +619,18 @@
                 widget.setTitleFontName(fontName);
             }
         }
+
+        var label = widget.getTitleRenderer();
+        if(label && json["ShadowEnabled"] && json["ShadowColor"] && label.enableShadow){
+            label.enableShadow(
+                getColor(json["ShadowColor"]),
+                cc.size(getParam(json["ShadowOffsetX"], 2), getParam(json["ShadowOffsetY"], -2)),
+                json["ShadowBlurRadius"] || 0
+            );
+        }
+        if(label && json["OutlineEnabled"] && json["OutlineColor"] && label.enableOutline)
+            label.enableOutline(getColor(json["OutlineColor"]), getParam(json["OutlineSize"], 1));
+
         this.widgetAttributes(widget, json);
 
         if(scale9Enabled) {
