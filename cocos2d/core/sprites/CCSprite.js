@@ -962,8 +962,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
     _changeRectWithTexture: function(rect){
         if(!rect || (!rect.width && !rect.height)) return;
-        var textureRect = this.getTextureRect();
-        if(textureRect.height || textureRect.width) return;
         rect.x = rect.x || 0;
         rect.y = rect.y || 0;
         rect.width = rect.width || 0;
