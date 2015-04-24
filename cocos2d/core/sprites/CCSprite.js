@@ -941,12 +941,14 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
             if(!texture._textureLoaded){
                 texture.addEventListener("load", function(){
+                    this._clearRect();
                     this._renderCmd._setTexture(texture);
                     this._changeRectWithTexture(texture.getContentSize());
                     this.setColor(this._realColor);
                     this._textureLoaded = true;
                 }, this);
             }else{
+                this._clearRect();
                 this._renderCmd._setTexture(texture);
                 this._changeRectWithTexture(texture.getContentSize());
                 this.setColor(this._realColor);
@@ -955,8 +957,22 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         }else{
             // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
             cc.assert(texture instanceof cc.Texture2D, cc._LogInfos.Sprite_setTexture_2);
+            this._clearRect();
             this._changeRectWithTexture(texture.getContentSize());
             this._renderCmd._setTexture(texture);
+        }
+    },
+
+    _clearRect: function(){
+        var texture = this._texture;
+        if(texture){
+            var textureRect = texture._contentSize;
+            var spriteRect = this._rect;
+            if(
+                textureRect.width === spriteRect.width &&
+                textureRect.height === spriteRect.height
+            )
+                spriteRect.width = spriteRect.height = 0;
         }
     },
 
