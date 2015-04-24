@@ -280,7 +280,7 @@ cc.Audio = cc.Class.extend({
         audio["connect"](this._volume);
         audio.loop = this.loop;
         this._startTime = this._context.currentTime;
-        this._currentTime = 0;
+        this._currentTime = offset || 0;
 
         /*
          * Safari on iOS 6 only supports noteOn(), noteGrainOn(), and noteOff() now.(iOS 6.1.3)
