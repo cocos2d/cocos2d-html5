@@ -34,6 +34,8 @@ cc.LoaderScene = cc.Scene.extend({
     _interval : null,
     _label : null,
     _className:"LoaderScene",
+    cb: null,
+    target: null,
     /**
      * Contructor of cc.LoaderScene
      * @returns {boolean}
@@ -101,12 +103,14 @@ cc.LoaderScene = cc.Scene.extend({
      * init with resources
      * @param {Array} resources
      * @param {Function|String} cb
+     * @param {Object} target
      */
-    initWithResources: function (resources, cb) {
+    initWithResources: function (resources, cb, target) {
         if(cc.isString(resources))
             resources = [resources];
         this.resources = resources || [];
         this.cb = cb;
+        this.target = target;
     },
 
     _startLoading: function () {
@@ -120,7 +124,7 @@ cc.LoaderScene = cc.Scene.extend({
                 self._label.setString("Loading... " + percent + "%");
             }, function () {
                 if (self.cb)
-                    self.cb();
+                    self.cb.call(self.target);
             });
     }
 });
@@ -129,6 +133,7 @@ cc.LoaderScene = cc.Scene.extend({
  * <p>when all the resource are downloaded it will invoke call function</p>
  * @param resources
  * @param cb
+ * @param target
  * @returns {cc.LoaderScene|*}
  * @example
  * //Example
@@ -136,13 +141,13 @@ cc.LoaderScene = cc.Scene.extend({
         cc.director.runScene(new HelloWorldScene());
     }, this);
  */
-cc.LoaderScene.preload = function(resources, cb){
+cc.LoaderScene.preload = function(resources, cb, target){
     var _cc = cc;
     if(!_cc.loaderScene) {
         _cc.loaderScene = new cc.LoaderScene();
         _cc.loaderScene.init();
     }
-    _cc.loaderScene.initWithResources(resources, cb);
+    _cc.loaderScene.initWithResources(resources, cb, target);
 
     cc.director.runScene(_cc.loaderScene);
     return _cc.loaderScene;
