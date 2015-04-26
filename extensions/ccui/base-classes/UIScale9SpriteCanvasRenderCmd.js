@@ -73,7 +73,7 @@
 
         var children = node._children;
         for(var i=0; i<children.length; i++){
-            children[i].transform(this);
+            children[i].transform(this, true);
         }
     };
 
