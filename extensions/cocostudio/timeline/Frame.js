@@ -138,7 +138,7 @@ ccs.Frame = ccs.Class.extend({
     apply: function(percent){
         if(!this._tween)
             return;
-        if(this._tweenType !== ccs.FrameEaseType.TWEEN_EASING_MAX  && this._tweenType !==  ccs.FrameEaseType.Linear)
+        if(this._tweenType !== ccs.FrameEaseType.TWEEN_EASING_MAX  && this._tweenType !==  ccs.FrameEaseType.LINEAR)
             percent = this.tweenPercent(percent);
         this._onApply(percent);
     },
