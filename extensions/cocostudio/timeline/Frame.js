@@ -1006,7 +1006,7 @@ ccs.InnerActionFrame = ccs.Frame.extend({
             if (this._animationName === "-- ALL --"){
                 innerStart = 0;
                 innerEnd = innerActiontimeline.getDuration();
-            } else if(innerActiontimeline.IsAnimationInfoExists(this._animationName)) {
+            } else if(innerActiontimeline.isAnimationInfoExists(this._animationName)) {
                 var info = innerActiontimeline.getAnimationInfo(this._animationName);
                 innerStart = info.startIndex;
                 innerEnd = info.endIndex;
