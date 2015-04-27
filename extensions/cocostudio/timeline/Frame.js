@@ -976,12 +976,13 @@ ccs.InnerActionFrame = ccs.Frame.extend({
 
     _endFrameIndex:0,
     _singleFrameIndex: 0,
-    _enterWithName: false,
+    _enterWithName: null,
     _animationName: "",
 
     ctor: function(){
         ccs.Frame.prototype.ctor.call(this);
 
+        this._enterWithName = false;
         this._innerActionType = ccs.InnerActionType.LoopAction;
         this._startFrameIndex = 0;
     },
@@ -991,10 +992,10 @@ ccs.InnerActionFrame = ccs.Frame.extend({
      * @param {ccs.Frame} nextFrame
      */
     onEnter: function(nextFrame){
-        if(!this._node)
-            return;
+        if(!this._node)  return;
         var innerActiontimeline = this._node.getActionByTag(this._node.getTag());
-        if (/*ccs.InnerActionType.SingleFrame*/"SingleFrame" === this._innerActionType){
+        if(!innerActiontimeline) return;
+        if (ccs.InnerActionType.SingleFrame === this._innerActionType){
             innerActiontimeline.gotoFrameAndPause(this._singleFrameIndex);
             return;
         }
@@ -1005,7 +1006,7 @@ ccs.InnerActionFrame = ccs.Frame.extend({
             if (this._animationName === "-- ALL --"){
                 innerStart = 0;
                 innerEnd = innerActiontimeline.getDuration();
-            } else if(innerActiontimeline.IsAnimationInfoExists(this._animationName)) {
+            } else if(innerActiontimeline.isAnimationInfoExists(this._animationName)) {
                 var info = innerActiontimeline.getAnimationInfo(this._animationName);
                 innerStart = info.startIndex;
                 innerEnd = info.endIndex;
@@ -1028,11 +1029,7 @@ ccs.InnerActionFrame = ccs.Frame.extend({
     },
 
     setAnimationName: function(animationName){
-        if(!this._enterWithName){
-            cc.log(" cannot set aniamtioname when enter frame with index. setEnterWithName true firstly!");
-        }else{
-            this._animationName = animationName;
-        }
+        this._animationName = animationName;
     },
 
     setSingleFrameIndex: function(frameIndex){
@@ -1060,6 +1057,9 @@ ccs.InnerActionFrame = ccs.Frame.extend({
         var frame = new ccs.InnerActionFrame();
         frame.setInnerActionType(this._innerActionType);
         frame.setStartFrameIndex(this._startFrameIndex);
+        frame.setEnterWithName(this._enterWithName);
+        frame.setAnimationName(this._animationName);
+        frame.setSingleFrameIndex(this._singleFrameIndex);
 
         frame._cloneProperty(this);
 
