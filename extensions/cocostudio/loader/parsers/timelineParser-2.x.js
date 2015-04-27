@@ -401,6 +401,23 @@
         layoutComponent.setRightMargin(rightMargin);
     };
 
+    var setLayoutBackground = function(layout, single, first, end){
+        if( layout.getBackGroundColorType() === 2 ){
+            first = first || {};
+            end = end || {};
+            layout.setBackGroundColor(getColor(first), getColor(end));
+        }else{
+            single = single || {};
+            layout.setBackGroundColor(getColor(single));
+        }
+    };
+
+    var setLayoutBackgroundVector = function(widget, vector){
+        var x = vector["ScaleX"] || 0;
+        var y = vector["ScaleY"] || 0;
+        widget.setBackGroundColorVector(cc.p(x, y));
+    };
+
     /**
      * Layout
      * @param json
@@ -453,16 +470,8 @@
 
         }
 
-        var firstColor = json["FirstColor"];
-        var endColor = json["EndColor"];
-        if(endColor["R"] != null && endColor["G"] != null && endColor["B"] != null)
-            widget.setBackGroundColor(getColor(firstColor), getColor(endColor));
-        else
-            widget.setBackGroundColor(getColor(json["SingleColor"]));
-
-        var colorVector = json["ColorVector"];
-        if(colorVector != null)
-            widget.setBackGroundColorVector(cc.p(colorVector["ScaleX"], colorVector["ScaleY"]));
+        setLayoutBackground(widget, json["SingleColor"], json["FirstColor"], json["EndColor"]);
+        setLayoutBackgroundVector(widget, json["ColorVector"]);
 
         return widget;
     };
@@ -725,24 +734,8 @@
             setContentSize(widget, json["Size"]);
         }
 
-        var firstColor = json["FirstColor"];
-        var endColor = json["EndColor"];
-        if(firstColor && endColor){
-            if(endColor["R"] != null && endColor["G"] != null && endColor["B"] != null)
-                widget.setBackGroundColor(getColor(firstColor), getColor(endColor));
-            else
-                widget.setBackGroundColor(getColor(firstColor));
-        }else{
-            widget.setBackGroundColor(getColor(json["SingleColor"]));
-        }
-
-
-        var colorVector = json["ColorVector"];
-        if(colorVector){
-            var colorVectorX = getParam(colorVector["ScaleX"], 1);
-            var colorVectorY = getParam(colorVector["ScaleY"], 1);
-            widget.setBackGroundColorVector(cc.p(colorVectorX, colorVectorY));
-        }
+        setLayoutBackground(widget, json["SingleColor"], json["FirstColor"], json["EndColor"]);
+        setLayoutBackgroundVector(widget, json["ColorVector"]);
 
         var innerNodeSize = json["InnerNodeSize"];
         var innerSize = cc.size(
@@ -904,21 +897,10 @@
         var colorType = getParam(json["ComboBoxIndex"], 0);
         widget.setBackGroundColorType(colorType);
 
-        var bgColorOpacity = json["BackColorAlpha"];
-        var firstColor = json["FirstColor"];
-        var endColor = json["EndColor"];
-        if(firstColor && endColor){
-            if(endColor["R"] != null && endColor["G"] != null && endColor["B"] != null)
-                widget.setBackGroundColor(getColor(firstColor), getColor(endColor));
-            else
-                widget.setBackGroundColor(getColor(firstColor));
-        }else{
-            widget.setBackGroundColor(getColor(json["SingleColor"]));
-        }
+        setLayoutBackground(widget, json["SingleColor"], json["FirstColor"], json["EndColor"]);
+        setLayoutBackgroundVector(widget, json["ColorVector"]);
 
-        var colorVector = json["ColorVector"];
-        if(colorVector != null && colorVector["ScaleX"] != null && colorVector["ScaleY"] != null)
-            widget.setBackGroundColorVector(cc.p(colorVector["ScaleX"], colorVector["ScaleY"]));
+        var bgColorOpacity = json["BackColorAlpha"];
         if(bgColorOpacity != null)
             widget.setBackGroundColorOpacity(bgColorOpacity);
 
@@ -1000,20 +982,9 @@
         if(innerSize != null)
             widget.setInnerContainerSize(cc.size(innerSize["Widget"]||0, innerSize["Height"]||0));
 
-        var firstColor = json["FirstColor"];
-        var endColor = json["EndColor"];
-        if(firstColor && endColor){
-            if(endColor["R"] != null && endColor["G"] != null && endColor["B"] != null)
-                widget.setBackGroundColor(getColor(firstColor), getColor(endColor));
-            else
-                widget.setBackGroundColor(getColor(firstColor));
-        }else{
-            widget.setBackGroundColor(getColor(json["SingleColor"]));
-        }
+        setLayoutBackground(widget, json["SingleColor"], json["FirstColor"], json["EndColor"]);
+        setLayoutBackgroundVector(widget, json["ColorVector"]);
 
-        var colorVector = json["ColorVector"];
-        if(colorVector != null && colorVector["ScaleX"] != null && colorVector["ScaleY"] != null)
-            widget.setBackGroundColorVector(cc.p(colorVector["ScaleX"], colorVector["ScaleY"]));
         if(bgColorOpacity != null)
             widget.setBackGroundColorOpacity(bgColorOpacity);
 
