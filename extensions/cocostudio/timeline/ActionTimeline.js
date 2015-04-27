@@ -484,6 +484,14 @@ ccs.ActionTimeline = cc.Action.extend({
      */
     removeAnimationInfo: function(name){
         delete this._animationInfos[name];
+    },
+
+    IsAnimationInfoExists: function(name){
+        return this._animationInfos[name];
+    },
+
+    getAnimationInfo: function(name){
+        return this._animationInfos[name];
     }
 });
 
