@@ -238,14 +238,14 @@
     // WIDGET //
     ////////////
 
-    parser.widgetAttributes = function (widget, json) {
+    parser.widgetAttributes = function (widget, json, enableContent) {
         widget.setCascadeColorEnabled(true);
         widget.setCascadeOpacityEnabled(true);
 
         widget.setUnifySizeEnabled(false);
         //widget.setLayoutComponentEnabled(true);
         widget.ignoreContentAdaptWithSize(false);
-        setContentSize(widget, json["Size"]);
+        !enableContent && setContentSize(widget, json["Size"]);
 
         var name = json["Name"];
         if (name)
@@ -476,8 +476,6 @@
 
         var widget = new ccui.Text();
 
-        this.widgetAttributes(widget, json);
-
         var touchScaleEnabled = json["TouchScaleChangeAble"];
         if(touchScaleEnabled != null)
             widget.setTouchScaleChangeEnabled(touchScaleEnabled);
@@ -554,8 +552,7 @@
 
         widget.setUnifySizeEnabled(false);
 
-        if(widget.isIgnoreContentAdaptWithSize())
-            setContentSize(widget, json["Size"]);
+        this.widgetAttributes(widget, json, widget.isIgnoreContentAdaptWithSize());
 
         return widget;
 
