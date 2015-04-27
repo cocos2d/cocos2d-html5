@@ -626,7 +626,7 @@
             );
         }
         if(label && json["OutlineEnabled"] && json["OutlineColor"] && label.enableStroke)
-                label.enableStroke(getColor(json["OutlineColor"]), getParam(json["OutlineSize"], 1));
+            label.enableStroke(getColor(json["OutlineColor"]), getParam(json["OutlineSize"], 1));
 
         this.widgetAttributes(widget, json);
 
