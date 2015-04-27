@@ -437,11 +437,11 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         var x = capInsets.x, y = capInsets.y;
         var width = capInsets.width, height = capInsets.height;
 
-        if (this._normalTextureSize.width < width) {
+        if (this._pressedTextureSize.width < width) {
             x = 0;
             width = 0;
         }
-        if (this._normalTextureSize.height < height) {
+        if (this._pressedTextureSize.height < height) {
             y = 0;
             height = 0;
         }
@@ -474,11 +474,11 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         var x = capInsets.x, y = capInsets.y;
         var width = capInsets.width, height = capInsets.height;
 
-        if (this._normalTextureSize.width < width) {
+        if (this._disabledTextureSize.width < width) {
             x = 0;
             width = 0;
         }
-        if (this._normalTextureSize.height < height) {
+        if (this._disabledTextureSize.height < height) {
             y = 0;
             height = 0;
         }
