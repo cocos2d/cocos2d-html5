@@ -458,7 +458,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
             var spriteRenderer = this._progressBarRenderer;
             var rect = spriteRenderer.getTextureRect();
             spriteRenderer.setTextureRect(
-                cc.rect(rect.x, rect.y, dis, rect.height),
+                cc.rect(rect.x, rect.y, dis / spriteRenderer._scaleX, rect.height),
                 spriteRenderer.isTextureRectRotated()
             );
         }
