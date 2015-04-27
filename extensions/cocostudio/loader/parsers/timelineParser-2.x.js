@@ -625,8 +625,8 @@
                 json["ShadowBlurRadius"] || 0
             );
         }
-        if(label && json["OutlineEnabled"] && json["OutlineColor"] && label.enableOutline)
-            label.enableOutline(getColor(json["OutlineColor"]), getParam(json["OutlineSize"], 1));
+        if(label && json["OutlineEnabled"] && json["OutlineColor"] && label.enableStroke)
+            label.enableStroke(getColor(json["OutlineColor"]), getParam(json["OutlineSize"], 1));
 
         this.widgetAttributes(widget, json);
 
