@@ -332,7 +332,6 @@
         if(this._colorized){
             this._node._texture = this._originalTexture;
             this._colorized = false;
-            this._updateColor();
         }
     };
 
