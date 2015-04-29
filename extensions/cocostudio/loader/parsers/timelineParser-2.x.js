@@ -218,6 +218,7 @@
                 cc.log("%s need to be preloaded", path);
             node = new cc.ParticleSystem(path);
             self.generalAttributes(node, json);
+            node.setPositionType(cc.ParticleSystem.TYPE_GROUPED);
             !cc.sys.isNative && node.setDrawMode(cc.ParticleSystem.TEXTURE_MODE);
 
             var blendData = json["BlendFunc"];
