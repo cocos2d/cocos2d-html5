@@ -39,10 +39,10 @@ _p.setAccelerometerEnabled = function(isEnable){
     var scheduler = cc.director.getScheduler();
     if(_t._accelEnabled){
         _t._accelCurTime = 0;
-        scheduler.scheduleUpdateForTarget(_t);
+        scheduler.scheduleUpdate(_t);
     } else {
         _t._accelCurTime = 0;
-        scheduler.unscheduleUpdateForTarget(_t);
+        scheduler.scheduleUpdate(_t);
     }
 };
 
@@ -76,12 +76,12 @@ _p._registerAccelerometerEvent = function(){
     _t._accelDeviceEvent = w.DeviceMotionEvent || w.DeviceOrientationEvent;
 
     //TODO fix DeviceMotionEvent bug on QQ Browser version 4.1 and below.
-    if (cc.sys.browserType == cc.sys.BROWSER_TYPE_MOBILE_QQ)
+    if (cc.sys.browserType === cc.sys.BROWSER_TYPE_MOBILE_QQ)
         _t._accelDeviceEvent = window.DeviceOrientationEvent;
 
-    var _deviceEventType = (_t._accelDeviceEvent == w.DeviceMotionEvent) ? "devicemotion" : "deviceorientation";
+    var _deviceEventType = (_t._accelDeviceEvent === w.DeviceMotionEvent) ? "devicemotion" : "deviceorientation";
     var ua = navigator.userAgent;
-    if (/Android/.test(ua) || (/Adr/.test(ua) && cc.sys.browserType == cc.BROWSER_TYPE_UC)) {
+    if (/Android/.test(ua) || (/Adr/.test(ua) && cc.sys.browserType === cc.BROWSER_TYPE_UC)) {
         _t._minus = -1;
     }
 
@@ -97,7 +97,7 @@ _p.didAccelerate = function (eventData) {
 
     var x, y, z;
 
-    if (_t._accelDeviceEvent == window.DeviceMotionEvent) {
+    if (_t._accelDeviceEvent === window.DeviceMotionEvent) {
         var eventAcceleration = eventData["accelerationIncludingGravity"];
         x = _t._accelMinus * eventAcceleration.x * 0.1;
         y = _t._accelMinus * eventAcceleration.y * 0.1;

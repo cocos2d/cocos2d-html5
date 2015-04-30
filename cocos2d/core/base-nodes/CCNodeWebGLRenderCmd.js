@@ -26,11 +26,11 @@
     cc.Node.WebGLRenderCmd = function (renderable) {
         cc.Node.RenderCmd.call(this, renderable);
 
-        var mat4 = new cc.kmMat4();
-        mat4.mat[2] = mat4.mat[3] = mat4.mat[6] = mat4.mat[7] = mat4.mat[8] = mat4.mat[9] = mat4.mat[11] = mat4.mat[14] = 0.0;
-        mat4.mat[10] = mat4.mat[15] = 1.0;
+        var mat4 = new cc.math.Matrix4(), mat = mat4.mat;
+        mat[2] = mat[3] = mat[6] = mat[7] = mat[8] = mat[9] = mat[11] = mat[14] = 0.0;
+        mat[10] = mat[15] = 1.0;
         this._transform4x4 = mat4;
-        this._stackMatrix = new cc.kmMat4();
+        this._stackMatrix = new cc.math.Matrix4();
         this._shaderProgram = null;
 
         this._camera = null;
@@ -214,7 +214,7 @@
         cc.kmMat4Multiply(stackMatrix, parentMatrix, t4x4);
 
         // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
-        if (node._camera != null && !(node.grid != null && node.grid.isActive())) {
+        if (node._camera !== null && !(node.grid !== null && node.grid.isActive())) {
             var apx = this._anchorPointInPoints.x, apy = this._anchorPointInPoints.y;
             var translate = (apx !== 0.0 || apy !== 0.0);
             if (translate){
@@ -223,15 +223,15 @@
                     apy = 0 | apy;
                 }
                 //cc.kmGLTranslatef(apx, apy, 0);
-                var translation = new cc.kmMat4();
-                cc.kmMat4Translation(translation, apx, apy, 0);
-                cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
+                var translation = cc.math.Matrix4.createByTranslation(apx, apy, 0, t4x4);      //t4x4 as a temp matrix
+                stackMatrix.multiply(translation);
 
                 node._camera._locateForRenderer(stackMatrix);
 
-                //cc.kmGLTranslatef(-apx, -apy, 0);
-                cc.kmMat4Translation(translation, -apx, -apy, 0);
-                cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
+                //cc.kmGLTranslatef(-apx, -apy, 0);    optimize at here : kmGLTranslatef
+                translation = cc.math.Matrix4.createByTranslation(-apx, -apy, 0, translation);
+                stackMatrix.multiply(translation);
+                t4x4.identity(); //reset t4x4;
             } else {
                 node._camera._locateForRenderer(stackMatrix);
             }

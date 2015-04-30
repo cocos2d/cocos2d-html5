@@ -58,78 +58,6 @@ sp._atlasLoader = {
     }
 };
 
-sp._regionAttachment_computeWorldVertices = function(self, x, y, bone, vertices){
-    var offset = self.offset;
-    x += bone.worldX;
-    y += bone.worldY;
-    var vertexIndex = sp.VERTEX_INDEX;
-    vertices[vertexIndex.X1] = offset[vertexIndex.X1] * bone.m00 + offset[vertexIndex.Y1] * bone.m01 + x;
-    vertices[vertexIndex.Y1] = offset[vertexIndex.X1] * bone.m10 + offset[vertexIndex.Y1] * bone.m11 + y;
-    vertices[vertexIndex.X2] = offset[vertexIndex.X2] * bone.m00 + offset[vertexIndex.Y2] * bone.m01 + x;
-    vertices[vertexIndex.Y2] = offset[vertexIndex.X2] * bone.m10 + offset[vertexIndex.Y2] * bone.m11 + y;
-    vertices[vertexIndex.X3] = offset[vertexIndex.X3] * bone.m00 + offset[vertexIndex.Y3] * bone.m01 + x;
-    vertices[vertexIndex.Y3] = offset[vertexIndex.X3] * bone.m10 + offset[vertexIndex.Y3] * bone.m11 + y;
-    vertices[vertexIndex.X4] = offset[vertexIndex.X4] * bone.m00 + offset[vertexIndex.Y4] * bone.m01 + x;
-    vertices[vertexIndex.Y4] = offset[vertexIndex.X4] * bone.m10 + offset[vertexIndex.Y4] * bone.m11 + y;
-};
-
-/*cc._spCallback = function(state, trackIndex, type,event, loopCount){
- state.context.onAnimationStateEvent(trackIndex, type, event, loopCount);
- };*/
-
-sp._regionAttachment_updateQuad = function(self, slot, quad, premultipliedAlpha) {
-    var vertices = {};
-    self.computeVertices(slot.skeleton.x, slot.skeleton.y, slot.bone, vertices);
-    var r = slot.skeleton.r * slot.r * 255;
-    var g = slot.skeleton.g * slot.g * 255;
-    var b = slot.skeleton.b * slot.b * 255;
-    var normalizedAlpha = slot.skeleton.a * slot.a;
-    if (premultipliedAlpha) {
-        r *= normalizedAlpha;
-        g *= normalizedAlpha;
-        b *= normalizedAlpha;
-    }
-    var a = normalizedAlpha * 255;
-
-    quad.bl.colors.r = quad.tl.colors.r = quad.tr.colors.r = quad.br.colors.r = r;
-    quad.bl.colors.g = quad.tl.colors.g = quad.tr.colors.g = quad.br.colors.g = g;
-    quad.bl.colors.b = quad.tl.colors.b = quad.tr.colors.b = quad.br.colors.b = b;
-    quad.bl.colors.a = quad.tl.colors.a = quad.tr.colors.a = quad.br.colors.a = a;
-
-    var VERTEX = sp.VERTEX_INDEX;
-    quad.bl.vertices.x = vertices[VERTEX.X1];
-    quad.bl.vertices.y = vertices[VERTEX.Y1];
-    quad.tl.vertices.x = vertices[VERTEX.X2];
-    quad.tl.vertices.y = vertices[VERTEX.Y2];
-    quad.tr.vertices.x = vertices[VERTEX.X3];
-    quad.tr.vertices.y = vertices[VERTEX.Y3];
-    quad.br.vertices.x = vertices[VERTEX.X4];
-    quad.br.vertices.y = vertices[VERTEX.Y4];
-
-    quad.bl.texCoords.u = self.uvs[VERTEX.X1];
-    quad.bl.texCoords.v = self.uvs[VERTEX.Y1];
-    quad.tl.texCoords.u = self.uvs[VERTEX.X2];
-    quad.tl.texCoords.v = self.uvs[VERTEX.Y2];
-    quad.tr.texCoords.u = self.uvs[VERTEX.X3];
-    quad.tr.texCoords.v = self.uvs[VERTEX.Y3];
-    quad.br.texCoords.u = self.uvs[VERTEX.X4];
-    quad.br.texCoords.v = self.uvs[VERTEX.Y4];
-};
-
-sp._regionAttachment_updateSlotForCanvas = function(self, slot, points) {
-    if(!points)
-        return;
-
-    var vertices = {};
-    self.computeVertices(slot.skeleton.x, slot.skeleton.y, slot.bone, vertices);
-    var VERTEX = sp.VERTEX_INDEX;
-    points.length = 0;
-    points.push(cc.p(vertices[VERTEX.X1], vertices[VERTEX.Y1]));
-    points.push(cc.p(vertices[VERTEX.X4], vertices[VERTEX.Y4]));
-    points.push(cc.p(vertices[VERTEX.X3], vertices[VERTEX.Y3]));
-    points.push(cc.p(vertices[VERTEX.X2], vertices[VERTEX.Y2]));
-};
-
 /**
  * The event type of spine skeleton animation. It contains event types: START(0), END(1), COMPLETE(2), EVENT(3).
  * @constant
@@ -140,6 +68,25 @@ sp.ANIMATION_EVENT_TYPE = {
     END: 1,
     COMPLETE: 2,
     EVENT: 3
+};
+
+sp.TrackEntryListeners = function(startListener, endListener, completeListener, eventListener){
+    this.startListener = startListener || null;
+    this.endListener = endListener || null;
+    this.completeListener = completeListener || null;
+    this.eventListener = eventListener || null;
+};
+
+sp.TrackEntryListeners.getListeners = function(entry){
+    if(!entry.rendererObject){
+        entry.rendererObject = new sp.TrackEntryListeners();
+        entry.listener = sp.trackEntryCallback;
+    }
+    return entry.rendererObject;
+};
+
+sp.trackEntryCallback = function(state, trackIndex, type, event, loopCount) {
+    state.rendererObject.onTrackEntryEvent(trackIndex, type, event, loopCount);
 };
 
 /**
@@ -155,12 +102,19 @@ sp.SkeletonAnimation = sp.Skeleton.extend(/** @lends sp.SkeletonAnimation# */{
     _target: null,
     _callback: null,
 
+    _ownsAnimationStateData: false,
+    _startListener: null,
+    _endListener: null,
+    _completeListener: null,
+    _eventListener: null,
+
     /**
      * Initializes a sp.SkeletonAnimation. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
      * @override
      */
     init: function () {
         sp.Skeleton.prototype.init.call(this);
+        this._ownsAnimationStateData = true;
         this.setAnimationStateData(new spine.AnimationStateData(this._skeleton.data));
     },
 
@@ -170,6 +124,7 @@ sp.SkeletonAnimation = sp.Skeleton.extend(/** @lends sp.SkeletonAnimation# */{
      */
     setAnimationStateData: function (stateData) {
         var state = new spine.AnimationState(stateData);
+        state.rendererObject = this;
         state.onStart = this._onAnimationStateStart.bind(this);
         state.onComplete = this._onAnimationStateComplete.bind(this);
         state.onEnd = this._onAnimationStateEnd.bind(this);
@@ -218,10 +173,11 @@ sp.SkeletonAnimation = sp.Skeleton.extend(/** @lends sp.SkeletonAnimation# */{
      * @param {Number} trackIndex
      * @param {String} name
      * @param {Boolean} loop
-     * @param {Number} delay
+     * @param {Number} [delay=0]
      * @returns {spine.TrackEntry|null}
      */
     addAnimation: function (trackIndex, name, loop, delay) {
+        delay = delay == null ? 0 : delay;
         var animation = this._skeleton.data.findAnimation(name);
         if (!animation) {
             cc.log("Spine: Animation not found:" + name);
@@ -262,11 +218,101 @@ sp.SkeletonAnimation = sp.Skeleton.extend(/** @lends sp.SkeletonAnimation# */{
      */
     update: function (dt) {
         this._super(dt);
-
         dt *= this._timeScale;
         this._state.update(dt);
         this._state.apply(this._skeleton);
         this._skeleton.updateWorldTransform();
+        this._renderCmd._updateChild();
+    },
+
+    /**
+     * Set the start event listener.
+     * @param {function} listener
+     */
+    setStartListener: function(listener){
+        this._startListener = listener;
+    },
+
+    /**
+     * Set the end event listener.
+     * @param {function} listener
+     */
+    setEndListener: function(listener) {
+        this._endListener = listener;
+    },
+
+    setCompleteListener: function(listener) {
+        this._completeListener = listener;
+    },
+
+    setEventListener: function(listener){
+        this._eventListener = listener;
+    },
+
+    setTrackStartListener: function(entry, listener){
+        sp.TrackEntryListeners.getListeners(entry).startListener = listener;
+    },
+
+    setTrackEndListener: function(entry, listener){
+        sp.TrackEntryListeners.getListeners(entry).endListener = listener;
+    },
+
+    setTrackCompleteListener: function(entry, listener){
+        sp.TrackEntryListeners.getListeners(entry).completeListener = listener;
+    },
+
+    setTrackEventListener: function(entry, listener){
+        sp.TrackEntryListeners.getListeners(entry).eventListener = listener;
+    },
+
+    onTrackEntryEvent: function(traceIndex, type, event, loopCount){
+        var entry = this._state.getCurrent(traceIndex);
+        if(!entry.rendererObject)
+            return;
+        var listeners = entry.rendererObject;
+        switch (type){
+            case sp.ANIMATION_EVENT_TYPE.START:
+                if(listeners.startListener)
+                    listeners.startListener(traceIndex);
+                break;
+            case sp.ANIMATION_EVENT_TYPE.END:
+                if(listeners.endListener)
+                    listeners.endListener(traceIndex);
+                break;
+            case sp.ANIMATION_EVENT_TYPE.COMPLETE:
+                if(listeners.completeListener)
+                    listeners.completeListener(traceIndex, loopCount);
+                break;
+            case sp.ANIMATION_EVENT_TYPE.EVENT:
+                if(listeners.eventListener)
+                    listeners.eventListener(traceIndex, event);
+                break;
+        }
+    },
+
+    onAnimationStateEvent: function(trackIndex, type, event, loopCount) {
+        switch(type){
+            case sp.ANIMATION_EVENT_TYPE.START:
+                if(this._startListener)
+                    this._startListener(trackIndex);
+                break;
+            case sp.ANIMATION_EVENT_TYPE.END:
+                if(this._endListener)
+                    this._endListener(trackIndex);
+                break;
+            case sp.ANIMATION_EVENT_TYPE.COMPLETE:
+                if(this._completeListener)
+                    this._completeListener(trackIndex, loopCount);
+                break;
+            case sp.ANIMATION_EVENT_TYPE.EVENT:
+                if(this._eventListener)
+                    this._eventListener(trackIndex, event);
+                break;
+        }
+    },
+
+    getState: function(){
+        return this._state;
     },
 
     _onAnimationStateStart: function (trackIndex) {
@@ -282,6 +328,7 @@ sp.SkeletonAnimation = sp.Skeleton.extend(/** @lends sp.SkeletonAnimation# */{
         this._animationStateCallback(trackIndex, sp.ANIMATION_EVENT_TYPE.EVENT, event, 0);
     },
     _animationStateCallback: function (trackIndex, type, event, loopCount) {
+        this.onAnimationStateEvent(trackIndex, type, event, loopCount);
         if (this._target && this._callback) {
             this._callback.call(this._target, this, trackIndex, type, event, loopCount)
         }

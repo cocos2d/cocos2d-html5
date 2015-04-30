@@ -57,13 +57,11 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                 case cc.Director.PROJECTION_2D:
                     cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
                     cc.kmGLLoadIdentity();
-                    var orthoMatrix = new cc.kmMat4();
-                    cc.kmMat4OrthographicProjection(
-                        orthoMatrix,
+                    var orthoMatrix = cc.math.Matrix4.createOrthographicProjection(
                         -ox,
-                            size.width - ox,
+                        size.width - ox,
                         -oy,
-                            size.height - oy,
+                        size.height - oy,
                         -1024, 1024);
                     cc.kmGLMultMatrix(orthoMatrix);
                     cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
@@ -71,21 +69,21 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                     break;
                 case cc.Director.PROJECTION_3D:
                     var zeye = _t.getZEye();
-                    var matrixPerspective = new cc.kmMat4(), matrixLookup = new cc.kmMat4();
+                    var matrixPerspective = new cc.math.Matrix4(), matrixLookup = new cc.math.Matrix4();
                     cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
                     cc.kmGLLoadIdentity();
 
                     // issue #1334
-                    cc.kmMat4PerspectiveProjection(matrixPerspective, 60, size.width / size.height, 0.1, zeye * 2);
+                    matrixPerspective = cc.math.Matrix4.createPerspectiveProjection(60, size.width / size.height, 0.1, zeye * 2);
 
                     cc.kmGLMultMatrix(matrixPerspective);
 
                     cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
                     cc.kmGLLoadIdentity();
-                    var eye = cc.kmVec3Fill(null, -ox + size.width / 2, -oy + size.height / 2, zeye);
-                    var center = cc.kmVec3Fill(null, -ox + size.width / 2, -oy + size.height / 2, 0.0);
-                    var up = cc.kmVec3Fill(null, 0.0, 1.0, 0.0);
-                    cc.kmMat4LookAt(matrixLookup, eye, center, up);
+                    var eye = new cc.math.Vec3(-ox + size.width / 2, -oy + size.height / 2, zeye);
+                    var center = new cc.math.Vec3( -ox + size.width / 2, -oy + size.height / 2, 0.0);
+                    var up = new cc.math.Vec3( 0.0, 1.0, 0.0);
+                    matrixLookup.lookAt(eye, center, up);
                     cc.kmGLMultMatrix(matrixLookup);
                     break;
                 case cc.Director.PROJECTION_CUSTOM:
@@ -169,7 +167,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                 return
             }
 
-            if ((cc.Director._fpsImageLoaded == null) || (cc.Director._fpsImageLoaded == false))
+            if ((cc.Director._fpsImageLoaded == null) || (cc.Director._fpsImageLoaded === false))
                 return;
 
             var texture = new cc.Texture2D();
@@ -238,37 +236,30 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         };
 
         _p.convertToGL = function (uiPoint) {
-            var transform = new cc.kmMat4();
+            var transform = new cc.math.Matrix4();
             cc.GLToClipTransform(transform);
 
-            var transformInv = new cc.kmMat4();
-            cc.kmMat4Inverse(transformInv, transform);
+            var transformInv = transform.inverse();
 
             // Calculate z=0 using -> transform*[0, 0, 0, 1]/w
             var zClip = transform.mat[14] / transform.mat[15];
-
             var glSize = this._openGLView.getDesignResolutionSize();
-            var clipCoord = new cc.kmVec3(2.0 * uiPoint.x / glSize.width - 1.0, 1.0 - 2.0 * uiPoint.y / glSize.height, zClip);
-
-            var glCoord = new cc.kmVec3();
-            cc.kmVec3TransformCoord(glCoord, clipCoord, transformInv);
-
+            var glCoord = new cc.math.Vec3(2.0 * uiPoint.x / glSize.width - 1.0, 1.0 - 2.0 * uiPoint.y / glSize.height, zClip);
+            glCoord.transformCoord(transformInv);
             return cc.p(glCoord.x, glCoord.y);
         };
 
         _p.convertToUI = function (glPoint) {
-            var transform = new cc.kmMat4();
+            var transform = new cc.math.Matrix4();
             cc.GLToClipTransform(transform);
 
-            var clipCoord = new cc.kmVec3();
+            var clipCoord = new cc.math.Vec3(glPoint.x, glPoint.y, 0.0);
             // Need to calculate the zero depth from the transform.
-            var glCoord = new cc.kmVec3(glPoint.x, glPoint.y, 0.0);
-            cc.kmVec3TransformCoord(clipCoord, glCoord, transform);
+            clipCoord.transformCoord(transform);
 
             var glSize = this._openGLView.getDesignResolutionSize();
             return cc.p(glSize.width * (clipCoord.x * 0.5 + 0.5), glSize.height * (-clipCoord.y * 0.5 + 0.5));
         };
-
 
         _p.getVisibleSize = function () {
             //if (this._openGLView) {

@@ -64,7 +64,7 @@ cc._tmp.WebGLTexture2D = function () {
 
         shaderProgram: null,
 
-        _isLoaded: false,
+        _textureLoaded: false,
         _htmlElementObj: null,
         _webTextureObj: null,
 
@@ -308,7 +308,7 @@ cc._tmp.WebGLTexture2D = function () {
             self._hasMipmaps = false;
             self.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE);
 
-            self._isLoaded = true;
+            self._textureLoaded = true;
 
             return true;
         },
@@ -406,7 +406,7 @@ cc._tmp.WebGLTexture2D = function () {
                 cc.log(cc._LogInfos.Texture2D_initWithImage_2, imageWidth, imageHeight, maxTextureSize, maxTextureSize);
                 return false;
             }
-            this._isLoaded = true;
+            this._textureLoaded = true;
 
             // always load premultiplied images
             return this._initPremultipliedATextureWithImage(uiImage, imageWidth, imageHeight);
@@ -421,6 +421,7 @@ cc._tmp.WebGLTexture2D = function () {
                 return;
             this._webTextureObj = cc._renderContext.createTexture();
             this._htmlElementObj = element;
+            this._textureLoaded = true;
         },
 
         /**
@@ -436,13 +437,15 @@ cc._tmp.WebGLTexture2D = function () {
          * @return {Boolean}
          */
         isLoaded: function () {
-            return this._isLoaded;
+            return this._textureLoaded;
         },
 
         /**
          * handler of texture loaded event
+         * @param {Boolean} [premultipled=false]
          */
-        handleLoadedTexture: function () {
+        handleLoadedTexture: function (premultipled) {
+            premultipled = (premultipled === undefined)?false: premultipled;
             var self = this;
             // Not sure about this ! Some texture need to be updated even after loaded
             if (!cc._rendererInitialized)
@@ -454,13 +457,15 @@ cc._tmp.WebGLTexture2D = function () {
             }
             if (!self._htmlElementObj.width || !self._htmlElementObj.height)
                 return;
-            self._isLoaded = true;
+
             //upload image to buffer
             var gl = cc._renderContext;
 
             cc.glBindTexture2D(self);
 
             gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
+            if(premultipled)
+                gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 1);
 
             // Specify OpenGL texture image
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, self._htmlElementObj);
@@ -472,6 +477,8 @@ cc._tmp.WebGLTexture2D = function () {
 
             self.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE);
             cc.glBindTexture2D(null);
+            if(premultipled)
+                gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
 
             var pixelsWide = self._htmlElementObj.width;
             var pixelsHigh = self._htmlElementObj.height;
@@ -482,7 +489,7 @@ cc._tmp.WebGLTexture2D = function () {
             self.maxS = 1;
             self.maxT = 1;
 
-            self._hasPremultipliedAlpha = false;
+            self._hasPremultipliedAlpha = premultipled;
             self._hasMipmaps = false;
 
             //dispatch load event to listener.
@@ -564,8 +571,8 @@ cc._tmp.WebGLTexture2D = function () {
             if(magFilter !== undefined)
                 texParams = {minFilter: texParams, magFilter: magFilter, wrapS: wrapS, wrapT: wrapT};
 
-            cc.assert((_t._pixelsWide == cc.NextPOT(_t._pixelsWide) && _t._pixelsHigh == cc.NextPOT(_t._pixelsHigh)) ||
-                (texParams.wrapS == gl.CLAMP_TO_EDGE && texParams.wrapT == gl.CLAMP_TO_EDGE),
+            cc.assert((_t._pixelsWide === cc.NextPOT(_t._pixelsWide) && _t._pixelsHigh === cc.NextPOT(_t._pixelsHigh)) ||
+                (texParams.wrapS === gl.CLAMP_TO_EDGE && texParams.wrapT === gl.CLAMP_TO_EDGE),
                 "WebGLRenderingContext.CLAMP_TO_EDGE should be used in NPOT textures");
 
             cc.glBindTexture2D(_t);
@@ -613,7 +620,7 @@ cc._tmp.WebGLTexture2D = function () {
          */
         generateMipmap: function () {
             var _t = this;
-            cc.assert(_t._pixelsWide == cc.NextPOT(_t._pixelsWide) && _t._pixelsHigh == cc.NextPOT(_t._pixelsHigh), "Mimpap texture only works in POT textures");
+            cc.assert(_t._pixelsWide === cc.NextPOT(_t._pixelsWide) && _t._pixelsHigh === cc.NextPOT(_t._pixelsHigh), "Mimpap texture only works in POT textures");
 
             cc.glBindTexture2D(_t);
             cc._renderContext.generateMipmap(cc._renderContext.TEXTURE_2D);
@@ -665,7 +672,7 @@ cc._tmp.WebGLTexture2D = function () {
             // Repack the pixel data into the right format
             var length = width * height;
 
-            if (pixelFormat == tex2d.PIXEL_FORMAT_RGB565) {
+            if (pixelFormat === tex2d.PIXEL_FORMAT_RGB565) {
                 if (hasAlpha) {
                     // Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "RRRRRGGGGGGBBBBB"
                     tempData = new Uint16Array(width * height);
@@ -689,7 +696,7 @@ cc._tmp.WebGLTexture2D = function () {
                                 (((inPixel8[i] & 0xFF) >> 3) << 0);    // B
                     }
                 }
-            } else if (pixelFormat == tex2d.PIXEL_FORMAT_RGBA4444) {
+            } else if (pixelFormat === tex2d.PIXEL_FORMAT_RGBA4444) {
                 // Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "RRRRGGGGBBBBAAAA"
                 tempData = new Uint16Array(width * height);
                 inPixel32 = uiImage.getData();
@@ -701,7 +708,7 @@ cc._tmp.WebGLTexture2D = function () {
                             ((((inPixel32[i] >> 16) & 0xFF) >> 4) << 4) | // B
                             ((((inPixel32[i] >> 24) & 0xFF) >> 4) << 0);  // A
                 }
-            } else if (pixelFormat == tex2d.PIXEL_FORMAT_RGB5A1) {
+            } else if (pixelFormat === tex2d.PIXEL_FORMAT_RGB5A1) {
                 // Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "RRRRRGGGGGBBBBBA"
                 tempData = new Uint16Array(width * height);
                 inPixel32 = uiImage.getData();
@@ -713,7 +720,7 @@ cc._tmp.WebGLTexture2D = function () {
                             ((((inPixel32[i] >> 16) & 0xFF) >> 3) << 1) | // B
                             ((((inPixel32[i] >> 24) & 0xFF) >> 7) << 0);  // A
                 }
-            } else if (pixelFormat == tex2d.PIXEL_FORMAT_A8) {
+            } else if (pixelFormat === tex2d.PIXEL_FORMAT_A8) {
                 // Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "AAAAAAAA"
                 tempData = new Uint8Array(width * height);
                 inPixel32 = uiImage.getData();
@@ -723,7 +730,7 @@ cc._tmp.WebGLTexture2D = function () {
                 }
             }
 
-            if (hasAlpha && pixelFormat == tex2d.PIXEL_FORMAT_RGB888) {
+            if (hasAlpha && pixelFormat === tex2d.PIXEL_FORMAT_RGB888) {
                 // Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "RRRRRRRRGGGGGGGGBBBBBBBB"
                 inPixel32 = uiImage.getData();
                 tempData = new Uint8Array(width * height * 3);
@@ -757,7 +764,6 @@ cc._tmp.WebGLTexture2D = function () {
         /**
          * remove listener from listeners by target
          * @param {cc.Node} target
-         * @deprecated since 3.1, please use addEventListener instead
          */
         removeLoadedEventListener: function (target) {
             this.removeEventListener("load", target);
@@ -895,5 +901,7 @@ cc._tmp.WebGLTextureCache = function () {
 
         return tex;
     };
-     _p = null;
+
+    _p.addImageAsync = _p.addImage;
+    _p = null;
 };

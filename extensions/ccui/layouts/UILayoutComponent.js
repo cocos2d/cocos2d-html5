@@ -41,284 +41,545 @@ ccui.LayoutComponent_SizeType = {
     PreSizeEnable: 2
 };
 
+//refactor since v3.3
 ccui.LayoutComponent = cc.Component.extend({
+    _horizontalEdge: 0,
+    _verticalEdge: 0,
 
-    _percentContentSize: null,
-    _usingPercentContentSize: false,
+    _leftMargin: 0,
+    _rightMargin: 0,
+    _bottomMargin: 0,
+    _topMargin: 0,
 
-    _referencePoint: ccui.LayoutComponent_ReferencePoint.BOTTOM_LEFT,
-    _relativePosition: null,
-    _percentPosition: null,
-    _usingPercentPosition: false,
+    _usingPositionPercentX: false,
+    _positionPercentX: 0,
+    _usingPositionPercentY: false,
+    _positionPercentY: 0,
+
+    _usingStretchWidth: false,
+    _usingStretchHeight: false,
+
+    _percentWidth: 0,
+    _usingPercentWidth: false,
+
+    _percentHeight: 0,
+    _usingPercentHeight: false,
+
     _actived: true,
+    _isPercentOnly: false,
 
+    ctor: function () {
+        this._name = ccui.LayoutComponent.NAME;
+    },
 
-    init: function(){
+    init: function () {
         var ret = true;
-        do
-        {
-            if (!cc.Component.prototype.init.call(this))
-            {
-                ret = false;
-                break;
-            }
 
-            //put layout component initalized code here
+        if (!cc.Component.prototype.init.call(this)) {
+            return false;
+        }
 
-        } while (0);
+        //put layout component initalized code here
+
         return ret;
     },
 
-    isUsingPercentPosition: function(){
-        return this._usingPercentPosition;
+    getPercentContentSize: function () {
+        return cc.p(this._percentWidth, this._percentHeight);
     },
-    setUsingPercentPosition: function(flag){
-        this._usingPercentPosition = flag;
-        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.PreRelativePositionEnable, cc.p(0,0));
-    },
-
-    getPercentPosition: function(){
-        return this._percentPosition;
-    },
-    setPercentPosition: function(percent){
-        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.PreRelativePosition, percent);
+    setPercentContentSize: function (percent) {
+        this.setPercentWidth(percent.x);
+        this.setPercentHeight(percent.y);
     },
 
-    getRelativePosition: function(){
-        return this._relativePosition;
-    },
-    setRelativePosition: function(position){
-        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.RelativePosition, position);
+    setUsingPercentContentSize: function (isUsed) {
+        this._usingPercentWidth = this._usingPercentHeight = isUsed;
     },
 
-    setReferencePoint: function(point){
-        this._referencePoint = point;
-        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.RelativePosition, this._relativePosition)
-    },
-    getReferencePoint: function(){
-        return this._referencePoint;
+    //old
+    SetActiveEnable: function (enable) {
+        this._actived = enable;
     },
 
-    getOwnerPosition: function(){
-        return this.getOwner().getPosition();
-    },
-    setOwnerPosition: function(point){
-        this.RefreshLayoutPosition(ccui.LayoutComponent_PositionType.Position, point);
+    //v3.3
+    getUsingPercentContentSize: function () {
+        return this._usingPercentWidth && this._usingPercentHeight;
     },
 
-    RefreshLayoutPosition: function(pType, point){
-        var parentNode = this.getOwner().getParent();
-        var basePoint = point;
-        if (parentNode != null && this._actived)
-        {
-            var parentSize = parentNode.getContentSize();
+    //position & margin
+    getAnchorPosition: function () {
+        return this._owner.getAnchorPoint();
+    },
 
-            if ( pType == ccui.LayoutComponent_PositionType.PreRelativePosition)
-            {
-                this._percentPosition = point;
-                basePoint = cc.p(this._percentPosition.x * parentSize.width, this._percentPosition.y * parentSize.height);
-            }
-            else if(pType == ccui.LayoutComponent_PositionType.PreRelativePositionEnable)
-            {
-                if (this._usingPercentPosition)
-                {
-                    if (parentSize.width != 0)
-                    {
-                        this._percentPosition.x = this._relativePosition.x / parentSize.width;
-                    }
-                    else
-                    {
-                        this._percentPosition.x = 0;
-                        this._relativePosition.x = 0;
-                    }
+    setAnchorPosition: function (point, y) {
+        var oldRect = this._owner.getBoundingBox();
+        this._owner.setAnchorPoint(point, y);
+        var newRect = this._owner.getBoundingBox();
+        var offSetX = oldRect.x - newRect.x, offSetY = oldRect.y - newRect.y;
 
-                    if (parentSize.height != 0)
-                    {
-                        this._percentPosition.y = this._relativePosition.y / parentSize.height;
-                    }
-                    else
-                    {
-                        this._percentPosition.y = 0;
-                        this._relativePosition.y = 0;
-                    }
-                }
-                basePoint = this._relativePosition;
+        var ownerPosition = this._owner.getPosition();
+        ownerPosition.x += offSetX;
+        ownerPosition.y += offSetY;
+        this.setPosition(ownerPosition);
+    },
+
+    getPosition: function () {
+        return this._owner.getPosition();
+    },
+
+    setPosition: function (position, y) {
+        var parent = this._getOwnerParent(), x;
+        if (parent != null) {
+            if (y === undefined) {
+                x = position.x;
+                y = position.y;
+            } else
+                x = position;
+            var parentSize = parent.getContentSize();
+
+            if (parentSize.width !== 0)
+                this._positionPercentX = x / parentSize.width;
+            else {
+                this._positionPercentX = 0;
+                if (this._usingPositionPercentX)
+                    x = 0;
             }
 
-            var inversePoint = basePoint;
-            switch (this._referencePoint)
-            {
-            case ccui.LayoutComponent_ReferencePoint.TOP_LEFT:
-                inversePoint.y = parentSize.height - inversePoint.y;
-                break;
-            case ccui.LayoutComponent_ReferencePoint.BOTTOM_RIGHT:
-                inversePoint.x = parentSize.width - inversePoint.x;
-                break;
-            case ccui.LayoutComponent_ReferencePoint.TOP_RIGHT:
-                inversePoint.x = parentSize.width - inversePoint.x;
-                inversePoint.y = parentSize.height - inversePoint.y;
-                break;
-            default:
-                break;
+            if (parentSize.height !== 0)
+                this._positionPercentY = y / parentSize.height;
+            else {
+                this._positionPercentY = 0;
+                if (this._usingPositionPercentY)
+                    y = 0;
             }
 
-            switch (pType)
-            {
-            case ccui.LayoutComponent_PositionType.Position:
-                this.getOwner().setPosition(basePoint);
-                this._relativePosition = inversePoint;
-                if (parentSize.width != 0 && parentSize.height != 0)
-                {
-                    this._percentPosition = cc.p(this._relativePosition.x / parentSize.width, this._relativePosition.y / parentSize.height);
-                }
-                else
-                {
-                    this._percentPosition = cc.p(0,0);
-                }
-                break;
-            case ccui.LayoutComponent_PositionType.RelativePosition:
-                this.getOwner().setPosition(inversePoint);
-                this._relativePosition = basePoint;
-                if (parentSize.width != 0 && parentSize.height != 0)
-                {
-                    this._percentPosition = cc.p(this._relativePosition.x / parentSize.width, this._relativePosition.y / parentSize.height);
-                }
-                else
-                {
-                    this._percentPosition = cc.p(0,0);
-                }
-                break;
-            case ccui.LayoutComponent_PositionType.PreRelativePosition:
-                this.getOwner().setPosition(inversePoint);
-                this._relativePosition = basePoint;
-                break;
-            case ccui.LayoutComponent_PositionType.PreRelativePositionEnable:
-                this.getOwner().setPosition(inversePoint);
-                this._relativePosition = basePoint;
-                break;
-            default:
-                break;
-            }
-        }
-        else
-        {
-            switch (pType)
-            {
-            case ccui.LayoutComponent_PositionType.Position:
-                this.getOwner().setPosition(basePoint);
-                if (this._referencePoint == ccui.LayoutComponent_ReferencePoint.BOTTOM_LEFT)
-                {
-                    this._relativePosition = basePoint;
-                }
-                break;
-            case ccui.LayoutComponent_PositionType.RelativePosition:
-                this._relativePosition = basePoint;
-                break;
-            case ccui.LayoutComponent_PositionType.PreRelativePosition:
-                this._percentPosition = basePoint;
-                break;
-            default:
-                break;
-            }
+            this._owner.setPosition(x, y);
+            this._refreshHorizontalMargin();
+            this._refreshVerticalMargin();
+        } else
+            this._owner.setPosition(position, y);
+    },
+
+    isPositionPercentXEnabled: function () {
+        return this._usingPositionPercentX;
+    },
+    setPositionPercentXEnabled: function (isUsed) {
+        this._usingPositionPercentX = isUsed;
+        if (this._usingPositionPercentX)
+            this._horizontalEdge = ccui.LayoutComponent.horizontalEdge.NONE;
+    },
+
+    getPositionPercentX: function () {
+        return this._positionPercentX;
+    },
+    setPositionPercentX: function (percentMargin) {
+        this._positionPercentX = percentMargin;
+
+        var parent = this._getOwnerParent();
+        if (parent !== null) {
+            this._owner.setPositionX(parent.width * this._positionPercentX);
+            this._refreshHorizontalMargin();
         }
     },
 
-    getOwnerContentSize: function(){
+    isPositionPercentYEnabled: function () {
+        return this._usingPositionPercentY;
+    },
+    setPositionPercentYEnabled: function (isUsed) {
+        this._usingPositionPercentY = isUsed;
+        if (this._usingPositionPercentY)
+            this._verticalEdge = ccui.LayoutComponent.verticalEdge.NONE;
+    },
+
+    getPositionPercentY: function () {
+        return this._positionPercentY;
+    },
+    setPositionPercentY: function (percentMargin) {
+        this._positionPercentY = percentMargin;
+
+        var parent = this._getOwnerParent();
+        if (parent !== null) {
+            this._owner.setPositionY(parent.height * this._positionPercentY);
+            this._refreshVerticalMargin();
+        }
+    },
+
+    getHorizontalEdge: function () {
+        return this._horizontalEdge;
+    },
+    setHorizontalEdge: function (hEdge) {
+        this._horizontalEdge = hEdge;
+        if (this._horizontalEdge !== ccui.LayoutComponent.horizontalEdge.NONE)
+            this._usingPositionPercentX = false;
+
+        var parent = this._getOwnerParent();
+        if (parent !== null) {
+            var ownerPoint = this._owner.getPosition();
+            var parentSize = parent.getContentSize();
+            if (parentSize.width !== 0)
+                this._positionPercentX = ownerPoint.x / parentSize.width;
+            else {
+                this._positionPercentX = 0;
+                ownerPoint.x = 0;
+                if (this._usingPositionPercentX)
+                    this._owner.setPosition(ownerPoint);
+            }
+            this._refreshHorizontalMargin();
+        }
+    },
+
+    getVerticalEdge: function () {
+        return this._verticalEdge;
+    },
+    setVerticalEdge: function (vEdge) {
+        this._verticalEdge = vEdge;
+        if (this._verticalEdge !== ccui.LayoutComponent.verticalEdge.NONE)
+            this._usingPositionPercentY = false;
+
+        var parent = this._getOwnerParent();
+        if (parent !== null) {
+            var ownerPoint = this._owner.getPosition();
+            var parentSize = parent.getContentSize();
+            if (parentSize.height !== 0)
+                this._positionPercentY = ownerPoint.y / parentSize.height;
+            else {
+                this._positionPercentY = 0;
+                ownerPoint.y = 0;
+                if (this._usingPositionPercentY)
+                    this._owner.setPosition(ownerPoint);
+            }
+            this._refreshVerticalMargin();
+        }
+    },
+
+    getLeftMargin: function () {
+        return this._leftMargin;
+    },
+    setLeftMargin: function (margin) {
+        this._leftMargin = margin;
+    },
+
+    getRightMargin: function () {
+        return this._rightMargin;
+    },
+    setRightMargin: function (margin) {
+        this._rightMargin = margin;
+    },
+
+    getTopMargin: function () {
+        return this._topMargin;
+    },
+    setTopMargin: function (margin) {
+        this._topMargin = margin;
+    },
+
+    getBottomMargin: function () {
+        return this._bottomMargin;
+    },
+    setBottomMargin: function (margin) {
+        this._bottomMargin = margin;
+    },
+
+    //size &
+    getSize: function () {
         return this.getOwner().getContentSize();
     },
-    setOwnerContentSize: function(percent){
-        this.RefreshLayoutSize(ccui.LayoutComponent_SizeType.Size, percent);
-    },
+    setSize: function (size) {
+        var parent = this._getOwnerParent();
+        if (parent !== null) {
+            var ownerSize = size, parentSize = parent.getContentSize();
 
-    getPercentContentSize: function(){
-        return this._percentContentSize;
-    },
-    setPercentContentSize: function(percent){
-        this.RefreshLayoutSize(ccui.LayoutComponent_SizeType.PreSize, percent);
-    },
-
-    isUsingPercentContentSize: function(){
-        return this._usingPercentContentSize;
-    },
-    setUsingPercentContentSize: function(flag){
-        this._usingPercentContentSize = flag;
-        this.RefreshLayoutSize(ccui.LayoutComponent_SizeType.PreSizeEnable, cc.p(0,0));
-    },
-
-    RefreshLayoutSize: function(sType, size){
-        var parentNode = this.getOwner().getParent();
-        if (parentNode != null && this._actived)
-        {
-            var parentSize = parentNode.getContentSize();
-
-            switch (sType)
-            {
-            case ccui.LayoutComponent_SizeType.Size:
-                if (parentSize.width != 0 && parentSize.height != 0)
-                {
-                    this._percentContentSize = cc.p(size.x/parentSize.width,size.y/parentSize.height);
-                }
-                else
-                {
-                    this._percentContentSize = cc.p(0,0);
-                }
-                this.getOwner().setContentSize(cc.size(size.x,size.y));
-                break;
-            case ccui.LayoutComponent_SizeType.PreSize:
-                cc.p_percentContentSize = size;
-                if (this._usingPercentContentSize)
-                {
-                    this.getOwner().setContentSize(cc.size(size.x*parentSize.width,size.y*parentSize.height));
-                }
-                break;
-            case ccui.LayoutComponent_SizeType.PreSizeEnable:
-                if (this._usingPercentContentSize)
-                {
-                    var baseSize = this.getOwner().getContentSize();
-                    if (parentSize.width != 0)
-                    {
-                        this._percentContentSize.x = baseSize.width/parentSize.width;
-                    }
-                    else
-                    {
-                        this._percentContentSize.x = 0;
-                        baseSize.width = 0;
-                    }
-
-                    if (parentSize.height != 0)
-                    {
-                        this._percentContentSize.y = baseSize.height/parentSize.height;
-                    }
-                    else
-                    {
-                        this._percentContentSize.y = 0;
-                        baseSize.height = 0;
-                    }
-
-                    this.getOwner().setContentSize(baseSize);
-                }
-                break;
-            default:
-                break;
+            if (parentSize.width !== 0)
+                this._percentWidth = ownerSize.width / parentSize.width;
+            else {
+                this._percentWidth = 0;
+                if (this._usingPercentWidth)
+                    ownerSize.width = 0;
             }
+
+            if (parentSize.height !== 0)
+                this._percentHeight = ownerSize.height / parentSize.height;
+            else {
+                this._percentHeight = 0;
+                if (this._usingPercentHeight)
+                    ownerSize.height = 0;
+            }
+
+            this._owner.setContentSize(ownerSize);
+
+            this._refreshHorizontalMargin();
+            this._refreshVerticalMargin();
         }
         else
-        {
-            switch (sType)
-            {
-            case ccui.LayoutComponent_SizeType.Size:
-                this.getOwner().setContentSize(cc.size(size.x,size.y));
+            this._owner.setContentSize(size);
+    },
+
+    isPercentWidthEnabled: function () {
+        return this._usingPercentWidth;
+    },
+    setPercentWidthEnabled: function (isUsed) {
+        this._usingPercentWidth = isUsed;
+        if (this._usingPercentWidth)
+            this._usingStretchWidth = false;
+    },
+
+    getSizeWidth: function () {
+        return this._owner.width;
+    },
+    setSizeWidth: function (width) {
+        var ownerSize = this._owner.getContentSize();
+        ownerSize.width = width;
+
+        var parent = this._getOwnerParent();
+        if (parent !== null) {
+            var parentSize = parent.getContentSize();
+            if (parentSize.width !== 0)
+                this._percentWidth = ownerSize.width / parentSize.width;
+            else {
+                this._percentWidth = 0;
+                if (this._usingPercentWidth)
+                    ownerSize.width = 0;
+            }
+            this._owner.setContentSize(ownerSize);
+            this._refreshHorizontalMargin();
+        } else
+            this._owner.setContentSize(ownerSize);
+    },
+
+    getPercentWidth: function () {
+        return this._percentWidth;
+    },
+    setPercentWidth: function (percentWidth) {
+        this._percentWidth = percentWidth;
+
+        var parent = this._getOwnerParent();
+        if (parent !== null) {
+            var ownerSize = this._owner.getContentSize();
+            ownerSize.width = parent.width * this._percentWidth;
+            this._owner.setContentSize(ownerSize);
+            this._refreshHorizontalMargin();
+        }
+    },
+
+    isPercentHeightEnabled: function () {
+        return this._usingPercentHeight;
+    },
+    setPercentHeightEnabled: function (isUsed) {
+        this._usingPercentHeight = isUsed;
+        if (this._usingPercentHeight)
+            this._usingStretchHeight = false;
+    },
+
+    getSizeHeight: function () {
+        return this._owner.height;
+    },
+    setSizeHeight: function (height) {
+        var ownerSize = this._owner.getContentSize();
+        ownerSize.height = height;
+
+        var parent = this._getOwnerParent();
+        if (parent !== null) {
+            var parentSize = parent.getContentSize();
+            if (parentSize.height !== 0)
+                this._percentHeight = ownerSize.height / parentSize.height;
+            else {
+                this._percentHeight = 0;
+                if (this._usingPercentHeight)
+                    ownerSize.height = 0;
+            }
+            this._owner.setContentSize(ownerSize);
+            this._refreshVerticalMargin();
+        }
+        else
+            this._owner.setContentSize(ownerSize);
+    },
+
+    getPercentHeight: function () {
+        return this._percentHeight;
+    },
+    setPercentHeight: function (percentHeight) {
+        this._percentHeight = percentHeight;
+
+        var parent = this._getOwnerParent();
+        if (parent !== null) {
+            var ownerSize = this._owner.getContentSize();
+            ownerSize.height = parent.height * this._percentHeight;
+            this._owner.setContentSize(ownerSize);
+            this._refreshVerticalMargin();
+        }
+    },
+
+    isStretchWidthEnabled: function () {
+        return this._usingStretchWidth;
+    },
+    setStretchWidthEnabled: function (isUsed) {
+        this._usingStretchWidth = isUsed;
+        if (this._usingStretchWidth)
+            this._usingPercentWidth = false;
+    },
+
+    isStretchHeightEnabled: function () {
+        return this._usingStretchHeight;
+    },
+    setStretchHeightEnabled: function (isUsed) {
+        this._usingStretchHeight = isUsed;
+        if (this._usingStretchHeight)
+            this._usingPercentHeight = false;
+    },
+
+    setPercentOnlyEnabled: function(enable){
+        this._isPercentOnly = enable;
+    },
+
+    setActiveEnabled: function (enable) {
+        this._actived = enable;
+    },
+    refreshLayout: function () {
+        if(!this._actived)
+            return;
+
+        var parent = this._getOwnerParent();
+        if (parent === null)
+            return;
+
+        var parentSize = parent.getContentSize(), locOwner = this._owner;
+        var ownerAnchor = locOwner.getAnchorPoint(), ownerSize = locOwner.getContentSize();
+        var ownerPosition = locOwner.getPosition();
+
+        switch (this._horizontalEdge) {
+            case ccui.LayoutComponent.horizontalEdge.NONE:
+                if (this._usingStretchWidth && !this._isPercentOnly) {
+                    ownerSize.width = parentSize.width * this._percentWidth;
+                    ownerPosition.x = this._leftMargin + ownerAnchor.x * ownerSize.width;
+                } else {
+                    if (this._usingPositionPercentX)
+                        ownerPosition.x = parentSize.width * this._positionPercentX;
+                    if (this._usingPercentWidth)
+                        ownerSize.width = parentSize.width * this._percentWidth;
+                }
                 break;
-            case ccui.LayoutComponent_SizeType.PreSize:
-                this._percentContentSize = size;
+            case ccui.LayoutComponent.horizontalEdge.LEFT:
+                if(this._isPercentOnly)
+                    break;
+                if (this._usingPercentWidth || this._usingStretchWidth)
+                    ownerSize.width = parentSize.width * this._percentWidth;
+                ownerPosition.x = this._leftMargin + ownerAnchor.x * ownerSize.width;
+                break;
+            case ccui.LayoutComponent.horizontalEdge.RIGHT:
+                if(this._isPercentOnly)
+                    break;
+                if (this._usingPercentWidth || this._usingStretchWidth)
+                    ownerSize.width = parentSize.width * this._percentWidth;
+                ownerPosition.x = parentSize.width - (this._rightMargin + (1 - ownerAnchor.x) * ownerSize.width);
+                break;
+            case ccui.LayoutComponent.horizontalEdge.CENTER:
+                if(this._isPercentOnly)
+                    break;
+                if (this._usingStretchWidth) {
+                    ownerSize.width = parentSize.width - this._leftMargin - this._rightMargin;
+                    if (ownerSize.width < 0)
+                        ownerSize.width = 0;
+                    ownerPosition.x = this._leftMargin + ownerAnchor.x * ownerSize.width;
+                } else {
+                    if (this._usingPercentWidth)
+                        ownerSize.width = parentSize.width * this._percentWidth;
+                    ownerPosition.x = parentSize.width * this._positionPercentX;
+                }
                 break;
             default:
                 break;
-            }
         }
-    },
-    SetActiveEnable: function(enable){
-        this._actived = enable;
-    }
 
+        switch (this._verticalEdge) {
+            case ccui.LayoutComponent.verticalEdge.NONE:
+                if (this._usingStretchHeight && !this._isPercentOnly) {
+                    ownerSize.height = parentSize.height * this._percentHeight;
+                    ownerPosition.y = this._bottomMargin + ownerAnchor.y * ownerSize.height;
+                } else {
+                    if (this._usingPositionPercentY)
+                        ownerPosition.y = parentSize.height * this._positionPercentY;
+                    if (this._usingPercentHeight)
+                        ownerSize.height = parentSize.height * this._percentHeight;
+                }
+                break;
+            case ccui.LayoutComponent.verticalEdge.BOTTOM:
+                if(this._isPercentOnly)
+                    break;
+                if (this._usingPercentHeight || this._usingStretchHeight)
+                    ownerSize.height = parentSize.height * this._percentHeight;
+                ownerPosition.y = this._bottomMargin + ownerAnchor.y * ownerSize.height;
+                break;
+            case ccui.LayoutComponent.verticalEdge.TOP:
+                if(this._isPercentOnly)
+                    break;
+                if (this._usingPercentHeight || this._usingStretchHeight)
+                    ownerSize.height = parentSize.height * this._percentHeight;
+                ownerPosition.y = parentSize.height - (this._topMargin + (1 - ownerAnchor.y) * ownerSize.height);
+                break;
+            case ccui.LayoutComponent.verticalEdge.CENTER:
+                if(this._isPercentOnly)
+                    break;
+                if (this._usingStretchHeight) {
+                    ownerSize.height = parentSize.height - this._topMargin - this._bottomMargin;
+                    if (ownerSize.height < 0)
+                        ownerSize.height = 0;
+                    ownerPosition.y = this._bottomMargin + ownerAnchor.y * ownerSize.height;
+                } else {
+                    if(this._usingPercentHeight)
+                        ownerSize.height = parentSize.height * this._percentHeight;
+                    ownerPosition.y = parentSize.height * this._positionPercentY;
+                }
+                break;
+            default:
+                break;
+        }
+
+        locOwner.setPosition(ownerPosition);
+        locOwner.setContentSize(ownerSize);
+
+        ccui.helper.doLayout(locOwner);
+    },
+
+    _getOwnerParent: function () {
+        return this._owner ? this._owner.getParent() : null;
+    },
+    _refreshHorizontalMargin: function () {
+        var parent = this._getOwnerParent();
+        if (parent === null)
+            return;
+
+        var ownerPoint = this._owner.getPosition(), ownerAnchor = this._owner.getAnchorPoint();
+        var ownerSize = this._owner.getContentSize(), parentSize = parent.getContentSize();
+
+        this._leftMargin = ownerPoint.x - ownerAnchor.x * ownerSize.width;
+        this._rightMargin = parentSize.width - (ownerPoint.x + (1 - ownerAnchor.x) * ownerSize.width);
+    },
+    _refreshVerticalMargin: function () {
+        var parent = this._getOwnerParent();
+        if (parent === null)
+            return;
+
+        var ownerPoint = this._owner.getPosition(), ownerAnchor = this._owner.getAnchorPoint();
+        var ownerSize = this._owner.getContentSize(), parentSize = parent.getContentSize();
+
+        this._bottomMargin = ownerPoint.y - ownerAnchor.y * ownerSize.height;
+        this._topMargin = parentSize.height - (ownerPoint.y + (1 - ownerAnchor.y) * ownerSize.height);
+    }
 });
+
+ccui.LayoutComponent.horizontalEdge = {NONE: 0, LEFT: 1, RIGHT: 2, CENTER: 3};
+ccui.LayoutComponent.verticalEdge = {NONE: 0, BOTTOM: 1, TOP: 2, CENTER: 3};
+
+ccui.LayoutComponent.NAME = "__ui_layout";
+ccui.LayoutComponent.bindLayoutComponent = function (node) {
+    var layout = node.getComponent(ccui.LayoutComponent.NAME);
+    if (layout !== undefined)
+        return layout;
+
+    layout = new ccui.LayoutComponent();
+    if (layout && layout.init()) {
+        node.addComponent(layout);
+        return layout;
+    }
+    return null;
+};

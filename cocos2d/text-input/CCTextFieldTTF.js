@@ -181,6 +181,8 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         this.colorSpaceHolder.g = value.g;
         this.colorSpaceHolder.b = value.b;
         this.colorSpaceHolder.a = cc.isUndefined(value.a) ? 255 : value.a;
+        if(!this._inputText.length)
+            this.setColor(this.colorSpaceHolder);
     },
 
     /**
@@ -192,6 +194,8 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         this._colorText.g = textColor.g;
         this._colorText.b = textColor.b;
         this._colorText.a = cc.isUndefined(textColor.a) ? 255 : textColor.a;
+        if(this._inputText.length)
+            this.setColor(this._colorText);
     },
 
     /**
@@ -352,7 +356,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
      */
     deleteBackward:function () {
         var strLen = this._inputText.length;
-        if (strLen == 0)
+        if (strLen === 0)
             return;
 
         // get the delete byte number
@@ -383,6 +387,25 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         cc.imeDispatcher.removeDelegate(this);
     },
 
+    _tipMessage: "please enter your word:",
+    /**
+     * Sets the input tip message to show on mobile browser.  (mobile Web only)
+     * @param {string} tipMessage
+     */
+    setTipMessage: function (tipMessage) {
+        if (tipMessage == null)
+            return;
+        this._tipMessage = tipMessage;
+    },
+
+    /**
+     * Gets the input tip message to show on mobile browser.   (mobile Web only)
+     * @returns {string}
+     */
+    getTipMessage: function () {
+        return this._tipMessage;
+    },
+
     /**
      * Append the text. <br />
      * Input the character.
@@ -409,7 +432,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
             this.string = sText;
         }
 
-        if (pos == -1)
+        if (pos === -1)
             return;
 
         // '\n' has inserted,  let delegate process first
@@ -450,7 +473,6 @@ cc.defineGetterSetter(_p, "charCount", _p.getCharCount);
 /** @expose */
 _p.placeHolder;
 cc.defineGetterSetter(_p, "placeHolder", _p.getPlaceHolder, _p.setPlaceHolder);
-
 
 /**
  * Please use new TextFieldTTF instead. <br />

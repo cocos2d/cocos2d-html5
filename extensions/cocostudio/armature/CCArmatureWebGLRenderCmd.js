@@ -50,22 +50,20 @@
             var selBone = locChildren[i];
             if (selBone && selBone.getDisplayRenderNode) {
                 var selNode = selBone.getDisplayRenderNode();
-
-                if (null == selNode)
+                if (null === selNode)
                     continue;
-
                 selNode.setShaderProgram(this._shaderProgram);
-
                 switch (selBone.getDisplayRenderNodeType()) {
                     case ccs.DISPLAY_TYPE_SPRITE:
                         if (selNode instanceof ccs.Skin) {
+                            this._updateColorAndOpacity(selNode._renderCmd, selBone);   //because skin didn't call visit()
                             selNode.updateTransform();
 
                             var func = selBone.getBlendFunc();
-                            if (func.src != alphaPremultiplied.src || func.dst != alphaPremultiplied.dst)
+                            if (func.src !== alphaPremultiplied.src || func.dst !== alphaPremultiplied.dst)
                                 selNode.setBlendFunc(selBone.getBlendFunc());
                             else {
-                                if ((node._blendFunc.src == alphaPremultiplied.src && node._blendFunc.dst == alphaPremultiplied.dst)
+                                if ((node._blendFunc.src === alphaPremultiplied.src && node._blendFunc.dst === alphaPremultiplied.dst)
                                     && !selNode.getTexture().hasPremultipliedAlpha())
                                     selNode.setBlendFunc(alphaNonPremultipled);
                                 else
@@ -85,7 +83,8 @@
             } else if (selBone instanceof cc.Node) {
                 selBone.setShaderProgram(this._shaderProgram);
                 selBone._renderCmd.transform();
-                selBone._renderCmd.rendering(ctx);
+                if(selBone._renderCmd.rendering)
+                    selBone._renderCmd.rendering(ctx);
             }
         }
         if(!dontChangeMatrix)
@@ -100,21 +99,52 @@
         this._shaderProgram = shaderProgram;
     };
 
+    proto._updateColorAndOpacity = function(skinRenderCmd, bone){
+        //update displayNode's color and opacity
+        var parentColor = bone._renderCmd._displayedColor, parentOpacity = bone._renderCmd._displayedOpacity;
+        var flags = cc.Node._dirtyFlags, locFlag = skinRenderCmd._dirtyFlag;
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
+        if(colorDirty)
+            skinRenderCmd._updateDisplayColor(parentColor);
+        if(opacityDirty)
+            skinRenderCmd._updateDisplayOpacity(parentOpacity);
+        if(colorDirty || opacityDirty)
+            skinRenderCmd._updateColor();
+    };
+
     proto.updateChildPosition = function(ctx, dis, selBone, alphaPremultiplied, alphaNonPremultipled){
         var node = this._node;
         dis.updateTransform();
 
         var func = selBone.getBlendFunc();
-        if (func.src != alphaPremultiplied.src || func.dst != alphaPremultiplied.dst)
+        if (func.src !== alphaPremultiplied.src || func.dst !== alphaPremultiplied.dst)
             dis.setBlendFunc(selBone.getBlendFunc());
         else {
-            if ((node._blendFunc.src == alphaPremultiplied.src && node_blendFunc.dst == alphaPremultiplied.dst)
+            if ((node._blendFunc.src === alphaPremultiplied.src && node_blendFunc.dst === alphaPremultiplied.dst)
                 && !dis.getTexture().hasPremultipliedAlpha())
                 dis.setBlendFunc(alphaNonPremultipled);
             else
                 dis.setBlendFunc(node._blendFunc);
         }
         dis.rendering(ctx);
+    };
+
+    proto.updateStatus = function () {
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        var colorDirty = locFlag & flags.colorDirty,
+            opacityDirty = locFlag & flags.opacityDirty;
+        if(colorDirty)
+            this._updateDisplayColor();
+
+        if(opacityDirty)
+            this._updateDisplayOpacity();
+
+        if(colorDirty || opacityDirty)
+            this._updateColor();
+
+        //update the transform every visit, needn't dirty flag,
+        this.transform(this.getParentRenderCmd(), true);
     };
 
     proto.visit = function(parentCmd){

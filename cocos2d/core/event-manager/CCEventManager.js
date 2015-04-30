@@ -45,7 +45,7 @@ cc._EventListenerVector = cc.Class.extend({
     },
 
     push: function (listener) {
-        if (listener._getFixedPriority() == 0)
+        if (listener._getFixedPriority() === 0)
             this._sceneGraphListeners.push(listener);
         else
             this._fixedListeners.push(listener);
@@ -83,6 +83,8 @@ cc.__getListenerID = function (event) {
         return cc._EventListenerKeyboard.LISTENER_ID;
     if(getType === eventType.MOUSE)
         return cc._EventListenerMouse.LISTENER_ID;
+    if(getType === eventType.FOCUS)
+        return cc._EventListenerFocus.LISTENER_ID;
     if(getType === eventType.TOUCH){
         // Touch listener is very special, it contains two kinds of listeners, EventListenerTouchOneByOne and EventListenerTouchAllAtOnce.
         // return UNKNOWN instead.
@@ -183,11 +185,11 @@ cc.eventManager = /** @lends cc.eventManager# */{
         }
         listeners.push(listener);
 
-        if (listener._getFixedPriority() == 0) {
+        if (listener._getFixedPriority() === 0) {
             this._setDirty(listenerID, this.DIRTY_SCENE_GRAPH_PRIORITY);
 
             var node = listener._getSceneGraphPriority();
-            if (node == null)
+            if (node === null)
                 cc.log(cc._LogInfos.eventManager__forceAddEventListener);
 
             this._associateNodeAndEventListener(node, listener);
@@ -202,7 +204,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
     },
 
     _updateDirtyFlagForSceneGraph: function () {
-        if (this._dirtyNodes.length == 0)
+        if (this._dirtyNodes.length === 0)
             return;
 
         var locDirtyNodes = this._dirtyNodes, selListeners, selListener, locNodeListenersMap = this._nodeListenersMap;
@@ -260,7 +262,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
         var locToAddedListeners = this._toAddedListeners, listener;
         for (i = 0; i < locToAddedListeners.length;) {
             listener = locToAddedListeners[i];
-            if (listener && listener._getListenerID() == listenerID)
+            if (listener && listener._getListenerID() === listenerID)
                 cc.arrayRemoveObject(locToAddedListeners, listener);
             else
                 ++i;
@@ -272,7 +274,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
         if (locFlagMap[listenerID])
             dirtyFlag = locFlagMap[listenerID];
 
-        if (dirtyFlag != this.DIRTY_NONE) {
+        if (dirtyFlag !== this.DIRTY_NONE) {
             // Clear the dirty flag first, if `rootNode` is null, then set its dirty flag of scene graph priority
             locFlagMap[listenerID] = this.DIRTY_NONE;
 
@@ -309,8 +311,9 @@ cc.eventManager = /** @lends cc.eventManager# */{
     },
 
     _sortEventListenersOfSceneGraphPriorityDes : function(l1, l2){
-        var locNodePriorityMap = cc.eventManager._nodePriorityMap;
-        if(!l1 || !l2 || !l1._getSceneGraphPriority() || !l2._getSceneGraphPriority())
+        var locNodePriorityMap = cc.eventManager._nodePriorityMap, node1 = l1._getSceneGraphPriority(),
+            node2 = l2._getSceneGraphPriority();
+        if(!l1 || !l2 || !node1 || !node2 || !locNodePriorityMap[node1.__instanceId] || !locNodePriorityMap[node2.__instanceId])
             return -1;
         return locNodePriorityMap[l2._getSceneGraphPriority().__instanceId] - locNodePriorityMap[l1._getSceneGraphPriority().__instanceId];
     },
@@ -379,16 +382,17 @@ cc.eventManager = /** @lends cc.eventManager# */{
     _updateListeners: function (event) {
         var locInDispatch = this._inDispatch;
         cc.assert(locInDispatch > 0, cc._LogInfos.EventManager__updateListeners);
-        if (event.getType() == cc.Event.TOUCH) {
+
+        if(locInDispatch > 1)
+            return;
+
+        if (event.getType() === cc.Event.TOUCH) {
             this._onUpdateListeners(cc._EventListenerTouchOneByOne.LISTENER_ID);
             this._onUpdateListeners(cc._EventListenerTouchAllAtOnce.LISTENER_ID);
         } else
             this._onUpdateListeners(cc.__getListenerID(event));
 
-        if(locInDispatch > 1)
-            return;
-
-        cc.assert(locInDispatch == 1, cc._LogInfos.EventManager__updateListeners_2);
+        cc.assert(locInDispatch === 1, cc._LogInfos.EventManager__updateListeners_2);
         var locListenersMap = this._listenersMap, locPriorityDirtyFlagMap = this._priorityDirtyFlagMap;
         for (var selKey in locListenersMap) {
             if (locListenersMap[selKey].empty()) {
@@ -415,14 +419,14 @@ cc.eventManager = /** @lends cc.eventManager# */{
 
         var isClaimed = false, removedIdx;
         var getCode = event.getEventCode(), eventCode = cc.EventTouch.EventCode;
-        if (getCode == eventCode.BEGAN) {
+        if (getCode === eventCode.BEGAN) {
             if (listener.onTouchBegan) {
                 isClaimed = listener.onTouchBegan(selTouch, event);
                 if (isClaimed && listener._registered)
                     listener._claimedTouches.push(selTouch);
             }
         } else if (listener._claimedTouches.length > 0
-            && ((removedIdx = listener._claimedTouches.indexOf(selTouch)) != -1)) {
+            && ((removedIdx = listener._claimedTouches.indexOf(selTouch)) !== -1)) {
             isClaimed = true;
             if(getCode === eventCode.MOVED && listener.onTouchMoved){
                 listener.onTouchMoved(selTouch, event);
@@ -461,7 +465,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
         var allAtOnceListeners = this._getListeners(cc._EventListenerTouchAllAtOnce.LISTENER_ID);
 
         // If there aren't any touch listeners, return directly.
-        if (null == oneByOneListeners && null == allAtOnceListeners)
+        if (null === oneByOneListeners && null === allAtOnceListeners)
             return;
 
         var originalTouches = event.getTouches(), mutableTouches = cc.copyArray(originalTouches);
@@ -497,13 +501,13 @@ cc.eventManager = /** @lends cc.eventManager# */{
 
         var eventCode = cc.EventTouch.EventCode, event = callbackParams.event, touches = callbackParams.touches, getCode = event.getEventCode();
         event._setCurrentTarget(listener._node);
-        if(getCode == eventCode.BEGAN && listener.onTouchesBegan)
+        if(getCode === eventCode.BEGAN && listener.onTouchesBegan)
             listener.onTouchesBegan(touches, event);
-        else if(getCode == eventCode.MOVED && listener.onTouchesMoved)
+        else if(getCode === eventCode.MOVED && listener.onTouchesMoved)
             listener.onTouchesMoved(touches, event);
-        else if(getCode == eventCode.ENDED && listener.onTouchesEnded)
+        else if(getCode === eventCode.ENDED && listener.onTouchesEnded)
             listener.onTouchesEnded(touches, event);
-        else if(getCode == eventCode.CANCELLED && listener.onTouchesCancelled)
+        else if(getCode === eventCode.CANCELLED && listener.onTouchesCancelled)
             listener.onTouchesCancelled(touches, event);
 
         // If the event was stopped, return directly.
@@ -664,7 +668,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
             return;
 
         if (cc.isNumber(nodeOrPriority)) {
-            if (nodeOrPriority == 0) {
+            if (nodeOrPriority === 0) {
                 cc.log(cc._LogInfos.eventManager_addListener);
                 return;
             }
@@ -732,7 +736,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
             var locToAddedListeners = this._toAddedListeners;
             for (var i = 0, len = locToAddedListeners.length; i < len; i++) {
                 var selListener = locToAddedListeners[i];
-                if (selListener == listener) {
+                if (selListener === listener) {
                     cc.arrayRemoveObject(locToAddedListeners, selListener);
                     selListener._setRegistered(false);
                     break;
@@ -747,14 +751,14 @@ cc.eventManager = /** @lends cc.eventManager# */{
 
         for (var i = 0, len = listeners.length; i < len; i++) {
             var selListener = listeners[i];
-            if (selListener == listener) {
+            if (selListener === listener) {
                 selListener._setRegistered(false);
                 if (selListener._getSceneGraphPriority() != null){
                     this._dissociateNodeAndEventListener(selListener._getSceneGraphPriority(), selListener);
                     selListener._setSceneGraphPriority(null);         // NULL out the node pointer so we don't have any dangling pointers to destroyed nodes.
                 }
 
-                if (this._inDispatch == 0)
+                if (this._inDispatch === 0)
                     cc.arrayRemoveObject(listeners, selListener);
                 return true;
             }
@@ -790,7 +794,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
             var locToAddedListeners = _t._toAddedListeners;
             for (i = 0; i < locToAddedListeners.length; ) {
                 var listener = locToAddedListeners[i];
-                if (listener._getSceneGraphPriority() == listenerType) {
+                if (listener._getSceneGraphPriority() === listenerType) {
                     listener._setSceneGraphPriority(null);                      // Ensure no dangling ptr to the target node.
                     listener._setRegistered(false);
                     locToAddedListeners.splice(i, 1);
@@ -804,15 +808,15 @@ cc.eventManager = /** @lends cc.eventManager# */{
                     _t.removeListeners(locChildren[i], true);
             }
         } else {
-            if (listenerType == cc.EventListener.TOUCH_ONE_BY_ONE)
+            if (listenerType === cc.EventListener.TOUCH_ONE_BY_ONE)
                 _t._removeListenersForListenerID(cc._EventListenerTouchOneByOne.LISTENER_ID);
-            else if (listenerType == cc.EventListener.TOUCH_ALL_AT_ONCE)
+            else if (listenerType === cc.EventListener.TOUCH_ALL_AT_ONCE)
                 _t._removeListenersForListenerID(cc._EventListenerTouchAllAtOnce.LISTENER_ID);
-            else if (listenerType == cc.EventListener.MOUSE)
+            else if (listenerType === cc.EventListener.MOUSE)
                 _t._removeListenersForListenerID(cc._EventListenerMouse.LISTENER_ID);
-            else if (listenerType == cc.EventListener.ACCELERATION)
+            else if (listenerType === cc.EventListener.ACCELERATION)
                 _t._removeListenersForListenerID(cc._EventListenerAcceleration.LISTENER_ID);
-            else if (listenerType == cc.EventListener.KEYBOARD)
+            else if (listenerType === cc.EventListener.KEYBOARD)
                 _t._removeListenersForListenerID(cc._EventListenerKeyboard.LISTENER_ID);
             else
                 cc.log(cc._LogInfos.eventManager_removeListeners);
@@ -853,7 +857,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
             var fixedPriorityListeners = selListeners.getFixedPriorityListeners();
             if (fixedPriorityListeners) {
                 var found = fixedPriorityListeners.indexOf(listener);
-                if (found != -1) {
+                if (found !== -1) {
                     if(listener._getSceneGraphPriority() != null)
                         cc.log(cc._LogInfos.eventManager_setPriority);
                     if (listener._getFixedPriority() !== fixedPriority) {
@@ -894,7 +898,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
         this._inDispatch++;
         if(!event || !event.getType)
             throw "event is undefined";
-        if (event.getType() == cc.Event.TOUCH) {
+        if (event.getType() === cc.Event.TOUCH) {
             this._dispatchTouchEvent(event);
             this._inDispatch--;
             return;
@@ -942,6 +946,14 @@ cc.EventHelper.prototype = {
     },
 
     addEventListener: function ( type, listener, target ) {
+        //check 'type' status, if the status is ready, dispatch event next frame
+        if(type === "load" && this._textureLoaded){            //only load event checked.
+            setTimeout(function(){
+                listener.call(target);
+            }, 0);
+            return;
+        }
+
         if ( this._listeners === undefined )
             this._listeners = {};
 
@@ -961,7 +973,7 @@ cc.EventHelper.prototype = {
         if ( listeners[ type ] !== undefined ) {
             for(var i = 0, len = listeners.length; i < len ; i++){
                 var selListener = listeners[i];
-                if(selListener.callback == listener && selListener.eventTarget == target)
+                if(selListener.callback === listener && selListener.eventTarget === target)
                     return true;
             }
         }
@@ -978,7 +990,7 @@ cc.EventHelper.prototype = {
         if ( listenerArray !== undefined ) {
             for(var i = 0; i < listenerArray.length ; ){
                 var selListener = listenerArray[i];
-                if(selListener.eventTarget == target)
+                if(selListener.eventTarget === target)
                     listenerArray.splice( i, 1 );
                 else
                     i++

@@ -38,7 +38,6 @@
         //  This is a special class
         //  Sprite can not obtain sign
         //  So here must to calculate of each frame
-
         var node  = this._node;
         node._syncPosition();
         if(!node._ignoreBodyRotation)
@@ -60,9 +59,11 @@
         }
 
         // Make matrix
-        var radians = locBody.a;
-        var c = Math.cos(radians);
-        var s = Math.sin(radians);
+        var radians = locBody.a, c = 1, s=0;
+        if (radians && !node._ignoreBodyRotation) {
+            c = Math.cos(radians);
+            s = Math.sin(radians);
+        }
 
         // Although scale is not used by physics engines, it is calculated just in case
         // the sprite is animated (scaled up/down) using actions.

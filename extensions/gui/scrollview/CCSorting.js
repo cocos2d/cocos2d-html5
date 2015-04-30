@@ -103,14 +103,14 @@ cc.ArrayForObjectSorting = cc.Class.extend(/** @lends cc.ArrayForObjectSorting# 
      * @param {Object} delObject    Object to remove
      */
     removeSortedObject:function (delObject) {
-        if (this.count() == 0) {
+        if (this.count() === 0) {
             return;
         }
 
         var idx = this.indexOfSortedObject(delObject);
-        if (idx < this.count() && idx != cc.INVALID_INDEX) {
+        if (idx < this.count() && idx !== cc.INVALID_INDEX) {
             var foundObj = this.objectAtIndex(idx);
-            if (foundObj.getObjectID() == delObject.getObjectID()) {
+            if (foundObj.getObjectID() === delObject.getObjectID()) {
                 this.removeObjectAtIndex(idx);
             }
         }
@@ -129,9 +129,9 @@ cc.ArrayForObjectSorting = cc.Class.extend(/** @lends cc.ArrayForObjectSorting# 
      */
     setObjectID_ofSortedObject:function (tag, setObject) {
         var idx = this.indexOfSortedObject(setObject);
-        if (idx < this.count() && idx != cc.INVALID_INDEX) {
+        if (idx < this.count() && idx !== cc.INVALID_INDEX) {
             var foundObj = this.objectAtIndex(idx);
-            if (foundObj.getObjectID() == setObject.getObjectID()) {
+            if (foundObj.getObjectID() === setObject.getObjectID()) {
                 this.removeObjectAtIndex(idx);
                 foundObj.setObjectID(tag);
                 this.insertSortedObject(foundObj);
@@ -140,16 +140,16 @@ cc.ArrayForObjectSorting = cc.Class.extend(/** @lends cc.ArrayForObjectSorting# 
     },
 
     objectWithObjectID:function (tag) {
-        if (this.count() == 0) {
+        if (this.count() === 0) {
             return null;
         }
         var foundObj = new cc.SortedObject();
         foundObj.setObjectID(tag);
 
         var idx = this.indexOfSortedObject(foundObj);
-        if (idx < this.count() && idx != cc.INVALID_INDEX) {
+        if (idx < this.count() && idx !== cc.INVALID_INDEX) {
             foundObj = this.objectAtIndex(idx);
-            if (foundObj.getObjectID() != tag)
+            if (foundObj.getObjectID() !== tag)
                 foundObj = null;
         }
         return foundObj;
@@ -193,7 +193,7 @@ cc.ArrayForObjectSorting = cc.Class.extend(/** @lends cc.ArrayForObjectSorting# 
             for (var i = 0; i < locObjectArr.length; i++) {
                 var pSortableObj = locObjectArr[i];
                 var curObjectID = pSortableObj.getObjectID();
-                if ((uOfSortObjectID == curObjectID) ||
+                if ((uOfSortObjectID === curObjectID) ||
                     (uOfSortObjectID >= uPrevObjectID && uOfSortObjectID < curObjectID)) {
                     break;
                 }
@@ -213,7 +213,7 @@ cc.ArrayForObjectSorting = cc.Class.extend(/** @lends cc.ArrayForObjectSorting# 
 
     lastObject:function () {
         var locObjectArr = this._saveObjectArr;
-        if (locObjectArr.length == 0)
+        if (locObjectArr.length === 0)
             return null;
         return locObjectArr[locObjectArr.length - 1];
     },

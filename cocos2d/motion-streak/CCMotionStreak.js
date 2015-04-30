@@ -129,7 +129,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * @param {cc.Texture2D} texture
      */
     setTexture:function (texture) {
-        if (this.texture != texture)
+        if (this.texture !== texture)
             this.texture = texture;
     },
 
@@ -220,6 +220,22 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      */
     setStartingPositionInitialized:function (startingPositionInitialized) {
         this.startingPositionInitialized = startingPositionInitialized;
+    },
+
+    /**
+     * Get stroke.
+     * @returns {Number} stroke
+     */
+    getStroke:function () {
+        return this._stroke;
+    },
+
+    /**
+     * Set stroke.
+     * @param {Number} stroke
+     */
+    setStroke:function (stroke) {
+        this._stroke = stroke;
     },
 
     /**
@@ -432,7 +448,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         else if (locNuPoints > 0) {
             var a1 = cc.pDistanceSQ(cc.p(locPointVertexes[(locNuPoints - 1) * 2], locPointVertexes[(locNuPoints - 1) * 2 + 1]),
                 this._positionR) < this._minSeg;
-            var a2 = (locNuPoints == 1) ? false : (cc.pDistanceSQ(
+            var a2 = (locNuPoints === 1) ? false : (cc.pDistanceSQ(
                 cc.p(locPointVertexes[(locNuPoints - 2) * 2], locPointVertexes[(locNuPoints - 2) * 2 + 1]), this._positionR) < (this._minSeg * 2.0));
             if (a1 || a2)
                 appendNewPoint = false;
@@ -473,7 +489,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
             cc.vertexLineToPolygon(locPointVertexes, this._stroke, this._vertices, 0, locNuPoints);
 
         // Updated Tex Coords only if they are different than previous step
-        if (locNuPoints && this._previousNuPoints != locNuPoints) {
+        if (locNuPoints && this._previousNuPoints !== locNuPoints) {
             var texDelta = 1.0 / locNuPoints;
             var locTexCoords = this._texCoords;
             for (i = 0; i < locNuPoints; i++) {

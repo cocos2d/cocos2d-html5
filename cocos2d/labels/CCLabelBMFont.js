@@ -305,7 +305,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         var i, locCfg = self._config, locKerningDict = locCfg.kerningDict,
             locCommonH = locCfg.commonHeight, locFontDict = locCfg.fontDefDictionary;
         for (i = 0; i < stringLen - 1; i++) {
-            if (locStr.charCodeAt(i) == 10) quantityOfLines++;
+            if (locStr.charCodeAt(i) === 10) quantityOfLines++;
         }
 
         var totalHeight = locCommonH * quantityOfLines;
@@ -314,7 +314,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         var prev = -1;
         for (i = 0; i < stringLen; i++) {
             var key = locStr.charCodeAt(i);
-            if (key == 0) continue;
+            if (key === 0) continue;
 
             if (key === 10) {
                 //new line
@@ -432,6 +432,106 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         this.setString(label, true);
     },
 
+    // calc the text all with in a line
+    _getCharsWidth:function (startIndex, endIndex) {
+        if (endIndex <= 0)
+        {
+            return 0;
+        }
+        var curTextFirstSprite = this.getChildByTag(startIndex);
+        var curTextLastSprite = this.getChildByTag(startIndex + endIndex);
+        return this._getLetterPosXLeft(curTextLastSprite) - this._getLetterPosXLeft(curTextFirstSprite);
+    },
+
+    _checkWarp:function (strArr, i, maxWidth, initStringWrapNum) {
+        var self = this;
+        var text = strArr[i];
+        var curLength = 0;
+        for (var strArrIndex = 0; strArrIndex < i; strArrIndex++)
+        {
+            curLength += strArr[strArrIndex].length;
+        }
+
+        curLength = curLength + i - initStringWrapNum; // add the wrap line num
+
+        var allWidth = self._getCharsWidth(curLength, strArr[i].length - 1);
+
+        if (allWidth > maxWidth && text.length > 1) {
+            var fuzzyLen = text.length * ( maxWidth / allWidth ) | 0;
+            var tmpText = text.substr(fuzzyLen);
+            var width = allWidth - this._getCharsWidth(curLength + fuzzyLen, tmpText.length - 1);
+            var sLine;
+            var pushNum = 0;
+
+            //Increased while cycle maximum ceiling. default 100 time
+            var checkWhile = 0;
+
+            //Exceeded the size
+            while (width > maxWidth && checkWhile++ < 100) {
+                fuzzyLen *= maxWidth / width;
+                fuzzyLen = fuzzyLen | 0;
+                tmpText = text.substr(fuzzyLen);
+                width = allWidth - this._getCharsWidth(curLength + fuzzyLen, tmpText.length - 1);
+            }
+
+            checkWhile = 0;
+
+            //Find the truncation point
+            while (width < maxWidth && checkWhile++ < 100) {
+                if (tmpText) {
+                    var exec = cc.LabelTTF._wordRex.exec(tmpText);
+                    pushNum = exec ? exec[0].length : 1;
+                    sLine = tmpText;
+                }
+                if (self._lineBreakWithoutSpaces) {
+                    pushNum = 0;
+                }
+                fuzzyLen = fuzzyLen + pushNum;
+                tmpText = text.substr(fuzzyLen);
+                width = allWidth - this._getCharsWidth(curLength + fuzzyLen, tmpText.length - 1);
+            }
+
+            fuzzyLen -= pushNum;
+            if (fuzzyLen === 0) {
+                fuzzyLen = 1;
+                sLine = sLine.substr(1);
+            }
+
+            var sText = text.substr(0, fuzzyLen), result;
+
+            //symbol in the first
+            if (cc.LabelTTF.wrapInspection) {
+                if (cc.LabelTTF._symbolRex.test(sLine || tmpText)) {
+                    result = cc.LabelTTF._lastWordRex.exec(sText);
+                    pushNum = result ? result[0].length : 0;
+                    if (self._lineBreakWithoutSpaces) {
+                        pushNum = 0;
+                    }
+                    fuzzyLen -= pushNum;
+
+                    sLine = text.substr(fuzzyLen);
+                    sText = text.substr(0, fuzzyLen);
+                }
+            }
+
+            //To judge whether a English words are truncated
+            if (cc.LabelTTF._firsrEnglish.test(sLine)) {
+                result = cc.LabelTTF._lastEnglish.exec(sText);
+                if (result && sText !== result[0]) {
+                    pushNum = result[0].length;
+                    if (self._lineBreakWithoutSpaces) {
+                        pushNum = 0;
+                    }
+                    fuzzyLen -= pushNum;
+                    sLine = text.substr(fuzzyLen);
+                    sText = text.substr(0, fuzzyLen);
+                }
+            }
+            strArr[i] = sLine || tmpText;
+            strArr.splice(i, 0, sText);
+        }
+    },
+
     /**
      * Update Label. <br />
      * Update this Label display string and more...
@@ -439,140 +539,32 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     updateLabel: function () {
         var self = this;
         self.string = self._initialString;
-
+        var i, j, characterSprite;
+        // process string
         // Step 1: Make multiline
         if (self._width > 0) {
-            var stringLength = self._string.length;
-            var multiline_string = [];
-            var last_word = [];
-
-            var line = 1, i = 0, start_line = false, start_word = false, startOfLine = -1, startOfWord = -1, skip = 0;
-
-            var characterSprite;
-            for (var j = 0, lj = self._children.length; j < lj; j++) {
-                var justSkipped = 0;
-                while (!(characterSprite = self.getChildByTag(j + skip + justSkipped)))
-                    justSkipped++;
-                skip += justSkipped;
-
-                if (i >= stringLength)
-                    break;
-
-                var character = self._string[i];
-                if (!start_word) {
-                    startOfWord = self._getLetterPosXLeft(characterSprite);
-                    start_word = true;
+            var stringArr = self.string.split('\n');
+            var wrapString = "";
+            var newWrapNum = 0;
+            var oldArrLength = 0;
+            for (i = 0; i < stringArr.length; i++) {
+                oldArrLength = stringArr.length;
+                this._checkWarp(stringArr, i, self._width * this._scaleX, newWrapNum);
+                if (oldArrLength < stringArr.length) {
+                    newWrapNum++;
                 }
-                if (!start_line) {
-                    startOfLine = startOfWord;
-                    start_line = true;
+                if (i > 0)
+                {
+                    wrapString += "\n";
                 }
-
-                // Newline.
-                if (character.charCodeAt(0) == 10) {
-                    last_word.push('\n');
-                    multiline_string = multiline_string.concat(last_word);
-                    last_word.length = 0;
-                    start_word = false;
-                    start_line = false;
-                    startOfWord = -1;
-                    startOfLine = -1;
-                    //i+= justSkipped;
-                    j--;
-                    skip -= justSkipped;
-                    line++;
-
-                    if (i >= stringLength)
-                        break;
-
-                    character = self._string[i];
-                    if (!startOfWord) {
-                        startOfWord = self._getLetterPosXLeft(characterSprite);
-                        start_word = true;
-                    }
-                    if (!startOfLine) {
-                        startOfLine = startOfWord;
-                        start_line = true;
-                    }
-                    i++;
-                    continue;
-                }
-
-                // Whitespace.
-                if (this._isspace_unicode(character)) {
-                    last_word.push(character);
-                    multiline_string = multiline_string.concat(last_word);
-                    last_word.length = 0;
-                    start_word = false;
-                    startOfWord = -1;
-                    i++;
-                    continue;
-                }
-
-                // Out of bounds.
-                if (self._getLetterPosXRight(characterSprite) - startOfLine > self._width) {
-                    if (!self._lineBreakWithoutSpaces) {
-                        last_word.push(character);
-
-                        var found = multiline_string.lastIndexOf(" ");
-                        if (found != -1)
-                            this._utf8_trim_ws(multiline_string);
-                        else
-                            multiline_string = [];
-
-                        if (multiline_string.length > 0)
-                            multiline_string.push('\n');
-
-                        line++;
-                        start_line = false;
-                        startOfLine = -1;
-                        i++;
-                    } else {
-                        this._utf8_trim_ws(last_word);
-
-                        last_word.push('\n');
-                        multiline_string = multiline_string.concat(last_word);
-                        last_word.length = 0;
-                        start_word = false;
-                        start_line = false;
-                        startOfWord = -1;
-                        startOfLine = -1;
-                        line++;
-
-                        if (i >= stringLength)
-                            break;
-
-                        if (!startOfWord) {
-                            startOfWord = self._getLetterPosXLeft(characterSprite);
-                            start_word = true;
-                        }
-                        if (!startOfLine) {
-                            startOfLine = startOfWord;
-                            start_line = true;
-                        }
-                        j--;
-                    }
-                } else {
-                    // Character is normal.
-                    last_word.push(character);
-                    i++;
-                }
+                wrapString += stringArr[i];
             }
-
-            multiline_string = multiline_string.concat(last_word);
-            var len = multiline_string.length;
-            var str_new = "";
-
-            for (i = 0; i < len; ++i)
-                str_new += multiline_string[i];
-
-            str_new = str_new + String.fromCharCode(0);
-            //this.updateString(true);
-            self._setString(str_new, false)
+            wrapString = wrapString + String.fromCharCode(0);
+            self._setString(wrapString, false);
         }
 
         // Step 2: Make alignment
-        if (self._alignment != cc.TEXT_ALIGNMENT_LEFT) {
+        if (self._alignment !== cc.TEXT_ALIGNMENT_LEFT) {
             i = 0;
 
             var lineNumber = 0;
@@ -580,11 +572,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var last_line = [];
 
             for (var ctr = 0; ctr < strlen; ctr++) {
-                if (self._string[ctr].charCodeAt(0) == 10 || self._string[ctr].charCodeAt(0) == 0) {
+                if (self._string[ctr].charCodeAt(0) === 10 || self._string[ctr].charCodeAt(0) === 0) {
                     var lineWidth = 0;
                     var line_length = last_line.length;
                     // if last line is empty we must just increase lineNumber and work with next line
-                    if (line_length == 0) {
+                    if (line_length === 0) {
                         lineNumber++;
                         continue;
                     }
@@ -608,7 +600,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                             break;
                     }
 
-                    if (shift != 0) {
+                    if (shift !== 0) {
                         for (j = 0; j < line_length; j++) {
                             index = i + j + lineNumber;
                             if (index < 0) continue;
@@ -706,7 +698,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      */
     setFntFile: function (fntFile) {
         var self = this;
-        if (fntFile != null && fntFile != self._fntFile) {
+        if (fntFile != null && fntFile !== self._fntFile) {
             var newConf = cc.loader.getRes(fntFile);
 
             if (!newConf) {
@@ -797,9 +789,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     //Checking whether the character is a whitespace
     _isspace_unicode: function(ch){
         ch = ch.charCodeAt(0);
-        return  ((ch >= 9 && ch <= 13) || ch == 32 || ch == 133 || ch == 160 || ch == 5760
-            || (ch >= 8192 && ch <= 8202) || ch == 8232 || ch == 8233 || ch == 8239
-            || ch == 8287 || ch == 12288)
+        return  ((ch >= 9 && ch <= 13) || ch === 32 || ch === 133 || ch === 160 || ch === 5760
+            || (ch >= 8192 && ch <= 8202) || ch === 8232 || ch === 8233 || ch === 8239
+            || ch === 8287 || ch === 12288)
     },
 
     _utf8_trim_ws: function(str){
@@ -882,7 +874,7 @@ cc._fntLoader = {
                 var key = tempStr.substring(0, index);
                 var value = tempStr.substring(index + 1);
                 if (value.match(this.INT_EXP)) value = parseInt(value);
-                else if (value[0] == '"') value = value.substring(1, value.length - 1);
+                else if (value[0] === '"') value = value.substring(1, value.length - 1);
                 obj[key] = value;
             }
         }

@@ -3,7 +3,7 @@ Cocos2d-html5
 
 [Cocos2d-html5][1] is a cross-platform 2D game engine written in Javascript, based on [Cocos2d-X][2] and licensed under MIT.
 It incorporates the same high level api as “Cocos2d JS-binding engine” and compatible with Cocos2d-X.
-It currently supports canvas and will support WebGL in the future.
+It currently supports canvas and WebGL renderer.
 
 Cross Platform
 -------------
@@ -16,7 +16,15 @@ Documentation
    * Website: [www.cocos2d-x.org][3]
    * API References: [http://www.cocos2d-x.org/wiki/Reference] [4]
 
-Running the tests
+
+Installing from [bower][8] (version >=3.4)
+------------------
+
+```shell
+$ bower install cocos2d-html5
+```
+
+Running the tests (version <3)
 ------------------
 
 ```shell
@@ -41,3 +49,4 @@ Contact us
 [5]: http://forum.cocos2d-x.org "http://forum.cocos2d-x.org"
 [6]: http://www.twitter.com/cocos2dhtml5 "http://www.twitter.com/cocos2dhtml5"
 [7]: http://t.sina.com.cn/cocos2dhtml5 "http://t.sina.com.cn/cocos2dhtml5"
+[8]: http://bower.io "http://bower.io"

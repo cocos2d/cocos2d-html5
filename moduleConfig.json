@@ -300,6 +300,7 @@
             "extensions/ccui/base-classes/CCProtectedNodeWebGLRenderCmd.js",
             "extensions/ccui/system/CocosGUI.js",
             "extensions/ccui/base-classes/UIWidget.js",
+            "extensions/ccui/base-classes/UIWidgetRenderCmd.js",
             "extensions/ccui/base-classes/UIScale9Sprite.js",
             "extensions/ccui/base-classes/UIScale9SpriteCanvasRenderCmd.js",
             "extensions/ccui/base-classes/UIScale9SpriteWebGLRenderCmd.js",
@@ -372,31 +373,20 @@
             "extensions/cocostudio/trigger/TriggerMng.js",
             "extensions/cocostudio/trigger/TriggerObj.js",
 
+            "extensions/cocostudio/timeline/ActionTimeline.js",
+            "extensions/cocostudio/timeline/Frame.js",
+            "extensions/cocostudio/timeline/Timeline.js",
 
-            "extensions/cocostudio/reader/widgetreader/ButtonReader/ButtonReader.js",
-            "extensions/cocostudio/reader/widgetreader/CheckBoxReader/CheckBoxReader.js",
-            "extensions/cocostudio/reader/widgetreader/ImageViewReader/ImageViewReader.js",
-            "extensions/cocostudio/reader/widgetreader/LabelAtlasReader/LabelAtlasReader.js",
-            "extensions/cocostudio/reader/widgetreader/LabelBMFontReader/LabelBMFontReader.js",
-            "extensions/cocostudio/reader/widgetreader/LabelReader/LabelReader.js",
-            "extensions/cocostudio/reader/widgetreader/LayoutReader/LayoutReader.js",
-            "extensions/cocostudio/reader/widgetreader/ScrollViewReader/ScrollViewReader.js",
-            "extensions/cocostudio/reader/widgetreader/ListViewReader/ListViewReader.js",
-            "extensions/cocostudio/reader/widgetreader/LoadingBarReader/LoadingBarReader.js",
-            "extensions/cocostudio/reader/widgetreader/PageViewReader/PageViewReader.js",
-            "extensions/cocostudio/reader/widgetreader/SliderReader/SliderReader.js",
-            "extensions/cocostudio/reader/widgetreader/TextFieldReader/TextFieldReader.js",
-            "extensions/cocostudio/reader/widgetreader/WidgetReaderProtocol.js",
-            "extensions/cocostudio/reader/widgetreader/WidgetReader.js",
+            "extensions/cocostudio/loader/load.js",
+            "extensions/cocostudio/loader/parsers/scene-1.x.js",
+            "extensions/cocostudio/loader/parsers/uiParser-1.x.js",
+            "extensions/cocostudio/loader/parsers/action-1.x.js",
+            "extensions/cocostudio/loader/parsers/action-2.x.js",
+            "extensions/cocostudio/loader/parsers/timelineParser-1.x.js",
+            "extensions/cocostudio/loader/parsers/timelineParser-2.x.js",
+            "extensions/cocostudio/loader/parsers/compatible.js"
 
-            "extensions/cocostudio/reader/GUIReader.js",
-            "extensions/cocostudio/reader/SceneReader.js",
 
-            "extensions/cocostudio/reader/timeline/ActionTimeline.js",
-            "extensions/cocostudio/reader/timeline/ActionTimelineCache.js",
-            "extensions/cocostudio/reader/timeline/Frame.js",
-            "extensions/cocostudio/reader/timeline/Timeline.js",
-            "extensions/cocostudio/reader/timeline/CSLoader.js"
         ],
         "gui" : [
             "core", "clipping-nodes", "render-texture", "actions", "progress-timer",
@@ -442,6 +432,30 @@
             "extensions/spine/CCSkeletonCanvasRenderCmd.js",
             "extensions/spine/CCSkeletonWebGLRenderCmd.js"
         ],
+        "gaf":[
+            "core",
+
+            "external/gaf/GAFMacros.js",
+            "external/gaf/GAFBoot.js",
+            "external/gaf/Library/GAFAssetPreload.js",
+            "external/gaf/Library/GAFAsset.js",
+            "external/gaf/Library/GAFObject.js",
+            "external/gaf/Library/GAFTimeLine.js",
+            "external/gaf/Library/GAFTextField.js",
+            "external/gaf/Library/GAFSprite.js",
+            "external/gaf/Library/GAFMask.js",
+            "external/gaf/Library/GAFSpriteCanvasRenderCmd.js",
+            "external/gaf/Library/GAFSpriteWebGLRenderCmd.js",
+            "external/gaf/Library/GAFTimeLineProto.js",
+            "external/gaf/Library/GAFSpriteProto.js",
+            "external/gaf/Library/GAFMaskProto.js",
+            "external/gaf/Library/GAFTags.js",
+            "external/gaf/Library/GAFLoader.js",
+            "external/gaf/Library/GAFDataReader.js",
+            "external/gaf/Library/GAFShaders.js",
+            "external/gaf/Library/GAFShaderManager.js",
+            "external/gaf/Library/GAFAtlasLoader.js"
+        ],
         "extensions" : ["gui", "ccbreader", "editbox", "cocostudio", "spine", "ccpool"],
 
         "box2d" : [
@@ -457,7 +471,7 @@
         "socketio" : [
             "external/socketio/socket.io.min.js"
         ],
-        "external" : ["box2d", "chipmunk", "socketio", "pluginx"]
+        "external" : ["box2d", "chipmunk", "socketio", "pluginx", "gaf"]
     },
     "bootFile" : "CCBoot.js"
 }

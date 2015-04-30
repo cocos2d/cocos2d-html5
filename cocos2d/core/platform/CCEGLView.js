@@ -54,17 +54,31 @@ cc.__BrowserGetter = {
     meta: {
         "width": "device-width",
         "user-scalable": "no"
-    }
+    },
+    adaptationType: cc.sys.browserType
 };
 
-switch(cc.sys.browserType){
+if(window.navigator.userAgent.indexOf("OS 8_1_") > -1) //this mistake like MIUI, so use of MIUI treatment method
+    cc.__BrowserGetter.adaptationType = cc.sys.BROWSER_TYPE_MIUI;
+
+if(cc.sys.os === cc.sys.OS_IOS) // All browsers are WebView
+    cc.__BrowserGetter.adaptationType = cc.sys.BROWSER_TYPE_SAFARI;
+
+switch(cc.__BrowserGetter.adaptationType){
     case cc.sys.BROWSER_TYPE_SAFARI:
         cc.__BrowserGetter.meta["minimal-ui"] = "true";
+        cc.__BrowserGetter.availWidth = function(frame){
+            return frame.clientWidth;
+        };
+        cc.__BrowserGetter.availHeight = function(frame){
+            return frame.clientHeight;
+        };
         break;
     case cc.sys.BROWSER_TYPE_CHROME:
         cc.__BrowserGetter.__defineGetter__("target-densitydpi", function(){
             return cc.view._targetDensityDPI;
         });
+    case cc.sys.BROWSER_TYPE_SOUGOU:
     case cc.sys.BROWSER_TYPE_UC:
         cc.__BrowserGetter.availWidth = function(frame){
             return frame.clientWidth;
@@ -172,7 +186,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         _t._viewName = "Cocos2dHTML5";
 
 	    var sys = cc.sys;
-        _t.enableRetina(sys.os == sys.OS_IOS || sys.os == sys.OS_OSX);
+        _t.enableRetina(sys.os === sys.OS_IOS || sys.os === sys.OS_OSX);
         cc.visibleRect && cc.visibleRect.init(_t._visibleRect);
 
         // Setup system default resolution policies
@@ -195,8 +209,15 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         }else{
             view = cc.view;
         }
+
+        // Check frame size changed or not
+        var prevFrameW = view._frameSize.width, prevFrameH = view._frameSize.height;
+        view._initFrameSize();
+        if (view._frameSize.width === prevFrameW && view._frameSize.height === prevFrameH)
+            return;
+
+        // Frame size changed, do resize works
         if (view._resizeCallback) {
-            view._initFrameSize();
             view._resizeCallback.call();
         }
         var width = view._originalDesignResolutionSize.width;
@@ -239,13 +260,15 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             //enable
             if (!this.__resizeWithBrowserSize) {
                 this.__resizeWithBrowserSize = true;
-                cc._addEventListener(window, 'resize', this._resizeEvent, false);
+                cc._addEventListener(window, 'resize', this._resizeEvent);
+                cc._addEventListener(window, 'orientationchange', this._resizeEvent);
             }
         } else {
             //disable
             if (this.__resizeWithBrowserSize) {
                 this.__resizeWithBrowserSize = false;
-                window.removeEventListener('resize', this._resizeEvent, false);
+                window.removeEventListener('resize', this._resizeEvent);
+                window.removeEventListener('orientationchange', this._resizeEvent);
             }
         }
     },
@@ -398,7 +421,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * @return {Boolean}
      */
     isOpenGLReady: function () {
-        return (this._hDC != null && this._hRC != null);
+        return (this._hDC !== null && this._hRC !== null);
     },
 
     /*
@@ -571,7 +594,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
         var result = policy.apply(this, this._designResolutionSize);
 
-        if(result.scale && result.scale.length == 2){
+        if(result.scale && result.scale.length === 2){
             this._scaleX = result.scale[0];
             this._scaleY = result.scale[1];
         }
@@ -601,7 +624,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         cc.winSize.width = director._winSizeInPoints.width;
         cc.winSize.height = director._winSizeInPoints.height;
 
-        if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
+        if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             // reset director's member variables to fit visible rect
             director._createStatsLabel();
             director.setGLDefaultValues();
@@ -801,7 +824,7 @@ cc.ContainerStrategy = cc.Class.extend(/** @lends cc.ContainerStrategy# */{
 
     _setupContainer: function (view, w, h) {
         var frame = view._frame;
-        if (cc.view._autoFullScreen && cc.sys.isMobile && frame == document.documentElement) {
+        if (cc.view._autoFullScreen && cc.sys.isMobile && frame === document.documentElement) {
             // Automatically full screen when user touches on mobile version
             cc.screen.autoFullScreen(frame);
         }
@@ -877,7 +900,7 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
                                contentW, contentH);
 
         // Translate the content
-        if (cc._renderType == cc._RENDER_TYPE_CANVAS){
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS){
             //TODO: modify something for setTransform
             //cc._renderContext.translate(viewport.x, viewport.y + contentH);
         }

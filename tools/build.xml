@@ -5,8 +5,8 @@
              classpath="./compiler/compiler.jar"/>
     <target name="compile">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="./../lib/cocos2d-js-v3.2-min.js">
-            <!--sourceMapOutputFile="./../lib/cocos2d-html5-v3.0-rc0-sourcemap" sourceMapFormat="V3" -->
+                debug="false" output="./../lib/cocos2d-js-v3.6-min.js">
+            <!--sourceMapOutputFile="./../lib/cocos2d-js-v3.6-sourcemap" sourceMapFormat="V3" -->
             <sources dir="./../">
                 <file name="Base64Images.js"/>
                 <file name="CCBoot.js"/>
@@ -74,8 +74,8 @@
                 <file name="cocos2d/core/sprites/CCSpriteBatchNodeCanvasRenderCmd.js"/>
                 <file name="cocos2d/core/sprites/CCSpriteBatchNodeWebGLRenderCmd.js"/>
                 <file name="cocos2d/core/CCConfiguration.js"/>
-                <file name="cocos2d/core/CCDirectorWebGL.js"/>
                 <file name="cocos2d/core/CCDirector.js"/>
+                <file name="cocos2d/core/CCDirectorWebGL.js"/>
                 <file name="cocos2d/core/CCCamera.js"/>
                 <file name="cocos2d/core/CCScheduler.js"/>
                 <file name="cocos2d/core/CCDrawingPrimitivesCanvas.js"/>
@@ -202,6 +202,7 @@
                 <file name="extensions/editbox/CCEditBox.js"/>
                 <file name="extensions/ccui/system/CocosGUI.js"/>
                 <file name="extensions/ccui/base-classes/UIWidget.js"/>
+                <file name="extensions/ccui/base-classes/UIWidgetRenderCmd.js"/>
                 <file name="extensions/ccui/base-classes/UIScale9Sprite.js"/>
                 <file name="extensions/ccui/base-classes/UIScale9SpriteCanvasRenderCmd.js"/>
                 <file name="extensions/ccui/base-classes/UIScale9SpriteWebGLRenderCmd.js"/>
@@ -265,28 +266,18 @@
                 <file name="extensions/cocostudio/trigger/TriggerBase.js"/>
                 <file name="extensions/cocostudio/trigger/TriggerMng.js"/>
                 <file name="extensions/cocostudio/trigger/TriggerObj.js"/>
-                <file name="extensions/cocostudio/reader/widgetreader/ButtonReader/ButtonReader.js"/>
-                <file name="extensions/cocostudio/reader/widgetreader/CheckBoxReader/CheckBoxReader.js"/>
-                <file name="extensions/cocostudio/reader/widgetreader/ImageViewReader/ImageViewReader.js"/>
-                <file name="extensions/cocostudio/reader/widgetreader/LabelAtlasReader/LabelAtlasReader.js"/>
-                <file name="extensions/cocostudio/reader/widgetreader/LabelBMFontReader/LabelBMFontReader.js"/>
-                <file name="extensions/cocostudio/reader/widgetreader/LabelReader/LabelReader.js"/>
-                <file name="extensions/cocostudio/reader/widgetreader/LayoutReader/LayoutReader.js"/>
-                <file name="extensions/cocostudio/reader/widgetreader/ListViewReader/ListViewReader.js"/>
-                <file name="extensions/cocostudio/reader/widgetreader/LoadingBarReader/LoadingBarReader.js"/>
-                <file name="extensions/cocostudio/reader/widgetreader/PageViewReader/PageViewReader.js"/>
-                <file name="extensions/cocostudio/reader/widgetreader/ScrollViewReader/ScrollViewReader.js"/>
-                <file name="extensions/cocostudio/reader/widgetreader/SliderReader/SliderReader.js"/>
-                <file name="extensions/cocostudio/reader/widgetreader/TextFieldReader/TextFieldReader.js"/>
-                <file name="extensions/cocostudio/reader/widgetreader/WidgetReader.js"/>
-                <file name="extensions/cocostudio/reader/widgetreader/WidgetReaderProtocol.js"/>
-                <file name="extensions/cocostudio/reader/GUIReader.js"/>
-                <file name="extensions/cocostudio/reader/SceneReader.js"/>
-                <file name="extensions/cocostudio/reader/timeline/ActionTimeline.js"/>
-                <file name="extensions/cocostudio/reader/timeline/ActionTimelineCache.js"/>
-                <file name="extensions/cocostudio/reader/timeline/Frame.js"/>
-                <file name="extensions/cocostudio/reader/timeline/CSLoader.js"/>
-                <file name="extensions/cocostudio/reader/timeline/Timeline.js"/>
+
+                <file name="extensions/cocostudio/timeline/ActionTimeline.js"/>
+                <file name="extensions/cocostudio/timeline/Frame.js"/>
+                <file name="extensions/cocostudio/timeline/Timeline.js"/>
+                <file name="extensions/cocostudio/loader/load.js"/>
+                <file name="extensions/cocostudio/loader/parsers/action-1.x.js"/>
+                <file name="extensions/cocostudio/loader/parsers/action-2.x.js"/>
+                <file name="extensions/cocostudio/loader/parsers/scene-1.x.js"/>
+                <file name="extensions/cocostudio/loader/parsers/timelineParser-1.x.js"/>
+                <file name="extensions/cocostudio/loader/parsers/timelineParser-2.x.js"/>
+                <file name="extensions/cocostudio/loader/parsers/uiParser-1.x.js"/>
+                <file name="extensions/cocostudio/loader/parsers/compatible.js"/>
 
                 <file name="cocos2d/physics/CCPhysicsSprite.js"/>
                 <file name="cocos2d/physics/CCPhysicsSpriteCanvasRenderCmd.js"/>
@@ -307,8 +298,8 @@
 
     <target name="compile_core">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="./../lib/cocos2d-js-v3.2-core-min.js">
-            <!--sourceMapOutputFile="./../lib/cocos2d-html5-v3.0-rc0-core-sourcemap" sourceMapFormat="V3" -->
+                debug="false" output="./../lib/cocos2d-js-v3.6-core-min.js">
+            <!--sourceMapOutputFile="./../lib/cocos2d-js-v3.6-core-sourcemap" sourceMapFormat="V3" -->
             <sources dir="./../">
                 <file name="CCBoot.js"/>
                 <file name="cocos2d/core/platform/CCClass.js"/>

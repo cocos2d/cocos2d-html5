@@ -90,7 +90,7 @@
     proto.checkAtlasCapacity = function(index){
         // make needed room
         var locAtlas = this._textureAtlas;
-        while (index >= locAtlas.capacity || locAtlas.capacity == locAtlas.totalQuads) {
+        while (index >= locAtlas.capacity || locAtlas.capacity === locAtlas.totalQuads) {
             this.increaseAtlasCapacity();
         }
     };
@@ -134,7 +134,8 @@
 
     proto.setTexture = function(texture){
         this._textureAtlas.setTexture(texture);
-        this._updateBlendFunc();
+        if(texture)
+            this._updateBlendFunc();
     };
 
     proto.removeAllQuads = function(){
@@ -168,7 +169,7 @@
             oldIndex = sprite.atlasIndex;
             sprite.atlasIndex = curIndex;
             sprite.arrivalOrder = 0;
-            if (oldIndex != curIndex)
+            if (oldIndex !== curIndex)
                 this._swap(oldIndex, curIndex);
             curIndex++;
         } else {
@@ -178,7 +179,7 @@
                 oldIndex = sprite.atlasIndex;
                 sprite.atlasIndex = curIndex;
                 sprite.arrivalOrder = 0;
-                if (oldIndex != curIndex)
+                if (oldIndex !== curIndex)
                     this._swap(oldIndex, curIndex);
                 curIndex++;
                 needNewIndex = false;
@@ -189,7 +190,7 @@
                     oldIndex = sprite.atlasIndex;
                     sprite.atlasIndex = curIndex;
                     sprite.arrivalOrder = 0;
-                    if (oldIndex != curIndex) {
+                    if (oldIndex !== curIndex) {
                         this._swap(oldIndex, curIndex);
                     }
                     curIndex++;
@@ -203,7 +204,7 @@
                 oldIndex = sprite.atlasIndex;
                 sprite.atlasIndex = curIndex;
                 sprite.arrivalOrder = 0;
-                if (oldIndex != curIndex) {
+                if (oldIndex !== curIndex) {
                     this._swap(oldIndex, curIndex);
                 }
                 curIndex++;
@@ -233,7 +234,7 @@
     };
 
     proto.setTextureAtlas = function(textureAtlas){
-        if (textureAtlas != this._textureAtlas) {
+        if (textureAtlas !== this._textureAtlas) {
             this._textureAtlas = textureAtlas;
         }
     };

@@ -67,11 +67,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     _bottom: null,
     _bottomRight: null,
 
-    //cache in canvas on Canvas mode
-    _cacheSprite: null,
-    _cacheCanvas: null,
-    _cacheContext: null,
-    _cacheTexture: null,
     _scale9Dirty: true,
 
     _opacityModifyRGB: false,
@@ -90,6 +85,10 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
     _spriteFrameRotated: false,
     _textureLoaded:false,
     _className:"Scale9Sprite",
+
+    //v3.3
+    _flippedX: false,
+    _flippedY: false,
 
     /**
      * return  texture is loaded
@@ -151,15 +150,15 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         var leftWidth = locBottomLeftContentSize.width;
         var bottomHeight = locBottomLeftContentSize.height;
 
-        if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
+        if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             //browser is in canvas mode, need to manually control rounding to prevent overlapping pixels
             var roundedRescaledWidth = Math.round(rescaledWidth);
-            if (rescaledWidth != roundedRescaledWidth) {
+            if (rescaledWidth !== roundedRescaledWidth) {
                 rescaledWidth = roundedRescaledWidth;
                 horizontalScale = rescaledWidth / locCenterContentSize.width;
             }
             var roundedRescaledHeight = Math.round(rescaledHeight);
-            if (rescaledHeight != roundedRescaledHeight) {
+            if (rescaledHeight !== roundedRescaledHeight) {
                 rescaledHeight = roundedRescaledHeight;
                 verticalScale = rescaledHeight / locCenterContentSize.height;
             }
@@ -468,11 +467,11 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         if(!locLoaded){
             texture.addEventListener("load", function(sender){
                 // the texture is rotated on Canvas render mode, so isRotated always is false.
-                var preferredSize = this._preferredSize;
-                preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                var preferredSize = this._preferredSize, restorePreferredSize = preferredSize.width !== 0 && preferredSize.height !== 0;
+                if (restorePreferredSize) preferredSize = cc.size(preferredSize.width, preferredSize.height);
                 var size  = sender.getContentSize();
                 this.updateWithBatchNode(this._scale9Image, cc.rect(0,0,size.width,size.height), false, this._capInsets);
-                this.setPreferredSize(preferredSize);
+                if (restorePreferredSize)this.setPreferredSize(preferredSize);
                 this._positionsAreDirty = true;
                 this.dispatchEvent("load");
             }, this);
@@ -501,17 +500,17 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         if(!locLoaded){
             spriteFrame.addEventListener("load", function(sender){
                 // the texture is rotated on Canvas render mode, so isRotated always is false.
-                var preferredSize = this._preferredSize;
-                preferredSize = cc.size(preferredSize.width, preferredSize.height);
-                this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc._renderType == cc._RENDER_TYPE_WEBGL && sender.isRotated(), this._capInsets);
-                this.setPreferredSize(preferredSize);
+                var preferredSize = this._preferredSize, restorePreferredSize = preferredSize.width !== 0 && preferredSize.height !== 0;
+                if (restorePreferredSize) preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc._renderType === cc._RENDER_TYPE_WEBGL && sender.isRotated(), this._capInsets);
+                if (restorePreferredSize)this.setPreferredSize(preferredSize);
                 this._positionsAreDirty = true;
                 this.dispatchEvent("load");
             },this);
         }
         var batchNode = new cc.SpriteBatchNode(spriteFrame.getTexture(), 9);
         // the texture is rotated on Canvas render mode, so isRotated always is false.
-        return this.initWithBatchNode(batchNode, spriteFrame.getRect(), cc._renderType == cc._RENDER_TYPE_WEBGL && spriteFrame.isRotated(), capInsets);
+        return this.initWithBatchNode(batchNode, spriteFrame.getRect(), cc._renderType === cc._RENDER_TYPE_WEBGL && spriteFrame.isRotated(), capInsets);
     },
 
     /**
@@ -593,7 +592,7 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         // Release old sprites
         this.removeAllChildren(true);
 
-        if (this._scale9Image != batchNode)
+        if (this._scale9Image !== batchNode)
             this._scale9Image = batchNode;
 
         if(!this._scale9Image)
@@ -602,6 +601,14 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         var tmpTexture = batchNode.getTexture();
         var locLoaded = tmpTexture.isLoaded();
         this._textureLoaded = locLoaded;
+
+        //this._capInsets = capInsets;
+        var locCapInsets = this._capInsets;
+        locCapInsets.x = capInsets.x;
+        locCapInsets.y = capInsets.y;
+        locCapInsets.width = capInsets.width;
+        locCapInsets.height = capInsets.height;
+
         if(!locLoaded){
             tmpTexture.addEventListener("load", function(sender){
                 this._positionsAreDirty = true;
@@ -612,12 +619,6 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         var locScale9Image = this._scale9Image;
         locScale9Image.removeAllChildren(true);
 
-        //this._capInsets = capInsets;
-        var locCapInsets = this._capInsets;
-        locCapInsets.x = capInsets.x;
-        locCapInsets.y = capInsets.y;
-        locCapInsets.width = capInsets.width;
-        locCapInsets.height = capInsets.height;
         this._spriteFrameRotated = rotated;
 
         var selTexture = locScale9Image.getTexture();
@@ -901,21 +902,126 @@ ccui.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprite# */{
         if(!locLoaded){
             spriteFrame.addEventListener("load", function(sender){
                 // the texture is rotated on Canvas render mode, so isRotated always is false.
-                var preferredSize = this._preferredSize;
-                preferredSize = cc.size(preferredSize.width, preferredSize.height);
-                this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc._renderType == cc._RENDER_TYPE_WEBGL && sender.isRotated(), this._capInsets);
-                this.setPreferredSize(preferredSize);
+                var preferredSize = this._preferredSize, restorePreferredSize = preferredSize.width !== 0 && preferredSize.height !== 0;
+                if (restorePreferredSize) preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc._renderType === cc._RENDER_TYPE_WEBGL && sender.isRotated(), this._capInsets);
+                if (restorePreferredSize)this.setPreferredSize(preferredSize);
                 this._positionsAreDirty = true;
                 this.dispatchEvent("load");
             },this);
         }
-        this.updateWithBatchNode(batchNode, spriteFrame.getRect(), cc._renderType == cc._RENDER_TYPE_WEBGL && spriteFrame.isRotated(), cc.rect(0, 0, 0, 0));
+        this.updateWithBatchNode(batchNode, spriteFrame.getRect(), cc._renderType === cc._RENDER_TYPE_WEBGL && spriteFrame.isRotated(), cc.rect(0, 0, 0, 0));
 
         // Reset insets
         this._insetLeft = 0;
         this._insetTop = 0;
         this._insetRight = 0;
         this._insetBottom = 0;
+    },
+
+    //v3.3
+    /**
+     * Sets ccui.Scale9Sprite's state
+     * @since v3.3
+     * @param {Number} state
+     */
+    setState: function(state){
+        this._renderCmd.setState(state);
+    },
+
+    //setScale9Enabled implement late
+
+    /**
+     * Sets whether the widget should be flipped horizontally or not.
+     * @since v3.3
+     * @param flippedX true if the widget should be flipped horizontally, false otherwise.
+     */
+    setFlippedX: function(flippedX){
+        var realScale = this.getScaleX();
+        this._flippedX = flippedX;
+        this.setScaleX(realScale);
+    },
+
+    /**
+     * <p>
+     * Returns the flag which indicates whether the widget is flipped horizontally or not.                         <br/>
+     *                                                                                                             <br/>
+     * It only flips the texture of the widget, and not the texture of the widget's children.                      <br/>
+     * Also, flipping the texture doesn't alter the anchorPoint.                                                   <br/>
+     * If you want to flip the anchorPoint too, and/or to flip the children too use:                               <br/>
+     * widget->setScaleX(sprite->getScaleX() * -1);                                                                <br/>
+     * </p>
+     * @since v3.3
+     * @return {Boolean} true if the widget is flipped horizontally, false otherwise.
+     */
+    isFlippedX: function(){
+        return this._flippedX;
+    },
+
+    /**
+     * Sets whether the widget should be flipped vertically or not.
+     * @since v3.3
+     * @param flippedY true if the widget should be flipped vertically, false otherwise.
+     */
+    setFlippedY:function(flippedY){
+        var realScale = this.getScaleY();
+        this._flippedY = flippedY;
+        this.setScaleY(realScale);
+    },
+
+    /**
+     * <p>
+     * Return the flag which indicates whether the widget is flipped vertically or not.                             <br/>
+     *                                                                                                              <br/>
+     * It only flips the texture of the widget, and not the texture of the widget's children.                       <br/>
+     * Also, flipping the texture doesn't alter the anchorPoint.                                                    <br/>
+     * If you want to flip the anchorPoint too, and/or to flip the children too use:                                <br/>
+     * widget->setScaleY(widget->getScaleY() * -1);                                                                 <br/>
+     * </p>
+     * @since v3.3
+     * @return {Boolean} true if the widget is flipped vertically, false otherwise.
+     */
+    isFlippedY:function(){
+        return this._flippedY;
+    },
+
+    setScaleX: function (scaleX) {
+        if (this._flippedX)
+            scaleX = scaleX * -1;
+        cc.Node.prototype.setScaleX.call(this, scaleX);
+    },
+
+    setScaleY: function (scaleY) {
+        if (this._flippedY)
+            scaleY = scaleY * -1;
+        cc.Node.prototype.setScaleY.call(this, scaleY);
+    },
+
+    setScale: function (scaleX, scaleY) {
+        if(scaleY === undefined)
+            scaleY = scaleX;
+        this.setScaleX(scaleX);
+        this.setScaleY(scaleY);
+    },
+
+    getScaleX: function () {
+        var originalScale = cc.Node.prototype.getScaleX.call(this);
+        if (this._flippedX)
+            originalScale = originalScale * -1.0;
+        return originalScale;
+    },
+
+    getScaleY: function () {
+        var originalScale = cc.Node.prototype.getScaleY.call(this);
+        if (this._flippedY)
+            originalScale = originalScale * -1.0;
+        return originalScale;
+    },
+
+    getScale: function () {
+        if(this.getScaleX() !== this.getScaleY())
+            cc.log("Scale9Sprite#scale. ScaleX != ScaleY. Don't know which one to return");
+        return this.getScaleX();
     },
 
     _createRenderCmd: function(){
@@ -997,3 +1103,5 @@ ccui.Scale9Sprite.POSITIONS_BOTTOM = 4;
 ccui.Scale9Sprite.POSITIONS_TOPRIGHT = 5;
 ccui.Scale9Sprite.POSITIONS_TOPLEFT = 6;
 ccui.Scale9Sprite.POSITIONS_BOTTOMRIGHT = 7;
+
+ccui.Scale9Sprite.state = {NORMAL: 0, GRAY: 1};

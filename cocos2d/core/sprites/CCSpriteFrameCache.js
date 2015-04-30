@@ -71,6 +71,17 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
             this._frameConfigCache[url] = dict;
             return dict;
         }
+        this._frameConfigCache[url] = this._parseFrameConfig(dict);
+        return this._frameConfigCache[url];
+    },
+
+    _getFrameConfigByJsonObject: function(url, jsonObject) {
+        cc.assert(jsonObject, cc._LogInfos.spriteFrameCache__getFrameConfig_2, url);
+        this._frameConfigCache[url] = this._parseFrameConfig(jsonObject);
+        return this._frameConfigCache[url];
+    },
+
+    _parseFrameConfig: function(dict) {
         var tempFrames = dict["frames"], tempMeta = dict["metadata"] || dict["meta"];
         var frames = {}, meta = {};
         var format = 0;
@@ -125,12 +136,68 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
             }
             frames[key] = tempFrame;
         }
-        var cfg = this._frameConfigCache[url] = {
-            _inited : true,
-            frames : frames,
-            meta : meta
-        };
-        return cfg;
+        return {_inited: true, frames: frames, meta: meta};
+    },
+
+    // Adds multiple Sprite Frames from a json object. it uses for local web view app.
+    _addSpriteFramesByObject: function(url, jsonObject, texture) {
+        cc.assert(url, cc._LogInfos.spriteFrameCache_addSpriteFrames_2);
+        if(!jsonObject || !jsonObject["frames"])
+            return;
+
+        var frameConfig = this._frameConfigCache[url] || this._getFrameConfigByJsonObject(url, jsonObject);
+        //this._checkConflict(frameConfig);                             //TODO
+        this._createSpriteFrames(url, frameConfig, texture);
+    },
+
+    _createSpriteFrames: function(url, frameConfig, texture) {
+        var frames = frameConfig.frames, meta = frameConfig.meta;
+        if(!texture){
+            var texturePath = cc.path.changeBasename(url, meta.image || ".png");
+            texture = cc.textureCache.addImage(texturePath);
+        }else if(texture instanceof cc.Texture2D){
+            //do nothing
+        }else if(cc.isString(texture)){//string
+            texture = cc.textureCache.addImage(texture);
+        }else{
+            cc.assert(0, cc._LogInfos.spriteFrameCache_addSpriteFrames_3);
+        }
+
+        //create sprite frames
+        var spAliases = this._spriteFramesAliases, spriteFrames = this._spriteFrames;
+        for (var key in frames) {
+            var frame = frames[key];
+            var spriteFrame = spriteFrames[key];
+            if (!spriteFrame) {
+                spriteFrame = new cc.SpriteFrame(texture, frame.rect, frame.rotated, frame.offset, frame.size);
+                var aliases = frame.aliases;
+                if(aliases){//set aliases
+                    for(var i = 0, li = aliases.length; i < li; i++){
+                        var alias = aliases[i];
+                        if (spAliases[alias])
+                            cc.log(cc._LogInfos.spriteFrameCache_addSpriteFrames, alias);
+                        spAliases[alias] = key;
+                    }
+                }
+
+                if (cc._renderType === cc._RENDER_TYPE_CANVAS && spriteFrame.isRotated()) {
+                    //clip to canvas
+                    var locTexture = spriteFrame.getTexture();
+                    if (locTexture.isLoaded()) {
+                        var tempElement = spriteFrame.getTexture().getHtmlElementObj();
+                        tempElement = cc.Sprite.CanvasRenderCmd._cutRotateImageToCanvas(tempElement, spriteFrame.getRectInPixels());
+                        var tempTexture = new cc.Texture2D();
+                        tempTexture.initWithElement(tempElement);
+                        tempTexture.handleLoadedTexture();
+                        spriteFrame.setTexture(tempTexture);
+
+                        var rect = spriteFrame._rect;
+                        spriteFrame.setRect(cc.rect(0, 0, rect.width, rect.height));
+                    }
+                }
+                spriteFrames[key] = spriteFrame;
+            }
+        }
     },
 
     /**
@@ -154,58 +221,9 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
         if(!dict || !dict["frames"])
             return;
 
-        var self = this;
-        var frameConfig = self._frameConfigCache[url] || self._getFrameConfig(url);
-        //self._checkConflict(frameConfig);                             //TODO
-        var frames = frameConfig.frames, meta = frameConfig.meta;
-        if(!texture){
-            var texturePath = cc.path.changeBasename(url, meta.image || ".png");
-            texture = cc.textureCache.addImage(texturePath);
-        }else if(texture instanceof cc.Texture2D){
-            //do nothing
-        }else if(cc.isString(texture)){//string
-            texture = cc.textureCache.addImage(texture);
-        }else{
-            cc.assert(0, cc._LogInfos.spriteFrameCache_addSpriteFrames_3);
-        }
-
-        //create sprite frames
-        var spAliases = self._spriteFramesAliases, spriteFrames = self._spriteFrames;
-        for (var key in frames) {
-            var frame = frames[key];
-            var spriteFrame = spriteFrames[key];
-            if (!spriteFrame) {
-                spriteFrame = new cc.SpriteFrame(texture, frame.rect, frame.rotated, frame.offset, frame.size);
-                var aliases = frame.aliases;
-                if(aliases){//set aliases
-                    for(var i = 0, li = aliases.length; i < li; i++){
-                        var alias = aliases[i];
-                        if (spAliases[alias]) {
-                            cc.log(cc._LogInfos.spriteFrameCache_addSpriteFrames, alias);
-                        }
-                        spAliases[alias] = key;
-                    }
-                }
-
-                if (cc._renderType === cc._RENDER_TYPE_CANVAS && spriteFrame.isRotated()) {
-                    //clip to canvas
-                    var locTexture = spriteFrame.getTexture();
-                    if (locTexture.isLoaded()) {
-                        var tempElement = spriteFrame.getTexture().getHtmlElementObj();
-                        tempElement = cc.Sprite.CanvasRenderCmd._cutRotateImageToCanvas(tempElement, spriteFrame.getRectInPixels());
-                        var tempTexture = new cc.Texture2D();
-                        tempTexture.initWithElement(tempElement);
-                        tempTexture.handleLoadedTexture();
-                        spriteFrame.setTexture(tempTexture);
-
-                        var rect = spriteFrame._rect;
-                        spriteFrame.setRect(cc.rect(0, 0, rect.width, rect.height));
-                    }
-                }
-
-                spriteFrames[key] = spriteFrame;
-            }
-        }
+        var frameConfig = this._frameConfigCache[url] || this._getFrameConfig(url);
+        //this._checkConflict(frameConfig);                             //TODO
+        this._createSpriteFrames(url, frameConfig, texture);
     },
 
     // Function to check if frames to add exists already, if so there may be name conflit that must be solved
@@ -282,7 +300,7 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
             if (spriteFrames[key]) {
                 delete(spriteFrames[key]);
                 for (var alias in aliases) {//remove alias
-                    if(aliases[alias] == key) delete aliases[alias];
+                    if(aliases[alias] === key) delete aliases[alias];
                 }
             }
         }
@@ -299,10 +317,10 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
         var self = this, spriteFrames = self._spriteFrames, aliases = self._spriteFramesAliases;
         for (var key in spriteFrames) {
             var frame = spriteFrames[key];
-            if (frame && (frame.getTexture() == texture)) {
+            if (frame && (frame.getTexture() === texture)) {
                 delete(spriteFrames[key]);
                 for (var alias in aliases) {//remove alias
-                    if(aliases[alias] == key) delete aliases[alias];
+                    if(aliases[alias] === key) delete aliases[alias];
                 }
             }
         }
@@ -330,7 +348,6 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
                 if(!frame) delete self._spriteFramesAliases[name];
             }
         }
-        if (!frame) cc.log(cc._LogInfos.spriteFrameCache_getSpriteFrame, name);
         return frame;
     },
 

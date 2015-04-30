@@ -178,7 +178,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
             if (e.keyCode === cc.KEY.tab) {
                 e.stopPropagation();
                 e.preventDefault();
-            } else if (e.keyCode == cc.KEY.enter) {
+            } else if (e.keyCode === cc.KEY.enter) {
                 selfPointer.dispatchInsertText("\n", 1);
                 e.stopPropagation();
                 e.preventDefault();
@@ -187,7 +187,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
 
         if (/msie/i.test(navigator.userAgent)) {
             cc._addEventListener(this._domInputControl, "keyup", function (e) {
-                if (e.keyCode == cc.KEY.backspace) {
+                if (e.keyCode === cc.KEY.backspace) {
                     selfPointer._processDomInputString(selfPointer._domInputControl.value);
                 }
             }, false);
@@ -353,7 +353,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
             return false;
 
         // if delegate is not in delegate list, return
-        if (this.impl._delegateList.indexOf(delegate) == -1)
+        if (this.impl._delegateList.indexOf(delegate) === -1)
             return false;
 
         if (this.impl._delegateWithIme) {
@@ -387,7 +387,9 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
             delegate.didAttachWithIME();
             //prompt
             this._currentInputString = delegate.string || "";
-            var userInput = prompt("please enter your word:", this._currentInputString);
+
+            var tipMessage = delegate.getTipMessage ? delegate.getTipMessage() : "please enter your word:";
+            var userInput = prompt(tipMessage, this._currentInputString);
             if(userInput != null)
                 this._processDomInputString(userInput);
             this.dispatchInsertText("\n", 1);
@@ -423,7 +425,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
             return false;
 
         // if delegate is not the current delegate attached with ime, return
-        if (this.impl._delegateWithIme != delegate)
+        if (this.impl._delegateWithIme !== delegate)
             return false;
 
         if (!delegate.canDetachWithIME())
@@ -447,11 +449,11 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
             return;
 
         // if delegate is not in delegate list, return
-        if (this.impl._delegateList.indexOf(delegate) == -1)
+        if (this.impl._delegateList.indexOf(delegate) === -1)
             return;
 
         if (this.impl._delegateWithIme) {
-            if (delegate == this.impl._delegateWithIme) {
+            if (delegate === this.impl._delegateWithIme) {
                 this.impl._delegateWithIme = null;
             }
         }
@@ -469,13 +471,13 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
      */
     processKeycode:function (keyCode) {
         if (keyCode < 32) {
-            if (keyCode == cc.KEY.backspace) {
+            if (keyCode === cc.KEY.backspace) {
                 this.dispatchDeleteBackward();
-            } else if (keyCode == cc.KEY.enter) {
+            } else if (keyCode === cc.KEY.enter) {
                 this.dispatchInsertText("\n", 1);
-            } else if (keyCode == cc.KEY.tab) {
+            } else if (keyCode === cc.KEY.tab) {
                 //tab input
-            } else if (keyCode == cc.KEY.escape) {
+            } else if (keyCode === cc.KEY.escape) {
                 //ESC input
             }
         } else if (keyCode < 255) {
@@ -509,7 +511,7 @@ cc.IMEDispatcher.Impl = cc.Class.extend(/** @lends cc.IMEDispatcher.Impl# */{
      */
     findDelegate:function (delegate) {
         for (var i = 0; i < this._delegateList.length; i++) {
-            if (this._delegateList[i] == delegate)
+            if (this._delegateList[i] === delegate)
                 return i;
         }
         return null;

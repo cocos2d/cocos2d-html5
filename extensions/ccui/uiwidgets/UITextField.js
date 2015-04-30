@@ -37,7 +37,6 @@ ccui._TextFieldRenderer = cc.TextFieldTTF.extend({
     _insertText: false,
     _deleteBackward: false,
     _className: "_TextFieldRenderer",
-    _textFieldRendererAdaptDirty: true,
 
     ctor: function () {
         cc.TextFieldTTF.prototype.ctor.call(this);
@@ -62,7 +61,7 @@ ccui._TextFieldRenderer = cc.TextFieldTTF.extend({
     },
 
     onTextFieldInsertText: function (sender, text, len) {
-        if (len == 1 && text == "\n")
+        if (len === 1 && text === "\n")
             return false;
 
         this.setInsertText(true);
@@ -82,7 +81,7 @@ ccui._TextFieldRenderer = cc.TextFieldTTF.extend({
     insertText: function (text, len) {
         var input_text = text;
 
-        if (text != "\n"){
+        if (text !== "\n"){
             if (this._maxLengthEnabled){
                 var text_count = this.getString().length;
                 if (text_count >= this._maxLength){
@@ -239,6 +238,8 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     _fontName: "",
     _fontSize: 12,
 
+    _ccEventCallback: null,
+
     /**
      * allocates and initializes a UITextField.
      * Constructor of ccui.TextField. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
@@ -251,12 +252,12 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
      */
     ctor: function (placeholder, fontName, fontSize) {
         ccui.Widget.prototype.ctor.call(this);
-        if (placeholder)
-            this.setPlaceHolder(placeholder);
         if (fontName)
             this.setFontName(fontName);
         if (fontSize)
             this.setFontSize(fontSize);
+        if (placeholder)
+            this.setPlaceHolder(placeholder);
     },
 
     /**
@@ -487,6 +488,10 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
             setTimeout(function(){
                 self._textFieldRenderer.attachWithIME();
             }, 0);
+        }else{
+            setTimeout(function(){
+                self._textFieldRenderer.detachWithIME();
+            }, 0);
         }
         return pass;
     },
@@ -560,25 +565,27 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     update: function (dt) {
-        if (this.getAttachWithIME()) {
-            this._attachWithIMEEvent();
-            this.setAttachWithIME(false);
-        }
         if (this.getDetachWithIME()) {
             this._detachWithIMEEvent();
             this.setDetachWithIME(false);
         }
+        if (this.getAttachWithIME()) {
+            this._attachWithIMEEvent();
+            this.setAttachWithIME(false);
+        }
         if (this.getInsertText()) {
+            this._textFieldRendererAdaptDirty = true;
+            this._updateContentSizeWithTextureSize(this._textFieldRenderer.getContentSize());
+
             this._insertTextEvent();
             this.setInsertText(false);
-            this._textFieldRendererAdaptDirty = true;
-            this._updateContentSizeWithTextureSize(this._textFieldRenderer.getContentSize());
         }
         if (this.getDeleteBackward()) {
-            this._deleteBackwardEvent();
-            this.setDeleteBackward(false);
             this._textFieldRendererAdaptDirty = true;
             this._updateContentSizeWithTextureSize(this._textFieldRenderer.getContentSize());
+
+            this._deleteBackwardEvent();
+            this.setDeleteBackward(false);
         }
     },
 
@@ -653,6 +660,9 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
             else
                 this._textFieldEventSelector(this, ccui.TextField.EVENT_ATTACH_WITH_IME);
         }
+        if (this._ccEventCallback){
+            this._ccEventCallback(this, ccui.TextField.EVENT_ATTACH_WITH_IME);
+        }
     },
 
     _detachWithIMEEvent: function () {
@@ -662,6 +672,8 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
             else
                 this._textFieldEventSelector(this, ccui.TextField.EVENT_DETACH_WITH_IME);
         }
+        if (this._ccEventCallback)
+            this._ccEventCallback(this, ccui.TextField.EVENT_DETACH_WITH_IME);
     },
 
     _insertTextEvent: function () {
@@ -669,8 +681,10 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
             if (this._textFieldEventListener)
                 this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_INSERT_TEXT);
             else
-                this._textFieldEventSelector(this, ccui.TextField.EVENT_INSERT_TEXT);
+                this._textFieldEventSelector(this, ccui.TextField.EVENT_INSERT_TEXT);          //eventCallback
         }
+        if (this._ccEventCallback)
+            this._ccEventCallback(this, ccui.TextField.EVENT_INSERT_TEXT);
     },
 
     _deleteBackwardEvent: function () {
@@ -678,8 +692,10 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
             if (this._textFieldEventListener)
                 this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_DELETE_BACKWARD);
             else
-                this._textFieldEventSelector(this, ccui.TextField.EVENT_DELETE_BACKWARD);
+                this._textFieldEventSelector(this, ccui.TextField.EVENT_DELETE_BACKWARD);         //eventCallback
         }
+        if (this._ccEventCallback)
+            this._ccEventCallback(this, ccui.TextField.EVENT_DELETE_BACKWARD);
     },
 
     /**
@@ -698,7 +714,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
      * @param {Function} selector
      */
     addEventListener: function(selector, target){
-        this._textFieldEventSelector = selector;
+        this._textFieldEventSelector = selector;        //when target is undefined, _textFieldEventSelector is ccEventCallback.
         this._textFieldEventListener = target;
     },
 
@@ -718,6 +734,17 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         if (!this._ignoreSize)
             this._textFieldRenderer.setDimensions(this._contentSize);
         this._textFieldRenderer.setPosition(this._contentSize.width / 2, this._contentSize.height / 2);
+    },
+
+    //@since v3.3
+    getAutoRenderSize: function(){
+        var virtualSize = this._textFieldRenderer.getContentSize();
+        if (!this._ignoreSize) {
+            this._textFieldRenderer.setDimensions(0, 0);
+            virtualSize = this._textFieldRenderer.getContentSize();
+            this._textFieldRenderer.setDimensions(this._contentSize.width, this._contentSize.height);
+        }
+        return virtualSize;
     },
 
     /**
@@ -769,6 +796,9 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         this.setDetachWithIME(textField.getDetachWithIME());
         this.setInsertText(textField.getInsertText());
         this.setDeleteBackward(textField.getDeleteBackward());
+        this._ccEventCallback = textField._ccEventCallback;
+        this._textFieldEventListener = textField._textFieldEventListener;
+        this._textFieldEventSelector = textField._textFieldEventSelector;
     },
 
     /**

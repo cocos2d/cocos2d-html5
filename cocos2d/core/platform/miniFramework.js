@@ -33,7 +33,7 @@
  */
 cc.$ = function (x) {
     /** @lends cc.$# */
-    var parent = (this == cc) ? document : this;
+    var parent = (this === cc) ? document : this;
 
     var el = (x instanceof HTMLElement) ? x : parent.querySelector(x);
 

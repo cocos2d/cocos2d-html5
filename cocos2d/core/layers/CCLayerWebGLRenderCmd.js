@@ -75,7 +75,7 @@
     var proto = cc.LayerColor.WebGLRenderCmd.prototype = Object.create(cc.Layer.WebGLRenderCmd.prototype);
     proto.constructor = cc.LayerColor.WebGLRenderCmd;
 
-    cc.LayerColor.WebGLRenderCmd.prototype.rendering = function (ctx) {
+    proto.rendering = function (ctx) {
         var context = ctx || cc._renderContext;
         var node = this._node;
 
@@ -93,7 +93,7 @@
         context.bindBuffer(context.ARRAY_BUFFER, this._colorsUint8Buffer);
         context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, 0, 0);
 
-        context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
+        context.drawArrays(context.TRIANGLE_STRIP, 0, this._squareVertices.length);
     };
 
     proto._updateSquareVertices = function(size, height){
@@ -160,6 +160,8 @@
     cc.LayerGradient.WebGLRenderCmd = function(renderable){
         cc.LayerColor.WebGLRenderCmd.call(this, renderable);
         this._needDraw = true;
+        this._clipRect = new cc.Rect();
+        this._clippingRectDirty = false;
     };
     var proto = cc.LayerGradient.WebGLRenderCmd.prototype = Object.create(cc.LayerColor.WebGLRenderCmd.prototype);
     cc.inject(cc.LayerGradient.RenderCmd, proto);
@@ -201,48 +203,109 @@
 
     proto._updateColor = function(){
         this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.gradientDirty ^ this._dirtyFlag;
-        var _t = this, node = this._node;
-        var locAlongVector = node._alongVector;
-        var h = cc.pLength(locAlongVector);
-        if (h === 0)
+        var node = this._node, stops = node._colorStops;
+        if(!stops || stops.length < 2)
             return;
 
-        var c = Math.sqrt(2.0), u = cc.p(locAlongVector.x / h, locAlongVector.y / h);
+        this._clippingRectDirty = true;
+        var stopsLen = stops.length, verticesLen = stopsLen * 2, i, contentSize = node._contentSize;
+        this._squareVerticesAB = new ArrayBuffer(verticesLen * 8);
+        this._squareColorsAB = new ArrayBuffer(verticesLen * 4);
+        var locVertices = this._squareVertices, locColors = this._squareColors;
+        locVertices.length = 0;
+        locColors.length = 0;
 
-        // Compressed Interpolation mode
-        if (node._compressedInterpolation) {
-            var h2 = 1 / ( Math.abs(u.x) + Math.abs(u.y) );
-            u = cc.pMult(u, h2 * c);
+        var locSquareVerticesAB = this._squareVerticesAB, locSquareColorsAB = this._squareColorsAB;
+        var locVertex2FLen = cc.Vertex2F.BYTES_PER_ELEMENT, locColorLen = cc.Color.BYTES_PER_ELEMENT;
+        for(i = 0; i < verticesLen; i++){
+            locVertices.push(new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen * i));
+            locColors.push(cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * i))
         }
 
-        var opacityf = _t._displayedOpacity / 255.0;
-        var locDisplayedColor = _t._displayedColor, locEndColor = node._endColor;
-        var S = { r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: node._startOpacity * opacityf};
-        var E = {r: locEndColor.r, g: locEndColor.g, b: locEndColor.b, a: node._endOpacity * opacityf};
+        //init vertex
+        var angle = Math.PI + cc.pAngleSigned(cc.p(0, -1), node._alongVector), locAnchor = cc.p(contentSize.width/2, contentSize.height /2);
+        var degrees = Math.round(cc.radiansToDegrees(angle));
+        var transMat = cc.affineTransformMake(1, 0, 0, 1, locAnchor.x, locAnchor.y);
+        transMat = cc.affineTransformRotate(transMat, angle);
+        var a, b;
+        if(degrees < 90) {
+            a = cc.p(-locAnchor.x, locAnchor.y);
+            b = cc.p(locAnchor.x, locAnchor.y);
+        } else if(degrees < 180) {
+            a = cc.p(locAnchor.x, locAnchor.y);
+            b = cc.p(locAnchor.x, -locAnchor.y);
+        } else if(degrees < 270) {
+            a = cc.p(locAnchor.x, -locAnchor.y);
+            b = cc.p(-locAnchor.x, -locAnchor.y);
+        } else {
+            a = cc.p(-locAnchor.x, -locAnchor.y);
+            b = cc.p(-locAnchor.x, locAnchor.y);
+        }
 
-        // (-1, -1)
-        var locSquareColors = _t._squareColors;
-        var locSquareColor0 = locSquareColors[0], locSquareColor1 = locSquareColors[1], locSquareColor2 = locSquareColors[2], locSquareColor3 = locSquareColors[3];
-        locSquareColor0.r = ((E.r + (S.r - E.r) * ((c + u.x + u.y) / (2.0 * c))));
-        locSquareColor0.g = ((E.g + (S.g - E.g) * ((c + u.x + u.y) / (2.0 * c))));
-        locSquareColor0.b = ((E.b + (S.b - E.b) * ((c + u.x + u.y) / (2.0 * c))));
-        locSquareColor0.a = ((E.a + (S.a - E.a) * ((c + u.x + u.y) / (2.0 * c))));
-        // (1, -1)
-        locSquareColor1.r = ((E.r + (S.r - E.r) * ((c - u.x + u.y) / (2.0 * c))));
-        locSquareColor1.g = ((E.g + (S.g - E.g) * ((c - u.x + u.y) / (2.0 * c))));
-        locSquareColor1.b = ((E.b + (S.b - E.b) * ((c - u.x + u.y) / (2.0 * c))));
-        locSquareColor1.a = ((E.a + (S.a - E.a) * ((c - u.x + u.y) / (2.0 * c))));
-        // (-1, 1)
-        locSquareColor2.r = ((E.r + (S.r - E.r) * ((c + u.x - u.y) / (2.0 * c))));
-        locSquareColor2.g = ((E.g + (S.g - E.g) * ((c + u.x - u.y) / (2.0 * c))));
-        locSquareColor2.b = ((E.b + (S.b - E.b) * ((c + u.x - u.y) / (2.0 * c))));
-        locSquareColor2.a = ((E.a + (S.a - E.a) * ((c + u.x - u.y) / (2.0 * c))));
-        // (1, 1)
-        locSquareColor3.r = ((E.r + (S.r - E.r) * ((c - u.x - u.y) / (2.0 * c))));
-        locSquareColor3.g = ((E.g + (S.g - E.g) * ((c - u.x - u.y) / (2.0 * c))));
-        locSquareColor3.b = ((E.b + (S.b - E.b) * ((c - u.x - u.y) / (2.0 * c))));
-        locSquareColor3.a = ((E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c))));
+        var sin = Math.sin(angle), cos = Math.cos(angle);
+        var tx = Math.abs((a.x * cos - a.y * sin)/locAnchor.x), ty = Math.abs((b.x * sin + b.y * cos)/locAnchor.y);
+        transMat = cc.affineTransformScale(transMat, tx, ty);
+        for (i = 0; i < stopsLen; i++) {
+            var stop = stops[i], y = stop.p * contentSize.height ;
+            var p0 = cc.pointApplyAffineTransform(- locAnchor.x , y - locAnchor.y, transMat);
+            locVertices[i * 2].x = p0.x;
+            locVertices[i * 2].y = p0.y;
+            var p1 = cc.pointApplyAffineTransform(contentSize.width - locAnchor.x, y - locAnchor.y, transMat);
+            locVertices[i * 2 + 1].x = p1.x;
+            locVertices[i * 2 + 1].y = p1.y;
+        }
 
-        _t._bindLayerColorsBufferData();
+        //init color
+        var opacityf = this._displayedOpacity / 255.0; //, displayColor = this._displayedColor;
+        for(i = 0; i < stopsLen; i++){
+            var stopColor = stops[i].color, locSquareColor0 = locColors[i * 2], locSquareColor1 = locColors[i * 2 + 1];
+            locSquareColor0.r = stopColor.r;
+            locSquareColor0.g = stopColor.g;
+            locSquareColor0.b = stopColor.b;
+            locSquareColor0.a = stopColor.a * opacityf;
+
+            locSquareColor1.r = stopColor.r;
+            locSquareColor1.g = stopColor.g;
+            locSquareColor1.b = stopColor.b;
+            locSquareColor1.a = stopColor.a * opacityf;
+        }
+        this._bindLayerVerticesBufferData();
+        this._bindLayerColorsBufferData();
+    };
+
+    proto.rendering = function (ctx) {
+        var context = ctx || cc._renderContext, node = this._node;
+
+        //it is too expensive to use stencil to clip, so it use Scissor,
+        //but it has a bug when layer rotated and layer's content size less than canvas's size.
+        var clippingRect = this._getClippingRect();
+        context.enable(context.SCISSOR_TEST);
+        cc.view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
+
+        //draw gradient layer
+        this._shaderProgram.use();
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
+        cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
+        //
+        // Attributes
+        //
+        context.bindBuffer(context.ARRAY_BUFFER, this._verticesFloat32Buffer);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, 0, 0);
+        context.bindBuffer(context.ARRAY_BUFFER, this._colorsUint8Buffer);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, 0, 0);
+        context.drawArrays(context.TRIANGLE_STRIP, 0, this._squareVertices.length);
+
+        context.disable(context.SCISSOR_TEST);
+    };
+
+    proto._getClippingRect = function(){
+        if(this._clippingRectDirty){
+            var node = this._node;
+            var rect = cc.rect(0, 0, node._contentSize.width, node._contentSize.height);
+            var trans = node.getNodeToWorldTransform();
+            this._clipRect = cc._rectApplyAffineTransformIn(rect, trans);
+        }
+        return this._clipRect;
     };
 })();

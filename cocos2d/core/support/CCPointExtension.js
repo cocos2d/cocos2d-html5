@@ -204,7 +204,8 @@ cc.pDistance = function (v1, v2) {
  * @return {cc.Point}
  */
 cc.pNormalize = function (v) {
-    return cc.pMult(v, 1.0 / cc.pLength(v));
+    var n = cc.pLength(v);
+    return n === 0 ? cc.p(v) : cc.pMult(v, 1.0 / n);
 };
 
 /**
@@ -370,7 +371,7 @@ cc.pRotateByAngle = function (v, pivot, angle) {
  * @return {Boolean}
  */
 cc.pLineIntersect = function (A, B, C, D, retP) {
-    if ((A.x == B.x && A.y == B.y) || (C.x == D.x && C.y == D.y)) {
+    if ((A.x === B.x && A.y === B.y) || (C.x === D.x && C.y === D.y)) {
         return false;
     }
     var BAx = B.x - A.x;
@@ -385,8 +386,8 @@ cc.pLineIntersect = function (A, B, C, D, retP) {
     retP.x = DCx * ACy - DCy * ACx;
     retP.y = BAx * ACy - BAy * ACx;
 
-    if (denom == 0) {
-        if (retP.x == 0 || retP.y == 0) {
+    if (denom === 0) {
+        if (retP.x === 0 || retP.y === 0) {
             // Lines incident
             return true;
         }
@@ -446,7 +447,7 @@ cc.pIntersectPoint = function (A, B, C, D) {
  */
 cc.pSameAs = function (A, B) {
     if ((A != null) && (B != null)) {
-        return (A.x == B.x && A.y == B.y);
+        return (A.x === B.x && A.y === B.y);
     }
     return false;
 };
@@ -506,7 +507,7 @@ cc.pAddIn = function(v1, v2) {
 
 /**
  * normalizes the point (inplace)
- * @param {cc.Point{ v
+ * @param {cc.Point} v
  */
 cc.pNormalizeIn = function(v) {
     cc.pMultIn(v, 1.0 / Math.sqrt(v.x * v.x + v.y * v.y));

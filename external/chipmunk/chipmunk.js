@@ -33,7 +33,7 @@ if(typeof exports === 'undefined'){
 	cp = {};
 
 	if(typeof window === 'object'){
-		window.cp = cp;
+		window["cp"] = cp;
 	}
 } else {
 	cp = exports;
@@ -1312,7 +1312,7 @@ var BoxShape2 = cp.BoxShape2 = function(body, box)
 		box.l, box.b,
 		box.l, box.t,
 		box.r, box.t,
-		box.r, box.b,
+		box.r, box.b
 	];
 	
 	return new PolyShape(body, verts, vzero);
@@ -1575,6 +1575,7 @@ var createStaticBody = function()
 
 	return body;
 };
+    cp.StaticBody = createStaticBody;
 
 if (typeof DEBUG !== 'undefined' && DEBUG) {
 	var v_assert_nan = function(v, message){assert(v.x == v.x && v.y == v.y, message); };

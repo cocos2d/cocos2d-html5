@@ -210,8 +210,8 @@ cc.ControlStepper = cc.Control.extend(/** @lends cc.ControlStepper# */{
         this._value = value;
 
         if (!this._wraps) {
-            this._minusLabel.setColor((value == this._minimumValue) ? cc.CONTROL_STEPPER_LABELCOLOR_DISABLED : cc.CONTROL_STEPPER_LABELCOLOR_ENABLED);
-            this._plusLabel.setColor((value == this._maximumValue) ? cc.CONTROL_STEPPER_LABELCOLOR_DISABLED : cc.CONTROL_STEPPER_LABELCOLOR_ENABLED);
+            this._minusLabel.setColor((value === this._minimumValue) ? cc.CONTROL_STEPPER_LABELCOLOR_DISABLED : cc.CONTROL_STEPPER_LABELCOLOR_ENABLED);
+            this._plusLabel.setColor((value === this._maximumValue) ? cc.CONTROL_STEPPER_LABELCOLOR_DISABLED : cc.CONTROL_STEPPER_LABELCOLOR_ENABLED);
         }
 
         if (send) {
@@ -232,12 +232,12 @@ cc.ControlStepper = cc.Control.extend(/** @lends cc.ControlStepper# */{
     update:function (dt) {
         this._autorepeatCount++;
 
-        if ((this._autorepeatCount < cc.AUTOREPEAT_INCREASETIME_INCREMENT) && (this._autorepeatCount % 3) != 0)
+        if ((this._autorepeatCount < cc.AUTOREPEAT_INCREASETIME_INCREMENT) && (this._autorepeatCount % 3) !== 0)
             return;
 
-        if (this._touchedPart == cc.CONTROL_STEPPER_PARTMINUS) {
+        if (this._touchedPart === cc.CONTROL_STEPPER_PARTMINUS) {
             this.setValueWithSendingEvent(this._value - this._stepValue, this._continuous);
-        } else if (this._touchedPart == cc.CONTROL_STEPPER_PARTPLUS) {
+        } else if (this._touchedPart === cc.CONTROL_STEPPER_PARTPLUS) {
             this.setValueWithSendingEvent(this._value + this._stepValue, this._continuous);
         }
     },

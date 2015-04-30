@@ -341,8 +341,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             var ton = plistFile || 100;
             this.setDrawMode(cc.ParticleSystem.TEXTURE_MODE);
             this.initWithTotalParticles(ton);
-        } else if (plistFile) {
+        } else if (cc.isString(plistFile)) {
             this.initWithFile(plistFile);
+        } else if (cc.isObject(plistFile)) {
+            this.initWithDictionary(plistFile, "");
         }
     },
 
@@ -1144,12 +1146,12 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     setBlendFunc:function (src, dst) {
         if (dst === undefined) {
-            if (this._blendFunc != src) {
+            if (this._blendFunc !== src) {
                 this._blendFunc = src;
                 this._updateBlendFunc();
             }
         } else {
-            if (this._blendFunc.src != src || this._blendFunc.dst != dst) {
+            if (this._blendFunc.src !== src || this._blendFunc.dst !== dst) {
                 this._blendFunc = {src:src, dst:dst};
                 this._updateBlendFunc();
             }
@@ -1182,7 +1184,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      *    dest blend function = GL_ONE;
      */
     isBlendAdditive:function () {
-        return (( this._blendFunc.src == cc.SRC_ALPHA && this._blendFunc.dst == cc.ONE) || (this._blendFunc.src == cc.ONE && this._blendFunc.dst == cc.ONE));
+        return (( this._blendFunc.src === cc.SRC_ALPHA && this._blendFunc.dst === cc.ONE) || (this._blendFunc.src === cc.ONE && this._blendFunc.dst === cc.ONE));
     },
 
     /**
@@ -1364,7 +1366,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             this.emitterMode = parseInt(locValueForKey("emitterType", dictionary));
 
             // Mode A: Gravity + tangential accel + radial accel
-            if (this.emitterMode == cc.ParticleSystem.MODE_GRAVITY) {
+            if (this.emitterMode === cc.ParticleSystem.MODE_GRAVITY) {
                 var locModeA = this.modeA;
                 // gravity
                 locModeA.gravity.x = parseFloat(locValueForKey("gravityx", dictionary));
@@ -1391,7 +1393,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 // rotation is dir
                 var locRotationIsDir = locValueForKey("rotationIsDir", dictionary).toLowerCase();
                 locModeA.rotationIsDir = (locRotationIsDir != null && (locRotationIsDir === "true" || locRotationIsDir === "1"));
-            } else if (this.emitterMode == cc.ParticleSystem.MODE_RADIUS) {
+            } else if (this.emitterMode === cc.ParticleSystem.MODE_RADIUS) {
                 // or Mode B: radius movement
                 var locModeB = this.modeB;
                 locModeB.startRadius = parseFloat(locValueForKey("maxRadius", dictionary));
@@ -1603,9 +1605,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         particle.deltaRotation = (endA - startA) / locParticleTimeToLive;
 
         // position
-        if (this.positionType == cc.ParticleSystem.TYPE_FREE)
+        if (this.positionType === cc.ParticleSystem.TYPE_FREE)
             particle.startPos = this.convertToWorldSpace(this._pointZeroForParticle);
-        else if (this.positionType == cc.ParticleSystem.TYPE_RELATIVE){
+        else if (this.positionType === cc.ParticleSystem.TYPE_RELATIVE){
             particle.startPos.x = this._position.x;
             particle.startPos.y = this._position.y;
         }
@@ -1710,15 +1712,15 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             }
 
             this._elapsed += dt;
-            if (this.duration != -1 && this.duration < this._elapsed)
+            if (this.duration !== -1 && this.duration < this._elapsed)
                 this.stopSystem();
         }
         this._particleIdx = 0;
 
         var currentPosition = cc.Particle.TemporaryPoints[0];
-        if (this.positionType == cc.ParticleSystem.TYPE_FREE) {
+        if (this.positionType === cc.ParticleSystem.TYPE_FREE) {
             cc.pIn(currentPosition, this.convertToWorldSpace(this._pointZeroForParticle));
-        } else if (this.positionType == cc.ParticleSystem.TYPE_RELATIVE) {
+        } else if (this.positionType === cc.ParticleSystem.TYPE_RELATIVE) {
             currentPosition.x = this._position.x;
             currentPosition.y = this._position.y;
         }
@@ -1744,7 +1746,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
                 if (selParticle.timeToLive > 0) {
                     // Mode A: gravity, direction, tangential accel & radial accel
-                    if (this.emitterMode == cc.ParticleSystem.MODE_GRAVITY) {
+                    if (this.emitterMode === cc.ParticleSystem.MODE_GRAVITY) {
 
                         var tmp = tpc, radial = tpa, tangential = tpb;
 
@@ -1801,7 +1803,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     // update values in quad
                     //
                     var newPos = tpa;
-                    if (this.positionType == cc.ParticleSystem.TYPE_FREE || this.positionType == cc.ParticleSystem.TYPE_RELATIVE) {
+                    if (this.positionType === cc.ParticleSystem.TYPE_FREE || this.positionType === cc.ParticleSystem.TYPE_RELATIVE) {
                         var diff = tpb;
                         cc.pIn(diff, currentPosition);
                         cc.pSubIn(diff, selParticle.startPos);
@@ -1838,7 +1840,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     }
 
                     --this.particleCount;
-                    if (this.particleCount == 0 && this.autoRemoveOnFinish) {
+                    if (this.particleCount === 0 && this.autoRemoveOnFinish) {
                         this.unscheduleUpdate();
                         this._parent.removeChild(this, true);
                         return;
@@ -1884,7 +1886,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         if (locTexture && locTexture instanceof cc.Texture2D) {
             this._opacityModifyRGB = false;
             var locBlendFunc = this._blendFunc;
-            if (locBlendFunc.src == cc.BLEND_SRC && locBlendFunc.dst == cc.BLEND_DST) {
+            if (locBlendFunc.src === cc.BLEND_SRC && locBlendFunc.dst === cc.BLEND_DST) {
                 if (locTexture.hasPremultipliedAlpha()) {
                     this._opacityModifyRGB = true;
                 } else {
@@ -1936,6 +1938,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             retParticle.setPosition(cc.p(this.x, this.y));
             retParticle.setPosVar(cc.p(this.getPosVar().x,this.getPosVar().y));
 
+            retParticle.setPositionType(this.getPositionType());
+
             // Spinning
             retParticle.setStartSpin(this.getStartSpin()||0);
             retParticle.setStartSpinVar(this.getStartSpinVar()||0);
@@ -1945,7 +1949,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             retParticle.setEmitterMode(this.getEmitterMode());
 
             // Mode A: Gravity + tangential accel + radial accel
-            if (this.getEmitterMode() == cc.ParticleSystem.MODE_GRAVITY) {
+            if (this.getEmitterMode() === cc.ParticleSystem.MODE_GRAVITY) {
                 // gravity
                 var gra = this.getGravity();
                 retParticle.setGravity(cc.p(gra.x,gra.y));
@@ -1962,7 +1966,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 retParticle.setTangentialAccel(this.getTangentialAccel());
                 retParticle.setTangentialAccelVar(this.getTangentialAccelVar());
 
-            } else if (this.getEmitterMode() == cc.ParticleSystem.MODE_RADIUS) {
+            } else if (this.getEmitterMode() === cc.ParticleSystem.MODE_RADIUS) {
                 // or Mode B: radius movement
                 retParticle.setStartRadius(this.getStartRadius());
                 retParticle.setStartRadiusVar(this.getStartRadiusVar());
@@ -2006,12 +2010,12 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             return;
 
         var locOffset = spriteFrame.getOffsetInPixels();
-        if (locOffset.x != 0 || locOffset.y != 0)
+        if (locOffset.x !== 0 || locOffset.y !== 0)
             cc.log("cc.ParticleSystem.setDisplayFrame(): QuadParticle only supports SpriteFrames with no offsets");
 
         // update texture before updating texture rect
         var texture = spriteFrame.getTexture(), locTexture = this._texture;
-        if (locTexture != texture)
+        if (locTexture !== texture)
             this.setTexture(texture);
     },
 
@@ -2022,7 +2026,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     setTextureWithRect: function (texture, rect) {
         var locTexture = this._texture;
-        if (locTexture != texture) {
+        if (locTexture !== texture) {
             this._texture = texture;
             this._updateBlendFunc();
         }

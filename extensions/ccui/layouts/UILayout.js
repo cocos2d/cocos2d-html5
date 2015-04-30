@@ -66,7 +66,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _backGroundImageOpacity:0,
 
     _loopFocus: false,                                                          //whether enable loop focus or not
-    __passFocusToChild: false,                                                  //on default, it will pass the focus to the next nearest widget
+    __passFocusToChild: true,                                                  //on default, it will pass the focus to the next nearest widget
     _isFocusPassing:false,                                                      //when finding the next focused widget, use this variable to pass focus between layout & widget
     _isInterceptTouch: false,
 
@@ -162,7 +162,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         if (this._isFocusPassing || this.isFocused()) {
             var parent = this.getParent();
             this._isFocusPassing = false;
-
             if (this.__passFocusToChild) {
                 var w = this._passFocusToChild(direction, current);
                 if (w instanceof ccui.Layout && parent) {
@@ -172,12 +171,12 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 return w;
             }
 
-            if (null == parent)
+            if (null == parent || !(parent instanceof ccui.Layout))
                 return this;
             parent._isFocusPassing = true;
             return parent.findNextFocusedWidget(direction, this);
         } else if(current.isFocused() || current instanceof ccui.Layout) {
-            if (this._layoutType == ccui.Layout.LINEAR_HORIZONTAL) {
+            if (this._layoutType === ccui.Layout.LINEAR_HORIZONTAL) {
                 switch (direction){
                     case ccui.Widget.LEFT:
                         return this._getPreviousFocusedWidget(direction, current);
@@ -189,27 +188,27 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                     case ccui.Widget.UP:
                         if (this._isLastWidgetInContainer(this, direction)){
                             if (this._isWidgetAncestorSupportLoopFocus(current, direction))
-                                return this.findNextFocusedWidget(direction, this);
+                                return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
                             return current;
                         } else {
-                            return this.findNextFocusedWidget(direction, this);
+                            return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
                         }
                     break;
                     default:
                         cc.assert(0, "Invalid Focus Direction");
                         return current;
                 }
-            } else if (this._layoutType == ccui.Layout.LINEAR_VERTICAL) {
+            } else if (this._layoutType === ccui.Layout.LINEAR_VERTICAL) {
                 switch (direction){
                     case ccui.Widget.LEFT:
                     case ccui.Widget.RIGHT:
                         if (this._isLastWidgetInContainer(this, direction)) {
                             if (this._isWidgetAncestorSupportLoopFocus(current, direction))
-                                return this.findNextFocusedWidget(direction, this);
+                                return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
                             return current;
                         }
                         else
-                            return this.findNextFocusedWidget(direction, this);
+                            return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
                      break;
                     case ccui.Widget.DOWN:
                         return this._getNextFocusedWidget(direction, current);
@@ -312,9 +311,9 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      *     If clippingEnabled is true, it will clip/scissor area.
      * </p>
      * @override
-     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
+     * @param {cc.Node.RenderCmd} [parentCmd]
      */
-    visit: function (ctx) {
+    visit: function (parentCmd) {
         if (!this._visible)
             return;
         this._adaptRenderers();
@@ -323,16 +322,16 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         if (this._clippingEnabled) {
             switch (this._clippingType) {
                 case ccui.Layout.CLIPPING_STENCIL:
-                    this._renderCmd.stencilClippingVisit(ctx);
+                    this._renderCmd.stencilClippingVisit(parentCmd);
                     break;
                 case ccui.Layout.CLIPPING_SCISSOR:
-                    this._renderCmd.scissorClippingVisit(ctx);
+                    this._renderCmd.scissorClippingVisit(parentCmd);
                     break;
                 default:
                     break;
             }
         } else
-            ccui.Widget.prototype.visit.call(this, ctx);
+            ccui.Widget.prototype.visit.call(this, parentCmd);
     },
 
     /**
@@ -341,7 +340,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {Boolean} able clipping enabled.
      */
     setClippingEnabled: function (able) {
-        if (able == this._clippingEnabled)
+        if (able === this._clippingEnabled)
             return;
         this._clippingEnabled = able;
         switch (this._clippingType) {
@@ -368,9 +367,9 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {ccui.Layout.CLIPPING_STENCIL|ccui.Layout.CLIPPING_SCISSOR} type
      */
     setClippingType: function (type) {
-        if (type == this._clippingType)
+        if (type === this._clippingType)
             return;
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS && type == ccui.Layout.CLIPPING_SCISSOR){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS && type === ccui.Layout.CLIPPING_SCISSOR){
             cc.log("Only supports STENCIL on canvas mode.");
             return;
         }
@@ -389,7 +388,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     _setStencilClippingSize: function (size) {
-        if (this._clippingEnabled && this._clippingType == ccui.Layout.CLIPPING_STENCIL) {
+        if (this._clippingEnabled && this._clippingType === ccui.Layout.CLIPPING_STENCIL) {
             var rect = [];
             rect[0] = cc.p(0, 0);
             rect[1] = cc.p(size.width, 0);
@@ -482,7 +481,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {Boolean} able  true that use scale9 renderer, false otherwise.
      */
     setBackGroundImageScale9Enabled: function (able) {
-        if (this._backGroundScale9Enabled == able)
+        if (this._backGroundScale9Enabled === able)
             return;
         this.removeProtectedChild(this._backGroundImage);
         this._backGroundImage = null;
@@ -509,41 +508,26 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         if (!fileName)
             return;
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
-        if (this._backGroundImage == null){
+        if (this._backGroundImage === null){
             this._addBackGroundImage();
             this.setBackGroundImageScale9Enabled(this._backGroundScale9Enabled);
         }
         this._backGroundImageFileName = fileName;
         this._bgImageTexType = texType;
         var locBackgroundImage = this._backGroundImage;
-        if (this._backGroundScale9Enabled) {
-            var bgiScale9 = locBackgroundImage;
-            switch (this._bgImageTexType) {
-                case ccui.Widget.LOCAL_TEXTURE:
-                    bgiScale9.initWithFile(fileName);
-                    break;
-                case ccui.Widget.PLIST_TEXTURE:
-                    bgiScale9.initWithSpriteFrameName(fileName);
-                    break;
-                default:
-                    break;
-            }
-            bgiScale9.setPreferredSize(this._contentSize);
-        } else {
-            var sprite = locBackgroundImage;
-            switch (this._bgImageTexType){
-                case ccui.Widget.LOCAL_TEXTURE:
-                    //SetTexture cannot load resource
-                    sprite.initWithFile(fileName);
-                    break;
-                case ccui.Widget.PLIST_TEXTURE:
-                    //SetTexture cannot load resource
-                    sprite.initWithSpriteFrameName(fileName);
-                    break;
-                default:
-                    break;
-            }
+        switch (this._bgImageTexType) {
+            case ccui.Widget.LOCAL_TEXTURE:
+                locBackgroundImage.initWithFile(fileName);
+                break;
+            case ccui.Widget.PLIST_TEXTURE:
+                locBackgroundImage.initWithSpriteFrameName(fileName);
+                break;
+            default:
+                break;
         }
+        if (this._backGroundScale9Enabled)
+            locBackgroundImage.setPreferredSize(this._contentSize);
+
         this._backGroundImageTextureSize = locBackgroundImage.getContentSize();
         locBackgroundImage.setPosition(this._contentSize.width * 0.5, this._contentSize.height * 0.5);
         this._updateBackGroundImageColor();
@@ -597,13 +581,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     _addBackGroundImage: function () {
+        var contentSize = this._contentSize;
         if (this._backGroundScale9Enabled) {
             this._backGroundImage = new ccui.Scale9Sprite();
-            this._backGroundImage.setPreferredSize(this._contentSize);
+            this._backGroundImage.setPreferredSize(contentSize);
         } else
             this._backGroundImage = new cc.Sprite();
         this.addProtectedChild(this._backGroundImage, ccui.Layout.BACKGROUND_IMAGE_ZORDER, -1);
-        this._backGroundImage.setPosition(this._contentSize.width / 2.0, this._contentSize.height / 2.0);
+        this._backGroundImage.setPosition(contentSize.width * 0.5, contentSize.height * 0.5);
     },
 
     /**
@@ -624,7 +609,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {ccui.Layout.BG_COLOR_NONE|ccui.Layout.BG_COLOR_SOLID|ccui.Layout.BG_COLOR_GRADIENT} type
      */
     setBackGroundColorType: function (type) {
-        if (this._colorType == type)
+        if (this._colorType === type)
             return;
         switch (this._colorType) {
             case ccui.Layout.BG_COLOR_NONE:
@@ -863,7 +848,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     /**
-     * request do layout, it will do layout at visit calls
+     * request to refresh widget layout, it will do layout at visit calls
      */
     requestDoLayout: function () {
         this._doLayoutDirty = true;
@@ -912,7 +897,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         var widgetCount = 0, locSize;
         for(var i = 0, len = children.length; i < len; i++) {
             var layout = children[i];
-            if (null != layout && layout instanceof ccui.Layout){
+            if (null !== layout && layout instanceof ccui.Layout){
                 locSize = layout._getLayoutAccumulatedSize();
                 layoutSize.width += locSize.width;
                 layoutSize.height += locSize.height;
@@ -929,10 +914,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
         //substract extra size
         var type = this.getLayoutType();
-        if (type == ccui.Layout.LINEAR_HORIZONTAL)
+        if (type === ccui.Layout.LINEAR_HORIZONTAL)
             layoutSize.height = layoutSize.height - layoutSize.height/widgetCount * (widgetCount-1);
 
-        if (type == ccui.Layout.LINEAR_VERTICAL)
+        if (type === ccui.Layout.LINEAR_VERTICAL)
             layoutSize.width = layoutSize.width - layoutSize.width/widgetCount * (widgetCount-1);
         return layoutSize;
     },
@@ -946,14 +931,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @private
      */
     _findNearestChildWidgetIndex: function(direction, baseWidget){
-        if (baseWidget == null || baseWidget == this)
+        if (baseWidget == null || baseWidget === this)
             return this._findFirstFocusEnabledWidgetIndex();
 
         var index = 0, locChildren = this.getChildren();
         var count = locChildren.length, widgetPosition;
 
         var distance = cc.FLT_MAX, found = 0;
-        if (direction == ccui.Widget.LEFT || direction == ccui.Widget.RIGHT || direction == ccui.Widget.DOWN || direction == ccui.Widget.UP) {
+        if (direction === ccui.Widget.LEFT || direction === ccui.Widget.RIGHT || direction === ccui.Widget.DOWN || direction === ccui.Widget.UP) {
             widgetPosition = this._getWorldCenterPoint(baseWidget);
             while (index < count) {
                 var w = locChildren[index];
@@ -982,14 +967,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @private
      */
     _findFarthestChildWidgetIndex: function(direction, baseWidget){
-        if (baseWidget == null || baseWidget == this)
+        if (baseWidget == null || baseWidget === this)
             return this._findFirstFocusEnabledWidgetIndex();
 
         var index = 0, locChildren = this.getChildren();
         var count = locChildren.length;
 
         var distance = -cc.FLT_MAX, found = 0;
-        if (direction == ccui.Widget.LEFT || direction == ccui.Widget.RIGHT || direction == ccui.Widget.DOWN || direction == ccui.Widget.UP) {
+        if (direction === ccui.Widget.LEFT || direction === ccui.Widget.RIGHT || direction === ccui.Widget.DOWN || direction === ccui.Widget.UP) {
             var widgetPosition =  this._getWorldCenterPoint(baseWidget);
             while (index <  count) {
                 var w = locChildren[index];
@@ -1078,16 +1063,16 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
         var previousWidgetPosition = this._getWorldCenterPoint(baseWidget);
         var widgetPosition = this._getWorldCenterPoint(this._findFirstNonLayoutWidget());
-        if (direction == ccui.Widget.LEFT) {
+        if (direction === ccui.Widget.LEFT) {
             this.onPassFocusToChild = (previousWidgetPosition.x > widgetPosition.x) ? this._findNearestChildWidgetIndex.bind(this)
                 : this._findFarthestChildWidgetIndex.bind(this);
-        } else if (direction == ccui.Widget.RIGHT) {
+        } else if (direction === ccui.Widget.RIGHT) {
             this.onPassFocusToChild = (previousWidgetPosition.x > widgetPosition.x) ? this._findFarthestChildWidgetIndex.bind(this)
                 : this._findNearestChildWidgetIndex.bind(this);
-        }else if(direction == ccui.Widget.DOWN) {
+        }else if(direction === ccui.Widget.DOWN) {
             this.onPassFocusToChild = (previousWidgetPosition.y > widgetPosition.y) ? this._findNearestChildWidgetIndex.bind(this)
                 : this._findFarthestChildWidgetIndex.bind(this);
-        }else if(direction == ccui.Widget.UP) {
+        }else if(direction === ccui.Widget.UP) {
             this.onPassFocusToChild = (previousWidgetPosition.y < widgetPosition.y) ? this._findNearestChildWidgetIndex.bind(this)
                 : this._findFarthestChildWidgetIndex.bind(this);
         }else
@@ -1108,7 +1093,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 if(widget)
                     return widget;
             } else{
-                if (child instanceof cc.Widget)
+                if (child instanceof ccui.Widget)
                     return child;
             }
         }
@@ -1203,22 +1188,15 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                         }
                     } else
                         return this._getNextFocusedWidget(direction, nextWidget);
-                } else {
-                    if (current instanceof ccui.Layout)
-                        return current;
-                    else
-                        return this._focusedWidget;
-                }
+                } else
+                    return (current instanceof ccui.Layout) ? current : ccui.Widget._focusedWidget;
             } else{
                 if (this._isLastWidgetInContainer(current, direction)){
                     if (this._isWidgetAncestorSupportLoopFocus(this, direction))
-                        return this.findNextFocusedWidget(direction, this);
-                    if (current instanceof ccui.Layout)
-                        return current;
-                    else
-                        return this._focusedWidget;
+                        return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
+                    return (current instanceof ccui.Layout) ? current : ccui.Widget._focusedWidget;
                 } else
-                    return this.findNextFocusedWidget(direction, this);
+                    return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
             }
         }
     },
@@ -1261,14 +1239,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                     } else
                         return this._getPreviousFocusedWidget(direction, nextWidget);
                 } else
-                    return (current instanceof ccui.Layout) ? current : this._focusedWidget;
+                    return (current instanceof ccui.Layout) ? current : ccui.Widget._focusedWidget;
             } else {
                 if (this._isLastWidgetInContainer(current, direction)) {
                     if (this._isWidgetAncestorSupportLoopFocus(this, direction))
-                        return this.findNextFocusedWidget(direction, this);
-                    return (current instanceof ccui.Layout) ? current : this._focusedWidget;
+                        return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
+                    return (current instanceof ccui.Layout) ? current : ccui.Widget._focusedWidget;
                 } else
-                    return this.findNextFocusedWidget(direction, this);
+                    return ccui.Widget.prototype.findNextFocusedWidget.call(this, direction, this);
             }
         }
     },
@@ -1310,46 +1288,46 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      */
     _isLastWidgetInContainer:function(widget, direction){
         var parent = widget.getParent();
-        if (parent instanceof ccui.Layout)
+        if (parent == null || !(parent instanceof ccui.Layout))
             return true;
 
         var container = parent.getChildren();
         var index = container.indexOf(widget);
-        if (parent.getLayoutType() == ccui.Layout.LINEAR_HORIZONTAL) {
-            if (direction == ccui.Widget.LEFT) {
-                if (index == 0)
+        if (parent.getLayoutType() === ccui.Layout.LINEAR_HORIZONTAL) {
+            if (direction === ccui.Widget.LEFT) {
+                if (index === 0)
                     return this._isLastWidgetInContainer(parent, direction);
                 else
                     return false;
             }
-            if (direction == ccui.Widget.RIGHT) {
-                if (index == container.length - 1)
+            if (direction === ccui.Widget.RIGHT) {
+                if (index === container.length - 1)
                     return this._isLastWidgetInContainer(parent, direction);
                 else
                     return false;
             }
-            if (direction == ccui.Widget.DOWN)
+            if (direction === ccui.Widget.DOWN)
                 return this._isLastWidgetInContainer(parent, direction);
 
-            if (direction == ccui.Widget.UP)
+            if (direction === ccui.Widget.UP)
                 return this._isLastWidgetInContainer(parent, direction);
-        } else if(parent.getLayoutType() == ccui.Layout.LINEAR_VERTICAL){
-            if (direction == ccui.Widget.UP){
-                if (index == 0)
+        } else if(parent.getLayoutType() === ccui.Layout.LINEAR_VERTICAL){
+            if (direction === ccui.Widget.UP){
+                if (index === 0)
                     return this._isLastWidgetInContainer(parent, direction);
                 else
                     return false;
             }
-            if (direction == ccui.Widget.DOWN) {
-                if (index == container.length - 1)
+            if (direction === ccui.Widget.DOWN) {
+                if (index === container.length - 1)
                     return this._isLastWidgetInContainer(parent, direction);
                 else
                     return false;
             }
-            if (direction == ccui.Widget.LEFT)
+            if (direction === ccui.Widget.LEFT)
                 return this._isLastWidgetInContainer(parent, direction);
 
-            if (direction == ccui.Widget.RIGHT)
+            if (direction === ccui.Widget.RIGHT)
                 return this._isLastWidgetInContainer(parent, direction);
         } else {
             cc.log("invalid layout Type");
@@ -1366,18 +1344,18 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      */
     _isWidgetAncestorSupportLoopFocus: function(widget, direction){
         var parent = widget.getParent();
-        if (parent == null)
+        if (parent == null || !(parent instanceof ccui.Layout))
             return false;
         if (parent.isLoopFocus()) {
             var layoutType = parent.getLayoutType();
-            if (layoutType == ccui.Layout.LINEAR_HORIZONTAL) {
-                if (direction == ccui.Widget.LEFT || direction == ccui.Widget.RIGHT)
+            if (layoutType === ccui.Layout.LINEAR_HORIZONTAL) {
+                if (direction === ccui.Widget.LEFT || direction === ccui.Widget.RIGHT)
                     return true;
                 else
                     return this._isWidgetAncestorSupportLoopFocus(parent, direction);
             }
-            if (layoutType == ccui.Layout.LINEAR_VERTICAL){
-                if (direction == ccui.Widget.DOWN || direction == ccui.Widget.UP)
+            if (layoutType === ccui.Layout.LINEAR_VERTICAL){
+                if (direction === ccui.Widget.DOWN || direction === ccui.Widget.UP)
                     return true;
                 else
                     return this._isWidgetAncestorSupportLoopFocus(parent, direction);
@@ -1462,6 +1440,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._loopFocus = layout._loopFocus;
         this.__passFocusToChild = layout.__passFocusToChild;
         this._isInterceptTouch = layout._isInterceptTouch;
+    },
+
+    /**
+     * force refresh widget layout
+     */
+    forceDoLayout: function(){
+        this.requestDoLayout();
+        this._doLayout();
     },
 
     _createRenderCmd: function(){

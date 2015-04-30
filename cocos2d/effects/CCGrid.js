@@ -150,7 +150,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
      * @param {Boolean} flipped
      */
     setTextureFlipped:function (flipped) {
-        if (this._isTextureFlipped != flipped) {
+        if (this._isTextureFlipped !== flipped) {
             this._isTextureFlipped = flipped;
             this.calculateVertexPoints();
         }
@@ -229,20 +229,27 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
             // XXX: Camera should be applied in the AnchorPoint
             //
             //cc.kmGLTranslatef(offset.x, offset.y, 0);
-            var translation = new cc.kmMat4();
-            cc.kmMat4Translation(translation, offset.x, offset.y, 0);
-            cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
+            var translation = cc.math.Matrix4.createByTranslation(offset.x, offset.y, 0);
+            stackMatrix.multiply(translation);
 
             //target.getCamera().locate();
             target._camera._locateForRenderer(stackMatrix);
 
             //cc.kmGLTranslatef(-offset.x, -offset.y, 0);
-            cc.kmMat4Translation(translation, -offset.x, -offset.y, 0);
-            cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
+            translation = cc.math.Matrix4.createByTranslation(-offset.x, -offset.y, 0, translation);
+            stackMatrix.multiply(translation);
         }
 
         cc.glBindTexture2D(this._texture);
+        this.beforeBlit();
         this.blit(target);
+        this.afterBlit();
+    },
+
+    beforeBlit: function () {
+    },
+
+    afterBlit: function () {
     },
 
     blit:function () {
@@ -265,8 +272,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
         cc.kmGLLoadIdentity();
 
-        var orthoMatrix = new cc.kmMat4();
-        cc.kmMat4OrthographicProjection(orthoMatrix, 0, winSize.width, 0, winSize.height, -1, 1);
+        var orthoMatrix = cc.math.Matrix4.createOrthographicProjection(0, winSize.width, 0, winSize.height, -1, 1);
         cc.kmGLMultMatrix(orthoMatrix);
 
         cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
@@ -302,6 +308,10 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
     _verticesBuffer:null,
     _indicesBuffer:null,
 
+    _needDepthTestForBlit: false,
+    _oldDepthTestValue: false,
+    _oldDepthWriteValue: false,
+
     /**
      * create one Grid3D object
      * Constructor of cc.Grid3D
@@ -325,11 +335,21 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
     },
 
     /**
-     * returns the vertex at a given position
+     * returns the vertex at a given position      <br/>
+     * It will be deprecated in future, please use getVertex instead.
      * @param {cc.Point} pos
      * @return {cc.Vertex3F}
      */
     vertex:function (pos) {
+         return this.getVertex(pos);
+    },
+
+    /**
+     * returns the vertex at a given position
+     * @param {cc.Point} pos
+     * @return {cc.Vertex3F}
+     */
+    getVertex: function(pos){
         if(pos.x !== (0| pos.x) || pos.y !== (0| pos.y))
             cc.log("cc.Grid3D.vertex() : Numbers must be integers");
         var index = 0 | ((pos.x * (this._gridSize.height + 1) + pos.y) * 3);
@@ -338,11 +358,21 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
     },
 
     /**
-     * returns the original (non-transformed) vertex at a given position
+     * returns the original (non-transformed) vertex at a given position             <br/>
+     * It will be deprecated in future, please use getOriginalVertex instead.
      * @param {cc.Point} pos
      * @return {cc.Vertex3F}
      */
     originalVertex:function (pos) {
+        return this.getOriginalVertex(pos);
+    },
+
+    /**
+     * returns the original (non-transformed) vertex at a given position
+     * @param {cc.Point} pos
+     * @return {cc.Vertex3F}
+     */
+    getOriginalVertex: function(pos) {
         if(pos.x !== (0| pos.x) || pos.y !== (0| pos.y))
             cc.log("cc.Grid3D.originalVertex() : Numbers must be integers");
         var index = 0 | ((pos.x * (this._gridSize.height + 1) + pos.y) * 3);
@@ -364,6 +394,28 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         vertArray[index + 1] = vertex.y;
         vertArray[index + 2] = vertex.z;
         this._dirty = true;
+    },
+
+    beforeBlit: function () {
+        if (this._needDepthTestForBlit) {
+            var gl = cc._renderContext;
+            this._oldDepthTestValue = gl.isEnabled(gl.DEPTH_TEST);
+            this._oldDepthWriteValue = gl.getParameter(gl.DEPTH_WRITEMASK);
+            //CHECK_GL_ERROR_DEBUG();
+            gl.enable(gl.DEPTH_TEST);
+            gl.depthMask(true);
+        }
+    },
+
+    afterBlit: function () {
+        if (this._needDepthTestForBlit) {
+            var gl = cc._renderContext;
+            if (this._oldDepthTestValue)
+                gl.enable(gl.DEPTH_TEST);
+            else
+                gl.disable(gl.DEPTH_TEST);
+            gl.depthMask(this._oldDepthWriteValue);
+        }
     },
 
     blit:function (target) {
@@ -482,6 +534,14 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
         this._dirty = true;
+    },
+
+    setNeedDepthTestForBlit: function(needDepthTest){
+        this._needDepthTestForBlit = needDepthTest;
+    },
+
+    getNeedDepthTestForBlit: function(){
+        return this._needDepthTestForBlit;
     }
 });
 
@@ -536,11 +596,21 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
     },
 
     /**
-     * returns the tile at the given position
+     * returns the tile at the given position    <br/>
+     * It will be deprecated in future, please use getTile instead.
      * @param {cc.Point} pos
      * @return {cc.Quad3}
      */
     tile:function (pos) {
+        return this.getTile(pos);
+    },
+
+    /**
+     * returns the tile at the given position
+     * @param {cc.Point} pos
+     * @return {cc.Quad3}
+     */
+    getTile: function(pos){
         if(pos.x !== (0| pos.x) || pos.y !== (0| pos.y))
             cc.log("cc.TiledGrid3D.tile() : Numbers must be integers");
 
@@ -557,7 +627,7 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
      * @param {cc.Point} pos
      * @return {cc.Quad3}
      */
-    originalTile:function (pos) {
+    getOriginalTile:function (pos) {
         if(pos.x !== (0| pos.x) || pos.y !== (0| pos.y))
             cc.log("cc.TiledGrid3D.originalTile() : Numbers must be integers");
 
@@ -567,6 +637,16 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
             new cc.Vertex3F(locOriginalVertices[idx + 3], locOriginalVertices[idx + 4], locOriginalVertices[idx + 5]),
             new cc.Vertex3F(locOriginalVertices[idx + 6 ], locOriginalVertices[idx + 7], locOriginalVertices[idx + 8]),
             new cc.Vertex3F(locOriginalVertices[idx + 9], locOriginalVertices[idx + 10], locOriginalVertices[idx + 11]));
+    },
+
+    /**
+     * returns the original tile (untransformed) at the given position.      <br/>
+     * It will be deprecated in future, please use getOriginalTile instead.
+     * @param {cc.Point} pos
+     * @return {cc.Quad3}
+     */
+    originalTile: function(pos) {
+        return this.getOriginalTile(pos);
     },
 
     /**
@@ -595,7 +675,7 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         this._dirty = true;
     },
 
-    blit:function (target) {
+    blit: function (target) {
         var n = this._gridSize.width * this._gridSize.height;
 
         this._shaderProgram.use();

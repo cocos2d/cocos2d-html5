@@ -112,15 +112,26 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
     /**
      * <p>Return the dictionary for the specific object name. <br />
      * It will return the 1st object found on the array for the given name.</p>
+     * @deprecated since v3.4 please use .getObject
      * @param {String} objectName
      * @return {object|Null}
      */
     objectNamed:function (objectName) {
+        this.getObject(objectName);
+    },
+
+    /**
+     * <p>Return the dictionary for the specific object name. <br />
+     * It will return the 1st object found on the array for the given name.</p>
+     * @param {String} objectName
+     * @return {object|Null}
+     */
+    getObject: function(objectName){
         if (this._objects && this._objects.length > 0) {
             var locObjects = this._objects;
             for (var i = 0, len = locObjects.length; i < len; i++) {
                 var name = locObjects[i]["name"];
-                if (name && name == objectName)
+                if (name && name === objectName)
                     return locObjects[i];
             }
         }

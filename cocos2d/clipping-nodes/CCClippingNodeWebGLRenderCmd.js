@@ -44,7 +44,7 @@
         this._mask_layer_le = null;
     };
 
-    var proto = cc.ClippingNode.WebGLRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
+    var proto = cc.ClippingNode.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.ClippingNode.WebGLRenderCmd;
 
     cc.ClippingNode.WebGLRenderCmd._init_once = null;
@@ -91,7 +91,7 @@
             return;
         }
 
-        if (cc.ClippingNode.WebGLRenderCmd._layer + 1 == cc.stencilBits) {
+        if (cc.ClippingNode.WebGLRenderCmd._layer + 1 === cc.stencilBits) {
             cc.ClippingNode.WebGLRenderCmd._visit_once = true;
             if (cc.ClippingNode.WebGLRenderCmd._visit_once) {
                 cc.log("Nesting more than " + cc.stencilBits + "stencils is not supported. Everything will be drawn without stencil for this node and its children.");
@@ -144,17 +144,29 @@
 
     proto._drawFullScreenQuadClearStencil = function () {
         // draw a fullscreen solid rectangle to clear the stencil buffer
-        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
-        cc.kmGLPushMatrix();
-        cc.kmGLLoadIdentity();
-        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-        cc.kmGLPushMatrix();
-        cc.kmGLLoadIdentity();
+        var projStack = cc.projection_matrix_stack;
+        //cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+        //cc.kmGLPushMatrix();
+        //cc.kmGLLoadIdentity();
+        projStack.push();
+        projStack.top.identity();
+
+        //cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+        //cc.kmGLPushMatrix();
+        //cc.kmGLLoadIdentity();
+        var modelViewStack = cc.modelview_matrix_stack;
+        modelViewStack.push();
+        modelViewStack.top.identity();
+
         cc._drawingUtil.drawSolidRect(cc.p(-1, -1), cc.p(1, 1), cc.color(255, 255, 255, 255));
-        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
-        cc.kmGLPopMatrix();
-        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-        cc.kmGLPopMatrix();
+
+        //cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+        //cc.kmGLPopMatrix();
+        projStack.pop();
+
+        //cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+        //cc.kmGLPopMatrix();
+        modelViewStack.pop();
     };
 
     proto._onBeforeVisit = function(ctx){

@@ -30,7 +30,7 @@
         cc.Node.CanvasRenderCmd.call(this, renderable);
         this._needDraw = true;
 
-        this._drawMode = cc.ParticleSystem.SHAPE_MODE;
+        this._drawMode = cc.ParticleSystem.TEXTURE_MODE;
         this._shapeType = cc.ParticleSystem.BALL_SHAPE;
 
         this._pointRect = cc.rect(0, 0, 0, 0);
@@ -55,7 +55,7 @@
     };
 
     proto.setBatchNode = function(batchNode){
-        if (this._batchNode != batchNode) {
+        if (this._batchNode !== batchNode) {
             this._node._batchNode = batchNode;
         }
     };
@@ -82,9 +82,9 @@
 
         var i, particle, lpx, alpha;
         var particleCount = this._node.particleCount, particles = this._node._particles;
-        if (node.drawMode == cc.ParticleSystem.TEXTURE_MODE) {
+        if (node.drawMode !== cc.ParticleSystem.SHAPE_MODE && node._texture) {
             // Delay drawing until the texture is fully loaded by the browser
-            if (!node._texture || !node._texture._isLoaded) {
+            if (!node._texture._textureLoaded) {
                 wrapper.restore();
                 return;
             }
@@ -129,7 +129,7 @@
 
                 context.save();
                 context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
-                if (node.shapeType == cc.ParticleSystem.STAR_SHAPE) {
+                if (node.shapeType === cc.ParticleSystem.STAR_SHAPE) {
                     if (particle.rotation)
                         context.rotate(cc.degreesToRadians(particle.rotation));
                     drawTool.drawStar(wrapper, lpx, particle.color);
@@ -206,7 +206,7 @@
 
     proto._initWithTotalParticles = function(totalParticles){};
     proto._updateDeltaColor = function(selParticle, dt){
-        if (!this._dontTint) {
+        if (!this._node._dontTint) {
             selParticle.color.r += selParticle.deltaColor.r * dt;
             selParticle.color.g += selParticle.deltaColor.g * dt;
             selParticle.color.b += selParticle.deltaColor.b * dt;

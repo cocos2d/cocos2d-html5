@@ -27,13 +27,14 @@
 cc.g_NumberOfDraws = 0;
 
 cc.GLToClipTransform = function (transformOut) {
-    var projection = new cc.kmMat4();
-    cc.kmGLGetMatrix(cc.KM_GL_PROJECTION, projection);
+    //var projection = new cc.math.Matrix4();
+    //cc.kmGLGetMatrix(cc.KM_GL_PROJECTION, projection);
+    cc.kmGLGetMatrix(cc.KM_GL_PROJECTION, transformOut);
 
-    var modelview = new cc.kmMat4();
+    var modelview = new cc.math.Matrix4();
     cc.kmGLGetMatrix(cc.KM_GL_MODELVIEW, modelview);
 
-    cc.kmMat4Multiply(transformOut, projection, modelview);
+    transformOut.multiply(modelview);
 };
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -153,8 +154,12 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         //scheduler
         this._scheduler = new cc.Scheduler();
         //action manager
-        this._actionManager = cc.ActionManager ? new cc.ActionManager() : null;
-        this._scheduler.scheduleUpdateForTarget(this._actionManager, cc.Scheduler.PRIORITY_SYSTEM, false);
+        if(cc.ActionManager){
+            this._actionManager = new cc.ActionManager();
+            this._scheduler.scheduleUpdate(this._actionManager, cc.Scheduler.PRIORITY_SYSTEM, false);
+        }else{
+            this._actionManager = null;
+        }
 
         this._eventAfterDraw = new cc.EventCustom(cc.Director.EVENT_AFTER_DRAW);
         this._eventAfterDraw.setUserData(this);
@@ -364,7 +369,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._scenesStack.pop();
         var c = this._scenesStack.length;
 
-        if (c == 0)
+        if (c === 0)
             this.end();
         else {
             this._sendCleanupToScene = true;
@@ -386,7 +391,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     purgeDirector: function () {
         //cleanup scheduler
-        this.getScheduler().unscheduleAllCallbacks();
+        this.getScheduler().unscheduleAll();
 
         // Disable event dispatching
         if (cc.eventManager)
@@ -484,7 +489,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {Number} scaleFactor
      */
     setContentScaleFactor: function (scaleFactor) {
-        if (scaleFactor != this._contentScaleFactor) {
+        if (scaleFactor !== this._contentScaleFactor) {
             this._contentScaleFactor = scaleFactor;
             this._createStatsLabel();
         }
@@ -541,7 +546,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         cc.renderer.childrenOrderDirty = true;
 
         this._nextScene = null;
-        if ((!runningIsTransition) && (this._runningScene != null)) {
+        if ((!runningIsTransition) && (this._runningScene !== null)) {
             this._runningScene.onEnter();
             this._runningScene.onEnterTransitionDidFinish();
         }
@@ -736,7 +741,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         var locScenesStack = this._scenesStack;
         var c = locScenesStack.length;
 
-        if (c == 0) {
+        if (c === 0) {
             this.end();
             return;
         }
@@ -771,7 +776,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {cc.Scheduler} scheduler
      */
     setScheduler: function (scheduler) {
-        if (this._scheduler != scheduler) {
+        if (this._scheduler !== scheduler) {
             this._scheduler = scheduler;
         }
     },
@@ -788,7 +793,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {cc.ActionManager} actionManager
      */
     setActionManager: function (actionManager) {
-        if (this._actionManager != actionManager) {
+        if (this._actionManager !== actionManager) {
             this._actionManager = actionManager;
         }
     },

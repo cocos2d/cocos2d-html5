@@ -23,10 +23,10 @@
  ****************************************************************************/
 
 (function(){
+    if(!cc.Node.WebGLRenderCmd)
+        return;
     cc.ProtectedNode.WebGLRenderCmd = function (renderable) {
         cc.Node.WebGLRenderCmd.call(this, renderable);
-        this._cachedParent = null;
-        this._cacheDirty = false;
     };
 
     var proto = cc.ProtectedNode.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
@@ -34,10 +34,6 @@
     proto.constructor = cc.ProtectedNode.WebGLRenderCmd;
 
     proto.visit = function(parentCmd){
-         this._node.visit(parentCmd);        //todo refactor late
-    };
-
-    proto._visit = function(parentCmd){
         var node = this._node;
         // quick return if not visible
         if (!node._visible)
@@ -59,7 +55,6 @@
         var childLen = locChildren.length, pLen = locProtectedChildren.length;
         node.sortAllChildren();
         node.sortAllProtectedChildren();
-
 
         var pChild;
         // draw children zOrder < 0
@@ -99,28 +94,6 @@
         currentStack.top = currentStack.stack.pop();
     };
 
-    proto._changeProtectedChild = function(child){
-        var cmd = child._renderCmd,
-            dirty = cmd._dirtyFlag,
-            flags = cc.Node._dirtyFlags;
-
-        if(this._dirtyFlag & flags.colorDirty)
-            dirty |= flags.colorDirty;
-
-        if(this._dirtyFlag & flags.opacityDirty)
-            dirty |= flags.opacityDirty;
-
-        var colorDirty = dirty & flags.colorDirty,
-            opacityDirty = dirty & flags.opacityDirty;
-
-        if(colorDirty)
-            cmd._updateDisplayColor(this._displayedColor);
-        if(opacityDirty)
-            cmd._updateDisplayOpacity(this._displayedOpacity);
-        if(colorDirty || opacityDirty)
-            cmd._updateColor();
-    };
-
     proto.transform = function(parentCmd, recursive){
         var node = this._node;
         var t4x4 = this._transform4x4, stackMatrix = this._stackMatrix,
@@ -149,7 +122,7 @@
         cc.kmMat4Multiply(stackMatrix, parentMatrix, t4x4);
 
         // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
-        if (node._camera != null && !(node.grid != null && node.grid.isActive())) {
+        if (node._camera !== null && !(node.grid !== null && node.grid.isActive())) {
             var apx = this._anchorPointInPoints.x, apy = this._anchorPointInPoints.y;
             var translate = (apx !== 0.0 || apy !== 0.0);
             if (translate){
@@ -158,15 +131,15 @@
                     apy = 0 | apy;
                 }
                 //cc.kmGLTranslatef(apx, apy, 0);
-                var translation = new cc.kmMat4();
-                cc.kmMat4Translation(translation, apx, apy, 0);
-                cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
+                var translation = cc.math.Matrix4.createByTranslation(apx, apy, 0, t4x4);       //t4x4 as a temp matrix
+                stackMatrix.multiply(translate);
 
                 node._camera._locateForRenderer(stackMatrix);
 
                 //cc.kmGLTranslatef(-apx, -apy, 0);
-                cc.kmMat4Translation(translation, -apx, -apy, 0);
-                cc.kmMat4Multiply(stackMatrix, stackMatrix, translation);
+                translation = cc.math.Matrix4.createByTranslation(-apx, -apy, 0, translation);
+                stackMatrix.multiply(translation);
+                t4x4.identity();    //reset t4x4;
             } else {
                 node._camera._locateForRenderer(stackMatrix);
             }

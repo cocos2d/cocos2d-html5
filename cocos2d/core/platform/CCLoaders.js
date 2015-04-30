@@ -37,6 +37,13 @@ cc._jsonLoader = {
 };
 cc.loader.register(["json", "ExportJson"], cc._jsonLoader);
 
+cc._jsLoader = {
+    load : function(realUrl, url, res, cb){
+        cc.loader.loadJs(realUrl, cb);
+    }
+};
+cc.loader.register(["js"], cc._jsLoader);
+
 cc._imgLoader = {
     load : function(realUrl, url, res, cb){
         cc.loader.cache[url] =  cc.loader.loadImg(realUrl, function(err, img){
@@ -89,7 +96,7 @@ cc._fontLoader = {
                 var src = srcs[i];
                 type = path.extname(src).toLowerCase();
                 fontStr += "url('" + srcs[i] + "') format('" + TYPE[type] + "')";
-                fontStr += (i == li - 1) ? ";" : ",";
+                fontStr += (i === li - 1) ? ";" : ",";
             }
         }else{
             fontStr += "url('" + srcs + "') format('" + TYPE[type] + "');";

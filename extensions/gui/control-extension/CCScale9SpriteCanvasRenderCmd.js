@@ -27,6 +27,7 @@
         cc.Node.CanvasRenderCmd.call(this, renderable);
         this._cachedParent = null;
         this._cacheDirty = false;
+        this._state = cc.Scale9Sprite.state.NORMAL;
 
         var node = this._node;
         var locCacheCanvas = this._cacheCanvas = cc.newElement('canvas');
@@ -44,21 +45,10 @@
     var proto = cc.Scale9Sprite.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.Scale9Sprite.CanvasRenderCmd;
 
-    proto.addBatchNodeToChildren = function(batchNode){
-        //needn't add to children on canvas mode.
-    };
-
-    proto._computeSpriteScale = function(sizableWidth, sizableHeight, centerWidth, centerHeight){
-        var horizontalScale = sizableWidth / centerWidth, verticalScale = sizableHeight / centerHeight;
-        return {horizontalScale: horizontalScale, verticalScale: verticalScale,
-            rescaledWidth: centerWidth * horizontalScale, rescaledHeight: centerHeight * verticalScale}
-    };
-
     proto.visit = function(parentCmd){
         var node = this._node;
-        if(!node._visible){
+        if(!node._visible)
             return;
-        }
 
         if (node._positionsAreDirty) {
             node._updatePositions();
@@ -71,6 +61,22 @@
         cc.Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
     };
 
+    proto.transform = function(parentCmd){
+        var node = this._node;
+        cc.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd);
+        if (node._positionsAreDirty) {
+            node._updatePositions();
+            node._positionsAreDirty = false;
+            node._scale9Dirty = true;
+        }
+        this._cacheScale9Sprite();
+
+        var children = node._children;
+        for(var i=0; i<children.length; i++){
+            children[i].transform(this, true);
+        }
+    };
+
     proto._updateDisplayColor = function(parentColor){
         cc.Node.CanvasRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
 
@@ -79,23 +85,14 @@
             var scaleChildren = scale9Image.getChildren();
             for (var i = 0; i < scaleChildren.length; i++) {
                 var selChild = scaleChildren[i];
-                if (selChild)
+                if (selChild){
                     selChild._renderCmd._updateDisplayColor(parentColor);
+                    selChild._renderCmd._updateColor();
+                }
             }
             this._cacheScale9Sprite();
         }
 
-    };
-
-    proto.transform = function(parentCmd){
-        var node = this._node;
-        this._cacheScale9Sprite();
-        cc.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd);
-
-        var children = node._children;
-        for(var i=0; i<children.length; i++){
-            children[i]._renderCmd.transform(this);
-        }
     };
 
     proto._cacheScale9Sprite = function(){
@@ -107,10 +104,10 @@
         var size = node._contentSize;
         var sizeInPixels = cc.size(size.width * locScaleFactor, size.height * locScaleFactor);
 
-        var locCanvas = this._cacheCanvas, wrapper = this._cacheContext, context = wrapper.getContext();
+        var locCanvas = this._cacheCanvas, wrapper = this._cacheContext, locContext = wrapper.getContext();
 
         var contentSizeChanged = false;
-        if(locCanvas.width != sizeInPixels.width || locCanvas.height != sizeInPixels.height){
+        if(locCanvas.width !== sizeInPixels.width || locCanvas.height !== sizeInPixels.height){
             locCanvas.width = sizeInPixels.width;
             locCanvas.height = sizeInPixels.height;
             contentSizeChanged = true;
@@ -121,9 +118,14 @@
         node._scale9Image.visit();
 
         //draw to cache canvas
-        context.setTransform(1, 0, 0, 1, 0, 0);
-        context.clearRect(0, 0, sizeInPixels.width, sizeInPixels.height);
+        var selTexture = node._scale9Image.getTexture();
+        if(selTexture && this._state === cc.Scale9Sprite.state.GRAY)
+            selTexture._switchToGray(true);
+        locContext.setTransform(1, 0, 0, 1, 0, 0);
+        locContext.clearRect(0, 0, sizeInPixels.width, sizeInPixels.height);
         cc.renderer._renderingToCacheCanvas(wrapper, node.__instanceId, locScaleFactor, locScaleFactor);
+        if(selTexture && this._state === cc.Scale9Sprite.state.GRAY)
+            selTexture._switchToGray(false);
 
         if(contentSizeChanged)
             this._cacheSprite.setTextureRect(cc.rect(0,0, size.width, size.height));
@@ -132,4 +134,11 @@
             node.addChild(this._cacheSprite, -1);
     };
 
+    proto.setState = function(state){
+        var locScale9Image = this._node._scale9Image;
+        if(!locScale9Image)
+            return;
+        this._state = state;
+        this._cacheScale9Sprite();
+    };
 })();

@@ -84,9 +84,7 @@ cc._tmp.WebGLColor = function () {
      * @type {number}
      */
     cc.Color.BYTES_PER_ELEMENT = 4;
-
     var _p = cc.Color.prototype;
-
     _p._getR = function () {
         return this._rU8[0];
     };
@@ -124,7 +122,6 @@ cc._tmp.WebGLColor = function () {
     _p.a;
     cc.defineGetterSetter(_p, "a", _p._getA, _p._setA);
 
-
     //redefine cc.Vertex2F
     /**
      * @class cc.Vertex2F
@@ -148,26 +145,26 @@ cc._tmp.WebGLColor = function () {
      * @type {number}
      */
     cc.Vertex2F.BYTES_PER_ELEMENT = 8;
-    Object.defineProperties(cc.Vertex2F.prototype, {
-        x: {
-            get: function () {
-                return this._xF32[0];
-            },
-            set: function (xValue) {
-                this._xF32[0] = xValue;
-            },
-            enumerable: true
-        },
-        y: {
-            get: function () {
-                return this._yF32[0];
-            },
-            set: function (yValue) {
-                this._yF32[0] = yValue;
-            },
-            enumerable: true
-        }
-    });
+
+    _p = cc.Vertex2F.prototype;
+    _p._getX = function () {
+        return this._xF32[0];
+    };
+    _p._setX = function (xValue) {
+        this._xF32[0] = xValue;
+    };
+    _p._getY = function () {
+        return this._yF32[0];
+    };
+    _p._setY = function (yValue) {
+        this._yF32[0] = yValue;
+    };
+    /** @expose */
+    _p.x;
+    cc.defineGetterSetter(_p, "x", _p._getX, _p._setX);
+    /** @expose */
+    _p.y;
+    cc.defineGetterSetter(_p, "y", _p._getY, _p._setY);
 
     // redefine cc.Vertex3F
     /**
@@ -196,35 +193,35 @@ cc._tmp.WebGLColor = function () {
      * @type {number}
      */
     cc.Vertex3F.BYTES_PER_ELEMENT = 12;
-    Object.defineProperties(cc.Vertex3F.prototype, {
-        x: {
-            get: function () {
-                return this._xF32[0];
-            },
-            set: function (xValue) {
-                this._xF32[0] = xValue;
-            },
-            enumerable: true
-        },
-        y: {
-            get: function () {
-                return this._yF32[0];
-            },
-            set: function (yValue) {
-                this._yF32[0] = yValue;
-            },
-            enumerable: true
-        },
-        z: {
-            get: function () {
-                return this._zF32[0];
-            },
-            set: function (zValue) {
-                this._zF32[0] = zValue;
-            },
-            enumerable: true
-        }
-    });
+
+    _p = cc.Vertex3F.prototype;
+    _p._getX = function () {
+        return this._xF32[0];
+    };
+    _p._setX = function (xValue) {
+        this._xF32[0] = xValue;
+    };
+    _p._getY = function () {
+        return this._yF32[0];
+    };
+    _p._setY = function (yValue) {
+        this._yF32[0] = yValue;
+    };
+    _p._getZ = function () {
+        return this._zF32[0];
+    };
+    _p._setZ = function (zValue) {
+        this._zF32[0] = zValue;
+    };
+    /** @expose */
+    _p.x;
+    cc.defineGetterSetter(_p, "x", _p._getX, _p._setX);
+    /** @expose */
+    _p.y;
+    cc.defineGetterSetter(_p, "y", _p._getY, _p._setY);
+    /** @expose */
+    _p.z;
+    cc.defineGetterSetter(_p, "z", _p._getZ, _p._setZ);
 
     // redefine cc.Tex2F
     /**
@@ -249,26 +246,26 @@ cc._tmp.WebGLColor = function () {
      * @type {number}
      */
     cc.Tex2F.BYTES_PER_ELEMENT = 8;
-    Object.defineProperties(cc.Tex2F.prototype, {
-        u: {
-            get: function () {
-                return this._uF32[0];
-            },
-            set: function (xValue) {
-                this._uF32[0] = xValue;
-            },
-            enumerable: true
-        },
-        v: {
-            get: function () {
-                return this._vF32[0];
-            },
-            set: function (yValue) {
-                this._vF32[0] = yValue;
-            },
-            enumerable: true
-        }
-    });
+
+    _p = cc.Tex2F.prototype;
+    _p._getU = function () {
+        return this._uF32[0];
+    };
+    _p._setU = function (xValue) {
+        this._uF32[0] = xValue;
+    };
+    _p._getV = function () {
+        return this._vF32[0];
+    };
+    _p._setV = function (yValue) {
+        this._vF32[0] = yValue;
+    };
+    /** @expose */
+    _p.u;
+    cc.defineGetterSetter(_p, "u", _p._getU, _p._setU);
+    /** @expose */
+    _p.v;
+    cc.defineGetterSetter(_p, "v", _p._getV, _p._setV);
 
     //redefine cc.Quad2
     /**
@@ -297,6 +294,49 @@ cc._tmp.WebGLColor = function () {
      */
     cc.Quad2.BYTES_PER_ELEMENT = 32;
 
+    _p = cc.Quad2.prototype;
+    _p._getTL = function () {
+        return this._tl;
+    };
+    _p._setTL = function (tlValue) {
+        this._tl.x = tlValue.x;
+        this._tl.y = tlValue.y;
+    };
+    _p._getTR = function () {
+        return this._tr;
+    };
+    _p._setTR = function (trValue) {
+        this._tr.x = trValue.x;
+        this._tr.y = trValue.y;
+    };
+    _p._getBL = function() {
+        return this._bl;
+    };
+    _p._setBL = function (blValue) {
+        this._bl.x = blValue.x;
+        this._bl.y = blValue.y;
+    };
+    _p._getBR = function () {
+        return this._br;
+    };
+    _p._setBR = function (brValue) {
+        this._br.x = brValue.x;
+        this._br.y = brValue.y;
+    };
+
+    /** @expose */
+    _p.tl;
+    cc.defineGetterSetter(_p, "tl", _p._getTL, _p._setTL);
+    /** @expose */
+    _p.tr;
+    cc.defineGetterSetter(_p, "tr", _p._getTR, _p._setTR);
+    /** @expose */
+    _p.bl;
+    cc.defineGetterSetter(_p, "bl", _p._getBL, _p._setBL);
+    /** @expose */
+    _p.br;
+    cc.defineGetterSetter(_p, "br", _p._getBR, _p._setBR);
+
     /**
      * A 3D Quad. 4 * 3 floats
      * @Class cc.Quad3
@@ -312,49 +352,6 @@ cc._tmp.WebGLColor = function () {
         this.tl = tl1 || new cc.Vertex3F(0, 0, 0);
         this.tr = tr1 || new cc.Vertex3F(0, 0, 0);
     };
-
-    Object.defineProperties(cc.Quad2.prototype, {
-        tl: {
-            get: function () {
-                return this._tl;
-            },
-            set: function (tlValue) {
-                this._tl.x = tlValue.x;
-                this._tl.y = tlValue.y;
-            },
-            enumerable: true
-        },
-        tr: {
-            get: function () {
-                return this._tr;
-            },
-            set: function (trValue) {
-                this._tr.x = trValue.x;
-                this._tr.y = trValue.y;
-            },
-            enumerable: true
-        },
-        bl: {
-            get: function () {
-                return this._bl;
-            },
-            set: function (blValue) {
-                this._bl.x = blValue.x;
-                this._bl.y = blValue.y;
-            },
-            enumerable: true
-        },
-        br: {
-            get: function () {
-                return this._br;
-            },
-            set: function (brValue) {
-                this._br.x = brValue.x;
-                this._br.y = brValue.y;
-            },
-            enumerable: true
-        }
-    });
 
     //redefine cc.V3F_C4B_T2F
     /**
@@ -383,43 +380,43 @@ cc._tmp.WebGLColor = function () {
      * @type {number}
      */
     cc.V3F_C4B_T2F.BYTES_PER_ELEMENT = 24;
-    Object.defineProperties(cc.V3F_C4B_T2F.prototype, {
-        vertices: {
-            get: function () {
-                return this._vertices;
-            },
-            set: function (verticesValue) {
-                var locVertices = this._vertices;
-                locVertices.x = verticesValue.x;
-                locVertices.y = verticesValue.y;
-                locVertices.z = verticesValue.z;
-            },
-            enumerable: true
-        },
-        colors: {
-            get: function () {
-                return this._colors;
-            },
-            set: function (colorValue) {
-                var locColors = this._colors;
-                locColors.r = colorValue.r;
-                locColors.g = colorValue.g;
-                locColors.b = colorValue.b;
-                locColors.a = colorValue.a;
-            },
-            enumerable: true
-        },
-        texCoords: {
-            get: function () {
-                return this._texCoords;
-            },
-            set: function (texValue) {
-                this._texCoords.u = texValue.u;
-                this._texCoords.v = texValue.v;
-            },
-            enumerable: true
-        }
-    });
+
+    _p = cc.V3F_C4B_T2F.prototype;
+    _p._getVertices = function () {
+        return this._vertices;
+    };
+    _p._setVertices = function (verticesValue) {
+        var locVertices = this._vertices;
+        locVertices.x = verticesValue.x;
+        locVertices.y = verticesValue.y;
+        locVertices.z = verticesValue.z;
+    };
+    _p._getColor = function () {
+        return this._colors;
+    };
+    _p._setColor = function (colorValue) {
+        var locColors = this._colors;
+        locColors.r = colorValue.r;
+        locColors.g = colorValue.g;
+        locColors.b = colorValue.b;
+        locColors.a = colorValue.a;
+    };
+    _p._getTexCoords = function () {
+        return this._texCoords;
+    };
+    _p._setTexCoords = function (texValue) {
+        this._texCoords.u = texValue.u;
+        this._texCoords.v = texValue.v;
+    };
+    /** @expose */
+    _p.vertices;
+    cc.defineGetterSetter(_p, "vertices", _p._getVertices, _p._setVertices);
+    /** @expose */
+    _p.colors;
+    cc.defineGetterSetter(_p, "colors", _p._getColor, _p._setColor);
+    /** @expose */
+    _p.texCoords;
+    cc.defineGetterSetter(_p, "texCoords", _p._getTexCoords, _p._setTexCoords);
 
     //redefine cc.V3F_C4B_T2F_Quad
     /**
@@ -451,62 +448,63 @@ cc._tmp.WebGLColor = function () {
      * @type {number}
      */
     cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT = 96;
-    Object.defineProperties(cc.V3F_C4B_T2F_Quad.prototype, {
-        tl: {
-            get: function () {
-                return this._tl;
-            },
-            set: function (tlValue) {
-                var locTl = this._tl;
-                locTl.vertices = tlValue.vertices;
-                locTl.colors = tlValue.colors;
-                locTl.texCoords = tlValue.texCoords;
-            },
-            enumerable: true
-        },
-        bl: {
-            get: function () {
-                return this._bl;
-            },
-            set: function (blValue) {
-                var locBl = this._bl;
-                locBl.vertices = blValue.vertices;
-                locBl.colors = blValue.colors;
-                locBl.texCoords = blValue.texCoords;
-            },
-            enumerable: true
-        },
-        tr: {
-            get: function () {
-                return this._tr;
-            },
-            set: function (trValue) {
-                var locTr = this._tr;
-                locTr.vertices = trValue.vertices;
-                locTr.colors = trValue.colors;
-                locTr.texCoords = trValue.texCoords;
-            },
-            enumerable: true
-        },
-        br: {
-            get: function () {
-                return this._br;
-            },
-            set: function (brValue) {
-                var locBr = this._br;
-                locBr.vertices = brValue.vertices;
-                locBr.colors = brValue.colors;
-                locBr.texCoords = brValue.texCoords;
-            },
-            enumerable: true
-        },
-        arrayBuffer: {
-            get: function () {
-                return this._arrayBuffer;
-            },
-            enumerable: true
-        }
-    });
+    _p = cc.V3F_C4B_T2F_Quad.prototype;
+    _p._getTL = function () {
+        return this._tl;
+    };
+    _p._setTL = function (tlValue) {
+        var locTl = this._tl;
+        locTl.vertices = tlValue.vertices;
+        locTl.colors = tlValue.colors;
+        locTl.texCoords = tlValue.texCoords;
+    };
+    _p._getBL = function () {
+        return this._bl;
+    };
+    _p._setBL = function (blValue) {
+        var locBl = this._bl;
+        locBl.vertices = blValue.vertices;
+        locBl.colors = blValue.colors;
+        locBl.texCoords = blValue.texCoords;
+    };
+    _p._getTR = function () {
+        return this._tr;
+    };
+    _p._setTR = function (trValue) {
+        var locTr = this._tr;
+        locTr.vertices = trValue.vertices;
+        locTr.colors = trValue.colors;
+        locTr.texCoords = trValue.texCoords;
+    };
+    _p._getBR = function () {
+        return this._br;
+    };
+    _p._setBR = function (brValue) {
+        var locBr = this._br;
+        locBr.vertices = brValue.vertices;
+        locBr.colors = brValue.colors;
+        locBr.texCoords = brValue.texCoords;
+    };
+    _p._getArrayBuffer = function () {
+        return this._arrayBuffer;
+    };
+
+    /** @expose */
+    _p.tl;
+    cc.defineGetterSetter(_p, "tl", _p._getTL, _p._setTL);
+    /** @expose */
+    _p.tr;
+    cc.defineGetterSetter(_p, "tr", _p._getTR, _p._setTR);
+    /** @expose */
+    _p.bl;
+    cc.defineGetterSetter(_p, "bl", _p._getBL, _p._setBL);
+    /** @expose */
+    _p.br;
+    cc.defineGetterSetter(_p, "br", _p._getBR, _p._setBR);
+    /** @expose */
+    _p.arrayBuffer;
+    cc.defineGetterSetter(_p, "arrayBuffer", _p._getArrayBuffer, null);
+
     /**
      * @function
      * @returns {cc.V3F_C4B_T2F_Quad}
@@ -561,7 +559,7 @@ cc._tmp.WebGLColor = function () {
     //redefine cc.V2F_C4B_T2F
     /**
      * @class cc.V2F_C4B_T2F
-     * @param {new cc.Vertex2F} vertices
+     * @param {cc.Vertex2F} vertices
      * @param {cc.color} colors
      * @param {cc.Tex2F} texCoords
      * @param {Array} arrayBuffer
@@ -580,46 +578,47 @@ cc._tmp.WebGLColor = function () {
         this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT) :
             new cc.Tex2F(0, 0, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT);
     };
+
     /**
      * @constant
      * @type {number}
      */
     cc.V2F_C4B_T2F.BYTES_PER_ELEMENT = 20;
-    Object.defineProperties(cc.V2F_C4B_T2F.prototype, {
-        vertices: {
-            get: function () {
-                return this._vertices;
-            },
-            set: function (verticesValue) {
-                this._vertices.x = verticesValue.x;
-                this._vertices.y = verticesValue.y;
-            },
-            enumerable: true
-        },
-        colors: {
-            get: function () {
-                return this._colors;
-            },
-            set: function (colorValue) {
-                var locColors = this._colors;
-                locColors.r = colorValue.r;
-                locColors.g = colorValue.g;
-                locColors.b = colorValue.b;
-                locColors.a = colorValue.a;
-            },
-            enumerable: true
-        },
-        texCoords: {
-            get: function () {
-                return this._texCoords;
-            },
-            set: function (texValue) {
-                this._texCoords.u = texValue.u;
-                this._texCoords.v = texValue.v;
-            },
-            enumerable: true
-        }
-    });
+    _p = cc.V2F_C4B_T2F.prototype;
+    _p._getVertices = function () {
+        return this._vertices;
+    };
+    _p._setVertices = function (verticesValue) {
+        this._vertices.x = verticesValue.x;
+        this._vertices.y = verticesValue.y;
+    };
+    _p._getColor = function () {
+        return this._colors;
+    };
+    _p._setColor = function (colorValue) {
+        var locColors = this._colors;
+        locColors.r = colorValue.r;
+        locColors.g = colorValue.g;
+        locColors.b = colorValue.b;
+        locColors.a = colorValue.a;
+    };
+    _p._getTexCoords = function () {
+        return this._texCoords;
+    };
+    _p._setTexCoords = function (texValue) {
+        this._texCoords.u = texValue.u;
+        this._texCoords.v = texValue.v;
+    };
+
+    /** @expose */
+    _p.vertices;
+    cc.defineGetterSetter(_p, "vertices", _p._getVertices, _p._setVertices);
+    /** @expose */
+    _p.colors;
+    cc.defineGetterSetter(_p, "colors", _p._getColor, _p._setColor);
+    /** @expose */
+    _p.texCoords;
+    cc.defineGetterSetter(_p, "texCoords", _p._getTexCoords, _p._setTexCoords);
 
     //redefine cc.V2F_C4B_T2F_Triangle
     /**
@@ -648,42 +647,42 @@ cc._tmp.WebGLColor = function () {
      * @type {number}
      */
     cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT = 60;
-    Object.defineProperties(cc.V2F_C4B_T2F_Triangle.prototype, {
-        a: {
-            get: function () {
-                return this._a;
-            },
-            set: function (aValue) {
-                var locA = this._a;
-                locA.vertices = aValue.vertices;
-                locA.colors = aValue.colors;
-                locA.texCoords = aValue.texCoords;
-            },
-            enumerable: true
-        },
-        b: {
-            get: function () {
-                return this._b;
-            },
-            set: function (bValue) {
-                var locB = this._b;
-                locB.vertices = bValue.vertices;
-                locB.colors = bValue.colors;
-                locB.texCoords = bValue.texCoords;
-            },
-            enumerable: true
-        },
-        c: {
-            get: function () {
-                return this._c;
-            },
-            set: function (cValue) {
-                var locC = this._c;
-                locC.vertices = cValue.vertices;
-                locC.colors = cValue.colors;
-                locC.texCoords = cValue.texCoords;
-            },
-            enumerable: true
-        }
-    });
+    _p = cc.V2F_C4B_T2F_Triangle.prototype;
+    _p._getA = function () {
+        return this._a;
+    };
+    _p._setA = function (aValue) {
+        var locA = this._a;
+        locA.vertices = aValue.vertices;
+        locA.colors = aValue.colors;
+        locA.texCoords = aValue.texCoords;
+    };
+    _p._getB = function () {
+        return this._b;
+    };
+    _p._setB = function (bValue) {
+        var locB = this._b;
+        locB.vertices = bValue.vertices;
+        locB.colors = bValue.colors;
+        locB.texCoords = bValue.texCoords;
+    };
+    _p._getC = function () {
+        return this._c;
+    };
+    _p._setC = function (cValue) {
+        var locC = this._c;
+        locC.vertices = cValue.vertices;
+        locC.colors = cValue.colors;
+        locC.texCoords = cValue.texCoords;
+    };
+
+    /** @expose */
+    _p.a;
+    cc.defineGetterSetter(_p, "a", _p._getA, _p._setA);
+    /** @expose */
+    _p.b;
+    cc.defineGetterSetter(_p, "b", _p._getB, _p._setB);
+    /** @expose */
+    _p.c;
+    cc.defineGetterSetter(_p, "c", _p._getC, _p._setC);
 };

@@ -70,23 +70,39 @@ ccui.RichElementText = ccui.RichElement.extend(/** @lends ccui.RichElementText# 
     _text: "",
     _fontName: "",
     _fontSize: 0,
+    /** @type cc.FontDefinition */
+    _fontDefinition: null,
     /**
+     * Usage Example using FontDefinition:
+     *
+     * var rtEl  = new ccui.RichElementText("tag", new cc.FontDefinition({
+     *                              fillStyle: cc.color.BLACK,
+     *                              fontName: "Arial",
+     *                              fontSize: 12,
+     *                              fontWeight: "bold",
+     *                              fontStyle: "normal",
+     *                              lineHeight: 14
+     *                          }), 255, "Some Text");
+     *
      * Constructor of ccui.RichElementText
      * @param {Number} tag
-     * @param {cc.Color} color
+     * @param {cc.Color|cc.FontDefinition} colorOrFontDef
      * @param {Number} opacity
      * @param {String} text
      * @param {String} fontName
      * @param {Number} fontSize
      */
-    ctor: function (tag, color, opacity, text, fontName, fontSize) {
+    ctor: function (tag, colorOrFontDef, opacity, text, fontName, fontSize) {
         ccui.RichElement.prototype.ctor.call(this);
         this._type = ccui.RichElement.TEXT;
         this._text = "";
         this._fontName = "";
         this._fontSize = 0;
 
-        fontSize && this.init(tag, color, opacity, text, fontName, fontSize);
+        if( colorOrFontDef && colorOrFontDef instanceof cc.FontDefinition)
+            this.initWithStringAndTextDefinition(tag, text, colorOrFontDef, opacity);
+        else
+            fontSize && this.init(tag, colorOrFontDef, opacity, text, fontName, fontSize);
     },
 
     /**
@@ -104,6 +120,15 @@ ccui.RichElementText = ccui.RichElement.extend(/** @lends ccui.RichElementText# 
         this._text = text;
         this._fontName = fontName;
         this._fontSize = fontSize;
+    },
+    initWithStringAndTextDefinition: function(tag, text, fontDef, opacity){
+
+        ccui.RichElement.prototype.init.call(this, tag, fontDef.fillStyle, opacity);
+        this._fontDefinition = fontDef;
+        this._text = text;
+        this._fontName = fontDef.fontName;
+        this._fontSize = fontDef.fontSize;
+
     }
 });
 
@@ -238,6 +263,9 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
     _leftSpaceWidth: 0,
     _verticalSpace: 0,
     _elementRenderersContainer: null,
+    _lineBreakOnSpace: false,
+    _textHorizontalAlignment: null,
+    _textVerticalAlignment: null,
 
     /**
      * create a rich text
@@ -252,6 +280,8 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
         this._elementRenders = [];
         this._leftSpaceWidth = 0;
         this._verticalSpace = 0;
+        this._textHorizontalAlignment = cc.TEXT_ALIGNMENT_LEFT;
+        this._textVerticalAlignment = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
     },
 
     _initRenderer: function () {
@@ -306,8 +336,10 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                     var elementRenderer = null;
                     switch (element._type) {
                         case ccui.RichElement.TEXT:
-                            //todo: There may be ambiguous
-                            elementRenderer = new cc.LabelTTF(element._text, element._fontName, element._fontSize);
+                            if( element._fontDefinition)
+                                elementRenderer = new cc.LabelTTF(element._text, element._fontDefinition);
+                            else //todo: There may be ambiguous
+                                elementRenderer = new cc.LabelTTF(element._text, element._fontName, element._fontSize);
                             break;
                         case ccui.RichElement.IMAGE:
                             elementRenderer = new cc.Sprite(element._filePath);
@@ -328,7 +360,10 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                     element = locRichElements[i];
                     switch (element._type) {
                         case ccui.RichElement.TEXT:
-                            this._handleTextRenderer(element._text, element._fontName, element._fontSize, element._color);
+                            if( element._fontDefinition)
+                                this._handleTextRenderer(element._text, element._fontDefinition, element._fontDefinition.fontSize, element._fontDefinition.fillStyle);
+                            else
+                                this._handleTextRenderer(element._text, element._fontName, element._fontSize, element._color);
                             break;
                         case ccui.RichElement.IMAGE:
                             this._handleImageRenderer(element._filePath, element._color, element._color.a);
@@ -345,9 +380,24 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
             this._formatTextDirty = false;
         }
     },
+    /**
+     * Prepare the child LabelTTF based on line breaking
+     * @param {String} text
+     * @param {String|cc.FontDefinition} fontNameOrFontDef
+     * @param {Number} fontSize
+     * @param {cc.Color} color
+     * @private
+     */
+    _handleTextRenderer: function (text, fontNameOrFontDef, fontSize, color) {
+        if(text === "")
+            return;
 
-    _handleTextRenderer: function (text, fontName, fontSize, color) {
-        var textRenderer =  new cc.LabelTTF(text, fontName, fontSize);
+        if(text === "\n"){ //Force Line Breaking
+            this._addNewLine();
+            return;
+        }
+
+        var textRenderer = fontNameOrFontDef instanceof cc.FontDefinition ? new cc.LabelTTF(text, fontNameOrFontDef) : new cc.LabelTTF(text, fontNameOrFontDef, fontSize);
         var textRendererWidth = textRenderer.getContentSize().width;
         this._leftSpaceWidth -= textRendererWidth;
         if (this._leftSpaceWidth < 0) {
@@ -357,18 +407,38 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
             var leftLength = stringLength * (1 - overstepPercent);
             var leftWords = curText.substr(0, leftLength);
             var cutWords = curText.substr(leftLength, curText.length - 1);
-            if (leftLength > 0) {
-                var leftRenderer = new cc.LabelTTF(leftWords.substr(0, leftLength), fontName, fontSize);
-                leftRenderer.setColor(color);
-                leftRenderer.setOpacity(color.a);
+            var validLeftLength = leftLength > 0;
+
+            if(this._lineBreakOnSpace){
+                var lastSpaceIndex = leftWords.lastIndexOf(' ');
+                leftLength = lastSpaceIndex === -1 ? leftLength : lastSpaceIndex+1 ;
+                cutWords = curText.substr(leftLength, curText.length - 1);
+                validLeftLength = leftLength > 0 && cutWords !== " ";
+            }
+
+            if (validLeftLength) {
+                var leftRenderer = null;
+                if( fontNameOrFontDef instanceof cc.FontDefinition)
+                {
+                    leftRenderer = new cc.LabelTTF(leftWords.substr(0, leftLength), fontNameOrFontDef);
+                    leftRenderer.setOpacity(fontNameOrFontDef.fillStyle.a); //TODO: Verify that might not be needed...
+                }else{
+                    leftRenderer =  new cc.LabelTTF(leftWords.substr(0, leftLength), fontNameOrFontDef, fontSize);
+                    leftRenderer.setColor(color);
+                    leftRenderer.setOpacity(color.a);
+                }
                 this._pushToContainer(leftRenderer);
             }
 
             this._addNewLine();
-            this._handleTextRenderer(cutWords, fontName, fontSize, color);
+            this._handleTextRenderer(cutWords, fontNameOrFontDef, fontSize, color);
         } else {
-            textRenderer.setColor(color);
-            textRenderer.setOpacity(color.a);
+            if( fontNameOrFontDef instanceof cc.FontDefinition) {
+                textRenderer.setOpacity(fontNameOrFontDef.fillStyle.a); //TODO: Verify that might not be needed...
+            }else {
+                textRenderer.setColor(color);
+                textRenderer.setOpacity(color.a);
+            }
             this._pushToContainer(textRenderer);
         }
     },
@@ -405,16 +475,33 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
             var newContentSizeWidth = 0;
             row = locElementRenders[0];
             nextPosX = 0;
+
             for (j = 0; j < row.length; j++) {
                 l = row[j];
                 l.setAnchorPoint(cc.p(0, 0));
                 l.setPosition(nextPosX, 0);
                 locRenderersContainer.addChild(l, 1, j);
+
+                var lineHeight = l.getLineHeight ? l.getLineHeight() : newContentSizeHeight;
+
                 var iSize = l.getContentSize();
                 newContentSizeWidth += iSize.width;
-                newContentSizeHeight = Math.max(newContentSizeHeight, iSize.height);
+                newContentSizeHeight = Math.max(Math.min(newContentSizeHeight, lineHeight), iSize.height);
                 nextPosX += iSize.width;
             }
+
+            //Text flow horizontal alignment:
+            if(this._textHorizontalAlignment !== cc.TEXT_ALIGNMENT_LEFT) {
+                var offsetX = 0;
+                if (this._textHorizontalAlignment === cc.TEXT_ALIGNMENT_RIGHT)
+                    offsetX = this._contentSize.width - nextPosX;
+                else if (this._textHorizontalAlignment === cc.TEXT_ALIGNMENT_CENTER)
+                    offsetX = (this._contentSize.width - nextPosX) / 2;
+
+                for (j = 0; j < row.length; j++)
+                    row[j].x += offsetX;
+            }
+
             locRenderersContainer.setContentSize(newContentSizeWidth, newContentSizeHeight);
         } else {
             var maxHeights = [];
@@ -423,13 +510,16 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                 var maxHeight = 0;
                 for (j = 0; j < row.length; j++) {
                     l = row[j];
-                    maxHeight = Math.max(l.getContentSize().height, maxHeight);
+                    var lineHeight = l.getLineHeight ? l.getLineHeight() : l.getContentSize().height;
+                    cc.log(lineHeight);
+                    maxHeight = Math.max(Math.min(l.getContentSize().height, lineHeight), maxHeight);
                 }
                 maxHeights[i] = maxHeight;
                 newContentSizeHeight += maxHeights[i];
             }
 
             var nextPosY = this._customSize.height;
+
             for (i = 0; i < locElementRenders.length; i++) {
                 row = locElementRenders[i];
                 nextPosX = 0;
@@ -442,7 +532,28 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                     locRenderersContainer.addChild(l, 1);
                     nextPosX += l.getContentSize().width;
                 }
+                //Text flow alignment(s)
+                if( this._textHorizontalAlignment !== cc.TEXT_ALIGNMENT_LEFT || this._textVerticalAlignment !== cc.VERTICAL_TEXT_ALIGNMENT_TOP) {
+                    var offsetX = 0;
+                    if (this._textHorizontalAlignment === cc.TEXT_ALIGNMENT_RIGHT)
+                        offsetX = this._contentSize.width - nextPosX;
+                    else if (this._textHorizontalAlignment === cc.TEXT_ALIGNMENT_CENTER)
+                        offsetX = (this._contentSize.width - nextPosX) / 2;
+
+                    var offsetY = 0;
+                    if (this._textVerticalAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
+                        offsetY = this._customSize.height - newContentSizeHeight;
+                    else if (this._textVerticalAlignment === cc.VERTICAL_TEXT_ALIGNMENT_CENTER)
+                        offsetY = (this._customSize.height - newContentSizeHeight) / 2;
+
+                    for (j = 0; j < row.length; j++) {
+                        l = row[j];
+                        l.x += offsetX;
+                        l.y -= offsetY;
+                    }
+                }
             }
+
             locRenderersContainer.setContentSize(this._contentSize);
         }
 
@@ -454,6 +565,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
 
         this.setContentSize(this._ignoreSize?this.getVirtualRendererSize():this._customSize);
         this._updateContentSizeWithTextureSize(this._contentSize);
+
         locRenderersContainer.setPosition(this._contentSize.width * 0.5, this._contentSize.height * 0.5);
     },
 
@@ -463,16 +575,8 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
         this._elementRenders[this._elementRenders.length - 1].push(renderer);
     },
 
-    /**
-     * Calls formatText before calls parent class' visit.
-     * @override
-     * @param parentCmd
-     */
-    visit: function (parentCmd) {
-        if (this._enabled) {
-            this.formatText();
-            ccui.Widget.prototype.visit.call(this, parentCmd);
-        }
+    _adaptRenderers: function(){
+        this.formatText();
     },
 
     /**
@@ -516,7 +620,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      * @override
      */
     ignoreContentAdaptWithSize: function (ignore) {
-        if (this._ignoreSize != ignore) {
+        if (this._ignoreSize !== ignore) {
             this._formatTextDirty = true;
             ccui.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
         }
@@ -553,6 +657,57 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
      */
     getDescription: function(){
         return "RichText";
+    },
+    /**
+     * Allow child renderer to be affected by ccui.RichText's opacity
+     * @param {boolean} value
+     */
+    setCascadeOpacityEnabled: function(value) {
+        this._super(value);
+        this._elementRenderersContainer.setCascadeOpacityEnabled(value);
+    },
+    /**
+     * This allow the RichText layout to break line on space only like in Latin text format
+     * by default the property is false, which break the line on characters
+     * @param value
+     */
+    setLineBreakOnSpace: function(value){
+        this._lineBreakOnSpace = value;
+        this._formatTextDirty = true;
+        this.formatText();
+    },
+    /**
+     * Set the renderer horizontal flow alignment for the Control
+     * although it is named TextHorizontalAlignment, it should work with all type of renderer too.
+     * NOTE: we should rename this to setHorizontalAlignment directly
+     *
+     * @example
+     * var richText = new ccui.RichText();
+     * richText.setTextHorizontalAlignment(cc.Text_ALIGNMENT_RIGHT);
+     *
+     * @param {Number} value - example cc.TEXT_ALIGNMENT_RIGHT
+     */
+    setTextHorizontalAlignment: function(value){
+        if(value !== this._textHorizontalAlignment) {
+            this._textHorizontalAlignment = value;
+            this.formatText();
+        }
+    },
+    /**
+     * Set the renderer vertical flow alignment for the Control
+     * although it is named TextVerticalAlignment, it should work with all type of renderer too.
+     *
+     * @example
+     * var richText = new ccui.RichText();
+     * richText.setTextVerticalAlignment(cc.VERTICAL_TEXT_ALIGNMENT_CENTER);
+     *
+     * @param {Number} value - example cc.VERTICAL_TEXT_ALIGNMENT_CENTER
+     */
+    setTextVerticalAlignment: function(value){
+        if(value !== this._textVerticalAlignment) {
+            this._textVerticalAlignment = value;
+            this.formatText();
+        }
     }
 });
 

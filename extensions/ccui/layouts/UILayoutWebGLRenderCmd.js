@@ -24,6 +24,8 @@
  ****************************************************************************/
 
 (function(){
+    if(!ccui.ProtectedNode.WebGLRenderCmd)
+        return;
     ccui.Layout.WebGLRenderCmd = function(renderable){
         ccui.ProtectedNode.WebGLRenderCmd.call(this, renderable);
         this._needDraw = false;
@@ -49,6 +51,28 @@
 
     var proto = ccui.Layout.WebGLRenderCmd.prototype = Object.create(ccui.ProtectedNode.WebGLRenderCmd.prototype);
     proto.constructor = ccui.Layout.WebGLRenderCmd;
+
+    proto.visit = function(parentCmd){
+        var node = this._node;
+        if (!node._visible)
+            return;
+        node._adaptRenderers();
+        node._doLayout();
+
+        if (node._clippingEnabled) {
+            switch (node._clippingType) {
+                case ccui.Layout.CLIPPING_STENCIL:
+                    this.stencilClippingVisit(parentCmd);
+                    break;
+                case ccui.Layout.CLIPPING_SCISSOR:
+                    this.scissorClippingVisit(parentCmd);
+                    break;
+                default:
+                    break;
+            }
+        } else
+            ccui.Widget.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
+    };
 
     proto._onBeforeVisitStencil = function(ctx){
         var gl = ctx || cc._renderContext;
@@ -148,7 +172,7 @@
             return;
 
         // all the _stencilBits are in use?
-        if (ccui.Layout.WebGLRenderCmd._layer + 1 == cc.stencilBits) {
+        if (ccui.Layout.WebGLRenderCmd._layer + 1 === cc.stencilBits) {
             // warn once
             ccui.Layout.WebGLRenderCmd._visit_once = true;
             if (ccui.Layout.WebGLRenderCmd._visit_once) {

@@ -186,6 +186,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _renderCmd:null,
 
+    _camera: null,
+
     /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @function
@@ -446,7 +448,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} globalZOrder
      */
     setGlobalZOrder: function (globalZOrder) {
-        if (this._globalZOrder != globalZOrder) {
+        if (this._globalZOrder !== globalZOrder) {
             this._globalZOrder = globalZOrder;
             cc.eventManager._setDirtyForNode(this);
         }
@@ -649,9 +651,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setPosition: function (newPosOrxValue, yValue) {
         var locPosition = this._position;
         if (yValue === undefined) {
+            if(locPosition.x === newPosOrxValue.x && locPosition.y === newPosOrxValue.y)
+                return;
             locPosition.x = newPosOrxValue.x;
             locPosition.y = newPosOrxValue.y;
         } else {
+            if(locPosition.x === newPosOrxValue && locPosition.y === yValue)
+                return;
             locPosition.x = newPosOrxValue;
             locPosition.y = yValue;
         }
@@ -962,7 +968,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Boolean} newValue true if anchor point will be ignored when you position this node
      */
     ignoreAnchorPointForPosition: function (newValue) {
-        if (newValue != this._ignoreAnchorPointForPosition) {
+        if (newValue !== this._ignoreAnchorPointForPosition) {
             this._ignoreAnchorPointForPosition = newValue;
             this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
         }
@@ -1072,7 +1078,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {object} newValue A user cocos2d object
      */
     setUserObject: function (newValue) {
-        if (this.userObject != newValue)
+        if (this.userObject !== newValue)
             this.userObject = newValue;
     },
 
@@ -1121,7 +1127,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {cc.ActionManager} actionManager A CCActionManager object that is used by all actions.
      */
     setActionManager: function (actionManager) {
-        if (this._actionManager != actionManager) {
+        if (this._actionManager !== actionManager) {
             this.stopAllActions();
             this._actionManager = actionManager;
         }
@@ -1150,7 +1156,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param scheduler A cc.Scheduler object that is used to schedule all "update" and timers.
      */
     setScheduler: function (scheduler) {
-        if (this._scheduler != scheduler) {
+        if (this._scheduler !== scheduler) {
             this.unscheduleAllCallbacks();
             this._scheduler = scheduler;
         }
@@ -1202,10 +1208,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getChildByTag: function (aTag) {
         var __children = this._children;
-        if (__children != null) {
+        if (__children !== null) {
             for (var i = 0; i < __children.length; i++) {
                 var node = __children[i];
-                if (node && node.tag == aTag)
+                if (node && node.tag === aTag)
                     return node;
             }
         }
@@ -1226,7 +1232,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
         var locChildren = this._children;
         for(var i = 0, len = locChildren.length; i < len; i++){
-           if(locChildren[i]._name == name)
+           if(locChildren[i]._name === name)
             return locChildren[i];
         }
         return null;
@@ -1298,7 +1304,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     removeFromParent: function (cleanup) {
         if (this._parent) {
-            if (cleanup == null)
+            if (cleanup === undefined)
                 cleanup = true;
             this._parent.removeChild(this, cleanup);
         }
@@ -1329,7 +1335,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (this._children.length === 0)
             return;
 
-        if (cleanup == null)
+        if (cleanup === undefined)
             cleanup = true;
         if (this._children.indexOf(child) > -1)
             this._detachChild(child, cleanup);
@@ -1351,7 +1357,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             cc.log(cc._LogInfos.Node_removeChildByTag);
 
         var child = this.getChildByTag(tag);
-        if (child == null)
+        if (!child)
             cc.log(cc._LogInfos.Node_removeChildByTag_2, tag);
         else
             this.removeChild(child, cleanup);
@@ -1374,26 +1380,28 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     removeAllChildren: function (cleanup) {
         // not using detachChild improves speed here
         var __children = this._children;
-        if (__children != null) {
-            if (cleanup == null)
+        if (__children !== null) {
+            if (cleanup === undefined)
                 cleanup = true;
             for (var i = 0; i < __children.length; i++) {
                 var node = __children[i];
                 if (node) {
-                    // IMPORTANT:
-                    //  -1st do onExit
-                    //  -2nd cleanup
                     if (this._running) {
                         node.onExitTransitionDidStart();
                         node.onExit();
                     }
+
+                    // If you don't do cleanup, the node's actions will not get removed and the
                     if (cleanup)
                         node.cleanup();
+
                     // set parent nil at the end
                     node.parent = null;
+                    node._renderCmd.detachFromParent();
                 }
             }
             this._children.length = 0;
+            cc.renderer.childrenOrderDirty = true;
         }
     },
 
@@ -1490,7 +1498,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     // Internal use only, do not call it by yourself,
     transformAncestors: function () {
-        if (this._parent != null) {
+        if (this._parent !== null) {
             this._parent.transformAncestors();
             this._parent.transform();
         }
@@ -1648,7 +1656,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} priority
      */
     scheduleUpdateWithPriority: function (priority) {
-        this.scheduler.scheduleUpdateForTarget(this, priority, !this._running);
+        this.scheduler.scheduleUpdate(this, priority, !this._running);
     },
 
     /**
@@ -1657,39 +1665,93 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @see cc.Node#scheduleUpdate
      */
     unscheduleUpdate: function () {
-        this.scheduler.unscheduleUpdateForTarget(this);
+        this.scheduler.unscheduleUpdate(this);
     },
 
     /**
      * <p>Schedules a custom selector.         <br/>
      * If the selector is already scheduled, then the interval parameter will be updated without scheduling it again.</p>
      * @function
-     * @param {function} callback_fn A function wrapped as a selector
+     * @param {function} callback A function wrapped as a selector
      * @param {Number} interval  Tick interval in seconds. 0 means tick every frame. If interval = 0, it's recommended to use scheduleUpdate() instead.
      * @param {Number} repeat    The selector will be executed (repeat + 1) times, you can use kCCRepeatForever for tick infinitely.
      * @param {Number} delay     The amount of time that the first tick will wait before execution.
+     * @param {String} key The only string identifying the callback
      */
-    schedule: function (callback_fn, interval, repeat, delay) {
-        interval = interval || 0;
+    schedule: function (callback, interval, repeat, delay, key) {
+        var len = arguments.length;
+        if(typeof callback === "function"){
+            //callback, interval, repeat, delay, key
+            if(len === 1){
+                //callback
+                interval = 0;
+                repeat = cc.REPEAT_FOREVER;
+                delay = 0;
+                key = this.__instanceId;
+            }else if(len === 2){
+                if(typeof interval === "number"){
+                    //callback, interval
+                    repeat = cc.REPEAT_FOREVER;
+                    delay = 0;
+                    key = this.__instanceId;
+                }else{
+                    //callback, key
+                    key = interval;
+                    interval = 0;
+                    repeat = cc.REPEAT_FOREVER;
+                    delay = 0;
+                }
+            }else if(len === 3){
+                if(typeof repeat === "string"){
+                    //callback, interval, key
+                    key = repeat;
+                    repeat = cc.REPEAT_FOREVER;
+                }else{
+                    //callback, interval, repeat
+                    key = this.__instanceId;
+                }
+                delay = 0;
+            }else if(len === 4){
+                key = this.__instanceId;
+            }
+        }else{
+            //selector
+            //selector, interval
+            //selector, interval, repeat, delay
+            if(len === 1){
+                interval = 0;
+                repeat = cc.REPEAT_FOREVER;
+                delay = 0;
+            }else if(len === 2){
+                repeat = cc.REPEAT_FOREVER;
+                delay = 0;
+            }
+        }
 
-        cc.assert(callback_fn, cc._LogInfos.Node_schedule);
+        cc.assert(callback, cc._LogInfos.Node_schedule);
         cc.assert(interval >= 0, cc._LogInfos.Node_schedule_2);
 
+        interval = interval || 0;
         repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
         delay = delay || 0;
 
-        this.scheduler.scheduleCallbackForTarget(this, callback_fn, interval, repeat, delay, !this._running);
+        this.scheduler.schedule(callback, this, interval, repeat, delay, !this._running, key);
     },
 
     /**
      * Schedules a callback function that runs only once, with a delay of 0 or larger
      * @function
      * @see cc.Node#schedule
-     * @param {function} callback_fn  A function wrapped as a selector
+     * @param {function} callback  A function wrapped as a selector
      * @param {Number} delay  The amount of time that the first tick will wait before execution.
+     * @param {String} key The only string identifying the callback
      */
-    scheduleOnce: function (callback_fn, delay) {
-        this.schedule(callback_fn, 0.0, 0, delay);
+    scheduleOnce: function (callback, delay, key) {
+        //selector, delay
+        //callback, delay, key
+        if(key === undefined)
+            key = this.__instanceId;
+        this.schedule(callback, 0, 0, delay, key);
     },
 
     /**
@@ -1699,10 +1761,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {function} callback_fn  A function wrapped as a selector
      */
     unschedule: function (callback_fn) {
+        //key
+        //selector
         if (!callback_fn)
             return;
 
-        this.scheduler.unscheduleCallbackForTarget(this, callback_fn);
+        this.scheduler.unschedule(callback_fn, this);
     },
 
     /**
@@ -1711,7 +1775,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      */
     unscheduleAllCallbacks: function () {
-        this.scheduler.unscheduleAllCallbacksForTarget(this);
+        this.scheduler.unscheduleAllForTarget(this);
     },
 
     /**
@@ -1807,6 +1871,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * spriteB.setAdditionalTransform(t);
      */
     setAdditionalTransform: function (additionalTransform) {
+        if(additionalTransform === undefined)
+            return this._additionalTransformDirty = false;
         this._additionalTransform = additionalTransform;
         this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
         this._additionalTransformDirty = true;
@@ -1838,7 +1904,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     getNodeToWorldTransform: function () {
         //TODO renderCmd has a WorldTransform
         var t = this.getNodeToParentTransform();
-        for (var p = this._parent; p != null; p = p.parent)
+        for (var p = this._parent; p !== null; p = p.parent)
             t = cc.affineTransformConcat(t, p.getNodeToParentTransform());
         return t;
     },
@@ -2191,7 +2257,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _getBoundingBoxToCurrentNode: function (parentTransform) {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
-        var trans = (parentTransform == null) ? this.getNodeToParentTransform() : cc.affineTransformConcat(this.getNodeToParentTransform(), parentTransform);
+        var trans = (parentTransform === undefined) ? this.getNodeToParentTransform() : cc.affineTransformConcat(this.getNodeToParentTransform(), parentTransform);
         rect = cc.rectApplyAffineTransform(rect, trans);
 
         //query child's BoundingBox
@@ -2362,6 +2428,119 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             return new cc.Node.CanvasRenderCmd(this);
         else
             return new cc.Node.WebGLRenderCmd(this);
+    },
+
+    /** Search the children of the receiving node to perform processing for nodes which share a name.
+     *
+     * @param name The name to search for, supports c++11 regular expression.
+     * Search syntax options:
+     * `//`: Can only be placed at the begin of the search string. This indicates that it will search recursively.
+     * `..`: The search should move up to the node's parent. Can only be placed at the end of string.
+     * `/` : When placed anywhere but the start of the search string, this indicates that the search should move to the node's children.
+     *
+     * @code
+     * enumerateChildren("//MyName", ...): This searches the children recursively and matches any node with the name `MyName`.
+     * enumerateChildren("[[:alnum:]]+", ...): This search string matches every node of its children.
+     * enumerateChildren("A[[:digit:]]", ...): This searches the node's children and returns any child named `A0`, `A1`, ..., `A9`.
+     * enumerateChildren("Abby/Normal", ...): This searches the node's grandchildren and returns any node whose name is `Normal`
+     * and whose parent is named `Abby`.
+     * enumerateChildren("//Abby/Normal", ...): This searches recursively and returns any node whose name is `Normal` and whose
+     * parent is named `Abby`.
+     * @endcode
+     *
+     * @warning Only support alpha or number for name, and not support unicode.
+     *
+     * @param callback A callback function to execute on nodes that match the `name` parameter. The function takes the following arguments:
+     *  `node`
+     *      A node that matches the name
+     *  And returns a boolean result. Your callback can return `true` to terminate the enumeration.
+     *
+     */
+    enumerateChildren: function(name, callback){
+        cc.assert(name && name.length != 0, "Invalid name");
+        cc.assert(callback != null, "Invalid callback function");
+
+        var length = name.length;
+        var subStrStartPos = 0;
+        var subStrlength = length;
+
+        // Starts with '//'?
+        var searchRecursively = false;
+        if(length > 2 && name[0] === "/" && name[1] === "/"){
+            searchRecursively = true;
+            subStrStartPos = 2;
+            subStrlength -= 2;
+        }
+
+        var searchFromParent = false;
+        if(length > 3 && name[length-3] === "/" && name[length-2] === "." && name[length-1] === "."){
+            searchFromParent = true;
+            subStrlength -= 3;
+        }
+
+        var newName = name.substr(subStrStartPos, subStrlength);
+
+        if(searchFromParent)
+            newName = "[[:alnum:]]+/" + newName;
+
+        if(searchRecursively)
+            this.doEnumerateRecursive(this, newName, callback);
+        else
+            this.doEnumerate(newName, callback);
+    },
+
+    doEnumerateRecursive: function(node, name, callback){
+        var ret = false;
+        if(node.doEnumerate(name,callback)){
+            ret = true;
+        }else{
+            var child,
+                children = node.getChildren(),
+                length = children.length;
+            // search its children
+            for (var i=0; i<length; i++) {
+                child = children[i];
+                if (this.doEnumerateRecursive(child, name, callback)) {
+                    ret = true;
+                    break;
+                }
+            }
+        }
+    },
+
+    doEnumerate: function(name, callback){
+        // name may be xxx/yyy, should find its parent
+        var pos = name.indexOf('/');
+        var searchName = name;
+        var needRecursive = false;
+        if (pos !== -1){
+            searchName = name.substr(0, pos);
+            //name.erase(0, pos+1);
+            needRecursive = true;
+        }
+
+        var ret = false;
+        var child,
+            children = this._children,
+            length = children.length;
+        for (var i=0; i<length; i++){
+            child = children[i];
+            if (child._name.indexOf(searchName) !== -1){
+                if (!needRecursive){
+                    // terminate enumeration if callback return true
+                    if (callback(child)){
+                        ret = true;
+                        break;
+                    }
+                }else{
+                    ret = child.doEnumerate(name, callback);
+                    if (ret)
+                        break;
+                }
+            }
+        }
+
+        return ret;
     }
 });
 

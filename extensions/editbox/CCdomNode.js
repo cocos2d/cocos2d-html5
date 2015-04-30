@@ -48,7 +48,7 @@ cc.DOM._addMethods = function (node) {
 	cc.defineGetterSetter(node, "anchorY", node._getAnchorY, node._setAnchorY);
 	cc.defineGetterSetter(node, "scale", node.getScale, node.setScale);
 	cc.defineGetterSetter(node, "scaleX", node.getScaleX, node.setScaleX);
-	cc.defineGetterSetter(node, "scaleY", node.getScaleY, node.getScaleY);
+	cc.defineGetterSetter(node, "scaleY", node.getScaleY, node.setScaleY);
 	cc.defineGetterSetter(node, "rotation", node.getRotation, node.setRotation);
  	cc.defineGetterSetter(node, "skewX", node.getSkewX, node.setSkewX);
 	cc.defineGetterSetter(node, "skewY", node.getSkewY, node.setSkewY);
@@ -168,12 +168,13 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 	 */
 	_setAnchorX:function (x) {
 		var locAnchorPoint = this._anchorPoint;
+        var cmd = this._renderCmd;
 
 		if (x === locAnchorPoint.x)
 			return;
 		locAnchorPoint.x = x;
 
-		var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
+		var locAPP = cmd._anchorPointInPoints, locSize = this._contentSize;
 		locAPP.x = locSize.width * locAnchorPoint.x;
 
 		this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + locAPP.x + 'px ' + -locAPP.y + 'px';
@@ -192,12 +193,13 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 	 */
 	_setAnchorY:function (y) {
 		var locAnchorPoint = this._anchorPoint;
+        var cmd = this._renderCmd;
 
 		if (y === locAnchorPoint.y)
 			return;
 		locAnchorPoint.y = y;
 
-		var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
+		var locAPP = cmd._anchorPointInPoints, locSize = this._contentSize;
 		locAPP.y = locSize.height * locAnchorPoint.y;
 
 		this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + locAPP.x + 'px ' + -locAPP.y + 'px';
@@ -246,11 +248,12 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 	 */
 	_setWidth:function (width) {
 		var locContentSize = this._contentSize;
+        var cmd = this._renderCmd;
 		if (width === locContentSize.width)
 			return;
 		locContentSize.width = width;
 
-		var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
+		var locAPP = cmd._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
 		locAPP.x = locContentSize.width * locAnchorPoint.x;
 		this.dom.width = locContentSize.width;
 		this.anchorX = locAnchorPoint.x;
@@ -267,11 +270,12 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 	 */
 	_setHeight:function (height) {
 		var locContentSize = this._contentSize;
+        var cmd = this._renderCmd;
 		if (height === locContentSize.height)
 			return;
 		locContentSize.height = height;
 
-		var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
+		var locAPP = cmd._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
 		locAPP.y = locContentSize.height * locAnchorPoint.y;
 		this.dom.height = locContentSize.height;
 		this.anchorY = locAnchorPoint.y;
@@ -287,7 +291,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * @param {Number} newRotation
      */
     setRotation:function (newRotation) {
-        if (this._rotation == newRotation)
+        if (this._rotation === newRotation)
             return;
 
         this._rotationX = this._rotationY = newRotation;
@@ -356,7 +360,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         //if dom does not have parent, but node has no parent and its running
         if (this.dom && !this.dom.parentNode) {
             if (!this.getParent()) {
-                if(this.dom.id == ""){
+                if(this.dom.id === ""){
                     cc.DOM._createEGLViewDiv(this);
                 }else{
                     this.dom.appendTo(cc.container);
@@ -422,13 +426,13 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 };
 
 cc.DOM._resetEGLViewDiv = function(){
-    var eglViewDiv = cc.$("#EGLViewDiv");
-    if(eglViewDiv){
-        var eglViewer = cc.view;
-        var designSize = eglViewer.getDesignResolutionSize();
-        var viewPortRect = eglViewer.getViewPortRect();
-        var screenSize = eglViewer.getFrameSize();
-	    var pixelRatio = eglViewer.getDevicePixelRatio();
+    var div = cc.$("#EGLViewDiv");
+    if(div){
+        var view = cc.view;
+        var designSize = view.getDesignResolutionSize();
+        var viewPortRect = view.getViewPortRect();
+        var screenSize = view.getFrameSize();
+	    var pixelRatio = view.getDevicePixelRatio();
         var designSizeWidth = designSize.width, designSizeHeight = designSize.height;
         if((designSize.width === 0) && (designSize.height === 0)){
             designSizeWidth = screenSize.width;
@@ -440,15 +444,21 @@ cc.DOM._resetEGLViewDiv = function(){
             viewPortWidth = screenSize.width;
         }
 
-        eglViewDiv.style.position = 'absolute';
+        div.style.position = 'absolute';
         //x.dom.style.display='block';
-        eglViewDiv.style.width = designSizeWidth + "px";
-        eglViewDiv.style.maxHeight = designSizeHeight + "px";
-        eglViewDiv.style.margin = 0;
+        div.style.width = designSizeWidth + "px";
+        div.style.maxHeight = designSizeHeight + "px";
+        div.style.margin = 0;
 
-        eglViewDiv.resize(eglViewer.getScaleX()/pixelRatio, eglViewer.getScaleY()/pixelRatio);
-        eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
-        eglViewDiv.style.bottom = "0px";
+        div.resize(view.getScaleX()/pixelRatio, view.getScaleY()/pixelRatio);
+        if (view.getResolutionPolicy() === view._rpNoBorder) {
+            div.style.left = (view.getFrameSize().width - designSizeWidth)/2 + "px";
+            div.style.bottom = (view.getFrameSize().height - designSizeHeight*view.getScaleY()/pixelRatio)/2 + "px";
+        }
+        else {
+            div.style.left = (designSizeWidth*view.getScaleX()/pixelRatio - designSizeWidth) / 2 + "px";
+            div.style.bottom = "0px";
+        }
     }
 };
 
@@ -489,17 +499,17 @@ cc.DOM.parentDOM = function (x) {
 };
 
 cc.DOM._createEGLViewDiv = function(p){
-    var eglViewDiv = cc.$("#EGLViewDiv");
-    if(!eglViewDiv){
-        eglViewDiv = cc.$new("div");
-        eglViewDiv.id = "EGLViewDiv";
+    var div = cc.$("#EGLViewDiv");
+    if(!div){
+        div = cc.$new("div");
+        div.id = "EGLViewDiv";
     }
 
-    var eglViewer = cc.view;
-    var designSize = eglViewer.getDesignResolutionSize();
-    var viewPortRect = eglViewer.getViewPortRect();
-    var screenSize = eglViewer.getFrameSize();
-    var pixelRatio = eglViewer.getDevicePixelRatio();
+    var view = cc.view;
+    var designSize = view.getDesignResolutionSize();
+    var viewPortRect = view.getViewPortRect();
+    var screenSize = view.getFrameSize();
+    var pixelRatio = view.getDevicePixelRatio();
     var designSizeWidth = designSize.width, designSizeHeight = designSize.height;
     if ((designSize.width === 0) && (designSize.height === 0)) {
         designSizeWidth = screenSize.width;
@@ -511,18 +521,24 @@ cc.DOM._createEGLViewDiv = function(p){
         viewPortWidth = screenSize.width;
     }
 
-    eglViewDiv.style.position = 'absolute';
+    div.style.position = 'absolute';
     //x.dom.style.display='block';
-    eglViewDiv.style.width = designSizeWidth + "px";
-    eglViewDiv.style.maxHeight = designSizeHeight + "px";
-    eglViewDiv.style.margin = 0;
+    div.style.width = designSizeWidth + "px";
+    div.style.maxHeight = designSizeHeight + "px";
+    div.style.margin = 0;
 
-    eglViewDiv.resize(eglViewer.getScaleX()/pixelRatio, eglViewer.getScaleY()/pixelRatio);
-    eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
-    eglViewDiv.style.bottom = "0px";
+    div.resize(view.getScaleX()/pixelRatio, view.getScaleY()/pixelRatio);
+    if (view.getResolutionPolicy() === view._rpNoBorder) {
+        div.style.left = (screenSize.width - designSizeWidth)/2 + "px";
+        div.style.bottom = (screenSize.height - designSizeHeight*view.getScaleY()/pixelRatio)/2 + "px";
+    }
+    else {
+        div.style.left = (designSizeWidth*view.getScaleX()/pixelRatio - designSizeWidth) / 2 + "px";
+        div.style.bottom = "0px";
+    }
 
-    p.dom.appendTo(eglViewDiv);
-    eglViewDiv.appendTo(cc.container);
+    p.dom.appendTo(div);
+    div.appendTo(cc.container);
 };
 
 /**
@@ -616,7 +632,7 @@ cc.DOM.convert = function (nodeObject) {
     if (arguments.length > 1) {
         cc.DOM.convert(arguments);
         return;
-    } else if (arguments.length == 1 && !arguments[0].length) {
+    } else if (arguments.length === 1 && !arguments[0].length) {
         cc.DOM.convert([arguments[0]]);
         return;
     }

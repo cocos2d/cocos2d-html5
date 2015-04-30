@@ -78,7 +78,7 @@
             var i, len, selChildren, item;
             if (this._cascadeOpacityEnabledDirty && !node._cascadeOpacityEnabled) {
                 this._displayedOpacity = node._realOpacity;
-                selChildren = this._children;
+                selChildren = node._children;
                 for (i = 0, len = selChildren.length; i < len; i++) {
                     item = selChildren[i];
                     if (item && item._renderCmd)
@@ -113,6 +113,28 @@
                 }
             }
             this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.opacityDirty ^ this._dirtyFlag;
+        },
+
+        _changeProtectedChild: function (child) {
+            var cmd = child._renderCmd,
+                dirty = cmd._dirtyFlag,
+                flags = cc.Node._dirtyFlags;
+
+            if (this._dirtyFlag & flags.colorDirty)
+                dirty |= flags.colorDirty;
+
+            if (this._dirtyFlag & flags.opacityDirty)
+                dirty |= flags.opacityDirty;
+
+            var colorDirty = dirty & flags.colorDirty,
+                opacityDirty = dirty & flags.opacityDirty;
+
+            if (colorDirty)
+                cmd._updateDisplayColor(this._displayedColor);
+            if (opacityDirty)
+                cmd._updateDisplayOpacity(this._displayedOpacity);
+            if (colorDirty || opacityDirty)
+                cmd._updateColor();
         }
     };
 
@@ -127,10 +149,6 @@
     proto.constructor = cc.ProtectedNode.CanvasRenderCmd;
 
     proto.visit = function(parentCmd){
-        this._node.visit(parentCmd);
-    };
-
-    proto._visit = function(parentCmd){
         var node = this._node;
         // quick return if not visible
         if (!node._visible)
@@ -146,7 +164,6 @@
 
         node.sortAllChildren();
         node.sortAllProtectedChildren();
-
 
         var pChild;
         // draw children zOrder < 0
@@ -182,28 +199,6 @@
         this._cacheDirty = false;
     };
 
-    proto._changeProtectedChild = function(child){
-        var cmd = child._renderCmd,
-            dirty = cmd._dirtyFlag,
-            flags = cc.Node._dirtyFlags;
-
-        if(this._dirtyFlag & flags.colorDirty)
-            dirty |= flags.colorDirty;
-
-        if(this._dirtyFlag & flags.opacityDirty)
-            dirty |= flags.opacityDirty;
-
-        var colorDirty = dirty & flags.colorDirty,
-            opacityDirty = dirty & flags.opacityDirty;
-
-        if(colorDirty)
-            cmd._updateDisplayColor(this._displayedColor);
-        if(opacityDirty)
-            cmd._updateDisplayOpacity(this._displayedOpacity);
-        if(colorDirty || opacityDirty)
-            cmd._updateColor();
-    };
-
     proto.transform = function(parentCmd, recursive){
         var node = this._node;
 
@@ -211,22 +206,16 @@
             node._changePosition();
 
         var t = node.getNodeToParentTransform(), worldT = this._worldTransform;
-        if(parentCmd){
+        if (parentCmd) {
             var pt = parentCmd._worldTransform;
+            // cc.AffineTransformConcat is incorrect at get world transform
             worldT.a = t.a * pt.a + t.b * pt.c;                               //a
             worldT.b = t.a * pt.b + t.b * pt.d;                               //b
             worldT.c = t.c * pt.a + t.d * pt.c;                               //c
             worldT.d = t.c * pt.b + t.d * pt.d;                               //d
-            if(node._skewX || node._skewY){
-                var plt = parentCmd._transform;
-                var xOffset = -(plt.b + plt.c) * t.ty ;
-                var yOffset = -(plt.b + plt.c) * t.tx;
-                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
-                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
-            }else{
-                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx);          //tx
-                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty);		  //ty
-            }
+
+            worldT.tx = pt.a * t.tx + pt.c * t.ty + pt.tx;
+            worldT.ty = pt.d * t.ty + pt.ty + pt.b * t.tx;
         } else {
             worldT.a = t.a;
             worldT.b = t.b;

@@ -27,6 +27,7 @@
         cc.Node.CanvasRenderCmd.call(this, renderable);
         this._cachedParent = null;
         this._cacheDirty = false;
+        this._state = ccui.Scale9Sprite.state.NORMAL;
 
         var node = this._node;
         var locCacheCanvas = this._cacheCanvas = cc.newElement('canvas');
@@ -62,12 +63,17 @@
 
     proto.transform = function(parentCmd){
         var node = this._node;
-        this._cacheScale9Sprite();
         cc.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd);
+        if (node._positionsAreDirty) {
+            node._updatePositions();
+            node._positionsAreDirty = false;
+            node._scale9Dirty = true;
+        }
+        this._cacheScale9Sprite();
 
         var children = node._children;
         for(var i=0; i<children.length; i++){
-            children[i].transform(this);
+            children[i].transform(this, true);
         }
     };
 
@@ -79,8 +85,10 @@
             var scaleChildren = scale9Image.getChildren();
             for (var i = 0; i < scaleChildren.length; i++) {
                 var selChild = scaleChildren[i];
-                if (selChild)
+                if (selChild){
                     selChild._renderCmd._updateDisplayColor(parentColor);
+                    selChild._renderCmd._updateColor();
+                }
             }
             this._cacheScale9Sprite();
         }
@@ -99,7 +107,7 @@
         var locCanvas = this._cacheCanvas, wrapper = this._cacheContext, locContext = wrapper.getContext();
 
         var contentSizeChanged = false;
-        if(locCanvas.width != sizeInPixels.width || locCanvas.height != sizeInPixels.height){
+        if(locCanvas.width !== sizeInPixels.width || locCanvas.height !== sizeInPixels.height){
             locCanvas.width = sizeInPixels.width;
             locCanvas.height = sizeInPixels.height;
             contentSizeChanged = true;
@@ -110,14 +118,27 @@
         node._scale9Image.visit();
 
         //draw to cache canvas
+        var selTexture = node._scale9Image.getTexture();
+        if(selTexture && this._state === ccui.Scale9Sprite.state.GRAY)
+            selTexture._switchToGray(true);
         locContext.setTransform(1, 0, 0, 1, 0, 0);
         locContext.clearRect(0, 0, sizeInPixels.width, sizeInPixels.height);
         cc.renderer._renderingToCacheCanvas(wrapper, node.__instanceId, locScaleFactor, locScaleFactor);
+        if(selTexture && this._state === ccui.Scale9Sprite.state.GRAY)
+            selTexture._switchToGray(false);
 
         if(contentSizeChanged)
             this._cacheSprite.setTextureRect(cc.rect(0,0, size.width, size.height));
 
         if(!this._cacheSprite.getParent())
             node.addChild(this._cacheSprite, -1);
+    };
+
+    proto.setState = function(state){
+        var locScale9Image = this._node._scale9Image;
+        if(!locScale9Image)
+            return;
+        this._state = state;
+        this._cacheScale9Sprite();
     };
 })();

@@ -72,6 +72,19 @@ var xmlFile2 = [];
 })();
 console.log("  The number of files in the XML file : %s", xmlFile.length);
 
+contains = contains.map(function(a){
+    return path.normalize(a);
+});
+moduleFile = moduleFile.map(function(a){
+    return path.normalize(a);
+});
+xmlFile = xmlFile.map(function(a){
+    return path.normalize(a);
+});
+xmlFile2 = xmlFile2.map(function(a){
+    return path.normalize(a);
+});
+
 console.log("\x1B[0m\x1B[33m");
 console.log("  warn : moduleConfig missing...");
 contains.forEach(function(a){

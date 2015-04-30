@@ -26,82 +26,88 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-cc.kmVec2 = function (x, y) {
-    this.x = x || 0;
-    this.y = y || 0;
-};
+(function(cc){
+    cc.math.Vec2 = function (x, y) {
+        if(y === undefined){
+            this.x = x.x;
+            this.y = x.y;
+        }else{
+            this.x = x || 0;
+            this.y = y || 0;
+        }
+    };
 
-cc.kmVec2Fill = function (pOut, x, y) {
-    pOut.x = x;
-    pOut.y = y;
-    return pOut;
-};
+    var proto = cc.math.Vec2.prototype;
+    proto.fill = function(x, y){   // = cc.kmVec2Fill
+        this.x = x;
+        this.y = y;
+    };
 
-cc.kmVec2Length = function (pIn) {
-    return Math.sqrt(cc.kmSQR(pIn.x) + cc.kmSQR(pIn.y));
-};
+    proto.length = function(){   // = cc.kmVec2Length
+        return Math.sqrt(cc.math.square(this.x) + cc.math.square(this.y));
+    };
 
-cc.kmVec2LengthSq = function (pIn) {
-    return cc.kmSQR(pIn.x) + cc.kmSQR(pIn.y);
-};
+    proto.lengthSq = function(){   // = cc.kmVec2LengthSq
+        return cc.math.square(this.x) + cc.math.square(this.y);
+    };
 
-cc.kmVec2Normalize = function (pOut, pIn) {
-    var l = 1.0 / cc.kmVec2Length(pIn);
+    proto.normalize = function(){  // = cc.kmVec2Normalize
+        var l = 1.0 / this.length();
+        this.x *= l;
+        this.y *= l;
+        return this;
+    };
 
-    var v = new cc.kmVec2();
-    v.x = pIn.x * l;
-    v.y = pIn.y * l;
+    cc.math.Vec2.add = function (pOut, pV1, pV2) {     // = cc.kmVec2Add
+        pOut.x = pV1.x + pV2.x;
+        pOut.y = pV1.y + pV2.y;
+        return pOut
+    };
 
-    pOut.x = v.x;
-    pOut.y = v.y;
+    proto.add = function(vec){   // = cc.kmVec2Add
+        this.x += vec.x;
+        this.y += vec.y;
+        return this;
+    };
 
-    return pOut;
-};
+    proto.dot = function (vec) {   //cc.kmVec2Dot
+        return this.x * vec.x + this.y * vec.y;
+    };
 
-cc.kmVec2Add = function (pOut, pV1, pV2) {
-    pOut.x = pV1.x + pV2.x;
-    pOut.y = pV1.y + pV2.y;
+    cc.math.Vec2.subtract = function (pOut, pV1, pV2) {      // = cc.kmVec2Subtract
+        pOut.x = pV1.x - pV2.x;
+        pOut.y = pV1.y - pV2.y;
+        return pOut;
+    };
 
-    return pOut
-};
+    proto.subtract = function(vec){     // = cc.kmVec2Subtract
+        this.x -= vec.x;
+        this.y -= vec.y;
+        return this;
+    };
 
-cc.kmVec2Dot = function (pV1, pV2) {
-    return pV1.x * pV2.x + pV1.y * pV2.y;
-};
+    proto.transform = function (mat3) {     // = cc.kmVec2Transform
+        var x = this.x, y = this.y;
+        this.x = x * mat3.mat[0] + y * mat3.mat[3] + mat3.mat[6];
+        this.y = x * mat3.mat[1] + y * mat3.mat[4] + mat3.mat[7];
+        return this;
+    };
 
-cc.kmVec2Subtract = function (pOut, pV1, pV2) {
-    pOut.x = pV1.x - pV2.x;
-    pOut.y = pV1.y - pV2.y;
+    cc.math.Vec2.scale = function (pOut, pIn, s) {  // = cc.kmVec2Scale
+        pOut.x = pIn.x * s;
+        pOut.y = pIn.y * s;
+        return pOut;
+    };
 
-    return pOut;
-};
+    proto.scale = function(s) {  // = cc.kmVec2Scale
+        this.x *= s;
+        this.y *= s;
+        return this;
+    };
 
-cc.kmVec2Transform = function (pOut, pV, pM) {
-    var v= new cc.kmVec2();
+    proto.equals = function (vec) {    // = cc.kmVec2AreEqual
+        return (this.x < vec.x + cc.math.EPSILON && this.x > vec.x - cc.math.EPSILON) &&
+            (this.y < vec.y + cc.math.EPSILON && this.y > vec.y - cc.math.EPSILON);
+    };
+})(cc);
 
-    v.x = pV.x * pM.mat[0] + pV.y * pM.mat[3] + pM.mat[6];
-    v.y = pV.x * pM.mat[1] + pV.y * pM.mat[4] + pM.mat[7];
-
-    pOut.x = v.x;
-    pOut.y = v.y;
-
-    return pOut;
-};
-
-cc.kmVec2TransformCoord = function (pOut, pV, pM) {
-    return null;
-};
-
-cc.kmVec2Scale = function (pOut, pIn, s) {
-    pOut.x = pIn.x * s;
-    pOut.y = pIn.y * s;
-
-    return pOut;
-};
-
-cc.kmVec2AreEqual = function (p1, p2) {
-    return (
-        (p1.x < p2.x + cc.kmEpsilon && p1.x > p2.x - cc.kmEpsilon) &&
-            (p1.y < p2.y + cc.kmEpsilon && p1.y > p2.y - cc.kmEpsilon)
-        );
-};

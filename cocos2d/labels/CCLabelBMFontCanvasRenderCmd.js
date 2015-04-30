@@ -70,12 +70,12 @@
     proto.setTexture = function (texture) {
         var node = this._node;
         var locChildren = node._children;
-        var locDisplayedColor = node._displayedColor;
+        var locDisplayedColor = this._displayedColor;
         for (var i = 0; i < locChildren.length; i++) {
             var selChild = locChildren[i];
             var cm = selChild._renderCmd;
             var childDColor = cm._displayedColor;
-            if (this._texture != cm._texture && (childDColor.r !== locDisplayedColor.r ||
+            if (this._texture !== cm._texture && (childDColor.r !== locDisplayedColor.r ||
                 childDColor.g !== locDisplayedColor.g || childDColor.b !== locDisplayedColor.b))
                 continue;
             selChild.texture = texture;

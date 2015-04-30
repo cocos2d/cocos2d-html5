@@ -36,7 +36,7 @@
         this._quadsArrayBuffer = null;
     };
     var proto = cc.ParticleSystem.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
-    proto.constructor = cc.ParticleSystem.CanvasRenderCmd;
+    proto.constructor = cc.ParticleSystem.WebGLRenderCmd;
 
     proto.getDrawMode = function(){};
     proto.setDrawMode = function(drawMode){};
@@ -45,7 +45,7 @@
 
     proto.setBatchNode = function(batchNode){
         var node = this._node;
-        if (node._batchNode != batchNode) {
+        if (node._batchNode !== batchNode) {
             var oldBatch = node._batchNode;
             node._batchNode = batchNode; //weak reference
 
@@ -89,8 +89,7 @@
     };
 
     proto.isDifferentTexture = function(texture1, texture2){
-         if(texture1 == texture2)
-            return true;
+         return (texture1 === texture2);
     };
 
     proto.updateParticlePosition = function(particle, position){

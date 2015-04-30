@@ -181,7 +181,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{                  
      * @param {cc.Color} lineColor
      */
     drawRect: function (origin, destination, fillColor, lineWidth, lineColor) {
-        lineWidth = lineWidth || this._lineWidth;
+        lineWidth = (lineWidth == null) ? this._lineWidth : lineWidth;
         lineColor = lineColor || this.getDrawColor();
         if(lineColor.a == null)
             lineColor.a = 255;
@@ -346,7 +346,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{                  
         for (var i = 0; i < segments + 1; i++) {
             var dt = i / segments;
             // border
-            if (dt == 1) {
+            if (dt === 1) {
                 p = config.length - 1;
                 lt = 1;
             } else {
@@ -436,7 +436,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{                  
      * @param {cc.Color} color
      */
     drawPoly_: function (verts, fillColor, lineWidth, color) {
-        lineWidth = lineWidth || this._lineWidth;
+        lineWidth = (lineWidth == null ) ? this._lineWidth : lineWidth;
         color = color || this.getDrawColor();
         if (color.a == null)
             color.a = 255;
@@ -554,7 +554,7 @@ cc.DrawNodeWebGL = cc.Node.extend({
     },
 
     drawRect: function (origin, destination, fillColor, lineWidth, lineColor) {
-        lineWidth = lineWidth || this._lineWidth;
+        lineWidth = (lineWidth == null) ? this._lineWidth : lineWidth;
         lineColor = lineColor || this.getDrawColor();
         if (lineColor.a == null)
             lineColor.a = 255;
@@ -632,7 +632,7 @@ cc.DrawNodeWebGL = cc.Node.extend({
             var dt = i / segments;
 
             // border
-            if (dt == 1) {
+            if (dt === 1) {
                 p = config.length - 1;
                 lt = 1;
             } else {
@@ -722,7 +722,7 @@ cc.DrawNodeWebGL = cc.Node.extend({
     },
 
     drawDots: function(points, radius,color) {
-        if(!points || points.length == 0)
+        if(!points || points.length === 0)
             return;
         color = color || this.getDrawColor();
         if (color.a == null)
@@ -789,7 +789,7 @@ cc.DrawNodeWebGL = cc.Node.extend({
             fillColor.a = 255;
         if (borderColor.a == null)
             borderColor.a = 255;
-        borderWidth = borderWidth || this._lineWidth;
+        borderWidth = (borderWidth == null)? this._lineWidth : borderWidth;
         borderWidth *= 0.5;
         var c4bFillColor = {r: 0 | fillColor.r, g: 0 | fillColor.g, b: 0 | fillColor.b, a: 0 | fillColor.a};
         var c4bBorderColor = {r: 0 | borderColor.r, g: 0 | borderColor.g, b: 0 | borderColor.b, a: 0 | borderColor.a};
@@ -852,7 +852,7 @@ cc.DrawNodeWebGL = cc.Node.extend({
     },
 
     _drawSegments: function(verts, borderWidth, borderColor, closePoly){
-        borderWidth = borderWidth || this._lineWidth;
+        borderWidth = (borderWidth == null) ? this._lineWidth : borderWidth;
         borderColor = borderColor || this._drawColor;
         if(borderColor.a == null)
             borderColor.a = 255;
@@ -911,7 +911,7 @@ cc.DrawNodeWebGL = cc.Node.extend({
     }
 });
 
-cc.DrawNode = cc._renderType == cc._RENDER_TYPE_WEBGL ? cc.DrawNodeWebGL : cc.DrawNodeCanvas;
+cc.DrawNode = cc._renderType === cc._RENDER_TYPE_WEBGL ? cc.DrawNodeWebGL : cc.DrawNodeCanvas;
 
 /**
  * Creates a DrawNode

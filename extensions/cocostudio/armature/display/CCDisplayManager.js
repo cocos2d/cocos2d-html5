@@ -83,9 +83,9 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
         }
 
         if(display instanceof ccs.DisplayData){
-            cc.displayFactory.addDisplay(this._bone, decoDisplay, display);
+            ccs.displayFactory.addDisplay(this._bone, decoDisplay, display);
             //! if changed display index is current display index, then change current display to the new display
-            if(index == this._displayIndex) {
+            if(index === this._displayIndex) {
                 this._displayIndex = -1;
                 this.changeDisplayWithIndex(index, false);
             }
@@ -134,7 +134,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
         decoDisplay.setDisplayData(displayData);
 
         //! if changed display index is current display index, then change current display to the new display
-        if(index == this._displayIndex) {
+        if(index === this._displayIndex) {
             this._displayIndex = -1;
             this.changeDisplayWithIndex(index, false);
         }
@@ -223,7 +223,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
         this._forceChangeDisplay = force;
 
         //if index is equal to current display index,then do nothing
-        if (this._displayIndex == index)
+        if (this._displayIndex === index)
             return;
 
         this._displayIndex = index;
@@ -247,7 +247,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
     changeDisplayWithName: function (name, force) {
         var locDisplayList = this._decoDisplayList;
         for (var i = 0; i < locDisplayList.length; i++) {
-            if (locDisplayList[i].getDisplayData().displayName == name) {
+            if (locDisplayList[i].getDisplayData().displayName === name) {
                 this.changeDisplayWithIndex(i, force);
                 break;
             }
@@ -382,7 +382,7 @@ ccs.DisplayManager = ccs.Class.extend(/** @lends ccs.DisplayManager */{
         if (y !== undefined)
             point = cc.p(point, y);
 
-        if(this._currentDecoDisplay.getDisplayData().displayType == ccs.DISPLAY_TYPE_SPRITE){
+        if(this._currentDecoDisplay.getDisplayData().displayType === ccs.DISPLAY_TYPE_SPRITE){
             /*
              *  First we first check if the point is in the sprite content rect. If false, then we continue to check
              *  the contour point. If this step is also false, then we can say the bone not contain this point.

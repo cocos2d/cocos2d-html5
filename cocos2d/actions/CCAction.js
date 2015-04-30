@@ -255,7 +255,7 @@ cc.FiniteTimeAction = cc.Action.extend(/** @lends cc.FiniteTimeAction# */{
      * @return {Number}
      */
     getDuration:function () {
-        return this._duration * (this._times || 1);
+        return this._duration * (this._timesForRepeat || 1);
     },
 
     /**
@@ -422,7 +422,7 @@ cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
      * @param {cc.ActionInterval} action
      */
     setInnerAction:function (action) {
-        if (this._innerAction != action) {
+        if (this._innerAction !== action) {
             this._innerAction = action;
         }
     },
@@ -607,7 +607,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
                 _this.topBoundary = _this.bottomBoundary = (_this.topBoundary + _this.bottomBoundary) / 2;
             }
 
-            if ((_this.topBoundary == _this.bottomBoundary) && (_this.leftBoundary == _this.rightBoundary))
+            if ((_this.topBoundary === _this.bottomBoundary) && (_this.leftBoundary === _this.rightBoundary))
                 _this._boundaryFullyCovered = true;
         }
         return true;

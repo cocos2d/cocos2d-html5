@@ -107,11 +107,17 @@ cc.Event.ACCELERATION = 2;
  */
 cc.Event.MOUSE = 3;
 /**
+ * The type code of UI focus event.
+ * @constant
+ * @type {number}
+ */
+cc.Event.FOCUS = 4;
+/**
  * The type code of Custom event.
  * @constant
  * @type {number}
  */
-cc.Event.CUSTOM = 4;
+cc.Event.CUSTOM = 6;
 
 /**
  * The Custom event
@@ -421,3 +427,23 @@ cc.EventTouch = cc.Event.extend(/** @lends cc.EventTouch# */{
 cc.EventTouch.MAX_TOUCHES = 5;
 
 cc.EventTouch.EventCode = {BEGAN: 0, MOVED: 1, ENDED: 2, CANCELLED: 3};
+
+/**
+ * Focus change event for UI widget
+ * @class
+ * @extends cc.Event
+ */
+cc.EventFocus = cc.Event.extend(/** @lends cc.EventTouch# */{
+    _widgetGetFocus: null,
+    _widgetLoseFocus: null,
+    /**
+     * Constructor function.
+     * @param {ccui.Widget} widgetLoseFocus
+     * @param {ccui.Widget} widgetGetFocus
+     */
+    ctor: function(widgetLoseFocus, widgetGetFocus){
+        cc.Event.prototype.ctor.call(this, cc.Event.FOCUS);
+        this._widgetGetFocus = widgetGetFocus;
+        this._widgetLoseFocus = widgetLoseFocus;
+    }
+});

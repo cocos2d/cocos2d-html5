@@ -59,12 +59,15 @@ ccs.actionManager = /** @lends ccs.actionManager# */{
      * @returns {ccs.ActionObject}
      */
     getActionByName: function (jsonName, actionName) {
-        var actionList = this._actionDic[jsonName];
+        var path = jsonName;
+        var pos = path.lastIndexOf("/");
+        var fileName = path.substr(pos + 1, path.length);
+        var actionList = this._actionDic[fileName];
         if (!actionList)
             return null;
         for (var i = 0; i < actionList.length; i++) {
             var locAction = actionList[i];
-            if (actionName == locAction.getName())
+            if (actionName === locAction.getName())
                 return locAction;
         }
         return null;

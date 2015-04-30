@@ -85,10 +85,10 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
      * @return {cc.Node} a Node object whose tag equals to the input parameter
      */
     getProtectedChildByTag: function(tag){
-        cc.assert(tag != cc.NODE_TAG_INVALID, "Invalid tag");
+        cc.assert(tag !== cc.NODE_TAG_INVALID, "Invalid tag");
         var locChildren = this._protectedChildren;
         for(var i = 0, len = locChildren.length; i < len; i++)
-            if(locChildren.getTag() == tag)
+            if(locChildren.getTag() === tag)
                 return locChildren[i];
         return null;
     },
@@ -129,7 +129,7 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
      * @param {Boolean} [cleanup=true]
      */
     removeProtectedChildByTag: function(tag, cleanup){
-        cc.assert( tag != cc.NODE_TAG_INVALID, "Invalid tag");
+        cc.assert( tag !== cc.NODE_TAG_INVALID, "Invalid tag");
 
         if(cleanup == null)
             cleanup = true;
@@ -222,16 +222,6 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
             //don't need to check children recursively, that's done in visit of each child
             this._reorderProtectedChildDirty = false;
         }
-    },
-
-    /**
-     * transforms and draws itself, and visit its children and protected children.
-     * @override
-     * @function
-     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx context of renderer
-     */
-    visit: function(parentCmd){
-        this._renderCmd._visit(parentCmd);
     },
 
     _changePosition: function(){},

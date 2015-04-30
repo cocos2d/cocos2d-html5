@@ -59,7 +59,7 @@
          * var spriteFrame = cc.spriteFrameCache.getSpriteFrame("grossini_dance_01.png");
          * var physicsSprite = new cc.PhysicsSprite(spriteFrame);
          *
-         * 4.Creates a sprite with an exsiting texture contained in a CCTexture2D object
+         * 4.Creates a sprite with an existing texture contained in a CCTexture2D object
          *      After creation, the rect will be the size of the texture, and the offset will be (0,0).
          * var texture = cc.textureCache.addImage("HelloHTML5World.png");
          * var physicsSprite1 = new cc.PhysicsSprite(texture);
@@ -347,7 +347,7 @@
 
         _syncPosition:function () {
             var locPosition = this._position, locBody = this._body;
-            if (locPosition.x != locBody.p.x || locPosition.y != locBody.p.y) {
+            if (locPosition.x !== locBody.p.x || locPosition.y !== locBody.p.y) {
                 cc.Sprite.prototype.setPosition.call(this, locBody.p.x, locBody.p.y);
             }
         },
@@ -373,7 +373,7 @@
             }
         },
         _syncRotation:function () {
-            if (this._rotationX != -cc.radiansToDegrees(this._body.a)) {
+            if (this._rotationX !== -cc.radiansToDegrees(this._body.a)) {
                 cc.Sprite.prototype.setRotation.call(this, -cc.radiansToDegrees(this._body.a));
             }
         },

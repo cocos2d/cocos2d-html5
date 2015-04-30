@@ -162,7 +162,7 @@ cc.EventListener = cc.Class.extend(/** @lends cc.EventListener# */{
      * @returns {boolean}
      */
     checkAvailable: function () {
-        return this._onEvent != null;
+        return this._onEvent !== null;
     },
 
     /**
@@ -263,11 +263,24 @@ cc.EventListener.MOUSE = 4;
  */
 cc.EventListener.ACCELERATION = 5;
 /**
+ * The type code of focus event listener.
+ * @constant
+ * @type {number}
+ */
+cc.EventListener.ACCELERATION = 6;
+/**
  * The type code of custom event listener.
  * @constant
  * @type {number}
  */
-cc.EventListener.CUSTOM = 6;
+cc.EventListener.CUSTOM = 8;
+
+/**
+ * The type code of Focus change event listener.
+ * @constant
+ * @type {number}
+ */
+cc.EventListener.FOCUS = 7;
 
 cc._EventListenerCustom = cc.EventListener.extend({
     _onCustomEvent: null,
@@ -275,7 +288,7 @@ cc._EventListenerCustom = cc.EventListener.extend({
         this._onCustomEvent = callback;
         var selfPointer = this;
         var listener = function (event) {
-            if (selfPointer._onCustomEvent != null)
+            if (selfPointer._onCustomEvent !== null)
                 selfPointer._onCustomEvent(event);
         };
 
@@ -283,7 +296,7 @@ cc._EventListenerCustom = cc.EventListener.extend({
     },
 
     checkAvailable: function () {
-        return (cc.EventListener.prototype.checkAvailable.call(this) && this._onCustomEvent != null);
+        return (cc.EventListener.prototype.checkAvailable.call(this) && this._onCustomEvent !== null);
     },
 
     clone: function () {
@@ -366,6 +379,10 @@ cc._EventListenerTouchOneByOne = cc.EventListener.extend({
         this.swallowTouches = needSwallow;
     },
 
+    isSwallowTouches: function(){
+        return this.swallowTouches;
+    },
+
     clone: function () {
         var eventListener = new cc._EventListenerTouchOneByOne();
         eventListener.onTouchBegan = this.onTouchBegan;
@@ -411,8 +428,8 @@ cc._EventListenerTouchAllAtOnce = cc.EventListener.extend({
     },
 
     checkAvailable: function(){
-        if (this.onTouchesBegan == null && this.onTouchesMoved == null
-            && this.onTouchesEnded == null && this.onTouchesCancelled == null) {
+        if (this.onTouchesBegan === null && this.onTouchesMoved === null
+            && this.onTouchesEnded === null && this.onTouchesCancelled === null) {
             cc.log(cc._LogInfos._EventListenerTouchAllAtOnce_checkAvailable);
             return false;
         }
@@ -466,7 +483,8 @@ cc.EventListener.create = function(argObj){
     else if(listenerType === cc.EventListener.ACCELERATION){
         listener = new cc._EventListenerAcceleration(argObj.callback);
         delete argObj.callback;
-    }
+    } else if(listenerType === cc.EventListener.FOCUS)
+        listener = new cc._EventListenerFocus();
 
     for(var key in argObj) {
         listener[key] = argObj[key];
@@ -474,3 +492,28 @@ cc.EventListener.create = function(argObj){
 
     return listener;
 };
+
+cc._EventListenerFocus = cc.EventListener.extend({
+    clone: function(){
+        var listener = new cc._EventListenerFocus();
+        listener.onFocusChanged = this.onFocusChanged;
+        return listener;
+    },
+    checkAvailable: function(){
+        if(!this.onFocusChanged){
+            cc.log("Invalid EventListenerFocus!");
+            return false;
+        }
+        return true;
+    },
+    onFocusChanged: null,
+    ctor: function(){
+        var listener = function(event){
+            if(this.onFocusChanged)
+                this.onFocusChanged(event._widgetLoseFocus, event._widgetGetFocus);
+        };
+        cc.EventListener.prototype.ctor.call(this, cc.EventListener.FOCUS, cc._EventListenerFocus.LISTENER_ID, listener);
+    }
+});
+
+cc._EventListenerFocus.LISTENER_ID = "__cc_focus_event";

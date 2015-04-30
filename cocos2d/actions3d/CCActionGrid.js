@@ -33,6 +33,7 @@
  */
 cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
     _gridSize:null,
+    _gridNodeTarget:null,
 
 	/**
 	 * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
@@ -46,6 +47,8 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
 
 		gridSize && this.initWithDuration(duration, gridSize);
     },
+
+    _cacheTargetAsGridNode: function(){},
 
     /**
      * to copy object with deep copy.
@@ -73,7 +76,7 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
         var targetGrid = t.grid;
         if (targetGrid && targetGrid.getReuseGrid() > 0) {
             var locGridSize = targetGrid.getGridSize();
-            if (targetGrid.isActive() && (locGridSize.width == this._gridSize.width) && (locGridSize.height == this._gridSize.height))
+            if (targetGrid.isActive() && (locGridSize.width === this._gridSize.width) && (locGridSize.height === this._gridSize.height))
                 targetGrid.reuse();
         } else {
             if (targetGrid && targetGrid.isActive())
@@ -155,12 +158,32 @@ cc.Grid3DAction = cc.GridAction.extend(/** @lends cc.Grid3DAction# */{
     },
 
     /**
-     * returns the vertex than belongs to certain position in the grid
+     * returns the vertex than belongs to certain position in the grid.                           <br/>
+     * It will be deprecated in future, please use getVertex instead.
      * @param {cc.Point} position
      * @return {cc.Vertex3F}
      */
     vertex:function (position) {
-        return this.target.grid.vertex(position);
+        return this.getVertex(position);
+    },
+
+    /**
+     * returns the vertex than belongs to certain position in the grid
+     * @param {cc.Point} position
+     * @return {cc.Vertex3F}
+     */
+    getVertex: function(position){
+        return this.target.grid.getVertex(position);
+    },
+
+    /**
+     * returns the non-transformed vertex than belongs to certain position in the grid          <br/>
+     * It will be deprecated in future, please use getVertex instead.
+     * @param {cc.Point} position
+     * @return {cc.Vertex3F}
+     */
+    originalVertex:function (position) {
+        return this.getOriginalVertex(position);
     },
 
     /**
@@ -168,7 +191,7 @@ cc.Grid3DAction = cc.GridAction.extend(/** @lends cc.Grid3DAction# */{
      * @param {cc.Point} position
      * @return {cc.Vertex3F}
      */
-    originalVertex:function (position) {
+    getOriginalVertex:function (position) {
         return this.target.grid.originalVertex(position);
     },
 
@@ -211,12 +234,32 @@ cc.Grid3DAction.create = cc.grid3DAction;
 cc.TiledGrid3DAction = cc.GridAction.extend(/** @lends cc.TiledGrid3DAction# */{
 
     /**
-     * returns the tile that belongs to a certain position of the grid
+     * returns the tile that belongs to a certain position of the grid        <br/>
+     * It will be deprecated in future, please use getTile instead.
      * @param {cc.Point} position
      * @return {cc.Quad3}
      */
     tile:function (position) {
+        return this.getTile(position);
+    },
+
+    /**
+     * returns the tile that belongs to a certain position of the grid
+     * @param {cc.Point} position
+     * @return {cc.Quad3}
+     */
+    getTile:function (position) {
         return this.target.grid.tile(position);
+    },
+
+    /**
+     * returns the non-transformed tile that belongs to a certain position of the grid               <br/>
+     * It will be deprecated in future, please use getOriginalTile instead.
+     * @param {cc.Point} position
+     * @return {cc.Quad3}
+     */
+    originalTile:function (position) {
+        return this.getOriginalTile(position);
     },
 
     /**
@@ -224,7 +267,7 @@ cc.TiledGrid3DAction = cc.GridAction.extend(/** @lends cc.TiledGrid3DAction# */{
      * @param {cc.Point} position
      * @return {cc.Quad3}
      */
-    originalTile:function (position) {
+    getOriginalTile:function (position) {
         return this.target.grid.originalTile(position);
     },
 
