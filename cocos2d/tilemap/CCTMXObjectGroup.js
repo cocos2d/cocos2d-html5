@@ -117,7 +117,7 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
      * @return {object|Null}
      */
     objectNamed:function (objectName) {
-        this.getObject(objectName);
+        return this.getObject(objectName);
     },
 
     /**
