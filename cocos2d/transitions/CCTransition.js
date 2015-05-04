@@ -652,8 +652,8 @@ cc.TransitionSlideInL = cc.TransitionScene.extend(/** @lends cc.TransitionSlideI
         var inA = this.action();
         var outA = this.action();
 
-        var inAction = this.easeActionWithAction(inA);
-        var outAction = cc.sequence(this.easeActionWithAction(outA), cc.callFunc(this.finish, this));
+        var inAction = cc.sequence([this.easeActionWithAction(inA), cc.callFunc(this.finish, this)]);
+        var outAction = this.easeActionWithAction(outA);
         this._inScene.runAction(inAction);
         this._outScene.runAction(outAction);
     },
