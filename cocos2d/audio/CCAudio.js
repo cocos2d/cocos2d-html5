@@ -671,6 +671,14 @@ cc.Audio = cc.Class.extend({
             }
             audio.play(0, loop);
             audio.setVolume(this._musicVolume);
+            function cbEnd(){
+             if (!this._currMusic._pause) {
+                 this.stopMusic();
+              }
+            }
+            var cbEndWithContext = cbEnd.bind(this);
+            audio._currentSource.onended = cbEndWithContext;
+
             this._currMusic = audio;
         },
 
