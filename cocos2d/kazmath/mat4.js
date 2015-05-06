@@ -181,7 +181,8 @@
      */
     cc.kmMat4Inverse = function (pOut, pM) {
         var inv = new cc.math.Matrix4(pM);
-        if (cc.math.Matrix4._gaussj(inv, identityMatrix) === false)
+        var tmp = new cc.math.Matrix4(identityMatrix);
+        if (cc.math.Matrix4._gaussj(inv, tmp) === false)
             return null;
         pOut.assignFrom(inv);
         return pOut;
@@ -193,7 +194,8 @@
      */
     proto.inverse = function(){    //cc.kmMat4Inverse
         var inv = new cc.math.Matrix4(this);
-        if (cc.math.Matrix4._gaussj(inv, identityMatrix) === false)
+        var tmp = new cc.math.Matrix4(identityMatrix);
+        if (cc.math.Matrix4._gaussj(inv, tmp) === false)
             return null;
         return inv;
     };
