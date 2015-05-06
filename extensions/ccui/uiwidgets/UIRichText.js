@@ -471,6 +471,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
         var newContentSizeHeight = 0, locRenderersContainer = this._elementRenderersContainer;
         var locElementRenders = this._elementRenders;
         var i, j, row, nextPosX, l;
+        var lineHeight, offsetX;
         if (this._ignoreSize) {
             var newContentSizeWidth = 0;
             row = locElementRenders[0];
@@ -482,7 +483,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                 l.setPosition(nextPosX, 0);
                 locRenderersContainer.addChild(l, 1, j);
 
-                var lineHeight = l.getLineHeight ? l.getLineHeight() : newContentSizeHeight;
+                lineHeight = l.getLineHeight ? l.getLineHeight() : newContentSizeHeight;
 
                 var iSize = l.getContentSize();
                 newContentSizeWidth += iSize.width;
@@ -492,7 +493,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
 
             //Text flow horizontal alignment:
             if(this._textHorizontalAlignment !== cc.TEXT_ALIGNMENT_LEFT) {
-                var offsetX = 0;
+                offsetX = 0;
                 if (this._textHorizontalAlignment === cc.TEXT_ALIGNMENT_RIGHT)
                     offsetX = this._contentSize.width - nextPosX;
                 else if (this._textHorizontalAlignment === cc.TEXT_ALIGNMENT_CENTER)
@@ -510,8 +511,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                 var maxHeight = 0;
                 for (j = 0; j < row.length; j++) {
                     l = row[j];
-                    var lineHeight = l.getLineHeight ? l.getLineHeight() : l.getContentSize().height;
-                    cc.log(lineHeight);
+                    lineHeight = l.getLineHeight ? l.getLineHeight() : l.getContentSize().height;
                     maxHeight = Math.max(Math.min(l.getContentSize().height, lineHeight), maxHeight);
                 }
                 maxHeights[i] = maxHeight;
@@ -534,7 +534,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
                 }
                 //Text flow alignment(s)
                 if( this._textHorizontalAlignment !== cc.TEXT_ALIGNMENT_LEFT || this._textVerticalAlignment !== cc.VERTICAL_TEXT_ALIGNMENT_TOP) {
-                    var offsetX = 0;
+                    offsetX = 0;
                     if (this._textHorizontalAlignment === cc.TEXT_ALIGNMENT_RIGHT)
                         offsetX = this._contentSize.width - nextPosX;
                     else if (this._textHorizontalAlignment === cc.TEXT_ALIGNMENT_CENTER)
