@@ -503,6 +503,9 @@ cc.Audio = cc.Class.extend({
 
             var i;
 
+            if(cc.loader.audioPath)
+                realUrl = cc.path.join(cc.loader.audioPath, realUrl);
+
             var extname = cc.path.extname(realUrl);
 
             var typeList = [extname];
