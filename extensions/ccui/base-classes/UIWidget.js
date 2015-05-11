@@ -153,6 +153,8 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _callbackName: null,
     _callbackType: null,
     _usingLayoutComponent: false,
+    
+    _onRunningScene: false,
 
     /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
@@ -201,9 +203,13 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @override
      */
     onEnter: function () {
-        var locListener = this._touchListener;
-        if (locListener && !locListener._isRegistered() && this._touchEnabled)
-            cc.eventManager.addListener(locListener, this);
+        // var locListener = this._touchListener;
+        // if (locListener && !locListener._isRegistered() && this._touchEnabled)
+        //     cc.eventManager.addListener(locListener, this);
+
+        this._onRunningScene = true;
+        this._manageListener(this._touchEnabled);
+
         if(!this._usingLayoutComponent)
             this.updateSizeAndPosition();
         cc.ProtectedNode.prototype.onEnter.call(this);
@@ -214,6 +220,9 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @override
      */
     onExit: function(){
+        this._onRunningScene = false;
+        this._manageListener(false);
+
         this.unscheduleUpdate();
         cc.ProtectedNode.prototype.onExit.call(this);
     },
@@ -656,12 +665,27 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {Boolean} enable  true if the widget is touch enabled, false if the widget is touch disabled.
      */
     setTouchEnabled: function (enable) {
-        if (this._touchEnabled === enable)
-            return;
+        if (enable == false) {
+            if (this._touchEnabled) {
+                cc.eventManager.removeListener(this._touchListener);
+            }
+        }
 
-        this._touchEnabled = enable;                                  //TODO need consider remove and re-add.
-        if (this._touchEnabled) {
-            if(!this._touchListener)
+        this._touchEnabled = enable;
+
+        // when the node is in the running scene
+        if (this._onRunningScene == true) {
+            _manageListener(enable);
+        }
+    },
+
+    /**
+     * Removes or adds the listener, do not call this function instead use setTouchEnabled.
+     * @param {Boolean} enable true for add listener, false for remove the listner.
+     */
+    _manageListener: function (enable) {
+        if (enable == true) {
+            if(this._touchListener == null) {
                 this._touchListener = cc.EventListener.create({
                     event: cc.EventListener.TOUCH_ONE_BY_ONE,
                     swallowTouches: true,
@@ -669,9 +693,12 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
                     onTouchMoved: this.onTouchMoved.bind(this),
                     onTouchEnded: this.onTouchEnded.bind(this)
                 });
+            }
             cc.eventManager.addListener(this._touchListener, this);
         } else {
-            cc.eventManager.removeListener(this._touchListener);
+            if(this._touchListener != null) {
+                cc.eventManager.removeListener(this._touchListener);
+            }
         }
     },
 
