@@ -439,7 +439,12 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             return 0;
         }
         var curTextFirstSprite = this.getChildByTag(startIndex);
-        var curTextLastSprite = this.getChildByTag(startIndex + endIndex);
+        var curTextLastSpriteId = startIndex + endIndex;
+        var curTextLastSprite = this.getChildByTag(curTextLastSpriteId);
+        while (!curTextLastSprite && 0 < curTextLastSpriteId) {
+            curTextLastSpriteId--;
+            curTextLastSprite = this.getChildByTag(curTextLastSpriteId);
+        }
         return this._getLetterPosXLeft(curTextLastSprite) - this._getLetterPosXLeft(curTextFirstSprite);
     },
 
