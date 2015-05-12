@@ -164,6 +164,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     __resizeWithBrowserSize: false,
     _isAdjustViewPort: true,
     _targetDensityDPI: null,
+    _resizeCallbackList: null,
 
     /**
      * Constructor of cc.EGLView
@@ -199,6 +200,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         _t._hDC = cc._canvas;
         _t._hRC = cc._renderContext;
         _t._targetDensityDPI = cc.DENSITYDPI_HIGH;
+        _t._resizeCallbackList = [];
     },
 
     // Resize helper functions
@@ -224,6 +226,11 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         var height = view._originalDesignResolutionSize.height;
         if (width > 0)
             view.setDesignResolutionSize(width, height, view._resolutionPolicy);
+
+        for(var i= 0, len= view._resizeCallbackList.length; i<len; i++){
+            var item = view._resizeCallbackList[i];
+            item.callback.call(item.target, view);
+        }
     },
 
     /**
@@ -774,6 +781,23 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
                 (selPoint.y - locViewPortRect.y) / locScaleY);
             selTouch._setPrevPoint((selPrePoint.x - locViewPortRect.x) / locScaleX,
                 (selPrePoint.y - locViewPortRect.y) / locScaleY);
+        }
+    },
+
+    _addResizeCallback: function(callback, target){
+        this._resizeCallbackList.push({
+            callback: callback,
+            target: target
+        });
+    },
+
+    _removeResizeCallback: function(callback){
+        var list = this._resizeCallbackList;
+        for(var i= 0, len=list.length; i<len; i++){
+            if(list[i].callback === callback){
+                list.splice(i, 1);
+                break;
+            }
         }
     }
 });
