@@ -315,7 +315,10 @@ cc.Audio = cc.Class.extend({
             if(self._ignoreEnded){
                 self._ignoreEnded = false;
             }else{
-                self._playing = false;
+                if(!self._pause)
+                    self.stop();
+                else
+                    self._playing = false;
             }
         };
     },
@@ -671,13 +674,6 @@ cc.Audio = cc.Class.extend({
             }
             audio.play(0, loop);
             audio.setVolume(this._musicVolume);
-            function cbEnd(){
-             if (!this._currMusic._pause) {
-                 this.stopMusic();
-              }
-            }
-            var cbEndWithContext = cbEnd.bind(this);
-            audio._currentSource.onended = cbEndWithContext;
 
             this._currMusic = audio;
         },
