@@ -33,6 +33,7 @@
  * replay       : The first music will fail, must be replay after touchstart
  * emptied      : Whether to use the emptied event to replace load callback
  * delay        : delay created the context object - only webAudio
+ * manualLoop : WebAudio loop attribute failure, need to manually perform loop
  *
  * May be modifications for a few browser version
  */
@@ -109,41 +110,46 @@
         console.log(e);
     }
 
-    ///////////////////////////
-    //  Browser compatibility//
-    ///////////////////////////
-    if(version){
-        switch(sys.browserType){
-            case sys.BROWSER_TYPE_CHROME:
-                if(parseInt(version) < 30){
-                    supportTable[sys.BROWSER_TYPE_CHROME]  = {multichannel: false , webAudio: true , auto: false};
-                }
-                break;
-            case sys.BROWSER_TYPE_MIUI:
-                version = version.match(/\d+/g);
-                if(version[0] < 2 || (version[0] === 2 && version[1] === 0 && version[2] <= 1)){
-                    supportTable[sys.BROWSER_TYPE_MIUI].auto = false;
-                }
-                break;
-        }
-    }
-
     if(cc.sys.isMobile){
         if(cc.sys.os !== cc.sys.OS_IOS)
             cc.__audioSupport = supportTable[sys.browserType] || supportTable["common"];
         else
             cc.__audioSupport = supportTable[sys.BROWSER_TYPE_SAFARI];
     }else{
-      switch(sys.browserType){
-          case sys.BROWSER_TYPE_IE:
-              cc.__audioSupport = supportTable[sys.BROWSER_TYPE_IE];
-              break;
-          case sys.BROWSER_TYPE_FIREFOX:
-              cc.__audioSupport = supportTable[sys.BROWSER_TYPE_FIREFOX];
-              break;
-          default:
-              cc.__audioSupport = supportTable["common"];
-      }
+        switch(sys.browserType){
+            case sys.BROWSER_TYPE_IE:
+                cc.__audioSupport = supportTable[sys.BROWSER_TYPE_IE];
+                break;
+            case sys.BROWSER_TYPE_FIREFOX:
+                cc.__audioSupport = supportTable[sys.BROWSER_TYPE_FIREFOX];
+                break;
+            default:
+                cc.__audioSupport = supportTable["common"];
+        }
+    }
+
+    ///////////////////////////
+    //  Browser compatibility//
+    ///////////////////////////
+    if(version){
+        switch(sys.browserType){
+            case sys.BROWSER_TYPE_CHROME:
+                version = parseInt(version);
+                if(version < 30){
+                    cc.__audioSupport  = {multichannel: false , webAudio: true , auto: false};
+                }else if(version === 42){
+                    cc.__audioSupport.manualLoop = true;
+                }
+                break;
+            case sys.BROWSER_TYPE_MIUI:
+                if(cc.sys.isMobile){
+                    version = version.match(/\d+/g);
+                    if(version[0] < 2 || (version[0] === 2 && version[1] === 0 && version[2] <= 1)){
+                        cc.__audioSupport.auto = false;
+                    }
+                }
+                break;
+        }
     }
 
     if(DEBUG){
@@ -181,6 +187,7 @@ cc.Audio = cc.Class.extend({
     _volume: null,
 
     _ignoreEnded: false,
+    _manualLoop: false,
 
     //DOM Audio
     _element: null,
@@ -278,7 +285,10 @@ cc.Audio = cc.Class.extend({
         var audio = this._context["createBufferSource"]();
         audio.buffer = this._buffer;
         audio["connect"](this._volume);
-        audio.loop = this.loop;
+        if(this._manualLoop)
+            audio.loop = false;
+        else
+            audio.loop = this.loop;
         this._startTime = this._context.currentTime;
         this._currentTime = offset || 0;
 
@@ -312,6 +322,11 @@ cc.Audio = cc.Class.extend({
         this._currentSource = audio;
         var self = this;
         audio["onended"] = function(){
+            if(self._manualLoop && self._playing && self.loop){
+                self.stop();
+                self.play();
+                return;
+            }
             if(self._ignoreEnded){
                 self._ignoreEnded = false;
             }else{
@@ -526,6 +541,8 @@ cc.Audio = cc.Class.extend({
                     volume["gain"].value = 1;
                     volume["connect"](context["destination"]);
                     audio = new cc.Audio(context, volume, realUrl);
+                    if(polyfill.manualLoop)
+                        audio._manualLoop = true;
                 }catch(err){
                     SWA = false;
                     cc.log("browser don't support webAudio");
@@ -585,18 +602,18 @@ cc.Audio = cc.Class.extend({
                         emptied();
                     }else{
                         termination = true;
-                    	element.pause();
-                    	document.body.removeChild(element);
+                        element.pause();
+                        document.body.removeChild(element);
                         cb("audio load timeout : " + realUrl, audio);
                     }
                 }, 10000);
 
                 var success = function(){
                     if(!cbCheck){
-                    	element.pause();
-                    	try { element.currentTime = 0;
-                    	element.volume = 1; } catch (e) {}
-                    	document.body.removeChild(element);
+                        element.pause();
+                        try { element.currentTime = 0;
+                            element.volume = 1; } catch (e) {}
+                        document.body.removeChild(element);
                         audio.setElement(element);
                         element.removeEventListener("canplaythrough", success, false);
                         element.removeEventListener("error", failure, false);
@@ -609,8 +626,8 @@ cc.Audio = cc.Class.extend({
 
                 var failure = function(){
                     if(!cbCheck) return;
-                	element.pause();
-                	document.body.removeChild(element);
+                    element.pause();
+                    document.body.removeChild(element);
                     element.removeEventListener("canplaythrough", success, false);
                     element.removeEventListener("error", failure, false);
                     element.removeEventListener("emptied", emptied, false);
@@ -674,6 +691,7 @@ cc.Audio = cc.Class.extend({
             }
             audio.play(0, loop);
             audio.setVolume(this._musicVolume);
+
             this._currMusic = audio;
         },
 
