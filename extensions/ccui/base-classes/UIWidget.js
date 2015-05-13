@@ -1768,7 +1768,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         return originalScale;
     },
     getScale: function(){
-        if(this.getScaleX() === this.getScaleY())
+        if(this.getScaleX() !== this.getScaleY())
             cc.log("Widget#scale. ScaleX != ScaleY. Don't know which one to return");
         return this.getScaleX();
     },
