@@ -330,7 +330,10 @@ cc.Audio = cc.Class.extend({
             if(self._ignoreEnded){
                 self._ignoreEnded = false;
             }else{
-                self._playing = false;
+                if(!self._pause)
+                    self.stop();
+                else
+                    self._playing = false;
             }
         };
     },
