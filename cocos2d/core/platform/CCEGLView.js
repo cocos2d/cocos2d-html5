@@ -200,7 +200,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         _t._hDC = cc._canvas;
         _t._hRC = cc._renderContext;
         _t._targetDensityDPI = cc.DENSITYDPI_HIGH;
-        _t._resizeCallbackList = [];
     },
 
     // Resize helper functions

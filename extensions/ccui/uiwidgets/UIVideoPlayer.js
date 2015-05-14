@@ -38,10 +38,10 @@ ccui.VideoPlayer = ccui.Widget.extend({
      * Set the video address
      * Automatically replace extname
      * All supported video formats will be added to the video
-     * @param {String} path
+     * @param {String} address
      */
-    setURL: function(path){
-        this._renderCmd.updateURL(path);
+    setURL: function(address){
+        this._renderCmd.updateURL(address);
     },
 
     /**
