@@ -152,6 +152,15 @@ cc._tmp.PrototypeTexture2D = function () {
      */
     _c.PIXEL_FORMAT_DEFAULT = _c.PIXEL_FORMAT_RGBA8888;
 
+    /**
+     * The default pixel format
+     * @memberOf cc.Texture2D
+     * @name PIXEL_FORMAT_PVRTC2
+     * @static
+     * @type {Number}
+     */
+    _c.defaultPixelFormat = _c.PIXEL_FORMAT_DEFAULT;
+
     var _M = cc.Texture2D._M = {};
     _M[_c.PIXEL_FORMAT_RGBA8888] = "RGBA8888";
     _M[_c.PIXEL_FORMAT_RGB888] = "RGB888";
@@ -198,8 +207,6 @@ cc._tmp.PrototypeTexture2D = function () {
     /** @expose */
     _p.height;
     cc.defineGetterSetter(_p, "height", _p._getHeight);
-
-    _c.defaultPixelFormat = _c.PIXEL_FORMAT_DEFAULT;
 };
 
 cc._tmp.PrototypeTextureAtlas = function () {
