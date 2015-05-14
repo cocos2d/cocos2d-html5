@@ -24,14 +24,10 @@
 
 ccui.VideoPlayer = ccui.Widget.extend({
 
-    _EventList: null,
-
     ctor: function(path){
         ccui.Widget.prototype.ctor.call(this);
         if(path)
             this.setURL(path);
-
-        this._EventList = {};//play | pause | stop | complete
     },
 
     _createRenderCmd: function(){
@@ -61,24 +57,6 @@ ccui.VideoPlayer = ccui.Widget.extend({
         }
 
         return "";
-    },
-
-    /**
-     * Set the video address
-     * Automatically replace extname
-     * All supported video formats will be added to the video
-     * @param {String} path
-     */
-    setFileName: function(path){
-        this.setURL(path);
-    },
-
-    /**
-     * Get the video path
-     * @returns {String}
-     */
-    getFileName: function(){
-        this.getURL(path);
     },
 
     /**
@@ -120,10 +98,7 @@ ccui.VideoPlayer = ccui.Widget.extend({
         }
 
         setTimeout(function(){
-            var list = self._EventList["stop"];
-            if(list)
-                for(var i=0; i<list.length; i++)
-                    list[i].call(self);
+            cc.eventManager.dispatchCustomEvent(ccui.VideoPlayer.EventType.STOPPED);
         }, 0);
     },
     /**
@@ -143,9 +118,7 @@ ccui.VideoPlayer = ccui.Widget.extend({
      */
     isPlaying: function(){
         var video = this._renderCmd._video;
-        if(video && video.paused === false)
-                return true;
-        return false;
+        return (video && video.paused === false);
     },
 
     /**
@@ -173,29 +146,32 @@ ccui.VideoPlayer = ccui.Widget.extend({
      * @param {Function} callback
      */
     addEventListener: function(event, callback){
-        var list = this._EventList;
-        if(!list[event])
-            list[event] = [];
-
-        list[event].push(callback);
+        if(!/^ui_video_/.test(event))
+            event = "ui_video_" + event;
+        return cc.eventManager.addCustomListener(event, callback);
     },
 
     /**
      *
      * @param {String} event play | pause | stop | complete
-     * @param {Function} callback
+     * @param {Function|Object} callbackOrListener
      */
-    removeEventListener: function(event, callback){
-        var list = this._EventList, item = list[event];
-        if(item){
-            for(var i=0; i<item.length; i++){
-                if(item[i] === callback){
-                    item.splice(i, 1);
-                    break;
-                }
+    removeEventListener: function(event, callbackOrListener){
+        var map, list;
+        if(!/^ui_video_/.test(event))
+            event = "ui_video_" + event;
+        if(typeof callbackOrListener === "function"){
+            map = cc.eventManager._listenersMap[event];
+            if(map){
+                list = map.getFixedPriorityListeners();
+                list && cc.eventManager._removeListenerInCallback(list, callbackOrListener);
             }
-            if(item.length === 0)
-                delete list[event];
+        }else{
+            map = cc.eventManager._listenersMap[event];
+            if(map){
+                list = map.getFixedPriorityListeners();
+                list && cc.eventManager._removeListenerInVector(list, callbackOrListener);
+            }
         }
     },
 
@@ -225,6 +201,13 @@ ccui.VideoPlayer = ccui.Widget.extend({
     }
 
 });
+
+ccui.VideoPlayer.EventType = {
+    PLAYING: "ui_video_play",
+    PAUSED: "ui_video_pause",
+    STOPPED: "ui_video_stop",
+    COMPLETED: "ui_video_complete"
+};
 
 (function(video){
     /**
@@ -261,6 +244,7 @@ ccui.VideoPlayer = ccui.Widget.extend({
         this._video.preload = "metadata";
         this._video.style["visibility"] = "hidden";
         this._loaded = false;
+        this._listener = null;
         this.initStyle();
     };
 
@@ -268,10 +252,15 @@ ccui.VideoPlayer = ccui.Widget.extend({
     proto.constructor = ccui.VideoPlayer.RenderCmd;
 
     proto.visit = function(){
-        var container = cc.container;
+        var self = this,
+            container = cc.container,
+            eventManager = cc.eventManager;
         if(this._node._visible){
             container.appendChild(this._video);
-            cc.view._addResizeCallback(this.resize, this);
+            if(this._listener === null)
+                this._listener = cc.eventManager.addCustomListener(cc.game.EVENT_RESIZE, function () {
+                    self.resize();
+                });
         }else{
             var hasChild = false;
             if('contains' in container) {
@@ -281,7 +270,9 @@ ccui.VideoPlayer = ccui.Widget.extend({
             }
             if(hasChild)
                 container.removeChild(this._video);
-            cc.view._removeResizeCallback(this.resize, this);
+            var list = eventManager._listenersMap[cc.game.EVENT_RESIZE].getFixedPriorityListeners();
+            eventManager._removeListenerInVector(list, this._listener);
+            this._listener = null;
         }
         this.updateStatus();
     };
@@ -298,11 +289,16 @@ ccui.VideoPlayer = ccui.Widget.extend({
     };
 
     proto.resize = function(view){
-        var node = this._node;
+        view = view || cc.view;
+        var node = this._node,
+            eventManager = cc.eventManager;
         if(node._parent && node._visible)
             this.updateMatrix(this._worldTransform, view._scaleX, view._scaleY);
-        else
-            cc.view._removeResizeCallback(this.resize, this);
+        else{
+            var list = eventManager._listenersMap[cc.game.EVENT_RESIZE].getFixedPriorityListeners();
+            eventManager._removeListenerInVector(list, this._listener);
+            this._listener = null;
+        }
     };
 
     proto.updateMatrix = function(t, scaleX, scaleY){
@@ -313,12 +309,6 @@ ccui.VideoPlayer = ccui.Widget.extend({
             scaleY = scaleY / dpr;
         }
         if(this._loaded === false) return;
-        //var clientWidth = node._contentSize.width,
-        //    clientHeight = node._contentSize.height;
-        //var ax = clientWidth*node._scaleX,
-        //    ay = clientHeight*node._scaleY;
-        var cx = this._anchorPointInPoints.x,
-            cy = this._anchorPointInPoints.y;
         var cw = node._contentSize.width,
             ch = node._contentSize.height;
         var a = t.a * scaleX,
@@ -370,22 +360,13 @@ ccui.VideoPlayer = ccui.Widget.extend({
             video = this._video;
         //binding event
         video.addEventListener("ended", function(){
-            var list = node._EventList["complete"];
-            if(list)
-                for(var i=0; i<list.length; i++)
-                    list[i].call(node);
+            cc.eventManager.dispatchCustomEvent(ccui.VideoPlayer.EventType.COMPLETED)
         });
         video.addEventListener("play", function(){
-            var list = node._EventList["play"];
-            if(list)
-                for(var i=0; i<list.length; i++)
-                    list[i].call(node);
+            cc.eventManager.dispatchCustomEvent(ccui.VideoPlayer.EventType.PLAYING)
         });
         video.addEventListener("pause", function(){
-            var list = node._EventList["pause"];
-            if(list)
-                for(var i=0; i<list.length; i++)
-                    list[i].call(node);
+            cc.eventManager.dispatchCustomEvent(ccui.VideoPlayer.EventType.PAUSED)
         });
     };
 

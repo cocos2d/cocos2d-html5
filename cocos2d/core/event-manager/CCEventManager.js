@@ -745,6 +745,27 @@ cc.eventManager = /** @lends cc.eventManager# */{
         }
     },
 
+    _removeListenerInCallback: function(listeners, callback){
+        if (listeners == null)
+            return false;
+
+        for (var i = 0, len = listeners.length; i < len; i++) {
+            var selListener = listeners[i];
+            if (selListener._onCustomEvent === callback || selListener._onEvent === callback) {
+                selListener._setRegistered(false);
+                if (selListener._getSceneGraphPriority() != null){
+                    this._dissociateNodeAndEventListener(selListener._getSceneGraphPriority(), selListener);
+                    selListener._setSceneGraphPriority(null);         // NULL out the node pointer so we don't have any dangling pointers to destroyed nodes.
+                }
+
+                if (this._inDispatch === 0)
+                    cc.arrayRemoveObject(listeners, selListener);
+                return true;
+            }
+        }
+        return false;
+    },
+
     _removeListenerInVector : function(listeners, listener){
         if (listeners == null)
             return false;
