@@ -665,17 +665,25 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {Boolean} enable  true if the widget is touch enabled, false if the widget is touch disabled.
      */
     setTouchEnabled: function (enable) {
-        if (enable == false) {
-            if (this._touchEnabled) {
-                cc.eventManager.removeListener(this._touchListener);
-            }
-        }
+        // if the new state is equal to the last one there is no need to procced
+        
+        if (this._touchEnabled === enable)
+            return;
+
+        // If the this._touchEnabled === false the listener will be removed on exit,
+        // If this._touchEnabled === false before call this function the listener wont be added
+
+        // if (enable == false) {
+        //     if (this._touchEnabled) {
+        //         cc.eventManager.removeListener(this._touchListener);
+        //     }
+        // }
 
         this._touchEnabled = enable;
 
         // when the node is in the running scene
-        if (this._onRunningScene == true) {
-            _manageListener(enable);
+        if (this._onRunningScene === true) {
+            this._manageListener(enable);
         }
     },
 
@@ -684,8 +692,8 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      * @param {Boolean} enable true for add listener, false for remove the listner.
      */
     _manageListener: function (enable) {
-        if (enable == true) {
-            if(this._touchListener == null) {
+        if (enable === true) {
+            if(this._touchListener === null) {
                 this._touchListener = cc.EventListener.create({
                     event: cc.EventListener.TOUCH_ONE_BY_ONE,
                     swallowTouches: true,
@@ -696,7 +704,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             }
             cc.eventManager.addListener(this._touchListener, this);
         } else {
-            if(this._touchListener != null) {
+            if(this._touchListener !== null) {
                 cc.eventManager.removeListener(this._touchListener);
             }
         }
