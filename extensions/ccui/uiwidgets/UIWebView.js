@@ -79,6 +79,8 @@ ccui.WebView = ccui.Widget.extend({
      * go back
      */
     goBack: function(){
+        if(ccui.WebView.polyfill.closeHistory)
+            return cc.log("The current browser does not support the GoBack");
         var iframe = this._renderCmd._iframe;
         if(iframe){
             var win = iframe.contentWindow;
@@ -91,6 +93,8 @@ ccui.WebView = ccui.Widget.extend({
      * go forward
      */
     goForward: function(){
+        if(ccui.WebView.polyfill.closeHistory)
+            return cc.log("The current browser does not support the GoForward");
         var iframe = this._renderCmd._iframe;
         if(iframe){
             var win = iframe.contentWindow;
@@ -195,13 +199,24 @@ ccui.WebView.EventType = {
 
 (function(){
 
-    ccui.WebView.polyfill = {
+    var polyfill = ccui.WebView.polyfill = {
         devicePixelRatio: false,
         enableDiv: false
     };
 
     if(cc.sys.os === cc.sys.OS_IOS)
         ccui.WebView.polyfill.enableDiv = true;
+
+    if(cc.sys.isMobile){
+        if(cc.sys.browserType === cc.sys.BROWSER_TYPE_FIREFOX){
+            polyfill.enableBG = true;
+        }
+    }else{
+        if(cc.sys.browserType === cc.sys.BROWSER_TYPE_IE){
+            polyfill.closeHistory = true;
+        }
+    }
+
 
 })();
 
@@ -222,6 +237,10 @@ ccui.WebView.EventType = {
         }else{
             this._div = this._iframe = document.createElement("iframe");
         }
+
+        if(polyfill.enableBG)
+            this._div.style["background"] = "#FFF";
+
         this._iframe.addEventListener("load", function(){
             cc.eventManager.dispatchCustomEvent(ccui.WebView.EventType.LOADED);
         });
