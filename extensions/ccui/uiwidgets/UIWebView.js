@@ -83,7 +83,7 @@ ccui.WebView = ccui.Widget.extend({
      * go back
      */
     goBack: function(){
-        if(ccui.WebView.polyfill.closeHistory)
+        if(ccui.WebView._polyfill.closeHistory)
             return cc.log("The current browser does not support the GoBack");
         var iframe = this._renderCmd._iframe;
         if(iframe){
@@ -97,7 +97,7 @@ ccui.WebView = ccui.Widget.extend({
      * go forward
      */
     goForward: function(){
-        if(ccui.WebView.polyfill.closeHistory)
+        if(ccui.WebView._polyfill.closeHistory)
             return cc.log("The current browser does not support the GoForward");
         var iframe = this._renderCmd._iframe;
         if(iframe){
@@ -116,6 +116,7 @@ ccui.WebView = ccui.Widget.extend({
         if(iframe){
             var win = iframe.contentWindow;
             try{
+                cc.eventManager.dispatchCustomEvent(ccui.WebView.EventType.JS_EVALUATED);
                 win.eval(str);
             }catch(err){
                 console.error(err);
@@ -161,16 +162,6 @@ ccui.WebView = ccui.Widget.extend({
         }
     },
 
-    //setOnShouldStartLoading: function(callback){},
-    //setOnDidFinishLoading: function(){},
-    //setOnDidFailLoading: function(){},
-    //setOnJSCallback: function(){},
-
-    //getOnShouldStartLoading: function(){},
-    //getOnDidFinishLoading: function(){},
-    //getOnDidFailLoading: function(){},
-    //getOnJSCallback: function(){},
-
     _createRenderCmd: function(){
         return new ccui.WebView.RenderCmd(this);
     },
@@ -206,18 +197,19 @@ ccui.WebView = ccui.Widget.extend({
 ccui.WebView.EventType = {
     LOADING: "ui_webview_loading",
     LOADED: "ui_webview_load",
-    ERROR: "ui_webview_error"
+    ERROR: "ui_webview_error",
+    JS_EVALUATED: "ui_webview_js"
 };
 
 (function(){
 
-    var polyfill = ccui.WebView.polyfill = {
+    var polyfill = ccui.WebView._polyfill = {
         devicePixelRatio: false,
         enableDiv: false
     };
 
     if(cc.sys.os === cc.sys.OS_IOS)
-        ccui.WebView.polyfill.enableDiv = true;
+        polyfill.enableDiv = true;
 
     if(cc.sys.isMobile){
         if(cc.sys.browserType === cc.sys.BROWSER_TYPE_FIREFOX){
@@ -383,4 +375,4 @@ ccui.WebView.EventType = {
         }
     };
 
-})(ccui.WebView.polyfill);
+})(ccui.WebView._polyfill);
