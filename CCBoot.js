@@ -1822,11 +1822,6 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys.openURL = function(url){
         window.open(url);
     }
-
-    /**
-     * Don't use SIMD.js optimization
-     */
-    sys.doNotUseSIMD = false;
 };
 
 //+++++++++++++++++++++++++something about sys end+++++++++++++++++++++++++++++
