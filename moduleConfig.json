@@ -322,6 +322,7 @@
             "extensions/ccui/uiwidgets/UITextAtlas.js",
             "extensions/ccui/uiwidgets/UITextBMFont.js",
             "extensions/ccui/uiwidgets/UITextField.js",
+            "extensions/ccui/uiwidgets/UIVideoPlayer.js",
             "extensions/ccui/uiwidgets/UIRichText.js",
             "extensions/ccui/uiwidgets/UIWebView.js",
             "extensions/ccui/uiwidgets/scroll-widget/UIScrollView.js",
