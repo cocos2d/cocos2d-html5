@@ -19,14 +19,14 @@
   </div>
   <div id='echo'></div>
   <script>
-    var cc = cc || {sys: {}};
-    // Set doNotUseSIMD to compare the scalar version and SIMD version
-    cc.sys.doNotUseSIMD = true;
+    var cc = cc || {};
   </script>
   <script src="../utility.js"></script>
   <script src="../vec3.js"></script>
   <script src="../vec4.js"></script>
   <script src="../mat4.js"></script>
+  <script src="../vec3SIMD.js"></script>
+  <script src="../mat4SIMD.js"></script>
   <script src="base.js"></script>
   <script src="kernel-template.js"></script>
   <script src="kmMat4Multiply.js"></script>

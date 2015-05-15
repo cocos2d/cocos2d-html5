@@ -8,6 +8,8 @@ load ('../utility.js');
 load ('../vec3.js');
 load ('../vec4.js');
 load ('../mat4.js');
+load ('../vec3SIMD.js');
+load ('../mat4SIMD.js');
 
 // load individual benchmarks
 load ('kernel-template.js');
