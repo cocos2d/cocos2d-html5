@@ -202,6 +202,10 @@ ccui.VideoPlayer = ccui.Widget.extend({
 
 });
 
+/**
+ * The VideoPlayer support list of events
+ * @type {{PLAYING: string, PAUSED: string, STOPPED: string, COMPLETED: string}}
+ */
 ccui.VideoPlayer.EventType = {
     PLAYING: "ui_video_play",
     PAUSED: "ui_video_pause",
@@ -215,7 +219,7 @@ ccui.VideoPlayer.EventType = {
      * @devicePixelRatio Whether you need to consider devicePixelRatio calculated position
      * @event To get the data using events
      */
-    video.polyfill = {
+    video._polyfill = {
         devicePixelRatio: false,
         event: "canplay",
         canPlayType: []
@@ -224,14 +228,14 @@ ccui.VideoPlayer.EventType = {
     (function(){
         var dom = document.createElement("video");
         if(dom.canPlayType("video/ogg"))
-            video.polyfill.canPlayType.push(".ogg");
+            video._polyfill.canPlayType.push(".ogg");
         if(dom.canPlayType("video/mp4"))
-            video.polyfill.canPlayType.push(".mp4");
+            video._polyfill.canPlayType.push(".mp4");
     })();
 
     if(cc.sys.OS_IOS === cc.sys.os){
-        video.polyfill.devicePixelRatio = true;
-        video.polyfill.event = "progress";
+        video._polyfill.devicePixelRatio = true;
+        video._polyfill.event = "progress";
     }
 
 })(ccui.VideoPlayer);
@@ -402,4 +406,4 @@ ccui.VideoPlayer.EventType = {
         }
     };
 
-})(ccui.VideoPlayer.polyfill);
+})(ccui.VideoPlayer._polyfill);

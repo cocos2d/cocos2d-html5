@@ -879,7 +879,7 @@ cc.TransitionShrinkGrow = cc.TransitionScene.extend(/** @lends cc.TransitionShri
         var scaleOut = cc.scaleTo(this._duration, 0.01);
         var scaleIn = cc.scaleTo(this._duration, 1.0);
 
-        this._inScene.runAction(cc.sequence(this.easeActionWithAction(scaleIn), cc.callFunc(this.finish, this));
+        this._inScene.runAction(cc.sequence(this.easeActionWithAction(scaleIn), cc.callFunc(this.finish, this)));
         this._outScene.runAction(this.easeActionWithAction(scaleOut));
     },
 

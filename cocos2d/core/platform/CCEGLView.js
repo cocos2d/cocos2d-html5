@@ -224,7 +224,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         var height = view._originalDesignResolutionSize.height;
         if (width > 0)
             view.setDesignResolutionSize(width, height, view._resolutionPolicy);
-
     },
 
     /**
