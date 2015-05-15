@@ -116,8 +116,8 @@ ccui.WebView = ccui.Widget.extend({
         if(iframe){
             var win = iframe.contentWindow;
             try{
-                cc.eventManager.dispatchCustomEvent(ccui.WebView.EventType.JS_EVALUATED);
                 win.eval(str);
+                cc.eventManager.dispatchCustomEvent(ccui.WebView.EventType.JS_EVALUATED);
             }catch(err){
                 console.error(err);
             }
