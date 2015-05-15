@@ -144,11 +144,15 @@
             "cocos2d/kazmath/plane.js",
             "cocos2d/kazmath/quaternion.js",
             "cocos2d/kazmath/aabb.js",
-            "cocos2d/kazmath/vec3SIMD.js",
-            "cocos2d/kazmath/mat4SIMD.js",
-            "cocos2d/kazmath/SIMDPolyfill.js",
             "cocos2d/kazmath/gl/mat4stack.js",
             "cocos2d/kazmath/gl/matrix.js"
+        ],
+        "kazmathSIMD" : [
+            "kazmath",
+
+            "cocos2d/kazmath/vec3SIMD.js",
+            "cocos2d/kazmath/mat4SIMD.js",
+            "cocos2d/kazmath/SIMDPolyfill.js"
         ],
         "labels" : [
             "core",
