@@ -52,6 +52,10 @@ ccui.WebView = ccui.Widget.extend({
     stopLoading: function(){
         cc.log("Web does not support loading");
     },
+
+    /**
+     * Reload the WebView
+     */
     reload: function(){
         var iframe = this._renderCmd._iframe;
         if(iframe){
@@ -105,7 +109,7 @@ ccui.WebView = ccui.Widget.extend({
 
     /**
      * In the webview execution within a period of js string
-     * @param str
+     * @param {String} str
      */
     evaluateJS: function(str){
         var iframe = this._renderCmd._iframe;
@@ -128,24 +132,20 @@ ccui.WebView = ccui.Widget.extend({
 
     /**
      * The binding event
-     * @param event string: load | loading | error Or: ccui.WebView.EventType
-     * @param callback
+     * @param {ccui.WebView.EventType} ccui.WebView.EventType
+     * @param {Function} callback
      */
     addEventListener: function(event, callback){
-        if(!/^ui_webview_/.test(event))
-            event = "ui_webview_" + event;
         return cc.eventManager.addCustomListener(event, callback);
     },
 
     /**
      * Delete events
-     * @param event
-     * @param callbackOrListener
+     * @param {ccui.WebView.EventType} event
+     * @param {Function|Listener} callbackOrListener
      */
     removeEventListener: function(event, callbackOrListener){
         var map, list;
-        if(!/^ui_webview_/.test(event))
-            event = "ui_webview_" + event;
         if(typeof callbackOrListener === "function"){
             map = cc.eventManager._listenersMap[event];
             if(map){
@@ -175,6 +175,11 @@ ccui.WebView = ccui.Widget.extend({
         return new ccui.WebView.RenderCmd(this);
     },
 
+    /**
+     * Set the contentSize
+     * @param {Number} w
+     * @param {Number} h
+     */
     setContentSize: function(w, h){
         ccui.Widget.prototype.setContentSize.call(this, w, h);
         if(h === undefined){
@@ -184,6 +189,9 @@ ccui.WebView = ccui.Widget.extend({
         this._renderCmd.changeSize(w, h);
     },
 
+    /**
+     * remove node
+     */
     cleanup: function(){
         this._renderCmd.removeDom();
         this.stopAllActions();
@@ -191,6 +199,10 @@ ccui.WebView = ccui.Widget.extend({
     }
 });
 
+/**
+ * The WebView support list of events
+ * @type {{LOADING: string, LOADED: string, ERROR: string}}
+ */
 ccui.WebView.EventType = {
     LOADING: "ui_webview_loading",
     LOADED: "ui_webview_load",
