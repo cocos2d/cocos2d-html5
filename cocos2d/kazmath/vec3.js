@@ -209,7 +209,7 @@
         return tyArr;
     };
 
-    if(typeof(SIMD) !== 'undefined' && cc.doNotUseSIMD !== true) {
+    if(typeof(SIMD) !== 'undefined' && cc.sys.doNotUseSIMD !== true) {
         proto.transformCoord = proto.transformCoordSIMD;
     }
 })(cc);

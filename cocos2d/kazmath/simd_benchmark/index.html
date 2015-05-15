@@ -19,8 +19,9 @@
   </div>
   <div id='echo'></div>
   <script>
-    var cc = cc || {};
-    cc.doNotUseSIMD = true;
+    var cc = cc || {sys: {}};
+    // Set doNotUseSIMD to compare the scalar version and SIMD version
+    cc.sys.doNotUseSIMD = true;
   </script>
   <script src="../utility.js"></script>
   <script src="../vec3.js"></script>

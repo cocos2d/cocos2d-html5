@@ -1421,7 +1421,7 @@
         return temp.toAxisAndAngle();
     };
 
-    if(typeof(SIMD) !== 'undefined' && cc.doNotUseSIMD !== true) {
+    if(typeof(SIMD) !== 'undefined' && cc.sys.doNotUseSIMD !== true) {
         proto.inverse = proto.inverseSIMD;
         proto.isIdentity = proto.isIdentitySIMD;
         proto.transpose = proto.transposeSIMD;
