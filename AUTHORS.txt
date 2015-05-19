@@ -1,6 +1,6 @@
 Cocos2d-html5 authors
 
-(ordered by the join in time)
+(Ordered by join time)
 
 Core Developers:
 
