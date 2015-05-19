@@ -133,7 +133,6 @@
 
         this._clipElemType = node._stencil instanceof cc.Sprite;
         this._syncStatus(parentCmd);
-        this._dirtyFlag = 0;
 
         cc.renderer.pushRenderCommand(this._rendererSaveCmd);
         if (this._clipElemType) {
@@ -171,6 +170,7 @@
                 locProtectChildren[j].visit(this);
             cc.renderer.pushRenderCommand(this._rendererRestoreCmd);
         }
+        this._dirtyFlag = 0;
     };
 
     ccui.Layout.CanvasRenderCmd._getSharedCache = function () {
