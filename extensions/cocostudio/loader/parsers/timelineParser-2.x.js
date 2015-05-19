@@ -1131,13 +1131,10 @@
         var volume = json["Volume"] || 0;
         cc.audioEngine.setMusicVolume(volume);
         //var name = json["Name"];
-        var resPath = "";
-        if(cc.loader.resPath)
-            resPath = (cc.loader.resPath + "/").replace(/\/\/$/, "/");
 
         loadTexture(json["FileData"], resourcePath, function(path, type){
             cc.loader.load(path, function(){
-                cc.audioEngine.playMusic(resPath + path, loop);
+                cc.audioEngine.playMusic(path, loop);
             });
         });
 
