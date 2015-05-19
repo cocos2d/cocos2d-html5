@@ -966,8 +966,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _clearRect: function(){
         var texture = this._texture;
         if(texture){
-            if(texture._htmlElementObj instanceof HTMLCanvasElement)
-                return;
             var textureRect = texture._contentSize;
             var spriteRect = this._rect;
             if(
