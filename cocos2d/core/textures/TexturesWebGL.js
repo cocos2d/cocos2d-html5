@@ -845,17 +845,23 @@ cc._tmp.WebGLTextureCache = function () {
     var _p = cc.textureCache;
 
     _p.handleLoadedTexture = function (url) {
-        var locTexs = this._textures;
+        var locTexs = this._textures, tex, ext;
         //remove judge(webgl)
         if (!cc._rendererInitialized) {
             locTexs = this._loadedTexturesBefore;
         }
-        var tex = locTexs[url];
+        tex = locTexs[url];
         if (!tex) {
             tex = locTexs[url] = new cc.Texture2D();
             tex.url = url;
         }
-        tex.handleLoadedTexture();
+        ext = cc.path.extname(url);
+        if (ext === ".png") {
+            tex.handleLoadedTexture(true);
+        }
+        else {
+            tex.handleLoadedTexture();
+        }
     };
 
     /**
