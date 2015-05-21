@@ -33,6 +33,8 @@ ccs._load = (function(){
      */
     var load = function(file, type, path){
 
+        file = cc.path.join(cc.loader.resPath, file);
+
         var json = cc.loader.getRes(file);
 
         if(!json)
