@@ -122,6 +122,7 @@
 
         this._syncStatus(parentCmd);
         cc.renderer.pushRenderCommand(this);
+        this._cacheDirty = true;
 
         //the bakeSprite is drawing
         this._bakeSprite.visit(this);
