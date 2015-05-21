@@ -47,7 +47,7 @@
             this._needDraw = true;
             cc.renderer.childrenOrderDirty = true;
             //limit: 1. its children's blendfunc are invalid.
-            this._isBaked = this._cacheDirty = true;
+            this._isBaked = true;
 
             var children = this._node._children;
             for(var i = 0, len = children.length; i < len; i++)
