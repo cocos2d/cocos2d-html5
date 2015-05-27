@@ -90,7 +90,7 @@
 
         //draw sprite
         var image = locSprite._texture.getHtmlElementObj();
-        if (locSprite._colorized) {
+        if (locSprite._renderCmd._colorized) {
             context.drawImage(image,
                 0, 0, locTextureCoord.width, locTextureCoord.height,
                 locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
@@ -226,10 +226,10 @@
             spriteCmd._syncDisplayOpacity();
         }
 
-/*        if(colorDirty || opacityDirty){
+        if(colorDirty || opacityDirty){
             spriteCmd._updateColor();
-            this._updateColor();
-        }*/
+            //this._updateColor();
+        }
 
         if (locFlag & flags.transformDirty) {
             //update the transform
@@ -256,10 +256,10 @@
             spriteCmd._updateDisplayOpacity();
         }
 
-/*        if(colorDirty || opacityDirty){
+        if(colorDirty || opacityDirty){
             spriteCmd._updateColor();
-            this._updateColor();
-        }*/
+            //this._updateColor();
+        }
 
         if(locFlag & flags.transformDirty){
             //update the transform
