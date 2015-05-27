@@ -160,37 +160,21 @@ ccui.VideoPlayer = ccui.Widget.extend({
      * @param {Function} callback
      */
     setEventListener: function(event, callback){
-        var list = this._EventList[event];
-        if(!list)
-            list = this._EventList[event] = [];
-        list[0] = callback;
+        this._EventList[event] = callback;
     },
 
     /**
      * Delete events
-     * @param {String} event play | pause | stop | complete
-     * @param {Function|Object} callback
+     * @param {ccui.VideoPlayer.EventType} event
      */
-    removeEventListener: function(event, callback){
-        var list = this._EventList[event];
-        if(list){
-            if(callback)
-                for(var i=0; i<list.length; i++){
-                    if(list[i] === callback){
-                        list.splice(i, 1);
-                        break;
-                    }
-                }
-            else
-                list.length = 0;
-        }
+    removeEventListener: function(event){
+        this._EventList[event] = null;
     },
 
     _dispatchEvent: function(event) {
-        var list = this._EventList[event];
-        if (list)
-            for(var i=0; i<list.length; i++)
-                list[i].call(this, this, this._renderCmd._video.src);
+        var callback = this._EventList[event];
+        if (callback)
+            callback.call(this, this, this._renderCmd._video.src);
     },
 
     /**
