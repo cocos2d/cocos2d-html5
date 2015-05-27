@@ -156,7 +156,7 @@ ccui.VideoPlayer = ccui.Widget.extend({
 
     /**
      * The binding event
-     * @param {String} event play | pause | stop | complete
+     * @param {ccui.VideoPlayer.EventType} event
      * @param {Function} callback
      */
     setEventListener: function(event, callback){
@@ -372,10 +372,10 @@ ccui.VideoPlayer.EventType = {
             node._dispatchEvent(ccui.VideoPlayer.EventType.COMPLETED);
         });
         video.addEventListener("play", function(){
-            node._dispatchEvent(ccui.VideoPlayer.EventType.PLAYING)
+            node._dispatchEvent(ccui.VideoPlayer.EventType.PLAYING);
         });
         video.addEventListener("pause", function(){
-            node._dispatchEvent(ccui.VideoPlayer.EventType.PAUSED)
+            node._dispatchEvent(ccui.VideoPlayer.EventType.PAUSED);
         });
     };
 
