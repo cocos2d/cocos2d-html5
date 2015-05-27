@@ -26,6 +26,7 @@ ccui.VideoPlayer = ccui.Widget.extend({
 
     ctor: function(path){
         ccui.Widget.prototype.ctor.call(this);
+        this._EventList = {};
         if(path)
             this.setURL(path);
     },
@@ -98,7 +99,7 @@ ccui.VideoPlayer = ccui.Widget.extend({
         }
 
         setTimeout(function(){
-            cc.eventManager.dispatchCustomEvent(ccui.VideoPlayer.EventType.STOPPED);
+            self._dispatchEvent(ccui.VideoPlayer.EventType.STOPPED);
         }, 0);
     },
     /**
@@ -128,58 +129,62 @@ ccui.VideoPlayer = ccui.Widget.extend({
         cc.log("On the web is always keep the aspect ratio");
     },
     isKeepAspectRatioEnabled: function(){
-        return true;
+        return false;
     },
 
+    /**
+     * Set whether the full screen
+     * May appear inconsistent in different browsers
+     * @param {boolean} enable
+     */
     setFullScreenEnabled: function(enable){
         var video = this._renderCmd._video;
-        if(video)
-            cc.screen.requestFullScreen(video);
+        if(video){
+            if(enable)
+                cc.screen.requestFullScreen(video);
+            else
+                cc.screen.exitFullScreen(video);
+        }
     },
+
+    /**
+     * Determine whether already full screen
+     */
     isFullScreenEnabled: function(){
         cc.log("Can't know status");
     },
 
     /**
-     *
-     * @param {String} event play | pause | stop | complete
+     * The binding event
+     * @param {ccui.VideoPlayer.EventType} event
      * @param {Function} callback
      */
-    addEventListener: function(event, callback){
-        if(!/^ui_video_/.test(event))
-            event = "ui_video_" + event;
-        return cc.eventManager.addCustomListener(event, callback);
+    setEventListener: function(event, callback){
+        this._EventList[event] = callback;
     },
 
     /**
-     *
-     * @param {String} event play | pause | stop | complete
-     * @param {Function|Object} callbackOrListener
+     * Delete events
+     * @param {ccui.VideoPlayer.EventType} event
      */
-    removeEventListener: function(event, callbackOrListener){
-        var map, list;
-        if(!/^ui_video_/.test(event))
-            event = "ui_video_" + event;
-        if(typeof callbackOrListener === "function"){
-            map = cc.eventManager._listenersMap[event];
-            if(map){
-                list = map.getFixedPriorityListeners();
-                list && cc.eventManager._removeListenerInCallback(list, callbackOrListener);
-            }
-        }else{
-            map = cc.eventManager._listenersMap[event];
-            if(map){
-                list = map.getFixedPriorityListeners();
-                list && cc.eventManager._removeListenerInVector(list, callbackOrListener);
-            }
-        }
+    removeEventListener: function(event){
+        this._EventList[event] = null;
     },
 
-    onPlayEvent: function(event){
-        var list = this._EventList[event];
+    _dispatchEvent: function(event) {
+        var callback = this._EventList[event];
+        if (callback)
+            callback.call(this, this, this._renderCmd._video.src);
+    },
+
+    /**
+     * Trigger playing events
+     */
+    onPlayEvent: function(){
+        var list = this._EventList[ccui.VideoPlayer.EventType.PLAYING];
         if(list)
             for(var i=0; i<list.length; i++)
-                list[i].call(this);
+                list[i].call(this, this, this._renderCmd._video.src);
     },
 
     //_createCloneInstance: function(){},
@@ -207,10 +212,10 @@ ccui.VideoPlayer = ccui.Widget.extend({
  * @type {{PLAYING: string, PAUSED: string, STOPPED: string, COMPLETED: string}}
  */
 ccui.VideoPlayer.EventType = {
-    PLAYING: "ui_video_play",
-    PAUSED: "ui_video_pause",
-    STOPPED: "ui_video_stop",
-    COMPLETED: "ui_video_complete"
+    PLAYING: "play",
+    PAUSED: "pause",
+    STOPPED: "stop",
+    COMPLETED: "complete"
 };
 
 (function(video){
@@ -364,13 +369,13 @@ ccui.VideoPlayer.EventType = {
             video = this._video;
         //binding event
         video.addEventListener("ended", function(){
-            cc.eventManager.dispatchCustomEvent(ccui.VideoPlayer.EventType.COMPLETED)
+            node._dispatchEvent(ccui.VideoPlayer.EventType.COMPLETED);
         });
         video.addEventListener("play", function(){
-            cc.eventManager.dispatchCustomEvent(ccui.VideoPlayer.EventType.PLAYING)
+            node._dispatchEvent(ccui.VideoPlayer.EventType.PLAYING);
         });
         video.addEventListener("pause", function(){
-            cc.eventManager.dispatchCustomEvent(ccui.VideoPlayer.EventType.PAUSED)
+            node._dispatchEvent(ccui.VideoPlayer.EventType.PAUSED);
         });
     };
 
