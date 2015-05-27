@@ -26,11 +26,10 @@ ccui.WebView = ccui.Widget.extend({
 
     ctor: function(path){
         ccui.Widget.prototype.ctor.call(this);
+        this._EventList = {};
         if(path)
             this.loadURL(path);
-        this._EventList = {};
     },
-
 
     setJavascriptInterfaceScheme: function(scheme){},
     loadData: function(data, MIMEType, encoding, baseURL){},
@@ -43,7 +42,7 @@ ccui.WebView = ccui.Widget.extend({
      */
     loadURL: function(url){
         this._renderCmd.updateURL(url);
-        cc.eventManager.dispatchCustomEvent(ccui.WebView.EventType.LOADING);
+        this._dispatchEvent(ccui.WebView.EventType.LOADING);
     },
 
     /**
@@ -117,7 +116,7 @@ ccui.WebView = ccui.Widget.extend({
             var win = iframe.contentWindow;
             try{
                 win.eval(str);
-                cc.eventManager.dispatchCustomEvent(ccui.WebView.EventType.JS_EVALUATED);
+                this._dispatchEvent(ccui.WebView.EventType.JS_EVALUATED);
             }catch(err){
                 console.error(err);
             }
@@ -133,33 +132,41 @@ ccui.WebView = ccui.Widget.extend({
 
     /**
      * The binding event
-     * @param {ccui.WebView.EventType} ccui.WebView.EventType
+     * @param {ccui.WebView.EventType} event
      * @param {Function} callback
      */
-    addEventListener: function(event, callback){
-        return cc.eventManager.addCustomListener(event, callback);
+    setEventListener: function(event, callback){
+        var list = this._EventList[event];
+        if(!list)
+            list = this._EventList[event] = [];
+        list[0] = callback;
     },
 
     /**
      * Delete events
      * @param {ccui.WebView.EventType} event
-     * @param {Function|Listener} callbackOrListener
+     * @param {Function} callback
      */
-    removeEventListener: function(event, callbackOrListener){
-        var map, list;
-        if(typeof callbackOrListener === "function"){
-            map = cc.eventManager._listenersMap[event];
-            if(map){
-                list = map.getFixedPriorityListeners();
-                list && cc.eventManager._removeListenerInCallback(list, callbackOrListener);
-            }
-        }else{
-            map = cc.eventManager._listenersMap[event];
-            if(map){
-                list = map.getFixedPriorityListeners();
-                list && cc.eventManager._removeListenerInVector(list, callbackOrListener);
-            }
+    removeEventListener: function(event, callback){
+        var list = this._EventList[event];
+        if(list){
+            if(callback)
+                for(var i=0; i<list.length; i++){
+                    if(list[i] === callback){
+                        list.splice(i, 1);
+                        break;
+                    }
+                }
+            else
+                list.length = 0;
         }
+    },
+
+    _dispatchEvent: function(event) {
+        var list = this._EventList[event];
+        if (list)
+            for(var i=0; i<list.length; i++)
+                list[i].call(this, this, this._renderCmd._iframe.src);
     },
 
     _createRenderCmd: function(){
@@ -195,10 +202,10 @@ ccui.WebView = ccui.Widget.extend({
  * @type {{LOADING: string, LOADED: string, ERROR: string}}
  */
 ccui.WebView.EventType = {
-    LOADING: "ui_webview_loading",
-    LOADED: "ui_webview_load",
-    ERROR: "ui_webview_error",
-    JS_EVALUATED: "ui_webview_js"
+    LOADING: "loading",
+    LOADED: "load",
+    ERROR: "error",
+    JS_EVALUATED: "js"
 };
 
 (function(){
@@ -246,10 +253,10 @@ ccui.WebView.EventType = {
             this._div.style["background"] = "#FFF";
 
         this._iframe.addEventListener("load", function(){
-            cc.eventManager.dispatchCustomEvent(ccui.WebView.EventType.LOADED);
+            node._dispatchEvent(ccui.WebView.EventType.LOADED);
         });
         this._iframe.addEventListener("error", function(){
-            cc.eventManager.dispatchCustomEvent(ccui.WebView.EventType.ERROR);
+            node._dispatchEvent(ccui.WebView.EventType.ERROR);
         });
         this._div.style["background-color"] = "#FFF";
         this._div.style.height = "200px";
