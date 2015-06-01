@@ -203,7 +203,10 @@
             if (displayedColor.r === 255 && displayedColor.g === 255 && displayedColor.b === 255) {
                 if (this._colorized) {
                     this._colorized = false;
-                    node.texture = this._originalTexture;
+                    var rect = cc.rect(node._rect);
+                    var isRotation = node._rectRotated;
+                    node.setTexture(this._originalTexture);
+                    node.setTextureRect(rect, isRotation);
                 }
                 return;
             }

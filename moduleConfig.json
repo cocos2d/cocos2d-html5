@@ -147,6 +147,13 @@
             "cocos2d/kazmath/gl/mat4stack.js",
             "cocos2d/kazmath/gl/matrix.js"
         ],
+        "kazmathSIMD" : [
+            "kazmath",
+
+            "cocos2d/kazmath/vec3SIMD.js",
+            "cocos2d/kazmath/mat4SIMD.js",
+            "cocos2d/kazmath/SIMDPolyfill.js"
+        ],
         "labels" : [
             "core",
 
@@ -322,7 +329,9 @@
             "extensions/ccui/uiwidgets/UITextAtlas.js",
             "extensions/ccui/uiwidgets/UITextBMFont.js",
             "extensions/ccui/uiwidgets/UITextField.js",
+            "extensions/ccui/uiwidgets/UIVideoPlayer.js",
             "extensions/ccui/uiwidgets/UIRichText.js",
+            "extensions/ccui/uiwidgets/UIWebView.js",
             "extensions/ccui/uiwidgets/scroll-widget/UIScrollView.js",
             "extensions/ccui/uiwidgets/scroll-widget/UIListView.js",
             "extensions/ccui/uiwidgets/scroll-widget/UIPageView.js"

@@ -652,8 +652,8 @@ cc.TransitionSlideInL = cc.TransitionScene.extend(/** @lends cc.TransitionSlideI
         var inA = this.action();
         var outA = this.action();
 
-        var inAction = this.easeActionWithAction(inA);
-        var outAction = cc.sequence(this.easeActionWithAction(outA), cc.callFunc(this.finish, this));
+        var inAction = cc.sequence(this.easeActionWithAction(inA), cc.callFunc(this.finish, this));
+        var outAction = this.easeActionWithAction(outA);
         this._inScene.runAction(inAction);
         this._outScene.runAction(outAction);
     },
@@ -879,10 +879,8 @@ cc.TransitionShrinkGrow = cc.TransitionScene.extend(/** @lends cc.TransitionShri
         var scaleOut = cc.scaleTo(this._duration, 0.01);
         var scaleIn = cc.scaleTo(this._duration, 1.0);
 
-        this._inScene.runAction(this.easeActionWithAction(scaleIn));
-        this._outScene.runAction(
-            cc.sequence(this.easeActionWithAction(scaleOut), cc.callFunc(this.finish, this))
-        );
+        this._inScene.runAction(cc.sequence(this.easeActionWithAction(scaleIn), cc.callFunc(this.finish, this)));
+        this._outScene.runAction(this.easeActionWithAction(scaleOut));
     },
 
     /**

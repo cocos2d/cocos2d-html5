@@ -2049,6 +2049,7 @@ cc.game = /** @lends cc.game# */{
 
     EVENT_HIDE: "game_on_hide",
     EVENT_SHOW: "game_on_show",
+    EVENT_RESIZE: "game_on_resize",
     _eventHide: null,
     _eventShow: null,
     _onBeforeStartArr: [],

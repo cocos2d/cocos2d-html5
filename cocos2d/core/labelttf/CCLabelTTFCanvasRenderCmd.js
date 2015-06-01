@@ -153,7 +153,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             }
         }
 
-        if (this._strings.length > 0)
+        if (this._strings.length > 1)
             this._isMultiLine = true;
 
         var locSize, locStrokeShadowOffsetX = 0, locStrokeShadowOffsetY = 0;

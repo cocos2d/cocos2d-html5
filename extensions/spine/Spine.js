@@ -1941,7 +1941,7 @@ spine.SkeletonJson.prototype = {
                         frameIndex++;
                     }
                     timelines.push(timeline);
-                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() * 5 - 5]);
+                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() * 5 - 5] || 0);
 
                 } else if (timelineName == "attachment") {
                     var timeline = new spine.AttachmentTimeline(values.length);
@@ -1953,7 +1953,7 @@ spine.SkeletonJson.prototype = {
                         timeline.setFrame(frameIndex++, valueMap["time"], valueMap["name"]);
                     }
                     timelines.push(timeline);
-                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() - 1]);
+                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() - 1] || 0);
 
                 } else
                     throw "Invalid timeline type for a slot: " + timelineName + " (" + slotName + ")";
@@ -1982,7 +1982,7 @@ spine.SkeletonJson.prototype = {
                         frameIndex++;
                     }
                     timelines.push(timeline);
-                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() * 2 - 2]);
+                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() * 2 - 2] || 0);
 
                 } else if (timelineName == "translate" || timelineName == "scale") {
                     var timeline;
@@ -2005,7 +2005,7 @@ spine.SkeletonJson.prototype = {
                         frameIndex++;
                     }
                     timelines.push(timeline);
-                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() * 3 - 3]);
+                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() * 3 - 3] || 0);
 
                 } else if (timelineName == "flipX" || timelineName == "flipY") {
                     var x = timelineName == "flipX";
@@ -2020,7 +2020,7 @@ spine.SkeletonJson.prototype = {
                         frameIndex++;
                     }
                     timelines.push(timeline);
-                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() * 2 - 2]);
+                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() * 2 - 2] || 0);
                 } else
                     throw "Invalid timeline type for a bone: " + timelineName + " (" + boneName + ")";
             }
@@ -2043,7 +2043,7 @@ spine.SkeletonJson.prototype = {
                 frameIndex++;
             }
             timelines.push(timeline);
-            duration = Math.max(duration, timeline.frames[timeline.frameCount * 3 - 3]);
+            duration = Math.max(duration, timeline.frames[timeline.frameCount * 3 - 3] || 0);
         }
 
         var ffd = map["ffd"];
@@ -2104,7 +2104,7 @@ spine.SkeletonJson.prototype = {
                         frameIndex++;
                     }
                     timelines[timelines.length] = timeline;
-                    duration = Math.max(duration, timeline.frames[timeline.frameCount - 1]);
+                    duration = Math.max(duration, timeline.frames[timeline.frameCount - 1] || 0);
                 }
             }
         }
@@ -2147,7 +2147,7 @@ spine.SkeletonJson.prototype = {
                 timeline.setFrame(frameIndex++, drawOrderMap["time"], drawOrder);
             }
             timelines.push(timeline);
-            duration = Math.max(duration, timeline.frames[timeline.getFrameCount() - 1]);
+            duration = Math.max(duration, timeline.frames[timeline.getFrameCount() - 1] || 0);
         }
 
         var events = map["events"];
@@ -2165,7 +2165,7 @@ spine.SkeletonJson.prototype = {
                 timeline.setFrame(frameIndex++, eventMap["time"], event);
             }
             timelines.push(timeline);
-            duration = Math.max(duration, timeline.frames[timeline.getFrameCount() - 1]);
+            duration = Math.max(duration, timeline.frames[timeline.getFrameCount() - 1] || 0);
         }
 
         skeletonData.animations.push(new spine.Animation(name, timelines, duration));
