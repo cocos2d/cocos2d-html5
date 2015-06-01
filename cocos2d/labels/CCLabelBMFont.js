@@ -327,7 +327,18 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var fontDef = locFontDict[key];
             if (!fontDef) {
                 cc.log("cocos2d: LabelBMFont: character not found " + locStr[i]);
-                continue;
+
+                fontDef = {
+                    rect: {
+                        x: 0,
+                        y: 0,
+                        width: 0,
+                        height: 0
+                    },
+                    xOffset: 0,
+                    yOffset: 0,
+                    xAdvance: 0
+                };
             }
 
             var rect = cc.rect(fontDef.rect.x, fontDef.rect.y, fontDef.rect.width, fontDef.rect.height);
@@ -439,12 +450,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             return 0;
         }
         var curTextFirstSprite = this.getChildByTag(startIndex);
-        var curTextLastSpriteId = startIndex + endIndex;
-        var curTextLastSprite = this.getChildByTag(curTextLastSpriteId);
-        while (!curTextLastSprite && 0 < curTextLastSpriteId) {
-            curTextLastSpriteId--;
-            curTextLastSprite = this.getChildByTag(curTextLastSpriteId);
-        }
+        var curTextLastSprite = this.getChildByTag(startIndex + endIndex);
         return this._getLetterPosXLeft(curTextLastSprite) - this._getLetterPosXLeft(curTextFirstSprite);
     },
 
