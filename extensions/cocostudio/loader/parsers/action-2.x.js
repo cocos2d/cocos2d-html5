@@ -149,8 +149,16 @@
                 frame.setAnchorPoint(cc.p(anchorx, anchory));
                 return frame;
             }
-        },
-        {
+        },{
+            name: "AnchorPoint",
+            handle: function(options){
+                var frame = new ccs.AnchorPointFrame();
+                var anchorx = options["X"];
+                var anchory = options["Y"];
+                frame.setAnchorPoint(cc.p(anchorx, anchory));
+                return frame;
+            }
+        },{
             name: "InnerAction",
             handle: function(options){
                 var frame = new ccs.InnerActionFrame();
