@@ -1232,6 +1232,7 @@
                 node.getAnimation().play(currentAnimationName, -1, isLoop);
 
         });
+        node.setColor(getColor(json["CColor"]));
         return node;
     };
 
