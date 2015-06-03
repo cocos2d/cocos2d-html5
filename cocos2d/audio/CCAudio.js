@@ -469,6 +469,7 @@ cc.Audio = cc.Class.extend({
                     self._setBufferCallback = null;
                 };
             }
+            audio._manualLoop = this._manualLoop;
         }
         audio._AUDIO_TYPE = this._AUDIO_TYPE;
         return audio;
