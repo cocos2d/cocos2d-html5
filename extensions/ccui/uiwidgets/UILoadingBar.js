@@ -241,11 +241,11 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
     },
 
     _setPercent: function(){
-        var rect, spriteRenderer, spriteTextureRect;
+        var res, rect, spriteRenderer, spriteTextureRect;
 
         if (this._totalLength <= 0)
             return;
-        var res = this._percent / 100.0;
+        res = this._percent / 100.0;
 
         if (this._scale9Enabled)
             this._setScale9Scale();
