@@ -727,7 +727,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     unscheduleAllWithMinPriority: function(minPriority){
         // Custom Selectors
         var i, element, arr = this._arrayForTimers;
-        for(i=0; i<arr.length; i++){
+        for(i=arr.length-1; i>=0; i--){
             element = arr[i];
             this.unscheduleAllForTarget(element.target);
         }
