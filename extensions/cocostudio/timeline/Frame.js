@@ -190,6 +190,14 @@ ccs.Frame = ccs.Class.extend({
 });
 
 ccs.Frame.tweenToMap = {
+    "-1": function(time, easingParam){
+        if (easingParam)
+        {
+            var tt = 1 - time;
+            return easingParam[1]*tt*tt*tt + 3*easingParam[3]*time*tt*tt + 3*easingParam[5]*time*time*tt + easingParam[7]*time*time*time;
+        }
+        return time;
+    },
     1: cc._easeSineInObj.easing,//Sine_EaseIn
     2: cc._easeSineOutObj.easing,//Sine_EaseOut
     3: cc._easeSineInOutObj.easing,//Sine_EaseInOut
