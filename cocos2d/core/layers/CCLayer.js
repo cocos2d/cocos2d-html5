@@ -83,7 +83,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @see cc.Layer#bake and cc.Layer#unbake
      */
     isBaked: function(){
-        return this._isBaked;
+        return this._renderCmd._isBaked;
     },
 
     addChild: function(child, localZOrder, tag){

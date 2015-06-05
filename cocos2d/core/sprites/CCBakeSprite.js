@@ -58,13 +58,20 @@ cc.BakeSprite = cc.Sprite.extend(/** @lends cc.BakeSprite# */{
      * @param {Number} [height]
      */
     resetCanvasSize: function(sizeOrWidth, height){
+        var locCanvas = this._cacheCanvas,
+            locContext = this._cacheContext,
+            strokeStyle = locContext._context.strokeStyle,
+            fillStyle = locContext._context.fillStyle;
         if(height === undefined){
             height = sizeOrWidth.height;
             sizeOrWidth = sizeOrWidth.width;
         }
-        var locCanvas = this._cacheCanvas;
         locCanvas.width = sizeOrWidth;
         locCanvas.height = height;   //TODO note baidu browser      reset the context after set width or height
+        if(strokeStyle !== locContext._context.strokeStyle)
+            locContext._context.strokeStyle = strokeStyle;
+        if(fillStyle !== locContext._context.fillStyle)
+            locContext._context.fillStyle = fillStyle;
         this.getTexture().handleLoadedTexture();
         this.setTextureRect(cc.rect(0,0, sizeOrWidth, height), false);
     }
