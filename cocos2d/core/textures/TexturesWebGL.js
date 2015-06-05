@@ -855,12 +855,14 @@ cc._tmp.WebGLTextureCache = function () {
             tex = locTexs[url] = new cc.Texture2D();
             tex.url = url;
         }
-        ext = cc.path.extname(url);
-        if (ext === ".png") {
-            tex.handleLoadedTexture(true);
-        }
-        else {
-            tex.handleLoadedTexture();
+        if(!tex.isLoaded()) {
+            ext = cc.path.extname(url);
+            if (ext === ".png") {
+                tex.handleLoadedTexture(true);
+            }
+            else {
+                tex.handleLoadedTexture();
+            }
         }
     };
 
@@ -888,12 +890,15 @@ cc._tmp.WebGLTextureCache = function () {
         }
         var tex = locTexs[url] || locTexs[cc.loader._aliases[url]];
         if (tex) {
-            cb && cb.call(target, tex);
-            return tex;
+            if(tex.isLoaded()) {
+                cb && cb.call(target, tex);
+                return tex;
+            }
+        } else {
+            tex = locTexs[url] = new cc.Texture2D();
+            tex.url = url;
         }
 
-        tex = locTexs[url] = new cc.Texture2D();
-        tex.url = url;
         var loadFunc = cc.loader._checkIsImageURL(url) ? cc.loader.load : cc.loader.loadImg;
         loadFunc.call(cc.loader, url, function (err, img) {
             if (err)
