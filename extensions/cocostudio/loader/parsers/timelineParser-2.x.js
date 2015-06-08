@@ -121,6 +121,8 @@
 
         node.setCascadeColorEnabled(true);
         node.setCascadeOpacityEnabled(true);
+
+        setLayoutComponent(node, json);
     };
 
     parser.parseChild = function(node, children, resourcePath){
@@ -326,6 +328,11 @@
         var color = json["CColor"];
         if (color != null)
             widget.setColor(getColor(color));
+
+        setLayoutComponent(widget, json);
+    };
+
+    var setLayoutComponent = function(widget, json){
 
         var layoutComponent = ccui.LayoutComponent.bindLayoutComponent(widget);
         if(!layoutComponent)
