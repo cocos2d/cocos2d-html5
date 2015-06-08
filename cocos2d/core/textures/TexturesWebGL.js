@@ -899,9 +899,6 @@ cc._tmp.WebGLTextureCache = function () {
                 }, target);
                 return tex;
             }
-        } else {
-            tex = locTexs[url] = new cc.Texture2D();
-            tex.url = url;
         }
 
         tex = locTexs[url] = new cc.Texture2D();
