@@ -41,6 +41,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _backGroundImageFileName: null,
     _backGroundImageCapInsets: null,
     _colorType: null,
+    _colorTypeBackup: null,
     _bgImageTexType: ccui.Widget.LOCAL_TEXTURE,
     _colorRender: null,
     _gradientRender: null,
@@ -531,6 +532,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._backGroundImageTextureSize = locBackgroundImage.getContentSize();
         locBackgroundImage.setPosition(this._contentSize.width * 0.5, this._contentSize.height * 0.5);
         this._updateBackGroundImageColor();
+        this._colorTypeBackup = this._colorType;
+        this.setBackGroundColorType(0);
     },
 
     /**
@@ -602,6 +605,11 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._backGroundImageFileName = "";
         this._backGroundImageTextureSize.width = 0;
         this._backGroundImageTextureSize.height = 0;
+        if(this._colorTypeBackup !== null){
+            var type = this._colorTypeBackup;
+            this._colorTypeBackup = null;
+            this.setBackGroundColorType(type);
+        }
     },
 
     /**
@@ -609,6 +617,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {ccui.Layout.BG_COLOR_NONE|ccui.Layout.BG_COLOR_SOLID|ccui.Layout.BG_COLOR_GRADIENT} type
      */
     setBackGroundColorType: function (type) {
+        if(this._colorTypeBackup !== null){
+            this._colorTypeBackup = type;
+            return;
+        }
         if (this._colorType === type)
             return;
         switch (this._colorType) {
