@@ -738,7 +738,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         this._renderCmd._checkTextureBoundary(texture, rect, rotated);
 
-        _t.texture = texture;
+        _t.setTexture(texture);
         _t.setTextureRect(rect, rotated);
 
         // by default use "Self Render".

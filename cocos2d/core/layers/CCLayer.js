@@ -191,7 +191,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      */
     ctor: function(color, width, height){
         cc.Layer.prototype.ctor.call(this);
-        this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        this._blendFunc = new cc.BlendFunc(cc.SRC_ALPHA, cc.ONE_MINUS_SRC_ALPHA);
         cc.LayerColor.prototype.init.call(this, color, width, height);
     },
 

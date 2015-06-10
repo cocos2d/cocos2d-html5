@@ -171,7 +171,7 @@ cc.REPEAT_FOREVER = Number.MAX_VALUE - 1;
  * @constant
  * @type Number
  */
-cc.BLEND_SRC = cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA ? 1 : 0x0302;
+cc.BLEND_SRC = (cc._renderType === cc._RENDER_TYPE_WEBGL && cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA) ? cc.ONE : cc.SRC_ALPHA;
 
 /**
  * default gl blend dst function. Compatible with premultiplied alpha images.
