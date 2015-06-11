@@ -888,8 +888,17 @@ cc._tmp.WebGLTextureCache = function () {
         }
         var tex = locTexs[url] || locTexs[cc.loader._aliases[url]];
         if (tex) {
-            cb && cb.call(target, tex);
-            return tex;
+            if(tex.isLoaded()) {
+                cb && cb.call(target, tex);
+                return tex;
+            }
+            else
+            {
+                tex.addEventListener("load", function(){
+                   cb && cb.call(target, tex);
+                }, target);
+                return tex;
+            }
         }
 
         tex = locTexs[url] = new cc.Texture2D();
