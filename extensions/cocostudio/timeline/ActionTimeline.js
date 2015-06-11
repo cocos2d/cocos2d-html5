@@ -121,6 +121,7 @@ ccs.ActionTimeline = cc.Action.extend({
     _loop: null,
     _frameEventListener: null,
     _animationInfos: null,
+    _lastFrameListener: null,
 
     ctor: function(){
         cc.Action.prototype.ctor.call(this);
@@ -399,15 +400,24 @@ ccs.ActionTimeline = cc.Action.extend({
         }
 
         this._time += delta * this._timeSpeed;
-        this._currentFrame = this._time / this._frameInternal | 0;
+        var endoffset = this._time - this._endFrame * this._frameInternal;
 
-        this._stepToFrame(this._currentFrame);
-
-        if(this._time > this._endFrame * this._frameInternal){
+        if(endoffset < this._frameInternal){
+            this._currentFrame = this._time / this._frameInternal;
+            this._stepToFrame(this._currentFrame);
+            if(endoffset >= 0 && this._lastFrameListener)
+                this._lastFrameListener();
+        }else{
             this._playing = this._loop;
-            if(!this._playing)
+            if(!this._playing){
                 this._time = this._endFrame * this._frameInternal;
-            else
+                if (this._currentFrame != this._endFrame){
+                    this._currentFrame = this._endFrame;
+                    this._stepToFrame(this._currentFrame);
+                    if(this._lastFrameListener)
+                        this._lastFrameListener();
+                }
+            }else
                 this.gotoFrameAndPlay(this._startFrame, this._endFrame, this._loop);
         }
 
@@ -492,6 +502,14 @@ ccs.ActionTimeline = cc.Action.extend({
 
     getAnimationInfo: function(name){
         return this._animationInfos[name];
+    },
+
+    setLastFrameCallFunc: function(listener){
+        this._lastFrameListener = listener;
+    },
+
+    clearLastFrameCallFunc: function(){
+        this._lastFrameListener = null;
     }
 });
 
