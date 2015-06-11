@@ -838,7 +838,7 @@ cc.loader = /** @lends cc.loader# */{
             return cb();
         }
         var realUrl = url;
-        if (!url.match(cc.urlRegExp))
+        if (!url.match(cc._urlRegExp))
         {
             var basePath = loader.getBasePath ? loader.getBasePath() : self.resPath;
             realUrl = self.getUrl(basePath, url);
@@ -2357,7 +2357,7 @@ Function.prototype.bind = Function.prototype.bind || function (oThis) {
     return fBound;
 };
 
-cc.urlRegExp = new RegExp(
+cc._urlRegExp = new RegExp(
     "^" +
         // protocol identifier
         "(?:(?:https?|ftp)://)" +
