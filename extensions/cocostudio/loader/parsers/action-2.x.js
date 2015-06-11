@@ -257,11 +257,13 @@
         var type = options["Type"];
         frame.setTweenType(type);
         var points = options["Points"];
+        var result = [];
         if(points){
-            points = points.map(function(p){
-                return cc.p(p["X"], p["Y"]);
+            points.forEach(function(p){
+                result.push(p["X"]);
+                result.push(p["Y"]);
             });
-            frame.setEasingParams(points);
+            frame.setEasingParams(result);
         }
     };
 
