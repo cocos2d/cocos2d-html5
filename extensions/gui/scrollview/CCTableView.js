@@ -194,7 +194,7 @@ cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
     _oldDirection:null,
     _cellsPositions:null,                       //vector with all cell positions
     _touchedCell:null,
-
+    _touchBeganPos:null,
     /**
      * The
      * @param dataSource
@@ -623,7 +623,7 @@ cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
     onTouchEnded:function (touch, event) {
         if (!this.isVisible())
             return;
-
+        this._touchBeganPos = null;
         if (this._touchedCell){
             var bb = this.getBoundingBox();
             var tmpOrigin = cc.p(bb.x, bb.y);
@@ -651,7 +651,7 @@ cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
         if(this._touches.length === 1) {
             var index, point;
 
-            point = this.getContainer().convertTouchToNodeSpace(touch);
+            this._touchBeganPos = point = this.getContainer().convertTouchToNodeSpace(touch);
 
             index = this._indexFromOffset(point);
             if (index === cc.INVALID_INDEX)
@@ -672,7 +672,10 @@ cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
 
     onTouchMoved: function(touch, event){
         cc.ScrollView.prototype.onTouchMoved.call(this, touch, event);
-
+        var point = this.getContainer().convertTouchToNodeSpace(touch);
+        if(this._touchBeganPos && Math.abs(point.x - this._touchBeganPos.x) < 10 &&  Math.abs(point.y - this._touchBeganPos.y) < 10) {
+            return;
+        }
         if (this._touchedCell && this.isTouchMoved()) {
             if(this._tableViewDelegate !== null && this._tableViewDelegate.tableCellUnhighlight)
                 this._tableViewDelegate.tableCellUnhighlight(this, this._touchedCell);
@@ -682,7 +685,7 @@ cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
 
     onTouchCancelled: function(touch, event){
         cc.ScrollView.prototype.onTouchCancelled.call(this, touch, event);
-
+        this._touchBeganPos = null;
         if (this._touchedCell) {
             if(this._tableViewDelegate !== null && this._tableViewDelegate.tableCellUnhighlight)
                 this._tableViewDelegate.tableCellUnhighlight(this, this._touchedCell);
