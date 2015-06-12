@@ -168,10 +168,7 @@
             var node = this._node, displayedColor = this._displayedColor;
 
             if (displayedColor.r === 255 && displayedColor.g === 255 && displayedColor.b === 255){
-                if(this._colorized){
-                    this._colorized = false;
-                    node.texture = this._originalTexture;
-                }
+                this._setOriginalTexture();
                 return;
             }
 
@@ -201,13 +198,7 @@
         proto._updateColor = function () {
             var node = this._node, displayedColor = this._displayedColor;
             if (displayedColor.r === 255 && displayedColor.g === 255 && displayedColor.b === 255) {
-                if (this._colorized) {
-                    this._colorized = false;
-                    var rect = cc.rect(node._rect);
-                    var isRotation = node._rectRotated;
-                    node.setTexture(this._originalTexture);
-                    node.setTextureRect(rect, isRotation);
-                }
+                this._setOriginalTexture();
                 return;
             }
 
@@ -231,6 +222,17 @@
             }
         };
     }
+    
+    proto._setOriginalTexture = function () {
+        if (this._colorized) {
+            this._colorized = false;
+            var node = this._node;
+            var rect = cc.rect(node._rect);
+            var isRotation = node._rectRotated;
+            node.setTexture(this._originalTexture);
+            node.setTextureRect(rect, isRotation);
+        }
+    };
 
     proto.getQuad = function () {
         //throw an error. it doesn't support this function.
