@@ -105,7 +105,7 @@ cc.loader.loadBinarySync = function (url) {
 };
 
 //Compatibility with IE9
-var Uint8Array = Uint8Array || Array;
+window.Uint8Array = window.Uint8Array || window.Array;
 
 if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
     var IEBinaryToArray_ByteStr_Script =
