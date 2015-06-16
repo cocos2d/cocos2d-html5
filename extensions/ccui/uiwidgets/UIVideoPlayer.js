@@ -364,7 +364,7 @@ ccui.VideoPlayer.EventType = {
         };
         video.addEventListener(polyfill.event, cb);
 
-        video.controls = "controls";
+        //video.controls = "controls";
         video.preload = "metadata";
         video.style["visibility"] = "hidden";
         this._loaded = false;
