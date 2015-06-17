@@ -84,13 +84,17 @@ ccui.WebView = ccui.Widget.extend({
      * go back
      */
     goBack: function(){
-        if(ccui.WebView._polyfill.closeHistory)
-            return cc.log("The current browser does not support the GoBack");
-        var iframe = this._renderCmd._iframe;
-        if(iframe){
-            var win = iframe.contentWindow;
-            if(win && win.location)
-                win.history.back();
+        try{
+            if(ccui.WebView._polyfill.closeHistory)
+                return cc.log("The current browser does not support the GoBack");
+            var iframe = this._renderCmd._iframe;
+            if(iframe){
+                var win = iframe.contentWindow;
+                if(win && win.location)
+                    win.history.back();
+            }
+        }catch(err){
+            cc.log(err);
         }
     },
 
@@ -98,13 +102,17 @@ ccui.WebView = ccui.Widget.extend({
      * go forward
      */
     goForward: function(){
-        if(ccui.WebView._polyfill.closeHistory)
-            return cc.log("The current browser does not support the GoForward");
-        var iframe = this._renderCmd._iframe;
-        if(iframe){
-            var win = iframe.contentWindow;
-            if(win && win.location)
-                win.history.forward();
+        try{
+            if(ccui.WebView._polyfill.closeHistory)
+                return cc.log("The current browser does not support the GoForward");
+            var iframe = this._renderCmd._iframe;
+            if(iframe){
+                var win = iframe.contentWindow;
+                if(win && win.location)
+                    win.history.forward();
+            }
+        }catch(err){
+            cc.log(err);
         }
     },
 
