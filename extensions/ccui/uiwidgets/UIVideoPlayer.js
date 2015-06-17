@@ -50,14 +50,7 @@ ccui.VideoPlayer = ccui.Widget.extend({
      * @returns {String}
      */
     getURL: function() {
-        var video = this._renderCmd._video;
-        if (video) {
-            var source = video.getElementsByTagName("source");
-            if (source && source[0])
-                return source[0].src;
-        }
-
-        return "";
+        return this._renderCmd._url;
     },
 
     /**
@@ -65,8 +58,10 @@ ccui.VideoPlayer = ccui.Widget.extend({
      */
     play: function(){
         var video = this._renderCmd._video;
-        if(video)
+        if(video){
+            this._renderCmd._played = true;
             video.play();
+        }
     },
 
     /**
@@ -248,12 +243,8 @@ ccui.VideoPlayer.EventType = {
 (function(polyfill){
     ccui.VideoPlayer.RenderCmd = function(node){
         cc.Node.CanvasRenderCmd.call(this, node);
-        this._video = document.createElement("video");
-        //this._video.controls = "controls";
-        this._video.preload = "metadata";
-        this._video.style["visibility"] = "hidden";
-        this._loaded = false;
         this._listener = null;
+        this._url = "";
         this.initStyle();
     };
 
@@ -332,11 +323,60 @@ ccui.VideoPlayer.EventType = {
     };
 
     proto.updateURL = function(path){
-        var video = this._video;
-        var source = document.createElement("source");
+        var source, video, hasChild, container, extname;
+
+        if (this._url == path)
+            return;
+
+        this._url = path;
+
+        if(cc.loader.resPath && !/^http/.test(path))
+            path = cc.path.join(cc.loader.resPath, path);
+
+        hasChild = false;
+        container = cc.container;
+        if('contains' in container) {
+            hasChild = container.contains(this._video);
+        }else {
+            hasChild = container.compareDocumentPosition(this._video) % 16;
+        }
+        if(hasChild)
+            container.removeChild(this._video);
+
+        this._video = document.createElement("video");
+        video = this._video;
+        this.bindEvent();
+        var self = this;
+
+        var cb = function(){
+            self._loaded = true;
+            self.changeSize();
+            self.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
+            video.removeEventListener(polyfill.event, cb);
+            video.currentTime = 0;
+            video.style["visibility"] = "visible";
+            //IOS does not display video images
+            video.play();
+            if(!self._played){
+                video.pause();
+                video.currentTime = 0;
+            }
+        };
+        video.addEventListener(polyfill.event, cb);
+
+        //video.controls = "controls";
+        video.preload = "metadata";
+        video.style["visibility"] = "hidden";
+        this._loaded = false;
+        this._played = false;
+        this.initStyle();
+        this.visit();
+
+        source = document.createElement("source");
         source.src = path;
         video.appendChild(source);
-        var extname = cc.path.extname(path);
+
+        extname = cc.path.extname(path);
         for(var i=0; i<polyfill.canPlayType.length; i++){
             if(extname !== polyfill.canPlayType[i]){
                 source = document.createElement("source");
@@ -344,24 +384,6 @@ ccui.VideoPlayer.EventType = {
                 video.appendChild(source);
             }
         }
-        var self = this;
-
-        var cb = function(){
-            self._loaded = true;
-            self.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
-            self.changeSize(0, 0);
-            video.removeEventListener(polyfill.event, cb);
-            video.style["visibility"] = "visible";
-            //IOS does not display video images
-            video.play();
-            video.currentTime = 0;
-            video.pause();
-            video.currentTime = 0;
-            setTimeout(function(){
-                self.bindEvent();
-            }, 0);
-        };
-        video.addEventListener(polyfill.event, cb);
     };
 
     proto.bindEvent = function(){
@@ -388,11 +410,14 @@ ccui.VideoPlayer.EventType = {
     };
 
     proto.changeSize = function(w, h){
+        var contentSize = this._node._contentSize;
+        w = w || contentSize.width;
+        h = h || contentSize.height;
         var video = this._video;
         if(video){
-            if(w !== undefined && w !== 0)
+            if(w !== 0)
                 video.width = w;
-            if(h !== undefined && h !== 0)
+            if(h !== 0)
                 video.height = h;
         }
     };
