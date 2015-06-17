@@ -41,7 +41,7 @@
          * @returns {*}
          */
         widgetFromJsonFile: function(file){
-            var json = cc.loader.getRes(cc.path.join(cc.loader.resPath, file));
+            var json = cc.loader.getRes(file);
             if(json)
                 this._fileDesignSizes[file] = cc.size(json["designWidth"]||0, json["designHeight"]||0);
 
