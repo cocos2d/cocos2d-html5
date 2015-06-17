@@ -35,12 +35,14 @@ ccs.Frame = ccs.Class.extend({
     _node: null,
     _tweenType: null,
     _easingParam: null,
+    _enterWhenPassed: null,
 
     ctor: function(){
         this._frameIndex = 0;
         this._tween = true;
         this._timeline = null;
         this._node = null;
+        this._enterWhenPassed = false;
         this._easingParam = [];
     },
 
@@ -1284,6 +1286,7 @@ ccs.EventFrame = ccs.Frame.extend({
     ctor: function(){
         ccs.Frame.prototype.ctor.call(this);
         this._event = "";
+        this._enterWhenPassed = true;
     },
 
     /**
