@@ -238,6 +238,10 @@ ccui.VideoPlayer.EventType = {
         video._polyfill.event = "progress";
     }
 
+    var style = document.createElement("style");
+    style.innerHTML = ".cocosVideo:-moz-full-screen{transform:matrix(1,0,0,1,0,0) !important;}";
+    document.head.appendChild(style);
+
 })(ccui.VideoPlayer);
 
 (function(polyfill){
@@ -407,6 +411,7 @@ ccui.VideoPlayer.EventType = {
         video.style.position = "absolute";
         video.style.bottom = "0px";
         video.style.left = "0px";
+        video.className = "cocosVideo";
     };
 
     proto.changeSize = function(w, h){
