@@ -60,7 +60,10 @@ ccui.VideoPlayer = ccui.Widget.extend({
         var video = this._renderCmd._video;
         if(video){
             this._renderCmd._played = true;
-            video.play();
+            video.pause();
+            setTimeout(function(){
+                video.play();
+            }, 20);
         }
     },
 
@@ -78,8 +81,12 @@ ccui.VideoPlayer = ccui.Widget.extend({
      */
     resume: function(){
         var video = this._renderCmd._video;
-        if(video)
-            video.play();
+        if(video){
+            video.pause();
+            setTimeout(function(){
+                video.play();
+            }, 20);
+        }
     },
 
     /**
