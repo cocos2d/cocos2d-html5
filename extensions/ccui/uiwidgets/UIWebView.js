@@ -91,7 +91,7 @@ ccui.WebView = ccui.Widget.extend({
             if(iframe){
                 var win = iframe.contentWindow;
                 if(win && win.location)
-                    win.history.back();
+                    win.history.back.call(win);
             }
         }catch(err){
             cc.log(err);
@@ -109,7 +109,7 @@ ccui.WebView = ccui.Widget.extend({
             if(iframe){
                 var win = iframe.contentWindow;
                 if(win && win.location)
-                    win.history.forward();
+                    win.history.forward.call(win);
             }
         }catch(err){
             cc.log(err);
