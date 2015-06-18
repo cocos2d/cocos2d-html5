@@ -333,11 +333,6 @@
         locTextureRect.width = 0 | (rect.width * scaleFactor);
         locTextureRect.height = 0 | (rect.height * scaleFactor);
         locTextureRect.validRect = !(locTextureRect.width === 0 || locTextureRect.height === 0 || locTextureRect.x < 0 || locTextureRect.y < 0);
-
-        if(this._colorized){
-            this._node._texture = this._originalTexture;
-            this._colorized = false;
-        }
     };
 
     //TODO need refactor these functions
