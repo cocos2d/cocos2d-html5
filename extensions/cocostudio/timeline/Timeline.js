@@ -187,7 +187,7 @@ ccs.Timeline = ccs.Class.extend({
     _apply: function(frameIndex){
         if (this._currentKeyFrame)
         {
-            var currentPercent = this._betweenDuration === 0 ? 0 : (frameIndex - this._currentKeyFrameIndex) / this._betweenDuration;
+            var currentPercent = this._betweenDuration <= 0 ? 0 : (frameIndex - this._currentKeyFrameIndex) / this._betweenDuration;
             this._currentKeyFrame.apply(currentPercent);
         }
     },
