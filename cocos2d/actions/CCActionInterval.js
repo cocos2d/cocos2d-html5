@@ -2909,9 +2909,12 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
         dt = this._computeEaseTime(dt);
         var locFrom = this._from, locTo = this._to;
         if (locFrom) {
-            this.target.color = cc.color(locFrom.r + (locTo.r - locFrom.r) * dt,
-                                        locFrom.g + (locTo.g - locFrom.g) * dt,
-	                                    locFrom.b + (locTo.b - locFrom.b) * dt);
+            this.target.setColor(
+                cc.color(
+                    locFrom.r + (locTo.r - locFrom.r) * dt,
+                    locFrom.g + (locTo.g - locFrom.g) * dt,
+                    locFrom.b + (locTo.b - locFrom.b) * dt)
+            );
         }
     }
 });
