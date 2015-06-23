@@ -1408,23 +1408,7 @@ cc._initSys = function (config, CONFIG_KEY) {
      * @default
      * @type {Number}
      */
-    sys.UNKNOWN = 0;
-    /**
-     * @memberof cc.sys
-     * @name IOS
-     * @constant
-     * @default
-     * @type {Number}
-     */
-    sys.IOS = 1;
-    /**
-     * @memberof cc.sys
-     * @name ANDROID
-     * @constant
-     * @default
-     * @type {Number}
-     */
-    sys.ANDROID = 2;
+    sys.UNKNOWN = -1;
     /**
      * @memberof cc.sys
      * @name WIN32
@@ -1432,15 +1416,7 @@ cc._initSys = function (config, CONFIG_KEY) {
      * @default
      * @type {Number}
      */
-    sys.WIN32 = 3;
-    /**
-     * @memberof cc.sys
-     * @name MARMALADE
-     * @constant
-     * @default
-     * @type {Number}
-     */
-    sys.MARMALADE = 4;
+    sys.WIN32 = 0;
     /**
      * @memberof cc.sys
      * @name LINUX
@@ -1448,23 +1424,7 @@ cc._initSys = function (config, CONFIG_KEY) {
      * @default
      * @type {Number}
      */
-    sys.LINUX = 5;
-    /**
-     * @memberof cc.sys
-     * @name BADA
-     * @constant
-     * @default
-     * @type {Number}
-     */
-    sys.BADA = 6;
-    /**
-     * @memberof cc.sys
-     * @name BLACKBERRY
-     * @constant
-     * @default
-     * @type {Number}
-     */
-    sys.BLACKBERRY = 7;
+    sys.LINUX = 1;
     /**
      * @memberof cc.sys
      * @name MACOS
@@ -1472,7 +1432,39 @@ cc._initSys = function (config, CONFIG_KEY) {
      * @default
      * @type {Number}
      */
-    sys.MACOS = 8;
+    sys.MACOS = 2;
+    /**
+     * @memberof cc.sys
+     * @name ANDROID
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.ANDROID = 3;
+    /**
+     * @memberof cc.sys
+     * @name IOS
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.IPHONE = 4;
+    /**
+     * @memberof cc.sys
+     * @name IOS
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.IPAD = 5;
+    /**
+     * @memberof cc.sys
+     * @name BLACKBERRY
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.BLACKBERRY = 6;
     /**
      * @memberof cc.sys
      * @name NACL
@@ -1480,7 +1472,7 @@ cc._initSys = function (config, CONFIG_KEY) {
      * @default
      * @type {Number}
      */
-    sys.NACL = 9;
+    sys.NACL = 7;
     /**
      * @memberof cc.sys
      * @name EMSCRIPTEN
@@ -1488,7 +1480,7 @@ cc._initSys = function (config, CONFIG_KEY) {
      * @default
      * @type {Number}
      */
-    sys.EMSCRIPTEN = 10;
+    sys.EMSCRIPTEN = 8;
     /**
      * @memberof cc.sys
      * @name TIZEN
@@ -1496,23 +1488,7 @@ cc._initSys = function (config, CONFIG_KEY) {
      * @default
      * @type {Number}
      */
-    sys.TIZEN = 11;
-    /**
-     * @memberof cc.sys
-     * @name QT5
-     * @constant
-     * @default
-     * @type {Number}
-     */
-    sys.QT5 = 12;
-    /**
-     * @memberof cc.sys
-     * @name WP8
-     * @constant
-     * @default
-     * @type {Number}
-     */
-    sys.WP8 = 13;
+    sys.TIZEN = 9;
     /**
      * @memberof cc.sys
      * @name WINRT
@@ -1520,7 +1496,15 @@ cc._initSys = function (config, CONFIG_KEY) {
      * @default
      * @type {Number}
      */
-    sys.WINRT = 14;
+    sys.WINRT = 10;
+    /**
+     * @memberof cc.sys
+     * @name WP8
+     * @constant
+     * @default
+     * @type {Number}
+     */
+    sys.WP8 = 11;
     /**
      * @memberof cc.sys
      * @name MOBILE_BROWSER
