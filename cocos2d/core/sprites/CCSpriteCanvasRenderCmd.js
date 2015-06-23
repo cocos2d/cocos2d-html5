@@ -217,7 +217,7 @@
                     locTexture = new cc.Texture2D();
                     locTexture.initWithElement(locElement);
                     locTexture.handleLoadedTexture();
-                    node.texture = locTexture;
+                    node.setTexture(locTexture);
                 }
             }
         };
@@ -239,10 +239,8 @@
         return null;
     };
 
-    proto._updateForSetSpriteFrame = function (pNewTexture, textureLoaded) {
-        var node = this._node;
-        if (node._rectRotated)
-            node._originalTexture = pNewTexture;      //TODO
+    proto._updateForSetSpriteFrame = function (pNewTexture, textureLoaded){
+        this._originalTexture = pNewTexture;      //TODO
         this._colorized = false;
         this._textureCoord.renderX = this._textureCoord.x;
         this._textureCoord.renderY = this._textureCoord.y;
