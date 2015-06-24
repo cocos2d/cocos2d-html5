@@ -260,15 +260,5 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS)
         }
     };
 
-    proto._switchToArmatureMode = function(enable, t, scaleX, scaleY){
-        if(enable){
-            this._armatureMode++;
-            this._context.setTransform(t.a, t.c, t.b, t.d, this._offsetX + t.tx * scaleX, this._realOffsetY - (t.ty * scaleY));
-            this.save();
-        }else{
-            this._armatureMode--;
-            this.restore();
-        }
-    };
 })();
 
