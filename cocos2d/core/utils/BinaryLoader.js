@@ -37,7 +37,7 @@ cc.loader.loadBinary = function (url, cb) {
     var xhr = this.getXMLHttpRequest(),
         errInfo = "load " + url + " failed!";
     xhr.open("GET", url, true);
-    if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+    if (cc.loader.loadBinary._IEFilter) {
         // IE-specific logic here
         xhr.setRequestHeader("Accept-Charset", "x-user-defined");
         xhr.onreadystatechange = function () {
@@ -54,6 +54,8 @@ cc.loader.loadBinary = function (url, cb) {
     }
     xhr.send(null);
 };
+
+cc.loader.loadBinary._IEFilter = (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent) && window.IEBinaryToArray_ByteStr && window.IEBinaryToArray_ByteStr_Last);
 
 cc.loader._str2Uint8Array = function (strData) {
     if (!strData)
@@ -78,7 +80,7 @@ cc.loader.loadBinarySync = function (url) {
     var errInfo = "load " + url + " failed!";
     req.open('GET', url, false);
     var arrayInfo = null;
-    if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+    if (cc.loader.loadBinary._IEFilter) {
         req.setRequestHeader("Accept-Charset", "x-user-defined");
         req.send(null);
         if (req.status !== 200) {
@@ -107,7 +109,7 @@ cc.loader.loadBinarySync = function (url) {
 //Compatibility with IE9
 window.Uint8Array = window.Uint8Array || window.Array;
 
-if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent) && window.IEBinaryToArray_ByteStr && window.IEBinaryToArray_ByteStr_Last) {
+if (cc.loader.loadBinary._IEFilter) {
     var IEBinaryToArray_ByteStr_Script =
         "<!-- IEBinaryToArray_ByteStr -->\r\n" +
             //"<script type='text/vbscript'>\r\n" +
