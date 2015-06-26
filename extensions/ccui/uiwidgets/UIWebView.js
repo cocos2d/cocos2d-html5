@@ -252,7 +252,7 @@ ccui.WebView.EventType = {
         this._iframe.addEventListener("error", function(){
             node._dispatchEvent(ccui.WebView.EventType.ERROR);
         });
-        this._div.style["background-color"] = "#FFF";
+        this._div.style["background"] = "#FFF";
         this._div.style.height = "200px";
         this._div.style.width = "300px";
         this._div.style.overflow = "scroll";
