@@ -24,6 +24,10 @@
 
 ccui.VideoPlayer = ccui.Widget.extend({
 
+    _played: false,
+    _playing: false,
+    _stopped: true,
+
     ctor: function(path){
         ccui.Widget.prototype.ctor.call(this);
         this._EventList = {};
@@ -57,19 +61,23 @@ ccui.VideoPlayer = ccui.Widget.extend({
      * Play the video
      */
     play: function(){
-        var renderCmd = this._renderCmd,
-            video = renderCmd._video;
+        var self = this,
+            video = this._renderCmd._video;
         if(video){
-            renderCmd._played = true;
+            this._played = true;
             video.pause();
+            if(this._stopped !== false || this._playing !== false || this._played !== true)
+                video.currentTime = 0;
             if(ccui.VideoPlayer._polyfill.autoplayAfterOperation){
                 setTimeout(function(){
                     video.play();
-                    renderCmd._playing = true;
+                    self._playing = true;
+                    self._stopped = false;
                 }, 20);
             }else{
                 video.play();
-                renderCmd._playing = true;
+                this._playing = true;
+                this._stopped = false;
             }
         }
     },
@@ -78,11 +86,10 @@ ccui.VideoPlayer = ccui.Widget.extend({
      * Pause the video
      */
     pause: function(){
-        var renderCmd = this._renderCmd,
-            video = renderCmd._video;
-        if(video){
+        var video = this._renderCmd._video;
+        if(video && this._playing === true && this._stopped === false){
             video.pause();
-            renderCmd._playing = false;
+            this._playing = false;
         }
     },
 
@@ -90,9 +97,9 @@ ccui.VideoPlayer = ccui.Widget.extend({
      * Resume the video
      */
     resume: function(){
-        var renderCmd = this._renderCmd;
-        if(renderCmd._played === true)
+        if(this._stopped === false && this._playing === false && this._played === true){
             this.play();
+        }
     },
 
     /**
@@ -100,12 +107,12 @@ ccui.VideoPlayer = ccui.Widget.extend({
      */
     stop: function(){
         var self = this,
-            renderCmd = self._renderCmd,
-            video = renderCmd._video;
+            video = this._renderCmd._video;
         if(video){
             video.pause();
             video.currentTime = 0;
-            renderCmd._playing = false;
+            this._playing = false;
+            this._stopped = true;
         }
 
         setTimeout(function(){
@@ -133,13 +140,12 @@ ccui.VideoPlayer = ccui.Widget.extend({
      * @returns {boolean}
      */
     isPlaying: function(){
-        var renderCmd = this._renderCmd;
-        if(ccui.VideoPlayer._polyfill.autoplayAfterOperation && renderCmd._playing){
+        if(ccui.VideoPlayer._polyfill.autoplayAfterOperation && this._playing){
             setTimeout(function(){
                 video.play();
             }, 20);
         }
-        return renderCmd._playing;
+        return this._playing;
     },
 
     /**
@@ -279,7 +285,6 @@ ccui.VideoPlayer.EventType = {
         cc.Node.CanvasRenderCmd.call(this, node);
         this._listener = null;
         this._url = "";
-        this._playing = false;
         this.initStyle();
     };
 
@@ -359,6 +364,7 @@ ccui.VideoPlayer.EventType = {
 
     proto.updateURL = function(path){
         var source, video, hasChild, container, extname;
+        var node = this._node;
 
         if (this._url == path)
             return;
@@ -392,7 +398,7 @@ ccui.VideoPlayer.EventType = {
             video.style["visibility"] = "visible";
             //IOS does not display video images
             video.play();
-            if(!self._played){
+            if(!node._played){
                 video.pause();
                 video.currentTime = 0;
             }
@@ -403,8 +409,9 @@ ccui.VideoPlayer.EventType = {
         video.preload = "metadata";
         video.style["visibility"] = "hidden";
         this._loaded = false;
-        this._played = false;
-        this._playing = false;
+        node._played = false;
+        node._playing = false;
+        node._stopped = true;
         this.initStyle();
         this.visit();
 
@@ -429,7 +436,7 @@ ccui.VideoPlayer.EventType = {
         //binding event
         video.addEventListener("ended", function(){
             node._renderCmd.updateMatrix(self._worldTransform, cc.view._scaleX, cc.view._scaleY);
-            self._playing = false;
+            node._playing = false;
             node._dispatchEvent(ccui.VideoPlayer.EventType.COMPLETED);
         });
         video.addEventListener("play", function(){
