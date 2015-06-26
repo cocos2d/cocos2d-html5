@@ -228,9 +228,10 @@
             this._colorized = false;
             var node = this._node;
             var rect = cc.rect(node._rect);
+            var contentSize = cc.size(node._contentSize);
             var isRotation = node._rectRotated;
             node.setTexture(this._originalTexture);
-            node.setTextureRect(rect, isRotation);
+            node.setTextureRect(rect, isRotation, contentSize);
         }
     };
 
@@ -244,8 +245,9 @@
         this._colorized = false;
         this._textureCoord.renderX = this._textureCoord.x;
         this._textureCoord.renderY = this._textureCoord.y;
+        textureLoaded = textureLoaded || pNewTexture._textureLoaded;
         if (textureLoaded) {
-            var curColor = node.getColor();
+            var curColor = this._node.getColor();
             if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
                 this._updateColor();
         }
