@@ -399,6 +399,8 @@ ccui.VideoPlayer.EventType = {
         var self = this;
 
         var cb = function(){
+            if(self._loaded == true)
+                return;
             self._loaded = true;
             self.changeSize();
             self.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
