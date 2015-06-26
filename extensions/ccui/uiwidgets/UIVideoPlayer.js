@@ -24,9 +24,9 @@
 
 ccui.VideoPlayer = ccui.Widget.extend({
 
-    _played: null,
-    _playing: null,
-    _stopped: null,
+    _played: false,
+    _playing: false,
+    _stopped: true,
 
     ctor: function(path){
         ccui.Widget.prototype.ctor.call(this);
