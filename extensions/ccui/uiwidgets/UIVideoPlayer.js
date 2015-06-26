@@ -33,9 +33,6 @@ ccui.VideoPlayer = ccui.Widget.extend({
         this._EventList = {};
         if(path)
             this.setURL(path);
-        this._played = false;
-        this._playing = false;
-        this._stopped = true;
     },
 
     _createRenderCmd: function(){
