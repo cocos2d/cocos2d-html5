@@ -62,17 +62,18 @@ ccui.VideoPlayer = ccui.Widget.extend({
         if(video){
             renderCmd._played = true;
             video.pause();
-            video.currentTime = 0;
+            if(renderCmd._stopped !== false || renderCmd._playing !== false || renderCmd._played !== true)
+                video.currentTime = 0;
             if(ccui.VideoPlayer._polyfill.autoplayAfterOperation){
                 setTimeout(function(){
                     video.play();
                     renderCmd._playing = true;
-                    renderCmd._paused = false;
+                    renderCmd._stopped = false;
                 }, 20);
             }else{
                 video.play();
                 renderCmd._playing = true;
-                renderCmd._paused = false;
+                renderCmd._stopped = false;
             }
         }
     },
@@ -83,9 +84,8 @@ ccui.VideoPlayer = ccui.Widget.extend({
     pause: function(){
         var renderCmd = this._renderCmd,
             video = renderCmd._video;
-        if(video && renderCmd._playing === true){
+        if(video && renderCmd._playing === true && renderCmd._stopped === false){
             video.pause();
-            renderCmd._paused = true;
             renderCmd._playing = false;
         }
     },
@@ -95,9 +95,8 @@ ccui.VideoPlayer = ccui.Widget.extend({
      */
     resume: function(){
         var renderCmd = this._renderCmd;
-        if(renderCmd._paused === true && renderCmd._played === true){
+        if(renderCmd._stopped === false && renderCmd._playing === false && renderCmd._played === true){
             this.play();
-            renderCmd._paused = false;
         }
     },
 
@@ -112,7 +111,7 @@ ccui.VideoPlayer = ccui.Widget.extend({
             video.pause();
             video.currentTime = 0;
             renderCmd._playing = false;
-            renderCmd._paused = false;
+            renderCmd._stopped = true;
         }
 
         setTimeout(function(){
@@ -287,7 +286,7 @@ ccui.VideoPlayer.EventType = {
         this._listener = null;
         this._url = "";
         this._playing = false;
-        this._paused = false;
+        this._stopped = true;
         this.initStyle();
     };
 
@@ -413,7 +412,7 @@ ccui.VideoPlayer.EventType = {
         this._loaded = false;
         this._played = false;
         this._playing = false;
-        this._paused = false;
+        this._stopped = true;
         this.initStyle();
         this.visit();
 
