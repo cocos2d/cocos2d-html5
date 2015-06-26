@@ -24,11 +24,18 @@
 
 ccui.VideoPlayer = ccui.Widget.extend({
 
+    _played: null,
+    _playing: null,
+    _stopped: null,
+
     ctor: function(path){
         ccui.Widget.prototype.ctor.call(this);
         this._EventList = {};
         if(path)
             this.setURL(path);
+        this._played = false;
+        this._playing = false;
+        this._stopped = true;
     },
 
     _createRenderCmd: function(){
@@ -281,8 +288,6 @@ ccui.VideoPlayer.EventType = {
         cc.Node.CanvasRenderCmd.call(this, node);
         this._listener = null;
         this._url = "";
-        node._playing = false;
-        node._stopped = true;
         this.initStyle();
     };
 
