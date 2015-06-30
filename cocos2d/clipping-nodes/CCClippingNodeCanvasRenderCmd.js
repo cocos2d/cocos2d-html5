@@ -61,7 +61,8 @@
                 scaleY = scaleY ||cc.view.getScaleY();
                 var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
 
-                wrapper.setTransform(this._transform, scaleX, scaleY);
+                var t = this._transform;
+                context.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
                 for (var i = 0; i < stencil._buffer.length; i++) {
                     var vertices = stencil._buffer[i].verts;
                     //TODO: need support circle etc
@@ -70,7 +71,7 @@
 
                     var firstPoint = vertices[0];
                     context.moveTo(firstPoint.x * scaleX, -firstPoint.y * scaleY);
-                    for (var j = 1, len = vertices.length; j < len; j++)
+                    for (var j = vertices.length - 1; j > 0; j--)
                         context.lineTo(vertices[j].x * scaleX, -vertices[j].y * scaleY);
                 }
             };
@@ -96,8 +97,7 @@
             wrapper.setTransform(this._worldTransform, scaleX, scaleY);
 
             if (this._node.inverted) {
-                context.setTransform(1, 0, 0, 1, 0, 0);
-                context.rect(0, 0, context.canvas.width, context.canvas.height);
+                context.rect(0, 0, context.canvas.width, -context.canvas.height);
                 context.clip();
             }
         }
