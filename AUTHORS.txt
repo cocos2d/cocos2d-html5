@@ -16,7 +16,7 @@ Core Developers:
 
     Sijie Wang (@VisualSJ)
 
-    Jialong Zhai (@JoshuaAstray)
+    Long Jiang (@jianglong0156)
 
 Contributors:
 Name                GithubID    Main contribution
@@ -165,6 +165,7 @@ erykwalder           @erykwalder    Function.prototype.bind bug fix
 
 ZippoLag             @ZippoLag      cc.Application.getCurrentLanguage bug fix
                                     typo fix
+                                    Fixed `cc.TMXObjectGroup#objectNamed` not returning the result bug
 
 Asano                @LaercioAsano  cc.Node bug fix
 
@@ -178,6 +179,7 @@ Mykyta Usikov        @musikov       cc.ClippingNode bugs fix
                                     cc.Scale9Sprite bugs fix
                                     cc.RenderTexture bug fix
                                     cc.ParticleSystem bug fix
+                                    Made CCProgressTimerCanvasRenderCmd to properly show colorized sprites
 
 Han XiaoLong         @kpkhxlgy0     cc.ParticleSytem bug fix
 
@@ -243,6 +245,8 @@ Dany Ellement        @DEllement     cc.FontDefinition & ccui.RichText improvemen
 IShm                 @IShm          cc.Screen bug fix
                                     cc.ParticleSystem bug fix
                                     ccui.PageView bug fix
+                                    Fixed crash when character not found into BMP font
+                                    Fixed restoring of sprite's color issue
 
 Thomas Jablonski     @thomas-jablonski  cc.audioEngine bug fix
                                         Cocostudio typo fix
@@ -255,11 +259,22 @@ feijing566           @feijing566    cc.Audio bug fix
 
 RackovychV           @RackovychV    Fixed a bug of `cc.Scheduler`'s `pauseAllTargetsWithMinPriority`
 
+giuseppelt           @giuseppelt    Fixed TransitionSlideX callback sequence issue
 
+YShumov              @pixmaster     Fixed issue in music end event
+
+SPACELAN             @spacelan      Fixed `inverse` function bug of `cc.math.Matrix4`
+
+patriciog            @patriciog     Allowed timeline animations with only one frame
+
+Ningxin Hu           @huningxin     SIMD.js optimization for kazmath functions
+
+Zachary Lester       @ZLester       Fix typo in AUTHORS.txt
 
 Retired Core Developers:
       Shengxiang Chen (Nero Chan)
       Xingsen Ma
+      Jialong Zhai (@JoshuaAstray)
 
 Cocos2d-x and cocos2d-html5 can not grow so fast without the active community.
 
