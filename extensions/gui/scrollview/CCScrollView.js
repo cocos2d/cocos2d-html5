@@ -140,14 +140,12 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
     initWithViewSize:function (size, container) {
         var pZero = cc.p(0,0);
         if (cc.Layer.prototype.init.call(this)) {
-            this._container = container;
-
-            if (!this._container) {
-                this._container = new cc.Layer();
-                this._container.ignoreAnchorPointForPosition(false);
-                this._container.setAnchorPoint(pZero);
+            if (!container && !this._container) {
+                container = new cc.Layer();
             }
-
+            if (container) {
+                this.setContainer(container);
+            }
             this.setViewSize(size);
 
             this.setTouchEnabled(true);
@@ -161,7 +159,6 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
             this._container.setPosition(pZero);
             this._touchLength = 0.0;
 
-            this.addChild(this._container);
             this._minScale = this._maxScale = 1.0;
             return true;
         }
