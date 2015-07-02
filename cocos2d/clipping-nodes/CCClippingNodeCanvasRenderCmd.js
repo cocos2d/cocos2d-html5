@@ -60,10 +60,9 @@
                 scaleX = scaleX || cc.view.getScaleX();
                 scaleY = scaleY ||cc.view.getScaleY();
                 var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
-                var t = this._transform;                                              //note: use local transform
-                wrapper.save();
+
+                var t = this._transform;
                 context.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
-                context.beginPath();
                 for (var i = 0; i < stencil._buffer.length; i++) {
                     var vertices = stencil._buffer[i].verts;
                     //TODO: need support circle etc
@@ -72,10 +71,9 @@
 
                     var firstPoint = vertices[0];
                     context.moveTo(firstPoint.x * scaleX, -firstPoint.y * scaleY);
-                    for (var j = 1, len = vertices.length; j < len; j++)
+                    for (var j = vertices.length - 1; j > 0; j--)
                         context.lineTo(vertices[j].x * scaleX, -vertices[j].y * scaleY);
                 }
-                wrapper.restore();
             };
         }else{
             stencil._parent = this._node;
@@ -94,9 +92,14 @@
             locCacheCtx.drawImage(canvas, 0, 0);                //save the result to shareCache canvas
         } else {
             wrapper.save();
-            wrapper.save();                                                               //save for clip
+            context.beginPath();                                                         //save for clip
             //Because drawNode's content size is zero
             wrapper.setTransform(this._worldTransform, scaleX, scaleY);
+
+            if (this._node.inverted) {
+                context.rect(0, 0, context.canvas.width, -context.canvas.height);
+                context.clip();
+            }
         }
     };
 
@@ -123,21 +126,6 @@
             //hack
             this._setStencilCompositionOperation(node._stencil);
         } else {
-            wrapper.restore();                                 //it use for
-            if (node.inverted) {
-                var canvas = context.canvas;
-                wrapper.save();
-                context.setTransform(1, 0, 0, 1, 0, 0);
-
-                context.moveTo(0, 0);
-                context.lineTo(0, canvas.height);
-                context.lineTo(canvas.width, canvas.height);
-                context.lineTo(canvas.width, 0);
-                context.lineTo(0, 0);
-
-                wrapper.restore();
-            }
-            context.closePath();
             context.clip();
         }
     };
