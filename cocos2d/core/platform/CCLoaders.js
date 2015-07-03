@@ -88,7 +88,6 @@ cc._fontLoader = {
     },
     _loadFont : function(name, srcs, type){
         var doc = document, path = cc.path, TYPE = this.TYPE, fontStyle = cc.newElement("style");
-        type = type.toLowerCase();
         fontStyle.type = "text/css";
         doc.body.appendChild(fontStyle);
 
@@ -105,6 +104,7 @@ cc._fontLoader = {
                 fontStr += (i === li - 1) ? ";" : ",";
             }
         }else{
+            type = type.toLowerCase();
             fontStr += "url('" + srcs + "') format('" + TYPE[type] + "');";
         }
         fontStyle.textContent += fontStr + "}";
