@@ -82,15 +82,21 @@ cc._fontLoader = {
     TYPE : {
         ".eot" : "embedded-opentype",
         ".ttf" : "truetype",
+        ".ttc" : "truetype",
         ".woff" : "woff",
         ".svg" : "svg"
     },
     _loadFont : function(name, srcs, type){
         var doc = document, path = cc.path, TYPE = this.TYPE, fontStyle = cc.newElement("style");
+        type = type.toLowerCase();
         fontStyle.type = "text/css";
         doc.body.appendChild(fontStyle);
 
-        var fontStr = "@font-face { font-family:" + name + "; src:";
+        var fontStr = "";
+        if(isNaN(name - 0))
+            fontStr += "@font-face { font-family:" + name + "; src:";
+        else
+            fontStr += "@font-face { font-family:'" + name + "'; src:";
         if(srcs instanceof Array){
             for(var i = 0, li = srcs.length; i < li; i++){
                 var src = srcs[i];
@@ -101,7 +107,7 @@ cc._fontLoader = {
         }else{
             fontStr += "url('" + srcs + "') format('" + TYPE[type] + "');";
         }
-        fontStyle.textContent += fontStr + "};";
+        fontStyle.textContent += fontStr + "}";
 
         //<div style="font-family: PressStart;">.</div>
         var preloadDiv = cc.newElement("div");
@@ -126,7 +132,7 @@ cc._fontLoader = {
         cb(null, true);
     }
 };
-cc.loader.register(["font", "eot", "ttf", "woff", "svg"], cc._fontLoader);
+cc.loader.register(["font", "eot", "ttf", "woff", "svg", "ttc"], cc._fontLoader);
 
 cc._binaryLoader = {
     load : function(realUrl, url, res, cb){
