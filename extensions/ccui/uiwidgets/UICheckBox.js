@@ -366,8 +366,10 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this._backGroundBoxRenderer.setScale(this._backgroundTextureScaleX, this._backgroundTextureScaleY);
         this._frontCrossRenderer.setScale(this._backgroundTextureScaleX, this._backgroundTextureScaleY);
 
-        if (this._isSelected)
+        if (this._isSelected){
             this._frontCrossRenderer.setVisible(true);
+            this._frontCrossRendererAdaptDirty = true;
+        }
     },
 
     _onPressStateChangedToPressed: function () {
@@ -395,6 +397,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
         if (this._isSelected) {
             this._frontCrossDisabledRenderer.setVisible(true);
+            this._frontCrossDisabledRendererAdaptDirty = true;
         }
     },
 
