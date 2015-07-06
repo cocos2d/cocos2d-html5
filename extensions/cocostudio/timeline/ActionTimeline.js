@@ -76,7 +76,16 @@ ccs.ObjectExtensionData = ccs.Class.extend({
 
     getActionTag: function(){
         return this._timelineData.getActionTag();
+    },
+
+    setCustomProperty: function(customProperty){
+        this._customProperty = customProperty;
+    },
+
+    getCustomProperty: function(){
+        return this._customProperty;
     }
+
 });
 
 ccs.ObjectExtensionData.create = function(){
