@@ -631,7 +631,7 @@
                 if (cc.sys.isNative) {
                     fontName = cc.path.join(cc.loader.resPath, resourcePath, path);
                 } else {
-                    fontName = path.match(/([^\/]+)\.ttf/);
+                    fontName = path.match(/([^\/]+)\.(\S+)/);
                     fontName = fontName ? fontName[1] : "";
                 }
                 widget.setTitleFontName(fontName);
