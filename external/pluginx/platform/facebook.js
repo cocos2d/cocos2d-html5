@@ -147,23 +147,34 @@ plugin.extend('facebook', {
      * Login to facebook
      * @param {Function} callback
      * @param {Array} permissions
+     * @param {Boolean} rerequest
      * @example
      * //example
      * plugin.FacebookAgent.login();
      */
-    login: function (permissions, callback) {
+    login: function (permissions, callback, rerequest) {
         var self = this;
+        var loginParams = {};
+
         if (typeof permissions == 'function') {
             callback = permissions;
             permissions = [];
         }
+
         if (permissions.every(function (item) {
             if (item != 'public_profile')
                 return true;
         })) {
             permissions.push("public_profile");
         }
-        var permissionsStr = permissions.join(',');
+
+        loginParams.scope = permissions.join(',');
+        loginParams.return_scopes = true;
+
+        if (rerequest) {
+           loginParams.auth_type = 'rerequest';
+        }
+
         FB.login(function (response) {
             if (response['authResponse']) {
                 //save user info
@@ -181,10 +192,7 @@ plugin.extend('facebook', {
                     error_message: response['error_message'] || "Unknown error"
                 });
             }
-        }, {
-            scope: permissionsStr,
-            return_scopes: true
-        });
+        }, loginParams);
     },
     /**
      * Checking login status

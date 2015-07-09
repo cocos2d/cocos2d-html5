@@ -664,21 +664,41 @@ cc.loader = /** @lends cc.loader# */{
      */
     loadTxt: function (url, cb) {
         if (!cc._isNodeJs) {
-            var xhr = this.getXMLHttpRequest(),
-                errInfo = "load " + url + " failed!";
+            var xhr = this.getXMLHttpRequest();
+            var errInfo = "load " + url + " failed!";
+
             xhr.open("GET", url, true);
+
             if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
                 // IE-specific logic here
                 xhr.setRequestHeader("Accept-Charset", "utf-8");
                 xhr.onreadystatechange = function () {
-                    if(xhr.readyState === 4)
-                        xhr.status === 200 ? cb(null, xhr.responseText) : cb(errInfo);
+                    if(xhr.readyState === 4) {
+                       if (xhr.status === 200) {
+                          cb(null, xhr.responseText);
+                       }
+                       else {
+                          cb({status:xhr.status, statusText:errInfo}, null);
+                       }
+                    }
                 };
-            } else {
+            }
+            else {
                 if (xhr.overrideMimeType) xhr.overrideMimeType("text\/plain; charset=utf-8");
+
                 xhr.onload = function () {
-                    if(xhr.readyState === 4)
-                        xhr.status === 200 ? cb(null, xhr.responseText) : cb(errInfo);
+                    if(xhr.readyState === 4) {
+                       if (xhr.status === 200) {
+                          cb(null, xhr.responseText);
+                       }
+                       else {
+                          cb({status:xhr.status, statusText:errInfo}, null);
+                       }
+                    }
+                };
+
+                xhr.onerror = function() {
+                    cb({status:xhr.status, statusText:errInfo}, null);
                 };
             }
             xhr.send(null);
@@ -712,21 +732,33 @@ cc.loader = /** @lends cc.loader# */{
 
     loadCsb: function(url, cb){
         var xhr = new XMLHttpRequest();
+
         xhr.open("GET", url, true);
         xhr.responseType = "arraybuffer";
 
         xhr.onload = function () {
             var arrayBuffer = xhr.response; // Note: not oReq.responseText
+
             if (arrayBuffer) {
                 window.msg = arrayBuffer;
             }
-            if(xhr.readyState === 4)
-                xhr.status === 200 ? cb(null, xhr.response) : cb("load " + url + " failed!");
+
+            if(xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    cb(null, xhr.response);
+                }
+                else {
+                    cb("load " + url + " failed!");
+                }
+            }
+        };
+
+        xhr.onerror = function(){
+            cb("load " + url + " failed!");
         };
 
         xhr.send(null);
     },
-
     /**
      * Load a single resource as json.
      * @param {string} url
@@ -855,7 +887,7 @@ cc.loader = /** @lends cc.loader# */{
                 cc.log(err);
                 self.cache[url] = null;
                 delete self.cache[url];
-                cb();
+                cb({status:404, statusText:err}, null);
             } else {
                 self.cache[url] = data;
                 cb(null, data);
@@ -2064,7 +2096,7 @@ cc.game = /** @lends cc.game# */{
     _paused: true,//whether the game is paused
 
     _intervalId: null,//interval target of main
-    
+
     _lastTime: null,
     _frameTime: null,
 
