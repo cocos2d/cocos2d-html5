@@ -26,7 +26,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var Float32Array = Float32Array || Array;
+window.Float32Array = window.Float32Array || window.Array;
 (function(cc){
     cc.math.Matrix3 = function(mat3) {
         if (mat3 && mat3.mat) {
