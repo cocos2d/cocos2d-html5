@@ -556,8 +556,10 @@ cc.Audio = cc.Class.extend({
             realUrl = cc.path.changeExtname(realUrl, typeList.splice(0, 1));
 
             if(SWA){//Buffer
-                if(polyfill.webAudioCallback)
+                if(polyfill.webAudioCallback) {
                     polyfill.webAudioCallback(realUrl);
+                }
+
                 var request = new XMLHttpRequest();
                 request.open("GET", realUrl, true);
                 request.responseType = "arraybuffer";
@@ -573,8 +575,14 @@ cc.Audio = cc.Class.extend({
                         loader.loadAudioFromExtList(realUrl, typeList, audio, cb);
                     });
                 };
+
+                request.onerror = function() {
+                    cb({status:404, statusText:ERRSTR}, null);
+                };
+
                 request.send();
-            }else{//DOM
+            }
+            else{//DOM
 
                 var element = document.createElement("audio");
                 var cbCheck = false;
@@ -583,38 +591,48 @@ cc.Audio = cc.Class.extend({
                 var timer = setTimeout(function(){
                     if(element.readyState === 0){
                         emptied();
-                    }else{
+                    }
+                    else{
                         termination = true;
-                    	element.pause();
-                    	document.body.removeChild(element);
+                        element.pause();
+                        document.body.removeChild(element);
                         cb("audio load timeout : " + realUrl, audio);
                     }
                 }, 10000);
 
                 var success = function(){
                     if(!cbCheck){
-                    	element.pause();
-                    	try { element.currentTime = 0;
-                    	element.volume = 1; } catch (e) {}
-                    	document.body.removeChild(element);
-                        audio.setElement(element);
-                        element.removeEventListener("canplaythrough", success, false);
-                        element.removeEventListener("error", failure, false);
-                        element.removeEventListener("emptied", emptied, false);
-                        !termination && cb(null, audio);
-                        cbCheck = true;
-                        clearTimeout(timer);
+                      element.pause();
+
+                      try {
+                         element.currentTime = 0;
+                         element.volume = 1;
+                      }
+                      catch (e) {}
+
+                      document.body.removeChild(element);
+                      audio.setElement(element);
+                      element.removeEventListener("canplaythrough", success, false);
+                      element.removeEventListener("error", failure, false);
+                      element.removeEventListener("emptied", emptied, false);
+                      !termination && cb(null, audio);
+                      cbCheck = true;
+                      clearTimeout(timer);
                     }
                 };
 
                 var failure = function(){
+
                     if(!cbCheck) return;
-                	element.pause();
-                	document.body.removeChild(element);
+
+                    element.pause();
+                    document.body.removeChild(element);
                     element.removeEventListener("canplaythrough", success, false);
                     element.removeEventListener("error", failure, false);
                     element.removeEventListener("emptied", emptied, false);
+
                     !termination && loader.loadAudioFromExtList(realUrl, typeList, audio, cb);
+
                     cbCheck = true;
                     clearTimeout(timer);
                 };
@@ -627,8 +645,10 @@ cc.Audio = cc.Class.extend({
 
                 cc._addEventListener(element, "canplaythrough", success, false);
                 cc._addEventListener(element, "error", failure, false);
-                if(polyfill.emptied)
+
+                if(polyfill.emptied) {
                     cc._addEventListener(element, "emptied", emptied, false);
+                }
 
                 element.src = realUrl;
                 document.body.appendChild(element);
