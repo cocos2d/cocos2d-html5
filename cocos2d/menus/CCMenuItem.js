@@ -241,8 +241,8 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
             this._disabledColor = cc.color(126, 126, 126);
             this.setLabel(label);
 
-            this.cascadeColor = true;
-            this.cascadeOpacity = true;
+            this.setCascadeColorEnabled(true);
+            this.setCascadeOpacityEnabled(true);
         }
     },
 
@@ -281,6 +281,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
             label.anchorY = 0;
             this.width = label.width;
             this.height = label.height;
+            label.setCascadeColorEnabled(true);
         }
 
         if (this._label) {
@@ -296,47 +297,14 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
      */
     setEnabled: function (enabled) {
         if (this._enabled !== enabled) {
-            var locLabel = this._label;
             if (!enabled) {
-                this._colorBackup = locLabel.color;
-                locLabel.color = this._disabledColor;
+                this._colorBackup = this.color;
+                this.setColor(this._disabledColor);
             } else {
-                locLabel.color = this._colorBackup;
+                this.setColor(this._colorBackup);
             }
         }
         cc.MenuItem.prototype.setEnabled.call(this, enabled);
-    },
-
-    /**
-     * set opacity for cc.MenuItemLabel
-     * @param {Number} opacity from 0-255
-     */
-    setOpacity: function (opacity) {
-        this._label.opacity = opacity;
-    },
-
-    /**
-     * return the opacity of cc.MenuItemLabel
-     * @return {Number}
-     */
-    getOpacity: function () {
-        return this._label.opacity;
-    },
-
-    /**
-     * set the opacity for cc.MenuItemLabel
-     * @param {cc.Color} color
-     */
-    setColor: function (color) {
-        this._label.color = color;
-    },
-
-    /**
-     * return the color of cc.MenuItemLabel
-     * @return {cc.Color}
-     */
-    getColor: function () {
-        return this._label.color;
     },
 
     /**
@@ -353,8 +321,8 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
         this._disabledColor = cc.color(126, 126, 126);
         this.setLabel(label);
 
-        this.cascadeColor = true;
-        this.cascadeOpacity = true;
+        this.setCascadeColorEnabled(true);
+        this.setCascadeOpacityEnabled(true);
 
         return true;
     },
@@ -867,58 +835,14 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
                 locNormalImage.addEventListener("load", function (sender) {
                     this.width = sender.width;
                     this.height = sender.height;
-                    this.cascadeColor = true;
-                    this.cascadeOpacity = true;
+                    this.setCascadeColorEnabled(true);
+                    this.setCascadeOpacityEnabled(true);
                 }, this);
             }
         }
-        this.cascadeColor = true;
-        this.cascadeOpacity = true;
+        this.setCascadeColorEnabled(true);
+        this.setCascadeOpacityEnabled(true);
         return true;
-    },
-
-    /**
-     * set the color for cc.MenuItemSprite
-     * @param {cc.Color} color
-     */
-    setColor: function (color) {
-        this._normalImage.color = color;
-
-        if (this._selectedImage)
-            this._selectedImage.color = color;
-
-        if (this._disabledImage)
-            this._disabledImage.color = color;
-    },
-
-    /**
-     * return the color of cc.MenuItemSprite
-     * @return {cc.Color}
-     */
-    getColor: function () {
-        return this._normalImage.color;
-    },
-
-    /**
-     * set the opacity for cc.MenuItemSprite
-     * @param {Number} opacity 0 - 255
-     */
-    setOpacity: function (opacity) {
-        this._normalImage.opacity = opacity;
-
-        if (this._selectedImage)
-            this._selectedImage.opacity = opacity;
-
-        if (this._disabledImage)
-            this._disabledImage.opacity = opacity;
-    },
-
-    /**
-     * return the opacity of cc.MenuItemSprite
-     * @return {Number} opacity from 0 - 255
-     */
-    getOpacity: function () {
-        return this._normalImage.opacity;
     },
 
     /**
@@ -1311,8 +1235,8 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
         this._selectedIndex = cc.UINT_MAX;
         this.setSelectedIndex(0);
 
-        this.cascadeColor = true;
-        this.cascadeOpacity = true;
+        this.setCascadeColorEnabled(true);
+        this.setCascadeOpacityEnabled(true);
 
         return true;
     },
