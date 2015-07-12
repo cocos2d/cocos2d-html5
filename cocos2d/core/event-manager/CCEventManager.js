@@ -307,7 +307,27 @@ cc.eventManager = /** @lends cc.eventManager# */{
         var notificationNode = cc.director.getNotificationNode();
         if(notificationNode) {
             this._visitTarget(notificationNode, true);
-            this._visitTarget(rootNode, false);
+
+            // save result in temp variable for later use
+            var notificationNodePriorityMap = this._nodePriorityMap,
+                notificationNodePriorityIndex = this._nodePriorityIndex;
+
+            // reset
+            this._nodePriorityIndex = 0;
+            this._nodePriorityMap = {};
+
+            // visit rootNode
+            this._visitTarget(rootNode, true);
+
+            // update priority map
+            for(var id in notificationNodePriorityMap) {
+                if(notificationNodePriorityMap.hasOwnProperty(id)) {
+                    this._nodePriorityMap[id] = notificationNodePriorityMap[id] + this._nodePriorityIndex;
+                }
+            }
+            // update index
+            this._nodePriorityIndex += notificationNodePriorityIndex
+
         } else {
             this._visitTarget(rootNode, true);
         }
