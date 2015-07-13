@@ -147,11 +147,6 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                 cc.eventManager.setEnabled(true);
         };
 
-        _p._clear = function () {
-            var gl = cc._renderContext;
-            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        };
-
         _p._beforeVisitScene = function () {
             cc.kmGLPushMatrix();
         };
@@ -314,7 +309,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             _t.setProjection(_t._projection);
 
             // set other opengl default values
-            cc._renderContext.clearColor(0.0, 0.0, 0.0, 1.0);
+            cc._renderContext.clearColor(0.0, 0.0, 0.0, 0.0);
         };
     })();
 }
