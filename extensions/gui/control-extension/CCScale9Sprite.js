@@ -269,12 +269,6 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         if(!this._scale9Image)
             return;
         cc.Node.prototype.setOpacity.call(this, opacity);
-        var scaleChildren = this._scale9Image.getChildren();
-        for (var i = 0; i < scaleChildren.length; i++) {
-            var selChild = scaleChildren[i];
-            if (selChild)
-                selChild.setOpacity(opacity);
-        }
         this._scale9Dirty = true;
     },
 
