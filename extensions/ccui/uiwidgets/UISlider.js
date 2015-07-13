@@ -605,12 +605,12 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
                 var btextureSize = this._barTextureSize;
                 if (btextureSize.width <= 0.0 || btextureSize.height <= 0.0) {
                     this._barRenderer.setScale(1.0);
-                    return;
+                }else{
+                    var bscaleX = this._contentSize.width / btextureSize.width;
+                    var bscaleY = this._contentSize.height / btextureSize.height;
+                    this._barRenderer.setScaleX(bscaleX);
+                    this._barRenderer.setScaleY(bscaleY);
                 }
-                var bscaleX = this._contentSize.width / btextureSize.width;
-                var bscaleY = this._contentSize.height / btextureSize.height;
-                this._barRenderer.setScaleX(bscaleX);
-                this._barRenderer.setScaleY(bscaleY);
             }
         }
         this._barRenderer.setPosition(this._contentSize.width / 2.0, this._contentSize.height / 2.0);
