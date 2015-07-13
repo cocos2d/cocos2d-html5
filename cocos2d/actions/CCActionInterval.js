@@ -3263,7 +3263,8 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
     _nextFrame:0,
     _origFrame:null,
     _executedLoops:0,
-    _splitTimes:null,
+    _splitTimes: null,
+    _currFrameIndex:0,
 
 	/**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
@@ -3289,6 +3290,14 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
      */
     setAnimation:function (animation) {
         this._animation = animation;
+    },
+
+    /**
+     * Gets the index of sprite frame currently displayed.
+     * @return {Number}
+     */
+    getCurrentFrameIndex: function () {
+        return this._currFrameIndex;
     },
 
     /**
@@ -3373,7 +3382,8 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
         var numberOfFrames = frames.length, locSplitTimes = this._splitTimes;
         for (var i = this._nextFrame; i < numberOfFrames; i++) {
             if (locSplitTimes[i] <= dt) {
-                this.target.setSpriteFrame(frames[i].getSpriteFrame());
+                _currFrameIndex = i;
+                this.target.setSpriteFrame(frames[_currFrameIndex].getSpriteFrame());
                 this._nextFrame = i + 1;
             } else {
                 // Issue 1438. Could be more than one frame per tick, due to low frame rate or frame delta < 1/FPS
