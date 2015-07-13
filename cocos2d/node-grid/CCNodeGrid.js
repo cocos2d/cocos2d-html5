@@ -36,7 +36,14 @@
 cc.NodeGrid = cc.Node.extend({
     grid: null,
     _target: null,
+    _gridRect:null,
 
+    ctor: function (rect) {
+        cc.Node.prototype.ctor.call(this);
+        if(rect == undefined) rect = cc.rect();
+        this._gridRect = rect;
+        cc.GridAction.prototype._gridNodeTarget = this;
+    },
     /**
      * Gets the grid object.
      * @returns {cc.GridBase}
@@ -51,6 +58,21 @@ cc.NodeGrid = cc.Node.extend({
      */
     setGrid: function (grid) {
         this.grid = grid;
+    },
+
+    /**
+     * @brief Set the effect grid rect.
+     * @param {cc.rect} rect.
+     */
+    setGridRect: function (rect) {
+        this._gridRect = rect;
+    },
+    /**
+     * @brief Get the effect grid rect.
+     * @return {cc.rect} rect.
+    */
+    getGridRect: function () {
+        return this._gridRect;
     },
 
     /**
@@ -125,5 +147,4 @@ cc.defineGetterSetter(_p, "target", null, _p.setTarget);
  * @return {cc.NodeGrid}
  */
 cc.NodeGrid.create = function () {
-    return new cc.NodeGrid();
 };
