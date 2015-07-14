@@ -68,11 +68,14 @@
         var locDisplayedColor = this._displayedColor;
         var curColor = {r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: node._displayedOpacity};
         var locItemWidth = node._itemWidth;
-        for (var i = 0; i < n; i++) {
+        for (var i = 0, cr = -1; i < n; i++) {
             var a = locString.charCodeAt(i) - node._mapStartChar.charCodeAt(0);
             var row = a % node._itemsPerRow;
             var col = 0 | (a / node._itemsPerRow);
+            if(row < 0 || col < 0)
+                continue;
 
+            cr++;
             var left, right, top, bottom;
             if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
                 // Issue #938. Don't use texStepX & texStepY
@@ -97,16 +100,16 @@
             locQuadBR.texCoords.u = right;
             locQuadBR.texCoords.v = bottom;
 
-            locQuadBL.vertices.x = (i * locItemWidth);
+            locQuadBL.vertices.x = (cr * locItemWidth);
             locQuadBL.vertices.y = 0;
             locQuadBL.vertices.z = 0.0;
-            locQuadBR.vertices.x = (i * locItemWidth + locItemWidth);
+            locQuadBR.vertices.x = (cr * locItemWidth + locItemWidth);
             locQuadBR.vertices.y = 0;
             locQuadBR.vertices.z = 0.0;
-            locQuadTL.vertices.x = i * locItemWidth;
+            locQuadTL.vertices.x = cr * locItemWidth;
             locQuadTL.vertices.y = node._itemHeight;
             locQuadTL.vertices.z = 0.0;
-            locQuadTR.vertices.x = i * locItemWidth + locItemWidth;
+            locQuadTR.vertices.x = cr * locItemWidth + locItemWidth;
             locQuadTR.vertices.y = node._itemHeight;
             locQuadTR.vertices.z = 0.0;
             locQuadTL.colors = curColor;
