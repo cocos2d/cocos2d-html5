@@ -1708,10 +1708,14 @@ cc._initSys = function (config, CONFIG_KEY) {
         localStorage.removeItem("storage");
         localStorage = null;
     } catch (e) {
-        if (e.name === "SECURITY_ERR" || e.name === "QuotaExceededError") {
+        var warn = function () {
             cc.warn("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option");
         }
-        sys.localStorage = function () {
+        sys.localStorage = {
+            getItem : warn,
+            setItem : warn,
+            removeItem : warn,
+            clear : warn
         };
     }
 
