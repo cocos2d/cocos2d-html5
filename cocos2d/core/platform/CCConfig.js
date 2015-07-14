@@ -31,7 +31,7 @@
  * @type {String}
  * @name cc.ENGINE_VERSION
  */
-window["CocosEngine"] = cc.ENGINE_VERSION = "Cocos2d-JS v3.7 RC0";
+window["CocosEngine"] = cc.ENGINE_VERSION = "Cocos2d-JS v3.7 RC1";
 
 /**
  * <p>
