@@ -213,7 +213,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         this._gridSize = gridSize;
         this._texture = texture;
         this._isTextureFlipped = flipped;
-        if(rect == undefined || cc._rectEqualToZero(rect))
+        if(rect === undefined || cc._rectEqualToZero(rect))
         {
             var size = this._texture.getContentSize();
             rect = new cc.rect(0,0,size.width,size.height);
@@ -317,7 +317,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
  * @param {cc.Rect} [rect=]
  * @return {cc.GridBase}
  */
-cc.GridBase.create = function (gridSize, texture, flipped,rect) {
+cc.GridBase.create = function (gridSize, texture, flipped, rect) {
     return new cc.GridBase(gridSize, texture, flipped, rect);
 };
 

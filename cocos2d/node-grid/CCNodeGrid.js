@@ -147,4 +147,5 @@ cc.defineGetterSetter(_p, "target", null, _p.setTarget);
  * @return {cc.NodeGrid}
  */
 cc.NodeGrid.create = function () {
+    return new cc.NodeGrid();
 };
