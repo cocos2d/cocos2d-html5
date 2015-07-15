@@ -969,11 +969,15 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             var textureRect = texture._contentSize;
             var spriteRect = this._rect;
             var spriteContent = this._contentSize;
-            if(
-                textureRect.width === spriteRect.width && spriteContent.width === spriteRect.width &&
-                textureRect.height === spriteRect.height && spriteContent.height === spriteRect.height
-            )
+            if(spriteContent.width === 0 && spriteContent.height === 0)
                 spriteRect.width = spriteRect.height = 0;
+            else{
+                if(
+                    textureRect.width === spriteRect.width && spriteContent.width === spriteRect.width &&
+                    textureRect.height === spriteRect.height && spriteContent.height === spriteRect.height
+                )
+                    spriteRect.width = spriteRect.height = 0;
+            }
         }
     },
 
