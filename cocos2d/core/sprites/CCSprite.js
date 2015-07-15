@@ -968,9 +968,13 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if(!size || (!size.width && !size.height)) return;
         var rect = this.getTextureRect();
         if(
-            (contentSize.width !== oldSize.width && contentSize.height !== oldSize.height) &&
+            // If the contentSize does not exist, Set the contentSize
             (contentSize.width !== 0 && contentSize.height !== 0) &&
+            // ContentSize exist, But size is equal to the old texture, Set the contentSize
+            (contentSize.width !== oldSize.width && contentSize.height !== oldSize.height) &&
+            // To satisfy the above two, But height/width does not exist, Set the contentSize
             (rect.height !== 0 || rect.width !== 0)
+            // The remaining direct return
         ){
             return;
         }
