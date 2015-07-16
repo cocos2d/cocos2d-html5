@@ -962,18 +962,18 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     _changeRectWithTexture: function(texture, oldTexture){
-        var textureContentSize = texture._contentSize,
+        var textureRect = cc.rect(0, 0, texture._contentSize.width, texture._contentSize.height),
             oldTextureContentSize = oldTexture ? oldTexture._contentSize : cc.size(),
             nodeContentSize = this._contentSize;
 
-        var textureWidth = textureContentSize.width,
-            textureHeight = textureContentSize.height,
+        var textureWidth = textureRect.width,
+            textureHeight = textureRect.height,
             oldTextureWidth = oldTextureContentSize.width,
             oldTextureHeight = oldTextureContentSize.height,
             nodeWidth = nodeContentSize.width,
             nodeHeight = nodeContentSize.height;
 
-        if(!textureContentSize || (!textureWidth && !textureHeight)) return;
+        if(!textureRect || (!textureWidth && !textureHeight)) return;
         var nodeRect = this._rect;
         if(
             // If the contentSize does not exist, Set the contentSize
@@ -988,11 +988,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         ){
             return;
         }
-        textureContentSize.x = textureContentSize.x || 0;
-        textureContentSize.y = textureContentSize.y || 0;
-        textureContentSize.width = textureContentSize.width || 0;
-        textureContentSize.height = textureContentSize.height || 0;
-        this.setTextureRect(textureContentSize);
+        textureRect.x = textureRect.x || 0;
+        textureRect.y = textureRect.y || 0;
+        textureRect.width = textureRect.width || 0;
+        textureRect.height = textureRect.height || 0;
+        this.setTextureRect(textureRect);
     },
 
     _createRenderCmd: function(){
