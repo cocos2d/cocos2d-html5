@@ -26,6 +26,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+window.Uint16Array = window.Uint16Array || window.Array;
 window.Float32Array = window.Float32Array || window.Array;
 (function(cc){
     cc.math.Matrix3 = function(mat3) {
