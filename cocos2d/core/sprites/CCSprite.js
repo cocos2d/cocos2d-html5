@@ -962,29 +962,37 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     _changeRectWithTexture: function(texture, oldTexture){
-        var size = texture.getContentSize();
-        var oldSize = oldTexture ? oldTexture.getContentSize() : cc.rect();
-        var contentSize = this._contentSize;
-        if(!size || (!size.width && !size.height)) return;
-        var rect = this.getTextureRect();
+        var textureContentSize = texture._contentSize,
+            oldTextureContentSize = oldTexture ? oldTexture._contentSize : cc.size(),
+            nodeContentSize = this._contentSize;
+
+        var textureWidth = textureContentSize.width,
+            textureHeight = textureContentSize.height,
+            oldTextureWidth = oldTextureContentSize.width,
+            oldTextureHeight = oldTextureContentSize.height,
+            nodeWidth = nodeContentSize.width,
+            nodeHeight = nodeContentSize;
+
+        if(!textureContentSize || (!textureWidth && !textureHeight)) return;
+        var nodeRect = this._rect;
         if(
             // If the contentSize does not exist, Set the contentSize
-            (contentSize.width !== 0 && contentSize.height !== 0) &&
+            (nodeWidth !== 0 && nodeHeight !== 0) &&
             // ContentSize exist, But size is equal to the old texture, Set the contentSize
-            (contentSize.width !== oldSize.width && contentSize.height !== oldSize.height) &&
+            (nodeWidth !== oldTextureWidth && nodeHeight !== oldTextureHeight) &&
             // Same old size and new texture size
-            (oldSize.width === size.width && oldSize.height === size.height) &&
+            (oldTextureWidth === textureWidth && oldTextureHeight === textureHeight) &&
             // To satisfy the above two, But height/width does not exist, Set the contentSize
-            (rect.height !== 0 || rect.width !== 0)
+            (nodeRect.height !== 0 || nodeRect.width !== 0)
             // The remaining direct return
         ){
             return;
         }
-        size.x = size.x || 0;
-        size.y = size.y || 0;
-        size.width = size.width || 0;
-        size.height = size.height || 0;
-        this.setTextureRect(size);
+        textureContentSize.x = textureContentSize.x || 0;
+        textureContentSize.y = textureContentSize.y || 0;
+        textureContentSize.width = textureContentSize.width || 0;
+        textureContentSize.height = textureContentSize.height || 0;
+        this.setTextureRect(textureContentSize);
     },
 
     _createRenderCmd: function(){
