@@ -971,7 +971,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             oldTextureWidth = oldTextureContentSize.width,
             oldTextureHeight = oldTextureContentSize.height,
             nodeWidth = nodeContentSize.width,
-            nodeHeight = nodeContentSize;
+            nodeHeight = nodeContentSize.height;
 
         if(!textureContentSize || (!textureWidth && !textureHeight)) return;
         var nodeRect = this._rect;
