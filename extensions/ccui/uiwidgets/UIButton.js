@@ -274,6 +274,8 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
                 break;
         }
 
+        this._normalTextureLoaded = normalRenderer._textureLoaded;
+
         this._normalTextureSize = this._buttonNormalRenderer.getContentSize();
         this._updateChildrenDisplayedRGBA();
         if (this._unifySize){
@@ -284,7 +286,6 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         }else
             this._updateContentSizeWithTextureSize(this._normalTextureSize);
 
-        this._normalTextureLoaded = true;
         this._normalTextureAdaptDirty = true;
         this._findLayout();
     },
