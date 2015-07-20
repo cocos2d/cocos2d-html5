@@ -22,6 +22,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * @class
+ * @brief Displays a video file.
+ *
+ * @note VideoPlayer displays a video file base on system widget.
+ * It's mean VideoPlayer displays a video file above all graphical elements
+ *
+ * @property {String}   path - The video path
+ */
 ccui.VideoPlayer = ccui.Widget.extend({
 
     _played: false,

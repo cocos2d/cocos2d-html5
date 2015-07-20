@@ -22,6 +22,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * @class
+ * @brief A View that displays web pages.
+ *
+ * @note WebView displays web pages base on system widget.
+ * It's mean WebView displays web pages above all graphical elements
+ *
+ * @property {String}   path - The web view path
+ */
 ccui.WebView = ccui.Widget.extend({
 
     ctor: function(path){
