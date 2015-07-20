@@ -2143,8 +2143,42 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      * @return {cc.AffineTransform} The affine transform object
      */
-    getNodeToParentTransform: function(){
-        return this._renderCmd.getNodeToParentTransform();
+    getNodeToParentTransform: function(ancestor){
+        if(ancestor){
+            var t = this._renderCmd.getNodeToParentTransform(ancestor);
+            var pt, worldT = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+            for(var p = this._parent;  p != null && p != ancestor ; p = p.getParent()){
+                pt = p.getNodeToParentTransform();
+                worldT.a = t.a * pt.a + t.b * pt.c;                               //a
+                worldT.b = t.a * pt.b + t.b * pt.d;                               //b
+                worldT.c = t.c * pt.a + t.d * pt.c;                               //c
+                worldT.d = t.c * pt.b + t.d * pt.d;                               //d
+
+                worldT.tx = pt.a * t.tx + pt.c * t.ty + pt.tx;
+                worldT.ty = pt.d * t.ty + pt.ty + pt.b * t.tx;
+                t.a = worldT.a;
+                t.b = worldT.b;
+                t.c = worldT.c;
+                t.d = worldT.d;
+                t.tx = worldT.tx;
+                t.ty = worldT.ty;
+            }
+
+            return t;
+        }else{
+            return this._renderCmd.getNodeToParentTransform();
+        }
+    },
+
+    getNodeToParentAffineTransform: function(ancestor){
+        var t = this.getNodeToParentTransform();
+        if(ancestor){
+            for (var p = this._parent; p != null && p != ancestor; p = p.getParent())
+                t = cc.affineTransformConcat(t, p.getNodeToParentAffineTransform());
+            return t;
+        }else{
+            return {a: t.a, b: t.b, c: t.c, d: t.d, tx: t.tx, ty: t.ty};
+        }
     },
 
     /**
