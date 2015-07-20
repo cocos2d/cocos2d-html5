@@ -27,7 +27,7 @@
  * @extends ccui.Widget
  * @brief A View that displays web pages.
  *
- * @note based on DOM element
+ * @note WebView displays web pages based on DOM element
  * WebView will be rendered above all other graphical elements.
  *
  * @property {String}   path - The url to be shown in the web view

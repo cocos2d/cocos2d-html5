@@ -27,7 +27,7 @@
  * @extends ccui.Widget
  * @brief Displays a video file.
  *
- * @note based on DOM element
+ * @note VideoPlayer displays a video file based on DOM element
  * VideoPlayer will be rendered above all other graphical elements.
  *
  * @property {String}   path - The video path
