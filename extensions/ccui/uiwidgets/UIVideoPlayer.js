@@ -22,7 +22,17 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccui.VideoPlayer = ccui.Widget.extend({
+/**
+ * @class
+ * @extends ccui.Widget
+ * @brief Displays a video file.
+ *
+ * @note based on DOM element
+ * VideoPlayer will be rendered above all other graphical elements.
+ *
+ * @property {String}   path - The video path
+ */
+ccui.VideoPlayer = ccui.Widget.extend(/** @lends ccui.VideoPlayer# */{
 
     _played: false,
     _playing: false,
