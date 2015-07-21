@@ -838,7 +838,7 @@ cc.loader = /** @lends cc.loader# */{
             return cb();
         }
         var realUrl = url;
-        if (!url.match(cc._urlRegExp))
+        if (!cc._urlRegExp.test(url))
         {
             var basePath = loader.getBasePath ? loader.getBasePath() : self.resPath;
             realUrl = self.getUrl(basePath, url);
@@ -2367,6 +2367,8 @@ cc._urlRegExp = new RegExp(
             "(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
             // TLD identifier
             "(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
+        "|" +
+            "(?:localhost)" +
         ")" +
         // port number
         "(?::\\d{2,5})?" +
