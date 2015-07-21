@@ -1256,6 +1256,28 @@
         return node;
     };
 
+    parser.initBoneNode = function(json, resourcePath){
+
+        var node = new ccs.BoneNode();
+
+        var length = json["Length"];
+        if(length !== undefined)
+            node.setDebugDrawLength(length);
+
+        var blendFunc = json["BlendFunc"];
+        if(blendFunc)
+            node.setBlendFunc(new cc.BlendFunc(blendFunc["Src"] || 0, blendFunc["Dst"] || 0));
+
+        parser.generalAttributes(node, json);
+        return node;
+    };
+
+    parser.initSkeletonNode = function(json){
+        var node = new ccs.SkeletonNode();
+        parser.generalAttributes(node, json);
+        return node;
+    };
+
     var loadedPlist = {};
     var loadTexture = function(json, resourcePath, cb){
         if(json != null){
@@ -1323,7 +1345,9 @@
         {name: "SimpleAudioObjectData", handle: parser.initSimpleAudio},
         {name: "GameMapObjectData", handle: parser.initGameMap},
         {name: "ProjectNodeObjectData", handle: parser.initProjectNode},
-        {name: "ArmatureNodeObjectData", handle: parser.initArmature}
+        {name: "ArmatureNodeObjectData", handle: parser.initArmature},
+        {name: "BoneNodeObjectData", handle: parser.initBoneNode},
+        {name: "SkeletonNodeObjectData", handle: parser.initSkeletonNode}
     ];
 
     register.forEach(function(item){
