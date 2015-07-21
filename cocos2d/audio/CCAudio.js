@@ -248,27 +248,19 @@ cc.Audio = cc.Class.extend({
 
     getPlaying: function(){
         if(!this._playing){
-            return this._playing;
+            return false;
         }
         if(this._AUDIO_TYPE === "AUDIO"){
             var audio = this._element;
-            if(!audio || this._pause){
-                this._playing = false;
-                return false;
-            }else if(audio.ended){
-                this._playing = false;
-                return false;
-            }else
-                return true;
-        }else{
-            var sourceNode = this._currentSource;
-            if(!sourceNode)
-                return true;
-            if(sourceNode["playbackState"] == null)
-                return this._playing;
-            else
-                return this._currentTime + this._context.currentTime - this._startTime < this._currentSource.buffer.duration;
+            if(!audio || this._pause || audio.ended){
+                return this._playing = false;
+            }
+            return true;
         }
+        var sourceNode = this._currentSource;
+        if(!sourceNode || !sourceNode["playbackState"])
+            return true;
+        return this._currentTime + this._context.currentTime - this._startTime < sourceNode.buffer.duration;
     },
 
     _playOfWebAudio: function(offset){
@@ -277,7 +269,7 @@ cc.Audio = cc.Class.extend({
             return;
         }
         if(!this._pause && cs){
-            if(this._context.currentTime === 0 || this._currentTime + this._context.currentTime - this._startTime > this._currentSource.buffer.duration)
+            if(this._context.currentTime === 0 || this._currentTime + this._context.currentTime - this._startTime > cs.buffer.duration)
                 this._stopOfWebAudio();
             else
                 return;
@@ -291,6 +283,7 @@ cc.Audio = cc.Class.extend({
             audio.loop = this.loop;
         this._startTime = this._context.currentTime;
         this._currentTime = offset || 0;
+        this._ignoreEnded = false;
 
         /*
          * Safari on iOS 6 only supports noteOn(), noteGrainOn(), and noteOff() now.(iOS 6.1.3)
@@ -879,7 +872,7 @@ cc.Audio = cc.Class.extend({
                 var audioList = audioPool[p];
                 if(Array.isArray(audioList))
                     for(var i=0; i<audioList.length; i++){
-                        audioList[i].setVolume(volume)
+                        audioList[i].setVolume(volume);
                     }
             }
         },
