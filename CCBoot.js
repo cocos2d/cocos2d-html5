@@ -643,7 +643,7 @@ cc.loader = /** @lends cc.loader# */{
                 jsLoadingImg.src = cc._loadingImage;
 
             var canvasNode = d.getElementById(cc.game.config["id"]);
-            canvasNode.style.backgroundColor = "black";
+            canvasNode.style.backgroundColor = "transparent";
             canvasNode.parentNode.appendChild(jsLoadingImg);
 
             var canvasStyle = getComputedStyle ? getComputedStyle(canvasNode) : canvasNode.currentStyle;
@@ -1947,7 +1947,7 @@ cc._setup = function (el, width, height) {
             'stencil': true,
             'preserveDrawingBuffer': true,
             'antialias': !cc.sys.isMobile,
-            'alpha': false
+            'alpha': true
         });
     if (cc._renderContext) {
         win.gl = cc._renderContext; // global variable declared in CCMacro.js

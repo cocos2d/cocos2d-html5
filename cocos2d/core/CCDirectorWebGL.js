@@ -314,7 +314,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             _t.setProjection(_t._projection);
 
             // set other opengl default values
-            cc._renderContext.clearColor(0.0, 0.0, 0.0, 1.0);
+            cc._renderContext.clearColor(0.0, 0.0, 0.0, 0.0);
         };
     })();
 }
