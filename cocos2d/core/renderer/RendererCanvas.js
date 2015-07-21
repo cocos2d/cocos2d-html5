@@ -130,13 +130,13 @@ cc.rendererCanvas = {
         var viewport = cc._canvas;
         var gl = cc._renderContext.getContext();
         var glWrapper = cc._renderContext;
-        gl.setTransform(1,0,0,1, 0, 0);
+        gl.setTransform(1, 0, 0, 1, 0, 0);
         //IF transparent or translucence clearRect first to decrease filling rate
-        if(this._clearColor['a']!=255)
+        if(this._clearColor.a != 255)
             gl.clearRect(0, 0, viewport.width, viewport.height);
-        var fillStyle = 'rgb(' +this._clearColor['r']+','+this._clearColor['g']+','+this._clearColor['b']+')' ;
+        var fillStyle = 'rgb(' + this._clearColor.r + ',' + this._clearColor.g + ',' + this._clearColor.b +')' ;
         glWrapper.setFillStyle(fillStyle);
-        glWrapper.setGlobalAlpha(this._clearColor['a']);
+        glWrapper.setGlobalAlpha(this._clearColor.a);
         gl.fillRect(0, 0, viewport.width, viewport.height);
     },
 
