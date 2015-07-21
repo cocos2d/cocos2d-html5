@@ -1,5 +1,11 @@
 ChangeLog:
 
+Cocos2d-x v3.7 Final @ July 20 2015
+    [REFINE]        web: Add compatible Uint16Array defintion
+    
+    [FIX]           web: Fixed url check regular expression not supporting localhost issue
+    [FIX]           web: Fixed issue that sprite doesn't update texture rect correctly 
+
 Cocos2d-x v3.7 RC1 @ July 14 2015
     [REFINE]        Improved localStorage warning when disabled
 
