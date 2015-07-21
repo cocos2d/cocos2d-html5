@@ -44,7 +44,8 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
         cc._checkWebGLRenderMode();
         cc.ActionInterval.prototype.ctor.call(this);
         this._gridSize = cc.size(0,0);
-		gridSize && this.initWithDuration(duration, gridSize);
+
+        gridSize && this.initWithDuration(duration, gridSize);
     },
 
     _cacheTargetAsGridNode: function(){},
