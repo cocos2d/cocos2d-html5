@@ -1,6 +1,24 @@
 ChangeLog:
 
-Cocos2d-x v3.7 @ July 1 2015
+Cocos2d-x v3.7 Final @ July 20 2015
+    [REFINE]        web: Add compatible Uint16Array defintion
+    
+    [FIX]           web: Fixed url check regular expression not supporting localhost issue
+    [FIX]           web: Fixed issue that sprite doesn't update texture rect correctly 
+
+Cocos2d-x v3.7 RC1 @ July 14 2015
+    [REFINE]        Improved localStorage warning when disabled
+
+    [FIX]           Fixed a bug that SingleNode's color isn't set
+    [FIX]           studio: Fixed a bug of JSON parser that texture address is wrong
+    [FIX]           Fixed MenuItems' color/opacity setter issue with child nodes
+    [FIX]           Fixed page view's layout issue for JSON parser
+    [FIX]           Add ttc loader and prevent the pure digital fonts is invalid
+    [FIX]           Fixed Float32Array initialization
+    [FIX]           Fixed a bug that layout background is missing
+    [FIX]           Fixed a bug that ObjectExtensionData miss setCustomProperty and getCustomProperty function
+
+Cocos2d-x v3.7 RC0 @ July 1 2015
 
 * The json loader of Cocos Studio will automatically load dependencies resources
 * SIMD.js optimization for kazmath functions (from Intel)

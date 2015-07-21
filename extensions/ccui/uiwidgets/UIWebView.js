@@ -22,7 +22,17 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccui.WebView = ccui.Widget.extend({
+/**
+ * @class
+ * @extends ccui.Widget
+ * @brief A View that displays web pages.
+ *
+ * @note WebView displays web pages based on DOM element
+ * WebView will be rendered above all other graphical elements.
+ *
+ * @property {String}   path - The url to be shown in the web view
+ */
+ccui.WebView = ccui.Widget.extend(/** @lends ccui.WebView# */{
 
     ctor: function(path){
         ccui.Widget.prototype.ctor.call(this);

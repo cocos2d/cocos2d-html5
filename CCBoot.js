@@ -838,7 +838,7 @@ cc.loader = /** @lends cc.loader# */{
             return cb();
         }
         var realUrl = url;
-        if (!url.match(cc._urlRegExp))
+        if (!cc._urlRegExp.test(url))
         {
             var basePath = loader.getBasePath ? loader.getBasePath() : self.resPath;
             realUrl = self.getUrl(basePath, url);
@@ -1708,10 +1708,14 @@ cc._initSys = function (config, CONFIG_KEY) {
         localStorage.removeItem("storage");
         localStorage = null;
     } catch (e) {
-        if (e.name === "SECURITY_ERR" || e.name === "QuotaExceededError") {
+        var warn = function () {
             cc.warn("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option");
         }
-        sys.localStorage = function () {
+        sys.localStorage = {
+            getItem : warn,
+            setItem : warn,
+            removeItem : warn,
+            clear : warn
         };
     }
 
@@ -2363,6 +2367,8 @@ cc._urlRegExp = new RegExp(
             "(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
             // TLD identifier
             "(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
+        "|" +
+            "(?:localhost)" +
         ")" +
         // port number
         "(?::\\d{2,5})?" +

@@ -537,7 +537,16 @@ ccui.LayoutComponent = cc.Component.extend({
         locOwner.setPosition(ownerPosition);
         locOwner.setContentSize(ownerSize);
 
-        ccui.helper.doLayout(locOwner);
+        if(locOwner instanceof ccui.PageView){
+            locOwner.forceDoLayout();
+
+            var layoutVector = locOwner.getPages();
+            for(var i=0; i<layoutVector.length; i++){
+                ccui.helper.doLayout(layoutVector[i]);
+            }
+        }else{
+            ccui.helper.doLayout(locOwner);
+        }
     },
 
     _getOwnerParent: function () {

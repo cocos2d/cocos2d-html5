@@ -936,56 +936,63 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if(!texture)
             return this._renderCmd._setTexture(null);
 
+        var oldTexture = this._texture;
         if(cc.isString(texture)){
             texture = cc.textureCache.addImage(texture);
 
             if(!texture._textureLoaded){
                 texture.addEventListener("load", function(){
-                    this._clearRect();
                     this._renderCmd._setTexture(texture);
-                    this._changeRectWithTexture(texture.getContentSize());
+                    this._changeRectWithTexture(texture, oldTexture);
                     this.setColor(this._realColor);
                     this._textureLoaded = true;
                 }, this);
             }else{
-                this._clearRect();
                 this._renderCmd._setTexture(texture);
-                this._changeRectWithTexture(texture.getContentSize());
+                this._changeRectWithTexture(texture, oldTexture);
                 this.setColor(this._realColor);
                 this._textureLoaded = true;
             }
         }else{
             // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
             cc.assert(texture instanceof cc.Texture2D, cc._LogInfos.Sprite_setTexture_2);
-            this._clearRect();
-            this._changeRectWithTexture(texture.getContentSize());
+            this._changeRectWithTexture(texture, oldTexture);
             this._renderCmd._setTexture(texture);
         }
     },
 
-    _clearRect: function(){
-        var texture = this._texture;
-        if(texture){
-            var textureRect = texture._contentSize;
-            var spriteRect = this._rect;
-            var spriteContent = this._contentSize;
-            if(
-                textureRect.width === spriteRect.width && spriteContent.width === spriteRect.width &&
-                textureRect.height === spriteRect.height && spriteContent.height === spriteRect.height
-            )
-                spriteRect.width = spriteRect.height = 0;
-        }
-    },
+    _changeRectWithTexture: function(texture, oldTexture){
+        var textureRect = cc.rect(0, 0, texture._contentSize.width, texture._contentSize.height),
+            oldTextureContentSize = oldTexture ? oldTexture._contentSize : cc.size(),
+            nodeContentSize = this._contentSize;
 
-    _changeRectWithTexture: function(rect){
-        if(!rect || (!rect.width && !rect.height)) return;
-        var textureRect = this.getTextureRect();
-        if(textureRect.height || textureRect.width) return;
-        rect.x = rect.x || 0;
-        rect.y = rect.y || 0;
-        rect.width = rect.width || 0;
-        rect.height = rect.height || 0;
-        this.setTextureRect(rect);
+        var textureWidth = textureRect.width,
+            textureHeight = textureRect.height,
+            oldTextureWidth = oldTextureContentSize.width,
+            oldTextureHeight = oldTextureContentSize.height,
+            nodeWidth = nodeContentSize.width,
+            nodeHeight = nodeContentSize.height;
+
+        if(!textureRect || (!textureWidth && !textureHeight)) return;
+        var nodeRect = this._rect;
+        if(
+            // If the contentSize does not exist, Set the contentSize
+            (nodeWidth !== 0 && nodeHeight !== 0) &&
+            // ContentSize exist, But size is equal to the old texture, Set the contentSize
+            (nodeWidth !== oldTextureWidth && nodeHeight !== oldTextureHeight) &&
+            // Same old size and new texture size
+            (oldTextureWidth === textureWidth && oldTextureHeight === textureHeight) &&
+            // To satisfy the above two, But height/width does not exist, Set the contentSize
+            (nodeRect.height !== 0 || nodeRect.width !== 0)
+            // The remaining direct return
+        ){
+            return;
+        }
+        textureRect.x = textureRect.x || 0;
+        textureRect.y = textureRect.y || 0;
+        textureRect.width = textureRect.width || 0;
+        textureRect.height = textureRect.height || 0;
+        this.setTextureRect(textureRect);
     },
 
     _createRenderCmd: function(){
