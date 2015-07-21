@@ -39,8 +39,9 @@
     var proto = cc.Node.WebGLRenderCmd.prototype = Object.create(cc.Node.RenderCmd.prototype);
     proto.constructor = cc.Node.WebGLRenderCmd;
 
-    proto.getNodeToParentTransform = function () {
+    proto.getNodeToParentTransform = function (ancestor) {
         var node = this._node;
+        var t = this._transform;
         if (node._usingNormalizedPosition && node._parent) {        //TODO need refactor
             var conSize = node._parent._contentSize;
             node._position.x = node._normalizedPosition.x * conSize.width;
@@ -83,7 +84,6 @@
 
             // Build Transform Matrix
             // Adjusted transform calculation for rotational skew
-            var t = this._transform;
             t.a = cy * scx;
             t.b = sy * scx;
             t.c = -sx * scy;
@@ -108,6 +108,15 @@
             }
             this._transform = t;
         }
+
+        if(ancestor){
+            var worldT = {a: t.a, b: t.b, c: t.c, d: t.d, tx: t.tx, ty: t.ty};
+            for(var p = node._parent;  p != null && p != ancestor ; p = p.getParent()){
+                worldT = cc.affineTransformConcat(worldT, p.getNodeToParentTransform());
+            }
+            return worldT;
+        }
+
         return this._transform;
     };
 

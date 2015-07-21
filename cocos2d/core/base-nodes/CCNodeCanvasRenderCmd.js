@@ -231,6 +231,21 @@ cc.Node.RenderCmd.prototype = {
             this.transform(this.getParentRenderCmd(), true);
             this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
         }
+    },
+
+
+    _matrixMultiplication: function(t, pt){
+        var a = t.a, b = t.b, c = t.c, d = t.d, tx = t.tx, ty = t.ty;
+        var pa = pt.a, pb = pt.b, pc = pt.c, pd = pt.d, ptx = pt.tx, pty = pt.ty;
+
+        t.a = a * pa + b * pc;
+        t.b = a * pb + b * pd;
+        t.c = c * pa + d * pc;
+        t.d = c * pb + d * pd;
+        t.tx = a * ptx + b * pty + tx;
+        t.ty = c * ptx + d * pty + ty;
+
+        return t;
     }
 };
 
@@ -282,8 +297,9 @@ cc.Node.RenderCmd.prototype = {
         }
     };
 
-    proto.getNodeToParentTransform = function () {
+    proto.getNodeToParentTransform = function (ancestor) {
         var node = this._node, normalizeDirty = false;
+        var t = this._transform;// quick reference
         if (node._usingNormalizedPosition && node._parent) {        //TODO need refactor
             var conSize = node._parent._contentSize;
             node._position.x = node._normalizedPosition.x * conSize.width;
@@ -292,7 +308,6 @@ cc.Node.RenderCmd.prototype = {
             normalizeDirty = true;
         }
         if (normalizeDirty || (this._dirtyFlag & cc.Node._dirtyFlags.transformDirty)) {
-            var t = this._transform;// quick reference
 
             // base position
             t.tx = node._position.x;
@@ -365,6 +380,15 @@ cc.Node.RenderCmd.prototype = {
             if (node._additionalTransformDirty)
                 this._transform = cc.affineTransformConcat(t, node._additionalTransform);
         }
+
+        if(ancestor){
+            var transform = {a: t.a, b: t.b, c: t.c, d: t.d, tx: t.tx, ty: t.ty};
+            for(var p = node._parent;  p != null && p != ancestor ; p = p.getParent()){
+                this._matrixMultiplication(transform, p.getNodeToParentTransform());
+            }
+            return transform;
+        }
+
         return this._transform;
     };
 
