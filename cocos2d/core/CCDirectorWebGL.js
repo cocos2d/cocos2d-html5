@@ -114,6 +114,10 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             //cc.checkGLErrorDebug();
         };
 
+        _p.setClearColor = function (clearColor) {
+            cc.renderer._clearColor = clearColor;
+        };
+
         _p.setOpenGLView = function (openGLView) {
             var _t = this;
             // set size
