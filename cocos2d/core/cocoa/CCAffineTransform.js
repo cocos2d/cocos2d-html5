@@ -244,7 +244,16 @@ cc.affineTransformConcat = function (t1, t2) {
         ty: t1.tx * t2.b + t1.ty * t2.d + t2.ty};				    //ty
 };
 
-cc._affineTransformConcat = function (t1, t2) {
+/**
+ * Concatenate a transform matrix to another<br/>
+ * The results are reflected in the first matrix.<br/>
+ * t' = t1 * t2
+ * @function
+ * @param {cc.AffineTransform} t1 The first transform object
+ * @param {cc.AffineTransform} t2 The transform object to concatenate
+ * @return {cc.AffineTransform} The result of concatenation
+ */
+cc.affineTransformConcatIn = function (t1, t2) {
     var a = t1.a, b = t1.b, c = t1.c, d = t1.d, tx = t1.tx, ty = t1.ty;
     t1.a = a * t2.a + b * t2.c;
     t1.b = a * t2.b + b * t2.d;
