@@ -244,6 +244,17 @@ cc.affineTransformConcat = function (t1, t2) {
         ty: t1.tx * t2.b + t1.ty * t2.d + t2.ty};				    //ty
 };
 
+cc._affineTransformConcat = function (t1, t2) {
+    var a = t1.a, b = t1.b, c = t1.c, d = t1.d, tx = t1.tx, ty = t1.ty;
+    t1.a = a * t2.a + b * t2.c;
+    t1.b = a * t2.b + b * t2.d;
+    t1.c = c * t2.a + d * t2.c;
+    t1.d = c * t2.b + d * t2.d;
+    t1.tx = tx * t2.a + ty * t2.c + t2.tx;
+    t1.ty = tx * t2.b + ty * t2.d + t2.ty;
+    return t1;
+};
+
 /**
  * Return true if an affine transform equals to another, false otherwise.
  * @function
