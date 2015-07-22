@@ -2143,8 +2143,21 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      * @return {cc.AffineTransform} The affine transform object
      */
-    getNodeToParentTransform: function(){
-        return this._renderCmd.getNodeToParentTransform();
+    getNodeToParentTransform: function(ancestor){
+        var t = this._renderCmd.getNodeToParentTransform();
+        if(ancestor){
+            var T = {a: t.a, b: t.b, c: t.c, d: t.d, tx: t.tx, ty: t.ty};
+            for(var p = this._parent;  p != null && p != ancestor ; p = p.getParent()){
+                cc.affineTransformConcatIn(T, p.getNodeToParentTransform());
+            }
+            return T;
+        }else{
+            return t;
+        }
+    },
+
+    getNodeToParentAffineTransform: function(ancestor){
+        return this.getNodeToParentTransform(ancestor);
     },
 
     /**
