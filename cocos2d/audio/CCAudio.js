@@ -594,6 +594,11 @@ cc.Audio = cc.Class.extend({
                         loader.loadAudioFromExtList(realUrl, typeList, audio, cb);
                     });
                 };
+
+                request.onerror = function(){
+                    cb({status:520, statusMessage:ERRSTR}, null);
+                };
+
                 request.send();
             }else{//DOM
 
