@@ -32,7 +32,8 @@ cc.rendererCanvas = {
     _cacheToCanvasCmds: {},                              // an array saves the renderer commands need for cache to other canvas
     _cacheInstanceIds: [],
     _currentID: 0,
-    _clearColor: cc.color(),                            //background color,default BLACK
+    _clearColor: cc.color(),                                  //background color,default BLACK
+    _clearFillStyle: null,
 
     getRenderCmd: function (renderableObject) {
         //TODO Add renderCmd pool here
@@ -132,10 +133,9 @@ cc.rendererCanvas = {
         var glWrapper = cc._renderContext;
         gl.setTransform(1, 0, 0, 1, 0, 0);
         //IF transparent or translucence clearRect first to decrease filling rate
-        if(this._clearColor.a != 255)
+        if(this._clearColor.a !== 255)
             gl.clearRect(0, 0, viewport.width, viewport.height);
-        var fillStyle = 'rgb(' + this._clearColor.r + ',' + this._clearColor.g + ',' + this._clearColor.b +')' ;
-        glWrapper.setFillStyle(fillStyle);
+        glWrapper.setFillStyle(this._clearFillStyle);
         glWrapper.setGlobalAlpha(this._clearColor.a);
         gl.fillRect(0, 0, viewport.width, viewport.height);
     },

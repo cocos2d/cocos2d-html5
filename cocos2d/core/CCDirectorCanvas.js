@@ -37,6 +37,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p.setDepthTest = function () {
     };
 
+    _p.setClearColor = function (clearColor) {
+        cc.renderer._clearColor = clearColor;
+        cc.renderer._clearFillStyle = 'rgb(' + clearColor.r + ',' + clearColor.g + ',' + clearColor.b +')' ;
+    };
+
     _p.setOpenGLView = function (openGLView) {
         // set size
         this._winSizeInPoints.width = cc._canvas.width;      //this._openGLView.getDesignResolutionSize();
