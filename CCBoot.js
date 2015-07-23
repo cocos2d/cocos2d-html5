@@ -672,16 +672,16 @@ cc.loader = /** @lends cc.loader# */{
                 xhr.setRequestHeader("Accept-Charset", "utf-8");
                 xhr.onreadystatechange = function () {
                     if(xhr.readyState === 4)
-                        xhr.status === 200 ? cb(null, xhr.responseText) : cb({status:xhr.status, statusMessage:errInfo}, null);
+                        xhr.status === 200 ? cb(null, xhr.responseText) : cb({status:xhr.status, errorMessage:errInfo}, null);
                 };
             } else {
                 if (xhr.overrideMimeType) xhr.overrideMimeType("text\/plain; charset=utf-8");
                 xhr.onload = function () {
                     if(xhr.readyState === 4)
-                        xhr.status === 200 ? cb(null, xhr.responseText) : cb({status:xhr.status, statusMessage:errInfo}, null);
+                        xhr.status === 200 ? cb(null, xhr.responseText) : cb({status:xhr.status, errorMessage:errInfo}, null);
                 };
                 xhr.onerror = function(){
-                    cb({status:xhr.status, statusMessage:errInfo}, null);
+                    cb({status:xhr.status, errorMessage:errInfo}, null);
                 };
             }
             xhr.send(null);
@@ -725,10 +725,10 @@ cc.loader = /** @lends cc.loader# */{
                 window.msg = arrayBuffer;
             }
             if(xhr.readyState === 4)
-                xhr.status === 200 ? cb(null, xhr.response) : cb({status:xhr.status, statusMessage:errInfo}, null);
+                xhr.status === 200 ? cb(null, xhr.response) : cb({status:xhr.status, errorMessage:errInfo}, null);
         };
         xhr.onerror = function(){
-            cb({status:xhr.status, statusMessage:errInfo}, null);
+            cb({status:xhr.status, errorMessage:errInfo}, null);
         };
         xhr.send(null);
     },
@@ -861,7 +861,7 @@ cc.loader = /** @lends cc.loader# */{
                 cc.log(err);
                 self.cache[url] = null;
                 delete self.cache[url];
-                cb({status:520, statusMessage:errInfo}, null);
+                cb({status:520, errorMessage:errInfo}, null);
             } else {
                 self.cache[url] = data;
                 cb(null, data);
