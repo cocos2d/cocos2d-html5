@@ -43,7 +43,7 @@ ccs.SkeletonNode = (function(){
         _squareVertices: null,
         _squareColors: null,
         _noMVPVertices: null,
-        _suitMap: null,
+        _skinGroupMap: null,
 
         _sortedAllBonesDirty: false,
         _sortedAllBones: null,
@@ -59,6 +59,8 @@ ccs.SkeletonNode = (function(){
             ];
             BoneNode.prototype.ctor.call(this);
             this._subBonesMap = {};
+
+            this._skinGroupMap = {};
 
             this._rackLength = this._rackWidth = 20;
             this._updateVertices();
@@ -94,10 +96,6 @@ ccs.SkeletonNode = (function(){
             }
         },
 
-        addSuitInfo: function(suitName, boneSkinNameMap){
-            this._suitMap[suitName] = boneSkinNameMap;
-        },
-
         addSkinGroup: function(groupName, boneSkinNameMap){
             //todo _skinGroupMap
             this._skinGroupMap[groupName] = boneSkinNameMap;
@@ -118,7 +116,7 @@ ccs.SkeletonNode = (function(){
             var allBones = this.getAllSubBones();
             for(var bone, i=0; i<allBones.length; i++){
                 bone = allBones[i];
-                var r = cc.rectApplyAffineTransform(bone.getVisibleSkinsRect(), bone.getBoneToSkeletonAffineTransform());
+                var r = cc.rectApplyAffineTransform(bone.getVisibleSkinsRect(), bone.getNodeToParentTransform());
                 if (r.x === 0 && r.y === 0 && r.width === 0 && r.height === 0)
                     continue;
 
@@ -153,10 +151,12 @@ ccs.SkeletonNode = (function(){
                 var radiusw = this._rackWidth * .5;
                 var radiusl_2 = radiusl * .25;
                 var radiusw_2 = radiusw * .25;
-                squareVertices[5].x = -radiusl; squareVertices[5].y = -radiusl;
-                squareVertices[6].x = radiusl;  squareVertices[3].y = radiusw;
-                squareVertices[1].x = radiusl_2; squareVertices[7].y = radiusw_2;
-                squareVertices[2].x = -radiusl_2; squareVertices[4].y = - radiusw_2;
+                squareVertices[5].y = squareVertices[2].y = squareVertices[1].y = squareVertices[6].y
+                    = squareVertices[0].x = squareVertices[4].x = squareVertices[7].x = squareVertices[3].x = .0;
+                squareVertices[5].x = -radiusl; squareVertices[0].y = -radiusw;
+                squareVertices[6].x =  radiusl;  squareVertices[3].y = radiusw;
+                squareVertices[1].x =  radiusl_2; squareVertices[7].y = radiusw_2;
+                squareVertices[2].x = - radiusl_2; squareVertices[4].y = - radiusw_2;
                 for(var i=0; i<squareVertices.length; i++){
                     squareVertices[i].x = anchorPointInPoints.x;
                     squareVertices[i].y = anchorPointInPoints.y;

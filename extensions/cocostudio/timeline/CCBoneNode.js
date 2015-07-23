@@ -127,9 +127,6 @@ ccs.BoneNode = (function () {
             }
         },
 
-        displaySkins: function (skinName, hideOthers) {
-        },
-
         getVisibleSkins: function () {
             var displayingSkins = [];
             var boneSkins = this._boneSkins;
@@ -224,12 +221,6 @@ ccs.BoneNode = (function () {
 
             renderCmd._debug = isDebugDraw;
             cc.renderer.childrenOrderDirty = true;
-            var children = this._children;
-            for (var child, i = 0; i < children.length; i++) {
-                child = children[i];
-                if (child && child.setDebugDrawEnabled)
-                    child.setDebugDrawEnabled(isDebugDraw);
-            }
         },
 
         isDebugDrawEnabled: function () {
@@ -284,36 +275,6 @@ ccs.BoneNode = (function () {
         getBoundingBox: function () {
             var boundingBox = this.getVisibleSkinsRect();
             return cc.rectApplyAffineTransform(boundingBox, this.getNodeToParentAffineTransform());
-        },
-
-        getBoneToSkeletonTransform: function () {
-            var retMat;
-            if (this._rootSkeleton == null) {
-                retMat = {a: 1, b: 0, c: 0, d: 1, x: 0, y: 0};
-                debug.log("can not transform before added to Skeleton");
-                return retMat;
-            }
-
-            retMat = this.getNodeToParentTransform();
-            //todo check here p exists
-            for (var p = this._parent; p && p != this._rootSkeleton; p = p.getParent()) {
-                //todo check here
-                retMat = cc.affineTransformConcat(p.getNodeToParentTransform(), retMat);
-            }
-            return retMat;
-        },
-
-        getBoneToSkeletonAffineTransform: function () {
-            var retTrans;
-            if (this._rootSkeleton == null) {
-                retTrans = {a: 1, b: 0, c: 0, d: 1, x: 0, y: 0};
-                debug.log("can not transform before added to Skeleton");
-                return retTrans;
-            }
-            retTrans = this.getNodeToParentTransform();
-            for (var p = this._parent; p && p != this._rootSkeleton; p = p.getParent())
-                retTrans = cc.affineTransformConcat(retTrans, p.getNodeToParentTransform());
-            return retTrans;
         },
 
         batchBoneDrawToSkeleton: function (bone) {},
@@ -373,7 +334,7 @@ ccs.BoneNode = (function () {
         _removeFromChildrenListHelper: function (child) {
             if (child instanceof BoneNode) {
                 this._removeFromBoneList(child);
-                if (child._renderCmd._debug){
+                if (child._rootSkeleton._renderCmd._debug){
                     this._rootSkeleton._subDrawBonesDirty = true;
                     this._rootSkeleton._subDrawBonesOrderDirty = true;
                 }
@@ -420,7 +381,7 @@ ccs.BoneNode = (function () {
                     else
                         debug.log("already has a bone named %s in skeleton %s", boneName, this._rootSkeleton.getName());
                 }
-                if(bone._renderCmd._debug && bone._visible){
+                if(bone._rootSkeleton._renderCmd._debug && bone._visible){
                     this._rootSkeleton._subDrawBonesDirty = true;
                     this._rootSkeleton._subDrawBonesOrderDirty = true;
                 }
@@ -468,8 +429,9 @@ ccs.BoneNode = (function () {
             if (this._rackLength != squareVertices[2].x - anchorPointInPoints.x ||
                 squareVertices[3].y != this._rackWidth / 2  - anchorPointInPoints.y) {
 
+                squareVertices[1].x = squareVertices[1].y = squareVertices[3].y = 0;
                 squareVertices[0].x = squareVertices[2].x = this._rackLength * .1;
-                squareVertices[2].y =  this._rackWidth * .5;
+                squareVertices[2].y = this._rackWidth * .5;
                 squareVertices[0].y = -squareVertices[2].y;
                 squareVertices[3].x = this._rackLength;
 
@@ -510,8 +472,9 @@ ccs.BoneNode = (function () {
         proto.constructor = BoneNodeCanvasCmd;
 
         proto.visit = function (parentCmd) {
+            var node = this._node;
             Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
-            if (this._node._visible && this._debug) {
+            if (node._visible && node._rootSkeleton._renderCmd._debug) {
                 cc.renderer.pushRenderCommand(this._drawNode._renderCmd);
             }
 
@@ -523,7 +486,7 @@ ccs.BoneNode = (function () {
 
         proto.transform = function (parentCmd, recursive) {
             Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd, recursive);
-            if (this._debug) {
+            if (this._node._rootSkeleton._renderCmd._debug) {
                 this._drawNode._renderCmd.transform(this);
             }
         };
@@ -546,7 +509,7 @@ ccs.BoneNode = (function () {
 
         proto.visit = function (parentCmd) {
             Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
-            if (this._debug) {
+            if (this._node._rootSkeleton._renderCmd._debug) {
                 cc.renderer.pushRenderCommand(this._drawNode._renderCmd);
             }
 
@@ -558,7 +521,7 @@ ccs.BoneNode = (function () {
 
         proto.transform = function (parentCmd, recursive) {
             Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
-            if (this._debug) {
+            if (this._node._rootSkeleton._renderCmd._debug) {
                 this._drawNode._renderCmd.transform(this);
             }
         };
