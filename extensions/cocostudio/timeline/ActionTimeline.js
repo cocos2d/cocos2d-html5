@@ -60,6 +60,12 @@ ccs.ActionTimelineData = ccs.Class.extend({
 
 });
 
+ccs.AnimationInfo = function(name, start, end){
+    this.name = name;
+    this.startIndex = start;
+    this.endIndex = end;
+};
+
 ccs.ObjectExtensionData = ccs.Class.extend({
 
     _customProperty: null,
