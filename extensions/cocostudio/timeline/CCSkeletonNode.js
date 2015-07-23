@@ -61,8 +61,7 @@ ccs.SkeletonNode = (function(){
             this._subBonesMap = {};
 
             this._rackLength = this._rackWidth = 20;
-            this.setContentSize(cc.size(20, 20));
-            //this._updateVertices();
+            this._updateVertices();
             this._rootSkeleton = this;
         },
 

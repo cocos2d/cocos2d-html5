@@ -76,7 +76,6 @@ ccs.BoneNode = (function () {
             this._childBones = [];
             this._boneSkins = [];
 
-            this._anchorPoint = type.p(0, .5);
             this._rackLength = length === undefined ? 50 : length;
             this._rackWidth = 20;
             this._updateVertices();
