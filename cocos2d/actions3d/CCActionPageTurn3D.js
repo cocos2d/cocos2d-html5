@@ -37,7 +37,7 @@
  */
 cc.PageTurn3D = cc.Grid3DAction.extend(/** @lends cc.PageTurn3D# */{
     getGrid: function(){
-        var result = new cc.Grid3D(this._gridSize);
+        var result = new cc.Grid3D(this._gridSize, undefined, undefined, this._gridNodeTarget.getGridRect());
         result.setNeedDepthTestForBlit(true);
         return result;
     },
@@ -57,8 +57,9 @@ cc.PageTurn3D = cc.Grid3DAction.extend(/** @lends cc.PageTurn3D# */{
         var deltaAy = (tt * tt * 500);
         var ay = -100 - deltaAy;
 
-        var deltaTheta = -Math.PI / 2 * Math.sqrt(time);
-        var theta = /*0.01f */ +Math.PI / 2 + deltaTheta;
+        var deltaTheta = Math.sqrt(time);
+        var theta = deltaTheta>0.5?Math.PI/2 *deltaTheta : Math.PI/2*(1-deltaTheta);
+        var rotateByYAxis = (2-time)*Math.PI;
 
         var sinTheta = Math.sin(theta);
         var cosTheta = Math.cos(theta);
@@ -72,6 +73,7 @@ cc.PageTurn3D = cc.Grid3DAction.extend(/** @lends cc.PageTurn3D# */{
                 // Get original vertex
                 var p = this.getOriginalVertex(locVer);
 
+                p.x -= this.getGridRect().x;
                 var R = Math.sqrt((p.x * p.x) + ((p.y - ay) * (p.y - ay)));
                 var r = R * sinTheta;
                 var alpha = Math.asin(p.x / R);
@@ -89,14 +91,17 @@ cc.PageTurn3D = cc.Grid3DAction.extend(/** @lends cc.PageTurn3D# */{
 
                 // We scale z here to avoid the animation being
                 // too much bigger than the screen due to perspectve transform
-                p.z = (r * ( 1 - cosBeta ) * cosTheta) / 7;// "100" didn't work for
-
+                p.z = (r * ( 1 - cosBeta ) * cosTheta);// "100" didn't work for
+                p.x = p.z * Math.sin(rotateByYAxis) + p.x * Math.cos(rotateByYAxis);
+                p.z = p.z * Math.cos(rotateByYAxis) - p.x * Math.cos(rotateByYAxis);
+                p.z/= 7;
                 //	Stop z coord from dropping beneath underlying page in a transition
                 // issue #751
                 if (p.z < 0.5)
                     p.z = 0.5;
 
                 // Set new coords
+                p.x+= this.getGridRect().x;
                 this.setVertex(locVer, p);
             }
         }
