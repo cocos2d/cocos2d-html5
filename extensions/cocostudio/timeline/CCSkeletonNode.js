@@ -116,7 +116,7 @@ ccs.SkeletonNode = (function(){
             var allBones = this.getAllSubBones();
             for(var bone, i=0; i<allBones.length; i++){
                 bone = allBones[i];
-                var r = cc.rectApplyAffineTransform(bone.getVisibleSkinsRect(), bone.getNodeToParentTransform());
+                var r = cc.rectApplyAffineTransform(bone.getVisibleSkinsRect(), bone.getNodeToParentTransform(bone.getRootSkeletonNode()));
                 if (r.x === 0 && r.y === 0 && r.width === 0 && r.height === 0)
                     continue;
 
@@ -158,8 +158,8 @@ ccs.SkeletonNode = (function(){
                 squareVertices[1].x =  radiusl_2; squareVertices[7].y = radiusw_2;
                 squareVertices[2].x = - radiusl_2; squareVertices[4].y = - radiusw_2;
                 for(var i=0; i<squareVertices.length; i++){
-                    squareVertices[i].x = anchorPointInPoints.x;
-                    squareVertices[i].y = anchorPointInPoints.y;
+                    squareVertices[i].x += anchorPointInPoints.x;
+                    squareVertices[i].y += anchorPointInPoints.y;
                 }
             }
         },

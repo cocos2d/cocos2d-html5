@@ -474,7 +474,7 @@ ccs.BoneNode = (function () {
         proto.visit = function (parentCmd) {
             var node = this._node;
             Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
-            if (node._visible && node._rootSkeleton._renderCmd._debug) {
+            if (node._visible && node._rootSkeleton &&  node._rootSkeleton._renderCmd._debug) {
                 cc.renderer.pushRenderCommand(this._drawNode._renderCmd);
             }
 
@@ -485,8 +485,9 @@ ccs.BoneNode = (function () {
         };
 
         proto.transform = function (parentCmd, recursive) {
+            var rootSkeleton = this._node._rootSkeleton;
             Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd, recursive);
-            if (this._node._rootSkeleton._renderCmd._debug) {
+            if (rootSkeleton && rootSkeleton._renderCmd._debug) {
                 this._drawNode._renderCmd.transform(this);
             }
         };
@@ -508,8 +509,9 @@ ccs.BoneNode = (function () {
         proto.constructor = BoneNodeWebGLCmd;
 
         proto.visit = function (parentCmd) {
+            var rootSkeleton = this._node._rootSkeleton;
             Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
-            if (this._node._rootSkeleton._renderCmd._debug) {
+            if (rootSkeleton && rootSkeleton._renderCmd._debug) {
                 cc.renderer.pushRenderCommand(this._drawNode._renderCmd);
             }
 
@@ -520,8 +522,9 @@ ccs.BoneNode = (function () {
         };
 
         proto.transform = function (parentCmd, recursive) {
+            var rootSkeleton = this._node._rootSkeleton;
             Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
-            if (this._node._rootSkeleton._renderCmd._debug) {
+            if (rootSkeleton && rootSkeleton._renderCmd._debug) {
                 this._drawNode._renderCmd.transform(this);
             }
         };
