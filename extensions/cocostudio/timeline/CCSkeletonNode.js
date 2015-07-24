@@ -97,7 +97,6 @@ ccs.SkeletonNode = (function(){
         },
 
         addSkinGroup: function(groupName, boneSkinNameMap){
-            //todo _skinGroupMap
             this._skinGroupMap[groupName] = boneSkinNameMap;
         },
 
@@ -175,7 +174,6 @@ ccs.SkeletonNode = (function(){
             this._subDrawBones = false;
         }
 
-        //_batchDrawAllSubBones
     });
 
     SkeletonNode.create = function(){

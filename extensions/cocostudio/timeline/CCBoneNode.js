@@ -314,11 +314,6 @@ ccs.BoneNode = (function () {
                 return;
 
             Node.prototype.setVisible.call(this, visible);
-            //todo change dirty
-            //if(this._isRackShow){
-            //    this._rootSkeleton._subDrawBonesDirty = true;
-            //    this._rootSkeleton._subDrawBonesOrderDirty = true;
-            //}
         },
 
         _addToChildrenListHelper: function (child) {
@@ -354,10 +349,6 @@ ccs.BoneNode = (function () {
                 subBone = subBones[i];
                 subBone._rootSkeleton = null;
                 cc.arrayRemoveObject(this._rootSkeleton._subBonesMap, subBone.getName());
-                //if(bone._isRackShow && bone._visible){
-                //    this._rootSkeleton._subDrawBonesDirty = true;
-                //    this._rootSkeleton._subDrawBonesOrderDirty = true;
-                //}
             }
         },
 
@@ -372,11 +363,6 @@ ccs.BoneNode = (function () {
                     var boneName = subBone.getName();
                     if (this._rootSkeleton._subBonesMap[boneName]) {
                         this._rootSkeleton._subBonesMap[subBone.getName()] = subBone;
-                        //todo change dirty
-                        //if(bone._isRackShow && bone._visible){
-                        //    this._rootSkeleton._subDrawBonesDirty = true;
-                        //    this._rootSkeleton._subDrawBonesOrderDirty = true;
-                        //}
                     }
                     else
                         debug.log("already has a bone named %s in skeleton %s", boneName, this._rootSkeleton.getName());
