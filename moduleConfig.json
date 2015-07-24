@@ -387,6 +387,10 @@
             "extensions/cocostudio/timeline/Frame.js",
             "extensions/cocostudio/timeline/Timeline.js",
 
+            "extensions/cocostudio/timeline/CCSkinNode.js",
+            "extensions/cocostudio/timeline/CCBoneNode.js",
+            "extensions/cocostudio/timeline/CCSkeletonNode.js",
+
             "extensions/cocostudio/loader/load.js",
             "extensions/cocostudio/loader/parsers/scene-1.x.js",
             "extensions/cocostudio/loader/parsers/uiParser-1.x.js",
