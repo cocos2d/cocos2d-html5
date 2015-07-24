@@ -571,7 +571,7 @@ cc.Audio = cc.Class.extend({
                     ERRSTR += ext + "|";
                 });
                 ERRSTR = ERRSTR.replace(/\|$/, ")");
-                return cb(ERRSTR);
+                return cb({status:520, errorMessage:ERRSTR}, null);
             }
 
             realUrl = cc.path.changeExtname(realUrl, typeList.splice(0, 1));
@@ -591,7 +591,6 @@ cc.Audio = cc.Class.extend({
                         cb(null, audio);
                     }, function(){
                         //error
-                        cb({status:520, errorMessage:ERRSTR}, null);
                         loader.loadAudioFromExtList(realUrl, typeList, audio, cb);
                     });
                 };
