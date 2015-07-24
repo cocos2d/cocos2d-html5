@@ -510,9 +510,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @function
      * @param {cc.color} clearColor
      */
-    setClearColor: function(clearColor) {
-        cc.renderer._clearColor = clearColor;
-     },
+    setClearColor: null,
     /**
      * Sets the default values based on the CCConfiguration info
      */
