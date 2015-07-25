@@ -66,12 +66,14 @@ ccs.AnimationInfo = function(name, start, end){
     this.endIndex = end;
 };
 
-ccs.ObjectExtensionData = ccs.Class.extend({
+ccs.ComExtensionData = ccs.Component.extend({
 
     _customProperty: null,
     _timelineData: null,
+    _name: "ComExtensionData",
 
     ctor: function(){
+        this._customProperty = "";
         this._timelineData = new ccs.ActionTimelineData(0);
         return true;
     },
@@ -94,8 +96,8 @@ ccs.ObjectExtensionData = ccs.Class.extend({
 
 });
 
-ccs.ObjectExtensionData.create = function(){
-    return new ccs.ObjectExtensionData();
+ccs.ComExtensionData.create = function(){
+    return new ccs.ComExtensionData();
 };
 
 /**
@@ -458,7 +460,7 @@ ccs.ActionTimeline = cc.Action.extend({
 
         var self = this;
         var callback = function(child){
-            var data = child.getUserObject();
+            var data = child.getComponent("ComExtensionData");
 
             if(data) {
                 var actionTag = data.getActionTag();
