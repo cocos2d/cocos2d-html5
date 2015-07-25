@@ -112,12 +112,14 @@
         node.setTag(json["Tag"] || 0);
 
         var actionTag = json["ActionTag"] || 0;
-        var extensionData = new ccs.ObjectExtensionData();
+        var extensionData = new ccs.ComExtensionData();
         var customProperty = json["UserData"];
         if(customProperty !== undefined)
             extensionData.setCustomProperty(customProperty);
         extensionData.setActionTag(actionTag);
-        node.setUserObject(extensionData);
+        if (node.getComponent("ComExtensionData"))
+            node.removeComponent("ComExtensionData");
+        node.addComponent(extensionData);
 
         node.setCascadeColorEnabled(true);
         node.setCascadeOpacityEnabled(true);
@@ -260,12 +262,14 @@
 
         var actionTag = json["ActionTag"] || 0;
         widget.setActionTag(actionTag);
-        var extensionData = new ccs.ObjectExtensionData();
+        var extensionData = new ccs.ComExtensionData();
         var customProperty = json["UserData"];
         if(customProperty !== undefined)
             extensionData.setCustomProperty(customProperty);
         extensionData.setActionTag(actionTag);
-        widget.setUserObject(extensionData);
+        if (widget.getComponent("ComExtensionData"))
+            widget.removeComponent("ComExtensionData");
+        widget.addComponent(extensionData);
 
         var rotationSkewX = json["RotationSkewX"];
         if (rotationSkewX)
