@@ -338,6 +338,23 @@
             widget.setColor(getColor(color));
 
         setLayoutComponent(widget, json);
+        bindCallback(widget, json);
+    };
+
+    var bindCallback = function(widget, json){
+        var callBackType = json["CallBackType"];
+        var callBackName = json["CallBackName"];
+        var callBack = function(e){
+            if(typeof widget[callBackName] === "function")
+                widget[callBackName](e);
+        };
+        if(callBackType === "Click"){
+            widget.addClickEventListener(callBack);
+        }else if(callBackType === "Touch"){
+            widget.addTouchEventListener(callBack);
+        }else if(callBackType === "Event"){
+            widget.addCCSEventListener(callBack);
+        }
     };
 
     var setLayoutComponent = function(widget, json){
@@ -1146,15 +1163,13 @@
      */
     parser.initSimpleAudio = function(json, resourcePath){
 
+        var node = new ccs.ComAudio();
         var loop = json["Loop"] || false;
-        var volume = json["Volume"] || 0;
-        cc.audioEngine.setMusicVolume(volume);
-        //var name = json["Name"];
-
+        //var volume = json["Volume"] || 0;
+        //cc.audioEngine.setMusicVolume(volume);
+        node.setLoop(loop);
         loadTexture(json["FileData"], resourcePath, function(path, type){
-            cc.loader.load(path, function(){
-                cc.audioEngine.playMusic(path, loop);
-            });
+            node.setFile(path);
         });
 
     };
@@ -1260,6 +1275,28 @@
         return node;
     };
 
+    parser.initBoneNode = function(json, resourcePath){
+
+        var node = new ccs.BoneNode();
+
+        var length = json["Length"];
+        if(length !== undefined)
+            node.setDebugDrawLength(length);
+
+        var blendFunc = json["BlendFunc"];
+        if(blendFunc)
+            node.setBlendFunc(new cc.BlendFunc(blendFunc["Src"] || 0, blendFunc["Dst"] || 0));
+
+        parser.generalAttributes(node, json);
+        return node;
+    };
+
+    parser.initSkeletonNode = function(json){
+        var node = new ccs.SkeletonNode();
+        parser.generalAttributes(node, json);
+        return node;
+    };
+
     var loadedPlist = {};
     var loadTexture = function(json, resourcePath, cb){
         if(json != null){
@@ -1327,7 +1364,9 @@
         {name: "SimpleAudioObjectData", handle: parser.initSimpleAudio},
         {name: "GameMapObjectData", handle: parser.initGameMap},
         {name: "ProjectNodeObjectData", handle: parser.initProjectNode},
-        {name: "ArmatureNodeObjectData", handle: parser.initArmature}
+        {name: "ArmatureNodeObjectData", handle: parser.initArmature},
+        {name: "BoneNodeObjectData", handle: parser.initBoneNode},
+        {name: "SkeletonNodeObjectData", handle: parser.initSkeletonNode}
     ];
 
     register.forEach(function(item){

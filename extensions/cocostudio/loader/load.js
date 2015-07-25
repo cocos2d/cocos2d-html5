@@ -228,7 +228,7 @@ cc._jsonLoader = {
         cc.loader.loadJson(realUrl, function(error, data){
             if(data && data["Content"] && data["Content"]["Content"]["UsedResources"]){
                 var list = data["Content"]["Content"]["UsedResources"],
-                    dirname = cc.path.dirname(realUrl);
+                    dirname = cc.path.dirname(url);
                 for(var i=0; i<list.length; i++){
                     list[i] = cc.path.join(dirname, list[i]);
                 }

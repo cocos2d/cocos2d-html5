@@ -643,7 +643,7 @@ cc.loader = /** @lends cc.loader# */{
                 jsLoadingImg.src = cc._loadingImage;
 
             var canvasNode = d.getElementById(cc.game.config["id"]);
-            canvasNode.style.backgroundColor = "black";
+            canvasNode.style.backgroundColor = "transparent";
             canvasNode.parentNode.appendChild(jsLoadingImg);
 
             var canvasStyle = getComputedStyle ? getComputedStyle(canvasNode) : canvasNode.currentStyle;
@@ -672,13 +672,16 @@ cc.loader = /** @lends cc.loader# */{
                 xhr.setRequestHeader("Accept-Charset", "utf-8");
                 xhr.onreadystatechange = function () {
                     if(xhr.readyState === 4)
-                        xhr.status === 200 ? cb(null, xhr.responseText) : cb(errInfo);
+                        xhr.status === 200 ? cb(null, xhr.responseText) : cb({status:xhr.status, errorMessage:errInfo}, null);
                 };
             } else {
                 if (xhr.overrideMimeType) xhr.overrideMimeType("text\/plain; charset=utf-8");
                 xhr.onload = function () {
                     if(xhr.readyState === 4)
-                        xhr.status === 200 ? cb(null, xhr.responseText) : cb(errInfo);
+                        xhr.status === 200 ? cb(null, xhr.responseText) : cb({status:xhr.status, errorMessage:errInfo}, null);
+                };
+                xhr.onerror = function(){
+                    cb({status:xhr.status, errorMessage:errInfo}, null);
                 };
             }
             xhr.send(null);
@@ -711,7 +714,8 @@ cc.loader = /** @lends cc.loader# */{
     },
 
     loadCsb: function(url, cb){
-        var xhr = new XMLHttpRequest();
+        var xhr = new XMLHttpRequest(),
+            errInfo = "load " + url + " failed!";
         xhr.open("GET", url, true);
         xhr.responseType = "arraybuffer";
 
@@ -721,9 +725,11 @@ cc.loader = /** @lends cc.loader# */{
                 window.msg = arrayBuffer;
             }
             if(xhr.readyState === 4)
-                xhr.status === 200 ? cb(null, xhr.response) : cb("load " + url + " failed!");
+                xhr.status === 200 ? cb(null, xhr.response) : cb({status:xhr.status, errorMessage:errInfo}, null);
         };
-
+        xhr.onerror = function(){
+            cb({status:xhr.status, errorMessage:errInfo}, null);
+        };
         xhr.send(null);
     },
 
@@ -855,7 +861,7 @@ cc.loader = /** @lends cc.loader# */{
                 cc.log(err);
                 self.cache[url] = null;
                 delete self.cache[url];
-                cb();
+                cb({status:520, errorMessage:errInfo}, null);
             } else {
                 self.cache[url] = data;
                 cb(null, data);
@@ -1947,7 +1953,7 @@ cc._setup = function (el, width, height) {
             'stencil': true,
             'preserveDrawingBuffer': true,
             'antialias': !cc.sys.isMobile,
-            'alpha': false
+            'alpha': true
         });
     if (cc._renderContext) {
         win.gl = cc._renderContext; // global variable declared in CCMacro.js

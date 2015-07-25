@@ -643,8 +643,10 @@ cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
     },
 
     onTouchBegan:function(touch, event){
-        if (!this.isVisible())
-            return false;
+        for (var c = this; c != null; c = c.parent) {
+            if (!c.isVisible())
+                return false;
+        }
 
         var touchResult = cc.ScrollView.prototype.onTouchBegan.call(this, touch, event);
 
