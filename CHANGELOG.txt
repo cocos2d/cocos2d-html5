@@ -1,5 +1,22 @@
 ChangeLog:
 
+Cocos2d-x v3.7.1 @ ??
+    [HIGHLIGHT]     studio: Added new skeleton animation support and JSON parser for cocos v2.3.2 beta
+
+    [NEW]           Node: Added getNodeToParentTransform with selected ancestor
+    [NEW]           web: Added cc.director.setClearColor and support transparent background
+    [NEW]           web: Added Animate's getCurrentFrameIndex function
+
+    [REFINE]        studio: Optimized JSON parser's performance by removing audio play
+    [REFINE]        studio: Optimized editor related extension data to a component instead of hosting in _userObject
+    [REFINE]        web: Improved color/opacity manipulations in MenuItems
+
+    [FIX]           studio: Fixed ccs.Skin construction issue in JSON parser
+    [FIX]           web: Fixed an issue that loading process won't trigger callback problem
+    [FIX]           web: Fixed a bug where not resetting cc.Audio._ignoreEnded when replaying a sound caused it to stay in a "playing" state
+    [FIX]           web: cc.ScrollView and cc.TableView: added check for parent visibility in onTouchBegan method
+    [FIX]           web: Fixed TurnPageDown effect
+
 Cocos2d-x v3.7 Final @ July 20 2015
     [REFINE]        web: Add compatible Uint16Array defintion
     
