@@ -1246,7 +1246,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @function
      * @param {cc.Node} child  A child node
      * @param {Number} [localZOrder=]  Z order for drawing priority. Please refer to setZOrder(int)
-     * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
+     * @param {Number|String} [tag=]  An integer or a name to identify the node easily. Please refer to setTag(int) and setName(string)
      */
     addChild: function (child, localZOrder, tag) {
         localZOrder = localZOrder === undefined ? child._localZOrder : localZOrder;
