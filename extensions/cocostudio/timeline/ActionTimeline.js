@@ -78,16 +78,6 @@ ccs.ComExtensionData = ccs.Component.extend({
         return true;
     },
 
-    onEnter: function(){},
-
-    onExit: function(){
-        this.onRemove();
-    },
-
-    onAdd: function(){},
-
-    onRemove: function(){},
-
     setActionTag: function(actionTag){
         this._timelineData.setActionTag(actionTag);
     },
