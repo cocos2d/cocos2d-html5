@@ -250,6 +250,14 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         return this._targetDensityDPI;
     },
 
+    /** Get retina factor.
+     *
+     * @return The retina factor.
+     */
+    getRetinaFactor: function(){
+        return 1;
+    },
+
     /**
      * Sets whether resize canvas automatically when browser's size changed.<br/>
      * Useful only on web.
