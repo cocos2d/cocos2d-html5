@@ -861,7 +861,7 @@ cc.loader = /** @lends cc.loader# */{
                 cc.log(err);
                 self.cache[url] = null;
                 delete self.cache[url];
-                cb({status:520, errorMessage:errInfo}, null);
+                cb({status:520, errorMessage:"load " + url + " failed!"}, null);
             } else {
                 self.cache[url] = data;
                 cb(null, data);
