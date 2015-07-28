@@ -445,11 +445,11 @@ cc.Node.RenderCmd.prototype = {
         }
     };
 
-    proto.setDirtyFlag = function (dirtyFlag) {
-        cc.Node.RenderCmd.prototype.setDirtyFlag.call(this, dirtyFlag);
-        this._setCacheDirty();                  //TODO it should remove from here.
+    proto.setDirtyFlag = function (dirtyFlag, child) {
+        cc.Node.RenderCmd.prototype.setDirtyFlag.call(this, dirtyFlag, child);
+        this._setCacheDirty(child);                  //TODO it should remove from here.
         if(this._cachedParent)
-            this._cachedParent.setDirtyFlag(dirtyFlag);
+            this._cachedParent.setDirtyFlag(dirtyFlag, true);
     };
 
     proto._setCacheDirty = function () {
