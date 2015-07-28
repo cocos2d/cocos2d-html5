@@ -1,25 +1,26 @@
 /******************************************************************************
  * Spine Runtimes Software License
- * Version 2.1
- *
- * Copyright (c) 2013, Esoteric Software
+ * Version 2.3
+ * 
+ * Copyright (c) 2013-2015, Esoteric Software
  * All rights reserved.
- *
+ * 
  * You are granted a perpetual, non-exclusive, non-sublicensable and
- * non-transferable license to install, execute and perform the Spine Runtimes
- * Software (the "Software") solely for internal use. Without the written
- * permission of Esoteric Software (typically granted by licensing Spine), you
- * may not (a) modify, translate, adapt or otherwise create derivative works,
- * improvements of the Software or develop new applications using the Software
- * or (b) remove, delete, alter or obscure any trademarks or any copyright,
- * trademark, patent or other intellectual property or proprietary rights
- * notices on or in the Software, including any copy thereof. Redistributions
- * in binary or source form must include this license and terms.
- *
+ * non-transferable license to use, install, execute and perform the Spine
+ * Runtimes Software (the "Software") and derivative works solely for personal
+ * or internal use. Without the written permission of Esoteric Software (see
+ * Section 2 of the Spine Software License Agreement), you may not (a) modify,
+ * translate, adapt or otherwise create derivative works, improvements of the
+ * Software or develop new applications using the Software or (b) remove,
+ * delete, alter or obscure any trademarks or any copyright, trademark, patent
+ * or other intellectual property or proprietary rights notices on or in the
+ * Software, including any copy thereof. Redistributions in binary or source
+ * form must include this license and terms.
+ * 
  * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL ESOTERIC SOFTARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * EVENT SHALL ESOTERIC SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
@@ -50,6 +51,13 @@ spine.BoneData.prototype = {
     flipX: false, flipY: false
 };
 
+spine.BlendMode = {
+    normal: 0,
+    additive: 1,
+    multiply: 2,
+    screen: 3
+};
+
 spine.SlotData = function (name, boneData) {
     this.name = name;
     this.boneData = boneData;
@@ -57,7 +65,7 @@ spine.SlotData = function (name, boneData) {
 spine.SlotData.prototype = {
     r: 1, g: 1, b: 1, a: 1,
     attachmentName: null,
-    additiveBlending: false
+    blendMode: spine.BlendMode.normal
 };
 
 spine.IkConstraintData = function (name) {
@@ -212,12 +220,12 @@ spine.IkConstraint.prototype = {
         var target = this.target;
         var bones = this.bones;
         switch (bones.length) {
-            case 1:
-                spine.IkConstraint.apply1(bones[0], target.worldX, target.worldY, this.mix);
-                break;
-            case 2:
-                spine.IkConstraint.apply2(bones[0], bones[1], target.worldX, target.worldY, this.bendDirection, this.mix);
-                break;
+        case 1:
+            spine.IkConstraint.apply1(bones[0], target.worldX, target.worldY, this.mix);
+            break;
+        case 2:
+            spine.IkConstraint.apply2(bones[0], bones[1], target.worldX, target.worldY, this.bendDirection, this.mix);
+            break;
         }
     }
 };
@@ -404,7 +412,7 @@ spine.Curves.prototype = {
         var i = frameIndex * 19/*BEZIER_SIZE*/;
         var curves = this.curves;
         curves[i++] = 2/*BEZIER*/;
-
+        
         var x = dfx, y = dfy;
         for (var n = i + 19/*BEZIER_SIZE*/ - 1; i < n; i += 2) {
             curves[i] = x;
@@ -1010,7 +1018,7 @@ spine.Skeleton = function (skeletonData) {
         this.slots.push(slot);
         this.drawOrder.push(slot);
     }
-
+    
     this.ikConstraints = [];
     for (var i = 0, n = skeletonData.ikConstraints.length; i < n; i++)
         this.ikConstraints.push(new spine.IkConstraint(skeletonData.ikConstraints[i], this));
@@ -1041,28 +1049,28 @@ spine.Skeleton.prototype = {
         var bones = this.bones;
 
         outer:
-            for (var i = 0, n = bones.length; i < n; i++) {
-                var bone = bones[i];
-                var current = bone;
-                do {
-                    for (var ii = 0; ii < ikConstraintsCount; ii++) {
-                        var ikConstraint = ikConstraints[ii];
-                        var parent = ikConstraint.bones[0];
-                        var child= ikConstraint.bones[ikConstraint.bones.length - 1];
-                        while (true) {
-                            if (current == child) {
-                                boneCache[ii].push(bone);
-                                boneCache[ii + 1].push(bone);
-                                continue outer;
-                            }
-                            if (child == parent) break;
-                            child = child.parent;
+        for (var i = 0, n = bones.length; i < n; i++) {
+            var bone = bones[i];
+            var current = bone;
+            do {
+                for (var ii = 0; ii < ikConstraintsCount; ii++) {
+                    var ikConstraint = ikConstraints[ii];
+                    var parent = ikConstraint.bones[0];
+                    var child= ikConstraint.bones[ikConstraint.bones.length - 1];
+                    while (true) {
+                        if (current == child) {
+                            boneCache[ii].push(bone);
+                            boneCache[ii + 1].push(bone);
+                            continue outer;
                         }
+                        if (child == parent) break;
+                        child = child.parent;
                     }
-                    current = current.parent;
-                } while (current);
-                nonIkBones[nonIkBones.length] = bone;
-            }
+                }
+                current = current.parent;
+            } while (current);
+            nonIkBones[nonIkBones.length] = bone;
+        }
     },
     /** Updates the world transform for each bone. */
     updateWorldTransform: function () {
@@ -1143,8 +1151,8 @@ spine.Skeleton.prototype = {
         if (!skin) throw "Skin not found: " + skinName;
         this.setSkin(skin);
     },
-    /** Sets the skin used to look up attachments before looking in the {@link SkeletonData#getDefaultSkin() default skin}.
-     * Attachments from the new skin are attached if the corresponding attachment from the old skin was attached. If there was
+    /** Sets the skin used to look up attachments before looking in the {@link SkeletonData#getDefaultSkin() default skin}. 
+     * Attachments from the new skin are attached if the corresponding attachment from the old skin was attached. If there was 
      * no old skin, each slot's setup mode attachment is attached from the new skin.
      * @param newSkin May be null. */
     setSkin: function (newSkin) {
@@ -1591,7 +1599,7 @@ spine.AnimationState.prototype = {
     clearTracks: function () {
         for (var i = 0, n = this.tracks.length; i < n; i++)
             this.clearTrack(i);
-        this.tracks.length = 0;
+        this.tracks.length = 0; 
     },
     clearTrack: function (trackIndex) {
         if (trackIndex >= this.tracks.length) return;
@@ -1766,7 +1774,7 @@ spine.SkeletonJson.prototype = {
             }
 
             slotData.attachmentName = slotMap["attachment"];
-            slotData.additiveBlending = slotMap["additive"] && slotMap["additive"] == "true";
+            slotData.blendMode = spine.AttachmentType[slotMap["blend"] || "normal"];
 
             skeletonData.slots.push(slotData);
         }
@@ -1817,7 +1825,7 @@ spine.SkeletonJson.prototype = {
 
         var type = spine.AttachmentType[map["type"] || "region"];
         var path = map["path"] || name;
-
+        
         var scale = this.scale;
         if (type == spine.AttachmentType.region) {
             var region = this.attachmentLoader.newRegionAttachment(skin, name, path);
@@ -1844,7 +1852,7 @@ spine.SkeletonJson.prototype = {
         } else if (type == spine.AttachmentType.mesh) {
             var mesh = this.attachmentLoader.newMeshAttachment(skin, name, path);
             if (!mesh) return null;
-            mesh.path = path;
+            mesh.path = path; 
             mesh.vertices = this.getFloatArray(map, "vertices", scale);
             mesh.triangles = this.getIntArray(map, "triangles");
             mesh.regionUVs = this.getFloatArray(map, "uvs", 1);
@@ -1888,7 +1896,7 @@ spine.SkeletonJson.prototype = {
             mesh.triangles = this.getIntArray(map, "triangles");
             mesh.regionUVs = uvs;
             mesh.updateUVs();
-
+            
             color = map["color"];
             if (color) {
                 mesh.r = this.toColor(color, 0);
@@ -1896,7 +1904,7 @@ spine.SkeletonJson.prototype = {
                 mesh.b = this.toColor(color, 2);
                 mesh.a = this.toColor(color, 3);
             }
-
+            
             mesh.hullLength = (map["hull"] || 0) * 2;
             if (map["edges"]) mesh.edges = this.getIntArray(map, "edges");
             mesh.width = (map["width"] || 0) * scale;
@@ -1941,7 +1949,7 @@ spine.SkeletonJson.prototype = {
                         frameIndex++;
                     }
                     timelines.push(timeline);
-                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() * 5 - 5] || 0);
+                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() * 5 - 5]);
 
                 } else if (timelineName == "attachment") {
                     var timeline = new spine.AttachmentTimeline(values.length);
@@ -1953,7 +1961,7 @@ spine.SkeletonJson.prototype = {
                         timeline.setFrame(frameIndex++, valueMap["time"], valueMap["name"]);
                     }
                     timelines.push(timeline);
-                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() - 1] || 0);
+                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() - 1]);
 
                 } else
                     throw "Invalid timeline type for a slot: " + timelineName + " (" + slotName + ")";
@@ -1982,7 +1990,7 @@ spine.SkeletonJson.prototype = {
                         frameIndex++;
                     }
                     timelines.push(timeline);
-                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() * 2 - 2] || 0);
+                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() * 2 - 2]);
 
                 } else if (timelineName == "translate" || timelineName == "scale") {
                     var timeline;
@@ -2005,7 +2013,7 @@ spine.SkeletonJson.prototype = {
                         frameIndex++;
                     }
                     timelines.push(timeline);
-                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() * 3 - 3] || 0);
+                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() * 3 - 3]);
 
                 } else if (timelineName == "flipX" || timelineName == "flipY") {
                     var x = timelineName == "flipX";
@@ -2020,7 +2028,7 @@ spine.SkeletonJson.prototype = {
                         frameIndex++;
                     }
                     timelines.push(timeline);
-                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() * 2 - 2] || 0);
+                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() * 2 - 2]);
                 } else
                     throw "Invalid timeline type for a bone: " + timelineName + " (" + boneName + ")";
             }
@@ -2043,7 +2051,7 @@ spine.SkeletonJson.prototype = {
                 frameIndex++;
             }
             timelines.push(timeline);
-            duration = Math.max(duration, timeline.frames[timeline.frameCount * 3 - 3] || 0);
+            duration = Math.max(duration, timeline.frames[timeline.frameCount * 3 - 3]);
         }
 
         var ffd = map["ffd"];
@@ -2060,7 +2068,7 @@ spine.SkeletonJson.prototype = {
                     if (!attachment) throw "FFD attachment not found: " + meshName;
                     timeline.slotIndex = slotIndex;
                     timeline.attachment = attachment;
-
+                    
                     var isMesh = attachment.type == spine.AttachmentType.mesh;
                     var vertexCount;
                     if (isMesh)
@@ -2098,13 +2106,13 @@ spine.SkeletonJson.prototype = {
                                     vertices[ii] += meshVertices[ii];
                             }
                         }
-
+                        
                         timeline.setFrame(frameIndex, valueMap["time"], vertices);
                         this.readCurve(timeline, frameIndex, valueMap);
                         frameIndex++;
                     }
                     timelines[timelines.length] = timeline;
-                    duration = Math.max(duration, timeline.frames[timeline.frameCount - 1] || 0);
+                    duration = Math.max(duration, timeline.frames[timeline.frameCount - 1]);
                 }
             }
         }
@@ -2147,7 +2155,7 @@ spine.SkeletonJson.prototype = {
                 timeline.setFrame(frameIndex++, drawOrderMap["time"], drawOrder);
             }
             timelines.push(timeline);
-            duration = Math.max(duration, timeline.frames[timeline.getFrameCount() - 1] || 0);
+            duration = Math.max(duration, timeline.frames[timeline.getFrameCount() - 1]);
         }
 
         var events = map["events"];
@@ -2165,14 +2173,14 @@ spine.SkeletonJson.prototype = {
                 timeline.setFrame(frameIndex++, eventMap["time"], event);
             }
             timelines.push(timeline);
-            duration = Math.max(duration, timeline.frames[timeline.getFrameCount() - 1] || 0);
+            duration = Math.max(duration, timeline.frames[timeline.getFrameCount() - 1]);
         }
 
         skeletonData.animations.push(new spine.Animation(name, timelines, duration));
     },
     readCurve: function (timeline, frameIndex, valueMap) {
         var curve = valueMap["curve"];
-        if (!curve)
+        if (!curve) 
             timeline.curves.setLinear(frameIndex);
         else if (curve == "stepped")
             timeline.curves.setStepped(frameIndex);

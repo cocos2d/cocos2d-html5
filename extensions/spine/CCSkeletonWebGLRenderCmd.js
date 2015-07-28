@@ -35,22 +35,24 @@
 
     proto.rendering = function (ctx) {
         var node = this._node, tmpQuad = this._tmpQuad;
+        var color = node.getColor(), locSkeleton = node._skeleton;
+
+        var blendMode, textureAtlas, attachment, slot, i, n;
+        var locBlendFunc = node._blendFunc;
+        var premultiAlpha = node._premultipliedAlpha;
+
         this._shaderProgram.use();
         this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 //        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-        var color = node.getColor(), locSkeleton = node._skeleton;
         locSkeleton.r = color.r / 255;
         locSkeleton.g = color.g / 255;
         locSkeleton.b = color.b / 255;
         locSkeleton.a = node.getOpacity() / 255;
-        if (node._premultipliedAlpha) {
+        if (premultiAlpha) {
             locSkeleton.r *= locSkeleton.a;
             locSkeleton.g *= locSkeleton.a;
             locSkeleton.b *= locSkeleton.a;
         }
-
-        var additive, textureAtlas, attachment, slot, i, n;
-        var locBlendFunc = node._blendFunc;
 
         //for (i = 0, n = locSkeleton.slots.length; i < n; i++) {
         for (i = 0, n = locSkeleton.drawOrder.length; i < n; i++) {
@@ -61,10 +63,10 @@
 
             switch(slot.attachment.type) {
                 case sp.ATTACHMENT_TYPE.REGION:
-                    this._updateRegionAttachmentQuad(attachment, slot, tmpQuad, node._premultipliedAlpha);
+                    this._updateRegionAttachmentQuad(attachment, slot, tmpQuad, premultiAlpha);
                     break;
                 case sp.ATTACHMENT_TYPE.MESH:
-                    this._updateMeshAttachmentQuad(attachment, slot, tmpQuad, node._premultipliedAlpha);
+                    this._updateMeshAttachmentQuad(attachment, slot, tmpQuad, premultiAlpha);
                     break;
                 case sp.ATTACHMENT_TYPE.SKINNED_MESH:
                     break;
@@ -74,13 +76,25 @@
 
             var regionTextureAtlas = node.getTextureAtlas(attachment);
 
-            if (slot.data.additiveBlending != additive) {
+            if (slot.data.blendMode != blendMode) {
                 if (textureAtlas) {
                     textureAtlas.drawQuads();
                     textureAtlas.removeAllQuads();
                 }
-                additive = !additive;
-                cc.glBlendFunc(locBlendFunc.src, additive ? cc.ONE : locBlendFunc.dst);
+                blendMode = slot.data.blendMode;
+                switch (blendMode) {
+                case spine.BlendMode.additive:
+                    cc.glBlendFunc(premultiAlpha ? cc.ONE : cc.SRC_ALPHA, cc.ONE);
+                    break;
+                case spine.BlendMode.multiply:
+                    cc.glBlendFunc(cc.DST_COLOR, cc.ONE_MINUS_SRC_ALPHA);
+                    break;
+                case spine.BlendMode.screen:
+                    cc.glBlendFunc(cc.ONE, cc.ONE_MINUS_SRC_COLOR);
+                    break;
+                default:
+                    cc.glBlendFunc(locBlendFunc.src, locBlendFunc.dst);
+                }
             } else if (regionTextureAtlas != textureAtlas && textureAtlas) {
                 textureAtlas.drawQuads();
                 textureAtlas.removeAllQuads();
