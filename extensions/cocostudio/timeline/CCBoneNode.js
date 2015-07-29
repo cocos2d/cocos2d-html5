@@ -155,10 +155,8 @@ ccs.BoneNode = (function () {
                 var top = boneStack.pop();
                 allBones.push(top);
                 var topChildren = top.getChildBones();
-                if (topChildren.length > 0) {
-                    for (var j = 0; j < topChildren; j++) {
-                        boneStack.push(topChildren[j]);
-                    }
+                for (var j = 0; j < topChildren; j++) {
+                    boneStack.push(topChildren[j]);
                 }
             }
             return allBones;
@@ -310,7 +308,7 @@ ccs.BoneNode = (function () {
         },
 
         setVisible: function (visible) {
-            if (this._visible == visible)
+            if (this._visible == visible || !this._rootSkeleton)
                 return;
 
             Node.prototype.setVisible.call(this, visible);
@@ -342,6 +340,8 @@ ccs.BoneNode = (function () {
 
         _removeFromBoneList: function (bone) {
             cc.arrayRemoveObject(this._childBones, bone);
+            if(!(bone instanceof ccs.SkeletonNode))
+                return;
             bone._rootSkeleton = null;
             var subBones = bone.getAllSubBones();
             subBones.push(bone);
