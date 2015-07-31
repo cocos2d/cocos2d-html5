@@ -252,33 +252,37 @@
 
             var bakeContext = locBakeSprite.getCacheContext();
             var ctx = bakeContext.getContext();
-            locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
-            ctx.fillStyle = bakeContext._currentFillStyle;
 
-            bakeContext.setOffset(0 - boundingBox.x, ctx.canvas.height - boundingBox.height + boundingBox.y );
             locBakeSprite.setPosition(boundingBox.x, boundingBox.y);
 
-            var child;
-            cc.renderer._turnToCacheMode(this.__instanceId);
-            //visit for canvas
-            if (len > 0) {
-                node.sortAllChildren();
-                // draw children zOrder < 0
-                for (i = 0; i < len; i++) {
-                    child = children[i];
-                    if (child._localZOrder < 0)
-                        child._renderCmd.visit(this);
-                    else
-                        break;
-                }
-                cc.renderer.pushRenderCommand(this);
-                for (; i < len; i++) {
-                    children[i]._renderCmd.visit(this);
-                }
-            } else
-                cc.renderer.pushRenderCommand(this);
-            cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
-            locBakeSprite.transform();
+            if(this._updateCache > 0) {
+                ctx.fillStyle = bakeContext._currentFillStyle;
+                locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
+                bakeContext.setOffset(0 - boundingBox.x, ctx.canvas.height - boundingBox.height + boundingBox.y );
+
+                var child;
+                cc.renderer._turnToCacheMode(this.__instanceId);
+                //visit for canvas
+                if (len > 0) {
+                    node.sortAllChildren();
+                    // draw children zOrder < 0
+                    for (i = 0; i < len; i++) {
+                        child = children[i];
+                        if (child._localZOrder < 0)
+                            child._renderCmd.visit(this);
+                        else
+                            break;
+                    }
+                    cc.renderer.pushRenderCommand(this);
+                    for (; i < len; i++) {
+                        children[i]._renderCmd.visit(this);
+                    }
+                } else
+                    cc.renderer.pushRenderCommand(this);
+                cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
+                locBakeSprite.transform();
+                this._updateCache--;
+            }
             this._cacheDirty = false;
         }
     };
@@ -333,20 +337,19 @@
             var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
             var colorDirty = locFlag & flags.colorDirty,
                 opacityDirty = locFlag & flags.opacityDirty;
-            if (colorDirty)
+            if(colorDirty)
                 this._updateDisplayColor();
 
-            if (opacityDirty)
+            if(opacityDirty)
                 this._updateDisplayOpacity();
 
-            if (locFlag & flags.transformDirty) {
-                //update the transform
-                this.transform(null, true);
-            }
-
-            if (colorDirty || opacityDirty || (locFlag & flags.gradientDirty)){
+            if(colorDirty || opacityDirty || (locFlag & flags.gradientDirty))
                 this._updateColor();
-            }
+
+            if(locFlag & flags.transformDirty)
+                //update the transform
+                this.transform(this.getParentRenderCmd(), true);
+
             this._dirtyFlag = 0;
         }
     };
