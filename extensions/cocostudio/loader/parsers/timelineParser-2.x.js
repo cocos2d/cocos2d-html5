@@ -104,7 +104,9 @@
         var visible = getParam(json["VisibleForFrame"], true);
         node.setVisible(visible);
 
-        setContentSize(node, json["Size"]);
+        var size = json["Size"];
+        if(size)
+            setContentSize(node, size);
 
         if (json["Alpha"] != null)
             node.setOpacity(json["Alpha"]);
@@ -1269,6 +1271,8 @@
 
         });
 
+        delete json["AnchorPoint"];
+        delete json["Size"];
         parser.generalAttributes(node, json);
 
         node.setColor(getColor(json["CColor"]));
