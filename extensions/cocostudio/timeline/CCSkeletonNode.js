@@ -57,6 +57,7 @@ ccs.SkeletonNode = (function(){
                 {x: 0, y: 0}, {x: 0, y: 0}, {x: 0, y: 0}, {x: 0, y: 0},
                 {x: 0, y: 0}, {x: 0, y: 0}, {x: 0, y: 0}, {x: 0, y: 0}
             ];
+            this._rootSkeleton = this;
             BoneNode.prototype.ctor.call(this);
             this._subBonesMap = {};
 
@@ -64,7 +65,6 @@ ccs.SkeletonNode = (function(){
 
             this._rackLength = this._rackWidth = 20;
             this._updateVertices();
-            this._rootSkeleton = this;
         },
 
         getBoneNode: function(boneName){
