@@ -37,10 +37,29 @@
         cc.Node.CanvasRenderCmd.call(this, renderable);
         this._isBaked = false;
         this._bakeSprite = null;
+        this._updateCache = 2; // 2: Updated child visit 1: Rendering 0: Nothing to do
     };
 
     var proto = cc.Layer.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.Layer.CanvasRenderCmd;
+
+    proto._setCacheDirty = function(child){
+        if(child && this._updateCache === 0)
+            this._updateCache = 2;
+        if (this._cacheDirty === false) {
+            this._cacheDirty = true;
+            var cachedP = this._cachedParent;
+            cachedP && cachedP !== this && cachedP._setNodeDirtyForCache && cachedP._setNodeDirtyForCache();
+        }
+    };
+
+    proto.transform = function (parentCmd, recursive) {
+        var wt = this._worldTransform;
+        var a = wt.a, b = wt.b, c = wt.c, d = wt.d, tx = wt.tx, ty = wt.ty;
+        cc.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+        if(( wt.a !== a || wt.b !== b || wt.c !== c || wt.d !== d ) && this._updateCache === 0)
+            this._updateCache = 2;
+    };
 
     proto.bake = function(){
         if (!this._isBaked) {
@@ -48,6 +67,8 @@
             cc.renderer.childrenOrderDirty = true;
             //limit: 1. its children's blendfunc are invalid.
             this._isBaked = this._cacheDirty = true;
+            if(this._updateCache === 0)
+                this._updateCache = 2;
 
             var children = this._node._children;
             for(var i = 0, len = children.length; i < len; i++)
@@ -66,6 +87,8 @@
             this._needDraw = false;
             this._isBaked = false;
             this._cacheDirty = true;
+            if(this._updateCache === 0)
+                this._updateCache = 2;
 
             var children = this._node._children;
             for(var i = 0, len = children.length; i < len; i++)
@@ -91,19 +114,23 @@
 
             var bakeContext = locBakeSprite.getCacheContext();
             var ctx = bakeContext.getContext();
-            locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
 
-            bakeContext.setOffset(0 - boundingBox.x, ctx.canvas.height - boundingBox.height + boundingBox.y );
             locBakeSprite.setPosition(boundingBox.x, boundingBox.y);
 
-            //visit for canvas
-            node.sortAllChildren();
-            cc.renderer._turnToCacheMode(this.__instanceId);
-            for (var i = 0, len = children.length; i < len; i++) {
-                children[i].visit(this);
+            if(this._updateCache > 0){
+                locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
+                bakeContext.setOffset(0 - boundingBox.x, ctx.canvas.height - boundingBox.height + boundingBox.y );
+                //visit for canvas
+                node.sortAllChildren();
+                cc.renderer._turnToCacheMode(this.__instanceId);
+                for (var i = 0, len = children.length; i < len; i++) {
+                    children[i].visit(this);
+                }
+                cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
+                locBakeSprite.transform();                   //because bake sprite's position was changed at rendering.
+                this._updateCache--;
             }
-            cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
-            locBakeSprite.transform();                   //because bake sprite's position was changed at rendering.
+
             this._cacheDirty = false;
         }
     };
@@ -123,6 +150,8 @@
         this._syncStatus(parentCmd);
         cc.renderer.pushRenderCommand(this);
         this._cacheDirty = true;
+        if(this._updateCache === 0)
+            this._updateCache = 2;
 
         //the bakeSprite is drawing
         this._bakeSprite.visit(this);
@@ -223,33 +252,37 @@
 
             var bakeContext = locBakeSprite.getCacheContext();
             var ctx = bakeContext.getContext();
-            locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
-            ctx.fillStyle = bakeContext._currentFillStyle;
 
-            bakeContext.setOffset(0 - boundingBox.x, ctx.canvas.height - boundingBox.height + boundingBox.y );
             locBakeSprite.setPosition(boundingBox.x, boundingBox.y);
 
-            var child;
-            cc.renderer._turnToCacheMode(this.__instanceId);
-            //visit for canvas
-            if (len > 0) {
-                node.sortAllChildren();
-                // draw children zOrder < 0
-                for (i = 0; i < len; i++) {
-                    child = children[i];
-                    if (child._localZOrder < 0)
-                        child._renderCmd.visit(this);
-                    else
-                        break;
-                }
-                cc.renderer.pushRenderCommand(this);
-                for (; i < len; i++) {
-                    children[i]._renderCmd.visit(this);
-                }
-            } else
-                cc.renderer.pushRenderCommand(this);
-            cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
-            locBakeSprite.transform();
+            if(this._updateCache > 0) {
+                ctx.fillStyle = bakeContext._currentFillStyle;
+                locBakeSprite.resetCanvasSize(boundingBox.width, boundingBox.height);
+                bakeContext.setOffset(0 - boundingBox.x, ctx.canvas.height - boundingBox.height + boundingBox.y );
+
+                var child;
+                cc.renderer._turnToCacheMode(this.__instanceId);
+                //visit for canvas
+                if (len > 0) {
+                    node.sortAllChildren();
+                    // draw children zOrder < 0
+                    for (i = 0; i < len; i++) {
+                        child = children[i];
+                        if (child._localZOrder < 0)
+                            child._renderCmd.visit(this);
+                        else
+                            break;
+                    }
+                    cc.renderer.pushRenderCommand(this);
+                    for (; i < len; i++) {
+                        children[i]._renderCmd.visit(this);
+                    }
+                } else
+                    cc.renderer.pushRenderCommand(this);
+                cc.renderer._renderingToCacheCanvas(bakeContext, this.__instanceId);
+                locBakeSprite.transform();
+                this._updateCache--;
+            }
             this._cacheDirty = false;
         }
     };
@@ -304,20 +337,19 @@
             var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
             var colorDirty = locFlag & flags.colorDirty,
                 opacityDirty = locFlag & flags.opacityDirty;
-            if (colorDirty)
+            if(colorDirty)
                 this._updateDisplayColor();
 
-            if (opacityDirty)
+            if(opacityDirty)
                 this._updateDisplayOpacity();
 
-            if (locFlag & flags.transformDirty) {
-                //update the transform
-                this.transform(null, true);
-            }
-
-            if (colorDirty || opacityDirty || (locFlag & flags.gradientDirty)){
+            if(colorDirty || opacityDirty || (locFlag & flags.gradientDirty))
                 this._updateColor();
-            }
+
+            if(locFlag & flags.transformDirty)
+                //update the transform
+                this.transform(this.getParentRenderCmd(), true);
+
             this._dirtyFlag = 0;
         }
     };
