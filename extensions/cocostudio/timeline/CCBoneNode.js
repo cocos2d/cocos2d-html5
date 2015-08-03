@@ -60,9 +60,9 @@ ccs.BoneNode = (function () {
         _noMVPVertices: null,
 
         ctor: function (length) {
+            Node.prototype.ctor.call(this);
             // null
             // length
-            Node.prototype.ctor.call(this);
             // _isRackShow -> _renderCmd._debug
             if (this._squareVertices === null)
                 this._squareVertices = [
@@ -70,7 +70,6 @@ ccs.BoneNode = (function () {
                 ];
 
             this._rackColor = cc.color.WHITE;
-            this._rootSkeleton = null;
             this._blendFunc = BlendFunc.ALPHA_NON_PREMULTIPLIED;
 
             this._childBones = [];
@@ -92,6 +91,7 @@ ccs.BoneNode = (function () {
                 }
             }
             Node.prototype.addChild.call(this, skin);
+            this._boneSkins.push(skin);
             skin.setVisible(display);
         },
 
@@ -109,7 +109,7 @@ ccs.BoneNode = (function () {
             if (typeof skin === "string") {
                 for (i = 0; i < boneSkins.length; i++) {
                     boneSkin = boneSkins[i];
-                    if (boneSkin == boneSkin.getName()) {
+                    if (skin == boneSkin.getName()) {
                         boneSkin.setVisible(true);
                     } else if (hideOthers) {
                         boneSkin.setVisible(false);
@@ -318,9 +318,9 @@ ccs.BoneNode = (function () {
             if (child instanceof BoneNode) {
                 this._addToBoneList(child);
             } else {
-                if (child instanceof SkinNode) {
-                    this._addToSkinList(skin);
-                }
+                //if (child instanceof SkinNode) {
+                    this._addToSkinList(child);
+                //}
             }
         },
 
@@ -352,16 +352,25 @@ ccs.BoneNode = (function () {
             }
         },
 
+        _setRootSkeleton: function(rootSkeleton){
+            this._rootSkeleton = rootSkeleton;
+            var subBones = this.getAllSubBones();
+            for (var i = 0; i < subBones.length; i++) {
+                this._addToBoneList(subBones[i]);
+            }
+        },
+
         _addToBoneList: function (bone) {
-            this._childBones.push(bone);
+            if(this._childBones.indexOf(bone) === -1)
+                this._childBones.push(bone);
             if (bone._rootSkeleton == null && this._rootSkeleton != null) {
                 var subBones = bone.getAllSubBones();
                 subBones.push(bone);
                 for (var subBone, i = 0; i < subBones.length; i++) {
                     subBone = subBones[i];
-                    subBone._rootSkeleton = this._rootSkeleton;
+                    subBone._setRootSkeleton(this._rootSkeleton);
                     var boneName = subBone.getName();
-                    if (this._rootSkeleton._subBonesMap[boneName]) {
+                    if (!this._rootSkeleton._subBonesMap[boneName]) {
                         this._rootSkeleton._subBonesMap[subBone.getName()] = subBone;
                     }
                     else
