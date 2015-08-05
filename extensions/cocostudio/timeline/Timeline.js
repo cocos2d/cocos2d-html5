@@ -199,27 +199,19 @@ ccs.Timeline = ccs.Class.extend({
         var length = this._frames.length;
         var needEnterFrame = false;
 
-        do
-        {
-            if (frameIndex <= this._frames[0].getFrameIndex())
-            {
+        do{
+            if (frameIndex < this._frames[0].getFrameIndex()){
                 if(this._currentKeyFrameIndex >= this._frames[0].getFrameIndex())
                     needEnterFrame = true;
 
                 this._fromIndex = 0;
-
-                if(length > 1)
-                    this._toIndex = 1;
-                else
-                    this._toIndex = 0;
+                this._toIndex = 0;
 
                 from = to = this._frames[0];
                 this._currentKeyFrameIndex = 0;
                 this._betweenDuration = this._frames[0].getFrameIndex();
                 break;
-            }
-            else if(frameIndex >= this._frames[length - 1].getFrameIndex())
-            {
+            }else if(frameIndex >= this._frames[length - 1].getFrameIndex()){
                 this._fromIndex = length - 1;
                 this._toIndex = 0;
 
