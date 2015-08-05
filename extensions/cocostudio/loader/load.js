@@ -222,8 +222,7 @@ ccs.csLoader = {
     }
 };
 
-
-cc._jsonLoader = {
+cc.loader.register(["json"], {
     load : function(realUrl, url, res, cb){
         cc.loader.loadJson(realUrl, function(error, data){
             if(data && data["Content"] && data["Content"]["Content"]["UsedResources"]){
@@ -232,14 +231,13 @@ cc._jsonLoader = {
                 for(var i=0; i<list.length; i++){
                     list[i] = cc.path.join(dirname, list[i]);
                 }
-                cc.loader.load(list, function(error, result){
-                    cc.loader.loadJson(realUrl, cb);
+                cc.loader.load(list, function(){
+                    cb(error, data);
                 });
             }else{
-                cc.loader.loadJson(realUrl, cb);
+                cb(error, data);
             }
 
         });
     }
-};
-cc.loader.register(["json", "ExportJson"], cc._jsonLoader);
+});
