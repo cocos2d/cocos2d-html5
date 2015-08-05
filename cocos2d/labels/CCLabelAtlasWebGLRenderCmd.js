@@ -68,11 +68,14 @@
         var locDisplayedColor = this._displayedColor;
         var curColor = {r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: node._displayedOpacity};
         var locItemWidth = node._itemWidth;
+        var locItemHeight = node._itemHeight;
         for (var i = 0, cr = -1; i < n; i++) {
             var a = locString.charCodeAt(i) - node._mapStartChar.charCodeAt(0);
             var row = a % node._itemsPerRow;
             var col = 0 | (a / node._itemsPerRow);
             if(row < 0 || col < 0)
+                continue;
+            if(row*locItemWidth + locItemWidth > textureWide || col*locItemHeight + locItemHeight > textureHigh)
                 continue;
 
             cr++;
@@ -117,11 +120,20 @@
             locQuadBL.colors = curColor;
             locQuadBR.colors = curColor;
         }
+        this.updateContentSize(i, cr+1);
         if (n > 0) {
             locTextureAtlas.dirty = true;
             var totalQuads = locTextureAtlas.totalQuads;
             if (n > totalQuads)
                 locTextureAtlas.increaseTotalQuadsWith(n - totalQuads);
+        }
+    };
+
+    proto.updateContentSize = function(i, cr){
+        var node = this._node,
+            contentSize = node._contentSize;
+        if(i !== cr && i*node._itemWidth === contentSize.width && node._itemHeight === contentSize.height){
+            node.setContentSize(cr * node._itemWidth, node._itemHeight);
         }
     };
 
