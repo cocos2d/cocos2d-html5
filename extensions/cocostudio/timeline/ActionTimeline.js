@@ -323,10 +323,7 @@ ccs.ActionTimeline = cc.Action.extend({
             this._timelineMap[tag] = [];
         }
 
-        if (!this._timelineMap[tag].some(function(item){
-            if(item === timeline)
-                return true;
-        })) {
+        if (this._timelineMap[tag].indexOf(timeline) === -1) {
             this._timelineList.push(timeline);
             this._timelineMap[tag].push(timeline);
             timeline.setActionTimeline(this);
