@@ -329,8 +329,7 @@ ccui.VideoPlayer.EventType = {
             }
             if(hasChild)
                 container.removeChild(this._video);
-            var list = eventManager._listenersMap[cc.game.EVENT_RESIZE].getFixedPriorityListeners();
-            eventManager._removeListenerInVector(list, this._listener);
+            eventManager.removeListener(this._listener);
             this._listener = null;
         }
         this.updateStatus();
@@ -354,8 +353,7 @@ ccui.VideoPlayer.EventType = {
         if(node._parent && node._visible)
             this.updateMatrix(this._worldTransform, view._scaleX, view._scaleY);
         else{
-            var list = eventManager._listenersMap[cc.game.EVENT_RESIZE].getFixedPriorityListeners();
-            eventManager._removeListenerInVector(list, this._listener);
+            eventManager.removeListener(this._listener);
             this._listener = null;
         }
     };
