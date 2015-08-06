@@ -339,17 +339,17 @@ ccs.BoneNode = (function () {
         },
 
         _removeFromBoneList: function (bone) {
-            cc.arrayRemoveObject(this._childBones, bone);
-            if(!(bone instanceof ccs.SkeletonNode))
-                return;
-            bone._rootSkeleton = null;
-            var subBones = bone.getAllSubBones();
-            subBones.push(bone);
+            if(bone instanceof ccs.SkeletonNode){
+                bone._rootSkeleton = null;
+                var subBones = bone.getAllSubBones();
+                subBones.push(bone);
+            }
             for (var subBone, i = 0; i < subBones.length; i++) {
                 subBone = subBones[i];
-                subBone._rootSkeleton = null;
                 cc.arrayRemoveObject(this._rootSkeleton._subBonesMap, subBone.getName());
+                subBone._rootSkeleton = null;
             }
+            cc.arrayRemoveObject(this._childBones, bone);
         },
 
         _setRootSkeleton: function(rootSkeleton){
