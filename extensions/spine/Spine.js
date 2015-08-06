@@ -1148,7 +1148,7 @@ spine.Skeleton.prototype = {
     },
     setSkinByName: function (skinName) {
         var skin = this.data.findSkin(skinName);
-        if (!skin) throw "Skin not found: " + skinName;
+        if (!skin) throw new Error("Skin not found: " + skinName);
         this.setSkin(skin);
     },
     /** Sets the skin used to look up attachments before looking in the {@link SkeletonData#getDefaultSkin() default skin}. 
@@ -1195,13 +1195,13 @@ spine.Skeleton.prototype = {
                 var attachment = null;
                 if (attachmentName) {
                     attachment = this.getAttachmentBySlotIndex(i, attachmentName);
-                    if (!attachment) throw "Attachment not found: " + attachmentName + ", for slot: " + slotName;
+                    if (!attachment) throw new Error("Attachment not found: " + attachmentName + ", for slot: " + slotName);
                 }
                 slot.setAttachment(attachment);
                 return;
             }
         }
-        throw "Slot not found: " + slotName;
+        throw new Error("Slot not found: " + slotName);
     },
     /** @return May be null. */
     findIkConstraint: function (ikConstraintName) {
@@ -1489,9 +1489,9 @@ spine.AnimationStateData.prototype = {
     defaultMix: 0,
     setMixByName: function (fromName, toName, duration) {
         var from = this.skeletonData.findAnimation(fromName);
-        if (!from) throw "Animation not found: " + fromName;
+        if (!from) throw new Error("Animation not found: " + fromName);
         var to = this.skeletonData.findAnimation(toName);
-        if (!to) throw "Animation not found: " + toName;
+        if (!to) throw new Error("Animation not found: " + toName);
         this.setMix(from, to, duration);
     },
     setMix: function (from, to, duration) {
@@ -1644,7 +1644,7 @@ spine.AnimationState.prototype = {
     },
     setAnimationByName: function (trackIndex, animationName, loop) {
         var animation = this.data.skeletonData.findAnimation(animationName);
-        if (!animation) throw "Animation not found: " + animationName;
+        if (!animation) throw new Error("Animation not found: " + animationName);
         return this.setAnimation(trackIndex, animation, loop);
     },
     /** Set the current animation. Any queued animations are cleared. */
@@ -1658,7 +1658,7 @@ spine.AnimationState.prototype = {
     },
     addAnimationByName: function (trackIndex, animationName, loop, delay) {
         var animation = this.data.skeletonData.findAnimation(animationName);
-        if (!animation) throw "Animation not found: " + animationName;
+        if (!animation) throw new Error("Animation not found: " + animationName);
         return this.addAnimation(trackIndex, animation, loop, delay);
     },
     /** Adds an animation to be played delay seconds after the current or last queued animation.
@@ -1719,7 +1719,7 @@ spine.SkeletonJson.prototype = {
             var parent = null;
             if (boneMap["parent"]) {
                 parent = skeletonData.findBone(boneMap["parent"]);
-                if (!parent) throw "Parent bone not found: " + boneMap["parent"];
+                if (!parent) throw new Error("Parent bone not found: " + boneMap["parent"]);
             }
             var boneData = new spine.BoneData(boneMap["name"], parent);
             boneData.length = (boneMap["length"] || 0) * this.scale;
@@ -1743,12 +1743,12 @@ spine.SkeletonJson.prototype = {
                 var bones = ikMap["bones"];
                 for (var ii = 0, nn = bones.length; ii < nn; ii++) {
                     var bone = skeletonData.findBone(bones[ii]);
-                    if (!bone) throw "IK bone not found: " + bones[ii];
+                    if (!bone) throw new Error("IK bone not found: " + bones[ii]);
                     ikConstraintData.bones.push(bone);
                 }
 
                 ikConstraintData.target = skeletonData.findBone(ikMap["target"]);
-                if (!ikConstraintData.target) throw "Target bone not found: " + ikMap["target"];
+                if (!ikConstraintData.target) throw new Error("Target bone not found: " + ikMap["target"]);
 
                 ikConstraintData.bendDirection = (!ikMap.hasOwnProperty("bendPositive") || ikMap["bendPositive"]) ? 1 : -1;
                 ikConstraintData.mix = ikMap.hasOwnProperty("mix") ? ikMap["mix"] : 1;
@@ -1762,7 +1762,7 @@ spine.SkeletonJson.prototype = {
         for (var i = 0, n = slots.length; i < n; i++) {
             var slotMap = slots[i];
             var boneData = skeletonData.findBone(slotMap["bone"]);
-            if (!boneData) throw "Slot bone not found: " + slotMap["bone"];
+            if (!boneData) throw new Error("Slot bone not found: " + slotMap["bone"]);
             var slotData = new spine.SlotData(slotMap["name"], boneData);
 
             var color = slotMap["color"];
@@ -1917,7 +1917,7 @@ spine.SkeletonJson.prototype = {
                 attachment.vertices.push(vertices[i] * scale);
             return attachment;
         }
-        throw "Unknown attachment type: " + type;
+        throw new Error("Unknown attachment type: " + type);
     },
     readAnimation: function (name, map, skeletonData) {
         var timelines = [];
@@ -1964,7 +1964,7 @@ spine.SkeletonJson.prototype = {
                     duration = Math.max(duration, timeline.frames[timeline.getFrameCount() - 1]);
 
                 } else
-                    throw "Invalid timeline type for a slot: " + timelineName + " (" + slotName + ")";
+                    throw new Error("Invalid timeline type for a slot: " + timelineName + " (" + slotName + ")");
             }
         }
 
@@ -1972,7 +1972,7 @@ spine.SkeletonJson.prototype = {
         for (var boneName in bones) {
             if (!bones.hasOwnProperty(boneName)) continue;
             var boneIndex = skeletonData.findBoneIndex(boneName);
-            if (boneIndex == -1) throw "Bone not found: " + boneName;
+            if (boneIndex == -1) throw new Error("Bone not found: " + boneName);
             var boneMap = bones[boneName];
 
             for (var timelineName in boneMap) {
@@ -2030,7 +2030,7 @@ spine.SkeletonJson.prototype = {
                     timelines.push(timeline);
                     duration = Math.max(duration, timeline.frames[timeline.getFrameCount() * 2 - 2]);
                 } else
-                    throw "Invalid timeline type for a bone: " + timelineName + " (" + boneName + ")";
+                    throw new Error("Invalid timeline type for a bone: " + timelineName + " (" + boneName + ")");
             }
         }
 
@@ -2065,7 +2065,7 @@ spine.SkeletonJson.prototype = {
                     var values = meshMap[meshName];
                     var timeline = new spine.FfdTimeline(values.length);
                     var attachment = skin.getAttachment(slotIndex, meshName);
-                    if (!attachment) throw "FFD attachment not found: " + meshName;
+                    if (!attachment) throw new Error("FFD attachment not found: " + meshName);
                     timeline.slotIndex = slotIndex;
                     timeline.attachment = attachment;
                     
@@ -2138,7 +2138,7 @@ spine.SkeletonJson.prototype = {
                     for (var ii = 0, nn = offsets.length; ii < nn; ii++) {
                         var offsetMap = offsets[ii];
                         var slotIndex = skeletonData.findSlotIndex(offsetMap["slot"]);
-                        if (slotIndex == -1) throw "Slot not found: " + offsetMap["slot"];
+                        if (slotIndex == -1) throw new Error("Slot not found: " + offsetMap["slot"]);
                         // Collect unchanged items.
                         while (originalIndex != slotIndex)
                             unchanged[unchangedIndex++] = originalIndex++;
@@ -2165,7 +2165,7 @@ spine.SkeletonJson.prototype = {
             for (var i = 0, n = events.length; i < n; i++) {
                 var eventMap = events[i];
                 var eventData = skeletonData.findEvent(eventMap["name"]);
-                if (!eventData) throw "Event not found: " + eventMap["name"];
+                if (!eventData) throw new Error("Event not found: " + eventMap["name"]);
                 var event = new spine.Event(eventData);
                 event.intValue = eventMap.hasOwnProperty("int") ? eventMap["int"] : eventData.intValue;
                 event.floatValue = eventMap.hasOwnProperty("float") ? eventMap["float"] : eventData.floatValue;
@@ -2188,7 +2188,7 @@ spine.SkeletonJson.prototype = {
             timeline.curves.setCurve(frameIndex, curve[0], curve[1], curve[2], curve[3]);
     },
     toColor: function (hexString, colorIndex) {
-        if (hexString.length != 8) throw "Color hexidecimal length must be 8, recieved: " + hexString;
+        if (hexString.length != 8) throw new Error("Color hexidecimal length must be 8, recieved: " + hexString);
         return parseInt(hexString.substring(colorIndex * 2, (colorIndex * 2) + 2), 16) / 255;
     },
     getFloatArray: function (map, name, scale) {
@@ -2408,14 +2408,14 @@ spine.AtlasReader.prototype = {
     readValue: function () {
         var line = this.readLine();
         var colon = line.indexOf(":");
-        if (colon == -1) throw "Invalid line: " + line;
+        if (colon == -1) throw new Error("Invalid line: " + line);
         return this.trim(line.substring(colon + 1));
     },
     /** Returns the number of tuple values read (1, 2 or 4). */
     readTuple: function (tuple) {
         var line = this.readLine();
         var colon = line.indexOf(":");
-        if (colon == -1) throw "Invalid line: " + line;
+        if (colon == -1) throw new Error("Invalid line: " + line);
         var i = 0, lastMatch = colon + 1;
         for (; i < 3; i++) {
             var comma = line.indexOf(",", lastMatch);
@@ -2434,7 +2434,7 @@ spine.AtlasAttachmentLoader = function (atlas) {
 spine.AtlasAttachmentLoader.prototype = {
     newRegionAttachment: function (skin, name, path) {
         var region = this.atlas.findRegion(path);
-        if (!region) throw "Region not found in atlas: " + path + " (region attachment: " + name + ")";
+        if (!region) throw new Error("Region not found in atlas: " + path + " (region attachment: " + name + ")");
         var attachment = new spine.RegionAttachment(name);
         attachment.rendererObject = region;
         attachment.setUVs(region.u, region.v, region.u2, region.v2, region.rotate);
@@ -2448,7 +2448,7 @@ spine.AtlasAttachmentLoader.prototype = {
     },
     newMeshAttachment: function (skin, name, path) {
         var region = this.atlas.findRegion(path);
-        if (!region) throw "Region not found in atlas: " + path + " (mesh attachment: " + name + ")";
+        if (!region) throw new Error("Region not found in atlas: " + path + " (mesh attachment: " + name + ")");
         var attachment = new spine.MeshAttachment(name);
         attachment.rendererObject = region;
         attachment.regionU = region.u;
@@ -2466,7 +2466,7 @@ spine.AtlasAttachmentLoader.prototype = {
     },
     newSkinnedMeshAttachment: function (skin, name, path) {
         var region = this.atlas.findRegion(path);
-        if (!region) throw "Region not found in atlas: " + path + " (skinned mesh attachment: " + name + ")";
+        if (!region) throw new Error("Region not found in atlas: " + path + " (skinned mesh attachment: " + name + ")");
         var attachment = new spine.SkinnedMeshAttachment(name);
         attachment.rendererObject = region;
         attachment.regionU = region.u;

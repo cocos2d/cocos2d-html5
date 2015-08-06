@@ -194,9 +194,9 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
      */
     initWithVertexShaderFilename: function (vShaderFilename, fShaderFileName) {
         var vertexSource = cc.loader.getRes(vShaderFilename);
-        if(!vertexSource) throw "Please load the resource firset : " + vShaderFilename;
+        if(!vertexSource) throw new Error("Please load the resource firset : " + vShaderFilename);
         var fragmentSource = cc.loader.getRes(fShaderFileName);
-        if(!fragmentSource) throw "Please load the resource firset : " + fShaderFileName;
+        if(!fragmentSource) throw new Error("Please load the resource firset : " + fShaderFileName);
         return this.initWithVertexShaderByteArray(vertexSource, fragmentSource);
     },
 
@@ -291,9 +291,9 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
      */
     getUniformLocationForName:function(name){
         if(!name)
-            throw "cc.GLProgram.getUniformLocationForName(): uniform name should be non-null";
+            throw new Error("cc.GLProgram.getUniformLocationForName(): uniform name should be non-null");
         if(!this._programObj)
-            throw "cc.GLProgram.getUniformLocationForName(): Invalid operation. Cannot get uniform location when program is not initialized";
+            throw new Error("cc.GLProgram.getUniformLocationForName(): Invalid operation. Cannot get uniform location when program is not initialized");
 
         return this._glContext.getUniformLocation(this._programObj, name);
     },
@@ -625,7 +625,7 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
 
     _setUniformForMVPMatrixWithMat4: function(modelViewMatrix){
         if(!modelViewMatrix)
-            throw "modelView matrix is undefined.";
+            throw new Error("modelView matrix is undefined.");
         this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_MVMATRIX], false, modelViewMatrix.mat);
         this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_PMATRIX], false, cc.projection_matrix_stack.top.mat);
     },

@@ -155,14 +155,14 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      */
     addChild:function (child, zOrder, tag) {
         if(!child)
-            throw "cc.ParticleBatchNode.addChild() : child should be non-null";
+            throw new Error("cc.ParticleBatchNode.addChild() : child should be non-null");
         if(!(child instanceof cc.ParticleSystem))
-            throw "cc.ParticleBatchNode.addChild() : only supports cc.ParticleSystem as children";
+            throw new Error("cc.ParticleBatchNode.addChild() : only supports cc.ParticleSystem as children");
         zOrder = (zOrder == null) ? child.zIndex : zOrder;
         tag = (tag == null) ? child.tag : tag;
 
         if(child.getTexture() !== this.textureAtlas.texture)
-            throw "cc.ParticleSystem.addChild() : the child is not using the same texture id";
+            throw new Error("cc.ParticleSystem.addChild() : the child is not using the same texture id");
 
         // If this is the 1st children, then copy blending function
         var childBlendFunc = child.getBlendFunc();
@@ -228,7 +228,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
             return;
 
         if(!(child instanceof cc.ParticleSystem))
-            throw "cc.ParticleBatchNode.removeChild(): only supports cc.ParticleSystem as children";
+            throw new Error("cc.ParticleBatchNode.removeChild(): only supports cc.ParticleSystem as children");
         if(this._children.indexOf(child) === -1){
             cc.log("cc.ParticleBatchNode.removeChild(): doesn't contain the sprite. Can't remove it");
             return;
@@ -256,9 +256,9 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      */
     reorderChild:function (child, zOrder) {
         if(!child)
-            throw "cc.ParticleBatchNode.reorderChild(): child should be non-null";
+            throw new Error("cc.ParticleBatchNode.reorderChild(): child should be non-null");
         if(!(child instanceof cc.ParticleSystem))
-            throw "cc.ParticleBatchNode.reorderChild(): only supports cc.QuadParticleSystems as children";
+            throw new Error("cc.ParticleBatchNode.reorderChild(): only supports cc.QuadParticleSystems as children");
         if(this._children.indexOf(child) === -1){
             cc.log("cc.ParticleBatchNode.reorderChild(): Child doesn't belong to batch");
             return;
@@ -459,7 +459,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     //
     _addChildHelper:function (child, z, aTag) {
         if(!child)
-            throw "cc.ParticleBatchNode._addChildHelper(): child should be non-null";
+            throw new Error("cc.ParticleBatchNode._addChildHelper(): child should be non-null");
         if(child.parent){
             cc.log("cc.ParticleBatchNode._addChildHelper(): child already added. It can't be added again");
             return null;

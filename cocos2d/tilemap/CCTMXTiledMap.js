@@ -270,7 +270,7 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      */
     initWithTMXFile:function (tmxFile) {
         if(!tmxFile || tmxFile.length === 0)
-            throw "cc.TMXTiledMap.initWithTMXFile(): tmxFile should be non-null or non-empty string.";
+            throw new Error("cc.TMXTiledMap.initWithTMXFile(): tmxFile should be non-null or non-empty string.");
 	    this.width = 0;
 	    this.height = 0;
         var mapInfo = new cc.TMXMapInfo(tmxFile);
@@ -349,7 +349,7 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      */
     getLayer:function (layerName) {
         if(!layerName || layerName.length === 0)
-            throw "cc.TMXTiledMap.getLayer(): layerName should be non-null or non-empty string.";
+            throw new Error("cc.TMXTiledMap.getLayer(): layerName should be non-null or non-empty string.");
         var locChildren = this._children;
         for (var i = 0; i < locChildren.length; i++) {
             var layer = locChildren[i];
@@ -367,7 +367,7 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      */
     getObjectGroup:function (groupName) {
         if(!groupName || groupName.length === 0)
-            throw "cc.TMXTiledMap.getObjectGroup(): groupName should be non-null or non-empty string.";
+            throw new Error("cc.TMXTiledMap.getObjectGroup(): groupName should be non-null or non-empty string.");
         if (this.objectGroups) {
             for (var i = 0; i < this.objectGroups.length; i++) {
                 var objectGroup = this.objectGroups[i];

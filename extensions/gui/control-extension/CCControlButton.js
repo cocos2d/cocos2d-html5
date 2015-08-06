@@ -168,9 +168,9 @@ cc.ControlButton = cc.Control.extend(/** @lends cc.ControlButton# */{
 
     initWithLabelAndBackgroundSprite: function (label, backgroundSprite) {
         if (!label)
-            throw "cc.ControlButton.initWithLabelAndBackgroundSprite(): label should be non-null";
+            throw new Error("cc.ControlButton.initWithLabelAndBackgroundSprite(): label should be non-null");
         if (!backgroundSprite)
-            throw "cc.ControlButton.initWithLabelAndBackgroundSprite(): backgroundSprite should be non-null";
+            throw new Error("cc.ControlButton.initWithLabelAndBackgroundSprite(): backgroundSprite should be non-null");
         if (cc.Control.prototype.init.call(this, true)) {
             this._parentInited = true;
 

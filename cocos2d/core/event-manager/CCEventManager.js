@@ -920,7 +920,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
         this._updateDirtyFlagForSceneGraph();
         this._inDispatch++;
         if(!event || !event.getType)
-            throw "event is undefined";
+            throw new Error("event is undefined");
         if (event.getType() === cc.Event.TOUCH) {
             this._dispatchTouchEvent(event);
             this._inDispatch--;

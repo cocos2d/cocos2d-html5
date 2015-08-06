@@ -95,9 +95,9 @@ cc.ControlStepper = cc.Control.extend(/** @lends cc.ControlStepper# */{
 
     initWithMinusSpriteAndPlusSprite:function (minusSprite, plusSprite) {
         if(!minusSprite)
-            throw "cc.ControlStepper.initWithMinusSpriteAndPlusSprite(): Minus sprite should be non-null.";
+            throw new Error("cc.ControlStepper.initWithMinusSpriteAndPlusSprite(): Minus sprite should be non-null.");
         if(!plusSprite)
-            throw "cc.ControlStepper.initWithMinusSpriteAndPlusSprite(): Plus sprite should be non-null.";
+            throw new Error("cc.ControlStepper.initWithMinusSpriteAndPlusSprite(): Plus sprite should be non-null.");
 
         if (this.init()) {
             // Set the default values
@@ -158,7 +158,7 @@ cc.ControlStepper = cc.Control.extend(/** @lends cc.ControlStepper# */{
 
     setMinimumValue:function (minimumValue) {
         if (minimumValue >= this._maximumValue)
-            throw "cc.ControlStepper.setMinimumValue(): minimumValue should be numerically less than maximumValue.";
+            throw new Error("cc.ControlStepper.setMinimumValue(): minimumValue should be numerically less than maximumValue.");
 
         this._minimumValue = minimumValue;
         this.setValue(this._value);
@@ -169,7 +169,7 @@ cc.ControlStepper = cc.Control.extend(/** @lends cc.ControlStepper# */{
 
     setMaximumValue:function (maximumValue) {
         if (maximumValue <= this._minimumValue)
-            throw "cc.ControlStepper.setMaximumValue(): maximumValue should be numerically less than maximumValue.";
+            throw new Error("cc.ControlStepper.setMaximumValue(): maximumValue should be numerically less than maximumValue.");
 
         this._maximumValue = maximumValue;
         this.setValue(this._value);
@@ -188,7 +188,7 @@ cc.ControlStepper = cc.Control.extend(/** @lends cc.ControlStepper# */{
 
     setStepValue:function (stepValue) {
         if (stepValue <= 0)
-            throw "cc.ControlStepper.setMaximumValue(): stepValue should be numerically greater than 0.";
+            throw new Error("cc.ControlStepper.setMaximumValue(): stepValue should be numerically greater than 0.");
         this._stepValue = stepValue;
     },
 

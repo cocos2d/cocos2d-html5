@@ -88,7 +88,7 @@ cc.ArrayForObjectSorting = cc.Class.extend(/** @lends cc.ArrayForObjectSorting# 
      */
     insertSortedObject:function (addObject) {
         if(!addObject)
-            throw "cc.ArrayForObjectSorting.insertSortedObject(): addObject should be non-null.";
+            throw new Error("cc.ArrayForObjectSorting.insertSortedObject(): addObject should be non-null.");
         var idx = this.indexOfSortedObject(addObject);
         this.insertObject(addObject, idx);
     },

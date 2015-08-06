@@ -309,7 +309,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
     runAnimationsForSequenceIdTweenDuration:function(nSeqId, tweenDuration){
         if(nSeqId === -1)
-            throw "cc.BuilderAnimationManager.runAnimationsForSequenceIdTweenDuration(): Sequence id should not be -1";
+            throw new Error("cc.BuilderAnimationManager.runAnimationsForSequenceIdTweenDuration(): Sequence id should not be -1");
         tweenDuration = tweenDuration || 0;
 
         this._rootNode.stopAllActions();
@@ -732,7 +732,7 @@ cc.BuilderRotateXTo = cc.ActionInterval.extend({
 });
 
 cc.BuilderRotateXTo.create = function (duration, angle) {
-    throw "rotationX has not been implemented in cocos2d-html5";
+    throw new Error("rotationX has not been implemented in cocos2d-html5");
 };
 
 //
@@ -743,7 +743,7 @@ cc.BuilderRotateYTo = cc.ActionInterval.extend({
 });
 
 cc.BuilderRotateYTo.create = function (duration, angle) {
-    throw "rotationY has not been implemented in cocos2d-html5";
+    throw new Error("rotationY has not been implemented in cocos2d-html5");
 };
 
 //

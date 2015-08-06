@@ -1204,7 +1204,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
          *  Need to get the full path of the xml file, or the Tiny XML can't find the xml at IOS
          */
         var xmlStr = cc.loader.getRes(xml);
-        if (!xmlStr) throw "Please load the resource first : " + xml;
+        if (!xmlStr) throw new Error("Please load the resource first : " + xml);
         var skeletonXML = cc.saxParser.parse(xmlStr);
         var skeleton = skeletonXML.documentElement;
         if (skeleton)

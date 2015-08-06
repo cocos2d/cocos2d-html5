@@ -103,7 +103,7 @@
                 cc.current_stack = cc.texture_matrix_stack;
                 break;
             default:
-                throw "Invalid matrix mode specified";   //TODO: Proper error handling
+                throw new Error("Invalid matrix mode specified");   //TODO: Proper error handling
                 break;
         }
     };
@@ -160,7 +160,7 @@
                 pOut.assignFrom(cc.texture_matrix_stack.top);
                 break;
             default:
-                throw "Invalid matrix mode specified"; //TODO: Proper error handling
+                throw new Error("Invalid matrix mode specified"); //TODO: Proper error handling
                 break;
         }
     };

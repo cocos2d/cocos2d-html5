@@ -168,7 +168,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
             return;
         }
         if(!child)
-            throw "cc.ParallaxNode.addChild(): child should be non-null";
+            throw new Error("cc.ParallaxNode.addChild(): child should be non-null");
         var obj = new cc.PointObject(ratio, offset);
         obj.setChild(child);
         this.parallaxArray.push(obj);

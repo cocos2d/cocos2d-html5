@@ -202,7 +202,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
      */
     initWithTileFile: function (tile, tileWidth, tileHeight, itemsToRender) {
         if (!tile)
-            throw "cc.AtlasNode.initWithTileFile(): title should not be null";
+            throw new Error("cc.AtlasNode.initWithTileFile(): title should not be null");
         var texture = cc.textureCache.addImage(tile);
         return this.initWithTexture(texture, tileWidth, tileHeight, itemsToRender);
     },

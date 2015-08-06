@@ -249,7 +249,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      */
     initWithFade:function (fade, minSeg, stroke, color, texture) {
         if(!texture)
-            throw "cc.MotionStreak.initWithFade(): Invalid filename or texture";
+            throw new Error("cc.MotionStreak.initWithFade(): Invalid filename or texture");
 
         if (cc.isString(texture))
             texture = cc.textureCache.addImage(texture);
