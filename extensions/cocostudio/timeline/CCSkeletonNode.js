@@ -22,6 +22,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+//9980397
+
 /**
  * SkeletonNode
  * base class
@@ -51,6 +53,7 @@ ccs.SkeletonNode = (function(){
         _batchedBoneColors: null,
         _batchedVeticesCount: null,
         _batchBoneCommand: null,
+        _subOrderedAllBones: null,
 
         ctor: function(){
             this._squareVertices = [
@@ -60,6 +63,7 @@ ccs.SkeletonNode = (function(){
             this._rootSkeleton = this;
             BoneNode.prototype.ctor.call(this);
             this._subBonesMap = {};
+            this._subOrderedAllBones = [];
 
             this._skinGroupMap = {};
 
@@ -140,6 +144,69 @@ ccs.SkeletonNode = (function(){
             return cc.rectApplyAffineTransform(boundingBox, this.getNodeToParentTransform());
         },
 
+        _visit: function(parentCmd){
+            if(!this._visible)
+                return;
+            var cmd = this._renderCmd;
+            parentCmd = parentCmd || cmd.getParentRenderCmd();
+            cmd._syncStatus(parentCmd);
+            this._checkSubBonesDirty();
+            var subOrderedAllBones = this._subOrderedAllBones,
+                subOrderedBone, subOrderedBoneCmd;
+            for (var i=0; i<subOrderedAllBones.length; i++){
+                subOrderedBone = subOrderedAllBones[i];
+                subOrderedBone._visitSkins();
+            }
+            if(cmd._debug)
+                for (i=0; i<subOrderedAllBones.length; i++){
+                    subOrderedBoneCmd = subOrderedAllBones[i]._renderCmd;
+                    cc.renderer.pushRenderCommand(subOrderedBoneCmd._drawNode._renderCmd);
+                }
+            this._dirtyFlag = 0;
+        },
+
+        _checkSubBonesDirty: function(){
+            if (this._subBonesDirty){
+                this._updateOrderedAllbones();
+                this._subBonesDirty = false;
+            }
+            if (this._subBonesOrderDirty){
+                this._sortOrderedAllBones();
+                this._subBonesOrderDirty = false;
+            }
+        },
+
+        _updateOrderedAllbones: function(){
+            this._subOrderedAllBones.length = 0;
+            // update sub bones, get All Visible SubBones
+            // get all sub bones as visit with visible
+            var boneStack = [];
+            var childBones = this._childBones;
+            for (var bone, i=0; i<childBones.length; i++){
+                bone = childBones[i];
+                if (bone.isVisible())
+                    boneStack.push(bone);
+            }
+            while(boneStack.length > 0){
+                var top = boneStack.pop();
+                var topCmd = top._renderCmd;
+                topCmd._syncStatus(topCmd.getParentRenderCmd());
+                this._subOrderedAllBones.push(top);
+
+                var topChildren = top.getChildBones();
+
+                for (var childbone, i=0; i<topChildren.length; i++){
+                    childbone = topChildren[i];
+                    if (childbone.isVisible())
+                        boneStack.push(childbone);
+                }
+            }
+        },
+
+        _sortOrderedAllBones: function(){
+            this._sortArray(this._subOrderedAllBones);
+        },
+
         // protected
         _updateVertices: function(){
             var squareVertices = this._squareVertices,
@@ -153,9 +220,9 @@ ccs.SkeletonNode = (function(){
                 squareVertices[5].y = squareVertices[2].y = squareVertices[1].y = squareVertices[6].y
                     = squareVertices[0].x = squareVertices[4].x = squareVertices[7].x = squareVertices[3].x = .0;
                 squareVertices[5].x = -radiusl; squareVertices[0].y = -radiusw;
-                squareVertices[6].x =  radiusl;  squareVertices[3].y = radiusw;
-                squareVertices[1].x =  radiusl_2; squareVertices[7].y = radiusw_2;
-                squareVertices[2].x = - radiusl_2; squareVertices[4].y = - radiusw_2;
+                squareVertices[6].x = radiusl;  squareVertices[3].y = radiusw;
+                squareVertices[1].x = radiusl_2; squareVertices[7].y = radiusw_2;
+                squareVertices[2].x = -radiusl_2; squareVertices[4].y = -radiusw_2;
                 for(var i=0; i<squareVertices.length; i++){
                     squareVertices[i].x += anchorPointInPoints.x;
                     squareVertices[i].y += anchorPointInPoints.y;
