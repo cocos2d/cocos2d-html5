@@ -934,7 +934,7 @@ cc.BuilderReader = cc.Class.extend({
             this._currentBit = 0;
             this._currentByte++;
             if(this._currentByte > this._data.length)
-                throw "out of the data bound";
+                throw new Error("out of the data bound");
         }
         return bit;
     },
@@ -1028,7 +1028,7 @@ cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
 
         // Create a controller
         var controllerClass = controllerClassCache[controllerName];
-        if(!controllerClass) throw "Can not find controller : " + controllerName;
+        if(!controllerClass) throw new Error("Can not find controller : " + controllerName);
         var controller = new controllerClass();
         controller.controllerName = controllerName;
 

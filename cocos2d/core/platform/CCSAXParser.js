@@ -89,7 +89,7 @@ cc.PlistParser = cc.SAXParser.extend(/** @lends cc.plistParser# */{
         var xmlDoc = this._parseXML(xmlTxt);
         var plist = xmlDoc.documentElement;
         if (plist.tagName !== 'plist')
-            throw "Not a plist file!";
+            throw new Error("Not a plist file!");
 
         // Get first real node
         var node = null;

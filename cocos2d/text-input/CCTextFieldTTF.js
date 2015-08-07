@@ -236,7 +236,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
                 return this.initWithString(this._placeHolder, arguments[1], arguments[2]);
                 break;
             default:
-                throw "Argument must be non-nil ";
+                throw new Error("Argument must be non-nil ");
                 break;
         }
     },

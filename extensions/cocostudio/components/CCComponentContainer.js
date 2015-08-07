@@ -48,7 +48,7 @@ cc.ComponentContainer = cc.Class.extend(/** @lends cc.ComponentContainer# */{
      */
     getComponent:function(name){
         if(!name)
-            throw "cc.ComponentContainer.getComponent(): name should be non-null";
+            throw new Error("cc.ComponentContainer.getComponent(): name should be non-null");
         name = name.trim();
         if(!this._components){
             this._components = {};
@@ -63,7 +63,7 @@ cc.ComponentContainer = cc.Class.extend(/** @lends cc.ComponentContainer# */{
      */
     add:function(component){
         if(!component)
-             throw "cc.ComponentContainer.add(): component should be non-null";
+             throw new Error("cc.ComponentContainer.add(): component should be non-null");
         if(component.getOwner()){
             cc.log("cc.ComponentContainer.add(): Component already added. It can't be added again");
             return false;
@@ -91,7 +91,7 @@ cc.ComponentContainer = cc.Class.extend(/** @lends cc.ComponentContainer# */{
      */
     remove:function(name){
         if(!name)
-            throw "cc.ComponentContainer.remove(): name should be non-null";
+            throw new Error("cc.ComponentContainer.remove(): name should be non-null");
         if(!this._components)
             return false;
         if(name instanceof cc.Component)

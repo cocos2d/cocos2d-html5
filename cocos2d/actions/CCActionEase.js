@@ -56,7 +56,7 @@ cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
      */
     initWithAction:function (action) {
         if(!action)
-            throw "cc.ActionEase.initWithAction(): action must be non nil";
+            throw new Error("cc.ActionEase.initWithAction(): action must be non nil");
 
         if (this.initWithDuration(action.getDuration())) {
             this._inner = action;

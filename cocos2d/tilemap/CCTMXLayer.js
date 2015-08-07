@@ -323,11 +323,11 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      */
     getTileAt: function (pos, y) {
         if(!pos)
-            throw "cc.TMXLayer.getTileAt(): pos should be non-null";
+            throw new Error("cc.TMXLayer.getTileAt(): pos should be non-null");
         if(y !== undefined)
             pos = cc.p(pos, y);
         if(pos.x >= this._layerSize.width || pos.y >= this._layerSize.height || pos.x < 0 || pos.y < 0)
-            throw "cc.TMXLayer.getTileAt(): invalid position";
+            throw new Error("cc.TMXLayer.getTileAt(): invalid position");
         if(!this.tiles || !this._atlasIndexArray){
             cc.log("cc.TMXLayer.getTileAt(): TMXLayer: the tiles map has been released");
             return null;
@@ -371,11 +371,11 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      */
     getTileGIDAt:function (pos, y) {
         if(pos == null)
-            throw "cc.TMXLayer.getTileGIDAt(): pos should be non-null";
+            throw new Error("cc.TMXLayer.getTileGIDAt(): pos should be non-null");
         if(y !== undefined)
             pos = cc.p(pos, y);
         if(pos.x >= this._layerSize.width || pos.y >= this._layerSize.height || pos.x < 0 || pos.y < 0)
-            throw "cc.TMXLayer.getTileGIDAt(): invalid position";
+            throw new Error("cc.TMXLayer.getTileGIDAt(): invalid position");
         if(!this.tiles || !this._atlasIndexArray){
             cc.log("cc.TMXLayer.getTileGIDAt(): TMXLayer: the tiles map has been released");
             return null;
@@ -398,11 +398,11 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      */
     getTileFlagsAt:function (pos, y) {
         if(!pos)
-            throw "cc.TMXLayer.getTileFlagsAt(): pos should be non-null";
+            throw new Error("cc.TMXLayer.getTileFlagsAt(): pos should be non-null");
         if(y !== undefined)
             pos = cc.p(pos, y);
         if(pos.x >= this._layerSize.width || pos.y >= this._layerSize.height || pos.x < 0 || pos.y < 0)
-            throw "cc.TMXLayer.getTileFlagsAt(): invalid position";
+            throw new Error("cc.TMXLayer.getTileFlagsAt(): invalid position");
         if(!this.tiles || !this._atlasIndexArray){
             cc.log("cc.TMXLayer.getTileFlagsAt(): TMXLayer: the tiles map has been released");
             return null;
@@ -428,7 +428,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      */
     setTileGID: function(gid, posOrX, flagsOrY, flags) {
         if(!posOrX)
-            throw "cc.TMXLayer.setTileGID(): pos should be non-null";
+            throw new Error("cc.TMXLayer.setTileGID(): pos should be non-null");
         var pos;
         if (flags !== undefined) {
             pos = cc.p(posOrX, flagsOrY);
@@ -437,7 +437,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             flags = flagsOrY;
         }
         if(pos.x >= this._layerSize.width || pos.y >= this._layerSize.height || pos.x < 0 || pos.y < 0)
-            throw "cc.TMXLayer.setTileGID(): invalid position";
+            throw new Error("cc.TMXLayer.setTileGID(): invalid position");
         if(!this.tiles || !this._atlasIndexArray){
             cc.log("cc.TMXLayer.setTileGID(): TMXLayer: the tiles map has been released");
             return;
@@ -484,11 +484,11 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      */
     removeTileAt:function (pos, y) {
         if(!pos)
-            throw "cc.TMXLayer.removeTileAt(): pos should be non-null";
+            throw new Error("cc.TMXLayer.removeTileAt(): pos should be non-null");
         if(y !== undefined)
             pos = cc.p(pos, y);
         if(pos.x >= this._layerSize.width || pos.y >= this._layerSize.height || pos.x < 0 || pos.y < 0)
-            throw "cc.TMXLayer.removeTileAt(): invalid position";
+            throw new Error("cc.TMXLayer.removeTileAt(): invalid position");
         if(!this.tiles || !this._atlasIndexArray){
             cc.log("cc.TMXLayer.removeTileAt(): TMXLayer: the tiles map has been released");
             return;

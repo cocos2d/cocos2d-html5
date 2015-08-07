@@ -450,7 +450,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         }
 
         if(!file)
-            throw "cc.Scale9Sprite.initWithFile(): file should be non-null";
+            throw new Error("cc.Scale9Sprite.initWithFile(): file should be non-null");
 
         var texture = cc.textureCache.getTextureForKey(file);
         if (!texture) {
@@ -487,7 +487,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
      */
     initWithSpriteFrame: function (spriteFrame, capInsets) {
         if(!spriteFrame || !spriteFrame.getTexture())
-            throw "cc.Scale9Sprite.initWithSpriteFrame(): spriteFrame should be non-null and its texture should be non-null";
+            throw new Error("cc.Scale9Sprite.initWithSpriteFrame(): spriteFrame should be non-null and its texture should be non-null");
 
         capInsets = capInsets || cc.rect(0, 0, 0, 0);
         var locLoaded = spriteFrame.textureLoaded();
@@ -520,7 +520,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
      */
     initWithSpriteFrameName: function (spriteFrameName, capInsets) {
         if(!spriteFrameName)
-            throw "cc.Scale9Sprite.initWithSpriteFrameName(): spriteFrameName should be non-null";
+            throw new Error("cc.Scale9Sprite.initWithSpriteFrameName(): spriteFrameName should be non-null");
         capInsets = capInsets || cc.rect(0, 0, 0, 0);
 
         var frame = cc.spriteFrameCache.getSpriteFrame(spriteFrameName);

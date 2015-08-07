@@ -175,7 +175,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
      */
     initWithDuration:function (duration, points, tension) {
         if(!points || points.length === 0)
-            throw "Invalid configuration. It must at least have one control point";
+            throw new Error("Invalid configuration. It must at least have one control point");
 
         if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
             this.setPoints(points);

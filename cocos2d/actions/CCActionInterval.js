@@ -377,7 +377,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      */
     initWithTwoActions:function (actionOne, actionTwo) {
         if(!actionOne || !actionTwo)
-            throw "cc.Sequence.initWithTwoActions(): arguments must all be non nil";
+            throw new Error("cc.Sequence.initWithTwoActions(): arguments must all be non nil");
 
         var d = actionOne._duration + actionTwo._duration;
         this.initWithDuration(d);
@@ -758,7 +758,7 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
      */
     initWithAction:function (action) {
         if(!action)
-            throw "cc.RepeatForever.initWithAction(): action must be non null";
+            throw new Error("cc.RepeatForever.initWithAction(): action must be non null");
 
         this._innerAction = action;
         return true;
@@ -908,7 +908,7 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
      */
     initWithTwoActions:function (action1, action2) {
         if(!action1 || !action2)
-            throw "cc.Spawn.initWithTwoActions(): arguments must all be non null" ;
+            throw new Error("cc.Spawn.initWithTwoActions(): arguments must all be non null");
 
         var ret = false;
 
@@ -3168,9 +3168,9 @@ cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
      */
     initWithAction:function (action) {
         if(!action)
-            throw "cc.ReverseTime.initWithAction(): action must be non null";
+            throw new Error("cc.ReverseTime.initWithAction(): action must be non null");
         if(action === this._other)
-            throw "cc.ReverseTime.initWithAction(): the action was already passed in.";
+            throw new Error("cc.ReverseTime.initWithAction(): the action was already passed in.");
 
         if (cc.ActionInterval.prototype.initWithDuration.call(this, action._duration)) {
             // Don't leak if action is reused
@@ -3306,7 +3306,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
      */
     initWithAnimation:function (animation) {
         if(!animation)
-            throw "cc.Animate.initWithAnimation(): animation must be non-NULL";
+            throw new Error("cc.Animate.initWithAnimation(): animation must be non-NULL");
         var singleDuration = animation.getDuration();
         if (this.initWithDuration(singleDuration * animation.getLoops())) {
             this._nextFrame = 0;

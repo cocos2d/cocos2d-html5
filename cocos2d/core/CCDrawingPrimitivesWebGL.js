@@ -46,7 +46,7 @@ cc.DrawingPrimitiveWebGL = cc.Class.extend(/** @lends cc.DrawingPrimitiveWebGL# 
             ctx = cc._renderContext;
 
         if (!ctx instanceof  WebGLRenderingContext)
-            throw "Can't initialise DrawingPrimitiveWebGL. context need is WebGLRenderingContext";
+            throw new Error("Can't initialise DrawingPrimitiveWebGL. context need is WebGLRenderingContext");
 
         this._renderContext = ctx;
         this._colorArray = new Float32Array([1.0, 1.0, 1.0, 1.0]);

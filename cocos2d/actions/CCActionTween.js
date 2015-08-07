@@ -104,7 +104,7 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
      */
     startWithTarget:function (target) {
         if(!target || !target.updateTweenAction)
-            throw "cc.ActionTween.startWithTarget(): target must be non-null, and target must implement updateTweenAction function";
+            throw new Error("cc.ActionTween.startWithTarget(): target must be non-null, and target must implement updateTweenAction function");
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         this.delta = this.to - this.from;
     },

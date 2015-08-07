@@ -76,7 +76,7 @@ cc._getAbsolutePosition = function(x, y, type, containerSize, propName){
 
 cc.setRelativeScale = function(node,scaleX, scaleY, type, propName){
     if(!node)
-        throw "cc.setRelativeScale(): node should be non-null";
+        throw new Error("cc.setRelativeScale(): node should be non-null");
 
     if (type === CCB_POSITIONTYPE_MULTIPLY_RESOLUTION) {
         var resolutionScale = cc.BuilderReader.getResolutionScale();

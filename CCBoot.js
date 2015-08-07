@@ -547,7 +547,7 @@ cc.loader = /** @lends cc.loader# */{
             results[0] = a0 || "";
             results[1] = a1 instanceof Array ? a1 : [a1];
             results[2] = a2;
-        } else throw "arguments error to load js!";
+        } else throw new Error("arguments error to load js!");
         return results;
     },
 
@@ -586,7 +586,7 @@ cc.loader = /** @lends cc.loader# */{
         var self = this, jsLoadingImg = self._loadJsImg(),
             args = self._getArgs4Js(arguments);
         this.loadJs(args[0], args[1], function (err) {
-            if (err) throw err;
+            if (err) throw new Error(err);
             jsLoadingImg.parentNode.removeChild(jsLoadingImg);//remove loading gif
             if (args[2]) args[2]();
         });
@@ -739,7 +739,7 @@ cc.loader = /** @lends cc.loader# */{
                     var result = JSON.parse(txt);
                 }
                 catch (e) {
-                    throw "parse json [" + url + "] failed : " + e;
+                    throw new Error("parse json [" + url + "] failed : " + e);
                     return;
                 }
                 cb(null, result);
@@ -900,7 +900,7 @@ cc.loader = /** @lends cc.loader# */{
         var self = this;
         var len = arguments.length;
         if(len === 0)
-            throw "arguments error!";
+            throw new Error("arguments error!");
 
         if(len === 3){
             if(typeof option === "function"){
@@ -2005,7 +2005,7 @@ cc._setup = function (el, width, height) {
 
 cc._checkWebGLRenderMode = function () {
     if (cc._renderType !== cc._RENDER_TYPE_WEBGL)
-        throw "This feature supports WebGL render mode only.";
+        throw new Error("This feature supports WebGL render mode only.");
 };
 
 cc._isContextMenuEnable = false;
@@ -2256,7 +2256,7 @@ cc.game = /** @lends cc.game# */{
         dir = dir || "";
         var jsList = [];
         var tempList = moduleMap[moduleName];
-        if (!tempList) throw "can not find module [" + moduleName + "]";
+        if (!tempList) throw new Error("can not find module [" + moduleName + "]");
         var ccPath = cc.path;
         for (var i = 0, li = tempList.length; i < li; i++) {
             var item = tempList[i];
@@ -2278,7 +2278,7 @@ cc.game = /** @lends cc.game# */{
         var self = this;
         var config = self.config, CONFIG_KEY = self.CONFIG_KEY, engineDir = config[CONFIG_KEY.engineDir], loader = cc.loader;
         if (!cc._supportRender) {
-            throw "The renderer doesn't support the renderMode " + config[CONFIG_KEY.renderMode];
+            throw new Error("The renderer doesn't support the renderMode " + config[CONFIG_KEY.renderMode]);
         }
         self._prepareCalled = true;
 
@@ -2286,7 +2286,7 @@ cc.game = /** @lends cc.game# */{
         if (cc.Class) {//is single file
             //load user's jsList only
             loader.loadJsWithImg("", jsList, function (err) {
-                if (err) throw err;
+                if (err) throw new Error(err);
                 self._prepared = true;
                 if (cb) cb();
             });
@@ -2294,7 +2294,7 @@ cc.game = /** @lends cc.game# */{
             //load cc's jsList first
             var ccModulesPath = cc.path.join(engineDir, "moduleConfig.json");
             loader.loadJson(ccModulesPath, function (err, modulesJson) {
-                if (err) throw err;
+                if (err) throw new Error(err);
                 var modules = config["modules"] || [];
                 var moduleMap = modulesJson["module"];
                 var newJsList = [];
@@ -2306,7 +2306,7 @@ cc.game = /** @lends cc.game# */{
                 }
                 newJsList = newJsList.concat(jsList);
                 cc.loader.loadJsWithImg(newJsList, function (err) {
-                    if (err) throw err;
+                    if (err) throw new Error(err);
                     self._prepared = true;
                     if (cb) cb();
                 });

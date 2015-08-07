@@ -49,13 +49,13 @@ cc.ControlSwitch = cc.Control.extend(/** @lends cc.ControlSwitch# */{
     /** Creates a switch with a mask sprite, on/off sprites for on/off states, a thumb sprite and an on/off labels. */
     initWithMaskSprite:function (maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel) {
         if(!maskSprite)
-            throw "cc.ControlSwitch.initWithMaskSprite(): maskSprite should be non-null.";
+            throw new Error("cc.ControlSwitch.initWithMaskSprite(): maskSprite should be non-null.");
         if(!onSprite)
-            throw "cc.ControlSwitch.initWithMaskSprite(): onSprite should be non-null.";
+            throw new Error("cc.ControlSwitch.initWithMaskSprite(): onSprite should be non-null.");
         if(!offSprite)
-            throw "cc.ControlSwitch.initWithMaskSprite(): offSprite should be non-null.";
+            throw new Error("cc.ControlSwitch.initWithMaskSprite(): offSprite should be non-null.");
         if(!thumbSprite)
-            throw "cc.ControlSwitch.initWithMaskSprite(): thumbSprite should be non-null.";
+            throw new Error("cc.ControlSwitch.initWithMaskSprite(): thumbSprite should be non-null.");
         if (this.init()) {
             this._on = true;
 

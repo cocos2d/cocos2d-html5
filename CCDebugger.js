@@ -319,7 +319,7 @@ cc._initDebugSetting = function (mode) {
             if (!cond && msg) {
                 for (var i = 2; i < arguments.length; i++)
                     msg = msg.replace(/(%s)|(%d)/, cc._formatString(arguments[i]));
-                throw msg;
+                throw new Error(msg);
             }
         };
         if(mode !== ccGame.DEBUG_MODE_ERROR)

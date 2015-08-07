@@ -461,7 +461,7 @@ cc.MenuItemAtlasFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemAtlasFont# 
      */
     initWithString: function (value, charMapFile, itemWidth, itemHeight, startCharMap, callback, target) {
         if (!value || value.length === 0)
-            throw "cc.MenuItemAtlasFont.initWithString(): value should be non-null and its length should be greater than 0";
+            throw new Error("cc.MenuItemAtlasFont.initWithString(): value should be non-null and its length should be greater than 0");
 
         var label = new cc.LabelAtlas();
         label.initWithString(value, charMapFile, itemWidth, itemHeight, startCharMap);
@@ -535,7 +535,7 @@ cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
      */
     initWithString: function (value, callback, target) {
         if (!value || value.length === 0)
-            throw "Value should be non-null and its length should be greater than 0";
+            throw new Error("Value should be non-null and its length should be greater than 0");
 
         this._fontName = cc._globalFontName;
         this._fontSize = cc._globalFontSize;

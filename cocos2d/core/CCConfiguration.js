@@ -278,7 +278,7 @@ cc.configuration = /** @lends cc.configuration# */{
 	    if(!this._inited)
 		    this._init();
         var dict = cc.loader.getRes(url);
-        if(!dict) throw "Please load the resource first : " + url;
+        if(!dict) throw new Error("Please load the resource first : " + url);
         cc.assert(dict, cc._LogInfos.configuration_loadConfigFile_2, url);
 
         var getDatas = dict["data"];

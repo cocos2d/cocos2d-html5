@@ -35,7 +35,7 @@ module.exports = function(projectDir, projectJson, buildOpt){
         jsAddedCache[moduleName] = true;
         var jsList = [];
         var tempList = moduleMap[moduleName];
-        if(!tempList) throw "can not find module [" + moduleName + "]";
+        if(!tempList) throw new Error("can not find module [" + moduleName + "]");
         for(var i = 0, li = tempList.length; i < li; i++){
             var item = tempList[i];
             if(jsAddedCache[item]) continue;

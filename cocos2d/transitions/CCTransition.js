@@ -177,7 +177,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
      */
     initWithDuration:function (t, scene) {
         if(!scene)
-            throw "cc.TransitionScene.initWithDuration(): Argument scene must be non-nil";
+            throw new Error("cc.TransitionScene.initWithDuration(): Argument scene must be non-nil");
 
         if (this.init()) {
             this._duration = t;
@@ -196,7 +196,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
             }
 
             if(this._inScene === this._outScene)
-                throw "cc.TransitionScene.initWithDuration(): Incoming scene must be different from the outgoing scene";
+                throw new Error("cc.TransitionScene.initWithDuration(): Incoming scene must be different from the outgoing scene");
 
             this._sceneOrder();
             return true;
