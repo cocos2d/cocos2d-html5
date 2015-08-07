@@ -202,7 +202,6 @@ cc.AsyncPool = function(srcObj, limit, iterator, onEnd, target){
     self._onEnd = onEnd;
     self._onEndTarget = target;
     self._results = srcObj instanceof Array ? [] : {};
-    self._isErr = false;
 
     cc.each(srcObj, function(value, index){
         self._pool.push({index : index, value : value});
@@ -234,17 +233,9 @@ cc.AsyncPool = function(srcObj, limit, iterator, onEnd, target){
         self._workingSize++;
         self._iterator.call(self._iteratorTarget, value, index,
             function(err) {
-                if (self._isErr)
-                    return;
 
                 self.finishedSize++;
                 self._workingSize--;
-                if (err) {
-                    self._isErr = true;
-                    if (self._onEnd)
-                        self._onEnd.call(self._onEndTarget, err);
-                    return;
-                }
 
                 var arr = Array.prototype.slice.call(arguments, 1);
                 self._results[this.index] = arr[0];
@@ -931,12 +922,10 @@ cc.loader = /** @lends cc.loader# */{
             resources, 0,
             function (value, index, AsyncPoolCallback, aPool) {
                 self._loadResIterator(value, index, function (err) {
-                    if (err)
-                        return AsyncPoolCallback(err);
                     var arr = Array.prototype.slice.call(arguments, 1);
                     if (option.trigger)
                         option.trigger.call(option.triggerTarget, arr[0], aPool.size, aPool.finishedSize);   //call trigger
-                    AsyncPoolCallback(null, arr[0]);
+                    AsyncPoolCallback(err, arr[0]);
                 });
             },
             option.cb, option.cbTarget);
