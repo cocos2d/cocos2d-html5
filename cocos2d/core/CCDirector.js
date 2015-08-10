@@ -566,6 +566,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     setNotificationNode: function (node) {
         this._notificationNode = node;
+        if(!node)
+            cc.renderer.childrenOrderDirty = true;
     },
 
     /**
