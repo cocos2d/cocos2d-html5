@@ -128,6 +128,18 @@ cc.rendererWebGL = {
             gl.blendFunc(gl.SRC_ALPHA, gl.DST_ALPHA);
     },
 
+    setDepthTest: function (enable){
+        var gl = cc._renderContext;
+        if(enable){
+            gl.clearDepth(1.0);
+            gl.enable(gl.DEPTH_TEST);
+            gl.depthFunc(gl.LEQUAL);
+        }
+        else{
+            gl.disable(gl.DEPTH_TEST);
+        }
+    },
+    
     pushRenderCommand: function (cmd) {
         if(!cmd._needDraw)
             return;

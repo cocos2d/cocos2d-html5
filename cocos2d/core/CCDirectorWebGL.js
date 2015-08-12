@@ -101,17 +101,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         };
 
         _p.setDepthTest = function (on) {
-
-            var loc_gl = cc._renderContext;
-            if (on) {
-                loc_gl.clearDepth(1.0);
-                loc_gl.enable(loc_gl.DEPTH_TEST);
-                loc_gl.depthFunc(loc_gl.LEQUAL);
-                //cc._renderContext.hint(cc._renderContext.PERSPECTIVE_CORRECTION_HINT, cc._renderContext.NICEST);
-            } else {
-                loc_gl.disable(loc_gl.DEPTH_TEST);
-            }
-            //cc.checkGLErrorDebug();
+            cc.renderer.setDepthTest(on);
         };
 
         _p.setClearColor = function (clearColor) {
