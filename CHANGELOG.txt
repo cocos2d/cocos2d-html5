@@ -1,6 +1,6 @@
 ChangeLog:
 
-Cocos2d-x v3.7.1 @ ??
+Cocos2d-x v3.7.1 @ August.12 2015
     [HIGHLIGHT]     studio: Added new skeleton animation support and JSON parser for cocos v2.3.2 beta
 
     [NEW]           Node: Added getNodeToParentTransform with selected ancestor
@@ -16,6 +16,7 @@ Cocos2d-x v3.7.1 @ ??
     [FIX]           web: Fixed a bug where not resetting cc.Audio._ignoreEnded when replaying a sound caused it to stay in a "playing" state
     [FIX]           web: cc.ScrollView and cc.TableView: added check for parent visibility in onTouchBegan method
     [FIX]           web: Fixed TurnPageDown effect
+    [FIX]           web: Fixed Cocos Studio parser issue that all elements are missing while the timeline action contains rotation
 
 Cocos2d-x v3.7 Final @ July 20 2015
     [REFINE]        web: Add compatible Uint16Array defintion
