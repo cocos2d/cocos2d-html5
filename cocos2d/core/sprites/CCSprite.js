@@ -980,8 +980,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             (nodeWidth !== 0 && nodeHeight !== 0) &&
             // ContentSize exist, But size is equal to the old texture, Set the contentSize
             (nodeWidth !== oldTextureWidth && nodeHeight !== oldTextureHeight) &&
-            // Same old size and new texture size
-            (oldTextureWidth === textureWidth && oldTextureHeight === textureHeight) &&
             // To satisfy the above two, But height/width does not exist, Set the contentSize
             (nodeRect.height !== 0 || nodeRect.width !== 0)
             // The remaining direct return
