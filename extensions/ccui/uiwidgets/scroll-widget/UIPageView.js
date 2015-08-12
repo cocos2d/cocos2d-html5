@@ -495,6 +495,11 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
      * @param {cc.Touch} touch
      */
     interceptTouchEvent: function (eventType, sender, touch) {
+        if(!this._touchEnabled)
+        {
+            ccui.Layout.prototype.interceptTouchEvent.call(this, eventType, sender, touch);
+            return;
+        }
         var touchPoint = touch.getLocation();
         switch (eventType) {
             case ccui.Widget.TOUCH_BEGAN:
