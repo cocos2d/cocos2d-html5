@@ -40,9 +40,9 @@ cc.NodeGrid = cc.Node.extend({
 
     ctor: function (rect) {
         cc.Node.prototype.ctor.call(this);
-        if(rect == undefined) rect = cc.rect();
+        if(rect === undefined) rect = cc.rect();
         this._gridRect = rect;
-        cc.GridAction.prototype._gridNodeTarget = this;
+        //cc.GridAction.prototype._gridNodeTarget = this;
     },
     /**
      * Gets the grid object.
@@ -81,6 +81,10 @@ cc.NodeGrid = cc.Node.extend({
      */
     setTarget: function (target) {
         this._target = target;
+    },
+
+    getTarget: function (target) {
+        return this._target;
     },
 
     _transformForWebGL: function () {

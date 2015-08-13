@@ -48,7 +48,15 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
         gridSize && this.initWithDuration(duration, gridSize);
     },
 
-    _cacheTargetAsGridNode: function(){},
+    _cacheTargetAsGridNode:function (target) {
+        var tempTarget = new cc.NodeGrid();
+
+        tempTarget.grid = target.getGrid();
+        tempTarget._target = target.getTarget();
+        tempTarget._gridRect = target.getGridRect();
+
+        this._gridNodeTarget = tempTarget;
+    },
 
     /**
      * to copy object with deep copy.
@@ -71,6 +79,8 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         cc.renderer.childrenOrderDirty = true;
+        this._cacheTargetAsGridNode(target);
+
         var newGrid = this.getGrid();
 
         var targetGrid = this._gridNodeTarget.getGrid();
@@ -195,7 +205,7 @@ cc.Grid3DAction = cc.GridAction.extend(/** @lends cc.Grid3DAction# */{
     },
 
     /**
-     * returns the non-transformed vertex than belongs to certain position in the grid
+     * returns the non-transformed vertex that belongs to certain position in the grid
      * @param {cc.Point} position
      * @return {cc.Vertex3F}
      */
@@ -339,9 +349,19 @@ cc.StopGrid = cc.ActionInstant.extend(/** @lends cc.StopGrid# */{
     startWithTarget:function (target) {
         cc.ActionInstant.prototype.startWithTarget.call(this, target);
         cc.renderer.childrenOrderDirty = true;
+        this._cacheTargetAsGridNode(target);
         var grid = this.target.grid;
         if (grid && grid.isActive())
             grid.setActive(false);
+    },
+    _cacheTargetAsGridNode:function (target) {
+        var tempTarget = new cc.NodeGrid();
+
+        tempTarget.grid = target.getGrid();
+        tempTarget._target = target.getTarget();
+        tempTarget._gridRect = target.getGridRect();
+
+        this._gridNodeTarget = tempTarget;
     }
 });
 
@@ -398,8 +418,19 @@ cc.ReuseGrid = cc.ActionInstant.extend(/** @lends cc.ReuseGrid# */{
     startWithTarget:function (target) {
         cc.ActionInstant.prototype.startWithTarget.call(this, target);
         cc.renderer.childrenOrderDirty = true;
+        this._cacheTargetAsGridNode(target);
+
         if (this.target.grid && this.target.grid.isActive())
             this.target.grid.setReuseGrid(this.target.grid.getReuseGrid() + this._times);
+    },
+    _cacheTargetAsGridNode:function (target) {
+        var tempTarget = new cc.NodeGrid();
+
+        tempTarget.grid = target.getGrid();
+        tempTarget._target = target.getTarget();
+        tempTarget._gridRect = target.getGridRect();
+
+        this._gridNodeTarget = tempTarget;
     }
 });
 
