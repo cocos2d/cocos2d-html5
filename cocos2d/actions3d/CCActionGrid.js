@@ -49,13 +49,7 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
     },
 
     _cacheTargetAsGridNode:function (target) {
-        var tempTarget = new cc.NodeGrid();
-
-        tempTarget.grid = target.getGrid();
-        tempTarget._target = target.getTarget();
-        tempTarget._gridRect = target.getGridRect();
-
-        this._gridNodeTarget = tempTarget;
+        this._gridNodeTarget = target;
     },
 
     /**
@@ -349,19 +343,9 @@ cc.StopGrid = cc.ActionInstant.extend(/** @lends cc.StopGrid# */{
     startWithTarget:function (target) {
         cc.ActionInstant.prototype.startWithTarget.call(this, target);
         cc.renderer.childrenOrderDirty = true;
-        this._cacheTargetAsGridNode(target);
         var grid = this.target.grid;
         if (grid && grid.isActive())
             grid.setActive(false);
-    },
-    _cacheTargetAsGridNode:function (target) {
-        var tempTarget = new cc.NodeGrid();
-
-        tempTarget.grid = target.getGrid();
-        tempTarget._target = target.getTarget();
-        tempTarget._gridRect = target.getGridRect();
-
-        this._gridNodeTarget = tempTarget;
     }
 });
 
@@ -418,19 +402,8 @@ cc.ReuseGrid = cc.ActionInstant.extend(/** @lends cc.ReuseGrid# */{
     startWithTarget:function (target) {
         cc.ActionInstant.prototype.startWithTarget.call(this, target);
         cc.renderer.childrenOrderDirty = true;
-        this._cacheTargetAsGridNode(target);
-
         if (this.target.grid && this.target.grid.isActive())
             this.target.grid.setReuseGrid(this.target.grid.getReuseGrid() + this._times);
-    },
-    _cacheTargetAsGridNode:function (target) {
-        var tempTarget = new cc.NodeGrid();
-
-        tempTarget.grid = target.getGrid();
-        tempTarget._target = target.getTarget();
-        tempTarget._gridRect = target.getGridRect();
-
-        this._gridNodeTarget = tempTarget;
     }
 });
 
