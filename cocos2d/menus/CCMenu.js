@@ -492,7 +492,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
             cc.log("cc.Menu.onTouchCancelled(): invalid state");
             return;
         }
-        if (this._selectedItem) {
+        if (target._selectedItem) {
             target._selectedItem.unselected();
             target._selectedItem.setNodeDirty();
         }
