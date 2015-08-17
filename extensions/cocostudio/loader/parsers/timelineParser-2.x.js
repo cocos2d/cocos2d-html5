@@ -41,7 +41,11 @@
         },
 
         getNodeJson: function(json){
-            return json["Content"]["Content"]["ObjectData"];
+            var content = json["Content"];
+            if(content["ObjectData"])
+                return content["ObjectData"];
+
+            return content["Content"]["ObjectData"];
         },
 
         getClass: function(json){
