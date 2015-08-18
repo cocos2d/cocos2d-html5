@@ -451,15 +451,16 @@ cc.ShuffleTiles.create = cc.shuffleTiles;
 cc.FadeOutTRTiles = cc.TiledGrid3DAction.extend(/** @lends cc.FadeOutTRTiles# */{
     /**
      * Test function
-     * @param {cc.Size} pos
+     * @param {cc.Point} pos
      * @param {Number} time
      */
     testFunc:function (pos, time) {
         var locX = this._gridSize.width * time;
         var locY = this._gridSize.height * time;
+        if (locX === this._gridSize.width && locY === this._gridSize.height) return 0.0;
         if ((locX + locY) === 0.0)
             return 1.0;
-        return Math.pow((pos.width + pos.height) / (locX + locY), 6);
+        return Math.pow((pos.x + pos.y) / (locX + locY), 6);
     },
 
     /**
@@ -508,14 +509,12 @@ cc.FadeOutTRTiles = cc.TiledGrid3DAction.extend(/** @lends cc.FadeOutTRTiles# */
      */
     update:function (dt) {
         var locGridSize = this._gridSize;
-        var locPos = cc.p(0, 0), locSize = cc.size(0, 0), distance;
+        var locPos = cc.p(0, 0),  distance;
         for (var i = 0; i < locGridSize.width; ++i) {
             for (var j = 0; j < locGridSize.height; ++j) {
                 locPos.x = i;
                 locPos.y = j;
-                locSize.width = i;
-                locSize.height = j;
-                distance = this.testFunc(locSize, dt);
+                distance = this.testFunc(locPos, dt);
                 if (distance === 0)
                     this.turnOffTile(locPos);
                 else if (distance < 1)
@@ -560,16 +559,18 @@ cc.FadeOutTRTiles.create = cc.fadeOutTRTiles;
 cc.FadeOutBLTiles = cc.FadeOutTRTiles.extend(/** @lends cc.FadeOutBLTiles# */{
     /**
      * Test function
-     * @param {cc.Size} pos
+     * @param {cc.Point} pos
      * @param {Number} time
      */
     testFunc:function (pos, time) {
         var locX = this._gridSize.width * (1.0 - time);
         var locY = this._gridSize.height * (1.0 - time);
-        if ((pos.width + pos.height) === 0)
+        if ((locX + locY) === 0)
+            return 0.0;
+        if ((pos.x + pos.y) === 0)
             return 1.0;
 
-        return Math.pow((locX + locY) / (pos.width + pos.height), 6);
+        return Math.pow((locX + locY) / (pos.x + pos.y), 6);
     }
 });
 
@@ -604,11 +605,16 @@ cc.FadeOutBLTiles.create = cc.fadeOutBLTiles;
  * @extends cc.FadeOutTRTiles
  */
 cc.FadeOutUpTiles = cc.FadeOutTRTiles.extend(/** @lends cc.FadeOutUpTiles# */{
+    /**
+     * Test function
+     * @param {cc.Point} pos
+     * @param {Number} time
+     */
     testFunc:function (pos, time) {
         var locY = this._gridSize.height * time;
-        if (locY === 0.0)
-            return 1.0;
-        return Math.pow(pos.height / locY, 6);
+        if( locY === this._gridSize.height) return 0.0;
+        if (locY === 0.0) return 1.0;
+        return Math.pow(pos.y / locY, 6);
     },
 
     transformTile:function (pos, distance) {
@@ -655,11 +661,16 @@ cc.FadeOutUpTiles.create = cc.fadeOutUpTiles;
  * @extends cc.FadeOutUpTiles
  */
 cc.FadeOutDownTiles = cc.FadeOutUpTiles.extend(/** @lends cc.FadeOutDownTiles# */{
+    /**
+     * Test function
+     * @param {cc.Point} pos
+     * @param {Number} time
+     */
     testFunc:function (pos, time) {
         var locY = this._gridSize.height * (1.0 - time);
-        if (pos.height === 0)
-            return 1.0;
-        return Math.pow(locY / pos.height, 6);
+        if( locY === 0.0 ) return 0.0;
+        if (pos.y === 0) return 1.0;
+        return Math.pow(locY / pos.y, 6);
     }
 });
 
