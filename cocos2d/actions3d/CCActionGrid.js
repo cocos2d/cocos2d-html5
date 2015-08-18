@@ -48,7 +48,9 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
         gridSize && this.initWithDuration(duration, gridSize);
     },
 
-    _cacheTargetAsGridNode: function(){},
+    _cacheTargetAsGridNode:function (target) {
+        this._gridNodeTarget = target;
+    },
 
     /**
      * to copy object with deep copy.
@@ -71,6 +73,8 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         cc.renderer.childrenOrderDirty = true;
+        this._cacheTargetAsGridNode(target);
+
         var newGrid = this.getGrid();
 
         var targetGrid = this._gridNodeTarget.getGrid();
@@ -195,7 +199,7 @@ cc.Grid3DAction = cc.GridAction.extend(/** @lends cc.Grid3DAction# */{
     },
 
     /**
-     * returns the non-transformed vertex than belongs to certain position in the grid
+     * returns the non-transformed vertex that belongs to certain position in the grid
      * @param {cc.Point} position
      * @return {cc.Vertex3F}
      */
