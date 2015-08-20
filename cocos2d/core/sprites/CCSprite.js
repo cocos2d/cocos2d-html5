@@ -976,16 +976,24 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if(!textureRect || (!textureWidth && !textureHeight)) return;
         var nodeRect = this._rect;
         if(
-            oldTexture && 
+            oldTexture &&
             // If the contentSize does not exist, Set the contentSize
             (nodeWidth !== 0 && nodeHeight !== 0) &&
-            // ContentSize exist, But size is equal to the old texture, Set the contentSize
-            (oldTexture.url || (nodeWidth !== oldTextureWidth && nodeHeight !== oldTextureHeight)) &&
             // To satisfy the above two, But height/width does not exist, Set the contentSize
             (nodeRect.height !== 0 || nodeRect.width !== 0)
             // The remaining direct return
         ){
-            return;
+            //Sprite in updateColor, Will generate a new texture without URL
+            //To replace this texture, no need to update rect
+            if(texture.url){
+                if(
+                    nodeWidth !== oldTextureWidth && nodeHeight !== oldTextureHeight &&
+                    oldTextureWidth === textureWidth && oldTextureHeight === textureHeight
+                )
+                    return;
+            }else{
+                return;
+            }
         }
         textureRect.x = textureRect.x || 0;
         textureRect.y = textureRect.y || 0;
