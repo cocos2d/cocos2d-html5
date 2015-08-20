@@ -39,6 +39,7 @@
         this._colorized = false;
 
         this._originalTexture = null;
+        this._originalRect = cc.rect();
     };
 
     var proto = cc.Sprite.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
@@ -105,7 +106,6 @@
             if (_y > texture.height)
                 cc.error(cc._LogInfos.RectHeight, texture.url);
         }
-        this._node._originalTexture = texture;
     };
 
     proto.rendering = function (ctx, scaleX, scaleY) {
@@ -213,6 +213,10 @@
                     && this._originalTexture._htmlElementObj !== locElement)
                     cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(this._originalTexture._htmlElementObj, displayedColor, locRect, locElement);
                 else {
+                    this._originalRect.x = node._rect.x;
+                    this._originalRect.y = node._rect.y;
+                    this._originalRect.width = node._rect.width;
+                    this._originalRect.height = node._rect.height;
                     locElement = cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(this._originalTexture._htmlElementObj, displayedColor, locRect);
                     locTexture = new cc.Texture2D();
                     locTexture.initWithElement(locElement);
@@ -227,11 +231,10 @@
         if (this._colorized) {
             this._colorized = false;
             var node = this._node;
-            var rect = cc.rect(node._rect);
             var contentSize = cc.size(node._contentSize);
             var isRotation = node._rectRotated;
             node.setTexture(this._originalTexture);
-            node.setTextureRect(rect, isRotation, contentSize);
+            node.setTextureRect(this._originalRect, isRotation, contentSize);
         }
     };
 
