@@ -1409,8 +1409,16 @@ ccs.BlendFuncFrame = ccs.Frame.extend({
     clone: function(){
         var frame = new ccs.BlendFuncFrame();
         frame.setBlendFunc(this._blendFunc);
-        frame.cloneProperty(this);
+        frame._cloneProperty(this);
         return frame;
+    },
+
+    setBlendFunc: function(blendFunc){
+        this._blendFunc = blendFunc;
+    },
+
+    getBlendFunc: function(){
+        return this._blendFunc;
     }
 });
 

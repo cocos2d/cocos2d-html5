@@ -446,7 +446,7 @@ ccs.BoneNode = (function () {
             this._boneSkins.push(skin);
             if (skin.getBlendFunc){
                 var blendFunc = skin.getBlendFunc();
-                if(this._blendFunc.src !== blendFunc.src && thi.ss._blendFunc.dst !== blendFunc.dst)
+                if(this._blendFunc.src !== blendFunc.src && this._blendFunc.dst !== blendFunc.dst)
                     skin.setBlendFunc(this._blendFunc);
             }
         },
