@@ -739,8 +739,11 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         if (this._normalImage) {
             this.removeChild(this._normalImage, true);
         }
-
+        
         this._normalImage = normalImage;
+        if(!this._normalImage)
+            return;
+
         this.width = this._normalImage.width;
         this.height = this._normalImage.height;
         this._updateImagesVisibility();
@@ -978,7 +981,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
             callback = null,
             target = null;
 
-        if (normalImage === undefined) {
+        if (normalImage === undefined || normalImage === null) {
             cc.MenuItemSprite.prototype.ctor.call(this);
         }
         else {
