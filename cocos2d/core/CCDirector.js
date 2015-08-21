@@ -565,9 +565,17 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {cc.Node} node
      */
     setNotificationNode: function (node) {
+        cc.renderer.childrenOrderDirty = true;
+        if(this._notificationNode){
+            this._notificationNode.onExitTransitionDidStart();
+            this._notificationNode.onExit();
+            this._notificationNode.cleanup();
+        }
         this._notificationNode = node;
         if(!node)
-            cc.renderer.childrenOrderDirty = true;
+            return;
+        this._notificationNode.onEnter();
+        this._notificationNode.onEnterTransitionDidFinish();
     },
 
     /**
