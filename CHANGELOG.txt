@@ -1,5 +1,40 @@
 ChangeLog:
 
+Cocos2d-x v3.8 
+    
+    [NEW]           spine: Supported Spine runtime 2.3 (Both native and web engine)
+    [NEW]           Animate: Added Animate's getCurrentFrameIndex function
+    [NEW]           network: Upgrade SocketIO support to v1.x
+
+    [REFINE]        web: Avoid re-bake the content when the parent node's position get changed
+    [REFINE]        web: Added GameNodeObjectData and GameLayerObjectData in JSON parser
+    [REFINE]        web: Updated skeleton animation to the latest version
+    [REFINE]        web: Optimized resources automatic loading in JSON parser
+    [REFINE]        web: Avoid cc.loader resource loading being terminated while encounter errors
+    [REFINE]        web: Throw new Error object instead of error message string
+    [REFINE]        web: Move setDepthTest to renderer
+    [REFINE]        web: Added BlendFuncFrame parser
+    [REFINE]        web: Permitted webp image loading on Chrome
+    [REFINE]        web: Suspended the video player when the browser is minimized
+
+    [FIX]           web: Fixed a bug that VideoPlayer remove event throw error
+    [FIX]           web: Fixed Armature position error in studio JSON parser
+    [FIX]           web: Fixed default clearColor error in director
+    [FIX]           web: Fixed rotation value parsing error in the timeline parser
+    [FIX]           web: Fixed a bug that nested animation may be affected by outer animation
+    [FIX]           web: Made LabelAtlas ignoring invalid characters and updating correctly the content size
+    [FIX]           web: Fixed a bug that VideoPlayer remove event throw error
+    [FIX]           web: Fixed a bug that cc.director.setNotificationNode(null) doesn't take effect
+    [FIX]           web: Fixed texture rect update issue while changing sprite frame
+    [FIX]           web: Fixed effect issue in ActionGrid and NodeGrid
+    [FIX]           web: Fixed logic issue in Menu's _onTouchCancelled function
+    [FIX]           web: Fixed MenuItem crash when normal image is null
+
+    [TEST]          web: Rewrote testcase for stencil depth mask in RenderTextureTest
+    [TEST]          web: Improved renderTexture stencilDepth test
+    [TEST]          web: Fixed abnormal effects in effectsTest
+    [TEST]          web: Fixed invisiable testcase of effects
+
 Cocos2d-x v3.7.1 @ August.12 2015
     [HIGHLIGHT]     studio: Added new skeleton animation support and JSON parser for cocos v2.3.2 beta
 

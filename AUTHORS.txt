@@ -272,6 +272,8 @@ Zachary Lester       @ZLester       Fix typo in AUTHORS.txt
 
 Juan Carlos          @Ruluk         Fixed a bug where not resetting cc.Audio._ignoreEnded when replaying a sound caused it to stay in a "playing" state
 
+Maxim Litvinov       @metalim       Throw new Error object instead of error message string
+
 Retired Core Developers:
       Shengxiang Chen (Nero Chan)
       Xingsen Ma
