@@ -501,6 +501,23 @@ cc.path = /** @lends cc.path# */{
         index = pathStr.lastIndexOf("/");
         index = index <= 0 ? 0 : index + 1;
         return pathStr.substring(0, index) + basename + ext + tempStr;
+    },
+    //todo Open up after verification
+    _normalize: function(url){
+        url = String(url);
+        var status = true;
+        var repFunc = function(){
+            status = true;
+            return "";
+        };
+        //remove ../
+        while(status){
+            status = false;
+            url = url.replace(/[^\.\/]+\/\.\.\//, repFunc);
+        }
+        //remove ./
+        url = url.replace(/\/\.\//g, "/");
+        return url;
     }
 };
 //+++++++++++++++++++++++++something about path end++++++++++++++++++++++++++++++++

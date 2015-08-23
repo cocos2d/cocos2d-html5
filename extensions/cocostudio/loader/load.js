@@ -192,6 +192,7 @@ ccs.load = function(file, path){
         object.action.tag = object.node.tag;
     return object;
 };
+ccs.load.validate = {};
 
 //Forward compatible interface
 
@@ -225,11 +226,19 @@ ccs.csLoader = {
 cc.loader.register(["json"], {
     load : function(realUrl, url, res, cb){
         cc.loader.loadJson(realUrl, function(error, data){
+            var path = cc.path;
             if(data && data["Content"] && data["Content"]["Content"]["UsedResources"]){
-                var list = data["Content"]["Content"]["UsedResources"],
-                    dirname = cc.path.dirname(url);
-                for(var i=0; i<list.length; i++){
-                    list[i] = cc.path.join(dirname, list[i]);
+                var UsedResources = data["Content"]["Content"]["UsedResources"],
+                    dirname = path.dirname(url),
+                    list = [],
+                    tmpUrl, normalUrl;
+                for(var i=0; i<UsedResources.length; i++){
+                    tmpUrl = path.join(dirname, UsedResources[i]);
+                    normalUrl = path._normalize(tmpUrl);
+                    if(!ccs.load.validate[normalUrl]){
+                        ccs.load.validate[normalUrl] = true;
+                        list.push(tmpUrl);
+                    }
                 }
                 cc.loader.load(list, function(){
                     cb(error, data);
