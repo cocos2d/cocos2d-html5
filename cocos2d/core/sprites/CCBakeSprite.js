@@ -73,6 +73,6 @@ cc.BakeSprite = cc.Sprite.extend(/** @lends cc.BakeSprite# */{
         if(fillStyle !== locContext._context.fillStyle)
             locContext._context.fillStyle = fillStyle;
         this.getTexture().handleLoadedTexture();
-        this.setTextureRect(cc.rect(0,0, sizeOrWidth, height), false);
+        this.setTextureRect(cc.rect(0,0, sizeOrWidth, height), false, null, false);
     }
 });
