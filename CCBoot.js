@@ -365,6 +365,8 @@ cc.async = /** @lends cc.async# */{
  * @class
  */
 cc.path = /** @lends cc.path# */{
+    normalizeRE: /[^\.\/]+\/\.\.\//,
+
     /**
      * Join strings to be a path.
      * @example
@@ -501,6 +503,17 @@ cc.path = /** @lends cc.path# */{
         index = pathStr.lastIndexOf("/");
         index = index <= 0 ? 0 : index + 1;
         return pathStr.substring(0, index) + basename + ext + tempStr;
+    },
+    //todo make public after verification
+    _normalize: function(url){
+        var oldUrl = url = String(url);
+
+        //removing all ../
+        do {
+            oldUrl = url;
+            url = url.replace(this.normalizeRE, "");
+        } while(oldUrl.length !== url.length);
+        return url;
     }
 };
 //+++++++++++++++++++++++++something about path end++++++++++++++++++++++++++++++++
