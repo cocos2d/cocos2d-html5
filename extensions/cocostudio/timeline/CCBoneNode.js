@@ -532,7 +532,7 @@ ccs.BoneNode = (function () {
 
         proto.visit = function (parentCmd) {
             var node = this._node;
-            node._visit(parentCmd);
+            node._visit && node._visit(parentCmd);
         };
         proto.updateDebugPoint = function (points) {
             this._drawNode.clear();
@@ -564,7 +564,8 @@ ccs.BoneNode = (function () {
         proto.constructor = BoneNodeWebGLCmd;
 
         proto.visit = function (parentCmd) {
-            this._node._visit(parentCmd);
+            var node = this._node;
+            node._visit && node._visit(parentCmd);
         };
         proto.updateDebugPoint = function (points) {
             this._drawNode.clear();
