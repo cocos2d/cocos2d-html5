@@ -1953,7 +1953,6 @@ ccui.ScrollView.SCROLLDIR_RIGHT = cc.p(1, 0);
             return;
         node._adaptRenderers();
         node._doLayout();
-        var  i, j, currentStack = cc.current_stack;
 
         this._syncStatus(parentCmd);
 
@@ -1971,11 +1970,12 @@ ccui.ScrollView.SCROLLDIR_RIGHT = cc.p(1, 0);
 
     proto.getWidgetsRenderCmds = function(protectCmd) {
         var node = protectCmd._node;
+        var parentCmd = node._parent._renderCmd;
+
         if (!node._visible)
             return;
 
-        if(this._stackMatrix !== protectCmd._stackMatrix)
-            protectCmd._syncStatus(this);
+        protectCmd._syncStatus(parentCmd);
 
         node.sortAllChildren();
         var locChildren = node._children,
@@ -1996,9 +1996,10 @@ ccui.ScrollView.SCROLLDIR_RIGHT = cc.p(1, 0);
     proto.stencilClippingVisit = function(protectCmd) {
         var beforeVisitCmdStencil = protectCmd._beforeVisitCmdStencil;
         var afterDrawStencilCmd = protectCmd._afterDrawStencilCmd;
-        var afterVisitCmdStencil = protectCmd._afterVisitCmdStencil;
 
         var node = protectCmd._node._parent;//this._node;
+        var parentCmd = node._renderCmd;
+
         if (!node._clippingStencil || !node._clippingStencil.isVisible())
             return;
 
@@ -2015,7 +2016,10 @@ ccui.ScrollView.SCROLLDIR_RIGHT = cc.p(1, 0);
         }
 
         cc.renderer.pushRenderCommand(beforeVisitCmdStencil);
-        node._clippingStencil.visit(this);
+
+        protectCmd._syncStatus(parentCmd);
+
+        node._clippingStencil.visit(parentCmd);
         cc.renderer.pushRenderCommand(afterDrawStencilCmd);
         this.getWidgetsRenderCmds(protectCmd);
         cc.renderer.pushRenderCommand(protectCmd._afterVisitCmdStencil);
@@ -2024,10 +2028,9 @@ ccui.ScrollView.SCROLLDIR_RIGHT = cc.p(1, 0);
 
     proto.scissorClippingVisit = function(protectCmd) {
         var beforeVisitCmdStencil = protectCmd._beforeVisitCmdStencil;
-        var afterVisitCmdScissor = protectCmd._beforeVisitCmdStencil;
         cc.renderer.pushRenderCommand(beforeVisitCmdStencil);
         this.getWidgetsRenderCmds(protectCmd);
-        cc.renderer.pushRenderCommand(afterVisitCmdScissor);
+        cc.renderer.pushRenderCommand(protectCmd._afterVisitCmdScissor);
     };
 
     proto.getContainerRenderCmds = function(protectCmd) {
@@ -2040,8 +2043,7 @@ ccui.ScrollView.SCROLLDIR_RIGHT = cc.p(1, 0);
         node._adaptRenderers();
         node._doLayout();
 
-        if(protectCmd._stackMatrix != parentCmd._stackMatrix)
-            protectCmd._syncStatus(parentCmd);
+        protectCmd._syncStatus(parentCmd);
 
         if (parentNode._clippingEnabled) {
             switch (parentNode._clippingType) {
@@ -2061,6 +2063,7 @@ ccui.ScrollView.SCROLLDIR_RIGHT = cc.p(1, 0);
 
     proto.getScrollViewRenderCmds = function(parentCmd) {
         var node = parentCmd._node;
+        var parentNode = node._parent;
 
         if(cc.renderer._isCacheToBufferOn === false)
             cc.renderer._turnToCacheMode();
@@ -2071,11 +2074,7 @@ ccui.ScrollView.SCROLLDIR_RIGHT = cc.p(1, 0);
         node._doLayout();
 
         var  i, j;
-
-        if(this._stackMatrix !== parentCmd._stackMatrix)
-            parentCmd._syncStatus(this);
-
-
+        parentCmd._syncStatus(parentNode._renderCmd);
 
         var locChildren = node._children, locProtectedChildren = node._protectedChildren;
         var childLen = locChildren.length, pLen = locProtectedChildren.length;
@@ -2086,7 +2085,7 @@ ccui.ScrollView.SCROLLDIR_RIGHT = cc.p(1, 0);
         // draw children zOrder < 0
         for (i = 0; i < childLen; i++) {
             if (locChildren[i] && locChildren[i]._localZOrder < 0 && locChildren[i]._inViewRect !== false)
-                locChildren[i].visit(this);
+                locChildren[i].visit(parentCmd);
             else
                 break;
         }
@@ -2096,7 +2095,7 @@ ccui.ScrollView.SCROLLDIR_RIGHT = cc.p(1, 0);
                 cc.ProtectedNode.RenderCmd._changeProtectedChild(pChild);
                 if(pChild.tag >= 0 ) this.getContainerRenderCmds(pChild._renderCmd);
                 else
-                    pChild.visit(this);
+                    pChild.visit(parentCmd);
             }else
                 break;
         }
@@ -2104,7 +2103,7 @@ ccui.ScrollView.SCROLLDIR_RIGHT = cc.p(1, 0);
         // draw children zOrder >= 0
         for (; i < childLen; i++) {
             if(locChildren[i]._inViewRect !== false)
-                locChildren[i] && locChildren[i].visit(this);
+                locChildren[i] && locChildren[i].visit(parentCmd);
         }
         for (; j < pLen; j++) {
             pChild = locProtectedChildren[j];
@@ -2112,7 +2111,7 @@ ccui.ScrollView.SCROLLDIR_RIGHT = cc.p(1, 0);
             cc.ProtectedNode.RenderCmd._changeProtectedChild(pChild);
             if(pChild.tag >= 0 ) this.getContainerRenderCmds(pChild._renderCmd);
             else
-                pChild.visit(this);
+                pChild.visit(parentCmd);
         }
 
         this._dirtyFlag = 0;
