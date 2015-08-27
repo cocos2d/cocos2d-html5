@@ -150,13 +150,23 @@ ccs.SkeletonNode = (function(){
             var cmd = this._renderCmd;
             parentCmd = parentCmd || cmd.getParentRenderCmd();
             cmd._syncStatus(parentCmd);
+
+            var i, node;
+            if(this._children.length !== 0){
+                for (i=0; i < this._children.length; i++){
+                    node = this._children[i];
+                    node._renderCmd.visit(cmd);
+                }
+            }
+
             this._checkSubBonesDirty();
             var subOrderedAllBones = this._subOrderedAllBones,
                 subOrderedBone, subOrderedBoneCmd;
-            for (var i=0; i<subOrderedAllBones.length; i++){
+            for (i=0; i<subOrderedAllBones.length; i++){
                 subOrderedBone = subOrderedAllBones[i];
                 subOrderedBone._visitSkins();
             }
+
             if(cmd._debug)
                 for (i=0; i<subOrderedAllBones.length; i++){
                     subOrderedBoneCmd = subOrderedAllBones[i]._renderCmd;
