@@ -151,6 +151,13 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this.addProtectedChild(this._innerContainer, 1, 1);
     },
 
+    _createRenderCmd: function(){
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+            return new ccui.ScrollView.WebGLRenderCmd(this);
+        else
+            return new ccui.ScrollView.CanvasRenderCmd(this);
+    },
+
     _onSizeChanged: function () {
         ccui.Layout.prototype._onSizeChanged.call(this);
         var locSize = this._contentSize;
@@ -295,6 +302,27 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         return this._innerContainer.height;
     },
 
+    _isInContainer: function (widget) {
+        var top = widget.getBottomBoundary() >= this._customSize.height - this._innerContainer.y;
+        var down = widget.getTopBoundary() <= -this._innerContainer.y;
+        var right = widget.getLeftBoundary() >= this._customSize.width - this._innerContainer.x;
+        var left = widget.getRightBoundary() <= -this._innerContainer.x;
+        if(top || down || right || left)
+            return false;
+        return true;
+    },
+
+    updateChildren: function () {
+        var child;
+        var childrenArray = this._innerContainer._children;
+        for(var i = 0; i < childrenArray.length; i++) {
+            child = childrenArray[i];
+            if(child._inViewRect === true && this._isInContainer(child) === false)
+                child._inViewRect = false;
+            else if (child._inViewRect === false && this._isInContainer(child) === true)
+                child._inViewRect = true;
+        }
+    },
     /**
      * Add child to ccui.ScrollView.
      * @param {cc.Node} widget
@@ -305,6 +333,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     addChild: function (widget, zOrder, tag) {
         if(!widget)
             return false;
+        if(this._isInContainer(widget) === false)
+            widget._inViewRect = false;
         zOrder = zOrder || widget.getLocalZOrder();
         tag = tag || widget.getTag();
         return this._innerContainer.addChild(widget, zOrder, tag);
@@ -376,6 +406,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this._moveChildPoint.x = locContainer.x + offsetX;
         this._moveChildPoint.y = locContainer.y + offsetY;
         this._innerContainer.setPosition(this._moveChildPoint);
+        if(this._innerContainer._children.length !== 0 )
+            this.updateChildren();
     },
 
     _autoScrollChildren: function (dt) {
@@ -1887,3 +1919,215 @@ ccui.ScrollView.SCROLLDIR_UP = cc.p(0, 1);
 ccui.ScrollView.SCROLLDIR_DOWN = cc.p(0, -1);
 ccui.ScrollView.SCROLLDIR_LEFT = cc.p(-1, 0);
 ccui.ScrollView.SCROLLDIR_RIGHT = cc.p(1, 0);
+
+(function(){
+    if(!ccui.ProtectedNode.CanvasRenderCmd)
+        return;
+    ccui.ScrollView.CanvasRenderCmd = function(renderable){
+        ccui.Layout.CanvasRenderCmd.call(this, renderable);
+    };
+
+    var proto = ccui.ScrollView.CanvasRenderCmd.prototype = Object.create(ccui.Layout.CanvasRenderCmd.prototype);
+    proto.constructor = ccui.ScrollView.CanvasRenderCmd;
+
+    proto.visit = function(parentCmd) {
+        ccui.Layout.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
+    }
+})();
+
+(function(){
+    if(!ccui.ProtectedNode.WebGLRenderCmd)
+        return;
+    ccui.ScrollView.WebGLRenderCmd = function(renderable){
+        ccui.Layout.WebGLRenderCmd.call(this, renderable);
+        this._needDraw = true;
+        this._dirty = false;
+    };
+
+    var proto = ccui.ScrollView.WebGLRenderCmd.prototype = Object.create(ccui.Layout.WebGLRenderCmd.prototype);
+    proto.constructor = ccui.ScrollView.WebGLRenderCmd;
+
+    proto.visit = function(parentCmd) {
+        var node = this._node;
+        if (!node._visible)
+            return;
+        node._adaptRenderers();
+        node._doLayout();
+        var  i, j, currentStack = cc.current_stack;
+
+        this._syncStatus(parentCmd);
+
+        var locGrid = node.grid;
+        if (locGrid && locGrid._active)
+            locGrid.beforeDraw();
+
+        cc.renderer.pushRenderCommand(this);
+
+        if (locGrid && locGrid._active)
+            locGrid.afterDraw(node);
+
+        this._dirtyFlag = 0;
+    };
+
+    proto.getWidgetsRenderCmds = function(protectCmd) {
+        var node = protectCmd._node;
+        if (!node._visible)
+            return;
+
+        if(this._stackMatrix !== protectCmd._stackMatrix)
+            protectCmd._syncStatus(this);
+
+        node.sortAllChildren();
+        var locChildren = node._children,
+            childLen = locChildren.length;
+        for (var i=0; i<childLen; i++){
+            if(!locChildren[i])
+                break;
+            if (locChildren[i] && locChildren[i]._inViewRect !== false) {
+                if(locChildren[i]._className === "ScrollView")
+                    this.getScrollViewRenderCmds(locChildren[i]._renderCmd);
+                else locChildren[i].visit(protectCmd);
+            }
+            else
+                continue;
+        }
+    };
+
+    proto.stencilClippingVisit = function(protectCmd) {
+        var beforeVisitCmdStencil = protectCmd._beforeVisitCmdStencil;
+        var afterDrawStencilCmd = protectCmd._afterDrawStencilCmd;
+        var afterVisitCmdStencil = protectCmd._afterVisitCmdStencil;
+
+        var node = protectCmd._node._parent;//this._node;
+        if (!node._clippingStencil || !node._clippingStencil.isVisible())
+            return;
+
+        // all the _stencilBits are in use?
+        if (ccui.Layout.WebGLRenderCmd._layer + 1 === cc.stencilBits) {
+            ccui.Layout.WebGLRenderCmd._visit_once = true;
+            if (ccui.Layout.WebGLRenderCmd._visit_once) {
+                cc.log("Nesting more than " + cc.stencilBits + "stencils is not supported. Everything will be drawn without stencil for this node and its childs.");
+                ccui.Layout.WebGLRenderCmd._visit_once = false;
+            }
+            // draw everything, as if there where no stencil
+            this.getWidgetsRenderCmds(protectCmd);
+            return;
+        }
+
+        cc.renderer.pushRenderCommand(beforeVisitCmdStencil);
+        node._clippingStencil.visit(this);
+        cc.renderer.pushRenderCommand(afterDrawStencilCmd);
+        this.getWidgetsRenderCmds(protectCmd);
+        cc.renderer.pushRenderCommand(protectCmd._afterVisitCmdStencil);
+
+    };
+
+    proto.scissorClippingVisit = function(protectCmd) {
+        var beforeVisitCmdStencil = protectCmd._beforeVisitCmdStencil;
+        var afterVisitCmdScissor = protectCmd._beforeVisitCmdStencil;
+        cc.renderer.pushRenderCommand(beforeVisitCmdStencil);
+        this.getWidgetsRenderCmds(protectCmd);
+        cc.renderer.pushRenderCommand(afterVisitCmdScissor);
+    };
+
+    proto.getContainerRenderCmds = function(protectCmd) {
+        var node = protectCmd._node;
+
+        var parentNode = node._parent;//this._node;
+        var parentCmd = parentNode._renderCmd;
+        if (!node._visible)
+            return;
+        node._adaptRenderers();
+        node._doLayout();
+
+        if(protectCmd._stackMatrix != parentCmd._stackMatrix)
+            protectCmd._syncStatus(parentCmd);
+
+        if (parentNode._clippingEnabled) {
+            switch (parentNode._clippingType) {
+                case ccui.Layout.CLIPPING_STENCIL:
+                    this.stencilClippingVisit(protectCmd);
+                    break;
+                case ccui.Layout.CLIPPING_SCISSOR:
+                    this.scissorClippingVisit(protectCmd);
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+            this.getWidgetsRenderCmds(protectCmd);
+    };
+
+    proto.getScrollViewRenderCmds = function(parentCmd) {
+        var node = parentCmd._node;
+
+        if(cc.renderer._isCacheToBufferOn === false)
+            cc.renderer._turnToCacheMode();
+
+        if (!node._visible)
+            return;
+        node._adaptRenderers();
+        node._doLayout();
+
+        var  i, j;
+
+        if(this._stackMatrix !== parentCmd._stackMatrix)
+            parentCmd._syncStatus(this);
+
+
+
+        var locChildren = node._children, locProtectedChildren = node._protectedChildren;
+        var childLen = locChildren.length, pLen = locProtectedChildren.length;
+        node.sortAllChildren();
+        node.sortAllProtectedChildren();
+
+        var pChild;
+        // draw children zOrder < 0
+        for (i = 0; i < childLen; i++) {
+            if (locChildren[i] && locChildren[i]._localZOrder < 0 && locChildren[i]._inViewRect !== false)
+                locChildren[i].visit(this);
+            else
+                break;
+        }
+        for(j = 0; j < pLen; j++){
+            pChild = locProtectedChildren[j];
+            if (pChild && pChild._localZOrder < 0 && pChild._inViewRect !== false){
+                cc.ProtectedNode.RenderCmd._changeProtectedChild(pChild);
+                if(pChild.tag >= 0 ) this.getContainerRenderCmds(pChild._renderCmd);
+                else
+                    pChild.visit(this);
+            }else
+                break;
+        }
+
+        // draw children zOrder >= 0
+        for (; i < childLen; i++) {
+            if(locChildren[i]._inViewRect !== false)
+                locChildren[i] && locChildren[i].visit(this);
+        }
+        for (; j < pLen; j++) {
+            pChild = locProtectedChildren[j];
+            if(!pChild || pChild._inViewRect===false) continue;
+            cc.ProtectedNode.RenderCmd._changeProtectedChild(pChild);
+            if(pChild.tag >= 0 ) this.getContainerRenderCmds(pChild._renderCmd);
+            else
+                pChild.visit(this);
+        }
+
+        this._dirtyFlag = 0;
+
+    };
+
+    proto.rendering = function(ctx){
+        this.getScrollViewRenderCmds(this);
+        var locCmds = cc.renderer._cacheToBufferCmds[0],
+            i,
+            len;
+        var context = ctx || cc._renderContext;
+        for (i = 0, len = locCmds.length; i < len; i++)
+            locCmds[i].rendering(context);
+        if(cc.renderer._isCacheToBufferOn === true)
+            cc.renderer._turnToNormalMode();
+    }
+})();
