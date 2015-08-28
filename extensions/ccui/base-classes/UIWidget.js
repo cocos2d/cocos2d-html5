@@ -153,6 +153,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     _callbackName: null,
     _callbackType: null,
     _usingLayoutComponent: false,
+    _inViewRect: true,
 
     /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
