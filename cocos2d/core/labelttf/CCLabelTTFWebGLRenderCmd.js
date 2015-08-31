@@ -28,6 +28,7 @@
         cc.Sprite.WebGLRenderCmd.call(this, renderable);
         cc.LabelTTF.RenderCmd.call(this);
         this.setShaderProgram(cc.shaderCache.programForKey(cc.LabelTTF._SHADER_PROGRAM));
+        this._drawOnCanvas = true;
     };
 
     var proto = cc.LabelTTF.WebGLRenderCmd.prototype = Object.create(cc.Sprite.WebGLRenderCmd.prototype);
