@@ -102,7 +102,7 @@ cc.screen = /** @lends cc.screen# */{
      */
     fullScreen: function () {
         if(!this._supportsFullScreen)   return false;
-        else if( document[this._fn.fullscreenElement] === null)
+        else if( document[this._fn.fullscreenElement] === undefined || document[this._fn.fullscreenElement] === null )
             return false;
         else
             return true;
