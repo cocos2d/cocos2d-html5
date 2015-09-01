@@ -69,8 +69,10 @@
             color = this._colorUnmodified,
             element = texture.getHtmlElementObj();
         var textureRect = cc.rect(0, 0, element.width, element.height);
-        //todo
-        this._renderTexture = texture._generateColorTexture(color.r, color.g, color.b, textureRect);
+        if(texture === this._renderTexture)
+            this._renderTexture = texture._generateColorTexture(color.r, color.g, color.b, textureRect);
+        else
+            texture._generateColorTexture(color.r, color.g, color.b, textureRect, this._renderTexture.getHtmlElementObj());
     };
 
     proto.setOpacity = function(opacity){
