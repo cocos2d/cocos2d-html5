@@ -44,8 +44,10 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         this._strokeColorStr = "";
         this._fillColorStr = "rgba(255,255,255,1)";
 
-        this._labelCanvas = null;
-        this._labelContext = null;
+        this._labelCanvas = cc.newElement("canvas");
+        this._labelCanvas.width = 1;
+        this._labelCanvas.height = 1;
+        this._labelContext = this._labelCanvas.getContext("2d");
         this._lineWidths = [];
         this._strings = [];
         this._isMultiLine = false;
@@ -53,24 +55,6 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     var proto = cc.LabelTTF.RenderCmd.prototype;
 
     proto.constructor = cc.LabelTTF.RenderCmd;
-
-    proto._getLabelContext = function () {
-        if (this._labelContext)
-            return this._labelContext;
-
-        var node = this._node;
-        if (!this._labelCanvas) {
-            var locCanvas = cc.newElement("canvas");
-            locCanvas.width = 1;
-            locCanvas.height = 1;
-            var labelTexture = new cc.Texture2D();
-            labelTexture.initWithElement(locCanvas);
-            node.setTexture(labelTexture);
-            this._labelCanvas = locCanvas;
-        }
-        this._labelContext = this._labelCanvas.getContext("2d");
-        return this._labelContext;
-    };
 
     proto._setFontStyle = function (fontNameOrFontDef, fontSize, fontStyle, fontWeight) {
 
@@ -95,8 +79,14 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     proto._updateTexture = function () {
         this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.textDirty ^ this._dirtyFlag;
         var node = this._node;
-        var locContext = this._getLabelContext(), locLabelCanvas = this._labelCanvas;
+        var locContext = this._labelContext, locLabelCanvas = this._labelCanvas;
         var locContentSize = node._contentSize;
+
+        if(!node._texture){
+            var texture = new cc.Texture2D();
+            texture.initWithElement(this._labelCanvas);
+            node.setTexture(texture);
+        }
 
         if (node._string.length === 0) {
             locLabelCanvas.width = 1;
@@ -124,11 +114,11 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     };
 
     proto._measureConfig = function () {
-        this._getLabelContext().font = this._fontStyleStr;
+        this._labelContext.font = this._fontStyleStr;
     };
 
     proto._measure = function (text) {
-        return this._getLabelContext().measureText(text).width;
+        return this._labelContext.measureText(text).width;
     };
 
     proto._updateTTF = function () {

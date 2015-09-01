@@ -96,30 +96,12 @@ cc.PVRHaveAlphaPremultiplied_ = false;
 
 //cc.Texture2DWebGL move to TextureWebGL.js
 
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
+(function(){
 
-    /**
-     * <p>
-     * This class allows to easily create OpenGL or Canvas 2D textures from images, text or raw data.                                    <br/>
-     * The created cc.Texture2D object will always have power-of-two dimensions.                                                <br/>
-     * Depending on how you create the cc.Texture2D object, the actual image area of the texture might be smaller than the texture dimensions <br/>
-     *  i.e. "contentSize" != (pixelsWide, pixelsHigh) and (maxS, maxT) != (1.0, 1.0).                                           <br/>
-     * Be aware that the content of the generated textures will be upside-down! </p>
-     * @name cc.Texture2D
-     * @class
-     * @extends cc.Class
-     *
-     * @property {WebGLTexture}     name            - <@readonly> WebGLTexture Object
-     * @property {Number}           pixelFormat     - <@readonly> Pixel format of the texture
-     * @property {Number}           pixelsWidth     - <@readonly> Width in pixels
-     * @property {Number}           pixelsHeight    - <@readonly> Height in pixels
-     * @property {Number}           width           - Content width in points
-     * @property {Number}           height          - Content height in points
-     * @property {cc.GLProgram}     shaderProgram   - The shader program used by drawAtPoint and drawInRect
-     * @property {Number}           maxS            - Texture max S
-     * @property {Number}           maxT            - Texture max T
-     */
-    cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
+    if(cc._renderType !== cc._RENDER_TYPE_CANVAS)
+        return;
+
+    var proto = {
         _contentSize: null,
         _textureLoaded: false,
         _htmlElementObj: null,
@@ -402,6 +384,22 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             this.removeEventListener("load", target);
         },
 
+        _generateColorTexture: function(){/*overide*/},
+        _generateTextureCacheForColor: function(){
+            if (this.channelCache)
+                return this.channelCache;
+
+            var textureCache = [
+                cc.newElement("canvas"),
+                cc.newElement("canvas"),
+                cc.newElement("canvas"),
+                cc.newElement("canvas")
+            ];
+            //todo texture onload
+            renderToCache(this._htmlElementObj, textureCache);
+            return this.channelCache = textureCache;
+        },
+
         //hack for gray effect
         _grayElementObj: null,
         _backupElement: null,
@@ -413,14 +411,177 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             if(this._isGray){
                 this._backupElement = this._htmlElementObj;
                 if(!this._grayElementObj)
-                     this._grayElementObj = cc.Texture2D._generateGrayTexture(this._htmlElementObj);
+                    this._grayElementObj = cc.Texture2D._generateGrayTexture(this._htmlElementObj);
                 this._htmlElementObj = this._grayElementObj;
             } else {
                 if(this._backupElement !== null)
                     this._htmlElementObj = this._backupElement;
             }
         }
-    });
+    };
+
+    var renderToCache = function(image, cache){
+        var w = image.width;
+        var h = image.height;
+
+        cache[0].width = w;
+        cache[0].height = h;
+        cache[1].width = w;
+        cache[1].height = h;
+        cache[2].width = w;
+        cache[2].height = h;
+        cache[3].width = w;
+        cache[3].height = h;
+
+        var cacheCtx = cache[3].getContext("2d");
+        cacheCtx.drawImage(image, 0, 0);
+        var pixels = cacheCtx.getImageData(0, 0, w, h).data;
+
+        var ctx;
+        for (var rgbI = 0; rgbI < 4; rgbI++) {
+            ctx = cache[rgbI].getContext("2d");
+
+            var to = ctx.getImageData(0, 0, w, h);
+            var data = to.data;
+            for (var i = 0; i < pixels.length; i += 4) {
+                data[i  ] = (rgbI === 0) ? pixels[i  ] : 0;
+                data[i + 1] = (rgbI === 1) ? pixels[i + 1] : 0;
+                data[i + 2] = (rgbI === 2) ? pixels[i + 2] : 0;
+                data[i + 3] = pixels[i + 3];
+            }
+            ctx.putImageData(to, 0, 0);
+        }
+        image.onload = null;
+    };
+
+    //change color function
+    if(cc.sys._supportCanvasNewBlendModes){
+        //multiply mode
+        //Primary afferent, Draw a new texture based on rect
+        proto._generateColorTexture = function(r, g, b, rect, canvas){
+            var onlyCanvas = false;
+            if(canvas)
+                onlyCanvas = true;
+            else
+                canvas = cc.newElement("canvas");
+            var textureImage = this._htmlElementObj;
+            if(!rect)
+                rect = cc.rect(0, 0, textureImage.width, textureImage.height);
+
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+
+            var context = canvas.getContext("2d");
+            context.globalCompositeOperation = "source-over";
+            context.fillStyle = "rgb(" + (r|0) + "," + (g|0) + "," + (b|0) + ")";
+            context.fillRect(0, 0, rect.width, rect.height);
+            context.globalCompositeOperation = "multiply";
+            context.drawImage(
+                textureImage,
+                rect.x, rect.y, rect.width, rect.height,
+                0, 0, rect.width, rect.height
+            );
+            context.globalCompositeOperation = "destination-atop";
+            context.drawImage(
+                textureImage,
+                rect.x, rect.y, rect.width, rect.height,
+                0, 0, rect.width, rect.height
+            );
+            if(onlyCanvas)
+                return canvas;
+            var newTexture = new cc.Texture2D();
+            newTexture.initWithElement(canvas);
+            newTexture.handleLoadedTexture();
+            return newTexture;
+        };
+    }else{
+        //Four color map overlay
+        proto._generateColorTexture = function(r, g, b, rect, canvas){
+            var onlyCanvas = false;
+            if(canvas)
+                onlyCanvas = true;
+            else
+                canvas = cc.newElement("canvas");
+
+            var textureImage = this._htmlElementObj;
+
+            var x, y, w, h;
+            if(rect){
+                x = rect.x; y = rect.y; w = rect.width; h = rect.height;
+            }else{
+                x = y = 0; w = textureImage.width; h = textureImage.height;
+            }
+
+            canvas.width = w;
+            canvas.height = h;
+
+            var context = canvas.getContext("2d");
+            var tintedImgCache = cc.textureCache.getTextureColors(this);
+            context.globalCompositeOperation = 'lighter';
+            context.drawImage(
+                tintedImgCache[3],
+                x, y, w, h,
+                0, 0, w, h
+            );
+            if (r > 0) {
+                context.globalAlpha = r / 255;
+                context.drawImage(
+                    tintedImgCache[0],
+                    x, y, w, h,
+                    0, 0, w, h
+                );
+            }
+            if (g > 0) {
+                context.globalAlpha = g / 255;
+                context.drawImage(
+                    tintedImgCache[1],
+                    x, y, w, h,
+                    0, 0, w, h
+                );
+            }
+            if (b > 0) {
+                context.globalAlpha = b / 255;
+                context.drawImage(
+                    tintedImgCache[2],
+                    x, y, w, h,
+                    0, 0, w, h
+                );
+            }
+            if(onlyCanvas)
+                return canvas;
+
+            var newTexture = new cc.Texture2D();
+            newTexture.initWithElement(canvas);
+            newTexture.handleLoadedTexture();
+            return newTexture;
+        };
+    }
+
+    /**
+     * <p>
+     * This class allows to easily create OpenGL or Canvas 2D textures from images, text or raw data.                                    <br/>
+     * The created cc.Texture2D object will always have power-of-two dimensions.                                                <br/>
+     * Depending on how you create the cc.Texture2D object, the actual image area of the texture might be smaller than the texture dimensions <br/>
+     *  i.e. "contentSize" != (pixelsWide, pixelsHigh) and (maxS, maxT) != (1.0, 1.0).                                           <br/>
+     * Be aware that the content of the generated textures will be upside-down! </p>
+     * @name cc.Texture2D
+     * @class
+     * @extends cc.Class
+     *
+     * @property {WebGLTexture}     name            - <@readonly> WebGLTexture Object
+     * @property {Number}           pixelFormat     - <@readonly> Pixel format of the texture
+     * @property {Number}           pixelsWidth     - <@readonly> Width in pixels
+     * @property {Number}           pixelsHeight    - <@readonly> Height in pixels
+     * @property {Number}           width           - Content width in points
+     * @property {Number}           height          - Content height in points
+     * @property {cc.GLProgram}     shaderProgram   - The shader program used by drawAtPoint and drawInRect
+     * @property {Number}           maxS            - Texture max S
+     * @property {Number}           maxT            - Texture max T
+     */
+    cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */proto);
+
+})();
+if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     cc.Texture2D._generateGrayTexture = function(texture, rect, renderCanvas){
         if (texture === null)
