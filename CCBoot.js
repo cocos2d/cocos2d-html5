@@ -1590,6 +1590,7 @@ cc._initSys = function (config, CONFIG_KEY) {
      */
     sys.language = currLanguage;
 
+    /* Determine the browser type */
     var browserType = sys.BROWSER_TYPE_UNKNOWN;
     var browserTypes = ua.match(/sogou|qzone|liebao|micromessenger|qqbrowser|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|trident|oupeng|opera|miuibrowser|firefox/i)
         || ua.match(/chrome|safari/i);
@@ -1602,8 +1603,45 @@ cc._initSys = function (config, CONFIG_KEY) {
         else if (browserType === "trident") browserType = sys.BROWSER_TYPE_IE;
         else if (browserType === "360 aphone") browserType = sys.BROWSER_TYPE_360;
     }else if(ua.indexOf("iphone") && ua.indexOf("mobile")){
-        browserType = "safari";
+        browserType = sys.BROWSER_TYPE_SAFARI;
     }
+
+    /* Determine the browser version number */
+    var browserVersion, tmp = null;
+    switch(browserType){
+        case sys.BROWSER_TYPE_IE:
+            tmp = ua.match(/(msie |rv:)([\d.]+)/);
+            break;
+        case sys.BROWSER_TYPE_FIREFOX:
+            tmp = ua.match(/(firefox\/|rv:)([\d.]+)/);
+            break;
+        case sys.BROWSER_TYPE_CHROME:
+            tmp = ua.match(/chrome\/([\d.]+)/);
+            break;
+        case sys.BROWSER_TYPE_BAIDU:
+            tmp = ua.match(/baidubrowser\/([\d.]+)/);
+            break;
+        case sys.BROWSER_TYPE_UC:
+            tmp = ua.match(/ucbrowser\/([\d.]+)/);
+            break;
+        case sys.BROWSER_TYPE_QQ:
+            tmp = ua.match(/qqbrowser\/([\d.]+)/);
+            break;
+        case sys.BROWSER_TYPE_OUPENG:
+            tmp = ua.match(/oupeng\/([\d.]+)/);
+            break;
+        case sys.BROWSER_TYPE_WECHAT:
+            tmp = ua.match(/micromessenger\/([\d.]+)/);
+            break;
+        case sys.BROWSER_TYPE_SAFARI:
+            tmp = ua.match(/safari\/([\d.]+)/);
+            break;
+        case sys.BROWSER_TYPE_MIUI:
+            tmp = ua.match(/miuibrowser\/([\d.]+)/);
+            break;
+    }
+    browserVersion = tmp ? tmp[1] : "";
+
     /**
      * Indicate the running browser type
      * @memberof cc.sys
@@ -1611,6 +1649,14 @@ cc._initSys = function (config, CONFIG_KEY) {
      * @type {String}
      */
     sys.browserType = browserType;
+
+    /**
+     * Indicate the running browser version
+     * @memberof cc.sys
+     * @name browserVersion
+     * @type {Number}
+     */
+    sys.browserVersion = browserVersion;
 
     // Get the os of system
     var iOS = ( ua.match(/(iPad|iPhone|iPod)/i) ? true : false );
@@ -1630,14 +1676,6 @@ cc._initSys = function (config, CONFIG_KEY) {
      * @type {String}
      */
     sys.os = osName;
-
-    var multipleAudioWhiteList = [
-        sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_BAIDU_APP,
-        sys.BROWSER_TYPE_SAFARI, sys.BROWSER_TYPE_UC, sys.BROWSER_TYPE_QQ, sys.BROWSER_TYPE_MOBILE_QQ, sys.BROWSER_TYPE_IE
-    ];
-
-    sys._supportMultipleAudio = multipleAudioWhiteList.indexOf(sys.browserType) > -1;
-
 
     //++++++++++++++++++something about cc._renderTYpe and cc._supportRender begin++++++++++++++++++++++++++++
 
@@ -1695,14 +1733,6 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys._supportCanvasNewBlendModes = sys._canUseCanvasNewBlendModes();
 
     //++++++++++++++++++something about cc._renderType and cc._supportRender end++++++++++++++++++++++++++++++
-
-    // check if browser supports Web Audio
-    // check Web Audio's context
-    try {
-        sys._supportWebAudio = !!(win.AudioContext || win.webkitAudioContext || win.mozAudioContext);
-    } catch (e) {
-        sys._supportWebAudio = false;
-    }
 
     /**
      * cc.sys.localStorage is a local storage component.
