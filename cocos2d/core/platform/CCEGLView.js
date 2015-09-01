@@ -626,7 +626,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
         if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             // reset director's member variables to fit visible rect
-            director._createStatsLabel();
             director.setGLDefaultValues();
         }
 
