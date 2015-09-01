@@ -1590,6 +1590,25 @@ cc._initSys = function (config, CONFIG_KEY) {
      */
     sys.language = currLanguage;
 
+    // Get the os of system
+    var iOS = ( ua.match(/(iPad|iPhone|iPod)/i) ? true : false );
+    var isAndroid = ua.match(/android/i) || nav.platform.match(/android/i) ? true : false;
+    var osName = sys.OS_UNKNOWN;
+    if (nav.appVersion.indexOf("Win") !== -1) osName = sys.OS_WINDOWS;
+    else if (iOS) osName = sys.OS_IOS;
+    else if (nav.appVersion.indexOf("Mac") !== -1) osName = sys.OS_OSX;
+    else if (nav.appVersion.indexOf("X11") !== -1 && nav.appVersion.indexOf("Linux") === -1) osName = sys.OS_UNIX;
+    else if (isAndroid) osName = sys.OS_ANDROID;
+    else if (nav.appVersion.indexOf("Linux") !== -1) osName = sys.OS_LINUX;
+
+    /**
+     * Indicate the running os name
+     * @memberof cc.sys
+     * @name os
+     * @type {String}
+     */
+    sys.os = osName;
+
     /* Determine the browser type */
     var browserType = sys.BROWSER_TYPE_UNKNOWN;
     var browserTypes = ua.match(/sogou|qzone|liebao|micromessenger|qqbrowser|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|trident|oupeng|opera|miuibrowser|firefox/i)
@@ -1658,24 +1677,20 @@ cc._initSys = function (config, CONFIG_KEY) {
      */
     sys.browserVersion = browserVersion;
 
-    // Get the os of system
-    var iOS = ( ua.match(/(iPad|iPhone|iPod)/i) ? true : false );
-    var isAndroid = ua.match(/android/i) || nav.platform.match(/android/i) ? true : false;
-    var osName = sys.OS_UNKNOWN;
-    if (nav.appVersion.indexOf("Win") !== -1) osName = sys.OS_WINDOWS;
-    else if (iOS) osName = sys.OS_IOS;
-    else if (nav.appVersion.indexOf("Mac") !== -1) osName = sys.OS_OSX;
-    else if (nav.appVersion.indexOf("X11") !== -1 && nav.appVersion.indexOf("Linux") === -1) osName = sys.OS_UNIX;
-    else if (isAndroid) osName = sys.OS_ANDROID;
-    else if (nav.appVersion.indexOf("Linux") !== -1) osName = sys.OS_LINUX;
+    var w = window.innerWidth || document.documentElement.clientWidth;
+    var h = window.innerHeight || document.documentElement.clientHeight;
+    var ratio = window.devicePixelRatio || 1;
 
     /**
-     * Indicate the running os name
+     * Indicate the real pixel resolution of the whole game window
      * @memberof cc.sys
-     * @name os
-     * @type {String}
+     * @name windowPixelResolution
+     * @type {Number}
      */
-    sys.os = osName;
+    sys.windowPixelResolution = {
+        width: ratio * w,
+        height: ratio * h
+    };
 
     //++++++++++++++++++something about cc._renderTYpe and cc._supportRender begin++++++++++++++++++++++++++++
 
