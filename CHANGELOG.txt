@@ -1,6 +1,6 @@
 ChangeLog:
 
-Cocos2d-x v3.8 
+Cocos2d-x v3.8  @ September.6 2015
     
     [NEW]           spine: Supported Spine runtime 2.3 (Both native and web engine)
     [NEW]           Animate: Added Animate's getCurrentFrameIndex function
@@ -29,6 +29,9 @@ Cocos2d-x v3.8
     [FIX]           web: Fixed effect issue in ActionGrid and NodeGrid
     [FIX]           web: Fixed logic issue in Menu's _onTouchCancelled function
     [FIX]           web: Fixed MenuItem crash when normal image is null
+    [FIX]           web: Fixed incomplete fadeout effects
+    [FIX]           web: Fixed issue that return value of cc.screen.fullScreen is not boolean
+    [FIX]           web: Fixed a bug that SkeletonNode is not drawing children
 
     [TEST]          web: Rewrote testcase for stencil depth mask in RenderTextureTest
     [TEST]          web: Improved renderTexture stencilDepth test
