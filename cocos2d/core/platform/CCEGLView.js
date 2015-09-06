@@ -239,7 +239,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      */
     setTargetDensityDPI: function(densityDPI){
         this._targetDensityDPI = densityDPI;
-        this._setViewPortMeta();
+        this._adjustViewportMeta();
     },
 
     /**
@@ -300,41 +300,45 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             this.setDesignResolutionSize(designWidth, designHeight, this._resolutionPolicy);
     },
 
-    _setViewPortMeta: function () {
+    _setViewportMeta: function (metas, overwrite) {
+        var vp = document.getElementById("cocosMetaElement");
+        if(vp){
+            document.head.removeChild(vp);
+        }
+
+        var elems = document.getElementsByName("viewport"),
+            currentVP = elems ? elems[0] : null,
+            content, key, pattern;
+
+        vp = cc.newElement("meta");
+        vp.id = "cocosMetaElement";
+        vp.name = "viewport";
+        vp.content = "";
+
+        content = currentVP ? currentVP.content : "";
+        for (key in metas) {
+            if (content.indexOf(key) == -1) {
+                content += "," + key + "=" + metas[key];
+            }
+            else if (overwrite) {
+                pattern = new RegExp(key+"\s*=\s*[^,]+");
+                content.replace(pattern, key + "=" + metas[key]);
+            }
+        }
+        if(/^,/.test(content))
+            content = content.substr(1);
+
+        vp.content = content;
+        // For adopting certain android devices which don't support second viewport
+        if (currentVP)
+            currentVP.content = content;
+
+        document.head.appendChild(vp);
+    },
+
+    _adjustViewportMeta: function () {
         if (this._isAdjustViewPort) {
-            var vp = document.getElementById("cocosMetaElement");
-            if(vp){
-                document.head.removeChild(vp);
-            }
-
-            var viewportMetas,
-                elems = document.getElementsByName("viewport"),
-                currentVP = elems ? elems[0] : null,
-                content;
-
-            vp = cc.newElement("meta");
-            vp.id = "cocosMetaElement";
-            vp.name = "viewport";
-            vp.content = "";
-
-            viewportMetas = cc.__BrowserGetter.meta;
-
-            content = currentVP ? currentVP.content : "";
-            for (var key in viewportMetas) {
-                var pattern = new RegExp(key);
-                if (!pattern.test(content)) {
-                    content += "," + key + "=" + viewportMetas[key];
-                }
-            }
-            if(/^,/.test(content))
-                content = content.substr(1);
-
-            vp.content = content;
-            // For adopting certain android devices which don't support second viewport
-            if (currentVP)
-                currentVP.content = content;
-
-            document.head.appendChild(vp);
+            this._setViewportMeta(cc.__BrowserGetter.meta, false);
         }
     },
 
@@ -585,7 +589,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
         // Reinit frame size
         if(cc.sys.isMobile)
-            this._setViewPortMeta();
+            this._adjustViewportMeta();
 
         this._initFrameSize();
 
@@ -645,6 +649,34 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      */
     getDesignResolutionSize: function () {
         return cc.size(this._designResolutionSize.width, this._designResolutionSize.height);
+    },
+
+    /**
+     * Sets the document body to desired pixel resolution and fit the game content to it.
+     * This function is very useful for adaptation in mobile browsers.
+     * In some HD android devices, the resolution is very high, but its browser performance may not be very good.
+     * In this case, enabling retina display is very costy and not suggested, and if retina is disabled, the image may be blurry.
+     * But this API can be helpful to set a desired pixel resolution which is in between.
+     * This API will do the following:
+     *     1. Set viewport's width to the desired width in pixel
+     *     2. Set body width to the exact pixel resolution
+     *     3. The resolution policy will be reset with designed view size in points.
+     * @param {Number} width Design resolution width.
+     * @param {Number} height Design resolution height.
+     * @param {cc.ResolutionPolicy|Number} resolutionPolicy The resolution policy desired
+     */
+    setRealPixelResolution: function (width, height, resolutionPolicy) {
+        // Set viewport's width
+        this._setViewportMeta({"width": width, "user-scalable": "no"}, true);
+
+        // Set body width to the exact pixel resolution
+        document.body.style.width = width + "px";
+        document.body.style.height = "100%";
+        document.body.style.left = "0px";
+        document.body.style.top = "0px";
+
+        // Reset the resolution size and policy
+        this.setDesignResolutionSize(width, height, resolutionPolicy);
     },
 
     /**
