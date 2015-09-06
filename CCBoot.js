@@ -184,168 +184,133 @@ cc.isCrossOrigin = function (url) {
 
 //+++++++++++++++++++++++++something about async begin+++++++++++++++++++++++++++++++
 /**
- * Async Pool class, a helper of cc.async
- * @param {Object|Array} srcObj
- * @param {Number} limit the limit of parallel number
- * @param {function} iterator
- * @param {function} onEnd
- * @param {object} target
- * @constructor
- */
-cc.AsyncPool = function(srcObj, limit, iterator, onEnd, target){
-    var self = this;
-    self._srcObj = srcObj;
-    self._limit = limit;
-    self._pool = [];
-    self._iterator = iterator;
-    self._iteratorTarget = target;
-    self._onEnd = onEnd;
-    self._onEndTarget = target;
-    self._results = srcObj instanceof Array ? [] : {};
-
-    cc.each(srcObj, function(value, index){
-        self._pool.push({index : index, value : value});
-    });
-
-    self.size = self._pool.length;
-    self.finishedSize = 0;
-    self._workingSize = 0;
-
-    self._limit = self._limit || self.size;
-
-    self.onIterator = function(iterator, target){
-        self._iterator = iterator;
-        self._iteratorTarget = target;
-    };
-
-    self.onEnd = function(endCb, endCbTarget){
-        self._onEnd = endCb;
-        self._onEndTarget = endCbTarget;
-    };
-
-    self._handleItem = function(){
-        var self = this;
-        if(self._pool.length === 0 || self._workingSize >= self._limit)
-            return;                                                         //return directly if the array's length = 0 or the working size great equal limit number
-
-        var item = self._pool.shift();
-        var value = item.value, index = item.index;
-        self._workingSize++;
-        self._iterator.call(self._iteratorTarget, value, index,
-            function(err) {
-
-                self.finishedSize++;
-                self._workingSize--;
-
-                var arr = Array.prototype.slice.call(arguments, 1);
-                self._results[this.index] = arr[0];
-                if (self.finishedSize === self.size) {
-                    if (self._onEnd)
-                        self._onEnd.call(self._onEndTarget, null, self._results);
-                    return;
-                }
-                self._handleItem();
-            }.bind(item),
-            self);
-    };
-
-    self.flow = function(){
-        var self = this;
-        if(self._pool.length === 0) {
-            if(self._onEnd)
-                self._onEnd.call(self._onEndTarget, null, []);
-                return;
-        }
-        for(var i = 0; i < self._limit; i++)
-            self._handleItem();
-    }
-};
-
-/**
  * @class
  */
 cc.async = /** @lends cc.async# */{
     /**
-     * Do tasks series.
-     * @param {Array|Object} tasks
+     * Multiple asynchronous functions need to be called in turn
+     * There is no exchange of data between the various functions
+     * @param {Array} tasks
      * @param {function} [cb] callback
      * @param {Object} [target]
-     * @return {cc.AsyncPool}
      */
     series : function(tasks, cb, target){
-        var asyncPool = new cc.AsyncPool(tasks, 1, function(func, index, cb1){
-            func.call(target, cb1);
-        }, cb, target);
-        asyncPool.flow();
-        return asyncPool;
+        var index = 0, values = [];
+        var func;
+        var callback = function(error, value){
+            if(!error && index < tasks.length){
+                values[index] = value;
+                func = tasks[index++];
+                func(callback);
+            }else{
+                cb.call(target || this, error, values);
+            }
+        };
+        callback(null);
     },
 
     /**
-     * Do tasks parallel.
+     * Parallel execution of multiple functions
      * @param {Array|Object} tasks
      * @param {function} cb callback
      * @param {Object} [target]
-     * @return {cc.AsyncPool}
      */
     parallel : function(tasks, cb, target){
-        var asyncPool = new cc.AsyncPool(tasks, 0, function(func, index, cb1){
-            func.call(target, cb1);
-        }, cb, target);
-        asyncPool.flow();
-        return asyncPool;
+        var index = 0, isArray = Array.isArray(tasks);
+        var values = isArray ? [] : {};
+
+        var handle = function(p){
+            if(isArray) p = p - 0;
+            var task = tasks[p];
+            if(task){
+                values[p] = undefined;
+                setTimeout(function(){
+                    task(function(error, value){
+                        values[p] = value;
+                        index--;
+                        if(error || index <= 0){
+                            index = Number.POSITIVE_INFINITY;
+                            cb.call(target || this, error, values);
+                        }
+                    });
+                }, 0);
+            }
+        };
+
+        for(var p in tasks){
+            index++;
+            handle(p);
+        }
+        if(index === 0)
+            cb.call(target || this, null, values);
     },
 
     /**
-     * Do tasks waterfall.
-     * @param {Array|Object} tasks
+     * Similar to series
+     * Each function will be passed to the next function
+     * If an error occurred, next function would not be executed
+     * @param {Array} tasks
      * @param {function} cb callback
      * @param {Object} [target]
-     * @return {cc.AsyncPool}
      */
     waterfall : function(tasks, cb, target){
-        var args = [];
-        var lastResults = [null];//the array to store the last results
-        var asyncPool = new cc.AsyncPool(tasks, 1,
-            function (func, index, cb1) {
-                args.push(function (err) {
-                    args = Array.prototype.slice.call(arguments, 1);
-                    if(tasks.length - 1 === index) lastResults = lastResults.concat(args);//while the last task
-                    cb1.apply(null, arguments);
-                });
-                func.apply(target, args);
-            }, function (err) {
-                if (!cb)
-                    return;
-                if (err)
-                    return cb.call(target, err);
-                cb.apply(target, lastResults);
-            });
-        asyncPool.flow();
-        return asyncPool;
+        var index = 0;
+        var func;
+        var callback = function(error){
+            var args;
+            if(!error && index < tasks.length){
+                args = Array.prototype.slice.call(arguments, 1);
+                args.push(callback);
+                func = tasks[index++];
+                func.apply(this, args);
+            }else{
+                cb.apply(target || this, arguments);
+            }
+        };
+        callback(null);
     },
 
     /**
-     * Do tasks by iterator.
+     * Similar to parallel
+     * Each task is processed by the incoming iterator
      * @param {Array|Object} tasks
      * @param {function|Object} iterator
-     * @param {function} [callback]
+     * @param {function} [cb]
      * @param {Object} [target]
-     * @return {cc.AsyncPool}
      */
-    map : function(tasks, iterator, callback, target){
-        var locIterator = iterator;
-        if(typeof(iterator) === "object"){
-            callback = iterator.cb;
-            target = iterator.iteratorTarget;
-            locIterator = iterator.iterator;
+    map : function(tasks, iterator, cb, target){
+        var index = 0, isArray = Array.isArray(tasks);
+        var values = isArray ? [] : {};
+
+        var handle = function(p){
+            if(isArray) p = p - 0;
+            var task = tasks[p];
+            if(task){
+                values[p] = undefined;
+                setTimeout(function(){
+                    iterator(task, p, function(error, value){
+                        values[p] = value;
+                        index--;
+                        if(error || index <= 0){
+                            index = Number.POSITIVE_INFINITY;
+                            cb.call(target || this, error, values);
+                        }
+                    });
+                }, 0);
+            }
+        };
+
+        for(var p in tasks){
+            index++;
+            handle(p);
         }
-        var asyncPool = new cc.AsyncPool(tasks, 0, locIterator, callback, target);
-        asyncPool.flow();
-        return asyncPool;
+        if(index === 0)
+            cb.call(target || this, null, values);
     },
 
     /**
-     * Do tasks by iterator limit.
+     * Similar to map
+     * Limit maximum number of tasks
      * @param {Array|Object} tasks
      * @param {Number} limit
      * @param {function} iterator
@@ -353,9 +318,8 @@ cc.async = /** @lends cc.async# */{
      * @param {Object} [target]
      */
     mapLimit : function(tasks, limit, iterator, cb, target){
-        var asyncPool = new cc.AsyncPool(tasks, limit, iterator, cb, target);
-        asyncPool.flow();
-        return asyncPool;
+        tasks.splice(limit);
+        this.map(tasks, iterator, cb, target)
     }
 };
 //+++++++++++++++++++++++++something about async end+++++++++++++++++++++++++++++++++
@@ -907,7 +871,6 @@ cc.loader = /** @lends cc.loader# */{
      * @param {string} resources
      * @param {function} [option] callback or trigger
      * @param {function|Object} [loadCallback]
-     * @return {cc.AsyncPool}
      */
     load : function(resources, option, loadCallback){
         var self = this;
@@ -931,19 +894,20 @@ cc.loader = /** @lends cc.loader# */{
 
         if(!(resources instanceof Array))
             resources = [resources];
-        var asyncPool = new cc.AsyncPool(
-            resources, 0,
-            function (value, index, AsyncPoolCallback, aPool) {
+        var currentIndex = 0, length = resources.length;
+        cc.async.map(
+            resources,
+            function (value, index, AsyncPoolCallback) {
                 self._loadResIterator(value, index, function (err) {
                     var arr = Array.prototype.slice.call(arguments, 1);
                     if (option.trigger)
-                        option.trigger.call(option.triggerTarget, arr[0], aPool.size, aPool.finishedSize);   //call trigger
+                        option.trigger.call(option.triggerTarget, arr[0], length, currentIndex++);   //call trigger
                     AsyncPoolCallback(err, arr[0]);
                 });
             },
-            option.cb, option.cbTarget);
-        asyncPool.flow();
-        return asyncPool;
+            option.cb,
+            option.cbTarget
+        );
     },
 
     _handleAliases: function (fileNames, cb) {
