@@ -576,7 +576,7 @@ cc.Audio = cc.Class.extend({
 
                 var success = function(){
                     if(!cbCheck){
-                        element.pause();
+                        //element.pause();
                         try { element.currentTime = 0;
                             element.volume = 1; } catch (e) {}
                         document.body.removeChild(element);
@@ -592,7 +592,7 @@ cc.Audio = cc.Class.extend({
 
                 var failure = function(){
                     if(!cbCheck) return;
-                    element.pause();
+                    //element.pause();
                     document.body.removeChild(element);
                     element.removeEventListener("canplaythrough", success, false);
                     element.removeEventListener("error", failure, false);
@@ -616,7 +616,8 @@ cc.Audio = cc.Class.extend({
                 element.src = realUrl;
                 document.body.appendChild(element);
                 element.volume = 0;
-                element.play();
+                //some browsers cannot pause(qq 6.1)
+                //element.play();
             }
 
         }
