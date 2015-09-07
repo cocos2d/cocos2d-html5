@@ -1609,65 +1609,35 @@ cc._initSys = function (config, CONFIG_KEY) {
      */
     sys.os = osName;
 
-    /* Determine the browser type */
-    var browserType = sys.BROWSER_TYPE_UNKNOWN;
-    var browserTypes = ua.match(/sogou|qzone|liebao|micromessenger|qqbrowser|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|trident|oupeng|opera|miuibrowser|firefox/i)
-        || ua.match(/chrome|safari/i);
-    if (browserTypes && browserTypes.length > 0) {
-        browserType = browserTypes[0];
-        if (browserType === 'micromessenger') {
-            browserType = sys.BROWSER_TYPE_WECHAT;
-        } else if (browserType === "safari" && (ua.match(/android.*applewebkit/)))
-            browserType = sys.BROWSER_TYPE_ANDROID;
-        else if (browserType === "trident") browserType = sys.BROWSER_TYPE_IE;
-        else if (browserType === "360 aphone") browserType = sys.BROWSER_TYPE_360;
-    }else if(ua.indexOf("iphone") && ua.indexOf("mobile")){
-        browserType = sys.BROWSER_TYPE_SAFARI;
-    }
-
-    /* Determine the browser version number */
-    var browserVersion, tmp = null;
-    switch(browserType){
-        case sys.BROWSER_TYPE_IE:
-            tmp = ua.match(/(msie |rv:)([\d.]+)/);
-            break;
-        case sys.BROWSER_TYPE_FIREFOX:
-            tmp = ua.match(/(firefox\/|rv:)([\d.]+)/);
-            break;
-        case sys.BROWSER_TYPE_CHROME:
-            tmp = ua.match(/chrome\/([\d.]+)/);
-            break;
-        case sys.BROWSER_TYPE_BAIDU:
-            tmp = ua.match(/baidubrowser\/([\d.]+)/);
-            break;
-        case sys.BROWSER_TYPE_UC:
-            tmp = ua.match(/ucbrowser\/([\d.]+)/);
-            break;
-        case sys.BROWSER_TYPE_QQ:
-            tmp = ua.match(/qqbrowser\/([\d.]+)/);
-            break;
-        case sys.BROWSER_TYPE_OUPENG:
-            tmp = ua.match(/oupeng\/([\d.]+)/);
-            break;
-        case sys.BROWSER_TYPE_WECHAT:
-            tmp = ua.match(/micromessenger\/([\d.]+)/);
-            break;
-        case sys.BROWSER_TYPE_SAFARI:
-            tmp = ua.match(/safari\/([\d.]+)/);
-            break;
-        case sys.BROWSER_TYPE_MIUI:
-            tmp = ua.match(/miuibrowser\/([\d.]+)/);
-            break;
-    }
-    browserVersion = tmp ? tmp[1] : "";
-
     /**
      * Indicate the running browser type
      * @memberof cc.sys
      * @name browserType
      * @type {String}
      */
-    sys.browserType = browserType;
+    sys.browserType = sys.BROWSER_TYPE_UNKNOWN;
+    /* Determine the browser type */
+    (function(){
+        var typeReg1 = /sogou|qzone|liebao|micromessenger|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|mxbrowser|trident|miuibrowser/i;
+        var typeReg2 = /qqbrowser|chrome|safari|firefox|opr|oupeng|opera/i;
+        var browserTypes = typeReg1.exec(ua);
+        if(!browserTypes) browserTypes = typeReg2.exec(ua);
+        var browserType = browserTypes ? browserTypes[0] : sys.BROWSER_TYPE_UNKNOWN;
+        if (browserType === 'micromessenger')
+            browserType = sys.BROWSER_TYPE_WECHAT;
+        else if (browserType === "safari" && (ua.match(/android.*applewebkit/)))
+            browserType = sys.BROWSER_TYPE_ANDROID;
+        else if (browserType === "trident")
+            browserType = sys.BROWSER_TYPE_IE;
+        else if (browserType === "360 aphone")
+            browserType = sys.BROWSER_TYPE_360;
+        else if (browserType === "mxbrowser")
+            browserType = sys.BROWSER_TYPE_MAXTHON;
+        else if (browserType === "opr")
+            browserType = sys.BROWSER_TYPE_OPERA;
+
+        sys.browserType = browserType;
+    })();
 
     /**
      * Indicate the running browser version
@@ -1675,7 +1645,15 @@ cc._initSys = function (config, CONFIG_KEY) {
      * @name browserVersion
      * @type {Number}
      */
-    sys.browserVersion = browserVersion;
+    sys.browserVersion = "";
+    /* Determine the browser version number */
+    (function(){
+        var versionReg1 = /(micromessenger|mx|maxthon|baidu|sogou)(mobile)?(browser)?\/?([\d.]+)/i;
+        var versionReg2 = /(msie |rv:|firefox|chrome|ucbrowser|qq|oupeng|opera|opr|safari|miui)(mobile)?(browser)?\/?([\d.]+)/i;
+        var tmp = ua.match(versionReg1);
+        if(!tmp) tmp = ua.match(versionReg2);
+        sys.browserVersion = tmp ? tmp[4] : "";
+    })();
 
     var w = window.innerWidth || document.documentElement.clientWidth;
     var h = window.innerHeight || document.documentElement.clientHeight;
