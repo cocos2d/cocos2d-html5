@@ -198,15 +198,19 @@ cc.async = /** @lends cc.async# */{
         var index = 0, values = [];
         var func;
         var callback = function(error, value){
-            if(!error && index < tasks.length){
-                values[index] = value;
-                func = tasks[index++];
+            values[index++] = value;
+            func = tasks[index];
+            if(!error && index < tasks.length && func){
                 func(callback);
             }else{
                 cb.call(target || this, error, values);
             }
         };
-        callback(null);
+        func = tasks[0];
+        if(func)
+            func(callback);
+        else
+            callback(null);
     },
 
     /**
@@ -258,16 +262,20 @@ cc.async = /** @lends cc.async# */{
         var func;
         var callback = function(error){
             var args;
-            if(!error && index < tasks.length){
-                args = Array.prototype.slice.call(arguments, 1);
-                args.push(callback);
-                func = tasks[index++];
+            args = Array.prototype.slice.call(arguments, 1);
+            args.push(callback);
+            func = tasks[++index];
+            if(!error && index < tasks.length && func){
                 func.apply(this, args);
             }else{
                 cb.apply(target || this, arguments);
             }
         };
-        callback(null);
+        func = tasks[0];
+        if(func)
+            func(callback);
+        else
+            callback(null);
     },
 
     /**
