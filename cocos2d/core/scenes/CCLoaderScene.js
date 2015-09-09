@@ -126,6 +126,13 @@ cc.LoaderScene = cc.Scene.extend({
                 if (self.cb)
                     self.cb.call(self.target);
             });
+    },
+
+    _updateTransform: function(){
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
+        this._bgLayer._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
+        this._label._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
+        this._logo._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     }
 });
 /**
@@ -146,6 +153,9 @@ cc.LoaderScene.preload = function(resources, cb, target){
     if(!_cc.loaderScene) {
         _cc.loaderScene = new cc.LoaderScene();
         _cc.loaderScene.init();
+        cc.eventManager.addCustomListener(cc.Director.EVENT_PROJECTION_CHANGED, function(){
+            _cc.loaderScene._updateTransform();
+        });
     }
     _cc.loaderScene.initWithResources(resources, cb, target);
 

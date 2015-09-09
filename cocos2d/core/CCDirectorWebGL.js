@@ -43,6 +43,27 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 
         var _p = cc.Director.prototype;
 
+        var recursiveChild = function(node){
+            if(node && node._renderCmd){
+                node._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
+                var i, children = node._children;
+                for(i=0; i<children.length; i++){
+                    recursiveChild(children[i]);
+                }
+            }
+        };
+
+        cc.eventManager.addCustomListener(cc.Director.EVENT_PROJECTION_CHANGED, function(){
+            console.log(2);
+            var director = cc.director;
+            var stack = cc.director._scenesStack;
+            for(var  i=0; i<stack.length; i++)
+                recursiveChild(stack[i]);
+            director._FPSLabel._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
+            director._SPFLabel._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
+            director._drawsLabel._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
+        });
+
         _p.setProjection = function (projection) {
             var _t = this;
             var size = _t._winSizeInPoints;

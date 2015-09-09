@@ -39,111 +39,6 @@
     var proto = cc.Node.WebGLRenderCmd.prototype = Object.create(cc.Node.RenderCmd.prototype);
     proto.constructor = cc.Node.WebGLRenderCmd;
 
-    proto.getNodeToParentTransform = function () {
-        var node = this._node;
-        if (node._usingNormalizedPosition && node._parent) {        //TODO need refactor
-            var conSize = node._parent._contentSize;
-            node._position.x = node._normalizedPosition.x * conSize.width;
-            node._position.y = node._normalizedPosition.y * conSize.height;
-            node._normalizedPositionDirty = false;
-        }
-        if (this._dirtyFlag & cc.Node._dirtyFlags.transformDirty) {
-            // Translate values
-            var x = node._position.x, y = node._position.y;
-            var apx = this._anchorPointInPoints.x, napx = -apx;
-            var apy = this._anchorPointInPoints.y, napy = -apy;
-            var scx = node._scaleX, scy = node._scaleY;
-            var rotationRadiansX = node._rotationX * 0.017453292519943295;  //0.017453292519943295 = (Math.PI / 180);   for performance
-            var rotationRadiansY = node._rotationY * 0.017453292519943295;
-
-            if (node._ignoreAnchorPointForPosition) {
-                x += apx;
-                y += apy;
-            }
-
-            // Rotation values
-            // Change rotation code to handle X and Y
-            // If we skew with the exact same value for both x and y then we're simply just rotating
-            var cx = 1, sx = 0, cy = 1, sy = 0;
-            if (node._rotationX !== 0 || node._rotationY !== 0) {
-                cx = Math.cos(-rotationRadiansX);
-                sx = Math.sin(-rotationRadiansX);
-                cy = Math.cos(-rotationRadiansY);
-                sy = Math.sin(-rotationRadiansY);
-            }
-            var needsSkewMatrix = ( node._skewX || node._skewY );
-
-            // optimization:
-            // inline anchor point calculation if skew is not needed
-            // Adjusted transform calculation for rotational skew
-            if (!needsSkewMatrix && (apx !== 0 || apy !== 0)) {
-                x += cy * napx * scx + -sx * napy * scy;
-                y += sy * napx * scx + cx * napy * scy;
-            }
-
-            // Build Transform Matrix
-            // Adjusted transform calculation for rotational skew
-            var t = this._transform;
-            t.a = cy * scx;
-            t.b = sy * scx;
-            t.c = -sx * scy;
-            t.d = cx * scy;
-            t.tx = x;
-            t.ty = y;
-
-            // XXX: Try to inline skew
-            // If skew is needed, apply skew and then anchor point
-            if (needsSkewMatrix) {
-                t = cc.affineTransformConcat({a: 1.0, b: Math.tan(cc.degreesToRadians(node._skewY)),
-                    c: Math.tan(cc.degreesToRadians(node._skewX)), d: 1.0, tx: 0.0, ty: 0.0}, t);
-
-                // adjust anchor point
-                if (apx !== 0 || apy !== 0)
-                    t = cc.affineTransformTranslate(t, napx, napy);
-            }
-
-            if (node._additionalTransformDirty) {
-                t = cc.affineTransformConcat(t, node._additionalTransform);
-                node._additionalTransformDirty = false;
-            }
-            this._transform = t;
-        }
-        return this._transform;
-    };
-
-    proto._syncStatus = function (parentCmd) {
-        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        var parentNode = parentCmd ? parentCmd._node : null;
-
-        if(parentNode && parentNode._cascadeColorEnabled && (parentCmd._dirtyFlag & flags.colorDirty))
-            locFlag |= flags.colorDirty;
-
-        if(parentNode && parentNode._cascadeOpacityEnabled && (parentCmd._dirtyFlag & flags.opacityDirty))
-            locFlag |= flags.opacityDirty;
-
-        if(parentCmd && (parentCmd._dirtyFlag & flags.transformDirty))
-            locFlag |= flags.transformDirty;
-
-        var colorDirty = locFlag & flags.colorDirty,
-            opacityDirty = locFlag & flags.opacityDirty;
-
-        this._dirtyFlag = locFlag;
-
-        if (colorDirty)
-            this._syncDisplayColor();
-
-        if (opacityDirty)
-            this._syncDisplayOpacity();
-
-        if(colorDirty || opacityDirty)
-            this._updateColor();
-
-        //if (locFlag & flags.transformDirty) {      //need update the stackMatrix every calling visit, because when projection changed, need update all scene graph element.
-            //update the transform
-        this.transform(parentCmd);
-        //}
-    };
-
     proto._updateColor = function(){};
 
     proto.visit = function (parentCmd) {
@@ -156,35 +51,13 @@
         if (node._parent && node._parent._renderCmd)
             this._curLevel = node._parent._renderCmd._curLevel + 1;
 
-        var i, currentStack = cc.current_stack;
+        var currentStack = cc.current_stack;
 
         //optimize performance for javascript
         currentStack.stack.push(currentStack.top);
         this._syncStatus(parentCmd);
         currentStack.top = this._stackMatrix;
-
-        var locChildren = node._children;
-        if (locChildren && locChildren.length > 0) {
-            var childLen = locChildren.length;
-            node.sortAllChildren();
-            // draw children zOrder < 0
-            for (i = 0; i < childLen; i++) {
-                if (locChildren[i] && locChildren[i]._localZOrder < 0)
-                    locChildren[i]._renderCmd.visit(this);
-                else
-                    break;
-            }
-
-            cc.renderer.pushRenderCommand(this);
-            // draw children zOrder >= 0
-            for (; i < childLen; i++) {
-                if (locChildren[i])
-                    locChildren[i]._renderCmd.visit(this);
-            }
-        } else
-            cc.renderer.pushRenderCommand(this);
-
-        this._dirtyFlag = 0;
+        this.visitChildren();
         //optimize performance for javascript
         currentStack.top = currentStack.stack.pop();
     };
