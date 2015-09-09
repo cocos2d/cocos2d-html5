@@ -276,6 +276,10 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
      * @param {Number} index
      */
     insertCustomItem: function (item, index) {
+        if(!item instanceof ccui.Widget)
+            return;
+        if(item.getParent())
+            item._detachChild(item,true);
         this._items.splice(index, 0, item);
         ccui.ScrollView.prototype.addChild.call(this, item);
         this._remedyLayoutParameter(item);
