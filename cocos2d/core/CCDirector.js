@@ -83,16 +83,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     _animationInterval: 0.0,
     _oldAnimationInterval: 0.0,
     _projection: 0,
-    _accumDt: 0.0,
     _contentScaleFactor: 1.0,
 
-    _displayStats: false,
     _deltaTime: 0.0,
-    _frameRate: 0.0,
-
-    _FPSLabel: null,
-    _SPFLabel: null,
-    _drawsLabel: null,
 
     _winSizeInPoints: null,
 
@@ -104,7 +97,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     _projectionDelegate: null,
     _runningScene: null,
 
-    _frames: 0,
     _totalFrames: 0,
     _secondsPerFrame: 0,
 
@@ -113,9 +105,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     _scheduler: null,
     _actionManager: null,
     _eventProjectionChanged: null,
-    _eventAfterDraw: null,
-    _eventAfterVisit: null,
     _eventAfterUpdate: null,
+    _eventAfterVisit: null,
+    _eventAfterDraw: null,
 
     ctor: function () {
         var self = this;
@@ -134,11 +126,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         // projection delegate if "Custom" projection is used
         this._projectionDelegate = null;
 
-        //FPS
-        this._accumDt = 0;
-        this._frameRate = 0;
-        this._displayStats = false;//can remove
-        this._totalFrames = this._frames = 0;
+        // FPS
+        this._totalFrames = 0;
         this._lastUpdate = Date.now();
 
         //Paused?
@@ -162,12 +151,12 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._actionManager = null;
         }
 
-        this._eventAfterDraw = new cc.EventCustom(cc.Director.EVENT_AFTER_DRAW);
-        this._eventAfterDraw.setUserData(this);
-        this._eventAfterVisit = new cc.EventCustom(cc.Director.EVENT_AFTER_VISIT);
-        this._eventAfterVisit.setUserData(this);
         this._eventAfterUpdate = new cc.EventCustom(cc.Director.EVENT_AFTER_UPDATE);
         this._eventAfterUpdate.setUserData(this);
+        this._eventAfterVisit = new cc.EventCustom(cc.Director.EVENT_AFTER_VISIT);
+        this._eventAfterVisit.setUserData(this);
+        this._eventAfterDraw = new cc.EventCustom(cc.Director.EVENT_AFTER_DRAW);
+        this._eventAfterDraw.setUserData(this);
         this._eventProjectionChanged = new cc.EventCustom(cc.Director.EVENT_PROJECTION_CHANGED);
         this._eventProjectionChanged.setUserData(this);
 
@@ -219,6 +208,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     drawScene: function () {
         var renderer = cc.renderer;
+
         // calculate "global" dt
         this.calculateDeltaTime();
 
@@ -248,26 +238,24 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
                 renderer.resetFlag();
             } else if (renderer.transformDirty() === true)
                 renderer.transform();
-
-            cc.eventManager.dispatchEvent(this._eventAfterVisit);
         }
 
         // draw the notifications node
         if (this._notificationNode)
             this._notificationNode.visit();
 
-        if (this._displayStats)
-            this._showStats();
+        cc.eventManager.dispatchEvent(this._eventAfterVisit);
 
         if (this._afterVisitScene)
             this._afterVisitScene();
 
         renderer.rendering(cc._renderContext);
-        cc.eventManager.dispatchEvent(this._eventAfterDraw);
+        cc.g_NumberOfDraws = 0;
         this._totalFrames++;
 
-        if (this._displayStats)
-            this._calculateMPF();
+        cc.eventManager.dispatchEvent(this._eventAfterDraw);
+
+        this._calculateMPF();
     },
 
     _beforeVisitScene: null,
@@ -492,7 +480,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     setContentScaleFactor: function (scaleFactor) {
         if (scaleFactor !== this._contentScaleFactor) {
             this._contentScaleFactor = scaleFactor;
-            this._createStatsLabel();
         }
     },
 
@@ -694,7 +681,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @return {Boolean}
      */
     isDisplayStats: function () {
-        return this._displayStats;
+        return cc.profiler ? cc.profiler.isShowingStats() : false;
     },
 
     /**
@@ -702,7 +689,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {Boolean} displayStats
      */
     setDisplayStats: function (displayStats) {
-        this._displayStats = displayStats;
+        if (cc.profiler) {
+            displayStats ? cc.profiler.showStats() : cc.profiler.hideStats();
+        }
     },
 
     /**
@@ -824,8 +813,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         return this._deltaTime;
     },
 
-    _createStatsLabel: null,
-
     _calculateMPF: function () {
         var now = Date.now();
         this._secondsPerFrame = (now - this._lastUpdate) / 1000;
@@ -844,15 +831,15 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 cc.Director.EVENT_PROJECTION_CHANGED = "director_projection_changed";
 
 /**
- * The event after draw of cc.Director
+ * The event after update of cc.Director
  * @constant
  * @type {string}
  * @example
- *   cc.eventManager.addCustomListener(cc.Director.EVENT_AFTER_DRAW, function(event) {
- *           cc.log("after draw event.");
+ *   cc.eventManager.addCustomListener(cc.Director.EVENT_AFTER_UPDATE, function(event) {
+ *           cc.log("after update event.");
  *       });
  */
-cc.Director.EVENT_AFTER_DRAW = "director_after_draw";
+cc.Director.EVENT_AFTER_UPDATE = "director_after_update";
 
 /**
  * The event after visit of cc.Director
@@ -866,15 +853,15 @@ cc.Director.EVENT_AFTER_DRAW = "director_after_draw";
 cc.Director.EVENT_AFTER_VISIT = "director_after_visit";
 
 /**
- * The event after update of cc.Director
+ * The event after draw of cc.Director
  * @constant
  * @type {string}
  * @example
- *   cc.eventManager.addCustomListener(cc.Director.EVENT_AFTER_UPDATE, function(event) {
- *           cc.log("after update event.");
+ *   cc.eventManager.addCustomListener(cc.Director.EVENT_AFTER_DRAW, function(event) {
+ *           cc.log("after draw event.");
  *       });
  */
-cc.Director.EVENT_AFTER_UPDATE = "director_after_update";
+cc.Director.EVENT_AFTER_DRAW = "director_after_draw";
 
 /***************************************************
  * implementation of DisplayLinkDirector

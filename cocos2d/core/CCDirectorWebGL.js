@@ -127,8 +127,6 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             //if (_t._openGLView != openGLView) {
             // because EAGLView is not kind of CCObject
 
-            _t._createStatsLabel();
-
             //if (_t._openGLView)
             _t.setGLDefaultValues();
 
@@ -152,81 +150,6 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 
         _p._afterVisitScene = function () {
             cc.kmGLPopMatrix();
-        };
-
-        _p._createStatsLabel = function () {
-            var _t = this;
-            if (!cc.LabelAtlas){
-                _t._createStatsLabelForCanvas();
-                return
-            }
-
-            if ((cc.Director._fpsImageLoaded == null) || (cc.Director._fpsImageLoaded === false))
-                return;
-
-            var texture = new cc.Texture2D();
-            texture.initWithElement(cc.Director._fpsImage);
-            texture.handleLoadedTexture();
-
-            /*
-             We want to use an image which is stored in the file named ccFPSImage.c
-             for any design resolutions and all resource resolutions.
-
-             To achieve this,
-
-             Firstly, we need to ignore 'contentScaleFactor' in 'CCAtlasNode' and 'CCLabelAtlas'.
-             So I added a new method called 'setIgnoreContentScaleFactor' for 'CCAtlasNode',
-             this is not exposed to game developers, it's only used for displaying FPS now.
-
-             Secondly, the size of this image is 480*320, to display the FPS label with correct size,
-             a factor of design resolution ratio of 480x320 is also needed.
-             */
-            var factor = cc.view.getDesignResolutionSize().height / 320.0;
-            if (factor === 0)
-                factor = _t._winSizeInPoints.height / 320.0;
-
-            var tmpLabel = new cc.LabelAtlas();
-            tmpLabel._setIgnoreContentScaleFactor(true);
-            tmpLabel.initWithString("00.0", texture, 12, 32, '.');
-            tmpLabel.scale = factor;
-            _t._FPSLabel = tmpLabel;
-
-            tmpLabel = new cc.LabelAtlas();
-            tmpLabel._setIgnoreContentScaleFactor(true);
-            tmpLabel.initWithString("0.000", texture, 12, 32, '.');
-            tmpLabel.scale = factor;
-            _t._SPFLabel = tmpLabel;
-
-            tmpLabel = new cc.LabelAtlas();
-            tmpLabel._setIgnoreContentScaleFactor(true);
-            tmpLabel.initWithString("000", texture, 12, 32, '.');
-            tmpLabel.scale = factor;
-            _t._drawsLabel = tmpLabel;
-
-            var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-            _t._drawsLabel.setPosition(locStatsPosition.x, 34 * factor + locStatsPosition.y);
-            _t._SPFLabel.setPosition(locStatsPosition.x, 17 * factor + locStatsPosition.y);
-            _t._FPSLabel.setPosition(locStatsPosition);
-        };
-
-        _p._createStatsLabelForCanvas = function () {
-            var _t = this;
-            //The original _createStatsLabelForCanvas method
-            //Because the referenced by a cc.Director.prototype._createStatsLabel
-            var fontSize = 0;
-            if (_t._winSizeInPoints.width > _t._winSizeInPoints.height)
-                fontSize = 0 | (_t._winSizeInPoints.height / 320 * 24);
-            else
-                fontSize = 0 | (_t._winSizeInPoints.width / 320 * 24);
-
-            _t._FPSLabel = new cc.LabelTTF("000.0", "Arial", fontSize);
-            _t._SPFLabel = new cc.LabelTTF("0.000", "Arial", fontSize);
-            _t._drawsLabel = new cc.LabelTTF("0000", "Arial", fontSize);
-
-            var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-            _t._drawsLabel.setPosition(_t._drawsLabel.width / 2 + locStatsPosition.x, _t._drawsLabel.height * 5 / 2 + locStatsPosition.y);
-            _t._SPFLabel.setPosition(_t._SPFLabel.width / 2 + locStatsPosition.x, _t._SPFLabel.height * 3 / 2 + locStatsPosition.y);
-            _t._FPSLabel.setPosition(_t._FPSLabel.width / 2 + locStatsPosition.x, _t._FPSLabel.height / 2 + locStatsPosition.y);
         };
 
         _p.convertToGL = function (uiPoint) {

@@ -79,6 +79,7 @@
                 <file name="cocos2d/core/CCDirectorWebGL.js"/>
                 <file name="cocos2d/core/CCCamera.js"/>
                 <file name="cocos2d/core/CCScheduler.js"/>
+                <file name="cocos2d/core/utils/CCProfiler.js"/>
                 <file name="cocos2d/core/CCDrawingPrimitivesCanvas.js"/>
                 <file name="cocos2d/core/CCDrawingPrimitivesWebGL.js"/>
                 <file name="cocos2d/core/labelttf/LabelTTFPropertyDefine.js"/>
