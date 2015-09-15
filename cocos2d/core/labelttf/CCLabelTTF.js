@@ -71,6 +71,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _fontSize: 0.0,
     _string: "",
     _originalText: null,
+    _onCacheCanvasMode: false,
 
     // font shadow
     _shadowEnabled: false,
@@ -738,11 +739,21 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         cc.Sprite.prototype.setTextureRect.call(this, rect, rotated, untrimmedSize, false);
     },
 
+    /**
+     * set Target to draw on
+     * @param boolean onCanvas
+     */
+    setDrawMode: function (onCacheMode) {
+        this._onCacheCanvasMode = onCacheMode;
+    },
+
     _createRenderCmd: function () {
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
-            return new cc.LabelTTF.CanvasRenderCmd(this);
-        else
+        if (cc._renderType === cc._RENDER_TYPE_WEBGL)
             return new cc.LabelTTF.WebGLRenderCmd(this);
+        else if (this._onCacheCanvasMode)
+            return new cc.LabelTTF.CacheCanvasRenderCmd(this);
+        else
+            return new cc.LabelTTF.CanvasRenderCmd(this);
     },
 
     //For web only
