@@ -170,62 +170,39 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         locCenter.setScaleX(horizontalScale);
         locCenter.setScaleY(verticalScale);
 
+        locBottomLeft.setAnchorPoint(1, 1);
+        locBottomLeft.setPosition(leftWidth,bottomHeight);
 
-        // Position corners
-        if(locBottomLeft)
-        {
-            locBottomLeft.setAnchorPoint(cc.p(1,1));
-            locBottomLeft.setPosition(leftWidth,bottomHeight);
-        }
-        if(locBottomRight)
-        {
-            locBottomRight.setAnchorPoint(cc.p(0,1));
-            locBottomRight.setPosition(leftWidth+rescaledWidth,bottomHeight);
-        }
-        if(locTopLeft)
-        {
-            locTopLeft.setAnchorPoint(cc.p(1,0));
-            locTopLeft.setPosition(leftWidth, bottomHeight+rescaledHeight);
-        }
-        if(locTopRight )
-        {
-            locTopRight.setAnchorPoint(cc.p(0,0));
-            locTopRight.setPosition(leftWidth+rescaledWidth, bottomHeight+rescaledHeight);
-        }
+        locBottomRight.setAnchorPoint(0, 1);
+        locBottomRight.setPosition(leftWidth+rescaledWidth,bottomHeight);
 
-        // Scale and position borders
-        if( locLeft )
-        {
-             locLeft .setAnchorPoint(cc.p(1,0.5));
-             locLeft .setPosition(leftWidth, bottomHeight+rescaledHeight/2 + centerOffset.y);
-             locLeft .setScaleY(verticalScale);
-        }
-        if(locRight )
-        {
-             locRight .setAnchorPoint(cc.p(0,0.5));
-             locRight .setPosition(leftWidth+rescaledWidth,bottomHeight+rescaledHeight/2 + centerOffset.y);
-             locRight .setScaleY(verticalScale);
-        }
-        if(locTop )
-        {
-            locTop .setAnchorPoint(cc.p(0.5,0));
-            locTop .setPosition(leftWidth+rescaledWidth/2 + centerOffset.x,bottomHeight+rescaledHeight);
-            locTop .setScaleX(horizontalScale);
-        }
-        if(locBottom )
-        {
-            locBottom .setAnchorPoint(cc.p(0.5,1));
-            locBottom .setPosition(leftWidth+rescaledWidth/2 + centerOffset.x,bottomHeight);
-            locBottom.setScaleX(horizontalScale);
-        }
-        // Position centre
-        if(locCenter )
-        {
-            locCenter.setAnchorPoint(cc.p(0.5,0.5));
-            locCenter.setPosition(leftWidth+rescaledWidth/2 + centerOffset.x, bottomHeight+rescaledHeight/2 + centerOffset.y);
-            locCenter.setScaleX(horizontalScale);
-            locCenter.setScaleY(verticalScale);
-        }
+
+        locTopLeft.setAnchorPoint(1, 0);
+        locTopLeft.setPosition(leftWidth, bottomHeight+rescaledHeight);
+
+        locTopRight.setAnchorPoint(0, 0);
+        locTopRight.setPosition(leftWidth+rescaledWidth, bottomHeight+rescaledHeight);
+
+        locLeft.setAnchorPoint(1, 0.5);
+        locLeft.setPosition(leftWidth, bottomHeight+rescaledHeight/2 + centerOffset.y);
+        locLeft.setScaleY(verticalScale);
+
+        locRight.setAnchorPoint(0, 0.5);
+        locRight.setPosition(leftWidth+rescaledWidth,bottomHeight+rescaledHeight/2 + centerOffset.y);
+        locRight.setScaleY(verticalScale);
+
+        locTop.setAnchorPoint(0.5, 0);
+        locTop.setPosition(leftWidth+rescaledWidth/2 + centerOffset.x,bottomHeight+rescaledHeight);
+        locTop.setScaleX(horizontalScale);
+
+        locBottom.setAnchorPoint(0.5, 1);
+        locBottom.setPosition(leftWidth+rescaledWidth/2 + centerOffset.x,bottomHeight);
+        locBottom.setScaleX(horizontalScale);
+
+        locCenter.setAnchorPoint(0.5, 0.5);
+        locCenter.setPosition(leftWidth+rescaledWidth/2 + centerOffset.x, bottomHeight+rescaledHeight/2 + centerOffset.y);
+        locCenter.setScaleX(horizontalScale);
+        locCenter.setScaleY(verticalScale);
     },
 
     /**
@@ -338,13 +315,15 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
     },
 
     setCapInsets: function (capInsets) {
-        if(!this._scale9Image)
-            return;
         var contentSize = this._contentSize;
         var tempWidth = contentSize.width, tempHeight = contentSize.height;
 
-        this.updateWithSprite(this._scale9Image,this._spriteRect,this._spriteFrameRotated,this._offset,this._originalSize,capInsets);
-
+        this.updateWithSprite(  this._scale9Image,
+                                this._spriteRect,
+                                this._spriteFrameRotated,
+                                this._offset,
+                                this._originalSize,
+                                capInsets );
         this._insetLeft = capInsets.x;
         this._insetTop = capInsets.y;
         this._insetRight = this._originalSize.width - this._insetLeft - capInsets.width;
@@ -430,11 +409,11 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         this._positionsAreDirty = true;
     },
 
-    setAnchorPoint: function(position) {
-        cc.Node.prototype.setAnchorPoint.call(this,position);
+    setAnchorPoint: function (point, y) {
+        cc.Node.prototype.setAnchorPoint.call(this, point, y);
         if(!this._scale9Enabled) {
             if(this._scale9Image) {
-                this._scale9Image.setAnchorPoint(position);
+                this._scale9Image.setAnchorPoint(point, y);
                 this._positionsAreDirty = true;
             }
         }
@@ -476,7 +455,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
 
         this.setCascadeColorEnabled(true);
         this.setCascadeOpacityEnabled(true);
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(0.5, 0.5);
         this._positionsAreDirty = true;
         return true;
     },
@@ -872,7 +851,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
             var textureSize = this._scale9Image.getTexture().getContentSize();
             rect = cc.rect(0, 0, textureSize.width, textureSize.height);
         }
-        if(size.width === size.height === 0)
+        if(size.width === 0 && size.height === 0)
             size = cc.size(rect.width, rect.height);
 
         this._spriteRect = rect;
