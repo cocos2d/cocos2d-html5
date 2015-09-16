@@ -303,13 +303,24 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     _isInContainer: function (widget) {
-        var top = widget.getBottomBoundary() >= this._customSize.height - this._innerContainer.y;
-        var down = widget.getTopBoundary() <= -this._innerContainer.y;
-        var right = widget.getLeftBoundary() >= this._customSize.width - this._innerContainer.x;
-        var left = widget.getRightBoundary() <= -this._innerContainer.x;
-        if(top || down || right || left)
+        var wPos = widget._position,
+            wSize = widget._contentSize,
+            wAnchor = widget._anchorPoint,
+            size = this._customSize,
+            pos = this._innerContainer._position,
+            bottom = 0, left = 0;
+        if (
+            // Top
+        (bottom = wPos.y - wAnchor.y * wSize.height) >= size.height - pos.y ||
+            // Bottom
+        bottom + wSize.height <= -pos.y ||
+            // right
+        (left = wPos.x - wAnchor.x * wSize.width) >= size.width - pos.x ||
+            // left
+        left + wSize.width <= -pos.x
+        )
             return false;
-        return true;
+        else return true;
     },
 
     updateChildren: function () {
