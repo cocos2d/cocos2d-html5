@@ -142,6 +142,8 @@ cc.rendererCanvas = {
 
     clearRenderCommands: function () {
         this._renderCmds.length = 0;
+        this._cacheInstanceIds.length = 0;
+        this._isCacheToCanvasOn = false;
     },
 
     pushRenderCommand: function (cmd) {
