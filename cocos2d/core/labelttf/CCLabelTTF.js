@@ -71,7 +71,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _fontSize: 0.0,
     _string: "",
     _originalText: null,
-    _onCacheCanvasMode: false,
+    _onCacheCanvasMode: true,
 
     // font shadow
     _shadowEnabled: false,
