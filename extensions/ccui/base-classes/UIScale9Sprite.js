@@ -68,7 +68,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
     _scale9Enabled: true,
     _scale9Dirty: true,
     _brightState: 0,
-    _protectedChildren: null,
+    _renderers: null,
 
     _opacityModifyRGB: false,
 
@@ -221,7 +221,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         this._originalSize = cc.size(0, 0);
         this._preferredSize = cc.size(0, 0);
         this._capInsets = cc.rect(0, 0, 0, 0);
-        this._protectedChildren = [];
+        this._renderers = [];
 
         if(file != undefined){
             if(file instanceof cc.SpriteFrame)
@@ -282,7 +282,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
             return;
         cc.Node.prototype.setOpacity.call(this, opacity);
         if(this._scale9Enabled) {
-            var pChildren = this._protectedChildren;
+            var pChildren = this._renderers;
             for(var i=0; i<pChildren.length; i++)
                 pChildren[i].setOpacity(opacity);
         }
@@ -298,7 +298,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
 
         cc.Node.prototype.setColor.call(this, color);
         if(this._scale9Enabled) {
-            var scaleChildren = this._protectedChildren;
+            var scaleChildren = this._renderers;
             for (var i = 0; i < scaleChildren.length; i++) {
                 var selChild = scaleChildren[i];
                 if (selChild)
@@ -768,58 +768,67 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         }
 
         // Centre
-        this._centre = new cc.Sprite();
+        if(!this._centre)
+            this._centre = new cc.Sprite();
         this._centre.initWithTexture(selTexture, rotatedCenterBounds, rotated);
         if(rotatedCenterBounds.width > 0 && rotatedCenterBounds.height > 0 )
-            this.addProtectedChild(this._centre);
+            this._renderers.push(this._centre);
 
         // Top
-        this._top = new cc.Sprite();
+        if(!this._top)
+            this._top = new cc.Sprite();
         this._top.initWithTexture(selTexture, rotatedCenterTopBounds, rotated);
         if(rotatedCenterTopBounds.width > 0 && rotatedCenterTopBounds.height > 0 )
-            this.addProtectedChild(this._top);
+            this._renderers.push(this._top);
 
         // Bottom
-        this._bottom = new cc.Sprite();
+        if(!this._bottom)
+            this._bottom = new cc.Sprite();
         this._bottom.initWithTexture(selTexture, rotatedCenterBottomBounds, rotated);
         if(rotatedCenterBottomBounds.width > 0 && rotatedCenterBottomBounds.height > 0 )
-            this.addProtectedChild(this._bottom);
+            this._renderers.push(this._bottom);
 
         // Left
-        this._left = new cc.Sprite();
+        if(!this._left)
+            this._left = new cc.Sprite();
         this._left.initWithTexture(selTexture, rotatedLeftCenterBounds, rotated);
         if(rotatedLeftCenterBounds.width > 0 && rotatedLeftCenterBounds.height > 0 )
-            this.addProtectedChild(this._left);
+            this._renderers.push(this._left);
 
         // Right
-        this._right = new cc.Sprite();
+        if(!this._right)
+            this._right = new cc.Sprite();
         this._right.initWithTexture(selTexture, rotatedRightCenterBounds, rotated);
         if(rotatedRightCenterBounds.width > 0 && rotatedRightCenterBounds.height > 0 )
-            this.addProtectedChild(this._right);
+            this._renderers.push(this._right);
 
         // Top left
-        this._topLeft = new cc.Sprite();
+        if(!this._topLeft)
+            this._topLeft = new cc.Sprite();
         this._topLeft.initWithTexture(selTexture, rotatedLeftTopBounds, rotated);
         if(rotatedLeftTopBounds.width > 0 && rotatedLeftTopBounds.height > 0 )
-            this.addProtectedChild(this._topLeft);
+            this._renderers.push(this._topLeft);
 
         // Top right
-        this._topRight = new cc.Sprite();
+        if(!this._topRight)
+            this._topRight = new cc.Sprite();
         this._topRight.initWithTexture(selTexture, rotatedRightTopBounds, rotated);
         if(rotatedRightTopBounds.width > 0 && rotatedRightTopBounds.height > 0 )
-            this.addProtectedChild(this._topRight);
+            this._renderers.push(this._topRight);
 
         // Bottom left
-        this._bottomLeft = new cc.Sprite();
+        if(!this._bottomLeft)
+            this._bottomLeft = new cc.Sprite();
         this._bottomLeft.initWithTexture(selTexture, rotatedLeftBottomBounds, rotated);
         if(rotatedLeftBottomBounds.width > 0 && rotatedLeftBottomBounds.height > 0 )
-            this.addProtectedChild(this._bottomLeft);
+            this._renderers.push(this._bottomLeft);
 
         // Bottom right
-        this._bottomRight = new cc.Sprite();
+        if(!this._bottomRight)
+            this._bottomRight = new cc.Sprite();
         this._bottomRight.initWithTexture(selTexture, rotatedRightBottomBounds, rotated);
         if(rotatedRightBottomBounds.width > 0 && rotatedRightBottomBounds.height > 0 )
-            this.addProtectedChild(this._bottomRight);
+            this._renderers.push(this._bottomRight);
     },
     /**
      * @brief Update Scale9Sprite with a specified sprite.
@@ -835,7 +844,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
     updateWithSprite: function(sprite, spriteRect, spriteFrameRotated, offset, originalSize, capInsets) {
         var opacity = this.getOpacity();
         var color = this.getColor();
-        this._protectedChildren.length = 0;
+        this._renderers.length = 0;
         if(sprite) {
             if(!sprite.getSpriteFrame())
                 return false;
@@ -895,9 +904,21 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
      * @param {cc.rect} capInsets
      */
     setSpriteFrame: function (spriteFrame, capInsets) {
-             var sprite = new cc.Sprite(spriteFrame.getTexture());
+        var sprite = new cc.Sprite(spriteFrame.getTexture());
+        var locLoaded = spriteFrame.textureLoaded();
+        this._textureLoaded = locLoaded;
+        if(!locLoaded){
+            spriteFrame.addEventListener("load", function(sender){
+                // the texture is rotated on Canvas render mode, so isRotated always is false.
+                var preferredSize = this._preferredSize, restorePreferredSize = preferredSize.width !== 0 && preferredSize.height !== 0;
+                if (restorePreferredSize) preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc._renderType === cc._RENDER_TYPE_WEBGL && sender.isRotated(), this._capInsets);
+                if (restorePreferredSize)this.setPreferredSize(preferredSize);
+                this._positionsAreDirty = true;
+                this.dispatchEvent("load");
+            },this);
+        }
         this.updateWithSprite(sprite, spriteFrame.getRect(),spriteFrame.isRotated(),spriteFrame.getOffset(),spriteFrame.getOriginalSize(),capInsets);
-
         // Reset insets
         this._insetLeft = capInsets.x;
         this._insetTop = capInsets.y;
@@ -925,15 +946,11 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
             return;
         }
         this._scale9Enabled = enabled;
-        this._protectedChildren.length = 0;
+        this._renderers.length = 0;
         //we must invalide the transform when toggling scale9enabled
         cc.Node.transformDirty = true;
-        //this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
-
-        if (this._scale9Enabled)
-        {
-            if (this._scale9Image)
-            {
+        if (this._scale9Enabled) {
+            if (this._scale9Image) {
                 this.updateWithSprite(this._scale9Image,
                     this._spriteRect,
                     this._spriteFrameRotated,
@@ -945,20 +962,11 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         this._positionsAreDirty = true;
     },
 
-    addProtectedChild: function(child) {
-        this._reorderChildDirty = true;
-        this._protectedChildren.push(child);
-    },
-
-    sortAllProtectedChildren: function() {
+    _setRenderersPosition: function() {
         if(this._positionsAreDirty) {
             this._updatePositions();
             this._adjustScale9ImagePosition();
             this._positionsAreDirty = false;
-        }
-        if(this._reorderChildDirty) {
-            this._protectedChildren.sort();
-            this._reorderChildDirty = false;
         }
     },
 

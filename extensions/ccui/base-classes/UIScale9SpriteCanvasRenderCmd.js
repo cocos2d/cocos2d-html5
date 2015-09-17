@@ -82,15 +82,15 @@
         cc.Node.CanvasRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
         var node = this._node;
         if(!node)   return;
-        var locProtectedChildren = node._protectedChildren;
+        var locRenderers = node._renderers;
 
         if(node._scale9Enabled) {
-            var protectChildLen = locProtectedChildren.length;
+            var protectChildLen = locRenderers.length;
             for(var j=0 ; j < protectChildLen; j++) {
-                var pchild = locProtectedChildren[j];
-                if(pchild) {
-                    pchild._renderCmd._updateDisplayColor(parentColor);
-                    pchild._renderCmd._updateColor();
+                var renderer = locRenderers[j];
+                if(renderer) {
+                    renderer._renderCmd._updateDisplayColor(parentColor);
+                    renderer._renderCmd._updateColor();
                 }
                 else
                     break;
@@ -128,13 +128,13 @@
         cc.renderer._turnToCacheMode(node.__instanceId);
 
         if(node._scale9Enabled) {
-            var locProtectedChildren = node._protectedChildren;
-            node.sortAllProtectedChildren();
-            var protectChildLen = locProtectedChildren.length;
+            var locRenderers = node._renderers;
+            node._setRenderersPosition();
+            var protectChildLen = locRenderers.length;
             for(var j=0; j < protectChildLen; j++) {
-                var pchild = locProtectedChildren[j];
-                if(pchild) {
-                    var tempCmd = pchild._renderCmd;
+                var renderer = locRenderers[j];
+                if(renderer) {
+                    var tempCmd = renderer._renderCmd;
                     tempCmd.updateStatus();
                     cc.renderer.pushRenderCommand(tempCmd);
                 }
