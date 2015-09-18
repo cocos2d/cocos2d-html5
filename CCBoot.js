@@ -1590,28 +1590,6 @@ cc._initSys = function (config, CONFIG_KEY) {
      */
     sys.language = currLanguage;
 
-    var browserType = sys.BROWSER_TYPE_UNKNOWN;
-    var browserTypes = ua.match(/sogou|qzone|liebao|micromessenger|qqbrowser|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|trident|oupeng|opera|miuibrowser|firefox/i)
-        || ua.match(/chrome|safari/i);
-    if (browserTypes && browserTypes.length > 0) {
-        browserType = browserTypes[0];
-        if (browserType === 'micromessenger') {
-            browserType = sys.BROWSER_TYPE_WECHAT;
-        } else if (browserType === "safari" && (ua.match(/android.*applewebkit/)))
-            browserType = sys.BROWSER_TYPE_ANDROID;
-        else if (browserType === "trident") browserType = sys.BROWSER_TYPE_IE;
-        else if (browserType === "360 aphone") browserType = sys.BROWSER_TYPE_360;
-    }else if(ua.indexOf("iphone") && ua.indexOf("mobile")){
-        browserType = "safari";
-    }
-    /**
-     * Indicate the running browser type
-     * @memberof cc.sys
-     * @name browserType
-     * @type {String}
-     */
-    sys.browserType = browserType;
-
     // Get the os of system
     var iOS = ( ua.match(/(iPad|iPhone|iPod)/i) ? true : false );
     var isAndroid = ua.match(/android/i) || nav.platform.match(/android/i) ? true : false;
@@ -1631,13 +1609,66 @@ cc._initSys = function (config, CONFIG_KEY) {
      */
     sys.os = osName;
 
-    var multipleAudioWhiteList = [
-        sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_BAIDU_APP,
-        sys.BROWSER_TYPE_SAFARI, sys.BROWSER_TYPE_UC, sys.BROWSER_TYPE_QQ, sys.BROWSER_TYPE_MOBILE_QQ, sys.BROWSER_TYPE_IE
-    ];
+    /**
+     * Indicate the running browser type
+     * @memberof cc.sys
+     * @name browserType
+     * @type {String}
+     */
+    sys.browserType = sys.BROWSER_TYPE_UNKNOWN;
+    /* Determine the browser type */
+    (function(){
+        var typeReg1 = /sogou|qzone|liebao|micromessenger|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|mxbrowser|trident|miuibrowser/i;
+        var typeReg2 = /qqbrowser|chrome|safari|firefox|opr|oupeng|opera/i;
+        var browserTypes = typeReg1.exec(ua);
+        if(!browserTypes) browserTypes = typeReg2.exec(ua);
+        var browserType = browserTypes ? browserTypes[0] : sys.BROWSER_TYPE_UNKNOWN;
+        if (browserType === 'micromessenger')
+            browserType = sys.BROWSER_TYPE_WECHAT;
+        else if (browserType === "safari" && (ua.match(/android.*applewebkit/)))
+            browserType = sys.BROWSER_TYPE_ANDROID;
+        else if (browserType === "trident")
+            browserType = sys.BROWSER_TYPE_IE;
+        else if (browserType === "360 aphone")
+            browserType = sys.BROWSER_TYPE_360;
+        else if (browserType === "mxbrowser")
+            browserType = sys.BROWSER_TYPE_MAXTHON;
+        else if (browserType === "opr")
+            browserType = sys.BROWSER_TYPE_OPERA;
 
-    sys._supportMultipleAudio = multipleAudioWhiteList.indexOf(sys.browserType) > -1;
+        sys.browserType = browserType;
+    })();
 
+    /**
+     * Indicate the running browser version
+     * @memberof cc.sys
+     * @name browserVersion
+     * @type {Number}
+     */
+    sys.browserVersion = "";
+    /* Determine the browser version number */
+    (function(){
+        var versionReg1 = /(micromessenger|mx|maxthon|baidu|sogou)(mobile)?(browser)?\/?([\d.]+)/i;
+        var versionReg2 = /(msie |rv:|firefox|chrome|ucbrowser|qq|oupeng|opera|opr|safari|miui)(mobile)?(browser)?\/?([\d.]+)/i;
+        var tmp = ua.match(versionReg1);
+        if(!tmp) tmp = ua.match(versionReg2);
+        sys.browserVersion = tmp ? tmp[4] : "";
+    })();
+
+    var w = window.innerWidth || document.documentElement.clientWidth;
+    var h = window.innerHeight || document.documentElement.clientHeight;
+    var ratio = window.devicePixelRatio || 1;
+
+    /**
+     * Indicate the real pixel resolution of the whole game window
+     * @memberof cc.sys
+     * @name windowPixelResolution
+     * @type {Number}
+     */
+    sys.windowPixelResolution = {
+        width: ratio * w,
+        height: ratio * h
+    };
 
     //++++++++++++++++++something about cc._renderTYpe and cc._supportRender begin++++++++++++++++++++++++++++
 
@@ -1695,14 +1726,6 @@ cc._initSys = function (config, CONFIG_KEY) {
     sys._supportCanvasNewBlendModes = sys._canUseCanvasNewBlendModes();
 
     //++++++++++++++++++something about cc._renderType and cc._supportRender end++++++++++++++++++++++++++++++
-
-    // check if browser supports Web Audio
-    // check Web Audio's context
-    try {
-        sys._supportWebAudio = !!(win.AudioContext || win.webkitAudioContext || win.mozAudioContext);
-    } catch (e) {
-        sys._supportWebAudio = false;
-    }
 
     /**
      * cc.sys.localStorage is a local storage component.

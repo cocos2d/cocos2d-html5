@@ -40,9 +40,15 @@
     proto.rendering = function(ctx){
         cc.AtlasNode.WebGLRenderCmd.prototype.rendering.call(this, ctx);
         if (cc.LABELATLAS_DEBUG_DRAW) {
-            var s = this._node.getContentSize();
-            var vertices = [cc.p(0, 0), cc.p(s.width, 0),
-                cc.p(s.width, s.height), cc.p(0, s.height)];
+            var node = this._node;
+            var s = node.getContentSize();
+            var locRect = node.getBoundingBoxToWorld();
+            var posX = locRect.x,
+                posY = locRect.y;
+                s.width = locRect.width;
+                s.height = locRect.height;
+            var vertices = [cc.p(posX, posY), cc.p(posX+ s.width, posY),
+                cc.p(s.width+posX, s.height+posY), cc.p(posX, posY+s.height)];
             cc._drawingUtil.drawPoly(vertices, 4, true);
         }
     };
