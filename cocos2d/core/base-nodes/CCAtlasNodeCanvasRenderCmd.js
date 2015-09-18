@@ -30,7 +30,7 @@
         cc.Node.CanvasRenderCmd.call(this, renderableObject);
         this._needDraw = false;
         this._colorUnmodified = cc.color.WHITE;
-        this._renderTexture = null;
+        this._textureToRender = null;
     };
 
     var proto = cc.AtlasNode.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
@@ -47,7 +47,7 @@
             cc.log(cc._LogInfos.AtlasNode__initWithTexture);
             return false;
         }
-        this._renderTexture = texture;
+        this._textureToRender = texture;
         this._calculateMaxItems();
 
         node.quadsToDraw = itemsToRender;
@@ -69,10 +69,10 @@
             color = this._colorUnmodified,
             element = texture.getHtmlElementObj();
         var textureRect = cc.rect(0, 0, element.width, element.height);
-        if(texture === this._renderTexture)
-            this._renderTexture = texture._generateColorTexture(color.r, color.g, color.b, textureRect);
+        if(texture === this._textureToRender)
+            this._textureToRender = texture._generateColorTexture(color.r, color.g, color.b, textureRect);
         else
-            texture._generateColorTexture(color.r, color.g, color.b, textureRect, this._renderTexture.getHtmlElementObj());
+            texture._generateColorTexture(color.r, color.g, color.b, textureRect, this._textureToRender.getHtmlElementObj());
     };
 
     proto.setOpacity = function(opacity){

@@ -38,7 +38,7 @@
         this._blendFuncStr = "source-over";
         this._colorized = false;
 
-        this._renderTexture = null;
+        this._textureToRender = null;
     };
 
     var proto = cc.Sprite.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
@@ -54,7 +54,6 @@
         var node = this._node;
         if (node._texture !== texture) {
             if (texture) {
-                if(texture.getHtmlElementObj() instanceof  HTMLImageElement)
                 node._textureLoaded = texture._textureLoaded;
             }else{
                 node._textureLoaded = false;
@@ -111,7 +110,7 @@
         var node = this._node;
         var locTextureCoord = this._textureCoord, alpha = (this._displayedOpacity / 255);
 
-        var texture = this._renderTexture || node._texture;
+        var texture = this._textureToRender || node._texture;
 
         if ((texture && (locTextureCoord.width === 0 || locTextureCoord.height === 0|| !texture._textureLoaded)) || alpha === 0)
             return;
@@ -182,10 +181,10 @@
 
         if(texture){
             if(dColor.r !== 255 || dColor.g !== 255 || dColor.b !== 255){
-                this._renderTexture = texture._generateColorTexture(dColor.r, dColor.g, dColor.b, rect);
+                this._textureToRender = texture._generateColorTexture(dColor.r, dColor.g, dColor.b, rect);
                 this._colorized = true;
             }else if(texture){
-                this._renderTexture = texture;
+                this._textureToRender = texture;
                 this._colorized = false;
             }
         }

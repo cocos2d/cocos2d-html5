@@ -80,7 +80,7 @@
 
     proto._changeTextureColor = function(){
         var node = this._node;
-        var texture = this._renderTexture,
+        var texture = this._textureToRender,
             contentSize = texture.getContentSize();
 
         var oTexture = node._texture,
@@ -90,7 +90,7 @@
         if(texture && contentSize.width > 0){
             if(!oElement)
                 return;
-            this._renderTexture = oTexture._generateColorTexture(disColor.r, disColor.g, disColor.b, textureRect);
+            this._textureToRender = oTexture._generateColorTexture(disColor.r, disColor.g, disColor.b, textureRect);
         }
     };
 
