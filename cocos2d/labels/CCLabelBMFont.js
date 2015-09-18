@@ -724,7 +724,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var locIsLoaded = texture.isLoaded();
             self._textureLoaded = locIsLoaded;
             self.texture = texture;
-            this._renderCmd._updateFntFileTexture();
             if (!locIsLoaded) {
                 texture.addEventListener("load", function (sender) {
                     var self1 = this;

@@ -128,9 +128,8 @@ cc.textureCache = /** @lends cc.textureCache# */{
         return null;
     },
 
-    _generalTextureKey: function () {
-        this._textureKeySeq++;
-        return "_textureKey_" + this._textureKeySeq;
+    _generalTextureKey: function (id) {
+        return "_textureKey_" + id;
     },
 
     /**
@@ -141,16 +140,17 @@ cc.textureCache = /** @lends cc.textureCache# */{
      * var cacheTextureForColor = cc.textureCache.getTextureColors(texture);
      */
     getTextureColors: function (texture) {
-        var key = this.getKeyByTexture(texture);
+        var image = texture._htmlElementObj;
+        var key = this.getKeyByTexture(image);
         if (!key) {
-            if (texture instanceof HTMLImageElement)
-                key = texture.src;
+            if (image instanceof HTMLImageElement)
+                key = image.src;
             else
-                key = this._generalTextureKey();
+                key = this._generalTextureKey(texture.__instanceId);
         }
 
         if (!this._textureColorsCache[key])
-            this._textureColorsCache[key] = cc.Sprite.CanvasRenderCmd._generateTextureCacheForColor(texture);
+            this._textureColorsCache[key] = texture._generateTextureCacheForColor();
         return this._textureColorsCache[key];
     },
 

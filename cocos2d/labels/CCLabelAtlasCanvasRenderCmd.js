@@ -41,7 +41,7 @@
         var node = this._node;
         var locString = node._string || "";
         var n = locString.length;
-        var texture = this._texture;
+        var texture = this._textureToRender;
         var locItemWidth = node._itemWidth , locItemHeight = node._itemHeight;     //needn't multiply cc.contentScaleFactor(), because sprite's draw will do this
 
         for (var i = 0, cr = -1; i < n; i++) {

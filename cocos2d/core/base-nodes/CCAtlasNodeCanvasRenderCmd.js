@@ -30,8 +30,7 @@
         cc.Node.CanvasRenderCmd.call(this, renderableObject);
         this._needDraw = false;
         this._colorUnmodified = cc.color.WHITE;
-        this._originalTexture = null;
-        this._texture = null;
+        this._textureToRender = null;
     };
 
     var proto = cc.AtlasNode.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
@@ -43,12 +42,12 @@
         node._itemHeight = tileHeight;
 
         node._opacityModifyRGB = true;
-        this._originalTexture = texture;
-        if (!this._originalTexture) {
+        node._texture = texture;
+        if (!node._texture) {
             cc.log(cc._LogInfos.AtlasNode__initWithTexture);
             return false;
         }
-        this._texture = this._originalTexture;
+        this._textureToRender = texture;
         this._calculateMaxItems();
 
         node.quadsToDraw = itemsToRender;
@@ -64,72 +63,26 @@
         this._changeTextureColor();
     };
 
-    if(cc.sys._supportCanvasNewBlendModes)
-        proto._changeTextureColor = function(){
-            var node = this._node;
-            var locTexture = node.getTexture();
-            if (locTexture && this._originalTexture) {
-                var element = this._originalTexture.getHtmlElementObj();
-                if(!element)
-                    return;
-                var locElement = locTexture.getHtmlElementObj();
-                var textureRect = cc.rect(0, 0, element.width, element.height);
-                if (locElement instanceof HTMLCanvasElement)
-                    cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(element, this._colorUnmodified, textureRect, locElement);
-                else {
-                    locElement = cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(element, this._colorUnmodified, textureRect);
-                    locTexture = new cc.Texture2D();
-                    locTexture.initWithElement(locElement);
-                    locTexture.handleLoadedTexture();
-                    node.setTexture(locTexture);
-                }
-            }
-        };
-    else
-        proto._changeTextureColor = function(){
-            var node = this._node;
-            var locElement, locTexture = node.getTexture();
-            if (locTexture && this._originalTexture) {
-                locElement = locTexture.getHtmlElementObj();
-                if (!locElement)
-                    return;
-                var element = this._originalTexture.getHtmlElementObj();
-                var cacheTextureForColor = cc.textureCache.getTextureColors(element);
-                if (cacheTextureForColor) {
-                    var textureRect = cc.rect(0, 0, element.width, element.height);
-                    if (locElement instanceof HTMLCanvasElement)
-                        cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, this._displayedColor, textureRect, locElement);
-                    else {
-                        locElement = cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, this._displayedColor, textureRect);
-                        locTexture = new cc.Texture2D();
-                        locTexture.initWithElement(locElement);
-                        locTexture.handleLoadedTexture();
-                        node.setTexture(locTexture);
-                    }
-                }
-            }
-        };
+    proto._changeTextureColor = function(){
+        var node = this._node;
+        var texture = node._texture,
+            color = this._colorUnmodified,
+            element = texture.getHtmlElementObj();
+        var textureRect = cc.rect(0, 0, element.width, element.height);
+        if(texture === this._textureToRender)
+            this._textureToRender = texture._generateColorTexture(color.r, color.g, color.b, textureRect);
+        else
+            texture._generateColorTexture(color.r, color.g, color.b, textureRect, this._textureToRender.getHtmlElementObj());
+    };
 
     proto.setOpacity = function(opacity){
         var node = this._node;
         cc.Node.prototype.setOpacity.call(node, opacity);
-        // special opacity for premultiplied textures
-        //if (node._opacityModifyRGB) {
-        //    node.color = this._colorUnmodified;
-        //}
-    };
-
-    proto.getTexture = function(){
-        return this._texture;
-    };
-
-    proto.setTexture = function (texture) {
-        this._texture = texture;
     };
 
     proto._calculateMaxItems = function(){
         var node = this._node;
-        var selTexture = this._texture;
+        var selTexture = node._texture;
         var size = selTexture.getContentSize();
 
         node._itemsPerColumn = 0 | (size.height / node._itemHeight);

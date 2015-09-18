@@ -1,18 +1,14 @@
 /****************************************************************************
  Copyright (c) 2013-2014 Chukong Technologies Inc.
-
  http://www.cocos2d-x.org
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
-
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
-
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -131,7 +127,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         if (locDimensionsWidth === 0) {
             if (this._isMultiLine)
                 locSize = cc.size(Math.ceil(Math.max.apply(Math, locLineWidth) + locStrokeShadowOffsetX),
-                        Math.ceil((this._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY));
+                    Math.ceil((this._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY));
             else
                 locSize = cc.size(Math.ceil(this._measure(node._string) + locStrokeShadowOffsetX), Math.ceil(this._fontClientHeight + locStrokeShadowOffsetY));
         } else {
@@ -386,6 +382,10 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 (function(){
     cc.LabelTTF.CacheRenderCmd = function (renderable) {
         cc.LabelTTF.RenderCmd.call(this,renderable);
+        var locCanvas = this._labelCanvas = cc.newElement("canvas");
+        locCanvas.width = 1;
+        locCanvas.height = 1;
+        this._labelContext = locCanvas.getContext("2d");
     };
 
     cc.LabelTTF.CacheRenderCmd.prototype = Object.create( cc.LabelTTF.RenderCmd.prototype);
@@ -394,24 +394,6 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     var proto = cc.LabelTTF.CacheRenderCmd.prototype;
     proto.constructor = cc.LabelTTF.CacheRenderCmd;
 
-    proto._getLabelContext = function () {
-        if (this._labelContext)
-            return this._labelContext;
-
-        var node = this._node;
-        if (!this._labelCanvas) {
-            var locCanvas = cc.newElement("canvas");
-            locCanvas.width = 1;
-            locCanvas.height = 1;
-            var labelTexture = new cc.Texture2D();
-            labelTexture.initWithElement(locCanvas);
-            node.setTexture(labelTexture);
-            this._labelCanvas = locCanvas;
-        }
-        this._labelContext = this._labelCanvas.getContext("2d");
-        return this._labelContext;
-    };
-
     proto._updateTexture = function () {
         this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.textDirty ^ this._dirtyFlag;
         var node = this._node;
@@ -419,7 +401,13 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         this._updateTTF();
         var width = locContentSize.width, height = locContentSize.height;
 
-        var locContext = this._getLabelContext(), locLabelCanvas = this._labelCanvas;
+        var locContext = this._labelContext, locLabelCanvas = this._labelCanvas;
+
+        if(!node._texture){
+            var labelTexture = new cc.Texture2D();
+            labelTexture.initWithElement(this._labelCanvas);
+            node.setTexture(labelTexture);
+        }
 
         if (node._string.length === 0) {
             locLabelCanvas.width = 1;
@@ -444,11 +432,11 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     };
 
     proto._measureConfig = function () {
-        this._getLabelContext().font = this._fontStyleStr;
+        this._labelContext.font = this._fontStyleStr;
     };
 
     proto._measure = function (text) {
-        return this._getLabelContext().measureText(text).width;
+        return this._labelContext.measureText(text).width;
     };
 
 })();
