@@ -173,9 +173,6 @@
                 <file name="extensions/gui/control-extension/CCControlButton.js"/>
                 <file name="extensions/gui/control-extension/CCControlUtils.js"/>
                 <file name="extensions/gui/control-extension/CCInvocation.js"/>
-                <file name="extensions/gui/control-extension/CCScale9Sprite.js"/>
-                <file name="extensions/gui/control-extension/CCScale9SpriteCanvasRenderCmd.js"/>
-                <file name="extensions/gui/control-extension/CCScale9SpriteWebGLRenderCmd.js"/>
                 <file name="extensions/gui/control-extension/CCMenuPassive.js"/>
                 <file name="extensions/gui/control-extension/CCControlSaturationBrightnessPicker.js"/>
                 <file name="extensions/gui/control-extension/CCControlHuePicker.js"/>
@@ -276,9 +273,6 @@
                 <file name="extensions/cocostudio/timeline/ActionTimeline.js"/>
                 <file name="extensions/cocostudio/timeline/Frame.js"/>
                 <file name="extensions/cocostudio/timeline/Timeline.js"/>
-                <file name="extensions/cocostudio/timeline/CCSkinNode.js"/>
-                <file name="extensions/cocostudio/timeline/CCBoneNode.js"/>
-                <file name="extensions/cocostudio/timeline/CCSkeletonNode.js"/>
                 <file name="extensions/cocostudio/loader/load.js"/>
                 <file name="extensions/cocostudio/loader/parsers/action-1.x.js"/>
                 <file name="extensions/cocostudio/loader/parsers/action-2.x.js"/>
