@@ -232,6 +232,8 @@
                 <file name="extensions/ccui/uiwidgets/scroll-widget/UIScrollView.js"/>
                 <file name="extensions/ccui/uiwidgets/scroll-widget/UIListView.js"/>
                 <file name="extensions/ccui/uiwidgets/scroll-widget/UIPageView.js"/>
+                <file name="extensions/ccui/uiwidgets/scroll-widget/UIScrollViewCanvasRenderCmd.js"/>
+                <file name="extensions/ccui/uiwidgets/scroll-widget/UIScrollViewWebGLRenderCmd.js"/>
                 <file name="extensions/cocostudio/components/CCComponent.js"/>
                 <file name="extensions/ccui/layouts/UILayoutComponent.js"/>
                 <file name="extensions/cocostudio/components/CCComponentContainer.js"/>
