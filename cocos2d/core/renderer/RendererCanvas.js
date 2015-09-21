@@ -132,9 +132,9 @@ cc.rendererCanvas = {
         var ctx = cc._renderContext.getContext();
         var wrapper = cc._renderContext;
         ctx.setTransform(1, 0, 0, 1, 0, 0);
-        //IF transparent or translucence clearRect first to decrease filling rate
-        if(this._clearColor.a !== 255)
-            ctx.clearRect(0, 0, viewport.width, viewport.height);
+        //if(this._clearColor.a !== 255)
+        //Canvas Overlap with each other and bold the edge
+        ctx.clearRect(0, 0, viewport.width, viewport.height);
         wrapper.setFillStyle(this._clearFillStyle);
         wrapper.setGlobalAlpha(this._clearColor.a);
         ctx.fillRect(0, 0, viewport.width, viewport.height);
