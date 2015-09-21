@@ -753,6 +753,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {cc.Rect} rect a rect of texture
      * @param {Boolean} [rotated] Whether or not the texture is rotated
      * @param {cc.Size} [untrimmedSize] The original pixels size of the texture
+     * @param {Boolean} [needConvert] contentScaleFactor switch
      */
     setTextureRect: function (rect, rotated, untrimmedSize, needConvert) {
         var _t = this;
@@ -936,70 +937,38 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if(!texture)
             return this._renderCmd._setTexture(null);
 
-        var oldTexture = this._texture;
-        if(cc.isString(texture)){
+        //CCSprite.cpp 327 and 338
+        var isFileName = cc.isString(texture);
+
+        if(isFileName)
             texture = cc.textureCache.addImage(texture);
 
-            if(!texture._textureLoaded){
-                texture.addEventListener("load", function(){
-                    this._renderCmd._setTexture(texture);
-                    this._changeRectWithTexture(texture, oldTexture);
-                    this.setColor(this._realColor);
-                    this._textureLoaded = true;
-                }, this);
-            }else{
-                this._renderCmd._setTexture(texture);
-                this._changeRectWithTexture(texture, oldTexture);
+        if(texture._textureLoaded){
+            this._setTexture(texture, isFileName);
+            this.setColor(this._realColor);
+            this._textureLoaded = true;
+        }else{
+            texture.addEventListener("load", function(){
+                this._setTexture(texture, isFileName);
                 this.setColor(this._realColor);
                 this._textureLoaded = true;
-            }
-        }else{
-            // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
-            cc.assert(texture instanceof cc.Texture2D, cc._LogInfos.Sprite_setTexture_2);
-            this._changeRectWithTexture(texture, oldTexture);
-            this._renderCmd._setTexture(texture);
+            }, this);
         }
     },
 
-    _changeRectWithTexture: function(texture, oldTexture){
-        var textureRect = cc.rect(0, 0, texture._contentSize.width, texture._contentSize.height),
-            oldTextureContentSize = oldTexture ? oldTexture._contentSize : cc.size(),
-            nodeContentSize = this._contentSize;
+    _setTexture: function(texture, change){
+        this._renderCmd._setTexture(texture);
+        if(change)
+            this._changeRectWithTexture(texture);
+    },
 
-        var textureWidth = textureRect.width,
-            textureHeight = textureRect.height,
-            oldTextureWidth = oldTextureContentSize.width,
-            oldTextureHeight = oldTextureContentSize.height,
-            nodeWidth = nodeContentSize.width,
-            nodeHeight = nodeContentSize.height;
-
-        if(!textureRect || (!textureWidth && !textureHeight)) return;
-        var nodeRect = this._rect;
-        if(
-            oldTexture &&
-            // If the contentSize does not exist, Set the contentSize
-            (nodeWidth !== 0 && nodeHeight !== 0) &&
-            // To satisfy the above two, But height/width does not exist, Set the contentSize
-            (nodeRect.height !== 0 || nodeRect.width !== 0)
-            // The remaining direct return
-        ){
-            //Sprite in updateColor, Will generate a new texture without URL
-            //To replace this texture, no need to update rect
-            if(texture.url){
-                if(
-                    nodeWidth !== oldTextureWidth && nodeHeight !== oldTextureHeight &&
-                    oldTextureWidth === textureWidth && oldTextureHeight === textureHeight
-                )
-                    return;
-            }else{
-                return;
-            }
-        }
-        textureRect.x = textureRect.x || 0;
-        textureRect.y = textureRect.y || 0;
-        textureRect.width = textureRect.width || 0;
-        textureRect.height = textureRect.height || 0;
-        this.setTextureRect(textureRect);
+    _changeRectWithTexture: function(texture){
+        var contentSize = texture._contentSize;
+        var rect = cc.rect(
+                0, 0,
+                contentSize.width, contentSize.height
+            );
+        this.setTextureRect(rect);
     },
 
     _createRenderCmd: function(){

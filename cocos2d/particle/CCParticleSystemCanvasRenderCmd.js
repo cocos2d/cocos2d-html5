@@ -34,6 +34,7 @@
         this._shapeType = cc.ParticleSystem.BALL_SHAPE;
 
         this._pointRect = cc.rect(0, 0, 0, 0);
+        this._tintCache = cc.newElement("canvas");
     };
     var proto = cc.ParticleSystem.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.ParticleSystem.CanvasRenderCmd;
@@ -114,7 +115,7 @@
                 if (particle.rotation)
                     context.rotate(cc.degreesToRadians(particle.rotation));
 
-                drawElement = particle.isChangeColor ? this._changeTextureColor(element, particle.color, this._pointRect) : element;
+                drawElement = particle.isChangeColor ? this._changeTextureColor(node._texture, particle.color, this._pointRect) : element;
                 context.drawImage(drawElement, -(0 | (w / 2)), -(0 | (h / 2)));
                 context.restore();
             }
@@ -142,32 +143,13 @@
         cc.g_NumberOfDraws++;
     };
 
-    if(!cc.sys._supportCanvasNewBlendModes){
-        proto._changeTextureColor = function(element, color, rect){
-            var cacheTextureForColor = cc.textureCache.getTextureColors(element);
-            if (cacheTextureForColor) {
-                // Create another cache for the tinted version
-                // This speeds up things by a fair bit
-                if (!cacheTextureForColor.tintCache) {
-                    cacheTextureForColor.tintCache = document.createElement('canvas');
-                    cacheTextureForColor.tintCache.width = element.width;
-                    cacheTextureForColor.tintCache.height = element.height;
-                }
-                cc.Sprite.CanvasRenderCmd._generateTintImage(element, cacheTextureForColor, color, rect, cacheTextureForColor.tintCache);
-                return cacheTextureForColor.tintCache;
-            }
-            return null
-        }
-    }else{
-        proto._changeTextureColor = function(element, color, rect){
-            if (!element.tintCache) {
-                element.tintCache = document.createElement('canvas');
-                element.tintCache.width = element.width;
-                element.tintCache.height = element.height;
-            }
-            return cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(element, color, rect, element.tintCache);
-        }
-    }
+    proto._changeTextureColor = function(texture, color, rect){
+        var tintCache = this._tintCache;
+        var textureContentSize = texture.getContentSize();
+        tintCache.width = textureContentSize.width;
+        tintCache.height = textureContentSize.height;
+        return texture._generateColorTexture(color.r, color.g, color.b, rect, tintCache);
+    };
 
     proto.initTexCoordsWithRect = function(pointRect){
         this._pointRect = pointRect;

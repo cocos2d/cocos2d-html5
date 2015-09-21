@@ -124,7 +124,9 @@
             "cocos2d/core/labelttf/CCLabelTTFCanvasRenderCmd.js",
             "cocos2d/core/labelttf/CCLabelTTFWebGLRenderCmd.js",
 
-            "cocos2d/core/CCActionManager.js"
+            "cocos2d/core/CCActionManager.js",
+            
+            "cocos2d/core/utils/CCProfiler.js"
         ],
         "effects" : [
             "core",
@@ -335,7 +337,9 @@
             "extensions/ccui/uiwidgets/UIWebView.js",
             "extensions/ccui/uiwidgets/scroll-widget/UIScrollView.js",
             "extensions/ccui/uiwidgets/scroll-widget/UIListView.js",
-            "extensions/ccui/uiwidgets/scroll-widget/UIPageView.js"
+            "extensions/ccui/uiwidgets/scroll-widget/UIPageView.js",
+            "extensions/ccui/uiwidgets/scroll-widget/UIScrollViewCanvasRenderCmd.js",
+            "extensions/ccui/uiwidgets/scroll-widget/UIScrollViewWebGLRenderCmd.js"
         ],
         "cocostudio" : [
             "core",  "tilemap", "particle", "shape-nodes", "ccui",
@@ -409,9 +413,6 @@
             "extensions/gui/control-extension/CCControlButton.js",
             "extensions/gui/control-extension/CCControlUtils.js",
             "extensions/gui/control-extension/CCInvocation.js",
-            "extensions/gui/control-extension/CCScale9Sprite.js",
-            "extensions/gui/control-extension/CCScale9SpriteCanvasRenderCmd.js",
-            "extensions/gui/control-extension/CCScale9SpriteWebGLRenderCmd.js",
             "extensions/gui/control-extension/CCMenuPassive.js",
             "extensions/gui/control-extension/CCControlSaturationBrightnessPicker.js",
             "extensions/gui/control-extension/CCControlHuePicker.js",

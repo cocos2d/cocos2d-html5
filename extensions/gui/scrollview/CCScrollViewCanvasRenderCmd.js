@@ -62,6 +62,8 @@
 
     proto.visit = function(parentCmd){
         var node = this._node;
+        if (!node._visible) return;
+        
         var i, locChildren = node._children, childrenLen;
 
         this.transform(parentCmd);

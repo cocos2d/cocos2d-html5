@@ -34,9 +34,11 @@
     var proto = ccui.Scale9Sprite.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = ccui.Scale9Sprite.WebGLRenderCmd;
 
-    proto.visit = function(parentCmd){
+    proto.visit = function(parentCmd) {
         var node = this._node;
         if(!node._visible)
+            return;
+        if(!node._scale9Image)
             return;
 
         if (node._positionsAreDirty) {
@@ -44,6 +46,32 @@
             node._positionsAreDirty = false;
             node._scale9Dirty = true;
         }
+
+        parentCmd = parentCmd || this.getParentRenderCmd();
+        if (node._parent && node._parent._renderCmd)
+            this._curLevel = node._parent._renderCmd._curLevel + 1;
+
+        this._syncStatus(parentCmd);
+
+        if(node._scale9Enabled) {
+            var locRenderers = node._renderers;
+            var rendererLen = locRenderers.length;
+            for(var j=0; j < rendererLen; j++) {
+                var renderer = locRenderers[j];
+                if(renderer) {
+                    var tempCmd = renderer._renderCmd;
+                    tempCmd.visit(this);
+                }
+                else
+                    break;
+            }
+        }
+        else {
+            node._adjustScale9ImageScale();
+            node._adjustScale9ImagePosition();
+            node._scale9Image._renderCmd.visit(this);
+        }
+        this._dirtyFlag = 0;
         cc.Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
     };
 
@@ -55,6 +83,25 @@
             node._positionsAreDirty = false;
             node._scale9Dirty = true;
         }
+        if(node._scale9Enabled) {
+            var locRenderers = node._renderers;
+            var protectChildLen = locRenderers.length;
+            for(var j=0; j < protectChildLen; j++) {
+                var pchild = locRenderers[j];
+                if(pchild) {
+                    var tempCmd = pchild._renderCmd;
+                    tempCmd.transform(this, true);
+                }
+                else
+                    break;
+            }
+        }
+        else {
+            node._adjustScale9ImageScale();
+            node._adjustScale9ImagePosition();
+            node._scale9Image._renderCmd.transform(this, true);
+        }
+
     };
 
     proto._updateDisplayColor = function(parentColor){

@@ -129,7 +129,15 @@ cc._fontLoader = {
         }else{
             self._loadFont(name, srcs);
         }
-        cb(null, true);
+        if(document.fonts){
+            document.fonts.load("1em " + name).then(function(){
+                cb(null, true);
+            }, function(err){
+                cb(err);
+            });
+        }else{
+            cb(null, true);
+        }
     }
 };
 cc.loader.register(["font", "eot", "ttf", "woff", "svg", "ttc"], cc._fontLoader);

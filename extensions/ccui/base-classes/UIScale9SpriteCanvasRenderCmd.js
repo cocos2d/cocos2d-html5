@@ -55,9 +55,10 @@
             node._positionsAreDirty = false;
             node._scale9Dirty = true;
         }
-        node._scale9Dirty = false;
+
         this._cacheScale9Sprite();
 
+        node._scale9Dirty = false;
         cc.Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
     };
 
@@ -79,23 +80,33 @@
 
     proto._updateDisplayColor = function(parentColor){
         cc.Node.CanvasRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
+        var node = this._node;
+        if(!node)   return;
+        var locRenderers = node._renderers;
 
-        var scale9Image = this._node._scale9Image;
-        if(scale9Image){
-            var scaleChildren = scale9Image.getChildren();
-            for (var i = 0; i < scaleChildren.length; i++) {
-                var selChild = scaleChildren[i];
-                if (selChild){
-                    selChild._renderCmd._updateDisplayColor(parentColor);
-                    selChild._renderCmd._updateColor();
+        if(node._scale9Enabled) {
+            var protectChildLen = locRenderers.length;
+            for(var j=0 ; j < protectChildLen; j++) {
+                var renderer = locRenderers[j];
+                if(renderer) {
+                    renderer._renderCmd._updateDisplayColor(parentColor);
+                    renderer._renderCmd._updateColor();
                 }
+                else
+                    break;
             }
             this._cacheScale9Sprite();
         }
-
+        else {
+            if (node._scale9Image) {
+                node._scale9Image._renderCmd._updateDisplayColor(parentColor);
+                node._scale9Image._renderCmd._updateColor();
+                this._cacheScale9Sprite();
+            }
+        }
     };
 
-    proto._cacheScale9Sprite = function(){
+    proto._cacheScale9Sprite = function() {
         var node = this._node;
         if(!node._scale9Image)
             return;
@@ -115,8 +126,29 @@
 
         //begin cache
         cc.renderer._turnToCacheMode(node.__instanceId);
-        node._scale9Image.visit();
 
+        if(node._scale9Enabled) {
+            var locRenderers = node._renderers;
+            node._setRenderersPosition();
+            var protectChildLen = locRenderers.length;
+            for(var j=0; j < protectChildLen; j++) {
+                var renderer = locRenderers[j];
+                if(renderer) {
+                    var tempCmd = renderer._renderCmd;
+                    tempCmd.updateStatus();
+                    cc.renderer.pushRenderCommand(tempCmd);
+                }
+                else
+                    break;
+            }
+        }
+        else {
+            var tempCmd = node._scale9Image._renderCmd;
+            node._adjustScale9ImagePosition();
+            node._adjustScale9ImageScale();
+            tempCmd.updateStatus();
+            cc.renderer.pushRenderCommand(node._scale9Image._renderCmd);
+        }
         //draw to cache canvas
         var selTexture = node._scale9Image.getTexture();
         if(selTexture && this._state === ccui.Scale9Sprite.state.GRAY)

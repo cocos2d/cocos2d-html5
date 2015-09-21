@@ -603,16 +603,6 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             this.setContentSize(this.getVirtualRendererSize());
     },
 
-    _updateTexturesRGBA: function(){
-        this._buttonNormalRenderer.setColor(this.getColor());
-        this._buttonClickedRenderer.setColor(this.getColor());
-        this._buttonDisableRenderer.setColor(this.getColor());
-
-        this._buttonNormalRenderer.setOpacity(this.getOpacity());
-        this._buttonClickedRenderer.setOpacity(this.getOpacity());
-        this._buttonDisableRenderer.setOpacity(this.getOpacity());
-    },
-
     _onSizeChanged: function () {
         ccui.Widget.prototype._onSizeChanged.call(this);
         this._updateTitleLocation();
@@ -892,11 +882,6 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this.setTitleColor(uiButton.getTitleColor());
         this.setPressedActionEnabled(uiButton.pressedActionEnabled);
         this.setZoomScale(uiButton._zoomScale);
-    },
-
-    setColor: function(color){
-        cc.ProtectedNode.prototype.setColor.call(this, color);
-        this._updateTexturesRGBA();
     },
 
     _getNormalSize: function(){

@@ -62,11 +62,6 @@
         fontChar._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.opacityDirty);
     };
 
-    proto._updateFntFileTexture = function(){
-        var node = this._node;
-        node._originalTexture = node.texture;
-    };
-
     proto.setTexture = function (texture) {
         var node = this._node;
         var locChildren = node._children;
@@ -83,51 +78,21 @@
         this._texture = texture;
     };
 
-    if(cc.sys._supportCanvasNewBlendModes)
-        proto._changeTextureColor = function(){
-            var node = this._node;
-            var locTexture = node.getTexture();
-            if (locTexture && locTexture.getContentSize().width>0) {
-                var element = this._originalTexture.getHtmlElementObj();
-                if(!element)
-                    return;
-                var locElement = locTexture.getHtmlElementObj();
-                var textureRect = cc.rect(0, 0, element.width, element.height);
-                if (locElement instanceof HTMLCanvasElement && !node._rectRotated){
-                    cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(element, this._displayedColor, textureRect, locElement);
-                    node.setTexture(locTexture);
-                } else {
-                    locElement = cc.Sprite.CanvasRenderCmd._generateTintImageWithMultiply(element, this._displayedColor, textureRect);
-                    locTexture = new cc.Texture2D();
-                    locTexture.initWithElement(locElement);
-                    locTexture.handleLoadedTexture();
-                    node.setTexture(locTexture);
-                }
-            }
-        };
-    else
-        proto._changeTextureColor = function () {
-            var node = this._node;
-            var locElement, locTexture = node.getTexture();
-            if (locTexture && locTexture.getContentSize().width > 0) {
-                locElement = locTexture.getHtmlElementObj();
-                if (!locElement)
-                    return;
-                var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
-                if (cacheTextureForColor) {
-                    if (locElement instanceof HTMLCanvasElement && !this._rectRotated) {
-                        cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, this._displayedColor, null, locElement);
-                        this.setTexture(locTexture);
-                    } else {
-                        locElement = cc.Sprite.CanvasRenderCmd._generateTintImage(locElement, cacheTextureForColor, this._displayedColor);
-                        locTexture = new cc.Texture2D();
-                        locTexture.initWithElement(locElement);
-                        locTexture.handleLoadedTexture();
-                        node.setTexture(locTexture);
-                    }
-                }
-            }
-        };
+    proto._changeTextureColor = function(){
+        var node = this._node;
+        var texture = this._textureToRender,
+            contentSize = texture.getContentSize();
+
+        var oTexture = node._texture,
+            oElement = oTexture.getHtmlElementObj();
+        var disColor = this._displayedColor;
+        var textureRect = cc.rect(0, 0, oElement.width, oElement.height);
+        if(texture && contentSize.width > 0){
+            if(!oElement)
+                return;
+            this._textureToRender = oTexture._generateColorTexture(disColor.r, disColor.g, disColor.b, textureRect);
+        }
+    };
 
     proto._updateChildrenDisplayedOpacity = function(locChild){
         cc.Node.prototype.updateDisplayedOpacity.call(locChild, this._displayedOpacity);
