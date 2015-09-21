@@ -1,7 +1,7 @@
 cc.profiler = (function () {
     var _inited = _showFPS = false;
     var _frames = _frameRate = _lastSPF = _accumDt = 0;
-    var _afterVisitListener = _FPSLabel = _SPFLabel = _drawsLabel = null;
+    var _afterProjection = _afterVisitListener = _FPSLabel = _SPFLabel = _drawsLabel = null;
 
     var LEVEL_DET_FACTOR = 0.6, _levelDetCycle = 10;
     var LEVELS = [0, 10, 20, 30];
@@ -91,6 +91,12 @@ cc.profiler = (function () {
         }
     };
 
+    var afterProjection = function(){
+        _FPSLabel._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
+        _SPFLabel._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
+        _drawsLabel._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
+    };
+
     var profiler = {
         onFrameRateChange: null,
 
@@ -138,6 +144,7 @@ cc.profiler = (function () {
         init: function () {
             if (!_inited) {
                 _afterVisitListener = cc.eventManager.addCustomListener(cc.Director.EVENT_AFTER_VISIT, afterVisit);
+                _afterProjection = cc.eventManager.addCustomListener(cc.Director.EVENT_PROJECTION_CHANGED, afterProjection);
                 _inited = true;
             }
         }
