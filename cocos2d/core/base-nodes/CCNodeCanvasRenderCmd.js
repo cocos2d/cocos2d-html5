@@ -231,67 +231,18 @@ cc.Node.RenderCmd.prototype = {
             this.transform(this.getParentRenderCmd(), true);
             this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
         }
-    }
-};
+    },
 
-//-----------------------Canvas ---------------------------
-
-(function() {
-//The cc.Node's render command for Canvas
-    cc.Node.CanvasRenderCmd = function (renderable) {
-        cc.Node.RenderCmd.call(this, renderable);
-        this._cachedParent = null;
-        this._cacheDirty = false;
-
-    };
-
-    var proto = cc.Node.CanvasRenderCmd.prototype = Object.create(cc.Node.RenderCmd.prototype);
-    proto.constructor = cc.Node.CanvasRenderCmd;
-
-    proto.transform = function (parentCmd, recursive) {
-        // transform for canvas
-        var t = this.getNodeToParentTransform(),
-            worldT = this._worldTransform;         //get the world transform
-        this._cacheDirty = true;
-        if (parentCmd) {
-            var pt = parentCmd._worldTransform;
-            // cc.AffineTransformConcat is incorrect at get world transform
-            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
-            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
-            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
-            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
-
-            worldT.tx = pt.a * t.tx + pt.c * t.ty + pt.tx;
-            worldT.ty = pt.d * t.ty + pt.ty + pt.b * t.tx;
-        } else {
-            worldT.a = t.a;
-            worldT.b = t.b;
-            worldT.c = t.c;
-            worldT.d = t.d;
-            worldT.tx = t.tx;
-            worldT.ty = t.ty;
-        }
-        if (recursive) {
-            var locChildren = this._node._children;
-            if (!locChildren || locChildren.length === 0)
-                return;
-            var i, len;
-            for (i = 0, len = locChildren.length; i < len; i++) {
-                locChildren[i]._renderCmd.transform(this, recursive);
-            }
-        }
-    };
-
-    proto.getNodeToParentTransform = function () {
-        var node = this._node, normalizeDirty = false;
+    getNodeToParentTransform: function () {
+        var node = this._node;
         if (node._usingNormalizedPosition && node._parent) {        //TODO need refactor
             var conSize = node._parent._contentSize;
             node._position.x = node._normalizedPosition.x * conSize.width;
             node._position.y = node._normalizedPosition.y * conSize.height;
             node._normalizedPositionDirty = false;
-            normalizeDirty = true;
+            this._dirtyFlag = this._dirtyFlag | cc.Node._dirtyFlags.transformDirty;
         }
-        if (normalizeDirty || (this._dirtyFlag & cc.Node._dirtyFlags.transformDirty)) {
+        if (this._dirtyFlag & cc.Node._dirtyFlags.transformDirty) {
             var t = this._transform;// quick reference
 
             // base position
@@ -366,42 +317,9 @@ cc.Node.RenderCmd.prototype = {
                 this._transform = cc.affineTransformConcat(t, node._additionalTransform);
         }
         return this._transform;
-    };
+    },
 
-    proto.visit = function (parentCmd) {
-        var node = this._node;
-        // quick return if not visible
-        if (!node._visible)
-            return;
-
-        parentCmd = parentCmd || this.getParentRenderCmd();
-        if (parentCmd)
-            this._curLevel = parentCmd._curLevel + 1;
-
-        //visit for canvas
-        var i, children = node._children, child;
-        this._syncStatus(parentCmd);
-        var len = children.length;
-        if (len > 0) {
-            node.sortAllChildren();
-            // draw children zOrder < 0
-            for (i = 0; i < len; i++) {
-                child = children[i];
-                if (child._localZOrder < 0)
-                    child._renderCmd.visit(this);
-                else
-                    break;
-            }
-            cc.renderer.pushRenderCommand(this);
-            for (; i < len; i++)
-                children[i]._renderCmd.visit(this);
-        } else {
-            cc.renderer.pushRenderCommand(this);
-        }
-        this._dirtyFlag = 0;
-    };
-
-    proto._syncStatus = function (parentCmd) {
+    _syncStatus: function (parentCmd) {
         //  In the visit logic does not restore the _dirtyFlag
         //  Because child elements need parent's _dirtyFlag to change himself
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
@@ -439,10 +357,94 @@ cc.Node.RenderCmd.prototype = {
         if(colorDirty)
             this._updateColor();
 
-        if (transformDirty){
+        if (transformDirty)
             //update the transform
             this.transform(parentCmd);
+    },
+
+    visitChildren: function(){
+        var node = this._node;
+        var i, children = node._children, child;
+        var len = children.length;
+        if (len > 0) {
+            node.sortAllChildren();
+            // draw children zOrder < 0
+            for (i = 0; i < len; i++) {
+                child = children[i];
+                if (child._localZOrder < 0)
+                    child._renderCmd.visit(this);
+                else
+                    break;
+            }
+            cc.renderer.pushRenderCommand(this);
+            for (; i < len; i++)
+                children[i]._renderCmd.visit(this);
+        } else {
+            cc.renderer.pushRenderCommand(this);
         }
+        this._dirtyFlag = 0;
+    }
+};
+
+//-----------------------Canvas ---------------------------
+
+(function() {
+//The cc.Node's render command for Canvas
+    cc.Node.CanvasRenderCmd = function (renderable) {
+        cc.Node.RenderCmd.call(this, renderable);
+        this._cachedParent = null;
+        this._cacheDirty = false;
+
+    };
+
+    var proto = cc.Node.CanvasRenderCmd.prototype = Object.create(cc.Node.RenderCmd.prototype);
+    proto.constructor = cc.Node.CanvasRenderCmd;
+
+    proto.transform = function (parentCmd, recursive) {
+        // transform for canvas
+        var t = this.getNodeToParentTransform(),
+            worldT = this._worldTransform;         //get the world transform
+        this._cacheDirty = true;
+        if (parentCmd) {
+            var pt = parentCmd._worldTransform;
+            // cc.AffineTransformConcat is incorrect at get world transform
+            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
+            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
+            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
+            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
+
+            worldT.tx = pt.a * t.tx + pt.c * t.ty + pt.tx;
+            worldT.ty = pt.d * t.ty + pt.ty + pt.b * t.tx;
+        } else {
+            worldT.a = t.a;
+            worldT.b = t.b;
+            worldT.c = t.c;
+            worldT.d = t.d;
+            worldT.tx = t.tx;
+            worldT.ty = t.ty;
+        }
+        if (recursive) {
+            var locChildren = this._node._children;
+            if (!locChildren || locChildren.length === 0)
+                return;
+            var i, len;
+            for (i = 0, len = locChildren.length; i < len; i++) {
+                locChildren[i]._renderCmd.transform(this, recursive);
+            }
+        }
+    };
+
+    proto.visit = function (parentCmd) {
+        var node = this._node;
+        // quick return if not visible
+        if (!node._visible)
+            return;
+
+        parentCmd = parentCmd || this.getParentRenderCmd();
+        if (parentCmd)
+            this._curLevel = parentCmd._curLevel + 1;
+        this._syncStatus(parentCmd);
+        this.visitChildren();
     };
 
     proto.setDirtyFlag = function (dirtyFlag, child) {
