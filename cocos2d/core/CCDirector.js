@@ -628,28 +628,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     setAlphaBlending: null,
 
-    _showStats: function () {
-        this._frames++;
-        this._accumDt += this._deltaTime;
-        if (this._FPSLabel && this._SPFLabel && this._drawsLabel) {
-            if (this._accumDt > cc.DIRECTOR_FPS_INTERVAL) {
-                this._SPFLabel.string = this._secondsPerFrame.toFixed(3);
-
-                this._frameRate = this._frames / this._accumDt;
-                this._frames = 0;
-                this._accumDt = 0;
-
-                this._FPSLabel.string = this._frameRate.toFixed(1);
-                this._drawsLabel.string = (0 | cc.g_NumberOfDraws).toString();
-            }
-            this._FPSLabel.visit();
-            this._SPFLabel.visit();
-            this._drawsLabel.visit();
-        } else
-            this._createStatsLabel();
-        cc.g_NumberOfDraws = 0;
-    },
-
     /**
      * Returns whether or not the replaced scene will receive the cleanup message.<br>
      * If the new scene is pushed, then the old scene won't receive the "cleanup" message.<br/>

@@ -129,15 +129,17 @@ cc.rendererCanvas = {
 
     clear: function () {
         var viewport = cc._canvas;
-        var ctx = cc._renderContext.getContext();
         var wrapper = cc._renderContext;
+        var ctx = wrapper.getContext();
         ctx.setTransform(1, 0, 0, 1, 0, 0);
-        //if(this._clearColor.a !== 255)
-        //Canvas Overlap with each other and bold the edge
         ctx.clearRect(0, 0, viewport.width, viewport.height);
-        wrapper.setFillStyle(this._clearFillStyle);
-        wrapper.setGlobalAlpha(this._clearColor.a);
-        ctx.fillRect(0, 0, viewport.width, viewport.height);
+        if (this._clearColor.r !== 0 ||
+            this._clearColor.g !== 0 || 
+            this._clearColor.b !== 0) {
+            wrapper.setFillStyle(this._clearFillStyle);
+            wrapper.setGlobalAlpha(this._clearColor.a);
+            ctx.fillRect(0, 0, viewport.width, viewport.height);
+        }
     },
 
     clearRenderCommands: function () {
