@@ -245,12 +245,12 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._notificationNode.visit();
 
         cc.eventManager.dispatchEvent(this._eventAfterVisit);
+        cc.g_NumberOfDraws = 0;
 
         if (this._afterVisitScene)
             this._afterVisitScene();
 
         renderer.rendering(cc._renderContext);
-        cc.g_NumberOfDraws = 0;
         this._totalFrames++;
 
         cc.eventManager.dispatchEvent(this._eventAfterDraw);
