@@ -104,36 +104,38 @@
 
     };
 
-    proto._updateDisplayColor = function(parentColor){
-        cc.Node.WebGLRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
-
-        var scale9Image = this._node._scale9Image;
-        if(scale9Image){
-            var scaleChildren = scale9Image.getChildren();
-            for (var i = 0; i < scaleChildren.length; i++) {
-                var selChild = scaleChildren[i];
-                if (selChild){
-                    selChild._renderCmd._updateDisplayColor(parentColor);
-                    selChild._renderCmd._updateColor();
-                }
-            }
-        }
+    proto._syncStatus = function (parentCmd){
+        cc.Node.WebGLRenderCmd.prototype._syncStatus.call(this, parentCmd);
+        this._updateDisplayColor(this._node._realColor);
+        this._updateDisplayOpacity(this._displayedOpacity);
     };
 
-    proto._updateDisplayOpacity = function(parentColor){
-        cc.Node.WebGLRenderCmd.prototype._updateDisplayOpacity.call(this, parentColor);
-
-        var scale9Image = this._node._scale9Image;
-        if(scale9Image){
-            var scaleChildren = scale9Image.getChildren();
-            for (var i = 0; i < scaleChildren.length; i++) {
-                var selChild = scaleChildren[i];
-                if (selChild){
-                    selChild._renderCmd._updateDisplayOpacity(parentColor);
-                    selChild._renderCmd._updateColor();
-                }
-            }
+    proto._updateDisplayColor = function(parentColor){
+        cc.Node.WebGLRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
+        var node = this._node;
+        var scale9Image = node._scale9Image;
+        parentColor = node._realColor;
+        if(node._scale9Enabled) {
+            var pChildren = node._renderers;
+            for(var i=0; i<pChildren.length; i++)
+                pChildren[i]._renderCmd._updateColor(parentColor);
         }
+        else
+            scale9Image._renderCmd._updateColor(parentColor);
+    };
+
+    proto._updateDisplayOpacity = function(parentOpacity){
+        cc.Node.WebGLRenderCmd.prototype._updateDisplayOpacity.call(this, parentOpacity);
+        var node = this._node;
+        var scale9Image = node._scale9Image;
+        parentOpacity = this._displayedOpacity;
+        if(node._scale9Enabled) {
+            var pChildren = node._renderers;
+            for(var i=0; i<pChildren.length; i++)
+                pChildren[i]._renderCmd._updateDisplayOpacity(parentOpacity);
+        }
+        else
+            scale9Image._renderCmd._updateDisplayOpacity(parentOpacity);
     };
 
     proto.setState = function (state) {
