@@ -856,13 +856,22 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         var size = originalSize;
 
         this._capInsets = capInsets;
+        var tmpTexture = this._scale9Image.getTexture();
+        var locLoaded = tmpTexture && tmpTexture.isLoaded();
+        this._textureLoaded = locLoaded;
+        if(!locLoaded){
+            tmpTexture.addEventListener("load", function(sender){
+                this._positionsAreDirty = true;
+                this.dispatchEvent("load");
+            },this);
+            return true;
+        }
         if(cc._rectEqualToZero(rect)) {
-            var textureSize = this._scale9Image.getTexture().getContentSize();
+            var textureSize = tmpTexture.getContentSize();
             rect = cc.rect(0, 0, textureSize.width, textureSize.height);
         }
         if(size.width === 0 && size.height === 0)
             size = cc.size(rect.width, rect.height);
-
         this._spriteRect = rect;
         this._offset = offset;
         this._spriteFrameRotated = spriteFrameRotated;
@@ -872,7 +881,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         if(this._scale9Enabled)
             this.createSlicedSprites();
         else
-            this._scale9Image.initWithTexture(this._scale9Image.getTexture(), this._spriteRect, this._spriteFrameRotated);
+            this._scale9Image.initWithTexture(tmpTexture, this._spriteRect, this._spriteFrameRotated);
 
         this.setState(this._brightState);
         this.setContentSize(size);
@@ -895,6 +904,17 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         var sprite = new cc.Sprite(batchNode.getTexture());
         var pos = cc.p(0,0);
         var originalSize = cc.size(originalRect.width,originalRect.height);
+
+        var tmpTexture = batchNode.getTexture();
+        var locLoaded = tmpTexture.isLoaded();
+        this._textureLoaded = locLoaded;
+        if(!locLoaded){
+            tmpTexture.addEventListener("load", function(sender){
+                this._positionsAreDirty = true;
+                this.dispatchEvent("load");
+            },this);
+            return true;
+        }
         return this.updateWithSprite(sprite, originalRect, rotated, pos, originalSize, capInsets);
     },
 
