@@ -104,8 +104,6 @@
 
         if(node._changePosition)
             node._changePosition();
-        
-        this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
 
         var t4x4Mat = t4x4.mat;
         t4x4Mat[0] = trans.a;
