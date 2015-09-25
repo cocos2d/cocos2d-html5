@@ -11,6 +11,18 @@
     var proto = ccui.ScrollView.WebGLRenderCmd.prototype = Object.create(ccui.Layout.WebGLRenderCmd.prototype);
     proto.constructor = ccui.ScrollView.WebGLRenderCmd;
 
+    proto.transform = function(parentCmd) {
+        ccui.Layout.WebGLRenderCmd.prototype.transform.call(this,parentCmd);
+        var node = this._node;
+        var child;
+        var childrenArray = node._innerContainer._children;
+        for(var i = 0; i < childrenArray.length; i++) {
+            child = childrenArray[i];
+            if(child._renderCmd._dirtyFlag & cc.Node._dirtyFlags.transformDirty) {
+                child._inViewRect = node._isInContainer(child);
+            }
+        }
+    };
     proto.visit = function(parentCmd) {
         var node = this._node;
         if (!node._visible)
