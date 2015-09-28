@@ -504,17 +504,16 @@ cc.PVRHaveAlphaPremultiplied_ = false;
                 canvas = cc.newElement("canvas");
 
             var textureImage = this._htmlElementObj;
-
+            if(!rect)
+                rect = cc.rect(0, 0, textureImage.width, textureImage.height);
             var x, y, w, h;
-            if(rect){
-                x = rect.x; y = rect.y; w = rect.width; h = rect.height;
-            }else{
-                x = y = 0; w = textureImage.width; h = textureImage.height;
-            }
+            x = rect.x; y = rect.y; w = rect.width; h = rect.height;
+            if(!w || !h)
+                return;
 
             canvas.width = w;
             canvas.height = h;
-
+            
             var context = canvas.getContext("2d");
             var tintedImgCache = cc.textureCache.getTextureColors(this);
             context.globalCompositeOperation = 'lighter';
