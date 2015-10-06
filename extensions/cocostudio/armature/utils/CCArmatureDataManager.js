@@ -295,7 +295,7 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
     },
 
     /**
-     * Adds Relative data of Armature data manager.
+     * Adds RelativeData of Armature data manager.
      * @param {String} configFilePath
      */
     addRelativeData: function (configFilePath) {
@@ -313,12 +313,23 @@ ccs.armatureDataManager = /** @lends ccs.armatureDataManager# */{
     },
 
     /**
+     * Removes RelativeData of Armature data manager by configFilePath.
+     * @param {string} configFilePath
+     */
+    removeRelativeData: function (configFilePath) {
+        if (this._relativeDatas[configFilePath]) {
+            delete this._relativeDatas[configFilePath];
+        }
+    },
+
+    /**
      * Clear data
      */
     clear: function() {
         this._animationDatas = {};
         this._armatureDatas = {};
         this._textureDatas = {};
+        this._relativeDatas = {};
         ccs.spriteFrameCacheHelper.clear();
         ccs.dataReaderHelper.clear();
     }
