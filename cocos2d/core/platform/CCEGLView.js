@@ -469,6 +469,16 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
+     * Returns the canvas size of the view.<br/>
+     * On native platforms, it returns the screen size since the view is a fullscreen view.<br/>
+     * On web, it returns the size of the canvas element.
+     * @return {cc.Size}
+     */
+    getCanvasSize: function () {
+        return cc.size(cc._canvas.width, cc._canvas.height);
+    },
+
+    /**
      * Returns the frame size of the view.<br/>
      * On native platforms, it returns the screen size since the view is a fullscreen view.<br/>
      * On web, it returns the size of the canvas's outer DOM element.
@@ -509,11 +519,29 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
+     * Returns the visible area size of the view port.
+     * @return {cc.Size}
+     */
+    getVisibleSizeInPixel: function () {
+        return cc.size( this._visibleRect.width * this._scaleX,
+                        this._visibleRect.height * this._scaleY );
+    },
+
+    /**
      * Returns the visible origin of the view port.
      * @return {cc.Point}
      */
     getVisibleOrigin: function () {
         return cc.p(this._visibleRect.x,this._visibleRect.y);
+    },
+
+    /**
+     * Returns the visible origin of the view port.
+     * @return {cc.Point}
+     */
+    getVisibleOriginInPixel: function () {
+        return cc.p(this._visibleRect.x * this._scaleX, 
+                    this._visibleRect.y * this._scaleY);
     },
 
     /**
