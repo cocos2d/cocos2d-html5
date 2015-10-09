@@ -382,7 +382,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 (function(){
     cc.LabelTTF.CacheRenderCmd = function (renderable) {
         cc.LabelTTF.RenderCmd.call(this,renderable);
-        var locCanvas = this._labelCanvas = cc.newElement("canvas");
+        var locCanvas = this._labelCanvas = document.createElement("canvas");
         locCanvas.width = 1;
         locCanvas.height = 1;
         this._labelContext = locCanvas.getContext("2d");

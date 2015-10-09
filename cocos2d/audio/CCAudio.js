@@ -608,10 +608,10 @@ cc.Audio = cc.Class.extend({
                     cb(null, audio);
                 };
 
-                cc._addEventListener(element, "canplaythrough", success, false);
-                cc._addEventListener(element, "error", failure, false);
+                element.addEventListener("canplaythrough", success, false);
+                element.addEventListener("error", failure, false);
                 if(polyfill.USE_EMPTIED_EVENT)
-                    cc._addEventListener(element, "emptied", emptied, false);
+                    element.addEventListener("emptied", emptied, false);
 
                 element.src = realUrl;
                 document.body.appendChild(element);

@@ -68,7 +68,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 } else {
     cc.Director._fpsImage = new Image();
-    cc._addEventListener(cc.Director._fpsImage, "load", function () {
+    cc.Director._fpsImage.addEventListener("load", function () {
         cc.Director._fpsImageLoaded = true;
     });
     if (cc._fpsImage) {

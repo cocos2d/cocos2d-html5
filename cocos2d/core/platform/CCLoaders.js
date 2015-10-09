@@ -87,7 +87,7 @@ cc._fontLoader = {
         ".svg" : "svg"
     },
     _loadFont : function(name, srcs, type){
-        var doc = document, path = cc.path, TYPE = this.TYPE, fontStyle = cc.newElement("style");
+        var doc = document, path = cc.path, TYPE = this.TYPE, fontStyle = document.createElement("style");
         fontStyle.type = "text/css";
         doc.body.appendChild(fontStyle);
 
@@ -110,7 +110,7 @@ cc._fontLoader = {
         fontStyle.textContent += fontStr + "}";
 
         //<div style="font-family: PressStart;">.</div>
-        var preloadDiv = cc.newElement("div");
+        var preloadDiv = document.createElement("div");
         var _divStyle =  preloadDiv.style;
         _divStyle.fontFamily = name;
         preloadDiv.innerHTML = ".";

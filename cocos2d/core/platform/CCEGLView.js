@@ -260,8 +260,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             //enable
             if (!this.__resizeWithBrowserSize) {
                 this.__resizeWithBrowserSize = true;
-                cc._addEventListener(window, 'resize', this._resizeEvent);
-                cc._addEventListener(window, 'orientationchange', this._resizeEvent);
+                window.addEventListener('resize', this._resizeEvent);
+                window.addEventListener('orientationchange', this._resizeEvent);
             }
         } else {
             //disable
@@ -310,7 +310,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             currentVP = elems ? elems[0] : null,
             content, key, pattern;
 
-        vp = cc.newElement("meta");
+        vp = document.createElement("meta");
         vp.id = "cocosMetaElement";
         vp.name = "viewport";
         vp.content = "";

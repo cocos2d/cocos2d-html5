@@ -28,7 +28,7 @@
         this._needDraw = true;
         this._clearColorStr = "rgba(255,255,255,1)";
 
-        this._cacheCanvas = cc.newElement('canvas');
+        this._cacheCanvas = document.createElement('canvas');
         this._cacheContext = new cc.CanvasContextWrapper(this._cacheCanvas.getContext('2d'));
     };
 

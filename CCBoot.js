@@ -33,8 +33,7 @@ cc._tmp = cc._tmp || {};
 cc._LogInfos = {};
 
 /** @expose */
-window._p;
-_p = window;
+window._p = window;
 /** @expose */
 _p.gl;
 /** @expose */
@@ -45,8 +44,10 @@ _p.DeviceOrientationEvent;
 _p.DeviceMotionEvent;
 /** @expose */
 _p.AudioContext;
-/** @expose */
-_p.webkitAudioContext;
+if (!_p.AudioContext) {
+    /** @expose */
+    _p.webkitAudioContext;
+}
 /** @expose */
 _p.mozAudioContext;
 _p = Object.prototype;
@@ -63,9 +64,6 @@ cc.newElement = function (x) {
 cc._addEventListener = function (element, type, listener, useCapture) {
     element.addEventListener(type, listener, useCapture);
 };
-
-//is nodejs ? Used to support node-webkit.
-cc._isNodeJs = typeof require !== 'undefined' && require("fs");
 
 /**
  * Iterate over an object or an array, executing a function for each matched element.
@@ -605,7 +603,7 @@ cc.loader = /** @lends cc.loader# */{
         });
     },
     _createScript: function (jsPath, isAsync, cb) {
-        var d = document, self = this, s = cc.newElement('script');
+        var d = document, self = this, s = document.createElement('script');
         s.async = isAsync;
         self._jsCache[jsPath] = true;
         if(cc.game.config["noCache"] && typeof jsPath === "string"){
@@ -616,12 +614,12 @@ cc.loader = /** @lends cc.loader# */{
         }else{
             s.src = jsPath;
         }
-        cc._addEventListener(s, 'load', function () {
+        s.addEventListener('load', function () {
             s.parentNode.removeChild(s);
             this.removeEventListener('load', arguments.callee, false);
             cb();
         }, false);
-        cc._addEventListener(s, 'error', function () {
+        s.addEventListener('error', function () {
             s.parentNode.removeChild(s);
             cb("Load " + jsPath + " failed!");
         }, false);
@@ -641,7 +639,7 @@ cc.loader = /** @lends cc.loader# */{
     _loadJsImg: function () {
         var d = document, jsLoadingImg = d.getElementById("cocos2d_loadJsImg");
         if (!jsLoadingImg) {
-            jsLoadingImg = cc.newElement('img');
+            jsLoadingImg = document.createElement('img');
 
             if (cc._loadingImage)
                 jsLoadingImg.src = cc._loadingImage;
@@ -811,8 +809,8 @@ cc.loader = /** @lends cc.loader# */{
             }
         };
 
-        cc._addEventListener(img, "load", loadCallback);
-        cc._addEventListener(img, "error", errorCallback);
+        img.addEventListener("load", loadCallback);
+        img.addEventListener("error", errorCallback);
         img.src = url;
         return img;
     },

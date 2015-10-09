@@ -174,6 +174,6 @@
     };
 
     ccui.Layout.CanvasRenderCmd._getSharedCache = function () {
-        return (cc.ClippingNode._sharedCache) || (cc.ClippingNode._sharedCache = cc.newElement("canvas"));
+        return (cc.ClippingNode._sharedCache) || (cc.ClippingNode._sharedCache = document.createElement("canvas"));
     };
 })();

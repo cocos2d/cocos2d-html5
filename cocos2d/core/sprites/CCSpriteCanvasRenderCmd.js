@@ -297,7 +297,7 @@
 
         counterclockwise = counterclockwise == null? true: counterclockwise;   // texture package is counterclockwise, spine is clockwise
 
-        var nCanvas = cc.newElement("canvas");
+        var nCanvas = document.createElement("canvas");
         nCanvas.width = rect.width;
         nCanvas.height = rect.height;
         var ctx = nCanvas.getContext("2d");
