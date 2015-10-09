@@ -106,7 +106,7 @@
 
     proto._syncStatus = function (parentCmd){
         cc.Node.WebGLRenderCmd.prototype._syncStatus.call(this, parentCmd);
-        this._updateDisplayColor(this._node._realColor);
+        this._updateDisplayColor(this._displayedColor);
         this._updateDisplayOpacity(this._displayedOpacity);
     };
 
@@ -114,14 +114,18 @@
         cc.Node.WebGLRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
         var node = this._node;
         var scale9Image = node._scale9Image;
-        parentColor = node._realColor;
+        parentColor = this._displayedColor;
         if(node._scale9Enabled) {
             var pChildren = node._renderers;
-            for(var i=0; i<pChildren.length; i++)
-                pChildren[i]._renderCmd._updateColor(parentColor);
+            for(var i=0; i<pChildren.length; i++) {
+                pChildren[i]._renderCmd._updateDisplayColor(parentColor);
+                pChildren[i]._renderCmd._updateColor();
+            }
         }
-        else
-            scale9Image._renderCmd._updateColor(parentColor);
+        else {
+            scale9Image._renderCmd._updateDisplayColor(parentColor);
+            scale9Image._renderCmd._updateColor();
+        }
     };
 
     proto._updateDisplayOpacity = function(parentOpacity){

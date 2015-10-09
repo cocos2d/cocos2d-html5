@@ -855,15 +855,17 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         var rect = spriteRect;
         var size = originalSize;
 
-        this._capInsets = capInsets;
         var tmpTexture = this._scale9Image.getTexture();
         var locLoaded = tmpTexture && tmpTexture.isLoaded();
         this._textureLoaded = locLoaded;
         if(!locLoaded){
             tmpTexture.addEventListener("load", function(sender){
                 this._positionsAreDirty = true;
+                this.updateWithSprite(sprite, spriteRect, spriteFrameRotated, offset, originalSize, capInsets);
+                this.setVisible(true);
                 this.dispatchEvent("load");
-            },this);
+            }, this);
+            this.setVisible(false);
             return true;
         }
         if(cc._rectEqualToZero(rect)) {
@@ -872,6 +874,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         }
         if(size.width === 0 && size.height === 0)
             size = cc.size(rect.width, rect.height);
+        this._capInsets = capInsets;
         this._spriteRect = rect;
         this._offset = offset;
         this._spriteFrameRotated = spriteFrameRotated;
@@ -911,8 +914,11 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         if(!locLoaded){
             tmpTexture.addEventListener("load", function(sender){
                 this._positionsAreDirty = true;
+                this.updateWithBatchNode(batchNode, originalRect, rotated, capInsets);
+                this.setVisible(true);
                 this.dispatchEvent("load");
-            },this);
+            }, this);
+            this.setVisible(false);
             return true;
         }
         return this.updateWithSprite(sprite, originalRect, rotated, pos, originalSize, capInsets);
