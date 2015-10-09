@@ -32,4 +32,8 @@
     var proto = cc.LabelTTF.WebGLRenderCmd.prototype = Object.create(cc.Sprite.WebGLRenderCmd.prototype);
     cc.inject(cc.LabelTTF.CacheRenderCmd.prototype, proto);
     proto.constructor = cc.LabelTTF.WebGLRenderCmd;
+    proto._updateColor = function () {
+        this._updateTexture();
+        cc.Sprite.WebGLRenderCmd.prototype._updateColor.call(this);
+    }
 })();
