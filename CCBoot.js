@@ -1,6 +1,6 @@
 /****************************************************************************
  Copyright (c) 2011-2012 cocos2d-x.org
- Copyright (c) 2013-2014 Chukong Technologies Inc.
+ Copyright (c) 2013-2015 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -56,6 +56,60 @@ _p._super;
 /** @expose */
 _p.ctor;
 delete window._p;
+
+/**
+ * Device oriented vertically, home button on the bottom
+ * @constant
+ * @type {Number}
+ */
+cc.ORIENTATION_PORTRAIT = 0;
+
+/**
+ * Device oriented vertically, home button on the top
+ * @constant
+ * @type {Number}
+ */
+cc.ORIENTATION_PORTRAIT_UPSIDE_DOWN = 1;
+
+/**
+ * Device oriented horizontally, home button on the right
+ * @constant
+ * @type {Number}
+ */
+cc.ORIENTATION_LANDSCAPE_LEFT = 2;
+
+/**
+ * Device oriented horizontally, home button on the left
+ * @constant
+ * @type {Number}
+ */
+cc.ORIENTATION_LANDSCAPE_RIGHT = 3;
+
+/**
+ * drawing primitive of game engine
+ * @type {cc.DrawingPrimitive}
+ */
+cc._drawingUtil = null;
+
+/**
+ * main Canvas 2D/3D Context of game engine
+ * @type {CanvasRenderingContext2D|WebGLRenderingContext}
+ */
+cc._renderContext = null;
+cc._supportRender = false;
+
+/**
+ * Main canvas of game engine
+ * @type {HTMLCanvasElement}
+ */
+cc._canvas = null;
+
+/**
+ * The element contains the game canvas
+ * @type {HTMLDivElement}
+ */
+cc.container = null;
+cc._gameDiv = null;
 
 cc.newElement = function (x) {
     return document.createElement(x);
@@ -248,7 +302,7 @@ cc.AsyncPool = function(srcObj, limit, iterator, onEnd, target){
         if(self._pool.length === 0) {
             if(self._onEnd)
                 self._onEnd.call(self._onEndTarget, null, []);
-                return;
+            return;
         }
         for(var i = 0; i < self._limit; i++)
             self._handleItem();
@@ -1658,6 +1712,12 @@ var _initSys = function () {
         catch (e) {}
     }
 
+    /**
+     * The capabilities of the current platform
+     * @memberof cc.sys
+     * @name capabilities
+     * @type {Object}
+     */
     var capabilities = sys.capabilities = {
         "canvas": _supportCanvas,
         "opengl": _supportWebGL
@@ -1756,6 +1816,10 @@ var _initSys = function () {
     }
 };
 _initSys();
+
+//to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
+cc.log = cc.warn = cc.error = cc.assert = function () {
+};
 
 var _config = null,
     //cache for js and module that has added into jsList to be loaded.
@@ -1887,73 +1951,7 @@ cc.initEngine = function (config, cb) {
 })();
 //+++++++++++++++++++++++++Engine initialization function end+++++++++++++++++++++++++++++
 
-//+++++++++++++++++++++++++something about log start++++++++++++++++++++++++++++
-
-//to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
-
-cc.log = cc.warn = cc.error = cc.assert = function () {
-};
-
-//+++++++++++++++++++++++++something about log end+++++++++++++++++++++++++++++
-
-
 //+++++++++++++++++++++++++something about CCGame begin+++++++++++++++++++++++++++
-
-/**
- * Device oriented vertically, home button on the bottom
- * @constant
- * @type {Number}
- */
-cc.ORIENTATION_PORTRAIT = 0;
-
-/**
- * Device oriented vertically, home button on the top
- * @constant
- * @type {Number}
- */
-cc.ORIENTATION_PORTRAIT_UPSIDE_DOWN = 1;
-
-/**
- * Device oriented horizontally, home button on the right
- * @constant
- * @type {Number}
- */
-cc.ORIENTATION_LANDSCAPE_LEFT = 2;
-
-/**
- * Device oriented horizontally, home button on the left
- * @constant
- * @type {Number}
- */
-cc.ORIENTATION_LANDSCAPE_RIGHT = 3;
-
-/**
- * drawing primitive of game engine
- * @type {cc.DrawingPrimitive}
- */
-cc._drawingUtil = null;
-
-/**
- * main Canvas 2D/3D Context of game engine
- * @type {CanvasRenderingContext2D|WebGLRenderingContext}
- */
-cc._renderContext = null;
-cc._supportRender = false;
-
-/**
- * Main canvas of game engine
- * @type {HTMLCanvasElement}
- */
-cc._canvas = null;
-
-/**
- * The element contains the game canvas
- * @type {HTMLDivElement}
- */
-cc.container = null;
-cc._gameDiv = null;
-
-
 /**
  * An object to boot the game.
  * @class
@@ -2155,6 +2153,8 @@ cc.game = /** @lends cc.game# */{
             config = self.config, 
             CONFIG_KEY = self.CONFIG_KEY;
 
+        this._loadConfig();
+
         // Already prepared
         if (this._prepared) {
             if (cb) cb();
@@ -2212,8 +2212,6 @@ cc.game = /** @lends cc.game# */{
         }
 
         // Engine not loaded yet
-        this._loadConfig();
-
         cc.initEngine(this.config, function () {
             self.prepare(cb);
         });
