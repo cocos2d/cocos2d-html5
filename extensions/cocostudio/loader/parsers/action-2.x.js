@@ -24,8 +24,6 @@
 
 (function(load, baseParser){
 
-    var cache = {};
-
     var Parser = baseParser.extend({
 
         getNodeJson: function(json){
@@ -35,8 +33,6 @@
         parseNode: function(json, resourcePath, file){
             if(!json)
                 return null;
-            if(cache[file])
-                return cache[file].clone();
 
             var self = this,
                 action = new ccs.ActionTimeline();
@@ -57,9 +53,7 @@
                     action.addTimeline(frame);
             });
 
-            cache[file] = action;
-            cache[file].retain();
-            return action.clone();
+            return action;
         },
 
         deferred: function(json, resourcePath, action, file){
