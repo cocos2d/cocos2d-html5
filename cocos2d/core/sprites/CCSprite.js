@@ -948,6 +948,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             this.setColor(this._realColor);
             this._textureLoaded = true;
         }else{
+            this._renderCmd._setTexture(null);
             texture.addEventListener("load", function(){
                 this._setTexture(texture, isFileName);
                 this.setColor(this._realColor);
