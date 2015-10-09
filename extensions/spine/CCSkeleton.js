@@ -94,7 +94,7 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
     },
 
     _createRenderCmd:function () {
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
             return new sp.Skeleton.CanvasRenderCmd(this);
         else
             return new sp.Skeleton.WebGLRenderCmd(this);

@@ -98,7 +98,7 @@ cc.PVRHaveAlphaPremultiplied_ = false;
 
 (function(){
 
-    if(cc._renderType !== cc._RENDER_TYPE_CANVAS)
+    if(cc._renderType !== cc.game.RENDER_TYPE_CANVAS)
         return;
 
     var proto = {
@@ -581,7 +581,7 @@ cc.PVRHaveAlphaPremultiplied_ = false;
     cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */proto);
 
 })();
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
+if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
 
     cc.Texture2D._generateGrayTexture = function(texture, rect, renderCanvas){
         if (texture === null)

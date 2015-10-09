@@ -349,7 +349,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     _createRenderCmd: function(){
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
             return new cc.ParticleSystem.CanvasRenderCmd(this);
         else
             return new cc.ParticleSystem.WebGLRenderCmd(this);

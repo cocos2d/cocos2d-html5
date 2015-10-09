@@ -31,7 +31,7 @@ gaf.Sprite = gaf.Object.extend
         //this._sprite.setCascadeOpacityEnabled(true);
         this._sprite.setOpacityModifyRGB(true);
 
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+        if(cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             this._sprite.setBlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     },
     
@@ -92,7 +92,7 @@ gaf.Sprite = gaf.Object.extend
     },
 
     _gafCreateRenderCmd: function(item){
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
             return new gaf.Sprite.CanvasRenderCmd(item);
         else
             return new gaf.Sprite.WebGLRenderCmd(item);

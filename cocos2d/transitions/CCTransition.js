@@ -217,7 +217,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
 	        scale: 1.0,
 	        rotation: 0.0
         });
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+        if(cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             this._inScene.getCamera().restore();
 
         this._outScene.attr({
@@ -227,7 +227,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
 	        scale: 1.0,
 	        rotation: 0.0
         });
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+        if(cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             this._outScene.getCamera().restore();
 
         //[self schedule:@selector(setNewScene:) interval:0];

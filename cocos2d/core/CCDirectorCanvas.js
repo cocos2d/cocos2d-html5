@@ -25,7 +25,7 @@
  ****************************************************************************/
 
 
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
+if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
 
     var _p = cc.Director.prototype;
 

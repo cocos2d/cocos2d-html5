@@ -628,7 +628,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         cc.winSize.width = director._winSizeInPoints.width;
         cc.winSize.height = director._winSizeInPoints.height;
 
-        if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
             // reset director's member variables to fit visible rect
             director.setGLDefaultValues();
         }
@@ -931,7 +931,7 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
                                contentW, contentH);
 
         // Translate the content
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS){
+        if (cc._renderType === cc.game.RENDER_TYPE_CANVAS){
             //TODO: modify something for setTransform
             //cc._renderContext.translate(viewport.x, viewport.y + contentH);
         }

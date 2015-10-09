@@ -1105,20 +1105,6 @@ cc.create3DContext = function (canvas, opt_attribs) {
 
 var _initSys = function () {
     /**
-     * Canvas of render type
-     * @constant
-     * @type {Number}
-     */
-    cc._RENDER_TYPE_CANVAS = 0;
-
-    /**
-     * WebGL of render type
-     * @constant
-     * @type {Number}
-     */
-    cc._RENDER_TYPE_WEBGL = 1;
-
-    /**
      * System variables
      * @namespace
      * @name cc.sys

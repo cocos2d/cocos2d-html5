@@ -278,7 +278,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     },
 
     _createRenderCmd: function(){
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
             return new cc.ProgressTimer.CanvasRenderCmd(this);
         else
             return new cc.ProgressTimer.WebGLRenderCmd(this);

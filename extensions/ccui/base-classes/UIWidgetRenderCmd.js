@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
+if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
     (function () {
         ccui.Widget.CanvasRenderCmd = function (renderable) {
             cc.ProtectedNode.CanvasRenderCmd.call(this, renderable);

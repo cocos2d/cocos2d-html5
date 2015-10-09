@@ -911,7 +911,7 @@ cc.DrawNodeWebGL = cc.Node.extend({
     }
 });
 
-cc.DrawNode = cc._renderType === cc._RENDER_TYPE_WEBGL ? cc.DrawNodeWebGL : cc.DrawNodeCanvas;
+cc.DrawNode = cc._renderType === cc.game.RENDER_TYPE_WEBGL ? cc.DrawNodeWebGL : cc.DrawNodeCanvas;
 
 /**
  * Creates a DrawNode
