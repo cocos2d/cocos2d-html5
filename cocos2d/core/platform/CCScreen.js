@@ -126,7 +126,7 @@ cc.screen = /** @lends cc.screen# */{
                 document.removeEventListener(eventName, this._preOnFullScreenChange);
             }
             this._preOnFullScreenChange = onFullScreenChange;
-            cc._addEventListener(document, eventName, onFullScreenChange, false);
+            document.addEventListener(eventName, onFullScreenChange, false);
         }
 
         return element[this._fn.requestFullscreen]();
@@ -155,7 +155,7 @@ cc.screen = /** @lends cc.screen# */{
             touchTarget.removeEventListener(theScreen._touchEvent, callback);
         }
         this.requestFullScreen(element, onFullScreenChange);
-        cc._addEventListener(touchTarget, this._touchEvent, callback);
+        touchTarget.addEventListener(this._touchEvent, callback);
     }
 };
 cc.screen.init();

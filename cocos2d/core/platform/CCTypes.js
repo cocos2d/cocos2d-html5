@@ -396,7 +396,7 @@ cc.FontDefinition.prototype._getCanvasFontStr = function(){
     return this.fontStyle + " " + this.fontWeight + " " + this.fontSize + "px/"+lineHeight+" '" + this.fontName + "'";
 };
 
-if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
+if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
     cc.assert(cc.isFunction(cc._tmp.WebGLColor), cc._LogInfos.MissingFile, "CCTypesWebGL.js");
     cc._tmp.WebGLColor();
     delete cc._tmp.WebGLColor;

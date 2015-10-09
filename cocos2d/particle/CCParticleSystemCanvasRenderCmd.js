@@ -34,7 +34,7 @@
         this._shapeType = cc.ParticleSystem.BALL_SHAPE;
 
         this._pointRect = cc.rect(0, 0, 0, 0);
-        this._tintCache = cc.newElement("canvas");
+        this._tintCache = document.createElement("canvas");
     };
     var proto = cc.ParticleSystem.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.ParticleSystem.CanvasRenderCmd;

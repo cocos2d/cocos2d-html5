@@ -29,7 +29,7 @@
         this._realWorldTransform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
 
         var locCanvas = cc._canvas;
-        var tmpCanvas = cc.newElement('canvas');
+        var tmpCanvas = document.createElement('canvas');
         tmpCanvas.width = locCanvas.width;
         tmpCanvas.height = locCanvas.height;
         this._cacheCanvas = tmpCanvas;

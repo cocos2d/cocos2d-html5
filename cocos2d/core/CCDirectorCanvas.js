@@ -25,7 +25,7 @@
  ****************************************************************************/
 
 
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
+if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
 
     var _p = cc.Director.prototype;
 
@@ -68,7 +68,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 } else {
     cc.Director._fpsImage = new Image();
-    cc._addEventListener(cc.Director._fpsImage, "load", function () {
+    cc.Director._fpsImage.addEventListener("load", function () {
         cc.Director._fpsImageLoaded = true;
     });
     if (cc._fpsImage) {

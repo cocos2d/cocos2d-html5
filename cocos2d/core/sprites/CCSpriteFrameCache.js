@@ -180,7 +180,7 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
                     }
                 }
 
-                if (cc._renderType === cc._RENDER_TYPE_CANVAS && spriteFrame.isRotated()) {
+                if (cc._renderType === cc.game.RENDER_TYPE_CANVAS && spriteFrame.isRotated()) {
                     //clip to canvas
                     var locTexture = spriteFrame.getTexture();
                     if (locTexture.isLoaded()) {

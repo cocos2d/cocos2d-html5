@@ -114,7 +114,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     _className: "LabelBMFont",
 
     _createRenderCmd: function(){
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+        if(cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             return new cc.LabelBMFont.WebGLRenderCmd(this);
         else
             return new cc.LabelBMFont.CanvasRenderCmd(this);
@@ -912,7 +912,7 @@ cc._fntLoader = {
         //common
         var commonObj = self._parseStrToObj(fntStr.match(self.COMMON_EXP)[0]);
         fnt.commonHeight = commonObj["lineHeight"];
-        if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
             var texSize = cc.configuration.getMaxTextureSize();
             if (commonObj["scaleW"] > texSize.width || commonObj["scaleH"] > texSize.height)
                 cc.log("cc.LabelBMFont._parseCommonArguments(): page can't be larger than supported");

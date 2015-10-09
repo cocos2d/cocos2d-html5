@@ -260,8 +260,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             //enable
             if (!this.__resizeWithBrowserSize) {
                 this.__resizeWithBrowserSize = true;
-                cc._addEventListener(window, 'resize', this._resizeEvent);
-                cc._addEventListener(window, 'orientationchange', this._resizeEvent);
+                window.addEventListener('resize', this._resizeEvent);
+                window.addEventListener('orientationchange', this._resizeEvent);
             }
         } else {
             //disable
@@ -310,7 +310,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             currentVP = elems ? elems[0] : null,
             content, key, pattern;
 
-        vp = cc.newElement("meta");
+        vp = document.createElement("meta");
         vp.id = "cocosMetaElement";
         vp.name = "viewport";
         vp.content = "";
@@ -469,6 +469,16 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
+     * Returns the canvas size of the view.<br/>
+     * On native platforms, it returns the screen size since the view is a fullscreen view.<br/>
+     * On web, it returns the size of the canvas element.
+     * @return {cc.Size}
+     */
+    getCanvasSize: function () {
+        return cc.size(cc._canvas.width, cc._canvas.height);
+    },
+
+    /**
      * Returns the frame size of the view.<br/>
      * On native platforms, it returns the screen size since the view is a fullscreen view.<br/>
      * On web, it returns the size of the canvas's outer DOM element.
@@ -509,11 +519,29 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     /**
+     * Returns the visible area size of the view port.
+     * @return {cc.Size}
+     */
+    getVisibleSizeInPixel: function () {
+        return cc.size( this._visibleRect.width * this._scaleX,
+                        this._visibleRect.height * this._scaleY );
+    },
+
+    /**
      * Returns the visible origin of the view port.
      * @return {cc.Point}
      */
     getVisibleOrigin: function () {
         return cc.p(this._visibleRect.x,this._visibleRect.y);
+    },
+
+    /**
+     * Returns the visible origin of the view port.
+     * @return {cc.Point}
+     */
+    getVisibleOriginInPixel: function () {
+        return cc.p(this._visibleRect.x * this._scaleX, 
+                    this._visibleRect.y * this._scaleY);
     },
 
     /**
@@ -628,7 +656,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         cc.winSize.width = director._winSizeInPoints.width;
         cc.winSize.height = director._winSizeInPoints.height;
 
-        if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
             // reset director's member variables to fit visible rect
             director.setGLDefaultValues();
         }
@@ -931,7 +959,7 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
                                contentW, contentH);
 
         // Translate the content
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS){
+        if (cc._renderType === cc.game.RENDER_TYPE_CANVAS){
             //TODO: modify something for setTransform
             //cc._renderContext.translate(viewport.x, viewport.y + contentH);
         }

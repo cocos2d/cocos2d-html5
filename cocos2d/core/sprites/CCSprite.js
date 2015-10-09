@@ -254,7 +254,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         }
 
         //TODO
-        var rotated = cc._renderType === cc._RENDER_TYPE_CANVAS ? false : spriteFrame._rotated;
+        var rotated = cc._renderType === cc.game.RENDER_TYPE_CANVAS ? false : spriteFrame._rotated;
         var ret = this.initWithTexture(spriteFrame.getTexture(), spriteFrame.getRect(), rotated);
         this.setSpriteFrame(spriteFrame);
 
@@ -948,6 +948,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             this.setColor(this._realColor);
             this._textureLoaded = true;
         }else{
+            this._renderCmd._setTexture(null);
             texture.addEventListener("load", function(){
                 this._setTexture(texture, isFileName);
                 this.setColor(this._realColor);
@@ -972,7 +973,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     _createRenderCmd: function(){
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
             return new cc.Sprite.CanvasRenderCmd(this);
         else
             return new cc.Sprite.WebGLRenderCmd(this);

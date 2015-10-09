@@ -39,7 +39,7 @@ cc.ParticleFire = cc.ParticleSystem.extend(/** @lends cc.ParticleFire# */{
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
     ctor:function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 300 : 150);
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 300 : 150);
     },
 
     /**
@@ -127,7 +127,7 @@ cc.ParticleFireworks = cc.ParticleSystem.extend(/** @lends cc.ParticleFireworks#
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
     ctor:function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 1500 : 150);
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 1500 : 150);
     },
 
     /**
@@ -212,7 +212,7 @@ cc.ParticleSun = cc.ParticleSystem.extend(/** @lends cc.ParticleSun# */{
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
     ctor:function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 350 : 150);
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 350 : 150);
     },
 
     /**
@@ -300,7 +300,7 @@ cc.ParticleGalaxy = cc.ParticleSystem.extend(/** @lends cc.ParticleGalaxy# */{
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
     ctor:function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 200 : 100);
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 200 : 100);
     },
 
     /**
@@ -389,7 +389,7 @@ cc.ParticleFlower = cc.ParticleSystem.extend(/** @lends cc.ParticleFlower# */{
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
     ctor : function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 250 : 100);
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 250 : 100);
     },
 
     /**
@@ -480,7 +480,7 @@ cc.ParticleMeteor = cc.ParticleSystem.extend(/** @lends cc.ParticleMeteor# */{
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
     ctor:function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 150 : 100);
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 150 : 100);
     },
 
     /**
@@ -571,7 +571,7 @@ cc.ParticleSpiral = cc.ParticleSystem.extend(/** @lends cc.ParticleSpiral# */{
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
     ctor:function() {
-        cc.ParticleSystem.prototype.ctor.call(this,(cc._renderType === cc._RENDER_TYPE_WEBGL) ? 500 : 100);
+        cc.ParticleSystem.prototype.ctor.call(this,(cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 500 : 100);
     },
 
     /**
@@ -661,7 +661,7 @@ cc.ParticleExplosion = cc.ParticleSystem.extend(/** @lends cc.ParticleExplosion#
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
     ctor:function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 700 : 300);
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 700 : 300);
     },
 
     /**
@@ -751,7 +751,7 @@ cc.ParticleSmoke = cc.ParticleSystem.extend(/** @lends cc.ParticleSmoke# */{
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
     ctor:function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 200 : 100);
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 200 : 100);
     },
 
     /**
@@ -838,7 +838,7 @@ cc.ParticleSnow = cc.ParticleSystem.extend(/** @lends cc.ParticleSnow# */{
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
     ctor:function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 700 : 250);
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 700 : 250);
     },
 
     /**
@@ -930,7 +930,7 @@ cc.ParticleRain = cc.ParticleSystem.extend(/** @lends cc.ParticleRain# */{
      * Override it to extend its behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
     ctor:function () {
-        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc._RENDER_TYPE_WEBGL) ? 1000 : 300);
+        cc.ParticleSystem.prototype.ctor.call(this, (cc._renderType === cc.game.RENDER_TYPE_WEBGL) ? 1000 : 300);
     },
 
     /**

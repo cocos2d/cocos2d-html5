@@ -748,7 +748,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     _createRenderCmd: function () {
-        if (cc._renderType === cc._RENDER_TYPE_WEBGL)
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             return new cc.LabelTTF.WebGLRenderCmd(this);
         else if (this._onCacheCanvasMode)
             return new cc.LabelTTF.CacheCanvasRenderCmd(this);
@@ -818,7 +818,7 @@ if (cc.USE_LA88_LABELS)
 else
     cc.LabelTTF._SHADER_PROGRAM = cc.SHADER_POSITION_TEXTUREA8COLOR;
 
-cc.LabelTTF.__labelHeightDiv = cc.newElement("div");
+cc.LabelTTF.__labelHeightDiv = document.createElement("div");
 cc.LabelTTF.__labelHeightDiv.style.fontFamily = "Arial";
 cc.LabelTTF.__labelHeightDiv.style.position = "absolute";
 cc.LabelTTF.__labelHeightDiv.style.left = "-100px";
@@ -827,7 +827,7 @@ cc.LabelTTF.__labelHeightDiv.style.lineHeight = "normal";
 
 document.body ?
     document.body.appendChild(cc.LabelTTF.__labelHeightDiv) :
-    cc._addEventListener(window, 'load', function () {
+    window.addEventListener('load', function () {
         this.removeEventListener('load', arguments.callee, false);
         document.body.appendChild(cc.LabelTTF.__labelHeightDiv);
     }, false);

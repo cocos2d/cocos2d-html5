@@ -41,7 +41,7 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
 	 * @param {cc.Size} gridSize
 	 */
     ctor:function(duration, gridSize){
-        cc._checkWebGLRenderMode();
+        cc.sys._checkWebGLRenderMode();
         cc.ActionInterval.prototype.ctor.call(this);
         this._gridSize = cc.size(0,0);
 

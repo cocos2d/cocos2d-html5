@@ -58,12 +58,12 @@ _p.setAccelerometerInterval = function(interval){
 };
 
 _p._registerKeyboardEvent = function(){
-    cc._addEventListener(cc._canvas, "keydown", function (e) {
+    cc._canvas.addEventListener("keydown", function (e) {
         cc.eventManager.dispatchEvent(new cc.EventKeyboard(e.keyCode, true));
         e.stopPropagation();
         e.preventDefault();
     }, false);
-    cc._addEventListener(cc._canvas, "keyup", function (e) {
+    cc._canvas.addEventListener("keyup", function (e) {
         cc.eventManager.dispatchEvent(new cc.EventKeyboard(e.keyCode, false));
         e.stopPropagation();
         e.preventDefault();
@@ -85,7 +85,7 @@ _p._registerAccelerometerEvent = function(){
         _t._minus = -1;
     }
 
-    cc._addEventListener(w, _deviceEventType, _t.didAccelerate.bind(_t), false);
+    w.addEventListener(_deviceEventType, _t.didAccelerate.bind(_t), false);
 };
 
 _p.didAccelerate = function (eventData) {

@@ -49,7 +49,7 @@ sp._atlasLoader = {
     },
     load:function(page, line, spAtlas){
         var texturePath = cc.path.join(cc.path.dirname(this.spAtlasFile), line);
-        if (cc._renderType === cc._RENDER_TYPE_WEBGL)
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             sp._atlasPage_createTexture_webGL(page,texturePath);
         else
             sp._atlasPage_createTexture_canvas(page,texturePath);

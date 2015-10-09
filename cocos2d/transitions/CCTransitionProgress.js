@@ -171,7 +171,7 @@ cc.TransitionProgressRadialCCW = cc.TransitionProgress.extend(/** @lends cc.Tran
         var pNode = new cc.ProgressTimer(texture.sprite);
 
         // but it is flipped upside down so we flip the sprite
-        if (cc._renderType === cc._RENDER_TYPE_WEBGL)
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             pNode.sprite.flippedY = true;
         pNode.type = cc.ProgressTimer.TYPE_RADIAL;
 
@@ -223,7 +223,7 @@ cc.TransitionProgressRadialCW = cc.TransitionProgress.extend(/** @lends cc.Trans
         var pNode = new cc.ProgressTimer(texture.sprite);
 
         // but it is flipped upside down so we flip the sprite
-        if (cc._renderType === cc._RENDER_TYPE_WEBGL)
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             pNode.sprite.flippedY = true;
         pNode.type = cc.ProgressTimer.TYPE_RADIAL;
 
@@ -277,7 +277,7 @@ cc.TransitionProgressHorizontal = cc.TransitionProgress.extend(/** @lends cc.Tra
         var pNode = new cc.ProgressTimer(texture.sprite);
 
         // but it is flipped upside down so we flip the sprite
-        if (cc._renderType === cc._RENDER_TYPE_WEBGL)
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             pNode.sprite.flippedY = true;
         pNode.type = cc.ProgressTimer.TYPE_BAR;
 
@@ -328,7 +328,7 @@ cc.TransitionProgressVertical = cc.TransitionProgress.extend(/** @lends cc.Trans
         var pNode = new cc.ProgressTimer(texture.sprite);
 
         // but it is flipped upside down so we flip the sprite
-        if (cc._renderType === cc._RENDER_TYPE_WEBGL)
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             pNode.sprite.flippedY = true;
         pNode.type = cc.ProgressTimer.TYPE_BAR;
 
@@ -375,7 +375,7 @@ cc.TransitionProgressInOut = cc.TransitionProgress.extend(/** @lends cc.Transiti
         var pNode = new cc.ProgressTimer(texture.sprite);
 
         // but it is flipped upside down so we flip the sprite
-        if (cc._renderType === cc._RENDER_TYPE_WEBGL)
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             pNode.sprite.flippedY = true;
         pNode.type = cc.ProgressTimer.TYPE_BAR;
 
@@ -431,7 +431,7 @@ cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.Transiti
         var pNode = new cc.ProgressTimer(texture.sprite);
 
         // but it is flipped upside down so we flip the sprite
-        if (cc._renderType === cc._RENDER_TYPE_WEBGL)
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             pNode.sprite.flippedY = true;
         pNode.type = cc.ProgressTimer.TYPE_BAR;
 

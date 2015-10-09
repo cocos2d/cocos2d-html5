@@ -642,7 +642,7 @@ cc.TextureAtlas.create = function (fileName, capacity) {
  */
 cc.TextureAtlas.createWithTexture = cc.TextureAtlas.create;
 
-if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
+if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
     cc.assert(cc.isFunction(cc._tmp.WebGLTextureAtlas), cc._LogInfos.MissingFile, "TexturesWebGL.js");
     cc._tmp.WebGLTextureAtlas();
     delete cc._tmp.WebGLTextureAtlas;

@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-//if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
+//if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
 cc.rendererCanvas = {
     childrenOrderDirty: true,
     _transformNodePool: [],                              //save nodes transform dirty
@@ -163,7 +163,7 @@ cc.rendererCanvas = {
     }
 };
 
-if (cc._renderType === cc._RENDER_TYPE_CANVAS)
+if (cc._renderType === cc.game.RENDER_TYPE_CANVAS)
     cc.renderer = cc.rendererCanvas;
 
 (function () {

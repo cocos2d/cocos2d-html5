@@ -246,7 +246,7 @@ cc.EditBox = cc.ControlButton.extend({
         tmpDOMSprite.draw = function () {};  //redefine draw function
         this.addChild(tmpDOMSprite);
         var selfPointer = this;
-        var tmpEdTxt = this._edTxt = cc.newElement("input");
+        var tmpEdTxt = this._edTxt = document.createElement("input");
         tmpEdTxt.type = "text";
         tmpEdTxt.style.fontSize = this._edFontSize + "px";
         tmpEdTxt.style.color = "#000000";
@@ -261,11 +261,11 @@ cc.EditBox = cc.ControlButton.extend({
         var onCanvasClick = function() { tmpEdTxt.blur();};
         
         // TODO the event listener will be remove when EditBox removes from parent.
-        cc._addEventListener(tmpEdTxt, "input", function () {
+        tmpEdTxt.addEventListener("input", function () {
             if (selfPointer._delegate && selfPointer._delegate.editBoxTextChanged)
                 selfPointer._delegate.editBoxTextChanged(selfPointer, this.value);
         });
-        cc._addEventListener(tmpEdTxt, "keypress", function (e) {
+        tmpEdTxt.addEventListener("keypress", function (e) {
             if (e.keyCode === cc.KEY.enter) {
                 e.stopPropagation();
                 e.preventDefault();
@@ -274,7 +274,7 @@ cc.EditBox = cc.ControlButton.extend({
                 cc._canvas.focus();
             }
         });
-        cc._addEventListener(tmpEdTxt, "focus", function () {
+        tmpEdTxt.addEventListener("focus", function () {
             if (this.value === selfPointer._placeholderText) {
                 this.value = "";
                 this.style.fontSize = selfPointer._edFontSize + "px";
@@ -286,9 +286,9 @@ cc.EditBox = cc.ControlButton.extend({
             }
             if (selfPointer._delegate && selfPointer._delegate.editBoxEditingDidBegin)
                 selfPointer._delegate.editBoxEditingDidBegin(selfPointer);
-            cc._addEventListener(cc._canvas, "click", onCanvasClick);
+            cc._canvas.addEventListener("click", onCanvasClick);
         });
-        cc._addEventListener(tmpEdTxt, "blur", function () {
+        tmpEdTxt.addEventListener("blur", function () {
             if (this.value === "") {
                 this.value = selfPointer._placeholderText;
                 this.style.fontSize = selfPointer._placeholderFontSize + "px";

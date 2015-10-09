@@ -30,7 +30,7 @@
         this._state = ccui.Scale9Sprite.state.NORMAL;
 
         var node = this._node;
-        var locCacheCanvas = this._cacheCanvas = cc.newElement('canvas');
+        var locCacheCanvas = this._cacheCanvas = document.createElement('canvas');
         locCacheCanvas.width = 1;
         locCacheCanvas.height = 1;
         this._cacheContext = new cc.CanvasContextWrapper(locCacheCanvas.getContext("2d"));

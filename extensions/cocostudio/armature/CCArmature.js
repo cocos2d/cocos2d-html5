@@ -545,7 +545,7 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
     },
 
     _createRenderCmd: function(){
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
+        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
             return new ccs.Armature.CanvasRenderCmd(this);
         else
             return new ccs.Armature.WebGLRenderCmd(this);

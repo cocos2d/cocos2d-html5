@@ -156,5 +156,12 @@ cc.PlistParser = cc.SAXParser.extend(/** @lends cc.plistParser# */{
         }
         return data;
     }
-
 });
+
+cc.saxParser = new cc.SAXParser();
+/**
+ * @type {cc.PlistParser}
+ * @name cc.plistParser
+ * A Plist Parser
+ */
+cc.plistParser = new cc.PlistParser();

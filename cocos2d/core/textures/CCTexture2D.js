@@ -98,7 +98,7 @@ cc.PVRHaveAlphaPremultiplied_ = false;
 
 (function(){
 
-    if(cc._renderType !== cc._RENDER_TYPE_CANVAS)
+    if(cc._renderType !== cc.game.RENDER_TYPE_CANVAS)
         return;
 
     var proto = {
@@ -390,10 +390,10 @@ cc.PVRHaveAlphaPremultiplied_ = false;
                 return this.channelCache;
 
             var textureCache = [
-                cc.newElement("canvas"),
-                cc.newElement("canvas"),
-                cc.newElement("canvas"),
-                cc.newElement("canvas")
+                document.createElement("canvas"),
+                document.createElement("canvas"),
+                document.createElement("canvas"),
+                document.createElement("canvas")
             ];
             //todo texture onload
             renderToCache(this._htmlElementObj, textureCache);
@@ -463,7 +463,7 @@ cc.PVRHaveAlphaPremultiplied_ = false;
             if(canvas)
                 onlyCanvas = true;
             else
-                canvas = cc.newElement("canvas");
+                canvas = document.createElement("canvas");
             var textureImage = this._htmlElementObj;
             if(!rect)
                 rect = cc.rect(0, 0, textureImage.width, textureImage.height);
@@ -501,7 +501,7 @@ cc.PVRHaveAlphaPremultiplied_ = false;
             if(canvas)
                 onlyCanvas = true;
             else
-                canvas = cc.newElement("canvas");
+                canvas = document.createElement("canvas");
 
             var textureImage = this._htmlElementObj;
             if(!rect)
@@ -580,12 +580,12 @@ cc.PVRHaveAlphaPremultiplied_ = false;
     cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */proto);
 
 })();
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
+if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
 
     cc.Texture2D._generateGrayTexture = function(texture, rect, renderCanvas){
         if (texture === null)
             return null;
-        renderCanvas = renderCanvas || cc.newElement("canvas");
+        renderCanvas = renderCanvas || document.createElement("canvas");
         rect = rect || cc.rect(0, 0, texture.width, texture.height);
         renderCanvas.width = rect.width;
         renderCanvas.height = rect.height;

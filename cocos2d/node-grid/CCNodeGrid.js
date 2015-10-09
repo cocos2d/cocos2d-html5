@@ -123,7 +123,7 @@ cc.NodeGrid = cc.Node.extend({
     },
 
     _createRenderCmd: function(){
-        if (cc._renderType === cc._RENDER_TYPE_WEBGL)
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             return new cc.NodeGrid.WebGLRenderCmd(this);
         else
             return new cc.Node.CanvasRenderCmd(this);            // cc.NodeGrid doesn't support Canvas mode.

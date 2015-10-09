@@ -446,7 +446,7 @@ cc.MIRRORED_REPEAT   = 0x8370;
  * @constant
  * @type Number
  */
-cc.BLEND_SRC = (cc._renderType === cc._RENDER_TYPE_WEBGL && cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA) ? cc.ONE : cc.SRC_ALPHA;
+cc.BLEND_SRC = (cc._renderType === cc.game.RENDER_TYPE_WEBGL && cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA) ? cc.ONE : cc.SRC_ALPHA;
 
 /**
  * default gl blend dst function. Compatible with premultiplied alpha images.
@@ -460,7 +460,7 @@ cc.BLEND_DST = 0x0303;
  * @function
  */
 cc.checkGLErrorDebug = function () {
-    if (cc.renderMode === cc._RENDER_TYPE_WEBGL) {
+    if (cc.renderMode === cc.game.RENDER_TYPE_WEBGL) {
         var _error = cc._renderContext.getError();
         if (_error) {
             cc.log(cc._LogInfos.checkGLErrorDebug, _error);

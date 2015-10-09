@@ -75,7 +75,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     },
 
     _createRenderCmd: function(){
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+        if(cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             return new cc.LabelAtlas.WebGLRenderCmd(this);
         else
             return new cc.LabelAtlas.CanvasRenderCmd(this);
