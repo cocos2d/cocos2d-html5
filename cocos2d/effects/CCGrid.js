@@ -53,7 +53,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
      * @param {cc.Rect} rect
      */
     ctor:function (gridSize, texture, flipped, rect) {
-        cc._checkWebGLRenderMode();
+        cc.sys._checkWebGLRenderMode();
         this._active=false;
         this._reuseGrid=0;
         this._gridSize=null;

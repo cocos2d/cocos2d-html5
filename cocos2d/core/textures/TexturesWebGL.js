@@ -447,7 +447,7 @@ cc._tmp.WebGLTexture2D = function () {
             premultiplied = (premultiplied === undefined) ? false : premultiplied;
             var self = this;
             // Not sure about this ! Some texture need to be updated even after loaded
-            if (!cc._rendererInitialized)
+            if (!cc.game._rendererInitialized)
                 return;
             if (!self._htmlElementObj) {
                 var img = cc.loader.getRes(self.url);
@@ -847,7 +847,7 @@ cc._tmp.WebGLTextureCache = function () {
     _p.handleLoadedTexture = function (url) {
         var locTexs = this._textures, tex, ext;
         //remove judge(webgl)
-        if (!cc._rendererInitialized) {
+        if (!cc.game._rendererInitialized) {
             locTexs = this._loadedTexturesBefore;
         }
         tex = locTexs[url];
@@ -883,7 +883,7 @@ cc._tmp.WebGLTextureCache = function () {
 
         var locTexs = this._textures;
         //remove judge(webgl)
-        if (!cc._rendererInitialized) {
+        if (!cc.game._rendererInitialized) {
             locTexs = this._loadedTexturesBefore;
         }
         var tex = locTexs[url] || locTexs[cc.loader._aliases[url]];

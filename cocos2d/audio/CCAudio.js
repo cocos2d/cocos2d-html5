@@ -1030,11 +1030,4 @@ cc.Audio = cc.Class.extend({
         }, 150);
     }
 
-    cc.eventManager.addCustomListener(cc.game.EVENT_HIDE, function () {
-        cc.audioEngine._pausePlaying();
-    });
-    cc.eventManager.addCustomListener(cc.game.EVENT_SHOW, function () {
-        cc.audioEngine._resumePlaying();
-    });
-
 })(window.__audioSupport);

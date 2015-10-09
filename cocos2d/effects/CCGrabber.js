@@ -40,7 +40,7 @@ cc.Grabber = cc.Class.extend({
      * constructor of cc.Grabber
      */
     ctor:function () {
-        cc._checkWebGLRenderMode();
+        cc.sys._checkWebGLRenderMode();
         this._gl = cc._renderContext;
         this._oldClearColor = [0, 0, 0, 0];
         this._oldFBO = null;
