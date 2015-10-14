@@ -24,54 +24,59 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
 
-if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
+    if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
+        var _p = cc.Director.prototype;
 
-    var _p = cc.Director.prototype;
+        _p.getProjection = function (projection) {
+            return this._projection;
+        };
 
-    _p.setProjection = function (projection) {
-        this._projection = projection;
-        cc.eventManager.dispatchEvent(this._eventProjectionChanged);
-    };
+        _p.setProjection = function (projection) {
+            this._projection = projection;
+            cc.eventManager.dispatchEvent(this._eventProjectionChanged);
+        };
 
-    _p.setDepthTest = function () {
-    };
+        _p.setDepthTest = function () {
+        };
 
-    _p.setClearColor = function (clearColor) {
-        cc.renderer._clearColor = clearColor;
-        cc.renderer._clearFillStyle = 'rgb(' + clearColor.r + ',' + clearColor.g + ',' + clearColor.b +')' ;
-    };
+        _p.setClearColor = function (clearColor) {
+            cc.renderer._clearColor = clearColor;
+            cc.renderer._clearFillStyle = 'rgb(' + clearColor.r + ',' + clearColor.g + ',' + clearColor.b +')' ;
+        };
 
-    _p.setOpenGLView = function (openGLView) {
-        // set size
-        this._winSizeInPoints.width = cc._canvas.width;      //this._openGLView.getDesignResolutionSize();
-        this._winSizeInPoints.height = cc._canvas.height;
-        this._openGLView = openGLView || cc.view;
-        if (cc.eventManager)
-            cc.eventManager.setEnabled(true);
-    };
+        _p.setOpenGLView = function (openGLView) {
+            // set size
+            this._winSizeInPoints.width = cc._canvas.width;      //this._openGLView.getDesignResolutionSize();
+            this._winSizeInPoints.height = cc._canvas.height;
+            this._openGLView = openGLView || cc.view;
+            if (cc.eventManager)
+                cc.eventManager.setEnabled(true);
+        };
 
-    _p.getVisibleSize = function () {
-        //if (this._openGLView) {
-        //return this._openGLView.getVisibleSize();
-        //} else {
-        return this.getWinSize();
-        //}
-    };
+        _p.getVisibleSize = function () {
+            //if (this._openGLView) {
+            //return this._openGLView.getVisibleSize();
+            //} else {
+            return this.getWinSize();
+            //}
+        };
 
-    _p.getVisibleOrigin = function () {
-        //if (this._openGLView) {
-        //return this._openGLView.getVisibleOrigin();
-        //} else {
-        return cc.p(0, 0);
-        //}
-    };
-} else {
-    cc.Director._fpsImage = new Image();
-    cc.Director._fpsImage.addEventListener("load", function () {
-        cc.Director._fpsImageLoaded = true;
-    });
-    if (cc._fpsImage) {
-        cc.Director._fpsImage.src = cc._fpsImage;
+        _p.getVisibleOrigin = function () {
+            //if (this._openGLView) {
+            //return this._openGLView.getVisibleOrigin();
+            //} else {
+            return cc.p(0, 0);
+            //}
+        };
+    } else {
+        cc.Director._fpsImage = new Image();
+        cc.Director._fpsImage.addEventListener("load", function () {
+            cc.Director._fpsImageLoaded = true;
+        });
+        if (cc._fpsImage) {
+            cc.Director._fpsImage.src = cc._fpsImage;
+        }
     }
-}
+});

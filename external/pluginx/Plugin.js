@@ -33,8 +33,6 @@
         return;
     }
 
-    var config = cc.game.config.plugin || {};
-
     //Native plugin usage
     var PluginManager = function(){};
 
@@ -233,6 +231,7 @@
 
         /** @expose */
         extend: function(name, extend){
+            var config = (cc.game.config && cc.game.config.plugin) || {};
             PluginList[name] = new (PluginAssembly.extend(name, extend));
             typeof PluginList[name].ctor === "function" && PluginList[name].ctor(config[name]);
         },

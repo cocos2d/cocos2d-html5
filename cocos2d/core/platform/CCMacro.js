@@ -444,9 +444,18 @@ cc.MIRRORED_REPEAT   = 0x8370;
 /**
  * default gl blend src function. Compatible with premultiplied alpha images.
  * @constant
+ * @name cc.BLEND_SRC
  * @type Number
  */
-cc.BLEND_SRC = (cc._renderType === cc.game.RENDER_TYPE_WEBGL && cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA) ? cc.ONE : cc.SRC_ALPHA;
+cc.defineGetterSetter(cc, "BLEND_SRC", function (){
+    if (cc._renderType === cc.game.RENDER_TYPE_WEBGL
+         && cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA) {
+        return cc.ONE;
+    }
+    else {
+        return cc.SRC_ALPHA;
+    }
+});
 
 /**
  * default gl blend dst function. Compatible with premultiplied alpha images.

@@ -27,7 +27,11 @@
 var cc = cc || {};
 cc._tmp = cc._tmp || {};
 
-cc._tmp.WebGLColor = function () {
+cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
+    if (cc._renderType !== cc.game.RENDER_TYPE_WEBGL) {
+        return;
+    }
+
     //redefine some types with ArrayBuffer for WebGL
     /**
      * @class cc.Color
@@ -121,6 +125,10 @@ cc._tmp.WebGLColor = function () {
     /** @expose */
     _p.a;
     cc.defineGetterSetter(_p, "a", _p._getA, _p._setA);
+
+    cc.assert(cc.isFunction(cc._tmp.PrototypeColor), cc._LogInfos.MissingFile, "CCTypesPropertyDefine.js");
+    cc._tmp.PrototypeColor();
+    delete cc._tmp.PrototypeColor;
 
     //redefine cc.Vertex2F
     /**
@@ -685,4 +693,4 @@ cc._tmp.WebGLColor = function () {
     /** @expose */
     _p.c;
     cc.defineGetterSetter(_p, "c", _p._getC, _p._setC);
-};
+});

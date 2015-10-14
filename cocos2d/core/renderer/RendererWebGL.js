@@ -152,5 +152,3 @@ cc.rendererWebGL = {
         }
     }
 };
-if (cc._renderType === cc.game.RENDER_TYPE_WEBGL)
-    cc.renderer = cc.rendererWebGL;

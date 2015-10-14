@@ -22,8 +22,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
-    (function () {
+cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
+    if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
         ccui.Widget.CanvasRenderCmd = function (renderable) {
             cc.ProtectedNode.CanvasRenderCmd.call(this, renderable);
             this._needDraw = false;
@@ -58,9 +58,7 @@ if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
                 cc.ProtectedNode.CanvasRenderCmd.prototype.transform.call(this, parentCmd, recursive);
             }
         };
-    })();
-} else {
-    (function () {
+    } else {
         ccui.Widget.WebGLRenderCmd = function (renderable) {
             cc.ProtectedNode.WebGLRenderCmd.call(this, renderable);
             this._needDraw = false;
@@ -95,6 +93,5 @@ if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
                 cc.ProtectedNode.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
             }
         };
-    })();
-}
-
+    }
+});
