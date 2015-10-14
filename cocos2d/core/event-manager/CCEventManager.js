@@ -1,6 +1,6 @@
 /****************************************************************************
  Copyright (c) 2011-2012 cocos2d-x.org
- Copyright (c) 2013-2014 Chukong Technologies Inc.
+ Copyright (c) 2013-2015 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -954,97 +954,3 @@ cc.eventManager = /** @lends cc.eventManager# */{
         this.dispatchEvent(ev);
     }
 };
-
-// The event helper
-cc.EventHelper = function(){};
-
-cc.EventHelper.prototype = {
-    constructor: cc.EventHelper,
-
-    apply: function ( object ) {
-        object.addEventListener = cc.EventHelper.prototype.addEventListener;
-        object.hasEventListener = cc.EventHelper.prototype.hasEventListener;
-        object.removeEventListener = cc.EventHelper.prototype.removeEventListener;
-        object.dispatchEvent = cc.EventHelper.prototype.dispatchEvent;
-    },
-
-    addEventListener: function ( type, listener, target ) {
-        //check 'type' status, if the status is ready, dispatch event next frame
-        if(type === "load" && this._textureLoaded){            //only load event checked.
-            setTimeout(function(){
-                listener.call(target);
-            }, 0);
-            return;
-        }
-
-        if ( this._listeners === undefined )
-            this._listeners = {};
-
-        var listeners = this._listeners;
-        if ( listeners[ type ] === undefined )
-            listeners[ type ] = [];
-
-        if ( !this.hasEventListener(type, listener, target))
-            listeners[ type ].push( {callback:listener, eventTarget: target} );
-    },
-
-    hasEventListener: function ( type, listener, target ) {
-        if ( this._listeners === undefined )
-            return false;
-
-        var listeners = this._listeners;
-        if ( listeners[ type ] !== undefined ) {
-            for(var i = 0, len = listeners.length; i < len ; i++){
-                var selListener = listeners[i];
-                if(selListener.callback === listener && selListener.eventTarget === target)
-                    return true;
-            }
-        }
-        return false;
-    },
-
-    removeEventListener: function( type, target){
-        if ( this._listeners === undefined )
-            return;
-
-        var listeners = this._listeners;
-        var listenerArray = listeners[ type ];
-
-        if ( listenerArray !== undefined ) {
-            for(var i = 0; i < listenerArray.length ; ){
-                var selListener = listenerArray[i];
-                if(selListener.eventTarget === target)
-                    listenerArray.splice( i, 1 );
-                else
-                    i++
-            }
-        }
-    },
-
-    dispatchEvent: function ( event, clearAfterDispatch ) {
-        if ( this._listeners === undefined )
-            return;
-
-        if(clearAfterDispatch == null)
-            clearAfterDispatch = true;
-        var listeners = this._listeners;
-        var listenerArray = listeners[ event];
-
-        if ( listenerArray !== undefined ) {
-            var array = [];
-            var length = listenerArray.length;
-
-            for ( var i = 0; i < length; i ++ ) {
-                array[ i ] = listenerArray[ i ];
-            }
-
-            for ( i = 0; i < length; i ++ ) {
-                array[ i ].callback.call( array[i].eventTarget, this );
-            }
-
-            if(clearAfterDispatch)
-                listenerArray.length = 0;
-        }
-    }
-};
-

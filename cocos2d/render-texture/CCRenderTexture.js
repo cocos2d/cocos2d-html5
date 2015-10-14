@@ -91,7 +91,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 	autoDraw:false,
 
     _texture:null,
-    _pixelFormat:cc.Texture2D.PIXEL_FORMAT_RGBA8888,
+    _pixelFormat:0,
 
     clearStencilVal:0,
     _clearColor:null,
@@ -114,6 +114,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         cc.Node.prototype.ctor.call(this);
         this._cascadeColorEnabled = true;
         this._cascadeOpacityEnabled = true;
+        this._pixelFormat = cc.Texture2D.PIXEL_FORMAT_RGBA8888;
         this._clearColor = new cc.Color(0,0,0,255);
 
         if(width !== undefined && height !== undefined) {

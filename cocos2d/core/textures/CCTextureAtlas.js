@@ -642,11 +642,13 @@ cc.TextureAtlas.create = function (fileName, capacity) {
  */
 cc.TextureAtlas.createWithTexture = cc.TextureAtlas.create;
 
-if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
-    cc.assert(cc.isFunction(cc._tmp.WebGLTextureAtlas), cc._LogInfos.MissingFile, "TexturesWebGL.js");
-    cc._tmp.WebGLTextureAtlas();
-    delete cc._tmp.WebGLTextureAtlas;
-}
+cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
+    if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
+        cc.assert(cc.isFunction(cc._tmp.WebGLTextureAtlas), cc._LogInfos.MissingFile, "TexturesWebGL.js");
+        cc._tmp.WebGLTextureAtlas();
+        delete cc._tmp.WebGLTextureAtlas;
+    }
+});
 
 cc.assert(cc.isFunction(cc._tmp.PrototypeTextureAtlas), cc._LogInfos.MissingFile, "TexturesPropertyDefine.js");
 cc._tmp.PrototypeTextureAtlas();
