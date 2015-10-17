@@ -512,7 +512,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
             }
         });
     }
-    else if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
+    else if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
         
         cc.extend(cc.DrawNode.prototype, {
             _bufferCapacity:0,

@@ -886,7 +886,7 @@ cc._tmp.WebGLTextureCache = function () {
         if (!cc.game._rendererInitialized) {
             locTexs = this._loadedTexturesBefore;
         }
-        var tex = locTexs[url] || locTexs[cc.loader._aliases[url]];
+        var tex = locTexs[url] || locTexs[cc.loader._getAliase(url)];
         if (tex) {
             if(tex.isLoaded()) {
                 cb && cb.call(target, tex);
