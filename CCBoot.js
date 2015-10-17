@@ -1100,6 +1100,15 @@ cc.loader = (function () {
         },
 
         /**
+         * Get aliase by url.
+         * @param url
+         * @returns {*}
+         */
+        _getAliase: function (url) {
+            return _aliases[url];
+        },
+
+        /**
          * Release the cache of resource by url.
          * @param url
          */
@@ -2214,11 +2223,16 @@ cc.game = /** @lends cc.game# */{
 
             // Load game scripts
             var jsList = config[CONFIG_KEY.jsList];
-            cc.loader.loadJsWithImg(jsList, function (err) {
-                if (err) throw new Error(err);
-                self._prepared = true;
+            if (jsList) {
+                cc.loader.loadJsWithImg(jsList, function (err) {
+                    if (err) throw new Error(err);
+                    self._prepared = true;
+                    if (cb) cb();
+                });
+            }
+            else {
                 if (cb) cb();
-            });
+            }
 
             return;
         }
