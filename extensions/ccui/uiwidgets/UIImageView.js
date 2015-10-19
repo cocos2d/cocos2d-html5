@@ -79,10 +79,6 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         this.addProtectedChild(this._imageRenderer, ccui.ImageView.RENDERER_ZORDER, -1);
     },
 
-    setRotation: function(rotate){
-        this._imageRenderer.setRotation(rotate);
-    },
-
     /**
      * Loads textures for button.
      * @param {String} fileName
