@@ -344,8 +344,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     addChild: function (widget, zOrder, tag) {
         if(!widget)
             return false;
-        //if(this._isInContainer(widget) === false)
-            //widget._inViewRect = false;
+        if(this._clippingEnabled && this._isInContainer(widget) === false)
+            widget._inViewRect = false;
         zOrder = zOrder || widget.getLocalZOrder();
         tag = tag || widget.getTag();
         return this._innerContainer.addChild(widget, zOrder, tag);
@@ -417,8 +417,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this._moveChildPoint.x = locContainer.x + offsetX;
         this._moveChildPoint.y = locContainer.y + offsetY;
         this._innerContainer.setPosition(this._moveChildPoint);
-        //if(this._innerContainer._children.length !== 0 )
-            //this.updateChildren();
+        if(this._clippingEnabled && this._innerContainer._children.length !== 0 )
+            this.updateChildren();
     },
 
     _autoScrollChildren: function (dt) {
