@@ -418,6 +418,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
             this.setTextHorizontalAlignment(uiLabel._labelRenderer.getHorizontalAlignment());
             this.setTextVerticalAlignment(uiLabel._labelRenderer.getVerticalAlignment());
             this.setContentSize(uiLabel.getContentSize());
+            this.setTextColor(uiLabel.getTextColor());
         }
     },
 
