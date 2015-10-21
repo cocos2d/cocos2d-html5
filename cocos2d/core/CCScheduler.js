@@ -556,7 +556,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         if(isSelector === false){
             //callback, target, interval, repeat, delay, paused, key
             //callback, target, interval, paused, key
-            if(arguments.length === 5){
+            if(arguments.length === 4 || arguments.length === 5){
                 key = delay;
                 paused = repeat;
                 delay = 0;
@@ -570,6 +570,9 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
                 repeat = cc.REPEAT_FOREVER;
                 delay = 0;
             }
+        }
+        if (key === undefined) {
+            key = target.__instanceId + "";
         }
 
         cc.assert(target, cc._LogInfos.Scheduler_scheduleCallbackForTarget_3);
