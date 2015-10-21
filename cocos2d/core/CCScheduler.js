@@ -573,8 +573,6 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         }
 
         cc.assert(target, cc._LogInfos.Scheduler_scheduleCallbackForTarget_3);
-        if(isSelector === false)
-            cc.assert(key, "key should not be empty!");
 
         var element = this._hashForTimers[target.__instanceId];
 
