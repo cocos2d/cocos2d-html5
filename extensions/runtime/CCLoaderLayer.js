@@ -1,7 +1,5 @@
 /****************************************************************************
- Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011-2012 cocos2d-x.org
- Copyright (c) 2013-2014 Chukong Technologies Inc.
+ Copyright (c) 2014-2015 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -23,7 +21,11 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-cc.INT_MAX = Number.MAX_VALUE;
+(function () {
+
+var INT_MAX = Number.MAX_VALUE;
+var GROUP_JSON_PATH = "group.json";
+
 cc.LoaderLayer = cc.Layer.extend({
     _backgroundSprite: null,
     _progressBackgroundSprite: null,
@@ -36,31 +38,26 @@ cc.LoaderLayer = cc.Layer.extend({
     _preloadCount: 0,
     _isPreloadFromFailed: false,
     _progressOriginalWidth: 0,
-    _isDefaultProgress: true,
     _isLandScape: false,
     _scaleFactor: null,
 
     ctor: function (config) {
         this._super();
-        this._setConfig(config);
-    },
-    _setConfig: function (config) {
         if (config) {
-            cc.LoaderLayer._userConfig = config;
+            cc.LoaderLayer.setConfig(config);
         }
     },
     onEnter: function () {
         this._super();
-        this.initData();
         this.initView();
-        var config = this._finalConfig;
+        var config = cc.LoaderLayer._finalConfig;
         if (config.onEnter) {
             config.onEnter(this);
         }
     },
     onExit: function () {
         this._super();
-        var config = this._finalConfig;
+        var config = cc.LoaderLayer._finalConfig;
         if (config.logo.action) {
             config.logo.action.release();
         }
@@ -71,86 +68,8 @@ cc.LoaderLayer = cc.Layer.extend({
             config.onExit(this);
         }
     },
-    initData: function () {
-        this._finalConfig = cc.cloneObject(cc.LoaderLayer._config);
-        var config = this._finalConfig;
-        if (cc.LoaderLayer._userConfig != null) {
-            var uConfig = cc.LoaderLayer._userConfig;
-            if (uConfig.background && uConfig.background.res) {
-                config.background.res = uConfig.background.res;
-            }
-            if (uConfig.title) {
-                var uTitle = uConfig.title;
-                var title = config.title;
-                title.show = typeof uTitle.show != "undefined" ? uTitle.show : title.show;
-                title.res = uTitle.res ? uTitle.res : title.res;
-                title.position = uTitle.position ? uTitle.position : title.position;
-                title.action = uTitle.action ? uTitle.action : title.action;
-                if (title.action) {
-                    title.action = uTitle.action;
-                    title.action.retain();
-                }
-            }
-            if (uConfig.logo) {
-                var uLogo = uConfig.logo;
-                var logo = config.logo;
-                logo.show = typeof uLogo.show != "undefined" ? uLogo.show : logo.show;
-                logo.res = uLogo.res ? uLogo.res : logo.res;
-                logo.position = uLogo.position ? uLogo.position : logo.position;
-                if (typeof uLogo.action != "undefined") {
-                    logo.action = uLogo.action;
-                    if (logo.action) {
-                        logo.action.retain();
-                    }
-                }
-            }
-            if (uConfig.progressBar) {
-                var uProgress = uConfig.progressBar;
-                var progress = config.progressBar;
-                progress.show = typeof uProgress.show != "undefined" ? uProgress.show : progress.show;
-                if (uProgress.res) {
-                    progress.res = uProgress.res;
-                    this._isDefaultProgress = false;
-                }
-                progress.offset = uProgress.offset ? uProgress.offset : progress.offset;
-                progress.position = uProgress.position ? uProgress.position : progress.position;
-                progress.barBackgroundRes = uProgress.barBackgroundRes ? uProgress.barBackgroundRes : progress.barBackgroundRes;
-            }
-            if (uConfig.tips) {
-                var uTips = uConfig.tips;
-                var tips = config.tips;
-                tips.show = typeof uTips.show != "undefined" ? uTips.show : tips.show;
-                tips.res = uTips.res ? uTips.res : tips.res;
-                tips.offset = uTips.offset ? uTips.offset : tips.offset;
-                tips.fontSize = uTips.fontSize ? uTips.fontSize : tips.fontSize;
-                tips.position = uTips.position ? uTips.position : tips.position;
-                tips.color = uTips.color ? uTips.color : tips.color;
-                if (uConfig.tips.tipsProgress && typeof uConfig.tips.tipsProgress == "function") {
-                    tips.tipsProgress = uConfig.tips.tipsProgress;
-                }
-            }
-            if (typeof uConfig.onEnter == "function") {
-                config.onEnter = uConfig.onEnter;
-            }
-            if (typeof uConfig.onExit == "function") {
-                config.onExit = uConfig.onExit;
-            }
-        }
-
-        if (typeof config.logo.action == "undefined" && cc.LoaderLayer._useDefaultSource) {
-            config.logo.action = cc.sequence(
-                cc.spawn(cc.moveBy(0.4, cc.p(0, 40)).easing(cc.easeIn(0.5)), cc.scaleTo(0.4, 0.95, 1.05).easing(cc.easeIn(0.5))),
-                cc.delayTime(0.08),
-                cc.spawn(cc.moveBy(0.4, cc.p(0, -40)).easing(cc.easeOut(0.5)), cc.scaleTo(0.4, 1.05, 0.95).easing(cc.easeOut(0.5)))
-            ).repeatForever();
-            config.logo.action.retain();
-        }
-        if (!config.tips.color) {
-            config.tips.color = cc.color(255, 255, 255);
-        }
-    },
     initView: function () {
-        var config = this._finalConfig;
+        var config = cc.LoaderLayer._finalConfig;
         this._contentLayer = new cc.Layer();
         this._isLandScape = cc.winSize.width > cc.winSize.height;
         this._scaleFactor = !cc.LoaderLayer._useDefaultSource ? 1 : cc.winSize.width > cc.winSize.height ? cc.winSize.width / 720 : cc.winSize.width / 480;
@@ -193,7 +112,7 @@ cc.LoaderLayer = cc.Layer.extend({
             this.progressBackgroundSprite = new cc.Sprite(config.progressBar.barBackgroundRes);
             this.progressBarSprite.anchorX = 0;
             this.progressBarSprite.anchorY = 0;
-            if (this._isDefaultProgress) {
+            if (cc.LoaderLayer._isDefaultProgress) {
                 this._barPoint = new cc.Sprite(config.progressBar.barPoint);
                 this.progressBarSprite.addChild(this._barPoint);
             }
@@ -232,7 +151,7 @@ cc.LoaderLayer = cc.Layer.extend({
             percent < 1 ? percent : 1;
             var width = percent * this._progressOriginalWidth;
             this.progressBarSprite.setTextureRect(cc.rect(0, 0, width, this.progressBarSprite.height));
-            if (this._isDefaultProgress) {
+            if (cc.LoaderLayer._isDefaultProgress) {
                 this._barPoint.setPosition(cc.p(this.progressBarSprite.width, this.progressBarSprite.height / 2));
             }
         }
@@ -264,7 +183,7 @@ cc.LoaderLayer = cc.Layer.extend({
         this._setProgress(0);
     },
     _preloadSource: function () {
-        cc.log("_preloadSource: " + this._groupname);
+        cc.log("cc.LoaderLayer is preloading resource group: " + this._groupname);
         this._resetLoadingLabel();
         if (cc.sys.isNative) {
             cc.Loader.preload(this._groupname, this._preload_native, this);
@@ -275,17 +194,18 @@ cc.LoaderLayer = cc.Layer.extend({
     _preload_html5: function () {
         var res = "";
         var groupIndex = [];
-        var config = this._finalConfig;
+        var config = cc.LoaderLayer._finalConfig;
+        var groups = cc.LoaderLayer.groups;
         if (cc.isString(this._groupname)) {
             if (this._groupname.indexOf(".") != -1) {
                 res = [this._groupname];
             } else {
-                res = window[this._groupname];
+                res = groups[this._groupname];
             }
         } else if (cc.isArray(this._groupname)) {
             res = [];
             for (var i = 0; i < this._groupname.length; i++) {
-                var group = window[this._groupname[i]];
+                var group = groups[this._groupname[i]];
                 var preCount = i > 0 ? groupIndex[i - 1] : 0;
                 groupIndex.push(preCount + group.length);
                 res = res.concat(group);
@@ -328,7 +248,7 @@ cc.LoaderLayer = cc.Layer.extend({
     },
     _preload_native: function (status) {
         cc.log(JSON.stringify(status));
-        var config = this._finalConfig;
+        var config = cc.LoaderLayer._finalConfig;
         if (status.percent) {
             this._setProgress(status.percent / 100);
         }
@@ -379,7 +299,7 @@ cc.LoaderLayer = cc.Layer.extend({
                 cc.log("isLargeThanResource is " + isLargeThanResource);
                 cc.view.setDesignResolutionSize(isLargeThanResource ? config.width : isLandscape ? 720 : 480, isLargeThanResource ? config.height : isLandscape ? 480 : 720, cc.ResolutionPolicy["FIXED_HEIGHT"]);
             }
-            cc.director.getRunningScene().addChild(this, cc.INT_MAX - 1);
+            cc.director.getRunningScene().addChild(this, INT_MAX - 1);
         }
         this._preloadCount++;
     }
@@ -439,6 +359,9 @@ cc.LoaderLayer._config = {//default setting for loaderlayer
         cc.log("LoaderLayer onExit");
     }
 }
+
+var res_engine_loaded = false;
+
 cc.LoaderLayer.preload = function (groupname, callback, target) {
     var loaderLayer = new cc.LoaderLayer();
     var preloadCb = function (status) {
@@ -505,13 +428,51 @@ cc.LoaderLayer.preload = function (groupname, callback, target) {
             cc.log("Current scene is null we can't start preload");
         }
     };
-    callPreload();
-}
+
+    if (res_engine_loaded) {
+        callPreload();
+        return;
+    }
+
+    // Res engine not loaded, load them
+    cc.loader.load([
+            GROUP_JSON_PATH,
+            cc.LoaderLayer._finalConfig.background.res,
+            cc.LoaderLayer._finalConfig.title.res,
+            cc.LoaderLayer._finalConfig.logo.res,
+            cc.LoaderLayer._finalConfig.progressBar.res,
+            cc.LoaderLayer._finalConfig.progressBar.barBackgroundRes,
+            cc.LoaderLayer._finalConfig.progressBar.barPoint,
+            cc.LoaderLayer._finalConfig.progressBar.barShadow,
+            cc.Dialog._finalConfig.background.res,
+            cc.Dialog._finalConfig.confirmBtn.normalRes,
+            cc.Dialog._finalConfig.confirmBtn.pressRes,
+            cc.Dialog._finalConfig.cancelBtn.normalRes,
+            cc.Dialog._finalConfig.cancelBtn.pressRes
+        ],
+        function (result, count, loadedCount) {
+            var percent = (loadedCount / count * 100) | 0;
+            percent = Math.min(percent, 100);
+            cc.log("Preloading engine resources... " + percent + "%");
+        }, function () {
+            var groups = cc.loader.getRes(GROUP_JSON_PATH);
+            if (groups) {
+                cc.LoaderLayer.groups = groups;
+            }
+            else {
+                cc.warn("Group versions haven't been loaded, you can also set group data with 'cc.LoaderLayer.groups'");
+            }
+            callPreload();
+        });
+};
+
 cc.LoaderLayer._useDefaultSource = true;
+cc.LoaderLayer._isDefaultProgress = true;
+cc.LoaderLayer._finalConfig = null;
+cc.LoaderLayer.groups = {};
 cc.LoaderLayer.setUseDefaultSource = function (status) {
     cc.LoaderLayer._useDefaultSource = status;
-}
-cc.LoaderLayer._userConfig = null;
+};
 cc.LoaderLayer.setConfig = function (config) {
     if(config.title && config.title.action){
         config.title.action.retain();
@@ -519,12 +480,87 @@ cc.LoaderLayer.setConfig = function (config) {
     if(config.logo && config.logo.action){
         config.logo.action.retain();
     }
-    cc.LoaderLayer._userConfig = config;
-}
+    this._initData(config);
+};
+cc.LoaderLayer._initData = function (uConfig) {
+    this._finalConfig = cc.clone(this._config);
+    var config = this._finalConfig;
+    if (uConfig != null) {
+        if (uConfig.background && uConfig.background.res) {
+            config.background.res = uConfig.background.res;
+        }
+        if (uConfig.title) {
+            var uTitle = uConfig.title;
+            var title = config.title;
+            title.show = typeof uTitle.show != "undefined" ? uTitle.show : title.show;
+            title.res = uTitle.res ? uTitle.res : title.res;
+            title.position = uTitle.position ? uTitle.position : title.position;
+            title.action = uTitle.action ? uTitle.action : title.action;
+            if (title.action) {
+                title.action = uTitle.action;
+                title.action.retain();
+            }
+        }
+        if (uConfig.logo) {
+            var uLogo = uConfig.logo;
+            var logo = config.logo;
+            logo.show = typeof uLogo.show != "undefined" ? uLogo.show : logo.show;
+            logo.res = uLogo.res ? uLogo.res : logo.res;
+            logo.position = uLogo.position ? uLogo.position : logo.position;
+            if (typeof uLogo.action != "undefined") {
+                logo.action = uLogo.action;
+                if (logo.action) {
+                    logo.action.retain();
+                }
+            }
+        }
+        if (uConfig.progressBar) {
+            var uProgress = uConfig.progressBar;
+            var progress = config.progressBar;
+            progress.show = typeof uProgress.show != "undefined" ? uProgress.show : progress.show;
+            if (uProgress.res) {
+                progress.res = uProgress.res;
+                this._isDefaultProgress = false;
+            }
+            progress.offset = uProgress.offset ? uProgress.offset : progress.offset;
+            progress.position = uProgress.position ? uProgress.position : progress.position;
+            progress.barBackgroundRes = uProgress.barBackgroundRes ? uProgress.barBackgroundRes : progress.barBackgroundRes;
+        }
+        if (uConfig.tips) {
+            var uTips = uConfig.tips;
+            var tips = config.tips;
+            tips.show = typeof uTips.show != "undefined" ? uTips.show : tips.show;
+            tips.res = uTips.res ? uTips.res : tips.res;
+            tips.offset = uTips.offset ? uTips.offset : tips.offset;
+            tips.fontSize = uTips.fontSize ? uTips.fontSize : tips.fontSize;
+            tips.position = uTips.position ? uTips.position : tips.position;
+            tips.color = uTips.color ? uTips.color : tips.color;
+            if (uConfig.tips.tipsProgress && typeof uConfig.tips.tipsProgress == "function") {
+                tips.tipsProgress = uConfig.tips.tipsProgress;
+            }
+        }
+        if (typeof uConfig.onEnter == "function") {
+            config.onEnter = uConfig.onEnter;
+        }
+        if (typeof uConfig.onExit == "function") {
+            config.onExit = uConfig.onExit;
+        }
+    }
+
+    if (typeof config.logo.action == "undefined" && this._useDefaultSource) {
+        config.logo.action = cc.sequence(
+            cc.spawn(cc.moveBy(0.4, cc.p(0, 40)).easing(cc.easeIn(0.5)), cc.scaleTo(0.4, 0.95, 1.05).easing(cc.easeIn(0.5))),
+            cc.delayTime(0.08),
+            cc.spawn(cc.moveBy(0.4, cc.p(0, -40)).easing(cc.easeOut(0.5)), cc.scaleTo(0.4, 1.05, 0.95).easing(cc.easeOut(0.5)))
+        ).repeatForever();
+        config.logo.action.retain();
+    }
+    if (!config.tips.color) {
+        config.tips.color = cc.color(255, 255, 255);
+    }
+};
 
 cc.Dialog = cc.Layer.extend({
-    _userConfig: null,
-    _finalConfig: null,
     _defaultConfig: null,
     backgroundSprite: null,
     _menuItemConfirm: null,
@@ -538,81 +574,16 @@ cc.Dialog = cc.Layer.extend({
         this.setConfig(config);
     },
     setConfig: function (config) {
-        if (config) {
-            this._userConfig = config;
-        }
         this.removeAllChildren();
-        this.initData();
-    },
-    initData: function () {
-        this._finalConfig = cc.cloneObject(cc.Dialog._defaultConfig);
-        var config = this._finalConfig;
-        if (this._userConfig != null) {
-            var uConfig = this._userConfig;
-            if (uConfig.position) {
-                config.position = uConfig.position;
-            }
-            if (uConfig.action) {
-                config.action = uConfig.action;
-            }
-            if (uConfig.background && uConfig.background.res) {
-                config.background = uConfig.background;
-            }
-            if (uConfig.confirmBtn) {
-                var uConfirmBtn = uConfig.confirmBtn;
-                var confirmBtn = config.confirmBtn;
-                confirmBtn.normalRes = uConfirmBtn.normalRes ? uConfirmBtn.normalRes : confirmBtn.normalRes;
-                confirmBtn.pressRes = uConfirmBtn.pressRes ? uConfirmBtn.pressRes : confirmBtn.pressRes;
-                confirmBtn.text = typeof uConfirmBtn.text != "undefined" ? uConfirmBtn.text : confirmBtn.text;
-                confirmBtn.textColor = uConfirmBtn.textColor ? uConfirmBtn.textColor : confirmBtn.textColor;
-                confirmBtn.fontSize = uConfirmBtn.fontSize ? uConfirmBtn.fontSize : confirmBtn.fontSize;
-                confirmBtn.position = uConfirmBtn.position ? uConfirmBtn.position : confirmBtn.position;
-                confirmBtn.callback = uConfirmBtn.callback ? uConfirmBtn.callback : confirmBtn.callback;
-            }
-            if (uConfig.cancelBtn) {
-                var uCancelBtn = uConfig.cancelBtn;
-                var cancelBtn = config.cancelBtn;
-                cancelBtn.normalRes = uCancelBtn.normalRes ? uCancelBtn.normalRes : cancelBtn.normalRes;
-                cancelBtn.pressRes = uCancelBtn.pressRes ? uCancelBtn.pressRes : cancelBtn.pressRes;
-                cancelBtn.text = typeof uCancelBtn.text != "undefined" ? uCancelBtn.text : cancelBtn.text;
-                cancelBtn.textColor = uCancelBtn.textColor ? uCancelBtn.textColor : cancelBtn.textColor;
-                cancelBtn.fontSize = uCancelBtn.fontSize ? uCancelBtn.fontSize : cancelBtn.fontSize;
-                cancelBtn.position = uCancelBtn.position ? uCancelBtn.position : cancelBtn.position;
-                cancelBtn.callback = uCancelBtn.callback ? uCancelBtn.callback : cancelBtn.callback;
-            }
-            if (uConfig.messageLabel) {
-                var uMessageLabel = uConfig.messageLabel;
-                var messageLabel = config.messageLabel;
-                messageLabel.text = typeof uMessageLabel.text != "undefined" ? uMessageLabel.text : messageLabel.text;
-                messageLabel.color = uMessageLabel.color ? uMessageLabel.color : messageLabel.color;
-                messageLabel.fontSize = uMessageLabel.fontSize ? uMessageLabel.fontSize : messageLabel.fontSize;
-                messageLabel.position = uMessageLabel.position ? uMessageLabel.position : messageLabel.position;
-                messageLabel.dimensions = uMessageLabel.dimensions ? uMessageLabel.dimensions : messageLabel.dimensions;
-            }
-            if (uConfig.target) {
-                config.target = uConfig.target;
-            }
-            if (typeof uConfig.onEnter == "function") {
-                config.onEnter = uConfig.onEnter;
-            }
-            if (typeof uConfig.onExit == "function") {
-                config.onExit = uConfig.onExit;
-            }
+        if (config) {
+            cc.Dialog.setConfig(config);
         }
-
-        if (!config.cancelBtn.textColor) {
-            config.cancelBtn.textColor = cc.color(255, 255, 255);
-        }
-        if (!config.confirmBtn.textColor) {
-            config.confirmBtn.textColor = cc.color(255, 255, 255);
-        }
-
     },
     initView: function () {
         var useDefaultSource = cc.Dialog._useDefaultSource;
         var winSize = cc.director.getWinSize();
         this._scaleFactor = !useDefaultSource ? 1 : winSize.width > winSize.height ? winSize.width / 720 : winSize.width / 480;
-        var config = this._finalConfig;
+        var config = cc.Dialog._finalConfig;
 
         //bg
         this.backgroundSprite = new cc.Scale9Sprite(config.background.res);
@@ -666,7 +637,7 @@ cc.Dialog = cc.Layer.extend({
         }
     },
     _confirmCallback: function () {
-        var config = this._finalConfig;
+        var config = cc.Dialog._finalConfig;
         if (config.confirmBtn.callback) {
             if (config.target) {
                 config.confirmBtn.callback.call(config.target, this);
@@ -677,7 +648,7 @@ cc.Dialog = cc.Layer.extend({
         this.removeFromParent();
     },
     _cancelCallback: function () {
-        var config = this._finalConfig;
+        var config = cc.Dialog._finalConfig;
         if (config.cancelBtn.callback) {
             if (config.target) {
                 config.cancelBtn.callback.call(config.target, this);
@@ -689,7 +660,7 @@ cc.Dialog = cc.Layer.extend({
     },
     onEnter: function () {
         this._super();
-        var config = this._finalConfig;
+        var config = cc.Dialog._finalConfig;
         this.initView();
         config.onEnter(this);
         var self = this;
@@ -704,7 +675,7 @@ cc.Dialog = cc.Layer.extend({
     },
     onExit: function () {
         this._super();
-        var config = this._finalConfig;
+        var config = cc.Dialog._finalConfig;
         config.onExit(this);
         this.removeAllChildren();
         cc.Dialog._dialog = null;
@@ -748,7 +719,7 @@ cc.Dialog.show = function (tips, confirmCb, cancelCb) {
 
     cc.Dialog._dialog = new cc.Dialog(conf);
     if (cc.director.getRunningScene()) {
-        cc.director.getRunningScene().addChild(cc.Dialog._dialog, cc.INT_MAX);
+        cc.director.getRunningScene().addChild(cc.Dialog._dialog, INT_MAX);
     } else {
         cc.log("Current scene is null we can't show dialog");
     }
@@ -800,6 +771,72 @@ cc.Dialog._defaultConfig = {
         cc.log("dialog call onExit");
     }
 };
+cc.Dialog.setConfig = function (config) {
+    this._initData(config);
+};
+cc.Dialog._initData = function (uConfig) {
+    this._finalConfig = cc.clone(this._defaultConfig);
+    var config = this._finalConfig;
+    if (uConfig != null) {
+        if (uConfig.position) {
+            config.position = uConfig.position;
+        }
+        if (uConfig.action) {
+            config.action = uConfig.action;
+        }
+        if (uConfig.background && uConfig.background.res) {
+            config.background = uConfig.background;
+        }
+        if (uConfig.confirmBtn) {
+            var uConfirmBtn = uConfig.confirmBtn;
+            var confirmBtn = config.confirmBtn;
+            confirmBtn.normalRes = uConfirmBtn.normalRes ? uConfirmBtn.normalRes : confirmBtn.normalRes;
+            confirmBtn.pressRes = uConfirmBtn.pressRes ? uConfirmBtn.pressRes : confirmBtn.pressRes;
+            confirmBtn.text = typeof uConfirmBtn.text != "undefined" ? uConfirmBtn.text : confirmBtn.text;
+            confirmBtn.textColor = uConfirmBtn.textColor ? uConfirmBtn.textColor : confirmBtn.textColor;
+            confirmBtn.fontSize = uConfirmBtn.fontSize ? uConfirmBtn.fontSize : confirmBtn.fontSize;
+            confirmBtn.position = uConfirmBtn.position ? uConfirmBtn.position : confirmBtn.position;
+            confirmBtn.callback = uConfirmBtn.callback ? uConfirmBtn.callback : confirmBtn.callback;
+        }
+        if (uConfig.cancelBtn) {
+            var uCancelBtn = uConfig.cancelBtn;
+            var cancelBtn = config.cancelBtn;
+            cancelBtn.normalRes = uCancelBtn.normalRes ? uCancelBtn.normalRes : cancelBtn.normalRes;
+            cancelBtn.pressRes = uCancelBtn.pressRes ? uCancelBtn.pressRes : cancelBtn.pressRes;
+            cancelBtn.text = typeof uCancelBtn.text != "undefined" ? uCancelBtn.text : cancelBtn.text;
+            cancelBtn.textColor = uCancelBtn.textColor ? uCancelBtn.textColor : cancelBtn.textColor;
+            cancelBtn.fontSize = uCancelBtn.fontSize ? uCancelBtn.fontSize : cancelBtn.fontSize;
+            cancelBtn.position = uCancelBtn.position ? uCancelBtn.position : cancelBtn.position;
+            cancelBtn.callback = uCancelBtn.callback ? uCancelBtn.callback : cancelBtn.callback;
+        }
+        if (uConfig.messageLabel) {
+            var uMessageLabel = uConfig.messageLabel;
+            var messageLabel = config.messageLabel;
+            messageLabel.text = typeof uMessageLabel.text != "undefined" ? uMessageLabel.text : messageLabel.text;
+            messageLabel.color = uMessageLabel.color ? uMessageLabel.color : messageLabel.color;
+            messageLabel.fontSize = uMessageLabel.fontSize ? uMessageLabel.fontSize : messageLabel.fontSize;
+            messageLabel.position = uMessageLabel.position ? uMessageLabel.position : messageLabel.position;
+            messageLabel.dimensions = uMessageLabel.dimensions ? uMessageLabel.dimensions : messageLabel.dimensions;
+        }
+        if (uConfig.target) {
+            config.target = uConfig.target;
+        }
+        if (typeof uConfig.onEnter == "function") {
+            config.onEnter = uConfig.onEnter;
+        }
+        if (typeof uConfig.onExit == "function") {
+            config.onExit = uConfig.onExit;
+        }
+    }
+
+    if (!config.cancelBtn.textColor) {
+        config.cancelBtn.textColor = cc.color(255, 255, 255);
+    }
+    if (!config.confirmBtn.textColor) {
+        config.confirmBtn.textColor = cc.color(255, 255, 255);
+    }
+};
+
 cc._NetworkErrorDialog = function () {
     cc.Dialog._clearDialog();
     cc.Dialog._dialog = new cc.Dialog(cc._NetworkErrorDialog._config);
@@ -856,7 +893,7 @@ cc._NetworkErrorDialog._show = function (type, tips, confirmCb, cancelCb) {
 
         networkDialog.setConfig(config);
         if (cc.director.getRunningScene()) {
-            cc.director.getRunningScene().addChild(networkDialog, cc.INT_MAX);
+            cc.director.getRunningScene().addChild(networkDialog, INT_MAX);
         } else {
             cc.log("Current scene is null we can't show dialog");
         }
@@ -915,26 +952,6 @@ cc.runtime.setOption = function (promptype, config) {
     }
 }
 
-cc.cloneObject = function (obj) {
-    var o, obj;
-    if (obj.constructor == Object) {
-        o = new obj.constructor();
-    } else {
-        o = new obj.constructor(obj.valueOf());
-    }
-    for (var key in obj) {
-        if (o[key] != obj[key]) {
-            if (typeof(obj[key]) == 'object') {
-                o[key] = cc.cloneObject(obj[key]);
-            } else {
-                o[key] = obj[key];
-            }
-        }
-    }
-    o.toString = obj.toString;
-    o.valueOf = obj.valueOf;
-    return o;
-}
 /**
  * only use in JSB get network type
  * @type {{}|*|cc.network}
@@ -950,3 +967,5 @@ cc.network.preloadstatus = {
     UNZIP: 2
 }
 cc.runtime.network = cc.network;
+
+})();
