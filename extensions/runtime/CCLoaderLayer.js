@@ -206,9 +206,10 @@ cc.LoaderLayer = cc.Layer.extend({
             res = [];
             for (var i = 0; i < this._groupname.length; i++) {
                 var group = groups[this._groupname[i]];
+                var files = group && group.files;
                 var preCount = i > 0 ? groupIndex[i - 1] : 0;
-                groupIndex.push(preCount + group.length);
-                res = res.concat(group);
+                groupIndex.push(preCount + files ? files.length : 0);
+                res = res.concat(files);
             }
         }
         var self = this;
@@ -462,13 +463,14 @@ cc.LoaderLayer.preload = function (groupname, callback, target) {
             else {
                 cc.warn("Group versions haven't been loaded, you can also set group data with 'cc.LoaderLayer.groups'");
             }
+            res_engine_loaded = true;
             callPreload();
         });
 };
 
 cc.LoaderLayer._useDefaultSource = true;
 cc.LoaderLayer._isDefaultProgress = true;
-cc.LoaderLayer._finalConfig = null;
+cc.LoaderLayer._finalConfig = cc.LoaderLayer._confg;
 cc.LoaderLayer.groups = {};
 cc.LoaderLayer.setUseDefaultSource = function (status) {
     cc.LoaderLayer._useDefaultSource = status;
@@ -771,6 +773,7 @@ cc.Dialog._defaultConfig = {
         cc.log("dialog call onExit");
     }
 };
+cc.Dialog._finalConfig = cc.Dialog._defaultConfig;
 cc.Dialog.setConfig = function (config) {
     this._initData(config);
 };
