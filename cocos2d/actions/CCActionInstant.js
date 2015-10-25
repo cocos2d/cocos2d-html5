@@ -630,11 +630,10 @@ cc.Place.create = cc.place;
  */
 cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
     _selectorTarget:null,
-    _callFunc:null,
     _function:null,
     _data:null,
 
-	/**
+    /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function. <br />
 	 * Creates a CallFunc action with the callback.
 	 * @param {function} selector
@@ -644,11 +643,7 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
     ctor:function(selector, selectorTarget, data){
         cc.FiniteTimeAction.prototype.ctor.call(this);
 
-		if(selector !== undefined){
-			if(selectorTarget === undefined)
-				this.initWithFunction(selector);
-			else this.initWithFunction(selector, selectorTarget, data);
-		}
+        this.initWithFunction(selector, selectorTarget, data);
     },
 
     /**
@@ -659,13 +654,15 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
      * @return {Boolean}
      */
     initWithFunction:function (selector, selectorTarget, data) {
-	    if (selectorTarget) {
-            this._data = data;
-            this._callFunc = selector;
+        if (selector) {
+            this._function = selector;
+        }
+        if (selectorTarget) {
             this._selectorTarget = selectorTarget;
-	    }
-	    else if (selector)
-		    this._function = selector;
+        }
+        if (data) {
+            this._data = data;
+        }
         return true;
     },
 
@@ -673,10 +670,9 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
      * execute the function.
      */
     execute:function () {
-        if (this._callFunc != null)         //CallFunc, N, ND
-            this._callFunc.call(this._selectorTarget, this.target, this._data);
-        else if(this._function)
-            this._function.call(null, this.target);
+        if (this._function) {
+            this._function.call(this._selectorTarget, this.target, this._data);
+        }
     },
 
     /**
@@ -715,12 +711,8 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
      * @return {cc.CallFunc}
      */
     clone:function(){
-       var action = new cc.CallFunc();
-        if(this._selectorTarget){
-             action.initWithFunction(this._callFunc,  this._selectorTarget, this._data)
-        }else if(this._function){
-             action.initWithFunction(this._function);
-        }
+        var action = new cc.CallFunc();
+        action.initWithFunction(this._function, this._selectorTarget, this._data);
         return action;
     }
 });
