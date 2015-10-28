@@ -23,6 +23,19 @@
         cc.renderer._turnToNormalMode();
     };
 
+    proto.transform = function(parentCmd) {
+        ccui.Layout.CanvasRenderCmd.prototype.transform.call(this,parentCmd);
+        var node = this._node;
+        var child;
+        var childrenArray = node._innerContainer._children;
+        for(var i = 0; i < childrenArray.length; i++) {
+            child = childrenArray[i];
+            if(child._renderCmd._dirtyFlag & cc.Node._dirtyFlags.transformDirty) {
+                child._inViewRect = node._isInContainer(child);
+            }
+        }
+    };
+
     proto.rendering = function (ctx) {
         var currentID = this._node.__instanceId;
         var locCmds = cc.renderer._cacheToCanvasCmds[currentID], i, len,
