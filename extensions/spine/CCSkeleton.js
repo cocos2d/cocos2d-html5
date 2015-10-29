@@ -85,7 +85,6 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
      */
     ctor:function(skeletonDataFile, atlasFile, scale){
         cc.Node.prototype.ctor.call(this);
-        this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
 
         if(arguments.length === 0)
             this.init();
@@ -105,9 +104,8 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
      */
     init: function () {
         cc.Node.prototype.init.call(this);
-        //this.setOpacityModifyRGB(true);
-        this._blendFunc.src = cc.ONE;
-        this._blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
+        this._premultipliedAlpha = (cc._renderType === cc.game.RENDER_TYPE_WEBGL && cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA);
+        this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
         this.scheduleUpdate();
     },
 
@@ -323,15 +321,15 @@ sp.Skeleton = cc.Node.extend(/** @lends sp.Skeleton# */{
      * Sets the premultiplied alpha value to sp.Skeleton.
      * @param {Number} alpha
      */
-    setOpacityModifyRGB: function (alpha) {
-        this._premultipliedAlpha = alpha;
+    setPremultipliedAlpha: function (premultiplied) {
+        this._premultipliedAlpha = premultiplied;
     },
 
     /**
      * Returns whether to enable premultiplied alpha.
      * @returns {boolean}
      */
-    isOpacityModifyRGB: function () {
+    isPremultipliedAlpha: function () {
         return this._premultipliedAlpha;
     },
 
