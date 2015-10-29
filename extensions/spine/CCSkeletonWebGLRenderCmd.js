@@ -43,7 +43,7 @@
 
         this._shaderProgram.use();
         this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
-//        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
+        // cc.glBlendFunc(locBlendFunc.src, locBlendFunc.dst);
         locSkeleton.r = color.r / 255;
         locSkeleton.g = color.g / 255;
         locSkeleton.b = color.b / 255;
