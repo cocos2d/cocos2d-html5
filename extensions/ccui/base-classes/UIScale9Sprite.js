@@ -278,24 +278,19 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
 
     /** Opacity: conforms to CCRGBAProtocol protocol */
     setOpacity: function (opacity) {
-        if(!this._scale9Image)
-            return;
         cc.Node.prototype.setOpacity.call(this, opacity);
         if(this._scale9Enabled) {
             var pChildren = this._renderers;
             for(var i=0; i<pChildren.length; i++)
                 pChildren[i].setOpacity(opacity);
         }
-        else
+        else if(this._scale9Image)
             this._scale9Image.setOpacity(opacity);
         this._scale9Dirty = true;
     },
 
     /** Color: conforms to CCRGBAProtocol protocol */
     setColor: function (color) {
-        if(!this._scale9Image)
-            return;
-
         cc.Node.prototype.setColor.call(this, color);
         if(this._scale9Enabled) {
             var scaleChildren = this._renderers;
@@ -305,7 +300,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
                     selChild.setColor(color);
             }
         }
-        else
+        else if (this._scale9Image)
             this._scale9Image.setColor(color);
         this._scale9Dirty = true;
     },
@@ -501,6 +496,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
                 this.updateWithBatchNode(this._scale9Image, cc.rect(0,0,size.width,size.height), false, this._capInsets);
                 if (restorePreferredSize)this.setPreferredSize(preferredSize);
                 this._positionsAreDirty = true;
+                this.setNodeDirty();
                 this.dispatchEvent("load");
             }, this);
         }
@@ -533,6 +529,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
                 this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc._renderType === cc.game.RENDER_TYPE_WEBGL && sender.isRotated(), this._capInsets);
                 if (restorePreferredSize)this.setPreferredSize(preferredSize);
                 this._positionsAreDirty = true;
+                this.setNodeDirty();
                 this.dispatchEvent("load");
             },this);
         }
@@ -863,6 +860,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
                 this._positionsAreDirty = true;
                 this.updateWithSprite(sprite, spriteRect, spriteFrameRotated, offset, originalSize, capInsets);
                 this.setVisible(true);
+                this.setNodeDirty();
                 this.dispatchEvent("load");
             }, this);
             this.setVisible(false);
@@ -916,6 +914,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
                 this._positionsAreDirty = true;
                 this.updateWithBatchNode(batchNode, originalRect, rotated, capInsets);
                 this.setVisible(true);
+                this.setNodeDirty();
                 this.dispatchEvent("load");
             }, this);
             this.setVisible(false);
@@ -941,6 +940,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
                 this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc._renderType === cc.game.RENDER_TYPE_WEBGL && sender.isRotated(), this._capInsets);
                 if (restorePreferredSize)this.setPreferredSize(preferredSize);
                 this._positionsAreDirty = true;
+                this.setNodeDirty();
                 this.dispatchEvent("load");
             },this);
         }
