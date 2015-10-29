@@ -2132,8 +2132,11 @@ cc.game = /** @lends cc.game# */{
      * Pause the game.
      */
     pause: function () {
+        if (this._paused) return;
         this._paused = true;
-
+        // Pause audio engine
+        cc.audioEngine._pausePlaying();
+        // Pause main loop
         if (this._intervalId)
             window.cancelAnimationFrame(this._intervalId);
         this._intervalId = 0;
@@ -2143,7 +2146,11 @@ cc.game = /** @lends cc.game# */{
      * Resume the game from pause.
      */
     resume: function () {
+        if (!this._paused) return;
         this._paused = false;
+        // Resume audio engine
+        cc.audioEngine._resumePlaying();
+        // Resume main loop
         this._runMainLoop();
     },
 
@@ -2528,18 +2535,10 @@ cc.game = /** @lends cc.game# */{
         }
 
         cc.eventManager.addCustomListener(cc.game.EVENT_HIDE, function () {
-            cc.audioEngine._pausePlaying();
+            cc.game.pause();
         });
         cc.eventManager.addCustomListener(cc.game.EVENT_SHOW, function () {
-            cc.audioEngine._resumePlaying();
-        });
-
-        cc.eventManager.addCustomListener(cc.game.EVENT_SHOW, function () {
-            if(self._intervalId){
-                window.cancelAnimationFrame(self._intervalId);
-
-                self._runMainLoop();
-            }
+            cc.game.resume();
         });
     }
 };
