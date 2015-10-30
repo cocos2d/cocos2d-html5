@@ -341,8 +341,7 @@ cc.Node.RenderCmd.prototype = {
             locFlag |= flags.transformDirty;
 
         var colorDirty = locFlag & flags.colorDirty,
-            opacityDirty = locFlag & flags.opacityDirty,
-            transformDirty = locFlag & flags.transformDirty;
+            opacityDirty = locFlag & flags.opacityDirty;
 
         this._dirtyFlag = locFlag;
 
@@ -357,7 +356,7 @@ cc.Node.RenderCmd.prototype = {
         if(colorDirty)
             this._updateColor();
 
-        if (transformDirty)
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL || locFlag & flags.transformDirty)
             //update the transform
             this.transform(parentCmd);
     },
