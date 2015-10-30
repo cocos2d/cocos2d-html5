@@ -334,7 +334,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         }else if(locFlag & flags.textDirty)
             this._updateTexture();
 
-        if (locFlag & flags.transformDirty)                 //update the transform
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL || locFlag & flags.transformDirty)
             this.transform(parentCmd);
     };
 
