@@ -1962,7 +1962,7 @@ function _load(config) {
             var modules = config["modules"] || [];
             var moduleMap = modulesJson["module"];
             var jsList = [];
-            if (cc.sys.supportWebGL && modules.indexOf("base4webgl") < 0) modules.splice(0, 0, "base4webgl");
+            if (cc.sys.capabilities["opengl"] && modules.indexOf("base4webgl") < 0) modules.splice(0, 0, "base4webgl");
             else if (modules.indexOf("core") < 0) modules.splice(0, 0, "core");
             for (var i = 0, li = modules.length; i < li; i++) {
                 var arr = _getJsListOfModule(moduleMap, modules[i], engineDir);
@@ -2135,7 +2135,7 @@ cc.game = /** @lends cc.game# */{
         if (this._paused) return;
         this._paused = true;
         // Pause audio engine
-        cc.audioEngine._pausePlaying();
+        cc.audioEngine && cc.audioEngine._pausePlaying();
         // Pause main loop
         if (this._intervalId)
             window.cancelAnimationFrame(this._intervalId);
@@ -2149,7 +2149,7 @@ cc.game = /** @lends cc.game# */{
         if (!this._paused) return;
         this._paused = false;
         // Resume audio engine
-        cc.audioEngine._resumePlaying();
+        cc.audioEngine && cc.audioEngine._resumePlaying();
         // Resume main loop
         this._runMainLoop();
     },

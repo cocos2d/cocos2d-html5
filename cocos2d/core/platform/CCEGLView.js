@@ -302,7 +302,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     _setViewportMeta: function (metas, overwrite) {
         var vp = document.getElementById("cocosMetaElement");
-        if(vp){
+        if(vp && overwrite){
             document.head.removeChild(vp);
         }
 
@@ -310,12 +310,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             currentVP = elems ? elems[0] : null,
             content, key, pattern;
 
-        vp = document.createElement("meta");
+        content = currentVP ? currentVP.content : "";
+        vp = vp || document.createElement("meta");
         vp.id = "cocosMetaElement";
         vp.name = "viewport";
         vp.content = "";
 
-        content = currentVP ? currentVP.content : "";
         for (key in metas) {
             if (content.indexOf(key) == -1) {
                 content += "," + key + "=" + metas[key];
@@ -698,7 +698,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
         // Set body width to the exact pixel resolution
         document.body.style.width = width + "px";
-        document.body.style.height = "100%";
         document.body.style.left = "0px";
         document.body.style.top = "0px";
 
