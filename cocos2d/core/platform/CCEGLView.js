@@ -694,7 +694,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      */
     setRealPixelResolution: function (width, height, resolutionPolicy) {
         // Set viewport's width
-        this._setViewportMeta({"width": width, "user-scalable": "no"}, true);
+        this._setViewportMeta({"width": width, "target-densitydpi": cc.DENSITYDPI_DEVICE, "user-scalable": "no"}, true);
 
         // Set body width to the exact pixel resolution
         document.body.style.width = width + "px";
