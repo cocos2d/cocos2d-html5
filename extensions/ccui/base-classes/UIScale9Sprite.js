@@ -929,6 +929,10 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
      * @param {cc.rect} capInsets
      */
     setSpriteFrame: function (spriteFrame, capInsets) {
+	        // Reset insets
+        if (!capInsets)
+            capInsets = cc.rect();
+			
         var sprite = new cc.Sprite(spriteFrame.getTexture());
         var locLoaded = spriteFrame.textureLoaded();
         this._textureLoaded = locLoaded;
@@ -945,9 +949,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
             },this);
         }
         this.updateWithSprite(sprite, spriteFrame.getRect(),spriteFrame.isRotated(),spriteFrame.getOffset(),spriteFrame.getOriginalSize(),capInsets);
-        // Reset insets
-        if (!capInsets)
-            capInsets = cc.rect();
+
         this._insetLeft = capInsets.x;
         this._insetTop = capInsets.y;
         this._insetRight = this._originalSize.width - this._insetLeft - capInsets.width;
