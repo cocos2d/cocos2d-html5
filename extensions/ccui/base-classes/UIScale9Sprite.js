@@ -929,10 +929,9 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
      * @param {cc.rect} capInsets
      */
     setSpriteFrame: function (spriteFrame, capInsets) {
-	        // Reset insets
+	    // Reset insets
         if (!capInsets)
             capInsets = cc.rect();
-			
         var sprite = new cc.Sprite(spriteFrame.getTexture());
         var locLoaded = spriteFrame.textureLoaded();
         this._textureLoaded = locLoaded;
