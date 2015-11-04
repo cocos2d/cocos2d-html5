@@ -156,6 +156,7 @@
         locContext.setTransform(1, 0, 0, 1, 0, 0);
         locContext.clearRect(0, 0, sizeInPixels.width, sizeInPixels.height);
         cc.renderer._renderingToCacheCanvas(wrapper, node.__instanceId, locScaleFactor, locScaleFactor);
+        cc.renderer._turnToNormalMode();
         if(selTexture && this._state === ccui.Scale9Sprite.state.GRAY)
             selTexture._switchToGray(false);
 
