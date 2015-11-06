@@ -469,7 +469,7 @@
 
         this.widgetAttributes(widget, json);
 
-        var clipEnabled = json["ClipAble"];
+        var clipEnabled = json["ClipAble"] || false;
         if(clipEnabled != null)
             widget.setClippingEnabled(clipEnabled);
 
@@ -750,7 +750,7 @@
             widget.setBackGroundImage(path, type);
         });
 
-        var clipEnabled = json["ClipAble"];
+        var clipEnabled = json["ClipAble"] || false;
         widget.setClippingEnabled(clipEnabled);
 
         var colorType = getParam(json["ComboBoxIndex"], 0);
