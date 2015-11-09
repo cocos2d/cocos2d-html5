@@ -14,26 +14,15 @@
         var node = this._node;
         if (!node._visible)
             return;
-        cc.renderer.pushRenderCommand(this);
         var currentID = node.__instanceId;
+        
+        cc.renderer.pushRenderCommand(this);
         cc.renderer._turnToCacheMode(currentID);
 
         ccui.Layout.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
+
         this._dirtyFlag = 0;
         cc.renderer._turnToNormalMode();
-    };
-
-    proto.transform = function(parentCmd) {
-        ccui.Layout.CanvasRenderCmd.prototype.transform.call(this,parentCmd);
-        var node = this._node;
-        var child;
-        var childrenArray = node._innerContainer._children;
-        for(var i = 0; i < childrenArray.length; i++) {
-            child = childrenArray[i];
-            if(child._renderCmd._dirtyFlag & cc.Node._dirtyFlags.transformDirty) {
-                child._inViewRect = node._isInContainer(child);
-            }
-        }
     };
 
     proto.rendering = function (ctx) {
