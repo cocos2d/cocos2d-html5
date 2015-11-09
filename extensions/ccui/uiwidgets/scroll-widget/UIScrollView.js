@@ -180,10 +180,12 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * @param {cc.Size} size inner container size.
      */
     setInnerContainerSize: function (size) {
-        var innerContainer = this._innerContainer;
-        var locSize = this._contentSize;
-        var innerSizeWidth = locSize.width, innerSizeHeight = locSize.height;
-        var originalInnerSize = innerContainer.getContentSize();
+        var innerContainer = this._innerContainer,
+            locSize = this._contentSize,
+            innerSizeWidth = locSize.width, innerSizeHeight = locSize.height,
+            originalInnerSize = innerContainer.getContentSize(),
+            renderCmd = this._renderCmd,
+            newInnerSize, offset;
         if (size.width < locSize.width)
             cc.log("Inner width <= ScrollView width, it will be force sized!");
         else
@@ -195,17 +197,20 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             innerSizeHeight = size.height;
 
         innerContainer.setContentSize(cc.size(innerSizeWidth, innerSizeHeight));
-        var newInnerSize, offset;
         switch (this.direction) {
             case ccui.ScrollView.DIR_VERTICAL:
                 newInnerSize = innerContainer.getContentSize();
                 offset = originalInnerSize.height - newInnerSize.height;
+                // Made child nodes transform available for scroll
+                renderCmd.transform(renderCmd.getParentRenderCmd(), true);
                 this._scrollChildren(0, offset);
                 break;
             case ccui.ScrollView.DIR_HORIZONTAL:
                 if (innerContainer.getRightBoundary() <= locSize.width) {
                     newInnerSize = innerContainer.getContentSize();
                     offset = originalInnerSize.width - newInnerSize.width;
+                    // Made child nodes transform available for scroll
+                    renderCmd.transform(renderCmd.getParentRenderCmd(), true);
                     this._scrollChildren(offset, 0);
                 }
                 break;
@@ -213,6 +218,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
                 newInnerSize = innerContainer.getContentSize();
                 var offsetY = originalInnerSize.height - newInnerSize.height;
                 var offsetX = (innerContainer.getRightBoundary() <= locSize.width) ? originalInnerSize.width - newInnerSize.width : 0;
+                // Made child nodes transform available for scroll
+                renderCmd.transform(renderCmd.getParentRenderCmd(), true);
                 this._scrollChildren(offsetX, offsetY);
                 break;
             default:
@@ -326,9 +333,9 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     updateChildren: function () {
-        var child;
+        var child, i, l;
         var childrenArray = this._innerContainer._children;
-        for(var i = 0; i < childrenArray.length; i++) {
+        for(i = 0, l = childrenArray.length; i < l; i++) {
             child = childrenArray[i];
             if(child._inViewRect === true && this._isInContainer(child) === false)
                 child._inViewRect = false;

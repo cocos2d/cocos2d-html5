@@ -447,13 +447,11 @@ cc.MIRRORED_REPEAT   = 0x8370;
  * @name cc.BLEND_SRC
  * @type Number
  */
-cc.defineGetterSetter(cc, "BLEND_SRC", function (){
+cc.BLEND_SRC = cc.SRC_ALPHA;
+cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
     if (cc._renderType === cc.game.RENDER_TYPE_WEBGL
          && cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA) {
-        return cc.ONE;
-    }
-    else {
-        return cc.SRC_ALPHA;
+        cc.BLEND_SRC = cc.ONE;
     }
 });
 
