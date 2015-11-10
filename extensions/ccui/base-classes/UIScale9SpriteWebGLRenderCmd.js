@@ -128,7 +128,7 @@
         }
     };
 
-proto._updateDisplayOpacity = function(parentOpacity){
+    proto._updateDisplayOpacity = function(parentOpacity){
         cc.Node.WebGLRenderCmd.prototype._updateDisplayOpacity.call(this, parentOpacity);
         var node = this._node;
         var scale9Image = node._scale9Image;
