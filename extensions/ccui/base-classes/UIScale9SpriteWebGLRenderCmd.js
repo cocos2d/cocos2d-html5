@@ -128,7 +128,7 @@
         }
     };
 
-    proto._updateDisplayOpacity = function(parentOpacity){
+proto._updateDisplayOpacity = function(parentOpacity){
         cc.Node.WebGLRenderCmd.prototype._updateDisplayOpacity.call(this, parentOpacity);
         var node = this._node;
         var scale9Image = node._scale9Image;
@@ -136,10 +136,16 @@
         if(node._scale9Enabled) {
             var pChildren = node._renderers;
             for(var i=0; i<pChildren.length; i++)
+            {
                 pChildren[i]._renderCmd._updateDisplayOpacity(parentOpacity);
+                pChildren[i]._renderCmd._updateColor();
+            }
         }
         else
+        {
             scale9Image._renderCmd._updateDisplayOpacity(parentOpacity);
+            scale9Image._renderCmd._updateColor();
+        }
     };
 
     proto.setState = function (state) {
