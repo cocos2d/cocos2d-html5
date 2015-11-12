@@ -65,7 +65,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
         this.setActionTag(dic["ActionTag"]);
         var actionFrameList = dic["actionframelist"];
 
-        var node = ccui.helper.seekWidgetByName(root, dic["name"]);
+        var node = ccui.helper.seekActionWidgetByActionTag(root, dic["ActionTag"]);
         var positionOffset = node instanceof ccui.Widget && !(node instanceof ccui.Layout);
 
         for (var i = 0; i < actionFrameList.length; i++) {
