@@ -330,7 +330,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
             this.dom.style.display = (x) ? 'block' : 'none';
     },
     _setLocalZOrder:function (z) {
-        this._localZOrder = z
+        this._localZOrder = z;
         this.setNodeDirty();
         if (this.dom)
             this.dom.zIndex = z;
@@ -393,17 +393,13 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         this.stopAllActions();
         this.unscheduleAllCallbacks();
 
+        cc.eventManager.removeListeners(this);
+
         // timers
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node._stateCallbackType.cleanup);
         if (this.dom) {
             this.dom.remove();
         }
-    },
-    /**
-     * replace remove from parent and clean up of ccNode
-     */
-    removeFromParentAndCleanup:function () {
-        this.dom.remove();
     },
     setOpacity:function (o) {
         this._opacity = o;
