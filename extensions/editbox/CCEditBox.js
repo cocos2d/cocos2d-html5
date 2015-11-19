@@ -229,6 +229,12 @@ cc.EditBox = cc.ControlButton.extend({
     _tooltip: false,
     _className: "EditBox",
 
+    _onCanvasClick : null,
+    _inputEvent : null,
+    _keyPressEvent : null,
+    _focusEvent : null,
+    _blurEvent : null,
+
     /**
      * constructor of cc.EditBox
      * @param {cc.Size} size
@@ -650,13 +656,7 @@ cc.EditBox = cc.ControlButton.extend({
         cc._canvas.removeEventListener('click', this._onCanvasClick);
 
         this._super();
-    },
-
-    _onCanvasClick : null,
-    _inputEvent : null,
-    _keyPressEvent : null,
-    _focusEvent : null,
-    _blurEvent : null
+    }
 });
 
 var _p = cc.EditBox.prototype;
