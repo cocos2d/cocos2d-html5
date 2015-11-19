@@ -660,7 +660,7 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
         if (selectorTarget) {
             this._selectorTarget = selectorTarget;
         }
-        if (data) {
+        if (data !== undefined) {
             this._data = data;
         }
         return true;
