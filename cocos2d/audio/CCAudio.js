@@ -224,7 +224,11 @@ cc.Audio = cc.Class.extend({
         var sourceNode = this._currentSource;
         if(!sourceNode || !sourceNode["playbackState"])
             return true;
-        return this._currentTime + this._context.currentTime - this._startTime < sourceNode.buffer.duration;
+
+        if(this._currentTime + this._context.currentTime - this._startTime < sourceNode.buffer.duration)
+            return true;
+
+        return sourceNode["playbackState"] == 2;
     },
 
     _playOfWebAudio: function(offset){
