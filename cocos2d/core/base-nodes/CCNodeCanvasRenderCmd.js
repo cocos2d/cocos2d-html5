@@ -353,7 +353,7 @@ cc.Node.RenderCmd.prototype = {
             //update the opacity
             this._syncDisplayOpacity();
 
-        if(colorDirty)
+        if(colorDirty || opacityDirty)
             this._updateColor();
 
         if (cc._renderType === cc.game.RENDER_TYPE_WEBGL || locFlag & flags.transformDirty)
