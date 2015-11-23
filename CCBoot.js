@@ -2262,7 +2262,7 @@ cc.game = /** @lends cc.game# */{
         else {
             if (config) {
                 if (typeof config === 'string') {
-                    if (!cc.game.config) cc.game.config = {};
+                    if (!cc.game.config) this._loadConfig();
                     cc.game.config[cc.game.CONFIG_KEY.id] = config;
                 } else {
                     cc.game.config = config;
