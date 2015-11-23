@@ -2261,7 +2261,12 @@ cc.game = /** @lends cc.game# */{
         }
         else {
             if (config) {
-                cc.game.config = config;
+                if (typeof config === 'string') {
+                    if (!cc.game.config) cc.game.config = {};
+                    cc.game.config[cc.game.CONFIG_KEY.id] = config;
+                } else {
+                    cc.game.config = config;
+                }
             }
             if (typeof onStart === 'function') {
                 cc.game.onStart = onStart;
