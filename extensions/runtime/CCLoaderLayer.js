@@ -421,18 +421,18 @@ cc.LoaderLayer.preload = function (groupname, callback, target) {
         }
     }
     var callPreload = function () {
-        if (cc.director.getRunningScene()) {
-            loaderLayer.updateGroup(groupname, preloadCb, target);
-            loaderLayer._addToScene();
-            loaderLayer._preloadSource();
-        } else {
-            cc.log("Current scene is null we can't start preload");
-        }
+        loaderLayer.updateGroup(groupname, preloadCb, target);
+        loaderLayer._addToScene();
+        loaderLayer._preloadSource();
     };
 
     if (res_engine_loaded) {
         callPreload();
         return;
+    }
+
+    if (!cc.director.getRunningScene()) {
+        cc.director.runScene(new cc.Scene());
     }
 
     // Res engine not loaded, load them
@@ -972,3 +972,18 @@ cc.network.preloadstatus = {
 cc.runtime.network = cc.network;
 
 })();
+
+cc.LoaderScene._preload = cc.LoaderScene.preload;
+cc.LoaderScene.preload = function (arr, cb, target) {
+    // No extension
+    var isGroups = (arr[0] && arr[0].indexOf('.') === -1);
+    if (isGroups) {
+        if (arr.indexOf('boot') === -1) {
+            arr.splice(0, 0, 'boot');
+        }
+        cc.LoaderLayer.preload(arr, cb, target);
+    }
+    else {
+        cc.LoaderScene._preload(arr, cb, target);
+    }
+}
