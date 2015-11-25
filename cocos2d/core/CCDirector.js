@@ -726,12 +726,12 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         var locScenesStack = this._scenesStack;
         var c = locScenesStack.length;
 
-        if (c === 0) {
+        if (level === 0) {
             this.end();
             return;
         }
-        // current level or lower -> nothing
-        if (level > c)
+        // stack overflow
+        if (level >= c)
             return;
 
         // pop stack until reaching desired level
@@ -745,7 +745,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             c--;
         }
         this._nextScene = locScenesStack[locScenesStack.length - 1];
-        this._sendCleanupToScene = false;
+        this._sendCleanupToScene = true;
     },
 
     /**

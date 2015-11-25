@@ -135,7 +135,7 @@ cc.LoaderLayer = cc.Layer.extend({
         //tips
         if (config.tips.show) {
             this.tipsLabel = new cc.LabelTTF("100%", "Arial", config.tips.fontSize);
-            this.tipsLabel.setColor(config.tips.color);
+            this.tipsLabel.setColor(config.tips.color ? config.tips.color : cc.color(255, 255, 255));
             this.tipsLabel.setPosition(config.tips.position ? config.tips.position : this.progressBackgroundSprite ? cc.p(this.progressBackgroundSprite.x, this.progressBackgroundSprite.y + this.progressBackgroundSprite.height / 2 + 20) : cc.pAdd(cc.visibleRect.bottom, cc.p(0, 100)));
             this._contentLayer.addChild(this.tipsLabel);
         }
@@ -421,18 +421,18 @@ cc.LoaderLayer.preload = function (groupname, callback, target) {
         }
     }
     var callPreload = function () {
-        if (cc.director.getRunningScene()) {
-            loaderLayer.updateGroup(groupname, preloadCb, target);
-            loaderLayer._addToScene();
-            loaderLayer._preloadSource();
-        } else {
-            cc.log("Current scene is null we can't start preload");
-        }
+        loaderLayer.updateGroup(groupname, preloadCb, target);
+        loaderLayer._addToScene();
+        loaderLayer._preloadSource();
     };
 
     if (res_engine_loaded) {
         callPreload();
         return;
+    }
+
+    if (!cc.director.getRunningScene()) {
+        cc.director.runScene(new cc.Scene());
     }
 
     // Res engine not loaded, load them
@@ -470,7 +470,7 @@ cc.LoaderLayer.preload = function (groupname, callback, target) {
 
 cc.LoaderLayer._useDefaultSource = true;
 cc.LoaderLayer._isDefaultProgress = true;
-cc.LoaderLayer._finalConfig = cc.LoaderLayer._confg;
+cc.LoaderLayer._finalConfig = cc.LoaderLayer._config;
 cc.LoaderLayer.groups = {};
 cc.LoaderLayer.setUseDefaultSource = function (status) {
     cc.LoaderLayer._useDefaultSource = status;
@@ -972,3 +972,18 @@ cc.network.preloadstatus = {
 cc.runtime.network = cc.network;
 
 })();
+
+cc.LoaderScene._preload = cc.LoaderScene.preload;
+cc.LoaderScene.preload = function (arr, cb, target) {
+    // No extension
+    var isGroups = (arr[0] && arr[0].indexOf('.') === -1);
+    if (isGroups) {
+        if (arr.indexOf('boot') === -1) {
+            arr.splice(0, 0, 'boot');
+        }
+        cc.LoaderLayer.preload(arr, cb, target);
+    }
+    else {
+        cc.LoaderScene._preload(arr, cb, target);
+    }
+}
