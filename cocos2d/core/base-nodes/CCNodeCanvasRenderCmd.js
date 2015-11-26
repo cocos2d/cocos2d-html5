@@ -358,7 +358,7 @@ cc.Node.RenderCmd.prototype = {
 
         if (cc._renderType === cc.game.RENDER_TYPE_WEBGL || locFlag & flags.transformDirty)
             //update the transform
-            this.transform(parentCmd);
+            this.transform(parentCmd, true);
     },
 
     visitChildren: function(){
