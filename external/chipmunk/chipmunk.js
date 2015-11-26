@@ -820,7 +820,7 @@ var bbWrapVect = function(bb, v)
 /// Segment query info struct.
 /* These are created using literals where needed.
 typedef struct cpSegmentQueryInfo {
-	/// The shape that was hit, null if no collision occured.
+	/// The shape that was hit, null if no collision occurred.
 	cpShape *shape;
 	/// The normalized distance along the query segment in the range [0, 1].
 	cpFloat t;
@@ -957,7 +957,7 @@ var NearestPointQueryInfo = function(shape, p, d)
 
 var SegmentQueryInfo = function(shape, t, n)
 {
-	/// The shape that was hit, NULL if no collision occured.
+	/// The shape that was hit, NULL if no collision occurred.
 	this.shape = shape;
 	/// The normalized distance along the query segment in the range [0, 1].
 	this.t = t;
@@ -2789,7 +2789,7 @@ bbTreeRenderDebug(cpSpatialIndex *index){
 
 /// @defgroup cpArbiter cpArbiter
 /// The cpArbiter struct controls pairs of colliding shapes.
-/// They are also used in conjuction with collision handler callbacks
+/// They are also used in conjunction with collision handler callbacks
 /// allowing you to retrieve information on the collision and control it.
 
 
@@ -3052,7 +3052,7 @@ Arbiter.prototype.update = function(contacts, handler, a, b)
 				
 				// This could trigger false positives, but is fairly unlikely nor serious if it does.
 				if(new_contact.hash === old.hash){
-					// Copy the persistant contact information.
+					// Copy the persistent contact information.
 					new_contact.jnAcc = old.jnAcc;
 					new_contact.jtAcc = old.jtAcc;
 				}
@@ -4779,7 +4779,7 @@ Space.prototype.makeCollideShapes = function()
 		//cpSpacePushContacts(space, numContacts);
 
 		// Get an arbiter from space.arbiterSet for the two shapes.
-		// This is where the persistant contact magic comes from.
+		// This is where the persistent contact magic comes from.
 		var arbHash = hashPair(a.hashid, b.hashid);
 		var arb = space.cachedArbiters[arbHash];
 		if (!arb){

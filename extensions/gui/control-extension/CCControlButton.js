@@ -241,7 +241,7 @@ cc.ControlButton = cc.Control.extend(/** @lends cc.ControlButton# */{
     },
 
     /**
-     * Adjust the background image. YES by default. If the property is set to NO, the background will use the prefered size of the background image.
+     * Adjust the background image. YES by default. If the property is set to NO, the background will use the preferred size of the background image.
      * @return {Boolean}
      */
     doesAdjustBackgroundImage: function () {
@@ -262,7 +262,7 @@ cc.ControlButton = cc.Control.extend(/** @lends cc.ControlButton# */{
         return this.zoomOnTouchDown = zoomOnTouchDown;
     },
 
-    /** The prefered size of the button, if label is larger it will be expanded. */
+    /** The preferred size of the button, if label is larger it will be expanded. */
     getPreferredSize: function () {
         return this._preferredSize;
     },

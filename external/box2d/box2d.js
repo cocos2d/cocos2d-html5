@@ -2140,7 +2140,7 @@ Box2D.postDefs = [];
         var localPointB;
         var pointA;
         var pointB;
-        var seperation = 0;
+        var separation = 0;
         var normal;
         switch (this.m_type) {
             case b2SeparationFunction.e_points:
@@ -2151,8 +2151,8 @@ Box2D.postDefs = [];
                 localPointB = this.m_proxyB.GetSupportVertex(axisB);
                 pointA = b2Math.MulX(transformA, localPointA);
                 pointB = b2Math.MulX(transformB, localPointB);
-                seperation = (pointB.x - pointA.x) * this.m_axis.x + (pointB.y - pointA.y) * this.m_axis.y;
-                return seperation;
+                separation = (pointB.x - pointA.x) * this.m_axis.x + (pointB.y - pointA.y) * this.m_axis.y;
+                return separation;
             }
             case b2SeparationFunction.e_faceA:
             {
@@ -2161,8 +2161,8 @@ Box2D.postDefs = [];
                 axisB = b2Math.MulTMV(transformB.R, normal.GetNegative());
                 localPointB = this.m_proxyB.GetSupportVertex(axisB);
                 pointB = b2Math.MulX(transformB, localPointB);
-                seperation = (pointB.x - pointA.x) * normal.x + (pointB.y - pointA.y) * normal.y;
-                return seperation;
+                separation = (pointB.x - pointA.x) * normal.x + (pointB.y - pointA.y) * normal.y;
+                return separation;
             }
             case b2SeparationFunction.e_faceB:
             {
@@ -2171,8 +2171,8 @@ Box2D.postDefs = [];
                 axisA = b2Math.MulTMV(transformA.R, normal.GetNegative());
                 localPointA = this.m_proxyA.GetSupportVertex(axisA);
                 pointA = b2Math.MulX(transformA, localPointA);
-                seperation = (pointA.x - pointB.x) * normal.x + (pointA.y - pointB.y) * normal.y;
-                return seperation;
+                separation = (pointA.x - pointB.x) * normal.x + (pointA.y - pointB.y) * normal.y;
+                return separation;
             }
             default:
                 b2Settings.b2Assert(false);

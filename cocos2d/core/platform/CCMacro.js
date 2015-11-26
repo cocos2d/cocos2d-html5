@@ -785,7 +785,7 @@ cc.arrayVerifyType = function (arr, type) {
 };
 
 /**
- * Searches for the first occurance of object and removes it. If object is not found the function has no effect.
+ * Searches for the first occurrence of object and removes it. If object is not found the function has no effect.
  * @function
  * @param {Array} arr Source Array
  * @param {*} delObj  remove object

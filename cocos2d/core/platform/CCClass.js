@@ -75,7 +75,7 @@ var ClassManager = {
         ClassManager[classId] = _super;
         // Copy the properties over onto the new prototype. We make function
         // properties non-eumerable as this makes typeof === 'function' check
-        // unneccessary in the for...in loop used 1) for generating Class()
+        // unnecessary in the for...in loop used 1) for generating Class()
         // 2) for cc.clone and perhaps more. It is also required to make
         // these function properties cacheable in Carakan.
         var desc = { writable: true, enumerable: false, configurable: true };
@@ -269,7 +269,7 @@ cc.clone = function (obj) {
 
     // Assuming that the constuctor above initialized all properies on obj, the
     // following keyed assignments won't turn newObj into dictionary mode
-    // becasue they're not *appending new properties* but *assigning existing
+    // because they're not *appending new properties* but *assigning existing
     // ones* (note that appending indexed properties is another story). See
     // CCClass.js for a link to the devils when the assumption fails.
     for (var key in obj) {

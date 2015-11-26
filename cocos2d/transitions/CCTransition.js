@@ -357,7 +357,7 @@ cc.TransitionRotoZoom = cc.TransitionScene.extend(/** @lends cc.TransitionRotoZo
 });
 
 /**
- * Creates a Transtion rotation and zoom
+ * Creates a Transition rotation and zoom
  * @deprecated since v3.0,please use new cc.TransitionRotoZoom(t, scene) instead
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene the scene to work with
@@ -665,7 +665,7 @@ cc.TransitionSlideInL = cc.TransitionScene.extend(/** @lends cc.TransitionSlideI
         this._inScene.setPosition(-cc.director.getWinSize().width + cc.ADJUST_FACTOR, 0);
     },
     /**
-     * returns the action that will be performed by the incomming and outgoing scene
+     * returns the action that will be performed by the incoming and outgoing scene
      * @return {cc.MoveBy}
      */
     action:function () {
@@ -721,7 +721,7 @@ cc.TransitionSlideInR = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
         this._inScene.setPosition(cc.director.getWinSize().width - cc.ADJUST_FACTOR, 0);
     },
     /**
-     *  returns the action that will be performed by the incomming and outgoing scene
+     *  returns the action that will be performed by the incoming and outgoing scene
      * @return {cc.MoveBy}
      */
     action:function () {
@@ -771,7 +771,7 @@ cc.TransitionSlideInB = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
     },
 
     /**
-     * returns the action that will be performed by the incomming and outgoing scene
+     * returns the action that will be performed by the incoming and outgoing scene
      * @return {cc.MoveBy}
      */
     action:function () {
@@ -821,7 +821,7 @@ cc.TransitionSlideInT = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
     },
 
     /**
-     * returns the action that will be performed by the incomming and outgoing scene
+     * returns the action that will be performed by the incoming and outgoing scene
      * @return {cc.MoveBy}
      */
     action:function () {

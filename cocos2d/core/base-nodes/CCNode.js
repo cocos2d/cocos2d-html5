@@ -1504,7 +1504,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
     },
 
-    //scene managment
+    //scene management
     /**
      * <p>
      *     Event callback that is invoked every time when CCNode enters the 'stage'.                                   <br/>

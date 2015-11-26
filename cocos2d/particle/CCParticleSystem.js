@@ -124,7 +124,7 @@ cc.Particle.TemporaryPoints = [
  * <p>
  *     Particle System base class. <br/>
  *     Attributes of a Particle System:<br/>
- *     - emmision rate of the particles<br/>
+ *     - emission rate of the particles<br/>
  *     - Gravity Mode (Mode A): <br/>
  *     - gravity <br/>
  *     - direction <br/>

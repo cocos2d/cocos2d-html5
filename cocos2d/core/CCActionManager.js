@@ -102,7 +102,7 @@ cc.ActionManager = cc.Class.extend(/** @lends cc.ActionManager# */{
 
         //check if the action target already exists
         var element = this._hashTargets[target.__instanceId];
-        //if doesnt exists, create a hashelement and push in mpTargets
+        //if doesn't exists, create a hashelement and push in mpTargets
         if (!element) {
             element = new cc.HashElement();
             element.paused = paused;
