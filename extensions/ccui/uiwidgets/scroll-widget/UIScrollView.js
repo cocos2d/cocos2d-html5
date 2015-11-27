@@ -68,6 +68,10 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     inertiaScrollEnabled: false,
 
+    _scrollBarEnabled: true,
+    _verticalScrollBar: null,
+    _horizontalScrollBar: null,
+
     _scrollViewEventListener: null,
     _scrollViewEventSelector: null,
     _className: "ScrollView",
@@ -94,6 +98,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this._touchMoveTimeDeltas = [];
         this._touchMovePreviousTimestamp = 0;
 
+        this._scrollBarEnabled = true;
+
         this.setTouchEnabled(true);
     },
 
@@ -105,6 +111,10 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         if (ccui.Layout.prototype.init.call(this)) {
             this.setClippingEnabled(true);
             this._innerContainer.setTouchEnabled(false);
+            if(this._scrollBarEnabled)
+            {
+                this._initScrollBar();
+            }
             return true;
         }
         return false;
@@ -116,7 +126,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      */
     onEnter: function () {
         ccui.Layout.prototype.onEnter.call(this);
-        this.scheduleUpdate(true);
+        this.scheduleUpdate();
     },
 
     /**
@@ -209,7 +219,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         }
         this.setInnerContainerPosition(pos);
 
-        //updateScrollBar(Vec2::ZERO);
+        this._updateScrollBar(cc.p(0 ,0));
     },
 
     _setInnerWidth: function (width) {
@@ -510,11 +520,23 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this.setInnerContainerPosition(cc.pAdd(this.getInnerContainerPosition(), adjustedMove));
 
         var outOfBoundary =this._getHowMuchOutOfBoundary();
-        //updateScrollBar(outOfBoundary);
+        this._updateScrollBar(outOfBoundary);
 
         if(this.bounceEnabled && canStartBounceBack)
         {
             this._startBounceBackIfNeeded();
+        }
+    },
+
+    _updateScrollBar: function(outOfBoundary)
+    {
+        if(this._verticalScrollBar)
+        {
+            this._verticalScrollBar.onScrolled(outOfBoundary);
+        }
+        if(this._horizontalScrollBar)
+        {
+            this._horizontalScrollBar.onScrolled(outOfBoundary);
         }
     },
 
@@ -1034,16 +1056,15 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this._touchMoveDisplacements.length = 0;
         this._touchMoveTimeDeltas.length = 0;
 
-        //
-        //if(_verticalScrollBar != nullptr)
-        //{
-        //    _verticalScrollBar->onTouchBegan();
-        //}
-        //if(_horizontalScrollBar != nullptr)
-        //{
-        //    _horizontalScrollBar->onTouchBegan();
-        //}
 
+        if(this._verticalScrollBar)
+        {
+           this._verticalScrollBar.onTouchBegan();
+        }
+        if(this._horizontalScrollBar)
+        {
+            this._horizontalScrollBar.onTouchBegan();
+        }
     },
 
     _handleMoveLogic: function (touch) {
@@ -1075,14 +1096,14 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             }
         }
 
-        //if(_verticalScrollBar != nullptr)
-        //{
-        //    _verticalScrollBar->onTouchEnded();
-        //}
-        //if(_horizontalScrollBar != nullptr)
-        //{
-        //    _horizontalScrollBar->onTouchEnded();
-        //}
+        if(this._verticalScrollBar)
+        {
+            this._verticalScrollBar.onTouchEnded();
+        }
+        if(this._horizontalScrollBar)
+        {
+            this._horizontalScrollBar.onTouchEnded();
+        }
     },
 
     /**
@@ -1252,6 +1273,12 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      */
     setDirection: function (dir) {
         this.direction = dir;
+
+        if(this._scrollBarEnabled)
+        {
+            this._removeScrollBar();
+            this._initScrollBar();
+        }
     },
 
     /**
@@ -1292,6 +1319,271 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      */
     isInertiaScrollEnabled: function () {
         return this.inertiaScrollEnabled;
+    },
+
+    /**
+     * Toggle scroll bar enabled.
+     * @param {boolean} enabled True if enable scroll bar, false otherwise.
+     */
+    setScrollBarEnabled: function(enabled)
+    {
+        if(this._scrollBarEnabled === enabled)
+        {
+            return;
+        }
+
+        if(this._scrollBarEnabled)
+        {
+            this._removeScrollBar();
+        }
+        this._scrollBarEnabled = enabled;
+        if(this._scrollBarEnabled)
+        {
+            this._initScrollBar();
+        }
+    },
+    /**
+     * Query scroll bar state.
+     * @returns {boolean} True if scroll bar is enabled, false otherwise.
+     */
+    isScrollBarEnabled: function()
+    {
+        return this._scrollBarEnabled;
+    },
+
+    /**
+     * Set the scroll bar positions from the left-bottom corner (horizontal) and right-top corner (vertical).
+     * @param {cc.Point} positionFromCorner The position from the left-bottom corner (horizontal) and right-top corner (vertical).
+     */
+    setScrollBarPositionFromCorner: function(positionFromCorner)
+    {
+        if(this.direction !== ccui.ScrollView.DIR_HORIZONTAL)
+        {
+            this.setScrollBarPositionFromCornerForVertical(positionFromCorner);
+        }
+        if(this.direction !=ccui.ScrollView.DIR_VERTICAL)
+        {
+            this.setScrollBarPositionFromCornerForHorizontal(positionFromCorner);
+        }
+    },
+
+    /**
+     * Set the vertical scroll bar position from right-top corner.
+     * @param {cc.Point} positionFromCorner The position from right-top corner
+     */
+    setScrollBarPositionFromCornerForVertical: function(positionFromCorner)
+    {
+        cc.assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+        cc.assert(this.direction !== ccui.ScrollView.DIR_HORIZONTAL, "Scroll view doesn't have a vertical scroll bar!");
+        this._verticalScrollBar.setPositionFromCorner(positionFromCorner);
+    },
+
+    /**
+     * Get the vertical scroll bar's position from right-top corner.
+     * @returns {cc.Point}
+     */
+    getScrollBarPositionFromCornerForVertical: function()
+    {
+        cc.assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+        cc.assert(this.direction !== ccui.ScrollView.DIR_HORIZONTAL, "Scroll view doesn't have a vertical scroll bar!");
+        return this._verticalScrollBar.getPositionFromCorner();
+    },
+
+    /**
+     * Set the horizontal scroll bar position from left-bottom corner.
+     * @param {cc.Point} positionFromCorner The position from left-bottom corner
+     */
+    setScrollBarPositionFromCornerForHorizontal: function(positionFromCorner)
+    {
+        cc.assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+        cc.assert(this.direction !== ccui.ScrollView.DIR_VERTICAL, "Scroll view doesn't have a horizontal scroll bar!");
+        this._horizontalScrollBar.setPositionFromCorner(positionFromCorner);
+    },
+
+    /**
+     * Get the horizontal scroll bar's position from right-top corner.
+     * @returns {cc.Point}
+     */
+    getScrollBarPositionFromCornerForHorizontal: function()
+    {
+        cc.assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+        cc.assert(this.direction !== ccui.ScrollView.DIR_VERTICAL, "Scroll view doesn't have a horizontal scroll bar!");
+        return this._horizontalScrollBar.getPositionFromCorner();
+    },
+
+    /**
+     * Set the scroll bar's width
+     * @param {number} width The scroll bar's width
+     */
+    setScrollBarWidth: function(width)
+    {
+        cc.assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+        if(this._verticalScrollBar)
+        {
+            this._verticalScrollBar.setWidth(width);
+        }
+        if(this._horizontalScrollBar)
+        {
+            this._horizontalScrollBar.setWidth(width);
+        }
+    },
+
+    /**
+     * Get the scroll bar's width
+     * @returns {number} the scroll bar's width
+     */
+    getScrollBarWidth: function()
+    {
+        cc.assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+        if(this._verticalScrollBar)
+        {
+            return this._verticalScrollBar.getWidth();
+        }
+        if(this._horizontalScrollBar)
+        {
+            return this._horizontalScrollBar.getWidth();
+        }
+        return 0;
+    },
+
+    /**
+     * Set the scroll bar's color
+     * @param {cc.Color} color the scroll bar's color
+     */
+    setScrollBarColor: function(color)
+    {
+        cc.assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+        if(this._verticalScrollBar)
+        {
+            this._verticalScrollBar.setColor(color);
+        }
+        if(this._horizontalScrollBar)
+        {
+            this._horizontalScrollBar.setColor(color);
+        }
+    },
+
+    /**
+     * Get the scroll bar's color
+     * @returns {cc.Color} the scroll bar's color
+     */
+    getScrollBarColor: function()
+    {
+        cc.assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+        if(this._verticalScrollBar)
+        {
+            this._verticalScrollBar.getColor();
+        }
+        if(this._horizontalScrollBar)
+        {
+            this._horizontalScrollBar.getColor();
+        }
+        return cc.color.WHITE;
+    },
+
+    /**
+     * Set the scroll bar's opacity
+     * @param {number} opacity the scroll bar's opacity
+     */
+    setScrollBarOpacity: function(opacity)
+    {
+        cc.assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+        if(this._verticalScrollBar)
+        {
+            this._verticalScrollBar.opacity = opacity;
+        }
+        if(this._horizontalScrollBar)
+        {
+            this._horizontalScrollBar.opacity = opacity;
+        }
+    },
+
+    /**
+     * Get the scroll bar's opacity
+     * @returns {number}
+     */
+    getScrollBarOpacity: function()
+    {
+        cc.assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+        if(this._verticalScrollBar)
+        {
+            return this._verticalScrollBar.opacity;
+        }
+        if(this._horizontalScrollBar)
+        {
+            return this._horizontalScrollBar.opacity;
+        }
+        return -1;
+    },
+
+    /**
+     * Set scroll bar auto hide state
+     * @param {boolean} autoHideEnabled scroll bar auto hide state
+     */
+    setScrollBarAutoHideEnabled: function(autoHideEnabled)
+    {
+        cc.assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+        if(this._verticalScrollBar)
+        {
+            this._verticalScrollBar.autoHideEnabled = autoHideEnabled;
+        }
+        if(this._horizontalScrollBar)
+        {
+            this._horizontalScrollBar.autoHideEnabled = autoHideEnabled;
+        }
+    },
+
+    /**
+     * Query scroll bar auto hide state
+     * @returns {boolean}
+     */
+    isScrollBarAutoHideEnabled: function()
+    {
+        cc.assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+        if(this._verticalScrollBar)
+        {
+            return this._verticalScrollBar.autoHideEnabled;
+        }
+        if(this._horizontalScrollBar)
+        {
+            return this._horizontalScrollBar.autoHideEnabled;
+        }
+        return false;
+    },
+
+    /**
+     * Set scroll bar auto hide time
+     * @param {number} autoHideTime scroll bar auto hide state
+     */
+    setScrollBarAutoHideTime: function(autoHideTime)
+    {
+        cc.assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+        if(this._verticalScrollBar)
+        {
+            this._verticalScrollBar.autoHideTime = autoHideTime;
+        }
+        if(this._horizontalScrollBar)
+        {
+            this._horizontalScrollBar.autoHideTime = autoHideTime;
+        }
+    },
+
+    /**
+     * Get the scroll bar's auto hide time
+     * @returns {number}
+     */
+    getScrollBarAutoHideTime: function()
+    {
+        cc.assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
+        if(this._verticalScrollBar)
+        {
+            return this._verticalScrollBar.autoHideTime;
+        }
+        if(this._horizontalScrollBar)
+        {
+            return this._horizontalScrollBar.autoHideTime;
+        }
+        return 0;
     },
 
     /**
@@ -1372,6 +1664,51 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             this._scrollViewEventListener = scrollView._scrollViewEventListener;
             this._scrollViewEventSelector = scrollView._scrollViewEventSelector;
             this._ccEventCallback = scrollView._ccEventCallback;
+
+            this.setScrollBarEnabled(scrollView.isScrollBarEnabled());
+            if(this.isScrollBarEnabled())
+            {
+                if(this.direction !== ccui.ScrollView.DIR_HORIZONTAL)
+                {
+                    this.setScrollBarPositionFromCornerForVertical(scrollView.getScrollBarPositionFromCornerForVertical());
+                }
+                if(this.direction !== ccui.ScrollView.DIR_VERTICAL)
+                {
+                    this.setScrollBarPositionFromCornerForHorizontal(scrollView.getScrollBarPositionFromCornerForHorizontal());
+                }
+                this.setScrollBarWidth(scrollView.getScrollBarWidth());
+                this.setScrollBarColor(scrollView.getScrollBarColor());
+                this.setScrollBarAutoHideEnabled(scrollView.isScrollBarAutoHideEnabled());
+                this.setScrollBarAutoHideTime(scrollView.getScrollBarAutoHideTime());
+            }
+        }
+    },
+
+    _initScrollBar: function()
+    {
+        if(this.direction !== ccui.ScrollView.DIR_HORIZONTAL && !this._verticalScrollBar)
+        {
+            this._verticalScrollBar = new ccui.ScrollViewBar(this, ccui.ScrollView.DIR_VERTICAL);
+            this.addProtectedChild(this._verticalScrollBar, 2);
+        }
+        if(this.direction !== ccui.ScrollView.DIR_VERTICAL && !this._horizontalScrollBar)
+        {
+            this._horizontalScrollBar = new ccui.ScrollViewBar(this, ccui.ScrollView.DIR_HORIZONTAL);
+            this.addProtectedChild(this._horizontalScrollBar, 2);
+        }
+    },
+
+    _removeScrollBar: function()
+    {
+        if(this._verticalScrollBar)
+        {
+            this.removeProtectedChild(this._verticalScrollBar);
+            this._verticalScrollBar = null;
+        }
+        if(this._horizontalScrollBar)
+        {
+            this.removeProtectedChild(this._horizontalScrollBar);
+            this._horizontalScrollBar = null;
         }
     },
 
