@@ -1,6 +1,6 @@
 /****************************************************************************
  Copyright (c) 2015 Neo Kim (neo.kim@neofect.com)
- Copyright (c) 2015 Nikita Besshaposhnikov (nikita.besshapshnikov@gmail.com)
+ Copyright (c) 2015 Nikita Besshaposhnikov (nikita.besshaposhnikov@gmail.com)
 
  http://www.cocos2d-x.org
 
@@ -35,7 +35,7 @@
  */
 ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */{
     _parentScroll: null,
-    _direction: 0,
+    _direction: null,
 
     _upperHalfCircle: null,
     _lowerHalfCircle: null,
@@ -372,7 +372,7 @@ var _p = ccui.ScrollViewBar.prototype;
 /** @expose */
 _p.opacity;
 cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
-
+/** @expose */
 _p.autoHideEnabled;
 cc.defineGetterSetter(_p, "autoHideEnabled", _p.isAutoHideEnabled, _p.setAutoHideEnabled);
 
