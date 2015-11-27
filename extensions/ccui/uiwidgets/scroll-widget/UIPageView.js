@@ -63,6 +63,8 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
         if (ccui.ListView.prototype.init.call(this)) {
             this.setDirection(ccui.ScrollView.DIR_HORIZONTAL);
             this.setMagneticType(ccui.ListView.MAGNETIC_CENTER);
+            this.setScrollBarEnabled(false);
+
             return true;
         }
         return false;
@@ -190,7 +192,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
 
     _handleReleaseLogic: function (touchPoint) {
 
-        ccui.ScrollView._handleReleaseLogic.call(this, touchPoint);
+        ccui.ScrollView.prototype._handleReleaseLogic.call(this, touchPoint);
 
         if (this._items.length <= 0)
             return;
@@ -342,7 +344,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
     },
 
     _copySpecialProperties: function (pageView) {
-        ccui.Layout.prototype._copySpecialProperties.call(this, pageView);
+        ccui.ListView.prototype._copySpecialProperties.call(this, pageView);
         this._ccEventCallback = pageView._ccEventCallback;
         this._pageViewEventListener = pageView._pageViewEventListener;
         this._pageViewEventSelector = pageView._pageViewEventSelector;
