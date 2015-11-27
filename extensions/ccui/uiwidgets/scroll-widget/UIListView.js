@@ -52,6 +52,8 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
 
     _magneticAllowedOutOfBoundary: true,
     _magneticType: 0,
+    _className:"ListView",
+
     /**
      * allocates and initializes a UIListView.
      * Constructor of ccui.ListView, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
@@ -102,6 +104,11 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         {
             this._startMagneticScroll();
         }
+    },
+
+    _onItemListChanged: function()
+    {
+        this._outOfBoundaryAmountDirty = true;
     },
 
     _updateInnerContainerSize: function () {
@@ -250,7 +257,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
             if(widget instanceof ccui.Widget)
             {
                 this._items.push(widget);
-                this._outOfBoundaryAmountDirty = true;
+                this._onItemListChanged();
             }
         }
     },
@@ -267,7 +274,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
             if(index > -1)
                 this._items.splice(index, 1);
 
-            this._outOfBoundaryAmountDirty = true;
+            this._onItemListChanged();
 
             ccui.ScrollView.prototype.removeChild.call(this, widget, cleanup);
         }
@@ -288,7 +295,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         ccui.ScrollView.prototype.removeAllChildrenWithCleanup.call(this, cleanup);
         this._items = [];
 
-        this._outOfBoundaryAmountDirty = true;
+        this._onItemListChanged();
     },
 
     /**
@@ -299,7 +306,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     insertCustomItem: function (item, index) {
         this._items.splice(index, 0, item);
 
-        this._outOfBoundaryAmountDirty = true;
+        this._onItemListChanged();
         ccui.ScrollView.prototype.addChild.call(this, item);
         this._remedyLayoutParameter(item);
         this._refreshViewDirty = true;
@@ -379,7 +386,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     setMagneticType: function(magneticType)
     {
         this._magneticType = magneticType;
-        this._outOfBoundaryAmountDirty = true;
+        this._onItemListChanged();
         this._startMagneticScroll();
     },
 
