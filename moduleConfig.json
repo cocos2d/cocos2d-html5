@@ -340,6 +340,8 @@
             "extensions/ccui/uiwidgets/scroll-widget/UIScrollView.js",
             "extensions/ccui/uiwidgets/scroll-widget/UIListView.js",
             "extensions/ccui/uiwidgets/scroll-widget/UIPageView.js",
+            "extensions/ccui/uiwidgets/scroll-widget/UIPageViewIndicator.js",
+            "extensions/ccui/uiwidgets/scroll-widget/UIPageView.js",
             "extensions/ccui/uiwidgets/scroll-widget/UIScrollViewCanvasRenderCmd.js",
             "extensions/ccui/uiwidgets/scroll-widget/UIScrollViewWebGLRenderCmd.js"
         ],
