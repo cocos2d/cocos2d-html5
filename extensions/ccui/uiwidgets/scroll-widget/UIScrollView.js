@@ -36,7 +36,7 @@
  */
 ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     _innerContainer: null,
-    direction: null,
+    _direction: null,
 
     _topBoundary: 0,
     _bottomBoundary: 0,
@@ -85,7 +85,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      */
     ctor: function () {
         ccui.Layout.prototype.ctor.call(this);
-        this.direction = ccui.ScrollView.DIR_NONE;
+        this._direction = ccui.ScrollView.DIR_NONE;
 
         this._childFocusCancelOffset = 5;
         this.inertiaScrollEnabled = true;
@@ -130,10 +130,10 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * When a widget is in a layout, you could call this method to get the next focused widget within a specified direction.             <br/>
+     * When a widget is in a layout, you could call this method to get the next focused widget within a specified _direction.             <br/>
      * If the widget is not in a layout, it will return itself
      *
-     * @param {Number} direction the direction to look for the next focused widget in a layout
+     * @param {Number} _direction the _direction to look for the next focused widget in a layout
      * @param {ccui.Widget} current the current focused widget
      * @returns {ccui.Widget}
      */
@@ -182,10 +182,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     setInnerContainerSize: function (size) {
         var innerContainer = this._innerContainer,
             locSize = this._contentSize,
-            innerSizeWidth = locSize.width, innerSizeHeight = locSize.height,
-            originalInnerSize = innerContainer.getContentSize(),
-            renderCmd = this._renderCmd,
-            newInnerSize, offset;
+            innerSizeWidth = locSize.width, innerSizeHeight = locSize.height;
+
         if (size.width < locSize.width)
             cc.log("Inner width <= ScrollView width, it will be force sized!");
         else
@@ -233,7 +231,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             innerWidth = width;
         container.width = innerWidth;
 
-        switch (this.direction) {
+        switch (this._direction) {
             case ccui.ScrollView.DIR_HORIZONTAL:
             case ccui.ScrollView.DIR_BOTH:
                 if (container.getRightBoundary() <= locW) {
@@ -261,7 +259,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             innerHeight = height;
         container.height = innerHeight;
 
-        switch (this.direction) {
+        switch (this._direction) {
             case ccui.ScrollView.DIR_VERTICAL:
             case ccui.ScrollView.DIR_BOTH:
                 var newInnerHeight = innerHeight;
@@ -292,11 +290,11 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         // Process bouncing events
         if(this.bounceEnabled)
         {
-            for(var direction = ccui.ScrollView.MOVEDIR_TOP; direction < ccui.ScrollView.MOVEDIR_RIGHT; ++direction)
+            for(var _direction = ccui.ScrollView.MOVEDIR_TOP; _direction < ccui.ScrollView.MOVEDIR_RIGHT; ++_direction)
             {
-                if(this._isOutOfBoundary(direction))
+                if(this._isOutOfBoundary(_direction))
                 {
-                   this._processScrollEvent(direction, true);
+                   this._processScrollEvent(_direction, true);
                 }
             }
         }
@@ -444,8 +442,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     _flattenVectorByDirection: function(vector)
     {
         var result = cc.p(0 ,0);
-        result.x = (this.direction === ccui.ScrollView.DIR_VERTICAL ? 0 : vector.x);
-        result.y = (this.direction === ccui.ScrollView.DIR_HORIZONTAL ? 0 : vector.y);
+        result.x = (this._direction === ccui.ScrollView.DIR_VERTICAL ? 0 : vector.x);
+        result.y = (this._direction === ccui.ScrollView.DIR_HORIZONTAL ? 0 : vector.y);
         return result;
     },
 
@@ -839,7 +837,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * @param {Boolean} attenuated
      */
     scrollToTopLeft: function (time, attenuated) {
-        if (this.direction !== ccui.ScrollView.DIR_BOTH) {
+        if (this._direction !== ccui.ScrollView.DIR_BOTH) {
             cc.log("Scroll direction is not both!");
             return;
         }
@@ -852,7 +850,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * @param {Boolean} attenuated
      */
     scrollToTopRight: function (time, attenuated) {
-        if (this.direction !== ccui.ScrollView.DIR_BOTH) {
+        if (this._direction !== ccui.ScrollView.DIR_BOTH) {
             cc.log("Scroll direction is not both!");
             return;
         }
@@ -867,7 +865,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * @param {Boolean} attenuated
      */
     scrollToBottomLeft: function (time, attenuated) {
-        if (this.direction !== ccui.ScrollView.DIR_BOTH) {
+        if (this._direction !== ccui.ScrollView.DIR_BOTH) {
             cc.log("Scroll direction is not both!");
             return;
         }
@@ -880,7 +878,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * @param {Boolean} attenuated
      */
     scrollToBottomRight: function (time, attenuated) {
-        if (this.direction !== ccui.ScrollView.DIR_BOTH) {
+        if (this._direction !== ccui.ScrollView.DIR_BOTH) {
             cc.log("Scroll direction is not both!");
             return;
         }
@@ -911,13 +909,13 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * Scroll inner container to both direction percent position of ScrollView.
+     * Scroll inner container to both _direction percent position of ScrollView.
      * @param {cc.Point} percent
      * @param {Number} time
      * @param {Boolean} attenuated
      */
     scrollToPercentBothDirection: function (percent, time, attenuated) {
-        if (this.direction !== ccui.ScrollView.DIR_BOTH)
+        if (this._direction !== ccui.ScrollView.DIR_BOTH)
             return;
         var minY = this._contentSize.height - this._innerContainer.getContentSize().height;
         var h = -minY;
@@ -957,8 +955,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * Move inner container to top and left boundary of ScrollView.
      */
     jumpToTopLeft: function () {
-        if (this.direction !== ccui.ScrollView.DIR_BOTH) {
-            cc.log("Scroll direction is not both!");
+        if (this._direction !== ccui.ScrollView.DIR_BOTH) {
+            cc.log("Scroll _direction is not both!");
             return;
         }
         this._jumpToDestination(0, this._contentSize.height - this._innerContainer.getContentSize().height);
@@ -968,8 +966,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * Move inner container to top and right boundary of ScrollView.
      */
     jumpToTopRight: function () {
-        if (this.direction !== ccui.ScrollView.DIR_BOTH) {
-            cc.log("Scroll direction is not both!");
+        if (this._direction !== ccui.ScrollView.DIR_BOTH) {
+            cc.log("Scroll _direction is not both!");
             return;
         }
         var inSize = this._innerContainer.getContentSize();
@@ -980,8 +978,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * Move inner container to bottom and left boundary of ScrollView.
      */
     jumpToBottomLeft: function () {
-        if (this.direction !== ccui.ScrollView.DIR_BOTH) {
-            cc.log("Scroll direction is not both!");
+        if (this._direction !== ccui.ScrollView.DIR_BOTH) {
+            cc.log("Scroll _direction is not both!");
             return;
         }
         this._jumpToDestination(0, 0);
@@ -991,8 +989,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * Move inner container to bottom and right boundary of ScrollView.
      */
     jumpToBottomRight: function () {
-        if (this.direction !== ccui.ScrollView.DIR_BOTH) {
-            cc.log("Scroll direction is not both!");
+        if (this._direction !== ccui.ScrollView.DIR_BOTH) {
+            cc.log("Scroll _direction is not both!");
             return;
         }
         this._jumpToDestination(this._contentSize.width - this._innerContainer.getContentSize().width, 0);
@@ -1018,11 +1016,11 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * Move inner container to both direction percent position of ScrollView.
+     * Move inner container to both _direction percent position of ScrollView.
      * @param {cc.Point} percent The destination vertical percent, accept value between 0 - 100
      */
     jumpToPercentBothDirection: function (percent) {
-        if (this.direction !== ccui.ScrollView.DIR_BOTH)
+        if (this._direction !== ccui.ScrollView.DIR_BOTH)
             return;
         var inSize = this._innerContainer.getContentSize();
         var minY = this._contentSize.height - inSize.height;
@@ -1206,11 +1204,11 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         }
     },
 
-    _processScrollEvent: function(directionEvent, bounce)
+    _processScrollEvent: function(_directionEvent, bounce)
     {
         var event = 0;
 
-        switch(directionEvent)
+        switch(_directionEvent)
         {
             case ccui.ScrollView.MOVEDIR_TOP:
                 event = (bounce ? ccui.ScrollView.EVENT_BOUNCE_TOP : ccui.ScrollView.EVENT_SCROLL_TO_TOP);
@@ -1267,12 +1265,12 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     /**
-     * Changes scroll direction of ScrollView.
+     * Changes scroll _direction of ScrollView.
      * @param {ccui.ScrollView.DIR_NONE | ccui.ScrollView.DIR_VERTICAL | ccui.ScrollView.DIR_HORIZONTAL | ccui.ScrollView.DIR_BOTH} dir
      *   Direction::VERTICAL means vertical scroll, Direction::HORIZONTAL means horizontal scroll
      */
     setDirection: function (dir) {
-        this.direction = dir;
+        this._direction = dir;
 
         if(this._scrollBarEnabled)
         {
@@ -1286,7 +1284,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * @returns {ccui.ScrollView.DIR_NONE | ccui.ScrollView.DIR_VERTICAL | ccui.ScrollView.DIR_HORIZONTAL | ccui.ScrollView.DIR_BOTH}
      */
     getDirection: function () {
-        return this.direction;
+        return this._direction;
     },
 
     /**
@@ -1357,11 +1355,11 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      */
     setScrollBarPositionFromCorner: function(positionFromCorner)
     {
-        if(this.direction !== ccui.ScrollView.DIR_HORIZONTAL)
+        if(this._direction !== ccui.ScrollView.DIR_HORIZONTAL)
         {
             this.setScrollBarPositionFromCornerForVertical(positionFromCorner);
         }
-        if(this.direction !=ccui.ScrollView.DIR_VERTICAL)
+        if(this._direction !== ccui.ScrollView.DIR_VERTICAL)
         {
             this.setScrollBarPositionFromCornerForHorizontal(positionFromCorner);
         }
@@ -1374,7 +1372,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     setScrollBarPositionFromCornerForVertical: function(positionFromCorner)
     {
         cc.assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
-        cc.assert(this.direction !== ccui.ScrollView.DIR_HORIZONTAL, "Scroll view doesn't have a vertical scroll bar!");
+        cc.assert(this._direction !== ccui.ScrollView.DIR_HORIZONTAL, "Scroll view doesn't have a vertical scroll bar!");
         this._verticalScrollBar.setPositionFromCorner(positionFromCorner);
     },
 
@@ -1385,7 +1383,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     getScrollBarPositionFromCornerForVertical: function()
     {
         cc.assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
-        cc.assert(this.direction !== ccui.ScrollView.DIR_HORIZONTAL, "Scroll view doesn't have a vertical scroll bar!");
+        cc.assert(this._direction !== ccui.ScrollView.DIR_HORIZONTAL, "Scroll view doesn't have a vertical scroll bar!");
         return this._verticalScrollBar.getPositionFromCorner();
     },
 
@@ -1396,7 +1394,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     setScrollBarPositionFromCornerForHorizontal: function(positionFromCorner)
     {
         cc.assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
-        cc.assert(this.direction !== ccui.ScrollView.DIR_VERTICAL, "Scroll view doesn't have a horizontal scroll bar!");
+        cc.assert(this._direction !== ccui.ScrollView.DIR_VERTICAL, "Scroll view doesn't have a horizontal scroll bar!");
         this._horizontalScrollBar.setPositionFromCorner(positionFromCorner);
     },
 
@@ -1407,7 +1405,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     getScrollBarPositionFromCornerForHorizontal: function()
     {
         cc.assert(this._scrollBarEnabled, "Scroll bar should be enabled!");
-        cc.assert(this.direction !== ccui.ScrollView.DIR_VERTICAL, "Scroll view doesn't have a horizontal scroll bar!");
+        cc.assert(this._direction !== ccui.ScrollView.DIR_VERTICAL, "Scroll view doesn't have a horizontal scroll bar!");
         return this._horizontalScrollBar.getPositionFromCorner();
     },
 
@@ -1637,7 +1635,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             ccui.Layout.prototype._copySpecialProperties.call(this, scrollView);
             this.setInnerContainerSize(scrollView.getInnerContainerSize());
             this.setInnerContainerPosition(scrollView.getInnerContainerPosition());
-            this.setDirection(scrollView.direction);
+            this.setDirection(scrollView._direction);
 
             this._topBoundary = scrollView._topBoundary;
             this._bottomBoundary = scrollView._bottomBoundary;
@@ -1668,11 +1666,11 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             this.setScrollBarEnabled(scrollView.isScrollBarEnabled());
             if(this.isScrollBarEnabled())
             {
-                if(this.direction !== ccui.ScrollView.DIR_HORIZONTAL)
+                if(this._direction !== ccui.ScrollView.DIR_HORIZONTAL)
                 {
                     this.setScrollBarPositionFromCornerForVertical(scrollView.getScrollBarPositionFromCornerForVertical());
                 }
-                if(this.direction !== ccui.ScrollView.DIR_VERTICAL)
+                if(this._direction !== ccui.ScrollView.DIR_VERTICAL)
                 {
                     this.setScrollBarPositionFromCornerForHorizontal(scrollView.getScrollBarPositionFromCornerForHorizontal());
                 }
@@ -1686,12 +1684,12 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
     _initScrollBar: function()
     {
-        if(this.direction !== ccui.ScrollView.DIR_HORIZONTAL && !this._verticalScrollBar)
+        if(this._direction !== ccui.ScrollView.DIR_HORIZONTAL && !this._verticalScrollBar)
         {
             this._verticalScrollBar = new ccui.ScrollViewBar(this, ccui.ScrollView.DIR_VERTICAL);
             this.addProtectedChild(this._verticalScrollBar, 2);
         }
-        if(this.direction !== ccui.ScrollView.DIR_VERTICAL && !this._horizontalScrollBar)
+        if(this._direction !== ccui.ScrollView.DIR_VERTICAL && !this._horizontalScrollBar)
         {
             this._horizontalScrollBar = new ccui.ScrollViewBar(this, ccui.ScrollView.DIR_HORIZONTAL);
             this.addProtectedChild(this._horizontalScrollBar, 2);
@@ -1778,7 +1776,9 @@ cc.defineGetterSetter(_p, "innerWidth", _p._getInnerWidth, _p._setInnerWidth);
 /** @expose */
 _p.innerHeight;
 cc.defineGetterSetter(_p, "innerHeight", _p._getInnerHeight, _p._setInnerHeight);
-
+/** @expose */
+_p.direction;
+cc.defineGetterSetter(_p, "direction", _p.getDirection, _p.setDirection);
 _p = null;
 
 /**
