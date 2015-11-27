@@ -40,6 +40,8 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
     _pageViewEventSelector: null,
     _className:"PageView",
 
+    _indicator: null,
+    _indicatorPositionAsAnchorPoint: null,
     /**
      * Allocates and initializes a UIPageView.
      * Constructor of ccui.PageView. please do not call this function by yourself, you should pass the parameters to constructor to initialize it .
@@ -51,6 +53,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
         ccui.ListView.prototype.ctor.call(this);
 
         this._childFocusCancelOffset = 5;
+        this._indicatorPositionAsAnchorPoint = cc.p(0.5, 1);
         this._pageViewEventListener = null;
         this._pageViewEventSelector = null;
     },
@@ -146,7 +149,36 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
 
         ccui.ListView.prototype._doLayout.call(this);
 
+        if(this._indicator)
+        {
+            var index = this.getIndex(this.getCenterItemInCurrentView());
+            this._indicator.indicate(index);
+        }
+
         this._refreshViewDirty = false;
+    },
+
+    /**
+     * Changes scroll direction of ccui.PageView.
+     * @param {ccui.ScrollView.DIR_NONE | ccui.ScrollView.DIR_VERTICAL | ccui.ScrollView.DIR_HORIZONTAL | ccui.ScrollView.DIR_BOTH} direction
+     */
+    setDirection: function(direction)
+    {
+        ccui.ListView.prototype.setDirection.call(this, direction);
+        if(direction === ccui.ScrollView.DIR_HORIZONTAL)
+        {
+            this._indicatorPositionAsAnchorPoint = cc.p(0.5, 0.1);
+        }
+        else if(direction === ccui.ScrollView.DIR_VERTICAL)
+        {
+            this._indicatorPositionAsAnchorPoint = cc.p(0.1, 0.5);
+        }
+
+        if(this._indicator)
+        {
+            this._indicator.setDirection(direction);
+            this._refreshIndicatorPosition();
+        }
     },
 
     /**
@@ -188,6 +220,36 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
     {
         ccui.ListView.prototype._moveInnerContainer.call(this, deltaMove, canStartBounceBack);
         this._curPageIdx = this.getIndex(this.getCenterItemInCurrentView());
+        if(this._indicator)
+        {
+            this._indicator.indicate(this._curPageIdx);
+        }
+    },
+
+    _onItemListChanged: function()
+    {
+        ccui.ListView.prototype._onItemListChanged.call(this);
+        if(this._indicator)
+        {
+            this._indicator.reset(this._items.length);
+        }
+    },
+
+    _onSizeChanged: function()
+    {
+        ccui.ListView.prototype._onSizeChanged.call(this);
+        this._refreshIndicatorPosition();
+    },
+
+    _refreshIndicatorPosition: function()
+    {
+        if(this._indicator)
+        {
+            var contentSize = this.getContentSize();
+            var posX = contentSize.width * this._indicatorPositionAsAnchorPoint.x;
+            var posY = contentSize.height * this._indicatorPositionAsAnchorPoint.y;
+            this._indicator.setPosition(cc.p(posX, posY));
+        }
     },
 
     _handleReleaseLogic: function (touchPoint) {
@@ -349,6 +411,130 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
         this._pageViewEventListener = pageView._pageViewEventListener;
         this._pageViewEventSelector = pageView._pageViewEventSelector;
         this._customScrollThreshold = pageView._customScrollThreshold;
+    },
+
+
+    /**
+     * Toggle page indicator enabled.
+     * @param {boolean} enabled True if enable page indicator, false otherwise.
+     */
+    setIndicatorEnabled: function(enabled)
+    {
+        if(enabled == (this._indicator !== null))
+        {
+            return;
+        }
+
+        if(!enabled)
+        {
+            this.removeProtectedChild(this._indicator);
+            this._indicator = null;
+        }
+        else
+        {
+            this._indicator = new ccui.PageViewIndicator();
+            this._indicator.setDirection(this.getDirection());
+            this.addProtectedChild(this._indicator, 10000);
+            this.setIndicatorSelectedIndexColor(cc.color(100, 100, 255));
+            this._refreshIndicatorPosition();
+        }
+    },
+
+    /**
+     * Query page indicator state.
+     * @returns {boolean} True if page indicator is enabled, false otherwise.
+     */
+    getIndicatorEnabled: function()
+    {
+        return this._indicator !== null;
+    },
+
+    /**
+     * Set the page indicator's position using anchor point.
+     * @param {cc.Point} positionAsAnchorPoint The position as anchor point.
+     */
+    setIndicatorPositionAsAnchorPoint: function(positionAsAnchorPoint)
+    {
+        this._indicatorPositionAsAnchorPoint = positionAsAnchorPoint;
+        this._refreshIndicatorPosition();
+    },
+
+    /**
+     * Get the page indicator's position as anchor point.
+     * @returns {cc.Point}
+     */
+    getIndicatorPositionAsAnchorPoint: function()
+    {
+        return this._indicatorPositionAsAnchorPoint;
+    },
+
+    /**
+     * Set the page indicator's position in page view.
+     * @param {cc.Point} position The position in page view
+     */
+    setIndicatorPosition: function(position)
+    {
+        if(this._indicator)
+        {
+            var contentSize = this.getContentSize();
+            this._indicatorPositionAsAnchorPoint.x = position.x / contentSize.width;
+            this._indicatorPositionAsAnchorPoint.y = position.y / contentSize.height;
+            this._indicator.setPosition(position);
+        }
+    },
+
+    /**
+     * Get the page indicator's position.
+     * @returns {cc.Point}
+     */
+    getIndicatorPosition: function()
+    {
+        cc.assert(this._indicator !== null, "");
+        return this._indicator.getPosition();
+    },
+
+    /**
+     * Set space between page indicator's index nodes.
+     * @param {number} spaceBetweenIndexNodes Space between nodes in pixel.
+     */
+    setIndicatorSpaceBetweenIndexNodes: function(spaceBetweenIndexNodes)
+    {
+        if(this._indicator)
+        {
+            this._indicator.setSpaceBetweenIndexNodes(spaceBetweenIndexNodes);
+        }
+    },
+
+    /**
+     * Get the space between page indicator's index nodes.
+     * @returns {number}
+     */
+    getIndicatorSpaceBetweenIndexNodes: function()
+    {
+        cc.assert(this._indicator !== null, "");
+        return this._indicator.getSpaceBetweenIndexNodes();
+    },
+
+    /**
+     * Set color of page indicator's selected index.
+     * @param {cc.Color} color Color for indicator
+     */
+    setIndicatorSelectedIndexColor: function(color)
+    {
+        if(this._indicator)
+        {
+            this._indicator.setSelectedIndexColor(color);
+        }
+    },
+
+    /**
+     * Get the color of page indicator's selected index.
+     * @returns {cc.Color}
+     */
+    getIndicatorSelectedIndexColor: function()
+    {
+        cc.assert(this._indicator !== null, "");
+        return this._indicator.getSelectedIndexColor();
     }
 });
 /**
