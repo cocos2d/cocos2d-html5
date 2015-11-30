@@ -1402,8 +1402,9 @@ ccs.ZOrderFrame.create = function(){
 ccs.BlendFuncFrame = ccs.Frame.extend({
 
     onEnter: function(nextFrame, currentFrameIndex){
-        if(this._node)
+        if (this._node && this._blendFunc) {
             this._node.setBlendFunc(this._blendFunc);
+        }
     },
 
     clone: function(){
