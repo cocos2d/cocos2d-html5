@@ -53,12 +53,8 @@
         if (node._positionsAreDirty) {
             node._updatePositions();
             node._positionsAreDirty = false;
-            node._scale9Dirty = true;
         }
 
-        this._cacheScale9Sprite();
-
-        node._scale9Dirty = false;
         cc.Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
     };
 
@@ -68,9 +64,7 @@
         if (node._positionsAreDirty) {
             node._updatePositions();
             node._positionsAreDirty = false;
-            node._scale9Dirty = true;
         }
-        this._cacheScale9Sprite();
 
         var children = node._children;
         for(var i=0; i<children.length; i++){
@@ -95,16 +89,38 @@
                 else
                     break;
             }
-            this._cacheScale9Sprite();
         }
         else {
             if (node._scale9Image) {
                 node._scale9Image._renderCmd._updateDisplayColor(parentColor);
                 node._scale9Image._renderCmd._updateColor();
-                this._cacheScale9Sprite();
             }
         }
     };
+
+    proto.updateStatus = function () {
+        var flags = cc.Node._dirtyFlags, 
+            locFlag = this._dirtyFlag;
+
+        cc.Node.RenderCmd.prototype.updateStatus.call(this);
+
+        if (locFlag & flags.cacheDirty) {
+            this._cacheScale9Sprite();
+            this._dirtyFlag = this._dirtyFlag & flags.cacheDirty ^ this._dirtyFlag;
+        }
+    };
+
+    proto._syncStatus = function (parentCmd) {
+        var flags = cc.Node._dirtyFlags, 
+            locFlag = this._dirtyFlag;
+
+        cc.Node.RenderCmd.prototype._syncStatus.call(this, parentCmd);
+        
+        if (locFlag & flags.cacheDirty) {
+            this._cacheScale9Sprite();
+            this._dirtyFlag = this._dirtyFlag & flags.cacheDirty ^ this._dirtyFlag;
+        }
+    }
 
     proto._cacheScale9Sprite = function() {
         var node = this._node;
@@ -172,6 +188,6 @@
         if(!locScale9Image)
             return;
         this._state = state;
-        this._cacheScale9Sprite();
+        this.setDirtyFlag(cc.Node._dirtyFlags.cacheDirty);
     };
 })();

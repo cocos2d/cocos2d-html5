@@ -1611,8 +1611,20 @@ var _initSys = function () {
     sys.language = currLanguage;
 
     // Get the os of system
-    var iOS = ( ua.match(/(iPad|iPhone|iPod)/i) ? true : false );
-    var isAndroid = ua.match(/android/i) || nav.platform.match(/android/i) ? true : false;
+    var isAndroid = false, iOS = false, osVersion = '', osMainVersion = 0;
+    var uaResult = /android (\d+(?:\.\d+)+)/i.exec(ua) || /android (\d+(?:\.\d+)+)/i.exec(nav.platform);
+    if (uaResult) {
+        isAndroid = true;
+        osVersion = uaResult[1] || '';
+        osMainVersion = parseInt(osVersion) || 0;
+    }
+    uaResult = /(iPad|iPhone|iPod).*OS ((\d+_?){2,3})/i.exec(ua);
+    if (uaResult) {
+        iOS = true;
+        osVersion = uaResult[2] || '';
+        osMainVersion = parseInt(osVersion) || 0;
+    }
+
     var osName = sys.OS_UNKNOWN;
     if (nav.appVersion.indexOf("Win") !== -1) osName = sys.OS_WINDOWS;
     else if (iOS) osName = sys.OS_IOS;
@@ -1628,6 +1640,20 @@ var _initSys = function () {
      * @type {String}
      */
     sys.os = osName;
+    /**
+     * Indicate the running os version string
+     * @memberof cc.sys
+     * @name osVersion
+     * @type {String}
+     */
+    sys.osVersion = osVersion;
+    /**
+     * Indicate the running os main version number
+     * @memberof cc.sys
+     * @name osMainVersion
+     * @type {Number}
+     */
+    sys.osMainVersion = osMainVersion;
 
     /**
      * Indicate the running browser type

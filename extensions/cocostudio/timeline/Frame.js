@@ -1346,7 +1346,7 @@ ccs.EventFrame.create = function(){
  */
 ccs.ZOrderFrame = ccs.Frame.extend({
 
-    _zorder: null,
+    _zorder: 0,
 
     /**
      * the execution of the callback
@@ -1400,9 +1400,13 @@ ccs.ZOrderFrame.create = function(){
 };
 
 ccs.BlendFuncFrame = ccs.Frame.extend({
+    ctor: function () {
+        this._super();
+        this._blendFunc = null;
+    },
 
     onEnter: function(nextFrame, currentFrameIndex){
-        if(this._node)
+        if(this._node && this._blendFunc)
             this._node.setBlendFunc(this._blendFunc);
     },
 
@@ -1414,7 +1418,8 @@ ccs.BlendFuncFrame = ccs.Frame.extend({
     },
 
     setBlendFunc: function(blendFunc){
-        this._blendFunc = blendFunc;
+        if (blendFunc && blendFunc.src && blendFunc.dst)
+            this._blendFunc = blendFunc;
     },
 
     getBlendFunc: function(){

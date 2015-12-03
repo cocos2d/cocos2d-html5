@@ -143,7 +143,10 @@
         if(colorDirty || opacityDirty)
             this._updateColor();
 
-        //update the transform every visit, needn't dirty flag,
+        if (locFlag & flags.orderDirty)
+            this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
+
+        //update the transform every visit, don't need dirty flag,
         this.transform(this.getParentRenderCmd(), true);
     };
 

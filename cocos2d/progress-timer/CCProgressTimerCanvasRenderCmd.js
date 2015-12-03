@@ -235,6 +235,10 @@
             //update the transform
             this.transform(parentCmd);
         }
+
+        if (locFlag & flags.orderDirty) {
+            this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
+        }
     };
 
     proto.updateStatus = function () {

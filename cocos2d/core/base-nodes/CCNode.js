@@ -1446,6 +1446,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         child.arrivalOrder = cc.s_globalOrderOfArrival;
         cc.s_globalOrderOfArrival++;
         child._setLocalZOrder(zOrder);
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.orderDirty);
     },
 
     /**
