@@ -271,14 +271,17 @@
         }
 
         // it's possible to have an untextured sprite
-        var node = this._node;
+        var node = this._node,
+            blendFunc = node._blendFunc;
         if (!node._texture || !node._texture.hasPremultipliedAlpha()) {
-            node._blendFunc.src = cc.SRC_ALPHA;
-            node._blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
+            if (blendFunc.src === cc.ONE && blendFunc.dst === cc.BLEND_DST) {
+                blendFunc.src = cc.SRC_ALPHA;
+            }
             node.opacityModifyRGB = false;
         } else {
-            node._blendFunc.src = cc.BLEND_SRC;
-            node._blendFunc.dst = cc.BLEND_DST;
+            if (blendFunc.src === cc.SRC_ALPHA && blendFunc.dst === cc.BLEND_DST) {
+                blendFunc.src = cc.ONE;
+            }
             node.opacityModifyRGB = true;
         }
     };

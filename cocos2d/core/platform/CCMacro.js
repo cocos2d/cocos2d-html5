@@ -460,7 +460,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
  * @constant
  * @type Number
  */
-cc.BLEND_DST = 0x0303;
+cc.BLEND_DST = cc.ONE_MINUS_SRC_ALPHA;
 
 /**
  * Check webgl error.Error will be shown in console if exists.
