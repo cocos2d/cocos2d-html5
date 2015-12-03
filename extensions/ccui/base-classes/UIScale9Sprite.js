@@ -66,7 +66,6 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
     _bottomRight: null,
 
     _scale9Enabled: true,
-    _scale9Dirty: true,
     _brightState: 0,
     _renderers: null,
 
@@ -264,7 +263,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         if (this._positionsAreDirty) {
             this._updatePositions();
             this._positionsAreDirty = false;
-            this._scale9Dirty = true;
+            this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.cacheDirty);
         }
     },
     _setPreferredWidth: function (value) {
@@ -286,7 +285,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         }
         else if(this._scale9Image)
             this._scale9Image.setOpacity(opacity);
-        this._scale9Dirty = true;
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.cacheDirty);
     },
 
     /** Color: conforms to CCRGBAProtocol protocol */
@@ -302,7 +301,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         }
         else if (this._scale9Image)
             this._scale9Image.setColor(color);
-        this._scale9Dirty = true;
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.cacheDirty);
     },
 
     getCapInsets: function () {
@@ -592,6 +591,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
             for (var i = 0, len = scaleChildren.length; i < len; i++)
                 scaleChildren[i].setOpacityModifyRGB(value);
         }
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.cacheDirty);
     },
 
     /** returns whether or not the opacity will be applied using glColor(R,G,B,opacity) or glColor(opacity, opacity, opacity, opacity);
@@ -1025,6 +1025,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         var realScale = this.getScaleX();
         this._flippedX = flippedX;
         this.setScaleX(realScale);
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.cacheDirty);
     },
 
     /**
@@ -1052,6 +1053,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         var realScale = this.getScaleY();
         this._flippedY = flippedY;
         this.setScaleY(realScale);
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.cacheDirty);
     },
 
     /**
@@ -1074,12 +1076,14 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         if (this._flippedX)
             scaleX = scaleX * -1;
         cc.Node.prototype.setScaleX.call(this, scaleX);
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.cacheDirty);
     },
 
     setScaleY: function (scaleY) {
         if (this._flippedY)
             scaleY = scaleY * -1;
         cc.Node.prototype.setScaleY.call(this, scaleY);
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.cacheDirty);
     },
 
     setScale: function (scaleX, scaleY) {
