@@ -53,6 +53,30 @@
         }
     };
 
+    proto.updateStatus = function () {
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        if (locFlag & flags.orderDirty) {
+            this._cacheDirty = true;
+            if(this._updateCache === 0)
+                this._updateCache = 2;
+            this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
+        }
+
+        cc.Node.RenderCmd.prototype.updateStatus.call(this);
+    };
+
+    proto._syncStatus = function () {
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        if (locFlag & flags.orderDirty) {
+            this._cacheDirty = true;
+            if(this._updateCache === 0)
+                this._updateCache = 2;
+            this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
+        }
+
+        cc.Node.RenderCmd.prototype._syncStatus.call(this);
+    };
+
     proto.transform = function (parentCmd, recursive) {
         var wt = this._worldTransform;
         var a = wt.a, b = wt.b, c = wt.c, d = wt.d, tx = wt.tx, ty = wt.ty;
@@ -149,9 +173,6 @@
 
         this._syncStatus(parentCmd);
         cc.renderer.pushRenderCommand(this);
-        this._cacheDirty = true;
-        if(this._updateCache === 0)
-            this._updateCache = 2;
 
         //the bakeSprite is drawing
         this._bakeSprite.visit(this);
@@ -338,7 +359,6 @@
     cc.LayerGradient.RenderCmd = {
         updateStatus: function () {
             var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-            var colorDirty = locFlag & flags.colorDirty;
             if (locFlag & flags.gradientDirty) {
                 this._dirtyFlag |= flags.colorDirty;
                 this._dirtyFlag = this._dirtyFlag & flags.gradientDirty ^ this._dirtyFlag;
@@ -392,7 +412,6 @@
 
     proto._syncStatus = function (parentCmd) {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        var colorDirty = locFlag & flags.colorDirty;
         if (locFlag & flags.gradientDirty) {
             this._dirtyFlag |= flags.colorDirty;
             this._dirtyFlag = locFlag & flags.gradientDirty ^ locFlag;
