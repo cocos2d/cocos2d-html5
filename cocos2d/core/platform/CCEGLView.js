@@ -52,8 +52,7 @@ cc.__BrowserGetter = {
             return frame.clientHeight;
     },
     meta: {
-        "width": "device-width",
-        "user-scalable": "no"
+        "width": "device-width"
     },
     adaptationType: cc.sys.browserType
 };
@@ -694,7 +693,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      */
     setRealPixelResolution: function (width, height, resolutionPolicy) {
         // Set viewport's width
-        this._setViewportMeta({"width": width, "target-densitydpi": cc.DENSITYDPI_DEVICE, "user-scalable": "no"}, true);
+        this._setViewportMeta({"width": width, "target-densitydpi": cc.DENSITYDPI_DEVICE}, true);
 
         // Set body width to the exact pixel resolution
         document.body.style.width = width + "px";
