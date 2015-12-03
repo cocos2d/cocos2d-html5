@@ -152,6 +152,10 @@
             //update the transform
             this.transform(this.getParentRenderCmd(), true);
         }
+
+        if (locFlag & flags.orderDirty) {
+            this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
+        }
     };
 
     proto.releaseData = function(){

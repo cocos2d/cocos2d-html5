@@ -235,11 +235,6 @@
             node._arrayMakeObjectsPerformSelector(node._children, cc.Node._stateCallbackType.updateTransform);
     };
 
-    proto._updateDisplayColor = function (parentColor) {
-        cc.Node.CanvasRenderCmd.prototype._updateDisplayColor.call(this, parentColor);
-        //this._updateColor();
-    };
-
     proto._spriteFrameLoadedCallback = function (spriteFrame) {
         var node = this;
         node.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
