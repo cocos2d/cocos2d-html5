@@ -46,7 +46,7 @@ cc.loader.register(["js"], cc._jsLoader);
 
 cc._imgLoader = {
     load : function(realUrl, url, res, cb){
-        cc.loader.cache[url] =  cc.loader.loadImg(realUrl, function(err, img){
+        cc.loader.cache[url] = cc.loader.loadImg(realUrl, function(err, img){
             if(err)
                 return cb(err);
             cc.textureCache.handleLoadedTexture(url);

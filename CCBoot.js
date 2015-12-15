@@ -873,6 +873,7 @@ cc.loader = (function () {
                 this.removeEventListener('load', loadCallback, false);
                 this.removeEventListener('error', errorCallback, false);
 
+                cc.loader.cache[url] = img;
                 if (callback)
                     callback(null, img);
             };
