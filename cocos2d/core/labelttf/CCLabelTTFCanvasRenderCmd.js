@@ -292,6 +292,11 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         
         if (locFlag & flags.textDirty)
             this._updateTexture();
+
+        if (this._dirtyFlag & flags.transformDirty){
+            this.transform(this.getParentRenderCmd(), true);
+            this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
+        }
     };
 
     proto._syncStatus = function (parentCmd) {
@@ -301,6 +306,9 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         
         if (locFlag & flags.textDirty)
             this._updateTexture();
+
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL || locFlag & flags.transformDirty)
+            this.transform(parentCmd);
     };
 
     proto.drawLabels = function (context, xOffset, yOffsetArray) {
