@@ -417,7 +417,7 @@ ccs.ActionTimeline = cc.Action.extend({
         var endoffset = this._time - this._endFrame * this._frameInternal;
 
         if(endoffset < this._frameInternal){
-            this._currentFrame = this._time / this._frameInternal;
+            this._currentFrame = Math.floor(this._time / this._frameInternal);
             this._stepToFrame(this._currentFrame);
             if(endoffset >= 0 && this._lastFrameListener)
                 this._lastFrameListener();
