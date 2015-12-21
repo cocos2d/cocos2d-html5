@@ -65,7 +65,7 @@
         cc.Node.RenderCmd.prototype.updateStatus.call(this);
     };
 
-    proto._syncStatus = function () {
+    proto._syncStatus = function (parentCmd) {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
         if (locFlag & flags.orderDirty) {
             this._cacheDirty = true;
@@ -73,8 +73,7 @@
                 this._updateCache = 2;
             this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
         }
-
-        cc.Node.RenderCmd.prototype._syncStatus.call(this);
+        cc.Node.RenderCmd.prototype._syncStatus.call(this, parentCmd);
     };
 
     proto.transform = function (parentCmd, recursive) {
