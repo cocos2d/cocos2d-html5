@@ -259,7 +259,7 @@ cc.loader.register(["json"], {
                     normalUrl = path._normalize(tmpUrl);
                     if(!ccs.load.validate[normalUrl]){
                         ccs.load.validate[normalUrl] = true;
-                        list.push(tmpUrl);
+                        list.push(normalUrl);
                     }
                 }
                 cc.loader.load(list, function(){
