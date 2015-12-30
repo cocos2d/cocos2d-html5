@@ -87,8 +87,6 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
                 this.setFontName(fontName);
                 this.setFontSize(fontSize);
                 this.setString(textContent);
-            }else{
-                this.setFontName(this._fontName);
             }
             return true;
         }
