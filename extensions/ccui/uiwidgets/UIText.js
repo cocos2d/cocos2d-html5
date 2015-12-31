@@ -43,8 +43,8 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     _touchScaleChangeEnabled: false,
     _normalScaleValueX: 1,
     _normalScaleValueY: 1,
-    _fontName: "Thonburi",
-    _fontSize: 10,
+    _fontName: "Arial",
+    _fontSize: 16,
     _onSelectedScaleOffset:0.5,
     _labelRenderer: "",
     _textAreaSize: null,
@@ -344,7 +344,9 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
             this._labelRenderer.setScale(1.0);
             this._normalScaleValueX = this._normalScaleValueY = 1;
         } else {
-            this._labelRenderer.setDimensions(cc.size(locContentSize.width, locContentSize.height));
+            if(this._labelRendererAdaptDirty){
+               this._labelRenderer.setDimensions(cc.size(locContentSize.width, locContentSize.height)); 
+            }
             var textureSize = this._labelRenderer.getContentSize();
             if (textureSize.width <= 0.0 || textureSize.height <= 0.0) {
                 this._labelRenderer.setScale(1.0);
