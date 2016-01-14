@@ -1786,11 +1786,17 @@ var _initSys = function () {
                 _supportWebGL = true;
             }
 
-            // Ruled out Android 4- except for QQ Brwoser 6.2+
-            if (sys.os === sys.OS_ANDROID && sys.osMainVersion < 5) {
+            // Accept only Android 5+ default browser and QQ Brwoser 6.2+
+            if (_supportWebGL && sys.os === sys.OS_ANDROID) {
+                _supportWebGL = false;
+                // QQ Brwoser 6.2+
                 var browserVer = parseFloat(sys.browserVersion);
-                if (sys.browserType !== sys.BROWSER_TYPE_MOBILE_QQ || browserVer < 6.2) {
-                    _supportWebGL = false;
+                if (sys.browserType === sys.BROWSER_TYPE_MOBILE_QQ && browserVer >= 6.2) {
+                    _supportWebGL = true;
+                }
+                // Android 5+ default browser
+                else if (sys.osMainVersion && sys.osMainVersion >= 5 && sys.browserType === sys.BROWSER_TYPE_ANDROID) {
+                    _supportWebGL = true;
                 }
             }
         }
