@@ -42,6 +42,8 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
         this._labelCanvas = null;
         this._labelContext = null;
+        this._labelCanvasScale = null;
+        this._labelContextScale = null;
         this._lineWidths = [];
         this._strings = [];
         this._isMultiLine = false;
@@ -154,6 +156,14 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         this._anchorPointInPoints.y = (locStrokeShadowOffsetY * 0.5) + ((locSize.height - locStrokeShadowOffsetY) * locAP.y);
     };
 
+    proto._absoluteScale = function(node) {
+        if (node.parent) {
+            return node.scale * this._absoluteScale(node.parent);
+        } else {
+            return node.scale;
+        }
+    }
+
     proto._saveStatus = function () {
         var node = this._node;
         var locStrokeShadowOffsetX = node._strokeShadowOffsetX, locStrokeShadowOffsetY = node._strokeShadowOffsetY;
@@ -212,6 +222,16 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         var xOffset = locStatus.xOffset;
         var yOffsetArray = locStatus.OffsetYArray;
         this.drawLabels(context, xOffset, yOffsetArray)
+
+        var scale = this._absoluteScale(this._node);
+        scale = Math.max(scale * cc.view.getScaleX(), scale * cc.view.getScaleX());
+
+        this._labelCanvasScale = document.createElement("canvas");
+        this._labelCanvasScale.width = context.canvas.width * scale;
+        this._labelCanvasScale.height = context.canvas.height * scale;
+        this._labelContextScale = this._labelCanvasScale.getContext("2d");
+        this._labelContextScale.setTransform(1, 0, 0, 1, locStatus.contextTransform.x * scale, locStatus.contextTransform.y * scale);
+        this.drawLabels(this._labelContextScale, xOffset, yOffsetArray, scale);
     };
 
     proto._checkWarp = function (strArr, i, maxWidth) {
@@ -311,7 +331,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             this.transform(parentCmd);
     };
 
-    proto.drawLabels = function (context, xOffset, yOffsetArray) {
+    proto.drawLabels = function (context, xOffset, yOffsetArray, scale) {
         var node = this._node;
         //shadow style setup
         if (node._shadowEnabled) {
@@ -330,6 +350,25 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         if (context.font !== this._fontStyleStr)
             context.font = this._fontStyleStr;
         context.fillStyle = this._fillColorStr;
+
+        if(scale) {
+            if(this._originalFontStyleStr === undefined) {
+                this._originalFontStyleStr = this._fontStyleStr;
+            }
+            var split = this._originalFontStyleStr.split(' ');
+            for (var i=0; i<split.length; i++) {
+                var match = split[i].match(/^[0-9]+/);
+                if(match) {
+                    split[i] = Math.floor((Number(match[0]) * scale)) + 'px'
+                }
+            }
+            context.font = split.join(' ');
+
+            xOffset = xOffset * scale;
+            for(var i=0; i<yOffsetArray.length; i++) {
+                yOffsetArray[i] = yOffsetArray[i] * scale;
+            }
+        }
 
         //stroke style setup
         var locStrokeEnabled = node._strokeEnabled;
@@ -401,6 +440,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         this._drawTTFInCanvas(locContext);
         node._texture && node._texture.handleLoadedTexture();
         node.setTextureRect(cc.rect(0, 0, width, height));
+        this._lastWidth = width * cc.view.getScaleX();
         return true;
     };
 
