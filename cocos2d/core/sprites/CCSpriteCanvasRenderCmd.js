@@ -150,6 +150,17 @@
         w = locWidth * scaleX;
         h = locHeight * scaleY;
 
+        if (node._fontName && this._labelCanvasScale) {
+            if(node._renderCmd._lastWidth !== w) {
+                node._renderCmd._updateTexture();
+            }
+            sx = 0;
+            sy = 0;
+            sw = this._labelCanvasScale.width;
+            sh = this._labelCanvasScale.height;
+            texture._htmlElementObj = this._labelCanvasScale;
+        }
+
         if (texture) {
             image = texture._htmlElementObj;
             if (texture._pattern !== "") {
