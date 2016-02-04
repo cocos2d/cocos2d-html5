@@ -224,7 +224,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         this.drawLabels(context, xOffset, yOffsetArray)
 
         var scale = this._absoluteScale(this._node);
-        scale = Math.max(scale * cc.view.getScaleX(), scale * cc.view.getScaleX());
+        scale = Math.max(scale * cc.view.getScaleX(), scale * cc.view.getScaleY());
 
         this._labelCanvasScale = document.createElement("canvas");
         this._labelCanvasScale.width = context.canvas.width * scale;
