@@ -1894,8 +1894,8 @@ var _initSys = function () {
 };
 _initSys();
 
-delete _tmpCanvas1;
-delete _tmpCanvas2;
+delete window._tmpCanvas1;
+delete window._tmpCanvas2;
 
 //to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
 cc.log = cc.warn = cc.error = cc.assert = function () {
@@ -1923,9 +1923,9 @@ function _determineRenderType(config) {
     cc._renderType = cc.game.RENDER_TYPE_CANVAS;
     cc._supportRender = true;
 
-    if ( userRenderMode === 2 || 
-        (   userRenderMode === 0 && 
-            shieldOs.indexOf(cc.sys.os) === -1 && 
+    if ( userRenderMode === 2 ||
+        (   userRenderMode === 0 &&
+            shieldOs.indexOf(cc.sys.os) === -1 &&
             shieldBrowser.indexOf(cc.sys.browserType) === -1 )) {
         if (cc.sys.capabilities["opengl"]) {
             cc._renderType = cc.game.RENDER_TYPE_WEBGL;
@@ -2084,7 +2084,7 @@ cc.game = /** @lends cc.game# */{
         renderMode: "renderMode",
         jsList: "jsList"
     },
-    
+
     // states
     _paused: true,//whether the game is paused
     _prepareCalled: false,//whether the prepare function has been called
@@ -2092,9 +2092,9 @@ cc.game = /** @lends cc.game# */{
     _rendererInitialized: false,
 
     _renderContext: null,
-    
+
     _intervalId: null,//interval target of main
-    
+
     _lastTime: null,
     _frameTime: null,
 
@@ -2207,7 +2207,7 @@ cc.game = /** @lends cc.game# */{
      */
     prepare: function (cb) {
         var self = this,
-            config = self.config, 
+            config = self.config,
             CONFIG_KEY = self.CONFIG_KEY;
 
         this._loadConfig();
@@ -2228,10 +2228,10 @@ cc.game = /** @lends cc.game# */{
             this._initRenderer(config[CONFIG_KEY.width], config[CONFIG_KEY.height]);
 
             /**
+             * cc.view is the shared view object.
              * @type {cc.EGLView}
              * @name cc.view
              * @memberof cc
-             * cc.view is the shared view object.
              */
             cc.view = cc.EGLView._getInstance();
 
@@ -2244,10 +2244,10 @@ cc.game = /** @lends cc.game# */{
             if (cc.director.setOpenGLView)
                 cc.director.setOpenGLView(cc.view);
             /**
+             * cc.winSize is the alias object for the size of the current game window.
              * @type {cc.Size}
              * @name cc.winSize
              * @memberof cc
-             * cc.winSize is the alias object for the size of the current game window.
              */
             cc.winSize = cc.director.getWinSize();
 
@@ -2300,7 +2300,7 @@ cc.game = /** @lends cc.game# */{
                 cc.game.onStart = onStart;
             }
         }
-        
+
         this.prepare(cc.game.onStart && cc.game.onStart.bind(cc.game));
     },
 
@@ -2377,7 +2377,7 @@ cc.game = /** @lends cc.game# */{
         if (document["ccConfig"]) {
             this._initConfig(document["ccConfig"]);
         }
-        // Load from project.json 
+        // Load from project.json
         else {
             try {
                 var cocos_script = document.getElementsByTagName('script');

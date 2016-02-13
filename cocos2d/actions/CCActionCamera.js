@@ -100,7 +100,7 @@ cc.ActionCamera = cc.ActionInterval.extend(/** @lends cc.ActionCamera# */{
      * - The action will be x coordinates of 0 move to 100. <br />
      * - The reversed action will be x of 100 move to 0.
      * - Will be rewritten
-     *
+     * @return {?cc.Action}
      */
     reverse:function () {
         return new cc.ReverseTime(this);

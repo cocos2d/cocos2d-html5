@@ -866,7 +866,7 @@ cc.Audio = cc.Class.extend({
 
         /**
          * Pause playing sound effect.
-         * @param {Number} cc.Audio The return value of function playEffect.
+         * @param {Number} audio The return value of function playEffect.
          * @example
          * //example
          * cc.audioEngine.pauseEffect(audioID);
@@ -897,7 +897,7 @@ cc.Audio = cc.Class.extend({
 
         /**
          * Resume playing sound effect.
-         * @param {Number} cc.Audio The return value of function playEffect.
+         * @param {Number} audio The return value of function playEffect.
          * @audioID
          * //example
          * cc.audioEngine.resumeEffect(audioID);
@@ -925,7 +925,7 @@ cc.Audio = cc.Class.extend({
 
         /**
          * Stop playing sound effect.
-         * @param {Number} cc.Audio The return value of function playEffect.
+         * @param {Number} audio The return value of function playEffect.
          * @example
          * //example
          * cc.audioEngine.stopEffect(audioID);

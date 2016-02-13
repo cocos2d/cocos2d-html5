@@ -200,7 +200,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
 
     /**
      *  Remove all children with cleanup
-     * @param {Boolean} cleanup
+     * @param {Boolean} [cleanup=true]
      */
     removeAllChildren:function (cleanup) {
         this.parallaxArray.length = 0;
