@@ -98,6 +98,25 @@
         }
     };
 
+    proto._updateDisplayOpacity = function (parentOpacity) {
+        cc.Node.WebGLRenderCmd.prototype._updateDisplayOpacity.call(this, parentOpacity);
+        var node = this._node;
+        if (!node) return;
+        var scale9Image = node._scale9Image;
+        parentOpacity = this._displayedOpacity;
+        if (node._scale9Enabled) {
+            var pChildren = node._renderers;
+            for (var i = 0; i < pChildren.length; i++) {
+                pChildren[i]._renderCmd._updateDisplayOpacity(parentOpacity);
+                pChildren[i]._renderCmd._updateColor();
+            }
+        }
+        else {
+            scale9Image._renderCmd._updateDisplayOpacity(parentOpacity);
+            scale9Image._renderCmd._updateColor();
+        }
+    };
+
     proto.updateStatus = function () {
         var flags = cc.Node._dirtyFlags, 
             locFlag = this._dirtyFlag;
@@ -120,6 +139,9 @@
             this._cacheScale9Sprite();
             this._dirtyFlag = this._dirtyFlag & flags.cacheDirty ^ this._dirtyFlag;
         }
+
+        if(!this._dirtyFlag)
+            this._cacheScale9Sprite();
     }
 
     proto._cacheScale9Sprite = function() {
