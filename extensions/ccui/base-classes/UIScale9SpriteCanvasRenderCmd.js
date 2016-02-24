@@ -58,9 +58,9 @@
         cc.Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
     };
 
-    proto.transform = function(parentCmd){
+    proto.transform = function(parentCmd, recursive){
         var node = this._node;
-        cc.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd);
+        cc.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd, recursive);
         if (node._positionsAreDirty) {
             node._updatePositions();
             node._positionsAreDirty = false;
@@ -98,25 +98,6 @@
         }
     };
 
-    proto._updateDisplayOpacity = function (parentOpacity) {
-        cc.Node.WebGLRenderCmd.prototype._updateDisplayOpacity.call(this, parentOpacity);
-        var node = this._node;
-        if (!node) return;
-        var scale9Image = node._scale9Image;
-        parentOpacity = this._displayedOpacity;
-        if (node._scale9Enabled) {
-            var pChildren = node._renderers;
-            for (var i = 0; i < pChildren.length; i++) {
-                pChildren[i]._renderCmd._updateDisplayOpacity(parentOpacity);
-                pChildren[i]._renderCmd._updateColor();
-            }
-        }
-        else {
-            scale9Image._renderCmd._updateDisplayOpacity(parentOpacity);
-            scale9Image._renderCmd._updateColor();
-        }
-    };
-
     proto.updateStatus = function () {
         var flags = cc.Node._dirtyFlags, 
             locFlag = this._dirtyFlag;
@@ -134,14 +115,11 @@
             locFlag = this._dirtyFlag;
 
         cc.Node.RenderCmd.prototype._syncStatus.call(this, parentCmd);
-        
-        if (locFlag & flags.cacheDirty) {
+       
+        if (locFlag || !flags.cacheDirty) {
             this._cacheScale9Sprite();
             this._dirtyFlag = this._dirtyFlag & flags.cacheDirty ^ this._dirtyFlag;
         }
-
-        if(!this._dirtyFlag)
-            this._cacheScale9Sprite();
     }
 
     proto._cacheScale9Sprite = function() {
