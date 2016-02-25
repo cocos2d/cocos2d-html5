@@ -567,8 +567,19 @@ cc.path = /** @lends cc.path# */{
 
 //+++++++++++++++++++++++++something about loader start+++++++++++++++++++++++++++
 /**
- * Loader for resource loading process. It's a singleton object.
+ * Resource loading management. Created by in CCBoot.js as a singleton
+ * cc.loader.
+ * @name cc.Loader
  * @class
+ * @memberof cc
+ * @see cc.loader
+ */
+
+/**
+ * Singleton instance of cc.Loader.
+ * @name cc.loader
+ * @member {cc.Loader}
+ * @memberof cc
  */
 cc.loader = (function () {
     var _jsCache = {}, //cache for js
@@ -607,10 +618,24 @@ cc.loader = (function () {
             "$", "i"
         );
 
-    return /** @lends cc.loader# */{
-        resPath: "",//root path of resource
-        audioPath: "",//root path of audio
-        cache: {},//cache for data loaded
+    return /** @lends cc.Loader# */{
+        /**
+         * Root path of resources.
+         * @type {String}
+         */
+        resPath: "",
+
+        /**
+         * Root path of audio resources
+         * @type {String}
+         */
+        audioPath: "",
+
+        /**
+         * Cache for data loaded.
+         * @type {Object}
+         */
+        cache: {},
 
         /**
          * Get XMLHttpRequest.
@@ -2045,32 +2070,99 @@ cc.initEngine = function (config, cb) {
  * An object to boot the game.
  * @class
  * @name cc.game
+ *
  */
 cc.game = /** @lends cc.game# */{
+	/** 
+	 * Debug mode: No debugging. {@static}
+ 	 * @const {Number}
+	 * @static
+	 */
     DEBUG_MODE_NONE: 0,
+	/**
+     * Debug mode: Info to console.
+	 * @const {Number}
+	 * @static
+     */
     DEBUG_MODE_INFO: 1,
+	/**
+     * Debug mode: Warning to console.
+	 * @const {Number}
+	 * @static
+     */
     DEBUG_MODE_WARN: 2,
+	/**
+     * Debug mode: Error to console.
+	 * @const {Number}
+	 * @static
+     */
     DEBUG_MODE_ERROR: 3,
+	/**
+     * Debug mode: Info to web page.
+	 * @const {Number}
+	 * @static
+     */
     DEBUG_MODE_INFO_FOR_WEB_PAGE: 4,
+	/**
+     * Debug mode: Warning to web page.
+	 * @const {Number}
+	 * @static
+     */
     DEBUG_MODE_WARN_FOR_WEB_PAGE: 5,
+	/**
+     * Debug mode: Error to web page.
+	 * @const {Number}
+	 * @static
+     */
     DEBUG_MODE_ERROR_FOR_WEB_PAGE: 6,
 
+    /**
+     * Event that is fired when the game is hidden.
+     * @constant {String}
+     */
     EVENT_HIDE: "game_on_hide",
+    /**
+     * Event that is fired when the game is shown.
+     * @constant {String}
+     */
     EVENT_SHOW: "game_on_show",
+    /**
+     * Event that is fired when the game is resized.
+     * @constant {String}
+     */
     EVENT_RESIZE: "game_on_resize",
+    /**
+     * Event that is fired when the renderer is done being initialized.
+     * @constant {String}
+     */
     EVENT_RENDERER_INITED: "renderer_inited",
 
+    /** @constant {Number} */
     RENDER_TYPE_CANVAS: 0,
+    /** @constant {Number} */
     RENDER_TYPE_WEBGL: 1,
+    /** @constant {Number} */
     RENDER_TYPE_OPENGL: 2,
 
     _eventHide: null,
     _eventShow: null,
 
     /**
-     * Key of config
+     * Keys found in config.json.
+     *
      * @constant
      * @type {Object}
+     *
+     * @prop {String} width
+     * @prop {String} height
+     * @prop {String} engineDir
+     * @prop {String} modules
+     * @prop {String} debugMode
+     * @prop {String} showFPS
+     * @prop {String} frameRate
+     * @prop {String} id
+     * @prop {String} renderMode
+     * @prop {String} jsList
      */
     CONFIG_KEY: {
         width: "width",
@@ -2122,15 +2214,23 @@ cc.game = /** @lends cc.game# */{
 
     /**
      * Callback when the scripts of engine have been load.
-     * @type {Function}
+     * @type {Function|null}
      */
     onStart: null,
 
     /**
      * Callback when game exits.
-     * @type {Function}
+     * @type {Function|null}
      */
     onStop: null,
+
+    /**
+     * Callback when game frame has been sized or resized. called
+     * once on game startup.
+     *
+     * @type {Function|null}
+     */
+    onResize: null,
 
 //@Public Methods
 
