@@ -518,39 +518,6 @@ ccs.BoneNode = (function () {
         return new ccui.BoneNode(length, color);
     };
 
-    var BoneNodeCanvasCmd = (function () {
-
-        var BoneNodeCanvasCmd = function (node) {
-            Node.CanvasRenderCmd.call(this, node);
-            this._debug = false;
-            this._color = cc.color.WHITE;
-            this._drawNode = new cc.DrawNode();
-        };
-
-        var proto = BoneNodeCanvasCmd.prototype = Object.create(Node.CanvasRenderCmd.prototype);
-        proto.constructor = BoneNodeCanvasCmd;
-
-        proto.visit = function (parentCmd) {
-            var node = this._node;
-            node._visit && node._visit(parentCmd);
-        };
-        proto.updateDebugPoint = function (points) {
-            this._drawNode.clear();
-            this._drawNode.drawPoly(points, this._color, 0, this._color);
-        };
-
-        proto.transform = function (parentCmd, recursive) {
-            var rootSkeleton = this._node._rootSkeleton;
-            Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd, recursive);
-            if (rootSkeleton && rootSkeleton._renderCmd._debug) {
-                this._drawNode._renderCmd.transform(this);
-            }
-        };
-
-        return BoneNodeCanvasCmd;
-
-    })();
-
     var BoneNodeWebGLCmd = (function () {
 
         var BoneNodeWebGLCmd = function (node) {

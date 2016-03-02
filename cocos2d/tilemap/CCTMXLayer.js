@@ -99,9 +99,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
-            return new cc.TMXLayer.CanvasRenderCmd(this);
-        else
             return new cc.TMXLayer.WebGLRenderCmd(this);
     },
 

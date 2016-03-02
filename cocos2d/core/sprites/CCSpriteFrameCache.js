@@ -179,22 +179,7 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
                         spAliases[alias] = key;
                     }
                 }
-
-                if (cc._renderType === cc.game.RENDER_TYPE_CANVAS && spriteFrame.isRotated()) {
-                    //clip to canvas
-                    var locTexture = spriteFrame.getTexture();
-                    if (locTexture.isLoaded()) {
-                        var tempElement = spriteFrame.getTexture().getHtmlElementObj();
-                        tempElement = cc.Sprite.CanvasRenderCmd._cutRotateImageToCanvas(tempElement, spriteFrame.getRectInPixels());
-                        var tempTexture = new cc.Texture2D();
-                        tempTexture.initWithElement(tempElement);
-                        tempTexture.handleLoadedTexture();
-                        spriteFrame.setTexture(tempTexture);
-
-                        var rect = spriteFrame._rect;
-                        spriteFrame.setRect(cc.rect(0, 0, rect.width, rect.height));
-                    }
-                }
+                
                 spriteFrames[key] = spriteFrame;
             }
         }

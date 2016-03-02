@@ -92,9 +92,6 @@ gaf.Sprite = gaf.Object.extend
     },
 
     _gafCreateRenderCmd: function(item){
-        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
-            return new gaf.Sprite.CanvasRenderCmd(item);
-        else
             return new gaf.Sprite.WebGLRenderCmd(item);
     }
 });

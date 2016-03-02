@@ -23,42 +23,6 @@
  ****************************************************************************/
 
 cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
-    if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
-        ccui.Widget.CanvasRenderCmd = function (renderable) {
-            cc.ProtectedNode.CanvasRenderCmd.call(this, renderable);
-            this._needDraw = false;
-        };
-
-        var proto = ccui.Widget.CanvasRenderCmd.prototype = Object.create(cc.ProtectedNode.CanvasRenderCmd.prototype);
-        proto.constructor = ccui.Widget.CanvasRenderCmd;
-
-        proto.visit = function (parentCmd) {
-            var node = this._node;
-            if (node._visible) {
-                node._adaptRenderers();
-                cc.ProtectedNode.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
-            }
-        };
-
-        proto.transform = function (parentCmd, recursive) {
-            var node = this._node;
-
-            if (node._visible) {
-                node._adaptRenderers();
-                if(!this._usingLayoutComponent){
-                    var widgetParent = node.getWidgetParent();
-                    if (widgetParent) {
-                        var parentSize = widgetParent.getContentSize();
-                        if (parentSize.width !== 0 && parentSize.height !== 0) {
-                            node._position.x = parentSize.width * node._positionPercent.x;
-                            node._position.y = parentSize.height * node._positionPercent.y;
-                        }
-                    }
-                }
-                cc.ProtectedNode.CanvasRenderCmd.prototype.transform.call(this, parentCmd, recursive);
-            }
-        };
-    } else {
         ccui.Widget.WebGLRenderCmd = function (renderable) {
             cc.ProtectedNode.WebGLRenderCmd.call(this, renderable);
             this._needDraw = false;
@@ -93,5 +57,5 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 cc.ProtectedNode.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
             }
         };
-    }
+    
 });

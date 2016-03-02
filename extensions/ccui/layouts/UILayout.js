@@ -1451,10 +1451,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             return new ccui.Layout.WebGLRenderCmd(this);
-        else
-            return new ccui.Layout.CanvasRenderCmd(this);
     }
 });
 

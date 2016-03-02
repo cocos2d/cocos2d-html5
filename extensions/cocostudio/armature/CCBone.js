@@ -630,9 +630,6 @@ ccs.Bone = ccs.Node.extend(/** @lends ccs.Bone# */{
     },
 
     _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
-            return new ccs.Bone.CanvasRenderCmd(this);
-        else
             return new ccs.Bone.WebGLRenderCmd(this);
     }
 });
@@ -688,16 +685,6 @@ ccs.Bone.RenderCmd = {
     }
 };
 
-(function(){
-    ccs.Bone.CanvasRenderCmd  = function(renderable){
-        cc.Node.CanvasRenderCmd.call(this, renderable);
-        this._needDraw = false;
-    };
-
-    var proto = ccs.Bone.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
-    cc.inject(ccs.Bone.RenderCmd, proto);
-    proto.constructor = ccs.Bone.CanvasRenderCmd;
-})();
 
 (function(){
     if(!cc.Node.WebGLRenderCmd)
