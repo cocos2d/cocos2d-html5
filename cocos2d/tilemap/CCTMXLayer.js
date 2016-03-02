@@ -493,8 +493,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
         var gid = this.getTileGIDAt(pos);
         if (gid !== 0) {
-            if (cc._renderType === cc.game.RENDER_TYPE_CANVAS)
-                this._setNodeDirtyForCache();
             var z = 0 | (pos.x + pos.y * this._layerSize.width);
             var atlasIndex = this._atlasIndexForExistantZ(z);
             // remove tile from GID map
@@ -572,8 +570,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
         // Parse cocos2d properties
         this._parseInternalProperties();
-        if (cc._renderType === cc.game.RENDER_TYPE_CANVAS)
-            this._setNodeDirtyForCache();
 
         var locLayerHeight = this._layerSize.height, locLayerWidth = this._layerSize.width;
         for (var y = 0; y < locLayerHeight; y++) {
@@ -621,9 +617,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             cc.log("cc.TMXLayer.removeChild(): Tile does not belong to TMXLayer");
             return;
         }
-
-        if (cc._renderType === cc.game.RENDER_TYPE_CANVAS)
-            this._setNodeDirtyForCache();
         var atlasIndex = sprite.atlasIndex;
         var zz = this._atlasIndexArray[atlasIndex];
         this.tiles[zz] = 0;

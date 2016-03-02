@@ -395,11 +395,3 @@ cc.FontDefinition.prototype._getCanvasFontStr = function(){
     var lineHeight = !this.lineHeight.charAt ? this.lineHeight+"px" : this.lineHeight;
     return this.fontStyle + " " + this.fontWeight + " " + this.fontSize + "px/"+lineHeight+" '" + this.fontName + "'";
 };
-
-cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
-    if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
-        cc.assert(cc.isFunction(cc._tmp.PrototypeColor), cc._LogInfos.MissingFile, "CCTypesPropertyDefine.js");
-        cc._tmp.PrototypeColor();
-        delete cc._tmp.PrototypeColor;
-    }
-});
