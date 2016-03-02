@@ -976,9 +976,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
-            return new cc.Sprite.CanvasRenderCmd(this);
-        else
             return new cc.Sprite.WebGLRenderCmd(this);
     }
 });

@@ -195,9 +195,6 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     },
 
     _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
-            return new cc.ClippingNode.CanvasRenderCmd(this);
-        else
             return new cc.ClippingNode.WebGLRenderCmd(this);
     }
 });
