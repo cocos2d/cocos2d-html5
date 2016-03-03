@@ -35,7 +35,7 @@
     proto.constructor = cc.SpriteBatchNode.WebGLRenderCmd;
 
     proto.isValidChild = function(child){
-        if (!(child instanceof cc.Sprite)) {
+        if (!(child instanceof cc.Sprite || child instanceof cc.Node)) {
             cc.log(cc._LogInfos.Sprite_addChild_4);
             return false;
         }
@@ -77,7 +77,8 @@
             this.transform(parentCmd);
         this.updateStatus(parentCmd);                       //because batchNode doesn't visit its children.
         currentStack.top = this._stackMatrix;
-
+        
+        node._reorderChildDirty = true;
         node.sortAllChildren();
 
         cc.renderer.pushRenderCommand(this);
