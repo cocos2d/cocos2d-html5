@@ -1115,14 +1115,24 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     setTexture:function (texture) {
         if(!texture)
             return;
+        
+        if(typeof texture ==="string" && texture.charAt(0) === "#")
+        {
+            var frame = cc.spriteFrameCache.getSpriteFrame(texture.substr(1, texture.length -1));
+            if(frame)
+            {
+                var rect = frame.getRect();
+                var texture = frame.getTexture();
+            }
+        }
 
         if(texture.isLoaded()){
-            this.setTextureWithRect(texture, cc.rect(0, 0, texture.width, texture.height));
+            this.setTextureWithRect(texture, rect || cc.rect(0, 0, texture.width, texture.height));
         } else {
             this._textureLoaded = false;
             texture.addEventListener("load", function(sender){
                 this._textureLoaded = true;
-                this.setTextureWithRect(sender, cc.rect(0, 0, sender.width, sender.height));
+                this.setTextureWithRect(sender, rect || cc.rect(0, 0, sender.width, sender.height));
             }, this);
         }
     },
@@ -1419,8 +1429,16 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 // texture
                 // Try to get the texture from the cache
                 var textureName = locValueForKey("textureFileName", dictionary);
-                var imgPath = cc.path.changeBasename(this._plistFile, textureName);
+                if(textureName.charAt(0) === "#")
+                    var imgPath = textureName;
+                else
+                    var imgPath = cc.path.changeBasename(this._plistFile, textureName);
+
                 var tex = cc.textureCache.getTextureForKey(imgPath);
+                if(!tex && imgPath.charAt(0) === "#") 
+                {
+                    tex = imgPath;
+                }
 
                 if (tex) {
                     this.setTexture(tex);
