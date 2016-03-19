@@ -321,7 +321,29 @@ cc.Node.RenderCmd.prototype = {
         }
         return this._transform;
     },
+    getRenderZ: function(parentCmd)
+    {
+        var node = this._node;
+        if(node.__z)
+        {
+            return node.__z;
+        }
+        else if(parentCmd && parentCmd._node.__z)
+        {
+            return parentCmd._node.__z;
+        }
+        else
+        {
+            return 0;
+        }
+    },
+    setRenderZ: function(parentCmd, matrix)
+    {
+        var node = this._node;
+        var parentCmd = parentCmd || this.getParentRenderCmd();
 
+         matrix.mat[14] = this.getRenderZ(parentCmd);
+    },
     _syncStatus: function (parentCmd) {
         //  In the visit logic does not restore the _dirtyFlag
         //  Because child elements need parent's _dirtyFlag to change himself

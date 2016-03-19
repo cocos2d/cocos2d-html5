@@ -98,7 +98,7 @@ cc.NodeGrid = cc.Node.extend({
 
         // Update Z vertex manually
         //this._transform4x4.mat[14] = this._vertexZ;
-        t4x4Mat[14] = this._vertexZ;
+        t4x4Mat[14] = this._node.__z || 0;
 
         //optimize performance for Javascript
         topMat4.multiply(t4x4) ; // = cc.kmGLMultMatrix(this._transform4x4);
