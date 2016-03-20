@@ -36,6 +36,8 @@
         this._supportsBatching = true;
         this._batchShader = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST_BATCHED);
         this._matLocation = gl.getAttribLocation(this._batchShader._programObj, cc.ATTRIBUTE_NAME_MVMAT);
+        this._batchBuffer = gl.createBuffer();
+        this._batchElementBuffer = gl.createBuffer();
     };
 
     var proto = cc.Sprite.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
@@ -79,10 +81,13 @@
             return 0;
         }
 
-
-       
         //upload required data to buffers
-        this._batchBuffer = gl.createBuffer();
+        
+
+        if(!this._batchBuffer)
+        {
+            console.log("WUT");
+        }
         gl.bindBuffer(gl.ARRAY_BUFFER, this._batchBuffer);
 
         var vertexDataPerSprite = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
@@ -107,8 +112,27 @@
             vertexDataOffset += vertexDataPerSprite;
             matrixDataOffset += matrixData * 4;
         }
+        
+        //create element buffer
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._batchElementBuffer);
 
-        return i;
+        var indices = new Uint16Array(count*6);
+
+        var currentQuad = 0;
+        for(var i=0;i<count*6;i+=6)
+        {
+            indices[i] = currentQuad + 0;
+            indices[i+1] = currentQuad +1;
+            indices[i+2] = currentQuad +2;
+            indices[i+3] = currentQuad +1;
+            indices[i+4] = currentQuad +2;
+            indices[i+5] = currentQuad +3;
+
+            currentQuad += 4;
+        }
+        
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.DYNAMIC_DRAW);
+        return count;
     }
 
     proto.setDirtyFlag = function(dirtyFlag){
@@ -509,16 +533,35 @@
 
             cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
             cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
+            gl.bindBuffer(gl.ARRAY_BUFFER, this._batchBuffer);
+            
+
+            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
+            
+
+            gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);                   //cc.VERTEX_ATTRIB_POSITION
+            gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
+            gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
             //enable matrix vertex attribs
             for(var i=0;i<4;++i)
             {
                 gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_MVMAT0 + i);
-                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_MVMAT0 + i, 4, gl.FLOAT, false, bytesPerRow, totalSpriteVertexData + bytesPerRow * i); //stride is one row
+                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_MVMAT0 + i, 4, gl.FLOAT, false, bytesPerRow*4, totalSpriteVertexData + bytesPerRow * i); //stride is one row
+            }
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._batchElementBuffer);
+            //gl.drawArrays(gl.TRIANGLE_STRIP, 0, count*4);
+            gl.drawElements(gl.TRIANGLES, count*6, gl.UNSIGNED_SHORT, 0);
+            var error = gl.getError();
+            if(error !== 0)
+            {  
+               console.log("ERROR!"); 
             }
 
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, count*4);
+            for(var i=0;i<4;++i)
+            {
+                gl.disableVertexAttribArray(cc.VERTEX_ATTRIB_MVMAT0 + i);
+            }
         }
         else
         {

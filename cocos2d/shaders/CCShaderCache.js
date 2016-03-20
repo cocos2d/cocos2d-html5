@@ -37,13 +37,7 @@ cc.shaderCache = /** @lends cc.shaderCache# */{
 	 * @type {Number}
 	 */
     TYPE_POSITION_TEXTURECOLOR: 0,
-    /**
-    * PITFOREST
-	 * @public
-	 * @constant
-	 * @type {Number}
-	 */
-    TYPE_POSITION_TEXTURECOLOR_ALPHATEST_BATCHED: 1,
+
 
 	/**
 	 * @public
@@ -87,12 +81,21 @@ cc.shaderCache = /** @lends cc.shaderCache# */{
 	 * @type {Number}
 	 */
 	TYPE_POSITION_LENGTH_TEXTURECOLOR: 7,
+
+	    /**
+    * PITFOREST
+	 * @public
+	 * @constant
+	 * @type {Number}
+	 */
+    TYPE_POSITION_TEXTURECOLOR_ALPHATEST_BATCHED: 8,
+    
 	/**
 	 * @public
 	 * @constant
 	 * @type {Number}
 	 */
-	TYPE_MAX: 8,
+	TYPE_MAX: 9,
 
     _programs: {},
 

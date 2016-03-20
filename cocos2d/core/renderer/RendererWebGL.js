@@ -50,8 +50,9 @@ cc.rendererWebGL = {
         
         var batches = [];
 
+        var dbgcnt = 1222;
         //prepare batching
-        for (i = 0, len = locCmds.length; i < len; ++i) 
+        for (i = 0, len = locCmds.length; i < dbgcnt&& i< len; ++i) 
         {
             var cmd = locCmds[i];
             if(!cmd._batched && cmd.configureBatch) //may be set to true by processed cmds during this loop 
@@ -66,13 +67,13 @@ cc.rendererWebGL = {
             }
         }
 
-        for (i = 0, len = locCmds.length; i < len; ++i) {
+        for (i = 0, len = locCmds.length; i < dbgcnt&& i< len; ++i) {
             var cmd = locCmds[i];
             if(cmd._batching || !cmd._batched) cmd.rendering(context);
         }
 
          //prepare batching
-        for (i = 0, len = locCmds.length; i < len; ++i) 
+        for (i = 0, len = locCmds.length; i < dbgcnt&& i< len; ++i) 
         {
             locCmds[i]._batched = false;
             locCmds[i]._batching = false;
