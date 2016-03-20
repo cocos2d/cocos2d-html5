@@ -36,7 +36,15 @@ cc.shaderCache = /** @lends cc.shaderCache# */{
 	 * @constant
 	 * @type {Number}
 	 */
-	TYPE_POSITION_TEXTURECOLOR: 0,
+    TYPE_POSITION_TEXTURECOLOR: 0,
+    /**
+    * PITFOREST
+	 * @public
+	 * @constant
+	 * @type {Number}
+	 */
+    TYPE_POSITION_TEXTURECOLOR_ALPHATEST_BATCHED: 1,
+
 	/**
 	 * @public
 	 * @constant
@@ -95,6 +103,13 @@ cc.shaderCache = /** @lends cc.shaderCache# */{
 
     _loadDefaultShader: function (program, type) {
         switch (type) {
+            case this.TYPE_POSITION_TEXTURECOLOR_ALPHATEST_BATCHED:
+                program.initWithVertexShaderByteArray(cc.SHADER_POSITION_TEXTURE_COLOR_VERT_BATCHED, cc.SHADER_POSITION_TEXTURE_COLOR_ALPHATEST_FRAG);
+
+                program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
+                program.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
+                program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
+                break;
             case this.TYPE_POSITION_TEXTURECOLOR:
                 program.initWithVertexShaderByteArray(cc.SHADER_POSITION_TEXTURE_COLOR_VERT, cc.SHADER_POSITION_TEXTURE_COLOR_FRAG);
 
@@ -165,6 +180,12 @@ cc.shaderCache = /** @lends cc.shaderCache# */{
         this._loadDefaultShader(program, this.TYPE_POSITION_TEXTURECOLOR);
         this._programs[cc.SHADER_POSITION_TEXTURECOLOR] = program;
         this._programs["ShaderPositionTextureColor"] = program;
+
+        // Position Texture Color alpha test
+        program = new cc.GLProgram();
+        this._loadDefaultShader(program, this.TYPE_POSITION_TEXTURECOLOR_ALPHATEST_BATCHED);
+        this._programs[cc.SHADER_POSITION_TEXTURECOLORALPHATEST_BATCHED] = program;
+        this._programs["ShaderPositionTextureColorAlphaTestBatched"] = program;
 
         // Position Texture Color alpha test
         program = new cc.GLProgram();

@@ -33,12 +33,83 @@
         this._quadDirty = true;
         this._dirty = false;
         this._recursiveDirty = false;
+        this._supportsBatching = true;
+        this._batchShader = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST_BATCHED);
+        this._matLocation = gl.getAttribLocation(this._batchShader._programObj, cc.ATTRIBUTE_NAME_MVMAT);
     };
 
     var proto = cc.Sprite.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
+
     proto.constructor = cc.Sprite.WebGLRenderCmd;
 
     proto.updateBlendFunc = function (blendFunc) {};
+    
+    proto.configureBatch = function(renderCmds, myIndex)
+    {
+        var node = this._node;
+        var texture = node.getTexture();
+        
+        for(var i=myIndex+1, len = renderCmds.length; i<len;++i)
+        {
+            var cmd = renderCmds[i];
+
+            //only consider other sprites for now
+            if(! (cmd instanceof cc.Sprite.WebGLRenderCmd))
+            {
+                break;
+            }
+
+            var otherNode = cmd._node;
+            if(texture !== otherNode.getTexture())
+            {
+                break;
+            }
+           
+            cmd._batched = true;
+        }
+        
+        var count = this._batchedNodes = i-myIndex;
+
+        if(count > 1)
+        {
+            this._batching = true;
+        }
+        else
+        {
+            return 0;
+        }
+
+
+       
+        //upload required data to buffers
+        this._batchBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._batchBuffer);
+
+        var vertexDataPerSprite = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+        var bytesPerRow = 4*4; //4 floats with 4 bytes each
+        var matrixData = 4*bytesPerRow;
+        var totalSpriteVertexData= vertexDataPerSprite * count;
+        gl.bufferData(gl.ARRAY_BUFFER, totalSpriteVertexData + matrixData*count*4,gl.DYNAMIC_DRAW);
+        
+        var vertexDataOffset = 0;
+        var matrixDataOffset = 0;
+        for(var j = myIndex; j<i; ++j)
+        {
+            var cmd = renderCmds[j];
+            gl.bufferSubData(gl.ARRAY_BUFFER, vertexDataOffset, cmd._quad.arrayBuffer);
+
+            //could skip this with ANGLE_instanced_arrays extension, but toggled off by default on browsers
+            gl.bufferSubData(gl.ARRAY_BUFFER, totalSpriteVertexData + matrixDataOffset + matrixData*0, cmd._stackMatrix.mat);
+            gl.bufferSubData(gl.ARRAY_BUFFER, totalSpriteVertexData + matrixDataOffset + matrixData*1, cmd._stackMatrix.mat);
+            gl.bufferSubData(gl.ARRAY_BUFFER, totalSpriteVertexData + matrixDataOffset + matrixData*2, cmd._stackMatrix.mat);
+            gl.bufferSubData(gl.ARRAY_BUFFER, totalSpriteVertexData + matrixDataOffset + matrixData*3, cmd._stackMatrix.mat);
+
+            vertexDataOffset += vertexDataPerSprite;
+            matrixDataOffset += matrixData * 4;
+        }
+
+        return i;
+    }
 
     proto.setDirtyFlag = function(dirtyFlag){
         cc.Node.WebGLRenderCmd.prototype.setDirtyFlag.call(this, dirtyFlag);
@@ -303,7 +374,7 @@
         }
 
         if (texture)
-            this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+            this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
         else
             this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_COLOR);
 
@@ -424,45 +495,73 @@
 
         var gl = ctx || cc._renderContext ;
         //cc.assert(!_t._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
+        if(this._batching)
+        {
+            var count = this._batchedNodes;
 
-        if (locTexture) {
-            if (locTexture._textureLoaded) {
+            var vertexDataPerSprite = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+            var bytesPerRow = 4*4; //4 floats with 4 bytes each
+            var matrixData = 4*bytesPerRow;
+            var totalSpriteVertexData= vertexDataPerSprite * count;
+
+            this._batchShader.use();
+            this._batchShader._updateProjectionUniform();
+
+            cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
+            cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
+            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
+
+            //enable matrix vertex attribs
+            for(var i=0;i<4;++i)
+            {
+                gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_MVMAT0 + i);
+                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_MVMAT0 + i, 4, gl.FLOAT, false, bytesPerRow, totalSpriteVertexData + bytesPerRow * i); //stride is one row
+            }
+
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, count*4);
+        }
+        else
+        {
+             if (locTexture) {
+                if (locTexture._textureLoaded) {
+                    this._shaderProgram.use();
+                    this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+
+                    cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
+                    //optimize performance for javascript
+                    cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
+                    cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
+
+                    gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
+                    if (this._quadDirty) {
+                        gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.DYNAMIC_DRAW);
+                        this._quadDirty = false;
+                    }
+                    gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);                   //cc.VERTEX_ATTRIB_POSITION
+                    gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
+                    gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
+                    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+                }
+            } else {
                 this._shaderProgram.use();
                 this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 
                 cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
-                //optimize performance for javascript
-                cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
-                cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
+                cc.glBindTexture2D(null);
+
+                cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
 
                 gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
                 if (this._quadDirty) {
-                    gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.DYNAMIC_DRAW);
+                    gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.STATIC_DRAW);
                     this._quadDirty = false;
                 }
-                gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);                   //cc.VERTEX_ATTRIB_POSITION
-                gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
-                gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
+                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
+                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
                 gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
             }
-        } else {
-            this._shaderProgram.use();
-            this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
-
-            cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
-            cc.glBindTexture2D(null);
-
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
-            if (this._quadDirty) {
-                gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.STATIC_DRAW);
-                this._quadDirty = false;
-            }
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         }
+       
         cc.g_NumberOfDraws++;
 
         if (cc.SPRITE_DEBUG_DRAW === 0 && !node._showNode)
