@@ -60,7 +60,14 @@ cc.rendererWebGL = {
 
         for (i = 0, len = locCmds.length; i< len; ++i) {
             var cmd = locCmds[i];
-            if(cmd._batching || !cmd._batched) cmd.rendering(context);
+            if(cmd._batching)
+            {
+                cmd.batchedRendering(context);
+            }
+            else if(!cmd._batched) 
+            {
+                cmd.rendering(context);
+            }
         }
 
          //prepare batching

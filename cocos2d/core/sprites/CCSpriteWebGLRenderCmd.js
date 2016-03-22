@@ -24,12 +24,13 @@
 
 //Sprite's WebGL render command
 (function() {
+
     cc.Sprite.WebGLRenderCmd = function (renderable) {
         cc.Node.WebGLRenderCmd.call(this, renderable);
         this._needDraw = true;
 
         this._quad = new cc.V3F_C4B_T2F_Quad();
-        this._quadBufferView = new Uint8Array(this._quad.arrayBuffer);
+        this._quadBufferView = new Uint32Array(this._quad.arrayBuffer);
         this._quadWebBuffer = cc._renderContext.createBuffer();
         this._quadDirty = true;
         this._dirty = false;
@@ -160,14 +161,14 @@
         this._batchBuffer = buf.arrayBuffer;
         this._batchElementBuffer = buf.elementBuffer;
 
-        var totalSpriteVertexData = this.vertexDataPerSprite * count;
-        var matrixData = this.matrixByteSize;
-        var vertexDataPerSprite = this.vertexDataPerSprite;
+        var totalSpriteVertexData = this.vertexDataPerSprite * count /4;
+        var matrixData = this.matrixByteSize/4;
+        var vertexDataPerSprite = this.vertexDataPerSprite/4;
         var vertexDataOffset = 0;
         var matrixDataOffset = 0;
         
         var totalBufferSize = count * this.byteSizePerSprite;
-        var uploadBuffer = new Uint8Array(totalBufferSize);
+        var uploadBuffer = new Uint32Array(totalBufferSize/4);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this._batchBuffer);
         
@@ -183,7 +184,7 @@
                 uploadBuffer[vertexDataOffset + k] = source[k];
             }
 
-            var matData = new Uint8Array(cmd._stackMatrix.mat.buffer);
+            var matData = new Uint32Array(cmd._stackMatrix.mat.buffer);
 
             source = matData;
             len = source.length;
@@ -202,7 +203,7 @@
                 uploadBuffer[offset2 + k] = val;
                 uploadBuffer[offset3 + k] = val;
             }
-            
+
             vertexDataOffset += vertexDataPerSprite;
             matrixDataOffset += matrixData * 4;
         }
@@ -608,123 +609,98 @@
         }
     };
 
+    proto.batchedRendering = function(ctx)
+    {
+        var node = this._node;
+        var locTexture = node._texture;
+        var count = this._batchedNodes;
+
+        var bytesPerRow = 16; //4 floats with 4 bytes each
+        var matrixData = this.matrixByteSize;
+        var totalSpriteVertexData = this.vertexDataPerSprite * count;
+
+        this._batchShader.use();
+        this._batchShader._updateProjectionUniform();
+
+        cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
+        cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._batchBuffer);
+
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
+
+        gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);                   //cc.VERTEX_ATTRIB_POSITION
+        gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
+        gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
+        //enable matrix vertex attribs
+        for(var i=0;i<4;++i)
+        {
+            gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_MVMAT0 + i);
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_MVMAT0 + i, 4, gl.FLOAT, false, bytesPerRow*4, totalSpriteVertexData + bytesPerRow * i); //stride is one row
+        }
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._batchElementBuffer);
+        //gl.drawArrays(gl.TRIANGLE_STRIP, 0, count*4);
+        gl.drawElements(gl.TRIANGLES, count*6, gl.UNSIGNED_SHORT, 0);
+
+        for(var i=0;i<4;++i)
+        {
+            gl.disableVertexAttribArray(cc.VERTEX_ATTRIB_MVMAT0 + i);
+        }
+
+        this.storeBatchBuffer(this.pooledBuffer);
+
+        cc.g_NumberOfDraws++;
+    }
+
+    
     proto.rendering = function (ctx) {
         var node = this._node, locTexture = node._texture;
         if ((locTexture &&!locTexture._textureLoaded) || this._displayedOpacity === 0)
             return;
 
         var gl = ctx || cc._renderContext ;
-        if(this._batching)
-        {
-            var count = this._batchedNodes;
-
-            var vertexDataPerSprite = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-            var bytesPerRow = 4*4; //4 floats with 4 bytes each
-            var matrixData = 4*bytesPerRow;
-            var totalSpriteVertexData = vertexDataPerSprite * count;
-
-            this._batchShader.use();
-            this._batchShader._updateProjectionUniform();
-
-            cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
-            cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, this._batchBuffer);
-            
-
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
-            
-
-            gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);                   //cc.VERTEX_ATTRIB_POSITION
-            gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
-            gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
-            //enable matrix vertex attribs
-            for(var i=0;i<4;++i)
-            {
-                gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_MVMAT0 + i);
-                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_MVMAT0 + i, 4, gl.FLOAT, false, bytesPerRow*4, totalSpriteVertexData + bytesPerRow * i); //stride is one row
-            }
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._batchElementBuffer);
-            //gl.drawArrays(gl.TRIANGLE_STRIP, 0, count*4);
-            gl.drawElements(gl.TRIANGLES, count*6, gl.UNSIGNED_SHORT, 0);
-
-            for(var i=0;i<4;++i)
-            {
-                gl.disableVertexAttribArray(cc.VERTEX_ATTRIB_MVMAT0 + i);
-            }
-
-            this.storeBatchBuffer(this.pooledBuffer);
-        }
-        else
-        {
-             if (locTexture) {
-                if (locTexture._textureLoaded) {
-                    this._shaderProgram.use();
-                    this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
-
-                    cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
-                    //optimize performance for javascript
-                    cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
-                    cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
-
-                    gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
-                    if (this._quadDirty) {
-                        gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.DYNAMIC_DRAW);
-                        this._quadDirty = false;
-                    }
-                    gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);                   //cc.VERTEX_ATTRIB_POSITION
-                    gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
-                    gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
-                    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-                }
-            } else {
+        
+         if (locTexture) {
+            if (locTexture._textureLoaded) {
                 this._shaderProgram.use();
                 this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 
                 cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
-                cc.glBindTexture2D(null);
-
-                cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
+                //optimize performance for javascript
+                cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
+                cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
                 gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
                 if (this._quadDirty) {
-                    gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.STATIC_DRAW);
+                    gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.DYNAMIC_DRAW);
                     this._quadDirty = false;
                 }
-                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
-                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
+                gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);                   //cc.VERTEX_ATTRIB_POSITION
+                gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
+                gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
                 gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
             }
+        } else {
+            this._shaderProgram.use();
+            this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+
+            cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
+            cc.glBindTexture2D(null);
+
+            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
+            if (this._quadDirty) {
+                gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.STATIC_DRAW);
+                this._quadDirty = false;
+            }
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         }
+        
        
         cc.g_NumberOfDraws++;
-
-        if (cc.SPRITE_DEBUG_DRAW === 0 && !node._showNode)
-            return;
-
-        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-        //cc.kmGLPushMatrixWitMat4(node._stackMatrix);
-        cc.current_stack.stack.push(cc.current_stack.top);
-        cc.current_stack.top = this._stackMatrix;
-
-        if (cc.SPRITE_DEBUG_DRAW === 1 || node._showNode) {
-            // draw bounding box
-            var locQuad = this._quad;
-            var verticesG1 = [
-                cc.p(locQuad.tl.vertices.x, locQuad.tl.vertices.y),
-                cc.p(locQuad.bl.vertices.x, locQuad.bl.vertices.y),
-                cc.p(locQuad.br.vertices.x, locQuad.br.vertices.y),
-                cc.p(locQuad.tr.vertices.x, locQuad.tr.vertices.y)
-            ];
-            cc._drawingUtil.drawPoly(verticesG1, 4, true);
-        } else if (cc.SPRITE_DEBUG_DRAW === 2) {
-            // draw texture box
-            var drawRectG2 = node.getTextureRect();
-            var offsetPixG2 = node.getOffsetPosition();
-            var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y),
-                cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y + drawRectG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawRectG2.height)];
-            cc._drawingUtil.drawPoly(verticesG2, 4, true);
-        } // CC_SPRITE_DEBUG_DRAW
-        cc.current_stack.top = cc.current_stack.stack.pop();
     };
 })();
