@@ -29,6 +29,7 @@
         this._needDraw = true;
 
         this._quad = new cc.V3F_C4B_T2F_Quad();
+        this._quadBufferView = new Uint8Array(this._quad.arrayBuffer);
         this._quadWebBuffer = cc._renderContext.createBuffer();
         this._quadDirty = true;
         this._dirty = false;
@@ -56,7 +57,6 @@
     
     proto.batchBufferPool = [];
    
-
     //creates webgl buffers and initializes their size to what is properly required for each sprite
     proto.createBatchBuffer = function(numSprites)
     {
@@ -166,46 +166,48 @@
         var vertexDataOffset = 0;
         var matrixDataOffset = 0;
         
-        var uploadBuffer = new Uint8Array(count * this.byteSizePerSprite);
-        
-        function copy(dest,source, start)
-        {
-            var len = source.length;
-            for(var i=0;i<len;++i)
-            {
-                dest[start + i] = source[i];
-            }
-        }
-
-
-        /*
-        for(var j = myIndex; j<i; ++j)
-        {
-            var cmd = renderCmds[j];
-            gl.bufferSubData(gl.ARRAY_BUFFER, vertexDataOffset, cmd._quad.arrayBuffer);
-            
-            //could skip this with ANGLE_instanced_arrays extension, but toggled off by default on browsers
-            gl.bufferSubData(gl.ARRAY_BUFFER, totalSpriteVertexData + matrixDataOffset + matrixData*0, cmd._stackMatrix.mat);
-            gl.bufferSubData(gl.ARRAY_BUFFER, totalSpriteVertexData + matrixDataOffset + matrixData*1, cmd._stackMatrix.mat);
-            gl.bufferSubData(gl.ARRAY_BUFFER, totalSpriteVertexData + matrixDataOffset + matrixData*2, cmd._stackMatrix.mat);
-            gl.bufferSubData(gl.ARRAY_BUFFER, totalSpriteVertexData + matrixDataOffset + matrixData*3, cmd._stackMatrix.mat);
-
-            vertexDataOffset += vertexDataPerSprite;
-            matrixDataOffset += matrixData * 4;
-        }*/
+        var totalBufferSize = count * this.byteSizePerSprite;
+        var uploadBuffer = new Uint8Array(totalBufferSize);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this._batchBuffer);
+        
+
         for(var j = myIndex; j<i; ++j)
         {
             var cmd = renderCmds[j];
-            var data = new Uint8Array(cmd._quad.arrayBuffer);  
-            copy(uploadBuffer, data, vertexDataOffset);
-            
-            data = new Uint8Array(cmd._stackMatrix.mat.buffer);
-            copy(uploadBuffer,data, totalSpriteVertexData + matrixDataOffset + matrixData*0);
-            copy(uploadBuffer,data, totalSpriteVertexData + matrixDataOffset + matrixData*1);
-            copy(uploadBuffer,data, totalSpriteVertexData + matrixDataOffset + matrixData*2);
-            copy(uploadBuffer,data, totalSpriteVertexData + matrixDataOffset + matrixData*3);
+            //copy(uploadBuffer, cmd._quadBufferView, vertexDataOffset);
+
+            var source = cmd._quadBufferView;
+            var len = source.length;
+            for(var k=0;k<len;++k)
+            {
+                uploadBuffer[vertexDataOffset + k] = source[k];
+            }
+
+            var matData = new Uint8Array(cmd._stackMatrix.mat.buffer);
+
+            source = matData;
+            len = source.length;
+
+            for(var k=0;k<len;++k)
+            {
+                uploadBuffer[totalSpriteVertexData + matrixDataOffset + matrixData*0 + k] = source[k];
+            }
+
+            for(var k=0;k<len;++k)
+            {
+                uploadBuffer[totalSpriteVertexData + matrixDataOffset + matrixData*1 + k] = source[k];
+            }
+
+            for(var k=0;k<len;++k)
+            {
+                uploadBuffer[totalSpriteVertexData + matrixDataOffset + matrixData*2 + k] = source[k];
+            }
+
+            for(var k=0;k<len;++k)
+            {
+                uploadBuffer[totalSpriteVertexData + matrixDataOffset + matrixData*3 + k] = source[k];
+            }
 
             vertexDataOffset += vertexDataPerSprite;
             matrixDataOffset += matrixData * 4;
