@@ -165,13 +165,25 @@
         var vertexDataPerSprite = this.vertexDataPerSprite;
         var vertexDataOffset = 0;
         var matrixDataOffset = 0;
+        
+        var uploadBuffer = new Uint8Array(count * this.byteSizePerSprite);
+        
+        function copy(dest,source, start)
+        {
+            var len = source.length;
+            for(var i=0;i<len;++i)
+            {
+                dest[start + i] = source[i];
+            }
+        }
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._batchBuffer);
+
+        /*
         for(var j = myIndex; j<i; ++j)
         {
             var cmd = renderCmds[j];
             gl.bufferSubData(gl.ARRAY_BUFFER, vertexDataOffset, cmd._quad.arrayBuffer);
-
+            
             //could skip this with ANGLE_instanced_arrays extension, but toggled off by default on browsers
             gl.bufferSubData(gl.ARRAY_BUFFER, totalSpriteVertexData + matrixDataOffset + matrixData*0, cmd._stackMatrix.mat);
             gl.bufferSubData(gl.ARRAY_BUFFER, totalSpriteVertexData + matrixDataOffset + matrixData*1, cmd._stackMatrix.mat);
@@ -180,7 +192,26 @@
 
             vertexDataOffset += vertexDataPerSprite;
             matrixDataOffset += matrixData * 4;
+        }*/
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._batchBuffer);
+        for(var j = myIndex; j<i; ++j)
+        {
+            var cmd = renderCmds[j];
+            var data = new Uint8Array(cmd._quad.arrayBuffer);  
+            copy(uploadBuffer, data, vertexDataOffset);
+            
+            data = new Uint8Array(cmd._stackMatrix.mat.buffer);
+            copy(uploadBuffer,data, totalSpriteVertexData + matrixDataOffset + matrixData*0);
+            copy(uploadBuffer,data, totalSpriteVertexData + matrixDataOffset + matrixData*1);
+            copy(uploadBuffer,data, totalSpriteVertexData + matrixDataOffset + matrixData*2);
+            copy(uploadBuffer,data, totalSpriteVertexData + matrixDataOffset + matrixData*3);
+
+            vertexDataOffset += vertexDataPerSprite;
+            matrixDataOffset += matrixData * 4;
         }
+
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, uploadBuffer);
         
         //create element buffer
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._batchElementBuffer);
