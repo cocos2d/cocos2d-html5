@@ -171,7 +171,6 @@
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this._batchBuffer);
         
-
         for(var j = myIndex; j<i; ++j)
         {
             var cmd = renderCmds[j];
@@ -188,27 +187,22 @@
 
             source = matData;
             len = source.length;
+            
+            var base = totalSpriteVertexData + matrixDataOffset;
+            var offset0 = base + matrixData*0;
+            var offset1 = base + matrixData*1;
+            var offset2 = base + matrixData*2;
+            var offset3 = base + matrixData*3;
 
             for(var k=0;k<len;++k)
             {
-                uploadBuffer[totalSpriteVertexData + matrixDataOffset + matrixData*0 + k] = source[k];
+                var val = source[k];
+                uploadBuffer[offset0 + k] = val;
+                uploadBuffer[offset1 + k] = val;
+                uploadBuffer[offset2 + k] = val;
+                uploadBuffer[offset3 + k] = val;
             }
-
-            for(var k=0;k<len;++k)
-            {
-                uploadBuffer[totalSpriteVertexData + matrixDataOffset + matrixData*1 + k] = source[k];
-            }
-
-            for(var k=0;k<len;++k)
-            {
-                uploadBuffer[totalSpriteVertexData + matrixDataOffset + matrixData*2 + k] = source[k];
-            }
-
-            for(var k=0;k<len;++k)
-            {
-                uploadBuffer[totalSpriteVertexData + matrixDataOffset + matrixData*3 + k] = source[k];
-            }
-
+            
             vertexDataOffset += vertexDataPerSprite;
             matrixDataOffset += matrixData * 4;
         }
