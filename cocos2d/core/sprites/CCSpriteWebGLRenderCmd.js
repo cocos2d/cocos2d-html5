@@ -161,6 +161,7 @@
         this._batchBuffer = buf.arrayBuffer;
         this._batchElementBuffer = buf.elementBuffer;
 
+        //all of the divisions by 4 are just because we work with uint32arrays instead of uint8 arrays so all indexes need to be shortened by the factor of 4
         var totalSpriteVertexData = this.vertexDataPerSprite * count /4;
         var matrixData = this.matrixByteSize/4;
         var vertexDataPerSprite = this.vertexDataPerSprite/4;
@@ -656,15 +657,13 @@
     
     proto.rendering = function (ctx) {
         var node = this._node, locTexture = node._texture;
-        if ((locTexture &&!locTexture._textureLoaded) || this._displayedOpacity === 0)
-            return;
 
-        var gl = ctx || cc._renderContext ;
+        var gl = ctx;
         
+        var program = this._shaderProgram;
          if (locTexture) {
-            if (locTexture._textureLoaded) {
-                this._shaderProgram.use();
-                this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+                program.use();
+                program._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 
                 cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
                 //optimize performance for javascript
@@ -680,10 +679,10 @@
                 gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
                 gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
                 gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-            }
+            
         } else {
-            this._shaderProgram.use();
-            this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+            program.use();
+            program._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 
             cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
             cc.glBindTexture2D(null);
