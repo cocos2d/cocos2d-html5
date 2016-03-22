@@ -36,8 +36,16 @@
         this._supportsBatching = true;
         this._batchShader = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST_BATCHED);
         this._matLocation = gl.getAttribLocation(this._batchShader._programObj, cc.ATTRIBUTE_NAME_MVMAT);
-        this._batchBuffer = gl.createBuffer();
-        this._batchElementBuffer = gl.createBuffer();
+        this._batchElementBuffer = null;
+        this._batchBuffer = null;
+
+        if(!proto.vertexDataPerSprite)
+        {
+            proto.vertexDataPerSprite = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+            proto.matrixByteSize =  4*4*4; //4 rows of 4 floats, 4 bytes each
+            proto.byteSizePerSprite = proto.vertexDataPerSprite + proto.matrixByteSize*4; //unfortunately, we have to transmit 4 matrices (one for each vertex lol, fuck you gl)
+            proto.indicesPerSprite = 6;
+        }
     };
 
     var proto = cc.Sprite.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
@@ -46,6 +54,73 @@
 
     proto.updateBlendFunc = function (blendFunc) {};
     
+    proto.batchBufferPool = [];
+   
+
+    //creates webgl buffers and initializes their size to what is properly required for each sprite
+    proto.createBatchBuffer = function(numSprites)
+    {
+        var arrayBuffer = gl.createBuffer();
+        var elementBuffer = gl.createBuffer();
+
+        this.initBatchBuffers(arrayBuffer,elementBuffer,numSprites);
+
+        return {arrayBuffer: arrayBuffer, elementBuffer: elementBuffer, size: numSprites };
+    }
+
+    proto.initBatchBuffers = function(arrayBuffer, elementBuffer, numSprites)
+    {
+        gl.bindBuffer(gl.ARRAY_BUFFER, arrayBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this.byteSizePerSprite * numSprites ,gl.DYNAMIC_DRAW);
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elementBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.indicesPerSprite * 2 * numSprites, gl.DYNAMIC_DRAW); //*2 because we use shorts for indices
+    }
+
+    //returns an object with {arrayBuffer, elementBuffer, size}, where size denotes how many sprites fit in the buffer (no need for bufferData if it's already big enough, bufferSubData enough)
+    proto.getBatchBuffer = function(numSprites)
+    {
+        var pool = this.batchBufferPool;
+        if(pool.length <=0)
+        {
+            return this.createBatchBuffer(numSprites);
+        }
+        else
+        {
+            var minBuf = null;  //we also track the smallest found buffer because that one will be re-initialized and returned if no fitting buffer can be found
+            var minSize = Number.MAX_VALUE; 
+            var minBufIndex = -1;
+            for(var i=pool.length-1;i>=0;--i)
+            {
+                var buf = pool[i];
+                if(buf.size >= numSprites)
+                {
+                    pool.removeByLastSwap(i);
+                    return buf;
+                }
+
+                if(buf.size < minSize)
+                {
+                    minSize = buf.size;
+                    minBuf = buf;
+                    minBufIndex = i;
+                }
+            }
+
+            //we only get here if no properly sized buffer was found
+            //in that case, take smallest buffer in pool, resize it and return it
+            pool.removeByLastSwap(minBufIndex);
+            this.initBatchBuffers(minBuf.arrayBuffer,minBuf.elementBuffer,numSprites);
+            return minBuf;
+        }
+    }
+
+    proto.storeBatchBuffer = function(buffer)
+    {
+        var pool = this.batchBufferPool;
+        pool.push(buffer);
+    }
+
     proto.configureBatch = function(renderCmds, myIndex)
     {
         var node = this._node;
@@ -81,23 +156,17 @@
             return 0;
         }
 
-        //upload required data to buffers
-        
+        var buf = this.pooledBuffer = this.getBatchBuffer(count);
+        this._batchBuffer = buf.arrayBuffer;
+        this._batchElementBuffer = buf.elementBuffer;
 
-        if(!this._batchBuffer)
-        {
-            console.log("WUT");
-        }
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._batchBuffer);
-
-        var vertexDataPerSprite = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-        var bytesPerRow = 4*4; //4 floats with 4 bytes each
-        var matrixData = 4*bytesPerRow;
-        var totalSpriteVertexData= vertexDataPerSprite * count;
-        gl.bufferData(gl.ARRAY_BUFFER, totalSpriteVertexData + matrixData*count*4,gl.DYNAMIC_DRAW);
-        
+        var totalSpriteVertexData = this.vertexDataPerSprite * count;
+        var matrixData = this.matrixByteSize;
+        var vertexDataPerSprite = this.vertexDataPerSprite;
         var vertexDataOffset = 0;
         var matrixDataOffset = 0;
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._batchBuffer);
         for(var j = myIndex; j<i; ++j)
         {
             var cmd = renderCmds[j];
@@ -131,7 +200,7 @@
             currentQuad += 4;
         }
         
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.DYNAMIC_DRAW);
+        gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, 0, indices);
         return count;
     }
 
@@ -518,7 +587,6 @@
             return;
 
         var gl = ctx || cc._renderContext ;
-        //cc.assert(!_t._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
         if(this._batching)
         {
             var count = this._batchedNodes;
@@ -526,7 +594,7 @@
             var vertexDataPerSprite = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
             var bytesPerRow = 4*4; //4 floats with 4 bytes each
             var matrixData = 4*bytesPerRow;
-            var totalSpriteVertexData= vertexDataPerSprite * count;
+            var totalSpriteVertexData = vertexDataPerSprite * count;
 
             this._batchShader.use();
             this._batchShader._updateProjectionUniform();
@@ -557,6 +625,8 @@
             {
                 gl.disableVertexAttribArray(cc.VERTEX_ATTRIB_MVMAT0 + i);
             }
+
+            this.storeBatchBuffer(this.pooledBuffer);
         }
         else
         {
