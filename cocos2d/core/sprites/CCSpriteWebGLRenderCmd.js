@@ -552,11 +552,6 @@
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._batchElementBuffer);
             //gl.drawArrays(gl.TRIANGLE_STRIP, 0, count*4);
             gl.drawElements(gl.TRIANGLES, count*6, gl.UNSIGNED_SHORT, 0);
-            var error = gl.getError();
-            if(error !== 0)
-            {  
-               console.log("ERROR!"); 
-            }
 
             for(var i=0;i<4;++i)
             {
