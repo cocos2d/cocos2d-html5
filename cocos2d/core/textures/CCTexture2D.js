@@ -136,6 +136,9 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
              */
             getContentSize: function () {
                 var locScaleFactor = cc.contentScaleFactor();
+                if (!this._textureLoaded) {
+                    cc.warn("Texture " + this.url + " is not available yet");
+                }
                 return cc.size(this._contentSize.width / locScaleFactor, this._contentSize.height / locScaleFactor);
             },
 
@@ -151,6 +154,9 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
              * @returns {cc.Size}
              */
             getContentSizeInPixels: function () {
+                if (!this._textureLoaded) {
+                    cc.warn("Texture " + this.url + " is not available yet");
+                }
                 return this._contentSize;
             },
 
