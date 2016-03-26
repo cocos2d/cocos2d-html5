@@ -130,7 +130,6 @@ cc.s_globalOrderOfArrival = 1;
  */
 cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _localZOrder: 0,                                     ///< Local order (relative to its siblings) used to sort the node
-    _globalZOrder: 0,                                    ///< Global order used to sort the node
     _vertexZ: 0.0,
 
     _rotationX: 0,
@@ -138,10 +137,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _scaleX: 1.0,
     _scaleY: 1.0,
     _position: null,
-
-    _normalizedPosition:null,
-    _usingNormalizedPosition: false,
-    _normalizedPositionDirty: false,
 
     _skewX: 0.0,
     _skewY: 0.0,
@@ -202,7 +197,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         _t._anchorPoint = cc.p(0, 0);
         _t._contentSize = cc.size(0, 0);
         _t._position = cc.p(0, 0);
-        _t._normalizedPosition = cc.p(0,0);
         _t._children = [];
 
         var director = cc.director;
@@ -432,38 +426,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * <p>Defines the oder in which the nodes are renderer.                                                                               <br/>
-     * Nodes that have a Global Z Order lower, are renderer first.                                                                        <br/>
-     *                                                                                                                                    <br/>
-     * In case two or more nodes have the same Global Z Order, the oder is not guaranteed.                                                <br/>
-     * The only exception if the Nodes have a Global Z Order == 0. In that case, the Scene Graph order is used.                           <br/>
-     *                                                                                                                                    <br/>
-     * By default, all nodes have a Global Z Order = 0. That means that by default, the Scene Graph order is used to render the nodes.    <br/>
-     *                                                                                                                                    <br/>
-     * Global Z Order is useful when you need to render nodes in an order different than the Scene Graph order.                           <br/>
-     *                                                                                                                                    <br/>
-     * Limitations: Global Z Order can't be used used by Nodes that have SpriteBatchNode as one of their ancestors.                       <br/>
-     * And if ClippingNode is one of the ancestors, then "global Z order" will be relative to the ClippingNode.   </p>
-     * @function
-     * @param {Number} globalZOrder
-     */
-    setGlobalZOrder: function (globalZOrder) {
-        if (this._globalZOrder !== globalZOrder) {
-            this._globalZOrder = globalZOrder;
-            cc.eventManager._setDirtyForNode(this);
-        }
-    },
-
-    /**
-     * Return the Node's Global Z Order.
-     * @function
-     * @returns {number} The node's global Z order
-     */
-    getGlobalZOrder: function () {
-        return this._globalZOrder;
-    },
-
-    /**
      * Returns WebGL Z vertex of this node.
      * @function
      * @return {Number} WebGL Z vertex of this node
@@ -661,29 +623,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             locPosition.x = newPosOrxValue;
             locPosition.y = yValue;
         }
-        this._usingNormalizedPosition = false;
-        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
-    },
-
-    /**
-     * <p>
-     * Sets the position (x,y) using values between 0 and 1.                                                <br/>
-     * The positions in pixels is calculated like the following:                                            <br/>
-     *   _position = _normalizedPosition * parent.getContentSize()
-     * </p>
-     * @param {cc.Point|Number} posOrX
-     * @param {Number} [y]
-     */
-    setNormalizedPosition: function(posOrX, y){
-        var locPosition = this._normalizedPosition;
-        if (y === undefined) {
-            locPosition.x = posOrX.x;
-            locPosition.y = posOrX.y;
-        } else {
-            locPosition.x = posOrX;
-            locPosition.y = y;
-        }
-        this._normalizedPositionDirty = this._usingNormalizedPosition = true;
         this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
@@ -694,14 +633,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getPosition: function () {
         return cc.p(this._position);
-    },
-
-    /**
-     * returns the normalized position
-     * @returns {cc.Point}
-     */
-    getNormalizedPosition: function(){
-        return cc.p(this._normalizedPosition);
     },
 
     /**

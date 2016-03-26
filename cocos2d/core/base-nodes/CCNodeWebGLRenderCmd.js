@@ -85,31 +85,7 @@
         
         this.setRenderZ(parentCmd, stackMatrix);
 
-
-        // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
-        if (node._camera !== null && !(node.grid !== null && node.grid.isActive())) {
-            var apx = this._anchorPointInPoints.x, apy = this._anchorPointInPoints.y;
-            var translate = (apx !== 0.0 || apy !== 0.0);
-            if (translate){
-                if(!cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
-                    apx = 0 | apx;
-                    apy = 0 | apy;
-                }
-                //cc.kmGLTranslatef(apx, apy, 0);
-                var translation = cc.math.Matrix4.createByTranslation(apx, apy, 0, t4x4);      //t4x4 as a temp matrix
-                stackMatrix.multiply(translation);
-
-                node._camera._locateForRenderer(stackMatrix);
-
-                //cc.kmGLTranslatef(-apx, -apy, 0);    optimize at here : kmGLTranslatef
-                translation = cc.math.Matrix4.createByTranslation(-apx, -apy, 0, translation);
-                stackMatrix.multiply(translation);
-                t4x4.identity(); //reset t4x4;
-            } else {
-                node._camera._locateForRenderer(stackMatrix);
-            }
-        }
-        if(!recursive || !node._children || node._children.length === 0)
+        if(!recursive || !node._children)
             return;
         var i, len, locChildren = node._children;
         for(i = 0, len = locChildren.length; i< len; i++){

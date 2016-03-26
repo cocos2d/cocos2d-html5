@@ -238,13 +238,6 @@ cc.Node.RenderCmd.prototype = {
 
     getNodeToParentTransform: function () {
         var node = this._node;
-        if (node._usingNormalizedPosition && node._parent) {        //TODO need refactor
-            var conSize = node._parent._contentSize;
-            node._position.x = node._normalizedPosition.x * conSize.width;
-            node._position.y = node._normalizedPosition.y * conSize.height;
-            node._normalizedPositionDirty = false;
-            this._dirtyFlag = this._dirtyFlag | cc.Node._dirtyFlags.transformDirty;
-        }
         if (this._dirtyFlag & cc.Node._dirtyFlags.transformDirty) {
             var t = this._transform;// quick reference
 

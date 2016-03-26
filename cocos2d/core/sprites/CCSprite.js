@@ -955,7 +955,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     _createRenderCmd: function(){
-            return new cc.Sprite.WebGLRenderCmd(this);
+		return new cc.Sprite.BasicWebGLRenderCmd(this);
     }
 });
 
