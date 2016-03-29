@@ -1061,6 +1061,9 @@
         });
         this.widgetAttributes(widget, json);
 
+        // the TextAtlas must be ignore ContentSize[Size] in the ccs file.
+        widget.ignoreContentAdaptWithSize(true);
+
         return widget;
     };
 
