@@ -58,9 +58,9 @@
         cc.Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
     };
 
-    proto.transform = function(parentCmd){
+    proto.transform = function(parentCmd, recursive){
         var node = this._node;
-        cc.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd);
+        cc.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd, recursive);
         if (node._positionsAreDirty) {
             node._updatePositions();
             node._positionsAreDirty = false;
@@ -115,8 +115,8 @@
             locFlag = this._dirtyFlag;
 
         cc.Node.RenderCmd.prototype._syncStatus.call(this, parentCmd);
-        
-        if (locFlag & flags.cacheDirty) {
+       
+        if (locFlag || !flags.cacheDirty) {
             this._cacheScale9Sprite();
             this._dirtyFlag = this._dirtyFlag & flags.cacheDirty ^ this._dirtyFlag;
         }

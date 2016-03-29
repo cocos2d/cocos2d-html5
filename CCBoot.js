@@ -23,12 +23,45 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+
+
 /**
  * The main namespace of Cocos2d-JS, all engine core classes, functions, properties and constants are defined in this namespace
  * @namespace
  * @name cc
  */
 var cc = cc || {};
+
+cc.create3DContext = function (canvas, opt_attribs) {
+    var names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
+    var context = null;
+    for (var ii = 0; ii < names.length; ++ii) {
+        try {
+            context = canvas.getContext(names[ii], opt_attribs);
+        } catch (e) {
+        }
+        if (context) {
+            break;
+        }
+    }
+    return context;
+};
+
+/*
+(function () {
+    var canvas = document.getElementById("gameCanvas");
+    if (canvas) {
+        var ctx = cc.create3DContext(canvas);
+
+        if(!ctx)
+        {
+            throw new Error("LOL!");
+        }
+    }
+}
+)();
+*/
+
 cc._tmp = cc._tmp || {};
 cc._LogInfos = {};
 
@@ -1184,20 +1217,7 @@ cc.formatStr = function(){
 var _tmpCanvas1 = document.createElement("canvas"),
     _tmpCanvas2 = document.createElement("canvas");
 
-cc.create3DContext = function (canvas, opt_attribs) {
-    var names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
-    var context = null;
-    for (var ii = 0; ii < names.length; ++ii) {
-        try {
-            context = canvas.getContext(names[ii], opt_attribs);
-        } catch (e) {
-        }
-        if (context) {
-            break;
-        }
-    }
-    return context;
-};
+
 
 var _initSys = function () {
     /**
@@ -2508,6 +2528,9 @@ cc.game = /** @lends cc.game# */{
             cc.shaderCache._init();
             cc._drawingUtil = new cc.DrawingPrimitiveWebGL(this._renderContext);
             cc.textureCache._initializingRenderer();
+            cc.glExt = {};
+            cc.glExt.instanced_arrays = gl.getExtension("ANGLE_instanced_arrays");
+            cc.glExt.element_uint = gl.getExtension("OES_element_index_uint");
         } else {
             cc.renderer = cc.rendererCanvas;
             this._renderContext = cc._renderContext = new cc.CanvasContextWrapper(localCanvas.getContext("2d"));

@@ -630,6 +630,9 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
         this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_PMATRIX], false, cc.projection_matrix_stack.top.mat);
     },
 
+    _updateProjectionUniform: function(){
+      this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_PMATRIX], false, cc.projection_matrix_stack.top.mat);  
+    },
     /**
      * returns the vertexShader error log
      * @return {String}

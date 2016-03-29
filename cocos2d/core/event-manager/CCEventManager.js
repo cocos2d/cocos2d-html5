@@ -114,7 +114,6 @@ cc.eventManager = /** @lends cc.eventManager# */{
     _priorityDirtyFlagMap: {},
     _nodeListenersMap: {},
     _nodePriorityMap: {},
-    _globalZOrderNodeMap: {},
     _toAddedListeners: [],
     _dirtyNodes: [],
     _inDispatch: 0,
@@ -587,7 +586,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
 
     _visitTarget: function (node, isRootNode) {
         var children = node.getChildren(), i = 0;
-        var childrenCount = children.length, locGlobalZOrderNodeMap = this._globalZOrderNodeMap, locNodeListenersMap = this._nodeListenersMap;
+        var childrenCount = children.length, locNodeListenersMap = this._nodeListenersMap;
 
         if (childrenCount > 0) {
             var child;
@@ -600,39 +599,11 @@ cc.eventManager = /** @lends cc.eventManager# */{
                     break;
             }
 
-            if (locNodeListenersMap[node.__instanceId] != null) {
-                if (!locGlobalZOrderNodeMap[node.getGlobalZOrder()])
-                    locGlobalZOrderNodeMap[node.getGlobalZOrder()] = [];
-                locGlobalZOrderNodeMap[node.getGlobalZOrder()].push(node.__instanceId);
-            }
-
             for (; i < childrenCount; i++) {
                 child = children[i];
                 if (child)
                     this._visitTarget(child, false);
             }
-        } else {
-            if (locNodeListenersMap[node.__instanceId] != null) {
-                if (!locGlobalZOrderNodeMap[node.getGlobalZOrder()])
-                    locGlobalZOrderNodeMap[node.getGlobalZOrder()] = [];
-                locGlobalZOrderNodeMap[node.getGlobalZOrder()].push(node.__instanceId);
-            }
-        }
-
-        if (isRootNode) {
-            var globalZOrders = [];
-            for (var selKey in locGlobalZOrderNodeMap)
-                globalZOrders.push(selKey);
-
-            globalZOrders.sort(this._sortNumberAsc);
-
-            var zOrdersLen = globalZOrders.length, selZOrders, j, locNodePriorityMap = this._nodePriorityMap;
-            for (i = 0; i < zOrdersLen; i++) {
-                selZOrders = locGlobalZOrderNodeMap[globalZOrders[i]];
-                for (j = 0; j < selZOrders.length; j++)
-                    locNodePriorityMap[selZOrders[j]] = ++this._nodePriorityIndex;
-            }
-            this._globalZOrderNodeMap = {};
         }
     },
 

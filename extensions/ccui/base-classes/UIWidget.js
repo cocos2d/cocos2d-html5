@@ -178,7 +178,8 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
     },
 
     /**
-     * initializes state of widget. please do not call this function by yourself, you should pass the parameters to constructor to initialize it .
+     * initializes state of widget. please do not call this function by yourself, you should pass the parameters to constructor to initialize it
+.
      * @returns {boolean}
      */
     init: function () {
@@ -1829,10 +1830,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
 
 
     _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             return new ccui.Widget.WebGLRenderCmd(this);
-        else
-            return new ccui.Widget.CanvasRenderCmd(this);
     }
 });
 

@@ -126,9 +126,6 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
-            return new cc.RenderTexture.CanvasRenderCmd(this);
-        else
             return new cc.RenderTexture.WebGLRenderCmd(this);
     },
 
