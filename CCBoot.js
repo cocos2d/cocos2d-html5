@@ -1665,7 +1665,7 @@ var _initSys = function () {
     sys.browserType = sys.BROWSER_TYPE_UNKNOWN;
     /* Determine the browser type */
     (function(){
-        var typeReg1 = /sogou|qzone|liebao|micromessenger|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|mxbrowser|trident|miuibrowser/i;
+        var typeReg1 = /mqqbrowser|sogou|qzone|liebao|micromessenger|ucbrowser|360 aphone|360browser|baiduboxapp|baidubrowser|maxthon|mxbrowser|trident|miuibrowser/i;
         var typeReg2 = /qqbrowser|chrome|safari|firefox|opr|oupeng|opera/i;
         var browserTypes = typeReg1.exec(ua);
         if(!browserTypes) browserTypes = typeReg2.exec(ua);
@@ -1695,8 +1695,8 @@ var _initSys = function () {
     sys.browserVersion = "";
     /* Determine the browser version number */
     (function(){
-        var versionReg1 = /(micromessenger|mx|maxthon|baidu|sogou)(mobile)?(browser)?\/?([\d.]+)/i;
-        var versionReg2 = /(msie |rv:|firefox|chrome|ucbrowser|qq|oupeng|opera|opr|safari|miui)(mobile)?(browser)?\/?([\d.]+)/i;
+        var versionReg1 = /(micromessenger|qq|mx|maxthon|baidu|sogou)(mobile)?(browser)?\/?([\d.]+)/i;
+        var versionReg2 = /(msie |rv:|firefox|chrome|ucbrowser|oupeng|opera|opr|safari|miui)(mobile)?(browser)?\/?([\d.]+)/i;
         var tmp = ua.match(versionReg1);
         if(!tmp) tmp = ua.match(versionReg2);
         sys.browserVersion = tmp ? tmp[4] : "";
@@ -1784,6 +1784,20 @@ var _initSys = function () {
             var context = cc.create3DContext(tmpCanvas, {'stencil': true, 'preserveDrawingBuffer': true });
             if(context) {
                 _supportWebGL = true;
+            }
+
+            // Accept only Android 5+ default browser and QQ Brwoser 6.2+
+            if (_supportWebGL && sys.os === sys.OS_ANDROID) {
+                _supportWebGL = false;
+                // QQ Brwoser 6.2+
+                var browserVer = parseFloat(sys.browserVersion);
+                if (sys.browserType === sys.BROWSER_TYPE_MOBILE_QQ && browserVer >= 6.2) {
+                    _supportWebGL = true;
+                }
+                // Android 5+ default browser
+                else if (sys.osMainVersion && sys.osMainVersion >= 5 && sys.browserType === sys.BROWSER_TYPE_ANDROID) {
+                    _supportWebGL = true;
+                }
             }
         }
         catch (e) {}
@@ -1876,9 +1890,12 @@ var _initSys = function () {
         str += "isMobile : " + self.isMobile + "\r\n";
         str += "language : " + self.language + "\r\n";
         str += "browserType : " + self.browserType + "\r\n";
+        str += "browserVersion : " + self.browserVersion + "\r\n";
         str += "capabilities : " + JSON.stringify(self.capabilities) + "\r\n";
         str += "os : " + self.os + "\r\n";
+        str += "osVersion : " + self.osVersion + "\r\n";
         str += "platform : " + self.platform + "\r\n";
+        str += "Using " + (cc._renderType === cc.game.RENDER_TYPE_WEBGL ? "WEBGL" : "CANVAS") + " renderer." + "\r\n";
         cc.log(str);
     };
 
@@ -1911,9 +1928,7 @@ cc._engineLoaded = false;
 
 function _determineRenderType(config) {
     var CONFIG_KEY = cc.game.CONFIG_KEY,
-        userRenderMode = parseInt(config[CONFIG_KEY.renderMode]) || 0,
-        shieldOs = [cc.sys.OS_ANDROID],
-        shieldBrowser = [];
+        userRenderMode = parseInt(config[CONFIG_KEY.renderMode]) || 0;
 
     // Adjust RenderType
     if (isNaN(userRenderMode) || userRenderMode > 2 || userRenderMode < 0)
@@ -1921,29 +1936,25 @@ function _determineRenderType(config) {
 
     // Determine RenderType
     cc._renderType = cc.game.RENDER_TYPE_CANVAS;
-    cc._supportRender = true;
+    cc._supportRender = false;
 
-    if ( userRenderMode === 2 || 
-        (   userRenderMode === 0 && 
-            shieldOs.indexOf(cc.sys.os) === -1 && 
-            shieldBrowser.indexOf(cc.sys.browserType) === -1 )) {
+    if (userRenderMode === 0) {
         if (cc.sys.capabilities["opengl"]) {
             cc._renderType = cc.game.RENDER_TYPE_WEBGL;
             cc._supportRender = true;
         }
-        else {
-            cc._supportRender = false;
-        }
-    }
-    if (userRenderMode === 1
-        || (userRenderMode === 0 && !cc._supportRender)) {
-        if (cc.sys.capabilities["canvas"]) {
+        else if (cc.sys.capabilities["canvas"]) {
             cc._renderType = cc.game.RENDER_TYPE_CANVAS;
             cc._supportRender = true;
         }
-        else {
-            cc._supportRender = false;
-        }
+    }
+    else if (userRenderMode === 1 && cc.sys.capabilities["canvas"]) {
+        cc._renderType = cc.game.RENDER_TYPE_CANVAS;
+        cc._supportRender = true;
+    }
+    else if (userRenderMode === 2 && cc.sys.capabilities["opengl"]) {
+        cc._renderType = cc.game.RENDER_TYPE_WEBGL;
+        cc._supportRender = true;
     }
 }
 

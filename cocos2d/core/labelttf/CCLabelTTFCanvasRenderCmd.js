@@ -264,6 +264,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
                 if (cc.LabelTTF._symbolRex.test(sLine || tmpText)) {
                     result = cc.LabelTTF._lastWordRex.exec(sText);
                     fuzzyLen -= result ? result[0].length : 0;
+                    if (fuzzyLen === 0) fuzzyLen = 1;
 
                     sLine = text.substr(fuzzyLen);
                     sText = text.substr(0, fuzzyLen);
