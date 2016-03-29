@@ -1114,9 +1114,6 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
     },
 
     _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
-            return new ccui.Scale9Sprite.CanvasRenderCmd(this);
-        else
             return new ccui.Scale9Sprite.WebGLRenderCmd(this);
     }
 });

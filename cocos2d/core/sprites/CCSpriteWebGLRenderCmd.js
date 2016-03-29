@@ -24,21 +24,95 @@
 
 //Sprite's WebGL render command
 (function() {
+
     cc.Sprite.WebGLRenderCmd = function (renderable) {
         cc.Node.WebGLRenderCmd.call(this, renderable);
         this._needDraw = true;
 
         this._quad = new cc.V3F_C4B_T2F_Quad();
+        this._quadBufferView = new Uint32Array(this._quad.arrayBuffer);
         this._quadWebBuffer = cc._renderContext.createBuffer();
         this._quadDirty = true;
         this._dirty = false;
         this._recursiveDirty = false;
+        this._supportsBatching = true;
+        this._batchShader = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST_BATCHED);
+        this._matLocation = gl.getAttribLocation(this._batchShader._programObj, cc.ATTRIBUTE_NAME_MVMAT);
+        this._batchElementBuffer = null;
+        this._batchBuffer = null;
     };
 
     var proto = cc.Sprite.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
+
     proto.constructor = cc.Sprite.WebGLRenderCmd;
 
     proto.updateBlendFunc = function (blendFunc) {};
+    
+    proto.batchBufferPool = [];
+   
+    //creates webgl buffers and initializes their size to what is properly required for each sprite
+    proto.createBatchBuffer = function(numSprites)
+    {
+        var arrayBuffer = gl.createBuffer();
+        var elementBuffer = gl.createBuffer();
+
+        this.initBatchBuffers(arrayBuffer,elementBuffer,numSprites);
+
+        return {arrayBuffer: arrayBuffer, elementBuffer: elementBuffer, size: numSprites };
+    }
+
+    proto.initBatchBuffers = function(arrayBuffer, elementBuffer, numSprites)
+    {
+        gl.bindBuffer(gl.ARRAY_BUFFER, arrayBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this.byteSizePerSprite * numSprites ,gl.DYNAMIC_DRAW);
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elementBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.indicesPerSprite * 2 * numSprites, gl.DYNAMIC_DRAW); //*2 because we use shorts for indices
+    }
+
+    //returns an object with {arrayBuffer, elementBuffer, size}, where size denotes how many sprites fit in the buffer (no need for bufferData if it's already big enough, bufferSubData enough)
+    proto.getBatchBuffer = function(numSprites)
+    {
+        var pool = this.batchBufferPool;
+        if(pool.length <=0)
+        {
+            return this.createBatchBuffer(numSprites);
+        }
+        else
+        {
+            var minBuf = null;  //we also track the smallest found buffer because that one will be re-initialized and returned if no fitting buffer can be found
+            var minSize = Number.MAX_VALUE; 
+            var minBufIndex = -1;
+            for(var i=pool.length-1;i>=0;--i)
+            {
+                var buf = pool[i];
+                if(buf.size >= numSprites)
+                {
+                    pool.removeByLastSwap(i);
+                    return buf;
+                }
+
+                if(buf.size < minSize)
+                {
+                    minSize = buf.size;
+                    minBuf = buf;
+                    minBufIndex = i;
+                }
+            }
+
+            //we only get here if no properly sized buffer was found
+            //in that case, take smallest buffer in pool, resize it and return it
+            pool.removeByLastSwap(minBufIndex);
+            this.initBatchBuffers(minBuf.arrayBuffer,minBuf.elementBuffer,numSprites);
+            return minBuf;
+        }
+    }
+
+    proto.storeBatchBuffer = function(buffer)
+    {
+        var pool = this.batchBufferPool;
+        pool.push(buffer);
+    }
 
     proto.setDirtyFlag = function(dirtyFlag){
         cc.Node.WebGLRenderCmd.prototype.setDirtyFlag.call(this, dirtyFlag);
@@ -303,7 +377,7 @@
         }
 
         if (texture)
-            this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+            this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
         else
             this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_COLOR);
 
@@ -419,16 +493,13 @@
 
     proto.rendering = function (ctx) {
         var node = this._node, locTexture = node._texture;
-        if ((locTexture &&!locTexture._textureLoaded) || this._displayedOpacity === 0)
-            return;
 
-        var gl = ctx || cc._renderContext ;
-        //cc.assert(!_t._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
-
-        if (locTexture) {
-            if (locTexture._textureLoaded) {
-                this._shaderProgram.use();
-                this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+        var gl = ctx;
+        
+        var program = this._shaderProgram;
+         if (locTexture) {
+                program.use();
+                program._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 
                 cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
                 //optimize performance for javascript
@@ -444,10 +515,10 @@
                 gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
                 gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
                 gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-            }
+            
         } else {
-            this._shaderProgram.use();
-            this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+            program.use();
+            program._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 
             cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
             cc.glBindTexture2D(null);
@@ -463,34 +534,8 @@
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         }
+        
+       
         cc.g_NumberOfDraws++;
-
-        if (cc.SPRITE_DEBUG_DRAW === 0 && !node._showNode)
-            return;
-
-        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-        //cc.kmGLPushMatrixWitMat4(node._stackMatrix);
-        cc.current_stack.stack.push(cc.current_stack.top);
-        cc.current_stack.top = this._stackMatrix;
-
-        if (cc.SPRITE_DEBUG_DRAW === 1 || node._showNode) {
-            // draw bounding box
-            var locQuad = this._quad;
-            var verticesG1 = [
-                cc.p(locQuad.tl.vertices.x, locQuad.tl.vertices.y),
-                cc.p(locQuad.bl.vertices.x, locQuad.bl.vertices.y),
-                cc.p(locQuad.br.vertices.x, locQuad.br.vertices.y),
-                cc.p(locQuad.tr.vertices.x, locQuad.tr.vertices.y)
-            ];
-            cc._drawingUtil.drawPoly(verticesG1, 4, true);
-        } else if (cc.SPRITE_DEBUG_DRAW === 2) {
-            // draw texture box
-            var drawRectG2 = node.getTextureRect();
-            var offsetPixG2 = node.getOffsetPosition();
-            var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y),
-                cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y + drawRectG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawRectG2.height)];
-            cc._drawingUtil.drawPoly(verticesG2, 4, true);
-        } // CC_SPRITE_DEBUG_DRAW
-        cc.current_stack.top = cc.current_stack.stack.pop();
     };
 })();

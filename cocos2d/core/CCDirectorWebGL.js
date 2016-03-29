@@ -82,7 +82,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                     size.width - ox,
                     -oy,
                     size.height - oy,
-                    -1024, 1024);
+                    -1,1);
                 cc.kmGLMultMatrix(orthoMatrix);
                 cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
                 cc.kmGLLoadIdentity();

@@ -76,14 +76,12 @@
 
     proto._onBeforeVisitStencil = function(ctx){
         var gl = ctx || cc._renderContext;
-
         ccui.Layout.WebGLRenderCmd._layer++;
 
         var mask_layer = 0x1 << ccui.Layout.WebGLRenderCmd._layer;
         var mask_layer_l = mask_layer - 1;
         this._mask_layer_le = mask_layer | mask_layer_l;
 
-        // manually save the stencil state
         this._currentStencilEnabled = gl.isEnabled(gl.STENCIL_TEST);
         this._currentStencilWriteMask = gl.getParameter(gl.STENCIL_WRITEMASK);
         this._currentStencilFunc = gl.getParameter(gl.STENCIL_FUNC);
@@ -94,9 +92,7 @@
         this._currentStencilPassDepthPass = gl.getParameter(gl.STENCIL_PASS_DEPTH_PASS);
 
         gl.enable(gl.STENCIL_TEST);
-
         gl.stencilMask(mask_layer);
-
         this._currentDepthWriteMask = gl.getParameter(gl.DEPTH_WRITEMASK);
 
         gl.depthMask(false);
@@ -121,7 +117,7 @@
     proto._onAfterVisitStencil = function(ctx){
         var gl = ctx || cc._renderContext;
         // manually restore the stencil state
-        gl.stencilFunc(this._currentStencilFunc, this._currentStencilRef, this._currentStencilValueMask);
+        gl.stencilFunc(this._currentStencilFunc || gl.EQUAL, this._currentStencilRef, this._currentStencilValueMask);
         gl.stencilOp(this._currentStencilFail, this._currentStencilPassDepthFail, this._currentStencilPassDepthPass);
         gl.stencilMask(this._currentStencilWriteMask);
         if (!this._currentStencilEnabled)

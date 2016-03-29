@@ -369,10 +369,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     setClippingType: function (type) {
         if (type === this._clippingType)
             return;
-        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS && type === ccui.Layout.CLIPPING_SCISSOR){
-            cc.log("Only supports STENCIL on canvas mode.");
-            return;
-        }
+
         var clippingEnabled = this.isClippingEnabled();
         this.setClippingEnabled(false);
         this._clippingType = type;
@@ -1451,10 +1448,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_WEBGL)
             return new ccui.Layout.WebGLRenderCmd(this);
-        else
-            return new ccui.Layout.CanvasRenderCmd(this);
     }
 });
 
