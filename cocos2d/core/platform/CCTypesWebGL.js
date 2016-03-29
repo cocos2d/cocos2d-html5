@@ -365,7 +365,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
     /**
      * @class cc.V3F_C4B_T2F
      * @param {cc.Vertex3F} vertices
-     * @param { cc.color} colors
+     * @param {cc.Color} colors
      * @param {cc.Tex2F} texCoords
      * @param {Array} arrayBuffer
      * @param {Number} offset
@@ -568,7 +568,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
     /**
      * @class cc.V2F_C4B_T2F
      * @param {cc.Vertex2F} vertices
-     * @param {cc.color} colors
+     * @param {cc.Color} colors
      * @param {cc.Tex2F} texCoords
      * @param {Array} arrayBuffer
      * @param {Number} offset

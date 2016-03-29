@@ -29,6 +29,13 @@
 window.Uint16Array = window.Uint16Array || window.Array;
 window.Float32Array = window.Float32Array || window.Array;
 (function(cc){
+    /**
+     * <p>
+     * A 3x3 matrix                         </br>
+     * </p>
+     * @class
+     * @param {cc.math.Matrix3} [mat3]
+     */
     cc.math.Matrix3 = function(mat3) {
         if (mat3 && mat3.mat) {
             this.mat = new Float32Array(mat3.mat);
@@ -37,9 +44,16 @@ window.Float32Array = window.Float32Array || window.Array;
         }
     };
     cc.kmMat3 = cc.math.Matrix3;
-    var proto = cc.math.Matrix3.prototype;
+    var _p = cc.math.Matrix3.prototype;
 
-    proto.fill = function(mat3) {            //cc.kmMat3Fill
+    /**
+     * Copy matrix.
+     * @fn fill
+     * @memberof cc.math.Matrix3
+     * @param  {cc.math.Matrix3} mat3 Matrix to copy
+     * @return {cc.math.Matrix3} this
+     */
+    _p.fill = function(mat3) {            //cc.kmMat3Fill
         var mat = this.mat, matIn = mat3.mat;
         mat[0] = matIn[0];
         mat[1] = matIn[1];
@@ -53,7 +67,7 @@ window.Float32Array = window.Float32Array || window.Array;
         return this;
     };
 
-    proto.adjugate = function(){   //= cc.kmMat3Adjugate
+    _p.adjugate = function(){   //= cc.kmMat3Adjugate
         var mat = this.mat;
         var m0 = mat[0], m1 = mat[1], m2 = mat[2], m3 = mat[3], m4 = mat[4],
             m5 = mat[5], m6 = mat[6], m7 = mat[7], m8 = mat[8];
@@ -71,7 +85,13 @@ window.Float32Array = window.Float32Array || window.Array;
         return this;
     };
 
-    proto.identity = function() { //cc.kmMat3Identity
+    /**
+     * Sets pOut to an identity matrix returns pOut
+     * @memberof cc.math.Matrix3
+     * @param {cc.math.Matrix3} pOut - A pointer to the matrix to set to identity
+     * @return {cc.math.Matrix3} this
+     */
+    _p.identity = function() { //cc.kmMat3Identity
         var mat = this.mat;
         mat[1] = mat[2] = mat[3] =
             mat[5] = mat[6] = mat[7] = 0;
@@ -81,7 +101,7 @@ window.Float32Array = window.Float32Array || window.Array;
 
     var tmpMatrix = new cc.math.Matrix3();          // internal matrix
 
-    proto.inverse = function(determinate){         //cc.kmMat3Inverse
+    _p.inverse = function(determinate){         //cc.kmMat3Inverse
         if (determinate === 0.0)
             return this;
         tmpMatrix.assignFrom(this);
@@ -91,14 +111,14 @@ window.Float32Array = window.Float32Array || window.Array;
         return this;
     };
 
-    proto.isIdentity = function(){    //= cc.kmMat3IsIdentity
+    _p.isIdentity = function(){    //= cc.kmMat3IsIdentity
         var mat = this.mat;
         return (mat[0] === 1 && mat[1] === 0 && mat[2] === 0
         && mat[3] === 0 && mat[4] === 1 && mat[5] === 0
         && mat[6] === 0 && mat[7] === 0 && mat[8] === 1);
     };
 
-    proto.transpose = function(){     // cc.kmMat3Transpose
+    _p.transpose = function(){     // cc.kmMat3Transpose
         var mat = this.mat;
         var  m1 = mat[1], m2 = mat[2], m3 = mat[3],  m5 = mat[5],
             m6 = mat[6], m7 = mat[7];
@@ -115,7 +135,7 @@ window.Float32Array = window.Float32Array || window.Array;
         return this;
     };
 
-    proto.determinant = function(){
+    _p.determinant = function(){
         var mat = this.mat;
         /*
          calculating the determinant following the rule of sarus,
@@ -130,7 +150,7 @@ window.Float32Array = window.Float32Array || window.Array;
         return output;
     };
 
-    proto.multiply = function(mat3){
+    _p.multiply = function(mat3){
         var m1 = this.mat, m2 = mat3.mat;
         var a0 = m1[0], a1 = m1[1], a2 = m1[2], a3 = m1[3], a4 = m1[4], a5 = m1[5],
             a6 = m1[6], a7 = m1[7], a8 = m1[8];
@@ -151,7 +171,7 @@ window.Float32Array = window.Float32Array || window.Array;
         return this;
     };
 
-    proto.multiplyScalar = function(factor) {
+    _p.multiplyScalar = function(factor) {
         var mat = this.mat;
         mat[0] *= factor;
         mat[1] *= factor;
@@ -185,7 +205,7 @@ window.Float32Array = window.Float32Array || window.Array;
         return retMat;
     };
 
-    proto.assignFrom = function(matIn){      // cc.kmMat3Assign
+    _p.assignFrom = function(matIn){      // cc.kmMat3Assign
         if(this === matIn) {
             cc.log("cc.math.Matrix3.assign(): current matrix equals matIn");
             return this;
@@ -203,7 +223,7 @@ window.Float32Array = window.Float32Array || window.Array;
         return this;
     };
 
-    proto.equals = function(mat3) {
+    _p.equals = function(mat3) {
         if (this === mat3)
             return true;
         var EPSILON = cc.math.EPSILON,m1 = this.mat, m2 = mat3.mat;
@@ -331,14 +351,7 @@ window.Float32Array = window.Float32Array || window.Array;
         return ret;
     };
 
-    proto.rotationToAxisAngle = function() {           //cc.kmMat3RotationToAxisAngle
+    _p.rotationToAxisAngle = function() {           //cc.kmMat3RotationToAxisAngle
         return cc.math.Quaternion.rotationMatrix(this).toAxisAndAngle();
     }
 })(cc);
-
-
-
-
-
-
-

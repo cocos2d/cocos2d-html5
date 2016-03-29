@@ -187,7 +187,7 @@ cc.setProjectionMatrixDirty = function () {
  *    These flags can be ORed. The flags that are not present, will be disabled.
  * </p>
  * @function
- * @param {cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR | cc.VERTEX_ATTRIB_FLAG_TEX_OORDS} flags
+ * @param {cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS} flags
  */
 cc.glEnableVertexAttribs = function (flags) {
     /* Position */
@@ -337,4 +337,3 @@ cc.glEnable = function (flags) {
          cc._renderContext.disable(cc._renderContext.BLEND);*/
     }
 };
-

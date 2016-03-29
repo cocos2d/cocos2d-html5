@@ -576,7 +576,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter. <br/>
      * (override removeAllChildren of cc.Node)
      * @function
-     * @param {Boolean} cleanup
+     * @param {Boolean} [cleanup=true]
      */
     removeAllChildren: function (cleanup) {
         // Invalidate atlas index. issue #569

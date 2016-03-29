@@ -27,7 +27,15 @@
  */
 
 (function(cc) {
-    cc.kmVec3 = cc.math.Vec3 = function (x, y, z) {
+    /**
+     * A 3d vector.
+     * @class
+     * @param {number} [x]
+     * @param {number} [y]
+     * @param {number} [z]
+     */
+
+    cc.math.Vec3 = cc.kmVec3 = function (x, y, z) {
         if(x && y === undefined){
             this.x = x.x;
             this.y = x.y;
@@ -43,9 +51,9 @@
         return new cc.math.Vec3(x, y, z);
     };
 
-    var proto = cc.math.Vec3.prototype;
+    var _p = cc.math.Vec3._ptype;
 
-    proto.fill = function (x, y, z) {    // =cc.kmVec3Fill
+    _p.fill = function (x, y, z) {    // =cc.kmVec3Fill
         if (x && y === undefined) {
             this.x = x.x;
             this.y = x.y;
@@ -58,15 +66,15 @@
         return this;
     };
 
-    proto.length = function () {     //=cc.kmVec3Length
+    _p.length = function () {     //=cc.kmVec3Length
         return Math.sqrt(cc.math.square(this.x) + cc.math.square(this.y) + cc.math.square(this.z));
     };
 
-    proto.lengthSq = function () {   //=cc.kmVec3LengthSq
+    _p.lengthSq = function () {   //=cc.kmVec3LengthSq
         return cc.math.square(this.x) + cc.math.square(this.y) + cc.math.square(this.z)
     };
 
-    proto.normalize = function () {  //= cc.kmVec3Normalize
+    _p.normalize = function () {  //= cc.kmVec3Normalize
         var l = 1.0 / this.length();
         this.x *= l;
         this.y *= l;
@@ -74,7 +82,7 @@
         return this;
     };
 
-    proto.cross = function (vec3) {   //= cc.kmVec3Cross
+    _p.cross = function (vec3) {   //= cc.kmVec3Cross
         var x = this.x, y = this.y, z = this.z;
         this.x = (y * vec3.z) - (z * vec3.y);
         this.y = (z * vec3.x) - (x * vec3.z);
@@ -82,25 +90,25 @@
         return this;
     };
 
-    proto.dot = function (vec) {     //= cc.kmVec3Dot
+    _p.dot = function (vec) {     //= cc.kmVec3Dot
         return (  this.x * vec.x + this.y * vec.y + this.z * vec.z );
     };
 
-    proto.add = function(vec){      //= cc.kmVec3Add
+    _p.add = function(vec){      //= cc.kmVec3Add
         this.x += vec.x;
         this.y += vec.y;
         this.z += vec.z;
         return this;
     };
 
-    proto.subtract = function (vec) {  // = cc.kmVec3Subtract
+    _p.subtract = function (vec) {  // = cc.kmVec3Subtract
         this.x -= vec.x;
         this.y -= vec.y;
         this.z -= vec.z;
         return this;
     };
 
-    proto.transform = function (mat4) {             // = cc.kmVec3Transform
+    _p.transform = function (mat4) {             // = cc.kmVec3Transform
         var x = this.x, y = this.y, z = this.z, mat = mat4.mat;
         this.x = x * mat[0] + y * mat[4] + z * mat[8] + mat[12];
         this.y = x * mat[1] + y * mat[5] + z * mat[9] + mat[13];
@@ -108,7 +116,7 @@
         return this;
     };
 
-    proto.transformNormal = function(mat4){
+    _p.transformNormal = function(mat4){
         /*
          a = (Vx, Vy, Vz, 0)
          b = (a×M)T
@@ -122,7 +130,7 @@
         return this;
     };
 
-    proto.transformCoord = function(mat4){        // = cc.kmVec3TransformCoord
+    _p.transformCoord = function(mat4){        // = cc.kmVec3TransformCoord
         /*
          a = (Vx, Vy, Vz, 1)
          b = (a×M)T
@@ -136,21 +144,21 @@
         return this;
     };
 
-    proto.scale = function(scale){             // = cc.kmVec3Scale
+    _p.scale = function(scale){             // = cc.kmVec3Scale
         this.x *= scale;
         this.y *= scale;
         this.z *= scale;
         return this;
     };
 
-    proto.equals = function(vec){    // = cc.kmVec3AreEqual
+    _p.equals = function(vec){    // = cc.kmVec3AreEqual
         var EPSILON = cc.math.EPSILON;
         return (this.x < (vec.x + EPSILON) && this.x > (vec.x - EPSILON)) &&
             (this.y < (vec.y + EPSILON) && this.y > (vec.y - EPSILON)) &&
             (this.z < (vec.z + EPSILON) && this.z > (vec.z - EPSILON));
     };
 
-    proto.inverseTransform = function(mat4){   //= cc.kmVec3InverseTransform
+    _p.inverseTransform = function(mat4){   //= cc.kmVec3InverseTransform
         var mat = mat4.mat;
         var v1 = new cc.math.Vec3(this.x - mat[12], this.y - mat[13], this.z - mat[14]);
         this.x = v1.x * mat[0] + v1.y * mat[1] + v1.z * mat[2];
@@ -159,7 +167,7 @@
         return this;
     };
 
-    proto.inverseTransformNormal = function(mat4){   // = cc.kmVec3InverseTransformNormal
+    _p.inverseTransformNormal = function(mat4){   // = cc.kmVec3InverseTransformNormal
         var x = this.x, y = this.y, z = this.z, mat = mat4.mat;
         this.x = x * mat[0] + y * mat[1] + z * mat[2];
         this.y = x * mat[4] + y * mat[5] + z * mat[6];
@@ -167,7 +175,7 @@
         return this;
     };
 
-    proto.assignFrom = function(vec){
+    _p.assignFrom = function(vec){
         if(!vec)
             return this;
         this.x = vec.x;
@@ -181,7 +189,7 @@
         return vec;
     };
 
-    proto.toTypeArray = function(){           //cc.kmVec3ToTypeArray
+    _p.toTypeArray = function(){           //cc.kmVec3ToTypeArray
         var tyArr = new Float32Array(3);
         tyArr[0] = this.x;
         tyArr[1] = this.y;
@@ -189,13 +197,3 @@
         return tyArr;
     };
 })(cc);
-
-
-
-
-
-
-
-
-
-
