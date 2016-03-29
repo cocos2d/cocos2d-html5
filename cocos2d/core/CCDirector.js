@@ -205,6 +205,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     
     traverseAndSetZ: function(node)
     {
+        var minZ = Number.MAX_VALUE;
+        var maxZ = -Number.MAX_VALUE;
+
         var children = node.children;
 
         var len = children.length;
@@ -215,19 +218,34 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             if(child._localZOrder < 0)
             {
                 this.traverseAndSetZ(child);
+                minZ = Math.min(minZ,child.__minZ);
+                maxZ = Math.max(maxZ,child.__maxZ);
             }
             else
                 break;
         }
-
-        node.__z = this.assignedZ;
+        
+        var z = this.assignedZ;
+        node.__z = z;
         this.assignedZ += this.assignedZStep;
+
+        minZ = Math.min(minZ,z);
+        maxZ = Math.max(maxZ,z);
 
         for(i;i<len;++i)
         {
+            var child = children[i];
             this.traverseAndSetZ(children[i]);
+            minZ = Math.min(minZ,child.__minZ);
+            maxZ = Math.max(maxZ,child.__maxZ);
         }
-
+        
+        node.__minZ = minZ;
+        node.__maxZ = maxZ;
+    },
+    getZStep: function()
+    {
+        return this.assignedZStep;
     },
     //[pitforest]
     //traverses the scene from the rootnode and assigns a global 'z' value to each node according to its draw order in the hierarcy that is within the min and max range of the projection matrix
@@ -235,9 +253,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     assignZ: function(rootNode)
     {
         this.assignedZ = 0; //first node that is drawn gets this value, it then gets incremented whenever a node assigns its z value
-        this.assignedZStep = 1/2000;
+        this.assignedZStep = 1/10000;
         this.traverseAndSetZ(rootNode);
-
     },
     /**
      *  Draw the scene. This method is called every frame. Don't call it manually.
