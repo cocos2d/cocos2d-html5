@@ -104,15 +104,13 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
             this.addProtectedChild(this._body);
 
             this.setColor(ccui.ScrollViewBar.DEFAULT_COLOR);
+            this.onScrolled(cc.p(0, 0));
+            cc.ProtectedNode.prototype.setOpacity.call(this, 0);
+            this._autoHideRemainingTime = 0;
 
             if(this._direction === ccui.ScrollView.DIR_HORIZONTAL)
             {
                 this.setRotation(90);
-            }
-
-            if(this._autoHideEnabled)
-            {
-                cc.ProtectedNode.prototype.setOpacity.call(this, 0)
             }
 
             return true;
@@ -187,7 +185,11 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
     setAutoHideEnabled: function(autoHideEnabled)
     {
         this._autoHideEnabled = autoHideEnabled;
-        cc.ProtectedNode.prototype.setOpacity.call(this, this.opacity);
+
+        if(!this._autoHideEnabled && !this._touching && this._autoHideRemainingTime <= 0)
+            cc.ProtectedNode.prototype.setOpacity.call(this, this.opacity);
+        else
+            cc.ProtectedNode.prototype.setOpacity.call(this, 0);
     },
     /**
      * Query scroll bar auto hide state

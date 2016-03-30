@@ -241,6 +241,12 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
         this._refreshIndicatorPosition();
     },
 
+    _remedyLayoutParameter: function (item)
+    {
+        item.setContentSize(this.getContentSize());
+        ccui.ListView.prototype._remedyLayoutParameter.call(this, item);
+    },
+    
     _refreshIndicatorPosition: function()
     {
         if(this._indicator)
@@ -296,6 +302,11 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
             }
         }
 
+    },
+
+    _getAutoScrollStopEpsilon: function()
+    {
+        return 0.001;
     },
 
     _pageTurningEvent: function () {

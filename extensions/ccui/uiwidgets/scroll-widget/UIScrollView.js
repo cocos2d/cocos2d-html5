@@ -46,6 +46,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     _touchMoveDisplacements: null,
     _touchMoveTimeDeltas: null,
     _touchMovePreviousTimestamp: 0,
+    _touchTotalTimeThreshold : 0.5,
 
     _autoScrolling: false,
     _autoScrollTargetDelta: null,
@@ -172,6 +173,12 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         var innerSize = this._innerContainer.getContentSize();
         this._innerContainer.setContentSize(cc.size(Math.max(innerSize.width, locSize.width), Math.max(innerSize.height, locSize.height)));
         this._innerContainer.setPosition(0, locSize.height - this._innerContainer.getContentSize().height);
+
+        if(this._verticalScrollBar)
+            this._verticalScrollBar.onScrolled(this._getHowMuchOutOfBoundary());
+
+        if(this._horizontalScrollBar)
+            this._horizontalScrollBar.onScrolled(this._getHowMuchOutOfBoundary());
     },
 
     /**
@@ -199,21 +206,13 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         var pos = this._innerContainer.getPosition();
         var contAP = this._innerContainer.getAnchorPoint();
 
-        if (this._innerContainer.getLeftBoundary() > 0.0)
+        if (this._innerContainer.getLeftBoundary() != 0.0)
         {
             pos.x = contAP.x * innerSizeWidth;
         }
-        if (this._innerContainer.getRightBoundary() < this._contentSize.width)
+        if (this._innerContainer.getTopBoundary() != this._contentSize.height)
         {
-            pos.x = this._contentSize.width - ((1.0 - contAP.x) * innerSizeWidth);
-        }
-        if (pos.y > 0.0)
-        {
-            pos.y = contAP.y * innerSizeHeight;
-        }
-        if (this._innerContainer.getTopBoundary() < this._contentSize.height)
-        {
-            pos.y = this._contentSize.height - (1.0 - contAP.y) * innerSizeWidth;
+            pos.y = this._contentSize.height - (1.0 - contAP.y) * innerSizeHeight;
         }
         this.setInnerContainerPosition(pos);
 
@@ -504,9 +503,9 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         }
         else
         {
-            var howMuchOutOfBoundary  = this._getHowMuchOutOfBoundary();
-            return howMuchOutOfBoundary.x !==0 && howMuchOutOfBoundary.y !== 0;
+            return !this._fltEqualZero(outOfBoundary);
         }
+
         return false;
     },
 
@@ -545,7 +544,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         {
             totalTime += this._touchMoveTimeDeltas[i];
         }
-        if(totalTime == 0 || totalTime >= 0.5)
+        if(totalTime == 0 || totalTime >= this._touchTotalTimeThreshold)
         {
             return cc.p(0, 0);
         }
@@ -559,6 +558,25 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         }
 
         return cc.pMult(totalMovement, 1 / totalTime);
+    },
+
+    /**
+     * Set the touch total time threshold
+     * @param {Number} touchTotalTimeThreshold
+     */
+    setTouchTotalTimeThreshold: function(touchTotalTimeThreshold)
+    {
+        this._touchTotalTimeThreshold = touchTotalTimeThreshold;
+    },
+
+
+    /**
+     * Get the touch total time threshold
+     * @returns {Number}
+     */
+    getTouchTotalTimeThreshold: function()
+    {
+        return this._touchTotalTimeThreshold;
     },
 
     _startInertiaScroll: function(touchMoveVelocity)
@@ -575,7 +593,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             return false;
         }
         var bounceBackAmount = this._getHowMuchOutOfBoundary();
-        if(bounceBackAmount.x === 0 && bounceBackAmount.y === 0)
+        if(this._fltEqualZero(bounceBackAmount))
         {
             return false;
         }
@@ -617,7 +635,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
         // If the destination is also out of boundary of same side, start brake from beggining.
         var currentOutOfBoundary = this._getHowMuchOutOfBoundary();
-        if(currentOutOfBoundary.x !== 0 || currentOutOfBoundary.y !== 0)
+        if(!this._fltEqualZero(currentOutOfBoundary))
         {
             this._autoScrollCurrentlyOutOfBoundary = true;
             var afterOutOfBoundary = this._getHowMuchOutOfBoundary(adjustedDeltaMove);
@@ -626,6 +644,17 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
                 this._autoScrollBraking = true;
             }
         }
+    },
+
+    /**
+     * Immediately stops inner container scroll initiated by any of the "scrollTo*" member functions
+     */
+    stopAutoScroll: function()
+    {
+        this._autoScrolling = false;
+        this._autoScrollAttenuate = true;
+        this._autoScrollTotalTime = 0;
+        this._autoScrollAccumulatedTime = 0;
     },
 
     _isNecessaryAutoScrollBrake: function()
@@ -653,6 +682,16 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         return false;
     },
 
+    _getAutoScrollStopEpsilon: function()
+    {
+        return 0.0001;
+    },
+
+    _fltEqualZero: function(point)
+    {
+        return (Math.abs(point.x) <=  0.0001 && Math.abs(point.y) <=  0.0001);
+    },
+
     _processAutoScrolling: function(deltaTime)
     {
         var OUT_OF_BOUNDARY_BREAKING_FACTOR = 0.05;
@@ -672,7 +711,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
 
         // Calculate the new position
         var newPosition = cc.pAdd(this._autoScrollStartPosition, cc.pMult(this._autoScrollTargetDelta,percentage));
-        var reachedEnd = (percentage == 1);
+        var reachedEnd = Math.abs(percentage - 1) <= this._getAutoScrollStopEpsilon();
 
         if(this.bounceEnabled)
         {
@@ -684,7 +723,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             // Don't let go out of boundary
             var moveDelta = cc.pSub(newPosition, this.getInnerContainerPosition());
             var outOfBoundary = this._getHowMuchOutOfBoundary(moveDelta);
-            if(outOfBoundary.x !== 0 || outOfBoundary.y !== 0)
+            if(!this._fltEqualZero(outOfBoundary))
             {
                 newPosition.x += outOfBoundary.x;
                 newPosition.y += outOfBoundary.y;
@@ -697,6 +736,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         if(reachedEnd)
         {
             this._autoScrolling = false;
+            this._dispatchEvent(ccui.ScrollView.EVENT_AUTOSCROLL_ENDED);
         }
 
         this._moveInnerContainer(cc.pSub(newPosition, this.getInnerContainerPosition()), reachedEnd);
@@ -1176,6 +1216,10 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             ccui.Layout.prototype.interceptTouchEvent.call(this, event, sender, touch);
             return;
         }
+
+        if(this._direction === ccui.ScrollView.DIR_NONE)
+            return;
+
         var touchPoint = touch.getLocation();
         switch (event) {
             case ccui.Widget.TOUCH_BEGAN:
@@ -1779,8 +1823,10 @@ cc.defineGetterSetter(_p, "innerHeight", _p._getInnerHeight, _p._setInnerHeight)
 /** @expose */
 _p.direction;
 cc.defineGetterSetter(_p, "direction", _p.getDirection, _p.setDirection);
+/** @expose */
+_p.touchTotalTimeThreshold;
+cc.defineGetterSetter(_p, "touchTotalTimeThreshold", _p.getTouchTotalTimeThreshold, _p.setTouchTotalTimeThreshold);
 _p = null;
-
 /**
  * allocates and initializes a UIScrollView.
  * @deprecated since v3.0, please use new ccui.ScrollView() instead.
@@ -1878,6 +1924,12 @@ ccui.ScrollView.EVENT_BOUNCE_RIGHT = 8;
  * @type {number}
  */
 ccui.ScrollView.EVENT_CONTAINER_MOVED = 9;
+/**
+ * The flag autoscroll ended of ccui.ScrollView's event.
+ * @constant
+ * @type {number}
+ */
+ccui.ScrollView.EVENT_AUTOSCROLL_ENDED = 10;
 
 /**
  * @ignore
