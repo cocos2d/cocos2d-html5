@@ -104,6 +104,7 @@
             //in that case, take smallest buffer in pool, resize it and return it
             pool.removeByLastSwap(minBufIndex);
             this.initBatchBuffers(minBuf.arrayBuffer,minBuf.elementBuffer,numSprites);
+            minBuf.size = numSprites;
             return minBuf;
         }
     }
