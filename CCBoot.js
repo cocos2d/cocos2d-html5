@@ -2230,6 +2230,11 @@ cc.game = /** @lends cc.game# */{
             config = self.config, 
             CONFIG_KEY = self.CONFIG_KEY;
 
+        if(window["gli"]) //if webinspector is installed, we have to hook iterator
+        {
+            gli.setupContext();
+        }
+        
         this._loadConfig();
 
         // Already prepared
