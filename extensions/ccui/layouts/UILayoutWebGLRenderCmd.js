@@ -118,22 +118,7 @@
         var gl = ctx || cc._renderContext;
         gl.disable(gl.SCISSOR_TEST);
     };
-
-    proto._drawFullScreenQuadClearStencil = function(){
-        // draw a fullscreen solid rectangle to clear the stencil buffer
-        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
-        cc.kmGLPushMatrix();
-        cc.kmGLLoadIdentity();
-        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-        cc.kmGLPushMatrix();
-        cc.kmGLLoadIdentity();
-        cc._drawingUtil.drawSolidRect(cc.p(-1,-1), cc.p(1,1), cc.color(255, 255, 255, 255));
-        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
-        cc.kmGLPopMatrix();
-        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-        cc.kmGLPopMatrix();
-    };
-
+    
     proto.rebindStencilRendering = function(stencil){};
 
     proto.transform = function(parentCmd, recursive){
