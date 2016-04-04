@@ -692,9 +692,9 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         this._selectedImage = null;
         this._disabledImage = null;
 
-        if (selectedSprite !== undefined) {
+        if (normalSprite !== undefined) {
             //normalSprite = normalSprite;
-            //selectedSprite = selectedSprite;
+            selectedSprite = selectedSprite || null;
             var disabledImage, target, callback;
             //when you send 4 arguments, five is undefined
             if (five !== undefined) {
@@ -739,7 +739,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         if (this._normalImage) {
             this.removeChild(this._normalImage, true);
         }
-        
+
         this._normalImage = normalImage;
         if(!this._normalImage)
             return;
