@@ -1786,7 +1786,7 @@ var _initSys = function () {
                 _supportWebGL = true;
             }
 
-            // Accept only Android 5+ default browser and QQ Brwoser 6.2+
+            // Accept only Android 5+ default browser and QQ Browser 6.2+
             if (_supportWebGL && sys.os === sys.OS_ANDROID) {
                 _supportWebGL = false;
                 // QQ Brwoser 6.2+
