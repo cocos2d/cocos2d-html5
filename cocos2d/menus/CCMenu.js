@@ -51,7 +51,7 @@ cc.DEFAULT_PADDING = 5;
  *  - But the only accepted children are MenuItem objects</p>
  * @class
  * @extends cc.Layer
- * @param {...cc.MenuItem|null} menuItems}
+ * @param {...cc.MenuItem|null} menuItems
  * @example
  * var layer = new cc.Menu(menuitem1, menuitem2, menuitem3);
  */

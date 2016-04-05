@@ -274,7 +274,7 @@ cc.FiniteTimeAction = cc.Action.extend(/** @lends cc.FiniteTimeAction# */{
      * - The reversed action will be x of 100 move to 0.
      * - Will be rewritten
      *
-     * @return {Null}
+     * @return {?cc.Action}
      */
     reverse:function () {
         cc.log("cocos2d: FiniteTimeAction#reverse: Implement me");

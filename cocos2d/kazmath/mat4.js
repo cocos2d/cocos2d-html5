@@ -37,6 +37,7 @@
      * | 2   6  10  14 |                     </br>
      * | 3   7  11  15 |
      * </p>
+     * @class
      * @param {cc.math.Matrix4} [mat4]
      */
     cc.math.Matrix4 = function (mat4) {
@@ -63,8 +64,8 @@
 
     /**
      * Sets pOut to an identity matrix returns pOut
-     * @Params pOut - A pointer to the matrix to set to identity
-     * @Return Returns pOut so that the call can be nested
+     * @param pOut - A pointer to the matrix to set to identity
+     * @returns Returns pOut so that the call can be nested
      */
     cc.kmMat4Identity = function (pOut) {
         var mat = pOut.mat;
@@ -1008,7 +1009,3 @@
         return temp.toAxisAndAngle();
     };
 })(cc);
-
-
-
-

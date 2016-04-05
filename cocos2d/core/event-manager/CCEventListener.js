@@ -257,7 +257,7 @@ cc.EventListener.KEYBOARD = 3;
  */
 cc.EventListener.MOUSE = 4;
 /**
- * The type code of focus event listener.
+ * The type code of acceleration event listener.
  * @constant
  * @type {number}
  */

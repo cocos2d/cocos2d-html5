@@ -410,6 +410,9 @@
                 return new cc.PhysicsSprite.WebGLRenderCmd(this);
         }
     };
+    /**
+     * @class
+     */
     cc.PhysicsSprite = cc.Sprite.extend(chipmunkAPI);
     cc.PhysicsSprite._className = "PhysicsSprite";
     var _p = cc.PhysicsSprite.prototype;

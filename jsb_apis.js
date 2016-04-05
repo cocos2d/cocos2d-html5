@@ -93,7 +93,7 @@ jsb.fileUtils = /** @lends jsb.fileUtils# */{
      * @param {String} arg2
      * @return {bool}
      */
-    renameFile : function (str, str, str)
+    renameFile : function (arg0,arg1,arg2)
     {
         return false;
     },
@@ -189,7 +189,7 @@ jsb.fileUtils = /** @lends jsb.fileUtils# */{
      * @param {String} arg1
      * @return {bool}
      */
-    writeStringToFile : function (str, str)
+    writeStringToFile : function (arg0,arg1)
     {
         return false;
     },
@@ -241,7 +241,7 @@ jsb.fileUtils = /** @lends jsb.fileUtils# */{
      * @param {String} arg1
      * @return {String}
      */
-    fullPathFromRelativeFile : function (str, str)
+    fullPathFromRelativeFile : function (arg0,arg1)
     {
         return ;
     },
@@ -363,7 +363,7 @@ jsb.EventAssetsManager = cc.Class.extend(/** @lends jsb.EventAssetsManager# */{
 
     /**
      * @function getEventCode
-     * @return {cc.EventAssetsManager::EventCode}
+     * @return {number} cc.EventAssetsManager.EventCode
      */
     getEventCode : function (
         )
@@ -386,7 +386,7 @@ jsb.EventAssetsManager = cc.Class.extend(/** @lends jsb.EventAssetsManager# */{
      * @constructor
      * @param {String} arg0
      * @param {cc.AssetsManager} arg1
-     * @param {cc.EventAssetsManager::EventCode} arg2
+     * @param {number} arg2 cc.EventAssetsManager::EventCode
      * @param {float} arg3
      * @param {float} arg4
      * @param {String} arg5
@@ -395,15 +395,15 @@ jsb.EventAssetsManager = cc.Class.extend(/** @lends jsb.EventAssetsManager# */{
      * @param {int} arg8
      */
     EventAssetsManager : function (
-        str,
+        arg0,
         assetsmanager,
         eventcode,
-        float,
-        float,
-        str,
-        str,
-        int,
-        int
+        arg3,
+        arg4,
+        arg5,
+        arg6,
+        arg7,
+        arg8
         )
     {
     }
@@ -464,7 +464,7 @@ jsb.AssetsManager = cc.Class.extend(/** @lends jsb.AssetsManager# */{
 
     /**
      * @function getState
-     * @return {jsb.AssetsManager::State}
+     * @return {number} jsb.AssetsManager::State
      */
     getState : function ()
     {
@@ -496,7 +496,7 @@ jsb.AssetsManager = cc.Class.extend(/** @lends jsb.AssetsManager# */{
 
     /**
      * @function getLocalManifest
-     * @return {jsb.Manifest}
+     * @return {object} jsb.Manifest
      */
     getLocalManifest : function ()
     {
@@ -525,7 +525,7 @@ jsb.AssetsManager = cc.Class.extend(/** @lends jsb.AssetsManager# */{
      * @param {String} arg1
      * @return {jsb.AssetsManager}
      */
-    create : function (str, str)
+    create : function (arg0,arg1)
     {
         return cc.AssetsManager;
     },
@@ -536,7 +536,7 @@ jsb.AssetsManager = cc.Class.extend(/** @lends jsb.AssetsManager# */{
      * @param {String} arg0
      * @param {String} arg1
      */
-    ctor : function (str, str)
+    ctor : function (arg0,arg1)
     {
     }
 
