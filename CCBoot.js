@@ -1786,7 +1786,7 @@ var _initSys = function () {
                 _supportWebGL = true;
             }
 
-            // Accept only Android 5+ default browser and QQ Brwoser 6.2+
+            // Accept only Android 5+ default browser and QQ Browser 6.2+
             if (_supportWebGL && sys.os === sys.OS_ANDROID) {
                 _supportWebGL = false;
                 // QQ Brwoser 6.2+
@@ -1910,9 +1910,6 @@ var _initSys = function () {
     };
 };
 _initSys();
-
-delete _tmpCanvas1;
-delete _tmpCanvas2;
 
 //to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
 cc.log = cc.warn = cc.error = cc.assert = function () {
@@ -2390,6 +2387,7 @@ cc.game = /** @lends cc.game# */{
         }
         // Load from project.json 
         else {
+            var data = {};
             try {
                 var cocos_script = document.getElementsByTagName('script');
                 for(var i = 0; i < cocos_script.length; i++){
@@ -2411,12 +2409,11 @@ cc.game = /** @lends cc.game# */{
                 if(!txt){
                     txt = cc.loader._loadTxtSync("project.json");
                 }
-                var data = JSON.parse(txt);
-                this._initConfig(data || {});
+                data = JSON.parse(txt);
             } catch (e) {
                 cc.log("Failed to read or parse project.json");
-                this._initConfig({});
             }
+            this._initConfig(data);
         }
     },
 
