@@ -338,7 +338,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     },
     /**
      * return the string of cc.MenuItemLabel
-     * @returns {*|string|_p.string|ret.string|q.string|String}
+     * @returns {String}
      */
     getString: function () {
         return this._label.string;
@@ -739,7 +739,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         if (this._normalImage) {
             this.removeChild(this._normalImage, true);
         }
-        
+
         this._normalImage = normalImage;
         if(!this._normalImage)
             return;
@@ -1211,9 +1211,9 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
 
     /**
      * initializes a cc.MenuItemToggle with items
-     * @param {cc.MenuItem} args[0...last-2] the rest in the array are cc.MenuItems
-     * @param {function|String} args[last-1] the second item in the args array is the callback
-     * @param {cc.Node} args[last] the first item in the args array is a target
+     * @param {...cc.MenuItem} array the rest in the array are cc.MenuItems
+     * @param {function|String} secondTolast the second item in the args array is the callback
+     * @param {cc.Node} last the first item in the args array is a target
      * @return {Boolean}
      */
     initWithItems: function (args) {
@@ -1338,7 +1338,6 @@ cc.defineGetterSetter(_p, "selectedIndex", _p.getSelectedIndex, _p.setSelectedIn
  * The inner items can be any MenuItem
  * @deprecated since v3.0 please use new cc.MenuItemToggle(params) instead
  * @return {cc.MenuItemToggle}
- * @example
  */
 cc.MenuItemToggle.create = function (/*Multiple arguments follow*/) {
     if ((arguments.length > 0) && (arguments[arguments.length - 1] == null))

@@ -56,7 +56,7 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
      * to copy object with deep copy.
      * returns a clone of action.
      *
-     * @return {cc.Action}
+     * @return {cc.ActionInterval}
      */
     clone:function(){
         var action = new cc.GridAction();

@@ -1140,7 +1140,7 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
     /**
      * Create a action. Opposite with the original motion trajectory. <br />
      * Will be overwrite.
-     * @return {null}
+     * @return {?cc.Action}
      */
     reverse:function () {
         cc.log("cc.EaseElastic.reverse(): it should be overridden in subclass.");
@@ -3678,4 +3678,3 @@ cc._easeCubicActionInOut = {
 cc.easeCubicActionInOut = function(){
     return cc._easeCubicActionInOut;
 };
-
