@@ -752,8 +752,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             return new cc.LabelTTF.WebGLRenderCmd(this);
         else if (this._onCacheCanvasMode)
             return new cc.LabelTTF.CacheCanvasRenderCmd(this);
-        else
-            return new cc.LabelTTF.CanvasRenderCmd(this);
     },
 
     //For web only

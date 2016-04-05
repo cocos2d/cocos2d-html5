@@ -92,9 +92,6 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     _createRenderCmd: function(){
-        if (cc._renderType === cc.game.RENDER_TYPE_CANVAS)
-            return new cc.Layer.CanvasRenderCmd(this);
-        else
             return new cc.Layer.WebGLRenderCmd(this);
     }
 });
@@ -255,9 +252,6 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     },
 
     _createRenderCmd: function(){
-        if (cc._renderType === cc.game.RENDER_TYPE_CANVAS)
-            return new cc.LayerColor.CanvasRenderCmd(this);
-        else
             return new cc.LayerColor.WebGLRenderCmd(this);
     }
 });
@@ -574,9 +568,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     _createRenderCmd: function(){
-        if (cc._renderType === cc.game.RENDER_TYPE_CANVAS)
-            return new cc.LayerGradient.CanvasRenderCmd(this);
-        else
             return new cc.LayerGradient.WebGLRenderCmd(this);
     }
 });

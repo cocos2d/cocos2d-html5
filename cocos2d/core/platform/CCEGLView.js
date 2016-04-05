@@ -960,12 +960,6 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
                                Math.round((containerH - contentH) / 2),
                                contentW, contentH);
 
-        // Translate the content
-        if (cc._renderType === cc.game.RENDER_TYPE_CANVAS){
-            //TODO: modify something for setTransform
-            //cc._renderContext.translate(viewport.x, viewport.y + contentH);
-        }
-
         this._result.scale = [scaleX, scaleY];
         this._result.viewport = viewport;
         return this._result;

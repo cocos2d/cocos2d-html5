@@ -152,10 +152,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_WEBGL)
-            return new ccui.ScrollView.WebGLRenderCmd(this);
-        else
-            return new ccui.ScrollView.CanvasRenderCmd(this);
+        return new ccui.ScrollView.WebGLRenderCmd(this);
     },
 
     _onSizeChanged: function () {

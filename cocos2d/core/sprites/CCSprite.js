@@ -314,25 +314,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if (this._reorderChildDirty) {
             var _children = this._children;
 
-            // insertion sort
-            var len = _children.length, i, j, tmp;
-            for(i=1; i<len; i++){
-                tmp = _children[i];
-                j = i - 1;
-
-                //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while(j >= 0){
-                    if(tmp._localZOrder < _children[j]._localZOrder){
-                        _children[j+1] = _children[j];
-                    }else if(tmp._localZOrder === _children[j]._localZOrder && tmp.arrivalOrder < _children[j].arrivalOrder){
-                        _children[j+1] = _children[j];
-                    }else{
-                        break;
-                    }
-                    j--;
-                }
-                _children[j+1] = tmp;
-            }
+            cc.Node.prototype.sortAllChildren.call(this);
 
             if (this._batchNode) {
                 this._arrayMakeObjectsPerformSelector(_children, cc.Node._stateCallbackType.sortAllChildren);
@@ -356,9 +338,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             cc.log(cc._LogInfos.Sprite_reorderChild);
             return;
         }
-
-        if (zOrder === child.zIndex)
-            return;
 
         if (this._batchNode && !this._reorderChildDirty) {
             this._setReorderChildDirtyRecursively();
@@ -976,10 +955,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
-            return new cc.Sprite.CanvasRenderCmd(this);
-        else
-            return new cc.Sprite.WebGLRenderCmd(this);
+		return new cc.Sprite.BasicWebGLRenderCmd(this);
     }
 });
 

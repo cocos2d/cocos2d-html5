@@ -17,8 +17,8 @@
             return;
         var currentID = this._node.__instanceId;
 
-        cc.renderer.pushRenderCommand(this);
-        cc.renderer._turnToCacheMode(currentID);
+        //cc.renderer.pushRenderCommand(this);
+        //cc.renderer._turnToCacheMode(currentID);
 
         ccui.Layout.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
         // Need to update children after do layout

@@ -76,6 +76,7 @@
 
     proto.transform = function(parentCmd, recursive){
         var node = this._node;
+        var parentCmd = parentCmd || this.getParentRenderCmd();
         cc.Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
         if (node._positionsAreDirty) {
             node._updatePositions();
@@ -87,6 +88,9 @@
             for(var j=0; j < protectChildLen; j++) {
                 var pchild = locRenderers[j];
                 if(pchild) {
+                    
+                    pchild.__z = this.getRenderZ(parentCmd);
+
                     var tempCmd = pchild._renderCmd;
                     tempCmd.transform(this, true);
                 }
@@ -111,8 +115,8 @@
 
     proto._syncStatus = function (parentCmd){
         cc.Node.WebGLRenderCmd.prototype._syncStatus.call(this, parentCmd);
-        this._updateDisplayColor(this._displayedColor);
-        this._updateDisplayOpacity(this._displayedOpacity);
+        this._updateDisplayColor(this._node._displayedColor);
+        this._updateDisplayOpacity(this._node._displayedOpacity);
     };
 
     proto._updateDisplayColor = function(parentColor){

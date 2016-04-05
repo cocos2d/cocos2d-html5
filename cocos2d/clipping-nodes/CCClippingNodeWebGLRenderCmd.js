@@ -173,14 +173,11 @@
         var gl = ctx || cc._renderContext, node = this._node;
         cc.ClippingNode.WebGLRenderCmd._layer++;
 
-        // mask of the current layer (ie: for layer 3: 00000100)
+
         var mask_layer = 0x1 << cc.ClippingNode.WebGLRenderCmd._layer;
-        // mask of all layers less than the current (ie: for layer 3: 00000011)
         var mask_layer_l = mask_layer - 1;
-        // mask of all layers less than or equal to the current (ie: for layer 3: 00000111)
-        //var mask_layer_le = mask_layer | mask_layer_l;
         this._mask_layer_le = mask_layer | mask_layer_l;
-        // manually save the stencil state
+
         this._currentStencilEnabled = gl.isEnabled(gl.STENCIL_TEST);
         this._currentStencilWriteMask = gl.getParameter(gl.STENCIL_WRITEMASK);
         this._currentStencilFunc = gl.getParameter(gl.STENCIL_FUNC);

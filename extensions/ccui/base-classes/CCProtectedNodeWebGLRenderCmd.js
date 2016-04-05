@@ -98,7 +98,8 @@
         var node = this._node;
         var t4x4 = this._transform4x4, stackMatrix = this._stackMatrix,
             parentMatrix = parentCmd ? parentCmd._stackMatrix : cc.current_stack.top;
-
+        
+        var parentCmd = parentCmd || this.getParentRenderCmd();
         // Convert 3x3 into 4x4 matrix
         var trans = node.getNodeToParentTransform();
 
@@ -113,12 +114,10 @@
         t4x4Mat[5] = trans.d;
         t4x4Mat[13] = trans.ty;
 
-        // Update Z vertex manually
-        t4x4Mat[14] = node._vertexZ;
-
         //optimize performance for Javascript
         cc.kmMat4Multiply(stackMatrix, parentMatrix, t4x4);
 
+        this.setRenderZ(parentCmd, stackMatrix);
         // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
         if (node._camera !== null && !(node.grid !== null && node.grid.isActive())) {
             var apx = this._anchorPointInPoints.x, apy = this._anchorPointInPoints.y;

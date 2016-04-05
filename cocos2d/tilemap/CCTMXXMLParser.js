@@ -289,6 +289,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         this._objectGroups = [];
         this.properties = [];
         this._tileProperties = {};
+        this._tileAnimations = {};
 
         this._currentFirstGID = 0;
 
@@ -637,6 +638,24 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                                 dict[name] = tp[j].getAttribute('value');
                             }
                             this._tileProperties[this.parentGID] = dict;
+                        }
+
+                        var animation = t.getElementsByTagName("animation");
+                        if(animation) animation = animation[0];//i think there can only be one animation defined for each tile
+
+                        if(animation)
+                        {
+                        	this._tileAnimations[this.parentGID] = [];
+							var frames = animation.children;
+							for(var i=0;i<frames.length;++i)
+							{
+								var frame = frames[i];
+								var id = parseInt(frames[i].getAttribute("tileid"));
+								var duration = parseInt(frames[i].getAttribute("duration"));
+								
+								//duration in milliseconds
+								this._tileAnimations[this.parentGID].push({id: id, duration: duration});
+							}
                         }
                     }
                 }
