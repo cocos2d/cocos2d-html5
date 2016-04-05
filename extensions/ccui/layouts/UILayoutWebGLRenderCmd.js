@@ -39,6 +39,8 @@
         this._currentStencilPassDepthFail = 0;
         this._currentStencilPassDepthPass = 0;
         this._currentDepthWriteMask = false;
+        this._scissorOldState = false;
+        this._clippingOldRect = null;
 
         this._mask_layer_le = 0;
 
@@ -56,6 +58,10 @@
         var node = this._node;
         if (!node._visible)
             return;
+
+        if(parentCmd && (parentCmd._dirtyFlag & cc.Node._dirtyFlags.transformDirty))
+            node._clippingRectDirty = true;
+
         node._adaptRenderers();
         node._doLayout();
 
@@ -71,7 +77,7 @@
                     break;
             }
         } else
-            ccui.Widget.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
+            ccui.ProtectedNode.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
     };
 
     proto._onBeforeVisitStencil = function(ctx){
@@ -130,16 +136,38 @@
     };
 
     proto._onBeforeVisitScissor = function(ctx){
-        var clippingRect = this._getClippingRect();
+        this._node._clippingRectDirty = true;
+        var clippingRect = this._node._getClippingRect();
         var gl = ctx || cc._renderContext;
-        gl.enable(gl.SCISSOR_TEST);
 
-        cc.view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
+        this._scissorOldState = cc.view.isScissorEnabled();
+
+        if(!this._scissorOldState)
+            gl.enable(gl.SCISSOR_TEST);
+
+        this._clippingOldRect = cc.view.getScissorRect();
+
+        if(!cc.rectEqualToRect(this._clippingOldRect, clippingRect))
+            cc.view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
     };
 
     proto._onAfterVisitScissor = function(ctx){
         var gl = ctx || cc._renderContext;
-        gl.disable(gl.SCISSOR_TEST);
+        if(this._scissorOldState)
+        {
+            if(!cc.rectEqualToRect(this._clippingOldRect, this._node._clippingRect))
+            {
+                cc.view.setScissorInPoints( this._clippingOldRect.x,
+                    this._clippingOldRect.y,
+                    this._clippingOldRect.width,
+                    this._clippingOldRect.height);
+            }
+
+        }
+        else
+        {
+            gl.disable(gl.SCISSOR_TEST);
+        }
     };
 
     proto._drawFullScreenQuadClearStencil = function(){
@@ -233,7 +261,7 @@
 
     proto.scissorClippingVisit = function(parentCmd){
         cc.renderer.pushRenderCommand(this._beforeVisitCmdScissor);
-        cc.ProtectedNode.prototype.visit.call(this._node, parentCmd);
+        ccui.ProtectedNode.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
         cc.renderer.pushRenderCommand(this._afterVisitCmdScissor);
     };
 
