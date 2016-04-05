@@ -419,38 +419,18 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
             if (this._clippingParent) {
                 parentClippingRect = this._clippingParent._getClippingRect();
-                var finalX = worldPos.x - (scissorWidth * this._anchorPoint.x);
-                var finalY = worldPos.y - (scissorHeight * this._anchorPoint.y);
-                var finalWidth = scissorWidth;
-                var finalHeight = scissorHeight;
 
-                var leftOffset = worldPos.x - parentClippingRect.x;
-                if (leftOffset < 0) {
-                    finalX = parentClippingRect.x;
-                    finalWidth += leftOffset;
-                }
-                var rightOffset = (worldPos.x + scissorWidth) - (parentClippingRect.x + parentClippingRect.width);
-                if (rightOffset > 0)
-                    finalWidth -= rightOffset;
-                var topOffset = (worldPos.y + scissorHeight) - (parentClippingRect.y + parentClippingRect.height);
-                if (topOffset > 0)
-                    finalHeight -= topOffset;
-                var bottomOffset = worldPos.y - parentClippingRect.y;
-                if (bottomOffset < 0) {
-                    finalY = parentClippingRect.x;
-                    finalHeight += bottomOffset;
-                }
-                if (finalWidth < 0)
-                    finalWidth = 0;
-                if (finalHeight < 0)
-                    finalHeight = 0;
-                this._clippingRect.x = finalX;
-                this._clippingRect.y = finalY;
-                this._clippingRect.width = finalWidth;
-                this._clippingRect.height = finalHeight;
+                this._clippingRect.x = Math.max(worldPos.x, parentClippingRect.x);
+                this._clippingRect.y = Math.max(worldPos.y, parentClippingRect.y);
+
+                var right = Math.min(worldPos.x + scissorWidth, parentClippingRect.x + parentClippingRect.width);
+                var top = Math.min(worldPos.y + scissorHeight, parentClippingRect.y + parentClippingRect.height);
+
+                this._clippingRect.width = Math.max(0.0, right -  this._clippingRect.x);
+                this._clippingRect.height = Math.max(0.0, top -  this._clippingRect.y);
             } else {
-                this._clippingRect.x = worldPos.x - (scissorWidth * this._anchorPoint.x);
-                this._clippingRect.y = worldPos.y - (scissorHeight * this._anchorPoint.y);
+                this._clippingRect.x = worldPos.x;
+                this._clippingRect.y = worldPos.y;
                 this._clippingRect.width = scissorWidth;
                 this._clippingRect.height = scissorHeight;
             }
