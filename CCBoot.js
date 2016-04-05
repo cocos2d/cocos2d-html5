@@ -2081,46 +2081,46 @@ cc.initEngine = function (config, cb) {
  *
  */
 cc.game = /** @lends cc.game# */{
-	/** 
-	 * Debug mode: No debugging. {@static}
- 	 * @const {Number}
-	 * @static
-	 */
+    /** 
+     * Debug mode: No debugging. {@static}
+     * @const {Number}
+     * @static
+     */
     DEBUG_MODE_NONE: 0,
-	/**
-     * Debug mode: Info to console.
-	 * @const {Number}
-	 * @static
+    /**
+     * Debug mode: Info, warning, error to console.
+     * @const {Number}
+     * @static
      */
     DEBUG_MODE_INFO: 1,
-	/**
-     * Debug mode: Warning to console.
-	 * @const {Number}
-	 * @static
+    /**
+     * Debug mode: Warning, error to console.
+     * @const {Number}
+     * @static
      */
     DEBUG_MODE_WARN: 2,
-	/**
+    /**
      * Debug mode: Error to console.
-	 * @const {Number}
-	 * @static
+     * @const {Number}
+     * @static
      */
     DEBUG_MODE_ERROR: 3,
-	/**
-     * Debug mode: Info to web page.
-	 * @const {Number}
-	 * @static
+    /**
+     * Debug mode: Info, warning, error to web page.
+     * @const {Number}
+     * @static
      */
     DEBUG_MODE_INFO_FOR_WEB_PAGE: 4,
-	/**
-     * Debug mode: Warning to web page.
-	 * @const {Number}
-	 * @static
+    /**
+     * Debug mode: Warning, error to web page.
+     * @const {Number}
+     * @static
      */
     DEBUG_MODE_WARN_FOR_WEB_PAGE: 5,
-	/**
+    /**
      * Debug mode: Error to web page.
-	 * @const {Number}
-	 * @static
+     * @const {Number}
+     * @static
      */
     DEBUG_MODE_ERROR_FOR_WEB_PAGE: 6,
 
@@ -2156,21 +2156,19 @@ cc.game = /** @lends cc.game# */{
     _eventShow: null,
 
     /**
-     * Keys found in config.json.
+     * Keys found in project.json.
      *
      * @constant
      * @type {Object}
      *
-     * @prop {String} width
-     * @prop {String} height
-     * @prop {String} engineDir
-     * @prop {String} modules
-     * @prop {String} debugMode
-     * @prop {String} showFPS
-     * @prop {String} frameRate
-     * @prop {String} id
-     * @prop {String} renderMode
-     * @prop {String} jsList
+     * @prop {String} engineDir     - In debug mode, if you use the whole engine to develop your game, you should specify its relative path with "engineDir".
+     * @prop {String} modules       - Defines which modules you will need in your game, it's useful only on web
+     * @prop {String} debugMode     - Debug mode, see DEBUG_MODE_XXX constant definitions.
+     * @prop {String} showFPS       - Left bottom corner fps information will show when "showFPS" equals true, otherwise it will be hide.
+     * @prop {String} frameRate     - Sets the wanted frame rate for your game, but the real fps depends on your game implementation and the running environment.
+     * @prop {String} id            - Sets the id of your canvas element on the web page, it's useful only on web.
+     * @prop {String} renderMode    - Sets the renderer type, only useful on web, 0: Automatic, 1: Canvas, 2: WebGL
+     * @prop {String} jsList        - Sets the list of js files in your game.
      */
     CONFIG_KEY: {
         width: "width",
@@ -2231,14 +2229,6 @@ cc.game = /** @lends cc.game# */{
      * @type {Function|null}
      */
     onStop: null,
-
-    /**
-     * Callback when game frame has been sized or resized. called
-     * once on game startup.
-     *
-     * @type {Function|null}
-     */
-    onResize: null,
 
 //@Public Methods
 
