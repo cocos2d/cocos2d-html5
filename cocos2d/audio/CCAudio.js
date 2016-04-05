@@ -33,7 +33,7 @@
  * REPLAY_AFTER_TOUCH   : The first music will fail, must be replay after touchstart
  * USE_EMPTIED_EVENT    : Whether to use the emptied event to replace load callback
  * DELAY_CREATE_CTX     : delay created the context object - only webAudio
- * NEED_MANUAL_LOOP     : WebAudio loop attribute failure, need to manually perform loop
+ * NEED_MANUAL_LOOP     : loop attribute failure, need to perform loop manually
  *
  * May be modifications for a few browser version
  */
@@ -49,7 +49,7 @@
     var supportWebAudio = !!(window.AudioContext || window.webkitAudioContext || window.mozAudioContext);
 
     var supportTable = {
-        "common" : {MULTI_CHANNEL: true , WEB_AUDIO: supportWebAudio , AUTOPLAY: true }
+        "common" : {MULTI_CHANNEL: true, WEB_AUDIO: supportWebAudio, AUTOPLAY: true }
     };
     supportTable[sys.BROWSER_TYPE_IE]  = {MULTI_CHANNEL: true , WEB_AUDIO: supportWebAudio , AUTOPLAY: true, USE_EMPTIED_EVENT: true};
     //  ANDROID  //
@@ -57,7 +57,7 @@
     supportTable[sys.BROWSER_TYPE_CHROME]   = {MULTI_CHANNEL: true, WEB_AUDIO: true , AUTOPLAY: false};
     supportTable[sys.BROWSER_TYPE_FIREFOX]  = {MULTI_CHANNEL: true, WEB_AUDIO: true , AUTOPLAY: true , DELAY_CREATE_CTX: true};
     supportTable[sys.BROWSER_TYPE_UC]       = {MULTI_CHANNEL: true, WEB_AUDIO: false, AUTOPLAY: false};
-    supportTable[sys.BROWSER_TYPE_QQ]       = {MULTI_CHANNEL: true, WEB_AUDIO: true, AUTOPLAY: true };
+    supportTable[sys.BROWSER_TYPE_QQ]       = {MULTI_CHANNEL: true, WEB_AUDIO: true, AUTOPLAY: true};
     supportTable[sys.BROWSER_TYPE_OUPENG]   = {MULTI_CHANNEL: false, WEB_AUDIO: false, AUTOPLAY: false, REPLAY_AFTER_TOUCH: true , USE_EMPTIED_EVENT: true };
     supportTable[sys.BROWSER_TYPE_WECHAT]   = {MULTI_CHANNEL: true, WEB_AUDIO: true, AUTOPLAY: false, REPLAY_AFTER_TOUCH: true , USE_EMPTIED_EVENT: true };
     supportTable[sys.BROWSER_TYPE_360]      = {MULTI_CHANNEL: false, WEB_AUDIO: false, AUTOPLAY: true };
@@ -682,7 +682,7 @@ cc.Audio = cc.Class.extend({
                 cc.loader.load(url);
                 audio = loader.cache[url];
             }
-            audio.play(0, loop);
+            audio.play(0, loop || false);
             audio.setVolume(this._musicVolume);
 
             this._currMusic = audio;
@@ -825,17 +825,24 @@ cc.Audio = cc.Class.extend({
                 }
             }
 
+            if (!SWA && i > this._maxAudioInstance) {
+                var first = effectList.shift();
+                first.stop();
+                effectList.push(first);
+                i = effectList.length - 1;
+                // cc.log("Error: %s greater than %d", url, this._maxAudioInstance);
+            }
+
             var audio;
             if (effectList[i]) {
                 audio = effectList[i];
                 audio.setVolume(this._effectVolume);
-                audio.play(0, loop);
-            } else if (!SWA && i > this._maxAudioInstance) {
-                cc.log("Error: %s greater than %d", url, this._maxAudioInstance);
+                audio.play(0, loop || false);
             } else {
                 audio = loader.cache[url];
                 if (audio && audio._AUDIO_TYPE != "WEBAUDIO") {
                     delete loader.cache[url];
+                    cc.loader.release(url);
                     audio = null;
                 }
                 if (!audio) {
@@ -847,8 +854,7 @@ cc.Audio = cc.Class.extend({
                 }
                 audio = audio.cloneNode();
                 audio.setVolume(this._effectVolume);
-                audio.loop = loop || false;
-                audio.play();
+                audio.play(0, loop || false);
                 effectList.push(audio);
             }
 
