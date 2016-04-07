@@ -51,7 +51,7 @@
         return new cc.math.Vec3(x, y, z);
     };
 
-    var _p = cc.math.Vec3._ptype;
+    var _p = cc.math.Vec3.prototype;
 
     _p.fill = function (x, y, z) {    // =cc.kmVec3Fill
         if (x && y === undefined) {
