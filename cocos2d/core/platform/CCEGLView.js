@@ -204,9 +204,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     // Resize helper functions
     _resizeEvent: function () {
         var view;
-        if(this.setDesignResolutionSize){
+        if (this.setDesignResolutionSize) {
             view = this;
-        }else{
+        } else {
             view = cc.view;
         }
 
@@ -222,8 +222,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         }
         var width = view._originalDesignResolutionSize.width;
         var height = view._originalDesignResolutionSize.height;
-        if (width > 0)
+        if (width > 0) {
             view.setDesignResolutionSize(width, height, view._resolutionPolicy);
+        }
     },
 
     /**
@@ -339,6 +340,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     _adjustViewportMeta: function () {
         if (this._isAdjustViewPort) {
             this._setViewportMeta(cc.__BrowserGetter.meta, false);
+            // Only adjust viewport once
+            this._isAdjustViewPort = false;
         }
     },
 
