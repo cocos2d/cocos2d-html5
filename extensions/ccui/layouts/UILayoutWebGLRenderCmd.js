@@ -31,15 +31,6 @@
         this._needDraw = false;
 
         this._currentStencilEnabled = 0;
-        this._currentStencilWriteMask = 0;
-        this._currentStencilFunc = 0;
-        this._currentStencilRef = 0;
-        this._currentStencilValueMask = 0;
-        this._currentStencilFail = 0;
-        this._currentStencilPassDepthFail = 0;
-        this._currentStencilPassDepthPass = 0;
-        this._currentDepthWriteMask = false;
-
         this._mask_layer_le = 0;
 
         this._beforeVisitCmdStencil = new cc.CustomRenderCmd(this, this._onBeforeVisitStencil);
@@ -85,45 +76,31 @@
 
         // manually save the stencil state
         this._currentStencilEnabled = gl.isEnabled(gl.STENCIL_TEST);
-        this._currentStencilWriteMask = gl.getParameter(gl.STENCIL_WRITEMASK);
-        this._currentStencilFunc = gl.getParameter(gl.STENCIL_FUNC);
-        this._currentStencilRef = gl.getParameter(gl.STENCIL_REF);
-        this._currentStencilValueMask = gl.getParameter(gl.STENCIL_VALUE_MASK);
-        this._currentStencilFail = gl.getParameter(gl.STENCIL_FAIL);
-        this._currentStencilPassDepthFail = gl.getParameter(gl.STENCIL_PASS_DEPTH_FAIL);
-        this._currentStencilPassDepthPass = gl.getParameter(gl.STENCIL_PASS_DEPTH_PASS);
+
+        gl.clear(gl.DEPTH_BUFFER_BIT);
 
         gl.enable(gl.STENCIL_TEST);
-
-        gl.stencilMask(mask_layer);
-
-        this._currentDepthWriteMask = gl.getParameter(gl.DEPTH_WRITEMASK);
 
         gl.depthMask(false);
 
         gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
-        gl.stencilOp(gl.ZERO, gl.KEEP, gl.KEEP);
-
-        // draw a fullscreen solid rectangle to clear the stencil buffer
-        this._drawFullScreenQuadClearStencil();
-
-        gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
         gl.stencilOp(gl.REPLACE, gl.KEEP, gl.KEEP);
+
+        gl.stencilMask(mask_layer);
+        gl.clear(gl.STENCIL_BUFFER_BIT);
+
     };
 
     proto._onAfterDrawStencil = function(ctx){
         var gl = ctx || cc._renderContext;
-        gl.depthMask(this._currentDepthWriteMask);
+        gl.depthMask(true);
         gl.stencilFunc(gl.EQUAL, this._mask_layer_le, this._mask_layer_le);
         gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
     };
 
     proto._onAfterVisitStencil = function(ctx){
         var gl = ctx || cc._renderContext;
-        // manually restore the stencil state
-        gl.stencilFunc(this._currentStencilFunc, this._currentStencilRef, this._currentStencilValueMask);
-        gl.stencilOp(this._currentStencilFail, this._currentStencilPassDepthFail, this._currentStencilPassDepthPass);
-        gl.stencilMask(this._currentStencilWriteMask);
+
         if (!this._currentStencilEnabled)
             gl.disable(gl.STENCIL_TEST);
         ccui.Layout.WebGLRenderCmd._layer--;
@@ -141,22 +118,7 @@
         var gl = ctx || cc._renderContext;
         gl.disable(gl.SCISSOR_TEST);
     };
-
-    proto._drawFullScreenQuadClearStencil = function(){
-        // draw a fullscreen solid rectangle to clear the stencil buffer
-        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
-        cc.kmGLPushMatrix();
-        cc.kmGLLoadIdentity();
-        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-        cc.kmGLPushMatrix();
-        cc.kmGLLoadIdentity();
-        cc._drawingUtil.drawSolidRect(cc.p(-1,-1), cc.p(1,1), cc.color(255, 255, 255, 255));
-        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
-        cc.kmGLPopMatrix();
-        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-        cc.kmGLPopMatrix();
-    };
-
+    
     proto.rebindStencilRendering = function(stencil){};
 
     proto.transform = function(parentCmd, recursive){
