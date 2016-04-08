@@ -459,6 +459,9 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
 
     _getHowMuchOutOfBoundary: function(addition)
     {
+        if(addition === undefined)
+            addition = cc.p(0, 0);
+
         if(!this._magneticAllowedOutOfBoundary || this._items.length === 0)
         {
             return ccui.ScrollView.prototype._getHowMuchOutOfBoundary.call(this, addition);
