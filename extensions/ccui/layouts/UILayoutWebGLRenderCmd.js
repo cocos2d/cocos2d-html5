@@ -109,6 +109,7 @@
             var mask_layer_l = mask_layer - 1;
             var mask_layer_le = mask_layer | mask_layer_l;
 
+            gl.stencilMask(mask_layer);
             gl.stencilFunc(gl.EQUAL, mask_layer_le, mask_layer_le);
         }
         else
