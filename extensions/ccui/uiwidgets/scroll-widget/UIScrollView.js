@@ -33,6 +33,7 @@
  * @property {ccui.ScrollView.DIR_NONE | ccui.ScrollView.DIR_VERTICAL | ccui.ScrollView.DIR_HORIZONTAL | ccui.ScrollView.DIR_BOTH}    direction               - Scroll direction of the scroll view
  * @property {Boolean}              bounceEnabled           - Indicate whether bounce is enabled
  * @property {Boolean}              inertiaScrollEnabled    - Indicate whether inertiaScroll is enabled
+ * @property {Number}               touchTotalTimeThreshold - Touch total time threshold
  */
 ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     _innerContainer: null,
