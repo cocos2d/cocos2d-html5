@@ -1111,7 +1111,7 @@ ccui.ListView.MAGNETIC_NONE = 0;
  * @constant
  * @type {number}
  */
-ccui.ListView.MAGNETIC_CENTER = 0;
+ccui.ListView.MAGNETIC_CENTER = 1;
 /**
  * The flag of ccui.ListView's magnetic both end type.<br/>
  * ListView tries to align its items in left or right end if it is horizontal, top or bottom in vertical. <br/>
@@ -1119,28 +1119,28 @@ ccui.ListView.MAGNETIC_CENTER = 0;
  * @constant
  * @type {number}
  */
-ccui.ListView.MAGNETIC_BOTH_END = 0;
+ccui.ListView.MAGNETIC_BOTH_END = 2;
 /**
  * The flag of ccui.ListView's magnetic left type.
  * @constant
  * @type {number}
  */
-ccui.ListView.MAGNETIC_LEFT = 0;
+ccui.ListView.MAGNETIC_LEFT = 3;
 /**
  * The flag of ccui.ListView's magnetic right type.
  * @constant
  * @type {number}
  */
-ccui.ListView.MAGNETIC_RIGHT = 0;
+ccui.ListView.MAGNETIC_RIGHT = 4;
 /**
  * The flag of ccui.ListView's magnetic top type.
  * @constant
  * @type {number}
  */
-ccui.ListView.MAGNETIC_TOP = 0;
+ccui.ListView.MAGNETIC_TOP = 5;
 /**
  * The flag of ccui.ListView's magnetic bottom type.
  * @constant
  * @type {number}
  */
-ccui.ListView.MAGNETIC_BOTTOM = 0;
+ccui.ListView.MAGNETIC_BOTTOM = 6;
