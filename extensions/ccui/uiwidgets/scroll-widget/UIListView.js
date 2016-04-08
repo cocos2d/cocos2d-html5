@@ -994,7 +994,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
 
                 var pTargetItem = this.getClosestItemToPosition(cc.pSub(magneticPosition, adjustedDeltaMove), magneticAnchorPoint);
                 var itemPosition = this._calculateItemPositionWithAnchor(pTargetItem, magneticAnchorPoint);
-                adjustedDeltaMove = magneticPosition - itemPosition;
+                adjustedDeltaMove = cc.pSub(magneticPosition, itemPosition);
             }
         }
         ccui.ScrollView.prototype._startAttenuatingAutoScroll.call(this,adjustedDeltaMove, initialVelocity);
