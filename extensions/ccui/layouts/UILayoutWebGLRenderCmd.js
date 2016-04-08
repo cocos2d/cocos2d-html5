@@ -101,9 +101,20 @@
     proto._onAfterVisitStencil = function(ctx){
         var gl = ctx || cc._renderContext;
 
-        if (!this._currentStencilEnabled)
-            gl.disable(gl.STENCIL_TEST);
         ccui.Layout.WebGLRenderCmd._layer--;
+
+        if (this._currentStencilEnabled)
+        {
+            var mask_layer = 0x1 << ccui.Layout.WebGLRenderCmd._layer;
+            var mask_layer_l = mask_layer - 1;
+            var mask_layer_le = mask_layer | mask_layer_l;
+
+            gl.stencilFunc(gl.EQUAL, mask_layer_le, mask_layer_le);
+        }
+        else
+        {
+            gl.disable(gl.STENCIL_TEST);
+        }
     };
 
     proto._onBeforeVisitScissor = function(ctx){
