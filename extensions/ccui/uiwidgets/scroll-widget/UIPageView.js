@@ -60,7 +60,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 
     /**
      * Allocates and initializes a UIPageView.
-     * Constructor of ccui.PageView. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
+     * Constructor of ccui.PageView. please do not call this function by yourself, you should pass the parameters to constructor to initialize it .
      * @example
      * // example
      * var uiPageView = new ccui.PageView();
@@ -112,12 +112,10 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
             return;
 
         var pageCount = this._getPageCount();
-        forceCreate = forceCreate || true;
         if (pageIdx < 0 || pageIdx >= pageCount) {
             if (forceCreate) {
-                if (pageIdx > pageCount) {
+                if (pageIdx > pageCount)
                     cc.log("pageIdx is %d, it will be added as page id [%d]", pageIdx, pageCount);
-                }
                 var newPage = this._createPage();
                 newPage.addChild(widget);
                 this.addPage(newPage);
@@ -216,33 +214,6 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 
     _getPageCount: function(){
         return this._pages.length;
-    },
-
-    getCurrentPageIndex: function() {
-        return this._curPageIdx;
-    },
-
-    setCurrentPageIndex: function(index) {
-        if (index < 0 || index >= this._getPageCount())
-        {
-            return;
-        }
-        this._curPageIdx = index;
-        this._doLayoutDirty = true;
-    },
-
-    /**
-     * @deprecated use setCurrentPageIndex instead.
-     */
-    setCurPageIndex: function(index) {
-        this.setCurrentPageIndex(index);
-    },
-
-    /**
-     * @deprecated use getCurrentPageIndex instead.
-     */
-    getCurPageIndex: function() {
-        return this.getCurrentPageIndex();
     },
 
     /**
