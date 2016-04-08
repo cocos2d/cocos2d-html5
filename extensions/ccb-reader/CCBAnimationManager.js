@@ -606,7 +606,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
         } else if (easingType === CCB_KEYFRAME_EASING_ELASTIC_INOUT) {
             return action.easing(cc.easeElasticInOut(easingOpt));
         } else {
-            cc.log("BuilderReader: Unkown easing type " + easingType);
+            cc.log("BuilderReader: Unknown easing type " + easingType);
             return action;
         }
     },

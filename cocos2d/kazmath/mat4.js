@@ -107,7 +107,7 @@
     //Returns an upper and a lower triangular matrix which are L and R in the Gauss algorithm
     cc.math.Matrix4._gaussj = function (a, b) {
         var i, icol = 0, irow = 0, j, k, l, ll, n = 4, m = 4, selElement;
-        var big, dum, pivinv;
+        var big, dumb, pivinv;
         var indxc = [0, 0, 0, 0], indxr = [0, 0, 0, 0], ipiv = [0, 0, 0, 0];
 
         /*    for (j = 0; j < n; j++) {
@@ -152,13 +152,13 @@
 
             for (ll = 0; ll < n; ll++) {
                 if (ll !== icol) {
-                    dum = a.get(ll, icol);
+                    dumb = a.get(ll, icol);
                     a.set(ll, icol, 0.0);
                     for (l = 0; l < n; l++)
-                        a.set(ll, l, a.get(ll, l) - a.get(icol, l) * dum);
+                        a.set(ll, l, a.get(ll, l) - a.get(icol, l) * dumb);
 
                     for (l = 0; l < m; l++)
-                        b.set(ll, l, a.get(ll, l) - b.get(icol, l) * dum);
+                        b.set(ll, l, a.get(ll, l) - b.get(icol, l) * dumb);
                 }
             }
         }

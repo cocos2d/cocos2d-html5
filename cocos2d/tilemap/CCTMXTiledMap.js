@@ -72,7 +72,7 @@ cc.TMX_ORIENTATION_ISO = 2;
  *
  * <p>Limitations: <br />
  * - It only supports one tileset per layer. <br />
- * - Embeded images are not supported <br />
+ * - Embedded images are not supported <br />
  * - It only supports the XML format (the JSON format is not supported)</p>
  *
  * <p>Technical description: <br />

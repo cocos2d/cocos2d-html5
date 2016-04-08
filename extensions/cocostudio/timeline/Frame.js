@@ -746,7 +746,7 @@ ccs.PositionFrame = ccs.Frame.extend({
     },
 
     /**
-     * Gets the postion x
+     * Gets the position x
      * @returns {Number}
      */
     getX: function(){

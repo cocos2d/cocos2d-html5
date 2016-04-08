@@ -27,7 +27,7 @@
  * The PageView control of Cocos UI.
  * @class
  * @extends ccui.Layout
- * @exmaple
+ * @example
  * var pageView = new ccui.PageView();
  * pageView.setTouchEnabled(true);
  * pageView.addPage(new ccui.Layout());
