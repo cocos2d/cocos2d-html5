@@ -53,7 +53,7 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
         ccui.ListView.prototype.ctor.call(this);
 
         this._childFocusCancelOffset = 5;
-        this._indicatorPositionAsAnchorPoint = cc.p(0.5, 1);
+        this._indicatorPositionAsAnchorPoint = cc.p(0.5, 0.1);
         this._pageViewEventListener = null;
         this._pageViewEventSelector = null;
     },

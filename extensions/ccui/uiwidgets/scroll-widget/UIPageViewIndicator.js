@@ -50,8 +50,8 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
 
         this.init();
 
-        this.setCascadeColorEnabled(true);
-        this.setCascadeOpacityEnabled(true);
+        // this.setCascadeColorEnabled(true);
+        // this.setCascadeOpacityEnabled(true);
     },
 
     /**
@@ -194,7 +194,7 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
         image.src = ccui.PageViewIndicator.CIRCLE_IMAGE;
 
         var indexNode = new cc.Sprite(image);
-        this.addProtectedChild(indexNode, 1);
+        this.addProtectedChild(indexNode);
         this._indexNodes.push(indexNode);
     },
 
