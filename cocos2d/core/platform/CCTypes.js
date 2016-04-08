@@ -56,8 +56,8 @@ cc.Color = function (r, g, b, a) {
  * Alpha channel is optional. Default value is 255
  *
  * @param {Number|String|cc.Color} r
- * @param {Number} g
- * @param {Number} b
+ * @param {Number} [g]
+ * @param {Number} [b]
  * @param {Number} [a=255]
  * @return {cc.Color}
  */

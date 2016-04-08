@@ -33,7 +33,7 @@
  * REPLAY_AFTER_TOUCH   : The first music will fail, must be replay after touchstart
  * USE_EMPTIED_EVENT    : Whether to use the emptied event to replace load callback
  * DELAY_CREATE_CTX     : delay created the context object - only webAudio
- * NEED_MANUAL_LOOP     : WebAudio loop attribute failure, need to manually perform loop
+ * NEED_MANUAL_LOOP     : loop attribute failure, need to perform loop manually
  *
  * May be modifications for a few browser version
  */
@@ -49,17 +49,17 @@
     var supportWebAudio = !!(window.AudioContext || window.webkitAudioContext || window.mozAudioContext);
 
     var supportTable = {
-        "common" : {MULTI_CHANNEL: true , WEB_AUDIO: supportWebAudio , AUTOPLAY: true }
+        "common" : {MULTI_CHANNEL: true, WEB_AUDIO: supportWebAudio, AUTOPLAY: true }
     };
     supportTable[sys.BROWSER_TYPE_IE]  = {MULTI_CHANNEL: true , WEB_AUDIO: supportWebAudio , AUTOPLAY: true, USE_EMPTIED_EVENT: true};
     //  ANDROID  //
-    supportTable[sys.BROWSER_TYPE_ANDROID]  = {MULTI_CHANNEL: false, WEB_AUDIO: false, AUTOPLAY: false};
-    supportTable[sys.BROWSER_TYPE_CHROME]   = {MULTI_CHANNEL: true , WEB_AUDIO: true , AUTOPLAY: false};
-    supportTable[sys.BROWSER_TYPE_FIREFOX]  = {MULTI_CHANNEL: true , WEB_AUDIO: true , AUTOPLAY: true , DELAY_CREATE_CTX: true};
-    supportTable[sys.BROWSER_TYPE_UC]       = {MULTI_CHANNEL: true , WEB_AUDIO: false, AUTOPLAY: false};
-    supportTable[sys.BROWSER_TYPE_QQ]       = {MULTI_CHANNEL: false, WEB_AUDIO: false, AUTOPLAY: true };
+    supportTable[sys.BROWSER_TYPE_ANDROID]  = {MULTI_CHANNEL: true, WEB_AUDIO: true, AUTOPLAY: false};
+    supportTable[sys.BROWSER_TYPE_CHROME]   = {MULTI_CHANNEL: true, WEB_AUDIO: true , AUTOPLAY: false};
+    supportTable[sys.BROWSER_TYPE_FIREFOX]  = {MULTI_CHANNEL: true, WEB_AUDIO: true , AUTOPLAY: true , DELAY_CREATE_CTX: true};
+    supportTable[sys.BROWSER_TYPE_UC]       = {MULTI_CHANNEL: true, WEB_AUDIO: false, AUTOPLAY: false};
+    supportTable[sys.BROWSER_TYPE_QQ]       = {MULTI_CHANNEL: true, WEB_AUDIO: true, AUTOPLAY: true};
     supportTable[sys.BROWSER_TYPE_OUPENG]   = {MULTI_CHANNEL: false, WEB_AUDIO: false, AUTOPLAY: false, REPLAY_AFTER_TOUCH: true , USE_EMPTIED_EVENT: true };
-    supportTable[sys.BROWSER_TYPE_WECHAT]   = {MULTI_CHANNEL: false, WEB_AUDIO: false, AUTOPLAY: false, REPLAY_AFTER_TOUCH: true , USE_EMPTIED_EVENT: true };
+    supportTable[sys.BROWSER_TYPE_WECHAT]   = {MULTI_CHANNEL: true, WEB_AUDIO: true, AUTOPLAY: false, REPLAY_AFTER_TOUCH: true , USE_EMPTIED_EVENT: true };
     supportTable[sys.BROWSER_TYPE_360]      = {MULTI_CHANNEL: false, WEB_AUDIO: false, AUTOPLAY: true };
     supportTable[sys.BROWSER_TYPE_MIUI]     = {MULTI_CHANNEL: false, WEB_AUDIO: false, AUTOPLAY: true };
     supportTable[sys.BROWSER_TYPE_LIEBAO]   = {MULTI_CHANNEL: false, WEB_AUDIO: false, AUTOPLAY: false, REPLAY_AFTER_TOUCH: true , USE_EMPTIED_EVENT: true };
@@ -329,7 +329,7 @@ cc.Audio = cc.Class.extend({
         var audio = this._element;
         if(audio){
             audio.pause();
-            if (audio.duration && audio.duration !== Infinity)
+            if (audio.duration)
                 audio.currentTime = 0;
         }
     },
@@ -476,6 +476,8 @@ cc.Audio = cc.Class.extend({
 
         cache: {},
 
+        useWebAudio: false,
+
         load: function(realUrl, url, res, cb){
 
             if(support.length === 0)
@@ -497,10 +499,10 @@ cc.Audio = cc.Class.extend({
 
             var audio;
 
-            if(loader.cache[url])
+            if (loader.cache[url])
                 return cb(null, loader.cache[url]);
 
-            if(SWA){
+            if (SWA && this.useWebAudio) {
                 try{
                     var volume = context["createGain"]();
                     volume["gain"].value = 1;
@@ -513,7 +515,7 @@ cc.Audio = cc.Class.extend({
                     cc.log("browser don't support web audio");
                     audio = new cc.Audio(null, null, realUrl);
                 }
-            }else{
+            } else {
                 audio = new cc.Audio(null, null, realUrl);
             }
 
@@ -524,7 +526,6 @@ cc.Audio = cc.Class.extend({
         },
 
         loadAudioFromExtList: function(realUrl, typeList, audio, cb){
-
             if(typeList.length === 0){
                 var ERRSTR = "can not found the resource of audio! Last match url is : ";
                 ERRSTR += realUrl.replace(/\.(.*)?$/, "(");
@@ -537,7 +538,7 @@ cc.Audio = cc.Class.extend({
 
             realUrl = cc.path.changeExtname(realUrl, typeList.splice(0, 1));
 
-            if(SWA){//Buffer
+            if (SWA && this.useWebAudio) {// WebAudio Buffer
                 if(polyfill.webAudioCallback)
                     polyfill.webAudioCallback(realUrl);
                 var request = new XMLHttpRequest();
@@ -561,29 +562,28 @@ cc.Audio = cc.Class.extend({
                 };
 
                 request.send();
-            }else{//DOM
-
-                var element = document.createElement("audio");
+            } else {//DOM
+                var element = new Audio();
+                audio.setElement(element);
                 var cbCheck = false;
                 var termination = false;
 
                 var timer = setTimeout(function(){
-                    if(element.readyState === 0){
+                    if (element.readyState === 0) {
                         emptied();
-                    }else{
+                    } else {
                         termination = true;
                         element.pause();
-                        document.body.removeChild(element);
-                        cb("audio load timeout : " + realUrl, audio);
+                        cb(null, audio);
                     }
-                }, 10000);
+                }, 8000);
 
                 var success = function(){
                     if(!cbCheck){
-                        //element.pause();
-                        try { element.currentTime = 0;
-                            element.volume = 1; } catch (e) {}
-                        document.body.removeChild(element);
+                        try {
+                            element.currentTime = 0;
+                            element.volume = 1;
+                        } catch (e) {}
                         audio.setElement(element);
                         element.removeEventListener("canplaythrough", success, false);
                         element.removeEventListener("error", failure, false);
@@ -596,8 +596,6 @@ cc.Audio = cc.Class.extend({
 
                 var failure = function(){
                     if(!cbCheck) return;
-                    //element.pause();
-                    document.body.removeChild(element);
                     element.removeEventListener("canplaythrough", success, false);
                     element.removeEventListener("error", failure, false);
                     element.removeEventListener("emptied", emptied, false);
@@ -618,10 +616,6 @@ cc.Audio = cc.Class.extend({
                     element.addEventListener("emptied", emptied, false);
 
                 element.src = realUrl;
-                document.body.appendChild(element);
-                element.volume = 0;
-                //some browsers cannot pause(qq 6.1)
-                //element.play();
             }
 
         }
@@ -635,8 +629,29 @@ cc.Audio = cc.Class.extend({
     cc.audioEngine = {
         _currMusic: null,
         _musicVolume: 1,
+        _autoplayed: false,
 
         features: polyfill,
+
+        // Autoplay on iOS and some other android browsers in which the music must be played in an event callback
+        autoplay: function (url, loop, isMusic) {
+            var self = this;
+            if (cc.game.canvas) {
+                if (!self._autoplayed) {
+                    self._autoplayed = true;
+                }
+                var delayedPlay = function () {
+                    if (isMusic) {
+                        self.playMusic(url, loop, true);
+                    }
+                    else {
+                        self.playEffect(url, loop);
+                    }
+                    cc.game.canvas.removeEventListener("touchstart", delayedPlay);
+                };
+                cc.game.canvas.addEventListener("touchstart", delayedPlay, false);
+            }
+        },
 
         /**
          * Indicates whether any background music can be played or not.
@@ -652,17 +667,22 @@ cc.Audio = cc.Class.extend({
          * //example
          * cc.audioEngine.playMusic(path, false);
          */
-        playMusic: function(url, loop){
+        playMusic: function(url, loop, immediate){
+            if (!SWC && !immediate) {
+                this.autoplay(url, loop, true);
+                return;
+            }
+
             var bgMusic = this._currMusic;
-            if(bgMusic && bgMusic.src !== url && bgMusic.getPlaying()){
+            if (bgMusic && bgMusic.getPlaying()) {
                 bgMusic.stop();
             }
             var audio = loader.cache[url];
-            if(!audio){
+            if (!audio) {
                 cc.loader.load(url);
                 audio = loader.cache[url];
             }
-            audio.play(0, loop);
+            audio.play(0, loop || false);
             audio.setVolume(this._musicVolume);
 
             this._currMusic = audio;
@@ -677,7 +697,7 @@ cc.Audio = cc.Class.extend({
          */
         stopMusic: function(releaseData){
             var audio = this._currMusic;
-            if(audio){
+            if (audio) {
                 audio.stop();
                 if (releaseData)
                     cc.loader.release(audio.src);
@@ -692,7 +712,7 @@ cc.Audio = cc.Class.extend({
          */
         pauseMusic: function(){
             var audio = this._currMusic;
-            if(audio)
+            if (audio)
                 audio.pause();
         },
 
@@ -704,7 +724,7 @@ cc.Audio = cc.Class.extend({
          */
         resumeMusic: function(){
             var audio = this._currMusic;
-            if(audio)
+            if (audio)
                 audio.resume();
         },
 
@@ -716,7 +736,7 @@ cc.Audio = cc.Class.extend({
          */
         rewindMusic: function(){
             var audio = this._currMusic;
-            if(audio){
+            if (audio){
                 audio.stop();
                 audio.play();
             }
@@ -742,13 +762,13 @@ cc.Audio = cc.Class.extend({
          */
         setMusicVolume: function(volume){
             volume = volume - 0;
-            if(isNaN(volume)) volume = 1;
-            if(volume > 1) volume = 1;
-            if(volume < 0) volume = 0;
+            if (isNaN(volume)) volume = 1;
+            if (volume > 1) volume = 1;
+            if (volume < 0) volume = 0;
 
             this._musicVolume = volume;
             var audio = this._currMusic;
-            if(audio){
+            if (audio) {
                 audio.setVolume(volume);
             }
         },
@@ -767,15 +787,15 @@ cc.Audio = cc.Class.extend({
          */
         isMusicPlaying: function(){
             var audio = this._currMusic;
-            if(audio){
+            if (audio) {
                 return audio.getPlaying();
-            }else{
+            } else {
                 return false;
             }
         },
 
         _audioPool: {},
-        _maxAudioInstance: 5,
+        _maxAudioInstance: 10,
         _effectVolume: 1,
         /**
          * Play sound effect.
@@ -787,42 +807,54 @@ cc.Audio = cc.Class.extend({
          * var soundId = cc.audioEngine.playEffect(path);
          */
         playEffect: function(url, loop){
-            //If the browser just support playing single audio
-            if(!SWB){
-                //Must be forced to shut down
-                //Because playing MULTI_CHANNEL audio will be stuck in chrome 28 (android)
-                return null;
+            if (!SWC && !this._autoplayed) {
+                this.autoplay(url, loop, false);
+                return;
             }
 
             var effectList = this._audioPool[url];
-            if(!effectList){
+            if (!effectList) {
                 effectList = this._audioPool[url] = [];
             }
 
             var i;
 
-            for(i=0; i<effectList.length; i++){
-                if(!effectList[i].getPlaying()){
+            for (i = 0; i < effectList.length; i++) {
+                if (!effectList[i].getPlaying()) {
                     break;
                 }
             }
 
-            if(effectList[i]){
+            if (!SWA && i > this._maxAudioInstance) {
+                var first = effectList.shift();
+                first.stop();
+                effectList.push(first);
+                i = effectList.length - 1;
+                // cc.log("Error: %s greater than %d", url, this._maxAudioInstance);
+            }
+
+            var audio;
+            if (effectList[i]) {
                 audio = effectList[i];
                 audio.setVolume(this._effectVolume);
-                audio.play(0, loop);
-            }else if(!SWA && i > this._maxAudioInstance){
-                cc.log("Error: %s greater than %d", url, this._maxAudioInstance);
-            }else{
-                var audio = loader.cache[url];
-                if(!audio){
+                audio.play(0, loop || false);
+            } else {
+                audio = loader.cache[url];
+                if (audio && audio._AUDIO_TYPE != "WEBAUDIO") {
+                    delete loader.cache[url];
+                    cc.loader.release(url);
+                    audio = null;
+                }
+                if (!audio) {
+                    // Force using webaudio for effects
+                    loader.useWebAudio = true;
                     cc.loader.load(url);
+                    loader.useWebAudio = false;
                     audio = loader.cache[url];
                 }
                 audio = audio.cloneNode();
                 audio.setVolume(this._effectVolume);
-                audio.loop = loop || false;
-                audio.play();
+                audio.play(0, loop || false);
                 effectList.push(audio);
             }
 
@@ -866,7 +898,7 @@ cc.Audio = cc.Class.extend({
 
         /**
          * Pause playing sound effect.
-         * @param {Number} cc.Audio The return value of function playEffect.
+         * @param {Number} audio The return value of function playEffect.
          * @example
          * //example
          * cc.audioEngine.pauseEffect(audioID);
@@ -897,7 +929,7 @@ cc.Audio = cc.Class.extend({
 
         /**
          * Resume playing sound effect.
-         * @param {Number} cc.Audio The return value of function playEffect.
+         * @param {Number} audio The return value of function playEffect.
          * @audioID
          * //example
          * cc.audioEngine.resumeEffect(audioID);
@@ -925,7 +957,7 @@ cc.Audio = cc.Class.extend({
 
         /**
          * Stop playing sound effect.
-         * @param {Number} cc.Audio The return value of function playEffect.
+         * @param {Number} audio The return value of function playEffect.
          * @example
          * //example
          * cc.audioEngine.stopEffect(audioID);
@@ -1005,33 +1037,5 @@ cc.Audio = cc.Class.extend({
             list.length = 0;
         }
     };
-
-    /**
-     * ome browsers must click on the page
-     */
-    if(!SWC){
-
-        //TODO Did not complete loading
-        var reBGM = function(){
-            var bg = cc.audioEngine._currMusic;
-            if(
-                bg &&
-                bg._touch === false &&
-                bg._playing &&
-                bg.getPlaying()
-            ){
-                bg._touch = true;
-                bg.play(0, bg.loop);
-                !polyfill.REPLAY_AFTER_TOUCH && cc._canvas.removeEventListener("touchstart", reBGM);
-            }
-
-        };
-
-        setTimeout(function(){
-            if(cc._canvas){
-                cc._canvas.addEventListener("touchstart", reBGM, false);
-            }
-        }, 150);
-    }
 
 })(window.__audioSupport);

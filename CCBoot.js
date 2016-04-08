@@ -567,8 +567,19 @@ cc.path = /** @lends cc.path# */{
 
 //+++++++++++++++++++++++++something about loader start+++++++++++++++++++++++++++
 /**
- * Loader for resource loading process. It's a singleton object.
+ * Resource loading management. Created by in CCBoot.js as a singleton
+ * cc.loader.
+ * @name cc.Loader
  * @class
+ * @memberof cc
+ * @see cc.loader
+ */
+
+/**
+ * Singleton instance of cc.Loader.
+ * @name cc.loader
+ * @member {cc.Loader}
+ * @memberof cc
  */
 cc.loader = (function () {
     var _jsCache = {}, //cache for js
@@ -607,10 +618,24 @@ cc.loader = (function () {
             "$", "i"
         );
 
-    return /** @lends cc.loader# */{
-        resPath: "",//root path of resource
-        audioPath: "",//root path of audio
-        cache: {},//cache for data loaded
+    return /** @lends cc.Loader# */{
+        /**
+         * Root path of resources.
+         * @type {String}
+         */
+        resPath: "",
+
+        /**
+         * Root path of audio resources
+         * @type {String}
+         */
+        audioPath: "",
+
+        /**
+         * Cache for data loaded.
+         * @type {Object}
+         */
+        cache: {},
 
         /**
          * Get XMLHttpRequest.
@@ -1786,7 +1811,7 @@ var _initSys = function () {
                 _supportWebGL = true;
             }
 
-            // Accept only Android 5+ default browser and QQ Brwoser 6.2+
+            // Accept only Android 5+ default browser and QQ Browser 6.2+
             if (_supportWebGL && sys.os === sys.OS_ANDROID) {
                 _supportWebGL = false;
                 // QQ Brwoser 6.2+
@@ -1910,9 +1935,6 @@ var _initSys = function () {
     };
 };
 _initSys();
-
-delete _tmpCanvas1;
-delete _tmpCanvas2;
 
 //to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
 cc.log = cc.warn = cc.error = cc.assert = function () {
@@ -2056,32 +2078,97 @@ cc.initEngine = function (config, cb) {
  * An object to boot the game.
  * @class
  * @name cc.game
+ *
  */
 cc.game = /** @lends cc.game# */{
+    /** 
+     * Debug mode: No debugging. {@static}
+     * @const {Number}
+     * @static
+     */
     DEBUG_MODE_NONE: 0,
+    /**
+     * Debug mode: Info, warning, error to console.
+     * @const {Number}
+     * @static
+     */
     DEBUG_MODE_INFO: 1,
+    /**
+     * Debug mode: Warning, error to console.
+     * @const {Number}
+     * @static
+     */
     DEBUG_MODE_WARN: 2,
+    /**
+     * Debug mode: Error to console.
+     * @const {Number}
+     * @static
+     */
     DEBUG_MODE_ERROR: 3,
+    /**
+     * Debug mode: Info, warning, error to web page.
+     * @const {Number}
+     * @static
+     */
     DEBUG_MODE_INFO_FOR_WEB_PAGE: 4,
+    /**
+     * Debug mode: Warning, error to web page.
+     * @const {Number}
+     * @static
+     */
     DEBUG_MODE_WARN_FOR_WEB_PAGE: 5,
+    /**
+     * Debug mode: Error to web page.
+     * @const {Number}
+     * @static
+     */
     DEBUG_MODE_ERROR_FOR_WEB_PAGE: 6,
 
+    /**
+     * Event that is fired when the game is hidden.
+     * @constant {String}
+     */
     EVENT_HIDE: "game_on_hide",
+    /**
+     * Event that is fired when the game is shown.
+     * @constant {String}
+     */
     EVENT_SHOW: "game_on_show",
+    /**
+     * Event that is fired when the game is resized.
+     * @constant {String}
+     */
     EVENT_RESIZE: "game_on_resize",
+    /**
+     * Event that is fired when the renderer is done being initialized.
+     * @constant {String}
+     */
     EVENT_RENDERER_INITED: "renderer_inited",
 
+    /** @constant {Number} */
     RENDER_TYPE_CANVAS: 0,
+    /** @constant {Number} */
     RENDER_TYPE_WEBGL: 1,
+    /** @constant {Number} */
     RENDER_TYPE_OPENGL: 2,
 
     _eventHide: null,
     _eventShow: null,
 
     /**
-     * Key of config
+     * Keys found in project.json.
+     *
      * @constant
      * @type {Object}
+     *
+     * @prop {String} engineDir     - In debug mode, if you use the whole engine to develop your game, you should specify its relative path with "engineDir".
+     * @prop {String} modules       - Defines which modules you will need in your game, it's useful only on web
+     * @prop {String} debugMode     - Debug mode, see DEBUG_MODE_XXX constant definitions.
+     * @prop {String} showFPS       - Left bottom corner fps information will show when "showFPS" equals true, otherwise it will be hide.
+     * @prop {String} frameRate     - Sets the wanted frame rate for your game, but the real fps depends on your game implementation and the running environment.
+     * @prop {String} id            - Sets the id of your canvas element on the web page, it's useful only on web.
+     * @prop {String} renderMode    - Sets the renderer type, only useful on web, 0: Automatic, 1: Canvas, 2: WebGL
+     * @prop {String} jsList        - Sets the list of js files in your game.
      */
     CONFIG_KEY: {
         width: "width",
@@ -2095,7 +2182,7 @@ cc.game = /** @lends cc.game# */{
         renderMode: "renderMode",
         jsList: "jsList"
     },
-    
+
     // states
     _paused: true,//whether the game is paused
     _prepareCalled: false,//whether the prepare function has been called
@@ -2103,9 +2190,9 @@ cc.game = /** @lends cc.game# */{
     _rendererInitialized: false,
 
     _renderContext: null,
-    
+
     _intervalId: null,//interval target of main
-    
+
     _lastTime: null,
     _frameTime: null,
 
@@ -2133,13 +2220,13 @@ cc.game = /** @lends cc.game# */{
 
     /**
      * Callback when the scripts of engine have been load.
-     * @type {Function}
+     * @type {Function|null}
      */
     onStart: null,
 
     /**
      * Callback when game exits.
-     * @type {Function}
+     * @type {Function|null}
      */
     onStop: null,
 
@@ -2218,7 +2305,7 @@ cc.game = /** @lends cc.game# */{
      */
     prepare: function (cb) {
         var self = this,
-            config = self.config, 
+            config = self.config,
             CONFIG_KEY = self.CONFIG_KEY;
 
         this._loadConfig();
@@ -2239,10 +2326,10 @@ cc.game = /** @lends cc.game# */{
             this._initRenderer(config[CONFIG_KEY.width], config[CONFIG_KEY.height]);
 
             /**
+             * cc.view is the shared view object.
              * @type {cc.EGLView}
              * @name cc.view
              * @memberof cc
-             * cc.view is the shared view object.
              */
             cc.view = cc.EGLView._getInstance();
 
@@ -2255,10 +2342,10 @@ cc.game = /** @lends cc.game# */{
             if (cc.director.setOpenGLView)
                 cc.director.setOpenGLView(cc.view);
             /**
+             * cc.winSize is the alias object for the size of the current game window.
              * @type {cc.Size}
              * @name cc.winSize
              * @memberof cc
-             * cc.winSize is the alias object for the size of the current game window.
              */
             cc.winSize = cc.director.getWinSize();
 
@@ -2311,7 +2398,7 @@ cc.game = /** @lends cc.game# */{
                 cc.game.onStart = onStart;
             }
         }
-        
+
         this.prepare(cc.game.onStart && cc.game.onStart.bind(cc.game));
     },
 
@@ -2388,8 +2475,9 @@ cc.game = /** @lends cc.game# */{
         if (document["ccConfig"]) {
             this._initConfig(document["ccConfig"]);
         }
-        // Load from project.json 
+        // Load from project.json
         else {
+            var data = {};
             try {
                 var cocos_script = document.getElementsByTagName('script');
                 for(var i = 0; i < cocos_script.length; i++){
@@ -2411,12 +2499,11 @@ cc.game = /** @lends cc.game# */{
                 if(!txt){
                     txt = cc.loader._loadTxtSync("project.json");
                 }
-                var data = JSON.parse(txt);
-                this._initConfig(data || {});
+                data = JSON.parse(txt);
             } catch (e) {
                 cc.log("Failed to read or parse project.json");
-                this._initConfig({});
             }
+            this._initConfig(data);
         }
     },
 

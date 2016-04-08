@@ -204,7 +204,7 @@ cc.Particle.TemporaryPoints = [
  * @property {Number}               positionType        - Particles movement type: cc.ParticleSystem.TYPE_FREE | cc.ParticleSystem.TYPE_GROUPED.
  * @property {Number}               totalParticles      - Maximum particles of the system.
  * @property {Boolean}              autoRemoveOnFinish  - Indicate whether the node will be auto-removed when it has no particles left.
- * @property {cc.Texture2D}         texture             - Texture of Particle System.
+ * @property {cc.Texture2D|HTMLImageElement|HTMLCanvasElement}         texture             - Texture of Particle System.
  *
  * @example
  *  emitter.radialAccel = 15;

@@ -43,7 +43,7 @@
  *     - It is recommended to use it ONLY if you are going to create 3D effects. For 2D effecs, use the action CCFollow or position/scale/rotate. *
  * </p>
  */
-cc.Camera = cc.Class.extend({
+cc.Camera = cc.Class.extend(/** @lends cc.Camera# */{
     _eyeX:null,
     _eyeY:null,
     _eyeZ:null,
