@@ -1296,17 +1296,16 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * @deprecated since v3.0, please use addEventListener instead.
      */
     addEventListenerScrollView: function (selector, target) {
-        this.addEventListener(selector, target);
+        this._scrollViewEventSelector = selector;
+        this._scrollViewEventListener = target;
     },
 
     /**
      * Adds callback function called ScrollView event triggered
      * @param {Function} selector
-     * @param {Object} [target=]
      */
-    addEventListener: function(selector, target){
-        this._scrollViewEventSelector = selector;
-        this._scrollViewEventListener = target;
+    addEventListener: function(selector){
+        this._ccEventCallback = selector;
     },
 
     /**

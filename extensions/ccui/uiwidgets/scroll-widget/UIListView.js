@@ -871,15 +871,6 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
      * @deprecated since v3.0, please use addEventListener instead.
      */
     addEventListenerListView: function (selector, target) {
-        this.addEventListener(selector, target);
-    },
-
-    /**
-     * Adds event listener to ccui.ListView.
-     * @param {Function} selector
-     * @param {Object} [target=]
-     */
-    addEventListener: function(selector, target){
         this._listViewEventListener = target;
         this._listViewEventSelector = selector;
     },

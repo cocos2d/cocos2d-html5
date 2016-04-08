@@ -327,17 +327,15 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
      * @deprecated since v3.0, please use addEventListener instead.
      */
     addEventListenerPageView: function (selector, target) {
-        this.addEventListener(selector, target);
-    },
-
-    /**
-     * Adds event listener to ccui.PageView.
-     * @param {Function} selector
-     * @param {Object} [target=]
-     */
-    addEventListener: function(selector, target){
         this._pageViewEventSelector = selector;
         this._pageViewEventListener = target;
+    },
+
+    addEventListener: function(selector){
+        this._ccEventCallback = function(ref, eventType) {
+            if(eventType == ccui.ScrollView.EVENT_AUTOSCROLL_ENDED)
+                selector(this, eventType)
+        };
     },
 
     /**
