@@ -24,6 +24,9 @@
 
 cc.rendererCanvas = {
     childrenOrderDirty: true,
+    assignedZ: 0,
+    assignedZStep: 1/10000,
+    
     _transformNodePool: [],                              //save nodes transform dirty
     _renderCmds: [],                                     //save renderer commands
 

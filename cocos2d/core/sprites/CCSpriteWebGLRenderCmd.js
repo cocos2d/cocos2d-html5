@@ -29,14 +29,36 @@
         this._needDraw = true;
 
         this._quad = new cc.V3F_C4B_T2F_Quad();
+        this._quadBufferView = new Uint32Array(this._quad.arrayBuffer);
         this._quadWebBuffer = cc._renderContext.createBuffer();
         this._quadDirty = true;
         this._dirty = false;
         this._recursiveDirty = false;
+
+        this._supportBatch = true;
+        if (!proto.batchShader) {
+            proto.batchShader = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST_BATCHED);
+        }
     };
 
     var proto = cc.Sprite.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.Sprite.WebGLRenderCmd;
+
+    proto.vertexDataPerUnit = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+    proto.matrixByteSize =  4 * 4 * 4; //4 rows of 4 floats, 4 bytes each
+    proto.bytesPerUnit = proto.vertexDataPerUnit + proto.matrixByteSize * 4;
+    proto.indicesPerUnit = 6;
+    proto.batchShader = null;
+
+    proto.getBatchInfo = function (info) {
+        info.texture = this._node._texture;
+        info.blendSrc = this._node._blendFunc.src;
+        info.blendDst = this._node._blendFunc.dst;
+        info.shader = this.batchShader;
+        info.vertexDataPerUnit = this.vertexDataPerUnit;
+        info.matrixByteSize = this.matrixByteSize;
+        info.bytesPerUnit = this.bytesPerUnit;
+    };
 
     proto.updateBlendFunc = function (blendFunc) {};
 
@@ -425,10 +447,11 @@
         var gl = ctx || cc._renderContext ;
         //cc.assert(!_t._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
+        var program = this._shaderProgram;
         if (locTexture) {
             if (locTexture._textureLoaded) {
-                this._shaderProgram.use();
-                this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+                program.use();
+                program._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 
                 cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
                 //optimize performance for javascript
@@ -446,8 +469,8 @@
                 gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
             }
         } else {
-            this._shaderProgram.use();
-            this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+            program.use();
+            program._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 
             cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
             cc.glBindTexture2D(null);

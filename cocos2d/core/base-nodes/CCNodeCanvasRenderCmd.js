@@ -32,7 +32,7 @@ cc.CustomRenderCmd = function (target, func) {
         if (!this._callback)
             return;
         this._callback.call(this._target, ctx, scaleX, scaleY);
-    }
+    };
 };
 
 cc.Node._dirtyFlags = {transformDirty: 1 << 0, visibleDirty: 1 << 1, colorDirty: 1 << 2, opacityDirty: 1 << 3, cacheDirty: 1 << 4,
@@ -56,6 +56,9 @@ cc.Node.RenderCmd = function(renderable){
     this._cascadeOpacityEnabledDirty = false;
 
     this._curLevel = -1;
+
+    this._minZ = 0;
+    this._maxZ = 0;
 };
 
 cc.Node.RenderCmd.prototype = {
@@ -368,24 +371,50 @@ cc.Node.RenderCmd.prototype = {
     },
 
     visitChildren: function(){
+        var renderer = cc.renderer;
         var node = this._node;
-        var i, children = node._children, child;
+        var i, children = node._children, child, cmd;
         var len = children.length;
+        var minZ = Number.MAX_VALUE;
+        var maxZ = -Number.MAX_VALUE;
         if (len > 0) {
             node.sortAllChildren();
             // draw children zOrder < 0
             for (i = 0; i < len; i++) {
                 child = children[i];
-                if (child._localZOrder < 0)
-                    child._renderCmd.visit(this);
-                else
+                if (child._localZOrder < 0) {
+                    cmd = child._renderCmd;
+                    cmd.visit(this);
+                    // minZ = Math.min(minZ, child._minZ);
+                    // maxZ = Math.max(maxZ, child._maxZ);
+                }
+                else {
                     break;
+                }
             }
-            cc.renderer.pushRenderCommand(this);
-            for (; i < len; i++)
-                children[i]._renderCmd.visit(this);
+
+            var z = renderer.assignedZ;
+            node._vertexZ = z;
+            renderer.assignedZ += renderer.assignedZStep;
+
+            // minZ = Math.min(minZ,z);
+            // maxZ = Math.max(maxZ,z);
+
+            renderer.pushRenderCommand(this);
+            for (; i < len; i++) {
+                child = children[i];
+                child._renderCmd.visit(this);
+                // minZ = Math.min(minZ, child._minZ);
+                // maxZ = Math.max(maxZ, child._maxZ);
+            }
+
+            // node._minZ = minZ;
+            // node._maxZ = maxZ;
         } else {
-            cc.renderer.pushRenderCommand(this);
+            node._vertexZ = renderer.assignedZ;
+            renderer.assignedZ += renderer.assignedZStep;
+
+            renderer.pushRenderCommand(this);
         }
         this._dirtyFlag = 0;
     }
@@ -399,7 +428,6 @@ cc.Node.RenderCmd.prototype = {
         cc.Node.RenderCmd.call(this, renderable);
         this._cachedParent = null;
         this._cacheDirty = false;
-
     };
 
     var proto = cc.Node.CanvasRenderCmd.prototype = Object.create(cc.Node.RenderCmd.prototype);

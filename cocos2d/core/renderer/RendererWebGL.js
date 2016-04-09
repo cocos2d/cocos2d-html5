@@ -22,8 +22,40 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.rendererWebGL = {
+cc.rendererWebGL = (function () {
+
+function objEqual (a, b) {
+    if (!a || !b) return false;
+
+    var keys = Object.keys(a);
+    for (var i = 0; i < keys.length; ++i) {
+        var key = keys[i];
+        if (!b[key] || a[key] !== b[key]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function removeByLastSwap (array, i) {
+    if (array.length > 0) 
+        array[i] = array[array.length - 1];
+    array.length--;
+}
+
+// Internal variables
+var _batchedInfo = {},
+    _batchedCount,
+    _batchBuffer,
+    _batchElementBuffer,
+    _batchBufferPool = [],
+    _pooledBuffer;
+
+return {
     childrenOrderDirty: true,
+    assignedZ: 0,
+    assignedZStep: 1/10000,
+
     _transformNodePool: [],                              //save nodes transform dirty
     _renderCmds: [],                                     //save renderer commands
 
@@ -42,15 +74,15 @@ cc.rendererWebGL = {
      * drawing all renderer command to context (default is cc._renderContext)
      * @param {WebGLRenderingContext} [ctx=cc._renderContext]
      */
-    rendering: function (ctx) {
-        var locCmds = this._renderCmds,
-            i,
-            len;
-        var context = ctx || cc._renderContext;
-        for (i = 0, len = locCmds.length; i < len; i++) {
-            locCmds[i].rendering(context);
-        }
-    },
+    // rendering: function (ctx) {
+    //     var locCmds = this._renderCmds,
+    //         i,
+    //         len;
+    //     var context = ctx || cc._renderContext;
+    //     for (i = 0, len = locCmds.length; i < len; i++) {
+    //         locCmds[i].rendering(context);
+    //     }
+    // },
 
     _turnToCacheMode: function (renderTextureID) {
         this._isCacheToBufferOn = true;
@@ -150,5 +182,253 @@ cc.rendererWebGL = {
             if (this._renderCmds.indexOf(cmd) === -1)
                 this._renderCmds.push(cmd);
         }
+    },
+
+    createBatchBuffer: function (bufferSize, indiceSize) {
+        var arrayBuffer = gl.createBuffer();
+        var elementBuffer = gl.createBuffer();
+
+        this.initBatchBuffers(arrayBuffer, elementBuffer, bufferSize, indiceSize);
+
+        return {arrayBuffer: arrayBuffer, elementBuffer: elementBuffer, bufferSize: bufferSize, indiceSize: indiceSize};
+    },
+
+    initBatchBuffers: function (arrayBuffer, elementBuffer, bufferSize, indiceSize) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, arrayBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, bufferSize, gl.DYNAMIC_DRAW);
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elementBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indiceSize, gl.DYNAMIC_DRAW);
+    },
+
+    // Returns an object with {arrayBuffer, elementBuffer, size}, 
+    // where size denotes how many unit fit in the buffer (no need for bufferData if it's already big enough, bufferSubData enough)
+    getBatchBuffer: function(bufferSize, indiceSize)
+    {
+        var pool = _batchBufferPool;
+
+        if (pool.length <= 0) {
+            return this.createBatchBuffer(bufferSize, indiceSize);
+        }
+        else {
+            var minBuf = null;  //we also track the smallest found buffer because that one will be re-initialized and returned if no fitting buffer can be found
+            var minSize = Number.MAX_VALUE; 
+            var minBufIndex = -1;
+            for (var i = pool.length - 1; i >= 0; --i) {
+                var buf = pool[i];
+                if (buf.bufferSize >= bufferSize && buf.indiceSize >= indiceSize) {
+                    removeByLastSwap(pool, i);
+                    this.initBatchBuffers(buf.arrayBuffer, buf.elementBuffer, bufferSize, indiceSize);
+                    buf.bufferSize = bufferSize;
+                    buf.indiceSize = indiceSize;
+                    return buf;
+                }
+
+                if (buf.bufferSize < minSize)
+                {
+                    minSize = buf.bufferSize;
+                    minBuf = buf;
+                    minBufIndex = i;
+                }
+            }
+
+            // we only get here if no properly sized buffer was found
+            // in that case, take smallest buffer in pool, resize it and return it
+            removeByLastSwap(pool, minBufIndex);
+            this.initBatchBuffers(minBuf.arrayBuffer, minBuf.elementBuffer, bufferSize, indiceSize);
+            minBuf.bufferSize = bufferSize;
+            minBuf.indiceSize = indiceSize;
+            return minBuf;
+        }
+    },
+
+    storeBatchBuffer: function(buffer) {
+        var pool = _batchBufferPool;
+        pool.push(buffer);
+    },
+
+
+    _forwardBatch: function (first) {
+        var renderCmds = this._renderCmds,
+            cmd = renderCmds[first];
+        if (!cmd || !cmd._supportBatch) return 0;
+
+        var info = {}, last;
+
+        // Initialize batched info
+        cmd.getBatchInfo(_batchedInfo);
+        _batchedInfo.totalVertexData = 0;
+        _batchedInfo.totalBufferSize = 0;
+        _batchedInfo.totalIndiceSize = 0;
+
+        for (last = first; last < renderCmds.length; ++last) {
+            cmd = renderCmds[last];
+            if (cmd._supportBatch) {
+                cmd.getBatchInfo(info);
+            }
+            else {
+                break;
+            }
+            // Batch info don't match, break batching
+            if (!objEqual(info, _batchedInfo)) {
+                break;
+            }
+            else {
+                _batchedInfo.totalVertexData += cmd.vertexDataPerUnit;
+                _batchedInfo.totalBufferSize += cmd.bytesPerUnit;
+                _batchedInfo.totalIndiceSize += cmd.indicesPerUnit;
+            }
+        }
+
+        var count = last - first;
+        if (count <= 1) {
+            return count;
+        }
+
+        _batchedCount = count;
+
+        var bufferSize = _batchedInfo.totalBufferSize;
+        var indiceSize = _batchedInfo.totalIndiceSize * 2; // *2 because we use shorts for indices
+        _pooledBuffer = this.getBatchBuffer(bufferSize, indiceSize);
+        _batchBuffer = _pooledBuffer.arrayBuffer;
+        _batchElementBuffer = _pooledBuffer.elementBuffer;
+
+        //all of the divisions by 4 are just because we work with uint32arrays instead of uint8 arrays so all indexes need to be shortened by the factor of 4
+        var totalVertexData = _batchedInfo.totalVertexData / 4;
+        var totalBufferSize = _batchedInfo.totalBufferSize / 4;
+        var vertexDataOffset = 0;
+        var matrixDataOffset = 0;
+
+        var uploadBuffer = new Uint32Array(totalBufferSize);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, _batchBuffer);
+
+        var i, j;
+        for (i = first; i < last; ++i) {
+            cmd = renderCmds[i];
+            var matrixData = cmd.matrixByteSize / 4;
+            var vertexDataPerUnit = cmd.vertexDataPerUnit / 4;
+
+            var source = cmd._quadBufferView;
+            var len = source.length;
+            for (j = 0; j < len; ++j) {
+                uploadBuffer[vertexDataOffset + j] = source[j];
+            }
+
+            var matData = new Uint32Array(cmd._stackMatrix.mat.buffer);
+
+            source = matData;
+            len = source.length;
+
+            var base = totalVertexData + matrixDataOffset;
+            var offset0 = base + matrixData * 0;
+            var offset1 = base + matrixData * 1;
+            var offset2 = base + matrixData * 2;
+            var offset3 = base + matrixData * 3;
+
+            for (j = 0; j < len; ++j) {
+                var val = source[j];
+                uploadBuffer[offset0 + j] = val;
+                uploadBuffer[offset1 + j] = val;
+                uploadBuffer[offset2 + j] = val;
+                uploadBuffer[offset3 + j] = val;
+            }
+
+            vertexDataOffset += vertexDataPerUnit;
+            matrixDataOffset += matrixData * 4;
+        }
+
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, uploadBuffer);
+
+        //create element buffer
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _batchElementBuffer);
+
+        var indices = new Uint16Array(_batchedInfo.totalIndiceSize);
+
+        var currentQuad = 0;
+        var indiceI = 0;
+        for (i = first; i < last; ++i) {
+            cmd = renderCmds[i];
+            indices[indiceI] = currentQuad + 0;
+            indices[indiceI + 1] = currentQuad + 1;
+            indices[indiceI + 2] = currentQuad + 2;
+            indices[indiceI + 3] = currentQuad + 3;
+            indices[indiceI + 4] = currentQuad + 2;
+            indices[indiceI + 5] = currentQuad + 1;
+            currentQuad += 4;
+            indiceI += cmd.indicesPerUnit;
+        }
+
+        gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, 0, indices);
+        return count;
+    },
+
+    _batchRendering: function () {
+        // var node = this._node;
+        var texture = _batchedInfo.texture;
+        var shader = _batchedInfo.shader;
+        var count = _batchedCount;
+
+        var bytesPerRow = 16; //4 floats with 4 bytes each
+        var matrixData = this.matrixByteSize;
+        var totalVertexData = _batchedInfo.totalVertexData / 4;
+
+        shader.use();
+        shader._updateProjectionUniform();
+
+        cc.glBlendFunc(_batchedInfo.blendSrc, _batchedInfo.blendDst);
+        cc.glBindTexture2DN(0, texture);                   // = cc.glBindTexture2D(texture);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, _batchBuffer);
+
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
+
+        gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);                   //cc.VERTEX_ATTRIB_POSITION
+        gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
+        gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
+        
+        var i;
+        //enable matrix vertex attribs
+        for (i = 0; i < 4; ++i) {
+            gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_MVMAT0 + i);
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_MVMAT0 + i, 4, gl.FLOAT, false, bytesPerRow * 4, totalVertexData + bytesPerRow * i); //stride is one row
+        }
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _batchElementBuffer);
+        gl.drawElements(gl.TRIANGLES, count * 6, gl.UNSIGNED_SHORT, 0);
+
+        for (i = 0; i < 4; ++i) {
+            gl.disableVertexAttribArray(cc.VERTEX_ATTRIB_MVMAT0 + i);
+        }
+
+        this.storeBatchBuffer(_pooledBuffer);
+
+        cc.g_NumberOfDraws++;
+    },
+
+    /**
+     * drawing all renderer command to context (default is cc._renderContext)
+     * @param {WebGLRenderingContext} [ctx=cc._renderContext]
+     */
+    rendering: function (ctx) {
+        var locCmds = this._renderCmds,
+            i, len, cmd,
+            context = ctx || cc._renderContext;
+
+        for (i = 0, len = locCmds.length; i < len; i++) {
+            cmd = locCmds[i];
+            
+            // Batching or direct rendering
+            var batchCount = this._forwardBatch(i);
+            if (batchCount > 1) {
+                this._batchRendering();
+                // i will increase by 1 each loop
+                i += batchCount - 1;
+            }
+            else {
+                cmd.rendering(context);
+            }
+        }
     }
 };
+})();

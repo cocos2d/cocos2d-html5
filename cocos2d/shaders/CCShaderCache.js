@@ -31,60 +31,66 @@
  */
 cc.shaderCache = /** @lends cc.shaderCache# */{
 
-	/**
-	 * @public
-	 * @constant
-	 * @type {Number}
-	 */
-	TYPE_POSITION_TEXTURECOLOR: 0,
-	/**
-	 * @public
-	 * @constant
-	 * @type {Number}
-	 */
-	TYPE_POSITION_TEXTURECOLOR_ALPHATEST: 1,
-	/**
-	 * @public
-	 * @constant
-	 * @type {Number}
-	 */
-	TYPE_POSITION_COLOR: 2,
-	/**
-	 * @public
-	 * @constant
-	 * @type {Number}
-	 */
-	TYPE_POSITION_TEXTURE: 3,
-	/**
-	 * @public
-	 * @constant
-	 * @type {Number}
-	 */
-	TYPE_POSITION_TEXTURE_UCOLOR: 4,
-	/**
-	 * @public
-	 * @constant
-	 * @type {Number}
-	 */
-	TYPE_POSITION_TEXTURE_A8COLOR: 5,
-	/**
-	 * @public
-	 * @constant
-	 * @type {Number}
-	 */
-	TYPE_POSITION_UCOLOR: 6,
-	/**
-	 * @public
-	 * @constant
-	 * @type {Number}
-	 */
-	TYPE_POSITION_LENGTH_TEXTURECOLOR: 7,
-	/**
-	 * @public
-	 * @constant
-	 * @type {Number}
-	 */
-	TYPE_MAX: 8,
+    /**
+     * @public
+     * @constant
+     * @type {Number}
+     */
+    TYPE_POSITION_TEXTURECOLOR: 0,
+    /**
+     * @public
+     * @constant
+     * @type {Number}
+     */
+    TYPE_POSITION_TEXTURECOLOR_ALPHATEST: 1,
+    /**
+     * @public
+     * @constant
+     * @type {Number}
+     */
+    TYPE_POSITION_COLOR: 2,
+    /**
+     * @public
+     * @constant
+     * @type {Number}
+     */
+    TYPE_POSITION_TEXTURE: 3,
+    /**
+     * @public
+     * @constant
+     * @type {Number}
+     */
+    TYPE_POSITION_TEXTURE_UCOLOR: 4,
+    /**
+     * @public
+     * @constant
+     * @type {Number}
+     */
+    TYPE_POSITION_TEXTURE_A8COLOR: 5,
+    /**
+     * @public
+     * @constant
+     * @type {Number}
+     */
+    TYPE_POSITION_UCOLOR: 6,
+    /**
+     * @public
+     * @constant
+     * @type {Number}
+     */
+    TYPE_POSITION_LENGTH_TEXTURECOLOR: 7,
+    /**
+     * @public
+     * @constant
+     * @type {Number}
+     */
+    TYPE_POSITION_TEXTURECOLOR_ALPHATEST_BATCHED: 8,
+    /**
+     * @public
+     * @constant
+     * @type {Number}
+     */
+    TYPE_MAX: 9,
 
     _programs: {},
 
@@ -97,7 +103,6 @@ cc.shaderCache = /** @lends cc.shaderCache# */{
         switch (type) {
             case this.TYPE_POSITION_TEXTURECOLOR:
                 program.initWithVertexShaderByteArray(cc.SHADER_POSITION_TEXTURE_COLOR_VERT, cc.SHADER_POSITION_TEXTURE_COLOR_FRAG);
-
                 program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
                 program.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
                 program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
@@ -109,27 +114,29 @@ cc.shaderCache = /** @lends cc.shaderCache# */{
                 program.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
                 program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
                 break;
+            case this.TYPE_POSITION_TEXTURECOLOR_ALPHATEST_BATCHED:
+                program.initWithVertexShaderByteArray(cc.SHADER_POSITION_TEXTURE_COLOR_VERT_BATCHED, cc.SHADER_POSITION_TEXTURE_COLOR_ALPHATEST_FRAG);
+                program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
+                program.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
+                program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
+                break;
             case this.TYPE_POSITION_COLOR:
                 program.initWithVertexShaderByteArray(cc.SHADER_POSITION_COLOR_VERT, cc.SHADER_POSITION_COLOR_FRAG);
-
                 program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
                 program.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
                 break;
             case this.TYPE_POSITION_TEXTURE:
                 program.initWithVertexShaderByteArray(cc.SHADER_POSITION_TEXTURE_VERT, cc.SHADER_POSITION_TEXTURE_FRAG);
-
                 program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
                 program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
                 break;
             case this.TYPE_POSITION_TEXTURE_UCOLOR:
                 program.initWithVertexShaderByteArray(cc.SHADER_POSITION_TEXTURE_UCOLOR_VERT, cc.SHADER_POSITION_TEXTURE_UCOLOR_FRAG);
-
                 program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
                 program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
                 break;
             case this.TYPE_POSITION_TEXTURE_A8COLOR:
                 program.initWithVertexShaderByteArray(cc.SHADER_POSITION_TEXTURE_A8COLOR_VERT, cc.SHADER_POSITION_TEXTURE_A8COLOR_FRAG);
-
                 program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
                 program.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
                 program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
@@ -140,7 +147,6 @@ cc.shaderCache = /** @lends cc.shaderCache# */{
                 break;
             case this.TYPE_POSITION_LENGTH_TEXTURECOLOR:
                 program.initWithVertexShaderByteArray(cc.SHADER_POSITION_COLOR_LENGTH_TEXTURE_VERT, cc.SHADER_POSITION_COLOR_LENGTH_TEXTURE_FRAG);
-
                 program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
                 program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
                 program.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
@@ -171,6 +177,12 @@ cc.shaderCache = /** @lends cc.shaderCache# */{
         this._loadDefaultShader(program, this.TYPE_POSITION_TEXTURECOLOR_ALPHATEST);
         this._programs[cc.SHADER_POSITION_TEXTURECOLORALPHATEST] = program;
         this._programs["ShaderPositionTextureColorAlphaTest"] = program;
+
+        // Position Texture Color alpha batched test
+        program = new cc.GLProgram();
+        this._loadDefaultShader(program, this.TYPE_POSITION_TEXTURECOLOR_ALPHATEST_BATCHED);
+        this._programs[cc.SHADER_POSITION_TEXTURECOLORALPHATEST_BATCHED] = program;
+        this._programs["ShaderPositionTextureColorAlphaTestBatched"] = program;
 
         //
         // Position, Color shader

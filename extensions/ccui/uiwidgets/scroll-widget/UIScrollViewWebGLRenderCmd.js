@@ -42,5 +42,5 @@
                 continue;
             locCmds[i].rendering(context);
         }
-    }
+    };
 })();

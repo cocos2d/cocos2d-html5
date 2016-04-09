@@ -113,11 +113,11 @@
         t4x4Mat[5] = trans.d;
         t4x4Mat[13] = trans.ty;
 
-        // Update Z vertex manually
-        t4x4Mat[14] = node._vertexZ;
-
         //optimize performance for Javascript
         cc.kmMat4Multiply(stackMatrix, parentMatrix, t4x4);
+
+        // Update Z depth
+        t4x4Mat[14] = node._vertexZ;
 
         // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
         if (node._camera !== null && !(node.grid !== null && node.grid.isActive())) {
