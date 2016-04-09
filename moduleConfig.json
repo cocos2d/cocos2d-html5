@@ -336,9 +336,11 @@
             "extensions/ccui/uiwidgets/UIVideoPlayer.js",
             "extensions/ccui/uiwidgets/UIRichText.js",
             "extensions/ccui/uiwidgets/UIWebView.js",
+            "extensions/ccui/uiwidgets/scroll-widget/UIScrollViewBar.js",
             "extensions/ccui/uiwidgets/scroll-widget/UIScrollView.js",
             "extensions/ccui/uiwidgets/scroll-widget/UIListView.js",
             "extensions/ccui/uiwidgets/scroll-widget/UIPageView.js",
+            "extensions/ccui/uiwidgets/scroll-widget/UIPageViewIndicator.js",
             "extensions/ccui/uiwidgets/scroll-widget/UIScrollViewCanvasRenderCmd.js",
             "extensions/ccui/uiwidgets/scroll-widget/UIScrollViewWebGLRenderCmd.js"
         ],
