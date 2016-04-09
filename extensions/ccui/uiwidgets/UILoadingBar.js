@@ -87,14 +87,16 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
             case ccui.LoadingBar.TYPE_LEFT:
                 this._barRenderer.setAnchorPoint(0, 0.5);
                 this._barRenderer.setPosition(0, this._contentSize.height*0.5);
-                if (!this._scale9Enabled)
-                    this._barRenderer.setFlippedX(false);
+                if (!this._scale9Enabled)  
+                    this._barRenderer.setFlippedX(false);  
+
                 break;
             case ccui.LoadingBar.TYPE_RIGHT:
                 this._barRenderer.setAnchorPoint(1, 0.5);
                 this._barRenderer.setPosition(this._totalLength,this._contentSize.height*0.5);
-                if (!this._scale9Enabled)
-                    this._barRenderer.setFlippedX(true);
+                if (!this._scale9Enabled)  
+                    this._barRenderer.setFlippedX(true);  
+
                 break;
         }
     },

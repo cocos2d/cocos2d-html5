@@ -238,6 +238,8 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         this._directorProjection = cc.director.getProjection();
 
         //this.set2DProjection();    //TODO why?
+        var size = cc.director.getWinSizeInPixels();
+        gl.viewport(0, 0, size.width , size.height);
         this._grabber.beforeRender(this._texture);
     },
 
@@ -246,6 +248,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
 
         // restore projection
         //cc.director.setProjection(this._directorProjection);
+        cc.director.setViewport();
 
         if (target && target.getCamera().isDirty()) {
             var offset = target.getAnchorPointInPoints();

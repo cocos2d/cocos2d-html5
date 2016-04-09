@@ -50,7 +50,7 @@
  * @extends cc.Node
  *
  * @param {String|cc.SpriteFrame|HTMLImageElement|cc.Texture2D} fileName  The string which indicates a path to image file, e.g., "scene1/monster.png".
- * @param {cc.Rect} rect  Only the contents inside rect of pszFileName's texture will be applied for this sprite.
+ * @param {cc.Rect} [rect]  Only the contents inside rect of pszFileName's texture will be applied for this sprite.
  * @param {Boolean} [rotated] Whether or not the texture rectangle is rotated.
  * @example
  *
@@ -797,7 +797,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @function
      * @param {cc.Sprite} child
      * @param {Number} localZOrder  child's zOrder
-     * @param {String} [tag] child's tag
+     * @param {number|String} [tag] child's tag
      * @override
      */
     addChild: function (child, localZOrder, tag) {
@@ -843,15 +843,18 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 _t._textureLoaded = true;
                 var locNewTexture = sender.getTexture();
                 if (locNewTexture !== _t._texture)
-                    _t.texture = locNewTexture;
+                    _t._setTexture(locNewTexture);
                 _t.setTextureRect(sender.getRect(), sender.isRotated(), sender.getOriginalSize());
                 _t.dispatchEvent("load");
-                _t.setColor(_t.color);
+                _t.setColor(_t._realColor);
             }, _t);
-        }else{
+        } else {
+            _t._textureLoaded = true;
             // update texture before updating texture rect
-            if (pNewTexture !== _t._texture)
-                _t.texture = pNewTexture;
+            if (pNewTexture !== _t._texture) {
+                _t._setTexture(pNewTexture);
+                _t.setColor(_t._realColor);
+            }
             _t.setTextureRect(newFrame.getRect(), newFrame.isRotated(), newFrame.getOriginalSize());
         }
         this._renderCmd._updateForSetSpriteFrame(pNewTexture);

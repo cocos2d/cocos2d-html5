@@ -343,7 +343,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
      * @return {cc.Point}
      */
     getPointByEvent: function(event, pos){
-        if (event.pageX != null)  //not avalable in <= IE8
+        if (event.pageX != null)  //not available in <= IE8
             return {x: event.pageX, y: event.pageY};
 
         pos.left -= document.body.scrollLeft;

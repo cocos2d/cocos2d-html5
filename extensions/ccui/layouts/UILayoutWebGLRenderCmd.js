@@ -31,14 +31,8 @@
         this._needDraw = false;
 
         this._currentStencilEnabled = 0;
-        this._currentStencilWriteMask = 0;
-        this._currentStencilFunc = 0;
-        this._currentStencilRef = 0;
-        this._currentStencilValueMask = 0;
-        this._currentStencilFail = 0;
-        this._currentStencilPassDepthFail = 0;
-        this._currentStencilPassDepthPass = 0;
-        this._currentDepthWriteMask = false;
+        this._scissorOldState = false;
+        this._clippingOldRect = null;
 
         this._mask_layer_le = 0;
 
@@ -56,6 +50,10 @@
         var node = this._node;
         if (!node._visible)
             return;
+
+        if(parentCmd && (parentCmd._dirtyFlag & cc.Node._dirtyFlags.transformDirty))
+            node._clippingRectDirty = true;
+
         node._adaptRenderers();
         node._doLayout();
 
@@ -71,7 +69,7 @@
                     break;
             }
         } else
-            ccui.Widget.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
+            ccui.ProtectedNode.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
     };
 
     proto._onBeforeVisitStencil = function(ctx){
@@ -85,78 +83,83 @@
 
         // manually save the stencil state
         this._currentStencilEnabled = gl.isEnabled(gl.STENCIL_TEST);
-        this._currentStencilWriteMask = gl.getParameter(gl.STENCIL_WRITEMASK);
-        this._currentStencilFunc = gl.getParameter(gl.STENCIL_FUNC);
-        this._currentStencilRef = gl.getParameter(gl.STENCIL_REF);
-        this._currentStencilValueMask = gl.getParameter(gl.STENCIL_VALUE_MASK);
-        this._currentStencilFail = gl.getParameter(gl.STENCIL_FAIL);
-        this._currentStencilPassDepthFail = gl.getParameter(gl.STENCIL_PASS_DEPTH_FAIL);
-        this._currentStencilPassDepthPass = gl.getParameter(gl.STENCIL_PASS_DEPTH_PASS);
+
+        gl.clear(gl.DEPTH_BUFFER_BIT);
 
         gl.enable(gl.STENCIL_TEST);
-
-        gl.stencilMask(mask_layer);
-
-        this._currentDepthWriteMask = gl.getParameter(gl.DEPTH_WRITEMASK);
 
         gl.depthMask(false);
 
         gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
-        gl.stencilOp(gl.ZERO, gl.KEEP, gl.KEEP);
-
-        // draw a fullscreen solid rectangle to clear the stencil buffer
-        this._drawFullScreenQuadClearStencil();
-
-        gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
         gl.stencilOp(gl.REPLACE, gl.KEEP, gl.KEEP);
+
+        gl.stencilMask(mask_layer);
+        gl.clear(gl.STENCIL_BUFFER_BIT);
+
     };
 
     proto._onAfterDrawStencil = function(ctx){
         var gl = ctx || cc._renderContext;
-        gl.depthMask(this._currentDepthWriteMask);
+        gl.depthMask(true);
         gl.stencilFunc(gl.EQUAL, this._mask_layer_le, this._mask_layer_le);
         gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
     };
 
     proto._onAfterVisitStencil = function(ctx){
         var gl = ctx || cc._renderContext;
-        // manually restore the stencil state
-        gl.stencilFunc(this._currentStencilFunc, this._currentStencilRef, this._currentStencilValueMask);
-        gl.stencilOp(this._currentStencilFail, this._currentStencilPassDepthFail, this._currentStencilPassDepthPass);
-        gl.stencilMask(this._currentStencilWriteMask);
-        if (!this._currentStencilEnabled)
-            gl.disable(gl.STENCIL_TEST);
+
         ccui.Layout.WebGLRenderCmd._layer--;
+
+        if (this._currentStencilEnabled)
+        {
+            var mask_layer = 0x1 << ccui.Layout.WebGLRenderCmd._layer;
+            var mask_layer_l = mask_layer - 1;
+            var mask_layer_le = mask_layer | mask_layer_l;
+
+            gl.stencilMask(mask_layer);
+            gl.stencilFunc(gl.EQUAL, mask_layer_le, mask_layer_le);
+        }
+        else
+        {
+            gl.disable(gl.STENCIL_TEST);
+        }
     };
 
     proto._onBeforeVisitScissor = function(ctx){
-        var clippingRect = this._getClippingRect();
+        this._node._clippingRectDirty = true;
+        var clippingRect = this._node._getClippingRect();
         var gl = ctx || cc._renderContext;
-        gl.enable(gl.SCISSOR_TEST);
 
-        cc.view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
+        this._scissorOldState = cc.view.isScissorEnabled();
+
+        if(!this._scissorOldState)
+            gl.enable(gl.SCISSOR_TEST);
+
+        this._clippingOldRect = cc.view.getScissorRect();
+
+        if(!cc.rectEqualToRect(this._clippingOldRect, clippingRect))
+            cc.view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
     };
 
     proto._onAfterVisitScissor = function(ctx){
         var gl = ctx || cc._renderContext;
-        gl.disable(gl.SCISSOR_TEST);
-    };
+        if(this._scissorOldState)
+        {
+            if(!cc.rectEqualToRect(this._clippingOldRect, this._node._clippingRect))
+            {
+                cc.view.setScissorInPoints( this._clippingOldRect.x,
+                    this._clippingOldRect.y,
+                    this._clippingOldRect.width,
+                    this._clippingOldRect.height);
+            }
 
-    proto._drawFullScreenQuadClearStencil = function(){
-        // draw a fullscreen solid rectangle to clear the stencil buffer
-        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
-        cc.kmGLPushMatrix();
-        cc.kmGLLoadIdentity();
-        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-        cc.kmGLPushMatrix();
-        cc.kmGLLoadIdentity();
-        cc._drawingUtil.drawSolidRect(cc.p(-1,-1), cc.p(1,1), cc.color(255, 255, 255, 255));
-        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
-        cc.kmGLPopMatrix();
-        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-        cc.kmGLPopMatrix();
+        }
+        else
+        {
+            gl.disable(gl.SCISSOR_TEST);
+        }
     };
-
+    
     proto.rebindStencilRendering = function(stencil){};
 
     proto.transform = function(parentCmd, recursive){
@@ -233,7 +236,7 @@
 
     proto.scissorClippingVisit = function(parentCmd){
         cc.renderer.pushRenderCommand(this._beforeVisitCmdScissor);
-        cc.ProtectedNode.prototype.visit.call(this._node, parentCmd);
+        ccui.ProtectedNode.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
         cc.renderer.pushRenderCommand(this._afterVisitCmdScissor);
     };
 

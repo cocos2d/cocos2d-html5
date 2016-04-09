@@ -224,7 +224,7 @@ cc._tmp.WebGLTexture2D = function () {
         },
 
         keepData: function (data, length) {
-            //The texture data mustn't be saved becuase it isn't a mutable texture.
+            //The texture data mustn't be saved because it isn't a mutable texture.
             return data;
         },
 

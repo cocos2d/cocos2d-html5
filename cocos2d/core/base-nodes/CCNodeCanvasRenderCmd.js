@@ -229,8 +229,11 @@ cc.Node.RenderCmd.prototype = {
         if(locFlag & flags.transformDirty){
             //update the transform
             this.transform(this.getParentRenderCmd(), true);
-            this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
+            this._dirtyFlag = this._dirtyFlag & flags.transformDirty ^ this._dirtyFlag;
         }
+
+        if (locFlag & flags.orderDirty)
+            this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
     },
 
     getNodeToParentTransform: function () {
@@ -358,7 +361,10 @@ cc.Node.RenderCmd.prototype = {
 
         if (cc._renderType === cc.game.RENDER_TYPE_WEBGL || locFlag & flags.transformDirty)
             //update the transform
-            this.transform(parentCmd);
+            this.transform(parentCmd, true);
+
+        if (locFlag & flags.orderDirty)
+            this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
     },
 
     visitChildren: function(){

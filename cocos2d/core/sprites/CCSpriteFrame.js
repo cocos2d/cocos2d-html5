@@ -347,8 +347,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         texture = this.getTexture();
 
         this._rectInPixels = rect;
-        rect = this._rect = cc.rectPixelsToPoints(rect);
-        
+        this._rect = cc.rectPixelsToPoints(rect);
+
         if(texture && texture.url && texture.isLoaded()) {
             var _x, _y;
             if(rotated){

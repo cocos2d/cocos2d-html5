@@ -334,7 +334,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     /**
-     * When enabled, it will render its children into the texture automatically. Disabled by default for compatiblity reasons. <br/>
+     * When enabled, it will render its children into the texture automatically. Disabled by default for compatibility reasons. <br/>
      * Will be enabled in the future.
      * @return {Boolean}
      */
@@ -343,7 +343,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     /**
-     * When enabled, it will render its children into the texture automatically. Disabled by default for compatiblity reasons. <br/>
+     * When enabled, it will render its children into the texture automatically. Disabled by default for compatibility reasons. <br/>
      * Will be enabled in the future.
      * @return {Boolean}
      */

@@ -86,7 +86,7 @@ cc.pMult = function (point, floatVar) {
  * Calculates midpoint between two points.
  * @param {cc.Point} v1
  * @param {cc.Point} v2
- * @return {cc.pMult}
+ * @return {cc.Point}
  */
 cc.pMidpoint = function (v1, v2) {
     return cc.pMult(cc.pAdd(v1, v2), 0.5);
@@ -134,7 +134,7 @@ cc.pRPerp = function (point) {
  * Calculates the projection of v1 over v2.
  * @param {cc.Point} v1
  * @param {cc.Point} v2
- * @return {cc.pMult}
+ * @return {cc.Point}
  */
 cc.pProject = function (v1, v2) {
     return cc.pMult(v2, cc.pDot(v1, v2) / cc.pDot(v2, v2));
@@ -284,7 +284,7 @@ cc.pCompOp = function (p, opFunc) {
  * @param {cc.Point} a
  * @param {cc.Point} b
  * @param {Number} alpha
- * @return {cc.pAdd}
+ * @return {cc.Point}
  */
 cc.pLerp = function (a, b, alpha) {
     return cc.pAdd(cc.pMult(a, 1 - alpha), cc.pMult(b, alpha));
@@ -454,7 +454,7 @@ cc.pSameAs = function (A, B) {
 
 
 
-// High Perfomance In Place Operationrs ---------------------------------------
+// High Performance In Place Operationrs ---------------------------------------
 
 /**
  * sets the position of the point to 0
@@ -498,7 +498,7 @@ cc.pSubIn = function(v1, v2) {
 /**
  * adds one point to another (inplace)
  * @param {cc.Point} v1
- * @param {cc.point} v2
+ * @param {cc.Point} v2
  */
 cc.pAddIn = function(v1, v2) {
     v1.x += v2.x;
@@ -512,4 +512,3 @@ cc.pAddIn = function(v1, v2) {
 cc.pNormalizeIn = function(v) {
     cc.pMultIn(v, 1.0 / Math.sqrt(v.x * v.x + v.y * v.y));
 };
-

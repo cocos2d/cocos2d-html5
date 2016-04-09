@@ -83,7 +83,7 @@ cc.__t = function (v) {
 /**
  * <p>CCDrawNode                                                <br/>
  * Node that draws dots, segments and polygons.                        <br/>
- * Faster than the "drawing primitives" since they it draws everything in one single batch.</p>
+ * Faster than the "drawing primitives" since it draws everything in one single batch.</p>
  * @class
  * @name cc.DrawNode
  * @extends cc.Node
@@ -158,7 +158,7 @@ cc.DrawNode = cc.Node.extend(/** @lends cc.DrawNode# */{
 
 /**
  * Creates a DrawNode
- * @deprecated since v3.0 please use new cc.DrawNode() instead.
+ * @deprecated since v3.0 please use `new cc.DrawNode()` instead.
  * @return {cc.DrawNode}
  */
 cc.DrawNode.create = function () {
@@ -351,8 +351,8 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
              * @override
              * @param {Array} points
              * @param {Number} segments
-             * @param {Number} lineWidth
-             * @param {cc.Color} color
+             * @param {Number} [lineWidth]
+             * @param {cc.Color} [color]
              */
             drawCatmullRom: function (points, segments, lineWidth, color) {
                 this.drawCardinalSpline(points, 0.5, segments, lineWidth, color);
@@ -364,8 +364,8 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
              * @param {Array} config
              * @param {Number} tension
              * @param {Number} segments
-             * @param {Number} lineWidth
-             * @param {cc.Color} color
+             * @param {Number} [lineWidth]
+             * @param {cc.Color} [color]
              */
             drawCardinalSpline: function (config, tension, segments, lineWidth, color) {
                 lineWidth = lineWidth || this._lineWidth;
@@ -408,7 +408,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
              * draw a dot at a position, with a given radius and color
              * @param {cc.Point} pos
              * @param {Number} radius
-             * @param {cc.Color} color
+             * @param {cc.Color} [color]
              */
             drawDot: function (pos, radius, color) {
                 color = color || this.getDrawColor();
@@ -426,7 +426,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
              * @override
              * @param {Array} points point of array
              * @param {Number} radius
-             * @param {cc.Color} color
+             * @param {cc.Color} [color]
              */
             drawDots: function(points, radius, color){
                 if(!points || points.length == 0)
@@ -442,8 +442,8 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
              * draw a segment with a radius and color
              * @param {cc.Point} from
              * @param {cc.Point} to
-             * @param {Number} lineWidth
-             * @param {cc.Color} color
+             * @param {Number} [lineWidth]
+             * @param {cc.Color} [color]
              */
             drawSegment: function (from, to, lineWidth, color) {
                 lineWidth = lineWidth || this._lineWidth;
@@ -462,9 +462,9 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
             /**
              * draw a polygon with a fill color and line color without copying the vertex list
              * @param {Array} verts
-             * @param {cc.Color} fillColor
-             * @param {Number} lineWidth
-             * @param {cc.Color} color
+             * @param {cc.Color|null} fillColor Fill color or `null` for a hollow polygon.
+             * @param {Number} [lineWidth]
+             * @param {cc.Color} [color]
              */
             drawPoly_: function (verts, fillColor, lineWidth, color) {
                 lineWidth = (lineWidth == null ) ? this._lineWidth : lineWidth;
@@ -472,7 +472,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 if (color.a == null)
                     color.a = 255;
                 var element = new cc._DrawNodeElement(cc.DrawNode.TYPE_POLY);
-                
+
                 element.verts = verts;
                 element.fillColor = fillColor;
                 element.lineWidth = lineWidth;
@@ -484,20 +484,20 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                     element.isFill = true;
                 this._buffer.push(element);
             },
-            
+
             /**
              * draw a polygon with a fill color and line color, copying the vertex list
              * @param {Array} verts
-             * @param {cc.Color} fillColor
-             * @param {Number} lineWidth
-             * @param {cc.Color} color
+             * @param {cc.Color|null} fillColor Fill color or `null` for a hollow polygon.
+             * @param {Number} [lineWidth]
+             * @param {cc.Color} [lineColor]
              */
-            drawPoly: function (verts, fillColor, lineWidth, color) {
+            drawPoly: function (verts, fillColor, lineWidth, lineColor) {
                 var vertsCopy = [];
                 for (var i=0; i < verts.length; i++) {
                     vertsCopy.push(cc.p(verts[i].x, verts[i].y));
                 }
-                return this.drawPoly_(vertsCopy, fillColor, lineWidth, color);     
+                return this.drawPoly_(vertsCopy, fillColor, lineWidth, lineColor);
             },
 
             /**
@@ -513,7 +513,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
         });
     }
     else if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
-        
+
         cc.extend(cc.DrawNode.prototype, {
             _bufferCapacity:0,
 

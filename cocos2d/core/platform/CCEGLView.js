@@ -52,8 +52,7 @@ cc.__BrowserGetter = {
             return frame.clientHeight;
     },
     meta: {
-        "width": "device-width",
-        "user-scalable": "no"
+        "width": "device-width"
     },
     adaptationType: cc.sys.browserType
 };
@@ -130,7 +129,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     // The visible rect in content's coordinate in point
     _visibleRect: null,
 	_retinaEnabled: false,
-    _autoFullScreen: true,
+    _autoFullScreen: false,
     // The device's pixel ratio (for retina displays)
     _devicePixelRatio: 1,
     // the view name
@@ -187,6 +186,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
 	    var sys = cc.sys;
         _t.enableRetina(sys.os === sys.OS_IOS || sys.os === sys.OS_OSX);
+        _t.enableAutoFullScreen(sys.isMobile && sys.browserType !== sys.BROWSER_TYPE_BAIDU);
         cc.visibleRect && cc.visibleRect.init(_t._visibleRect);
 
         // Setup system default resolution policies
@@ -204,9 +204,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     // Resize helper functions
     _resizeEvent: function () {
         var view;
-        if(this.setDesignResolutionSize){
+        if (this.setDesignResolutionSize) {
             view = this;
-        }else{
+        } else {
             view = cc.view;
         }
 
@@ -222,8 +222,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         }
         var width = view._originalDesignResolutionSize.width;
         var height = view._originalDesignResolutionSize.height;
-        if (width > 0)
+        if (width > 0) {
             view.setDesignResolutionSize(width, height, view._resolutionPolicy);
+        }
     },
 
     /**
@@ -339,6 +340,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     _adjustViewportMeta: function () {
         if (this._isAdjustViewPort) {
             this._setViewportMeta(cc.__BrowserGetter.meta, false);
+            // Only adjust viewport once
+            this._isAdjustViewPort = false;
         }
     },
 
@@ -401,7 +404,14 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * @param {Boolean} enabled  Enable or disable auto full screen on mobile devices
      */
     enableAutoFullScreen: function(enabled) {
-        this._autoFullScreen = enabled ? true : false;
+        if (enabled && enabled !== this._autoFullScreen && cc.sys.isMobile && this._frame === document.documentElement) {
+            // Automatically full screen when user touches on mobile version
+            this._autoFullScreen = true;
+            cc.screen.autoFullScreen(this._frame);
+        }
+        else {
+            this._autoFullScreen = false;
+        }
     },
 
     /**
@@ -694,7 +704,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      */
     setRealPixelResolution: function (width, height, resolutionPolicy) {
         // Set viewport's width
-        this._setViewportMeta({"width": width, "target-densitydpi": cc.DENSITYDPI_DEVICE, "user-scalable": "no"}, true);
+        this._setViewportMeta({"width": width, "target-densitydpi": cc.DENSITYDPI_DEVICE}, true);
 
         // Set body width to the exact pixel resolution
         document.body.style.width = width + "px";
@@ -882,10 +892,6 @@ cc.ContainerStrategy = cc.Class.extend(/** @lends cc.ContainerStrategy# */{
 
     _setupContainer: function (view, w, h) {
         var frame = view._frame;
-        if (cc.view._autoFullScreen && cc.sys.isMobile && frame === document.documentElement) {
-            // Automatically full screen when user touches on mobile version
-            cc.screen.autoFullScreen(frame);
-        }
 
         var locCanvasElement = cc._canvas, locContainer = cc.container;
         // Setup container

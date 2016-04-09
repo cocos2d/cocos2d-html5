@@ -820,7 +820,7 @@ var bbWrapVect = function(bb, v)
 /// Segment query info struct.
 /* These are created using literals where needed.
 typedef struct cpSegmentQueryInfo {
-	/// The shape that was hit, null if no collision occured.
+	/// The shape that was hit, null if no collision occurred.
 	cpShape *shape;
 	/// The normalized distance along the query segment in the range [0, 1].
 	cpFloat t;
@@ -833,6 +833,7 @@ var shapeIDCounter = 0;
 
 var CP_NO_GROUP = cp.NO_GROUP = 0;
 var CP_ALL_LAYERS = cp.ALL_LAYERS = ~0;
+var CP_ALL_CATEGORIES = cp.ALL_CATEGORIES = ~0; // Chipmunk v7.0 compatibility
 
 cp.resetShapeIdCounter = function()
 {
@@ -957,7 +958,7 @@ var NearestPointQueryInfo = function(shape, p, d)
 
 var SegmentQueryInfo = function(shape, t, n)
 {
-	/// The shape that was hit, NULL if no collision occured.
+	/// The shape that was hit, NULL if no collision occurred.
 	this.shape = shape;
 	/// The normalized distance along the query segment in the range [0, 1].
 	this.t = t;
@@ -1472,6 +1473,7 @@ PolyShape.prototype.containsVertPartial = function(vx, vy, n)
 // These methods are provided for API compatibility with Chipmunk. I recommend against using
 // them - just access the poly.verts list directly.
 PolyShape.prototype.getNumVerts = function() { return this.verts.length / 2; };
+PolyShape.prototype.getCount = PolyShape.prototype.getNumVerts;     // v7.0 compatibility
 PolyShape.prototype.getVert = function(i)
 {
 	return new Vect(this.verts[i * 2], this.verts[i * 2 + 1]);
@@ -1608,6 +1610,15 @@ if (typeof DEBUG !== 'undefined' && DEBUG) {
 Body.prototype.getPos = function() { return this.p; };
 Body.prototype.getVel = function() { return new Vect(this.vx, this.vy); };
 Body.prototype.getAngVel = function() { return this.w; };
+// chipmunk v7.0 compatibility
+Body.prototype.getPosition = Body.prototype.getPos;
+Body.prototype.getVelocity = Body.prototype.getVel;
+Body.prototype.getAngularVelocity = Body.prototype.getAngVel;
+Body.prototype.getCenterOfGravity = function() {
+    // FIXME: what is the best way to calculate the center of gravity?
+    // Needed for Chipmunk v7.0 compatibility
+    return this.p;
+};
 
 /// Returns true if the body is sleeping.
 Body.prototype.isSleeping = function()
@@ -1836,6 +1847,9 @@ Body.prototype.world2Local = function(v)
 {
 	return vunrotate(vsub(v, this.p), this.rot);
 };
+// chipmunk v7.0 compatibility
+Body.prototype.localToWorld = Body.prototype.local2World;
+Body.prototype.worldToLocal = Body.prototype.world2Local;
 
 /// Get the kinetic energy of a body.
 Body.prototype.kineticEnergy = function()
@@ -2789,7 +2803,7 @@ bbTreeRenderDebug(cpSpatialIndex *index){
 
 /// @defgroup cpArbiter cpArbiter
 /// The cpArbiter struct controls pairs of colliding shapes.
-/// They are also used in conjuction with collision handler callbacks
+/// They are also used in conjunction with collision handler callbacks
 /// allowing you to retrieve information on the collision and control it.
 
 
@@ -3052,7 +3066,7 @@ Arbiter.prototype.update = function(contacts, handler, a, b)
 				
 				// This could trigger false positives, but is fairly unlikely nor serious if it does.
 				if(new_contact.hash === old.hash){
-					// Copy the persistant contact information.
+					// Copy the persistent contact information.
 					new_contact.jnAcc = old.jnAcc;
 					new_contact.jtAcc = old.jtAcc;
 				}
@@ -4459,6 +4473,24 @@ Space.prototype.nearestPointQueryNearest = function(point, maxDistance, layers, 
 
 	return out;
 };
+// chipmunk v7.0 compatibility
+cp.SHAPE_FILTER_ALL = {
+        group:cp.NO_GROUP,
+        categories:cp.ALL_CATEGORIES,
+        mask:cp.ALL_CATEGORIES
+};
+
+// chipmunk v7.0 compatibility
+Space.prototype.pointQueryNearest = function(point, maxDistance, filter)
+{
+    var out = this.nearestPointQueryNearest(point, maxDistance, filter.mask, filter.group);
+    // chipmunk v7.0 compatibility
+    if (typeof out != 'undefined') {
+        out.distance = out.d;
+        out.point = out.p;
+    }
+    return out;
+};
 
 /// Perform a directed line segment query (like a raycast) against the space calling @c func for each shape intersected.
 Space.prototype.segmentQuery = function(start, end, layers, group, func)
@@ -4505,6 +4537,14 @@ Space.prototype.segmentQueryFirst = function(start, end, layers, group)
 
 	this.staticShapes.segmentQuery(start, end, 1, helper);
 	this.activeShapes.segmentQuery(start, end, out ? out.t : 1, helper);
+
+    // Chipmunk v7.0 compatibility
+    if (out && out !== "null" && out !== "undefined") {
+        out.normal = out.n;
+        out.alpha = out.t;
+        // 'p' seems to be the v6.2 friendly. And 'point' 7.0. Supports both just in case
+        out.p = out.point = cp.v.lerp(start, end, out.t);
+    }
 	
 	return out;
 };
@@ -4779,7 +4819,7 @@ Space.prototype.makeCollideShapes = function()
 		//cpSpacePushContacts(space, numContacts);
 
 		// Get an arbiter from space.arbiterSet for the two shapes.
-		// This is where the persistant contact magic comes from.
+		// This is where the persistent contact magic comes from.
 		var arbHash = hashPair(a.hashid, b.hashid);
 		var arb = space.cachedArbiters[arbHash];
 		if (!arb){

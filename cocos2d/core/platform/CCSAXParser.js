@@ -162,8 +162,9 @@ cc.PlistParser = cc.SAXParser.extend(/** @lends cc.plistParser# */{
 
 cc.saxParser = new cc.SAXParser();
 /**
- * @type {cc.PlistParser}
- * @name cc.plistParser
  * A Plist Parser
+ * @type {cc.PlistParser}
+ * @name plistParser
+ * @memberof cc
  */
 cc.plistParser = new cc.PlistParser();

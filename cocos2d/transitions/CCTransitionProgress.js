@@ -65,8 +65,8 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
 	},
 
     /**
+     * Custom on enter.
      * @override
-     * custom on enter
      */
     onEnter:function () {
         cc.TransitionScene.prototype.onEnter.call(this);
@@ -107,8 +107,8 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
     },
 
     /**
-     * @override
      * custom on exit
+     * @override
      */
     onExit:function () {
         // remove our layer and release all containing objects
@@ -425,7 +425,7 @@ cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.Transiti
         cc.TransitionProgress.prototype.ctor.call(this);
         scene && this.initWithDuration(t, scene);
     },
-    
+
     _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.director.getWinSize();
         var pNode = new cc.ProgressTimer(texture.sprite);

@@ -44,7 +44,6 @@
         if (node._positionsAreDirty) {
             node._updatePositions();
             node._positionsAreDirty = false;
-            node._scale9Dirty = true;
         }
 
         parentCmd = parentCmd || this.getParentRenderCmd();
@@ -81,7 +80,6 @@
         if (node._positionsAreDirty) {
             node._updatePositions();
             node._positionsAreDirty = false;
-            node._scale9Dirty = true;
         }
         if(node._scale9Enabled) {
             var locRenderers = node._renderers;
@@ -102,6 +100,13 @@
             node._scale9Image._renderCmd.transform(this, true);
         }
 
+    };
+
+    proto.setDirtyFlag = function (dirtyFlag, child) {
+        // ignore cache dirty, it's only for canvas
+        if (dirtyFlag === cc.Node._dirtyFlags.cacheDirty)
+            dirtyFlag = cc.Node._dirtyFlags.transformDirty;
+        cc.Node.RenderCmd.prototype.setDirtyFlag.call(this, dirtyFlag, child);
     };
 
     proto._syncStatus = function (parentCmd){

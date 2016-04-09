@@ -231,8 +231,8 @@ cc.ProtectedNode = cc.Node.extend(/** @lends cc.ProtectedNode# */{
      * @override
      */
     cleanup: function(){
-       cc.Node.prototype.cleanup.call(this);
-       var locChildren = this._protectedChildren;
+        cc.Node.prototype.cleanup.call(this);
+        var locChildren = this._protectedChildren;
         for(var i = 0 , len = locChildren.length; i  < len; i++)
             locChildren[i].cleanup();
     },

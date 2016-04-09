@@ -227,6 +227,7 @@
         });
     });
 
-    load.registerParser("action", "*", parser);
+    load.registerParser("action", "0.*", parser);
+    load.registerParser("action", "1.*", parser);
 
 })(ccs._load, ccs._parser);
