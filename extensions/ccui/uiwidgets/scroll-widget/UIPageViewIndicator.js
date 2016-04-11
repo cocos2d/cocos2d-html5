@@ -35,6 +35,12 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
     _indexNodes: null,
     _currentIndexNode: null,
     _spaceBetweenIndexNodes: 0,
+    _indexNodesScale: 1.0,
+    _indexNodesColor: null,
+    _useDefaultTexture: true,
+    _indexNodesTextureFile: "",
+    _indexNodesTexType: ccui.Widget.LOCAL_TEXTURE,
+
     _className: "PageViewIndicator",
 
     /**
@@ -47,6 +53,7 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
         this._direction = ccui.ScrollView.DIR_HORIZONTAL;
         this._indexNodes = [];
         this._spaceBetweenIndexNodes = ccui.PageViewIndicator.SPACE_BETWEEN_INDEX_NODES_DEFAULT;
+        this._indexNodesColor = cc.color.WHITE;
 
         this.init();
 
@@ -188,12 +195,128 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
         return this._currentIndexNode.getColor();
     },
 
+    /**
+     * Sets color of index nodes
+     * @param {cc.Color} indexNodesColor
+     */
+    setIndexNodesColor: function(indexNodesColor)
+    {
+        this._indexNodesColor = indexNodesColor;
+
+        for(var  i = 0 ; i < this._indexNodes.length; ++i)
+        {
+            this._indexNodes[i].setColor(indexNodesColor);
+        }
+    },
+
+    /**
+     * Gets color of index nodes
+     * @returns {cc.Color}
+     */
+    getIndexNodesColor: function()
+    {
+        var locRealColor = this._indexNodesColor;
+        return cc.color(locRealColor.r, locRealColor.g, locRealColor.b, locRealColor.a);
+    },
+
+    /**
+     * Sets scale of index nodes
+     * @param {Number} indexNodesScale
+     */
+    setIndexNodesScale: function(indexNodesScale)
+    {
+        if(this._indexNodesScale === indexNodesScale)
+        {
+            return;
+        }
+        this._indexNodesScale = indexNodesScale;
+
+        this._currentIndexNode.setScale(indexNodesScale);
+
+        for(var  i = 0 ; i < this._indexNodes.length; ++i)
+        {
+            this._indexNodes[i].setScale(this,_indexNodesScale);
+        }
+
+        this._rearrange();
+    },
+
+    /**
+     * Gets scale of index nodes
+     * @returns {Number}
+     */
+    getIndexNodesScale: function()
+    {
+        return this._indexNodesScale;
+    },
+
+    /**
+     * Sets texture of index nodes
+     * @param {String} texName
+     * @param {ccui.Widget.LOCAL_TEXTURE | ccui.Widget.PLIST_TEXTURE} [texType = ccui.Widget.LOCAL_TEXTURE]
+     */
+    setIndexNodesTexture: function(texName, texType)
+    {
+        if(texType === undefined)
+            texType = ccui.Widget.LOCAL_TEXTURE;
+        
+        this._useDefaultTexture = false;
+        this._indexNodesTextureFile = texName;
+        this._indexNodesTexType = texType;
+
+        switch (texType)
+        {
+            case ccui.Widget.LOCAL_TEXTURE:
+                this._currentIndexNode.setTexture(texName);
+                for(var  i = 0 ; i < this._indexNodes.length; ++i)
+                {
+                    this._indexNodes[i].setTexture(texName);
+                }
+                break;
+            case ccui.Widget.PLIST_TEXTURE:
+                this._currentIndexNode.setSpriteFrame(texName);
+                for(var  i = 0 ; i < this._indexNodes.length; ++i)
+                {
+                    this._indexNodes[i].setSpriteFrame(texName);
+                }
+                break;
+            default:
+                break;
+        }
+
+        this._rearrange();
+    },
+
     _increaseNumberOfPages: function()
     {
-        var image =  new Image();
-        image.src = ccui.PageViewIndicator.CIRCLE_IMAGE;
+        var indexNode;
 
-        var indexNode = new cc.Sprite(image);
+        if(this._useDefaultTexture)
+        {
+            var image =  new Image();
+            image.src = ccui.PageViewIndicator.CIRCLE_IMAGE;
+
+            indexNode = new cc.Sprite(image);
+        }
+        else
+        {
+            indexNode = new cc.Sprite();
+            switch (this._indexNodesTexType)
+            {
+                case ccui.Widget.LOCAL_TEXTURE:
+                    indexNode.initWithFile(this._indexNodesTextureFile);
+                    break;
+                case  ccui.Widget.PLIST_TEXTURE:
+                    indexNode.initWithSpriteFrameName(this._indexNodesTextureFile);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        indexNode.setColor(this._indexNodesColor);
+        indexNode.setScale(this._indexNodesScale);
+
         this.addProtectedChild(indexNode);
         this._indexNodes.push(indexNode);
     },
