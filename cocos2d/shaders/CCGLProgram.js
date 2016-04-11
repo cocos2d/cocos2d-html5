@@ -631,7 +631,7 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
     },
 
     _updateProjectionUniform: function(){
-      this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_PMATRIX], false, cc.projection_matrix_stack.top.mat);  
+        this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_PMATRIX], false, cc.projection_matrix_stack.top.mat);  
     },
 
     /**

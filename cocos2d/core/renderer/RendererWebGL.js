@@ -274,7 +274,7 @@ return {
                 break;
             }
             else {
-                _batchedInfo.totalVertexData += cmd.vertexDataPerUnit;
+                _batchedInfo.totalVertexData += cmd.vertexBytesPerUnit;
                 _batchedInfo.totalBufferSize += cmd.bytesPerUnit;
                 _batchedInfo.totalIndiceSize += cmd.indicesPerUnit;
             }
@@ -303,39 +303,13 @@ return {
 
         gl.bindBuffer(gl.ARRAY_BUFFER, _batchBuffer);
 
-        var i, j;
+        var i;
         for (i = first; i < last; ++i) {
             cmd = renderCmds[i];
-            var matrixData = cmd.matrixByteSize / 4;
-            var vertexDataPerUnit = cmd.vertexDataPerUnit / 4;
+            cmd.batchVertexBuffer(uploadBuffer, vertexDataOffset, totalVertexData, matrixDataOffset);
 
-            var source = cmd._quadBufferView;
-            var len = source.length;
-            for (j = 0; j < len; ++j) {
-                uploadBuffer[vertexDataOffset + j] = source[j];
-            }
-
-            var matData = new Uint32Array(cmd._stackMatrix.mat.buffer);
-
-            source = matData;
-            len = source.length;
-
-            var base = totalVertexData + matrixDataOffset;
-            var offset0 = base + matrixData * 0;
-            var offset1 = base + matrixData * 1;
-            var offset2 = base + matrixData * 2;
-            var offset3 = base + matrixData * 3;
-
-            for (j = 0; j < len; ++j) {
-                var val = source[j];
-                uploadBuffer[offset0 + j] = val;
-                uploadBuffer[offset1 + j] = val;
-                uploadBuffer[offset2 + j] = val;
-                uploadBuffer[offset3 + j] = val;
-            }
-
-            vertexDataOffset += vertexDataPerUnit;
-            matrixDataOffset += matrixData * 4;
+            vertexDataOffset += cmd.vertexBytesPerUnit / 4;
+            matrixDataOffset += cmd.matrixDataPerUnit / 4;
         }
 
         gl.bufferSubData(gl.ARRAY_BUFFER, 0, uploadBuffer);
@@ -345,18 +319,14 @@ return {
 
         var indices = new Uint16Array(_batchedInfo.totalIndiceSize);
 
-        var currentQuad = 0;
-        var indiceI = 0;
+        var currentVertex = 0;
+        var index = 0;
         for (i = first; i < last; ++i) {
             cmd = renderCmds[i];
-            indices[indiceI] = currentQuad + 0;
-            indices[indiceI + 1] = currentQuad + 1;
-            indices[indiceI + 2] = currentQuad + 2;
-            indices[indiceI + 3] = currentQuad + 3;
-            indices[indiceI + 4] = currentQuad + 2;
-            indices[indiceI + 5] = currentQuad + 1;
-            currentQuad += 4;
-            indiceI += cmd.indicesPerUnit;
+            cmd.batchIndexBuffer(indices, index, currentVertex);
+            
+            currentVertex += cmd.verticesPerUnit;
+            index += cmd.indicesPerUnit;
         }
 
         gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, 0, indices);
@@ -369,7 +339,6 @@ return {
         var shader = _batchedInfo.shader;
         var count = _batchedCount;
 
-        var matrixBytes = this.matrixByteSize;
         var bytesPerRow = 16; //4 floats with 4 bytes each
         var totalVertexBytes = _batchedInfo.totalVertexData;
 
@@ -391,7 +360,7 @@ return {
         //enable matrix vertex attribs row by row
         for (i = 0; i < 4; ++i) {
             gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_MVMAT0 + i);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_MVMAT0 + i, 4, gl.FLOAT, false, bytesPerRow, totalVertexBytes + bytesPerRow * i); //stride is one row
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_MVMAT0 + i, 4, gl.FLOAT, false, bytesPerRow * 4, totalVertexBytes + bytesPerRow * i); //stride is one row
         }
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _batchElementBuffer);

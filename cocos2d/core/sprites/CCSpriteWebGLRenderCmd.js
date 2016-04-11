@@ -24,6 +24,8 @@
 
 //Sprite's WebGL render command
 (function() {
+    var matrixByteSize =  4 * 4 * 4; //4 rows of 4 floats, 4 bytes each
+
     cc.Sprite.WebGLRenderCmd = function (renderable) {
         cc.Node.WebGLRenderCmd.call(this, renderable);
         this._needDraw = true;
@@ -44,10 +46,13 @@
     var proto = cc.Sprite.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.Sprite.WebGLRenderCmd;
 
-    proto.vertexDataPerUnit = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-    proto.matrixByteSize =  4 * 4 * 4; //4 rows of 4 floats, 4 bytes each
-    proto.bytesPerUnit = proto.vertexDataPerUnit + proto.matrixByteSize * 4;
+    // The following static properties must be provided for a auto batchable command
+    proto.vertexBytesPerUnit = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+    proto.matrixBytesPerUnit = matrixByteSize * 4;
+    proto.bytesPerUnit = proto.vertexBytesPerUnit + proto.matrixBytesPerUnit;
     proto.indicesPerUnit = 6;
+    proto.verticesPerUnit = 4;
+
     proto.batchShader = null;
 
     proto.getBatchInfo = function (info) {
@@ -55,9 +60,6 @@
         info.blendSrc = this._node._blendFunc.src;
         info.blendDst = this._node._blendFunc.dst;
         info.shader = this.batchShader;
-        info.vertexDataPerUnit = this.vertexDataPerUnit;
-        info.matrixByteSize = this.matrixByteSize;
-        info.bytesPerUnit = this.bytesPerUnit;
     };
 
     proto.updateBlendFunc = function (blendFunc) {};
@@ -515,5 +517,43 @@
             cc._drawingUtil.drawPoly(verticesG2, 4, true);
         } // CC_SPRITE_DEBUG_DRAW
         cc.current_stack.top = cc.current_stack.stack.pop();
+    };
+
+    proto.batchVertexBuffer = function (buffer, vertexDataOffset, totalVertexData, matrixDataOffset) {
+        var matrixData = matrixByteSize / 4;
+
+        var source = this._quadBufferView;
+        var len = source.length;
+        for (j = 0; j < len; ++j) {
+            buffer[vertexDataOffset + j] = source[j];
+        }
+
+        var matData = new Uint32Array(this._stackMatrix.mat.buffer);
+
+        source = matData;
+        len = source.length;
+
+        var base = totalVertexData + matrixDataOffset;
+        var offset0 = base + matrixData * 0;
+        var offset1 = base + matrixData * 1;
+        var offset2 = base + matrixData * 2;
+        var offset3 = base + matrixData * 3;
+
+        for (j = 0; j < len; ++j) {
+            var val = source[j];
+            buffer[offset0 + j] = val;
+            buffer[offset1 + j] = val;
+            buffer[offset2 + j] = val;
+            buffer[offset3 + j] = val;
+        }
+    };
+
+    proto.batchIndexBuffer = function (indices, index, vertexIndex) {
+        indices[index] = vertexIndex + 0;
+        indices[index + 1] = vertexIndex + 1;
+        indices[index + 2] = vertexIndex + 2;
+        indices[index + 3] = vertexIndex + 1;
+        indices[index + 4] = vertexIndex + 2;
+        indices[index + 5] = vertexIndex + 3;
     };
 })();
