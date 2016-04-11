@@ -224,11 +224,11 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
 
         if(file != undefined){
             if(file instanceof cc.SpriteFrame)
-                this.initWithSpriteFrame(file, rect);
+                this.initWithSpriteFrame(file, capInsets);
             else{
                 var frame = cc.spriteFrameCache.getSpriteFrame(file);
                 if(frame != null)
-                    this.initWithSpriteFrame(frame, rect);
+                    this.initWithSpriteFrame(frame, capInsets);
                 else
                     this.initWithFile(file, rect, capInsets);
             }
