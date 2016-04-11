@@ -520,35 +520,42 @@
     };
 
     proto.batchVertexBuffer = function (buffer, vertexDataOffset, totalVertexData, matrixDataOffset) {
-        var matrixData = matrixByteSize / 4;
+        // buffer is a Uint32 view typed array, not necessarily the same view with render command vertex data,
+        // but it's ok, it's just for copy data easier
 
-        var source = this._quadBufferView;
-        var len = source.length;
-        for (j = 0; j < len; ++j) {
-            buffer[vertexDataOffset + j] = source[j];
+        // Fill in vertex data with quad information (4 vertices for sprite)
+        var vertexData = this._quadBufferView;
+        var i, len = vertexData.length;
+        for (i = 0; i < len; ++i) {
+            buffer[vertexDataOffset + i] = vertexData[i];
         }
 
-        var matData = new Uint32Array(this._stackMatrix.mat.buffer);
+        // Fill in matrix data, matrix data is also wrapped into a Uint32 view, 
+        // you may see strange big values, but it's also ok.
+        var matrixData = new Uint32Array(this._stackMatrix.mat.buffer);
+        len = matrixData.length;
 
-        source = matData;
-        len = source.length;
-
+        // We need four matrix data into the buffer, one for each vertex.
+        // Otherwise the shader won't work
         var base = totalVertexData + matrixDataOffset;
-        var offset0 = base + matrixData * 0;
-        var offset1 = base + matrixData * 1;
-        var offset2 = base + matrixData * 2;
-        var offset3 = base + matrixData * 3;
+        var matrixDataSize = matrixByteSize / 4;
+        var offset0 = base;
+        var offset1 = offset0 + matrixDataSize;
+        var offset2 = offset1 + matrixDataSize;
+        var offset3 = offset2 + matrixDataSize;
 
-        for (j = 0; j < len; ++j) {
-            var val = source[j];
-            buffer[offset0 + j] = val;
-            buffer[offset1 + j] = val;
-            buffer[offset2 + j] = val;
-            buffer[offset3 + j] = val;
+        for (i = 0; i < len; ++i) {
+            var val = matrixData[i];
+            buffer[offset0 + i] = val;
+            buffer[offset1 + i] = val;
+            buffer[offset2 + i] = val;
+            buffer[offset3 + i] = val;
         }
     };
 
     proto.batchIndexBuffer = function (indices, index, vertexIndex) {
+        // Fill in index buffer, we split quad into two triangles
+        // because only triangles can be batched
         indices[index] = vertexIndex + 0;
         indices[index + 1] = vertexIndex + 1;
         indices[index + 2] = vertexIndex + 2;

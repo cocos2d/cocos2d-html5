@@ -57,8 +57,8 @@ cc.Node.RenderCmd = function(renderable){
 
     this._curLevel = -1;
 
-    this._minZ = 0;
-    this._maxZ = 0;
+    // this._minZ = 0;
+    // this._maxZ = 0;
 };
 
 cc.Node.RenderCmd.prototype = {

@@ -27,9 +27,7 @@ cc.rendererWebGL = (function () {
 function objEqual (a, b) {
     if (!a || !b) return false;
 
-    var keys = Object.keys(a);
-    for (var i = 0; i < keys.length; ++i) {
-        var key = keys[i];
+    for (var key in a) {
         if (!b[key] || a[key] !== b[key]) {
             return false;
         }
@@ -38,13 +36,30 @@ function objEqual (a, b) {
 }
 
 function removeByLastSwap (array, i) {
-    if (array.length > 0) 
+    if (array.length > 0) {
         array[i] = array[array.length - 1];
-    array.length--;
+        array.length--;
+    }
 }
 
 // Internal variables
-var _batchedInfo = {},
+    // Batching general informations
+var _batchedInfo = {
+        // Total vertex array buffer size, including vertex data and matrix data, in bytes
+        totalBufferSize: 0,
+        // All vertex data size for the current batch, in bytes
+        totalVertexData: 0,
+        // Index array size
+        totalIndexSize: 0,
+        // The batched texture, all batching element should have the same texture
+        texture: null,
+        // The batched blend source, all batching element should have the same blend source
+        blendSrc: null,
+        // The batched blend destination, all batching element should have the same blend destination
+        blendDst: null,
+        // The batched shader, all batching element should have the same shader
+        shader: null
+    },
     _batchedCount,
     _batchBuffer,
     _batchElementBuffer,
@@ -69,20 +84,6 @@ return {
         //TODO Add renderCmd pool here
         return renderableObject._createRenderCmd();
     },
-
-    /**
-     * drawing all renderer command to context (default is cc._renderContext)
-     * @param {WebGLRenderingContext} [ctx=cc._renderContext]
-     */
-    // rendering: function (ctx) {
-    //     var locCmds = this._renderCmds,
-    //         i,
-    //         len;
-    //     var context = ctx || cc._renderContext;
-    //     for (i = 0, len = locCmds.length; i < len; i++) {
-    //         locCmds[i].rendering(context);
-    //     }
-    // },
 
     _turnToCacheMode: function (renderTextureID) {
         this._isCacheToBufferOn = true;
@@ -184,6 +185,8 @@ return {
         }
     },
 
+    // Auto batch implementation inspired from @Heishe 's PR
+    // Ref: https://github.com/cocos2d/cocos2d-html5/pull/3248
     createBatchBuffer: function (bufferSize, indiceSize) {
         var arrayBuffer = gl.createBuffer();
         var elementBuffer = gl.createBuffer();
@@ -193,6 +196,8 @@ return {
         return {arrayBuffer: arrayBuffer, elementBuffer: elementBuffer, bufferSize: bufferSize, indiceSize: indiceSize};
     },
 
+    // Auto batch implementation inspired from @Heishe 's PR
+    // Ref: https://github.com/cocos2d/cocos2d-html5/pull/3248
     initBatchBuffers: function (arrayBuffer, elementBuffer, bufferSize, indiceSize) {
         gl.bindBuffer(gl.ARRAY_BUFFER, arrayBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, bufferSize, gl.DYNAMIC_DRAW);
@@ -200,6 +205,9 @@ return {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elementBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indiceSize, gl.DYNAMIC_DRAW);
     },
+
+    // Auto batch implementation inspired from @Heishe 's PR
+    // Ref: https://github.com/cocos2d/cocos2d-html5/pull/3248
 
     // Returns an object with {arrayBuffer, elementBuffer, size}, 
     // where size denotes how many unit fit in the buffer (no need for bufferData if it's already big enough, bufferSubData enough)
@@ -242,12 +250,16 @@ return {
         }
     },
 
+    // Auto batch implementation inspired from @Heishe 's PR
+    // Ref: https://github.com/cocos2d/cocos2d-html5/pull/3248
     storeBatchBuffer: function(buffer) {
         var pool = _batchBufferPool;
         pool.push(buffer);
     },
 
-
+    // Auto batch implementation inspired from @Heishe 's PR
+    // Ref: https://github.com/cocos2d/cocos2d-html5/pull/3248
+    // Forward search commands that can be batched together
     _forwardBatch: function (first) {
         var renderCmds = this._renderCmds,
             cmd = renderCmds[first];
@@ -259,8 +271,9 @@ return {
         cmd.getBatchInfo(_batchedInfo);
         _batchedInfo.totalVertexData = 0;
         _batchedInfo.totalBufferSize = 0;
-        _batchedInfo.totalIndiceSize = 0;
+        _batchedInfo.totalIndexSize = 0;
 
+        // Forward search and collect batch informations
         for (last = first; last < renderCmds.length; ++last) {
             cmd = renderCmds[last];
             if (cmd._supportBatch) {
@@ -276,11 +289,12 @@ return {
             else {
                 _batchedInfo.totalVertexData += cmd.vertexBytesPerUnit;
                 _batchedInfo.totalBufferSize += cmd.bytesPerUnit;
-                _batchedInfo.totalIndiceSize += cmd.indicesPerUnit;
+                _batchedInfo.totalIndexSize += cmd.indicesPerUnit;
             }
         }
 
         var count = last - first;
+        // Can't batch, fall back to original render command
         if (count <= 1) {
             return count;
         }
@@ -288,7 +302,7 @@ return {
         _batchedCount = count;
 
         var bufferSize = _batchedInfo.totalBufferSize;
-        var indiceSize = _batchedInfo.totalIndiceSize * 2; // *2 because we use shorts for indices
+        var indiceSize = _batchedInfo.totalIndexSize * 2; // *2 because we use shorts for indices
         _pooledBuffer = this.getBatchBuffer(bufferSize, indiceSize);
         _batchBuffer = _pooledBuffer.arrayBuffer;
         _batchElementBuffer = _pooledBuffer.elementBuffer;
@@ -301,30 +315,34 @@ return {
 
         var uploadBuffer = new Uint32Array(totalBufferSize);
 
+        // Bind vertex data buffer
         gl.bindBuffer(gl.ARRAY_BUFFER, _batchBuffer);
 
+        // Fill in vertex data command by command
         var i;
         for (i = first; i < last; ++i) {
             cmd = renderCmds[i];
             cmd.batchVertexBuffer(uploadBuffer, vertexDataOffset, totalVertexData, matrixDataOffset);
 
             vertexDataOffset += cmd.vertexBytesPerUnit / 4;
-            matrixDataOffset += cmd.matrixDataPerUnit / 4;
+            matrixDataOffset += cmd.matrixBytesPerUnit / 4;
         }
 
+        // Submit vertex data in one bufferSubData call
         gl.bufferSubData(gl.ARRAY_BUFFER, 0, uploadBuffer);
 
-        //create element buffer
+        // Bind element buffer
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _batchElementBuffer);
 
-        var indices = new Uint16Array(_batchedInfo.totalIndiceSize);
+        var indices = new Uint16Array(_batchedInfo.totalIndexSize);
 
+        // Fill in element buffer command by command
         var currentVertex = 0;
         var index = 0;
         for (i = first; i < last; ++i) {
             cmd = renderCmds[i];
             cmd.batchIndexBuffer(indices, index, currentVertex);
-            
+
             currentVertex += cmd.verticesPerUnit;
             index += cmd.indicesPerUnit;
         }
@@ -333,6 +351,9 @@ return {
         return count;
     },
 
+    // Auto batch implementation inspired from @Heishe 's PR
+    // Ref: https://github.com/cocos2d/cocos2d-html5/pull/3248
+    // Batch rendering using result collected in `_forwardBatch`
     _batchRendering: function () {
         // var node = this._node;
         var texture = _batchedInfo.texture;
@@ -357,14 +378,14 @@ return {
         gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
         
         var i;
-        //enable matrix vertex attribs row by row
+        // Enable matrix vertex attribs row by row (vec4 * 4)
         for (i = 0; i < 4; ++i) {
             gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_MVMAT0 + i);
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_MVMAT0 + i, 4, gl.FLOAT, false, bytesPerRow * 4, totalVertexBytes + bytesPerRow * i); //stride is one row
         }
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _batchElementBuffer);
-        gl.drawElements(gl.TRIANGLES, count * 6, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.TRIANGLES, _batchedInfo.totalIndexSize, gl.UNSIGNED_SHORT, 0);
 
         for (i = 0; i < 4; ++i) {
             gl.disableVertexAttribArray(cc.VERTEX_ATTRIB_MVMAT0 + i);

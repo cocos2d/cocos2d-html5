@@ -261,6 +261,8 @@ cc.SHADER_POSITION_TEXTURE_COLOR_ALPHATEST_FRAG =
         + "}";
 
 //-----------------------Shader_PositionTextureColorVertBatchedTest_frag Shader Source----------------------------
+// Auto batch implementation inspired from @Heishe 's PR
+// Ref: https://github.com/cocos2d/cocos2d-html5/pull/3248
 cc.SHADER_POSITION_TEXTURE_COLOR_VERT_BATCHED =
         "attribute vec4 a_position; \n"
         + "attribute vec2 a_texCoord; \n"
