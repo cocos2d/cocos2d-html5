@@ -369,9 +369,9 @@ return {
         var shader = _batchedInfo.shader;
         var count = _batchedCount;
 
+        var matrixBytes = this.matrixByteSize;
         var bytesPerRow = 16; //4 floats with 4 bytes each
-        var matrixData = this.matrixByteSize;
-        var totalVertexData = _batchedInfo.totalVertexData / 4;
+        var totalVertexBytes = _batchedInfo.totalVertexData;
 
         shader.use();
         shader._updateProjectionUniform();
@@ -388,10 +388,10 @@ return {
         gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
         
         var i;
-        //enable matrix vertex attribs
+        //enable matrix vertex attribs row by row
         for (i = 0; i < 4; ++i) {
             gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_MVMAT0 + i);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_MVMAT0 + i, 4, gl.FLOAT, false, bytesPerRow * 4, totalVertexData + bytesPerRow * i); //stride is one row
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_MVMAT0 + i, 4, gl.FLOAT, false, bytesPerRow, totalVertexBytes + bytesPerRow * i); //stride is one row
         }
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _batchElementBuffer);

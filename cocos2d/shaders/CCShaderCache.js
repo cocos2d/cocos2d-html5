@@ -119,6 +119,7 @@ cc.shaderCache = /** @lends cc.shaderCache# */{
                 program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
                 program.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
                 program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
+                program.addAttribute(cc.ATTRIBUTE_NAME_MVMAT, cc.VERTEX_ATTRIB_MVMAT0);
                 break;
             case this.TYPE_POSITION_COLOR:
                 program.initWithVertexShaderByteArray(cc.SHADER_POSITION_COLOR_VERT, cc.SHADER_POSITION_COLOR_FRAG);
