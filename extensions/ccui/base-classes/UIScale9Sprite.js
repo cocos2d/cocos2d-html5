@@ -208,11 +208,11 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
      * Constructor function. override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
      * @function
      * @param {string|cc.SpriteFrame} file file name of texture or a SpriteFrame
-     * @param {cc.Rect} rect
+     * @param {cc.Rect} rectOrCapInsets
      * @param {cc.Rect} capInsets
      * @returns {Scale9Sprite}
      */
-    ctor: function (file, rect, capInsets) {
+    ctor: function (file, rectOrCapInsets, capInsets) {
         cc.Node.prototype.ctor.call(this);
         this._spriteRect = cc.rect(0, 0, 0, 0);
         this._capInsetsInternal = cc.rect(0, 0, 0, 0);
@@ -224,13 +224,13 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
 
         if(file != undefined){
             if(file instanceof cc.SpriteFrame)
-                this.initWithSpriteFrame(file, rect);
+                this.initWithSpriteFrame(file, rectOrCapInsets);
             else{
                 var frame = cc.spriteFrameCache.getSpriteFrame(file);
                 if(frame != null)
-                    this.initWithSpriteFrame(frame, rect);
+                    this.initWithSpriteFrame(frame, rectOrCapInsets);
                 else
-                    this.initWithFile(file, rect, capInsets);
+                    this.initWithFile(file, rectOrCapInsets, capInsets);
             }
         }else{
             this.init();
