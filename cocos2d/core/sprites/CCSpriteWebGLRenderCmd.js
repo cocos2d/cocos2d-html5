@@ -37,7 +37,6 @@
         this._dirty = false;
         this._recursiveDirty = false;
 
-        this._supportBatch = true;
         if (!proto.batchShader) {
             proto.batchShader = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST_BATCHED);
         }
@@ -52,6 +51,7 @@
     proto.bytesPerUnit = proto.vertexBytesPerUnit + proto.matrixBytesPerUnit;
     proto.indicesPerUnit = 6;
     proto.verticesPerUnit = 4;
+    proto._supportBatch = true;
 
     proto.batchShader = null;
 

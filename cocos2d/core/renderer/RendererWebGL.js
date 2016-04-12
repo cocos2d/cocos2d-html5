@@ -60,6 +60,13 @@ var _batchedInfo = {
         // The batched shader, all batching element should have the same shader
         shader: null
     },
+    // to compare with the batched info
+    _currentInfo = {
+        texture: null,
+        blendSrc: null,
+        blendDst: null,
+        shader: null
+    },
     _batchedCount,
     _batchBuffer,
     _batchElementBuffer,
@@ -262,28 +269,32 @@ return {
     // Forward search commands that can be batched together
     _forwardBatch: function (first) {
         var renderCmds = this._renderCmds,
-            cmd = renderCmds[first];
-        if (!cmd || !cmd._supportBatch) return 0;
+            cmd = renderCmds[first],
+            last = first + 1, length = renderCmds.length;
 
-        var info = {}, last;
+        if (!cmd || !cmd._supportBatch)
+            return 0;
 
         // Initialize batched info
         cmd.getBatchInfo(_batchedInfo);
-        _batchedInfo.totalVertexData = 0;
-        _batchedInfo.totalBufferSize = 0;
-        _batchedInfo.totalIndexSize = 0;
+        _batchedInfo.totalVertexData = cmd.vertexBytesPerUnit;
+        _batchedInfo.totalBufferSize = cmd.bytesPerUnit;
+        _batchedInfo.totalIndexSize = cmd.indicesPerUnit;
 
         // Forward search and collect batch informations
-        for (last = first; last < renderCmds.length; ++last) {
-            cmd = renderCmds[last];
+        cmd = renderCmds[last];
+        while (cmd) {
             if (cmd._supportBatch) {
-                cmd.getBatchInfo(info);
+                cmd.getBatchInfo(_currentInfo);
             }
             else {
                 break;
             }
             // Batch info don't match, break batching
-            if (!objEqual(info, _batchedInfo)) {
+            if (_currentInfo.texture !== _batchedInfo.texture ||
+                _currentInfo.blendSrc !== _batchedInfo.blendSrc ||
+                _currentInfo.blendDst !== _batchedInfo.blendDst ||
+                _currentInfo.shader !== _batchedInfo.shader) {
                 break;
             }
             else {
@@ -291,6 +302,8 @@ return {
                 _batchedInfo.totalBufferSize += cmd.bytesPerUnit;
                 _batchedInfo.totalIndexSize += cmd.indicesPerUnit;
             }
+            ++last;
+            cmd = renderCmds[last];
         }
 
         var count = last - first;
@@ -402,22 +415,25 @@ return {
      */
     rendering: function (ctx) {
         var locCmds = this._renderCmds,
-            i, len, cmd,
+            i, len, cmd, next, batchCount,
             context = ctx || cc._renderContext;
 
         for (i = 0, len = locCmds.length; i < len; i++) {
             cmd = locCmds[i];
+            next = locCmds[i+1];
             
             // Batching or direct rendering
-            var batchCount = this._forwardBatch(i);
-            if (batchCount > 1) {
-                this._batchRendering();
-                // i will increase by 1 each loop
-                i += batchCount - 1;
+            if (cmd._supportBatch && next && next._supportBatch) {
+                batchCount = this._forwardBatch(i);
+                if (batchCount > 1) {
+                    this._batchRendering();
+                    // i will increase by 1 each loop
+                    i += batchCount - 1;
+                    continue;
+                }
             }
-            else {
-                cmd.rendering(context);
-            }
+
+            cmd.rendering(context);
         }
     }
 };
