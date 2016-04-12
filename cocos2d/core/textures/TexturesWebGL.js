@@ -224,7 +224,7 @@ cc._tmp.WebGLTexture2D = function () {
         },
 
         keepData: function (data, length) {
-            //The texture data mustn't be saved becuase it isn't a mutable texture.
+            //The texture data mustn't be saved because it isn't a mutable texture.
             return data;
         },
 
@@ -421,6 +421,9 @@ cc._tmp.WebGLTexture2D = function () {
             this._webTextureObj = cc._renderContext.createTexture();
             this._htmlElementObj = element;
             this._textureLoaded = true;
+            // Textures should be loaded with premultiplied alpha in order to avoid gray bleeding
+            // when semitransparent textures are interpolated (e.g. when scaled).
+            this._hasPremultipliedAlpha = true;
         },
 
         /**
@@ -444,8 +447,11 @@ cc._tmp.WebGLTexture2D = function () {
          * @param {Boolean} [premultiplied=false]
          */
         handleLoadedTexture: function (premultiplied) {
-            premultiplied = (premultiplied === undefined) ? false : premultiplied;
             var self = this;
+            premultiplied =
+              (premultiplied !== undefined)
+                ? premultiplied
+                : self._hasPremultipliedAlpha;
             // Not sure about this ! Some texture need to be updated even after loaded
             if (!cc.game._rendererInitialized)
                 return;

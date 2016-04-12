@@ -57,7 +57,7 @@ Cocos2d-x v3.7.1 @ August.12 2015
     [FIX]           web: Fixed Cocos Studio parser issue that all elements are missing while the timeline action contains rotation
 
 Cocos2d-x v3.7 Final @ July 20 2015
-    [REFINE]        web: Add compatible Uint16Array defintion
+    [REFINE]        web: Add compatible Uint16Array definition
     
     [FIX]           web: Fixed url check regular expression not supporting localhost issue
     [FIX]           web: Fixed issue that sprite doesn't update texture rect correctly 
@@ -200,7 +200,7 @@ Cocos2d-JS v3.5 @ April 1 2015
     8. Fixed a bug of Cocos Studio parser that the background color of `ccui.Layout` can't be parsed correctly.
     9. Fixed a bug of `cc.ClippingNode` that it doesn't work when set `inverted` to true in Canvas Mode.
     10. Fixed a bug of `ccs.Armature` that its name was modified to animation name when loading from json files.
-    11. Fixed a bug of `ccui.PageView` that it cancel child touch during movment of page view. 
+    11. Fixed a bug of `ccui.PageView` that it cancel child touch during movement of page view. 
     12. Fixed a bug of `cc.Scheduler` that its parameter `repeat` is invalid in schedule function.
     13. Fixed a bug of `cc.Scheduler` that `unschedule` function may fail.
 
@@ -363,7 +363,7 @@ Cocos2d-JS v3.2 RC0 @ Dec.11, 2014
 	6. Fixed an issue of `cc.ParticleSystem` that it can't change its texture mode and shape type in Canvas mode.
 	7. Fixed an issue of `cc.Layer`'s bake function that its position is incorrect when cc.view's scale isn't 1.
 	8. Fixed an issue of `ccs.ArmatureAnimation`'s `setMovementEventCallFunc` and `setFrameEventCallFunc`.
-	9. Fixed an issue of `console.log` that it isn't a funtion on IE9.
+	9. Fixed an issue of `console.log` that it isn't a function on IE9.
 	10. Fixed an issue of `CSLoader` that it will add duplicate resources to sprite frame cache.
 	11. Fixed an issue of `cc.ProgressTimer` that its setColor is not taking effect.
 	12. Fixed an issue of `cc.loader` that it will throw an error when loading a remote texture.

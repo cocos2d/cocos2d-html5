@@ -454,7 +454,7 @@ cc.pSameAs = function (A, B) {
 
 
 
-// High Perfomance In Place Operationrs ---------------------------------------
+// High Performance In Place Operationrs ---------------------------------------
 
 /**
  * sets the position of the point to 0

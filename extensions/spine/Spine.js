@@ -2271,7 +2271,7 @@ spine.SkeletonJson.prototype = {
             timeline.curves.setCurve(frameIndex, curve[0], curve[1], curve[2], curve[3]);
     },
     toColor: function (hexString, colorIndex) {
-        if (hexString.length != 8) throw new Error("Color hexidecimal length must be 8, recieved: " + hexString);
+        if (hexString.length != 8) throw new Error("Color hexadecimal length must be 8, received: " + hexString);
         return parseInt(hexString.substring(colorIndex * 2, (colorIndex * 2) + 2), 16) / 255;
     },
     getFloatArray: function (map, name, scale) {

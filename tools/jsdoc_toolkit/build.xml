@@ -159,8 +159,10 @@
                 <include name="ccui/uiwidgets/UISwitch.js"/>
                 <include name="ccui/uiwidgets/UITextField.js"/>
                 <include name="ccui/uiwidgets/Compatible/CompatibleClasses.js"/>
+                <include name="ccui/uiwidgets/scroll-widget/UIScrollViewBar.js"/>
                 <include name="ccui/uiwidgets/scroll-widget/UIScrollView.js"/>
                 <include name="ccui/uiwidgets/scroll-widget/UIListView.js"/>
+                <include name="ccui/uiwidgets/scroll-widget/UIPageViewIndicator.js"/>
                 <include name="ccui/uiwidgets/scroll-widget/UIPageView.js"/>
                 <include name="editbox/CCEditBox.js"/>
                 <include name="cocostudio/CocoStudio.js"/>

@@ -227,8 +227,10 @@
                 <file name="extensions/ccui/uiwidgets/UIWebView.js"/>
                 <file name="extensions/ccui/uiwidgets/UIVideoPlayer.js"/>
                 <file name="extensions/ccui/uiwidgets/UIRichText.js"/>
+                <file name="extensions/ccui/uiwidgets/scroll-widget/UIScrollViewBar.js"/>
                 <file name="extensions/ccui/uiwidgets/scroll-widget/UIScrollView.js"/>
                 <file name="extensions/ccui/uiwidgets/scroll-widget/UIListView.js"/>
+                <file name="extensions/ccui/uiwidgets/scroll-widget/UIPageViewIndicator.js"/>
                 <file name="extensions/ccui/uiwidgets/scroll-widget/UIPageView.js"/>
                 <file name="extensions/ccui/uiwidgets/scroll-widget/UIScrollViewCanvasRenderCmd.js"/>
                 <file name="extensions/ccui/uiwidgets/scroll-widget/UIScrollViewWebGLRenderCmd.js"/>

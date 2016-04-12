@@ -596,7 +596,7 @@ cc.DOM.forSprite = function (x) {
  * @param x
  */
 cc.DOM.placeHolder = function (x) {
-    //creating a placeholder dom to simulate other ccNode in the hierachy
+    //creating a placeholder dom to simulate other ccNode in the hierarchy
     x.dom = cc.$new('div');
     x.placeholder = true;
     x.dom.style.position = 'absolute';

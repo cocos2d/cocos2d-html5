@@ -143,7 +143,7 @@ window.Float32Array = window.Float32Array || window.Array;
          m = | 1  4  7 | 1  4 |
          | 2  5  8 | 2  5 |
          now sum up the products of the diagonals going to the right (i.e. 0,4,8)
-         and substract the products of the other diagonals (i.e. 2,4,6)
+         and subtract the products of the other diagonals (i.e. 2,4,6)
          */
         var output = mat[0] * mat[4] * mat[8] + mat[1] * mat[5] * mat[6] + mat[2] * mat[3] * mat[7];
         output -= mat[2] * mat[4] * mat[6] + mat[0] * mat[5] * mat[7] + mat[1] * mat[3] * mat[8];
