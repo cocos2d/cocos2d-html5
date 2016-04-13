@@ -92,8 +92,9 @@
                     var tempCmd = pchild._renderCmd;
                     tempCmd.transform(this, true);
                 }
-                else
+                else {
                     break;
+                }
             }
         }
         else {
@@ -101,7 +102,6 @@
             node._adjustScale9ImagePosition();
             node._scale9Image._renderCmd.transform(this, true);
         }
-
     };
 
     proto.setDirtyFlag = function (dirtyFlag, child) {
@@ -164,6 +164,55 @@
         } else if (state === ccui.Scale9Sprite.state.GRAY) {
             scale9Image.setShaderProgram(ccui.Scale9Sprite.WebGLRenderCmd._getGrayShaderProgram());
         }
+    };
+
+    proto._customUpdateBuffer = function (currVBuffer) {
+        var vbuffer, cmd,
+            node = this._node,
+            locRenderers = node._renderers,
+            totalVertexData;
+        if(node._scale9Enabled) {
+            cmd = locRenderers[0];
+            if (cmd) {
+                vbuffer = cmd._renderCmd._vBuffer;
+            }
+        }
+        else {
+            vbuffer = node._scale9Image._renderCmd._vBuffer;
+        }
+
+        if (vbuffer) {
+            if (currVBuffer !== vbuffer) {
+                // Send previous buffer to WebGLBuffer
+                if (currVBuffer) {
+                    gl.bufferSubData(gl.ARRAY_BUFFER, 0, currVBuffer.dataArray);
+                }
+                // Bind buffer
+                currVBuffer = vbuffer;
+                totalVertexData = currVBuffer.matrixOffset / 4;
+                gl.bindBuffer(gl.ARRAY_BUFFER, currVBuffer.buffer.arrayBuffer);
+            }
+            else {
+                totalVertexData = currVBuffer.matrixOffset / 4;
+            }
+
+            if(node._scale9Enabled) {
+                var protectChildLen = locRenderers.length;
+                for(var i = 0; i < protectChildLen; i++) {
+                    var pchild = locRenderers[i];
+                    if(pchild) {
+                        cmd = pchild._renderCmd;
+                        cmd.batchVertexBuffer(currVBuffer.dataArray, cmd._vertexOffset, totalVertexData, cmd._matrixOffset);
+                    }
+                }
+            }
+            else {
+                cmd = node._scale9Image._renderCmd;
+                cmd.batchVertexBuffer(currVBuffer.dataArray, cmd._vertexOffset, totalVertexData, cmd._matrixOffset);
+            }
+        }
+
+        return currVBuffer;
     };
 
     ccui.Scale9Sprite.WebGLRenderCmd._grayShaderProgram = null;

@@ -36,6 +36,9 @@
         this._quadDirty = true;
         this._dirty = false;
         this._recursiveDirty = false;
+        this._vBuffer = null;
+        this._vertexOffset = 0;
+        this._matrixOffset = 0;
 
         if (!proto.batchShader) {
             proto.batchShader = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST_BATCHED);
