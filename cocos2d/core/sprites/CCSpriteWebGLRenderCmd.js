@@ -39,6 +39,7 @@
         this._vBuffer = null;
         this._vertexOffset = 0;
         this._matrixOffset = 0;
+        this._matrixDirty = false;
 
         if (!proto.batchShader) {
             proto.batchShader = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST_BATCHED);
@@ -257,6 +258,7 @@
     proto.transform = function(parentCmd, recursive){
         cc.Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
         this._dirty = true;     //use for batching
+        this._matrixDirty = true;
     };
 
     proto._setColorDirty = function () {};

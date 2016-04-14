@@ -166,55 +166,6 @@
         }
     };
 
-    proto._customUpdateBuffer = function (currVBuffer) {
-        var vbuffer, cmd,
-            node = this._node,
-            locRenderers = node._renderers,
-            totalVertexData;
-        if(node._scale9Enabled) {
-            cmd = locRenderers[0];
-            if (cmd) {
-                vbuffer = cmd._renderCmd._vBuffer;
-            }
-        }
-        else {
-            vbuffer = node._scale9Image._renderCmd._vBuffer;
-        }
-
-        if (vbuffer) {
-            if (currVBuffer !== vbuffer) {
-                // Send previous buffer to WebGLBuffer
-                if (currVBuffer) {
-                    gl.bufferSubData(gl.ARRAY_BUFFER, 0, currVBuffer.dataArray);
-                }
-                // Bind buffer
-                currVBuffer = vbuffer;
-                totalVertexData = currVBuffer.matrixOffset / 4;
-                gl.bindBuffer(gl.ARRAY_BUFFER, currVBuffer.buffer.arrayBuffer);
-            }
-            else {
-                totalVertexData = currVBuffer.matrixOffset / 4;
-            }
-
-            if(node._scale9Enabled) {
-                var protectChildLen = locRenderers.length;
-                for(var i = 0; i < protectChildLen; i++) {
-                    var pchild = locRenderers[i];
-                    if(pchild) {
-                        cmd = pchild._renderCmd;
-                        cmd.batchVertexBuffer(currVBuffer.dataArray, cmd._vertexOffset, totalVertexData, cmd._matrixOffset);
-                    }
-                }
-            }
-            else {
-                cmd = node._scale9Image._renderCmd;
-                cmd.batchVertexBuffer(currVBuffer.dataArray, cmd._vertexOffset, totalVertexData, cmd._matrixOffset);
-            }
-        }
-
-        return currVBuffer;
-    };
-
     ccui.Scale9Sprite.WebGLRenderCmd._grayShaderProgram = null;
     ccui.Scale9Sprite.WebGLRenderCmd._getGrayShaderProgram = function(){
         var grayShader = ccui.Scale9Sprite.WebGLRenderCmd._grayShaderProgram;
