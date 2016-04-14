@@ -32,7 +32,10 @@ function removeByLastSwap (array, i) {
     }
 }
 
-var ACTIVATE_V4 = true;
+var ACTIVATE_V4 = false;
+if (!cc.sys.isMobile) {
+    ACTIVATE_V4 = true;
+}
 var CACHING_BUFFER = false;
 if (ACTIVATE_V4) {
     CACHING_BUFFER = true;
