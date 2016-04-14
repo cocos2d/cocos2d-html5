@@ -299,9 +299,9 @@ return {
     _forwardCheck: function (first) {
         var renderCmds = this._renderCmds,
             cmd = renderCmds[first],
-            last = first + 1, length = renderCmds.length,
+            last = first, length = renderCmds.length,
             vbuffer = cmd._vBuffer,
-            indexSize = cmd.indicesPerUnit;
+            indexSize = 0;
 
         // Reset current buffer and batched info
         cmd.getBatchInfo(_batchedInfo);
