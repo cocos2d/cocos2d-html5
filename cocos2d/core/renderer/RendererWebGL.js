@@ -32,14 +32,11 @@ function removeByLastSwap (array, i) {
     }
 }
 
-var ACTIVATE_V4 = false;
-if (!cc.sys.isMobile) {
-    ACTIVATE_V4 = true;
-}
 var CACHING_BUFFER = false;
-if (ACTIVATE_V4) {
+if (!cc.sys.isMobile) {
     CACHING_BUFFER = true;
 }
+var ACTIVATE_AUTO_BATCH = true;
 
 // Internal variables
     // Batching general informations
@@ -162,10 +159,6 @@ return {
 
     //reset renderer's flag
     resetFlag: function () {
-        // Straight forward buffer update logic, order dirty then update
-        if (!ACTIVATE_V4 && CACHING_BUFFER && this.childrenOrderDirty) {
-            _needUpdateBuffer = true;
-        }
         this.childrenOrderDirty = false;
         this._transformNodePool.length = 0;
     },
@@ -309,12 +302,6 @@ return {
         // Reset current buffer and batched info
         cmd.getBatchInfo(_batchedInfo);
         _currentBuffer = null;
-
-        // A simple solution temporarily
-        if (!ACTIVATE_V4) {
-            _currentBuffer = vbuffer;
-            return vbuffer.count;
-        }
 
         // Protection, vbuffer invalid or doesn't match the command
         if (cmd._vertexOffset !== vbuffer.vertexOffset || !vbuffer.buffer) {
@@ -621,27 +608,29 @@ return {
             cmd = locCmds[i];
             next = locCmds[i+1];
 
-            if (!_needUpdateBuffer) {
-                // Already batched in buffer
-                if (cmd._vBuffer) {
-                    batchCount = this._forwardCheck(i);
+            if (ACTIVATE_AUTO_BATCH) {
+                if (!_needUpdateBuffer) {
+                    // Already batched in buffer
+                    if (cmd._vBuffer) {
+                        batchCount = this._forwardCheck(i);
+                        if (batchCount > 1) {
+                            this._batchRendering();
+                            // i will increase by 1 each loop
+                            i += batchCount - 1;
+                            continue;
+                        }
+                    }
+                }
+                
+                // Batching or direct rendering
+                if (cmd._supportBatch && next && next._supportBatch) {
+                    batchCount = this._forwardBatch(i);
                     if (batchCount > 1) {
                         this._batchRendering();
                         // i will increase by 1 each loop
                         i += batchCount - 1;
                         continue;
                     }
-                }
-            }
-            
-            // Batching or direct rendering
-            if (cmd._supportBatch && next && next._supportBatch) {
-                batchCount = this._forwardBatch(i);
-                if (batchCount > 1) {
-                    this._batchRendering();
-                    // i will increase by 1 each loop
-                    i += batchCount - 1;
-                    continue;
                 }
             }
 

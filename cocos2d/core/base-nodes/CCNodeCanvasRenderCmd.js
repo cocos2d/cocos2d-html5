@@ -375,8 +375,8 @@ cc.Node.RenderCmd.prototype = {
         var node = this._node;
         var i, children = node._children, child, cmd;
         var len = children.length;
-        var minZ = Number.MAX_VALUE;
-        var maxZ = -Number.MAX_VALUE;
+        // var minZ = Number.MAX_VALUE;
+        // var maxZ = -Number.MAX_VALUE;
         if (len > 0) {
             node.sortAllChildren();
             // draw children zOrder < 0
