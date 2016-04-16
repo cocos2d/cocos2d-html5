@@ -60,7 +60,7 @@ cc.pool = /** @lends cc.pool# */{
      * @param obj
      */
     putInPool: function (obj) {
-        var pid = obj.constructor.prototype.__pid;
+        var pid = obj.constructor.prototype['__pid'];
         if (!pid) {
             var desc = { writable: true, enumerable: false, configurable: true };
             desc.value = ClassManager.getNewID();
@@ -82,7 +82,7 @@ cc.pool = /** @lends cc.pool# */{
      * @returns {boolean} if this kind of obj is already in pool return true,else return false;
      */
     hasObject: function (objClass) {
-        var pid = objClass.prototype.__pid;
+        var pid = objClass.prototype['__pid'];
         var list = this._pool[pid];
         if (!list || list.length === 0) {
             return false;
@@ -95,7 +95,7 @@ cc.pool = /** @lends cc.pool# */{
      * @param obj
      */
     removeObject: function (obj) {
-        var pid = obj.constructor.prototype.__pid;
+        var pid = obj.constructor.prototype['__pid'];
         if (pid) {
             var list = this._pool[pid];
             if (list) {
@@ -117,7 +117,7 @@ cc.pool = /** @lends cc.pool# */{
      */
     getFromPool: function (objClass/*,args*/) {
         if (this.hasObject(objClass)) {
-            var pid = objClass.prototype.__pid;
+            var pid = objClass.prototype['__pid'];
             var list = this._pool[pid];
             var args = Array.prototype.slice.call(arguments);
             args.shift();

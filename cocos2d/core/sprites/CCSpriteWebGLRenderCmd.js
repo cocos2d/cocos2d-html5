@@ -39,7 +39,6 @@
         this._vBuffer = null;
         this._vertexOffset = 0;
         this._matrixOffset = 0;
-        this._matrixDirty = false;
 
         if (!proto.batchShader) {
             proto.batchShader = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST_BATCHED);
@@ -258,7 +257,6 @@
     proto.transform = function(parentCmd, recursive){
         cc.Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
         this._dirty = true;     //use for batching
-        this._matrixDirty = true;
     };
 
     proto._setColorDirty = function () {};
@@ -281,15 +279,13 @@
         // renders using Sprite Manager
         if (node._batchNode) {
             if (node.atlasIndex !== cc.Sprite.INDEX_NOT_INITIALIZED) {
-                node.textureAtlas.updateQuad(locQuad, node.atlasIndex)
+                node.textureAtlas.updateQuad(locQuad, node.atlasIndex);
             } else {
                 // no need to set it recursively
                 // update dirty_, don't update recursiveDirty_
                 this._dirty = true;
             }
         }
-        // self render
-        // do nothing
         this._quadDirty = true;
     };
 
@@ -448,10 +444,10 @@
 
     proto.rendering = function (ctx) {
         var node = this._node, locTexture = node._texture;
-        if ((locTexture &&!locTexture._textureLoaded) || this._displayedOpacity === 0)
+        if ((locTexture && (!locTexture._textureLoaded || !node._rect.width || !node._rect.height)) || !this._displayedOpacity)
             return;
 
-        var gl = ctx || cc._renderContext ;
+        var gl = ctx || cc._renderContext;
         //cc.assert(!_t._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
         var program = this._shaderProgram;

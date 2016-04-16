@@ -59,10 +59,11 @@ var _batchedInfo = {
     },
     // The current virtual buffer
     _currentBuffer = null,
-    _batchBufferPool = [],
+    _batchBufferPool = new cc.SimplePool(),
     _virtualBuffers = [],
-    _needUpdateBuffer = CACHING_BUFFER ? true : false,
-    _updateBufferNextFrame = false;
+    _needUpdateBuffer = false,
+    _updateBufferNextFrame = false,
+    _orderDirtyInFrame = false;
 
 function createVirtualBuffer (buffer, vertexOffset, matrixOrigin, matrixOffset, indexOffset, totalBufferSize, totalIndexSize, count, data) {
     data = data || new Uint32Array(totalBufferSize / 4);
@@ -97,7 +98,7 @@ function clearVirtualBuffers () {
     for (var i = _virtualBuffers.length-1; i >= 0; --i) {
         var vbuffer = _virtualBuffers[i];
         if (vbuffer.buffer) {
-            _batchBufferPool.push(vbuffer.buffer);
+            _batchBufferPool.put(vbuffer.buffer);
         }
         vbuffer.buffer = null;
         vbuffer.dataArray = null;
@@ -159,6 +160,9 @@ return {
 
     //reset renderer's flag
     resetFlag: function () {
+        if (this.childrenOrderDirty) {
+            _orderDirtyInFrame = true;
+        }
         this.childrenOrderDirty = false;
         this._transformNodePool.length = 0;
     },
@@ -254,39 +258,35 @@ return {
     // where size denotes how many unit fit in the buffer (no need for bufferData if it's already big enough, bufferSubData enough)
     getBatchBuffer: function(bufferSize, indexSize)
     {
-        if (_batchBufferPool.length <= 0) {
-            return this.createBatchBuffer(bufferSize, indexSize);
-        }
+        if (_batchBufferPool.size() > 0) {
+            var minSize = Number.MAX_VALUE; 
+            var minBufIndex = -1;
 
-        var minBuf = null;  //we also track the smallest found buffer because that one will be re-initialized and returned if no fitting buffer can be found
-        var minSize = Number.MAX_VALUE; 
-        var minBufIndex = -1;
-        for (var i = _batchBufferPool.length - 1; i >= 0; --i) {
-            var buf = _batchBufferPool[i];
-            // Find available buffer with suitable size
-            if (buf.bufferSize >= bufferSize && buf.indexSize >= indexSize) {
-                removeByLastSwap(_batchBufferPool, i);
+            var buf = _batchBufferPool.find(function (i, buf) {
+                // Find available buffer with suitable size
+                if (buf.bufferSize >= bufferSize && buf.indexSize >= indexSize) {
+                    return true;
+                }
+
+                // Track the smallest found buffer because that one will be re-initialized and returned if no fitting buffer can be found
+                if (buf.bufferSize < minSize)
+                {
+                    minSize = buf.bufferSize;
+                    minBufIndex = i;
+                }
+            }, function () {
+                return minBufIndex;
+            });
+
+            if (buf) {
                 this.initBatchBuffers(buf.arrayBuffer, buf.elementBuffer, bufferSize, indexSize);
                 buf.bufferSize = bufferSize;
                 buf.indexSize = indexSize;
                 return buf;
             }
-
-            if (buf.bufferSize < minSize)
-            {
-                minSize = buf.bufferSize;
-                minBuf = buf;
-                minBufIndex = i;
-            }
         }
 
-        // we only get here if no properly sized buffer was found
-        // in that case, take smallest buffer in pool, resize it and return it
-        removeByLastSwap(_batchBufferPool, minBufIndex);
-        this.initBatchBuffers(minBuf.arrayBuffer, minBuf.elementBuffer, bufferSize, indexSize);
-        minBuf.bufferSize = bufferSize;
-        minBuf.indexSize = indexSize;
-        return minBuf;
+        return this.createBatchBuffer(bufferSize, indexSize);
     },
 
     // Forward search commands that are in the same virtual buffer, 
@@ -326,7 +326,7 @@ return {
             }
 
             // Lazy update transform matrix in buffer
-            if (cmd._matrixDirty) {
+            if (cmd._savedDirtyFlag) {
                 if (!matrixBuffer) {
                     // Bind buffer
                     matrixBuffer = vbuffer;
@@ -334,7 +334,7 @@ return {
                     gl.bindBuffer(gl.ARRAY_BUFFER, matrixBuffer.buffer.arrayBuffer);
                 }
                 cmd.batchVertexBuffer(matrixBuffer.dataArray, cmd._vertexOffset, martixOrigin, cmd._matrixOffset);
-                cmd._matrixDirty = false;
+                cmd._savedDirtyFlag = false;
             }
             indexSize += cmd.indicesPerUnit;
         }
@@ -346,6 +346,22 @@ return {
         var size = last - first;
         // no problem
         if (vbuffer.count === size) {
+            // If children order dirty in this frame, then need to check the next command 
+            // to see whether buffer should be updated
+            if (_orderDirtyInFrame) {
+                cmd = renderCmds[last];
+                if (cmd && cmd._supportBatch) {
+                    cmd.getBatchInfo(_currentInfo);
+                    // Can be batched together, update buffer in next frame
+                    if (_currentInfo.texture === _batchedInfo.texture &&
+                        _currentInfo.blendSrc === _batchedInfo.blendSrc &&
+                        _currentInfo.blendDst === _batchedInfo.blendDst &&
+                        _currentInfo.shader === _batchedInfo.shader) {
+                        _updateBufferNextFrame = true;
+                    }
+                }
+            }
+
             _currentBuffer = vbuffer;
             return size;
         }
@@ -440,6 +456,7 @@ return {
         cmd.getBatchInfo(_batchedInfo);
         if (!_batchedInfo.texture)
             return 0;
+
         var matrixOrigin = cmd.vertexBytesPerUnit;
         var totalBufferSize = cmd.bytesPerUnit;
         var totalIndexSize = cmd.indicesPerUnit;
@@ -462,7 +479,7 @@ return {
             }
             // Some render command inserted before existing batching cmds
             // Need to rebuild virtual buffers
-            else if (CACHING_BUFFER && cmd._vBuffer) {
+            else if (!_needUpdateBuffer && cmd._vBuffer) {
                 _updateBufferNextFrame = true;
                 break;
             }
@@ -541,7 +558,7 @@ return {
         gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, 0, indices);
 
         if (!CACHING_BUFFER) {
-            _batchBufferPool.push(buffer);
+            _batchBufferPool.put(buffer);
         }
         return count;
     },
@@ -609,9 +626,9 @@ return {
             next = locCmds[i+1];
 
             if (ACTIVATE_AUTO_BATCH) {
-                if (!_needUpdateBuffer) {
-                    // Already batched in buffer
-                    if (cmd._vBuffer) {
+                // Already batched in buffer
+                if (cmd._vBuffer) {
+                    if (!_needUpdateBuffer) {
                         batchCount = this._forwardCheck(i);
                         if (batchCount > 1) {
                             this._batchRendering();
@@ -620,16 +637,21 @@ return {
                             continue;
                         }
                     }
+                    else {
+                        cmd._vBuffer = null;
+                    }
                 }
                 
-                // Batching or direct rendering
-                if (cmd._supportBatch && next && next._supportBatch) {
-                    batchCount = this._forwardBatch(i);
-                    if (batchCount > 1) {
-                        this._batchRendering();
-                        // i will increase by 1 each loop
-                        i += batchCount - 1;
-                        continue;
+                if (!CACHING_BUFFER || _needUpdateBuffer || _orderDirtyInFrame) {
+                    // Batching or direct rendering
+                    if (cmd._supportBatch && next && next._supportBatch) {
+                        batchCount = this._forwardBatch(i);
+                        if (batchCount > 1) {
+                            this._batchRendering();
+                            // i will increase by 1 each loop
+                            i += batchCount - 1;
+                            continue;
+                        }
                     }
                 }
             }
@@ -643,6 +665,9 @@ return {
         if (_updateBufferNextFrame) {
             _needUpdateBuffer = true;
             _updateBufferNextFrame = false;
+        }
+        if (_orderDirtyInFrame) {
+            _orderDirtyInFrame = false;
         }
     }
 };

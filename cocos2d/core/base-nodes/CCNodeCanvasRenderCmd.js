@@ -41,6 +41,7 @@ cc.Node._dirtyFlags = {transformDirty: 1 << 0, visibleDirty: 1 << 1, colorDirty:
 //-------------------------Base -------------------------
 cc.Node.RenderCmd = function(renderable){
     this._dirtyFlag = 1;                           //need update the transform at first.
+    this._savedDirtyFlag = 0;
 
     this._node = renderable;
     this._needDraw = false;
@@ -88,7 +89,7 @@ cc.Node.RenderCmd.prototype = {
     },
 
     getParentToNodeTransform: function(){
-        if(this._dirtyFlag & cc.Node._dirtyFlags.transformDirty)
+        if (this._dirtyFlag & cc.Node._dirtyFlags.transformDirty)
             this._inverse = cc.affineTransformInvert(this.getNodeToParentTransform());
         return this._inverse;
     },
@@ -220,6 +221,8 @@ cc.Node.RenderCmd.prototype = {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
         var colorDirty = locFlag & flags.colorDirty,
             opacityDirty = locFlag & flags.opacityDirty;
+        this._savedDirtyFlag = locFlag;
+
         if(colorDirty)
             this._updateDisplayColor();
 
@@ -330,6 +333,7 @@ cc.Node.RenderCmd.prototype = {
         //  Because child elements need parent's _dirtyFlag to change himself
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
         var parentNode = parentCmd ? parentCmd._node : null;
+        this._savedDirtyFlag = locFlag;
 
         //  There is a possibility:
         //    The parent element changed color, child element not change
