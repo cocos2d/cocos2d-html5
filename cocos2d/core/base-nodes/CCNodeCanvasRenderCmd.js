@@ -41,7 +41,7 @@ cc.Node._dirtyFlags = {transformDirty: 1 << 0, visibleDirty: 1 << 1, colorDirty:
 //-------------------------Base -------------------------
 cc.Node.RenderCmd = function(renderable){
     this._dirtyFlag = 1;                           //need update the transform at first.
-    this._savedDirtyFlag = 0;
+    this._savedDirtyFlag = true;
 
     this._node = renderable;
     this._needDraw = false;
@@ -221,7 +221,7 @@ cc.Node.RenderCmd.prototype = {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
         var colorDirty = locFlag & flags.colorDirty,
             opacityDirty = locFlag & flags.opacityDirty;
-        this._savedDirtyFlag = locFlag;
+        this._savedDirtyFlag = this._savedDirtyFlag || locFlag;
 
         if(colorDirty)
             this._updateDisplayColor();
@@ -331,9 +331,14 @@ cc.Node.RenderCmd.prototype = {
     _syncStatus: function (parentCmd) {
         //  In the visit logic does not restore the _dirtyFlag
         //  Because child elements need parent's _dirtyFlag to change himself
-        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        var parentNode = parentCmd ? parentCmd._node : null;
-        this._savedDirtyFlag = locFlag;
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag, parentNode = null;
+        if (parentCmd) {
+            parentNode = parentCmd._node;
+            this._savedDirtyFlag = this._savedDirtyFlag || parentCmd._savedDirtyFlag || locFlag;
+        }
+        else {
+            this._savedDirtyFlag = this._savedDirtyFlag || locFlag;
+        }
 
         //  There is a possibility:
         //    The parent element changed color, child element not change

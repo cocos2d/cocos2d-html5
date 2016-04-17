@@ -60,10 +60,9 @@ var _batchedInfo = {
     // The current virtual buffer
     _currentBuffer = null,
     _batchBufferPool = new cc.SimplePool(),
-    _virtualBuffers = [],
-    _needUpdateBuffer = false,
-    _updateBufferNextFrame = false,
-    _orderDirtyInFrame = false;
+    _orderDirtyInFrame = false,
+    _bufferError = false,
+    _prevRenderCmds = [];
 
 function createVirtualBuffer (buffer, vertexOffset, matrixOrigin, matrixOffset, indexOffset, totalBufferSize, totalIndexSize, count, data) {
     data = data || new Uint32Array(totalBufferSize / 4);
@@ -87,23 +86,7 @@ function createVirtualBuffer (buffer, vertexOffset, matrixOrigin, matrixOffset, 
         // Render command count
         count: count
     };
-
-    if (CACHING_BUFFER) {
-        _virtualBuffers.push(vBuf);
-    }
     return vBuf;
-}
-
-function clearVirtualBuffers () {
-    for (var i = _virtualBuffers.length-1; i >= 0; --i) {
-        var vbuffer = _virtualBuffers[i];
-        if (vbuffer.buffer) {
-            _batchBufferPool.put(vbuffer.buffer);
-        }
-        vbuffer.buffer = null;
-        vbuffer.dataArray = null;
-    }
-    _virtualBuffers.length = 0;
 }
 
 return {
@@ -162,8 +145,8 @@ return {
     resetFlag: function () {
         if (this.childrenOrderDirty) {
             _orderDirtyInFrame = true;
+            this.childrenOrderDirty = false;
         }
-        this.childrenOrderDirty = false;
         this._transformNodePool.length = 0;
     },
 
@@ -195,6 +178,17 @@ return {
     },
 
     clearRenderCommands: function () {
+        // Copy previous command list for late check in rendering
+        if (CACHING_BUFFER) {
+            var locCmds = this._renderCmds;
+            var i, len = locCmds.length, cmd;
+            for (i = 0; i < len; ++i) {
+                cmd = locCmds[i];
+                cmd._currId = -1;
+                _prevRenderCmds[i] = cmd;
+            }
+            _prevRenderCmds.length = len;
+        }
         this._renderCmds.length = 0;
     },
 
@@ -225,8 +219,10 @@ return {
             if (cmdList.indexOf(cmd) === -1)
                 cmdList.push(cmd);
         } else {
-            if (this._renderCmds.indexOf(cmd) === -1)
+            if (this._renderCmds.indexOf(cmd) === -1) {
+                cmd._currId = this._renderCmds.length;
                 this._renderCmds.push(cmd);
+            }
         }
     },
 
@@ -289,6 +285,112 @@ return {
         return this.createBatchBuffer(bufferSize, indexSize);
     },
 
+    _refreshVirtualBuffers: function () {
+        var renderCmds = this._renderCmds,
+            len = _prevRenderCmds.length,
+            i = 0, j = 0, end, cmd1, cmd2, next, 
+            newBuf, currBuf,
+            startId, count;
+
+        // Loop previous render command list to compare with current command list
+        for (; i < len; ++i) {
+            cmd1 = _prevRenderCmds[i];
+            currBuf = cmd1._vBuffer;
+            matched = false;
+            // Check to update virtual buffer
+            if (currBuf) {
+                j = cmd1._currId;
+                // Removed from the command list
+                if (j < 0) {
+                    cmd1._vBuffer = null;
+                    continue;
+                }
+
+                cmd1.getBatchInfo(_batchedInfo);
+                startId = i;
+                count = 0;
+                // Remains in the command list
+                cmd2 = renderCmds[j];
+                while (cmd1 === cmd2 && cmd1._vBuffer === currBuf) {
+                    ++count;
+                    ++j;
+                    cmd1 = _prevRenderCmds[i+count];
+                    cmd2 = renderCmds[j];
+                }
+                end = i + count;
+
+                // No valid batch
+                if (count <= 1) {
+                    // Set both in case cmd1 doesn't equal cmd2
+                    cmd1._vBuffer = cmd2._vBuffer = null;
+                    continue;
+                }
+
+                // The next command in the current list support batch
+                if (cmd2._supportBatch) {
+                    cmd2.getBatchInfo(_currentInfo);
+                    if (_currentInfo.texture === _batchedInfo.texture &&
+                        _currentInfo.blendSrc === _batchedInfo.blendSrc &&
+                        _currentInfo.blendDst === _batchedInfo.blendDst &&
+                        _currentInfo.shader === _batchedInfo.shader) {
+                        // Old batch dirty, clean up v buffer properties
+                        for (; i < end; ++i) {
+                            _prevRenderCmds[i]._vBuffer = null;
+                        }
+                        continue;
+                    }
+                }
+
+                // Perfect match
+                if (currBuf.count === count) {
+                    i = i + count - 1;
+                }
+                // Sub match
+                else if (count > 1) {
+                    // First command in buffer
+                    cmd1 = _prevRenderCmds[i];
+                    // Last command in buffer
+                    cmd2 = _prevRenderCmds[end-1];
+                    newBuf = createVirtualBuffer(currBuf.buffer, 
+                                                 cmd1._vertexOffset, 
+                                                 currBuf.matrixOrigin,
+                                                 cmd1._matrixOffset,
+                                                 cmd1._indexOffset, 
+                                                 currBuf.totalBufferSize, 
+                                                 cmd2._indexOffset - cmd1._indexOffset + cmd2.indicesPerUnit, 
+                                                 count,
+                                                 currBuf.dataArray);
+                    for (; i < end; ++i) {
+                        _prevRenderCmds[i]._vBuffer = newBuf;
+                    }
+                }
+            }
+        }
+
+        // Forward batch other commands
+        len = renderCmds.length;
+        for (i = 0; i < len; ++i) {
+            cmd1 = renderCmds[i];
+            // Already batched command, do not update
+            if (cmd1._vBuffer) {
+                continue;
+            }
+
+            next = renderCmds[i+1];
+            // Batching
+            if (cmd1._supportBatch && next && next._supportBatch) {
+                count = this._forwardBatch(i);
+                if (count > 1) {
+                    // i will increase by 1 each loop
+                    i += count - 1;
+                    continue;
+                }
+            }
+        }
+        _prevRenderCmds.length = 0;
+        _bufferError = false;
+    },
+
     // Forward search commands that are in the same virtual buffer, 
     // If size match then no problem to render
     // Otherwise, the virtual buffer need to be updated
@@ -296,8 +398,7 @@ return {
         var renderCmds = this._renderCmds,
             cmd = renderCmds[first],
             last = first, length = renderCmds.length,
-            vbuffer = cmd._vBuffer,
-            indexSize = 0;
+            vbuffer = cmd._vBuffer;
 
         // Reset current buffer and batched info
         cmd.getBatchInfo(_batchedInfo);
@@ -305,15 +406,7 @@ return {
 
         // Protection, vbuffer invalid or doesn't match the command
         if (cmd._vertexOffset !== vbuffer.vertexOffset || !vbuffer.buffer) {
-            cmd._vBuffer = null;
-            for (; last < length; ++last) {
-                cmd = renderCmds[last];
-                if (vbuffer !== cmd._vBuffer) {
-                    break;
-                }
-                cmd._vBuffer = null;
-            }
-            _updateBufferNextFrame = true;
+            _bufferError = true;
             return 0;
         }
 
@@ -336,7 +429,6 @@ return {
                 cmd.batchVertexBuffer(matrixBuffer.dataArray, cmd._vertexOffset, martixOrigin, cmd._matrixOffset);
                 cmd._savedDirtyFlag = false;
             }
-            indexSize += cmd.indicesPerUnit;
         }
         // Send last buffer to WebGLBuffer
         if (matrixBuffer) {
@@ -346,97 +438,17 @@ return {
         var size = last - first;
         // no problem
         if (vbuffer.count === size) {
-            // If children order dirty in this frame, then need to check the next command 
-            // to see whether buffer should be updated
-            if (_orderDirtyInFrame) {
-                cmd = renderCmds[last];
-                if (cmd && cmd._supportBatch) {
-                    cmd.getBatchInfo(_currentInfo);
-                    // Can be batched together, update buffer in next frame
-                    if (_currentInfo.texture === _batchedInfo.texture &&
-                        _currentInfo.blendSrc === _batchedInfo.blendSrc &&
-                        _currentInfo.blendDst === _batchedInfo.blendDst &&
-                        _currentInfo.shader === _batchedInfo.shader) {
-                        _updateBufferNextFrame = true;
-                    }
-                }
-            }
-
             _currentBuffer = vbuffer;
             return size;
         }
-        // New render commands have been inserted, 
-        // need to create new virtual buffer for the current frame
-        // and if the inserted command can be batched, mark _needUpdateBuffer as true
-        // because we need to update the buffers by rerun _forwardBatch
-        else if (vbuffer.count > size) {
-            // Roll back to previous command
-            cmd = renderCmds[last-1];
-            var secondIndexSize = vbuffer.totalIndexSize - indexSize;
-            var secondCount = vbuffer.count - size;
-            if (size > 1) {
-                // Update first part vbuffer
-                vbuffer.count = size;
-                vbuffer.totalIndexSize = indexSize;
-                _currentBuffer = vbuffer;
-            }
-            else {
-                // First part only contain 1 command, remove the virtual buffer
-                cmd._vBuffer = null;
-                removeByLastSwap(_virtualBuffers, _virtualBuffers.indexOf(vbuffer));
-            }
-
-            var newBuffer;
-            if (secondCount > 1) {
-                // Create second part vbuffer reusing the same buffer and data array
-                newBuffer = createVirtualBuffer(vbuffer.buffer, 
-                                                cmd._vertexOffset * 4 + cmd.vertexBytesPerUnit, 
-                                                vbuffer.matrixOrigin,
-                                                cmd._matrixOffset * 4 + cmd.matrixBytesPerUnit, 
-                                                vbuffer.indexOffset + indexSize, 
-                                                vbuffer.totalBufferSize, 
-                                                secondIndexSize, 
-                                                secondCount,
-                                                vbuffer.data);
-                
-            }
-            else {
-                // Second part only contain 1 command
-                newBuffer = null;
-            }
-            // Update second part commands _vBuffer
-            for (last = last+1; last < length; ++last) {
-                cmd = renderCmds[last];
-                if (vbuffer !== cmd._vBuffer) {
-                    break;
-                }
-                cmd._vBuffer = newBuffer;
-            }
-
-            // The breaking command
-            cmd = renderCmds[first+size];
-            if (cmd._supportBatch) {
-                cmd.getBatchInfo(_currentInfo);
-                cmd = renderCmds[first];
-                cmd.getBatchInfo(_batchedInfo);
-                // Can be batched together, update buffer in next frame
-                if (_currentInfo.texture === _batchedInfo.texture &&
-                    _currentInfo.blendSrc === _batchedInfo.blendSrc &&
-                    _currentInfo.blendDst === _batchedInfo.blendDst &&
-                    _currentInfo.shader === _batchedInfo.shader) {
-                    _updateBufferNextFrame = true;
-                }
-            }
-            return size;
-        }
-        // Render commands removed
-        // need to update all commands and update buffer in next frame
+        // buffer errored
+        // need to update virtual buffers in next frame
         else {
             for (last = first; last < first + size; ++last) {
                 cmd = renderCmds[last];
                 cmd._vBuffer = null;
             }
-            _updateBufferNextFrame = true;
+            _bufferError = true;
             return 0;
         }
     },
@@ -477,12 +489,6 @@ return {
                 _currentInfo.shader !== _batchedInfo.shader) {
                 break;
             }
-            // Some render command inserted before existing batching cmds
-            // Need to rebuild virtual buffers
-            else if (!_needUpdateBuffer && cmd._vBuffer) {
-                _updateBufferNextFrame = true;
-                break;
-            }
             else {
                 matrixOrigin += cmd.vertexBytesPerUnit;
                 totalBufferSize += cmd.bytesPerUnit;
@@ -521,7 +527,7 @@ return {
         gl.bindBuffer(gl.ARRAY_BUFFER, vbuffer.buffer.arrayBuffer);
 
         // Fill in vertex data command by command
-        var i;
+        var i, index = 0;
         for (i = first; i < last; ++i) {
             cmd = renderCmds[i];
             cmd.batchVertexBuffer(uploadBuffer, vertexDataOffset, totalVertexData, matrixDataOffset);
@@ -530,10 +536,15 @@ return {
                 cmd._vBuffer = vbuffer;
                 cmd._vertexOffset = vertexDataOffset;
                 cmd._matrixOffset = matrixDataOffset;
+                cmd._indexOffset = index;
+            }
+            if (cmd._savedDirtyFlag) {
+                cmd._savedDirtyFlag = false;
             }
 
             vertexDataOffset += cmd.vertexBytesPerUnit / 4;
             matrixDataOffset += cmd.matrixBytesPerUnit / 4;
+            index += cmd.indicesPerUnit;
         }
 
         // Submit vertex data in one bufferSubData call
@@ -546,13 +557,11 @@ return {
 
         // Fill in element buffer command by command
         var currentVertex = 0;
-        var index = 0;
         for (i = first; i < last; ++i) {
             cmd = renderCmds[i];
-            cmd.batchIndexBuffer(indices, index, currentVertex);
+            cmd.batchIndexBuffer(indices, cmd._indexOffset, currentVertex);
 
             currentVertex += cmd.verticesPerUnit;
-            index += cmd.indicesPerUnit;
         }
 
         gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, 0, indices);
@@ -616,9 +625,9 @@ return {
             i, len, cmd, next, batchCount,
             context = ctx || cc._renderContext;
 
-        // Need to rebuild all virtual buffers in forward batching
-        if (_needUpdateBuffer) {
-            clearVirtualBuffers();
+        // Only update virtual buffers if children order dirty in the current frame
+        if (ACTIVATE_AUTO_BATCH && (_orderDirtyInFrame || _bufferError)) {
+            this._refreshVirtualBuffers();
         }
 
         for (i = 0, len = locCmds.length; i < len; i++) {
@@ -628,43 +637,17 @@ return {
             if (ACTIVATE_AUTO_BATCH) {
                 // Already batched in buffer
                 if (cmd._vBuffer) {
-                    if (!_needUpdateBuffer) {
-                        batchCount = this._forwardCheck(i);
-                        if (batchCount > 1) {
-                            this._batchRendering();
-                            // i will increase by 1 each loop
-                            i += batchCount - 1;
-                            continue;
-                        }
-                    }
-                    else {
-                        cmd._vBuffer = null;
-                    }
-                }
-                
-                if (!CACHING_BUFFER || _needUpdateBuffer || _orderDirtyInFrame) {
-                    // Batching or direct rendering
-                    if (cmd._supportBatch && next && next._supportBatch) {
-                        batchCount = this._forwardBatch(i);
-                        if (batchCount > 1) {
-                            this._batchRendering();
-                            // i will increase by 1 each loop
-                            i += batchCount - 1;
-                            continue;
-                        }
+                    batchCount = this._forwardCheck(i);
+                    if (batchCount > 1) {
+                        this._batchRendering();
+                        // i will increase by 1 each loop
+                        i += batchCount - 1;
+                        continue;
                     }
                 }
             }
 
             cmd.rendering(context);
-        }
-        if (_needUpdateBuffer) {
-            _needUpdateBuffer = false;
-        }
-        // Update virtual buffers in next frame
-        if (_updateBufferNextFrame) {
-            _needUpdateBuffer = true;
-            _updateBufferNextFrame = false;
         }
         if (_orderDirtyInFrame) {
             _orderDirtyInFrame = false;
