@@ -57,9 +57,6 @@ cc.Node.RenderCmd = function(renderable){
     this._cascadeOpacityEnabledDirty = false;
 
     this._curLevel = -1;
-
-    // this._minZ = 0;
-    // this._maxZ = 0;
 };
 
 cc.Node.RenderCmd.prototype = {
@@ -384,8 +381,6 @@ cc.Node.RenderCmd.prototype = {
         var node = this._node;
         var i, children = node._children, child, cmd;
         var len = children.length;
-        // var minZ = Number.MAX_VALUE;
-        // var maxZ = -Number.MAX_VALUE;
         if (len > 0) {
             node.sortAllChildren();
             // draw children zOrder < 0
@@ -394,8 +389,6 @@ cc.Node.RenderCmd.prototype = {
                 if (child._localZOrder < 0) {
                     cmd = child._renderCmd;
                     cmd.visit(this);
-                    // minZ = Math.min(minZ, child._minZ);
-                    // maxZ = Math.max(maxZ, child._maxZ);
                 }
                 else {
                     break;
@@ -406,19 +399,11 @@ cc.Node.RenderCmd.prototype = {
             node._vertexZ = z;
             renderer.assignedZ += renderer.assignedZStep;
 
-            // minZ = Math.min(minZ,z);
-            // maxZ = Math.max(maxZ,z);
-
             renderer.pushRenderCommand(this);
             for (; i < len; i++) {
                 child = children[i];
                 child._renderCmd.visit(this);
-                // minZ = Math.min(minZ, child._minZ);
-                // maxZ = Math.max(maxZ, child._maxZ);
             }
-
-            // node._minZ = minZ;
-            // node._maxZ = maxZ;
         } else {
             node._vertexZ = renderer.assignedZ;
             renderer.assignedZ += renderer.assignedZStep;

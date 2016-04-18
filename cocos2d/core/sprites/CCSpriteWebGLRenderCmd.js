@@ -39,7 +39,6 @@
         this._vBuffer = null;
         this._vertexOffset = 0;
         this._matrixOffset = 0;
-        this._indexOffset = 0;
 
         if (!proto.batchShader) {
             proto.batchShader = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST_BATCHED);
@@ -554,16 +553,5 @@
             buffer[offset2 + i] = val;
             buffer[offset3 + i] = val;
         }
-    };
-
-    proto.batchIndexBuffer = function (indices, index, vertexIndex) {
-        // Fill in index buffer, we split quad into two triangles
-        // because only triangles can be batched
-        indices[index] = vertexIndex + 0;
-        indices[index + 1] = vertexIndex + 1;
-        indices[index + 2] = vertexIndex + 2;
-        indices[index + 3] = vertexIndex + 1;
-        indices[index + 4] = vertexIndex + 2;
-        indices[index + 5] = vertexIndex + 3;
     };
 })();

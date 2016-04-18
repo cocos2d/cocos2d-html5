@@ -31,7 +31,7 @@ cc.profiler = (function () {
     };
 
     var analyseFPS = function (fps) {
-        var lastId = i = LEVELS.length - 1, ratio, average = 0;
+        var lastId = LEVELS.length - 1, i = lastId, ratio, average = 0;
         _analyseCount++;
         _totalFPS += fps;
 

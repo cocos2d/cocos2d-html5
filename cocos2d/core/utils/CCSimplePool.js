@@ -33,7 +33,7 @@ cc.SimplePool.prototype = {
     },
 
     put: function (obj) {
-        if (obj && this._pool.indexOf(obj) !== -1) {
+        if (obj && this._pool.indexOf(obj) === -1) {
             this._pool.unshift(obj);
         }
     },
