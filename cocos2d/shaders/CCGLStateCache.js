@@ -196,8 +196,6 @@ cc.glEnableVertexAttribs = function (flags) {
     if (enablePosition !== cc._vertexAttribPosition) {
         if (enablePosition)
             ctx.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
-        else
-            ctx.disableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
         cc._vertexAttribPosition = enablePosition;
     }
 

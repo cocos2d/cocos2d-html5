@@ -24,24 +24,44 @@
 
 //Sprite's WebGL render command
 (function() {
-    var matrixByteSize =  4 * 4 * 4; //4 rows of 4 floats, 4 bytes each
 
     cc.Sprite.WebGLRenderCmd = function (renderable) {
         cc.Node.WebGLRenderCmd.call(this, renderable);
         this._needDraw = true;
 
-        this._quad = new cc.V3F_C4B_T2F_Quad();
-        this._quadBufferView = new Uint32Array(this._quad.arrayBuffer);
-        this._quadWebBuffer = cc._renderContext.createBuffer();
-        this._quadDirty = true;
+        this._vertices = [
+            {x: 0, y: 0, z: 0},
+            {x: 0, y: 0, z: 0},
+            {x: 0, y: 0, z: 0},
+            {x: 0, y: 0, z: 0}
+        ];
+        var length = this.vertexBytesPerUnit;
+        var bufInfo = cc.renderer.requestBuffer(length);
+        this._buffer = bufInfo.buffer;
+        this._bufferOffset = bufInfo.offset;
+        this._quad = new cc.V3F_C4B_T2F_Quad(null, null, null, null, this._buffer.data, this._bufferOffset);
+        this._float32View = new Float32Array(this._buffer.data, this._bufferOffset, length / 4);
+        this._uint32View = new Uint32Array(this._buffer.data, this._bufferOffset, length / 4);
+        
+        // Separated webgl buffer implementation
+        // this._buffer = new ArrayBuffer(length);
+        // this._bufferOffset = 0;
+        // this._quad = new cc.V3F_C4B_T2F_Quad(null, null, null, null, this._buffer, this._bufferOffset);
+        // this._float32View = new Float32Array(this._buffer, this._bufferOffset, length / 4);
+        // Init buffer
+        // var gl = cc._renderContext;
+        // this._glBuffer = gl.createBuffer();
+        // gl.bindBuffer(gl.ARRAY_BUFFER, this._glBuffer);
+        // gl.bufferData(gl.ARRAY_BUFFER, length, gl.DYNAMIC_DRAW);
+
         this._dirty = false;
+        this._bufferDirty = false;
         this._recursiveDirty = false;
         this._vBuffer = null;
         this._vertexOffset = 0;
-        this._matrixOffset = 0;
 
         if (!proto.batchShader) {
-            proto.batchShader = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST_BATCHED);
+            proto.batchShader = cc.shaderCache.programForKey(cc.SHADER_SPRITE_POSITION_TEXTURECOLORALPHATEST);
         }
     };
 
@@ -50,8 +70,7 @@
 
     // The following static properties must be provided for a auto batchable command
     proto.vertexBytesPerUnit = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-    proto.matrixBytesPerUnit = matrixByteSize * 4;
-    proto.bytesPerUnit = proto.vertexBytesPerUnit + proto.matrixBytesPerUnit;
+    proto.bytesPerUnit = proto.vertexBytesPerUnit;
     proto.indicesPerUnit = 6;
     proto.verticesPerUnit = 4;
     proto._supportBatch = true;
@@ -63,6 +82,33 @@
         info.blendSrc = this._node._blendFunc.src;
         info.blendDst = this._node._blendFunc.dst;
         info.shader = this.batchShader;
+    };
+
+    proto.updateBuffer = function () {
+        if (!this._buffer) {
+            var length = this.vertexBytesPerUnit;
+            var bufInfo = cc.renderer.requestBuffer(length);
+            this._buffer = bufInfo.buffer;
+            this._bufferOffset = bufInfo.offset;
+            this._quad = new cc.V3F_C4B_T2F_Quad(null, null, null, null, this._buffer.data, this._bufferOffset);
+            this._float32View = new Float32Array(this._quad.arrayBuffer, this._bufferOffset, length / 4);
+            this._uint32View = new Uint32Array(this._quad.arrayBuffer, this._bufferOffset, length / 4);
+            
+            this._setTextureCoords(this._node._rect);
+            this._updateColor();
+            this._bufferDirty = true;
+            this._buffer.setDirty();
+        }
+    };
+
+    proto.freeBuffer = function () {
+        if (this._buffer) {
+            this._buffer.freeBuffer(this._bufferOffset, this.vertexBytesPerUnit);
+            this._buffer = null;
+            this._bufferOffset = 0;
+            this._quad = null;
+            this._float32View = null;
+        }
     };
 
     proto.updateBlendFunc = function (blendFunc) {};
@@ -112,12 +158,14 @@
     };
 
     proto._init = function () {
+        this.updateBuffer();
         var tempColor = {r: 255, g: 255, b: 255, a: 255}, quad = this._quad;
         quad.bl.colors = tempColor;
         quad.br.colors = tempColor;
         quad.tl.colors = tempColor;
         quad.tr.colors = tempColor;
-        this._quadDirty = true;
+        this._bufferDirty = true;
+        this._buffer.setDirty();
     };
 
     proto._resetForBatchNode = function () {
@@ -126,12 +174,15 @@
         var y1 = node._offsetPosition.y;
         var x2 = x1 + node._rect.width;
         var y2 = y1 + node._rect.height;
-        var locQuad = this._quad;
-        locQuad.bl.vertices = {x: x1, y: y1, z: 0};
-        locQuad.br.vertices = {x: x2, y: y1, z: 0};
-        locQuad.tl.vertices = {x: x1, y: y2, z: 0};
-        locQuad.tr.vertices = {x: x2, y: y2, z: 0};
-        this._quadDirty = true;
+        var vertices = this._vertices;
+        vertices[0].x = x1; vertices[0].y = y2; // tl
+        vertices[1].x = x1; vertices[1].y = y1; // bl
+        vertices[2].x = x2; vertices[2].y = y2; // tr
+        vertices[3].x = x2; vertices[3].y = y1; // br
+        this._bufferDirty = true;
+        if (this._buffer) {
+            this._buffer.setDirty();
+        }
     };
 
     proto.getQuad = function () {
@@ -165,7 +216,8 @@
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
         this.setBatchNode(this._batchNode);
-        renderCmd._quadDirty = true;
+        renderCmd._bufferDirty = true;
+        renderCmd._buffer.setDirty();
         this.dispatchEvent("load");
     };
 
@@ -174,16 +226,16 @@
             needConvert = true;
         if (needConvert)
             rect = cc.rectPointsToPixels(rect);
-        var node = this._node;
+        var node = this._node, locQuad = this._quad;
 
         var tex = node._batchNode ? node.textureAtlas.texture : node._texture;
-        if (!tex)
+        if (!tex || !locQuad)
             return;
 
         var atlasWidth = tex.pixelsWidth;
         var atlasHeight = tex.pixelsHeight;
 
-        var left, right, top, bottom, tempSwap, locQuad = this._quad;
+        var left, right, top, bottom, tempSwap;
         if (node._rectRotated) {
             if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
                 left = (2 * rect.x + 1) / (2 * atlasWidth);
@@ -251,11 +303,34 @@
             locQuad.tr.texCoords.u = right;
             locQuad.tr.texCoords.v = top;
         }
-        this._quadDirty = true;
+        this._bufferDirty = true;
+        this._buffer.setDirty();
     };
 
-    proto.transform = function(parentCmd, recursive){
+    proto.transform = function (parentCmd, recursive) {
         cc.Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+
+        if (this._buffer) {
+            var mat = this._stackMatrix.mat,
+                vertices = this._vertices,
+                buffer = this._float32View,
+                i, x, y, offset = 0,
+                row = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT / 16;
+
+            for (i = 0; i < 4; ++i) {
+                x = vertices[i].x;
+                y = vertices[i].y;
+                z = vertices[i].z;
+                buffer[offset] = x * mat[0] + y * mat[4] + mat[12];
+                buffer[offset+1] = x * mat[1] + y * mat[5] + mat[13];
+                buffer[offset+2] = mat[14];
+                offset += row;
+            }
+
+            this._bufferDirty = true;
+            this._buffer.setDirty();
+        }
+        
         this._dirty = true;     //use for batching
         this._savedDirtyFlag = true;
     };
@@ -272,10 +347,13 @@
             color4.b *= locDisplayedOpacity / 255.0;
         }
         var locQuad = this._quad;
-        locQuad.bl.colors = color4;
-        locQuad.br.colors = color4;
-        locQuad.tl.colors = color4;
-        locQuad.tr.colors = color4;
+        if (locQuad) {
+            locQuad.bl.colors = color4;
+            locQuad.br.colors = color4;
+            locQuad.tl.colors = color4;
+            locQuad.tr.colors = color4;
+            this._buffer.setDirty();
+        }
 
         // renders using Sprite Manager
         if (node._batchNode) {
@@ -287,7 +365,7 @@
                 this._dirty = true;
             }
         }
-        this._quadDirty = true;
+        this._bufferDirty = true;
     };
 
     proto._updateBlendFunc = function () {
@@ -320,7 +398,7 @@
                 cc.log(cc._LogInfos.Sprite_setTexture);
                 return;
             }
-        }else{
+        } else {
             if(node._texture !== texture){
                 node._textureLoaded = texture ? texture._textureLoaded : false;
                 node._texture = texture;
@@ -329,10 +407,9 @@
         }
 
         if (texture)
-            this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+            this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_SPRITE_POSITION_TEXTURECOLORALPHATEST);
         else
-            this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_COLOR);
-
+            this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_SPRITE_POSITION_COLOR);
     };
 
     proto.updateTransform = function () {                                    //called only at batching.
@@ -340,10 +417,14 @@
 
         // recalculate matrix only if it is dirty
         if (this._dirty) {
-            var locQuad = _t._quad, locParent = node._parent;
+            var locQuad = _t._quad, locParent = node._parent, vertices = _t._vertices;
             // If it is not visible, or one of its ancestors is not visible, then do nothing:
             if (!node._visible || ( locParent && locParent !== node._batchNode && locParent._shouldBeHidden)) {
-                locQuad.br.vertices = locQuad.tl.vertices = locQuad.tr.vertices = locQuad.bl.vertices = {x: 0, y: 0, z: 0};
+                for (var i = 0; i < 4; ++i) {
+                    vertices[i].x = 0;
+                    vertices[i].y = 0;
+                    vertices[i].z = 0;
+                }
                 node._shouldBeHidden = true;
             } else {
                 node._shouldBeHidden = false;
@@ -445,7 +526,7 @@
 
     proto.rendering = function (ctx) {
         var node = this._node, locTexture = node._texture;
-        if ((locTexture && (!locTexture._textureLoaded || !node._rect.width || !node._rect.height)) || !this._displayedOpacity)
+        if (!this._buffer || (locTexture && (!locTexture._textureLoaded || !node._rect.width || !node._rect.height)) || !this._displayedOpacity)
             return;
 
         var gl = ctx || cc._renderContext;
@@ -455,21 +536,21 @@
         if (locTexture) {
             if (locTexture._textureLoaded) {
                 program.use();
-                program._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+                program._updateProjectionUniform();
 
                 cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
                 //optimize performance for javascript
                 cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
                 cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
-                gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
-                if (this._quadDirty) {
-                    gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.DYNAMIC_DRAW);
-                    this._quadDirty = false;
-                }
-                gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);                   //cc.VERTEX_ATTRIB_POSITION
-                gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
-                gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
+                gl.bindBuffer(gl.ARRAY_BUFFER, this._buffer.vertexBuffer);
+                // if (this._bufferDirty) {
+                //     gl.bufferSubData(gl.ARRAY_BUFFER, this._bufferOffset, this._float32View);
+                //     this._bufferDirty = false;
+                // }
+                gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, this._bufferOffset);                       //cc.VERTEX_ATTRIB_POSITION
+                gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, this._bufferOffset + 12);           //cc.VERTEX_ATTRIB_COLOR
+                gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, this._bufferOffset + 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
                 gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
             }
         } else {
@@ -481,13 +562,13 @@
 
             cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
 
-            gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
-            if (this._quadDirty) {
-                gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.STATIC_DRAW);
-                this._quadDirty = false;
-            }
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this._buffer.vertexBuffer);
+            // if (this._bufferDirty) {
+            //     gl.bufferSubData(gl.ARRAY_BUFFER, this._bufferOffset, this._float32View);
+            //     this._bufferDirty = false;
+            // }
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, this._bufferOffset);
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, this._bufferOffset + 12);
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         }
         cc.g_NumberOfDraws++;
@@ -502,12 +583,12 @@
 
         if (cc.SPRITE_DEBUG_DRAW === 1 || node._showNode) {
             // draw bounding box
-            var locQuad = this._quad;
+            var vertices = this._vertices;
             var verticesG1 = [
-                cc.p(locQuad.tl.vertices.x, locQuad.tl.vertices.y),
-                cc.p(locQuad.bl.vertices.x, locQuad.bl.vertices.y),
-                cc.p(locQuad.br.vertices.x, locQuad.br.vertices.y),
-                cc.p(locQuad.tr.vertices.x, locQuad.tr.vertices.y)
+                cc.p(vertices[0].x, vertices[0].y),
+                cc.p(vertices[2].x, vertices[2].y),
+                cc.p(vertices[3].x, vertices[3].y),
+                cc.p(vertices[1].x, vertices[1].y)
             ];
             cc._drawingUtil.drawPoly(verticesG1, 4, true);
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
@@ -521,37 +602,20 @@
         cc.current_stack.top = cc.current_stack.stack.pop();
     };
 
-    proto.batchVertexBuffer = function (buffer, vertexDataOffset, totalVertexData, matrixDataOffset) {
-        // buffer is a Uint32 view typed array, not necessarily the same view with render command vertex data,
-        // but it's ok, it's just for copy data easier
-
+    proto.batchVertexBuffer = function (f32buffer, int32buffer, vertexDataOffset) {
         // Fill in vertex data with quad information (4 vertices for sprite)
-        var vertexData = this._quadBufferView;
-        var i, len = vertexData.length;
+        var float32Data = this._float32View;
+        var uint32Data = this._uint32View;
+        var i, len = float32Data.length, colorId = 3;
         for (i = 0; i < len; ++i) {
-            buffer[vertexDataOffset + i] = vertexData[i];
-        }
-
-        // Fill in matrix data, matrix data is also wrapped into a Uint32 view, 
-        // you may see strange big values, but it's also ok.
-        var matrixData = new Uint32Array(this._stackMatrix.mat.buffer);
-        len = matrixData.length;
-
-        // We need four matrix data into the buffer, one for each vertex.
-        // Otherwise the shader won't work
-        var base = totalVertexData + matrixDataOffset;
-        var matrixDataSize = matrixByteSize / 4;
-        var offset0 = base;
-        var offset1 = offset0 + matrixDataSize;
-        var offset2 = offset1 + matrixDataSize;
-        var offset3 = offset2 + matrixDataSize;
-
-        for (i = 0; i < len; ++i) {
-            var val = matrixData[i];
-            buffer[offset0 + i] = val;
-            buffer[offset1 + i] = val;
-            buffer[offset2 + i] = val;
-            buffer[offset3 + i] = val;
+            if (i === colorId) {
+                int32buffer[vertexDataOffset + i] = uint32Data[i];
+                // 6 data per index
+                colorId += 6;
+            }
+            else {
+                f32buffer[vertexDataOffset + i] = float32Data[i];
+            }
         }
     };
 })();
