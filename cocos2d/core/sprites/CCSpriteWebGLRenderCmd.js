@@ -24,19 +24,46 @@
 
 //Sprite's WebGL render command
 (function() {
+    var matrixByteSize =  4 * 4 * 4; //4 rows of 4 floats, 4 bytes each
+
     cc.Sprite.WebGLRenderCmd = function (renderable) {
         cc.Node.WebGLRenderCmd.call(this, renderable);
         this._needDraw = true;
 
         this._quad = new cc.V3F_C4B_T2F_Quad();
+        this._quadBufferView = new Uint32Array(this._quad.arrayBuffer);
         this._quadWebBuffer = cc._renderContext.createBuffer();
         this._quadDirty = true;
         this._dirty = false;
         this._recursiveDirty = false;
+        this._vBuffer = null;
+        this._vertexOffset = 0;
+        this._matrixOffset = 0;
+
+        if (!proto.batchShader) {
+            proto.batchShader = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST_BATCHED);
+        }
     };
 
     var proto = cc.Sprite.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.Sprite.WebGLRenderCmd;
+
+    // The following static properties must be provided for a auto batchable command
+    proto.vertexBytesPerUnit = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+    proto.matrixBytesPerUnit = matrixByteSize * 4;
+    proto.bytesPerUnit = proto.vertexBytesPerUnit + proto.matrixBytesPerUnit;
+    proto.indicesPerUnit = 6;
+    proto.verticesPerUnit = 4;
+    proto._supportBatch = true;
+
+    proto.batchShader = null;
+
+    proto.getBatchInfo = function (info) {
+        info.texture = this._node._texture;
+        info.blendSrc = this._node._blendFunc.src;
+        info.blendDst = this._node._blendFunc.dst;
+        info.shader = this.batchShader;
+    };
 
     proto.updateBlendFunc = function (blendFunc) {};
 
@@ -230,6 +257,7 @@
     proto.transform = function(parentCmd, recursive){
         cc.Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
         this._dirty = true;     //use for batching
+        this._savedDirtyFlag = true;
     };
 
     proto._setColorDirty = function () {};
@@ -252,15 +280,13 @@
         // renders using Sprite Manager
         if (node._batchNode) {
             if (node.atlasIndex !== cc.Sprite.INDEX_NOT_INITIALIZED) {
-                node.textureAtlas.updateQuad(locQuad, node.atlasIndex)
+                node.textureAtlas.updateQuad(locQuad, node.atlasIndex);
             } else {
                 // no need to set it recursively
                 // update dirty_, don't update recursiveDirty_
                 this._dirty = true;
             }
         }
-        // self render
-        // do nothing
         this._quadDirty = true;
     };
 
@@ -419,16 +445,17 @@
 
     proto.rendering = function (ctx) {
         var node = this._node, locTexture = node._texture;
-        if ((locTexture &&!locTexture._textureLoaded) || this._displayedOpacity === 0)
+        if ((locTexture && (!locTexture._textureLoaded || !node._rect.width || !node._rect.height)) || !this._displayedOpacity)
             return;
 
-        var gl = ctx || cc._renderContext ;
+        var gl = ctx || cc._renderContext;
         //cc.assert(!_t._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
+        var program = this._shaderProgram;
         if (locTexture) {
             if (locTexture._textureLoaded) {
-                this._shaderProgram.use();
-                this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+                program.use();
+                program._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 
                 cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
                 //optimize performance for javascript
@@ -446,8 +473,8 @@
                 gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
             }
         } else {
-            this._shaderProgram.use();
-            this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+            program.use();
+            program._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 
             cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
             cc.glBindTexture2D(null);
@@ -492,5 +519,39 @@
             cc._drawingUtil.drawPoly(verticesG2, 4, true);
         } // CC_SPRITE_DEBUG_DRAW
         cc.current_stack.top = cc.current_stack.stack.pop();
+    };
+
+    proto.batchVertexBuffer = function (buffer, vertexDataOffset, totalVertexData, matrixDataOffset) {
+        // buffer is a Uint32 view typed array, not necessarily the same view with render command vertex data,
+        // but it's ok, it's just for copy data easier
+
+        // Fill in vertex data with quad information (4 vertices for sprite)
+        var vertexData = this._quadBufferView;
+        var i, len = vertexData.length;
+        for (i = 0; i < len; ++i) {
+            buffer[vertexDataOffset + i] = vertexData[i];
+        }
+
+        // Fill in matrix data, matrix data is also wrapped into a Uint32 view, 
+        // you may see strange big values, but it's also ok.
+        var matrixData = new Uint32Array(this._stackMatrix.mat.buffer);
+        len = matrixData.length;
+
+        // We need four matrix data into the buffer, one for each vertex.
+        // Otherwise the shader won't work
+        var base = totalVertexData + matrixDataOffset;
+        var matrixDataSize = matrixByteSize / 4;
+        var offset0 = base;
+        var offset1 = offset0 + matrixDataSize;
+        var offset2 = offset1 + matrixDataSize;
+        var offset3 = offset2 + matrixDataSize;
+
+        for (i = 0; i < len; ++i) {
+            var val = matrixData[i];
+            buffer[offset0 + i] = val;
+            buffer[offset1 + i] = val;
+            buffer[offset2 + i] = val;
+            buffer[offset3 + i] = val;
+        }
     };
 })();

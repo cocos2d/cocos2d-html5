@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) 2013-2014 Chukong Technologies Inc.
+ Copyright (c) 2016 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -22,20 +22,53 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-// ----------------------------------- LabelTTF WebGL render cmd ----------------------------
-(function() {
-    cc.LabelTTF.WebGLRenderCmd = function (renderable) {
-        cc.Sprite.WebGLRenderCmd.call(this, renderable);
-        cc.LabelTTF.CacheRenderCmd.call(this);
-        this.setShaderProgram(cc.shaderCache.programForKey(cc.LabelTTF._SHADER_PROGRAM));
-    };
-    var proto = cc.LabelTTF.WebGLRenderCmd.prototype = Object.create(cc.Sprite.WebGLRenderCmd.prototype);
-    proto._supportBatch = false;
+cc.SimplePool = function () {
+    this._pool = [];
+};
+cc.SimplePool.prototype = {
+    constructor: cc.SimplePool,
 
-    cc.inject(cc.LabelTTF.CacheRenderCmd.prototype, proto);
-    proto.constructor = cc.LabelTTF.WebGLRenderCmd;
-    proto._updateColor = function () {
-        this._updateTexture();
-        cc.Sprite.WebGLRenderCmd.prototype._updateColor.call(this);
-    };
-})();
+    size: function () {
+        return this._pool.length;
+    },
+
+    put: function (obj) {
+        if (obj && this._pool.indexOf(obj) === -1) {
+            this._pool.unshift(obj);
+        }
+    },
+
+    get: function () {
+        var last = this._pool.length-1;
+        if (last < 0) {
+            return null;
+        }
+        else {
+            var obj = this._pool[last];
+            this._pool.length = last;
+            return obj;
+        }
+    },
+
+    find: function (finder, end) {
+        var found, i, obj, pool = this._pool, last = pool.length-1;
+        for (i = pool.length; i >= 0; --i) {
+            obj = pool[i];
+            found = finder(i, obj);
+            if (found) {
+                pool[i] = pool[last];
+                pool.length = last;
+                return obj;
+            }
+        }
+        if (end) {
+            var index = end();
+            if (index >= 0) {
+                pool[index] = pool[last];
+                pool.length = last;
+                return obj;
+            }
+        }
+        return null;
+    }
+};
