@@ -2600,9 +2600,6 @@ cc.game = /** @lends cc.game# */{
             cc.shaderCache._init();
             cc._drawingUtil = new cc.DrawingPrimitiveWebGL(this._renderContext);
             cc.textureCache._initializingRenderer();
-            // cc.glExt = {};
-            // cc.glExt.instanced_arrays = gl.getExtension("ANGLE_instanced_arrays");
-            // cc.glExt.element_uint = gl.getExtension("OES_element_index_uint");
         } else {
             cc.renderer = cc.rendererCanvas;
             this._renderContext = cc._renderContext = new cc.CanvasContextWrapper(localCanvas.getContext("2d"));

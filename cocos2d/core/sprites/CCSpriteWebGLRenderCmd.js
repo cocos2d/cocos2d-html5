@@ -216,8 +216,6 @@
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
         this.setBatchNode(this._batchNode);
-        renderCmd._bufferDirty = true;
-        renderCmd._buffer.setDirty();
         this.dispatchEvent("load");
     };
 
