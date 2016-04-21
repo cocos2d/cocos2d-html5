@@ -48,73 +48,20 @@
     // check Web Audio's context
     var supportWebAudio = !!(window.AudioContext || window.webkitAudioContext || window.mozAudioContext);
 
-    var supportTable = {
-        "common" : {MULTI_CHANNEL: true, WEB_AUDIO: supportWebAudio, AUTOPLAY: true }
-    };
-    supportTable[sys.BROWSER_TYPE_IE]  = {MULTI_CHANNEL: true , WEB_AUDIO: supportWebAudio , AUTOPLAY: true, USE_EMPTIED_EVENT: true};
-    //  ANDROID  //
-    supportTable[sys.BROWSER_TYPE_ANDROID]  = {MULTI_CHANNEL: true, WEB_AUDIO: true, AUTOPLAY: false};
-    supportTable[sys.BROWSER_TYPE_CHROME]   = {MULTI_CHANNEL: true, WEB_AUDIO: true , AUTOPLAY: false};
-    supportTable[sys.BROWSER_TYPE_FIREFOX]  = {MULTI_CHANNEL: true, WEB_AUDIO: true , AUTOPLAY: true , DELAY_CREATE_CTX: true};
-    supportTable[sys.BROWSER_TYPE_UC]       = {MULTI_CHANNEL: true, WEB_AUDIO: false, AUTOPLAY: false};
-    supportTable[sys.BROWSER_TYPE_QQ]       = {MULTI_CHANNEL: true, WEB_AUDIO: true, AUTOPLAY: true};
-    supportTable[sys.BROWSER_TYPE_OUPENG]   = {MULTI_CHANNEL: false, WEB_AUDIO: false, AUTOPLAY: false, REPLAY_AFTER_TOUCH: true , USE_EMPTIED_EVENT: true };
-    supportTable[sys.BROWSER_TYPE_WECHAT]   = {MULTI_CHANNEL: true, WEB_AUDIO: true, AUTOPLAY: false, REPLAY_AFTER_TOUCH: true , USE_EMPTIED_EVENT: true };
-    supportTable[sys.BROWSER_TYPE_360]      = {MULTI_CHANNEL: false, WEB_AUDIO: false, AUTOPLAY: true };
-    supportTable[sys.BROWSER_TYPE_MIUI]     = {MULTI_CHANNEL: false, WEB_AUDIO: false, AUTOPLAY: true };
-    supportTable[sys.BROWSER_TYPE_LIEBAO]   = {MULTI_CHANNEL: false, WEB_AUDIO: false, AUTOPLAY: false, REPLAY_AFTER_TOUCH: true , USE_EMPTIED_EVENT: true };
-    supportTable[sys.BROWSER_TYPE_SOUGOU]   = {MULTI_CHANNEL: false, WEB_AUDIO: false, AUTOPLAY: false, REPLAY_AFTER_TOUCH: true , USE_EMPTIED_EVENT: true };
-    //"Baidu" browser can automatically play
-    //But because it may be play failed, so need to replay and auto
-    supportTable[sys.BROWSER_TYPE_BAIDU]    = {MULTI_CHANNEL: false, WEB_AUDIO: false, AUTOPLAY: false, REPLAY_AFTER_TOUCH: true , USE_EMPTIED_EVENT: true };
-    supportTable[sys.BROWSER_TYPE_BAIDU_APP]= {MULTI_CHANNEL: false, WEB_AUDIO: false, AUTOPLAY: false, REPLAY_AFTER_TOUCH: true , USE_EMPTIED_EVENT: true };
+    var support = {ONLY_ONE: false, WEB_AUDIO: supportWebAudio, DELAY_CREATE_CTX: false, ONE_SOURCE: false };
 
-    //  APPLE  //
-    supportTable[sys.BROWSER_TYPE_SAFARI]  = {MULTI_CHANNEL: true , WEB_AUDIO: true , AUTOPLAY: false, webAudioCallback: function(realUrl){
-        document.createElement("audio").src = realUrl;
-    }};
+    if (sys.browserType === sys.BROWSER_TYPE_FIREFOX) {
+        support.DELAY_CREATE_CTX = true;
+        support.USE_LOADER_EVENT = 'canplay';
+    }
 
-    if(cc.sys.isMobile){
-        if(cc.sys.os !== cc.sys.OS_IOS)
-            window.__audioSupport = supportTable[sys.browserType] || supportTable["common"];
-        else
-            window.__audioSupport = supportTable[sys.BROWSER_TYPE_SAFARI];
-    }else{
-        switch(sys.browserType){
-            case sys.BROWSER_TYPE_IE:
-                window.__audioSupport = supportTable[sys.BROWSER_TYPE_IE];
-                break;
-            case sys.BROWSER_TYPE_FIREFOX:
-                window.__audioSupport = supportTable[sys.BROWSER_TYPE_FIREFOX];
-                break;
-            default:
-                window.__audioSupport = supportTable["common"];
+    if (sys.os === sys.OS_ANDROID) {
+        if (sys.browserType === sys.BROWSER_TYPE_UC) {
+            support.ONE_SOURCE = true;
         }
     }
 
-    ///////////////////////////
-    //  Browser compatibility//
-    ///////////////////////////
-    if(version){
-        switch(sys.browserType){
-            case sys.BROWSER_TYPE_CHROME:
-                version = parseInt(version);
-                if(version < 30){
-                    window.__audioSupport  = {MULTI_CHANNEL: false , WEB_AUDIO: true , AUTOPLAY: false};
-                }else if(version === 42){
-                    window.__audioSupport.NEED_MANUAL_LOOP = true;
-                }
-                break;
-            case sys.BROWSER_TYPE_MIUI:
-                if(cc.sys.isMobile){
-                    version = version.match(/\d+/g);
-                    if(version[0] < 2 || (version[0] === 2 && version[1] === 0 && version[2] <= 1)){
-                        window.__audioSupport.AUTOPLAY = false;
-                    }
-                }
-                break;
-        }
-    }
+    window.__audioSupport = support;
 
     if(DEBUG){
         setTimeout(function(){
@@ -132,317 +79,227 @@
  * Encapsulate DOM and webAudio
  */
 cc.Audio = cc.Class.extend({
-    //TODO Maybe loader shift in will be better
-    volume: 1,
-    loop: false,
     src: null,
-    _touch: false,
-
-    _playing: false,
-    _AUDIO_TYPE: "AUDIO",
-    _pause: false,
-
-    //Web Audio
-    _buffer: null,
-    _currentSource: null,
-    _startTime: null,
-    _currentTime: null,
-    _context: null,
-    _volume: null,
-
-    _ignoreEnded: false,
-    _manualLoop: false,
-
-    //DOM Audio
     _element: null,
+    _AUDIO_TYPE: "AUDIO",
 
-    ctor: function(context, volume, url){
-        context && (this._context = context);
-        volume && (this._volume = volume);
-        if(context && volume){
-            this._AUDIO_TYPE = "WEBAUDIO";
-        }
+    ctor: function(url){
         this.src = url;
     },
 
-    _setBufferCallback: null,
-    setBuffer: function(buffer){
-        if(!buffer) return;
-        var playing = this._playing;
+    setBuffer: function (buffer) {
         this._AUDIO_TYPE = "WEBAUDIO";
-
-        if(this._buffer && this._buffer !== buffer && this.getPlaying())
-            this.stop();
-
-        this._buffer = buffer;
-        if(playing)
-            this.play();
-
-        this._volume["gain"].value = this.volume;
-        this._setBufferCallback && this._setBufferCallback(buffer);
+        this._element = new cc.Audio.WebAudio(buffer);
     },
 
-    _setElementCallback: null,
-    setElement: function(element){
-        if(!element) return;
-        var playing = this._playing;
+    setElement: function (element) {
         this._AUDIO_TYPE = "AUDIO";
-
-        if(this._element && this._element !== element && this.getPlaying())
-            this.stop();
-
         this._element = element;
-        if(playing)
-            this.play();
 
-        element.volume = this.volume;
-        element.loop = this.loop;
-        this._setElementCallback && this._setElementCallback(element);
-    },
-
-    play: function(offset, loop){
-        this._playing = true;
-        this.loop = loop === undefined ? this.loop : loop;
-        if(this._AUDIO_TYPE === "AUDIO"){
-            this._playOfAudio(offset);
-        }else{
-            this._playOfWebAudio(offset);
-        }
-    },
-
-    getPlaying: function(){
-        if(!this._playing){
-            return false;
-        }
-        if(this._AUDIO_TYPE === "AUDIO"){
-            var audio = this._element;
-            if(!audio || this._pause || audio.ended){
-                return this._playing = false;
+        // 防止部分浏览器播放结束后不重置 paused 标记
+        // 会造成判断播放状态错误
+        element.addEventListener('ended', function () {
+            if (!element.loop) {
+                element.paused = true;
             }
-            return true;
-        }
-        var sourceNode = this._currentSource;
-        if(!sourceNode || !sourceNode["playbackState"])
-            return true;
-
-        if(this._currentTime + this._context.currentTime - this._startTime < sourceNode.buffer.duration)
-            return true;
-
-        return sourceNode["playbackState"] == 2;
+        });
     },
 
-    _playOfWebAudio: function(offset){
-        var cs = this._currentSource;
-        if(!this._buffer){
-            return;
+    play: function (offset, loop) {
+        if (!this._element) return;
+        this._element.loop = loop;
+        this._element.play();
+        if (this._AUDIO_TYPE === 'AUDIO' && this._element.paused) {
+            this.stop();
+            cc.Audio.touchPlayList.push({ loop: loop, offset: offset, audio: this._element });
         }
-        if(!this._pause && cs){
-            if(this._context.currentTime === 0 || this._currentTime + this._context.currentTime - this._startTime > cs.buffer.duration)
-                this._stopOfWebAudio();
-            else
-                return;
-        }
-        var audio = this._context["createBufferSource"]();
-        audio.buffer = this._buffer;
-        audio["connect"](this._volume);
-        if(this._manualLoop)
-            audio.loop = false;
-        else
-            audio.loop = this.loop;
-        this._startTime = this._context.currentTime;
-        this._currentTime = offset || 0;
-        this._ignoreEnded = false;
 
-        /*
-         * Safari on iOS 6 only supports noteOn(), noteGrainOn(), and noteOff() now.(iOS 6.1.3)
-         * The latest version of chrome has supported start() and stop()
-         * start() & stop() are specified in the latest specification (written on 04/26/2013)
-         *      Reference: https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
-         * noteOn(), noteGrainOn(), and noteOff() are specified in Draft 13 version (03/13/2012)
-         *      Reference: http://www.w3.org/2011/audio/drafts/2WD/Overview.html
-         */
-        if(audio.start){
-            audio.start(0, offset || 0);
-        }else if(audio["noteGrainOn"]){
-            var duration = audio.buffer.duration;
-            if (this.loop) {
-                /*
-                 * On Safari on iOS 6, if loop == true, the passed in @param duration will be the duration from now on.
-                 * In other words, the sound will keep playing the rest of the music all the time.
-                 * On latest chrome desktop version, the passed in duration will only be the duration in this cycle.
-                 * Now that latest chrome would have start() method, it is prepared for iOS here.
-                 */
-                audio["noteGrainOn"](0, offset, duration);
-            } else {
-                audio["noteGrainOn"](0, offset, duration - offset);
-            }
-        }else {
-            // if only noteOn() is supported, resuming sound will NOT work
-            audio["noteOn"](0);
-        }
-        this._currentSource = audio;
-        var self = this;
-        audio["onended"] = function(){
-            if(self._manualLoop && self._playing && self.loop){
-                self.stop();
-                self.play();
-                return;
-            }
-            if(self._ignoreEnded){
-                self._ignoreEnded = false;
-            }else{
-                if(!self._pause)
-                    self.stop();
-                else
-                    self._playing = false;
-            }
-        };
-    },
-
-    _playOfAudio: function(){
-        var audio = this._element;
-        if(audio){
-            audio.loop = this.loop;
-            audio.play();
+        if (cc.Audio.bindTourch === false) {
+            cc.Audio.bindTourch = true;
+            // 监听 body 的 touchstart 事件，在必要的时候播放音频
+            cc.game.canvas.addEventListener('touchstart', cc.Audio.touchStart);
         }
     },
 
-    stop: function(){
-        this._playing = false;
-        if(this._AUDIO_TYPE === "AUDIO"){
-            this._stopOfAudio();
-        }else{
-            this._stopOfWebAudio();
-        }
+    getPlaying: function () {
+        if (!this._element) return true;
+        return !this._element.paused;
     },
 
-    _stopOfWebAudio: function(){
-        var audio = this._currentSource;
-        this._ignoreEnded = true;
-        if(audio){
-            audio.stop(0);
-            this._currentSource = null;
-        }
+    stop: function () {
+        if (!this._element) return;
+        this._element.pause();
+        try{
+            this._element.currentTime = 0;
+        } catch (err) {}
     },
 
-    _stopOfAudio: function(){
-        var audio = this._element;
-        if(audio){
-            audio.pause();
-            if (audio.duration)
-                audio.currentTime = 0;
-        }
+    pause: function () {
+        if (!this._element) return;
+        this._element.pause();
     },
 
-    pause: function(){
-        if(this.getPlaying() === false)
-            return;
-        this._playing = false;
-        this._pause = true;
-        if(this._AUDIO_TYPE === "AUDIO"){
-            this._pauseOfAudio();
-        }else{
-            this._pauseOfWebAudio();
-        }
+    resume: function () {
+        if (!this._element) return;
+        this._element.play();
     },
 
-    _pauseOfWebAudio: function(){
-        this._currentTime += this._context.currentTime - this._startTime;
-        var audio = this._currentSource;
-        if(audio){
-            audio.stop(0);
-        }
+    setVolume: function (volume) {
+        if (!this._element) return;
+        this._element.volume = volume;
     },
 
-    _pauseOfAudio: function(){
-        var audio = this._element;
-        if(audio){
-            audio.pause();
-        }
+    getVolume: function () {
+        if (!this._element) return;
+        return this._element.volume;
     },
 
-    resume: function(){
-        if(this._pause){
-            if(this._AUDIO_TYPE === "AUDIO"){
-                this._resumeOfAudio();
-            }else{
-                this._resumeOfWebAudio();
-            }
-            this._pause = false;
-            this._playing = true;
-        }
-    },
-
-    _resumeOfWebAudio: function(){
-        var audio = this._currentSource;
-        if(audio){
-            this._startTime = this._context.currentTime;
-            var offset = this._currentTime % audio.buffer.duration;
-            this._playOfWebAudio(offset);
-        }
-    },
-
-    _resumeOfAudio: function(){
-        var audio = this._element;
-        if(audio){
-            audio.play();
-        }
-    },
-
-    setVolume: function(volume){
-        if(volume > 1) volume = 1;
-        if(volume < 0) volume = 0;
-        this.volume = volume;
-        if(this._AUDIO_TYPE === "AUDIO"){
-            if(this._element){
-                this._element.volume = volume;
-            }
-        }else{
-            if(this._volume){
-                this._volume["gain"].value = volume;
-            }
-        }
-    },
-
-    getVolume: function(){
-        return this.volume;
-    },
-
-    cloneNode: function(){
-        var audio, self;
-        if(this._AUDIO_TYPE === "AUDIO"){
-            audio = new cc.Audio();
-
+    cloneNode: function () {
+        var audio = new cc.Audio(this.src);
+        if (this._AUDIO_TYPE === "AUDIO") {
             var elem = document.createElement("audio");
+            var sources = elem.getElementsByTagName('source');
+            for (var i=0; i<sources.length; i++) {
+                elem.appendChild(sources[i]);
+            }
             elem.src = this.src;
             audio.setElement(elem);
-        }else{
-            var volume = this._context["createGain"]();
-            volume["gain"].value = 1;
-            volume["connect"](this._context["destination"]);
-            audio = new cc.Audio(this._context, volume, this.src);
-            if(this._buffer){
-                audio.setBuffer(this._buffer);
-            }else{
-                self = this;
-                this._setBufferCallback = function(buffer){
-                    audio.setBuffer(buffer);
-                    self._setBufferCallback = null;
-                };
-            }
-            audio._manualLoop = this._manualLoop;
+        } else {
+            audio.setBuffer(this._element.buffer);
         }
-        audio._AUDIO_TYPE = this._AUDIO_TYPE;
         return audio;
     }
-
 });
+
+cc.Audio.touchPlayList = [
+    //{ offset: 0, audio: audio }
+];
+
+cc.Audio.bindTourch = false;
+cc.Audio.touchStart = function () {
+    var list = cc.Audio.touchPlayList;
+    var item = null;
+    while (item = list.pop()) {
+        item.audio.loop = !!item.loop;
+        item.audio.play(item.offset);
+    }
+};
+
+cc.Audio.WebAudio = function (buffer) {
+    this.buffer = buffer;
+    this.context = cc.Audio._context;
+
+    var volume = this.context['createGain']();
+    volume['gain'].value = 1;
+    volume['connect'](this.context['destination']);
+    this._volume = volume;
+
+    this._loop = false;
+
+    // 记录开始播放时音频时间轴上的时间戳
+    this._startTime = -1;
+    // 记录当前正在播放的 Source
+    this._currentSource = null;
+    // 记录已经播放过的时间
+    this.playedLength = 0;
+
+    this._currextTimer = null;
+};
+
+cc.Audio.WebAudio.prototype = {
+    constructor: cc.Audio.WebAudio,
+
+    get paused () {
+        // 如果当前音频是循环播放的，则 paused 为 false
+        // loop 会在 pause() 方法中清空
+        if (this._currentSource && this._currentSource.loop)
+            return false;
+
+        // startTime 没有值，为默认的 -1，则没有开始播放
+        if (this._startTime === -1)
+            return true;
+
+        // 当前时间 - 开始播放的时间 是否 大于 音频的持续时间
+        return this.context.currentTime - this._startTime > this.buffer.duration;
+    },
+    set paused (bool) {},
+
+    get loop () { return this._loop; },
+    set loop (bool) { return this._loop = bool; },
+
+    get volume () { return this._volume['gain'].value; },
+    set volume (num) { return this._volume['gain'].value = num; },
+
+    get currentTime () { return this.playedLength; },
+    set currentTime (num) { return this.playedLength = num; },
+
+    play: function (offset) {
+
+        // 如果重复播放，需要停止之前一个音频
+        if (this._currentSource && !this.paused) {
+            this._currentSource.stop(0);
+            this.playedLength = 0;
+        }
+
+        var audio = this.context["createBufferSource"]();
+        audio.buffer = this.buffer;
+        audio["connect"](this._volume);
+        audio.loop = this._loop;
+
+        this._startTime = this.context.currentTime;
+        offset = offset || this.playedLength;
+
+        var duration = this.buffer.duration;
+        if (!this._loop) {
+            if (audio.start)
+                audio.start(0, offset, duration - offset);
+            else if (audio["notoGrainOn"])
+                audio["noteGrainOn"](0, offset, duration - offset);
+            else
+                audio["noteOn"](0, offset, duration - offset);
+        } else {
+            if (audio.start)
+                audio.start(0);
+            else if (audio["notoGrainOn"])
+                audio["noteGrainOn"](0);
+            else
+                audio["noteOn"](0);
+        }
+
+        this._currentSource = audio;
+
+        // 如果当前的音频上下文时间戳为 0
+        // 则有可能需要触摸事件才能真正开始播放音频
+        // 所以在这里加一个计时器，判断是否真正开始播放音频，如果没有，则传入touchPlay队列
+        if (this.context.currentTime === 0) {
+            var self = this;
+            clearTimeout(this._currextTimer);
+            this._currextTimer = setTimeout(function () {
+                if (self.context.currentTime === 0) {
+                    cc.Audio.touchPlayList.push({
+                        offset: offset,
+                        audio: self
+                    });
+                }
+            }, 10);
+        }
+    },
+    pause: function () {
+        // 记录当前已经播放的时间
+        this.playedLength = this.context.currentTime - this._startTime;
+        // 如果 playedLendth 超过了音频的持续时间，则应该取余数
+        this.playedLength %= this.buffer.duration;
+        var audio = this._currentSource;
+        this._currentSource = null;
+        this._startTime = -1;
+        if (audio)
+            audio.stop(0);
+    }
+};
 
 (function(polyfill){
 
-    var SWA = polyfill.WEB_AUDIO,
-        SWB = polyfill.MULTI_CHANNEL,
-        SWC = polyfill.AUTOPLAY;
+    var SWA = polyfill.WEB_AUDIO, SWB = polyfill.ONLY_ONE;
 
     var support = [];
 
@@ -464,8 +321,12 @@ cc.Audio = cc.Class.extend({
     try{
         if(SWA){
             var context = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
+            cc.Audio._context = context;
             if(polyfill.DELAY_CREATE_CTX)
-                setTimeout(function(){ context = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)(); }, 0);
+                setTimeout(function(){
+                    context = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
+                    cc.Audio._context = context;
+                }, 0);
         }
     }catch(error){
         SWA = false;
@@ -476,12 +337,41 @@ cc.Audio = cc.Class.extend({
 
         cache: {},
 
-        useWebAudio: false,
+        loadBuffer: function (url, cb) {
+            if (!SWA) return; // WebAudio Buffer
+
+            url = cc.path.join(cc.loader.resPath, url);
+
+            var request = new XMLHttpRequest();
+            request.open("GET", url, true);
+            request.responseType = "arraybuffer";
+
+            // Our asynchronous callback
+            request.onload = function () {
+                context["decodeAudioData"](request.response, function(buffer){
+                    //success
+                    cb(null, buffer);
+                    //audio.setBuffer(buffer);
+                }, function(){
+                    //error
+                    cb('decode error - ' + url);
+                });
+            };
+
+            request.onerror = function(){
+                cb('request error - ' + url);
+            };
+
+            request.send();
+        },
 
         load: function(realUrl, url, res, cb){
 
             if(support.length === 0)
                 return cb("can not support audio!");
+
+            if (loader.cache[url])
+                return cb(null, loader.cache[url]);
 
             var i;
 
@@ -498,31 +388,9 @@ cc.Audio = cc.Class.extend({
             }
 
             var audio;
-
-            if (loader.cache[url])
-                return cb(null, loader.cache[url]);
-
-            if (SWA && this.useWebAudio) {
-                try{
-                    var volume = context["createGain"]();
-                    volume["gain"].value = 1;
-                    volume["connect"](context["destination"]);
-                    audio = new cc.Audio(context, volume, realUrl);
-                    if(polyfill.NEED_MANUAL_LOOP)
-                        audio._manualLoop = true;
-                }catch(err){
-                    SWA = false;
-                    cc.log("browser don't support web audio");
-                    audio = new cc.Audio(null, null, realUrl);
-                }
-            } else {
-                audio = new cc.Audio(null, null, realUrl);
-            }
-
-            this.loadAudioFromExtList(realUrl, typeList, audio, cb);
-
+            audio = new cc.Audio(realUrl);
             loader.cache[url] = audio;
-
+            this.loadAudioFromExtList(realUrl, typeList, audio, cb);
         },
 
         loadAudioFromExtList: function(realUrl, typeList, audio, cb){
@@ -536,88 +404,43 @@ cc.Audio = cc.Class.extend({
                 return cb({status:520, errorMessage:ERRSTR}, null);
             }
 
-            realUrl = cc.path.changeExtname(realUrl, typeList.splice(0, 1));
+            var num = polyfill.ONE_SOURCE ? 1 : typeList.length;
 
-            if (SWA && this.useWebAudio) {// WebAudio Buffer
-                if(polyfill.webAudioCallback)
-                    polyfill.webAudioCallback(realUrl);
-                var request = new XMLHttpRequest();
-                request.open("GET", realUrl, true);
-                request.responseType = "arraybuffer";
-
-                // Our asynchronous callback
-                request.onload = function () {
-                    context["decodeAudioData"](request.response, function(buffer){
-                        //success
-                        audio.setBuffer(buffer);
-                        cb(null, audio);
-                    }, function(){
-                        //error
-                        loader.loadAudioFromExtList(realUrl, typeList, audio, cb);
-                    });
-                };
-
-                request.onerror = function(){
-                    cb({status:520, errorMessage:ERRSTR}, null);
-                };
-
-                request.send();
-            } else {//DOM
-                var element = new Audio();
-                audio.setElement(element);
-                var cbCheck = false;
-                var termination = false;
-
-                var timer = setTimeout(function(){
-                    if (element.readyState === 0) {
-                        emptied();
-                    } else {
-                        termination = true;
-                        element.pause();
-                        cb(null, audio);
-                    }
-                }, 8000);
-
-                var success = function(){
-                    if(!cbCheck){
-                        try {
-                            element.currentTime = 0;
-                            element.volume = 1;
-                        } catch (e) {}
-                        audio.setElement(element);
-                        element.removeEventListener("canplaythrough", success, false);
-                        element.removeEventListener("error", failure, false);
-                        element.removeEventListener("emptied", emptied, false);
-                        !termination && cb(null, audio);
-                        cbCheck = true;
-                        clearTimeout(timer);
-                    }
-                };
-
-                var failure = function(){
-                    if(!cbCheck) return;
-                    element.removeEventListener("canplaythrough", success, false);
-                    element.removeEventListener("error", failure, false);
-                    element.removeEventListener("emptied", emptied, false);
-                    !termination && loader.loadAudioFromExtList(realUrl, typeList, audio, cb);
-                    cbCheck = true;
-                    clearTimeout(timer);
-                };
-
-                var emptied = function(){
-                    termination = true;
-                    success();
-                    cb(null, audio);
-                };
-
-                element.addEventListener("canplaythrough", success, false);
-                element.addEventListener("error", failure, false);
-                if(polyfill.USE_EMPTIED_EVENT)
-                    element.addEventListener("emptied", emptied, false);
-
-                element.src = realUrl;
+            // 加载统一使用dom
+            var dom = document.createElement('audio');
+            for (var i=0; i<num; i++) {
+                var source = document.createElement('source');
+                source.src = cc.path.changeExtname(realUrl, typeList[i]);
+                dom.appendChild(source);
             }
 
+            audio.setElement(dom);
+
+            var timer = setTimeout(function(){
+                if (dom.readyState === 0) {
+                    failure();
+                } else {
+                    success();
+                }
+            }, 8000);
+
+            var success = function () {
+                dom.removeEventListener("canplaythrough", success, false);
+                dom.removeEventListener("error", failure, false);
+                dom.removeEventListener("emptied", success, false);
+                if (polyfill.USE_LOADER_EVENT)
+                    dom.removeEventListener(polyfill.USE_LOADER_EVENT, success, false);
+                clearTimeout(timer);
+                cb(null, audio);
+            };
+            var failure = function () {
+                cc.log('load audio failure - ' + realUrl);
+                success();
+            };
+            dom.addEventListener("canplaythrough", success, false);
+            dom.addEventListener("error", failure, false);
+            if(polyfill.USE_LOADER_EVENT)
+                dom.addEventListener(polyfill.USE_LOADER_EVENT, success, false);
         }
     };
     cc.loader.register(["mp3", "ogg", "wav", "mp4", "m4a"], loader);
@@ -629,29 +452,8 @@ cc.Audio = cc.Class.extend({
     cc.audioEngine = {
         _currMusic: null,
         _musicVolume: 1,
-        _autoplayed: false,
 
         features: polyfill,
-
-        // Autoplay on iOS and some other android browsers in which the music must be played in an event callback
-        autoplay: function (url, loop, isMusic) {
-            var self = this;
-            if (cc.game.canvas) {
-                if (!self._autoplayed) {
-                    self._autoplayed = true;
-                }
-                var delayedPlay = function () {
-                    if (isMusic) {
-                        self.playMusic(url, loop, true);
-                    }
-                    else {
-                        self.playEffect(url, loop);
-                    }
-                    cc.game.canvas.removeEventListener("touchstart", delayedPlay);
-                };
-                cc.game.canvas.addEventListener("touchstart", delayedPlay, false);
-            }
-        },
 
         /**
          * Indicates whether any background music can be played or not.
@@ -667,12 +469,7 @@ cc.Audio = cc.Class.extend({
          * //example
          * cc.audioEngine.playMusic(path, false);
          */
-        playMusic: function(url, loop, immediate){
-            if (!SWC && !immediate) {
-                this.autoplay(url, loop, true);
-                return;
-            }
-
+        playMusic: function(url, loop){
             var bgMusic = this._currMusic;
             if (bgMusic && bgMusic.getPlaying()) {
                 bgMusic.stop();
@@ -682,8 +479,8 @@ cc.Audio = cc.Class.extend({
                 cc.loader.load(url);
                 audio = loader.cache[url];
             }
-            audio.play(0, loop || false);
             audio.setVolume(this._musicVolume);
+            audio.play(0, loop || false);
 
             this._currMusic = audio;
         },
@@ -807,9 +604,10 @@ cc.Audio = cc.Class.extend({
          * var soundId = cc.audioEngine.playEffect(path);
          */
         playEffect: function(url, loop){
-            if (!SWC && !this._autoplayed) {
-                this.autoplay(url, loop, false);
-                return;
+
+            if (SWB && this._currMusic && this._currMusic.getPlaying()) {
+                cc.log('Browser is only allowed to play one audio');
+                return null;
             }
 
             var effectList = this._audioPool[url];
@@ -838,24 +636,43 @@ cc.Audio = cc.Class.extend({
                 audio = effectList[i];
                 audio.setVolume(this._effectVolume);
                 audio.play(0, loop || false);
-            } else {
-                audio = loader.cache[url];
-                if (audio && audio._AUDIO_TYPE != "WEBAUDIO") {
-                    delete loader.cache[url];
-                    cc.loader.release(url);
-                    audio = null;
-                }
-                if (!audio) {
-                    // Force using webaudio for effects
-                    loader.useWebAudio = true;
-                    cc.loader.load(url);
-                    loader.useWebAudio = false;
-                    audio = loader.cache[url];
-                }
+                return audio;
+            }
+
+            var cacheName = url;
+
+            if (SWA) { // WebAudio
+                cacheName += '_webAudio';
+            }
+
+            audio = loader.cache[cacheName];
+            if (audio) {
                 audio = audio.cloneNode();
                 audio.setVolume(this._effectVolume);
                 audio.play(0, loop || false);
                 effectList.push(audio);
+                return audio;
+            }
+
+            if (SWA) { // WebAudio
+                // Force using webaudio for effects
+                audio = new cc.Audio();
+                loader.loadBuffer(url, function (error, buffer) {
+                    audio.setBuffer(buffer);
+                    audio.setVolume(cc.audioEngine._effectVolume);
+                    if (!audio.getPlaying())
+                        audio.play(0, loop || false);
+                });
+                effectList.push(audio);
+                loader.cache[cacheName] = audio;
+            } else {
+                cc.loader.load(url);
+                audio = loader.cache[cacheName];
+                audio = audio.cloneNode();
+                audio.setVolume(this._effectVolume);
+                audio.play(0, loop || false);
+                effectList.push(audio);
+                return audio;
             }
 
             return audio;
