@@ -397,6 +397,8 @@ return {
                         for (; i < end; ++i) {
                             _prevRenderCmds[i]._vBuffer = null;
                         }
+                        // keeping i correct, it should run through all elements
+                        i--;
                         continue;
                     }
                 }
@@ -417,6 +419,8 @@ return {
                     for (; i < end; ++i) {
                         _prevRenderCmds[i]._vBuffer = newBuf;
                     }
+                    // keeping i correct, it should run through all elements
+                    i--;
                 }
             }
         }
