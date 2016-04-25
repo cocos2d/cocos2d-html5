@@ -586,6 +586,7 @@ cc.loader = (function () {
         _register = {}, //register of loaders
         _langPathCache = {}, //cache for lang path
         _aliases = {}, //aliases for res url
+        _queue = {}, // Callback queue for resources already loading
         _urlRegExp = new RegExp(
             "^" +
                 // protocol identifier
@@ -666,6 +667,10 @@ cc.loader = (function () {
                 results[2] = a2;
             } else throw new Error("arguments error to load js!");
             return results;
+        },
+
+        isLoading: function (url) {
+            return (_queue[url] !== undefined);
         },
 
         /**
@@ -890,6 +895,12 @@ cc.loader = (function () {
                 return img;
             }
 
+            var queue = _queue[url];
+            if (queue) {
+                queue.callbacks.push(callback);
+                return queue.img;
+            }
+
             img = new Image();
             if (opt.isCrossOrigin && location.origin !== "file://")
                 img.crossOrigin = "Anonymous";
@@ -898,22 +909,51 @@ cc.loader = (function () {
                 this.removeEventListener('load', loadCallback, false);
                 this.removeEventListener('error', errorCallback, false);
 
-                cc.loader.cache[url] = img;
-                if (callback)
-                    callback(null, img);
+                if (!_urlRegExp.test(url)) {
+                    cc.loader.cache[url] = img;
+                }
+
+                var queue = _queue[url];
+                if (queue) {
+                    callbacks = queue.callbacks;
+                    for (var i = 0; i < callbacks.length; ++i) {
+                        var callback = callbacks[i];
+                        if (callback) {
+                            callback(null, img);
+                        }
+                    }
+                    queue.img = null;
+                    delete _queue[url];
+                }
             };
 
             var self = this;
             var errorCallback = function () {
                 this.removeEventListener('error', errorCallback, false);
 
-                if(img.crossOrigin && img.crossOrigin.toLowerCase() === "anonymous"){
+                if (img.crossOrigin && img.crossOrigin.toLowerCase() === "anonymous") {
                     opt.isCrossOrigin = false;
                     self.release(url);
                     cc.loader.loadImg(url, opt, callback);
-                }else{
-                    typeof callback === "function" && callback("load image failed");
+                } else {
+                    var queue = _queue[url];
+                    if (queue) {
+                        callbacks = queue.callbacks;
+                        for (var i = 0; i < callbacks.length; ++i) {
+                            var callback = callbacks[i];
+                            if (callback) {
+                                callback("load image failed");
+                            }
+                        }
+                        queue.img = null;
+                        delete _queue[url];
+                    }
                 }
+            };
+
+            _queue[url] = {
+                img: img,
+                callbacks: callback ? [callback] : []
             };
 
             img.addEventListener("load", loadCallback);
