@@ -415,14 +415,10 @@
 
         // recalculate matrix only if it is dirty
         if (this._dirty) {
-            var locQuad = _t._quad, locParent = node._parent, vertices = _t._vertices;
+            var locQuad = _t._quad, locParent = node._parent;
             // If it is not visible, or one of its ancestors is not visible, then do nothing:
             if (!node._visible || ( locParent && locParent !== node._batchNode && locParent._shouldBeHidden)) {
-                for (var i = 0; i < 4; ++i) {
-                    vertices[i].x = 0;
-                    vertices[i].y = 0;
-                    vertices[i].z = 0;
-                }
+                locQuad.br.vertices = locQuad.tl.vertices = locQuad.tr.vertices = locQuad.bl.vertices = {x: 0, y: 0, z: 0};
                 node._shouldBeHidden = true;
             } else {
                 node._shouldBeHidden = false;
