@@ -35,36 +35,12 @@ ccui.RelativeBox = ccui.Layout.extend(/** @lends ccui.RelativeBox# */{
      * @param {cc.Size} [size]
      */
     ctor: function(size){
-        if(size)
-            this.initWithSize(size);
-        else
-            this.init();
-    },
+        ccui.Layout.prototype.ctor.call(this);
+        this.setLayoutType(ccui.Layout.RELATIVE);
 
-    /**
-     * Initializes a relative box. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
-     * @override
-     * @returns {boolean}
-     */
-    init: function(){
-        if(ccui.Layout.prototype.init.call(this)){
-            this.setLayoutType(ccui.Layout.RELATIVE);
-            return true;
-        }
-        return false;
-    },
-
-    /**
-     * Initializes a relative box with size
-     * @param {cc.Size} [size]
-     * @returns {boolean}
-     */
-    initWithSize: function(size){
-        if(this.init()){
+        if(size) {
             this.setContentSize(size);
-            return true;
         }
-        return false;
     }
 });
 

@@ -36,28 +36,22 @@ ccui.RichElement = ccui.Class.extend(/** @lends ccui.RichElement# */{
     /**
      * Constructor of ccui.RichElement
      */
-    ctor: function () {
+    ctor: function (tag, color, opacity) {
         this._type = 0;
-        this._tag = 0;
+        this._tag = tag || 0;
         this._color = cc.color(255, 255, 255, 255);
-    },
-
-    /**
-     * Initializes a richElement.
-     * @param {Number} tag
-     * @param {cc.Color} color
-     * @param {Number} opacity
-     */
-    init: function (tag, color, opacity) {
-        this._tag = tag;
-        this._color.r = color.r;
-        this._color.g = color.g;
-        this._color.b = color.b;
-        this._opacity = opacity;
-        if(opacity === undefined)
+        if (color) {
+            this._color.r = color.r;
+            this._color.g = color.g;
+            this._color.b = color.b;
+        }
+        this._opacity = opacity || 0;
+        if(opacity === undefined) {
             this._color.a = color.a;
-        else
+        }
+        else {
             this._color.a = opacity;
+        }
     }
 });
 
@@ -93,42 +87,18 @@ ccui.RichElementText = ccui.RichElement.extend(/** @lends ccui.RichElementText# 
      * @param {Number} fontSize
      */
     ctor: function (tag, colorOrFontDef, opacity, text, fontName, fontSize) {
-        ccui.RichElement.prototype.ctor.call(this);
+        var color = colorOrFontDef;
+        if (colorOrFontDef && colorOrFontDef instanceof cc.FontDefinition) {
+            color = colorOrFontDef.fillStyle;
+            fontName = fontDef.fontName;
+            fontSize = fontDef.fontSize;
+            this._fontDefinition = fontDef;
+        }
+        ccui.RichElement.prototype.ctor.call(this, tag, color, opacity);
         this._type = ccui.RichElement.TEXT;
-        this._text = "";
-        this._fontName = "";
-        this._fontSize = 0;
-
-        if( colorOrFontDef && colorOrFontDef instanceof cc.FontDefinition)
-            this.initWithStringAndTextDefinition(tag, text, colorOrFontDef, opacity);
-        else
-            fontSize && this.init(tag, colorOrFontDef, opacity, text, fontName, fontSize);
-    },
-
-    /**
-     * Initializes a ccui.RichElementText.
-     * @param {Number} tag
-     * @param {cc.Color} color
-     * @param {Number} opacity
-     * @param {String} text
-     * @param {String} fontName
-     * @param {Number} fontSize
-     * @override
-     */
-    init: function (tag, color, opacity, text, fontName, fontSize) {
-        ccui.RichElement.prototype.init.call(this, tag, color, opacity);
         this._text = text;
         this._fontName = fontName;
         this._fontSize = fontSize;
-    },
-    initWithStringAndTextDefinition: function(tag, text, fontDef, opacity){
-
-        ccui.RichElement.prototype.init.call(this, tag, fontDef.fillStyle, opacity);
-        this._fontDefinition = fontDef;
-        this._text = text;
-        this._fontName = fontDef.fontName;
-        this._fontSize = fontDef.fontSize;
-
     }
 });
 
@@ -165,26 +135,11 @@ ccui.RichElementImage = ccui.RichElement.extend(/** @lends ccui.RichElementImage
      * @param {String} filePath
      */
     ctor: function (tag, color, opacity, filePath) {
-        ccui.RichElement.prototype.ctor.call(this);
+        ccui.RichElement.prototype.ctor.call(this, tag, color, opacity);
         this._type = ccui.RichElement.IMAGE;
-        this._filePath = "";
+        this._filePath = filePath || "";
         this._textureRect = cc.rect(0, 0, 0, 0);
         this._textureType = 0;
-
-        filePath !== undefined && this.init(tag, color, opacity, filePath);
-    },
-
-    /**
-     * Initializes a ccui.RichElementImage
-     * @param {Number} tag
-     * @param {cc.Color} color
-     * @param {Number} opacity
-     * @param {String} filePath
-     * @override
-     */
-    init: function (tag, color, opacity, filePath) {
-        ccui.RichElement.prototype.init.call(this, tag, color, opacity);
-        this._filePath = filePath;
     }
 });
 
@@ -217,24 +172,9 @@ ccui.RichElementCustomNode = ccui.RichElement.extend(/** @lends ccui.RichElement
      * @param {cc.Node} customNode
      */
     ctor: function (tag, color, opacity, customNode) {
-        ccui.RichElement.prototype.ctor.call(this);
+        ccui.RichElement.prototype.ctor.call(this, tag, color, opacity);
         this._type = ccui.RichElement.CUSTOM;
-        this._customNode = null;
-
-        customNode !== undefined && this.init(tag, color, opacity, customNode);
-    },
-
-    /**
-     * Initializes a ccui.RichElementCustomNode
-     * @param {Number} tag
-     * @param {cc.Color} color
-     * @param {Number} opacity
-     * @param {cc.Node} customNode
-     * @override
-     */
-    init: function (tag, color, opacity, customNode) {
-        ccui.RichElement.prototype.init.call(this, tag, color, opacity);
-        this._customNode = customNode;
+        this._customNode = customNode || null;
     }
 });
 

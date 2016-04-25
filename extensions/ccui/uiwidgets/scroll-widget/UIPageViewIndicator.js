@@ -48,29 +48,15 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
         this._indexNodes = [];
         this._spaceBetweenIndexNodes = ccui.PageViewIndicator.SPACE_BETWEEN_INDEX_NODES_DEFAULT;
 
-        this.init();
+        var image =  new Image();
+        image.src = ccui.PageViewIndicator.CIRCLE_IMAGE;
+
+        this._currentIndexNode = new cc.Sprite(image);
+        this._currentIndexNode.setVisible(false);
+        this.addProtectedChild(this._currentIndexNode, 1);
 
         // this.setCascadeColorEnabled(true);
         // this.setCascadeOpacityEnabled(true);
-    },
-
-    /**
-     * Initializes a ccui.PageViewIndicator. Please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
-     * @returns {boolean}
-     */
-    init: function () {
-        if (cc.ProtectedNode.prototype.init.call(this)) {
-
-            var image =  new Image();
-            image.src = ccui.PageViewIndicator.CIRCLE_IMAGE;
-
-            this._currentIndexNode = new cc.Sprite(image);
-            this._currentIndexNode.setVisible(false);
-            this.addProtectedChild(this._currentIndexNode, 1);
-
-            return true;
-        }
-        return false;
     },
 
     /**

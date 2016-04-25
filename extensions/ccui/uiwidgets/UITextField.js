@@ -252,25 +252,13 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
      */
     ctor: function (placeholder, fontName, fontSize) {
         ccui.Widget.prototype.ctor.call(this);
+        this.setTouchEnabled(true);
         if (fontName)
             this.setFontName(fontName);
         if (fontSize)
             this.setFontSize(fontSize);
         if (placeholder)
             this.setPlaceHolder(placeholder);
-    },
-
-    /**
-     * Initializes a ccui.TextField. Please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
-     * @returns {boolean}
-     * @override
-     */
-    init: function(){
-        if(ccui.Widget.prototype.init.call(this)){
-            this.setTouchEnabled(true);
-            return true;
-        }
-        return false;
     },
 
     /**

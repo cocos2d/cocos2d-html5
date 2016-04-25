@@ -56,21 +56,10 @@ ccui.PageView = ccui.ListView.extend(/** @lends ccui.PageView# */{
         this._indicatorPositionAsAnchorPoint = cc.p(0.5, 0.1);
         this._pageViewEventListener = null;
         this._pageViewEventSelector = null;
-    },
 
-    /**
-     * Initializes a ccui.PageView. Please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
-     * @returns {boolean}
-     */
-    init: function () {
-        if (ccui.ListView.prototype.init.call(this)) {
-            this.setDirection(ccui.ScrollView.DIR_HORIZONTAL);
-            this.setMagneticType(ccui.ListView.MAGNETIC_CENTER);
-            this.setScrollBarEnabled(false);
-
-            return true;
-        }
-        return false;
+        this.setDirection(ccui.ScrollView.DIR_HORIZONTAL);
+        this.setMagneticType(ccui.ListView.MAGNETIC_CENTER);
+        this.setScrollBarEnabled(false);
     },
 
     /**

@@ -69,30 +69,13 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
         this._textAreaSize = cc.size(0, 0);
         ccui.Widget.prototype.ctor.call(this);
 
-        fontSize !== undefined && this.init(textContent, fontName, fontSize);
-
-    },
-
-    /**
-     * Initializes a ccui.Text. Please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
-     * @param {String} textContent
-     * @param {String} fontName
-     * @param {Number} fontSize
-     * @returns {boolean}
-     * @override
-     */
-    init: function (textContent, fontName, fontSize) {
-        if (ccui.Widget.prototype.init.call(this)) {
-            if(arguments.length > 0){
-                this.setFontName(fontName);
-                this.setFontSize(fontSize);
-                this.setString(textContent);
-            }else{
-                this.setFontName(this._fontName);
-            }
-            return true;
+        if (fontSize !== undefined) {
+            this.setFontName(fontName);
+            this.setFontSize(fontSize);
+            this.setString(textContent);
+        } else {
+            this.setFontName(this._fontName);
         }
-        return false;
     },
 
     _initRenderer: function () {
