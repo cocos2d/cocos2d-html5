@@ -291,7 +291,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (a.r != null && a.g != null && a.b != null && a.a != null) {
             this._enableShadow(a, b, c);
         } else {
-            this._enableShadowNoneColor(a, b, c, d)
+            this._enableShadowNoneColor(a, b, c, d);
         }
     },
 

@@ -41,6 +41,7 @@
                 <file name="cocos2d/core/event-manager/CCEventExtension.js"/>
                 <file name="cocos2d/core/base-nodes/BaseNodesPropertyDefine.js"/>
 
+                <file name="cocos2d/core/renderer/GlobalVertexBuffer.js"/>
                 <file name="cocos2d/core/renderer/RendererCanvas.js"/>
                 <file name="cocos2d/core/renderer/RendererWebGL.js"/>
 
@@ -336,6 +337,7 @@
                 <file name="cocos2d/core/textures/CCTexture2D.js"/>
                 <file name="cocos2d/core/textures/CCTextureCache.js"/>
 
+                <file name="cocos2d/core/renderer/GlobalVertexBuffer.js"/>
                 <file name="cocos2d/core/renderer/RendererCanvas.js"/>
                 <file name="cocos2d/core/renderer/RendererWebGL.js"/>
 

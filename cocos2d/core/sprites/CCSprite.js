@@ -132,6 +132,20 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         self._softInit(fileName, rect, rotated);
     },
 
+    onEnter: function () {
+        this._super();
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
+            this._renderCmd.updateBuffer();
+        }
+    },
+
+    cleanup: function () {
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
+            this._renderCmd.freeBuffer();
+        }
+        this._super();
+    },
+
     /**
      * Returns whether the texture have been loaded
      * @returns {boolean}
@@ -711,7 +725,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             if(_t.texture)
                 _t.texture.removeEventListener("load", _t);
             texture.addEventListener("load", _t._renderCmd._textureLoadedCallback, _t);
-            _t.texture = texture;
+            _t.setTexture(texture);
             return true;
         }
 

@@ -566,26 +566,6 @@ cc.VERTEX_ATTRIB_TEX_COORDS = 2;
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIB_MVMAT0 = 3;
-/**
- * @constant
- * @type {Number}
- */
-cc.VERTEX_ATTRIB_MVMAT1 = 4;
-/**
- * @constant
- * @type {Number}
- */
-cc.VERTEX_ATTRIB_MVMAT2 = 5;
-/**
- * @constant
- * @type {Number}
- */
-cc.VERTEX_ATTRIB_MVMAT3 = 6;
-/**
- * @constant
- * @type {Number}
- */
 cc.VERTEX_ATTRIB_MAX = 7;
 
 //------------Uniforms------------------
@@ -650,12 +630,17 @@ cc.SHADER_POSITION_TEXTURECOLORALPHATEST = "ShaderPositionTextureColorAlphaTest"
  * @constant
  * @type {String}
  */
-cc.SHADER_POSITION_TEXTURECOLORALPHATEST_BATCHED = "ShaderPositionTextureColorAlphaTestBatched";
+cc.SHADER_SPRITE_POSITION_TEXTURECOLORALPHATEST = "ShaderSpritePositionTextureColorAlphaTest";
 /**
  * @constant
  * @type {String}
  */
 cc.SHADER_POSITION_COLOR = "ShaderPositionColor";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.SHADER_SPRITE_POSITION_COLOR = "ShaderSpritePositionColor";
 /**
  * @constant
  * @type {String}

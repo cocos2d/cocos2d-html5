@@ -39,6 +39,25 @@ if (cc.ENABLE_GL_STATE_CACHE) {
     cc._GLServerState = 0;
     if(cc.TEXTURE_ATLAS_USE_VAO)
         cc._uVAO = 0;
+
+    var _currBuffers = {};
+    var _currBuffer;
+
+    WebGLRenderingContext.prototype.glBindBuffer = WebGLRenderingContext.prototype.bindBuffer;
+    WebGLRenderingContext.prototype.bindBuffer = function (target, buffer) {
+        if (_currBuffers[target] !== buffer) {
+            _currBuffers[target] = buffer;
+            this.glBindBuffer(target, buffer);
+        }
+
+        if (!_currBuffer || _currBuffer !== buffer) {
+            _currBuffer = buffer;
+            return false;
+        }
+        else {
+            return true;
+        }
+    };
 }
 
 // GL State Cache functions
@@ -81,7 +100,7 @@ cc.glUseProgram = function (program) {
 if(!cc.ENABLE_GL_STATE_CACHE){
     cc.glUseProgram = function (program) {
         cc._renderContext.useProgram(program);
-    }
+    };
 }
 
 /**
@@ -150,9 +169,9 @@ cc.glBlendFuncForParticle = function(sfactor, dfactor) {
     }
 };
 
-if(!cc.ENABLE_GL_STATE_CACHE){
+if (!cc.ENABLE_GL_STATE_CACHE) {
     cc.glBlendFunc = cc.setBlending;
-};
+}
 
 /**
  * Resets the blending mode back to the cached state in case you used glBlendFuncSeparate() or glBlendEquation().<br/>
@@ -196,8 +215,6 @@ cc.glEnableVertexAttribs = function (flags) {
     if (enablePosition !== cc._vertexAttribPosition) {
         if (enablePosition)
             ctx.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
-        else
-            ctx.disableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
         cc._vertexAttribPosition = enablePosition;
     }
 
