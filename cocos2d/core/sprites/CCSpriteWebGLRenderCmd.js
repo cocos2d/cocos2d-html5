@@ -25,6 +25,8 @@
 //Sprite's WebGL render command
 (function() {
 
+    var _resetPointers = true;
+
     cc.Sprite.WebGLRenderCmd = function (renderable) {
         cc.Node.WebGLRenderCmd.call(this, renderable);
         this._needDraw = true;
@@ -48,7 +50,8 @@
         // this._bufferOffset = 0;
         // this._quad = new cc.V3F_C4B_T2F_Quad(null, null, null, null, this._buffer, this._bufferOffset);
         // this._float32View = new Float32Array(this._buffer, this._bufferOffset, length / 4);
-        // Init buffer
+        // this._uint32View = new Uint32Array(this._buffer, this._bufferOffset, length / 4);
+        // // Init buffer
         // var gl = cc._renderContext;
         // this._glBuffer = gl.createBuffer();
         // gl.bindBuffer(gl.ARRAY_BUFFER, this._glBuffer);
@@ -534,36 +537,37 @@
 
                 cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
                 //optimize performance for javascript
-                cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
-                cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
+                cc.glBindTexture2DN(0, locTexture);
 
-                gl.bindBuffer(gl.ARRAY_BUFFER, this._buffer.vertexBuffer);
+                var _bufferchanged = !gl.bindBuffer(gl.ARRAY_BUFFER, this._buffer.vertexBuffer);
                 // if (this._bufferDirty) {
                 //     gl.bufferSubData(gl.ARRAY_BUFFER, this._bufferOffset, this._float32View);
                 //     this._bufferDirty = false;
                 // }
-                gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, this._bufferOffset);                       //cc.VERTEX_ATTRIB_POSITION
-                gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, this._bufferOffset + 12);           //cc.VERTEX_ATTRIB_COLOR
-                gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, this._bufferOffset + 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
-                gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+                if (_resetPointers || _bufferchanged) {
+                    cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
+                    gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
+                    gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
+                    gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);
+                }
+                gl.drawArrays(gl.TRIANGLE_STRIP, this._bufferOffset / (this.vertexBytesPerUnit/4), 4);
             }
         } else {
             program.use();
             program._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 
             cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
-            cc.glBindTexture2D(null);
-
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
 
             gl.bindBuffer(gl.ARRAY_BUFFER, this._buffer.vertexBuffer);
             // if (this._bufferDirty) {
             //     gl.bufferSubData(gl.ARRAY_BUFFER, this._bufferOffset, this._float32View);
             //     this._bufferDirty = false;
             // }
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, this._bufferOffset);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, this._bufferOffset + 12);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
+            gl.drawArrays(gl.TRIANGLE_STRIP, this._bufferOffset / (this.vertexBytesPerUnit/4), 4);
+            _resetPointers = true;
         }
         cc.g_NumberOfDraws++;
 
