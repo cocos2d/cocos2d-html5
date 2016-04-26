@@ -81,19 +81,14 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._capInsetsProgressBarRenderer = cc.rect(0, 0, 0, 0);
         ccui.Widget.prototype.ctor.call(this);
 
-        resType = resType == null ? 0 : resType;
+        resType = resType || 0;
         this.setTouchEnabled(true);
-        barTextureName && this.loadBarTexture(barTextureName, resType);
-        normalBallTextureName && this.loadSlidBallTextures(normalBallTextureName, resType);
-    },
-
-    /**
-     * Initializes a ccui.Slider. Please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
-     * @returns {boolean}
-     * @override
-     */
-    init: function () {
-        return ccui.Widget.prototype.init.call(this);
+        if (barTextureName) {
+            this.loadBarTexture(barTextureName, resType);
+        }
+        if (normalBallTextureName) {
+            this.loadSlidBallTextures(normalBallTextureName, resType);
+        }
     },
 
     _initRenderer: function () {

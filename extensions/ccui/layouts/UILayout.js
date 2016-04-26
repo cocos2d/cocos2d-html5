@@ -81,10 +81,16 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     ctor: function () {
         this._layoutType = ccui.Layout.ABSOLUTE;
         this._widgetType = ccui.Widget.TYPE_CONTAINER;
-        this._clippingType = ccui.Layout.CLIPPING_STENCIL;
+        this._clippingType = ccui.Layout.CLIPPING_SCISSOR;
         this._colorType = ccui.Layout.BG_COLOR_NONE;
 
         ccui.Widget.prototype.ctor.call(this);
+
+        this.ignoreContentAdaptWithSize(false);
+        this.setContentSize(cc.size(0, 0));
+        this.setAnchorPoint(0, 0);
+        this.onPassFocusToChild  = this._findNearestChildWidgetIndex.bind(this);
+
         this._backGroundImageCapInsets = cc.rect(0, 0, 0, 0);
 
         this._color = cc.color(255, 255, 255, 255);
@@ -237,22 +243,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     onPassFocusToChild: null,
 
     /**
-     * override "init" method of widget. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
-     * @returns {boolean}
-     * @override
-     */
-    init: function () {
-        if (ccui.Widget.prototype.init.call(this)) {
-            this.ignoreContentAdaptWithSize(false);
-            this.setContentSize(cc.size(0, 0));
-            this.setAnchorPoint(0, 0);
-            this.onPassFocusToChild  = this._findNearestChildWidgetIndex.bind(this);
-            return true;
-        }
-        return false;
-    },
-
-    /**
      * Adds a widget to the container.
      * @param {ccui.Widget} widget
      * @param {Number} [zOrder]
@@ -330,8 +320,9 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                 default:
                     break;
             }
-        } else
+        } else {
             ccui.Widget.prototype.visit.call(this, parentCmd);
+        }
     },
 
     /**
@@ -344,6 +335,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             return;
         this._clippingEnabled = able;
         switch (this._clippingType) {
+            case ccui.Layout.CLIPPING_SCISSOR:
             case ccui.Layout.CLIPPING_STENCIL:
                 if (able){
                     this._clippingStencil = new cc.DrawNode();
@@ -369,10 +361,6 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     setClippingType: function (type) {
         if (type === this._clippingType)
             return;
-        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS && type === ccui.Layout.CLIPPING_SCISSOR){
-            cc.log("Only supports STENCIL on canvas mode.");
-            return;
-        }
         var clippingEnabled = this.isClippingEnabled();
         this.setClippingEnabled(false);
         this._clippingType = type;
@@ -388,7 +376,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     _setStencilClippingSize: function (size) {
-        if (this._clippingEnabled && this._clippingType === ccui.Layout.CLIPPING_STENCIL) {
+        if (this._clippingEnabled) {
             var rect = [];
             rect[0] = cc.p(0, 0);
             rect[1] = cc.p(size.width, 0);

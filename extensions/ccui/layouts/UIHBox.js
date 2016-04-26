@@ -35,37 +35,12 @@ ccui.HBox = ccui.Layout.extend(/** @lends ccui.HBox# */{
      * @param {cc.Size} [size]
      */
     ctor: function(size){
-        ccui.Layout.prototype.ctor.call(this, size);
-        if(size !== undefined)
-            this.initWithSize(size);
-        else
-           this.init();
-    },
+        ccui.Layout.prototype.ctor.call(this);
+        this.setLayoutType(ccui.Layout.LINEAR_HORIZONTAL);
 
-    /**
-     * Initialize a HBox. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
-     * @override
-     * @returns {boolean}
-     */
-    init: function(){
-        if(ccui.Layout.prototype.init.call(this)){
-            this.setLayoutType(ccui.Layout.LINEAR_HORIZONTAL);
-            return true;
-        }
-        return false;
-    },
-
-    /**
-     * Initializes a HBox with size.
-     * @param size
-     * @returns {boolean}
-     */
-    initWithSize: function(size){
-        if(this.init()){
+        if(size) {
             this.setContentSize(size);
-            return true;
         }
-        return false;
     }
 });
 

@@ -66,21 +66,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         ccui.ScrollView.prototype.ctor.call(this);
         this._gravity = ccui.ListView.GRAVITY_CENTER_VERTICAL;
         this.setTouchEnabled(true);
-
-        this.init();
-    },
-
-    /**
-     * Initializes a ccui.ListView. Please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
-     * @returns {boolean}
-     * @override
-     */
-    init: function () {
-        if (ccui.ScrollView.prototype.init.call(this)) {
-            this.setDirection(ccui.ScrollView.DIR_VERTICAL);
-            return true;
-        }
-        return false;
+        this.setDirection(ccui.ScrollView.DIR_VERTICAL);
     },
 
     /**

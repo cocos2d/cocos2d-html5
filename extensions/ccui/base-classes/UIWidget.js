@@ -174,7 +174,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         this._positionPercent = cc.p(0, 0);
         this._nodes = [];
         this._layoutParameterType = ccui.LayoutParameter.NONE;
-        this.init();                        //TODO
+        ccui.Widget.prototype.init.call(this);
     },
 
     /**

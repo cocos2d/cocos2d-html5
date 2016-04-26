@@ -53,20 +53,13 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         this._imageTextureSize = cc.size(this._capInsets.width, this._capInsets.height);
         ccui.Widget.prototype.ctor.call(this);
         texType = texType === undefined ? 0 : texType;
-        this._init(imageFileName, texType);
-    },
 
-    /**
-     * Initializes an imageView. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
-     * @param {String} imageFileName
-     * @param {Number} [texType==ccui.Widget.LOCAL_TEXTURE]
-     * @returns {boolean}
-     */
-    _init: function(imageFileName, texType){
-        if(imageFileName === undefined)
-            this._imageTexType = ccui.Widget.LOCAL_TEXTURE;
-        else
+        if(imageFileName) {
             this.loadTexture(imageFileName, texType);
+        }
+        else {
+            this._imageTexType = ccui.Widget.LOCAL_TEXTURE;
+        }
     },
 
     _initRenderer: function () {

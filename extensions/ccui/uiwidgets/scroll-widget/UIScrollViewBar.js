@@ -70,7 +70,7 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
         this.autoHideTime = ccui.ScrollViewBar.DEFAULT_AUTO_HIDE_TIME;
         this._autoHideEnabled = true;
 
-        this.init();
+        ccui.ScrollViewBar.prototype.init.call(this);
 
         this.setCascadeColorEnabled(true);
         this.setCascadeOpacityEnabled(true);
@@ -81,41 +81,35 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
      * @returns {boolean}
      */
     init: function () {
-        if (cc.ProtectedNode.prototype.init.call(this)) {
+        var halfPixelImage = new Image();
+        halfPixelImage.src = ccui.ScrollViewBar.HALF_CIRCLE_IMAGE;
 
-            var halfPixelImage =  new Image();
-            halfPixelImage.src = ccui.ScrollViewBar.HALF_CIRCLE_IMAGE;
+        this._upperHalfCircle = new cc.Sprite(halfPixelImage);
+        this._upperHalfCircle.setAnchorPoint(cc.p(0.5, 0));
 
-            this._upperHalfCircle = new cc.Sprite(halfPixelImage);
-            this._upperHalfCircle.setAnchorPoint(cc.p(0.5, 0));
+        this._lowerHalfCircle = new cc.Sprite(halfPixelImage);
+        this._lowerHalfCircle.setAnchorPoint(cc.p(0.5, 0));
+        this._lowerHalfCircle.setScaleY(-1);
 
-            this._lowerHalfCircle = new cc.Sprite(halfPixelImage);
-            this._lowerHalfCircle.setAnchorPoint(cc.p(0.5, 0));
-            this._lowerHalfCircle.setScaleY(-1);
+        this.addProtectedChild(this._upperHalfCircle);
+        this.addProtectedChild(this._lowerHalfCircle);
 
-            this.addProtectedChild(this._upperHalfCircle);
-            this.addProtectedChild(this._lowerHalfCircle);
+        var bodyImage = new Image();
+        bodyImage.src = ccui.ScrollViewBar.BODY_IMAGE_1_PIXEL_HEIGHT;
 
-            var bodyImage = new Image();
-            bodyImage.src = ccui.ScrollViewBar.BODY_IMAGE_1_PIXEL_HEIGHT;
+        this._body =  new cc.Sprite(bodyImage);
+        this._body.setAnchorPoint(cc.p(0.5, 0));
+        this.addProtectedChild(this._body);
 
-            this._body =  new cc.Sprite(bodyImage);
-            this._body.setAnchorPoint(cc.p(0.5, 0));
-            this.addProtectedChild(this._body);
+        this.setColor(ccui.ScrollViewBar.DEFAULT_COLOR);
+        this.onScrolled(cc.p(0, 0));
+        cc.ProtectedNode.prototype.setOpacity.call(this, 0);
+        this._autoHideRemainingTime = 0;
 
-            this.setColor(ccui.ScrollViewBar.DEFAULT_COLOR);
-            this.onScrolled(cc.p(0, 0));
-            cc.ProtectedNode.prototype.setOpacity.call(this, 0);
-            this._autoHideRemainingTime = 0;
-
-            if(this._direction === ccui.ScrollView.DIR_HORIZONTAL)
-            {
-                this.setRotation(90);
-            }
-
-            return true;
+        if(this._direction === ccui.ScrollView.DIR_HORIZONTAL)
+        {
+            this.setRotation(90);
         }
-        return false;
     },
 
     /**
