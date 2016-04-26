@@ -30,10 +30,12 @@
         this.setShaderProgram(cc.shaderCache.programForKey(cc.LabelTTF._SHADER_PROGRAM));
     };
     var proto = cc.LabelTTF.WebGLRenderCmd.prototype = Object.create(cc.Sprite.WebGLRenderCmd.prototype);
+    proto._supportBatch = false;
+
     cc.inject(cc.LabelTTF.CacheRenderCmd.prototype, proto);
     proto.constructor = cc.LabelTTF.WebGLRenderCmd;
     proto._updateColor = function () {
         this._updateTexture();
         cc.Sprite.WebGLRenderCmd.prototype._updateColor.call(this);
-    }
+    };
 })();

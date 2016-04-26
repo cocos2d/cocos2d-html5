@@ -103,25 +103,10 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this._titleColor = cc.color.WHITE;
         ccui.Widget.prototype.ctor.call(this);
         this.setTouchEnabled(true);
-        this.init(normalImage, selectedImage, disableImage, texType);
-    },
 
-    /**
-     * Initializes a button. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
-     * @param {String} normalImage
-     * @param {String} [selectedImage=""]
-     * @param {String} [disableImage=""]
-     * @param {Number} [texType=ccui.Widget.LOCAL_TEXTURE]
-     * @returns {boolean}
-     * @override
-     */
-    init: function (normalImage, selectedImage,disableImage, texType) {
-        if (ccui.Widget.prototype.init.call(this)) {
-            if(normalImage === undefined)
-                return true;
+        if (normalImage) {
             this.loadTextures(normalImage, selectedImage,disableImage, texType);
         }
-        return false;
     },
 
     _initRenderer: function () {

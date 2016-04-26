@@ -586,6 +586,7 @@ cc.loader = (function () {
         _register = {}, //register of loaders
         _langPathCache = {}, //cache for lang path
         _aliases = {}, //aliases for res url
+        _queue = {}, // Callback queue for resources already loading
         _urlRegExp = new RegExp(
             "^" +
                 // protocol identifier
@@ -666,6 +667,10 @@ cc.loader = (function () {
                 results[2] = a2;
             } else throw new Error("arguments error to load js!");
             return results;
+        },
+
+        isLoading: function (url) {
+            return (_queue[url] !== undefined);
         },
 
         /**
@@ -890,6 +895,12 @@ cc.loader = (function () {
                 return img;
             }
 
+            var queue = _queue[url];
+            if (queue) {
+                queue.callbacks.push(callback);
+                return queue.img;
+            }
+
             img = new Image();
             if (opt.isCrossOrigin && location.origin !== "file://")
                 img.crossOrigin = "Anonymous";
@@ -901,8 +912,18 @@ cc.loader = (function () {
                 if (!_urlRegExp.test(url)) {
                     cc.loader.cache[url] = img;
                 }
-                if (callback) {
-                    callback(null, img);
+
+                var queue = _queue[url];
+                if (queue) {
+                    callbacks = queue.callbacks;
+                    for (var i = 0; i < callbacks.length; ++i) {
+                        var callback = callbacks[i];
+                        if (callback) {
+                            callback(null, img);
+                        }
+                    }
+                    queue.img = null;
+                    delete _queue[url];
                 }
             };
 
@@ -910,13 +931,29 @@ cc.loader = (function () {
             var errorCallback = function () {
                 this.removeEventListener('error', errorCallback, false);
 
-                if(img.crossOrigin && img.crossOrigin.toLowerCase() === "anonymous"){
+                if (img.crossOrigin && img.crossOrigin.toLowerCase() === "anonymous") {
                     opt.isCrossOrigin = false;
                     self.release(url);
                     cc.loader.loadImg(url, opt, callback);
-                }else{
-                    typeof callback === "function" && callback("load image failed");
+                } else {
+                    var queue = _queue[url];
+                    if (queue) {
+                        callbacks = queue.callbacks;
+                        for (var i = 0; i < callbacks.length; ++i) {
+                            var callback = callbacks[i];
+                            if (callback) {
+                                callback("load image failed");
+                            }
+                        }
+                        queue.img = null;
+                        delete _queue[url];
+                    }
                 }
+            };
+
+            _queue[url] = {
+                img: img,
+                callbacks: callback ? [callback] : []
             };
 
             img.addEventListener("load", loadCallback);
@@ -1806,29 +1843,43 @@ var _initSys = function () {
 
     var _supportCanvas = !!_tmpCanvas1.getContext("2d");
     var _supportWebGL = false;
-    var tmpCanvas = document.createElement("CANVAS");
     if (win.WebGLRenderingContext) {
+        var tmpCanvas = document.createElement("CANVAS");
         try{
             var context = cc.create3DContext(tmpCanvas, {'stencil': true, 'preserveDrawingBuffer': true });
             if(context) {
                 _supportWebGL = true;
             }
 
-            // Accept only Android 5+ default browser and QQ Browser 6.2+
             if (_supportWebGL && sys.os === sys.OS_ANDROID) {
-                _supportWebGL = false;
-                // QQ Brwoser 6.2+
-                var browserVer = parseFloat(sys.browserVersion);
-                if (sys.browserType === sys.BROWSER_TYPE_MOBILE_QQ && browserVer >= 6.2) {
-                    _supportWebGL = true;
-                }
-                // Android 5+ default browser
-                else if (sys.osMainVersion && sys.osMainVersion >= 5 && sys.browserType === sys.BROWSER_TYPE_ANDROID) {
-                    _supportWebGL = true;
+                switch (sys.browserType) {
+                case sys.BROWSER_TYPE_MOBILE_QQ:
+                case sys.BROWSER_TYPE_BAIDU:
+                case sys.BROWSER_TYPE_BAIDU_APP:
+                    // QQ & Baidu Brwoser 6.2+ (using blink kernel)
+                    var browserVer = parseFloat(sys.browserVersion);
+                    if (browserVer >= 6.2) {
+                        _supportWebGL = true;
+                    }
+                    else {
+                        _supportWebGL = false;
+                    }
+                    break;
+                case sys.BROWSER_TYPE_ANDROID:
+                    // Android 5+ default browser
+                    if (sys.osMainVersion && sys.osMainVersion >= 5) {
+                        _supportWebGL = true;
+                    }
+                    break;
+                case sys.BROWSER_TYPE_UNKNOWN:
+                case sys.BROWSER_TYPE_360:
+                case sys.BROWSER_TYPE_MIUI:
+                    _supportWebGL = false;
                 }
             }
         }
         catch (e) {}
+        tmpCanvas = null;
     }
 
     /**
@@ -1938,6 +1989,9 @@ var _initSys = function () {
     };
 };
 _initSys();
+
+_tmpCanvas1 = null;
+_tmpCanvas2 = null;
 
 //to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
 cc.log = cc.warn = cc.error = cc.assert = function () {
@@ -2071,7 +2125,7 @@ cc.initEngine = function (config, cb) {
 
     document.body ? _load(config) : cc._addEventListener(window, 'load', _windowLoaded, false);
     _engineInitCalled = true;
-}
+};
 
 })();
 //+++++++++++++++++++++++++Engine initialization function end+++++++++++++++++++++++++++++
@@ -2595,6 +2649,7 @@ cc.game = /** @lends cc.game# */{
         if (this._renderContext) {
             cc.renderer = cc.rendererWebGL;
             win.gl = this._renderContext; // global variable declared in CCMacro.js
+            cc.renderer.initQuadIndexBuffer();
             cc.shaderCache._init();
             cc._drawingUtil = new cc.DrawingPrimitiveWebGL(this._renderContext);
             cc.textureCache._initializingRenderer();

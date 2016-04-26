@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2011-2012 cocos2d-x.org
- Copyright (c) 2013-2014 Chukong Technologies Inc.
+ Copyright (c) 2016 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -23,33 +22,53 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * The Relative box for Cocos UI layout.  Its layout type is ccui.Layout.RELATIVE.
- * @class
- * @extends ccui.Layout
- */
-ccui.RelativeBox = ccui.Layout.extend(/** @lends ccui.RelativeBox# */{
-    /**
-     * The constructor of ccui.RelativeBox
-     * @function
-     * @param {cc.Size} [size]
-     */
-    ctor: function(size){
-        ccui.Layout.prototype.ctor.call(this);
-        this.setLayoutType(ccui.Layout.RELATIVE);
+cc.SimplePool = function () {
+    this._pool = [];
+};
+cc.SimplePool.prototype = {
+    constructor: cc.SimplePool,
 
-        if(size) {
-            this.setContentSize(size);
+    size: function () {
+        return this._pool.length;
+    },
+
+    put: function (obj) {
+        if (obj && this._pool.indexOf(obj) === -1) {
+            this._pool.unshift(obj);
         }
-    }
-});
+    },
 
-/**
- * Creates a relative box
- * @deprecated  since v3.0, please use new ccui.RelativeBox(size) instead.
- * @param {cc.Size} size
- * @returns {ccui.RelativeBox}
- */
-ccui.RelativeBox.create = function(size){
-    return new ccui.RelativeBox(size);
+    get: function () {
+        var last = this._pool.length-1;
+        if (last < 0) {
+            return null;
+        }
+        else {
+            var obj = this._pool[last];
+            this._pool.length = last;
+            return obj;
+        }
+    },
+
+    find: function (finder, end) {
+        var found, i, obj, pool = this._pool, last = pool.length-1;
+        for (i = pool.length; i >= 0; --i) {
+            obj = pool[i];
+            found = finder(i, obj);
+            if (found) {
+                pool[i] = pool[last];
+                pool.length = last;
+                return obj;
+            }
+        }
+        if (end) {
+            var index = end();
+            if (index >= 0) {
+                pool[index] = pool[last];
+                pool.length = last;
+                return obj;
+            }
+        }
+        return null;
+    }
 };

@@ -87,6 +87,9 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      */
     ctor: function () {
         ccui.Layout.prototype.ctor.call(this);
+        this.setClippingEnabled(true);
+        this._innerContainer.setTouchEnabled(false);
+
         this._direction = ccui.ScrollView.DIR_NONE;
 
         this._childFocusCancelOffset = 5;
@@ -101,6 +104,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this._touchMovePreviousTimestamp = 0;
 
         this._scrollBarEnabled = true;
+        this._initScrollBar();
 
         this.setTouchEnabled(true);
     },
@@ -111,12 +115,8 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      */
     init: function () {
         if (ccui.Layout.prototype.init.call(this)) {
-            this.setClippingEnabled(true);
-            this._innerContainer.setTouchEnabled(false);
-            if(this._scrollBarEnabled)
-            {
-                this._initScrollBar();
-            }
+            
+            
             return true;
         }
         return false;

@@ -76,6 +76,7 @@
 
     proto.transform = function(parentCmd, recursive){
         var node = this._node;
+        parentCmd = parentCmd || this.getParentRenderCmd();
         cc.Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
         if (node._positionsAreDirty) {
             node._updatePositions();
@@ -87,11 +88,13 @@
             for(var j=0; j < protectChildLen; j++) {
                 var pchild = locRenderers[j];
                 if(pchild) {
+                    pchild._vertexZ = parentCmd._node._vertexZ;
                     var tempCmd = pchild._renderCmd;
                     tempCmd.transform(this, true);
                 }
-                else
+                else {
                     break;
+                }
             }
         }
         else {
@@ -99,7 +102,6 @@
             node._adjustScale9ImagePosition();
             node._scale9Image._renderCmd.transform(this, true);
         }
-
     };
 
     proto.setDirtyFlag = function (dirtyFlag, child) {

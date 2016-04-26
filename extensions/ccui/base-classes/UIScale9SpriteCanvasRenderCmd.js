@@ -120,7 +120,7 @@
             this._cacheScale9Sprite();
             this._dirtyFlag = this._dirtyFlag & flags.cacheDirty ^ this._dirtyFlag;
         }
-    }
+    };
 
     proto._cacheScale9Sprite = function() {
         var node = this._node;

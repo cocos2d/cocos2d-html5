@@ -12,6 +12,7 @@
                 <file name="CCBoot.js"/>
                 <file name="cocos2d/core/event-manager/CCEventHelper.js"/>
                 <file name="CCDebugger.js"/>
+                <file name="cocos2d/core/utils/CCSimplePool.js"/>
                 <file name="cocos2d/core/utils/BinaryLoader.js"/>
                 <file name="cocos2d/core/platform/CCClass.js"/>
                 <file name="cocos2d/core/platform/CCCommon.js"/>
@@ -40,6 +41,7 @@
                 <file name="cocos2d/core/event-manager/CCEventExtension.js"/>
                 <file name="cocos2d/core/base-nodes/BaseNodesPropertyDefine.js"/>
 
+                <file name="cocos2d/core/renderer/GlobalVertexBuffer.js"/>
                 <file name="cocos2d/core/renderer/RendererCanvas.js"/>
                 <file name="cocos2d/core/renderer/RendererWebGL.js"/>
 
@@ -307,6 +309,7 @@
                 debug="false" output="./../lib/cocos2d-js-v3.11-core-min.js">
             <!--sourceMapOutputFile="./../lib/cocos2d-js-v3.11-core-sourcemap" sourceMapFormat="V3" -->
             <sources dir="./../">
+                <file name="cocos2d/core/utils/CCSimplePool.js"/>
                 <file name="CCBoot.js"/>
                 <file name="cocos2d/core/event-manager/CCEventHelper.js"/>
                 <file name="cocos2d/core/platform/CCClass.js"/>
@@ -334,6 +337,7 @@
                 <file name="cocos2d/core/textures/CCTexture2D.js"/>
                 <file name="cocos2d/core/textures/CCTextureCache.js"/>
 
+                <file name="cocos2d/core/renderer/GlobalVertexBuffer.js"/>
                 <file name="cocos2d/core/renderer/RendererCanvas.js"/>
                 <file name="cocos2d/core/renderer/RendererWebGL.js"/>
 

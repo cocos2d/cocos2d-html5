@@ -50,7 +50,7 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
     ctor: function (text, filename) {
         ccui.Widget.prototype.ctor.call(this);
 
-        if(filename != undefined){
+        if (filename !== undefined) {
             this.setFntFile(filename);
             this.setString(text);
         }

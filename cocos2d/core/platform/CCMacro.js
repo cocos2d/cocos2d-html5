@@ -566,7 +566,7 @@ cc.VERTEX_ATTRIB_TEX_COORDS = 2;
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIB_MAX = 3;
+cc.VERTEX_ATTRIB_MAX = 7;
 
 //------------Uniforms------------------
 /**
@@ -630,7 +630,17 @@ cc.SHADER_POSITION_TEXTURECOLORALPHATEST = "ShaderPositionTextureColorAlphaTest"
  * @constant
  * @type {String}
  */
+cc.SHADER_SPRITE_POSITION_TEXTURECOLORALPHATEST = "ShaderSpritePositionTextureColorAlphaTest";
+/**
+ * @constant
+ * @type {String}
+ */
 cc.SHADER_POSITION_COLOR = "ShaderPositionColor";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.SHADER_SPRITE_POSITION_COLOR = "ShaderSpritePositionColor";
 /**
  * @constant
  * @type {String}
@@ -720,6 +730,11 @@ cc.ATTRIBUTE_NAME_POSITION = "a_position";
  * @type {String}
  */
 cc.ATTRIBUTE_NAME_TEX_COORD = "a_texCoord";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.ATTRIBUTE_NAME_MVMAT = "a_mvMatrix";
 
 
 /**

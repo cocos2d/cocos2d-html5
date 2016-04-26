@@ -35,24 +35,12 @@ ccui.VBox = ccui.Layout.extend(/** @lends ccui.VBox# */{
      * @param {cc.Size} size
      */
     ctor: function(size){
-        ccui.Layout.prototype.ctor.call(this, size);
-        if(size !== undefined)
-            this.initWithSize(size);
-        else
-            this.init();
-    },
+        ccui.Layout.prototype.ctor.call(this);
+        this.setLayoutType(ccui.Layout.LINEAR_VERTICAL);
 
-    /**
-     * Initializes a VBox. please do not call this function by yourself, you should pass the parameters to constructor to initialize it.
-     * @override
-     * @returns {boolean}
-     */
-    init: function(){
-        if(ccui.Layout.prototype.init.call(this)){
-            this.setLayoutType(ccui.Layout.LINEAR_VERTICAL);
-            return true;
+        if (size) {
+            this.setContentSize(size);
         }
-        return false;
     },
 
     /**
@@ -62,7 +50,7 @@ ccui.VBox = ccui.Layout.extend(/** @lends ccui.VBox# */{
      */
     initWithSize: function(size){
         if(this.init()){
-            this.setContentSize(size);
+            
             return true;
         }
         return false;

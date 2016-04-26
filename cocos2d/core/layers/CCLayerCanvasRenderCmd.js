@@ -97,7 +97,7 @@
             for(var i = 0, len = children.length; i < len; i++)
                 children[i]._renderCmd._setCachedParent(this);
 
-            if (!this._bakeSprite){
+            if (!this._bakeSprite) {
                 this._bakeSprite = new cc.BakeSprite();
                 this._bakeSprite.setAnchorPoint(0,0);
             }

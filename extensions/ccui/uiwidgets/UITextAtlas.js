@@ -54,7 +54,9 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
      */
     ctor: function (stringValue, charMapFile, itemWidth, itemHeight, startCharMap) {
         ccui.Widget.prototype.ctor.call(this);
-        startCharMap !== undefined && this.setProperty(stringValue, charMapFile, itemWidth, itemHeight, startCharMap);
+        if (startCharMap !== undefined) {
+            this.setProperty(stringValue, charMapFile, itemWidth, itemHeight, startCharMap);
+        }
     },
 
     _initRenderer: function () {

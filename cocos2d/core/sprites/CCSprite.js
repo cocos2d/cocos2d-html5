@@ -132,6 +132,20 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         self._softInit(fileName, rect, rotated);
     },
 
+    onEnter: function () {
+        this._super();
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
+            this._renderCmd.updateBuffer();
+        }
+    },
+
+    cleanup: function () {
+        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
+            this._renderCmd.freeBuffer();
+        }
+        this._super();
+    },
+
     /**
      * Returns whether the texture have been loaded
      * @returns {boolean}
@@ -314,25 +328,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if (this._reorderChildDirty) {
             var _children = this._children;
 
-            // insertion sort
-            var len = _children.length, i, j, tmp;
-            for(i=1; i<len; i++){
-                tmp = _children[i];
-                j = i - 1;
-
-                //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while(j >= 0){
-                    if(tmp._localZOrder < _children[j]._localZOrder){
-                        _children[j+1] = _children[j];
-                    }else if(tmp._localZOrder === _children[j]._localZOrder && tmp.arrivalOrder < _children[j].arrivalOrder){
-                        _children[j+1] = _children[j];
-                    }else{
-                        break;
-                    }
-                    j--;
-                }
-                _children[j+1] = tmp;
-            }
+            cc.Node.prototype.sortAllChildren.call(this);
 
             if (this._batchNode) {
                 this._arrayMakeObjectsPerformSelector(_children, cc.Node._stateCallbackType.sortAllChildren);
@@ -729,7 +725,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             if(_t.texture)
                 _t.texture.removeEventListener("load", _t);
             texture.addEventListener("load", _t._renderCmd._textureLoadedCallback, _t);
-            _t.texture = texture;
+            _t.setTexture(texture);
             return true;
         }
 

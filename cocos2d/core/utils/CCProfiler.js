@@ -21,13 +21,17 @@ cc.profiler = (function () {
         _SPFLabel = new cc.LabelTTF("0.000", "Arial", fontSize);
         _drawsLabel = new cc.LabelTTF("0000", "Arial", fontSize);
 
+        _FPSLabel.setVertexZ(0.9999);
+        _SPFLabel.setVertexZ(0.9999);
+        _SPFLabel.setVertexZ(0.9999);
+
         _drawsLabel.setPosition(_drawsLabel.width / 2 + locStatsPosition.x, _drawsLabel.height * 5 / 2 + locStatsPosition.y);
         _SPFLabel.setPosition(_SPFLabel.width / 2 + locStatsPosition.x, _SPFLabel.height * 3 / 2 + locStatsPosition.y);
         _FPSLabel.setPosition(_FPSLabel.width / 2 + locStatsPosition.x, _FPSLabel.height / 2 + locStatsPosition.y);
     };
 
     var analyseFPS = function (fps) {
-        var lastId = i = LEVELS.length - 1, ratio, average = 0;
+        var lastId = LEVELS.length - 1, i = lastId, ratio, average = 0;
         _analyseCount++;
         _totalFPS += fps;
 

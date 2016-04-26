@@ -163,10 +163,9 @@
 
         if (node.alphaThreshold < 1) {            //TODO desktop
             var program = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
-            var alphaValueLocation = gl.getUniformLocation(program.getProgram(), cc.UNIFORM_ALPHA_TEST_VALUE_S);
             // set our alphaThreshold
             cc.glUseProgram(program.getProgram());
-            program.setUniformLocationWith1f(alphaValueLocation, node.alphaThreshold);
+            program.setUniformLocationWith1f(cc.UNIFORM_ALPHA_TEST_VALUE_S, node.alphaThreshold);
             cc.setProgram(node._stencil, program);
         }
     };
