@@ -2654,7 +2654,7 @@ cc.game = /** @lends cc.game# */{
         if (this._renderContext) {
             cc.renderer = cc.rendererWebGL;
             win.gl = this._renderContext; // global variable declared in CCMacro.js
-            cc.renderer.initQuadIndexBuffer();
+            cc.renderer.init();
             cc.shaderCache._init();
             cc._drawingUtil = new cc.DrawingPrimitiveWebGL(this._renderContext);
             cc.textureCache._initializingRenderer();

@@ -126,6 +126,8 @@ function createVirtualBuffer (buffer, vertexOffset, totalBufferSize, count, data
 }
 
 return {
+    mat4Identity: null,
+
     childrenOrderDirty: true,
     assignedZ: 0,
     assignedZStep: 1/10000,
@@ -139,7 +141,9 @@ return {
     _currentID: 0,
     _clearColor: cc.color(),                            //background color,default BLACK
 
-    initQuadIndexBuffer: function () {
+    init: function () {
+        this.mat4Identity = new cc.math.Matrix4();
+        this.mat4Identity.identity();
         getQuadIndexBuffer(1000);
     },
 
