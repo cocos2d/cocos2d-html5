@@ -197,6 +197,12 @@ return {
         renderTextureId = renderTextureId || this._currentID;
         var locCmds = this._cacheToBufferCmds[renderTextureId], i, len;
         var ctx = cc._renderContext, locIDs = this._cacheInstanceIds;
+        // Update all global buffers (only invoke bufferSubData when buffer is dirty)
+        for (i = 0, len = _gbuffers.length; i < len; ++i) {
+            _gbuffers[i].update();
+        }
+        // Reset buffer cache to avoid issue
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
         for (i = 0, len = locCmds.length; i < len; i++) {
             locCmds[i].rendering(ctx);
         }
