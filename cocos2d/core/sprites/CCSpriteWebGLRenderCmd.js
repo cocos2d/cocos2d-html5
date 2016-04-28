@@ -32,10 +32,10 @@
         this._needDraw = true;
 
         this._vertices = [
-            {x: 0, y: 0, z: 0},
-            {x: 0, y: 0, z: 0},
-            {x: 0, y: 0, z: 0},
-            {x: 0, y: 0, z: 0}
+            {x: 0, y: 0, z: 0}, // tl
+            {x: 0, y: 0, z: 0}, // bl
+            {x: 0, y: 0, z: 0}, // tr
+            {x: 0, y: 0, z: 0}  // br
         ];
         var length = this.vertexBytesPerUnit;
         var bufInfo = cc.renderer.requestBuffer(length);
@@ -321,7 +321,6 @@
             for (i = 0; i < 4; ++i) {
                 x = vertices[i].x;
                 y = vertices[i].y;
-                z = vertices[i].z;
                 buffer[offset] = x * mat[0] + y * mat[4] + mat[12];
                 buffer[offset+1] = x * mat[1] + y * mat[5] + mat[13];
                 buffer[offset+2] = mat[14];
@@ -555,7 +554,7 @@
             }
         } else {
             program.use();
-            program._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+            program._updateProjectionUniform();
 
             cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
 
