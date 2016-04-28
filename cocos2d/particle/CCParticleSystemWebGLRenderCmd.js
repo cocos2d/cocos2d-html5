@@ -366,7 +366,7 @@
     proto.postStep = function(){
         var gl = cc._renderContext;
         gl.bindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0]);
-        gl.bufferData(gl.ARRAY_BUFFER, this._quadsArrayBuffer, gl.DYNAMIC_DRAW);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, this._quadsArrayBuffer);
     };
 
     proto._setBlendAdditive = function(){
