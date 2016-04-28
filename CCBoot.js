@@ -885,7 +885,7 @@ cc.loader = (function () {
                 isCrossOrigin: true
             };
             if (callback !== undefined)
-                opt.isCrossOrigin = option.isCrossOrigin === null ? opt.isCrossOrigin : option.isCrossOrigin;
+                opt.isCrossOrigin = option.isCrossOrigin === undefined ? opt.isCrossOrigin : option.isCrossOrigin;
             else if (option !== undefined)
                 callback = option;
 
@@ -917,9 +917,9 @@ cc.loader = (function () {
                 if (queue) {
                     callbacks = queue.callbacks;
                     for (var i = 0; i < callbacks.length; ++i) {
-                        var callback = callbacks[i];
-                        if (callback) {
-                            callback(null, img);
+                        var cb = callbacks[i];
+                        if (cb) {
+                            cb(null, img);
                         }
                     }
                     queue.img = null;
@@ -940,9 +940,9 @@ cc.loader = (function () {
                     if (queue) {
                         callbacks = queue.callbacks;
                         for (var i = 0; i < callbacks.length; ++i) {
-                            var callback = callbacks[i];
-                            if (callback) {
-                                callback("load image failed");
+                            var cb = callbacks[i];
+                            if (cb) {
+                                cb("load image failed");
                             }
                         }
                         queue.img = null;
@@ -1180,6 +1180,11 @@ cc.loader = (function () {
          */
         release: function (url) {
             var cache = this.cache;
+            var queue = _queue[url];
+            if (queue) {
+                queue.img = null;
+                delete _queue[url];
+            }
             delete cache[url];
             delete cache[_aliases[url]];
             delete _aliases[url];
@@ -1415,7 +1420,7 @@ var _initSys = function () {
      * @constant
      * @type {Number}
      */
-    sys.LANGUAGE_UNKNOWN = "unknown";
+    sys.LANGUAGE_UNKNOWN = "unkonwn";
 
     /**
      * @memberof cc.sys
@@ -2649,10 +2654,13 @@ cc.game = /** @lends cc.game# */{
         if (this._renderContext) {
             cc.renderer = cc.rendererWebGL;
             win.gl = this._renderContext; // global variable declared in CCMacro.js
-            cc.renderer.initQuadIndexBuffer();
+            cc.renderer.init();
             cc.shaderCache._init();
             cc._drawingUtil = new cc.DrawingPrimitiveWebGL(this._renderContext);
             cc.textureCache._initializingRenderer();
+            cc.glExt = {};
+            cc.glExt.instanced_arrays = gl.getExtension("ANGLE_instanced_arrays");
+            cc.glExt.element_uint = gl.getExtension("OES_element_index_uint");
         } else {
             cc.renderer = cc.rendererCanvas;
             this._renderContext = cc._renderContext = new cc.CanvasContextWrapper(localCanvas.getContext("2d"));

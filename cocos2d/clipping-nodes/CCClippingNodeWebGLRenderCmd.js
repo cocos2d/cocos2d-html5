@@ -57,8 +57,9 @@
     proto.transform = function(parentCmd, recursive){
         var node = this._node;
         cc.Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
-        if(node._stencil)
+        if(node._stencil) {
             node._stencil._renderCmd.transform(this, recursive);
+        }
     };
 
     proto.visit = function(parentCmd){
@@ -72,7 +73,7 @@
 
         // if stencil buffer disabled
         if (cc.stencilBits < 1) {
-            // draw everything, as if there where no stencil
+            // draw everything, as if there were no stencil
             cc.Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
             return;
         }
@@ -102,7 +103,7 @@
         this._syncStatus(parentCmd);
         currentStack.top = this._stackMatrix;
 
-        //this._stencil._stackMatrix = this._stackMatrix;
+        // node._stencil._stackMatrix = node._stackMatrix;
         node._stencil._renderCmd.visit(this);
 
         cc.renderer.pushRenderCommand(this._afterDrawStencilCmd);
@@ -166,6 +167,7 @@
             // set our alphaThreshold
             cc.glUseProgram(program.getProgram());
             program.setUniformLocationWith1f(cc.UNIFORM_ALPHA_TEST_VALUE_S, node.alphaThreshold);
+            program.setUniformLocationWithMatrix4fv(cc.UNIFORM_MVMATRIX_S, cc.renderer.mat4Identity.mat);
             cc.setProgram(node._stencil, program);
         }
     };

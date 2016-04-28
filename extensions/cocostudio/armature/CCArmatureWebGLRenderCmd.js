@@ -52,10 +52,10 @@
                 var selNode = selBone.getDisplayRenderNode();
                 if (null === selNode)
                     continue;
-                selNode.setShaderProgram(this._shaderProgram);
                 switch (selBone.getDisplayRenderNodeType()) {
                     case ccs.DISPLAY_TYPE_SPRITE:
                         if (selNode instanceof ccs.Skin) {
+                            selNode.setShaderProgram(this._shaderProgram);
                             this._updateColorAndOpacity(selNode._renderCmd, selBone);   //because skin didn't call visit()
                             selNode.updateTransform();
 
@@ -73,6 +73,7 @@
                         }
                         break;
                     case ccs.DISPLAY_TYPE_ARMATURE:
+                        selNode.setShaderProgram(this._shaderProgram);
                         selNode._renderCmd.rendering(ctx, true);
                         break;
                     default:
@@ -92,7 +93,7 @@
     };
 
     proto.initShaderCache = function(){
-        this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+        this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_SPRITE_POSITION_TEXTURECOLOR);
     };
 
     proto.setShaderProgram = function(shaderProgram){

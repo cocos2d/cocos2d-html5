@@ -40,7 +40,7 @@ var GlobalVertexBuffer = function (gl) {
 
     // Init buffer data
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, this.byteLength, gl.DYNAMIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, this.dataArray, gl.DYNAMIC_DRAW);
 
     this._dirty = false;
     this._spaces = {

@@ -32,115 +32,65 @@
     cc.inject(ccs.Skin.RenderCmd, proto);
     proto.constructor = ccs.Skin.WebGLRenderCmd;
 
+    // The following static properties must be provided for a auto batchable command
+    proto.vertexBytesPerUnit = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+    proto.bytesPerUnit = proto.vertexBytesPerUnit;
+    proto.indicesPerUnit = 6;
+    proto.verticesPerUnit = 4;
+    proto._supportBatch = true;
+
+    proto.batchShader = null;
+
     proto.updateTransform = function(){
         var node = this._node;
         var locQuad = this._quad;
+        var vertices = this._vertices;
         // If it is not visible, or one of its ancestors is not visible, then do nothing:
-        if( !node._visible)
+        if (!node._visible)
             locQuad.br.vertices = locQuad.tl.vertices = locQuad.tr.vertices = locQuad.bl.vertices = {x: 0, y: 0, z: 0};
-        else {
+        else if (this._buffer) {
             //
             // calculate the Quad based on the Affine Matrix
             //
             var transform = this.getNodeToParentTransform();         //this._transform;
-            var size = node._rect;
 
-            var x1 = node._offsetPosition.x, y1 = node._offsetPosition.y;
+            var buffer = this._float32View,
+                i, x, y, offset = 0,
+                row = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT / 16,
+                parentCmd = this.getParentRenderCmd(),
+                parentMatrix = (parentCmd ? parentCmd._stackMatrix : cc.current_stack.top),
+                t4x4 = this._transform4x4, stackMatrix = this._stackMatrix,
+                mat = t4x4.mat;
 
-            var x2 = x1 + size.width, y2 = y1 + size.height;
-            var x = transform.tx, y = transform.ty;
+            mat[0] = transform.a;
+            mat[4] = transform.c;
+            mat[12] = transform.tx;
+            mat[1] = transform.b;
+            mat[5] = transform.d;
+            mat[13] = transform.ty;
+            cc.kmMat4Multiply(stackMatrix, parentMatrix, t4x4);
+            mat[14] = node._vertexZ;
 
-            var cr = transform.a, sr = transform.b;
-            var cr2 = transform.d, sr2 = -transform.c;
-            var ax = x1 * cr - y1 * sr2 + x;
-            var ay = x1 * sr + y1 * cr2 + y;
+            mat = stackMatrix.mat;
 
-            var bx = x2 * cr - y1 * sr2 + x;
-            var by = x2 * sr + y1 * cr2 + y;
-
-            var cx = x2 * cr - y2 * sr2 + x;
-            var cy = x2 * sr + y2 * cr2 + y;
-
-            var dx = x1 * cr - y2 * sr2 + x;
-            var dy = x1 * sr + y2 * cr2 + y;
-
-            var locVertexZ = node._vertexZ;
-            if(!cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
-                ax = 0 | ax;
-                ay = 0 | ay;
-                bx = 0 | bx;
-                by = 0 | by;
-                cx = 0 | cx;
-                cy = 0 | cy;
-                dx = 0 | dx;
-                dy = 0 | dy;
+            for (i = 0; i < 4; ++i) {
+                x = vertices[i].x;
+                y = vertices[i].y;
+                z = vertices[i].z;
+                buffer[offset] = x * mat[0] + y * mat[4] + mat[12];
+                buffer[offset+1] = x * mat[1] + y * mat[5] + mat[13];
+                buffer[offset+2] = -388;
+                offset += row;
             }
-            this.SET_VERTEX3F(locQuad.bl.vertices,ax, ay,locVertexZ);
-            this.SET_VERTEX3F(locQuad.br.vertices,bx, by,locVertexZ);
-            this.SET_VERTEX3F(locQuad.tl.vertices,dx, dy,locVertexZ);
-            this.SET_VERTEX3F(locQuad.tr.vertices,cx, cy,locVertexZ);
-        }
-
-        // MARMALADE CHANGE: ADDED CHECK FOR nullptr, TO PERMIT SPRITES WITH NO BATCH NODE / TEXTURE ATLAS
-        if (node.textureAtlas)
-            node.textureAtlas.updateQuad(locQuad, node.textureAtlas.getTotalQuads());
-        this._quadDirty = true;
-    };
-
-    proto.SET_VERTEX3F = function(_v_, _x_, _y_, _z_){
-        (_v_).x = (_x_);
-        (_v_).y = (_y_);
-        (_v_).z = (_z_);
-    };
-
-    proto.rendering = function(ctx){
-        var node = this._node;
-        if (!node._textureLoaded)
-            return;
-
-        var gl = ctx || cc._renderContext, locTexture = node._texture;
-        if (locTexture && locTexture._textureLoaded) {
-            this._shaderProgram.use();
-            this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
-
-            cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
-            //optimize performance for javascript
-            cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
-            if (this._quadDirty) {
-                gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.DYNAMIC_DRAW);
-                this._quadDirty = false;
+            // MARMALADE CHANGE: ADDED CHECK FOR nullptr, TO PERMIT SPRITES WITH NO BATCH NODE / TEXTURE ATLAS
+            if (node.textureAtlas) {
+                node.textureAtlas.updateQuad(locQuad, node.textureAtlas.getTotalQuads());
             }
-            gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);                   //cc.VERTEX_ATTRIB_POSITION
-            gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
-            gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
 
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+            this._quadDirty = true;
+            this._savedDirtyFlag = true;
+            this._bufferDirty = true;
+            this._buffer.setDirty();
         }
-
-        cc.g_NumberOfDraws++;
-        if (cc.SPRITE_DEBUG_DRAW === 0 && !node._showNode)
-            return;
-
-        if (cc.SPRITE_DEBUG_DRAW === 1 || node._showNode) {
-            // draw bounding box
-            var locQuad = this._quad;
-            var verticesG1 = [
-                cc.p(locQuad.tl.vertices.x, locQuad.tl.vertices.y),
-                cc.p(locQuad.bl.vertices.x, locQuad.bl.vertices.y),
-                cc.p(locQuad.br.vertices.x, locQuad.br.vertices.y),
-                cc.p(locQuad.tr.vertices.x, locQuad.tr.vertices.y)
-            ];
-            cc._drawingUtil.drawPoly(verticesG1, 4, true);
-        } else if (cc.SPRITE_DEBUG_DRAW === 2) {
-            // draw texture box
-            var drawRectG2 = node.getTextureRect();
-            var offsetPixG2 = node.getOffsetPosition();
-            var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y),
-                cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y + drawRectG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawRectG2.height)];
-            cc._drawingUtil.drawPoly(verticesG2, 4, true);
-        } // CC_SPRITE_DEBUG_DRAW
     };
 })();

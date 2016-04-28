@@ -561,7 +561,7 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
      */
     setUniformLocationWithMatrix4fv: function (location, matrixArray) {
         var locObj = typeof location === 'string' ? this.getUniformLocationForName(location) : location;
-        this._glContext.uniformMatrix4fv(location, false, matrixArray);
+        this._glContext.uniformMatrix4fv(locObj, false, matrixArray);
     },
 
     setUniformLocationF32: function () {
