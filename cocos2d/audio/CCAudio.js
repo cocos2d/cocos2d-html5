@@ -114,8 +114,8 @@ cc.Audio = cc.Class.extend({
             cc.Audio.touchPlayList.push({ loop: loop, offset: offset, audio: this._element });
         }
 
-        if (cc.Audio.bindTourch === false) {
-            cc.Audio.bindTourch = true;
+        if (cc.Audio.bindTouch === false) {
+            cc.Audio.bindTouch = true;
             // Listen to the touchstart body event and play the audio when necessary.
             cc.game.canvas.addEventListener('touchstart', cc.Audio.touchStart);
         }
@@ -175,7 +175,7 @@ cc.Audio.touchPlayList = [
     //{ offset: 0, audio: audio }
 ];
 
-cc.Audio.bindTourch = false;
+cc.Audio.bindTouch = false;
 cc.Audio.touchStart = function () {
     var list = cc.Audio.touchPlayList;
     var item = null;
@@ -336,10 +336,10 @@ cc.Audio.WebAudio.prototype = {
 
         cache: {},
 
+        useWebAudio: false,
+
         loadBuffer: function (url, cb) {
             if (!SWA) return; // WebAudio Buffer
-
-            url = cc.path.join(cc.loader.resPath, url);
 
             var request = new XMLHttpRequest();
             request.open("GET", url, true);
@@ -369,8 +369,9 @@ cc.Audio.WebAudio.prototype = {
             if(support.length === 0)
                 return cb("can not support audio!");
 
-            if (loader.cache[url])
-                return cb(null, loader.cache[url]);
+            var audio = cc.loader.getRes(url);
+            if (audio)
+                return cb(null, audio);
 
             var i;
 
@@ -386,10 +387,9 @@ cc.Audio.WebAudio.prototype = {
                 }
             }
 
-            var audio;
             audio = new cc.Audio(realUrl);
-            loader.cache[url] = audio;
             this.loadAudioFromExtList(realUrl, typeList, audio, cb);
+            return audio;
         },
 
         loadAudioFromExtList: function(realUrl, typeList, audio, cb){
@@ -401,6 +401,19 @@ cc.Audio.WebAudio.prototype = {
                 });
                 ERRSTR = ERRSTR.replace(/\|$/, ")");
                 return cb({status:520, errorMessage:ERRSTR}, null);
+            }
+
+            if (SWA && this.useWebAudio) {
+                this.loadBuffer(realUrl, function (error, buffer) {
+                    if (error)
+                        cc.log(error);
+
+                    if (buffer)
+                        audio.setBuffer(buffer);
+
+                    cb(null, audio);
+                });
+                return;
             }
 
             var num = polyfill.ONE_SOURCE ? 1 : typeList.length;
@@ -473,10 +486,10 @@ cc.Audio.WebAudio.prototype = {
             if (bgMusic && bgMusic.getPlaying()) {
                 bgMusic.stop();
             }
-            var audio = loader.cache[url];
+            var audio = cc.loader.getRes(url);
             if (!audio) {
                 cc.loader.load(url);
-                audio = loader.cache[url];
+                audio = cc.loader.getRes(url);
             }
             audio.setVolume(this._musicVolume);
             audio.play(0, loop || false);
@@ -638,41 +651,41 @@ cc.Audio.WebAudio.prototype = {
                 return audio;
             }
 
-            var cacheName = url;
+            audio = cc.loader.getRes(url);
 
-            if (SWA) { // WebAudio
-                cacheName += '_webAudio';
+            if (SWA && audio._AUDIO_TYPE === 'AUDIO') {
+                cc.loader.release(url);
+                audio = null;
             }
 
-            audio = loader.cache[cacheName];
             if (audio) {
-                audio = audio.cloneNode();
-                audio.setVolume(this._effectVolume);
-                audio.play(0, loop || false);
-                effectList.push(audio);
-                return audio;
+
+                if (SWA && audio._AUDIO_TYPE === 'AUDIO') {
+                    loader.loadBuffer(url, function (error, buffer) {
+                        audio.setBuffer(buffer);
+                        audio.setVolume(cc.audioEngine._effectVolume);
+                        if (!audio.getPlaying())
+                            audio.play(0, loop || false);
+                    });
+                } else {
+                    audio = audio.cloneNode();
+                    audio.setVolume(this._effectVolume);
+                    audio.play(0, loop || false);
+                    effectList.push(audio);
+                    return audio;
+                }
+
             }
 
-            if (SWA) { // WebAudio
-                // Force using webaudio for effects
-                audio = new cc.Audio();
-                loader.loadBuffer(url, function (error, buffer) {
-                    audio.setBuffer(buffer);
-                    audio.setVolume(cc.audioEngine._effectVolume);
-                    if (!audio.getPlaying())
-                        audio.play(0, loop || false);
-                });
-                effectList.push(audio);
-                loader.cache[cacheName] = audio;
-            } else {
-                cc.loader.load(url);
-                audio = loader.cache[cacheName];
+            loader.useWebAudio = true;
+            cc.loader.load(url, function (audio) {
+                audio = cc.loader.getRes(url);
                 audio = audio.cloneNode();
-                audio.setVolume(this._effectVolume);
+                audio.setVolume(cc.audioEngine._effectVolume);
                 audio.play(0, loop || false);
                 effectList.push(audio);
-                return audio;
-            }
+            });
+            loader.useWebAudio = false;
 
             return audio;
         },
@@ -815,7 +828,6 @@ cc.Audio.WebAudio.prototype = {
             var pool = this._audioPool[url];
             if(pool) pool.length = 0;
             delete this._audioPool[url];
-            delete loader.cache[url];
         },
 
         /**
