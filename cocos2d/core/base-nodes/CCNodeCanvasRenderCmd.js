@@ -395,9 +395,10 @@ cc.Node.RenderCmd.prototype = {
                 }
             }
 
-            var z = renderer.assignedZ;
-            node._vertexZ = z;
-            renderer.assignedZ += renderer.assignedZStep;
+            if (isNaN(node._customZ)) {
+                node._vertexZ = renderer.assignedZ;
+                renderer.assignedZ += renderer.assignedZStep;
+            }
 
             renderer.pushRenderCommand(this);
             for (; i < len; i++) {
@@ -405,8 +406,10 @@ cc.Node.RenderCmd.prototype = {
                 child._renderCmd.visit(this);
             }
         } else {
-            node._vertexZ = renderer.assignedZ;
-            renderer.assignedZ += renderer.assignedZStep;
+            if (isNaN(node._customZ)) {
+                node._vertexZ = renderer.assignedZ;
+                renderer.assignedZ += renderer.assignedZStep;
+            }
 
             renderer.pushRenderCommand(this);
         }
