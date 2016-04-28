@@ -368,7 +368,7 @@ cc.Node.RenderCmd.prototype = {
         if(colorDirty || opacityDirty)
             this._updateColor();
 
-        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL || locFlag & flags.transformDirty)
+        if (locFlag & flags.transformDirty)
             //update the transform
             this.transform(parentCmd, true);
 
