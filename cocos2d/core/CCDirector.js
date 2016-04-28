@@ -228,7 +228,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._beforeVisitScene();
 
         // draw the scene
-        var skipRendering = false;
         if (this._runningScene) {
             if (renderer.childrenOrderDirty === true) {
                 cc.renderer.clearRenderCommands();
@@ -240,14 +239,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             else if (renderer.transformDirty() === true) {
                 renderer.transform();
             }
-            else {
-                skipRendering = true;
-            }
         }
 
-        if (!skipRendering) {
-            renderer.clear();
-        }
+        renderer.clear();
 
         // draw the notifications node
         if (this._notificationNode)
@@ -259,9 +253,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (this._afterVisitScene)
             this._afterVisitScene();
 
-        if (!skipRendering) {
-            renderer.rendering(cc._renderContext);
-        }
+        renderer.rendering(cc._renderContext);
         this._totalFrames++;
 
         cc.eventManager.dispatchEvent(this._eventAfterDraw);
