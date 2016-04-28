@@ -885,7 +885,7 @@ cc.loader = (function () {
                 isCrossOrigin: true
             };
             if (callback !== undefined)
-                opt.isCrossOrigin = option.isCrossOrigin === null ? opt.isCrossOrigin : option.isCrossOrigin;
+                opt.isCrossOrigin = option.isCrossOrigin === undefined ? opt.isCrossOrigin : option.isCrossOrigin;
             else if (option !== undefined)
                 callback = option;
 
@@ -917,9 +917,9 @@ cc.loader = (function () {
                 if (queue) {
                     callbacks = queue.callbacks;
                     for (var i = 0; i < callbacks.length; ++i) {
-                        var callback = callbacks[i];
-                        if (callback) {
-                            callback(null, img);
+                        var cb = callbacks[i];
+                        if (cb) {
+                            cb(null, img);
                         }
                     }
                     queue.img = null;
@@ -940,9 +940,9 @@ cc.loader = (function () {
                     if (queue) {
                         callbacks = queue.callbacks;
                         for (var i = 0; i < callbacks.length; ++i) {
-                            var callback = callbacks[i];
-                            if (callback) {
-                                callback("load image failed");
+                            var cb = callbacks[i];
+                            if (cb) {
+                                cb("load image failed");
                             }
                         }
                         queue.img = null;
@@ -1180,6 +1180,11 @@ cc.loader = (function () {
          */
         release: function (url) {
             var cache = this.cache;
+            var queue = _queue[url];
+            if (queue) {
+                queue.img = null;
+                delete _queue[url];
+            }
             delete cache[url];
             delete cache[_aliases[url]];
             delete _aliases[url];
