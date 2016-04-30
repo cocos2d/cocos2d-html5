@@ -79,7 +79,7 @@
                 z = vertices[i].z;
                 buffer[offset] = x * mat[0] + y * mat[4] + mat[12];
                 buffer[offset+1] = x * mat[1] + y * mat[5] + mat[13];
-                buffer[offset+2] = -388;
+                buffer[offset+2] = mat[14];
                 offset += row;
             }
             // MARMALADE CHANGE: ADDED CHECK FOR nullptr, TO PERMIT SPRITES WITH NO BATCH NODE / TEXTURE ATLAS
