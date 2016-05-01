@@ -641,12 +641,14 @@ return {
 
         gl.bindBuffer(gl.ARRAY_BUFFER, _currentBuffer.buffer.arrayBuffer);
 
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
+        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
+        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
+        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
 
         var vertexOffset = _currentBuffer.vertexOffset;
-        gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, vertexOffset);
-        gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, vertexOffset + 12);
-        gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, vertexOffset + 16);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, vertexOffset);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, vertexOffset + 12);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, vertexOffset + 16);
 
         var elemBuffer = getQuadIndexBuffer(count);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elemBuffer);

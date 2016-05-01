@@ -649,13 +649,16 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
             _render:function () {
                 var gl = cc._renderContext;
 
-                cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
                 gl.bindBuffer(gl.ARRAY_BUFFER, this._trianglesWebBuffer);
                 if (this._dirty) {
                     gl.bufferData(gl.ARRAY_BUFFER, this._trianglesArrayBuffer, gl.STREAM_DRAW);
                     this._dirty = false;
                 }
                 var triangleSize = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT;
+
+                gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
+                gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
+                gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
 
                 // vertex
                 gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, triangleSize, 0);

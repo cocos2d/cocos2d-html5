@@ -55,11 +55,13 @@
 
         var blendFunc = node._sprite._blendFunc;
         cc.glBlendFunc(blendFunc.src, blendFunc.dst);
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
-
         cc.glBindTexture2D(node._sprite.texture);
-
         context.bindBuffer(context.ARRAY_BUFFER, this._vertexWebGLBuffer);
+
+        context.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
+        context.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
+        context.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
+
         if (this._vertexDataDirty) {
             context.bufferSubData(context.ARRAY_BUFFER, 0, this._float32View);
             this._vertexDataDirty = false;

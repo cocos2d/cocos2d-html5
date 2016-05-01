@@ -544,7 +544,9 @@
                 //     this._bufferDirty = false;
                 // }
                 if (_resetPointers || _bufferchanged) {
-                    cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
+                    gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
+                    gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
+                    gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
                     gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
                     gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
                     gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);
