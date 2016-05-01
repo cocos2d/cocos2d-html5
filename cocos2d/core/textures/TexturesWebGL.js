@@ -327,7 +327,8 @@ cc._tmp.WebGLTexture2D = function () {
                 0.0, self.maxT,
                 self.maxS, self.maxT,
                 0.0, 0.0,
-                self.maxS, 0.0 ];
+                self.maxS, 0.0 ],
+                gl = cc._renderContext;
 
             var width = self._pixelsWide * self.maxS,
                 height = self._pixelsHigh * self.maxT;
@@ -338,13 +339,13 @@ cc._tmp.WebGLTexture2D = function () {
                 point.x, height + point.y, 0.0,
                 width + point.x, height + point.y, 0.0 ];
 
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
             self._shaderProgram.use();
             self._shaderProgram.setUniformsForBuiltins();
 
             cc.glBindTexture2D(self);
 
-            var gl = cc._renderContext;
+            gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
+            gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, 0, vertices);
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, coordinates);
 
@@ -368,13 +369,14 @@ cc._tmp.WebGLTexture2D = function () {
                 rect.x, rect.y + rect.height, /*0.0,*/
                 rect.x + rect.width, rect.y + rect.height        /*0.0*/ ];
 
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
             self._shaderProgram.use();
             self._shaderProgram.setUniformsForBuiltins();
 
             cc.glBindTexture2D(self);
 
             var gl = cc._renderContext;
+            gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
+            gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, 0, vertices);
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, coordinates);
 
@@ -823,13 +825,16 @@ cc._tmp.WebGLTextureAtlas = function () {
         //vertices
         //gl.bindBuffer(gl.ARRAY_BUFFER, _t._buffersVBO[0]);
         // XXX: update is done in draw... perhaps it should be done in a timer
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, _t._quadsWebBuffer);
         if (_t.dirty){
             gl.bufferData(gl.ARRAY_BUFFER, _t._quadsArrayBuffer, gl.DYNAMIC_DRAW);
             _t.dirty = false;
         }
+
+        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
+        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
+        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
 
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);               // vertices
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);          // colors

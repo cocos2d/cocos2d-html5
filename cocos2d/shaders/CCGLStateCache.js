@@ -25,9 +25,6 @@
  ****************************************************************************/
 
 cc._currentProjectionMatrix = -1;
-cc._vertexAttribPosition = false;
-cc._vertexAttribColor = false;
-cc._vertexAttribTexCoords = false;
 
 if (cc.ENABLE_GL_STATE_CACHE) {
     cc.MAX_ACTIVETEXTURE = 16;
@@ -58,6 +55,50 @@ if (cc.ENABLE_GL_STATE_CACHE) {
             return true;
         }
     };
+
+    WebGLRenderingContext.prototype.glEnableVertexAttribArray = WebGLRenderingContext.prototype.enableVertexAttribArray;
+    WebGLRenderingContext.prototype.enableVertexAttribArray = function (index) {
+        if (index === cc.VERTEX_ATTRIB_FLAG_POSITION) {
+            if (!this._vertexAttribPosition) {
+                this.glEnableVertexAttribArray(index);
+                this._vertexAttribPosition = true;
+            }
+        }
+        else if (index === cc.VERTEX_ATTRIB_FLAG_COLOR) {
+            if (!this._vertexAttribColor) {
+                this.glEnableVertexAttribArray(index);
+                this._vertexAttribColor = true;
+            }
+        }
+        else if (index === cc.VERTEX_ATTRIB_FLAG_TEX_COORDS) {
+            if (!this._vertexAttribTexCoords) {
+                this.glEnableVertexAttribArray(index);
+                this._vertexAttribTexCoords = true;
+            }
+        }
+        else {
+            this.glEnableVertexAttribArray(index);
+        }
+    };
+
+    WebGLRenderingContext.prototype.glDisableVertexAttribArray = WebGLRenderingContext.prototype.disableVertexAttribArray;
+    WebGLRenderingContext.prototype.disableVertexAttribArray = function (index) {
+        if (index === cc.VERTEX_ATTRIB_FLAG_COLOR) {
+            if (this._vertexAttribColor) {
+                this.glDisableVertexAttribArray(index);
+                this._vertexAttribColor = false;
+            }
+        }
+        else if (index === cc.VERTEX_ATTRIB_FLAG_TEX_COORDS) {
+            if (this._vertexAttribTexCoords) {
+                this.glDisableVertexAttribArray(index);
+                this._vertexAttribTexCoords = false;
+            }
+        }
+        else if (index !== 0) {
+            this.glDisableVertexAttribArray(index);
+        }
+    };
 }
 
 // GL State Cache functions
@@ -70,9 +111,6 @@ if (cc.ENABLE_GL_STATE_CACHE) {
 cc.glInvalidateStateCache = function () {
     cc.kmGLFreeAll();
     cc._currentProjectionMatrix = -1;
-    cc._vertexAttribPosition = false;
-    cc._vertexAttribColor = false;
-    cc._vertexAttribTexCoords = false;
     if (cc.ENABLE_GL_STATE_CACHE) {
         cc._currentShaderProgram = -1;
         for (var i = 0; i < cc.MAX_ACTIVETEXTURE; i++) {
@@ -193,50 +231,6 @@ cc.glBlendResetToCache = function () {
  */
 cc.setProjectionMatrixDirty = function () {
     cc._currentProjectionMatrix = -1;
-};
-
-/**
- * <p>
- *    Will enable the vertex attribs that are passed as flags.  <br/>
- *    Possible flags:                                           <br/>
- *    cc.VERTEX_ATTRIB_FLAG_POSITION                             <br/>
- *    cc.VERTEX_ATTRIB_FLAG_COLOR                                <br/>
- *    cc.VERTEX_ATTRIB_FLAG_TEX_COORDS                            <br/>
- *                                                              <br/>
- *    These flags can be ORed. The flags that are not present, will be disabled.
- * </p>
- * @function
- * @param {cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS} flags
- */
-cc.glEnableVertexAttribs = function (flags) {
-    /* Position */
-    var ctx = cc._renderContext;
-    var enablePosition = ( flags & cc.VERTEX_ATTRIB_FLAG_POSITION );
-    if (enablePosition !== cc._vertexAttribPosition) {
-        if (enablePosition)
-            ctx.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
-        cc._vertexAttribPosition = enablePosition;
-    }
-
-    /* Color */
-    var enableColor = (flags & cc.VERTEX_ATTRIB_FLAG_COLOR);
-    if (enableColor !== cc._vertexAttribColor) {
-        if (enableColor)
-            ctx.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
-        else
-            ctx.disableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
-        cc._vertexAttribColor = enableColor;
-    }
-
-    /* Tex Coords */
-    var enableTexCoords = (flags & cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
-    if (enableTexCoords !== cc._vertexAttribTexCoords) {
-        if (enableTexCoords)
-            ctx.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
-        else
-            ctx.disableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
-        cc._vertexAttribTexCoords = enableTexCoords;
-    }
 };
 
 /**

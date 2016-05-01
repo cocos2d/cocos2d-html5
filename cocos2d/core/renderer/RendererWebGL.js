@@ -106,13 +106,20 @@ function getQuadIndexBuffer (numQuads) {
 }
 
 function createVirtualBuffer (buffer, vertexOffset, totalBufferSize, count, data) {
-    data = data || new Float32Array(totalBufferSize / 4);
-    var uint32View = new Uint32Array(data.buffer);
+    var float32View, uint32View;
+    if (data) {
+        float32View = new Float32Array(data, vertexOffset, totalBufferSize / 4);
+        uint32View = new Uint32Array(data, vertexOffset, totalBufferSize / 4);
+    }
+    else {
+        float32View = new Float32Array(totalBufferSize / 4);
+        uint32View = new Uint32Array(float32View.buffer);
+    }
     var vBuf = {
         // The object contains real WebGL buffers, it's created or retrieved via getBatchBuffer
         buffer: buffer,
         // The vertex data array (Float32Array)
-        float32View: data,
+        float32View: float32View,
         // Uint32 view
         uint32View: uint32View,
         // The start offset in the vertex buffer, in bytes
@@ -358,9 +365,10 @@ return {
     _refreshVirtualBuffers: function () {
         var renderCmds = this._renderCmds,
             len = _prevRenderCmds.length,
+            currLen = renderCmds.length,
             i = 0, j = 0, end, cmd1, cmd2, next, 
             newBuf, currBuf,
-            startId, count;
+            startId, count, size;
 
         // Loop previous render command list to compare with current command list
         for (; i < len; ++i) {
@@ -371,7 +379,7 @@ return {
             if (currBuf) {
                 j = cmd1._currId;
                 // Removed from the command list
-                if (j < 0) {
+                if (j < 0 || j >= currLen) {
                     cmd1._vBuffer = null;
                     continue;
                 }
@@ -381,7 +389,7 @@ return {
                 count = 0;
                 // Remains in the command list
                 cmd2 = renderCmds[j];
-                while (cmd1 === cmd2 && cmd1._vBuffer === currBuf) {
+                while (cmd1 && cmd1 === cmd2 && cmd1._vBuffer === currBuf) {
                     ++count;
                     ++j;
                     cmd1 = _prevRenderCmds[i+count];
@@ -392,12 +400,15 @@ return {
                 // No valid batch
                 if (count <= 1) {
                     // Set both in case cmd1 doesn't equal cmd2
-                    cmd1._vBuffer = cmd2._vBuffer = null;
+                    cmd1._vBuffer = null;
+                    if (cmd2) {
+                        cmd2._vBuffer = null;
+                    }
                     continue;
                 }
 
                 // The next command in the current list support batch
-                if (cmd2._supportBatch) {
+                if (cmd2 && cmd2._supportBatch) {
                     cmd2.getBatchInfo(_currentInfo);
                     if (_currentInfo.texture === _batchedInfo.texture &&
                         _currentInfo.blendSrc === _batchedInfo.blendSrc &&
@@ -421,11 +432,13 @@ return {
                 else if (count > 1) {
                     // First command in buffer
                     cmd1 = _prevRenderCmds[i];
+                    // cmd2 = _prevRenderCmds[i+count-1];
+                    size = count * cmd1.bytesPerUnit;
                     newBuf = createVirtualBuffer(currBuf.buffer, 
-                                                 cmd1._vertexOffset, 
-                                                 currBuf.totalBufferSize, 
+                                                 currBuf.vertexOffset + cmd1._vertexOffset * 4, 
+                                                 size, 
                                                  count,
-                                                 currBuf.float32View);
+                                                 currBuf.float32View.buffer);
                     for (; i < end; ++i) {
                         _prevRenderCmds[i]._vBuffer = newBuf;
                     }
@@ -628,12 +641,14 @@ return {
 
         gl.bindBuffer(gl.ARRAY_BUFFER, _currentBuffer.buffer.arrayBuffer);
 
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
+        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
+        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
+        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
 
         var vertexOffset = _currentBuffer.vertexOffset;
-        gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, vertexOffset);
-        gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, vertexOffset + 12);
-        gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, vertexOffset + 16);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, vertexOffset);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, vertexOffset + 12);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, vertexOffset + 16);
 
         var elemBuffer = getQuadIndexBuffer(count);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elemBuffer);

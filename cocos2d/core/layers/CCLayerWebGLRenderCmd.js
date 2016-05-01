@@ -81,7 +81,8 @@
 
         this._shaderProgram.use();
         this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
+        context.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
+        context.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
         cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
 
         //
@@ -285,7 +286,8 @@
         //draw gradient layer
         this._shaderProgram.use();
         this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
+        context.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
+        context.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
         cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
         //
         // Attributes
