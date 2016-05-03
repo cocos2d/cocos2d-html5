@@ -99,8 +99,7 @@
             
             this._setTextureCoords(this._node._rect);
             this._updateColor();
-            this._bufferDirty = true;
-            this._buffer.setDirty();
+            this._updateVertexBuffer();
         }
     };
 
@@ -308,9 +307,7 @@
         this._buffer.setDirty();
     };
 
-    proto.transform = function (parentCmd, recursive) {
-        cc.Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
-
+    proto._updateVertexBuffer = function () {
         if (this._buffer) {
             var mat = this._stackMatrix.mat,
                 vertices = this._vertices,
@@ -330,7 +327,12 @@
             this._bufferDirty = true;
             this._buffer.setDirty();
         }
-        
+    };
+
+    proto.transform = function (parentCmd, recursive) {
+        cc.Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+
+        this._updateVertexBuffer();
         this._dirty = true;     //use for batching
         this._savedDirtyFlag = true;
     };
@@ -518,6 +520,11 @@
                 cc.error(cc._LogInfos.RectHeight, texture.url);
             }
         }
+    };
+
+    proto.needDraw = function () {
+        var node = this._node, locTexture = node._texture;
+        return (this._buffer && locTexture && locTexture._textureLoaded && node._rect.width && node._rect.height && this._displayedOpacity);
     };
 
     proto.rendering = function (ctx) {

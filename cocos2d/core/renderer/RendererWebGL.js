@@ -293,7 +293,7 @@ return {
     },
     
     pushRenderCommand: function (cmd) {
-        if(!cmd._needDraw)
+        if(!cmd.needDraw())
             return;
         if (this._isCacheToBufferOn) {
             var currentId = this._currentID, locCmdBuffer = this._cacheToBufferCmds;
@@ -399,7 +399,7 @@ return {
 
                 // No valid batch
                 if (count <= 1) {
-                    // Set both in case cmd1 doesn't equal cmd2
+                    cmd1 = _prevRenderCmds[i];
                     cmd1._vBuffer = null;
                     if (cmd2) {
                         cmd2._vBuffer = null;
@@ -435,7 +435,7 @@ return {
                     // cmd2 = _prevRenderCmds[i+count-1];
                     size = count * cmd1.bytesPerUnit;
                     newBuf = createVirtualBuffer(currBuf.buffer, 
-                                                 currBuf.vertexOffset + cmd1._vertexOffset * 4, 
+                                                 cmd1._vertexOffset * 4, 
                                                  size, 
                                                  count,
                                                  currBuf.float32View.buffer);

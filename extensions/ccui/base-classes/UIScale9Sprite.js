@@ -902,6 +902,9 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
      * @returns {boolean}
      */
     updateWithBatchNode: function (batchNode, originalRect, rotated, capInsets) {
+        if (!batchNode) {
+            return false;
+        }
         var sprite = new cc.Sprite(batchNode.getTexture());
         var pos = cc.p(0,0);
         var originalSize = cc.size(originalRect.width,originalRect.height);

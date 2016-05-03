@@ -151,7 +151,7 @@ cc.rendererCanvas = {
     },
 
     pushRenderCommand: function (cmd) {
-        if(!cmd._needDraw)
+        if(!cmd.needDraw())
             return;
         if (this._isCacheToCanvasOn) {
             var currentId = this._currentID, locCmdBuffer = this._cacheToCanvasCmds;
