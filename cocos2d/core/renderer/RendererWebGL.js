@@ -293,7 +293,7 @@ return {
     },
     
     pushRenderCommand: function (cmd) {
-        if(!cmd._needDraw)
+        if(!cmd.needDraw())
             return;
         if (this._isCacheToBufferOn) {
             var currentId = this._currentID, locCmdBuffer = this._cacheToBufferCmds;

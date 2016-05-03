@@ -522,6 +522,11 @@
         }
     };
 
+    proto.needDraw = function () {
+        var node = this._node, locTexture = node._texture;
+        return (this._buffer && locTexture && locTexture._textureLoaded && node._rect.width && node._rect.height && this._displayedOpacity);
+    };
+
     proto.rendering = function (ctx) {
         var node = this._node, locTexture = node._texture;
         if (!this._buffer || (locTexture && (!locTexture._textureLoaded || !node._rect.width || !node._rect.height)) || !this._displayedOpacity)

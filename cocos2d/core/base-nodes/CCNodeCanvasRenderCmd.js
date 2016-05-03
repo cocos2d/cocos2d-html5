@@ -33,6 +33,9 @@ cc.CustomRenderCmd = function (target, func) {
             return;
         this._callback.call(this._target, ctx, scaleX, scaleY);
     };
+    this.needDraw = function () {
+        return this._needDraw;
+    };
 };
 
 cc.Node._dirtyFlags = {transformDirty: 1 << 0, visibleDirty: 1 << 1, colorDirty: 1 << 2, opacityDirty: 1 << 3, cacheDirty: 1 << 4,
@@ -61,6 +64,10 @@ cc.Node.RenderCmd = function(renderable){
 
 cc.Node.RenderCmd.prototype = {
     constructor: cc.Node.RenderCmd,
+
+    needDraw: function () {
+        return this._needDraw;
+    },
 
     getAnchorPointInPoints: function(){
         return cc.p(this._anchorPointInPoints);
