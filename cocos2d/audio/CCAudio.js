@@ -653,7 +653,7 @@ cc.Audio.WebAudio.prototype = {
 
             audio = cc.loader.getRes(url);
 
-            if (SWA && audio._AUDIO_TYPE === 'AUDIO') {
+            if (audio && SWA && audio._AUDIO_TYPE === 'AUDIO') {
                 cc.loader.release(url);
                 audio = null;
             }
