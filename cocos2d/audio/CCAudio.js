@@ -388,6 +388,7 @@ cc.Audio.WebAudio.prototype = {
             }
 
             audio = new cc.Audio(realUrl);
+            cc.loader.cache[url] = audio;
             this.loadAudioFromExtList(realUrl, typeList, audio, cb);
             return audio;
         },
