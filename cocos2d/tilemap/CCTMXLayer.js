@@ -775,9 +775,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                     this.shaderProgram.use();
                     this.shaderProgram.setUniformLocationWith1f(cc.UNIFORM_ALPHA_TEST_VALUE_S, alphaFuncValue);
                 }
-            } else {
-                this._vertexZvalue = cc.renderer.assignedZStep * parseInt(vertexz, 10);
-            }
+            } else
+                this._vertexZvalue = parseInt(vertexz, 10);
         }
     },
 
@@ -838,10 +837,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             switch (this.layerOrientation) {
                 case cc.TMX_ORIENTATION_ISO:
                     maxVal = this._layerSize.width + this._layerSize.height;
-                    ret = -(maxVal - (pos.x + pos.y)) * cc.renderer.assignedZStep;
+                    ret = -(maxVal - (pos.x + pos.y));
                     break;
                 case cc.TMX_ORIENTATION_ORTHO:
-                    ret = -(this._layerSize.height - pos.y) * cc.renderer.assignedZStep;
+                    ret = -(this._layerSize.height - pos.y);
                     break;
                 case cc.TMX_ORIENTATION_HEX:
                     cc.log("TMX Hexa zOrder not supported");

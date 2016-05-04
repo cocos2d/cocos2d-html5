@@ -46,23 +46,26 @@ cc.loader.register(["js"], cc._jsLoader);
 
 cc._imgLoader = {
     load : function(realUrl, url, res, cb){
-        cc.loader.cache[url] = cc.loader.loadImg(realUrl, function(err, img){
-            if(err)
-                return cb(err);
-            cc.textureCache.handleLoadedTexture(url);
-            cb(null, img);
-        });
+        var callback;
+        if (cc.loader.isLoading(realUrl)) {
+            callback = cb;
+        }
+        else {
+            callback = function(err, img){
+                if(err)
+                    return cb(err);
+                cc.loader.cache[url] = img;
+                cc.textureCache.handleLoadedTexture(url);
+                cb(null, img);
+            };
+        }
+        cc.loader.loadImg(realUrl, callback);
     }
 };
 cc.loader.register(["png", "jpg", "bmp","jpeg","gif", "ico", "tiff", "webp"], cc._imgLoader);
 cc._serverImgLoader = {
     load : function(realUrl, url, res, cb){
-        cc.loader.cache[url] =  cc.loader.loadImg(res.src, function(err, img){
-            if(err)
-                return cb(err);
-            cc.textureCache.handleLoadedTexture(url);
-            cb(null, img);
-        });
+        cc._imgLoader.load(res.src, url, res, cb);
     }
 };
 cc.loader.register(["serverImg"], cc._serverImgLoader);
