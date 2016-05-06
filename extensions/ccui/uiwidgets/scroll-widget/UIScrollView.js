@@ -131,6 +131,11 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this.scheduleUpdate();
     },
 
+    onExit: function () {
+        cc.renderer._removeCache(this.__instanceId);
+        ccui.Layout.prototype.onExit.call(this);
+    },
+
     /**
      * When a widget is in a layout, you could call this method to get the next focused widget within a specified _direction.             <br/>
      * If the widget is not in a layout, it will return itself

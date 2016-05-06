@@ -48,6 +48,10 @@
         this._fullViewport = fullViewport;
     };
 
+    proto.needDraw = function () {
+        return this._needDraw && this._node.autoDraw;
+    };
+
     proto.rendering = function (ctx) {
         var gl = ctx || cc._renderContext;
         var node = this._node;
