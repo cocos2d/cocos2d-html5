@@ -163,7 +163,37 @@
         currentStack.top = this._stackMatrix;
 
         node.sortAllChildren();
-        cc.renderer.pushRenderCommand(this);
+
+        var renderer = cc.renderer,
+            children = node._children, child,
+            i, len = children.length;
+
+        for (i = 0; i < len; i++) {
+            child = children[i];
+            if (child._localZOrder < 0) {
+                if (isNaN(child._customZ)) {
+                    child._vertexZ = renderer.assignedZ;
+                    renderer.assignedZ += renderer.assignedZStep;
+                }
+            }
+            else {
+                break;
+            }
+        }
+
+        if (isNaN(node._customZ)) {
+            node._vertexZ = renderer.assignedZ;
+            renderer.assignedZ += renderer.assignedZStep;
+        }
+        renderer.pushRenderCommand(this);
+        
+        for (; i < len; i++) {
+            child = children[i];
+            if (isNaN(child._customZ)) {
+                child._vertexZ = renderer.assignedZ;
+                renderer.assignedZ += renderer.assignedZStep;
+            }
+        }
 
         this._dirtyFlag = 0;
         currentStack.top = currentStack.stack.pop();

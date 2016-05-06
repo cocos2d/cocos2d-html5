@@ -45,10 +45,8 @@
         var node = this._node;
         var locQuad = this._quad;
         var vertices = this._vertices;
-        // If it is not visible, or one of its ancestors is not visible, then do nothing:
-        if (!node._visible)
-            locQuad.br.vertices = locQuad.tl.vertices = locQuad.tr.vertices = locQuad.bl.vertices = {x: 0, y: 0, z: 0};
-        else if (this._buffer) {
+        
+        if (this._buffer) {
             //
             // calculate the Quad based on the Affine Matrix
             //
@@ -86,11 +84,11 @@
             if (node.textureAtlas) {
                 node.textureAtlas.updateQuad(locQuad, node.textureAtlas.getTotalQuads());
             }
-
-            this._quadDirty = true;
-            this._savedDirtyFlag = true;
-            this._bufferDirty = true;
-            this._buffer.setDirty();
+            
+            // Need manually buffer data because it's invoked during rendering
+            cc._renderContext.bindBuffer(gl.ARRAY_BUFFER, this._buffer.vertexBuffer);
+            cc._renderContext.bufferSubData(gl.ARRAY_BUFFER, this._bufferOffset, this._float32View);
+            cc._renderContext.bindBuffer(gl.ARRAY_BUFFER, null);
         }
     };
 })();
