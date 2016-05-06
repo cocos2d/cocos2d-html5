@@ -523,8 +523,7 @@
     };
 
     proto.needDraw = function () {
-        var node = this._node, locTexture = node._texture;
-        return (this._buffer && locTexture && locTexture._textureLoaded && node._rect.width && node._rect.height && this._displayedOpacity);
+        return (this._buffer && this._node._texture);
     };
 
     proto.rendering = function (ctx) {
