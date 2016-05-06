@@ -47,7 +47,7 @@
     proto.rendering = function (ctx) {
         var node = this._node;
         var context = ctx || cc._renderContext;
-        if (!this._vertexDataCount || !node._sprite)
+        if (this._vertexDataCount === 0 || !node._sprite)
             return;
 
         this._shaderProgram.use();
@@ -177,7 +177,11 @@
     proto.releaseData = function(){
         if (this._vertexData) {
             //release all previous information
-            cc._renderContext.deleteBuffer(this._vertexWebGLBuffer);
+            var webglBuffer = this._vertexWebGLBuffer;
+            setTimeout(function () {
+                cc._renderContext.deleteBuffer(webglBuffer);
+            }, 0.1);
+            this._vertexWebGLBuffer = null;
             this._vertexData = null;
             this._float32View = null;
             this._vertexArrayBuffer = null;
