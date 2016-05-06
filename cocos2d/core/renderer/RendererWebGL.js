@@ -196,6 +196,15 @@ return {
         this._isCacheToBufferOn = false;
     },
 
+    _removeCache: function (instanceID) {
+        instanceID = instanceID || this._currentID;
+        this._cacheToBufferCmds[instanceID].length = 0;
+        delete this._cacheToBufferCmds[instanceID];
+
+        var locIDs = this._cacheInstanceIds;
+        cc.arrayRemoveObject(locIDs, instanceID);
+    },
+
     /**
      * drawing all renderer command to cache canvas' context
      * @param {Number} [renderTextureId]
@@ -203,7 +212,7 @@ return {
     _renderingToBuffer: function (renderTextureId) {
         renderTextureId = renderTextureId || this._currentID;
         var locCmds = this._cacheToBufferCmds[renderTextureId], i, len;
-        var ctx = cc._renderContext, locIDs = this._cacheInstanceIds;
+        var ctx = cc._renderContext;
         // Update all global buffers (only invoke bufferSubData when buffer is dirty)
         for (i = 0, len = _gbuffers.length; i < len; ++i) {
             _gbuffers[i].update();
@@ -213,10 +222,9 @@ return {
         for (i = 0, len = locCmds.length; i < len; i++) {
             locCmds[i].rendering(ctx);
         }
-        locCmds.length = 0;
-        delete this._cacheToBufferCmds[renderTextureId];
-        cc.arrayRemoveObject(locIDs, renderTextureId);
+        this._removeCache(renderTextureId);
 
+        var locIDs = this._cacheInstanceIds;
         if (locIDs.length === 0)
             this._isCacheToBufferOn = false;
         else
