@@ -2360,6 +2360,13 @@ cc.game = /** @lends cc.game# */{
         cc.game.onStart();
     },
 
+    /**
+     * End game, it will close the game window
+     */
+    end: function () {
+        close();
+    },
+
 //  @Game loading
     /**
      * Prepare game.
