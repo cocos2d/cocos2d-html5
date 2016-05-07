@@ -1,34 +1,36 @@
 cc.profiler = (function () {
-    var _inited = _showFPS = false;
-    var _frames = _frameRate = _lastSPF = _accumDt = 0;
-    var _afterProjection = _afterVisitListener = _FPSLabel = _SPFLabel = _drawsLabel = null;
+    var _inited = false, _showFPS = false;
+    var _frames = 0, _frameRate = 0, _lastSPF = 0, _accumDt = 0;
+    var _afterVisitListener = null, 
+        _FPSLabel = document.createElement('div'), 
+        _SPFLabel = document.createElement('div'), 
+        _drawsLabel = document.createElement('div'),
+        _fps = document.createElement('div');
 
     var LEVEL_DET_FACTOR = 0.6, _levelDetCycle = 10;
     var LEVELS = [0, 10, 20, 30];
     var _fpsCount = [0, 0, 0, 0];
     var _currLevel = 3, _analyseCount = 0, _totalFPS = 0;
 
-    var createStatsLabel = function () {
-        var fontSize = 0;
-        var w = cc.winSize.width, h = cc.winSize.height;
-        var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        if (w > h)
-            fontSize = 0 | (h / 320 * 24);
-        else
-            fontSize = 0 | (w / 320 * 24);
+    _fps.id = 'fps';
+    _fps.style.position = 'absolute';
+    _fps.style.padding = '3px';
+    _fps.style.textAlign = 'left';
+    _fps.style.backgroundColor = 'rgb(0, 0, 34)';
+    _fps.style.bottom = cc.DIRECTOR_STATS_POSITION.y + '0px';
+    _fps.style.left = cc.DIRECTOR_STATS_POSITION.x + 'px';
+    _fps.style.width = '45px';
+    _fps.style.height = '60px';
 
-        _FPSLabel = new cc.LabelTTF("000.0", "Arial", fontSize);
-        _SPFLabel = new cc.LabelTTF("0.000", "Arial", fontSize);
-        _drawsLabel = new cc.LabelTTF("0000", "Arial", fontSize);
-
-        _FPSLabel.setVertexZ(0.9999);
-        _SPFLabel.setVertexZ(0.9999);
-        _SPFLabel.setVertexZ(0.9999);
-
-        _drawsLabel.setPosition(_drawsLabel.width / 2 + locStatsPosition.x, _drawsLabel.height * 5 / 2 + locStatsPosition.y);
-        _SPFLabel.setPosition(_SPFLabel.width / 2 + locStatsPosition.x, _SPFLabel.height * 3 / 2 + locStatsPosition.y);
-        _FPSLabel.setPosition(_FPSLabel.width / 2 + locStatsPosition.x, _FPSLabel.height / 2 + locStatsPosition.y);
-    };
+    var labels = [_drawsLabel, _SPFLabel, _FPSLabel];
+    for (var i = 0; i < 3; ++i) {
+        var style = labels[i].style;
+        style.color = 'rgb(0, 255, 255)';
+        style.font = 'bold 12px Helvetica, Arial';
+        style.lineHeight = '20px';
+        style.width = '100%';
+        _fps.appendChild(labels[i]);
+    }
 
     var analyseFPS = function (fps) {
         var lastId = LEVELS.length - 1, i = lastId, ratio, average = 0;
@@ -82,23 +84,11 @@ cc.profiler = (function () {
             }
 
             if (_showFPS) {
-                _SPFLabel.string = _lastSPF.toFixed(3);
-                _FPSLabel.string = _frameRate.toFixed(1);
-                _drawsLabel.string = (0 | cc.g_NumberOfDraws).toString();
+                _SPFLabel.innerText = _lastSPF.toFixed(3);
+                _FPSLabel.innerText = _frameRate.toFixed(1);
+                _drawsLabel.innerText = (0 | cc.g_NumberOfDraws).toString();
             }
         }
-
-        if (_showFPS) {
-            _FPSLabel.visit();
-            _SPFLabel.visit();
-            _drawsLabel.visit();
-        }
-    };
-
-    var afterProjection = function(){
-        _FPSLabel._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
-        _SPFLabel._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
-        _drawsLabel._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     };
 
     var profiler = {
@@ -133,22 +123,19 @@ cc.profiler = (function () {
             if (!_inited) {
                 this.init();
             }
-            if (cc.LabelTTF && !_FPSLabel) {
-                createStatsLabel();
-            }
-            if (_FPSLabel) {
-                _showFPS = true;
-            }
+
+            cc.container.appendChild(_fps);
+            _showFPS = true;
         },
 
         hideStats: function () {
             _showFPS = false;
+            cc.container.removeChild(_fps);
         },
 
         init: function () {
             if (!_inited) {
                 _afterVisitListener = cc.eventManager.addCustomListener(cc.Director.EVENT_AFTER_VISIT, afterVisit);
-                _afterProjection = cc.eventManager.addCustomListener(cc.Director.EVENT_PROJECTION_CHANGED, afterProjection);
                 _inited = true;
             }
         }
