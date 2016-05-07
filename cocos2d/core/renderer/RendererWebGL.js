@@ -198,8 +198,11 @@ return {
 
     _removeCache: function (instanceID) {
         instanceID = instanceID || this._currentID;
-        this._cacheToBufferCmds[instanceID].length = 0;
-        delete this._cacheToBufferCmds[instanceID];
+        var cmds = this._cacheToBufferCmds[instanceID];
+        if (cmds) {
+            cmds.length = 0;
+            delete this._cacheToBufferCmds[instanceID];
+        }
 
         var locIDs = this._cacheInstanceIds;
         cc.arrayRemoveObject(locIDs, instanceID);

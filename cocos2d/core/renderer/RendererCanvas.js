@@ -99,8 +99,11 @@ cc.rendererCanvas = {
 
     _removeCache: function (instanceID) {
         instanceID = instanceID || this._currentID;
-        this._cacheToCanvasCmds[instanceID].length = 0;
-        delete this._cacheToCanvasCmds[instanceID];
+        var cmds = this._cacheToCanvasCmds[instanceID];
+        if (cmds) {
+            cmds.length = 0;
+            delete this._cacheToCanvasCmds[instanceID];
+        }
 
         var locIDs = this._cacheInstanceIds;
         cc.arrayRemoveObject(locIDs, instanceID);
