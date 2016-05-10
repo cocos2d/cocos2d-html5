@@ -436,11 +436,15 @@ cc.eventManager = /** @lends cc.eventManager# */{
 
             if(sceneGraphPriorityListeners){
                 idx = sceneGraphPriorityListeners.indexOf(selListener);
-                sceneGraphPriorityListeners.splice(idx, 1);
+                if (idx !== -1) {
+                    sceneGraphPriorityListeners.splice(idx, 1);
+                }
             }
             if(fixedPriorityListeners){
                 idx = fixedPriorityListeners.indexOf(selListener);
-                fixedPriorityListeners.splice(idx, 1);
+                if (idx !== -1) {
+                    fixedPriorityListeners.splice(idx, 1);
+                }
             }
         }
         toRemovedListeners.length = 0;
