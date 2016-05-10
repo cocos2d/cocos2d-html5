@@ -124,13 +124,17 @@ cc.profiler = (function () {
                 this.init();
             }
 
-            cc.container.appendChild(_fps);
+            if (_fps.parentElement === null) {
+                cc.container.appendChild(_fps);
+            }
             _showFPS = true;
         },
 
         hideStats: function () {
             _showFPS = false;
-            cc.container.removeChild(_fps);
+            if (_fps.parentElement === cc.container) {
+                cc.container.removeChild(_fps);
+            }
         },
 
         init: function () {

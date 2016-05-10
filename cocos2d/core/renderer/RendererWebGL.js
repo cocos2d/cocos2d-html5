@@ -127,7 +127,9 @@ function createVirtualBuffer (buffer, vertexOffset, totalBufferSize, count, data
         // Total vertex array buffer size, including vertex data, in bytes
         totalBufferSize: totalBufferSize,
         // Render command count
-        count: count
+        count: count,
+        // Valid flag, indicate whether the buffer is valid or not
+        valid: true
     };
     return vBuf;
 }
@@ -387,7 +389,7 @@ return {
             currBuf = cmd1._vBuffer;
             matched = false;
             // Check to update virtual buffer
-            if (currBuf) {
+            if (currBuf && currBuf.valid) {
                 j = cmd1._currId;
                 // Removed from the command list
                 if (j < 0 || j >= currLen) {
@@ -497,7 +499,7 @@ return {
         _currentBuffer = null;
 
         // Protection, vbuffer invalid or doesn't match the command
-        if (cmd._vertexOffset !== vbuffer.vertexOffset || !vbuffer.buffer) {
+        if (cmd._vertexOffset !== vbuffer.vertexOffset || !vbuffer.valid || !vbuffer.buffer) {
             _bufferError = true;
             return 0;
         }

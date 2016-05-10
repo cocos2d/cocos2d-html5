@@ -87,6 +87,12 @@
         info.shader = this.batchShader;
     };
 
+    proto._invalidBatch = function () {
+        if (this._vBuffer) {
+            this._vBuffer.valid = false;
+        }
+    };
+
     proto.updateBuffer = function () {
         if (!this._buffer) {
             var length = this.vertexBytesPerUnit;
@@ -390,6 +396,7 @@
             }
             node.opacityModifyRGB = true;
         }
+        this._invalidBatch();
     };
 
     proto._setTexture = function (texture) {
@@ -404,6 +411,7 @@
             if(node._texture !== texture){
                 node._textureLoaded = texture ? texture._textureLoaded : false;
                 node._texture = texture;
+                // This will invalid current batch
                 this._updateBlendFunc();
             }
         }
