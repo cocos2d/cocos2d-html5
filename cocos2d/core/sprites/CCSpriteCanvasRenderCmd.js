@@ -149,7 +149,7 @@
         w = locWidth * scaleX;
         h = locHeight * scaleY;
 
-        if (texture) {
+        if (texture && texture._htmlElementObj) {
             image = texture._htmlElementObj;
             if (texture._pattern !== "") {
                 wrapper.setFillStyle(context.createPattern(image, texture._pattern));
