@@ -1288,6 +1288,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             if (this._isTransitionFinished)
                 child.onEnterTransitionDidFinish();
         }
+        child._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
         if (this._cascadeColorEnabled)
             child._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.colorDirty);
         if (this._cascadeOpacityEnabled)
