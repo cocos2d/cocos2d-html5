@@ -36,6 +36,9 @@
         if (!locCmds) {
             return;
         }
+
+        this._node.updateChildren();
+
         for (i = 0, len = locCmds.length; i < len; i++) {
             checkNode = locCmds[i]._node;
             if(checkNode instanceof ccui.ScrollView)
