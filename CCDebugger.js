@@ -312,24 +312,12 @@ cc._initDebugSetting = function (mode) {
     } else if(console && console.log.apply){//console is null when user doesn't open dev tool on IE9
         //log to console
 
-        cc.error = function(){
-            return console.error.apply(console, arguments);
-        };
-        cc.assert = function (cond, msg) {
-            if (!cond && msg) {
-                for (var i = 2; i < arguments.length; i++)
-                    msg = msg.replace(/(%s)|(%d)/, cc._formatString(arguments[i]));
-                throw new Error(msg);
-            }
-        };
-        if(mode !== ccGame.DEBUG_MODE_ERROR)
-            cc.warn = function(){
-                return console.warn.apply(console, arguments);
-            };
-        if(mode === ccGame.DEBUG_MODE_INFO)
-            cc.log = function(){
-                return console.log.apply(console, arguments);
-            };
+        cc.error = Function.prototype.bind.call(console.error, console);
+        cc.assert = Function.prototype.bind.call(console.assert, console);
+        if (mode !== ccGame.DEBUG_MODE_ERROR)
+            cc.warn = Function.prototype.bind.call(console.warn, console);
+        if (mode === ccGame.DEBUG_MODE_INFO)
+            cc.log = Function.prototype.bind.call(console.log, console);
     }
 };
 //+++++++++++++++++++++++++something about log end+++++++++++++++++++++++++++++
