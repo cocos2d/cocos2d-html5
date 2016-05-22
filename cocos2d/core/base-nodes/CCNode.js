@@ -1888,7 +1888,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.AffineTransform}
      */
     getParentToNodeTransform: function () {
-       this._renderCmd.getParentToNodeTransform();
+       return this._renderCmd.getParentToNodeTransform();
     },
 
     /**
