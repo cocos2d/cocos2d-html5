@@ -197,7 +197,7 @@
             this._vertexArrayBuffer = new ArrayBuffer(MAX_VERTEX_COUNT * vertexDataLen);
             this._float32View = new Float32Array(this._vertexArrayBuffer);
             this._vertexData = [];
-            for (i = 0; i < MAX_VERTEX_COUNT; i++) {
+            for (var i = 0; i < MAX_VERTEX_COUNT; i++) {
                 this._vertexData[i] = new cc.V3F_C4B_T2F(null, null, null, this._vertexArrayBuffer, i * vertexDataLen);
             }
 

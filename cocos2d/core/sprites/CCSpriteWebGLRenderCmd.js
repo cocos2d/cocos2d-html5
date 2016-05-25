@@ -531,7 +531,7 @@
     };
 
     proto.needDraw = function () {
-        return (this._buffer && this._node._texture);
+        return (this._buffer && this._needDraw);
     };
 
     proto.rendering = function (ctx) {
