@@ -481,35 +481,21 @@ cc.checkGLErrorDebug = function () {
  * @constant
  * @type Number
  */
-cc.DEVICE_ORIENTATION_PORTRAIT = 0;
+cc.ORIENTATION_PORTRAIT = 1;
 
 /**
  * Device oriented horizontally, home button on the right (UIDeviceOrientationLandscapeLeft)
  * @constant
  * @type Number
  */
-cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT = 1;
+cc.ORIENTATION_LANDSCAPE = 2;
 
 /**
  * Device oriented vertically, home button on the top (UIDeviceOrientationPortraitUpsideDown)
  * @constant
  * @type Number
  */
-cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN = 2;
-
-/**
- * Device oriented horizontally, home button on the left (UIDeviceOrientationLandscapeRight)
- * @constant
- * @type Number
- */
-cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT = 3;
-
-/**
- * In browsers, we only support 2 orientations by change window size.
- * @constant
- * @type Number
- */
-cc.DEVICE_MAX_ORIENTATIONS = 2;
+cc.ORIENTATION_AUTO = 3;
 
 
 // ------------------- vertex attrib flags -----------------------------
