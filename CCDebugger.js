@@ -313,7 +313,18 @@ cc._initDebugSetting = function (mode) {
         //log to console
 
         cc.error = Function.prototype.bind.call(console.error, console);
-        cc.assert = Function.prototype.bind.call(console.assert, console);
+        //If console.assert is not support user throw Error msg on wrong condition
+        if (console.assert) {
+            cc.assert = Function.prototype.bind.call(console.assert, console);
+        } else {
+            cc.assert = function (cond, msg) {
+                if (!cond && msg) {
+                    for (var i = 2; i < arguments.length; i++)
+                        msg = msg.replace(/(%s)|(%d)/, cc._formatString(arguments[i]));
+                    throw new Error(msg);
+                }
+            };
+        }
         if (mode !== ccGame.DEBUG_MODE_ERROR)
             cc.warn = Function.prototype.bind.call(console.warn, console);
         if (mode === ccGame.DEBUG_MODE_INFO)
