@@ -57,7 +57,8 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontNameOrFontDef);
 
         }else {
-            this._fontStyleStr = fontStyle + " " + fontWeight + " " + fontSize + "px '" + fontNameOrFontDef + "'";
+            var deviceFontSize = fontSize * cc.view.getDevicePixelRatio();
+            this._fontStyleStr = fontStyle + " " + fontWeight + " " + deviceFontSize + "px '" + fontNameOrFontDef + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontNameOrFontDef, fontSize);
         }
     };
@@ -123,22 +124,32 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             locStrokeShadowOffsetY += Math.abs(locOffsetSize.y) * 2;
         }
 
+        var pixelRatio = cc.view.getDevicePixelRatio();
         //get offset for stroke and shadow
         if (locDimensionsWidth === 0) {
             if (this._isMultiLine)
-                locSize = cc.size(Math.ceil(Math.max.apply(Math, locLineWidth) + locStrokeShadowOffsetX),
-                    Math.ceil((this._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY));
+                locSize = cc.size(
+                    Math.ceil(Math.max.apply(Math, locLineWidth) + locStrokeShadowOffsetX),
+                    Math.ceil((this._fontClientHeight * pixelRatio * this._strings.length) + locStrokeShadowOffsetY));
             else
-                locSize = cc.size(Math.ceil(this._measure(node._string) + locStrokeShadowOffsetX), Math.ceil(this._fontClientHeight + locStrokeShadowOffsetY));
+                locSize = cc.size(
+                    Math.ceil(this._measure(node._string) + locStrokeShadowOffsetX),
+                    Math.ceil(this._fontClientHeight * pixelRatio + locStrokeShadowOffsetY));
         } else {
             if (node._dimensions.height === 0) {
                 if (this._isMultiLine)
-                    locSize = cc.size(Math.ceil(locDimensionsWidth + locStrokeShadowOffsetX), Math.ceil((node.getLineHeight() * this._strings.length) + locStrokeShadowOffsetY));
+                    locSize = cc.size(
+                        Math.ceil(locDimensionsWidth + locStrokeShadowOffsetX),
+                        Math.ceil((node.getLineHeight() * pixelRatio * this._strings.length) + locStrokeShadowOffsetY));
                 else
-                    locSize = cc.size(Math.ceil(locDimensionsWidth + locStrokeShadowOffsetX), Math.ceil(node.getLineHeight() + locStrokeShadowOffsetY));
+                    locSize = cc.size(
+                        Math.ceil(locDimensionsWidth + locStrokeShadowOffsetX),
+                        Math.ceil(node.getLineHeight() * pixelRatio + locStrokeShadowOffsetY));
             } else {
                 //dimension is already set, contentSize must be same as dimension
-                locSize = cc.size(Math.ceil(locDimensionsWidth + locStrokeShadowOffsetX), Math.ceil(node._dimensions.height + locStrokeShadowOffsetY));
+                locSize = cc.size(
+                    Math.ceil(locDimensionsWidth + locStrokeShadowOffsetX),
+                    Math.ceil(node._dimensions.height * pixelRatio + locStrokeShadowOffsetY));
             }
         }
         if(node._getFontStyle() !== "normal"){    //add width for 'italic' and 'oblique'
