@@ -79,14 +79,4 @@
 
         return this._transform;
     };
-
-    proto.updateTransform = function(){
-        var node = this._node;
-        var dirty = node.isDirty();
-        if(dirty){
-            var cmd = node._renderCmd;
-            cmd && cmd.setDirtyRecursively(true);
-        }
-        cc.Sprite.WebGLRenderCmd.prototype.updateTransform.call(this);
-    };
 })();

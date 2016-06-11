@@ -108,8 +108,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     _lineBreakWithoutSpaces: false,
     _imageOffset: null,
 
-    _reusedChar: null,
-
     _textureLoaded: false,
     _className: "LabelBMFont",
 
@@ -153,7 +151,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     ctor: function (str, fntFile, width, alignment, imageOffset) {
         cc.SpriteBatchNode.prototype.ctor.call(this);
         this._imageOffset = cc.p(0, 0);
-        this._reusedChar = [];
         this._cascadeColorEnabled = true;
         this._cascadeOpacityEnabled = true;
         this.initWithString(str, fntFile, width, alignment, imageOffset);
@@ -224,7 +221,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      */
     initWithString: function (str, fntFile, width, alignment, imageOffset) {
         var self = this, theString = str || "";
-        var cmd = this._renderCmd;
 
         if (self._config)
             cc.log("cc.LabelBMFont.initWithString(): re-init is no longer supported");
@@ -262,7 +258,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         if (self.initWithTexture(texture, theString.length)) {
             self._alignment = alignment || cc.TEXT_ALIGNMENT_LEFT;
             self._imageOffset = imageOffset || cc.p(0, 0);
-            self._width = (width == null) ? -1 : width;
+            self._width = (width === undefined) ? -1 : width;
 
             self._realOpacity = 255;
             self._realColor = cc.color(255, 255, 255, 255);
@@ -271,8 +267,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             self._contentSize.height = 0;
 
             self.setAnchorPoint(0.5, 0.5);
-
-            this._renderCmd._initBatchTexture();
 
             self.setString(theString, true);
             return true;
@@ -286,7 +280,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     createFontChars: function () {
         var self = this;
         var cmd = this._renderCmd;
-        var locTexture = cmd._texture || self.textureAtlas.texture;
+        var locTexture = cmd._texture || this._texture;
 
         var nextFontPositionX = 0;
 
@@ -312,6 +306,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         var nextFontPositionY = -(locCommonH - locCommonH * quantityOfLines);
 
         var prev = -1;
+        var fontDef;
         for (i = 0; i < stringLen; i++) {
             var key = locStr.charCodeAt(i);
             if (key === 0) continue;
@@ -324,7 +319,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             }
 
             var kerningAmount = locKerningDict[(prev << 16) | (key & 0xffff)] || 0;
-            var fontDef = locFontDict[key];
+            fontDef = locFontDict[key];
             if (!fontDef) {
                 cc.log("cocos2d: LabelBMFont: character not found " + locStr[i]);
 
@@ -348,18 +343,18 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
             var fontChar = self.getChildByTag(i);
 
-            if(!fontChar){
+            if (!fontChar) {
                 fontChar = new cc.Sprite();
                 fontChar.initWithTexture(locTexture, rect, false);
                 fontChar._newTextureWhenChangeColor = true;
                 this.addChild(fontChar, 0, i);
-            }else{
-                this._renderCmd._updateCharTexture(fontChar, rect, key);
+            } else {
+                cmd._updateCharTexture(fontChar, rect, key);
             }
 
             // Apply label properties
             fontChar.opacityModifyRGB = this._opacityModifyRGB;
-            this._renderCmd._updateCharColorAndOpacity(fontChar);
+            cmd._updateCharColorAndOpacity(fontChar);
 
             var yOffset = locCfg.commonHeight - fontDef.yOffset;
             var fontPos = cc.p(nextFontPositionX + fontDef.xOffset + fontDef.rect.width * 0.5 + kerningAmount,

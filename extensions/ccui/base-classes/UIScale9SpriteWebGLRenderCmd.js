@@ -77,7 +77,7 @@
     proto.transform = function(parentCmd, recursive){
         var node = this._node;
         parentCmd = parentCmd || this.getParentRenderCmd();
-        cc.Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+        this.originTransform(parentCmd, recursive);
         if (node._positionsAreDirty) {
             node._updatePositions();
             node._positionsAreDirty = false;

@@ -90,7 +90,7 @@
                 cc.log("Nesting more than " + cc.stencilBits + "stencils is not supported. Everything will be drawn without stencil for this node and its children.");
                 cc.ClippingNode.WebGLRenderCmd._visit_once = false;
             }
-            // draw everything, as if there where no stencil
+            // draw everything, as if there were no stencil
             cc.Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
             return;
         }

@@ -42,15 +42,14 @@
  * @extends cc.Node
  *
  * @param {String|cc.Texture2D} fileImage
- * @param {Number} capacity
  * @example
  *
  * // 1. create a SpriteBatchNode with image path
- * var spriteBatchNode = new cc.SpriteBatchNode("res/animations/grossini.png", 50);
+ * var spriteBatchNode = new cc.SpriteBatchNode("res/animations/grossini.png");
  *
  * // 2. create a SpriteBatchNode with texture
  * var texture = cc.textureCache.addImage("res/animations/grossini.png");
- * var spriteBatchNode = new cc.SpriteBatchNode(texture,50);
+ * var spriteBatchNode = new cc.SpriteBatchNode(texture);
  *
  * @property {cc.TextureAtlas}  textureAtlas    - The texture atlas
  * @property {Array}            descendants     - <@readonly> Descendants of sprite batch node
@@ -58,16 +57,14 @@
 cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     _blendFunc: null,
     // all descendants: chlidren, gran children, etc...
-    _descendants: null,
+    _texture: null,
     _className: "SpriteBatchNode",
 
-    ctor: function (fileImage, capacity) {
+    ctor: function (fileImage) {
         cc.Node.prototype.ctor.call(this);
-        this._descendants = [];
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
 
         var texture2D;
-        capacity = capacity || cc.SpriteBatchNode.DEFAULT_CAPACITY;
         if (cc.isString(fileImage)) {
             texture2D = cc.textureCache.getTextureForKey(fileImage);
             if (!texture2D)
@@ -75,72 +72,48 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         }else if (fileImage instanceof cc.Texture2D)
             texture2D = fileImage;
 
-        texture2D && this.initWithTexture(texture2D, capacity);
+        texture2D && this.initWithTexture(texture2D);
     },
 
     /**
      * <p>
-     *    This is the opposite of "addQuadFromSprite.<br/>
-     *    It add the sprite to the children and descendants array, but it doesn't update add it to the texture atlas<br/>
+     *    Same as addChild
      * </p>
      * @param {cc.Sprite} child
      * @param {Number} z zOrder
      * @param {Number} aTag
      * @return {cc.SpriteBatchNode}
+     * @deprecated since v3.12
      */
     addSpriteWithoutQuad: function (child, z, aTag) {
-        cc.assert(child, cc._LogInfos.SpriteBatchNode_addSpriteWithoutQuad_2);
-
-        if (!(child instanceof cc.Sprite)) {
-            cc.log(cc._LogInfos.SpriteBatchNode_addSpriteWithoutQuad);
-            return null;
-        }
-
-        // quad index is Z
-        child.atlasIndex = z;
-
-        // XXX: optimize with a binary search
-        var i = 0, len, locDescendants = this._descendants;
-        if (locDescendants && locDescendants.length > 0) {
-            for (i = 0, len = locDescendants.length; i < len; i++) {
-                var obj = locDescendants[i];
-                if (obj && (obj.atlasIndex >= z))
-                    break;
-            }
-        }
-        locDescendants.splice(i, 0, child);
-
-        // IMPORTANT: Call super, and not self. Avoid adding it to the texture atlas array
-        cc.Node.prototype.addChild.call(this, child, z, aTag);
-
-        //#issue 1262 don't use lazy sorting, tiles are added as quads not as sprites, so sprites need to be added in order
-        this.reorderBatch(false);
+        this.addChild(child, z, aTag);
         return this;
     },
 
     // property
     /**
-     * Return TextureAtlas of cc.SpriteBatchNode
+     * Return null, no texture atlas is used any more
      * @return {cc.TextureAtlas}
+     * @deprecated since v3.12
      */
     getTextureAtlas: function () {
-        return this._renderCmd.getTextureAtlas();
+        return null;
     },
 
     /**
      * TextureAtlas of cc.SpriteBatchNode setter
      * @param {cc.TextureAtlas} textureAtlas
+     * @deprecated since v3.12
      */
-    setTextureAtlas: function (textureAtlas) {
-        this._renderCmd.getTextureAtlas(textureAtlas);
-    },
+    setTextureAtlas: function (textureAtlas) {},
 
     /**
      * Return Descendants of cc.SpriteBatchNode
      * @return {Array}
+     * @deprecated since v3.12
      */
     getDescendants: function () {
-        return this._descendants;
+        return this._children;
     },
 
     /**
@@ -159,11 +132,6 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (!texture2D)
             texture2D = cc.textureCache.addImage(fileImage);
         return this.initWithTexture(texture2D, capacity);
-    },
-
-    _setNodeDirtyForCache: function () {
-        if(this._renderCmd && this._renderCmd._setNodeDirtyForCache)
-            this._renderCmd._setNodeDirtyForCache();
     },
 
     /**
@@ -185,11 +153,10 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
 
     /**
-     * Increase Atlas Capacity
+     * Do nothing
+     * @deprecated since v3.12
      */
-    increaseAtlasCapacity: function () {
-        this._renderCmd.increaseAtlasCapacity();
-    },
+    increaseAtlasCapacity: function () {},
 
     /**
      * Removes a child given a certain index. It will also cleanup the running actions depending on the cleanup parameter.
@@ -202,32 +169,13 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
 
     /**
-     * Rebuild index in order for child
+     * Do nothing
      * @param {cc.Sprite} pobParent
      * @param {Number} index
      * @return {Number}
+     * @deprecated since v3.12
      */
     rebuildIndexInOrder: function (pobParent, index) {
-        var children = pobParent.children;
-        if (children && children.length > 0) {
-            for (var i = 0; i < children.length; i++) {
-                var obj = children[i];
-                if (obj && (obj.zIndex < 0))
-                    index = this.rebuildIndexInOrder(obj, index);
-            }
-        }
-        // ignore self (batch node)
-        if (!pobParent === this) {
-            pobParent.atlasIndex = index;
-            index++;
-        }
-        if (children && children.length > 0) {
-            for (i = 0; i < children.length; i++) {
-                obj = children[i];
-                if (obj && (obj.zIndex >= 0))
-                    index = this.rebuildIndexInOrder(obj, index);
-            }
-        }
         return index;
     },
 
@@ -235,12 +183,12 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * Returns highest atlas index in child
      * @param {cc.Sprite} sprite
      * @return {Number}
+     * @deprecated since v3.12
      */
     highestAtlasIndexInChild: function (sprite) {
         var children = sprite.children;
-
         if (!children || children.length === 0)
-            return sprite.atlasIndex;
+            return sprite.zIndex;
         else
             return this.highestAtlasIndexInChild(children[children.length - 1]);
     },
@@ -249,60 +197,30 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * Returns lowest atlas index in child
      * @param {cc.Sprite} sprite
      * @return {Number}
+     * @deprecated since v3.12
      */
     lowestAtlasIndexInChild: function (sprite) {
         var children = sprite.children;
         if (!children || children.length === 0)
-            return sprite.atlasIndex;
+            return sprite.zIndex;
         else
             return this.lowestAtlasIndexInChild(children[children.length - 1]);
     },
 
     /**
-     * Returns atlas index for child
+     * Returns index for child
      * @param {cc.Sprite} sprite
-     * @param {Number} nZ
      * @return {Number}
+     * @deprecated since v3.12
      */
-    atlasIndexForChild: function (sprite, nZ) {
-        var selParent = sprite.parent;
-        var brothers = selParent.children;
-        var childIndex = brothers.indexOf(sprite);
-
-        // ignore parent Z if parent is spriteSheet
-        var ignoreParent = selParent === this;
-        var previous = null;
-        if (childIndex > 0 && childIndex < cc.UINT_MAX)
-            previous = brothers[childIndex - 1];
-
-        // first child of the sprite sheet
-        if (ignoreParent) {
-            if (childIndex === 0)
-                return 0;
-            return this.highestAtlasIndexInChild(previous) + 1;
-        }
-
-        // parent is a cc.Sprite, so, it must be taken into account
-        // first child of an cc.Sprite ?
-        if (childIndex === 0) {
-            // less than parent and brothers
-            if (nZ < 0)
-                return selParent.atlasIndex;
-            else
-                return selParent.atlasIndex + 1;
-        } else {
-            // previous & sprite belong to the same branch
-            if ((previous.zIndex < 0 && nZ < 0) || (previous.zIndex >= 0 && nZ >= 0))
-                return this.highestAtlasIndexInChild(previous) + 1;
-
-            // else (previous < 0 and sprite >= 0 )
-            return selParent.atlasIndex + 1;
-        }
+    atlasIndexForChild: function (sprite) {
+        return sprite.zIndex;
     },
 
     /**
      * Sprites use this to start sortChildren, don't call this manually
      * @param {Boolean} reorder
+     * @deprecated since v3.12
      */
     reorderBatch: function (reorder) {
         this._reorderChildDirty = reorder;
@@ -329,45 +247,6 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
 
     /**
-     * Reorder children (override reorderChild of cc.Node)
-     * @override
-     * @param {cc.Sprite} child
-     * @param {Number} zOrder
-     */
-    reorderChild: function (child, zOrder) {
-        cc.assert(child, cc._LogInfos.SpriteBatchNode_reorderChild_2);
-        if (this._children.indexOf(child) === -1) {
-            cc.log(cc._LogInfos.SpriteBatchNode_reorderChild);
-            return;
-        }
-        if (zOrder === child.zIndex)
-            return;
-
-        //set the z-order and sort later
-        cc.Node.prototype.reorderChild.call(this, child, zOrder);
-        //this.setNodeDirty();
-    },
-
-    /**
-     * Removes a child from cc.SpriteBatchNode (override removeChild of cc.Node)
-     * @param {cc.Sprite} child
-     * @param {Boolean} cleanup
-     */
-    removeChild: function (child, cleanup) {
-        // explicit null handling
-        if (child == null)
-            return;
-        if (this._children.indexOf(child) === -1) {
-            cc.log(cc._LogInfos.SpriteBatchNode_removeChild);
-            return;
-        }
-
-        // cleanup before removing
-        this.removeSpriteFromAtlas(child);
-        cc.Node.prototype.removeChild.call(this, child, cleanup);
-    },
-
-    /**
      * <p>
      *   Updates a quad at a certain index into the texture atlas. The CCSprite won't be added into the children array.                 <br/>
      *   This method should be called only when you are dealing with very big AtlasSrite and when most of the cc.Sprite won't be updated.<br/>
@@ -383,155 +262,71 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             cc.log(cc._LogInfos.CCSpriteBatchNode_updateQuadFromSprite);
             return;
         }
-        this._renderCmd.checkAtlasCapacity();
 
         //
         // update the quad directly. Don't add the sprite to the scene graph
         //
-        sprite.batchNode = this;
-        sprite.atlasIndex = index;
         sprite.dirty = true;
         // UpdateTransform updates the textureAtlas quad
-        sprite.updateTransform();
+        sprite._renderCmd.transform(this._renderCmd, true);
     },
 
     /**
      * <p>
-     *    Inserts a quad at a certain index into the texture atlas. The cc.Sprite won't be added into the children array.                    <br/>
-     *    This method should be called only when you are dealing with very big AtlasSprite and when most of the cc.Sprite won't be updated.  <br/>
-     *    For example: a tile map (cc.TMXMap) or a label with lots of characters (cc.LabelBMFont)
+     *    Same as addChild(sprite, index)
      * </p>
      * @function
      * @param {cc.Sprite} sprite
      * @param {Number} index
+     * @deprecated since v3.12
      */
     insertQuadFromSprite: function (sprite, index) {
-        cc.assert(sprite, cc._LogInfos.CCSpriteBatchNode_insertQuadFromSprite_2);
-        if (!(sprite instanceof cc.Sprite)) {
-            cc.log(cc._LogInfos.CCSpriteBatchNode_insertQuadFromSprite);
-            return;
-        }
-        this._renderCmd.insertQuad(sprite, index);
-
-        //
-        // update the quad directly. Don't add the sprite to the scene graph
-        //
-        sprite.batchNode = this;
-        sprite.atlasIndex = index;
-
-        // XXX: updateTransform will update the textureAtlas too, using updateQuad.
-        // XXX: so, it should be AFTER the insertQuad
-        sprite.dirty = true;
-        sprite.updateTransform();
-        this._renderCmd.cutting(sprite, index);
+        this.addChild(sprite, index);
     },
 
     /**
-     * <p>
-     *    Initializes a cc.SpriteBatchNode with a texture2d and capacity of children.<br/>
-     *    The capacity will be increased in 33% in runtime if it run out of space.<br/>
-     *    Please pass parameters to constructor to initialize the sprite batch node, do not call this function yourself.
-     * </p>
-     * @function
-     * @param {cc.Texture2D} tex
-     * @param {Number} [capacity]
-     * @return {Boolean}
-     */
-    initWithTexture: function (tex, capacity) {
-        this._children.length = 0;
-        this._descendants.length = 0;
-
-        capacity = capacity || cc.SpriteBatchNode.DEFAULT_CAPACITY;
-        this._renderCmd.initWithTexture(tex, capacity);
-        return true;
-    },
-
-    /**
-     * Insert a child
+     * Same as addChild(sprite, index)
      * @param {cc.Sprite} sprite The child sprite
      * @param {Number} index The insert index
+     * @deprecated since v3.12
      */
     insertChild: function (sprite, index) {
-        //TODO WebGL only        ?
-        sprite.batchNode = this;
-        sprite.atlasIndex = index;
-        sprite.dirty = true;
-
-        this._renderCmd.insertQuad(sprite, index);
-        this._descendants.splice(index, 0, sprite);
-
-        // update indices
-        var i = index + 1, locDescendant = this._descendants;
-        if (locDescendant && locDescendant.length > 0) {
-            for (; i < locDescendant.length; i++)
-                locDescendant[i].atlasIndex++;
-        }
-
-        // add children recursively
-        var locChildren = sprite.children, child, l;
-        if (locChildren) {
-            for (i = 0, l = locChildren.length || 0; i < l; i++) {
-                child = locChildren[i];
-                if (child) {
-                    var getIndex = this.atlasIndexForChild(child, child.zIndex);
-                    this.insertChild(child, getIndex);
-                }
-            }
-        }
+        this.addChild(sprite, index);
     },
 
     /**
-     * Add child at the end, faster than insert child
+     * Add child at the end
      * @function
      * @param {cc.Sprite} sprite
      */
     appendChild: function (sprite) {
-        this._reorderChildDirty = true;
-        sprite.batchNode = this;
-        sprite.dirty = true;
-
-        this._descendants.push(sprite);
-        var index = this._descendants.length - 1;
-
-        sprite.atlasIndex = index;
-        this._renderCmd.insertQuad(sprite, index);
-
-        // add children recursively
-        var children = sprite.children;
-        for (var i = 0, l = children.length || 0; i < l; i++)
-            this.appendChild(children[i]);
+        this.sortAllChildren();
+        var lastLocalZOrder = this._children[this._children.length-1]._localZOrder;
+        this.addChild(sprite. lastLocalZOrder + 1);
     },
 
     /**
-     * Removes sprite from TextureAtlas
+     * Same as removeChild
      * @function
      * @param {cc.Sprite} sprite
+     * @param {Boolean} [cleanup=true]  true if all running actions and callbacks on the child node will be cleanup, false otherwise.
+     * @deprecated since v3.12
      */
-    removeSpriteFromAtlas: function (sprite) {
-        this._renderCmd.removeQuadAtIndex(sprite.atlasIndex);
-
-        // Cleanup sprite. It might be reused (issue #569)
-        sprite.batchNode = null;
-        var locDescendants = this._descendants;
-        var index = locDescendants.indexOf(sprite);
-        if (index !== -1) {
-            locDescendants.splice(index, 1);
-
-            // update all sprites beyond this one
-            var len = locDescendants.length;
-            for (; index < len; ++index) {
-                var s = locDescendants[index];
-                s.atlasIndex--;
-            }
-        }
-
-        // remove children recursively
-        var children = sprite.children;
-        if (children) {
-            for (var i = 0, l = children.length || 0; i < l; i++)
-                children[i] && this.removeSpriteFromAtlas(children[i]);
-        }
+    removeSpriteFromAtlas: function (sprite, cleanup) {
+        this.removeChild(sprite, cleanup);
     },
+
+    /**
+     * Set the texture property
+     * @function
+     * @param {cc.Texture2D} tex
+     * @return {Boolean}
+     */
+    initWithTexture: function (tex) {
+        this._texture = tex;
+        return true;
+    },
+
     // CCTextureProtocol
     /**
      * Returns texture of the sprite batch node
@@ -539,7 +334,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {cc.Texture2D}
      */
     getTexture: function () {
-        return this._renderCmd.getTexture();
+        return this._texture;
     },
 
     /**
@@ -548,7 +343,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {cc.Texture2D} texture
      */
     setTexture: function(texture){
-        this._renderCmd.setTexture(texture);
+        this._texture = texture;
+        // Set children texture and children texture rect ?
     },
 
     /**
@@ -560,77 +356,26 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {Number} [tag]
      */
     addChild: function (child, zOrder, tag) {
-        cc.assert(child != null, cc._LogInfos.CCSpriteBatchNode_addChild_3);
+        cc.assert(child !== undefined, cc._LogInfos.CCSpriteBatchNode_addChild_3);
 
-        if(!this._renderCmd.isValidChild(child))
+        if(!this._isValidChild(child))
             return;
 
-        zOrder = (zOrder == null) ? child.zIndex : zOrder;
-        tag = (tag == null) ? child.tag : tag;
+        zOrder = (zOrder === undefined) ? child.zIndex : zOrder;
+        tag = (tag === undefined) ? child.tag : tag;
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
-        this.appendChild(child);
-        //this.setNodeDirty();
     },
 
-    /**
-     * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter. <br/>
-     * (override removeAllChildren of cc.Node)
-     * @function
-     * @param {Boolean} [cleanup=true]
-     */
-    removeAllChildren: function (cleanup) {
-        // Invalidate atlas index. issue #569
-        // useSelfRender should be performed on all descendants. issue #1216
-        var locDescendants = this._descendants;
-        if (locDescendants && locDescendants.length > 0) {
-            for (var i = 0, len = locDescendants.length; i < len; i++) {
-                if (locDescendants[i])
-                    locDescendants[i].batchNode = null;
-            }
+    _isValidChild: function (child) {
+        if (!(child instanceof cc.Sprite)) {
+            cc.log(cc._LogInfos.Sprite_addChild_4);
+            return false;
         }
-        cc.Node.prototype.removeAllChildren.call(this, cleanup);
-        this._descendants.length = 0;
-        this._renderCmd.removeAllQuads();
-    },
-
-    /**
-     * Sort all children nodes (override draw of cc.Node)
-     */
-    sortAllChildren: function () {
-        if (this._reorderChildDirty) {
-            var childrenArr = this._children;
-            var i, j = 0, length = childrenArr.length, tempChild;
-            //insertion sort
-            for (i = 1; i < length; i++) {
-                var tempItem = childrenArr[i];
-                j = i - 1;
-                tempChild = childrenArr[j];
-
-                //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
-                    ( tempItem._localZOrder === tempChild._localZOrder && tempItem.arrivalOrder < tempChild.arrivalOrder ))) {
-                    childrenArr[j + 1] = tempChild;
-                    j = j - 1;
-                    tempChild = childrenArr[j];
-                }
-                childrenArr[j + 1] = tempItem;
-            }
-
-            //sorted now check all children
-            if (childrenArr.length > 0) {
-                //first sort all children recursively based on zOrder
-                this._arrayMakeObjectsPerformSelector(childrenArr, cc.Node._stateCallbackType.sortAllChildren);
-                this._renderCmd.updateChildrenAtlasIndex(childrenArr);
-            }
-            this._reorderChildDirty = false;
+        if (child.texture !== this._texture) {
+            cc.log(cc._LogInfos.Sprite_addChild_5);
+            return false;
         }
-    },
-
-    _createRenderCmd: function(){
-        if(cc._renderType === cc.game.RENDER_TYPE_CANVAS)
-            return new cc.SpriteBatchNode.CanvasRenderCmd(this);
-        else
-            return new cc.SpriteBatchNode.WebGLRenderCmd(this);
+        return true;
     }
 });
 
@@ -638,19 +383,7 @@ var _p = cc.SpriteBatchNode.prototype;
 
 // Override properties
 cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
-cc.defineGetterSetter(_p, "textureAtlas", _p.getTextureAtlas, _p.setTextureAtlas);
 
-// Extended properties
-/** @expose */
-_p.descendants;
-cc.defineGetterSetter(_p, "descendants", _p.getDescendants);
-
-
-/**
- * @constant
- * @type Number
- */
-cc.SpriteBatchNode.DEFAULT_CAPACITY = 29;
 
 /**
  * <p>
@@ -661,11 +394,10 @@ cc.SpriteBatchNode.DEFAULT_CAPACITY = 29;
  * @deprecated since v3.0, please use new construction instead
  * @see cc.SpriteBatchNode
  * @param {String|cc.Texture2D} fileImage
- * @param {Number} capacity
  * @return {cc.SpriteBatchNode}
  */
-cc.SpriteBatchNode.create = function (fileImage, capacity) {
-    return new cc.SpriteBatchNode(fileImage, capacity);
+cc.SpriteBatchNode.create = function (fileImage) {
+    return new cc.SpriteBatchNode(fileImage);
 };
 
 /**

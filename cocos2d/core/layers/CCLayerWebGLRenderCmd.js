@@ -54,6 +54,9 @@
         cc.Layer.WebGLRenderCmd.call(this, renderable);
         this._needDraw = true;
 
+        this._matrix = new cc.math.Matrix4();
+        this._matrix.identity();
+
         //
         var _t = this;
         _t._squareVerticesAB = new ArrayBuffer(32);
@@ -79,8 +82,16 @@
         var context = ctx || cc._renderContext;
         var node = this._node;
 
+        var wt = this._worldTransform;
+        this._matrix.mat[0] = wt.a;
+        this._matrix.mat[4] = wt.c;
+        this._matrix.mat[12] = wt.tx;
+        this._matrix.mat[1] = wt.b;
+        this._matrix.mat[5] = wt.d;
+        this._matrix.mat[13] = wt.ty;
+
         this._shaderProgram.use();
-        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._matrix);
         context.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
         context.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
         cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);
@@ -283,9 +294,17 @@
         context.enable(context.SCISSOR_TEST);
         cc.view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
 
+        var wt = this._worldTransform;
+        this._matrix.mat[0] = wt.a;
+        this._matrix.mat[4] = wt.c;
+        this._matrix.mat[12] = wt.tx;
+        this._matrix.mat[1] = wt.b;
+        this._matrix.mat[5] = wt.d;
+        this._matrix.mat[13] = wt.ty;
+
         //draw gradient layer
         this._shaderProgram.use();
-        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._matrix);
         context.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
         context.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
         cc.glBlendFunc(node._blendFunc.src, node._blendFunc.dst);

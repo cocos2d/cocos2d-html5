@@ -32,11 +32,11 @@
 
 (function(){
     cc.LabelBMFont.CanvasRenderCmd = function(renderableObject){
-        cc.SpriteBatchNode.CanvasRenderCmd.call(this, renderableObject);
+        cc.Node.CanvasRenderCmd.call(this, renderableObject);
         this._needDraw = true;
     };
 
-    var proto = cc.LabelBMFont.CanvasRenderCmd.prototype = Object.create(cc.SpriteBatchNode.CanvasRenderCmd.prototype);
+    var proto = cc.LabelBMFont.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.LabelBMFont.CanvasRenderCmd;
 
     proto.rendering = function(){
@@ -70,27 +70,28 @@
             var selChild = locChildren[i];
             var cm = selChild._renderCmd;
             var childDColor = cm._displayedColor;
-            if (this._texture !== cm._texture && (childDColor.r !== locDisplayedColor.r ||
+            if (node._texture !== cm._texture && (childDColor.r !== locDisplayedColor.r ||
                 childDColor.g !== locDisplayedColor.g || childDColor.b !== locDisplayedColor.b))
                 continue;
             selChild.texture = texture;
         }
-        this._texture = texture;
+        node._texture = texture;
     };
 
     proto._changeTextureColor = function(){
         var node = this._node;
-        var texture = this._textureToRender,
+        var texture = node._texture,
             contentSize = texture.getContentSize();
 
         var oTexture = node._texture,
             oElement = oTexture.getHtmlElementObj();
         var disColor = this._displayedColor;
         var textureRect = cc.rect(0, 0, oElement.width, oElement.height);
-        if(texture && contentSize.width > 0){
+        if (texture && contentSize.width > 0) {
             if(!oElement)
                 return;
-            this._textureToRender = oTexture._generateColorTexture(disColor.r, disColor.g, disColor.b, textureRect);
+            var textureToRender = oTexture._generateColorTexture(disColor.r, disColor.g, disColor.b, textureRect);
+            node.setTexture(textureToRender);
         }
     };
 
@@ -101,7 +102,5 @@
     proto._updateChildrenDisplayedColor = function(locChild){
         cc.Node.prototype.updateDisplayedColor.call(locChild, this._displayedColor);
     };
-
-    proto._initBatchTexture = function(){};
 
 })();

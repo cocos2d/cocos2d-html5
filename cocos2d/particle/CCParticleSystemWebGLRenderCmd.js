@@ -30,6 +30,9 @@
         cc.Node.WebGLRenderCmd.call(this, renderable);
         this._needDraw = true;
 
+        this._matrix = new cc.math.Matrix4();
+        this._matrix.identity();
+
         this._buffersVBO = [0, 0];
         this._quads = [];
         this._indices = [];
@@ -186,8 +189,16 @@
 
         var gl = ctx || cc._renderContext;
 
+        var wt = this._worldTransform;
+        this._matrix.mat[0] = wt.a;
+        this._matrix.mat[4] = wt.c;
+        this._matrix.mat[12] = wt.tx;
+        this._matrix.mat[1] = wt.b;
+        this._matrix.mat[5] = wt.d;
+        this._matrix.mat[13] = wt.ty;
+
         this._shaderProgram.use();
-        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);     //;
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._matrix);     //;
 
         cc.glBindTexture2D(node._texture);
         cc.glBlendFuncForParticle(node._blendFunc.src, node._blendFunc.dst);

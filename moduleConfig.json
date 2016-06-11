@@ -6,7 +6,6 @@
             "cocos2d/actions/CCAction.js",
             "cocos2d/actions/CCActionInterval.js",
             "cocos2d/actions/CCActionInstant.js",
-            "cocos2d/actions/CCActionCamera.js",
             "cocos2d/actions/CCActionEase.js",
             "cocos2d/actions/CCActionCatmullRom.js",
             "cocos2d/actions/CCActionTween.js"
@@ -42,7 +41,6 @@
         "core" : [
             "cocos2d/core/event-manager/CCEventHelper.js",
             "CCDebugger.js",
-            "cocos2d/core/utils/CCSimplePool.js",
             "cocos2d/core/utils/BinaryLoader.js",
             "Base64Images.js",
             "cocos2d/core/platform/CCClass.js",
@@ -74,7 +72,6 @@
             "cocos2d/core/event-manager/CCEventManager.js",
             "cocos2d/core/event-manager/CCEventExtension.js",
 
-            "cocos2d/core/renderer/GlobalVertexBuffer.js",
             "cocos2d/core/renderer/RendererCanvas.js",
             "cocos2d/core/renderer/RendererWebGL.js",
 
@@ -104,8 +101,6 @@
             "cocos2d/core/sprites/CCSpriteCanvasRenderCmd.js",
             "cocos2d/core/sprites/CCSpriteWebGLRenderCmd.js",
             "cocos2d/core/sprites/CCSpriteBatchNode.js",
-            "cocos2d/core/sprites/CCSpriteBatchNodeCanvasRenderCmd.js",
-            "cocos2d/core/sprites/CCSpriteBatchNodeWebGLRenderCmd.js",
             "cocos2d/core/sprites/CCBakeSprite.js",
             "cocos2d/core/sprites/CCAnimation.js",
             "cocos2d/core/sprites/CCAnimationCache.js",
@@ -117,7 +112,6 @@
             "cocos2d/core/CCDirectorCanvas.js",
             "cocos2d/core/CCDirectorWebGL.js",
 
-            "cocos2d/core/CCCamera.js",
             "cocos2d/core/CCScheduler.js",
             "cocos2d/core/CCDrawingPrimitivesCanvas.js",
             "cocos2d/core/CCDrawingPrimitivesWebGL.js",

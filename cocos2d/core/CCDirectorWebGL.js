@@ -78,10 +78,10 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
                 cc.kmGLLoadIdentity();
                 var orthoMatrix = cc.math.Matrix4.createOrthographicProjection(
-                    -ox,
-                    size.width - ox,
-                    -oy,
-                    size.height - oy,
+                    0,
+                    size.width,
+                    0,
+                    size.height,
                     -1024, 1024);
                 cc.kmGLMultMatrix(orthoMatrix);
                 cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);

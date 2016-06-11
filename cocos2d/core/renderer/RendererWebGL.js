@@ -32,14 +32,9 @@ function removeByLastSwap (array, i) {
     }
 }
 
-var CACHING_BUFFER = true;
-var ACTIVATE_AUTO_BATCH = true;
-
 // Internal variables
-    // Global vertex buffers, shared by sprites
-var _gbuffers = [],
     // Batching general informations
-    _batchedInfo = {
+var _batchedInfo = {
         // The batched texture, all batching element should have the same texture
         texture: null,
         // The batched blend source, all batching element should have the same blend source
@@ -49,89 +44,70 @@ var _gbuffers = [],
         // The batched shader, all batching element should have the same shader
         shader: null
     },
-    // to compare with the batched info
-    _currentInfo = {
-        texture: null,
-        blendSrc: null,
-        blendDst: null,
-        shader: null
-    },
-    // The current virtual buffer
-    _currentBuffer = null,
-    _batchBufferPool = new cc.SimplePool(),
-    _orderDirtyInFrame = false,
-    _bufferError = false,
-    _prevRenderCmds = [],
-    _quadIndexBuffer = {
-        buffer: null,
-        maxQuads: 0
-    };
+
+    _quadIndexBuffer = null,
+    _quadVertexBuffer = null,
+    // Total vertex size
+    _vertexSize = 0,
+    // Current batching vertex size
+    _batchingSize = 0,
+    _sizePerVertex = 6,
+    // buffer data and views
+    _vertexData = null,
+    _vertexDataSize = 0,
+    _vertexDataF32 = null,
+    _vertexDataUI32 = null;
+
 
 // Inspired from @Heishe's gotta-batch-them-all branch
 // https://github.com/Talisca/cocos2d-html5/commit/de731f16414eb9bcaa20480006897ca6576d362c
-function updateQuadIndexBuffer (numQuads) {
-    if (!_quadIndexBuffer.buffer) {
-        return;
-    }
+function updateQuadBuffer (numQuads) {
     var gl = cc._renderContext;
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _quadIndexBuffer.buffer);
+    // Update index buffer and fill up
+    if (_quadIndexBuffer) {
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _quadIndexBuffer);
 
-    var indices = new Uint16Array(numQuads * 6);
-    var currentQuad = 0;
-    for (var i = 0, len = numQuads * 6; i < len; i += 6) {
-        indices[i] = currentQuad + 0;
-        indices[i + 1] = currentQuad + 1;
-        indices[i + 2] = currentQuad + 2;
-        indices[i + 3] = currentQuad + 1;
-        indices[i + 4] = currentQuad + 2;
-        indices[i + 5] = currentQuad + 3;
-        currentQuad += 4;
+        var indices = new Uint16Array(numQuads * 6);
+        var currentQuad = 0;
+        for (var i = 0, len = numQuads * 6; i < len; i += 6) {
+            indices[i] = currentQuad + 0;
+            indices[i + 1] = currentQuad + 1;
+            indices[i + 2] = currentQuad + 2;
+            indices[i + 3] = currentQuad + 1;
+            indices[i + 4] = currentQuad + 2;
+            indices[i + 5] = currentQuad + 3;
+            currentQuad += 4;
+        }
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
     }
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
-    _quadIndexBuffer.maxQuads = numQuads;
+
+    if (_quadVertexBuffer) {
+        _vertexDataSize = numQuads * 4 * _sizePerVertex;
+        var byteLength = _vertexDataSize * 4;
+        _vertexData = new ArrayBuffer(byteLength);
+        _vertexDataF32 = new Float32Array(_vertexData);
+        _vertexDataUI32 = new Uint32Array(_vertexData);
+        // Init buffer data
+        gl.bindBuffer(gl.ARRAY_BUFFER, _quadVertexBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, _vertexDataF32, gl.DYNAMIC_DRAW);
+    }
+    _vertexSize = numQuads * 4;
 }
 
 // Inspired from @Heishe's gotta-batch-them-all branch
 // https://github.com/Talisca/cocos2d-html5/commit/de731f16414eb9bcaa20480006897ca6576d362c
-function getQuadIndexBuffer (numQuads) {
-    if (_quadIndexBuffer.buffer === null) {
-        _quadIndexBuffer.buffer = cc._renderContext.createBuffer();
-    }
+function initQuadBuffer (numQuads) {
+    var gl = cc._renderContext;
+    if (_quadIndexBuffer === null) {
+        // TODO do user need to release the memory ?
+        _quadVertexBuffer = gl.createBuffer();
+        _quadIndexBuffer = gl.createBuffer();
 
-    if (_quadIndexBuffer.maxQuads < numQuads) {
-        updateQuadIndexBuffer(numQuads);
-    }
-
-    return _quadIndexBuffer.buffer;
-}
-
-function createVirtualBuffer (buffer, vertexOffset, totalBufferSize, count, data) {
-    var float32View, uint32View;
-    if (data) {
-        float32View = new Float32Array(data, vertexOffset, totalBufferSize / 4);
-        uint32View = new Uint32Array(data, vertexOffset, totalBufferSize / 4);
+        updateQuadBuffer(numQuads);
     }
     else {
-        float32View = new Float32Array(totalBufferSize / 4);
-        uint32View = new Uint32Array(float32View.buffer);
+        updateQuadBuffer(numQuads);
     }
-    var vBuf = {
-        // The object contains real WebGL buffers, it's created or retrieved via getBatchBuffer
-        buffer: buffer,
-        // The vertex data array (Float32Array)
-        float32View: float32View,
-        // Uint32 view
-        uint32View: uint32View,
-        // The start offset in the vertex buffer, in bytes
-        vertexOffset: vertexOffset,
-        // Total vertex array buffer size, including vertex data, in bytes
-        totalBufferSize: totalBufferSize,
-        // Render command count
-        count: count,
-        // Valid flag, indicate whether the buffer is valid or not
-        valid: true
-    };
-    return vBuf;
 }
 
 return {
@@ -153,32 +129,7 @@ return {
     init: function () {
         this.mat4Identity = new cc.math.Matrix4();
         this.mat4Identity.identity();
-        getQuadIndexBuffer(1000);
-    },
-
-    requestBuffer: function (size) {
-        var i, len = _gbuffers.length, buffer,
-            gl = cc._renderContext,
-            result;
-        for (i = 0; i < len; ++i) {
-            buffer = _gbuffers[i];
-            if (buffer.gl === gl) {
-                result = buffer.requestBuffer(size);
-                if (result) {
-                    return result;
-                }
-            }
-        }
-
-        if (!result) {
-            buffer = new GlobalVertexBuffer(gl);
-            _gbuffers.push(buffer);
-            result = buffer.requestBuffer(size);
-        }
-        if (!result) {
-            cc.error('Request WebGL buffer failed');
-        }
-        return result;
+        initQuadBuffer(2000);
     },
 
     getRenderCmd: function (renderableObject) {
@@ -218,10 +169,6 @@ return {
         renderTextureId = renderTextureId || this._currentID;
         var locCmds = this._cacheToBufferCmds[renderTextureId], i, len;
         var ctx = cc._renderContext;
-        // Update all global buffers (only invoke bufferSubData when buffer is dirty)
-        for (i = 0, len = _gbuffers.length; i < len; ++i) {
-            _gbuffers[i].update();
-        }
         // Reset buffer cache to avoid issue
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
         for (i = 0, len = locCmds.length; i < len; i++) {
@@ -239,7 +186,6 @@ return {
     //reset renderer's flag
     resetFlag: function () {
         if (this.childrenOrderDirty) {
-            _orderDirtyInFrame = true;
             this.childrenOrderDirty = false;
         }
         this._transformNodePool.length = 0;
@@ -274,16 +220,6 @@ return {
 
     clearRenderCommands: function () {
         // Copy previous command list for late check in rendering
-        if (CACHING_BUFFER) {
-            var locCmds = this._renderCmds;
-            var i, len = locCmds.length, cmd;
-            for (i = 0; i < len; ++i) {
-                cmd = locCmds[i];
-                cmd._currId = -1;
-                _prevRenderCmds[i] = cmd;
-            }
-            _prevRenderCmds.length = len;
-        }
         this._renderCmds.length = 0;
     },
 
@@ -321,330 +257,44 @@ return {
         }
     },
 
-    // Auto batch implementation inspired from @Heishe 's PR
-    // Ref: https://github.com/cocos2d/cocos2d-html5/pull/3248
-    createBatchBuffer: function (bufferSize) {
-        var arrayBuffer = gl.createBuffer();
-
-        this.initBatchBuffers(arrayBuffer, bufferSize);
-
-        return {arrayBuffer: arrayBuffer, bufferSize: bufferSize};
-    },
-
-    // Auto batch implementation inspired from @Heishe 's PR
-    // Ref: https://github.com/cocos2d/cocos2d-html5/pull/3248
-    initBatchBuffers: function (arrayBuffer, bufferSize) {
-        gl.bindBuffer(gl.ARRAY_BUFFER, arrayBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, bufferSize, gl.DYNAMIC_DRAW);
-    },
-
-    // Auto batch implementation inspired from @Heishe 's PR
-    // Ref: https://github.com/cocos2d/cocos2d-html5/pull/3248
-
-    // Returns an object with {arrayBuffer, size}, 
-    // where size denotes how many unit fit in the buffer (no need for bufferData if it's already big enough, bufferSubData enough)
-    getBatchBuffer: function(bufferSize)
-    {
-        if (_batchBufferPool.size() > 0) {
-            var minSize = Number.MAX_VALUE; 
-            var minBufIndex = -1;
-
-            var buf = _batchBufferPool.find(function (i, buf) {
-                // Find available buffer with suitable size
-                if (buf.bufferSize >= bufferSize) {
-                    return true;
-                }
-
-                // Track the smallest found buffer because that one will be re-initialized and returned if no fitting buffer can be found
-                if (buf.bufferSize < minSize)
-                {
-                    minSize = buf.bufferSize;
-                    minBufIndex = i;
-                }
-            }, function () {
-                return minBufIndex;
-            });
-
-            if (buf) {
-                this.initBatchBuffers(buf.arrayBuffer, bufferSize);
-                buf.bufferSize = bufferSize;
-                return buf;
-            }
+    _uploadBufferData: function (cmd) {
+        if (_batchingSize >= _vertexSize) {
+            this._batchRendering();
         }
 
-        return this.createBatchBuffer(bufferSize);
-    },
-
-    _refreshVirtualBuffers: function () {
-        var renderCmds = this._renderCmds,
-            len = _prevRenderCmds.length,
-            currLen = renderCmds.length,
-            i = 0, j = 0, end, cmd1, cmd2, next, 
-            newBuf, currBuf,
-            startId, count, size;
-
-        // Loop previous render command list to compare with current command list
-        for (; i < len; ++i) {
-            cmd1 = _prevRenderCmds[i];
-            currBuf = cmd1._vBuffer;
-            matched = false;
-            // Check to update virtual buffer
-            if (currBuf && currBuf.valid) {
-                j = cmd1._currId;
-                // Removed from the command list
-                if (j < 0 || j >= currLen) {
-                    cmd1._vBuffer = null;
-                    continue;
-                }
-
-                cmd1.getBatchInfo(_batchedInfo);
-                startId = i;
-                count = 0;
-                // Remains in the command list
-                cmd2 = renderCmds[j];
-                while (cmd1 && cmd1 === cmd2 && cmd1._vBuffer === currBuf) {
-                    ++count;
-                    ++j;
-                    cmd1 = _prevRenderCmds[i+count];
-                    cmd2 = renderCmds[j];
-                }
-                end = i + count;
-
-                // No valid batch
-                if (count <= 1) {
-                    cmd1 = _prevRenderCmds[i];
-                    cmd1._vBuffer = null;
-                    if (cmd2) {
-                        cmd2._vBuffer = null;
-                    }
-                    continue;
-                }
-
-                // The next command in the current list support batch
-                if (cmd2 && cmd2._supportBatch) {
-                    cmd2.getBatchInfo(_currentInfo);
-                    if (_currentInfo.texture === _batchedInfo.texture &&
-                        _currentInfo.blendSrc === _batchedInfo.blendSrc &&
-                        _currentInfo.blendDst === _batchedInfo.blendDst &&
-                        _currentInfo.shader === _batchedInfo.shader) {
-                        // Old batch dirty, clean up v buffer properties
-                        for (; i < end; ++i) {
-                            _prevRenderCmds[i]._vBuffer = null;
-                        }
-                        // keeping i correct, it should run through all elements
-                        i--;
-                        continue;
-                    }
-                }
-
-                // Perfect match
-                if (currBuf.count === count) {
-                    i = i + count - 1;
-                }
-                // Sub match
-                else if (count > 1) {
-                    // First command in buffer
-                    cmd1 = _prevRenderCmds[i];
-                    // cmd2 = _prevRenderCmds[i+count-1];
-                    size = count * cmd1.bytesPerUnit;
-                    newBuf = createVirtualBuffer(currBuf.buffer, 
-                                                 cmd1._vertexOffset * 4, 
-                                                 size, 
-                                                 count,
-                                                 currBuf.float32View.buffer);
-                    for (; i < end; ++i) {
-                        _prevRenderCmds[i]._vBuffer = newBuf;
-                    }
-                    // keeping i correct, it should run through all elements
-                    i--;
-                }
-            }
+        // Check batching
+        var texture = cmd._node._texture;
+        var blendSrc = cmd._node._blendFunc.src;
+        var blendDst = cmd._node._blendFunc.dst;
+        var shader = cmd._shaderProgram;
+        if (_batchedInfo.texture !== texture ||
+            _batchedInfo.blendSrc !== blendSrc ||
+            _batchedInfo.blendDst !== blendDst ||
+            _batchedInfo.shader !== shader) {
+            // Draw batched elements
+            this._batchRendering();
+            // Update _batchedInfo
+            _batchedInfo.texture = texture;
+            _batchedInfo.blendSrc = blendSrc;
+            _batchedInfo.blendDst = blendDst;
+            _batchedInfo.shader = shader;
         }
 
-        // Forward batch other commands
-        len = renderCmds.length;
-        for (i = 0; i < len; ++i) {
-            cmd1 = renderCmds[i];
-            // Already batched command, do not update
-            if (cmd1._vBuffer) {
-                continue;
-            }
-
-            next = renderCmds[i+1];
-            // Batching
-            if (cmd1._supportBatch && next && next._supportBatch) {
-                count = this._forwardBatch(i);
-                if (count > 1) {
-                    // i will increase by 1 each loop
-                    i += count - 1;
-                    continue;
-                }
-            }
-        }
-        _prevRenderCmds.length = 0;
-        _bufferError = false;
-    },
-
-    // Forward search commands that are in the same virtual buffer, 
-    // If size match then no problem to render
-    // Otherwise, the virtual buffer need to be updated
-    _forwardCheck: function (first) {
-        var renderCmds = this._renderCmds,
-            cmd = renderCmds[first],
-            last = first, length = renderCmds.length,
-            vbuffer = cmd._vBuffer;
-
-        // Reset current buffer and batched info
-        cmd.getBatchInfo(_batchedInfo);
-        _currentBuffer = null;
-
-        // Protection, vbuffer invalid or doesn't match the command
-        if (cmd._vertexOffset !== vbuffer.vertexOffset || !vbuffer.valid || !vbuffer.buffer) {
-            _bufferError = true;
-            return 0;
-        }
-
-        // Forward check
-        var vertexBuffer;
-        for (; last < length; ++last) {
-            cmd = renderCmds[last];
-            if (vbuffer !== cmd._vBuffer) {
-                break;
-            }
-
-            // Lazy update vertex in buffer
-            if (cmd._bufferDirty) {
-                if (!vertexBuffer) {
-                    // Bind buffer
-                    vertexBuffer = vbuffer;
-                    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer.buffer.arrayBuffer);
-                }
-                cmd.batchVertexBuffer(vertexBuffer.float32View, vertexBuffer.uint32View, cmd._vertexOffset);
-                cmd._bufferDirty = false;
-            }
-        }
-        // Send last buffer to WebGLBuffer
-        if (vertexBuffer) {
-            gl.bufferSubData(gl.ARRAY_BUFFER, 0, vertexBuffer.float32View);
-        }
-
-        var size = last - first;
-        // no problem
-        if (vbuffer.count === size) {
-            _currentBuffer = vbuffer;
-            return size;
-        }
-        // buffer errored
-        // need to update virtual buffers in next frame
-        else {
-            for (last = first; last < first + size; ++last) {
-                cmd = renderCmds[last];
-                cmd._vBuffer = null;
-            }
-            _bufferError = true;
-            return 0;
+        // Upload vertex data
+        var uploaded = cmd.uploadData(_vertexDataF32, _vertexDataUI32, _batchingSize * _sizePerVertex);
+        if (uploaded) {
+            _batchingSize += 4;
         }
     },
 
-    // Auto batch implementation inspired from @Heishe 's PR
-    // Ref: https://github.com/cocos2d/cocos2d-html5/pull/3248
-    // Forward search commands that can be batched together
-    _forwardBatch: function (first) {
-        var renderCmds = this._renderCmds,
-            cmd = renderCmds[first],
-            last = first + 1, length = renderCmds.length;
-
-        if (!cmd || !cmd._supportBatch)
-            return 0;
-
-        // Initialize batched info
-        cmd.getBatchInfo(_batchedInfo);
-        if (!_batchedInfo.texture)
-            return 0;
-
-        var totalBufferSize = cmd.bytesPerUnit;
-
-        // Forward search and collect batch informations
-        cmd = renderCmds[last];
-        while (cmd) {
-            if (cmd._supportBatch) {
-                cmd.getBatchInfo(_currentInfo);
-            }
-            else {
-                break;
-            }
-            // Batch info don't match, break batching
-            if (_currentInfo.texture !== _batchedInfo.texture ||
-                _currentInfo.blendSrc !== _batchedInfo.blendSrc ||
-                _currentInfo.blendDst !== _batchedInfo.blendDst ||
-                _currentInfo.shader !== _batchedInfo.shader) {
-                break;
-            }
-            else {
-                totalBufferSize += cmd.bytesPerUnit;
-            }
-            ++last;
-            cmd = renderCmds[last];
-        }
-
-        var count = last - first;
-        // Can't batch, fall back to original render command
-        if (count <= 1) {
-            return count;
-        }
-
-        var buffer = this.getBatchBuffer(totalBufferSize);
-
-        // Create a virtual buffer
-        var vbuffer = createVirtualBuffer(buffer, 
-                                          0,
-                                          totalBufferSize, 
-                                          count);
-        _currentBuffer = vbuffer;
-        var uploadBuffer = vbuffer.float32View;
-
-        //all of the divisions by 4 are just because we work with Float32Arrays instead of uint8 arrays so all indexes need to be shortened by the factor of 4
-        var vertexDataOffset = 0;
-
-        // Bind vertex data buffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, vbuffer.buffer.arrayBuffer);
-
-        // Fill in vertex data command by command
-        var i;
-        for (i = first; i < last; ++i) {
-            cmd = renderCmds[i];
-            cmd.batchVertexBuffer(uploadBuffer, vbuffer.uint32View, vertexDataOffset);
-
-            if (CACHING_BUFFER) {
-                cmd._vBuffer = vbuffer;
-                cmd._vertexOffset = vertexDataOffset;
-            }
-            if (cmd._savedDirtyFlag) {
-                cmd._savedDirtyFlag = false;
-            }
-
-            vertexDataOffset += cmd.vertexBytesPerUnit / 4;
-        }
-
-        // Submit vertex data in one bufferSubData call
-        gl.bufferSubData(gl.ARRAY_BUFFER, 0, uploadBuffer);
-
-        if (!CACHING_BUFFER) {
-            _batchBufferPool.put(buffer);
-        }
-        return count;
-    },
-
-    // Auto batch implementation inspired from @Heishe 's PR
-    // Ref: https://github.com/cocos2d/cocos2d-html5/pull/3248
-    // Batch rendering using result collected in `_forwardBatch`
     _batchRendering: function () {
-        // var node = this._node;
+        if (_batchingSize === 0 || !_batchedInfo.texture) {
+            return;
+        }
+
         var texture = _batchedInfo.texture;
         var shader = _batchedInfo.shader;
-        var count = _currentBuffer.count;
-
-        var bytesPerRow = 16; //4 floats with 4 bytes each
+        var count = _batchingSize / 4;
 
         shader.use();
         shader._updateProjectionUniform();
@@ -652,22 +302,31 @@ return {
         cc.glBlendFunc(_batchedInfo.blendSrc, _batchedInfo.blendDst);
         cc.glBindTexture2DN(0, texture);                   // = cc.glBindTexture2D(texture);
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, _currentBuffer.buffer.arrayBuffer);
+        var _bufferchanged = !gl.bindBuffer(gl.ARRAY_BUFFER, _quadVertexBuffer);
+        // upload the vertex data to the gl buffer
+        if (_batchingSize > _vertexSize * 0.5) {
+            gl.bufferSubData(gl.ARRAY_BUFFER, 0, _vertexDataF32);
+        }
+        else {
+            var view = _vertexDataF32.subarray(0, _batchingSize * _sizePerVertex);
+            gl.bufferSubData(gl.ARRAY_BUFFER, 0, view);
+        }
 
-        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
-        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
-        gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
+        if (_bufferchanged) {
+            gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
+            gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
+            gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);
+        }
 
-        var vertexOffset = _currentBuffer.vertexOffset;
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, vertexOffset);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, vertexOffset + 12);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, vertexOffset + 16);
-
-        var elemBuffer = getQuadIndexBuffer(count);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elemBuffer);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _quadIndexBuffer);
         gl.drawElements(gl.TRIANGLES, count * 6, gl.UNSIGNED_SHORT, 0);
 
         cc.g_NumberOfDraws++;
+
+        _batchingSize = 0;
     },
 
     /**
@@ -679,41 +338,24 @@ return {
             i, len, cmd, next, batchCount,
             context = ctx || cc._renderContext;
 
-        // Update all global buffers (only invoke bufferData when buffer is dirty)
-        for (i = 0, len = _gbuffers.length; i < len; ++i) {
-            _gbuffers[i].update();
-        }
-
-        // Only update virtual buffers if children order dirty in the current frame
-        if (ACTIVATE_AUTO_BATCH && (_orderDirtyInFrame || _bufferError)) {
-            this._refreshVirtualBuffers();
-        }
-
         // Reset buffer for rendering
         context.bindBuffer(gl.ARRAY_BUFFER, null);
 
         for (i = 0, len = locCmds.length; i < len; ++i) {
             cmd = locCmds[i];
-            next = locCmds[i+1];
 
-            if (ACTIVATE_AUTO_BATCH) {
-                // Already batched in buffer
-                if (cmd._vBuffer) {
-                    batchCount = this._forwardCheck(i);
-                    if (batchCount > 1) {
-                        this._batchRendering();
-                        // i will increase by 1 each loop
-                        i += batchCount - 1;
-                        continue;
-                    }
-                }
+            if (cmd.uploadData) {
+                this._uploadBufferData(cmd);
             }
-
-            cmd.rendering(context);
+            else {
+                if (cmd._batchingSize > 0) {
+                    this._batchRendering();
+                }
+                cmd.rendering(context);
+            }
         }
-        if (_orderDirtyInFrame) {
-            _orderDirtyInFrame = false;
-        }
+        this._batchRendering();
+        _batchedInfo.texture = null;
     }
 };
 })();
