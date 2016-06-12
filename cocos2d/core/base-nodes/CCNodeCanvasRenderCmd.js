@@ -120,9 +120,7 @@ cc.Node.RenderCmd.prototype = {
     },
 
     transform: function (parentCmd, recursive) {
-        // transform for canvas
         var node = this._node,
-            dirty = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty,
             pt = parentCmd ? parentCmd._worldTransform : null,
             t = this._transform,
             wt = this._worldTransform;         //get the world transform
@@ -132,118 +130,115 @@ cc.Node.RenderCmd.prototype = {
             node._position.x = node._normalizedPosition.x * conSize.width;
             node._position.y = node._normalizedPosition.y * conSize.height;
             node._normalizedPositionDirty = false;
-            dirty = true;
         }
 
-        if (dirty) {
-            var hasRotation = this._rotationX || this._rotationY;
-            var hasSkew = node._skewX || node._skewY;
-            if (hasRotation || hasSkew) {
-                var sx = node._scaleX, sy = node._scaleY;
-                var appX = this._anchorPointInPoints.x, appY = this._anchorPointInPoints.y;
+        var hasRotation = node._rotationX || node._rotationY;
+        var hasSkew = node._skewX || node._skewY;
+        if (hasRotation || hasSkew) {
+            var sx = node._scaleX, sy = node._scaleY;
+            var appX = this._anchorPointInPoints.x, appY = this._anchorPointInPoints.y;
 
-                // position 
-                t.tx = node._position.x;
-                t.ty = node._position.y;
+            // position 
+            t.tx = node._position.x;
+            t.ty = node._position.y;
 
-                // rotation
-                if (hasRotation) {
-                    var rotationRadiansX = node._rotationX * 0.017453292519943295;  //0.017453292519943295 = (Math.PI / 180);   for performance
-                    c = Math.sin(rotationRadiansX);
-                    d = Math.cos(rotationRadiansX);
-                    if (node._rotationY === node._rotationX) {
-                        a = d;
-                        b = -c;
-                    }
-                    else {
-                        var rotationRadiansY = node._rotationY * 0.017453292519943295;  //0.017453292519943295 = (Math.PI / 180);   for performance
-                        a = Math.cos(rotationRadiansY);
-                        b = -Math.sin(rotationRadiansY);
-                    }
-                }
-
-                // scale
-                a *= sx;
-                b *= sx;
-                c *= sy;
-                d *= sy;
-
-                // skew
-                if (hasSkew) {
-                    // offset the anchorpoint
-                    var skx = Math.tan(-node._skewX * Math.PI / 180);
-                    var sky = Math.tan(-node._skewY * Math.PI / 180);
-                    if (skx === Infinity)
-                        skx = 99999999;
-                    if (sky === Infinity)
-                        sky = 99999999;
-                    var xx = appY * skx;
-                    var yy = appX * sky;
-                    t.a = a - c * sky;
-                    t.b = b - d * sky;
-                    t.c = c - a * skx;
-                    t.d = d - b * skx;
-                    t.tx += a * xx + c * yy;
-                    t.ty += b * xx + d * yy;
-                }
-
-                // adjust anchorPoint
-                if (!node._ignoreAnchorPointForPosition && (appX || appY)) {
-                    t.tx -= t.a * appX + t.c * appY;
-                    t.ty -= t.b * appX + t.d * appY;
-                }
-
-                if (pt) {
-                    // cc.AffineTransformConcat is incorrect at get world transform
-                    wt.a = t.a * pt.a + t.b * pt.c;                               //a
-                    wt.b = t.a * pt.b + t.b * pt.d;                               //b
-                    wt.c = t.c * pt.a + t.d * pt.c;                               //c
-                    wt.d = t.c * pt.b + t.d * pt.d;                               //d
-                    wt.tx = pt.a * t.tx + pt.c * t.ty + pt.tx;
-                    wt.ty = pt.d * t.ty + pt.ty + pt.b * t.tx;
-                } else {
-                    wt.a = t.a;
-                    wt.b = t.b;
-                    wt.c = t.c;
-                    wt.d = t.d;
-                    wt.tx = t.tx;
-                    wt.ty = t.ty;
-                }
-            }
-            else {
-                t.a = node._scaleX;
-                t.b = 0;
-                t.c = 0;
-                t.d = node._scaleY;
-                if (node._ignoreAnchorPointForPosition) {
-                    t.tx = node._position.x;
-                    t.ty = node._position.y;
+            // rotation
+            if (hasRotation) {
+                var rotationRadiansX = node._rotationX * 0.017453292519943295;  //0.017453292519943295 = (Math.PI / 180);   for performance
+                c = Math.sin(rotationRadiansX);
+                d = Math.cos(rotationRadiansX);
+                if (node._rotationY === node._rotationX) {
+                    a = d;
+                    b = -c;
                 }
                 else {
-                    t.tx = node._position.x - this._anchorPointInPoints.x * t.a;
-                    t.ty = node._position.y - this._anchorPointInPoints.y * t.d;
-                }
-
-                if (pt) {
-                    wt.a  = t.a  * pt.a + t.b  * pt.c;
-                    wt.b  = t.a  * pt.b + t.b  * pt.d;
-                    wt.c  = t.c  * pt.a + t.d  * pt.c;
-                    wt.d  = t.c  * pt.b + t.d  * pt.d;
-                    wt.tx = t.tx * pt.a + t.ty * pt.c + pt.tx;
-                    wt.ty = t.tx * pt.b + t.ty * pt.d + pt.ty;
-                } else {
-                    wt.a = t.a;
-                    wt.b = t.b;
-                    wt.c = t.c;
-                    wt.d = t.d;
-                    wt.tx = t.tx;
-                    wt.ty = t.ty;
+                    var rotationRadiansY = node._rotationY * 0.017453292519943295;  //0.017453292519943295 = (Math.PI / 180);   for performance
+                    a = Math.cos(rotationRadiansY);
+                    b = -Math.sin(rotationRadiansY);
                 }
             }
 
-            if (node._additionalTransformDirty) {
-                this._transform = cc.affineTransformConcat(t, node._additionalTransform);
+            // scale
+            t.a = a *= sx;
+            t.b = b *= sx;
+            t.c = c *= sy;
+            t.d = d *= sy;
+
+            // skew
+            if (hasSkew) {
+                // offset the anchorpoint
+                var skx = Math.tan(-node._skewX * Math.PI / 180);
+                var sky = Math.tan(-node._skewY * Math.PI / 180);
+                if (skx === Infinity)
+                    skx = 99999999;
+                if (sky === Infinity)
+                    sky = 99999999;
+                var xx = appY * skx;
+                var yy = appX * sky;
+                t.a = a - c * sky;
+                t.b = b - d * sky;
+                t.c = c - a * skx;
+                t.d = d - b * skx;
+                t.tx += a * xx + c * yy;
+                t.ty += b * xx + d * yy;
             }
+
+            // adjust anchorPoint
+            if (!node._ignoreAnchorPointForPosition && (appX || appY)) {
+                t.tx -= t.a * appX + t.c * appY;
+                t.ty -= t.b * appX + t.d * appY;
+            }
+
+            if (pt) {
+                // cc.AffineTransformConcat is incorrect at get world transform
+                wt.a = t.a * pt.a + t.b * pt.c;                               //a
+                wt.b = t.a * pt.b + t.b * pt.d;                               //b
+                wt.c = t.c * pt.a + t.d * pt.c;                               //c
+                wt.d = t.c * pt.b + t.d * pt.d;                               //d
+                wt.tx = pt.a * t.tx + pt.c * t.ty + pt.tx;
+                wt.ty = pt.d * t.ty + pt.ty + pt.b * t.tx;
+            } else {
+                wt.a = t.a;
+                wt.b = t.b;
+                wt.c = t.c;
+                wt.d = t.d;
+                wt.tx = t.tx;
+                wt.ty = t.ty;
+            }
+        }
+        else {
+            t.a = node._scaleX;
+            t.b = 0;
+            t.c = 0;
+            t.d = node._scaleY;
+            if (node._ignoreAnchorPointForPosition) {
+                t.tx = node._position.x;
+                t.ty = node._position.y;
+            }
+            else {
+                t.tx = node._position.x - this._anchorPointInPoints.x * t.a;
+                t.ty = node._position.y - this._anchorPointInPoints.y * t.d;
+            }
+
+            if (pt) {
+                wt.a  = t.a  * pt.a + t.b  * pt.c;
+                wt.b  = t.a  * pt.b + t.b  * pt.d;
+                wt.c  = t.c  * pt.a + t.d  * pt.c;
+                wt.d  = t.c  * pt.b + t.d  * pt.d;
+                wt.tx = t.tx * pt.a + t.ty * pt.c + pt.tx;
+                wt.ty = t.tx * pt.b + t.ty * pt.d + pt.ty;
+            } else {
+                wt.a = t.a;
+                wt.b = t.b;
+                wt.c = t.c;
+                wt.d = t.d;
+                wt.tx = t.tx;
+                wt.ty = t.ty;
+            }
+        }
+
+        if (node._additionalTransformDirty) {
+            this._transform = cc.affineTransformConcat(t, node._additionalTransform);
         }
 
         if (recursive) {
@@ -451,7 +446,7 @@ cc.Node.RenderCmd.prototype = {
 
         if (locFlag & flags.transformDirty)
             //update the transform
-            this.transform(parentCmd, true);
+            this.transform(parentCmd);
 
         if (locFlag & flags.orderDirty)
             this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
