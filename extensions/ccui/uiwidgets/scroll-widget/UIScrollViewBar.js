@@ -81,23 +81,17 @@ ccui.ScrollViewBar = ccui.ProtectedNode.extend(/** @lends ccui.ScrollViewBar# */
      * @returns {boolean}
      */
     init: function () {
-        var halfPixelImage = new Image();
-        halfPixelImage.src = ccui.ScrollViewBar.HALF_CIRCLE_IMAGE;
-
-        this._upperHalfCircle = new cc.Sprite(halfPixelImage);
+        this._upperHalfCircle = ccui.helper.createSpriteFromBase64(ccui.ScrollViewBar.HALF_CIRCLE_IMAGE, ccui.ScrollViewBar.HALF_CIRCLE_IMAGE_KEY);
         this._upperHalfCircle.setAnchorPoint(cc.p(0.5, 0));
 
-        this._lowerHalfCircle = new cc.Sprite(halfPixelImage);
+        this._lowerHalfCircle = ccui.helper.createSpriteFromBase64(ccui.ScrollViewBar.HALF_CIRCLE_IMAGE, ccui.ScrollViewBar.HALF_CIRCLE_IMAGE_KEY);
         this._lowerHalfCircle.setAnchorPoint(cc.p(0.5, 0));
         this._lowerHalfCircle.setScaleY(-1);
 
         this.addProtectedChild(this._upperHalfCircle);
         this.addProtectedChild(this._lowerHalfCircle);
 
-        var bodyImage = new Image();
-        bodyImage.src = ccui.ScrollViewBar.BODY_IMAGE_1_PIXEL_HEIGHT;
-
-        this._body =  new cc.Sprite(bodyImage);
+        this._body =  ccui.helper.createSpriteFromBase64(ccui.ScrollViewBar.BODY_IMAGE_1_PIXEL_HEIGHT, ccui.ScrollViewBar.BODY_IMAGE_1_PIXEL_HEIGHT_KEY);
         this._body.setAnchorPoint(cc.p(0.5, 0));
         this.addProtectedChild(this._body);
 

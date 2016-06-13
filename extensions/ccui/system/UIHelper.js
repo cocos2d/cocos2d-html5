@@ -168,13 +168,11 @@ ccui.helper = {
         if(!texture2D) {
             var image = new Image();
             image.src = base64String;
-            texture2D = new cc.Texture2D();
-            texture.initWithImage(image);
-
-            cc.textureCache.cacheImage(key, texture2D);
+            cc.textureCache.cacheImage(key, image);
+            texture2D = cc.textureCache.getTextureForKey(key);
         }
 
-        var sprite = new Sprite(texture2D);
+        var sprite = new cc.Sprite(texture2D);
 
         return sprite;
     }

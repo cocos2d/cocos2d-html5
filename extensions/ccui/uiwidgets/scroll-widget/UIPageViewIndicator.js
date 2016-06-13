@@ -55,8 +55,7 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
         this._spaceBetweenIndexNodes = ccui.PageViewIndicator.SPACE_BETWEEN_INDEX_NODES_DEFAULT;
         this._indexNodesColor = cc.color.WHITE;
 
-
-        this._currentIndexNode = new cc.Sprite(ccui.helper.createSpriteFromBase64(ccui.PageViewIndicator.CIRCLE_IMAGE, ccui.PageViewIndicator.CIRCLE_IMAGE_KEY));
+        this._currentIndexNode = ccui.helper.createSpriteFromBase64(ccui.PageViewIndicator.CIRCLE_IMAGE, ccui.PageViewIndicator.CIRCLE_IMAGE_KEY);
         this._currentIndexNode.setVisible(false);
         this.addProtectedChild(this._currentIndexNode, 1);
 
@@ -277,10 +276,7 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
 
         if(this._useDefaultTexture)
         {
-            var image =  new Image();
-            image.src = ccui.PageViewIndicator.CIRCLE_IMAGE;
-
-            indexNode = new cc.Sprite(image);
+            indexNode = ccui.helper.createSpriteFromBase64(ccui.PageViewIndicator.CIRCLE_IMAGE, ccui.PageViewIndicator.CIRCLE_IMAGE_KEY);
         }
         else
         {
