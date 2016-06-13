@@ -140,8 +140,15 @@ return {
     _turnToCacheMode: function (renderTextureID) {
         this._isCacheToBufferOn = true;
         renderTextureID = renderTextureID || 0;
-        this._cacheToBufferCmds[renderTextureID] = [];
-        this._cacheInstanceIds.push(renderTextureID);
+        if (!this._cacheToBufferCmds[renderTextureID]) {
+            this._cacheToBufferCmds[renderTextureID] = [];
+        }
+        else {
+            this._cacheToBufferCmds[renderTextureID].length = 0;
+        }
+        if (this._cacheInstanceIds.indexOf(renderTextureID) === -1) {
+            this._cacheInstanceIds.push(renderTextureID);
+        }
         this._currentID = renderTextureID;
     },
 
@@ -169,23 +176,7 @@ return {
         renderTextureId = renderTextureId || this._currentID;
         var locCmds = this._cacheToBufferCmds[renderTextureId], i, len;
         var ctx = cc._renderContext;
-        // Reset buffer cache to avoid issue
-        gl.bindBuffer(gl.ARRAY_BUFFER, null);
-        for (i = 0, len = locCmds.length; i < len; ++i) {
-            cmd = locCmds[i];
-
-            if (cmd.uploadData) {
-                this._uploadBufferData(cmd);
-            }
-            else {
-                if (cmd._batchingSize > 0) {
-                    this._batchRendering();
-                }
-                cmd.rendering(ctx);
-            }
-        }
-        this._batchRendering();
-        _batchedInfo.texture = null;
+        this.rendering(ctx, locCmds);
         this._removeCache(renderTextureId);
 
         var locIDs = this._cacheInstanceIds;
@@ -317,11 +308,11 @@ return {
         var _bufferchanged = !gl.bindBuffer(gl.ARRAY_BUFFER, _quadVertexBuffer);
         // upload the vertex data to the gl buffer
         if (_batchingSize > _vertexSize * 0.5) {
-            gl.bufferSubData(gl.ARRAY_BUFFER, 0, _vertexDataF32);
+            gl.bufferData(gl.ARRAY_BUFFER, _vertexDataF32, gl.DYNAMIC_DRAW);
         }
         else {
             var view = _vertexDataF32.subarray(0, _batchingSize * _sizePerVertex);
-            gl.bufferSubData(gl.ARRAY_BUFFER, 0, view);
+            gl.bufferData(gl.ARRAY_BUFFER, view, gl.DYNAMIC_DRAW);
         }
 
         if (_bufferchanged) {
@@ -345,8 +336,8 @@ return {
      * drawing all renderer command to context (default is cc._renderContext)
      * @param {WebGLRenderingContext} [ctx=cc._renderContext]
      */
-    rendering: function (ctx) {
-        var locCmds = this._renderCmds,
+    rendering: function (ctx, cmds) {
+        var locCmds = cmds || this._renderCmds,
             i, len, cmd, next, batchCount,
             context = ctx || cc._renderContext;
 

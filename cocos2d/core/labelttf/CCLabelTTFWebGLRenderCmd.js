@@ -32,7 +32,5 @@
 
     cc.inject(cc.LabelTTF.CacheRenderCmd.prototype, proto);
     proto.constructor = cc.LabelTTF.WebGLRenderCmd;
-    proto._updateColor = function () {
-        this._updateTexture();
-    };
+    proto._updateColor = function () {};
 })();
