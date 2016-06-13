@@ -171,9 +171,21 @@ return {
         var ctx = cc._renderContext;
         // Reset buffer cache to avoid issue
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
-        for (i = 0, len = locCmds.length; i < len; i++) {
-            locCmds[i].rendering(ctx);
+        for (i = 0, len = locCmds.length; i < len; ++i) {
+            cmd = locCmds[i];
+
+            if (cmd.uploadData) {
+                this._uploadBufferData(cmd);
+            }
+            else {
+                if (cmd._batchingSize > 0) {
+                    this._batchRendering();
+                }
+                cmd.rendering(ctx);
+            }
         }
+        this._batchRendering();
+        _batchedInfo.texture = null;
         this._removeCache(renderTextureId);
 
         var locIDs = this._cacheInstanceIds;

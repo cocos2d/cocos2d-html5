@@ -29,11 +29,6 @@
  http://slick.cokeandcode.com/demos/hiero.jnlp (Free, Java)
  http://www.angelcode.com/products/bmfont/ (Free, Windows only)
  ****************************************************************************/
-/**
- * @constant
- * @type Number
- */
-cc.LABEL_AUTOMATIC_WIDTH = -1;
 
 /**
  * <p>cc.LabelBMFont is a subclass of cc.SpriteBatchNode.</p>
@@ -718,12 +713,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var texture = cc.textureCache.addImage(newConf.atlasName);
             var locIsLoaded = texture.isLoaded();
             self._textureLoaded = locIsLoaded;
-            self.texture = texture;
             if (!locIsLoaded) {
                 texture.addEventListener("load", function (sender) {
                     var self1 = this;
                     self1._textureLoaded = true;
-                    self1.texture = sender;
+                    self1.setTexture(sender);
                     self1.createFontChars();
                     self1._changeTextureColor();
                     self1.updateLabel();
@@ -731,6 +725,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     self1.dispatchEvent("load");
                 }, self);
             } else {
+                self.setTexture(texture);
                 self.createFontChars();
             }
         }
@@ -745,6 +740,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     setTexture: function(texture){
+        this._texture = texture;
         this._renderCmd.setTexture(texture);
     },
 
@@ -844,6 +840,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     /** @expose */
     p.textAlign;
     cc.defineGetterSetter(p, "textAlign", p._getAlignment, p.setAlignment);
+
+    // Override properties
+    cc.defineGetterSetter(p, "texture", p.getTexture, p.setTexture);
 })();
 
 /**
@@ -860,7 +859,7 @@ cc.LabelBMFont.create = function (str, fntFile, width, alignment, imageOffset) {
     return new cc.LabelBMFont(str, fntFile, width, alignment, imageOffset);
 };
 
-cc._fntLoader = {
+var _fntLoader = {
     INFO_EXP: /info [^\n]*(\n|$)/gi,
     COMMON_EXP: /common [^\n]*(\n|$)/gi,
     PAGE_EXP: /page [^\n]*(\n|$)/gi,
@@ -960,4 +959,4 @@ cc._fntLoader = {
         });
     }
 };
-cc.loader.register(["fnt"], cc._fntLoader);
+cc.loader.register(["fnt"], _fntLoader);

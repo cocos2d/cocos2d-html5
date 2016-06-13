@@ -29,11 +29,11 @@
         cc.Node.WebGLRenderCmd.call(this, renderable);
         this._needDraw = true;
 
-        this._vertices = [
-            {x: 0, y: 0, u: 0, v: 0}, // tl
-            {x: 0, y: 0, u: 0, v: 0}, // bl
-            {x: 0, y: 0, u: 0, v: 0}, // tr
-            {x: 0, y: 0, u: 0, v: 0}  // br
+        this._uvs = [
+            {u: 0, v: 0}, // tl
+            {u: 0, v: 0}, // bl
+            {u: 0, v: 0}, // tr
+            {u: 0, v: 0}  // br
         ];
         this._dirty = false;
         this._recursiveDirty = false;
@@ -49,7 +49,6 @@
     proto.bytesPerUnit = proto.vertexBytesPerUnit;
     proto.indicesPerUnit = 6;
     proto.verticesPerUnit = 4;
-    proto._supportBatch = true;
 
     proto.updateBlendFunc = function (blendFunc) {};
 
@@ -138,7 +137,7 @@
         var node = this._node;
 
         var tex = node._batchNode ? node.textureAtlas.texture : node._texture;
-        var uvs = this._vertices;
+        var uvs = this._uvs;
         if (!tex)
             return;
 
@@ -216,17 +215,6 @@
     };
 
     proto._setColorDirty = function () {};
-
-    proto._updateColor = function () {
-        var locDisplayedColor = this._displayedColor, locDisplayedOpacity = this._displayedOpacity, node = this._node;
-        var color4 = {r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: locDisplayedOpacity};
-        // special opacity for premultiplied textures
-        if (node._opacityModifyRGB) {
-            color4.r *= locDisplayedOpacity / 255.0;
-            color4.g *= locDisplayedOpacity / 255.0;
-            color4.b *= locDisplayedOpacity / 255.0;
-        }
-    };
 
     proto._updateBlendFunc = function () {
         if (this._batchNode) {
@@ -318,18 +306,27 @@
         f32buffer[offset + 19] = rx * wt.b + by * wt.d + wt.ty;
 
         // Fill in vertex data with quad information (4 vertices for sprite)
-        var vertices = this._vertices;
-        var opacity = this._displayedOpacity;
-        var color = this._displayedColor, r, g, b;
-        var i, len = vertices.length, offset, vertex, colorView;
+        var uvs = this._uvs;
+        var opacity = Math.floor(this._displayedOpacity);
+        var r = this._displayedColor.r,
+            g = this._displayedColor.g,
+            b = this._displayedColor.b;
+        if (node._opacityModifyRGB) {
+            var a = opacity / 255;
+            r *= a;
+            g *= a;
+            b *= a;
+        }
+
+        var i, len = uvs.length, offset, uv, colorView;
         for (i = 0; i < len; ++i) {
             offset = vertexDataOffset + i * 6;
-            vertex = vertices[i];
+            uv = uvs[i];
             f32buffer[offset + 2] = node._vertexZ;
-            f32buffer[offset + 4] = vertex.u;
-            f32buffer[offset + 5] = vertex.v;
+            f32buffer[offset + 4] = uv.u;
+            f32buffer[offset + 5] = uv.v;
 
-            ui32buffer[offset + 3] = ((color.r<<24) | (color.g<<16) | (color.b)<<8 | opacity);
+            ui32buffer[offset + 3] = ((opacity<<24) | (b<<16) | (g<<8) | r);
         }
 
         return true;

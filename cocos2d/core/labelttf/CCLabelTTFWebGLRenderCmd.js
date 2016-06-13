@@ -34,6 +34,5 @@
     proto.constructor = cc.LabelTTF.WebGLRenderCmd;
     proto._updateColor = function () {
         this._updateTexture();
-        cc.Sprite.WebGLRenderCmd.prototype._updateColor.call(this);
     };
 })();

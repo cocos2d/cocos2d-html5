@@ -127,10 +127,14 @@
         }
     };
 
-    proto._updateColor = function(){
-        var locDisplayedColor = this._displayedColor;
-        this._colorF32Array = new Float32Array([locDisplayedColor.r / 255.0, locDisplayedColor.g / 255.0,
-                locDisplayedColor.b / 255.0, this._displayedOpacity / 255.0]);
+    proto._updateColor = function () {
+        if (this._colorF32Array) {
+            var locDisplayedColor = this._displayedColor;
+            this._colorF32Array[0] = locDisplayedColor.r / 255.0;
+            this._colorF32Array[1] = locDisplayedColor.g / 255.0;
+            this._colorF32Array[2] = locDisplayedColor.b / 255.0;
+            this._colorF32Array[3] = this._displayedOpacity / 255.0;
+        }
     };
 
     proto.getTexture = function(){

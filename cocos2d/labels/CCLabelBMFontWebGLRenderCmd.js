@@ -33,14 +33,13 @@
 (function(){
     cc.LabelBMFont.WebGLRenderCmd = function(renderableObject){
         cc.Node.WebGLRenderCmd.call(this, renderableObject);
-        this._needDraw = true;
     };
 
     var proto = cc.LabelBMFont.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.LabelBMFont.WebGLRenderCmd;
 
     proto.setTexture = function (texture) {
-        this._node._texture = texture;
+        this._node.setOpacityModifyRGB(this._node._texture.hasPremultipliedAlpha());
     };
 
     proto._updateCharTexture = function(fontChar, rect, key){
@@ -51,14 +50,6 @@
     };
 
     proto._changeTextureColor = function(){};
-
-    proto._updateChildrenDisplayedOpacity = function(locChild){
-        locChild.updateDisplayedOpacity(this._displayedOpacity);
-    };
-
-    proto._updateChildrenDisplayedColor = function(locChild){
-        locChild.updateDisplayedColor(this._displayedColor);
-    };
 
     proto._updateCharColorAndOpacity = function(){};
 })();

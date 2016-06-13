@@ -323,7 +323,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {Boolean}
      */
     initWithTexture: function (tex) {
-        this._texture = tex;
+        this.setTexture(tex);
         return true;
     },
 

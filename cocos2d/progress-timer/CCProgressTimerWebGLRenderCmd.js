@@ -33,6 +33,9 @@
         this._needDraw = true;
         this._progressDirty = true;
 
+        this._bl = cc.p();
+        this._tr = cc.p();
+
         this.initCmd();
     };
 
@@ -41,7 +44,16 @@
 
     proto.transform = function (parentCmd, recursive) {
         cc.Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
-        this._node._sprite._renderCmd.transform(this, recursive);
+        var sp = this._node._sprite;
+        sp._renderCmd.transform(this, recursive);
+
+        var lx = sp._offsetPosition.x, rx = lx + sp._rect.width,
+            by = sp._offsetPosition.y, ty = by + sp._rect.height,
+            wt = this._worldTransform;
+        this._bl.x = lx * wt.a + by * wt.c + wt.tx;
+        this._bl.y = lx * wt.b + by * wt.d + wt.ty;
+        this._tr.x = rx * wt.a + ty * wt.c + wt.tx;
+        this._tr.y = rx * wt.b + ty * wt.d + wt.ty;
     };
 
     proto.rendering = function (ctx) {
@@ -104,19 +116,22 @@
         var spriteCmd = node._sprite._renderCmd;
         var spriteFlag = spriteCmd._dirtyFlag;
 
-        var colorDirty = spriteFlag & flags.colorDirty,
-            opacityDirty = spriteFlag & flags.opacityDirty;
+        var colorDirty = (locFlag | spriteFlag) & flags.colorDirty,
+            opacityDirty = (locFlag | spriteFlag) & flags.opacityDirty;
 
         if (colorDirty){
             spriteCmd._syncDisplayColor();
+            spriteCmd._dirtyFlag = spriteCmd._dirtyFlag & flags.colorDirty ^ spriteCmd._dirtyFlag;
+            this._dirtyFlag = this._dirtyFlag & flags.colorDirty ^ this._dirtyFlag;
         }
 
         if (opacityDirty){
             spriteCmd._syncDisplayOpacity();
+            spriteCmd._dirtyFlag = spriteCmd._dirtyFlag & flags.opacityDirty ^ spriteCmd._dirtyFlag;
+            this._dirtyFlag = this._dirtyFlag & flags.opacityDirty ^ this._dirtyFlag;
         }
 
         if(colorDirty || opacityDirty){
-            spriteCmd._updateColor();
             this._updateColor();
         }
 
@@ -141,21 +156,22 @@
         var spriteCmd = node._sprite._renderCmd;
         var spriteFlag = spriteCmd._dirtyFlag;
 
-        var colorDirty = spriteFlag & flags.colorDirty,
-            opacityDirty = spriteFlag & flags.opacityDirty;
+        var colorDirty = (locFlag | spriteFlag) & flags.colorDirty,
+            opacityDirty = (locFlag | spriteFlag) & flags.opacityDirty;
 
         if(colorDirty){
             spriteCmd._updateDisplayColor();
+            spriteCmd._dirtyFlag = spriteCmd._dirtyFlag & flags.colorDirty ^ spriteCmd._dirtyFlag;
             this._dirtyFlag = this._dirtyFlag & flags.colorDirty ^ this._dirtyFlag;
         }
 
         if(opacityDirty){
             spriteCmd._updateDisplayOpacity();
+            spriteCmd._dirtyFlag = spriteCmd._dirtyFlag & flags.opacityDirty ^ spriteCmd._dirtyFlag;
             this._dirtyFlag = this._dirtyFlag & flags.opacityDirty ^ this._dirtyFlag;
         }
 
         if(colorDirty || opacityDirty){
-            spriteCmd._updateColor();
             this._updateColor();
         }
 
@@ -470,44 +486,52 @@
             coords.v = 0;
             return;
         }
-        var quad = locSprite.quad;
-        var min = cc.p(quad.bl.texCoords.u, quad.bl.texCoords.v);
-        var max = cc.p(quad.tr.texCoords.u, quad.tr.texCoords.v);
+        var uvs = locSprite._renderCmd._uvs,
+            bl = uvs[1],
+            tr = uvs[2];
+        var min = cc.p(bl.u, bl.v);
+        var max = cc.p(tr.u, tr.v);
 
         //  Fix bug #1303 so that progress timer handles sprite frame texture rotation
         if (locSprite.textureRectRotated) {
-            var temp = alpha.x;
-            alpha.x = alpha.y;
-            alpha.y = temp;
+            var temp = ax;
+            ax = ay;
+            ay = temp;
         }
         coords.u = min.x * (1 - ax) + max.x * ax;
         coords.v = min.y * (1 - ay) + max.y * ay;
     };
 
     proto._vertexFromAlphaPoint = function (vertex, ax, ay) {
-        var spriteCmd = this._node._sprite._renderCmd;
-        if (!spriteCmd) {
-            vertex.x = 0;
-            vertex.y = 0;
-            return;
-        }
-        var quad = spriteCmd._quad;
-        var min = cc.p(quad.bl.vertices.x, quad.bl.vertices.y);
-        var max = cc.p(quad.tr.vertices.x, quad.tr.vertices.y);
-        vertex.x = min.x * (1 - ax) + max.x * ax;
-        vertex.y = min.y * (1 - ay) + max.y * ay;
-        vertex.z = quad.bl.vertices.z;
+        vertex.x = this._bl.x * (1 - ax) + this._tr.x * ax;
+        vertex.y = this._bl.y * (1 - ay) + this._tr.y * ay;
+        vertex.z = this._node._vertexZ;
     };
 
     proto._updateColor = function(){
-        var node = this._node;
-        if (!node._sprite || !this._vertexDataCount)
+        var sp = this._node._sprite;
+        if (!this._vertexDataCount || !sp)
             return;
 
-        var sc = node._sprite.quad.tl.colors;
+        var color = this._displayedColor;
+        var spColor = sp._renderCmd._displayedColor;
+        var r = spColor.r;
+        var g = spColor.g;
+        var b = spColor.b;
+        var a = sp._renderCmd._displayedOpacity / 255;
+        if (sp._opacityModifyRGB) {
+            r *= a;
+            g *= a;
+            b *= a;
+        }
+        color.r = r;
+        color.g = g;
+        color.b = b;
+        color.a = sp._renderCmd._displayedOpacity;
         var locVertexData = this._vertexData;
-        for (var i = 0, len = this._vertexDataCount; i < len; ++i)
-            locVertexData[i].colors = sc;
+        for (var i = 0, len = this._vertexDataCount; i < len; ++i) {
+            locVertexData[i].colors = color;
+        }
         this._vertexDataDirty = true;
     };
 })();

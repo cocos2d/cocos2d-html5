@@ -33,15 +33,10 @@
 (function(){
     cc.LabelBMFont.CanvasRenderCmd = function(renderableObject){
         cc.Node.CanvasRenderCmd.call(this, renderableObject);
-        this._needDraw = true;
     };
 
     var proto = cc.LabelBMFont.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.LabelBMFont.CanvasRenderCmd;
-
-    proto.rendering = function(){
-        void 0;
-    };
 
     proto._updateCharTexture = function(fontChar, rect, key){
         if (key === 32) {
