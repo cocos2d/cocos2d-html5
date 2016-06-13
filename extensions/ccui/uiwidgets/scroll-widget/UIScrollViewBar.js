@@ -379,5 +379,7 @@ ccui.ScrollViewBar.DEFAULT_COLOR = cc.color(52, 65, 87);
 ccui.ScrollViewBar.DEFAULT_MARGIN = 20;
 ccui.ScrollViewBar.DEFAULT_AUTO_HIDE_TIME = 0.2;
 ccui.ScrollViewBar.DEFAULT_SCROLLBAR_OPACITY = 0.4;
+ccui.ScrollViewBar.HALF_CIRCLE_IMAGE_KEY = "/__half_circle_image";
 ccui.ScrollViewBar.HALF_CIRCLE_IMAGE = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAGCAMAAADAMI+zAAAAJ1BMVEX///////////////////////////////////////////////////9Ruv0SAAAADHRSTlMABgcbbW7Hz9Dz+PmlcJP5AAAAMElEQVR4AUXHwQ2AQAhFwYcLH1H6r1djzDK3ASxUpTBeK/uTCyz7dx54b44m4p5cD1MwAooEJyk3AAAAAElFTkSuQmCC";
+ccui.ScrollViewBar.BODY_IMAGE_1_PIXEL_HEIGHT_KEY = "/__body_image_height";
 ccui.ScrollViewBar.BODY_IMAGE_1_PIXEL_HEIGHT = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAABCAMAAADdNb8LAAAAA1BMVEX///+nxBvIAAAACklEQVR4AWNABgAADQABYc2cpAAAAABJRU5ErkJggg==";

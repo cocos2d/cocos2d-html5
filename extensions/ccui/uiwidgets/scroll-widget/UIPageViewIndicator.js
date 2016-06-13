@@ -55,10 +55,8 @@ ccui.PageViewIndicator = ccui.ProtectedNode.extend(/** @lends ccui.PageViewIndic
         this._spaceBetweenIndexNodes = ccui.PageViewIndicator.SPACE_BETWEEN_INDEX_NODES_DEFAULT;
         this._indexNodesColor = cc.color.WHITE;
 
-        var image =  new Image();
-        image.src = ccui.PageViewIndicator.CIRCLE_IMAGE;
 
-        this._currentIndexNode = new cc.Sprite(image);
+        this._currentIndexNode = new cc.Sprite(ccui.helper.createSpriteFromBase64(ccui.PageViewIndicator.CIRCLE_IMAGE, ccui.PageViewIndicator.CIRCLE_IMAGE_KEY));
         this._currentIndexNode.setVisible(false);
         this.addProtectedChild(this._currentIndexNode, 1);
 
@@ -342,4 +340,5 @@ cc.defineGetterSetter(_p, "spaceBetweenIndexNodes", _p.getSpaceBetweenIndexNodes
  * @ignore
  */
 ccui.PageViewIndicator.SPACE_BETWEEN_INDEX_NODES_DEFAULT = 23;
+ccui.PageViewIndicator.CIRCLE_IMAGE_KEY = "/__circle_image";
 ccui.PageViewIndicator.CIRCLE_IMAGE = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAQAAADZc7J/AAAA8ElEQVRIx62VyRGCQBBF+6gWRCEmYDIQkhiBCgHhSclC8YqWzOV5oVzKAYZp3r1/9fpbxAIBMTsKrjx5cqVgR0wgLhCRUWOjJiPqD56xoaGPhpRZV/iSEy6crHmw5oIrF9b/lVeMofrJgjlnxlIy/wik+JB+mme8BExbBhm+5CJC2LE2LtSEQoyGWDioBA5CoRIohJtK4CYDxzNEM4GAugR1E9VjVC+SZpXvhCJCrjomESLvc17pDGX7bWmlh6UtpjPVCWy9zaJ0TD7qfm3pwERMz2trRVZk3K3BD/L34AY+dEDCniMVBkPFkT2J/b2/AIV+dRpFLOYoAAAAAElFTkSuQmCC";

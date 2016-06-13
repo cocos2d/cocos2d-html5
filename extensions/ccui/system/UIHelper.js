@@ -160,5 +160,22 @@ ccui.helper = {
             height = 0.0;
         }
         return cc.rect(x, y, width, height);
+    },
+
+    createSpriteFromBase64: function(base64String, key) {
+        var texture2D = cc.textureCache.getTextureForKey(key);
+
+        if(!texture2D) {
+            var image = new Image();
+            image.src = base64String;
+            texture2D = new cc.Texture2D();
+            texture.initWithImage(image);
+
+            cc.textureCache.cacheImage(key, texture2D);
+        }
+
+        var sprite = new Sprite(texture2D);
+
+        return sprite;
     }
 };
