@@ -1857,17 +1857,25 @@ var _initSys = function () {
             }
 
             if (_supportWebGL && sys.os === sys.OS_ANDROID) {
+                var browserVer = parseFloat(sys.browserVersion);
                 switch (sys.browserType) {
                 case sys.BROWSER_TYPE_MOBILE_QQ:
                 case sys.BROWSER_TYPE_BAIDU:
                 case sys.BROWSER_TYPE_BAIDU_APP:
                     // QQ & Baidu Brwoser 6.2+ (using blink kernel)
-                    var browserVer = parseFloat(sys.browserVersion);
                     if (browserVer >= 6.2) {
                         _supportWebGL = true;
                     }
                     else {
                         _supportWebGL = false;
+                    }
+                    break;
+                case sys.BROWSER_TYPE_CHROME:
+                    // Chrome on android supports WebGL from v.30
+                    if(browserVer >= 30.0) {
+                      _supportWebGL = true;
+                    } else {
+                      _supportWebGL = false;
                     }
                     break;
                 case sys.BROWSER_TYPE_ANDROID:
