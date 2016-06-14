@@ -29,11 +29,11 @@
         cc.Node.WebGLRenderCmd.call(this, renderable);
         this._needDraw = true;
 
-        this._uvs = [
-            {u: 0, v: 0}, // tl
-            {u: 0, v: 0}, // bl
-            {u: 0, v: 0}, // tr
-            {u: 0, v: 0}  // br
+        this._vertices = [
+            {x: 0, y: 0, u: 0, v: 0}, // tl
+            {x: 0, y: 0, u: 0, v: 0}, // bl
+            {x: 0, y: 0, u: 0, v: 0}, // tr
+            {x: 0, y: 0, u: 0, v: 0}  // br
         ];
         this._dirty = false;
         this._recursiveDirty = false;
@@ -43,12 +43,6 @@
 
     var proto = cc.Sprite.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = cc.Sprite.WebGLRenderCmd;
-
-    // The following static properties must be provided for a auto batchable command
-    proto.vertexBytesPerUnit = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-    proto.bytesPerUnit = proto.vertexBytesPerUnit;
-    proto.indicesPerUnit = 6;
-    proto.verticesPerUnit = 4;
 
     proto.updateBlendFunc = function (blendFunc) {};
 
@@ -104,7 +98,6 @@
     };
 
     proto._textureLoadedCallback = function (sender) {
-        var renderCmd = this._renderCmd;
         if (this._textureLoaded)
             return;
 
@@ -137,7 +130,7 @@
         var node = this._node;
 
         var tex = node._batchNode ? node.textureAtlas.texture : node._texture;
-        var uvs = this._uvs;
+        var uvs = this._vertices;
         if (!tex)
             return;
 
@@ -280,6 +273,25 @@
         }
     };
 
+    proto.transform = function (parentCmd, recursive) {
+        this.originTransform(parentCmd, recursive);
+
+        var node = this._node,
+            lx = node._offsetPosition.x, rx = lx + node._rect.width,
+            by = node._offsetPosition.y, ty = by + node._rect.height,
+            wt = this._worldTransform;
+
+        var vertices = this._vertices;
+        vertices[0].x = lx * wt.a + ty * wt.c + wt.tx; // tl
+        vertices[0].y = lx * wt.b + ty * wt.d + wt.ty;
+        vertices[1].x = lx * wt.a + by * wt.c + wt.tx; // bl
+        vertices[1].y = lx * wt.b + by * wt.d + wt.ty;
+        vertices[2].x = rx * wt.a + ty * wt.c + wt.tx; // tr
+        vertices[2].y = rx * wt.b + ty * wt.d + wt.ty;
+        vertices[3].x = rx * wt.a + by * wt.c + wt.tx; // br
+        vertices[3].y = rx * wt.b + by * wt.d + wt.ty;
+    };
+
     proto.needDraw = function () {
         var node = this._node, locTexture = node._texture;
         return (this._needDraw && locTexture);
@@ -290,24 +302,18 @@
         if (!(locTexture && locTexture._textureLoaded && node._rect.width && node._rect.height) || !this._displayedOpacity)
             return false;
 
-        var lx = node._offsetPosition.x, rx = lx + node._rect.width,
-            by = node._offsetPosition.y, ty = by + node._rect.height,
-            wt = this._worldTransform;
-
-        offset = vertexDataOffset;
-
-        f32buffer[offset] = lx * wt.a + ty * wt.c + wt.tx; // tl
-        f32buffer[offset + 1] = lx * wt.b + ty * wt.d + wt.ty;
-        f32buffer[offset + 6] = lx * wt.a + by * wt.c + wt.tx; // bl
-        f32buffer[offset + 7] = lx * wt.b + by * wt.d + wt.ty;
-        f32buffer[offset + 12] = rx * wt.a + ty * wt.c + wt.tx; // tr
-        f32buffer[offset + 13] = rx * wt.b + ty * wt.d + wt.ty;
-        f32buffer[offset + 18] = rx * wt.a + by * wt.c + wt.tx; // br
-        f32buffer[offset + 19] = rx * wt.b + by * wt.d + wt.ty;
+        var vertices = this._vertices;
+        var visibleRect = cc.view._visibleRect;
+        var tl = vertices[0], bl = vertices[1], tr = vertices[2], br = vertices[3];
+        if (Math.max(tl.x, bl.x, tr.x, br.x) < visibleRect.x ||
+            Math.max(tl.y, bl.y, tr.y, br.y) < visibleRect.y ||
+            Math.min(tl.x, bl.x, tr.x, br.x) > visibleRect.x + visibleRect.width ||
+            Math.min(tl.y, bl.y, tr.y, br.y) > visibleRect.y + visibleRect.height) {
+            return false;
+        }
 
         // Fill in vertex data with quad information (4 vertices for sprite)
-        var uvs = this._uvs;
-        var opacity = Math.floor(this._displayedOpacity);
+        var opacity = this._displayedOpacity;
         var r = this._displayedColor.r,
             g = this._displayedColor.g,
             b = this._displayedColor.b;
@@ -318,15 +324,16 @@
             b *= a;
         }
 
-        var i, len = uvs.length, offset, uv, colorView;
+        var i, len = vertices.length, vertex, offset = vertexDataOffset;
         for (i = 0; i < len; ++i) {
             offset = vertexDataOffset + i * 6;
-            uv = uvs[i];
+            vertex = vertices[i];
+            f32buffer[offset] = vertex.x;
+            f32buffer[offset + 1] = vertex.y;
             f32buffer[offset + 2] = node._vertexZ;
-            f32buffer[offset + 4] = uv.u;
-            f32buffer[offset + 5] = uv.v;
-
             ui32buffer[offset + 3] = ((opacity<<24) | (b<<16) | (g<<8) | r);
+            f32buffer[offset + 4] = vertex.u;
+            f32buffer[offset + 5] = vertex.v;
         }
 
         return true;
