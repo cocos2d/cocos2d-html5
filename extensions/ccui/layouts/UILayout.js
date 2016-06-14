@@ -1026,23 +1026,23 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @private
      */
     _findProperSearchingFunctor: function(direction, baseWidget){
-        if (baseWidget == null)
+        if (baseWidget === undefined)
             return;
 
         var previousWidgetPosition = this._getWorldCenterPoint(baseWidget);
         var widgetPosition = this._getWorldCenterPoint(this._findFirstNonLayoutWidget());
         if (direction === ccui.Widget.LEFT) {
-            this.onPassFocusToChild = (previousWidgetPosition.x > widgetPosition.x) ? this._findNearestChildWidgetIndex.bind(this)
-                : this._findFarthestChildWidgetIndex.bind(this);
+            this.onPassFocusToChild = (previousWidgetPosition.x > widgetPosition.x) ? this._findNearestChildWidgetIndex
+                : this._findFarthestChildWidgetIndex;
         } else if (direction === ccui.Widget.RIGHT) {
-            this.onPassFocusToChild = (previousWidgetPosition.x > widgetPosition.x) ? this._findFarthestChildWidgetIndex.bind(this)
-                : this._findNearestChildWidgetIndex.bind(this);
+            this.onPassFocusToChild = (previousWidgetPosition.x > widgetPosition.x) ? this._findFarthestChildWidgetIndex
+                : this._findNearestChildWidgetIndex;
         }else if(direction === ccui.Widget.DOWN) {
-            this.onPassFocusToChild = (previousWidgetPosition.y > widgetPosition.y) ? this._findNearestChildWidgetIndex.bind(this)
-                : this._findFarthestChildWidgetIndex.bind(this);
+            this.onPassFocusToChild = (previousWidgetPosition.y > widgetPosition.y) ? this._findNearestChildWidgetIndex
+                : this._findFarthestChildWidgetIndex;
         }else if(direction === ccui.Widget.UP) {
-            this.onPassFocusToChild = (previousWidgetPosition.y < widgetPosition.y) ? this._findNearestChildWidgetIndex.bind(this)
-                : this._findFarthestChildWidgetIndex.bind(this);
+            this.onPassFocusToChild = (previousWidgetPosition.y < widgetPosition.y) ? this._findNearestChildWidgetIndex
+                : this._findFarthestChildWidgetIndex;
         }else
             cc.log("invalid direction!");
     },

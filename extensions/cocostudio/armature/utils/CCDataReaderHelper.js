@@ -790,7 +790,7 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         frameData.soundEffect = frameData.strSoundEffect;
 
         var isTween = frameXML.getAttribute(ccs.CONST_A_TWEEN_FRAME);
-        frameData.isTween = !(isTween != undefined && isTween === "false");
+        frameData.isTween = !(isTween !== undefined && (isTween === "false" || isTween === "0"));
 
         if (dataInfo.flashToolVersion >= ccs.CONST_VERSION_2_0) {
             x = frameXML.getAttribute(ccs.CONST_A_COCOS2DX_X);

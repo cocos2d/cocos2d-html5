@@ -187,7 +187,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             this._initRenderer();
             this.setBright(true);
 
-            this.onFocusChanged = this.onFocusChange.bind(this);
+            this.onFocusChanged = this.onFocusChange;
             this.onNextFocusedWidget = null;
             this.setAnchorPoint(cc.p(0.5, 0.5));
 

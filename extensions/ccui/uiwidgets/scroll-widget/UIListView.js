@@ -124,7 +124,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     _remedyLayoutParameter: function (item) {
         cc.assert(null != item, "ListView Item can't be nil!");
 
-        var linearLayoutParameter = item.getLayoutParameter();
+        var linearLayoutParameter = item.getLayoutParameter(ccui.LayoutParameter.LINEAR);
         var isLayoutParameterExists = true;
         if (!linearLayoutParameter) {
             linearLayoutParameter = new ccui.LinearLayoutParameter();
@@ -884,8 +884,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
      */
     interceptTouchEvent: function (eventType, sender, touch) {
         ccui.ScrollView.prototype.interceptTouchEvent.call(this, eventType, sender, touch);
-        if(!this._touchEnabled)
-        {
+        if (!this._touchEnabled) {
             return;
         }
         if (eventType !== ccui.Widget.TOUCH_MOVED) {
