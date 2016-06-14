@@ -133,32 +133,30 @@
         var clippingRect = this._node._getClippingRect();
         var gl = ctx || cc._renderContext;
 
-        this._scissorOldState = cc.view.isScissorEnabled();
+        this._scissorOldState = gl.isEnabled(gl.SCISSOR_TEST);
 
-        if(!this._scissorOldState)
+        if (!this._scissorOldState) {
             gl.enable(gl.SCISSOR_TEST);
-
-        this._clippingOldRect = cc.view.getScissorRect();
-
-        if(!cc.rectEqualToRect(this._clippingOldRect, clippingRect))
             cc.view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
+        }
+        else {
+            this._clippingOldRect = cc.view.getScissorRect();
+            if (!cc.rectEqualToRect(this._clippingOldRect, clippingRect))
+                cc.view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
+        }
     };
 
     proto._onAfterVisitScissor = function(ctx){
         var gl = ctx || cc._renderContext;
-        if(this._scissorOldState)
-        {
-            if(!cc.rectEqualToRect(this._clippingOldRect, this._node._clippingRect))
-            {
+        if (this._scissorOldState) {
+            if (!cc.rectEqualToRect(this._clippingOldRect, this._node._clippingRect)) {
                 cc.view.setScissorInPoints( this._clippingOldRect.x,
                     this._clippingOldRect.y,
                     this._clippingOldRect.width,
                     this._clippingOldRect.height);
             }
-
         }
-        else
-        {
+        else {
             gl.disable(gl.SCISSOR_TEST);
         }
     };

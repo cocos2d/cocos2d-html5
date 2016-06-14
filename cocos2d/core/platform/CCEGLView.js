@@ -102,6 +102,8 @@ switch(cc.__BrowserGetter.adaptationType){
         break;
 }
 
+var _scissorRect = cc.rect();
+
 /**
  * cc.view is the singleton object which represents the game window.<br/>
  * It's main task include: <br/>
@@ -768,11 +770,15 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * @param {Number} h
      */
     setScissorInPoints: function (x, y, w, h) {
-        var locFrameZoomFactor = this._frameZoomFactor, locScaleX = this._scaleX, locScaleY = this._scaleY;
-        cc._renderContext.scissor((x * locScaleX * locFrameZoomFactor + this._viewPortRect.x * locFrameZoomFactor),
-            (y * locScaleY * locFrameZoomFactor + this._viewPortRect.y * locFrameZoomFactor),
-            (w * locScaleX * locFrameZoomFactor),
-            (h * locScaleY * locFrameZoomFactor));
+        var zoomFactor = this._frameZoomFactor, scaleX = this._scaleX, scaleY = this._scaleY;
+        _scissorRect.x = x;
+        _scissorRect.y = y;
+        _scissorRect.width = w;
+        _scissorRect.height = h;
+        cc._renderContext.scissor(x * scaleX * zoomFactor + this._viewPortRect.x * zoomFactor,
+                                  y * scaleY * zoomFactor + this._viewPortRect.y * zoomFactor,
+                                  w * scaleX * zoomFactor,
+                                  h * scaleY * zoomFactor);
     },
 
     /**
@@ -780,8 +786,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * @return {Boolean}
      */
     isScissorEnabled: function () {
-        var gl = cc._renderContext;
-        return gl.isEnabled(gl.SCISSOR_TEST);
+        return cc._renderContext.isEnabled(gl.SCISSOR_TEST);
     },
 
     /**
@@ -789,10 +794,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * @return {cc.Rect}
      */
     getScissorRect: function () {
-        var gl = cc._renderContext, scaleX = this._scaleX, scaleY = this._scaleY;
-        var boxArr = gl.getParameter(gl.SCISSOR_BOX);
-        return cc.rect((boxArr[0] - this._viewPortRect.x) / scaleX, (boxArr[1] - this._viewPortRect.y) / scaleY,
-            boxArr[2] / scaleX, boxArr[3] / scaleY);
+        return cc.rect(_scissorRect);
     },
 
     /**
