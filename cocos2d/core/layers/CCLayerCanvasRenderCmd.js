@@ -160,7 +160,7 @@
 
     proto.visit = function(parentCmd){
         if(!this._isBaked){
-            cc.Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
+            this.originVisit(parentCmd);
             return;
         }
 
@@ -309,7 +309,7 @@
 
     proto.visit = function(parentCmd){
         if(!this._isBaked){
-            cc.Node.CanvasRenderCmd.prototype.visit.call(this);
+            this.originVisit();
             return;
         }
 

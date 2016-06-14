@@ -74,13 +74,13 @@
         // if stencil buffer disabled
         if (cc.stencilBits < 1) {
             // draw everything, as if there were no stencil
-            cc.Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
+            this.originVisit(parentCmd);
             return;
         }
 
         if (!node._stencil || !node._stencil.visible) {
             if (node.inverted)
-                cc.Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);   // draw everything
+                this.originVisit(parentCmd);   // draw everything
             return;
         }
 
@@ -91,7 +91,7 @@
                 cc.ClippingNode.WebGLRenderCmd._visit_once = false;
             }
             // draw everything, as if there were no stencil
-            cc.Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
+            this.originVisit(parentCmd);
             return;
         }
 

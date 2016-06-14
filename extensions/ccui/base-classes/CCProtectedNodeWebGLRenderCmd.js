@@ -98,4 +98,7 @@
             }
         }
     };
+
+    proto.pNodeVisit = proto.visit;
+    proto.pNodeTransform = proto.transform;
 })();

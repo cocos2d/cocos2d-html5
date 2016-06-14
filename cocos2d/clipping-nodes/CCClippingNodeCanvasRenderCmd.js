@@ -174,7 +174,7 @@
         this._clipElemType = !(!this._cangodhelpme() && node._stencil instanceof cc.DrawNode);
         if (!node._stencil || !node._stencil.visible) {
             if (this.inverted)
-                cc.Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);   // draw everything
+                this.originVisit(parentCmd);   // draw everything
             return;
         }
 
@@ -182,7 +182,7 @@
         cc.renderer.pushRenderCommand(this._rendererSaveCmd);
         if(this._clipElemType){
             // Draw everything first using node visit function
-            cc.Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
+            this.originVisit(parentCmd);
         }else{
             node._stencil.visit(this);
         }

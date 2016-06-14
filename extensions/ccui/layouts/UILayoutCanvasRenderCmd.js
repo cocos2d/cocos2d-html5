@@ -58,9 +58,11 @@
                     break;
             }
         } else {
-            ccui.Widget.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
+            this.widgetVisit(parentCmd);
         }
     };
+
+    proto.layoutVisit = proto.visit;
 
     proto._onRenderSaveCmd = function(ctx, scaleX, scaleY){
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();

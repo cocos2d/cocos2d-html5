@@ -71,7 +71,7 @@
             node._scale9Image._renderCmd.visit(this);
         }
         this._dirtyFlag = 0;
-        cc.Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
+        this.originVisit(parentCmd);
     };
 
     proto.transform = function(parentCmd, recursive){

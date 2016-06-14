@@ -68,9 +68,12 @@
                 default:
                     break;
             }
-        } else
-            ccui.ProtectedNode.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
+        } else {
+            this.pNodeVisit(parentCmd);
+        }
     };
+
+    proto.layoutVisit = proto.visit;
 
     proto._onBeforeVisitStencil = function(ctx){
         var gl = ctx || cc._renderContext;
@@ -164,7 +167,7 @@
 
     proto.transform = function(parentCmd, recursive){
         var node = this._node;
-        ccui.ProtectedNode.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+        this.pNodeTransform(parentCmd, recursive);
         if(node._clippingStencil)
             node._clippingStencil._renderCmd.transform(this, recursive);
     };
@@ -236,7 +239,7 @@
 
     proto.scissorClippingVisit = function(parentCmd){
         cc.renderer.pushRenderCommand(this._beforeVisitCmdScissor);
-        ccui.ProtectedNode.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
+        this.pNodeVisit(parentCmd);
         cc.renderer.pushRenderCommand(this._afterVisitCmdScissor);
     };
 

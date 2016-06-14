@@ -20,7 +20,7 @@
         cc.renderer.pushRenderCommand(this);
         cc.renderer._turnToCacheMode(currentID);
 
-        ccui.Layout.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
+        this.layoutVisit(parentCmd);
         // Need to update children after do layout
         node.updateChildren();
 

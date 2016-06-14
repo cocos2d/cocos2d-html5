@@ -19,7 +19,7 @@
         cc.renderer.pushRenderCommand(this);
         cc.renderer._turnToCacheMode(currentID);
 
-        ccui.Layout.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
+        this.layoutVisit(parentCmd);
 
         this._dirtyFlag = 0;
         cc.renderer._turnToNormalMode();

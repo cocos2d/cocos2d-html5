@@ -493,6 +493,7 @@ cc.Node.RenderCmd.prototype = {
     }
 };
 
+cc.Node.RenderCmd.prototype.originVisit = cc.Node.RenderCmd.prototype.visit;
 cc.Node.RenderCmd.prototype.originTransform = cc.Node.RenderCmd.prototype.transform;
 
 //-----------------------Canvas ---------------------------
