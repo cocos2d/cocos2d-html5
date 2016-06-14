@@ -24,14 +24,6 @@
 
 cc.rendererWebGL = (function () {
 
-function removeByLastSwap (array, i) {
-    var len = array.length;
-    if (len > 0 && i >= 0 && i < len) {
-        array[i] = array[len - 1];
-        array.length--;
-    }
-}
-
 // Internal variables
     // Batching general informations
 var _batchedInfo = {
@@ -56,7 +48,8 @@ var _batchedInfo = {
     _vertexData = null,
     _vertexDataSize = 0,
     _vertexDataF32 = null,
-    _vertexDataUI32 = null;
+    _vertexDataUI32 = null,
+    _IS_IOS = false;
 
 
 // Inspired from @Heishe's gotta-batch-them-all branch
@@ -130,6 +123,9 @@ return {
         this.mat4Identity = new cc.math.Matrix4();
         this.mat4Identity.identity();
         initQuadBuffer(2000);
+        if (cc.sys.os === cc.sys.OS_IOS) {
+            _IS_IOS = true;
+        }
     },
 
     getRenderCmd: function (renderableObject) {
@@ -308,11 +304,13 @@ return {
         var _bufferchanged = !gl.bindBuffer(gl.ARRAY_BUFFER, _quadVertexBuffer);
         // upload the vertex data to the gl buffer
         if (_batchingSize > _vertexSize * 0.5) {
-            gl.bufferData(gl.ARRAY_BUFFER, _vertexDataF32, gl.DYNAMIC_DRAW);
+            if (_IS_IOS) gl.bufferData(gl.ARRAY_BUFFER, _vertexDataF32, gl.DYNAMIC_DRAW);
+            else gl.bufferSubData(gl.ARRAY_BUFFER, 0, _vertexDataF32);
         }
         else {
             var view = _vertexDataF32.subarray(0, _batchingSize * _sizePerVertex);
-            gl.bufferData(gl.ARRAY_BUFFER, view, gl.DYNAMIC_DRAW);
+            if (_IS_IOS) gl.bufferData(gl.ARRAY_BUFFER, view, gl.DYNAMIC_DRAW);
+            else gl.bufferSubData(gl.ARRAY_BUFFER, 0, view);
         }
 
         if (_bufferchanged) {
