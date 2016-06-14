@@ -120,6 +120,10 @@ return {
     _clearColor: cc.color(),                            //background color,default BLACK
 
     init: function () {
+        var gl = cc._renderContext;
+        gl.disable(gl.CULL_FACE);
+        gl.disable(gl.DEPTH_TEST);
+
         this.mat4Identity = new cc.math.Matrix4();
         this.mat4Identity.identity();
         initQuadBuffer(2000);

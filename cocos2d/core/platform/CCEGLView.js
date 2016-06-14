@@ -35,7 +35,7 @@ cc.DENSITYDPI_HIGH = "high-dpi";
 cc.DENSITYDPI_MEDIUM = "medium-dpi";
 cc.DENSITYDPI_LOW = "low-dpi";
 
-cc.__BrowserGetter = {
+var __BrowserGetter = {
     init: function(){
         this.html = document.getElementsByTagName("html")[0];
     },
@@ -58,36 +58,36 @@ cc.__BrowserGetter = {
 };
 
 if(window.navigator.userAgent.indexOf("OS 8_1_") > -1) //this mistake like MIUI, so use of MIUI treatment method
-    cc.__BrowserGetter.adaptationType = cc.sys.BROWSER_TYPE_MIUI;
+    __BrowserGetter.adaptationType = cc.sys.BROWSER_TYPE_MIUI;
 
 if(cc.sys.os === cc.sys.OS_IOS) // All browsers are WebView
-    cc.__BrowserGetter.adaptationType = cc.sys.BROWSER_TYPE_SAFARI;
+    __BrowserGetter.adaptationType = cc.sys.BROWSER_TYPE_SAFARI;
 
-switch(cc.__BrowserGetter.adaptationType){
+switch(__BrowserGetter.adaptationType){
     case cc.sys.BROWSER_TYPE_SAFARI:
-        cc.__BrowserGetter.meta["minimal-ui"] = "true";
-        cc.__BrowserGetter.availWidth = function(frame){
+        __BrowserGetter.meta["minimal-ui"] = "true";
+        __BrowserGetter.availWidth = function(frame){
             return frame.clientWidth;
         };
-        cc.__BrowserGetter.availHeight = function(frame){
+        __BrowserGetter.availHeight = function(frame){
             return frame.clientHeight;
         };
         break;
     case cc.sys.BROWSER_TYPE_CHROME:
-        cc.__BrowserGetter.__defineGetter__("target-densitydpi", function(){
+        __BrowserGetter.__defineGetter__("target-densitydpi", function(){
             return cc.view._targetDensityDPI;
         });
     case cc.sys.BROWSER_TYPE_SOUGOU:
     case cc.sys.BROWSER_TYPE_UC:
-        cc.__BrowserGetter.availWidth = function(frame){
+        __BrowserGetter.availWidth = function(frame){
             return frame.clientWidth;
         };
-        cc.__BrowserGetter.availHeight = function(frame){
+        __BrowserGetter.availHeight = function(frame){
             return frame.clientHeight;
         };
         break;
     case cc.sys.BROWSER_TYPE_MIUI:
-        cc.__BrowserGetter.init = function(view){
+        __BrowserGetter.init = function(view){
             if(view.__resizeWithBrowserSize) return;
             var resize = function(){
                 view.setDesignResolutionSize(
@@ -169,7 +169,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     ctor: function () {
         var _t = this, d = document, _strategyer = cc.ContainerStrategy, _strategy = cc.ContentStrategy;
 
-        cc.__BrowserGetter.init(this);
+        __BrowserGetter.init(this);
 
         _t._frame = (cc.container.parentNode === d.body) ? d.documentElement : cc.container.parentNode;
         _t._frameSize = cc.size(0, 0);
@@ -301,8 +301,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     _initFrameSize: function () {
         var locFrameSize = this._frameSize;
-        var w = cc.__BrowserGetter.availWidth(this._frame);
-        var h = cc.__BrowserGetter.availHeight(this._frame);
+        var w = __BrowserGetter.availWidth(this._frame);
+        var h = __BrowserGetter.availHeight(this._frame);
         var isLandscape = w >= h;
 
         if (!cc.sys.isMobile ||
@@ -371,7 +371,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
     _adjustViewportMeta: function () {
         if (this._isAdjustViewPort) {
-            this._setViewportMeta(cc.__BrowserGetter.meta, false);
+            this._setViewportMeta(__BrowserGetter.meta, false);
             // Only adjust viewport once
             this._isAdjustViewPort = false;
         }

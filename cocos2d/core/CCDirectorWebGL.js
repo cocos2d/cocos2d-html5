@@ -245,9 +245,6 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
     _p.setGLDefaultValues = function () {
         var _t = this;
         _t.setAlphaBlending(true);
-        // XXX: Fix me, should enable/disable depth test according the depth format as cocos2d-iphone did
-        // [self setDepthTest: view_.depthFormat];
-        _t.setDepthTest(false);
         _t.setProjection(_t._projection);
 
         // set other opengl default values
