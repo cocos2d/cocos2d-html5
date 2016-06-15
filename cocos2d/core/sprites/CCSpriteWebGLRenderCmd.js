@@ -302,16 +302,6 @@
         if (!(locTexture && locTexture._textureLoaded && node._rect.width && node._rect.height) || !this._displayedOpacity)
             return false;
 
-        var vertices = this._vertices;
-        var visibleRect = cc.view._visibleRect;
-        var tl = vertices[0], bl = vertices[1], tr = vertices[2], br = vertices[3];
-        if (Math.max(tl.x, bl.x, tr.x, br.x) < visibleRect.x ||
-            Math.max(tl.y, bl.y, tr.y, br.y) < visibleRect.y ||
-            Math.min(tl.x, bl.x, tr.x, br.x) > visibleRect.x + visibleRect.width ||
-            Math.min(tl.y, bl.y, tr.y, br.y) > visibleRect.y + visibleRect.height) {
-            return false;
-        }
-
         // Fill in vertex data with quad information (4 vertices for sprite)
         var opacity = this._displayedOpacity;
         var r = this._displayedColor.r,
@@ -324,6 +314,7 @@
             b *= a;
         }
 
+        var vertices = this._vertices;
         var i, len = vertices.length, vertex, offset = vertexDataOffset;
         for (i = 0; i < len; ++i) {
             offset = vertexDataOffset + i * 6;

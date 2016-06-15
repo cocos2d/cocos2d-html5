@@ -308,13 +308,11 @@ return {
         var _bufferchanged = !gl.bindBuffer(gl.ARRAY_BUFFER, _quadVertexBuffer);
         // upload the vertex data to the gl buffer
         if (_batchingSize > _vertexSize * 0.5) {
-            if (_IS_IOS) gl.bufferData(gl.ARRAY_BUFFER, _vertexDataF32, gl.DYNAMIC_DRAW);
-            else gl.bufferSubData(gl.ARRAY_BUFFER, 0, _vertexDataF32);
+            gl.bufferData(gl.ARRAY_BUFFER, _vertexDataF32, gl.DYNAMIC_DRAW);
         }
         else {
             var view = _vertexDataF32.subarray(0, _batchingSize * _sizePerVertex);
-            if (_IS_IOS) gl.bufferData(gl.ARRAY_BUFFER, view, gl.DYNAMIC_DRAW);
-            else gl.bufferSubData(gl.ARRAY_BUFFER, 0, view);
+            gl.bufferData(gl.ARRAY_BUFFER, view, gl.DYNAMIC_DRAW);
         }
 
         if (_bufferchanged) {

@@ -1,6 +1,6 @@
 cc.profiler = (function () {
     var _showFPS = false;
-    window._inited = false;
+    var _inited = false;
     var _frames = 0, _frameRate = 0, _lastSPF = 0, _accumDt = 0;
     var _afterVisitListener = null, 
         _FPSLabel = document.createElement('div'), 
