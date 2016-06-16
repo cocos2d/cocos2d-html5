@@ -108,7 +108,7 @@ return {
 
     childrenOrderDirty: true,
     assignedZ: 0,
-    assignedZStep: 1/10000,
+    assignedZStep: 1/100,
 
     _transformNodePool: [],                              //save nodes transform dirty
     _renderCmds: [],                                     //save renderer commands
@@ -130,6 +130,10 @@ return {
         if (cc.sys.os === cc.sys.OS_IOS) {
             _IS_IOS = true;
         }
+    },
+
+    getVertexSize: function () {
+        return _vertexSize;
     },
 
     getRenderCmd: function (renderableObject) {
@@ -260,6 +264,10 @@ return {
         }
     },
 
+    _increaseBatchingSize: function (increment) {
+        _batchingSize += increment;
+    },
+
     _uploadBufferData: function (cmd) {
         if (_batchingSize >= _vertexSize) {
             this._batchRendering();
@@ -284,9 +292,9 @@ return {
         }
 
         // Upload vertex data
-        var uploaded = cmd.uploadData(_vertexDataF32, _vertexDataUI32, _batchingSize * _sizePerVertex);
-        if (uploaded) {
-            _batchingSize += 4;
+        var len = cmd.uploadData(_vertexDataF32, _vertexDataUI32, _batchingSize * _sizePerVertex);
+        if (len > 0) {
+            _batchingSize += len;
         }
     },
 
@@ -299,8 +307,10 @@ return {
         var shader = _batchedInfo.shader;
         var count = _batchingSize / 4;
 
-        shader.use();
-        shader._updateProjectionUniform();
+        if (shader) {
+            shader.use();
+            shader._updateProjectionUniform();
+        }
 
         cc.glBlendFunc(_batchedInfo.blendSrc, _batchedInfo.blendDst);
         cc.glBindTexture2DN(0, texture);                   // = cc.glBindTexture2D(texture);
@@ -351,7 +361,7 @@ return {
                 this._uploadBufferData(cmd);
             }
             else {
-                if (cmd._batchingSize > 0) {
+                if (_batchingSize > 0) {
                     this._batchRendering();
                 }
                 cmd.rendering(context);

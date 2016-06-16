@@ -35,6 +35,7 @@
             {x: 0, y: 0, u: 0, v: 0}, // tr
             {x: 0, y: 0, u: 0, v: 0}  // br
         ];
+        this._color = new Uint32Array(1);
         this._dirty = false;
         this._recursiveDirty = false;
 
@@ -313,20 +314,22 @@
             g *= a;
             b *= a;
         }
+        this._color[0] = ((opacity<<24) | (b<<16) | (g<<8) | r);
+        var z = node._vertexZ;
 
         var vertices = this._vertices;
         var i, len = vertices.length, vertex, offset = vertexDataOffset;
         for (i = 0; i < len; ++i) {
-            offset = vertexDataOffset + i * 6;
             vertex = vertices[i];
             f32buffer[offset] = vertex.x;
             f32buffer[offset + 1] = vertex.y;
-            f32buffer[offset + 2] = node._vertexZ;
-            ui32buffer[offset + 3] = ((opacity<<24) | (b<<16) | (g<<8) | r);
+            f32buffer[offset + 2] = z;
+            ui32buffer[offset + 3] = this._color[0];
             f32buffer[offset + 4] = vertex.u;
             f32buffer[offset + 5] = vertex.v;
+            offset += 6;
         }
 
-        return true;
+        return len;
     };
 })();

@@ -134,10 +134,10 @@ cc.Node.RenderCmd.prototype = {
 
         var hasRotation = node._rotationX || node._rotationY;
         var hasSkew = node._skewX || node._skewY;
+        var sx = node._scaleX, sy = node._scaleY;
+        var appX = this._anchorPointInPoints.x, appY = this._anchorPointInPoints.y;
+        var a = 1, b = 0, c = 0, d = 1;
         if (hasRotation || hasSkew) {
-            var sx = node._scaleX, sy = node._scaleY;
-            var appX = this._anchorPointInPoints.x, appY = this._anchorPointInPoints.y;
-
             // position 
             t.tx = node._position.x;
             t.ty = node._position.y;
@@ -166,27 +166,26 @@ cc.Node.RenderCmd.prototype = {
 
             // skew
             if (hasSkew) {
-                // offset the anchorpoint
-                var skx = Math.tan(-node._skewX * Math.PI / 180);
-                var sky = Math.tan(-node._skewY * Math.PI / 180);
+                var skx = Math.tan(node._skewX * Math.PI / 180);
+                var sky = Math.tan(node._skewY * Math.PI / 180);
                 if (skx === Infinity)
                     skx = 99999999;
                 if (sky === Infinity)
                     sky = 99999999;
-                var xx = appY * skx;
-                var yy = appX * sky;
-                t.a = a - c * sky;
-                t.b = b - d * sky;
-                t.c = c - a * skx;
-                t.d = d - b * skx;
-                t.tx += a * xx + c * yy;
-                t.ty += b * xx + d * yy;
+                t.a = a + b * sky;
+                t.b = b + a * sky;
+                t.c = c + d * skx;
+                t.d = d + c * skx;
             }
 
-            // adjust anchorPoint
-            if (!node._ignoreAnchorPointForPosition && (appX || appY)) {
+            if (appX || appY) {
                 t.tx -= t.a * appX + t.c * appY;
                 t.ty -= t.b * appX + t.d * appY;
+                // adjust anchorPoint
+                if (node._ignoreAnchorPointForPosition) {
+                    t.tx += appX;
+                    t.ty += appY;
+                }
             }
 
             if (pt) {
@@ -207,17 +206,21 @@ cc.Node.RenderCmd.prototype = {
             }
         }
         else {
-            t.a = node._scaleX;
+            t.a = sx;
             t.b = 0;
             t.c = 0;
-            t.d = node._scaleY;
-            if (node._ignoreAnchorPointForPosition) {
-                t.tx = node._position.x;
-                t.ty = node._position.y;
-            }
-            else {
-                t.tx = node._position.x - this._anchorPointInPoints.x * t.a;
-                t.ty = node._position.y - this._anchorPointInPoints.y * t.d;
+            t.d = sy;
+            t.tx = node._position.x;
+            t.ty = node._position.y;
+
+            if (appX || appY) {
+                t.tx -= t.a * appX;
+                t.ty -= t.d * appY;
+                // adjust anchorPoint
+                if (node._ignoreAnchorPointForPosition) {
+                    t.tx += appX;
+                    t.ty += appY;
+                }
             }
 
             if (pt) {
@@ -255,7 +258,7 @@ cc.Node.RenderCmd.prototype = {
     },
 
     visit: function (parentCmd) {
-        var node = this._node;
+        var node = this._node, renderer = cc.renderer;
         // quick return if not visible
         if (!node._visible)
             return;
@@ -263,6 +266,12 @@ cc.Node.RenderCmd.prototype = {
         parentCmd = parentCmd || this.getParentRenderCmd();
         if (parentCmd)
             this._curLevel = parentCmd._curLevel + 1;
+
+        if (isNaN(node._customZ)) {
+            node._vertexZ = renderer.assignedZ;
+            renderer.assignedZ += renderer.assignedZStep;
+        }
+
         this._syncStatus(parentCmd);
         this.visitChildren();
     },
@@ -471,22 +480,12 @@ cc.Node.RenderCmd.prototype = {
                 }
             }
 
-            if (isNaN(node._customZ)) {
-                node._vertexZ = renderer.assignedZ;
-                renderer.assignedZ += renderer.assignedZStep;
-            }
-
             renderer.pushRenderCommand(this);
             for (; i < len; i++) {
                 child = children[i];
                 child._renderCmd.visit(this);
             }
         } else {
-            if (isNaN(node._customZ)) {
-                node._vertexZ = renderer.assignedZ;
-                renderer.assignedZ += renderer.assignedZStep;
-            }
-
             renderer.pushRenderCommand(this);
         }
         this._dirtyFlag = 0;

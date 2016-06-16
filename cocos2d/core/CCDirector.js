@@ -26,16 +26,6 @@
 
 cc.g_NumberOfDraws = 0;
 
-cc.GLToClipTransform = function (transformOut) {
-    //var projection = new cc.math.Matrix4();
-    //cc.kmGLGetMatrix(cc.KM_GL_PROJECTION, projection);
-    cc.kmGLGetMatrix(cc.KM_GL_PROJECTION, transformOut);
-
-    var modelview = new cc.math.Matrix4();
-    cc.kmGLGetMatrix(cc.KM_GL_MODELVIEW, modelview);
-
-    transformOut.multiply(modelview);
-};
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
@@ -191,7 +181,16 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {cc.Point} uiPoint
      * @return {cc.Point}
      */
-    convertToGL: null,
+    convertToGL: function (uiPoint) {
+        var docElem = document.documentElement;
+        var view = cc.view;
+        var box = element.getBoundingClientRect();
+        box.left += window.pageXOffset - docElem.clientLeft;
+        box.top += window.pageYOffset - docElem.clientTop;
+        var x = view._devicePixelRatio * (uiPoint.x - box.left);
+        var y = view._devicePixelRatio * (box.top + box.height - uiPoint.y);
+        return view._isRotated ? {x: view._viewPortRect.width - y, y: x} : {x: x, y: y};
+    },
 
     /**
      * Converts an WebGL coordinate to a view coordinate<br/>
@@ -201,7 +200,23 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {cc.Point} glPoint
      * @return {cc.Point}
      */
-    convertToUI: null,
+    convertToUI: function (glPoint) {
+        var docElem = document.documentElement;
+        var view = cc.view;
+        var box = element.getBoundingClientRect();
+        box.left += window.pageXOffset - docElem.clientLeft;
+        box.top += window.pageYOffset - docElem.clientTop;
+        var uiPoint = {x: 0, y: 0};
+        if (view._isRotated) {
+            uiPoint.x = box.left + glPoint.y / view._devicePixelRatio;
+            uiPoint.y = box.top + box.height - (view._viewPortRect.width - glPoint.x) / view._devicePixelRatio;
+        }
+        else {
+            uiPoint.x = box.left + glPoint.x / view._devicePixelRatio;
+            uiPoint.y = box.top + box.height - glPoint.y / view._devicePixelRatio;
+        }
+        return uiPoint;
+    },
 
     /**
      *  Draw the scene. This method is called every frame. Don't call it manually.

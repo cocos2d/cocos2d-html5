@@ -750,12 +750,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         var locRect = _t._rect;
         _t._offsetPosition.x = relativeOffsetX + (_t._contentSize.width - locRect.width) / 2;
         _t._offsetPosition.y = relativeOffsetY + (_t._contentSize.height - locRect.height) / 2;
-
-        // rendering using batch node
-        if (_t._batchNode) {
-            // update dirty, don't update _recursiveDirty
-            _t.dirty = true;
-        }
     },
 
     // BatchNode methods

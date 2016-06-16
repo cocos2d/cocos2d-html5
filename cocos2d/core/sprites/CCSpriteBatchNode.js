@@ -344,7 +344,29 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      */
     setTexture: function(texture){
         this._texture = texture;
-        // Set children texture and children texture rect ?
+
+        if (texture._textureLoaded) {
+            var children = this._children, i, len = children.length;
+            for (i = 0; i < len; ++i) {
+                children[i].setTexture(texture);
+            }
+        }
+        else {
+            texture.addEventListener("load", function(){
+                var children = this._children, i, len = children.length;
+                for (i = 0; i < len; ++i) {
+                    children[i].setTexture(texture);
+                }
+            }, this);
+        }
+    },
+
+    setShaderProgram: function (newShaderProgram) {
+        this._renderCmd.setShaderProgram(newShaderProgram);
+        var children = this._children, i, len = children.length;
+        for (i = 0; i < len; ++i) {
+            children[i].setShaderProgram(newShaderProgram);
+        }
     },
 
     /**
@@ -364,6 +386,11 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         zOrder = (zOrder === undefined) ? child.zIndex : zOrder;
         tag = (tag === undefined) ? child.tag : tag;
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
+        
+        // Apply shader
+        if (this._renderCmd._shaderProgram) {
+            child.shaderProgram = this._renderCmd._shaderProgram;
+        }
     },
 
     _isValidChild: function (child) {
@@ -383,6 +410,7 @@ var _p = cc.SpriteBatchNode.prototype;
 
 // Override properties
 cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
+cc.defineGetterSetter(_p, "shaderProgram", _p.getShaderProgram, _p.setShaderProgram);
 
 
 /**

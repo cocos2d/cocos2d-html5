@@ -56,7 +56,7 @@
 
     proto.transform = function(parentCmd, recursive){
         var node = this._node;
-        cc.Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+        this.originTransform(parentCmd, recursive);
         if(node._stencil) {
             node._stencil._renderCmd.transform(this, recursive);
         }

@@ -486,7 +486,7 @@
             coords.v = 0;
             return;
         }
-        var uvs = locSprite._renderCmd._uvs,
+        var uvs = locSprite._renderCmd._vertices,
             bl = uvs[1],
             tr = uvs[2];
         var min = cc.p(bl.u, bl.v);

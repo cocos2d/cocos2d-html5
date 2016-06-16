@@ -358,7 +358,8 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
 
             tex = locTexs[url] = new cc.Texture2D();
             tex.url = url;
-            cc.loader.loadImg(url, function (err, img) {
+            var basePath = cc.loader.getBasePath ? cc.loader.getBasePath() : cc.loader.resPath;
+            cc.loader.loadImg(cc.path.join(basePath || "", url), function (err, img) {
                 if (err)
                     return cb && cb.call(target, err);
 

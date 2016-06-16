@@ -26,8 +26,10 @@
     sp.Skeleton.WebGLRenderCmd = function (renderableObject) {
         cc.Node.WebGLRenderCmd.call(this, renderableObject);
         this._needDraw = true;
-        this.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+        this._matrix = new cc.math.Matrix4();
+        this._matrix.identity();
         this._tmpQuad = new cc.V3F_C4B_T2F_Quad();
+        this.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
     };
 
     var proto = sp.Skeleton.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
@@ -41,8 +43,16 @@
         var locBlendFunc = node._blendFunc;
         var premultiAlpha = node._premultipliedAlpha;
 
+        var wt = this._worldTransform;
+        this._matrix.mat[0] = wt.a;
+        this._matrix.mat[4] = wt.c;
+        this._matrix.mat[12] = wt.tx;
+        this._matrix.mat[1] = wt.b;
+        this._matrix.mat[5] = wt.d;
+        this._matrix.mat[13] = wt.ty;
+
         this._shaderProgram.use();
-        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._matrix);
         // cc.glBlendFunc(locBlendFunc.src, locBlendFunc.dst);
         locSkeleton.r = color.r / 255;
         locSkeleton.g = color.g / 255;
@@ -119,9 +129,8 @@
 
         if (node._debugBones || node._debugSlots) {
             cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-            //cc.kmGLPushMatrixWitMat4(this._stackMatrix);
             cc.current_stack.stack.push(cc.current_stack.top);
-            cc.current_stack.top = this._stackMatrix;
+            cc.current_stack.top = this._matrix;
             var drawingUtil = cc._drawingUtil;
 
             if (node._debugSlots) {

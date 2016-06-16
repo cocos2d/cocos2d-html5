@@ -25,7 +25,7 @@
 (function(){
     cc.TMXLayer.WebGLRenderCmd = function(renderableObject){
         cc.Node.WebGLRenderCmd.call(this, renderableObject);
-        this._needDraw = true;
+        this._needDraw = false;
     };
 
     var proto = cc.TMXLayer.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
