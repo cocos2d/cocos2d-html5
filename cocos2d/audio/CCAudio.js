@@ -810,6 +810,7 @@ cc.Audio.WebAudio.prototype = {
                 for(var i=0; i<ap[p].length; i++){
                     list[i].stop();
                 }
+                list.length = 0;
             }
         },
 

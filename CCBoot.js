@@ -2331,7 +2331,10 @@ cc.game = /** @lends cc.game# */{
         if (this._paused) return;
         this._paused = true;
         // Pause audio engine
-        cc.audioEngine && cc.audioEngine._pausePlaying();
+        if (cc.audioEngine) {
+            cc.audioEngine.stopAllEffects();
+            cc.audioEngine.pauseMusic();
+        }
         // Pause main loop
         if (this._intervalId)
             window.cancelAnimationFrame(this._intervalId);
@@ -2345,7 +2348,9 @@ cc.game = /** @lends cc.game# */{
         if (!this._paused) return;
         this._paused = false;
         // Resume audio engine
-        cc.audioEngine && cc.audioEngine._resumePlaying();
+        if (cc.audioEngine) {
+            cc.audioEngine.resumeMusic();
+        }
         // Resume main loop
         this._runMainLoop();
     },
