@@ -101,9 +101,9 @@
 
     proto.initShaderCache = function(){};
     proto.setShaderProgram = function(){};
-    proto.updateChildPosition = function(ctx, dis){
-        //dis.visit(ctx);
-        cc.renderer.pushRenderCommand(dis._renderCmd);
+    proto.updateChildPosition = function(dis, bone){
+        dis.visit();
+        // cc.renderer.pushRenderCommand(dis._renderCmd);
     };
 
     proto.rendering = function(ctx, scaleX, scaleY){
@@ -120,7 +120,7 @@
                 switch (selBone.getDisplayRenderNodeType()) {
                     case ccs.DISPLAY_TYPE_SPRITE:
                         if(selNode instanceof ccs.Skin)
-                            this.updateChildPosition(ctx, selNode, selBone, alphaPremultiplied, alphaNonPremultipled);
+                            this.updateChildPosition(selNode, selBone, alphaPremultiplied, alphaNonPremultipled);
                         break;
                     case ccs.DISPLAY_TYPE_ARMATURE:
                         selNode._renderCmd.rendering(ctx, scaleX, scaleY);
