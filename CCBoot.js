@@ -915,7 +915,7 @@ cc.loader = (function () {
 
                 var queue = _queue[url];
                 if (queue) {
-                    callbacks = queue.callbacks;
+                    var callbacks = queue.callbacks;
                     for (var i = 0; i < callbacks.length; ++i) {
                         var cb = callbacks[i];
                         if (cb) {
@@ -938,7 +938,7 @@ cc.loader = (function () {
                 } else {
                     var queue = _queue[url];
                     if (queue) {
-                        callbacks = queue.callbacks;
+                        var callbacks = queue.callbacks;
                         for (var i = 0; i < callbacks.length; ++i) {
                             var cb = callbacks[i];
                             if (cb) {
