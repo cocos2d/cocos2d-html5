@@ -46,18 +46,28 @@
                 wt.tx = t.tx * pt.a + t.ty * pt.c + pt.tx;
                 wt.ty = t.tx * pt.b + t.ty * pt.d + pt.ty;
 
-                var lx = node._offsetPosition.x, rx = lx + node._rect.width,
-                    by = node._offsetPosition.y, ty = by + node._rect.height;
-
                 var vertices = this._vertices;
-                vertices[0].x = lx * wt.a + ty * wt.c + wt.tx; // tl
-                vertices[0].y = lx * wt.b + ty * wt.d + wt.ty;
-                vertices[1].x = lx * wt.a + by * wt.c + wt.tx; // bl
-                vertices[1].y = lx * wt.b + by * wt.d + wt.ty;
-                vertices[2].x = rx * wt.a + ty * wt.c + wt.tx; // tr
-                vertices[2].y = rx * wt.b + ty * wt.d + wt.ty;
-                vertices[3].x = rx * wt.a + by * wt.c + wt.tx; // br
-                vertices[3].y = rx * wt.b + by * wt.d + wt.ty;
+                if (vertices) {
+                    var lx = node._offsetPosition.x, rx = lx + node._rect.width,
+                        by = node._offsetPosition.y, ty = by + node._rect.height;
+
+                    vertices[0].x = lx * wt.a + ty * wt.c + wt.tx; // tl
+                    vertices[0].y = lx * wt.b + ty * wt.d + wt.ty;
+                    vertices[1].x = lx * wt.a + by * wt.c + wt.tx; // bl
+                    vertices[1].y = lx * wt.b + by * wt.d + wt.ty;
+                    vertices[2].x = rx * wt.a + ty * wt.c + wt.tx; // tr
+                    vertices[2].y = rx * wt.b + ty * wt.d + wt.ty;
+                    vertices[3].x = rx * wt.a + by * wt.c + wt.tx; // br
+                    vertices[3].y = rx * wt.b + by * wt.d + wt.ty;
+                }
+            }
+            else {
+                wt.a  = t.a;
+                wt.b  = t.b;
+                wt.c  = t.c;
+                wt.d  = t.d;
+                wt.tx = t.tx;
+                wt.ty = t.ty;
             }
         },
 
@@ -76,7 +86,6 @@
 
     ccs.Skin.CanvasRenderCmd = function(renderable){
         cc.Sprite.CanvasRenderCmd.call(this, renderable);
-        this._needDraw = true;
     };
 
     var proto = ccs.Skin.CanvasRenderCmd.prototype = Object.create(cc.Sprite.CanvasRenderCmd.prototype);

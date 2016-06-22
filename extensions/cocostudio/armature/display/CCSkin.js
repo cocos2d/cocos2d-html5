@@ -108,7 +108,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         this.setRotationY(cc.radiansToDegrees(-skinData.skewY));
         this.setPosition(skinData.x, skinData.y);
 
-        this.updateArmatureTransform();
+        this._renderCmd.transform();
     },
 
     /**
