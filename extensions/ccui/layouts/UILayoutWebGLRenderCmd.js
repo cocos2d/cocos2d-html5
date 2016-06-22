@@ -68,9 +68,12 @@
                 default:
                     break;
             }
-        } else
-            ccui.ProtectedNode.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
+        } else {
+            this.pNodeVisit(parentCmd);
+        }
     };
+
+    proto.layoutVisit = proto.visit;
 
     proto._onBeforeVisitStencil = function(ctx){
         var gl = ctx || cc._renderContext;
@@ -130,32 +133,30 @@
         var clippingRect = this._node._getClippingRect();
         var gl = ctx || cc._renderContext;
 
-        this._scissorOldState = cc.view.isScissorEnabled();
+        this._scissorOldState = gl.isEnabled(gl.SCISSOR_TEST);
 
-        if(!this._scissorOldState)
+        if (!this._scissorOldState) {
             gl.enable(gl.SCISSOR_TEST);
-
-        this._clippingOldRect = cc.view.getScissorRect();
-
-        if(!cc.rectEqualToRect(this._clippingOldRect, clippingRect))
             cc.view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
+        }
+        else {
+            this._clippingOldRect = cc.view.getScissorRect();
+            if (!cc.rectEqualToRect(this._clippingOldRect, clippingRect))
+                cc.view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
+        }
     };
 
     proto._onAfterVisitScissor = function(ctx){
         var gl = ctx || cc._renderContext;
-        if(this._scissorOldState)
-        {
-            if(!cc.rectEqualToRect(this._clippingOldRect, this._node._clippingRect))
-            {
+        if (this._scissorOldState) {
+            if (!cc.rectEqualToRect(this._clippingOldRect, this._node._clippingRect)) {
                 cc.view.setScissorInPoints( this._clippingOldRect.x,
                     this._clippingOldRect.y,
                     this._clippingOldRect.width,
                     this._clippingOldRect.height);
             }
-
         }
-        else
-        {
+        else {
             gl.disable(gl.SCISSOR_TEST);
         }
     };
@@ -164,7 +165,7 @@
 
     proto.transform = function(parentCmd, recursive){
         var node = this._node;
-        ccui.ProtectedNode.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+        this.pNodeTransform(parentCmd, recursive);
         if(node._clippingStencil)
             node._clippingStencil._renderCmd.transform(this, recursive);
     };
@@ -236,7 +237,7 @@
 
     proto.scissorClippingVisit = function(parentCmd){
         cc.renderer.pushRenderCommand(this._beforeVisitCmdScissor);
-        ccui.ProtectedNode.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
+        this.pNodeVisit(parentCmd);
         cc.renderer.pushRenderCommand(this._afterVisitCmdScissor);
     };
 

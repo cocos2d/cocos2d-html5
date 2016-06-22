@@ -38,17 +38,12 @@ if (cc.ENABLE_GL_STATE_CACHE) {
         cc._uVAO = 0;
 
     var _currBuffers = {};
-    var _currBuffer;
 
     WebGLRenderingContext.prototype.glBindBuffer = WebGLRenderingContext.prototype.bindBuffer;
     WebGLRenderingContext.prototype.bindBuffer = function (target, buffer) {
         if (_currBuffers[target] !== buffer) {
-            _currBuffers[target] = buffer;
             this.glBindBuffer(target, buffer);
-        }
-
-        if (!_currBuffer || _currBuffer !== buffer) {
-            _currBuffer = buffer;
+            _currBuffers[target] = buffer;
             return false;
         }
         else {

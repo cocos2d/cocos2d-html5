@@ -232,21 +232,12 @@ cc.inputManager = /** @lends cc.inputManager# */{
         if (cc.isFunction(element.getBoundingClientRect)) {
             box = element.getBoundingClientRect();
         } else {
-            if (element instanceof HTMLCanvasElement) {
-                box = {
-                    left: 0,
-                    top: 0,
-                    width: element.width,
-                    height: element.height
-                };
-            } else {
-                box = {
-                    left: 0,
-                    top: 0,
-                    width: parseInt(element.style.width),
-                    height: parseInt(element.style.height)
-                };
-            }
+            box = {
+                left: 0,
+                top: 0,
+                width: parseInt(element.style.width),
+                height: parseInt(element.style.height)
+            };
         }
         return {
             left: box.left + win.pageXOffset - docElem.clientLeft,

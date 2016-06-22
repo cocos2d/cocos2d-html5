@@ -253,8 +253,7 @@
                 <file name="extensions/cocostudio/armature/display/CCDisplayFactory.js"/>
                 <file name="extensions/cocostudio/armature/display/CCDisplayManager.js"/>
                 <file name="extensions/cocostudio/armature/display/CCSkin.js"/>
-                <file name="extensions/cocostudio/armature/display/CCSkinCanvasRenderCmd.js"/>
-                <file name="extensions/cocostudio/armature/display/CCSkinWebGLRenderCmd.js"/>
+                <file name="extensions/cocostudio/armature/display/CCSkinRenderCmd.js"/>
                 <file name="extensions/cocostudio/armature/animation/CCProcessBase.js"/>
                 <file name="extensions/cocostudio/armature/animation/CCArmatureAnimation.js"/>
                 <file name="extensions/cocostudio/armature/animation/CCTween.js"/>

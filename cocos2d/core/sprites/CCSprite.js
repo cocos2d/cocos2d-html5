@@ -132,20 +132,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         self._softInit(fileName, rect, rotated);
     },
 
-    onEnter: function () {
-        this._super();
-        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
-            this._renderCmd.updateBuffer();
-        }
-    },
-
-    cleanup: function () {
-        if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
-            this._renderCmd.freeBuffer();
-        }
-        this._super();
-    },
-
     /**
      * Returns whether the texture have been loaded
      * @returns {boolean}
@@ -584,7 +570,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {cc.V3F_C4B_T2F_Quad|null} Returns a cc.V3F_C4B_T2F_Quad object when render mode is WebGL, returns null when render mode is Canvas.
      */
     getQuad:function () {
-        return this._renderCmd.getQuad();
+        return null;
     },
 
     /**
@@ -634,7 +620,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         _t._offsetPosition.y = 0;
         _t._hasChildren = false;
 
-        this._renderCmd._init();
         // updated in "useSelfRender"
         // Atlas: TexCoords
         _t.setTextureRect(cc.rect(0, 0, 0, 0), false, cc.size(0, 0));
@@ -709,8 +694,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         _t._offsetPosition.y = 0;
         _t._hasChildren = false;
 
-        this._renderCmd._init();
-
         var locTextureLoaded = texture.isLoaded();
         _t._textureLoaded = locTextureLoaded;
 
@@ -767,26 +750,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         var locRect = _t._rect;
         _t._offsetPosition.x = relativeOffsetX + (_t._contentSize.width - locRect.width) / 2;
         _t._offsetPosition.y = relativeOffsetY + (_t._contentSize.height - locRect.height) / 2;
-
-        // rendering using batch node
-        if (_t._batchNode) {
-            // update dirty, don't update _recursiveDirty
-            _t.dirty = true;
-        } else {
-            // self rendering
-            // Atlas: Vertex
-            this._renderCmd._resetForBatchNode();
-        }
     },
 
     // BatchNode methods
-    /**
-     * Updates the quad according the the rotation, position, scale values.
-     * @function
-     */
-    updateTransform: function(){
-        this._renderCmd.updateTransform();
-    },
 
     /**
      * Add child to sprite (override cc.Node)
@@ -917,8 +883,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             _t.textureAtlas = null;
             _t._recursiveDirty = false;
             _t.dirty = false;
-
-            this._renderCmd._resetForBatchNode();
         } else {
             // using batch
             _t._transformToBatch = cc.affineTransformIdentity();

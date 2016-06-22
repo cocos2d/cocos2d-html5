@@ -205,36 +205,16 @@
         if(node._changePosition)
             node._changePosition();
 
-        var t = node.getNodeToParentTransform(), worldT = this._worldTransform;
-        if (parentCmd) {
-            var pt = parentCmd._worldTransform;
-            // cc.AffineTransformConcat is incorrect at get world transform
-            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
-            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
-            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
-            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
+        this.originTransform(parentCmd, recursive);
 
-            worldT.tx = pt.a * t.tx + pt.c * t.ty + pt.tx;
-            worldT.ty = pt.d * t.ty + pt.ty + pt.b * t.tx;
-        } else {
-            worldT.a = t.a;
-            worldT.b = t.b;
-            worldT.c = t.c;
-            worldT.d = t.d;
-            worldT.tx = t.tx;
-            worldT.ty = t.ty;
-        }
-        var i, len, locChildren = node._children;
-        if(recursive && locChildren && locChildren.length !== 0){
-            for(i = 0, len = locChildren.length; i< len; i++){
-                locChildren[i]._renderCmd.transform(this, recursive);
-            }
-        }
-        locChildren = node._protectedChildren;
+        var i, len, locChildren = node._protectedChildren;
         if(recursive && locChildren && locChildren.length !== 0){
             for(i = 0, len = locChildren.length; i< len; i++){
                 locChildren[i]._renderCmd.transform(this, recursive);
             }
         }
     };
+
+    proto.pNodeVisit = proto.visit;
+    proto.pNodeTransform = proto.transform;
 })();

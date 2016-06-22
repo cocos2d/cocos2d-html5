@@ -899,11 +899,6 @@ cc.LabelTTF.create = function (text, fontName, fontSize, dimensions, hAlignment,
  */
 cc.LabelTTF.createWithFontDefinition = cc.LabelTTF.create;
 
-if (cc.USE_LA88_LABELS)
-    cc.LabelTTF._SHADER_PROGRAM = cc.SHADER_POSITION_TEXTURECOLOR;
-else
-    cc.LabelTTF._SHADER_PROGRAM = cc.SHADER_POSITION_TEXTUREA8COLOR;
-
 cc.LabelTTF.__labelHeightDiv = document.createElement("div");
 cc.LabelTTF.__labelHeightDiv.style.fontFamily = "Arial";
 cc.LabelTTF.__labelHeightDiv.style.position = "absolute";

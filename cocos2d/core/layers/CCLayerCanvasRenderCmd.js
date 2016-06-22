@@ -160,7 +160,7 @@
 
     proto.visit = function(parentCmd){
         if(!this._isBaked){
-            cc.Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
+            this.originVisit(parentCmd);
             return;
         }
 
@@ -309,7 +309,7 @@
 
     proto.visit = function(parentCmd){
         if(!this._isBaked){
-            cc.Node.CanvasRenderCmd.prototype.visit.call(this);
+            this.originVisit();
             return;
         }
 
@@ -355,18 +355,6 @@
  * cc.LayerGradient's rendering objects of Canvas
  */
 (function(){
-    cc.LayerGradient.RenderCmd = {
-        updateStatus: function () {
-            var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-            if (locFlag & flags.gradientDirty) {
-                this._dirtyFlag |= flags.colorDirty;
-                this._dirtyFlag = this._dirtyFlag & flags.gradientDirty ^ this._dirtyFlag;
-            }
-
-            cc.Node.RenderCmd.prototype.updateStatus.call(this);
-        }
-    };
-
     cc.LayerGradient.CanvasRenderCmd = function(renderable){
         cc.LayerColor.CanvasRenderCmd.call(this, renderable);
         this._needDraw = true;
@@ -376,7 +364,6 @@
         this._endStopStr = null;
     };
     var proto = cc.LayerGradient.CanvasRenderCmd.prototype = Object.create(cc.LayerColor.CanvasRenderCmd.prototype);
-    cc.inject(cc.LayerGradient.RenderCmd, proto);
     proto.constructor = cc.LayerGradient.CanvasRenderCmd;
 
     proto.rendering = function (ctx, scaleX, scaleY) {
@@ -409,6 +396,16 @@
         cc.g_NumberOfDraws++;
     };
 
+    proto.updateStatus = function () {
+        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
+        if (locFlag & flags.gradientDirty) {
+            this._dirtyFlag |= flags.colorDirty;
+            this._dirtyFlag = this._dirtyFlag & flags.gradientDirty ^ this._dirtyFlag;
+        }
+
+        cc.Node.RenderCmd.prototype.updateStatus.call(this);
+    };
+
     proto._syncStatus = function (parentCmd) {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
         if (locFlag & flags.gradientDirty) {
@@ -419,11 +416,10 @@
         cc.Node.RenderCmd.prototype._syncStatus.call(this, parentCmd);
     };
 
-    proto._updateColor = function(){
+    proto._updateColor = function() {
         var node = this._node;
         var contentSize = node._contentSize;
         var tWidth = contentSize.width * 0.5, tHeight = contentSize.height * 0.5;
-        this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.gradientDirty ^ this._dirtyFlag;
 
         //fix the bug of gradient layer
         var angle = cc.pAngleSigned(cc.p(0, -1), node._alongVector);

@@ -250,26 +250,6 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         //cc.director.setProjection(this._directorProjection);
         cc.director.setViewport();
 
-        if (target && target.getCamera().isDirty()) {
-            var offset = target.getAnchorPointInPoints();
-
-            //TODO hack
-            var stackMatrix = target._renderCmd._stackMatrix;
-            //
-            // XXX: Camera should be applied in the AnchorPoint
-            //
-            //cc.kmGLTranslatef(offset.x, offset.y, 0);
-            var translation = cc.math.Matrix4.createByTranslation(offset.x, offset.y, 0);
-            stackMatrix.multiply(translation);
-
-            //target.getCamera().locate();
-            target._camera._locateForRenderer(stackMatrix);
-
-            //cc.kmGLTranslatef(-offset.x, -offset.y, 0);
-            translation = cc.math.Matrix4.createByTranslation(-offset.x, -offset.y, 0, translation);
-            stackMatrix.multiply(translation);
-        }
-
         cc.glBindTexture2D(this._texture);
         this.beforeBlit();
         this.blit(target);
@@ -362,6 +342,9 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         this._verticesBuffer=null;
         this._indicesBuffer=null;
 
+        this._matrix = new cc.math.Matrix4();
+        this._matrix.identity();
+
         if(gridSize !== undefined)
             this.initWithSize(gridSize, texture, flipped, rect);
     },
@@ -452,9 +435,18 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
 
     blit:function (target) {
         var n = this._gridSize.width * this._gridSize.height;
+
+        var wt = target._renderCmd._worldTransform;
+        this._matrix.mat[0] = wt.a;
+        this._matrix.mat[4] = wt.c;
+        this._matrix.mat[12] = wt.tx;
+        this._matrix.mat[1] = wt.b;
+        this._matrix.mat[5] = wt.d;
+        this._matrix.mat[13] = wt.ty;
+
         this._shaderProgram.use();
         //this._shaderProgram.setUniformsForBuiltins();
-        this._shaderProgram._setUniformForMVPMatrixWithMat4(target._renderCmd._stackMatrix);
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._matrix);
 
         var gl = cc._renderContext, locDirty = this._dirty;
 
@@ -625,6 +617,9 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         this._verticesBuffer=null;
         this._indicesBuffer=null;
 
+        this._matrix = new cc.math.Matrix4();
+        this._matrix.identity();
+
         if(gridSize !== undefined)
             this.initWithSize(gridSize, texture, flipped, rect);
     },
@@ -712,8 +707,16 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
     blit: function (target) {
         var n = this._gridSize.width * this._gridSize.height;
 
+        var wt = target._renderCmd._worldTransform;
+        this._matrix.mat[0] = wt.a;
+        this._matrix.mat[4] = wt.c;
+        this._matrix.mat[12] = wt.tx;
+        this._matrix.mat[1] = wt.b;
+        this._matrix.mat[5] = wt.d;
+        this._matrix.mat[13] = wt.ty;
+
         this._shaderProgram.use();
-        this._shaderProgram._setUniformForMVPMatrixWithMat4(target._renderCmd._stackMatrix);
+        this._shaderProgram._setUniformForMVPMatrixWithMat4(this._matrix);
         //this._shaderProgram.setUniformsForBuiltins();
 
         //

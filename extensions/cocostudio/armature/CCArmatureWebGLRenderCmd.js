@@ -28,6 +28,7 @@
         cc.Node.WebGLRenderCmd.call(this, renderableObject);
         this._needDraw = true;
 
+        this._parentCmd = null;
         this._realAnchorPointInPoints = new cc.Point(0,0);
     };
 
@@ -35,14 +36,9 @@
     cc.inject(ccs.Armature.RenderCmd, proto);
     proto.constructor = ccs.Armature.WebGLRenderCmd;
 
-    proto.rendering = function (ctx, dontChangeMatrix) {
-        var node = this._node;
-
-        if(!dontChangeMatrix){
-            cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-            cc.kmGLPushMatrix();
-            cc.kmGLLoadMatrix(this._stackMatrix);
-        }
+    proto.uploadData = function (f32buffer, ui32buffer, vertexDataOffset) {
+        var node = this._node, cmd;
+        var parentCmd = this._parentCmd || this;
 
         var locChildren = node._children;
         var alphaPremultiplied = cc.BlendFunc.ALPHA_PREMULTIPLIED, alphaNonPremultipled = cc.BlendFunc.ALPHA_NON_PREMULTIPLIED;
@@ -52,44 +48,63 @@
                 var selNode = selBone.getDisplayRenderNode();
                 if (null === selNode)
                     continue;
+                cmd = selNode._renderCmd;
                 switch (selBone.getDisplayRenderNodeType()) {
                     case ccs.DISPLAY_TYPE_SPRITE:
                         if (selNode instanceof ccs.Skin) {
                             selNode.setShaderProgram(this._shaderProgram);
-                            this._updateColorAndOpacity(selNode._renderCmd, selBone);   //because skin didn't call visit()
-                            selNode.updateTransform();
+                            this._updateColorAndOpacity(cmd, selBone);   //because skin didn't call visit()
+                            cmd.transform(parentCmd);
 
                             var func = selBone.getBlendFunc();
                             if (func.src !== alphaPremultiplied.src || func.dst !== alphaPremultiplied.dst)
                                 selNode.setBlendFunc(selBone.getBlendFunc());
                             else {
-                                if ((node._blendFunc.src === alphaPremultiplied.src && node._blendFunc.dst === alphaPremultiplied.dst)
-                                    && !selNode.getTexture().hasPremultipliedAlpha())
+                                if (node._blendFunc.src === alphaPremultiplied.src && 
+                                    node._blendFunc.dst === alphaPremultiplied.dst && 
+                                    !selNode.getTexture().hasPremultipliedAlpha()) {
                                     selNode.setBlendFunc(alphaNonPremultipled);
-                                else
+                                }
+                                else {
                                     selNode.setBlendFunc(node._blendFunc);
+                                }
                             }
-                            selNode._renderCmd.rendering(ctx);
+                            // Support batch for Armature skin
+                            cc.renderer._uploadBufferData(cmd);
                         }
                         break;
                     case ccs.DISPLAY_TYPE_ARMATURE:
                         selNode.setShaderProgram(this._shaderProgram);
-                        selNode._renderCmd.rendering(ctx, true);
-                        break;
+                        cmd._parentCmd = this;
+                        // Continue rendering in default
                     default:
-                        selNode._renderCmd.transform();
-                        selNode._renderCmd.rendering(ctx);
+                        if (cmd.uploadData) {
+                            cc.renderer._uploadBufferData(cmd);
+                        }
+                        else {
+                            // Finish previous batch
+                            cc.renderer._batchRendering();
+                            cmd.transform(this);
+                            cmd.rendering(cc._renderContext);
+                        }
                         break;
                 }
             } else if (selBone instanceof cc.Node) {
                 selBone.setShaderProgram(this._shaderProgram);
-                selBone._renderCmd.transform();
-                if(selBone._renderCmd.rendering)
-                    selBone._renderCmd.rendering(ctx);
+                cmd = selBone._renderCmd;
+                cmd.transform(this);
+                if (cmd.uploadData) {
+                    cc.renderer._uploadBufferData(cmd);
+                }
+                else if (cmd.rendering) {
+                    // Finish previous batch
+                    cc.renderer._batchRendering();
+                    cmd.rendering(cc._renderContext);
+                }
             }
         }
-        if(!dontChangeMatrix)
-            cc.kmGLPopMatrix();
+        this._parentCmd = null;
+        return 0;
     };
 
     proto.initShaderCache = function(){
@@ -114,53 +129,16 @@
             skinRenderCmd._updateColor();
     };
 
-    proto.updateChildPosition = function(ctx, dis, selBone, alphaPremultiplied, alphaNonPremultipled){
-        var node = this._node;
-        dis.updateTransform();
-
-        var func = selBone.getBlendFunc();
-        if (func.src !== alphaPremultiplied.src || func.dst !== alphaPremultiplied.dst)
-            dis.setBlendFunc(selBone.getBlendFunc());
-        else {
-            if ((node._blendFunc.src === alphaPremultiplied.src && node_blendFunc.dst === alphaPremultiplied.dst)
-                && !dis.getTexture().hasPremultipliedAlpha())
-                dis.setBlendFunc(alphaNonPremultipled);
-            else
-                dis.setBlendFunc(node._blendFunc);
-        }
-        dis.rendering(ctx);
-    };
-
-    proto.updateStatus = function () {
-        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        var colorDirty = locFlag & flags.colorDirty,
-            opacityDirty = locFlag & flags.opacityDirty;
-        if(colorDirty)
-            this._updateDisplayColor();
-
-        if(opacityDirty)
-            this._updateDisplayOpacity();
-
-        if(colorDirty || opacityDirty)
-            this._updateColor();
-
-        if (locFlag & flags.orderDirty)
-            this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
-
-        //update the transform every visit, don't need dirty flag,
-        this.transform(this.getParentRenderCmd(), true);
-    };
-
     proto.visit = function(parentCmd){
         var node = this._node;
         // quick return if not visible. children won't be drawn.
         if (!node._visible)
             return;
 
-        var currentStack = cc.current_stack;
-        currentStack.stack.push(currentStack.top);
+        parentCmd = parentCmd || this.getParentRenderCmd();
+        if (parentCmd)
+            this._curLevel = parentCmd._curLevel + 1;
         this.updateStatus(parentCmd);
-        currentStack.top = this._stackMatrix;
 
         node.sortAllChildren();
 
@@ -196,6 +174,5 @@
         }
 
         this._dirtyFlag = 0;
-        currentStack.top = currentStack.stack.pop();
     };
 })();

@@ -108,14 +108,6 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         this.setRotationY(cc.radiansToDegrees(-skinData.skewY));
         this.setPosition(skinData.x, skinData.y);
 
-        var localTransform = this.getNodeToParentTransform ? this.getNodeToParentTransform() : this.nodeToParentTransform();
-        var skinTransform = this._skinTransform;
-        skinTransform.a = localTransform.a;
-        skinTransform.b = localTransform.b;
-        skinTransform.c = localTransform.c;
-        skinTransform.d = localTransform.d;
-        skinTransform.tx = localTransform.tx;
-        skinTransform.ty = localTransform.ty;
         this.updateArmatureTransform();
     },
 
@@ -131,7 +123,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
      * Updates armature skin's transform with skin transform and bone's transform.
      */
     updateArmatureTransform: function () {
-        this._renderCmd.updateArmatureTransform();
+        this._renderCmd.transform();
     },
 
     /**

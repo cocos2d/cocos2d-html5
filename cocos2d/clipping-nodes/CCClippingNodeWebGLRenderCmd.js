@@ -56,7 +56,7 @@
 
     proto.transform = function(parentCmd, recursive){
         var node = this._node;
-        cc.Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+        this.originTransform(parentCmd, recursive);
         if(node._stencil) {
             node._stencil._renderCmd.transform(this, recursive);
         }
@@ -74,13 +74,13 @@
         // if stencil buffer disabled
         if (cc.stencilBits < 1) {
             // draw everything, as if there were no stencil
-            cc.Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
+            this.originVisit(parentCmd);
             return;
         }
 
         if (!node._stencil || !node._stencil.visible) {
             if (node.inverted)
-                cc.Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);   // draw everything
+                this.originVisit(parentCmd);   // draw everything
             return;
         }
 
@@ -90,8 +90,8 @@
                 cc.log("Nesting more than " + cc.stencilBits + "stencils is not supported. Everything will be drawn without stencil for this node and its children.");
                 cc.ClippingNode.WebGLRenderCmd._visit_once = false;
             }
-            // draw everything, as if there where no stencil
-            cc.Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
+            // draw everything, as if there were no stencil
+            this.originVisit(parentCmd);
             return;
         }
 

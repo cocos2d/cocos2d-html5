@@ -25,13 +25,40 @@
 
 (function(){
     ccs.Skin.RenderCmd = {
-        updateArmatureTransform: function () {
-            var node = this._node;
-            this._transform = cc.affineTransformConcat(
-                node._skinTransform,
-                node.bone.getNodeToArmatureTransform()
-            );
-            this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
+        transform: function (parentCmd, recursive) {
+            var node = this._node,
+                pt = parentCmd ? parentCmd._worldTransform : null,
+                t = this._transform,
+                wt = this._worldTransform,
+                dirty = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty;
+
+            if (dirty || pt) {
+                this.originTransform();
+                cc.affineTransformConcatIn(t, node.bone.getNodeToArmatureTransform());
+                this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
+            }
+
+            if (pt) {
+                wt.a  = t.a  * pt.a + t.b  * pt.c;
+                wt.b  = t.a  * pt.b + t.b  * pt.d;
+                wt.c  = t.c  * pt.a + t.d  * pt.c;
+                wt.d  = t.c  * pt.b + t.d  * pt.d;
+                wt.tx = t.tx * pt.a + t.ty * pt.c + pt.tx;
+                wt.ty = t.tx * pt.b + t.ty * pt.d + pt.ty;
+
+                var lx = node._offsetPosition.x, rx = lx + node._rect.width,
+                    by = node._offsetPosition.y, ty = by + node._rect.height;
+
+                var vertices = this._vertices;
+                vertices[0].x = lx * wt.a + ty * wt.c + wt.tx; // tl
+                vertices[0].y = lx * wt.b + ty * wt.d + wt.ty;
+                vertices[1].x = lx * wt.a + by * wt.c + wt.tx; // bl
+                vertices[1].y = lx * wt.b + by * wt.d + wt.ty;
+                vertices[2].x = rx * wt.a + ty * wt.c + wt.tx; // tr
+                vertices[2].y = rx * wt.b + ty * wt.d + wt.ty;
+                vertices[3].x = rx * wt.a + by * wt.c + wt.tx; // br
+                vertices[3].y = rx * wt.b + by * wt.d + wt.ty;
+            }
         },
 
         getNodeToWorldTransform: function () {
@@ -55,4 +82,12 @@
     var proto = ccs.Skin.CanvasRenderCmd.prototype = Object.create(cc.Sprite.CanvasRenderCmd.prototype);
     cc.inject(ccs.Skin.RenderCmd, proto);
     proto.constructor = ccs.Skin.CanvasRenderCmd;
+
+    ccs.Skin.WebGLRenderCmd = function(renderable){
+        cc.Sprite.WebGLRenderCmd.call(this, renderable);
+    };
+
+    proto = ccs.Skin.WebGLRenderCmd.prototype = Object.create(cc.Sprite.WebGLRenderCmd.prototype);
+    cc.inject(ccs.Skin.RenderCmd, proto);
+    proto.constructor = ccs.Skin.WebGLRenderCmd;
 })();

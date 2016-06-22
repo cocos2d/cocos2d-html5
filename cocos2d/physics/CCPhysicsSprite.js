@@ -174,28 +174,22 @@
             }
             this.setNodeDirty();
         },
+
         _syncPosition:function () {
-            var pos = this._body.GetPosition();
-            this._position.x = pos.x * this._PTMRatio;
-            this._position.y = pos.y * this._PTMRatio;
-            this._rotationRadians = this._rotation * (Math.PI / 180);
+            var locPosition = this._position,
+                pos = this._body.GetPosition(),
+                x = pos.x * this._PTMRatio,
+                y = pos.y * this._PTMRatio;
+            if (locPosition.x !== pos.x || locPosition.y !== pos.y) {
+                cc.Sprite.prototype.setPosition.call(this, x, y);
+            }
         },
         _syncRotation:function () {
             this._rotationRadians = this._body.GetAngle();
-        },
-        /**
-         * visit
-         */
-        visit:function () {
-            if (this._body && this._PTMRatio) {
-                this._syncPosition();
-                if (!this._ignoreBodyRotation)
-                    this._syncRotation();
+            var a = cc.radiansToDegrees(this._rotationRadians);
+            if (this._rotationX !== a) {
+                cc.Sprite.prototype.setRotation.call(this, a);
             }
-            else {
-                cc.log("PhysicsSprite body or PTIMRatio was not set");
-            }
-            this._super();
         },
 
         /**
@@ -324,7 +318,6 @@
                 this._body.p.x = newPosOrxValue;
                 this._body.p.y = yValue;
             }
-            //this._syncPosition();
         },
 
         /**
@@ -333,7 +326,6 @@
          */
         setPositionX:function (xValue) {
             this._body.p.x = xValue;
-            //this._syncPosition();
         },
 
         /**
@@ -342,7 +334,6 @@
          */
         setPositionY:function (yValue) {
             this._body.p.y = yValue;
-            //this._syncPosition();
         },
 
         _syncPosition:function () {
@@ -369,12 +360,12 @@
                 cc.Sprite.prototype.setRotation.call(this, r);
             } else {
                 this._body.a = -cc.degreesToRadians(r);
-                //this._syncRotation();
             }
         },
         _syncRotation:function () {
-            if (this._rotationX !== -cc.radiansToDegrees(this._body.a)) {
-                cc.Sprite.prototype.setRotation.call(this, -cc.radiansToDegrees(this._body.a));
+            var a = -cc.radiansToDegrees(this._body.a);
+            if (this._rotationX !== a) {
+                cc.Sprite.prototype.setRotation.call(this, a);
             }
         },
 

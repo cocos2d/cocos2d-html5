@@ -123,7 +123,7 @@ cc.TMXLayerInfo = cc.Class.extend(/** @lends cc.TMXLayerInfo# */{
         this.properties = [];
         this.name = "";
         this._layerSize = null;
-        this._tiles = [];
+        this._tiles = null;
         this.visible = true;
         this._opacity = 0;
         this.ownTiles = true;
@@ -200,8 +200,8 @@ cc.TMXTilesetInfo = cc.Class.extend(/** @lends cc.TMXTilesetInfo# */{
      * @param {Number} gid
      * @return {cc.Rect}
      */
-    rectForGID:function (gid) {
-        var rect = cc.rect(0, 0, 0, 0);
+    rectForGID:function (gid, result) {
+        var rect = result || cc.rect(0, 0, 0, 0);
         rect.width = this._tileSize.width;
         rect.height = this._tileSize.height;
         gid &= cc.TMX_TILE_FLIPPED_MASK;
@@ -682,36 +682,40 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                     cc.log("cc.TMXMapInfo.parseXMLFile(): unsupported compression method");
                     return null;
                 }
+                var tiles;
                 switch (compression) {
                     case 'gzip':
-                        layer._tiles = cc.unzipBase64AsArray(nodeValue, 4);
+                        tiles = cc.unzipBase64AsArray(nodeValue, 4);
                         break;
                     case 'zlib':
                         var inflator = new Zlib.Inflate(cc.Codec.Base64.decodeAsArray(nodeValue, 1));
-                        layer._tiles = cc.uint8ArrayToUint32Array(inflator.decompress());
+                        tiles = cc.uint8ArrayToUint32Array(inflator.decompress());
                         break;
                     case null:
                     case '':
                         // Uncompressed
                         if (encoding === "base64")
-                            layer._tiles = cc.Codec.Base64.decodeAsArray(nodeValue, 4);
+                            tiles = cc.Codec.Base64.decodeAsArray(nodeValue, 4);
                         else if (encoding === "csv") {
-                            layer._tiles = [];
+                            tiles = [];
                             var csvTiles = nodeValue.split(',');
                             for (var csvIdx = 0; csvIdx < csvTiles.length; csvIdx++)
-                                layer._tiles.push(parseInt(csvTiles[csvIdx]));
+                                tiles.push(parseInt(csvTiles[csvIdx]));
                         } else {
                             //XML format
                             var selDataTiles = data.getElementsByTagName("tile");
-                            layer._tiles = [];
+                            tiles = [];
                             for (var xmlIdx = 0; xmlIdx < selDataTiles.length; xmlIdx++)
-                                layer._tiles.push(parseInt(selDataTiles[xmlIdx].getAttribute("gid")));
+                                tiles.push(parseInt(selDataTiles[xmlIdx].getAttribute("gid")));
                         }
                         break;
                     default:
                         if(this.layerAttrs === cc.TMXLayerInfo.ATTRIB_NONE)
                             cc.log("cc.TMXMapInfo.parseXMLFile(): Only base64 and/or gzip/zlib maps are supported");
                         break;
+                }
+                if (tiles) {
+                    layer._tiles = new Uint32Array(tiles);
                 }
 
                 // The parent element is the last layer

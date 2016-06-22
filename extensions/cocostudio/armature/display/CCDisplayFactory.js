@@ -60,15 +60,17 @@ ccs.displayFactory = {
     },
 
     _helpTransform: {a:1, b:0, c:0, d:1, tx:0, ty:0},
-    updateDisplay: function (bone,dt, dirty) {
+    updateDisplay: function (bone, dt, dirty) {
         var display = bone.getDisplayRenderNode();
         if(!display)
             return;
 
         switch (bone.getDisplayRenderNodeType()) {
             case ccs.DISPLAY_TYPE_SPRITE:
-                if (dirty)
+                if (dirty) {
+                    display._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
                     display.updateArmatureTransform();
+                }
                 break;
             case ccs.DISPLAY_TYPE_PARTICLE:
                 this.updateParticleDisplay(bone, display, dt);

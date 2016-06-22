@@ -55,7 +55,7 @@
             node._positionsAreDirty = false;
         }
 
-        cc.Node.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
+        this.originVisit(parentCmd);
     };
 
     proto.transform = function(parentCmd){

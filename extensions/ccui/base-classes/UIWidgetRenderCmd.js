@@ -36,7 +36,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
             var node = this._node;
             if (node._visible) {
                 node._adaptRenderers();
-                cc.ProtectedNode.CanvasRenderCmd.prototype.visit.call(this, parentCmd);
+                this.pNodeVisit(parentCmd);
             }
         };
 
@@ -55,9 +55,12 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                         }
                     }
                 }
-                cc.ProtectedNode.CanvasRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+                this.pNodeTransform(parentCmd, recursive);
             }
         };
+
+        proto.widgetVisit = proto.visit;
+        proto.widgetTransform = proto.transform;
     } else {
         ccui.Widget.WebGLRenderCmd = function (renderable) {
             cc.ProtectedNode.WebGLRenderCmd.call(this, renderable);
@@ -71,7 +74,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
             var node = this._node;
             if (node._visible) {
                 node._adaptRenderers();
-                cc.ProtectedNode.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
+                this.pNodeVisit(parentCmd);
             }
         };
 
@@ -90,8 +93,11 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                         }
                     }
                 }
-                cc.ProtectedNode.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+                this.pNodeTransform(parentCmd, recursive);
             }
         };
+
+        proto.widgetVisit = proto.visit;
+        proto.widgetTransform = proto.transform;
     }
 });

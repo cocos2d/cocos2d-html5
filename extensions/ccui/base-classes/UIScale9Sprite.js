@@ -488,12 +488,16 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         this._textureLoaded = locLoaded;
         if(!locLoaded){
             texture.addEventListener("load", function(sender){
-                // the texture is rotated on Canvas render mode, so isRotated always is false.
-                var preferredSize = this._preferredSize, restorePreferredSize = preferredSize.width !== 0 && preferredSize.height !== 0;
-                if (restorePreferredSize) preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                var preferredSize = this._preferredSize, 
+                    restorePreferredSize = preferredSize.width !== 0 && preferredSize.height !== 0;
+                if (restorePreferredSize) {
+                    preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                }
                 var size  = sender.getContentSize();
                 this.updateWithBatchNode(this._scale9Image, cc.rect(0,0,size.width,size.height), false, this._capInsets);
-                if (restorePreferredSize)this.setPreferredSize(preferredSize);
+                if (restorePreferredSize) {
+                    this.setPreferredSize(preferredSize);
+                }
                 this._positionsAreDirty = true;
                 this.setNodeDirty();
                 this.dispatchEvent("load");
@@ -522,11 +526,15 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         this._textureLoaded = locLoaded;
         if(!locLoaded){
             spriteFrame.addEventListener("load", function(sender){
-                // the texture is rotated on Canvas render mode, so isRotated always is false.
-                var preferredSize = this._preferredSize, restorePreferredSize = preferredSize.width !== 0 && preferredSize.height !== 0;
-                if (restorePreferredSize) preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                var preferredSize = this._preferredSize, 
+                    restorePreferredSize = preferredSize.width !== 0 && preferredSize.height !== 0;
+                if (restorePreferredSize) {
+                    preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                }
                 this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc._renderType === cc.game.RENDER_TYPE_WEBGL && sender.isRotated(), this._capInsets);
-                if (restorePreferredSize)this.setPreferredSize(preferredSize);
+                if (restorePreferredSize) {
+                    this.setPreferredSize(preferredSize);
+                }
                 this._positionsAreDirty = true;
                 this.setNodeDirty();
                 this.dispatchEvent("load");
@@ -857,8 +865,16 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         this._textureLoaded = locLoaded;
         if(!locLoaded){
             tmpTexture.addEventListener("load", function(sender){
-                this._positionsAreDirty = true;
+                var preferredSize = this._preferredSize, 
+                    restorePreferredSize = preferredSize.width !== 0 && preferredSize.height !== 0;
+                if (restorePreferredSize) {
+                    preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                }
                 this.updateWithSprite(sprite, spriteRect, spriteFrameRotated, offset, originalSize, capInsets);
+                if (restorePreferredSize) {
+                    this.setPreferredSize(preferredSize);
+                }
+                this._positionsAreDirty = true;
                 this.setVisible(true);
                 this.setNodeDirty();
                 this.dispatchEvent("load");
@@ -914,8 +930,16 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         this._textureLoaded = locLoaded;
         if(!locLoaded){
             tmpTexture.addEventListener("load", function(sender){
-                this._positionsAreDirty = true;
+                var preferredSize = this._preferredSize, 
+                    restorePreferredSize = preferredSize.width !== 0 && preferredSize.height !== 0;
+                if (restorePreferredSize) {
+                    preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                }
                 this.updateWithBatchNode(batchNode, originalRect, rotated, capInsets);
+                if (restorePreferredSize) {
+                    this.setPreferredSize(preferredSize);
+                }
+                this._positionsAreDirty = true;
                 this.setVisible(true);
                 this.setNodeDirty();
                 this.dispatchEvent("load");
@@ -940,11 +964,15 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         this._textureLoaded = locLoaded;
         if(!locLoaded){
             spriteFrame.addEventListener("load", function(sender){
-                // the texture is rotated on Canvas render mode, so isRotated always is false.
-                var preferredSize = this._preferredSize, restorePreferredSize = preferredSize.width !== 0 && preferredSize.height !== 0;
-                if (restorePreferredSize) preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                var preferredSize = this._preferredSize, 
+                    restorePreferredSize = preferredSize.width !== 0 && preferredSize.height !== 0;
+                if (restorePreferredSize) {
+                    preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                }
                 this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc._renderType === cc.game.RENDER_TYPE_WEBGL && sender.isRotated(), this._capInsets);
-                if (restorePreferredSize)this.setPreferredSize(preferredSize);
+                if (restorePreferredSize) {
+                    this.setPreferredSize(preferredSize);
+                }
                 this._positionsAreDirty = true;
                 this.setNodeDirty();
                 this.dispatchEvent("load");
