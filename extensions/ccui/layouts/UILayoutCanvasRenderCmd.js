@@ -40,7 +40,9 @@
     proto.constructor = ccui.Layout.CanvasRenderCmd;
 
     cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
-        ccui.Layout.CanvasRenderCmd.prototype.widgetVisit = ccui.Widget.CanvasRenderCmd.prototype.widgetVisit;
+        if (ccui.Widget.CanvasRenderCmd) {
+            ccui.Layout.CanvasRenderCmd.prototype.widgetVisit = ccui.Widget.CanvasRenderCmd.prototype.widgetVisit;
+        }
     });
 
     proto.visit = function(parentCmd){
