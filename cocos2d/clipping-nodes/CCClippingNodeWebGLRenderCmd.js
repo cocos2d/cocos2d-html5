@@ -155,7 +155,6 @@
 
         gl.depthMask(false);
 
-        gl.clear(gl.STENCIL_BUFFER_BIT);
         gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
         gl.stencilOp(gl.REPLACE, gl.KEEP, gl.KEEP);
 
@@ -186,7 +185,7 @@
 
         if (this._currentStencilEnabled)
         {
-            var mask_layer = 0x1 << ccui.Layout.WebGLRenderCmd._layer;
+            var mask_layer = 0x1 << cc.ClippingNode.WebGLRenderCmd._layer--;
             var mask_layer_l = mask_layer - 1;
             var mask_layer_le = mask_layer | mask_layer_l;
 
