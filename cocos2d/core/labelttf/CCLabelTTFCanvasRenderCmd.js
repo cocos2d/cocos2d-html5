@@ -47,6 +47,8 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         this._isMultiLine = false;
         this._status = [];
         this._renderingIndex = 0;
+
+        this._texRect = cc.rect();
     };
     var proto = cc.LabelTTF.RenderCmd.prototype;
     proto.constructor = cc.LabelTTF.RenderCmd;
@@ -92,7 +94,8 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
     proto._updateTTF = function () {
         var node = this._node;
-        var locDimensionsWidth = node._dimensions.width, i, strLength;
+        var pixelRatio = cc.view.getDevicePixelRatio();
+        var locDimensionsWidth = node._dimensions.width * pixelRatio, i, strLength;
         var locLineWidth = this._lineWidths;
         locLineWidth.length = 0;
 
@@ -124,7 +127,6 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             locStrokeShadowOffsetY += Math.abs(locOffsetSize.y) * 2;
         }
 
-        var pixelRatio = cc.view.getDevicePixelRatio();
         //get offset for stroke and shadow
         if (locDimensionsWidth === 0) {
             if (this._isMultiLine)
@@ -155,7 +157,16 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         if(node._getFontStyle() !== "normal"){    //add width for 'italic' and 'oblique'
             locSize.width = Math.ceil(locSize.width + node._fontSize * 0.3);
         }
-        node.setContentSize(locSize);
+        if (this._strings.length === 0) {
+            this._texRect.width = 1;
+            this._texRect.height = locSize.height || 1;
+        }
+        else {
+            this._texRect.width = locSize.width;
+            this._texRect.height = locSize.height;
+        }
+        var nodeW = locSize.width / pixelRatio, nodeH = locSize.height / pixelRatio;
+        node.setContentSize(nodeW, nodeH);
         node._strokeShadowOffsetX = locStrokeShadowOffsetX;
         node._strokeShadowOffsetY = locStrokeShadowOffsetY;
 
@@ -167,13 +178,14 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
     proto._saveStatus = function () {
         var node = this._node;
+        var scale = cc.view.getDevicePixelRatio();
         var locStrokeShadowOffsetX = node._strokeShadowOffsetX, locStrokeShadowOffsetY = node._strokeShadowOffsetY;
-        var locContentSizeHeight = node._contentSize.height - locStrokeShadowOffsetY, locVAlignment = node._vAlignment,
+        var locContentSizeHeight = node._contentSize.height * scale - locStrokeShadowOffsetY, locVAlignment = node._vAlignment,
             locHAlignment = node._hAlignment;
         var dx = locStrokeShadowOffsetX * 0.5,
             dy = locContentSizeHeight + locStrokeShadowOffsetY * 0.5;
         var xOffset = 0, yOffset = 0, OffsetYArray = [];
-        var locContentWidth = node._contentSize.width - locStrokeShadowOffsetX;
+        var locContentWidth = node._contentSize.width * scale - locStrokeShadowOffsetX;
 
         //lineHeight
         var lineHeight = node.getLineHeight();
@@ -301,7 +313,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
 
         cc.Node.RenderCmd.prototype.updateStatus.call(this);
-        
+
         if (locFlag & flags.textDirty)
             this._updateTexture();
 
@@ -313,9 +325,9 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
     proto._syncStatus = function (parentCmd) {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        
+
         cc.Node.RenderCmd.prototype._syncStatus.call(this, parentCmd);
-        
+
         if (locFlag & flags.textDirty)
             this._updateTexture();
 
@@ -371,6 +383,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         locCanvas.width = 1;
         locCanvas.height = 1;
         this._labelContext = locCanvas.getContext("2d");
+        this._texRect = cc.rect();
     };
 
     cc.LabelTTF.CacheRenderCmd.prototype = Object.create( cc.LabelTTF.RenderCmd.prototype);
@@ -382,9 +395,8 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     proto._updateTexture = function () {
         this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.textDirty ^ this._dirtyFlag;
         var node = this._node;
-        var locContentSize = node._contentSize;
         this._updateTTF();
-        var width = locContentSize.width, height = locContentSize.height;
+        var width = this._texRect.width, height = this._texRect.height;
 
         var locContext = this._labelContext, locLabelCanvas = this._labelCanvas;
 
@@ -395,10 +407,10 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         }
 
         if (node._string.length === 0) {
-            locLabelCanvas.width = 1;
-            locLabelCanvas.height = locContentSize.height || 1;
+            locLabelCanvas.width = width;
+            locLabelCanvas.height = height;
             node._texture && node._texture.handleLoadedTexture();
-            node.setTextureRect(cc.rect(0, 0, 1, locContentSize.height));
+            node.setTextureRect(this._texRect);
             return true;
         }
 
@@ -406,13 +418,13 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         locContext.font = this._fontStyleStr;
 
         var flag = locLabelCanvas.width === width && locLabelCanvas.height === height;
-        locLabelCanvas.width = width;
-        locLabelCanvas.height = height;
+        locLabelCanvas.width = this._texRect.width;
+        locLabelCanvas.height = this._texRect.height;
         if (flag) locContext.clearRect(0, 0, width, height);
         this._saveStatus();
         this._drawTTFInCanvas(locContext);
         node._texture && node._texture.handleLoadedTexture();
-        node.setTextureRect(cc.rect(0, 0, width, height));
+        node.setTextureRect(this._texRect);
         return true;
     };
 
@@ -460,15 +472,14 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     proto._updateTexture = function () {
         this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.textDirty ^ this._dirtyFlag;
         var node = this._node;
-        var locContentSize = node._contentSize;
+        var scale = cc.view.getDevicePixelRatio();
         this._updateTTF();
-        var width = locContentSize.width, height = locContentSize.height;
         if (node._string.length === 0) {
-            node.setTextureRect(cc.rect(0, 0, 1, locContentSize.height));
+            node.setTextureRect(this._texRect);
             return true;
         }
         this._saveStatus();
-        node.setTextureRect(cc.rect(0, 0, width, height));
+        node.setTextureRect(this._texRect);
         return true;
     };
 

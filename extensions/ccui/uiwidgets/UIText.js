@@ -46,7 +46,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     _fontName: "Arial",
     _fontSize: 16,
     _onSelectedScaleOffset:0.5,
-    _labelRenderer: "",
+    _labelRenderer: null,
     _textAreaSize: null,
     _textVerticalAlignment: 0,
     _textHorizontalAlignment: 0,
