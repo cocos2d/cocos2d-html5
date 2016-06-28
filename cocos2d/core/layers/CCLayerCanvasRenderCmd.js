@@ -59,7 +59,7 @@
             this._cacheDirty = true;
             if(this._updateCache === 0)
                 this._updateCache = 2;
-            this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
+            this._dirtyFlag = locFlag & flags.orderDirty ^ locFlag;
         }
 
         cc.Node.RenderCmd.prototype.updateStatus.call(this);
@@ -71,7 +71,7 @@
             this._cacheDirty = true;
             if(this._updateCache === 0)
                 this._updateCache = 2;
-            this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
+            this._dirtyFlag = locFlag & flags.orderDirty ^ locFlag;
         }
         cc.Node.RenderCmd.prototype._syncStatus.call(this, parentCmd);
     };
@@ -400,7 +400,7 @@
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
         if (locFlag & flags.gradientDirty) {
             this._dirtyFlag |= flags.colorDirty;
-            this._dirtyFlag = this._dirtyFlag & flags.gradientDirty ^ this._dirtyFlag;
+            this._dirtyFlag = locFlag & flags.gradientDirty ^ locFlag;
         }
 
         cc.Node.RenderCmd.prototype.updateStatus.call(this);

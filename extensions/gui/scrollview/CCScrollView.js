@@ -581,14 +581,6 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
         this._clippingToBounds = clippingToBounds;
     },
 
-    visit:function (parentCmd) {
-        // quick return if not visible
-        if (!this.isVisible())
-            return;
-
-        this._renderCmd.visit(parentCmd);
-    },
-
     addChild:function (child, zOrder, tag) {
         if (!child)
             throw new Error("child must not nil!");
