@@ -403,7 +403,7 @@ ccui.VideoPlayer.EventType = {
     proto.updateMatrix = function(t, scaleX, scaleY){
         var node = this._node;
         if(polyfill.devicePixelRatio){
-            var dpr = window.devicePixelRatio;
+            var dpr = cc.view.getDevicePixelRatio();
             scaleX = scaleX / dpr;
             scaleY = scaleY / dpr;
         }

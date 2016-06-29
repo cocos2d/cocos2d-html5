@@ -340,8 +340,8 @@ ccui.WebView.EventType = {
 
     proto.updateMatrix = function(t, scaleX, scaleY){
         var node = this._node;
-        if(polyfill.devicePixelRatio && scaleX !== 1 && scaleX !== 1){
-            var dpr = window.devicePixelRatio;
+        if (polyfill.devicePixelRatio && scaleX !== 1 && scaleX !== 1) {
+            var dpr = cc.view.getDevicePixelRatio();
             scaleX = scaleX / dpr;
             scaleY = scaleY / dpr;
         }

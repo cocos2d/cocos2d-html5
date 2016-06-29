@@ -453,9 +453,11 @@ cc.Node.RenderCmd.prototype = {
         if(colorDirty || opacityDirty)
             this._updateColor();
 
-        if (locFlag & flags.transformDirty)
+        if (locFlag & flags.transformDirty) {
             //update the transform
             this.transform(parentCmd);
+            this._dirtyFlag = locFlag & flags.transformDirty ^ locFlag;
+        }
 
         if (locFlag & flags.orderDirty)
             this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;

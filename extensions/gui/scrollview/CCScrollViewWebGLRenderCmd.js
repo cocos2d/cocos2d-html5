@@ -77,7 +77,7 @@
 
         cc.kmGLPushMatrix();
 
-        this.transform(parendCmd);
+        this._syncStatus(parentCmd);
 
         if (node._clippingToBounds) {
             cc.renderer.pushRenderCommand(this.startCmd);

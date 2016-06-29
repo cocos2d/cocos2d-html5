@@ -36,11 +36,10 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * <p>Constructor of cc.Layer, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.</p>
      */
     ctor: function () {
-        var nodep = cc.Node.prototype;
-        nodep.ctor.call(this);
+        cc.Node.prototype.ctor.call(this);
         this._ignoreAnchorPointForPosition = true;
-        nodep.setAnchorPoint.call(this, 0.5, 0.5);
-        nodep.setContentSize.call(this, cc.winSize);
+        this.setAnchorPoint(0.5, 0.5);
+        this.setContentSize(cc.winSize);
     },
 
     /**

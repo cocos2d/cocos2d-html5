@@ -66,7 +66,7 @@
         
         var i, locChildren = node._children, childrenLen;
 
-        this.transform(parentCmd);
+        this._syncStatus(parentCmd);
         cc.renderer.pushRenderCommand(this.startCmd);
 
         if (locChildren && locChildren.length > 0) {
