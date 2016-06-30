@@ -55,12 +55,12 @@
             return 0;
         }
 
-        var scalex = cc.director._contentScaleFactor * cc.view._scaleX,
-            scaley = cc.director._contentScaleFactor * cc.view._scaleY,
-            tilew = node._mapTileSize.width / scalex,
-            tileh = node._mapTileSize.height / scaley,
-            extw = node.tileset._tileSize.width / scalex - tilew,
-            exth = node.tileset._tileSize.height / scaley - tileh,
+        var scalex = cc.view._scaleX,
+            scaley = cc.view._scaleY,
+            tilew = node._mapTileSize.width,
+            tileh = node._mapTileSize.height,
+            extw = node.tileset._tileSize.width / cc.director._contentScaleFactor - tilew,
+            exth = node.tileset._tileSize.height / cc.director._contentScaleFactor - tileh,
             winw = cc.winSize.width,
             winh = cc.winSize.height,
             rows = node._layerSize.height,
@@ -105,7 +105,7 @@
             offset = vertexDataOffset,
             colOffset = startRow * cols, z, gid, grid,
             mask = cc.TMX_TILE_FLIPPED_MASK,
-            i, top, left, bottom, right,
+            i, top, left, bottom, right, w, h,
             wa = a, wb = b, wc = c, wd = d, wtx = tx, wty = ty, // world
             flagged = false, flippedX = false, flippedY = false,
             vertices = this._vertices;
@@ -149,8 +149,23 @@
                     z = node._vertexZ + cc.renderer.assignedZStep * (node.height - bottom) / node.height;
                     break;
                 }
-                right = left + grid.width * scalex;
-                top = bottom + grid.height * scaley;
+                right = left + tilew + extw;
+                top = bottom + tileh + exth;
+                // TMX_ORIENTATION_ISO trim
+                if (layerOrientation === cc.TMX_ORIENTATION_ISO) {
+                    if (bottom > winh) {
+                        col += Math.floor((bottom - winh)*2/h) - 1;
+                        continue;
+                    }
+                    if (right < 0) {
+                        col += Math.floor((-right)*2/w) - 1;
+                        continue;
+                    }
+                    if (left > winw || top < 0) {
+                        col = maxCol;
+                        continue;
+                    }
+                }
                 // Rotation and Flip
                 if (gid > cc.TMX_TILE_DIAGONAL_FLAG) {
                     flagged = true;
