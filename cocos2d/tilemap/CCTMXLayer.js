@@ -152,7 +152,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
             grid = {
                 texId: texId,
-                x: 0, y: 0, width: 0, height: 0,
+                x: 0, y: 0, width: tw, height: th,
                 t: 0, l: 0, r: 0, b: 0
             };
             tileset.rectForGID(gid, grid);

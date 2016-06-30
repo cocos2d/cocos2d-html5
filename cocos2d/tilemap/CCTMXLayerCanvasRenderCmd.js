@@ -26,195 +26,233 @@
     cc.TMXLayer.CanvasRenderCmd = function(renderable){
         cc.Node.CanvasRenderCmd.call(this, renderable);
         this._needDraw = true;
-        this._realWorldTransform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
-
-        var locCanvas = cc._canvas;
-        var tmpCanvas = document.createElement('canvas');
-        tmpCanvas.width = locCanvas.width;
-        tmpCanvas.height = locCanvas.height;
-        this._cacheCanvas = tmpCanvas;
-        this._cacheContext = new cc.CanvasContextWrapper(this._cacheCanvas.getContext('2d'));
-        var tempTexture = new cc.Texture2D();
-        tempTexture.initWithElement(tmpCanvas);
-        tempTexture.handleLoadedTexture();
-        this._cacheTexture = tempTexture;
-        // This class uses cache, so its default cachedParent should be himself
-        this._cacheDirty = false;
     };
 
     var proto = cc.TMXLayer.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.TMXLayer.CanvasRenderCmd;
 
-    //set the cache dirty flag for canvas
-    proto._setNodeDirtyForCache = function () {
-        this._cacheDirty  = true;
-    };
-
-    proto._renderingChildToCache = function () {
-        if (this._cacheDirty) {
-            var wrapper = this._cacheContext,
-                context = wrapper.getContext(), locCanvas = this._cacheCanvas;
-
-            //wrapper.save();
-            context.setTransform(1, 0, 0, 1, 0, 0);
-            context.clearRect(0, 0, locCanvas.width, locCanvas.height);
-            //reset the cache context
-
-            var locChildren = this._node._children;
-            for (var i = 0, len =  locChildren.length; i < len; i++) {
-                if (locChildren[i]){
-                    var selCmd = locChildren[i]._renderCmd;
-                    if(selCmd){
-                        selCmd.rendering(wrapper, 1, 1);
-                        selCmd._cacheDirty = false;
-                    }
-                }
-            }
-
-            //wrapper.restore();
-            this._cacheDirty = false;
-        }
-    };
-
-    proto.rendering = function (ctx, scaleX, scaleY) {
-        var alpha = this._displayedOpacity / 255;
-        if (alpha <= 0)
-            return;
-
-        var node = this._node;
-        this._renderingChildToCache();
-        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
-        wrapper.setGlobalAlpha(alpha);
-
-        var locCacheCanvas = this._cacheCanvas;
-        //direct draw image by canvas drawImage
-        if (locCacheCanvas && locCacheCanvas.width !== 0 && locCacheCanvas.height !== 0) {
-            wrapper.setTransform(this._realWorldTransform, scaleX, scaleY);
-            var locCanvasHeight = locCacheCanvas.height * scaleY;
-            if (node.layerOrientation === cc.TMX_ORIENTATION_HEX) {
-                var halfTileSize = node._mapTileSize.height * 0.5 * scaleY;
-                context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
-                    0, -locCanvasHeight + halfTileSize, locCacheCanvas.width * scaleX, locCanvasHeight);
-            } else {
-                context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
-                    0, -locCanvasHeight, locCacheCanvas.width * scaleX, locCanvasHeight);
-            }
-        }
-        cc.g_NumberOfDraws++;
-    };
-
-    proto._updateCacheContext = function(size, height){
-        var node = this._node,
-            locContentSize = node._contentSize,
-            locCanvas = this._cacheCanvas,
-            scaleFactor = cc.contentScaleFactor();
-        locCanvas.width = 0 | (locContentSize.width * 1.5 * scaleFactor);
-        locCanvas.height = 0 | (locContentSize.height * 1.5 * scaleFactor);
-
-        //todo: need change the wrapper's height
-        if(node.layerOrientation === cc.TMX_ORIENTATION_HEX)
-            this._cacheContext.setOffset(0, -node._mapTileSize.height * 0.5);                  //translate for hexagonal
-        else
-            this._cacheContext.setOffset(0, 0);
-        var locTexContentSize = this._cacheTexture._contentSize;
-        locTexContentSize.width = locCanvas.width;
-        locTexContentSize.height = locCanvas.height;
-    };
-
-    proto.getTexture = function(){
-        return this._cacheTexture;
-    };
-
-    proto.visit = function(parentCmd){
-        var node = this._node;
-        //TODO: it will implement dynamic compute child cutting automation.
-        var i, len, locChildren = node._children;
+    proto.visit = function (parentCmd) {
+        var node = this._node, renderer = cc.renderer;
         // quick return if not visible
-        if (!node._visible || !locChildren || locChildren.length === 0)
+        if (!node._visible)
             return;
 
         parentCmd = parentCmd || this.getParentRenderCmd();
         if (parentCmd)
             this._curLevel = parentCmd._curLevel + 1;
 
-        this._syncStatus(parentCmd);
-        if (this._cacheDirty) {
-            var wrapper = this._cacheContext, locCanvas = this._cacheCanvas, context = wrapper.getContext(),
-                instanceID = node.__instanceId, renderer = cc.renderer;
-            //begin cache
-            renderer._turnToCacheMode(instanceID);
+        if (isNaN(node._customZ)) {
+            node._vertexZ = renderer.assignedZ;
+            renderer.assignedZ += renderer.assignedZStep;
+        }
 
+        this._syncStatus(parentCmd);
+
+        // Visit children
+        var children = node._children, child, cmd,
+            spTiles = node._spriteTiles,
+            i, len = children.length;
+        if (len > 0) {
             node.sortAllChildren();
-            for (i = 0, len =  locChildren.length; i < len; i++) {
-                if (locChildren[i]){
-                    var selCmd = locChildren[i]._renderCmd;
-                    if(selCmd){
-                        selCmd.visit(this);
-                        selCmd._cacheDirty = false;
-                    }
+            // draw children zOrder < 0
+            for (i = 0; i < len; i++) {
+                child = children[i];
+                if (child._localZOrder < 0) {
+                    cmd = child._renderCmd;
+                    cmd.visit(this);
+                }
+                else {
+                    break;
                 }
             }
 
-            //wrapper.save();
-            context.setTransform(1, 0, 0, 1, 0, 0);
-            context.clearRect(0, 0, locCanvas.width, locCanvas.height);
-            //set the wrapper's offset
-
-            //draw to cache canvas
-            renderer._renderingToCacheCanvas(wrapper, instanceID);
-            //wrapper.restore();                           //todo: it can be reserve.
-            this._cacheDirty = false
+            renderer.pushRenderCommand(this);
+            for (; i < len; i++) {
+                child = children[i];
+                if (child._localZOrder === 0 && spTiles[child.tag]) {
+                    if (isNaN(child._customZ)) {
+                        child._vertexZ = renderer.assignedZ;
+                        renderer.assignedZ += renderer.assignedZStep;
+                    }
+                    child._renderCmd.updateStatus(this, true);
+                    continue;
+                }
+                child._renderCmd.visit(this);
+            }
+        } else {
+            renderer.pushRenderCommand(this);
         }
-        cc.renderer.pushRenderCommand(this);
         this._dirtyFlag = 0;
     };
 
-    proto.transform = function (parentCmd, recursive) {
-        // transform for canvas
-        var t = this.getNodeToParentTransform(),
-            worldT = this._realWorldTransform;         //get the world transform
+    proto.rendering = function (ctx, scaleX, scaleY) {
+        var node = this._node, hasRotation = (node._rotationX || node._rotationY),
+            layerOrientation = node.layerOrientation,
+            tiles = node.tiles,
+            alpha = this._displayedOpacity / 255;
 
-        if (parentCmd) {
-            var pt = parentCmd._worldTransform;
-            // cc.AffineTransformConcat is incorrect at get world transform
-            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
-            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
-            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
-            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
-
-            worldT.tx = pt.a * t.tx + pt.c * t.ty + pt.tx;
-            worldT.ty = pt.d * t.ty + pt.ty + pt.b * t.tx;
-        } else {
-            worldT.a = t.a;
-            worldT.b = t.b;
-            worldT.c = t.c;
-            worldT.d = t.d;
-            worldT.tx = t.tx;
-            worldT.ty = t.ty;
+        if (!tiles || alpha <= 0) {
+            return;
         }
-        if (recursive) {
-            var locChildren = this._node._children;
-            if (!locChildren || locChildren.length === 0)
-                return;
-            var i, len;
-            for (i = 0, len = locChildren.length; i < len; i++) {
-                locChildren[i]._renderCmd.transform(this, recursive);
+
+        var maptw = node._mapTileSize.width,
+            mapth = node._mapTileSize.height,
+            tilew = node.tileset._tileSize.width / cc.director._contentScaleFactor,
+            tileh = node.tileset._tileSize.height / cc.director._contentScaleFactor,
+            extw = tilew - maptw,
+            exth = tileh - mapth,
+            winw = cc.winSize.width,
+            winh = cc.winSize.height,
+            rows = node._layerSize.height,
+            cols = node._layerSize.width,
+            grids = node._texGrids,
+            spTiles = node._spriteTiles,
+            wt = this._worldTransform,
+            ox = -node._contentSize.width * node._anchorPoint.x,
+            oy = -node._contentSize.height * node._anchorPoint.y,
+            a = wt.a, b = wt.b, c = wt.c, d = wt.d,
+            mapx = ox * a + oy * c + wt.tx,
+            mapy = ox * b + oy * d + wt.ty;
+
+        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
+
+        // Culling
+        var startCol = 0, startRow = 0,
+            maxCol = cols, maxRow = rows;
+        if (!hasRotation && layerOrientation === cc.TMX_ORIENTATION_ORTHO) {
+            startCol = Math.floor(-(mapx - extw * a) / (maptw * a));
+            startRow = Math.floor((mapy - exth * d + mapth * rows * d - winh) / (mapth * d));
+            maxCol = Math.ceil((winw - mapx + extw * a) / (maptw * a));
+            maxRow = rows - Math.floor(-(mapy + exth * d) / (mapth * d));
+            // Adjustment
+            if (startCol < 0) startCol = 0;
+            if (startRow < 0) startRow = 0;
+            if (maxCol > cols) maxCol = cols;
+            if (maxRow > rows) maxRow = rows;
+        }
+
+        var i, row, col, colOffset = startRow * cols, z, 
+            gid, grid, tex, cmd,
+            mask = cc.TMX_TILE_FLIPPED_MASK,
+            top, left, bottom, right, 
+            w = tilew * a, h = tileh * d, gt, gl, gb, gr,
+            flippedX = false, flippedY = false;
+
+        // Draw culled sprite tiles
+        z = colOffset + startCol;
+        for (i in spTiles) {
+            if (i < z && spTiles[i]) {
+                cmd = spTiles[i]._renderCmd;
+                if (spTiles[i]._localZOrder === 0 && !!cmd.rendering) {
+                    cmd.rendering(ctx, scaleX, scaleY);
+                }
+            }
+            else if (i >= z) {
+                break;
             }
         }
-    };
 
-    proto.initImageSize = function(){
-        var node = this._node;
-        node.tileset.imageSize = this._texture.getContentSizeInPixels();
-    };
+        wrapper.setTransform(wt, scaleX, scaleY);
+        wrapper.setGlobalAlpha(alpha);
 
-    proto._reusedTileWithRect = function(rect){
-        var node = this._node;
-        node._reusedTile = new cc.Sprite();
-        node._reusedTile.initWithTexture(this._texture, rect, false);
-        node._reusedTile.batchNode = node;
-        node._reusedTile.parent = node;
-        node._reusedTile._renderCmd._cachedParent = node._renderCmd;
-        return node._reusedTile;
+        for (row = startRow; row < maxRow; ++row) {
+            for (col = startCol; col < maxCol; ++col) {
+                z = colOffset + col;
+                // Skip sprite tiles
+                if (spTiles[z]) {
+                    cmd = spTiles[z]._renderCmd;
+                    if (spTiles[z]._localZOrder === 0 && !!cmd.rendering) {
+                        cmd.rendering(ctx, scaleX, scaleY);
+                        wrapper.setTransform(wt, scaleX, scaleY);
+                        wrapper.setGlobalAlpha(alpha);
+                    }
+                    continue;
+                }
+
+                gid = node.tiles[z];
+                grid = grids[(gid & mask) >>> 0];
+                if (!grid) {
+                    continue;
+                }
+                tex = node._textures[grid.texId];
+                if (!tex || !tex._htmlElementObj) {
+                    continue;
+                }
+
+                switch (layerOrientation) {
+                case cc.TMX_ORIENTATION_ORTHO:
+                    left = col * maptw;
+                    bottom = -(rows - row - 1) * mapth;
+                    break;
+                case cc.TMX_ORIENTATION_ISO:
+                    left = maptw / 2 * ( cols + col - row - 1);
+                    bottom = -mapth / 2 * ( rows * 2 - col - row - 2);
+                    break;
+                case cc.TMX_ORIENTATION_HEX:
+                    left = col * maptw * 3 / 4;
+                    bottom = -(rows - row - 1) * mapth + ((col % 2 === 1) ? (-mapth / 2) : 0);
+                    break;
+                }
+                right = left + tilew;
+                top = bottom - tileh;
+                // TMX_ORIENTATION_ISO trim
+                if (!hasRotation && layerOrientation === cc.TMX_ORIENTATION_ISO) {
+                    gb = -mapy + bottom*d;
+                    if (gb < -winh-h) {
+                        col += Math.floor((-winh - gb)*2/h) - 1;
+                        continue;
+                    }
+                    gr = mapx + right*a;
+                    if (gr < -w) {
+                        col += Math.floor((-gr)*2/w) - 1;
+                        continue;
+                    }
+                    gl = mapx + left*a;
+                    gt = -mapy + top*d;
+                    if (gl > winw || gt > 0) {
+                        col = maxCol;
+                        continue;
+                    }
+                }
+
+                // Rotation and Flip
+                if (gid > cc.TMX_TILE_DIAGONAL_FLAG) {
+                    flippedX = (gid & cc.TMX_TILE_HORIZONTAL_FLAG) >>> 0;
+                    flippedY = (gid & cc.TMX_TILE_VERTICAL_FLAG) >>> 0;
+                }
+
+                if (flippedX) {
+                    left = -right;
+                    context.scale(-1, 1);
+                }
+                if (flippedY) {
+                    top = -bottom;
+                    context.scale(1, -1);
+                }
+
+                context.drawImage(tex._htmlElementObj,
+                    grid.x, grid.y, grid.width, grid.height,
+                    left, top, tilew, tileh);
+                // Revert flip
+                if (flippedX) {
+                    context.scale(-1, 1);
+                }
+                if (flippedY) {
+                    context.scale(1, -1);
+                }
+                cc.g_NumberOfDraws++;
+            }
+            colOffset += cols;
+        }
+
+        // Draw culled sprite tiles
+        for (i in spTiles) {
+            if (i > z && spTiles[i]) {
+                cmd = spTiles[i]._renderCmd;
+                if (spTiles[i]._localZOrder === 0 && !!cmd.rendering) {
+                    cmd.rendering(ctx, scaleX, scaleY);
+                }
+            }
+        }
     };
 })();
