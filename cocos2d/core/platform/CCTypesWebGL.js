@@ -69,16 +69,13 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Color.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
 
-        var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = Uint8Array.BYTES_PER_ELEMENT;
-        this._rU8 = new Uint8Array(locArrayBuffer, locOffset, 1);
-        this._gU8 = new Uint8Array(locArrayBuffer, locOffset + locElementLen, 1);
-        this._bU8 = new Uint8Array(locArrayBuffer, locOffset + locElementLen * 2, 1);
-        this._aU8 = new Uint8Array(locArrayBuffer, locOffset + locElementLen * 3, 1);
+        var locArrayBuffer = this._arrayBuffer, locOffset = this._offset;
+        this._view = new Uint8Array(locArrayBuffer, locOffset, 4);
 
-        this._rU8[0] = r || 0;
-        this._gU8[0] = g || 0;
-        this._bU8[0] = b || 0;
-        this._aU8[0] = (a == null) ? 255 : a;
+        this._view[0] = r || 0;
+        this._view[1] = g || 0;
+        this._view[2] = b || 0;
+        this._view[3] = (a == null) ? 255 : a;
 
         if (a === undefined)
             this.a_undefined = true;
@@ -90,28 +87,28 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
     cc.Color.BYTES_PER_ELEMENT = 4;
     var _p = cc.Color.prototype;
     _p._getR = function () {
-        return this._rU8[0];
+        return this._view[0];
     };
     _p._setR = function (value) {
-        this._rU8[0] = value < 0 ? 0 : value;
+        this._view[0] = value < 0 ? 0 : value;
     };
     _p._getG = function () {
-        return this._gU8[0];
+        return this._view[1];
     };
     _p._setG = function (value) {
-        this._gU8[0] = value < 0 ? 0 : value;
+        this._view[1] = value < 0 ? 0 : value;
     };
     _p._getB = function () {
-        return this._bU8[0];
+        return this._view[2];
     };
     _p._setB = function (value) {
-        this._bU8[0] = value < 0 ? 0 : value;
+        this._view[2] = value < 0 ? 0 : value;
     };
     _p._getA = function () {
-        return this._aU8[0];
+        return this._view[3];
     };
     _p._setA = function (value) {
-        this._aU8[0] = value < 0 ? 0 : value;
+        this._view[3] = value < 0 ? 0 : value;
     };
     /** @expose */
     _p.r;

@@ -509,6 +509,7 @@ cc.Audio.WebAudio.prototype = {
             var audio = this._currMusic;
             if (audio) {
                 audio.stop();
+                this._currMusic = null;
                 if (releaseData)
                     cc.loader.release(audio.src);
             }
@@ -793,8 +794,9 @@ cc.Audio.WebAudio.prototype = {
          * cc.audioEngine.stopEffect(audioID);
          */
         stopEffect: function(audio){
-            if(audio)
+            if(audio) {
                 audio.stop();
+            }
         },
 
         /**
@@ -807,7 +809,7 @@ cc.Audio.WebAudio.prototype = {
             var ap = this._audioPool;
             for(var p in ap){
                 var list = ap[p];
-                for(var i=0; i<ap[p].length; i++){
+                for(var i=0; i<list.length; i++){
                     list[i].stop();
                 }
                 list.length = 0;

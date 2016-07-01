@@ -110,10 +110,9 @@ cc.Vertex2F = function (x, y, arrayBuffer, offset) {
     this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Vertex2F.BYTES_PER_ELEMENT);
     this._offset = offset || 0;
 
-    this._xF32 = new Float32Array(this._arrayBuffer, this._offset, 1);
-    this._yF32 = new Float32Array(this._arrayBuffer, this._offset + 4, 1);
-    this._xF32[0] = x || 0;
-    this._yF32[0] = y || 0;
+    this._view = new Float32Array(this._arrayBuffer, this._offset, 2);
+    this._view[0] = x || 0;
+    this._view[1] = y || 0;
 };
 /**
  * @constant
@@ -123,16 +122,16 @@ cc.Vertex2F.BYTES_PER_ELEMENT = 8;
 
 _p = cc.Vertex2F.prototype;
 _p._getX = function () {
-    return this._xF32[0];
+    return this._view[0];
 };
 _p._setX = function (xValue) {
-    this._xF32[0] = xValue;
+    this._view[0] = xValue;
 };
 _p._getY = function () {
-    return this._yF32[0];
+    return this._view[1];
 };
 _p._setY = function (yValue) {
-    this._yF32[0] = yValue;
+    this._view[1] = yValue;
 };
 /** @expose */
 _p.x;
@@ -155,12 +154,10 @@ cc.Vertex3F = function (x, y, z, arrayBuffer, offset) {
     this._offset = offset || 0;
 
     var locArrayBuffer = this._arrayBuffer, locOffset = this._offset;
-    this._xF32 = new Float32Array(locArrayBuffer, locOffset, 1);
-    this._xF32[0] = x || 0;
-    this._yF32 = new Float32Array(locArrayBuffer, locOffset + Float32Array.BYTES_PER_ELEMENT, 1);
-    this._yF32[0] = y || 0;
-    this._zF32 = new Float32Array(locArrayBuffer, locOffset + Float32Array.BYTES_PER_ELEMENT * 2, 1);
-    this._zF32[0] = z || 0;
+    this._view = new Float32Array(locArrayBuffer, locOffset, 3);
+    this._view[0] = x || 0;
+    this._view[1] = y || 0;
+    this._view[2] = z || 0;
 };
 /**
  * @constant
@@ -170,22 +167,22 @@ cc.Vertex3F.BYTES_PER_ELEMENT = 12;
 
 _p = cc.Vertex3F.prototype;
 _p._getX = function () {
-    return this._xF32[0];
+    return this._view[0];
 };
 _p._setX = function (xValue) {
-    this._xF32[0] = xValue;
+    this._view[0] = xValue;
 };
 _p._getY = function () {
-    return this._yF32[0];
+    return this._view[1];
 };
 _p._setY = function (yValue) {
-    this._yF32[0] = yValue;
+    this._view[1] = yValue;
 };
 _p._getZ = function () {
-    return this._zF32[0];
+    return this._view[2];
 };
 _p._setZ = function (zValue) {
-    this._zF32[0] = zValue;
+    this._view[2] = zValue;
 };
 /** @expose */
 _p.x;
@@ -209,10 +206,9 @@ cc.Tex2F = function (u, v, arrayBuffer, offset) {
     this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Tex2F.BYTES_PER_ELEMENT);
     this._offset = offset || 0;
 
-    this._uF32 = new Float32Array(this._arrayBuffer, this._offset, 1);
-    this._vF32 = new Float32Array(this._arrayBuffer, this._offset + 4, 1);
-    this._uF32[0] = u || 0;
-    this._vF32[0] = v || 0;
+    this._view = new Float32Array(this._arrayBuffer, this._offset, 2);
+    this._view[0] = u || 0;
+    this._view[1] = v || 0;
 };
 /**
  * @constants
@@ -222,16 +218,16 @@ cc.Tex2F.BYTES_PER_ELEMENT = 8;
 
 _p = cc.Tex2F.prototype;
 _p._getU = function () {
-    return this._uF32[0];
+    return this._view[0];
 };
 _p._setU = function (xValue) {
-    this._uF32[0] = xValue;
+    this._view[0] = xValue;
 };
 _p._getV = function () {
-    return this._vF32[0];
+    return this._view[1];
 };
 _p._setV = function (yValue) {
-    this._vF32[0] = yValue;
+    this._view[1] = yValue;
 };
 /** @expose */
 _p.u;
@@ -254,11 +250,14 @@ cc.Quad2 = function (tl, tr, bl, br, arrayBuffer, offset) {
     this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Quad2.BYTES_PER_ELEMENT);
     this._offset = offset || 0;
 
-    var locArrayBuffer = this._arrayBuffer, locElementLen = cc.Vertex2F.BYTES_PER_ELEMENT;
-    this._tl = tl ? new cc.Vertex2F(tl.x, tl.y, locArrayBuffer, 0) : new cc.Vertex2F(0, 0, locArrayBuffer, 0);
-    this._tr = tr ? new cc.Vertex2F(tr.x, tr.y, locArrayBuffer, locElementLen) : new cc.Vertex2F(0, 0, locArrayBuffer, locElementLen);
-    this._bl = bl ? new cc.Vertex2F(bl.x, bl.y, locArrayBuffer, locElementLen * 2) : new cc.Vertex2F(0, 0, locArrayBuffer, locElementLen * 2);
-    this._br = br ? new cc.Vertex2F(br.x, br.y, locArrayBuffer, locElementLen * 3) : new cc.Vertex2F(0, 0, locArrayBuffer, locElementLen * 3);
+    var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = cc.Vertex2F.BYTES_PER_ELEMENT;
+    this._tl = tl ? new cc.Vertex2F(tl.x, tl.y, locArrayBuffer, locOffset) : new cc.Vertex2F(0, 0, locArrayBuffer, locOffset);
+    locOffset += locElementLen;
+    this._tr = tr ? new cc.Vertex2F(tr.x, tr.y, locArrayBuffer, locOffset) : new cc.Vertex2F(0, 0, locArrayBuffer, locOffset);
+    locOffset += locElementLen;
+    this._bl = bl ? new cc.Vertex2F(bl.x, bl.y, locArrayBuffer, locOffset) : new cc.Vertex2F(0, 0, locArrayBuffer, locOffset);
+    locOffset += locElementLen;
+    this._br = br ? new cc.Vertex2F(br.x, br.y, locArrayBuffer, locOffset) : new cc.Vertex2F(0, 0, locArrayBuffer, locOffset);
 };
 /**
  * @constant
@@ -271,29 +270,29 @@ _p._getTL = function () {
     return this._tl;
 };
 _p._setTL = function (tlValue) {
-    this._tl.x = tlValue.x;
-    this._tl.y = tlValue.y;
+    this._tl._view[0] = tlValue.x;
+    this._tl._view[1] = tlValue.y;
 };
 _p._getTR = function () {
     return this._tr;
 };
 _p._setTR = function (trValue) {
-    this._tr.x = trValue.x;
-    this._tr.y = trValue.y;
+    this._tr._view[0] = trValue.x;
+    this._tr._view[1] = trValue.y;
 };
 _p._getBL = function() {
     return this._bl;
 };
 _p._setBL = function (blValue) {
-    this._bl.x = blValue.x;
-    this._bl.y = blValue.y;
+    this._bl._view[0] = blValue.x;
+    this._bl._view[1] = blValue.y;
 };
 _p._getBR = function () {
     return this._br;
 };
 _p._setBR = function (brValue) {
-    this._br.x = brValue.x;
-    this._br.y = brValue.y;
+    this._br._view[0] = brValue.x;
+    this._br._view[1] = brValue.y;
 };
 
 /** @expose */
@@ -313,17 +312,29 @@ cc.defineGetterSetter(_p, "br", _p._getBR, _p._setBR);
  * A 3D Quad. 4 * 3 floats
  * @Class cc.Quad3
  * @Construct
- * @param {cc.Vertex3F} bl1
- * @param {cc.Vertex3F} br1
- * @param {cc.Vertex3F} tl1
- * @param {cc.Vertex3F} tr1
+ * @param {cc.Vertex3F} bl
+ * @param {cc.Vertex3F} br
+ * @param {cc.Vertex3F} tl
+ * @param {cc.Vertex3F} tr
  */
-cc.Quad3 = function (bl1, br1, tl1, tr1) {
-    this.bl = bl1 || new cc.Vertex3F(0, 0, 0);
-    this.br = br1 || new cc.Vertex3F(0, 0, 0);
-    this.tl = tl1 || new cc.Vertex3F(0, 0, 0);
-    this.tr = tr1 || new cc.Vertex3F(0, 0, 0);
+cc.Quad3 = function (bl, br, tl, tr, arrayBuffer, offset) {
+    this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Quad3.BYTES_PER_ELEMENT);
+    this._offset = offset || 0;
+    
+    var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = cc.Vertex3F.BYTES_PER_ELEMENT;
+    this.bl = bl ? new cc.Vertex3F(bl.x, bl.y, bl.z, locArrayBuffer, locOffset) : new cc.Vertex3F(0, 0, 0, locArrayBuffer, locOffset);
+    locOffset += locElementLen;
+    this.br = br ? new cc.Vertex3F(br.x, br.y, br.z, locArrayBuffer, locOffset) : new cc.Vertex3F(0, 0, 0, locArrayBuffer, locOffset);
+    locOffset += locElementLen;
+    this.tl = tl ? new cc.Vertex3F(tl.x, tl.y, tl.z, locArrayBuffer, locOffset) : new cc.Vertex3F(0, 0, 0, locArrayBuffer, locOffset);
+    locOffset += locElementLen;
+    this.tr = tr ? new cc.Vertex3F(tr.x, tr.y, tr.z, locArrayBuffer, locOffset) : new cc.Vertex3F(0, 0, 0, locArrayBuffer, locOffset);
 };
+/**
+ * @constant
+ * @type {number}
+ */
+cc.Quad3.BYTES_PER_ELEMENT = 48;
 
 /**
  * @class cc.V3F_C4B_T2F
@@ -338,13 +349,17 @@ cc.V3F_C4B_T2F = function (vertices, colors, texCoords, arrayBuffer, offset) {
     this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V3F_C4B_T2F.BYTES_PER_ELEMENT);
     this._offset = offset || 0;
 
-    var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = cc.Vertex3F.BYTES_PER_ELEMENT;
+    var locArrayBuffer = this._arrayBuffer, locOffset = this._offset;
     this._vertices = vertices ? new cc.Vertex3F(vertices.x, vertices.y, vertices.z, locArrayBuffer, locOffset) :
         new cc.Vertex3F(0, 0, 0, locArrayBuffer, locOffset);
-    this._colors = colors ? cc.color(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset + locElementLen) :
-        cc.color(0, 0, 0, 0, locArrayBuffer, locOffset + locElementLen);
-    this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT) :
-        new cc.Tex2F(0, 0, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT);
+
+    locOffset += cc.Vertex3F.BYTES_PER_ELEMENT;
+    this._colors = colors ? cc.color(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset) :
+        cc.color(0, 0, 0, 0, locArrayBuffer, locOffset);
+
+    locOffset += cc.Color.BYTES_PER_ELEMENT;
+    this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset) :
+        new cc.Tex2F(0, 0, locArrayBuffer, locOffset);
 };
 /**
  * @constant
@@ -358,26 +373,26 @@ _p._getVertices = function () {
 };
 _p._setVertices = function (verticesValue) {
     var locVertices = this._vertices;
-    locVertices.x = verticesValue.x;
-    locVertices.y = verticesValue.y;
-    locVertices.z = verticesValue.z;
+    locVertices._view[0] = verticesValue.x;
+    locVertices._view[1] = verticesValue.y;
+    locVertices._view[2] = verticesValue.z;
 };
 _p._getColor = function () {
     return this._colors;
 };
 _p._setColor = function (colorValue) {
     var locColors = this._colors;
-    locColors.r = colorValue.r;
-    locColors.g = colorValue.g;
-    locColors.b = colorValue.b;
-    locColors.a = colorValue.a;
+    locColors._view[0] = colorValue.r;
+    locColors._view[1] = colorValue.g;
+    locColors._view[2] = colorValue.b;
+    locColors._view[3] = colorValue.a;
 };
 _p._getTexCoords = function () {
     return this._texCoords;
 };
 _p._setTexCoords = function (texValue) {
-    this._texCoords.u = texValue.u;
-    this._texCoords.v = texValue.v;
+    this._texCoords._view[0] = texValue.u;
+    this._texCoords._view[1] = texValue.v;
 };
 /** @expose */
 _p.vertices;
@@ -406,12 +421,15 @@ cc.V3F_C4B_T2F_Quad = function (tl, bl, tr, br, arrayBuffer, offset) {
     var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = cc.V3F_C4B_T2F.BYTES_PER_ELEMENT;
     this._tl = tl ? new cc.V3F_C4B_T2F(tl.vertices, tl.colors, tl.texCoords, locArrayBuffer, locOffset) :
         new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset);
-    this._bl = bl ? new cc.V3F_C4B_T2F(bl.vertices, bl.colors, bl.texCoords, locArrayBuffer, locOffset + locElementLen) :
-        new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset + locElementLen);
-    this._tr = tr ? new cc.V3F_C4B_T2F(tr.vertices, tr.colors, tr.texCoords, locArrayBuffer, locOffset + locElementLen * 2) :
-        new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset + locElementLen * 2);
-    this._br = br ? new cc.V3F_C4B_T2F(br.vertices, br.colors, br.texCoords, locArrayBuffer, locOffset + locElementLen * 3) :
-        new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset + locElementLen * 3);
+    locOffset += locElementLen;
+    this._bl = bl ? new cc.V3F_C4B_T2F(bl.vertices, bl.colors, bl.texCoords, locArrayBuffer, locOffset) :
+        new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset);
+    locOffset += locElementLen;
+    this._tr = tr ? new cc.V3F_C4B_T2F(tr.vertices, tr.colors, tr.texCoords, locArrayBuffer, locOffset) :
+        new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset);
+    locOffset += locElementLen;
+    this._br = br ? new cc.V3F_C4B_T2F(br.vertices, br.colors, br.texCoords, locArrayBuffer, locOffset) :
+        new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset);
 };
 /**
  * @constant
@@ -540,13 +558,15 @@ cc.V2F_C4B_T2F = function (vertices, colors, texCoords, arrayBuffer, offset) {
     this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V2F_C4B_T2F.BYTES_PER_ELEMENT);
     this._offset = offset || 0;
 
-    var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = cc.Vertex2F.BYTES_PER_ELEMENT;
+    var locArrayBuffer = this._arrayBuffer, locOffset = this._offset;
     this._vertices = vertices ? new cc.Vertex2F(vertices.x, vertices.y, locArrayBuffer, locOffset) :
         new cc.Vertex2F(0, 0, locArrayBuffer, locOffset);
-    this._colors = colors ? cc.color(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset + locElementLen) :
-        cc.color(0, 0, 0, 0, locArrayBuffer, locOffset + locElementLen);
-    this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT) :
-        new cc.Tex2F(0, 0, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT);
+    locOffset += cc.Vertex2F.BYTES_PER_ELEMENT;
+    this._colors = colors ? cc.color(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset) :
+        cc.color(0, 0, 0, 0, locArrayBuffer, locOffset);
+    locOffset += cc.Color.BYTES_PER_ELEMENT;
+    this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset) :
+        new cc.Tex2F(0, 0, locArrayBuffer, locOffset);
 };
 
 /**
@@ -559,25 +579,25 @@ _p._getVertices = function () {
     return this._vertices;
 };
 _p._setVertices = function (verticesValue) {
-    this._vertices.x = verticesValue.x;
-    this._vertices.y = verticesValue.y;
+    this._vertices._view[0] = verticesValue.x;
+    this._vertices._view[1] = verticesValue.y;
 };
 _p._getColor = function () {
     return this._colors;
 };
 _p._setColor = function (colorValue) {
     var locColors = this._colors;
-    locColors.r = colorValue.r;
-    locColors.g = colorValue.g;
-    locColors.b = colorValue.b;
-    locColors.a = colorValue.a;
+    locColors._view[0] = colorValue.r;
+    locColors._view[1] = colorValue.g;
+    locColors._view[2] = colorValue.b;
+    locColors._view[3] = colorValue.a;
 };
 _p._getTexCoords = function () {
     return this._texCoords;
 };
 _p._setTexCoords = function (texValue) {
-    this._texCoords.u = texValue.u;
-    this._texCoords.v = texValue.v;
+    this._texCoords._view[0] = texValue.u;
+    this._texCoords._view[1] = texValue.v;
 };
 
 /** @expose */
@@ -607,10 +627,12 @@ cc.V2F_C4B_T2F_Triangle = function (a, b, c, arrayBuffer, offset) {
     var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT;
     this._a = a ? new cc.V2F_C4B_T2F(a.vertices, a.colors, a.texCoords, locArrayBuffer, locOffset) :
         new cc.V2F_C4B_T2F(null, null, null, locArrayBuffer, locOffset);
-    this._b = b ? new cc.V2F_C4B_T2F(b.vertices, b.colors, b.texCoords, locArrayBuffer, locOffset + locElementLen) :
-        new cc.V2F_C4B_T2F(null, null, null, locArrayBuffer, locOffset + locElementLen);
-    this._c = c ? new cc.V2F_C4B_T2F(c.vertices, c.colors, c.texCoords, locArrayBuffer, locOffset + locElementLen * 2) :
-        new cc.V2F_C4B_T2F(null, null, null, locArrayBuffer, locOffset + locElementLen * 2);
+    locOffset += locElementLen;
+    this._b = b ? new cc.V2F_C4B_T2F(b.vertices, b.colors, b.texCoords, locArrayBuffer, locOffset) :
+        new cc.V2F_C4B_T2F(null, null, null, locArrayBuffer, locOffset);
+    locOffset += locElementLen;
+    this._c = c ? new cc.V2F_C4B_T2F(c.vertices, c.colors, c.texCoords, locArrayBuffer, locOffset) :
+        new cc.V2F_C4B_T2F(null, null, null, locArrayBuffer, locOffset);
 };
 /**
  * @constant
