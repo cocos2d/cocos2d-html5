@@ -123,18 +123,14 @@ cc.glInvalidateStateCache = function () {
  * @function
  * @param {WebGLProgram} program
  */
-cc.glUseProgram = function (program) {
+cc.glUseProgram = cc.ENABLE_GL_STATE_CACHE ? function (program) {
     if (program !== cc._currentShaderProgram) {
         cc._currentShaderProgram = program;
         cc._renderContext.useProgram(program);
     }
+} : function (program) {
+    cc._renderContext.useProgram(program);
 };
-
-if(!cc.ENABLE_GL_STATE_CACHE){
-    cc.glUseProgram = function (program) {
-        cc._renderContext.useProgram(program);
-    };
-}
 
 /**
  * Deletes the GL program. If it is the one that is being used, it invalidates it.<br/>
@@ -148,21 +144,6 @@ cc.glDeleteProgram = function (program) {
             cc._currentShaderProgram = -1;
     }
     gl.deleteProgram(program);
-};
-
-/**
- * Uses a blending function in case it not already used.<br/>
- * If CC_ENABLE_GL_STATE_CACHE is disabled, it will the glBlendFunc() directly.
- * @function
- * @param {Number} sfactor
- * @param {Number} dfactor
- */
-cc.glBlendFunc = function (sfactor, dfactor) {
-    if ((sfactor !== cc._blendingSource) || (dfactor !== cc._blendingDest)) {
-        cc._blendingSource = sfactor;
-        cc._blendingDest = dfactor;
-        cc.setBlending(sfactor, dfactor);
-    }
 };
 
 /**
@@ -183,6 +164,21 @@ cc.setBlending = function (sfactor, dfactor) {
 };
 
 /**
+ * Uses a blending function in case it not already used.<br/>
+ * If CC_ENABLE_GL_STATE_CACHE is disabled, it will the glBlendFunc() directly.
+ * @function
+ * @param {Number} sfactor
+ * @param {Number} dfactor
+ */
+cc.glBlendFunc = cc.ENABLE_GL_STATE_CACHE ? function (sfactor, dfactor) {
+    if ((sfactor !== cc._blendingSource) || (dfactor !== cc._blendingDest)) {
+        cc._blendingSource = sfactor;
+        cc._blendingDest = dfactor;
+        cc.setBlending(sfactor, dfactor);
+    }
+} : cc.setBlending;
+
+/**
  * @function
  * @param {Number} sfactor
  * @param {Number} dfactor
@@ -201,10 +197,6 @@ cc.glBlendFuncForParticle = function(sfactor, dfactor) {
         }
     }
 };
-
-if (!cc.ENABLE_GL_STATE_CACHE) {
-    cc.glBlendFunc = cc.setBlending;
-}
 
 /**
  * Resets the blending mode back to the cached state in case you used glBlendFuncSeparate() or glBlendEquation().<br/>
@@ -245,7 +237,7 @@ cc.glBindTexture2D = function (textureId) {
  * @param {Number} textureUnit
  * @param {cc.Texture2D} textureId
  */
-cc.glBindTexture2DN = function (textureUnit, textureId) {
+cc.glBindTexture2DN = cc.ENABLE_GL_STATE_CACHE ? function (textureUnit, textureId) {
     if (cc._currentBoundTexture[textureUnit] === textureId)
         return;
     cc._currentBoundTexture[textureUnit] = textureId;
@@ -256,17 +248,14 @@ cc.glBindTexture2DN = function (textureUnit, textureId) {
         ctx.bindTexture(ctx.TEXTURE_2D, textureId._webTextureObj);
     else
         ctx.bindTexture(ctx.TEXTURE_2D, null);
+} : function (textureUnit, textureId) {
+    var ctx = cc._renderContext;
+    ctx.activeTexture(ctx.TEXTURE0 + textureUnit);
+    if(textureId)
+        ctx.bindTexture(ctx.TEXTURE_2D, textureId._webTextureObj);
+    else
+        ctx.bindTexture(ctx.TEXTURE_2D, null);
 };
-if (!cc.ENABLE_GL_STATE_CACHE){
-    cc.glBindTexture2DN = function (textureUnit, textureId) {
-        var ctx = cc._renderContext;
-        ctx.activeTexture(ctx.TEXTURE0 + textureUnit);
-        if(textureId)
-            ctx.bindTexture(ctx.TEXTURE_2D, textureId._webTextureObj);
-        else
-            ctx.bindTexture(ctx.TEXTURE_2D, null);
-    };
-}
 
 /**
  * It will delete a given texture. If the texture was bound, it will invalidate the cached. <br/>
@@ -290,7 +279,7 @@ cc.glDeleteTextureN = function (textureUnit, textureId) {
         if (textureId === cc._currentBoundTexture[ textureUnit ])
             cc._currentBoundTexture[ textureUnit ] = -1;
     }
-    cc._renderContext.deleteTexture(textureId);
+    cc._renderContext.deleteTexture(textureId._webTextureObj);
 };
 
 /**

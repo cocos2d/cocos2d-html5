@@ -743,6 +743,7 @@ cc.GLProgram = cc.Class.extend(/** @lends cc.GLProgram# */{
 
         // Purge uniform hash
         for (var key in this._hashForUniforms) {
+            this._hashForUniforms[key].length = 0;
             delete this._hashForUniforms[key];
         }
     },

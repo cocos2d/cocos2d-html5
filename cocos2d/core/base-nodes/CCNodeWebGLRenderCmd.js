@@ -25,13 +25,7 @@
 (function() {
     cc.Node.WebGLRenderCmd = function (renderable) {
         cc.Node.RenderCmd.call(this, renderable);
-
         this._shaderProgram = null;
-
-        this._camera = null;
-
-        // Current index in the command list for improving auto batching perf
-        this._currId = -1;
     };
 
     var proto = cc.Node.WebGLRenderCmd.prototype = Object.create(cc.Node.RenderCmd.prototype);

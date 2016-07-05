@@ -257,6 +257,13 @@ cc.Node.RenderCmd.prototype = {
         this._cacheDirty = true;
     },
 
+    getNodeToParentTransform: function () {
+        if (this._dirtyFlag & cc.Node._dirtyFlags.transformDirty) {
+            this.transform();
+        }
+        return this._transform;
+    },
+
     visit: function (parentCmd) {
         var node = this._node, renderer = cc.renderer;
         // quick return if not visible
@@ -403,13 +410,6 @@ cc.Node.RenderCmd.prototype = {
             this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
     },
 
-    getNodeToParentTransform: function () {
-        if (this._dirtyFlag & cc.Node._dirtyFlags.transformDirty) {
-            this.transform();
-        }
-        return this._transform;
-    },
-
     _syncStatus: function (parentCmd) {
         //  In the visit logic does not restore the _dirtyFlag
         //  Because child elements need parent's _dirtyFlag to change himself
@@ -464,7 +464,7 @@ cc.Node.RenderCmd.prototype = {
     visitChildren: function(){
         var renderer = cc.renderer;
         var node = this._node;
-        var i, children = node._children, child, cmd;
+        var i, children = node._children, child;
         var len = children.length;
         if (len > 0) {
             node.sortAllChildren();
@@ -472,8 +472,7 @@ cc.Node.RenderCmd.prototype = {
             for (i = 0; i < len; i++) {
                 child = children[i];
                 if (child._localZOrder < 0) {
-                    cmd = child._renderCmd;
-                    cmd.visit(this);
+                    child._renderCmd.visit(this);
                 }
                 else {
                     break;
@@ -482,8 +481,7 @@ cc.Node.RenderCmd.prototype = {
 
             renderer.pushRenderCommand(this);
             for (; i < len; i++) {
-                child = children[i];
-                child._renderCmd.visit(this);
+                children[i]._renderCmd.visit(this);
             }
         } else {
             renderer.pushRenderCommand(this);

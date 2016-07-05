@@ -69,7 +69,7 @@
         }
     };
 
-    proto.visit = function(parendCmd){
+    proto.visit = function(parentCmd){
         var node = this._node;
         if (!node._visible) return;
 
