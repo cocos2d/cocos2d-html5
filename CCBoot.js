@@ -288,7 +288,7 @@ cc.AsyncPool = function(srcObj, limit, iterator, onEnd, target){
                 self._results[this.index] = arr[0];
                 if (self.finishedSize === self.size) {
                     if (self._onEnd)
-                        self._onEnd.call(self._onEndTarget, null, self._results);
+                        self._onEnd.call(self._onEndTarget, err, self._results);
                     return;
                 }
                 self._handleItem();
@@ -2151,7 +2151,7 @@ cc.initEngine = function (config, cb) {
  *
  */
 cc.game = /** @lends cc.game# */{
-    /** 
+    /**
      * Debug mode: No debugging. {@static}
      * @const {Number}
      * @static
