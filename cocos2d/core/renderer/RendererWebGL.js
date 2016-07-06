@@ -302,6 +302,7 @@ return {
             return;
         }
 
+        var gl = cc._renderContext;
         var texture = _batchedInfo.texture;
         var shader = _batchedInfo.shader;
         var count = _batchingSize / 4;

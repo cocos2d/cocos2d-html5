@@ -391,8 +391,9 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
             var tipMessage = delegate.getTipMessage ? delegate.getTipMessage() : "please enter your word:";
             // wechat cover the prompt function .So need use the Window.prototype.prompt
             var userInput;
-            if(window.Window && Window.prototype.prompt && Window.prototype.prompt != prompt){
-                userInput = Window.prototype.prompt.call(window, tipMessage, this._currentInputString);
+            var win = window.Window;
+            if(win && win.prototype.prompt && win.prototype.prompt != prompt){
+                userInput = win.prototype.prompt.call(window, tipMessage, this._currentInputString);
             }else{
                 userInput = prompt(tipMessage, this._currentInputString);
             }

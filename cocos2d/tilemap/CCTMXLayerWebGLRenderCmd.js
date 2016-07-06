@@ -57,10 +57,12 @@
 
         var scalex = cc.view._scaleX,
             scaley = cc.view._scaleY,
-            tilew = node._mapTileSize.width,
-            tileh = node._mapTileSize.height,
-            extw = node.tileset._tileSize.width / cc.director._contentScaleFactor - tilew,
-            exth = node.tileset._tileSize.height / cc.director._contentScaleFactor - tileh,
+            maptw = node._mapTileSize.width,
+            mapth = node._mapTileSize.height,
+            tilew = node.tileset._tileSize.width / cc.director._contentScaleFactor,
+            tileh = node.tileset._tileSize.height / cc.director._contentScaleFactor,
+            extw = tilew - maptw,
+            exth = tileh - mapth,
             winw = cc.winSize.width,
             winh = cc.winSize.height,
             rows = node._layerSize.height,
@@ -90,10 +92,10 @@
         var startCol = 0, startRow = 0,
             maxCol = cols, maxRow = rows;
         if (!hasRotation && layerOrientation === cc.TMX_ORIENTATION_ORTHO) {
-            startCol = Math.floor(-(mapx - extw * a) / (tilew * a));
-            startRow = Math.floor((mapy - exth * d + tileh * rows * d - winh) / (tileh * d));
-            maxCol = Math.ceil((winw - mapx + extw * a) / (tilew * a));
-            maxRow = rows - Math.floor(-(mapy + exth * d) / (tileh * d));
+            startCol = Math.floor(-(mapx - extw * a) / (maptw * a));
+            startRow = Math.floor((mapy - exth * d + mapth * rows * d - winh) / (mapth * d));
+            maxCol = Math.ceil((winw - mapx + extw * a) / (maptw * a));
+            maxRow = rows - Math.floor(-(mapy + exth * d) / (mapth * d));
             // Adjustment
             if (startCol < 0) startCol = 0;
             if (startRow < 0) startRow = 0;
@@ -105,7 +107,8 @@
             offset = vertexDataOffset,
             colOffset = startRow * cols, z, gid, grid,
             mask = cc.TMX_TILE_FLIPPED_MASK,
-            i, top, left, bottom, right, w, h,
+            i, top, left, bottom, right, 
+            w = tilew * a, h = tileh * d, gt, gl, gb, gr,
             wa = a, wb = b, wc = c, wd = d, wtx = tx, wty = ty, // world
             flagged = false, flippedX = false, flippedY = false,
             vertices = this._vertices;
@@ -134,34 +137,38 @@
                 // Vertices
                 switch (layerOrientation) {
                 case cc.TMX_ORIENTATION_ORTHO:
-                    left = col * tilew;
-                    bottom = (rows - row - 1) * tileh;
+                    left = col * maptw;
+                    bottom = (rows - row - 1) * mapth;
                     z = node._vertexZ + cc.renderer.assignedZStep * z / tiles.length;
                     break;
                 case cc.TMX_ORIENTATION_ISO:
-                    left = tilew / 2 * ( cols + col - row - 1);
-                    bottom = tileh / 2 * ( rows * 2 - col - row - 2);
+                    left = maptw / 2 * ( cols + col - row - 1);
+                    bottom = mapth / 2 * ( rows * 2 - col - row - 2);
                     z = node._vertexZ + cc.renderer.assignedZStep * (node.height - bottom) / node.height;
                     break;
                 case cc.TMX_ORIENTATION_HEX:
-                    left = col * tilew * 3 / 4;
-                    bottom = (rows - row - 1) * tileh + ((col % 2 === 1) ? (-tileh / 2) : 0);
+                    left = col * maptw * 3 / 4;
+                    bottom = (rows - row - 1) * mapth + ((col % 2 === 1) ? (-mapth / 2) : 0);
                     z = node._vertexZ + cc.renderer.assignedZStep * (node.height - bottom) / node.height;
                     break;
                 }
-                right = left + tilew + extw;
-                top = bottom + tileh + exth;
+                right = left + tilew;
+                top = bottom + tileh;
                 // TMX_ORIENTATION_ISO trim
-                if (layerOrientation === cc.TMX_ORIENTATION_ISO) {
-                    if (bottom > winh) {
-                        col += Math.floor((bottom - winh)*2/h) - 1;
+                if (!hasRotation && layerOrientation === cc.TMX_ORIENTATION_ISO) {
+                    gb = mapy + bottom*d;
+                    if (gb > winh+h) {
+                        col += Math.floor((gb-winh)*2/h) - 1;
                         continue;
                     }
-                    if (right < 0) {
-                        col += Math.floor((-right)*2/w) - 1;
+                    gr = mapx + right*a;
+                    if (gr < -w) {
+                        col += Math.floor((-gr)*2/w) - 1;
                         continue;
                     }
-                    if (left > winw || top < 0) {
+                    gl = mapx + left*a;
+                    gt = mapy + top*d;
+                    if (gl > winw || gt < 0) {
                         col = maxCol;
                         continue;
                     }
