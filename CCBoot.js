@@ -292,8 +292,10 @@ cc.AsyncPool = function(srcObj, limit, iterator, onEnd, target){
                     self._results[this.index] = result;
                 }
                 if (self.finishedSize === self.size) {
-                    if (self._onEnd)
-                        self._onEnd.call(self._onEndTarget, self._errors, self._results);
+                    if (self._onEnd) {
+                        var errors = self._errors.length === 0 ? null : self._errors;
+                        self._onEnd.call(self._onEndTarget, errors, self._results);
+                    }
                     return;
                 }
                 self._handleItem();
