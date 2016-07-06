@@ -312,10 +312,10 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     proto.updateStatus = function () {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
 
-        cc.Node.RenderCmd.prototype.updateStatus.call(this);
-
         if (locFlag & flags.textDirty)
             this._updateTexture();
+
+        cc.Node.RenderCmd.prototype.updateStatus.call(this);
 
         if (this._dirtyFlag & flags.transformDirty){
             this.transform(this.getParentRenderCmd(), true);
@@ -326,10 +326,10 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     proto._syncStatus = function (parentCmd) {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
 
-        cc.Node.RenderCmd.prototype._syncStatus.call(this, parentCmd);
-
         if (locFlag & flags.textDirty)
             this._updateTexture();
+
+        cc.Node.RenderCmd.prototype._syncStatus.call(this, parentCmd);
 
         if (cc._renderType === cc.game.RENDER_TYPE_WEBGL || locFlag & flags.transformDirty)
             this.transform(parentCmd);
