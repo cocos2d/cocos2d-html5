@@ -49,7 +49,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
 
     _listViewEventListener: null,
     _listViewEventSelector: null,
-
+    _ccListViewEventCallback: null,
     _magneticAllowedOutOfBoundary: true,
     _magneticType: 0,
     _className:"ListView",
@@ -864,6 +864,14 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
         this._listViewEventSelector = selector;
     },
 
+    /**
+     * Adds callback function called ListView event triggered
+     * @param {Function} selector
+     */
+    addEventListener: function(selector){
+        this._ccListViewEventCallback = selector;
+    },
+
     _selectedItemEvent: function (event) {
         var eventEnum = (event === ccui.Widget.TOUCH_BEGAN) ? ccui.ListView.ON_SELECTED_ITEM_START : ccui.ListView.ON_SELECTED_ITEM_END;
         if(this._listViewEventSelector){
@@ -872,8 +880,8 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
             else
                 this._listViewEventSelector(this, eventEnum);
         }
-        if(this._ccEventCallback)
-            this._ccEventCallback(this, eventEnum);
+        if(this._ccListViewEventCallback)
+            this._ccListViewEventCallback(this, eventEnum);
     },
 
     /**
