@@ -1903,6 +1903,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.AffineTransform}
      */
     getNodeToWorldTransform: function () {
+        // Update the transform is needed
+        this._renderCmd.getNodeToParentTransform();
         return this._renderCmd._worldTransform;
     },
 
