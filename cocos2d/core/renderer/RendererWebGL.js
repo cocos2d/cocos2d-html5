@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) 2013-2014 Chukong Technologies Inc.
+ Copyright (c) 2013-2016 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -178,7 +178,7 @@ return {
      */
     _renderingToBuffer: function (renderTextureId) {
         renderTextureId = renderTextureId || this._currentID;
-        var locCmds = this._cacheToBufferCmds[renderTextureId], i, len;
+        var locCmds = this._cacheToBufferCmds[renderTextureId];
         var ctx = cc._renderContext;
         this.rendering(ctx, locCmds);
         this._removeCache(renderTextureId);
@@ -258,7 +258,6 @@ return {
                 cmdList.push(cmd);
         } else {
             if (this._renderCmds.indexOf(cmd) === -1) {
-                cmd._currId = this._renderCmds.length;
                 this._renderCmds.push(cmd);
             }
         }
@@ -303,6 +302,7 @@ return {
             return;
         }
 
+        var gl = cc._renderContext;
         var texture = _batchedInfo.texture;
         var shader = _batchedInfo.shader;
         var count = _batchingSize / 4;

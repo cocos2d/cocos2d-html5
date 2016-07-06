@@ -183,7 +183,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         _t._contentTranslateLeftTop = {left: 0, top: 0};
         _t._viewName = "Cocos2dHTML5";
 
-	    var sys = cc.sys;
+        var sys = cc.sys;
         _t.enableRetina(sys.os === sys.OS_IOS || sys.os === sys.OS_OSX);
         _t.enableAutoFullScreen(sys.isMobile && sys.browserType !== sys.BROWSER_TYPE_BAIDU);
         cc.visibleRect && cc.visibleRect.init(_t._visibleRect);
@@ -410,24 +410,24 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         this._isAdjustViewPort = enabled;
     },
 
-	/**
-	 * Retina support is enabled by default for Apple device but disabled for other devices,<br/>
-	 * it takes effect only when you called setDesignResolutionPolicy<br/>
+    /**
+     * Retina support is enabled by default for Apple device but disabled for other devices,<br/>
+     * it takes effect only when you called setDesignResolutionPolicy<br/>
      * Only useful on web
-	 * @param {Boolean} enabled  Enable or disable retina display
-	 */
-	enableRetina: function(enabled) {
-		this._retinaEnabled = enabled ? true : false;
-	},
+     * @param {Boolean} enabled  Enable or disable retina display
+     */
+    enableRetina: function(enabled) {
+        this._retinaEnabled = enabled ? true : false;
+    },
 
-	/**
-	 * Check whether retina display is enabled.<br/>
+    /**
+     * Check whether retina display is enabled.<br/>
      * Only useful on web
-	 * @return {Boolean}
-	 */
-	isRetinaEnabled: function() {
-		return this._retinaEnabled;
-	},
+     * @return {Boolean}
+     */
+    isRetinaEnabled: function() {
+        return this._retinaEnabled;
+    },
 
     /**
      * If enabled, the application will try automatically to enter full screen mode on mobile devices<br/>
@@ -977,9 +977,9 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
     },
 
     _buildResult: function (containerW, containerH, contentW, contentH, scaleX, scaleY) {
-	    // Makes content fit better the canvas
-	    Math.abs(containerW - contentW) < 2 && (contentW = containerW);
-	    Math.abs(containerH - contentH) < 2 && (contentH = containerH);
+        // Makes content fit better the canvas
+        Math.abs(containerW - contentW) < 2 && (contentW = containerW);
+        Math.abs(containerH - contentH) < 2 && (contentH = containerH);
 
         var viewport = cc.rect(Math.round((containerW - contentW) / 2),
                                Math.round((containerH - contentH) / 2),
@@ -1076,7 +1076,7 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
      */
     var EqualToWindow = EqualToFrame.extend({
         preApply: function (view) {
-	        this._super(view);
+            this._super(view);
             view._frame = document.documentElement;
         },
 
@@ -1092,7 +1092,7 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
      */
     var ProportionalToWindow = ProportionalToFrame.extend({
         preApply: function (view) {
-	        this._super(view);
+            this._super(view);
             view._frame = document.documentElement;
         },
 
@@ -1140,7 +1140,7 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
                 scaleX = containerW / designW, scaleY = containerH / designH, scale = 0,
                 contentW, contentH;
 
-	        scaleX < scaleY ? (scale = scaleX, contentW = containerW, contentH = designH * scale)
+            scaleX < scaleY ? (scale = scaleX, contentW = containerW, contentH = designH * scale)
                 : (scale = scaleY, contentW = designW * scale, contentH = containerH);
 
             return this._buildResult(containerW, containerH, contentW, contentH, scale, scale);
@@ -1212,7 +1212,7 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
  * @param {cc.ContentStrategy} contentStg The content strategy
  */
 cc.ResolutionPolicy = cc.Class.extend(/** @lends cc.ResolutionPolicy# */{
-	_containerStrategy: null,
+    _containerStrategy: null,
     _contentStrategy: null,
 
     /**

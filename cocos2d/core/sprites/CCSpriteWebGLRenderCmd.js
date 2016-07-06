@@ -244,7 +244,6 @@
             if(node._texture !== texture){
                 node._textureLoaded = texture ? texture._textureLoaded : false;
                 node._texture = texture;
-                // This will invalid current batch
                 this._updateBlendFunc();
 
                 if (node._textureLoaded) {

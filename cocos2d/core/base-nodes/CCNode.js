@@ -942,6 +942,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setParent: function (parent) {
         this._parent = parent;
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**
@@ -1902,11 +1903,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.AffineTransform}
      */
     getNodeToWorldTransform: function () {
-        //TODO renderCmd has a WorldTransform
-        var t = this.getNodeToParentTransform();
-        for (var p = this._parent; p !== null; p = p.parent)
-            t = cc.affineTransformConcat(t, p.getNodeToParentTransform());
-        return t;
+        return this._renderCmd._worldTransform;
     },
 
     /**
