@@ -54,6 +54,8 @@
         this._bl.y = lx * wt.b + by * wt.d + wt.ty;
         this._tr.x = rx * wt.a + ty * wt.c + wt.tx;
         this._tr.y = rx * wt.b + ty * wt.d + wt.ty;
+
+        this._updateProgressData();
     };
 
     proto.rendering = function (ctx) {
