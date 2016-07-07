@@ -75,8 +75,6 @@
 
         var i, locChildren = node._children, selChild, childrenLen;
 
-        cc.kmGLPushMatrix();
-
         this._syncStatus(parentCmd);
 
         if (node._clippingToBounds) {
@@ -104,6 +102,5 @@
         }
 
         this._dirtyFlag = 0;
-        cc.kmGLPopMatrix();
     };
 })();
