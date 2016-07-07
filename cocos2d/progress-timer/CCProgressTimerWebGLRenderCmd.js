@@ -43,7 +43,7 @@
     proto.constructor = cc.ProgressTimer.WebGLRenderCmd;
 
     proto.transform = function (parentCmd, recursive) {
-        cc.Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+        this.originTransform(parentCmd, recursive);
         var sp = this._node._sprite;
         sp._renderCmd.transform(this, recursive);
 

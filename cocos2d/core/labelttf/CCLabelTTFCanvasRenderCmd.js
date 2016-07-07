@@ -57,7 +57,6 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         if(fontNameOrFontDef instanceof cc.FontDefinition){
             this._fontStyleStr = fontNameOrFontDef._getCanvasFontStr();
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontNameOrFontDef);
-
         }else {
             var deviceFontSize = fontSize * cc.view.getDevicePixelRatio();
             this._fontStyleStr = fontStyle + " " + fontWeight + " " + deviceFontSize + "px '" + fontNameOrFontDef + "'";
@@ -188,8 +187,8 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         var locContentWidth = node._contentSize.width * scale - locStrokeShadowOffsetX;
 
         //lineHeight
-        var lineHeight = node.getLineHeight();
-        var transformTop = (lineHeight - this._fontClientHeight) / 2;
+        var lineHeight = node.getLineHeight() * scale;
+        var transformTop = (lineHeight - this._fontClientHeight * scale) / 2;
 
         if (locHAlignment === cc.TEXT_ALIGNMENT_RIGHT)
             xOffset += locContentWidth;
