@@ -114,6 +114,17 @@ cc.newElement = function (x) {
     return document.createElement(x);
 };
 
+cc.onBodyReady = function(fn) {
+    function test(){
+        if(document.body) {
+            fn();
+        } else {
+            setTimeout(test, 1);
+        }
+    }
+    test();
+};
+
 /**
  * Iterate over an object or an array, executing a function for each matched element.
  * @param {object|array} obj
@@ -2143,7 +2154,9 @@ cc.initEngine = function (config, cb) {
 
     _determineRenderType(config);
 
-    document.body ? _load(config) : cc._addEventListener(window, 'load', _windowLoaded, false);
+    cc.onBodyReady(function(){
+        _load(config);
+    });
     _engineInitCalled = true;
 };
 
