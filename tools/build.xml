@@ -6,8 +6,8 @@
     <target name="compile">
         <jscomp compilationLevel="simple" warning="quiet"
                 debug="false" output="./../lib/cocos2d-js-v3.11-min.js"
-                languageIn="ECMASCRIPT5">
-            <!--sourceMapOutputFile="./../lib/cocos2d-js-v3.11-sourcemap" sourceMapFormat="V3" -->
+                languageIn="ECMASCRIPT5"
+                sourceMapOutputFile="./../lib/cocos2d-js-v3.11-sourcemap" sourceMapFormat="V3">
             <sources dir="./../">
                 <file name="Base64Images.js"/>
                 <file name="CCBoot.js"/>
@@ -307,9 +307,8 @@
     <target name="compile_core">
         <jscomp compilationLevel="simple" warning="quiet"
                 debug="false" output="./../lib/cocos2d-js-v3.11-core-min.js"
-                languageIn="ECMASCRIPT5">
-            <!--sourceMapOutputFile="./../lib/cocos2d-js-v3.11-core-sourcemap" sourceMapFormat="V3" -->
-            <sources dir="./../">
+                languageIn="ECMASCRIPT5"
+                sourceMapOutputFile="./../lib/cocos2d-js-v3.11-core-sourcemap" sourceMapFormat="V3">            <sources dir="./../">
                 <file name="cocos2d/core/utils/CCSimplePool.js"/>
                 <file name="CCBoot.js"/>
                 <file name="cocos2d/core/event-manager/CCEventHelper.js"/>
