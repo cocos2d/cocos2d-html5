@@ -418,11 +418,13 @@ cc._tmp.WebGLTexture2D = function () {
          * @param {HTMLImageElement|HTMLCanvasElement} element
          */
         initWithElement: function (element) {
+            try {
             if (!element)
                 return;
             this._webTextureObj = cc._renderContext.createTexture();
             this._htmlElementObj = element;
             this._textureLoaded = true;
+            } catch (err) {console.warn(err);}
             // Textures should be loaded with premultiplied alpha in order to avoid gray bleeding
             // when semitransparent textures are interpolated (e.g. when scaled).
             this._hasPremultipliedAlpha = true;
@@ -856,6 +858,7 @@ cc._tmp.WebGLTextureCache = function () {
     var _p = cc.textureCache;
 
     _p.handleLoadedTexture = function (url) {
+        try {
         var locTexs = this._textures, tex, ext;
         //remove judge(webgl)
         if (!cc.game._rendererInitialized) {
@@ -873,6 +876,7 @@ cc._tmp.WebGLTextureCache = function () {
         else {
             tex.handleLoadedTexture();
         }
+        } catch (err) {console.warn(err);}
     };
 
     /**
