@@ -108,6 +108,7 @@
     proto.resetVertexData = function(){};
 
     proto._updateProgress = function(){
+        this.setDirtyFlag(cc.Node._dirtyFlags.contentDirty);
         var node = this._node;
         var locSprite = node._sprite;
         var sw = locSprite.width, sh = locSprite.height;
@@ -272,6 +273,9 @@
         if(locFlag & flags.transformDirty){
             //update the transform
             this.transform(this.getParentRenderCmd(), true);
+        }
+        if(locFlag & flags.contentDirty) {
+            this._notifyRegionStatus && this._notifyRegionStatus(cc.Node.CanvasRenderCmd.RegionStatus.Dirty);
         }
         this._dirtyFlag = 0;
     };
