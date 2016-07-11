@@ -37,7 +37,7 @@
         };
         this._blendFuncStr = "source-over";
         this._colorized = false;
-
+        this._canUseDirtyRegion = true;
         this._textureToRender = null;
     };
 

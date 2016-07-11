@@ -37,6 +37,7 @@
         cc.Node.CanvasRenderCmd.call(this, renderable);
         this._isBaked = false;
         this._bakeSprite = null;
+        this._canUseDirtyRegion = true;
         this._updateCache = 2; // 2: Updated child visit 1: Rendering 0: Nothing to do
     };
 

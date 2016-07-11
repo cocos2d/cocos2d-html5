@@ -49,6 +49,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         this._renderingIndex = 0;
 
         this._texRect = cc.rect();
+        this._canUseDirtyRegion = true;
     };
     var proto = cc.LabelTTF.RenderCmd.prototype;
     proto.constructor = cc.LabelTTF.RenderCmd;

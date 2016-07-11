@@ -41,6 +41,7 @@ cc.rendererCanvas = {
     _allNeedDraw: true,
     _enableDirtyRegion: false,
     _debugDirtyRegion: false,
+    _canUseDirtyRegion : false,
 
     getRenderCmd: function (renderableObject) {
         //TODO Add renderCmd pool here
@@ -132,7 +133,7 @@ cc.rendererCanvas = {
         wrapper.computeRealOffsetY();
         var dirtyList = this._dirtyRegion.getDirtyRegions();
         var locCmds = this._renderCmds, i, len;
-        var allNeedDraw = this._allNeedDraw || !this._enableDirtyRegion;
+        var allNeedDraw = this._allNeedDraw || !this._enableDirtyRegion || !this._canUseDirtyRegion;
         if(!allNeedDraw) {
             this._collectDirtyRegion();
             this._beginDrawDirtyRegion(wrapper);
@@ -266,11 +267,15 @@ cc.rendererCanvas = {
         this._cacheInstanceIds.length = 0;
         this._isCacheToCanvasOn = false;
         this._allNeedDraw = true;
+        this._canUseDirtyRegion = true;
     },
 
     pushRenderCommand: function (cmd) {
         if(!cmd.needDraw())
             return;
+        if(!cmd._canUseDirtyRegion) {
+            this._canUseDirtyRegion = false;
+        }
         if (this._isCacheToCanvasOn) {
             var currentId = this._currentID, locCmdBuffer = this._cacheToCanvasCmds;
             var cmdList = locCmdBuffer[currentId];

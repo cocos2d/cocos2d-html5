@@ -37,6 +37,7 @@
         this._startAngle = 270;
         this._endAngle = 270;
         this._counterClockWise = false;
+        this._canUseDirtyRegion = true;
     };
 
     var proto = cc.ProgressTimer.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);

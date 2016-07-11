@@ -516,6 +516,7 @@ cc.Node.RenderCmd.prototype.originTransform = cc.Node.RenderCmd.prototype.transf
         this._currentRegion = new cc.Region();
         this._oldRegion = new cc.Region();
         this._regionFlag = 0;
+        this._canUseDirtyRegion = false;
     };
 
     cc.Node.CanvasRenderCmd.RegionStatus = {

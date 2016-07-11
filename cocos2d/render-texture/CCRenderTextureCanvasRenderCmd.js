@@ -88,6 +88,7 @@
 
         var scale = cc.contentScaleFactor();
         cc.renderer._renderingToCacheCanvas(this._cacheContext, node.__instanceId, scale, scale);
+        node.sprite._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.colorDirty);
     };
 
     proto.clearRect = function(x, y, width, height){
