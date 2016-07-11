@@ -246,7 +246,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
                     this.width = sender.width;
                     this.height = sender.height;
                     if (this.parent instanceof cc.Menu) {
-                        this.parent.alignItemsVerticallyWithPadding();
+                        this.parent.updateAlign();
                     }
                 }, this);
             }
@@ -725,9 +725,9 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
             if (normalSprite.textureLoaded && !normalSprite.textureLoaded()) {
                 normalSprite.addEventListener("load", function (sender) {
                     this.width = sender.width;
-                    this.height = sender.height
+                    this.height = sender.height;
                     if (this.parent instanceof cc.Menu) {
-                        this.parent.alignItemsVerticallyWithPadding();
+                        this.parent.updateAlign();
                     }
                 }, this);
             }
@@ -774,7 +774,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
                 this.width = sender.width;
                 this.height = sender.height;
                 if (this.parent instanceof cc.Menu) {
-                    this.parent.alignItemsVerticallyWithPadding();
+                    this.parent.updateAlign();
                 }
             }, this);
         }
@@ -865,7 +865,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
                     this.setCascadeColorEnabled(true);
                     this.setCascadeOpacityEnabled(true);
                     if (this.parent instanceof cc.Menu) {
-                        this.parent.alignItemsVerticallyWithPadding();
+                        this.parent.updateAlign();
                     }
                 }, this);
             }
@@ -1021,7 +1021,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
                     this.width = sender.width;
                     this.height = sender.height;
                     if (this.parent instanceof cc.Menu) {
-                        this.parent.alignItemsVerticallyWithPadding();
+                        this.parent.updateAlign();
                     }
                 }, this);
             }
