@@ -210,6 +210,9 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * @param {Number} padding
      */
     alignItemsVerticallyWithPadding: function (padding) {
+        if (padding === undefined)
+            padding = this._padding !== undefined ? this._padding : cc.DEFAULT_PADDING;
+        this._padding = padding;
         var height = -padding, locChildren = this._children, len, i, locScaleY, locHeight, locChild;
         if (locChildren && locChildren.length > 0) {
             for (i = 0, len = locChildren.length; i < len; i++)

@@ -241,6 +241,16 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
             this._disabledColor = cc.color(126, 126, 126);
             this.setLabel(label);
 
+            if (label.textureLoaded && !label.textureLoaded()) {
+                label.addEventListener("load", function (sender) {
+                    this.width = sender.width;
+                    this.height = sender.height;
+                    if (this.parent instanceof cc.Menu) {
+                        this.parent.alignItemsVerticallyWithPadding();
+                    }
+                }, this);
+            }
+
             this.setCascadeColorEnabled(true);
             this.setCascadeOpacityEnabled(true);
         }
@@ -711,6 +721,17 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
             } else if (three === undefined) {
                 disabledImage = null;
             }
+
+            if (normalSprite.textureLoaded && !normalSprite.textureLoaded()) {
+                normalSprite.addEventListener("load", function (sender) {
+                    this.width = sender.width;
+                    this.height = sender.height
+                    if (this.parent instanceof cc.Menu) {
+                        this.parent.alignItemsVerticallyWithPadding();
+                    }
+                }, this);
+            }
+
             this.initWithNormalSprite(normalSprite, selectedSprite, disabledImage, callback, target);
         }
     },
@@ -752,6 +773,9 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
             normalImage.addEventListener("load", function (sender) {
                 this.width = sender.width;
                 this.height = sender.height;
+                if (this.parent instanceof cc.Menu) {
+                    this.parent.alignItemsVerticallyWithPadding();
+                }
             }, this);
         }
     },
@@ -840,6 +864,9 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
                     this.height = sender.height;
                     this.setCascadeColorEnabled(true);
                     this.setCascadeOpacityEnabled(true);
+                    if (this.parent instanceof cc.Menu) {
+                        this.parent.alignItemsVerticallyWithPadding();
+                    }
                 }, this);
             }
         }
@@ -988,6 +1015,17 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
             normalSprite = new cc.Sprite(normalImage);
             selectedImage &&
             (selectedSprite = new cc.Sprite(selectedImage));
+
+            if (normalSprite.textureLoaded && !normalSprite.textureLoaded()) {
+                normalSprite.addEventListener("load", function (sender) {
+                    this.width = sender.width;
+                    this.height = sender.height;
+                    if (this.parent instanceof cc.Menu) {
+                        this.parent.alignItemsVerticallyWithPadding();
+                    }
+                }, this);
+            }
+
             if (four === undefined) {
                 callback = three;
             }
