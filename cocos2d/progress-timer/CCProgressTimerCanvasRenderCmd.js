@@ -89,7 +89,8 @@
         }
 
         //draw sprite
-        var image = locSprite._texture.getHtmlElementObj();
+        var texture = locSprite._renderCmd._textureToRender || locSprite._texture;
+        var image = texture.getHtmlElementObj();
         if (locSprite._renderCmd._colorized) {
             context.drawImage(image,
                 0, 0, locTextureCoord.width, locTextureCoord.height,
