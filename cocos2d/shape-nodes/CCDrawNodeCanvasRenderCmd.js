@@ -32,8 +32,15 @@
         this._blendFunc = null;
     };
 
+
     cc.DrawNode.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     cc.DrawNode.CanvasRenderCmd.prototype.constructor = cc.DrawNode.CanvasRenderCmd;
+
+    cc.DrawNode.CanvasRenderCmd.prototype.getLocalBB = function () {
+        var node = this._node;
+        return node._localBB;
+    };
+
     cc.extend( cc.DrawNode.CanvasRenderCmd.prototype, {
         rendering: function (ctx, scaleX, scaleY) {
             var wrapper = ctx || cc._renderContext, context = wrapper.getContext(), node = this._node;

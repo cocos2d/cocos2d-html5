@@ -201,8 +201,12 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 locCmd._blendFunc = this._blendFunc = new cc.BlendFunc(cc.SRC_ALPHA, cc.ONE_MINUS_SRC_ALPHA);
 
                 this.init();
+                this._localBB = new cc.Rect();
             },
 
+            _setLocalBB: function(rect) {
+                this._localBB = cc.rect(rect);
+            },
             /**
              * draws a rectangle given the origin and destination point measured in points.
              * @param {cc.Point} origin

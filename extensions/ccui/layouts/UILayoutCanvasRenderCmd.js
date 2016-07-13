@@ -30,6 +30,7 @@
 
         this._clipElemType = false;
         this._locCache = null;
+        this._canUseDirtyRegion = true;
         this._rendererSaveCmd = new cc.CustomRenderCmd(this, this._onRenderSaveCmd);
         this._rendererSaveCmdSprite = new cc.CustomRenderCmd(this, this._onRenderSaveSpriteCmd);
         this._rendererClipCmd = new cc.CustomRenderCmd(this, this._onRenderClipCmd);
@@ -94,7 +95,7 @@
         }
     };
 
-    proto._onRenderClipCmd = function(ctx){
+    proto._onRenderClipCmd = function(ctx,scaleX, scaleY){
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         if (!this._clipElemType) {
             wrapper.restore();
@@ -119,6 +120,7 @@
 
     proto.rebindStencilRendering = function(stencil){
         stencil._renderCmd.rendering = this.__stencilDraw;
+        stencil._renderCmd._canUseDirtyRegion = true;
     };
 
     proto.__stencilDraw = function(ctx,scaleX, scaleY){          //Only for Canvas
@@ -141,6 +143,10 @@
             return;
 
         this._clipElemType = node._stencil instanceof cc.Sprite;
+        this._rendererSaveCmd._canUseDirtyRegion = !this._clipElemType;
+        this._rendererSaveCmdSprite._canUseDirtyRegion = !this._clipElemType;
+        this._rendererClipCmd._canUseDirtyRegion = !this._clipElemType;
+        this._rendererRestoreCmd._canUseDirtyRegion = !this._clipElemType;
         this._syncStatus(parentCmd);
 
         cc.renderer.pushRenderCommand(this._rendererSaveCmd);
@@ -148,6 +154,7 @@
             cc.ProtectedNode.prototype.visit.call(node, parentCmd);
             cc.renderer.pushRenderCommand(this._rendererSaveCmdSprite);
         }
+
         node._clippingStencil.visit(this);
 
         cc.renderer.pushRenderCommand(this._rendererClipCmd);

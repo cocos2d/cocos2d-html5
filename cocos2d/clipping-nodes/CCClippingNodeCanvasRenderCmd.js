@@ -34,6 +34,7 @@
         this._rendererSaveCmd = new cc.CustomRenderCmd(this, this._saveCmdCallback);
         this._rendererClipCmd = new cc.CustomRenderCmd(this, this._clipCmdCallback);
         this._rendererRestoreCmd = new cc.CustomRenderCmd(this, this._restoreCmdCallback);
+        this._drawNodeAsStencil = false;
     };
     var proto = cc.ClippingNode.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
     proto.constructor = cc.ClippingNode.CanvasRenderCmd;
@@ -43,12 +44,13 @@
     proto.setStencil = function(stencil){
         if(stencil == null)
             return;
-
+        var drawNodeAsStencil = false;
         this._node._stencil = stencil;
 
         // For shape stencil, rewrite the draw of stencil ,only init the clip path and draw nothing.
         //else
         if (stencil instanceof cc.DrawNode) {
+            drawNodeAsStencil = this._drawNodeAsStencil = true;
             if(stencil._buffer){
                 for(var i=0; i<stencil._buffer.length; i++){
                     stencil._buffer[i].isFill = false;
@@ -75,9 +77,12 @@
                         context.lineTo(vertices[j].x * scaleX, -vertices[j].y * scaleY);
                 }
             };
-        }else{
+        } else{
             stencil._parent = this._node;
         }
+        this._rendererSaveCmd._canUseDirtyRegion = drawNodeAsStencil;
+        this._rendererClipCmd._canUseDirtyRegion = drawNodeAsStencil;
+        this._rendererRestoreCmd._canUseDirtyRegion = drawNodeAsStencil;
     };
 
     proto._saveCmdCallback  = function(ctx, scaleX, scaleY) {
@@ -90,6 +95,8 @@
             locCache.height = canvas.height;                     //note: on some browser, it can't clear the canvas, e.g. baidu
             var locCacheCtx = locCache.getContext("2d");
             locCacheCtx.drawImage(canvas, 0, 0);                //save the result to shareCache canvas
+        } else if (this._drawNodeAsStencil) {
+            wrapper.save();
         } else {
             wrapper.save();
             context.beginPath();                                                         //save for clip
@@ -118,13 +125,29 @@
         }
     };
 
-    proto._clipCmdCallback = function(ctx) {
+    proto._clipCmdCallback = function(ctx, scaleX, scaleY) {
         var node = this._node;
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
 
         if (this._clipElemType) {
             //hack
             this._setStencilCompositionOperation(node._stencil);
+        } else if (this._drawNodeAsStencil) {
+            context.beginPath();                                                         //save for clip
+            wrapper.setTransform(this._worldTransform, scaleX, scaleY);
+
+            //draw elements
+            var stencilBuffer = this._node._stencil._buffer;
+            for(var index = 0; index < stencilBuffer.length; ++index) {
+                var vertices = stencilBuffer[index].verts;
+                if(vertices.length < 3) continue;
+                context.moveTo(vertices[0].x * scaleX, -vertices[0].y * scaleY);
+                for(var vIndex = 1; vIndex < vertices.length; ++vIndex) {
+                    context.lineTo(vertices[vIndex].x * scaleX, -vertices[vIndex].y * scaleY);
+                }
+            }
+            //end draw elements
+            context.clip();
         } else {
             context.clip();
         }
@@ -141,6 +164,8 @@
             context.drawImage(locCache, 0, 0);
             context.restore();
             this._dirtyFlag = 0;
+        } else if (this._drawNodeAsStencil) {
+            wrapper.restore();                             //use for restore clip operation
         } else {
             wrapper.restore();                             //use for restore clip operation
         }
@@ -183,6 +208,8 @@
         if(this._clipElemType){
             // Draw everything first using node visit function
             this.originVisit(parentCmd);
+        } else if (this._drawNodeAsStencil) {
+            //do nothing
         }else{
             node._stencil.visit(this);
         }
