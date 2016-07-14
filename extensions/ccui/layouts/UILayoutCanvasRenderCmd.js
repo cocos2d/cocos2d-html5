@@ -30,7 +30,6 @@
 
         this._clipElemType = false;
         this._locCache = null;
-        this._canUseDirtyRegion = true;
         this._rendererSaveCmd = new cc.CustomRenderCmd(this, this._onRenderSaveCmd);
         this._rendererSaveCmdSprite = new cc.CustomRenderCmd(this, this._onRenderSaveSpriteCmd);
         this._rendererClipCmd = new cc.CustomRenderCmd(this, this._onRenderClipCmd);
@@ -95,7 +94,7 @@
         }
     };
 
-    proto._onRenderClipCmd = function(ctx,scaleX, scaleY){
+    proto._onRenderClipCmd = function(ctx){
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         if (!this._clipElemType) {
             wrapper.restore();
@@ -120,7 +119,6 @@
 
     proto.rebindStencilRendering = function(stencil){
         stencil._renderCmd.rendering = this.__stencilDraw;
-        stencil._renderCmd._canUseDirtyRegion = true;
     };
 
     proto.__stencilDraw = function(ctx,scaleX, scaleY){          //Only for Canvas
@@ -130,9 +128,9 @@
             var element = buffer[i], vertices = element.verts;
             var firstPoint = vertices[0];
             locContext.beginPath();
-            locContext.moveTo(firstPoint.x * scaleX, -firstPoint.y * scaleY);
+            locContext.moveTo(firstPoint.x, -firstPoint.y );
             for (var j = 1, len = vertices.length; j < len; j++)
-                locContext.lineTo(vertices[j].x * scaleX, -vertices[j].y * scaleY);
+                locContext.lineTo(vertices[j].x , -vertices[j].y );
             locContext.closePath();
         }
     };
@@ -143,10 +141,6 @@
             return;
 
         this._clipElemType = node._stencil instanceof cc.Sprite;
-        this._rendererSaveCmd._canUseDirtyRegion = !this._clipElemType;
-        this._rendererSaveCmdSprite._canUseDirtyRegion = !this._clipElemType;
-        this._rendererClipCmd._canUseDirtyRegion = !this._clipElemType;
-        this._rendererRestoreCmd._canUseDirtyRegion = !this._clipElemType;
         this._syncStatus(parentCmd);
 
         cc.renderer.pushRenderCommand(this._rendererSaveCmd);
@@ -154,7 +148,6 @@
             cc.ProtectedNode.prototype.visit.call(node, parentCmd);
             cc.renderer.pushRenderCommand(this._rendererSaveCmdSprite);
         }
-
         node._clippingStencil.visit(this);
 
         cc.renderer.pushRenderCommand(this._rendererClipCmd);
