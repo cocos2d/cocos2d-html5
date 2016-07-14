@@ -51,33 +51,6 @@
         //else
         if (stencil instanceof cc.DrawNode) {
             drawNodeAsStencil = this._drawNodeAsStencil = true;
-            if(stencil._buffer){
-                for(var i=0; i<stencil._buffer.length; i++){
-                    stencil._buffer[i].isFill = false;
-                    stencil._buffer[i].isStroke = false;
-                }
-            }
-
-            stencil._renderCmd.rendering = function (ctx, scaleX, scaleY) {
-                scaleX = scaleX || cc.view.getScaleX();
-                scaleY = scaleY ||cc.view.getScaleY();
-                var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
-
-                var t = this._transform;
-                //wrapper.setTransform(t, scaleX, scaleY);
-                context.transform(t.a, t.b, t.c, t.d, t.tx, t.ty);
-                for (var i = 0; i < stencil._buffer.length; i++) {
-                    var vertices = stencil._buffer[i].verts;
-                    //TODO: need support circle etc
-                    //cc.assert(cc.vertexListIsClockwise(vertices),
-                    //    "Only clockwise polygons should be used as stencil");
-
-                    var firstPoint = vertices[0];
-                    context.moveTo(firstPoint.x, -firstPoint.y );
-                    for (var j = vertices.length - 1; j > 0; j--)
-                        context.lineTo(vertices[j].x , -vertices[j].y );
-                }
-            };
         } else{
             stencil._parent = this._node;
         }
@@ -135,7 +108,11 @@
             this._setStencilCompositionOperation(node._stencil);
         } else if (this._drawNodeAsStencil) {
             context.beginPath();                                                         //save for clip
-            wrapper.setTransform(this._worldTransform, scaleX, scaleY);
+            var tm = this._worldTransform;
+            var stencilLocalTM = this._node._stencil._renderCmd._transform;
+            var stencilWorldTM = this._node._stencil._renderCmd._worldTransform;
+            stencilWorldTM = cc.affineTransformConcat(tm, stencilLocalTM);
+            wrapper.setTransform(stencilWorldTM, scaleX, scaleY);
 
             //draw elements
             var stencilBuffer = this._node._stencil._buffer;
