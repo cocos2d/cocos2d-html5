@@ -140,10 +140,10 @@
         sw = locTextureCoord.width;
         sh = locTextureCoord.height;
 
-        x = locX * scaleX;
-        y = locY * scaleY;
-        w = locWidth * scaleX;
-        h = locHeight * scaleY;
+        x = locX;
+        y = locY;
+        w = locWidth;
+        h = locHeight;
 
         if (texture && texture._htmlElementObj) {
             image = texture._htmlElementObj;

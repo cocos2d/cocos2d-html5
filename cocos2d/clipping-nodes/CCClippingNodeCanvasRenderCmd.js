@@ -64,7 +64,8 @@
                 var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
 
                 var t = this._transform;
-                context.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
+                //wrapper.setTransform(t, scaleX, scaleY);
+                context.transform(t.a, t.b, t.c, t.d, t.tx, t.ty);
                 for (var i = 0; i < stencil._buffer.length; i++) {
                     var vertices = stencil._buffer[i].verts;
                     //TODO: need support circle etc
@@ -72,9 +73,9 @@
                     //    "Only clockwise polygons should be used as stencil");
 
                     var firstPoint = vertices[0];
-                    context.moveTo(firstPoint.x * scaleX, -firstPoint.y * scaleY);
+                    context.moveTo(firstPoint.x, -firstPoint.y );
                     for (var j = vertices.length - 1; j > 0; j--)
-                        context.lineTo(vertices[j].x * scaleX, -vertices[j].y * scaleY);
+                        context.lineTo(vertices[j].x , -vertices[j].y );
                 }
             };
         } else{
@@ -141,9 +142,9 @@
             for(var index = 0; index < stencilBuffer.length; ++index) {
                 var vertices = stencilBuffer[index].verts;
                 if(vertices.length < 3) continue;
-                context.moveTo(vertices[0].x * scaleX, -vertices[0].y * scaleY);
+                context.moveTo(vertices[0].x, -vertices[0].y );
                 for(var vIndex = 1; vIndex < vertices.length; ++vIndex) {
-                    context.lineTo(vertices[vIndex].x * scaleX, -vertices[vIndex].y * scaleY);
+                    context.lineTo(vertices[vIndex].x , -vertices[vIndex].y );
                 }
             }
             //end draw elements
