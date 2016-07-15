@@ -153,7 +153,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
                     Math.ceil(node._dimensions.height * pixelRatio + locStrokeShadowOffsetY));
             }
         }
-        if(node._getFontStyle() !== "normal"){    //add width for 'italic' and 'oblique'
+        if (node._getFontStyle() !== "normal") {    //add width for 'italic' and 'oblique'
             locSize.width = Math.ceil(locSize.width + node._fontSize * 0.3);
         }
         if (this._strings.length === 0) {
