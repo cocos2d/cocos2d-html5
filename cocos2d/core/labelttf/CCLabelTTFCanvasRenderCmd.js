@@ -92,6 +92,16 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             + (0 | (db * locStrokeColor.b)) + ", 1)";
     };
 
+    var localBB = new cc.Rect();
+    proto.getLocalBB = function () {
+        var node = this._node;
+        localBB.x = localBB.y = 0;
+        var pixelRatio = cc.view.getDevicePixelRatio();
+        localBB.width = node._getWidth() * pixelRatio;
+        localBB.height = node._getHeight() * pixelRatio;
+        return localBB;
+    };
+
     proto._updateTTF = function () {
         var node = this._node;
         var pixelRatio = cc.view.getDevicePixelRatio();
