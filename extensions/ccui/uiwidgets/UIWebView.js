@@ -291,7 +291,7 @@ ccui.WebView.EventType = {
     proto.constructor = ccui.WebView.RenderCmd;
 
     proto.transform = function (parentCmd, recursive) {
-        RenderCmd.prototype.transform.call(this, parentCmd, recursive);
+        this.originTransform(parentCmd, recursive);
         this.updateMatrix(this._worldTransform, cc.view._scaleX, cc.view._scaleY);
     };
     
