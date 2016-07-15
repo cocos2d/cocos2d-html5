@@ -25,8 +25,8 @@
 cc.rendererCanvas = {
     childrenOrderDirty: true,
     assignedZ: 0,
-    assignedZStep: 1/10000,
-    
+    assignedZStep: 1 / 10000,
+
     _transformNodePool: [],                              //save nodes transform dirty
     _renderCmds: [],                                     //save renderer commands
 
@@ -41,14 +41,14 @@ cc.rendererCanvas = {
     _allNeedDraw: true,
     _enableDirtyRegion: false,
     _debugDirtyRegion: false,
-    _canUseDirtyRegion : false,
+    _canUseDirtyRegion: false,
 
     getRenderCmd: function (renderableObject) {
         //TODO Add renderCmd pool here
         return renderableObject._createRenderCmd();
     },
 
-    enableDirtyRegion : function (enabled) {
+    enableDirtyRegion: function (enabled) {
         this._enableDirtyRegion = enabled;
     },
 
@@ -56,65 +56,65 @@ cc.rendererCanvas = {
         return this._enableDirtyRegion;
     },
 
-        _collectDirtyRegion: function() {
-                 //collect dirtyList
-                      var locCmds = this._renderCmds, i, len;
-                  var dirtyRegion = this._dirtyRegion;
-                 for (i = 0, len = locCmds.length; i < len; i++) {
-                          var cmd = locCmds[i];
-                          var regionFlag  = cmd._regionFlag;
-                          var oldRegion = cmd._oldRegion;
-                          var currentRegion = cmd._currentRegion;
-                         if(regionFlag > cc.Node.CanvasRenderCmd.RegionStatus.NotDirty) {
-                                 //add
-                        (!currentRegion.isEmpty()) && dirtyRegion.addRegion(currentRegion);
-                                 if(cmd._regionFlag > cc.Node.CanvasRenderCmd.RegionStatus.Dirty) {
-                                            (!oldRegion.isEmpty()) && dirtyRegion.addRegion(oldRegion);
-                        }
-                        cmd._regionFlag = cc.Node.CanvasRenderCmd.RegionStatus.NotDirty;
-                    }
+    _collectDirtyRegion: function () {
+        //collect dirtyList
+        var locCmds = this._renderCmds, i, len;
+        var dirtyRegion = this._dirtyRegion;
+        for (i = 0, len = locCmds.length; i < len; i++) {
+            var cmd = locCmds[i];
+            var regionFlag = cmd._regionFlag;
+            var oldRegion = cmd._oldRegion;
+            var currentRegion = cmd._currentRegion;
+            if (regionFlag > cc.Node.CanvasRenderCmd.RegionStatus.NotDirty) {
+                //add
+                (!currentRegion.isEmpty()) && dirtyRegion.addRegion(currentRegion);
+                if (cmd._regionFlag > cc.Node.CanvasRenderCmd.RegionStatus.Dirty) {
+                    (!oldRegion.isEmpty()) && dirtyRegion.addRegion(oldRegion);
+                }
+                cmd._regionFlag = cc.Node.CanvasRenderCmd.RegionStatus.NotDirty;
+            }
 
-                    }
-            },
+        }
+    },
 
-        _beginDrawDirtyRegion: function(ctxWrapper) {
-                 var ctx = ctxWrapper.getContext();
-            var dirtyList = this._dirtyRegion.getDirtyRegions();
-            ctx.save();
-                 //add clip
-                     var scaleX = ctxWrapper._scaleX;
-            var scaleY = ctxWrapper._scaleY;
-                  ctxWrapper.setTransform({a:1, b:0, c:0, d:1, tx:0,ty:0}, scaleX, scaleY);
-                      ctx.beginPath();
-                 for(var index = 0, count = dirtyList.length; index < count; ++index) {
-                          var region = dirtyList[index];
-                          ctx.rect(region._minX * scaleX , -region._maxY * scaleY, region._width * scaleX, region._height * scaleY);
-                      }
-                ctx.clip();
-                  //end add clip
-        },
-
-        _endDrawDirtyRegion: function(ctx) {
-              ctx.restore();
-            },
-
-    _debugDrawDirtyRegion: function(ctxWrapper) {
-        if(!this._debugDirtyRegion) return;
+    _beginDrawDirtyRegion: function (ctxWrapper) {
         var ctx = ctxWrapper.getContext();
-            var dirtyList = this._dirtyRegion.getDirtyRegions();
-             //add clip
-              var scaleX = ctxWrapper._scaleX;
-           var scaleY = ctxWrapper._scaleY;
-             ctxWrapper.setTransform({a:1, b:0, c:0, d:1, tx:0,ty:0}, scaleX, scaleY);
-               ctx.beginPath();
-             for(var index = 0, count = dirtyList.length; index < count; ++index) {
-                 var region = dirtyList[index];
-                 ctx.rect(region._minX * scaleX, -region._maxY * scaleY, region._width * scaleX, region._height * scaleY);
-              }
-         var oldstyle = ctx.fillStyle;
-         ctx.fillStyle = 'green';
-            ctx.fill();
-         ctx.fillStyle = oldstyle;
+        var dirtyList = this._dirtyRegion.getDirtyRegions();
+        ctx.save();
+        //add clip
+        var scaleX = ctxWrapper._scaleX;
+        var scaleY = ctxWrapper._scaleY;
+        ctxWrapper.setTransform({a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0}, scaleX, scaleY);
+        ctx.beginPath();
+        for (var index = 0, count = dirtyList.length; index < count; ++index) {
+            var region = dirtyList[index];
+            ctx.rect(region._minX , -region._maxY , region._width , region._height );
+        }
+        ctx.clip();
+        //end add clip
+    },
+
+    _endDrawDirtyRegion: function (ctx) {
+        ctx.restore();
+    },
+
+    _debugDrawDirtyRegion: function (ctxWrapper) {
+        if (!this._debugDirtyRegion) return;
+        var ctx = ctxWrapper.getContext();
+        var dirtyList = this._dirtyRegion.getDirtyRegions();
+        //add clip
+        var scaleX = ctxWrapper._scaleX;
+        var scaleY = ctxWrapper._scaleY;
+        ctxWrapper.setTransform({a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0}, scaleX, scaleY);
+        ctx.beginPath();
+        for (var index = 0, count = dirtyList.length; index < count; ++index) {
+            var region = dirtyList[index];
+            ctx.rect(region._minX, -region._maxY , region._width , region._height );
+        }
+        var oldstyle = ctx.fillStyle;
+        ctx.fillStyle = 'green';
+        ctx.fill();
+        ctx.fillStyle = oldstyle;
         //end add clip
     },
     /**
@@ -129,12 +129,12 @@ cc.rendererCanvas = {
 
         var scaleX = cc.view.getScaleX(),
             scaleY = cc.view.getScaleY();
-        wrapper.setViewScale(scaleX,scaleY);
+        wrapper.setViewScale(scaleX, scaleY);
         wrapper.computeRealOffsetY();
         var dirtyList = this._dirtyRegion.getDirtyRegions();
         var locCmds = this._renderCmds, i, len;
         var allNeedDraw = this._allNeedDraw || !this._enableDirtyRegion || !this._canUseDirtyRegion;
-        if(!allNeedDraw) {
+        if (!allNeedDraw) {
             this._collectDirtyRegion();
             this._beginDrawDirtyRegion(wrapper);
         }
@@ -153,22 +153,22 @@ cc.rendererCanvas = {
             var cmd = locCmds[i];
             var needRendering = false;
             var cmdRegion = cmd._currentRegion;
-            if(!cmdRegion || allNeedDraw) {
+            if (!cmdRegion || allNeedDraw) {
                 needRendering = true;
             } else {
-                for(var index = 0, count = dirtyList.length; index < count; ++index) {
-                    if(dirtyList[index].intersects(cmdRegion)) {
+                for (var index = 0, count = dirtyList.length; index < count; ++index) {
+                    if (dirtyList[index].intersects(cmdRegion)) {
                         needRendering = true;
                         break;
                     }
                 }
             }
-            if(needRendering) {
+            if (needRendering) {
                 cmd.rendering(wrapper, scaleX, scaleY);
             }
         }
 
-        if(!allNeedDraw) {
+        if (!allNeedDraw) {
             //draw debug info for dirty region if it is needed
             this._debugDrawDirtyRegion(wrapper);
             this._endDrawDirtyRegion(ctx);
@@ -209,7 +209,7 @@ cc.rendererCanvas = {
         this._isCacheToCanvasOn = true;
         renderTextureID = renderTextureID || 0;
         this._cacheToCanvasCmds[renderTextureID] = [];
-        if(this._cacheInstanceIds.indexOf(renderTextureID) === -1)
+        if (this._cacheInstanceIds.indexOf(renderTextureID) === -1)
             this._cacheInstanceIds.push(renderTextureID);
         this._currentID = renderTextureID;
     },
@@ -271,9 +271,9 @@ cc.rendererCanvas = {
     },
 
     pushRenderCommand: function (cmd) {
-        if(!cmd.needDraw())
+        if (!cmd.needDraw())
             return;
-        if(!cmd._canUseDirtyRegion) {
+        if (!cmd._canUseDirtyRegion) {
             this._canUseDirtyRegion = false;
         }
         if (this._isCacheToCanvasOn) {
@@ -306,7 +306,7 @@ cc.rendererCanvas = {
 
     var proto = cc.CanvasContextWrapper.prototype;
 
-    proto.resetCache = function(){
+    proto.resetCache = function () {
         var context = this._context;
         //call it after resize cc._canvas, because context will reset.
         this._currentAlpha = context.globalAlpha;
@@ -316,23 +316,23 @@ cc.rendererCanvas = {
         this._realOffsetY = this._context.canvas.height + this._offsetY;
     };
 
-    proto.setOffset = function(x, y){
+    proto.setOffset = function (x, y) {
         this._offsetX = x;
         this._offsetY = y;
         this._realOffsetY = this._context.canvas.height + this._offsetY;
     };
 
-    proto.computeRealOffsetY = function(){
+    proto.computeRealOffsetY = function () {
         this._realOffsetY = this._context.canvas.height + this._offsetY;
     };
 
-    proto.setViewScale = function(scaleX, scaleY){
+    proto.setViewScale = function (scaleX, scaleY) {
         //call it at cc.renderCanvas.rendering
         this._scaleX = scaleX;
         this._scaleY = scaleY;
     };
 
-    proto.getContext = function(){
+    proto.getContext = function () {
         return this._context;
     };
 
@@ -357,7 +357,7 @@ cc.rendererCanvas = {
         }
     };
 
-    proto.setCompositeOperation = function(compositionOperation){
+    proto.setCompositeOperation = function (compositionOperation) {
         if (this._saveCount > 0) {
             this._context.globalCompositeOperation = compositionOperation;
         } else {
@@ -368,7 +368,7 @@ cc.rendererCanvas = {
         }
     };
 
-    proto.setFillStyle = function(fillStyle){
+    proto.setFillStyle = function (fillStyle) {
         if (this._saveCount > 0) {
             this._context.fillStyle = fillStyle;
         } else {
@@ -379,7 +379,7 @@ cc.rendererCanvas = {
         }
     };
 
-    proto.setStrokeStyle = function(strokeStyle){
+    proto.setStrokeStyle = function (strokeStyle) {
         if (this._saveCount > 0) {
             this._context.strokeStyle = strokeStyle;
         } else {
@@ -390,7 +390,7 @@ cc.rendererCanvas = {
         }
     };
 
-    proto.setTransform = function(t, scaleX, scaleY){
+    proto.setTransform = function (t, scaleX, scaleY) {
         if (this._armatureMode > 0) {
             //ugly for armature
             this.restore();
@@ -401,12 +401,12 @@ cc.rendererCanvas = {
         }
     };
 
-    proto._switchToArmatureMode = function(enable, t, scaleX, scaleY){
-        if(enable){
+    proto._switchToArmatureMode = function (enable, t, scaleX, scaleY) {
+        if (enable) {
             this._armatureMode++;
             this._context.setTransform(t.a, t.c, t.b, t.d, this._offsetX + t.tx * scaleX, this._realOffsetY - (t.ty * scaleY));
             this.save();
-        }else{
+        } else {
             this._armatureMode--;
             this.restore();
         }

@@ -27,12 +27,13 @@
     ccui.Layout.CanvasRenderCmd = function(renderable){
         ccui.ProtectedNode.CanvasRenderCmd.call(this, renderable);
         this._needDraw = false;
-        
-        this._locCache = null;
+
         this._rendererSaveCmd = new cc.CustomRenderCmd(this, this._onRenderSaveCmd);
-        this._rendererSaveCmdSprite = new cc.CustomRenderCmd(this, this._onRenderSaveSpriteCmd);
         this._rendererClipCmd = new cc.CustomRenderCmd(this, this._onRenderClipCmd);
         this._rendererRestoreCmd = new cc.CustomRenderCmd(this, this._onRenderRestoreCmd);
+        this._rendererSaveCmd._canUseDirtyRegion = true;
+        this._rendererClipCmd._canUseDirtyRegion = true;
+        this._rendererRestoreCmd._canUseDirtyRegion = true;
     };
 
     var proto = ccui.Layout.CanvasRenderCmd.prototype = Object.create(ccui.ProtectedNode.CanvasRenderCmd.prototype);
@@ -76,11 +77,6 @@
         wrapper.setTransform(this._worldTransform, scaleX, scaleY);
     };
 
-    proto._onRenderSaveSpriteCmd = function(ctx){
-        var wrapper = ctx || cc._renderContext;
-        //var node = this._node;
-    };
-
     proto._onRenderClipCmd = function(ctx){
         var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
         wrapper.restore();
@@ -95,6 +91,7 @@
 
     proto.rebindStencilRendering = function(stencil){
         stencil._renderCmd.rendering = this.__stencilDraw;
+        stencil._renderCmd._canUseDirtyRegion = true;
     };
 
     proto.__stencilDraw = function(ctx,scaleX, scaleY){          //Only for Canvas
