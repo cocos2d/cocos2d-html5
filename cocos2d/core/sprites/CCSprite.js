@@ -802,6 +802,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if (!locTextureLoaded) {
             _t._textureLoaded = false;
             newFrame.addEventListener("load", function (sender) {
+                _t.setNodeDirty(true);
                 _t._textureLoaded = true;
                 var locNewTexture = sender.getTexture();
                 if (locNewTexture !== _t._texture)
@@ -913,6 +914,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         }else{
             this._renderCmd._setTexture(null);
             texture.addEventListener("load", function(){
+                this.setNodeDirty(true);
                 this._setTexture(texture, isFileName);
                 this.setColor(this._realColor);
                 this._textureLoaded = true;
