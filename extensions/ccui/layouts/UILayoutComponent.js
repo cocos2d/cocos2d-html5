@@ -586,9 +586,11 @@ ccui.LayoutComponent.bindLayoutComponent = function (node) {
         return layout;
 
     layout = new ccui.LayoutComponent();
-    if (layout && layout.init()) {
-        node.addComponent(layout);
-        return layout;
-    }
-    return null;
+    layout.init();
+    node.addComponent(layout);
+    node.addEventListener("load", function () {
+        layout.refreshLayout();
+    }, this);
+
+    return layout;
 };
