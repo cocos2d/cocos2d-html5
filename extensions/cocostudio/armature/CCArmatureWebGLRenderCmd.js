@@ -60,9 +60,10 @@
                             if (func.src !== alphaPremultiplied.src || func.dst !== alphaPremultiplied.dst)
                                 selNode.setBlendFunc(selBone.getBlendFunc());
                             else {
+                                var tex = selNode.getTexture();
                                 if (node._blendFunc.src === alphaPremultiplied.src && 
                                     node._blendFunc.dst === alphaPremultiplied.dst && 
-                                    !selNode.getTexture().hasPremultipliedAlpha()) {
+                                    tex && !tex.hasPremultipliedAlpha()) {
                                     selNode.setBlendFunc(alphaNonPremultipled);
                                 }
                                 else {
@@ -138,13 +139,18 @@
         parentCmd = parentCmd || this.getParentRenderCmd();
         if (parentCmd)
             this._curLevel = parentCmd._curLevel + 1;
-        this.updateStatus(parentCmd);
+
+        this._syncStatus(parentCmd);
 
         node.sortAllChildren();
-
         var renderer = cc.renderer,
             children = node._children, child,
             i, len = children.length;
+
+        if (isNaN(node._customZ)) {
+            node._vertexZ = renderer.assignedZ;
+            renderer.assignedZ += renderer.assignedZStep;
+        }
 
         for (i = 0; i < len; i++) {
             child = children[i];
@@ -159,12 +165,7 @@
             }
         }
 
-        if (isNaN(node._customZ)) {
-            node._vertexZ = renderer.assignedZ;
-            renderer.assignedZ += renderer.assignedZStep;
-        }
         renderer.pushRenderCommand(this);
-        
         for (; i < len; i++) {
             child = children[i];
             if (isNaN(child._customZ)) {
