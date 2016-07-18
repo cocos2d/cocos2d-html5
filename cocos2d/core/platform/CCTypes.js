@@ -354,8 +354,8 @@ cc.V3F_C4B_T2F = function (vertices, colors, texCoords, arrayBuffer, offset) {
         new cc.Vertex3F(0, 0, 0, locArrayBuffer, locOffset);
 
     locOffset += cc.Vertex3F.BYTES_PER_ELEMENT;
-    this._colors = colors ? cc.color(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset) :
-        cc.color(0, 0, 0, 0, locArrayBuffer, locOffset);
+    this._colors = colors ? new cc.Color(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset) :
+        new cc.Color(0, 0, 0, 0, locArrayBuffer, locOffset);
 
     locOffset += cc.Color.BYTES_PER_ELEMENT;
     this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset) :
