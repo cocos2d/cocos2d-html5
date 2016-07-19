@@ -42,6 +42,8 @@ cc.rendererCanvas = {
     _enableDirtyRegion: false,
     _debugDirtyRegion: false,
     _canUseDirtyRegion: false,
+    //max dirty Region count, default is 10
+    _dirtyRegionCountThreshold: 10,
 
     getRenderCmd: function (renderableObject) {
         //TODO Add renderCmd pool here
@@ -56,25 +58,38 @@ cc.rendererCanvas = {
         return this._enableDirtyRegion;
     },
 
+    setDirtyRegionCountThreshold: function(threshold) {
+        this._dirtyRegionCountThreshold = threshold;
+    },
+
     _collectDirtyRegion: function () {
         //collect dirtyList
         var locCmds = this._renderCmds, i, len;
         var dirtyRegion = this._dirtyRegion;
+        var dirtryRegionCount = 0;
+        var result = true;
         for (i = 0, len = locCmds.length; i < len; i++) {
             var cmd = locCmds[i];
             var regionFlag = cmd._regionFlag;
             var oldRegion = cmd._oldRegion;
             var currentRegion = cmd._currentRegion;
             if (regionFlag > cc.Node.CanvasRenderCmd.RegionStatus.NotDirty) {
+                ++dirtryRegionCount;
+                if(dirtryRegionCount > this._dirtyRegionCountThreshold)
+                    result = false;
                 //add
-                (!currentRegion.isEmpty()) && dirtyRegion.addRegion(currentRegion);
-                if (cmd._regionFlag > cc.Node.CanvasRenderCmd.RegionStatus.Dirty) {
-                    (!oldRegion.isEmpty()) && dirtyRegion.addRegion(oldRegion);
+                if(result) {
+                    (!currentRegion.isEmpty()) && dirtyRegion.addRegion(currentRegion);
+                    if (cmd._regionFlag > cc.Node.CanvasRenderCmd.RegionStatus.Dirty) {
+                        (!oldRegion.isEmpty()) && dirtyRegion.addRegion(oldRegion);
+                    }
                 }
                 cmd._regionFlag = cc.Node.CanvasRenderCmd.RegionStatus.NotDirty;
             }
 
         }
+
+        return result;
     },
 
     _beginDrawDirtyRegion: function (ctxWrapper) {
@@ -134,8 +149,14 @@ cc.rendererCanvas = {
         var dirtyList = this._dirtyRegion.getDirtyRegions();
         var locCmds = this._renderCmds, i, len;
         var allNeedDraw = this._allNeedDraw || !this._enableDirtyRegion || !this._canUseDirtyRegion;
+        var collectResult = true;
         if (!allNeedDraw) {
-            this._collectDirtyRegion();
+            collectResult = this._collectDirtyRegion();
+        }
+
+        allNeedDraw = allNeedDraw || (!collectResult);
+
+        if(!allNeedDraw) {
             this._beginDrawDirtyRegion(wrapper);
         }
 
