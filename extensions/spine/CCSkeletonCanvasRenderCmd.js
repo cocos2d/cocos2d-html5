@@ -133,7 +133,7 @@
         var rendererObject = attachment.rendererObject;
         var texture = rendererObject.page._texture;
         var sprite = new cc.Sprite();
-        texture.addEventListener('load', function () {
+        var loaded = function () {
             var rect = new cc.Rect(rendererObject.x, rendererObject.y, rendererObject.width, rendererObject.height);
             sprite.initWithTexture(texture, rect, rendererObject.rotate, false);
             sprite._rect.width = attachment.width;
@@ -142,8 +142,12 @@
             sprite.setRotation(-attachment.rotation);
             sprite.setScale(rendererObject.width / rendererObject.originalWidth * attachment.scaleX,
                 rendererObject.height / rendererObject.originalHeight * attachment.scaleY);
-
-        }, this);
+        };
+        if (texture.isLoaded()) {
+            loaded();
+        } else {
+            texture.addEventListener('load', loaded, this);
+        }
         slot.sprites = slot.sprites || {};
         slot.sprites[rendererObject.name] = sprite;
         return sprite;
