@@ -244,14 +244,14 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         // draw the scene
         if (this._runningScene) {
-            if (renderer.childrenOrderDirty === true) {
+            if (renderer.childrenOrderDirty) {
                 cc.renderer.clearRenderCommands();
                 cc.renderer.assignedZ = 0;
                 this._runningScene._renderCmd._curLevel = 0;                          //level start from 0;
                 this._runningScene.visit();
                 renderer.resetFlag();
             } 
-            else if (renderer.transformDirty() === true) {
+            else if (renderer.transformDirty()) {
                 renderer.transform();
             }
         }

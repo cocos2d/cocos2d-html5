@@ -34,11 +34,27 @@
     var proto = ccui.Scale9Sprite.WebGLRenderCmd.prototype = Object.create(cc.Node.WebGLRenderCmd.prototype);
     proto.constructor = ccui.Scale9Sprite.WebGLRenderCmd;
 
+    proto.setShaderProgram = function (shaderProgram) {
+        var node = this._node;
+        if (node._scale9Enabled) {
+            var renderers = node._renderers, l = renderers.length;
+            for (var i = 0; i < l; i++) {
+                if (renderers[i]) {
+                    renderers[i]._renderCmd._shaderProgram = shaderProgram;
+                }
+            }
+        }
+        else {
+            node._scale9Image._renderCmd._shaderProgram = shaderProgram;
+        }
+        this._shaderProgram = shaderProgram;
+    };
+
     proto.visit = function(parentCmd) {
         var node = this._node;
-        if(!node._visible)
+        if (!node._visible)
             return;
-        if(!node._scale9Image)
+        if (!node._scale9Image)
             return;
 
         if (node._positionsAreDirty) {
@@ -52,12 +68,12 @@
 
         this._syncStatus(parentCmd);
 
-        if(node._scale9Enabled) {
+        if (node._scale9Enabled) {
             var locRenderers = node._renderers;
             var rendererLen = locRenderers.length;
-            for(var j=0; j < rendererLen; j++) {
+            for (var j=0; j < rendererLen; j++) {
                 var renderer = locRenderers[j];
-                if(renderer) {
+                if (renderer) {
                     var tempCmd = renderer._renderCmd;
                     tempCmd.visit(this);
                 }
@@ -158,13 +174,11 @@
     };
 
     proto.setState = function (state) {
-        var scale9Image = this._node._scale9Image;
-        if(scale9Image == null)
-            return;
         if (state === ccui.Scale9Sprite.state.NORMAL) {
-            scale9Image.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
-        } else if (state === ccui.Scale9Sprite.state.GRAY) {
-            scale9Image.setShaderProgram(ccui.Scale9Sprite.WebGLRenderCmd._getGrayShaderProgram());
+            this.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_SPRITE_POSITION_TEXTURECOLOR));
+        }
+        else if (state === ccui.Scale9Sprite.state.GRAY) {
+            this.setShaderProgram(ccui.Scale9Sprite.WebGLRenderCmd._getGrayShaderProgram());
         }
     };
 
@@ -175,7 +189,7 @@
             return grayShader;
 
         grayShader = new cc.GLProgram();
-        grayShader.initWithVertexShaderByteArray(cc.SHADER_POSITION_TEXTURE_COLOR_VERT, ccui.Scale9Sprite.WebGLRenderCmd._grayShaderFragment);
+        grayShader.initWithVertexShaderByteArray(cc.SHADER_SPRITE_POSITION_TEXTURE_COLOR_VERT, ccui.Scale9Sprite.WebGLRenderCmd._grayShaderFragment);
         grayShader.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
         grayShader.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
         grayShader.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);

@@ -245,8 +245,15 @@ ccui.WebView.EventType = {
 
 (function(polyfill){
 
+    var RenderCmd = null;
+    if (cc._renderType === cc.game.RENDER_TYPE_WEBGL) {
+        RenderCmd = cc.Node.WebGLRenderCmd;
+    } else {
+        RenderCmd = cc.Node.CanvasRenderCmd;
+    }
+
     ccui.WebView.RenderCmd = function(node){
-        cc.Node.CanvasRenderCmd.call(this, node);
+        RenderCmd.call(this, node);
 
         this._div = null;
         this._iframe = null;
@@ -280,9 +287,14 @@ ccui.WebView.EventType = {
         this.initStyle();
     };
 
-    var proto = ccui.WebView.RenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);
+    var proto = ccui.WebView.RenderCmd.prototype = Object.create(RenderCmd.prototype);
     proto.constructor = ccui.WebView.RenderCmd;
 
+    proto.transform = function (parentCmd, recursive) {
+        this.originTransform(parentCmd, recursive);
+        this.updateMatrix(this._worldTransform, cc.view._scaleX, cc.view._scaleY);
+    };
+    
     proto.updateStatus = function(){
         polyfill.devicePixelRatio = cc.view.isRetinaEnabled();
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;

@@ -222,17 +222,18 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         this._capInsets = cc.rect(0, 0, 0, 0);
         this._renderers = [];
 
-        if(file != undefined){
-            if(file instanceof cc.SpriteFrame)
+        if (file !== undefined) {
+            if (file instanceof cc.SpriteFrame)
                 this.initWithSpriteFrame(file, rectOrCapInsets);
-            else{
+            else {
                 var frame = cc.spriteFrameCache.getSpriteFrame(file);
-                if(frame != null)
+                if (frame)
                     this.initWithSpriteFrame(frame, rectOrCapInsets);
                 else
                     this.initWithFile(file, rectOrCapInsets, capInsets);
             }
-        }else{
+        }
+        else {
             this.init();
         }
     },
@@ -992,15 +993,18 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
      * @since v3.3
      * @param {Number} state
      */
-    setState: function(state){
-        this._renderCmd.setState(state);
+    setState: function (state) {
+        if (state === ccui.Scale9Sprite.state.NORMAL || state === ccui.Scale9Sprite.state.GRAY) {
+            this._brightState = state;
+            this._renderCmd.setState(state);
+        }
     },
     /**
      * @brief Toggle 9-slice feature.
      * If Scale9Sprite is 9-slice disabled, the Scale9Sprite will rendered as a normal sprite.
      * @param {boolean}    enabled    True to enable 9-slice, false otherwise.
      */
-    setScale9Enabled: function(enabled){
+    setScale9Enabled: function (enabled) {
         if (this._scale9Enabled === enabled)
         {
             return;

@@ -1903,9 +1903,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.AffineTransform}
      */
     getNodeToWorldTransform: function () {
-        var t = this.getNodeToParentTransform();        
-        for (var p = this._parent; p !== null; p = p.parent)      
-            t = cc.affineTransformConcat(t, p.getNodeToParentTransform());        
+        var t = this.getNodeToParentTransform();
+        for (var p = this._parent; p !== null; p = p.parent)
+            t = cc.affineTransformConcat(t, p.getNodeToParentTransform());
         return t;
     },
 

@@ -194,6 +194,8 @@ ccs.load = function(file, path){
 };
 ccs.load.validate = {};
 
+ccs.load.preload = true;
+
 /**
  * Analysis of studio JSON file and layout ui widgets by visible size.
  * The incoming file name, parse out the corresponding object
@@ -255,6 +257,8 @@ cc.loader.register(["json"], {
                     list = [],
                     tmpUrl, normalUrl;
                 for(var i=0; i<UsedResources.length; i++){
+                    if (!ccs.load.preload && /\.(png|jpg$)/.test(UsedResources[i]))
+                        continue;
                     tmpUrl = path.join(dirname, UsedResources[i]);
                     normalUrl = path._normalize(tmpUrl);
                     if(!ccs.load.validate[normalUrl]){
