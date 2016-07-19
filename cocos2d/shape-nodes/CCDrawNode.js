@@ -204,7 +204,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 this._localBB = new cc.Rect();
             },
 
-            _setLocalBB: function(rect) {
+            setLocalBB: function(rect) {
                 this._localBB = cc.rect(rect);
             },
             /**
