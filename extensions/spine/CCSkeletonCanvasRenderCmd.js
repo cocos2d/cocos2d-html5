@@ -129,24 +129,27 @@
         }
     };
 
+    proto._loaded = function (sprite, texture, rendererObject, attachment) {
+        var rect = new cc.Rect(rendererObject.x, rendererObject.y, rendererObject.width, rendererObject.height);
+        sprite.initWithTexture(texture, rect, rendererObject.rotate, false);
+        sprite._rect.width = attachment.width;
+        sprite._rect.height = attachment.height;
+        sprite.setContentSize(attachment.width, attachment.height);
+        sprite.setRotation(-attachment.rotation);
+        sprite.setScale(rendererObject.width / rendererObject.originalWidth * attachment.scaleX,
+            rendererObject.height / rendererObject.originalHeight * attachment.scaleY);
+    };
+
     proto._createSprite = function(slot, attachment){
         var rendererObject = attachment.rendererObject;
         var texture = rendererObject.page._texture;
         var sprite = new cc.Sprite();
-        var loaded = function () {
-            var rect = new cc.Rect(rendererObject.x, rendererObject.y, rendererObject.width, rendererObject.height);
-            sprite.initWithTexture(texture, rect, rendererObject.rotate, false);
-            sprite._rect.width = attachment.width;
-            sprite._rect.height = attachment.height;
-            sprite.setContentSize(attachment.width, attachment.height);
-            sprite.setRotation(-attachment.rotation);
-            sprite.setScale(rendererObject.width / rendererObject.originalWidth * attachment.scaleX,
-                rendererObject.height / rendererObject.originalHeight * attachment.scaleY);
-        };
         if (texture.isLoaded()) {
-            loaded();
+            proto._loaded(sprite, texture, rendererObject, attachment);
         } else {
-            texture.addEventListener('load', loaded, this);
+            texture.addEventListener('load', function () {
+                proto._loaded(sprite, texture, rendererObject, attachment);
+            }, this);
         }
         slot.sprites = slot.sprites || {};
         slot.sprites[rendererObject.name] = sprite;
