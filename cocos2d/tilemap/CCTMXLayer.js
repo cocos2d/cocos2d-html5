@@ -114,7 +114,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var tex = this._textures[texId];
         if (!tex.isLoaded()) {
             tex.addEventListener("load", function () {
-                this._fillTextureGrids(tileset, tex);
+                this._fillTextureGrids(tileset, texId);
             }, this);
             return;
         }

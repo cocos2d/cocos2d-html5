@@ -80,6 +80,14 @@ ccui.LabelBMFont = ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFo
         if(!locRenderer._textureLoaded){
              locRenderer.addEventListener("load", function(){
                  _self.setFntFile(_self._fntFileName);
+                 var parent = _self.parent;
+                 while (parent) {
+                     if (parent.requestDoLayout) {
+                         parent.requestDoLayout();
+                         break;
+                     }
+                     parent = parent.parent;
+                 }
              });
         }
     },
