@@ -538,8 +538,8 @@ cc.Node.RenderCmd.prototype.originTransform = cc.Node.RenderCmd.prototype.transf
     proto.getLocalBB = function () {
         var node = this._node;
         localBB.x = localBB.y = 0;
-        localBB.width = node._getWidth();
-        localBB.height = node._getHeight();
+        localBB.width = node._contentSize.width;
+        localBB.height = node._contentSize.height;
         return localBB;
     };
 

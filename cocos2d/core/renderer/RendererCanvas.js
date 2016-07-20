@@ -68,23 +68,24 @@ cc.rendererCanvas = {
         var dirtyRegion = this._dirtyRegion;
         var dirtryRegionCount = 0;
         var result = true;
+        var localStatus = cc.Node.CanvasRenderCmd.RegionStatus;
         for (i = 0, len = locCmds.length; i < len; i++) {
             var cmd = locCmds[i];
             var regionFlag = cmd._regionFlag;
             var oldRegion = cmd._oldRegion;
             var currentRegion = cmd._currentRegion;
-            if (regionFlag > cc.Node.CanvasRenderCmd.RegionStatus.NotDirty) {
+            if (regionFlag > localStatus.NotDirty) {
                 ++dirtryRegionCount;
                 if(dirtryRegionCount > this._dirtyRegionCountThreshold)
                     result = false;
                 //add
                 if(result) {
                     (!currentRegion.isEmpty()) && dirtyRegion.addRegion(currentRegion);
-                    if (cmd._regionFlag > cc.Node.CanvasRenderCmd.RegionStatus.Dirty) {
+                    if (cmd._regionFlag > localStatus.Dirty) {
                         (!oldRegion.isEmpty()) && dirtyRegion.addRegion(oldRegion);
                     }
                 }
-                cmd._regionFlag = cc.Node.CanvasRenderCmd.RegionStatus.NotDirty;
+                cmd._regionFlag = localStatus.NotDirty;
             }
 
         }
@@ -263,7 +264,8 @@ cc.rendererCanvas = {
 
         //transform node
         for (var i = 0, len = locPool.length; i < len; i++) {
-            locPool[i].updateStatus();
+            if (locPool[i]._dirtyFlag !== 0)
+                locPool[i].updateStatus();
         }
         locPool.length = 0;
     },

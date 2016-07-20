@@ -204,8 +204,19 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 this._localBB = new cc.Rect();
             },
 
-            setLocalBB: function(rect) {
-                this._localBB = cc.rect(rect);
+            setLocalBB: function(rectorX, y, width, height) {
+                var localBB = this._localBB;
+                if(y === undefined) {
+                    localBB.x = rectorX.x;
+                    localBB.y = rectorX.y;
+                    localBB.width = rectorX.width;
+                    localBB.height = rectorX.height;
+                } else {
+                    localBB.x = rectorX;
+                    localBB.y = y;
+                    localBB.width = width;
+                    localBB.height = height;
+                }
             },
             /**
              * draws a rectangle given the origin and destination point measured in points.

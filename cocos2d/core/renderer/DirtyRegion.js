@@ -54,7 +54,7 @@ regionProto.updateArea = function () {
 
 //merge two region into one
 regionProto.union = function (target) {
-    if(this.isEmpty()) {
+    if(this._width <= 0 || this._height <= 0) {
         this.setTo(target._minX, target._minY, target._maxX, target._maxY);
         return;
     }
@@ -115,7 +115,7 @@ regionProto.isEmpty = function () {
 
 //check whether two region is intersects or not
 regionProto.intersects = function (target) {
-    if (this.isEmpty() || target.isEmpty()) {
+    if (this._width <= 0 || this._height <= 0 || target._width <= 0 || target._height <= 0) {
         return false;
     }
     var max = this._minX > target._minX ? this._minX : target._minX;
