@@ -37,6 +37,7 @@
         cc.Node.CanvasRenderCmd.call(this, renderable);
         this._isBaked = false;
         this._bakeSprite = null;
+        this._canUseDirtyRegion = true;
         this._updateCache = 2; // 2: Updated child visit 1: Rendering 0: Nothing to do
     };
 
@@ -244,7 +245,7 @@
             + (0 | curColor.b) + ", 1)");  //TODO: need cache the color string
 
         wrapper.setTransform(this._worldTransform, scaleX, scaleY);
-        context.fillRect(0, 0, locWidth * scaleX, -locHeight * scaleY);
+        context.fillRect(0, 0, locWidth , -locHeight );
 
         cc.g_NumberOfDraws++;
     };
@@ -377,7 +378,7 @@
         var locWidth = node._contentSize.width, locHeight = node._contentSize.height;
         wrapper.setCompositeOperation(this._blendFuncStr);
         wrapper.setGlobalAlpha(opacity);
-        var gradient = context.createLinearGradient(this._startPoint.x*scaleX, this._startPoint.y*scaleY, this._endPoint.x*scaleX, this._endPoint.y*scaleY);
+        var gradient = context.createLinearGradient(this._startPoint.x, this._startPoint.y, this._endPoint.x, this._endPoint.y);
 
         if(node._colorStops){  //Should always fall here now
              for(var i=0; i < node._colorStops.length; i++) {
@@ -392,7 +393,7 @@
         wrapper.setFillStyle(gradient);
 
         wrapper.setTransform(this._worldTransform, scaleX, scaleY);
-        context.fillRect(0, 0, locWidth * scaleX, -locHeight * scaleY);
+        context.fillRect(0, 0, locWidth , -locHeight );
         cc.g_NumberOfDraws++;
     };
 

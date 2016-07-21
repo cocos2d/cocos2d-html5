@@ -28,7 +28,9 @@
         this._needDraw = false;
 
         this.startCmd = new cc.CustomRenderCmd(this, this._startCmd);
+        this.startCmd._canUseDirtyRegion = true;
         this.endCmd = new cc.CustomRenderCmd(this, this._endCmd);
+        this.endCmd._canUseDirtyRegion = true;
     };
 
     var proto = cc.ScrollView.CanvasRenderCmd.prototype = Object.create(cc.Layer.CanvasRenderCmd.prototype);
@@ -45,8 +47,8 @@
 
             var locScaleX = node.getScaleX(), locScaleY = node.getScaleY();
 
-            var getWidth = (node._viewSize.width * locScaleX) * scaleX;
-            var getHeight = (node._viewSize.height * locScaleY) * scaleY;
+            var getWidth = (node._viewSize.width * locScaleX);
+            var getHeight = (node._viewSize.height * locScaleY);
 
             context.beginPath();
             context.rect(0, 0, getWidth, -getHeight);
