@@ -134,7 +134,7 @@
         var i, row, col, colOffset = startRow * cols, z, 
             gid, grid, tex, cmd,
             mask = cc.TMX_TILE_FLIPPED_MASK,
-            top, left, bottom, right, dw = tilew * scaleX, dh = tileh * scaleY,
+            top, left, bottom, right, dw = tilew, dh = tileh ,
             w = tilew * a, h = tileh * d, gt, gl, gb, gr,
             flippedX = false, flippedY = false;
 
@@ -232,7 +232,7 @@
 
                 context.drawImage(tex._htmlElementObj,
                     grid.x, grid.y, grid.width, grid.height,
-                    left*scaleX, top*scaleY, dw, dh);
+                    left, top, dw, dh);
                 // Revert flip
                 if (flippedX) {
                     context.scale(-1, 1);

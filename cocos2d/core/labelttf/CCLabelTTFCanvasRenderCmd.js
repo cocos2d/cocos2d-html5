@@ -49,6 +49,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         this._renderingIndex = 0;
 
         this._texRect = cc.rect();
+        this._canUseDirtyRegion = true;
     };
     var proto = cc.LabelTTF.RenderCmd.prototype;
     proto.constructor = cc.LabelTTF.RenderCmd;
@@ -89,6 +90,16 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             + (0 | (db * locFontFillColor.b)) + ", 1)";
         this._strokeColorStr = "rgba(" + (0 | (dr * locStrokeColor.r)) + "," + (0 | (dg * locStrokeColor.g)) + ","
             + (0 | (db * locStrokeColor.b)) + ", 1)";
+    };
+
+    var localBB = new cc.Rect();
+    proto.getLocalBB = function () {
+        var node = this._node;
+        localBB.x = localBB.y = 0;
+        var pixelRatio = cc.view.getDevicePixelRatio();
+        localBB.width = node._getWidth() * pixelRatio;
+        localBB.height = node._getHeight() * pixelRatio;
+        return localBB;
     };
 
     proto._updateTTF = function () {

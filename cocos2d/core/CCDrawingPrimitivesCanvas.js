@@ -97,8 +97,8 @@ cc.DrawingPrimitiveCanvas = cc.Class.extend(/** @lends cc.DrawingPrimitiveCanvas
     drawLine:function (origin, destination) {
         var locContext = this._renderContext.getContext(), locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
         locContext.beginPath();
-        locContext.moveTo(origin.x * locScaleX, -origin.y * locScaleY);
-        locContext.lineTo(destination.x * locScaleX, -destination.y * locScaleY);
+        locContext.moveTo(origin.x , -origin.y );
+        locContext.lineTo(destination.x, -destination.y );
         locContext.closePath();
         locContext.stroke();
     },
@@ -153,9 +153,9 @@ cc.DrawingPrimitiveCanvas = cc.Class.extend(/** @lends cc.DrawingPrimitiveCanvas
         var firstPoint = vertices[0], locContext = this._renderContext.getContext();
         var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
         locContext.beginPath();
-        locContext.moveTo(firstPoint.x * locScaleX, -firstPoint.y * locScaleY);
+        locContext.moveTo(firstPoint.x , -firstPoint.y );
         for (var i = 1, len = vertices.length; i < len; i++)
-            locContext.lineTo(vertices[i].x * locScaleX, -vertices[i].y * locScaleY);
+            locContext.lineTo(vertices[i].x , -vertices[i].y );
 
         if (closePolygon)
             locContext.closePath();
@@ -192,9 +192,9 @@ cc.DrawingPrimitiveCanvas = cc.Class.extend(/** @lends cc.DrawingPrimitiveCanvas
         var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
         locContext.beginPath();
         var endAngle = angle - Math.PI * 2;
-        locContext.arc(0 | (center.x * locScaleX), 0 | -(center.y * locScaleY), radius * locScaleX, -angle, -endAngle, false);
+        locContext.arc(0 | (center.x ), 0 | -(center.y ), radius , -angle, -endAngle, false);
         if (drawLineToCenter) {
-            locContext.lineTo(0 | (center.x * locScaleX), 0 | -(center.y * locScaleY));
+            locContext.lineTo(0 | (center.x ), 0 | -(center.y ));
         }
         locContext.stroke();
     },
@@ -338,7 +338,6 @@ cc.DrawingPrimitiveCanvas = cc.Class.extend(/** @lends cc.DrawingPrimitiveCanvas
     drawStar:function (ctx, radius, color) {
         var wrapper = ctx || this._renderContext;
         var context = wrapper.getContext();
-        radius *= cc.view.getScaleX();
         var colorStr = "rgba(" + (0 | color.r) + "," + (0 | color.g) + "," + (0 | color.b);
         wrapper.setFillStyle(colorStr + ",1)");
         //context.fillStyle = colorStr + ",1)";

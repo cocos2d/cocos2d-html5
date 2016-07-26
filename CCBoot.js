@@ -1858,7 +1858,7 @@ var _initSys = function () {
     if (win.WebGLRenderingContext) {
         var tmpCanvas = document.createElement("CANVAS");
         try{
-            var context = cc.create3DContext(tmpCanvas, {'stencil': true, 'preserveDrawingBuffer': true });
+            var context = cc.create3DContext(tmpCanvas, {'stencil': true});
             if(context) {
                 _supportWebGL = true;
             }
@@ -2663,7 +2663,6 @@ cc.game = /** @lends cc.game# */{
             this._renderContext = cc._renderContext = cc.webglContext
              = cc.create3DContext(localCanvas, {
                 'stencil': true,
-                'preserveDrawingBuffer': true,
                 'antialias': !cc.sys.isMobile,
                 'alpha': false
             });

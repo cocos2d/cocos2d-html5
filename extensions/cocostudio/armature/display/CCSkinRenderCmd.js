@@ -25,6 +25,7 @@
 
 (function(){
     ccs.Skin.RenderCmd = {
+        _realWorldTM: null,
         transform: function (parentCmd, recursive) {
             var node = this._node,
                 pt = parentCmd ? parentCmd._worldTransform : null,
@@ -69,6 +70,11 @@
                 wt.tx = t.tx;
                 wt.ty = t.ty;
             }
+            var rwtm = this._realWorldTM;
+            if(rwtm) {
+                rwtm.a = t.a; rwtm.b = t.b; rwtm.c = t.c; rwtm.d = t.d; rwtm.tx= t.tx; rwtm.ty = t.ty;
+                cc.affineTransformConcatIn(rwtm, this._node.bone.getArmature()._renderCmd._worldTransform);
+            }
         },
 
         getNodeToWorldTransform: function () {
@@ -86,11 +92,24 @@
 
     ccs.Skin.CanvasRenderCmd = function(renderable){
         cc.Sprite.CanvasRenderCmd.call(this, renderable);
+        this._realWorldTM = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
     };
 
     var proto = ccs.Skin.CanvasRenderCmd.prototype = Object.create(cc.Sprite.CanvasRenderCmd.prototype);
     cc.inject(ccs.Skin.RenderCmd, proto);
+
     proto.constructor = ccs.Skin.CanvasRenderCmd;
+
+    proto._updateCurrentRegions = function () {
+        var temp = this._currentRegion;
+        this._currentRegion = this._oldRegion;
+        this._oldRegion = temp;
+        //hittest will call the transform, and set region flag to DirtyDouble, and the changes need to be considered for rendering
+        if (cc.Node.CanvasRenderCmd.RegionStatus.DirtyDouble === this._regionFlag && (!this._currentRegion.isEmpty())) {
+            this._oldRegion.union(this._currentRegion);
+        }
+        this._currentRegion.updateRegion(this.getLocalBB(), this._realWorldTM);
+    };
 
     ccs.Skin.WebGLRenderCmd = function(renderable){
         cc.Sprite.WebGLRenderCmd.call(this, renderable);

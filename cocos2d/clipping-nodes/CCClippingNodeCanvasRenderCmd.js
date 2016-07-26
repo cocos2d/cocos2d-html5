@@ -57,24 +57,15 @@
             }
 
             stencil._renderCmd.rendering = function (ctx, scaleX, scaleY) {
-                scaleX = scaleX || cc.view.getScaleX();
-                scaleY = scaleY ||cc.view.getScaleY();
-                var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
-
-                var t = this._transform;
-                context.transform(t.a, t.b, t.c, t.d, t.tx * scaleX, -t.ty * scaleY);
-                for (var i = 0; i < stencil._buffer.length; i++) {
-                    var vertices = stencil._buffer[i].verts;
-                    //TODO: need support circle etc
-                    //cc.assert(cc.vertexListIsClockwise(vertices),
-                    //    "Only clockwise polygons should be used as stencil");
-
-                    var firstPoint = vertices[0];
-                    context.moveTo(firstPoint.x * scaleX, -firstPoint.y * scaleY);
-                    for (var j = vertices.length - 1; j > 0; j--)
-                        context.lineTo(vertices[j].x * scaleX, -vertices[j].y * scaleY);
-                }
+                //make it do nothing and draw it in clipp render command
+                return;
             };
+
+            stencil._renderCmd._canUseDirtyRegion = true;
+            this._rendererSaveCmd._canUseDirtyRegion = true;
+            this._rendererClipCmd._canUseDirtyRegion = true;
+            this._rendererRestoreCmd._canUseDirtyRegion = true;
+
         }else{
             stencil._parent = this._node;
         }
@@ -92,11 +83,11 @@
             locCacheCtx.drawImage(canvas, 0, 0);                //save the result to shareCache canvas
         } else {
             wrapper.save();
-            context.beginPath();                                                         //save for clip
             //Because drawNode's content size is zero
             wrapper.setTransform(this._worldTransform, scaleX, scaleY);
 
             if (this._node.inverted) {
+                context.beginPath();                                                         //save for clip
                 context.rect(0, 0, context.canvas.width, -context.canvas.height);
                 context.clip();
             }
@@ -126,6 +117,23 @@
             //hack
             this._setStencilCompositionOperation(node._stencil);
         } else {
+            var stencil = this._node._stencil;
+            if(stencil instanceof cc.DrawNode) {
+                context.beginPath();
+                var t = stencil._renderCmd._transform;
+                context.transform(t.a, t.b, t.c, t.d, t.tx, -t.ty);
+                for (var i = 0; i < stencil._buffer.length; i++) {
+                    var vertices = stencil._buffer[i].verts;
+                    //TODO: need support circle etc
+                    //cc.assert(cc.vertexListIsClockwise(vertices),
+                    //    "Only clockwise polygons should be used as stencil");
+
+                    var firstPoint = vertices[0];
+                    context.moveTo(firstPoint.x , -firstPoint.y );
+                    for (var j = vertices.length - 1; j > 0; j--)
+                        context.lineTo(vertices[j].x , -vertices[j].y );
+                }
+            }
             context.clip();
         }
     };

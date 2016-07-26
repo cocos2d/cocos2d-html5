@@ -47,8 +47,11 @@
         this._needDraw = true;
 
         this._realAnchorPointInPoints = new cc.Point(0,0);
+        this._canUseDirtyRegion = true;
         this._startRenderCmd = new cc.CustomRenderCmd(this, this._startCmdCallback);
         this._RestoreRenderCmd = new cc.CustomRenderCmd(this, this._RestoreCmdCallback);
+        this._startRenderCmd._canUseDirtyRegion = true;
+        this._RestoreRenderCmd._canUseDirtyRegion = true;
     };
 
     var proto = ccs.Armature.CanvasRenderCmd.prototype = Object.create(cc.Node.CanvasRenderCmd.prototype);

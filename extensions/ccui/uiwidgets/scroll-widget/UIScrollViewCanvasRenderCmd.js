@@ -3,7 +3,7 @@
         return;
     ccui.ScrollView.CanvasRenderCmd = function(renderable){
         ccui.Layout.CanvasRenderCmd.call(this, renderable);
-        this._needDraw = true;
+        //this._needDraw = true;
         this._dirty = false;
     };
 
@@ -17,12 +17,12 @@
         var currentID = node.__instanceId;
         
         cc.renderer.pushRenderCommand(this);
-        cc.renderer._turnToCacheMode(currentID);
+        //cc.renderer._turnToCacheMode(currentID);
 
         this.layoutVisit(parentCmd);
 
         this._dirtyFlag = 0;
-        cc.renderer._turnToNormalMode();
+        //cc.renderer._turnToNormalMode();
     };
 
     proto.rendering = function (ctx) {
