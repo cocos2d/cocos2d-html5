@@ -123,6 +123,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     ctor: function (fileName, rect, rotated) {
         var self = this;
         cc.Node.prototype.ctor.call(self);
+        self._loader = new cc.Sprite.loadManager(self);
         self._shouldBeHidden = false;
         self._offsetPosition = cc.p(0, 0);
         self._unflippedOffsetPositionFromCenter = cc.p(0, 0);
@@ -246,11 +247,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      */
     initWithSpriteFrame:function (spriteFrame) {
         cc.assert(spriteFrame, cc._LogInfos.Sprite_initWithSpriteFrame);
-
+        this._loader.clear();
         if(!spriteFrame.textureLoaded()){
             //add event listener
             this._textureLoaded = false;
-            spriteFrame.addEventListener("load", this._renderCmd._spriteFrameLoadedCallback, this);
+            this._loader.add(spriteFrame, this._renderCmd._spriteFrameLoadedCallback, this);
         }
 
         //TODO
@@ -669,6 +670,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     initWithTexture: function (texture, rect, rotated, counterclockwise) {
         var _t = this;
         cc.assert(arguments.length !== 0, cc._LogInfos.CCSpriteBatchNode_initWithTexture);
+        this._loader.clear();
 
         rotated = rotated || false;
         texture = this._renderCmd._handleTextureForRotatedTexture(texture, rect, rotated, counterclockwise);
@@ -705,9 +707,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 _t._rect.width = rect.width;
                 _t._rect.height = rect.height;
             }
-            if(_t.texture)
-                _t.texture.removeEventListener("load", _t);
-            texture.addEventListener("load", _t._renderCmd._textureLoadedCallback, _t);
+
+            this._loader.add(texture, _t._renderCmd._textureLoadedCallback, _t);
             _t.setTexture(texture);
             return true;
         }
@@ -789,6 +790,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             newFrame = cc.spriteFrameCache.getSpriteFrame(newFrame);
             cc.assert(newFrame, cc._LogInfos.Sprite_setSpriteFrame)
         }
+        this._loader.clear();
 
         this.setNodeDirty(true);
 
@@ -801,7 +803,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         var locTextureLoaded = newFrame.textureLoaded();
         if (!locTextureLoaded) {
             _t._textureLoaded = false;
-            newFrame.addEventListener("load", function (sender) {
+            this._loader.add(newFrame, function (sender) {
                 _t.setNodeDirty(true);
                 _t._textureLoaded = true;
                 var locNewTexture = sender.getTexture();
@@ -898,6 +900,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {cc.Texture2D|String} texture
      */
     setTexture: function (texture) {
+        this._loader.clear();
         if(!texture)
             return this._renderCmd._setTexture(null);
 
@@ -913,12 +916,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             this._textureLoaded = true;
         }else{
             this._renderCmd._setTexture(null);
-            texture.addEventListener("load", function(){
-                this.setNodeDirty(true);
-                this._setTexture(texture, isFileName);
-                this.setColor(this._realColor);
-                this._textureLoaded = true;
-            }, this);
+            this._loader.add(texture, this._renderCmd._textureLoadedCallback, this);
         }
     },
 
@@ -931,9 +929,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _changeRectWithTexture: function(texture){
         var contentSize = texture._contentSize;
         var rect = cc.rect(
-                0, 0,
-                contentSize.width, contentSize.height
-            );
+            0, 0,
+            contentSize.width, contentSize.height
+        );
         this.setTextureRect(rect);
     },
 
@@ -990,3 +988,25 @@ cc.EventHelper.prototype.apply(cc.Sprite.prototype);
 cc.assert(cc.isFunction(cc._tmp.PrototypeSprite), cc._LogInfos.MissingFile, "SpritesPropertyDefine.js");
 cc._tmp.PrototypeSprite();
 delete cc._tmp.PrototypeSprite;
+
+(function () {
+    var manager = cc.Sprite.loadManager = function (target) {
+        this.target = target;
+        this.list = [];
+    };
+
+    manager.prototype.add = function (source, callback, target) {
+        source.addEventListener('load', callback, target);
+        this.list.push({
+            source: source,
+            listener: callback,
+            target: target
+        });
+    };
+    manager.prototype.clear = function () {
+        while (this.list.length > 0) {
+            var item = this.list.pop();
+            item.source.removeEventListener('load', item.listener, item.target);
+        }
+    };
+})();

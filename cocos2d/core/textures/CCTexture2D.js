@@ -380,7 +380,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
              * @param {cc.Node} target
              */
             removeLoadedEventListener: function (target) {
-                this.removeEventListener("load", target);
+                this.removeEventTarget("load", target);
             },
 
             _generateColorTexture: function(){/*overide*/},

@@ -71,12 +71,32 @@ cc.EventHelper.prototype = {
         return false;
     },
 
-    removeEventListener: function( type, target){
+    removeEventListener: function( type, listener){
         if ( this._listeners === undefined )
             return;
 
         var listeners = this._listeners;
         var listenerArray = listeners[ type ];
+        if (!listenerArray) return;
+
+        if ( listenerArray !== undefined ) {
+            for(var i = 0; i < listenerArray.length ; ){
+                var selListener = listenerArray[i];
+                if(selListener.callback === listener)
+                    listenerArray.splice( i, 1 );
+                else
+                    i++
+            }
+        }
+    },
+
+    removeEventTarget: function( type, listener, target){
+        if ( this._listeners === undefined )
+            return;
+
+        var listeners = this._listeners;
+        var listenerArray = listeners[ type ];
+        if (!listenerArray) return;
 
         if ( listenerArray !== undefined ) {
             for(var i = 0; i < listenerArray.length ; ){
