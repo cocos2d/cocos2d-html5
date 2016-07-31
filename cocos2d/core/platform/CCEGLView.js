@@ -213,14 +213,15 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         if (view._isRotated === prevRotated && view._frameSize.width === prevFrameW && view._frameSize.height === prevFrameH)
             return;
 
-        // Frame size changed, do resize works
-        if (view._resizeCallback) {
-            view._resizeCallback.call();
-        }
         var width = view._originalDesignResolutionSize.width;
         var height = view._originalDesignResolutionSize.height;
         if (width > 0) {
             view.setDesignResolutionSize(width, height, view._resolutionPolicy);
+        }
+
+        // Frame size changed, do resize works
+        if (view._resizeCallback) {
+            view._resizeCallback.call();
         }
     },
 
