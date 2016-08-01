@@ -866,26 +866,24 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         point.y = (_t._devicePixelRatio * (relatedPos.top + relatedPos.height - point.y) - locViewPortRect.y) / _t._scaleY;
     },
 
-    _convertTouchesWithScale: function(touches){
-        var locViewPortRect = this._viewPortRect, locScaleX = this._scaleX, locScaleY = this._scaleY,
-            selTouch, selPoint, selPrePoint, selStartPoint;
-        for( var i = 0; i < touches.length; i ++){
+    _convertPointWithScale: function (point) {
+        var viewport = this._viewPortRect;
+        point.x = (point.x - viewport.x) / this._scaleX;
+        point.y = (point.y - viewport.y) / this._scaleY;
+    },
+
+    _convertTouchesWithScale: function (touches) {
+        var viewport = this._viewPortRect, scaleX = this._scaleX, scaleY = this._scaleY,
+            selTouch, selPoint, selPrePoint;
+        for( var i = 0; i < touches.length; i++){
             selTouch = touches[i];
-            hasStartPoint = selTouch._startPointCaptured;
             selPoint = selTouch._point;
             selPrePoint = selTouch._prevPoint;
 
-            selPoint.x = (selPoint.x - locViewPortRect.x) / locScaleX;
-            selPoint.y = (selPoint.y - locViewPortRect.y) / locScaleY;
-            selPrePoint.x = (selPrePoint.x - locViewPortRect.x) / locScaleX;
-            selPrePoint.y = (selPrePoint.y - locViewPortRect.y) / locScaleY;
-            
-            if (!hasStartPoint) {
-                selStartPoint = selTouch._startPoint;
-                selStartPoint.x = selPoint.x;
-                selStartPoint.y = selPoint.y;
-                selTouch._startPointCaptured = true;
-            }
+            selPoint.x = (selPoint.x - viewport.x) / scaleX;
+            selPoint.y = (selPoint.y - viewport.y) / scaleY;
+            selPrePoint.x = (selPrePoint.x - viewport.x) / scaleX;
+            selPrePoint.y = (selPrePoint.y - viewport.y) / scaleY;
         }
     }
 });

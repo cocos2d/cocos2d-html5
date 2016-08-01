@@ -135,7 +135,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
      * @deprecated since v3.0, please use getID() instead
      */
     getId:function () {
-        cc.log("getId is deprecated. Please use getID instead.")
+        cc.log("getId is deprecated. Please use getID instead.");
         return this._id;
     },
 
@@ -149,8 +149,9 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
         this._prevPoint = this._point;
         this._point = cc.p(x || 0, y || 0);
         this._id = id;
-        if(!this._startPointCaptured){
+        if (!this._startPointCaptured) {
             this._startPoint = cc.p(this._point);
+            cc.view._convertPointWithScale(this._startPoint);
             this._startPointCaptured = true;
         }
     },
