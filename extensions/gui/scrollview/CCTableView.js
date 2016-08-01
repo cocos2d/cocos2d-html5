@@ -520,6 +520,8 @@ cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
         this._updateContentSize();
         if (this._dataSource.numberOfCellsInTableView(this) > 0)
             this.scrollViewDidScroll(this);
+
+        this.setNodeDirty();
     },
 
     /**

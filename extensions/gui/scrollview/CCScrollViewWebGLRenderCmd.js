@@ -62,7 +62,7 @@
         var node = this._node;
         if (node._scissorRestored) {  //restore the parent's scissor rect
             var rect = node._parentScissorRect;
-            cc.view.setScissorInPoints(rect.x, rect.y, rect.width, rect.height)
+            cc.view.setScissorInPoints(rect.x, rect.y, rect.width, rect.height);
         }else{
             var ctx = cc._renderContext;
             ctx.disable(ctx.SCISSOR_TEST);
