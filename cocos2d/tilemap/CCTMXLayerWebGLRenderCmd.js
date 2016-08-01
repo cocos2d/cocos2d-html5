@@ -76,7 +76,7 @@
             mapx = ox * a + oy * c + tx,
             mapy = ox * b + oy * d + ty;
 
-        var opacity = this._displayedOpacity,
+        var opacity = node._opacity,
             cr = this._displayedColor.r,
             cg = this._displayedColor.g,
             cb = this._displayedColor.b;
