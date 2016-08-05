@@ -916,12 +916,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             this._textureLoaded = true;
         }else{
             this._renderCmd._setTexture(null);
-            this._loader.add(texture, function () {
-                this.setNodeDirty(true);
-                this._setTexture(texture, isFileName);
-                this.setColor(this._realColor);
-                this._textureLoaded = true;
-            }, this);
+            this._loader.add(texture, this._renderCmd._textureLoadedCallback, this);
         }
     },
 
