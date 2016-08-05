@@ -214,6 +214,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
      */
     ctor: function (file, rectOrCapInsets, capInsets) {
         cc.Node.prototype.ctor.call(this);
+        this._loader = new cc.Sprite.loadManager(this);
         this._spriteRect = cc.rect(0, 0, 0, 0);
         this._capInsetsInternal = cc.rect(0, 0, 0, 0);
 
@@ -493,8 +494,9 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
 
         var locLoaded = texture.isLoaded();
         this._textureLoaded = locLoaded;
+        this._loader.clear();
         if(!locLoaded){
-            texture.addEventListener("load", function(sender){
+            this._loader.add(texture, function(sender){
                 var preferredSize = this._preferredSize, 
                     restorePreferredSize = preferredSize.width !== 0 && preferredSize.height !== 0;
                 if (restorePreferredSize) {
@@ -533,6 +535,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         var texture = spriteFrame.getTexture();
         var loaded = texture.loaded;
 
+        this._loader.clear();
         if (loaded) {
             var batchNode = new cc.SpriteBatchNode(spriteFrame.getTexture(), 9);
             // the texture is rotated on Canvas render mode, so isRotated always is false.
@@ -543,12 +546,21 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
             this._capInsets.width = capInsets.width;
             this._capInsets.height = capInsets.height;
             var textureCallback = function () {
+                var preferredSize = this._preferredSize,
+                    restorePreferredSize = preferredSize.width !== 0 && preferredSize.height !== 0;
+                if (restorePreferredSize) {
+                    preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                }
                 var batchNode = new cc.SpriteBatchNode(spriteFrame.getTexture(), 9);
                 // the texture is rotated on Canvas render mode, so isRotated always is false.
                 this.initWithBatchNode(batchNode, spriteFrame.getRect(), cc._renderType === cc.game.RENDER_TYPE_WEBGL && spriteFrame.isRotated(), this._capInsets);
+                if (restorePreferredSize) {
+                    this.setPreferredSize(preferredSize);
+                }
+                this._positionsAreDirty = true;
                 this.dispatchEvent("load");
             };
-            texture.addEventListener('load', textureCallback, this);
+            this._loader.add(texture, textureCallback, this);
         }
 
         return true;
@@ -921,12 +933,13 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         var pos = cc.p(0,0);
         var originalSize = cc.size(originalRect.width,originalRect.height);
 
+        this._loader.clear();
         var tmpTexture = batchNode.getTexture();
         var loaded = this._textureLoaded = tmpTexture.isLoaded();
         if (loaded) {
             return this.updateWithSprite(sprite, originalRect, rotated, pos, originalSize, capInsets);
         } else {
-            tmpTexture.addEventListener("load", function(sender){
+            this._loader.add(tmpTexture, function(sender){
                 var preferredSize = this._preferredSize,
                     restorePreferredSize = preferredSize.width !== 0 && preferredSize.height !== 0;
                 if (restorePreferredSize) {
@@ -957,8 +970,9 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         var sprite = new cc.Sprite(spriteFrame.getTexture());
         var locLoaded = spriteFrame.textureLoaded();
         this._textureLoaded = locLoaded;
+        this._loader.clear();
         if(!locLoaded){
-            spriteFrame.addEventListener("load", function(sender){
+            this._loader.add(spriteFrame, function(sender){
                 var preferredSize = this._preferredSize,
                     restorePreferredSize = preferredSize.width !== 0 && preferredSize.height !== 0;
                 if (restorePreferredSize) {
