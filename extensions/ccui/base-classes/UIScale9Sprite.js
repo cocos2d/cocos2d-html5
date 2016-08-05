@@ -214,7 +214,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
      */
     ctor: function (file, rectOrCapInsets, capInsets) {
         cc.Node.prototype.ctor.call(this);
-        this._loader = new cc.Sprite.loadManager(this);
+        this._loader = new cc.Sprite.LoadManager();
         this._spriteRect = cc.rect(0, 0, 0, 0);
         this._capInsetsInternal = cc.rect(0, 0, 0, 0);
 
@@ -313,6 +313,8 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
     setCapInsets: function (capInsets) {
         var contentSize = this._contentSize;
         var tempWidth = contentSize.width, tempHeight = contentSize.height;
+        // Asynchronous loading texture requires this data
+        // This data does not take effect immediately, so it does not affect the existing texture.
         this._capInsets.x = capInsets.x;
         this._capInsets.y = capInsets.y;
         this._capInsets.width = capInsets.width;

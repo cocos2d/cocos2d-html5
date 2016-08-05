@@ -77,7 +77,6 @@ cc.EventHelper.prototype = {
 
         var listeners = this._listeners;
         var listenerArray = listeners[ type ];
-        if (!listenerArray) return;
 
         if ( listenerArray !== undefined ) {
             for(var i = 0; i < listenerArray.length ; ){
@@ -96,7 +95,6 @@ cc.EventHelper.prototype = {
 
         var listeners = this._listeners;
         var listenerArray = listeners[ type ];
-        if (!listenerArray) return;
 
         if ( listenerArray !== undefined ) {
             for(var i = 0; i < listenerArray.length ; ){

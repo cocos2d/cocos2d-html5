@@ -123,7 +123,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     ctor: function (fileName, rect, rotated) {
         var self = this;
         cc.Node.prototype.ctor.call(self);
-        self._loader = new cc.Sprite.loadManager(self);
+        self._loader = new cc.Sprite.LoadManager();
         self._shouldBeHidden = false;
         self._offsetPosition = cc.p(0, 0);
         self._unflippedOffsetPositionFromCenter = cc.p(0, 0);
@@ -916,7 +916,12 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             this._textureLoaded = true;
         }else{
             this._renderCmd._setTexture(null);
-            this._loader.add(texture, this._renderCmd._textureLoadedCallback, this);
+            this._loader.add(texture, function () {
+                this.setNodeDirty(true);
+                this._setTexture(texture, isFileName);
+                this.setColor(this._realColor);
+                this._textureLoaded = true;
+            }, this);
         }
     },
 
@@ -990,8 +995,7 @@ cc._tmp.PrototypeSprite();
 delete cc._tmp.PrototypeSprite;
 
 (function () {
-    var manager = cc.Sprite.loadManager = function (target) {
-        this.target = target;
+    var manager = cc.Sprite.LoadManager = function () {
         this.list = [];
     };
 
