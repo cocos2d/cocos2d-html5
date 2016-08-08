@@ -71,7 +71,7 @@ cc.EventHelper.prototype = {
         return false;
     },
 
-    removeEventListener: function( type, listener){
+    removeEventListener: function( type, listener, target){
         if ( this._listeners === undefined )
             return;
 
@@ -81,7 +81,7 @@ cc.EventHelper.prototype = {
         if ( listenerArray !== undefined ) {
             for(var i = 0; i < listenerArray.length ; ){
                 var selListener = listenerArray[i];
-                if(selListener.callback === listener)
+                if(selListener.eventTarget === target && selListener.callback === listener)
                     listenerArray.splice( i, 1 );
                 else
                     i++
