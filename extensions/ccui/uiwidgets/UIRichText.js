@@ -90,9 +90,9 @@ ccui.RichElementText = ccui.RichElement.extend(/** @lends ccui.RichElementText# 
         var color = colorOrFontDef;
         if (colorOrFontDef && colorOrFontDef instanceof cc.FontDefinition) {
             color = colorOrFontDef.fillStyle;
-            fontName = fontDef.fontName;
-            fontSize = fontDef.fontSize;
-            this._fontDefinition = fontDef;
+            fontName = colorOrFontDef.fontName;
+            fontSize = colorOrFontDef.fontSize;
+            this._fontDefinition = colorOrFontDef;
         }
         ccui.RichElement.prototype.ctor.call(this, tag, color, opacity);
         this._type = ccui.RichElement.TEXT;
