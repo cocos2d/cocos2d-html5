@@ -75,6 +75,17 @@
         wrapper.save();
         wrapper.save();
         wrapper.setTransform(this._worldTransform, scaleX, scaleY);
+        var buffer = this._node._clippingStencil._renderCmd._buffer;
+
+        for (var i = 0, bufLen = buffer.length; i < bufLen; i++) {
+            var element = buffer[i], vertices = element.verts;
+            var firstPoint = vertices[0];
+            context.beginPath();
+            context.moveTo(firstPoint.x, -firstPoint.y );
+            for (var j = 1, len = vertices.length; j < len; j++)
+                context.lineTo(vertices[j].x , -vertices[j].y );
+            context.closePath();
+        }
     };
 
     proto._onRenderClipCmd = function(ctx){
@@ -95,17 +106,7 @@
     };
 
     proto.__stencilDraw = function(ctx,scaleX, scaleY){          //Only for Canvas
-        var wrapper = ctx || cc._renderContext, locContext = wrapper.getContext(), buffer = this._buffer;
-
-        for (var i = 0, bufLen = buffer.length; i < bufLen; i++) {
-            var element = buffer[i], vertices = element.verts;
-            var firstPoint = vertices[0];
-            locContext.beginPath();
-            locContext.moveTo(firstPoint.x, -firstPoint.y );
-            for (var j = 1, len = vertices.length; j < len; j++)
-                locContext.lineTo(vertices[j].x , -vertices[j].y );
-            locContext.closePath();
-        }
+        //do nothing, rendering in layout
     };
 
     proto.stencilClippingVisit = proto.scissorClippingVisit = function (parentCmd) {
