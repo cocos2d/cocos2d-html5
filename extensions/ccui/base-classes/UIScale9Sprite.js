@@ -535,7 +535,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         capInsets = capInsets || cc.rect(0, 0, 0, 0);
 
         var texture = spriteFrame.getTexture();
-        var loaded = texture.loaded;
+        var loaded = texture.isLoaded();
 
         this._loader.clear();
         if (loaded) {
