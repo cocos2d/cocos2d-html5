@@ -604,12 +604,16 @@ cc.Node.RenderCmd.prototype.originTransform = cc.Node.RenderCmd.prototype.transf
         if (!blendFunc)
             return "source-over";
         else {
-            if (( blendFunc.src === cc.SRC_ALPHA && blendFunc.dst === cc.ONE) || (blendFunc.src === cc.ONE && blendFunc.dst === cc.ONE))
+            if (blendFunc.src === cc.ONE && blendFunc.dst === cc.ONE)
                 return "lighter";
-            else if (blendFunc.src === cc.ZERO && blendFunc.dst === cc.SRC_ALPHA)
-                return "destination-in";
-            else if (blendFunc.src === cc.ZERO && blendFunc.dst === cc.ONE_MINUS_SRC_ALPHA)
-                return "destination-out";
+            else if(blendFunc.src === cc.ONE && blendFunc.dst === cc.DST_ALPHA)
+                return "lighter";
+
+            else if(blendFunc.src === cc.ZERO && blendFunc.dst === cc.ONE)
+                return "multiply";
+            else if(blendFunc.src === cc.ZERO && blendFunc.dst === cc.DST_ALPHA)
+                return "multiply";
+
             else
                 return "source-over";
         }
