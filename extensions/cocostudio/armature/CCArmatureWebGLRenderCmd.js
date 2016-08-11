@@ -44,6 +44,7 @@
         var alphaPremultiplied = cc.BlendFunc.ALPHA_PREMULTIPLIED, alphaNonPremultipled = cc.BlendFunc.ALPHA_NON_PREMULTIPLIED;
         for (var i = 0, len = locChildren.length; i < len; i++) {
             var selBone = locChildren[i];
+            var boneCmd = selBone._renderCmd;
             if (selBone && selBone.getDisplayRenderNode) {
                 var selNode = selBone.getDisplayRenderNode();
                 if (null === selNode)
@@ -52,7 +53,6 @@
                 switch (selBone.getDisplayRenderNodeType()) {
                     case ccs.DISPLAY_TYPE_SPRITE:
                         if (selNode instanceof ccs.Skin) {
-                            selBone._renderCmd._syncStatus(parentCmd);
                             selNode.setShaderProgram(this._shaderProgram);
                             this._updateColorAndOpacity(cmd, selBone);   //because skin didn't call visit()
                             cmd.transform(parentCmd);
@@ -77,31 +77,31 @@
                         break;
                     case ccs.DISPLAY_TYPE_ARMATURE:
                         selNode.setShaderProgram(this._shaderProgram);
-                        cmd._parentCmd = parentCmd;
+                        cmd._parentCmd = this;
                         // Continue rendering in default
                     default:
+                        boneCmd._syncStatus(parentCmd);
+                        cmd._syncStatus(boneCmd);
                         if (cmd.uploadData) {
                             cc.renderer._uploadBufferData(cmd);
                         }
-                        else {
+                        else if (cmd.rendering) {
                             // Finish previous batch
                             cc.renderer._batchRendering();
-                            cmd.transform(this);
                             cmd.rendering(cc._renderContext);
                         }
                         break;
                 }
             } else if (selBone instanceof cc.Node) {
                 selBone.setShaderProgram(this._shaderProgram);
-                cmd = selBone._renderCmd;
-                cmd.transform(this);
-                if (cmd.uploadData) {
-                    cc.renderer._uploadBufferData(cmd);
+                boneCmd._syncStatus(parentCmd);
+                if (boneCmd.uploadData) {
+                    cc.renderer._uploadBufferData(boneCmd);
                 }
-                else if (cmd.rendering) {
+                else if (boneCmd.rendering) {
                     // Finish previous batch
                     cc.renderer._batchRendering();
-                    cmd.rendering(cc._renderContext);
+                    boneCmd.rendering(cc._renderContext);
                 }
             }
         }
