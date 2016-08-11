@@ -52,6 +52,7 @@
                 switch (selBone.getDisplayRenderNodeType()) {
                     case ccs.DISPLAY_TYPE_SPRITE:
                         if (selNode instanceof ccs.Skin) {
+                            selBone._renderCmd._syncStatus(parentCmd);
                             selNode.setShaderProgram(this._shaderProgram);
                             this._updateColorAndOpacity(cmd, selBone);   //because skin didn't call visit()
                             cmd.transform(parentCmd);
@@ -76,7 +77,7 @@
                         break;
                     case ccs.DISPLAY_TYPE_ARMATURE:
                         selNode.setShaderProgram(this._shaderProgram);
-                        cmd._parentCmd = this;
+                        cmd._parentCmd = parentCmd;
                         // Continue rendering in default
                     default:
                         if (cmd.uploadData) {
@@ -119,6 +120,7 @@
     proto._updateColorAndOpacity = function(skinRenderCmd, bone){
         //update displayNode's color and opacity
         var parentColor = bone._renderCmd._displayedColor, parentOpacity = bone._renderCmd._displayedOpacity;
+
         var flags = cc.Node._dirtyFlags, locFlag = skinRenderCmd._dirtyFlag;
         var colorDirty = locFlag & flags.colorDirty,
             opacityDirty = locFlag & flags.opacityDirty;

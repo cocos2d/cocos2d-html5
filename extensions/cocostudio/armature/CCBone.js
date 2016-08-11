@@ -674,15 +674,15 @@ ccs.Bone.create = function (name) {
 };
 
 ccs.Bone.RenderCmd = {
-    _updateColor: function(){
+    _updateColor: function () {
         var node = this._node;
         var display = node._displayManager.getDisplayRenderNode();
         if (display !== null) {
             var displayCmd = display._renderCmd;
-            display.setColor(cc.color( node._tweenData.r, node._tweenData.g, node._tweenData.g));
-            display.setOpacity(node._tweenData.a);
-            displayCmd._syncDisplayColor(this._displayedColor);
-            displayCmd._syncDisplayOpacity(this._displayedOpacity);
+            display.setColor(this._displayedColor);
+            display.setOpacity(this._displayedOpacity);
+            displayCmd._syncDisplayColor(node._tweenData);
+            displayCmd._syncDisplayOpacity(node._tweenData.a);
             displayCmd._updateColor();
         }
     }

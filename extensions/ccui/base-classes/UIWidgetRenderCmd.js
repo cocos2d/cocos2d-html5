@@ -42,8 +42,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
 
         proto.transform = function (parentCmd, recursive) {
             var node = this._node;
-
-            if (node._visible) {
+            if (node._visible && node._running) {
                 node._adaptRenderers();
                 if(!this._usingLayoutComponent){
                     var widgetParent = node.getWidgetParent();
@@ -80,7 +79,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
 
         proto.transform = function(parentCmd, recursive){
             var node = this._node;
-            if (node._visible) {
+            if (node._visible && node._running) {
                 node._adaptRenderers();
 
                 if(!this._usingLayoutComponent) {

@@ -33,13 +33,15 @@
 
     proto.visit = function (parentCmd) {
         var node = this._node, renderer = cc.renderer;
+
+        parentCmd = parentCmd || this.getParentRenderCmd();
+        if (parentCmd) {
+            this._curLevel = parentCmd._curLevel + 1;
+        }
+
         // quick return if not visible
         if (!node._visible)
             return;
-
-        parentCmd = parentCmd || this.getParentRenderCmd();
-        if (parentCmd)
-            this._curLevel = parentCmd._curLevel + 1;
 
         if (isNaN(node._customZ)) {
             node._vertexZ = renderer.assignedZ;
@@ -49,7 +51,7 @@
         this._syncStatus(parentCmd);
 
         // Visit children
-        var children = node._children, child, cmd,
+        var children = node._children, child,
             spTiles = node._spriteTiles,
             i, len = children.length;
         if (len > 0) {
@@ -58,8 +60,7 @@
             for (i = 0; i < len; i++) {
                 child = children[i];
                 if (child._localZOrder < 0) {
-                    cmd = child._renderCmd;
-                    cmd.visit(this);
+                    child._renderCmd.visit(this);
                 }
                 else {
                     break;
@@ -74,7 +75,7 @@
                         child._vertexZ = renderer.assignedZ;
                         renderer.assignedZ += renderer.assignedZStep;
                     }
-                    child._renderCmd.updateStatus(this, true);
+                    child._renderCmd.updateStatus();
                     continue;
                 }
                 child._renderCmd.visit(this);

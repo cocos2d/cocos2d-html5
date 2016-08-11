@@ -178,10 +178,10 @@ cc.Node.RenderCmd.prototype = {
                     skx = 99999999;
                 if (sky === Infinity)
                     sky = 99999999;
-                t.a = a + b * sky;
-                t.b = b + a * sky;
-                t.c = c + d * skx;
-                t.d = d + c * skx;
+                t.a = a + c * sky;
+                t.b = b + d * sky;
+                t.c = c + a * skx;
+                t.d = d + b * skx;
             }
 
             if (appX || appY) {
@@ -465,11 +465,9 @@ cc.Node.RenderCmd.prototype = {
         if (colorDirty || opacityDirty)
             this._updateColor();
 
-        if (locFlag & flags.transformDirty) {
+        if (locFlag & flags.transformDirty)
             //update the transform
             this.transform(parentCmd);
-            this._dirtyFlag = this._dirtyFlag & flags.transformDirty ^ this._dirtyFlag;
-        }
 
         if (locFlag & flags.orderDirty)
             this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
