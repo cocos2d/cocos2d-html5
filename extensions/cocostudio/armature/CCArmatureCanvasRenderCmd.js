@@ -77,10 +77,14 @@
             var selBone = locChildren[i];
             var boneCmd = selBone._renderCmd;
             if (selBone && selBone.getDisplayRenderNode) {
+                var boneType = selBone.getDisplayRenderNodeType();
                 var selNode = selBone.getDisplayRenderNode();
                 if (selNode && selNode._renderCmd){
                     var cmd = selNode._renderCmd;
                     cmd.transform(null);   //must be null, use transform in armature mode
+                    if (boneType !== ccs.DISPLAY_TYPE_ARMATURE && boneType !== ccs.DISPLAY_TYPE_SPRITE) {
+                        cc.affineTransformConcatIn(cmd._worldTransform, selBone._worldTransform);
+                    }
 
                     //update displayNode's color and opacity, because skin didn't call visit()
                     var flags = cc.Node._dirtyFlags, locFlag = cmd._dirtyFlag, boneFlag = boneCmd._dirtyFlag;
@@ -137,13 +141,13 @@
                 boneCmd._syncStatus(this);
                 switch (selBone.getDisplayRenderNodeType()) {
                     case ccs.DISPLAY_TYPE_SPRITE:
-                        selNode.visit(boneCmd);
+                        selNode._renderCmd.visit(boneCmd);
                         break;
                     case ccs.DISPLAY_TYPE_ARMATURE:
                         selNode._renderCmd.rendering(ctx, scaleX, scaleY);
                         break;
                     default:
-                        selNode.visit(boneCmd);
+                        selNode._renderCmd.visit(boneCmd);
                         break;
                 }
             } else if(selBone instanceof cc.Node) {
