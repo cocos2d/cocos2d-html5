@@ -185,26 +185,6 @@
         }
     };
 
-    proto._updateForSetSpriteFrame = function (pNewTexture, textureLoaded){
-        this._colorized = false;
-        this._textureCoord.renderX = this._textureCoord.x;
-        this._textureCoord.renderY = this._textureCoord.y;
-        textureLoaded = textureLoaded || pNewTexture._textureLoaded;
-        if (textureLoaded) {
-            var curColor = this._node.getColor();
-            if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
-                this._updateColor();
-        }
-    };
-
-    proto._spriteFrameLoadedCallback = function (spriteFrame) {
-        var node = this;
-        node.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
-
-        node._renderCmd._updateColor();
-        node.dispatchEvent("load");
-    };
-
     proto._textureLoadedCallback = function (sender) {
         var node = this;
         if (node._textureLoaded)
