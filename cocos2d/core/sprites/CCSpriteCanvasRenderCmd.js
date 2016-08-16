@@ -192,8 +192,10 @@
         textureLoaded = textureLoaded || pNewTexture._textureLoaded;
         if (textureLoaded) {
             var curColor = this._node.getColor();
-            if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
+            if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255||
+                this._displayedColor.r !== 255 || this._displayedColor.g !== 255 || this._displayedColor.b !== 255) {
                 this._updateColor();
+            }
         }
     };
 
