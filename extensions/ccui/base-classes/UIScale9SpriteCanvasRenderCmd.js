@@ -181,6 +181,7 @@
 
         if(!this._cacheSprite.getParent())
             node.addChild(this._cacheSprite, -1);
+        this._cacheSprite._renderCmd._updateColor();
     };
 
     proto.setState = function(state){
