@@ -635,9 +635,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if (!tex) {
             tex = cc.textureCache.addImage(filename);
         }
-        this._loader.clear();
+
         if (!tex.isLoaded()) {
-            this._loader.add(tex, function () {
+            this._loader.clear();
+            this._loader.once(tex, function () {
                 this.initWithFile(filename, rect);
                 this.dispatchEvent("load");
             }, this);
@@ -669,7 +670,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         _t._textureLoaded = texture.isLoaded();
         if (!_t._textureLoaded) {
-            this._loader.add(texture, function () {
+            this._loader.once(texture, function () {
                 this.initWithTexture(texture, rect, rotated, counterclockwise);
                 this.dispatchEvent("load");
             }, this);
@@ -789,21 +790,22 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         this.setNodeDirty(true);
 
-        var frameOffset = newFrame.getOffset();
-        _t._unflippedOffsetPositionFromCenter.x = frameOffset.x;
-        _t._unflippedOffsetPositionFromCenter.y = frameOffset.y;
-
         // update rect
         var pNewTexture = newFrame.getTexture();
         _t._textureLoaded = newFrame.textureLoaded();
         this._loader.clear();
         if (!_t._textureLoaded) {
-            this._loader.add(pNewTexture, function () {
+            this._loader.once(pNewTexture, function () {
                 this.setSpriteFrame(newFrame);
                 this.dispatchEvent("load");
             }, this);
             return false;
         }
+
+        var frameOffset = newFrame.getOffset();
+        _t._unflippedOffsetPositionFromCenter.x = frameOffset.x;
+        _t._unflippedOffsetPositionFromCenter.y = frameOffset.y;
+
         if (pNewTexture !== _t._texture) {
             this._renderCmd._setTexture(pNewTexture);
             _t.setColor(_t._realColor);
@@ -898,7 +900,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this._loader.clear();
         if (!texture._textureLoaded) {
             // wait for the load to be set again
-            this._loader.add(texture, function () {
+            this._loader.once(texture, function () {
                 this.setTexture(texture);
                 this.dispatchEvent("load");
             }, this);
@@ -906,7 +908,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         }
 
         this._renderCmd._setTexture(texture);
-        this._changeRectWithTexture(texture);
+        if (isFileName)
+            this._changeRectWithTexture(texture);
         this.setColor(this._realColor);
         this._textureLoaded = true;
     },
@@ -984,6 +987,18 @@ delete cc._tmp.PrototypeSprite;
         this.list.push({
             source: source,
             listener: callback,
+            target: target
+        });
+    };
+    manager.prototype.once = function (source, callback, target) {
+        var tmpCallback = function (event) {
+            source.addEventListener('load', tmpCallback, target);
+            callback.call(target, event);
+        };
+        source.addEventListener('load', tmpCallback, target);
+        this.list.push({
+            source: source,
+            listener: tmpCallback,
             target: target
         });
     };

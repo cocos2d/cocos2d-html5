@@ -321,8 +321,8 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         return cc.rect(this._capInsets);
     },
 
-    asyncSetCapInsets: function () {
-        this.removeEventListener('load', this.asyncSetCapInsets, this);
+    _asyncSetCapInsets: function () {
+        this.removeEventListener('load', this._asyncSetCapInsets, this);
         this.setCapInsets(this._cacheCapInsets);
         this._cacheCapInsets = null;
     },
@@ -333,8 +333,8 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         // This data does not take effect immediately, so it does not affect the existing texture.
         if (!this._textureLoaded) {
             this._cacheCapInsets = capInsets;
-            this.removeEventListener('load', this.asyncSetCapInsets, this);
-            this.addEventListener('load', this.asyncSetCapInsets, this);
+            this.removeEventListener('load', this._asyncSetCapInsets, this);
+            this.addEventListener('load', this._asyncSetCapInsets, this);
             return false;
         }
 
@@ -516,7 +516,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         this._textureLoaded = locLoaded;
         this._loader.clear();
         if (!locLoaded) {
-            this._loader.add(texture, function () {
+            this._loader.once(texture, function () {
                 this.initWithFile(file, rect, capInsets);
                 this.dispatchEvent("load");
             }, this);
@@ -545,7 +545,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         var loaded = this._textureLoaded = texture.isLoaded();
         this._loader.clear();
         if (!loaded) {
-            this._loader.add(texture, function () {
+            this._loader.once(texture, function () {
                 this.initWithSpriteFrame(spriteFrame, capInsets);
                 this.dispatchEvent("load");
             }, this);
@@ -864,7 +864,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         this._loader.clear();
         this._textureLoaded = sprite._textureLoaded;
         if (!sprite._textureLoaded) {
-            this._loader.add(sprite, function () {
+            this._loader.once(sprite, function () {
                 this.updateWithSprite(sprite, spriteRect, spriteFrameRotated, offset, originalSize, capInsets);
                 this.dispatchEvent("load");
             }, this);
@@ -930,7 +930,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         this._loader.clear();
         var loaded = this._textureLoaded = texture.isLoaded();
         if (!loaded) {
-            this._loader.add(texture, function () {
+            this._loader.once(texture, function () {
                 this.updateWithBatchNode(batchNode, originalRect, rotated, capInsets);
                 this.dispatchEvent("load");
             }, this);
@@ -956,7 +956,7 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         this._textureLoaded = texture._textureLoaded;
         this._loader.clear();
         if (!texture._textureLoaded) {
-            this._loader.add(spriteFrame, function () {
+            this._loader.once(spriteFrame, function () {
                 this.setSpriteFrame(spriteFrame, capInsets);
                 this.dispatchEvent("load");
             }, this);
