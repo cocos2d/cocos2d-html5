@@ -233,13 +233,19 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
      * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTextureNormal: function (normal, texType) {
-        if (!normal) return;
-
+        if (!normal)
+            return;
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._normalFileName = normal;
         this._normalTexType = texType;
 
+        var self = this;
         var normalRenderer = this._buttonNormalRenderer;
+        if(!normalRenderer._textureLoaded){
+            normalRenderer.addEventListener("load", function(){
+                self.loadTextureNormal(self._normalFileName, self._normalTexType);
+            });
+        }
         switch (this._normalTexType){
             case ccui.Widget.LOCAL_TEXTURE:
                 //SetTexture cannot load resource
@@ -252,19 +258,14 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
             default:
                 break;
         }
-        var loaded  = normalRenderer._textureLoaded;
-        normalRenderer.removeEventListener('load', this._loadNormalTextureCallback);
-        normalRenderer.addEventListener('load', this._loadNormalTextureCallback, this);
-        if (loaded) {
-            this._loadNormalTextureCallback();
-        }
-    },
-    _loadNormalTextureCallback: function () {
+
+        this._normalTextureLoaded = normalRenderer._textureLoaded;
+
         this._normalTextureSize = this._buttonNormalRenderer.getContentSize();
         this._updateChildrenDisplayedRGBA();
         if (this._unifySize){
             if (this._scale9Enabled){
-                this._buttonNormalRenderer.setCapInsets(this._capInsetsNormal);
+                normalRenderer.setCapInsets(this._capInsetsNormal);
                 this._updateContentSizeWithTextureSize(this._getNormalSize());
             }
         }else
