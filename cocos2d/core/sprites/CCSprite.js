@@ -983,6 +983,7 @@ delete cc._tmp.PrototypeSprite;
     };
 
     manager.prototype.add = function (source, callback, target) {
+        if (!source || !source.addEventListener) return;
         source.addEventListener('load', callback, target);
         this.list.push({
             source: source,
@@ -991,6 +992,7 @@ delete cc._tmp.PrototypeSprite;
         });
     };
     manager.prototype.once = function (source, callback, target) {
+        if (!source || !source.addEventListener) return;
         var tmpCallback = function (event) {
             source.removeEventListener('load', tmpCallback, target);
             callback.call(target, event);
