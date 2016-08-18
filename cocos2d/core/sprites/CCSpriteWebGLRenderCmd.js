@@ -88,14 +88,7 @@
     proto.isFrameDisplayed = function (frame) {
         var node = this._node;
         return (cc.rectEqualToRect(frame.getRect(), node._rect) && frame.getTexture().getName() === node._texture.getName()
-            && cc.pointEqualToPoint(frame.getOffset(), node._unflippedOffsetPositionFromCenter));
-    };
-
-    proto._updateForSetSpriteFrame = function () {};
-
-    proto._spriteFrameLoadedCallback = function (spriteFrame) {
-        this.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
-        this.dispatchEvent("load");
+        && cc.pointEqualToPoint(frame.getOffset(), node._unflippedOffsetPositionFromCenter));
     };
 
     proto._textureLoadedCallback = function (sender) {

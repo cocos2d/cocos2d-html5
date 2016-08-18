@@ -701,6 +701,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         this._normalImage = null;
         this._selectedImage = null;
         this._disabledImage = null;
+        this._loader = new cc.Sprite.LoadManager();
 
         if (normalSprite !== undefined) {
             //normalSprite = normalSprite;
@@ -722,17 +723,16 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
                 disabledImage = null;
             }
 
+            this._loader.clear();
             if (normalSprite.textureLoaded && !normalSprite.textureLoaded()) {
-                normalSprite.addEventListener("load", function (sender) {
-                    this.width = sender.width;
-                    this.height = sender.height;
-                    if (this.parent instanceof cc.Menu) {
-                        this.parent.updateAlign();
-                    }
+                this._loader.once(normalSprite, function () {
+                    this.initWithNormalSprite(normalSprite, selectedSprite, disabledImage, callback, target);
                 }, this);
+                return false;
             }
 
             this.initWithNormalSprite(normalSprite, selectedSprite, disabledImage, callback, target);
+            return true;
         }
     },
 
@@ -849,6 +849,13 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
      * @return {Boolean}
      */
     initWithNormalSprite: function (normalSprite, selectedSprite, disabledSprite, callback, target) {
+        this._loader.clear();
+        if (normalSprite.textureLoaded && !normalSprite.textureLoaded()) {
+            this._loader.once(normalSprite, function () {
+                this.initWithNormalSprite(normalSprite, selectedSprite, disabledSprite, callback, target);
+            }, this);
+            return false;
+        }
         this.initWithCallback(callback, target);
         this.setNormalImage(normalSprite);
         this.setSelectedImage(selectedSprite);
@@ -857,18 +864,6 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         if (locNormalImage) {
             this.width = locNormalImage.width;
             this.height = locNormalImage.height;
-
-            if (locNormalImage.textureLoaded && !locNormalImage.textureLoaded()) {
-                locNormalImage.addEventListener("load", function (sender) {
-                    this.width = sender.width;
-                    this.height = sender.height;
-                    this.setCascadeColorEnabled(true);
-                    this.setCascadeOpacityEnabled(true);
-                    if (this.parent instanceof cc.Menu) {
-                        this.parent.updateAlign();
-                    }
-                }, this);
-            }
         }
         this.setCascadeColorEnabled(true);
         this.setCascadeOpacityEnabled(true);
@@ -1015,16 +1010,6 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
             normalSprite = new cc.Sprite(normalImage);
             selectedImage &&
             (selectedSprite = new cc.Sprite(selectedImage));
-
-            if (normalSprite.textureLoaded && !normalSprite.textureLoaded()) {
-                normalSprite.addEventListener("load", function (sender) {
-                    this.width = sender.width;
-                    this.height = sender.height;
-                    if (this.parent instanceof cc.Menu) {
-                        this.parent.updateAlign();
-                    }
-                }, this);
-            }
 
             if (four === undefined) {
                 callback = three;
