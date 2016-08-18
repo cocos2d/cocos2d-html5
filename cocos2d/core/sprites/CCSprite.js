@@ -992,7 +992,7 @@ delete cc._tmp.PrototypeSprite;
     };
     manager.prototype.once = function (source, callback, target) {
         var tmpCallback = function (event) {
-            source.addEventListener('load', tmpCallback, target);
+            source.removeEventListener('load', tmpCallback, target);
             callback.call(target, event);
         };
         source.addEventListener('load', tmpCallback, target);
