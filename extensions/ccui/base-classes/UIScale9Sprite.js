@@ -264,10 +264,11 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
 
     _asyncSetPreferredSize: function () {
         this.removeEventListener('load', this._asyncSetPreferredSize, this);
-        this._cachePreferredSize = null;
         this.setPreferredSize(this._cachePreferredSize);
+        this._cachePreferredSize = null;
     },
     setPreferredSize: function (preferredSize) {
+        if (!preferredSize) return;
         if (!this._textureLoaded) {
             this._cachePreferredSize = preferredSize;
             this.removeEventListener('load', this._asyncSetPreferredSize, this);
