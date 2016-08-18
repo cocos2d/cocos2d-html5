@@ -55,6 +55,10 @@
         support.USE_LOADER_EVENT = 'canplay';
     }
 
+    if (sys.os === sys.OS_IOS) {
+        support.USE_LOADER_EVENT = 'loadedmetadata';
+    }
+
     if (sys.os === sys.OS_ANDROID) {
         if (sys.browserType === sys.BROWSER_TYPE_UC) {
             support.ONE_SOURCE = true;
