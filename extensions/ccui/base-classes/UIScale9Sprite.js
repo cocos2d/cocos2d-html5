@@ -235,6 +235,10 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         }
         else {
             this.init();
+            this.setCascadeColorEnabled(true);
+            this.setCascadeOpacityEnabled(true);
+            this.setAnchorPoint(0.5, 0.5);
+            this._positionsAreDirty = true;
         }
     },
 
