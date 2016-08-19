@@ -1035,7 +1035,15 @@ cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
      */
     var EqualToFrame = cc.ContainerStrategy.extend({
         apply: function (view) {
+            var frameH = view._frameSize.height, containerStyle = cc.container.style;
             this._setupContainer(view, view._frameSize.width, view._frameSize.height);
+            // Setup container's margin and padding
+            if (view._isRotated) {
+                containerStyle.marginLeft = frameH + 'px';
+            }
+            else {
+                containerStyle.margin = '0px';
+            }
         }
     });
 
