@@ -876,23 +876,25 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
             return false;
         }
 
-        var spriteFrame = sprite.getSpriteFrame();
-        if (spriteFrame && cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
-            spriteFrameRotated = false;
-            spriteRect = { x: 0, y: 0, height: spriteRect.height, width: spriteRect.width }
-        }
-
         this._scale9Image = sprite;
         if(!this._scale9Image)  return false;
+        var tmpTexture = this._scale9Image.getTexture();
+        this._textureLoaded = tmpTexture && tmpTexture.isLoaded();
+
+        var spriteFrame = sprite.getSpriteFrame();
+        if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
+            // Clipping will reset the properties - canvas mode
+            if (spriteFrame && tmpTexture._htmlElementObj instanceof window.HTMLCanvasElement) {
+                spriteFrameRotated = false;
+                spriteRect = { x: 0, y: 0, height: spriteRect.height, width: spriteRect.width }
+            }
+        }
 
         var opacity = this.getOpacity();
         var color = this.getColor();
         this._renderers.length = 0;
         var rect = spriteRect;
         var size = originalSize;
-
-        var tmpTexture = this._scale9Image.getTexture();
-        this._textureLoaded = tmpTexture && tmpTexture.isLoaded();
 
         if(cc._rectEqualToZero(rect)) {
             var textureSize = tmpTexture.getContentSize();
