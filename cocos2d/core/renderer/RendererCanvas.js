@@ -418,7 +418,7 @@ cc.rendererCanvas = {
             //ugly for armature
             this.restore();
             this.save();
-            this._context.transform(t.a, -t.b, -t.c, t.d, t.tx * scaleX, -(t.ty * scaleY));
+            this._context.transform(t.a * scaleX, -t.b * scaleY, -t.c * scaleX, t.d * scaleY, t.tx * scaleX, -(t.ty * scaleY));
         } else {
             this._context.setTransform(t.a * scaleX, -t.b * scaleY, -t.c * scaleX, t.d * scaleY, this._offsetX + t.tx * scaleX, this._realOffsetY - (t.ty * scaleY));
         }
