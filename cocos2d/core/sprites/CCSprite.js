@@ -293,6 +293,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         locRect.y = rect.y;
         locRect.width = rect.width;
         locRect.height = rect.height;
+        this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
     /**
