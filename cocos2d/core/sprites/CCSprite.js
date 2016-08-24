@@ -123,6 +123,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     ctor: function (fileName, rect, rotated) {
         var self = this;
         cc.Node.prototype.ctor.call(self);
+        // default transform anchor: center
+        this.setAnchorPoint(0.5, 0.5);
+
         self._loader = new cc.Sprite.LoadManager();
         self._shouldBeHidden = false;
         self._offsetPosition = cc.p(0, 0);
@@ -693,9 +696,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         _t._blendFunc.dst = cc.BLEND_DST;
 
         _t._flippedX = _t._flippedY = false;
-
-        // default transform anchor: center
-        _t.setAnchorPoint(0.5, 0.5);
 
         // zwoptex default values
         _t._offsetPosition.x = 0;
