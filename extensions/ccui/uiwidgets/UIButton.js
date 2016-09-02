@@ -116,6 +116,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this._buttonDisableRenderer = new cc.Sprite();
         this._titleRenderer = new cc.LabelTTF("");
         this._titleRenderer.setAnchorPoint(0.5, 0.5);
+        this._titleRenderer.setVerticalAlignment(cc.VERTICAL_TEXT_ALIGNMENT_CENTER);
 
         this.addProtectedChild(this._buttonNormalRenderer, ccui.Button.NORMAL_RENDERER_ZORDER, -1);
         this.addProtectedChild(this._buttonClickedRenderer, ccui.Button.PRESSED_RENDERER_ZORDER, -1);
