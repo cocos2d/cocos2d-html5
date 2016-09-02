@@ -77,6 +77,7 @@
                         break;
                     case ccs.DISPLAY_TYPE_ARMATURE:
                         selNode.setShaderProgram(this._shaderProgram);
+                        this._updateColorAndOpacity(cmd, selBone);
                         cmd._parentCmd = this;
                         // Continue rendering in default
                     default:
