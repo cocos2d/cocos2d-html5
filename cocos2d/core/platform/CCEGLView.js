@@ -138,6 +138,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     _viewName: "",
     // Custom callback for resize event
     _resizeCallback: null,
+
+    _orientationChanging: true,
+
     _scaleX: 1,
     _originalScaleX: 1,
     _scaleY: 1,
@@ -224,6 +227,11 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         }
     },
 
+    _orientationChange: function () {
+        this._orientationChanging = true;
+        this._resizeEvent();
+    },
+
     /**
      * <p>
      * Sets view's target-densitydpi for android mobile browser. it can be set to:           <br/>
@@ -259,14 +267,14 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             if (!this.__resizeWithBrowserSize) {
                 this.__resizeWithBrowserSize = true;
                 window.addEventListener('resize', this._resizeEvent);
-                window.addEventListener('orientationchange', this._resizeEvent);
+                window.addEventListener('orientationchange', this._orientationChange);
             }
         } else {
             //disable
             if (this.__resizeWithBrowserSize) {
                 this.__resizeWithBrowserSize = false;
                 window.removeEventListener('resize', this._resizeEvent);
-                window.removeEventListener('orientationchange', this._resizeEvent);
+                window.removeEventListener('orientationchange', this._orientationChange);
             }
         }
     },
@@ -305,7 +313,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         var h = __BrowserGetter.availHeight(this._frame);
         var isLandscape = w >= h;
 
-        if (!cc.sys.isMobile ||
+        if (!this._orientationChanging || !cc.sys.isMobile ||
             (isLandscape && this._orientation & cc.ORIENTATION_LANDSCAPE) || 
             (!isLandscape && this._orientation & cc.ORIENTATION_PORTRAIT)) {
             locFrameSize.width = w;
@@ -323,6 +331,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             cc.container.style.transformOrigin = '0px 0px 0px';
             this._isRotated = true;
         }
+        this._orientationChanging = false;
     },
 
     // hack
