@@ -1859,8 +1859,15 @@ var _initSys = function () {
         var tmpCanvas = document.createElement("CANVAS");
         try{
             var context = cc.create3DContext(tmpCanvas, {'stencil': true});
-            if(context) {
+            if (context && context.getShaderPrecisionFormat) {
                 _supportWebGL = true;
+            }
+
+            if (_supportWebGL && sys.os === sys.OS_IOS) {
+                // Not activating WebGL in iOS UIWebView because it may crash when entering background
+                if (!window.indexedDB) {
+                    _supportWebGL = false;
+                }
             }
 
             if (_supportWebGL && sys.os === sys.OS_ANDROID) {
