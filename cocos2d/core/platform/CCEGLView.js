@@ -228,8 +228,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     },
 
     _orientationChange: function () {
-        this._orientationChanging = true;
-        this._resizeEvent();
+        cc.view._orientationChanging = true;
+        cc.view._resizeEvent();
     },
 
     /**
@@ -267,14 +267,14 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             if (!this.__resizeWithBrowserSize) {
                 this.__resizeWithBrowserSize = true;
                 window.addEventListener('resize', this._resizeEvent);
-                window.addEventListener('orientationchange', this._orientationChange, this);
+                window.addEventListener('orientationchange', this._orientationChange);
             }
         } else {
             //disable
             if (this.__resizeWithBrowserSize) {
                 this.__resizeWithBrowserSize = false;
                 window.removeEventListener('resize', this._resizeEvent);
-                window.removeEventListener('orientationchange', this._orientationChange, this);
+                window.removeEventListener('orientationchange', this._orientationChange);
             }
         }
     },
