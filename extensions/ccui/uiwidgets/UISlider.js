@@ -680,6 +680,22 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         return this._zoomScale;
     },
 
+    getSlidBallNormalRenderer : function () {
+        return this._slidBallNormalRenderer;
+    },
+
+    getSlidBallPressedRenderer : function () {
+        return this._slidBallPressedRenderer;
+    },
+
+    getSlidBallDisabledRenderer : function () {
+        return this._slidBallDisabledRenderer;
+    },
+
+    getSlidBallRenderer : function () {
+        return this._slidBallRenderer;
+    },
+
     /**
      * Returns the "class name" of ccui.LoadingBar.
      * @returns {string}
