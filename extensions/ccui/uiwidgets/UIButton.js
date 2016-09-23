@@ -254,6 +254,9 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
                 break;
             case ccui.Widget.PLIST_TEXTURE:
                 //SetTexture cannot load resource
+                if (normal[0] === "#") {
+                    normal = normal.substr(1, normal.length - 1);
+                }
                 normalRenderer.initWithSpriteFrameName(normal);
                 break;
             default:
@@ -303,6 +306,9 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
                 break;
             case ccui.Widget.PLIST_TEXTURE:
                 //SetTexture cannot load resource
+                if (selected[0] === "#") {
+                    selected = selected.substr(1, selected.length - 1);
+                }
                 clickedRenderer.initWithSpriteFrameName(selected);
                 break;
             default:
@@ -348,6 +354,9 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
                 break;
             case ccui.Widget.PLIST_TEXTURE:
                 //SetTexture cannot load resource
+                if (disabled[0] === "#") {
+                    disabled = disabled.substr(1, disabled.length - 1);
+                }
                 disabledRenderer.initWithSpriteFrameName(disabled);
                 break;
             default:
