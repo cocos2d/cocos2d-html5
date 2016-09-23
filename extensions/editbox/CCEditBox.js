@@ -263,6 +263,8 @@ cc.EditBox = cc.ControlButton.extend({
         tmpEdTxt.style.active = 0;
         tmpEdTxt.style.outline = "medium";
         tmpEdTxt.style.padding = "0";
+
+        this.__fullscreen = false;
         var onCanvasClick = function() { this._edTxt.blur();};
         this._onCanvasClick = onCanvasClick.bind(this);
         
@@ -282,6 +284,15 @@ cc.EditBox = cc.ControlButton.extend({
         };
         this._keyPressEvent = keypressEvent.bind(this);
         var focusEvent = function () {
+            // Exit fullscreen
+            if(cc.view.isAutoFullScreenEnabled()) {
+                this.__fullscreen = true;
+                cc.view.enableAutoFullScreen(false);
+                cc.screen.exitFullScreen();
+            } else {
+                this.__fullscreen = false;
+            }
+
             if (this._edTxt.value === this._placeholderText) {
                 this._edTxt.value = "";
                 this._edTxt.style.fontSize = this._edFontSize + "px";
@@ -297,6 +308,11 @@ cc.EditBox = cc.ControlButton.extend({
         };
         this._focusEvent = focusEvent.bind(this);
         var blurEvent = function () {
+            // Resume fullscreen logic
+            if(this.__fullscreen) {
+                cc.view.enableAutoFullScreen(true);
+            }
+
             if (this._edTxt.value === "") {
                 this._edTxt.value = this._placeholderText;
                 this._edTxt.style.fontSize = this._placeholderFontSize + "px";

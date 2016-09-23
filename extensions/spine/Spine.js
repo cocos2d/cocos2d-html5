@@ -1857,7 +1857,7 @@ spine.SkeletonJson.prototype = {
             }
 
             slotData.attachmentName = slotMap["attachment"];
-            slotData.blendMode = spine.AttachmentType[slotMap["blend"] || "normal"];
+            slotData.blendMode = spine.BlendMode[slotMap["blend"] || "normal"];
 
             skeletonData.slots.push(slotData);
         }
