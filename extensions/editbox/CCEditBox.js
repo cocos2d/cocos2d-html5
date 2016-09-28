@@ -237,6 +237,7 @@ cc.EditBox = cc.Node.extend({
     ctor: function (size, normal9SpriteBg) {
         cc.Node.prototype.ctor.call(this);
 
+        this.setAnchorPoint(cc.p(0.5, 0.5));
         this._textColor = cc.color.WHITE;
         this._placeholderColor = cc.color.GRAY;
         cc.Node.prototype.setContentSize.call(this, size);
@@ -899,7 +900,7 @@ _p = null;
     };
 
     proto._updateDOMPlaceholderFontStyle = function () {
-        this._placeholderLabel.setFontFileOrFamily(this._editBox._placeholderFontName);
+        this._placeholderLabel.setFontName(this._editBox._placeholderFontName);
         this._placeholderLabel.setFontSize(this._editBox._placeholderFontSize);
     };
 
@@ -994,7 +995,7 @@ _p = null;
             this._edTxt.style.fontSize = this._edFontSize + 'px';
         }
         this._textLabel.setFontSize(this._edFontSize);
-        this._textLabel.setFontFileOrFamily(this._edFontName);
+        this._textLabel.setFontName(this._edFontName);
     };
 
 
