@@ -242,6 +242,7 @@ cc.EditBox = cc.Node.extend({
 
         this.initWithSizeAndBackgroundSprite(size, normal9SpriteBg);
         this._renderCmd._createLabels();
+        this.createDomElementIfNeeded();
     },
 
     _createRenderCmd: function () {
@@ -761,16 +762,16 @@ _p = null;
         if (this._editBox._editBoxInputMode === cc.EDITBOX_INPUT_MODE_ANY){
             this._textLabel.setPosition(LEFT_PADDING, editBoxSize.height);
             this._placeholderLabel.setPosition(LEFT_PADDING, editBoxSize.height);
-            this._placeholderLabel.setVerticalAlign(cc.VerticalTextAlignment.TOP);
-            this._textLabel.setVerticalAlign(cc.VerticalTextAlignment.TOP);
-            this._textLabel.enableWrapText(true);
+            this._placeholderLabel.setVerticalAlignment(cc.VERTICAL_TEXT_ALIGNMENT_TOP);
+            this._textLabel.setVerticalAlignment(cc.VERTICAL_TEXT_ALIGNMENT_TOP);
+            // this._textLabel.enableWrapText(true);
         }
         else {
-            this._textLabel.enableWrapText(false);
+            // this._textLabel.enableWrapText(false);
             this._textLabel.setPosition(LEFT_PADDING, editBoxSize.height);
             this._placeholderLabel.setPosition(LEFT_PADDING, (editBoxSize.height + placeholderLabelSize.height) / 2);
-            this._placeholderLabel.setVerticalAlign(cc.VerticalTextAlignment.CENTER);
-            this._textLabel.setVerticalAlign(cc.VerticalTextAlignment.CENTER);
+            this._placeholderLabel.setVerticalAlignment(cc.VERTICAL_TEXT_ALIGNMENT_CENTER);
+            this._textLabel.setVerticalAlignment(cc.VERTICAL_TEXT_ALIGNMENT_CENTER);
         }
 
     };
