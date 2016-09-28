@@ -222,7 +222,7 @@ cc.EditBoxDelegate = cc.Class.extend({
 cc.EditBox = cc.Node.extend({
     _backgroundSprite: null,
     _delegate: null,
-    _editBoxInputMode: cc.EDITBOX_INPUT_MODE_ANY,
+    _editBoxInputMode: cc.EDITBOX_INPUT_MODE_SINGLELINE,
     _editBoxInputFlag: cc.EDITBOX_INPUT_FLAG_SENSITIVE,
     _keyboardReturnType: cc.KEYBOARD_RETURNTYPE_DEFAULT,
     _maxLength: 50,
@@ -239,10 +239,21 @@ cc.EditBox = cc.Node.extend({
 
         this._textColor = cc.color.WHITE;
         this._placeholderColor = cc.color.GRAY;
+        cc.Node.prototype.setContentSize.call(this, size);
 
-        this.initWithSizeAndBackgroundSprite(size, normal9SpriteBg);
         this._renderCmd._createLabels();
         this.createDomElementIfNeeded();
+
+        this.initWithSizeAndBackgroundSprite(size, normal9SpriteBg);
+
+        cc.eventManager.addListener({
+            event: cc.EventListener.TOUCH_ONE_BY_ONE,
+            swallowTouches: true,
+            onTouchBegan: this._onTouchBegan.bind(this),
+            onTouchEnded: this._onTouchEnded.bind(this)
+        }, this);
+
+        this.setInputFlag(this._editBoxInputFlag);
     },
 
     _createRenderCmd: function () {
@@ -409,7 +420,7 @@ cc.EditBox = cc.Node.extend({
             this._backgroundSprite.removeFromParent();
         }
         this._backgroundSprite = normal9SpriteBg;
-        cc.Node.prototype.setContentSize.call(this, size);
+        this.setContentSize(size);
 
         if(this._backgroundSprite && !this._backgroundSprite.parent) {
             this._backgroundSprite.setAnchorPoint(cc.p(0, 0));
@@ -564,17 +575,19 @@ _p = null;
         tmpEdTxt.style.padding = '0';
         tmpEdTxt.style.textTransform = 'uppercase';
         tmpEdTxt.style.display = 'none';
+
         tmpEdTxt.style.position = "absolute";
         tmpEdTxt.style.bottom = "0px";
         tmpEdTxt.style.left = LEFT_PADDING + "px";
         tmpEdTxt.style.className = "cocosEditBox";
+        this.setMaxLength(thisPointer._editBox._maxLength);
 
         tmpEdTxt.addEventListener('input', function () {
             var editBox = thisPointer._editBox;
 
 
-            if (this.value.length > this.maxLength) {
-                this.value = this.value.slice(0, this.maxLength);
+            if (this.value.length > this._maxLength) {
+                this.value = this.value.slice(0, this._maxLength);
             }
 
             if (editBox._delegate && editBox._delegate.editBoxTextChanged) {
@@ -667,10 +680,11 @@ _p = null;
         tmpEdTxt.style.bottom = "0px";
         tmpEdTxt.style.left = LEFT_PADDING + "px";
         tmpEdTxt.style.className = "cocosEditBox";
+        this.setMaxLength(thisPointer._editBox._maxLength);
 
         tmpEdTxt.addEventListener('input', function () {
-            if (this.value.length > this.maxLength) {
-                this.value = this.value.slice(0, this.maxLength);
+            if (this.value.length > this._maxLength) {
+                this.value = this.value.slice(0, this._maxLength);
             }
 
             var editBox = thisPointer._editBox;
@@ -756,6 +770,7 @@ _p = null;
     proto._updateLabelPosition = function (editBoxSize) {
         var labelContentSize = cc.size(editBoxSize.width - LEFT_PADDING, editBoxSize.height);
         this._textLabel.setContentSize(labelContentSize);
+        this._textLabel.setDimensions(labelContentSize);
         this._placeholderLabel.setLineHeight(editBoxSize.height);
         var placeholderLabelSize = this._placeholderLabel.getContentSize();
 
@@ -994,7 +1009,7 @@ _p = null;
     };
 
     proto.createNativeControl = function() {
-        this._createDomTextArea();
+        this._createDomInput();
         this._addDomInputControl();
     };
 
