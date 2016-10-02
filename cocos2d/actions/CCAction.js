@@ -185,7 +185,7 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
     },
 
     /**
-     * Currently JavaScript Bindigns (JSB), in some cases, needs to use retain and release. This is a bug in JSB, <br/>
+     * Currently JavaScript Bindings (JSB), in some cases, needs to use retain and release. This is a bug in JSB, <br/>
      * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB. <br/>
      * This is a hack, and should be removed once JSB fixes the retain/release bug.
      */
@@ -193,7 +193,7 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
     },
 
     /**
-     * Currently JavaScript Bindigns (JSB), in some cases, needs to use retain and release. This is a bug in JSB, <br/>
+     * Currently JavaScript Bindings (JSB), in some cases, needs to use retain and release. This is a bug in JSB, <br/>
      * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB. <br/>
      * This is a hack, and should be removed once JSB fixes the retain/release bug.
      */
@@ -238,7 +238,7 @@ cc.Action.create = cc.action;
  * @extends cc.Action
  */
 cc.FiniteTimeAction = cc.Action.extend(/** @lends cc.FiniteTimeAction# */{
-    //! duration in seconds
+    // duration in seconds
     _duration:0,
 
     /**
@@ -562,7 +562,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
      *
      * @param {Boolean} value
      */
-    setBoudarySet:function (value) {
+    setBoundarySet:function (value) {
         this._boundarySet = value;
     },
 
