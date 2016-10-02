@@ -194,6 +194,10 @@ cc.Node.RenderCmd.prototype = {
                 }
             }
 
+            if (node._additionalTransformDirty) {
+                this._transform = t = cc.affineTransformConcat(t, node._additionalTransform); // seems like 'this._transform' can be removed
+            }
+
             if (pt) {
                 // cc.AffineTransformConcat is incorrect at get world transform
                 wt.a = t.a * pt.a + t.b * pt.c;                               //a
@@ -229,6 +233,10 @@ cc.Node.RenderCmd.prototype = {
                 }
             }
 
+            if (node._additionalTransformDirty) {
+                this._transform = t = cc.affineTransformConcat(t, node._additionalTransform);
+            }
+
             if (pt) {
                 wt.a = t.a * pt.a + t.b * pt.c;
                 wt.b = t.a * pt.b + t.b * pt.d;
@@ -244,10 +252,6 @@ cc.Node.RenderCmd.prototype = {
                 wt.tx = t.tx;
                 wt.ty = t.ty;
             }
-        }
-
-        if (node._additionalTransformDirty) {
-            this._transform = cc.affineTransformConcat(t, node._additionalTransform);
         }
 
         this._updateCurrentRegions && this._updateCurrentRegions();
