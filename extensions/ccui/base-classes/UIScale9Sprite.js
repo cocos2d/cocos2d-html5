@@ -288,9 +288,16 @@ ccui.Scale9Sprite = cc.Scale9Sprite = cc.Node.extend(/** @lends ccui.Scale9Sprit
         this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.cacheDirty);
     },
 
+    getColor: function () {
+        return this._color;
+    },
+
     /** Color: conforms to CCRGBAProtocol protocol */
     setColor: function (color) {
-        cc.Node.prototype.setColor.call(this, color);
+        // Intentionally not calling super().
+        // Instead, setColor() is called on each scale child so that
+        // tint is only applied once.
+        this._color = color;
         if(this._scale9Enabled) {
             var scaleChildren = this._renderers;
             for (var i = 0; i < scaleChildren.length; i++) {
