@@ -1391,8 +1391,13 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 locModeA.tangentialAccelVar = (pszTmp) ? parseFloat(pszTmp) : 0;
 
                 // rotation is dir
-                var locRotationIsDir = locValueForKey("rotationIsDir", dictionary).toLowerCase();
-                locModeA.rotationIsDir = (locRotationIsDir != null && (locRotationIsDir === "true" || locRotationIsDir === "1"));
+                var locRotationIsDir = locValueForKey("rotationIsDir", dictionary);
+                if (locRotationIsDir !== null) {
+                    locRotationIsDir = locRotationIsDir.toString().toLowerCase();
+                    locModeA.rotationIsDir = (locRotationIsDir === "true" || locRotationIsDir === "1");
+                }
+                else
+                    locModeA.rotationIsDir = false;
             } else if (this.emitterMode === cc.ParticleSystem.MODE_RADIUS) {
                 // or Mode B: radius movement
                 var locModeB = this.modeB;
