@@ -265,6 +265,7 @@ cc.EditBox = cc.ControlButton.extend({
         tmpEdTxt.style.padding = "0";
 
         this.__fullscreen = false;
+        this.__autoResize = false;
         var onCanvasClick = function() { this._edTxt.blur();};
         this._onCanvasClick = onCanvasClick.bind(this);
         
@@ -285,13 +286,15 @@ cc.EditBox = cc.ControlButton.extend({
         this._keyPressEvent = keypressEvent.bind(this);
         var focusEvent = function () {
             // Exit fullscreen
-            if(cc.view.isAutoFullScreenEnabled()) {
+            if (cc.view.isAutoFullScreenEnabled()) {
                 this.__fullscreen = true;
                 cc.view.enableAutoFullScreen(false);
                 cc.screen.exitFullScreen();
             } else {
                 this.__fullscreen = false;
             }
+            this.__autoResize = cc.view.__resizeWithBrowserSize;
+            cc.view.resizeWithBrowserSize(false);
 
             if (this._edTxt.value === this._placeholderText) {
                 this._edTxt.value = "";
@@ -309,8 +312,11 @@ cc.EditBox = cc.ControlButton.extend({
         this._focusEvent = focusEvent.bind(this);
         var blurEvent = function () {
             // Resume fullscreen logic
-            if(this.__fullscreen) {
+            if (this.__fullscreen) {
                 cc.view.enableAutoFullScreen(true);
+            }
+            if (this.__autoResize) {
+                cc.view.resizeWithBrowserSize(true);
             }
 
             if (this._edTxt.value === "") {
