@@ -725,9 +725,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
         this._originalScaleX = this._scaleX;
         this._originalScaleY = this._scaleY;
-        // For editbox
-        if (cc.DOM)
-            cc.DOM._resetEGLViewDiv();
         cc.visibleRect && cc.visibleRect.init(this._visibleRect);
     },
 
