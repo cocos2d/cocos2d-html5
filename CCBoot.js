@@ -2020,6 +2020,21 @@ var _initSys = function () {
     sys.openURL = function(url){
         window.open(url);
     };
+
+    /**
+     * Get the number of milliseconds elapsed since 1 January 1970 00:00:00 UTC.
+     * @memberof cc.sys
+     * @name now
+     * @return {Number}
+     */
+    sys.now = function () {
+        if (Date.now) {
+            return Date.now();
+        }
+        else {
+            return +(new Date);
+        }
+    };
 };
 _initSys();
 
