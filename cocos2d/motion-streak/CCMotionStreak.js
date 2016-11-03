@@ -290,11 +290,11 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         this.scheduleUpdate();
 
         //bind buffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
+        cc.glBindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, this._vertices, gl.DYNAMIC_DRAW);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordsBuffer);
+        cc.glBindBuffer(gl.ARRAY_BUFFER, this._texCoordsBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, this._texCoords, gl.DYNAMIC_DRAW);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._colorPointerBuffer);
+        cc.glBindBuffer(gl.ARRAY_BUFFER, this._colorPointerBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, this._colorPointer, gl.DYNAMIC_DRAW);
 
         return true;

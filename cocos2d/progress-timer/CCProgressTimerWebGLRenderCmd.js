@@ -70,7 +70,7 @@
         var blendFunc = node._sprite._blendFunc;
         cc.glBlendFunc(blendFunc.src, blendFunc.dst);
         cc.glBindTexture2D(node._sprite.texture);
-        context.bindBuffer(context.ARRAY_BUFFER, this._vertexWebGLBuffer);
+        cc.glBindBuffer(context.ARRAY_BUFFER, this._vertexWebGLBuffer);
 
         context.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
         context.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
@@ -220,7 +220,7 @@
             }
 
             // Init buffer data
-            gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexWebGLBuffer);
+            cc.glBindBuffer(gl.ARRAY_BUFFER, this._vertexWebGLBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, this._float32View, gl.DYNAMIC_DRAW);
 
             this._vertexDataCount = 0;

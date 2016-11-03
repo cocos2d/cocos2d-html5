@@ -39,7 +39,7 @@ var GlobalVertexBuffer = function (gl) {
     this.dataArray = new Float32Array(this.data);
 
     // Init buffer data
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+    cc.glBindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, this.dataArray, gl.DYNAMIC_DRAW);
 
     this._dirty = false;
@@ -114,7 +114,7 @@ GlobalVertexBuffer.prototype = {
 
     update: function () {
         if (this._dirty) {
-            this.gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+            cc.glBindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
             // Note: Can memorize different dirty zones and update them separately, maybe faster
             this.gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.dataArray);
             this._dirty = false;

@@ -456,18 +456,18 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         // Attributes
         //
         // position
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
+        cc.glBindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
         if (locDirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._vertices, gl.DYNAMIC_DRAW);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, 0);
 
         // texCoords
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
+        cc.glBindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
         if (locDirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._texCoordinates, gl.DYNAMIC_DRAW);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, 0);
 
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
+        cc.glBindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
         if (locDirty)
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
         gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, 0);
@@ -553,11 +553,11 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         }
         this._originalVertices = new Float32Array(this._vertices);
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
+        cc.glBindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, this._vertices, gl.DYNAMIC_DRAW);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
+        cc.glBindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, this._texCoordinates, gl.DYNAMIC_DRAW);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
+        cc.glBindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
         this._dirty = true;
     },
@@ -727,18 +727,18 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
 
         // position
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
+        cc.glBindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
         if (locDirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._vertices, gl.DYNAMIC_DRAW);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, this._vertices);
 
         // texCoords
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
+        cc.glBindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
         if (locDirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._texCoordinates, gl.DYNAMIC_DRAW);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, this._texCoordinates);
 
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
+        cc.glBindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
         if (locDirty)
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
         gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, 0);
@@ -832,11 +832,11 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         }
         this._originalVertices = new Float32Array(this._vertices);
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
+        cc.glBindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, this._vertices, gl.DYNAMIC_DRAW);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
+        cc.glBindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, this._texCoordinates, gl.DYNAMIC_DRAW);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
+        cc.glBindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.DYNAMIC_DRAW);
         this._dirty = true;
     }
