@@ -768,26 +768,27 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         }
     },
 
-    isScheduled: function(key, target){
+    isScheduled: function(callback, target){
         //key, target
         //selector, target
-        cc.assert(key, "Argument key must not be empty");
+        cc.assert(callback, "Argument callback must not be empty");
         cc.assert(target, "Argument target must be non-nullptr");
 
-        var element = this._hashForUpdates[target.__instanceId];
+        var element = this._hashForTimers[target.__instanceId];
 
-        if (!element){
+        if (!element) {
             return false;
         }
 
         if (element.timers == null){
             return false;
-        }else{
+        }
+        else {
             var timers = element.timers;
-            for (var i = 0; i < timers.length; ++i){
+            for (var i = 0; i < timers.length; ++i) {
                 var timer =  timers[i];
 
-                if (key === timer.getKey()){
+                if (callback === timer._selector){
                     return true;
                 }
             }
