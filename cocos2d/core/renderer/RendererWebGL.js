@@ -315,7 +315,7 @@ return {
         cc.glBlendFunc(_batchedInfo.blendSrc, _batchedInfo.blendDst);
         cc.glBindTexture2DN(0, texture);                   // = cc.glBindTexture2D(texture);
 
-        var _bufferchanged = !cc.glBindBuffer(gl.ARRAY_BUFFER, _quadVertexBuffer);
+        var _bufferchanged = !gl.bindBuffer(gl.ARRAY_BUFFER, _quadVertexBuffer);
         // upload the vertex data to the gl buffer
         if (_batchingSize > _vertexSize * 0.5) {
             gl.bufferData(gl.ARRAY_BUFFER, _vertexDataF32, gl.DYNAMIC_DRAW);
@@ -334,7 +334,7 @@ return {
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);
         }
 
-        cc.glBindBuffer(gl.ELEMENT_ARRAY_BUFFER, _quadIndexBuffer);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _quadIndexBuffer);
         gl.drawElements(gl.TRIANGLES, count * 6, gl.UNSIGNED_SHORT, 0);
 
         cc.g_NumberOfDraws++;
@@ -352,7 +352,7 @@ return {
             context = ctx || cc._renderContext;
 
         // Reset buffer for rendering
-        cc.glBindBuffer(gl.ARRAY_BUFFER, null);
+        context.bindBuffer(gl.ARRAY_BUFFER, null);
 
         for (i = 0, len = locCmds.length; i < len; ++i) {
             cmd = locCmds[i];

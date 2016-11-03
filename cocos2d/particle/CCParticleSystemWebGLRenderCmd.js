@@ -210,12 +210,12 @@
         gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
         gl.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
 
-        cc.glBindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0]);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0]);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);               // vertices
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);          // colors
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);            // tex coords
 
-        cc.glBindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
         gl.drawElements(gl.TRIANGLES, node._particleIdx * 6, gl.UNSIGNED_SHORT, 0);
     };
 
@@ -341,11 +341,11 @@
 
         //gl.deleteBuffer(this._buffersVBO[0]);
         this._buffersVBO[0] = gl.createBuffer();
-        cc.glBindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0]);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0]);
         gl.bufferData(gl.ARRAY_BUFFER, this._quadsArrayBuffer, gl.DYNAMIC_DRAW);
 
         this._buffersVBO[1] = gl.createBuffer();
-        cc.glBindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
 
         //cc.checkGLErrorDebug();
@@ -378,7 +378,7 @@
 
     proto.postStep = function(){
         var gl = cc._renderContext;
-        cc.glBindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0]);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0]);
         gl.bufferSubData(gl.ARRAY_BUFFER, 0, this._quadsArrayBuffer);
     };
 

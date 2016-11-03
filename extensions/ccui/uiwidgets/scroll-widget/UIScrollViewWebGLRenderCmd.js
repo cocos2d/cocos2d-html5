@@ -40,7 +40,7 @@
         this._node.updateChildren();
 
         // Reset buffer for rendering
-        cc.glBindBuffer(gl.ARRAY_BUFFER, null);
+        context.bindBuffer(gl.ARRAY_BUFFER, null);
 
         for (i = 0, len = locCmds.length; i < len; i++) {
             cmd = locCmds[i];
