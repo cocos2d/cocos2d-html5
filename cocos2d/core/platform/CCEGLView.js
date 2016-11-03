@@ -217,13 +217,14 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             return;
 
         // Frame size changed, do resize works
-        if (view._resizeCallback) {
-            view._resizeCallback.call();
-        }
         var width = view._originalDesignResolutionSize.width;
         var height = view._originalDesignResolutionSize.height;
-        if (width > 0) {
+        if (width > 0)
             view.setDesignResolutionSize(width, height, view._resolutionPolicy);
+
+        cc.eventManager.dispatchCustomEvent('canvas-resize');
+        if (view._resizeCallback) {
+            view._resizeCallback.call();
         }
     },
 
@@ -287,7 +288,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * @param {Function|null} callback The callback function
      */
     setResizeCallback: function (callback) {
-        if (cc.isFunction(callback) || callback == null) {
+        if (typeof callback === 'function' || callback == null) {
             this._resizeCallback = callback;
         }
     },
@@ -304,6 +305,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         orientation = orientation & cc.ORIENTATION_AUTO;
         if (orientation) {
             this._orientation = orientation;
+            var designWidth = this._originalDesignResolutionSize.width;
+            var designHeight = this._originalDesignResolutionSize.height;
+            this.setDesignResolutionSize(designWidth, designHeight, this._resolutionPolicy);
         }
     },
 
@@ -428,7 +432,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      * @param {Boolean} enabled  Enable or disable retina display
      */
     enableRetina: function(enabled) {
-        this._retinaEnabled = enabled ? true : false;
+        this._retinaEnabled = !!enabled;
     },
 
     /**
@@ -672,6 +676,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         if(cc.sys.isMobile)
             this._adjustViewportMeta();
 
+        // Permit to re-detect the orientation of device.
+        this._orientationChanging = true;
         this._initFrameSize();
 
         this._originalDesignResolutionSize.width = this._designResolutionSize.width = width;
@@ -713,6 +719,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             // reset director's member variables to fit visible rect
             director.setGLDefaultValues();
         }
+        else if (cc._renderType === cc.game.RENDER_TYPE_CANVAS) {
+            cc.renderer._allNeedDraw = true;
+        }
 
         this._originalScaleX = this._scaleX;
         this._originalScaleY = this._scaleY;
@@ -747,7 +756,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
      */
     setRealPixelResolution: function (width, height, resolutionPolicy) {
         // Set viewport's width
-        this._setViewportMeta({"width": width, "target-densitydpi": cc.DENSITYDPI_DEVICE}, true);
+        this._setViewportMeta({"width": width}, true);
 
         // Set body width to the exact pixel resolution
         document.body.style.width = width + "px";
@@ -871,10 +880,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         return this._isRotated ? {x: this._viewPortRect.width - y, y: x} : {x: x, y: y};
     },
 
-    _convertMouseToLocationInView: function(point, relatedPos) {
-        var locViewPortRect = this._viewPortRect, _t = this;
-        point.x = ((_t._devicePixelRatio * (point.x - relatedPos.left)) - locViewPortRect.x) / _t._scaleX;
-        point.y = (_t._devicePixelRatio * (relatedPos.top + relatedPos.height - point.y) - locViewPortRect.y) / _t._scaleY;
+    _convertMouseToLocationInView: function (point, relatedPos) {
+        var viewport = this._viewPortRect, _t = this;
+        point.x = ((_t._devicePixelRatio * (point.x - relatedPos.left)) - viewport.x) / _t._scaleX;
+        point.y = (_t._devicePixelRatio * (relatedPos.top + relatedPos.height - point.y) - viewport.y) / _t._scaleY;
     },
 
     _convertPointWithScale: function (point) {
@@ -945,6 +954,10 @@ cc.ContainerStrategy = cc.Class.extend(/** @lends cc.ContainerStrategy# */{
 
     _setupContainer: function (view, w, h) {
         var locCanvas = cc.game.canvas, locContainer = cc.game.container;
+        if (cc.sys.os === cc.sys.OS_ANDROID) {
+            document.body.style.width = (view._isRotated ? h : w) + 'px';
+            document.body.style.height = (view._isRotated ? w : h) + 'px';
+        }
 
         // Setup style
         locContainer.style.width = locCanvas.style.width = w + 'px';
