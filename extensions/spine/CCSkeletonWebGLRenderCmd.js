@@ -103,7 +103,7 @@
                     cc.glBlendFunc(cc.ONE, cc.ONE_MINUS_SRC_COLOR);
                     break;
                 default:
-                    cc.glBlendFunc(locBlendFunc.src, locBlendFunc.dst);
+                    cc.glBlendFunc(premultiAlpha ? cc.ONE : cc.SRC_ALPHA, cc.ONE_MINUS_SRC_ALPHA);
                 }
             } else if (regionTextureAtlas != textureAtlas && textureAtlas) {
                 textureAtlas.drawQuads();
