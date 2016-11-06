@@ -44,10 +44,6 @@ if (cc.ENABLE_GL_STATE_CACHE) {
         if (_currBuffers[target] !== buffer) {
             this.glBindBuffer(target, buffer);
             _currBuffers[target] = buffer;
-            return false;
-        }
-        else {
-            return true;
         }
     };
 
