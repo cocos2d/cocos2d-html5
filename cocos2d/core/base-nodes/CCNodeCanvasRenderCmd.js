@@ -38,13 +38,39 @@ cc.CustomRenderCmd = function (target, func) {
     };
 };
 
-cc.Node._dirtyFlags = {
+var dirtyFlags = cc.Node._dirtyFlags = {
     transformDirty: 1 << 0, visibleDirty: 1 << 1, colorDirty: 1 << 2, opacityDirty: 1 << 3, cacheDirty: 1 << 4,
     orderDirty: 1 << 5, textDirty: 1 << 6, gradientDirty: 1 << 7, textureDirty: 1 << 8,
     contentDirty: 1 << 9,
     COUNT: 10,
     all: (1 << 10) - 1
 };
+
+var ONE_DEGREE = Math.PI / 180;
+var stack = new Array(50);
+
+function transformChildTree (root) {
+    var index = 1;
+    var children, child, curr, parentCmd, i, len;
+    stack[0] = root;
+    while (index) {
+        index--;
+        curr = stack[index];
+        // Avoid memory leak
+        stack[index] = null;
+        if (!curr) continue;
+        children = curr._children;
+        if (children && children.length > 0) {
+            parentCmd = curr._renderCmd;
+            for (i = 0, len = children.length; i < len; ++i) {
+                child = children[i];
+                stack[index] = child;
+                index++;
+                child._renderCmd.transform(parentCmd);
+            }
+        }
+    }
+}
 
 //-------------------------Base -------------------------
 cc.Node.RenderCmd = function (renderable) {
@@ -150,7 +176,7 @@ cc.Node.RenderCmd.prototype = {
 
             // rotation
             if (hasRotation) {
-                var rotationRadiansX = node._rotationX * 0.017453292519943295;  //0.017453292519943295 = (Math.PI / 180);   for performance
+                var rotationRadiansX = node._rotationX * ONE_DEGREE;
                 c = Math.sin(rotationRadiansX);
                 d = Math.cos(rotationRadiansX);
                 if (node._rotationY === node._rotationX) {
@@ -158,7 +184,7 @@ cc.Node.RenderCmd.prototype = {
                     b = -c;
                 }
                 else {
-                    var rotationRadiansY = node._rotationY * 0.017453292519943295;  //0.017453292519943295 = (Math.PI / 180);   for performance
+                    var rotationRadiansY = node._rotationY * ONE_DEGREE;
                     a = Math.cos(rotationRadiansY);
                     b = -Math.sin(rotationRadiansY);
                 }
@@ -172,8 +198,8 @@ cc.Node.RenderCmd.prototype = {
 
             // skew
             if (hasSkew) {
-                var skx = Math.tan(node._skewX * Math.PI / 180);
-                var sky = Math.tan(node._skewY * Math.PI / 180);
+                var skx = Math.tan(node._skewX * ONE_DEGREE);
+                var sky = Math.tan(node._skewY * ONE_DEGREE);
                 if (skx === Infinity)
                     skx = 99999999;
                 if (sky === Infinity)
@@ -250,17 +276,13 @@ cc.Node.RenderCmd.prototype = {
             this._transform = cc.affineTransformConcat(t, node._additionalTransform);
         }
 
-        this._updateCurrentRegions && this._updateCurrentRegions();
-        this._notifyRegionStatus && this._notifyRegionStatus(cc.Node.CanvasRenderCmd.RegionStatus.DirtyDouble);
+        if (this._updateCurrentRegions) {
+            this._updateCurrentRegions();
+            this._notifyRegionStatus && this._notifyRegionStatus(cc.Node.CanvasRenderCmd.RegionStatus.DirtyDouble);
+        }
 
         if (recursive) {
-            var locChildren = this._node._children;
-            if (!locChildren || locChildren.length === 0)
-                return;
-            var i, len;
-            for (i = 0, len = locChildren.length; i < len; i++) {
-                locChildren[i]._renderCmd.transform(this, recursive);
-            }
+            transformChildTree(node);
         }
 
         this._cacheDirty = true;
@@ -331,7 +353,7 @@ cc.Node.RenderCmd.prototype = {
                 }
             }
         }
-        this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.colorDirty ^ this._dirtyFlag;
+        this._dirtyFlag &= ~dirtyFlags.colorDirty;
     },
 
     _updateDisplayOpacity: function (parentOpacity) {
@@ -366,7 +388,7 @@ cc.Node.RenderCmd.prototype = {
                 }
             }
         }
-        this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.opacityDirty ^ this._dirtyFlag;
+        this._dirtyFlag &= ~dirtyFlags.opacityDirty;
     },
 
     _syncDisplayColor: function (parentColor) {
@@ -394,14 +416,17 @@ cc.Node.RenderCmd.prototype = {
         this._displayedOpacity = node._realOpacity * parentOpacity / 255.0;
     },
 
-    _updateColor: function () {
-    },
+    _updateColor: function(){},
 
     updateStatus: function () {
-        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        var colorDirty = locFlag & flags.colorDirty,
-            opacityDirty = locFlag & flags.opacityDirty;
-        this._savedDirtyFlag = this._savedDirtyFlag || locFlag;
+        var locFlag = this._dirtyFlag;
+        var colorDirty = locFlag & dirtyFlags.colorDirty,
+            opacityDirty = locFlag & dirtyFlags.opacityDirty;
+
+        if (locFlag & dirtyFlags.contentDirty) {
+            this._notifyRegionStatus && this._notifyRegionStatus(_ccsg.Node.CanvasRenderCmd.RegionStatus.Dirty);
+            this._dirtyFlag &= ~dirtyFlags.contentDirty;
+        }
 
         if (colorDirty)
             this._updateDisplayColor();
@@ -412,20 +437,20 @@ cc.Node.RenderCmd.prototype = {
         if (colorDirty || opacityDirty)
             this._updateColor();
 
-        if (locFlag & flags.transformDirty) {
+        if (locFlag & dirtyFlags.transformDirty) {
             //update the transform
             this.transform(this.getParentRenderCmd(), true);
-            this._dirtyFlag = this._dirtyFlag & flags.transformDirty ^ this._dirtyFlag;
+            this._dirtyFlag &= ~dirtyFlags.transformDirty;
         }
 
-        if (locFlag & flags.orderDirty)
-            this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
+        if (locFlag & dirtyFlags.orderDirty)
+            this._dirtyFlag &= ~dirtyFlags.orderDirty;
     },
 
     _syncStatus: function (parentCmd) {
         //  In the visit logic does not restore the _dirtyFlag
         //  Because child elements need parent's _dirtyFlag to change himself
-        var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag, parentNode = null;
+        var locFlag = this._dirtyFlag, parentNode = null;
         if (parentCmd) {
             parentNode = parentCmd._node;
             this._savedDirtyFlag = this._savedDirtyFlag || parentCmd._savedDirtyFlag || locFlag;
@@ -440,37 +465,37 @@ cc.Node.RenderCmd.prototype = {
         //    But while the child element does not enter the circulation
         //    Here will be reset state in last
         //    In order the child elements get the parent state
-        if (parentNode && parentNode._cascadeColorEnabled && (parentCmd._dirtyFlag & flags.colorDirty))
-            locFlag |= flags.colorDirty;
+        if (parentNode && parentNode._cascadeColorEnabled && (parentCmd._dirtyFlag & dirtyFlags.colorDirty))
+            locFlag |= dirtyFlags.colorDirty;
 
-        if (parentNode && parentNode._cascadeOpacityEnabled && (parentCmd._dirtyFlag & flags.opacityDirty))
-            locFlag |= flags.opacityDirty;
+        if (parentNode && parentNode._cascadeOpacityEnabled && (parentCmd._dirtyFlag & dirtyFlags.opacityDirty))
+            locFlag |= dirtyFlags.opacityDirty;
 
-        if (parentCmd && (parentCmd._dirtyFlag & flags.transformDirty))
-            locFlag |= flags.transformDirty;
+        if (parentCmd && (parentCmd._dirtyFlag & dirtyFlags.transformDirty))
+            locFlag |= dirtyFlags.transformDirty;
 
-        var colorDirty = locFlag & flags.colorDirty,
-            opacityDirty = locFlag & flags.opacityDirty;
+        var colorDirty = locFlag & dirtyFlags.colorDirty,
+            opacityDirty = locFlag & dirtyFlags.opacityDirty;
 
         this._dirtyFlag = locFlag;
 
         if (colorDirty)
-        //update the color
+            //update the color
             this._syncDisplayColor();
 
         if (opacityDirty)
-        //update the opacity
+            //update the opacity
             this._syncDisplayOpacity();
 
         if (colorDirty || opacityDirty)
             this._updateColor();
 
-        if (locFlag & flags.transformDirty)
+        if (locFlag & dirtyFlags.transformDirty)
             //update the transform
             this.transform(parentCmd);
 
-        if (locFlag & flags.orderDirty)
-            this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
+        if (locFlag & dirtyFlags.orderDirty)
+            this._dirtyFlag &= ~dirtyFlags.orderDirty;
     },
 
     visitChildren: function () {
