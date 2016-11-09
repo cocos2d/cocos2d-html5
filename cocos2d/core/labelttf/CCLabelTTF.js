@@ -806,7 +806,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     getContentSize: function () {
         if (this._needUpdateTexture)
             this._renderCmd._updateTTF();
-        return cc.size(this._contentSize);
+        return cc.size(
+            this._contentSize.width / cc.view.getDevicePixelRatio(),
+            this._contentSize.height / cc.view.getDevicePixelRatio());
     },
 
     _getWidth: function () {
