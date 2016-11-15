@@ -101,6 +101,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
         this._clippingRect = cc.rect(0, 0, 0, 0);
         this._backGroundImageColor = cc.color(255, 255, 255, 255);
+        this._alignment = ccui.Layout.ALIGN_LEFT;
     },
 
     /**
@@ -1384,6 +1385,27 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         return "Layout";
     },
 
+    /**
+     * Set the alignment. Used by linear layout.
+     *
+     * By default left alignment is used in horizontal layouts and top alignment
+     * in vertical layouts.
+     *
+     * @param {ccui.Layout.ALIGN_LEFT|ccui.Layout.ALIGN_TOP|ccui.Layout.ALIGN_CENTER|ccui.Layout.ALIGN_RIGHT|ccui.Layout.ALIGN_BOTTOM|number} alignment
+     */
+    setAlignment: function (alignment) {
+        this._alignment = alignment;
+    },
+
+    /**
+     * Returns the alignment used by linear layout.
+     *
+     * @return {ccui.Layout.ALIGN_LEFT|ccui.Layout.ALIGN_TOP|ccui.Layout.ALIGN_CENTER|ccui.Layout.ALIGN_RIGHT|ccui.Layout.ALIGN_BOTTOM}
+     */
+    getAlignment: function () {
+        return this._alignment;
+    },
+
     _createCloneInstance: function () {
         return new ccui.Layout();
     },
@@ -1525,3 +1547,23 @@ ccui.Layout.BACKGROUND_IMAGE_ZORDER = -1;
  * @constant
  */
 ccui.Layout.BACKGROUND_RENDERER_ZORDER = -2;
+
+//Layout alignment
+/**
+ * Place items on the left.
+ * @type {number}
+ * @constant
+ */
+ccui.Layout.ALIGN_LEFT = ccui.Layout.ALIGN_TOP = 0;
+/**
+ * Place items in the center.
+ * @type {number}
+ * @constant
+ */
+ccui.Layout.ALIGN_CENTER = 1;
+/**
+ * Place items on the right.
+ * @type {number}
+ * @constant
+ */
+ccui.Layout.ALIGN_RIGHT = ccui.Layout.ALIGN_BOTTOM = 2;

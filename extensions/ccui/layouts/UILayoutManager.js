@@ -48,7 +48,30 @@ ccui.linearVerticalLayoutManager = /** @lends ccui.linearVerticalLayoutManager# 
     _doLayout: function(layout){
         var layoutSize = layout._getLayoutContentSize();
         var container = layout._getLayoutElements();
-        var topBoundary = layoutSize.height;
+
+        var topBoundary;
+        if (layout.getAlignment() == ccui.Layout.ALIGN_TOP) {
+            topBoundary = layoutSize.height;
+        } else {
+            var usedHeight = 0;
+            for (var i = 0, len = container.length; i < len; i++) {
+                var child = container[i];
+                if (child) {
+                    var layoutParameter = child.getLayoutParameter();
+                    if (layoutParameter) {
+                        var cs = child.getContentSize();
+                        var mg = layoutParameter.getMargin();
+                        usedHeight += cs.height + mg.top + mg.bottom;
+                    }
+                }
+            }
+
+            if (layout.getAlignment() == ccui.Layout.ALIGN_CENTER) {
+                topBoundary = (layoutSize.height - usedHeight) / 2 + usedHeight;
+            } else {
+                topBoundary = usedHeight;
+            }
+        }
 
         for (var i = 0, len = container.length; i < len; i++) {
             var child = container[i];
@@ -94,7 +117,31 @@ ccui.linearHorizontalLayoutManager = /** @lends ccui.linearHorizontalLayoutManag
     _doLayout: function(layout){
         var layoutSize = layout._getLayoutContentSize();
         var container = layout._getLayoutElements();
-        var leftBoundary = 0.0;
+
+        var leftBoundary;
+        if (layout.getAlignment() == ccui.Layout.ALIGN_LEFT) {
+            leftBoundary = 0.0;
+        } else {
+            var usedWidth = 0;
+            for (var i = 0, len = container.length; i < len; i++) {
+                var child = container[i];
+                if (child) {
+                    var layoutParameter = child.getLayoutParameter();
+                    if (layoutParameter) {
+                        var cs = child.getContentSize();
+                        var mg = layoutParameter.getMargin();
+                        usedWidth += cs.width + mg.left + mg.right;
+                    }
+                }
+            }
+
+            if (layout.getAlignment() == ccui.Layout.ALIGN_CENTER) {
+                leftBoundary = (layoutSize.width - usedWidth) / 2;
+            } else {
+                leftBoundary = layoutSize.width - usedWidth;
+            }
+        }
+
         for (var i = 0, len = container.length;  i < len; i++) {
             var child = container[i];
             if (child) {
