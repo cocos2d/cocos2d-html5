@@ -208,7 +208,7 @@ cc.EditBoxDelegate = cc.Class.extend({
 cc.EditBox = cc.Node.extend({
     _backgroundSprite: null,
     _delegate: null,
-    _editBoxInputMode: cc.EDITBOX_INPUT_MODE_SINGLELINE,
+    _editBoxInputMode: cc.EDITBOX_INPUT_MODE_ANY,
     _editBoxInputFlag: cc.EDITBOX_INPUT_FLAG_SENSITIVE,
     _keyboardReturnType: cc.KEYBOARD_RETURNTYPE_DEFAULT,
     _maxLength: 50,
