@@ -64,10 +64,10 @@ cc.Color = function (r, g, b, a) {
 cc.color = function (r, g, b, a) {
     if (r === undefined)
         return {r: 0, g: 0, b: 0, a: 255};
-    if (cc.isString(r))
-        return cc.hexToColor(r);
-    if (cc.isObject(r))
+    if (typeof r === 'object')
         return {r: r.r, g: r.g, b: r.b, a: (r.a == null) ? 255 : r.a};
+    if (typeof r === 'string')
+        return cc.hexToColor(r);
     return  {r: r, g: g, b: b, a: (a == null ? 255 : a)};
 };
 

@@ -1250,13 +1250,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     addChild: function (child, localZOrder, tag) {
         localZOrder = localZOrder === undefined ? child._localZOrder : localZOrder;
         var name, setTag = false;
-        if(cc.isUndefined(tag)){
-            tag = undefined;
+        if (tag === undefined) {
             name = child._name;
-        } else if(cc.isString(tag)){
+        } else if (typeof tag === 'string'){
             name = tag;
             tag = undefined;
-        } else if(cc.isNumber(tag)){
+        } else if (typeof tag === 'number'){
             setTag = true;
             name = "";
         }

@@ -528,7 +528,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _softInit: function (fileName, rect, rotated) {
         if (fileName === undefined)
             cc.Sprite.prototype.init.call(this);
-        else if (cc.isString(fileName)) {
+        else if (typeof fileName === 'string') {
             if (fileName[0] === "#") {
                 // Init with a sprite frame name
                 var frameName = fileName.substr(1, fileName.length - 1);
@@ -783,7 +783,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      */
     setSpriteFrame: function (newFrame) {
         var _t = this;
-        if(cc.isString(newFrame)){
+        if(typeof newFrame === 'string'){
             newFrame = cc.spriteFrameCache.getSpriteFrame(newFrame);
             cc.assert(newFrame, cc._LogInfos.Sprite_setSpriteFrame)
         }
@@ -893,7 +893,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             return this._renderCmd._setTexture(null);
 
         //CCSprite.cpp 327 and 338
-        var isFileName = cc.isString(texture);
+        var isFileName = (typeof texture === 'string');
 
         if(isFileName)
             texture = cc.textureCache.addImage(texture);
