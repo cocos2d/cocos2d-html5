@@ -26,61 +26,6 @@
  ****************************************************************************/
 
 /**
- * Code copied & pasted from SpacePatrol game https://github.com/slembcke/SpacePatrol
- *
- * Renamed and added some changes for cocos2d
- *
- */
-// cc.v2fzero = function () {
-//     return {x: 0, y: 0};
-// };
-
-// cc.v2f = function (x, y) {
-//     return {x: x, y: y};
-// };
-
-// cc.v2fadd = function (v0, v1) {
-//     return cc.v2f(v0.x + v1.x, v0.y + v1.y);
-// };
-
-// cc.v2fsub = function (v0, v1) {
-//     return cc.v2f(v0.x - v1.x, v0.y - v1.y);
-// };
-
-// cc.v2fmult = function (v, s) {
-//     return cc.v2f(v.x * s, v.y * s);
-// };
-
-// cc.v2fperp = function (p0) {
-//     return cc.v2f(-p0.y, p0.x);
-// };
-
-// cc.v2fneg = function (p0) {
-//     return cc.v2f(-p0.x, -p0.y);
-// };
-
-// cc.v2fdot = function (p0, p1) {
-//     return  p0.x * p1.x + p0.y * p1.y;
-// };
-
-// cc.v2fforangle = function (_a_) {
-//     return cc.v2f(Math.cos(_a_), Math.sin(_a_));
-// };
-
-// cc.v2fnormalize = function (p) {
-//     var r = cc.pNormalize(cc.p(p.x, p.y));
-//     return cc.v2f(r.x, r.y);
-// };
-
-// cc.__v2f = function (v) {
-//     return cc.v2f(v.x, v.y);
-// };
-
-// cc.__t = function (v) {
-//     return {u: v.x, v: v.y};
-// };
-
-/**
  * <p>CCDrawNode                                                <br/>
  * Node that draws dots, segments and polygons.                        <br/>
  * Faster than the "drawing primitives" since it draws everything in one single batch.</p>
@@ -562,10 +507,6 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
             _f32Buffer: null,
             _ui32Buffer: null,
 
-            // _trianglesArrayBuffer:null,
-            // _trianglesWebBuffer:null,
-            // _trianglesReader:null,
-
             _dirty: false,
             _className: "DrawNodeWebGL",
 
@@ -847,85 +788,53 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 if (!succeed) 
                     return;
 
-                // var a = cc.__v2f(from), b = cc.__v2f(to);
                 var a = from, b = to;
-                // var n = cc.v2fnormalize(cc.v2fperp(cc.v2fsub(b, a)))
+                // var n = normalize(perp(sub(b, a)))
                 _n.x = a.y - b.y; _n.y = b.x - a.x;
                 cc.pNormalizeIn(_n);
-                // var t = cc.v2fperp(n);
+                // var t = perp(n);
                 _t.x = -_n.y; _t.y = _n.x;
-                // var nw = cc.v2fmult(n, radius), tw = cc.v2fmult(t, radius);
+                // var nw = mult(n, radius), tw = mult(t, radius);
                 pMultOut(_n, radius, _nw);
                 pMultOut(_t, radius, _tw);
 
-                // var v0 = cc.v2fsub(b, cc.v2fadd(nw, tw)); uv0 = cc.__t(cc.v2fneg(cc.v2fadd(n, t)))
+                // var v0 = sub(b, add(nw, tw)); uv0 = neg(add(n, t))
                 var v0x = b.x - _nw.x - _tw.x, v0y = b.y - _nw.y - _tw.y, u0 = -(_n.x + _t.x), v0 = -(_n.y + _t.y);
-                // var v1 = cc.v2fadd(b, cc.v2fsub(nw, tw)); uv1 = cc.__t(cc.v2fsub(n, t))
+                // var v1 = add(b, sub(nw, tw)); uv1 = sub(n, t)
                 var v1x = b.x + _nw.x - _tw.x, v1y = b.y + _nw.y - _tw.y, u1 = _n.x - _t.x, v1 = _n.y - _t.y;
-                // var v2 = cc.v2fsub(b, nw); uv2 = cc.__t(cc.v2fneg(n))
+                // var v2 = sub(b, nw); uv2 = neg(n)
                 var v2x = b.x - _nw.x, v2y = b.y - _nw.y, u2 = -_n.x, v2 = -_n.y;
-                // var v3 = cc.v2fadd(b, nw); uv3 = cc.__t(n)
+                // var v3 = add(b, nw); uv3 = n
                 var v3x = b.x + _nw.x, v3y = b.y + _nw.y, u3 = _n.x, v3 = _n.y;
-                // var v4 = cc.v2fsub(a, nw); uv4 = cc.__t(cc.v2fneg(n))
+                // var v4 = sub(a, nw); uv4 = neg(n)
                 var v4x = a.x - _nw.x, v4y = a.y - _nw.y, u4 = u2, v4 = v2;
-                // var v5 = cc.v2fadd(a, nw); uv5 = cc.__t(n)
+                // var v5 = add(a, nw); uv5 = n
                 var v5x = a.x + _nw.x, v5y = a.y + _nw.y, u5 = _n.x, v5 = _n.y;
-                // var v6 = cc.v2fsub(a, cc.v2fsub(nw, tw)); uv6 = cc.__t(cc.v2fsub(t, n))
+                // var v6 = sub(a, sub(nw, tw)); uv6 = sub(t, n)
                 var v6x = a.x - _nw.x + _tw.x, v6y = a.y - _nw.y + _tw.y, u6 = _t.x - _n.x, v6 = _t.y - _n.y;
-                // var v7 = cc.v2fadd(a, cc.v2fadd(nw, tw)); uv7 = cc.__t(cc.v2fadd(n, t))
+                // var v7 = add(a, add(nw, tw)); uv7 = add(n, t)
                 var v7x = a.x + _nw.x + _tw.x, v7y = a.y + _nw.y + _tw.y, u7 = _n.x + _t.x, v7 = _n.y + _t.y;
 
-                // var TriangleLength = cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT, triangleBuffer = this._trianglesArrayBuffer, locBuffer = this._buffer;
-                // locBuffer.push(new cc.V2F_C4B_T2F_Triangle(
-                //     {vertices: v0, colors: c4bColor, texCoords: uv0},
-                //     {vertices: v1, colors: c4bColor, texCoords: uv1}, 
-                //     {vertices: v2, colors: c4bColor, texCoords: uv2},
-                //     triangleBuffer, locBuffer.length * TriangleLength));
                 this.appendVertexData(v0x, v0y, color, u0, v0);
                 this.appendVertexData(v1x, v1y, color, u1, v1);
                 this.appendVertexData(v2x, v2y, color, u2, v2);
 
-                // locBuffer.push(new cc.V2F_C4B_T2F_Triangle(
-                //     {vertices: v3, colors: c4bColor, texCoords: uv3},
-                //     {vertices: v1, colors: c4bColor, texCoords: uv1}, 
-                //     {vertices: v2, colors: c4bColor, texCoords: uv2},
-                //     triangleBuffer, locBuffer.length * TriangleLength));
                 this.appendVertexData(v3x, v3y, color, u3, v3);
                 this.appendVertexData(v1x, v1y, color, u1, v1);
                 this.appendVertexData(v2x, v2y, color, u2, v2);
 
-                // locBuffer.push(new cc.V2F_C4B_T2F_Triangle(
-                //     {vertices: v3, colors: c4bColor, texCoords: uv3},
-                //     {vertices: v4, colors: c4bColor, texCoords: uv4}, 
-                //     {vertices: v2, colors: c4bColor, texCoords: uv2},
-                //     triangleBuffer, locBuffer.length * TriangleLength));
                 this.appendVertexData(v3x, v3y, color, u3, v3);
                 this.appendVertexData(v4x, v4y, color, u4, v4);
                 this.appendVertexData(v2x, v2y, color, u2, v2);
 
-                // locBuffer.push(new cc.V2F_C4B_T2F_Triangle(
-                //     {vertices: v3, colors: c4bColor, texCoords: uv3},
-                //     {vertices: v4, colors: c4bColor, texCoords: uv4}, 
-                //     {vertices: v5, colors: c4bColor, texCoords: uv5},
-                //     triangleBuffer, locBuffer.length * TriangleLength));
                 this.appendVertexData(v3x, v3y, color, u3, v3);
                 this.appendVertexData(v4x, v4y, color, u4, v4);
                 this.appendVertexData(v5x, v5y, color, u5, v5);
 
-                // locBuffer.push(new cc.V2F_C4B_T2F_Triangle(
-                //     {vertices: v6, colors: c4bColor, texCoords: uv6},
-                //     {vertices: v4, colors: c4bColor, texCoords: uv4}, 
-                //     {vertices: v5, colors: c4bColor, texCoords: uv5},
-                //     triangleBuffer, locBuffer.length * TriangleLength));
                 this.appendVertexData(v6x, v6y, color, u6, v6);
                 this.appendVertexData(v4x, v4y, color, u4, v4);
                 this.appendVertexData(v5x, v5y, color, u5, v5);
 
-                // locBuffer.push(new cc.V2F_C4B_T2F_Triangle(
-                //     {vertices: v6, colors: c4bColor, texCoords: uv6},
-                //     {vertices: v7, colors: c4bColor, texCoords: uv7}, 
-                //     {vertices: v5, colors: c4bColor, texCoords: uv5},
-                //     triangleBuffer, locBuffer.length * TriangleLength));
                 this.appendVertexData(v6x, v6y, color, u6, v6);
                 this.appendVertexData(v7x, v7y, color, u7, v7);
                 this.appendVertexData(v5x, v5y, color, u5, v5);
@@ -963,13 +872,13 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                     v1y = verts[i + 1];
                     v2x = verts[(i + 2) % count];
                     v2y = verts[(i + 3) % count];
-                    // var n1 = cc.v2fnormalize(cc.v2fperp(cc.v2fsub(v1, v0)));
-                    // var n2 = cc.v2fnormalize(cc.v2fperp(cc.v2fsub(v2, v1)));
+                    // var n1 = normalize(perp(sub(v1, v0)));
+                    // var n2 = normalize(perp(sub(v2, v1)));
                     _n.x = v0y - v1y; _n.y = v1x - v0x;
                     _nw.x = v1y - v2y; _nw.y = v2x - v1x;
                     cc.pNormalizeIn(_n);
                     cc.pNormalizeIn(_nw);
-                    // var offset = cc.v2fmult(cc.v2fadd(n1, n2), 1.0 / (cc.v2fdot(n1, n2) + 1.0));
+                    // var offset = mult(add(n1, n2), 1.0 / (dot(n1, n2) + 1.0));
                     factor = _n.x * _nw.x + _n.y * _nw.y + 1;
                     offx = (_n.x + _nw.x) / factor;
                     offy = (_n.y + _nw.y) / factor;
@@ -985,21 +894,16 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
 
                 var inset = (outline == false ? 0.5 : 0.0);
                 for (i = 0; i < count - 2; i++) {
-                    // v0 = cc.v2fsub(cc.__v2f(verts[0]), cc.v2fmult(extrude[0].offset, inset));
+                    // v0 = sub(verts[0], multi(extrude[0].offset, inset));
                     v0x = verts[0] - _extrude[0] * inset;
                     v0y = verts[1] - _extrude[1] * inset;
-                    // v1 = cc.v2fsub(cc.__v2f(verts[i + 1]), cc.v2fmult(extrude[i + 1].offset, inset));
+                    // v1 = sub(verts[i + 1], multi(extrude[i + 1].offset, inset));
                     v1x = verts[i * 2 + 2] - _extrude[(i+1) * 4] * inset;
                     v1y = verts[i * 2 + 3] - _extrude[(i+1) * 4 + 1] * inset;
-                    // v2 = cc.v2fsub(cc.__v2f(verts[i + 2]), cc.v2fmult(extrude[i + 2].offset, inset));
+                    // v2 = sub(verts[i + 2], multi(extrude[i + 2].offset, inset));
                     v2x = verts[i * 2 + 4] - _extrude[(i+2) * 4] * inset;
                     v2y = verts[i * 2 + 5] - _extrude[(i+2) * 4 + 1] * inset;
 
-                    // locBuffer.push(new cc.V2F_C4B_T2F_Triangle(
-                    //     {vertices: v0, colors: c4bFillColor, texCoords: cc.__t(cc.v2fzero())},
-                    //     {vertices: v1, colors: c4bFillColor, texCoords: cc.__t(cc.v2fzero())}, 
-                    //     {vertices: v2, colors: c4bFillColor, texCoords: cc.__t(cc.v2fzero())},
-                    //     trianglesBuffer, locBuffer.length * triangleBytesLen));
                     this.appendVertexData(v0x, v0y, fillColor, 0, 0);
                     this.appendVertexData(v1x, v1y, fillColor, 0, 0);
                     this.appendVertexData(v2x, v2y, fillColor, 0, 0);
@@ -1025,38 +929,11 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                     off1x = _extrude[j * 4];
                     off1y = _extrude[j * 4 + 1];
 
-                    // var inner0 = outline ? cc.v2fsub(v0, cc.v2fmult(offset0, borderWidth)) : cc.v2fsub(v0, cc.v2fmult(offset0, 0.5));
                     in0x = v0x - off0x * bw; in0y = v0y - off0y * bw;
-                    // var inner1 = outline ? cc.v2fsub(v1, cc.v2fmult(offset1, borderWidth)) : cc.v2fsub(v1, cc.v2fmult(offset1, 0.5));
                     in1x = v1x - off1x * bw; in1y = v1y - off1y * bw;
-                    // var outer0 = outline ? cc.v2fadd(v0, cc.v2fmult(offset0, borderWidth)) : cc.v2fadd(v0, cc.v2fmult(offset0, 0.5));
                     out0x = v0x + off0x * bw; out0y = v0y + off0y * bw;
-                    // var outer1 = outline ? cc.v2fadd(v1, cc.v2fmult(offset1, borderWidth)) : cc.v2fadd(v1, cc.v2fmult(offset1, 0.5));
                     out1x = v1x + off1x * bw; out1y = v1y + off1y * bw;
 
-                    // if (outline) {
-                    //     locBuffer.push(new cc.V2F_C4B_T2F_Triangle(
-                    //         {vertices: inner0, colors: borderColor, texCoords: cc.__t(cc.v2fneg(n0))},
-                    //         {vertices: inner1, colors: borderColor, texCoords: cc.__t(cc.v2fneg(n0))}, 
-                    //         {vertices: outer1, colors: borderColor, texCoords: cc.__t(n0)},
-                    //         trianglesBuffer, locBuffer.length * triangleBytesLen));
-                    //     locBuffer.push(new cc.V2F_C4B_T2F_Triangle(
-                    //         {vertices: inner0, colors: borderColor, texCoords: cc.__t(cc.v2fneg(n0))},
-                    //         {vertices: outer0, colors: borderColor, texCoords: cc.__t(n0)}, 
-                    //         {vertices: outer1, colors: borderColor, texCoords: cc.__t(n0)},
-                    //         trianglesBuffer, locBuffer.length * triangleBytesLen));
-                    // } else {
-                    //     locBuffer.push(new cc.V2F_C4B_T2F_Triangle(
-                    //         {vertices: inner0, colors: fillColor, texCoords: cc.__t(cc.v2fzero())},
-                    //         {vertices: inner1, colors: fillColor, texCoords: cc.__t(cc.v2fzero())}, 
-                    //         {vertices: outer1, colors: fillColor, texCoords: cc.__t(n0)},
-                    //         trianglesBuffer, locBuffer.length * triangleBytesLen));
-                    //     locBuffer.push(new cc.V2F_C4B_T2F_Triangle(
-                    //         {vertices: inner0, colors: fillColor, texCoords: cc.__t(cc.v2fzero())},
-                    //         {vertices: outer0, colors: fillColor, texCoords: cc.__t(n0)}, 
-                    //         {vertices: outer1, colors: fillColor, texCoords: cc.__t(n0)},
-                    //         trianglesBuffer, locBuffer.length * triangleBytesLen));
-                    // }
                     this.appendVertexData(in0x, in0y, color, _nw.x, _nw.y);
                     this.appendVertexData(in1x, in1y, color, _nw.x, _nw.y);
                     this.appendVertexData(out1x, out1y, color, _n.x, _n.y);
@@ -1091,13 +968,13 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                     v1y = verts[i + 1];
                     v2x = verts[(i + 2) % count];
                     v2y = verts[(i + 3) % count];
-                    // var n1 = cc.v2fnormalize(cc.v2fperp(cc.v2fsub(v1, v0)));
-                    // var n2 = cc.v2fnormalize(cc.v2fperp(cc.v2fsub(v2, v1)));
+                    // var n1 = normalize(perp(sub(v1, v0)));
+                    // var n2 = normalize(perp(sub(v2, v1)));
                     _n.x = v0y - v1y; _n.y = v1x - v0x;
                     _nw.x = v1y - v2y; _nw.y = v2x - v1x;
                     cc.pNormalizeIn(_n);
                     cc.pNormalizeIn(_nw);
-                    // var offset = cc.v2fmult(cc.v2fadd(n1, n2), 1.0 / (cc.v2fdot(n1, n2) + 1.0));
+                    // var offset = multi(add(n1, n2), 1.0 / (dot(n1, n2) + 1.0));
                     factor = _n.x * _nw.x + _n.y * _nw.y + 1;
                     offx = (_n.x + _nw.x) / factor;
                     offy = (_n.y + _nw.y) / factor;
@@ -1128,28 +1005,15 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                     off0y = _extrude[i * 4 + 1];
                     off1x = _extrude[j * 4];
                     off1y = _extrude[j * 4 + 1];
-                    // var inner0 = cc.v2fsub(v0, cc.v2fmult(offset0, borderWidth));
                     in0x = v0x - off0x * borderWidth; in0y = v0y - off0y * borderWidth;
-                    // var inner1 = cc.v2fsub(v1, cc.v2fmult(offset1, borderWidth));
                     in1x = v1x - off1x * borderWidth; in1y = v1y - off1y * borderWidth;
-                    // var outer0 = cc.v2fadd(v0, cc.v2fmult(offset0, borderWidth));
                     out0x = v0x + off0x * borderWidth; out0y = v0y + off0y * borderWidth;
-                    // var outer1 = cc.v2fadd(v1, cc.v2fmult(offset1, borderWidth));
                     out1x = v1x + off1x * borderWidth; out1y = v1y + off1y * borderWidth;
-                    // locBuffer.push(new cc.V2F_C4B_T2F_Triangle(
-                    //     {vertices: inner0, colors: c4bBorderColor, texCoords: cc.__t(cc.v2fneg(n0))},
-                    //     {vertices: inner1, colors: c4bBorderColor, texCoords: cc.__t(cc.v2fneg(n0))}, 
-                    //     {vertices: outer1, colors: c4bBorderColor, texCoords: cc.__t(n0)},
-                    //     trianglesBuffer, locBuffer.length * triangleBytesLen));
+
                     this.appendVertexData(in0x, in0y, borderColor, -_n.x, -_n.y);
                     this.appendVertexData(in1x, in1y, borderColor, -_n.x, -_n.y);
                     this.appendVertexData(out1x, out1y, borderColor, _n.x, _n.y);
 
-                    // locBuffer.push(new cc.V2F_C4B_T2F_Triangle(
-                    //     {vertices: inner0, colors: c4bBorderColor, texCoords: cc.__t(cc.v2fneg(n0))},
-                    //     {vertices: outer0, colors: c4bBorderColor, texCoords: cc.__t(n0)}, 
-                    //     {vertices: outer1, colors: c4bBorderColor, texCoords: cc.__t(n0)},
-                    //     trianglesBuffer, locBuffer.length * triangleBytesLen));
                     this.appendVertexData(in0x, in0y, borderColor, -_n.x, -_n.y);
                     this.appendVertexData(out0x, out0y, borderColor, _n.x, _n.y);
                     this.appendVertexData(out1x, out1y, borderColor, _n.x, _n.y);
