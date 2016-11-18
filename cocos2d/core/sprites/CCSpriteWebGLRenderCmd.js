@@ -272,17 +272,20 @@
         var node = this._node,
             lx = node._offsetPosition.x, rx = lx + node._rect.width,
             by = node._offsetPosition.y, ty = by + node._rect.height,
-            wt = this._worldTransform;
+            wt = this._worldTransform, 
+            wtx = wt.tx, wty = wt.ty,
+            lxa = lx * wt.a, lxb = lx * wt.b, rxa = rx * wt.a, rxb = rx * wt.b,
+            tyc = ty * wt.c, tyd = ty * wt.d, byc = by * wt.c, byd = by * wt.d;
 
         var vertices = this._vertices;
-        vertices[0].x = lx * wt.a + ty * wt.c + wt.tx; // tl
-        vertices[0].y = lx * wt.b + ty * wt.d + wt.ty;
-        vertices[1].x = lx * wt.a + by * wt.c + wt.tx; // bl
-        vertices[1].y = lx * wt.b + by * wt.d + wt.ty;
-        vertices[2].x = rx * wt.a + ty * wt.c + wt.tx; // tr
-        vertices[2].y = rx * wt.b + ty * wt.d + wt.ty;
-        vertices[3].x = rx * wt.a + by * wt.c + wt.tx; // br
-        vertices[3].y = rx * wt.b + by * wt.d + wt.ty;
+        vertices[0].x = lxa + tyc + wtx; // tl
+        vertices[0].y = lxb + tyd + wty;
+        vertices[1].x = lxa + byc + wtx; // bl
+        vertices[1].y = lxb + byd + wty;
+        vertices[2].x = rxa + tyc + wtx; // tr
+        vertices[2].y = rxb + tyd + wty;
+        vertices[3].x = rxa + byc + wtx; // br
+        vertices[3].y = rxb + byd + wty;
     };
 
     proto.needDraw = function () {
