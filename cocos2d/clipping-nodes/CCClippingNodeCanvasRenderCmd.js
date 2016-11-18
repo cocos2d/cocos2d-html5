@@ -178,6 +178,7 @@
             this._curLevel = parentCmd._curLevel + 1;
         var transformRenderCmd = this;
 
+        this._syncStatus(parentCmd);
         // Composition mode, costy but support texture stencil
         this._clipElemType = !(!this._cangodhelpme() && node._stencil instanceof cc.DrawNode);
         if (!node._stencil || !node._stencil.visible) {
@@ -186,7 +187,6 @@
             return;
         }
 
-        this._syncStatus(parentCmd);
         cc.renderer.pushRenderCommand(this._rendererSaveCmd);
         if(this._clipElemType){
             // Draw everything first using node visit function

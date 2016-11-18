@@ -68,13 +68,14 @@
 
     proto._syncStatus = function (parentCmd) {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-        if (locFlag & flags.orderDirty) {
+        // if (locFlag & flags.orderDirty) {
+        if (this._isBaked || locFlag & flags.orderDirty) {
             this._cacheDirty = true;
             if(this._updateCache === 0)
                 this._updateCache = 2;
-            this._dirtyFlag = locFlag & flags.orderDirty ^ locFlag;
+            this._dirtyFlag &= ~flags.orderDirty;
         }
-        cc.Node.RenderCmd.prototype._syncStatus.call(this, parentCmd);
+        this._originSyncStatus(parentCmd);
     };
 
     proto.transform = function (parentCmd, recursive) {
@@ -414,7 +415,7 @@
             this._dirtyFlag = locFlag & flags.gradientDirty ^ locFlag;
         }
 
-        cc.Node.RenderCmd.prototype._syncStatus.call(this, parentCmd);
+        this._originSyncStatus(parentCmd);
     };
 
     proto._updateColor = function() {

@@ -339,7 +339,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         if (locFlag & flags.textDirty)
             this._updateTexture();
 
-        cc.Node.RenderCmd.prototype._syncStatus.call(this, parentCmd);
+        this._originSyncStatus(parentCmd);
 
         if (cc._renderType === cc.game.RENDER_TYPE_WEBGL || locFlag & flags.transformDirty)
             this.transform(parentCmd);

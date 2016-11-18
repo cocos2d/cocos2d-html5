@@ -451,13 +451,6 @@ cc.Node.RenderCmd.prototype = {
         //  In the visit logic does not restore the _dirtyFlag
         //  Because child elements need parent's _dirtyFlag to change himself
         var locFlag = this._dirtyFlag, parentNode = null;
-        if (parentCmd) {
-            parentNode = parentCmd._node;
-            this._savedDirtyFlag = this._savedDirtyFlag || parentCmd._savedDirtyFlag || locFlag;
-        }
-        else {
-            this._savedDirtyFlag = this._savedDirtyFlag || locFlag;
-        }
 
         //  There is a possibility:
         //    The parent element changed color, child element not change
@@ -474,10 +467,10 @@ cc.Node.RenderCmd.prototype = {
         if (parentCmd && (parentCmd._dirtyFlag & dirtyFlags.transformDirty))
             locFlag |= dirtyFlags.transformDirty;
 
+        this._dirtyFlag = locFlag;
+
         var colorDirty = locFlag & dirtyFlags.colorDirty,
             opacityDirty = locFlag & dirtyFlags.opacityDirty;
-
-        this._dirtyFlag = locFlag;
 
         if (colorDirty)
             //update the color
@@ -529,6 +522,7 @@ cc.Node.RenderCmd.prototype = {
 
 cc.Node.RenderCmd.prototype.originVisit = cc.Node.RenderCmd.prototype.visit;
 cc.Node.RenderCmd.prototype.originTransform = cc.Node.RenderCmd.prototype.transform;
+cc.Node.RenderCmd.prototype._originSyncStatus = cc.Node.RenderCmd.prototype._syncStatus;
 
 //-----------------------Canvas ---------------------------
 

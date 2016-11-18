@@ -90,7 +90,8 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      */
     onEnter: function () {
         cc.Node.prototype.onEnter.call(this);
-        this._stencil.onEnter();
+        if (this._stencil)
+            this._stencil.onEnter();
     },
 
     /**
@@ -103,7 +104,8 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      */
     onEnterTransitionDidFinish: function () {
         cc.Node.prototype.onEnterTransitionDidFinish.call(this);
-        this._stencil.onEnterTransitionDidFinish();
+        if (this._stencil)
+            this._stencil.onEnterTransitionDidFinish();
     },
 
     /**

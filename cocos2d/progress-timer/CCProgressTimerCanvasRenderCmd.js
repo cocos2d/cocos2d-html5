@@ -221,14 +221,14 @@
 
         if (colorDirty){
             spriteCmd._syncDisplayColor();
-            spriteCmd._dirtyFlag = spriteCmd._dirtyFlag & flags.colorDirty ^ spriteCmd._dirtyFlag;
-            this._dirtyFlag = this._dirtyFlag & flags.colorDirty ^ this._dirtyFlag;
+            spriteCmd._dirtyFlag &= ~flags.colorDirty;
+            this._dirtyFlag &= ~flags.colorDirty;
         }
 
         if (opacityDirty){
             spriteCmd._syncDisplayOpacity();
-            spriteCmd._dirtyFlag = spriteCmd._dirtyFlag & flags.opacityDirty ^ spriteCmd._dirtyFlag;
-            this._dirtyFlag = this._dirtyFlag & flags.opacityDirty ^ this._dirtyFlag;
+            spriteCmd._dirtyFlag &= ~flags.opacityDirty;
+            this._dirtyFlag &= ~flags.opacityDirty;
         }
 
         if(colorDirty || opacityDirty){
@@ -241,7 +241,7 @@
         }
 
         if (locFlag & flags.orderDirty) {
-            this._dirtyFlag = this._dirtyFlag & flags.orderDirty ^ this._dirtyFlag;
+            this._dirtyFlag &= ~flags.orderDirty;
         }
     };
 

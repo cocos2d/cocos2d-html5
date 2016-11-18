@@ -114,7 +114,7 @@
         var flags = cc.Node._dirtyFlags, 
             locFlag = this._dirtyFlag;
 
-        cc.Node.RenderCmd.prototype._syncStatus.call(this, parentCmd);
+        this._originSyncStatus(parentCmd);
         
         if (locFlag & flags.cacheDirty) {
             this._cacheScale9Sprite();

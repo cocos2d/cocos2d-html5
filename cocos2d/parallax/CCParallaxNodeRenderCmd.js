@@ -40,7 +40,7 @@
 
     proto._syncStatus = function(parentCmd){
         this._node._updateParallaxPosition();
-        cc.Node.CanvasRenderCmd.prototype._syncStatus.call(this, parentCmd);
+        this._originSyncStatus(parentCmd);
     };
 })();
 
@@ -63,7 +63,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
 
     proto._syncStatus = function(parentCmd){
         this._node._updateParallaxPosition();
-        cc.Node.WebGLRenderCmd.prototype._syncStatus.call(this, parentCmd);
+        this._originSyncStatus(parentCmd);
     };
 });
 

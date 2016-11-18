@@ -189,7 +189,7 @@
             this._dirtyFlag = locFlag & flags.gradientDirty ^ locFlag;
         }
 
-        cc.Node.RenderCmd.prototype._syncStatus.call(this, parentCmd);
+        this._originSyncStatus(parentCmd);
     };
 
     proto.transform = function (parentCmd, recursive) {
