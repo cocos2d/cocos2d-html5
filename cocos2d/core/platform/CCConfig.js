@@ -260,6 +260,8 @@ cc.LABELBMFONT_DEBUG_DRAW = 0;
  */
 cc.LABELATLAS_DEBUG_DRAW = 0;
 
+cc.DRAWNODE_TOTAL_VERTICES = 20000;
+
 /**
  * Whether or not support retina display
  * @constant

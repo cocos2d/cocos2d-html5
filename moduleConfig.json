@@ -72,6 +72,7 @@
             "cocos2d/core/event-manager/CCEventManager.js",
             "cocos2d/core/event-manager/CCEventExtension.js",
 
+            "cocos2d/core/renderer/GlobalVertexBuffer.js",
             "cocos2d/core/renderer/RendererCanvas.js",
             "cocos2d/core/renderer/RendererWebGL.js",
             "cocos2d/core/renderer/DirtyRegion.js",
