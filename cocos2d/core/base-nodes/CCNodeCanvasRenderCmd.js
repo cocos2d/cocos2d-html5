@@ -69,6 +69,16 @@ function transformChildTree (root) {
                 child._renderCmd.transform(parentCmd);
             }
         }
+        var pChildren = curr._protectedChildren;
+        if (pChildren && pChildren.length > 0) {
+            parentCmd = curr._renderCmd;
+            for (i = 0, len = pChildren.length; i < len; ++i) {
+                child = pChildren[i];
+                stack[index] = child;
+                index++;
+                child._renderCmd.transform(parentCmd);
+            }
+        }
     }
 }
 
