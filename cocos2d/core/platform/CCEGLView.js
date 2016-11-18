@@ -311,6 +311,18 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         }
     },
 
+    setDocumentPixelWidth: function (width) {
+        // Set viewport's width
+        this._setViewportMeta({"width": width}, true);
+
+        // Set body width to the exact pixel resolution
+        document.documentElement.style.width = width + 'px';
+        document.body.style.width = "100%";
+
+        // Reset the resolution size and policy
+        this.setDesignResolutionSize(this._designResolutionSize.width, this._designResolutionSize.height, this._resolutionPolicy);
+    },
+
     _initFrameSize: function () {
         var locFrameSize = this._frameSize;
         var w = __BrowserGetter.availWidth(this._frame);
@@ -756,9 +768,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         this._setViewportMeta({"width": width}, true);
 
         // Set body width to the exact pixel resolution
-        document.body.style.width = width + "px";
-        document.body.style.left = "0px";
-        document.body.style.top = "0px";
+        document.html.style.width = width + 'px';
+        document.body.style.width = "100%";
 
         // Reset the resolution size and policy
         this.setDesignResolutionSize(width, height, resolutionPolicy);
