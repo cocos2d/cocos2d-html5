@@ -674,7 +674,7 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
     var LEFT_PADDING = 2;
 
     function scrollWindowUp (editBox) {
-        if (cc.sys.os === cc.sys.OS_IOS && cc.sys.osMainVersion === 9) {
+        // if (cc.sys.os === cc.sys.OS_IOS && cc.sys.osMainVersion === 9) {
             var worldPos = editBox.convertToWorldSpace(cc.p(0,0));
             var windowHeight = cc.visibleRect.height;
             var windowWidth = cc.visibleRect.width;
@@ -690,7 +690,7 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
                     window.scrollTo(0, scrollOffset);
                 }
             }, TIMER_NAME);
-        }
+        // }
     }
 
     function capitalize (string) {
@@ -925,6 +925,8 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
             } else {
                 thisPointer.__fullscreen = false;
             }
+            this.__autoResize = cc.view.__resizeWithBrowserSize;
+            cc.view.resizeWithBrowserSize(false);
 
             scrollWindowUp(editBox);
 
@@ -951,6 +953,9 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
             window.scrollY = 0;
             if(thisPointer.__fullscreen) {
                 cc.view.enableAutoFullScreen(true);
+            }
+            if (this.__autoResize) {
+                cc.view.resizeWithBrowserSize(true);
             }
 
             if (editBox._delegate && editBox._delegate.editBoxEditingDidEnded) {
