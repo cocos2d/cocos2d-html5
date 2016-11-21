@@ -283,7 +283,7 @@ cc.Node.RenderCmd.prototype = {
         }
 
         if (node._additionalTransformDirty) {
-            this._transform = cc.affineTransformConcat(t, node._additionalTransform);
+            cc.affineTransformConcatIn(t, node._additionalTransform);
         }
 
         if (this._updateCurrentRegions) {

@@ -267,7 +267,7 @@ cc.DRAWNODE_TOTAL_VERTICES = 20000;
  * @constant
  * @type {Number}
  */
-cc.IS_RETINA_DISPLAY_SUPPORTED = 1;
+cc.IS_RETINA_DISPLAY_SUPPORTED = 0;
 
 /**
  * Default engine
