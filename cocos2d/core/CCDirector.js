@@ -136,7 +136,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         //action manager
         if(cc.ActionManager){
             this._actionManager = new cc.ActionManager();
-            this._scheduler.scheduleUpdate(this._actionManager, cc.Scheduler.PRIORITY_SYSTEM, false);
         }else{
             this._actionManager = null;
         }
@@ -229,6 +228,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         //tick before glClear: issue #533
         if (!this._paused) {
+            this._actionManager.update(this._deltaTime);
             this._scheduler.update(this._deltaTime);
             cc.eventManager.dispatchEvent(this._eventAfterUpdate);
         }
@@ -272,6 +272,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._totalFrames++;
 
         cc.eventManager.dispatchEvent(this._eventAfterDraw);
+        cc.eventManager.frameUpdateListeners();
 
         this._calculateMPF();
     },

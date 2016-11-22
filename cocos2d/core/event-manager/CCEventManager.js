@@ -23,6 +23,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+(function () {
+
 /**
  * @ignore
  */
@@ -73,25 +75,25 @@ cc._EventListenerVector = cc.Class.extend({
     }
 });
 
-cc.__getListenerID = function (event) {
-    var eventType = cc.Event, getType = event.getType();
-    if(getType === eventType.ACCELERATION)
+function __getListenerID (event) {
+    var eventType = cc.Event, getType = event._type;
+    if (getType === eventType.ACCELERATION)
         return cc._EventListenerAcceleration.LISTENER_ID;
-    if(getType === eventType.CUSTOM)
-        return event.getEventName();
-    if(getType === eventType.KEYBOARD)
+    if (getType === eventType.CUSTOM)
+        return event._eventName;
+    if (getType === eventType.KEYBOARD)
         return cc._EventListenerKeyboard.LISTENER_ID;
-    if(getType === eventType.MOUSE)
+    if (getType === eventType.MOUSE)
         return cc._EventListenerMouse.LISTENER_ID;
-    if(getType === eventType.FOCUS)
+    if (getType === eventType.FOCUS)
         return cc._EventListenerFocus.LISTENER_ID;
-    if(getType === eventType.TOUCH){
+    if (getType === eventType.TOUCH) {
         // Touch listener is very special, it contains two kinds of listeners, EventListenerTouchOneByOne and EventListenerTouchAllAtOnce.
         // return UNKNOWN instead.
         cc.log(cc._LogInfos.__getListenerID);
     }
     return "";
-};
+}
 
 /**
  * <p>
@@ -346,11 +348,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
         return l1._getFixedPriority() - l2._getFixedPriority();
     },
 
-    _onUpdateListeners: function (listenerID) {
-        var listeners = this._listenersMap[listenerID];
-        if (!listeners)
-            return;
-
+    _onUpdateListeners: function (listeners) {
         var fixedPriorityListeners = listeners.getFixedPriorityListeners();
         var sceneGraphPriorityListeners = listeners.getSceneGraphPriorityListeners();
         var i, selListener, idx, toRemovedListeners = this._toRemovedListeners;
@@ -390,20 +388,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
             listeners.clearFixedListeners();
     },
 
-    _updateListeners: function (event) {
-        var locInDispatch = this._inDispatch;
-        cc.assert(locInDispatch > 0, cc._LogInfos.EventManager__updateListeners);
-
-        if(locInDispatch > 1)
-            return;
-
-        if (event.getType() === cc.Event.TOUCH) {
-            this._onUpdateListeners(cc._EventListenerTouchOneByOne.LISTENER_ID);
-            this._onUpdateListeners(cc._EventListenerTouchAllAtOnce.LISTENER_ID);
-        } else
-            this._onUpdateListeners(cc.__getListenerID(event));
-
-        cc.assert(locInDispatch === 1, cc._LogInfos.EventManager__updateListeners_2);
+    frameUpdateListeners: function () {
         var locListenersMap = this._listenersMap, locPriorityDirtyFlagMap = this._priorityDirtyFlagMap;
         for (var selKey in locListenersMap) {
             if (locListenersMap[selKey].empty()) {
@@ -416,10 +401,41 @@ cc.eventManager = /** @lends cc.eventManager# */{
         if (locToAddedListeners.length !== 0) {
             for (var i = 0, len = locToAddedListeners.length; i < len; i++)
                 this._forceAddEventListener(locToAddedListeners[i]);
-            this._toAddedListeners.length = 0;
+            locToAddedListeners.length = 0;
         }
-        if(this._toRemovedListeners.length !== 0)
+        if (this._toRemovedListeners.length !== 0) {
             this._cleanToRemovedListeners();
+        }
+    },
+
+    _updateTouchListeners: function (event) {
+        var locInDispatch = this._inDispatch;
+        cc.assert(locInDispatch > 0, cc._LogInfos.EventManager__updateListeners);
+
+        if (locInDispatch > 1)
+            return;
+
+        var listeners;
+        listeners = this._listenersMap[cc._EventListenerTouchOneByOne.LISTENER_ID];
+        if (listeners) {
+            this._onUpdateListeners(listeners);
+        }
+        listeners = this._listenersMap[cc._EventListenerTouchAllAtOnce.LISTENER_ID];
+        if (listeners) {
+            this._onUpdateListeners(listeners);
+        }
+
+        cc.assert(locInDispatch === 1, cc._LogInfos.EventManager__updateListeners_2);
+
+        var locToAddedListeners = this._toAddedListeners;
+        if (locToAddedListeners.length !== 0) {
+            for (var i = 0, len = locToAddedListeners.length; i < len; i++)
+                this._forceAddEventListener(locToAddedListeners[i]);
+            locToAddedListeners.length = 0;
+        }
+        if (this._toRemovedListeners.length !== 0) {
+            this._cleanToRemovedListeners();
+        }
     },
 
     //Remove all listeners in _toRemoveListeners list and cleanup
@@ -486,7 +502,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
 
         // If the event was stopped, return directly.
         if (event.isStopped()) {
-            cc.eventManager._updateListeners(event);
+            cc.eventManager._updateTouchListeners(event);
             return true;
         }
 
@@ -532,7 +548,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
             if (event.isStopped())
                 return;
         }
-        this._updateListeners(event);
+        this._updateTouchListeners(event);
     },
 
     _onTouchesEventCallback: function (listener, callbackParams) {
@@ -553,7 +569,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
 
         // If the event was stopped, return directly.
         if (event.isStopped()) {
-            cc.eventManager._updateListeners(event);
+            cc.eventManager._updateTouchListeners(event);
             return true;
         }
         return false;
@@ -962,19 +978,20 @@ cc.eventManager = /** @lends cc.eventManager# */{
         this._inDispatch++;
         if(!event || !event.getType)
             throw new Error("event is undefined");
-        if (event.getType() === cc.Event.TOUCH) {
+        if (event._type === cc.Event.TOUCH) {
             this._dispatchTouchEvent(event);
             this._inDispatch--;
             return;
         }
 
-        var listenerID = cc.__getListenerID(event);
+        var listenerID = __getListenerID(event);
         this._sortEventListeners(listenerID);
         var selListeners = this._listenersMap[listenerID];
-        if (selListeners != null)
+        if (selListeners) {
             this._dispatchEventToListeners(selListeners, this._onListenerCallback, event);
-
-        this._updateListeners(event);
+            this._onUpdateListeners(selListeners);
+        }
+        
         this._inDispatch--;
     },
 
@@ -995,3 +1012,5 @@ cc.eventManager = /** @lends cc.eventManager# */{
         this.dispatchEvent(ev);
     }
 };
+
+})();
