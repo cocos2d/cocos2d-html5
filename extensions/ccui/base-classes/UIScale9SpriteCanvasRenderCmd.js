@@ -58,9 +58,9 @@
         this.originVisit(parentCmd);
     };
 
-    proto.transform = function(parentCmd){
+    proto.transform = function(parentCmd, recursive) {
         var node = this._node;
-        cc.Node.CanvasRenderCmd.prototype.transform.call(this, parentCmd);
+        this.originTransform(parentCmd, recursive);
         if (node._positionsAreDirty) {
             node._updatePositions();
             node._positionsAreDirty = false;
@@ -68,7 +68,7 @@
 
         var children = node._children;
         for(var i=0; i<children.length; i++){
-            children[i].transform(this, true);
+            children[i].transform(this);
         }
     };
 

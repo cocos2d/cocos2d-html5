@@ -323,19 +323,6 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         return this._isAncestorsVisible(parent);
     },
 
-    _cleanupWidget: function(){
-        //clean up _touchListener
-        this._eventDispatcher.removeEventListener(this._touchListener);
-        this._touchEnabled = false;
-        this._touchListener = null;
-
-        //cleanup focused widget and focus navigation controller
-        if (ccui.Widget._focusedWidget === this){
-            ccui.Widget._focusedWidget = null;
-            ccui.Widget._focusNavigationController = null;
-        }
-    },
-
     /**
      * <p>
      *     Sets whether the widget is enabled                                                                                    <br/>

@@ -107,7 +107,7 @@
                 if(pchild) {
                     pchild._vertexZ = parentCmd._node._vertexZ;
                     var tempCmd = pchild._renderCmd;
-                    tempCmd.transform(this, true);
+                    tempCmd.transform(this);
                     tempCmd._dirtyFlag = tempCmd._dirtyFlag & flags.transformDirty ^ tempCmd._dirtyFlag;
                 }
                 else {
@@ -118,7 +118,7 @@
         else {
             node._adjustScale9ImageScale();
             node._adjustScale9ImagePosition();
-            node._scale9Image._renderCmd.transform(this, true);
+            node._scale9Image._renderCmd.transform(this);
         }
     };
 
