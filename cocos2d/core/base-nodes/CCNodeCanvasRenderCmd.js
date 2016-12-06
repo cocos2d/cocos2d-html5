@@ -230,6 +230,10 @@ cc.Node.RenderCmd.prototype = {
                 }
             }
 
+            if (node._additionalTransformDirty) {
+                cc.affineTransformConcatIn(t, node._additionalTransform);
+            }
+
             if (pt) {
                 // cc.AffineTransformConcat is incorrect at get world transform
                 wt.a = t.a * pt.a + t.b * pt.c;                               //a
@@ -265,6 +269,10 @@ cc.Node.RenderCmd.prototype = {
                 }
             }
 
+            if (node._additionalTransformDirty) {
+                cc.affineTransformConcatIn(t, node._additionalTransform);
+            }
+
             if (pt) {
                 wt.a = t.a * pt.a + t.b * pt.c;
                 wt.b = t.a * pt.b + t.b * pt.d;
@@ -280,10 +288,6 @@ cc.Node.RenderCmd.prototype = {
                 wt.tx = t.tx;
                 wt.ty = t.ty;
             }
-        }
-
-        if (node._additionalTransformDirty) {
-            cc.affineTransformConcatIn(t, node._additionalTransform);
         }
 
         if (this._updateCurrentRegions) {
