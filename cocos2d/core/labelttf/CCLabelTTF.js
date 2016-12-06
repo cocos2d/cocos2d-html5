@@ -923,6 +923,7 @@ document.body ?
  * @private
  */
 cc.LabelTTF.__getFontHeightByDiv = function (fontName, fontSize) {
+    try{
     var clientHeight, labelDiv = cc.LabelTTF.__labelHeightDiv;
     if(fontName instanceof cc.FontDefinition){
         /** @type cc.FontDefinition */
@@ -951,6 +952,8 @@ cc.LabelTTF.__getFontHeightByDiv = function (fontName, fontSize) {
         labelDiv.innerHTML = "";
     }
     return clientHeight;
+    } catch (err) {console.warn(err);}
+    return 10;
 
 };
 

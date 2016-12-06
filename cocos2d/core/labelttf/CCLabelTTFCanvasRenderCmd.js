@@ -55,6 +55,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     proto.constructor = cc.LabelTTF.RenderCmd;
 
     proto._setFontStyle = function (fontNameOrFontDef, fontSize, fontStyle, fontWeight) {
+        try{
         if(fontNameOrFontDef instanceof cc.FontDefinition){
             this._fontStyleStr = fontNameOrFontDef._getCanvasFontStr();
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontNameOrFontDef);
@@ -63,6 +64,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             this._fontStyleStr = fontStyle + " " + fontWeight + " " + deviceFontSize + "px '" + fontNameOrFontDef + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontNameOrFontDef, fontSize);
         }
+        } catch (err) {console.warn(err);}
     };
 
     proto._getFontStyle = function () {
@@ -238,6 +240,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     };
 
     proto._drawTTFInCanvas = function (context) {
+        try {
         if (!context)
             return;
         var locStatus = this._status.pop();
@@ -245,6 +248,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         var xOffset = locStatus.xOffset;
         var yOffsetArray = locStatus.OffsetYArray;
         this.drawLabels(context, xOffset, yOffsetArray);
+        } catch (err) {console.warn(err);}
     };
 
     proto._checkWarp = function (strArr, i, maxWidth) {
@@ -403,6 +407,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
     proto.constructor = cc.LabelTTF.CacheRenderCmd;
 
     proto._updateTexture = function () {
+        try {
         this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.textDirty ^ this._dirtyFlag;
         var node = this._node;
         this._updateTTF();
@@ -435,15 +440,21 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
         this._drawTTFInCanvas(locContext);
         node._texture && node._texture.handleLoadedTexture();
         node.setTextureRect(this._texRect);
+        
+        } catch(err) {console.warn("Update texture failed", err)}
         return true;
     };
 
     proto._measureConfig = function () {
+        try {
         this._labelContext.font = this._fontStyleStr;
+        } catch (err) {console.warn(err);}
     };
 
     proto._measure = function (text) {
+        try {
         return this._labelContext.measureText(text).width;
+        } catch (err) {console.warn(err);}
     };
 
 })();
