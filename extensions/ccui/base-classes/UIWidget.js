@@ -333,6 +333,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
      */
     setEnabled: function (enabled) {
         this._enabled = enabled;
+        this.setBright(enabled);
     },
 
     /**

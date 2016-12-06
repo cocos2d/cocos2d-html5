@@ -26,12 +26,6 @@
 
 (function () {
 
-/**
- * Minimum priority level for user scheduling.
- * @constant
- * @type Number
- */
-cc.PRIORITY_NON_SYSTEM = cc.PRIORITY_SYSTEM + 1;
 
 var MAX_POOL_SIZE = 20;
 
@@ -1037,11 +1031,19 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         this.unscheduleAllWithMinPriority(minPriority);
     }
 });
+
 /**
  * Priority level reserved for system services.
  * @constant
  * @type Number
  */
 cc.Scheduler.PRIORITY_SYSTEM = (-2147483647 - 1);
+
+/**
+ * Minimum priority level for user scheduling.
+ * @constant
+ * @type Number
+ */
+cc.Scheduler.PRIORITY_NON_SYSTEM = cc.Scheduler.PRIORITY_SYSTEM + 1;
 
 })();

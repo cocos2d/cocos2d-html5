@@ -2512,6 +2512,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                 }
             }
         }
+        return ret;
     },
 
     doEnumerate: function(name, callback){
