@@ -612,7 +612,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     setScale: function (scale, scaleY) {
         this._scaleX = scale / cc.view.getDevicePixelRatio();
         this._scaleY = ((scaleY || scaleY === 0) ? scaleY : scale) /
-            cc.view.getDevicePixelRatio();
+          cc.view.getDevicePixelRatio();
         this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
@@ -806,18 +806,20 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     getContentSize: function () {
         if (this._needUpdateTexture)
             this._renderCmd._updateTTF();
-        return cc.size(this._contentSize);
+        return cc.size(
+            this._contentSize.width / cc.view.getDevicePixelRatio(),
+            this._contentSize.height / cc.view.getDevicePixelRatio());
     },
 
     _getWidth: function () {
         if (this._needUpdateTexture)
             this._renderCmd._updateTTF();
-        return this._contentSize.width;
+        return cc.Sprite.prototype._getWidth.call(this);
     },
     _getHeight: function () {
         if (this._needUpdateTexture)
             this._renderCmd._updateTTF();
-        return this._contentSize.height;
+        return cc.Sprite.prototype._getHeight.call(this);
     },
 
     setTextureRect: function (rect, rotated, untrimmedSize) {
