@@ -350,6 +350,21 @@ cc.EditBox = cc.ControlButton.extend({
     },
 
     /**
+     * Manuallly enable the focus and input.
+     */
+    enableInput: function(){
+        this._edTxt.removeAttribute("disabled");
+    },
+
+    /**
+     * Manuallly disable the focus and input.
+     */
+    disableInput: function(){
+        this._edTxt.setAttribute("disabled","disabled");
+    }
+    ,
+
+    /**
      * Set the font.
      * @param {String} fontName  The font name.
      * @param {Number} fontSize  The font size.
