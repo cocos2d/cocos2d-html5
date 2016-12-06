@@ -56,6 +56,8 @@ cc.UIInterfaceOrientationPortrait = 0;
  * @name cc.inputManager
  */
 cc.inputManager = /** @lends cc.inputManager# */{
+    TOUCH_TIMEOUT: 5000,
+
     _mousePressed: false,
 
     _isRegisterEvent: false,
@@ -81,11 +83,20 @@ cc.inputManager = /** @lends cc.inputManager# */{
 
     _getUnUsedIndex: function () {
         var temp = this._indexBitsUsed;
+        var now = cc.sys.now();
 
         for (var i = 0; i < this._maxTouches; i++) {
             if (!(temp & 0x00000001)) {
                 this._indexBitsUsed |= (1 << i);
                 return i;
+            }
+            else {
+                var touch = this._touches[i];
+                if (now - touch._lastModified > this.TOUCH_TIMEOUT) {
+                    this._removeUsedIndexBit(i);
+                    delete this._touchesIntegerDict[touch.getID()];
+                    return i;
+                }
             }
             temp >>= 1;
         }
@@ -110,7 +121,9 @@ cc.inputManager = /** @lends cc.inputManager# */{
      * @param {Array} touches
      */
     handleTouchesBegin: function (touches) {
-        var selTouch, index, curTouch, touchID, handleTouches = [], locTouchIntDict = this._touchesIntegerDict;
+        var selTouch, index, curTouch, touchID, 
+            handleTouches = [], locTouchIntDict = this._touchesIntegerDict,
+            now = cc.sys.now();
         for(var i = 0, len = touches.length; i< len; i ++){
             selTouch = touches[i];
             touchID = selTouch.getID();
@@ -124,6 +137,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
                 }
                 //curTouch = this._touches[unusedIndex] = selTouch;
                 curTouch = this._touches[unusedIndex] = new cc.Touch(selTouch._point.x, selTouch._point.y, selTouch.getID());
+                curTouch._lastModified = now;
                 curTouch._setPrevPoint(selTouch._prevPoint);
                 locTouchIntDict[touchID] = unusedIndex;
                 handleTouches.push(curTouch);
@@ -142,7 +156,9 @@ cc.inputManager = /** @lends cc.inputManager# */{
      * @param {Array} touches
      */
     handleTouchesMove: function(touches){
-        var selTouch, index, touchID, handleTouches = [], locTouches = this._touches;
+        var selTouch, index, touchID, 
+            handleTouches = [], locTouches = this._touches,
+            now = cc.sys.now();
         for(var i = 0, len = touches.length; i< len; i ++){
             selTouch = touches[i];
             touchID = selTouch.getID();
@@ -155,6 +171,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
             if(locTouches[index]){
                 locTouches[index]._setPoint(selTouch._point);
                 locTouches[index]._setPrevPoint(selTouch._prevPoint);
+                locTouches[index]._lastModified = now;
                 handleTouches.push(locTouches[index]);
             }
         }

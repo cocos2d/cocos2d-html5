@@ -292,7 +292,6 @@
         "editbox" : [
             "core", "gui",
 
-            "extensions/editbox/CCdomNode.js",
             "extensions/editbox/CCEditBox.js"
         ],
         "ccpool" : [

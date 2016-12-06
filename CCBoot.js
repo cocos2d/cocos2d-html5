@@ -1666,7 +1666,7 @@ var _initSys = function () {
      * @name isMobile
      * @type {Boolean}
      */
-    sys.isMobile = ua.indexOf('mobile') !== -1 || ua.indexOf('android') !== -1;
+    sys.isMobile = /mobile|android|iphone|ipad/.test(ua);
 
     /**
      * Indicate the running platform
@@ -1701,6 +1701,11 @@ var _initSys = function () {
         iOS = true;
         osVersion = uaResult[2] || '';
         osMainVersion = parseInt(osVersion) || 0;
+    } 
+    else if (/(iPhone|iPad|iPod)/.exec(nav.platform)) {
+        iOS = true;
+        osVersion = '';
+        osMainVersion = 0;
     }
 
     var osName = sys.OS_UNKNOWN;
@@ -2015,6 +2020,21 @@ var _initSys = function () {
     sys.openURL = function(url){
         window.open(url);
     };
+
+    /**
+     * Get the number of milliseconds elapsed since 1 January 1970 00:00:00 UTC.
+     * @memberof cc.sys
+     * @name now
+     * @return {Number}
+     */
+    sys.now = function () {
+        if (Date.now) {
+            return Date.now();
+        }
+        else {
+            return +(new Date);
+        }
+    };
 };
 _initSys();
 
@@ -2089,7 +2109,7 @@ function _afterEngineLoaded(config) {
     if (cc._initDebugSetting)
         cc._initDebugSetting(config[cc.game.CONFIG_KEY.debugMode]);
     cc._engineLoaded = true;
-    cc.log(cc.ENGINE_VERSION);
+    console.log(cc.ENGINE_VERSION);
     if (_engineLoadedCallback) _engineLoadedCallback();
 }
 
