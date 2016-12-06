@@ -42,11 +42,23 @@
     var DEBUG = false;
 
     var sys = cc.sys;
-    var version = sys.browserVersion;
+    var version = null;
+    try {
+        version = sys.browserVersion;
+    } catch(err) {
+        console.warn(err);
+        sys = {};
+    }
 
     // check if browser supports Web Audio
     // check Web Audio's context
-    var supportWebAudio = !!(window.AudioContext || window.webkitAudioContext || window.mozAudioContext);
+    var supportWebAudio = false;
+
+    try {
+        supportWebAudio = !!(window.AudioContext || window.webkitAudioContext || window.mozAudioContext);
+    } catch(err) {
+        console.warn("Audio Init Error", err);
+    }
 
     var support = {ONLY_ONE: false, WEB_AUDIO: supportWebAudio, DELAY_CREATE_CTX: false, ONE_SOURCE: false };
 
@@ -97,6 +109,7 @@ cc.Audio = cc.Class.extend({
     },
 
     setElement: function (element) {
+        try{
         this._AUDIO_TYPE = "AUDIO";
         this._element = element;
 
@@ -107,6 +120,7 @@ cc.Audio = cc.Class.extend({
                 element.paused = true;
             }
         });
+        } catch (err) {console.warn(err);}
     },
 
     play: function (offset, loop) {
@@ -398,6 +412,7 @@ cc.Audio.WebAudio.prototype = {
         },
 
         loadAudioFromExtList: function(realUrl, typeList, audio, cb){
+            try{
             if(typeList.length === 0){
                 var ERRSTR = "can not found the resource of audio! Last match url is : ";
                 ERRSTR += realUrl.replace(/\.(.*)?$/, "(");
@@ -458,6 +473,8 @@ cc.Audio.WebAudio.prototype = {
             dom.addEventListener("error", failure, false);
             if(polyfill.USE_LOADER_EVENT)
                 dom.addEventListener(polyfill.USE_LOADER_EVENT, success, false);
+
+            } catch (err) {console.warn(err);}
         }
     };
     cc.loader.register(["mp3", "ogg", "wav", "mp4", "m4a"], loader);
