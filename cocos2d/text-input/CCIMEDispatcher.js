@@ -528,8 +528,6 @@ cc.IMEDispatcher.Impl = cc.Class.extend(/** @lends cc.IMEDispatcher.Impl# */{
 // Initialize imeDispatcher singleton
 cc.imeDispatcher = new cc.IMEDispatcher();
 
-document.body ?
-    cc.imeDispatcher.init() :
-    window.addEventListener('load', function () {
-        cc.imeDispatcher.init();
-    }, false);
+cc.onBodyReady(function () {
+    cc.imeDispatcher.init();
+});
