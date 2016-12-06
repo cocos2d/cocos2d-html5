@@ -103,7 +103,8 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
     proto._updateTTF = function () {
         var node = this._node;
-        var locDimensionsWidth = node._dimensions.width, i, strLength;
+        var pixelRatio = cc.view.getDevicePixelRatio();
+        var locDimensionsWidth = node._dimensions.width * pixelRatio, i, strLength;
         var locLineWidth = this._lineWidths;
         locLineWidth.length = 0;
 
@@ -135,7 +136,6 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
             locStrokeShadowOffsetY += Math.abs(locOffsetSize.y) * 2;
         }
 
-        var pixelRatio = cc.view.getDevicePixelRatio();
         //get offset for stroke and shadow
         if (locDimensionsWidth === 0) {
             if (this._isMultiLine)
@@ -178,6 +178,7 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
     proto._saveStatus = function () {
         var node = this._node;
+        var scale = cc.view.getDevicePixelRatio();
         var locStrokeShadowOffsetX = node._strokeShadowOffsetX, locStrokeShadowOffsetY = node._strokeShadowOffsetY;
         var locContentSizeHeight = node._contentSize.height - locStrokeShadowOffsetY, locVAlignment = node._vAlignment,
             locHAlignment = node._hAlignment;
@@ -310,32 +311,16 @@ cc.LabelTTF._firsrEnglish = /^[a-zA-Z0-9ÄÖÜäöüßéèçàùêâîôû]/;
 
     proto.updateStatus = function () {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-
-<<<<<<< HEAD
-=======
-        cc.Node.RenderCmd.prototype.updateStatus.call(this);
         
->>>>>>> 45cdfaa... Revert "Fix UIText issue and Label getContentSize value wrong in retina mode"
         if (locFlag & flags.textDirty)
             this._updateTexture();
 
         cc.Node.RenderCmd.prototype.updateStatus.call(this);
-
-        if (this._dirtyFlag & flags.transformDirty){
-            this.transform(this.getParentRenderCmd(), true);
-            this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.transformDirty ^ this._dirtyFlag;
-        }
     };
 
     proto._syncStatus = function (parentCmd) {
         var flags = cc.Node._dirtyFlags, locFlag = this._dirtyFlag;
-<<<<<<< HEAD
 
-=======
-        
-        cc.Node.RenderCmd.prototype._syncStatus.call(this, parentCmd);
-        
->>>>>>> 45cdfaa... Revert "Fix UIText issue and Label getContentSize value wrong in retina mode"
         if (locFlag & flags.textDirty)
             this._updateTexture();
 

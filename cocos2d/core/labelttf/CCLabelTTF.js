@@ -610,9 +610,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @param {Number} [scaleY=]
      */
     setScale: function (scale, scaleY) {
-        this._scaleX = scale / cc.view.getDevicePixelRatio();
-        this._scaleY = ((scaleY || scaleY === 0) ? scaleY : scale) /
-          cc.view.getDevicePixelRatio();
+        var ratio = cc.view.getDevicePixelRatio();
+        this._scaleX = scale / ratio;
+        this._scaleY = ((scaleY || scaleY === 0) ? scaleY : scale) / ratio;
         this._renderCmd.setDirtyFlag(cc.Node._dirtyFlags.transformDirty);
     },
 
@@ -806,25 +806,37 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     getContentSize: function () {
         if (this._needUpdateTexture)
             this._renderCmd._updateTTF();
-        return cc.size(
-            this._contentSize.width / cc.view.getDevicePixelRatio(),
-            this._contentSize.height / cc.view.getDevicePixelRatio());
+        var ratio = cc.view.getDevicePixelRatio();
+        return cc.size( this._contentSize.width / ratio, this._contentSize.height / ratio );
     },
 
     _getWidth: function () {
         if (this._needUpdateTexture)
             this._renderCmd._updateTTF();
-        return cc.Sprite.prototype._getWidth.call(this);
+        return this._contentSize.width / cc.view.getDevicePixelRatio();
     },
     _getHeight: function () {
         if (this._needUpdateTexture)
             this._renderCmd._updateTTF();
-        return cc.Sprite.prototype._getHeight.call(this);
+        return this._contentSize.height / cc.view.getDevicePixelRatio();
     },
 
     setTextureRect: function (rect, rotated, untrimmedSize) {
-        //set needConvert to false
-        cc.Sprite.prototype.setTextureRect.call(this, rect, rotated, untrimmedSize, false);
+        var _t = this;
+        _t._rectRotated = rotated || false;
+        _t.setContentSize(untrimmedSize || rect);
+
+        _t.setVertexRect(rect);
+        _t._renderCmd._setTextureCoords(rect, false);
+
+        var relativeOffsetX = _t._unflippedOffsetPositionFromCenter.x, relativeOffsetY = _t._unflippedOffsetPositionFromCenter.y;
+        if (_t._flippedX)
+            relativeOffsetX = -relativeOffsetX;
+        if (_t._flippedY)
+            relativeOffsetY = -relativeOffsetY;
+        var locRect = _t._rect;
+        _t._offsetPosition.x = relativeOffsetX + (rect.width - locRect.width) / 2;
+        _t._offsetPosition.y = relativeOffsetY + (rect.height - locRect.height) / 2;
     },
 
     /**
