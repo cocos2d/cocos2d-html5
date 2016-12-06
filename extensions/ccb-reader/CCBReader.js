@@ -222,7 +222,9 @@ cc.BuilderReader = cc.Class.extend({
         if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
             req.setRequestHeader("Accept-Charset", "x-user-defined");
             req.send(null);
-            if (req.status !== 200) {
+            var status = 0;
+            try {status = req.status} catch(err){}
+            if (status !== 200) {
                 cc.log(errInfo);
                 return null;
             }
@@ -236,7 +238,9 @@ cc.BuilderReader = cc.Class.extend({
             if (req.overrideMimeType)
                 req.overrideMimeType('text\/plain; charset=x-user-defined');
             req.send(null);
-            if (req.status !== 200) {
+            var status = 0;
+            try {status = req.status} catch(err){}
+            if (status !== 200) {
                 cc.log(errInfo);
                 return null;
             }

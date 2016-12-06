@@ -41,7 +41,9 @@ cc.loader.loadBinary = function (url, cb) {
         // IE-specific logic here
         xhr.setRequestHeader("Accept-Charset", "x-user-defined");
         xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
+            var status = 0;
+            try {status = xhr.status} catch(err){}
+            if (xhr.readyState === 4 && status === 200) {
                 var fileContents = cc._convertResponseBodyToText(xhr["responseBody"]);
                 cb(null, self._str2Uint8Array(fileContents));
             } else cb(errInfo);
@@ -49,7 +51,9 @@ cc.loader.loadBinary = function (url, cb) {
     } else {
         if (xhr.overrideMimeType) xhr.overrideMimeType("text\/plain; charset=x-user-defined");
         xhr.onload = function () {
-            xhr.readyState === 4 && xhr.status === 200 ? cb(null, self._str2Uint8Array(xhr.responseText)) : cb(errInfo);
+            var status = 0;
+            try {status = xhr.status} catch(err){}
+            xhr.readyState === 4 && status === 200 ? cb(null, self._str2Uint8Array(xhr.responseText)) : cb(errInfo);
         };
     }
     xhr.send(null);
@@ -83,7 +87,9 @@ cc.loader.loadBinarySync = function (url) {
     if (cc.loader.loadBinary._IEFilter) {
         req.setRequestHeader("Accept-Charset", "x-user-defined");
         req.send(null);
-        if (req.status !== 200) {
+        var status = 0;
+        try {status = req.status} catch(err){}
+        if (status !== 200) {
             cc.log(errInfo);
             return null;
         }
@@ -96,7 +102,9 @@ cc.loader.loadBinarySync = function (url) {
         if (req.overrideMimeType)
             req.overrideMimeType('text\/plain; charset=x-user-defined');
         req.send(null);
-        if (req.status !== 200) {
+        var status = 0;
+        try {status = req.status} catch(err){}
+        if (status !== 200) {
             cc.log(errInfo);
             return null;
         }
