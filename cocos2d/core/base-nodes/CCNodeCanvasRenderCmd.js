@@ -27,15 +27,14 @@ cc.CustomRenderCmd = function (target, func) {
     this._needDraw = true;
     this._target = target;
     this._callback = func;
-
-    this.rendering = function (ctx, scaleX, scaleY) {
-        if (!this._callback)
-            return;
-        this._callback.call(this._target, ctx, scaleX, scaleY);
-    };
-    this.needDraw = function () {
-        return this._needDraw;
-    };
+};
+cc.CustomRenderCmd.prototype.rendering = function (ctx, scaleX, scaleY) {
+    if (!this._callback)
+        return;
+    this._callback.call(this._target, ctx, scaleX, scaleY);
+};
+cc.CustomRenderCmd.prototype.needDraw = function () {
+    return this._needDraw;
 };
 
 var dirtyFlags = cc.Node._dirtyFlags = {

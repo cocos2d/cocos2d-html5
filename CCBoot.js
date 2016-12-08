@@ -594,37 +594,7 @@ cc.loader = (function () {
         _langPathCache = {}, //cache for lang path
         _aliases = {}, //aliases for res url
         _queue = {}, // Callback queue for resources already loading
-        _urlRegExp = new RegExp(
-            "^" +
-                // protocol identifier
-                "(?:(?:https?|ftp)://)" +
-                // user:pass authentication
-                "(?:\\S+(?::\\S*)?@)?" +
-                "(?:" +
-                    // IP address dotted notation octets
-                    // excludes loopback network 0.0.0.0
-                    // excludes reserved space >= 224.0.0.0
-                    // excludes network & broacast addresses
-                    // (first & last IP address of each class)
-                    "(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" +
-                    "(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}" +
-                    "(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" +
-                "|" +
-                    // host name
-                    "(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" +
-                    // domain name
-                    "(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
-                    // TLD identifier
-                    "(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
-                "|" +
-                    "(?:localhost)" +
-                ")" +
-                // port number
-                "(?::\\d{2,5})?" +
-                // resource path
-                "(?:/\\S*)?" +
-            "$", "i"
-        );
+        _urlRegExp = new RegExp("^(?:https?|ftp)://\\S*$", "i");
 
     return /** @lends cc.Loader# */{
         /**
@@ -650,7 +620,9 @@ cc.loader = (function () {
          * @returns {XMLHttpRequest}
          */
         getXMLHttpRequest: function () {
-            return window.XMLHttpRequest ? new window.XMLHttpRequest() : new ActiveXObject("MSXML2.XMLHTTP");
+            var xhr = window.XMLHttpRequest ? new window.XMLHttpRequest() : new ActiveXObject("MSXML2.XMLHTTP");
+            xhr.timeout = 10000;
+            return xhr;
         },
 
         //@MODE_BEGIN DEV
@@ -1863,13 +1835,13 @@ var _initSys = function () {
     if (win.WebGLRenderingContext) {
         var tmpCanvas = document.createElement("CANVAS");
         try{
-            var context = cc.create3DContext(tmpCanvas, {'stencil': true});
+            var context = cc.create3DContext(tmpCanvas);
             if (context && context.getShaderPrecisionFormat) {
                 _supportWebGL = true;
             }
 
-            if (_supportWebGL && sys.os === sys.OS_IOS) {
-                // Not activating WebGL in iOS UIWebView because it may crash when entering background
+            if (_supportWebGL && sys.os === sys.OS_IOS && sys.osMainVersion === 9) {
+                // Not activating WebGL in iOS 9 UIWebView because it may crash when entering background
                 if (!window.indexedDB) {
                     _supportWebGL = false;
                 }
@@ -2691,8 +2663,8 @@ cc.game = /** @lends cc.game# */{
             this._renderContext = cc._renderContext = cc.webglContext
              = cc.create3DContext(localCanvas, {
                 'stencil': true,
-                'antialias': !cc.sys.isMobile,
-                'alpha': false
+                'alpha': false,
+                'preserveDrawingBuffer': false
             });
         }
         // WebGL context created successfully
@@ -2809,35 +2781,3 @@ Function.prototype.bind = Function.prototype.bind || function (oThis) {
 
     return fBound;
 };
-
-cc._urlRegExp = new RegExp(
-    "^" +
-        // protocol identifier
-        "(?:(?:https?|ftp)://)" +
-        // user:pass authentication
-        "(?:\\S+(?::\\S*)?@)?" +
-        "(?:" +
-            // IP address dotted notation octets
-            // excludes loopback network 0.0.0.0
-            // excludes reserved space >= 224.0.0.0
-            // excludes network & broacast addresses
-            // (first & last IP address of each class)
-            "(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" +
-            "(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}" +
-            "(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" +
-        "|" +
-            // host name
-            "(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" +
-            // domain name
-            "(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
-            // TLD identifier
-            "(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
-        "|" +
-            "(?:localhost)" +
-        ")" +
-        // port number
-        "(?::\\d{2,5})?" +
-        // resource path
-        "(?:/\\S*)?" +
-    "$", "i"
-);

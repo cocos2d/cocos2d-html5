@@ -126,7 +126,7 @@ return {
 
         this.mat4Identity = new cc.math.Matrix4();
         this.mat4Identity.identity();
-        initQuadBuffer(2000);
+        initQuadBuffer(500);
         if (cc.sys.os === cc.sys.OS_IOS) {
             _IS_IOS = true;
         }

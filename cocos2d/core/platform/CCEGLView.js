@@ -678,11 +678,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 
         this.setResolutionPolicy(resolutionPolicy);
         var policy = this._resolutionPolicy;
-        if (!policy){
-            cc.log(cc._LogInfos.EGLView_setDesignResolutionSize_2);
-            return;
+        if (policy) {
+            policy.preApply(this);
         }
-        policy.preApply(this);
 
         // Reinit frame size
         if (cc.sys.isMobile)
@@ -691,6 +689,11 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         // Permit to re-detect the orientation of device.
         this._orientationChanging = true;
         this._initFrameSize();
+
+        if (!policy) {
+            cc.log(cc._LogInfos.EGLView_setDesignResolutionSize_2);
+            return;
+        }
 
         this._originalDesignResolutionSize.width = this._designResolutionSize.width = width;
         this._originalDesignResolutionSize.height = this._designResolutionSize.height = height;
@@ -768,7 +771,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         this._setViewportMeta({"width": width}, true);
 
         // Set body width to the exact pixel resolution
-        document.html.style.width = width + 'px';
+        document.documentElement.style.width = width + 'px';
         document.body.style.width = "100%";
 
         // Reset the resolution size and policy

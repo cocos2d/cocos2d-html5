@@ -84,19 +84,14 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
             onTouchCancelled: this._onTouchCancelled
         });
 
-        if ((arguments.length > 0) && (arguments[arguments.length - 1] == null))
-            cc.log("parameters should not be ending with null in Javascript");
-
         var argc = arguments.length, items;
-        if (argc === 0) {
-            items = [];
-        } else if (argc === 1) {
-            if (menuItems instanceof Array) {
-                items = menuItems;
-            }
-            else items = [menuItems];
+        if (menuItems instanceof Array) {
+            items = menuItems;
         }
-        else if (argc > 1) {
+        else if (argc === 0) {
+            items = [];
+        }
+        else if (argc > 0) {
             items = [];
             for (var i = 0; i < argc; i++) {
                 if (arguments[i])

@@ -292,3 +292,14 @@ cc.affineTransformInvert = function (t) {
         tx: determinant * (t.c * t.ty - t.d * t.tx), ty: determinant * (t.b * t.tx - t.a * t.ty)
     };
 };
+
+cc.affineTransformInvertOut = function (t, out) {
+    var a = t.a, b = t.b, c = t.c, d = t.d;
+    var determinant = 1 / (a * d - b * c);
+    out.a = determinant * d;
+    out.b = -determinant * b;
+    out.c = -determinant * c;
+    out.d = determinant * a;
+    out.tx = determinant * (c * t.ty - d * t.tx);
+    out.ty = determinant * (b * t.tx - a * t.ty);
+};

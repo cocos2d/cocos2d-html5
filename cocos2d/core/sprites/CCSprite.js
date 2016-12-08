@@ -355,16 +355,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * Sets whether the sprite is visible or not.
-     * @param {Boolean} visible
-     * @override
-     */
-    setVisible:function (visible) {
-        cc.Node.prototype.setVisible.call(this, visible);
-        this._renderCmd.setDirtyRecursively(true);
-    },
-
-    /**
      * Removes all children from the container.
      * @param cleanup whether or not cleanup all running actions
      * @override

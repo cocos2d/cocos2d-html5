@@ -112,6 +112,8 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 this._textureLoaded = false;
                 this._htmlElementObj = null;
                 this._pattern = "";
+                this._pixelsWide = 0;
+                this._pixelsHigh = 0;
             },
 
             /**
@@ -119,7 +121,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
              * @return {Number}
              */
             getPixelsWide: function () {
-                return this._contentSize.width;
+                return this._pixelsWide;
             },
 
             /**
@@ -127,7 +129,7 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
              * @return {Number}
              */
             getPixelsHigh: function () {
-                return this._contentSize.height;
+                return this._pixelsHigh;
             },
 
             /**
@@ -162,8 +164,8 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 if (!element)
                     return;
                 this._htmlElementObj = element;
-                this._contentSize.width = element.width;
-                this._contentSize.height = element.height;
+                this._pixelsWide = this._contentSize.width = element.width;
+                this._pixelsHigh = this._contentSize.height = element.height;
                 this._textureLoaded = true;
             },
 
@@ -196,8 +198,8 @@ cc.game.addEventListener(cc.game.EVENT_RENDERER_INITED, function () {
                 }
 
                 var locElement = self._htmlElementObj;
-                self._contentSize.width = locElement.width;
-                self._contentSize.height = locElement.height;
+                self._pixelsWide = self._contentSize.width = locElement.width;
+                self._pixelsHigh = self._contentSize.height = locElement.height;
 
                 //dispatch load event to listener.
                 self.dispatchEvent("load");

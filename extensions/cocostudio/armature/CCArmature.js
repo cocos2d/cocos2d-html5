@@ -79,7 +79,6 @@ ccs.Armature = ccs.Node.extend(/** @lends ccs.Armature# */{
      * @return {Boolean}
      */
     init: function (name, parentBone) {
-        cc.Node.prototype.init.call(this);
         if (parentBone)
             this._parentBone = parentBone;
         this.removeAllChildren();

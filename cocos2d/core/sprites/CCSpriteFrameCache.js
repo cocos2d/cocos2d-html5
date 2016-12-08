@@ -190,6 +190,7 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
                         tempTexture.initWithElement(tempElement);
                         tempTexture.handleLoadedTexture();
                         spriteFrame.setTexture(tempTexture);
+                        spriteFrame.setRotated(false);
 
                         var rect = spriteFrame._rect;
                         spriteFrame.setRect(cc.rect(0, 0, rect.width, rect.height));

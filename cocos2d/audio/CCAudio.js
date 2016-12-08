@@ -834,6 +834,7 @@ cc.Audio.WebAudio.prototype = {
                 }
                 list.length = 0;
             }
+            ap.length = 0;
         },
 
         /**
@@ -850,7 +851,12 @@ cc.Audio.WebAudio.prototype = {
 
             cc.loader.release(url);
             var pool = this._audioPool[url];
-            if(pool) pool.length = 0;
+            if (pool) {
+                for (var i = 0; i < pool.length; i++) {
+                    pool[i].stop();
+                }
+                pool.length = 0;
+            }
             delete this._audioPool[url];
         },
 

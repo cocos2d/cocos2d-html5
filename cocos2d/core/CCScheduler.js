@@ -237,7 +237,7 @@ cc.inject({
                     }
                 }
 
-                if (!this._runForever && this._timesExecuted > this._repeat)
+                if (this._callback && !this._runForever && this._timesExecuted > this._repeat)
                     this.cancel();
             }
         }
@@ -596,7 +596,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
         if (!element) {
             // Is this the 1st element ? Then set the pause level to all the callback_fns of this target
-            element = HashTimerEntry.get(null, target, 0, null, null, paused, null);
+            element = HashTimerEntry.get(null, target, 0, null, null, paused);
             this._arrayForTimers.push(element);
             this._hashForTimers[target.__instanceId] = element;
         } else {

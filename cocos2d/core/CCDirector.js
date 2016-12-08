@@ -239,9 +239,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this.setNextScene();
         }
 
-        if (this._beforeVisitScene)
-            this._beforeVisitScene();
-
         // draw the scene
         if (this._runningScene) {
             if (renderer.childrenOrderDirty) {
@@ -265,9 +262,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         cc.eventManager.dispatchEvent(this._eventAfterVisit);
         cc.g_NumberOfDraws = 0;
 
-        if (this._afterVisitScene)
-            this._afterVisitScene();
-
         renderer.rendering(cc._renderContext);
         this._totalFrames++;
 
@@ -276,9 +270,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         this._calculateMPF();
     },
-
-    _beforeVisitScene: null,
-    _afterVisitScene: null,
 
     /**
      * End the life of director in the next frame

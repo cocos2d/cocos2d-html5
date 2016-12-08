@@ -21,7 +21,7 @@ cc.profiler = (function () {
     _fps.style.bottom = cc.DIRECTOR_STATS_POSITION.y + '0px';
     _fps.style.left = cc.DIRECTOR_STATS_POSITION.x + 'px';
     _fps.style.width = '45px';
-    _fps.style.height = '60px';
+    _fps.style.height = '80px';
 
     var labels = [_drawsLabel, _SPFLabel, _FPSLabel];
     for (var i = 0; i < 3; ++i) {
@@ -85,8 +85,9 @@ cc.profiler = (function () {
             }
 
             if (_showFPS) {
+                var mode = cc._renderType === cc.game.RENDER_TYPE_CANVAS ? "\n canvas" : "\n webgl";
                 _SPFLabel.innerText = _lastSPF.toFixed(3);
-                _FPSLabel.innerText = _frameRate.toFixed(1);
+                _FPSLabel.innerText = _frameRate.toFixed(1).toString() + mode;
                 _drawsLabel.innerText = (0 | cc.g_NumberOfDraws).toString();
             }
         }
